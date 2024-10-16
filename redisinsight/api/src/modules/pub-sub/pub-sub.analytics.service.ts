@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { TelemetryEvents } from 'src/constants';
+import { some } from 'lodash';
+import { DEFAULT_MATCH, TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { RedisError, ReplyError } from 'src/models';
+import { SubscriptionDto } from './dto';
 
 export interface IExecResult {
   response: any;
@@ -31,12 +33,13 @@ export class PubSubAnalyticsService extends TelemetryBaseService {
     }
   }
 
-  sendChannelSubscribeEvent(databaseId: string): void {
+  sendChannelSubscribeEvent(databaseId: string, subs: SubscriptionDto[]): void {
     try {
       this.sendEvent(
         TelemetryEvents.PubSubChannelSubscribed,
         {
           databaseId,
+          allChannels: some(subs, { channel: DEFAULT_MATCH }) ? 'yes' : 'no',
         },
       );
     } catch (e) {

@@ -92,6 +92,18 @@ services:
       ssh:
         ipv4_address: 172.33.100.112
 
+  # oss standalone v8
+  oss-standalone-v8:
+    logging: *logging
+    image: redis:8.0-M01
+    ports:
+      - 8109:6379
+    networks:
+      default:
+        ipv4_address: 172.31.100.113
+      ssh:
+        ipv4_address: 172.33.100.113
+
   # oss standalone redisearch
   oss-standalone-redisearch:
     logging: *logging

@@ -1,4 +1,5 @@
-import { t, Selector } from 'testcafe';
+import { Selector, t } from 'testcafe';
+import { TlsCertificates } from '../../../helpers/constants';
 
 export class AddRedisDatabase {
     //-------------------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ export class AddRedisDatabase {
     cancelButton = Selector('[data-testid=btn-cancel]');
     showPasswordBtn = Selector('[aria-label^="Show password"]');
     testConnectionBtn = Selector('[data-testid=btn-test-connection]');
+
     // TEXT INPUTS (also referred to as 'Text fields')
     disabledDatabaseInfo = Selector('[class=euiListGroupItem__label]');
     hostInput = Selector('[data-testid=host]');
@@ -57,9 +59,12 @@ export class AddRedisDatabase {
     selectCompressor = Selector('[data-testid=select-compressor]', { timeout: 1000 });
     useCloudAccount = Selector('[data-testid=use-cloud-account-accordion]');
     useCloudKeys = Selector('[data-testid=use-cloud-keys-accordion]');
+    certificateDropdownList = Selector('div.euiSuperSelect__listbox div');
+
     // CHECKBOXES
     useSSHCheckbox = Selector('[data-testid=use-ssh]~div', { timeout: 500 });
     dataCompressorCheckbox = Selector('[data-testid=showCompressor] ~ label');
+    requiresTlsClientCheckbox = Selector('[data-testid=tls-required-checkbox]  ~ label');
     // RADIO BUTTONS
     sshPasswordRadioBtn = Selector('#password~div', { timeout: 500 });
     sshPrivateKeyRadioBtn = Selector('#privateKey~div', { timeout: 500 });
@@ -252,6 +257,29 @@ export class AddRedisDatabase {
         }
         await t.click(this.selectCompressor);
         await t.click(Selector(`[id="${compressor}"]`));
+    }
+
+    /**
+     * Remove certificate
+     * @param certificate - certificate
+     * @param name - name of the certificate
+     */
+    async removeCertificateButton(certificate: TlsCertificates, name: string): Promise<void> {
+
+        const row =  Selector('button')
+            .find('div')
+            .withText(name);
+        const removeButton = `[data-testid^=delete-${certificate}-cert]`;
+        const removeButtonFooter = Selector('[class^=_popoverFooter]');
+
+        if(certificate === TlsCertificates.CA){
+            await t.click(this.caCertField);
+        }
+        else {
+            await t.click(this.clientCertField);
+        }
+        await t.click(row.find(removeButton));
+        await t.click(removeButtonFooter.find(removeButton));
     }
 }
 

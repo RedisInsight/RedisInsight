@@ -1,0 +1,53 @@
+name: Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Build target
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - docker
+          - windows:x64
+          - macos
+          - macos:x64
+          - macos:arm64
+          - linux:appimage:x64
+          - linux:deb:x64
+          - linux:rpm:x64
+          - linux:snap:x64
+
+      environment:
+        description: Environment to run build
+        type: environment
+        default: 'staging'
+        required: false
+
+jobs:
+  build_linux:
+    if: startsWith(inputs.target, 'linux') || inputs.target == 'all'
+    # concurrency: build
+    uses: ./.github/workflows/pipeline-build-linux.yml
+    secrets: inherit
+    with:
+      target: ${{ inputs.target }}
+
+  build_macos:
+    if: startsWith(inputs.target, 'macos') || inputs.target == 'all'
+    uses: ./.github/workflows/pipeline-build-macos.yml
+    secrets: inherit
+    with:
+      target: ${{ inputs.target }}
+
+  build_windows:
+    if: startsWith(inputs.target, 'windows') || inputs.target == 'all'
+    uses: ./.github/workflows/pipeline-build-windows.yml
+    secrets: inherit
+
+  build_docker:
+    if: startsWith(inputs.target, 'docker') || inputs.target == 'all'
+    uses: ./.github/workflows/pipeline-build-docker.yml
+    secrets: inherit

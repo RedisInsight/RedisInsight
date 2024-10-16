@@ -384,7 +384,7 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
             />
             <PopoverDelete
               header={formatLongName(instance.name, 50, 10, '...')}
-              text="will be deleted from Redis Insight."
+              text="will be removed from Redis Insight."
               item={instance.id}
               suffix={suffix}
               deleting={deletingIdRef.current}

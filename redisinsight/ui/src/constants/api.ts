@@ -149,6 +149,9 @@ enum ApiEndpoints {
   RDI_PIPELINE_JOB_FUNCTIONS = 'pipeline/job-functions',
   RDI_STATISTICS = 'statistics',
   RDI_PIPELINE_STATUS = 'pipeline/status',
+  RDI_PIPELINE_STOP = 'pipeline/stop',
+  RDI_PIPELINE_START = 'pipeline/start',
+  RDI_PIPELINE_RESET = 'pipeline/reset',
 }
 
 export enum CustomHeaders {

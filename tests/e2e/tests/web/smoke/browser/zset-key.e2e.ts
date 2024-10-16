@@ -37,8 +37,8 @@ test('Verify that user can remove member from ZSet', async t => {
     await t.expect(browserPage.zsetScoresList.withExactText(score).exists).ok('The Zset score not found', { timeout: 10000 });
 
     // Remove member from the key
-    await t.click(browserPage.removeZserMemberButton);
-    await t.click(browserPage.confirmRemovZSetMemberButton);
+    await t.click(browserPage.removeZsetMemberButton);
+    await t.click(browserPage.confirmRemoveZSetMemberButton);
     // Check the notification message
     const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Member has been removed', 'The notification not found');

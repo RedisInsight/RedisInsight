@@ -6,7 +6,6 @@ import {
   EuiTextColor,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
   EuiFieldText,
   EuiPanel,
   EuiSuperSelect,
@@ -16,6 +15,7 @@ import {
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { insertListElementsAction } from 'uiSrc/slices/browser/list'
+import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { KeyTypes } from 'uiSrc/constants'
 import { stringToBuffer } from 'uiSrc/utils'
@@ -36,7 +36,7 @@ export enum ListElementDestination {
 export const TAIL_DESTINATION: ListElementDestination = ListElementDestination.Tail
 export const HEAD_DESTINATION: ListElementDestination = ListElementDestination.Head
 
-const optionsDestinations: EuiSuperSelectOption<string>[] = [
+export const optionsDestinations: EuiSuperSelectOption<string>[] = [
   {
     value: TAIL_DESTINATION,
     inputDisplay: 'Push to tail',
@@ -50,7 +50,7 @@ const optionsDestinations: EuiSuperSelectOption<string>[] = [
 const AddListElements = (props: Props) => {
   const { closePanel } = props
 
-  const [element, setElement] = useState<string>('')
+  const [elements, setElements] = useState<string[]>([''])
   const [destination, setDestination] = useState<ListElementDestination>(TAIL_DESTINATION)
   const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
   const { viewType } = useSelector(keysSelector)
@@ -76,15 +76,35 @@ const AddListElements = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.List,
-        numberOfAdded: 1,
+        numberOfAdded: elements.length,
       }
     })
+  }
+
+  const addField = () => {
+    setElements([...elements, ''])
+  }
+
+  const onClickRemove = (_item: string, index?: number) => {
+    if (elements.length === 1) {
+      setElements([''])
+    } else {
+      setElements(elements.filter((_el, i) => i !== index))
+    }
+  }
+
+  const isClearDisabled = (item:string) => elements.length === 1 && !item.length
+
+  const handleElementChange = (value: string, index: number) => {
+    const newElements = [...elements]
+    newElements[index] = value
+    setElements(newElements)
   }
 
   const submitData = (): void => {
     const data: PushElementToListDto = {
       keyName: selectedKey,
-      element: stringToBuffer(element),
+      elements: elements.map((el) => stringToBuffer(el)),
       destination,
     }
     dispatch(insertListElementsAction(data, onSuccessAdded))
@@ -97,37 +117,33 @@ const AddListElements = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-list-field-panel"
-        className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx(styles.container, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
-        <EuiFlexItem grow>
-          <EuiFlexGroup gutterSize="none" alignItems="center">
-            <EuiFlexItem grow={false} style={{ minWidth: '220px' }}>
-              <EuiFormRow fullWidth>
-                <EuiSuperSelect
-                  valueOfSelected={destination}
-                  options={optionsDestinations}
-                  onChange={(value) => setDestination(value as ListElementDestination)}
-                  data-testid="destination-select"
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem grow>
-              <EuiFormRow fullWidth>
-                <EuiFieldText
-                  fullWidth
-                  name={config.element.name}
-                  id={config.element.name}
-                  placeholder={config.element.placeholder}
-                  value={element}
-                  autoComplete="off"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setElement(e.target.value)}
-                  data-testid="elements-input"
-                  inputRef={elementInput}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
+        <EuiSuperSelect
+          valueOfSelected={destination}
+          options={optionsDestinations}
+          onChange={(value) => setDestination(value as ListElementDestination)}
+          data-testid="destination-select"
+        />
+        <AddMultipleFields
+          items={elements}
+          onClickRemove={onClickRemove}
+          onClickAdd={addField}
+          isClearDisabled={isClearDisabled}
+        >
+          {(item, index) => (
+            <EuiFieldText
+              fullWidth
+              name={`element-${index}`}
+              id={`element-${index}`}
+              placeholder={config.element.placeholder}
+              value={item}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleElementChange(e.target.value, index)}
+              data-testid={`element-${index}`}
+            />
+          )}
+        </AddMultipleFields>
       </EuiPanel>
       <EuiPanel
         style={{ border: 'none' }}

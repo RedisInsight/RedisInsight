@@ -6,10 +6,12 @@ import {
   mockClientCertificate,
   mockClientCertificateRepository, mockCreateClientCertificateDto,
   MockType,
+  mockRedisClientStorage,
 } from 'src/__mocks__';
 import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
+import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 describe('ClientCertificateService', () => {
   let service: ClientCertificateService;
@@ -23,6 +25,10 @@ describe('ClientCertificateService', () => {
         {
           provide: ClientCertificateRepository,
           useFactory: mockClientCertificateRepository,
+        },
+        {
+          provide: RedisClientStorage,
+          useFactory: mockRedisClientStorage,
         },
       ],
     }).compile();
@@ -87,9 +93,26 @@ describe('ClientCertificateService', () => {
   });
 
   describe('delete', () => {
-    it('should delete client certificate', async () => {
-      expect(await service.delete(mockClientCertificate.id)).toEqual(undefined);
+    const mockId = 'mock-client-cert-id';
+    const mockAffectedDatabases = ['db1', 'db2'];
+
+    beforeEach(() => {
+      jest.clearAllMocks();
     });
+
+    it('should delete client certificate and remove affected database clients', async () => {
+      jest.spyOn(repository, 'delete').mockResolvedValue({ affectedDatabases: mockAffectedDatabases });
+      jest.spyOn(service['redisClientStorage'], 'removeManyByMetadata').mockResolvedValue(undefined);
+
+      await service.delete(mockId);
+
+      expect(repository.delete).toHaveBeenCalledWith(mockId);
+      expect(service['redisClientStorage'].removeManyByMetadata).toHaveBeenCalledTimes(mockAffectedDatabases.length);
+      mockAffectedDatabases.forEach((databaseId) => {
+        expect(service['redisClientStorage'].removeManyByMetadata).toHaveBeenCalledWith({ databaseId });
+      });
+    });
+
     it('should throw encryption error', async () => {
       repository.delete.mockRejectedValueOnce(new KeytarEncryptionErrorException());
 

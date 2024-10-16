@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { Formik, FormikProps } from 'formik'
 
+import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 import {
   appContextSelector,
   resetDatabaseContext,
@@ -17,17 +18,24 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import {
   deployPipelineAction,
+  getPipelineStatusAction,
   rdiPipelineSelector,
+  resetPipelineAction,
+  resetPipelineChecked,
   setPipelineInitialState,
 } from 'uiSrc/slices/rdi/pipeline'
-import { IPipeline } from 'uiSrc/slices/interfaces'
+import { IActionPipelineResultProps, IPipeline } from 'uiSrc/slices/interfaces'
 import { createAxiosError, Nullable, pipelineToJson } from 'uiSrc/utils'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
+import { RdiInstancePageTemplate } from 'uiSrc/templates'
+import { RdiInstanceHeader } from 'uiSrc/components'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import InstancePageRouter from './InstancePageRouter'
-import { ConfirmLeavePagePopup } from './components'
+import { ConfirmLeavePagePopup, RdiPipelineHeader } from './components'
 import { useUndeployedChangesPrompt } from './hooks'
+import styles from './styles.module.scss'
 
 export interface Props {
   routes: IRoute[]
@@ -45,7 +53,7 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const { lastPage, contextRdiInstanceId } = useSelector(appContextSelector)
-  const { data } = useSelector(rdiPipelineSelector)
+  const { data, resetChecked } = useSelector(rdiPipelineSelector)
   const { showModal, handleCloseModal, handleConfirmLeave } = useUndeployedChangesPrompt()
 
   const [initialFormValues, setInitialFormValues] = useState<IPipeline>(getInitialValues(data))
@@ -85,6 +93,28 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
     dispatch(setPipelineDialogState(true))
   }, [])
 
+  const actionPipelineCallback = (event: TelemetryEvent, result: IActionPipelineResultProps) => {
+    sendEventTelemetry({
+      event,
+      eventData: {
+        id: rdiInstanceId,
+        ...result,
+      }
+    })
+    dispatch(getPipelineStatusAction(rdiInstanceId))
+  }
+
+  const updatePipelineStatus = () => {
+    if (resetChecked) {
+      dispatch(resetPipelineChecked(false))
+      dispatch(resetPipelineAction(rdiInstanceId,
+        (result: IActionPipelineResultProps) => actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result),
+        (result: IActionPipelineResultProps) => actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result)))
+    } else {
+      dispatch(getPipelineStatusAction(rdiInstanceId))
+    }
+  }
+
   const onSubmit = (values: IPipeline) => {
     const JSONValues = pipelineToJson(values, (errors) => {
       dispatch(addErrorNotification(createAxiosError({
@@ -94,7 +124,8 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
     if (!JSONValues) {
       return
     }
-    dispatch(deployPipelineAction(rdiInstanceId, JSONValues))
+    dispatch(deployPipelineAction(rdiInstanceId, JSONValues, updatePipelineStatus,
+      () => dispatch(getPipelineStatusAction(rdiInstanceId))),)
   }
 
   return (
@@ -105,8 +136,18 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
       innerRef={formikRef}
     >
       <>
-        <InstancePageRouter routes={routes} />
-        {showModal && <ConfirmLeavePagePopup onClose={handleCloseModal} onConfirm={handleConfirmLeave} />}
+        <EuiFlexGroup className={styles.page} direction="column" gutterSize="none" responsive={false}>
+          <EuiFlexItem grow={false}>
+            <RdiInstanceHeader />
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <RdiPipelineHeader />
+          </EuiFlexItem>
+          <RdiInstancePageTemplate>
+            <InstancePageRouter routes={routes} />
+            {showModal && <ConfirmLeavePagePopup onClose={handleCloseModal} onConfirm={handleConfirmLeave} />}
+          </RdiInstancePageTemplate>
+        </EuiFlexGroup>
       </>
     </Formik>
   )

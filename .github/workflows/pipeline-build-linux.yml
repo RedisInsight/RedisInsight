@@ -55,8 +55,9 @@ jobs:
     #     path: "."
     # - run: cp ./electron/package.json ./redisinsight/
 
-    - name: Install plugins dependencies and build plugins
-      run: yarn build:statics
+    # todo uncomment
+    # - name: Install plugins dependencies and build plugins
+    #   run: yarn build:statics
 
     - name: Build linux packages (production)
       if: vars.ENV == 'production' && inputs.target == vars.ALL

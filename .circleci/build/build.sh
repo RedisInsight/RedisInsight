@@ -7,6 +7,7 @@ yarn --cwd redisinsight/api
 
 # build
 
-yarn build:statics
+# todo uncomment
+# yarn build:statics
 yarn build:ui
 yarn --cwd ./redisinsight/api build:prod

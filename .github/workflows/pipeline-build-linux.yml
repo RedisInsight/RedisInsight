@@ -3,6 +3,12 @@ name: Build linux pipeline
 on:
   workflow_call:
     inputs:
+      environment:
+        description: Environment for build
+        required: false
+        default: 'staging'
+        type: string
+
       target:
         description: Build target
         required: false
@@ -11,11 +17,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
     name: Build linux job
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment }}
 
     steps:
-    #TODO: some debug information
+    #TODO: some debug tools
     # - uses: crazy-max/ghaction-dump-context@v2
     # - uses: hmarr/debug-action@v3
     # ssh
@@ -27,7 +34,7 @@ jobs:
     #     limit-access-to-actor: true
     #     limit-access-to-users: zalenskiSofteq
 
-    - uses: actions/checkout@v4.1.0
+    - uses: actions/checkout@v4
 
     - name: Install all libs and dependencies
       uses: ./.github/actions/install-all-build-libs
@@ -52,15 +59,15 @@ jobs:
       run: yarn build:statics
 
     - name: Build linux packages (production)
-      if: vars.ENV == 'production' && inputs.target == 'all'
+      if: vars.ENV == 'production' && inputs.target == vars.ALL
       run: yarn package:prod
 
     - name: Build linux packages (staging)
-      if: (vars.ENV == 'staging' || vars.ENV == 'development') && inputs.target == 'all'
+      if: (vars.ENV == 'staging' || vars.ENV == 'development') && inputs.target == vars.ALL
       run: yarn package:stage
 
     - name: Build linux packages (development)
-      if: inputs.target != 'all'
+      if: inputs.target != vars.ALL
       run: |
         target=""
         if [ ${{ startsWith(inputs.target, 'linux:') }} == 'true' ]; then
@@ -70,31 +77,56 @@ jobs:
 
         yarn package:stage --linux $target
 
-    - uses: actions/upload-artifact@v4.1.0
+    - uses: actions/upload-artifact@v4
+      name: Upload latest-linux.yml artifact
+      with:
+        name: linux-latest
+        path: |
+          ./release/latest-linux.yml
+
+    - uses: actions/upload-artifact@v4
       name: Upload AppImage artifact
       with:
-        name: 'linux-appimage-build'
+        name: linux-appimage-build
         path: |
           ./release/Redis-Insight*.AppImage
-          ./release/*-linux.yml
 
-    - uses: actions/upload-artifact@v4.1.0
+    - uses: actions/upload-artifact@v4
       name: Upload Deb artifact
       with:
-        name: 'linux-deb-build'
+        name: linux-deb-build
         path: |
           ./release/Redis-Insight*.deb
 
-    - uses: actions/upload-artifact@v4.1.0
+    - uses: actions/upload-artifact@v4
       name: Upload rpm artifacts
       with:
-        name: 'linux-rpm-build'
+        name: linux-rpm-build
         path: |
           ./release/Redis-Insight*.rpm
 
-    - uses: actions/upload-artifact@v4.1.0
+    - uses: actions/upload-artifact@v4
       name: Upload snap artifact
       with:
-        name: 'linux-snap-builds'
+        name: linux-snap-builds
         path: |
           ./release/Redis-Insight*.snap
+
+    env:
+      RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}
+      RI_AI_QUERY_PASS: ${{ secrets.RI_AI_QUERY_PASS }}
+      RI_AI_QUERY_USER: ${{ secrets.RI_AI_QUERY_USER }}
+      RI_CLOUD_API_URL: ${{ secrets.RI_CLOUD_API_URL }}
+      RI_CLOUD_CAPI_URL: ${{ secrets.RI_CLOUD_CAPI_URL }}
+      RI_CLOUD_IDP_AUTHORIZE_URL: ${{ secrets.RI_CLOUD_IDP_AUTHORIZE_URL }}
+      RI_CLOUD_IDP_CLIENT_ID: ${{ secrets.RI_CLOUD_IDP_CLIENT_ID }}
+      RI_CLOUD_IDP_GH_ID: ${{ secrets.RI_CLOUD_IDP_GH_ID }}
+      RI_CLOUD_IDP_GOOGLE_ID: ${{ secrets.RI_CLOUD_IDP_GOOGLE_ID }}
+      RI_CLOUD_IDP_ISSUER: ${{ secrets.RI_CLOUD_IDP_ISSUER }}
+      RI_CLOUD_IDP_REDIRECT_URI: ${{ secrets.RI_CLOUD_IDP_REDIRECT_URI }}
+      RI_CLOUD_IDP_TOKEN_URL: ${{ secrets.RI_CLOUD_IDP_TOKEN_URL }}
+      RI_SEGMENT_WRITE_KEY: ${{ secrets.RI_SEGMENT_WRITE_KEY }}
+      RI_SERVER_TLS_CERT: ${{ secrets.RI_SERVER_TLS_CERT }}
+      RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
+      RI_FEATURES_CONFIG_URL: ${{ secrets.RI_FEATURES_CONFIG_URL }}
+      RI_UPGRADES_LINK: ${{ secrets.RI_UPGRADES_LINK }}

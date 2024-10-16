@@ -1,14 +1,20 @@
 name: Build docker pipeline
 on:
   workflow_call:
+    inputs:
+      environment:
+        description: Environment for build
+        required: false
+        default: 'staging'
+        type: string
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
     name: Build doker job
-
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment }}
     steps:
-    - uses: actions/checkout@v4.1.0
+    - uses: actions/checkout@v4
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -67,9 +73,37 @@ jobs:
         docker image save -o release/docker/docker-linux-alpine.amd64.tar redisinsight:amd64
         docker image save -o release/docker/docker-linux-alpine.arm64.tar redisinsight:arm64
 
-    - uses: actions/upload-artifact@v4.1.0
-      name: Upload docker images
+    - uses: actions/upload-artifact@v4
+      name: Upload docker amd64 images
       with:
         if-no-files-found: error
-        name: docker
-        path: ./release
+        name: docker-amd64
+        path: ./release/docker/docker-linux-alpine.amd64.tar
+
+    - uses: actions/upload-artifact@v4
+      name: Upload docker arm64 images
+      with:
+        if-no-files-found: error
+        name: docker-arm64
+        path: ./release/docker/docker-linux-alpine.arm64.tar
+
+    env:
+      RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}
+      RI_AI_QUERY_PASS: ${{ secrets.RI_AI_QUERY_PASS }}
+      RI_AI_QUERY_USER: ${{ secrets.RI_AI_QUERY_USER }}
+      RI_CLOUD_API_URL: ${{ secrets.RI_CLOUD_API_URL }}
+      RI_CLOUD_CAPI_URL: ${{ secrets.RI_CLOUD_CAPI_URL }}
+      RI_CLOUD_IDP_AUTHORIZE_URL: ${{ secrets.RI_CLOUD_IDP_AUTHORIZE_URL }}
+      RI_CLOUD_IDP_CLIENT_ID: ${{ secrets.RI_CLOUD_IDP_CLIENT_ID }}
+      RI_CLOUD_IDP_GH_ID: ${{ secrets.RI_CLOUD_IDP_GH_ID }}
+      RI_CLOUD_IDP_GOOGLE_ID: ${{ secrets.RI_CLOUD_IDP_GOOGLE_ID }}
+      RI_CLOUD_IDP_ISSUER: ${{ secrets.RI_CLOUD_IDP_ISSUER }}
+      RI_CLOUD_IDP_REDIRECT_URI: ${{ secrets.RI_CLOUD_IDP_REDIRECT_URI }}
+      RI_CLOUD_IDP_TOKEN_URL: ${{ secrets.RI_CLOUD_IDP_TOKEN_URL }}
+      RI_SEGMENT_WRITE_KEY: ${{ secrets.RI_SEGMENT_WRITE_KEY }}
+      RI_SERVER_TLS_CERT: ${{ secrets.RI_SERVER_TLS_CERT }}
+      RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
+      RI_FEATURES_CONFIG_URL: ${{ secrets.RI_FEATURES_CONFIG_URL }}
+      RI_UPGRADES_LINK: ${{ secrets.RI_UPGRADES_LINK }}
+
+

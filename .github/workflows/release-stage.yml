@@ -1,0 +1,40 @@
+name: Release (stage)
+
+on:
+  push:
+    branches:
+      - 'release/**'
+      # todo: remove after tests
+      - 'test/release/**'
+
+jobs:
+  tests:
+    name: Release stage tests
+    uses: ./.github/workflows/tests.yml
+    secrets: inherit
+    with:
+      all_tests: true
+
+  builds:
+    name: Release stage builds
+    uses: ./.github/workflows/build.yml
+    needs: tests
+    secrets: inherit
+    with:
+      environment: 'staging'
+      target: 'all'
+
+
+  # todo: e2e tests for release stage
+  # e2e-linux:
+  #   uses: ./.github/workflows/build.yml
+  #   needs: builds
+  #   secrets: inherit
+  #   with:
+  #     environment: 'staging'
+  #     target: 'all'
+
+
+
+
+

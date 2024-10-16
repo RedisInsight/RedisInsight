@@ -7,7 +7,15 @@ on:
 
   workflow_dispatch:
     inputs:
-      all-tests:
+      all_tests:
+        description: Run all tests (FE, BE, IT, E2E)
+        type: boolean
+        required: false
+        default: false
+
+  workflow_call:
+    inputs:
+      all_tests:
         description: Run all tests (FE, BE, IT, E2E)
         type: boolean
         required: false
@@ -22,7 +30,7 @@ jobs:
       desktop: ${{ steps.filter.outputs.desktop }}
       e2e: ${{ steps.filter.outputs.e2e }}
     steps:
-    - uses: actions/checkout@v4.1.0
+    - uses: actions/checkout@v4
     - uses: dorny/paths-filter@v3.0.2
       id: filter
       with:
@@ -41,14 +49,14 @@ jobs:
     # TODO: concurrency
     # concurrency: build
     needs: changes
-    if: needs.changes.outputs.frontend == 'true' || inputs.all-tests
+    if: needs.changes.outputs.frontend == 'true' || inputs.all_tests
     uses: ./.github/workflows/tests-frontend.yml
-    # secrets: inherit
+    secrets: inherit
 
   backend-tests:
     # TODO: concurrency
     # concurrency: build
     needs: changes
-    if: needs.changes.outputs.backend == 'true' || inputs.all-tests
+    if: needs.changes.outputs.backend == 'true' || inputs.all_tests
     uses: ./.github/workflows/tests-backend.yml
-    # secrets: inherit
+    secrets: inherit

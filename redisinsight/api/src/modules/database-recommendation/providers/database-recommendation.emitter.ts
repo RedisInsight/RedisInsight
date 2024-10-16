@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { ClientMetadata } from 'src/common/models';
 import { RecommendationEvents, RecommendationServerEvents } from 'src/modules/database-recommendation/constants';
 import {
@@ -35,7 +35,7 @@ export class DatabaseRecommendationEmitter {
       this.eventEmitter.emit(
         RecommendationServerEvents.Recommendation,
         recommendations[0].databaseId,
-        plainToClass(
+        plainToInstance(
           DatabaseRecommendationsResponse,
           {
             totalUnread,

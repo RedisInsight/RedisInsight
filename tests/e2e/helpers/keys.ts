@@ -91,21 +91,23 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
     const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
 
-    await client.on('error', async function(error: string) {
+    client.on('error', (error: string) => {
         throw new Error(error);
     });
-    await client.on('connect', async function() {
-        if (keyArguments.keysCount) {
-            for (let i = 0; i < keyArguments.keysCount; i++) {
-                const keyName = `${keyArguments.keyNameStartWith}${Common.generateWord(20)}`;
-                await client.hset([keyName, 'field1', 'Hello'], async(error: string) => {
-                    if (error) {
-                        throw error;
-                    }
-                });
+
+    client.on('connect', async () => {
+        try {
+            if (keyArguments.keysCount) {
+                for (let i = 0; i < keyArguments.keysCount; i++) {
+                    const keyName = `${keyArguments.keyNameStartWith}${Common.generateWord(20)}`;
+                    await client.hSet(keyName, 'field1', 'Hello');
+                }
             }
+        } catch (error) {
+            console.error('Error setting hash:', error);
+        } finally {
+            await client.quit();
         }
-        await client.quit();
     });
 }
 
@@ -118,25 +120,27 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
 export async function populateHashWithFields(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
     const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
-    const fields: string[] = [];
+    const fields: Record<string, string> = {}; // Using an object for field-value pairs
 
-    await client.on('error', async function(error: string) {
+    client.on('error', (error: string) => {
         throw new Error(error);
     });
-    await client.on('connect', async function() {
-        if (keyArguments.fieldsCount) {
-            for (let i = 0; i < keyArguments.fieldsCount; i++) {
-                const field = `${keyArguments.fieldStartWith}${Common.generateWord(10)}`;
-                const fieldValue = `${keyArguments.fieldValueStartWith}${Common.generateWord(10)}`;
-                fields.push(field, fieldValue);
+
+    client.on('connect', async () => {
+        try {
+            if (keyArguments.fieldsCount) {
+                for (let i = 0; i < keyArguments.fieldsCount; i++) {
+                    const field = `${keyArguments.fieldStartWith}${Common.generateWord(10)}`;
+                    const fieldValue = `${keyArguments.fieldValueStartWith}${Common.generateWord(10)}`;
+                    fields[field] = fieldValue;
+                }
             }
+            await client.hSet(keyArguments.keyName!, fields); 
+        } catch (error) {
+            console.error('Error setting hash fields:', error);
+        } finally {
+            await client.quit();
         }
-        await client.hset(keyArguments.keyName, fields, async(error: string) => {
-            if (error) {
-                throw error;
-            }
-        });
-        await client.quit();
     });
 }
 
@@ -151,22 +155,25 @@ export async function populateListWithElements(host: string, port: string, keyAr
     const client = createClient(dbConf);
     const elements: string[] = [];
 
-    await client.on('error', async function(error: string) {
+    client.on('error', (error: string) => {
         throw new Error(error);
     });
-    await client.on('connect', async function() {
-        if (keyArguments.elementsCount) {
-            for (let i = 0; i < keyArguments.elementsCount; i++) {
-                const element = `${keyArguments.elementStartWith}${Common.generateWord(10)}`;
-                elements.push(element);
+
+    client.on('connect', async () => {
+        try {
+            if (keyArguments.elementsCount) {
+                for (let i = 0; i < keyArguments.elementsCount; i++) {
+                    const element = `${keyArguments.elementStartWith}${Common.generateWord(10)}`;
+                    elements.push(element);
+                }
             }
+            // Push all the elements to the list
+            await client.lPush(keyArguments.keyName!, elements); // Spread the elements array
+        } catch (error) {
+            console.error('Error pushing elements to list:', error);
+        } finally {
+            await client.quit();
         }
-        await client.lpush(keyArguments.keyName, elements, async(error: string) => {
-            if (error) {
-                throw error;
-            }
-        });
-        await client.quit();
     });
 }
 
@@ -181,22 +188,25 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
     const client = createClient(dbConf);
     const members: string[] = [];
 
-    await client.on('error', async function(error: string) {
+    client.on('error', (error: string) => {
         throw new Error(error);
     });
-    await client.on('connect', async function() {
-        if (keyArguments.membersCount) {
-            for (let i = 0; i < keyArguments.membersCount; i++) {
-                const member = `${keyArguments.memberStartWith}${Common.generateWord(10)}`;
-                members.push(member);
+
+    client.on('connect', async () => {
+        try {
+            if (keyArguments.membersCount) {
+                for (let i = 0; i < keyArguments.membersCount; i++) {
+                    const member = `${keyArguments.memberStartWith}${Common.generateWord(10)}`;
+                    members.push(member);
+                }
             }
+            // Add all members to the set using sAdd
+            await client.sAdd(keyArguments.keyName!, members);
+        } catch (error) {
+            console.error('Error adding members to set:', error);
+        } finally {
+            await client.quit();
         }
-        await client.sadd(keyArguments.keyName, members, async(error: string) => {
-            if (error) {
-                throw error;
-            }
-        });
-        await client.quit();
     });
 }
 
@@ -208,28 +218,30 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
  */
 export async function populateZSetWithMembers(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
     const dbConf = { port: Number.parseInt(port), host, username: 'default' };
-    let minScoreValue: -10;
-    let maxScoreValue: 10;
+    const minScoreValue = -10;
+    const maxScoreValue = 10;
     const client = createClient(dbConf);
-    const members: string[] = [];
+    const members: { score: number; value: string }[] = [];
 
-    await client.on('error', async function(error: string) {
+    client.on('error', (error: string) => {
         throw new Error(error);
     });
-    await client.on('connect', async function() {
-        if (keyArguments.membersCount) {
-            for (let i = 0; i < keyArguments.membersCount; i++) {
-                const memberName = `${keyArguments.memberStartWith}${Common.generateWord(10)}`;
-                const scoreValue = random(minScoreValue, maxScoreValue).toString(2);
-                members.push(scoreValue, memberName);
+
+    client.on('connect', async () => {
+        try {
+            if (keyArguments.membersCount) {
+                for (let i = 0; i < keyArguments.membersCount; i++) {
+                    const memberName = `${keyArguments.memberStartWith}${Common.generateWord(10)}`;
+                    const scoreValue = random(minScoreValue, maxScoreValue);
+                    members.push({ score: scoreValue, value: memberName });
+                }
             }
+            await client.zAdd(keyArguments.keyName!, members);
+        } catch (error) {
+            console.error('Error adding members to sorted set:', error);
+        } finally {
+            await client.quit();
         }
-        await client.zadd(keyArguments.keyName, members, async(error: string) => {
-            if (error) {
-                throw error;
-            }
-        });
-        await client.quit();
     });
 }
 
@@ -242,16 +254,18 @@ export async function deleteAllKeysFromDB(host: string, port: string): Promise<v
     const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
 
-    await client.on('error', async function(error: string) {
+    client.on('error', (error: string) => {
         throw new Error(error);
     });
-    await client.on('connect', async function() {
-        await client.flushall((error: string) => {
-            if (error) {
-                throw error;
-            }
-        });
-        await client.quit();
+
+    client.on('connect', async () => {
+        try {
+            await client.flushAll();
+        } catch (error) {
+            console.error('Error flushing database:', error);
+        } finally {
+            await client.quit();
+        }
     });
 }
 

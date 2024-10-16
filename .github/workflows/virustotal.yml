@@ -78,10 +78,10 @@ jobs:
     - name: Send File to scan
       if: needs.download_artifacts.outputs.artifact_exists == 'true'
       run: |
-        uploadZipFile="./release/${{ matrix.artifact }}.zip"
+        uploadZipFile="./${{ matrix.artifact }}.zip"
 
         # Compress artifactes
-        zip -r "${uploadZipFile}" "./release/${{ matrix.artifact }}"
+        zip -r "${uploadZipFile}" "./release"
 
         # Generate url to download zip file
         uploadUrl=$(curl -sq -XGET https://www.virustotal.com/api/v3/files/upload_url -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data')

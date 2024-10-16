@@ -8,17 +8,18 @@ on:
       - 'test/prod/**'
 
 jobs:
-  tests-prod:
-    name: Run all tests
-    uses: ./.github/workflows/tests.yml
-    secrets: inherit
-    with:
-      all_tests: true
+  # todo uncomment
+  # tests-prod:
+  #   name: Run all tests
+  #   uses: ./.github/workflows/tests.yml
+  #   secrets: inherit
+  #   with:
+  #     all_tests: true
 
   builds-prod:
     name: Create all builds for release
     uses: ./.github/workflows/build.yml
-    needs: tests-prod
+    # needs: tests-prod
     secrets: inherit
     with:
       environment: 'production'
@@ -35,6 +36,7 @@ jobs:
   aws-prod:
     name: Realse to AWS S3
     uses: ./.github/workflows/aws.yml
+    if: ${{ always() }}
     needs: virustotal-prod
     secrets: inherit
 

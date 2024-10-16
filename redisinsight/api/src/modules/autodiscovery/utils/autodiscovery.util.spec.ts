@@ -4,7 +4,6 @@ import {
 import * as os from 'os';
 import * as ch from 'child_process';
 import * as net from 'net';
-import { mocked } from 'ts-jest/utils';
 import * as events from 'events';
 import * as stream from 'stream';
 import { ChildProcess } from 'child_process';
@@ -39,17 +38,17 @@ describe('getSpawnArgs', () => {
   const getSpawnArgsTests = [
     {
       name: 'Linux',
-      before: () => mocked(os.type).mockReturnValue('Linux'),
+      before: () => (os.type as jest.Mock).mockReturnValue('Linux'),
       output: ['netstat', ['-anpt']],
     },
     {
       name: 'Darwin',
-      before: () => mocked(os.type).mockReturnValue('Darwin'),
+      before: () => (os.type as jest.Mock).mockReturnValue('Darwin'),
       output: ['netstat', ['-anvp', 'tcp']],
     },
     {
       name: 'Windows_NT',
-      before: () => mocked(os.type).mockReturnValue('Windows_NT'),
+      before: () => (os.type as jest.Mock).mockReturnValue('Windows_NT'),
       output: ['netstat.exe', ['-a', '-n', '-o']],
     },
   ];
@@ -67,8 +66,8 @@ describe('getSpawnArgs', () => {
 
 describe('getRunningProcesses', () => {
   beforeEach(() => {
-    mocked(os.type).mockReturnValue('Linux');
-    mocked(ch.spawn).mockReturnValue(mockChildProcess);
+    (os.type as jest.Mock).mockReturnValue('Linux');
+    (ch.spawn as jest.Mock).mockReturnValue(mockChildProcess);
   });
   const getRunningProcessesTests = [
     {
@@ -94,7 +93,7 @@ describe('getRunningProcesses', () => {
   });
 
   it('Should throw an error for unsupported platform', async () => {
-    mocked(os.type).mockReturnValueOnce('custom_os');
+    (os.type as jest.Mock).mockReturnValueOnce('custom_os');
 
     try {
       await autodiscoveryUtility.getRunningProcesses();
@@ -172,7 +171,7 @@ describe('getTCPEndpoints', () => {
 
 describe('testEndpoint', () => {
   beforeEach(() => {
-    mocked(net.createConnection).mockReturnValue(mockSocket);
+    (net.createConnection as jest.Mock).mockReturnValue(mockSocket);
   });
   const testEndpointTests = [
     {
@@ -224,7 +223,7 @@ describe('getAvailableEndpoints', () => {
   beforeEach(() => {
     const getRunningProcessesSpy = jest.spyOn(autodiscoveryUtility, 'getRunningProcesses');
     getRunningProcessesSpy.mockResolvedValue(['']);
-    mocked(net.createConnection).mockReturnValue(mockSocket);
+    (net.createConnection as jest.Mock).mockReturnValue(mockSocket);
   });
   const getAvailableEndpointsTests = [
     {

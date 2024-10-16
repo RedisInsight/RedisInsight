@@ -20,7 +20,7 @@ import {
 import { AiQueryMessageRepository } from 'src/modules/ai/query/repositories/ai-query.message.repository';
 import { AiQueryAuthProvider } from 'src/modules/ai/query/providers/auth/ai-query-auth.provider';
 import { classToClass, Config } from 'src/utils';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { AiQueryContextRepository } from 'src/modules/ai/query/repositories/ai-query.context.repository';
 import config from 'src/utils/config';
 
@@ -197,14 +197,14 @@ export class AiQueryService {
         });
 
         socket.on(AiQueryWsEvents.TOOL_CALL, async (data) => {
-          answer.steps.push(plainToClass(AiQueryIntermediateStep, {
+          answer.steps.push(plainToInstance(AiQueryIntermediateStep, {
             type: AiQueryIntermediateStepType.TOOL_CALL,
             data,
           }));
         });
 
         socket.on(AiQueryWsEvents.TOOL_REPLY, async (data) => {
-          answer.steps.push(plainToClass(AiQueryIntermediateStep, {
+          answer.steps.push(plainToInstance(AiQueryIntermediateStep, {
             type: AiQueryIntermediateStepType.TOOL,
             data,
           }));

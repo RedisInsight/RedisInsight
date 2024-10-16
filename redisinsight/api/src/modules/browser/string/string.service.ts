@@ -15,7 +15,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { GetKeyInfoDto } from 'src/modules/browser/keys/dto';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
@@ -100,7 +100,7 @@ export class StringService {
       );
 
       this.logger.log('Succeed to get string value.');
-      return plainToClass(GetStringValueResponse, { value, keyName });
+      return plainToInstance(GetStringValueResponse, { value, keyName });
     } catch (error) {
       this.logger.error('Failed to get string value.', error);
       if (error.message.includes(RedisErrorCodes.WrongType)) {

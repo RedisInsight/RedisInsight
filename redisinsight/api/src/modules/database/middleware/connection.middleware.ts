@@ -10,7 +10,7 @@ import { NextFunction, Request, Response } from 'express';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { sessionMetadataFromRequest } from 'src/common/decorators';
 import { Database } from '../models/database';
 
@@ -28,7 +28,7 @@ export class ConnectionMiddleware implements NestMiddleware {
     const sessionMetadata = sessionMetadataFromRequest(req);
 
     if (instanceIdFromReq) {
-      timeout = plainToClass(
+      timeout = plainToInstance(
         Database,
         await this.databaseService.get(sessionMetadata, instanceIdFromReq),
       )?.timeout;

@@ -71,12 +71,6 @@ export class SettingsController {
       },
     ],
   })
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-    }),
-  )
   async update(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Body() dto: UpdateSettingsDto,

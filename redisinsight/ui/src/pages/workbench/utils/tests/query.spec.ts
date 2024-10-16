@@ -2,7 +2,6 @@ import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
 import { Maybe, splitQueryByArgs } from 'uiSrc/utils'
 import { MOCKED_REDIS_COMMANDS } from 'uiSrc/mocks/data/mocked_redis_commands'
 import { IRedisCommand } from 'uiSrc/constants'
-import { COMPOSITE_ARGS } from 'uiSrc/pages/workbench/constants'
 import {
   commonfindCurrentArgumentCases,
   findArgumentftAggreageTests,
@@ -16,6 +15,9 @@ const COMMANDS = Object.keys(MOCKED_REDIS_COMMANDS).map((name) => ({
   name,
   ...MOCKED_REDIS_COMMANDS[name]
 }))
+const COMPOSITE_ARGS = COMMANDS
+  .filter((command) => command.name && command.name.includes(' '))
+  .map(({ name }) => name)
 
 describe('findCurrentArgument', () => {
   describe('with list of commands', () => {

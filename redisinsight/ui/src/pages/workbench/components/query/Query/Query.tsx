@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { compact, first } from 'lodash'
 import cx from 'classnames'
@@ -32,7 +32,7 @@ import { addOwnTokenToArgs, findCurrentArgument, } from 'uiSrc/pages/workbench/u
 import { getRange, getRediSearchSignutureProvider, } from 'uiSrc/pages/workbench/utils/monaco'
 import { CursorContext } from 'uiSrc/pages/workbench/types'
 import { asSuggestionsRef, getCommandsSuggestions, isIndexComplete } from 'uiSrc/pages/workbench/utils/suggestions'
-import { COMMANDS_TO_GET_INDEX_INFO, COMPOSITE_ARGS, EmptySuggestionsIds, } from 'uiSrc/pages/workbench/constants'
+import { COMMANDS_TO_GET_INDEX_INFO, EmptySuggestionsIds, } from 'uiSrc/pages/workbench/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { findSuggestionsByArg } from 'uiSrc/pages/workbench/utils/searchSuggestions'
@@ -105,7 +105,16 @@ const Query = (props: Props) => {
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
 
-  const REDIS_COMMANDS = commands.map((command) => ({ ...addOwnTokenToArgs(command.name!, command) }))
+  // TODO: need refactor to avoid this
+  const REDIS_COMMANDS = useMemo(
+    () => commands.map((command) => ({ ...addOwnTokenToArgs(command.name!, command) })),
+    [commands]
+  )
+
+  const COMPOSITE_ARGS = useMemo(() => commands
+    .filter((command) => command.name && command.name.includes(' '))
+    .map(({ name }) => name),
+  [commands])
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
@@ -328,7 +337,13 @@ const Query = (props: Props) => {
       return
     }
 
-    const command = findCompleteQuery(model, e.position, REDIS_COMMANDS_SPEC, REDIS_COMMANDS_ARRAY, COMPOSITE_ARGS)
+    const command = findCompleteQuery(
+      model,
+      e.position,
+      REDIS_COMMANDS_SPEC,
+      REDIS_COMMANDS_ARRAY,
+      COMPOSITE_ARGS as string[]
+    )
     handleSuggestions(editor, command)
     handleDslSyntax(e, command)
   }
@@ -538,11 +553,11 @@ const Query = (props: Props) => {
     if (position.column === 1) {
       helpWidgetRef.current.isOpen = false
       if (command) return asSuggestionsRef([])
-      return asSuggestionsRef(getCommandsSuggestions(REDIS_COMMANDS, range), false)
+      return asSuggestionsRef(getCommandsSuggestions(commands, range), false, false)
     }
 
     if (!command) {
-      return asSuggestionsRef(getCommandsSuggestions(REDIS_COMMANDS, range), false)
+      return asSuggestionsRef(getCommandsSuggestions(commands, range), false)
     }
 
     const { allArgs, args, cursor } = command
@@ -568,7 +583,8 @@ const Query = (props: Props) => {
       helpWidgetRef.current = {
         isOpen,
         parent: parent || helpWidgetRef.current.parent,
-        currentArg: currentArg || helpWidgetRef.current.currentArg }
+        currentArg: currentArg || helpWidgetRef.current.currentArg
+      }
     }
 
     return suggestions

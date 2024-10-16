@@ -83,14 +83,6 @@ export const COMMANDS_WITHOUT_INDEX_PROPOSE = [
   'FT.CREATE'
 ]
 
-export const COMPOSITE_ARGS = [
-  'LOAD *',
-  'FT.CONFIG GET',
-  'FT.CONFIG SET',
-  'FT.CURSOR DEL',
-  'FT.CURSOR READ',
-]
-
 export enum DefinedArgumentName {
   index = 'index',
   query = 'query',

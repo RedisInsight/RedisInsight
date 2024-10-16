@@ -3,6 +3,7 @@
 import { findLastIndex, isNumber, toNumber } from 'lodash'
 import { generateArgsNames, Maybe, Nullable } from 'uiSrc/utils'
 import { CommandProvider, IRedisCommand, IRedisCommandTree, ICommandTokenType } from 'uiSrc/constants'
+import { isStringsEqual } from './helpers'
 import { ArgName, FoundCommandArgument } from '../types'
 
 export const findCurrentArgument = (
@@ -20,8 +21,7 @@ export const findCurrentArgument = (
       return findCurrentArgument(currentArg.arguments, prev.slice(i), prev, currentWithParent)
     }
 
-    const tokenIndex = args.findIndex((cArg) =>
-      cArg.token?.toLowerCase() === arg.toLowerCase())
+    const tokenIndex = args.findIndex((cArg) => isStringsEqual(cArg.token, arg))
     const token = args[tokenIndex]
 
     if (token) {
@@ -79,9 +79,9 @@ const findStopArgumentInQuery = (
     }
 
     if (!isBlockedOnCommand && currentCommandArg?.optional) {
-      const isNotToken = currentCommandArg?.token && currentCommandArg.token !== arg.toUpperCase()
+      const isNotToken = currentCommandArg?.token && !isStringsEqual(currentCommandArg.token, arg)
       const isNotOneOfToken = !currentCommandArg?.token && currentCommandArg?.type === ICommandTokenType.OneOf
-        && currentCommandArg?.arguments?.every(({ token }) => token !== arg.toUpperCase())
+        && currentCommandArg?.arguments?.every(({ token }) => !isStringsEqual(token, arg))
 
       if (isNotToken || isNotOneOfToken) {
         moveToNextCommandArg()
@@ -99,8 +99,8 @@ const findStopArgumentInQuery = (
         blockArguments = Array(nArgs).fill(currentCommandArg.arguments).flat()
       }
 
-      const currentQueryArg = queryArgs.slice(i)?.[0]?.toUpperCase()
-      const isBlockHasToken = blockArguments?.[0]?.token === currentQueryArg
+      const currentQueryArg = queryArgs.slice(i)?.[0]
+      const isBlockHasToken = isStringsEqual(blockArguments?.[0]?.token, currentQueryArg)
 
       if (currentCommandArg.token && !isBlockHasToken && currentQueryArg) {
         blockArguments.unshift({
@@ -132,7 +132,7 @@ const findStopArgumentInQuery = (
     }
 
     // if we are on token - that requires one more argument
-    if (currentCommandArg?.token === arg.toUpperCase()) {
+    if (isStringsEqual(currentCommandArg?.token, arg)) {
       blockCommand()
       continue
     }
@@ -153,7 +153,7 @@ const findStopArgumentInQuery = (
 
     if (currentCommandArg?.type === ICommandTokenType.OneOf && currentCommandArg?.optional) {
       // if oneof is optional then we can switch to another argument
-      if (!currentCommandArg?.arguments?.some(({ token }) => token === arg)) {
+      if (!currentCommandArg?.arguments?.some(({ token }) => isStringsEqual(token, arg))) {
         moveToNextCommandArg()
       }
 
@@ -303,7 +303,7 @@ export const getAllRestArguments = (
   const currentToken = current?.type === ICommandTokenType.Block ? current?.arguments?.[0].token : current?.token
   const lastTokenIndex = findLastIndex(
     untilTokenArgs,
-    (arg) => arg?.toLowerCase() === currentToken?.toLowerCase()
+    (arg) => isStringsEqual(arg, currentToken)
   )
   const currentLvlNextArgs = removeNotSuggestedArgs(
     untilTokenArgs.slice(lastTokenIndex > 0 ? lastTokenIndex : 0),
@@ -331,7 +331,7 @@ export const removeNotSuggestedArgs = (args: string[], commandArgs: IRedisComman
     if (arg.type === ICommandTokenType.OneOf) {
       return !args
         .some((queryArg) => arg.arguments
-          ?.some((oneOfArg) => oneOfArg.token?.toUpperCase() === queryArg.toUpperCase()))
+          ?.some((oneOfArg) => isStringsEqual(oneOfArg.token, queryArg)))
     }
 
     if (arg.type === ICommandTokenType.Block) {
@@ -373,8 +373,8 @@ export const fillArgsByType = (args: IRedisCommand[], expandBlock = true): IRedi
 export const findArgByToken = (list: IRedisCommand[], arg: string): Maybe<IRedisCommand> =>
   list.find((cArg) =>
     (cArg.type === ICommandTokenType.OneOf
-      ? cArg.arguments?.some((oneOfArg: IRedisCommand) => oneOfArg?.token?.toLowerCase() === arg?.toLowerCase())
-      : cArg.arguments?.[0]?.token?.toLowerCase() === arg?.toLowerCase()))
+      ? cArg.arguments?.some((oneOfArg: IRedisCommand) => isStringsEqual(oneOfArg?.token, arg))
+      : isStringsEqual(cArg.arguments?.[0].token, arg)))
 
 export const generateDetail = (command: Maybe<IRedisCommand>) => {
   if (!command) return ''

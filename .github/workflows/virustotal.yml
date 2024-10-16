@@ -28,11 +28,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download All Artifacts
-        # TODO: Update to v4 after fix this issue:
-        # https://github.com/nektos/act/issues/2433
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: ./release
+          # TODO: enable pattern filter after fix:
+          # https://github.com/nektos/act/issues/2433
           #   pattern: '*-build'
           #   merge-multiple: true
 
@@ -70,9 +70,7 @@ jobs:
     steps:
     - name: Download Artifact ${{ matrix.artifact }}
       if: needs.download_artifacts.outputs.artifact_exists == 'true'
-      # TODO: Update to v4 after fix this issue:
-      # https://github.com/nektos/act/issues/2433
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: ${{ matrix.artifact }}
         path: ./release
@@ -80,11 +78,18 @@ jobs:
     - name: Send File to scan
       if: needs.download_artifacts.outputs.artifact_exists == 'true'
       run: |
-        uploadFile="./release/${{ matrix.artifact }}.zip"
+        uploadZipFile="./release/${{ matrix.artifact }}.zip"
+
+        # Compress artifactes
+        zip -r "${uploadZipFile}" "./release/${{ matrix.artifact }}"
+
+        # Generate url to download zip file
         uploadUrl=$(curl -sq -XGET https://www.virustotal.com/api/v3/files/upload_url -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data')
 
-        echo "File to upload: ${uploadFile}"
-        analysedId=$(curl -sq -XPOST "${uploadUrl}" -H "x-apikey: $VIRUSTOTAL_API_KEY" --form file=@"${uploadFile}" | jq -r '.data.id')
+        echo "File to upload: ${uploadZipFile}"
+
+        # Upload zip file to VirusTotal
+        analysedId=$(curl -sq -XPOST "${uploadUrl}" -H "x-apikey: $VIRUSTOTAL_API_KEY" --form file=@"${uploadZipFile}" | jq -r '.data.id')
 
         if [ $analysedId == "null" ]; then
           echo 'Status is null, something went wrong';
@@ -101,6 +106,7 @@ jobs:
 
         echo "Url to check: ${url}"
 
+        # Upload Url to VirusTotal
         analysedId=$(curl -sq -XPOST https://www.virustotal.com/api/v3/urls -H "x-apikey: $VIRUSTOTAL_API_KEY" --form url=${url} | jq -r '.data.id')
 
         if [ $analysedId == "null" ]; then
@@ -160,6 +166,7 @@ jobs:
         FILE_NAME=virustotal.report.json
         BUILD_NAME=$BUILD_NAME FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$FAILED node .github/virustotal-report.js
 
+        # todo uncomment after testing
         # BUILD_NAME=$BUILD_NAME FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$FAILED node .github/virustotal-report.js &&
         # curl -H "Content-type: application/json" --data @$FILE_NAME -H "Authorization: Bearer ${SLACK_TEST_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
 

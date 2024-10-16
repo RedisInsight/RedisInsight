@@ -105,6 +105,7 @@ const Query = (props: Props) => {
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
 
+  // TODO: need refactor to avoid this
   const REDIS_COMMANDS = commands.map((command) => ({ ...addOwnTokenToArgs(command.name!, command) }))
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -538,11 +539,11 @@ const Query = (props: Props) => {
     if (position.column === 1) {
       helpWidgetRef.current.isOpen = false
       if (command) return asSuggestionsRef([])
-      return asSuggestionsRef(getCommandsSuggestions(REDIS_COMMANDS, range), false)
+      return asSuggestionsRef(getCommandsSuggestions(commands, range), false)
     }
 
     if (!command) {
-      return asSuggestionsRef(getCommandsSuggestions(REDIS_COMMANDS, range), false)
+      return asSuggestionsRef(getCommandsSuggestions(commands, range), false)
     }
 
     const { allArgs, args, cursor } = command

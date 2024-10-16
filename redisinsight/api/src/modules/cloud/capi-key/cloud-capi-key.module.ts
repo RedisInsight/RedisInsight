@@ -11,7 +11,7 @@ import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key
 @Module({
   imports: [
     CloudUserModule,
-    CloudSessionModule,
+    CloudSessionModule.register(),
   ],
   controllers: [CloudCapiKeyController],
   providers: [

@@ -3,7 +3,7 @@
 import { findLastIndex, isNumber, toNumber } from 'lodash'
 import { generateArgsNames, Maybe, Nullable } from 'uiSrc/utils'
 import { CommandProvider, IRedisCommand, IRedisCommandTree, ICommandTokenType } from 'uiSrc/constants'
-import { isStringsEqual } from 'uiSrc/pages/workbench/utils/queryUtils'
+import { isStringsEqual } from './helpers'
 import { ArgName, FoundCommandArgument } from '../types'
 
 export const findCurrentArgument = (

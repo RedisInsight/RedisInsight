@@ -1,7 +1,7 @@
 /* eslint-disable no-continue */
 import { ICommandTokenType, IRedisCommand } from 'uiSrc/constants'
 import { Maybe } from 'uiSrc/utils'
-import { isStringsEqual, isTokenEqualsArg } from 'uiSrc/pages/workbench/utils/queryUtils'
+import { isStringsEqual, isTokenEqualsArg } from './helpers'
 
 interface BlockTokensTree {
   queryArgs: string[]

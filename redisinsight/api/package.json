@@ -140,7 +140,7 @@
     "ts-jest": "^29.2.5",
     "ts-loader": "^6.2.1",
     "ts-mocha": "^8.0.0",
-    "ts-node": "^9.1.1",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "^3.9.0",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "typescript": "^4.8.2"

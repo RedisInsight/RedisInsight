@@ -1,5 +1,6 @@
 import { CloudUser } from 'src/modules/cloud/user/models';
 import { CloudAuthIdpType } from 'src/modules/cloud/auth/models';
+import { Expose } from 'class-transformer';
 
 export class CloudSession {
   accessToken?: string;
@@ -13,4 +14,12 @@ export class CloudSession {
   apiSessionId?: string;
 
   user?: CloudUser;
+}
+
+export class CloudSessionData {
+  @Expose()
+  id: number;
+
+  @Expose()
+  data: CloudSession;
 }

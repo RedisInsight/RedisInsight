@@ -11,7 +11,7 @@ import { CloudAuthModule } from 'src/modules/cloud/auth/cloud-auth.module';
 
 @Global()
 @Module({
-  imports: [CloudSessionModule, CloudAuthModule],
+  imports: [CloudSessionModule.register(), CloudAuthModule],
   providers: [
     CloudUserApiProvider,
     CloudUserCapiProvider,

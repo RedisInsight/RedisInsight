@@ -8,7 +8,7 @@ import { CloudAuthController } from 'src/modules/cloud/auth/cloud-auth.controlle
 import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics';
 
 @Module({
-  imports: [CloudSessionModule],
+  imports: [CloudSessionModule.register()],
   providers: [
     GoogleIdpCloudAuthStrategy,
     GithubIdpCloudAuthStrategy,

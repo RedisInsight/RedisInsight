@@ -11,7 +11,7 @@ import { CloudSubscriptionCapiProvider } from './providers/cloud-subscription.ca
 @Module({
   imports: [
     CloudUserModule,
-    CloudSessionModule,
+    CloudSessionModule.register(),
     CloudCapiKeyModule,
   ],
   providers: [

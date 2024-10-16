@@ -9,9 +9,21 @@ import { RedisClient } from 'src/modules/redis/client';
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
+type IsClientConnectingMap = {
+  [key: string]: boolean
+};
+
+type PendingGetByClientIdMap = {
+  [key: string]: { resolve: (value: RedisClient) => void, reject: (reason?: any) => void }[]
+};
+
 @Injectable()
 export class DatabaseClientFactory {
   private logger = new Logger('DatabaseClientFactory');
+
+  private isConnecting: IsClientConnectingMap = {};
+
+  private pendingGetClient: PendingGetByClientIdMap = {};
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -37,7 +49,43 @@ export class DatabaseClientFactory {
       return client;
     }
 
-    return this.redisClientStorage.set(await this.createClient(clientMetadata));
+    // queue request if we are already connecting
+    const clientId = RedisClient.generateId(RedisClient.prepareClientMetadata(clientMetadata));
+    if (this.isConnecting[clientId]) {
+      this.logger.debug('Client already connecting. Queueing get client request', { clientId });
+      if (!this.pendingGetClient[clientId]) {
+        this.pendingGetClient[clientId] = [];
+      }
+
+      return new Promise((resolve, reject) => {
+        this.pendingGetClient[clientId].push({ resolve, reject });
+      });
+    }
+
+    this.isConnecting[clientId] = true;
+    try {
+      this.logger.log('Creating new client', { clientId });
+      const newClient = await this.createClient(clientMetadata);
+      this.redisClientStorage.set(newClient);
+
+      // resolve pending gets
+      while (this.pendingGetClient[clientId]?.length) {
+        const next = this.pendingGetClient[clientId].shift();
+        next?.resolve(newClient);
+      }
+
+      return newClient;
+    } catch (error) {
+      // reject pending gets
+      while (this.pendingGetClient[clientId]?.length) {
+        const next = this.pendingGetClient[clientId].shift();
+        next?.reject(error);
+      }
+
+      throw error;
+    } finally {
+      delete this.isConnecting[clientId];
+    }
   }
 
   /**

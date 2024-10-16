@@ -99,9 +99,9 @@ test
         await t.click(browserPage.bulkActionsButton);
         await browserPage.BulkActions.startBulkDelete();
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
         // Go to Browser Page
-        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
+        await t.click(browserPage.NavigationPanel.browserButton);
         await t.expect(browserPage.BulkActions.bulkStatusInProgress.exists).ok('Progress value not displayed', { timeout: 5000 });
     });
 test

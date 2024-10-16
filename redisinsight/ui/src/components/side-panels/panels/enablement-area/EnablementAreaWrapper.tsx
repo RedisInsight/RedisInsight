@@ -7,6 +7,7 @@ import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-cust
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { CodeButtonParams } from 'uiSrc/constants'
 import { sendWbQueryAction } from 'uiSrc/slices/workbench/wb-results'
+import { CommandExecutionType } from 'uiSrc/slices/interfaces'
 import { getTutorialSection } from './EnablementArea/utils'
 import EnablementArea from './EnablementArea'
 
@@ -26,7 +27,14 @@ const EnablementAreaWrapper = () => {
     params?: CodeButtonParams,
     onFinish?: () => void
   ) => {
-    dispatch(sendWbQueryAction(script, null, params, { afterAll: onFinish }, onFinish))
+    dispatch(sendWbQueryAction(
+      script,
+      null,
+      params,
+      CommandExecutionType.Workbench,
+      { afterAll: onFinish },
+      onFinish
+    ))
   }
 
   const onOpenInternalPage = ({ path, manifestPath }: IInternalPage) => {

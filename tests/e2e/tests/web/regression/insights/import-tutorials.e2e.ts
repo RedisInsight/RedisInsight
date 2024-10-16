@@ -41,7 +41,7 @@ fixture `Upload custom tutorials`
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -52,6 +52,8 @@ https://redislabs.atlassian.net/browse/RI-4302, https://redislabs.atlassian.net/
 test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
+
         tutorialName = `${zipFolderName}${Common.generateWord(5)}`;
         zipFilePath = path.join('..', 'test-data', 'upload-tutorials', `${tutorialName}.zip`);
         // Create zip file for uploading
@@ -165,6 +167,8 @@ test
 test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
+
         tutorialName = `${zipFolderName}${Common.generateWord(5)}`;
         zipFilePath = path.join('..', 'test-data', 'upload-tutorials', `${tutorialName}.zip`);
         // Create zip file for uploading
@@ -176,7 +180,8 @@ test
         await Common.deleteFileFromFolder(zipFilePath);
         await deleteAllKeysFromDB(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port);
         // Clear and delete database
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
+
         await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await tutorials.deleteTutorialByName(tutorialName);

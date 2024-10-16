@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   ConflictException,
   ForbiddenException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { when } from 'jest-when';
 import {
@@ -20,6 +21,7 @@ import {
 } from 'src/modules/browser/redisearch/dto';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { mockIndexInfoDto, mockIndexInfoRaw } from 'src/__mocks__/redisearch';
 
 const keyName1 = Buffer.from('keyName1');
 const keyName2 = Buffer.from('keyName2');
@@ -366,6 +368,34 @@ describe('RedisearchService', () => {
         'TYPE', keyName1,
       ], { replyEncoding: 'utf8' });
       expect(browserHistory.create).toHaveBeenCalled();
+    });
+  });
+
+  describe('getInfo', () => {
+    it('should get indexInfo', async () => {
+      const mockIndexName = 'idx:movie';
+      when(standaloneClient.sendCommand)
+        .calledWith(['FT.INFO', mockIndexName], { replyEncoding: 'utf8' })
+        .mockResolvedValue(mockIndexInfoRaw);
+
+      const res = await service.getInfo(mockBrowserClientMetadata, { index: mockIndexName });
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'FT.INFO',
+        mockIndexName,
+      ], { replyEncoding: 'utf8' });
+      expect(res).toEqual(mockIndexInfoDto);
+    });
+
+    it('should throw error if index name was not provided', async () => {
+      await expect(service.getInfo(mockBrowserClientMetadata, { index: '' })).rejects.toThrow('Index was not provided');
+    });
+
+    it('should throw error if client was not created', async () => {
+      const error = new Error('Client was not created');
+      databaseClientFactory.getOrCreateClient = jest.fn().mockRejectedValue(error);
+
+      await expect(service.getInfo(mockBrowserClientMetadata,
+        { index: 'indexName' })).rejects.toThrow(InternalServerErrorException);
     });
   });
 });

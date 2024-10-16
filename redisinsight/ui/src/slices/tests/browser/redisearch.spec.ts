@@ -47,7 +47,7 @@ import reducer, {
   deleteRediSearchHistorySuccess,
   deleteRediSearchHistoryFailure,
   fetchRedisearchHistoryAction,
-  deleteRedisearchHistoryAction,
+  deleteRedisearchHistoryAction, fetchRedisearchInfoAction,
 } from '../../browser/redisearch'
 
 let store: typeof mockedStore
@@ -1274,6 +1274,41 @@ describe('redisearch slice', () => {
           deleteRediSearchHistoryFailure(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchRedisearchInfoAction', () => {
+      it('success fetch info', async () => {
+        // Arrange
+        const responsePayload = { status: 200 }
+        const onSuccess = jest.fn()
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchRedisearchInfoAction('index', onSuccess))
+
+        expect(onSuccess).toBeCalled()
+      })
+
+      it('failed to delete history', async () => {
+        // Arrange
+        const onFailed = jest.fn()
+        const errorMessage = 'some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchRedisearchInfoAction('index', undefined, onFailed))
+
+        // Assert
+        expect(onFailed).toBeCalled()
       })
     })
   })

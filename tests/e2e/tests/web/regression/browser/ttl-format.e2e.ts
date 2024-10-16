@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { keyTypes } from '../../../../helpers/keys';
+import { deleteKeysViaCli, keyTypes } from '../../../../helpers/keys';
 import { rte, COMMANDS_TO_CREATE_KEY, keyLength } from '../../../../helpers/constants';
 import { BrowserPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
@@ -31,9 +31,7 @@ fixture `TTL values in Keys Table`
     })
     .afterEach(async() => {
         // Clear and delete database
-        for (let i = 0; i < keysData.length; i++) {
-            await browserPage.deleteKey();
-        }
+        await deleteKeysViaCli(keysData);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see TTL in the list of keys rounded down to the nearest unit', async t => {

@@ -26,6 +26,8 @@ import BrowserSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import BrowserActiveSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import WorkbenchSVG from 'uiSrc/assets/img/sidebar/workbench.svg'
 import WorkbenchActiveSVG from 'uiSrc/assets/img/sidebar/workbench_active.svg'
+import SearchSVG from 'uiSrc/assets/img/sidebar/search.svg'
+import SearchActiveSVG from 'uiSrc/assets/img/sidebar/search_active.svg'
 import SlowLogSVG from 'uiSrc/assets/img/sidebar/slowlog.svg'
 import SlowLogActiveSVG from 'uiSrc/assets/img/sidebar/slowlog_active.svg'
 import PubSubSVG from 'uiSrc/assets/img/sidebar/pubsub.svg'
@@ -49,8 +51,6 @@ import NotificationMenu from './components/notifications-center'
 import { RedisLogo } from './components/redis-logo/RedisLogo'
 import styles from './styles.module.scss'
 
-const workbenchPath = `/${PageNames.workbench}`
-const browserPath = `/${PageNames.browser}`
 const pubSubPath = `/${PageNames.pubSub}`
 
 interface INavigations {
@@ -111,7 +111,7 @@ const NavigationMenu = () => {
     {
       tooltipText: 'Browser',
       pageName: PageNames.browser,
-      isActivePage: activePage === browserPath,
+      isActivePage: activePage === `/${PageNames.browser}`,
       ariaLabel: 'Browser page button',
       onClick: () => handleGoPage(Pages.browser(connectedInstanceId)),
       dataTestId: 'browser-page-btn',
@@ -125,13 +125,28 @@ const NavigationMenu = () => {
       onboard: ONBOARDING_FEATURES.BROWSER_PAGE
     },
     {
+      tooltipText: 'Search and Query',
+      pageName: PageNames.search,
+      ariaLabel: 'Search and Query page button',
+      onClick: () => handleGoPage(Pages.search(connectedInstanceId)),
+      dataTestId: 'search-page-btn',
+      connectedInstanceId,
+      isActivePage: activePage === `/${PageNames.search}`,
+      getClassName() {
+        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+      },
+      getIconType() {
+        return this.isActivePage ? SearchSVG : SearchActiveSVG
+      },
+    },
+    {
       tooltipText: 'Workbench',
       pageName: PageNames.workbench,
       ariaLabel: 'Workbench page button',
       onClick: () => handleGoPage(Pages.workbench(connectedInstanceId)),
       dataTestId: 'workbench-page-btn',
       connectedInstanceId,
-      isActivePage: activePage === workbenchPath,
+      isActivePage: activePage === `/${PageNames.workbench}`,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },

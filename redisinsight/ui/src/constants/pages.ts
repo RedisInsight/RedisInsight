@@ -1,12 +1,14 @@
 import { FeatureFlags } from 'uiSrc/constants'
+import { Maybe } from 'uiSrc/utils'
 
 export interface IRoute {
   path: any
-  component: (routes: any) => JSX.Element | Element | null
+  component?: (routes: any) => JSX.Element | Element | null
   pageName?: PageNames
   exact?: boolean
   routes?: any
   protected?: boolean
+  redirect?: (params: Record<string, Maybe<string>>) => string
   isAvailableWithoutAgreements?: boolean
   featureFlag?: FeatureFlags
 }
@@ -14,6 +16,7 @@ export interface IRoute {
 export enum PageNames {
   workbench = 'workbench',
   browser = 'browser',
+  search = 'search',
   slowLog = 'slowlog',
   pubSub = 'pub-sub',
   analytics = 'analytics',
@@ -46,6 +49,7 @@ export const Pages = {
   sentinelDatabasesResult: `${sentinel}/databases-result`,
   browser: (instanceId: string) => `/${instanceId}/${PageNames.browser}`,
   workbench: (instanceId: string) => `/${instanceId}/${PageNames.workbench}`,
+  search: (instanceId: string) => `/${instanceId}/${PageNames.search}`,
   pubSub: (instanceId: string) => `/${instanceId}/${PageNames.pubSub}`,
   analytics: (instanceId: string) => `/${instanceId}/${PageNames.analytics}`,
   slowLog: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.slowLog}`,

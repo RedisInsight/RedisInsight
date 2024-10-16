@@ -1,15 +1,15 @@
 export interface ICommands {
-  [key: string]: ICommand;
+  [key: string]: ICommand
 }
 
 export interface ICommand {
-  name?: string;
-  summary: string;
-  complexity?: string;
-  arguments?: ICommandArg[];
-  since: string;
-  group: CommandGroup | string;
-  provider?: string;
+  name?: string
+  summary: string
+  complexity?: string
+  arguments?: ICommandArg[]
+  since: string
+  group: CommandGroup | string
+  provider?: string
 }
 
 export enum CommandProvider {
@@ -18,19 +18,49 @@ export enum CommandProvider {
 }
 
 export interface ICommandArg {
-  name?: string[] | string;
-  type?: CommandArgsType[] | CommandArgsType | string | string[];
-  optional?: boolean;
-  enum?: string[];
-  block?: ICommandArg[];
-  command?: string;
-  multiple?: boolean;
-  variadic?: boolean;
-  dsl?: string;
+  name?: string[] | string
+  type?: CommandArgsType[] | CommandArgsType | string | string[]
+  optional?: boolean
+  enum?: string[]
+  block?: ICommandArg[]
+  command?: string
+  multiple?: boolean
+  variadic?: boolean
+  dsl?: string
+}
+
+export enum ICommandTokenType {
+  PureToken = 'pure-token',
+  Block = 'block',
+  OneOf = 'oneof',
+  String = 'string',
+  Double = 'double',
+  Enum = 'enum',
+  Integer = 'integer',
+  Key = 'key',
+  POSIXTime = 'posix time',
+  Pattern = 'pattern',
+}
+
+export interface IRedisCommand {
+  name?: string
+  summary?: string
+  expression?: boolean
+  type?: ICommandTokenType
+  token?: string
+  optional?: boolean
+  multiple?: boolean
+  arguments?: IRedisCommand[]
+  variadic?: boolean
+  dsl?: string
+}
+
+export interface IRedisCommandTree extends IRedisCommand {
+  parent?: IRedisCommandTree
 }
 
 export interface ICommandArgGenerated extends ICommandArg {
-  generatedName?: string | string[];
+  generatedName?: string | string[]
 }
 
 export enum CommandArgsType {

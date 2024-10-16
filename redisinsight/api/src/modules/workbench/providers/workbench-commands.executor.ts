@@ -11,7 +11,7 @@ import {
 } from 'src/modules/cli/constants/errors';
 import { unknownCommand } from 'src/constants';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
-import { CreateCommandExecutionDto, RunQueryMode } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import {
   FormatterManager,
   FormatterTypes,
@@ -20,6 +20,7 @@ import {
 } from 'src/common/transformers';
 import { RedisClient } from 'src/modules/redis/client';
 import { getAnalyticsDataFromIndexInfo } from 'src/utils';
+import { RunQueryMode } from 'src/modules/workbench/models/command-execution';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
@@ -44,7 +45,7 @@ export class WorkbenchCommandsExecutor {
 
   /**
    * Entrypoint for any CommandExecution
-   * Will determine type of a command (standalone, per node(s)) and format, and execute it
+   * Will determine type of command (standalone, per node(s)) and format, and execute it
    * Also sis a single place of analytics events invocation
    * @param client
    * @param dto

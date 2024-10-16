@@ -15,7 +15,7 @@ import {
   sendWbQueryAction,
   workbenchResultsSelector,
 } from 'uiSrc/slices/workbench/wb-results'
-import { Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
+import { CommandExecutionType, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector, initialState as instanceInitState } from 'uiSrc/slices/instances/instances'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
@@ -44,7 +44,7 @@ interface IState {
 
 let state: IState = {
   loading: false,
-  instance: instanceInitState.connectedInstance,
+  instance: instanceInitState?.connectedInstance,
   unsupportedCommands: [],
   blockingCommands: [],
   visualizations: [],
@@ -161,13 +161,19 @@ const WBViewWrapper = () => {
   ) => {
     if (!commandInit?.length) return
 
-    dispatch(sendWbQueryAction(commandInit, commandId, executeParams, {
-      afterEach: () => {
-        const isNewCommand = !commandId
-        isNewCommand && scrollResults('start')
-      },
-      afterAll: updateOnboardingOnSubmit
-    }))
+    dispatch(sendWbQueryAction(
+      commandInit,
+      commandId,
+      executeParams,
+      CommandExecutionType.Workbench,
+      {
+        afterEach: () => {
+          const isNewCommand = !commandId
+          isNewCommand && scrollResults('start')
+        },
+        afterAll: updateOnboardingOnSubmit
+      }
+    ))
   }
 
   const scrollResults = (inline: ScrollLogicalPosition = 'start') => {
@@ -230,7 +236,6 @@ const WBViewWrapper = () => {
       script={script}
       setScript={setScript}
       setScriptEl={setScriptEl}
-      scriptEl={scriptEl}
       scrollDivRef={scrollDivRef}
       activeMode={activeRunQueryMode}
       onSubmit={sourceValueSubmit}

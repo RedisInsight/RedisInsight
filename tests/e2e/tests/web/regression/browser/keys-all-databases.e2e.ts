@@ -108,9 +108,9 @@ test
         await browserActions.verifyAllRenderedKeysHasText();
 
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
         // Go to Browser Page
-        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
+        await t.click(browserPage.NavigationPanel.browserButton);
         // Verify that keys info in row not empty after switching between pages
         await browserActions.verifyAllRenderedKeysHasText();
     });

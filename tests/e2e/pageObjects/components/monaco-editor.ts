@@ -10,6 +10,7 @@ export class MonacoEditor {
     monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]');
     monacoCommandIndicator = Selector('div.monaco-glyph-run-command');
     monacoWidget = Selector('[data-testid=monaco-widget]');
+    monacoSuggestWidget = Selector('.suggest-widget');
     nonRedisEditorResizeBottom = Selector('.t_resize-bottom');
     nonRedisEditorResizeTop = Selector('.t_resize-top');
 

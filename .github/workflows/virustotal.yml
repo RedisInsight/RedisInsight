@@ -18,6 +18,7 @@ env:
 
 jobs:
   download_artifacts:
+    name: Download artifacts
     runs-on: ubuntu-latest
     outputs:
       artifact_names: ${{ steps.list_artifacts.outputs.artifact_names }}

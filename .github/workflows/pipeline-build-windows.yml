@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build windows job
+    name: Build windows
     runs-on: windows-2022
     environment: ${{ inputs.environment }}
 

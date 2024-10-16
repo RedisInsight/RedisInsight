@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    name: Build macos job
+    name: Build macos
     runs-on: macos-14
     environment: ${{ inputs.environment }}
     steps:

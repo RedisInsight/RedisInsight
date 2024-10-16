@@ -13,7 +13,7 @@ env:
 
 jobs:
   unit-tests:
-    name: Unit tests Backend job
+    name: Backend tests
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

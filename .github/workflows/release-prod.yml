@@ -25,7 +25,7 @@ jobs:
       target: 'all'
 
   virustotal-prod:
-    name: Check builds via virustotal
+    name: Virustotal
     uses: ./.github/workflows/virustotal.yml
     needs: builds-prod
     secrets: inherit

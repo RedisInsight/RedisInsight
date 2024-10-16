@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build doker job
+    name: Build docker
     runs-on: ubuntu-24.04
     environment: ${{ inputs.environment }}
     steps:

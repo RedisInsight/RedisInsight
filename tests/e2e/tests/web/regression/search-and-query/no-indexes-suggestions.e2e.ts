@@ -24,7 +24,6 @@ test
     })('Verify suggestions when there are no indexes', async t => {
 
         await t.click(browserPage.NavigationPanel.workbenchButton);
-        await t.pressKey('ctrl+space');
 
         await t.typeText(workbenchPage.queryInput, 'FT.SE', { replace: true });
         await t.pressKey('tab');

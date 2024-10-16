@@ -72,12 +72,11 @@ test('Verify that user can interact with the Editor while command(s) in progress
 
     await settingsPage.changeCommandsInPipeline(pipelineValues[2]);
     // Go to Workbench page
-    await t.click(settingsPage.NavigationPanel.browserButton);
     await t.click(browserPage.NavigationPanel.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(commandForSend);
-    await t.typeText(workbenchPage.queryInput, commandForSend, { replace: true, paste: true });
-    await t.pressKey('enter');
-    // 'Verify that user can interact with the Editor
+    await t.typeText(workbenchPage.queryInput, commandForSend, { replace: true });
+    // await t.pressKey('enter');
+    // Verify that user can interact with the Editor
     await t.expect(workbenchPage.queryInputScriptArea.textContent).contains(valueInEditor, { timeout: 5000 });
 });
 test('Verify that command results are added to history in order most recent - on top', async t => {

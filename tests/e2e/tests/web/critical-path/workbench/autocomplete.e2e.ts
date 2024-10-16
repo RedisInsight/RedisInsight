@@ -36,15 +36,15 @@ test('Verify that when user have selected a command (via “Enter” from the li
     await t.pressKey('enter');
     const script = await workbenchPage.queryInputScriptArea.textContent;
     // Verify that user can select a command from the list with auto-suggestions when type in any character in the Editor
-    await t.expect(script.replace(/\s/g, ' ')).contains('LINDEX ', 'Result of sent command exists');
+    await t.expect(script.replace(/\s/g, ' ')).eql('LINDEX ', 'Result of sent command not exists');
 
-    // Check the required arguments inserted
+    // Check the required arguments suggested
     for (const argument of commandArguments) {
-        await t.expect(script).contains(argument, `The required argument ${argument} is inserted`);
+        await t.expect(workbenchPage.MonacoEditor.monacoHintWithArguments.textContent).contains(argument, `The required argument ${argument} is not suggested`);
     }
 });
 test('Verify that user can change any required argument inserted', async t => {
-    const command = 'HMGET';
+    const command = 'HMGE';
     const commandArguments = [
         'key',
         'field'
@@ -54,7 +54,7 @@ test('Verify that user can change any required argument inserted', async t => {
         'secondArgument'
     ];
 
-    // Select command via Enter
+    // Select HMGET command via Enter
     await t.typeText(workbenchPage.queryInput, command, { replace: true });
     await t.pressKey('enter');
     // Change required arguments
@@ -68,15 +68,18 @@ test('Verify that user can change any required argument inserted', async t => {
     await t.expect(scriptAfterEdit).notContains(commandArguments[0], `The argument ${commandArguments[0]} is not changed`);
 });
 test('Verify that the list of optional arguments will not be inserted with autocomplete', async t => {
-    const command = 'ZPOPMAX';
+    const command = 'ZPOPMA';
     const commandRequiredArgument = 'key';
-    const commandOptionalArgument = 'count';
+    const commandOptionalArgument = '[count]';
 
-    // Select command via Enter
+    // Select ZPOPMAX command via Enter
     await t.typeText(workbenchPage.queryInput, command, { replace: true });
     await t.pressKey('enter');
     // Verify the command arguments inserted
     const script = await workbenchPage.queryInputScriptArea.textContent;
-    await t.expect(script).contains(commandRequiredArgument, 'The required argument is inserted');
-    await t.expect(script).notContains(commandOptionalArgument, 'The optional argument is not inserted');
+    await t.expect(script.replace(/\s/g, ' ')).eql('ZPOPMAX ', 'Result of sent command not exists');
+
+    // Check the required and optional arguments suggested
+    await t.expect(workbenchPage.MonacoEditor.monacoHintWithArguments.textContent).contains(commandRequiredArgument, `The required argument is not suggested`);
+    await t.expect(workbenchPage.MonacoEditor.monacoHintWithArguments.textContent).contains(commandOptionalArgument, `The optional argument is not suggested in blocks`);
 });

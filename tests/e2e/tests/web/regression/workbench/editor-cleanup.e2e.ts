@@ -50,6 +50,7 @@ test('Enabled Editor Cleanup toggle behavior', async t => {
     await workbenchPage.sendCommandInWorkbench(commandToSend);
     await workbenchPage.sendCommandInWorkbench(commandToSend);
     // Verify that Editor input is cleared after running command
+    await t.pressKey('esc');
     await t.expect(await workbenchPage.queryInputScriptArea.textContent).eql('', 'Input in Editor is saved');
 });
 test

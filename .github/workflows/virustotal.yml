@@ -12,9 +12,7 @@ on:
 env:
   VIRUSTOTAL_FILE_NAMES: ${{ vars.VIRUSTOTAL_FILE_NAMES }}
   VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
-
-  # TODO: test on other slack chat
-  # SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
+  SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
 
 jobs:
   download_artifacts:
@@ -166,9 +164,8 @@ jobs:
         FILE_NAME=virustotal.report.json
         BUILD_NAME=$BUILD_NAME FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$FAILED node .github/virustotal-report.js
 
-        # todo uncomment after testing
-        # BUILD_NAME=$BUILD_NAME FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$FAILED node .github/virustotal-report.js &&
-        # curl -H "Content-type: application/json" --data @$FILE_NAME -H "Authorization: Bearer ${SLACK_TEST_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
+        BUILD_NAME=$BUILD_NAME FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$FAILED node .github/virustotal-report.js &&
+        curl -H "Content-type: application/json" --data @$FILE_NAME -H "Authorization: Bearer ${SLACK_TEST_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
 
         if [ "$FAILED" == "true" ]; then
           echo 'Found dangers';

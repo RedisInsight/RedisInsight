@@ -88,27 +88,28 @@ export async function deleteKeysViaCli(keyData: KeyData): Promise<void> {
  * @param keyArguments The arguments of key
  */
 export async function populateDBWithHashes(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
-    const client = createClient(dbConf);
+    const url = `redis://default@${host}:${port}`;
+    const client = createClient({ url });
 
-    client.on('error', (error: string) => {
-        throw new Error(error);
+    client.on('error', (error: Error) => {
+        console.error('Redis Client Error', error);
     });
 
-    client.on('connect', async () => {
-        try {
-            if (keyArguments.keysCount) {
-                for (let i = 0; i < keyArguments.keysCount; i++) {
-                    const keyName = `${keyArguments.keyNameStartWith}${Common.generateWord(20)}`;
-                    await client.hSet(keyName, 'field1', 'Hello');
-                }
+    try {
+        await client.connect();
+
+        if (keyArguments.keysCount) {
+            for (let i = 0; i < keyArguments.keysCount; i++) {
+                const keyName = `${keyArguments.keyNameStartWith}${Common.generateWord(20)}`;
+                await client.hSet(keyName, 'field1', 'Hello');
             }
-        } catch (error) {
-            console.error('Error setting hash:', error);
-        } finally {
-            await client.quit();
         }
-    });
+
+    } catch (error) {
+        console.error('Error during Redis operations:', error);
+    } finally {
+        await client.disconnect();
+    }
 }
 
 /**
@@ -118,30 +119,36 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
  * @param keyArguments The arguments of key and its fields
  */
 export async function populateHashWithFields(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
-    const client = createClient(dbConf);
-    const fields: Record<string, string> = {}; // Using an object for field-value pairs
+    const url = `redis://default@${host}:${port}`;
+    const client = createClient({ url });
+    const fields: Record<string, string> = {};
 
-    client.on('error', (error: string) => {
-        throw new Error(error);
+    client.on('error', (error: Error) => {
+        console.error('Redis Client Error', error);
     });
 
-    client.on('connect', async () => {
-        try {
-            if (keyArguments.fieldsCount) {
-                for (let i = 0; i < keyArguments.fieldsCount; i++) {
-                    const field = `${keyArguments.fieldStartWith}${Common.generateWord(10)}`;
-                    const fieldValue = `${keyArguments.fieldValueStartWith}${Common.generateWord(10)}`;
-                    fields[field] = fieldValue;
-                }
+    try {
+        await client.connect();
+
+        if (keyArguments.fieldsCount) {
+            for (let i = 0; i < keyArguments.fieldsCount; i++) {
+                const field = `${keyArguments.fieldStartWith}${Common.generateWord(10)}`;
+                const fieldValue = `${keyArguments.fieldValueStartWith}${Common.generateWord(10)}`;
+                fields[field] = fieldValue;
             }
-            await client.hSet(keyArguments.keyName!, fields); 
-        } catch (error) {
-            console.error('Error setting hash fields:', error);
-        } finally {
-            await client.quit();
         }
-    });
+
+        if (keyArguments.keyName) {
+            await client.hSet(keyArguments.keyName, fields);
+        } else {
+            throw new Error('keyName is required to populate the hash.');
+        }
+
+    } catch (error) {
+        console.error('Error setting hash fields:', error);
+    } finally {
+        await client.disconnect();
+    }
 }
 
 /**
@@ -151,30 +158,35 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
  * @param keyArguments The arguments of key and its members
  */
 export async function populateListWithElements(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
-    const client = createClient(dbConf);
+    const url = `redis://default@${host}:${port}`;
+    const client = createClient({ url });
     const elements: string[] = [];
 
-    client.on('error', (error: string) => {
-        throw new Error(error);
+    client.on('error', (error: Error) => {
+        console.error('Redis Client Error', error);
     });
 
-    client.on('connect', async () => {
-        try {
-            if (keyArguments.elementsCount) {
-                for (let i = 0; i < keyArguments.elementsCount; i++) {
-                    const element = `${keyArguments.elementStartWith}${Common.generateWord(10)}`;
-                    elements.push(element);
-                }
+    try {
+        await client.connect();
+
+        if (keyArguments.elementsCount) {
+            for (let i = 0; i < keyArguments.elementsCount; i++) {
+                const element = `${keyArguments.elementStartWith}${Common.generateWord(10)}`;
+                elements.push(element);
             }
-            // Push all the elements to the list
-            await client.lPush(keyArguments.keyName!, elements); // Spread the elements array
-        } catch (error) {
-            console.error('Error pushing elements to list:', error);
-        } finally {
-            await client.quit();
         }
-    });
+
+        if (keyArguments.keyName) {
+            await client.lPush(keyArguments.keyName, elements);
+        } else {
+            throw new Error('keyName is required to populate the list.');
+        }
+
+    } catch (error) {
+        console.error('Error pushing elements to list:', error);
+    } finally {
+        await client.disconnect();
+    }
 }
 
 /**
@@ -184,30 +196,35 @@ export async function populateListWithElements(host: string, port: string, keyAr
  * @param keyArguments The arguments of key and its members
  */
 export async function populateSetWithMembers(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
-    const client = createClient(dbConf);
+    const url = `redis://default@${host}:${port}`;
+    const client = createClient({ url });
     const members: string[] = [];
 
-    client.on('error', (error: string) => {
-        throw new Error(error);
+    client.on('error', (error: Error) => {
+        console.error('Redis Client Error', error);
     });
 
-    client.on('connect', async () => {
-        try {
-            if (keyArguments.membersCount) {
-                for (let i = 0; i < keyArguments.membersCount; i++) {
-                    const member = `${keyArguments.memberStartWith}${Common.generateWord(10)}`;
-                    members.push(member);
-                }
+    try {
+        await client.connect();
+
+        if (keyArguments.membersCount) {
+            for (let i = 0; i < keyArguments.membersCount; i++) {
+                const member = `${keyArguments.memberStartWith}${Common.generateWord(10)}`;
+                members.push(member);
             }
-            // Add all members to the set using sAdd
-            await client.sAdd(keyArguments.keyName!, members);
-        } catch (error) {
-            console.error('Error adding members to set:', error);
-        } finally {
-            await client.quit();
         }
-    });
+
+        if (keyArguments.keyName) {
+            await client.sAdd(keyArguments.keyName, members);
+        } else {
+            throw new Error('keyName is required to populate the set.');
+        }
+
+    } catch (error) {
+        console.error('Error adding members to set:', error);
+    } finally {
+        await client.disconnect();
+    }
 }
 
 /**
@@ -217,32 +234,38 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
  * @param keyArguments The arguments of key and its members
  */
 export async function populateZSetWithMembers(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
+    const url = `redis://default@${host}:${port}`;
+    const client = createClient({ url });
     const minScoreValue = -10;
     const maxScoreValue = 10;
-    const client = createClient(dbConf);
     const members: { score: number; value: string }[] = [];
 
-    client.on('error', (error: string) => {
-        throw new Error(error);
+    client.on('error', (error: Error) => {
+        console.error('Redis Client Error', error);
     });
 
-    client.on('connect', async () => {
-        try {
-            if (keyArguments.membersCount) {
-                for (let i = 0; i < keyArguments.membersCount; i++) {
-                    const memberName = `${keyArguments.memberStartWith}${Common.generateWord(10)}`;
-                    const scoreValue = random(minScoreValue, maxScoreValue);
-                    members.push({ score: scoreValue, value: memberName });
-                }
+    try {
+        await client.connect();
+
+        if (keyArguments.membersCount) {
+            for (let i = 0; i < keyArguments.membersCount; i++) {
+                const memberName = `${keyArguments.memberStartWith}${Common.generateWord(10)}`;
+                const scoreValue = random(minScoreValue, maxScoreValue);
+                members.push({ score: scoreValue, value: memberName });
             }
-            await client.zAdd(keyArguments.keyName!, members);
-        } catch (error) {
-            console.error('Error adding members to sorted set:', error);
-        } finally {
-            await client.quit();
         }
-    });
+
+        if (keyArguments.keyName) {
+            await client.zAdd(keyArguments.keyName, members);
+        } else {
+            throw new Error('keyName is required to populate the sorted set.');
+        }
+
+    } catch (error) {
+        console.error('Error adding members to sorted set:', error);
+    } finally {
+        await client.disconnect();
+    }
 }
 
 /**
@@ -251,22 +274,23 @@ export async function populateZSetWithMembers(host: string, port: string, keyArg
  * @param port The port of database
  */
 export async function deleteAllKeysFromDB(host: string, port: string): Promise<void> {
-    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
-    const client = createClient(dbConf);
+    const url = `redis://default@${host}:${port}`;
+    const client = createClient({ url });
 
-    client.on('error', (error: string) => {
-        throw new Error(error);
+    client.on('error', (error: Error) => {
+        console.error('Redis Client Error', error);
     });
 
-    client.on('connect', async () => {
-        try {
-            await client.flushAll();
-        } catch (error) {
-            console.error('Error flushing database:', error);
-        } finally {
-            await client.quit();
-        }
-    });
+    try {
+        await client.connect();
+
+        await client.flushAll();
+
+    } catch (error) {
+        console.error('Error flushing database:', error);
+    } finally {
+        await client.disconnect();
+    }
 }
 
 /**

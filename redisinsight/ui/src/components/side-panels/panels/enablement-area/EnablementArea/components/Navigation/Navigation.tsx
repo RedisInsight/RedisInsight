@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiListGroup, EuiText } from '@elastic/eui'
+import { EuiListGroup } from '@elastic/eui'
 import { isArray } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
@@ -147,7 +147,7 @@ const Navigation = (props: Props) => {
             testId={id || label}
             label={label}
             summary={summary}
-            {...args}
+            path={args?.path}
           >
             {args?.content || label}
           </InternalLink>

@@ -44,8 +44,6 @@ jobs:
   release-public:
     name: Release s3 public
     runs-on: ubuntu-latest
-    # todo: remove after test
-    if: ${{ '1' == '2' }}
     needs: 'release-private'
     environment: 'production-approve'
     steps:

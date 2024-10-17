@@ -1,0 +1,54 @@
+name: Tests
+
+on:
+  # push:
+  #   branches-ignore:
+  #     - main
+
+  workflow_dispatch:
+    inputs:
+      all-tests:
+        description: Run all tests (FE, BE, IT, E2E)
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+      desktop: ${{ steps.filter.outputs.desktop }}
+      e2e: ${{ steps.filter.outputs.e2e }}
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: dorny/paths-filter@v3.0.2
+      id: filter
+      with:
+        base: ${{ github.ref }}
+        filters: |
+          frontend:
+            - 'redisinsight/ui/**'
+          backend:
+            - 'redisinsight/api/**'
+          desktop:
+            - 'redisinsight/desktop/**'
+          e2e:
+            - 'tests/e2e/**'
+
+  frontend-tests:
+    # TODO: concurrency
+    # concurrency: build
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true' || inputs.all-tests
+    uses: ./.github/workflows/tests-frontend.yml
+    # secrets: inherit
+
+  backend-tests:
+    # TODO: concurrency
+    # concurrency: build
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' || inputs.all-tests
+    uses: ./.github/workflows/tests-backend.yml
+    # secrets: inherit

@@ -64,22 +64,22 @@ describe('KeysScanner', () => {
     infoStrategy.getLengthSafe.mockResolvedValue(2);
     clusterClient.nodes.mockReturnValue([standaloneClient, standaloneClient, standaloneClient]);
     when(standaloneClient.sendCommand)
-      .calledWith(jasmine.arrayContaining(['scan']))
+      .calledWith(expect.arrayContaining(['scan']))
       .mockResolvedValue(['0', [mockKey.name]]);
     when(standaloneClient.sendPipeline)
-      .calledWith(jasmine.arrayContaining([
-        jasmine.arrayContaining(['memory']),
+      .calledWith(expect.arrayContaining([
+        expect.arrayContaining(['memory']),
       ]))
       .mockReturnValue([[null, 10]]);
     when(standaloneClient.sendPipeline)
-      .calledWith(jasmine.arrayContaining([
-        jasmine.arrayContaining(['ttl']),
+      .calledWith(expect.arrayContaining([
+        expect.arrayContaining(['ttl']),
       ]))
       .mockReturnValue([[null, -1]]);
     when(standaloneClient.sendPipeline)
       .calledWith(
-        jasmine.arrayContaining([
-          jasmine.arrayContaining(['type']),
+        expect.arrayContaining([
+          expect.arrayContaining(['type']),
         ]),
         expect.anything(),
       )

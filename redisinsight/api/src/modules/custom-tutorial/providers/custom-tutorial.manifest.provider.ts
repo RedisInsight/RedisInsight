@@ -8,7 +8,7 @@ import {
   CustomTutorialManifestType,
   RootCustomTutorialManifest,
 } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { winPathToNormalPath } from 'src/utils';
 
 const MANIFEST_FILE = 'manifest.json';
@@ -134,7 +134,7 @@ export class CustomTutorialManifestProvider {
         return null;
       }
 
-      return plainToClass(RootCustomTutorialManifest, manifestJson, { excludeExtraneousValues: true });
+      return plainToInstance(RootCustomTutorialManifest, manifestJson, { excludeExtraneousValues: true });
     } catch (e) {
       this.logger.warn('Unable to get manifest for tutorial');
       return null;

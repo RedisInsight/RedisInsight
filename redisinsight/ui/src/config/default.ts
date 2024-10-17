@@ -32,6 +32,7 @@ export const defaultConfig = {
   },
   database: {
     defaultConnectionTimeout: intEnv('RI_CONNECTIONS_TIMEOUT_DEFAULT', 30_000),
+    defaultTimeoutToGetInfo: intEnv('RI_TIMEOUT_TO_GET_INFO', 5_000),
   },
   app: {
     env: process.env.NODE_ENV,

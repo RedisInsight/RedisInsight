@@ -1,5 +1,4 @@
 import { Builder, By, Key, until } from 'selenium-webdriver';
-import open = require('open');
 import { googleUser, googleUserPassword } from './conf';
 
 export async function processGoogleSSO(urlToUse: string): Promise<void> {
@@ -27,6 +26,7 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
         const redirectUrl = `${protocol + callbackUrl  }?${  modifiedUrl}`;
 
         // Open Redis Insight electron app using deeplink
+        const open = (await import('open')).default;
         await open(redirectUrl, { app: { name: 'Redis Insight' } });
     }
     catch (error) {

@@ -1,12 +1,12 @@
 import { languages } from 'monaco-editor'
 import { curryRight } from 'lodash'
-import { SearchCommand } from 'uiSrc/pages/search/types'
 import { Maybe } from 'uiSrc/utils'
+import { IRedisCommand } from 'uiSrc/constants'
 
 const appendToken = (token: string, name: Maybe<string>) => (name ? `${token}.${name}` : token)
 export const generateQuery = (
-  argToken?: SearchCommand,
-  args?: SearchCommand[]
+  argToken?: IRedisCommand,
+  args?: IRedisCommand[]
 ): { [name: string]: languages.IMonarchLanguageRule[] } => {
   const curriedAppendToken = curryRight(appendToken)
   const appendTokenName = curriedAppendToken(argToken?.token)

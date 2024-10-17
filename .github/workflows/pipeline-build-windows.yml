@@ -50,7 +50,7 @@ jobs:
         path: |
           ./release/Redis-Insight*.exe
           ./release/Redis-Insight*.exe.blockmap
-          ./release/*.yml
+          ./release/latest.yml
 
     env:
       WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}

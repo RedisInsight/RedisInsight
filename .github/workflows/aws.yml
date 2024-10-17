@@ -30,16 +30,16 @@ jobs:
       run: |
 
         # Define array of folders to exclude
-        exclude=("web" "web-mini", "redis-stack", "docker")
+        exclude=("web" "web-mini" "redistack-builds")
 
-        # Iterate through first-level directories
-        for dir in */; do
+        # Iterate through first-level directories in ./release
+        for dir in ./release/*/; do
           dir_name=$(basename "$dir")
 
           # Check if the directory is not in the exclude list
           if [[ ! " ${exclude[@]} " =~ " ${dir_name} " ]]; then
-            # Move all files from the subdirectory to the root directory
-            mv "$dir"* ./
+            # Move all files from the subdirectory to the release directory
+            mv "$dir"* ./release/
 
             # Remove the now-empty subdirectory
             rmdir "$dir"

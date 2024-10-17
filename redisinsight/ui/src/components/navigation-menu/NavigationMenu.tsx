@@ -26,8 +26,6 @@ import BrowserSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import BrowserActiveSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import WorkbenchSVG from 'uiSrc/assets/img/sidebar/workbench.svg'
 import WorkbenchActiveSVG from 'uiSrc/assets/img/sidebar/workbench_active.svg'
-import SearchSVG from 'uiSrc/assets/img/sidebar/search.svg'
-import SearchActiveSVG from 'uiSrc/assets/img/sidebar/search_active.svg'
 import SlowLogSVG from 'uiSrc/assets/img/sidebar/slowlog.svg'
 import SlowLogActiveSVG from 'uiSrc/assets/img/sidebar/slowlog_active.svg'
 import PubSubSVG from 'uiSrc/assets/img/sidebar/pubsub.svg'
@@ -123,21 +121,6 @@ const NavigationMenu = () => {
         return this.isActivePage ? BrowserSVG : BrowserActiveSVG
       },
       onboard: ONBOARDING_FEATURES.BROWSER_PAGE
-    },
-    {
-      tooltipText: 'Search and Query',
-      pageName: PageNames.search,
-      ariaLabel: 'Search and Query page button',
-      onClick: () => handleGoPage(Pages.search(connectedInstanceId)),
-      dataTestId: 'search-page-btn',
-      connectedInstanceId,
-      isActivePage: activePage === `/${PageNames.search}`,
-      getClassName() {
-        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
-      },
-      getIconType() {
-        return this.isActivePage ? SearchSVG : SearchActiveSVG
-      },
     },
     {
       tooltipText: 'Workbench',

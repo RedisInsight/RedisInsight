@@ -29,7 +29,6 @@ describe('CodeBlock', () => {
       sendWBCommand({
         commandId: expect.any(String),
         commands: ['info'],
-        executionType: CommandExecutionType.Workbench
       }),
       setDbIndexState(true)
     ])

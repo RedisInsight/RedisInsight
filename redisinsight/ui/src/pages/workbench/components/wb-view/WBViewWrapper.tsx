@@ -15,7 +15,7 @@ import {
   sendWbQueryAction,
   workbenchResultsSelector,
 } from 'uiSrc/slices/workbench/wb-results'
-import { CommandExecutionType, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
+import { Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector, initialState as instanceInitState } from 'uiSrc/slices/instances/instances'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
@@ -165,7 +165,6 @@ const WBViewWrapper = () => {
       commandInit,
       commandId,
       executeParams,
-      CommandExecutionType.Workbench,
       {
         afterEach: () => {
           const isNewCommand = !commandId

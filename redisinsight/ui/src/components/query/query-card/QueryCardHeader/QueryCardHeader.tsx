@@ -19,27 +19,21 @@ import {
   getCommandNameFromQuery,
   getVisualizationsByCommand,
   isGroupMode,
-  isGroupResults,
+  truncateText,
+  urlForAsset,
+  truncateMilliseconds,
   isRawMode,
   isSilentMode,
   isSilentModeWithoutError,
-  truncateMilliseconds,
-  truncateText,
-  urlForAsset,
+  isGroupResults,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import {
-  getProfileViewTypeOptions,
-  getViewTypeOptions,
-  isCommandAllowedForProfile,
-  ProfileQueryType,
-  WBQueryType
-} from 'uiSrc/pages/workbench/constants'
-import { CommandExecutionType, IPluginVisualization } from 'uiSrc/slices/interfaces'
-import { ResultsMode, ResultsSummary, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { getViewTypeOptions, WBQueryType, getProfileViewTypeOptions, ProfileQueryType, isCommandAllowedForProfile } from 'uiSrc/pages/workbench/constants'
+import { IPluginVisualization } from 'uiSrc/slices/interfaces'
+import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { FormatedDate, FullScreen } from 'uiSrc/components'
 
@@ -63,7 +57,6 @@ export interface Props {
   mode?: RunQueryMode
   resultsMode?: ResultsMode
   activeResultsMode?: ResultsMode
-  executionType?: CommandExecutionType
   summary?: ResultsSummary
   summaryText?: string
   queryType: WBQueryType
@@ -109,7 +102,6 @@ const QueryCardHeader = (props: Props) => {
     createdAt,
     mode,
     resultsMode,
-    executionType,
     summary,
     activeResultsMode,
     summaryText,
@@ -129,7 +121,6 @@ const QueryCardHeader = (props: Props) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { theme } = useContext(ThemeContext)
-  const isExecuteTypeSearch = executionType === CommandExecutionType.Search
 
   const eventStop = (event: React.MouseEvent) => {
     event.preventDefault()
@@ -148,12 +139,7 @@ const QueryCardHeader = (props: Props) => {
   }
 
   const handleCopy = (event: React.MouseEvent, query: string) => {
-    sendEvent(
-      isExecuteTypeSearch
-        ? TelemetryEvent.SEARCH_COMMAND_COPIED
-        : TelemetryEvent.WORKBENCH_COMMAND_COPIED,
-      query
-    )
+    sendEvent(TelemetryEvent.WORKBENCH_COMMAND_COPIED, query)
     eventStop(event)
     navigator.clipboard?.writeText?.(query)
   }
@@ -168,29 +154,24 @@ const QueryCardHeader = (props: Props) => {
     const previousView = options.find(({ id }) => id === selectedValue)
     const type = currentView.value
     setSelectedValue(type as WBQueryType, initValue)
-    sendEvent(isExecuteTypeSearch
-      ? TelemetryEvent.SEARCH_RESULT_VIEW_CHANGED
-      : TelemetryEvent.WORKBENCH_RESULT_VIEW_CHANGED,
-    query,
-    {
-      rawMode: isRawMode(activeMode),
-      group: isGroupMode(activeResultsMode),
-      previousView: previousView?.name,
-      isPreviousViewInternal: !!previousView?.internal,
-      currentView: currentView?.name,
-      isCurrentViewInternal: !!currentView?.internal,
-    })
+    sendEvent(
+      TelemetryEvent.WORKBENCH_RESULT_VIEW_CHANGED,
+      query,
+      {
+        rawMode: isRawMode(activeMode),
+        group: isGroupMode(activeResultsMode),
+        previousView: previousView?.name,
+        isPreviousViewInternal: !!previousView?.internal,
+        currentView: currentView?.name,
+        isCurrentViewInternal: !!currentView?.internal,
+      }
+    )
   }
 
   const handleQueryDelete = (event: React.MouseEvent) => {
     eventStop(event)
     onQueryDelete()
-    sendEvent(
-      isExecuteTypeSearch
-        ? TelemetryEvent.SEARCH_CLEAR_RESULT_CLICKED
-        : TelemetryEvent.WORKBENCH_CLEAR_RESULT_CLICKED,
-      query
-    )
+    sendEvent(TelemetryEvent.WORKBENCH_CLEAR_RESULT_CLICKED, query)
   }
 
   const handleQueryReRun = (event: React.MouseEvent) => {
@@ -200,14 +181,8 @@ const QueryCardHeader = (props: Props) => {
 
   const handleToggleOpen = () => {
     if (!isFullScreen && !isSilentModeWithoutError(resultsMode, summary?.fail)) {
-      const collapsedEventName = isExecuteTypeSearch
-        ? TelemetryEvent.SEARCH_RESULTS_COLLAPSED
-        : TelemetryEvent.WORKBENCH_RESULTS_COLLAPSED
-      const expandedEventName = isExecuteTypeSearch
-        ? TelemetryEvent.SEARCH_RESULTS_EXPANDED
-        : TelemetryEvent.WORKBENCH_RESULTS_EXPANDED
       sendEvent(
-        isOpen ? collapsedEventName : expandedEventName,
+        isOpen ? TelemetryEvent.WORKBENCH_RESULTS_COLLAPSED : TelemetryEvent.WORKBENCH_RESULTS_EXPANDED,
         query
       )
     }

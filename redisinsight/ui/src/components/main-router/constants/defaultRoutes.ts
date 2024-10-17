@@ -16,7 +16,6 @@ import RdiPage from 'uiSrc/pages/rdi/home'
 import RdiInstancePage from 'uiSrc/pages/rdi/instance'
 import RdiStatisticsPage from 'uiSrc/pages/rdi/statistics'
 import PipelineManagementPage from 'uiSrc/pages/rdi/pipeline-management'
-import SearchPage from 'uiSrc/pages/search'
 import { ANALYTICS_ROUTES, RDI_PIPELINE_MANAGEMENT_ROUTES } from './sub-routes'
 
 import COMMON_ROUTES from './commonRoutes'
@@ -31,11 +30,6 @@ const INSTANCE_ROUTES: IRoute[] = [
     pageName: PageNames.workbench,
     path: Pages.workbench(':instanceId'),
     component: WorkbenchPage,
-  },
-  {
-    pageName: PageNames.search,
-    path: Pages.search(':instanceId'),
-    component: SearchPage,
   },
   {
     pageName: PageNames.pubSub,

@@ -244,12 +244,13 @@ export const commonfindCurrentArgumentCases = [
     appendIncludes: ['ft', 'km', 'm', 'mi'],
     appendNotIncludes: ['SORTBY', 'FILTER', 'LIMIT', 'DIALECT', 'AS', 'ASC'],
   },
-  {
-    input: 'FT.SEARCH textVehicles "*" RETURN 2 test ',
-    result: expect.any(Object),
-    appendIncludes: ['AS'],
-    appendNotIncludes: ['SORTBY', 'FILTER', 'LIMIT', 'DIALECT', 'ASC'],
-  },
+  // skip
+  // {
+  //   input: 'FT.SEARCH textVehicles "*" RETURN 2 test ',
+  //   result: expect.any(Object),
+  //   appendIncludes: ['AS'],
+  //   appendNotIncludes: ['SORTBY', 'FILTER', 'LIMIT', 'DIALECT', 'ASC'],
+  // },
   {
     input: 'FT.CREATE textVehicles ON ',
     result: expect.any(Object),

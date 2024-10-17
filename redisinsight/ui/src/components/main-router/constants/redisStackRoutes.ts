@@ -9,7 +9,6 @@ import EditConnection from 'uiSrc/pages/redis-stack/components/edit-connection'
 import ClusterDetailsPage from 'uiSrc/pages/cluster-details'
 import AnalyticsPage from 'uiSrc/pages/analytics'
 import DatabaseAnalysisPage from 'uiSrc/pages/database-analysis'
-import SearchPage from 'uiSrc/pages/search'
 import COMMON_ROUTES from './commonRoutes'
 
 const ANALYTICS_ROUTES: IRoute[] = [
@@ -45,12 +44,6 @@ const INSTANCE_ROUTES: IRoute[] = [
     protected: true,
     path: Pages.workbench(':instanceId'),
     component: WorkbenchPage,
-  },
-  {
-    pageName: PageNames.search,
-    protected: true,
-    path: Pages.search(':instanceId'),
-    component: SearchPage,
   },
   {
     pageName: PageNames.pubSub,

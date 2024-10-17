@@ -1,6 +1,5 @@
-import { getRediSearchSignutureProvider } from 'uiSrc/pages/search/utils'
 import { MOCKED_REDIS_COMMANDS } from 'uiSrc/mocks/data/mocked_redis_commands'
-import { SearchCommand } from 'uiSrc/pages/search/types'
+import { getRediSearchSignutureProvider } from 'uiSrc/pages/workbench/utils/monaco'
 
 const ftAggregateCommand = MOCKED_REDIS_COMMANDS['FT.AGGREGATE']
 
@@ -16,7 +15,7 @@ const getRediSearchSignatureProviderTests = [
   {
     input: {
       isOpen: true,
-      currentArg: ftAggregateCommand.arguments.find(({ name }) => name === 'groupby') as SearchCommand,
+      currentArg: ftAggregateCommand.arguments.find(({ name }) => name === 'groupby'),
       parent: null
     },
     result: {
@@ -35,7 +34,7 @@ const getRediSearchSignatureProviderTests = [
     input: {
       isOpen: true,
       currentArg: { name: 'expression' },
-      parent: ftAggregateCommand.arguments.find(({ name }) => name === 'apply') as SearchCommand
+      parent: ftAggregateCommand.arguments.find(({ name }) => name === 'apply')
     },
     result: {
       dispose: expect.any(Function),

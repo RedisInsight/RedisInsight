@@ -129,7 +129,6 @@ describe('NavigationMenu', () => {
 
       expect(screen.getByTestId('browser-page-btn')).toBeTruthy()
       expect(screen.getByTestId('workbench-page-btn')).toBeTruthy()
-      expect(screen.getByTestId('search-page-btn')).toBeTruthy()
     })
 
     it('should render public routes', () => {

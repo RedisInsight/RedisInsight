@@ -1,7 +1,6 @@
-import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
 import { Maybe, splitQueryByArgs } from 'uiSrc/utils'
 import { MOCKED_REDIS_COMMANDS } from 'uiSrc/mocks/data/mocked_redis_commands'
-import { IRedisCommand } from 'uiSrc/constants'
+import { IRedisCommand, ICommandTokenType } from 'uiSrc/constants'
 import {
   commonfindCurrentArgumentCases,
   findArgumentftAggreageTests,
@@ -23,11 +22,11 @@ describe('findCurrentArgument', () => {
   describe('with list of commands', () => {
     commonfindCurrentArgumentCases.forEach(({ input, result, appendIncludes, appendNotIncludes }) => {
       it(`should return proper suggestions for ${input}`, () => {
-        const { args } = splitQueryByArgs(input, 0, COMPOSITE_ARGS)
+        const { args } = splitQueryByArgs(input, 0, COMPOSITE_ARGS.concat('LOAD *'))
         const COMMANDS_LIST = COMMANDS.map((command) => ({
           ...addOwnTokenToArgs(command.name!, command),
           token: command.name!,
-          type: TokenType.Block
+          type: ICommandTokenType.Block
         }))
 
         const testResult = findCurrentArgument(
@@ -79,21 +78,21 @@ describe('findCurrentArgument', () => {
   })
 })
 
-const generateDetailTests: Array<{ input: Maybe<SearchCommand>, result: any }> = [
+const generateDetailTests: Array<{ input: Maybe<IRedisCommand>, result: any }> = [
   {
-    input: ftSearchCommand.arguments.find(({ name }) => name === 'nocontent') as SearchCommand,
+    input: ftSearchCommand.arguments.find(({ name }) => name === 'nocontent') as IRedisCommand,
     result: 'NOCONTENT'
   },
   {
-    input: ftSearchCommand.arguments.find(({ name }) => name === 'filter') as SearchCommand,
+    input: ftSearchCommand.arguments.find(({ name }) => name === 'filter') as IRedisCommand,
     result: 'FILTER numeric_field min max'
   },
   {
-    input: ftSearchCommand.arguments.find(({ name }) => name === 'geo_filter') as SearchCommand,
+    input: ftSearchCommand.arguments.find(({ name }) => name === 'geo_filter') as IRedisCommand,
     result: 'GEOFILTER geo_field lon lat radius m | km | mi | ft'
   },
   {
-    input: ftAggregateCommand.arguments.find(({ name }) => name === 'groupby') as SearchCommand,
+    input: ftAggregateCommand.arguments.find(({ name }) => name === 'groupby') as IRedisCommand,
     result: 'GROUPBY nargs property [property ...] [REDUCE function nargs arg [arg ...] [AS name] [REDUCE function nargs arg [arg ...] [AS name] ...]]'
   },
 ]

@@ -168,9 +168,10 @@ export const getGeneralSuggestions = (
   helpWidgetData?: any
 } => {
   if (foundArg && !foundArg.isComplete) {
+    const parent = getParentWithOwnToken(foundArg?.parent)
     return {
       suggestions: getMandatoryArgumentSuggestions(foundArg, fields, range),
-      helpWidgetData: { isOpen: !!foundArg?.stopArg, parent: foundArg?.parent, currentArg: foundArg?.stopArg }
+      helpWidgetData: { isOpen: !!foundArg?.stopArg, parent, currentArg: foundArg?.stopArg }
     }
   }
 
@@ -196,4 +197,15 @@ export const isIndexComplete = (index: string) => {
   }
 
   return !escape
+}
+
+export const getParentWithOwnToken = (command?: IRedisCommand) => {
+  if (command?.token) {
+    return {
+      ...command,
+      arguments: command?.arguments ? [{ name: command.token }, ...command.arguments] : undefined
+    }
+  }
+
+  return command
 }

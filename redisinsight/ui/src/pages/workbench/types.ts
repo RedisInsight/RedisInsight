@@ -25,3 +25,9 @@ export interface CursorContext {
   argRightOffset: number
   range: monacoEditor.IRange
 }
+
+export interface BlockTokensTree {
+  queryArgs: string[]
+  command?: IRedisCommand
+  parent?: BlockTokensTree
+}

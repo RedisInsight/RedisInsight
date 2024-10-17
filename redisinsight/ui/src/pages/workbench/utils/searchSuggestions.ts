@@ -10,7 +10,8 @@ import {
   getFunctionsSuggestions,
   getGeneralSuggestions,
   getIndexesSuggestions,
-  getNoIndexesSuggestion
+  getNoIndexesSuggestion,
+  getParentWithOwnToken,
 } from 'uiSrc/pages/workbench/utils/suggestions'
 import {
   COMMANDS_WITHOUT_INDEX_PROPOSE,
@@ -94,7 +95,7 @@ const handleIndexSuggestions = (
   cursorContext: CursorContext
 ) => {
   const isIndex = indexes.length > 0
-  const helpWidget = { isOpen: isIndex, parent: command.info, currentArg: foundArg?.stopArg }
+  const helpWidget = { isOpen: isIndex, parent: foundArg?.parent, currentArg: foundArg?.stopArg }
   const currentCommand = command.info
 
   if (COMMANDS_WITHOUT_INDEX_PROPOSE.includes(command.name || '')) {
@@ -182,7 +183,11 @@ const handleCommonSuggestions = (
   const shouldHideSuggestions = isCursorInQuotes || nextCursorChar || (prevCursorChar && isEscaped)
   if (shouldHideSuggestions) {
     return {
-      helpWidget: { isOpen: !!foundArg, parent: foundArg?.parent, currentArg: foundArg?.stopArg },
+      helpWidget: {
+        isOpen: foundArg && foundArg.isBlocked,
+        parent: getParentWithOwnToken(foundArg?.parent),
+        currentArg: foundArg?.stopArg
+      },
       suggestions: asSuggestionsRef([])
     }
   }

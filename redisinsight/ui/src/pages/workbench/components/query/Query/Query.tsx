@@ -28,7 +28,7 @@ import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench
 import DedicatedEditor from 'uiSrc/components/monaco-editor/components/dedicated-editor'
 import { QueryActions, QueryTutorials } from 'uiSrc/components/query'
 
-import { addOwnTokenToArgs, findCurrentArgument, } from 'uiSrc/pages/workbench/utils/query'
+import { addOwnTokenToArgs, findCurrentArgument } from 'uiSrc/pages/workbench/utils/query'
 import { getRange, getRediSearchSignutureProvider, } from 'uiSrc/pages/workbench/utils/monaco'
 import { CursorContext } from 'uiSrc/pages/workbench/types'
 import { asSuggestionsRef, getCommandsSuggestions, isIndexComplete } from 'uiSrc/pages/workbench/utils/suggestions'

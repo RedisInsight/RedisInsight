@@ -44,6 +44,20 @@ describe('FeatureFlagComponent', () => {
     expect(screen.getByTestId('inner-component')).toBeInTheDocument()
   })
 
+  it('should render null if flag is enabled and children are undefined', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      name: {
+        flag: true
+      }
+    })
+
+    const { container } = render(
+      <FeatureFlagComponent name={'name' as FeatureFlags} />
+    )
+
+    expect(container).toMatchInlineSnapshot('<div />')
+  })
+
   it('should render otherwise component if the feature flag not enabled', () => {
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
       name: {

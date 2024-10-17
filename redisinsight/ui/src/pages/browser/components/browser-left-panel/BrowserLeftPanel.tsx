@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
+import { EuiButton } from '@elastic/eui'
 import {
   appContextBrowser,
   appContextSelector,
@@ -20,8 +21,9 @@ import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api
 import { redisearchDataSelector, redisearchListSelector, redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { isEqualBuffers, Nullable } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { KeyTypes } from 'uiSrc/constants'
+import { FeatureFlags, KeyTypes } from 'uiSrc/constants'
 
+import { FeatureFlagComponent } from 'uiSrc/components'
 import KeyList from '../key-list'
 import KeyTree from '../key-tree'
 import KeysHeader from '../keys-header'
@@ -130,7 +132,25 @@ const BrowserLeftPanel = (props: Props) => {
         handleScanMoreClick={handleScanMoreClick}
         nextCursor={keysState.nextCursor}
       />
-      {keysError && <div className={styles.error}><div>{keysError}</div></div>}
+      {keysError && (
+        <div className={styles.error}>
+          <div>{keysError}</div>
+          <FeatureFlagComponent
+            name={FeatureFlags.envDependent}
+            otherwise={(
+              <EuiButton
+                fill
+                color="secondary"
+                onClick={() => {
+                  loadKeys(viewType)
+                }}
+              >
+                Retry
+              </EuiButton>
+            )}
+          />
+        </div>
+      )}
       {viewType === KeyViewType.Browser && !keysError && (
         <KeyList
           hideFooter

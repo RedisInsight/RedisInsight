@@ -120,7 +120,7 @@ jobs:
       with:
         name: 'redisstack'
         path: |
-          ./release/redisstack
+          ./release/Redis-Insight-app-darwin.*.tar.gz
 
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}

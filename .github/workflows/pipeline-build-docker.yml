@@ -85,14 +85,14 @@ jobs:
       with:
         if-no-files-found: error
         name: web-mini
-        path: ./redisinsight/api/web-mini
+        path: ./release/web-mini
 
     - uses: actions/upload-artifact@v4
       name: Upload web artifacts
       with:
         if-no-files-found: error
         name: web
-        path: ./redisinsight/api/web
+        path: ./release/web
 
     env:
       RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}

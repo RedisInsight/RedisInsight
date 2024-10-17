@@ -20,10 +20,6 @@ if (defaultConfig.api.hostedBase) {
 } else {
   base = defaultConfig.app.env === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
 }
-const DEFAULT_TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5_000 : 60_000
-const ENV_TIMEOUT_TO_GET_INFO = process.env.RI_TIMEOUT_TO_GET_INFO
-  ? +process.env.RI_TIMEOUT_TO_GET_INFO
-  : DEFAULT_TIMEOUT_TO_GET_INFO
 
 /**
  * @type {import('vite').UserConfig}

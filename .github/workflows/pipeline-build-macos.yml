@@ -92,7 +92,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: inputs.target == vars.ALL || endsWith(inputs.target, 'x64')
       with:
-        name: macos-x64-builds
+        name: macos-zip-builds
         path: |
           ./release/Redis-Insight*.zip
 

@@ -30,7 +30,7 @@ jobs:
       run: |
 
         # Define array of folders to exclude
-        exclude=("web" "web-mini" "redistack-builds")
+        exclude=("web" "web-mini" "redistack-builds", "docker")
 
         # Iterate through first-level directories in ./release
         for dir in ./release/*/; do
@@ -69,12 +69,12 @@ jobs:
         appName=$(jq -r '.productName' electron-builder.json)
         appVersion=$(jq -r '.version' redisinsight/package.json)
 
-        echo "export downloadLatestFolderPath=${downloadLatestFolderPath}" >> $BASH_ENV
-        echo "export upgradeLatestFolderPath=${upgradeLatestFolderPath}" >> $BASH_ENV
-        echo "export releasesFolderPath=${releasesFolderPath}" >> $BASH_ENV
-        echo "export applicationName=${appName}" >> $BASH_ENV
-        echo "export applicationVersion=${appVersion}" >> $BASH_ENV
-        echo "export appFileName=Redis-Insight" >> $BASH_ENV
+        echo "export downloadLatestFolderPath=${downloadLatestFolderPath}" >> $GITHUB_ENV
+        echo "export upgradeLatestFolderPath=${upgradeLatestFolderPath}" >> $GITHUB_ENV
+        echo "export releasesFolderPath=${releasesFolderPath}" >> $GITHUB_ENV
+        echo "export applicationName=${appName}" >> $GITHUB_ENV
+        echo "export applicationVersion=${appVersion}" >> $GITHUB_ENV
+        echo "export appFileName=Redis-Insight" >> $GITHUB_ENV
 
         # download latest.yml file to get last public version
         aws s3 cp s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath}/${latestYmlFileName} .
@@ -83,7 +83,7 @@ jobs:
         versionLineArr=(${versionLine/:// })
         previousAppVersion=${versionLineArr[1]}
 
-        echo "export previousApplicationVersion=${previousAppVersion}" >> $BASH_ENV
+        echo "export previousApplicationVersion=${previousAppVersion}" >> $GITHUB_ENV
 
     - name: Publish AWS S3
       run: |

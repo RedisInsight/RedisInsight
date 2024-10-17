@@ -13,7 +13,7 @@ export const initialState: {
   status: typeof appStatus[number],
   error?: string
 } = {
-  status: STATUS_INITIAL
+  status: STATUS_INITIAL,
 }
 
 const appInitSlice = createSlice({
@@ -26,14 +26,22 @@ const appInitSlice = createSlice({
     initializeAppStateSuccess: (state) => {
       state.status = STATUS_SUCCESS
     },
-    initializeAppStateFail: (state, { payload }: { payload: { error: string } }) => {
+    initializeAppStateFail: (state, { payload }: {
+      payload: {
+        error: string
+      }
+    }) => {
       state.status = STATUS_FAIL
       state.error = payload.error
     },
-  }
+  },
 })
 
-export const { initializeAppState, initializeAppStateSuccess, initializeAppStateFail } = appInitSlice.actions
+export const {
+  initializeAppState,
+  initializeAppStateSuccess,
+  initializeAppStateFail,
+} = appInitSlice.actions
 
 export const appInitSelector = (state: RootState) => state.app.init
 
@@ -48,21 +56,20 @@ export default appInitSlice.reducer
  */
 export function initializeAppAction(
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(initializeAppState())
       if (getCsrfEndpoint()) {
         await dispatch(fetchCsrfTokenAction())
-        await dispatch(fetchFeatureFlags())
-      } else {
-        await dispatch(fetchFeatureFlags())
       }
+      await dispatch(fetchFeatureFlags())
+
       dispatch(initializeAppStateSuccess())
       onSuccessAction?.()
     } catch (error: any) {
-      console.error('Error fetching CSRF token: ', error)
+      console.error('Error initializing application: ', error)
       dispatch(initializeAppStateFail({ error: error?.message || '' }))
       onFailAction?.()
     }

@@ -32,7 +32,7 @@ import { addOwnTokenToArgs, findCurrentArgument, } from 'uiSrc/pages/workbench/u
 import { getRange, getRediSearchSignutureProvider, } from 'uiSrc/pages/workbench/utils/monaco'
 import { CursorContext } from 'uiSrc/pages/workbench/types'
 import { asSuggestionsRef, getCommandsSuggestions, isIndexComplete } from 'uiSrc/pages/workbench/utils/suggestions'
-import { COMMANDS_TO_GET_INDEX_INFO, EmptySuggestionsIds, } from 'uiSrc/pages/workbench/constants'
+import { COMMANDS_TO_GET_INDEX_INFO, COMPOSITE_ARGS, EmptySuggestionsIds, } from 'uiSrc/pages/workbench/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { findSuggestionsByArg } from 'uiSrc/pages/workbench/utils/searchSuggestions'
@@ -111,9 +111,11 @@ const Query = (props: Props) => {
     [commands]
   )
 
-  const COMPOSITE_ARGS = useMemo(() => commands
-    .filter((command) => command.name && command.name.includes(' '))
-    .map(({ name }) => name),
+  const compositeTokens = useMemo(() =>
+    commands
+      .filter((command) => command.token && command.token.includes(' '))
+      .map(({ token }) => token)
+      .concat(...COMPOSITE_ARGS),
   [commands])
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -342,7 +344,7 @@ const Query = (props: Props) => {
       e.position,
       REDIS_COMMANDS_SPEC,
       REDIS_COMMANDS_ARRAY,
-      COMPOSITE_ARGS as string[]
+      compositeTokens as string[]
     )
     handleSuggestions(editor, command)
     handleDslSyntax(e, command)

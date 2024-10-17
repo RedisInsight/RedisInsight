@@ -19,13 +19,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # - name: Configure AWS Credentials
-    #   uses: aws-actions/configure-aws-credentials@v4
-    #   with:
-    #     aws-region: ${{ secrets.AWS_REGION }}
-    #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
     - name: Download All Artifacts
       uses: actions/download-artifact@v4
       with:
@@ -35,6 +28,24 @@ jobs:
 
     - name: Publish private
       run: |
+
+        # Define array of folders to exclude
+        exclude=("web" "web-mini", "redis-stack", "docker")
+
+        # Iterate through first-level directories
+        for dir in */; do
+          dir_name=$(basename "$dir")
+
+          # Check if the directory is not in the exclude list
+          if [[ ! " ${exclude[@]} " =~ " ${dir_name} " ]]; then
+            # Move all files from the subdirectory to the root directory
+            mv "$dir"* ./
+
+            # Remove the now-empty subdirectory
+            rmdir "$dir"
+          fi
+        done
+
         chmod +x .circleci/build/sum_sha256.sh
         .circleci/build/sum_sha256.sh
         applicationVersion=$(jq -r '.version' redisinsight/package.json)

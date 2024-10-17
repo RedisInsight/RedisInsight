@@ -69,12 +69,12 @@ jobs:
         appName=$(jq -r '.productName' electron-builder.json)
         appVersion=$(jq -r '.version' redisinsight/package.json)
 
-        echo "export downloadLatestFolderPath=${downloadLatestFolderPath}" >> $GITHUB_ENV
-        echo "export upgradeLatestFolderPath=${upgradeLatestFolderPath}" >> $GITHUB_ENV
-        echo "export releasesFolderPath=${releasesFolderPath}" >> $GITHUB_ENV
-        echo "export applicationName=${appName}" >> $GITHUB_ENV
-        echo "export applicationVersion=${appVersion}" >> $GITHUB_ENV
-        echo "export appFileName=Redis-Insight" >> $GITHUB_ENV
+        echo "downloadLatestFolderPath=${downloadLatestFolderPath}" >> $GITHUB_ENV
+        echo "upgradeLatestFolderPath=${upgradeLatestFolderPath}" >> $GITHUB_ENV
+        echo "releasesFolderPath=${releasesFolderPath}" >> $GITHUB_ENV
+        echo "applicationName=${appName}" >> $GITHUB_ENV
+        echo "applicationVersion=${appVersion}" >> $GITHUB_ENV
+        echo "appFileName=Redis-Insight" >> $GITHUB_ENV
 
         # download latest.yml file to get last public version
         aws s3 cp s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath}/${latestYmlFileName} .
@@ -83,7 +83,7 @@ jobs:
         versionLineArr=(${versionLine/:// })
         previousAppVersion=${versionLineArr[1]}
 
-        echo "export previousApplicationVersion=${previousAppVersion}" >> $GITHUB_ENV
+        echo "previousApplicationVersion=${previousAppVersion}" >> $GITHUB_ENV
 
     - name: Publish AWS S3
       run: |
@@ -113,75 +113,75 @@ jobs:
 
         # declare all tags
         declare -A tag0=(
-            [arch]='x64'
-            [platform]='macos'
-            [objectDownload]=${appFileName}'-mac-x64.dmg'
-            [objectUpgrade]=${appFileName}'-mac-x64.zip'
+          [arch]='x64'
+          [platform]='macos'
+          [objectDownload]=${appFileName}'-mac-x64.dmg'
+          [objectUpgrade]=${appFileName}'-mac-x64.zip'
         )
 
         declare -A tag1=(
-            [arch]='arm64'
-            [platform]='macos'
-            [objectDownload]=${appFileName}'-mac-arm64.dmg'
-            [objectUpgrade]=${appFileName}'-mac-arm64.zip'
+          [arch]='arm64'
+          [platform]='macos'
+          [objectDownload]=${appFileName}'-mac-arm64.dmg'
+          [objectUpgrade]=${appFileName}'-mac-arm64.zip'
         )
 
         declare -A tag2=(
-            [arch]='x64'
-            [platform]='windows'
-            [objectDownload]=${appFileName}'-win-installer.exe'
+          [arch]='x64'
+          [platform]='windows'
+          [objectDownload]=${appFileName}'-win-installer.exe'
         )
 
         declare -A tag3=(
-            [arch]='x64'
-            [platform]='linux_AppImage'
-            [objectDownload]=${appFileName}'-linux-x86_64.AppImage'
+          [arch]='x64'
+          [platform]='linux_AppImage'
+          [objectDownload]=${appFileName}'-linux-x86_64.AppImage'
         )
 
         declare -A tag4=(
-            [arch]='x64'
-            [platform]='linux_deb'
-            [objectDownload]=${appFileName}'-linux-amd64.deb'
+          [arch]='x64'
+          [platform]='linux_deb'
+          [objectDownload]=${appFileName}'-linux-amd64.deb'
         )
 
         declare -A tag5=(
-            [arch]='x64'
-            [platform]='linux_rpm'
-            [objectDownload]=${appFileName}'-linux-x86_64.rpm'
+          [arch]='x64'
+          [platform]='linux_rpm'
+          [objectDownload]=${appFileName}'-linux-x86_64.rpm'
         )
 
         # loop for add all tags to each app and create metrics
         declare -n tag
         for tag in ${!tag@}; do
 
-            designation0="downloads"
-            designation1="upgrades"
+          designation0="downloads"
+          designation1="upgrades"
 
-            id0="${tag[platform]}_${tag[arch]}_${designation0}_${applicationVersion}"
-            id1="${tag[platform]}_${tag[arch]}_${designation1}_${applicationVersion}"
+          id0="${tag[platform]}_${tag[arch]}_${designation0}_${applicationVersion}"
+          id1="${tag[platform]}_${tag[arch]}_${designation1}_${applicationVersion}"
 
-            # add tags to each app for download
-            aws s3api put-object-tagging \
-              --bucket ${AWS_BUCKET_NAME} \
-              --key ${downloadLatestFolderPath}/${tag[objectDownload]} \
-              --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation0}"'" }]}'
+          # add tags to each app for download
+          aws s3api put-object-tagging \
+            --bucket ${AWS_BUCKET_NAME} \
+            --key ${downloadLatestFolderPath}/${tag[objectDownload]} \
+            --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation0}"'" }]}'
 
-            # add tags to each app for upgrades
-            aws s3api put-object-tagging \
-              --bucket ${AWS_BUCKET_NAME} \
-              --key ${upgradeLatestFolderPath}/${tag[objectUpgrade]:=${tag[objectDownload]}} \
-              --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation1}"'" }]}'
+          # add tags to each app for upgrades
+          aws s3api put-object-tagging \
+            --bucket ${AWS_BUCKET_NAME} \
+            --key ${upgradeLatestFolderPath}/${tag[objectUpgrade]:=${tag[objectDownload]}} \
+            --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation1}"'" }]}'
 
-            # Create metrics for all tags for downloads to S3
-            aws s3api put-bucket-metrics-configuration \
-              --bucket ${AWS_BUCKET_NAME} \
-              --id ${id0} \
-              --metrics-configuration '{"Id": "'"${id0}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation0}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"} ]}}}'
+          # Create metrics for all tags for downloads to S3
+          aws s3api put-bucket-metrics-configuration \
+            --bucket ${AWS_BUCKET_NAME} \
+            --id ${id0} \
+            --metrics-configuration '{"Id": "'"${id0}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation0}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"} ]}}}'
 
-            # Create metrics for all tags for upgrades to S3
-            aws s3api put-bucket-metrics-configuration \
-              --bucket ${AWS_BUCKET_NAME} \
-              --id ${id1} \
-              --metrics-configuration '{"Id": "'"${id1}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation1}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"}]}}}'
+          # Create metrics for all tags for upgrades to S3
+          aws s3api put-bucket-metrics-configuration \
+            --bucket ${AWS_BUCKET_NAME} \
+            --id ${id1} \
+            --metrics-configuration '{"Id": "'"${id1}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation1}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"}]}}}'
 
         done

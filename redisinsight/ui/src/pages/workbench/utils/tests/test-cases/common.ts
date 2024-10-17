@@ -248,7 +248,7 @@ export const commonfindCurrentArgumentCases = [
     input: 'FT.SEARCH textVehicles "*" RETURN 2 test ',
     result: expect.any(Object),
     appendIncludes: ['AS'],
-    appendNotIncludes: ['SORTBY', 'FILTER', 'LIMIT', 'DIALECT', 'AS', 'ASC'],
+    appendNotIncludes: ['SORTBY', 'FILTER', 'LIMIT', 'DIALECT', 'ASC'],
   },
   {
     input: 'FT.CREATE textVehicles ON ',
@@ -287,7 +287,8 @@ export const commonfindCurrentArgumentCases = [
   {
     input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' SORTBY nargs property ASC ',
     result: expect.any(Object),
-    appendIncludes: ['MAX', 'APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
+    appendIncludes: ['MAX', 'APPLY', 'LOAD', 'GROUPBY'],
+    appendNotIncludes: ['SORTBY'],
   },
   {
     input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' PARAMS 4 name1 value1 name2 value2 ',

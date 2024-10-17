@@ -9,12 +9,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Download Docker artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: docker
+        path: ./release
+
     - name: Publish docker
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-        DOCKER_V1_USER: ${{ secrets.DOCKER_V1_USER }}
         DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+        DOCKER_V1_USER: ${{ secrets.DOCKER_V1_USER }}
         DOCKER_V1_REPO: ${{ secrets.DOCKER_V1_REPO }}
       run: |
         appVersion=$(jq -r '.version' redisinsight/package.json)
@@ -32,10 +38,4 @@ jobs:
         -d redisinsight \
         -r $DOCKER_V1_REPO \
         -v $appVersion
-
-    # - uses: actions/upload-artifact@v4
-    #   with:
-    #     name: licenses
-    #     path: licenses
-    #     if-no-files-found: error
 

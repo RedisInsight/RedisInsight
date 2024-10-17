@@ -152,12 +152,12 @@ jobs:
         echo "analazedMalicious:  ${analazedMalicious}, analazedSuspicious: ${analazedSuspicious}, analazedHarmless: ${analazedHarmless}"
 
         if [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
-          echo "export FAILED=true" >> $GITHUB_ENV
+          echo "FAILED=true" >> $GITHUB_ENV
           echo 'Found dangers';
         fi
 
-        echo "export FAILED=false" >> $GITHUB_ENV
-        echo "export skip_report=true" >> $GITHUB_ENV
+        echo "FAILED=false" >> $GITHUB_ENV
+        echo "skip_report=true" >> $GITHUB_ENV
         echo 'Passed';
 
     - name: Send Report

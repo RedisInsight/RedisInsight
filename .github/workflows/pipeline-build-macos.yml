@@ -118,7 +118,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: vars.ENV == 'production'
       with:
-        name: 'redistack-builds'
+        name: 'redisstack'
         path: |
           ./release/redisstack
 

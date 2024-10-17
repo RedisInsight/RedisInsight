@@ -30,7 +30,7 @@ jobs:
       run: |
 
         # Define array of folders to exclude
-        exclude=("web" "web-mini" "redistack-builds", "docker")
+        exclude=("web" "web-mini" "redisstack", "docker")
 
         # Iterate through first-level directories in ./release
         for dir in ./release/*/; do

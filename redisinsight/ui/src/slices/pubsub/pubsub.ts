@@ -6,7 +6,8 @@ import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { StatePubSub } from 'uiSrc/slices/interfaces/pubsub'
 import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { SubscriptionDto } from 'apiSrc/modules/pub-sub/dto/subscription.dto'
+import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
+import { SubscriptionType } from 'uiSrc/constants/pubSub'
 import { MessagesResponse } from 'apiSrc/modules/pub-sub/dto/messages.response'
 import { PublishResponse } from 'apiSrc/modules/pub-sub/dto/publish.response'
 
@@ -32,9 +33,15 @@ const pubSubSlice = createSlice({
     setPubSubConnected: (state, { payload }: PayloadAction<boolean>) => {
       state.isConnected = payload
     },
-    toggleSubscribeTriggerPubSub: (state, { payload }: PayloadAction<SubscriptionDto[]>) => {
+    toggleSubscribeTriggerPubSub: (state, { payload }: PayloadAction<string>) => {
+      const channels = payload.trim() || DEFAULT_SEARCH_MATCH
+      const subs = channels.split(' ').map((channel) => ({
+        channel,
+        type: SubscriptionType.PSubscribe,
+      }))
+
       state.isSubscribeTriggered = !state.isSubscribeTriggered
-      state.subscriptions = payload
+      state.subscriptions = subs
     },
     setIsPubSubSubscribed: (state) => {
       state.isSubscribed = true

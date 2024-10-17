@@ -50,7 +50,6 @@ const cellCache = new CellMeasurerCache({
 })
 
 export interface Props {
-  isFooterOpen?: boolean
   onRemoveKey: () => void
 }
 

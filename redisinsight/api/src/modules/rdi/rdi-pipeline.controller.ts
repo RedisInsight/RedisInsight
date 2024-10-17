@@ -66,6 +66,39 @@ export class RdiPipelineController {
     return this.rdiPipelineService.deploy(rdiClientMetadata, dto);
   }
 
+  @Post('/stop')
+  @ApiEndpoint({
+    description: 'Stops running pipeline',
+    responses: [{ status: 200 }],
+  })
+  async stopPipeline(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+  ): Promise<void> {
+    return this.rdiPipelineService.stopPipeline(rdiClientMetadata);
+  }
+
+  @Post('/start')
+  @ApiEndpoint({
+    description: 'Starts the stopped pipeline',
+    responses: [{ status: 200 }],
+  })
+  async startPipeline(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+  ): Promise<void> {
+    return this.rdiPipelineService.startPipeline(rdiClientMetadata);
+  }
+
+  @Post('/reset')
+  @ApiEndpoint({
+    description: 'Resets default pipeline',
+    responses: [{ status: 200 }],
+  })
+  async resetPipeline(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+  ): Promise<void> {
+    return this.rdiPipelineService.resetPipeline(rdiClientMetadata);
+  }
+
   @Post('/test-connections')
   @ApiEndpoint({
     description: 'Test target connections',

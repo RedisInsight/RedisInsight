@@ -23,6 +23,7 @@ import {
 import {
   fetchServerInfo,
   appServerInfoSelector,
+  setServerLoaded
 } from 'uiSrc/slices/app/info'
 
 import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
@@ -42,7 +43,10 @@ const SETTINGS_PAGE_PATH = '/settings'
 const Config = () => {
   const serverInfo = useSelector(appServerInfoSelector)
   const { config, spec } = useSelector(userSettingsSelector)
-  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const {
+    [FeatureFlags.cloudSso]: cloudSsoFeature,
+    [FeatureFlags.envDependent]: envDependentFeature
+  } = useSelector(appFeatureFlagsFeaturesSelector)
   const { pathname } = useLocation()
 
   const dispatch = useDispatch()
@@ -50,17 +54,21 @@ const Config = () => {
     setFavicon(favicon)
 
     dispatch(setCapability(localStorageService?.get(BrowserStorageItem.capability)))
+    if (envDependentFeature?.flag) {
+      dispatch(fetchServerInfo())
+      dispatch(fetchNotificationsAction())
+      dispatch(fetchCustomTutorials())
+    } else {
+      dispatch(setServerLoaded())
+    }
 
-    dispatch(fetchServerInfo())
     dispatch(fetchUnsupportedCliCommandsAction())
     dispatch(fetchRedisCommandsInfo())
-    dispatch(fetchNotificationsAction())
     dispatch(fetchContentRecommendations())
     dispatch(fetchGuideLinksAction())
 
     // get tutorials
     dispatch(fetchTutorials())
-    dispatch(fetchCustomTutorials())
 
     dispatch(fetchFeatureFlags())
 
@@ -71,7 +79,7 @@ const Config = () => {
   }, [])
 
   useEffect(() => {
-    if (config && spec) {
+    if (config && spec && envDependentFeature?.flag) {
       checkSettingsToShowPopup()
     }
   }, [spec])
@@ -80,7 +88,7 @@ const Config = () => {
     if (cloudSsoFeature?.flag) {
       dispatch(fetchProfile())
     }
-  }, [cloudSsoFeature])
+  }, [cloudSsoFeature?.flag])
 
   useEffect(() => {
     featuresHighlight()

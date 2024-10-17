@@ -13,7 +13,7 @@ import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { Pages } from 'uiSrc/constants'
-import OAuthSocialButtons from '../../shared/oauth-social-buttons'
+import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -99,20 +99,26 @@ const OAuthAutodiscovery = (props: Props) => {
       className={styles.container}
       data-testid="oauth-container-import"
     >
-      <EuiText className={styles.text} color="subdued">
-        Auto-discover subscriptions and add your databases.
-        <br />
-        A new Redis Cloud account will be created for you if you don’t have one.
-      </EuiText>
-      <OAuthSocialButtons
+      <OAuthForm
         inline={inline}
         className={styles.buttonsContainer}
         onClick={handleClickSso}
         action={OAuthSocialAction.Import}
-      />
-      <div className={styles.containerAgreement}>
-        <OAuthAgreement size="s" />
-      </div>
+      >
+        {(form: React.ReactNode) => (
+          <>
+            <EuiText className={styles.text} color="subdued">
+              Auto-discover subscriptions and add your databases.
+              <br />
+              A new Redis Cloud account will be created for you if you don’t have one.
+            </EuiText>
+            {form}
+            <div className={styles.containerAgreement}>
+              <OAuthAgreement size="s" />
+            </div>
+          </>
+        )}
+      </OAuthForm>
     </div>
   )
 }

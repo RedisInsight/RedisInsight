@@ -8,6 +8,9 @@ export enum RdiUrl {
   DryRunJob = 'api/v1/pipelines/jobs/dry-run',
   JobFunctions = '/api/v1/pipelines/jobs/functions',
   Deploy = 'api/v1/pipelines',
+  StopPipeline = 'api/v1/pipelines/stop',
+  StartPipeline = 'api/v1/pipelines/start',
+  ResetPipeline = 'api/v1/pipelines/reset',
   TestConnections = 'api/v1/pipelines/targets/dry-run',
   GetStatistics = 'api/v1/monitoring/statistics',
   GetPipelineStatus = 'api/v1/status',
@@ -22,3 +25,10 @@ export const RDI_SYNC_INTERVAL = 5 * 60 * 1_000; // 5 min
 export const POLLING_INTERVAL = 1_000;
 export const MAX_POLLING_TIME = 2 * 60 * 1000; // 2 min
 export const WAIT_BEFORE_POLLING = 1_000;
+
+export enum PipelineActions {
+  Deploy = 'Deploy',
+  Reset = 'Reset',
+  Start = 'Start',
+  Stop = 'Stop',
+}

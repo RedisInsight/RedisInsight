@@ -220,7 +220,7 @@ const VirtualGrid = (props: IProps) => {
             style={{
               width: lastColumn?.minWidth,
               height: getRowHeight(rowIndex),
-              marginLeft: width - lastColumn?.minWidth - (hasHorizontalScrollOffset ? 29 : 13)
+              marginLeft: width - lastColumn?.minWidth - (hasHorizontalScrollOffset ? 23 : 13)
             }}
           >
             {lastColumn?.render && isObject(rowData) && lastColumn?.render(rowData, expanded) }

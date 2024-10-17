@@ -2,7 +2,7 @@ import { Selector } from 'testcafe';
 import { keyLength, KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { addKeysViaCli, deleteKeysViaCli, formattersKeyTypes } from '../../../../helpers/keys';
 import { Common, DatabaseHelper } from '../../../../helpers';
-import { BrowserPage } from '../../../../pageObjects';
+import { BrowserPage, SettingsPage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import {
@@ -20,6 +20,8 @@ import { phpData } from '../../../../test-data/formatters';
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const workbenchPage = new WorkbenchPage();
+const settingsPage = new SettingsPage();
 
 const keysData = formattersKeyTypes.map(item =>
     ({ ...item, keyName: `${item.keyName}` + '-' + `${Common.generateWord(keyLength)}` }));

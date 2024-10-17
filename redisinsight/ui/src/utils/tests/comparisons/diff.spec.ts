@@ -18,7 +18,7 @@ describe('getDiffKeysOfObjectValues', () => {
 
 const getFormUpdatesTests: any[] = [
   [{ name: 'name' }, { name: 'name' }, {}],
-  [{ name: '' }, { name: 'name' }, { name: null }],
+  [{ name: '' }, { name: 'name' }, { name: '' }],
   [{ name: 'name' }, { name: '' }, { name: 'name' }],
   [{ name: 'name', port: 123 }, { name: '', port: 123 }, { name: 'name' }],
   [{ name: 'name', port: 123 }, { name: '', port: 1 }, { name: 'name', port: 123 }],

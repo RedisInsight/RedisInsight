@@ -23,6 +23,7 @@ import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 import { mockCloudAuthService } from 'src/__mocks__/cloud-auth';
 import axios from 'axios';
 import { ServerService } from 'src/modules/server/server.service';
+import { CloudAuthIdpType } from 'src/modules/cloud/auth/models';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -230,6 +231,21 @@ describe('CloudUserApiService', () => {
       });
       expect(mockedAxios.post).toHaveBeenCalledTimes(1);
       expect(mockedAxios.post).toHaveBeenNthCalledWith(1, 'login', expect.anything(), expect.anything());
+    });
+    it('should login and get csrf when no apiSessionId login should be sent with "auth_mode"', async () => {
+      sessionService.getSession.mockResolvedValueOnce({ idpType: CloudAuthIdpType.Sso });
+
+      expect(await service['ensureLogin'](mockSessionMetadata)).toEqual(undefined);
+      expect(spyEnsureAccessToken).toHaveBeenCalledTimes(1);
+      expect(spyEnsureCsrf).toHaveBeenCalledTimes(1);
+      expect(sessionService.getSession).toHaveBeenCalledWith(mockSessionMetadata.sessionId);
+      expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockSessionMetadata.sessionId, {
+        apiSessionId: mockCloudApiAuthDto.apiSessionId,
+      });
+      expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+      expect(mockedAxios.post).toHaveBeenNthCalledWith(1, 'login', expect.objectContaining({
+        auth_mode: CloudAuthIdpType.Sso,
+      }), expect.anything());
     });
     it('should throw unauthorized error when no session id successfully fetched', async () => {
       when(mockedAxios.post).calledWith('login', expect.anything(), expect.anything())

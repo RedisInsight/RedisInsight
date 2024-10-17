@@ -1,11 +1,6 @@
 import React from 'react'
-import { cloneDeep } from 'lodash'
-import { render, cleanup, mockedStore, fireEvent, screen } from 'uiSrc/utils/test-utils'
-
-import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
-import { CloudAuthSocial, IpcInvokeEvent } from 'uiSrc/electron/constants'
-import { signIn } from 'uiSrc/slices/oauth/cloud'
-
+import { render, fireEvent, screen } from 'uiSrc/utils/test-utils'
+import { OAuthStrategy } from 'uiSrc/slices/interfaces'
 import OAuthSocialButtons from './OAuthSocialButtons'
 
 jest.mock('uiSrc/slices/oauth/cloud', () => ({
@@ -16,58 +11,34 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
   oauthCloudPAgreementSelector: jest.fn().mockReturnValue(true),
 }))
 
-let store: typeof mockedStore
-const invokeMock = jest.fn()
-beforeEach(() => {
-  cleanup()
-  store = cloneDeep(mockedStore)
-  store.clearActions()
-  window.app = {
-    ipc: { invoke: invokeMock }
-  } as any
-})
+const onClick = jest.fn()
 
 describe('OAuthSocialButtons', () => {
   it('should render', () => {
-    expect(render(<OAuthSocialButtons action={OAuthSocialAction.Create} />)).toBeTruthy()
+    expect(render(<OAuthSocialButtons />)).toBeTruthy()
   })
 
   it('should call proper actions after click on google', () => {
-    const onClick = jest.fn()
-    render(<OAuthSocialButtons action={OAuthSocialAction.Create} onClick={onClick} />)
+    render(<OAuthSocialButtons onClick={onClick} />)
 
     fireEvent.click(screen.getByTestId('google-oauth'))
 
-    expect(onClick).toBeCalledWith('Google')
-
-    expect(invokeMock).toBeCalledTimes(1)
-    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, {
-      action: OAuthSocialAction.Create, strategy: CloudAuthSocial.Google
-    })
-
-    const expectedActions = [signIn()]
-    expect(store.getActions()).toEqual(expectedActions)
-
-    invokeMock.mockRestore()
+    expect(onClick).toBeCalledWith(OAuthStrategy.Google)
   })
 
   it('should call proper actions after click on github', () => {
-    const onClick = jest.fn()
-    render(<OAuthSocialButtons action={OAuthSocialAction.Import} onClick={onClick} />)
+    render(<OAuthSocialButtons onClick={onClick} />)
 
     fireEvent.click(screen.getByTestId('github-oauth'))
 
-    expect(onClick).toBeCalledWith('GitHub')
+    expect(onClick).toBeCalledWith(OAuthStrategy.GitHub)
+  })
 
-    expect(invokeMock).toBeCalledTimes(1)
-    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, {
-      action: OAuthSocialAction.Import, strategy: CloudAuthSocial.Github
-    })
-    invokeMock.mockRestore()
+  it('should call proper actions after click on sso', () => {
+    render(<OAuthSocialButtons onClick={onClick} />)
 
-    const expectedActions = [signIn()]
-    expect(store.getActions()).toEqual(expectedActions)
+    fireEvent.click(screen.getByTestId('sso-oauth'))
 
-    invokeMock.mockRestore()
+    expect(onClick).toBeCalledWith(OAuthStrategy.SSO)
   })
 })

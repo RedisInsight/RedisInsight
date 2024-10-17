@@ -6,7 +6,6 @@ import { ExploreTab } from './explore-tab';
 export class InsightsPanel {
     // CONTAINERS
     sidePanel = Selector('[data-testid=side-panels-insights]');
-    explorePanelButton = Selector('[data-testid=insights-trigger]');
     closeButton = Selector('[data-testid=close-insights-btn]');
     activeTab = Selector('[class*=euiTab-isSelected]');
 
@@ -19,23 +18,12 @@ export class InsightsPanel {
     activeTabMask = '[class*=euiTab-isSelected]';
 
     /**
-     * Open/Close  Panel
-     * @param state State of panel
-     */
-    async togglePanel(state: boolean): Promise<void> {
-        const isPanelExists = await this.sidePanel.exists;
-
-        if (state !== isPanelExists) {
-            await t.click(this.explorePanelButton);
-        }
-    }
-
-    /**
      * get active tab
      */
     async getActiveTabName(): Promise<string> {
         return (this.sidePanel.find(this.activeTabMask)).textContent;
     }
+
     /**
      * Click on Panel tab
      * @param type of the tab
@@ -64,5 +52,4 @@ export class InsightsPanel {
     getInsightsPanel(): Selector {
         return Selector('[class=euiButton__text]').withExactText(ExploreTabs.Tips);
     }
-
 }

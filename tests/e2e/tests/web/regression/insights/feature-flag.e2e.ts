@@ -49,7 +49,7 @@ test('Verify that default config applied when remote config version is lower', a
     const featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
 
     await t.expect(featureVersion).eql(2.3403, 'Config with lowest version applied');
-    await browserPage.InsightsPanel.togglePanel(true);
+    await browserPage.NavigationHeader.togglePanel(true);
     await t.expect(browserPage.InsightsPanel.getInsightsPanel().exists).ok('Insights panel displayed when disabled in default config');
 });
 test('Verify that invaid remote config not applied even if its version is higher than in the default config', async t => {
@@ -60,7 +60,7 @@ test('Verify that invaid remote config not applied even if its version is higher
     const featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
 
     await t.expect(featureVersion).eql(2.3403, 'Config highest version not applied');
-    await browserPage.InsightsPanel.togglePanel(true);
+    await browserPage.NavigationHeader.togglePanel(true);
     await t.expect(browserPage.InsightsPanel.getInsightsPanel().exists).ok('Insights panel displayed when disabled in default config');
 });
 test
@@ -87,30 +87,30 @@ test
 
         await t.expect(featureVersion).eql(versionFromConfig, 'Config with invalid data applied');
         // Verify that Insights panel displayed if user's controlNumber is in range from config file
-        await browserPage.InsightsPanel.togglePanel(true);
+        await browserPage.NavigationHeader.togglePanel(true);
         await t.expect(browserPage.InsightsPanel.getInsightsPanel().exists).ok('Insights panel not displayed when enabled from remote config');
 
         // Verify that recommendations displayed for all databases if option enabled
         await t.click(browserPage.OverviewPanel.myRedisDBLink);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
-        await browserPage.InsightsPanel.togglePanel(true);
+        await browserPage.NavigationHeader.togglePanel(true);
         await t.expect(browserPage.InsightsPanel.getInsightsPanel().exists).ok('Insights panel not displayed for the other db connection');
-        await browserPage.InsightsPanel.togglePanel(true);
+        await browserPage.NavigationHeader.togglePanel(true);
         const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         await t.expect(tab.getRecommendationByName(redisVersionRecom).exists).ok('Redis Version recommendation not displayed');
 
-        await browserPage.InsightsPanel.togglePanel(false);
+        await browserPage.NavigationHeader.togglePanel(false);
         // Verify that Insights panel can be displayed for Telemetry enabled/disabled according to filters
         await t.click(browserPage.NavigationPanel.settingsButton);
         await settingsPage.changeAnalyticsSwitcher(false);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.InsightsPanel.togglePanel(true);
+        await browserPage.NavigationHeader.togglePanel(true);
         await t.expect(browserPage.InsightsPanel.getInsightsPanel().exists).notOk('Insights panel displayed without analytics when its filter is on');
 
         // Update remote config .json to config without analytics filter
         await modifyFeaturesConfigJson(pathes.analyticsConfig);
         await updateControlNumber(48.2);
-        await browserPage.InsightsPanel.togglePanel(true);
+        await browserPage.NavigationHeader.togglePanel(true);
         // Verify that Insights panel can be displayed for WebStack app according to filters
         await t.expect(browserPage.InsightsPanel.getInsightsPanel().exists).ok('Insights panel not displayed without analytics when its filter is off');
 
@@ -121,7 +121,7 @@ test
         // Update remote config .json to config with buildType filter excluding current app build
         await modifyFeaturesConfigJson(pathes.buildTypeConfig);
         await updateControlNumber(48.2);
-        await browserPage.InsightsPanel.togglePanel(true);
+        await browserPage.NavigationHeader.togglePanel(true);
         // Verify that buildType filter applied
         featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
         versionFromConfig = await Common.getJsonPropertyValue('version', pathes.buildTypeConfig);
@@ -131,7 +131,7 @@ test
         // Update remote config .json to config with insights feature disabled
         await modifyFeaturesConfigJson(pathes.flagOffConfig);
         await updateControlNumber(48.2);
-        await browserPage.InsightsPanel.togglePanel(true);
+        await browserPage.NavigationHeader.togglePanel(true);
         // Verify that Insights panel not displayed if the remote config file has it disabled
         featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
         versionFromConfig = await Common.getJsonPropertyValue('version', pathes.flagOffConfig);

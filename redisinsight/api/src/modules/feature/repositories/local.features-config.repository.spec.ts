@@ -5,8 +5,9 @@ import {
   mockFeaturesConfig,
   mockFeaturesConfigEntity,
   mockRepository,
+  mockSessionMetadata,
   MockType,
-} from 'src/__mocks__';
+} from 'src/__mocks__'
 import { LocalFeaturesConfigRepository } from 'src/modules/feature/repositories/local.features-config.repository';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import { plainToClass } from 'class-transformer';
@@ -85,11 +86,26 @@ describe('LocalFeaturesConfigRepository', () => {
 
       expect(result).toEqual(mockFeaturesConfig);
     });
+    it('should fail to create with unique constraint and return existing', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
+      repository.findOneBy.mockResolvedValueOnce(mockFeaturesConfig);
+      repository.save.mockRejectedValueOnce({ code: 'SQLITE_CONSTRAINT' });
+
+      const result = await service.getOrCreate();
+
+      expect(result).toEqual(mockFeaturesConfig);
+    });
+    it('should fail when failed to create new and error is not unique constraint', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
+      repository.save.mockRejectedValueOnce(new Error());
+
+      await expect(service.getOrCreate()).rejects.toThrow(Error);
+    });
   });
 
   describe('update', () => {
     it('should update config', async () => {
-      const result = await service.update(defaultConfig);
+      const result = await service.update(mockSessionMetadata, defaultConfig);
 
       expect(result).toEqual(mockFeaturesConfig);
       expect(repository.update).toHaveBeenCalledWith(

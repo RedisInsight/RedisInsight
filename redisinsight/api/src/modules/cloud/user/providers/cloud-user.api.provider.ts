@@ -41,6 +41,7 @@ export class CloudUserApiProvider extends CloudApiProvider {
         'login',
         {
           ...CloudApiProvider.generateUtmBody(utm),
+          auth_mode: credentials?.idpType,
         },
         {
           ...CloudApiProvider.getHeaders(credentials),

@@ -8,11 +8,14 @@ import { ApiRdiClient } from 'src/modules/rdi/client/api.rdi.client';
 import { RdiEntity } from 'src/modules/rdi/entities/rdi.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { RdiDryRunJobDto } from 'src/modules/rdi/dto';
+import { sign } from 'jsonwebtoken';
 
 export const mockRdiId = 'rdiId';
 export const mockRdiPasswordEncrypted = 'password_ENCRYPTED';
 
 export const mockRdiPasswordPlain = 'some pass';
+
+export const mockedRdiAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
 
 export class MockRdiClient extends ApiRdiClient {
   constructor(metadata: RdiClientMetadata, client: any = jest.fn()) {
@@ -30,6 +33,12 @@ export class MockRdiClient extends ApiRdiClient {
   public getStrategies = jest.fn();
 
   public deploy = jest.fn();
+
+  public startPipeline = jest.fn();
+
+  public stopPipeline = jest.fn();
+
+  public resetPipeline = jest.fn();
 
   public deployJob = jest.fn();
 

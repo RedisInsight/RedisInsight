@@ -27,6 +27,8 @@ import { applyTlSDatabase, applySSHDatabase, autoFillFormDetails, getTlsSettings
 import {
   DEFAULT_TIMEOUT,
   SubmitBtnText,
+  ADD_NEW,
+  ADD_NEW_CA_CERT,
 } from 'uiSrc/pages/home/constants'
 import ManualConnectionForm from './manual-connection-form'
 
@@ -174,6 +176,8 @@ const ManualConnectionWrapper = (props: Props) => {
       sentinelMasterName,
       sentinelMasterUsername,
       sentinelMasterPassword,
+      ssh,
+      tls
     } = values
 
     const database: any = {
@@ -186,6 +190,8 @@ const ManualConnectionWrapper = (props: Props) => {
       password,
       compressor,
       timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
+      ssh,
+      tls
     }
 
     // add tls & ssh for database (modifies database object)
@@ -203,7 +209,22 @@ const ManualConnectionWrapper = (props: Props) => {
     if (editMode) {
       database.id = editedInstance?.id
 
-      return getFormUpdates(database, omit(editedInstance, ['id']))
+      const updatedValues = getFormUpdates(database, omit(editedInstance, ['id']))
+
+      // When a new caCert/clientCert is deleted, the editedInstance
+      // is not updated with the deletion until 'apply' is
+      // clicked. Once the apply is clicked, the editedInstance object
+      // that is validated against, still has the older certificates
+      // attached. Attaching the new certs to the final object helps.
+      if (values.selectedCaCertName === ADD_NEW_CA_CERT && values.newCaCertName !== '' && values.newCaCertName === editedInstance.caCert?.name) {
+        updatedValues.caCert = database.caCert
+      }
+
+      if (values.selectedTlsClientCertId === ADD_NEW && values.newTlsCertPairName !== '' && values.newTlsCertPairName === editedInstance?.clientCert?.name) {
+        updatedValues.clientCert = database.clientCert
+      }
+
+      return updatedValues
     }
 
     return removeEmpty(database)

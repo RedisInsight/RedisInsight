@@ -8,6 +8,7 @@ import { classToClass } from 'src/utils';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import { FeaturesConfig } from 'src/modules/feature/model/features-config';
+import { SessionMetadata } from 'src/common/models';
 import * as defaultConfig from '../../../../config/features-config.json';
 
 @Injectable()
@@ -43,13 +44,21 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
     let entity = await this.repository.findOneBy({ id: this.id });
 
     if (!entity) {
-      this.logger.log('Creating features config entity');
+      try {
+        this.logger.log('Creating features config entity');
 
-      entity = await this.repository.save(plainToClass(FeaturesConfigEntity, {
-        id: this.id,
-        data: defaultConfig,
-        controlNumber: this.generateControlNumber(),
-      }));
+        entity = await this.repository.save(plainToClass(FeaturesConfigEntity, {
+          id: this.id,
+          data: defaultConfig,
+          controlNumber: this.generateControlNumber(),
+        }));
+      } catch (e) {
+        if (e.code === 'SQLITE_CONSTRAINT') {
+          return this.getOrCreate();
+        }
+
+        throw e;
+      }
     }
 
     return classToClass(FeaturesConfig, entity);
@@ -58,7 +67,7 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
   /**
    * @inheritDoc
    */
-  async update(data: any): Promise<FeaturesConfig> {
+  async update(_sessionMetadata: SessionMetadata, data: Record<string, any>): Promise<FeaturesConfig> {
     await this.repository.update(
       { id: this.id },
       plainToClass(FeaturesConfigEntity, { data, id: this.id }),

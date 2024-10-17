@@ -49,6 +49,9 @@ import rdiDryRunJobReducer from './rdi/dryRun'
 import rdiTestConnectionsReducer from './rdi/testConnections'
 import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
+import {getConfig} from 'uiSrc/config'
+
+const riConfig = getConfig()
 
 export const history = createBrowserHistory()
 
@@ -128,7 +131,7 @@ export const rootReducer = combineReducers({
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, }),
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: riConfig.app.env !== 'production',
 })
 
 export { store }

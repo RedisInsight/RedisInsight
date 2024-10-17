@@ -5,6 +5,7 @@ import { ApiEndpoints } from 'uiSrc/constants'
 import { cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 import { logoutUser } from 'uiSrc/slices/oauth/cloud'
 import { store } from 'uiSrc/slices/store'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 
 describe('requestInterceptor', () => {
   it('should properly set db-index to headers', () => {
@@ -54,7 +55,7 @@ describe('cloudAuthInterceptor', () => {
     try {
       await cloudAuthInterceptor(response)
     } catch {
-      expect(mockedTestStore.getActions()).toEqual([logoutUser()])
+      expect(mockedTestStore.getActions()).toEqual([logoutUser(), setSSOFlow()])
     }
   })
 

@@ -33,6 +33,7 @@ import {
   setBrowserPanelSizes,
   setLastPageContext,
   setBrowserBulkActionOpen,
+  appContextSelector,
 } from 'uiSrc/slices/app/context'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
@@ -42,6 +43,7 @@ import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import OnboardingStartPopover from 'uiSrc/pages/browser/components/onboarding-start-popover'
 import { sidePanelsSelector } from 'uiSrc/slices/panels/sidePanels'
+import { useStateWithContext } from 'uiSrc/services/hooks'
 import BrowserSearchPanel from './components/browser-search-panel'
 import BrowserLeftPanel from './components/browser-left-panel'
 import BrowserRightPanel from './components/browser-right-panel'
@@ -66,6 +68,8 @@ const BrowserPage = () => {
     keyList: { selectedKey: selectedKeyContext },
     bulkActions: { opened: bulkActionOpenContext },
   } = useSelector(appContextBrowser)
+  const { contextInstanceId } = useSelector(appContextSelector)
+
   const { isBrowserFullScreen } = useSelector(keysSelector)
   const { type } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
   const { viewType, searchMode } = useSelector(keysSelector)
@@ -73,10 +77,11 @@ const BrowserPage = () => {
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
   const [arePanelsCollapsed, setArePanelsCollapsed] = useState(isOneSideMode(!!openedSidePanel))
-  const [selectedKey, setSelectedKey] = useState<Nullable<RedisResponseBuffer>>(selectedKeyContext)
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
   const [isCreateIndexPanelOpen, setIsCreateIndexPanelOpen] = useState(false)
   const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(bulkActionOpenContext)
+
+  const [selectedKey, setSelectedKey] = useStateWithContext<Nullable<RedisResponseBuffer>>(selectedKeyContext, null)
 
   const [sizes, setSizes] = useState(panelSizes)
 
@@ -118,8 +123,8 @@ const BrowserPage = () => {
   }, [isBulkActionsPanelOpen])
 
   useEffect(() => {
-    setSelectedKey(selectedKeyContext)
-  }, [selectedKeyContext])
+    if (contextInstanceId === instanceId) setSelectedKey(selectedKeyContext)
+  }, [selectedKeyContext, contextInstanceId])
 
   useEffect(() => {
     selectedKeyRef.current = selectedKey

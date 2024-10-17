@@ -121,3 +121,13 @@ export enum RdiPopoverOptions  {
     Pipeline = 'empty',
 }
 
+export enum TlsCertificates  {
+    CA  = 'ca',
+    Client = 'client',
+}
+
+export enum AddElementInList  {
+    Head ,
+    Tail,
+}
+

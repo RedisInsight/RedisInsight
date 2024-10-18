@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - 'release/**'
-      # todo: remove after tests
-      - 'test/release/**'
 
 jobs:
   tests:

@@ -1,9 +1,0 @@
-name: Nightly jobs
-on:
-  schedule:
-  - cron: '0 0 * * *'
-
-jobs:
-  virustotal-check:
-    uses: ./.github/workflows/virustotal.yml
-    secrets: inherit

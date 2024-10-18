@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - 'latest'
-      # todo: remove after test
-      - 'test/prod/**'
 
 jobs:
   tests-prod:

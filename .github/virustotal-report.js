@@ -36,10 +36,8 @@ if (failed === true) {
   results.message.text = '<!here> ' + results.message.text;
 }
 
-console.log({'results.message': results.message});
-
 
 fs.writeFileSync(fileName, JSON.stringify({
-  // channel: process.env.SLACK_VIRUSTOTAL_REPORT_CHANNEL,
+  channel: process.env.SLACK_VIRUSTOTAL_REPORT_CHANNEL,
   ...results.message,
 }));

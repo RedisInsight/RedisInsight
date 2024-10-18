@@ -6370,12 +6370,13 @@ nest-winston@^1.9.7:
   dependencies:
     fast-safe-stringify "^2.1.1"
 
-nestjs-form-data@^1.8.7:
-  version "1.9.91"
-  resolved "https://registry.yarnpkg.com/nestjs-form-data/-/nestjs-form-data-1.9.91.tgz#379812fb9b920cb505b50960433be38bc9bda72f"
-  integrity sha512-g9PDq97UjOoDFjYnhtc/N5HIwTWiyp1DDA9iYs8suSXZK7Z17UE+Hw8HsKH9l2TXlUGUY/BrvaiACFZ472CXuw==
+nestjs-form-data@~1.8.7:
+  version "1.8.7"
+  resolved "https://registry.yarnpkg.com/nestjs-form-data/-/nestjs-form-data-1.8.7.tgz#ccdbc2060849e34018841bfba557de37ae64abdb"
+  integrity sha512-mk17APNXELILClea2nwffRrD/NK5Q6zulTJCzNPxwMWfWucHO2HD7Ftjwg2BVnwO27QgqILDLuaO6LEpP6Ng4w==
   dependencies:
     uid "^2.0.0"
+    append-field "^1.0.0"
     busboy "^1.6.0"
     concat-stream "^2.0.0"
     file-type "^16.5.4"

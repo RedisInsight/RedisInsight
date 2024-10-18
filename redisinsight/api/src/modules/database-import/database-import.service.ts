@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { get, isArray, set } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { ConnectionType, Compressor } from 'src/modules/database/entities/database.entity';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import {
@@ -123,7 +123,7 @@ export class DatabaseImportService {
           }
         })), Promise.resolve());
 
-      response = plainToInstance(DatabaseImportResponse, response);
+      response = plainToClass(DatabaseImportResponse, response);
 
       this.analytics.sendImportResults(response);
 
@@ -231,7 +231,7 @@ export class DatabaseImportService {
         errors.push(new InvalidCompressorException());
       }
 
-      const dto = plainToInstance(
+      const dto = plainToClass(
         ImportDatabaseDto,
         // additionally replace empty strings ("") with null
         Object.keys(data)

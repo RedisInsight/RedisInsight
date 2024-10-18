@@ -1,17 +1,17 @@
 import { forEach } from 'lodash';
 import { applyDecorators } from '@nestjs/common';
-import { instanceToPlain, plainToInstance, Transform } from 'class-transformer';
-import { ClassConstructor } from 'class-transformer/types/interfaces';
+import { classToPlain, plainToClass, Transform } from 'class-transformer';
+import { ClassType } from 'class-transformer/ClassTransformer';
 
-export function ObjectAsMap<T>(targetClass: ClassConstructor<T>) {
+export function ObjectAsMap<T>(targetClass: ClassType<T>) {
   return applyDecorators(
     Transform(
-      ({ value: object }): Map<string, T> => {
+      (object): Map<string, T> => {
         const result = new Map();
 
         try {
           forEach(object, (value, key) => {
-            result.set(key, plainToInstance(targetClass, value));
+            result.set(key, plainToClass(targetClass, value));
           });
 
           return result;
@@ -22,12 +22,12 @@ export function ObjectAsMap<T>(targetClass: ClassConstructor<T>) {
       { toClassOnly: true },
     ),
     Transform(
-      ({ value: map }): object => {
+      (map): object => {
         try {
           const result = {};
 
           forEach(Array.from(map), ([key, value]) => {
-            result[key] = instanceToPlain(value);
+            result[key] = classToPlain(value);
           });
 
           return result;

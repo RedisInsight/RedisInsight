@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
@@ -200,7 +200,7 @@ export class ApiRdiClient extends RdiClient {
 
       return {
         status: RdiStatisticsStatus.Success,
-        data: plainToInstance(RdiStatisticsData, convertKeysToCamelCase(data)),
+        data: plainToClass(RdiStatisticsData, convertKeysToCamelCase(data)),
       };
     } catch (e) {
       const message: string = parseErrorMessage(e);

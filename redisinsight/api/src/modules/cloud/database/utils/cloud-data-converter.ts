@@ -1,5 +1,5 @@
 import { find, get, isArray } from 'lodash';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import {
   CloudDatabase, CloudDatabaseMemoryStorage,
   CloudDatabasePersistencePolicy, CloudDatabaseProtocol, ICloudCapiDatabase, ICloudCapiSubscriptionDatabases,
@@ -21,7 +21,7 @@ export const parseCloudDatabaseCapiResponse = (
     databaseId, name, publicEndpoint, status, security, planMemoryLimit, memoryLimitMeasurementUnit,
   } = database;
 
-  return plainToInstance(CloudDatabase, {
+  return plainToClass(CloudDatabase, {
     subscriptionId,
     subscriptionType,
     databaseId,

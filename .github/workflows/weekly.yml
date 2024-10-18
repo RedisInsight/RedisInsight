@@ -1,0 +1,9 @@
+name: Weekly jobs
+on:
+  schedule:
+  - cron: 0 0 * * 1
+
+jobs:
+  licenses-check:
+    uses: ./.github/workflows/licenses-check.yml
+    secrets: inherit

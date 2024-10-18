@@ -1,6 +1,7 @@
 name: Build
 
 on:
+  # Manual trigger build
   workflow_dispatch:
     inputs:
       target:
@@ -12,13 +13,14 @@ on:
           - all
           - docker
           - windows:x64
-          - macos
           - macos:x64
           - macos:arm64
+          - macos:all
           - linux:appimage:x64
           - linux:deb:x64
           - linux:rpm:x64
           - linux:snap:x64
+          - linux:all
 
       environment:
         description: Environment to run build
@@ -26,28 +28,48 @@ on:
         default: 'staging'
         required: false
 
+  # Called for Release workflows
+  workflow_call:
+    inputs:
+      environment:
+        description: Environment to run build
+        type: string
+        default: 'staging'
+        required: false
+      target:
+        description: Build target
+        type: string
+        default: 'all'
+        required: false
+
 jobs:
-  build_linux:
-    if: startsWith(inputs.target, 'linux') || inputs.target == 'all'
+  build-linux:
+    if: startsWith(inputs.target, 'linux') || endsWith(inputs.target, 'all')
     # concurrency: build
     uses: ./.github/workflows/pipeline-build-linux.yml
     secrets: inherit
     with:
-      target: ${{ inputs.target }}
+      environment: ${{ inputs.environment }}
+      target: ${{ (endsWith(inputs.target, 'all') && 'all') || inputs.target }}
 
-  build_macos:
-    if: startsWith(inputs.target, 'macos') || inputs.target == 'all'
+  build-macos:
+    if: startsWith(inputs.target, 'macos') || endsWith(inputs.target, 'all')
     uses: ./.github/workflows/pipeline-build-macos.yml
     secrets: inherit
     with:
-      target: ${{ inputs.target }}
+      environment: ${{ inputs.environment }}
+      target: ${{ (endsWith(inputs.target, 'all') && 'all') || inputs.target }}
 
-  build_windows:
-    if: startsWith(inputs.target, 'windows') || inputs.target == 'all'
+  build-windows:
+    if: startsWith(inputs.target, 'windows') || endsWith(inputs.target, 'all')
     uses: ./.github/workflows/pipeline-build-windows.yml
     secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}
 
-  build_docker:
-    if: startsWith(inputs.target, 'docker') || inputs.target == 'all'
+  build-docker:
+    if: startsWith(inputs.target, 'docker') || endsWith(inputs.target, 'all')
     uses: ./.github/workflows/pipeline-build-docker.yml
     secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}

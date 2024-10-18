@@ -13,10 +13,10 @@ env:
 
 jobs:
   unit-tests:
-    name: Unit tests Backend job
+    name: Backend tests
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4.1.0
+    - uses: actions/checkout@v4
 
     - name: Install all libs and dependencies for BE
       uses: ./.github/actions/install-all-build-libs

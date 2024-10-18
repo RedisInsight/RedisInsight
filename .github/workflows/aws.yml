@@ -87,6 +87,11 @@ jobs:
 
     - name: Publish AWS S3
       run: |
+
+        # check if sub directories exists
+        if [[ -z "${!downloadLatestFolderPath}" || -z "${!upgradeLatestFolderPath}" ]]; then
+          exit 1;
+        fi
         # remove previous build from the latest directory /public/latest
         aws s3 rm s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} --recursive
 

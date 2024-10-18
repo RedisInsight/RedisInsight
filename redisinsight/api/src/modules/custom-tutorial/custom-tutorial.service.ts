@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CustomTutorialRepository } from 'src/modules/custom-tutorial/repositories/custom-tutorial.repository';
 import { CustomTutorial, CustomTutorialActions } from 'src/modules/custom-tutorial/models/custom-tutorial';
 import { UploadCustomTutorialDto } from 'src/modules/custom-tutorial/dto/upload.custom-tutorial.dto';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CustomTutorialFsProvider } from 'src/modules/custom-tutorial/providers/custom-tutorial.fs.provider';
 import {
@@ -51,7 +51,7 @@ export class CustomTutorialService {
       }
 
       const errors = await this.validator.validate(
-        plainToInstance(RootCustomTutorialManifest, manifest),
+        plainToClass(RootCustomTutorialManifest, manifest),
         { whitelist: true },
       );
 
@@ -91,7 +91,7 @@ export class CustomTutorialService {
       await this.validateManifestJson(tmpPath);
 
       // create tutorial model
-      const model = plainToInstance(CustomTutorial, {
+      const model = plainToClass(CustomTutorial, {
         ...dto,
         id: uuidv4(),
       });

@@ -2,12 +2,12 @@ import { get, toNumber } from 'lodash';
 import {
   CloudSubscription, CloudSubscriptionPlan, CloudSubscriptionRegion, CloudSubscriptionType, ICloudCapiSubscription, ICloudApiSubscriptionCloudRegion, ICloudCapiSubscriptionPlan,
 } from 'src/modules/cloud/subscription/models';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 
 export const parseCloudSubscriptionCapiResponse = (
   subscription: ICloudCapiSubscription,
   type: CloudSubscriptionType,
-): CloudSubscription => plainToInstance(CloudSubscription, {
+): CloudSubscription => plainToClass(CloudSubscription, {
   id: subscription.id,
   type,
   name: subscription.name,
@@ -45,7 +45,7 @@ export const parseCloudSubscriptionsPlansCapiResponse = (
   const result: CloudSubscriptionPlan[] = [];
   if (plans?.length) {
     plans?.forEach?.((plan): void => {
-      result.push(plainToInstance(CloudSubscriptionPlan, {
+      result.push(plainToClass(CloudSubscriptionPlan, {
         id: plan.id,
         type,
         name: plan.name,
@@ -65,7 +65,7 @@ export const parseCloudSubscriptionsCloudRegionsApiResponse = (
   const result: CloudSubscriptionRegion[] = [];
   if (regions?.length) {
     regions?.forEach?.((plan): void => {
-      result.push(plainToInstance(CloudSubscriptionRegion, {
+      result.push(plainToClass(CloudSubscriptionRegion, {
         id: toNumber(plan.id),
         name: plan.name,
         cloud: plan.cloud,

@@ -14,7 +14,7 @@ import { CloudJobEvents } from 'src/modules/cloud/common/constants';
 import { CloudJobService } from 'src/modules/cloud/job/cloud-job.service';
 import { MonitorCloudJobDto } from 'src/modules/cloud/job/dto/monitor.cloud-job.dto';
 import { Validator } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { CloudJobInfo } from 'src/modules/cloud/job/models';
 import { SessionMetadata } from 'src/common/models';
 import { WSSessionMetadata } from 'src/modules/auth/session-metadata/decorators/ws-session-metadata.decorator';
@@ -42,7 +42,7 @@ export class CloudJobGateway {
       @Body() data: MonitorCloudJobDto,
   ): Promise<CloudJobInfo> {
     try {
-      const dto = plainToInstance(MonitorCloudJobDto, data);
+      const dto = plainToClass(MonitorCloudJobDto, data);
 
       const errors = await this.validator.validate(
         dto,

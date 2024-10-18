@@ -7,7 +7,7 @@ import {
   CloudAuthRequestOptions,
 } from 'src/modules/cloud/auth/models/cloud-auth-request';
 import { SessionMetadata } from 'src/common/models';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import axios from 'axios';
 import * as path from 'path';
 import {
@@ -67,7 +67,7 @@ export class SsoIdpCloudAuthStrategy extends CloudAuthStrategy {
     const authClient = new OktaAuth(this.config);
     const tokenParams = await authClient.token.prepareTokenParams(this.config);
 
-    return plainToInstance(CloudAuthRequest, {
+    return plainToClass(CloudAuthRequest, {
       ...this.config,
       ...tokenParams,
       idp,

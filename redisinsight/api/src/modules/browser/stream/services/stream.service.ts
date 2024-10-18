@@ -24,7 +24,7 @@ import {
   StreamEntryFieldDto,
 } from 'src/modules/browser/stream/dto';
 import { RedisErrorCodes } from 'src/constants';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
@@ -70,7 +70,7 @@ export class StreamService {
 
       this.logger.log('Succeed to get entries from the stream.');
 
-      return plainToInstance(GetStreamEntriesResponse, {
+      return plainToClass(GetStreamEntriesResponse, {
         keyName,
         total: info['length'],
         lastGeneratedId: info['last-generated-id'].toString(),
@@ -240,7 +240,7 @@ export class StreamService {
       catchMultiTransactionError(transactionResults);
 
       this.logger.log('Succeed to add entries to the stream.');
-      return plainToInstance(AddStreamEntriesResponse, {
+      return plainToClass(AddStreamEntriesResponse, {
         keyName,
         entries: transactionResults.map((entryResult) => entryResult[1].toString()),
       });
@@ -327,7 +327,7 @@ export class StreamService {
 
     return {
       id: entry[0].toString(),
-      fields: chunk(entry[1] || [], 2).map((field) => plainToInstance(
+      fields: chunk(entry[1] || [], 2).map((field) => plainToClass(
         StreamEntryFieldDto,
         {
           name: field[0],

@@ -1,12 +1,12 @@
 import { get, map } from 'lodash';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import {
   FeatureConfigFilter,
   FeatureConfigFilterAnd,
   FeatureConfigFilterOr,
 } from 'src/modules/feature/model/features-config';
 
-export const featureConfigFilterTransformer = ({ value }) => map(value || [], (filter) => {
+export const featureConfigFilterTransformer = (value) => map(value || [], (filter) => {
   let cls: any = FeatureConfigFilter;
 
   if (get(filter, 'and')) {
@@ -17,5 +17,5 @@ export const featureConfigFilterTransformer = ({ value }) => map(value || [], (f
     cls = FeatureConfigFilterOr;
   }
 
-  return plainToInstance(cls, filter);
+  return plainToClass(cls, filter);
 });

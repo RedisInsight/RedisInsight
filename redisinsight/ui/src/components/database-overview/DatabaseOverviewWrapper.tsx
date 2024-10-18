@@ -13,7 +13,7 @@ import { getOverviewMetrics } from './components/OverviewMetrics'
 
 const riConfig = getConfig()
 
-const TIMEOUT_TO_GET_INFO = riConfig.app.env !== 'development' ? 5000 : 60_000
+const TIMEOUT_TO_GET_INFO = riConfig.app.env !== 'development' ? riConfig.database.defaultTimeoutToGetInfo : 60_000
 
 const DatabaseOverviewWrapper = () => {
   let interval: NodeJS.Timeout

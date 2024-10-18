@@ -5,6 +5,7 @@ import { CloudUserModule } from 'src/modules/cloud/user/cloud-user.module';
 import { CloudTaskModule } from 'src/modules/cloud/task/cloud-task.module';
 import { CloudJobModule } from 'src/modules/cloud/job/cloud-job.module';
 import { CloudCapiKeyModule } from 'src/modules/cloud/capi-key/cloud-capi-key.module';
+import { CloudSessionModule } from './session/cloud-session.module';
 
 @Module({})
 export class CloudModule {
@@ -12,6 +13,7 @@ export class CloudModule {
     return {
       module: CloudModule,
       imports: [
+        CloudSessionModule.register(),
         CloudAuthModule,
         CloudUserModule,
         CloudAutodiscoveryModule,

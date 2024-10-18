@@ -7,7 +7,7 @@ import { OktaAuth } from '@okta/okta-auth-js';
 import { SsoIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/sso-idp.cloud.auth-strategy';
 import { CloudAuthIdpType } from 'src/modules/cloud/auth/models';
 import {
-  CloudOauthSsoUnsupportedEmailException
+  CloudOauthSsoUnsupportedEmailException,
 } from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
 
 jest.mock('@okta/okta-auth-js');

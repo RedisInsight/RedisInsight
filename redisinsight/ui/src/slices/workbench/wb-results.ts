@@ -7,7 +7,8 @@ import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
 import { RunQueryMode, ResultsMode, CommandExecutionType } from 'uiSrc/slices/interfaces/workbench'
 import {
-  getApiErrorMessage, getCommandsForExecution,
+  getApiErrorMessage,
+  getCommandsForExecution,
   getExecuteParams,
   getMultiCommands,
   getUrl,
@@ -29,7 +30,6 @@ import {
 } from '../interfaces'
 
 export const initialState: StateWorkbenchResults = {
-  type: CommandExecutionType.Workbench,
   isLoaded: false,
   loading: false,
   processing: false,
@@ -46,10 +46,6 @@ const workbenchResultsSlice = createSlice({
   initialState,
   reducers: {
     setWBResultsInitialState: () => initialState,
-
-    setExecutionType: (state, { payload }: PayloadAction<CommandExecutionType>) => {
-      state.type = payload
-    },
 
     // Fetch Workbench history
     loadWBHistory: (state) => {
@@ -118,12 +114,10 @@ const workbenchResultsSlice = createSlice({
     sendWBCommand: (
       state,
       {
-        payload: { commands, commandId, executionType }
+        payload: { commands, commandId }
       }:
-      PayloadAction<{ commands: string[], commandId: string, executionType: CommandExecutionType }>
+      { payload: { commands: string[], commandId: string } }
     ) => {
-      if (executionType !== state.type) return
-
       let newItems = [
         ...commands.map((command, i) => ({
           command,
@@ -227,7 +221,6 @@ const workbenchResultsSlice = createSlice({
 // Actions generated from the slice
 export const {
   setWBResultsInitialState,
-  setExecutionType,
   loadWBHistory,
   loadWBHistorySuccess,
   loadWBHistoryFailure,
@@ -311,7 +304,6 @@ export function sendWBCommandAction({
       dispatch(sendWBCommand({
         commands: isGroupResults(resultsMode) ? [`${commands.length} - Command(s)`] : commands,
         commandId,
-        executionType
       }))
 
       dispatch(setDbIndexState(true))
@@ -378,7 +370,6 @@ export function sendWBCommandClusterAction({
       dispatch(sendWBCommand({
         commands: isGroupResults(resultsMode) ? [`${commands.length} - Commands`] : commands,
         commandId,
-        executionType
       }))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
@@ -527,7 +518,6 @@ export function sendWbQueryAction(
   queryInit: string,
   commandId?: Nullable<string>,
   executeParams: CodeButtonParams = {},
-  executionType?: CommandExecutionType,
   onSuccessAction?: {
     afterEach?: () => void,
     afterAll?: () => void
@@ -563,7 +553,6 @@ export function sendWbQueryAction(
           commands,
           multiCommands,
           mode: activeRunQueryMode,
-          executionType,
           onSuccessAction: onSuccess,
           onFailAction: onFail
         }))
@@ -586,7 +575,6 @@ export function sendWbQueryAction(
           mode: activeRunQueryMode,
           resultsMode,
           multiCommands,
-          executionType,
           onSuccessAction: onSuccess,
           onFailAction: onFail
         })

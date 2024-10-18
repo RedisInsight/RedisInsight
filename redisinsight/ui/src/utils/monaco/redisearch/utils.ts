@@ -1,27 +1,27 @@
 import { isNumber, remove } from 'lodash'
 import { languages } from 'monaco-editor'
-import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
 import { Maybe, Nullable } from 'uiSrc/utils'
-import { DefinedArgumentName } from 'uiSrc/pages/search/components/query/constants'
 import { generateQuery } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokensTemplates'
+import { ICommandTokenType, IRedisCommand } from 'uiSrc/constants'
+import { DefinedArgumentName } from 'uiSrc/pages/workbench/constants'
 
-export const generateKeywords = (commands: SearchCommand[]) => commands.map(({ name }) => name)
-export const generateTokens = (command?: SearchCommand): Nullable<{
-  pureTokens: Array<Array<SearchCommand>>
-  tokensWithQueryAfter: Array<Array<{ token: SearchCommand, arguments: SearchCommand[] }>>
+export const generateKeywords = (commands: IRedisCommand[]) => commands.map(({ name }) => name)
+export const generateTokens = (command?: IRedisCommand): Nullable<{
+  pureTokens: Array<Array<IRedisCommand>>
+  tokensWithQueryAfter: Array<Array<{ token: IRedisCommand, arguments: IRedisCommand[] }>>
 }> => {
   if (!command) return null
-  const pureTokens: Array<Array<SearchCommand>> = []
-  const tokensWithQueryAfter: Array<Array<{ token: SearchCommand, arguments: SearchCommand[] }>> = []
+  const pureTokens: Array<Array<IRedisCommand>> = []
+  const tokensWithQueryAfter: Array<Array<{ token: IRedisCommand, arguments: IRedisCommand[] }>> = []
 
-  function processArguments(args: SearchCommand[], level = 0) {
+  function processArguments(args: IRedisCommand[], level = 0) {
     if (!pureTokens[level]) pureTokens[level] = []
     if (!tokensWithQueryAfter[level]) tokensWithQueryAfter[level] = []
 
     args.forEach((arg) => {
       if (arg.token) pureTokens[level].push(arg)
 
-      if (arg.type === TokenType.Block && arg.arguments) {
+      if (arg.type === ICommandTokenType.Block && arg.arguments) {
         const blockToken = arg.arguments[0]
         const nextArgs = arg.arguments
         const isArgHasOwnSyntax = arg.arguments[0].expression && !!arg.arguments[0].arguments?.length
@@ -30,7 +30,7 @@ export const generateTokens = (command?: SearchCommand): Nullable<{
           if (isArgHasOwnSyntax) {
             tokensWithQueryAfter[level].push({
               token: blockToken,
-              arguments: arg.arguments[0].arguments as SearchCommand[]
+              arguments: arg.arguments[0].arguments as IRedisCommand[]
             })
           } else {
             pureTokens[level].push(blockToken)
@@ -40,7 +40,7 @@ export const generateTokens = (command?: SearchCommand): Nullable<{
         processArguments(blockToken ? nextArgs.slice(1, nextArgs.length) : nextArgs, level + 1)
       }
 
-      if (arg.type === TokenType.OneOf && arg.arguments) {
+      if (arg.type === ICommandTokenType.OneOf && arg.arguments) {
         arg.arguments.forEach((choice) => {
           if (choice?.token) pureTokens[level].push(choice)
         })
@@ -55,14 +55,14 @@ export const generateTokens = (command?: SearchCommand): Nullable<{
   return { pureTokens, tokensWithQueryAfter }
 }
 
-export const isIndexAfterKeyword = (command?: SearchCommand) => {
+export const isIndexAfterKeyword = (command?: IRedisCommand) => {
   if (!command) return false
 
   const index = command.arguments?.findIndex(({ name }) => name === DefinedArgumentName.index)
   return isNumber(index) && index === 0
 }
 
-export const isQueryAfterIndex = (command?: SearchCommand) => {
+export const isQueryAfterIndex = (command?: IRedisCommand) => {
   if (!command) return false
 
   const index = command.arguments?.findIndex(({ name }) => name === DefinedArgumentName.index)
@@ -70,13 +70,13 @@ export const isQueryAfterIndex = (command?: SearchCommand) => {
 }
 
 export const appendTokenWithQuery = (
-  args: Array<{ token: SearchCommand, arguments: SearchCommand[] }>,
+  args: Array<{ token: IRedisCommand, arguments: IRedisCommand[] }>,
   level: number
 ): languages.IMonarchLanguageRule[] =>
   args.map(({ token }) => [`(${token.token})\\b`, { token: `argument.block.${level}`, next: `@query.${token.token}` }])
 
 export const appendQueryWithNextFunctions = (
-  tokens: Array<{ token: SearchCommand, arguments: SearchCommand[] }>
+  tokens: Array<{ token: IRedisCommand, arguments: IRedisCommand[] }>
 ): {
   [name: string]: languages.IMonarchLanguageRule[]
 } => {
@@ -94,7 +94,7 @@ export const appendQueryWithNextFunctions = (
 
 export const generateTokensWithFunctions = (
   name: string = '',
-  tokens?: Array<Array<{ token: SearchCommand, arguments: SearchCommand[] }>>
+  tokens?: Array<Array<{ token: IRedisCommand, arguments: IRedisCommand[] }>>
 ): {
   [name: string]: languages.IMonarchLanguageRule[]
 } => {
@@ -116,12 +116,12 @@ export const generateTokensWithFunctions = (
 
 export const getBlockTokens = (
   name: string = '',
-  pureTokens: Maybe<Array<SearchCommand>[]>
+  pureTokens: Maybe<Array<IRedisCommand>[]>
 ): languages.IMonarchLanguageRule[] => {
   if (!pureTokens) return []
 
   const getLeveledToken = (
-    tokens: SearchCommand[],
+    tokens: IRedisCommand[],
     lvl: number
   ): languages.IMonarchLanguageRule[] => {
     const result: languages.IMonarchLanguageRule[] = []

@@ -69,7 +69,6 @@ export function initializeAppAction(
       dispatch(initializeAppStateSuccess())
       onSuccessAction?.()
     } catch (error: any) {
-      console.error('Error initializing application: ', error)
       dispatch(initializeAppStateFail({ error: error?.message || '' }))
       onFailAction?.()
     }

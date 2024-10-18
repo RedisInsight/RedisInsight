@@ -12,11 +12,13 @@ import {
   keysDataSelector,
   keysSelector,
   selectedKeyDataSelector,
-  toggleBrowserFullScreen
+  toggleBrowserFullScreen,
 } from 'uiSrc/slices/browser/keys'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
+import { FeatureFlagComponent } from 'uiSrc/components'
+import { FeatureFlags } from 'uiSrc/constants'
 
 export interface Props {
   selectedKey: Nullable<RedisResponseBuffer>
@@ -124,13 +126,15 @@ const BrowserRightPanel = (props: Props) => {
         />
       )}
       {isBulkActionsPanelOpen && every([!isAddKeyPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
-        <BulkActions
-          isFullScreen={isBrowserFullScreen}
-          arePanelsCollapsed={arePanelsCollapsed}
-          onClosePanel={closePanel}
-          onBulkActionsPanel={handleBulkActionsPanel}
-          onToggleFullScreen={handleToggleFullScreen}
-        />
+        <FeatureFlagComponent name={FeatureFlags.envDependent}>
+          <BulkActions
+            isFullScreen={isBrowserFullScreen}
+            arePanelsCollapsed={arePanelsCollapsed}
+            onClosePanel={closePanel}
+            onBulkActionsPanel={handleBulkActionsPanel}
+            onToggleFullScreen={handleToggleFullScreen}
+          />
+        </FeatureFlagComponent>
       )}
       {isCreateIndexPanelOpen && every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen], Boolean) && (
         <CreateRedisearchIndex

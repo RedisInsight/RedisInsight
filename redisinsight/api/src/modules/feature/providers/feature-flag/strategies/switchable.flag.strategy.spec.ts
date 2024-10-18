@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockAppSettings,
   mockFeaturesConfigService,
+  mockSessionMetadata,
   mockSettingsService,
   MockType,
 } from 'src/__mocks__';
@@ -61,6 +62,7 @@ describe('SwitchableFlagStrategy', () => {
       filterSpy.mockReturnValueOnce(false);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.DatabaseChat],
         null,
       ))
@@ -78,6 +80,7 @@ describe('SwitchableFlagStrategy', () => {
       filterSpy.mockReturnValueOnce(true);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.DatabaseChat],
         {
           perc: [[0, 10]],
@@ -103,6 +106,7 @@ describe('SwitchableFlagStrategy', () => {
       }) as any);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.DatabaseChat],
         {
           perc: [[0, 10]],
@@ -128,6 +132,7 @@ describe('SwitchableFlagStrategy', () => {
       }) as any);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.DatabaseChat],
         {
           perc: [[0, 10]],
@@ -149,6 +154,7 @@ describe('SwitchableFlagStrategy', () => {
       filterSpy.mockReturnValueOnce(true);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.DatabaseChat],
         {
           perc: [[0, 10]],
@@ -174,6 +180,7 @@ describe('SwitchableFlagStrategy', () => {
       }) as any);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.DatabaseChat],
         {
           perc: [[0, 10]],
@@ -199,6 +206,7 @@ describe('SwitchableFlagStrategy', () => {
       }) as any);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.DatabaseChat],
         {
           perc: [[0, 10]],
@@ -225,6 +233,7 @@ describe('SwitchableFlagStrategy', () => {
       }) as any);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.DatabaseChat],
         {
           perc: [[0, 10]],
@@ -251,6 +260,7 @@ describe('SwitchableFlagStrategy', () => {
       }) as any);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.DatabaseChat],
         {
           perc: [[0, 100]],

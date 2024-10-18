@@ -2,10 +2,7 @@ import * as fs from 'fs';
 import {
   MiddlewareConsumer, Module, NestModule, OnModuleInit,
 } from '@nestjs/common';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { RouterModule } from '@nestjs/core';
-import { join } from 'path';
-import { Response } from 'express';
 import config, { Config } from 'src/utils/config';
 import { PluginModule } from 'src/modules/plugin/plugin.module';
 import { CommandsModule } from 'src/modules/commands/commands.module';
@@ -40,10 +37,7 @@ import { RedisConnectionMiddleware, redisConnectionControllers } from './middlew
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
-
-const setXFrameOptionsHeader = (res: Response) => {
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-};
+const STATICS_CONFIG = config.get('statics') as Config['statics'];
 
 @Module({
   imports: [
@@ -72,38 +66,10 @@ const setXFrameOptionsHeader = (res: Response) => {
     AiChatModule,
     AiQueryModule.register(),
     RdiModule.register(),
-    ...(SERVER_CONFIG.staticContent
-      ? [
-        ServeStaticModule.forRoot({
-          rootPath: join(__dirname, '..', '..', '..', 'ui', 'dist'),
-          exclude: ['/api/**', `${SERVER_CONFIG.customPluginsUri}/**`, `${SERVER_CONFIG.staticUri}/**`],
-          serveRoot: SERVER_CONFIG.proxyPath ? `/${SERVER_CONFIG.proxyPath}` : '',
-          serveStaticOptions: {
-            index: false,
-            setHeaders: setXFrameOptionsHeader,
-          },
-        }),
-      ]
-      : []),
-    ServeStaticModule.forRoot({
-      serveRoot: SERVER_CONFIG.customPluginsUri,
-      rootPath: join(PATH_CONFIG.customPlugins),
-      exclude: ['/api/**'],
-      serveStaticOptions: {
-        fallthrough: false,
-        setHeaders: setXFrameOptionsHeader,
-      },
+    StaticsManagementModule.register({
+      initDefaults: STATICS_CONFIG.initDefaults,
+      autoUpdate: STATICS_CONFIG.autoUpdate,
     }),
-    ServeStaticModule.forRoot({
-      serveRoot: SERVER_CONFIG.staticUri,
-      rootPath: join(PATH_CONFIG.staticDir),
-      exclude: ['/api/**'],
-      serveStaticOptions: {
-        fallthrough: false,
-        setHeaders: setXFrameOptionsHeader,
-      },
-    }),
-    StaticsManagementModule.register(),
   ],
   controllers: [],
   providers: [],

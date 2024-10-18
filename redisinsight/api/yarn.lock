@@ -1264,10 +1264,10 @@
     consola "^2.15.0"
     node-fetch "^2.6.1"
 
-"@okta/okta-auth-js@^7.8.0":
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/@okta/okta-auth-js/-/okta-auth-js-7.8.0.tgz#1ab69c47cbf6fd7f3ce9f6caed2e05685f5bb22d"
-  integrity sha512-yFjv0wD9T5GYcFg6zzQ0M/WGdq2IMoaI/SK/0s9AqazZ6ILv6eyZq47L2nJJ7xld5DBFUhVewnD6BS3Ee7Im1A==
+"@okta/okta-auth-js@^7.8.1":
+  version "7.8.1"
+  resolved "https://registry.yarnpkg.com/@okta/okta-auth-js/-/okta-auth-js-7.8.1.tgz#eb36ac8deb0290f59917ede239fae82d76cc2ab8"
+  integrity sha512-vrsh1QK2NxZQgOQHqIX33ykTsf+X3zcHIzdNjbPbxp1YvTZeyd9oNlcLh1cgp4m0xA/NXoj5xM4no6j3SFtnUw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@peculiar/webcrypto" "^1.4.0"
@@ -1279,7 +1279,6 @@
     cross-fetch "^3.1.5"
     fast-text-encoding "^1.0.6"
     js-cookie "^3.0.1"
-    jsonpath-plus "^6.0.1"
     node-cache "^5.1.2"
     p-cancelable "^2.0.0"
     tiny-emitter "1.1.0"
@@ -5718,7 +5717,7 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-jsonpath-plus@^10.0.0, jsonpath-plus@^6.0.1:
+jsonpath-plus@^10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/jsonpath-plus/-/jsonpath-plus-10.0.0.tgz#7a747d47e20a27867dbbc80b57fd554788b91474"
   integrity sha512-v7j76HGp/ibKlXYeZ7UrfCLSNDaBWuJMA0GaMjA4sZJtCtY89qgPyToDDcl2zdeHh4B5q/B3g2pQdW76fOg/dA==

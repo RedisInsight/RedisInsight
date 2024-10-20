@@ -73,7 +73,7 @@ const CopilotSettingsPopover = ({
       promises.push(createGeneralAgreementFunc({ consent: values.checkGeneralAgreement }))
     }
 
-    if (databaseId && (!!databaseAgreement?.dataConsent !== values.checkDbAgreement)) {
+    if (databaseId && (!databaseAgreement || (!!databaseAgreement?.dataConsent !== values.checkDbAgreement))) {
       promises.push(createDatabaseAgreementFunc(databaseId, { dataConsent: values.checkDbAgreement }))
     }
 

@@ -30,24 +30,19 @@ const AiAnswerMessage = ({
   return (
     <React.Fragment key={id}>
       <div className={styles.answerWrapper}>
-        <div className={styles.avatarWrapper}>
-          <ChatbotAvatar type={AiChatType.General} />
-        </div>
-        <div className={styles.answerTextWrapper}>
-          <EuiText color="subdued" className={styles.aiBotNameText}>Redis Bot</EuiText>
-          <div
-            className={cx('jsx-markdown', styles.answer, { [styles.error]: !!error })}
-            data-testid={`ai-message-${type}_${id}`}
+        <ChatbotAvatar type={AiChatType.General} />
+        <div
+          className={cx('jsx-markdown', styles.answer, { [styles.error]: !!error })}
+          data-testid={`ai-message-${type}_${id}`}
+        >
+          {error && (<EuiIcon type="alert" className={styles.errorIcon} />)}
+          <MarkdownMessage
+            onRunCommand={onRunCommand}
+            onMessageRendered={onMessageRendered}
+            modules={modules}
           >
-            {error && (<EuiIcon type="alert" className={styles.errorIcon} />)}
-            <MarkdownMessage
-              onRunCommand={onRunCommand}
-              onMessageRendered={onMessageRendered}
-              modules={modules}
-            >
-              {content}
-            </MarkdownMessage>
-          </div>
+            {content}
+          </MarkdownMessage>
         </div>
       </div>
       <ErrorMessage error={error} onRestart={onRestart} />

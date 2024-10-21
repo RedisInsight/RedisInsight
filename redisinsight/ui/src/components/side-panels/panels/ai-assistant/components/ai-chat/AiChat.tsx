@@ -39,7 +39,9 @@ const AiChat = () => {
       dispatch(clearAiDatabaseAgreement())
     }
     if (instanceId) {
-      dispatch(getAiDatabaseAgreementAction(instanceId))
+      dispatch(getAiDatabaseAgreementAction(instanceId, (agreement) => {
+        if (!agreement) setSettingsOpenedByDefault(true)
+      }))
     }
     dispatch(getAiChatHistoryAction(instanceId))
   }, [instanceId, userOAuthProfile?.id])

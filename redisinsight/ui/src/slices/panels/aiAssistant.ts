@@ -203,7 +203,11 @@ export function getAiAgreementAction(onSuccess?: (data: Nullable<AiAgreement>) =
   }
 }
 
-export function getAiDatabaseAgreementAction(databaseId: string, onSuccess?: () => void, onFailure?: () => void) {
+export function getAiDatabaseAgreementAction(
+  databaseId: string,
+  onSuccess?: (agreement: AiDatabaseAgreement) => void,
+  onFailure?: () => void
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getAiDatabaseAgreement())
 
@@ -215,7 +219,7 @@ export function getAiDatabaseAgreementAction(databaseId: string, onSuccess?: () 
         dispatch(getAiDatabaseAgreementSuccess(data))
       }
 
-      onSuccess?.()
+      onSuccess?.(data)
     } catch (error) {
       const err = getAxiosError(error as EnhancedAxiosError)
       const errorCode = getApiErrorCode(error as AxiosError)

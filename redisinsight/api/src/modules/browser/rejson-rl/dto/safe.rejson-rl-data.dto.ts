@@ -40,5 +40,5 @@ export class SafeRejsonRlDataDto {
     type: String,
     description: 'Any value',
   })
-  value?: string | number | boolean | null;
+  value?: string | number | boolean | bigint | null;
 }

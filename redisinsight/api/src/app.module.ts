@@ -26,17 +26,19 @@ import { CloudModule } from 'src/modules/cloud/cloud.module';
 import { RdiModule } from 'src/modules/rdi/rdi.module';
 import { AiChatModule } from 'src/modules/ai/chat/ai-chat.module';
 import { AiQueryModule } from 'src/modules/ai/query/ai-query.module';
-import { BrowserModule } from './modules/browser/browser.module';
-import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterprise.module';
-import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.module';
-import { ProfilerModule } from './modules/profiler/profiler.module';
-import { CliModule } from './modules/cli/cli.module';
-import { StaticsManagementModule } from './modules/statics-management/statics-management.module';
-import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
-import SubpathProxyMiddleware from './middleware/subpath-proxy.middleware';
-import XFrameOptionsMiddleware from './middleware/x-frame-options.middleware';
-import { routes } from './app.routes';
-import { RedisConnectionMiddleware, redisConnectionControllers } from './middleware/redis-connection';
+import { BrowserModule } from 'src/modules/browser/browser.module';
+import { RedisEnterpriseModule } from 'src/modules/redis-enterprise/redis-enterprise.module';
+import { RedisSentinelModule } from 'src/modules/redis-sentinel/redis-sentinel.module';
+import { ProfilerModule } from 'src/modules/profiler/profiler.module';
+import { CliModule } from 'src/modules/cli/cli.module';
+import { StaticsManagementModule } from 'src/modules/statics-management/statics-management.module';
+import { ExcludeRouteMiddleware } from 'src/middleware/exclude-route.middleware';
+import SubpathProxyMiddleware from 'src/middleware/subpath-proxy.middleware';
+import XFrameOptionsMiddleware from 'src/middleware/x-frame-options.middleware';
+import { routes } from 'src/app.routes';
+import { RedisConnectionMiddleware, redisConnectionControllers } from 'src/middleware/redis-connection';
+import { JSONBigIntSerializationMiddleware } from 'src/middleware/json-bigint-serialization.middleware';
+import { RejsonRlController } from 'src/modules/browser/rejson-rl/rejson-rl.controller';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -142,5 +144,9 @@ export class AppModule implements OnModuleInit, NestModule {
     consumer
       .apply(RedisConnectionMiddleware)
       .forRoutes(...redisConnectionControllers);
+
+    consumer
+      .apply(JSONBigIntSerializationMiddleware)
+      .forRoutes(RejsonRlController)
   }
 }

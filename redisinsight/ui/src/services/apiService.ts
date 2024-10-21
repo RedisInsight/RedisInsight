@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios'
 import { isNumber } from 'lodash'
+import JSONBigInt from 'json-bigint'
 import { sessionStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { CLOUD_AUTH_API_ENDPOINTS, CustomHeaders } from 'uiSrc/constants/api'
@@ -25,6 +26,15 @@ export const getBaseUrl = () => (!isDevelopment && isWebApp
 const mutableAxiosInstance: AxiosInstance = axios.create({
   baseURL: hostedApiBaseUrl || getBaseUrl(),
   withCredentials: !!hostedApiBaseUrl,
+  transformResponse: [
+    (data) => {
+      try {
+        return JSONBigInt({ useNativeBigInt: true }).parse(data)
+      } catch (e) {
+        return JSON.parse(data)
+      }
+    },
+  ],
 })
 
 export const setApiCsrfHeader = (token: string) => {

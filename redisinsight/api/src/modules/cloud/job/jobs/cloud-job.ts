@@ -2,13 +2,13 @@ import { v4 as uuidv4 } from 'uuid';
 import config from 'src/utils/config';
 import { CloudJobInfo, CloudJobStatus, CloudJobStep } from 'src/modules/cloud/job/models/cloud-job-info';
 import { HttpException, Logger } from '@nestjs/common';
-import { ClassType } from 'class-transformer/ClassTransformer';
 import { CloudJobAbortedException, wrapCloudJobError } from 'src/modules/cloud/job/exceptions';
 import { SessionMetadata } from 'src/common/models';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { debounce } from 'lodash';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
+import { ClassType } from 'class-transformer/ClassTransformer';
 
 const cloudConfig = config.get('cloud');
 

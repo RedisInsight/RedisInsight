@@ -46,11 +46,13 @@ describe('RdiClientProvider', () => {
       const metadata: RdiClientMetadata = { id: '123', sessionMetadata: undefined };
       const client: RdiClient = generateMockRdiClient(metadata);
       rdiClientStorage.getByMetadata.mockResolvedValue(client);
+      repository.update.mockResolvedValue(mockRdi);
 
       const result = await provider.getOrCreate(metadata);
 
       expect(rdiClientStorage.getByMetadata).toHaveBeenCalledWith(metadata);
       expect(client.ensureAuth).toHaveBeenCalled();
+      expect(repository.update).toHaveBeenCalled();
       expect(result).toEqual(client);
     });
 
@@ -84,11 +86,13 @@ describe('RdiClientProvider', () => {
       const client: RdiClient = generateMockRdiClient(metadata);
       repository.get.mockResolvedValue(mockRdi);
       rdiClientFactory.createClient.mockResolvedValue(client);
+      repository.update.mockResolvedValue(mockRdi);
 
       const result = await provider.create(metadata);
 
       expect(repository.get).toHaveBeenCalledWith(metadata.id);
       expect(rdiClientFactory.createClient).toHaveBeenCalledWith(metadata, mockRdi);
+      expect(repository.update).toHaveBeenCalled();
       expect(result).toEqual(client);
     });
   });
@@ -126,6 +130,17 @@ describe('RdiClientProvider', () => {
 
       expect(rdiClientStorage.deleteManyByRdiId).toHaveBeenCalledWith(id);
       expect(result).toEqual(2);
+    });
+  });
+
+  describe('updateLastConnection', () => {
+    it('should update rdi lastConnection', async () => {
+      const metadata: RdiClientMetadata = { id: '123', sessionMetadata: undefined };
+      repository.update.mockResolvedValue(mockRdi);
+
+      await provider['updateLastConnection'](metadata);
+
+      expect(repository.update).toHaveBeenCalled();
     });
   });
 });

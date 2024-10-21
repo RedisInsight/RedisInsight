@@ -12,6 +12,7 @@ import { ClientCertificateRepository } from 'src/modules/certificate/repositorie
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.client-certificate.dto';
 import { classToClass } from 'src/utils';
+import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 @Injectable()
 export class ClientCertificateService {
@@ -19,6 +20,7 @@ export class ClientCertificateService {
 
   constructor(
     private readonly repository: ClientCertificateRepository,
+    private redisClientStorage: RedisClientStorage,
   ) {}
 
   /**
@@ -67,7 +69,12 @@ export class ClientCertificateService {
     this.logger.log(`Deleting client certificate. id: ${id}`);
 
     try {
-      await this.repository.delete(id);
+      const { affectedDatabases } = await this.repository.delete(id);
+
+      await Promise.all(affectedDatabases.map(async (databaseId) => {
+        // If the certificate is used by the database, remove the client
+        await this.redisClientStorage.removeManyByMetadata({ databaseId });
+      }));
     } catch (error) {
       this.logger.error(`Failed to delete certificate ${id}`, error);
 

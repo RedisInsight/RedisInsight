@@ -11,7 +11,7 @@ describe('HashInfoStrategy', () => {
 
   beforeEach(async () => {
     when(client.sendCommand)
-      .calledWith(jasmine.arrayContaining(['hlen']))
+      .calledWith(expect.arrayContaining(['hlen']))
       .mockResolvedValue(mockRedisResponse);
   });
 

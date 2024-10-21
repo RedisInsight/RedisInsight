@@ -28,7 +28,7 @@ export class DatabaseImportResult {
     type: String,
   })
   @Expose()
-  @Transform((v) => (isString(v) ? v : undefined), { toPlainOnly: true })
+  @Transform((value) => (isString(value) ? value : undefined), { toPlainOnly: true })
   host?: string;
 
   @ApiPropertyOptional({
@@ -36,7 +36,7 @@ export class DatabaseImportResult {
     type: Number,
   })
   @Expose()
-  @Transform((v) => (isNumber(v) ? v : undefined), { toPlainOnly: true })
+  @Transform((value) => (isNumber(value) ? value : undefined), { toPlainOnly: true })
   port?: number;
 
   @ApiPropertyOptional({
@@ -44,23 +44,26 @@ export class DatabaseImportResult {
     type: String,
   })
   @Expose()
-  @Transform((e) => {
-    if (!e) {
-      return undefined;
-    }
-
-    return e.map((error) => {
-      if (error?.response) {
-        return error.response;
+  @Transform(
+    (e) => {
+      if (!e) {
+        return undefined;
       }
 
-      return {
-        statusCode: 500,
-        message: error?.message || 'Unhandled Error',
-        error: 'Unhandled Error',
-      };
-    });
-  }, { toPlainOnly: true })
+      return e.map((error) => {
+        if (error?.response) {
+          return error.response;
+        }
+
+        return {
+          statusCode: 500,
+          message: error?.message || 'Unhandled Error',
+          error: 'Unhandled Error',
+        };
+      });
+    },
+    { toPlainOnly: true },
+  )
   errors?: Error[];
 }
 

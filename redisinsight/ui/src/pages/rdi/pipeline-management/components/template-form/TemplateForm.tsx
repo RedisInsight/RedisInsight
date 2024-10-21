@@ -32,7 +32,7 @@ export interface Props {
   value: string
 }
 
-const getTooltipContent = (value: string, isNoTemplateOptions: boolean) => {
+export const getTooltipContent = (value: string, isNoTemplateOptions: boolean) => {
   if (isNoTemplateOptions) {
     return (
       <>
@@ -57,7 +57,7 @@ const TemplateForm = (props: Props) => {
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
-  const [pipelineTypeOptions, setPipelineTypeOptions] = useState<EuiSuperSelectOption<string>[]>(NO_OPTIONS)
+  const [pipelineTypeOptions, setPipelineTypeOptions] = useState<EuiSuperSelectOption<string>[]>([])
   const [dbTypeOptions, setDbTypeOptions] = useState<EuiSuperSelectOption<string>[]>(NO_OPTIONS)
   const [selectedDbType, setSelectedDbType] = useState<string>('')
   const [selectedPipelineType, setSelectedPipelineType] = useState<string>('')
@@ -144,6 +144,7 @@ const TemplateForm = (props: Props) => {
       <EuiSpacer size="s" />
       <EuiForm component="form">
         <EuiSpacer size="xs" />
+        {(pipelineTypeOptions?.length > 1) && (
         <EuiFormRow className={styles.formRow}>
           <>
             <div className={styles.rowLabel}>Pipeline type</div>
@@ -156,6 +157,7 @@ const TemplateForm = (props: Props) => {
             />
           </>
         </EuiFormRow>
+        )}
         {source === RdiPipelineTabs.Config && (
           <EuiFormRow className={styles.formRow}>
             <>

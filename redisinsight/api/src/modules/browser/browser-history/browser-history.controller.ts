@@ -16,6 +16,16 @@ import { BrowserHistoryService } from 'src/modules/browser/browser-history/brows
 import { SessionMetadata } from 'src/common/models';
 import { RequestSessionMetadata } from 'src/common/decorators';
 
+import {
+  IsOptional, IsEnum,
+} from 'class-validator';
+
+class ListQueryDto {
+  @IsEnum(BrowserHistoryMode)
+  @IsOptional()
+  mode?: BrowserHistoryMode;
+}
+
 @UseInterceptors(BrowserSerializeInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
 @ApiTags('Browser: Browser History')
@@ -41,7 +51,7 @@ export class BrowserHistoryController {
   async list(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Param('dbInstance') databaseId: string,
-      @Query() { mode = BrowserHistoryMode.Pattern }: { mode: BrowserHistoryMode },
+      @Query(new ValidationPipe()) { mode = BrowserHistoryMode.Pattern }: ListQueryDto,
   ): Promise<BrowserHistory[]> {
     return this.service.list(sessionMetadata, databaseId, mode);
   }

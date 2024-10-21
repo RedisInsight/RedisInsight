@@ -63,7 +63,7 @@ export class GetKeysDto {
   })
   @IsBoolean()
   @IsOptional()
-  @Transform((val) => val === true || val === 'true')
+  @Transform((value) => value === true || value === 'true')
   keysInfo?: boolean = true;
 
   @ApiPropertyOptional({

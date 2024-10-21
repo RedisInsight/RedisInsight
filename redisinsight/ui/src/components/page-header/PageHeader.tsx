@@ -15,7 +15,6 @@ import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import styles from './PageHeader.module.scss'
 
 interface Props {
@@ -29,11 +28,7 @@ interface Props {
 const PageHeader = (props: Props) => {
   const { title, subtitle, showInsights, children, className } = props
 
-  const {
-    [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  const { [FeatureFlags.databaseChat]: databaseChatFeature } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -63,7 +58,7 @@ const PageHeader = (props: Props) => {
         {children ? <>{children}</> : ''}
         {showInsights ? (
           <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
-            {isAnyChatAvailable && (
+            {databaseChatFeature?.flag && (
               <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
                 <CopilotTrigger />
               </EuiFlexItem>

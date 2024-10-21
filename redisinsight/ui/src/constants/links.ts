@@ -15,6 +15,7 @@ export const EXTERNAL_LINKS = {
   rdiQuickStart: 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/quick-start-guide/',
   rdiPipeline: 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/data-pipelines/data-pipelines/',
   rdiPipelineTransforms: 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/data-pipelines/transform-examples/',
+  copilotMoreInfo: 'https://redis.io/docs/latest/develop/connect/insight/copilot-faq/',
   pubSub: 'https://redis.io/docs/latest/commands/psubscribe/',
 }
 
@@ -24,6 +25,7 @@ export const UTM_CAMPAINGS: Record<any, string> = {
   [OAuthSocialSource.Workbench]: 'redisinsight_workbench',
   [CloudSsoUtmCampaign.BrowserFilter]: 'browser_filter',
   [OAuthSocialSource.EmptyDatabasesList]: 'empty_db_list',
+  Copilot: 'copilot',
   PubSub: 'pub_sub',
   Main: 'main',
 }

@@ -20,7 +20,9 @@ import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-conf
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 import { CloudCapiKeyEntity } from 'src/modules/cloud/capi-key/entity/cloud-capi-key.entity';
 import { RdiEntity } from 'src/modules/rdi/entities/rdi.entity';
-import { AiQueryMessageEntity } from 'src/modules/ai/query/entities/ai-query.message.entity';
+import { AiMessageEntity } from 'src/modules/ai/messages/entities/ai.message.entity';
+import { AiAgreementEntity } from 'src/modules/ai/agreements/entities/ai.agreement.entity';
+import { AiDatabaseAgreementEntity } from 'src/modules/ai/agreements/entities/ai.database.agreement.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
 
@@ -51,7 +53,9 @@ const ormConfig = {
     CloudDatabaseDetailsEntity,
     CloudCapiKeyEntity,
     RdiEntity,
-    AiQueryMessageEntity,
+    AiMessageEntity,
+    AiAgreementEntity,
+    AiDatabaseAgreementEntity,
   ],
   migrations,
 };

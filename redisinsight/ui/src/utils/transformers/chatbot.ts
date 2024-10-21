@@ -8,8 +8,8 @@ export const generateHumanMessage = (message: string): AiChatMessage => ({
   context: {}
 })
 
-export const generateAiMessage = (message = ''): AiChatMessage => ({
+export const generateAiMessage = (): AiChatMessage => ({
   id: `ai_${uuidv4()}`,
   type: AiChatMessageType.AIMessage,
-  content: message,
+  content: '',
 })

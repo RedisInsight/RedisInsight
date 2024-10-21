@@ -1,0 +1,94 @@
+$spacing: 6px;
+$delay: .13s;
+
+.wrapper {
+  width: 100%;
+  height: 100%;
+
+  :global {
+    code {
+      background-color: var(--euiColorEmptyShade) !important;
+    }
+    pre > code {
+      background-color:  var(--browserTableRowEven) !important;
+    }
+  }
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.history {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+  @include eui.scrollBar;
+  padding: 8px 12px;
+
+  font-size: 12px;
+
+  > :first-child {
+    margin-top: auto;
+  }
+}
+.answerWrapper, .questionWrapper {
+  max-width: 90%;
+  margin: 8px 0;
+  display: flex;
+  gap: 4px;
+}
+
+.answer, .question {
+  overflow-wrap: break-word;
+  padding: 8px 16px;
+  border-radius: 8px;
+
+  &.error {
+    opacity: .66;
+    display: flex;
+
+    .errorIcon {
+      width: 12px;
+      height: 12px;
+      color: var(--euiColorDangerText);
+      margin-top: 2px;
+      margin-right: 6px;
+    }
+  }
+}
+
+.answerWrapper {
+  align-self: flex-start;
+}
+
+.answer {
+  background-color: var(--euiColorLightestShade);
+  border-top-left-radius: 0;
+}
+
+.questionWrapper {
+  align-self: flex-end;
+}
+
+.question {
+  background-color: var(--insightsTriggerBgColor);
+  border-top-right-radius: 0;
+}
+
+.avatarWrapper {
+  margin-top: 16px;
+}
+
+.aiBotNameText {
+  font-weight: 400 !important;
+  font-size: 10px !important;
+  line-height: 12px !important;
+  margin-bottom: 4px !important;
+}
+
+

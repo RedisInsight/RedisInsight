@@ -21,6 +21,9 @@ export const repositories = {
   FEATURE: 'FeatureEntity',
   CLOUD_DATABASE_DETAILS: 'CloudDatabaseDetailsEntity',
   RDI: 'RdiEntity',
+  AIMessage: 'AiMessageEntity',
+  AiAgreement: 'AiAgreementEntity',
+  AiDatabaseAgreement: 'AiDatabaseAgreementEntity',
 }
 
 let localDbConnection;
@@ -666,4 +669,142 @@ export const createNotExistingNotifications = async (truncate: boolean = false) 
   ];
 
   await createNotifications(notifications, truncate);
+}
+
+export const generateDatabase = async (databaseId: string) => {
+  const dbRep = await getRepository(repositories.DATABASE);
+
+  await dbRep.clear();
+
+  return await dbRep.save({
+    tls: false,
+    verifyServerCert: false,
+    host: constants.TEST_INSTANCE_HOST_2,
+    port: 3679,
+    connectionType: 'STANDALONE',
+    name: constants.TEST_INSTANCE_NAME_2,
+    db: constants.TEST_REDIS_DB_INDEX,
+    timeout: 30000,
+    modules: '[]',
+    version: '7.0',
+    id: databaseId,
+  });
+}
+
+export const checkDatabaseExist = async (dbId) => {
+  const dbRep = await getRepository(repositories.DATABASE)
+
+  const db = await dbRep.findOneBy({ id: dbId})
+
+  if (!db) {
+    await generateDatabase(dbId)
+  }
+}
+
+export const clearAiAgreements = async () => {
+  const rep = await getRepository(repositories.AiAgreement)
+  await rep.clear()
+}
+
+export const clearAiDatabaseAgreements = async () => {
+  const rep = await getRepository(repositories.AiDatabaseAgreement)
+  await rep.clear()
+}
+
+export const generateAiAgreement = async (
+  partial: Record<string, any> = {},
+  truncate: boolean = true,
+) => {
+  const rep = await getRepository(repositories.AiAgreement);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  return await rep.save({
+...constants.TEST_AI_AGREEMENT,
+...partial,
+  })
+}
+
+export const generateAiDatabaseAgreement = async (
+  partial: Record<string, any> = {},
+  truncate: boolean = true,
+) => {
+  const rep = await getRepository(repositories.AiDatabaseAgreement);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  let db = null
+
+  // create db in order to avoid QueryFailedError: SQLITE_CONSTRAINT: FOREIGN KEY constraint failed
+  db = await generateDatabase(partial.databaseId || 'test_ai-db_id')
+
+
+  return await rep.save({
+    ...constants.TEST_AI_DATABASE_AGREEMENT,
+    databaseId: db.id,
+   ...partial,
+  })
+}
+
+export const getAllAiMessages = async () => {
+  const rep = await getRepository(repositories.AIMessage);
+  return rep.createQueryBuilder('m').getMany()
+}
+
+export const generateAiDatabaseMessages = async (
+  partial: Record<string, any> = {},
+  truncate: boolean = true,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.AIMessage);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  result.push(await rep.save({
+    ...constants.TEST_AI_MESSAGE_HUMAN_2,
+    content: encryptData(constants.TEST_AI_MESSAGE_HUMAN_2.content),
+    databaseId: 'mockDBId',
+    ...partial,
+  }));
+
+  result.push(await rep.save({
+    ...constants.TEST_AI_MESSAGE_AI_RESPONSE_2,
+    steps: null,
+    content: encryptData(constants.TEST_AI_MESSAGE_AI_RESPONSE_2.content),
+    databaseId: 'mockDBId',
+    ...partial,
+  }));
+
+  return result;
+}
+
+export const generateAiMessages = async (
+  partial?: Record<string, any>,
+  truncate: boolean = true,
+) => {
+  const rep = await getRepository(repositories.AIMessage);
+
+  const result = [];
+  if (truncate) {
+    await rep.clear();
+  }
+
+  result.push(await rep.save({
+    ...constants.TEST_AI_MESSAGE_HUMAN,
+    content: encryptData(constants.TEST_AI_MESSAGE_HUMAN.content),
+  }));
+
+  result.push(await rep.save({
+    ...constants.TEST_AI_MESSAGE_AI_RESPONSE,
+    steps: null,
+    content: encryptData(constants.TEST_AI_MESSAGE_AI_RESPONSE.content),
+  }));
+
+  return result;
 }

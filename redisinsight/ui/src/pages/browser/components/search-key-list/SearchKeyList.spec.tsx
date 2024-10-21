@@ -8,8 +8,6 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
-import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import SearchKeyList from './SearchKeyList'
 
@@ -155,7 +153,6 @@ describe('SearchKeyList', () => {
     fireEvent.click(screen.getByTestId('ask-redis-copilot-btn'))
 
     const expectedActions = [
-      setSelectedTab(AiChatType.Query),
       changeSidePanel(SidePanels.AiAssistant),
     ]
 

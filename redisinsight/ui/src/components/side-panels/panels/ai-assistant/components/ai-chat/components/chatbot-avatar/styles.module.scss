@@ -1,0 +1,17 @@
+.container {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.general {
+  background-color: #FF4438;
+}
+
+.database {
+  background-color: #80DBFF;
+}

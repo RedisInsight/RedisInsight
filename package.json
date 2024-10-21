@@ -81,6 +81,7 @@
     "rawproto/protobufjs": "^7.2.5",
     "webpack-bundle-analyzer/ws": "^7.5.10",
     "msw/path-to-regexp": "^6.3.0",
+    "msw/cookie": "^0.7.0",
     "react-router-dom/react-router/path-to-regexp": "^1.9.0"
   },
   "devDependencies": {

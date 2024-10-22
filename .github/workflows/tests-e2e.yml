@@ -27,8 +27,8 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
-    container:
-      image: circleci/classic:latest
+    # container:
+    #   image: circleci/classic:latest
     strategy:
       matrix:
         # Number of threads to run tests
@@ -38,6 +38,10 @@ jobs:
     name: E2E tests
     steps:
     - uses: actions/checkout@v4
+
+
+    - name: Install Docker CLI
+      uses: docker/setup-buildx-action@v3
 
     # # TODO: uncomment
     # - name: Download Docker Artifacts

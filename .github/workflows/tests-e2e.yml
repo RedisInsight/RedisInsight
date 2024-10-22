@@ -3,10 +3,10 @@ on:
   push:
     branches:
       - 'e2e/**'
+  workflow_dispatch:
   workflow_call:
 
 env:
-  # TEST_FILES: ${{ secrets.TEST_FILES }}
   E2E_CLOUD_DATABASE_USERNAME: ${{ secrets.E2E_CLOUD_DATABASE_USERNAME }}
   E2E_CLOUD_DATABASE_PASSWORD: ${{ secrets.E2E_CLOUD_DATABASE_PASSWORD }}
   E2E_CLOUD_API_ACCESS_KEY: ${{ secrets.E2E_CLOUD_API_ACCESS_KEY }}
@@ -19,7 +19,6 @@ env:
   RI_SERVER_TLS_CERT: ${{ secrets.RI_SERVER_TLS_CERT }}
   RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
 
-
 jobs:
   # build-docker:
   #   uses: ./.github/workflows/pipeline-build-docker.yml
@@ -27,22 +26,17 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    # needs: build-docker
     container:
       image: docker:latest
       options: --privileged
     strategy:
       matrix:
         # Number of threads to run tests
-        # parallel: [0]
         parallel: [0, 1, 2, 3]
-    # needs: build-docker
     name: E2E tests
     steps:
     - uses: actions/checkout@v4
-
-
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
 
     # # TODO: uncomment
     # - name: Download Docker Artifacts
@@ -62,27 +56,26 @@ jobs:
         # docker image load -i ./release/docker-linux-alpine.amd64.tar
         docker pull redis/redisinsight
 
-    # - run: sudo apt-get update -qy && sudo apt-get install -qy tmux;
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3 #1 better
-      with:
-        detached: true
-      # uses: lhotari/action-upterm@v1 #2
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3 #1 better
+    #   with:
+    #     detached: true
 
     - name: Generate test files
       run: |
 
         cd ./tests/e2e
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        TEST_FILES=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
 
         cd ../../
-        echo $TEST_FILES
+        echo $testFiles
 
-        # echo "TEST_FILES=${TEST_FILES}" >> $GITHUB_ENV
+        echo "TEST_FILES=${testFiles}" >> $GITHUB_ENV
 
     - name: Run tests
       run: |
+        export NODE_INDEX=${{ matrix.parallel }}
         cd ./tests/e2e
         export TEST_FILES=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
 
@@ -95,6 +88,13 @@ jobs:
         -f tests/e2e/rte.docker-compose.yml \
         -f tests/e2e/docker.web.docker-compose.yml \
         up --abort-on-container-exit --force-recreate
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
+      if: ${{ always() }}
+      with:
+        name: results-${{ matrix.parallel }}
+        path: results
 
 
 

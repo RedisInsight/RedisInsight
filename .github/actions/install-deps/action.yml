@@ -26,8 +26,8 @@ runs:
       #   SKIP_POSTINSTALL: ${{ inputs.skip-postinstall }}
       # run: yarn install
       run: |
-        export npm_config_keytar_binary_host_mirror=${{ inputs.keytar-host-mirror }}
-        export npm_config_node_sqlite3_binary_host_mirror=${{ inputs.sqlite3-host-mirror }}
+        # todo: uncomment after build our binaries
+        # export npm_config_keytar_binary_host_mirror=${{ inputs.keytar-host-mirror }}
+        # export npm_config_node_sqlite3_binary_host_mirror=${{ inputs.sqlite3-host-mirror }}
 
         yarn install
-        echo $SKIP_POSTINSTALL

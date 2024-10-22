@@ -40,8 +40,8 @@ jobs:
     - uses: actions/checkout@v4
 
 
-    - name: Install Docker CLI
-      uses: docker/setup-buildx-action@v3
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
 
     # # TODO: uncomment
     # - name: Download Docker Artifacts

@@ -34,7 +34,7 @@ MimeType=x-scheme-handler/redisinsight;
 EOL
 
 # Copy the .desktop file to the local applications directory
-cp ri-test/redisinsight.desktop ~/.local/share/applications/
+cp ri-test/redisinsight.desktop "$HOME/.local/share/applications"
 
 # Update the desktop database with custom directory
 update-desktop-database "$(pwd)/ri-test/"

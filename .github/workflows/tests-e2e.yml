@@ -62,13 +62,17 @@ jobs:
         detached: true
       # uses: lhotari/action-upterm@v1 #2
 
-    - name: Run tests
+    - name: Generate test files
       run: |
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        export TEST_FILES=$(find tests -name '*.e2e.js' | sort | awk "NR % 4 == 1" | sed "s|^|${REPO_NAME}/|")
+        TEST_FILES=$(find tests -name '*.e2e.js' | sort | awk "NR % 4 == 1" | sed "s|^|${REPO_NAME}/|")
 
         echo $TEST_FILES
 
+        echo "TEST_FILES=${TEST_FILES}" >> $GITHUB_ENV
+
+    - name: Run tests
+      run: |
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
         RI_SERVER_TLS_KEY="$RI_SERVER_TLS_KEY" \

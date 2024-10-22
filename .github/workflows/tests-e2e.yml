@@ -30,7 +30,8 @@ jobs:
     strategy:
       matrix:
         # Number of threads to run tests
-        parallel: [0, 1, 2, 3]
+        parallel: [0]
+        # parallel: [0, 1, 2, 3]
     # needs: build-docker
     name: E2E tests
     steps:

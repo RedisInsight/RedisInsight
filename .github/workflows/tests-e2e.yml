@@ -62,7 +62,7 @@ jobs:
     #   with:
     #     detached: true
 
-    - name: Generate test files
+    - name: Generate test files list
       run: |
 
         cd ./tests/e2e
@@ -74,11 +74,16 @@ jobs:
 
         # echo "TEST_FILES=${testFiles}" >> $GITHUB_ENV
 
-        {
-          echo "TEST_FILES<<EOF"
-          echo $testFiles
-          echo EOF
-        } >> $GITHUB_ENV
+        # Multiline env variable
+        # {
+        #   echo "TEST_FILES<<EOF"
+        #   echo $testFiles
+        #   echo EOF
+        # } >> $GITHUB_ENV
+
+        echo "TEST_FILES<<EOF" >> $GITHUB_ENV
+        echo "$testFiles" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
 
     - name: Run tests
       run: |

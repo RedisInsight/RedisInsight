@@ -18,6 +18,7 @@ env:
   RI_ENCRYPTION_KEY: ${{ secrets.RI_ENCRYPTION_KEY }}
   RI_SERVER_TLS_CERT: ${{ secrets.RI_SERVER_TLS_CERT }}
   RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
+  TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
 
 jobs:
   # build-docker:
@@ -78,6 +79,7 @@ jobs:
     - name: Run tests
       run: |
         export NODE_INDEX=${{ matrix.parallel }}
+        export TEST_FILES="tests/web/smoke/browser/edit-key-name.e2e.ts"
 
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
@@ -88,7 +90,7 @@ jobs:
         up --abort-on-container-exit --force-recreate
 
     - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3 #1 better
+      uses: mxschmitt/action-tmate@v3
       with:
         detached: true
 

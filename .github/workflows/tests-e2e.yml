@@ -65,7 +65,7 @@ jobs:
     - name: Generate test files
       run: |
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        TEST_FILES=$(find tests -name '*.e2e.ts' | sort | awk "NR % 4 == 1" | sed "s|^|${REPO_NAME}/|")
+        TEST_FILES=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}" | sed "s|^|${REPO_NAME}/|")
 
         echo $TEST_FILES
 
@@ -73,6 +73,7 @@ jobs:
 
     - name: Run tests
       run: |
+        REPO_NAME=$(basename $GITHUB_REPOSITORY)
         export TEST_FILES=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}" | sed "s|^|${REPO_NAME}/|")
 
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \

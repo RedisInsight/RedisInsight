@@ -65,7 +65,7 @@ jobs:
     - name: Generate test files
       run: |
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        TEST_FILES=$(find tests -name '*.e2e.js' | sort | awk "NR % 4 == 1" | sed "s|^|${REPO_NAME}/|")
+        TEST_FILES=$(find tests -name '*.e2e.ts' | sort | awk 'NR % 4 == 1 { print }')
 
         echo $TEST_FILES
 

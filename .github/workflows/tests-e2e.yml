@@ -33,7 +33,8 @@ jobs:
     strategy:
       matrix:
         # Number of threads to run tests
-        parallel: [0, 1, 2, 3]
+        parallel: [0]
+        # parallel: [0, 1, 2, 3]
     name: E2E tests
     steps:
     - uses: actions/checkout@v4
@@ -73,11 +74,19 @@ jobs:
 
         echo "TEST_FILES=${testFiles}" >> $GITHUB_ENV
 
+        {
+          echo "TEST_FILES<<EOF"
+          echo $testFiles
+          echo EOF
+        } >> $GITHUB_ENV
+
     - name: Run tests
       run: |
         export NODE_INDEX=${{ matrix.parallel }}
+        echo 'Run tests'
+        echo $TEST_FILES
         cd ./tests/e2e
-        export TEST_FILES=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+        # export TEST_FILES=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
 
         cd ../../
 

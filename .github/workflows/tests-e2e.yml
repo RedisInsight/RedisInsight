@@ -50,12 +50,6 @@ jobs:
     # - run: mv release2/docker-linux-alpine.amd64.tar release/docker-linux-alpine.amd64.tar
     # - run: ls -R ./release
 
-    - name: Login to DockerHub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USER_TEST }}
-        password: ${{ secrets.DOCKER_PASS_TEST }}
-
     - name: Load built docker image from workspace
       run: |
         # TODO: uncomment

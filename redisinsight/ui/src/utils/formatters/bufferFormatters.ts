@@ -171,6 +171,10 @@ const bufferToJava = (reply: RedisResponseBuffer) => {
     return decoded
   }
 
+  if (decoded instanceof Date) {
+    return decoded
+  }
+
   const { fields } = decoded
   const fieldsArray = Array.from(fields, ([key, value]) => ({ [key]: value }))
   return { ...decoded, fields: fieldsArray }

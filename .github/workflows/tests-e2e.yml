@@ -28,7 +28,7 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:22.04
+      image: circleci/classic:latest
     strategy:
       matrix:
         # Number of threads to run tests

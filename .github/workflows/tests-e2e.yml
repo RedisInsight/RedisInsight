@@ -97,7 +97,7 @@ jobs:
       if: ${{ always() }}
       with:
         name: results-${{ matrix.parallel }}
-        path: results
+        path: tests/e2e/results
 
 
 

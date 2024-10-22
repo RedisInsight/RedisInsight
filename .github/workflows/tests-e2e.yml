@@ -64,17 +64,23 @@ jobs:
 
     - name: Generate test files
       run: |
-        REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        TEST_FILES=$(find "$(pwd)/tests/e2e/tests/web" -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
 
+        cd ./tests/e2e
+        REPO_NAME=$(basename $GITHUB_REPOSITORY)
+        TEST_FILES=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+
+        cd ../../
         echo $TEST_FILES
 
         # echo "TEST_FILES=${TEST_FILES}" >> $GITHUB_ENV
 
     - name: Run tests
       run: |
+        cd ./tests/e2e
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
         export TEST_FILES=$(find "$(pwd)/tests/e2e/tests/web" -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+
+        cd ../../
 
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \

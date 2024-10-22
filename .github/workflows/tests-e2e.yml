@@ -30,8 +30,8 @@ jobs:
     strategy:
       matrix:
         # Number of threads to run tests
-        parallel: [0]
-        # parallel: [0, 1, 2, 3]
+        # parallel: [0]
+        parallel: [0, 1, 2, 3]
     # needs: build-docker
     name: E2E tests
     steps:
@@ -55,6 +55,12 @@ jobs:
         # docker image load -i ./release/docker-linux-alpine.amd64.tar
         docker pull redis/redisinsight
 
+    # - run: sudo apt-get update -qy && sudo apt-get install -qy tmux;
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3 #1 better
+      with:
+        detached: true
+      # uses: lhotari/action-upterm@v1 #2
 
     - name: Run tests
       run: |
@@ -70,8 +76,5 @@ jobs:
         -f tests/e2e/docker.web.docker-compose.yml \
         up --abort-on-container-exit --force-recreate
 
-    # - run: sudo apt-get update -qy && sudo apt-get install -qy tmux;
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3 #1 better
-      # uses: lhotari/action-upterm@v1 #2
+
 

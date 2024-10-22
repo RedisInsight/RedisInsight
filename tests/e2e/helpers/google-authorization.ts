@@ -1,5 +1,6 @@
 import { Builder, By, Key, until } from 'selenium-webdriver';
 import open = require('open');
+import { exec } from 'child_process';
 import chrome = require('selenium-webdriver/chrome');
 import { googleUser, googleUserPassword } from './conf';
 
@@ -48,10 +49,22 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
         const currentUrl = await driver.getCurrentUrl();
         const parts = currentUrl.split('?');
         const modifiedUrl = parts.length > 1 ? parts[1] : currentUrl;
-        const redirectUrl = `${protocol + callbackUrl  }?${  modifiedUrl}`;
+        const redirectUrl = `${protocol + callbackUrl}?${modifiedUrl}`;
 
         // Open Redis Insight electron app using deeplink
-        await open(redirectUrl, { app: { name: 'Redis Insight' } });
+        if (process.platform === 'linux') {
+            await exec(`xdg-open ${redirectUrl}`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error('error opening redis insight on linux', error);
+                    return;
+                }
+                console.log('Redis Insight opened successfully', stdout)
+            })
+        } else {
+            await open(redirectUrl, { app: { name: 'Redis Insight' } });
+        }
+
+
     }
     catch (error) {
         console.error('Error during Google SSO automation:', error);

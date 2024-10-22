@@ -58,16 +58,32 @@ export function getOpenedChromeTab(callback: Callback): void {
         });
     }
     else if (isLinux) {
-        exec('xdotool search --onlyvisible --class "Google-chrome" getwindowname $(xdotool getactivewindow)', (error, stdout) => {
+        // Activate the Chrome window
+        exec('xdotool search --onlyvisible --class "Google-chrome" windowactivate', (error) => {
             if (error) {
-                console.error('Error retrieving tabs and windows on Linux:', error);
+                console.error('Error focusing on Chrome window:', error);
                 return;
             }
-            const url = parseUrlFromTitle(stdout.trim());
-            callback(url);
-        });
-    }
-    else {
+
+            // Simulate Ctrl+L to focus on the URL bar and Ctrl+C to copy the URL
+            exec('xdotool key ctrl+l; xdotool key ctrl+c', (error) => {
+                if (error) {
+                    console.error('Error sending keyboard shortcuts to Chrome:', error);
+                    return;
+                }
+
+                // Retrieve the URL from the clipboard using xclip
+                exec('xclip -o', (error, stdout) => {
+                    if (error) {
+                        console.error('Error getting clipboard content:', error);
+                        return;
+                    }
+                    const url = stdout.trim();
+                    callback(url);
+                });
+            });
+        })
+    } else {
         console.error('Unsupported operating system:', process.platform);
     }
 }

@@ -64,7 +64,8 @@ jobs:
 
     - name: Run tests
       run: |
-        export TEST_FILES=$(find tests -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+        REPO_NAME=$(basename $GITHUB_REPOSITORY)
+        export TEST_FILES=$(find tests -name '*.e2e.js' | sort | awk "NR % 4 == 1" | sed "s|^|${REPO_NAME}/|")
 
         echo $TEST_FILES
 

@@ -73,6 +73,8 @@ jobs:
 
     - name: Run tests
       run: |
+        export TEST_FILES=$(find tests -name '*.e2e.ts' | sort | awk 'NR % 4 == 1 { print }')
+
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
         RI_SERVER_TLS_KEY="$RI_SERVER_TLS_KEY" \

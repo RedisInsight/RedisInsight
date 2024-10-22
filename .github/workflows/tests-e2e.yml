@@ -27,11 +27,12 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    container: node:20.14-alpine
     strategy:
       matrix:
         # Number of threads to run tests
-        # parallel: [0]
-        parallel: [0, 1, 2, 3]
+        parallel: [0]
+        # parallel: [0, 1, 2, 3]
     # needs: build-docker
     name: E2E tests
     steps:

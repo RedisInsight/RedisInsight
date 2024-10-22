@@ -31,6 +31,9 @@ jobs:
     container:
       image: docker:latest
       options: --privileged
+      volumes:
+        - ./results:/usr/src/app/results
+        - ./report:/usr/src/app/report
     strategy:
       matrix:
         # Number of threads to run tests

@@ -69,7 +69,7 @@ jobs:
 
         echo $testFiles
 
-        echo "TEST_FILES=${testFiles}" >> $GITHUB_ENV
+        # echo "TEST_FILES=${testFiles}" >> $GITHUB_ENV
 
     - name: Run tests
       run: |

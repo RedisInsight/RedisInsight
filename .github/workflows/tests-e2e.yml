@@ -1,0 +1,73 @@
+name: Tests E2E
+on:
+  push:
+    branches:
+      - 'e2e/*'
+  workflow_call:
+
+env:
+  # TEST_FILES: ${{ secrets.TEST_FILES }}
+  E2E_CLOUD_DATABASE_USERNAME: ${{ secrets.E2E_CLOUD_DATABASE_USERNAME }}
+  E2E_CLOUD_DATABASE_PASSWORD: ${{ secrets.E2E_CLOUD_DATABASE_PASSWORD }}
+  E2E_CLOUD_API_ACCESS_KEY: ${{ secrets.E2E_CLOUD_API_ACCESS_KEY }}
+  E2E_CLOUD_DATABASE_HOST: ${{ secrets.E2E_CLOUD_DATABASE_HOST }}
+  E2E_CLOUD_DATABASE_PORT: ${{ secrets.E2E_CLOUD_DATABASE_PORT }}
+  E2E_CLOUD_DATABASE_NAME: ${{ secrets.E2E_CLOUD_DATABASE_NAME }}
+  E2E_CLOUD_API_SECRET_KEY: ${{ secrets.E2E_CLOUD_API_SECRET_KEY }}
+  E2E_RI_ENCRYPTION_KEY: ${{ secrets.E2E_RI_ENCRYPTION_KEY }}
+  RI_ENCRYPTION_KEY: ${{ secrets.RI_ENCRYPTION_KEY }}
+  RI_SERVER_TLS_CERT: ${{ secrets.RI_SERVER_TLS_CERT }}
+  RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
+
+
+jobs:
+  build-docker:
+    uses: ./.github/workflows/pipeline-build-docker.yml
+    secrets: inherit
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: build-docker
+    name: E2E tests
+    steps:
+    - uses: actions/checkout@v4
+
+    # TODO: uncomment
+    - name: Download Docker Artifacts
+      if: ${{ !env.ACT }}
+      uses: actions/download-artifact@v4
+      with:
+        name: docker
+        path: ./release
+
+    - uses: KengoTODA/actions-setup-docker-compose@v1
+      if: ${{ env.ACT }}
+      name: Install `docker-compose` for local simulations
+      with:
+        version: '2.14.2'
+
+    # - run: mkdir release
+    # - run: mv release2/docker-linux-alpine.amd64.tar release/docker-linux-alpine.amd64.tar
+    - run: ls -R ./release
+
+    - name: Load built docker image from workspace
+      run: |
+        docker image load -i ./release/docker-linux-alpine.amd64.tar
+
+    - name: Run tests
+      run: |
+        # cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/web/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
+
+        # export TEST_FILES='tests/web/**/*.e2e.ts'
+
+        TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
+        RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
+        RI_SERVER_TLS_KEY="$RI_SERVER_TLS_KEY" \
+        docker-compose \
+        -f tests/e2e/rte.docker-compose.yml \
+        -f tests/e2e/docker.web.docker-compose.yml \
+        up --abort-on-container-exit --force-recreate
+
+
+
+

@@ -64,7 +64,7 @@ jobs:
 
     - name: Run tests
       run: |
-        export TEST_FILES=$(find tests -name '*.e2e.js' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+        export TEST_FILES=$(find tests -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
 
         echo $TEST_FILES
 

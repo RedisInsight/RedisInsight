@@ -154,69 +154,71 @@ services:
     logging: *logging
     image: redis:5
 
-  # oss cluster (v7)
-  cluster-plain-creator-7:
-    logging: *logging
-    build:
-      context: ./rte/oss-cluster-7
-      dockerfile: creator.Dockerfile
-    depends_on:
-      - master-plain-7-1
-      - master-plain-7-2
-      - master-plain-7-3
-  master-plain-7-1:
-    logging: *logging
-    build: &cluster-plain-7-build ./rte/oss-cluster-7
-    ports:
-      - 8200:6379
-    networks:
-      default:
-        ipv4_address: 172.31.100.211
-      ssh:
-        ipv4_address: 172.33.100.211
-  master-plain-7-2:
-    logging: *logging
-    build: *cluster-plain-7-build
-    networks:
-      default:
-        ipv4_address: 172.31.100.212
-  master-plain-7-3:
-    logging: *logging
-    build: *cluster-plain-7-build
-    networks:
-      default:
-        ipv4_address: 172.31.100.213
+# TODO uncomment
+  # # oss cluster (v7)
+  # cluster-plain-creator-7:
+  #   logging: *logging
+  #   build:
+  #     context: ./rte/oss-cluster-7
+  #     dockerfile: creator.Dockerfile
+  #   depends_on:
+  #     - master-plain-7-1
+  #     - master-plain-7-2
+  #     - master-plain-7-3
+  # master-plain-7-1:
+  #   logging: *logging
+  #   build: &cluster-plain-7-build ./rte/oss-cluster-7
+  #   ports:
+  #     - 8200:6379
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.31.100.211
+  #     ssh:
+  #       ipv4_address: 172.33.100.211
+  # master-plain-7-2:
+  #   logging: *logging
+  #   build: *cluster-plain-7-build
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.31.100.212
+  # master-plain-7-3:
+  #   logging: *logging
+  #   build: *cluster-plain-7-build
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.31.100.213
 
-  # oss cluster (v7) with rediserch > 2.2
-  cluster-rs-creator-7:
-    logging: *logging
-    build:
-      context: &cluster-rs-7-build ./rte/oss-cluster-7-rs
-      dockerfile: creator.Dockerfile
-    depends_on:
-      - master-rs-7-1
-      - master-rs-7-2
-      - master-rs-7-3
-  master-rs-7-1:
-    logging: *logging
-    build: *cluster-rs-7-build
-    ports:
-      - 8221:6379
-    networks:
-      default:
-        ipv4_address: 172.31.100.221
-  master-rs-7-2:
-    logging: *logging
-    build: *cluster-rs-7-build
-    networks:
-      default:
-        ipv4_address: 172.31.100.222
-  master-rs-7-3:
-    logging: *logging
-    build: *cluster-rs-7-build
-    networks:
-      default:
-        ipv4_address: 172.31.100.223
+# todo uncomment
+  # # oss cluster (v7) with rediserch > 2.2
+  # cluster-rs-creator-7:
+  #   logging: *logging
+  #   build:
+  #     context: &cluster-rs-7-build ./rte/oss-cluster-7-rs
+  #     dockerfile: creator.Dockerfile
+  #   depends_on:
+  #     - master-rs-7-1
+  #     - master-rs-7-2
+  #     - master-rs-7-3
+  # master-rs-7-1:
+  #   logging: *logging
+  #   build: *cluster-rs-7-build
+  #   ports:
+  #     - 8221:6379
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.31.100.221
+  # master-rs-7-2:
+  #   logging: *logging
+  #   build: *cluster-rs-7-build
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.31.100.222
+  # master-rs-7-3:
+  #   logging: *logging
+  #   build: *cluster-rs-7-build
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.31.100.223
 
   # oss cluster with redisgears 2
   gears-cluster-2-0-creator:

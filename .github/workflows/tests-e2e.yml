@@ -27,6 +27,10 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Number of threads to run tests
+        parallel: [0, 1, 2, 3]
     # needs: build-docker
     name: E2E tests
     steps:
@@ -40,12 +44,6 @@ jobs:
     #     name: docker
     #     path: ./release
 
-    - uses: KengoTODA/actions-setup-docker-compose@v1
-      if: ${{ env.ACT }}
-      name: Install `docker-compose` for local simulations
-      with:
-        version: '2.14.2'
-
     # - run: mkdir release
     # - run: mv release2/docker-linux-alpine.amd64.tar release/docker-linux-alpine.amd64.tar
     # - run: ls -R ./release
@@ -58,9 +56,9 @@ jobs:
 
     - name: Run tests
       run: |
-        # cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/web/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
+        export TEST_FILES=$(find tests -name '*.e2e.js' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
 
-        # export TEST_FILES='tests/web/**/*.e2e.ts'
+        echo $TEST_FILES
 
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \

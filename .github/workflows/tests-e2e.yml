@@ -54,7 +54,7 @@ jobs:
       run: |
         # TODO: uncomment
         # docker image load -i ./release/docker-linux-alpine.amd64.tar
-        docker pull redis/redisinsight:amd64
+        docker pull redis/redisinsight
 
     - name: Run tests
       run: |

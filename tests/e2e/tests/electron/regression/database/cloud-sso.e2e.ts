@@ -57,7 +57,7 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
     await t.expect(myRedisDatabasePage.ssoAuth.exists).ok('SSO auth button not displayed when SSO feature enabled');
 });
 // skip until adding linux support
-test.skip('Verify that user can sign in using SSO via Google authorization', async t => {
+test.only('Verify that user can sign in using SSO via Google authorization', async t => {
     const logsFilename = 'chrome_logs.txt';
     const logsFilePath = path.join('test-data', logsFilename);
 

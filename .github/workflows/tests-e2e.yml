@@ -2,7 +2,7 @@ name: Tests E2E
 on:
   push:
     branches:
-      - 'e2e/*'
+      - 'e2e/**'
   workflow_call:
 
 env:

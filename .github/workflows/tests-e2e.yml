@@ -65,15 +65,15 @@ jobs:
     - name: Generate test files
       run: |
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        testFiles=$(find tests -name '*.e2e.ts' | sort | awk 'NR % 4 == 1 { print }')
+        TEST_FILES=$(find tests -name '*.e2e.ts' | sort | awk "NR % 4 == 1" | sed "s|^|${REPO_NAME}/|")
 
-        echo $testFiles
+        echo $TEST_FILES
 
-        # echo "TEST_FILES=${testFiles}" >> $GITHUB_ENV
+        echo "TEST_FILES=${TEST_FILES}" >> $GITHUB_ENV
 
     - name: Run tests
       run: |
-        export TEST_FILES=$(find tests -name '*.e2e.ts' | sort | awk 'NR % 4 == 1 { print }')
+        export TEST_FILES=$(find tests -name '*.e2e.ts' | sort | awk "NR % 4 == 1" | sed "s|^|${REPO_NAME}/|")
 
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \

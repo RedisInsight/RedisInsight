@@ -27,7 +27,8 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
-    container: node:20.14-alpine
+    container:
+      image: ubuntu:22.04
     strategy:
       matrix:
         # Number of threads to run tests

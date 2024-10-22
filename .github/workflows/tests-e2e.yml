@@ -65,11 +65,11 @@ jobs:
     - name: Generate test files
       run: |
         REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        TEST_FILES=$(find tests -name '*.e2e.ts' | sort | awk 'NR % 4 == 1 { print }')
+        testFiles=$(find tests -name '*.e2e.ts' | sort | awk 'NR % 4 == 1 { print }')
 
-        echo $TEST_FILES
+        echo $testFiles
 
-        echo "TEST_FILES=${TEST_FILES}" >> $GITHUB_ENV
+        echo "TEST_FILES=${testFiles}" >> $GITHUB_ENV
 
     - name: Run tests
       run: |

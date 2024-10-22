@@ -62,25 +62,15 @@ jobs:
     #   with:
     #     detached: true
 
-    - name: Generate test files list
+    - name: Generate short list of the test files
       run: |
-
         cd ./tests/e2e
-        REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
-
+        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 40 == ${{ matrix.parallel }}")
+        # testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
         cd ../../
         echo $testFiles
 
-        # echo "TEST_FILES=${testFiles}" >> $GITHUB_ENV
-
-        # Multiline env variable
-        # {
-        #   echo "TEST_FILES<<EOF"
-        #   echo $testFiles
-        #   echo EOF
-        # } >> $GITHUB_ENV
-
+        # Multi-Line value
         echo "TEST_FILES<<EOF" >> $GITHUB_ENV
         echo "$testFiles" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
@@ -88,12 +78,6 @@ jobs:
     - name: Run tests
       run: |
         export NODE_INDEX=${{ matrix.parallel }}
-        echo 'Run tests'
-        echo $TEST_FILES
-        cd ./tests/e2e
-        # export TEST_FILES=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
-
-        cd ../../
 
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
@@ -102,6 +86,11 @@ jobs:
         -f tests/e2e/rte.docker-compose.yml \
         -f tests/e2e/docker.web.docker-compose.yml \
         up --abort-on-container-exit --force-recreate
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3 #1 better
+      with:
+        detached: true
 
     - name: Upload Test Report
       uses: actions/upload-artifact@v4

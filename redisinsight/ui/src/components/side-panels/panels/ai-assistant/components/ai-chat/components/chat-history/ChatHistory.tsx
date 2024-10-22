@@ -124,23 +124,12 @@ const ChatHistory = (props: Props) => {
       <div className={styles.wrapper}>
         <div className={styles.history} data-testid="ai-chat-empty-history">
           <div className={styles.answerWrapper}>
+            <ChatbotAvatar type={AiChatType.General} />
             <div
-              className={styles.avatarWrapper}
+              className={styles.answer}
+              data-testid="ai-message-initial-message"
             >
-              <ChatbotAvatar type={AiChatType.General} />
-            </div>
-            <div>
-              <EuiText
-                color="subdued"
-                className={styles.aiBotNameText}
-              >Redis Bot
-              </EuiText>
-              <div
-                className={styles.answer}
-                data-testid="ai-message-initial-message"
-              >
-                {AiChatInitialMessage}
-              </div>
+              {AiChatInitialMessage}
             </div>
           </div>
         </div>

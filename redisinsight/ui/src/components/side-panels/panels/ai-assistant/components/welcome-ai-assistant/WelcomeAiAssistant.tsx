@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { OAuthAgreement } from 'uiSrc/components/oauth/shared'
 
@@ -8,6 +8,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { setOAuthCloudSource } from 'uiSrc/slices/oauth/cloud'
 import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
+import { setHideCopilotSplashScreen } from 'uiSrc/slices/panels/aiAssistant'
 import styles from './styles.module.scss'
 
 const WelcomeAiAssistant = () => {
@@ -25,6 +26,10 @@ const WelcomeAiAssistant = () => {
         source: OAuthSocialSource.AiChat
       }
     })
+  }
+
+  const onBack = () => {
+    dispatch(setHideCopilotSplashScreen(false))
   }
 
   return (
@@ -53,6 +58,17 @@ const WelcomeAiAssistant = () => {
             </>
           )}
         </OAuthForm>
+      </div>
+      <div className={styles.actionContainer}>
+        <EuiButton
+          fill
+          size="m"
+          aria-label="Back to Copilot SplashScreen"
+          onClick={onBack}
+          data-testid="copilot-welcome-back-btn"
+        >
+          Back
+        </EuiButton>
       </div>
     </div>
   )

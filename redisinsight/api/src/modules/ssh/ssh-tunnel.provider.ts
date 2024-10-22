@@ -135,7 +135,14 @@ export class SshTunnelProvider {
           port: sshOptions.port,
           username: sshOptions.username,
           privateKey: sshOptions.privateKey,
+
+          // // If password
+          // password: sshOptions.password,
+          // tryKeyboard: false,
+
+          // If MFA
           tryKeyboard: true,
+
           // Additional SSH options for better connection handling
           keepaliveInterval: 10000, // Send keepalive every 10 seconds
           keepaliveCountMax: 3, // Allow 3 missed keepalives before considering connection dead

@@ -7,6 +7,7 @@ import { ADD_NEW_CA_CERT, ADD_NEW } from 'uiSrc/pages/home/constants'
 import {
   appRedirectionSelector,
   setFromUrl,
+  setReturnUrl,
   setUrlDbConnection,
   setUrlHandlingInitialState,
   setUrlProperties
@@ -20,6 +21,8 @@ import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { setOnboarding } from 'uiSrc/slices/app/features'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { localStorageService } from 'uiSrc/services'
+import { AppStorageItem } from 'uiSrc/constants/storage'
 
 const GlobalUrlHandler = () => {
   const { fromUrl } = useSelector(appRedirectionSelector)
@@ -29,8 +32,18 @@ const GlobalUrlHandler = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const location = useLocation()
+  const searchParams = new URLSearchParams(location.search)
+  const returnUrl = searchParams.get('returnUrl')
 
   useEffect(() => {
+    if (returnUrl) {
+      localStorageService.set(AppStorageItem.returnUrl, { value: returnUrl })
+      dispatch(setReturnUrl(returnUrl))
+      history.push(location.pathname)
+    } else if (localStorageService.get(AppStorageItem.returnUrl)) {
+      dispatch(setReturnUrl(localStorageService.get(AppStorageItem.returnUrl).value))
+    }
+
     // start handling only after closing consent popup
     // including updated consents & from scratch
     if (!fromUrl || isNull(isShowConsents) || isShowConsents || !config) return
@@ -61,7 +74,7 @@ const GlobalUrlHandler = () => {
     } catch (_e) {
       //
     }
-  }, [fromUrl, config, isShowConsents])
+  }, [returnUrl, fromUrl, config, isShowConsents])
 
   useEffect(() => {
     try {

@@ -84,8 +84,7 @@ jobs:
     - name: Run tests
       run: |
         cd ./tests/e2e
-        REPO_NAME=$(basename $GITHUB_REPOSITORY)
-        export TEST_FILES=$(find "$(pwd)/tests/e2e/tests/web" -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+        export TEST_FILES=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
 
         cd ../../
 

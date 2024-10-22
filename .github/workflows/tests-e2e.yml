@@ -73,7 +73,7 @@ jobs:
 
     - name: Run tests
       run: |
-        export TEST_FILES=$(find tests -name '*.e2e.ts' | sort | awk "NR % 4 == 1" | sed "s|^|${REPO_NAME}/|")
+        export TEST_FILES=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}" | sed "s|^|${REPO_NAME}/|")
 
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \

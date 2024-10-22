@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import config from 'src/utils/config';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
@@ -22,10 +22,10 @@ const FEATURES_CONFIG = config.get('features_config');
 @Injectable()
 export class LocalFeaturesConfigService
   extends FeaturesConfigService
-  implements OnApplicationBootstrap {
-  private logger = new Logger('LocalFeaturesConfigService');
-
+  implements OnModuleDestroy {
   private validator = new Validator();
+
+  private autoSyncTimeout: NodeJS.Timeout;
 
   constructor(
     private readonly repository: FeaturesConfigRepository,
@@ -36,17 +36,37 @@ export class LocalFeaturesConfigService
     super();
   }
 
+  onModuleDestroy() {
+    clearTimeout(this.autoSyncTimeout);
+  }
+
   /**
-   * Sync config on startup
-   * Set interval to re-sync automatically without waiting for next app start
+   * @inheritDoc
    */
-  async onApplicationBootstrap() {
+  async init() {
     // todo: [USER_CONTEXT] revise
     const sessionMetadata = this.constantsProvider.getSystemSessionMetadata();
-    this.sync(sessionMetadata).catch();
-    if (FEATURES_CONFIG.syncInterval > 0) {
-      setInterval(this.sync.bind(this, sessionMetadata), FEATURES_CONFIG.syncInterval);
-    }
+    await this.getControlInfo(sessionMetadata); // init default values
+
+    // initialize auto synchronisation
+    this.autoSync(sessionMetadata).catch();
+  }
+
+  /**
+   * Will try to auto update config file each FEATURES_CONFIG.syncInterval
+   * @param sessionMetadata
+   */
+  async autoSync(sessionMetadata: SessionMetadata): Promise<void> {
+    this.sync(sessionMetadata)
+      .catch()
+      .finally(() => {
+        if (FEATURES_CONFIG.syncInterval > 0) {
+          this.autoSyncTimeout = setTimeout(
+            this.autoSync.bind(this, sessionMetadata),
+            FEATURES_CONFIG.syncInterval,
+          );
+        }
+      });
   }
 
   /**

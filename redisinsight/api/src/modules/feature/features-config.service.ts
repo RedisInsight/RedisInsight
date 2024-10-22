@@ -1,8 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export abstract class FeaturesConfigService {
+  protected logger = new Logger(this.constructor.name);
+
+  /**
+   * Should initialize all required values
+   * Sync config on startup (in background)
+   * Set interval to re-sync automatically without waiting for next app start
+   */
+  abstract init(): Promise<void>;
+
   /**
    * Get control group and number fields
    */

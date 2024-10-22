@@ -11,7 +11,7 @@ import {
   mockSentinelRedisClient, mockSessionMetadata,
   mockStandaloneRedisClient,
   MockType,
-} from 'src/__mocks__'
+} from 'src/__mocks__';
 import { Database } from 'src/modules/database/models/database';
 import { RedisClientFactory, RedisClientLib } from 'src/modules/redis/redis.client.factory';
 import { IoredisRedisConnectionStrategy } from 'src/modules/redis/connection/ioredis.redis.connection.strategy';
@@ -63,12 +63,12 @@ describe('LocalRedisClientFactory', () => {
     featureService.getByName.mockResolvedValue(mockFeatureRedisClient);
   });
 
-  describe('onModuleInit', () => {
+  describe('init', () => {
     it('should set ioredis as default strategy from config', async () => {
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(featureService.getByName).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.RedisClient);
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
@@ -85,7 +85,7 @@ describe('LocalRedisClientFactory', () => {
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(featureService.getByName).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.RedisClient);
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
@@ -97,7 +97,7 @@ describe('LocalRedisClientFactory', () => {
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(featureService.getByName).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.RedisClient);
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
@@ -112,7 +112,7 @@ describe('LocalRedisClientFactory', () => {
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(featureService.getByName).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.RedisClient);
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
@@ -127,7 +127,7 @@ describe('LocalRedisClientFactory', () => {
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(featureService.getByName).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.RedisClient);
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
@@ -144,7 +144,7 @@ describe('LocalRedisClientFactory', () => {
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.NODE_REDIS);
@@ -155,7 +155,7 @@ describe('LocalRedisClientFactory', () => {
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);

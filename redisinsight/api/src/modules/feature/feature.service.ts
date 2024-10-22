@@ -21,4 +21,10 @@ export abstract class FeatureService {
    * @param sessionMetadata
    */
   abstract list(sessionMetadata: SessionMetadata): Promise<FeaturesFlags>;
+
+  /**
+   * Recalculate all feature flags based on existing config
+   * @param sessionMetadata
+   */
+  abstract recalculateFeatureFlags(sessionMetadata: SessionMetadata): Promise<void>;
 }

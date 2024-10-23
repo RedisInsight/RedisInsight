@@ -52,7 +52,6 @@ export class RdiInstancePage extends BaseOverviewPage {
     templateButton = Selector('[data-testid^=template-trigger-]');
     templateApplyButton = Selector('[data-testid=template-apply-btn]');
     templateCancelButton = Selector('[data-testid=template-cancel-btn]');
-    pipelineDropdown =  Selector('[data-testid=pipeline-type-select]');
     databaseDropdown =  Selector('[data-testid=db-type-select]');
 
     //dialog
@@ -77,17 +76,12 @@ export class RdiInstancePage extends BaseOverviewPage {
 
     /**
      * Select value from template dropdowns
-     * @param pipeline value of pipeline dropdown
      * @param database value of database dropdown
      */
-    async setTemplateDropdownValue(pipeline: RdiTemplatePipelineType, database?: RdiTemplateDatabaseType): Promise<void> {
-        await t.click(this.pipelineDropdown);
-        let selector =  Selector(`[id='${pipeline}']`);
-        await t.click(selector);
+    async setTemplateDropdownValue(database?: RdiTemplateDatabaseType): Promise<void> {
         if(database != null) {
             await t.click(this.databaseDropdown);
-            selector =  Selector(`[id='${database}']`);
-            await t.click(selector);
+            await t.click(Selector(`[id='${database}']`));
         }
         await t.click(this.templateApplyButton);
     }
@@ -97,8 +91,8 @@ export class RdiInstancePage extends BaseOverviewPage {
      * @param option option to select
      */
     async selectStartPipelineOption(option: RdiPopoverOptions): Promise<void> {
-
         const selector =  Selector(`[data-testid='${option}-source-pipeline-dialog']`);
+
         await t.click(selector);
     }
 

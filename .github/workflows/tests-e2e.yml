@@ -61,6 +61,9 @@ jobs:
         # docker image load -i ./release/docker-linux-alpine.amd64.tar
         docker pull redis/redisinsight
 
+        # TODO:
+        git config --global --add safe.directory /__w/RedisInsight/RedisInsight
+
     # - name: Setup tmate session
     #   uses: mxschmitt/action-tmate@v3 #1 better
     #   with:

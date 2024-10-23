@@ -1,10 +1,16 @@
 name: Tests E2E
 on:
-  push:
-    branches:
-      - 'e2e/**'
+  # push:
+  #   branches:
+  #     - 'e2e/**'
   workflow_dispatch:
   workflow_call:
+    inputs:
+      report:
+        description: Send report to Slack
+        required: false
+        default: false
+        type: boolean
 
 env:
   E2E_CLOUD_DATABASE_USERNAME: ${{ secrets.E2E_CLOUD_DATABASE_USERNAME }}
@@ -18,16 +24,22 @@ env:
   RI_ENCRYPTION_KEY: ${{ secrets.RI_ENCRYPTION_KEY }}
   RI_SERVER_TLS_CERT: ${{ secrets.RI_SERVER_TLS_CERT }}
   RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
+  SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
 
 jobs:
-  # build-docker:
-  #   uses: ./.github/workflows/pipeline-build-docker.yml
-  #   secrets: inherit
+  approve:
+    runs-on: ubuntu-latest
+    environment: ${{ startsWith(github.ref_name, 'e2e/') && 'e2e-approve' || 'staging' }}
+
+  build-docker:
+    needs: approve
+    uses: ./.github/workflows/pipeline-build-docker.yml
+    secrets: inherit
 
   e2e-tests:
     runs-on: ubuntu-latest
-    # needs: build-docker
+    needs: build-docker
     container:
       image: docker:latest
       options: --privileged
@@ -38,39 +50,30 @@ jobs:
       fail-fast: false
       matrix:
         # Number of threads to run tests
-        # parallel: [0]
         parallel: [0, 1, 2, 3]
     name: E2E tests
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup
+    - name: Setup repository
       run: git config --global --add safe.directory /__w/RedisInsight/RedisInsight
 
-    # # TODO: uncomment
-    # - name: Download Docker Artifacts
-    #   if: ${{ !env.ACT }}
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     name: docker
-    #     path: ./release
-
-    # - run: mkdir release
-    # - run: mv release2/docker-linux-alpine.amd64.tar release/docker-linux-alpine.amd64.tar
-    # - run: ls -R ./release
+    - name: Download Docker Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: docker
+        path: ./release
 
     - name: Load built docker image from workspace
       run: |
-        # TODO: uncomment
-        # docker image load -i ./release/docker-linux-alpine.amd64.tar
-        docker pull redis/redisinsight
+        docker image load -i ./release/docker-linux-alpine.amd64.tar
+        # docker pull redis/redisinsight
 
     - name: Generate short list of the test files
       run: |
         cd ./tests/e2e
         # !!! 40
-        # testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
-        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 10 == ${{ matrix.parallel }}")
+        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
         cd ../../
         echo $testFiles
 
@@ -92,12 +95,6 @@ jobs:
         -f tests/e2e/docker.web.docker-compose.yml \
         up --abort-on-container-exit --force-recreate
 
-    # - name: Setup tmate session
-    #   uses: mxschmitt/action-tmate@v3
-    #   if: always()
-    #   with:
-    #     detached: true
-
     - name: Generate test results for ${{ matrix.parallel }}th node
       uses: dorny/test-reporter@v1
       if: always()
@@ -113,6 +110,12 @@ jobs:
       with:
         name: report-node-${{ matrix.parallel }}
         path: /usr/src/app/report
+
+    - name: Send report to Slack
+      if: inputs.report && always()
+      run: |
+        node ./.github/e2e-results.js
+        curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
 
 

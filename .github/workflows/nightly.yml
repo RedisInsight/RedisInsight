@@ -1,0 +1,11 @@
+name: Nightly jobs
+on:
+  schedule:
+  - cron: 0 0 * * *
+
+jobs:
+  e2e:
+    uses: ./.github/workflows/tests-e2e.yml
+    secrets: inherit
+    with:
+      report: true

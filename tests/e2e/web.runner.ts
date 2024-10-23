@@ -20,6 +20,10 @@ import testcafe from 'testcafe';
                 .reporter([
                     'spec',
                     {
+                        name: 'junit',
+                        output: './results/results-junit.xml'
+                    },
+                    {
                         name: 'xunit',
                         output: './results/results.xml'
                     },

@@ -68,6 +68,7 @@
     "testcafe-browser-provider-electron": "0.0.21",
     "testcafe-reporter-html": "1.4.6",
     "testcafe-reporter-json": "2.2.0",
+    "testcafe-reporter-junit": "^3.0.2",
     "testcafe-reporter-spec": "2.2.0",
     "ts-node": "10.9.1",
     "typescript": "5.1.3",

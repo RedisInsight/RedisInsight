@@ -18,6 +18,8 @@ const pathes = {
     defaultRemote: path.join('.', 'test-data', 'features-configs', 'insights-default-remote.json'),
     electronConfig: path.join('.', 'test-data', 'features-configs', 'sso-electron-build.json')
 };
+const logsFilename = 'chrome_logs.txt';
+const logsFilePath = path.join('test-data', logsFilename);
 
 fixture `Cloud SSO`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -30,6 +32,10 @@ fixture `Cloud SSO`
         await updateControlNumber(48.2);
     })
     .afterEach(async() => {
+        if (fs.existsSync(logsFilePath)) {
+            fs.unlinkSync(logsFilePath);
+            console.log(`Deleted logs file: ${logsFilePath}`);
+        }
         await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Verify that user can see SSO feature if it is enabled in feature config', async t => {
@@ -58,9 +64,6 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
 });
 // skip until adding linux support
 test.only('Verify that user can sign in using SSO via Google authorization', async t => {
-    const logsFilename = 'chrome_logs.txt';
-    const logsFilePath = path.join('test-data', logsFilename);
-
     await t.expect(myRedisDatabasePage.promoButton.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
     await t.click(myRedisDatabasePage.NavigationHeader.cloudSignInButton);
     // Navigate to Google Auth button

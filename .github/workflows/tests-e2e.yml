@@ -76,9 +76,9 @@ jobs:
     - name: Generate short list of the test files
       run: |
         cd ./tests/e2e
-        # !!! 40
         testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
         cd ../../
+
         echo $testFiles
 
         # Multi-Line value

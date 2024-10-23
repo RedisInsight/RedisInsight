@@ -107,11 +107,11 @@ jobs:
     #   with:
     #     detached: true
 
-    - name: Test Results for ${{ matrix.parallel }}th node
+    - name: Test Results for ${{ matrix.parallel }}th node1
       uses: dorny/test-reporter@v1
       if: always()
       with:
-        name: Tests Results
+        name: Tests Results for ${{ matrix.parallel }}th node
         path: results/results.xml
         reporter: java-junit
         fail-on-error: false

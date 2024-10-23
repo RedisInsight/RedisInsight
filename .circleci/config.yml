@@ -408,11 +408,17 @@ jobs:
           name: Install WM
           command: sudo apt install fluxbox
       - run:
-          name: Run X11
-          command: |
-            Xvfb :99 -screen 0 1920x1080x24 &
+          name: Install Xvfb
+          command: sudo apt-get install -y xvfb
+      - run:
+          name: Start Xvfb
+          command:  | 
+            Xvfb :99 -ac -screen 0 1920x1080x24 &
             sleep 3
             fluxbox &
+      - run:
+          name: Set Display
+          command: export DISPLAY=:99
       # - run:
       #     name: Clone mocked RDI server
       #     command: |

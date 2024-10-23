@@ -97,6 +97,7 @@ jobs:
         up --abort-on-container-exit --force-recreate
 
     - name: Copy results
+      if: ${{ always() }}
       run: |
         cp -R /usr/src/app/results/ ./results
 

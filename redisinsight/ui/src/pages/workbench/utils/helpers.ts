@@ -4,7 +4,7 @@ import { Maybe } from 'uiSrc/utils'
 export const isStringsEqual = (str1?: string, str2?: string) => str1?.toLowerCase() === str2?.toLowerCase()
 
 export const isTokenEqualsArg = (token: IRedisCommand, arg: string) => {
-  if (token.type === ICommandTokenType.OneOf) {
+  if (token.type === ICommandTokenType.OneOf && !token.token) {
     return token.arguments
       ?.some((oneOfArg: IRedisCommand) => isStringsEqual(oneOfArg?.token, arg))
   }

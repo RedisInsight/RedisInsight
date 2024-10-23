@@ -37,8 +37,7 @@ jobs:
     strategy:
       matrix:
         # Number of threads to run tests
-        # parallel: [0, 1, 2, 3]
-        parallel: [0]
+        parallel: [0, 1, 2, 3]
     name: E2E tests
     steps:
     - uses: actions/checkout@v4
@@ -102,36 +101,20 @@ jobs:
         cp -R /usr/src/app/results/ ./results
         cp -R /usr/src/app/report/ ./report
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      if: always()
-      with:
-        detached: true
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
+    #   if: always()
+    #   with:
+    #     detached: true
 
-    - name: Test Report
+    - name: Test Results for ${{ matrix.parallel }}th node
       uses: dorny/test-reporter@v1
       if: always()
       with:
-        name: java-junit Tests
+        name: Tests Results
         path: results/results.xml
-        # reporter: jest-junit
         reporter: java-junit
-
-    - name: Test Report2
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: dotnet-xunit Tests
-        path: results/results.xml
-        # reporter: jest-junit
-        reporter: dotnet-xunit
-
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: results-${{ matrix.parallel }}
-        path: results
+        fail-on-error: false
 
     - name: Upload Test Report
       uses: actions/upload-artifact@v4

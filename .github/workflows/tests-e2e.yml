@@ -97,13 +97,13 @@ jobs:
         up --abort-on-container-exit --force-recreate
 
     - name: Copy results
-      if: ${{ always() }}
+      if: always()
       run: |
         cp -R /usr/src/app/results/ ./results
 
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
-      if: ${{ always() }}
+      if: always()
       with:
         detached: true
 
@@ -121,7 +121,7 @@ jobs:
       if: always()
       with:
         name: XML Tests
-        path: /usr/src/app/results/results.xml
+        path: results/results.xml
         reporter: jest-junit
 
     - name: Upload Test Results

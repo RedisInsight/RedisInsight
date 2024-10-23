@@ -96,11 +96,11 @@ jobs:
         -f tests/e2e/docker.web.docker-compose.yml \
         up --abort-on-container-exit --force-recreate
 
-    # - name: Setup tmate session
-    #   uses: mxschmitt/action-tmate@v3
-    #   if: ${{ always() }}
-    #   with:
-    #     detached: true
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ always() }}
+      with:
+        detached: true
 
     - name: Test Report
       uses: dorny/test-reporter@v1

@@ -32,8 +32,10 @@ jobs:
       image: docker:latest
       options: --privileged
       volumes:
-        - ./results:./tests/e2e/results
-        - ./report:./tests/e2e/report
+        - results:/usr/src/app/results
+        - report:/usr/src/app/report
+        - results2:/__w/RedisInsight/RedisInsight/tests/e2e/results
+        - report2:/__w/RedisInsight/RedisInsight/tests/e2e/report
     strategy:
       matrix:
         # Number of threads to run tests

@@ -25,6 +25,7 @@ const OAuthForm = ({
   const dispatch = useDispatch()
 
   const [authStrategy, setAuthStrategy] = useState('')
+  const [disabled, setDisabled] = useState(false)
 
   const initOAuthProcess = (strategy: OAuthStrategy, action: string, data?: {}) => {
     dispatch(signIn())
@@ -32,6 +33,8 @@ const OAuthForm = ({
   }
 
   const onSocialButtonClick = (authStrategy: OAuthStrategy) => {
+    setDisabled(true)
+    setTimeout(() => { setDisabled(false) }, 1000)
     dispatch(enableUserAnalyticsAction())
     setAuthStrategy(authStrategy)
     onClick?.(authStrategy)
@@ -83,6 +86,7 @@ const OAuthForm = ({
       <OAuthSocialButtons
         onClick={onSocialButtonClick}
         {...rest}
+        disabled={disabled}
       />
     )
   )

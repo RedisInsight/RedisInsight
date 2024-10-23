@@ -13,6 +13,7 @@ import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Injectable()
 export class LocalClientCertificateRepository extends ClientCertificateRepository {
@@ -23,6 +24,8 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
   constructor(
     @InjectRepository(ClientCertificateEntity)
     private readonly repository: Repository<ClientCertificateEntity>,
+    @InjectRepository(DatabaseEntity)
+    private readonly databaseRepository: Repository<DatabaseEntity>,
     private readonly encryptionService: EncryptionService,
   ) {
     super();
@@ -71,7 +74,7 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
   /**
    * @inheritDoc
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<{ affectedDatabases: string[] }> {
     this.logger.log(`Deleting certificate. id: ${id}`);
 
     // todo: 1. why we need to check if entity exists?
@@ -83,7 +86,16 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
       throw new NotFoundException();
     }
 
+    const affectedDatabases = (await this.databaseRepository
+      .createQueryBuilder('d')
+      .leftJoinAndSelect('d.clientCert', 'c')
+      .where({ clientCert: id })
+      .select(['d.id'])
+      .getMany()).map((e) => e.id);
+
     await this.repository.delete(id);
     this.logger.log(`Succeed to delete client certificate: ${id}`);
+
+    return { affectedDatabases };
   }
 }

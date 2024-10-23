@@ -3,8 +3,9 @@ import {
 } from 'typeorm';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { Expose, Transform } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { IsInt, Min } from 'class-validator';
+import { DataAsJsonString } from 'src/common/decorators';
 
 @Entity('command_execution')
 export class CommandExecutionEntity {
@@ -35,14 +36,7 @@ export class CommandExecutionEntity {
   mode?: string = RunQueryMode.ASCII;
 
   @Column({ nullable: false, type: 'text' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((string) => {
-    try {
-      return JSON.parse(string);
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @DataAsJsonString()
   @Expose()
   result: string;
 
@@ -55,26 +49,12 @@ export class CommandExecutionEntity {
   resultsMode?: string = ResultsMode.Default;
 
   @Column({ nullable: true })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((string) => {
-    try {
-      return JSON.parse(string);
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @DataAsJsonString()
   @Expose()
   summary?: string;
 
   @Column({ nullable: true })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((string) => {
-    try {
-      return JSON.parse(string);
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @DataAsJsonString()
   @Expose()
   nodeOptions?: string = null;
 

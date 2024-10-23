@@ -126,3 +126,8 @@ export enum TlsCertificates  {
     Client = 'client',
 }
 
+export enum AddElementInList  {
+    Head ,
+    Tail,
+}
+

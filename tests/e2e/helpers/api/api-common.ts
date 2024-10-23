@@ -1,4 +1,4 @@
-import * as request from 'supertest';
+import request from 'supertest';
 import { Common } from '../common';
 
 const endpoint = Common.getEndpoint();

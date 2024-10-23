@@ -15,7 +15,8 @@
     "postinstall": "npx patch-package"
   },
   "resolutions": {
-    "**/semver": "^7.5.2"
+    "**/semver": "^7.5.2",
+    "sqlite3/**/tar": "^6.2.1"
   },
   "dependencies": {
     "keytar": "^7.9.0",

@@ -1,5 +1,4 @@
 import { Builder, By, Key, until } from 'selenium-webdriver';
-import open = require('open');
 import { exec } from 'child_process';
 import chrome = require('selenium-webdriver/chrome');
 import { googleUser, googleUserPassword } from './conf';
@@ -61,10 +60,9 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
                 console.log('Redis Insight opened successfully', stdout)
             })
         } else {
+            const open = (await import('open')).default;
             await open(redirectUrl, { app: { name: 'Redis Insight' } });
         }
-
-
     }
     catch (error) {
         console.error('Error during Google SSO automation:', error);

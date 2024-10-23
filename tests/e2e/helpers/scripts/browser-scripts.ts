@@ -3,8 +3,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import CDP from 'chrome-remote-interface';
 
-type Callback = (url: string) => void;
-
 /**
  * Get current machine platform
  */
@@ -35,6 +33,14 @@ export function openChromeWindow(): void {
                 console.error('Error opening Chrome:', error);
                 return;
             }
+            // Check if Chrome is running after opening it
+            exec(`pgrep "chrome"`, (err, stdout) => {
+                if (err || !stdout.trim()) {
+                    console.error('Chrome process not found after attempting to launch.');
+                } else {
+                    console.log('Chrome is running with PID:', stdout.trim());
+                }
+            });
         });
     }
 }
@@ -63,6 +69,7 @@ export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring
         let initialTabCount = 0;
 
         const checkChromeAndGetTab = () => {
+            console.log(`Attempting to connect to Chrome DevTools (Attempt: ${attempts + 1}/${maxRetries})...`);
             CDP.List(async (err, targets) => {
                 if (err) {
                     console.error('Error connecting to Chrome with CDP:', err);
@@ -76,10 +83,12 @@ export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring
                 }
 
                 const pageTargets = targets.filter(target => target.type === 'page');
-                
+                console.log(`Found ${pageTargets.length} open tabs in Chrome`);
+
                 // First, get the initial tab count
                 if (attempts === 0) {
                     initialTabCount = pageTargets.length;
+                    console.log('Initial tab count:', initialTabCount);
                 }
 
                 // Detect if a new tab has opened

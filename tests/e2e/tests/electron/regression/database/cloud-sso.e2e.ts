@@ -7,7 +7,7 @@ import { commonUrl } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { modifyFeaturesConfigJson, updateControlNumber } from '../../../../helpers/insights';
 import { processGoogleSSO } from '../../../../helpers/google-authorization';
-import { openChromeWithUrl, saveOpenedChromeTabUrl } from '../../../../helpers/scripts/browser-scripts';
+import { openChromeWindow, saveOpenedChromeTabUrl } from '../../../../helpers/scripts/browser-scripts';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
@@ -72,13 +72,15 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     await t.pressKey('shift+tab');
 
     // Open Chrome with a sample URL and save it to logs file
-    openChromeWithUrl();
+    openChromeWindow();
     saveOpenedChromeTabUrl(logsFilePath);
     // Click the button to trigger the Google authorization page
     await t.pressKey('enter');
     await t.wait(2000);
 
     urlToUse = fs.readFileSync(logsFilePath, 'utf8');
+    console.log('urlToUse: ', urlToUse)
+    await t.expect(urlToUse).contains('authorize?');
     await processGoogleSSO(urlToUse);
     await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
     await myRedisDatabasePage.reloadPage();

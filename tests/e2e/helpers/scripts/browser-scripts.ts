@@ -15,14 +15,13 @@ function getPlatform(): { isMac: boolean, isLinux: boolean } {
 }
 
 /**
- * Open a new Chrome browser instance with a specific URL
- * @param url The URL to open
+ * Open a new Chrome browser instance
  */
-export function openChromeWithUrl(url = 'https://www.example.com'): void {
+export function openChromeWindow(): void {
     const { isMac, isLinux } = getPlatform();
 
     if (isMac) {
-        exec(`open -na "Google Chrome" --args --new-window "${url}"`, (error) => {
+        exec(`open -na "Google Chrome" --args --new-window`, (error) => {
             if (error) {
                 console.error('Error opening Chrome:', error);
                 return;
@@ -30,7 +29,7 @@ export function openChromeWithUrl(url = 'https://www.example.com'): void {
         });
     }
     else if (isLinux) {
-        exec(`google-chrome --new-window "${url}"`, (error) => {
+        exec(`google-chrome --new-window`, (error) => {
             if (error) {
                 console.error('Error opening Chrome:', error);
                 return;
@@ -43,8 +42,10 @@ export function openChromeWithUrl(url = 'https://www.example.com'): void {
  * Retrieve opened tab in Google Chrome using Chrome DevTools Protocol
  * @param callback Function to save opened tab
  */
-export function getOpenedChromeTab(callback: Callback): void {
+export function getOpenedChromeTab(callback: (url: string) => void): void {
     const { isMac, isLinux } = getPlatform();
+    const maxRetries = 10;
+    const retryDelay = 500;
 
     if (isMac) {
         const scriptPath = path.join(__dirname, 'get_chrome_tab_url.applescript');
@@ -56,33 +57,56 @@ export function getOpenedChromeTab(callback: Callback): void {
             const url = stdout.trim();
             callback(url);
         });
-    }
-    else if (isLinux) {
-        // Activate the Chrome window
-        exec('xdotool search --onlyvisible --class "chrome" windowactivate --verbose', (error) => {
-            if (error) {
-                console.error('Error focusing on Chrome window:', error);
-                return;
-            }
+    } else if (isLinux) {
+        let attempts = 0;
 
-            // Simulate Ctrl+L to focus on the URL bar and Ctrl+C to copy the URL
-            exec('xdotool key ctrl+l; xdotool key ctrl+c', (error) => {
-                if (error) {
-                    console.error('Error sending keyboard shortcuts to Chrome:', error);
+        const checkChromeAndGetTab = () => {
+            // Check if Chrome is running
+            exec('xdotool search --onlyvisible --class "chrome"', (error, stdout) => {
+                if (error || !stdout.trim()) {
+                    console.log(`Chrome not detected, retrying... (${attempts + 1}/${maxRetries})`);
+                    attempts++;
+                    
+                    // Retry if Chrome is not open and we haven't reached the max retries
+                    if (attempts < maxRetries) {
+                        setTimeout(checkChromeAndGetTab, retryDelay);
+                    } else {
+                        console.error('Chrome did not open within the expected time.');
+                    }
                     return;
                 }
 
-                // Retrieve the URL from the clipboard using xclip
-                exec('xclip -o', (error, stdout) => {
+                console.log('Chrome detected, focusing on Chrome window...');
+                // Activate the Chrome window
+                exec('xdotool search --onlyvisible --class "chrome" windowactivate', (error) => {
                     if (error) {
-                        console.error('Error getting clipboard content:', error);
+                        console.error('Error focusing on Chrome window:', error);
                         return;
                     }
-                    const url = stdout.trim();
-                    callback(url);
+
+                    // Simulate Ctrl+L to focus on the URL bar and Ctrl+C to copy the URL
+                    exec('xdotool key ctrl+l; xdotool key ctrl+c', (error) => {
+                        if (error) {
+                            console.error('Error sending keyboard shortcuts to Chrome:', error);
+                            return;
+                        }
+
+                        // Retrieve the URL from the clipboard using xclip
+                        exec('xclip -o', (error, stdout) => {
+                            if (error) {
+                                console.error('Error getting clipboard content:', error);
+                                return;
+                            }
+                            const url = stdout.trim();
+                            callback(url);
+                        });
+                    });
                 });
             });
-        })
+        };
+
+        // Start the process by checking for Chrome
+        checkChromeAndGetTab();
     } else {
         console.error('Unsupported operating system:', process.platform);
     }
@@ -101,7 +125,7 @@ function parseUrlFromTitle(title: string): string {
 * @param logsFilePath The path to the file with logged url
 * @param timeout The timeout for monitoring Chrome tabs
 */
-export function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 1000): void {
+export function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 10000): void {
     setTimeout(() => {
         getOpenedChromeTab((windows: string | NodeJS.ArrayBufferView) => {
             // Save the window information to a file

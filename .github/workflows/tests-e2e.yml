@@ -32,8 +32,8 @@ jobs:
       image: docker:latest
       options: --privileged
       volumes:
-        - /usr/src/app/results:/usr/src/app/results
-        - /usr/src/app/report:/usr/src/app/report
+        - ./results:./tests/e2e/results
+        - ./report:./tests/e2e/report
     strategy:
       matrix:
         # Number of threads to run tests

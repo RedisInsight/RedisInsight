@@ -63,6 +63,7 @@ const WelcomeAiAssistant = () => {
         <EuiButton
           fill
           size="m"
+          color="secondary"
           aria-label="Back to Copilot SplashScreen"
           onClick={onBack}
           data-testid="copilot-welcome-back-btn"

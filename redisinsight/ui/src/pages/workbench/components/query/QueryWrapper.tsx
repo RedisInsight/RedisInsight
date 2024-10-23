@@ -51,7 +51,7 @@ const QueryWrapper = (props: Props) => {
     if (!connectedIndstanceId) return
 
     // fetch indexes
-    dispatch(fetchRedisearchListAction())
+    dispatch(fetchRedisearchListAction(undefined, undefined, false))
   }, [connectedIndstanceId])
 
   const Placeholder = (

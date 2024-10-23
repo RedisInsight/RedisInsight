@@ -61,7 +61,6 @@ const WelcomeAiAssistant = () => {
       </div>
       <div className={styles.actionContainer}>
         <EuiButton
-          fill
           size="m"
           color="secondary"
           aria-label="Back to Copilot SplashScreen"

@@ -30,11 +30,10 @@ jobs:
     # needs: build-docker
     container:
       image: docker:latest
-      options: --user root -v ${{ github.workspace }}:/usr/src/app/:rw
-      # options: --privileged
-      # volumes:
-      #   - /usr/src/app/results:/usr/src/app/results
-      #   - /usr/src/app/report:/usr/src/app/report
+      options: --privileged
+      volumes:
+        - /usr/src/app/results:/usr/src/app/results
+        - /usr/src/app/report:/usr/src/app/report
     strategy:
       matrix:
         # Number of threads to run tests

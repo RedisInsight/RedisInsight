@@ -30,10 +30,11 @@ jobs:
     # needs: build-docker
     container:
       image: docker:latest
-      options: --privileged
-      volumes:
-        - /usr/src/app/results:/usr/src/app/results
-        - /usr/src/app/report:/usr/src/app/report
+      options: -v /__w/RedisInsight/RedisInsight/results:/usr/src/app/results/:rw
+      # options: --privileged
+      # volumes:
+      #   - /usr/src/app/results:/usr/src/app/results
+      #   - /usr/src/app/report:/usr/src/app/report
     strategy:
       matrix:
         # Number of threads to run tests
@@ -129,14 +130,14 @@ jobs:
       if: always()
       with:
         name: results-${{ matrix.parallel }}
-        path: /usr/src/app/results/
+        path: results
 
     - name: Upload Test Report
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: report-${{ matrix.parallel }}
-        path: /usr/src/app/report
+        path: report
 
 
 

@@ -100,6 +100,7 @@ jobs:
       if: always()
       run: |
         cp -R /usr/src/app/results/ ./results
+        cp -R /usr/src/app/report/ ./report
 
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
@@ -111,18 +112,19 @@ jobs:
       uses: dorny/test-reporter@v1
       if: always()
       with:
-        name: Mocha Tests
-        path: results/e2e.results.json
-        # path: /usr/src/app/results/e2e.results.json
-        reporter: mocha-json
+        name: java-junit Tests
+        path: results/results.xml
+        # reporter: jest-junit
+        reporter: java-junit
 
-    - name: Test Report
+    - name: Test Report2
       uses: dorny/test-reporter@v1
       if: always()
       with:
-        name: XML Tests
+        name: dotnet-xunit Tests
         path: results/results.xml
-        reporter: jest-junit
+        # reporter: jest-junit
+        reporter: dotnet-xunit
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v4

@@ -115,4 +115,13 @@ describe('CreateRedisearchIndexWrapper', () => {
 
     expect(screen.getByTestId('identifier-info-icon')).toBeInTheDocument()
   })
+
+  it('should not have geoshape option', () => {
+    const { queryByText } = render(<CreateRedisearchIndexWrapper onClosePanel={onClose} />)
+
+    fireEvent.click(screen.getByTestId('field-type-0'))
+
+    expect(queryByText('GEOSHAPE')).not.toBeInTheDocument()
+    expect(queryByText('VECTOR')).not.toBeInTheDocument()
+  })
 })

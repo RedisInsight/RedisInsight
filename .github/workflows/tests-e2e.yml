@@ -31,6 +31,9 @@ jobs:
   approve:
     runs-on: ubuntu-latest
     environment: ${{ startsWith(github.ref_name, 'e2e/') && 'e2e-approve' || 'staging' }}
+    name: Approve E2E tests
+    steps:
+      - uses: actions/checkout@v4
 
   build-docker:
     needs: approve
@@ -40,6 +43,7 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     needs: build-docker
+    name: E2E tests
     container:
       image: docker:latest
       options: --privileged
@@ -51,7 +55,7 @@ jobs:
       matrix:
         # Number of threads to run tests
         parallel: [0, 1, 2, 3]
-    name: E2E tests
+
     steps:
     - uses: actions/checkout@v4
 

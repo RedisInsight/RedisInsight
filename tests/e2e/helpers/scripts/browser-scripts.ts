@@ -59,7 +59,7 @@ export function getOpenedChromeTab(callback: Callback): void {
     }
     else if (isLinux) {
         // Activate the Chrome window
-        exec('xdotool search --onlyvisible --class "Google-chrome" windowactivate', (error) => {
+        exec('xdotool search --onlyvisible --class "chrome" windowactivate --verbose', (error) => {
             if (error) {
                 console.error('Error focusing on Chrome window:', error);
                 return;

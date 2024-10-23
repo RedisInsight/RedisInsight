@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
+import CDP from 'chrome-remote-interface';
 
 type Callback = (url: string) => void;
 
@@ -29,7 +30,7 @@ export function openChromeWindow(): void {
         });
     }
     else if (isLinux) {
-        exec(`google-chrome --new-window`, (error) => {
+        exec(`google-chrome --new-window --remote-debugging-port=9222`, (error) => {
             if (error) {
                 console.error('Error opening Chrome:', error);
                 return;
@@ -42,7 +43,7 @@ export function openChromeWindow(): void {
  * Retrieve opened tab in Google Chrome using Chrome DevTools Protocol
  * @param callback Function to save opened tab
  */
-export function getOpenedChromeTab(callback: (url: string) => void): void {
+export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring?: string): void {
     const { isMac, isLinux } = getPlatform();
     const maxRetries = 10;
     const retryDelay = 500;
@@ -59,49 +60,54 @@ export function getOpenedChromeTab(callback: (url: string) => void): void {
         });
     } else if (isLinux) {
         let attempts = 0;
+        let initialTabCount = 0;
 
         const checkChromeAndGetTab = () => {
-            // Check if Chrome is running
-            exec('xdotool search --onlyvisible --class "chrome"', (error, stdout) => {
-                if (error || !stdout.trim()) {
-                    console.log(`Chrome not detected, retrying... (${attempts + 1}/${maxRetries})`);
-                    attempts++;
-                    
-                    // Retry if Chrome is not open and we haven't reached the max retries
+            CDP.List(async (err, targets) => {
+                if (err) {
+                    console.error('Error connecting to Chrome with CDP:', err);
                     if (attempts < maxRetries) {
+                        attempts++;
                         setTimeout(checkChromeAndGetTab, retryDelay);
                     } else {
-                        console.error('Chrome did not open within the expected time.');
+                        console.error('Failed to connect to Chrome within the expected time.');
                     }
                     return;
                 }
 
-                console.log('Chrome detected, focusing on Chrome window...');
-                // Activate the Chrome window
-                exec('xdotool search --onlyvisible --class "chrome" windowactivate', (error) => {
-                    if (error) {
-                        console.error('Error focusing on Chrome window:', error);
-                        return;
+                const pageTargets = targets.filter(target => target.type === 'page');
+                
+                // First, get the initial tab count
+                if (attempts === 0) {
+                    initialTabCount = pageTargets.length;
+                }
+
+                // Detect if a new tab has opened
+                const newTabOpened = pageTargets.length > initialTabCount;
+
+                // If a new tab has opened, find it
+                if (newTabOpened) {
+                    console.log('New tab detected...');
+                    
+                    const newTab = pageTargets.find(target => 
+                        (urlSubstring && target.url.includes(urlSubstring)) || target.url !== '');
+
+                    if (newTab) {
+                        console.log('Correct tab found:', newTab.url);
+                        callback(newTab.url);
+                    } else {
+                        console.log('New tab opened but does not match criteria, retrying...');
+                        setTimeout(checkChromeAndGetTab, retryDelay);  // Keep retrying until the right tab is found
                     }
-
-                    // Simulate Ctrl+L to focus on the URL bar and Ctrl+C to copy the URL
-                    exec('xdotool key ctrl+l; xdotool key ctrl+c', (error) => {
-                        if (error) {
-                            console.error('Error sending keyboard shortcuts to Chrome:', error);
-                            return;
-                        }
-
-                        // Retrieve the URL from the clipboard using xclip
-                        exec('xclip -o', (error, stdout) => {
-                            if (error) {
-                                console.error('Error getting clipboard content:', error);
-                                return;
-                            }
-                            const url = stdout.trim();
-                            callback(url);
-                        });
-                    });
-                });
+                } else {
+                    console.log(`No new tab detected yet, retrying... (${attempts + 1}/${maxRetries})`);
+                    attempts++;
+                    if (attempts < maxRetries) {
+                        setTimeout(checkChromeAndGetTab, retryDelay);
+                    } else {
+                        console.error('Failed to detect new tab within the expected time.');
+                    }
+                }
             });
         };
 
@@ -110,14 +116,6 @@ export function getOpenedChromeTab(callback: (url: string) => void): void {
     } else {
         console.error('Unsupported operating system:', process.platform);
     }
-}
-
-/**
- * Parse the URL from the window title (this may vary based on how the title is formatted)
- */
-function parseUrlFromTitle(title: string): string {
-    const match = title.match(/\[(.*)\]/);
-    return match ? match[1] : title;
 }
 
 /**

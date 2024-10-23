@@ -43,6 +43,7 @@
   "devDependencies": {
     "@types/archiver": "^6.0.2",
     "@types/chance": "1.1.6",
+    "@types/chrome-remote-interface": "^0.31.14",
     "@types/edit-json-file": "1.7.3",
     "@types/fs-extra": "11.0.4",
     "@types/selenium-webdriver": "^4.1.26",

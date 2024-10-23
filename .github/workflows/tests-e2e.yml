@@ -104,8 +104,16 @@ jobs:
       if: always()
       with:
         name: Mocha Tests
-        path: /usr/src/app/results/results/e2e.results.json
+        path: /usr/src/app/results/e2e.results.json
         reporter: mocha-json
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: XML Tests
+        path: /usr/src/app/results/results.xml
+        reporter: jest-junit
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v4

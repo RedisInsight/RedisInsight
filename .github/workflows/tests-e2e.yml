@@ -30,7 +30,7 @@ jobs:
     # needs: build-docker
     container:
       image: docker:latest
-      options: -v /__w/RedisInsight/RedisInsight/results:/usr/src/app/results/:rw
+      options: --user root -v ${{ github.workspace }}:/usr/src/app/:rw
       # options: --privileged
       # volumes:
       #   - /usr/src/app/results:/usr/src/app/results

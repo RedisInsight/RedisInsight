@@ -4,7 +4,7 @@ import {
   REDISEARCH_GEOSHAPE_SEMANTIC_VERSION,
   REDISEARCH_GEOSHAPE_VERSION,
 } from 'uiSrc/constants'
-import { FIELD_TYPE_OPTIONS, FieldTypes } from 'uiSrc/pages/browser/components/create-redisearch-index/constants'
+import { FIELD_TYPE_OPTIONS } from 'uiSrc/pages/browser/components/create-redisearch-index/constants'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 const isGeoshapeOptionAvailable = (modules: AdditionalRedisModule[]): boolean =>
@@ -17,7 +17,7 @@ const isGeoshapeOptionAvailable = (modules: AdditionalRedisModule[]): boolean =>
         ))))
 
 export const getFieldTypeOptions = (modules: AdditionalRedisModule[] = []) => FIELD_TYPE_OPTIONS
-  .filter((option) => option.value !== FieldTypes.GEOSHAPE || isGeoshapeOptionAvailable(modules))
+  .filter(() => isGeoshapeOptionAvailable(modules))
   .map(({ value, text }) => ({
     value,
     inputDisplay: text,

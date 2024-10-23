@@ -34,8 +34,6 @@ jobs:
       volumes:
         - /usr/src/app/results:/usr/src/app/results
         - /usr/src/app/report:/usr/src/app/report
-        # - results2:/__w/RedisInsight/RedisInsight/tests/e2e/results
-        # - report2:/__w/RedisInsight/RedisInsight/tests/e2e/report
     strategy:
       matrix:
         # Number of threads to run tests
@@ -100,12 +98,19 @@ jobs:
       with:
         detached: true
 
-    - name: Upload Test Report
+    - name: Upload Test Results
       uses: actions/upload-artifact@v4
       if: ${{ always() }}
       with:
         name: results-${{ matrix.parallel }}
-        path: tests/e2e/results
+        path: /usr/src/app/results
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
+      if: ${{ always() }}
+      with:
+        name: report-${{ matrix.parallel }}
+        path: /usr/src/app/report
 
 
 

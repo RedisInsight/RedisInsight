@@ -38,8 +38,8 @@ jobs:
       fail-fast: false
       matrix:
         # Number of threads to run tests
-        parallel: [0]
-        # parallel: [0, 1, 2, 3]
+        # parallel: [0]
+        parallel: [0, 1, 2, 3]
     name: E2E tests
     steps:
     - uses: actions/checkout@v4
@@ -82,7 +82,7 @@ jobs:
     - name: Run tests
       run: |
         export NODE_INDEX=${{ matrix.parallel }}
-        export TEST_FILES="tests/web/smoke/browser/edit-key-name.e2e.ts"
+        # export TEST_FILES="tests/web/smoke/browser/edit-key-name.e2e.ts"
 
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \

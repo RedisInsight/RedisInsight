@@ -43,7 +43,6 @@ const TemplateButton = ({ setFieldValue, value }: TemplateButtonProps) => {
       content={getTooltipContent(value, !templateOption)}
       position="bottom"
       display="inlineBlock"
-      className={styles.btn}
       anchorClassName="flex-row"
     >
       <EuiButton

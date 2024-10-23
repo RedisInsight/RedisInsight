@@ -1,8 +1,8 @@
 import { getCypherMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/cypherTokens'
 import { getJmespathMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/jmespathTokens'
 import { getSqliteFunctionsMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/sqliteFunctionsTokens'
-import { getRediSearchMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokens'
-import { MOCKED_SUPPORTED_COMMANDS } from 'uiSrc/pages/search/mocks/mocks'
+import { getRediSearchSubRedisMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokensSubRedis'
+import { MOCKED_REDIS_COMMANDS } from 'uiSrc/mocks/data/mocked_redis_commands'
 
 describe('getCypherMonarchTokensProvider', () => {
   it('should be truthy', () => {
@@ -24,15 +24,15 @@ describe('getSqliteFunctionsMonarchTokensProvider', () => {
 
 describe('getRediSearchMonarchTokensProvider', () => {
   it('should be truthy', () => {
-    expect(getRediSearchMonarchTokensProvider([])).toBeTruthy()
+    expect(getRediSearchSubRedisMonarchTokensProvider([])).toBeTruthy()
   })
 
   it('should be truthy with command', () => {
-    const commands = Object.keys(MOCKED_SUPPORTED_COMMANDS)
+    const commands = Object.keys(MOCKED_REDIS_COMMANDS)
       .map((key) => ({
-        ...MOCKED_SUPPORTED_COMMANDS[key],
-        name: key
+        ...MOCKED_REDIS_COMMANDS[key],
+        name: key,
       }))
-    expect(getRediSearchMonarchTokensProvider(commands, 'FT.AGGREGATE')).toBeTruthy()
+    expect(getRediSearchSubRedisMonarchTokensProvider(commands)).toBeTruthy()
   })
 })

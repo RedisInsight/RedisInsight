@@ -7,7 +7,6 @@ import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-cust
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { CodeButtonParams } from 'uiSrc/constants'
 import { sendWbQueryAction } from 'uiSrc/slices/workbench/wb-results'
-import { CommandExecutionType } from 'uiSrc/slices/interfaces'
 import { getTutorialSection } from './EnablementArea/utils'
 import EnablementArea from './EnablementArea'
 
@@ -31,7 +30,6 @@ const EnablementAreaWrapper = () => {
       script,
       null,
       params,
-      CommandExecutionType.Workbench,
       { afterAll: onFinish },
       onFinish
     ))

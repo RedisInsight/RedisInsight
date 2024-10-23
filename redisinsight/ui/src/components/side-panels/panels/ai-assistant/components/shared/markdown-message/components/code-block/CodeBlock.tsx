@@ -4,7 +4,6 @@ import { CodeButtonParams } from 'uiSrc/constants'
 import { sendWbQueryAction } from 'uiSrc/slices/workbench/wb-results'
 import { CodeButtonBlock } from 'uiSrc/components/markdown'
 import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
-import { CommandExecutionType } from 'uiSrc/slices/interfaces'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 export interface Props {
@@ -25,7 +24,6 @@ const CodeBlock = (props: Props) => {
       children,
       null,
       params,
-      CommandExecutionType.Workbench,
       { afterAll: onFinish },
       onFinish
     ))

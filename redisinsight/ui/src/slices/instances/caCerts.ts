@@ -30,6 +30,19 @@ const caCertsSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+
+    // delete ca certificate
+    deleteCaCertificate: (state) => {
+      state.loading = true
+      state.error = ''
+    },
+    deleteCaCertificateSuccess: (state) => {
+      state.loading = false
+    },
+    deleteCaCertificateFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
   },
 })
 
@@ -38,6 +51,10 @@ export const {
   loadCaCerts,
   loadCaCertsSuccess,
   loadCaCertsFailure,
+
+  deleteCaCertificate,
+  deleteCaCertificateSuccess,
+  deleteCaCertificateFailure,
 } = caCertsSlice.actions
 
 // A selector
@@ -63,6 +80,28 @@ export function fetchCaCerts() {
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(loadCaCertsFailure(errorMessage))
+    }
+  }
+}
+
+export function deleteCaCertificateAction(id: string, onSuccessAction?: (id: string) => void,) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(deleteCaCertificate(id))
+
+    try {
+      const { status } = await apiService.delete(
+        `${ApiEndpoints.CA_CERTIFICATES}/${id}`
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(deleteCaCertificateSuccess())
+        onSuccessAction?.(id)
+        dispatch(fetchCaCerts())
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(deleteCaCertificateFailure(errorMessage))
     }
   }
 }

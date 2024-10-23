@@ -8,7 +8,6 @@ import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { getPipelineStatusAction, rdiPipelineStatusSelector } from 'uiSrc/slices/rdi/pipeline'
 import { fetchRdiStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
-import RdiInstancePageTemplate from 'uiSrc/templates/rdi-instance-page-template'
 import { formatLongName, Nullable, setTitle } from 'uiSrc/utils'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
 import { PageNames } from 'uiSrc/constants'
@@ -99,54 +98,52 @@ const StatisticsPage = () => {
   const { data: statisticsData } = statisticsResults
 
   return (
-    <RdiInstancePageTemplate>
-      <div className={styles.pageContainer}>
-        <div className={styles.bodyContainer}>
-          {pageLoading && (
-            <div className={styles.cover}>
-              <EuiLoadingSpinner size="xl" />
-            </div>
-          )}
-          {!isPipelineDeployed(statusData) ? (
-            // TODO add loader
-            <Empty rdiInstanceId={rdiInstanceId} />
-          ) : (
-            <>
-              <Status data={statisticsData.rdiPipelineStatus} />
-              <ProcessingPerformance
-                data={statisticsData.processingPerformance}
-                loading={isStatisticsLoading}
-                onRefresh={() => onRefresh('processing_performance')}
-                onRefreshClicked={() => onRefreshClicked('processing_performance')}
-                onChangeAutoRefresh={(enableAutoRefresh: boolean, refreshRate: string) =>
-                  onChangeAutoRefresh('processing_performance', enableAutoRefresh, refreshRate)}
-              />
-              <TargetConnections data={statisticsData.connections} />
-              <DataStreams
-                data={statisticsData.dataStreams}
-                loading={isStatisticsLoading}
-                onRefresh={() => {
-                  dispatch(fetchRdiStatistics(rdiInstanceId, 'data_streams'))
-                }}
-                onRefreshClicked={() => onRefreshClicked('data_streams')}
-                onChangeAutoRefresh={(enableAutoRefresh: boolean, refreshRate: string) =>
-                  onChangeAutoRefresh('data_streams', enableAutoRefresh, refreshRate)}
-              />
-              <Clients
-                data={statisticsData.clients}
-                loading={isStatisticsLoading}
-                onRefresh={() => {
-                  dispatch(fetchRdiStatistics(rdiInstanceId, 'clients'))
-                }}
-                onRefreshClicked={() => onRefreshClicked('clients')}
-                onChangeAutoRefresh={(enableAutoRefresh: boolean, refreshRate: string) =>
-                  onChangeAutoRefresh('clients', enableAutoRefresh, refreshRate)}
-              />
-            </>
-          )}
-        </div>
+    <div className={styles.pageContainer}>
+      <div className={styles.bodyContainer}>
+        {pageLoading && (
+          <div className={styles.cover}>
+            <EuiLoadingSpinner size="xl" />
+          </div>
+        )}
+        {!isPipelineDeployed(statusData) ? (
+        // TODO add loader
+          <Empty rdiInstanceId={rdiInstanceId} />
+        ) : (
+          <>
+            <Status data={statisticsData.rdiPipelineStatus} />
+            <ProcessingPerformance
+              data={statisticsData.processingPerformance}
+              loading={isStatisticsLoading}
+              onRefresh={() => onRefresh('processing_performance')}
+              onRefreshClicked={() => onRefreshClicked('processing_performance')}
+              onChangeAutoRefresh={(enableAutoRefresh: boolean, refreshRate: string) =>
+                onChangeAutoRefresh('processing_performance', enableAutoRefresh, refreshRate)}
+            />
+            <TargetConnections data={statisticsData.connections} />
+            <DataStreams
+              data={statisticsData.dataStreams}
+              loading={isStatisticsLoading}
+              onRefresh={() => {
+                dispatch(fetchRdiStatistics(rdiInstanceId, 'data_streams'))
+              }}
+              onRefreshClicked={() => onRefreshClicked('data_streams')}
+              onChangeAutoRefresh={(enableAutoRefresh: boolean, refreshRate: string) =>
+                onChangeAutoRefresh('data_streams', enableAutoRefresh, refreshRate)}
+            />
+            <Clients
+              data={statisticsData.clients}
+              loading={isStatisticsLoading}
+              onRefresh={() => {
+                dispatch(fetchRdiStatistics(rdiInstanceId, 'clients'))
+              }}
+              onRefreshClicked={() => onRefreshClicked('clients')}
+              onChangeAutoRefresh={(enableAutoRefresh: boolean, refreshRate: string) =>
+                onChangeAutoRefresh('clients', enableAutoRefresh, refreshRate)}
+            />
+          </>
+        )}
       </div>
-    </RdiInstancePageTemplate>
+    </div>
   )
 }
 

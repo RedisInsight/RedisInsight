@@ -65,6 +65,6 @@ export class Telemetry {
         const requestBody = JSON.parse(request.request.body.toString());
 
         // Verify that event has correct property value
-        await t.expect(requestBody.eventData[property]).eql(value);
+        await t.expect(String(requestBody.eventData[property])).eql(value);
     }
 }

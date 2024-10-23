@@ -1,7 +1,11 @@
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
+import {
+    commonUrl,
+    ossStandaloneConfig,
+    ossStandaloneV8Config
+} from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -23,7 +27,7 @@ fixture `Redis Stack`
     })
     .afterEach(async() => {
         // Delete database
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Verify that user can see module list Redis Stack icon hovering (without Redis Stack text)', async t => {
     // Verify that user can see Redis Stack icon when Redis Stack DB is added in the application
@@ -46,4 +50,17 @@ test('Verify that user can see Redis Stack icon in Edit mode near the DB name', 
     await t.expect(myRedisDatabasePage.tooltipRedisStackLogo.visible).ok('Redis Stack logo not found');
     const databaseName = myRedisDatabasePage.redisStackIcon.parent().nextSibling();
     await t.expect(databaseName.withAttribute('data-testid', 'edit-alias-btn').exists).ok('Edit button not found');
+});
+test.before(async() => {
+    // Add new databases using API
+    await databaseHelper.acceptLicenseTerms();
+    await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV8Config);
+    // Reload Page
+    await browserPage.reloadPage();
+})('Verify that Redis Stack is not displayed for stack >8', async t => {
+    // Verify that user can not see Redis Stack icon when Redis Stack DB > 8 is added in the application
+    await t.expect(myRedisDatabasePage.redisStackIcon.visible).notOk('Redis Stack icon found');
+    await t.click(myRedisDatabasePage.editDatabaseButton);
+    // Check redis stack icon near the db name
+    await t.expect(myRedisDatabasePage.redisStackIcon.visible).notOk('Redis Stack icon found');
 });

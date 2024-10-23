@@ -246,7 +246,7 @@ test
         //Verify that user is navigated to DB Analysis page via Analyze button and new report is generated
         await t.click(memoryEfficiencyPage.selectedReport);
         await t.expect(memoryEfficiencyPage.reportItem.visible).ok('Database analysis page not opened');
-        await t.click(memoryEfficiencyPage.NavigationPanel.workbenchButton);
+        await t.click(memoryEfficiencyPage.NavigationPanel.browserButton);
         await workbenchPage.NavigationHeader.togglePanel(true);
         tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         await t.click(tab.analyzeDatabaseLink);

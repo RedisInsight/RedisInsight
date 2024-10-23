@@ -64,17 +64,37 @@ describe('pubsub slice', () => {
 
     describe('toggleSubscribeTriggerPubSub', () => {
       it('should properly set state', () => {
-        const subscriptions = [{ channel: '1', type: 'ss' }]
+        const channels = '1 * 3'
 
         // Arrange
         const state = {
           ...initialState,
           isSubscribeTriggered: !initialState.isSubscribeTriggered,
-          subscriptions
+          subscriptions: [{ channel: '1', type: 'p' }, { channel: '*', type: 'p' }, { channel: '3', type: 'p' }]
         }
 
         // Act
-        const nextState = reducer(initialState, toggleSubscribeTriggerPubSub(subscriptions))
+        const nextState = reducer(initialState, toggleSubscribeTriggerPubSub(channels))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          pubsub: nextState,
+        })
+        expect(pubSubSelector(rootState)).toEqual(state)
+      })
+
+      it('should properly set state for empty channels', () => {
+        const channels = ''
+
+        // Arrange
+        const state = {
+          ...initialState,
+          isSubscribeTriggered: !initialState.isSubscribeTriggered,
+          subscriptions: [{ channel: '*', type: 'p' }]
+        }
+
+        // Act
+        const nextState = reducer(initialState, toggleSubscribeTriggerPubSub(channels))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {

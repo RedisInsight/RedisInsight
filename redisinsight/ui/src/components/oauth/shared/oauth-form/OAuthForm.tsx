@@ -4,6 +4,7 @@ import { signIn } from 'uiSrc/slices/oauth/cloud'
 import { OAuthSocialAction, OAuthStrategy } from 'uiSrc/slices/interfaces'
 import { ipcAuth } from 'uiSrc/electron/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { enableUserAnalyticsAction } from 'uiSrc/slices/user/user-settings'
 import OAuthSsoForm from './components/oauth-sso-form'
 import OAuthSocialButtons from '../oauth-social-buttons'
 import { Props as OAuthSocialButtonsProps } from '../oauth-social-buttons/OAuthSocialButtons'
@@ -31,6 +32,7 @@ const OAuthForm = ({
   }
 
   const onSocialButtonClick = (authStrategy: OAuthStrategy) => {
+    dispatch(enableUserAnalyticsAction())
     setAuthStrategy(authStrategy)
     onClick?.(authStrategy)
 

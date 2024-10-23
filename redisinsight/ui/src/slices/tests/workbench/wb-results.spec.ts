@@ -96,32 +96,6 @@ describe('workbench results slice', () => {
     })
   })
 
-  describe('sendWBCommand with another type', () => {
-    it('should properly set state', () => {
-      // Arrange
-      const mockPayload = {
-        commands: ['command', 'command2'],
-        commandId: '123',
-        executionType: CommandExecutionType.Search
-      }
-      const state = {
-        ...initialState,
-        items: []
-      }
-
-      // Act
-      const nextState = reducer(initialState, sendWBCommand(mockPayload))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        workbench: {
-          results: nextState,
-        },
-      })
-      expect(workbenchResultsSelector(rootState)).toEqual(state)
-    })
-  })
-
   describe('toggleOpenWBResult', () => {
     it('should properly set isOpen = true', () => {
       // Arrange

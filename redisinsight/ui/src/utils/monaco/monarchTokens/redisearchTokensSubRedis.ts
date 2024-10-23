@@ -1,11 +1,12 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
 import { remove } from 'lodash'
-import { SearchCommand } from 'uiSrc/pages/search/types'
+import { IRedisCommandTree } from 'uiSrc/constants'
 import {
   generateKeywords,
   generateTokens,
   generateTokensWithFunctions,
-  getBlockTokens, isIndexAfterKeyword,
+  getBlockTokens,
+  isIndexAfterKeyword,
   isQueryAfterIndex
 } from 'uiSrc/utils/monaco/redisearch/utils'
 import { generateQuery } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokensTemplates'
@@ -13,7 +14,7 @@ import { generateQuery } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokens
 const STRING_DOUBLE = 'string.double'
 
 export const getRediSearchSubRedisMonarchTokensProvider = (
-  commands: SearchCommand[],
+  commands: IRedisCommandTree[],
 ): monacoEditor.languages.IMonarchLanguage => {
   const withoutIndexSuggestions = [...commands]
   const withNextIndexSuggestions = remove(withoutIndexSuggestions, isIndexAfterKeyword)

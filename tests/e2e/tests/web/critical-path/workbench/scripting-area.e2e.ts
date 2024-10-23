@@ -112,9 +112,9 @@ test('Verify that user can run one command in multiple lines in Workbench page',
         'ON HASH PREFIX 1 product:',
         'SCHEMA price NUMERIC SORTABLE'
     ];
-        //Send command in multiple lines
+    // Send command in multiple lines
     await workbenchPage.sendCommandInWorkbench(multipleLinesCommand.join('\n\t'), 0.5);
-    //Check the result
+    // Check the result
     const resultCommand = await workbenchPage.queryCardCommand.nth(0).textContent;
     for(const commandPart of multipleLinesCommand) {
         await t.expect(resultCommand).contains(commandPart, 'The multiple lines command is in the result');
@@ -126,12 +126,12 @@ test('Verify that user can use one indent to indicate command in several lines i
         `FT.CREATE ${indexName}`,
         'ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE'
     ];
-        //Send command in multiple lines
+    // Send command in multiple lines
     await t.typeText(workbenchPage.queryInput, multipleLinesCommand[0]);
-    await t.pressKey('enter tab');
+    await t.pressKey('enter esc tab');
     await t.typeText(workbenchPage.queryInput, multipleLinesCommand[1]);
     await t.click(workbenchPage.submitCommandButton);
-    //Check the result
+    // Check the result
     const resultCommand = await workbenchPage.queryCardCommand.nth(0).textContent;
     for(const commandPart of multipleLinesCommand) {
         await t.expect(resultCommand).contains(commandPart, 'The multiple lines command is in the result');

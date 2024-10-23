@@ -9,9 +9,9 @@
       "disabled": false,
       "category": "privacy",
       "since": "1.0.1",
-      "title": "Analytics",
-      "label": "Enable Analytics",
-      "description": "Select to help us make Redis Insight better. We aggregate anonymized user experience data and use it to fix bugs and improve experience for all users."
+      "title": "Usage Data",
+      "label": "Usage Data",
+      "description": "Select the usage data option to help us improve Redis Insight. We use such usage data to understand how Redis Insight features are used, prioritize new features, and enhance the user experience."
     },
     "notifications": {
       "defaultValue": false,

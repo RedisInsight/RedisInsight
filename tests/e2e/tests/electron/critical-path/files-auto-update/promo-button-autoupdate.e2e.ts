@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { Chance } from 'chance';
-import * as editJsonFile from 'edit-json-file';
+import editJsonFile from 'edit-json-file';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { commonUrl, workingDirectory } from '../../../../helpers/conf';

@@ -37,8 +37,7 @@ jobs:
     strategy:
       matrix:
         # Number of threads to run tests
-        parallel: [0]
-        # parallel: [0, 1, 2, 3]
+        parallel: [0, 1, 2, 3]
     name: E2E tests
     steps:
     - uses: actions/checkout@v4
@@ -69,8 +68,9 @@ jobs:
     - name: Generate short list of the test files
       run: |
         cd ./tests/e2e
-        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 40 == ${{ matrix.parallel }}")
+        # !!! 40
         # testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 40 == ${{ matrix.parallel }}")
         cd ../../
         echo $testFiles
 
@@ -82,7 +82,7 @@ jobs:
     - name: Run tests
       run: |
         export NODE_INDEX=${{ matrix.parallel }}
-        export TEST_FILES="tests/web/smoke/browser/edit-key-name.e2e.ts"
+        # export TEST_FILES="tests/web/smoke/browser/edit-key-name.e2e.ts"
 
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
@@ -92,11 +92,11 @@ jobs:
         -f tests/e2e/docker.web.docker-compose.yml \
         up --abort-on-container-exit --force-recreate
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      if: ${{ always() }}
-      with:
-        detached: true
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
+    #   if: ${{ always() }}
+    #   with:
+    #     detached: true
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v4

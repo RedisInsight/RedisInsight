@@ -60,20 +60,12 @@ jobs:
         # docker image load -i ./release/docker-linux-alpine.amd64.tar
         docker pull redis/redisinsight
 
-        # TODO:
-        git config --global --add safe.directory /__w/RedisInsight/RedisInsight
-
-    # - name: Setup tmate session
-    #   uses: mxschmitt/action-tmate@v3 #1 better
-    #   with:
-    #     detached: true
-
     - name: Generate short list of the test files
       run: |
         cd ./tests/e2e
         # !!! 40
         # testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
-        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 40 == ${{ matrix.parallel }}")
+        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 10 == ${{ matrix.parallel }}")
         cd ../../
         echo $testFiles
 
@@ -85,7 +77,7 @@ jobs:
     - name: Run tests
       run: |
         export NODE_INDEX=${{ matrix.parallel }}
-        export TEST_FILES="tests/web/smoke/browser/edit-key-name.e2e.ts"
+        # export TEST_FILES="tests/web/smoke/browser/edit-key-name.e2e.ts"
 
         TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
         RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
@@ -107,7 +99,7 @@ jobs:
     #   with:
     #     detached: true
 
-    - name: Test Results for ${{ matrix.parallel }}th node1
+    - name: Generate test results for ${{ matrix.parallel }}th node
       uses: dorny/test-reporter@v1
       if: always()
       with:

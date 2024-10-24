@@ -104,6 +104,14 @@ export const getFunctionsSuggestions = (functions: IRedisCommand[], range: monac
     detail: summary
   }))
 
+export const getSortingForCommand = (command: IRedisCommand) => {
+  if (!command.token?.startsWith(ModuleCommandPrefix.RediSearch)) return command.token
+  if (!SORTED_SEARCH_COMMANDS.includes(command.token)) return command.token
+
+  const index = findIndex(SORTED_SEARCH_COMMANDS, (token) => token === command.token)
+  return `${ModuleCommandPrefix.RediSearch}_${index}`
+}
+
 export const getCommandsSuggestions = (commands: IRedisCommand[], range: monaco.IRange) =>
   commands.map((command) => buildSuggestion(command, range, {
     detail: generateDetail(command),
@@ -111,6 +119,7 @@ export const getCommandsSuggestions = (commands: IRedisCommand[], range: monaco.
     documentation: {
       value: getCommandMarkdown(command as any)
     },
+    sortText: getSortingForCommand(command)
   }))
 
 export const getMandatoryArgumentSuggestions = (
@@ -176,7 +185,8 @@ export const getGeneralSuggestions = (
   if (foundArg && !foundArg.isComplete) {
     return {
       suggestions: getMandatoryArgumentSuggestions(foundArg, fields, range),
-      helpWidgetData: { isOpen: !!foundArg?.stopArg,
+      helpWidgetData: {
+        isOpen: !!foundArg?.stopArg,
         data: {
           parent: foundArg?.parent,
           currentArg: foundArg?.stopArg,

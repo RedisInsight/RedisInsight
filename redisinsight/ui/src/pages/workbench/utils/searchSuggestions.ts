@@ -37,7 +37,7 @@ export const findSuggestionsByArg = (
   const [beforeOffsetArgs, [currentOffsetArg]] = args
 
   const scopedList = command.name
-    ? listOfCommands.filter(({ name }) => name === command?.name)
+    ? listOfCommands.filter(({ token }) => token === command?.name)
     : listOfCommands
   const foundArg = findCurrentArgument(scopedList, beforeOffsetArgs)
 
@@ -97,7 +97,7 @@ const handleIndexSuggestions = (
   cursorContext: CursorContext
 ) => {
   const isIndex = indexes.length > 0
-  const helpWidget = { isOpen: isIndex, data: { parent: command.info, currentArg: foundArg?.stopArg } }
+  const helpWidget = { isOpen: isIndex, data: { parent: foundArg.parent, currentArg: foundArg?.stopArg } }
   const currentCommand = command.info
 
   if (COMMANDS_WITHOUT_INDEX_PROPOSE.includes(command.name || '')) {

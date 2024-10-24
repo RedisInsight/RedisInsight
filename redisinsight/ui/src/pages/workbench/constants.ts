@@ -98,3 +98,10 @@ export const FIELD_START_SYMBOL = '@'
 export enum EmptySuggestionsIds {
   NoIndexes = 'no-indexes'
 }
+
+export const SORTED_SEARCH_COMMANDS = [
+  'FT.SEARCH',
+  'FT.CREATE',
+  'FT.EXPLAIN',
+  'FT.PROFILE'
+]

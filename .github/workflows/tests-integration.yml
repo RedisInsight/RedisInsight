@@ -48,7 +48,7 @@ env:
   #   }
   ITESTS_NAMES_SHORT: |
     {
-      "oss-st-5": "OSS Standalone v5"
+      "oss-st-5": "OSS Standalone v5",
       "oss-st-6": "OSS Standalone v6"
     }
 

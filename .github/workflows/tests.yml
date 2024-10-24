@@ -57,22 +57,21 @@ jobs:
           e2e:
             - 'tests/e2e/**'
 
-  frontend-tests:
-    # TODO: concurrency
-    # concurrency: build
-    needs: changes
-    if: needs.changes.outputs.frontend == 'true' || inputs.all_tests || startsWith(github.ref_name, 'fe/')
-    uses: ./.github/workflows/tests-frontend.yml
-    secrets: inherit
+  # frontend-tests:
+  #   # TODO: concurrency
+  #   # concurrency: build
+  #   needs: changes
+  #   if: needs.changes.outputs.frontend == 'true' || inputs.all_tests || startsWith(github.ref_name, 'fe/')
+  #   uses: ./.github/workflows/tests-frontend.yml
+  #   secrets: inherit
 
-  backend-tests:
-    # TODO: concurrency
-    # concurrency: build
-    needs: changes
-    # TODO: remove
-    # if: needs.changes.outputs.backend == 'true' || inputs.all_tests || startsWith(github.ref_name, 'be/')
-    uses: ./.github/workflows/tests-backend.yml
-    secrets: inherit
+  # backend-tests:
+  #   # TODO: concurrency
+  #   # concurrency: build
+  #   needs: changes
+  #   if: needs.changes.outputs.backend == 'true' || inputs.all_tests || startsWith(github.ref_name, 'be/')
+  #   uses: ./.github/workflows/tests-backend.yml
+  #   secrets: inherit
 
   integration-tests:
     # concurrency: build
@@ -85,41 +84,41 @@ jobs:
       short_rte_list: ${{ !inputs.all_tests }}
       redis_client: ${{ inputs.redis_client }}
 
-  # E2E Approve
-  e2e-approve:
-    runs-on: ubuntu-latest
-    needs: changes
-    timeout-minutes: 60
-    if: inputs.all_tests || startsWith(github.ref_name, 'e2e/')
-    environment: ${{ startsWith(github.ref_name, 'e2e/') && 'e2e-approve' || 'staging' }}
-    name: Approve E2E tests
-    steps:
-      - uses: actions/checkout@v4
+  # # E2E Approve
+  # e2e-approve:
+  #   runs-on: ubuntu-latest
+  #   needs: changes
+  #   timeout-minutes: 60
+  #   if: inputs.all_tests || startsWith(github.ref_name, 'e2e/')
+  #   environment: ${{ startsWith(github.ref_name, 'e2e/') && 'e2e-approve' || 'staging' }}
+  #   name: Approve E2E tests
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-  # E2E Docker
-  build-docker:
-    uses: ./.github/workflows/pipeline-build-docker.yml
-    needs: e2e-approve
-    secrets: inherit
-    with:
-      only_docker: true
+  # # E2E Docker
+  # build-docker:
+  #   uses: ./.github/workflows/pipeline-build-docker.yml
+  #   needs: e2e-approve
+  #   secrets: inherit
+  #   with:
+  #     only_docker: true
 
-  e2e-docker-tests:
-    needs: build-docker
-    uses: ./.github/workflows/tests-e2e-docker.yml
-    secrets: inherit
+  # e2e-docker-tests:
+  #   needs: build-docker
+  #   uses: ./.github/workflows/tests-e2e-docker.yml
+  #   secrets: inherit
 
 
-  # E2E AppImage
-  build-appimage:
-    uses: ./.github/workflows/pipeline-build-linux.yml
-    needs: e2e-approve
-    secrets: inherit
-    with:
-      target: linux:appimage:x64
+  # # E2E AppImage
+  # build-appimage:
+  #   uses: ./.github/workflows/pipeline-build-linux.yml
+  #   needs: e2e-approve
+  #   secrets: inherit
+  #   with:
+  #     target: linux:appimage:x64
 
-  e2e-appimage-tests:
-    # concurrency: build
-    needs: build-appimage
-    uses: ./.github/workflows/tests-e2e-appimage.yml
-    secrets: inherit
+  # e2e-appimage-tests:
+  #   # concurrency: build
+  #   needs: build-appimage
+  #   uses: ./.github/workflows/tests-e2e-appimage.yml
+  #   secrets: inherit

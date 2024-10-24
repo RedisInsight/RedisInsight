@@ -86,6 +86,11 @@ export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring
                 const pageTargets = targets.filter(target => target.type === 'page');
                 console.log(`Found ${pageTargets.length} open tabs in Chrome`);
 
+                // Log URLs of all open tabs
+                pageTargets.forEach(target => {
+                    console.log(`Open tab URL: ${target.url}`);
+                });
+
                 // First, get the initial tab count
                 if (attempts === 0) {
                     initialTabCount = pageTargets.length;

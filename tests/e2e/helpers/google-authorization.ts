@@ -53,7 +53,7 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
         // Open Redis Insight electron app using deeplink
         if (process.platform === 'linux') {
             console.log('redirectUrl: ', redirectUrl)
-            exec(`xdg-open ${redirectUrl}`, (error, stdout, stderr) => {
+            exec(`xdg-open "${redirectUrl}"`, (error, stdout, stderr) => {
                 if (error) {
                     console.error('error opening redis insight on linux', error);
                     return;

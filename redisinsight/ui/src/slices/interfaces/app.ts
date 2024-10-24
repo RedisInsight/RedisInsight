@@ -106,6 +106,14 @@ export interface StateAppContext {
       }
     }
   }
+  searchAndQuery: {
+    script: string
+    panelSizes: {
+      vertical: {
+        [key: string]: number
+      }
+    }
+  }
   pubsub: {
     channel: string
     message: string

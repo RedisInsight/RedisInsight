@@ -10,7 +10,6 @@ import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -65,7 +64,7 @@ test('Verify that user can see the list of all commands from all clients ran for
     await browserPage.addHashKey(keyName);
     await browserPage.Profiler.checkCommandInMonitorResults(browser_command);
     //Open Workbench page to create new client
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     //Send command in Workbench
     await workbenchPage.sendCommandInWorkbench(workbench_command);
     //Check that command from Workbench is displayed in monitor

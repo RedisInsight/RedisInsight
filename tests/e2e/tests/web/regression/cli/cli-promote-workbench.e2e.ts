@@ -22,7 +22,7 @@ fixture `Promote workbench in CLI`
     });
 test('Verify that user can see saved workbench context after redirection from CLI to workbench', async t => {
     // Open Workbench
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     const command = 'INFO';
     await t.typeText(workbenchPage.queryInput, command, { replace: true, speed: 1, paste: true });
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);

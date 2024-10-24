@@ -137,6 +137,7 @@ test('Verify onboard new user skip tour', async(t) => {
     await t.expect(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterPanel.visible).ok('help center panel is not opened');
     await t.click(onboardingCardsDialog.resetOnboardingBtn);
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
+    await t.click(browserPage.NavigationPanel.browserButton);
     // Verify that when user reset onboarding, user can see the onboarding triggered when user open the Browser page.
     await t.expect(onboardingCardsDialog.showMeAroundButton.visible).ok('onboarding starting is not visible');
     // click skip tour
@@ -158,7 +159,8 @@ test.requestHooks(logger)('Verify that the final onboarding step is closed when 
     // Verify last step of onboarding process is visible
     await onboardingCardsDialog.verifyStepVisible('Great job!');
     // Go to Workbench page
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
 
     // Verify that “ONBOARDING_TOUR_FINISHED” event is sent when user opens another page (or close the app)
     await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);

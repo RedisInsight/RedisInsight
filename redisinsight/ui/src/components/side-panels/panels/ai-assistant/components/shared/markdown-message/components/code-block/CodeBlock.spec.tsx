@@ -5,6 +5,7 @@ import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
 
 import { sendWBCommand } from 'uiSrc/slices/workbench/wb-results'
 import { setDbIndexState } from 'uiSrc/slices/app/context'
+import { CommandExecutionType } from 'uiSrc/slices/interfaces'
 import CodeBlock from './CodeBlock'
 
 let store: typeof mockedStore
@@ -27,7 +28,7 @@ describe('CodeBlock', () => {
     expect(store.getActions()).toEqual([
       sendWBCommand({
         commandId: expect.any(String),
-        commands: ['info']
+        commands: ['info'],
       }),
       setDbIndexState(true)
     ])

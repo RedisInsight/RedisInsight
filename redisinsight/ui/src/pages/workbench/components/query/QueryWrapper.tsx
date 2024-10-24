@@ -1,11 +1,15 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { EuiLoadingContent } from '@elastic/eui'
 
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import Query from './Query'
+import { fetchRedisearchListAction, redisearchListSelector } from 'uiSrc/slices/browser/redisearch'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { mergeRedisCommandsSpecs } from 'uiSrc/utils/transformers/redisCommands'
+import SEARCH_COMMANDS_SPEC from 'uiSrc/pages/workbench/data/supported_commands.json'
 import styles from './Query/styles.module.scss'
+import Query from './Query'
 
 export interface Props {
   query: string
@@ -13,7 +17,6 @@ export interface Props {
   resultsMode?: ResultsMode
   setQuery: (script: string) => void
   setQueryEl: Function
-  setIsCodeBtnDisabled: (value: boolean) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
   onSubmit: (value?: string) => void
   onQueryChangeMode: () => void
@@ -27,15 +30,29 @@ const QueryWrapper = (props: Props) => {
     resultsMode,
     setQuery,
     setQueryEl,
-    setIsCodeBtnDisabled,
     onKeyDown,
     onSubmit,
     onQueryChangeMode,
     onChangeGroupMode
   } = props
-  const {
-    loading: isCommandsLoading,
-  } = useSelector(appRedisCommandsSelector)
+  const { loading: isCommandsLoading, } = useSelector(appRedisCommandsSelector)
+  const { id: connectedIndstanceId } = useSelector(connectedInstanceSelector)
+  const { data: indexes = [] } = useSelector(redisearchListSelector)
+  const { spec: COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
+
+  const REDIS_COMMANDS = useMemo(
+    () => mergeRedisCommandsSpecs(COMMANDS_SPEC, SEARCH_COMMANDS_SPEC),
+    [COMMANDS_SPEC, SEARCH_COMMANDS_SPEC]
+  )
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (!connectedIndstanceId) return
+
+    // fetch indexes
+    dispatch(fetchRedisearchListAction(undefined, undefined, false))
+  }, [connectedIndstanceId])
 
   const Placeholder = (
     <div className={styles.containerPlaceholder}>
@@ -49,11 +66,12 @@ const QueryWrapper = (props: Props) => {
   ) : (
     <Query
       query={query}
+      commands={REDIS_COMMANDS}
+      indexes={indexes}
       activeMode={activeMode}
       resultsMode={resultsMode}
       setQuery={setQuery}
       setQueryEl={setQueryEl}
-      setIsCodeBtnDisabled={setIsCodeBtnDisabled}
       onKeyDown={onKeyDown}
       onSubmit={onSubmit}
       onQueryChangeMode={onQueryChangeMode}

@@ -11,7 +11,6 @@ import { unknownCommand } from 'src/constants';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import {
   CreateCommandExecutionDto,
-  RunQueryMode,
 } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
@@ -19,6 +18,7 @@ import { ServiceUnavailableException } from '@nestjs/common';
 import { CommandNotSupportedError, CommandParsingError } from 'src/modules/cli/constants/errors';
 import { FormatterManager, IFormatterStrategy, FormatterTypes } from 'src/common/transformers';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { RunQueryMode } from 'src/modules/workbench/models/command-execution';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';

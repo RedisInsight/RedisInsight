@@ -44,7 +44,14 @@ enum ActionTypes {
 const baseUrl = getBaseApiUrl()
 
 const QueryCardCliPlugin = (props: Props) => {
-  const { query, id, result, setMessage, commandId, mode = RunQueryMode.Raw } = props
+  const {
+    query,
+    id,
+    result,
+    setMessage,
+    commandId,
+    mode = RunQueryMode.Raw,
+  } = props
   const { visualizations = [], staticPath } = useSelector(appPluginsSelector)
   const { modules = [] } = useSelector(connectedInstanceSelector)
   const serverInfo = useSelector(appServerInfoSelector)

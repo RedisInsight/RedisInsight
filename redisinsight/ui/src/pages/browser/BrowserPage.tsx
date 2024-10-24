@@ -31,7 +31,6 @@ import {
   setBrowserSelectedKey,
   appContextBrowser,
   setBrowserPanelSizes,
-  setLastPageContext,
   setBrowserBulkActionOpen,
   appContextSelector,
 } from 'uiSrc/slices/app/context'
@@ -110,7 +109,6 @@ const BrowserPage = () => {
       })
       dispatch(setBrowserBulkActionOpen(isBulkActionsPanelOpenRef.current))
       dispatch(setBrowserSelectedKey(selectedKeyRef.current))
-      dispatch(setLastPageContext('browser'))
 
       if (!selectedKeyRef.current) {
         dispatch(toggleBrowserFullScreen(false))

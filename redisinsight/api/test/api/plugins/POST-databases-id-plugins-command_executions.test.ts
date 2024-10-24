@@ -8,8 +8,8 @@ import {
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
   validateApiCall,
-  requirements,
-} from '../deps';
+  requirements, getMainCheckFn,
+} from '../deps'
 const { server, request, constants, rte, localDb } = deps;
 
 // endpoint to test
@@ -40,26 +40,10 @@ const responseSchema = Joi.object().keys({
   })),
   mode: Joi.string().required(),
   resultsMode: Joi.string().required(),
+  type: Joi.string().valid('WORKBENCH', 'SEARCH').required(),
 }).required();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /databases/:instanceId/plugins/command-executions', () => {
   before(rte.data.truncate);

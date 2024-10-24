@@ -179,7 +179,8 @@ export const findArgumentftSearchTests = [
       append: [],
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {

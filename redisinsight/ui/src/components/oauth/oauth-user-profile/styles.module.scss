@@ -135,3 +135,12 @@
     }
   }
 }
+
+.loadingContainer {
+  display: flex;
+  align-items: center;
+
+  .loading {
+    border-top-color: var(--euiColorGhost) !important;
+  }
+}

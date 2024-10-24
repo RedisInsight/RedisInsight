@@ -21,6 +21,7 @@ import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/
 import { CloudCapiKeyEntity } from 'src/modules/cloud/capi-key/entity/cloud-capi-key.entity';
 import { RdiEntity } from 'src/modules/rdi/entities/rdi.entity';
 import { AiQueryMessageEntity } from 'src/modules/ai/query/entities/ai-query.message.entity';
+import { CloudSessionEntity } from 'src/modules/cloud/session/entities/cloud.session.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
 
@@ -52,6 +53,7 @@ const ormConfig = {
     CloudCapiKeyEntity,
     RdiEntity,
     AiQueryMessageEntity,
+    CloudSessionEntity,
   ],
   migrations,
 };

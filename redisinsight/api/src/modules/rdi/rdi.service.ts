@@ -16,6 +16,7 @@ import { RdiPipelineNotFoundException, wrapRdiPipelineError } from 'src/modules/
 import { isUndefined, omitBy } from 'lodash';
 import { deepMerge } from 'src/common/utils';
 import { RdiAnalytics } from './rdi.analytics';
+import { CloudAuthService } from '../cloud/auth/cloud-auth.service';
 
 @Injectable()
 export class RdiService {

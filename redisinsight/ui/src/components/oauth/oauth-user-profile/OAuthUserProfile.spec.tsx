@@ -21,7 +21,9 @@ const mockedProps = mock<Props>()
 jest.mock('uiSrc/slices/oauth/cloud', () => ({
   ...jest.requireActual('uiSrc/slices/oauth/cloud'),
   oauthCloudUserSelector: jest.fn().mockReturnValue({
-    data: null
+    loading: false,
+    data: null,
+    error: '',
   }),
 }))
 
@@ -50,7 +52,20 @@ describe('OAuthUserProfile', () => {
     expect(render(<OAuthUserProfile {...mockedProps} />)).toBeTruthy()
   })
 
+  it('should render loading spinner initially', () => {
+    render(<OAuthUserProfile {...mockedProps} />)
+
+    expect(screen.getByTestId('oath-user-profile-spinner')).toBeInTheDocument()
+    expect(screen.queryByTestId('cloud-sign-in-btn')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('user-profile-btn')).not.toBeInTheDocument()
+  })
+
   it('should render sign in button if no profile', () => {
+    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
+      loading: false,
+      data: null,
+      error: 'Some error',
+    })
     render(<OAuthUserProfile {...mockedProps} />)
 
     expect(screen.getByTestId('cloud-sign-in-btn')).toBeInTheDocument()

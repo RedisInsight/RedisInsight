@@ -41,7 +41,7 @@ import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.fla
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { SsoIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/sso-idp.cloud.auth-strategy';
 import {
-  CloudOauthSsoUnsupportedEmailException
+  CloudOauthSsoUnsupportedEmailException,
 } from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -255,7 +255,9 @@ describe('CloudAuthService', () => {
           error: 'access_denied',
           error_description: 'Some required properties are missing: email and lastName',
         },
-      )).rejects.toThrow(new CloudOauthMissedRequiredDataException('Some required properties are missing: email and lastName'));
+      )).rejects.toThrow(
+        new CloudOauthMissedRequiredDataException('Some required properties are missing: email and lastName'),
+      );
     });
     it('should throw an error if request not found', async () => {
       expect(service['authRequests'].size).toEqual(1);
@@ -343,6 +345,7 @@ describe('CloudAuthService', () => {
         {
           accessToken: mockCloudAccessTokenNew,
           refreshToken: mockCloudRefreshTokenNew,
+          idpType: mockCloudApiAuthDto.idpType,
           csrf: null,
           apiSessionId: null,
         },

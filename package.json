@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "dev:ui": "yarn --cwd redisinsight/ui dev",
-    "dev:api": "yarn --cwd redisinsight/api dev",
+    "dev:api": "yarn --cwd redisinsight/api start:dev",
     "dev:electron": "yarn --cwd redisinsight/desktop dev",
     "dev": "cross-env RI_APP_TYPE=electron concurrently \"yarn dev:ui\" \"yarn dev:api\" \"yarn dev:electron\"",
     "build:ui": "cross-env NODE_ENV=production RI_APP_TYPE=web yarn --cwd redisinsight/ui build",

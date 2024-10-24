@@ -101,7 +101,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
         data-testid="add-redis-database-short"
       >
         <span className={cx('eui-showFor--s', 'eui-showFor--xs')}>+ DATABASE</span>
-        <span className={cx('eui-hideFor--s', 'eui-hideFor--xs')}>- asd Add Redis database</span>
+        <span className={cx('eui-hideFor--s', 'eui-hideFor--xs')}>+ Add Redis database</span>
       </EuiButton>
     </>
   )

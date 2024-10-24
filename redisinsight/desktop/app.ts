@@ -12,7 +12,7 @@ import {
   installExtensions,
   initTray,
   initAutoUpdaterHandlers,
-  createApiServer,
+  launchApiServer,
   initCloudHandlers,
   electronStore,
 } from 'desktopSrc/lib'
@@ -27,12 +27,9 @@ if (!config.isProduction) {
 }
 
 let deepLink: undefined | string
-// const apiServer = createApiServer();
 
 const init = async () => {
-  debugger;
-  console.log('init')
-  // await apiServer.launch()
+  await launchApiServer()
   initLogging()
   initElectronHandlers()
   initAutoUpdaterHandlers()
@@ -47,14 +44,10 @@ const init = async () => {
     app.setAboutPanelOptions(AboutPanelOptions)
   }
 
-  console.log('installExtensions')
-
   await installExtensions()
-  console.log('installExtensions done')
+
   try {
-    console.log('app.whenReady')
     await app.whenReady()
-    console.log('app.whenReady done')
 
     deepLink = process.argv?.[1] || deepLink
 
@@ -77,14 +70,12 @@ const init = async () => {
     }
 
     await windowFactory(WindowType.Main, splashWindow, { parsedDeepLink })
-    console.log('initAutoUpdateChecks')
+
     initAutoUpdateChecks(
       process.env.RI_MANUAL_UPGRADES_LINK || process.env.RI_UPGRADES_LINK,
       parseInt(process.env.RI_AUTO_UPDATE_INTERVAL, 10) || 84 * 3600 * 1000,
     )
-    console.log('initAutoUpdateChecks done')
   } catch (err) {
-    console.log('error', err)
     log.error(wrapErrorMessageSensitiveData(err as Error))
   }
 }

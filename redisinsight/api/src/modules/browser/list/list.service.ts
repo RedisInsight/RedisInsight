@@ -85,7 +85,7 @@ export class ListService {
       }
 
       this.logger.log(`Succeed to insert element at the ${destination} of the list data type.`);
-      return plainToClass(PushListElementsResponse, { keyName, total, 'asd': 'asdasddsadsa' });
+    return plainToClass(PushListElementsResponse, { keyName, total });
     } catch (error) {
       this.logger.error('Failed to inserts element to the list data type.', error);
       if (error.message.includes(RedisErrorCodes.WrongType)) {

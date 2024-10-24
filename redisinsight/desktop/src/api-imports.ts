@@ -12,21 +12,20 @@ log.info('Development mode:', isDev);
 // Base path to the API directory
 const apiPath = isDev
   ? path.join(__dirname, '..', '..', 'api', 'src')
-  : path.join(__dirname, '..', '..', 'api', 'dist');  // Remove the extra 'src'
+  : path.join(__dirname, '..', '..', 'api');  // Remove the extra 'src'
 log.info('API Path:', apiPath);
 
 const originalResolveFilename = Module._resolveFilename;
 Module._resolveFilename = function(request: string, parent: string, isMain: boolean, options: any) {
-  if (request.startsWith('apiSrc/') || request.startsWith('src/')) {
-    const strippedRequest = request
-      .replace(/^apiSrc\//, '')
-      .replace(/^src\//, '');
+  if (request.startsWith('apiSrc/')) {
+    const strippedRequest = request.replace(/^apiSrc\//, '');
+    const modulePath = path.join(apiPath, 'src', strippedRequest);
     
-    const modulePath = path.join(apiPath, strippedRequest);
     log.info('Trying to resolve:', {
       request,
       strippedRequest,
-      modulePath
+      modulePath,
+      exists: require('fs').existsSync(modulePath)
     });
     
     try {
@@ -40,10 +39,24 @@ Module._resolveFilename = function(request: string, parent: string, isMain: bool
 };
 
 export function importApiModule(modulePath: string) {
+  // Remove any .js extension if present
+  modulePath = modulePath.replace(/\.js$/, '');
+  
   const fullPath = path.join(apiPath, modulePath);
   log.info('Importing module:', {
     modulePath,
-    fullPath
+    fullPath,
+    exists: require('fs').existsSync(fullPath)
   });
-  return require(fullPath);
+  
+  try {
+    return require(fullPath);
+  } catch (err) {
+    log.error('Failed to import module:', {
+      modulePath,
+      fullPath,
+      error: err
+    });
+    throw err;
+  }
 }

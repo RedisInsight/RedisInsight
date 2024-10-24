@@ -8,8 +8,6 @@ import 'uiSrc/styles/main.scss'
 
 listenPluginsEvents()
 
-console.log('NOT indexElectron')
-
 const rootEl = document.getElementById('root')
 const root = createRoot(rootEl!)
 root.render(

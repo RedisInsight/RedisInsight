@@ -37,7 +37,7 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => (
       }}
       data-testid="empty-rdi-instance-button"
     >
-      - asd Add Redis database
+      + Add Redis database
     </EuiButton>
     <OAuthSsoHandlerDialog>
       {(ssoCloudHandlerClick) => (

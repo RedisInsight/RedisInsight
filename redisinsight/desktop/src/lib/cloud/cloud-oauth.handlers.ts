@@ -10,9 +10,9 @@ import {
   CloudAuthResponse, 
   CloudAuthStatus 
 } from 'desktopSrc/types/cloud-auth'
-const { DEFAULT_SESSION_ID, DEFAULT_USER_ID } = importApiModule('apiSrc/../../dist/src/common/constants')
-const { CloudOauthUnexpectedErrorException } = importApiModule('apiSrc/../../dist/src/modules/cloud/auth/exceptions')
-const { CloudAuthService } = importApiModule('apiSrc/../../dist/src/modules/cloud/auth/cloud-auth.service')
+const { DEFAULT_SESSION_ID, DEFAULT_USER_ID } = importApiModule('dist/src/common/constants')
+const { CloudOauthUnexpectedErrorException } = importApiModule('dist/src/modules/cloud/auth/exceptions')
+const { CloudAuthService } = importApiModule('dist/src/modules/cloud/auth/cloud-auth.service')
 import { importApiModule } from 'desktopSrc/api-imports'
 
 export const getOauthIpcErrorResponse = (error: any): { status: CloudAuthStatus.Failed, error: {} } => {

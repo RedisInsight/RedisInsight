@@ -53,6 +53,7 @@ describe('MonitorWrapper', () => {
     })
     expect(screen.queryByTestId('monitor')).toBeInTheDocument()
     expect(screen.queryByTestId('monitor-header')).toBeInTheDocument()
+    expect(screen.queryByTestId('monitor-not-supported')).not.toBeInTheDocument()
   })
 
   it('should hide feature dependent items when feature flag is on', async () => {
@@ -67,5 +68,6 @@ describe('MonitorWrapper', () => {
     })
     expect(screen.queryByTestId('monitor')).not.toBeInTheDocument()
     expect(screen.queryByTestId('monitor-header')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('monitor-not-supported')).toBeInTheDocument()
   })
 })

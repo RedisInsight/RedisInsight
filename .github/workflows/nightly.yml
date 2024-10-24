@@ -23,7 +23,7 @@ jobs:
     uses: ./.github/workflows/pipeline-build-linux.yml
     secrets: inherit
     with:
-      target: linux:appimage:x64
+      target: 'linux:appimage:x64'
 
   e2e-appimage-nightly:
     uses: ./.github/workflows/tests-e2e-appimage.yml

@@ -46,12 +46,6 @@ env:
       "re-crdt": "Redis Enterprise with active-active database inside",
       "oss-sent-tls-auth": "OSS Sentinel with TLS auth"
     }
-  # ITESTS_NAMES_SHORT: |
-  #   {
-  #     "oss-st-5": "OSS Standalone v5",
-  #     "oss-st-6": "OSS Standalone v6"
-  #   }
-
 
 jobs:
   set-matrix:
@@ -59,7 +53,7 @@ jobs:
     outputs:
       matrix: ${{ steps.parse-matrix.outputs.matrix }}
     steps:
-      - name: Parse ITESTS_NAMES_SHORT and create JSON array
+      - name: Create JSON array for run-tests matrix
         id: parse-matrix
         run: |
           # Extract the JSON object from the environment variable
@@ -74,9 +68,9 @@ jobs:
           # Output the formed JSON array for use in other jobs
           echo "matrix=$MATRIX_ARRAY" >> $GITHUB_OUTPUT
 
-      - name: Verify the formed JSON array
+      - name: Verify the formed matrix array
         run: |
-          echo "Formed JSON array:"
+          echo "Formed matrix array:"
           echo "${{ steps.parse-matrix.outputs.matrix }}"
 
   run-tests:
@@ -87,7 +81,6 @@ jobs:
     #   image: docker:latest
     #   options: --privileged
     #   volumes:
-    #     # - /usr/src/app/coverage:./redisinsight/api/test/test-runs/coverage
     #     - /usr/src/app/coverage:/usr/src/app/coverage
     strategy:
       matrix:
@@ -113,7 +106,6 @@ jobs:
           export RI_REDIS_CLIENTS_FORCE_STRATEGY=${{ inputs.redis_client }}
         fi
 
-        # TODO: check cirleci
         ./redisinsight/api/test/test-runs/start-test-run.sh -r ${{ matrix.rte }} -t ${{ inputs.build }}
         mkdir -p mkdir itest/coverages && mkdir -p itest/results
 
@@ -121,12 +113,12 @@ jobs:
         cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml
         cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/${{ matrix.rte }}.coverage.json
 
-    - name: Upload result files as artifact
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: results-${{ matrix.rte }}
-        path: itest/results
+    # - name: Upload result files as artifact
+    #   if: always()
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: results-${{ matrix.rte }}
+    #     path: itest/results
 
     - name: Upload coverage files as artifact
       if: always()
@@ -134,11 +126,6 @@ jobs:
       with:
         name: coverages-${{ matrix.rte }}
         path: itest/coverages
-
-    # - name: Setup upterm session
-    #   uses: mxschmitt/action-tmate@v3
-    #   with:
-    #     detached: true
 
     - name: Send report to Slack
       if: inputs.report && always()
@@ -148,15 +135,10 @@ jobs:
 
   coverage:
     runs-on: ubuntu-latest
+    name: Final coverage
     needs: run-tests
     steps:
     - uses: actions/checkout@v4
-
-    - name: Download results artifacts
-      uses: actions/download-artifact@v4
-      with:
-        pattern: results-*
-        path: ./results
 
     - name: Download coverage artifacts
       uses: actions/download-artifact@v4
@@ -173,10 +155,10 @@ jobs:
         sudo cp -R ./coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
         cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
 
-    - name: Setup upterm session
-      uses: mxschmitt/action-tmate@v3
-      with:
-        detached: true
+    # - name: Setup upterm session
+    #   uses: mxschmitt/action-tmate@v3
+    #   with:
+    #     detached: true
 
 
 

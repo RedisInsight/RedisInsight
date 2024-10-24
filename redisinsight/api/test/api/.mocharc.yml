@@ -1,6 +1,6 @@
 spec:
-  # - 'test/**/*.test.ts'
-  - 'test/api/database/GET-databases.test.ts'
+  - 'test/**/*.test.ts'
+  # - 'test/api/database/GET-databases.test.ts'
 require: 'test/api/api.deps.init.ts'
 retries: 2
 timeout: 60000

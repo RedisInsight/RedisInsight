@@ -404,6 +404,7 @@ jobs:
             sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
             sudo apt-get update
             sudo apt-get install -y google-chrome-stable
+            xdg-settings set default-web-browser google-chrome.desktop
       - run:
           name: Install WM
           command: sudo apt install fluxbox

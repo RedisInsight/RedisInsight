@@ -3,6 +3,7 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
+import { Common } from '../../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();

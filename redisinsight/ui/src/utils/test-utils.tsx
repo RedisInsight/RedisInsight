@@ -31,6 +31,7 @@ import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/
 import { initialState as initialStateAppSocketConnectionReducer } from 'uiSrc/slices/app/socket-connection'
 import { initialState as initialStateAppFeaturesReducer } from 'uiSrc/slices/app/features'
 import { initialState as initialStateAppUrlHandlingReducer } from 'uiSrc/slices/app/url-handling'
+import { initialState as initialStateAppCsrfReducer } from 'uiSrc/slices/app/csrf'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
@@ -76,6 +77,7 @@ const initialStateDefault: RootState = {
     socketConnection: cloneDeep(initialStateAppSocketConnectionReducer),
     features: cloneDeep(initialStateAppFeaturesReducer),
     urlHandling: cloneDeep(initialStateAppUrlHandlingReducer),
+    csrf: cloneDeep(initialStateAppCsrfReducer),
   },
   connections: {
     instances: cloneDeep(initialStateInstances),

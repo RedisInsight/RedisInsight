@@ -1,44 +1,26 @@
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { ReactElement, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
-import apiService, { setApiCsrfHeader } from 'uiSrc/services/apiService'
-import { setResourceCsrfHeader } from 'uiSrc/services/resourcesService'
+import { appCsrfSelector, fetchCsrfTokenAction } from 'uiSrc/slices/app/csrf'
 import PagePlaceholder from '../page-placeholder'
 
-const getCsrfEndpoint = () => process.env.RI_CSRF_ENDPOINT || ''
-
-interface CSRFTokenResponse {
-  token: string;
-}
-
 const Csrf = ({ children }: { children: ReactElement }) => {
-  // default to true to prevent other components from making requests before the CSRF token is fetched
-  const [loading, setLoading] = useState(true)
-
-  const fetchCsrfToken = async () => {
-    let data: CSRFTokenResponse | undefined
-    try {
-      const { data } = await apiService.get<CSRFTokenResponse>(getCsrfEndpoint())
-
-      setApiCsrfHeader(data.token)
-      setResourceCsrfHeader(data.token)
-    } catch (error) {
-      console.error('Error fetching CSRF token: ', error)
-    } finally {
-      setLoading(false)
-    }
-
-    return { data }
-  }
+  const dispatch = useDispatch()
+  const { loading, token, csrfEndpoint } = useSelector(appCsrfSelector)
 
   useEffect(() => {
-    if (!getCsrfEndpoint()) {
-      return
-    }
-
-    fetchCsrfToken()
+    dispatch(fetchCsrfTokenAction())
   }, [])
 
-  return loading && getCsrfEndpoint() ? <PagePlaceholder /> : children
+  // if csrfEndpoint is defined, that implies that we need
+  // the csrf token to be fetched before rendering any of the children.
+  // the children will make requests to the backend
+  // that need the csrf token to be authorized.
+  if (csrfEndpoint) {
+    return !loading && token ? children : <PagePlaceholder />
+  }
+
+  return !loading ? children : <PagePlaceholder />
 }
 
 export default Csrf

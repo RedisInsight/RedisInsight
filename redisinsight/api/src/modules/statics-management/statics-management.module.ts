@@ -11,6 +11,10 @@ const TUTORIALS_CONFIG = config.get('tutorials') as Config['tutorials'];
 
 const CONTENT_CONFIG = config.get('content');
 
+const setXFrameOptionsHeader = (res: Response) => {
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+};
+
 const downloadableStaticFiles = (res: Response) => {
   if (res.req?.query?.download === 'true') {
     res.setHeader('Content-Type', 'application/octet-stream');
@@ -21,7 +25,7 @@ const downloadableStaticFiles = (res: Response) => {
 
 @Module({})
 export class StaticsManagementModule {
-  static register({ shouldAutoUpdate } = { shouldAutoUpdate: true }): DynamicModule {
+  static register({ autoUpdate, initDefaults }): DynamicModule {
     return {
       module: StaticsManagementModule,
       imports: [
@@ -46,6 +50,7 @@ export class StaticsManagementModule {
           rootPath: join(PATH_CONFIG.content),
           serveStaticOptions: {
             fallthrough: false,
+            setHeaders: setXFrameOptionsHeader,
           },
         }),
         ServeStaticModule.forRoot({
@@ -53,6 +58,7 @@ export class StaticsManagementModule {
           rootPath: join(PATH_CONFIG.defaultPlugins),
           serveStaticOptions: {
             fallthrough: false,
+            setHeaders: setXFrameOptionsHeader,
           },
         }),
         ServeStaticModule.forRoot({
@@ -60,15 +66,30 @@ export class StaticsManagementModule {
           rootPath: join(PATH_CONFIG.customPlugins),
           serveStaticOptions: {
             fallthrough: false,
+            setHeaders: setXFrameOptionsHeader,
           },
         }),
         ServeStaticModule.forRoot({
-          serveRoot: SERVER_CONFIG.pluginsAssetsUri,
-          rootPath: join(PATH_CONFIG.pluginsAssets),
+          serveRoot: SERVER_CONFIG.staticUri,
+          rootPath: join(PATH_CONFIG.staticDir),
           serveStaticOptions: {
             fallthrough: false,
+            setHeaders: setXFrameOptionsHeader,
           },
         }),
+        ...(SERVER_CONFIG.staticContent
+          ? [
+            ServeStaticModule.forRoot({
+              rootPath: join(__dirname, '..', '..', '..', '..', '..', 'ui', 'dist'),
+              exclude: ['/api/**', `${SERVER_CONFIG.customPluginsUri}/**`, `${SERVER_CONFIG.staticUri}/**`],
+              serveRoot: SERVER_CONFIG.proxyPath ? `/${SERVER_CONFIG.proxyPath}` : '',
+              serveStaticOptions: {
+                index: false,
+                setHeaders: setXFrameOptionsHeader,
+              },
+            }),
+          ]
+          : []),
       ],
       providers: [
         {
@@ -77,7 +98,8 @@ export class StaticsManagementModule {
             name: 'TutorialsProvider',
             destinationPath: PATH_CONFIG.tutorials,
             defaultSourcePath: PATH_CONFIG.defaultTutorials,
-            shouldAutoUpdate,
+            autoUpdate,
+            initDefaults,
             ...TUTORIALS_CONFIG,
           }),
         },
@@ -87,7 +109,8 @@ export class StaticsManagementModule {
             name: 'ContentProvider',
             destinationPath: PATH_CONFIG.content,
             defaultSourcePath: PATH_CONFIG.defaultContent,
-            shouldAutoUpdate,
+            autoUpdate,
+            initDefaults,
             ...CONTENT_CONFIG,
           }),
         },

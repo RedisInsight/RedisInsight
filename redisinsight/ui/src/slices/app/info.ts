@@ -49,6 +49,9 @@ const appInfoSlice = createSlice({
     },
     setEncoding: (state, { payload }: PayloadAction<RedisResponseEncoding>) => {
       state.encoding = payload
+    },
+    setServerLoaded: (state) => {
+      state.loading = false
     }
   },
 })
@@ -62,6 +65,7 @@ export const {
   getServerInfoFailure,
   setShortcutsFlyoutState,
   setEncoding,
+  setServerLoaded,
 } = appInfoSlice.actions
 
 // A selector

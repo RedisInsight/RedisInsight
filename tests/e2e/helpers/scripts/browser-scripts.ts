@@ -28,7 +28,7 @@ export function openChromeWindow(): void {
         });
     }
     else if (isLinux) {
-        exec(`google-chrome --new-window --remote-debugging-port=9222`, (error) => {
+        exec(`google-chrome --new-window --remote-debugging-port=9223`, (error) => {
             if (error) {
                 console.error('Error opening Chrome:', error);
                 return;

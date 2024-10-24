@@ -2,9 +2,9 @@ import { get } from 'lodash';
 import {
   CloudAccountInfo, ICloudCapiAccount,
 } from 'src/modules/cloud/user/models';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 
-export const parseCloudAccountCapiResponse = (account: ICloudCapiAccount): CloudAccountInfo => plainToInstance(
+export const parseCloudAccountCapiResponse = (account: ICloudCapiAccount): CloudAccountInfo => plainToClass(
   CloudAccountInfo,
   {
     accountId: account.id,

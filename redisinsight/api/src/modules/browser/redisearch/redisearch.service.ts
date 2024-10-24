@@ -16,7 +16,7 @@ import {
 } from 'src/modules/browser/redisearch/dto';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/dto';
 import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { numberWithSpaces } from 'src/utils/base.helper';
 import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto';
@@ -55,7 +55,7 @@ export class RedisearchService {
         ['FT._LIST'],
       )));
 
-      return plainToInstance(ListRedisearchIndexesResponse, {
+      return plainToClass(ListRedisearchIndexesResponse, {
         indexes: (
           uniq(
             ([].concat(...res)).map((idx) => idx.toString('hex')),
@@ -200,14 +200,14 @@ export class RedisearchService {
       if (query !== DEFAULT_MATCH) {
         await this.browserHistory.create(
           clientMetadata,
-          plainToInstance(
+          plainToClass(
             CreateBrowserHistoryDto,
             { filter: { match: query, type: null }, mode: BrowserHistoryMode.Redisearch },
           ),
         );
       }
 
-      return plainToInstance(GetKeysWithDetailsResponse, {
+      return plainToClass(GetKeysWithDetailsResponse, {
         cursor: limit + offset >= total ? 0 : limit + offset,
         total,
         scanned: keyNames.length + offset,

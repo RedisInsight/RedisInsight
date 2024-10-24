@@ -61,7 +61,7 @@ const configuration: webpack.Configuration =  {
           // 'reflect-metadata',
           // 'swagger-ui-express',
           // 'class-transformer',
-          'class-transformer/storage',
+          // 'class-transformer/storage',
           // '@nestjs/websockets',
           // '@nestjs/core/adapters/http-adapter',
           // '@nestjs/core/helpers/router-method-factory',

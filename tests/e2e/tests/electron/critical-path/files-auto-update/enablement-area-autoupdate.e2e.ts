@@ -1,7 +1,7 @@
 // import { join } from 'path';
 // import * as os from 'os';
 import * as fs from 'fs';
-import * as editJsonFile from 'edit-json-file';
+import editJsonFile from 'edit-json-file';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, workingDirectory } from '../../../../helpers/conf';

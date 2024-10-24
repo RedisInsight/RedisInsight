@@ -1,6 +1,6 @@
 import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { sessionMetadataFromRequest } from 'src/common/decorators';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { RdiClientMetadata } from 'src/modules/rdi/models';
 import { Validator } from 'class-validator';
 import { ApiParam } from '@nestjs/swagger';
@@ -10,7 +10,7 @@ const validator = new Validator();
 export const RequestRdiClientMetadata = createParamDecorator((_: unknown, ctx: ExecutionContext) => {
   const req = ctx.switchToHttp().getRequest();
 
-  const rdiClientMetadata = plainToInstance(RdiClientMetadata, {
+  const rdiClientMetadata = plainToClass(RdiClientMetadata, {
     id: req.params?.['id'],
     sessionMetadata: sessionMetadataFromRequest(req),
   });

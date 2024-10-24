@@ -8,7 +8,7 @@ import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/models';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
@@ -87,7 +87,7 @@ export class AutodiscoveryService implements OnModuleInit {
           context: ClientContext.Common,
           sessionMetadata,
         } as ClientMetadata,
-        plainToInstance(Database, endpoint),
+        plainToClass(Database, endpoint),
         { useRetry: false, connectionName: 'redisinsight-auto-discovery' },
       );
 

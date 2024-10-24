@@ -7,7 +7,7 @@ import config from 'src/utils/config';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { FeatureConfigConfigDestination, FeatureServerEvents } from 'src/modules/feature/constants';
 import { Validator } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { UnableToFetchRemoteConfigException } from 'src/modules/feature/exceptions';
@@ -64,7 +64,7 @@ export class FeaturesConfigService implements OnApplicationBootstrap {
       remoteConfig = await this.fetchRemoteConfig();
 
       // we should use default config in case when remote is invalid
-      await this.validator.validateOrReject(plainToInstance(FeaturesConfigData, remoteConfig));
+      await this.validator.validateOrReject(plainToClass(FeaturesConfigData, remoteConfig));
 
       if (remoteConfig?.version > defaultConfig?.version) {
         newConfig = {

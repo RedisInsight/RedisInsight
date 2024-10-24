@@ -5,7 +5,7 @@ import { getConfig } from 'uiSrc/config'
 import { AppDispatch, RootState } from '../store'
 
 const riConfig = getConfig()
-const getCsrfEndpoint = () => riConfig.api.csrfEndpoint
+export const getCsrfEndpoint = () => riConfig.api.csrfEndpoint
 
 interface CSRFTokenResponse {
   token: string

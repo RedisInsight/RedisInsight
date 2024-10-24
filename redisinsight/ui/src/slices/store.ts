@@ -1,6 +1,7 @@
 import { createBrowserHistory } from 'history'
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 
+import { getConfig } from 'uiSrc/config'
 import instancesReducer from './instances/instances'
 import caCertsReducer from './instances/caCerts'
 import clientCertsReducer from './instances/clientCerts'
@@ -22,6 +23,7 @@ import outputReducer from './cli/cli-output'
 import monitorReducer from './cli/monitor'
 import userSettingsReducer from './user/user-settings'
 import appInfoReducer from './app/info'
+import appInitReducer from './app/init'
 import appContextReducer from './app/context'
 import appCsrfReducer from './app/csrf'
 import appRedisCommandsReducer from './app/redis-commands'
@@ -49,7 +51,6 @@ import rdiDryRunJobReducer from './rdi/dryRun'
 import rdiTestConnectionsReducer from './rdi/testConnections'
 import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
-import {getConfig} from 'uiSrc/config'
 
 const riConfig = getConfig()
 
@@ -66,6 +67,7 @@ export const rootReducer = combineReducers({
     features: appFeaturesReducer,
     urlHandling: appUrlHandlingReducer,
     csrf: appCsrfReducer,
+    init: appInitReducer,
   }),
   connections: combineReducers({
     instances: instancesReducer,

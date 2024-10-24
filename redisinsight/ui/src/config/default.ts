@@ -42,6 +42,9 @@ export const defaultConfig = {
     defaultTheme: process.env.RI_DEFAULT_THEME ?? 'DARK',
     lazyLoad: booleanEnv('RI_ROUTES_LAZY_LOAD', false),
     routesExcludedByEnv: booleanEnv('RI_ROUTES_EXCLUDED_BY_ENV', false),
+    returnUrlBase: process.env.RI_RETURN_URL_BASE,
+    returnUrlLabel: process.env.RI_RETURN_URL_LABEL || 'Back',
+    returnUrlTooltip: process.env.RI_RETURN_URL_TOOLTIP || 'Back',
   },
   workbench: {
     pipelineCountDefault: intEnv('PIPELINE_COUNT_DEFAULT', 5),

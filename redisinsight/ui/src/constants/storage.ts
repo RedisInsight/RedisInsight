@@ -49,3 +49,7 @@ export enum CapabilityStorageItem {
   source = 'source',
   tutorialPopoverShown = 'tutorialPopoverShown'
 }
+
+export enum AppStorageItem {
+  returnUrl = 'returnUrl'
+}

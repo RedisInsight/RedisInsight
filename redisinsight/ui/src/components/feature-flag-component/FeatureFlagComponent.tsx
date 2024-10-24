@@ -6,7 +6,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 export interface Props {
   name: FeatureFlags
-  children: JSX.Element | JSX.Element[]
+  children?: JSX.Element | JSX.Element[]
   otherwise?: React.ReactElement
   enabledByDefault?: boolean
 }
@@ -18,6 +18,10 @@ const FeatureFlagComponent = (props: Props) => {
 
   if (!flag) {
     return otherwise ?? null
+  }
+
+  if (!children) {
+    return null
   }
 
   const cloneElement = (child: React.ReactElement) => React.cloneElement(child, { variant })

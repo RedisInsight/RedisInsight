@@ -32,6 +32,7 @@ export const findCurrentArgument = (
       // this is the main function which creates the list of arguments
       return {
         ...getArgumentSuggestions({ tokenArgs: pastArgs, untilTokenArgs }, commandArgs, parent),
+        token,
         parent: parent || token
       }
     }

@@ -1,9 +1,15 @@
 import { monaco } from 'react-monaco-editor'
 import * as monacoEditor from 'monaco-editor'
+import { findIndex } from 'lodash'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { bufferToString, formatLongName, generateArgsForInsertText, getCommandMarkdown, Nullable } from 'uiSrc/utils'
 import { FoundCommandArgument } from 'uiSrc/pages/workbench/types'
-import { DefinedArgumentName, EmptySuggestionsIds } from 'uiSrc/pages/workbench/constants'
+import {
+  DefinedArgumentName,
+  EmptySuggestionsIds,
+  ModuleCommandPrefix,
+  SORTED_SEARCH_COMMANDS
+} from 'uiSrc/pages/workbench/constants'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { IRedisCommand } from 'uiSrc/constants'
 import { generateDetail, removeNotSuggestedArgs } from './query'
@@ -170,7 +176,13 @@ export const getGeneralSuggestions = (
   if (foundArg && !foundArg.isComplete) {
     return {
       suggestions: getMandatoryArgumentSuggestions(foundArg, fields, range),
-      helpWidgetData: { isOpen: !!foundArg?.stopArg, parent: foundArg?.parent, currentArg: foundArg?.stopArg }
+      helpWidgetData: { isOpen: !!foundArg?.stopArg,
+        data: {
+          parent: foundArg?.parent,
+          currentArg: foundArg?.stopArg,
+          token: foundArg?.token
+        }
+      }
     }
   }
 

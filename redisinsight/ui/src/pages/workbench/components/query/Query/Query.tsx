@@ -85,8 +85,7 @@ const Query = (props: Props) => {
   const suggestionsRef = useRef<monacoEditor.languages.CompletionItem[]>([])
   const helpWidgetRef = useRef<any>({
     isOpen: false,
-    parent: null,
-    currentArg: null
+    data: {}
   })
   const indexesRef = useRef<RedisResponseBuffer[]>([])
   const attributesRef = useRef<any>([])
@@ -581,11 +580,10 @@ const Query = (props: Props) => {
     )
 
     if (helpWidget) {
-      const { isOpen, parent, currentArg } = helpWidget
+      const { isOpen, data } = helpWidget
       helpWidgetRef.current = {
         isOpen,
-        parent: parent || helpWidgetRef.current.parent,
-        currentArg: currentArg || helpWidgetRef.current.currentArg
+        data: data || helpWidgetRef.current.data
       }
     }
 

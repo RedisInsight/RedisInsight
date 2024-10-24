@@ -2,7 +2,7 @@ import { monaco } from 'react-monaco-editor'
 import * as monacoEditor from 'monaco-editor'
 import { isString } from 'lodash'
 import { generateDetail } from 'uiSrc/pages/workbench/utils/query'
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, Nullable } from 'uiSrc/utils'
 import { IRedisCommand, ICommandTokenType } from 'uiSrc/constants'
 
 export const setCursorPositionAtTheEnd = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
@@ -39,16 +39,30 @@ export const buildSuggestion = (arg: IRedisCommand, range: monaco.IRange, option
 
 export const getRediSearchSignutureProvider = (options: Maybe<{
   isOpen: boolean
-  currentArg: IRedisCommand
-  parent: Maybe<IRedisCommand>
+  data: {
+    currentArg: IRedisCommand
+    parent: Maybe<IRedisCommand>
+    token: Maybe<IRedisCommand>
+  }
 }>) => {
-  const { isOpen, currentArg, parent } = options || {}
+  const { isOpen, data } = options || {}
+  const { currentArg, parent, token } = data || {}
   if (!isOpen) return null
 
   const label = generateDetail(parent)
+  let signaturePosition: Nullable<[number, number]> = null
   const arg = currentArg?.type === ICommandTokenType.Block
-    ? currentArg?.arguments?.[0]?.name
+    ? (currentArg?.arguments?.[0]?.name || currentArg?.token || '')
     : (currentArg?.name || currentArg?.type || '')
+
+  // we may have several the same args inside documentation, so we get proper arg after token
+  const numberOfArgsInside = label.split(arg).length - 1
+  if (token && numberOfArgsInside > 1) {
+    const parentToken = token.token || token.arguments?.[0]?.token
+    const parentTokenPosition = parentToken ? label.indexOf(parentToken) : 0
+    const startPosition = label.indexOf(arg, parentTokenPosition)
+    signaturePosition = [startPosition, startPosition + arg.length]
+  }
 
   return {
     dispose: () => {},
@@ -57,7 +71,9 @@ export const getRediSearchSignutureProvider = (options: Maybe<{
       activeSignature: 0,
       signatures: [{
         label: label || '',
-        parameters: [{ label: arg }]
+        parameters: [
+          { label: signaturePosition || arg }
+        ],
       }]
     }
   }

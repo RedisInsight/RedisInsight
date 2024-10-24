@@ -7,16 +7,20 @@ const getRediSearchSignatureProviderTests = [
   {
     input: {
       isOpen: false,
-      currentArg: {},
-      parent: {}
+      data: {
+        currentArg: {},
+        parent: {}
+      }
     },
     result: null
   },
   {
     input: {
       isOpen: true,
-      currentArg: ftAggregateCommand.arguments.find(({ name }) => name === 'groupby'),
-      parent: null
+      data: {
+        currentArg: ftAggregateCommand.arguments.find(({ name }) => name === 'groupby'),
+        parent: null
+      }
     },
     result: {
       dispose: expect.any(Function),
@@ -33,8 +37,10 @@ const getRediSearchSignatureProviderTests = [
   {
     input: {
       isOpen: true,
-      currentArg: { name: 'expression' },
-      parent: ftAggregateCommand.arguments.find(({ name }) => name === 'apply')
+      data: {
+        currentArg: { name: 'expression' },
+        parent: ftAggregateCommand.arguments.find(({ name }) => name === 'apply')
+      }
     },
     result: {
       dispose: expect.any(Function),

@@ -53,7 +53,8 @@ export const findArgumentftSearchTests = [
       ]],
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -67,7 +68,8 @@ export const findArgumentftSearchTests = [
       append: [],
       isBlocked: true,
       isComplete: false,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -81,7 +83,8 @@ export const findArgumentftSearchTests = [
       append: [],
       isBlocked: true,
       isComplete: false,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -96,7 +99,8 @@ export const findArgumentftSearchTests = [
       append: [],
       isBlocked: true,
       isComplete: false,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -126,7 +130,8 @@ export const findArgumentftSearchTests = [
       ]],
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -136,7 +141,8 @@ export const findArgumentftSearchTests = [
       append: [],
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -162,7 +168,8 @@ export const findArgumentftSearchTests = [
       ],
       isBlocked: false,
       isComplete: false,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -198,7 +205,8 @@ export const findArgumentftSearchTests = [
       ],
       isBlocked: false,
       isComplete: false,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -208,7 +216,8 @@ export const findArgumentftSearchTests = [
       append: [],
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -249,7 +258,8 @@ export const findArgumentftSearchTests = [
       ],
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -259,7 +269,8 @@ export const findArgumentftSearchTests = [
       append: [[]],
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
   {
@@ -271,7 +282,8 @@ export const findArgumentftSearchTests = [
       ],
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     }
   },
 ]

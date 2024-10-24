@@ -13,6 +13,7 @@ export interface FoundCommandArgument {
   isBlocked: boolean
   append: Maybe<Array<IRedisCommandTree[]>>
   parent: Maybe<IRedisCommand>
+  token: Maybe<IRedisCommand>
 }
 
 export interface CursorContext {

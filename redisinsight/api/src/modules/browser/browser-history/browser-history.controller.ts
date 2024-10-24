@@ -11,20 +11,11 @@ import {
   BrowserHistory,
   DeleteBrowserHistoryItemsDto,
   DeleteBrowserHistoryItemsResponse,
+  ListBrowserHistoryDto,
 } from 'src/modules/browser/browser-history/dto';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { SessionMetadata } from 'src/common/models';
 import { RequestSessionMetadata } from 'src/common/decorators';
-
-import {
-  IsOptional, IsEnum,
-} from 'class-validator';
-
-class ListQueryDto {
-  @IsEnum(BrowserHistoryMode)
-  @IsOptional()
-  mode?: BrowserHistoryMode;
-}
 
 @UseInterceptors(BrowserSerializeInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -51,9 +42,9 @@ export class BrowserHistoryController {
   async list(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Param('dbInstance') databaseId: string,
-      @Query(new ValidationPipe()) { mode = BrowserHistoryMode.Pattern }: ListQueryDto,
+      @Query() dto: ListBrowserHistoryDto,
   ): Promise<BrowserHistory[]> {
-    return this.service.list(sessionMetadata, databaseId, mode);
+    return this.service.list(sessionMetadata, databaseId, dto.mode);
   }
 
   @Delete('/:id')

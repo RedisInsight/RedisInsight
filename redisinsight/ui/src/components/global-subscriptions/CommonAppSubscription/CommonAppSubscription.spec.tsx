@@ -12,7 +12,7 @@ import { FeatureFlags, SocketEvent } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommendations'
-import BottomGroupMinimized from 'uiSrc/components/bottom-group-components/components/bottom-group-minimized'
+
 import { GlobalSubscriptions } from 'uiSrc/components'
 import { NotificationsDto } from 'apiSrc/modules/notification/dto'
 import CommonAppSubscription from './CommonAppSubscription'

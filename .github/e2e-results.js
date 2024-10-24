@@ -1,17 +1,18 @@
 const fs = require('fs');
 
 let parallelNodeInfo = '';
-const totalNodes = parseInt(process.env.CIRCLE_NODE_TOTAL, 10);
+// const totalNodes = parseInt(process.env.NODE_TOTAL, 10);
+const totalNodes = 4;
 if (totalNodes > 1) {
-  parallelNodeInfo = ` (node: ${parseInt(process.env.CIRCLE_NODE_INDEX, 10) + 1}/${totalNodes})`
+  parallelNodeInfo = ` (node: ${parseInt(process.env.NODE_INDEX, 10) + 1}/${totalNodes})`
 }
 
-const file = fs.readdirSync('tests/e2e/mochawesome-report').find(file => file.endsWith('-setup-report.json'))
-const appBuildType = process.env.APP_BUILD_TYPE || 'VSCode (Linux)'
+const file = 'tests/e2e/results/e2e.results.json'
+const appBuildType = process.env.APP_BUILD_TYPE || 'Web'
 const results = {
   message: {
-    text: `*E2ETest - ${appBuildType}${parallelNodeInfo}* (Branch: *${process.env.CIRCLE_BRANCH}*)` +
-      `\n<https://app.circleci.com/pipelines/workflows/${process.env.CIRCLE_WORKFLOW_ID}|View on CircleCI>`,
+    text: `*E2ETest - ${appBuildType}${parallelNodeInfo}* (Branch: *${process.env.GITHUB_REF_NAME}*)` +
+      `\n<https://github.com/RedisInsight/RedisInsight/actions/runs/${process.env.GITHUB_RUN_ID}|View on Github Actions>`,
     attachments: [],
   },
 };
@@ -19,22 +20,22 @@ const results = {
 const result = JSON.parse(fs.readFileSync(file, 'utf-8'))
 const testRunResult = {
   color: '#36a64f',
-  title: `Started at: *${result.stats.start}`,
-  text: `Executed ${result.stats.tests} in ${(new Date(result.stats.end) - new Date(result.stats.start)) / 1000}s`,
+  title: `Started at: *${result.startTime}`,
+  text: `Executed ${result.total} in ${(new Date(result.endTime) - new Date(result.startTime)) / 1000}s`,
   fields: [
     {
       title: 'Passed',
-      value: result.stats.passes,
+      value: result.passed,
       short: true,
     },
     {
       title: 'Skipped',
-      value: result.stats.skipped,
+      value: result.skipped,
       short: true,
     },
   ],
 };
-const failed = result.stats.failures;
+const failed = result.total - result.passed;
 if (failed) {
   results.passed = false;
   testRunResult.color = '#cc0000';

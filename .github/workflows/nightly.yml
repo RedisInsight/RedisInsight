@@ -1,0 +1,18 @@
+name: Nightly jobs
+on:
+  schedule:
+  - cron: 0 0 * * *
+
+jobs:
+  build-appimage:
+    uses: ./.github/workflows/pipeline-build-linux.yml
+    secrets: inherit
+    with:
+      target: linux:appimage:x64
+
+  e2e-appimage:
+    uses: ./.github/workflows/tests-e2e-appimage.yml
+    needs: build-appimage
+    secrets: inherit
+    with:
+      report: true

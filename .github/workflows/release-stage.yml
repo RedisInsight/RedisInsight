@@ -22,16 +22,15 @@ jobs:
       environment: 'staging'
       target: 'all'
 
+  e2e-docker-tests:
+    needs: builds
+    uses: ./.github/workflows/tests-e2e-docker.yml
+    secrets: inherit
 
-  # todo: e2e tests for release stage
-  # e2e-linux:
-  #   uses: ./.github/workflows/build.yml
-  #   needs: builds
-  #   secrets: inherit
-  #   with:
-  #     environment: 'staging'
-  #     target: 'all'
-
+  e2e-appimage-tests:
+    needs: builds
+    uses: ./.github/workflows/tests-e2e-appimage.yml
+    secrets: inherit
 
 
 

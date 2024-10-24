@@ -53,6 +53,7 @@ export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring
     const { isMac, isLinux } = getPlatform();
     const maxRetries = 10;
     const retryDelay = 500;
+    const chromeDebuggingPort = 9223;
 
     if (isMac) {
         const scriptPath = path.join(__dirname, 'get_chrome_tab_url.applescript');
@@ -70,7 +71,7 @@ export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring
 
         const checkChromeAndGetTab = () => {
             console.log(`Attempting to connect to Chrome DevTools (Attempt: ${attempts + 1}/${maxRetries})...`);
-            CDP.List(async (err, targets) => {
+            CDP.List({ port: chromeDebuggingPort }, async (err, targets) => {
                 if (err) {
                     console.error('Error connecting to Chrome with CDP:', err);
                     if (attempts < maxRetries) {

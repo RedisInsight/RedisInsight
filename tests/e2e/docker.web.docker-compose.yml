@@ -39,9 +39,7 @@ services:
   app:
     logging:
       driver: none
-    # TODO: uncomment
-    # image: redisinsight:amd64
-    image: redis/redisinsight:latest
+    image: redisinsight:amd64
     env_file:
       - ./.env
     environment:

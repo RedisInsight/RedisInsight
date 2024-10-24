@@ -28,7 +28,7 @@ export function openChromeWindow(): void {
         });
     }
     else if (isLinux) {
-        exec(`google-chrome --remote-debugging-port=9223 --no-sandbox --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --remote-debugging-port=9223`, (error) => {
+        exec(`google-chrome --remote-debugging-port=9223 --no-sandbox --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --v=1`, (error) => {
             if (error) {
                 console.error('Error opening Chrome:', error);
                 return;
@@ -103,9 +103,10 @@ export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring
                 // If a new tab has opened, find it
                 if (newTabOpened) {
                     console.log('New tab detected...');
-                    
+
                     const newTab = pageTargets.find(target => 
-                        (urlSubstring && target.url.includes(urlSubstring)) || target.url !== '');
+                        (urlSubstring && target.url.includes(urlSubstring)) || 
+                        target.url.includes('auth.'));
 
                     if (newTab) {
                         console.log('Correct tab found:', newTab.url);

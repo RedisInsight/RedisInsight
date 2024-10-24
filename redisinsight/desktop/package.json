@@ -1,0 +1,32 @@
+{
+  "name": "redisinsight",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "cross-env ELECTRON_DEV=true ELECTRON_ENABLE_LOGGING=true ELECTRON_DEBUG_LOGGING=true ELECTRON_ENABLE_STACK_DUMPING=true yarn build:preload && yarn build:renderer && yarn build && electron . --enable-logging --inspect=5858",
+    "build": "vite build --config vite.main.config.ts",
+    "build:preload": "vite build --config vite.preload.config.ts",
+    "build:renderer": "vite build --config vite.renderer.config.ts"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.5.0",
+    "@electron-forge/maker-deb": "^7.5.0",
+    "@electron-forge/maker-rpm": "^7.5.0",
+    "@electron-forge/maker-squirrel": "^7.5.0",
+    "@electron-forge/maker-zip": "^7.5.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
+    "@electron-forge/plugin-fuses": "^7.5.0",
+    "@electron-forge/plugin-vite": "^7.5.0",
+    "@electron/fuses": "^1.8.0",
+    "@vitejs/plugin-react": "^4.3.3",
+    "electron": "33.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.9"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "default-browser-id": "^3.0.0",
+    "electron-squirrel-startup": "^1.0.1"
+  }
+}

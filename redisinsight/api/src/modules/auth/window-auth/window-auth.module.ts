@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import config, { Config } from 'src/utils/config';
+import config, { Config } from '../../../utils/config';
 import { WindowAuthService } from './window-auth.service';
 import { WindowAuthMiddleware } from './middleware/window.auth.middleware';
 

@@ -55,7 +55,7 @@ const appFeaturesSlice = createSlice({
     setFeaturesInitialState: () => initialState,
     setFeaturesToHighlight: (state, { payload }: { payload: { version: string, features: string[] } }) => {
       state.highlighting.features = payload.features
-      state.highlighting.version = payload.version
+      state.highlighting.version = payload.version      
       state.highlighting.pages = getPagesForFeatures(payload.features)
     },
     removeFeatureFromHighlighting: (state, { payload }: { payload: string }) => {
@@ -112,6 +112,7 @@ const appFeaturesSlice = createSlice({
       state.featureFlags.loading = true
     },
     getFeatureFlagsSuccess: (state, { payload }) => {
+      debugger
       state.featureFlags.loading = false
       state.featureFlags.features = payload.features
     },
@@ -140,7 +141,10 @@ export const appFeaturePagesHighlightingSelector = (state: RootState) => state.a
 
 export const appFeatureOnboardingSelector = (state: RootState) => state.app.features.onboarding
 export const appFeatureFlagsSelector = (state: RootState) => state.app.features.featureFlags
-export const appFeatureFlagsFeaturesSelector = (state: RootState) => state.app.features.featureFlags.features
+export const appFeatureFlagsFeaturesSelector = (state: RootState) => {
+  console.log('state.app.features.featureFlags.features', state)
+  return state.app.features.featureFlags.features
+}
 
 export default appFeaturesSlice.reducer
 
@@ -163,15 +167,18 @@ export function fetchFeatureFlags(
     dispatch(getFeatureFlags())
 
     try {
+      debugger;
       const { data, status } = await apiService.get(
         ApiEndpoints.FEATURES
       )
 
       if (isStatusSuccessful(status)) {
+        debugger
         dispatch(getFeatureFlagsSuccess(data))
         onSuccessAction?.(data)
       }
     } catch (error) {
+      debugger
       dispatch(getFeatureFlagsFailure())
       onFailAction?.()
     }

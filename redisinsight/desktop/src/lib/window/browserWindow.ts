@@ -8,6 +8,7 @@ import { electronStore, updateTray } from 'desktopSrc/lib'
 import { resolveHtmlPath, getFittedBounds } from 'desktopSrc/utils'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
 import { initWindowHandlers } from './window.handlers'
+import path from 'path'
 
 export const windows = new Map<string, BrowserWindow>()
 export const getWindows = () => windows
@@ -37,6 +38,7 @@ export const createWindow = async ({
   id = uuidv4(),
   options = {}
 }: ICreateWindow) => {
+  console.log('create window called!')
   let x
   let y
   let { width, height } = options
@@ -52,7 +54,7 @@ export const createWindow = async ({
     width = currentWindowWidth
     height = currentWindowHeight
   }
-
+  console.log('new window options', options)
   const newWindow: BrowserWindow | null = new BrowserWindow({
     ...options,
     x,
@@ -61,6 +63,9 @@ export const createWindow = async ({
     height,
     webPreferences: {
       ...options.webPreferences,
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true,
+      nodeIntegrationInSubFrames: true,
       preload: options.preloadPath
     }
   })
@@ -78,8 +83,9 @@ export const createWindow = async ({
     }
   }
 
-  newWindow.loadURL(resolveHtmlPath(htmlFileName, options?.parsedDeepLink))
+  newWindow.loadURL('http://localhost:8080')
 
+  console.log('newWindow.loadURL', htmlFileName, options?.parsedDeepLink, resolveHtmlPath(htmlFileName, options?.parsedDeepLink))
   initWindowHandlers(newWindow, prevWindow, windows, id)
 
   contextMenu({ window: newWindow, showInspectElement: true })
@@ -100,7 +106,7 @@ export const windowFactory = async (
     case WindowType.Splash:
       return createWindow({
         prevWindow,
-        htmlFileName: 'splash.html',
+        htmlFileName: '../splash.html',
         windowType,
         options: {
           ...config.splashWindow,
@@ -110,7 +116,7 @@ export const windowFactory = async (
     case WindowType.Main:
       return createWindow({
         prevWindow,
-        htmlFileName: 'index.html',
+        htmlFileName: '../src/index.html',
         windowType,
         options: {
           ...options,

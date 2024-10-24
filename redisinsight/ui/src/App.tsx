@@ -21,7 +21,7 @@ import themeLight from './styles/themes/light_theme/lightTheme.scss?inline'
 
 import './styles/elastic.css'
 import './App.scss'
-
+console.log('App')
 themeService.registerTheme(Theme.Dark, themeDark)
 themeService.registerTheme(Theme.Light, themeLight)
 

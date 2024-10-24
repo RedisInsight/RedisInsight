@@ -17,21 +17,26 @@ const ipcHandler = {
 contextBridge.exposeInMainWorld('app', {
   // Send data from main to render
   sendWindowId: ((windowId: any) => {
-    ipcRenderer.on(IpcOnEvent.sendWindowId, windowId)
+    console.log('[Preload] Sending windowId:', windowId)
+    return ipcRenderer.on(IpcOnEvent.sendWindowId, windowId)
   }),
   cloudOauthCallback: ((connected: any) => {
-    ipcRenderer.on(IpcOnEvent.cloudOauthCallback, connected)
+    return ipcRenderer.on(IpcOnEvent.cloudOauthCallback, connected);
   }),
   deepLinkAction: ((parsedDeepLink: any) => {
-    ipcRenderer.on(IpcOnEvent.deepLinkAction, parsedDeepLink)
+    return ipcRenderer.on(IpcOnEvent.deepLinkAction, parsedDeepLink)
   }),
   updateAvailable: ((updateInfo: any) => {
-    ipcRenderer.on(IpcOnEvent.appUpdateAvailable, updateInfo)
+    return ipcRenderer.on(IpcOnEvent.appUpdateAvailable, updateInfo)
   }),
   ipc: ipcHandler,
   config: {
     apiPort: config.apiPort
   }
 } as WindowApp)
+
+contextBridge.exposeInMainWorld('electron', {
+  // Expose any APIs you need here
+})
 
 export type IPCHandler = typeof ipcHandler

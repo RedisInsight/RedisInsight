@@ -18,6 +18,6 @@ config.getApiPort = () => process.env.RI_APP_PORT || configInit.defaultPort
 
 config.icon = getAssetPath('icon.png')
 
-config.preloadPath = app.isPackaged ? path.join(__dirname, 'preload.js') : path.join(__dirname, '../../dll/preload.js')
+config.preloadPath = app.isPackaged ? path.join(__dirname, 'preload.js') : path.join(__dirname, '../dist/preload.js')
 
 export const configMain = config

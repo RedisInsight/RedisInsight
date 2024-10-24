@@ -1,8 +1,8 @@
 {
-  "build": "release",
-  "defaultPort": 5530,
+  "build": "development",
+  "defaultPort": 5540,
   "host": "localhost",
-  "debug": false,
+  "debug": true,
   "themeSource": "dark",
   "appName": "Redis Insight",
   "schema": "redisinsight",
@@ -14,9 +14,9 @@
     "minWidth": 960,
     "webPreferences": {
       "contextIsolation": true,
-      "nodeIntegration": false,
-      "nodeIntegrationInWorker": false,
-      "webSecurity": true,
+      "nodeIntegration": true,
+      "nodeIntegrationInWorker": true,
+      "webSecurity": false,
       "spellcheck": true,
       "allowRunningInsecureContent": false,
       "scrollBounce": true
@@ -31,7 +31,7 @@
     "alwaysOnTop": true,
     "title": "Redis Insight",
     "webPreferences": {
-      "nodeIntegration": false,
+      "nodeIntegration": true,
       "contextIsolation": true
     }
   },

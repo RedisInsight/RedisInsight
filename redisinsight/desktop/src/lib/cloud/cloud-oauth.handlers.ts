@@ -5,14 +5,15 @@ import { UrlWithParsedQuery } from 'url'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { getBackendApp, getWindows } from 'desktopSrc/lib'
 import { IpcOnEvent, IpcInvokeEvent } from 'uiSrc/electron/constants'
-import {
-  CloudAuthRequestOptions,
-  CloudAuthResponse,
-  CloudAuthStatus,
-} from 'apiSrc/modules/cloud/auth/models'
-import { DEFAULT_SESSION_ID, DEFAULT_USER_ID } from 'apiSrc/common/constants'
-import { CloudOauthUnexpectedErrorException } from 'apiSrc/modules/cloud/auth/exceptions'
-import { CloudAuthService } from '../../../../api/dist/src/modules/cloud/auth/cloud-auth.service'
+import { 
+  CloudAuthRequestOptions, 
+  CloudAuthResponse, 
+  CloudAuthStatus 
+} from 'desktopSrc/types/cloud-auth'
+const { DEFAULT_SESSION_ID, DEFAULT_USER_ID } = importApiModule('apiSrc/../../dist/src/common/constants')
+const { CloudOauthUnexpectedErrorException } = importApiModule('apiSrc/../../dist/src/modules/cloud/auth/exceptions')
+const { CloudAuthService } = importApiModule('apiSrc/../../dist/src/modules/cloud/auth/cloud-auth.service')
+import { importApiModule } from 'desktopSrc/api-imports'
 
 export const getOauthIpcErrorResponse = (error: any): { status: CloudAuthStatus.Failed, error: {} } => {
   let errorResponse = new CloudOauthUnexpectedErrorException().getResponse()

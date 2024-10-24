@@ -1,4 +1,11 @@
-import { describe, expect, it, deps, validateApiCall, before, _, getMainCheckFn } from '../deps';
+import {
+  describe,
+  deps,
+  before,
+  getMainCheckFn,
+  generateInvalidDataTestCases,
+  validateInvalidDataTestCase
+} from '../deps'
 import { Joi } from '../../helpers/test';
 import { BrowserHistoryMode } from 'src/common/constants';
 const { localDb, request, server, constants, rte } = deps;
@@ -6,6 +13,17 @@ const { localDb, request, server, constants, rte } = deps;
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
   request(server).get(`/${constants.API.DATABASES}/${instanceId}/history`);
+
+// input query schema
+const querySchema = Joi.object({
+  mode: Joi.string().valid('pattern', 'redisearch').messages({
+    'any.only': 'mode must be one of the following values: pattern, redisearch'
+  }),
+}).strict();
+
+const validInputData = {
+  mode: 'pattern',
+};
 
 const responseSchema = Joi.array().items(Joi.object({
   id: Joi.string().required(),
@@ -40,4 +58,10 @@ describe(`GET /databases/:instanceId/history`, () => {
       responseSchema,
     },
   ].map(mainCheckFn);
+
+  describe('Validation', () => {
+    generateInvalidDataTestCases(querySchema, validInputData, 'query').map(
+      validateInvalidDataTestCase(endpoint, querySchema, 'query'),
+    );
+  });
 });

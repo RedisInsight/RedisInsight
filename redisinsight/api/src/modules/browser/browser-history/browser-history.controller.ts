@@ -11,6 +11,7 @@ import {
   BrowserHistory,
   DeleteBrowserHistoryItemsDto,
   DeleteBrowserHistoryItemsResponse,
+  ListBrowserHistoryDto,
 } from 'src/modules/browser/browser-history/dto';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { SessionMetadata } from 'src/common/models';
@@ -41,9 +42,9 @@ export class BrowserHistoryController {
   async list(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Param('dbInstance') databaseId: string,
-      @Query() { mode = BrowserHistoryMode.Pattern }: { mode: BrowserHistoryMode },
+      @Query() dto: ListBrowserHistoryDto,
   ): Promise<BrowserHistory[]> {
-    return this.service.list(sessionMetadata, databaseId, mode);
+    return this.service.list(sessionMetadata, databaseId, dto.mode);
   }
 
   @Delete('/:id')

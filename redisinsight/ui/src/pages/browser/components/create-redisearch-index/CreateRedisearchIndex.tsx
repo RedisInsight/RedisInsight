@@ -56,7 +56,7 @@ const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
 const initialFieldValue = (fieldTypeOptions: EuiSuperSelectOption<string>[], id = 0) => ({
   id,
   identifier: '',
-  fieldType: fieldTypeOptions.length > 0 ? fieldTypeOptions[0].value : ''
+  fieldType: fieldTypeOptions[0]?.value || ''
 })
 
 const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {

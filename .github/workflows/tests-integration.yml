@@ -48,6 +48,7 @@ env:
   #   }
   ITESTS_NAMES_SHORT: |
     {
+      "oss-st-5": "OSS Standalone v5"
       "oss-st-6": "OSS Standalone v6"
     }
 
@@ -116,14 +117,6 @@ jobs:
         ./redisinsight/api/test/test-runs/start-test-run.sh -r ${{ matrix.rte }} -t ${{ inputs.build }}
         mkdir -p mkdir itest/coverages && mkdir -p itest/results
 
-        ls -la
-        # ls -la /usr/src/app
-        # ls -la /usr/src/app/coverage
-        ls -la ./redisinsight/api/
-        ls -la ./redisinsight/api/test
-        ls -la ./redisinsight/api/test/test-runs
-
-
         cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/${{ matrix.rte }}.result.json
         cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml
         cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/${{ matrix.rte }}.coverage.json
@@ -142,17 +135,10 @@ jobs:
         name: coverages-${{ matrix.rte }}
         path: itest/coverages
 
-    - name: Upload coverage2 files as artifact
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverages-${{ matrix.rte }}
-        path: /usr/src/app/coverage
-
-    - name: Setup upterm session
-      uses: mxschmitt/action-tmate@v3
-      with:
-        detached: true
+    # - name: Setup upterm session
+    #   uses: mxschmitt/action-tmate@v3
+    #   with:
+    #     detached: true
 
     - name: Send report to Slack
       if: inputs.report && always()
@@ -181,9 +167,9 @@ jobs:
     - name: Calculate coverage across all tests runs
       run: |
         npx nyc report -t ./coverages -r text -r text-summary
-        # sudo mkdir -p /usr/src/app
-        # sudo cp -a ./redisinsight/api/. /usr/src/app/
-        # sudo cp -R /tmp/itest/coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
-        # cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
+        sudo mkdir -p /usr/src/app
+        sudo cp -a ./redisinsight/api/. /usr/src/app/
+        sudo cp -R ./coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
+        cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
 
 

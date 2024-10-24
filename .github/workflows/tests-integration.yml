@@ -21,6 +21,7 @@ on:
 
 env:
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+  TEST_MEDIUM_DB_DUMP: ${{ secrets.TEST_MEDIUM_DB_DUMP }}
   ITESTS_NAMES: |
     {
       "oss-st-5": "OSS Standalone v5",
@@ -83,6 +84,7 @@ jobs:
     #   volumes:
     #     - /usr/src/app/coverage:/usr/src/app/coverage
     strategy:
+      fail-fast: false
       matrix:
         rte: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
     steps:

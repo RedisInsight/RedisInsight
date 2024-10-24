@@ -11,7 +11,7 @@ describe('ListInfoStrategy', () => {
 
   beforeEach(async () => {
     when(client.sendCommand)
-      .calledWith(jasmine.arrayContaining(['llen']))
+      .calledWith(expect.arrayContaining(['llen']))
       .mockResolvedValue(mockRedisResponse);
   });
 

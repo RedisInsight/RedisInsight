@@ -5,7 +5,6 @@ import {
 } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common, DatabaseHelper } from '../../../../helpers';
-import { deleteAllKeysFromDB } from '../../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const databaseAPIRequests = new DatabaseAPIRequests();
@@ -26,7 +25,7 @@ fixture `DataTime format setting`
         await databaseHelper.acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig);
     })
     .afterEach(async t => {
-        await deleteAllKeysFromDB(ossClusterConfig.ossClusterPort, ossClusterConfig.ossClusterPort);
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await t.click(workbenchPage.NavigationPanel.settingsButton);
         await t.click(settingsPage.accordionAppearance);
         await t.click(settingsPage.commonRadioButton);

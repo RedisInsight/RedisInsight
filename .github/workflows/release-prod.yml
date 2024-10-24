@@ -1,0 +1,43 @@
+name: Release (prod)
+
+on:
+  push:
+    branches:
+      - 'latest'
+
+jobs:
+  tests-prod:
+    name: Run all tests
+    uses: ./.github/workflows/tests.yml
+    secrets: inherit
+    with:
+      all_tests: true
+
+  builds-prod:
+    name: Create all builds for release
+    uses: ./.github/workflows/build.yml
+    needs: tests-prod
+    secrets: inherit
+    with:
+      environment: 'production'
+      target: 'all'
+
+  virustotal-prod:
+    name: Virustotal
+    uses: ./.github/workflows/virustotal.yml
+    needs: builds-prod
+    secrets: inherit
+    with:
+      skip_report: true
+
+  aws-prod:
+    name: Realse to AWS S3
+    uses: ./.github/workflows/aws.yml
+    needs: virustotal-prod
+    secrets: inherit
+
+  docker-prod:
+    name: Release docker images
+    uses: ./.github/workflows/release-docker.yml
+    needs: aws-prod
+    secrets: inherit

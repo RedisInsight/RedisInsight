@@ -29,6 +29,10 @@ const checkError = (cb) => (e) => {
   cb();
 };
 
+function fail(data?: any) {
+  expect(`Expected to fail but got ${data}`).toBeFalsy();
+}
+
 describe('IoredisRedisConnectionStrategy', () => {
   let service: IoredisRedisConnectionStrategy;
   let mockIoredisNativeClient;

@@ -776,16 +776,16 @@ describe('Cluster Scanner Strategy', () => {
     beforeEach(() => {
       when(mockClusterRedisClient.sendPipeline)
         .calledWith([
-          jasmine.arrayContaining([BrowserToolKeysCommands.Ttl]),
-          jasmine.arrayContaining(['memory', 'usage']),
-          jasmine.arrayContaining([BrowserToolKeysCommands.Type]),
+          expect.arrayContaining([BrowserToolKeysCommands.Ttl]),
+          expect.arrayContaining(['memory', 'usage']),
+          expect.arrayContaining([BrowserToolKeysCommands.Type]),
         ],
         { replyEncoding: 'utf8' })
         .mockResolvedValue([[null, -1], [null, 50], [null, 'string']]);
       when(mockClusterRedisClient.sendPipeline)
         .calledWith([
-          jasmine.arrayContaining([BrowserToolKeysCommands.Ttl]),
-          jasmine.arrayContaining(['memory', 'usage']),
+          expect.arrayContaining([BrowserToolKeysCommands.Ttl]),
+          expect.arrayContaining(['memory', 'usage']),
         ],
         { replyEncoding: 'utf8' })
         .mockResolvedValue([[null, 999], [null, 555]]);

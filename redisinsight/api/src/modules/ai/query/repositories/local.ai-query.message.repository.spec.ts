@@ -51,20 +51,20 @@ describe('LocalAiQueryAuthProvider', () => {
 
     encryptionService.decrypt.mockImplementation((value) => value);
     when(encryptionService.decrypt)
-      .calledWith(mockAiQueryHumanMessageEntity.content, jasmine.anything())
+      .calledWith(mockAiQueryHumanMessageEntity.content, expect.anything())
       .mockResolvedValue(mockAiQueryHumanMessage.content)
-      .calledWith(mockAiQueryAiResponseEntity.content, jasmine.anything())
+      .calledWith(mockAiQueryAiResponseEntity.content, expect.anything())
       .mockResolvedValue(mockAiQueryAiResponse.content)
-      .calledWith(mockAiQueryAiResponseEntity.steps, jasmine.anything())
+      .calledWith(mockAiQueryAiResponseEntity.steps, expect.anything())
       .mockResolvedValue(JSON.stringify(mockAiQueryAiResponse.steps));
 
     encryptionService.encrypt.mockImplementation((value) => value);
     when(encryptionService.encrypt)
-      .calledWith(mockAiQueryHumanMessage.content, jasmine.anything())
+      .calledWith(mockAiQueryHumanMessage.content, expect.anything())
       .mockResolvedValue(mockAiQueryHumanMessageEntity.content)
-      .calledWith(mockAiQueryAiResponse.content, jasmine.anything())
+      .calledWith(mockAiQueryAiResponse.content, expect.anything())
       .mockResolvedValue(mockAiQueryAiResponseEntity.content)
-      .calledWith(JSON.stringify(mockAiQueryAiResponse.steps), jasmine.anything())
+      .calledWith(JSON.stringify(mockAiQueryAiResponse.steps), expect.anything())
       .mockResolvedValue(mockAiQueryAiResponseEntity.steps);
   });
 

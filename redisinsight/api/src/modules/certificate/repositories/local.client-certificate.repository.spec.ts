@@ -65,9 +65,9 @@ describe('LocalClientCertificateRepository', () => {
     repository.create.mockReturnValue(mockClientCertificate); // not an entity since create happens before encryption
 
     when(encryptionService.decrypt)
-      .calledWith(mockClientCertificateCertificateEncrypted, jasmine.anything())
+      .calledWith(mockClientCertificateCertificateEncrypted, expect.anything())
       .mockResolvedValue(mockClientCertificateCertificatePlain)
-      .calledWith(mockClientCertificateKeyEncrypted, jasmine.anything())
+      .calledWith(mockClientCertificateKeyEncrypted, expect.anything())
       .mockResolvedValue(mockClientCertificateKeyPlain);
     when(encryptionService.encrypt)
       .calledWith(mockClientCertificateCertificatePlain)

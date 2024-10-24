@@ -57,11 +57,9 @@ jobs:
         # docker pull redis/redisinsight
 
     - name: Generate short list of the test files
+      working-directory: ./tests/e2e
       run: |
-        cd ./tests/e2e
         testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
-        cd ../../
-
         echo $testFiles
 
         # Multi-Line value

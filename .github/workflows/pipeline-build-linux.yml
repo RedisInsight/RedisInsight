@@ -28,7 +28,7 @@ jobs:
     # ssh
     # - run: sudo apt-get update -qy && sudo apt-get install -qy tmux;
     # - name: Setup upterm session
-    # - uses: mxschmitt/action-tmate #1 better
+    # - uses: mxschmitt/action-tmate@v3 #1 better
     #   uses: lhotari/action-upterm@v1 #2
     #   with:
     #     limit-access-to-actor: true

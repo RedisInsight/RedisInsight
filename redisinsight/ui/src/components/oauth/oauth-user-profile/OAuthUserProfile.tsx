@@ -49,7 +49,11 @@ const OAuthUserProfile = (props: Props) => {
     if (profileLoading) {
       return (
         <div className={styles.loadingContainer}>
-          <EuiLoadingSpinner className={cx('infiniteMessage__icon', styles.loading)} size="l" />
+          <EuiLoadingSpinner
+            className={cx('infiniteMessage__icon', styles.loading)}
+            size="l"
+            data-testid="oath-user-profile-spinner"
+          />
         </div>
       )
     }

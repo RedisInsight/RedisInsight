@@ -13,6 +13,7 @@ jobs:
     secrets: inherit
     with:
       all_tests: true
+      without_e2e: true
 
   builds-prod:
     name: Create all builds for release

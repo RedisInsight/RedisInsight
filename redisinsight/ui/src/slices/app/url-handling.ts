@@ -1,10 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from 'uiSrc/slices/store'
 import { StateUrlHandling } from 'uiSrc/slices/interfaces/urlHandling'
+import { localStorageService } from 'uiSrc/services'
+import { AppStorageItem } from 'uiSrc/constants/storage'
 
 export const initialState: StateUrlHandling = {
   fromUrl: null,
-  returnUrl: null,
+  returnUrl: localStorageService.get(AppStorageItem.returnUrl),
   action: null,
   dbConnection: null,
   properties: {}

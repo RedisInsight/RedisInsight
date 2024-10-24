@@ -32,18 +32,8 @@ const GlobalUrlHandler = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const location = useLocation()
-  const searchParams = new URLSearchParams(location.search)
-  const returnUrl = searchParams.get('returnUrl')
 
   useEffect(() => {
-    if (returnUrl) {
-      localStorageService.set(AppStorageItem.returnUrl, { value: returnUrl })
-      dispatch(setReturnUrl(returnUrl))
-      history.push(location.pathname)
-    } else if (localStorageService.get(AppStorageItem.returnUrl)) {
-      dispatch(setReturnUrl(localStorageService.get(AppStorageItem.returnUrl).value))
-    }
-
     // start handling only after closing consent popup
     // including updated consents & from scratch
     if (!fromUrl || isNull(isShowConsents) || isShowConsents || !config) return
@@ -74,18 +64,24 @@ const GlobalUrlHandler = () => {
     } catch (_e) {
       //
     }
-  }, [returnUrl, fromUrl, config, isShowConsents])
+  }, [fromUrl, config, isShowConsents])
 
   useEffect(() => {
     try {
       const params = new URLSearchParams(search)
       const from = params.get('from')
+      const returnUrl = params.get('returnUrl')
 
       if (from) {
         dispatch(setFromUrl(from))
         history.replace({
           search: ''
         })
+      }
+      if (returnUrl) {
+        localStorageService.set(AppStorageItem.returnUrl, { value: returnUrl })
+        dispatch(setReturnUrl(returnUrl))
+        history.push(location.pathname)
       }
     } catch {
       // do nothing

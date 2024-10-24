@@ -1,7 +1,7 @@
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, WorkbenchPage } from '../../../../pageObjects';
 import { rte } from '../../../../helpers/constants';
-import { commonUrl, ossClusterConfig, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../../helpers/conf';
+import { commonUrl, ossClusterConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
@@ -14,11 +14,11 @@ fixture `Search and Query Raw mode`
     .page(commonUrl);
 
 test
-    .before(async t => {
+    .before(async () => {
         await databaseHelper.acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig);
         await browserPage.Cli.sendCommandInCli('flushdb');
     })
-    .after(async t => {
+    .after(async () => {
         await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
 
     })('Verify suggestions when there are no indexes', async t => {

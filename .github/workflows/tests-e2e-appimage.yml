@@ -83,5 +83,7 @@ jobs:
         path: tests/e2e/results/results.xml
         reporter: java-junit
         list-tests: 'failed'
+        list-suites: 'failed'
+        fail-on-error: 'false'
 
 

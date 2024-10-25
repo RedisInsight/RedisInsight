@@ -140,6 +140,8 @@ jobs:
         path: itest/results/*.result.xml
         reporter: jest-junit
         list-tests: 'failed'
+        list-suites: 'failed'
+        fail-on-error: 'false'
 
   coverage:
     runs-on: ubuntu-latest

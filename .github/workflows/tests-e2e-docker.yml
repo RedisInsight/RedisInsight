@@ -108,3 +108,5 @@ jobs:
         path: /usr/src/app/results/results.xml
         reporter: java-junit
         list-tests: 'failed'
+        list-suites: 'failed'
+        fail-on-error: 'false'

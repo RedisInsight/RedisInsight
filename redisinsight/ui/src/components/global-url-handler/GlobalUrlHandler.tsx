@@ -79,7 +79,7 @@ const GlobalUrlHandler = () => {
         })
       }
       if (returnUrl) {
-        localStorageService.set(AppStorageItem.returnUrl, { value: returnUrl })
+        localStorageService.set(AppStorageItem.returnUrl, returnUrl)
         dispatch(setReturnUrl(returnUrl))
         history.push(location.pathname)
       }

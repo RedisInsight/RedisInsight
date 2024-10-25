@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [react()],
   base: './',
   build: {
+    emptyOutDir: false,
     outDir: 'dist/renderer',
-    emptyOutDir: true,
     rollupOptions: {
       input: {
         index: path.join(__dirname, './src/index.html')

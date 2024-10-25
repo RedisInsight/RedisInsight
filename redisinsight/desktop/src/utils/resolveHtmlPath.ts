@@ -5,7 +5,7 @@ import { configMain as config } from 'desktopSrc/config'
 import { IParsedDeepLink } from 'desktopSrc/lib/app/deep-link.handlers'
 
 export const resolveHtmlPath = (htmlFileName: string, parsedDeepLink?: IParsedDeepLink) => {
-  if (config.isDevelopment) {
+  if (config.isDevelopment && false) {
     const port = process.env.PORT || 1212
     const url = new URL(`http://localhost:${port}`)
     url.pathname = htmlFileName

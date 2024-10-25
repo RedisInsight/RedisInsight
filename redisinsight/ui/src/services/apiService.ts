@@ -32,6 +32,8 @@ export const setApiCsrfHeader = (token: string) => {
 }
 
 export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
+  console.log('[API Client] Current headers:', config.headers);
+  console.log('[API Client] Window ID from store:', /* however you store windowId */);
   if (config?.headers) {
     const instanceId = /databases\/([\w-]+)\/?.*/.exec(config.url || '')?.[1]
 

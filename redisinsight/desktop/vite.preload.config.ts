@@ -3,6 +3,7 @@ import path from 'path'
 
 export default defineConfig({
   build: {
+    emptyOutDir: false,
     outDir: '../desktop/dist',
     lib: {
       entry: path.join(__dirname, '../desktop/preload.ts'),
@@ -12,7 +13,6 @@ export default defineConfig({
     rollupOptions: {
       external: ['electron'],
     },
-    emptyOutDir: false,
   },
   resolve: {
     alias: {

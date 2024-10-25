@@ -88,6 +88,7 @@ export const createWindow = async ({
   contextMenu({ window: newWindow, showInspectElement: true })
 
   windows.set(id, newWindow)
+  console.log('[Window Creation] Current windows:', Array.from(windows.keys()));
 
   updateTray(newWindow.webContents.getTitle())
 

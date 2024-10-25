@@ -25,6 +25,7 @@
     "vite": "^5.4.9"
   },
   "dependencies": {
+    "@nestjs/common": "^10.4.6",
     "cross-env": "^7.0.3",
     "default-browser-id": "^3.0.0",
     "electron-squirrel-startup": "^1.0.1"

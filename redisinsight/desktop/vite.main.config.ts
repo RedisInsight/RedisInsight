@@ -17,6 +17,7 @@ export default defineConfig({
     },
   ],
   build: {
+    emptyOutDir: false,
     outDir: 'dist',
     lib: {
       entry: path.resolve(__dirname, 'index.ts'),
@@ -27,17 +28,21 @@ export default defineConfig({
       external: [
         'electron',
         'ts-node',
+        '@nestjs/core',
+        '@nestjs/common',
+        '@nestjs/platform-express',
+        '@nestjs/swagger',
+        'nest-winston',
         ...builtinModules,
         ...builtinModules.map(m => `node:${m}`),
         /^apiSrc\//,
         /^src\//,
       ],
       output: {
-        format: 'cjs',  // Ensure CJS format
+        format: 'cjs',
         entryFileNames: '[name].js',
       }
     },
-    emptyOutDir: false,
     target: 'node14',
   },
   resolve: {

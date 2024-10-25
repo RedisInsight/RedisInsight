@@ -10,7 +10,7 @@ export class AuthModule {
   static register() {
     const imports = [];
 
-    if (SERVER_CONFIG.buildType === BuildType.Electron) {
+    if (SERVER_CONFIG.buildType === BuildType.Electron || true) {
       imports.push(WindowAuthModule);
     }
 

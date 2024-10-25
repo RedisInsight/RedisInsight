@@ -49,6 +49,13 @@ jobs:
     - name: Unit tests UI
       run: yarn test:cov --ci --silent
 
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        comment_mode: 'failures'
+        files: reports/jest-*.xml
+
     - name: Generate test results
       uses: dorny/test-reporter@v1
       if: always()
@@ -57,12 +64,3 @@ jobs:
         path: reports/jest-*.xml
         reporter: jest-junit
         list-tests: 'failed'
-        max-annotations: '1'
-        fail-on-error: false
-
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-        comment_mode: 'failures'
-        files: reports/jest-*.xml

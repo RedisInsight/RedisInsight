@@ -111,24 +111,6 @@ jobs:
         cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml
         cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/${{ matrix.rte }}.coverage.json
 
-    - name: Generate test results
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: 'Test results: IT (${{ matrix.rte }}) tests'
-        path: itest/results/*.result.xml
-        reporter: jest-junit
-        list-tests: 'failed'
-        max-annotations: '1'
-        fail-on-error: false
-
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-        comment_mode: 'failures'
-        files: itest/results/*.result.xml
-
     - name: Upload coverage files as artifact
       if: always()
       uses: actions/upload-artifact@v4
@@ -141,6 +123,23 @@ jobs:
       run: |
         ITEST_NAME=${{ matrix.rte }} node ./.github/itest-results.js
         curl -H "Content-type: application/json" --data @itests.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        comment_mode: off
+        check_run: false
+        files: itest/results/*.result.xml
+
+    - name: Generate test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: 'Test results: IT (${{ matrix.rte }}) tests'
+        path: itest/results/*.result.xml
+        reporter: jest-junit
+        list-tests: 'failed'
 
   coverage:
     runs-on: ubuntu-latest

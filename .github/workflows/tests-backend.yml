@@ -56,6 +56,6 @@ jobs:
       if: always()
       with:
         name: BE Unit tests results
-        path: reports/jest-*.xml    # Path to test results
+        path: redisinsight/api/reports/jest-*.xml    # Path to test results
         reporter: jest-junit        # Format of test results
         fail-on-error: false

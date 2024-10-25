@@ -79,24 +79,6 @@ jobs:
         -f tests/e2e/docker.web.docker-compose.yml \
         up --abort-on-container-exit --force-recreate
 
-    - name: Generate test results for ${{ matrix.parallel }}th node
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: 'Test results: E2E (docker) ${{ matrix.parallel }}th node'
-        path: /usr/src/app/results/results.xml
-        reporter: java-junit
-        list-tests: 'failed'
-        max-annotations: '1'
-        fail-on-error: false
-
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action/linux@v2
-      if: always()
-      with:
-        comment_mode: 'failures'
-        files: /usr/src/app/results/results.xml
-
     - name: Upload Test Report
       uses: actions/upload-artifact@v4
       if: always()
@@ -110,3 +92,19 @@ jobs:
         node ./.github/e2e-results.js
         curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action/linux@v2
+      if: always()
+      with:
+        comment_mode: off
+        check_run: false
+        files: /usr/src/app/results/results.xml
+
+    - name: Generate test results for ${{ matrix.parallel }}th node
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: 'Test results: E2E (docker) ${{ matrix.parallel }}th node'
+        path: /usr/src/app/results/results.xml
+        reporter: java-junit
+        list-tests: 'failed'

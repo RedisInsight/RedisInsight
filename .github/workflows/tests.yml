@@ -84,7 +84,7 @@ jobs:
     uses: ./.github/workflows/tests-integration.yml
     secrets: inherit
     with:
-      short_rte_list: ${{ inputs.short_rte_list }}
+      short_rte_list: ${{ inputs.short_rte_list || false }}
       redis_client: ${{ inputs.redis_client }}
 
   # E2E Approve

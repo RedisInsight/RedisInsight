@@ -13,7 +13,6 @@ export interface Props {
 
 const FeatureFlagComponent = (props: Props) => {
   const { children, name, otherwise, enabledByDefault } = props
-
   const { [name]: feature } = useSelector(appFeatureFlagsFeaturesSelector)
   const { flag, variant } = feature ?? { flag: enabledByDefault }
 

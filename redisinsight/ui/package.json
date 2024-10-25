@@ -10,7 +10,7 @@
     "url": "https://redis.com/redis-enterprise/redis-insight"
   },
   "scripts": {
-    "dev": "vite dev --force",
+    "dev": "vite dev",
     "build": "vite build",
     "stats": "npx vite-bundle-visualizer --open -o ./dist-stats.html --sourcemap"
   }

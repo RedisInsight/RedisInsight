@@ -55,7 +55,7 @@ const appFeaturesSlice = createSlice({
     setFeaturesInitialState: () => initialState,
     setFeaturesToHighlight: (state, { payload }: { payload: { version: string, features: string[] } }) => {
       state.highlighting.features = payload.features
-      state.highlighting.version = payload.version      
+      state.highlighting.version = payload.version
       state.highlighting.pages = getPagesForFeatures(payload.features)
     },
     removeFeatureFromHighlighting: (state, { payload }: { payload: string }) => {

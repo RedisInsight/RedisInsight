@@ -9,7 +9,7 @@
     "dev:ui": "cross-env RI_APP_TYPE=electron NODE_ENV=development yarn --cwd redisinsight/ui dev",
     "dev:api": "cross-env RI_APP_TYPE=electron NODE_ENV=development yarn --cwd redisinsight/api start:dev",
     "dev:electron": "cross-env RI_APP_TYPE=electron NODE_ENV=development yarn --cwd redisinsight/desktop dev",
-    "dev": "cross-env RI_APP_TYPE=electron concurrently \"yarn dev:ui\" \"yarn dev:api\" \"yarn dev:electron\"",
+    "dev": "cross-env RI_APP_TYPE=electron NODE_ENV=development concurrently \"yarn dev:ui\" \"wait-on http://localhost:8080 && yarn dev:api\" \"wait-on http://localhost:5540 && yarn dev:electron\"",
     "build:ui": "cross-env NODE_ENV=production RI_APP_TYPE=web yarn --cwd redisinsight/ui build",
     "build:renderer": "cross-env NODE_ENV=production RI_APP_TYPE=electron yarn --cwd redisinsight/ui build --emptyOutDir && copyfiles ./redisinsight/desktop/splash.html ./redisinsight/dist/renderer -f",
     "stats:ui": "yarn --cwd redisinsight/ui stats",
@@ -281,7 +281,8 @@
     "unified": "^10.1.1",
     "unist-util-visit": "^4.1.0",
     "url-parse": "^1.5.10",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "wait-on": "^8.0.1"
   },
   "devEngines": {
     "node": ">=16.x",

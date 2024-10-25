@@ -15,25 +15,30 @@ export interface IParsedDeepLink {
 export const deepLinkHandler = async (from?: string): Promise<undefined | IParsedDeepLink> => {
   if (from) {
     try {
-      const url = parse(from, true)
+      // Remove the protocol part for parsing
+      const urlWithoutProtocol = from.replace(/^redisinsight-dev:\/\/|^redisinsight:\/\//, '');
+      const url = parse(`http://${urlWithoutProtocol}`, true);
+      
+      console.log('Parsed URL:', url);
+      
       switch (url?.hostname) {
         case 'cloud':
-          await cloudDeepLinkHandler(url)
-          break
+          await cloudDeepLinkHandler(url);
+          break;
         default:
           return {
             from,
             target: url.query?.target || '_self',
             initialPage: url.query?.initialPage,
-          } as IParsedDeepLink
+          } as IParsedDeepLink;
       }
     } catch (e) {
-      log.error(wrapErrorMessageSensitiveData(e as Error))
+      log.error(wrapErrorMessageSensitiveData(e as Error));
     }
   }
 
-  return undefined
-}
+  return undefined;
+};
 
 export const deepLinkWindowHandler = async (parsedDeepLink?: IParsedDeepLink) => {
   // tbd: implement mechanism to find current window

@@ -53,13 +53,26 @@ const init = async () => {
 
     // deep linking
     // register our application to handle custom protocol
+    console.log('Registering protocol:', config.schema, {
+      execPath: process.execPath,
+      appPath: path.join(__dirname)
+    });
+
     if (process.defaultApp) {
-      if (deepLink) {
-        app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(deepLink)])
-      }
+      // Running in development
+      const electronExePath = process.execPath;
+      const appPath = path.join(__dirname);
+      const registered = app.setAsDefaultProtocolClient(config.schema, electronExePath, [appPath]);
+      console.log('Protocol registration result:', registered);
     } else {
-      app.setAsDefaultProtocolClient(config.schema)
+      // Running in production
+      const registered = app.setAsDefaultProtocolClient(config.schema);
+      console.log('Protocol registration result:', registered);
     }
+
+    // Check if protocol is registered
+    const isRegistered = app.isDefaultProtocolClient(config.schema);
+    console.log('Protocol registration status:', isRegistered);
 
     const splashWindow = await windowFactory(WindowType.Splash)
 

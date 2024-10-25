@@ -91,7 +91,7 @@ jobs:
         fail-on-error: false
 
     - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
+      uses: EnricoMi/publish-unit-test-result-action/linux@v2
       if: always()
       with:
         comment_mode: 'failures'

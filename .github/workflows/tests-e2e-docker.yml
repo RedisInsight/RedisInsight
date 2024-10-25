@@ -96,6 +96,7 @@ jobs:
       uses: EnricoMi/publish-unit-test-result-action/linux@v2
       if: always()
       with:
+        check_name: 'E2E (Docker ${{ matrix.parallel }}th) tests summary'
         comment_mode: off
         check_run: false
         files: /usr/src/app/results/results.xml

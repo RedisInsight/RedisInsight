@@ -128,6 +128,7 @@ jobs:
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
+        check_name: 'ITest (${{ matrix.rte }}) summary'
         comment_mode: off
         check_run: false
         files: itest/results/*.result.xml

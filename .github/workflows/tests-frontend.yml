@@ -56,6 +56,6 @@ jobs:
         name: 'Test results: FE unit tests'
         path: reports/jest-*.xml
         reporter: jest-junit
-        list-tests: 'failed'
+        list-tests: 'only-failed'
         max-annotations: '1'
         fail-on-error: false

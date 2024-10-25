@@ -86,7 +86,7 @@ jobs:
         name: 'Test results: E2E (docker) ${{ matrix.parallel }}th node'
         path: /usr/src/app/results/results.xml
         reporter: java-junit
-        list-tests: 'failed'
+        list-tests: 'only-failed'
         max-annotations: '1'
         fail-on-error: false
 

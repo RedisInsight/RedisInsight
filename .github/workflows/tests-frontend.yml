@@ -59,3 +59,10 @@ jobs:
         list-tests: 'failed'
         max-annotations: '1'
         fail-on-error: false
+
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        comment_mode: 'failures'
+        files: reports/jest-*.xml

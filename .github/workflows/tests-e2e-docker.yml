@@ -90,6 +90,13 @@ jobs:
         max-annotations: '1'
         fail-on-error: false
 
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        comment_mode: 'failures'
+        files: /usr/src/app/results/results.xml
+
     - name: Upload Test Report
       uses: actions/upload-artifact@v4
       if: always()

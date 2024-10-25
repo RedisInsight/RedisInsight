@@ -92,15 +92,6 @@ jobs:
         node ./.github/e2e-results.js
         curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action/linux@v2
-      if: always()
-      with:
-        check_name: 'E2E (Docker ${{ matrix.parallel }}th) tests summary'
-        comment_mode: off
-        check_run: false
-        files: /usr/src/app/results/results.xml
-
     - name: Generate test results for ${{ matrix.parallel }}th node
       uses: dorny/test-reporter@v1
       if: always()

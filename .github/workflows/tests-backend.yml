@@ -50,3 +50,12 @@ jobs:
 
     - name: Unit tests API
       run: yarn --cwd redisinsight/api/ test:cov --ci
+
+    - name: Generate test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: BE Unit tests results
+        path: reports/jest-*.xml    # Path to test results
+        reporter: jest-junit        # Format of test results
+        fail-on-error: false

@@ -95,7 +95,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
         },
         responseSchema,
         checkFn: async ({ body }) => {
-          expect(body.response).to.have.string(constants.TEST_STRING_VALUE_1)
+          expect(body.response).to.have.string('constants.TEST_STRING_VALUE_1')
         }
       },
       {

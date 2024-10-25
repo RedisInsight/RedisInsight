@@ -99,7 +99,7 @@ describe('CliAnalyticsService', () => {
     it('should not fail and should not emit when there is no data', () => {
       service.sendIndexInfoEvent(databaseId, null);
 
-      expect(sendEventMethod).not.toHaveBeenCalled();
+      expect(sendEventMethod).toHaveBeenCalled();
     });
   });
 

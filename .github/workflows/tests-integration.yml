@@ -118,7 +118,7 @@ jobs:
         name: 'Test results: IT (${{ matrix.rte }}) tests'
         path: itest/results/*.result.xml
         reporter: jest-junit
-        list-tests: 'only-failed'
+        list-tests: 'failed'
         max-annotations: '1'
         fail-on-error: false
 

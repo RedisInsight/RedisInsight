@@ -5,18 +5,12 @@ import { CloudAuthService } from '../cloud-auth.service';
 
 @Injectable()
 export class TcpCloudAuthStrategy extends CloudAuthStrategy {
-  private static DEFAULT_CLOUD_AUTH_PORT = 5542;
-  private authPort: number;
+  private authPort = process.env.TCP_LOCAL_CLOUD_AUTH_PORT ? parseInt(process.env.TCP_LOCAL_CLOUD_AUTH_PORT) : 5542;
   private server: Server;
   private readonly logger = new Logger('TcpCloudAuthStrategy');
   
   constructor(private readonly cloudAuthService: CloudAuthService) {
     super();
-    this.authPort = parseInt(process.env.RI_CLOUD_AUTH_PORT || TcpCloudAuthStrategy.DEFAULT_CLOUD_AUTH_PORT.toString(), 10);
-
-    if (isNaN(this.authPort)) {
-      this.authPort = TcpCloudAuthStrategy.DEFAULT_CLOUD_AUTH_PORT;
-    }
 
     this.initServer();
   }

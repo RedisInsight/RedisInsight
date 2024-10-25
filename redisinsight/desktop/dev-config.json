@@ -1,0 +1,9 @@
+{
+  "build": "development",
+  "defaultPort": 5540,
+  "debug": true,
+  "mainWindow": {
+    "show": true
+  }
+}
+

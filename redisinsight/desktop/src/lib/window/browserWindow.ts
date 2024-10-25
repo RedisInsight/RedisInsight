@@ -52,7 +52,7 @@ export const createWindow = async ({
     width = currentWindowWidth
     height = currentWindowHeight
   }
-  
+
   const newWindow: BrowserWindow | null = new BrowserWindow({
     ...options,
     x,
@@ -61,9 +61,6 @@ export const createWindow = async ({
     height,
     webPreferences: {
       ...options.webPreferences,
-      nodeIntegration: true,
-      nodeIntegrationInWorker: true,
-      nodeIntegrationInSubFrames: true,
       preload: options.preloadPath
     }
   })
@@ -81,14 +78,18 @@ export const createWindow = async ({
     }
   }
 
-  newWindow.loadURL('http://localhost:8080')
+  if (process.env.NODE_ENV === 'development') {
+    const frontEndPort = process.env.RI_APP_PORT || '8080'
+    newWindow.loadURL(`http://localhost:${frontEndPort}`)
+  } else {
+    newWindow.loadURL(resolveHtmlPath(htmlFileName, options?.parsedDeepLink))
+  }
 
   initWindowHandlers(newWindow, prevWindow, windows, id)
 
   contextMenu({ window: newWindow, showInspectElement: true })
 
   windows.set(id, newWindow)
-  console.log('[Window Creation] Current windows:', Array.from(windows.keys()));
 
   updateTray(newWindow.webContents.getTitle())
 
@@ -104,7 +105,7 @@ export const windowFactory = async (
     case WindowType.Splash:
       return createWindow({
         prevWindow,
-        htmlFileName: '../splash.html',
+        htmlFileName: process.env.NODE_ENV === 'development' ? '../splash.html' : 'splash.html',
         windowType,
         options: {
           ...config.splashWindow,
@@ -114,7 +115,7 @@ export const windowFactory = async (
     case WindowType.Main:
       return createWindow({
         prevWindow,
-        htmlFileName: '../src/index.html',
+        htmlFileName: process.env.NODE_ENV === 'development' ? '../src/index.html' : 'index.html',
         windowType,
         options: {
           ...options,

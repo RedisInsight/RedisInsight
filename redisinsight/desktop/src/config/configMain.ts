@@ -7,6 +7,9 @@ import pkg from '../../../package.json'
 const config: any = configInit
 
 // Merge in some details from package.json
+config.build = process.env.NODE_ENV === 'development' ? 'development' : 'production'
+config.devBuild = process.env.NODE_ENV === 'development' ? true : false
+config.defaultPort = process.env.NODE_ENV === 'development' ? 5540 : config.defaultPort
 config.name = pkg.appName
 config.description = pkg.description
 config.version = pkg.version

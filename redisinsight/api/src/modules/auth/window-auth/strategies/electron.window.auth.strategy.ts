@@ -4,18 +4,8 @@ import { AbstractWindowAuthStrategy } from './abstract.window.auth.strategy';
 
 @Injectable()
 export class ElectronWindowAuthStrategy extends AbstractWindowAuthStrategy {
-  private static DEFAULT_AUTH_PORT = 5541;
-  private authPort: number;
+  private authPort = process.env.TCP_LOCAL_AUTH_PORT ? parseInt(process.env.TCP_LOCAL_AUTH_PORT) : 5541;
   
-  constructor() {
-    super();
-    this.authPort = parseInt(process.env.RI_AUTH_PORT || ElectronWindowAuthStrategy.DEFAULT_AUTH_PORT.toString(), 10);
-
-    if (isNaN(this.authPort)) {
-      this.authPort = ElectronWindowAuthStrategy.DEFAULT_AUTH_PORT;
-    }
-  }
-
   async isAuthorized(id: string): Promise<boolean> {
     return new Promise((resolve) => {
       const client = createConnection(this.authPort, 'localhost', () => {

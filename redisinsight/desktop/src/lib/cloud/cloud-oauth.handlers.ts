@@ -16,40 +16,33 @@ const { CloudOauthUnexpectedErrorException } = importApiModule('dist/src/modules
 const { CloudAuthService } = importApiModule('dist/src/modules/cloud/auth/cloud-auth.service')
 import { importApiModule } from 'desktopSrc/api-imports'
 
-const CLOUD_AUTH_PORT = 5542;
+const TCP_LOCAL_CLOUD_AUTH_PORT = process.env.TCP_LOCAL_CLOUD_AUTH_PORT ? parseInt(process.env.TCP_LOCAL_CLOUD_AUTH_PORT) : 5542;
 
 const sendTcpRequest = (data: any): Promise<any> => {
   return new Promise((resolve, reject) => {
-    console.log('Sending TCP request with data:', data); // Add this line
-    const client = createConnection(CLOUD_AUTH_PORT, 'localhost', () => {
-      console.log('Client connected to server');
+    const client = createConnection(TCP_LOCAL_CLOUD_AUTH_PORT, 'localhost', () => {
       client.write(JSON.stringify(data));
     });
 
     let responseData = '';
     client.on('data', (chunk) => {
-      console.log(`Data received from server: ${chunk}`);
       responseData += chunk;
     });
 
     client.on('end', () => {
-      console.log('Disconnected from server');
       try {
         const response = JSON.parse(responseData);
-        console.log('Parsed response:', response); // Add this line
         if (response.success) {
           resolve(response);
         } else {
           reject(new Error(response.error));
         }
       } catch (err) {
-        console.error('Error parsing response:', err); // Add this line
         reject(err);
       }
     });
 
     client.on('error', (err) => {
-      console.error(`Client error:`, err); // Modified this line
       reject(err);
     });
   });
@@ -79,14 +72,6 @@ export const initCloudOauthHandlers = () => {
   ipcMain.handle(IpcInvokeEvent.cloudOauth, async (event, options: CloudAuthRequestOptions) => {
     try {
       if (process.env.NODE_ENV === 'development') {
-        console.log('Sending auth request with options:', {
-          sessionMetadata: {
-            sessionId: DEFAULT_SESSION_ID,
-            userId: DEFAULT_USER_ID,
-          },
-          authOptions: options
-        });
-
         const { url } = await sendTcpRequest({
           action: 'getAuthUrl',
           options: {
@@ -146,7 +131,6 @@ export const initCloudOauthHandlers = () => {
 }
 
 export const cloudOauthCallback = async (url: UrlWithParsedQuery) => {
-  console.log('Handling callback with URL:', url);
   try {
     if (process.env.NODE_ENV === 'development') {
       const { result } = await sendTcpRequest({

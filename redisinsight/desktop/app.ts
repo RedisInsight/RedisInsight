@@ -53,10 +53,6 @@ const init = async () => {
 
     // deep linking
     // register our application to handle custom protocol
-    console.log('Registering protocol:', config.schema, {
-      execPath: process.execPath,
-      appPath: path.join(__dirname)
-    });
 
     if (process.defaultApp) {
       // Running in development

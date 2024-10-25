@@ -121,7 +121,7 @@ jobs:
       if: always()
       with:
         name: 'Test results: IT (${{ matrix.rte }}) tests'
-        path: itest/results/test-run-result.json
+        path: itest/results/*.result.json
         reporter: mocha-json
         fail-on-error: false
 

@@ -83,7 +83,7 @@ jobs:
       uses: dorny/test-reporter@v1
       if: always()
       with:
-        name: E2E (docker) tests results for ${{ matrix.parallel }}th node
+        name: 'Test results: E2E (docker) ${{ matrix.parallel }}th node'
         path: /usr/src/app/results/results.xml
         reporter: java-junit
         fail-on-error: false

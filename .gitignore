@@ -58,6 +58,7 @@ redisinsight/api/dist-minified
 redisinsight/api/tutorials
 redisinsight/api/content
 redisinsight/ui/dist-stats.html
+reports
 dist
 distWeb
 dll

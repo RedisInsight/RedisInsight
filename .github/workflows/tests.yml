@@ -6,8 +6,6 @@ on:
       - 'fe/**'
       - 'be/**'
       - 'e2e/**'
-    # branches-ignore:
-    #   - main
 
   workflow_dispatch:
     inputs:
@@ -33,6 +31,10 @@ on:
         description: Run group of tests
         type: string
         default: 'all'
+      short_rte_list:
+        description: Use short rte list
+        type: boolean
+        default: false
 
 
 jobs:
@@ -82,7 +84,7 @@ jobs:
     uses: ./.github/workflows/tests-integration.yml
     secrets: inherit
     with:
-      short_rte_list: ${{ !inputs.all_tests }}
+      short_rte_list: ${{ inputs.short_rte_list }}
       redis_client: ${{ inputs.redis_client }}
 
   # E2E Approve

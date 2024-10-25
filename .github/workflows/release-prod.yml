@@ -12,6 +12,7 @@ jobs:
     secrets: inherit
     with:
       group_tests: 'without_e2e'
+      short_rte_list: false
 
   builds-prod:
     name: Create all builds for release

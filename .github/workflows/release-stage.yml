@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'release/**'
+      - 'test/release'
 
 jobs:
   tests:
@@ -12,6 +13,7 @@ jobs:
     secrets: inherit
     with:
       group_tests: 'without_e2e'
+      short_rte_list: false
 
   builds:
     name: Release stage builds

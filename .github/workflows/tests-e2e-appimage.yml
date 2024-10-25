@@ -59,7 +59,7 @@ jobs:
       uses: dorny/test-reporter@v1
       if: always()
       with:
-        name: E2E (AppImage) tests results
+        name: 'Test results: E2E (AppImage)'
         path: tests/e2e/results/results.xml
         reporter: java-junit
         fail-on-error: false

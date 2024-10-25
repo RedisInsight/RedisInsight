@@ -49,13 +49,13 @@ jobs:
         curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: Unit tests API
-      run: yarn --cwd redisinsight/api/ test:cov --ci
+      run: yarn --cwd redisinsight/api/ test:cov --ci --silent
 
     - name: Generate test results
       uses: dorny/test-reporter@v1
       if: always()
       with:
-        name: BE Unit tests results
-        path: redisinsight/api/reports/jest-*.xml    # Path to test results
-        reporter: jest-junit        # Format of test results
+        name: 'Test results: BE unit tests'
+        path: redisinsight/api/reports/jest-*.xml
+        reporter: jest-junit
         fail-on-error: false

@@ -57,6 +57,7 @@ describe('RdiInstanceHeader', () => {
 
     expect(screen.getByTestId('rdi-instance-name')).toHaveTextContent('name')
   })
+
   it('should show feature dependent items when feature flag is on', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),

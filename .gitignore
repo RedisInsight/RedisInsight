@@ -53,6 +53,7 @@ redisinsight/ui/style.css.map
 redisinsight/ui/dist
 redisinsight/api/commands
 redisinsight/api/guides
+redisinsight/api/reports
 redisinsight/api/dist-minified
 redisinsight/api/tutorials
 redisinsight/api/content

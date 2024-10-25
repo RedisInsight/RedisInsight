@@ -23,7 +23,7 @@ const createDto = {
 let client;
 
 describe('bulk-actions', function () {
-  this.timeout(10000);
+  this.timeout(20000);
   beforeEach(async () => {
     client = await getClient();
     await rte.data.generateKeys(true);

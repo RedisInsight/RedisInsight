@@ -1,11 +1,10 @@
-import { ProfileQueryType, SEARCH_COMMANDS, GRAPH_COMMANDS } from './constants'
+import { ProfileQueryType } from '../../constants'
 
 import {
   generateGraphProfileQuery,
   generateSearchProfileQuery,
   generateProfileQueryForCommand,
-} from './utils'
-
+} from '../profile'
 
 const generateGraphProfileQueryTests: Record<string, any>[] = [
   { input: 'GRAPH.QUERY key "MATCH (n) RETURN n"', output: 'graph.profile key "MATCH (n) RETURN n"', type: ProfileQueryType.Profile },
@@ -17,14 +16,13 @@ const generateGraphProfileQueryTests: Record<string, any>[] = [
 ]
 
 describe('generateGraphProfileQuery', () => {
-  generateGraphProfileQueryTests.forEach(test => {
+  generateGraphProfileQueryTests.forEach((test) => {
     it(`should be output: ${test.output} for input: ${test.input} and type: ${test.type}`, () => {
-      const result = generateGraphProfileQuery(test.input, test.type);
-      expect(result).toEqual(test.output);
-    });
+      const result = generateGraphProfileQuery(test.input, test.type)
+      expect(result).toEqual(test.output)
+    })
   })
-});
-
+})
 
 const generateSearchProfileQueryTests: Record<string, any>[] = [
   { input: 'FT.SEARCH index tomatoes', output: 'ft.profile index SEARCH QUERY tomatoes', type: ProfileQueryType.Profile },
@@ -44,13 +42,13 @@ const generateSearchProfileQueryTests: Record<string, any>[] = [
 ]
 
 describe('generateSearchProfileQuery', () => {
-  generateSearchProfileQueryTests.forEach(test => {
+  generateSearchProfileQueryTests.forEach((test) => {
     it(`should be output: ${test.output} for input: ${test.input} and type: ${test.type}`, () => {
-      const result = generateSearchProfileQuery(test.input, test.type);
-      expect(result).toEqual(test.output);
-    });
+      const result = generateSearchProfileQuery(test.input, test.type)
+      expect(result).toEqual(test.output)
+    })
   })
-});
+})
 
 const generateProfileQueryForCommandTests: Record<string, any>[] = [
   ...generateGraphProfileQueryTests,
@@ -69,11 +67,11 @@ const generateProfileQueryForCommandTests: Record<string, any>[] = [
   { input: 'ft.explain index tomatoes', output: null, type: ProfileQueryType.Explain },
 ]
 describe('generateProfileQueryForCommand', () => {
-  generateProfileQueryForCommandTests.forEach(test => {
+  generateProfileQueryForCommandTests.forEach((test) => {
     it(`should be output: ${test.output} for input: ${test.input} and type: ${test.type}`, () => {
-      const result = generateProfileQueryForCommand(test.input, test.type);
+      const result = generateProfileQueryForCommand(test.input, test.type)
 
-      expect(result).toEqual(test.output);
-    });
+      expect(result).toEqual(test.output)
+    })
   })
-});
+})

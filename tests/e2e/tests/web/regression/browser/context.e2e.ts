@@ -41,7 +41,6 @@ test('Verify that if user has saved context on Browser page and go to Settings p
     await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Verify that Browser and Workbench icons are displayed
     await t.expect(myRedisDatabasePage.NavigationPanel.browserButton.visible).ok('Browser icon is not displayed');
-    await t.expect(myRedisDatabasePage.NavigationPanel.workbenchButton.visible).ok('Workbench icon is not displayed');
     // Open Browser page and verify context
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     await verifySearchFilterValue(keyName);
@@ -54,13 +53,13 @@ test('Verify that when user reload the window with saved context(on any page), c
     // Create context modificaions and navigate to Workbench
     await browserPage.addStringKey(keyName);
     await browserPage.openKeyDetails(keyName);
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     // Open Browser page and verify context
-    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
+    await t.click(browserPage.NavigationPanel.browserButton);
     await verifySearchFilterValue(keyName);
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is not selected');
     // Navigate to Workbench and reload the window
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     await myRedisDatabasePage.reloadPage();
     // Return back to Browser and check context is not saved
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);

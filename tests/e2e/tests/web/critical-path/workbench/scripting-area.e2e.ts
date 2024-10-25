@@ -1,6 +1,6 @@
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
@@ -9,6 +9,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const browserPage = new BrowserPage();
 
 let indexName = Common.generateWord(5);
 let keyName = Common.generateWord(5);
@@ -19,7 +20,7 @@ fixture `Scripting area at Workbench`
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         //Go to Workbench page
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .afterEach(async t => {
         await t.switchToMainWindow();
@@ -111,9 +112,9 @@ test('Verify that user can run one command in multiple lines in Workbench page',
         'ON HASH PREFIX 1 product:',
         'SCHEMA price NUMERIC SORTABLE'
     ];
-        //Send command in multiple lines
+    // Send command in multiple lines
     await workbenchPage.sendCommandInWorkbench(multipleLinesCommand.join('\n\t'), 0.5);
-    //Check the result
+    // Check the result
     const resultCommand = await workbenchPage.queryCardCommand.nth(0).textContent;
     for(const commandPart of multipleLinesCommand) {
         await t.expect(resultCommand).contains(commandPart, 'The multiple lines command is in the result');
@@ -125,12 +126,12 @@ test('Verify that user can use one indent to indicate command in several lines i
         `FT.CREATE ${indexName}`,
         'ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE'
     ];
-        //Send command in multiple lines
+    // Send command in multiple lines
     await t.typeText(workbenchPage.queryInput, multipleLinesCommand[0]);
-    await t.pressKey('enter tab');
+    await t.pressKey('enter esc tab');
     await t.typeText(workbenchPage.queryInput, multipleLinesCommand[1]);
     await t.click(workbenchPage.submitCommandButton);
-    //Check the result
+    // Check the result
     const resultCommand = await workbenchPage.queryCardCommand.nth(0).textContent;
     for(const commandPart of multipleLinesCommand) {
         await t.expect(resultCommand).contains(commandPart, 'The multiple lines command is in the result');

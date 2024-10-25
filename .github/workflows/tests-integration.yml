@@ -121,8 +121,9 @@ jobs:
       if: always()
       with:
         name: 'Test results: IT (${{ matrix.rte }}) tests'
-        path: itest/results/*.result.json
-        reporter: mocha-json
+        path: itest/results/*.result.xml
+        reporter: jest-junit
+        max-annotations: '1'
         fail-on-error: false
 
     - name: Upload coverage files as artifact

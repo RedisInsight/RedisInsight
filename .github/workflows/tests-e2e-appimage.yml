@@ -62,6 +62,7 @@ jobs:
         name: 'Test results: E2E (AppImage)'
         path: tests/e2e/results/results.xml
         reporter: java-junit
+        max-annotations: '1'
         fail-on-error: false
 
     - name: Upload Test Report

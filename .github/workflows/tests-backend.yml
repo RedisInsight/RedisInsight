@@ -58,4 +58,5 @@ jobs:
         name: 'Test results: BE unit tests'
         path: redisinsight/api/reports/jest-*.xml
         reporter: jest-junit
+        max-annotations: '1'
         fail-on-error: false

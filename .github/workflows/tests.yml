@@ -34,7 +34,7 @@ on:
       short_rte_list:
         description: Use short rte list
         type: boolean
-        default: false
+        default: true
 
 
 jobs:
@@ -84,7 +84,7 @@ jobs:
     uses: ./.github/workflows/tests-integration.yml
     secrets: inherit
     with:
-      short_rte_list: ${{ inputs.short_rte_list || false }}
+      short_rte_list: ${{ inputs.short_rte_list || true }}
       redis_client: ${{ inputs.redis_client }}
 
   # E2E Approve

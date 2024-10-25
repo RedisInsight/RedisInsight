@@ -528,6 +528,8 @@ const Query = (props: Props) => {
 
   const setupMonacoRedisLang = (monaco: typeof monacoEditor) => {
     disposeCompletionItemProvider = monaco.languages.registerCompletionItemProvider(MonacoLanguage.Redis, {
+      // refactor/remove trigger function (TODO: after apply suggestion need trigger again)
+      // triggerCharacters: [' '], // Dot and space will trigger suggestions
       provideCompletionItems: (): monacoEditor.languages.CompletionList => ({ suggestions: suggestionsRef.current })
     }).dispose
 

@@ -12,7 +12,7 @@ import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { EMPTY_COMMAND } from 'uiSrc/constants'
-import { ResultsMode } from 'uiSrc/slices/interfaces'
+import { CommandExecutionType, ResultsMode } from 'uiSrc/slices/interfaces'
 import { setDbIndexState } from 'uiSrc/slices/app/context'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import reducer, {
@@ -67,7 +67,8 @@ describe('workbench results slice', () => {
       // Arrange
       const mockPayload = {
         commands: ['command', 'command2'],
-        commandId: '123'
+        commandId: '123',
+        executionType: CommandExecutionType.Workbench
       }
       const state = {
         ...initialState,

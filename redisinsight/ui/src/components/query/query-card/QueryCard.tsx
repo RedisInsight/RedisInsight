@@ -5,15 +5,9 @@ import { EuiLoadingContent, keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
 
-import { WBQueryType, ProfileQueryType, DEFAULT_TEXT_VIEW_TYPE } from 'uiSrc/pages/workbench/constants'
-import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
-import {
-  getWBQueryType,
-  getVisualizationsByCommand,
-  Maybe,
-  isGroupResults,
-  isSilentModeWithoutError,
-} from 'uiSrc/utils'
+import { DEFAULT_TEXT_VIEW_TYPE, ProfileQueryType, WBQueryType } from 'uiSrc/pages/workbench/constants'
+import { ResultsMode, ResultsSummary, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { getVisualizationsByCommand, getWBQueryType, isGroupResults, isSilentModeWithoutError, Maybe, } from 'uiSrc/utils'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'

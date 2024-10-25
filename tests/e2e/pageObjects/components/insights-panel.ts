@@ -7,7 +7,7 @@ export class InsightsPanel {
     // CONTAINERS
     sidePanel = Selector('[data-testid=side-panels-insights]');
     closeButton = Selector('[data-testid=close-insights-btn]');
-    activeTab = Selector('[class*=euiTab-isSelected]');
+    activeTab = this.sidePanel.find('[class*="euiTab-isSelected"]');
 
     recommendationsTab = Selector('[data-testid=recommendations-tab]');
     exploreTab = Selector('[data-testid=explore-tab]');

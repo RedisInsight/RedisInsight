@@ -53,8 +53,5 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['electron']
-  },
-  define: {
-    'process.env.ELECTRON_DEV': JSON.stringify(process.env.ELECTRON_DEV),
-  },
+  }
 });

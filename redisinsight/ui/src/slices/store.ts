@@ -24,6 +24,7 @@ import monitorReducer from './cli/monitor'
 import userSettingsReducer from './user/user-settings'
 import appInfoReducer from './app/info'
 import appInitReducer from './app/init'
+import appConnectivityReducer from './app/connectivity'
 import appContextReducer from './app/context'
 import appCsrfReducer from './app/csrf'
 import appRedisCommandsReducer from './app/redis-commands'
@@ -68,6 +69,7 @@ export const rootReducer = combineReducers({
     urlHandling: appUrlHandlingReducer,
     csrf: appCsrfReducer,
     init: appInitReducer,
+    connectivity: appConnectivityReducer
   }),
   connections: combineReducers({
     instances: instancesReducer,

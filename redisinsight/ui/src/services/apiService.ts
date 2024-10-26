@@ -5,7 +5,9 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { CLOUD_AUTH_API_ENDPOINTS, CustomHeaders } from 'uiSrc/constants/api'
 import { store } from 'uiSrc/slices/store'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
+import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
 import { getConfig } from 'uiSrc/config'
+import errorMessages from 'apiSrc/constants/error-messages'
 
 const riConfig = getConfig()
 
@@ -71,6 +73,17 @@ export const hostedAuthInterceptor = (error: AxiosError) => {
   return Promise.reject(error)
 }
 
+export const connectivityErrorsInterceptor = (error: AxiosError) => {
+  const { response } = error
+  const responseData = response?.data as { message?: string, code?: string }
+
+  if (response?.status === 503 && responseData.code === 'serviceUnavailable') {
+    store?.dispatch<any>(setConnectivityError(errorMessages.LOST_CONNECTIVITY))
+  }
+
+  return Promise.reject(error)
+}
+
 mutableAxiosInstance.interceptors.request.use(
   requestInterceptor,
   (error) => Promise.reject(error)
@@ -84,6 +97,11 @@ mutableAxiosInstance.interceptors.response.use(
 mutableAxiosInstance.interceptors.response.use(
   undefined,
   hostedAuthInterceptor
+)
+
+mutableAxiosInstance.interceptors.response.use(
+  undefined,
+  connectivityErrorsInterceptor
 )
 
 export default mutableAxiosInstance

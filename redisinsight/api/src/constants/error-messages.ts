@@ -26,6 +26,8 @@ export default {
   WRONG_DATABASE_TYPE: 'Wrong database type.',
   CONNECTION_TIMEOUT:
     'The connection has timed out, please check the connection details.',
+  LOST_CONNECTIVITY: 
+    'The connection to the server has been lost.',
   SERVER_CLOSED_CONNECTION: 'Server closed the connection.',
   UNABLE_TO_ESTABLISH_CONNECTION: 'Unable to establish connection.',
   RECONNECTING_TO_DATABASE: 'Reconnecting to the redis database.',

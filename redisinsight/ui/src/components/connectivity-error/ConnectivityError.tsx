@@ -21,7 +21,7 @@ const ConnectivityError = ({ isLoading, error, onRetry }: ConnectivityErrorProps
           direction="column"
           justifyContent="center"
         >
-          <EuiFlexItem grow={false}>
+          <EuiFlexItem grow={false} data-testid="connectivity-error-message">
             {error}
           </EuiFlexItem>
           { onRetry && (

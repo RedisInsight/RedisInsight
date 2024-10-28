@@ -18,7 +18,7 @@ export class WindowAuthModule implements NestModule {
     private readonly windowAuthService: WindowAuthService,
     private readonly electronStrategy: ElectronWindowAuthStrategy,
   ) {
-    if (process.env.RI_APP_TYPE === 'electron' || true) {
+    if (process.env.RI_APP_TYPE === 'electron' && process.env.NODE_ENV === 'development') {
       this.windowAuthService.setStrategy(this.electronStrategy);
     }
   }

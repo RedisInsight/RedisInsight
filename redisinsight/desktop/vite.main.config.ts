@@ -17,7 +17,7 @@ export default defineConfig({
     },
   ],
   build: {
-    emptyOutDir: false,
+    emptyOutDir: true,
     outDir: 'dist',
     lib: {
       entry: path.resolve(__dirname, 'index.ts'),

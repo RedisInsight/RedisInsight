@@ -1,6 +1,6 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
-import { cloneDeep, set } from 'lodash';
+import { cloneDeep, set } from 'lodash'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
@@ -11,8 +11,8 @@ import {
   render,
   waitForEuiPopoverVisible,
   initialStateDefault, mockStore,
-} from 'uiSrc/utils/test-utils';
-import { FeatureFlags, Pages } from 'uiSrc/constants';
+} from 'uiSrc/utils/test-utils'
+import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { getDBAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 
 import WelcomeScreen from './WelcomeScreen'

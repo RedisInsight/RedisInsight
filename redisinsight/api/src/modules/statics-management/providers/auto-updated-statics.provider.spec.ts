@@ -12,6 +12,8 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('fs-extra');
 const mockedFs = fs as jest.Mocked<typeof fs>;
 
+jest.mock('glob');
+
 const mockedAdmZip = {
   extractAllTo: jest.fn(),
 };
@@ -21,10 +23,6 @@ describe('AutoUpdatedStaticsProvider', () => {
   let service: AutoUpdatedStaticsProvider;
 
   beforeEach(async () => {
-    jest.mock('fs-extra', () => mockedFs);
-    jest.mock('axios', () => mockedAxios);
-    jest.mock('adm-zip', () => jest.fn().mockImplementation(() => mockedAdmZip));
-
     service = new AutoUpdatedStaticsProvider({
       name: 'TutorialsProvider',
       destinationPath: PATH_CONFIG.tutorials,

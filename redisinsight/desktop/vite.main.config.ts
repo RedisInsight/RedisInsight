@@ -43,7 +43,6 @@ export default defineConfig({
         entryFileNames: '[name].js',
       }
     },
-    target: 'node14',
   },
   resolve: {
     alias: {

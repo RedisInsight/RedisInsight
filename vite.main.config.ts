@@ -39,7 +39,6 @@ export default defineConfig({
       },
     },
     emptyOutDir: true,
-    target: 'node14',
   },
   resolve: {
     alias: {

@@ -9,7 +9,6 @@ import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list
 import {
     RdiPopoverOptions,
     RdiTemplateDatabaseType,
-    RdiTemplatePipelineType,
     RedisOverviewPage,
     TextConnectionSection
 } from '../../../../helpers/constants';
@@ -132,27 +131,27 @@ test('Verify that link on configuration is valid', async() => {
 
 test('Verify that user can insert template', async() => {
     const disabledAttribute = 'isDisabled';
-    const defaultValue = 'ingest';
+    const defaultValue = 'mongodb';
     const templateWords = 'type: mysql';
     // should be empty config
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
-    await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
+    await t.expect(rdiInstancePage.templateApplyButton.visible).ok('The template popover is not expanded');
     const buttonClass = rdiInstancePage.templateApplyButton.getAttribute('class');
     await t.expect(buttonClass).notContains(disabledAttribute, 'Apply button is disabled');
     await t.click(rdiInstancePage.templateCancelButton);
-    await t.expect(rdiInstancePage.templateApplyButton.exists).notOk('the template popover is not closed');
+    await t.expect(rdiInstancePage.templateApplyButton.exists).notOk('The template popover is not closed');
 
     await t.click(rdiInstancePage.templateButton);
-    await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
-    await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql(defaultValue, 'the default value is set incorrectly');
-    await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.Ingest, RdiTemplateDatabaseType.MySql);
+    await t.expect(rdiInstancePage.templateApplyButton.visible).ok('The template popover is not expanded');
+    await t.expect(rdiInstancePage.databaseDropdown.textContent).eql(defaultValue, 'The default value is set incorrectly');
+    await rdiInstancePage.setTemplateDropdownValue(RdiTemplateDatabaseType.MySql);
 
     const enteredText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
-    await t.expect(enteredText).contains(templateWords, 'template is incorrect');
+    await t.expect(enteredText).contains(templateWords, 'Template is incorrect');
 
     await t.click(rdiInstancePage.templateButton);
     await t.expect(buttonClass).contains(disabledAttribute, 'Apply button is active');
-    await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql(defaultValue, 'the value is set incorrectly');
+    await t.expect(rdiInstancePage.databaseDropdown.textContent).eql(defaultValue, 'the value is set incorrectly');
 });

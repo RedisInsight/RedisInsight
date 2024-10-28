@@ -53,7 +53,11 @@ const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
   }
 })
 
-const initialFieldValue = (fieldTypeOptions: EuiSuperSelectOption<string>[], id = 0) => ({ id, identifier: '', fieldType: fieldTypeOptions[0].value })
+const initialFieldValue = (fieldTypeOptions: EuiSuperSelectOption<string>[], id = 0) => ({
+  id,
+  identifier: '',
+  fieldType: fieldTypeOptions[0]?.value || ''
+})
 
 const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   const { viewType } = useSelector(keysSelector)
@@ -63,7 +67,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   const [keyTypeSelected, setKeyTypeSelected] = useState<RedisearchIndexKeyType>(keyTypeOptions[0].value)
   const [prefixes, setPrefixes] = useState<EuiComboBoxOptionOption[]>([])
   const [indexName, setIndexName] = useState<string>('')
-  const [fieldTypeOptions, setFieldTypeOptions] = useState<EuiSuperSelectOption<string>[]>(getFieldTypeOptions(modules))
+  const [fieldTypeOptions, setFieldTypeOptions] = useState<EuiSuperSelectOption<string>[]>(getFieldTypeOptions)
   const [fields, setFields] = useState<any[]>([initialFieldValue(fieldTypeOptions)])
 
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState<boolean>(false)
@@ -81,7 +85,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   }, [fields.length])
 
   useEffect(() => {
-    setFieldTypeOptions(getFieldTypeOptions(modules))
+    setFieldTypeOptions(getFieldTypeOptions)
   }, [modules])
 
   const addField = () => {

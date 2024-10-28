@@ -8,18 +8,18 @@ import { monaco as monacoEditor } from 'react-monaco-editor'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
-import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
-import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
+import { deleteChangedFile, fetchPipelineStrategies, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import { FileChangeType, IPipeline } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { DSL, KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
-import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
 import { createAxiosError, isEqualPipelineFile, Maybe, yamlToJson } from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { KeyboardShortcut } from 'uiSrc/components'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import TemplateButton from '../../components/template-button'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -34,7 +34,6 @@ const Job = (props: Props) => {
   const { name, value = '', deployedJobValue, jobIndex, rdiInstanceId } = props
 
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
-  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
   const [shouldOpenDedicatedEditor, setShouldOpenDedicatedEditor] = useState<boolean>(false)
 
   const dispatch = useDispatch()
@@ -48,12 +47,12 @@ const Job = (props: Props) => {
   const { setFieldValue } = useFormikContext<IPipeline>()
 
   useEffect(() => {
-    setIsPanelOpen(false)
-  }, [name])
+    dispatch(fetchPipelineStrategies(rdiInstanceId))
+  }, [])
 
   useEffect(() => {
-    setIsPopoverOpen(!value)
-  }, [value, name])
+    setIsPanelOpen(false)
+  }, [name])
 
   useEffect(() => {
     deployedJobValueRef.current = deployedJobValue
@@ -147,7 +146,7 @@ const Job = (props: Props) => {
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
         <div className="rdi__content-header">
           <EuiText className={cx('rdi__title', 'line-clamp-2')}>{name}</EuiText>
-          <div>
+          <div className={styles.actionContainer}>
             <EuiToolTip
               position="top"
               className={styles.tooltip}
@@ -174,13 +173,9 @@ const Job = (props: Props) => {
                 SQL and JMESPath Editor
               </EuiButton>
             </EuiToolTip>
-            <TemplatePopover
-              isPopoverOpen={isPopoverOpen}
-              setIsPopoverOpen={setIsPopoverOpen}
+            <TemplateButton
               value={value}
               setFieldValue={(template) => setFieldValue(`jobs.${jobIndexRef.current ?? -1}.value`, template)}
-              loading={loading}
-              source={RdiPipelineTabs.Jobs}
             />
           </div>
         </div>

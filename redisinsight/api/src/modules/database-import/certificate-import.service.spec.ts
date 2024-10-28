@@ -66,7 +66,7 @@ describe('CertificateImportService', () => {
     clientRepository = await module.get(getRepositoryToken(ClientCertificateEntity));
     encryptionService = await module.get(EncryptionService);
 
-    when(encryptionService.decrypt).calledWith(mockCaCertificateCertificateEncrypted, jasmine.anything())
+    when(encryptionService.decrypt).calledWith(mockCaCertificateCertificateEncrypted, expect.anything())
       .mockResolvedValue(mockCaCertificateCertificatePlain);
     when(encryptionService.encrypt).calledWith(mockCaCertificateCertificatePlain)
       .mockResolvedValue({
@@ -75,9 +75,9 @@ describe('CertificateImportService', () => {
       });
 
     when(encryptionService.decrypt)
-      .calledWith(mockClientCertificateCertificateEncrypted, jasmine.anything())
+      .calledWith(mockClientCertificateCertificateEncrypted, expect.anything())
       .mockResolvedValue(mockClientCertificateCertificatePlain)
-      .calledWith(mockClientCertificateKeyEncrypted, jasmine.anything())
+      .calledWith(mockClientCertificateKeyEncrypted, expect.anything())
       .mockResolvedValue(mockClientCertificateKeyPlain);
     when(encryptionService.encrypt)
       .calledWith(mockClientCertificateCertificatePlain)

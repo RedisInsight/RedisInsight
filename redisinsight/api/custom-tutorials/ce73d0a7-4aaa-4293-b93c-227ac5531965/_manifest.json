@@ -1,0 +1,1 @@
+{"children":[{"id":"folder","label":"folder","type":"group","children":[{"id":"file.md","label":"file","type":"internal-link","args":{"path":"/folder/file.md"}}]},{"id":"info.md","label":"info","type":"internal-link","args":{"path":"/info.md"}}]}

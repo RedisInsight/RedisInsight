@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -19,6 +20,7 @@ import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-com
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { ClientMetadata } from 'src/common/models';
 import { WorkbenchClientMetadata } from 'src/modules/workbench/decorators/workbench-client-metadata.decorator';
+import { CommandExecutionFilter } from 'src/modules/workbench/models/command-executions.filter';
 
 @ApiTags('Workbench')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -62,8 +64,9 @@ export class WorkbenchController {
   @ApiRedisParams()
   async listCommandExecutions(
     @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
+      @Query() filter: CommandExecutionFilter,
   ): Promise<ShortCommandExecution[]> {
-    return this.service.listCommandExecutions(clientMetadata);
+    return this.service.listCommandExecutions(clientMetadata, filter);
   }
 
   @ApiEndpoint({
@@ -107,7 +110,8 @@ export class WorkbenchController {
   @ApiRedisParams()
   async deleteCommandExecutions(
     @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
+      @Body() filter: CommandExecutionFilter,
   ): Promise<void> {
-    return this.service.deleteCommandExecutions(clientMetadata);
+    return this.service.deleteCommandExecutions(clientMetadata, filter);
   }
 }

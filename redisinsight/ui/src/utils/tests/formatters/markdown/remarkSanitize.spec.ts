@@ -5,13 +5,15 @@ jest.mock('unist-util-visit')
 
 const testCases = [
   { input: '', output: '' },
-  { input: '<a href="https://localhost">', output: '<a href="https://localhost">' },
+  { input: '<a href="https://localhost">', output: '<a href="https://localhost" target="_blank">' },
+  { input: '<a href="/settings">', output: '<a>' },
   { input: '<a href="javascript:alert(1)">', output: '<a>' },
   { input: '<img onload="alert(1)">', output: '<img>' },
   { input: '<img src="javascript:alert(1)">', output: '<img>' },
   { input: '<img src="img.png">', output: '<img src="img.png">' },
   { input: '<div dangerouslySetInnerHTML={{"__html": "<img src=x onerror=alert(\'this.still.works\')>"}} />', output: '' },
   { input: '<script>', output: '' },
+  { input: '<script>alert(1)</script>', output: '' },
 ]
 
 describe('remarkSanitize', () => {

@@ -58,17 +58,11 @@ const init = async () => {
       // Running in development
       const electronExePath = process.execPath;
       const appPath = path.join(__dirname);
-      const registered = app.setAsDefaultProtocolClient(config.schema, electronExePath, [appPath]);
-      console.log('Protocol registration result:', registered);
+      app.setAsDefaultProtocolClient(config.schema, electronExePath, [appPath]);
     } else {
       // Running in production
-      const registered = app.setAsDefaultProtocolClient(config.schema);
-      console.log('Protocol registration result:', registered);
+      app.setAsDefaultProtocolClient(config.schema);
     }
-
-    // Check if protocol is registered
-    const isRegistered = app.isDefaultProtocolClient(config.schema);
-    console.log('Protocol registration status:', isRegistered);
 
     const splashWindow = await windowFactory(WindowType.Splash)
 

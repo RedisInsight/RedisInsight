@@ -17,9 +17,7 @@ const ipcHandler = {
 contextBridge.exposeInMainWorld('app', {
   // Send data from main to render
   sendWindowId: ((callback: any) => {
-    console.log('[Preload] Setting up window ID listener');
     return ipcRenderer.on(IpcOnEvent.sendWindowId, (event, windowId) => {
-      console.log('[Preload] Received window ID:', windowId);
       callback(event, windowId);
     });
   }),

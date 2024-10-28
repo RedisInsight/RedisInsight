@@ -92,8 +92,6 @@
     "@babel/preset-env": "^7.23.2",
     "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.23.2",
-    "@electron-forge/cli": "^7.5.0",
-    "@electron-forge/plugin-vite": "^7.5.0",
     "@electron/rebuild": "^3.3.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@svgr/webpack": "^8.1.0",

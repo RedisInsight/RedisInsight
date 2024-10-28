@@ -13,6 +13,7 @@ export default defineConfig({
             external: true
           };
         }
+        return undefined;
       },
     },
   ],

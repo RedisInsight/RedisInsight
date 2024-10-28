@@ -28,6 +28,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:ui": "eslint ./redisinsight/ui --ext .js,.jsx,.ts,.tsx",
     "lint:api": "yarn --cwd redisinsight/api lint",
+    "lint:desktop": "eslint ./redisinsight/desktop",
     "lint:e2e": "yarn --cwd tests/e2e lint",
     "package": "yarn package:dev",
     "package:prod": "ts-node ./scripts/prebuild.js dist && yarn build:prod && electron-builder build -p never",

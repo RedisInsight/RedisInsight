@@ -56,12 +56,12 @@ const init = async () => {
 
     if (process.defaultApp) {
       // Running in development
-      const electronExePath = process.execPath;
-      const appPath = path.join(__dirname);
-      app.setAsDefaultProtocolClient(config.schema, electronExePath, [appPath]);
+      const electronExePath = process.execPath
+      const appPath = path.join(__dirname)
+      app.setAsDefaultProtocolClient(config.schema, electronExePath, [appPath])
     } else {
       // Running in production
-      app.setAsDefaultProtocolClient(config.schema);
+      app.setAsDefaultProtocolClient(config.schema)
     }
 
     const splashWindow = await windowFactory(WindowType.Splash)

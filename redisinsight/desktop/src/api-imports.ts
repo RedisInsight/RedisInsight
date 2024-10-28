@@ -1,62 +1,68 @@
-import path from 'path';
-import { createRequire } from 'module';
-import Module from 'module';
-import log from 'electron-log';
+import log from 'electron-log'
+import path from 'path'
+import Module, { createRequire } from 'module'
+import fs from 'fs'
 
-const require = createRequire(import.meta.url);
+const require = createRequire(import.meta.url)
 
 // Check if we're in development mode
-const isDev = process.env.ELECTRON_DEV === 'true';
-log.info('Development mode:', isDev);
+const isDev = process.env.ELECTRON_DEV === 'true'
+log.info('Development mode:', isDev)
 
 // Base path to the API directory
 const apiPath = isDev
   ? path.join(__dirname, '..', '..', 'api', 'src')
-  : path.join(__dirname, '..', '..', 'api');  // Remove the extra 'src'
-log.info('API Path:', apiPath);
+  : path.join(__dirname, '..', '..', 'api') // Remove the extra 'src'
+log.info('API Path:', apiPath)
 
-const originalResolveFilename = Module._resolveFilename;
-Module._resolveFilename = function(request: string, parent: string, isMain: boolean, options: any) {
+const { resolveFilename } = (Module as any);
+(Module as any).resolveFilename = function resolveApiModule(
+  request: string,
+  parent: string,
+  isMain: boolean,
+  options: any
+) {
   if (request.startsWith('apiSrc/')) {
-    const strippedRequest = request.replace(/^apiSrc\//, '');
-    const modulePath = path.join(apiPath, 'src', strippedRequest);
-    
+    const strippedRequest = request.replace(/^apiSrc\//, '')
+    const modulePath = path.join(apiPath, strippedRequest)
+
     log.info('Trying to resolve:', {
       request,
       strippedRequest,
       modulePath,
-      exists: require('fs').existsSync(modulePath)
-    });
-    
+      exists: fs.existsSync(modulePath)
+    })
+
     try {
-      return originalResolveFilename.call(this, modulePath, parent, isMain, options);
+      return resolveFilename.call(this, modulePath, parent, isMain, options)
     } catch (err) {
-      log.error('Failed to resolve module:', err);
-      throw err;
+      log.error('Failed to resolve module:', err)
+      throw err
     }
   }
-  return originalResolveFilename.call(this, request, parent, isMain, options);
-};
+  return resolveFilename.call(this, request, parent, isMain, options)
+}
 
 export function importApiModule(modulePath: string) {
   // Remove any .js extension if present
-  modulePath = modulePath.replace(/\.js$/, '');
-  
-  const fullPath = path.join(apiPath, modulePath);
+  const updatedPath = modulePath.replace(/\.js$/, '')
+
+  const fullPath = path.join(apiPath, updatedPath)
   log.info('Importing module:', {
-    modulePath,
+    updatedPath,
     fullPath,
-    exists: require('fs').existsSync(fullPath)
-  });
-  
+    exists: fs.existsSync(fullPath)
+  })
+
   try {
-    return require(fullPath);
+    // eslint-disable-next-line import/no-dynamic-require
+    return require(fullPath)
   } catch (err) {
     log.error('Failed to import module:', {
-      modulePath,
+      updatedPath,
       fullPath,
       error: err
-    });
-    throw err;
+    })
+    throw err
   }
 }

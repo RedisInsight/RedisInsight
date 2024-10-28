@@ -13,4 +13,3 @@ export interface CloudAuthResponse {
   status: CloudAuthStatus;
   error?: string;
 }
-

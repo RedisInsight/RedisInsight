@@ -16,20 +16,12 @@ const ipcHandler = {
 
 contextBridge.exposeInMainWorld('app', {
   // Send data from main to render
-  sendWindowId: ((callback: any) => {
-    return ipcRenderer.on(IpcOnEvent.sendWindowId, (event, windowId) => {
-      callback(event, windowId);
-    });
-  }),
-  cloudOauthCallback: ((connected: any) => {
-    return ipcRenderer.on(IpcOnEvent.cloudOauthCallback, connected);
-  }),
-  deepLinkAction: ((parsedDeepLink: any) => {
-    return ipcRenderer.on(IpcOnEvent.deepLinkAction, parsedDeepLink)
-  }),
-  updateAvailable: ((updateInfo: any) => {
-    return ipcRenderer.on(IpcOnEvent.appUpdateAvailable, updateInfo)
-  }),
+  sendWindowId: ((callback: any) => ipcRenderer.on(IpcOnEvent.sendWindowId, (event, windowId) => {
+    callback(event, windowId)
+  })),
+  cloudOauthCallback: ((connected: any) => ipcRenderer.on(IpcOnEvent.cloudOauthCallback, connected)),
+  deepLinkAction: ((parsedDeepLink: any) => ipcRenderer.on(IpcOnEvent.deepLinkAction, parsedDeepLink)),
+  updateAvailable: ((updateInfo: any) => ipcRenderer.on(IpcOnEvent.appUpdateAvailable, updateInfo)),
   ipc: ipcHandler,
   config: {
     apiPort: config.apiPort

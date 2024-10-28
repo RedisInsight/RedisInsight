@@ -2,51 +2,52 @@ import { ipcMain, WebContents } from 'electron'
 import log from 'electron-log'
 import open from 'open'
 import { UrlWithParsedQuery } from 'url'
+import { createConnection } from 'net'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { getBackendApp, getWindows } from 'desktopSrc/lib'
-import { IpcOnEvent, IpcInvokeEvent } from 'uiSrc/electron/constants'
-import { 
-  CloudAuthRequestOptions, 
-  CloudAuthResponse, 
-  CloudAuthStatus 
+import {
+  CloudAuthRequestOptions,
+  CloudAuthResponse,
+  CloudAuthStatus
 } from 'desktopSrc/types/cloud-auth'
-import { createConnection } from 'net'
+import { importApiModule } from 'desktopSrc/api-imports'
+import { IpcOnEvent, IpcInvokeEvent } from 'uiSrc/electron/constants'
+
 const { DEFAULT_SESSION_ID, DEFAULT_USER_ID } = importApiModule('dist/src/common/constants')
 const { CloudOauthUnexpectedErrorException } = importApiModule('dist/src/modules/cloud/auth/exceptions')
 const { CloudAuthService } = importApiModule('dist/src/modules/cloud/auth/cloud-auth.service')
-import { importApiModule } from 'desktopSrc/api-imports'
 
-const TCP_LOCAL_CLOUD_AUTH_PORT = process.env.TCP_LOCAL_CLOUD_AUTH_PORT ? parseInt(process.env.TCP_LOCAL_CLOUD_AUTH_PORT) : 5542;
+const TCP_LOCAL_CLOUD_AUTH_PORT = process.env.TCP_LOCAL_CLOUD_AUTH_PORT
+  ? parseInt(process.env.TCP_LOCAL_CLOUD_AUTH_PORT, 10)
+  : 5542
 
-const sendTcpRequest = (data: any): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    const client = createConnection(TCP_LOCAL_CLOUD_AUTH_PORT, 'localhost', () => {
-      client.write(JSON.stringify(data));
-    });
+const sendTcpRequest = (data: any): Promise<any> => new Promise((resolve, reject) => {
+  const client = createConnection(TCP_LOCAL_CLOUD_AUTH_PORT, 'localhost', () => {
+    client.write(JSON.stringify(data))
+  })
 
-    let responseData = '';
-    client.on('data', (chunk) => {
-      responseData += chunk;
-    });
+  let responseData = ''
+  client.on('data', (chunk) => {
+    responseData += chunk
+  })
 
-    client.on('end', () => {
-      try {
-        const response = JSON.parse(responseData);
-        if (response.success) {
-          resolve(response);
-        } else {
-          reject(new Error(response.error));
-        }
-      } catch (err) {
-        reject(err);
+  client.on('end', () => {
+    try {
+      const response = JSON.parse(responseData)
+      if (response.success) {
+        resolve(response)
+      } else {
+        reject(new Error(response.error))
       }
-    });
+    } catch (err) {
+      reject(err)
+    }
+  })
 
-    client.on('error', (err) => {
-      reject(err);
-    });
-  });
-};
+  client.on('error', (err) => {
+    reject(err)
+  })
+})
 
 export const getOauthIpcErrorResponse = (error: any): { status: CloudAuthStatus.Failed, error: {} } => {
   let errorResponse = new CloudOauthUnexpectedErrorException().getResponse()
@@ -84,13 +85,13 @@ export const initCloudOauthHandlers = () => {
               callback: getTokenCallbackFunction(event.sender),
             }
           }
-        });
+        })
 
-        await open(url);
+        await open(url)
 
         return {
           status: CloudAuthStatus.Succeed,
-        };
+        }
       }
 
       // Original implementation for non-development environments
@@ -138,13 +139,13 @@ export const cloudOauthCallback = async (url: UrlWithParsedQuery) => {
         options: {
           query: url.query
         }
-      });
+      })
 
-      const [currentWindow] = getWindows().values();
+      const [currentWindow] = getWindows().values()
       if (result.status === CloudAuthStatus.Failed) {
-        currentWindow?.webContents.send(IpcOnEvent.cloudOauthCallback, result);
+        currentWindow?.webContents.send(IpcOnEvent.cloudOauthCallback, result)
       }
-      return;
+      return
     }
 
     // Original implementation for non-development environments

@@ -7,18 +7,5 @@
     "build": "cross-env ELECTRON_DEV=true ELECTRON_ENABLE_LOGGING=true ELECTRON_DEBUG_LOGGING=true ELECTRON_ENABLE_STACK_DUMPING=true NODE_ENV=development vite build --config vite.main.config.ts",
     "build:preload": "cross-env ELECTRON_DEV=true ELECTRON_ENABLE_LOGGING=true ELECTRON_DEBUG_LOGGING=true ELECTRON_ENABLE_STACK_DUMPING=true NODE_ENV=development vite build --config vite.preload.config.ts",
     "build:renderer": "cross-env ELECTRON_DEV=true ELECTRON_ENABLE_LOGGING=true ELECTRON_DEBUG_LOGGING=true ELECTRON_ENABLE_STACK_DUMPING=true NODE_ENV=development vite build --config vite.renderer.config.ts"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.3",
-    "electron": "33.0.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.9"
-  },
-  "dependencies": {
-    "@nestjs/common": "^10.4.6",
-    "cross-env": "^7.0.3",
-    "default-browser-id": "^3.0.0",
-    "electron-squirrel-startup": "^1.0.1"
   }
 }

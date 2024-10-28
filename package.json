@@ -216,9 +216,6 @@
     "yarn-deduplicate": "^3.1.0"
   },
   "dependencies": {
-    "@antv/hierarchy": "^0.6.14",
-    "@antv/x6": "^2.18.1",
-    "@antv/x6-react-shape": "^2.2.3",
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "34.6.0",
     "@reduxjs/toolkit": "^1.6.2",
@@ -256,13 +253,11 @@
     "pako": "^2.1.0",
     "php-serialize": "^4.0.2",
     "pickleparser": "^0.2.1",
-    "plotly.js-dist-min": "^2.35.2",
     "rawproto": "^0.7.6",
     "react": "^18.2.0",
     "react-contenteditable": "^3.3.5",
     "react-dom": "^18.2.0",
     "react-hotkeys-hook": "^3.3.1",
-    "react-json-tree": "^0.19.0",
     "react-jsx-parser": "^1.28.4",
     "react-monaco-editor": "^0.55.0",
     "react-redux": "^7.2.2",
@@ -273,7 +268,6 @@
     "react-vtree": "^3.0.0-beta.3",
     "react-window": "^1.8.6",
     "react-window-infinite-loader": "^1.0.8",
-    "redisinsight-plugin-sdk": "^1.1.0",
     "rehype-stringify": "^9.0.2",
     "remark-gfm": "^3.0.1",
     "remark-parse": "^10.0.1",
@@ -282,8 +276,7 @@
     "unified": "^10.1.1",
     "unist-util-visit": "^4.1.0",
     "url-parse": "^1.5.10",
-    "uuid": "^8.3.2",
-    "wait-on": "^8.0.1"
+    "uuid": "^8.3.2"
   },
   "devEngines": {
     "node": ">=16.x",

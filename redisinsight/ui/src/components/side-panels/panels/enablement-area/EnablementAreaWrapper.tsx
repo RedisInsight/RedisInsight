@@ -26,7 +26,13 @@ const EnablementAreaWrapper = () => {
     params?: CodeButtonParams,
     onFinish?: () => void
   ) => {
-    dispatch(sendWbQueryAction(script, null, params, { afterAll: onFinish }, onFinish))
+    dispatch(sendWbQueryAction(
+      script,
+      null,
+      params,
+      { afterAll: onFinish },
+      onFinish
+    ))
   }
 
   const onOpenInternalPage = ({ path, manifestPath }: IInternalPage) => {

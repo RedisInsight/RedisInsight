@@ -151,7 +151,7 @@ describe('RecommendationProvider', () => {
   describe('determineLuaScriptRecommendation', () => {
     it('should not return luaScript recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockResolvedValue(mockRedisMemoryInfoResponse1);
 
       const luaScriptRecommendation = await service.determineLuaScriptRecommendation(client);
@@ -160,7 +160,7 @@ describe('RecommendationProvider', () => {
 
     it('should return luaScript recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockResolvedValue(mockRedisMemoryInfoResponse2);
 
       const luaScriptRecommendation = await service.determineLuaScriptRecommendation(client);
@@ -169,7 +169,7 @@ describe('RecommendationProvider', () => {
 
     it('should not return luaScript recommendation when info command executed with error', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockRejectedValue('some error');
 
       const luaScriptRecommendation = await service.determineLuaScriptRecommendation(client);
@@ -205,7 +205,7 @@ describe('RecommendationProvider', () => {
   describe('determineLogicalDatabasesRecommendation', () => {
     it('should not return avoidLogicalDatabases recommendation when only one logical db', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockResolvedValue(mockRedisKeyspaceInfoResponse1);
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(client);
@@ -214,7 +214,7 @@ describe('RecommendationProvider', () => {
 
     it('should not return avoidLogicalDatabases recommendation when only on logical db with keys', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockResolvedValue(mockRedisKeyspaceInfoResponse2);
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(client);
@@ -223,7 +223,7 @@ describe('RecommendationProvider', () => {
 
     it('should return avoidLogicalDatabases recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockResolvedValue(mockRedisKeyspaceInfoResponse3);
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(client);
@@ -232,7 +232,7 @@ describe('RecommendationProvider', () => {
 
     it('should not return avoidLogicalDatabases recommendation when info command executed with error', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockRejectedValue('some error');
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(client);
@@ -242,7 +242,7 @@ describe('RecommendationProvider', () => {
     it('should not return avoidLogicalDatabases recommendation when isCluster', async () => {
       client.getConnectionType = jest.fn().mockReturnValueOnce(RedisClientConnectionType.CLUSTER);
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockResolvedValue(mockRedisKeyspaceInfoResponse3);
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(client);
@@ -278,7 +278,7 @@ describe('RecommendationProvider', () => {
   describe('determineIncreaseSetMaxIntsetEntriesRecommendation', () => {
     it('should not return increaseSetMaxIntsetEntries', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['config']), expect.anything())
+        .calledWith(expect.arrayContaining(['config']), expect.anything())
         .mockResolvedValue(mockRedisConfigResponse);
 
       const increaseSetMaxIntsetEntriesRecommendation = await service
@@ -288,7 +288,7 @@ describe('RecommendationProvider', () => {
 
     it('should return increaseSetMaxIntsetEntries recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['config']), expect.anything())
+        .calledWith(expect.arrayContaining(['config']), expect.anything())
         .mockResolvedValue(mockRedisConfigResponse);
 
       const increaseSetMaxIntsetEntriesRecommendation = await service
@@ -303,7 +303,7 @@ describe('RecommendationProvider', () => {
     it('should not return increaseSetMaxIntsetEntries recommendation when config command executed with error',
       async () => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['config']), expect.anything())
+          .calledWith(expect.arrayContaining(['config']), expect.anything())
           .mockRejectedValue('some error');
 
         const increaseSetMaxIntsetEntriesRecommendation = await service
@@ -315,7 +315,7 @@ describe('RecommendationProvider', () => {
   describe('determineHashHashtableToZiplistRecommendation', () => {
     it('should not return hashHashtableToZiplist recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['config']), expect.anything())
+        .calledWith(expect.arrayContaining(['config']), expect.anything())
         .mockResolvedValue(mockRedisConfigResponse);
 
       const convertHashtableToZiplistRecommendation = await service
@@ -325,7 +325,7 @@ describe('RecommendationProvider', () => {
 
     it('should return hashHashtableToZiplist recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['config']), expect.anything())
+        .calledWith(expect.arrayContaining(['config']), expect.anything())
         .mockResolvedValue(mockRedisConfigResponse);
 
       const convertHashtableToZiplistRecommendation = await service
@@ -342,7 +342,7 @@ describe('RecommendationProvider', () => {
     it('should not return hashHashtableToZiplist recommendation when config command executed with error',
       async () => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['config']), expect.anything())
+          .calledWith(expect.arrayContaining(['config']), expect.anything())
           .mockRejectedValue('some error');
 
         const convertHashtableToZiplistRecommendation = await service
@@ -388,7 +388,7 @@ describe('RecommendationProvider', () => {
   describe('determineZSetHashtableToZiplistRecommendation', () => {
     it('should not return zSetHashtableToZiplist recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['config']), expect.anything())
+        .calledWith(expect.arrayContaining(['config']), expect.anything())
         .mockResolvedValue(mockRedisConfigResponse);
 
       const zSetHashtableToZiplistRecommendation = await service
@@ -398,7 +398,7 @@ describe('RecommendationProvider', () => {
 
     it('should return zSetHashtableToZiplist recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['config']), expect.anything())
+        .calledWith(expect.arrayContaining(['config']), expect.anything())
         .mockResolvedValue(mockRedisConfigResponse);
 
       const zSetHashtableToZiplistRecommendation = await service
@@ -413,7 +413,7 @@ describe('RecommendationProvider', () => {
     it('should not return zSetHashtableToZiplist recommendation when config command executed with error',
       async () => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['config']), expect.anything())
+          .calledWith(expect.arrayContaining(['config']), expect.anything())
           .mockRejectedValue('some error');
 
         const zSetHashtableToZiplistRecommendation = await service
@@ -442,7 +442,7 @@ describe('RecommendationProvider', () => {
   describe('determineConnectionClientsRecommendation', () => {
     it('should not return connectionClients recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockResolvedValue(mockRedisClientsResponse1);
 
       const connectionClientsRecommendation = await service
@@ -452,7 +452,7 @@ describe('RecommendationProvider', () => {
 
     it('should return connectionClients recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockResolvedValue(mockRedisClientsResponse2);
 
       const connectionClientsRecommendation = await service
@@ -464,7 +464,7 @@ describe('RecommendationProvider', () => {
     it('should not return connectionClients recommendation when info command executed with error',
       async () => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+          .calledWith(expect.arrayContaining(['info']), expect.anything())
           .mockRejectedValue('some error');
 
         const connectionClientsRecommendation = await service
@@ -476,7 +476,7 @@ describe('RecommendationProvider', () => {
   describe('determineSetPasswordRecommendation', () => {
     it('should not return setPassword recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['acl']), expect.anything())
+        .calledWith(expect.arrayContaining(['acl']), expect.anything())
         .mockResolvedValue(mockRedisAclListResponse1);
 
       const setPasswordRecommendation = await service
@@ -486,7 +486,7 @@ describe('RecommendationProvider', () => {
 
     it('should return setPassword recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['acl']), expect.anything())
+        .calledWith(expect.arrayContaining(['acl']), expect.anything())
         .mockResolvedValue(mockRedisAclListResponse2);
 
       const setPasswordRecommendation = await service
@@ -497,7 +497,7 @@ describe('RecommendationProvider', () => {
     it('should not return setPassword recommendation when acl command executed with error',
       async () => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['acl']), expect.anything())
+          .calledWith(expect.arrayContaining(['acl']), expect.anything())
           .mockRejectedValue('some error');
 
         const setPasswordRecommendation = await service
@@ -508,7 +508,7 @@ describe('RecommendationProvider', () => {
     it('should not return setPassword recommendation when acl command executed with error',
       async () => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['auth']))
+          .calledWith(expect.arrayContaining(['auth']))
           .mockRejectedValue(mockRedisNoAuthError);
 
         const setPasswordRecommendation = await service
@@ -520,7 +520,7 @@ describe('RecommendationProvider', () => {
   describe('determineRedisVersionRecommendation', () => {
     it('should not return redis version recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockResolvedValue(mockRedisServerResponse1);
 
       const redisVersionRecommendation = await service
@@ -530,7 +530,7 @@ describe('RecommendationProvider', () => {
 
     it('should return redis version recommendation', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+        .calledWith(expect.arrayContaining(['info']), expect.anything())
         .mockResolvedValueOnce(mockRedisServerResponse2);
 
       const redisVersionRecommendation = await service
@@ -542,7 +542,7 @@ describe('RecommendationProvider', () => {
       async () => {
         resetAllWhenMocks();
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['info']), expect.anything())
+          .calledWith(expect.arrayContaining(['info']), expect.anything())
           .mockRejectedValue('some error');
 
         const redisVersionRecommendation = await service
@@ -609,7 +609,7 @@ describe('RecommendationProvider', () => {
   describe('determineRTSRecommendation', () => {
     test.each(generateRTSRecommendationTests)('%j', async ({ input, expected }) => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['zscan']), expect.anything())
+        .calledWith(expect.arrayContaining(['zscan']), expect.anything())
         .mockResolvedValue(input);
 
       const RTSRecommendation = await service
@@ -621,13 +621,13 @@ describe('RecommendationProvider', () => {
       let counter = 0;
       while (counter <= 100) {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['zscan']), expect.anything())
+          .calledWith(expect.arrayContaining(['zscan']), expect.anything())
           .mockResolvedValueOnce(mockZScanResponse1);
         counter += 1;
       }
 
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['zscan']), expect.anything())
+        .calledWith(expect.arrayContaining(['zscan']), expect.anything())
         .mockResolvedValueOnce(mockZScanResponse2);
 
       const RTSRecommendation = await service
@@ -639,7 +639,7 @@ describe('RecommendationProvider', () => {
       async () => {
         resetAllWhenMocks();
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['zscan']), expect.anything())
+          .calledWith(expect.arrayContaining(['zscan']), expect.anything())
           .mockRejectedValue('some error');
 
         const RTSRecommendation = await service

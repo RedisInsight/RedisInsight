@@ -37,7 +37,7 @@ global['jest'] = {
   fn: dummyJest,
 };
 
-global['jasmine'] = {
+global['expect'] = {
   any: () => {},
 }
 

@@ -60,9 +60,9 @@ describe('LocalCloudCapiKeyRepository', () => {
     repository.merge.mockReturnValue(mockFeatureEntity);
 
     when(encryptionService.decrypt)
-      .calledWith(mockCapiKeyEncrypted, jasmine.anything())
+      .calledWith(mockCapiKeyEncrypted, expect.anything())
       .mockResolvedValue(mockCloudCapiAuthDto.capiKey)
-      .calledWith(mockCapiSecretEncrypted, jasmine.anything())
+      .calledWith(mockCapiSecretEncrypted, expect.anything())
       .mockResolvedValue(mockCloudCapiAuthDto.capiSecret);
 
     when(encryptionService.encrypt)
@@ -80,7 +80,7 @@ describe('LocalCloudCapiKeyRepository', () => {
     });
     it('should return null fields in case of decryption errors', async () => {
       when(encryptionService.decrypt)
-        .calledWith(mockCapiKeyEncrypted, jasmine.anything())
+        .calledWith(mockCapiKeyEncrypted, expect.anything())
         .mockRejectedValueOnce(new KeytarDecryptionErrorException());
 
       expect(await service.get(mockDatabase.id)).toEqual({

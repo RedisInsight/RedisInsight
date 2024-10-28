@@ -1,10 +1,9 @@
 import {
   expect,
   describe,
-  it,
   deps,
-  validateApiCall,
-} from '../deps';
+  getMainCheckFn,
+} from '../deps'
 const { server, request, constants, rte, localDb } = deps;
 
 // endpoint to test
@@ -14,24 +13,7 @@ const endpoint = (
 ) =>
   request(server).delete(`/${constants.API.DATABASES}/${instanceId}/workbench/command-executions/${id}`);
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('DELETE /databases/:instanceId/workbench/command-executions/:commandExecutionId', () => {
   describe('Common', () => {

@@ -11,7 +11,7 @@ describe('ZSetInfoStrategy', () => {
 
   beforeEach(async () => {
     when(client.sendCommand)
-      .calledWith(jasmine.arrayContaining(['zcard']))
+      .calledWith(expect.arrayContaining(['zcard']))
       .mockResolvedValue(mockRedisResponse);
   });
 

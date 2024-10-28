@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { EuiButtonEmpty, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -15,10 +15,11 @@ export interface Props {
   onClick: (authStrategy: OAuthStrategy) => void
   className?: string
   inline?: boolean
+  disabled?: boolean
 }
 
 const OAuthSocialButtons = (props: Props) => {
-  const { onClick, className, inline } = props
+  const { onClick, className, inline, disabled } = props
 
   const agreement = useSelector(oauthCloudPAgreementSelector)
 
@@ -58,7 +59,7 @@ const OAuthSocialButtons = (props: Props) => {
         >
           <>
             <EuiButtonEmpty
-              disabled={!agreement}
+              disabled={!agreement || disabled}
               className={cx(styles.button, className, { [styles.inline]: inline })}
               onClick={() => {
                 onClick(strategy)

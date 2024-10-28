@@ -11,7 +11,7 @@ describe('StringInfoStrategy', () => {
 
   beforeEach(async () => {
     when(client.sendCommand)
-      .calledWith(jasmine.arrayContaining(['strlen']))
+      .calledWith(expect.arrayContaining(['strlen']))
       .mockResolvedValue(mockRedisResponse);
   });
 

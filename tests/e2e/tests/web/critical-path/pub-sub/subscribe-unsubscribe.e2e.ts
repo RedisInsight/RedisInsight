@@ -1,5 +1,5 @@
 import { DatabaseHelper } from '../../../../helpers/database';
-import { MyRedisDatabasePage, PubSubPage, WorkbenchPage } from '../../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, PubSubPage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../../helpers/conf';
 import { rte } from '../../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../../helpers/pub-sub';
@@ -10,6 +10,7 @@ const pubSubPage = new PubSubPage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const browserPage = new BrowserPage();
 
 fixture `Subscribe/Unsubscribe from a channel`
     .meta({ rte: rte.standalone, type: 'critical_path' })
@@ -120,7 +121,7 @@ test('Verify that user can see a internal link to pubsub window under word “Pu
     await t.expect(pubSubPage.pubSubPageContainer.exists).ok('Pubsub page is opened');
 
     // Verify that user can see a custom message when he tries to run SUBSCRIBE command in Workbench: “Use Pub/Sub tool to subscribe to channels.”
-    await t.click(pubSubPage.NavigationPanel.workbenchButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(commandSecond);
     await t.expect(await workbenchPage.queryResult.textContent).eql('Use Pub/Sub tool to subscribe to channels.', 'Message is not displayed', { timeout: 10000 });
 

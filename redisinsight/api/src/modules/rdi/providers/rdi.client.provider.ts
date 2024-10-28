@@ -1,6 +1,6 @@
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { RdiClientMetadata } from 'src/modules/rdi/models';
+import { Rdi, RdiClientMetadata } from 'src/modules/rdi/models';
 import { RdiClientStorage } from 'src/modules/rdi/providers/rdi.client.storage';
 import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { RdiRepository } from 'src/modules/rdi/repository/rdi.repository';
@@ -20,6 +20,7 @@ export class RdiClientProvider {
     let client = await this.rdiClientStorage.getByMetadata(rdiClientMetadata);
     if (client) {
       await client.ensureAuth();
+      this.updateLastConnection(rdiClientMetadata);
       return client;
     }
 
@@ -35,7 +36,11 @@ export class RdiClientProvider {
       this.logger.error(`RDI with ${clientMetadata.id} was not Found`);
       throw new NotFoundException(ERROR_MESSAGES.INVALID_RDI_INSTANCE_ID);
     }
-    return this.rdiClientFactory.createClient(clientMetadata, rdi);
+    const rdiClient = await this.rdiClientFactory.createClient(clientMetadata, rdi);
+    if (rdiClient) {
+      this.updateLastConnection(clientMetadata);
+    }
+    return rdiClient;
   }
 
   async delete(rdiClientMetadata: RdiClientMetadata): Promise<number> {
@@ -48,5 +53,13 @@ export class RdiClientProvider {
 
   async deleteManyByRdiId(id: string): Promise<number> {
     return this.rdiClientStorage.deleteManyByRdiId(id);
+  }
+
+  private async updateLastConnection(rdiClientMetadata: RdiClientMetadata): Promise<void> {
+    try {
+      await this.repository.update(rdiClientMetadata.id, { lastConnection: new Date() });
+    } catch (e) {
+      // ignore the error
+    }
   }
 }

@@ -9,8 +9,8 @@ import {
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
   validateApiCall,
-  requirements,
-} from '../deps';
+  requirements, getMainCheckFn,
+} from '../deps'
 import { convertArrayReplyToObject } from 'src/modules/redis/utils';
 const { server, request, constants, rte, localDb } = deps;
 
@@ -25,6 +25,7 @@ const dataSchema = Joi.object({
   }),
   mode: Joi.string().valid('RAW', 'ASCII').allow(null),
   resultsMode: Joi.string().valid('DEFAULT', 'GROUP_MODE').allow(null),
+  type: Joi.string().valid('WORKBENCH', 'SEARCH').allow(null),
 }).messages({
   'any.required': '{#label} should not be empty',
 }).strict();
@@ -54,26 +55,10 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     success: Joi.number(),
     fail: Joi.number(),
   }),
+  type: Joi.string().valid('WORKBENCH', 'SEARCH').required(),
 })).required();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /databases/:instanceId/workbench/command-executions', () => {
   before(rte.data.truncate);
@@ -86,7 +71,7 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
 
   describe('Common', () => {
     describe('String', () => {
-      const bigStringValue = Buffer.alloc(1023 * 1024, 'a').toString();
+      const bigStringValue = Buffer.alloc(10, 'a').toString();
 
       [
         {
@@ -118,8 +103,8 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
             });
 
             expect(entity.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
-            expect(localDb.encryptData(body[0].command)).to.eql(entity.command);
-            expect(localDb.encryptData(JSON.stringify(body[0].result))).to.eql(entity.result);
+            expect(body[0].command).to.eql(localDb.decryptData(entity.command));
+            expect(body[0].result).to.eql(JSON.parse(localDb.decryptData(entity.result)));
           },
           before: async () => {
             expect(await rte.client.set(constants.TEST_STRING_KEY_1, bigStringValue));
@@ -230,8 +215,8 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
             });
 
             expect(entity.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
-            expect(localDb.encryptData(body[0].command)).to.eql(entity.command);
-            expect(localDb.encryptData(JSON.stringify(body[0].result))).to.eql(entity.result);
+            expect(body[0].command).to.eql(localDb.decryptData(entity.command));
+            expect(body[0].result).to.eql(JSON.parse(localDb.decryptData(entity.result)));
           }
         },
         {

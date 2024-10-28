@@ -11,7 +11,7 @@ describe('SetInfoStrategy', () => {
 
   beforeEach(async () => {
     when(client.sendCommand)
-      .calledWith(jasmine.arrayContaining(['scard']))
+      .calledWith(expect.arrayContaining(['scard']))
       .mockResolvedValue(mockRedisResponse);
   });
 

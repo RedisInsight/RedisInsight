@@ -58,7 +58,7 @@ describe('LocalDatabaseRecommendationRepository', () => {
         data: mockDatabaseRecommendationEntity.params,
       });
     when(encryptionService.decrypt)
-      .calledWith(mockDatabaseRecommendationEntity.params, jasmine.anything())
+      .calledWith(mockDatabaseRecommendationEntity.params, expect.anything())
       .mockReturnValue(JSON.stringify(mockDatabaseRecommendation.params));
   });
 

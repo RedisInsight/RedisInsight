@@ -62,12 +62,12 @@ module.exports = {
       },
     ],
   ],
-  // coverageThreshold: {
-  //   global: {
-  //     statements: 80,
-  //     branches: 63,
-  //     functions: 72,
-  //     lines: 80,
-  //   },
-  // },
+  coverageThreshold: {
+    global: {
+      statements: 80,
+      branches: 63,
+      functions: 72,
+      lines: 80,
+    },
+  },
 };

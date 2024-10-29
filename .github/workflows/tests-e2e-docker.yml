@@ -31,8 +31,10 @@ jobs:
       image: docker:latest
       options: --privileged
       volumes:
-        - /usr/src/app/results:/usr/src/app/results
-        - /usr/src/app/report:/usr/src/app/report
+        - /usr/src/app/results:/__w/RedisInsight/RedisInsight/tests/e2e/results
+        - /usr/src/app/report:/__w/RedisInsight/RedisInsight/tests/e2e/report
+        # - /usr/src/app/results:/usr/src/app/results
+        # - /usr/src/app/report:/usr/src/app/report
     strategy:
       fail-fast: false
       matrix:

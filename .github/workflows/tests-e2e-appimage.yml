@@ -68,15 +68,6 @@ jobs:
         APP_BUILD_TYPE="Electron (Linux)" node ./.github/e2e-results.js
         curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-        check_name: 'E2E (AppImage) tests summary'
-        comment_mode: off
-        check_run: false
-        files: tests/e2e/results/results.xml
-
     - name: Generate test results
       uses: dorny/test-reporter@v1
       if: always()

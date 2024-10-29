@@ -124,15 +124,6 @@ jobs:
         ITEST_NAME=${{ matrix.rte }} node ./.github/itest-results.js
         curl -H "Content-type: application/json" --data @itests.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-        check_name: 'ITest (${{ matrix.rte }}) summary'
-        comment_mode: off
-        check_run: false
-        files: itest/results/*.result.xml
-
     - name: Generate test results
       uses: dorny/test-reporter@v1
       if: always()

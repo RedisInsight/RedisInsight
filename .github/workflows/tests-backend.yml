@@ -51,15 +51,6 @@ jobs:
     - name: Unit tests API
       run: yarn --cwd redisinsight/api/ test:cov --ci --silent
 
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-        check_name: 'BE Unit tests summary'
-        comment_mode: 'failures'
-        check_run: false
-        files: redisinsight/api/reports/jest-*.xml
-
     - name: Generate test results
       uses: dorny/test-reporter@v1
       if: always()

@@ -80,25 +80,9 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
     forceRerender({})
   }
 
-  // useEffect(() => {
-  //   const editInstanceId = new URLSearchParams(search).get('editInstance')
-  //   if (editInstanceId && !instances.loading) {
-  //     const instance = instances.data.find((item: Instance) => item.id === editInstanceId)
-  //     if (instance) {
-  //       handleClickEditInstance(instance)
-  //     }
-  //     setTimeout(() => {
-  //       history.replace(Pages.home)
-  //     }, 1000)
-  //   }
-  //
-  //   // isLoadingRef.current = instances.loading
-  //   // forceRerender({})
-  // }, [instances.loading, search])
-
   useEffect(() => {
     const editInstanceId = new URLSearchParams(search).get('editInstance')
-    if (editInstanceId && instances.data.length) {
+    if (editInstanceId && instances?.data?.length) {
       const instance = instances.data.find((item: Instance) => item.id === editInstanceId)
       if (instance) {
         handleClickEditInstance(instance)

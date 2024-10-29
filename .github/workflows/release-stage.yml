@@ -1,10 +1,9 @@
-name: Release (stage)
+name: 📖 Release (stage)
 
 on:
   push:
     branches:
       - 'release/**'
-      - 'test/release'
 
 jobs:
   tests:

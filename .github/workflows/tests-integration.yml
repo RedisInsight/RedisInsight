@@ -55,25 +55,25 @@ jobs:
     outputs:
       matrix: ${{ steps.parse-matrix.outputs.matrix }}
     steps:
-      - name: Create JSON array for run-tests matrix
-        id: parse-matrix
-        run: |
-          # Extract the JSON object from the environment variable
-          MATRIX_JSON="$ITESTS_NAMES_SHORT"
+    - name: Create JSON array for run-tests matrix
+      id: parse-matrix
+      run: |
+        # Extract the JSON object from the environment variable
+        MATRIX_JSON="$ITESTS_NAMES_SHORT"
 
-          if [ "${{ inputs.short_rte_list }}" == "false" ]; then
-            MATRIX_JSON="$ITESTS_NAMES"
-          fi
+        if [ "${{ inputs.short_rte_list }}" == "false" ]; then
+          MATRIX_JSON="$ITESTS_NAMES"
+        fi
 
-          MATRIX_ARRAY=$(echo "$MATRIX_JSON" | jq -c 'keys')
+        MATRIX_ARRAY=$(echo "$MATRIX_JSON" | jq -c 'keys')
 
-          # Output the formed JSON array for use in other jobs
-          echo "matrix=$MATRIX_ARRAY" >> $GITHUB_OUTPUT
+        # Output the formed JSON array for use in other jobs
+        echo "matrix=$MATRIX_ARRAY" >> $GITHUB_OUTPUT
 
-      - name: Verify the formed matrix array
-        run: |
-          echo "Formed matrix array:"
-          echo "${{ steps.parse-matrix.outputs.matrix }}"
+    - name: Verify the formed matrix array
+      run: |
+        echo "Formed matrix array:"
+        echo "${{ steps.parse-matrix.outputs.matrix }}"
 
   run-tests:
     name: ITest
@@ -151,11 +151,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Merge coverage artifacts
+      id: merge-artifacts
+      uses: actions/upload-artifact/merge@v4
+      with:
+        name: coverages-artifacts
+        pattern: coverages-*
+        delete-merged: true
+
     - name: Download coverage artifacts
       uses: actions/download-artifact@v4
       with:
-        pattern: coverages-*
-        merge-multiple: true
+        pattern: coverages-artifacts
         path: ./coverages
 
     - name: Calculate coverage across all tests runs
@@ -165,4 +172,14 @@ jobs:
         sudo cp -a ./redisinsight/api/. /usr/src/app/
         sudo cp -R ./coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
         cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
+
+    - name: Delete Artifact
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.actions.deleteArtifact({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            artifact_id: ${{ steps.merge-artifacts.outputs.artifact-id }}
+          });
 

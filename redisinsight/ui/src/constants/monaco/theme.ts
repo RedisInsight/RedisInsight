@@ -37,16 +37,14 @@ export const redisearchLightThemeRules = [
 export const darkThemeRules = [
   { token: 'function', foreground: 'BFBC4E' },
   ...redisearchDarKThemeRules.map((rule) => ({
-    ...rule,
-    token: `${rule.token}`
+    ...rule
   }))
 ]
 
 export const lightThemeRules = [
   { token: 'function', foreground: '795E26' },
   ...redisearchLightThemeRules.map((rule) => ({
-    ...rule,
-    token: `${rule.token}.redisearch`
+    ...rule
   }))
 ]
 

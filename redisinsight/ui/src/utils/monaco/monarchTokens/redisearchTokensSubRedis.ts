@@ -122,7 +122,7 @@ export const getRediSearchSubRedisMonarchTokensProvider = (
           [/[^\\"]+/, STRING_DOUBLE],
         ],
         startOfLine: [
-          [/\n/, { next: '@keywords', token: '@pop' }]
+          [/\s?\n/, { next: '@root', token: '@pop' }],
         ]
       },
     }

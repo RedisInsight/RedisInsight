@@ -22,6 +22,7 @@ env:
   RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
   SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
+  E2E_VOLUME_PATH: "/usr/src/app"
 
 jobs:
   e2e-docker-tests:
@@ -31,10 +32,8 @@ jobs:
       image: docker:latest
       options: --privileged
       volumes:
-        - /usr/src/app/results:/__w/RedisInsight/RedisInsight/tests/e2e/results
-        - /usr/src/app/report:/__w/RedisInsight/RedisInsight/tests/e2e/report
-        # - /usr/src/app/results:/usr/src/app/results
-        # - /usr/src/app/report:/usr/src/app/report
+        - /usr/src/app/results:/usr/src/app/results
+        - /usr/src/app/report:/usr/src/app/report
     strategy:
       fail-fast: false
       matrix:

@@ -1,1 +1,0 @@
-# _folder/file.md

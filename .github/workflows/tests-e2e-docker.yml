@@ -22,6 +22,7 @@ env:
   RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
   SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
+  E2E_VOLUME_PATH: "/usr/src/app"
 
 jobs:
   e2e-docker-tests:

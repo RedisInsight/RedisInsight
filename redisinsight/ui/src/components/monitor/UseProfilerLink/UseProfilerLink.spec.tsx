@@ -27,7 +27,7 @@ describe('UseProfilerLink', () => {
     expect(screen.getByText('tool to see all the requests processed by the server.', { exact: false })).toBeInTheDocument()
   })
 
-  it('should show feature dependent items when feature flag is off', async () => {
+  it('should show feature dependent items when feature flag is on', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
@@ -41,7 +41,7 @@ describe('UseProfilerLink', () => {
     expect(screen.queryByTestId('user-profiler-link-disabled')).not.toBeInTheDocument()
   })
 
-  it('should hide feature dependent items when feature flag is on', async () => {
+  it('should hide feature dependent items when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,

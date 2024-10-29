@@ -35,7 +35,7 @@ describe('BottomGroupMinimized', () => {
     const expectedActions = [toggleCliHelper()]
     expect(store.getActions()).toEqual(expectedActions)
   })
-  it('should show "Profiler" and "user-survey-link" when feature flag is off', async () => {
+  it('should show "Profiler" and "user-survey-link" when feature flag is on', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
@@ -49,7 +49,7 @@ describe('BottomGroupMinimized', () => {
     expect(screen.queryByTestId('user-survey-link')).toBeInTheDocument()
   })
 
-  it('should hide "Profiler" and "user-survey-link" when feature flag is on', async () => {
+  it('should hide "Profiler" and "user-survey-link" when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,

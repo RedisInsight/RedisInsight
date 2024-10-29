@@ -72,7 +72,7 @@ describe('PageHeader', () => {
     expect(screen.queryByTestId('redis-logo-home')).not.toBeInTheDocument()
   })
 
-  it('should show feature dependent items when feature flag is off', async () => {
+  it('should show feature dependent items when feature flag is on', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
@@ -85,7 +85,7 @@ describe('PageHeader', () => {
     expect(screen.queryByTestId('o-auth-user-profile')).toBeInTheDocument()
   })
 
-  it('should hide feature dependent items when feature flag is on', async () => {
+  it('should hide feature dependent items when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,

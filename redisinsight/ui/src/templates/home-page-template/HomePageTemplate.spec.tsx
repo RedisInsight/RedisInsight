@@ -50,7 +50,7 @@ describe('HomePageTemplate', () => {
     expect(screen.getByTestId('home-tabs')).toBeInTheDocument()
   })
 
-  it('should show feature dependent items when feature flag is off', async () => {
+  it('should show feature dependent items when feature flag is on', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
@@ -63,7 +63,7 @@ describe('HomePageTemplate', () => {
     expect(screen.queryByTestId('home-page-sso-profile')).toBeInTheDocument()
   })
 
-  it('should hide feature dependent items when feature flag is on', async () => {
+  it('should hide feature dependent items when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,

@@ -41,7 +41,7 @@ describe('MonitorWrapper', () => {
     expect(monitorHeader).toBeInTheDocument()
   })
 
-  it('should show feature dependent items when feature flag is off', async () => {
+  it('should show feature dependent items when feature flag is on', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
@@ -56,7 +56,7 @@ describe('MonitorWrapper', () => {
     expect(screen.queryByTestId('monitor-not-supported')).not.toBeInTheDocument()
   })
 
-  it('should hide feature dependent items when feature flag is on', async () => {
+  it('should hide feature dependent items when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,

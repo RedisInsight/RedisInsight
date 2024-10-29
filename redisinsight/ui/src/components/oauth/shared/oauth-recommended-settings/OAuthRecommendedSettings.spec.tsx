@@ -26,7 +26,7 @@ describe('OAuthRecommendedSettings', () => {
     expect(onChange).toBeCalledWith(false)
   })
 
-  it('should show feature dependent items when feature flag is off', async () => {
+  it('should show feature dependent items when feature flag is on', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSsoRecommendedSettings}`,
@@ -39,7 +39,7 @@ describe('OAuthRecommendedSettings', () => {
     expect(screen.queryByTestId('oauth-recommended-settings-checkbox')).toBeInTheDocument()
   })
 
-  it('should hide feature dependent items when feature flag is on', async () => {
+  it('should hide feature dependent items when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSsoRecommendedSettings}`,

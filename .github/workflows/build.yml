@@ -1,0 +1,75 @@
+name: 🚀 Build
+
+on:
+  # Manual trigger build
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Build target
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - docker
+          - windows:x64
+          - macos:x64
+          - macos:arm64
+          - macos:all
+          - linux:appimage:x64
+          - linux:deb:x64
+          - linux:rpm:x64
+          - linux:snap:x64
+          - linux:all
+
+      environment:
+        description: Environment to run build
+        type: environment
+        default: 'staging'
+        required: false
+
+  # Called for Release workflows
+  workflow_call:
+    inputs:
+      environment:
+        description: Environment to run build
+        type: string
+        default: 'staging'
+        required: false
+      target:
+        description: Build target
+        type: string
+        default: 'all'
+        required: false
+
+jobs:
+  build-linux:
+    if: startsWith(inputs.target, 'linux') || endsWith(inputs.target, 'all')
+    # concurrency: build
+    uses: ./.github/workflows/pipeline-build-linux.yml
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}
+      target: ${{ (endsWith(inputs.target, 'all') && 'all') || inputs.target }}
+
+  build-macos:
+    if: startsWith(inputs.target, 'macos') || endsWith(inputs.target, 'all')
+    uses: ./.github/workflows/pipeline-build-macos.yml
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}
+      target: ${{ (endsWith(inputs.target, 'all') && 'all') || inputs.target }}
+
+  build-windows:
+    if: startsWith(inputs.target, 'windows') || endsWith(inputs.target, 'all')
+    uses: ./.github/workflows/pipeline-build-windows.yml
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}
+
+  build-docker:
+    if: startsWith(inputs.target, 'docker') || endsWith(inputs.target, 'all')
+    uses: ./.github/workflows/pipeline-build-docker.yml
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}

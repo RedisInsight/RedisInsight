@@ -1,0 +1,33 @@
+name: Install Dependencies action
+description: Caches and installs dependencies for a given path
+inputs:
+  dir-path:
+    description: Path to the directory
+    required: true
+  keytar-host-mirror:
+    description: Keytar binary host mirror
+    required: false
+  sqlite3-host-mirror:
+    description: SQLite3 binary host mirror
+    required: false
+  skip-postinstall:
+    description: Skip postinstall
+    required: false
+    default: '0'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install dependencies
+      working-directory: ${{ inputs.dir-path }}
+      shell: bash
+
+      # env:
+      #   SKIP_POSTINSTALL: ${{ inputs.skip-postinstall }}
+      # run: yarn install
+      run: |
+        # todo: uncomment after build our binaries
+        # export npm_config_keytar_binary_host_mirror=${{ inputs.keytar-host-mirror }}
+        # export npm_config_node_sqlite3_binary_host_mirror=${{ inputs.sqlite3-host-mirror }}
+
+        yarn install --frozen-lockfile --network-timeout 1000000

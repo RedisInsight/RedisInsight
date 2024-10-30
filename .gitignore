@@ -18,6 +18,11 @@ lerna-debug.log*
 /.nyc_output
 **/coverage
 
+#CI
+.actrc
+my.secrets
+my.inputs
+
 # IDEs and editors
 /.idea
 .idea/
@@ -48,10 +53,12 @@ redisinsight/ui/style.css.map
 redisinsight/ui/dist
 redisinsight/api/commands
 redisinsight/api/guides
+redisinsight/api/reports
 redisinsight/api/dist-minified
 redisinsight/api/tutorials
 redisinsight/api/content
 redisinsight/ui/dist-stats.html
+reports
 dist
 distWeb
 dll

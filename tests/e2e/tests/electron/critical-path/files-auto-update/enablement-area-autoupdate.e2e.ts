@@ -1,9 +1,7 @@
-// import { join } from 'path';
-// import * as os from 'os';
 import * as fs from 'fs';
-import * as editJsonFile from 'edit-json-file';
+import editJsonFile from 'edit-json-file';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, workingDirectory } from '../../../../helpers/conf';
 import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
@@ -12,6 +10,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const browserPage = new BrowserPage();
 
 if (fs.existsSync(workingDirectory)) {
 
@@ -46,7 +45,7 @@ if (fs.existsSync(workingDirectory)) {
         const tutorialsTimestampFileNew = editJsonFile(tutorialsTimestampPath);
 
         // Open Workbench page
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
 
         // Check Enablement area and validate that removed file is existed in Guides
         await workbenchPage.NavigationHeader.togglePanel(true);

@@ -32,7 +32,7 @@ test('Verify that user can use survey link', async t => {
     await Common.checkURL(externalPageLink);
     await goBackHistory();
     // Workbench page
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     await t.expect(browserPage.userSurveyLink.visible).ok('Survey Link is not displayed');
     // Slow Log page
     await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);

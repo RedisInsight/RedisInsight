@@ -101,6 +101,7 @@ export enum EmptySuggestionsIds {
 
 export const SORTED_SEARCH_COMMANDS = [
   'FT.SEARCH',
+  'FT.AGGREGATE',
   'FT.CREATE',
   'FT.EXPLAIN',
   'FT.PROFILE'

@@ -37,7 +37,7 @@ export const findSuggestionsByArg = (
   const [beforeOffsetArgs, [currentOffsetArg]] = args
 
   const startCommentIndex = beforeOffsetArgs.findIndex((el) => el.startsWith('//'))
-  if (startCommentIndex > -1) {
+  if (startCommentIndex > -1 || currentOffsetArg?.startsWith('//')) {
     return {
       suggestions: asSuggestionsRef([]),
       helpWidget: { isOpen: false }

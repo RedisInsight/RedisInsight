@@ -7,7 +7,7 @@ import styles from 'uiSrc/pages/browser/components/popover-delete/styles.module.
 export default {
   REJSON_SHOULD_BE_LOADED: (
     <>
-      RedisJSON module should be loaded to add this key. Find&nbsp;
+      JSON module should be loaded to add this key. Find&nbsp;
       <a
         href="https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/json/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_tutorials"
         className="link-underline"
@@ -17,12 +17,12 @@ export default {
         more information
       </a>
       &nbsp;
-      about RedisJSON or create your&nbsp;
+      about JSON or create your&nbsp;
       <a href={`${EXTERNAL_LINKS.tryFree}?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_redisjson`} className="link-underline" target="_blank" rel="noreferrer">
         free Redis database
       </a>
       &nbsp;
-      with RedisJSON on Redis Cloud.
+      with JSON on Redis Cloud.
     </>
   ),
   REMOVE_LAST_ELEMENT: (fieldType: string) => (

@@ -15,7 +15,7 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
     link: 'https://redis.io/docs/latest/develop/data-types/timeseries/'
   },
   [RedisDefaultModules.Search]: {
-    text: ['RediSearch adds the capability to:'],
+    text: ['Redis Query Engine adds the capability to:'],
     improvements: [
       'Query',
       'Secondary index',
@@ -25,13 +25,13 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
     link: 'https://redis.io/docs/interact/search-and-query/'
   },
   [RedisDefaultModules.ReJSON]: {
-    text: ['RedisJSON adds the capability to:'],
+    text: ['JSON adds the capability to:'],
     improvements: [
       'Store JSON documents',
       'Update JSON documents',
       'Retrieve JSON documents'
     ],
-    additionalText: ['RedisJSON also works seamlessly with RediSearch to let you index and query JSON documents.'],
+    additionalText: ['JSON also works seamlessly with Redis Query Engine to let you index and query JSON documents.'],
     link: 'https://redis.io/docs/latest/develop/data-types/json/'
   },
   [RedisDefaultModules.Bloom]: {

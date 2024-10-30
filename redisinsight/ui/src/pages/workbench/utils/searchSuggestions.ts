@@ -36,7 +36,7 @@ export const findSuggestionsByArg = (
   const { prevCursorChar } = cursor
   const [beforeOffsetArgs, [currentOffsetArg]] = args
 
-  const startCommentIndex = [...beforeOffsetArgs, currentOffsetArg].findIndex((el) => el.startsWith('//'))
+  const startCommentIndex = beforeOffsetArgs.findIndex((el) => el.startsWith('//'))
   if (startCommentIndex > -1) {
     return {
       suggestions: asSuggestionsRef([]),

@@ -238,13 +238,6 @@ export const findCompleteQuery = (
     fullQuery = `\n${fullQuery}`
   }
 
-  const matchedCommand = commandsArray
-    .find((command) => commandName?.trim().toUpperCase().startsWith(command.toUpperCase()))
-
-  if (isUndefined(matchedCommand)) {
-    return null
-  }
-
   const commandCursorPosition = fullQuery.length
   // find args in the next lines
   const linesCount = model.getLineCount()
@@ -272,6 +265,14 @@ export const findCompleteQuery = (
     commandCursorPosition,
     compositeArgs,
   )
+
+  const [[firstQueryArg]] = args
+  const matchedCommand = commandsArray
+    .find((command) => firstQueryArg?.toUpperCase() === command.toUpperCase())
+
+  if (isUndefined(matchedCommand)) {
+    return null
+  }
 
   return {
     position,

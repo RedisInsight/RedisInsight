@@ -23,13 +23,17 @@ export const getRediSearchSubRedisMonarchTokensProvider = (
   const generateTokensForCommands = () => {
     let commandTokens: any = {}
 
-    withNextIndexSuggestions.forEach((command) => {
+    commands.forEach((command) => {
       const isIndexAfterCommand = isIndexAfterKeyword(command)
       const argTokens = generateTokens(command)
       const tokenName = command.token?.replace(/(\.| )/g, '_')
+      const blockTokens = getBlockTokens(tokenName, argTokens?.pureTokens)
+
+      if (blockTokens.length) {
+        commandTokens[`argument.block.${tokenName}`] = blockTokens
+      }
 
       if (isIndexAfterCommand) {
-        commandTokens[`argument.block.${tokenName}`] = getBlockTokens(tokenName, argTokens?.pureTokens)
         commandTokens = {
           ...commandTokens,
           ...generateTokensWithFunctions(tokenName, argTokens?.tokensWithQueryAfter)
@@ -40,7 +44,6 @@ export const getRediSearchSubRedisMonarchTokensProvider = (
     return commandTokens
   }
 
-  const keywords = generateKeywords(commands)
   const tokens = generateTokensForCommands()
 
   const includeTokens = () => {
@@ -52,14 +55,16 @@ export const getRediSearchSubRedisMonarchTokensProvider = (
     {
       defaultToken: '',
       tokenPostfix: '.redisearch',
+      includeLF: true,
       ignoreCase: true,
       brackets: [
         { open: '[', close: ']', token: 'delimiter.square' },
         { open: '(', close: ')', token: 'delimiter.parenthesis' },
       ],
-      keywords,
+      keywords: [],
       tokenizer: {
         root: [
+          { include: '@startOfLine' },
           { include: '@keywords' },
           ...includeTokens(),
           { include: '@fields' },
@@ -72,9 +77,9 @@ export const getRediSearchSubRedisMonarchTokensProvider = (
           [/[\w@#$.]+/, 'identifier']
         ],
         keywords: [
-          [`(${generateKeywords(withNextQueryIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@index.query' }],
-          [`(${generateKeywords(withNextIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@index' }],
-          [`(${generateKeywords(withoutIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@root' }],
+          [`^\\s*(${generateKeywords(withNextQueryIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@index.query' }],
+          [`^\\s*(${generateKeywords(withNextIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@index' }],
+          [`^\\s*(${generateKeywords(withoutIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@root' }],
         ],
         ...tokens,
         ...generateQuery(),
@@ -115,6 +120,9 @@ export const getRediSearchSubRedisMonarchTokensProvider = (
           [/\\./, STRING_DOUBLE],
           [/"/, { token: STRING_DOUBLE, next: '@pop' }],
           [/[^\\"]+/, STRING_DOUBLE],
+        ],
+        startOfLine: [
+          [/\n/, { next: '@keywords', token: '@pop' }]
         ]
       },
     }

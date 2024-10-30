@@ -70,9 +70,9 @@ describe('LocalCommandExecutionRepository', () => {
       });
 
     when(encryptionService.decrypt)
-      .calledWith(mockCommandExecutionEntity.command, jasmine.anything())
+      .calledWith(mockCommandExecutionEntity.command, expect.anything())
       .mockResolvedValue(mockCommandExecution.command)
-      .calledWith(mockCommandExecutionEntity.result, jasmine.anything())
+      .calledWith(mockCommandExecutionEntity.result, expect.anything())
       .mockResolvedValue(JSON.stringify(mockCommandExecution.result));
 
     repository.save.mockReturnValue(mockCommandExecutionEntity);

@@ -39,11 +39,6 @@ runs:
         cache: ${{ runner.os != 'Windows' && 'yarn' || '' }}
         cache-dependency-path: ${{ runner.os != 'Windows' && '**/yarn.lock' || '' }}
 
-    # - run: echo "inputs.skip-electron-deps"
-    # - run: echo "${{inputs.skip-electron-deps}}"
-    # - run: echo "inputs.skip-backend-deps"
-    # - run: echo "${{inputs.skip-backend-deps}}"
-
     - name: Setup Python
       # if: ${{ contains(inputs.skip-electron-deps, '1') }}
       uses: actions/setup-python@v5

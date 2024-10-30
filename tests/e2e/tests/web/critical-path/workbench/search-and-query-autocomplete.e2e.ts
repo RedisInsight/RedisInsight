@@ -18,7 +18,7 @@ let indexName2: string;
 let indexName3: string;
 
 fixture `Autocomplete for entered commands in search and query`
-    .meta({ type: 'regression', rte: rte.standalone })
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
@@ -84,8 +84,12 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
         'students',
         'type'
     ];
+    const ftSortedCommands = ['FT.SEARCH', 'FT.CREATE', 'FT.EXPLAIN', 'FT.PROFILE'];
+
     // Verify basic commands suggestions FT.SEARCH and FT.AGGREGATE
     await t.typeText(workbenchPage.queryInput, 'FT', { replace: true });
+    // Verify custom sorting for FT. commands
+    await t.expect(await workbenchPage.MonacoEditor.getSuggestionsArrayFromMonaco(4)).eql(ftSortedCommands, 'Wrong order of FT commands');
     // Verify that the list with FT.SEARCH and FT.AGGREGATE auto-suggestions is displayed
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withText('FT._LIST').exists).ok('FT._LIST auto-suggestions are not displayed');
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withText('FT.AGGREGATE').exists).ok('FT.AGGREGATE auto-suggestions are not displayed');

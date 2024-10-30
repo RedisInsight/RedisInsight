@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as editJsonFile from 'edit-json-file';
+import editJsonFile from 'edit-json-file';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, workingDirectory } from '../../../../helpers/conf';

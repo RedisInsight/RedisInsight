@@ -7,7 +7,8 @@ export const commonfindCurrentArgumentCases = [
       append: expect.any(Array),
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     },
     appendIncludes: ['WITHSCORES', 'VERBATIM', 'FILTER', 'SORTBY', 'RETURN'],
     appendNotIncludes: ['DIALECT']
@@ -19,7 +20,8 @@ export const commonfindCurrentArgumentCases = [
       append: expect.any(Array),
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     },
     appendIncludes: ['REDUCE', 'APPLY', 'SORTBY', 'GROUPBY'],
     appendNotIncludes: ['AS'],
@@ -36,7 +38,8 @@ export const commonfindCurrentArgumentCases = [
       append: expect.any(Array),
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     },
     appendIncludes: ['AS', 'REDUCE', 'APPLY', 'SORTBY', 'GROUPBY'],
   },
@@ -47,7 +50,8 @@ export const commonfindCurrentArgumentCases = [
       append: expect.any(Array),
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     },
     appendIncludes: ['DIALECT', 'EXPANDER', 'INKEYS', 'LIMIT'],
     appendNotIncludes: ['ASC'],
@@ -107,7 +111,8 @@ export const commonfindCurrentArgumentCases = [
       append: expect.any(Array),
       isBlocked: false,
       isComplete: false,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     },
     appendIncludes: ['AS', 'GEO', 'TEXT', 'VECTOR'],
     appendNotIncludes: ['SCHEMA', 'SCORE', 'NOHL'],
@@ -119,7 +124,8 @@ export const commonfindCurrentArgumentCases = [
       append: expect.any(Array),
       isBlocked: false,
       isComplete: true,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     },
     appendIncludes: ['INDEXEMPTY', 'SORTABLE', 'WITHSUFFIXTRIE'],
     appendNotIncludes: ['SCHEMA', 'SCORE', 'NOHL'],
@@ -131,7 +137,8 @@ export const commonfindCurrentArgumentCases = [
       append: expect.any(Array),
       isBlocked: false,
       isComplete: false,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     },
     appendIncludes: ['SCHEMA', 'SKIPINITIALSCAN'],
     appendNotIncludes: ['ADD'],
@@ -152,7 +159,8 @@ export const commonfindCurrentArgumentCases = [
       append: [],
       isBlocked: true,
       isComplete: false,
-      parent: expect.any(Object)
+      parent: expect.any(Object),
+      token: expect.any(Object)
     },
     appendIncludes: [],
     appendNotIncludes: [expect.any(String)],
@@ -169,6 +177,7 @@ export const commonfindCurrentArgumentCases = [
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object),
+      token: expect.any(Object),
       stopArg: {
         multiple: true,
         name: 'term',
@@ -187,7 +196,8 @@ export const commonfindCurrentArgumentCases = [
       stopArg: {
         name: 'score',
         type: 'double'
-      }
+      },
+      token: expect.any(Object)
     },
     appendIncludes: [],
   },

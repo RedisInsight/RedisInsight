@@ -32,6 +32,7 @@ export const findCurrentArgument = (
       // this is the main function which creates the list of arguments
       return {
         ...getArgumentSuggestions({ tokenArgs: pastArgs, untilTokenArgs }, commandArgs, parent),
+        token,
         parent: parent || token
       }
     }
@@ -378,7 +379,10 @@ export const findArgByToken = (list: IRedisCommand[], arg: string): Maybe<IRedis
 
 export const generateDetail = (command: Maybe<IRedisCommand>) => {
   if (!command) return ''
-  if (command.arguments) return generateArgsNames(CommandProvider.Main, command.arguments).join(' ')
+  if (command.arguments) {
+    const args = generateArgsNames(CommandProvider.Main, command.arguments).join(' ')
+    return command.token ? `${command.token} ${args}` : args
+  }
   if (command.token) {
     if (command.type === ICommandTokenType.PureToken) return command.token
     return `${command.token}`

@@ -8,13 +8,14 @@ const STRING_DOUBLE = 'string.double'
 export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monacoEditor.languages.IMonarchLanguage => {
   const commandRedisCommands = [...commands]
   const searchCommands = remove(commandRedisCommands, ({ token }) => token?.startsWith(ModuleCommandPrefix.RediSearch))
-  const COMMON_COMMANDS_REGEX = `(${commandRedisCommands.map(({ token }) => token).join('|')})\\b`
-  const SEARCH_COMMANDS_REGEX = `(${searchCommands.map(({ token }) => token).join('|')})\\b`
+  const COMMON_COMMANDS_REGEX = `^\\s*(${commandRedisCommands.map(({ token }) => token).join('|')})\\b`
+  const SEARCH_COMMANDS_REGEX = `^\\s*(${searchCommands.map(({ token }) => token).join('|')})\\b`
 
   return {
     defaultToken: '',
     tokenPostfix: '.redis',
     ignoreCase: true,
+    includeLF: true,
     brackets: [
       { open: '[', close: ']', token: 'delimiter.square' },
       { open: '(', close: ')', token: 'delimiter.parenthesis' },
@@ -23,6 +24,7 @@ export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monaco
     operators: [],
     tokenizer: {
       root: [
+        { include: '@startOfLine' },
         { include: '@whitespace' },
         { include: '@numbers' },
         { include: '@strings' },
@@ -71,6 +73,9 @@ export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monaco
       // TODO: can be tokens or functions the same - need to think how to avoid wrong ending
       endRedisearch: [
         [`^\\s*${COMMON_COMMANDS_REGEX}`, { token: '@rematch', next: '@root', nextEmbedded: '@pop', log: 'end' }],
+      ],
+      startOfLine: [
+        [/\n/, { next: '@root', token: '@pop' }],
       ]
     },
   }

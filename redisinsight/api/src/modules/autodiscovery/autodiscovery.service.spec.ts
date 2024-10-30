@@ -13,7 +13,6 @@ import {
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { AutodiscoveryService } from 'src/modules/autodiscovery/autodiscovery.service';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { mocked } from 'ts-jest/utils';
 import config, { Config } from 'src/utils/config';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
@@ -84,7 +83,7 @@ describe('AutodiscoveryService', () => {
     databaseService = module.get(DatabaseService);
     redisClientFactory = module.get(RedisClientFactory);
 
-    mocked(utils.convertRedisInfoReplyToObject).mockReturnValue({
+    (utils.convertRedisInfoReplyToObject as jest.Mock).mockReturnValue({
       server: {
         redis_mode: 'standalone',
       },
@@ -155,7 +154,7 @@ describe('AutodiscoveryService', () => {
     let addRedisDatabaseSpy;
 
     beforeEach(async () => {
-      mocked(getAvailableEndpoints).mockResolvedValue([]);
+      (getAvailableEndpoints as jest.Mock).mockResolvedValue([]);
       addRedisDatabaseSpy = jest.spyOn(service as any, 'addRedisDatabase');
       addRedisDatabaseSpy.mockResolvedValue(null);
     });
@@ -167,7 +166,8 @@ describe('AutodiscoveryService', () => {
     });
 
     it('should should call addRedisDatabase 2 times', async () => {
-      mocked(getAvailableEndpoints).mockResolvedValueOnce([mockAutodiscoveryEndpoint, mockAutodiscoveryEndpoint]);
+      (getAvailableEndpoints as jest.Mock)
+        .mockResolvedValueOnce([mockAutodiscoveryEndpoint, mockAutodiscoveryEndpoint]);
       await service['discoverDatabases'](mockSessionMetadata);
 
       expect(addRedisDatabaseSpy).toHaveBeenCalledTimes(2);
@@ -193,7 +193,7 @@ describe('AutodiscoveryService', () => {
     });
 
     it('should not create database if redis_mode is not standalone', async () => {
-      mocked(utils.convertRedisInfoReplyToObject).mockReturnValueOnce({
+      (utils.convertRedisInfoReplyToObject as jest.Mock).mockReturnValueOnce({
         server: {
           redis_mode: 'cluster',
         },

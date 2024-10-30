@@ -37,11 +37,14 @@ export const findSuggestionsByArg = (
   const { prevCursorChar } = cursor
   const [beforeOffsetArgs, [currentOffsetArg]] = args
 
-  const foundArg = findCurrentArgument(listOfCommands, beforeOffsetArgs)
+  const scopedList = command.name
+    ? listOfCommands.filter(({ token }) => token === command?.name)
+    : listOfCommands
+  const foundArg = findCurrentArgument(scopedList, beforeOffsetArgs)
 
   if (!command.name.startsWith(ModuleCommandPrefix.RediSearch)) {
     return {
-      helpWidget: { isOpen: !!foundArg, parent: foundArg?.parent, currentArg: foundArg?.stopArg },
+      helpWidget: { isOpen: !!foundArg, data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg } },
       suggestions: asSuggestionsRef([])
     }
   }
@@ -95,7 +98,7 @@ const handleIndexSuggestions = (
   cursorContext: CursorContext
 ) => {
   const isIndex = indexes.length > 0
-  const helpWidget = { isOpen: isIndex, parent: foundArg?.parent, currentArg: foundArg?.stopArg }
+  const helpWidget = { isOpen: isIndex, data: { parent: foundArg.parent, currentArg: foundArg?.stopArg } }
   const currentCommand = command.info
 
   if (COMMANDS_WITHOUT_INDEX_PROPOSE.includes(command.name || '')) {
@@ -133,7 +136,7 @@ const handleIndexSuggestions = (
 }
 
 const handleQuerySuggestions = (foundArg: FoundCommandArgument) => ({
-  helpWidget: { isOpen: true, parent: foundArg?.parent, currentArg: foundArg?.stopArg },
+  helpWidget: { isOpen: true, data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg } },
   suggestions: asSuggestionsRef([], false)
 })
 
@@ -142,7 +145,7 @@ const handleExpressionSuggestions = (
   foundArg: FoundCommandArgument,
   cursorContext: CursorContext,
 ) => {
-  const helpWidget = { isOpen: true, parent: foundArg?.parent, currentArg: foundArg?.stopArg }
+  const helpWidget = { isOpen: true, data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg } }
 
   const { isCursorInQuotes, offset, argLeftOffset } = cursorContext
   if (!isCursorInQuotes) {
@@ -183,11 +186,7 @@ const handleCommonSuggestions = (
   const shouldHideSuggestions = isCursorInQuotes || nextCursorChar || (prevCursorChar && isEscaped)
   if (shouldHideSuggestions) {
     return {
-      helpWidget: {
-        isOpen: foundArg && foundArg.isBlocked,
-        parent: getParentWithOwnToken(foundArg?.parent),
-        currentArg: foundArg?.stopArg
-      },
+      helpWidget: { isOpen: !!foundArg, data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg } },
       suggestions: asSuggestionsRef([])
     }
   }

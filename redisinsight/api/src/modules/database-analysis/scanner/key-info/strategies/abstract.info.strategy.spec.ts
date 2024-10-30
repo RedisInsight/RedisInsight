@@ -11,7 +11,7 @@ describe('AbstractInfoStrategy', () => {
 
   beforeEach(async () => {
     when(client.sendCommand)
-      .calledWith(jasmine.arrayContaining(['hlen']))
+      .calledWith(expect.arrayContaining(['hlen']))
       .mockResolvedValue(mockRedisResponse);
   });
 
@@ -21,7 +21,7 @@ describe('AbstractInfoStrategy', () => {
     });
     it('should return null in case of error', async () => {
       when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['hlen']))
+        .calledWith(expect.arrayContaining(['hlen']))
         .mockRejectedValueOnce(new Error('some error'));
 
       expect(await strategy.getLengthSafe(client, mockKey)).toEqual(null);

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { omit } from 'lodash';
 import { ClientMetadata } from 'src/common/models';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { CommandExecution } from 'src/modules/workbench/models/command-execution';
-import { CreateCommandExecutionDto, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { CommandExecution, ResultsMode } from 'src/modules/workbench/models/command-execution';
+import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { getBlockingCommands, multilineCommandToOneLine } from 'src/utils/cli-helper';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -12,6 +12,7 @@ import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
+import { CommandExecutionFilter } from 'src/modules/workbench/models/command-executions.filter';
 import { getUnsupportedCommands } from './utils/getUnsupportedCommands';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
@@ -160,9 +161,13 @@ export class WorkbenchService {
    * Get list command execution history per instance (last 30 items)
    *
    * @param clientMetadata
+   * @param filter
    */
-  async listCommandExecutions(clientMetadata: ClientMetadata): Promise<ShortCommandExecution[]> {
-    return this.commandExecutionRepository.getList(clientMetadata.sessionMetadata, clientMetadata.databaseId);
+  async listCommandExecutions(
+    clientMetadata: ClientMetadata,
+    filter: CommandExecutionFilter,
+  ): Promise<ShortCommandExecution[]> {
+    return this.commandExecutionRepository.getList(clientMetadata.sessionMetadata, clientMetadata.databaseId, filter);
   }
 
   /**
@@ -190,9 +195,10 @@ export class WorkbenchService {
    * Delete command executions by databaseId
    *
    * @param clientMetadata
+   * @param filter
    */
-  async deleteCommandExecutions(clientMetadata: ClientMetadata): Promise<void> {
-    await this.commandExecutionRepository.deleteAll(clientMetadata.sessionMetadata, clientMetadata.databaseId);
+  async deleteCommandExecutions(clientMetadata: ClientMetadata, filter: CommandExecutionFilter): Promise<void> {
+    await this.commandExecutionRepository.deleteAll(clientMetadata.sessionMetadata, clientMetadata.databaseId, filter);
   }
 
   /**

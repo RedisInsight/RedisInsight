@@ -11,6 +11,8 @@ import { catchAclError } from 'src/utils';
 import { ClientMetadata } from 'src/common/models';
 import {
   CreateRedisearchIndexDto,
+  IndexInfoDto,
+  IndexInfoRequestBodyDto,
   ListRedisearchIndexesResponse,
   SearchRedisearchDto,
 } from 'src/modules/browser/redisearch/dto';
@@ -28,6 +30,7 @@ import {
   RedisClientConnectionType,
   RedisClientNodeRole,
 } from 'src/modules/redis/client';
+import { convertIndexInfoReply } from '../utils/redisIndexInfo';
 
 @Injectable()
 export class RedisearchService {
@@ -134,6 +137,38 @@ export class RedisearchService {
       return undefined;
     } catch (e) {
       this.logger.error('Failed to create redisearch index', e);
+      throw catchAclError(e);
+    }
+  }
+
+  /**
+   * Gets the info of a given index
+   * @param clientMetadata
+   * @param dto
+   */
+  public async getInfo(
+    clientMetadata: ClientMetadata,
+    dto: IndexInfoRequestBodyDto,
+  ): Promise<IndexInfoDto> {
+    this.logger.log('Getting index info');
+
+    try {
+      const { index } = dto;
+
+      if (!index) {
+        throw new Error('Index was not provided');
+      }
+
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      const infoReply = await client.sendCommand(
+        ['FT.INFO', index],
+        { replyEncoding: 'utf8' },
+      ) as string[][];
+
+      return plainToClass(IndexInfoDto, convertIndexInfoReply(infoReply));
+    } catch (e) {
+      this.logger.error('Failed to get index info', e);
       throw catchAclError(e);
     }
   }

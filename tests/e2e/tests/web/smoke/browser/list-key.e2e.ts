@@ -32,12 +32,11 @@ test('Verify that user can select remove List element position: from tail', asyn
     keyName = Common.generateWord(10);
     await browserPage.addListKey(keyName, keyTTL);
     // Add few elements to the List key
-    await browserPage.addElementToList(element);
+    await browserPage.addElementToList([element]);
     // Verify that user can add element to List
     await t.expect(browserPage.listElementsList.withExactText(element).exists).ok('The list element not added', { timeout: 10000 });
 
-    await browserPage.addElementToList(element2);
-    await browserPage.addElementToList(element3);
+    await browserPage.addElementToList([element2,element3]);
     // Remove element from the key
     await browserPage.removeListElementFromTail('1');
     // Check the notification message
@@ -48,10 +47,9 @@ test('Verify that user can select remove List element position: from tail', asyn
 });
 test('Verify that user can select remove List element position: from head', async t => {
     keyName = Common.generateWord(10);
-    await browserPage.addListKey(keyName, keyTTL, element);
+    await browserPage.addListKey(keyName, keyTTL, [element]);
     // Add few elements to the List key
-    await browserPage.addElementToList(element2);
-    await browserPage.addElementToList(element3);
+    await browserPage.addElementToList([element2,element3]);
     // Remove element from the key
     await browserPage.removeListElementFromHead('1');
     // Check the notification message

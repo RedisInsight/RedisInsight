@@ -108,17 +108,17 @@ describe('LocalDatabaseRepository', () => {
     repository.update.mockResolvedValue(mockDatabaseEntity);
 
     when(encryptionService.decrypt)
-      .calledWith(mockDatabasePasswordEncrypted, jasmine.anything())
+      .calledWith(mockDatabasePasswordEncrypted, expect.anything())
       .mockResolvedValue(mockDatabasePasswordPlain)
-      .calledWith(mockDatabaseSentinelMasterPasswordEncrypted, jasmine.anything())
+      .calledWith(mockDatabaseSentinelMasterPasswordEncrypted, expect.anything())
       .mockResolvedValue(mockDatabaseSentinelMasterPasswordPlain)
-      .calledWith(mockSshOptionsUsernameEncrypted, jasmine.anything())
+      .calledWith(mockSshOptionsUsernameEncrypted, expect.anything())
       .mockResolvedValue(mockSshOptionsUsernamePlain)
-      .calledWith(mockSshOptionsPasswordEncrypted, jasmine.anything())
+      .calledWith(mockSshOptionsPasswordEncrypted, expect.anything())
       .mockResolvedValue(mockSshOptionsPasswordPlain)
-      .calledWith(mockSshOptionsPrivateKeyEncrypted, jasmine.anything())
+      .calledWith(mockSshOptionsPrivateKeyEncrypted, expect.anything())
       .mockResolvedValue(mockSshOptionsPrivateKeyPlain)
-      .calledWith(mockSshOptionsPassphraseEncrypted, jasmine.anything())
+      .calledWith(mockSshOptionsPassphraseEncrypted, expect.anything())
       .mockResolvedValue(mockSshOptionsPassphrasePlain);
     when(encryptionService.encrypt)
       .calledWith(mockDatabasePasswordPlain)

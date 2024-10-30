@@ -1,0 +1,14 @@
+name: Pull request created
+
+on:
+  pull_request_target:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  assign-author:
+    runs-on: ubuntu-latest
+    name: Assign author pr
+    steps:
+      - uses: toshimaru/auto-author-assign@v2.1.1

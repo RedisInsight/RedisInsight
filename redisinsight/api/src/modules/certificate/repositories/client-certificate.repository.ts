@@ -24,5 +24,5 @@ export abstract class ClientCertificateRepository {
    * @param id
    * @throws NotFoundException in case when try to delete not existing cert (?)
    */
-  abstract delete(id: string): Promise<void>;
+  abstract delete(id: string): Promise<{ affectedDatabases: string[] }>;
 }

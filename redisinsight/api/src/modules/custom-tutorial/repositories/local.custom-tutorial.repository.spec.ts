@@ -71,7 +71,7 @@ describe('LocalCustomTutorialRepository', () => {
       expect(result).toEqual(mockCustomTutorial);
       expect(repository.save).toHaveBeenCalledWith({
         ...mockCustomTutorialEntity,
-        createdAt: jasmine.anything(),
+        createdAt: expect.anything(),
       });
     });
   });

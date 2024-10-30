@@ -11,7 +11,7 @@ describe('StreamInfoStrategy', () => {
 
   beforeEach(async () => {
     when(client.sendCommand)
-      .calledWith(jasmine.arrayContaining(['xlen']))
+      .calledWith(expect.arrayContaining(['xlen']))
       .mockResolvedValue(mockRedisResponse);
   });
 

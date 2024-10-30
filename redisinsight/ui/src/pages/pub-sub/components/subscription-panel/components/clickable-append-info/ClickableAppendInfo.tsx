@@ -26,6 +26,7 @@ const ClickableAppendInfo = () => {
         />
     )}
       isOpen={open}
+      closePopover={() => setOpen(false)}
       panelClassName={styles.popover}
       anchorClassName={styles.infoIcon}
       panelPaddingSize="s"
@@ -35,6 +36,8 @@ const ClickableAppendInfo = () => {
         color="subdued"
         size="s"
       >
+        Subscribe to one or more channels or patterns by entering them, separated by spaces.
+        <br />
         Supported glob-style patterns are described&nbsp;
         <EuiLink
           external={false}

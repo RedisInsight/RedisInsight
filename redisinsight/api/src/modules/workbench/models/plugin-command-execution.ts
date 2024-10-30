@@ -3,9 +3,4 @@ import { OmitType, PartialType } from '@nestjs/swagger';
 
 export class PluginCommandExecution extends PartialType(
   OmitType(CommandExecution, ['createdAt', 'id'] as const),
-) {
-  constructor(partial: Partial<PluginCommandExecution>) {
-    super();
-    Object.assign(this, partial);
-  }
-}
+) {}

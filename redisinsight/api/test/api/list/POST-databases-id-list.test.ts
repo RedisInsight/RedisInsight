@@ -10,6 +10,7 @@ import {
   validateInvalidDataTestCase,
   validateApiCall, getMainCheckFn,
 } from '../deps';
+import { ListElementDestination } from 'src/modules/browser/list/dto';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
@@ -193,6 +194,7 @@ describe('POST /databases/:databases/list', () => {
           data: {
             keyName: constants.getRandomString(),
             elements: [constants.TEST_LIST_ELEMENT_1],
+            destination: ListElementDestination.Head,
           },
           statusCode: 201,
         },
@@ -202,6 +204,7 @@ describe('POST /databases/:databases/list', () => {
           data: {
             keyName: constants.getRandomString(),
             elements: [constants.getRandomString()],
+            destination: ListElementDestination.Head,
           },
           statusCode: 403,
           responseBody: {
@@ -216,6 +219,7 @@ describe('POST /databases/:databases/list', () => {
           data: {
             keyName: constants.getRandomString(),
             elements: [constants.getRandomString()],
+            destination: ListElementDestination.Head,
           },
           statusCode: 403,
           responseBody: {

@@ -17,13 +17,10 @@ export class DatabaseAnalysisEntity {
   @Expose()
   databaseId: string;
 
-  @ManyToOne(
-    () => DatabaseEntity,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => DatabaseEntity, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'databaseId' })
   database: DatabaseEntity;
 
@@ -52,62 +49,74 @@ export class DatabaseAnalysisEntity {
   totalMemory: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((str) => {
-    try {
-      return JSON.parse(str).map((value) => ({
-        ...value,
-        nsp: Buffer.from(value.nsp),
-      }));
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(
+    (str) => {
+      try {
+        return JSON.parse(str).map((value) => ({
+          ...value,
+          nsp: Buffer.from(value.nsp),
+        }));
+      } catch (e) {
+        return undefined;
+      }
+    },
+    { toPlainOnly: true },
+  )
   @Expose()
   topKeysNsp: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((str) => {
-    try {
-      return JSON.parse(str).map((value) => ({
-        ...value,
-        nsp: Buffer.from(value.nsp),
-      }));
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(
+    (str) => {
+      try {
+        return JSON.parse(str).map((value) => ({
+          ...value,
+          nsp: Buffer.from(value.nsp),
+        }));
+      } catch (e) {
+        return undefined;
+      }
+    },
+    { toPlainOnly: true },
+  )
   @Expose()
   topMemoryNsp: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((str) => {
-    try {
-      return JSON.parse(str).map((value) => ({
-        ...value,
-        name: Buffer.from(value.name),
-      }));
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(
+    (str) => {
+      try {
+        return JSON.parse(str).map((value) => ({
+          ...value,
+          name: Buffer.from(value.name),
+        }));
+      } catch (e) {
+        return undefined;
+      }
+    },
+    { toPlainOnly: true },
+  )
   @Expose()
   topKeysLength: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((str) => {
-    try {
-      return JSON.parse(str).map((value) => ({
-        ...value,
-        name: Buffer.from(value.name),
-      }));
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(
+    (str) => {
+      try {
+        return JSON.parse(str).map((value) => ({
+          ...value,
+          name: Buffer.from(value.name),
+        }));
+      } catch (e) {
+        return undefined;
+      }
+    },
+    { toPlainOnly: true },
+  )
   @Expose()
   topKeysMemory: string;
 

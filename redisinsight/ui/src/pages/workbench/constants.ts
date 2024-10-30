@@ -67,3 +67,41 @@ export enum ModuleCommandPrefix {
   TOPK = 'TOPK.',
   TDIGEST = 'TDIGEST.',
 }
+
+export const COMMANDS_TO_GET_INDEX_INFO = [
+  'FT.SEARCH',
+  'FT.AGGREGATE',
+  'FT.EXPLAIN',
+  'FT.EXPLAINCLI',
+  'FT.PROFILE',
+  'FT.SPELLCHECK',
+  'FT.TAGVALS',
+  'FT.ALTER'
+]
+
+export const COMMANDS_WITHOUT_INDEX_PROPOSE = [
+  'FT.CREATE'
+]
+
+export const COMPOSITE_ARGS = [
+  'LOAD *',
+]
+
+export enum DefinedArgumentName {
+  index = 'index',
+  query = 'query',
+  field = 'field',
+  expression = 'expression'
+}
+
+export const FIELD_START_SYMBOL = '@'
+export enum EmptySuggestionsIds {
+  NoIndexes = 'no-indexes'
+}
+
+export const SORTED_SEARCH_COMMANDS = [
+  'FT.SEARCH',
+  'FT.CREATE',
+  'FT.EXPLAIN',
+  'FT.PROFILE'
+]

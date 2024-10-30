@@ -62,6 +62,7 @@ test('Verify that user can see link to Workbench under word “Workbench” in t
 
         // Add key and verify Workbench link
         await browserPage.Cli.sendCommandInCli(commands[i]);
+        await t.click(browserPage.NavigationPanel.browserButton);
         await browserPage.searchByKeyName(keyName);
         await t.click(browserPage.keyNameInTheList);
         await t.click(browserPage.internalLinkToWorkbench);

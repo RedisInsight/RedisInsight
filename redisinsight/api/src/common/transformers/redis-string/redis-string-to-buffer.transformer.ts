@@ -2,7 +2,7 @@ import { isArray } from 'lodash';
 import { RedisStringTransformOptions } from 'src/common/constants';
 import { Transform } from 'class-transformer';
 
-const SingleRedisStringToBuffer = (value: any) => {
+const SingleRedisStringToBuffer = (value) => {
   if (value instanceof Buffer) {
     return value;
   }
@@ -10,7 +10,7 @@ const SingleRedisStringToBuffer = (value: any) => {
   return Buffer.from(value);
 };
 
-const ArrayRedisStringToBuffer = (value: any) => {
+const ArrayRedisStringToBuffer = (value) => {
   if (isArray(value)) {
     return value.map(SingleRedisStringToBuffer);
   }

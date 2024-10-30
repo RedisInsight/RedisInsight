@@ -79,14 +79,11 @@ describe('TemplateForm', () => {
   it('should display db type select when source is "config"', () => {
     render(<TemplateForm {...instance(mockedProps)} source={RdiPipelineTabs.Config} />)
 
-    expect(screen.getByTestId('pipeline-type-select')).toBeInTheDocument()
     expect(screen.getByTestId('db-type-select')).toBeInTheDocument()
   })
 
   it('should not render db type select when source is "jobs"', () => {
     render(<TemplateForm {...instance(mockedProps)} source={RdiPipelineTabs.Jobs} />)
-
-    expect(screen.getByTestId('pipeline-type-select')).toBeInTheDocument()
 
     const dbTypeSelect = screen.queryByTestId('db-type-select')
 
@@ -96,7 +93,6 @@ describe('TemplateForm', () => {
   it('should select "No template" value', () => {
     render(<TemplateForm {...instance(mockedProps)} source={RdiPipelineTabs.Config} />)
 
-    expect(screen.getByTestId('pipeline-type-select')).toHaveTextContent(NO_TEMPLATE_LABEL)
     expect(screen.getByTestId('db-type-select')).toHaveTextContent(NO_TEMPLATE_LABEL)
   })
 

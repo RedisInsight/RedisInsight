@@ -80,29 +80,24 @@ test('Verify that user can add, edit and delete job', async() => {
 test('Verify that user insert template for jobs', async() => {
     const jobName = 'testJob';
     const disabledAttribute = 'isDisabled';
-    const defaultValue = 'ingest';
     const templateWords = 'server_name: chinook';
-    // should be empty config
+    const templateInsertedTooltip = 'Templates can be accessed only with the empty Editor to prevent potential data loss.';
+    // Should be empty config
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
 
     await rdiInstancePage.PipelineManagementPanel.openJobByName(jobName);
-    await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
-    const buttonClass = rdiInstancePage.templateApplyButton.getAttribute('class');
-    await t.expect(buttonClass).notContains(disabledAttribute, 'Apply button is disabled');
-    await t.click(rdiInstancePage.templateCancelButton);
-    await t.expect(rdiInstancePage.templateApplyButton.exists).notOk('the template popover is not closed');
-
     await t.click(rdiInstancePage.templateButton);
-    await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
-    await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql(defaultValue, 'the default value is set incorrectly');
-    await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.Ingest);
 
-    //verify uniq templates words - should be undated when templates are added
+    // Verify uniq templates words - should be undated when templates are added
     const enteredText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
+    // Verify that user can see the template is inserted for the empty editor when clicking on the “Insert template” in jobs
     await t.expect(enteredText).contains(templateWords, 'template is incorrect');
 
-    await t.click(rdiInstancePage.templateButton);
-    await t.expect(buttonClass).contains(disabledAttribute, 'Apply button is active');
+    // Verify that user can see a standard validation on disabled Insert template button when the editor is not empty
+    await t.hover(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
+    await rdiInstancePage.verifyTooltipContainsText(templateInsertedTooltip);
+    const buttonClass = rdiInstancePage.templateButton.getAttribute('class');
+    await t.expect(buttonClass).contains(disabledAttribute, 'Insert Template button is not disabled');
 });
 test('Verify that user can change job config', async() => {
     const jobName = 'testJob';

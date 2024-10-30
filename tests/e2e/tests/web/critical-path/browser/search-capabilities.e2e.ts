@@ -280,9 +280,8 @@ test
         await t.click(browserPage.getKeySelectorByName(keyName));
 
         // Verify that Redisearch context (inputs, key selected, scroll, key details) saved after switching between pages
-        await t
-            .click(myRedisDatabasePage.NavigationPanel.workbenchButton)
-            .click(myRedisDatabasePage.NavigationPanel.browserButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.browserButton);
         await verifyContext();
 
         // Verify that Redisearch context saved when switching between browser/tree view

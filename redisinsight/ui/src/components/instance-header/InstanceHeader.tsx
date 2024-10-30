@@ -27,7 +27,6 @@ import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/Database
 import { resetKeyInfo } from 'uiSrc/slices/browser/keys'
 
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -50,11 +49,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const { server } = useSelector(appInfoSelector)
   const { disabled: isDbIndexDisabled } = useSelector(appContextDbIndex)
   const { databases = 0 } = useSelector(connectedInstanceInfoSelector)
-  const {
-    [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  const { [FeatureFlags.databaseChat]: databaseChatFeature } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const history = useHistory()
   const [dbIndex, setDbIndex] = useState<string>(String(db || 0))
@@ -204,7 +199,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
           <DatabaseOverviewWrapper />
         </EuiFlexItem>
 
-        {isAnyChatAvailable && (
+        {databaseChatFeature?.flag && (
           <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
             <CopilotTrigger />
           </EuiFlexItem>

@@ -132,8 +132,7 @@ enum ApiEndpoints {
   CLOUD_ME_AUTODISCOVERY_DATABASES = 'cloud/me/autodiscovery/databases',
   CLOUD_CAPI_KEYS = 'cloud/me/capi-keys',
 
-  AI_ASSISTANT_CHATS = 'ai/assistant/chats',
-  AI_EXPERT = 'ai/expert',
+  AI_CHAT = 'ai',
 
   ANALYTICS_SEND_EVENT = 'analytics/send-event',
   ANALYTICS_SEND_PAGE = 'analytics/send-page',
@@ -158,6 +157,11 @@ export enum CustomHeaders {
   DbIndex = 'ri-db-index',
   WindowId = 'x-window-id',
   CsrfToken = 'X-CSRF-Token',
+}
+
+export enum AiChatPath {
+  Agreements = 'agreements',
+  Messages = 'messages'
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

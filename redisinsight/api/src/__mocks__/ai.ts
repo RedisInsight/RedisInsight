@@ -1,12 +1,18 @@
-import { AiChat, AiChatMessage, AiChatMessageType } from 'src/modules/ai/chat/models';
+import {
+  AiMessage, AiMessageType, AiIntermediateStep, AiIntermediateStepType,
+} from 'src/modules/ai/messages/models';
 import { Readable } from 'stream';
 import * as MockSocket from 'socket.io-mock';
 import { AxiosError } from 'axios';
-import { SendAiChatMessageDto } from 'src/modules/ai/chat/dto/send.ai-chat.message.dto';
+import { AiMessageDto } from 'src/modules/ai/messages/dto/send.ai.message.dto';
 import { mockCloudSession } from 'src/__mocks__/cloud-session';
-import { AiQueryIntermediateStep, AiQueryIntermediateStepType, AiQueryMessage } from 'src/modules/ai/query/models';
-import { AiQueryMessageEntity } from 'src/modules/ai/query/entities/ai-query.message.entity';
+import { AiMessageEntity } from 'src/modules/ai/messages/entities/ai.message.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
+import { AiModule } from 'src/modules/ai/ai.module';
+import { AiAgreementEntity } from 'src/modules/ai/agreements/entities/ai.agreement.entity';
+import { AiAgreement } from 'src/modules/ai/agreements/models/ai.agreement';
+import { AiDatabaseAgreementEntity } from 'src/modules/ai/agreements/entities/ai.database.agreement.entity';
+import { AiDatabaseAgreement } from 'src/modules/ai/agreements/models/ai.database.agreement';
 
 export const mockAiChatId = '0539879dc020add5abb33f6f60a07fe8d5a0b9d61c81c9d79d77f9b1b2f2e239';
 
@@ -46,21 +52,21 @@ export const mockAiChatInternalServerError = {
 } as AxiosError;
 
 export const mockHumanMessage1Response = {
-  type: AiChatMessageType.HumanMessage,
+  type: AiMessageType.HumanMessage,
   content: 'Question 1',
 };
 
 export const mockHumanMessage2Response = {
-  type: AiChatMessageType.HumanMessage,
+  type: AiMessageType.HumanMessage,
   content: 'Question 2',
 };
 
 export const mockAiMessage1Response = {
-  type: AiChatMessageType.AiMessage,
+  type: AiMessageType.AiMessage,
   content: 'Answer 1',
 };
 export const mockAiMessage2Response = {
-  type: AiChatMessageType.AiMessage,
+  type: AiMessageType.AiMessage,
   content: 'Answer 2',
 };
 
@@ -71,109 +77,109 @@ export const mockAiHistoryApiResponse = [
   mockAiMessage2Response,
 ];
 
-export const mockAiChat = Object.assign(new AiChat(), {
+export const mockAiChat = Object.assign(new AiModule(), {
   id: mockAiChatId,
   messages: [
-    Object.assign(new AiChatMessage(), mockHumanMessage1Response),
-    Object.assign(new AiChatMessage(), mockAiMessage1Response),
-    Object.assign(new AiChatMessage(), mockHumanMessage2Response),
-    Object.assign(new AiChatMessage(), mockAiMessage2Response),
+    Object.assign(new AiMessage(), mockHumanMessage1Response),
+    Object.assign(new AiMessage(), mockAiMessage1Response),
+    Object.assign(new AiMessage(), mockHumanMessage2Response),
+    Object.assign(new AiMessage(), mockAiMessage2Response),
   ],
 });
 export const getMockedReadableStream = () => new Readable();
 export const mockAiResponseStream = getMockedReadableStream();
 
-export const mockSendAiChatMessageDto = Object.assign(new SendAiChatMessageDto(), {
+export const mockSendAiChatMessageDto = Object.assign(new AiMessageDto(), {
   content: mockHumanMessage1Response.content,
 });
 
-export const mockAiQueryConversationId = 'conversation-id-uuid';
-export const mockAiQueryDatabaseId = 'database-id-uuid';
-export const mockAiQueryAccountId = 'account-id';
+export const mockAiConversationId = 'conversation-id-uuid';
+export const mockAiDatabaseId = 'database-id-uuid';
+export const mockAiAccountId = 'account-id';
 
-export const mockAiQueryHumanMessage: AiQueryMessage = Object.assign(new AiQueryMessage(), {
+export const mockAiHumanMessage: AiMessage = Object.assign(new AiMessage(), {
   id: 'uuid-for-human-message-1',
-  type: AiChatMessageType.HumanMessage,
+  type: AiMessageType.HumanMessage,
   content: 'human message 1',
-  conversationId: mockAiQueryConversationId,
-  databaseId: mockAiQueryDatabaseId,
-  accountId: mockAiQueryAccountId,
+  conversationId: mockAiConversationId,
+  databaseId: mockAiDatabaseId,
+  accountId: mockAiAccountId,
 });
 
-export const mockAiQueryHumanMessageEntity: AiQueryMessageEntity = Object.assign(new AiQueryMessageEntity(), {
-  ...mockAiQueryHumanMessage,
+export const mockAiHumanMessageEntity: AiMessageEntity = Object.assign(new AiMessageEntity(), {
+  ...mockAiHumanMessage,
   content: 'human message 1 ENCRYPTED',
   encryption: EncryptionStrategy.KEYTAR,
 });
 
-export const mockAiQueryHumanMessage2: AiQueryMessage = Object.assign(new AiQueryMessage(), {
+export const mockAiHumanMessage2: AiMessage = Object.assign(new AiMessage(), {
   id: 'uuid-for-human-message-2',
-  type: AiChatMessageType.HumanMessage,
+  type: AiMessageType.HumanMessage,
   content: 'human message 2',
-  conversationId: mockAiQueryConversationId,
-  databaseId: mockAiQueryDatabaseId,
-  accountId: mockAiQueryAccountId,
+  conversationId: mockAiConversationId,
+  databaseId: mockAiDatabaseId,
+  accountId: mockAiAccountId,
 });
 
-export const mockAiQueryHumanMessageEntity2: AiQueryMessageEntity = Object.assign(new AiQueryMessageEntity(), {
-  ...mockAiQueryHumanMessage2,
+export const mockAiHumanMessageEntity2: AiMessageEntity = Object.assign(new AiMessageEntity(), {
+  ...mockAiHumanMessage2,
   content: 'human message 2',
   encryption: EncryptionStrategy.PLAIN,
 });
 
-export const mockAiQueryAiIntermediateStep: AiQueryIntermediateStep = Object.assign(new AiQueryIntermediateStep(), {
-  type: AiQueryIntermediateStepType.TOOL,
+export const mockAiAiIntermediateStep: AiIntermediateStep = Object.assign(new AiIntermediateStep(), {
+  type: AiIntermediateStepType.TOOL,
   data: 'intermediate tool 1',
 });
 
-export const mockAiQueryAiIntermediateStep2: AiQueryIntermediateStep = Object.assign(new AiQueryIntermediateStep(), {
-  type: AiQueryIntermediateStepType.TOOL_CALL,
+export const mockAiAiIntermediateStep2: AiIntermediateStep = Object.assign(new AiIntermediateStep(), {
+  type: AiIntermediateStepType.TOOL_CALL,
   data: 'intermediate tool call 2',
 });
 
-export const mockAiQueryAiResponse: AiQueryMessage = Object.assign(new AiQueryMessage(), {
+export const mockAiAiResponse: AiMessage = Object.assign(new AiMessage(), {
   id: 'uuid-for-ai-response-1',
-  type: AiChatMessageType.AiMessage,
+  type: AiMessageType.AiMessage,
   content: 'ai response 1',
   steps: [
-    mockAiQueryAiIntermediateStep,
-    mockAiQueryAiIntermediateStep2,
+    mockAiAiIntermediateStep,
+    mockAiAiIntermediateStep2,
   ],
-  conversationId: mockAiQueryConversationId,
-  databaseId: mockAiQueryDatabaseId,
-  accountId: mockAiQueryAccountId,
+  conversationId: mockAiConversationId,
+  databaseId: mockAiDatabaseId,
+  accountId: mockAiAccountId,
 });
 
-export const mockAiQueryAiResponseEntity: AiQueryMessageEntity = Object.assign(new AiQueryMessageEntity(), {
-  ...mockAiQueryAiResponse,
+export const mockAiAiResponseEntity: AiMessageEntity = Object.assign(new AiMessageEntity(), {
+  ...mockAiAiResponse,
   content: 'ai response 1 ENCRYPTED',
   encryption: EncryptionStrategy.KEYTAR,
 });
 
-export const mockAiQueryAiResponse2: AiQueryMessage = Object.assign(new AiQueryMessage(), {
+export const mockAiAiResponse2: AiMessage = Object.assign(new AiMessage(), {
   id: 'uuid-for-ai-response-2',
-  type: AiChatMessageType.AiMessage,
+  type: AiMessageType.AiMessage,
   content: 'ai response 2',
   steps: [],
-  conversationId: mockAiQueryConversationId,
-  databaseId: mockAiQueryDatabaseId,
-  accountId: mockAiQueryAccountId,
+  conversationId: mockAiConversationId,
+  databaseId: mockAiDatabaseId,
+  accountId: mockAiAccountId,
 });
 
-export const mockAiQueryAiResponseEntity2: AiQueryMessageEntity = Object.assign(new AiQueryMessageEntity(), {
-  ...mockAiQueryAiResponse2,
+export const mockAiAiResponseEntity2: AiMessageEntity = Object.assign(new AiMessageEntity(), {
+  ...mockAiAiResponse2,
   content: 'ai response 2',
   encryption: EncryptionStrategy.PLAIN,
   steps: '[]',
 });
 
-export const mockAiQueryHistory = [mockAiQueryHumanMessage, mockAiQueryAiResponse];
+export const mockAiHistory = [mockAiHumanMessage, mockAiAiResponse];
 
-export const mockAiQueryIndex = 'idx:bicycle';
+export const mockAiIndex = 'idx:bicycle';
 
-export const mockAiQueryIndexInfoReply = [
+export const mockAiIndexInfoReply = [
   'index_name',
-  mockAiQueryIndex,
+  mockAiIndex,
   'index_options',
   [],
   'index_definition',
@@ -282,8 +288,8 @@ export const mockAiQueryIndexInfoReply = [
   ],
 ];
 
-export const mockAiQueryIndexInfoObject = {
-  index_name: mockAiQueryIndex,
+export const mockAiIndexInfoObject = {
+  index_name: mockAiIndex,
   index_options: [],
   index_definition: { key_type: 'JSON', prefixes: ['bicycle:'], default_score: '1' },
   attributes: [
@@ -351,7 +357,7 @@ export const mockAiQueryIndexInfoObject = {
   ],
 };
 
-export const mockAiQuerySchema = {
+export const mockAiSchema = {
   $schema: 'http://json-schema.org/draft-06/schema#',
   $ref: '#/definitions/IdxBicycle',
   definitions: {
@@ -373,7 +379,7 @@ export const mockAiQuerySchema = {
   },
 };
 
-export const mockAiQuerySchemaForHash = {
+export const mockAiSchemaForHash = {
   $schema: 'http://json-schema.org/draft-06/schema#',
   $ref: '#/definitions/IdxBicycle',
   definitions: {
@@ -395,31 +401,31 @@ export const mockAiQuerySchemaForHash = {
   },
 };
 
-export const mockAiQueryGetDescriptionTopValuesReply = [
+export const mockAiGetDescriptionTopValuesReply = [
   '3',
   ['1', 'The Freedom offers eco-friendly mobility without compromising on style and performance!'],
   ['1', 'The Explorer conquers rugged trails and mountain peaks with confidence and agility!'],
   ['1', 'The Pioneer leads the way through challenging trails and rocky terrain with confidence!'],
 ];
 
-export const mockAiQueryGetPriceTopValuesReply = [
+export const mockAiGetPriceTopValuesReply = [
   '3',
   ['1', '320'],
   ['1', '329'],
   ['1', '380'],
 ];
 
-export const mockAiQueryGetTypeTopValuesReply = [
+export const mockAiGetTypeTopValuesReply = [
   '3',
   ['1', 'Mountain'],
   ['1', 'City'],
   ['1', 'Kids'],
 ];
 
-export const mockAiQueryIndexContext = {
-  index_name: mockAiQueryIndex,
-  create_statement: `FT.CREATE ${mockAiQueryIndex} ON JSON PREFIX 1 bicycle: SCHEMA $.description AS description TEXT $.price AS price NUMERIC $.type AS type TAG`,
-  documents_schema: mockAiQuerySchema,
+export const mockAiIndexContext = {
+  index_name: mockAiIndex,
+  create_statement: `FT.CREATE ${mockAiIndex} ON JSON PREFIX 1 bicycle: SCHEMA $.description AS description TEXT $.price AS price NUMERIC $.type AS type TAG`,
+  documents_schema: mockAiSchema,
   documents_type: 'JSON',
   attributes: {
     description: {
@@ -466,9 +472,9 @@ export const mockAiQueryIndexContext = {
   },
 };
 
-export const mockAiQueryFullDbContext = {
-  [mockAiQueryIndex]: {
-    index_name: mockAiQueryIndex,
+export const mockAiFullDbContext = {
+  [mockAiIndex]: {
+    index_name: mockAiIndex,
     attributes: [
       {
         identifier: '$.description',
@@ -492,13 +498,13 @@ export const mockAiQueryFullDbContext = {
   },
 };
 
-export const mockAiQueryJsonReply = JSON.stringify({
+export const mockAiJsonReply = JSON.stringify({
   price: 490,
   type: 'Touring',
   description: 'The Wanderer takes you on epic adventures across varied landscapes with comfort and endurance!',
 });
 
-export const mockAiQueryHScanReply = [
+export const mockAiHScanReply = [
   0,
   [
     'price', '490',
@@ -507,13 +513,13 @@ export const mockAiQueryHScanReply = [
   ],
 ];
 
-export const mockAiQueryAuth = {
+export const mockAiAuth = {
   accountId: mockCloudSession.user.currentAccountId,
   csrf: mockCloudSession.csrf,
   sessionId: mockCloudSession.apiSessionId,
 };
 
-export const mockAiQuerySocket = new MockSocket();
+export const mockAiSocket = new MockSocket();
 
 export const mockConvAiProvider = jest.fn(() => ({
   auth: jest.fn().mockResolvedValue(mockAiChatId),
@@ -522,24 +528,57 @@ export const mockConvAiProvider = jest.fn(() => ({
   reset: jest.fn(),
 }));
 
-export const mockAiQueryProvider = jest.fn(() => ({
-  getSocket: jest.fn().mockResolvedValue(mockAiQuerySocket.socketClient),
+export const mockAiMessageProvider = jest.fn(() => ({
+  getSocket: jest.fn().mockResolvedValue(mockAiSocket.socketClient),
 }));
 
-export const mockAiQueryAuthProvider = jest.fn(() => ({
-  getAuthData: jest.fn().mockResolvedValue(mockAiQueryAuth),
+export const mockAiAuthProvider = jest.fn(() => ({
+  getAuthData: jest.fn().mockResolvedValue(mockAiAuth),
 }));
 
-export const mockAiQueryMessageRepository = jest.fn(() => ({
-  list: jest.fn().mockResolvedValue(mockAiQueryHistory),
+export const mockAiMessageRepository = jest.fn(() => ({
+  list: jest.fn().mockResolvedValue(mockAiHistory),
   createMany: jest.fn(),
   clearHistory: jest.fn(),
 }));
 
-export const mockAiQueryContextRepository = jest.fn(() => ({
-  getFullDbContext: jest.fn().mockResolvedValue(mockAiQueryFullDbContext),
-  setFullDbContext: jest.fn().mockResolvedValue(mockAiQueryFullDbContext),
-  getIndexContext: jest.fn().mockResolvedValue(mockAiQueryIndexContext),
-  setIndexContext: jest.fn().mockResolvedValue(mockAiQueryIndexContext),
+export const mockAiContextRepository = jest.fn(() => ({
+  getFullDbContext: jest.fn().mockResolvedValue(mockAiFullDbContext),
+  setFullDbContext: jest.fn().mockResolvedValue(mockAiFullDbContext),
+  getIndexContext: jest.fn().mockResolvedValue(mockAiIndexContext),
+  setIndexContext: jest.fn().mockResolvedValue(mockAiIndexContext),
   reset: jest.fn(),
+}));
+
+export const mockAiAgreementEntity = Object.assign(new AiAgreementEntity(), {
+  accountId: mockAiAccountId,
+  consent: true,
+});
+
+export const mockAiDatabaseAgreementEntity = Object.assign(new AiDatabaseAgreementEntity(), {
+  databaseId: mockAiDatabaseId,
+  accountId: mockAiAccountId,
+  dataConsent: true,
+});
+
+export const mockAiAgreement = Object.assign(new AiAgreement(), mockAiAgreementEntity);
+
+export const mockAiDatabaseAgreement = Object.assign(new AiDatabaseAgreement(), mockAiDatabaseAgreementEntity);
+
+export const mockAiAgreementRepository = jest.fn(() => ({
+  get: jest.fn().mockResolvedValue(mockAiAgreement),
+  save: jest.fn().mockResolvedValue(mockAiAgreement),
+}));
+
+export const mockAiDatabaseAgreementRepository = jest.fn(() => ({
+  get: jest.fn().mockResolvedValue(mockAiDatabaseAgreement),
+  save: jest.fn().mockResolvedValue(mockAiDatabaseAgreement),
+}));
+
+export const mockAiAgreementService = jest.fn(() => ({
+  getAiAgreement: jest.fn().mockResolvedValue(mockAiAgreement),
+}));
+
+export const mockAiDatabaseAgreementService = jest.fn(() => ({
+  getAiDatabaseAgreement: jest.fn().mockResolvedValue(mockAiDatabaseAgreement),
 }));

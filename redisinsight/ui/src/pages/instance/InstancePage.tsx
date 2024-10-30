@@ -23,6 +23,7 @@ import { localStorageService } from 'uiSrc/services'
 import { InstancePageTemplate } from 'uiSrc/templates'
 import { getPageName } from 'uiSrc/utils/routing'
 import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slices/rdi/instances'
+import { loadPluginsAction } from 'uiSrc/slices/app/plugins'
 import InstancePageRouter from './InstancePageRouter'
 
 export interface Props {
@@ -40,6 +41,10 @@ const InstancePage = ({ routes = [] }: Props) => {
   const { contextInstanceId } = useSelector(appContextSelector)
 
   const lastPageRef = useRef<string>()
+
+  useEffect(() => {
+    dispatch(loadPluginsAction())
+  }, [])
 
   useEffect(() => {
     dispatch(fetchConnectedInstanceAction(connectionInstanceId, () => {

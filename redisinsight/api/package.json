@@ -123,6 +123,7 @@
     "eslint-plugin-sonarjs": "^0.9.1",
     "ioredis-mock": "^8.2.2",
     "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
     "jest-when": "^3.2.1",
     "joi": "^17.4.0",
     "mocha": "^8.4.0",
@@ -167,6 +168,21 @@
       "src/(.*)": "<rootDir>/$1",
       "apiSrc/(.*)": "<rootDir>/$1",
       "tests/(.*)": "<rootDir>/__tests__/$1"
-    }
+    },
+    "reporters": [
+      "default",
+      [
+        "jest-junit",
+        {
+          "outputDirectory": "reports",
+          "outputName": "jest-junit.xml",
+          "ancestorSeparator": " › ",
+          "uniqueOutputName": "false",
+          "suiteNameTemplate": "{filepath}",
+          "classNameTemplate": "{classname}",
+          "titleTemplate": "{title}"
+        }
+      ]
+    ]
   }
 }

@@ -1,0 +1,176 @@
+name: Integration tests
+on:
+  workflow_call:
+    inputs:
+      build:
+        description: Backend build to run tests over
+        type: string
+        default: 'local'
+      redis_client:
+        description: Library to use for redis connection
+        type: string
+        default: 'ioredis'
+      report:
+        description:  Send report for test run to slack
+        type: boolean
+        default: false
+      short_rte_list:
+        description: Use short rte list
+        type: boolean
+        default: false
+
+env:
+  SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+  TEST_MEDIUM_DB_DUMP: ${{ secrets.TEST_MEDIUM_DB_DUMP }}
+  TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
+  ITESTS_NAMES: |
+    {
+      "oss-st-5": "OSS Standalone v5",
+      "oss-st-5-pass": "OSS Standalone v5 with admin pass required",
+      "oss-st-6": "OSS Standalone v6 and all modules",
+      "oss-st-big": "OSS Standalone v6 and all modules and predefined amount of data inside (~3-4M)",
+      "mods-preview": "OSS Standalone and all preview modules",
+      "oss-st-6-tls": "OSS Standalone v6 with TLS enabled",
+      "oss-st-6-tls-auth": "OSS Standalone v6 with TLS auth required",
+      "oss-clu": "OSS Cluster",
+      "oss-clu-tls": "OSS Cluster with TLS enabled",
+      "oss-sent": "OSS Sentinel",
+      "oss-sent-tls-auth": "OSS Sentinel with TLS auth",
+      "re-st": "Redis Enterprise with Standalone inside",
+      "re-clu": "Redis Enterprise with Cluster inside",
+      "re-crdt": "Redis Enterprise with active-active database inside"
+    }
+  ITESTS_NAMES_SHORT: |
+    {
+      "oss-st-5-pass": "OSS Standalone v5 with admin pass required",
+      "oss-st-6-tls-auth": "OSS Standalone v6 with TLS auth required",
+      "oss-clu-tls": "OSS Cluster with TLS enabled",
+      "re-crdt": "Redis Enterprise with active-active database inside",
+      "oss-sent-tls-auth": "OSS Sentinel with TLS auth"
+    }
+
+jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.parse-matrix.outputs.matrix }}
+    steps:
+    - name: Create JSON array for run-tests matrix
+      id: parse-matrix
+      run: |
+        # Extract the JSON object from the environment variable
+        MATRIX_JSON="$ITESTS_NAMES_SHORT"
+
+        if [ "${{ inputs.short_rte_list }}" == "false" ]; then
+          MATRIX_JSON="$ITESTS_NAMES"
+        fi
+
+        MATRIX_ARRAY=$(echo "$MATRIX_JSON" | jq -c 'keys')
+
+        # Output the formed JSON array for use in other jobs
+        echo "matrix=$MATRIX_ARRAY" >> $GITHUB_OUTPUT
+
+    - name: Verify the formed matrix array
+      run: |
+        echo "Formed matrix array:"
+        echo "${{ steps.parse-matrix.outputs.matrix }}"
+
+  run-tests:
+    name: ITest
+    runs-on: ubuntu-latest
+    needs: set-matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        rte: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download Docker Artifacts
+      if: inputs.build == 'docker'
+      uses: actions/download-artifact@v4
+      with:
+        name: docker
+        path: ./release
+
+    - name: Load built docker image from workspace
+      if: inputs.build == 'docker'
+      run: |
+        docker image load -i ./release/docker-linux-alpine.amd64.tar
+
+    - name: Run tests
+      run: |
+        if [ ${{ inputs.redis_client }} == "node-redis" ]; then
+          export RI_REDIS_CLIENTS_FORCE_STRATEGY=${{ inputs.redis_client }}
+        fi
+
+        ./redisinsight/api/test/test-runs/start-test-run.sh -r ${{ matrix.rte }} -t ${{ inputs.build }}
+        mkdir -p mkdir itest/coverages && mkdir -p itest/results
+
+        cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/${{ matrix.rte }}.result.json
+        cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml
+        cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/${{ matrix.rte }}.coverage.json
+
+    - name: Upload coverage files as artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverages-${{ matrix.rte }}
+        path: itest/coverages
+
+    - name: Send report to Slack
+      if: inputs.report && always()
+      run: |
+        ITEST_NAME=${{ matrix.rte }} node ./.github/itest-results.js
+        curl -H "Content-type: application/json" --data @itests.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+
+    - name: Generate test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: 'Test results: IT (${{ matrix.rte }}) tests'
+        path: itest/results/*.result.xml
+        reporter: jest-junit
+        list-tests: 'failed'
+        list-suites: 'failed'
+        fail-on-error: 'false'
+
+  coverage:
+    runs-on: ubuntu-latest
+    name: Final coverage
+    needs: run-tests
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Merge coverage artifacts
+      id: merge-artifacts
+      uses: actions/upload-artifact/merge@v4
+      with:
+        name: coverages-artifacts
+        pattern: coverages-*
+        delete-merged: true
+
+    - name: Download coverage artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: coverages-artifacts
+        path: ./coverages
+
+    - name: Calculate coverage across all tests runs
+      run: |
+        npx nyc report -t ./coverages -r text -r text-summary
+        sudo mkdir -p /usr/src/app
+        sudo cp -a ./redisinsight/api/. /usr/src/app/
+        sudo cp -R ./coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
+        cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
+
+    - name: Delete Artifact
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.actions.deleteArtifact({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            artifact_id: ${{ steps.merge-artifacts.outputs.artifact-id }}
+          });
+

@@ -69,6 +69,11 @@ export enum ResultsMode {
   GroupMode = 'GROUP_MODE',
 }
 
+export enum CommandExecutionType {
+  Workbench = 'WORKBENCH',
+  Search = 'SEARCH',
+}
+
 export interface ResultsSummary {
   total: number
   success: number

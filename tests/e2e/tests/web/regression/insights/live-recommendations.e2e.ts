@@ -246,7 +246,7 @@ test
         //Verify that user is navigated to DB Analysis page via Analyze button and new report is generated
         await t.click(memoryEfficiencyPage.selectedReport);
         await t.expect(memoryEfficiencyPage.reportItem.visible).ok('Database analysis page not opened');
-        await t.click(memoryEfficiencyPage.NavigationPanel.workbenchButton);
+        await t.click(memoryEfficiencyPage.NavigationPanel.browserButton);
         await workbenchPage.NavigationHeader.togglePanel(true);
         tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         await t.click(tab.analyzeDatabaseLink);
@@ -263,6 +263,7 @@ test
         await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify that key name is displayed for Insights and DA recommendations', async t => {
         const cliCommand = `JSON.SET ${keyName} $ '{ "model": "Hyperion", "brand": "Velorim"}'`;
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await browserPage.Cli.sendCommandInCli(cliCommand);
         await t.click(browserPage.refreshKeysButton);
         await browserPage.NavigationHeader.togglePanel(true);
@@ -274,7 +275,6 @@ test
         await t.click(tab.analyzeDatabaseLink);
         await t.click(tab.analyzeTooltipButton);
         await t.click(memoryEfficiencyPage.recommendationsTab);
-        await memoryEfficiencyPage.getRecommendationButtonByName(RecommendationIds.searchJson);
         keyNameFromRecommendation = await tab.getRecommendationByName(RecommendationIds.searchJson)
             .find(tab.cssKeyName)
             .innerText;

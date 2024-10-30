@@ -275,7 +275,12 @@ export async function populateZSetWithMembers(host: string, port: string, keyArg
  */
 export async function deleteAllKeysFromDB(host: string, port: string): Promise<void> {
     const url = `redis://default@${host}:${port}`;
-    const client = createClient({ url });
+    const client = createClient({
+        url,
+        socket: {
+            connectTimeout: 10000
+        }
+    });
 
     client.on('error', (error: Error) => {
         console.error('Redis Client Error', error);

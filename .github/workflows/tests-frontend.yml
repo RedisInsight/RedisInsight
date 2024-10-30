@@ -48,3 +48,14 @@ jobs:
 
     - name: Unit tests UI
       run: yarn test:cov --ci --silent
+
+    - name: Generate test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: 'Test results: FE unit tests'
+        path: reports/jest-*.xml
+        reporter: jest-junit
+        list-tests: 'failed'
+        list-suites: 'failed'
+        fail-on-error: 'false'

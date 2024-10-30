@@ -1,4 +1,4 @@
-name: Release (stage)
+name: 📖 Release (stage)
 
 on:
   push:
@@ -11,7 +11,8 @@ jobs:
     uses: ./.github/workflows/tests.yml
     secrets: inherit
     with:
-      all_tests: true
+      group_tests: 'without_e2e'
+      short_rte_list: false
 
   builds:
     name: Release stage builds
@@ -22,16 +23,15 @@ jobs:
       environment: 'staging'
       target: 'all'
 
+  e2e-docker-tests:
+    needs: builds
+    uses: ./.github/workflows/tests-e2e-docker.yml
+    secrets: inherit
 
-  # todo: e2e tests for release stage
-  # e2e-linux:
-  #   uses: ./.github/workflows/build.yml
-  #   needs: builds
-  #   secrets: inherit
-  #   with:
-  #     environment: 'staging'
-  #     target: 'all'
-
+  e2e-appimage-tests:
+    needs: builds
+    uses: ./.github/workflows/tests-e2e-appimage.yml
+    secrets: inherit
 
 
 

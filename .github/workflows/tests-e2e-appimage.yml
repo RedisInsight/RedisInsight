@@ -1,0 +1,82 @@
+name: Tests E2E AppImage
+on:
+  workflow_call:
+    inputs:
+      report:
+        description: Send report to Slack
+        required: false
+        default: false
+        type: boolean
+
+env:
+  E2E_CLOUD_DATABASE_USERNAME: ${{ secrets.E2E_CLOUD_DATABASE_USERNAME }}
+  E2E_CLOUD_DATABASE_PASSWORD: ${{ secrets.E2E_CLOUD_DATABASE_PASSWORD }}
+  E2E_CLOUD_API_ACCESS_KEY: ${{ secrets.E2E_CLOUD_API_ACCESS_KEY }}
+  E2E_CLOUD_DATABASE_HOST: ${{ secrets.E2E_CLOUD_DATABASE_HOST }}
+  E2E_CLOUD_DATABASE_PORT: ${{ secrets.E2E_CLOUD_DATABASE_PORT }}
+  E2E_CLOUD_DATABASE_NAME: ${{ secrets.E2E_CLOUD_DATABASE_NAME }}
+  E2E_CLOUD_API_SECRET_KEY: ${{ secrets.E2E_CLOUD_API_SECRET_KEY }}
+  E2E_RI_ENCRYPTION_KEY: ${{ secrets.E2E_RI_ENCRYPTION_KEY }}
+  RI_ENCRYPTION_KEY: ${{ secrets.RI_ENCRYPTION_KEY }}
+  RI_SERVER_TLS_CERT: ${{ secrets.RI_SERVER_TLS_CERT }}
+  RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
+  SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
+  TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
+  DBUS_SESSION_BUS_ADDRESS: ${{ vars.DBUS_SESSION_BUS_ADDRESS }}
+  DISPLAY: ${{ vars.DISPLAY }}
+  APPIMAGE_PATH: ${{ vars.APPIMAGE_PATH }}
+
+jobs:
+  e2e-tests-appimage:
+    runs-on: ubuntu-latest
+    name: E2E AppImage tests
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install WM
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install kmod libfuse2 xvfb net-tools fluxbox netcat -y
+        # sudo apt-get install kmod libfuse2 xvfb net-tools fluxbox netcat appimagelauncher -y
+
+    - name: Download AppImage Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: linux-appimage-build
+        path: ./release
+
+    - name: Run X11
+      run: |
+        Xvfb :99 -screen 0 1920x1080x24 &
+        sleep 3
+        fluxbox &
+
+    - name: Run tests
+      run: |
+        .github/e2e/test.app-image.sh
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: report-appimage
+        path: tests/e2e/report
+
+    - name: Send report to Slack
+      if: inputs.report && always()
+      run: |
+        APP_BUILD_TYPE="Electron (Linux)" node ./.github/e2e-results.js
+        curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+
+    - name: Generate test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: 'Test results: E2E (AppImage)'
+        path: tests/e2e/results/results.xml
+        reporter: java-junit
+        list-tests: 'failed'
+        list-suites: 'failed'
+        fail-on-error: 'false'
+
+

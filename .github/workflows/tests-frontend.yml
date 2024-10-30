@@ -8,9 +8,9 @@ env:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
-    name: Unit tests Frontend job
+    name: Frontend tests
     steps:
-    - uses: actions/checkout@v4.1.0
+    - uses: actions/checkout@v4
 
     - name: Install all libs and dependencies
       uses: ./.github/actions/install-all-build-libs

@@ -8,6 +8,7 @@ import { Pages } from 'uiSrc/constants'
 import { appContextSelector, setCurrentWorkspace } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
 import MainRouter from './MainRouter'
+import * as activityMonitor from './activityMonitor'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -64,5 +65,16 @@ describe('MainRouter', () => {
     render(<Router><MainRouter /></Router>)
 
     expect(store.getActions()).toContainEqual(setCurrentWorkspace(AppWorkspace.Databases))
+  })
+
+  it('starts activity monitor on mount and stops on unmount', () => {
+    const startActivityMonitorSpy = jest.spyOn(activityMonitor, 'startActivityMonitor')
+    const stopActivityMonitorSpy = jest.spyOn(activityMonitor, 'stopActivityMonitor')
+
+    const { unmount } = render(<Router><MainRouter /></Router>)
+
+    expect(startActivityMonitorSpy).toHaveBeenCalledTimes(1)
+    unmount()
+    expect(stopActivityMonitorSpy).toHaveBeenCalledTimes(1)
   })
 })

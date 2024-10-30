@@ -3,22 +3,23 @@ import { getConfig } from 'uiSrc/config'
 
 const riConfig = getConfig()
 
-const monitorOrigin = riConfig.app.activityMonitorOrigin
+const throttleTimeout = riConfig.app.activityMonitorThrottleTimeout
 const windowEvents = ['click', 'keydown', 'scroll', 'touchstart']
-const isMonitorEnabled = monitorOrigin && window.opener
+
+const getIsMonitorEnabled = () => riConfig.app.activityMonitorOrigin && window.opener
 
 const onActivity = throttle(() => {
   try {
     // post event to parent window
-    window.opener.postMessage({ name: 'setLastActivity' }, monitorOrigin)
+    window.opener.postMessage({ name: 'setLastActivity' }, riConfig.app.activityMonitorOrigin)
   } catch {
     // ignore errors
   }
-}, 30000)
+}, throttleTimeout)
 
 export const startActivityMonitor = () => {
   try {
-    if (isMonitorEnabled) {
+    if (getIsMonitorEnabled()) {
       windowEvents.forEach((event) => {
         window.addEventListener(event, onActivity, { passive: true, capture: true })
       })
@@ -30,7 +31,7 @@ export const startActivityMonitor = () => {
 
 export const stopActivityMonitor = () => {
   try {
-    if (isMonitorEnabled) {
+    if (getIsMonitorEnabled()) {
       windowEvents.forEach((event) => {
         window.removeEventListener(event, onActivity, { capture: true })
       })

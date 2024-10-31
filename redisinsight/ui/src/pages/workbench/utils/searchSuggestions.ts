@@ -36,6 +36,14 @@ export const findSuggestionsByArg = (
   const { prevCursorChar } = cursor
   const [beforeOffsetArgs, [currentOffsetArg]] = args
 
+  const startCommentIndex = beforeOffsetArgs.findIndex((el) => el.startsWith('//'))
+  if (startCommentIndex > -1 || currentOffsetArg?.startsWith('//')) {
+    return {
+      suggestions: asSuggestionsRef([]),
+      helpWidget: { isOpen: false }
+    }
+  }
+
   const scopedList = command.name
     ? listOfCommands.filter(({ token }) => token === command?.name)
     : listOfCommands

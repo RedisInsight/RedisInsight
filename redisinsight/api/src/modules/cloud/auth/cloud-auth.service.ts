@@ -35,6 +35,8 @@ export class CloudAuthService {
 
   private authRequests: Map<string, CloudAuthRequest> = new Map();
 
+  private inProgressRequests: Map<string, CloudAuthRequest> = new Map();
+
   constructor(
     private readonly sessionService: CloudSessionService,
     private readonly googleIdpAuthStrategy: GoogleIdpCloudAuthStrategy,
@@ -185,6 +187,8 @@ export class CloudAuthService {
     // delete authRequest on this step
     // allow to redirect with authorization code only once
     this.authRequests.delete(query.state);
+    // Track in progress auth requests to avoid errors when for some reason many we receive many the same calls
+    this.inProgressRequests.set(query.state, authRequest);
 
     const tokens = await this.exchangeCode(authRequest, query.code);
 
@@ -296,5 +300,13 @@ export class CloudAuthService {
       this.logger.error('Unable to logout', e);
       throw wrapHttpError(e);
     }
+  }
+
+  isRequestInProgress(query) {
+    return !!this.inProgressRequests.has(query?.state);
+  }
+
+  finishInProgressRequest(query) {
+    this.inProgressRequests.delete(query?.state);
   }
 }

@@ -65,6 +65,9 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
 // skip until adding linux support
 test.only('Verify that user can sign in using SSO via Google authorization', async t => {
     await t.expect(myRedisDatabasePage.promoButton.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
+    // Open Chrome with a sample URL and save it to logs file
+    openChromeWindow();
+    await t.wait(10000);
     await t.click(myRedisDatabasePage.NavigationHeader.cloudSignInButton);
     // Navigate to Google Auth button
     await t.pressKey('tab');
@@ -74,9 +77,7 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     await t.pressKey('shift+tab');
     await t.pressKey('shift+tab');
 
-    // Open Chrome with a sample URL and save it to logs file
-    openChromeWindow();
-    await t.wait(20000);
+    await t.wait(10000);
     saveOpenedChromeTabUrl(logsFilePath);
     // Click the button to trigger the Google authorization page
     await t.pressKey('enter');

@@ -49,6 +49,10 @@ export const defaultMonacoOptions: monacoEditor.editor.IStandaloneEditorConstruc
   automaticLayout: true,
   formatOnPaste: false,
   glyphMargin: true,
+  bracketPairColorization: {
+    enabled: true,
+    independentColorPoolPerBracketType: true
+  },
   stickyScroll: {
     enabled: true,
     defaultModel: 'indentationModel'

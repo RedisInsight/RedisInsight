@@ -49,7 +49,7 @@ export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monaco
       ],
       whitespace: [
         [/\s+/, 'white'],
-        [/\/\/.*$/, 'comment'],
+        [/\/\/.*/, 'comment'],
       ],
       numbers: [
         [/0[xX][0-9a-fA-F]*/, 'number'],

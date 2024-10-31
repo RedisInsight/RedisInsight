@@ -27,6 +27,7 @@ export const generateQuery = (
       [/\\"/, { token: 'query', next: appendTokenName('@query.inside.double') }],
       [/==|!=|<=|>=|<|>/, { token: 'query.operator' }],
       [/&&|\|\|/, { token: 'query.operator' }],
+      [/[()]/, 'delimiter.parenthesis'],
       getFunctionsTokens('@function.inside.double'),
       [/"/, { token: appendTokenName('query'), next: '@root' }],
       [/./, { token: appendTokenName('query'), next: appendTokenName('@query.inside.double') }],
@@ -37,6 +38,7 @@ export const generateQuery = (
       [/\\'/, { token: appendTokenName('query'), next: appendTokenName('query.inside.single') }],
       [/==|!=|<=|>=|<|>/, { token: 'query.operator' }],
       [/&&|\|\|/, { token: 'query.operator' }],
+      [/[()]/, 'delimiter.parenthesis'],
       getFunctionsTokens('@function.inside.single'),
       [/'/, { token: appendTokenName('query'), next: '@root' }],
       [/./, { token: appendTokenName('query'), next: appendTokenName('@query.inside.single') }],
@@ -53,11 +55,6 @@ export const generateQuery = (
       [/\s+/, { token: '@rematch', next: appendTokenName('@query.inside.single') }],
       [/'/, { token: appendTokenName('query'), next: '@root' }],
 
-      { include: appendTokenName('@query') }
-    ],
-    [appendTokenName('function.inside.double')]: [
-      [/\s+/, 'white'], // Handle whitespace
-      [/\(/, { token: 'delimiter.parenthesis', next: appendTokenName('@function.args.double') }],
       { include: appendTokenName('@query') }
     ],
     [appendTokenName('function.inside.double')]: [

@@ -1,5 +1,4 @@
 import { find } from 'lodash';
-import { decode } from 'jsonwebtoken';
 import { Injectable, Logger } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
@@ -10,11 +9,9 @@ import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptio
 import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
-import config from 'src/utils/config';
 import { CloudSession } from 'src/modules/cloud/session/models/cloud-session';
 import { ServerService } from 'src/modules/server/server.service';
-
-const cloudConfig = config.get('cloud');
+import { isValidToken } from './utils';
 
 @Injectable()
 export class CloudUserApiService {
@@ -70,20 +67,15 @@ export class CloudUserApiService {
     try {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
-      if (!session?.accessToken) {
+      if (!session?.refreshToken) {
         throw new CloudApiUnauthorizedException();
       }
 
-      const { exp } = JSON.parse(Buffer.from(session.accessToken.split('.')[1], 'base64').toString());
-
-      const expiresIn = exp * 1_000 - Date.now();
-
-      if (expiresIn < cloudConfig.renewTokensBeforeExpire) {
-        // need to renew
-        await this.cloudAuthService.renewTokens(sessionMetadata, session.idpType, session.refreshToken);
+      if (!isValidToken(session?.accessToken)) {
+        await this.cloudAuthService.renewTokens(sessionMetadata, session?.idpType, session?.refreshToken);
       }
     } catch (e) {
-      throw new CloudApiUnauthorizedException();
+      throw new CloudApiUnauthorizedException(e.message);
     }
   }
 

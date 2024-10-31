@@ -80,7 +80,7 @@ export default {
     migrateOldFolders: process.env.RI_MIGRATE_OLD_FOLDERS ? process.env.RI_MIGRATE_OLD_FOLDERS === 'true' : true,
     autoBootstrap: process.env.RI_AUTO_BOOTSTRAP ? process.env.RI_AUTO_BOOTSTRAP === 'true' : true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.58.0',
+    appVersion: process.env.RI_APP_VERSION || '2.60.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -279,7 +279,7 @@ export default {
     },
   },
   ai: {
-    convAiApiUrl: process.env.RI_AI_CONVAI_API_URL || 'https://staging.redis.io/convai/api',
+    convAiApiUrl: process.env.RI_AI_CONVAI_API_URL || 'https://staging.learn.redis.com/convai/api',
     convAiToken: process.env.RI_AI_CONVAI_TOKEN,
     querySocketUrl: process.env.RI_AI_QUERY_SOCKET_URL || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com',
     querySocketPath: process.env.RI_AI_QUERY_SOCKET_PATH || '/api/v1/cloud-copilot-service/socket.io/',

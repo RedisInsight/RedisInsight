@@ -115,7 +115,7 @@ describe('POST /databases/:id/redisearch/info', () => {
         },
         statusCode: 500,
         responseBody: {
-          message: 'Unknown index name',
+          message: 'Unknown Index name',
           error: 'Internal Server Error',
           statusCode: 500,
         },

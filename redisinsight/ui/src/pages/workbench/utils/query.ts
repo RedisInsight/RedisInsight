@@ -336,11 +336,12 @@ export const removeNotSuggestedArgs = (args: string[], commandArgs: IRedisComman
     }
 
     if (arg.type === ICommandTokenType.Block) {
-      if (arg.token) return !args.includes(arg.token) || arg.multiple
-      return arg.arguments?.[0]?.token && (!args.includes(arg.arguments?.[0]?.token?.toUpperCase()) || arg.multiple)
+      if (arg.token) return !args.some((queryArg) => isStringsEqual(queryArg, arg.token)) || arg.multiple
+      return arg.arguments?.[0]?.token
+        && (!args.some(((queryArg) => isStringsEqual(queryArg, arg.arguments?.[0]?.token))) || arg.multiple)
     }
 
-    return arg.token && !args.includes(arg.token)
+    return arg.token && !args.some((queryArg) => isStringsEqual(queryArg, arg.token))
   })
 
 export const fillArgsByType = (args: IRedisCommand[], expandBlock = true): IRedisCommandTree[] => {
@@ -380,7 +381,11 @@ export const findArgByToken = (list: IRedisCommand[], arg: string): Maybe<IRedis
 export const generateDetail = (command: Maybe<IRedisCommand>) => {
   if (!command) return ''
   if (command.arguments) {
-    const args = generateArgsNames(CommandProvider.Main, command.arguments).join(' ')
+    const isTokenInArguemnts = command.token === command.arguments?.[0]?.token
+    const args = generateArgsNames(
+      CommandProvider.Main,
+      command.arguments.slice(isTokenInArguemnts ? 1 : 0)
+    ).join(' ')
     return command.token ? `${command.token} ${args}` : args
   }
   if (command.token) {

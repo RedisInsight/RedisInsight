@@ -419,7 +419,8 @@ jobs:
           command: sudo apt-get install -y xvfb
       - run:
           name: Start Xvfb
-          command:  | 
+          command: |
+            if [ -f /tmp/.X99-lock ]; then rm /tmp/.X99-lock; fi
             Xvfb :99 -ac -screen 0 1920x1080x24 &
             sleep 3
             fluxbox &

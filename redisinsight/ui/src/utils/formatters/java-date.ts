@@ -7,7 +7,7 @@ export default class JavaDate implements JavaSerializable {
     this.time = stream.readLong()
   }
 
-  readResolve(): any {
+  readResolve() {
     return new Date(Number(this.time))
   }
 }

@@ -14,8 +14,8 @@ let gracefulShutdown: Function
 let beApp: any
 export const launchApiServer = async () => {
   try {
-    if (process.env.NODE_ENV === 'development' && process.env.ELECTRON_DEV === 'true') {
-    // Define auth port
+    if (process.env.NODE_ENV === 'development' && process.env.RI_APP_TYPE === 'electron') {
+      // Define auth port
       const TCP_LOCAL_AUTH_PORT = process.env.TCP_LOCAL_AUTH_PORT ? parseInt(process.env.TCP_LOCAL_AUTH_PORT, 10) : 5541
 
       // Create and start auth server first
@@ -62,7 +62,9 @@ export const launchApiServer = async () => {
         process.env.BUILD_PACKAGE = 'appimage'
       }
   
-      log.info('Available port:', detectPortConst)
+      log.info('Starting server with port:', detectPortConst)
+      log.info('Environment:', process.env.NODE_ENV)
+      log.info('App type:', process.env.RI_APP_TYPE)
   
       const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server(detectPortConst)
       gracefulShutdown = gracefulShutdownFn
@@ -71,6 +73,8 @@ export const launchApiServer = async () => {
 
   } catch (error) {
     log.error('Catch server error:', wrapErrorMessageSensitiveData(error))
+    log.error('Server initialization error:', error)
+    log.error('Error stack:', error.stack)
     throw error
   }
 }

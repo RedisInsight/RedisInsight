@@ -156,7 +156,7 @@ test('Verify that the Message field input is preserved until user Publish a mess
     // Verify that the Channel field input is preserved until user modify it (publishing a message does not clear the field)
     await t.expect(pubSubPage.channelNameInput.value).eql('testChannel', 'Channel input is empty', { timeout: 10000 });
 });
-test('Verify that user can clear all the messages from the pubsub window', async t => {
+test.requestHooks(logger)('Verify that user can clear all the messages from the pubsub window', async t => {
     await pubSubPage.subsribeToChannelAndPublishMessage('testChannel', 'message');
     await pubSubPage.publishMessage('testChannel2', 'second m');
     // Verify the tooltip text 'Clear Messages' appears on hover the clear button

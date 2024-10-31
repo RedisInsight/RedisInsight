@@ -10,6 +10,7 @@ export class MonacoEditor {
     monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]');
     monacoCommandIndicator = Selector('div.monaco-glyph-run-command');
     monacoWidget = Selector('[data-testid=monaco-widget]');
+    monacoSuggestWidget = Selector('.suggest-widget');
     nonRedisEditorResizeBottom = Selector('.t_resize-bottom');
     nonRedisEditorResizeTop = Selector('.t_resize-top');
 
@@ -22,7 +23,7 @@ export class MonacoEditor {
     async sendTextToMonaco(input: Selector, command: string, clean = true): Promise<void> {
 
         await t.click(input);
-        if(clean) {
+        if (clean) {
             await t
                 // remove text since replace doesn't work here
                 .pressKey('ctrl+a')
@@ -38,10 +39,10 @@ export class MonacoEditor {
      * @param depth level of depth of the object
      */
     async insertTextByLines(input: Selector, lines: string[], depth: number): Promise<void> {
-        for(let i = 0; i < lines.length; i++) {
+        for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
 
-            for(let j = 0; j < depth; j++) {
+            for (let j = 0; j < depth; j++) {
                 await t.pressKey('shift+tab');
             }
 
@@ -59,5 +60,23 @@ export class MonacoEditor {
     async getTextFromMonaco(): Promise<string> {
         const textAreaMonaco = Selector('[class^=view-lines ]');
         return (await textAreaMonaco.textContent).replace(/\s+/g, ' ');
+    }
+
+    /**
+    * Get suggestions as ordered array from monaco from the beginning
+    * @param suggestions number of elements to get
+    */
+    async getSuggestionsArrayFromMonaco(suggestions: number): Promise<string[]> {
+        const textArray: string[] = [];
+        const suggestionElements = this.monacoSuggestion;
+
+        for (let i = 0; i < suggestions; i++) {
+            const suggestionItem = suggestionElements.nth(i);
+            if (await suggestionItem.exists) {
+                textArray.push(await suggestionItem.textContent);
+            }
+        }
+
+        return textArray;
     }
 }

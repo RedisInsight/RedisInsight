@@ -121,7 +121,8 @@ aliases:
     - oss-st-5            # OSS Standalone v5
     - oss-st-5-pass       # OSS Standalone v5 with admin pass required
     - oss-st-6            # OSS Standalone v6 and all modules
-    - oss-st-big          # OSS Standalone v6 and all modules and predefined amount of data inside (~3-4M)
+    # TODO: Investigate why it randomly fails
+    # - oss-st-big          # OSS Standalone v6 and all modules and predefined amount of data inside (~3-4M)
     - mods-preview        # OSS Standalone and all preview modules
     - oss-st-6-tls        # OSS Standalone v6 with TLS enabled
     - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required

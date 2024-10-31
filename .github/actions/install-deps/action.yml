@@ -30,4 +30,4 @@ runs:
         # export npm_config_keytar_binary_host_mirror=${{ inputs.keytar-host-mirror }}
         # export npm_config_node_sqlite3_binary_host_mirror=${{ inputs.sqlite3-host-mirror }}
 
-        yarn install
+        yarn install --frozen-lockfile --network-timeout 1000000

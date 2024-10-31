@@ -150,7 +150,7 @@ describe('InstanceHeader', () => {
     expect(screen.queryByTestId('instance-header-divider-env-dependent')).toBeInTheDocument()
   })
 
-  it('should nt show env dependent items button when feature flag is off', async () => {
+  it('should not show env dependent items button when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,

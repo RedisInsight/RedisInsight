@@ -36,6 +36,7 @@ import { COMMANDS_TO_GET_INDEX_INFO, COMPOSITE_ARGS, EmptySuggestionsIds, } from
 import { useDebouncedEffect } from 'uiSrc/services'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { findSuggestionsByArg } from 'uiSrc/pages/workbench/utils/searchSuggestions'
+import { findSuggestionsByQueryArgs } from 'uiSrc/pages/workbench/utils/query_refactor'
 import {
   argInQuotesRegExp,
   aroundQuotesRegExp,
@@ -562,7 +563,7 @@ const Query = (props: Props) => {
     }
 
     const { allArgs, args, cursor } = command
-    const [, [currentOffsetArg]] = args
+    const [beforeOffsetArgs, [currentOffsetArg]] = args
 
     if (COMMANDS_TO_GET_INDEX_INFO.some((name) => name === command.name)) {
       setSelectedIndex(allArgs[1] || '')
@@ -572,12 +573,15 @@ const Query = (props: Props) => {
 
     const cursorContext: CursorContext = { ...cursor, currentOffsetArg, offset: command.commandCursorPosition, range }
     const { suggestions, helpWidget } = findSuggestionsByArg(
-      REDIS_COMMANDS,
+      commands,
       command,
       cursorContext,
       { fields: attributesRef.current, indexes: indexesRef.current },
       isEscapedSuggestions.current
     )
+
+    // const newFound = findSuggestionsByQueryArgs(commands, beforeOffsetArgs)
+    // console.log(newFound)
 
     if (helpWidget) {
       const { isOpen, data } = helpWidget

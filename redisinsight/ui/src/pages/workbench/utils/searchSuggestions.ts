@@ -19,6 +19,7 @@ import {
   FIELD_START_SYMBOL,
   ModuleCommandPrefix
 } from 'uiSrc/pages/workbench/constants'
+import { findSuggestionsByQueryArgs } from 'uiSrc/pages/workbench/utils/query_refactor'
 
 export const findSuggestionsByArg = (
   listOfCommands: IRedisCommand[],
@@ -37,10 +38,8 @@ export const findSuggestionsByArg = (
   const { prevCursorChar } = cursor
   const [beforeOffsetArgs, [currentOffsetArg]] = args
 
-  const scopedList = command.name
-    ? listOfCommands.filter(({ token }) => token === command?.name)
-    : listOfCommands
-  const foundArg = findCurrentArgument(scopedList, beforeOffsetArgs)
+  const foundArg = findSuggestionsByQueryArgs(listOfCommands, beforeOffsetArgs)
+  console.log('foundArg', foundArg)
 
   if (!command.name.startsWith(ModuleCommandPrefix.RediSearch)) {
     return {

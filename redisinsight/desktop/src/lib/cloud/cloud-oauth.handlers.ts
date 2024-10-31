@@ -13,7 +13,6 @@ import {
 import { importApiModule } from 'desktopSrc/api-imports'
 import { IpcOnEvent, IpcInvokeEvent } from 'uiSrc/electron/constants'
 
-const { DEFAULT_SESSION_ID, DEFAULT_USER_ID } = importApiModule('dist/src/common/constants')
 const { CloudOauthUnexpectedErrorException } = importApiModule('dist/src/modules/cloud/auth/exceptions')
 const { CloudAuthService } = importApiModule('dist/src/modules/cloud/auth/cloud-auth.service')
 

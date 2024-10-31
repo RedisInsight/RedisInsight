@@ -3,9 +3,9 @@
   "appId": "org.RedisLabs.RedisInsight-V2",
   "copyright": "Copyright © 2024 Redis Ltd.",
   "files": [
-    "dist",
-    "node_modules",
-    "package.json"
+    "dist/**/*",
+    "api/dist/**/*",
+    "node_modules/**/*"
   ],
   "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
   "compression": "normal",
@@ -204,6 +204,16 @@
     {
       "from": "./resources/app",
       "to": "./app",
+      "filter": ["**/*"]
+    },
+    {
+      "from": "redisinsight/api/dist",
+      "to": "api/dist",
+      "filter": ["**/*"]
+    },
+    {
+      "from": "redisinsight/api/node_modules",
+      "to": "api/dist/node_modules",
       "filter": ["**/*"]
     }
   ]

@@ -38,13 +38,15 @@ export function openChromeWindow(): void {
             console.error('Linux Chrome stderr:', stderr);
 
             // Check if Chrome is running after opening it
-            exec(`pgrep "chrome"`, (err, pidOutput) => {
-                if (err || !pidOutput.trim()) {
-                    console.error('Chrome process not found after attempting to launch.');
-                } else {
-                    console.log('Chrome is running with PID:', pidOutput.trim());
-                }
-            });
+            setTimeout(() => {
+                exec(`pgrep "chrome"`, (err, stdout) => {
+                    if (err || !stdout.trim()) {
+                        console.error('Chrome process not found after attempting to launch.');
+                    } else {
+                        console.log('Chrome is running with PID:', stdout.trim());
+                    }
+                });
+            }, 5000);
         });
     }
 }

@@ -8,6 +8,7 @@ import {
 } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { RecommendationsActions } from '../../../../common-actions/recommendations-actions';
+import { Telemetry } from '../../../../helpers';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -15,6 +16,17 @@ const browserPage = new BrowserPage();
 const recommendationsActions = new RecommendationsActions();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+
+const telemetry = new Telemetry();
+
+const logger = telemetry.createLogger();
+
+const telemetryEvent = 'DATABASE_ANALYSIS_TIPS_EXPANDED';
+const expectedProperties = [
+    'databaseId',
+    'provider',
+    'recommendation'
+];
 
 const luaScriptRecommendation = RecommendationIds.luaScript;
 const useSmallerKeysRecommendation = RecommendationIds.useSmallerKeys;
@@ -34,6 +46,7 @@ test
         // Go to Recommendations tab
         await t.click(memoryEfficiencyPage.recommendationsTab);
     })
+    .requestHooks(logger)
     .after(async() => {
         await browserPage.Cli.sendCommandInCli('SCRIPT FLUSH');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
@@ -60,6 +73,10 @@ test
         // Verify that user can expand/collapse recommendation
         const expandedTextContaiterSize = await memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).offsetHeight;
         await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecommendation));
+
+        //Verify telemetry event
+        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+
         await t.expect(memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).offsetHeight)
             .lt(expandedTextContaiterSize, 'Lua script recommendation not collapsed');
         await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecommendation));

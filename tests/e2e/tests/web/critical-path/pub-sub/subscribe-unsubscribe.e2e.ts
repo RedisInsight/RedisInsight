@@ -4,6 +4,7 @@ import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../
 import { rte } from '../../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../../helpers/pub-sub';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
+import { Telemetry } from '../../../../helpers';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
@@ -11,6 +12,16 @@ const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const browserPage = new BrowserPage();
+const telemetry = new Telemetry();
+
+const logger = telemetry.createLogger();
+
+const telemetryEvent = 'PUBSUB_MESSAGES_CLEARED';
+const expectedProperties = [
+    'databaseId',
+    'messages',
+    'provider'
+];
 
 fixture `Subscribe/Unsubscribe from a channel`
     .meta({ rte: rte.standalone, type: 'critical_path' })
@@ -152,6 +163,10 @@ test('Verify that user can clear all the messages from the pubsub window', async
     await t.hover(pubSubPage.clearPubSubButton);
     await t.expect(pubSubPage.clearButtonTooltip.textContent).contains('Clear Messages', 'Clear Messages tooltip not displayed');
     await t.click(pubSubPage.clearPubSubButton);
+
+    //Verify telemetry event
+    await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+
     // Verify that the clear of the messages does not affect the subscription state
     await t.expect(pubSubPage.subscribeStatus.textContent).eql('You are  subscribed', 'User is not subscribed', { timeout: 10000 });
     // Verify that the Messages counter is reset after clear messages

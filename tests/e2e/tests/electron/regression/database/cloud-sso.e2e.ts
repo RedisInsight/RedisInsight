@@ -76,7 +76,7 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
 
     // Open Chrome with a sample URL and save it to logs file
     openChromeWindow();
-    await t.wait(2000);
+    await t.wait(20000);
     saveOpenedChromeTabUrl(logsFilePath);
     // Click the button to trigger the Google authorization page
     await t.pressKey('enter');

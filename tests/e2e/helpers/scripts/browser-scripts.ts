@@ -22,23 +22,27 @@ export function openChromeWindow(): void {
     if (isMac) {
         exec(`open -na "Google Chrome" --args --new-window`, (error) => {
             if (error) {
-                console.error('Error opening Chrome:', error);
+                console.error('Error opening Chrome on Mac:', error);
                 return;
             }
         });
     }
     else if (isLinux) {
-        exec(`google-chrome --remote-debugging-port=9223 --no-sandbox --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --incognito --profile-directory=Default --remote-allow-origins=* --disable-popup-blocking --v=1 about:blank`, (error) => {
+        console.log('Opening Chrome on Linux...');
+        exec(`google-chrome --remote-debugging-port=9223 --no-sandbox --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --incognito --profile-directory=Default --remote-allow-origins=* --disable-popup-blocking --v=1 about:blank`, (error, stdout, stderr) => {
             if (error) {
-                console.error('Error opening Chrome:', error);
+                console.error('Error opening Chrome on Linux:', error);
                 return;
             }
+            console.log('Linux Chrome stdout:', stdout);
+            console.error('Linux Chrome stderr:', stderr);
+
             // Check if Chrome is running after opening it
-            exec(`pgrep "chrome"`, (err, stdout) => {
-                if (err || !stdout.trim()) {
+            exec(`pgrep "chrome"`, (err, pidOutput) => {
+                if (err || !pidOutput.trim()) {
                     console.error('Chrome process not found after attempting to launch.');
                 } else {
-                    console.log('Chrome is running with PID:', stdout.trim());
+                    console.log('Chrome is running with PID:', pidOutput.trim());
                 }
             });
         });

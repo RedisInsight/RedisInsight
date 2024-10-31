@@ -51,7 +51,7 @@ export function openChromeWindow(): void {
  */
 export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring?: string): void {
     const { isMac, isLinux } = getPlatform();
-    const maxRetries = 10;
+    const maxRetries = 30;
     const retryDelay = 500;
     const chromeDebuggingPort = 9223;
 

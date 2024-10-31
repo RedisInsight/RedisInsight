@@ -4,7 +4,11 @@ on:
     inputs:
       report:
         description: Send report to Slack
-        required: false
+        default: false
+        type: boolean
+
+      debug:
+        description: SSH Debug
         default: false
         type: boolean
 
@@ -22,12 +26,16 @@ env:
   RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
   SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
+  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   E2E_VOLUME_PATH: "/usr/src/app"
 
 jobs:
   e2e-docker-tests:
     runs-on: ubuntu-latest
     name: E2E Docker tests
+    environment:
+      name: production
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/e2e/${{ matrix.parallel }}
     container:
       image: docker:latest
       options: --privileged
@@ -46,15 +54,21 @@ jobs:
     - name: Setup repository
       run: git config --global --add safe.directory /__w/RedisInsight/RedisInsight
 
+    # SSH Debug
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
+
     - name: Download Docker Artifacts
       uses: actions/download-artifact@v4
       with:
         name: docker
-        path: ./release
 
     - name: Load built docker image from workspace
       run: |
-        docker image load -i ./release/docker-linux-alpine.amd64.tar
+        docker image load -i ./docker/docker-linux-alpine.amd64.tar
         # docker pull redis/redisinsight
 
     - name: Generate short list of the test files
@@ -103,3 +117,12 @@ jobs:
         list-tests: 'failed'
         list-suites: 'failed'
         fail-on-error: 'false'
+
+  # Deploy report to Github Pages
+  deploy-pages:
+    name: Deploy reports
+    uses: ./.github/workflows/deploy-pages.yml
+    needs: 'e2e-docker-tests'
+    if: always()
+    with:
+      pattern: 'report-*'

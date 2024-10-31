@@ -4,9 +4,13 @@ on:
     inputs:
       environment:
         description: Environment for build
-        required: false
         default: 'staging'
         type: string
+
+      debug:
+        description: SSH Debug
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -16,6 +20,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
 
     - name: Install all libs and dependencies
       uses: ./.github/actions/install-all-build-libs

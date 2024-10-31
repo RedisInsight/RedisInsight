@@ -14,6 +14,11 @@ on:
         default: 'all'
         type: string
 
+      debug:
+        description: SSH Debug
+        default: false
+        type: boolean
+
 jobs:
   build:
     name: Build macos
@@ -21,6 +26,13 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
     - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
 
     - name: Add certificates to the keychain
       uses: ./.github/actions/install-apple-certs

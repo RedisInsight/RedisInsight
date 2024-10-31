@@ -4,11 +4,16 @@ on:
 
 env:
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
+  REPORT_NAME: "report-fe"
 
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
     name: Frontend tests
+    environment:
+      name: staging
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/fe/
     steps:
     - uses: actions/checkout@v4
 
@@ -49,6 +54,13 @@ jobs:
     - name: Unit tests UI
       run: yarn test:cov --ci --silent
 
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ env.REPORT_NAME }}
+        path: reports
+
     - name: Generate test results
       uses: dorny/test-reporter@v1
       if: always()
@@ -59,3 +71,11 @@ jobs:
         list-tests: 'failed'
         list-suites: 'failed'
         fail-on-error: 'false'
+
+  deploy-pages:
+    name: Deploy report
+    uses: ./.github/workflows/deploy-pages.yml
+    needs: 'unit-tests'
+    if: always()
+    with:
+      group: 'reports'

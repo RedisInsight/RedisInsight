@@ -8,6 +8,12 @@ on:
         default: false
         type: boolean
 
+      debug:
+        description: Send report to Slack
+        required: false
+        default: false
+        type: boolean
+
 env:
   E2E_CLOUD_DATABASE_USERNAME: ${{ secrets.E2E_CLOUD_DATABASE_USERNAME }}
   E2E_CLOUD_DATABASE_PASSWORD: ${{ secrets.E2E_CLOUD_DATABASE_PASSWORD }}
@@ -25,13 +31,25 @@ env:
   DBUS_SESSION_BUS_ADDRESS: ${{ vars.DBUS_SESSION_BUS_ADDRESS }}
   DISPLAY: ${{ vars.DISPLAY }}
   APPIMAGE_PATH: ${{ vars.APPIMAGE_PATH }}
+  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
+  REPORT_NAME: "report-appimage"
 
 jobs:
   e2e-tests-appimage:
     runs-on: ubuntu-latest
     name: E2E AppImage tests
+    environment:
+      name: production
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/e2e/${{ env.REPORT_NAME }}
     steps:
     - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
 
     - name: Install WM
       run: |
@@ -59,7 +77,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: report-appimage
+        name: ${{ env.REPORT_NAME }}
         path: tests/e2e/report
 
     - name: Send report to Slack
@@ -79,4 +97,11 @@ jobs:
         list-suites: 'failed'
         fail-on-error: 'false'
 
-
+  # Deploy report to Github Pages
+  deploy-pages:
+    name: Deploy report
+    uses: ./.github/workflows/deploy-pages.yml
+    needs: 'e2e-tests-appimage'
+    if: always()
+    with:
+      pattern: 'report'

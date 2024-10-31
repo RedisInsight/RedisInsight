@@ -4,12 +4,16 @@ on:
     inputs:
       environment:
         description: Environment for build
-        required: false
         default: 'staging'
         type: string
+
       only_docker:
         description: Build only docker
-        required: false
+        default: false
+        type: boolean
+
+      debug:
+        description: SSH Debug
         default: false
         type: boolean
 
@@ -20,6 +24,13 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
     - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3

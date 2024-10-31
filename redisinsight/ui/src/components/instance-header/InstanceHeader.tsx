@@ -28,7 +28,12 @@ import { resetKeyInfo } from 'uiSrc/slices/browser/keys'
 
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
+import { getConfig } from 'uiSrc/config'
+import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
 import styles from './styles.module.scss'
+
+const riConfig = getConfig()
+const { returnUrlBase, returnUrlLabel, returnUrlTooltip } = riConfig.app
 
 export interface Props {
   onChangeDbIndex?: (index: number) => void
@@ -50,6 +55,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const { server } = useSelector(appInfoSelector)
   const { disabled: isDbIndexDisabled } = useSelector(appContextDbIndex)
   const { databases = 0 } = useSelector(connectedInstanceInfoSelector)
+  const returnUrl = useSelector(appReturnUrlSelector)
   const {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
@@ -66,6 +72,11 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
   const goHome = () => {
     history.push(Pages.home)
+  }
+
+  const goToReturnUrl = () => {
+    const fullUrl = `${returnUrlBase}${returnUrl}`
+    document.location = fullUrl
   }
 
   const handleChangeDbIndex = () => {
@@ -126,6 +137,28 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                       <EuiText className={styles.divider}>&#62;</EuiText>
                     </EuiFlexItem>
                   </FeatureFlagComponent>
+                  {returnUrlBase && returnUrl && (
+                  <FeatureFlagComponent
+                    name={FeatureFlags.envDependent}
+                    otherwise={(
+                      <EuiFlexItem style={{ padding: '4px 24px 4px 0' }} grow={false}>
+                        <EuiToolTip
+                          position="bottom"
+                          content={returnUrlTooltip || returnUrlLabel}
+                        >
+                          <EuiText
+                            className={styles.breadCrumbLink}
+                            aria-label={returnUrlTooltip || returnUrlLabel}
+                            onClick={goToReturnUrl}
+                            onKeyDown={goToReturnUrl}
+                          >
+                            &#60; {returnUrlLabel}
+                          </EuiText>
+                        </EuiToolTip>
+                      </EuiFlexItem>
+                    )}
+                  />
+                  )}
                   <EuiFlexItem style={{ overflow: 'hidden' }}>
                     <b className={styles.dbName}>{name}</b>
                   </EuiFlexItem>

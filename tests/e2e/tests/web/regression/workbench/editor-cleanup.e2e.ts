@@ -3,6 +3,7 @@ import { WorkbenchPage, MyRedisDatabasePage, SettingsPage, BrowserPage } from '.
 import { rte } from '../../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
+import { Telemetry } from '../../../../helpers';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -10,11 +11,20 @@ const settingsPage = new SettingsPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const browserPage = new BrowserPage();
+const telemetry = new Telemetry();
+
+const logger = telemetry.createLogger();
 
 const commandToSend = 'info server';
 const databasesForAdding = [
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB1' },
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB2' }
+];
+
+const telemetryEvent = 'SETTINGS_WORKBENCH_EDITOR_CLEAR_CHANGED';
+const expectedProperties = [
+    'currentValue',
+    'newValue'
 ];
 
 fixture `Workbench Editor Cleanup`
@@ -62,6 +72,7 @@ test
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
     })
+    .requestHooks(logger)
     .after(async() => {
         // Clear and delete database
         await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
@@ -71,6 +82,8 @@ test
         await t.click(settingsPage.accordionWorkbenchSettings);
         // Disable Editor Cleanup
         await settingsPage.changeEditorCleanupSwitcher(false);
+        //Verify telemetry event
+        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
         await myRedisDatabasePage.reloadPage();
         await t.click(settingsPage.accordionWorkbenchSettings);
         // Verify that Editor Cleanup setting is saved when refreshing the page

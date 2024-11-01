@@ -18,11 +18,27 @@ const telemetry = new Telemetry();
 let indexName = chance.word({ length: 5 });
 let keyName = chance.word({ length: 5 });
 const logger = telemetry.createLogger();
-const telemetryEvent = 'EXPLORE_PANEL_TUTORIAL_OPENED';
+const tutorialTelemetryEvent = 'EXPLORE_PANEL_TUTORIAL_OPENED';
+const workbenchTelemetryEvents = ['WORKBENCH_COMMAND_SUBMITTED','WORKBENCH_MODE_CHANGED']
 const telemetryPath = 'static/tutorials/ds/hashes.md';
-const expectedProperties = [
+const tutorialExpectedProperties = [
     'databaseId',
     'path'
+];
+const workbenchExpectedProperties = [
+    'command',
+    'databaseId',
+    'multiple',
+    'pipeline',
+    'provider',
+    'rawMode',
+    'results'
+];
+const rawModeExpectedProperties = [
+    'changedFromMode',
+    'changedToMode',
+    'databaseId',
+    'provider',
 ];
 
 fixture `Default scripts area at Workbench`
@@ -53,6 +69,7 @@ test
             `FT.INFO "${indexName}"`;
         // Send commands
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
+        await telemetry.verifyEventHasProperties(workbenchTelemetryEvents[0], workbenchExpectedProperties, logger);
         // Run automatically added "FT._LIST" and "FT.INFO {index}" scripts
         await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
@@ -60,13 +77,16 @@ test
         await t.click(tutorials.internalLinkWorkingWithHashes);
 
         // Verify that telemetry event 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED' sent and has all expected properties
-        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
-        await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
+        await telemetry.verifyEventHasProperties(tutorialTelemetryEvent, tutorialExpectedProperties, logger);
+        await telemetry.verifyEventPropertyValue(tutorialTelemetryEvent, 'path', telemetryPath, logger);
 
         await workbenchPage.sendCommandInWorkbench(addedScript);
 
         // Check the FT._LIST result
         await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command not found');
+        // Verify telemetry event
+        await t.click(workbenchPage.rawModeBtn);
+        await telemetry.verifyEventHasProperties(workbenchTelemetryEvents[1], rawModeExpectedProperties, logger);
         // Check the FT.INFO result
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.queryColumns.textContent).contains('name', 'The result of the FT.INFO command not found');

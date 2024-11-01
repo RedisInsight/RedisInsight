@@ -46,7 +46,7 @@ export function openChromeWindow(): void {
                         console.log('Chrome is running with PID:', stdout.trim());
                     }
                 });
-            }, 5000);
+            }, 10000);
         });
     }
 }

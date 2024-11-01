@@ -56,7 +56,7 @@ jobs:
       run: git config --global --add safe.directory /__w/RedisInsight/RedisInsight
 
     # SSH Debug
-    - name: Setup tmate session
+    - name: Enable SSH
       uses: mxschmitt/action-tmate@v3
       if: inputs.debug
       with:

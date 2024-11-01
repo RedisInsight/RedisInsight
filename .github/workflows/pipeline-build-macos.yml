@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@v4
 
     # SSH Debug
-    - name: Setup tmate session
+    - name: Enable SSH
       uses: mxschmitt/action-tmate@v3
       if: inputs.debug
       with:

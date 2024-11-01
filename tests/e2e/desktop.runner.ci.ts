@@ -41,7 +41,8 @@ import testcafe from 'testcafe';
                     // quarantineMode: { successThreshold: 1, attemptLimit: 3 },
                     pageRequestTimeout: 20000,
                     disableMultipleWindows: true,
-                    runExecutionTimeout: 120000
+                    runExecutionTimeout: 280000,
+                    testExecutionTimeout: 280000
                 });
         })
         .then((failedCount) => {

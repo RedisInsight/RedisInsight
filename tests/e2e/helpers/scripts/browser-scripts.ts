@@ -3,6 +3,12 @@ import * as path from 'path';
 import * as fs from 'fs';
 import CDP from 'chrome-remote-interface';
 
+interface Target {
+    type: string;
+    url: string;
+}
+
+
 /**
  * Get current machine platform
  */
@@ -94,69 +100,45 @@ export async function getOpenedChromeTab(urlSubstring?: string): Promise<string>
             });
         });
     } else if (isLinux) {
-        let attempts = 0;
-        let initialTabCount = 0;
-
-        const checkChromeAndGetTab = async (): Promise<string> => {
+        for (let attempts = 0; attempts < maxRetries; attempts++) {
             console.log(`Attempting to connect to Chrome DevTools (Attempt: ${attempts + 1}/${maxRetries})...`);
-            return new Promise((resolve, reject) => {
-                CDP.List({ port: chromeDebuggingPort }, (err, targets) => {
-                    if (err) {
-                        console.error('Error connecting to Chrome with CDP:', err);
-                        if (attempts < maxRetries) {
-                            attempts++;
-                            setTimeout(() => resolve(checkChromeAndGetTab()), retryDelay);
+
+            try {
+                const targets = await new Promise<Target[]>((resolve, reject) => {
+                    CDP.List({ port: chromeDebuggingPort }, (err, targets) => {
+                        if (err) {
+                            console.error('Error connecting to Chrome with CDP:', err);
+                            reject(err);
                         } else {
-                            reject(new Error('Failed to connect to Chrome within the expected time.'));
+                            resolve(targets);
                         }
-                        return;
-                    }
-
-                    const pageTargets = targets.filter(target => target.type === 'page');
-                    console.log(`Found ${pageTargets.length} open tabs in Chrome`);
-
-                    // Log URLs of all open tabs
-                    pageTargets.forEach(target => {
-                        console.log(`Open tab URL: ${target.url}`);
                     });
-
-                    // First, get the initial tab count
-                    if (attempts === 0) {
-                        initialTabCount = pageTargets.length;
-                        console.log('Initial tab count:', initialTabCount);
-                    }
-
-                    // Detect if a new tab has opened
-                    const newTabOpened = pageTargets.length > initialTabCount;
-
-                    // If a new tab has opened, find it
-                    if (newTabOpened) {
-                        console.log('New tab detected...');
-                        const newTab = pageTargets.find(target =>
-                            (urlSubstring && target.url.includes(urlSubstring)) ||
-                            target.url.includes('auth.'));
-                        if (newTab) {
-                            console.log('Correct tab found:', newTab.url);
-                            resolve(newTab.url);
-                        } else {
-                            console.log('New tab opened but does not match criteria, retrying...');
-                            setTimeout(() => resolve(checkChromeAndGetTab()), retryDelay);  // Keep retrying until the right tab is found
-                        }
-                    } else {
-                        console.log(`No new tab detected yet, retrying... (${attempts + 1}/${maxRetries})`);
-                        attempts++;
-                        if (attempts < maxRetries) {
-                            setTimeout(() => resolve(checkChromeAndGetTab()), retryDelay);
-                        } else {
-                            reject(new Error('Failed to detect new tab within the expected time.'));
-                        }
-                    }
                 });
-            });
-        };
 
-        // Start the process by checking for Chrome
-        return await checkChromeAndGetTab();
+                const pageTargets = targets.filter(target => target.type === 'page');
+                console.log(`Found ${pageTargets.length} open tabs in Chrome`);
+
+                // Check for a new tab matching criteria
+                const newTab = pageTargets.find(target =>
+                    (urlSubstring && target.url.includes(urlSubstring)) ||
+                    target.url.includes('auth.') // Change this according to your requirements
+                );
+
+                if (newTab) {
+                    console.log('Correct tab found:', newTab.url);
+                    return newTab.url; // Return the found URL
+                } else {
+                    console.log('No matching tab found, retrying...');
+                }
+            } catch (err) {
+                console.error('Error during Chrome connection attempt:', err);
+            }
+
+            // Wait before the next attempt
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+        }
+
+        throw new Error('No new tab matching criteria was found within the maximum attempts.');
     } else {
         throw new Error('Unsupported operating system: ' + process.platform);
     }
@@ -171,13 +153,7 @@ export async function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 200
     await new Promise(resolve => setTimeout(resolve, timeout));
     try {
         const url = await getOpenedChromeTab();
-        fs.writeFile(logsFilePath, url, 'utf8', (err) => {
-            if (err) {
-                console.error('Error saving logs:', err);
-            } else {
-                console.log('Logs saved successfully.');
-            }
-        });
+        await fs.promises.writeFile(logsFilePath, url, 'utf8');
     } catch (err) {
         console.error('Error saving logs:', err);
     }

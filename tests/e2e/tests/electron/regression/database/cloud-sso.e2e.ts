@@ -69,7 +69,7 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     openChromeWindow();
     await t.wait(3000);
     closeChrome()
-    await t.wait(3000);
+    await t.wait(1000);
     openChromeWindow();
     await t.click(myRedisDatabasePage.NavigationHeader.cloudSignInButton);
     // Navigate to Google Auth button
@@ -80,7 +80,7 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     await t.pressKey('shift+tab');
     await t.pressKey('shift+tab');
 
-    await t.wait(10000);
+    await t.wait(5000);
     saveOpenedChromeTabUrl(logsFilePath);
     // Click the button to trigger the Google authorization page
     await t.pressKey('enter');

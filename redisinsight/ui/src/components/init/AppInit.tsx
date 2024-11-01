@@ -1,15 +1,39 @@
-import React, { ReactElement, useEffect } from 'react'
+import React, { ReactElement, useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { appInitSelector, initializeAppAction, STATUS_SUCCESS } from 'uiSrc/slices/app/init'
+import {
+  appInitSelector,
+  initializeAppAction,
+  STATUS_FAIL,
+  STATUS_INITIAL,
+  STATUS_SUCCESS,
+} from 'uiSrc/slices/app/init'
+import ConnectivityError from 'uiSrc/components/connectivity-error/ConnectivityError'
 import PagePlaceholder from '../page-placeholder'
 
-const AppInit = ({ children }: { children: ReactElement }) => {
+type Props = {
+  children: ReactElement
+  onSuccess?: () => void,
+  onFail?: () => void,
+}
+
+const AppInit = ({ children, onSuccess, onFail }: Props) => {
   const dispatch = useDispatch()
-  const { status } = useSelector(appInitSelector)
+  const {
+    status,
+    error = 'Something went wrong, please try again later',
+  } = useSelector(appInitSelector)
+
+  const initApp = useCallback(() => dispatch(initializeAppAction(onSuccess, onFail)), [])
 
   useEffect(() => {
-    dispatch(initializeAppAction())
+    if (status === STATUS_INITIAL) {
+      initApp()
+    }
   }, [])
+
+  if (status === STATUS_FAIL) {
+    return <ConnectivityError isLoading={false} onRetry={initApp} error={error} />
+  }
 
   return status === STATUS_SUCCESS ? children : <PagePlaceholder />
 }

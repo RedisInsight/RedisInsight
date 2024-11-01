@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: staging
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ env.REPORT_NAME }}/report
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}/report
     steps:
     - uses: actions/checkout@v4
 

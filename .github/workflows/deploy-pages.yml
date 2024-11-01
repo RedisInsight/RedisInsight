@@ -19,9 +19,10 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         pattern: ${{ format('{0}*', inputs.group) }}
-        path: public
+        path: public/${{ github.run_id }}
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         folder: public
+        clean: false

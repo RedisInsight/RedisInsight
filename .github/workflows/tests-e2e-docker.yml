@@ -36,7 +36,7 @@ jobs:
     name: E2E Docker tests
     environment:
       name: production
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}
     container:
       image: docker:latest
       options: --privileged

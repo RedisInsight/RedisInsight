@@ -40,7 +40,7 @@ jobs:
     name: E2E AppImage tests
     environment:
       name: production
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/e2e/${{ env.REPORT_NAME }}
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ env.REPORT_NAME }}
     steps:
     - uses: actions/checkout@v4
 
@@ -55,7 +55,6 @@ jobs:
       run: |
         sudo apt-get update -y
         sudo apt-get install kmod libfuse2 xvfb net-tools fluxbox netcat -y
-        # sudo apt-get install kmod libfuse2 xvfb net-tools fluxbox netcat appimagelauncher -y
 
     - name: Download AppImage Artifacts
       uses: actions/download-artifact@v4
@@ -104,4 +103,4 @@ jobs:
     needs: 'e2e-tests-appimage'
     if: always()
     with:
-      pattern: 'report'
+      group: 'report'

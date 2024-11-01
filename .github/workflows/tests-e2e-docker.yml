@@ -28,6 +28,7 @@ env:
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
   DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   E2E_VOLUME_PATH: "/usr/src/app"
+  REPORT_NAME: "report-docker-node"
 
 jobs:
   e2e-docker-tests:
@@ -35,7 +36,7 @@ jobs:
     name: E2E Docker tests
     environment:
       name: production
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/e2e/${{ matrix.parallel }}
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}
     container:
       image: docker:latest
       options: --privileged
@@ -65,11 +66,11 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: docker
+        path: ./release
 
     - name: Load built docker image from workspace
       run: |
-        docker image load -i ./docker/docker-linux-alpine.amd64.tar
-        # docker pull redis/redisinsight
+        docker image load -i ./release/docker-linux-alpine.amd64.tar
 
     - name: Generate short list of the test files
       working-directory: ./tests/e2e
@@ -125,4 +126,4 @@ jobs:
     needs: 'e2e-docker-tests'
     if: always()
     with:
-      pattern: 'report-*'
+      group: 'report'

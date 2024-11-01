@@ -9,6 +9,7 @@ on:
         required: false
 
 env:
+  SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
   DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   REPORT_NAME: "report-be"
@@ -19,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: staging
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/be/
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ env.REPORT_NAME }}/report
     steps:
     - uses: actions/checkout@v4
 
@@ -56,23 +57,21 @@ jobs:
     - name: Unit tests API
       run: yarn --cwd redisinsight/api/ test:cov --ci --silent
 
+
+    - name: Prepare report
+      if: always()
+      working-directory: redisinsight/api
+      run: |
+        mkdir report
+        cp -R ./coverage ./report
+        cp -a ./reports ./report/report
+
     - name: Upload Test Report
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ${{ env.REPORT_NAME }}
-        path: redisinsight/api/reports
-
-    - name: Generate test results
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: 'Test results: BE unit tests'
-        path: redisinsight/api/reports/jest-*.xml
-        reporter: jest-junit
-        list-tests: 'failed'
-        list-suites: 'failed'
-        fail-on-error: 'false'
+        path: redisinsight/api/report
 
   deploy-pages:
     name: Deploy report
@@ -80,4 +79,4 @@ jobs:
     needs: 'unit-tests'
     if: always()
     with:
-      group: 'reports'
+      group: 'report'

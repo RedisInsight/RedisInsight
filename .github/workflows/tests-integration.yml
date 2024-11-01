@@ -25,9 +25,11 @@ on:
 
 env:
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+  SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
   TEST_MEDIUM_DB_DUMP: ${{ secrets.TEST_MEDIUM_DB_DUMP }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
   DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
+  REPORT_NAME: "report-it"
   ITESTS_NAMES: |
     {
       "oss-st-5": "OSS Standalone v5",
@@ -86,7 +88,7 @@ jobs:
     needs: set-matrix
     environment:
       name: production
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/it/${{ matrix.rte }}
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ env.REPORT_NAME }}-${{ matrix.rte }}
     strategy:
       fail-fast: false
       matrix:

@@ -48,7 +48,7 @@ on:
 
       environment:
         description: Environment to run build
-        type: string
+        type: environment
         default: 'staging'
         required: false
 

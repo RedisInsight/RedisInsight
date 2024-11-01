@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec, execSync } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
 import CDP from 'chrome-remote-interface';
@@ -11,6 +11,18 @@ function getPlatform(): { isMac: boolean, isLinux: boolean } {
         isMac: process.platform === 'darwin',
         isLinux: process.platform === 'linux'
     };
+}
+
+export function closeChrome(): void {
+    console.log('Closing Chrome...');
+    exec(`pkill chrome`, (error, stdout, stderr) => {
+        if (error) {
+            console.error('Error closing Chrome:', error);
+            return;
+        }
+        console.log('Chrome closed successfully. stdout:', stdout);
+        console.error('stderr:', stderr);
+    });
 }
 
 /**
@@ -29,25 +41,32 @@ export function openChromeWindow(): void {
     }
     else if (isLinux) {
         console.log('Opening Chrome on Linux...');
-        exec(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --incognito --profile-directory=Default --remote-allow-origins=* --disable-popup-blocking --v=1 about:blank`, (error, stdout, stderr) => {
-            if (error) {
-                console.error('Error opening Chrome on Linux:', error);
-                return;
-            }
-            console.log('Linux Chrome stdout:', stdout);
-            console.error('Linux Chrome stderr:', stderr);
+        // exec(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --incognito --profile-directory=Default --remote-allow-origins=* --disable-popup-blocking --v=1 about:blank`, (error, stdout, stderr) => {
+        //     if (error) {
+        //         console.error('Error opening Chrome on Linux:', error);
+        //         return;
+        //     }
+        //     console.log('Linux Chrome stdout:', stdout);
+        //     console.error('Linux Chrome stderr:', stderr);
 
-            // Check if Chrome is running after opening it
-            setTimeout(() => {
-                exec(`pgrep "chrome"`, (err, stdout) => {
-                    if (err || !stdout.trim()) {
-                        console.error('Chrome process not found after attempting to launch.');
-                    } else {
-                        console.log('Chrome is running with PID:', stdout.trim());
-                    }
-                });
-            }, 10000);
-        });
+        // });
+        try {
+            console.log("Attempting to open Chrome with execSync");
+            const output = execSync(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --incognito --profile-directory=Default --remote-allow-origins=* --disable-popup-blocking --v=1 about:blank`, { stdio: 'inherit' });
+            console.log("Chrome opened successfully with execSync:", output);
+        } catch (error) {
+            console.error("Error occurred in execSync:", error);
+        }
+        // Check if Chrome is running after opening it
+        setTimeout(() => {
+            exec(`pgrep "chrome"`, (err, stdout) => {
+                if (err || !stdout.trim()) {
+                    console.error('Chrome process not found after attempting to launch.');
+                } else {
+                    console.log('Chrome is running with PID:', stdout.trim());
+                }
+            });
+        }, 10000);
     }
 }
 

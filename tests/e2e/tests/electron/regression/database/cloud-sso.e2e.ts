@@ -7,7 +7,7 @@ import { commonUrl } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { modifyFeaturesConfigJson, updateControlNumber } from '../../../../helpers/insights';
 import { processGoogleSSO } from '../../../../helpers/google-authorization';
-import { openChromeWindow, saveOpenedChromeTabUrl } from '../../../../helpers/scripts/browser-scripts';
+import { closeChrome, openChromeWindow, saveOpenedChromeTabUrl } from '../../../../helpers/scripts/browser-scripts';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
@@ -67,7 +67,10 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     await t.expect(myRedisDatabasePage.promoButton.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
     // Open Chrome with a sample URL and save it to logs file
     openChromeWindow();
-    await t.wait(5000);
+    await t.wait(3000);
+    closeChrome()
+    await t.wait(3000);
+    openChromeWindow();
     await t.click(myRedisDatabasePage.NavigationHeader.cloudSignInButton);
     // Navigate to Google Auth button
     await t.pressKey('tab');

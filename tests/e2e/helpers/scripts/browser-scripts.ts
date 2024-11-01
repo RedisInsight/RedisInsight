@@ -72,9 +72,10 @@ export function openChromeWindow(): void {
 
 /**
  * Retrieve opened tab in Google Chrome using Chrome DevTools Protocol
- * @param callback Function to save opened tab
+ * @param urlSubstring Optional substring to match in the URL
+ * @returns Promise<string> Resolves to the URL of the opened tab
  */
-export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring?: string): void {
+export async function getOpenedChromeTab(urlSubstring?: string): Promise<string> {
     const { isMac, isLinux } = getPlatform();
     const maxRetries = 20;
     const retryDelay = 800;
@@ -82,100 +83,104 @@ export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring
 
     if (isMac) {
         const scriptPath = path.join(__dirname, 'get_chrome_tab_url.applescript');
-        exec(`osascript ${scriptPath}`, (error, stdout) => {
-            if (error) {
-                console.error('Error retrieving tabs and windows on macOS:', error);
-                return;
-            }
-            const url = stdout.trim();
-            callback(url);
+        return new Promise((resolve, reject) => {
+            exec(`osascript ${scriptPath}`, (error, stdout) => {
+                if (error) {
+                    console.error('Error retrieving tabs and windows on macOS:', error);
+                    reject(error);
+                    return;
+                }
+                resolve(stdout.trim());
+            });
         });
     } else if (isLinux) {
         let attempts = 0;
         let initialTabCount = 0;
 
-        const checkChromeAndGetTab = () => {
+        const checkChromeAndGetTab = async (): Promise<string> => {
             console.log(`Attempting to connect to Chrome DevTools (Attempt: ${attempts + 1}/${maxRetries})...`);
-            CDP.List({ port: chromeDebuggingPort }, async (err, targets) => {
-                if (err) {
-                    console.error('Error connecting to Chrome with CDP:', err);
-                    if (attempts < maxRetries) {
-                        attempts++;
-                        setTimeout(checkChromeAndGetTab, retryDelay);
-                    } else {
-                        console.error('Failed to connect to Chrome within the expected time.');
+            return new Promise((resolve, reject) => {
+                CDP.List({ port: chromeDebuggingPort }, (err, targets) => {
+                    if (err) {
+                        console.error('Error connecting to Chrome with CDP:', err);
+                        if (attempts < maxRetries) {
+                            attempts++;
+                            setTimeout(() => resolve(checkChromeAndGetTab()), retryDelay);
+                        } else {
+                            reject(new Error('Failed to connect to Chrome within the expected time.'));
+                        }
+                        return;
                     }
-                    return;
-                }
 
-                const pageTargets = targets.filter(target => target.type === 'page');
-                console.log(`Found ${pageTargets.length} open tabs in Chrome`);
+                    const pageTargets = targets.filter(target => target.type === 'page');
+                    console.log(`Found ${pageTargets.length} open tabs in Chrome`);
 
-                // Log URLs of all open tabs
-                pageTargets.forEach(target => {
-                    console.log(`Open tab URL: ${target.url}`);
+                    // Log URLs of all open tabs
+                    pageTargets.forEach(target => {
+                        console.log(`Open tab URL: ${target.url}`);
+                    });
+
+                    // First, get the initial tab count
+                    if (attempts === 0) {
+                        initialTabCount = pageTargets.length;
+                        console.log('Initial tab count:', initialTabCount);
+                    }
+
+                    // Detect if a new tab has opened
+                    const newTabOpened = pageTargets.length > initialTabCount;
+
+                    // If a new tab has opened, find it
+                    if (newTabOpened) {
+                        console.log('New tab detected...');
+                        const newTab = pageTargets.find(target =>
+                            (urlSubstring && target.url.includes(urlSubstring)) ||
+                            target.url.includes('auth.'));
+                        if (newTab) {
+                            console.log('Correct tab found:', newTab.url);
+                            resolve(newTab.url);
+                        } else {
+                            console.log('New tab opened but does not match criteria, retrying...');
+                            setTimeout(() => resolve(checkChromeAndGetTab()), retryDelay);  // Keep retrying until the right tab is found
+                        }
+                    } else {
+                        console.log(`No new tab detected yet, retrying... (${attempts + 1}/${maxRetries})`);
+                        attempts++;
+                        if (attempts < maxRetries) {
+                            setTimeout(() => resolve(checkChromeAndGetTab()), retryDelay);
+                        } else {
+                            reject(new Error('Failed to detect new tab within the expected time.'));
+                        }
+                    }
                 });
-
-                // First, get the initial tab count
-                if (attempts === 0) {
-                    initialTabCount = pageTargets.length;
-                    console.log('Initial tab count:', initialTabCount);
-                }
-
-                // Detect if a new tab has opened
-                const newTabOpened = pageTargets.length > initialTabCount;
-
-                // If a new tab has opened, find it
-                if (newTabOpened) {
-                    console.log('New tab detected...');
-
-                    const newTab = pageTargets.find(target =>
-                        (urlSubstring && target.url.includes(urlSubstring)) ||
-                        target.url.includes('auth.'));
-
-                    if (newTab) {
-                        console.log('Correct tab found:', newTab.url);
-                        callback(newTab.url);
-                    } else {
-                        console.log('New tab opened but does not match criteria, retrying...');
-                        attempts++;
-                        setTimeout(checkChromeAndGetTab, retryDelay);
-                    }
-                } else {
-                    console.log(`No new tab detected yet, retrying... (${attempts + 1}/${maxRetries})`);
-                    attempts++;
-                    if (attempts < maxRetries) {
-                        setTimeout(checkChromeAndGetTab, retryDelay);
-                    } else {
-                        console.error('Failed to detect new tab within the expected time.');
-                    }
-                }
             });
         };
 
         // Start the process by checking for Chrome
-        checkChromeAndGetTab();
+        return await checkChromeAndGetTab();
     } else {
-        console.error('Unsupported operating system:', process.platform);
+        throw new Error('Unsupported operating system: ' + process.platform);
     }
 }
 
 /**
-* Save opened chrome tab url to file
-* @param logsFilePath The path to the file with logged url
-* @param timeout The timeout for monitoring Chrome tabs
-*/
-export function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 500): void {
-    setTimeout(() => {
-        getOpenedChromeTab((windows: string | NodeJS.ArrayBufferView) => {
-            // Save the window information to a file
-            fs.writeFile(logsFilePath, windows, (err) => {
-                if (err) {
-                    console.error('Error saving logs:', err);
-                }
-            });
+ * Save opened chrome tab URL to file
+ * @param logsFilePath The path to the file with logged URL
+ * @param timeout The timeout for monitoring Chrome tabs
+ */
+export async function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 2000): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, timeout));
+    try {
+        const url = await getOpenedChromeTab();
+        fs.writeFile(logsFilePath, url, 'utf8', (err) => {
+            if (err) {
+                console.error('Error saving logs:', err);
+            } else {
+                console.log('Logs saved successfully.');
+            }
         });
-    }, timeout);
+    } catch (err) {
+        console.error('Error saving logs:', err);
+    }
 }
 
 /**

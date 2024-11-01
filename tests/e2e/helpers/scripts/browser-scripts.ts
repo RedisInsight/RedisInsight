@@ -138,7 +138,8 @@ export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring
                         callback(newTab.url);
                     } else {
                         console.log('New tab opened but does not match criteria, retrying...');
-                        setTimeout(checkChromeAndGetTab, retryDelay);  // Keep retrying until the right tab is found
+                        attempts++;
+                        setTimeout(checkChromeAndGetTab, retryDelay);
                     }
                 } else {
                     console.log(`No new tab detected yet, retrying... (${attempts + 1}/${maxRetries})`);

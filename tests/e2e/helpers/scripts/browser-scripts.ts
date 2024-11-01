@@ -29,7 +29,7 @@ export function openChromeWindow(): void {
     }
     else if (isLinux) {
         console.log('Opening Chrome on Linux...');
-        exec(`google-chrome --remote-debugging-port=9223 --no-sandbox --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --incognito --profile-directory=Default --remote-allow-origins=* --disable-popup-blocking --v=1 about:blank`, (error, stdout, stderr) => {
+        exec(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --incognito --profile-directory=Default --remote-allow-origins=* --disable-popup-blocking --v=1 about:blank`, (error, stdout, stderr) => {
             if (error) {
                 console.error('Error opening Chrome on Linux:', error);
                 return;
@@ -57,8 +57,8 @@ export function openChromeWindow(): void {
  */
 export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring?: string): void {
     const { isMac, isLinux } = getPlatform();
-    const maxRetries = 30;
-    const retryDelay = 500;
+    const maxRetries = 10;
+    const retryDelay = 800;
     const chromeDebuggingPort = 9223;
 
     if (isMac) {

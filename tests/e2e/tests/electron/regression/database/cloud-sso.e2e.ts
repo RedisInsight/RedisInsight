@@ -68,8 +68,6 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     // Open Chrome with a sample URL and save it to logs file
     openChromeWindow();
     await t.wait(5000);
-    openChromeWindow();
-    await t.wait(5000);
     await t.click(myRedisDatabasePage.NavigationHeader.cloudSignInButton);
     // Navigate to Google Auth button
     await t.pressKey('tab');

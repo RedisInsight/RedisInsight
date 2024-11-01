@@ -13,7 +13,7 @@ import {
 } from 'uiSrc/slices/interfaces'
 import { Nullable } from '../types'
 
-ObjectInputStream.RegisterObjectClass(JavaDate, 'java.util.Date', '7523967970034938905')
+ObjectInputStream.RegisterObjectClass(JavaDate, JavaDate.ClassName, JavaDate.SerialVersionUID)
 
 const decoder = new TextDecoder('utf-8')
 const encoder = new TextEncoder()

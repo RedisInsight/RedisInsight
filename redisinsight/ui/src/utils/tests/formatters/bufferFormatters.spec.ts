@@ -19,7 +19,7 @@ import {
 
 try {
   // Register JavaDate class for deserialization
-  ObjectInputStream.RegisterObjectClass(JavaDate, 'java.util.Date', '7523967970034938905')
+  ObjectInputStream.RegisterObjectClass(JavaDate, JavaDate.ClassName, JavaDate.SerialVersionUID)
   // eslint-disable-next-line no-empty
 } catch (e) {}
 

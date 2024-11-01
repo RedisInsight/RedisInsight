@@ -173,9 +173,8 @@
     "reporters": [
       "default",
       ["jest-html-reporters", {
-        "publicPath": "./reports",
-        "filename": "index.html",
-        "openReport": true
+        "publicPath": "./report",
+        "filename": "index.html"
       }]
     ]
   }

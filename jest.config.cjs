@@ -52,9 +52,8 @@ module.exports = {
     [
       'jest-html-reporters',
       {
-        publicPath: './reports',
+        publicPath: './report',
         filename: 'index.html',
-        openReport: true,
       },
     ],
   ],

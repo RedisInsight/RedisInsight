@@ -40,7 +40,8 @@ import testcafe from 'testcafe';
                     speed: 1,
                     // quarantineMode: { successThreshold: 1, attemptLimit: 3 },
                     pageRequestTimeout: 20000,
-                    disableMultipleWindows: true
+                    disableMultipleWindows: true,
+                    runExecutionTimeout: 120000
                 });
         })
         .then((failedCount) => {

@@ -164,7 +164,7 @@ export function getOpenedChromeTab(callback: (url: string) => void, urlSubstring
 * @param logsFilePath The path to the file with logged url
 * @param timeout The timeout for monitoring Chrome tabs
 */
-export function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 20000): void {
+export function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 500): void {
     setTimeout(() => {
         getOpenedChromeTab((windows: string | NodeJS.ArrayBufferView) => {
             // Save the window information to a file

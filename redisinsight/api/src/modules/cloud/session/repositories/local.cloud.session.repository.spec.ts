@@ -38,7 +38,7 @@ describe('LocalCloudSessionRepository', () => {
 
     encryptionService.decrypt.mockImplementation((value) => value);
     when(encryptionService.decrypt)
-      .calledWith(mockCloudSessionEntity.data, jasmine.anything())
+      .calledWith(mockCloudSessionEntity.data, expect.anything())
       .mockResolvedValue(JSON.stringify(mockCloudSessionData.data));
 
     encryptionService.encrypt.mockImplementation((value) => value);

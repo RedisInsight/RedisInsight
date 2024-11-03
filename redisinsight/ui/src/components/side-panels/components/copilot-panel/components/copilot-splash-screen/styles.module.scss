@@ -1,8 +1,9 @@
 .container {
-  padding: 20px;
+  padding: 20px 0;
   height: 100%;
 
   .closeBtnWrapper {
+    padding: 0 20px;
     display: flex;
     margin-bottom: 20px;
 
@@ -33,6 +34,7 @@
       justify-content: flex-start;
 
       img {
+        max-width: 100%;
         display: block;
         margin: auto;
       }

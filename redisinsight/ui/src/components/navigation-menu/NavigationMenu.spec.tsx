@@ -4,9 +4,16 @@ import { BuildType } from 'uiSrc/constants/env'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { appContextSelector } from 'uiSrc/slices/app/context'
 import NavigationMenu from './NavigationMenu'
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -16,6 +23,13 @@ beforeEach(() => {
 })
 
 const mockAppInfoSelector = jest.requireActual('uiSrc/slices/app/info')
+
+jest.mock('uiSrc/slices/app/context', () => ({
+  ...jest.requireActual('uiSrc/slices/app/context'),
+  appContextSelector: jest.fn().mockReturnValue({
+    workspace: 'database',
+  }),
+}))
 
 jest.mock('uiSrc/slices/app/info', () => ({
   ...jest.requireActual('uiSrc/slices/app/info'),
@@ -28,6 +42,13 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: ''
+  }),
+}))
+
+jest.mock('uiSrc/slices/rdi/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/rdi/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: 'mockRdiId',
   }),
 }))
 
@@ -155,6 +176,49 @@ describe('NavigationMenu', () => {
       const githubBtn = container.querySelector('[data-test-subj="github-repo-btn"]')
       expect(githubBtn).toBeTruthy()
       expect(githubBtn?.getAttribute('href')).toEqual(EXTERNAL_LINKS.githubRepo)
+    })
+  })
+
+  it('should render private routes with connectedRdiInstanceId', () => {
+    (appContextSelector as jest.Mock).mockImplementation(() => ({
+      ...appContextSelector,
+      workspace: 'redisDataIntegration'
+    }))
+
+    render(<NavigationMenu />)
+
+    expect(screen.getByTestId('pipeline-status-page-btn')).toBeTruthy()
+    expect(screen.getByTestId('pipeline-management-page-btn')).toBeTruthy()
+  })
+
+  it('should call proper telemetry event after click on rdi button', () => {
+    (appContextSelector as jest.Mock).mockImplementation(() => ({
+      ...appContextSelector,
+      workspace: 'redisDataIntegration'
+    }))
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+    render(<NavigationMenu />)
+
+    fireEvent.click(screen.getByTestId('pipeline-status-page-btn'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.OPEN_RDI_CLICKED,
+      eventData: {
+        rdiId: 'mockRdiId',
+        source: 'button',
+      }
+    })
+
+    fireEvent.click(screen.getByTestId('pipeline-management-page-btn'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.OPEN_RDI_CLICKED,
+      eventData: {
+        rdiId: 'mockRdiId',
+        source: 'button',
+      }
     })
   })
 })

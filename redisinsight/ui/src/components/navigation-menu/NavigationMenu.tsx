@@ -43,6 +43,7 @@ import { FeatureFlagComponent } from 'uiSrc/components'
 
 import { appContextSelector } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
 
@@ -177,7 +178,16 @@ const NavigationMenu = () => {
       tooltipText: 'Pipeline Status',
       pageName: PageNames.rdiStatistics,
       ariaLabel: 'Pipeline Status page button',
-      onClick: () => handleGoPage(Pages.rdiStatistics(connectedRdiInstanceId)),
+      onClick: () => {
+        sendEventTelemetry({
+          event: TelemetryEvent.OPEN_RDI_CLICKED,
+          eventData: {
+            rdiId: connectedRdiInstanceId,
+            source: 'button',
+          }
+        })
+        handleGoPage(Pages.rdiStatistics(connectedRdiInstanceId))
+      },
       dataTestId: 'pipeline-status-page-btn',
       isActivePage: activePage === `/${PageNames.rdiStatistics}`,
       getClassName() {
@@ -191,7 +201,16 @@ const NavigationMenu = () => {
       tooltipText: 'Pipeline Management',
       pageName: PageNames.rdiPipelineManagement,
       ariaLabel: 'Pipeline Management page button',
-      onClick: () => handleGoPage(Pages.rdiPipelineManagement(connectedRdiInstanceId)),
+      onClick: () => {
+        sendEventTelemetry({
+          event: TelemetryEvent.OPEN_RDI_CLICKED,
+          eventData: {
+            rdiId: connectedRdiInstanceId,
+            source: 'button',
+          }
+        })
+        handleGoPage(Pages.rdiPipelineManagement(connectedRdiInstanceId))
+      },
       dataTestId: 'pipeline-management-page-btn',
       isActivePage: isPipelineManagementPath(),
       getClassName() {

@@ -85,6 +85,7 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     // Click the button to trigger the Google authorization page
     await t.pressKey('enter');
 
+    await t.wait(2000);
     urlToUse = fs.readFileSync(logsFilePath, 'utf8');
     console.log('urlToUse: ', urlToUse)
     await t.expect(urlToUse).contains('authorize?');

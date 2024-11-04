@@ -83,8 +83,8 @@ export function openChromeWindow(): void {
  */
 export async function getOpenedChromeTab(urlSubstring?: string): Promise<string> {
     const { isMac, isLinux } = getPlatform();
-    const maxRetries = 20;
-    const retryDelay = 800;
+    const maxRetries = 10;
+    const retryDelay = 300;
     const chromeDebuggingPort = 9223;
 
     if (isMac) {
@@ -126,7 +126,7 @@ export async function getOpenedChromeTab(urlSubstring?: string): Promise<string>
 
                 if (newTab) {
                     console.log('Correct tab found:', newTab.url);
-                    return newTab.url; // Return the found URL
+                    return newTab.url;
                 } else {
                     console.log('No matching tab found, retrying...');
                 }
@@ -149,12 +149,17 @@ export async function getOpenedChromeTab(urlSubstring?: string): Promise<string>
  * @param logsFilePath The path to the file with logged URL
  * @param timeout The timeout for monitoring Chrome tabs
  */
-export async function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 2000): Promise<void> {
+export async function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 100): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, timeout));
     try {
         const url = await getOpenedChromeTab();
-        console.log('URL final: ', url);
-        await fs.promises.writeFile(logsFilePath, url, 'utf8');
+        fs.writeFile(logsFilePath, url, 'utf8', (err) => {
+            if (err) {
+                console.error('Error saving logs:', err);
+            } else {
+                console.log('Logs saved successfully.');
+            }
+        });
     } catch (err) {
         console.error('Error saving logs:', err);
     }

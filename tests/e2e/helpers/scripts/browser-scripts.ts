@@ -58,7 +58,7 @@ export function openChromeWindow(): void {
         // });
         try {
             console.log("Attempting to open Chrome with execSync");
-            const output = execSync(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --incognito --profile-directory=Default --user-data-dir=/tmp/chrome-profile --remote-allow-origins=* --disable-popup-blocking --v=1 about:blank`, { stdio: 'inherit', timeout: 10000 });
+            const output = execSync(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-search-engine-choice-screen --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --remote-allow-origins=* --disable-popup-blocking about:blank`, { stdio: 'inherit', timeout: 10000 });
             console.log("Chrome opened successfully with execSync:", output);
         } catch (error) {
             console.error("Error occurred in execSync:", error);

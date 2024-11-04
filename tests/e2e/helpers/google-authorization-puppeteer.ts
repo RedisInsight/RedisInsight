@@ -4,7 +4,10 @@ import * as fs from 'fs';
 import { exec } from 'child_process';
 import { googleUser, googleUserPassword } from './conf';
 
-puppeteer.use(StealthPlugin());
+const stealthPlugin = StealthPlugin();
+stealthPlugin.enabledEvasions.delete('iframe.contentWindow');
+stealthPlugin.enabledEvasions.delete('navigator.plugins');
+puppeteer.use(stealthPlugin);
 
 export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void> {
     const browser = await puppeteer.launch({
@@ -19,14 +22,15 @@ export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void>
             '--disable-domain-reliability',
             '--disable-default-apps',
             '--no-default-browser-check',
-            '--disable-extensions',
-            '--disable-popup-blocking',
             '--ignore-certificate-errors',
-            '--incognito'
+            '--incognito',
+            '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         ],
+        defaultViewport: null
     });
 
     const page = await browser.newPage();
+    await page.setBypassCSP(true);
 
     const protocol = 'redisinsight://';
     const callbackUrl = 'cloud/oauth/callback';

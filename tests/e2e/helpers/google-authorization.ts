@@ -1,4 +1,5 @@
 import { Builder, By, Key, until } from 'selenium-webdriver';
+import * as fs from 'fs';
 import { exec } from 'child_process';
 import chrome = require('selenium-webdriver/chrome');
 import { googleUser, googleUserPassword } from './conf';
@@ -67,6 +68,11 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
     }
     catch (error) {
         console.error('Error during Google SSO automation:', error);
+
+        // Take a screenshot if there's an error
+        const screenshot = await driver.takeScreenshot();
+        fs.writeFileSync('./report/screenshots/selenium_screenshot.png', screenshot, 'base64');
+        console.log('Screenshot saved as screenshot.png');
     }
     finally {
         await driver.quit();

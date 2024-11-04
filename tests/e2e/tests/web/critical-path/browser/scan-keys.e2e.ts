@@ -33,9 +33,6 @@ fixture `Browser - Specify Keys to Scan`
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async t => {
-        await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
-        await t.click(settingsPage.accordionAdvancedSettings);
-        await settingsPage.changeKeysToScanValue('10000');
         // Open Browser page
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         //Clear and delete database
@@ -70,4 +67,8 @@ test('Verify that the user can see this number of keys applied to new filter req
     const keysNumberOfScannedScanMore = await browserPage.scannedValue.textContent;
     // Verify that number of results is 2000
     await t.expect(keysNumberOfScannedScanMore).contains('2 000', 'Number of scanned is not 2000');
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
+    await t.click(settingsPage.accordionAdvancedSettings);
+    await settingsPage.changeKeysToScanValue('10000');
+    await t.expect(settingsPage.keysToScanValue.textContent).eql('10000', 'Keys to Scan has proper value');
 });

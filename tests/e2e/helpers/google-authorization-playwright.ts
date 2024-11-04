@@ -4,9 +4,9 @@ import { exec } from 'child_process';
 import { googleUser, googleUserPassword } from './conf';
 
 export async function processGoogleSSOPlaywright(urlToUse: string): Promise<void> {
-    const browser = await chromium.launch({ headless: false }); // Run in visible mode to avoid detection
+    const browser = await chromium.launch({ headless: false });
     const context = await browser.newContext({
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', // Realistic user-agent
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
         viewport: { width: 1280, height: 800 },
     });
     const page = await context.newPage();

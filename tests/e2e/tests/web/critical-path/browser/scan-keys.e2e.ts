@@ -28,7 +28,7 @@ const explicitErrorHandler = (): void => {
 fixture `Browser - Specify Keys to Scan`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
-    //.clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
+    .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })

@@ -60,7 +60,7 @@ export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void>
         }
 
         // Wait for the authorization to complete
-        await page.waitForURL('**/#success', { timeout: 10000 });
+        await page.waitForFunction(() => window.location.href.includes('#success'), { timeout: 10000 });
 
         const currentUrl = page.url();
         const parts = currentUrl.split('?');

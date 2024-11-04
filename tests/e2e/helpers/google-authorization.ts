@@ -17,13 +17,13 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
         '--disable-domain-reliability',
         '--disable-default-apps',
         '--no-default-browser-check',
-        '--no-sandbox',
+        // '--no-sandbox',
         '--disable-plugins-discovery',
         '--disable-extensions',
         '--disable-popup-blocking',
         '--profile-directory=Default',
         '--ignore-certificate-errors',
-        '--disable-blink-features=AutomationControlled',
+        // '--disable-blink-features=AutomationControlled',
         '--incognito',
         'user_agent=DN'
     );
@@ -40,8 +40,15 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
         await driver.get(urlToUse);
         await driver.findElement(By.css('input[type="email"]')).sendKeys(googleUser, Key.RETURN);
         await driver.wait(until.elementLocated(By.css('input[type="password"]')), 10000);
-        await driver.sleep(2000);
+        await driver.sleep(Math.random() * 1000 + 500);
         await driver.findElement(By.css('input[type="password"]')).sendKeys(googleUserPassword, Key.RETURN);
+        await driver.sleep(Math.random() * 1000 + 500);
+        const elements = await driver.findElements(By.xpath("//*[text()='Try another way']"));
+        if (elements.length > 0 && await elements[0].isDisplayed()) {
+            await elements[0].click();
+        } else {
+            console.log("'Try another way' button not found or not visible.");
+        }
 
         // Wait for the authorization to complete and the redirect to your specified URI
         await driver.wait(until.urlContains('#success'), 30000);

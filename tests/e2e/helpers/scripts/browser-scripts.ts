@@ -153,6 +153,7 @@ export async function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 100
     await new Promise(resolve => setTimeout(resolve, timeout));
     try {
         const url = await getOpenedChromeTab();
+        console.log('final url:', url);
         fs.writeFile(logsFilePath, url, 'utf8', (err) => {
             if (err) {
                 console.error('Error saving logs:', err);

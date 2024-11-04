@@ -1,12 +1,21 @@
 import React from 'react'
-import { cloneDeep } from 'lodash'
-import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import { cloneDeep, set } from 'lodash'
+import {
+  render,
+  screen,
+  fireEvent,
+  mockedStore,
+  cleanup,
+  initialStateDefault,
+  mockStore,
+} from 'uiSrc/utils/test-utils'
 import { setOnboarding } from 'uiSrc/slices/app/features'
 
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setReleaseNotesViewed, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 
+import { FeatureFlags } from 'uiSrc/constants'
 import HelpMenu from './HelpMenu'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -82,5 +91,37 @@ describe('HelpMenu', () => {
     });
 
     (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should show feature dependent items when feature flag is on', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: true }
+    )
+
+    render(<HelpMenu />, {
+      store: mockStore(initialStoreState)
+    })
+    fireEvent.click(screen.getByTestId('help-menu-button'))
+
+    expect(screen.queryByTestId('submit-bug-btn')).toBeInTheDocument()
+    expect(screen.queryByTestId('reset-onboarding-btn')).toBeInTheDocument()
+  })
+
+  it('should hide feature dependent items when feature flag is off', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+
+    render(<HelpMenu />, {
+      store: mockStore(initialStoreState)
+    })
+    fireEvent.click(screen.getByTestId('help-menu-button'))
+
+    expect(screen.queryByTestId('submit-bug-btn')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('reset-onboarding-btn')).not.toBeInTheDocument()
   })
 })

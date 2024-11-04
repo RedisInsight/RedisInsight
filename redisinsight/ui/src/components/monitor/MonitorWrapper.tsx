@@ -44,7 +44,7 @@ const MonitorWrapper = () => {
       <FeatureFlagComponent
         name={FeatureFlags.envDependent}
         otherwise={(
-          <div style={{ display: 'grid', placeContent: 'center', height: '100%' }}>
+          <div data-testid="monitor-not-supported" style={{ display: 'grid', placeContent: 'center', height: '100%' }}>
             <EuiTextColor color="accent">Monitor not supported in this environment.</EuiTextColor>
           </div>
         )}

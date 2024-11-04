@@ -151,7 +151,7 @@ const Navigation = (props: Props) => {
             testId={id || label}
             label={label}
             summary={summary}
-            {...args}
+            path={args?.path}
           >
             {args?.content || label}
           </InternalLink>

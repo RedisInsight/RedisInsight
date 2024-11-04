@@ -1,0 +1,12 @@
+.btn {
+  display: flex;
+  align-items: center;
+  color: var(--recommendationsCountBgColor) !important;
+  background-color: var(--tableRowSelectedColor) !important;
+  border-radius: 4px;
+  border-color: var(--tableRowSelectedColor) !important;
+
+  > span {
+    color: var(--recommendationsCountBgColor) !important;
+  }
+}

@@ -1,0 +1,123 @@
+name: ✅ Tests
+
+on:
+  push:
+    branches:
+      - 'fe/**'
+      - 'be/**'
+      - 'e2e/**'
+
+  workflow_dispatch:
+    inputs:
+      group_tests:
+        description: Run group of tests
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - without_e2e
+
+      redis_client:
+        description: Library to use for redis connection
+        default: 'ioredis'
+        type: choice
+        options:
+          - ioredis
+          - node-redis
+
+  workflow_call:
+    inputs:
+      group_tests:
+        description: Run group of tests
+        type: string
+        default: 'all'
+      short_rte_list:
+        description: Use short rte list
+        type: boolean
+        default: true
+
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+      desktop: ${{ steps.filter.outputs.desktop }}
+      e2e: ${{ steps.filter.outputs.e2e }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v3.0.2
+      id: filter
+      with:
+        base: ${{ github.ref }}
+        filters: |
+          frontend:
+            - 'redisinsight/ui/**'
+          backend:
+            - 'redisinsight/api/**'
+          desktop:
+            - 'redisinsight/desktop/**'
+          e2e:
+            - 'tests/e2e/**'
+
+  # TODO: concurrency
+
+  frontend-tests:
+    needs: changes
+    if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'fe/')
+    uses: ./.github/workflows/tests-frontend.yml
+    secrets: inherit
+
+  backend-tests:
+    needs: changes
+    if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'be/')
+    uses: ./.github/workflows/tests-backend.yml
+    secrets: inherit
+
+  integration-tests:
+    needs: changes
+    if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'be/')
+    uses: ./.github/workflows/tests-integration.yml
+    secrets: inherit
+    with:
+      short_rte_list: ${{ inputs.short_rte_list || true }}
+      redis_client: ${{ inputs.redis_client }}
+
+  # E2E Approve
+  e2e-approve:
+    runs-on: ubuntu-latest
+    needs: changes
+    timeout-minutes: 60
+    if: inputs.group_tests == 'all' || startsWith(github.ref_name, 'e2e/')
+    environment: ${{ startsWith(github.ref_name, 'e2e/') && 'e2e-approve' || 'staging' }}
+    name: Approve E2E tests
+    steps:
+      - uses: actions/checkout@v4
+
+  # E2E Docker
+  build-docker:
+    uses: ./.github/workflows/pipeline-build-docker.yml
+    needs: e2e-approve
+    secrets: inherit
+    with:
+      only_docker: true
+
+  e2e-docker-tests:
+    needs: build-docker
+    uses: ./.github/workflows/tests-e2e-docker.yml
+    secrets: inherit
+
+
+  # E2E AppImage
+  build-appimage:
+    uses: ./.github/workflows/pipeline-build-linux.yml
+    needs: e2e-approve
+    secrets: inherit
+    with:
+      target: linux:appimage:x64
+
+  e2e-appimage-tests:
+    needs: build-appimage
+    uses: ./.github/workflows/tests-e2e-appimage.yml
+    secrets: inherit

@@ -162,11 +162,11 @@ describe('BulkImportService', () => {
       spy.mockResolvedValue(mockSummary);
       expect(await service.import(mockClientMetadata, mockReadableStream)).toEqual({
         ...mockImportResult,
-        duration: jasmine.anything(),
+        duration: expect.anything(),
       });
       expect(analytics.sendActionSucceed).toHaveBeenCalledWith({
         ...mockImportResult,
-        duration: jasmine.anything(),
+        duration: expect.anything(),
       });
     });
 
@@ -185,7 +185,7 @@ describe('BulkImportService', () => {
             failed: 0,
             errors: [],
           },
-          duration: jasmine.anything(),
+          duration: expect.anything(),
         });
     });
 
@@ -204,7 +204,7 @@ describe('BulkImportService', () => {
             failed: 0,
             errors: [],
           },
-          duration: jasmine.anything(),
+          duration: expect.anything(),
         });
     });
 
@@ -225,7 +225,7 @@ describe('BulkImportService', () => {
           failed: 2,
           errors: [],
         },
-        duration: jasmine.anything(),
+        duration: expect.anything(),
       });
       expect(mockStandaloneRedisClient.disconnect).toHaveBeenCalled();
     });

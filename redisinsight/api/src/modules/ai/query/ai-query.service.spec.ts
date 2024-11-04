@@ -57,7 +57,7 @@ describe('AiQueryService', () => {
     clientSocket.disconnect();
     serverSocket.disconnect();
     wsServer.close();
-    httpServer.stop();
+    httpServer?.stop?.();
   });
 
   beforeEach(async () => {

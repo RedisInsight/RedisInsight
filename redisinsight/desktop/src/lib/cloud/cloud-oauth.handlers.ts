@@ -76,6 +76,12 @@ export const initCloudOauthHandlers = () => {
 export const cloudOauthCallback = async (url: UrlWithParsedQuery) => {
   try {
     const authService: CloudAuthService = getBackendApp()?.get?.(CloudAuthService)
+
+    // Ignore xdg-open when the same request is being processed.
+    if (authService.isRequestInProgress(url.query)) {
+      return
+    }
+
     const result = await authService.handleCallback(url.query)
 
     if (result.status === CloudAuthStatus.Failed) {
@@ -83,6 +89,9 @@ export const cloudOauthCallback = async (url: UrlWithParsedQuery) => {
 
       currentWindow?.webContents.send(IpcOnEvent.cloudOauthCallback, result)
     }
+
+    // complete auth request processing
+    authService.finishInProgressRequest(url.query)
   } catch (e) {
     log.error(wrapErrorMessageSensitiveData(e as Error))
   }

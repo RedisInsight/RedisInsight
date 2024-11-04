@@ -49,8 +49,6 @@ import NotificationMenu from './components/notifications-center'
 import { RedisLogo } from './components/redis-logo/RedisLogo'
 import styles from './styles.module.scss'
 
-const workbenchPath = `/${PageNames.workbench}`
-const browserPath = `/${PageNames.browser}`
 const pubSubPath = `/${PageNames.pubSub}`
 
 interface INavigations {
@@ -111,7 +109,7 @@ const NavigationMenu = () => {
     {
       tooltipText: 'Browser',
       pageName: PageNames.browser,
-      isActivePage: activePage === browserPath,
+      isActivePage: activePage === `/${PageNames.browser}`,
       ariaLabel: 'Browser page button',
       onClick: () => handleGoPage(Pages.browser(connectedInstanceId)),
       dataTestId: 'browser-page-btn',
@@ -131,7 +129,7 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.workbench(connectedInstanceId)),
       dataTestId: 'workbench-page-btn',
       connectedInstanceId,
-      isActivePage: activePage === workbenchPath,
+      isActivePage: activePage === `/${PageNames.workbench}`,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -311,10 +309,10 @@ const NavigationMenu = () => {
         {connectedRdiInstanceId && isRdiWorkspace && (privateRdiRoutes.map(renderNavItem))}
       </div>
       <div className={styles.bottomContainer}>
-        <FeatureFlagComponent name={FeatureFlags.envDependent}>
+        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <NotificationMenu />
         </FeatureFlagComponent>
-        <FeatureFlagComponent name={FeatureFlags.envDependent}>
+        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <HelpMenu />
         </FeatureFlagComponent>
         {publicRoutes.map(renderPublicNavItem)}
@@ -325,12 +323,14 @@ const NavigationMenu = () => {
               color="transparent"
               className="eui-hideFor--xs eui-hideFor--s"
               variant="middle"
+              data-testid="github-repo-divider-otherwise"
             />
           )}
+          enabledByDefault
         >
-          <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
+          <Divider data-testid="github-repo-divider-default" colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
         </FeatureFlagComponent>
-        <FeatureFlagComponent name={FeatureFlags.envDependent}>
+        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <Divider
             colorVariable="separatorNavigationColor"
             className="eui-showFor--xs--flex eui-showFor--s--flex"

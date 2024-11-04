@@ -12,12 +12,12 @@
 .time {
   color: var(--defaultGreenColor);
   width: 150px;
+  padding-right: 4px;
 }
 
 .channel {
   color: var(--euiColorMediumShade);
   width: 220px;
-  max-height: 26px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -29,12 +29,19 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .message {
   width: calc(100% - 372px);
   color: var(--htmlColor);
   word-break: break-word;
+
+  span {
+    display: inline-block;
+    vertical-align: middle;
+  }
 }
 
 .header {

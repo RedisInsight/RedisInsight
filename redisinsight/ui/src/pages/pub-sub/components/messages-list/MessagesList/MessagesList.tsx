@@ -130,7 +130,7 @@ const MessagesList = (props: Props) => {
             <div className={styles.channelAnchor}>{channel}</div>
           </EuiToolTip>
         </div>
-        <div className={styles.message} ref={rowRef}>{message}</div>
+        <div className={styles.message} ref={rowRef}><span>{message}</span></div>
       </div>
     )
   }

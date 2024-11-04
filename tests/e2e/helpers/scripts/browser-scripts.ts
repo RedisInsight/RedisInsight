@@ -121,7 +121,7 @@ export async function getOpenedChromeTab(urlSubstring?: string): Promise<string>
                 // Check for a new tab matching criteria
                 const newTab = pageTargets.find(target =>
                     (urlSubstring && target.url.includes(urlSubstring)) ||
-                    target.url.includes('auth.') // Change this according to your requirements
+                    target.url.includes('authorize?')
                 );
 
                 if (newTab) {
@@ -153,6 +153,7 @@ export async function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 200
     await new Promise(resolve => setTimeout(resolve, timeout));
     try {
         const url = await getOpenedChromeTab();
+        console.log('URL final: ', url);
         await fs.promises.writeFile(logsFilePath, url, 'utf8');
     } catch (err) {
         console.error('Error saving logs:', err);

@@ -69,9 +69,10 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
     catch (error) {
         console.error('Error during Google SSO automation:', error);
 
+        fs.mkdirSync('./report/screenshots/', { recursive: true });
         // Take a screenshot if there's an error
         const screenshot = await driver.takeScreenshot();
-        fs.writeFileSync('/home/circleci/project/tests/e2e/report/screenshots/selenium_screenshot.png', screenshot, 'base64');
+        fs.writeFileSync('./report/screenshots/selenium_screenshot.png', screenshot, 'base64');
         console.log('Screenshot saved as screenshot.png');
     }
     finally {

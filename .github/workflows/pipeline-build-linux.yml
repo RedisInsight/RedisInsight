@@ -1,0 +1,126 @@
+name: Build linux pipeline
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: Environment for build
+        required: false
+        default: 'staging'
+        type: string
+
+      target:
+        description: Build target
+        required: false
+        default: 'all'
+        type: string
+
+jobs:
+  build:
+    name: Build linux
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment }}
+
+    steps:
+    #TODO: some debug tools
+    # - uses: crazy-max/ghaction-dump-context@v2
+    # - uses: hmarr/debug-action@v3
+    # ssh
+    # - run: sudo apt-get update -qy && sudo apt-get install -qy tmux;
+    # - name: Setup upterm session
+    # - uses: mxschmitt/action-tmate@v3 #1 better
+    #   uses: lhotari/action-upterm@v1 #2
+    #   with:
+    #     limit-access-to-actor: true
+    #     limit-access-to-users: zalenskiSofteq
+
+    - uses: actions/checkout@v4
+
+    - name: Install all libs and dependencies
+      uses: ./.github/actions/install-all-build-libs
+      with:
+        keytar-host-mirror: ${{ secrets.NPM_CONFIG_KEYTAR_BINARY_HOST_MIRROR }}
+        sqlite3-host-mirror: ${{ secrets.NPM_CONFIG_NODE_SQLITE3_BINARY_HOST_MIRROR }}
+
+    # TODO: Is it needed?
+    # - run: |
+    #     mkdir electron
+    #     CURRENT_VERSION=$(jq -r ".version" redisinsight/package.json)
+    #     echo "Build version: $CURRENT_VERSION"
+    #     cp ./redisinsight/package.json ./electron/package.json
+    #     echo "$VERSION" > electron/version
+    #     exit 0
+    # - uses: actions/download-artifact@v4.1.0
+    #   with:
+    #     path: "."
+    # - run: cp ./electron/package.json ./redisinsight/
+
+    - name: Install plugins dependencies and build plugins
+      run: yarn build:statics
+
+    - name: Build linux packages (production)
+      if: vars.ENV == 'production' && inputs.target == vars.ALL
+      run: yarn package:prod
+
+    - name: Build linux packages (staging)
+      if: (vars.ENV == 'staging' || vars.ENV == 'development') && inputs.target == vars.ALL
+      run: yarn package:stage
+
+    - name: Build linux packages (development)
+      if: inputs.target != vars.ALL
+      run: |
+        target=""
+        if [ ${{ startsWith(inputs.target, 'linux:') }} == 'true' ]; then
+          inputsTarget=${{inputs.target}}
+          target=${inputsTarget#linux:}
+        fi
+
+        yarn package:stage --linux $target
+
+    - uses: actions/upload-artifact@v4
+      name: Upload AppImage artifact
+      with:
+        name: linux-appimage-build
+        path: |
+          ./release/Redis-Insight*.AppImage
+          ./release/latest-linux.yml
+
+    - uses: actions/upload-artifact@v4
+      name: Upload Deb artifact
+      with:
+        name: linux-deb-build
+        path: |
+          ./release/Redis-Insight*.deb
+
+    - uses: actions/upload-artifact@v4
+      name: Upload rpm artifacts
+      with:
+        name: linux-rpm-build
+        path: |
+          ./release/Redis-Insight*.rpm
+
+    - uses: actions/upload-artifact@v4
+      name: Upload snap artifact
+      with:
+        name: linux-snap-builds
+        path: |
+          ./release/Redis-Insight*.snap
+
+    env:
+      RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}
+      RI_AI_QUERY_PASS: ${{ secrets.RI_AI_QUERY_PASS }}
+      RI_AI_QUERY_USER: ${{ secrets.RI_AI_QUERY_USER }}
+      RI_CLOUD_API_URL: ${{ secrets.RI_CLOUD_API_URL }}
+      RI_CLOUD_CAPI_URL: ${{ secrets.RI_CLOUD_CAPI_URL }}
+      RI_CLOUD_IDP_AUTHORIZE_URL: ${{ secrets.RI_CLOUD_IDP_AUTHORIZE_URL }}
+      RI_CLOUD_IDP_CLIENT_ID: ${{ secrets.RI_CLOUD_IDP_CLIENT_ID }}
+      RI_CLOUD_IDP_GH_ID: ${{ secrets.RI_CLOUD_IDP_GH_ID }}
+      RI_CLOUD_IDP_GOOGLE_ID: ${{ secrets.RI_CLOUD_IDP_GOOGLE_ID }}
+      RI_CLOUD_IDP_ISSUER: ${{ secrets.RI_CLOUD_IDP_ISSUER }}
+      RI_CLOUD_IDP_REDIRECT_URI: ${{ secrets.RI_CLOUD_IDP_REDIRECT_URI }}
+      RI_CLOUD_IDP_TOKEN_URL: ${{ secrets.RI_CLOUD_IDP_TOKEN_URL }}
+      RI_SEGMENT_WRITE_KEY: ${{ secrets.RI_SEGMENT_WRITE_KEY }}
+      RI_SERVER_TLS_CERT: ${{ secrets.RI_SERVER_TLS_CERT }}
+      RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
+      RI_FEATURES_CONFIG_URL: ${{ secrets.RI_FEATURES_CONFIG_URL }}
+      RI_UPGRADES_LINK: ${{ secrets.RI_UPGRADES_LINK }}

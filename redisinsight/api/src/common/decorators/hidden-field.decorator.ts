@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 
 export function HiddenField(field: any): PropertyDecorator {
-  return Transform((value: string) => (value ? field : undefined), {
+  return Transform((value) => (value ? field : undefined), {
     toPlainOnly: true,
   });
 }

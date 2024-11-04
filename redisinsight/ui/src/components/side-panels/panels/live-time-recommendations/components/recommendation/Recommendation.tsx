@@ -17,7 +17,7 @@ import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
 import { Nullable, Maybe, findTutorialPath } from 'uiSrc/utils'
-import { FeatureFlags, Theme } from 'uiSrc/constants'
+import { FeatureFlags, Pages, Theme } from 'uiSrc/constants'
 import {
   RecommendationVoting,
   RecommendationCopyComponent,
@@ -82,7 +82,12 @@ const Recommendation = ({
       }
     })
 
-    const tutorialPath = findTutorialPath({ id: tutorialId ?? '' })
+    if (!tutorialId) {
+      history.push(Pages.workbench(instanceId))
+      return
+    }
+
+    const tutorialPath = findTutorialPath({ id: tutorialId })
     dispatch(openTutorialByPath(tutorialPath ?? '', history))
   }
 

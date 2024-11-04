@@ -3,7 +3,7 @@ require('dotenv').config({ path: './redisinsight/ui/.env.test' })
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   testEnvironmentOptions: {
-    url: 'http://localhost/'
+    url: 'http://localhost/',
   },
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|ico|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
@@ -20,7 +20,8 @@ module.exports = {
     'remark-rehype': '<rootDir>/redisinsight/__mocks__/remarkRehype.js',
     'rehype-stringify': '<rootDir>/redisinsight/__mocks__/rehypeStringify.js',
     'unist-util-visit': '<rootDir>/redisinsight/__mocks__/unistUtilsVisit.js',
-    'react-children-utilities': '<rootDir>/redisinsight/__mocks__/react-children-utilities.js',
+    'react-children-utilities':
+      '<rootDir>/redisinsight/__mocks__/react-children-utilities.js',
     d3: '<rootDir>/node_modules/d3/dist/d3.min.js',
     '^uuid$': require.resolve('uuid'),
     msgpackr: require.resolve('msgpackr'),
@@ -29,20 +30,9 @@ module.exports = {
     'construct-style-sheets-polyfill',
     '<rootDir>/redisinsight/ui/src/setup-env.ts',
   ],
-  setupFilesAfterEnv: [
-    '<rootDir>/redisinsight/ui/src/setup-tests.ts',
-  ],
-  moduleDirectories: [
-    'node_modules',
-    'redisinsight/node_modules',
-  ],
-  moduleFileExtensions: [
-    'js',
-    'jsx',
-    'ts',
-    'tsx',
-    'json',
-  ],
+  setupFilesAfterEnv: ['<rootDir>/redisinsight/ui/src/setup-tests.ts'],
+  moduleDirectories: ['node_modules', 'redisinsight/node_modules'],
+  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
   testEnvironment: 'jest-environment-jsdom',
   transformIgnorePatterns: [
     'node_modules/(?!(monaco-editor|react-monaco-editor)/)',
@@ -59,6 +49,21 @@ module.exports = {
     '<rootDir>/redisinsight/ui/src/packages',
   ],
   resolver: '<rootDir>/jest-resolver.js',
+  reporters: [
+    'default',
+    [
+      'jest-junit',
+      {
+        outputDirectory: 'reports',
+        outputName: 'jest-junit.xml',
+        ancestorSeparator: ' › ',
+        uniqueOutputName: 'false',
+        suiteNameTemplate: '{filepath}',
+        classNameTemplate: '{classname}',
+        titleTemplate: '{title}',
+      },
+    ],
+  ],
   coverageThreshold: {
     global: {
       statements: 80,
@@ -70,4 +75,4 @@ module.exports = {
   globals: {
     riConfig: {}
   }
-}
+};

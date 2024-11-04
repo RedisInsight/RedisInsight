@@ -7,8 +7,8 @@ services:
       dockerfile: e2e.Dockerfile
     tty: true
     volumes:
-      - ./results:/usr/src/app/results
-      - ./report:/usr/src/app/report
+      - ${E2E_VOLUME_PATH:-.}/results:/usr/src/app/results
+      - ${E2E_VOLUME_PATH:-.}/report:/usr/src/app/report
       - ./plugins:/usr/src/app/plugins
       - rihomedir:/root/.redis-insight
       - tmp:/tmp

@@ -3,6 +3,7 @@ import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
+import { Telemetry } from '../../../../helpers';
 
 const slowLogPage = new SlowLogPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -10,6 +11,21 @@ const browserPage = new BrowserPage();
 const overviewPage = new ClusterDetailsPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const telemetry = new Telemetry();
+
+const logger = telemetry.createLogger();
+
+const telemetryEvents = ['SLOWLOG_CLEARED','SLOWLOG_LOADED'];
+const clearExpectedProperties = [
+    'databaseId',
+    'provider'
+];
+
+const loadExpectedProperties = [
+    'databaseId',
+    'numberOfCommands',
+    'provider'
+];
 
 const slowerThanParameter = 1;
 let maxCommandLength = 50;
@@ -108,7 +124,8 @@ test('Verify that user can set slowlog-log-slower-than value in milliseconds and
     await t.expect(parseFloat(microsecondsDuration.replace(' ', '')) / 1000).eql(parseFloat(millisecondsDuration));
     await t.expect(parseFloat(microsecondsDuration.replace(' ', ''))).eql(parseFloat(millisecondsDuration) * 1000);
 });
-test('Verify that user can reset settings to default on Slow Log page', async t => {
+test.requestHooks(logger)
+('Verify that user can reset settings to default on Slow Log page', async t => {
     // Set slowlog-max-len=0
     command = 'info';
     await slowLogPage.changeSlowerThanParameter(slowerThanParameter, slowLogPage.slowLogConfigureMicroSecondsUnit);
@@ -117,12 +134,20 @@ test('Verify that user can reset settings to default on Slow Log page', async t 
     await t.expect(slowLogPage.slowLogCommandValue.withExactText(command).exists).ok('Logged command not found');
     await t.click(slowLogPage.slowLogClearButton);
     await t.click(slowLogPage.slowLogConfirmClearButton);
+
+    //Verify telemetry event
+    await telemetry.verifyEventHasProperties(telemetryEvents[0], clearExpectedProperties, logger);
+
     // Verify that user can clear Slow Log
     await t.expect(slowLogPage.slowLogEmptyResult.exists).ok('Slow log is not cleared');
 
     // Set slower than parameter and max length
     await slowLogPage.changeSlowerThanParameter(slowerThanParameter, slowLogPage.slowLogConfigureMicroSecondsUnit);
     await slowLogPage.changeMaxLengthParameter(maxCommandLength);
+
+    //Verify telemetry event
+    await telemetry.verifyEventHasProperties(telemetryEvents[1], loadExpectedProperties, logger);
+
     // Reset settings to default
     await slowLogPage.resetToDefaultConfig();
     // Compare configuration after re-setting

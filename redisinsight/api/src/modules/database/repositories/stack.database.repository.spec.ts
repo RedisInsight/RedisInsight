@@ -93,9 +93,9 @@ describe('StackDatabasesRepository', () => {
     repository.update.mockResolvedValue(mockDatabaseEntity);
 
     when(encryptionService.decrypt)
-      .calledWith(mockDatabasePasswordEncrypted, jasmine.anything())
+      .calledWith(mockDatabasePasswordEncrypted, expect.anything())
       .mockResolvedValue(mockDatabasePasswordPlain)
-      .calledWith(mockDatabaseSentinelMasterPasswordEncrypted, jasmine.anything())
+      .calledWith(mockDatabaseSentinelMasterPasswordEncrypted, expect.anything())
       .mockResolvedValue(mockDatabaseSentinelMasterPasswordPlain);
     when(encryptionService.encrypt)
       .calledWith(mockDatabasePasswordPlain)

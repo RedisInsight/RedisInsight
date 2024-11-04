@@ -57,7 +57,7 @@ describe('LocalCaCertificateRepository', () => {
     repository.save.mockResolvedValue(mockCaCertificateEntity);
     repository.create.mockReturnValue(mockCaCertificate); // not entity since it happens before encryption
 
-    when(encryptionService.decrypt).calledWith(mockCaCertificateCertificateEncrypted, jasmine.anything())
+    when(encryptionService.decrypt).calledWith(mockCaCertificateCertificateEncrypted, expect.anything())
       .mockResolvedValue(mockCaCertificateCertificatePlain);
     when(encryptionService.encrypt).calledWith(mockCaCertificateCertificatePlain)
       .mockResolvedValue({

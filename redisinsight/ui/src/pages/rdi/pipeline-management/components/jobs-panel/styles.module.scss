@@ -59,7 +59,7 @@ $animation-duration: 300ms;
 
   .codeLabel {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     font: normal normal normal 14px/17px Graphik, sans-serif;
     height: 28px;

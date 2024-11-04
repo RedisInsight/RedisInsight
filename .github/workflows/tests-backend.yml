@@ -1,0 +1,64 @@
+name: Tests BE
+on:
+  workflow_call:
+    inputs:
+      skip-electron-deps:
+        description: Skip install electron dependencies
+        type: boolean
+        default: false
+        required: false
+
+env:
+  SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install all libs and dependencies for BE
+      uses: ./.github/actions/install-all-build-libs
+      with:
+        skip-electron-deps: '1'
+
+    - name: API PROD dependencies scan
+      run: |
+        FILENAME=api.prod.deps.audit.json
+
+        yarn --cwd redisinsight/api audit --groups dependencies --json > $FILENAME || true &&
+        FILENAME=$FILENAME DEPS="API prod" node .circleci/deps-audit-report.js &&
+        curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+
+    - name: API DEV dependencies scan
+      run: |
+        FILENAME=api.dev.deps.audit.json
+
+        yarn --cwd redisinsight/api audit --groups devDependencies --json > $FILENAME || true &&
+        FILENAME=$FILENAME DEPS="API dev" node .circleci/deps-audit-report.js &&
+        curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+
+    - name: Code analysis
+      run: |
+        FILENAME=api.lint.audit.json
+        WORKDIR="./redisinsight/api"
+
+        yarn lint:api -f json -o $FILENAME || true &&
+        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="API" node .circleci/lint-report.js &&
+        curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+
+    - name: Unit tests API
+      run: yarn --cwd redisinsight/api/ test:cov --ci --silent
+
+    - name: Generate test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: 'Test results: BE unit tests'
+        path: redisinsight/api/reports/jest-*.xml
+        reporter: jest-junit
+        list-tests: 'failed'
+        list-suites: 'failed'
+        fail-on-error: 'false'
+

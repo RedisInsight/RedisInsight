@@ -26,7 +26,7 @@ describe('TsInfoStrategy', () => {
 
   beforeEach(async () => {
     when(client.sendCommand)
-      .calledWith(jasmine.arrayContaining(['ts.info']), expect.anything())
+      .calledWith(expect.arrayContaining(['ts.info']), expect.anything())
       .mockResolvedValue(mockRedisResponse);
   });
 

@@ -124,29 +124,25 @@ describe('WelcomeScreen', () => {
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
       { flag: true }
     )
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 1 })
 
     render(<WelcomeScreen />, {
       store: mockStore(initialStoreState)
     })
-    expect(screen.queryByTestId('no-recommendations-analyse-text')).toBeInTheDocument()
+    expect(screen.queryByTestId('insights-db-analysis-link')).toBeInTheDocument()
   })
 
   it('should hide feature dependent items when feature flag is off', async () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
-      ...mockRecommendationsSelector,
-      data: {
-        recommendations: [{ name: 'RTS' }],
-      },
-    }))
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
       { flag: false }
     )
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 1 })
 
     render(<WelcomeScreen />, {
       store: mockStore(initialStoreState)
     })
-    expect(screen.queryByTestId('no-recommendations-analyse-text')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('insights-db-analysis-link')).not.toBeInTheDocument()
   })
 })

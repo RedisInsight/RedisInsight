@@ -1,17 +1,8 @@
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import React from 'react'
-import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { cleanup, initialStateDefault, mockedStore, mockStore, render, screen } from 'uiSrc/utils/test-utils'
+import { FeatureFlags } from 'uiSrc/constants'
 import UseProfilerLink from './UseProfilerLink'
-
-jest.mock('uiSrc/slices/app/features', () => ({
-  ...jest.requireActual('uiSrc/slices/app/features'),
-  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    envDependent: {
-      flag: true,
-    }
-  }),
-}))
 
 let store: typeof mockedStore
 
@@ -36,14 +27,31 @@ describe('UseProfilerLink', () => {
     expect(screen.getByText('tool to see all the requests processed by the server.', { exact: false })).toBeInTheDocument()
   })
 
-  it('should not show the link when envDependent.flag = false', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      envDependent: {
-        flag: false,
-      }
-    })
-    render(<UseProfilerLink {...props} />)
+  it('should show feature dependent items when feature flag is on', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: true }
+    )
 
-    expect(screen.getByText('Monitor not supported in this environment.')).toBeInTheDocument()
+    render(<UseProfilerLink {...props} />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('user-profiler-link')).toBeInTheDocument()
+    expect(screen.queryByTestId('user-profiler-link-disabled')).not.toBeInTheDocument()
+  })
+
+  it('should hide feature dependent items when feature flag is off', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+
+    render(<UseProfilerLink {...props} />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('user-profiler-link')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('user-profiler-link-disabled')).toBeInTheDocument()
   })
 })

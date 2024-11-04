@@ -1,16 +1,18 @@
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import {
   cleanup,
   clearStoreActions,
   fireEvent,
+  initialStateDefault,
   mockedStore,
+  mockStore,
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
 import { loadKeys, setFilter } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
-import { KeyTypes } from 'uiSrc/constants'
+import { FeatureFlags, KeyTypes } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import FilterKeyType from './FilterKeyType'
 
@@ -59,7 +61,7 @@ describe('FilterKeyType', () => {
     expect(queryByTestId(unsupportedAnchorId)).not.toBeInTheDocument()
   })
 
-  it('"setFilter" and "loadKeys" should be called after selecte "Hash" type', () => {
+  it('"setFilter" and "loadKeys" should be called after select "Hash" type', () => {
     const { queryByText } = render(
       <FilterKeyType />
     )
@@ -77,7 +79,7 @@ describe('FilterKeyType', () => {
   })
 
   it('should be disabled filter with database redis version < 6.0', () => {
-    connectedInstanceOverviewSelector.mockImplementation(() => ({
+    connectedInstanceOverviewSelector.mockImplementationOnce(() => ({
       version: '5.1',
     }))
     render(<FilterKeyType />)
@@ -87,7 +89,7 @@ describe('FilterKeyType', () => {
   })
 
   it('should be info box with database redis version < 6.0', () => {
-    connectedInstanceOverviewSelector.mockImplementation(() => ({
+    connectedInstanceOverviewSelector.mockImplementationOnce(() => ({
       version: '5.1',
     }))
     render(<FilterKeyType />)
@@ -102,7 +104,7 @@ describe('FilterKeyType', () => {
     const sendEventTelemetryMock = jest.fn()
 
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
-    connectedInstanceOverviewSelector.mockImplementation(() => ({
+    connectedInstanceOverviewSelector.mockImplementationOnce(() => ({
       version: '5.1',
     }))
 
@@ -116,5 +118,35 @@ describe('FilterKeyType', () => {
         databaseId: 'instanceId',
       }
     })
+  })
+
+  it('should not filter out items if required feature flags are set to true', () => {
+    const { queryByText } = render(
+      <FilterKeyType />
+    )
+
+    fireEvent.click(screen.getByTestId(filterSelectId))
+
+    const graphElement = queryByText('Graph')
+    expect(graphElement).toBeInTheDocument()
+  })
+
+  it('should filter out items if required feature flags are not set to true', () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+    const { queryByText } = render(
+      <FilterKeyType />,
+      {
+        store: mockStore(initialStoreState)
+      }
+    )
+
+    fireEvent.click(screen.getByTestId(filterSelectId))
+
+    const graphElement = queryByText('Graph')
+    expect(graphElement).not.toBeInTheDocument()
   })
 })

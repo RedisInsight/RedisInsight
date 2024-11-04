@@ -16,6 +16,7 @@ import {
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { SessionMetadata } from 'src/common/models';
 import { RequestSessionMetadata } from 'src/common/decorators';
+import { DeleteBrowserHistoryQueryDto } from 'src/modules/browser/browser-history/dto/delete.browser-history.query.dto';
 
 @UseInterceptors(BrowserSerializeInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -56,9 +57,10 @@ export class BrowserHistoryController {
   async delete(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Param('dbInstance') databaseId: string,
+      @Query() query: DeleteBrowserHistoryQueryDto,
       @Param('id') id: string,
   ): Promise<void> {
-    await this.service.delete(sessionMetadata, databaseId, id);
+    await this.service.delete(sessionMetadata, databaseId, query.mode, id);
   }
 
   @ApiEndpoint({
@@ -76,8 +78,9 @@ export class BrowserHistoryController {
   async bulkDelete(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Param('dbInstance') databaseId: string,
+      @Query() query: DeleteBrowserHistoryQueryDto,
       @Body() dto: DeleteBrowserHistoryItemsDto,
   ): Promise<DeleteBrowserHistoryItemsResponse> {
-    return this.service.bulkDelete(sessionMetadata, databaseId, dto.ids);
+    return this.service.bulkDelete(sessionMetadata, databaseId, query.mode, dto.ids);
   }
 }

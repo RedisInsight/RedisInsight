@@ -67,7 +67,7 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     await t.expect(myRedisDatabasePage.promoButton.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
     // Open Chrome with a sample URL and save it to logs file
     openChromeWindow();
-    await t.wait(3000);
+    await t.wait(1000);
     closeChrome()
     await t.wait(1000);
     openChromeWindow();
@@ -80,11 +80,10 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     await t.pressKey('shift+tab');
     await t.pressKey('shift+tab');
 
-    await t.wait(5000);
+    await t.wait(2000);
     saveOpenedChromeTabUrl(logsFilePath);
     // Click the button to trigger the Google authorization page
     await t.pressKey('enter');
-    await t.wait(2000);
 
     urlToUse = fs.readFileSync(logsFilePath, 'utf8');
     console.log('urlToUse: ', urlToUse)

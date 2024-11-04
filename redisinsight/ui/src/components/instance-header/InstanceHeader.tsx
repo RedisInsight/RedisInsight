@@ -133,7 +133,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>
-                    <EuiFlexItem grow={false}>
+                    <EuiFlexItem grow={false} data-testid="instance-header-divider-env-dependent">
                       <EuiText className={styles.divider}>&#62;</EuiText>
                     </EuiFlexItem>
                   </FeatureFlagComponent>

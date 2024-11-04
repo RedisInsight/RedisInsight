@@ -311,10 +311,10 @@ const NavigationMenu = () => {
         {connectedRdiInstanceId && isRdiWorkspace && (privateRdiRoutes.map(renderNavItem))}
       </div>
       <div className={styles.bottomContainer}>
-        <FeatureFlagComponent name={FeatureFlags.envDependent}>
+        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <NotificationMenu />
         </FeatureFlagComponent>
-        <FeatureFlagComponent name={FeatureFlags.envDependent}>
+        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <HelpMenu />
         </FeatureFlagComponent>
         {publicRoutes.map(renderPublicNavItem)}
@@ -325,12 +325,14 @@ const NavigationMenu = () => {
               color="transparent"
               className="eui-hideFor--xs eui-hideFor--s"
               variant="middle"
+              data-testid="github-repo-divider-otherwise"
             />
           )}
+          enabledByDefault
         >
-          <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
+          <Divider data-testid="github-repo-divider-default" colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
         </FeatureFlagComponent>
-        <FeatureFlagComponent name={FeatureFlags.envDependent}>
+        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <Divider
             colorVariable="separatorNavigationColor"
             className="eui-showFor--xs--flex eui-showFor--s--flex"

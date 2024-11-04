@@ -10,9 +10,9 @@ export interface Props {
 const UseProfilerLink = ({ onClick }: Props) => (
   <FeatureFlagComponent
     name={FeatureFlags.envDependent}
-    otherwise={<EuiTextColor color="accent">Monitor not supported in this environment.</EuiTextColor>}
+    otherwise={<EuiTextColor data-testid="user-profiler-link-disabled" color="accent">Monitor not supported in this environment.</EuiTextColor>}
   >
-    <EuiTextColor color="danger" key={Date.now()}>
+    <EuiTextColor data-testid="user-profiler-link" color="danger" key={Date.now()}>
       {'Use '}
       <EuiLink onClick={onClick} className="btnLikeLink" color="text" data-test-subj="monitor-btn">
         Profiler

@@ -51,7 +51,7 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
         }
 
         // Wait for the authorization to complete and the redirect to your specified URI
-        await driver.wait(until.urlContains('#success'), 30000);
+        await driver.wait(until.urlContains('#success'), 10000);
 
         const currentUrl = await driver.getCurrentUrl();
         const parts = currentUrl.split('?');

@@ -8,6 +8,7 @@ import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { modifyFeaturesConfigJson, updateControlNumber } from '../../../../helpers/insights';
 import { processGoogleSSO } from '../../../../helpers/google-authorization';
 import { closeChrome, openChromeWindow, saveOpenedChromeTabUrl } from '../../../../helpers/scripts/browser-scripts';
+import { processGoogleSSOPlaywright } from '../../../../helpers/google-authorization-playwright';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
@@ -89,7 +90,8 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     urlToUse = fs.readFileSync(logsFilePath, 'utf8');
     console.log('urlToUse: ', urlToUse)
     await t.expect(urlToUse).contains('authorize?');
-    await processGoogleSSO(urlToUse);
+    // await processGoogleSSO(urlToUse);
+    await processGoogleSSOPlaywright(urlToUse);
     await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
     await myRedisDatabasePage.reloadPage();
     await t.expect(myRedisDatabasePage.userProfileBtn.exists).ok('User profile button not displayed');

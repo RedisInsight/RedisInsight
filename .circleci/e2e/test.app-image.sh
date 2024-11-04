@@ -2,6 +2,7 @@
 set -e
 
 yarn --cwd tests/e2e install
+yarn --cwd tests/e2e playwright install
 
 # Create the ri-test directory if it doesn't exist
 mkdir -p ri-test

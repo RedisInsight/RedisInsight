@@ -660,9 +660,6 @@ jobs:
             yarn --cwd redisinsight/api/ install --ignore-optional
             yarn --cwd redisinsight/ install --ignore-optional
             yarn install
-      - run:
-          name: Install Playwright Browsers
-          command: yarn playwright install
           no_output_timeout: 15m
       - run:
           name: Install plugins dependencies and build plugins

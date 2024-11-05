@@ -54,3 +54,8 @@ jobs:
     uses: ./.github/workflows/release-docker.yml
     needs: aws-prod
     secrets: inherit
+
+# Cancel a previous run workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true

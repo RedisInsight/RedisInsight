@@ -171,7 +171,7 @@ jobs:
     - name: Download coverage artifacts
       uses: actions/download-artifact@v4
       with:
-        pattern: coverages-artifacts
+        name: coverages-artifacts
         path: ./coverages
 
     # SSH Debug

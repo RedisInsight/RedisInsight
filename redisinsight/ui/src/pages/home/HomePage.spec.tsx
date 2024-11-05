@@ -1,20 +1,6 @@
 import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
-
-import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
 import HomePage from './HomePage'
-
-jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
-  ...jest.requireActual('uiSrc/slices/content/create-redis-buttons'),
-  contentSelector: () => jest.fn().mockReturnValue({ data: {}, loading: false }),
-}))
-
-jest.mock('uiSrc/slices/content/guide-links', () => ({
-  ...jest.requireActual('uiSrc/slices/content/guide-links'),
-  guideLinksSelector: jest.fn().mockReturnValue({
-    data: MOCK_EXPLORE_GUIDES
-  })
-}))
 
 jest.mock('uiSrc/slices/panels/sidePanels', () => ({
   ...jest.requireActual('uiSrc/slices/panels/sidePanels'),
@@ -31,12 +17,6 @@ jest.mock('uiSrc/slices/panels/sidePanels', () => ({
 describe('HomePage', () => {
   it('should render', async () => {
     expect(await render(<HomePage />)).toBeTruthy()
-  })
-
-  it('should render capability promotion section', async () => {
-    await render(<HomePage />)
-
-    expect(screen.getByTestId('capability-promotion')).toBeInTheDocument()
   })
 
   it('should render insights trigger', async () => {

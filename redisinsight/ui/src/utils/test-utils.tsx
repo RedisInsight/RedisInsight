@@ -59,6 +59,8 @@ import { initialState as initialStateRdiTestConnections } from 'uiSrc/slices/rdi
 import { initialState as initialStateAiAssistant } from 'uiSrc/slices/panels/aiAssistant'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
+import { initialState as initialStateAppConnectivity } from 'uiSrc/slices/app/connectivity'
+import { initialState as initialStateAppInit } from 'uiSrc/slices/app/init'
 
 interface Options {
   initialState?: RootState
@@ -79,6 +81,8 @@ const initialStateDefault: RootState = {
     features: cloneDeep(initialStateAppFeaturesReducer),
     urlHandling: cloneDeep(initialStateAppUrlHandlingReducer),
     csrf: cloneDeep(initialStateAppCsrfReducer),
+    init: cloneDeep(initialStateAppInit),
+    connectivity: cloneDeep(initialStateAppConnectivity)
   },
   connections: {
     instances: cloneDeep(initialStateInstances),

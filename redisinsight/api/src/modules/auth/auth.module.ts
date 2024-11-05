@@ -9,6 +9,7 @@ const SERVER_CONFIG = config.get('server') as Config['server'];
 export class AuthModule {
   static register() {
     const imports = [];
+
     if (SERVER_CONFIG.buildType === BuildType.Electron) {
       imports.push(WindowAuthModule);
     }

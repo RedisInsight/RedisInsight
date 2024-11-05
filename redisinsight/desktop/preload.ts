@@ -28,8 +28,4 @@ contextBridge.exposeInMainWorld('app', {
   }
 } as WindowApp)
 
-contextBridge.exposeInMainWorld('electron', {
-  // Expose any APIs you need here
-})
-
 export type IPCHandler = typeof ipcHandler

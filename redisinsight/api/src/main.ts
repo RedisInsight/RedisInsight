@@ -97,6 +97,6 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   return { app, gracefulShutdown };
 }
 
-if (serverConfig.autoBootstrap && process.env.RI_AUTO_BOOTSTRAP !== 'false') {
+if (serverConfig.autoBootstrap) {
   bootstrap();
 }

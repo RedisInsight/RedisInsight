@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import { builtinModules } from 'module'
 import path from 'path'
-import type { Plugin } from 'vite'
 
 export default defineConfig({
   plugins: [
@@ -9,23 +8,12 @@ export default defineConfig({
       name: 'resolve-imports',
       enforce: 'pre',
       resolveId(source) {
-        if (source.startsWith('desktopSrc/')) {
-          const relativePath = source.replace('desktopSrc/', './src/')
-          return relativePath
-        }
-        if (source.startsWith('uiSrc/')) {
-          const relativePath = source.replace('uiSrc/', './ui/src/')
-          return path.resolve(__dirname, relativePath)
-        }
         if (source.startsWith('apiSrc/')) {
-          if (process.env.NODE_ENV === 'development') {
-            return {
-              id: source.replace('apiSrc/', '../api/src/'),
-              external: true
-            }
-          }
+          // Keep the full module path but point to dist
+          const relativePath = source.replace('apiSrc/', '')
+          const fullPath = path.join(__dirname, '../api/dist/src', relativePath)
           return {
-            id: source.replace('apiSrc/', '../api/dist/src/'),
+            id: fullPath,
             external: true
           }
         }
@@ -49,7 +37,7 @@ export default defineConfig({
         ...builtinModules.map((m) => `node:${m}`),
         /^@nestjs\/.*/,
         /^src\//,
-        /^apiSrc\//
+        /^\.\.\/api\/dist\/src\/.*/
       ],
       output: {
         format: 'cjs',

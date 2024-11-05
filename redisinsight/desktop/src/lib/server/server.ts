@@ -8,6 +8,9 @@ import { configMain as config } from 'desktopSrc/config'
 import { getWindows } from '../window'
 
 import server from 'apiSrc/main'
+import { WindowAuthService } from 'apiSrc/modules/auth/window-auth/window-auth.service'
+import { ElectronWindowAuthStrategy } from 'apiSrc/modules/auth/window-auth/strategies/electron.window.auth.strategy'
+import { WindowAuthModule } from 'apiSrc/modules/auth/window-auth/window-auth.module'
 
 const port = config.defaultPort
 
@@ -15,7 +18,9 @@ let gracefulShutdown: Function
 let beApp: any
 export const launchApiServer = async () => {
   try {
+    console.log('Launching API server', process.env.NODE_ENV, process.env.RI_APP_TYPE, process.env.NODE_ENV === 'development' && process.env.RI_APP_TYPE === 'electron')
     if (process.env.NODE_ENV === 'development' && process.env.RI_APP_TYPE === 'electron') {
+      console.log('Launching API server', 1)
       // Define auth port
       const TCP_LOCAL_AUTH_PORT = process.env.TCP_LOCAL_AUTH_PORT ? parseInt(process.env.TCP_LOCAL_AUTH_PORT, 10) : 5541
 
@@ -53,24 +58,26 @@ export const launchApiServer = async () => {
           resolve()
         })
       })
-    } else {
-      // Production code
-      const detectPortConst = await getPort({ port: portNumbers(port, port + 1_000) })
-      process.env.RI_APP_PORT = detectPortConst?.toString()
-  
-      if (process.env.APPIMAGE) {
-        process.env.BUILD_PACKAGE = 'appimage'
-      }
-  
-      log.info('Starting server with port:', detectPortConst)
-      log.info('Environment:', process.env.NODE_ENV)
-      log.info('App type:', process.env.RI_APP_TYPE)
-  
-      const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server(detectPortConst)
-      gracefulShutdown = gracefulShutdownFn
-      beApp = apiApp
+      return
+    }
+    // Production code
+    const detectPortConst = await getPort({ port: portNumbers(port, port + 1_000) })
+    process.env.RI_APP_PORT = detectPortConst?.toString()
+
+    if (process.env.APPIMAGE) {
+      process.env.BUILD_PACKAGE = 'appimage'
     }
 
+    log.info('Starting server with port:', detectPortConst)
+    log.info('Environment:', process.env.NODE_ENV)
+    log.info('App type:', process.env.RI_APP_TYPE)
+
+    const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server(detectPortConst)
+    gracefulShutdown = gracefulShutdownFn
+    beApp = apiApp
+    
+    const windowAuthService = beApp?.select?.(WindowAuthModule).get?.(WindowAuthService)
+    windowAuthService.setStrategy(new ElectronWindowAuthStrategy())
   } catch (error) {
     log.error('Catch server error:', wrapErrorMessageSensitiveData(error))
     log.error('Server initialization error:', error)

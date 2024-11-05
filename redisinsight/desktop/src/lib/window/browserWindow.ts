@@ -79,8 +79,7 @@ export const createWindow = async ({
   }
 
   if (process.env.NODE_ENV === 'development') {
-    const frontEndPort = process.env.RI_APP_PORT || '8080'
-    newWindow.loadURL(`http://localhost:${frontEndPort}`)
+    newWindow.loadURL(`http://localhost:8080`)
   } else {
     newWindow.loadURL(resolveHtmlPath(htmlFileName, options?.parsedDeepLink))
   }

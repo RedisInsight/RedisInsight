@@ -8,10 +8,9 @@
   "scripts": {
     "dev:ui": "cross-env yarn --cwd redisinsight/ui dev",
     "dev:api": "cross-env yarn --cwd redisinsight/api start:dev",
-    "dev:electron:ui": "cross-env RI_APP_TYPE=electron NODE_ENV=development yarn --cwd redisinsight/ui dev",
-    "dev:electron:api": "cross-env RI_APP_TYPE=electron NODE_ENV=development yarn --cwd redisinsight/api start:dev",
+    "dev:electron:ui": "cross-env RI_APP_PORT=8080 RI_APP_TYPE=electron NODE_ENV=development yarn --cwd redisinsight/ui dev",
     "dev:electron": "cross-env RI_APP_TYPE=electron NODE_ENV=development yarn --cwd redisinsight/desktop dev",
-    "dev:desktop": "concurrently \"yarn dev:electron:api\" \"yarn dev:electron:ui\" \"yarn dev:electron\"",
+    "dev:desktop": "concurrently \"yarn dev:electron:ui\" \"yarn dev:electron\"",
     "build:ui": "cross-env NODE_ENV=production RI_APP_TYPE=web yarn --cwd redisinsight/ui build",
     "build:renderer": "cross-env NODE_ENV=production RI_APP_TYPE=electron yarn --cwd redisinsight/ui build --emptyOutDir && copyfiles ./redisinsight/desktop/splash.html ./redisinsight/dist/renderer -f",
     "stats:ui": "yarn --cwd redisinsight/ui stats",

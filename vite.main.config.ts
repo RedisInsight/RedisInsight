@@ -3,20 +3,7 @@ import { builtinModules } from 'module';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [
-    {
-      name: 'resolve-api-imports',
-      resolveId: (source) => {
-        if (source.startsWith('apiSrc/') || source.startsWith('src/')) {
-          return {
-            id: source,
-            external: true
-          };
-        }
-        return undefined;
-      },
-    },
-  ],
+  plugins: [],
   build: {
     outDir: 'dist',
     lib: {

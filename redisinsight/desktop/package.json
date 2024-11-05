@@ -12,13 +12,3 @@
     "build:renderer": "cross-env ELECTRON_DEV=true ELECTRON_ENABLE_LOGGING=true ELECTRON_DEBUG_LOGGING=true ELECTRON_ENABLE_STACK_DUMPING=true NODE_ENV=development vite build --config vite.renderer.config.ts"
   }
 }
-
-
-/* 
-  No vacation days for Petar or Artem. Seth will have holidays on 11/11 (vetaran's day) and 22-28/11 (thanksgiving).
-
-  team velocity
-    Seth
-    Petar
-    Artem
-*/

@@ -52,15 +52,10 @@ module.exports = {
   reporters: [
     'default',
     [
-      'jest-junit',
+      'jest-html-reporters',
       {
-        outputDirectory: 'reports',
-        outputName: 'jest-junit.xml',
-        ancestorSeparator: ' › ',
-        uniqueOutputName: 'false',
-        suiteNameTemplate: '{filepath}',
-        classNameTemplate: '{classname}',
-        titleTemplate: '{title}',
+        publicPath: './report',
+        filename: 'index.html',
       },
     ],
   ],

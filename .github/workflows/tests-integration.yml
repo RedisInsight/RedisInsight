@@ -156,6 +156,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Final coverage
     needs: run-tests
+    if: always()
     steps:
     - uses: actions/checkout@v4
 
@@ -172,6 +173,12 @@ jobs:
       with:
         pattern: coverages-artifacts
         path: ./coverages
+
+    # SSH Debug
+    - name: Enable SSH
+      uses: mxschmitt/action-tmate@v3
+      with:
+        detached: true
 
     - name: Calculate coverage across all tests runs
       run: |

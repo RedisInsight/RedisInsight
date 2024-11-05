@@ -147,7 +147,18 @@ jobs:
       with:
         name: 'Test results: IT (${{ matrix.rte }}) tests'
         path: itest/results/*.result.xml
-        reporter: jest-junit
+        reporter: java-junit
+        list-tests: 'failed'
+        list-suites: 'failed'
+        fail-on-error: 'false'
+
+    - name: Generate test results (mocha)
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: 'Test results: IT (${{ matrix.rte }}) tests'
+        path: itest/results/*.result.json
+        reporter: mocha-json
         list-tests: 'failed'
         list-suites: 'failed'
         fail-on-error: 'false'
@@ -168,6 +179,12 @@ jobs:
         delete-merged: true
 
     - name: Download coverage artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: coverages-artifacts
+        path: ./coverages
+
+    - name: Download results artifacts
       uses: actions/download-artifact@v4
       with:
         pattern: coverages-artifacts

@@ -13,21 +13,24 @@ export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<v
     const { browser, page } = await connect({
         headless: false,
         args: [
-            '--disable-web-security',
-            '--allow-running-insecure-content',
-            '--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.119 Safari/537.36'
+            // '--disable-web-security',
+            // '--allow-running-insecure-content',
+            // '--disable-features=IsolateOrigins,site-per-process',
+            // '--ignore-certificate-errors',
+            // '--user-data-dir=',
+            // '--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.119 Safari/537.36'
         ],
         customConfig: {},
         turnstile: true,
         connectOption: {},
-        disableXvfb: false,
+        disableXvfb: true,
         ignoreAllFlags: false,
-        proxy:{
-            host:'proxy.scrapeops.io',
-            port: 5353,
-            username:'scrapeops',
-            password: process.env.SCRAPEOPS_API_KEY
-        }
+        // proxy:{
+        //     host:'proxy.scrapeops.io',
+        //     port: 5353,
+        //     username:'scrapeops',
+        //     password: process.env.SCRAPEOPS_API_KEY
+        // }
     })
 
     // await page.setBypassCSP(true);

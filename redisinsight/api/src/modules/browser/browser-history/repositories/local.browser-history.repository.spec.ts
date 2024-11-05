@@ -130,6 +130,7 @@ describe('LocalBrowserHistoryRepository', () => {
       expect(await browserHistoryRepository.delete(
         mockSessionMetadata,
         mockBrowserHistory.databaseId,
+        mockBrowserHistory.mode,
         mockBrowserHistory.id,
       )).toEqual(undefined);
     });
@@ -138,6 +139,7 @@ describe('LocalBrowserHistoryRepository', () => {
       await expect(browserHistoryRepository.delete(
         mockSessionMetadata,
         mockBrowserHistory.databaseId,
+        mockBrowserHistory.mode,
         mockBrowserHistory.id,
       )).rejects.toThrowError(InternalServerErrorException);
     });

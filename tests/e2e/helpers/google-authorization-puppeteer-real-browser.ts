@@ -17,7 +17,7 @@ export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<v
             // '--allow-running-insecure-content',
             // '--disable-features=IsolateOrigins,site-per-process',
             // '--ignore-certificate-errors',
-            // '--user-data-dir=',
+            '--user-data-dir=./test-data/Default',
             // '--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.119 Safari/537.36'
         ],
         customConfig: {},

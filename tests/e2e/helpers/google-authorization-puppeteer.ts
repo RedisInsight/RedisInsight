@@ -10,6 +10,12 @@ import { googleUser, googleUserPassword } from './conf';
 // stealthPlugin.enabledEvasions.delete('navigator.plugins');
 // puppeteer.use(stealthPlugin);
 
+// Helper function for waiting
+async function waitForTimeout(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
 export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void> {
     const { browser, page } = await connect({
         headless: false,
@@ -65,6 +71,10 @@ export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void>
             page.waitForNavigation({ waitUntil: 'networkidle0' })
         ]);
 
+        // Wait for password field to be ready
+        await page.waitForSelector('input[type="password"]', { visible: true });
+        await waitForTimeout(500);
+
         // Type password and submit
         await page.type('input[type="password"]', googleUserPassword, { delay: Math.random() * 100 + 50 });
         const screenshotPass = await page.screenshot();
@@ -75,6 +85,7 @@ export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void>
             page.click('#passwordNext'),
             page.waitForNavigation({ waitUntil: 'networkidle0' })
         ]);
+        await waitForTimeout(500);
 
         // Check for "Try another way" button
         const tryAnotherWayButtons = await page.$$("//*[text()='Try another way']");

@@ -1,35 +1,54 @@
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+// import puppeteer from 'puppeteer-extra';
+// import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import { connect } from 'puppeteer-real-browser'
 import * as fs from 'fs';
 import { exec } from 'child_process';
 import { googleUser, googleUserPassword } from './conf';
 
-const stealthPlugin = StealthPlugin();
-stealthPlugin.enabledEvasions.delete('iframe.contentWindow');
-stealthPlugin.enabledEvasions.delete('navigator.plugins');
-puppeteer.use(stealthPlugin);
+// const stealthPlugin = StealthPlugin();
+// stealthPlugin.enabledEvasions.delete('iframe.contentWindow');
+// stealthPlugin.enabledEvasions.delete('navigator.plugins');
+// puppeteer.use(stealthPlugin);
 
 export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void> {
-    const browser = await puppeteer.launch({
+    const { browser, page } = await connect({
         headless: false,
         args: [
-            '--disable-web-security',
-            '--remote-allow-origins=*',
-            '--allow-running-insecure-content',
-            '--disable-client-side-phishing-detection',
-            '--disable-dev-shm-usage',
-            '--disable-gpu',
-            '--disable-domain-reliability',
-            '--disable-default-apps',
-            '--no-default-browser-check',
-            '--ignore-certificate-errors',
-            '--incognito',
-            '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            '--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.119 Safari/537.36'
         ],
-        defaultViewport: null
-    });
+        customConfig: {},
+        turnstile: true,
+        connectOption: {},
+        disableXvfb: false,
+        ignoreAllFlags: false
+        // proxy:{
+        //     host:'<proxy-host>',
+        //     port:'<proxy-port>',
+        //     username:'<proxy-username>',
+        //     password:'<proxy-password>'
+        // }
+    
+    })
+    // const browser = await puppeteer.launch({
+    //     headless: false,
+    //     args: [
+    //         '--disable-web-security',
+    //         '--remote-allow-origins=*',
+    //         '--allow-running-insecure-content',
+    //         '--disable-client-side-phishing-detection',
+    //         '--disable-dev-shm-usage',
+    //         '--disable-gpu',
+    //         '--disable-domain-reliability',
+    //         '--disable-default-apps',
+    //         '--no-default-browser-check',
+    //         '--ignore-certificate-errors',
+    //         '--incognito',
+    //         '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    //     ],
+    //     defaultViewport: null
+    // });
 
-    const page = await browser.newPage();
+    // const page = await browser.newPage();
     await page.setBypassCSP(true);
 
     const protocol = 'redisinsight://';

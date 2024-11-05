@@ -84,12 +84,12 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
         'students',
         'type'
     ];
-    const ftSortedCommands = ['FT.SEARCH', 'FT.CREATE', 'FT.EXPLAIN', 'FT.PROFILE'];
+    const ftSortedCommands = ['FT.SEARCH', 'FT.AGGREGATE', 'FT.CREATE', 'FT.EXPLAIN', 'FT.PROFILE'];
 
     // Verify basic commands suggestions FT.SEARCH and FT.AGGREGATE
     await t.typeText(workbenchPage.queryInput, 'FT', { replace: true });
     // Verify custom sorting for FT. commands
-    await t.expect(await workbenchPage.MonacoEditor.getSuggestionsArrayFromMonaco(4)).eql(ftSortedCommands, 'Wrong order of FT commands');
+    await t.expect(await workbenchPage.MonacoEditor.getSuggestionsArrayFromMonaco(5)).eql(ftSortedCommands, 'Wrong order of FT commands');
     // Verify that the list with FT.SEARCH and FT.AGGREGATE auto-suggestions is displayed
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withText('FT._LIST').exists).ok('FT._LIST auto-suggestions are not displayed');
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withText('FT.AGGREGATE').exists).ok('FT.AGGREGATE auto-suggestions are not displayed');
@@ -386,9 +386,9 @@ test.skip
         await t.typeText(workbenchPage.queryInput, 'field2_num', { replace: false });
         await t.pressKey('space');
         await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withExactText('NUMERIC').exists).ok('query can not be prolong');
-        
+
         // Select NUMERIC keyword
-        await t.typeText(workbenchPage.queryInput, 'so', { replace: false });        
+        await t.typeText(workbenchPage.queryInput, 'so', { replace: false });
         await t.pressKey('tab');
 
         await t.expect((await workbenchPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.CREATE ${indexName3} FILTER filterNew SCHEMA field_name TEXT SORTABLE field2_num NUMERIC`);

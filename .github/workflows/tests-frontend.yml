@@ -3,12 +3,18 @@ on:
   workflow_call:
 
 env:
+  SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
+  REPORT_NAME: "report-fe"
 
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
     name: Frontend tests
+    environment:
+      name: staging
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}
     steps:
     - uses: actions/checkout@v4
 
@@ -48,3 +54,18 @@ jobs:
 
     - name: Unit tests UI
       run: yarn test:cov --ci --silent
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ env.REPORT_NAME }}
+        path: report
+
+  deploy-pages:
+    name: Deploy report
+    uses: ./.github/workflows/deploy-pages.yml
+    needs: 'unit-tests'
+    if: always()
+    with:
+      group: 'report'

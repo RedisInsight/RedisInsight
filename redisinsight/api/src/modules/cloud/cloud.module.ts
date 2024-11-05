@@ -14,6 +14,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GoogleIdpCloudAuthStrategy } from './auth/auth-strategy/google-idp.cloud.auth-strategy';
 import { GithubIdpCloudAuthStrategy } from './auth/auth-strategy/github-idp.cloud.auth-strategy';
 import { SsoIdpCloudAuthStrategy } from './auth/auth-strategy/sso-idp.cloud.auth-strategy';
+import { CloudSessionModule } from './session/cloud-session.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ export class CloudModule {
     return {
       module: CloudModule,
       imports: [
+        CloudSessionModule.register(),
         CloudAuthModule,
         CloudUserModule,
         CloudAutodiscoveryModule,

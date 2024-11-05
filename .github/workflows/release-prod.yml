@@ -1,4 +1,4 @@
-name: Release (prod)
+name: ❗ Release (prod)
 
 on:
   push:
@@ -11,7 +11,8 @@ jobs:
     uses: ./.github/workflows/tests.yml
     secrets: inherit
     with:
-      all_tests: true
+      group_tests: 'without_e2e'
+      short_rte_list: false
 
   builds-prod:
     name: Create all builds for release
@@ -21,6 +22,18 @@ jobs:
     with:
       environment: 'production'
       target: 'all'
+
+  e2e-docker-tests:
+    name: E2E Docker tests
+    needs: builds-prod
+    uses: ./.github/workflows/tests-e2e-docker.yml
+    secrets: inherit
+
+  e2e-appimage-tests:
+    name: E2E AppImage tests
+    needs: builds-prod
+    uses: ./.github/workflows/tests-e2e-appimage.yml
+    secrets: inherit
 
   virustotal-prod:
     name: Virustotal
@@ -41,3 +54,8 @@ jobs:
     uses: ./.github/workflows/release-docker.yml
     needs: aws-prod
     secrets: inherit
+
+# Cancel a previous run workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true

@@ -4,7 +4,8 @@ on:
   workflow_call:
 
 env:
-  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+  # AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME_TEST }}
   AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -49,6 +50,12 @@ jobs:
         applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
         aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive
+
+  # Remove artifacts from github actions
+  remove-artifacts:
+    name: Remove artifacts
+    uses: ./.github/workflows/remove-artifacts.yml
+    needs: 'release-private'
 
   release-public:
     name: Release s3 public

@@ -23,7 +23,7 @@ fixture `Tree view verifications`
 test('Verify that user can see that "Tree view" mode is enabled state is saved when refreshes the page', async t => {
     await t.click(browserPage.NavigationPanel.settingsButton);
     await t.click(settingsPage.accordionAdvancedSettings);
-    // await t.expect(settingsPage.keysToScanValue.textContent).eql('500', 'Keys to Scan has proper value');
+    await t.expect(settingsPage.keysToScanValue.textContent).eql('10000', 'Keys to Scan has proper value');
     // await settingsPage.changeKeysToScanValue('10000');
     // await t.expect(settingsPage.keysToScanValue.textContent).eql('10000', 'Keys to Scan has proper value');
     await t.click(browserPage.NavigationPanel.browserButton);

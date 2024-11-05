@@ -25,7 +25,7 @@ const explicitErrorHandler = (): void => {
     });
 };
 
-fixture.skip `Browser - Specify Keys to Scan`
+fixture `Browser - Specify Keys to Scan`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
@@ -36,6 +36,7 @@ fixture.skip `Browser - Specify Keys to Scan`
         await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         await t.click(settingsPage.accordionAdvancedSettings);
         await settingsPage.changeKeysToScanValue('10000');
+        await settingsPage.reloadPage();
         // Open Browser page
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         //Clear and delete database

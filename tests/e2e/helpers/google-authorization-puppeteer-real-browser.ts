@@ -11,7 +11,7 @@ async function waitForTimeout(ms: number) {
 
 
 export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<void> {
-    const userDataDir = path.resolve(__dirname, './test-data/Default');
+    const userDataDir = path.resolve(__dirname, '../test-data/Default');
     console.log('user data dir: ', userDataDir);
     const { browser, page } = await connect({
         headless: false,

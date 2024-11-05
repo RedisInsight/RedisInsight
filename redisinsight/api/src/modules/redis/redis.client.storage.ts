@@ -1,5 +1,5 @@
 import { isMatch, sum } from 'lodash';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { RedisClient } from 'src/modules/redis/client';
 import { ClientMetadata } from 'src/common/models';
 import apiConfig from 'src/utils/config';
@@ -68,6 +68,10 @@ export class RedisClientStorage {
     }
 
     return client;
+  }
+
+  public getClientsCount() {
+    return this.clients.size;
   }
 
   /**

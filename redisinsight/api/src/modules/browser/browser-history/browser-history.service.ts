@@ -81,6 +81,7 @@ export class BrowserHistoryService {
   /**
    * Bulk delete browser history items. Uses "delete" method and skipping error
    * Returns successfully deleted browser history items number
+   * @param sessionMetadata
    * @param databaseId
    * @param mode
    * @param ids

@@ -174,12 +174,6 @@ jobs:
         name: coverages-artifacts
         path: ./coverages
 
-    # SSH Debug
-    - name: Enable SSH
-      uses: mxschmitt/action-tmate@v3
-      with:
-        detached: true
-
     - name: Calculate coverage across all tests runs
       run: |
         npx nyc report -t ./coverages -r text -r text-summary

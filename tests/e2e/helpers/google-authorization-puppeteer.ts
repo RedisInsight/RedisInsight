@@ -50,6 +50,7 @@ export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void>
 
     // const page = await browser.newPage();
     await page.setBypassCSP(true);
+    fs.mkdirSync('./report/screenshots/', { recursive: true });
 
     const protocol = 'redisinsight://';
     const callbackUrl = 'cloud/oauth/callback';
@@ -66,7 +67,11 @@ export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void>
 
         // Type password and submit
         await page.type('input[type="password"]', googleUserPassword, { delay: Math.random() * 100 + 50 });
+        const screenshotPass = await page.screenshot();
+        fs.writeFileSync('./report/screenshots/puppeteer_screenshotPass.png', screenshotPass, 'base64');
         await Promise.all([
+            page.click('#selectionc1'),
+            fs.writeFileSync('./report/screenshots/puppeteer_screenshotPass1.png', await page.screenshot(), 'base64'),
             page.click('#passwordNext'),
             page.waitForNavigation({ waitUntil: 'networkidle0' })
         ]);
@@ -107,7 +112,6 @@ export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void>
     } catch (error) {
         console.error('Error during Google SSO automation:', error);
 
-        fs.mkdirSync('./report/screenshots/', { recursive: true });
         // Take a screenshot if there's an error
         const screenshot = await page.screenshot();
         fs.writeFileSync('./report/screenshots/puppeteer_screenshot.png', screenshot, 'base64');

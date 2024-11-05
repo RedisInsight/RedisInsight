@@ -2,6 +2,7 @@ import { connect } from 'puppeteer-real-browser'
 import * as fs from 'fs';
 import { exec } from 'child_process';
 import { googleUser, googleUserPassword } from './conf';
+import * as path from 'path';
 
 // Helper function for waiting
 async function waitForTimeout(ms: number) {
@@ -10,6 +11,8 @@ async function waitForTimeout(ms: number) {
 
 
 export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<void> {
+    const userDataDir = path.resolve(__dirname, './test-data/Default');
+    console.log('user data dir: ', userDataDir);
     const { browser, page } = await connect({
         headless: false,
         args: [
@@ -17,7 +20,7 @@ export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<v
             // '--allow-running-insecure-content',
             // '--disable-features=IsolateOrigins,site-per-process',
             // '--ignore-certificate-errors',
-            '--user-data-dir=./test-data/Default',
+            `--user-data-dir=${userDataDir}`,
             // '--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.119 Safari/537.36'
         ],
         customConfig: {},

@@ -19,7 +19,13 @@ export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<v
         turnstile: true,
         connectOption: {},
         disableXvfb: false,
-        ignoreAllFlags: false
+        ignoreAllFlags: false,
+        proxy:{
+            host:'proxy.scrapeops.io',
+            port: 5353,
+            username:'scrapeops',
+            password: process.env.SCRAPEOPS_API_KEY
+        }
     })
 
     // await page.setBypassCSP(true);

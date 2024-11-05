@@ -8,7 +8,6 @@ import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import { localStorageService } from 'uiSrc/services'
 import {
   appFeatureFlagsFeaturesSelector,
-  fetchFeatureFlags,
   setFeaturesToHighlight,
   setOnboarding
 } from 'uiSrc/slices/app/features'
@@ -26,7 +25,7 @@ import {
   setServerLoaded
 } from 'uiSrc/slices/app/info'
 
-import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
+import { isDifferentConsentsExists } from 'uiSrc/utils'
 import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
 import { fetchTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
@@ -66,8 +65,6 @@ const Config = () => {
 
     // get tutorials
     dispatch(fetchTutorials())
-
-    dispatch(fetchFeatureFlags())
 
     // fetch config settings, after that take spec
     if (pathname !== SETTINGS_PAGE_PATH) {

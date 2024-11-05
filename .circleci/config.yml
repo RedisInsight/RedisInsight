@@ -429,7 +429,7 @@ jobs:
       - run:
           name: Download Chrome Profile
           command: |
-            curl -O E2E_USER_PROFILE_LINK
+            curl -O chrome-profile.tar.gz $E2E_USER_PROFILE_LINK
             tar -xvzf chrome-profile.tar.gz -C /tests/e2e/test-data
       # - run:
       #     name: Clone mocked RDI server

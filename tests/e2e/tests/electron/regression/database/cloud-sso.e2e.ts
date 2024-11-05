@@ -10,6 +10,7 @@ import { processGoogleSSO } from '../../../../helpers/google-authorization';
 import { closeChrome, openChromeWindow, saveOpenedChromeTabUrl } from '../../../../helpers/scripts/browser-scripts';
 import { processGoogleSSOPlaywright } from '../../../../helpers/google-authorization-playwright';
 import { processGoogleSSOPuppeteer } from '../../../../helpers/google-authorization-puppeteer';
+import { processGoogleSSOPuppeteerReal } from '../../../../helpers/google-authorization-puppeteer-real-browser';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
@@ -92,7 +93,7 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     console.log('urlToUse: ', urlToUse)
     await t.expect(urlToUse).contains('authorize?');
     // await processGoogleSSO(urlToUse);
-    await processGoogleSSOPuppeteer(urlToUse);
+    await processGoogleSSOPuppeteerReal(urlToUse);
     await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
     await myRedisDatabasePage.reloadPage();
     await t.expect(myRedisDatabasePage.userProfileBtn.exists).ok('User profile button not displayed');

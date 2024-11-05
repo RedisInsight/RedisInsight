@@ -9,7 +9,7 @@ async function waitForTimeout(ms: number) {
 }
 
 
-export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void> {
+export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<void> {
     const { browser, page } = await connect({
         headless: false,
         args: [
@@ -19,14 +19,10 @@ export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void>
         turnstile: true,
         connectOption: {},
         disableXvfb: false,
-        ignoreAllFlags: false,
-        proxy:{
-            host:'127.0.0.1',
-            port: 3128
-        }
+        ignoreAllFlags: false
     })
 
-    await page.setBypassCSP(true);
+    // await page.setBypassCSP(true);
     fs.mkdirSync('./report/screenshots/', { recursive: true });
 
     const protocol = 'redisinsight://';

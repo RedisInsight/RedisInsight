@@ -69,17 +69,15 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
   }, [width])
 
   const handleCheckConnectToInstance = (id: string) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.OPEN_RDI_CLICKED,
+      eventData: {
+        rdiId: id,
+      }
+    })
     dispatch(checkConnectToRdiInstanceAction(
       id,
-      (id: string) => {
-        sendEventTelemetry({
-          event: TelemetryEvent.OPEN_RDI_CLICKED,
-          eventData: {
-            rdiId: id,
-          }
-        })
-        history.push(Pages.rdiPipeline(id))
-      },
+      (id: string) => history.push(Pages.rdiPipeline(id)),
       () => dispatch(setAppContextConnectedRdiInstanceId(''))
     ))
   }

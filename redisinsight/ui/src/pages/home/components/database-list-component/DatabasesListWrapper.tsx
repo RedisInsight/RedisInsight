@@ -24,7 +24,7 @@ import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLog
 import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import ItemList from 'uiSrc/components/item-list'
-import { BrowserStorageItem, Pages, Theme } from 'uiSrc/constants'
+import { BrowserStorageItem, FeatureFlags, Pages, Theme } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
@@ -37,16 +37,29 @@ import {
   checkConnectToInstanceAction,
   deleteInstancesAction,
   exportInstancesAction,
-  instancesSelector,
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
-import { CONNECTION_TYPE_DISPLAY, ConnectionType, Instance } from 'uiSrc/slices/interfaces'
-import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
-import { Nullable, formatLongName, getDbIndex, lastConnectionFormat, replaceSpaces } from 'uiSrc/utils'
+import {
+  CONNECTION_TYPE_DISPLAY,
+  ConnectionType,
+  Instance,
+  OAuthSocialAction,
+  OAuthSocialSource
+} from 'uiSrc/slices/interfaces'
+import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { formatLongName, getDbIndex, lastConnectionFormat, Nullable, replaceSpaces } from 'uiSrc/utils'
 
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import styles from './styles.module.scss'
 
 export interface Props {
+  instances: Instance[]
+  predefinedInstances?: Instance[]
+  loading: boolean
   width: number
   editedInstance: Nullable<Instance>
   onEditInstance: (instance: Instance) => void
@@ -55,16 +68,33 @@ export interface Props {
 
 const suffix = '_db_instance'
 const COLS_TO_HIDE = ['connectionType', 'modules', 'lastConnection']
+const isCreateCloudDb = (id?: string) => id === CREATE_CLOUD_DB_ID
 
-const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteInstances }: Props) => {
+const DatabasesListWrapper = (props: Props) => {
+  const {
+    instances,
+    width,
+    predefinedInstances = [],
+    onEditInstance,
+    editedInstance,
+    onDeleteInstances,
+    loading
+  } = props
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
   const { theme } = useContext(ThemeContext)
 
   const { contextInstanceId } = useSelector(appContextSelector)
-  const instances = useSelector(instancesSelector)
+  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+
   const [, forceRerender] = useState({})
+  const sortingRef = useRef<PropertySort>(
+    localStorageService.get(BrowserStorageItem.instancesSorting) ?? {
+      field: 'lastConnection',
+      direction: 'asc'
+    }
+  )
 
   const deletingIdRef = useRef('')
 
@@ -82,8 +112,8 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
 
   useEffect(() => {
     const editInstanceId = new URLSearchParams(search).get('editInstance')
-    if (editInstanceId && instances?.data?.length) {
-      const instance = instances.data.find((item: Instance) => item.id === editInstanceId)
+    if (editInstanceId && instances?.length) {
+      const instance = instances.find((item: Instance) => item.id === editInstanceId)
       if (instance) {
         handleClickEditInstance(instance)
         history.replace(Pages.home)
@@ -211,6 +241,31 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
     })
   }
 
+  const handleClickFreeDb = () => {
+    if (cloudSsoFeature?.flag) {
+      dispatch(setSSOFlow(OAuthSocialAction.Create))
+      dispatch(setSocialDialogState(OAuthSocialSource.ListOfDatabases))
+      return
+    }
+
+    const link = document.createElement('a')
+    link.setAttribute('href', getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: 'list_of_databases' }))
+    link.setAttribute('target', '_blank')
+
+    link.click()
+    link.remove()
+  }
+
+  const getRowProps = (instance: Instance) => ({
+    className: cx({
+      'euiTableRow-isSelected': instance?.id === editedInstance?.id,
+      cloudDbRow: isCreateCloudDb(instance?.id)
+    }),
+    onClick: isCreateCloudDb(instance?.id) ? handleClickFreeDb : undefined,
+    isSelectable: !isCreateCloudDb(instance?.id),
+    'data-testid': `db-row_${instance?.id}`
+  })
+
   const columns: EuiTableFieldDataColumnType<Instance>[] = [
     {
       field: 'name',
@@ -219,9 +274,18 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
       dataType: 'string',
       truncateText: true,
       'data-test-subj': 'database-alias-column',
-      sortable: ({ name }) => name?.toLowerCase(),
+      sortable: ({ name, id }) => {
+        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
+        return name?.toLowerCase()
+      },
       width: '30%',
       render: function InstanceCell(name: string = '', instance: Instance) {
+        if (isCreateCloudDb(instance.id)) {
+          return (
+            <EuiText className={cx(styles.tooltipAnchorColumnName)}>{instance.name}</EuiText>
+          )
+        }
+
         const { id, db, new: newStatus = false } = instance
         const cellContent = replaceSpaces(name.substring(0, 200))
 
@@ -261,8 +325,13 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
       width: '35%',
       dataType: 'string',
       truncateText: true,
-      sortable: ({ host, port }) => `${host}:${port}`,
-      render: function HostPort(name: string, { port, id }: Instance) {
+      sortable: ({ host, port, id }) => {
+        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
+        return `${host}:${port}`
+      },
+      render: function HostPort(name: string, { host, port, id }: Instance) {
+        if (isCreateCloudDb(id)) return host
+
         const text = `${name}:${port}`
         return (
           <div className="host_port" data-testid="host-port">
@@ -284,7 +353,10 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
       className: 'column_type',
       name: 'Connection Type',
       dataType: 'string',
-      sortable: true,
+      sortable: ({ id, connectionType }) => {
+        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
+        return connectionType
+      },
       width: '180px',
       truncateText: true,
       hideForMobile: true,
@@ -340,8 +412,14 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
       dataType: 'date',
       align: 'right',
       width: '170px',
-      sortable: ({ lastConnection }) => (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
-      render: (date: Date) => lastConnectionFormat(date),
+      sortable: ({ lastConnection, id }) => {
+        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? -Infinity : +Infinity
+        return (lastConnection ? -new Date(`${lastConnection}`) : -Infinity)
+      },
+      render: (date: Date, { id }) => {
+        if (id === CREATE_CLOUD_DB_ID) return null
+        return lastConnectionFormat(date)
+      },
     },
     {
       field: 'controls',
@@ -349,6 +427,7 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
       width: '120px',
       name: '',
       render: function Actions(_act: any, instance: Instance) {
+        if (isCreateCloudDb(instance?.id)) return null
         return (
           <>
             {instance.cloudDetails && (
@@ -393,6 +472,7 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
   const onTableChange = ({ sort, page }: Criteria<Instance>) => {
     // calls also with page changing
     if (sort && !page) {
+      sortingRef.current = sort
       localStorageService.set(BrowserStorageItem.instancesSorting, sort)
       sendEventTelemetry({
         event: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SORTED,
@@ -401,25 +481,26 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
     }
   }
 
-  const sort: PropertySort = localStorageService.get(BrowserStorageItem.instancesSorting) ?? {
-    field: 'lastConnection',
-    direction: 'asc'
-  }
+  const listOfInstances = [
+    ...predefinedInstances,
+    ...instances
+  ]
 
   return (
     <div className={styles.container}>
       <ItemList<Instance>
         width={width}
-        editedInstance={editedInstance}
         columns={columns}
         columnsToHide={COLS_TO_HIDE}
         onDelete={handleDeleteInstances}
         onExport={handleExportInstances}
         onWheel={closePopover}
-        loading={instances.loading}
-        data={instances.data}
+        loading={loading}
+        data={listOfInstances}
+        rowProps={getRowProps}
+        getSelectableItems={(item) => item.id !== 'create-free-cloud-db'}
         onTableChange={onTableChange}
-        sort={sort}
+        sort={sortingRef.current}
       />
     </div>
   )

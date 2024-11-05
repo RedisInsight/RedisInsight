@@ -90,7 +90,8 @@ export enum OAuthSocialSource {
   DatabasesList = 'db_list',
   DiscoveryForm = 'discovery form',
   UserProfile = 'user profile',
-  AiChat = 'ai chat'
+  AiChat = 'ai chat',
+  NavigationMenu = 'navigation menu'
 }
 
 export enum OAuthSocialAction {

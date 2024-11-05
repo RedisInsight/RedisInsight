@@ -29,11 +29,14 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { localStorageService } from 'uiSrc/services'
 import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
-import { fetchContentAction as fetchCreateRedisButtonsAction } from 'uiSrc/slices/content/create-redis-buttons'
+import {
+  contentSelector,
+  fetchContentAction as fetchCreateRedisButtonsAction
+} from 'uiSrc/slices/content/create-redis-buttons'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
-import { AddDbType } from 'uiSrc/pages/home/constants'
+import { AddDbType, CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 
 import DatabasesList from './components/database-list-component'
 import DatabaseListHeader from './components/database-list-header'
@@ -58,6 +61,7 @@ const HomePage = () => {
   const { credentials: cloudCredentials } = useSelector(cloudSelector)
   const { instance: sentinelInstance } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
+  const { data: createDbContent } = useSelector(contentSelector)
 
   const {
     loading,
@@ -72,6 +76,11 @@ const HomePage = () => {
   } = useSelector(editedInstanceSelector)
 
   const { contextInstanceId } = useSelector(appContextSelector)
+
+  const predefinedInstances = createDbContent?.cloud_list_of_databases ? [
+    { id: CREATE_CLOUD_DB_ID, ...createDbContent.cloud_list_of_databases } as Instance
+  ] : []
+  const isInstanceExists = instances.length > 0 || predefinedInstances.length > 0
 
   useEffect(() => {
     setTitle('Redis databases')
@@ -199,7 +208,7 @@ const HomePage = () => {
   const onResizeTrottled = useCallback(throttle(onResize, 100), [])
 
   const InstanceList = () =>
-    (!instances.length && !loading && !loadingChanging ? (
+    (!isInstanceExists && !loading && !loadingChanging ? (
       <EuiPanel className={styles.emptyPanel} borderRadius="none">
         <EmptyMessage onAddInstanceClick={handleAddInstance} />
       </EuiPanel>
@@ -208,6 +217,9 @@ const HomePage = () => {
         {(resizeRef) => (
           <div ref={resizeRef} style={{ height: '100%' }}>
             <DatabasesList
+              loading={loading}
+              instances={instances}
+              predefinedInstances={predefinedInstances}
               width={width}
               editedInstance={editedInstance}
               onEditInstance={handleEditInstance}
@@ -241,7 +253,7 @@ const HomePage = () => {
                         className: cx('home__resizePanelLeft', {
                           fullWidth: !openRightPanel,
                           openedRightPanel: !!openRightPanel,
-                          hidden: !!openRightPanel && !instances.length,
+                          hidden: !!openRightPanel && !isInstanceExists,
                         })
                       }}
                     >
@@ -250,7 +262,7 @@ const HomePage = () => {
 
                     <EuiResizableButton
                       className={cx('home__resizableButton', {
-                        hidden: !openRightPanel || !instances.length,
+                        hidden: !openRightPanel || !isInstanceExists,
                       })}
                       style={{ margin: 0 }}
                     />
@@ -261,7 +273,7 @@ const HomePage = () => {
                       wrapperProps={{
                         className: cx('home__resizePanelRight', {
                           hidden: !openRightPanel,
-                          fullWidth: !instances.length,
+                          fullWidth: !isInstanceExists,
                         })
                       }}
                       id="form"
@@ -286,7 +298,7 @@ const HomePage = () => {
                               : handleClose
                           }
                           onDbEdited={onDbEdited}
-                          isFullWidth={!instances.length}
+                          isFullWidth={!isInstanceExists}
                           initConnectionType={initialDbTypeRef.current}
                         />
                       )}

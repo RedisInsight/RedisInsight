@@ -83,17 +83,25 @@ const isCountArg = (arg?: Nullable<IRedisCommand>) => arg?.name === ArgName.NArg
 const findStopArgument = (
   queryArgs: string[],
   command?: IRedisCommand,
+  count: number = 0,
   skippedArguments: IRedisCommand[][] = []
 ) => {
   let commandIndex = 0
   let isBlocked = true
-  let argsCount = 0
+  let argsCount = count
 
   if (!command?.arguments) return null
 
   for (let i = 0; i < queryArgs.length; i++) {
     const queryArg = queryArgs[i]
     let currentArgument: Maybe<IRedisCommand> = command?.arguments[commandIndex]
+
+    if (!currentArgument && argsCount > 0) {
+      commandIndex = 0
+      currentArgument = command?.arguments[commandIndex]
+    }
+
+    console.log(queryArgs, currentArgument)
 
     // // if no argument, we still can apply all optional after last mandatory
     // if (!currentArgument) {
@@ -145,34 +153,44 @@ const findStopArgument = (
 
     // handle block, we call the same function for block arguments
     if (currentArgument?.type === ICommandTokenType.Block) {
-      console.log('handle block', argsCount)
-      const blockQueryArgs = queryArgs.slice(i)
-      let blockArguments = currentArgument.arguments ? [...currentArgument.arguments] : []
-      if (currentArgument.multiple && argsCount) {
-        blockArguments = Array(Math.round(argsCount / blockArguments?.length))
-          .fill(currentArgument.arguments).flat().slice(0, argsCount)
-      }
+      console.log('handle block', currentArgument)
 
-      const command = {
-        ...currentArgument,
-        arguments: blockArguments
+      const a = findStopArgument(
+        queryArgs.slice(i),
+        currentArgument,
+        argsCount
+      )
+      console.log(a)
+      return {
+        stopArgument: null,
+        skippedArguments: []
       }
-      const block: any = findStopArgument(blockQueryArgs, command, skippedArguments)
-      console.log('return from block', block)
-      if (isBlocked || block.isBlocked || block.stopArgument) {
-        return {
-          ...block,
-          skippedArguments: [fillArgsByType([block.stopArgument])],
-          blockParent: currentArgument
-        }
-      }
-
-      // since we iterated throw the block and completed it we need to skip number of args from this block
-      // TODO: wrong
-      i += blockQueryArgs.length - 1
-      commandIndex++
-      isBlocked = false
-      continue
+      // const blockQueryArgs = queryArgs.slice(i)
+      // let blockArguments = currentArgument.arguments ? [...currentArgument.arguments] : []
+      // if (currentArgument.multiple && argsCount) {
+      //   blockArguments = Array(Math.round(argsCount / blockArguments?.length))
+      //     .fill(currentArgument.arguments).flat().slice(0, argsCount)
+      // }
+      //
+      // const command = {
+      //   ...currentArgument,
+      //   arguments: blockArguments
+      // }
+      // const block: any = findStopArgument(blockQueryArgs, command, skippedArguments)
+      // if (isBlocked || block.isBlocked || block.stopArgument) {
+      //   return {
+      //     ...block,
+      //     skippedArguments: [fillArgsByType([block.stopArgument])],
+      //     blockParent: currentArgument
+      //   }
+      // }
+      //
+      // // since we iterated throw the block and completed it we need to skip number of args from this block
+      // // TODO: wrong
+      // i += blockQueryArgs.length - 1
+      // commandIndex++
+      // isBlocked = false
+      // continue
     }
 
     // handle one-of argument
@@ -223,8 +241,6 @@ const findStopArgument = (
   }
 
   const lastArgument: Maybe<IRedisCommand> = command?.arguments?.[commandIndex]
-
-  console.log('before return last argument', isBlocked, lastArgument)
   // if (!lastArgument) {
   //   const prevMandatoryIndex = findLastIndex(
   //     command.arguments.slice(0, commandIndex),

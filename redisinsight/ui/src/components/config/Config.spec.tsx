@@ -2,7 +2,7 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { BuildType } from 'uiSrc/constants/env'
 import { localStorageService } from 'uiSrc/services'
-import { getFeatureFlags, setFeaturesToHighlight, setOnboarding } from 'uiSrc/slices/app/features'
+import { setFeaturesToHighlight, setOnboarding } from 'uiSrc/slices/app/features'
 import { getNotifications } from 'uiSrc/slices/app/notifications'
 import { render, mockedStore, cleanup, MOCKED_HIGHLIGHTING_FEATURES } from 'uiSrc/utils/test-utils'
 
@@ -69,7 +69,6 @@ describe('Config', () => {
       getContentRecommendations(),
       getGuideLinks(),
       getWBTutorials(),
-      getFeatureFlags(),
       getUserConfigSettings(),
       setSettingsPopupState(false)
     ]
@@ -106,7 +105,6 @@ describe('Config', () => {
       getContentRecommendations(),
       getGuideLinks(),
       getWBTutorials(),
-      getFeatureFlags(),
       getUserConfigSettings(),
       setSettingsPopupState(true),
     ]

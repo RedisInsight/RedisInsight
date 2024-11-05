@@ -1,5 +1,5 @@
 import {
-  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, RelationId
+  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, RelationId, JoinColumn
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -199,11 +199,12 @@ export class DatabaseEntity implements IBaseDatabaseEntity {
   ssh: boolean;
 
   @Expose()
-  @OneToOne('ssh_options', {
+  @OneToOne(() => SshOptionsEntity, {
     eager: true,
     onDelete: 'CASCADE',
     cascade: true,
   })
+  @JoinColumn()
   @Type(() => SshOptionsEntity)
   sshOptions: IBaseSshOptionsEntity;
 
@@ -211,17 +212,8 @@ export class DatabaseEntity implements IBaseDatabaseEntity {
   sshOptionsId: string;
 
   @Expose()
-  @OneToOne(
-    () => CloudDatabaseDetailsEntity,
-    (cloudDetails) => cloudDetails.database,
-    {
-      eager: true,
-      onDelete: 'CASCADE',
-      cascade: true,
-    },
-  )
-  @Type(() => CloudDatabaseDetailsEntity)
-  cloudDetails: IBaseCloudDetailsEntity;
+  @OneToOne(() => CloudDatabaseDetailsEntity, (cloudDetails) => cloudDetails.database)
+  cloudDetails: CloudDatabaseDetailsEntity;
 
   @Expose()
   @Column({

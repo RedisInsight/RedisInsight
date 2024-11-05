@@ -6,53 +6,62 @@ import type { Plugin } from 'vite'
 export default defineConfig({
   plugins: [
     {
-      name: 'resolve-api-imports',
-      resolveId: (source: string): { id: string; external: boolean } | undefined => {
-        if (source.startsWith('apiSrc/') || source.startsWith('src/')) {
+      name: 'resolve-imports',
+      enforce: 'pre',
+      resolveId(source) {
+        if (source.startsWith('desktopSrc/')) {
+          const relativePath = source.replace('desktopSrc/', './src/')
+          return relativePath
+        }
+        if (source.startsWith('uiSrc/')) {
+          const relativePath = source.replace('uiSrc/', './ui/src/')
+          return path.resolve(__dirname, relativePath)
+        }
+        if (source.startsWith('apiSrc/')) {
+          if (process.env.NODE_ENV === 'development') {
+            return {
+              id: source.replace('apiSrc/', '../api/src/'),
+              external: true
+            }
+          }
           return {
-            id: source,
+            id: source.replace('apiSrc/', '../api/dist/src/'),
             external: true
           }
         }
-        return undefined
-      },
-    } as Plugin,
+        return null
+      }
+    }
   ],
   build: {
-    emptyOutDir: true,
+    emptyOutDir: false,
     outDir: 'dist',
     lib: {
       entry: path.resolve(__dirname, 'index.ts'),
-      formats: ['cjs'], // Only use CJS format
+      formats: ['cjs'],
       fileName: () => 'index.js',
     },
     rollupOptions: {
       external: [
         'electron',
         'ts-node',
-        '@nestjs/core',
-        '@nestjs/common',
-        '@nestjs/platform-express',
-        '@nestjs/swagger',
-        'nest-winston',
         ...builtinModules,
         ...builtinModules.map((m) => `node:${m}`),
-        /^apiSrc\//,
+        /^@nestjs\/.*/,
         /^src\//,
+        /^apiSrc\//
       ],
       output: {
         format: 'cjs',
         entryFileNames: '[name].js',
+        interop: 'auto'
       }
-    },
+    }
   },
   resolve: {
     alias: {
       desktopSrc: path.resolve(__dirname, 'src'),
-      uiSrc: path.resolve(__dirname, '../ui/src'),
-    },
-  },
-  optimizeDeps: {
-    include: ['electron']
+      uiSrc: path.resolve(__dirname, '../ui/src')
+    }
   }
 })

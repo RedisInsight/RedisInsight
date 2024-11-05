@@ -2,10 +2,10 @@ import {
   Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
-import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import { IBaseDatabaseEntity, IBaseCloudDetailsEntity } from 'src/modules/database/interfaces/entity-interfaces';
 
 @Entity('database_cloud_details')
-export class CloudDatabaseDetailsEntity {
+export class CloudDatabaseDetailsEntity implements IBaseCloudDetailsEntity {
   @Expose()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -30,14 +30,10 @@ export class CloudDatabaseDetailsEntity {
   @Column({ nullable: true, default: false })
   free: boolean;
 
-  @OneToOne(
-    () => DatabaseEntity,
-    (database) => database.cloudDetails,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-    },
-  )
+  @OneToOne('database_instance', {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
-  database: DatabaseEntity;
+  database: IBaseDatabaseEntity;
 }

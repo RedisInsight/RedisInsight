@@ -1,5 +1,5 @@
 import {
-  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn,
+  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, RelationId
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -8,6 +8,9 @@ import { Expose, Transform, Type } from 'class-transformer';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
+import { IBaseDatabaseEntity } from 'src/modules/database/interfaces/entity-interfaces';
+import { IBaseCloudDetailsEntity } from 'src/modules/database/interfaces/entity-interfaces';
+import { IBaseSshOptionsEntity } from 'src/modules/ssh/interfaces/entity-interfaces';
 
 export enum HostingProvider {
   RE_CLUSTER = 'RE_CLUSTER',
@@ -49,7 +52,7 @@ export enum Compressor {
 }
 
 @Entity('database_instance')
-export class DatabaseEntity {
+export class DatabaseEntity implements IBaseDatabaseEntity {
   @Expose()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -196,17 +199,16 @@ export class DatabaseEntity {
   ssh: boolean;
 
   @Expose()
-  @OneToOne(
-    () => SshOptionsEntity,
-    (sshOptions) => sshOptions.database,
-    {
-      eager: true,
-      onDelete: 'CASCADE',
-      cascade: true,
-    },
-  )
+  @OneToOne('ssh_options', {
+    eager: true,
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   @Type(() => SshOptionsEntity)
-  sshOptions: SshOptionsEntity;
+  sshOptions: IBaseSshOptionsEntity;
+
+  @RelationId((database: DatabaseEntity) => database.sshOptions)
+  sshOptionsId: string;
 
   @Expose()
   @OneToOne(
@@ -219,7 +221,7 @@ export class DatabaseEntity {
     },
   )
   @Type(() => CloudDatabaseDetailsEntity)
-  cloudDetails: CloudDatabaseDetailsEntity;
+  cloudDetails: IBaseCloudDetailsEntity;
 
   @Expose()
   @Column({

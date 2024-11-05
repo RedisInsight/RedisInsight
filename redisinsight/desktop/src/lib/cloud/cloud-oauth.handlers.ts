@@ -10,11 +10,11 @@ import {
   CloudAuthResponse,
   CloudAuthStatus
 } from 'desktopSrc/types/cloud-auth'
-import { importApiModule } from 'desktopSrc/api-imports'
+
 import { IpcOnEvent, IpcInvokeEvent } from 'uiSrc/electron/constants'
 
-const { CloudOauthUnexpectedErrorException } = importApiModule('dist/src/modules/cloud/auth/exceptions')
-const { CloudAuthService } = importApiModule('dist/src/modules/cloud/auth/cloud-auth.service')
+import { CloudOauthUnexpectedErrorException } from 'apiSrc/modules/cloud/auth/exceptions'
+import { CloudAuthService } from 'apiSrc/modules/cloud/auth/cloud-auth.service'
 
 const TCP_LOCAL_CLOUD_AUTH_PORT = process.env.TCP_LOCAL_CLOUD_AUTH_PORT
   ? parseInt(process.env.TCP_LOCAL_CLOUD_AUTH_PORT, 10)

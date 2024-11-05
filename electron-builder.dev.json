@@ -1,0 +1,221 @@
+{
+    "productName": "Redis Insight",
+    "appId": "org.RedisLabs.RedisInsight-V2",
+    "copyright": "Copyright © 2024 Redis Ltd.",
+    "files": [
+      "dist/**/*",
+      "api/dist/**/*",
+      "node_modules/**/*"
+    ],
+    "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
+    "compression": "normal",
+    "asarUnpack": [
+      "node_modules/keytar",
+      "node_modules/sqlite3",
+      "node_modules/cpu-features"
+    ],
+    "protocols": [{
+      "name": "RedisInsight",
+      "role": "Viewer",
+      "schemes": ["redisinsight"]
+    }
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "notarize": {
+        "teamId": "UUK47G4BAZ"
+      },
+      "type": "distribution",
+      "hardenedRuntime": true,
+      "darkModeSupport": true,
+      "icon": "resources/icons/1024x1024.png",
+      "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
+      "entitlements": "resources/entitlements.mac.plist",
+      "entitlementsInherit": "resources/entitlements.mac.plist",
+      "gatekeeperAssess": false
+    },
+    "mas": {
+      "mergeASARs": false,
+      "entitlements": "resources/entitlements.mas.plist",
+      "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
+      "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
+      "hardenedRuntime": false,
+      "asarUnpack": ["node_modules"],
+      "provisioningProfile": "embedded.provisionprofile",
+      "binaries": [
+        "Contents/Resources/app-x64.asar.unpacked/node_modules/sqlite3/build/Release/node_sqlite3.node",
+        "Contents/Resources/app-arm64.asar.unpacked/node_modules/sqlite3/build/Release/node_sqlite3.node",
+        "Contents/Resources/app-arm64.asar.unpacked/node_modules/keytar/build/Release/keytar.node",
+        "Contents/Resources/app-x64.asar.unpacked/node_modules/keytar/build/Release/keytar.node"
+      ],
+      "artifactName": "Redis-Insight-${os}-${arch}-mas.${ext}"
+    },
+    "masDev": {
+      "mergeASARs": false,
+      "entitlements": "resources/entitlements.mas.plist",
+      "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
+      "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
+      "hardenedRuntime": false,
+      "asarUnpack": ["node_modules"],
+      "provisioningProfile": "dev.provisionprofile",
+      "binaries": [
+        "Contents/Resources/app-x64.asar.unpacked/node_modules/sqlite3/build/Release/node_sqlite3.node",
+        "Contents/Resources/app-arm64.asar.unpacked/node_modules/sqlite3/build/Release/node_sqlite3.node",
+        "Contents/Resources/app-arm64.asar.unpacked/node_modules/keytar/build/Release/keytar.node",
+        "Contents/Resources/app-x64.asar.unpacked/node_modules/keytar/build/Release/keytar.node"
+      ],
+      "artifactName": "Redis-Insight-${os}-${arch}-masDev.${ext}"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": ["nsis"],
+      "artifactName": "Redis-Insight-${os}-installer.${ext}",
+      "icon": "resources/icon.ico",
+      "publisherName": [
+        "Redis Inc.",
+        "Redis Labs Inc."
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "linux": {
+      "icon": "./resources/icons",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        },
+        {
+          "target": "rpm",
+          "arch": ["x64"]
+        },
+        {
+          "target": "snap",
+          "arch": ["x64"]
+        }
+      ],
+      "synopsis": "Redis GUI by Redis Ltd.",
+      "category": "Development",
+      "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
+      "desktop": {
+        "Name": "Redis Insight",
+        "Type": "Application",
+        "Comment": "Redis GUI by Redis Ltd"
+      }
+    },
+    "snap": {
+      "plugs": [
+        "default",
+        "password-manager-service"
+      ],
+      "confinement": "strict",
+      "stagePackages": ["default"]
+    },
+    "flatpak": {
+      "runtimeVersion": "20.08",
+      "modules": [
+        {
+          "name": "libsecret",
+          "buildsystem": "meson",
+          "config-opts": [
+            "-Dmanpage=false",
+            "-Dvapi=false",
+            "-Dgtk_doc=false",
+            "-Dintrospection=false"
+          ],
+          "cleanup": ["/bin", "/include", "/lib/pkgconfig", "/share/man"],
+          "sources": [
+            {
+              "type": "archive",
+              "url": "https://download.gnome.org/sources/libsecret/0.20/libsecret-0.20.5.tar.xz",
+              "sha256": "3fb3ce340fcd7db54d87c893e69bfc2b1f6e4d4b279065ffe66dac9f0fd12b4d"
+            }
+          ]
+        }
+      ],
+      "finishArgs": [
+        "--share=ipc",
+        "--share=network",
+        "--filesystem=home",
+        "--device=dri",
+        "--talk-name=org.freedesktop.secrets",
+        "--talk-name=org.freedesktop.Notifications",
+        "--talk-name=org.freedesktop.Flatpak",
+        "--socket=fallback-x11",
+        "--socket=wayland",
+        "--socket=x11"
+      ]
+    },
+    "directories": {
+      "app": "redisinsight",
+      "buildResources": "resources",
+      "output": "release"
+    },
+    "extraResources": [
+      "./resources/**",
+      {
+        "from": "./redisinsight/api/static",
+        "to": "static",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "./redisinsight/api/defaults",
+        "to": "defaults",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "./redisinsight/api/data",
+        "to": "data",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "LICENSE",
+        "to": "LICENSE.redisinsight.txt"
+      },
+      {
+        "from": "./resources/app",
+        "to": "./app",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "redisinsight/api/dist",
+        "to": "api/dist",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "redisinsight/api/node_modules",
+        "to": "api/dist/node_modules",
+        "filter": ["**/*"]
+      }
+    ]
+  }
+  

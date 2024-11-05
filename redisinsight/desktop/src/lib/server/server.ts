@@ -6,7 +6,8 @@ import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
 
 import { getWindows } from '../window'
-import { importApiModule } from 'desktopSrc/api-imports'
+
+import server from 'apiSrc/main'
 
 const port = config.defaultPort
 
@@ -54,7 +55,6 @@ export const launchApiServer = async () => {
       })
     } else {
       // Production code
-      const server = importApiModule('dist/src/main').default
       const detectPortConst = await getPort({ port: portNumbers(port, port + 1_000) })
       process.env.RI_APP_PORT = detectPortConst?.toString()
   

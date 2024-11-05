@@ -9,10 +9,16 @@ import { getWindows } from '../window'
 
 import server from 'apiSrc/main'
 import { WindowAuthService } from 'apiSrc/modules/auth/window-auth/window-auth.service'
-import { ElectronWindowAuthStrategy } from 'apiSrc/modules/auth/window-auth/strategies/electron.window.auth.strategy'
 import { WindowAuthModule } from 'apiSrc/modules/auth/window-auth/window-auth.module'
+import { AbstractWindowAuthStrategy } from 'apiSrc/modules/auth/window-auth/strategies/abstract.window.auth.strategy'
 
 const port = config.defaultPort
+
+export class ElectronWindowAuthStrategy extends AbstractWindowAuthStrategy {
+  async isAuthorized(id: string): Promise<boolean> {
+    return getWindows()?.has(id)
+  }
+}
 
 let gracefulShutdown: Function
 let beApp: any

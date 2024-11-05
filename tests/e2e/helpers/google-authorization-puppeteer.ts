@@ -55,7 +55,7 @@ export async function processGoogleSSOPuppeteer(urlToUse: string): Promise<void>
     // });
 
     // const page = await browser.newPage();
-    await page.setBypassCSP(true);
+    // await page.setBypassCSP(true);
     fs.mkdirSync('./report/screenshots/', { recursive: true });
 
     const protocol = 'redisinsight://';

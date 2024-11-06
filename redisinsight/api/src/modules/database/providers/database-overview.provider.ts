@@ -219,7 +219,7 @@ export class DatabaseOverviewProvider {
         return [undefined, undefined];
       }
 
-      const totalKeysPerDb = {};
+      const totalKeysPerDb: number[] = [];
 
       masterNodes.forEach((node) => {
         map(

@@ -2,7 +2,6 @@ import { t, Selector } from 'testcafe';
 import { DatabaseAPIRequests } from '../helpers/api/api-database';
 import { AddRedisDatabase } from './components/myRedisDatabase/add-redis-database';
 import { InsightsPanel } from './components/insights-panel';
-import { CompatibilityPromotion } from './components/compatibility-promotion';
 import { BaseOverviewPage } from './base-overview-page';
 import { NavigationPanel } from './components/navigation-panel';
 import { NavigationHeader } from './components/navigation/navigation-header';
@@ -15,7 +14,6 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     NavigationPanel = new NavigationPanel();
     AddRedisDatabase = new AddRedisDatabase();
     InsightsPanel = new InsightsPanel();
-    CompatibilityPromotion = new CompatibilityPromotion();
     NavigationHeader = new NavigationHeader();
     AuthorizationDialog = new AuthorizationDialog();
 

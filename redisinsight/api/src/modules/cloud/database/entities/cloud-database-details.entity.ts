@@ -2,9 +2,10 @@ import {
   Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
-import { IDatabaseEntity } from 'src/modules/database/interfaces/database-relations.interface';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import { IDatabase } from 'src/modules/database/interfaces/database.interface';
 
-@Entity('database_cloud_details')
+@Entity('cloud_database_details')
 export class CloudDatabaseDetailsEntity {
   @Expose()
   @PrimaryGeneratedColumn('uuid')
@@ -31,13 +32,12 @@ export class CloudDatabaseDetailsEntity {
   free: boolean;
 
   @OneToOne(
-    () => DatabaseEntity,
-    (database) => database.cloudDetails,
+    'DatabaseEntity',
+    'cloudDetails',
     {
-      nullable: true,
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn()
-  database: IDatabaseEntity;
+  @JoinColumn({ name: 'databaseInstanceId' })
+  database_instance: IDatabase;
 }

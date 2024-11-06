@@ -1,13 +1,32 @@
 import {
-  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn,
+  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, JoinColumn,
 } from 'typeorm';
+import { DataAsJsonString } from 'src/common/decorators';
+import { Expose, Transform } from 'class-transformer';
+import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
+import { ISshOptions } from '../../../common/interfaces/entity-interfaces';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
-import { DataAsJsonString } from 'src/common/decorators';
-import { Expose, Transform, Type } from 'class-transformer';
-import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
-import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
+import { IDatabase } from '../interfaces/database.interface';
+
+// Keep and export the enums here
+export enum ConnectionType {
+  STANDALONE = 'STANDALONE',
+  CLUSTER = 'CLUSTER',
+  SENTINEL = 'SENTINEL',
+  NOT_CONNECTED = 'NOT CONNECTED',
+}
+
+export enum Compressor {
+  NONE = 'NONE',
+  GZIP = 'GZIP',
+  ZSTD = 'ZSTD',
+  LZ4 = 'LZ4',
+  SNAPPY = 'SNAPPY',
+  Brotli = 'Brotli',
+  PHPGZCompress = 'PHPGZCompress',
+}
 
 export enum HostingProvider {
   RE_CLUSTER = 'RE_CLUSTER',
@@ -31,25 +50,8 @@ export enum HostingProvider {
   UNKNOWN = 'UNKNOWN',
 }
 
-export enum ConnectionType {
-  STANDALONE = 'STANDALONE',
-  CLUSTER = 'CLUSTER',
-  SENTINEL = 'SENTINEL',
-  NOT_CONNECTED = 'NOT CONNECTED',
-}
-
-export enum Compressor {
-  NONE = 'NONE',
-  GZIP = 'GZIP',
-  ZSTD = 'ZSTD',
-  LZ4 = 'LZ4',
-  SNAPPY = 'SNAPPY',
-  Brotli = 'Brotli',
-  PHPGZCompress = 'PHPGZCompress',
-}
-
 @Entity('database_instance')
-export class DatabaseEntity {
+export class DatabaseEntity implements IDatabase {
   @Expose()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -130,10 +132,19 @@ export class DatabaseEntity {
   @Column({ nullable: true })
   verifyServerCert: boolean;
 
-  @Expose()
+  @OneToOne(
+    'CloudDatabaseDetailsEntity',
+    'database_instance',
+    {
+      cascade: true,
+      nullable: true,
+    },
+  )
+  cloudDetails?: CloudDatabaseDetailsEntity;
+
   @ManyToOne(
-    () => CaCertificateEntity,
-    (caCertificate) => caCertificate.databases,
+    type => CaCertificateEntity,
+    caCertificate => caCertificate.databases,
     {
       eager: true,
       onDelete: 'SET NULL',
@@ -141,10 +152,9 @@ export class DatabaseEntity {
   )
   caCert: CaCertificateEntity;
 
-  @Expose()
   @ManyToOne(
-    () => ClientCertificateEntity,
-    (clientCertificate) => clientCertificate.databases,
+    type => ClientCertificateEntity,
+    clientCertificate => clientCertificate.databases,
     {
       eager: true,
       onDelete: 'SET NULL',
@@ -196,30 +206,11 @@ export class DatabaseEntity {
   ssh: boolean;
 
   @Expose()
-  @OneToOne(
-    () => SshOptionsEntity,
-    (sshOptions) => sshOptions.database,
-    {
-      eager: true,
-      onDelete: 'CASCADE',
-      cascade: true,
-    },
-  )
-  @Type(() => SshOptionsEntity)
-  sshOptions: SshOptionsEntity;
-
-  @Expose()
-  @OneToOne(
-    () => CloudDatabaseDetailsEntity,
-    (cloudDetails) => cloudDetails.database,
-    {
-      eager: true,
-      onDelete: 'CASCADE',
-      cascade: true,
-    },
-  )
-  @Type(() => CloudDatabaseDetailsEntity)
-  cloudDetails: CloudDatabaseDetailsEntity;
+  @OneToOne('SshOptionsEntity', 'database_instance', {
+    cascade: true,
+    nullable: true,
+  })
+  sshOptions?: ISshOptions;
 
   @Expose()
   @Column({

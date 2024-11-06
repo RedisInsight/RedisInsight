@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { commonUrl } from '../../../../helpers/conf';
+import { commonUrl, samlUser } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { modifyFeaturesConfigJson, updateControlNumber } from '../../../../helpers/insights';
 import { processGoogleSSO } from '../../../../helpers/google-authorization';
@@ -74,18 +74,22 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     closeChrome()
     await t.wait(1000);
     openChromeWindow();
-    await t.click(myRedisDatabasePage.NavigationHeader.cloudSignInButton);
-    // Navigate to Google Auth button
-    await t.pressKey('tab');
-    await t.pressKey('tab');
-    await t.pressKey('space');
-    await t.pressKey('shift+tab');
-    await t.pressKey('shift+tab');
+    // await t.click(myRedisDatabasePage.NavigationHeader.cloudSignInButton);
+    // // Navigate to Google Auth button
+    // await t.pressKey('tab');
+    // await t.pressKey('tab');
+    // await t.pressKey('space');
+    // await t.pressKey('shift+tab');
+    // await t.pressKey('shift+tab');
+    await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
+    await t.click(myRedisDatabasePage.NavigationHeader.ssoOauthButton);
+    await t.typeText(myRedisDatabasePage.NavigationHeader.ssoEmailInput, samlUser, { replace: true, paste: true });
 
     await t.wait(2000);
     saveOpenedChromeTabUrl(logsFilePath);
     // Click the button to trigger the Google authorization page
-    await t.pressKey('enter');
+    // await t.pressKey('enter');
+    await t.click(myRedisDatabasePage.NavigationHeader.submitBtn);
 
     await t.wait(2000);
     urlToUse = fs.readFileSync(logsFilePath, 'utf8');

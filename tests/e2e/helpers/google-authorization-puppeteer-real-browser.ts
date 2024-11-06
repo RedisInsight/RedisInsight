@@ -2,7 +2,7 @@ import { connect } from 'puppeteer-real-browser'
 import * as fs from 'fs';
 import * as path from 'path';
 import { exec } from 'child_process';
-import { googleUser, googleUserPassword } from './conf';
+import { googleUser, googleUserPassword, samlUser, samlUserPassword } from './conf';
 
 
 // Helper function for waiting
@@ -43,10 +43,10 @@ export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<v
         await page.goto(urlToUse);
         
         // Type email and submit
-        await page.type('#login_field', googleUser, { delay: Math.random() * 100 + 50 });
+        await page.type('input[autocomplete="username"]', samlUser, { delay: Math.random() * 100 + 50 });
 
         // Type password and submit
-        await page.type('#password', googleUserPassword, { delay: Math.random() * 100 + 50 });
+        await page.type('input[autocomplete="current-password"]', samlUserPassword, { delay: Math.random() * 100 + 50 });
         const screenshotPass = await page.screenshot();
         fs.writeFileSync('./report/screenshots/puppeteer_screenshotPass.png', screenshotPass, 'base64');
         await page.click('input[type="submit"]');

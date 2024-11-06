@@ -82,6 +82,7 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     // await t.pressKey('shift+tab');
     // await t.pressKey('shift+tab');
     await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
+    await t.click(myRedisDatabasePage.NavigationHeader.oauthAgreement);
     await t.click(myRedisDatabasePage.NavigationHeader.ssoOauthButton);
     await t.typeText(myRedisDatabasePage.NavigationHeader.ssoEmailInput, samlUser, { replace: true, paste: true });
 

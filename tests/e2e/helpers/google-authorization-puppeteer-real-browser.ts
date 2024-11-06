@@ -41,6 +41,7 @@ export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<v
 
     try {
         await page.goto(urlToUse);
+        await waitForTimeout(7000);
         
         // Type email and submit
         await page.type('input[autocomplete="username"]', samlUser, { delay: Math.random() * 100 + 50 });

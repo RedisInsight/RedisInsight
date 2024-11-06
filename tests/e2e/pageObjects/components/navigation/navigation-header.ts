@@ -8,6 +8,7 @@ export class NavigationHeader {
     ssoOauthButton = Selector('[data-testid=sso-oauth]');
     ssoEmailInput = Selector('[data-testid=sso-email]');
     submitBtn = Selector('[data-testid=btn-submit]');
+    oauthAgreement = Selector('[for=ouath-agreement]');
 
     /**
      * Open/Close  Panel

@@ -13,7 +13,6 @@ import { ClientCertificateRepository } from 'src/modules/certificate/repositorie
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
 import { SessionMetadata } from 'src/common/models';
-import { CloudDatabaseDetails } from 'src/modules/cloud/database/models';
 
 @Injectable()
 export class LocalDatabaseRepository extends DatabaseRepository {
@@ -87,60 +86,20 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   /**
    * @inheritDoc
    */
-  public async list(_: SessionMetadata): Promise<Database[]> {
-    try {
-      // First try to get just the database entities
-      const entities = await this.repository
-        .createQueryBuilder('d')
-        .select([
-          'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
-          'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version',
-        ])
-        .getMany();
+  public async list(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _: SessionMetadata,
+  ): Promise<Database[]> {
+    const entities = await this.repository
+      .createQueryBuilder('d')
+      .leftJoinAndSelect('d.cloudDetails', 'cd')
+      .select([
+        'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
+        'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version', 'cd',
+      ])
+      .getMany();
 
-      // Try to get cloud details if the table exists
-      let cloudDetailsMap = new Map();
-      try {
-        const cloudDetails = await this.repository.manager.query(
-          'SELECT * FROM cloud_database_details'
-        );
-        cloudDetailsMap = new Map(
-          cloudDetails.map(cd => [cd.databaseInstanceId, cd])
-        );
-      } catch (e) {
-        // Table doesn't exist, continue without cloud details
-      }
-
-      // Map the results
-      return entities.map((entity) => {
-        const database = classToClass(Database, entity);
-        const cloudDetails = cloudDetailsMap.get(entity.id);
-        
-        if (cloudDetails) {
-          database.cloudDetails = classToClass(CloudDatabaseDetails, {
-            id: cloudDetails.id,
-            cloudId: cloudDetails.cloudId,
-            subscriptionType: cloudDetails.subscriptionType,
-            planMemoryLimit: cloudDetails.planMemoryLimit,
-            memoryLimitMeasurementUnit: cloudDetails.memoryLimitMeasurementUnit,
-            free: cloudDetails.free ?? false,
-            database: entity,
-          });
-        }
-        return database;
-      });
-    } catch (error) {
-      // Fallback to just getting database entities if anything fails
-      const entities = await this.repository
-        .createQueryBuilder('d')
-        .select([
-          'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
-          'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version',
-        ])
-        .getMany();
-
-      return entities.map(entity => classToClass(Database, entity));
-    }
+    return entities.map((entity) => classToClass(Database, entity));
   }
 
   /**

@@ -7,12 +7,12 @@ import { configMain as config } from 'desktopSrc/config'
 
 import { getWindows } from '../window'
 
-import server from 'apiSrc/main'
-import { WindowAuthService } from 'apiSrc/modules/auth/window-auth/window-auth.service'
-import { WindowAuthModule } from 'apiSrc/modules/auth/window-auth/window-auth.module'
-import { AbstractWindowAuthStrategy } from 'apiSrc/modules/auth/window-auth/strategies/abstract.window.auth.strategy'
+import { AbstractWindowAuthStrategy } from '../../../../api/dist/src/modules/auth/window-auth/strategies/abstract.window.auth.strategy'
+import { WindowAuthModule } from '../../../../api/dist/src/modules/auth/window-auth/window-auth.module'
+import { WindowAuthService } from '../../../../api/dist/src/modules/auth/window-auth/window-auth.service'
+import server from '../../../../api/dist/src/main'
 
-const port = config.defaultPort
+const port = config?.defaultPort
 
 export class ElectronWindowAuthStrategy extends AbstractWindowAuthStrategy {
   async isAuthorized(id: string): Promise<boolean> {

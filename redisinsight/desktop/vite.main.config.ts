@@ -2,19 +2,26 @@ import { defineConfig } from 'vite'
 import { builtinModules } from 'module'
 import path from 'path'
 
+const apiDistPath = path.resolve(__dirname, '../api/dist/src')
+
 export default defineConfig({
   plugins: [
     {
       name: 'resolve-imports',
       enforce: 'pre',
       resolveId(source) {
-        if (source.startsWith('apiSrc/')) {
-          // Keep the full module path but point to dist
-          const relativePath = source.replace('apiSrc/', '')
-          const fullPath = path.join(__dirname, '../api/dist/src', relativePath)
+        if (source.startsWith('desktopSrc/')) {
+          const relativePath = source.replace('desktopSrc/', '')
+          return path.join(__dirname, 'src', relativePath)
+        }
+        if (source.startsWith('apiSrc/') || source.includes('api/dist/src/')) {
+          const modulePath = source.includes('apiSrc/') 
+            ? source.replace('apiSrc/', '')
+            : source.split('api/dist/src/')[1]
+            
           return {
-            id: fullPath,
-            external: true
+            id: path.join(apiDistPath, modulePath),
+            external: 'absolute'
           }
         }
         return null
@@ -37,12 +44,14 @@ export default defineConfig({
         ...builtinModules.map((m) => `node:${m}`),
         /^@nestjs\/.*/,
         /^src\//,
-        /^\.\.\/api\/dist\/src\/.*/
+        (id) => id.startsWith(apiDistPath)
       ],
       output: {
         format: 'cjs',
         entryFileNames: '[name].js',
-        interop: 'auto'
+        interop: 'auto',
+        preserveModules: true,
+        preserveModulesRoot: path.resolve(__dirname)
       }
     }
   },

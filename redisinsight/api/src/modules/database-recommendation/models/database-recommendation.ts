@@ -3,7 +3,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEnum, IsOptional, IsBoolean,
 } from 'class-validator';
-import { DatabaseRecommendationParams } from './database-recommendation-params';
+import { DatabaseRecommendationParams } from 'src/modules/database-recommendation/models';
 
 export enum Vote {
   DoubleLike = 'very useful',

@@ -104,7 +104,7 @@ export const windowFactory = async (
     case WindowType.Splash:
       return createWindow({
         prevWindow,
-        htmlFileName: process.env.NODE_ENV === 'development' ? '../splash.html' : 'splash.html',
+        htmlFileName: process.env.NODE_ENV === 'development' ? '../../../splash.html' : 'splash.html',
         windowType,
         options: {
           ...config.splashWindow,

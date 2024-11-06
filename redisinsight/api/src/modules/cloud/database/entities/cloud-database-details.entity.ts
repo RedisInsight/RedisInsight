@@ -3,9 +3,8 @@ import {
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
-import { IDatabase } from 'src/modules/database/interfaces/database.interface';
 
-@Entity('cloud_database_details')
+@Entity('database_cloud_details')
 export class CloudDatabaseDetailsEntity {
   @Expose()
   @PrimaryGeneratedColumn('uuid')
@@ -32,12 +31,13 @@ export class CloudDatabaseDetailsEntity {
   free: boolean;
 
   @OneToOne(
-    'DatabaseEntity',
-    'cloudDetails',
+    () => DatabaseEntity,
+    (database) => database.cloudDetails,
     {
+      nullable: true,
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn({ name: 'databaseInstanceId' })
-  database_instance: IDatabase;
+  @JoinColumn()
+  database: DatabaseEntity;
 }

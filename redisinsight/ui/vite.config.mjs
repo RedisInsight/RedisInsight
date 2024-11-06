@@ -70,6 +70,7 @@ export default defineConfig({
       '@antv/hierarchy'
     ],
     esbuildOptions: {
+      // fix for https://github.com/bvaughn/react-virtualized/issues/1722
       plugins: [fixReactVirtualized],
     },
   },

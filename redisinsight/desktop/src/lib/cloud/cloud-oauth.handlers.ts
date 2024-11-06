@@ -5,16 +5,13 @@ import { UrlWithParsedQuery } from 'url'
 import { createConnection } from 'net'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { getBackendApp, getWindows } from 'desktopSrc/lib'
-import {
-  CloudAuthRequestOptions,
-  CloudAuthResponse,
-} from 'desktopSrc/types/cloud-auth'
 
 import { IpcOnEvent, IpcInvokeEvent } from 'uiSrc/electron/constants'
 
 import { CloudOauthUnexpectedErrorException } from 'apiSrc/modules/cloud/auth/exceptions'
 import { CloudAuthService } from 'apiSrc/modules/cloud/auth/cloud-auth.service'
-import { CloudAuthStatus } from 'apiSrc/modules/cloud/auth/models'
+import { CloudAuthRequestOptions, CloudAuthResponse, CloudAuthStatus } from 'apiSrc/modules/cloud/auth/models'
+import { DEFAULT_SESSION_ID, DEFAULT_USER_ID } from 'apiSrc/common/constants'
 
 const TCP_LOCAL_CLOUD_AUTH_PORT = process.env.TCP_LOCAL_CLOUD_AUTH_PORT
   ? parseInt(process.env.TCP_LOCAL_CLOUD_AUTH_PORT, 10)

@@ -41,42 +41,16 @@ export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<v
 
     try {
         await page.goto(urlToUse);
-        await waitForTimeout(5000);
-        await page.click('div[data-email]');
         
-        // // Type email and submit
-        // await page.type('input[type="email"]', googleUser, { delay: Math.random() * 100 + 50 });
-        // await Promise.all([
-        //     page.click('#identifierNext'),
-        //     page.waitForNavigation({ waitUntil: 'networkidle0' })
-        // ]);
+        // Type email and submit
+        await page.type('#login_field', googleUser, { delay: Math.random() * 100 + 50 });
 
-        // // Wait for password field to be ready
-        // await page.waitForSelector('input[type="password"]', { visible: true });
-        // await waitForTimeout(500);
-
-        // // Type password and submit
-        // await page.type('input[type="password"]', googleUserPassword, { delay: Math.random() * 100 + 50 });
-        // const screenshotPass = await page.screenshot();
-        // fs.writeFileSync('./report/screenshots/puppeteer_screenshotPass.png', screenshotPass, 'base64');
-        // await Promise.all([
-        //     page.click('#selectionc1'),
-        //     fs.writeFileSync('./report/screenshots/puppeteer_screenshotPass1.png', await page.screenshot(), 'base64'),
-        //     page.click('#passwordNext'),
-        //     page.waitForNavigation({ waitUntil: 'networkidle0' })
-        // ]);
-        await waitForTimeout(3000);
-
-        // // Check for "Try another way" button
-        // const tryAnotherWayButtons = await page.$$("//*[text()='Try another way']");
-        // if (tryAnotherWayButtons.length > 0) {
-        //     const buttonVisible = await tryAnotherWayButtons[0].isIntersectingViewport();
-        //     if (buttonVisible) {
-        //         await tryAnotherWayButtons[0].click();
-        //     } else {
-        //         console.log("'Try another way' button not found or not visible.");
-        //     }
-        // }
+        // Type password and submit
+        await page.type('#password', googleUserPassword, { delay: Math.random() * 100 + 50 });
+        const screenshotPass = await page.screenshot();
+        fs.writeFileSync('./report/screenshots/puppeteer_screenshotPass.png', screenshotPass, 'base64');
+        await page.click('input[type="submit"]');
+        await waitForTimeout(5000);
 
         // Wait for the authorization to complete
         await page.waitForFunction(() => window.location.href.includes('#success'), { timeout: 10000 });

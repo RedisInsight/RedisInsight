@@ -81,7 +81,6 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     await t.pressKey('space');
     await t.pressKey('shift+tab');
     await t.pressKey('shift+tab');
-    await t.pressKey('shift+tab');
 
     await t.wait(2000);
     saveOpenedChromeTabUrl(logsFilePath);

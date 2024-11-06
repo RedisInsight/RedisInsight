@@ -30,7 +30,7 @@ test
         }
         // Verify that user can see all the databases automatically discovered with 127.0.0.1 host instead of localhost
         for(let i = 0; i < standalonePorts.length; i++) {
-            await t.expect(myRedisDatabasePage.dbNameList.withExactText(`127.0.0.1:${standalonePorts[i]}`).exists).ok('Standalone DBs');
+            await t.expect(myRedisDatabasePage.dbNameList.withExactText(`127.0.0.1:${standalonePorts[i]}`).exists).eql(true, `Standalone DBs is not found for ${standalonePorts[i]}`);
         }
         // Check that Sentinel and OSS cluster have not been added into the application
         for(let j = 0; j < otherPorts.length; j++) {

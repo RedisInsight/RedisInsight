@@ -102,5 +102,5 @@ test.only('Verify that user can sign in using SSO via Google authorization', asy
     await myRedisDatabasePage.reloadPage();
     await t.expect(myRedisDatabasePage.userProfileBtn.exists).ok('User profile button not displayed');
     await t.click(myRedisDatabasePage.userProfileBtn);
-    await t.expect(myRedisDatabasePage.userProfileAccountInfo.textContent).contains('ri-sso-test-1', 'User not signed in');
+    await t.expect(myRedisDatabasePage.userProfileAccountInfo.textContent).contains('Geor', 'User not signed in');
 });

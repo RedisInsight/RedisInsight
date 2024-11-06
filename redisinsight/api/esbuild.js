@@ -26,6 +26,7 @@ async function main() {
     bundle: true,
     format: 'cjs',
     minifyWhitespace: true,
+    // if true - some nestjs decorators are not working
     minifyIdentifiers: false,
     sourcemap: !production,
     sourcesContent: false,
@@ -38,6 +39,8 @@ async function main() {
     target: 'node16',
     metafile: true,
     plugins: [
+      /* add to the end of plugins array */
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       esbuildProblemMatcherPlugin,
     ],
   });

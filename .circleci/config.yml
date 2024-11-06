@@ -426,11 +426,11 @@ jobs:
             fluxbox &
             export DISPLAY=:99
             echo $DISPLAY
-      # - run:
-      #     name: Download Chrome Profile
-      #     command: |
-      #       curl -O $E2E_USER_PROFILE_LINK
-      #       tar -xvzf chrome-profile.tar.gz -C tests/e2e/test-data
+      - run:
+          name: Download Chrome Profile
+          command: |
+            curl -O $E2E_USER_PROFILE_LINK
+            tar -xvzf chrome-profile.tar.gz -C tests/e2e/test-data
       # - run:
       #     name: Clone mocked RDI server
       #     command: |
@@ -440,13 +440,13 @@ jobs:
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/electron/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
             .circleci/e2e/test.app-image.sh
-      - run:
-          name: Archive and Save Google Chrome User Data
-          when: always
-          command: |
-            tar -czvf chrome-user-data.tar.gz -C "$HOME/.config" google-chrome
-            mkdir -p tests/e2e/report
-            mv chrome-user-data.tar.gz tests/e2e/report/
+      # - run:
+      #     name: Archive and Save Google Chrome User Data
+      #     when: always
+      #     command: |
+      #       tar -czvf chrome-user-data.tar.gz -C "$HOME/.config" google-chrome
+      #       mkdir -p tests/e2e/report
+      #       mv chrome-user-data.tar.gz tests/e2e/report/
       - when:
           condition:
             equal: [ true, << parameters.report >> ]

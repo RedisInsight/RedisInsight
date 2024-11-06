@@ -38,7 +38,6 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     sortByDatabaseAlias = Selector('span').withAttribute('title', 'Database Alias');
     sortByHostAndPort = Selector('span').withAttribute('title', 'Host:Port');
     sortByConnectionType = Selector('span').withAttribute('title', 'Connection Type');
-    sortByLastConnection = Selector('span').withAttribute('title', 'Last connection');
     importDatabasesBtn = Selector('[data-testid=import-from-file-btn]');
     submitImportBtn = Selector('[data-testid=submit-btn]');
     okDialogBtn = Selector('[data-testid=ok-btn]');
@@ -46,11 +45,10 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     exportBtn = Selector('[data-testid=export-btn]');
     exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
     userProfileBtn = Selector('[data-testid=user-profile-btn]');
-    addDbFromEmptyListBtn = Selector('[data-testid=empty-rdi-instance-button]');
-    emptyDbCloudBtn = Selector('[data-testid=empty-database-cloud-button]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', { timeout: 500 });
+    starFreeDbCheckbox = Selector('[data-test-subj=checkboxSelectRow-create-free-cloud-db]');
     //ICONS
     moduleColumn = Selector('[data-test-subj=tableHeaderCell_modules_3]');
     moduleSearchIcon = Selector('[data-testid^=RediSearch]');
@@ -75,11 +73,10 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     noResultsFoundMessage = Selector('div').withExactText('No results found');
     noResultsFoundText = Selector('div').withExactText('No results matched your search. Try reducing the criteria.');
     failedImportMessage = Selector('[data-testid=result-failed]');
-    successImportMessage = Selector('[data-testid=result-success]');
     importDialogTitle = Selector('[data-testid=import-file-modal-title]');
     importResult = Selector('[data-testid^=table-result-]');
     userProfileAccountInfo = Selector('[data-testid^=profile-account-]');
-    emptyListMessage = Selector('[data-testid=empty-database-instance-list]');
+    portCloudDb = Selector('[class*=column_host]');
     // DIALOG
     importDbDialog = Selector('[data-testid=import-file-modal]');
     successResultsAccordion = Selector('[data-testid^=success-results-]');
@@ -135,8 +132,7 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
         const dbNames = this.tableRowContent;
         const count = await dbNames.count;
 
-        // i = 1 since the first db is a link
-        for (let i = 1; i < count; i++) {
+        for (let i = 0; i < count; i++) {
             if ((await dbNames.nth(i).innerText || '').includes(dbName)) {
                 await t
                     .click(this.deleteRowButton.nth(i))
@@ -212,9 +208,9 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     */
     async verifyDatabaseStatusIsVisible(databaseName: string): Promise<void> {
         const databaseId = await databaseAPIRequests.getDatabaseIdByName(databaseName);
-        const databaseEditBtn = Selector(`[data-testid=database-status-new-${databaseId}]`);
+        const databaseNewPoint = Selector(`[data-testid=database-status-new-${databaseId}]`);
 
-        await t.expect(databaseEditBtn.exists).ok(`Database status is not visible for ${databaseName}`);
+        await t.expect(databaseNewPoint.exists).ok(`Database status is not visible for ${databaseName}`);
     }
 
     /**

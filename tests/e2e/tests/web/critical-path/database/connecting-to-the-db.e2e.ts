@@ -187,17 +187,21 @@ test
     .before(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseHelper.acceptLicenseTerms();
-    })('Verify that user can see the No databases message on the empty databases list', async t => {
-        const noDatabasesMessage = 'No databases yet, let\'s add one!';
-        const externalPageLink = 'https://redis.io/try-free?utm_source=redisinsight&utm_medium=main&utm_campaign=empty_db_list'
+    })('Verify that create free cloud db is displayed always', async t => {
 
-        await t.expect(myRedisDatabasePage.emptyListMessage.withText(noDatabasesMessage).exists).ok('Empty databases list message not displayed');
+        const externalPageLinkList = 'https://redis.io/try-free?utm_source=redisinsight&utm_medium=app&utm_campaign=list_of_databases';
+        const externalPageLinkNavigation = 'https://redis.io/try-free?utm_source=redisinsight&utm_medium=app&utm_campaign=navigation_menu';
 
-        await t.click(myRedisDatabasePage.addDbFromEmptyListBtn);
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn.exists).ok('Add database form not opened');
-        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
+        await t.expect(myRedisDatabasePage.dbNameList.exists).notOk('some db is added');
+        await t.expect(myRedisDatabasePage.tableRowContent.textContent).contains('Free Redis Cloud DB', `create free db row is not displayed`);
+        await t.expect(myRedisDatabasePage.starFreeDbCheckbox.exists).ok('star checkbox is not displayed next to free db link');
+        await t.expect(myRedisDatabasePage.portCloudDb.textContent).contains('Set up in a few clicks', `create free db row is not displayed`);
 
-        await t.click(myRedisDatabasePage.emptyDbCloudBtn);
-        await Common.checkURL(externalPageLink);
+        await t.click(myRedisDatabasePage.tableRowContent);
+        await Common.checkURL(externalPageLinkList);
+        await goBackHistory();
+
+        await t.click(myRedisDatabasePage.NavigationPanel.cloudButton);
+        await Common.checkURL(externalPageLinkNavigation);
         await goBackHistory();
     });

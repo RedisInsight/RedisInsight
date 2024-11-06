@@ -442,6 +442,7 @@ jobs:
             .circleci/e2e/test.app-image.sh
       - run:
           name: Archive and Save Google Chrome User Data
+          when: always
           command: |
             tar -czvf chrome-user-data.tar.gz -C "$HOME/.config" google-chrome
             mkdir -p tests/e2e/report

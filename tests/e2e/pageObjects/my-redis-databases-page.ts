@@ -135,7 +135,8 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
         const dbNames = this.tableRowContent;
         const count = await dbNames.count;
 
-        for (let i = 0; i < count; i++) {
+        // i = 1 since the first db is a link
+        for (let i = 1; i < count; i++) {
             if ((await dbNames.nth(i).innerText || '').includes(dbName)) {
                 await t
                     .click(this.deleteRowButton.nth(i))

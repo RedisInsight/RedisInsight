@@ -2,9 +2,11 @@ import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { commonUrl } from '../../../../helpers/conf';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
+import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const standalonePorts = [8100, 8101, 8102, 8103, 12000];
 const otherPorts = [28100, 8200];
@@ -18,9 +20,7 @@ fixture `Autodiscovery`
 test
     .after(async() => {
         // Delete all auto-discovered databases
-        for(let i = 0; i < standalonePorts.length; i++) {
-            await myRedisDatabasePage.deleteDatabaseByName(`127.0.0.1:${standalonePorts[i]}`);
-        }
+        await databaseAPIRequests.deleteAllDatabasesApi();
     })('Verify that when users open application for the first time, they can see all auto-discovered Standalone DBs', async t => {
         // Check that standalone DBs have been added into the application
         const n = await myRedisDatabasePage.dbNameList.count;

@@ -1,16 +1,17 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiListGroup, EuiText } from '@elastic/eui'
+import { EuiListGroup } from '@elastic/eui'
 import { isArray } from 'lodash'
 import { useParams } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
-import { ApiEndpoints, EAItemActions, EAManifestFirstKey } from 'uiSrc/constants'
+import { ApiEndpoints, EAItemActions, EAManifestFirstKey, FeatureFlags } from 'uiSrc/constants'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
 import UploadWarning from 'uiSrc/components/upload-warning'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import {
   FormValues
 } from '../UploadTutorialForm/UploadTutorialForm'
@@ -41,6 +42,9 @@ const PATHS = {
 
 const Navigation = (props: Props) => {
   const { tutorials, customTutorials, isInternalPageVisible } = props
+  const {
+    [FeatureFlags.envDependent]: envDependentFeature
+  } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
 
@@ -147,7 +151,7 @@ const Navigation = (props: Props) => {
             testId={id || label}
             label={label}
             summary={summary}
-            {...args}
+            path={args?.path}
           >
             {args?.content || label}
           </InternalLink>
@@ -177,7 +181,9 @@ const Navigation = (props: Props) => {
       className={cx(styles.innerContainer)}
     >
       {tutorials && renderTreeView(getManifestItems(tutorials), PATHS.tutorials)}
-      {customTutorials && renderTreeView(getManifestItems(customTutorials), PATHS.customTutorials)}
+      {customTutorials
+        && envDependentFeature?.flag
+        && renderTreeView(getManifestItems(customTutorials), PATHS.customTutorials)}
     </EuiListGroup>
   )
 }

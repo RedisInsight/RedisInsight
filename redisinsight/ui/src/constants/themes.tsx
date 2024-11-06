@@ -1,4 +1,7 @@
 import { EuiSuperSelectOption } from '@elastic/eui'
+import { getConfig } from 'uiSrc/config'
+
+const riConfig = getConfig()
 
 export enum Theme {
   Dark = 'DARK',
@@ -6,7 +9,7 @@ export enum Theme {
   System = 'SYSTEM',
 }
 
-export const DEFAULT_THEME = process.env.RI_DEFAULT_THEME || Theme.Dark
+export const DEFAULT_THEME = riConfig.app.defaultTheme
 
 export const THEMES: EuiSuperSelectOption<string>[] = [
   {

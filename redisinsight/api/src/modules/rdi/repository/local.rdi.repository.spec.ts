@@ -39,7 +39,7 @@ describe('LocalRdiRepository', () => {
     encryptionService = module.get(EncryptionService);
 
     when(encryptionService.decrypt)
-      .calledWith(mockRdiPasswordEncrypted, jasmine.anything())
+      .calledWith(mockRdiPasswordEncrypted, expect.anything())
       .mockResolvedValue(mockRdiPasswordPlain);
 
     when(encryptionService.encrypt)

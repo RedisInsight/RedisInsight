@@ -1,0 +1,16 @@
+name: Install Windows certs
+
+inputs:
+  WIN_CSC_PFX_BASE64:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup sign certificates
+      shell: bash
+      env:
+        WIN_CSC_PFX_BASE64: ${{ inputs.WIN_CSC_PFX_BASE64 }}
+      run: |
+        mkdir -p certs
+        echo "$WIN_CSC_PFX_BASE64" | base64 -d > certs/redislabs_win.pfx

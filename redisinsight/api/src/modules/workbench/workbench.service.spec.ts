@@ -1,22 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { v4 as uuidv4 } from 'uuid';
 import { when } from 'jest-when';
 import {
-  mockDatabase,
+  mockCommandExecution, mockCommandExecutionFilter, mockCommandExecutionRepository,
+  mockCommandExecutionSuccessResult,
+  mockCreateCommandExecutionDto,
   mockDatabaseClientFactory,
-  mockStandaloneRedisClient,
+  mockStandaloneRedisClient, MockType,
   mockWorkbenchAnalyticsService,
-  mockWorkbenchClientMetadata,
+  mockWorkbenchClientMetadata, mockWorkbenchCommandsExecutor,
 } from 'src/__mocks__';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
-import {
-  CreateCommandExecutionDto,
-  RunQueryMode,
-  ResultsMode,
-} from 'src/modules/workbench/dto/create-command-execution.dto';
-import { CommandExecution } from 'src/modules/workbench/models/command-execution';
+import { ResultsMode, RunQueryMode } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
@@ -24,12 +20,6 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
-
-const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
-  command: 'set foo bar',
-  mode: RunQueryMode.ASCII,
-  resultsMode: ResultsMode.Default,
-};
 
 const mockCommands = ['set 1 1', 'get 1'];
 
@@ -54,23 +44,8 @@ const mockCreateCommandExecutionsDto: CreateCommandExecutionsDto = {
 };
 
 const mockCommandExecutionResults: CommandExecutionResult[] = [
-  new CommandExecutionResult({
-    status: CommandExecutionStatus.Success,
-    response: 'OK',
-  }),
+  mockCommandExecutionSuccessResult,
 ];
-const mockCommandExecutionToRun: CommandExecution = new CommandExecution({
-  ...mockCreateCommandExecutionDto,
-  databaseId: mockDatabase.id,
-  db: 0,
-});
-
-const mockCommandExecution: CommandExecution = new CommandExecution({
-  ...mockCommandExecutionToRun,
-  id: uuidv4(),
-  createdAt: new Date(),
-  result: mockCommandExecutionResults,
-});
 
 const mockSendCommandResultSuccess = { response: '1', status: 'success' };
 const mockSendCommandResultFail = { response: 'error', status: 'fail' };
@@ -106,19 +81,10 @@ const mockCommandExecutionWithSilentMode = {
   }],
 };
 
-const mockCommandExecutionRepository = () => ({
-  createMany: jest.fn(),
-  getList: jest.fn(),
-  getOne: jest.fn(),
-  delete: jest.fn(),
-  deleteAll: jest.fn(),
-});
-
 describe('WorkbenchService', () => {
-  const client = mockStandaloneRedisClient;
   let service: WorkbenchService;
-  let workbenchCommandsExecutor;
-  let commandExecutionProvider;
+  let workbenchCommandsExecutor: MockType<WorkbenchCommandsExecutor>;
+  let commandExecutionRepository: MockType<CommandExecutionRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -130,9 +96,7 @@ describe('WorkbenchService', () => {
         },
         {
           provide: WorkbenchCommandsExecutor,
-          useFactory: () => ({
-            sendCommand: jest.fn(),
-          }),
+          useFactory: mockWorkbenchCommandsExecutor,
         },
         {
           provide: CommandExecutionRepository,
@@ -145,30 +109,38 @@ describe('WorkbenchService', () => {
       ],
     }).compile();
 
-    service = module.get<WorkbenchService>(WorkbenchService);
-    workbenchCommandsExecutor = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
-    commandExecutionProvider = module.get(CommandExecutionRepository);
+    service = module.get(WorkbenchService);
+    workbenchCommandsExecutor = module.get(WorkbenchCommandsExecutor);
+    commandExecutionRepository = module.get(CommandExecutionRepository);
   });
 
   describe('createCommandExecution', () => {
     it('should successfully execute command and save it', async () => {
-      const result = await service.createCommandExecution(client, mockCreateCommandExecutionDto);
-      // can't predict execution time
-      expect(result).toMatchObject(mockCommandExecutionToRun);
-      expect(result.executionTime).toBeGreaterThan(0);
+      const result = await service.createCommandExecution(mockStandaloneRedisClient, mockCreateCommandExecutionDto);
+      expect(result).toEqual({
+        ...mockCommandExecution,
+        executionTime: result.executionTime,
+        id: undefined, // result was not saved yet
+        createdAt: undefined, // result was not saved yet
+      });
     });
     it('should save db index', async () => {
       const db = 2;
-      client.getCurrentDbIndex = jest.fn().mockResolvedValueOnce(db);
+      mockStandaloneRedisClient.getCurrentDbIndex.mockResolvedValueOnce(db);
       const result = await service.createCommandExecution(
-        client,
+        mockStandaloneRedisClient,
         mockCreateCommandExecutionDto,
       );
-      expect(result).toMatchObject({ ...mockCommandExecutionToRun, db });
-      expect(result.db).toBe(db);
+      expect(result).toEqual({
+        ...mockCommandExecution,
+        executionTime: result.executionTime,
+        id: undefined, // result was not saved yet
+        createdAt: undefined, // result was not saved yet
+        db,
+      });
     });
     it('should save result as unsupported command message', async () => {
-      client.getCurrentDbIndex = jest.fn().mockResolvedValueOnce(0);
+      mockStandaloneRedisClient.getCurrentDbIndex = jest.fn().mockResolvedValueOnce(0);
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
 
       const dto = {
@@ -177,7 +149,7 @@ describe('WorkbenchService', () => {
         mode: RunQueryMode.ASCII,
       };
 
-      expect(await service.createCommandExecution(client, dto)).toEqual({
+      expect(await service.createCommandExecution(mockStandaloneRedisClient, dto)).toEqual({
         ...dto,
         db: 0,
         databaseId: mockWorkbenchClientMetadata.databaseId,
@@ -199,7 +171,7 @@ describe('WorkbenchService', () => {
       };
 
       try {
-        await service.createCommandExecution(client, dto);
+        await service.createCommandExecution(mockStandaloneRedisClient, dto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
@@ -211,19 +183,18 @@ describe('WorkbenchService', () => {
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(
         [mockCommandExecutionResults, mockCommandExecutionResults],
       );
-      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecution, mockCommandExecution]);
+      commandExecutionRepository.createMany.mockResolvedValueOnce([mockCommandExecution, mockCommandExecution]);
 
       const result = await service.createCommandExecutions(mockWorkbenchClientMetadata, mockCreateCommandExecutionsDto);
 
       expect(result).toEqual([mockCommandExecution, mockCommandExecution]);
     });
-
     it('should successfully execute commands and save in group mode view', async () => {
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(client, expect.anything())
+        .calledWith(mockStandaloneRedisClient, expect.anything())
         .mockResolvedValue([mockSendCommandResultSuccess]);
 
-      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithGroupMode]);
+      commandExecutionRepository.createMany.mockResolvedValueOnce([mockCommandExecutionWithGroupMode]);
 
       const result = await service.createCommandExecutions(
         mockWorkbenchClientMetadata,
@@ -232,13 +203,12 @@ describe('WorkbenchService', () => {
 
       expect(result).toEqual([mockCommandExecutionWithGroupMode]);
     });
-
     it('should successfully execute commands and save in silent mode view', async () => {
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(client, expect.anything())
+        .calledWith(mockStandaloneRedisClient, expect.anything())
         .mockResolvedValue([mockSendCommandResultSuccess]);
 
-      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithSilentMode]);
+      commandExecutionRepository.createMany.mockResolvedValueOnce([mockCommandExecutionWithSilentMode]);
 
       const result = await service.createCommandExecutions(
         mockWorkbenchClientMetadata,
@@ -250,20 +220,20 @@ describe('WorkbenchService', () => {
 
     it('should successfully execute commands with error and save summary', async () => {
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(client, {
+        .calledWith(mockStandaloneRedisClient, {
           ...mockCreateCommandExecutionDtoWithGroupMode,
           command: mockCommands[0],
         })
         .mockResolvedValue([mockSendCommandResultSuccess]);
 
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(client, {
+        .calledWith(mockStandaloneRedisClient, {
           ...mockCreateCommandExecutionDtoWithGroupMode,
           command: mockCommands[1],
         })
         .mockResolvedValue([mockSendCommandResultFail]);
 
-      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithGroupMode]);
+      commandExecutionRepository.createMany.mockResolvedValueOnce([mockCommandExecutionWithGroupMode]);
 
       const result = await service.createCommandExecutions(
         mockWorkbenchClientMetadata,
@@ -275,20 +245,20 @@ describe('WorkbenchService', () => {
 
     it('should successfully execute commands with error and save summary in silent mode view', async () => {
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(client, {
+        .calledWith(mockStandaloneRedisClient, {
           ...mockCreateCommandExecutionDtoWithSilentMode,
           command: mockCommands[0],
         })
         .mockResolvedValue([mockSendCommandResultSuccess]);
 
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(client, {
+        .calledWith(mockStandaloneRedisClient, {
           ...mockCreateCommandExecutionDtoWithSilentMode,
           command: mockCommands[1],
         })
         .mockResolvedValue([mockSendCommandResultFail]);
 
-      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithSilentMode]);
+      commandExecutionRepository.createMany.mockResolvedValueOnce([mockCommandExecutionWithSilentMode]);
 
       const result = await service.createCommandExecutions(
         mockWorkbenchClientMetadata,
@@ -310,7 +280,7 @@ describe('WorkbenchService', () => {
     });
     it('should throw an error from command execution provider (create)', async () => {
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce([mockCommandExecutionResults]);
-      commandExecutionProvider.createMany.mockRejectedValueOnce(new InternalServerErrorException('db error'));
+      commandExecutionRepository.createMany.mockRejectedValueOnce(new InternalServerErrorException('db error'));
 
       try {
         await service.createCommandExecutions(mockWorkbenchClientMetadata, mockCreateCommandExecutionsDto);
@@ -322,17 +292,17 @@ describe('WorkbenchService', () => {
   });
   describe('listCommandExecutions', () => {
     it('should return list of command executions', async () => {
-      commandExecutionProvider.getList.mockResolvedValueOnce([mockCommandExecution, mockCommandExecution]);
+      commandExecutionRepository.getList.mockResolvedValueOnce([mockCommandExecution, mockCommandExecution]);
 
-      const result = await service.listCommandExecutions(mockWorkbenchClientMetadata);
+      const result = await service.listCommandExecutions(mockWorkbenchClientMetadata, mockCommandExecutionFilter);
 
       expect(result).toEqual([mockCommandExecution, mockCommandExecution]);
     });
     it('should throw an error from command execution provider (getList)', async () => {
-      commandExecutionProvider.getList.mockRejectedValueOnce(new InternalServerErrorException());
+      commandExecutionRepository.getList.mockRejectedValueOnce(new InternalServerErrorException());
 
       try {
-        await service.listCommandExecutions(mockWorkbenchClientMetadata);
+        await service.listCommandExecutions(mockWorkbenchClientMetadata, mockCommandExecutionFilter);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);
@@ -341,14 +311,14 @@ describe('WorkbenchService', () => {
   });
   describe('getCommandExecution', () => {
     it('should return full command executions', async () => {
-      commandExecutionProvider.getOne.mockResolvedValueOnce(mockCommandExecution);
+      commandExecutionRepository.getOne.mockResolvedValueOnce(mockCommandExecution);
 
       const result = await service.getCommandExecution(mockWorkbenchClientMetadata, mockCommandExecution.id);
 
       expect(result).toEqual(mockCommandExecution);
     });
     it('should throw an error from command execution provider (getOne)', async () => {
-      commandExecutionProvider.getOne.mockRejectedValueOnce(new InternalServerErrorException());
+      commandExecutionRepository.getOne.mockRejectedValueOnce(new InternalServerErrorException());
 
       try {
         await service.getCommandExecution(mockWorkbenchClientMetadata, mockCommandExecution.id);
@@ -360,7 +330,7 @@ describe('WorkbenchService', () => {
   });
   describe('deleteCommandExecution', () => {
     it('should not return anything on delete', async () => {
-      commandExecutionProvider.delete.mockResolvedValueOnce('some response');
+      commandExecutionRepository.delete.mockResolvedValueOnce('some response');
 
       const result = await service.deleteCommandExecution(
         mockWorkbenchClientMetadata,
@@ -372,10 +342,11 @@ describe('WorkbenchService', () => {
   });
   describe('deleteCommandExecutions', () => {
     it('should not return anything on delete', async () => {
-      commandExecutionProvider.deleteAll.mockResolvedValueOnce('some response');
+      commandExecutionRepository.deleteAll.mockResolvedValueOnce('some response');
 
       const result = await service.deleteCommandExecutions(
         mockWorkbenchClientMetadata,
+        mockCommandExecutionFilter,
       );
 
       expect(result).toEqual(undefined);

@@ -8,7 +8,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall, getMainCheckFn,
+  JoiRedisString
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -19,13 +20,22 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 // input data schema
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
-  element: Joi.string().required(),
-  destination: Joi.string().valid('HEAD', 'TAIL'),
+  elements: Joi.array().items(
+    Joi.custom((value, helpers) => {
+      if (typeof value === 'string' || Buffer.isBuffer(value)) {
+        return value;
+      }
+      return helpers.error('any.invalid');
+    }).messages({
+      'any.invalid': 'elements must be a string or a Buffer',
+    })
+  ).required(),
+  destination: Joi.string().valid('HEAD', 'TAIL').default('TAIL'),
 }).strict();
 
 const validInputData = {
   keyName: constants.getRandomString(),
-  element: constants.getRandomString(),
+  elements: [constants.getRandomString()],
   destination: 'TAIL',
 };
 
@@ -49,7 +59,7 @@ describe('PUT /databases/:instanceId/list', () => {
         },
         data: {
           keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
-          element: constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1,
+          elements: [constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1],
         },
         responseBody: {
           keyName: constants.TEST_LIST_KEY_BIN_UTF8_1,
@@ -69,7 +79,7 @@ describe('PUT /databases/:instanceId/list', () => {
         },
         data: {
           keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
-          element: constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1,
+          elements: [constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1],
         },
         responseBody: {
           keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
@@ -90,7 +100,7 @@ describe('PUT /databases/:instanceId/list', () => {
         },
         data: {
           keyName: constants.TEST_LIST_KEY_BIN_ASCII_1,
-          element: constants.TEST_LIST_ELEMENT_BIN_ASCII_1,
+          elements: [constants.TEST_LIST_ELEMENT_BIN_ASCII_1],
         },
         responseBody: {
           keyName: constants.TEST_LIST_KEY_BIN_ASCII_1,
@@ -126,8 +136,7 @@ describe('PUT /databases/:instanceId/list', () => {
           name: 'Should insert 1 element to the tail (by default)',
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            element: constants.getRandomString(),
-            destination: 'TAIL',
+            elements: [constants.getRandomString()],
           },
           responseSchema,
           responseBody: {
@@ -136,14 +145,14 @@ describe('PUT /databases/:instanceId/list', () => {
           },
           after: async function () {
             const elements = await rte.client.lrange(constants.TEST_LIST_KEY_1, 0, 1000);
-            expect(elements[2]).to.eql(this.data.element);
+            expect(elements[2]).to.eql(this.data.elements[0]);
           },
         },
         {
           name: 'Should insert 1 element to the tail',
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
             destination: 'TAIL',
           },
           responseSchema,
@@ -153,14 +162,14 @@ describe('PUT /databases/:instanceId/list', () => {
           },
           after: async function () {
             const elements = await rte.client.lrange(constants.TEST_LIST_KEY_1, 0, 1000);
-            expect(elements[3]).to.eql(this.data.element);
+            expect(elements[3]).to.eql(this.data.elements[0]);
           },
         },
         {
           name: 'Should insert 1 element to the head',
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
             destination: 'HEAD',
           },
           responseSchema,
@@ -170,14 +179,14 @@ describe('PUT /databases/:instanceId/list', () => {
           },
           after: async function () {
             const elements = await rte.client.lrange(constants.TEST_LIST_KEY_1, 0, 1000);
-            expect(elements[0]).to.eql(this.data.element);
+            expect(elements[0]).to.eql(this.data.elements[0]);
           },
         },
         {
           name: 'Should return NotFound error if key does not exists',
           data: {
             keyName: constants.getRandomString(),
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
             destination: 'HEAD',
           },
           statusCode: 404,
@@ -192,7 +201,7 @@ describe('PUT /databases/:instanceId/list', () => {
           endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
             destination: 'HEAD',
           },
           statusCode: 404,
@@ -215,7 +224,7 @@ describe('PUT /databases/:instanceId/list', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
             destination: 'TAIL',
           },
           responseSchema,
@@ -225,7 +234,7 @@ describe('PUT /databases/:instanceId/list', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
             destination: 'HEAD',
           },
           statusCode: 403,
@@ -240,7 +249,7 @@ describe('PUT /databases/:instanceId/list', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
             destination: 'TAIL',
           },
           statusCode: 403,

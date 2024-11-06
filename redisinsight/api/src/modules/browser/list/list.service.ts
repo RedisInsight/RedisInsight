@@ -69,13 +69,13 @@ export class ListService {
   ): Promise<PushListElementsResponse> {
     try {
       this.logger.log('Insert element at the tail/head of the list data type.');
-      const { keyName, element, destination } = dto;
+      const { keyName, elements, destination } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       const total: RedisClientCommandReply = await client.sendCommand([
         BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPushX' : 'LPushX'],
         keyName,
-        element,
+        ...elements,
       ]);
       if (!total) {
         this.logger.error(
@@ -234,17 +234,25 @@ export class ListService {
     client: RedisClient,
     dto: PushElementToListDto,
   ): Promise<void> {
-    const { keyName, element } = dto;
-    await client.sendCommand([BrowserToolListCommands.LPush, keyName, element]);
+    const { keyName, elements, destination } = dto;
+    await client.sendCommand([
+      BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPush' : 'LPush'],
+      keyName,
+      ...elements
+    ]);
   }
 
   public async createListWithExpiration(
     client: RedisClient,
     dto: CreateListWithExpireDto,
   ): Promise<void> {
-    const { keyName, element, expire } = dto;
+    const { keyName, elements, expire, destination } = dto;
     const transactionResults = await client.sendPipeline([
-      [BrowserToolListCommands.LPush, keyName, element],
+      [
+        BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPush' : 'LPush'],
+        keyName,
+        ...elements
+      ],
       [BrowserToolKeysCommands.Expire, keyName, expire],
     ]);
     catchMultiTransactionError(transactionResults);

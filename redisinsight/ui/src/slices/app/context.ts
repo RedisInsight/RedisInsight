@@ -75,6 +75,12 @@ export const initialState: StateAppContext = {
       vertical: {}
     }
   },
+  searchAndQuery: {
+    script: '',
+    panelSizes: {
+      vertical: {}
+    }
+  },
   pubsub: {
     channel: '',
     message: ''
@@ -178,6 +184,12 @@ const appContextSlice = createSlice({
     setWorkbenchVerticalPanelSizes: (state, { payload }: { payload: any }) => {
       state.workbench.panelSizes.vertical = payload
     },
+    setSQVerticalPanelSizes: (state, { payload }: { payload: any }) => {
+      state.searchAndQuery.panelSizes.vertical = payload
+    },
+    setSQScript: (state, { payload }: { payload: any }) => {
+      state.searchAndQuery.script = payload
+    },
     setLastPageContext: (state, { payload }: { payload: string }) => {
       state.lastPage = payload
     },
@@ -248,6 +260,8 @@ export const {
   resetBrowserTree,
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
+  setSQVerticalPanelSizes,
+  setSQScript,
   setLastPageContext,
   setPubSubFieldsContext,
   setBrowserBulkActionOpen,
@@ -276,6 +290,8 @@ export const appContextBrowserKeyDetails = (state: RootState) =>
   state.app.context.browser.keyDetailsSizes
 export const appContextWorkbench = (state: RootState) =>
   state.app.context.workbench
+export const appContextSearchAndQuery = (state: RootState) =>
+  state.app.context.searchAndQuery
 export const appContextSelectedKey = (state: RootState) =>
   state.app.context.browser.keyList.selectedKey
 export const appContextPubSub = (state: RootState) =>

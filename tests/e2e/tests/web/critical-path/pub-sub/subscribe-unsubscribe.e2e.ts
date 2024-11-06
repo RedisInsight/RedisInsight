@@ -1,15 +1,27 @@
 import { DatabaseHelper } from '../../../../helpers/database';
-import { MyRedisDatabasePage, PubSubPage, WorkbenchPage } from '../../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, PubSubPage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../../helpers/conf';
 import { rte } from '../../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../../helpers/pub-sub';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
+import { Telemetry } from '../../../../helpers';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const browserPage = new BrowserPage();
+const telemetry = new Telemetry();
+
+const logger = telemetry.createLogger();
+
+const telemetryEvent = 'PUBSUB_MESSAGES_CLEARED';
+const expectedProperties = [
+    'databaseId',
+    'messages',
+    'provider'
+];
 
 fixture `Subscribe/Unsubscribe from a channel`
     .meta({ rte: rte.standalone, type: 'critical_path' })
@@ -120,7 +132,7 @@ test('Verify that user can see a internal link to pubsub window under word “Pu
     await t.expect(pubSubPage.pubSubPageContainer.exists).ok('Pubsub page is opened');
 
     // Verify that user can see a custom message when he tries to run SUBSCRIBE command in Workbench: “Use Pub/Sub tool to subscribe to channels.”
-    await t.click(pubSubPage.NavigationPanel.workbenchButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(commandSecond);
     await t.expect(await workbenchPage.queryResult.textContent).eql('Use Pub/Sub tool to subscribe to channels.', 'Message is not displayed', { timeout: 10000 });
 
@@ -144,13 +156,17 @@ test('Verify that the Message field input is preserved until user Publish a mess
     // Verify that the Channel field input is preserved until user modify it (publishing a message does not clear the field)
     await t.expect(pubSubPage.channelNameInput.value).eql('testChannel', 'Channel input is empty', { timeout: 10000 });
 });
-test('Verify that user can clear all the messages from the pubsub window', async t => {
+test.requestHooks(logger)('Verify that user can clear all the messages from the pubsub window', async t => {
     await pubSubPage.subsribeToChannelAndPublishMessage('testChannel', 'message');
     await pubSubPage.publishMessage('testChannel2', 'second m');
     // Verify the tooltip text 'Clear Messages' appears on hover the clear button
     await t.hover(pubSubPage.clearPubSubButton);
     await t.expect(pubSubPage.clearButtonTooltip.textContent).contains('Clear Messages', 'Clear Messages tooltip not displayed');
     await t.click(pubSubPage.clearPubSubButton);
+
+    //Verify telemetry event
+    await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+
     // Verify that the clear of the messages does not affect the subscription state
     await t.expect(pubSubPage.subscribeStatus.textContent).eql('You are  subscribed', 'User is not subscribed', { timeout: 10000 });
     // Verify that the Messages counter is reset after clear messages

@@ -1,11 +1,20 @@
 import React from 'react'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 
 import reactRouterDom from 'react-router-dom'
-import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  screen,
+  fireEvent,
+  mockedStore,
+  cleanup,
+  initialStateDefault,
+  mockStore,
+} from 'uiSrc/utils/test-utils'
 import { resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
 import { resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
+import { FeatureFlags } from 'uiSrc/constants'
 import PageHeader from './PageHeader'
 
 jest.mock('react-router-dom', () => ({
@@ -61,5 +70,31 @@ describe('PageHeader', () => {
 
     expect(screen.getByTestId('custom-logo')).toBeInTheDocument()
     expect(screen.queryByTestId('redis-logo-home')).not.toBeInTheDocument()
+  })
+
+  it('should show feature dependent items when feature flag is on', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
+      { flag: true }
+    )
+
+    render(<PageHeader title="Page" subtitle="subtitle" showInsights />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('o-auth-user-profile')).toBeInTheDocument()
+  })
+
+  it('should hide feature dependent items when feature flag is off', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
+      { flag: false }
+    )
+
+    render(<PageHeader title="Page" subtitle="subtitle" showInsights />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('o-auth-user-profile')).not.toBeInTheDocument()
   })
 })

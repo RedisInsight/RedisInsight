@@ -39,6 +39,7 @@ import { initialState as initialStateUserSettings } from 'uiSrc/slices/user/user
 import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb-results'
 import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { initialState as initialStateWBECustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import { initialState as initialStateSearchAndQuery } from 'uiSrc/slices/search/searchAndQuery'
 import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
 import { initialState as initialStateGuideLinks } from 'uiSrc/slices/content/guide-links'
 import { initialState as initialStateSlowLog } from 'uiSrc/slices/analytics/slowlog'
@@ -58,6 +59,8 @@ import { initialState as initialStateRdiTestConnections } from 'uiSrc/slices/rdi
 import { initialState as initialStateAiAssistant } from 'uiSrc/slices/panels/aiAssistant'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
+import { initialState as initialStateAppConnectivity } from 'uiSrc/slices/app/connectivity'
+import { initialState as initialStateAppInit } from 'uiSrc/slices/app/init'
 
 interface Options {
   initialState?: RootState
@@ -78,6 +81,8 @@ const initialStateDefault: RootState = {
     features: cloneDeep(initialStateAppFeaturesReducer),
     urlHandling: cloneDeep(initialStateAppUrlHandlingReducer),
     csrf: cloneDeep(initialStateAppCsrfReducer),
+    init: cloneDeep(initialStateAppInit),
+    connectivity: cloneDeep(initialStateAppConnectivity)
   },
   connections: {
     instances: cloneDeep(initialStateInstances),
@@ -111,6 +116,9 @@ const initialStateDefault: RootState = {
     results: cloneDeep(initialStateWBResults),
     tutorials: cloneDeep(initialStateWBETutorials),
     customTutorials: cloneDeep(initialStateWBECustomTutorials),
+  },
+  search: {
+    query: cloneDeep(initialStateSearchAndQuery),
   },
   content: {
     createRedisButtons: cloneDeep(initialStateCreateRedisButtons),

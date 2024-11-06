@@ -22,9 +22,12 @@ import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
+import { getConfig } from 'uiSrc/config'
 import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
 import ApiStatusCode from '../../constants/apiStatusCode'
+
+const riConfig = getConfig()
 
 interface IProps {
   retryDelay?: number
@@ -74,8 +77,8 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
         ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
       },
       rejectUnauthorized: false,
-      transports: process.env.RI_SOCKET_TRANSPORTS?.split(','),
-      withCredentials: process.env.RI_SOCKET_CREDENTIALS === 'true',
+      transports: riConfig.api.socketTransports?.split(','),
+      withCredentials: riConfig.api.socketCredentials,
     })
     dispatch(setSocket(socketRef.current))
 
@@ -96,7 +99,7 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
       }
 
       payloadsRef.current.push({ isError: true, time: `${Date.now()}`, ...payload })
-      setNewItems(payloadsRef.current, () => { payloads.length = 0 })
+      setNewItems(payloadsRef.current, () => { payloadsRef.current.length = 0 })
       dispatch(pauseMonitor())
     })
 

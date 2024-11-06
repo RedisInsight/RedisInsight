@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import {
   EuiCheckbox,
   EuiFieldText,
@@ -13,15 +13,22 @@ import {
 import cx from 'classnames'
 import { FormikProps } from 'formik'
 
-import { validateCertName, validateField } from 'uiSrc/utils'
+import { useDispatch } from 'react-redux'
+import { validateCertName, validateField, Nullable, truncateText } from 'uiSrc/utils'
+import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 
 import {
   ADD_NEW_CA_CERT,
-  NO_CA_CERT
+  NO_CA_CERT,
+  ADD_NEW,
 } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { deleteCaCertificateAction } from 'uiSrc/slices/instances/caCerts'
+import { deleteClientCertAction } from 'uiSrc/slices/instances/clientCerts'
 import styles from '../styles.module.scss'
+
+const suffix = '_tls_details'
 
 export interface Props {
   flexGroupClassName?: string
@@ -30,8 +37,52 @@ export interface Props {
   caCertificates?: { id: string; name: string }[]
   certificates?: { id: number; name: string }[]
 }
+
 const TlsDetails = (props: Props) => {
+  const dispatch = useDispatch()
   const { flexGroupClassName = '', flexItemClassName = '', formik, caCertificates, certificates } = props
+  const [activeCertId, setActiveCertId] = useState<Nullable<string>>(null)
+
+  const handleDeleteCaCert = (id: string) => {
+    dispatch(deleteCaCertificateAction(id, () => {
+      if (formik.values.selectedCaCertName === id) {
+        formik.setFieldValue(
+          'selectedCaCertName',
+          NO_CA_CERT,
+        )
+      }
+      handleClickDeleteCert('CA')
+    }))
+  }
+
+  const handleDeleteClientCert = (id: string) => {
+    dispatch(deleteClientCertAction(id, () => {
+      if (formik.values.selectedTlsClientCertId === id) {
+        formik.setFieldValue(
+          'selectedTlsClientCertId',
+          ADD_NEW,
+        )
+      }
+      handleClickDeleteCert('Client')
+    }))
+  }
+
+  const handleClickDeleteCert = (certificateType: 'Client' | 'CA') => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_CERTIFICATE_REMOVED,
+      eventData: {
+        certificateType,
+      },
+    })
+  }
+
+  const closePopover = () => {
+    setActiveCertId(null)
+  }
+
+  const showPopover = (id: string) => {
+    setActiveCertId(`${id}${suffix}`)
+  }
 
   const optionsCertsCA: EuiSuperSelectOption<string>[] = [
     {
@@ -48,6 +99,23 @@ const TlsDetails = (props: Props) => {
     optionsCertsCA.push({
       value: cert.id,
       inputDisplay: cert.name,
+      dropdownDisplay: (
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>{truncateText(cert.name, 25)}</div>
+          <PopoverDelete
+            header={cert.name}
+            text="will be removed from RedisInsight."
+            item={cert.id}
+            suffix={suffix}
+            deleting={activeCertId}
+            closePopover={closePopover}
+            updateLoading={false}
+            showPopover={showPopover}
+            handleDeleteItem={handleDeleteCaCert}
+            testid={`delete-ca-cert-${cert.id}`}
+          />
+        </div>
+      ),
     })
   })
 
@@ -62,6 +130,23 @@ const TlsDetails = (props: Props) => {
     optionsCertsClient.push({
       value: `${cert.id}`,
       inputDisplay: cert.name,
+      dropdownDisplay: (
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>{truncateText(cert.name, 25)}</div>
+          <PopoverDelete
+            header={cert.name}
+            text="will be removed from RedisInsight."
+            item={cert.id}
+            suffix={suffix}
+            deleting={activeCertId}
+            closePopover={closePopover}
+            updateLoading={false}
+            showPopover={showPopover}
+            handleDeleteItem={handleDeleteClientCert}
+            testid={`delete-client-cert-${cert.id}`}
+          />
+        </div>
+      ),
     })
   })
 

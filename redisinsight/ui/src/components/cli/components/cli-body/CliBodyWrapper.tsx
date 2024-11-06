@@ -27,6 +27,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { checkUnsupportedCommand, clearOutput, cliCommandOutput } from 'uiSrc/utils/cliHelper'
 import { cliTexts } from 'uiSrc/constants/cliOutput'
 import { showMonitor } from 'uiSrc/slices/cli/monitor'
+import UseProfilerLink from 'uiSrc/components/monitor/UseProfilerLink'
 
 import CliBody from './CliBody'
 
@@ -93,7 +94,10 @@ const CliBodyWrapper = () => {
 
     // Flow if MONITOR command was executed
     if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
-      dispatch(concatToOutput(cliTexts.MONITOR_COMMAND_CLI(() => { dispatch(showMonitor()) })))
+      dispatch(concatToOutput([
+        <UseProfilerLink onClick={() => { dispatch(showMonitor()) }} />,
+        '\n'
+      ]))
       resetCommand()
       return
     }

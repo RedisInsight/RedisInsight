@@ -17,8 +17,13 @@ import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
 import { Nullable, Maybe, findTutorialPath } from 'uiSrc/utils'
-import { Theme } from 'uiSrc/constants'
-import { RecommendationVoting, RecommendationCopyComponent, RecommendationBody } from 'uiSrc/components'
+import { FeatureFlags, Pages, Theme } from 'uiSrc/constants'
+import {
+  RecommendationVoting,
+  RecommendationCopyComponent,
+  RecommendationBody,
+  FeatureFlagComponent
+} from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -77,7 +82,12 @@ const Recommendation = ({
       }
     })
 
-    const tutorialPath = findTutorialPath({ id: tutorialId ?? '' })
+    if (!tutorialId) {
+      history.push(Pages.workbench(instanceId))
+      return
+    }
+
+    const tutorialPath = findTutorialPath({ id: tutorialId })
     dispatch(openTutorialByPath(tutorialPath ?? '', history))
   }
 
@@ -165,9 +175,11 @@ const Recommendation = ({
           live
         />
       )}
-      <div className={styles.actions}>
-        <RecommendationVoting live id={id} vote={vote} name={name} containerClass={styles.votingContainer} />
-      </div>
+      <FeatureFlagComponent name={FeatureFlags.envDependent}>
+        <div className={styles.actions}>
+          <RecommendationVoting live id={id} vote={vote} name={name} containerClass={styles.votingContainer} />
+        </div>
+      </FeatureFlagComponent>
     </EuiText>
   )
 

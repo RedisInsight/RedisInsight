@@ -1,11 +1,12 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
-import { cleanup, mockedStore, render, act } from 'uiSrc/utils/test-utils'
+import { act, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 
 import {
   appRedirectionSelector,
-  setFromUrl, setUrlDbConnection,
+  setFromUrl,
+  setUrlDbConnection,
   setUrlHandlingInitialState,
   setUrlProperties
 } from 'uiSrc/slices/app/url-handling'
@@ -15,6 +16,10 @@ import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { Pages } from 'uiSrc/constants'
 import { ADD_NEW, ADD_NEW_CA_CERT } from 'uiSrc/pages/home/constants'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
+import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { SidePanels } from 'uiSrc/slices/interfaces/insights'
+import { setOnboarding } from 'uiSrc/slices/app/features'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import GlobalUrlHandler from './GlobalUrlHandler'
 
 jest.mock('uiSrc/slices/user/user-settings', () => ({
@@ -32,6 +37,11 @@ jest.mock('uiSrc/slices/app/url-handling', () => ({
   }),
 }))
 
+jest.mock('uiSrc/utils/routing', () => ({
+  ...jest.requireActual('uiSrc/slices/app/url-handling'),
+  getRedirectionPage: jest.fn().mockImplementation((page) => page),
+}))
+
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -43,8 +53,9 @@ const fromUrl = 'redisinsight://databases/connect?redisUrl=redis://default:passw
 
 describe('GlobalUrlHandler', () => {
   beforeEach(() => {
-    reactRouterDom.useLocation = jest.fn().mockReturnValueOnce({ search: '' })
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({ search: '', pathname: '' })
   })
+
   it('should render', () => {
     expect(render(<GlobalUrlHandler />)).toBeTruthy()
   })
@@ -65,6 +76,67 @@ describe('GlobalUrlHandler', () => {
     expect(store.getActions()).toEqual([setFromUrl(decodeURIComponent(fromUrl))])
 
     expect(replaceMock).toBeCalledWith({ search: '' })
+  })
+
+  it('should call proper actions to open page', async () => {
+    const fromUrl = 'redisinsight://open?redirect=/integrate'
+
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock });
+    (userSettingsSelector as jest.Mock).mockReturnValueOnce({
+      config: {},
+      isShowConsents: false
+    });
+
+    (appRedirectionSelector as jest.Mock).mockReturnValueOnce({ fromUrl })
+
+    await act(async () => {
+      render(<GlobalUrlHandler />)
+    })
+
+    const actionUrl = new URL(fromUrl)
+    const fromParams = new URLSearchParams(actionUrl.search)
+    // @ts-ignore
+    const urlProperties = Object.fromEntries(fromParams) || {}
+
+    expect(store.getActions()).toEqual([
+      setUrlProperties(urlProperties),
+      setFromUrl(null),
+    ])
+
+    expect(pushMock).toBeCalledWith(Pages.rdi)
+  })
+
+  it('should call proper actions to open page and copilot, onboarding', async () => {
+    const fromUrl = 'redisinsight://open?redirect=/integrate&copilot=true&onboarding=true'
+
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock });
+    (userSettingsSelector as jest.Mock).mockReturnValueOnce({
+      config: {},
+      isShowConsents: false
+    });
+
+    (appRedirectionSelector as jest.Mock).mockReturnValueOnce({ fromUrl })
+
+    await act(async () => {
+      render(<GlobalUrlHandler />)
+    })
+
+    const actionUrl = new URL(fromUrl)
+    const fromParams = new URLSearchParams(actionUrl.search)
+    // @ts-ignore
+    const urlProperties = Object.fromEntries(fromParams) || {}
+
+    const onboardingTotalSteps = Object.keys(ONBOARDING_FEATURES)?.length
+    expect(store.getActions()).toEqual([
+      setUrlProperties(urlProperties),
+      setFromUrl(null),
+      changeSidePanel(SidePanels.AiAssistant),
+      setOnboarding({ currentStep: 0, totalSteps: onboardingTotalSteps })
+    ])
+
+    expect(pushMock).toBeCalledWith(Pages.rdi)
   })
 
   it('should call proper actions only after consents popup is accepted', async () => {

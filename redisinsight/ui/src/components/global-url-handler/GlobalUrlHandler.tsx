@@ -7,6 +7,7 @@ import { ADD_NEW_CA_CERT, ADD_NEW } from 'uiSrc/pages/home/constants'
 import {
   appRedirectionSelector,
   setFromUrl,
+  setReturnUrl,
   setUrlDbConnection,
   setUrlHandlingInitialState,
   setUrlProperties
@@ -15,7 +16,13 @@ import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { autoCreateAndConnectToInstanceAction } from 'uiSrc/slices/instances/instances'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
-import { Nullable, transformQueryParamsObject, parseRedisUrl } from 'uiSrc/utils'
+import { Nullable, transformQueryParamsObject, parseRedisUrl, Maybe } from 'uiSrc/utils'
+import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { SidePanels } from 'uiSrc/slices/interfaces/insights'
+import { setOnboarding } from 'uiSrc/slices/app/features'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { localStorageService } from 'uiSrc/services'
+import { AppStorageItem } from 'uiSrc/constants/storage'
 
 const GlobalUrlHandler = () => {
   const { fromUrl } = useSelector(appRedirectionSelector)
@@ -24,6 +31,7 @@ const GlobalUrlHandler = () => {
 
   const history = useHistory()
   const dispatch = useDispatch()
+  const location = useLocation()
 
   useEffect(() => {
     // start handling only after closing consent popup
@@ -33,21 +41,26 @@ const GlobalUrlHandler = () => {
     try {
       const actionUrl = new URL(fromUrl)
       const fromParams = new URLSearchParams(actionUrl.search)
+      const pathname = actionUrl.hostname + actionUrl.pathname
+      const action = pathname?.replace(/^(\/\/?)|\/$/g, '')
 
       // @ts-ignore
       const urlProperties = Object.fromEntries(fromParams) || {}
 
       // rename cloudBdbId to cloudId
-      urlProperties.cloudId = urlProperties.cloudBdbId
-      delete urlProperties.cloudBdbId
+      if (action === UrlHandlingActions.Connect) {
+        urlProperties.cloudId = urlProperties.cloudBdbId
+        delete urlProperties.cloudBdbId
+      }
 
       dispatch(setUrlProperties(urlProperties))
       dispatch(setFromUrl(null))
 
-      const pathname = actionUrl.hostname + actionUrl.pathname
-      if (pathname?.replace(/^(\/\/?)/g, '') === UrlHandlingActions.Connect) {
-        connectToDatabase(urlProperties)
-      }
+      const transformedProperties = transformQueryParamsObject(urlProperties)
+      handleCommonProperties(transformedProperties)
+
+      if (action === UrlHandlingActions.Connect) connectToDatabase(urlProperties)
+      if (action === UrlHandlingActions.Open) openPage(transformedProperties)
     } catch (_e) {
       //
     }
@@ -57,6 +70,7 @@ const GlobalUrlHandler = () => {
     try {
       const params = new URLSearchParams(search)
       const from = params.get('from')
+      const returnUrl = params.get('returnUrl')
 
       if (from) {
         dispatch(setFromUrl(from))
@@ -64,14 +78,23 @@ const GlobalUrlHandler = () => {
           search: ''
         })
       }
+      if (returnUrl) {
+        localStorageService.set(AppStorageItem.returnUrl, returnUrl)
+        dispatch(setReturnUrl(returnUrl))
+        history.push(location.pathname)
+      }
     } catch {
       // do nothing
     }
   }, [search])
 
-  const onSuccessConnectToDb = (id: string, redirectPage: Nullable<string>) => {
+  const redirectToPage = (
+    id: Maybe<string>,
+    redirectPage: Nullable<string>,
+    currentPathname?: string
+  ) => {
     if (redirectPage) {
-      const pageToRedirect = getRedirectionPage(redirectPage, id)
+      const pageToRedirect = getRedirectionPage(redirectPage, id || undefined, currentPathname)
 
       if (pageToRedirect) {
         history.push(pageToRedirect)
@@ -79,7 +102,7 @@ const GlobalUrlHandler = () => {
       }
     }
 
-    history.push(Pages.browser(id))
+    history.push(id ? Pages.browser(id) : Pages.home)
   }
 
   const connectToDatabase = (properties: Record<string, any>) => {
@@ -130,7 +153,7 @@ const GlobalUrlHandler = () => {
           db.cloudDetails = cloudDetails
         }
         dispatch(setUrlHandlingInitialState())
-        dispatch(autoCreateAndConnectToInstanceAction(db, (id) => onSuccessConnectToDb(id, redirect)))
+        dispatch(autoCreateAndConnectToInstanceAction(db, (id) => redirectToPage(id, redirect)))
 
         return
       }
@@ -150,6 +173,21 @@ const GlobalUrlHandler = () => {
     } catch (e) {
       //
     }
+  }
+
+  const handleCommonProperties = (properties: Record<string, any>) => {
+    if (properties.copilot) {
+      dispatch(changeSidePanel(SidePanels.AiAssistant))
+    }
+
+    if (properties.onboarding) {
+      const totalSteps = Object.keys(ONBOARDING_FEATURES || {}).length
+      dispatch(setOnboarding({ currentStep: 0, totalSteps }))
+    }
+  }
+
+  const openPage = (properties: Record<string, any>) => {
+    redirectToPage(undefined, properties.redirect || '/_', location.pathname)
   }
 
   return null

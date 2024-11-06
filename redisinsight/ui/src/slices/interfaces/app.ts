@@ -58,6 +58,11 @@ export interface StateAppInfo {
   isShortcutsFlyoutOpen: boolean
 }
 
+export interface StateAppConnectivity {
+  loading: boolean;
+  error?: string;
+}
+
 export interface StateAppContext {
   workspace: AppWorkspace
   contextInstanceId: string
@@ -99,6 +104,14 @@ export interface StateAppContext {
     }
   }
   workbench: {
+    script: string
+    panelSizes: {
+      vertical: {
+        [key: string]: number
+      }
+    }
+  }
+  searchAndQuery: {
     script: string
     panelSizes: {
       vertical: {

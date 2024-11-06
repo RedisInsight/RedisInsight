@@ -26,13 +26,13 @@ test('Verify that user can use survey link', async t => {
     // Verify that user can see survey link on any page inside of DB
     // Browser page
     await t.expect(browserPage.userSurveyLink.visible).ok('Survey Link is not displayed');
-    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
-    // await t.click(browserPage.userSurveyLink);
-    // // Verify that when users click on RI survey, they are redirected to https://www.surveymonkey.com/r/redisinsight
-    // await Common.checkURL(externalPageLink);
-    // await goBackHistory();
+
+    await t.click(browserPage.userSurveyLink);
+    // Verify that when users click on RI survey, they are redirected to https://www.surveymonkey.com/r/redisinsight
+    await Common.checkURL(externalPageLink);
+    await goBackHistory();
     // Workbench page
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     await t.expect(browserPage.userSurveyLink.visible).ok('Survey Link is not displayed');
     // Slow Log page
     await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);

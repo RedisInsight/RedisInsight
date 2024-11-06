@@ -5,15 +5,17 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { CLOUD_AUTH_API_ENDPOINTS, CustomHeaders } from 'uiSrc/constants/api'
 import { store } from 'uiSrc/slices/store'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
-import { envConfig } from 'uiSrc/env-config'
+import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
+import { getConfig } from 'uiSrc/config'
 
-const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
-const baseApiUrl = process.env.RI_BASE_API_URL
-const isDevelopment = process.env.NODE_ENV === 'development'
-const isWebApp = process.env.RI_APP_TYPE === 'web'
-const hostedApiBaseUrl = envConfig.RI_HOSTED_API_BASE_URL
+const riConfig = getConfig()
 
-let apiPrefix = process.env.RI_API_PREFIX
+const { apiPort } = window.app?.config || { apiPort: riConfig.api.port }
+const isDevelopment = riConfig.app.env === 'development'
+const isWebApp = riConfig.app.type === 'web'
+const hostedApiBaseUrl = riConfig.api.hostedBaseUrl
+
+let apiPrefix = riConfig.api.prefix
 
 if (window.__RI_PROXY_PATH__) {
   apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
@@ -21,7 +23,7 @@ if (window.__RI_PROXY_PATH__) {
 
 export const getBaseUrl = () => (!isDevelopment && isWebApp
   ? `${window.location.origin}/${apiPrefix}/`
-  : `${baseApiUrl}:${apiPort}/${apiPrefix}/`)
+  : `${riConfig.api.baseUrl}:${apiPort}/${apiPrefix}/`)
 
 const mutableAxiosInstance: AxiosInstance = axios.create({
   baseURL: hostedApiBaseUrl || getBaseUrl(),
@@ -65,8 +67,19 @@ export const hostedAuthInterceptor = (error: AxiosError) => {
   const { response } = error
   if (response?.status === 401 && hostedApiBaseUrl) {
     // provide the current path to redirect back to the same location after login
-    window.location.href = `${envConfig.RI_401_REDIRECT_URL}${window.location.pathname}`
+    window.location.href = `${riConfig.app.unauthenticatedRedirect}${window.location.pathname}`
   }
+  return Promise.reject(error)
+}
+
+export const connectivityErrorsInterceptor = (error: AxiosError) => {
+  const { response } = error
+  const responseData = response?.data as { message?: string, code?: string }
+
+  if (response?.status === 503 && responseData.code === 'serviceUnavailable') {
+    store?.dispatch<any>(setConnectivityError('The connection to the server has been lost.'))
+  }
+
   return Promise.reject(error)
 }
 
@@ -83,6 +96,11 @@ mutableAxiosInstance.interceptors.response.use(
 mutableAxiosInstance.interceptors.response.use(
   undefined,
   hostedAuthInterceptor
+)
+
+mutableAxiosInstance.interceptors.response.use(
+  undefined,
+  connectivityErrorsInterceptor
 )
 
 export default mutableAxiosInstance

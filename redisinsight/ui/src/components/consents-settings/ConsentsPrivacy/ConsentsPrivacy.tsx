@@ -76,11 +76,10 @@ const ConsentsPrivacy = () => {
       <div className={styles.consentsWrapper}>
         <EuiText size="s" className={styles.smallText} color="subdued">
           To optimize your experience, Redis Insight uses third-party tools.
-          All data collected is anonymized and will not be used for any purpose without your consent.
         </EuiText>
         <EuiSpacer size="l" />
         <EuiTitle size="xs">
-          <h4>Analytics</h4>
+          <h4>Usage Data</h4>
         </EuiTitle>
         {
           privacyConsents

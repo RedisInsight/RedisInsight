@@ -1,11 +1,12 @@
 import { DatabaseHelper } from '../../../../helpers/database';
-import { BrowserPage } from '../../../../pageObjects';
+import { BrowserPage, SettingsPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneBigConfig } from '../../../../helpers/conf';
 import { rte, KeyTypesTexts } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { verifySearchFilterValue } from '../../../../helpers/keys';
 
 const browserPage = new BrowserPage();
+const settingsPage = new SettingsPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
@@ -20,6 +21,10 @@ fixture `Tree view verifications`
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test('Verify that user can see that "Tree view" mode is enabled state is saved when refreshes the page', async t => {
+    await t.click(browserPage.NavigationPanel.settingsButton);
+    await t.click(settingsPage.accordionAdvancedSettings);
+    await settingsPage.changeKeysToScanValue('10000');
+    await t.click(browserPage.NavigationPanel.browserButton);
     // Verify that when user opens the application he can see that Tree View is disabled by default(Browser is selected by default)
     await t.expect(browserPage.browserViewButton.getStyleProperty('background-color')).eql('rgb(41, 47, 71)', 'The Browser is not selected by default');
     await t.expect(browserPage.TreeView.treeViewSettingsBtn.exists).notOk('The tree view is displayed', { timeout: 5000 });

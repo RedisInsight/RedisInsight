@@ -80,7 +80,7 @@ export class StaticsManagementModule {
         ...(SERVER_CONFIG.staticContent
           ? [
             ServeStaticModule.forRoot({
-              rootPath: join(__dirname, '..', '..', '..', 'ui', 'dist'),
+              rootPath: join(__dirname, '..', '..', '..', '..', '..', 'ui', 'dist'),
               exclude: ['/api/**', `${SERVER_CONFIG.customPluginsUri}/**`, `${SERVER_CONFIG.staticUri}/**`],
               serveRoot: SERVER_CONFIG.proxyPath ? `/${SERVER_CONFIG.proxyPath}` : '',
               serveStaticOptions: {

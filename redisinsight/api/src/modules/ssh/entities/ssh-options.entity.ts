@@ -1,12 +1,11 @@
 import {
-  Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationId
+  Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
-import { IBaseDatabaseEntity } from 'src/modules/database/interfaces/entity-interfaces';
-import { IBaseSshOptionsEntity } from '../interfaces/entity-interfaces';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Entity('ssh_options')
-export class SshOptionsEntity implements IBaseSshOptionsEntity {
+export class SshOptionsEntity {
   @Expose()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -39,13 +38,14 @@ export class SshOptionsEntity implements IBaseSshOptionsEntity {
   @Column({ nullable: true })
   passphrase: string;
 
-  @OneToOne('database_instance', {
-    nullable: true,
-    onDelete: 'CASCADE',
-  })
+  @OneToOne(
+    () => DatabaseEntity,
+    (database) => database.sshOptions,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn()
-  database: IBaseDatabaseEntity;
-
-  @RelationId((sshOptions: SshOptionsEntity) => sshOptions.database)
-  databaseId: string;
+  database: DatabaseEntity;
 }

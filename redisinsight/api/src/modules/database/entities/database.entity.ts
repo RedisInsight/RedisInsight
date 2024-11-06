@@ -1,5 +1,5 @@
 import {
-  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, RelationId, JoinColumn
+  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -8,9 +8,6 @@ import { Expose, Transform, Type } from 'class-transformer';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
-import { IBaseDatabaseEntity } from 'src/modules/database/interfaces/entity-interfaces';
-import { IBaseCloudDetailsEntity } from 'src/modules/database/interfaces/entity-interfaces';
-import { IBaseSshOptionsEntity } from 'src/modules/ssh/interfaces/entity-interfaces';
 
 export enum HostingProvider {
   RE_CLUSTER = 'RE_CLUSTER',
@@ -52,7 +49,7 @@ export enum Compressor {
 }
 
 @Entity('database_instance')
-export class DatabaseEntity implements IBaseDatabaseEntity {
+export class DatabaseEntity {
   @Expose()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -199,20 +196,29 @@ export class DatabaseEntity implements IBaseDatabaseEntity {
   ssh: boolean;
 
   @Expose()
-  @OneToOne(() => SshOptionsEntity, {
-    eager: true,
-    onDelete: 'CASCADE',
-    cascade: true,
-  })
-  @JoinColumn()
+  @OneToOne(
+    () => SshOptionsEntity,
+    (sshOptions) => sshOptions.database,
+    {
+      eager: true,
+      onDelete: 'CASCADE',
+      cascade: true,
+    },
+  )
   @Type(() => SshOptionsEntity)
-  sshOptions: IBaseSshOptionsEntity;
-
-  @RelationId((database: DatabaseEntity) => database.sshOptions)
-  sshOptionsId: string;
+  sshOptions: SshOptionsEntity;
 
   @Expose()
-  @OneToOne(() => CloudDatabaseDetailsEntity, (cloudDetails) => cloudDetails.database)
+  @OneToOne(
+    () => CloudDatabaseDetailsEntity,
+    (cloudDetails) => cloudDetails.database,
+    {
+      eager: true,
+      onDelete: 'CASCADE',
+      cascade: true,
+    },
+  )
+  @Type(() => CloudDatabaseDetailsEntity)
   cloudDetails: CloudDatabaseDetailsEntity;
 
   @Expose()

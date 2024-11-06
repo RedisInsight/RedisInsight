@@ -40,7 +40,7 @@ export async function processGoogleSSOPuppeteerReal(urlToUse: string): Promise<v
 
     try {
         await page.goto(urlToUse);
-
+        await waitForTimeout(5000);
         await page.click('div[data-email]');
         
         // // Type email and submit

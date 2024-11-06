@@ -1,8 +1,9 @@
 import { connect } from 'puppeteer-real-browser'
 import * as fs from 'fs';
+import * as path from 'path';
 import { exec } from 'child_process';
 import { googleUser, googleUserPassword } from './conf';
-import * as path from 'path';
+
 
 // Helper function for waiting
 async function waitForTimeout(ms: number) {

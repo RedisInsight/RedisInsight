@@ -1,10 +1,12 @@
 import { Builder, By, Key, until } from 'selenium-webdriver';
 import * as fs from 'fs';
 import { exec } from 'child_process';
+import * as path from 'path';
 import chrome = require('selenium-webdriver/chrome');
 import { googleUser, googleUserPassword } from './conf';
 
 export async function processGoogleSSO(urlToUse: string): Promise<void> {
+    const userDataDir = path.resolve(__dirname, '../test-data/Default');
     // Set Chrome options
     const chromeOptions = new chrome.Options();
     chromeOptions.addArguments(
@@ -17,15 +19,15 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
         '--disable-domain-reliability',
         '--disable-default-apps',
         '--no-default-browser-check',
-        // '--no-sandbox',
+        `--user-data-dir=${userDataDir}`,
         '--disable-plugins-discovery',
         '--disable-extensions',
         '--disable-popup-blocking',
         '--profile-directory=Default',
         '--ignore-certificate-errors',
         // '--disable-blink-features=AutomationControlled',
-        '--incognito',
-        'user_agent=DN'
+        // '--incognito',
+        // 'user_agent=DN'
     );
     // Create a WebDriver instance with ChromeDriver
     const driver = await new Builder()

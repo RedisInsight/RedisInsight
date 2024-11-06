@@ -28,6 +28,11 @@ import { RedisString } from 'src/common/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 import { RedisClient } from 'src/modules/redis/client';
+const JSONBigInt = require('json-bigint');
+const JSONParser = JSONBigInt({ 
+  useNativeBigInt: true,
+  alwaysParseAsBig: false // Only convert numbers that are too large for regular JSON
+});
 
 @Injectable()
 export class RejsonRlService {
@@ -50,8 +55,26 @@ export class RejsonRlService {
         `There is no such path: "${path}" in key: "${keyName}"`,
       );
     }
+    
+    const parsed = JSONParser.parse(data);
+    
+    // Convert BigInts to strings only where necessary
+    const replaceBigInts = (obj: any): any => {
+      if (typeof obj === 'bigint') {
+        return obj.toString();
+      }
+      if (Array.isArray(obj)) {
+        return obj.map(replaceBigInts);
+      }
+      if (obj && typeof obj === 'object') {
+        return Object.fromEntries(
+          Object.entries(obj).map(([key, value]) => [key, replaceBigInts(value)])
+        );
+      }
+      return obj;
+    };
 
-    return JSON.parse(data);
+    return replaceBigInts(parsed);
   }
 
   private async estimateSize(
@@ -279,15 +302,18 @@ export class RejsonRlService {
 
       // Get value in the path without any checks
       if (forceRetrieve) {
+        console.log('getJson forceRetrieve', forceRetrieve);
         result.data = await this.forceGetJson(client, keyName, path);
         return result;
       }
 
       const jsonSize = await this.estimateSize(client, keyName, path);
+      console.log('getJson jsonSize', jsonSize, config.get('modules')['json']['sizeThreshold']);
       if (jsonSize > config.get('modules')['json']['sizeThreshold']) {
         const type = await this.getJsonDataType(client, keyName, path);
         result.downloaded = false;
         result.type = type;
+        console.log('getJson type details', type, result);
         result.data = await this.safeGetJsonByType(
           client,
           keyName,
@@ -295,6 +321,7 @@ export class RejsonRlService {
           type,
         );
       } else {
+        console.log('getJson forceRetrieve from the else!', forceRetrieve);
         result.data = await this.forceGetJson(client, keyName, path);
       }
 

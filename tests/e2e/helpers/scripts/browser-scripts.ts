@@ -2,11 +2,13 @@ import { exec, execSync } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
 import CDP from 'chrome-remote-interface';
+import { promisify } from 'util';
 
 interface Target {
     type: string;
     url: string;
 }
+const execPromise = promisify(exec);
 
 /**
  * Get current machine platform
@@ -18,33 +20,29 @@ function getPlatform(): { isMac: boolean, isLinux: boolean } {
     };
 }
 
-export function closeChrome(): void {
+export async function closeChrome(): Promise<void> {
     console.log('Closing Chrome...');
-    exec(`pkill chrome`, (error, stdout, stderr) => {
-        if (error) {
-            console.error('Error closing Chrome:', error);
-            return;
-        }
+    try {
+        const { stdout, stderr } = await execPromise(`pkill chrome`);
         console.log('Chrome closed successfully. stdout:', stdout);
-        console.error('stderr:', stderr);
-    });
+        if (stderr) {
+            console.error('stderr:', stderr);
+        }
+    } catch (error) {
+        console.error('Error closing Chrome:', error);
+    }
 }
 
 /**
  * Open a new Chrome browser instance
  */
-export function openChromeWindow(): void {
+export async function openChromeWindow(): Promise<void> {
     const { isMac, isLinux } = getPlatform();
 
     if (isMac) {
-        exec(`open -na "Google Chrome" --args --new-window`, (error) => {
-            if (error) {
-                console.error('Error opening Chrome on Mac:', error);
-                return;
-            }
-        });
-    }
-    else if (isLinux) {
+        await execPromise(`open -na "Google Chrome" --args --new-window`);
+        console.log('Chrome opened on Mac');
+    } else if (isLinux) {
         console.log('Opening Chrome on Linux...');
         try {
             console.log("Attempting to open Chrome with execSync");
@@ -52,18 +50,33 @@ export function openChromeWindow(): void {
             console.log("Chrome opened successfully with execSync:", output);
         } catch (error) {
             console.error("Error occurred in execSync:", error);
+            return;
         }
+
         // Check if Chrome is running after opening it
-        setTimeout(() => {
-            exec(`pgrep "chrome"`, (err, stdout) => {
-                if (err || !stdout.trim()) {
-                    console.error('Chrome process not found after attempting to launch.');
-                } else {
-                    console.log('Chrome is running with PID:', stdout.trim());
-                }
-            });
-        }, 10000);
+        const isChromeRunning = await waitForChromeProcess();
+        if (isChromeRunning) {
+            console.log('Chrome is running.');
+        } else {
+            console.error('Chrome process not found after attempting to launch.');
+        }
     }
+}
+
+async function waitForChromeProcess(maxWaitTime = 10000, interval = 1000): Promise<boolean> {
+    const start = Date.now();
+    while (Date.now() - start < maxWaitTime) {
+        try {
+            const { stdout } = await execPromise(`pgrep "chrome"`);
+            if (stdout.trim()) {
+                return true;
+            }
+        } catch (error) {
+            // Ignore errors, Chrome may not be running yet
+        }
+        await new Promise(resolve => setTimeout(resolve, interval));
+    }
+    return false;
 }
 
 /**

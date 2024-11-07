@@ -55,9 +55,9 @@ runs:
 
     ls -R ./release
 
-  - uses: actions/upload-artifact@v4
+  - name: Upload builds
+    uses: actions/upload-artifact@v4
     id: artifacts
-    name: Upload builds
     with:
       if-no-files-found: warn
       name: ${{ env.BUILD_NAME }}

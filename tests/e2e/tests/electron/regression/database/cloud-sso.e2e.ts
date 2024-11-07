@@ -65,18 +65,14 @@ test.only('Verify that user can sign in using SSO via SAML', async t => {
     // Open Chrome with a sample URL and save it to logs file
     await openChromeWindow();
     await t.wait(2000);
-    await closeChrome();
-    await t.wait(2000);
-    await openChromeWindow();
-    await t.wait(2000);
     await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.ssoOauthButton);
     await t.typeText(aiChatBotPanel.RedisCloudSigninPanel.ssoEmailInput, samlUser, { replace: true, paste: true });
 
     await t.wait(2000);
-    await saveOpenedChromeTabUrl(logsFilePath);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.submitBtn);
+    await saveOpenedChromeTabUrl(logsFilePath);
 
     await t.wait(2000);
     urlToUse = await Common.readFileFromFolder(logsFilePath);

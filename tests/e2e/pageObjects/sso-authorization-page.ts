@@ -25,6 +25,7 @@ export class SsoAuthorizationPage {
      */
     async signInUsingSso(authorizationType: 'Google' | 'Github' | 'SAML', page: PageWithCursor, urlToUse: string, username: string, password: string): Promise<void> {
         await page.goto(urlToUse);
+        await SsoAuthorization.waitForTimeout(2000);
         if (authorizationType === 'SAML') {
             await this.submitOktaForm(page, username, password)
         } else if (authorizationType === 'Google') {

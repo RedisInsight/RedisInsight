@@ -39,8 +39,6 @@ export class SsoAuthorization {
             const redirectUrl = `${protocol}${callbackUrl}?${modifiedUrl}`;
 
             await this.openRedisInsightWithDeeplink(redirectUrl);
-
-
         } catch (error) {
             console.error('Error during SSO:', error);
             // Take a screenshot if there's an error

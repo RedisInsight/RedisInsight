@@ -50,7 +50,7 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
 
 export const MODULE_TEXT_VIEW: { [key in RedisDefaultModules]?: string } = {
   [RedisDefaultModules.Bloom]: 'RedisBloom',
-  [RedisDefaultModules.ReJSON]: 'RedisJSON',
+  [RedisDefaultModules.ReJSON]: 'JSON',
   [RedisDefaultModules.Search]: 'RediSearch',
   [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
 }

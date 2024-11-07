@@ -254,7 +254,7 @@ export class RejsonRlService {
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
         throw new BadRequestException(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
 
@@ -308,7 +308,7 @@ export class RejsonRlService {
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
         throw new BadRequestException(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
 
@@ -362,7 +362,7 @@ export class RejsonRlService {
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
         throw new BadRequestException(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
 
@@ -403,7 +403,7 @@ export class RejsonRlService {
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
         throw new BadRequestException(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
 
@@ -444,7 +444,7 @@ export class RejsonRlService {
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
         throw new BadRequestException(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
 

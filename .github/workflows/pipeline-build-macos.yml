@@ -81,7 +81,14 @@ jobs:
       if: inputs.target != vars.ALL
       run: |
         unset CSC_LINK
-        yarn package:stage --mac ${{ inputs.target }}
+        target=""
+
+        if [ ${{ startsWith(inputs.target, 'macos:') }} == 'true' ]; then
+          inputsTarget=${{inputs.target}}
+          target=${inputsTarget#macos:}
+        fi
+
+        yarn package:stage --mac $target
         rm -rf release/mac
 
     - name: Repack dmg to tar
@@ -92,7 +99,6 @@ jobs:
 
     - name: Upload x64 packages
       uses: actions/upload-artifact@v4
-      if: inputs.target == vars.ALL || endsWith(inputs.target, 'x64')
       with:
         name: macos-builds
         path: |

@@ -47,6 +47,7 @@ export class SsoAuthorization {
             fs.mkdirSync('./report/screenshots/', { recursive: true });
             const screenshot = await page.screenshot();
             fs.writeFileSync(`./report/screenshots/puppeteer_screenshot_${Common.generateWord(5)}.png`, screenshot, 'base64');
+            throw error;
         } finally {
             await browser.close();
         }

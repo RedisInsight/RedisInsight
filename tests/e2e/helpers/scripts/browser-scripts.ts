@@ -77,7 +77,7 @@ async function waitForChromeProcess(maxWaitTime = 10000, interval = 1000): Promi
  */
 export async function getOpenedChromeTab(urlSubstring?: string): Promise<string> {
     const { isMac, isLinux } = Common.getPlatform();
-    const maxRetries = 10;
+    const maxRetries = 20;
     const retryDelay = 300;
     const chromeDebuggingPort = 9223;
 

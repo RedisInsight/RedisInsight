@@ -3,6 +3,7 @@ import { isString, uniqBy } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, ICommand, ICommands } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, checkDeprecatedCommandGroup } from 'uiSrc/utils'
+import { getConfig } from 'uiSrc/config'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -62,6 +63,37 @@ export function fetchRedisCommandsInfo(onSuccessAction?: () => void, onFailActio
       const { data, status } = await apiService.get<GetServerInfoResponse>(ApiEndpoints.REDIS_COMMANDS)
 
       if (isStatusSuccessful(status)) {
+        dispatch(getRedisCommandsSuccess(data))
+        onSuccessAction?.()
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(getRedisCommandsFailure(errorMessage))
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchLocalRedisCommandsInfo(onSuccessAction?: () => void, onFailAction?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getRedisCommands())
+
+    const commands = ['main', 'redisearch', 'redisjson', 'redistimeseries', 'redisai', 'redisgraph', 'redisgears', 'redisbloom']
+
+    try {
+      const riConfig = getConfig()
+      const results = await Promise.all(
+        commands.map((command) => apiService.get<ICommand>(
+          `${riConfig.app.commandsLocalBaseUrl}/commands/${command}.json`
+        ))
+      )
+      if (results.every(({ status }) => isStatusSuccessful(status))) {
+        const data: ICommands = results.reduce((obj, result) => ({
+          ...obj,
+          ...result.data
+        }), {})
+
         dispatch(getRedisCommandsSuccess(data))
         onSuccessAction?.()
       }

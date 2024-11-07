@@ -35,21 +35,6 @@ export function closeChrome(): void {
  */
 export function openChromeWindow(): void {
     const { isMac, isLinux } = getPlatform();
-    const chromeArgs = `
-        --remote-debugging-port=9223 \
-        --disable-gpu \
-        --disable-search-engine-choice-screen \
-        --disable-dev-shm-usage \
-        --disable-software-rasterizer \
-        --enable-logging \
-        --disable-extensions \
-        --no-default-browser-check \
-        --disable-default-apps \
-        --disable-domain-reliability \
-        --disable-web-security \
-        --remote-allow-origins=* \
-        --disable-popup-blocking \
-        about:blank`
 
     if (isMac) {
         exec(`open -na "Google Chrome" --args --new-window`, (error) => {

@@ -69,6 +69,10 @@ test.only('Verify that user can sign in using SSO via SAML', async t => {
     // Open Chrome with a sample URL and save it to logs file
     openChromeWindow();
     await t.wait(2000);
+    closeChrome();
+    await t.wait(2000);
+    openChromeWindow();
+    await t.wait(2000);
     await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.ssoOauthButton);

@@ -9,6 +9,9 @@ export const STATUS_SUCCESS = 'success'
 export const STATUS_FAIL = 'fail'
 const appStatus = [STATUS_INITIAL, STATUS_LOADING, STATUS_SUCCESS, STATUS_FAIL] as const
 
+export const FAILED_TO_FETCH_CSRF_TOKEN_ERROR = 'Failed to fetch CSRF token'
+export const FAILED_TO_FETCH_FEATURE_FLAGS_ERROR = 'Failed to fetch feature flags'
+
 export const initialState: {
   status: typeof appStatus[number],
   error?: string
@@ -47,9 +50,6 @@ export const appInitSelector = (state: RootState) => state.app.init
 
 export default appInitSlice.reducer
 
-export const FAILED_TO_FETCH_CSRF_TOKEN_ERROR = 'Failed to fetch CSRF token'
-export const FAILED_TO_FETCH_FEATURE_FLAGS_ERROR = 'Failed to fetch feature flags'
-
 /**
  * Initialize the app by fetching REQUIRED data.
  *
@@ -65,10 +65,10 @@ export function initializeAppAction(
     try {
       dispatch(initializeAppState())
       await dispatch(fetchCsrfTokenAction(undefined, () => {
-        dispatch(initializeAppStateFail({ error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR }))
+        throw new Error(FAILED_TO_FETCH_CSRF_TOKEN_ERROR)
       }))
       await dispatch(fetchFeatureFlags(undefined, () => {
-        dispatch(initializeAppStateFail({ error: FAILED_TO_FETCH_FEATURE_FLAGS_ERROR }))
+        throw new Error(FAILED_TO_FETCH_FEATURE_FLAGS_ERROR)
       }))
       dispatch(initializeAppStateSuccess())
       onSuccessAction?.()

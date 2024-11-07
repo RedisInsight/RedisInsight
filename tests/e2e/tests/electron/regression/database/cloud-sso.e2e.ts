@@ -86,6 +86,7 @@ test.only('Verify that user can sign in using SSO via SAML', async t => {
     urlToUse = fs.readFileSync(logsFilePath, 'utf8');
     await t.expect(urlToUse).contains('authorize?');
     closeChrome();
+    await t.wait(2000);
     await SsoAuthorization.processSSOPuppeteer(urlToUse, 'SAML');
     await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
     await myRedisDatabasePage.reloadPage();

@@ -41,7 +41,8 @@
     "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
-    "gatekeeperAssess": false
+    "gatekeeperAssess": false,
+    "identity": null
   },
   "mas": {
     "mergeASARs": false,

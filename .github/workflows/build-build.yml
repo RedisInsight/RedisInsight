@@ -18,11 +18,6 @@ on:
         description: Enable SSH Debug
         type: boolean
 
-# Cancel a previous same workflow
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   build-linux:
     if: contains(inputs.target, 'linux') || inputs.target == 'all'

@@ -90,27 +90,14 @@ jobs:
         docker image save -o release/docker/docker-linux-alpine.arm64.tar redisinsight:arm64
 
     - uses: actions/upload-artifact@v4
-      name: Upload docker images
-      with:
-        if-no-files-found: error
-        name: docker
-        path: ./release/docker/docker-linux-alpine.*64.tar
-
-    - uses: actions/upload-artifact@v4
-      name: Upload web-mini artifacts
-      if: ${{ !inputs.only_docker }}
+      name: Upload docker builds
       with:
         if-no-files-found: warn
-        name: web-mini
-        path: ./release/web-mini
-
-    - uses: actions/upload-artifact@v4
-      name: Upload web artifacts
-      if: ${{ !inputs.only_docker }}
-      with:
-        if-no-files-found: warn
-        name: web
-        path: ./release/web
+        name: docker-builds
+        path: |
+          ./release/docker
+          ./release/web
+          ./release/web-mini
 
     env:
       RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}

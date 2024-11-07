@@ -1,4 +1,4 @@
-name: AWS
+name: AWS production
 
 on:
   workflow_call:
@@ -18,33 +18,20 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Download All Artifacts
+    - name: Merge build artifacts
+      id: build
+      uses: ./.github/actions/merge-build-artifacts
+
+    - name: Download builds
       uses: actions/download-artifact@v4
       with:
-        path: ./release
+        name: ${{ steps.build.outputs.build-name }}
+        path: release
 
     - run: ls -R ./release
 
     - name: Publish private
       run: |
-
-        # Define array of folders to exclude
-        exclude=("web" "web-mini" "redisstack" "docker")
-
-        # Iterate through first-level directories in ./release
-        for dir in ./release/*/; do
-          dir_name=$(basename "$dir")
-
-          # Check if the directory is not in the exclude list
-          if [[ ! " ${exclude[@]} " =~ " ${dir_name} " ]]; then
-            # Move all files from the subdirectory to the release directory
-            mv "$dir"* ./release/
-
-            # Remove the now-empty subdirectory
-            rmdir "$dir"
-          fi
-        done
-
         chmod +x .circleci/build/sum_sha256.sh
         .circleci/build/sum_sha256.sh
         applicationVersion=$(jq -r '.version' redisinsight/package.json)

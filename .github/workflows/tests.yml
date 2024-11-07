@@ -137,3 +137,8 @@ jobs:
     secrets: inherit
     with:
       debug: ${{ inputs.debug || false }}
+
+  clean:
+    uses: ./.github/workflows/clean-deployments.yml
+    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
+    if: always()

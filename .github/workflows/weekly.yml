@@ -7,3 +7,7 @@ jobs:
   licenses-check:
     uses: ./.github/workflows/licenses-check.yml
     secrets: inherit
+
+  remove-dev-builds:
+    uses: ./.github/workflows/licenses-check.yml
+    secrets: inherit

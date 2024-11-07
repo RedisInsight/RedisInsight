@@ -78,32 +78,14 @@ jobs:
         yarn package:stage --linux $target
 
     - uses: actions/upload-artifact@v4
-      name: Upload AppImage artifact
+      name: Upload linux builds
       with:
-        name: linux-appimage-build
+        name: linux-builds
         path: |
-          ./release/Redis-Insight*.AppImage
           ./release/latest-linux.yml
-
-    - uses: actions/upload-artifact@v4
-      name: Upload Deb artifact
-      with:
-        name: linux-deb-build
-        path: |
+          ./release/Redis-Insight*.AppImage
           ./release/Redis-Insight*.deb
-
-    - uses: actions/upload-artifact@v4
-      name: Upload rpm artifacts
-      with:
-        name: linux-rpm-build
-        path: |
           ./release/Redis-Insight*.rpm
-
-    - uses: actions/upload-artifact@v4
-      name: Upload snap artifact
-      with:
-        name: linux-snap-builds
-        path: |
           ./release/Redis-Insight*.snap
 
     env:

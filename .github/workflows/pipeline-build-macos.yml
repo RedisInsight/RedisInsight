@@ -94,44 +94,16 @@ jobs:
       uses: actions/upload-artifact@v4
       if: inputs.target == vars.ALL || endsWith(inputs.target, 'x64')
       with:
-        name: macos-x64-builds
+        name: macos-builds
         path: |
           ./release/Redis-Insight*x64.dmg
           ./release/Redis-Insight*x64.dmg.blockmap
-
-    - name: Upload zips packages
-      uses: actions/upload-artifact@v4
-      if: inputs.target == vars.ALL || endsWith(inputs.target, 'x64')
-      with:
-        name: macos-zip-builds
-        path: |
           ./release/Redis-Insight*.zip
-
-    - name: Upload ARM packages
-      uses: actions/upload-artifact@v4
-      if: inputs.target == vars.ALL || endsWith(inputs.target, 'arm64')
-      with:
-        name: macos-arm-builds
-        path: |
           ./release/Redis-Insight*arm64.dmg
           ./release/Redis-Insight*arm64.dmg.blockmap
-
-    - name: Upload MAS packages
-      uses: actions/upload-artifact@v4
-      if: inputs.target == vars.ALL
-      with:
-        name: macos-mas-builds
-        path: |
           ./release/Redis-Insight*.pkg
           ./release/*-mac.yml
-
-    - name: Upload redis stack packages
-      uses: actions/upload-artifact@v4
-      if: vars.ENV == 'production'
-      with:
-        name: 'redisstack'
-        path: |
-          ./release/redisstack/Redis-Insight-app-darwin.*.tar.gz
+          ./release/redisstack
 
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}

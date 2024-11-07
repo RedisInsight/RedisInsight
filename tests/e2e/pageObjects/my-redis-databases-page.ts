@@ -131,11 +131,10 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     async deleteDatabaseByName(dbName: string): Promise<void> {
         const dbNames = this.tableRowContent;
         const count = await dbNames.count;
-
         for (let i = 0; i < count; i++) {
             if ((await dbNames.nth(i).innerText || '').includes(dbName)) {
                 await t
-                    .click(this.deleteRowButton.nth(i))
+                    .click(this.deleteRowButton.nth(i-1))
                     .click(this.confirmDeleteButton);
                 break;
             }

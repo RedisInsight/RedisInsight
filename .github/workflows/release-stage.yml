@@ -16,7 +16,7 @@ jobs:
 
   builds:
     name: Release stage builds
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/build-build.yml
     needs: tests
     secrets: inherit
     with:

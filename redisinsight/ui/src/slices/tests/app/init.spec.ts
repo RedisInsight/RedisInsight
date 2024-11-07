@@ -15,6 +15,10 @@ import reducer, {
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
 import { getFeatureFlags, getFeatureFlagsFailure, getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
+import { getConfig } from 'uiSrc/config'
+import { fetchCsrfToken, fetchCsrfTokenFail } from 'uiSrc/slices/app/csrf'
+
+const riConfig = getConfig()
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -110,7 +114,7 @@ describe('init slice', () => {
       const responsePayload = {
         response: {
           status: 500,
-          data: { message: 'What ever error' },
+          data: { message: 'Whatever error' },
         },
       }
 
@@ -125,6 +129,25 @@ describe('init slice', () => {
         getFeatureFlags(),
         getFeatureFlagsFailure(),
         initializeAppStateFail({ error: FAILED_TO_FETCH_FEATURE_FLAGS_ERROR }),
+      ]
+
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+
+    it('failed to init csrf', async () => {
+      riConfig.api.csrfEndpoint = 'http://localhost'
+
+      apiService.get = jest.fn().mockRejectedValueOnce(new Error('something went wrong'))
+
+      // Act
+      await store.dispatch<any>(initializeAppAction())
+
+      // Assert
+      const expectedActions = [
+        initializeAppState(),
+        fetchCsrfToken(),
+        fetchCsrfTokenFail({ error: 'something went wrong' }),
+        initializeAppStateFail({ error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR }),
       ]
 
       expect(store.getActions()).toEqual(expectedActions)

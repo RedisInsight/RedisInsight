@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash'
 import reducer, {
   appInitSelector,
   FAILED_TO_FETCH_CSRF_TOKEN_ERROR,
+  FAILED_TO_FETCH_FEATURE_FLAGS_ERROR,
   initializeAppAction,
   initializeAppState,
   initializeAppStateFail,
@@ -109,7 +110,7 @@ describe('init slice', () => {
       const responsePayload = {
         response: {
           status: 500,
-          data: { message: FAILED_TO_FETCH_CSRF_TOKEN_ERROR },
+          data: { message: 'What ever error' },
         },
       }
 
@@ -123,7 +124,7 @@ describe('init slice', () => {
         initializeAppState(),
         getFeatureFlags(),
         getFeatureFlagsFailure(),
-        initializeAppStateFail({ error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR }),
+        initializeAppStateFail({ error: FAILED_TO_FETCH_FEATURE_FLAGS_ERROR }),
       ]
 
       expect(store.getActions()).toEqual(expectedActions)

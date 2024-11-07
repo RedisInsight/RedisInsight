@@ -270,4 +270,14 @@ export class Common {
     static async readFileFromFolder(filePath: string): Promise<string> {
         return fs.readFileSync(filePath, 'utf8');
     }
+
+    /**
+      * Get current machine platform
+     */
+    static getPlatform(): { isMac: boolean, isLinux: boolean } {
+        return {
+            isMac: process.platform === 'darwin',
+            isLinux: process.platform === 'linux'
+        };
+    }
 }

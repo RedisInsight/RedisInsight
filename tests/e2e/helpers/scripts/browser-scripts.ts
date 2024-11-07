@@ -3,22 +3,13 @@ import * as path from 'path';
 import * as fs from 'fs';
 import CDP from 'chrome-remote-interface';
 import { promisify } from 'util';
+import { Common } from '../common';
 
 interface Target {
     type: string;
     url: string;
 }
 const execPromise = promisify(exec);
-
-/**
- * Get current machine platform
- */
-function getPlatform(): { isMac: boolean, isLinux: boolean } {
-    return {
-        isMac: process.platform === 'darwin',
-        isLinux: process.platform === 'linux'
-    };
-}
 
 export async function closeChrome(): Promise<void> {
     console.log('Closing Chrome...');
@@ -37,7 +28,7 @@ export async function closeChrome(): Promise<void> {
  * Open a new Chrome browser instance
  */
 export async function openChromeWindow(): Promise<void> {
-    const { isMac, isLinux } = getPlatform();
+    const { isMac, isLinux } = Common.getPlatform();
 
     if (isMac) {
         await execPromise(`open -na "Google Chrome" --args --new-window`);
@@ -85,7 +76,7 @@ async function waitForChromeProcess(maxWaitTime = 10000, interval = 1000): Promi
  * @returns Promise<string> Resolves to the URL of the opened tab
  */
 export async function getOpenedChromeTab(urlSubstring?: string): Promise<string> {
-    const { isMac, isLinux } = getPlatform();
+    const { isMac, isLinux } = Common.getPlatform();
     const maxRetries = 10;
     const retryDelay = 300;
     const chromeDebuggingPort = 9223;
@@ -167,7 +158,7 @@ export async function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 100
  * @param prefix The prefix to match the tab URL
  */
 export function closeChromeTabWithPrefix(prefix: string): void {
-    const { isMac, isLinux } = getPlatform();
+    const { isMac, isLinux } = Common.getPlatform();
 
     if (isMac) {
         const scriptPath = path.join(__dirname, 'close_chrome_tab.applescript');

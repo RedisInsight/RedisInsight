@@ -3,7 +3,7 @@ import { SsoAuthorization } from "../helpers";
 
 export class SsoAuthorizationPage {
     // BUTTONS
-    oktaSubmitFormButton = 'input[type="submit"]';
+    submitFormButton = 'input[type="submit"]';
     tryAnotherWayButton = `//*[text()='Try another way']`
     googleNextButton = '#identifierNext';
     googleSubmitPasswordButton = '#passwordNext';
@@ -12,6 +12,8 @@ export class SsoAuthorizationPage {
     oktaPasswordInput = 'input[autocomplete="current-password"]';
     googleEmailInput = 'input[type="email"]';
     goooglePasswordInput = 'input[type="password"]';
+    githubUserNameInput = '#login_field';
+    githubPasswordInput = '#password';
 
     /**
      * Sign in using SSO
@@ -28,7 +30,7 @@ export class SsoAuthorizationPage {
         } else if (authorizationType === 'Google') {
             await this.submitGoogleForm(page, username, password)
         } else if (authorizationType === 'Github') {
-
+            await this.submitGithubForm(page, username, password)
         }
         // Wait for the authorization to complete
         await page.waitForFunction(() => window.location.href.includes('#success'), { timeout: 10000 });
@@ -44,7 +46,7 @@ export class SsoAuthorizationPage {
         await page.waitForSelector(this.oktaUserNameInput, { visible: true });
         await page.type(this.oktaUserNameInput, username, { delay: Math.random() * 100 + 50 });
         await page.type(this.oktaPasswordInput, password, { delay: Math.random() * 100 + 50 });
-        await page.click(this.oktaSubmitFormButton);
+        await page.click(this.submitFormButton);
     }
 
     /**
@@ -80,5 +82,18 @@ export class SsoAuthorizationPage {
                 console.log("'Try another way' button not found or not visible.");
             }
         }
+    }
+
+    /**
+     * Submit login GitHub form
+     * @param urlToUse The url to process authorization
+     * @param username The username to okta account
+     * @param password The password to okta account
+     */
+    async submitGithubForm(page: PageWithCursor, username: string, password: string): Promise<void> {
+        await page.waitForSelector(this.githubUserNameInput, { visible: true });
+        await page.type(this.githubUserNameInput, username, { delay: Math.random() * 100 + 50 });
+        await page.type(this.githubPasswordInput, password, { delay: Math.random() * 100 + 50 });
+        await page.click(this.submitFormButton);
     }
 }

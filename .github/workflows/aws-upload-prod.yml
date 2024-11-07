@@ -20,7 +20,7 @@ jobs:
 
     - name: Merge build artifacts
       id: build
-      uses: .github/actions/merge-build-artifacts
+      uses: ./.github/actions/merge-build-artifacts
 
     - name: Download builds
       uses: actions/download-artifact@v4

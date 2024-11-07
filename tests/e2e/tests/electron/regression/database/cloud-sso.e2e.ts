@@ -6,15 +6,14 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { commonUrl, samlUser } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { modifyFeaturesConfigJson, updateControlNumber } from '../../../../helpers/insights';
-import { processGoogleSSO } from '../../../../helpers/google-authorization';
 import { closeChrome, openChromeWindow, saveOpenedChromeTabUrl } from '../../../../helpers/scripts/browser-scripts';
-import { processGoogleSSOPlaywright } from '../../../../helpers/google-authorization-playwright';
-import { processGoogleSSOPuppeteer } from '../../../../helpers/google-authorization-puppeteer';
-import { processGoogleSSOPuppeteerReal } from '../../../../helpers/google-authorization-puppeteer-real-browser';
+import { SsoAuthorization } from '../../../../helpers';
+import { AiChatBotPanel } from '../../../../pageObjects/components/chatbot/ai-chatbot-panel';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const aiChatBotPanel = new AiChatBotPanel();
 
 let urlToUse = '';
 const pathes = {
@@ -61,43 +60,78 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
     await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudKeys.exists).ok('Use Cloud Keys accordion not displayed when SSO feature enabled');
     await t.click(myRedisDatabasePage.AddRedisDatabase.useCloudAccount);
     // Verify that Auth buttons are displayed for auto-discovery panel on Electron app
-    await t.expect(myRedisDatabasePage.googleAuth.exists).ok('Google auth button not displayed when SSO feature enabled');
-    await t.expect(myRedisDatabasePage.gitHubAuth.exists).ok('Github auth button not displayed when SSO feature enabled');
-    await t.expect(myRedisDatabasePage.ssoAuth.exists).ok('SSO auth button not displayed when SSO feature enabled');
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.RedisCloudSigninPanel.googleOauth.exists).ok('Google auth button not displayed when SSO feature enabled');
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.RedisCloudSigninPanel.githubOauth.exists).ok('Github auth button not displayed when SSO feature enabled');
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.RedisCloudSigninPanel.ssoOauth.exists).ok('SSO auth button not displayed when SSO feature enabled');
 });
-// skip until adding linux support
-test.only('Verify that user can sign in using SSO via Google authorization', async t => {
+// skip until adding tests for SSO feature
+test.only('Verify that user can sign in using SSO via SAML', async t => {
+    // Open Chrome with a sample URL and save it to logs file
+    openChromeWindow();
+    await t.wait(2000);
+    await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
+    await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
+    await t.click(aiChatBotPanel.RedisCloudSigninPanel.ssoOauthButton);
+    await t.typeText(aiChatBotPanel.RedisCloudSigninPanel.ssoEmailInput, samlUser, { replace: true, paste: true });
+
+    await t.wait(2000);
+    saveOpenedChromeTabUrl(logsFilePath);
+    await t.click(aiChatBotPanel.RedisCloudSigninPanel.submitBtn);
+
+    await t.wait(2000);
+    urlToUse = fs.readFileSync(logsFilePath, 'utf8');
+    await t.expect(urlToUse).contains('authorize?');
+    closeChrome();
+    await SsoAuthorization.processSSOPuppeteer(urlToUse, 'SAML');
+    await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
+    await myRedisDatabasePage.reloadPage();
+    await t.expect(myRedisDatabasePage.userProfileBtn.exists).ok('User profile button not displayed');
+    await t.click(myRedisDatabasePage.userProfileBtn);
+    await t.expect(myRedisDatabasePage.userProfileAccountInfo.textContent).contains('Geor', 'User not signed in');
+});
+// Can be run only locally for google auth
+test.skip('Verify that user can sign in using SSO via Google authorization', async t => {
     await t.expect(myRedisDatabasePage.promoButton.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
     // Open Chrome with a sample URL and save it to logs file
     openChromeWindow();
-    await t.wait(1000);
-    closeChrome()
-    await t.wait(1000);
-    openChromeWindow();
-    // await t.click(myRedisDatabasePage.NavigationHeader.cloudSignInButton);
-    // // Navigate to Google Auth button
-    // await t.pressKey('tab');
-    // await t.pressKey('tab');
-    // await t.pressKey('space');
-    // await t.pressKey('shift+tab');
-    // await t.pressKey('shift+tab');
+    await t.wait(2000);
     await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
-    await t.click(myRedisDatabasePage.NavigationHeader.oauthAgreement);
-    await t.click(myRedisDatabasePage.NavigationHeader.ssoOauthButton);
-    await t.typeText(myRedisDatabasePage.NavigationHeader.ssoEmailInput, samlUser, { replace: true, paste: true });
+    await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
 
     await t.wait(2000);
     saveOpenedChromeTabUrl(logsFilePath);
     // Click the button to trigger the Google authorization page
-    // await t.pressKey('enter');
-    await t.click(myRedisDatabasePage.NavigationHeader.submitBtn);
+    await t.click(aiChatBotPanel.RedisCloudSigninPanel.googleOauth);
 
     await t.wait(2000);
     urlToUse = fs.readFileSync(logsFilePath, 'utf8');
-    console.log('urlToUse: ', urlToUse)
     await t.expect(urlToUse).contains('authorize?');
-    // await processGoogleSSO(urlToUse);
-    await processGoogleSSOPuppeteerReal(urlToUse);
+    closeChrome();
+    await SsoAuthorization.processSSOPuppeteer(urlToUse, 'Google');
+    await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
+    await myRedisDatabasePage.reloadPage();
+    await t.expect(myRedisDatabasePage.userProfileBtn.exists).ok('User profile button not displayed');
+    await t.click(myRedisDatabasePage.userProfileBtn);
+    await t.expect(myRedisDatabasePage.userProfileAccountInfo.textContent).contains('Geor', 'User not signed in');
+});
+// Can be run only locally for github auth
+test.skip('Verify that user can sign in using SSO via Github authorization', async t => {
+    // Open Chrome with a sample URL and save it to logs file
+    openChromeWindow();
+    await t.wait(1000);
+    await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
+    await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
+
+    await t.wait(2000);
+    saveOpenedChromeTabUrl(logsFilePath);
+    // Click the button to trigger the Github authorization page
+    await t.click(aiChatBotPanel.RedisCloudSigninPanel.githubOauth);
+
+    await t.wait(2000);
+    urlToUse = fs.readFileSync(logsFilePath, 'utf8');
+    await t.expect(urlToUse).contains('authorize?');
+    closeChrome();
+    await SsoAuthorization.processSSOPuppeteer(urlToUse, 'Github');
     await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
     await myRedisDatabasePage.reloadPage();
     await t.expect(myRedisDatabasePage.userProfileBtn.exists).ok('User profile button not displayed');

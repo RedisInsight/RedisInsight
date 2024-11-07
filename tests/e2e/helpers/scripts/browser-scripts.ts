@@ -8,7 +8,6 @@ interface Target {
     url: string;
 }
 
-
 /**
  * Get current machine platform
  */
@@ -36,6 +35,21 @@ export function closeChrome(): void {
  */
 export function openChromeWindow(): void {
     const { isMac, isLinux } = getPlatform();
+    const chromeArgs = `
+        --remote-debugging-port=9223 \
+        --disable-gpu \
+        --disable-search-engine-choice-screen \
+        --disable-dev-shm-usage \
+        --disable-software-rasterizer \
+        --enable-logging \
+        --disable-extensions \
+        --no-default-browser-check \
+        --disable-default-apps \
+        --disable-domain-reliability \
+        --disable-web-security \
+        --remote-allow-origins=* \
+        --disable-popup-blocking \
+        about:blank`
 
     if (isMac) {
         exec(`open -na "Google Chrome" --args --new-window`, (error) => {
@@ -47,18 +61,9 @@ export function openChromeWindow(): void {
     }
     else if (isLinux) {
         console.log('Opening Chrome on Linux...');
-        // exec(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --incognito --profile-directory=Default --remote-allow-origins=* --disable-popup-blocking --v=1 about:blank`, (error, stdout, stderr) => {
-        //     if (error) {
-        //         console.error('Error opening Chrome on Linux:', error);
-        //         return;
-        //     }
-        //     console.log('Linux Chrome stdout:', stdout);
-        //     console.error('Linux Chrome stderr:', stderr);
-
-        // });
         try {
             console.log("Attempting to open Chrome with execSync");
-            const output = execSync(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-search-engine-choice-screen --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --remote-allow-origins=* --disable-popup-blocking about:blank`, { stdio: 'inherit', timeout: 10000 });
+            const output = execSync(`google-chrome ${chromeArgs}`, { stdio: 'inherit', timeout: 10000 });
             console.log("Chrome opened successfully with execSync:", output);
         } catch (error) {
             console.error("Error occurred in execSync:", error);

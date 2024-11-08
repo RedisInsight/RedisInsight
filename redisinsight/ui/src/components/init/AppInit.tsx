@@ -8,7 +8,7 @@ import {
   STATUS_SUCCESS,
 } from 'uiSrc/slices/app/init'
 import ConnectivityError from 'uiSrc/components/connectivity-error/ConnectivityError'
-import PagePlaceholder from '../page-placeholder'
+import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 
 type Props = {
   children: ReactElement
@@ -35,7 +35,7 @@ const AppInit = ({ children, onSuccess, onFail }: Props) => {
     return <ConnectivityError isLoading={false} onRetry={initApp} error={error} />
   }
 
-  return status === STATUS_SUCCESS ? children : <PagePlaceholder />
+  return status === STATUS_SUCCESS ? children : <SuspenseLoader />
 }
 
 export default AppInit

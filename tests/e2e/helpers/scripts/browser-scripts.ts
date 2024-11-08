@@ -37,8 +37,15 @@ export async function openChromeWindow(): Promise<void> {
         console.log('Opening Chrome on Linux...');
         try {
             console.log("Attempting to open Chrome with execSync");
-            const output = execSync(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-search-engine-choice-screen --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --remote-allow-origins=* --disable-popup-blocking about:blank`, { timeout: 10000 });
-            console.log("Chrome opened successfully with execSync:", output);
+            // const output = execSync(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-search-engine-choice-screen --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --no-sandbox --remote-allow-origins=* --disable-popup-blocking about:blank &`, { timeout: 10000 });
+            // console.log("Chrome opened successfully with execSync:", output);
+            exec(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-search-engine-choice-screen --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --no-sandbox --remote-allow-origins=* --disable-popup-blocking about:blank &`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`Error launching Chrome: ${error}`);
+                } else {
+                    console.log("Chrome started successfully in the background.");
+                }
+            });
         } catch (error) {
             console.error("Error occurred in execSync:", error);
             return;

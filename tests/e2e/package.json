@@ -65,7 +65,6 @@
     "fs-extra": "^11.2.0",
     "open": "^10.1.0",
     "redis": "4.7.0",
-    "selenium-webdriver": "^4.25.0",
     "sqlite3": "^5.1.7",
     "supertest": "^7.0.0",
     "testcafe": "3.6.2",

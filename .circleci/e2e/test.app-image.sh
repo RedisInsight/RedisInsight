@@ -43,9 +43,9 @@ update-desktop-database "$(pwd)/ri-test/"
 xdg-mime default redisinsight.desktop x-scheme-handler/redisinsight
 
 # Run rte
-# docker-compose -f tests/e2e/rte.docker-compose.yml build
-# docker-compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V
-# ./tests/e2e/wait-for-redis.sh localhost 12000 && \
+docker-compose -f tests/e2e/rte.docker-compose.yml build
+docker-compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V
+./tests/e2e/wait-for-redis.sh localhost 12000 && \
 
 # Run tests
 COMMON_URL=$(pwd)/ri-test/resources/app.asar/dist/renderer/index.html \

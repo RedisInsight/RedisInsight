@@ -38,7 +38,7 @@ import testcafe from 'testcafe';
                     selectorTimeout: 10000,
                     assertionTimeout: 10000,
                     speed: 1,
-                    // quarantineMode: { successThreshold: 1, attemptLimit: 3 },
+                    quarantineMode: { successThreshold: 1, attemptLimit: 3 },
                     pageRequestTimeout: 20000,
                     disableMultipleWindows: true,
                     runExecutionTimeout: 280000,

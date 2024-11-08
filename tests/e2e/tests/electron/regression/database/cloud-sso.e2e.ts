@@ -60,7 +60,7 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
     await t.expect(myRedisDatabasePage.AddRedisDatabase.RedisCloudSigninPanel.ssoOauth.exists).ok('SSO auth button not displayed when SSO feature enabled');
 });
 // skip until adding tests for SSO feature
-test.only('Verify that user can sign in using SSO SAML auth', async t => {
+test.skip('Verify that user can sign in using SSO SAML auth', async t => {
     // Open Chrome with a sample URL and save it to logs file
     await openChromeOnCi();
     await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
@@ -74,7 +74,6 @@ test.only('Verify that user can sign in using SSO SAML auth', async t => {
     urlToUse = await Common.readFileFromFolder(logsWithUrlFilePath);
     await t.expect(urlToUse).contains('authorize?');
     await closeChrome();
-    // await t.wait(2000);
     await SsoAuthorization.processSSOPuppeteer(urlToUse, 'SAML');
     await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
     await myRedisDatabasePage.reloadPage();

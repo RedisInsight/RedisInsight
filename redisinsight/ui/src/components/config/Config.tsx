@@ -27,7 +27,7 @@ import {
 
 import { isDifferentConsentsExists } from 'uiSrc/utils'
 import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
-import { fetchLocalRedisCommandsInfo, fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
+import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
 import { fetchTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { fetchCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
@@ -54,13 +54,12 @@ const Config = () => {
       dispatch(fetchServerInfo())
       dispatch(fetchNotificationsAction())
       dispatch(fetchCustomTutorials())
-      dispatch(fetchRedisCommandsInfo())
     } else {
       dispatch(setServerLoaded())
-      dispatch(fetchLocalRedisCommandsInfo())
     }
 
     dispatch(fetchUnsupportedCliCommandsAction())
+    dispatch(fetchRedisCommandsInfo())
     dispatch(fetchContentRecommendations())
     dispatch(fetchGuideLinksAction())
 

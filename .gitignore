@@ -86,4 +86,4 @@ licenses
 # caches
 .temp_cache
 
-commands/
+static/

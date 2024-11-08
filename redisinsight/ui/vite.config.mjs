@@ -49,7 +49,8 @@ export default defineConfig({
       allow: [
         '..',
         '../../node_modules/monaco-editor',
-        'commands'
+        'static',
+        'defaults'
       ],
     },
   },

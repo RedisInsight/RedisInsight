@@ -1,6 +1,8 @@
 import { cloneDeep, uniqBy } from 'lodash'
+import set from 'lodash/set'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
-import { apiService } from 'uiSrc/services'
+import { getConfig } from 'uiSrc/config'
+import { apiService, resourcesService } from 'uiSrc/services'
 import { ICommand, MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import reducer, {
   initialState,
@@ -8,12 +10,20 @@ import reducer, {
   getRedisCommandsFailure,
   getRedisCommandsSuccess,
   appRedisCommandsSelector,
-  fetchRedisCommandsInfo, commands, fetchLocalRedisCommandsInfo
+  fetchRedisCommandsInfo,
+  commands,
 } from '../../app/redis-commands'
+
+const riConfig = getConfig()
+
+const mockConfig = (useLocalResources = false) => {
+  set(riConfig, 'app.useLocalResources', useLocalResources)
+}
 
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
+  mockConfig()
   store = cloneDeep(mockedStore)
   store.clearActions()
 })
@@ -143,22 +153,21 @@ describe('slices', () => {
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
     })
-  })
 
-  describe('fetchLocalRedisCommandsInfo', () => {
     it('successfully fetches all local commands', async () => {
+      mockConfig(true)
       let expectedResult = {}
       const onSuccessAction = jest.fn()
       const onFailAction = jest.fn()
-      const apiGetSpy = jest.spyOn(apiService, 'get')
+      const resourceGetSpy = jest.spyOn(resourcesService, 'get')
 
       commands.forEach((command) => {
         expectedResult = { ...expectedResult, [command]: {} }
-        apiGetSpy.mockResolvedValueOnce({ status: 200, data: { [command]: {} } })
+        resourceGetSpy.mockResolvedValueOnce({ status: 200, data: { [command]: {} } })
       })
 
       // Act
-      await store.dispatch<any>(fetchLocalRedisCommandsInfo(onSuccessAction, onFailAction))
+      await store.dispatch<any>(fetchRedisCommandsInfo(onSuccessAction, onFailAction))
 
       // Assert
       const expectedActions = [
@@ -171,21 +180,21 @@ describe('slices', () => {
       expect(onFailAction).not.toHaveBeenCalled()
     })
 
-    it('handles fetch failures', async () => {
+    it('handles local commands fetch failures', async () => {
       let expectedResult = {}
       const onSuccessAction = jest.fn()
       const onFailAction = jest.fn()
-      const apiGetSpy = jest.spyOn(apiService, 'get')
+      const resourceGetSpy = jest.spyOn(resourcesService, 'get')
       const errorMessage = 'Something was wrong!'
 
       commands.slice(0, -1).forEach((command) => {
         expectedResult = { ...expectedResult, [command]: {} }
-        apiGetSpy.mockResolvedValueOnce({ status: 200, data: { [command]: {} } })
+        resourceGetSpy.mockResolvedValueOnce({ status: 200, data: { [command]: {} } })
       })
-      apiGetSpy.mockRejectedValueOnce({ status: 500, data: { message: errorMessage } })
+      resourceGetSpy.mockRejectedValueOnce({ status: 500, data: { message: errorMessage } })
 
       // Act
-      await store.dispatch<any>(fetchLocalRedisCommandsInfo(onSuccessAction, onFailAction))
+      await store.dispatch<any>(fetchRedisCommandsInfo(onSuccessAction, onFailAction))
 
       // Assert
       const expectedActions = [

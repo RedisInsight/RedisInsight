@@ -7,8 +7,6 @@
       "api/dist/**/*",
       "node_modules/**/*"
     ],
-    "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
-    "compression": "normal",
     "asarUnpack": [
       "node_modules/keytar",
       "node_modules/sqlite3",

@@ -68,7 +68,7 @@
      "stars":54
   },
   {
-     "name":"JSON",
+     "name":"RedisJSON",
      "abbreviation": "RJ",
      "license":"Redis Source Available License",
      "repository":"https://github.com/RedisJSON/RedisJSON",

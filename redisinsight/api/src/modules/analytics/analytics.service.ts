@@ -8,6 +8,7 @@ import axios from 'axios';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 import { ServerService } from 'src/modules/server/server.service';
+import { SessionMetadata } from 'src/common/models';
 
 export const NON_TRACKING_ANONYMOUS_ID = '00000000-0000-0000-0000-000000000001';
 
@@ -22,8 +23,8 @@ export interface ITelemetryEvent {
 }
 
 export interface ITelemetryInitEvent {
-  anonymousId: string;
-  sessionId: number;
+  anonymousId?: string;
+  sessionId?: number;
   appType: string;
   controlNumber: number;
   controlGroup: string;
@@ -38,7 +39,7 @@ export enum Telemetry {
 
 @Injectable()
 export class AnalyticsService {
-  private anonymousId: string = NON_TRACKING_ANONYMOUS_ID;
+  private anonymousId: string;
 
   private sessionId: number = -1;
 
@@ -57,15 +58,45 @@ export class AnalyticsService {
     private readonly constantsProvider: ConstantsProvider,
   ) {}
 
-  public getAnonymousId(): string {
-    return this.anonymousId;
+  /**
+   * Returns default anonymous id if was set during service initialization
+   * Otherwise sessionMetadata.userId will be returned or 'unknown' string
+   *
+   * If we want to have single anonymousId it should be set during initialization. E.g. init({ anonymousId: 'id' })
+   * If we want to distinguish between several requests then sessionMetadata should have proper userId field, and
+   * we shouldn't pass anonymousId during initialization
+   *
+   * @param sessionMetadata
+   */
+  public getAnonymousId(sessionMetadata?: SessionMetadata): string {
+    return this.anonymousId ?? sessionMetadata?.userId ?? 'unknown';
+  }
+
+  /**
+   * Returns default sessionId if was set during service initialization
+   * Otherwise sessionMetadata.sessionId will be returned or -1
+   *
+   * Behaves the same way as getAnonymousId.
+   *
+   * @param sessionMetadata
+   */
+  public getSessionId(sessionMetadata?: SessionMetadata): number {
+    if (this.sessionId) {
+      return this.sessionId;
+    }
+
+    if (sessionMetadata?.sessionId) {
+      // convert string to number
+      return Number(BigInt(`0x${Buffer.from(sessionMetadata?.sessionId).toString('hex')}`));
+    }
+
+    return -1;
   }
 
   public async init(initConfig: ITelemetryInitEvent) {
     const {
       anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion, firstStart,
     } = initConfig;
-
     this.sessionId = sessionId;
     this.anonymousId = anonymousId;
     this.appType = appType;
@@ -108,30 +139,13 @@ export class AnalyticsService {
       // for analytics is granted or not.
       // If permissions not granted
       // anonymousId will includes "00000000-0000-0000-0000-000000000001" value without any user identifiers.
-      const {
-        event, eventData, nonTracking, traits = {},
-      } = payload;
-      const isAnalyticsGranted = await this.checkIsAnalyticsGranted();
+      // todo: USER_CONTEXT
+      const trackParams = await this.prepareEventData(this.constantsProvider.getSystemSessionMetadata(), payload);
 
-      if (isAnalyticsGranted || nonTracking) {
+      if (trackParams) {
         this.analytics.track({
-          anonymousId: !isAnalyticsGranted && nonTracking ? NON_TRACKING_ANONYMOUS_ID : this.anonymousId,
-          integrations: { Amplitude: { session_id: this.sessionId } },
-          event,
-          context: {
-            traits: {
-              ...traits,
-              telemetry: isAnalyticsGranted ? Telemetry.Enabled : Telemetry.Disabled,
-            },
-          },
-          properties: {
-            ...eventData,
-            anonymousId: this.anonymousId,
-            buildType: this.appType,
-            controlNumber: this.controlNumber,
-            controlGroup: this.controlGroup,
-            appVersion: this.appVersion,
-          },
+          ...trackParams,
+          event: payload.event,
         });
       }
     } catch (e) {
@@ -140,7 +154,7 @@ export class AnalyticsService {
   }
 
   @OnEvent(AppAnalyticsEvents.Page)
-  async sendPage(payload: ITelemetryEvent) {
+  async sendPage(sessionMetadata: SessionMetadata, payload: ITelemetryEvent) {
     try {
       // The event is reported only if the user's permission is granted.
       // The anonymousId is also sent along with the event.
@@ -149,16 +163,34 @@ export class AnalyticsService {
       // user in any way. When `nonTracking` is True, the event is sent regardless of whether the user's permission
       // for analytics is granted or not.
       // If permissions not granted anonymousId includes "UNSET" value without any user identifiers.
+      const pageParams = await this.prepareEventData(sessionMetadata, payload);
+
+      if (pageParams) {
+        this.analytics.page({
+          ...pageParams,
+          name: payload.event,
+        });
+      }
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
+
+  private async prepareEventData(sessionMetadata: SessionMetadata, payload: ITelemetryEvent) {
+    try {
       const {
-        event, eventData, nonTracking, traits = {},
+        eventData,
+        nonTracking,
+        traits = {},
       } = payload;
-      const isAnalyticsGranted = await this.checkIsAnalyticsGranted();
+      const isAnalyticsGranted = await this.checkIsAnalyticsGranted(sessionMetadata);
 
       if (isAnalyticsGranted || nonTracking) {
-        this.analytics.page({
-          name: event,
-          anonymousId: !isAnalyticsGranted && nonTracking ? NON_TRACKING_ANONYMOUS_ID : this.anonymousId,
-          integrations: { Amplitude: { session_id: this.sessionId } },
+        return {
+          anonymousId: !isAnalyticsGranted && nonTracking
+            ? NON_TRACKING_ANONYMOUS_ID
+            : this.getAnonymousId(sessionMetadata),
+          integrations: { Amplitude: { session_id: this.getSessionId(sessionMetadata) } },
           context: {
             traits: {
               ...traits,
@@ -167,23 +199,24 @@ export class AnalyticsService {
           },
           properties: {
             ...eventData,
-            anonymousId: this.anonymousId,
+            anonymousId: this.getAnonymousId(sessionMetadata),
             buildType: this.appType,
             controlNumber: this.controlNumber,
             controlGroup: this.controlGroup,
             appVersion: this.appVersion,
           },
-        });
+        };
       }
     } catch (e) {
-      // continue regardless of error
+      // ignore errors
     }
+
+    return null;
   }
 
-  private async checkIsAnalyticsGranted() {
+  private async checkIsAnalyticsGranted(sessionMetadata: SessionMetadata) {
     return !!get(
-      // todo: [USER_CONTEXT] define how to fetch userId?
-      await this.settingsService.getAppSettings(this.constantsProvider.getSystemSessionMetadata()),
+      await this.settingsService.getAppSettings(sessionMetadata),
       'agreements.analytics',
       false,
     );

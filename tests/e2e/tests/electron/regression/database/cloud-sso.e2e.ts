@@ -19,8 +19,7 @@ const pathes = {
     defaultRemote: path.join('.', 'test-data', 'features-configs', 'insights-default-remote.json'),
     electronConfig: path.join('.', 'test-data', 'features-configs', 'sso-electron-build.json')
 };
-const logsFilename = 'chrome_logs.txt';
-const logsFilePath = path.join('test-data', logsFilename);
+const logsFilePath = path.join('test-data', 'chrome_logs.txt');
 
 fixture `Cloud SSO`
     .meta({ type: 'regression', rte: rte.standalone })

@@ -34,7 +34,7 @@ export class SsoAuthorizationPage {
             await this.submitGithubForm(page, username, password)
         }
         // Wait for the authorization to complete
-        await page.waitForFunction(() => window.location.href.includes('#success'), { timeout: 10000 });
+        await page.waitForFunction(() => window.location.href.includes('#success'), { timeout: 15000 });
     }
 
     /**

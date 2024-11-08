@@ -3,8 +3,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { exec } from 'child_process';
 import { samlUser, samlUserPassword } from './conf';
-import { SsoAuthorizationPage } from '../pageObjects';
+import { MyRedisDatabasePage, SsoAuthorizationPage } from '../pageObjects';
 import { Common } from './common';
+import { closeChrome, openChromeWindow, saveOpenedChromeTabUrl } from './scripts/browser-scripts';
+import { t } from 'testcafe';
+import { AiChatBotPanel } from '../pageObjects/components/chatbot/ai-chatbot-panel';
 
 export class SsoAuthorization {
     /**
@@ -76,5 +79,40 @@ export class SsoAuthorization {
             const open = (await import('open')).default;
             await open(redirectUrl, { app: { name: 'Redis Insight' } });
         }
+    }
+
+    /**
+     * Sign in using SAML SSO
+     * @param urlToUse The url to process authorization
+     */
+    static async signInThroughSamlSso(urlToUse: string): Promise<void> {
+        const myRedisDatabasePage = new MyRedisDatabasePage();
+        const aiChatBotPanel = new AiChatBotPanel();
+        const logsFilePath = path.join('test-data', 'chrome_logs.txt');
+
+        await openChromeWindow();
+        await t.wait(2000);
+        await closeChrome();
+        await t.wait(2000);
+        await openChromeWindow();
+        await t.wait(2000);
+        await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
+        await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
+        await t.click(aiChatBotPanel.RedisCloudSigninPanel.ssoOauthButton);
+        await t.typeText(aiChatBotPanel.RedisCloudSigninPanel.ssoEmailInput, samlUser, { replace: true, paste: true });
+    
+        await t.wait(2000);
+        await t.click(aiChatBotPanel.RedisCloudSigninPanel.submitBtn);
+        await saveOpenedChromeTabUrl(logsFilePath);
+    
+        await t.wait(2000);
+        urlToUse = await Common.readFileFromFolder(logsFilePath);
+        await t.expect(urlToUse).contains('authorize?');
+        await closeChrome();
+        await t.wait(2000);
+        await this.processSSOPuppeteer(urlToUse, 'SAML');
+        await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
+        await myRedisDatabasePage.reloadPage();
+        await t.expect(myRedisDatabasePage.userProfileBtn.exists).ok('User profile button not displayed');
     }
 }

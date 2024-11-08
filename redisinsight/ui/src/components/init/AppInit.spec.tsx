@@ -67,7 +67,7 @@ describe('App Init', () => {
     expect(screen.getByTestId('suspense-loader')).toBeInTheDocument()
   })
 
-  it('should render error page with default error message, when status is "fail"', () => {
+  it('should render error page with generic error message, when status is "fail"', () => {
     (appInitSelector as jest.Mock).mockReturnValue({
       ...initialState,
       status: STATUS_FAIL,
@@ -82,27 +82,9 @@ describe('App Init', () => {
       }
     )
     expect(screen.getByTestId('connectivity-error-message')).toBeInTheDocument()
-    expect(screen.getByText('Something went wrong, please try again later')).toBeInTheDocument()
+    expect(screen.getByText('An unexpected server error has occurred. Please retry the request.')).toBeInTheDocument()
   })
 
-  it('should render error page with custom error message, when status is "fail"', () => {
-    (appInitSelector as jest.Mock).mockReturnValue({
-      ...initialState,
-      status: STATUS_FAIL,
-      error: 'Custom error message'
-    })
-    const initializeAppActionMock = jest.fn();
-    (initializeAppAction as jest.Mock).mockImplementation(() => initializeAppActionMock)
-    render(
-      <AppInit>
-        <div>children</div>
-      </AppInit>, {
-        store: mockedStore,
-      }
-    )
-    expect(screen.getByTestId('connectivity-error-message')).toBeInTheDocument()
-    expect(screen.getByText('Custom error message')).toBeInTheDocument()
-  })
   it('should render children when status is "success"', () => {
     (appInitSelector as jest.Mock).mockReturnValue({
       ...initialState,

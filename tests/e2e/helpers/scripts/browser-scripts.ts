@@ -36,9 +36,6 @@ export async function openChromeWindow(): Promise<void> {
     } else if (isLinux) {
         console.log('Opening Chrome on Linux...');
         try {
-            console.log("Attempting to open Chrome with execSync");
-            // const output = execSync(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-search-engine-choice-screen --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --no-sandbox --remote-allow-origins=* --disable-popup-blocking about:blank &`, { timeout: 10000 });
-            // console.log("Chrome opened successfully with execSync:", output);
             exec(`google-chrome --remote-debugging-port=9223 --disable-gpu --disable-search-engine-choice-screen --disable-dev-shm-usage --disable-software-rasterizer --enable-logging --disable-extensions --no-default-browser-check --disable-default-apps --disable-domain-reliability --disable-web-security --no-sandbox --remote-allow-origins=* --disable-popup-blocking about:blank &`, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`Error launching Chrome: ${error}`);
@@ -84,8 +81,8 @@ async function waitForChromeProcess(maxWaitTime = 10000, interval = 1000): Promi
  */
 export async function getOpenedChromeTab(urlSubstring?: string): Promise<string> {
     const { isMac, isLinux } = Common.getPlatform();
-    const maxRetries = 20;
-    const retryDelay = 300;
+    const maxRetries = 25;
+    const retryDelay = 400;
     const chromeDebuggingPort = 9223;
 
     if (isMac) {

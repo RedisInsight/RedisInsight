@@ -6,7 +6,7 @@ export const EMPTY_COMMAND = 'Encrypted data'
 
 export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } = {
   [RedisDefaultModules.TimeSeries]: {
-    text: ['RedisTimeSeries adds a Time Series data structure to Redis. ', 'With this capability you can:'],
+    text: ['Time series data structure adds the capability to:'],
     improvements: [
       'Add sample data',
       'Perform cross-time-series range and aggregation queries',
@@ -15,7 +15,7 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
     link: 'https://redis.io/docs/latest/develop/data-types/timeseries/'
   },
   [RedisDefaultModules.Search]: {
-    text: ['Redis Query Engine adds the capability to:'],
+    text: ['Redis Query Engine allows to:'],
     improvements: [
       'Query',
       'Secondary index',
@@ -31,11 +31,11 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
       'Update JSON documents',
       'Retrieve JSON documents'
     ],
-    additionalText: ['JSON also works seamlessly with Redis Query Engine to let you index and query JSON documents.'],
+    additionalText: ['JSON data structure also works seamlessly with Redis Query Engine to let you index and query JSON documents.'],
     link: 'https://redis.io/docs/latest/develop/data-types/json/'
   },
   [RedisDefaultModules.Bloom]: {
-    text: ['RedisBloom adds a set of probabilistic data structures to Redis, including:'],
+    text: ['Probabilistic data structures include:'],
     improvements: [
       'Bloom filter',
       'Cuckoo filter',
@@ -43,14 +43,14 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
       'Top-K',
       'T-digest'
     ],
-    additionalText: ['With this capability you can query streaming data without needing to store all the elements of the stream.'],
+    additionalText: ['With these data structures, you can query streaming data without needing to store all the elements of the stream.'],
     link: 'https://redis.io/docs/latest/develop/data-types/probabilistic/bloom-filter/'
   },
 }
 
 export const MODULE_TEXT_VIEW: { [key in RedisDefaultModules]?: string } = {
-  [RedisDefaultModules.Bloom]: 'RedisBloom',
-  [RedisDefaultModules.ReJSON]: 'JSON',
-  [RedisDefaultModules.Search]: 'RediSearch',
-  [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
+  [RedisDefaultModules.Bloom]: 'Probabilistic data structures',
+  [RedisDefaultModules.ReJSON]: 'JSON data structure',
+  [RedisDefaultModules.Search]: 'Redis Query Engine',
+  [RedisDefaultModules.TimeSeries]: 'Time series data structure',
 }

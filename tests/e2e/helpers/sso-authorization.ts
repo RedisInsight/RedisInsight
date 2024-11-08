@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 import { samlUser, samlUserPassword } from './conf';
 import { MyRedisDatabasePage, SsoAuthorizationPage } from '../pageObjects';
 import { Common } from './common';
-import { closeChrome, openChromeWindow, saveOpenedChromeTabUrl } from './scripts/browser-scripts';
+import { closeChrome, openChromeOnCi, saveOpenedChromeTabUrl } from './scripts/browser-scripts';
 import { t } from 'testcafe';
 import { AiChatBotPanel } from '../pageObjects/components/chatbot/ai-chatbot-panel';
 
@@ -90,12 +90,7 @@ export class SsoAuthorization {
         const aiChatBotPanel = new AiChatBotPanel();
         const logsFilePath = path.join('test-data', 'chrome_logs.txt');
 
-        await openChromeWindow();
-        await t.wait(2000);
-        await closeChrome();
-        await t.wait(2000);
-        await openChromeWindow();
-        await t.wait(2000);
+        await openChromeOnCi();
         await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
         await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
         await t.click(aiChatBotPanel.RedisCloudSigninPanel.ssoOauthButton);

@@ -11,6 +11,9 @@ interface Target {
 }
 const execPromise = promisify(exec);
 
+/**
+ * Close Chrome browser instance
+ */
 export async function closeChrome(): Promise<void> {
     console.log('Closing Chrome...');
     try {
@@ -58,6 +61,11 @@ export async function openChromeWindow(): Promise<void> {
     }
 }
 
+/**
+ * Waiting for chrome process start
+ * @param maxWaitTime Max waiting time
+ * @param interval Interval between check
+ */
 async function waitForChromeProcess(maxWaitTime = 10000, interval = 1000): Promise<boolean> {
     const start = Date.now();
     while (Date.now() - start < maxWaitTime) {
@@ -159,42 +167,13 @@ export async function saveOpenedChromeTabUrl(logsFilePath: string, timeout = 100
 }
 
 /**
- * Close the Chrome tab by prefix
- * @param prefix The prefix to match the tab URL
+ * Close Chrome browser instance
  */
-export function closeChromeTabWithPrefix(prefix: string): void {
-    const { isMac, isLinux } = Common.getPlatform();
-
-    if (isMac) {
-        const scriptPath = path.join(__dirname, 'close_chrome_tab.applescript');
-        exec(`osascript ${scriptPath} "${prefix}"`, (error, stdout, stderr) => {
-            if (error) {
-                console.error('Error closing tabs in Chrome on macOS:', error);
-                console.error('stdout:', stdout);
-                console.error('stderr:', stderr);
-                return;
-            }
-        });
-    }
-    else if (isLinux) {
-        exec('wmctrl -c "$(xdotool search --onlyvisible --class \'Google-chrome\' | xargs -I {} xdotool getwindowname {})"', (error, stdout, stderr) => {
-            if (error) {
-                console.error('Error closing tabs in Chrome on Linux:', error);
-                console.error('stdout:', stdout);
-                console.error('stderr:', stderr);
-                return;
-            }
-            // Filtering the output based on the prefix
-            if (stdout.includes(prefix)) {
-                exec(`xdotool search --onlyvisible --class "Google-chrome" windowkill $(xdotool search --onlyvisible --class "Google-chrome" | grep "${prefix}")`, (err) => {
-                    if (err) {
-                        console.error('Error killing the window:', err);
-                    }
-                });
-            }
-        });
-    }
-    else {
-        console.error('Unsupported operating system:', process.platform);
-    }
+export async function openChromeOnCi(): Promise<void> {
+    await openChromeWindow();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await closeChrome();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await openChromeWindow();
+    await new Promise(resolve => setTimeout(resolve, 1000));
 }

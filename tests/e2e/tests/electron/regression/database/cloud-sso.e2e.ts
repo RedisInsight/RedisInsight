@@ -5,7 +5,7 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { commonUrl, samlUser } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { modifyFeaturesConfigJson, updateControlNumber } from '../../../../helpers/insights';
-import { closeChrome, openChromeWindow, saveOpenedChromeTabUrl } from '../../../../helpers/scripts/browser-scripts';
+import { closeChrome, openChromeOnCi, openChromeWindow, saveOpenedChromeTabUrl } from '../../../../helpers/scripts/browser-scripts';
 import { Common, SsoAuthorization } from '../../../../helpers';
 import { AiChatBotPanel } from '../../../../pageObjects/components/chatbot/ai-chatbot-panel';
 
@@ -62,12 +62,7 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
 // skip until adding tests for SSO feature
 test.only('Verify that user can sign in using SSO via SAML', async t => {
     // Open Chrome with a sample URL and save it to logs file
-    await openChromeWindow();
-    await t.wait(2000);
-    await closeChrome();
-    await t.wait(2000);
-    await openChromeWindow();
-    await t.wait(2000);
+    await openChromeOnCi();
     await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.ssoOauthButton);

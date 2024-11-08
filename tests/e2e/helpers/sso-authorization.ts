@@ -17,13 +17,10 @@ export class SsoAuthorization {
      */
     static async processSSOPuppeteer(urlToUse: string, authorizationType: 'Google' | 'Github' | 'SAML'): Promise<void> {
         const ssoAuthorizationPage = new SsoAuthorizationPage();
-        // const userDataDir = path.resolve(__dirname, '../test-data/Default');
         const { browser, page } = await connect({
             headless: false,
             args: [],
-            customConfig: {
-                // userDataDir: userDataDir
-            },
+            customConfig: {},
             turnstile: true,
             connectOption: {},
             disableXvfb: true,

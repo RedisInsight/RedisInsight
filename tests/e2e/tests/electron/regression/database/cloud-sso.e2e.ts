@@ -67,8 +67,6 @@ test.only('Verify that user can sign in using SSO SAML auth', async t => {
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.ssoOauthButton);
     await t.typeText(aiChatBotPanel.RedisCloudSigninPanel.ssoEmailInput, samlUser, { replace: true, paste: true });
-
-    await t.wait(2000);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.submitBtn);
     await saveOpenedChromeTabUrl(logsWithUrlFilePath);
 
@@ -76,7 +74,7 @@ test.only('Verify that user can sign in using SSO SAML auth', async t => {
     urlToUse = await Common.readFileFromFolder(logsWithUrlFilePath);
     await t.expect(urlToUse).contains('authorize?');
     await closeChrome();
-    await t.wait(2000);
+    // await t.wait(2000);
     await SsoAuthorization.processSSOPuppeteer(urlToUse, 'SAML');
     await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
     await myRedisDatabasePage.reloadPage();
@@ -85,7 +83,7 @@ test.only('Verify that user can sign in using SSO SAML auth', async t => {
     await t.expect(myRedisDatabasePage.userProfileAccountInfo.textContent).contains('Geor', 'User not signed in');
 });
 // Can be run only locally for google auth
-test.skip('Verify that user can sign in using SSO via Google authorization', async t => {
+test.skip('Verify that user can sign in using SSO Google auth', async t => {
     await t.expect(myRedisDatabasePage.promoButton.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
     // Open Chrome with a sample URL and save it to logs file
     await openChromeWindow();
@@ -110,7 +108,7 @@ test.skip('Verify that user can sign in using SSO via Google authorization', asy
     await t.expect(myRedisDatabasePage.userProfileAccountInfo.textContent).contains('Geor', 'User not signed in');
 });
 // Can be run only locally for github auth
-test.skip('Verify that user can sign in using SSO via Github authorization', async t => {
+test.skip('Verify that user can sign in using SSO Github auth', async t => {
     // Open Chrome with a sample URL and save it to logs file
     await openChromeWindow();
     await t.wait(1000);

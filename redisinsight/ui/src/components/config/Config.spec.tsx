@@ -1,17 +1,24 @@
 import React from 'react'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import { BuildType } from 'uiSrc/constants/env'
 import { localStorageService } from 'uiSrc/services'
 import { setFeaturesToHighlight, setOnboarding } from 'uiSrc/slices/app/features'
 import { getNotifications } from 'uiSrc/slices/app/notifications'
-import { render, mockedStore, cleanup, MOCKED_HIGHLIGHTING_FEATURES } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  mockedStore,
+  cleanup,
+  MOCKED_HIGHLIGHTING_FEATURES,
+  initialStateDefault,
+  mockStore
+} from 'uiSrc/utils/test-utils'
 
 import {
   getUserConfigSettings,
   setSettingsPopupState,
   userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
-import { appServerInfoSelector, getServerInfo } from 'uiSrc/slices/app/info'
+import { appServerInfoSelector, getServerInfo, setServerLoaded } from 'uiSrc/slices/app/info'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { getRedisCommands } from 'uiSrc/slices/app/redis-commands'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
@@ -20,6 +27,7 @@ import { getContentRecommendations } from 'uiSrc/slices/recommendations/recommen
 import { getGuideLinks } from 'uiSrc/slices/content/guide-links'
 import { getWBCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { setCapability } from 'uiSrc/slices/app/context'
+import { FeatureFlags } from 'uiSrc/constants'
 import Config from './Config'
 
 let store: typeof mockedStore
@@ -64,8 +72,8 @@ describe('Config', () => {
       getServerInfo(),
       getNotifications(),
       getWBCustomTutorials(),
-      processCliClient(),
       getRedisCommands(),
+      processCliClient(),
       getContentRecommendations(),
       getGuideLinks(),
       getWBTutorials(),
@@ -73,6 +81,28 @@ describe('Config', () => {
       setSettingsPopupState(false)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
+  })
+
+  it('should render expected actions when envDependant feature is off', () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+    const mockedStore = mockStore(initialStoreState)
+
+    render(<Config />, { store: mockedStore })
+    const afterRenderActions = [
+      setCapability(),
+      setServerLoaded(),
+      getRedisCommands(),
+      processCliClient(),
+      getContentRecommendations(),
+      getGuideLinks(),
+      getWBTutorials(),
+      getUserConfigSettings(),
+    ]
+    expect(mockedStore.getActions()).toEqual([...afterRenderActions])
   })
 
   it('should call the list of actions', () => {

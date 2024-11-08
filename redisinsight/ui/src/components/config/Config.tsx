@@ -54,16 +54,13 @@ const Config = () => {
       dispatch(fetchServerInfo())
       dispatch(fetchNotificationsAction())
       dispatch(fetchCustomTutorials())
+      dispatch(fetchRedisCommandsInfo())
     } else {
       dispatch(setServerLoaded())
+      dispatch(fetchLocalRedisCommandsInfo())
     }
 
     dispatch(fetchUnsupportedCliCommandsAction())
-    if (envDependentFeature?.flag) {
-      dispatch(fetchRedisCommandsInfo())
-    } else {
-      dispatch(fetchLocalRedisCommandsInfo())
-    }
     dispatch(fetchContentRecommendations())
     dispatch(fetchGuideLinksAction())
 

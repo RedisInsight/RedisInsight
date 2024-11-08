@@ -9,6 +9,17 @@ import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { AppDispatch, RootState } from '../store'
 import { StateAppRedisCommands } from '../interfaces'
 
+export const commands = [
+  'main',
+  'redisearch',
+  'redisjson',
+  'redistimeseries',
+  'redisai',
+  'redisgraph',
+  'redisgears',
+  'redisbloom'
+]
+
 export const initialState: StateAppRedisCommands = {
   loading: false,
   error: '',
@@ -78,8 +89,6 @@ export function fetchRedisCommandsInfo(onSuccessAction?: () => void, onFailActio
 export function fetchLocalRedisCommandsInfo(onSuccessAction?: () => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(getRedisCommands())
-
-    const commands = ['main', 'redisearch', 'redisjson', 'redistimeseries', 'redisai', 'redisgraph', 'redisgears', 'redisbloom']
 
     try {
       const riConfig = getConfig()

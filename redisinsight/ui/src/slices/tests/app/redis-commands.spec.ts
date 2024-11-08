@@ -8,7 +8,7 @@ import reducer, {
   getRedisCommandsFailure,
   getRedisCommandsSuccess,
   appRedisCommandsSelector,
-  fetchRedisCommandsInfo
+  fetchRedisCommandsInfo, commands, fetchLocalRedisCommandsInfo
 } from '../../app/redis-commands'
 
 let store: typeof mockedStore
@@ -142,6 +142,60 @@ describe('slices', () => {
       ]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
+  })
+
+  describe('fetchLocalRedisCommandsInfo', () => {
+    it('successfully fetches all local commands', async () => {
+      let expectedResult = {}
+      const onSuccessAction = jest.fn()
+      const onFailAction = jest.fn()
+      const apiGetSpy = jest.spyOn(apiService, 'get')
+
+      commands.forEach((command) => {
+        expectedResult = { ...expectedResult, [command]: {} }
+        apiGetSpy.mockResolvedValueOnce({ status: 200, data: { [command]: {} } })
+      })
+
+      // Act
+      await store.dispatch<any>(fetchLocalRedisCommandsInfo(onSuccessAction, onFailAction))
+
+      // Assert
+      const expectedActions = [
+        getRedisCommands(),
+        getRedisCommandsSuccess(expectedResult)
+      ]
+
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+      expect(onSuccessAction).toHaveBeenCalledTimes(1)
+      expect(onFailAction).not.toHaveBeenCalled()
+    })
+
+    it('handles fetch failures', async () => {
+      let expectedResult = {}
+      const onSuccessAction = jest.fn()
+      const onFailAction = jest.fn()
+      const apiGetSpy = jest.spyOn(apiService, 'get')
+      const errorMessage = 'Something was wrong!'
+
+      commands.slice(0, -1).forEach((command) => {
+        expectedResult = { ...expectedResult, [command]: {} }
+        apiGetSpy.mockResolvedValueOnce({ status: 200, data: { [command]: {} } })
+      })
+      apiGetSpy.mockRejectedValueOnce({ status: 500, data: { message: errorMessage } })
+
+      // Act
+      await store.dispatch<any>(fetchLocalRedisCommandsInfo(onSuccessAction, onFailAction))
+
+      // Assert
+      const expectedActions = [
+        getRedisCommands(),
+        getRedisCommandsFailure(errorMessage),
+      ]
+
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+      expect(onFailAction).toHaveBeenCalledTimes(1)
+      expect(onSuccessAction).not.toHaveBeenCalled()
     })
   })
 })

@@ -17,12 +17,12 @@ export class SsoAuthorization {
      */
     static async processSSOPuppeteer(urlToUse: string, authorizationType: 'Google' | 'Github' | 'SAML'): Promise<void> {
         const ssoAuthorizationPage = new SsoAuthorizationPage();
-        const userDataDir = path.resolve(__dirname, '../test-data/Default');
+        // const userDataDir = path.resolve(__dirname, '../test-data/Default');
         const { browser, page } = await connect({
             headless: false,
             args: [],
             customConfig: {
-                userDataDir: userDataDir
+                // userDataDir: userDataDir
             },
             turnstile: true,
             connectOption: {},
@@ -88,7 +88,7 @@ export class SsoAuthorization {
     static async signInThroughSamlSso(urlToUse: string): Promise<void> {
         const myRedisDatabasePage = new MyRedisDatabasePage();
         const aiChatBotPanel = new AiChatBotPanel();
-        const logsFilePath = path.join('test-data', 'chrome_logs.txt');
+        const logsWithUrlFilePath = path.join('test-data', 'chrome_logs.txt');
 
         await openChromeOnCi();
         await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
@@ -98,10 +98,10 @@ export class SsoAuthorization {
     
         await t.wait(2000);
         await t.click(aiChatBotPanel.RedisCloudSigninPanel.submitBtn);
-        await saveOpenedChromeTabUrl(logsFilePath);
+        await saveOpenedChromeTabUrl(logsWithUrlFilePath);
     
         await t.wait(2000);
-        urlToUse = await Common.readFileFromFolder(logsFilePath);
+        urlToUse = await Common.readFileFromFolder(logsWithUrlFilePath);
         await t.expect(urlToUse).contains('authorize?');
         await closeChrome();
         await t.wait(2000);

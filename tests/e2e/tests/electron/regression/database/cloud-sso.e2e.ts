@@ -19,7 +19,7 @@ const pathes = {
     defaultRemote: path.join('.', 'test-data', 'features-configs', 'insights-default-remote.json'),
     electronConfig: path.join('.', 'test-data', 'features-configs', 'sso-electron-build.json')
 };
-const logsFilePath = path.join('test-data', 'chrome_logs.txt');
+const logsWithUrlFilePath = path.join('test-data', 'chrome_logs.txt');
 
 fixture `Cloud SSO`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -32,7 +32,7 @@ fixture `Cloud SSO`
         await updateControlNumber(48.2);
     })
     .afterEach(async() => {
-        await Common.deleteFileFromFolderIfExists(logsFilePath);
+        await Common.deleteFileFromFolderIfExists(logsWithUrlFilePath);
         await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Verify that user can see SSO feature if it is enabled in feature config', async t => {
@@ -60,7 +60,7 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
     await t.expect(myRedisDatabasePage.AddRedisDatabase.RedisCloudSigninPanel.ssoOauth.exists).ok('SSO auth button not displayed when SSO feature enabled');
 });
 // skip until adding tests for SSO feature
-test.only('Verify that user can sign in using SSO via SAML', async t => {
+test.skip('Verify that user can sign in using SSO via SAML', async t => {
     // Open Chrome with a sample URL and save it to logs file
     await openChromeOnCi();
     await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
@@ -70,10 +70,10 @@ test.only('Verify that user can sign in using SSO via SAML', async t => {
 
     await t.wait(2000);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.submitBtn);
-    await saveOpenedChromeTabUrl(logsFilePath);
+    await saveOpenedChromeTabUrl(logsWithUrlFilePath);
 
     await t.wait(2000);
-    urlToUse = await Common.readFileFromFolder(logsFilePath);
+    urlToUse = await Common.readFileFromFolder(logsWithUrlFilePath);
     await t.expect(urlToUse).contains('authorize?');
     await closeChrome();
     await t.wait(2000);
@@ -94,12 +94,12 @@ test.skip('Verify that user can sign in using SSO via Google authorization', asy
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
 
     await t.wait(2000);
-    await saveOpenedChromeTabUrl(logsFilePath);
+    await saveOpenedChromeTabUrl(logsWithUrlFilePath);
     // Click the button to trigger the Google authorization page
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.googleOauth);
 
     await t.wait(2000);
-    urlToUse = await Common.readFileFromFolder(logsFilePath);
+    urlToUse = await Common.readFileFromFolder(logsWithUrlFilePath);
     await t.expect(urlToUse).contains('authorize?');
     await closeChrome();
     await SsoAuthorization.processSSOPuppeteer(urlToUse, 'Google');
@@ -118,12 +118,12 @@ test.skip('Verify that user can sign in using SSO via Github authorization', asy
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
 
     await t.wait(2000);
-    await saveOpenedChromeTabUrl(logsFilePath);
+    await saveOpenedChromeTabUrl(logsWithUrlFilePath);
     // Click the button to trigger the Github authorization page
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.githubOauth);
 
     await t.wait(2000);
-    urlToUse = await Common.readFileFromFolder(logsFilePath);
+    urlToUse = await Common.readFileFromFolder(logsWithUrlFilePath);
     await t.expect(urlToUse).contains('authorize?');
     await closeChrome();
     await SsoAuthorization.processSSOPuppeteer(urlToUse, 'Github');

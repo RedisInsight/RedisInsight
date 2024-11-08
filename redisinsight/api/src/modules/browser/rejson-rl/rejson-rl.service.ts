@@ -253,9 +253,12 @@ export class RejsonRlService {
       }
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
-        throw new BadRequestException(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
-        );
+        throw new BadRequestException({
+          message: ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
+          additionalInfo: {
+            jsonModuleMissing: true
+          }
+        });
       }
 
       throw catchAclError(error);
@@ -307,9 +310,12 @@ export class RejsonRlService {
       }
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
-        throw new BadRequestException(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
-        );
+        throw new BadRequestException({
+          message: ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
+          additionalInfo: {
+            jsonModuleMissing: true
+          }
+        });
       }
 
       // todo: refactor error handling across the project
@@ -361,9 +367,12 @@ export class RejsonRlService {
       }
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
-        throw new BadRequestException(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
-        );
+        throw new BadRequestException({
+          message: ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
+          additionalInfo: {
+            jsonModuleMissing: true
+          }
+        });
       }
 
       throw catchAclError(error);
@@ -402,9 +411,12 @@ export class RejsonRlService {
       }
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
-        throw new BadRequestException(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
-        );
+        throw new BadRequestException({
+          message: ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
+          additionalInfo: {
+            jsonModuleMissing: true
+          }
+        });
       }
 
       throw catchAclError(error);
@@ -443,9 +455,12 @@ export class RejsonRlService {
       }
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
-        throw new BadRequestException(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
-        );
+        throw new BadRequestException({
+          message: ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
+          additionalInfo: {
+            jsonModuleMissing: true
+          }
+        });
       }
 
       throw catchAclError(error);

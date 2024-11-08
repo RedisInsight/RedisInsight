@@ -4,7 +4,6 @@ import {
   appInitSelector,
   initializeAppAction,
   STATUS_FAIL,
-  STATUS_INITIAL,
   STATUS_SUCCESS,
 } from 'uiSrc/slices/app/init'
 import ConnectivityError from 'uiSrc/components/connectivity-error/ConnectivityError'
@@ -26,9 +25,7 @@ const AppInit = ({ children, onSuccess, onFail }: Props) => {
   const initApp = useCallback(() => dispatch(initializeAppAction(onSuccess, onFail)), [])
 
   useEffect(() => {
-    if (status === STATUS_INITIAL) {
-      initApp()
-    }
+    initApp()
   }, [])
 
   if (status === STATUS_FAIL) {

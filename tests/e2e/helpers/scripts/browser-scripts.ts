@@ -115,6 +115,7 @@ export async function getOpenedChromeTab(urlSubstring?: string): Promise<string>
 
                 const pageTargets = targets.filter(target => target.type === 'page');
                 console.log(`Found ${pageTargets.length} open tabs in Chrome`);
+                console.log(`Found ${targets[0].url} url open tabs in Chrome`);
 
                 // Check for a new tab matching criteria
                 const newTab = pageTargets.find(target =>

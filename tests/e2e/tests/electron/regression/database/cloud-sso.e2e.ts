@@ -65,6 +65,10 @@ test.only('Verify that user can sign in using SSO via SAML', async t => {
     // Open Chrome with a sample URL and save it to logs file
     await openChromeWindow();
     await t.wait(2000);
+    await closeChrome();
+    await t.wait(2000);
+    await openChromeWindow();
+    await t.wait(2000);
     await t.click(myRedisDatabasePage.NavigationHeader.copilotButton);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.oauthAgreement);
     await t.click(aiChatBotPanel.RedisCloudSigninPanel.ssoOauthButton);
@@ -77,7 +81,7 @@ test.only('Verify that user can sign in using SSO via SAML', async t => {
     await t.wait(2000);
     urlToUse = await Common.readFileFromFolder(logsFilePath);
     await t.expect(urlToUse).contains('authorize?');
-    // await closeChrome();
+    await closeChrome();
     await t.wait(2000);
     await SsoAuthorization.processSSOPuppeteer(urlToUse, 'SAML');
     await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });

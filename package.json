@@ -1,6 +1,5 @@
 {
   "name": "redisinsight",
-  "version": "1.0.0",
   "productName": "Redis Insight",
   "description": "Redis Insight",
   "license": "SSPL",

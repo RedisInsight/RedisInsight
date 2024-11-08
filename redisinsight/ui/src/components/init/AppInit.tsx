@@ -19,17 +19,16 @@ const AppInit = ({ children, onSuccess, onFail }: Props) => {
   const dispatch = useDispatch()
   const {
     status,
-    error = 'Something went wrong, please try again later',
   } = useSelector(appInitSelector)
 
-  const initApp = useCallback(() => dispatch(initializeAppAction(onSuccess, onFail)), [])
+  const initApp = useCallback(() => dispatch(initializeAppAction(onSuccess, onFail)), [onSuccess, onFail])
 
   useEffect(() => {
     initApp()
   }, [])
 
   if (status === STATUS_FAIL) {
-    return <ConnectivityError isLoading={false} onRetry={initApp} error={error} />
+    return <ConnectivityError isLoading={false} onRetry={initApp} error="An unexpected server error has occurred. Please retry the request." />
   }
 
   return status === STATUS_SUCCESS ? children : <SuspenseLoader />

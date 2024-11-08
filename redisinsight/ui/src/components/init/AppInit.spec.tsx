@@ -9,7 +9,6 @@ jest.mock('uiSrc/slices/app/init', () => ({
   ...jest.requireActual('uiSrc/slices/app/init'),
   reducers: {
     ...jest.requireActual('uiSrc/slices/app/init').reducers,
-    initializeAppAction: jest.fn(),
   },
   appInitSelector: jest.fn().mockReturnValue(jest.requireActual('uiSrc/slices/app/init').initialState),
   initializeAppAction: jest.fn(),
@@ -39,14 +38,16 @@ describe('App Init', () => {
     })
     const initializeAppActionMock = jest.fn();
     (initializeAppAction as jest.Mock).mockImplementation(() => initializeAppActionMock)
+    const onSuccess = jest.fn()
+    const onFail = jest.fn()
     render(
-      <AppInit>
+      <AppInit onSuccess={onSuccess} onFail={onFail}>
         <div>children</div>
       </AppInit>, {
         store: mockedStore,
       }
     )
-    expect(initializeAppAction).toBeCalled()
+    expect(initializeAppAction).toHaveBeenCalled()
   })
 
   it('should render page placeholder when status is "loading"', () => {
@@ -54,6 +55,8 @@ describe('App Init', () => {
       ...initialState,
       status: STATUS_LOADING,
     })
+    const initializeAppActionMock = jest.fn();
+    (initializeAppAction as jest.Mock).mockImplementation(() => initializeAppActionMock)
     render(
       <AppInit>
         <div>children</div>
@@ -61,7 +64,7 @@ describe('App Init', () => {
         store: mockedStore,
       }
     )
-    expect(screen.getByTestId('page-placeholder')).toBeInTheDocument()
+    expect(screen.getByTestId('suspense-loader')).toBeInTheDocument()
   })
 
   it('should render error page with default error message, when status is "fail"', () => {
@@ -69,6 +72,8 @@ describe('App Init', () => {
       ...initialState,
       status: STATUS_FAIL,
     })
+    const initializeAppActionMock = jest.fn();
+    (initializeAppAction as jest.Mock).mockImplementation(() => initializeAppActionMock)
     render(
       <AppInit>
         <div>children</div>
@@ -86,6 +91,8 @@ describe('App Init', () => {
       status: STATUS_FAIL,
       error: 'Custom error message'
     })
+    const initializeAppActionMock = jest.fn();
+    (initializeAppAction as jest.Mock).mockImplementation(() => initializeAppActionMock)
     render(
       <AppInit>
         <div>children</div>
@@ -101,6 +108,8 @@ describe('App Init', () => {
       ...initialState,
       status: STATUS_SUCCESS,
     })
+    const initializeAppActionMock = jest.fn();
+    (initializeAppAction as jest.Mock).mockImplementation(() => initializeAppActionMock)
     render(
       <AppInit>
         <div>children</div>

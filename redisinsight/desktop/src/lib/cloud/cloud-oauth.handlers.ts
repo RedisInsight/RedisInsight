@@ -12,6 +12,7 @@ import { CloudOauthUnexpectedErrorException } from 'apiSrc/modules/cloud/auth/ex
 import { CloudAuthService } from 'apiSrc/modules/cloud/auth/cloud-auth.service'
 import { CloudAuthRequestOptions, CloudAuthResponse, CloudAuthStatus } from 'apiSrc/modules/cloud/auth/models'
 import { DEFAULT_SESSION_ID, DEFAULT_USER_ID } from 'apiSrc/common/constants'
+import { configMain as config } from 'desktopSrc/config/configMain'
 
 const TCP_LOCAL_CLOUD_AUTH_PORT = process.env.TCP_LOCAL_CLOUD_AUTH_PORT
   ? parseInt(process.env.TCP_LOCAL_CLOUD_AUTH_PORT, 10)
@@ -68,7 +69,7 @@ export const getTokenCallbackFunction = (webContents: WebContents) => (response:
 export const initCloudOauthHandlers = () => {
   ipcMain.handle(IpcInvokeEvent.cloudOauth, async (event, options: CloudAuthRequestOptions) => {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (config.isDevelopment) {
         const { url } = await sendTcpRequest({
           action: 'getAuthUrl',
           options: {
@@ -129,7 +130,7 @@ export const initCloudOauthHandlers = () => {
 
 export const cloudOauthCallback = async (url: UrlWithParsedQuery) => {
   try {
-    if (process.env.NODE_ENV === 'development') {
+    if (config.isDevelopment) {
       const { result } = await sendTcpRequest({
         action: 'handleCallback',
         options: {

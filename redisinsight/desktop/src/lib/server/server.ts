@@ -24,8 +24,7 @@ let gracefulShutdown: Function
 let beApp: any
 export const launchApiServer = async () => {
   try {
-    console.log('Launching API server', process.env.NODE_ENV, process.env.RI_APP_TYPE, process.env.NODE_ENV === 'development' && process.env.RI_APP_TYPE === 'electron')
-    if (process.env.NODE_ENV === 'development' && process.env.RI_APP_TYPE === 'electron') {
+    if (config.isDevelopment && process.env.RI_APP_TYPE === 'electron') {
       console.log('Launching API server', 1)
       // Define auth port
       const TCP_LOCAL_AUTH_PORT = process.env.TCP_LOCAL_AUTH_PORT ? parseInt(process.env.TCP_LOCAL_AUTH_PORT, 10) : 5541

@@ -78,7 +78,7 @@ export const createWindow = async ({
     }
   }
 
-  if (process.env.NODE_ENV === 'development') {
+  if (config.isDevelopment) {
     newWindow.loadURL(`http://localhost:8080`)
   } else {
     newWindow.loadURL(resolveHtmlPath(htmlFileName, options?.parsedDeepLink))
@@ -104,7 +104,7 @@ export const windowFactory = async (
     case WindowType.Splash:
       return createWindow({
         prevWindow,
-        htmlFileName: process.env.NODE_ENV === 'development' ? '../../../splash.html' : 'splash.html',
+        htmlFileName: config.isDevelopment ? '../../../splash.html' : 'splash.html',
         windowType,
         options: {
           ...config.splashWindow,
@@ -114,7 +114,7 @@ export const windowFactory = async (
     case WindowType.Main:
       return createWindow({
         prevWindow,
-        htmlFileName: process.env.NODE_ENV === 'development' ? '../src/index.html' : 'index.html',
+        htmlFileName: config.isDevelopment ? '../src/index.html' : 'index.html',
         windowType,
         options: {
           ...options,

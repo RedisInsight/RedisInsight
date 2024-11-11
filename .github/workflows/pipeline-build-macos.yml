@@ -116,9 +116,6 @@ jobs:
           ./release/*-mac.yml
           ./release/redisstack
 
-    - name: Adding markdown
-      run: echo '### Hello world! 🚀' >> $GITHUB_STEP_SUMMARY
-
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}

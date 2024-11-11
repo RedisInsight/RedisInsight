@@ -35,9 +35,6 @@ async function main() {
     define,
     external,
     logLevel: 'silent',
-    keepNames: true,
-    target: 'node16',
-    metafile: true,
     plugins: [
       /* add to the end of plugins array */
       // eslint-disable-next-line @typescript-eslint/no-use-before-define

@@ -1,17 +1,37 @@
-import React, { ReactElement, useEffect } from 'react'
+import React, { ReactElement, useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { appInitSelector, initializeAppAction, STATUS_SUCCESS } from 'uiSrc/slices/app/init'
-import PagePlaceholder from '../page-placeholder'
+import {
+  appInitSelector,
+  initializeAppAction,
+  STATUS_FAIL,
+  STATUS_SUCCESS,
+} from 'uiSrc/slices/app/init'
+import ConnectivityError from 'uiSrc/components/connectivity-error/ConnectivityError'
+import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 
-const AppInit = ({ children }: { children: ReactElement }) => {
+type Props = {
+  children: ReactElement
+  onSuccess?: () => void,
+  onFail?: () => void,
+}
+
+const AppInit = ({ children, onSuccess, onFail }: Props) => {
   const dispatch = useDispatch()
-  const { status } = useSelector(appInitSelector)
+  const {
+    status,
+  } = useSelector(appInitSelector)
+
+  const initApp = useCallback(() => dispatch(initializeAppAction(onSuccess, onFail)), [onSuccess, onFail])
 
   useEffect(() => {
-    dispatch(initializeAppAction())
+    initApp()
   }, [])
 
-  return status === STATUS_SUCCESS ? children : <PagePlaceholder />
+  if (status === STATUS_FAIL) {
+    return <ConnectivityError isLoading={false} onRetry={initApp} error="An unexpected server error has occurred. Please retry the request." />
+  }
+
+  return status === STATUS_SUCCESS ? children : <SuspenseLoader />
 }
 
 export default AppInit

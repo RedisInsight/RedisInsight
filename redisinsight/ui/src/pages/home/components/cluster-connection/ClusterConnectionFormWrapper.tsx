@@ -7,7 +7,6 @@ import {
   fetchInstancesRedisCluster,
 } from 'uiSrc/slices/instances/cluster'
 import { Pages } from 'uiSrc/constants'
-import { useResizableFormField } from 'uiSrc/services'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { ICredentialsRedisCluster, InstanceType } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -16,11 +15,10 @@ import { autoFillFormDetails } from 'uiSrc/pages/home/utils'
 import ClusterConnectionForm from './cluster-connection-form/ClusterConnectionForm'
 
 export interface Props {
-  width: number;
-  onClose?: () => void;
+  onClose?: () => void
 }
 
-const ClusterConnectionFormWrapper = ({ onClose, width }: Props) => {
+const ClusterConnectionFormWrapper = ({ onClose }: Props) => {
   const [initialValues, setInitialValues] = useState({
     host: '',
     port: '',
@@ -34,11 +32,6 @@ const ClusterConnectionFormWrapper = ({ onClose, width }: Props) => {
   const formRef = useRef<HTMLDivElement>(null)
 
   const { loading, credentials } = useSelector(clusterSelector)
-
-  const [flexGroupClassName, flexItemClassName] = useResizableFormField(
-    formRef,
-    width
-  )
 
   useEffect(
     () => () => {
@@ -83,8 +76,6 @@ const ClusterConnectionFormWrapper = ({ onClose, width }: Props) => {
         password={credentials?.password ?? ''}
         initialValues={initialValues}
         onHostNamePaste={handlePostHostName}
-        flexGroupClassName={flexGroupClassName}
-        flexItemClassName={flexItemClassName}
         onClose={onClose}
         onSubmit={formSubmit}
         loading={loading}

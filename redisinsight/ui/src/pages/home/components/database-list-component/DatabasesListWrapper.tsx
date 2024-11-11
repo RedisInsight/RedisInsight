@@ -2,7 +2,7 @@ import {
   Criteria,
   EuiButtonIcon,
   EuiIcon,
-  EuiLink,
+  EuiLink, EuiResizeObserver,
   EuiTableFieldDataColumnType,
   EuiText,
   EuiTextColor,
@@ -60,7 +60,6 @@ export interface Props {
   instances: Instance[]
   predefinedInstances?: Instance[]
   loading: boolean
-  width: number
   editedInstance: Nullable<Instance>
   onEditInstance: (instance: Instance) => void
   onDeleteInstances: (instances: Instance[]) => void
@@ -73,7 +72,6 @@ const isCreateCloudDb = (id?: string) => id === CREATE_CLOUD_DB_ID
 const DatabasesListWrapper = (props: Props) => {
   const {
     instances,
-    width,
     predefinedInstances = [],
     onEditInstance,
     editedInstance,
@@ -88,6 +86,7 @@ const DatabasesListWrapper = (props: Props) => {
   const { contextInstanceId } = useSelector(appContextSelector)
   const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
 
+  const [width, setWidth] = useState(0)
   const [, forceRerender] = useState({})
   const sortingRef = useRef<PropertySort>(
     localStorageService.get(BrowserStorageItem.instancesSorting) ?? {
@@ -120,10 +119,6 @@ const DatabasesListWrapper = (props: Props) => {
       }
     }
   }, [instances, search])
-
-  useEffect(() => {
-    closePopover()
-  }, [width])
 
   const handleCopy = (text = '', databaseId?: string) => {
     navigator.clipboard?.writeText(text)
@@ -233,6 +228,10 @@ const DatabasesListWrapper = (props: Props) => {
         }
       )
     )
+  }
+
+  const onResize = ({ width: innerWidth }: { width: number }) => {
+    setWidth(innerWidth)
   }
 
   const handleClickGoToCloud = () => {
@@ -487,22 +486,26 @@ const DatabasesListWrapper = (props: Props) => {
   ]
 
   return (
-    <div className={styles.container}>
-      <ItemList<Instance>
-        width={width}
-        columns={columns}
-        columnsToHide={COLS_TO_HIDE}
-        onDelete={handleDeleteInstances}
-        onExport={handleExportInstances}
-        onWheel={closePopover}
-        loading={loading}
-        data={listOfInstances}
-        rowProps={getRowProps}
-        getSelectableItems={(item) => item.id !== 'create-free-cloud-db'}
-        onTableChange={onTableChange}
-        sort={sortingRef.current}
-      />
-    </div>
+    <EuiResizeObserver onResize={onResize}>
+      {(resizeRef) => (
+        <div className={styles.container} ref={resizeRef}>
+          <ItemList<Instance>
+            width={width}
+            columns={columns}
+            columnsToHide={COLS_TO_HIDE}
+            onDelete={handleDeleteInstances}
+            onExport={handleExportInstances}
+            onWheel={closePopover}
+            loading={loading}
+            data={listOfInstances}
+            rowProps={getRowProps}
+            getSelectableItems={(item) => item.id !== 'create-free-cloud-db'}
+            onTableChange={onTableChange}
+            sort={sortingRef.current}
+          />
+        </div>
+      )}
+    </EuiResizeObserver>
   )
 }
 

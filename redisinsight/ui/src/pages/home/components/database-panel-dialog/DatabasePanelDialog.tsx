@@ -1,62 +1,63 @@
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
-  EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
+  EuiModal,
+  EuiModalBody,
+  EuiModalFooter,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
   EuiRadioGroup,
-  EuiRadioGroupOption,
+  EuiRadioGroupOption, EuiSpacer,
   EuiText,
-  EuiTitle,
-  EuiToolTip,
+  EuiTitle
 } from '@elastic/eui'
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
-import { cloudSelector, resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
-import { clusterSelector, resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
-import { Instance, InstanceType } from 'uiSrc/slices/interfaces'
-import { sentinelSelector, resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
-
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
-import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
+import { Instance, InstanceType } from 'uiSrc/slices/interfaces'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import ClusterConnectionFormWrapper from 'uiSrc/pages/home/components/cluster-connection'
-import CloudConnectionFormWrapper from 'uiSrc/pages/home/components/cloud-connection'
-import SentinelConnectionWrapper from 'uiSrc/pages/home/components/sentinel-connection'
-import ManualConnectionWrapper from 'uiSrc/pages/home/components/manual-connection'
-import InstanceConnections from 'uiSrc/pages/home/components/database-panel/instance-connections'
+import { clusterSelector, resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
+import { cloudSelector, resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
+import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
+import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 
+import ManualConnectionWrapper from 'uiSrc/pages/home/components/manual-connection'
+import SentinelConnectionWrapper from 'uiSrc/pages/home/components/sentinel-connection'
+import ClusterConnectionFormWrapper from 'uiSrc/pages/home/components/cluster-connection'
+import AddDatabaseFlowTabs from 'uiSrc/pages/home/components/add-database-flow-tabs'
+
+import CloudConnectionFormWrapper from 'uiSrc/pages/home/components/cloud-connection'
+import ImportDatabase from 'uiSrc/pages/home/components/import-database'
+import { HeaderProvider } from './ModalTitleProvider'
 import styles from './styles.module.scss'
 
 export interface Props {
-  width: number
-  isResizablePanel?: boolean
+  isOpen: boolean
   editMode: boolean
   urlHandlingAction?: Nullable<UrlHandlingActions>
   initialValues?: Nullable<Record<string, any>>
   editedInstance: Nullable<Instance>
-  onClose?: () => void
+  onClose: () => void
   onDbEdited?: () => void
-  onAliasEdited?: (value: string) => void
-  isFullWidth?: boolean
   initConnectionType?: AddDbType
 }
 
-const DatabasePanel = React.memo((props: Props) => {
+const DatabasePanelDialog = (props: Props) => {
   const {
+    isOpen,
     editMode,
-    isResizablePanel,
     onClose,
-    isFullWidth: isFullWidthProp = false,
     initConnectionType = AddDbType.manual
   } = props
 
   const [typeSelected, setTypeSelected] = useState<InstanceType>(
-    InstanceType.RedisCloudPro
+    InstanceType.RedisEnterpriseCluster
   )
   const [connectionType, setConnectionType] = useState<AddDbType>(initConnectionType)
-  const [isFullWidth, setIsFullWidth] = useState(isFullWidthProp)
+  const [headerContent, setHeaderContent] = useState<Nullable<React.ReactNode>>(null)
 
   const { credentials: clusterCredentials } = useSelector(clusterSelector)
   const { credentials: cloudCredentials } = useSelector(cloudSelector)
@@ -96,7 +97,7 @@ const DatabasePanel = React.memo((props: Props) => {
   }, [editMode])
 
   useEffect(() =>
-    // ComponentWillUnmount
+  // ComponentWillUnmount
     () => {
       if (connectionType === AddDbType.manual) return
 
@@ -122,16 +123,7 @@ const DatabasePanel = React.memo((props: Props) => {
     },
   [typeSelected])
 
-  useEffect(() => {
-    setIsFullWidth(isFullWidthProp)
-  }, [isFullWidthProp])
-
   const typesFormStage: EuiRadioGroupOption[] = [
-    {
-      id: InstanceType.RedisCloudPro,
-      label: InstanceType.RedisCloudPro,
-      'data-test-subj': 'radio-btn-cloud-pro',
-    },
     {
       id: InstanceType.RedisEnterpriseCluster,
       label: InstanceType.RedisEnterpriseCluster,
@@ -144,8 +136,6 @@ const DatabasePanel = React.memo((props: Props) => {
     },
   ]
 
-  const radioBtnLegend = isResizablePanel ? '' : <span>Connect to:</span>
-
   const onChange = (optionId: InstanceType) => {
     setTypeSelected(optionId)
   }
@@ -157,29 +147,25 @@ const DatabasePanel = React.memo((props: Props) => {
 
   const InstanceTypes = () => (
     <EuiForm className="formDataTypes">
-      <EuiFlexGroup wrap={!isFullWidth} gutterSize="s">
+      <EuiFlexGroup direction="column" gutterSize="s">
         <EuiFlexItem
-          grow={!isFullWidth}
-          className={cx(styles.radioBtnText, {
-            [styles.radioBtnTextFullWidth]: isFullWidth,
-          })}
+          grow={false}
+          className={cx(styles.radioBtnText)}
         >
-          <EuiText>Connect to:</EuiText>
+          <EuiFlexItem><EuiText color="subdued" size="s">Connect with:</EuiText></EuiFlexItem>
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiRadioGroup
             options={typesFormStage}
             idSelected={typeSelected}
-            className="dbTypes"
+            className={styles.softwareTypes}
             onChange={(id) => onChange(id as InstanceType)}
             name="radio group"
-            legend={{
-              children: radioBtnLegend,
-            }}
             data-testid="db-types"
           />
         </EuiFlexItem>
       </EuiFlexGroup>
+      <EuiSpacer />
     </EuiForm>
   )
 
@@ -188,55 +174,54 @@ const DatabasePanel = React.memo((props: Props) => {
       {connectionType === AddDbType.manual && (
         <ManualConnectionWrapper {...props} />
       )}
+      {connectionType === AddDbType.cloud && (
+        <CloudConnectionFormWrapper {...props} />
+      )}
+      {connectionType === AddDbType.import && (
+        <ImportDatabase onClose={onClose} />
+      )}
       {connectionType === AddDbType.auto && (
         <>
-          {typeSelected === InstanceType.Sentinel && (
-            <SentinelConnectionWrapper {...props} />
-          )}
-          {typeSelected === InstanceType.RedisEnterpriseCluster && (
-            <ClusterConnectionFormWrapper {...props} />
-          )}
-          {typeSelected === InstanceType.RedisCloudPro && (
-            <CloudConnectionFormWrapper {...props} />
-          )}
+          {typeSelected === InstanceType.Sentinel && (<SentinelConnectionWrapper {...props} />)}
+          {typeSelected === InstanceType.RedisEnterpriseCluster && (<ClusterConnectionFormWrapper {...props} />)}
         </>
       )}
     </>
   )
 
-  return (
-    <div className="databasePanelWrapper">
-      <div className={cx('container relative', { addDbWrapper: !editMode })}>
-        {!isFullWidth && onClose && (
-          <EuiToolTip
-            content="Close"
-            position="left"
-            anchorClassName={styles.closeKeyTooltip}
-          >
-            <EuiButtonIcon
-              iconType="cross"
-              color="primary"
-              aria-label="Close"
-              onClick={onClose}
-            />
-          </EuiToolTip>
-        )}
-        {!editMode && (
-          <>
-            <EuiTitle size="xs">
-              <h4>Discover and Add Redis Databases</h4>
-            </EuiTitle>
-            <InstanceConnections
-              {...{ isFullWidth, connectionType, changeConnectionType }}
-            />
-            {connectionType === AddDbType.auto && <InstanceTypes />}
-          </>
-        )}
-        {Form()}
-      </div>
-      <div id="footerDatabaseForm" />
-    </div>
-  )
-})
+  if (!isOpen) return null
 
-export default DatabasePanel
+  return (
+    <EuiModal
+      className={styles.modal}
+      onClose={onClose}
+    >
+      <EuiModalHeader>
+        <EuiModalHeaderTitle id="formModalHeader">
+          {headerContent ?? (<EuiTitle size="s"><h4>Discover and Add Redis Databases</h4></EuiTitle>)}
+        </EuiModalHeaderTitle>
+      </EuiModalHeader>
+      <EuiModalBody>
+        <div className={cx(styles.bodyWrapper, 'container relative', { addDbWrapper: !editMode })}>
+          {!editMode && (
+            <AddDatabaseFlowTabs
+              connectionType={connectionType}
+              onChange={changeConnectionType}
+            />
+          )}
+          <div className={styles.formWrapper}>
+            {connectionType === AddDbType.auto && <InstanceTypes />}
+            <HeaderProvider value={{ headerContent, setHeaderContent }}>
+              {Form()}
+            </HeaderProvider>
+          </div>
+        </div>
+      </EuiModalBody>
+      <EuiModalFooter>
+        <div id="footerDatabaseForm" />
+      </EuiModalFooter>
+    </EuiModal>
+  )
+}
+
+export default DatabasePanelDialog

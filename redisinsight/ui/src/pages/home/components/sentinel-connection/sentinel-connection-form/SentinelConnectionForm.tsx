@@ -5,6 +5,7 @@ import {
   EuiFlexItem,
   EuiToolTip,
   keys,
+  EuiSpacer,
 } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
@@ -12,7 +13,6 @@ import React, { useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 
 import validationErrors from 'uiSrc/constants/validationErrors'
-import { useResizableFormField } from 'uiSrc/services'
 import {
   fieldDisplayNames,
 } from 'uiSrc/pages/home/constants'
@@ -25,7 +25,6 @@ import {
 } from 'uiSrc/pages/home/components/form'
 
 export interface Props {
-  width: number
   loading: boolean
   initialValues: DbConnectionInfo
   certificates: { id: string; name: string }[],
@@ -45,7 +44,6 @@ const getInitFieldsDisplayNames = ({ host, port }: any) => {
 const SentinelConnectionForm = (props: Props) => {
   const {
     initialValues = {},
-    width,
     onClose,
     onSubmit,
     onHostNamePaste,
@@ -78,11 +76,6 @@ const SentinelConnectionForm = (props: Props) => {
     },
   })
 
-  const [flexGroupClassName, flexItemClassName] = useResizableFormField(
-    formRef,
-    width
-  )
-
   const onKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
     if (event.key === keys.ENTER && !submitIsDisable()) {
       // event.
@@ -106,6 +99,7 @@ const SentinelConnectionForm = (props: Props) => {
     >
       <EuiButton
         fill
+        size="s"
         color="secondary"
         type="submit"
         onClick={onClick}
@@ -113,6 +107,7 @@ const SentinelConnectionForm = (props: Props) => {
         isLoading={loading}
         iconType={submitIsDisabled ? 'iInCircle' : undefined}
         data-testid="btn-submit"
+        style={{ marginLeft: 12 }}
       >
         Discover Database
       </EuiButton>
@@ -124,33 +119,25 @@ const SentinelConnectionForm = (props: Props) => {
 
     if (footerEl) {
       return ReactDOM.createPortal(
-        <EuiFlexGroup
-          justifyContent="spaceBetween"
-          alignItems="center"
-          className="footerAddDatabase"
-          gutterSize="none"
-          responsive={false}
-        >
-          <EuiFlexItem className="btn-back" grow={false} />
-          <EuiFlexItem grow={false}>
-            <EuiFlexGroup responsive={false}>
-              {onClose && (
-                <EuiButton
-                  onClick={onClose}
-                  color="secondary"
-                  className="btn-cancel"
-                  data-testid="btn-cancel"
-                >
-                  Cancel
-                </EuiButton>
-              )}
-              <SubmitButton
-                onClick={formik.submitForm}
-                submitIsDisabled={submitIsDisable()}
-              />
-            </EuiFlexGroup>
-          </EuiFlexItem>
-        </EuiFlexGroup>,
+        (
+          <div className="footerAddDatabase">
+            {onClose && (
+            <EuiButton
+              size="s"
+              onClick={onClose}
+              color="secondary"
+              className="btn-cancel"
+              data-testid="btn-cancel"
+            >
+              Cancel
+            </EuiButton>
+            )}
+            <SubmitButton
+              onClick={formik.submitForm}
+              submitIsDisabled={submitIsDisable()}
+            />
+          </div>
+        ),
         footerEl
       )
     }
@@ -158,7 +145,7 @@ const SentinelConnectionForm = (props: Props) => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative" data-testid="add-db_sentinel">
       <div className="getStartedForm" ref={formRef}>
         <MessageSentinel />
         <br />
@@ -170,15 +157,12 @@ const SentinelConnectionForm = (props: Props) => {
         >
           <DatabaseForm
             formik={formik}
-            flexItemClassName={flexItemClassName}
-            flexGroupClassName={flexGroupClassName}
             showFields={{ host: true, port: true, alias: false, timeout: false }}
             onHostNamePaste={onHostNamePaste}
           />
+          <EuiSpacer />
           <TlsDetails
             formik={formik}
-            flexItemClassName={flexItemClassName}
-            flexGroupClassName={flexGroupClassName}
             certificates={certificates}
             caCertificates={caCertificates}
           />

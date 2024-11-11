@@ -500,13 +500,13 @@ export function cloneInstanceAction({ id, ...payload }: Partial<Instance>, onSuc
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status } = await apiService.post(`${ApiEndpoints.DATABASES}/clone/${id}`, payload)
+      const { status, data } = await apiService.post(`${ApiEndpoints.DATABASES}/clone/${id}`, payload)
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch<any>(fetchInstancesAction())
 
-        dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(payload.name ?? '')))
+        dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(data.name ?? '')))
         onSuccess?.(id)
       }
     } catch (_err) {

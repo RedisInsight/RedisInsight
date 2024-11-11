@@ -46,20 +46,20 @@ async function generateBuildSummary() {
         if (!categories[mapping.category]) {
           categories[mapping.category] = []
         }
-        const s3path = `https://s3.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_BUCKET_NAME_TEST}/`
-        const href = `${s3path}public/${SUB_PATH}/${file}`
+        const s3path = `https://s3.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_BUCKET_NAME_TEST}`
+        const href = `${s3path}/public/${SUB_PATH}/${file}`
 
         categories[mapping.category].push(`- [${ mapping.name }](${href})`)
       }
     })
 
     // Prepare the summary markdown document
-    const markdownLines = ['# Builds:', '']
+    const markdownLines = ['## Builds:', '']
 
     // Append categories to markdown if they have entries
     Object.keys(categories).forEach((category) => {
       if (categories[category].length) {
-        markdownLines.push(`## ${category}`, '', ...categories[category], '')
+        markdownLines.push(`### ${category}`, '', ...categories[category], '')
       }
     })
 

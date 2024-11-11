@@ -74,7 +74,8 @@ jobs:
       with:
         format: 'list'
 
-    - run: echo ${{ steps.get-selected.outputs.selected }}
+    - name: echo selected targets
+      run: echo ${{ steps.get-selected.outputs.selected }}
 
   manual-build:
     needs: get-selected

@@ -25,7 +25,7 @@ jobs:
       run: |
         npm i -g license-checker
         echo "$GOOGLE_ACCOUNT_SERVICE_KEY_BASE64" | base64 -id > gasKey.json
-        SPREADSHEET_ID=$GOOGLE_SPREADSHEET_DEPENDENCIES_ID node .circleci/deps-licenses-report.js
+        SPREADSHEET_ID=$GOOGLE_SPREADSHEET_DEPENDENCIES_ID node .github/deps-licenses-report.js
 
     - uses: actions/upload-artifact@v4
       with:

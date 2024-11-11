@@ -99,8 +99,8 @@ jobs:
       # TODO: remove
       # if: vars.ENV == 'production'
       run: |
-        ARCH=x64 ./.circleci/redisstack/dmg.repack.sh
-        ARCH=arm64 ./.circleci/redisstack/dmg.repack.sh
+        ARCH=x64 ./.github/redisstack/dmg.repack.sh
+        ARCH=arm64 ./.github/redisstack/dmg.repack.sh
 
     - name: Upload x64 packages
       uses: actions/upload-artifact@v4

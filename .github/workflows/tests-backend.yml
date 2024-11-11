@@ -34,7 +34,7 @@ jobs:
         FILENAME=api.prod.deps.audit.json
 
         yarn --cwd redisinsight/api audit --groups dependencies --json > $FILENAME || true &&
-        FILENAME=$FILENAME DEPS="API prod" node .circleci/deps-audit-report.js &&
+        FILENAME=$FILENAME DEPS="API prod" node .github/deps-audit-report.js &&
         curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: API DEV dependencies scan
@@ -42,7 +42,7 @@ jobs:
         FILENAME=api.dev.deps.audit.json
 
         yarn --cwd redisinsight/api audit --groups devDependencies --json > $FILENAME || true &&
-        FILENAME=$FILENAME DEPS="API dev" node .circleci/deps-audit-report.js &&
+        FILENAME=$FILENAME DEPS="API dev" node .github/deps-audit-report.js &&
         curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: Code analysis
@@ -51,7 +51,7 @@ jobs:
         WORKDIR="./redisinsight/api"
 
         yarn lint:api -f json -o $FILENAME || true &&
-        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="API" node .circleci/lint-report.js &&
+        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="API" node .github/lint-report.js &&
         curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: Unit tests API

@@ -85,14 +85,15 @@ jobs:
 
         if [ ${{ startsWith(inputs.target, 'macos:') }} == 'true' ]; then
           inputsTarget=${{inputs.target}}
-          target=${inputsTarget#macos:}
+          target=--${inputsTarget#macos:}
         fi
 
         yarn package:stage --mac $target
         rm -rf release/mac
 
     - name: Repack dmg to tar
-      if: vars.ENV == 'production'
+      # TODO: remove
+      # if: vars.ENV == 'production'
       run: |
         ARCH=x64 ./.circleci/redisstack/dmg.repack.sh
         ARCH=arm64 ./.circleci/redisstack/dmg.repack.sh
@@ -110,6 +111,13 @@ jobs:
           ./release/Redis-Insight*.pkg
           ./release/*-mac.yml
           ./release/redisstack
+
+    # - name: Upload redisstack packages
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: redisstack-builds
+    #     path: |
+    #       ./release/redisstack
 
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}

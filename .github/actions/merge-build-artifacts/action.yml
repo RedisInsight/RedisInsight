@@ -22,7 +22,7 @@ runs:
     with:
       name: 'all-builds'
       pattern: '*-builds'
-      path: release
+      # path: release
       delete-merged: true
 
   - name: List Release Directory

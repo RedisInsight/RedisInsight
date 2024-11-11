@@ -32,17 +32,17 @@ on:
         required: false
 
       build_linux_deb_x64:
-        description: Build Linux DEB x64
+        description: Build Linux deb x64
         type: boolean
         required: false
 
       build_linux_rpm_x64:
-        description: Build Linux RPM x64
+        description: Build Linux rpm x64
         type: boolean
         required: false
 
       build_linux_snap_x64:
-        description: Build Linux Snap x64
+        description: Build Linux snap x64
         type: boolean
         required: false
 

@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { writeFile } = fs.promises;
+
 const Categories = {
   Linux: 'Linux Builds',
   MacOS: 'MacOS Builds',
@@ -56,7 +58,10 @@ async function generateBuildSummary() {
       }
     });
 
-    process.env.GITHUB_STEP_SUMMARY = markdownLines.join('\n')
+    const data = markdownLines.join('\n');
+    const summaryFilePath = process.env.GITHUB_STEP_SUMMARY
+
+    await writeFile(summaryFilePath, data, { encoding: 'utf8' });
 
     // // Write the formatted summary to GitHub Actions output
     // core.summary

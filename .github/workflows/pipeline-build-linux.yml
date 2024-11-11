@@ -75,7 +75,11 @@ jobs:
           target=${inputsTarget#linux:}
         fi
 
-        yarn package:stage --linux $target
+        if [ ${{ contains(vars.ENV, 'production') }} ]; then
+          yarn package:prod --linux $target
+        else
+          yarn package:stage --linux $target
+        fi
 
     - uses: actions/upload-artifact@v4
       name: Upload linux builds

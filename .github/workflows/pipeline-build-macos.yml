@@ -87,7 +87,7 @@ jobs:
           target=--${inputsTarget#macos:}
         fi
 
-        if [ "$ENV" = "production" ]; then
+        if [ ${{ contains(vars.ENV, 'production') }} ]; then
           yarn package:prod --mac $target
         else
           yarn package:stage --mac $target
@@ -115,6 +115,9 @@ jobs:
           ./release/Redis-Insight*.pkg
           ./release/*-mac.yml
           ./release/redisstack
+
+    - name: Adding markdown
+      run: echo '### Hello world! 🚀' >> $GITHUB_STEP_SUMMARY
 
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}

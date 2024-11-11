@@ -92,7 +92,7 @@ jobs:
     with:
       short_rte_list: ${{ inputs.short_rte_list || true }}
       redis_client: ${{ inputs.redis_client }}
-      debug: ${{ inputs.debug }}
+      debug: ${{ inputs.debug || false }}
 
   # E2E Approve
   e2e-approve:
@@ -111,7 +111,7 @@ jobs:
     needs: e2e-approve
     secrets: inherit
     with:
-      debug: ${{ inputs.debug }}
+      debug: ${{ inputs.debug || false }}
       only_docker: true
 
   e2e-docker-tests:
@@ -119,7 +119,7 @@ jobs:
     uses: ./.github/workflows/tests-e2e-docker.yml
     secrets: inherit
     with:
-      debug: ${{ inputs.debug }}
+      debug: ${{ inputs.debug || false }}
 
 
   # E2E AppImage
@@ -129,11 +129,11 @@ jobs:
     secrets: inherit
     with:
       target: linux:appimage:x64
-      debug: ${{ inputs.debug }}
+      debug: ${{ inputs.debug || false }}
 
   e2e-appimage-tests:
     needs: build-appimage
     uses: ./.github/workflows/tests-e2e-appimage.yml
     secrets: inherit
     with:
-      debug: ${{ inputs.debug }}
+      debug: ${{ inputs.debug || false }}

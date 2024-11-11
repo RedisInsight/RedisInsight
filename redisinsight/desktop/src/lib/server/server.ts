@@ -24,10 +24,10 @@ let gracefulShutdown: Function
 let beApp: any
 export const launchApiServer = async () => {
   try {
-    if (config.isDevelopment && process.env.RI_APP_TYPE === 'electron') {
+    if (config.isDevelopment) {
       console.log('Launching API server', 1)
       // Define auth port
-      const TCP_LOCAL_AUTH_PORT = process.env.TCP_LOCAL_AUTH_PORT ? parseInt(process.env.TCP_LOCAL_AUTH_PORT, 10) : 5541
+      const TCP_LOCAL_AUTH_PORT = config.tcpLocalAuthPort
 
       // Create and start auth server first
       const authServer = createServer((socket) => {
@@ -75,7 +75,6 @@ export const launchApiServer = async () => {
 
     log.info('Starting server with port:', detectPortConst)
     log.info('Environment:', process.env.NODE_ENV)
-    log.info('App type:', process.env.RI_APP_TYPE)
 
     const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server(detectPortConst)
     gracefulShutdown = gracefulShutdownFn
@@ -83,7 +82,8 @@ export const launchApiServer = async () => {
     
     const windowAuthService = beApp?.select?.(WindowAuthModule).get?.(WindowAuthService)
     windowAuthService.setStrategy(new ElectronWindowAuthStrategy())
-  } catch (error) {
+  } catch (_err) {
+    const error = _err as Error
     log.error('Catch server error:', wrapErrorMessageSensitiveData(error))
     log.error('Server initialization error:', error)
     log.error('Error stack:', error.stack)

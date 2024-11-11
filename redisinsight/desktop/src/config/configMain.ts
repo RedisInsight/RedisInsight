@@ -16,6 +16,7 @@ config.isDevelopment = process.env.NODE_ENV === 'development'
 config.isProduction = process.env.NODE_ENV === 'production'
 config.appPort = process.env.RI_APP_PORT || configInit.defaultPort
 config.getApiPort = () => process.env.RI_APP_PORT || configInit.defaultPort
+config.tcpLocalAuthPort = process.env.TCP_LOCAL_AUTH_PORT ? parseInt(process.env.TCP_LOCAL_AUTH_PORT, 10) : 5541
 
 config.icon = getAssetPath('icon.png')
 

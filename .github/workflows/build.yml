@@ -1,99 +1,54 @@
-name: 🚀 Manual build
+name: Build
 
 on:
-  # Manual trigger build
-  # No multi-select
-  # https://github.com/actions/runner/issues/2076
-  workflow_dispatch:
+  # Called for Release workflows
+  workflow_call:
     inputs:
-      build_docker:
-        description: Build Docker
-        type: boolean
-        required: false
-
-      build_windows_x64:
-        description: Build Windows x64
-        type: boolean
-        required: false
-
-      build_macos_x64:
-        description: Build macOS x64
-        type: boolean
-        required: false
-
-      build_macos_arm64:
-        description: Build macOS arm64
-        type: boolean
-        required: false
-
-      build_linux_appimage_x64:
-        description: Build Linux AppImage x64
-        type: boolean
-        required: false
-
-      build_linux_deb_x64:
-        description: Build Linux deb x64
-        type: boolean
-        required: false
-
-      build_linux_rpm_x64:
-        description: Build Linux rpm x64
-        type: boolean
-        required: false
-
-      build_linux_snap_x64:
-        description: Build Linux snap x64
-        type: boolean
-        required: false
-
       environment:
         description: Environment to run build
-        type: environment
+        type: string
         default: 'staging'
-        required: false
+
+      target:
+        description: Build target
+        type: string
+        default: 'all'
 
       debug:
         description: Enable SSH Debug
         type: boolean
 
-# Cancel a previous same workflow
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  get-selected:
-    runs-on: ubuntu-latest
-    outputs: # Set this to consume the output on other job
-      selected: ${{ steps.get-selected.outputs.selected}}
-    steps:
-    - uses: actions/checkout@v4
-
-    - id: get-selected
-      uses: joao-zanutto/get-selected@v1.1.1
-      with:
-        format: 'list'
-
-    - name: echo selected targets
-      run: echo ${{ steps.get-selected.outputs.selected }}
-
-  manual-build:
-    needs: get-selected
-    uses: ./.github/workflows/build-build.yml
+  build-linux:
+    if: contains(inputs.target, 'linux') || inputs.target == 'all'
+    uses: ./.github/workflows/pipeline-build-linux.yml
     secrets: inherit
     with:
-      target: ${{ needs.get-selected.outputs.selected }}
+      environment: ${{ inputs.environment }}
+      target: ${{ inputs.target }}
       debug: ${{ inputs.debug }}
 
-  aws-upload:
-    uses: ./.github/workflows/aws-upload-dev.yml
+  build-macos:
+    if: contains(inputs.target, 'macos') || inputs.target == 'all'
+    uses: ./.github/workflows/pipeline-build-macos.yml
     secrets: inherit
-    needs: [manual-build]
-    if: always()
+    with:
+      environment: ${{ inputs.environment }}
+      target: ${{ inputs.target }}
+      debug: ${{ inputs.debug }}
 
-  clean:
-    uses: ./.github/workflows/clean-deployments.yml
-    # secrets: inherit
-    needs: [aws-upload]
-    if: always()
+  build-windows:
+    if: contains(inputs.target, 'windows') || inputs.target == 'all'
+    uses: ./.github/workflows/pipeline-build-windows.yml
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}
+      debug: ${{ inputs.debug }}
 
+  build-docker:
+    if: contains(inputs.target, 'docker') || inputs.target == 'all'
+    uses: ./.github/workflows/pipeline-build-docker.yml
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}
+      debug: ${{ inputs.debug }}

@@ -56,6 +56,10 @@ jobs:
       run: |
         aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
 
+    - name: Generate job summary
+      run: |
+        node ./.github/generate-build-summary.js
+
   # Remove artifacts from github actions
   remove-artifacts:
     name: Remove artifacts

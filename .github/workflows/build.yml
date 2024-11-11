@@ -76,51 +76,23 @@ jobs:
 
     - run: echo ${{ steps.get-selected.outputs.selected }}
 
-    - run: |
-        base_dir="./release"
-        docker_dir="$base_dir/docker"
+  manual-build:
+    needs: get-selected
+    uses: ./.github/workflows/build-build.yml
+    secrets: inherit
+    with:
+      target: ${{ needs.get-selected.outputs.selected }}
+      debug: ${{ inputs.debug }}
 
-        mkdir -p "$base_dir"
-        mkdir -p "$docker_dir"
+  aws-upload:
+    uses: ./.github/workflows/aws-upload-dev.yml
+    secrets: inherit
+    needs: [manual-build]
+    if: always()
 
-        echo "test" > "$base_dir/Redis-Insight-linux-amd64.deb"
-        echo "test" > "$base_dir/Redis-Insight-linux-amd64.snap"
-        echo "test" > "$base_dir/Redis-Insight-linux-x86_64.AppImage"
-        echo "test" > "$base_dir/Redis-Insight-linux-x86_64.rpm"
-        echo "test" > "$base_dir/Redis-Insight-mac-arm64.dmg"
-        echo "test" > "$base_dir/Redis-Insight-mac-x64.dmg"
-        echo "test" > "$base_dir/Redis-Insight-win-installer.exe"
-
-        echo "test" > "$docker_dir/docker-linux-alpine.amd64.tar"
-        echo "test" > "$docker_dir/docker-linux-alpine.arm64.tar"
-
-        echo "All files created"
-
-    - name: Generate Markdown Summary
-      id: generate_markdown
-      run: |
-        node ./.github/generate-build-summary.js
-
-        echo $GITHUB_STEP_SUMMARY
-
-
-  # manual-build:
-  #   needs: get-selected
-  #   uses: ./.github/workflows/build-build.yml
-  #   secrets: inherit
-  #   with:
-  #     target: ${{ needs.get-selected.outputs.selected }}
-  #     debug: ${{ inputs.debug }}
-
-  # aws-upload:
-  #   uses: ./.github/workflows/aws-upload-dev.yml
-  #   secrets: inherit
-  #   needs: [manual-build]
-  #   if: always()
-
-  # clean:
-  #   uses: ./.github/workflows/clean-deployments.yml
-  #   # secrets: inherit
-  #   needs: [aws-upload]
-  #   if: always()
+  clean:
+    uses: ./.github/workflows/clean-deployments.yml
+    # secrets: inherit
+    needs: [aws-upload]
+    if: always()
 

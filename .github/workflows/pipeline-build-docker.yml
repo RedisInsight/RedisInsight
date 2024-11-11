@@ -53,13 +53,13 @@ jobs:
         PLATFORM=linux ARCH=x64 LIBC=musl .github/build/build_modules.sh
         PLATFORM=linux ARCH=arm64 LIBC=musl .github/build/build_modules.sh
         # Redis Stack + VSC Linux
-        # PLATFORM=linux ARCH=x64 .github/build/build_modules.sh
-        # PLATFORM=linux ARCH=arm64 .github/build/build_modules.sh
+        PLATFORM=linux ARCH=x64 .github/build/build_modules.sh
+        PLATFORM=linux ARCH=arm64 .github/build/build_modules.sh
         # VSC Darwin
-        # PLATFORM=darwin ARCH=x64 .github/build/build_modules.sh
-        # PLATFORM=darwin ARCH=arm64 .github/build/build_modules.sh
+        PLATFORM=darwin ARCH=x64 .github/build/build_modules.sh
+        PLATFORM=darwin ARCH=arm64 .github/build/build_modules.sh
         # VSC Windows
-        # PLATFORM=win32 ARCH=x64 .github/build/build_modules.sh
+        PLATFORM=win32 ARCH=x64 .github/build/build_modules.sh
     - name: Build Docker (x64, arm64)
       env:
         ENV: ${{ vars.ENV }}

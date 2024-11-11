@@ -50,8 +50,8 @@ jobs:
         keytar-host-mirror: ${{ secrets.NPM_CONFIG_KEYTAR_BINARY_HOST_MIRROR }}
         sqlite3-host-mirror: ${{ secrets.NPM_CONFIG_NODE_SQLITE3_BINARY_HOST_MIRROR }}
 
-    # - name: Install plugins dependencies and build plugins
-    #   run: yarn build:statics
+    - name: Install plugins dependencies and build plugins
+      run: yarn build:statics
 
     - name: Build macos dmg (prod)
       if: vars.ENV == 'production' && inputs.target == vars.ALL
@@ -96,8 +96,7 @@ jobs:
         rm -rf release/mac
 
     - name: Repack dmg to tar
-      # TODO: remove
-      # if: vars.ENV == 'production'
+      if: vars.ENV == 'production'
       run: |
         ARCH=x64 ./.github/redisstack/dmg.repack.sh
         ARCH=arm64 ./.github/redisstack/dmg.repack.sh

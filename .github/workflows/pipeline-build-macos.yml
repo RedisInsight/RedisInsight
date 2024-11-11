@@ -81,7 +81,14 @@ jobs:
       if: inputs.target != vars.ALL
       run: |
         unset CSC_LINK
-        yarn package:stage --mac ${{ inputs.target }}
+        target=""
+
+        if [ ${{ startsWith(inputs.target, 'macos:') }} == 'true' ]; then
+          inputsTarget=${{inputs.target}}
+          target=--${inputsTarget#macos:}
+        fi
+
+        yarn package:stage --mac $target
         rm -rf release/mac
 
     - name: Repack dmg to tar

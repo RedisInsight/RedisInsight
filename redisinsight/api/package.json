@@ -155,7 +155,7 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "../report/coverage",
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       ".entity.ts$",

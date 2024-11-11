@@ -25,10 +25,6 @@ jobs:
       id: date
       uses: ./.github/actions/get-current-date
 
-    # - name: Merge build artifacts
-    #   id: build
-    #   uses: ./.github/actions/merge-build-artifacts
-
     - name: Merge builds by pattern
       id: merge-builds
       uses: actions/upload-artifact/merge@v4

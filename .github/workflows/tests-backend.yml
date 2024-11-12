@@ -64,11 +64,6 @@ jobs:
         name: ${{ env.REPORT_NAME }}
         path: redisinsight/api/report
 
-  deploy-pages:
-    name: Deploy report
-    needs: 'unit-tests'
-    runs-on: ubuntu-latest
-    steps:
     - name: Deploy report
       uses: ./.github/actions/deploy-pages
       if: always()

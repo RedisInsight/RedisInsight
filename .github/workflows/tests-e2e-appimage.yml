@@ -96,12 +96,7 @@ jobs:
         list-suites: 'failed'
         fail-on-error: 'false'
 
-  # Deploy report to Github Pages
-  deploy-pages:
-    name: Deploy report
-    needs: 'e2e-tests-appimage'
-    runs-on: ubuntu-latest
-    steps:
+    # Deploy report to Github Pages
     - name: Deploy report
       uses: ./.github/actions/deploy-pages
       if: always()

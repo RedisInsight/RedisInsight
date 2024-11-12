@@ -56,6 +56,11 @@ jobs:
       run: |
         aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
 
+    - name: Move pre-release builds to upgrades folder
+      if: inputs.pre-release
+      run: |
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/upgrades --recursive
+
     - name: Generate job summary
       run: |
         node ./.github/generate-build-summary.js

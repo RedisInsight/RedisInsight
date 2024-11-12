@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import { join, posix } from 'path';
 import * as os from 'os';
 import { trim } from 'lodash';
@@ -249,30 +250,66 @@ export default {
     renewTokensBeforeExpire: parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) || 2 * 60_000, // 2min
     idp: {
       google: {
-        authorizeUrl: process.env.RI_CLOUD_IDP_GOOGLE_AUTHORIZE_URL || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
-        tokenUrl: process.env.RI_CLOUD_IDP_GOOGLE_TOKEN_URL || process.env.RI_CLOUD_IDP_TOKEN_URL,
-        revokeTokenUrl: process.env.RI_CLOUD_IDP_GOOGLE_REVOKE_TOKEN_URL || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
-        issuer: process.env.RI_CLOUD_IDP_GOOGLE_ISSUER || process.env.RI_CLOUD_IDP_ISSUER,
-        clientId: process.env.RI_CLOUD_IDP_GOOGLE_CLIENT_ID || process.env.RI_CLOUD_IDP_CLIENT_ID,
-        redirectUri: process.env.RI_CLOUD_IDP_GOOGLE_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
-        idp: process.env.RI_CLOUD_IDP_GOOGLE_ID,
+        authorizeUrl: process.env.RI_CLOUD_IDP_GOOGLE_AUTHORIZE_URL
+          || process.env.RI_CLOUD_IDP_AUTHORIZE_URL
+          || 'oauth2/default/v1/authorize',
+        tokenUrl: process.env.RI_CLOUD_IDP_GOOGLE_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_TOKEN_URL
+          || 'oauth2/default/v1/token',
+        revokeTokenUrl: process.env.RI_CLOUD_IDP_GOOGLE_REVOKE_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL
+          || 'oauth2/default/v1/revoke',
+        issuer: process.env.RI_CLOUD_IDP_GOOGLE_ISSUER
+          || process.env.RI_CLOUD_IDP_ISSUER
+          || 'https://auth.qa.redislabs.com',
+        clientId: process.env.RI_CLOUD_IDP_GOOGLE_CLIENT_ID
+          || process.env.RI_CLOUD_IDP_CLIENT_ID
+          || '0oa7ku3x9aALuh3uK1d7',
+        redirectUri: process.env.RI_CLOUD_IDP_GOOGLE_REDIRECT_URI
+          || process.env.RI_CLOUD_IDP_REDIRECT_URI
+          || 'https://auth.redisinsight.redis.com/callback.html',
+        idp: process.env.RI_CLOUD_IDP_GOOGLE_ID || '0oa8in2sir3kD2jdN1d7',
       },
       github: {
-        authorizeUrl: process.env.RI_CLOUD_IDP_GH_AUTHORIZE_URL || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
-        tokenUrl: process.env.RI_CLOUD_IDP_GH_TOKEN_URL || process.env.RI_CLOUD_IDP_TOKEN_URL,
-        revokeTokenUrl: process.env.RI_CLOUD_IDP_GH_REVOKE_TOKEN_URL || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
-        issuer: process.env.RI_CLOUD_IDP_GH_ISSUER || process.env.RI_CLOUD_IDP_ISSUER,
-        clientId: process.env.RI_CLOUD_IDP_GH_CLIENT_ID || process.env.RI_CLOUD_IDP_CLIENT_ID,
-        redirectUri: process.env.RI_CLOUD_IDP_GH_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
-        idp: process.env.RI_CLOUD_IDP_GH_ID,
+        authorizeUrl: process.env.RI_CLOUD_IDP_GH_AUTHORIZE_URL
+          || process.env.RI_CLOUD_IDP_AUTHORIZE_URL
+          || 'oauth2/default/v1/authorize',
+        tokenUrl: process.env.RI_CLOUD_IDP_GH_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_TOKEN_URL
+          || 'oauth2/default/v1/token',
+        revokeTokenUrl: process.env.RI_CLOUD_IDP_GH_REVOKE_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL
+          || 'oauth2/default/v1/revoke',
+        issuer: process.env.RI_CLOUD_IDP_GH_ISSUER
+          || process.env.RI_CLOUD_IDP_ISSUER
+          || 'https://auth.qa.redislabs.com',
+        clientId: process.env.RI_CLOUD_IDP_GH_CLIENT_ID
+          || process.env.RI_CLOUD_IDP_CLIENT_ID
+          || '0oa7ku3x9aALuh3uK1d7',
+        redirectUri: process.env.RI_CLOUD_IDP_GH_REDIRECT_URI
+          || process.env.RI_CLOUD_IDP_REDIRECT_URI
+          || 'https://auth.redisinsight.redis.com/callback.html',
+        idp: process.env.RI_CLOUD_IDP_GH_ID || '0oa8pxbcc1PwnhZ3R1d7',
       },
       sso: {
-        authorizeUrl: process.env.RI_CLOUD_IDP_SSO_AUTHORIZE_URL || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
-        tokenUrl: process.env.RI_CLOUD_IDP_SSO_TOKEN_URL || process.env.RI_CLOUD_IDP_TOKEN_URL,
-        revokeTokenUrl: process.env.RI_CLOUD_IDP_SSO_REVOKE_TOKEN_URL || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
-        issuer: process.env.RI_CLOUD_IDP_SSO_ISSUER || process.env.RI_CLOUD_IDP_ISSUER,
-        clientId: process.env.RI_CLOUD_IDP_SSO_CLIENT_ID || process.env.RI_CLOUD_IDP_CLIENT_ID,
-        redirectUri: process.env.RI_CLOUD_IDP_SSO_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
+        authorizeUrl: process.env.RI_CLOUD_IDP_SSO_AUTHORIZE_URL
+          || process.env.RI_CLOUD_IDP_AUTHORIZE_URL
+          || 'oauth2/default/v1/authorize',
+        tokenUrl: process.env.RI_CLOUD_IDP_SSO_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_TOKEN_URL
+          || 'oauth2/default/v1/token',
+        revokeTokenUrl: process.env.RI_CLOUD_IDP_SSO_REVOKE_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL
+          || 'oauth2/default/v1/revoke',
+        issuer: process.env.RI_CLOUD_IDP_SSO_ISSUER
+          || process.env.RI_CLOUD_IDP_ISSUER
+          || 'https://auth.qa.redislabs.com',
+        clientId: process.env.RI_CLOUD_IDP_SSO_CLIENT_ID
+          || process.env.RI_CLOUD_IDP_CLIENT_ID
+          || '0oa7ku3x9aALuh3uK1d7',
+        redirectUri: process.env.RI_CLOUD_IDP_SSO_REDIRECT_URI
+          || process.env.RI_CLOUD_IDP_REDIRECT_URI
+          || 'https://auth.redisinsight.redis.com/callback.html',
         emailVerificationUri: process.env.RI_CLOUD_IDP_SSO_EMAIL_VERIFICATION_URI || 'saml/okta_idp_id',
         idp: process.env.RI_CLOUD_IDP_SSO_ID,
       },

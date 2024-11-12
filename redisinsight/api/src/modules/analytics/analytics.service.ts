@@ -128,8 +128,7 @@ export class AnalyticsService {
     }
   }
 
-  @OnEvent(AppAnalyticsEvents.Track)
-  async sendEvent(payload: ITelemetryEvent) {
+  async sendUserEvent(sessionMetadata: SessionMetadata, payload: ITelemetryEvent) {
     try {
       // The event is reported only if the user's permission is granted.
       // The anonymousId is also sent along with the event.
@@ -139,8 +138,7 @@ export class AnalyticsService {
       // for analytics is granted or not.
       // If permissions not granted
       // anonymousId will includes "00000000-0000-0000-0000-000000000001" value without any user identifiers.
-      // todo: USER_CONTEXT
-      const trackParams = await this.prepareEventData(this.constantsProvider.getSystemSessionMetadata(), payload);
+      const trackParams = await this.prepareEventData(sessionMetadata, payload);
 
       if (trackParams) {
         this.analytics.track({
@@ -151,6 +149,12 @@ export class AnalyticsService {
     } catch (e) {
       // continue regardless of error
     }
+  }
+
+  @OnEvent(AppAnalyticsEvents.Track)
+  async sendEvent(payload: ITelemetryEvent) {
+    // todo: USER_CONTEXT
+    return this.sendUserEvent(this.constantsProvider.getSystemSessionMetadata(), payload);
   }
 
   @OnEvent(AppAnalyticsEvents.Page)

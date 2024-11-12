@@ -324,11 +324,15 @@ export let sourceInstance: Nullable<CancelTokenSource> = null
 
 // Asynchronous thunk action
 export function fetchInstancesAction(onSuccess?: (data: Instance[]) => void) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadInstances())
 
     try {
-      const { data, status } = await apiService.get<DatabaseInstanceResponse[]>(`${ApiEndpoints.DATABASES}`)
+      const envDependentFeature = get(stateInit(), ['app', 'features', 'featureFlags', 'features', 'envDependent'])
+
+      const { data, status } = envDependentFeature?.flag
+        ? await apiService.get<DatabaseInstanceResponse[]>(`${ApiEndpoints.DATABASES}`)
+        : { data: [], status: 200 }
 
       if (isStatusSuccessful(status)) {
         localStorageService.set(BrowserStorageItem.instancesCount, data?.length)

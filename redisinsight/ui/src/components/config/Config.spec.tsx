@@ -1,13 +1,20 @@
 import React from 'react'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
+import { waitFor } from '@testing-library/react'
 import { BuildType } from 'uiSrc/constants/env'
 import { localStorageService } from 'uiSrc/services'
 import { setFeaturesToHighlight, setOnboarding } from 'uiSrc/slices/app/features'
 import { getNotifications } from 'uiSrc/slices/app/notifications'
-import { render, mockedStore, cleanup, MOCKED_HIGHLIGHTING_FEATURES } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  mockedStore,
+  cleanup,
+  MOCKED_HIGHLIGHTING_FEATURES,
+} from 'uiSrc/utils/test-utils'
 
 import {
   getUserConfigSettings,
+  getUserSettingsSpec,
   setSettingsPopupState,
   userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
@@ -20,6 +27,7 @@ import { getContentRecommendations } from 'uiSrc/slices/recommendations/recommen
 import { getGuideLinks } from 'uiSrc/slices/content/guide-links'
 import { getWBCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { setCapability } from 'uiSrc/slices/app/context'
+import { FeatureFlags } from 'uiSrc/constants'
 import Config from './Config'
 
 let store: typeof mockedStore
@@ -57,7 +65,13 @@ jest.mock('uiSrc/services', () => ({
 const onboardingTotalSteps = Object.keys(ONBOARDING_FEATURES)?.length
 
 describe('Config', () => {
-  it('should render', () => {
+  it('should render with spec call', async () => {
+    set(
+      store,
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: true }
+    )
+
     render(<Config />)
     const afterRenderActions = [
       setCapability(),
@@ -73,6 +87,33 @@ describe('Config', () => {
       setSettingsPopupState(false)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
+    await waitFor(() => expect(store.getActions()).toContainEqual(getUserSettingsSpec()))
+  })
+
+  it('should render w/o settings spec call', async () => {
+    set(
+      store,
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+
+    render(<Config />)
+
+    const afterRenderActions = [
+      setCapability(),
+      getServerInfo(),
+      getNotifications(),
+      getWBCustomTutorials(),
+      processCliClient(),
+      getRedisCommands(),
+      getContentRecommendations(),
+      getGuideLinks(),
+      getWBTutorials(),
+      getUserConfigSettings(),
+      setSettingsPopupState(false)
+    ]
+    expect(store.getActions()).toEqual([...afterRenderActions])
+    await waitFor(() => expect(store.getActions()).not.toContainEqual(getUserSettingsSpec()))
   })
 
   it('should call the list of actions', () => {

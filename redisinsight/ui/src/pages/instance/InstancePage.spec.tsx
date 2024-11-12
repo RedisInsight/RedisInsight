@@ -3,7 +3,7 @@ import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
 
-import { within } from '@testing-library/react'
+import { waitFor, within } from '@testing-library/react'
 import { cleanup, mockedStore, render, act, mockStore, initialStateDefault } from 'uiSrc/utils/test-utils'
 import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
@@ -31,6 +31,8 @@ import {
 import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { getAllPlugins } from 'uiSrc/slices/app/plugins'
+import { FeatureFlags } from 'uiSrc/constants'
+import { getDatabasesApiSpy } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import InstancePage, { Props } from './InstancePage'
 
 const INSTANCE_ID_MOCK = 'instanceId'
@@ -64,6 +66,7 @@ beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
   store.clearActions()
+  getDatabasesApiSpy.mockClear()
 })
 
 /**
@@ -136,6 +139,56 @@ describe('InstancePage', () => {
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+  })
+
+  it('should call databases list api', async () => {
+    (appContextSelector as jest.Mock).mockReturnValue({
+      contextInstanceId: 'prevId'
+    })
+
+    const initialState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: true },
+    )
+
+    await act(() => {
+      render(
+        <BrowserRouter>
+          <InstancePage {...instance(mockedProps)} />
+        </BrowserRouter>,
+        {
+          store: mockStore(initialState)
+        }
+      )
+    })
+
+    await waitFor(() => expect(getDatabasesApiSpy).toHaveBeenCalledTimes(1))
+  })
+
+  it('should not call databases list api when flag disabled', async () => {
+    (appContextSelector as jest.Mock).mockReturnValue({
+      contextInstanceId: 'prevId'
+    })
+
+    const initialState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false },
+    )
+
+    await act(() => {
+      render(
+        <BrowserRouter>
+          <InstancePage {...instance(mockedProps)} />
+        </BrowserRouter>,
+        {
+          store: mockStore(initialState)
+        }
+      )
+    })
+
+    await waitFor(() => expect(getDatabasesApiSpy).toHaveBeenCalledTimes(0))
   })
 
   it('should not render connectivity error page when envDependent feature flag is on', () => {

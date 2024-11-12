@@ -27,8 +27,9 @@ export class AnalyticsController {
   })
   async sendEvent(
     @Body() dto: SendEventDto,
+      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<void> {
-    return this.service.sendEvent(dto);
+    return this.service.sendUserEvent(sessionMetadata, dto);
   }
 
   @Post('send-page')

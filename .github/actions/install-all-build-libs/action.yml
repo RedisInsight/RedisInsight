@@ -36,10 +36,8 @@ runs:
         node-version: '20.15'
         # disable cache for windows
         # https://github.com/actions/setup-node/issues/975
-        # cache: ${{ runner.os != 'Windows' && 'yarn' || '' }}
-        # cache-dependency-path: ${{ runner.os != 'Windows' && '**/yarn.lock' || '' }}
-        cache: 'yarn'
-        cache-dependency-path: '**/yarn.lock'
+        cache: ${{ runner.os != 'Windows' && 'yarn' || '' }}
+        cache-dependency-path: ${{ runner.os != 'Windows' && '**/yarn.lock' || '' }}
 
     - name: Setup Python
       # if: ${{ contains(inputs.skip-electron-deps, '1') }}

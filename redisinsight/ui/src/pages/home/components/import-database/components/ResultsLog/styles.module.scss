@@ -15,15 +15,6 @@
     }
   }
 
-  &:global(.euiAccordion-isOpen) {
-    :global {
-      .euiAccordion__triggerWrapper {
-        border-radius: 0;
-        border-color: transparent;
-      }
-    }
-  }
-
   &:global(.success) {
     &:before {
       background-color: var(--successBorderColor);

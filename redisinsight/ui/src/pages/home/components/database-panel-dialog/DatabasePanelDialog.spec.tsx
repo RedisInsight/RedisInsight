@@ -11,6 +11,14 @@ describe('DatabasePanelDialog', () => {
     expect(render(<DatabasePanelDialog {...instance(mockedProps)} />)).toBeTruthy()
   })
 
+  it('should change tab to manual and render proper form', () => {
+    render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
+
+    fireEvent.click(screen.getByTestId('add-database_tab_manual'))
+
+    expect(screen.getByTestId('add-db_manual')).toBeInTheDocument()
+  })
+
   it('should change tab to cloud and render proper form', () => {
     render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
 

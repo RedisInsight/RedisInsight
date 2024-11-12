@@ -64,11 +64,9 @@ async function generateBuildSummary() {
     })
 
     const data = markdownLines.join('\n')
-    console.log({data});
+    const summaryFilePath = GITHUB_STEP_SUMMARY
 
-    // const summaryFilePath = GITHUB_STEP_SUMMARY
-
-    // await writeFile(summaryFilePath, data, { encoding: 'utf8' })
+    await writeFile(summaryFilePath, data, { encoding: 'utf8' })
 
     console.log('Build summary generated successfully.')
 

@@ -50,7 +50,8 @@ jobs:
 
     - name: Upload builds to s3 bucket
       run: |
-        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/upgrades --recursive
+        # aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
 
     - name: Generate job summary
       run: |

@@ -65,12 +65,12 @@ jobs:
     - name: Download Docker Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: docker
+        name: docker-builds
         path: ./release
 
     - name: Load built docker image from workspace
       run: |
-        docker image load -i ./release/docker-linux-alpine.amd64.tar
+        docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
 
     - name: Generate short list of the test files
       working-directory: ./tests/e2e

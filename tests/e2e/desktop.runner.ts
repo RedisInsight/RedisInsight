@@ -29,7 +29,7 @@ import testcafe from 'testcafe';
                     },
                     {
                         name: 'html',
-                        output: './report/report.html'
+                        output: './report/index.html'
                     }
                 ])
                 .run({

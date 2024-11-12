@@ -266,22 +266,26 @@ export const findCompleteQuery = (
     compositeArgs,
   )
 
-  const [[firstQueryArg]] = args
+  const [[commandNameFromQuery]] = args
   const matchedCommand = commandsArray
-    .find((command) => firstQueryArg?.toUpperCase() === command.toUpperCase())
+    .find((command) => commandNameFromQuery?.toUpperCase() === command.toUpperCase())
+
+  const cursorContext = {
+    position,
+    fullQuery,
+    args,
+    allArgs: args.flat(),
+    cursor,
+  }
 
   if (isUndefined(matchedCommand)) {
-    return null
+    return cursorContext as IMonacoQuery
   }
 
   return {
-    position,
+    ...cursorContext,
     commandPosition,
     commandCursorPosition,
-    fullQuery,
-    args,
-    cursor,
-    allArgs: args.flat(),
     name: matchedCommand,
     info: commandsSpec[matchedCommand]
   } as IMonacoQuery

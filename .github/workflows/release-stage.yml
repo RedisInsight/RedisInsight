@@ -33,6 +33,7 @@ jobs:
     uses: ./.github/workflows/tests-e2e-appimage.yml
     secrets: inherit
 
-
-
-
+# Cancel a previous run workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true

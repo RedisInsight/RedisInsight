@@ -4,7 +4,11 @@ on:
     inputs:
       report:
         description: Send report to Slack
-        required: false
+        default: false
+        type: boolean
+
+      debug:
+        description: SSH Debug
         default: false
         type: boolean
 
@@ -22,12 +26,17 @@ env:
   RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
   SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
+  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   E2E_VOLUME_PATH: "/usr/src/app"
+  REPORT_NAME: "report-docker-node"
 
 jobs:
   e2e-docker-tests:
     runs-on: ubuntu-latest
     name: E2E Docker tests
+    environment:
+      name: production
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}
     container:
       image: docker:latest
       options: --privileged
@@ -38,13 +47,20 @@ jobs:
       fail-fast: false
       matrix:
         # Number of threads to run tests
-        parallel: [0, 1, 2, 3]
+        parallel: [0, 1, 2]
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Setup repository
       run: git config --global --add safe.directory /__w/RedisInsight/RedisInsight
+
+    # SSH Debug
+    - name: Enable SSH
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
 
     - name: Download Docker Artifacts
       uses: actions/download-artifact@v4
@@ -55,12 +71,11 @@ jobs:
     - name: Load built docker image from workspace
       run: |
         docker image load -i ./release/docker-linux-alpine.amd64.tar
-        # docker pull redis/redisinsight
 
     - name: Generate short list of the test files
       working-directory: ./tests/e2e
       run: |
-        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 3 == ${{ matrix.parallel }}")
         echo $testFiles
 
         # Multi-Line value
@@ -103,3 +118,12 @@ jobs:
         list-tests: 'failed'
         list-suites: 'failed'
         fail-on-error: 'false'
+
+  # Deploy report to Github Pages
+  deploy-pages:
+    name: Deploy reports
+    uses: ./.github/workflows/deploy-pages.yml
+    needs: 'e2e-docker-tests'
+    if: always()
+    with:
+      group: 'report'

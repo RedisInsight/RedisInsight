@@ -7,7 +7,7 @@ import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { commonUrl } from '../../../../helpers/conf';
 import { RdiPopoverOptions, RedisOverviewPage } from '../../../../helpers/constants';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
-import { Common, DatabaseHelper } from '../../../../helpers';
+import { Common, DatabaseHelper, Telemetry } from '../../../../helpers';
 import { RdiApiRequests } from '../../../../helpers/api/api-rdi';
 import { goBackHistory } from '../../../../helpers/utils';
 
@@ -17,6 +17,22 @@ const rdiInstancePage = new RdiInstancePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
 const rdiApiRequests = new RdiApiRequests();
+
+const telemetry = new Telemetry();
+
+const logger = telemetry.createLogger();
+
+const telemetryEvents = ['RDI_INSTANCE_LIST_SEARCHED','RDI_START_OPTION_SELECTED'];
+
+const instanceExpectedProperties = [
+    'instancesFullCount',
+    'instancesSearchedCount'
+];
+
+const pipelineExpectedProperties = [
+    'id',
+    'option'
+];
 
 const rdiInstance: RdiInstance = {
     alias: 'Alias',
@@ -104,19 +120,24 @@ test('Verify that user can add and remove RDI', async() => {
 
     await t.expect(rdiInstancesListPage.emptyRdiList.textContent).contains('Redis Data Integration', 'The instance is not removed');
 });
-test
+test.requestHooks(logger)
     .after(async() => {
         await rdiInstancesListPage.deleteAllInstance();
     })('Verify that user can search by RDI', async() => {
         await rdiInstancesListPage.addRdi(rdiInstance);
         await rdiInstancesListPage.addRdi(rdiInstance2);
         await t.typeText(rdiInstancesListPage.searchInput, rdiInstance2.alias);
+
+        //Verify telemetry event
+        await telemetry.verifyEventHasProperties(telemetryEvents[0], instanceExpectedProperties, logger);
+
         const addedRdiInstance = await rdiInstancesListPage.getRdiInstanceValuesByIndex(0);
         await t.expect(addedRdiInstance.alias).eql(rdiInstance2.alias, 'correct item is displayed');
 
         await t.expect(await rdiInstancesListPage.rdiInstanceRow.count).eql(1, 'search works incorrectly');
     });
-test('Verify that sorting on the list of rdi saved when rdi opened', async t => {
+test.requestHooks(logger)
+('Verify that sorting on the list of rdi saved when rdi opened', async t => {
     // Sort by Connection Type
     await rdiInstancesListPage.addRdi(rdiInstance);
     await rdiInstancesListPage.addRdi(rdiInstance3);
@@ -128,6 +149,10 @@ test('Verify that sorting on the list of rdi saved when rdi opened', async t => 
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByAlias);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.alias);
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
+
+    //verify telemetry event
+    await telemetry.verifyEventHasProperties(telemetryEvents[1], pipelineExpectedProperties, logger);
+
     await t.click(rdiInstancePage.RdiHeader.breadcrumbsLink);
     actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByAlias);

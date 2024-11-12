@@ -100,7 +100,7 @@ export const getRediSearchSubRedisMonarchTokensProvider = (
         ],
         whitespace: [
           [/\s+/, 'white'],
-          [/\/\/.*$/, 'comment'],
+          [/\/\/.*/, 'comment'],
         ],
         numbers: [
           [/0[xX][0-9a-fA-F]*/, 'number'],
@@ -122,7 +122,7 @@ export const getRediSearchSubRedisMonarchTokensProvider = (
           [/[^\\"]+/, STRING_DOUBLE],
         ],
         startOfLine: [
-          [/\n/, { next: '@keywords', token: '@pop' }]
+          [/\s?\n/, { next: '@root', token: '@pop' }],
         ]
       },
     }

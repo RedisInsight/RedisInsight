@@ -22,7 +22,6 @@ import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
 import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
-import { ShowChildByCondition } from 'uiSrc/components'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import ItemList from 'uiSrc/components/item-list'
 import { BrowserStorageItem, Pages, Theme } from 'uiSrc/constants'
@@ -68,7 +67,6 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
   const [, forceRerender] = useState({})
 
   const deletingIdRef = useRef('')
-  const isLoadingRef = useRef(false)
 
   const closePopover = () => {
     if (deletingIdRef.current) {
@@ -84,19 +82,14 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
 
   useEffect(() => {
     const editInstanceId = new URLSearchParams(search).get('editInstance')
-    if (editInstanceId && !instances.loading) {
+    if (editInstanceId && instances?.data?.length) {
       const instance = instances.data.find((item: Instance) => item.id === editInstanceId)
       if (instance) {
         handleClickEditInstance(instance)
-      }
-      setTimeout(() => {
         history.replace(Pages.home)
-      }, 1000)
+      }
     }
-
-    isLoadingRef.current = instances.loading
-    forceRerender({})
-  }, [instances.loading, search])
+  }, [instances, search])
 
   useEffect(() => {
     closePopover()
@@ -235,32 +228,28 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
         return (
           <div role="presentation">
             {newStatus && (
-              <ShowChildByCondition isShow={!isLoadingRef.current} innerClassName={styles.newStatusAnchor}>
-                <EuiToolTip content="New" position="top" anchorClassName={styles.newStatusAnchor}>
-                  <div className={styles.newStatus} data-testid={`database-status-new-${id}`} />
-                </EuiToolTip>
-              </ShowChildByCondition>
-            )}
-            <ShowChildByCondition isShow={!isLoadingRef.current}>
-              <EuiToolTip
-                position="bottom"
-                title="Database Alias"
-                className={styles.tooltipColumnName}
-                content={`${formatLongName(name)} ${getDbIndex(db)}`}
-              >
-                <EuiText
-                  className={styles.tooltipAnchorColumnName}
-                  data-testid={`instance-name-${id}`}
-                  onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, instance)}
-                  onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, instance)}
-                >
-                  <EuiTextColor className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}>
-                    {cellContent}
-                  </EuiTextColor>
-                  <EuiTextColor>{` ${getDbIndex(db)}`}</EuiTextColor>
-                </EuiText>
+              <EuiToolTip content="New" position="top" anchorClassName={styles.newStatusAnchor}>
+                <div className={styles.newStatus} data-testid={`database-status-new-${id}`} />
               </EuiToolTip>
-            </ShowChildByCondition>
+            )}
+            <EuiToolTip
+              position="bottom"
+              title="Database Alias"
+              className={styles.tooltipColumnName}
+              content={`${formatLongName(name)} ${getDbIndex(db)}`}
+            >
+              <EuiText
+                className={styles.tooltipAnchorColumnName}
+                data-testid={`instance-name-${id}`}
+                onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, instance)}
+                onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, instance)}
+              >
+                <EuiTextColor className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}>
+                  {cellContent}
+                </EuiTextColor>
+                <EuiTextColor>{` ${getDbIndex(db)}`}</EuiTextColor>
+              </EuiText>
+            </EuiToolTip>
           </div>
         )
       },

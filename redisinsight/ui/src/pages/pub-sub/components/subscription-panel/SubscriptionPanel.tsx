@@ -20,14 +20,14 @@ import ClickableAppendInfo from './components/clickable-append-info'
 import styles from './styles.module.scss'
 
 const SubscriptionPanel = () => {
-  const { messages, isSubscribed, loading, count } = useSelector(pubSubSelector)
+  const { messages, isSubscribed, subscriptions, loading, count } = useSelector(pubSubSelector)
 
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const [channels, setChannels] = useState(DEFAULT_SEARCH_MATCH)
+  const [channels, setChannels] = useState(subscriptions?.length ? subscriptions.map((sub) => sub.channel).join(' ') : DEFAULT_SEARCH_MATCH)
 
   const toggleSubscribe = () => {
     dispatch(toggleSubscribeTriggerPubSub(channels))

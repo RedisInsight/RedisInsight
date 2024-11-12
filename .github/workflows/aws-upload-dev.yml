@@ -37,7 +37,7 @@ jobs:
     - name: Upload builds to s3 bucket dev sub folder
       if: ${{ !inputs.pre-release }}
       run: |
-        echo "SUB_PATH=dev-builds/${{ steps.date.outputs.date }}/${{ github.run_id }}" >> $GITHUB_ENV
+        SUB_PATH="dev-builds/${{ steps.date.outputs.date }}/${{ github.run_id }}"
 
         aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
 
@@ -45,10 +45,9 @@ jobs:
       if: inputs.pre-release
       run: |
         APP_VERSION=$(jq -r '.version' redisinsight/package.json)
-        echo "SUB_PATH=pre-release/${APP_VERSION}" >> $GITHUB_ENV
 
         aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/upgrades --recursive
-        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/pre-release/${APP_VERSION} --recursive
 
     - name: Generate job summary
       run: |

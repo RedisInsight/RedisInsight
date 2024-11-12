@@ -20,7 +20,7 @@ const PatternsInfo = ({ channels }: PatternsInfoProps) => {
       <EuiToolTip
         anchorClassName={styles.appendIcon}
         position="right"
-        title={<>{channels?.trim().split(' ').map((ch) => <p>{ch}</p>)}</>}
+        title={<>{channels?.trim().split(' ').map((ch) => <p key={`${ch}`}>{ch}</p>)}</>}
       >
         <EuiIcon
           type="iInCircle"

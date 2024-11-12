@@ -9,12 +9,18 @@ on:
         required: false
 
 env:
+  SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
+  REPORT_NAME: "report-be"
 
 jobs:
   unit-tests:
-    name: Backend tests
+    name: Unit tests
     runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}
     steps:
     - uses: actions/checkout@v4
 
@@ -28,7 +34,7 @@ jobs:
         FILENAME=api.prod.deps.audit.json
 
         yarn --cwd redisinsight/api audit --groups dependencies --json > $FILENAME || true &&
-        FILENAME=$FILENAME DEPS="API prod" node .circleci/deps-audit-report.js &&
+        FILENAME=$FILENAME DEPS="API prod" node .github/deps-audit-report.js &&
         curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: API DEV dependencies scan
@@ -36,7 +42,7 @@ jobs:
         FILENAME=api.dev.deps.audit.json
 
         yarn --cwd redisinsight/api audit --groups devDependencies --json > $FILENAME || true &&
-        FILENAME=$FILENAME DEPS="API dev" node .circleci/deps-audit-report.js &&
+        FILENAME=$FILENAME DEPS="API dev" node .github/deps-audit-report.js &&
         curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: Code analysis
@@ -45,8 +51,23 @@ jobs:
         WORKDIR="./redisinsight/api"
 
         yarn lint:api -f json -o $FILENAME || true &&
-        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="API" node .circleci/lint-report.js &&
+        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="API" node .github/lint-report.js &&
         curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: Unit tests API
-      run: yarn --cwd redisinsight/api/ test:cov --ci
+      run: yarn --cwd redisinsight/api/ test:cov --ci --silent
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ env.REPORT_NAME }}
+        path: redisinsight/api/report
+
+  deploy-pages:
+    name: Deploy report
+    uses: ./.github/workflows/deploy-pages.yml
+    needs: 'unit-tests'
+    if: always()
+    with:
+      group: 'report'

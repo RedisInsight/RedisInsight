@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { compact, first } from 'lodash'
+import { compact, first, isFinite } from 'lodash'
 import cx from 'classnames'
 import MonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { useParams } from 'react-router-dom'
@@ -423,7 +423,7 @@ const Query = (props: Props) => {
     command: Nullable<IMonacoQuery>
   ) => {
     const { editor } = monacoObjects?.current || {}
-    if (!command || !editor) {
+    if (!command?.info || !editor) {
       isWidgetEscaped.current = false
       return
     }
@@ -471,6 +471,7 @@ const Query = (props: Props) => {
   }
 
   const triggerSuggestions = () => {
+    isEscapedSuggestions.current = false
     const { editor } = monacoObjects.current || {}
     setTimeout(() => editor?.trigger('', 'editor.action.triggerSuggest', { auto: false }))
   }
@@ -528,6 +529,8 @@ const Query = (props: Props) => {
 
   const setupMonacoRedisLang = (monaco: typeof monacoEditor) => {
     disposeCompletionItemProvider = monaco.languages.registerCompletionItemProvider(MonacoLanguage.Redis, {
+      // refactor/remove trigger function (TODO: after apply suggestion need trigger again)
+      // triggerCharacters: [' '], // Dot and space will trigger suggestions
       provideCompletionItems: (): monacoEditor.languages.CompletionList => ({ suggestions: suggestionsRef.current })
     }).dispose
 
@@ -553,12 +556,12 @@ const Query = (props: Props) => {
 
     if (position.column === 1) {
       helpWidgetRef.current.isOpen = false
-      if (command) return asSuggestionsRef([])
+      if (command?.info) return asSuggestionsRef([])
       return asSuggestionsRef(getCommandsSuggestions(commands, range), false, false)
     }
 
-    if (!command) {
-      return asSuggestionsRef(getCommandsSuggestions(commands, range), false)
+    if (!command?.info) {
+      return asSuggestionsRef(getCommandsSuggestions(commands, range), false, false)
     }
 
     const { allArgs, args, cursor } = command

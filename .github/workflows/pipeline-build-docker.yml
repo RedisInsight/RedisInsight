@@ -4,9 +4,18 @@ on:
     inputs:
       environment:
         description: Environment for build
-        required: false
         default: 'staging'
         type: string
+
+      only_docker:
+        description: Build only docker
+        default: false
+        type: boolean
+
+      debug:
+        description: SSH Debug
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -15,6 +24,13 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
     - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Enable SSH
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -26,24 +42,24 @@ jobs:
         sqlite3-host-mirror: ${{ secrets.NPM_CONFIG_NODE_SQLITE3_BINARY_HOST_MIRROR }}
 
     - name: Build sources
-      run: ./.circleci/build/build.sh
+      run: ./.github/build/build.sh
 
-    # todo: matrix
+      # todo: matrix
     - name: Build web archives
       run: |
         unset npm_config_keytar_binary_host_mirror
         unset npm_config_node_sqlite3_binary_host_mirror
         # Docker sources
-        PLATFORM=linux ARCH=x64 LIBC=musl .circleci/build/build_modules.sh
-        PLATFORM=linux ARCH=arm64 LIBC=musl .circleci/build/build_modules.sh
+        PLATFORM=linux ARCH=x64 LIBC=musl .github/build/build_modules.sh
+        PLATFORM=linux ARCH=arm64 LIBC=musl .github/build/build_modules.sh
         # Redis Stack + VSC Linux
-        PLATFORM=linux ARCH=x64 .circleci/build/build_modules.sh
-        PLATFORM=linux ARCH=arm64 .circleci/build/build_modules.sh
+        PLATFORM=linux ARCH=x64 .github/build/build_modules.sh
+        PLATFORM=linux ARCH=arm64 .github/build/build_modules.sh
         # VSC Darwin
-        PLATFORM=darwin ARCH=x64 .circleci/build/build_modules.sh
-        PLATFORM=darwin ARCH=arm64 .circleci/build/build_modules.sh
+        PLATFORM=darwin ARCH=x64 .github/build/build_modules.sh
+        PLATFORM=darwin ARCH=arm64 .github/build/build_modules.sh
         # VSC Windows
-        PLATFORM=win32 ARCH=x64 .circleci/build/build_modules.sh
+        PLATFORM=win32 ARCH=x64 .github/build/build_modules.sh
     - name: Build Docker (x64, arm64)
       env:
         ENV: ${{ vars.ENV }}
@@ -51,7 +67,7 @@ jobs:
       run: |
         # Build alpine x64 image
         docker buildx build \
-        -f .circleci/build/build.Dockerfile \
+        -f .github/build/build.Dockerfile \
         --platform linux/amd64 \
         --build-arg DIST=release/web/Redis-Insight-web-linux-musl.x64.tar.gz \
         --build-arg NODE_ENV="$ENV" \
@@ -61,7 +77,7 @@ jobs:
 
         # Build alpine arm64 image
         docker buildx build \
-        -f .circleci/build/build.Dockerfile \
+        -f .github/build/build.Dockerfile \
         --platform linux/arm64 \
         --build-arg DIST=release/web/Redis-Insight-web-linux-musl.arm64.tar.gz \
         --build-arg NODE_ENV="$ENV" \
@@ -74,25 +90,14 @@ jobs:
         docker image save -o release/docker/docker-linux-alpine.arm64.tar redisinsight:arm64
 
     - uses: actions/upload-artifact@v4
-      name: Upload docker images
+      name: Upload docker builds
       with:
-        if-no-files-found: error
-        name: docker
-        path: ./release/docker/docker-linux-alpine.*64.tar
-
-    - uses: actions/upload-artifact@v4
-      name: Upload web-mini artifacts
-      with:
-        if-no-files-found: error
-        name: web-mini
-        path: ./release/web-mini
-
-    - uses: actions/upload-artifact@v4
-      name: Upload web artifacts
-      with:
-        if-no-files-found: error
-        name: web
-        path: ./release/web
+        if-no-files-found: warn
+        name: docker-builds
+        path: |
+          ./release/docker
+          ./release/web
+          ./release/web-mini
 
     env:
       RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}

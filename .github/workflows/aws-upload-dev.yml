@@ -25,19 +25,12 @@ jobs:
       id: date
       uses: ./.github/actions/get-current-date
 
-    - name: Merge builds by pattern
-      id: merge-builds
-      uses: actions/upload-artifact/merge@v4
-      with:
-        name: 'all-builds'
-        pattern: '*-builds'
-        delete-merged: true
-
     - name: Download builds
       uses: actions/download-artifact@v4
       with:
-        name: 'all-builds'
+        pattern: '*-builds'
         path: release
+        merge-multiple: true
 
     - run: ls -R ./release
 
@@ -52,6 +45,7 @@ jobs:
         APP_VERSION=$(jq -r '.version' redisinsight/package.json)
         echo "SUB_PATH=pre-release/${APP_VERSION}" >> $GITHUB_ENV
 
+        aws s3 rm s3://${AWS_BUCKET_NAME_TEST}/public/upgrades --recursive
         aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/upgrades --recursive
 
     - name: Upload builds to s3 bucket
@@ -66,6 +60,7 @@ jobs:
   remove-artifacts:
     name: Remove artifacts
     needs: 's3'
+    if: ${{ !inputs.pre-release }}
     runs-on: ubuntu-latest
 
     steps:

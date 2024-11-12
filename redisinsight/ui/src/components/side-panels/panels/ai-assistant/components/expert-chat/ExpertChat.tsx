@@ -179,7 +179,7 @@ const ExpertChat = () => {
 
     if (!isRedisearchAvailable(modules)) {
       return {
-        title: 'Search & query capability is not available',
+        title: 'Redis Query Engine capability is not available',
         content: freeInstances?.length
           ? 'Use your free all-in-one Redis Cloud database to start exploring these capabilities.'
           : 'Create a free Redis Stack database with search & query capability that extends the core capabilities of open-source Redis.',

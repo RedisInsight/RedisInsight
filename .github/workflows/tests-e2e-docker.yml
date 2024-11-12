@@ -26,7 +26,6 @@ env:
   RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
   SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
-  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   E2E_VOLUME_PATH: "/usr/src/app"
   REPORT_NAME: "report-docker-node"
 
@@ -120,7 +119,7 @@ jobs:
 
     - name: Add link to report in the workflow summary
       run: |
-        link="${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}"
+        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}"
 
         echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
 

@@ -5,7 +5,6 @@ on:
 env:
   SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
-  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   REPORT_NAME: "report-fe"
 
 jobs:
@@ -72,6 +71,6 @@ jobs:
 
     - name: Add link to report in the workflow summary
       run: |
-        link="${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}"
+        link="${{ env.DEFAULT_TEST_REPORTS_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}"
         echo "### Test results: Frontend unit tests" >> $GITHUB_STEP_SUMMARY
         echo "[${link}](${link})" >> $GITHUB_STEP_SUMMARY

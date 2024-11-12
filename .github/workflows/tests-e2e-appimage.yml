@@ -31,7 +31,6 @@ env:
   DBUS_SESSION_BUS_ADDRESS: ${{ vars.DBUS_SESSION_BUS_ADDRESS }}
   DISPLAY: ${{ vars.DISPLAY }}
   APPIMAGE_PATH: ${{ vars.APPIMAGE_PATH }}
-  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   REPORT_NAME: "report-appimage"
 
 jobs:
@@ -109,6 +108,6 @@ jobs:
 
     - name: Add link to report in the workflow summary
       run: |
-        link="${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}"
+        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}"
         echo "[${link}](${link})" >> $GITHUB_STEP_SUMMARY
 

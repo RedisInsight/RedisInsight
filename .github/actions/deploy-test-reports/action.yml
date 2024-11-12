@@ -42,7 +42,7 @@ runs:
         AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
       run: |
 
-        SUB_PATH=test-reports/${{ steps.date.outputs.date }}/${{ github.run_id }}
+        SUB_PATH=test-reports/${{ steps.date.outputs.date }}
 
         aws s3 cp public/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
 

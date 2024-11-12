@@ -112,13 +112,6 @@ const Notifications = () => {
         )
       }
 
-      if (!!additionalInfo?.jsonModuleMissing) {
-        return errorMessages.REDIS_JSON(
-          id,
-          () => removeToast({ id })
-        )
-      }
-
       return errorMessages.DEFAULT(id, message, () => removeToast({ id }), title)
     })
 

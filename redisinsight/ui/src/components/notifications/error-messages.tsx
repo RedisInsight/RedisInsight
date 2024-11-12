@@ -2,26 +2,13 @@ import React from 'react'
 import { EuiTextColor } from '@elastic/eui'
 import { Toast } from '@elastic/eui/src/components/toast/global_toast_list'
 import RdiDeployErrorContent from './components/rdi-deploy-error-content'
-import { EncryptionErrorContent, DefaultErrorContent, JsonErrorContent } from './components'
+import { EncryptionErrorContent, DefaultErrorContent } from './components'
 import CloudCapiUnAuthorizedErrorContent from './components/cloud-capi-unauthorized'
 
 const TOAST_LIFE_TIME = 1000 * 60 * 60 * 12 // 12hr
 
 // TODO: use i18n file for texts
 export default {
-  REDIS_JSON: (id: string, onClose = () => {}): Toast => ({
-    id,
-    'data-test-subj': 'toast-error',
-    color: 'danger',
-    iconType: 'alert',
-    onClose,
-    title: (
-      <EuiTextColor color="ghost">
-        <b>Error</b>
-      </EuiTextColor>
-    ),
-    text: <JsonErrorContent onClose={onClose} />,
-  }),
   DEFAULT: (id: string, text: any, onClose = () => {}, title: string = 'Error'): Toast => ({
     id,
     'data-test-subj': 'toast-error',

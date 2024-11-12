@@ -189,16 +189,16 @@ export const COMMAND_MODULES = {
   [RedisDefaultModules.Bloom]: [RedisDefaultModules.Bloom],
 }
 
-const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'RediSearch' }), {})
+const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'Redis Query Engine' }), {})
 
 // Enums don't allow to use dynamic key
 export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
-  [RedisDefaultModules.AI]: 'RedisAI',
-  [RedisDefaultModules.Graph]: 'RedisGraph',
-  [RedisDefaultModules.Gears]: 'RedisGears',
-  [RedisDefaultModules.Bloom]: 'RedisBloom',
-  [RedisDefaultModules.ReJSON]: 'RedisJSON',
-  [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
+  [RedisDefaultModules.AI]: 'AI',
+  [RedisDefaultModules.Graph]: 'Graph',
+  [RedisDefaultModules.Gears]: 'Gears',
+  [RedisDefaultModules.Bloom]: 'Probabilistic',
+  [RedisDefaultModules.ReJSON]: 'JSON',
+  [RedisDefaultModules.TimeSeries]: 'Time Series',
   [RedisCustomModulesName.Proto]: 'redis-protobuf',
   [RedisCustomModulesName.IpTables]: 'RedisPushIpTables',
   ...RediSearchModulesText,

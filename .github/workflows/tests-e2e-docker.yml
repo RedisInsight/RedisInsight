@@ -47,7 +47,7 @@ jobs:
       fail-fast: false
       matrix:
         # Number of threads to run tests
-        parallel: [0, 1, 2, 3]
+        parallel: [0, 1, 2]
 
     steps:
     - uses: actions/checkout@v4
@@ -65,17 +65,17 @@ jobs:
     - name: Download Docker Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: docker
+        name: docker-builds
         path: ./release
 
     - name: Load built docker image from workspace
       run: |
-        docker image load -i ./release/docker-linux-alpine.amd64.tar
+        docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
 
     - name: Generate short list of the test files
       working-directory: ./tests/e2e
       run: |
-        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 3 == ${{ matrix.parallel }}")
         echo $testFiles
 
         # Multi-Line value

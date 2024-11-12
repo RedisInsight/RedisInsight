@@ -2,7 +2,7 @@ const fs = require('fs');
 const { join } = require('path');
 const { last, set } = require('lodash');
 const { google } = require('googleapis');
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 const csvParser = require('csv-parser');
 const { stringify } = require('csv-stringify');
 
@@ -74,17 +74,18 @@ async function runLicenseCheck(path) {
     `license-checker --start ${path} --csv --out ./${licenseFolderName}/${name}_dev.csv --development`,
   ]
 
-  return await Promise.all(COMMANDS.map((command) =>
-    new Promise((resolve, reject) => {
-      exec(command, (error, stdout, stderr) => {
+  return await Promise.all(COMMANDS.map((command) => {
+    const [cmd, ...args] = command.split(' ');
+    return new Promise((resolve, reject) => {
+      execFile(cmd, args, (error, stdout, stderr) => {
         if (error) {
           console.error(`Failed command: ${command}, error:`, stderr);
           reject(error);
         }
         resolve();
       });
-    })
-  ));
+    });
+  }));
 }
 
 async function sendLicensesToGoogleSheet() {

@@ -173,7 +173,7 @@ const ExpertChat = () => {
     if (!instanceId) {
       return {
         title: 'Open a database',
-        content: 'Open your Redis database with search & query, or create a new database to get started.'
+        content: 'Open your Redis database with Redis Query Engine, or create a new database to get started.'
       }
     }
 
@@ -182,7 +182,7 @@ const ExpertChat = () => {
         title: 'Redis Query Engine capability is not available',
         content: freeInstances?.length
           ? 'Use your free all-in-one Redis Cloud database to start exploring these capabilities.'
-          : 'Create a free Redis Stack database with search & query capability that extends the core capabilities of open-source Redis.',
+          : 'Create a free Redis Stack database with Redis Query Engine capability that extends the core capabilities of open-source Redis.',
         icon: (
           <EuiIcon
             className={styles.iconTelescope}

@@ -72,7 +72,6 @@ async function generateBuildSummary() {
 
   } catch (error) {
     console.error(error);
-
   }
 }
 

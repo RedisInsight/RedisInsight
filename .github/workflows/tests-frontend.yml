@@ -64,8 +64,11 @@ jobs:
 
   deploy-pages:
     name: Deploy report
-    uses: ./.github/workflows/deploy-pages.yml
     needs: 'unit-tests'
-    if: always()
-    with:
-      group: 'report'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy report
+      uses: ./.github/actions/deploy-pages
+      if: always()
+      with:
+        group: 'report'

@@ -121,9 +121,13 @@ jobs:
 
   # Deploy report to Github Pages
   deploy-pages:
-    name: Deploy reports
-    uses: ./.github/workflows/deploy-pages.yml
+    name: Deploy report
     needs: 'e2e-docker-tests'
-    if: always()
-    with:
-      group: 'report'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy report
+      uses: ./.github/actions/deploy-pages
+      if: always()
+      with:
+        group: 'report'
+

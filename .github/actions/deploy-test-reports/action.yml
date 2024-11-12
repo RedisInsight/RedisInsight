@@ -44,6 +44,6 @@ runs:
 
         SUB_PATH=test-reports/${{ steps.date.outputs.date }}/${{ github.run_id }}
 
-        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
+        aws s3 cp public/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
 
 

@@ -58,8 +58,8 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     moduleSearchIcon = Selector("[data-testid^='Redis Query Engine']");
     moduleGraphIcon = Selector('[data-testid^=Graph]');
     moduleJSONIcon = Selector('[data-testid^=JSON]');
-    moduleTimeseriesIcon = Selector('[data-testid^=Time Series]');
-    moduleBloomIcon = Selector('[data-testid^=Bloom]');
+    moduleTimeseriesIcon = Selector("[data-testid^='Time Series']");
+    moduleBloomIcon = Selector('[data-testid^=Probabilistic]');
     moduleAIIcon = Selector('[data-testid^=AI]');
     moduleGearsIcon = Selector('[data-testid^=Gears]');
     redisStackIcon = Selector('[data-testid=redis-stack-icon]');

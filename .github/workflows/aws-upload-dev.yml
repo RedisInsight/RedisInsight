@@ -1,0 +1,67 @@
+name: AWS Development
+
+on:
+  workflow_call:
+    inputs:
+      pre-release:
+        type: boolean
+        default: false
+
+env:
+  AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
+  AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+  AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  s3:
+    name: Upload to s3
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Get current date
+      id: date
+      uses: ./.github/actions/get-current-date
+
+    - name: Merge builds by pattern
+      id: merge-builds
+      uses: actions/upload-artifact/merge@v4
+      with:
+        name: 'all-builds'
+        pattern: '*-builds'
+        delete-merged: true
+
+    - name: Download builds
+      uses: actions/download-artifact@v4
+      with:
+        name: 'all-builds'
+        path: release
+
+    - run: ls -R ./release
+
+    - name: Set sub path for dev builds
+      if: ${{ !inputs.pre-release }}
+      run: |
+        echo "SUB_PATH=dev-builds/${{ steps.date.outputs.date }}/${{ github.run_id }}" >> $GITHUB_ENV
+
+    - name: Set sub path for pre-release builds
+      if: inputs.pre-release
+      run: |
+        APP_VERSION=$(jq -r '.version' redisinsight/package.json)
+        echo "SUB_PATH=pre-release/${APP_VERSION}" >> $GITHUB_ENV
+
+    - name: Upload builds to s3 bucket
+      run: |
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
+
+    - name: Generate job summary
+      run: |
+        node ./.github/generate-build-summary.js
+
+  # Remove artifacts from github actions
+  remove-artifacts:
+    name: Remove artifacts
+    uses: ./.github/workflows/remove-artifacts.yml
+    needs: 's3'

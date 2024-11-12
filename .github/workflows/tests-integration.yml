@@ -152,6 +152,7 @@ jobs:
         fail-on-error: 'false'
 
     - name: Add link to report in the workflow summary
+      if: always()
       run: |
         link="${{ steps.test-reporter.outputs.url_html }}"
         echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY

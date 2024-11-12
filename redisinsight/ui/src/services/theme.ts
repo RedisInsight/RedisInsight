@@ -13,17 +13,18 @@ class ThemeService {
   }
 
   applyTheme(newTheme: Theme) {
-    const actualTheme = newTheme
+    let actualTheme = newTheme
+
     if (newTheme === Theme.System) {
       if (window.matchMedia && window.matchMedia(THEME_MATCH_MEDIA_DARK).matches) {
-        newTheme = Theme.Dark
+        actualTheme = Theme.Dark
       } else {
-        newTheme = Theme.Light
+        actualTheme = Theme.Light
       }
     }
 
     const sheet = new CSSStyleSheet()
-    sheet?.replaceSync(this.themes[newTheme])
+    sheet?.replaceSync(this.themes[actualTheme])
 
     document.adoptedStyleSheets = [sheet]
 

@@ -30,7 +30,6 @@ export const {
 
 // A selector
 export const appConnectivity = (state: RootState) => state.app.connectivity
-export const appConnectivityLoading = (state: RootState) => state.app.connectivity.loading
 export const appConnectivityError = (state: RootState) => state.app.connectivity.error
 
 // The reducer

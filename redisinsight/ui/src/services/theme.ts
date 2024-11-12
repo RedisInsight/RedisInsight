@@ -16,7 +16,7 @@ class ThemeService {
     let actualTheme = newTheme
 
     if (newTheme === Theme.System) {
-      if (window.matchMedia && window.matchMedia(THEME_MATCH_MEDIA_DARK).matches) {
+      if (window.matchMedia?.(THEME_MATCH_MEDIA_DARK)?.matches) {
         actualTheme = Theme.Dark
       } else {
         actualTheme = Theme.Light
@@ -29,7 +29,7 @@ class ThemeService {
     document.adoptedStyleSheets = [sheet]
 
     localStorageService.set(BrowserStorageItem.theme, actualTheme)
-    document.body.classList.value = `theme_${newTheme}`
+    document.body.classList.value = `theme_${actualTheme}`
   }
 
   static getTheme() {

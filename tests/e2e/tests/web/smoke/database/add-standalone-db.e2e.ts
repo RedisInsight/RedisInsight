@@ -17,7 +17,7 @@ const chance = new Chance();
 const databaseHelper = new DatabaseHelper();
 
 const logger = telemetry.createLogger();
-const telemetryEvent = 'CONFIG_DATABASES_OPEN_DATABASE';
+const telemetryEvents = ['CONFIG_DATABASES_OPEN_DATABASE','CONFIG_DATABASES_CLICKED'];
 const expectedProperties = [
     'databaseId',
     'RediSearch',
@@ -28,6 +28,9 @@ const expectedProperties = [
     'RedisJSON',
     'RedisTimeSeries',
     'customModules'
+];
+const clickButtonExpectedProperties = [
+    'source'
 ];
 let databaseName = `test_standalone-${chance.string({ length: 10 })}`;
 
@@ -49,8 +52,10 @@ test
         // Fill the add database form
         await myRedisDatabasePage.AddRedisDatabase.addDatabaseButton.with({ visibilityCheck: true, timeout: 10000 })();
         await t
-            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
-            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
+        // Verify that telemetry event 'CONFIG_DATABASES_CLICKED' sent and has all expected properties
+        await telemetry.verifyEventHasProperties(telemetryEvents[1], clickButtonExpectedProperties, logger);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
         await t
             .typeText(myRedisDatabasePage.AddRedisDatabase.hostInput, ossStandaloneConfig.host, { replace: true, paste: true })
             .typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneConfig.port, { replace: true, paste: true })
@@ -69,7 +74,7 @@ test
         await myRedisDatabasePage.clickOnDBByName(databaseName);
 
         // Verify that telemetry event 'CONFIG_DATABASES_OPEN_DATABASE' sent and has all expected properties
-        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+        await telemetry.verifyEventHasProperties(telemetryEvents[0], expectedProperties, logger);
 
         await t.click(browserPage.OverviewPanel.myRedisDBLink);
         // Verify that user can't see an indicator of databases that were opened

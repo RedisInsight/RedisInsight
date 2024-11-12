@@ -48,7 +48,7 @@ enum OpenDialogName {
 
 const HomePage = () => {
   const [openDialog, setOpenDialog] = useState<Nullable<OpenDialogName>>(null)
-  const initialDbTypeRef = useRef<AddDbType>(AddDbType.manual)
+  const initialDbTypeRef = useRef<AddDbType>(AddDbType.cloud)
 
   const dispatch = useDispatch()
 

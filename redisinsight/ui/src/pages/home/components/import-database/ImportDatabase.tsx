@@ -44,6 +44,10 @@ const ImportDatabase = (props: Props) => {
 
   useEffect(() => {
     setDomReady(true)
+
+    return () => {
+      dispatch(resetImportInstances())
+    }
   }, [])
 
   const onFileChange = (files: FileList | null) => {
@@ -66,6 +70,11 @@ const ImportDatabase = (props: Props) => {
     }
   }
 
+  const onClickRetry = () => {
+    dispatch(resetImportInstances())
+    onFileChange(null)
+  }
+
   const onSubmit = () => {
     if (files) {
       const formData = new FormData()
@@ -82,6 +91,23 @@ const ImportDatabase = (props: Props) => {
   const Footer = () => {
     const footerEl = document.getElementById('footerDatabaseForm')
     if (!domReady || !footerEl) return null
+
+    if (error) {
+      return ReactDOM.createPortal(
+        <div className="footerAddDatabase">
+          <EuiButton
+            fill
+            size="s"
+            color="secondary"
+            onClick={onClickRetry}
+            data-testid="btn-retry"
+          >
+            Retry
+          </EuiButton>
+        </div>,
+        footerEl
+      )
+    }
 
     if (data) {
       return ReactDOM.createPortal(

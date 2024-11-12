@@ -50,7 +50,7 @@ const DatabasePanelDialog = (props: Props) => {
     isOpen,
     editMode,
     onClose,
-    initConnectionType = AddDbType.manual
+    initConnectionType = AddDbType.cloud
   } = props
 
   const [typeSelected, setTypeSelected] = useState<InstanceType>(

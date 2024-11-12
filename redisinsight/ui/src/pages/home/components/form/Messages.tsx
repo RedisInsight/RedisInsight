@@ -2,6 +2,7 @@ import React from 'react'
 import { EuiLink, EuiText } from '@elastic/eui'
 import { APPLICATION_NAME } from 'uiSrc/constants'
 
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 import styles from '../styles.module.scss'
 
 const MessageCloudApiKeys = () => (
@@ -27,7 +28,7 @@ const MessageStandalone = () => (
     . &nbsp;
     <EuiLink
       color="text"
-      href="https://docs.redis.com/latest/ri/using-redisinsight/add-instance/"
+      href={getUtmExternalLink('https://redis.io/docs/latest/develop/connect/insight#connection-management', { campaign: 'redisinsight' })}
       className={styles.link}
       external={false}
       target="_blank"
@@ -46,7 +47,7 @@ const MessageSentinel = () => (
     . &nbsp;
     <EuiLink
       color="text"
-      href="https://redis.io/docs/management/sentinel/"
+      href={getUtmExternalLink('https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/', { campaign: 'redisinsight' })}
       className={styles.link}
       external={false}
       target="_blank"
@@ -65,7 +66,7 @@ const MessageEnterpriceSoftware = () => (
     . &nbsp;
     <EuiLink
       color="text"
-      href="https://redis.io/redis-enterprise-software/overview/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight"
+      href={getUtmExternalLink('https://redis.io/redis-enterprise-software/overview/', { campaign: 'redisinsight' })}
       className={styles.link}
       external={false}
       target="_blank"

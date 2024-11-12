@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { importInstancesFromFile, importInstancesSelector } from 'uiSrc/slices/instances/instances'
+import { importInstancesFromFile, importInstancesSelector, resetImportInstances } from 'uiSrc/slices/instances/instances'
 import ImportDatabase from './ImportDatabase'
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
@@ -49,7 +49,7 @@ describe('ImportDatabase', () => {
       type: 'application/JSON',
     })
 
-    await act(() => {
+    await act(async () => {
       fireEvent.change(
         screen.getByTestId('import-file-modal-filepicker'),
         {
@@ -69,6 +69,26 @@ describe('ImportDatabase', () => {
     });
 
     (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should call proper actions on retry', async () => {
+    (importInstancesSelector as jest.Mock).mockImplementation(() => ({
+      loading: false,
+      data: null,
+      error: 'Error message'
+    }))
+
+    render(
+      <div>
+        <ImportDatabase onClose={jest.fn()} />
+        <div id="footerDatabaseForm" />
+      </div>
+    )
+
+    fireEvent.click(screen.getByTestId('btn-retry'))
+
+    const expectedActions = [resetImportInstances()]
+    expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should render error message when 0 success databases added', () => {

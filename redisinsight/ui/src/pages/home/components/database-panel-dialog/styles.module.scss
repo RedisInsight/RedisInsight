@@ -96,13 +96,16 @@
     .euiFormRow, .euiFormControlLayout {
       max-width: none;
 
+      .euiFormControlLayout:not(.euiFormControlLayout--compressed) {
+        height: 42px !important;
+      }
+
       .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
       .euiSelect:not(.euiSelect--compressed),
-      .euiFormControlLayout:not(.euiFormControlLayout--compressed),
       .euiFieldText:not(.euiFieldText--compressed),
       .euiFieldNumber:not(.euiFieldNumber--compressed),
       .euiFieldPassword {
-        height: 43px !important;
+        height: 40px !important;
       }
     }
 

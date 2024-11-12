@@ -172,7 +172,7 @@ const CloudConnectionForm = (props: Props) => {
     return null
   }
 
-  const CloudApiForm = () => (
+  const CloudApiForm = (
     <div className={styles.cloudApi} data-testid="add-db_cloud-api">
       <MessageCloudApiKeys />
       <EuiSpacer />
@@ -237,7 +237,7 @@ const CloudConnectionForm = (props: Props) => {
         <EuiSpacer />
       </FeatureFlagComponent>
       {type === CloudConnectionOptions.Account && (<OAuthAutodiscovery source={OAuthSocialSource.DiscoveryForm} />)}
-      {type === CloudConnectionOptions.ApiKeys && (<CloudApiForm />)}
+      {type === CloudConnectionOptions.ApiKeys && CloudApiForm}
     </div>
   )
 }

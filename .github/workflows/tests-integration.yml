@@ -88,7 +88,6 @@ jobs:
     needs: set-matrix
     environment:
       name: production
-      url: ${{ steps.test-reporter.outputs.url_html }}
     strategy:
       fail-fast: false
       matrix:
@@ -152,6 +151,12 @@ jobs:
         list-tests: 'failed'
         list-suites: 'failed'
         fail-on-error: 'false'
+
+    - name: Add link to report in the workflow summary
+      run: |
+        link="${{ steps.test-reporter.outputs.url_html }}"
+        echo '### Test results: IT (${{ matrix.rte }}) tests' >> $GITHUB_STEP_SUMMARY
+        echo '- [${link}](${link})' >> $GITHUB_STEP_SUMMARY
 
   coverage:
     runs-on: ubuntu-latest

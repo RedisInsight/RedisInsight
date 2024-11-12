@@ -40,7 +40,6 @@ jobs:
     name: E2E AppImage tests
     environment:
       name: production
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}
     steps:
     - uses: actions/checkout@v4
 
@@ -102,4 +101,10 @@ jobs:
       if: always()
       with:
         group: 'report'
+
+    - name: Add link to report in the workflow summary
+      run: |
+        link="${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}"
+        echo '### Test results: E2E (AppImage)' >> $GITHUB_STEP_SUMMARY
+        echo '- [${link}](${link})' >> $GITHUB_STEP_SUMMARY
 

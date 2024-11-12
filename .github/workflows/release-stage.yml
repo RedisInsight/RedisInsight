@@ -23,6 +23,13 @@ jobs:
       environment: 'staging'
       target: 'all'
 
+  aws:
+    uses: ./.github/workflows/aws-upload-dev.yml
+    needs: [builds]
+    if: always()
+    with:
+      pre-release: true
+
   e2e-docker-tests:
     needs: builds
     uses: ./.github/workflows/tests-e2e-docker.yml

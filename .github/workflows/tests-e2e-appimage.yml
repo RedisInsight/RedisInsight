@@ -59,7 +59,7 @@ jobs:
     - name: Download AppImage Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: linux-appimage-build
+        name: linux-builds
         path: ./release
 
     - name: Run X11

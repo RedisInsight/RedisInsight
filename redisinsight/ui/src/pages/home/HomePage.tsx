@@ -2,14 +2,9 @@ import {
   EuiPage,
   EuiPageBody,
   EuiPanel,
-  EuiResizableContainer,
-  EuiResizeObserver
 } from '@elastic/eui'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
-import { throttle } from 'lodash'
-import DatabasePanel from 'uiSrc/pages/home/components/database-panel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
 import { HomePageTemplate } from 'uiSrc/templates'
@@ -41,18 +36,18 @@ import { AddDbType, CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import DatabasesList from './components/database-list-component'
 import DatabaseListHeader from './components/database-list-header'
 import EmptyMessage from './components/empty-message/EmptyMessage'
+import DatabasePanelDialog from './components/database-panel-dialog'
 
 import './styles.scss'
 import styles from './styles.module.scss'
 
-enum RightPanelName {
+enum OpenDialogName {
   AddDatabase = 'add',
   EditDatabase = 'edit'
 }
 
 const HomePage = () => {
-  const [width, setWidth] = useState(0)
-  const [openRightPanel, setOpenRightPanel] = useState<Nullable<RightPanelName>>(null)
+  const [openDialog, setOpenDialog] = useState<Nullable<OpenDialogName>>(null)
   const initialDbTypeRef = useRef<AddDbType>(AddDbType.manual)
 
   const dispatch = useDispatch()
@@ -103,20 +98,20 @@ const HomePage = () => {
 
   useEffect(() => {
     if (isChangedInstance) {
-      setOpenRightPanel(null)
+      setOpenDialog(null)
       dispatch(setEditedInstance(null))
     }
   }, [isChangedInstance])
 
   useEffect(() => {
     if (clusterCredentials || cloudCredentials || sentinelInstance) {
-      setOpenRightPanel(RightPanelName.AddDatabase)
+      setOpenDialog(OpenDialogName.AddDatabase)
     }
   }, [clusterCredentials, cloudCredentials, sentinelInstance])
 
   useEffect(() => {
     if (action === UrlHandlingActions.Connect) {
-      setOpenRightPanel(RightPanelName.AddDatabase)
+      setOpenDialog(OpenDialogName.AddDatabase)
     }
   }, [action, dbConnection])
 
@@ -150,7 +145,7 @@ const HomePage = () => {
 
   const closeEditDialog = () => {
     dispatch(setEditedInstance(null))
-    setOpenRightPanel(null)
+    setOpenDialog(null)
 
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_EDIT_CANCELLED_CLICKED,
@@ -164,7 +159,7 @@ const HomePage = () => {
     dispatch(resetDataRedisCluster())
     dispatch(resetDataSentinel())
 
-    setOpenRightPanel(null)
+    setOpenDialog(null)
     dispatch(setEditedInstance(null))
 
     if (action === UrlHandlingActions.Connect) {
@@ -178,57 +173,29 @@ const HomePage = () => {
 
   const handleAddInstance = (addDbType = AddDbType.manual) => {
     initialDbTypeRef.current = addDbType
-    setOpenRightPanel(RightPanelName.AddDatabase)
+    setOpenDialog(OpenDialogName.AddDatabase)
     dispatch(setEditedInstance(null))
   }
 
   const handleEditInstance = (editedInstance: Instance) => {
     if (editedInstance) {
       dispatch(fetchEditedInstanceAction(editedInstance))
-      setOpenRightPanel(RightPanelName.EditDatabase)
+      setOpenDialog(OpenDialogName.EditDatabase)
     }
   }
   const handleDeleteInstances = (instances: Instance[]) => {
     if (
       instances.find((instance) => instance.id === editedInstance?.id)
-      && openRightPanel === RightPanelName.EditDatabase
+      && openDialog === OpenDialogName.EditDatabase
     ) {
       dispatch(setEditedInstance(null))
-      setOpenRightPanel(null)
+      setOpenDialog(null)
     }
 
     instances.forEach((instance) => {
       localStorageService.remove(BrowserStorageItem.dbConfig + instance.id)
     })
   }
-
-  const onResize = ({ width: innerWidth }: { width: number }) => {
-    setWidth(innerWidth)
-  }
-  const onResizeTrottled = useCallback(throttle(onResize, 100), [])
-
-  const InstanceList = () =>
-    (!isInstanceExists && !loading && !loadingChanging ? (
-      <EuiPanel className={styles.emptyPanel} borderRadius="none">
-        <EmptyMessage onAddInstanceClick={handleAddInstance} />
-      </EuiPanel>
-    ) : (
-      <EuiResizeObserver onResize={onResizeTrottled}>
-        {(resizeRef) => (
-          <div ref={resizeRef} style={{ height: '100%' }}>
-            <DatabasesList
-              loading={loading}
-              instances={instances}
-              predefinedInstances={predefinedInstances}
-              width={width}
-              editedInstance={editedInstance}
-              onEditInstance={handleEditInstance}
-              onDeleteInstances={handleDeleteInstances}
-            />
-          </div>
-        )}
-      </EuiResizeObserver>
-    ))
 
   return (
     <HomePageTemplate>
@@ -239,74 +206,39 @@ const HomePage = () => {
               key="instance-controls"
               onAddInstance={handleAddInstance}
             />
+            <DatabasePanelDialog
+              isOpen={!!openDialog}
+              editMode={openDialog === OpenDialogName.EditDatabase}
+              urlHandlingAction={action}
+              initialValues={dbConnection ?? null}
+              editedInstance={
+                openDialog === OpenDialogName.EditDatabase
+                  ? editedInstance
+                  : sentinelInstance ?? null
+              }
+              onClose={
+                openDialog === OpenDialogName.EditDatabase
+                  ? closeEditDialog
+                  : handleClose
+              }
+              onDbEdited={onDbEdited}
+              initConnectionType={initialDbTypeRef.current}
+            />
             <div key="homePage" className="homePage">
-              <EuiResizableContainer style={{ height: '100%' }}>
-                {(EuiResizablePanel, EuiResizableButton) => (
-                  <>
-                    <EuiResizablePanel
-                      scrollable={false}
-                      initialSize={62}
-                      id="databases"
-                      minSize="50%"
-                      paddingSize="none"
-                      wrapperProps={{
-                        className: cx('home__resizePanelLeft', {
-                          fullWidth: !openRightPanel,
-                          openedRightPanel: !!openRightPanel,
-                          hidden: !!openRightPanel && !isInstanceExists,
-                        })
-                      }}
-                    >
-                      <InstanceList />
-                    </EuiResizablePanel>
-
-                    <EuiResizableButton
-                      className={cx('home__resizableButton', {
-                        hidden: !openRightPanel || !isInstanceExists,
-                      })}
-                      style={{ margin: 0 }}
-                    />
-
-                    <EuiResizablePanel
-                      scrollable={false}
-                      initialSize={38}
-                      wrapperProps={{
-                        className: cx('home__resizePanelRight', {
-                          hidden: !openRightPanel,
-                          fullWidth: !isInstanceExists,
-                        })
-                      }}
-                      id="form"
-                      paddingSize="none"
-                      style={{ minWidth: '474px' }}
-                    >
-                      {!!openRightPanel && (
-                        <DatabasePanel
-                          editMode={openRightPanel === RightPanelName.EditDatabase}
-                          width={width}
-                          isResizablePanel
-                          urlHandlingAction={action}
-                          initialValues={dbConnection ?? null}
-                          editedInstance={
-                            openRightPanel === RightPanelName.EditDatabase
-                              ? editedInstance
-                              : sentinelInstance ?? null
-                          }
-                          onClose={
-                            openRightPanel === RightPanelName.EditDatabase
-                              ? closeEditDialog
-                              : handleClose
-                          }
-                          onDbEdited={onDbEdited}
-                          isFullWidth={!isInstanceExists}
-                          initConnectionType={initialDbTypeRef.current}
-                        />
-                      )}
-                      <div id="footerDatabaseForm" />
-                    </EuiResizablePanel>
-                  </>
-                )}
-              </EuiResizableContainer>
+              {(!isInstanceExists && !loading && !loadingChanging ? (
+                <EuiPanel className={styles.emptyPanel} borderRadius="none">
+                  <EmptyMessage onAddInstanceClick={handleAddInstance} />
+                </EuiPanel>
+              ) : (
+                <DatabasesList
+                  loading={loading}
+                  instances={instances}
+                  predefinedInstances={predefinedInstances}
+                  editedInstance={editedInstance}
+                  onEditInstance={handleEditInstance}
+                  onDeleteInstances={handleDeleteInstances}
+                />
+              ))}
             </div>
           </EuiPageBody>
         </EuiPage>

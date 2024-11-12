@@ -8,7 +8,7 @@ import {
   EuiFlexItem,
   EuiFormRow,
   EuiRadioGroup,
-  EuiRadioGroupOption,
+  EuiRadioGroupOption, EuiSpacer,
   EuiTextArea,
   htmlIdGenerator
 } from '@elastic/eui'
@@ -142,6 +142,7 @@ const SSHDetails = (props: Props) => {
           </EuiFlexItem>
         </EuiFlexGroup>
 
+        <EuiSpacer />
         <EuiFlexGroup
           className={flexGroupClassName}
         >

@@ -33,7 +33,6 @@ import {
 import ManualConnectionForm from './manual-connection-form'
 
 export interface Props {
-  width: number
   editMode: boolean
   urlHandlingAction?: Nullable<UrlHandlingActions>
   initialValues?: Nullable<Record<string, any>>
@@ -46,7 +45,6 @@ export interface Props {
 const ManualConnectionWrapper = (props: Props) => {
   const {
     editMode,
-    width,
     onClose,
     onDbEdited,
     onAliasEdited,
@@ -259,24 +257,21 @@ const ManualConnectionWrapper = (props: Props) => {
   )
 
   return (
-    <div>
-      <ManualConnectionForm
-        width={width}
-        formFields={formFields}
-        connectionType={connectionType}
-        loading={loadingStandalone}
-        buildType={server?.buildType as BuildType}
-        submitButtonText={getSubmitButtonText()}
-        onSubmit={handleConnectionFormSubmit}
-        onTestConnection={handleTestConnectionDatabase}
-        onClose={handleOnClose}
-        onHostNamePaste={handlePostHostName}
-        isEditMode={editMode}
-        isCloneMode={isCloneMode}
-        setIsCloneMode={setIsCloneMode}
-        onAliasEdited={onAliasEdited}
-      />
-    </div>
+    <ManualConnectionForm
+      formFields={formFields}
+      connectionType={connectionType}
+      loading={loadingStandalone}
+      buildType={server?.buildType as BuildType}
+      submitButtonText={getSubmitButtonText()}
+      onSubmit={handleConnectionFormSubmit}
+      onTestConnection={handleTestConnectionDatabase}
+      onClose={handleOnClose}
+      onHostNamePaste={handlePostHostName}
+      isEditMode={editMode}
+      isCloneMode={isCloneMode}
+      setIsCloneMode={setIsCloneMode}
+      onAliasEdited={onAliasEdited}
+    />
   )
 }
 

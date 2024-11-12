@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiText } from '@elastic/eui'
+import { EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { find } from 'lodash'
@@ -108,11 +108,15 @@ const OAuthAutodiscovery = (props: Props) => {
         {(form: React.ReactNode) => (
           <>
             <EuiText className={styles.text} color="subdued">
-              Auto-discover subscriptions and add your databases.
-              <br />
+              Discover subscriptions and add your databases.
               A new Redis Cloud account will be created for you if you don’t have one.
             </EuiText>
+            <EuiSpacer size="xl" />
+            <EuiText>Get started with</EuiText>
+            <EuiTitle className={styles.title} size="l"><h3>Redis Cloud account</h3></EuiTitle>
+            <EuiSpacer size="xl" />
             {form}
+            <EuiSpacer size="xxl" />
             <div className={styles.containerAgreement}>
               <OAuthAgreement size="s" />
             </div>

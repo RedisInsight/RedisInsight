@@ -1,10 +1,10 @@
-import { cloneDeep } from 'lodash'
 import React from 'react'
-import { importInstancesFromFile, importInstancesSelector } from 'uiSrc/slices/instances/instances'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { render, screen, fireEvent, mockedStore, cleanup, act } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
-import ImportDatabasesDialog from './ImportDatabasesDialog'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { importInstancesFromFile, importInstancesSelector } from 'uiSrc/slices/instances/instances'
+import ImportDatabase from './ImportDatabase'
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
@@ -27,16 +27,21 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('ImportDatabasesDialog', () => {
+describe('ImportDatabase', () => {
   it('should render', () => {
-    expect(render(<ImportDatabasesDialog onClose={jest.fn()} />)).toBeTruthy()
+    expect(render(<ImportDatabase onClose={jest.fn} />)).toBeTruthy()
   })
 
   it('should call proper actions and send telemetry', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<ImportDatabasesDialog onClose={jest.fn()} />)
+    render(
+      <div>
+        <ImportDatabase onClose={jest.fn()} />
+        <div id="footerDatabaseForm" />
+      </div>
+    )
 
     const jsonString = JSON.stringify({})
     const blob = new Blob([jsonString])
@@ -53,8 +58,8 @@ describe('ImportDatabasesDialog', () => {
       )
     })
 
-    expect(screen.getByTestId('submit-btn')).not.toBeDisabled()
-    fireEvent.click(screen.getByTestId('submit-btn'))
+    expect(screen.getByTestId('btn-submit')).not.toBeDisabled()
+    fireEvent.click(screen.getByTestId('btn-submit'))
 
     const expectedActions = [importInstancesFromFile()]
     expect(store.getActions()).toEqual(expectedActions)
@@ -73,7 +78,7 @@ describe('ImportDatabasesDialog', () => {
       error: 'Error message'
     }))
 
-    render(<ImportDatabasesDialog onClose={jest.fn()} />)
+    render(<ImportDatabase onClose={jest.fn()} />)
     expect(screen.getByTestId('result-failed')).toBeInTheDocument()
     expect(screen.getByTestId('result-failed')).toHaveTextContent('Error message')
   })

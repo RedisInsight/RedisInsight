@@ -19,7 +19,7 @@ async function generateBuildSummary() {
   try {
     // Read the contents of the release directory and Docker subdirectory
     const files = fs.readdirSync(directoryPath)
-    const dockerFiles = fs.readdirSync(dockerDirectoryPath).map((file) => `docker/${file}`)
+    const dockerFiles = fs.existsSync(dockerDirectoryPath) ? fs.readdirSync(dockerDirectoryPath).map((file) => `docker/${file}`) : [];
 
     // Combine all files into a single array
     const allFiles = [...files, ...dockerFiles]
@@ -64,13 +64,17 @@ async function generateBuildSummary() {
     })
 
     const data = markdownLines.join('\n')
-    const summaryFilePath = GITHUB_STEP_SUMMARY
+    console.log({data});
 
-    await writeFile(summaryFilePath, data, { encoding: 'utf8' })
+    // const summaryFilePath = GITHUB_STEP_SUMMARY
+
+    // await writeFile(summaryFilePath, data, { encoding: 'utf8' })
 
     console.log('Build summary generated successfully.')
 
   } catch (error) {
+    console.error(error);
+
   }
 }
 

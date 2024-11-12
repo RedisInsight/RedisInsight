@@ -84,6 +84,7 @@ jobs:
     with:
       target: ${{ needs.get-selected.outputs.selected }}
       debug: ${{ inputs.debug }}
+      environment: ${{ inputs.environment }}
 
   aws-upload:
     uses: ./.github/workflows/aws-upload-dev.yml

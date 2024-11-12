@@ -9,11 +9,11 @@ export default {
     <>
       This database does not support the JSON data structure. Learn more about JSON support
       {' '}
-      <a href="https://redis.io/docs/stack/json/about/" target="_blank" rel="noreferrer">here</a>.
+      <a href="https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/json/" target="_blank" rel="noreferrer">here</a>.
       {' '}
       You can also create a
       {' '}
-      <a href="https://redis.io/docs/stack/json/about/" target="_blank" rel="noreferrer">free Redis Cloud database</a>
+      <a href="https://redis.io/try-free/" target="_blank" rel="noreferrer">free Redis Cloud database</a>
       {' '}
       with built-in JSON support.
     </>

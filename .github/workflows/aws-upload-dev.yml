@@ -46,11 +46,13 @@ jobs:
       run: |
         echo "SUB_PATH=dev-builds/${{ steps.date.outputs.date }}/${{ github.run_id }}" >> $GITHUB_ENV
 
-    - name: Set sub path for pre-release builds
+    - name: Set sub path for pre-release builds and copy to upgrades folder
       if: inputs.pre-release
       run: |
         APP_VERSION=$(jq -r '.version' redisinsight/package.json)
         echo "SUB_PATH=pre-release/${APP_VERSION}" >> $GITHUB_ENV
+
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/upgrades --recursive
 
     - name: Upload builds to s3 bucket
       run: |
@@ -63,5 +65,24 @@ jobs:
   # Remove artifacts from github actions
   remove-artifacts:
     name: Remove artifacts
-    uses: ./.github/workflows/remove-artifacts.yml
     needs: 's3'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Merge artifacts by pattern
+      id: merge-artifacts
+      uses: actions/upload-artifact/merge@v4
+      with:
+        name: remove-artifacts
+        pattern: '*'
+        delete-merged: true
+
+    - name: Delete merged artifact
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.actions.deleteArtifact({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            artifact_id: ${{ steps.merge-artifacts.outputs.artifact-id }}
+          });

@@ -112,7 +112,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
           )}
         </div>
         <div className={styles.contentWrapper}>
-          {renderTitle(width, module)}
+          {renderTitle(width, MODULE_TEXT_VIEW[moduleName])}
           <EuiText className={styles.bigText}>
             {CONTENT[moduleName]?.text.map((item: string) => (
               width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
@@ -130,7 +130,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
               ))}
             </EuiText>
           )}
-          {renderText(module)}
+          {renderText(MODULE_TEXT_VIEW[moduleName])}
         </div>
       </div>
       <div className={styles.linksWrapper}>

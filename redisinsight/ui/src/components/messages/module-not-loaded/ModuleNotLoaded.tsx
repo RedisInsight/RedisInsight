@@ -18,6 +18,13 @@ import { getDbWithModuleLoaded } from 'uiSrc/utils'
 import { useCapability } from 'uiSrc/services'
 import styles from './styles.module.scss'
 
+export const MODULE_OAUTH_SOURCE_MAP: { [key in RedisDefaultModules]?: String } = {
+  [RedisDefaultModules.Bloom]: 'RedisBloom',
+  [RedisDefaultModules.ReJSON]: 'RedisJSON',
+  [RedisDefaultModules.Search]: 'RediSearch',
+  [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
+}
+
 export interface IProps {
   moduleName: RedisDefaultModules
   id: string
@@ -51,7 +58,8 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
   const [width, setWidth] = useState(0)
   const freeInstances = useSelector(freeInstancesSelector) || []
 
-  const module = MODULE_TEXT_VIEW[moduleName]
+  const module = MODULE_OAUTH_SOURCE_MAP[moduleName]
+
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
   const source = type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
 

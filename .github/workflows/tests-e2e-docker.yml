@@ -121,18 +121,23 @@ jobs:
     - name: Add link to report in the workflow summary
       run: |
         link="${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}"
-        echo '### Test results: E2E (docker) ${{ matrix.parallel }}th node' >> $GITHUB_STEP_SUMMARY
-        echo '- [${link}](${link})' >> $GITHUB_STEP_SUMMARY
 
-  # Deploy report to Github Pages
-  deploy-pages:
+        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
+
+  # Deploy report to AWS test bucket
+  deploy-report:
     name: Deploy report
     needs: 'e2e-docker-tests'
     runs-on: ubuntu-latest
     steps:
     - name: Deploy report
-      uses: ./.github/actions/deploy-pages
+      uses: ./.github/actions/deploy-test-reports
       if: always()
       with:
         group: 'report'
+        AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
+        AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+        AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 

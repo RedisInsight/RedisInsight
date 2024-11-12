@@ -60,13 +60,18 @@ jobs:
         path: report
 
     - name: Deploy report
-      uses: ./.github/actions/deploy-pages
+      uses: ./.github/actions/deploy-test-reports
       if: always()
       with:
         group: 'report'
+        AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
+        AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+        AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: Add link to report in the workflow summary
       run: |
         link="${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}"
-        echo '### Test results: Frontend unit tests' >> $GITHUB_STEP_SUMMARY
-        echo '- [${link}](${link})' >> $GITHUB_STEP_SUMMARY
+        echo "### Test results: Frontend unit tests" >> $GITHUB_STEP_SUMMARY
+        echo "[${link}](${link})" >> $GITHUB_STEP_SUMMARY

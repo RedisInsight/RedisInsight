@@ -17,7 +17,8 @@ runs:
       uses: actions/download-artifact@v4
       with:
         pattern: ${{ inputs.group }}
-        path: public/${{ github.run_id }}
+        # path: public/${{ github.run_id }}
+        path: public
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4

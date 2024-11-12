@@ -69,8 +69,14 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+    - name: Get current date
+      id: date
+      if: always()
+      uses: ./.github/actions/get-current-date
+
     - name: Add link to report in the workflow summary
+      if: always()
       run: |
-        link="${{ env.DEFAULT_TEST_REPORTS_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}"
+        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${{ steps.date.outputs.date }}/${{ github.run_id }}/${{ env.REPORT_NAME }}/index.html"
         echo "### Test results: Frontend unit tests" >> $GITHUB_STEP_SUMMARY
         echo "[${link}](${link})" >> $GITHUB_STEP_SUMMARY

@@ -11,18 +11,15 @@ runs:
   using: 'composite'
   steps:
     - name: Checkout repository
-      shell: bash
       uses: actions/checkout@v4
 
     - name: Download artifacts
-      shell: bash
       uses: actions/download-artifact@v4
       with:
         pattern: ${{ inputs.group }}
         path: public/${{ github.run_id }}
 
     - name: Deploy 🚀
-      shell: bash
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         folder: public

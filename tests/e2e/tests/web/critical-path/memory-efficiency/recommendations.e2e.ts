@@ -12,6 +12,7 @@ import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { RecommendationsActions } from '../../../../common-actions/recommendations-actions';
 import { Common } from '../../../../helpers/common';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
+import { Telemetry } from '../../../../helpers';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -21,6 +22,16 @@ const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const apiKeyRequests = new APIKeyRequests();
+const telemetry = new Telemetry();
+
+const logger = telemetry.createLogger();
+
+const telemetryEvent = 'DATABASE_ANALYSIS_TIPS_COLLAPSED';
+const expectedProperties = [
+    'databaseId',
+    'provider',
+    'recommendation'
+];
 
 // const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
 let keyName = `recomKey-${Common.generateWord(10)}`;
@@ -46,6 +57,7 @@ fixture `Memory Efficiency Recommendations`
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
+    .requestHooks(logger)
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
         // Go to Analysis Tools page
@@ -82,6 +94,10 @@ test
         // Verify that user can expand/collapse recommendation
         const expandedTextContaiterSize = await memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).offsetHeight;
         await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecommendation));
+
+        //Verify telemetry event
+        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+
         await t.expect(memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).offsetHeight)
             .lt(expandedTextContaiterSize, 'Lua script recommendation not collapsed');
         await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecommendation));

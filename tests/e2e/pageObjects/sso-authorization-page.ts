@@ -26,13 +26,22 @@ export class SsoAuthorizationPage {
     async signInUsingSso(authorizationType: 'Google' | 'Github' | 'SAML', page: PageWithCursor, urlToUse: string, username: string, password: string): Promise<void> {
         await page.goto(urlToUse);
         await SsoAuthorization.waitForTimeout(2000);
-        if (authorizationType === 'SAML') {
-            await this.submitOktaForm(page, username, password)
-        } else if (authorizationType === 'Google') {
-            await this.submitGoogleForm(page, username, password)
-        } else if (authorizationType === 'Github') {
-            await this.submitGithubForm(page, username, password)
+
+
+        switch (authorizationType) {
+            case 'SAML':
+                await this.submitOktaForm(page, username, password);
+                break;
+            case 'Google':
+                await this.submitGoogleForm(page, username, password);
+                break;
+            case 'Github':
+                await this.submitGithubForm(page, username, password);
+                break;
+            default:
+                throw new Error(`Unsupported authorization type: ${authorizationType}`);
         }
+
         await SsoAuthorization.waitForTimeout(2000);
         // Wait for the authorization to complete
         await page.waitForFunction(() => window.location.href.includes('#success'), { timeout: 11000 });

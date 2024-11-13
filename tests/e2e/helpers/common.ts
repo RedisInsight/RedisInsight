@@ -264,7 +264,7 @@ export class Common {
     }
 
     /**
-      * Delete file from folder
+      * Read file from folder
       * @param filePath Path to file
      */
     static async readFileFromFolder(filePath: string): Promise<string> {

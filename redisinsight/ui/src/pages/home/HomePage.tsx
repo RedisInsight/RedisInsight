@@ -20,6 +20,7 @@ import {
   fetchEditedInstanceAction,
   fetchInstancesAction,
   instancesSelector,
+  resetImportInstances,
   setEditedInstance
 } from 'uiSrc/slices/instances/instances'
 import { localStorageService } from 'uiSrc/services'
@@ -158,6 +159,7 @@ const HomePage = () => {
   const handleClose = () => {
     dispatch(resetDataRedisCluster())
     dispatch(resetDataSentinel())
+    dispatch(resetImportInstances())
 
     setOpenDialog(null)
     dispatch(setEditedInstance(null))

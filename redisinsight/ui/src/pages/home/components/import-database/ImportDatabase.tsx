@@ -44,10 +44,6 @@ const ImportDatabase = (props: Props) => {
 
   useEffect(() => {
     setDomReady(true)
-
-    return () => {
-      dispatch(resetImportInstances())
-    }
   }, [])
 
   const onFileChange = (files: FileList | null) => {
@@ -57,9 +53,6 @@ const ImportDatabase = (props: Props) => {
   }
 
   const handleOnClose = () => {
-    if (data?.success?.length || data?.partial?.length) {
-      dispatch(fetchInstancesAction())
-    }
     onClose()
     dispatch(resetImportInstances())
 
@@ -80,7 +73,14 @@ const ImportDatabase = (props: Props) => {
       const formData = new FormData()
       formData.append('file', files[0])
 
-      dispatch(uploadInstancesFile(formData))
+      dispatch(uploadInstancesFile(
+        formData,
+        (data) => {
+          if (data?.success?.length || data?.partial?.length) {
+            dispatch(fetchInstancesAction())
+          }
+        }
+      ))
 
       sendEventTelemetry({
         event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_SUBMITTED

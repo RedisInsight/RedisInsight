@@ -798,7 +798,7 @@ export function resetInstanceUpdateAction() {
 // Asynchronous thunk action
 export function uploadInstancesFile(
   file: FormData,
-  onSuccessAction?: () => void,
+  onSuccessAction?: (data: any) => void,
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
@@ -818,7 +818,7 @@ export function uploadInstancesFile(
 
       if (isStatusSuccessful(status)) {
         dispatch(importInstancesFromFileSuccess(data))
-        onSuccessAction?.()
+        onSuccessAction?.(data)
       }
     } catch (_err) {
       const error = _err as AxiosError

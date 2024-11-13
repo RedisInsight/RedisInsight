@@ -31,7 +31,6 @@ env:
   DBUS_SESSION_BUS_ADDRESS: ${{ vars.DBUS_SESSION_BUS_ADDRESS }}
   DISPLAY: ${{ vars.DISPLAY }}
   APPIMAGE_PATH: ${{ vars.APPIMAGE_PATH }}
-  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   REPORT_NAME: "report-appimage"
 
 jobs:
@@ -40,7 +39,6 @@ jobs:
     name: E2E AppImage tests
     environment:
       name: production
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}
     steps:
     - uses: actions/checkout@v4
 
@@ -96,11 +94,26 @@ jobs:
         list-suites: 'failed'
         fail-on-error: 'false'
 
-  # Deploy report to Github Pages
-  deploy-pages:
-    name: Deploy report
-    uses: ./.github/workflows/deploy-pages.yml
-    needs: 'e2e-tests-appimage'
-    if: always()
-    with:
-      group: 'report'
+    # Deploy report to AWS test bucket
+    - name: Deploy report
+      uses: ./.github/actions/deploy-test-reports
+      if: always()
+      with:
+        group: 'report'
+        AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
+        AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+        AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Get current date
+      id: date
+      if: always()
+      uses: ./.github/actions/get-current-date
+
+    - name: Add link to report in the workflow summary
+      if: always()
+      run: |
+        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${{ steps.date.outputs.date }}/${{ github.run_id }}/${{ env.REPORT_NAME }}/index.html"
+        echo "[${link}](${link})" >> $GITHUB_STEP_SUMMARY
+

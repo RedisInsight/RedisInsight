@@ -98,3 +98,15 @@ jobs:
     needs: [aws-upload]
     if: always()
 
+  # Remove artifacts from github actions
+  remove-artifacts:
+    name: Remove artifacts
+    needs: [aws-upload]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Remove all artifacts
+      uses: ./.github/actions/remove-artifacts
+
+

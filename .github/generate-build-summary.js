@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const { writeFile } = fs.promises
+const { appendFile } = fs.promises
 
 const { AWS_DEFAULT_REGION, AWS_BUCKET_NAME_TEST, SUB_PATH, GITHUB_STEP_SUMMARY } = process.env;
 
@@ -66,7 +66,7 @@ async function generateBuildSummary() {
     const data = markdownLines.join('\n')
     const summaryFilePath = GITHUB_STEP_SUMMARY
 
-    await writeFile(summaryFilePath, data, { encoding: 'utf8' })
+    await appendFile(summaryFilePath, data, { encoding: 'utf8' })
 
     console.log('Build summary generated successfully.')
 

@@ -41,12 +41,6 @@ jobs:
 
         aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive
 
-  # Remove artifacts from github actions
-  remove-artifacts:
-    name: Remove artifacts
-    uses: ./.github/workflows/remove-artifacts.yml
-    needs: 'release-private'
-
   release-public:
     name: Release s3 public
     runs-on: ubuntu-latest

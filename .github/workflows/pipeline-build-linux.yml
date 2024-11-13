@@ -15,6 +15,11 @@ on:
         default: 'all'
         type: string
 
+      debug:
+        description: SSH Debug
+        default: false
+        type: boolean
+
 jobs:
   build:
     name: Build linux
@@ -22,19 +27,14 @@ jobs:
     environment: ${{ inputs.environment }}
 
     steps:
-    #TODO: some debug tools
-    # - uses: crazy-max/ghaction-dump-context@v2
-    # - uses: hmarr/debug-action@v3
-    # ssh
-    # - run: sudo apt-get update -qy && sudo apt-get install -qy tmux;
-    # - name: Setup upterm session
-    # - uses: mxschmitt/action-tmate@v3 #1 better
-    #   uses: lhotari/action-upterm@v1 #2
-    #   with:
-    #     limit-access-to-actor: true
-    #     limit-access-to-users: zalenskiSofteq
-
     - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Enable SSH
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
 
     - name: Install all libs and dependencies
       uses: ./.github/actions/install-all-build-libs
@@ -75,35 +75,21 @@ jobs:
           target=${inputsTarget#linux:}
         fi
 
-        yarn package:stage --linux $target
+        if [ ${{ contains(vars.ENV, 'production') }} ]; then
+          yarn package:prod --linux $target
+        else
+          yarn package:stage --linux $target
+        fi
 
     - uses: actions/upload-artifact@v4
-      name: Upload AppImage artifact
+      name: Upload linux builds
       with:
-        name: linux-appimage-build
+        name: linux-builds
         path: |
-          ./release/Redis-Insight*.AppImage
           ./release/latest-linux.yml
-
-    - uses: actions/upload-artifact@v4
-      name: Upload Deb artifact
-      with:
-        name: linux-deb-build
-        path: |
+          ./release/Redis-Insight*.AppImage
           ./release/Redis-Insight*.deb
-
-    - uses: actions/upload-artifact@v4
-      name: Upload rpm artifacts
-      with:
-        name: linux-rpm-build
-        path: |
           ./release/Redis-Insight*.rpm
-
-    - uses: actions/upload-artifact@v4
-      name: Upload snap artifact
-      with:
-        name: linux-snap-builds
-        path: |
           ./release/Redis-Insight*.snap
 
     env:

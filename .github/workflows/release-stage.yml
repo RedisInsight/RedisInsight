@@ -23,6 +23,13 @@ jobs:
       environment: 'staging'
       target: 'all'
 
+  aws:
+    uses: ./.github/workflows/aws-upload-dev.yml
+    needs: [builds]
+    if: always()
+    with:
+      pre-release: true
+
   e2e-docker-tests:
     needs: builds
     uses: ./.github/workflows/tests-e2e-docker.yml
@@ -33,6 +40,7 @@ jobs:
     uses: ./.github/workflows/tests-e2e-appimage.yml
     secrets: inherit
 
-
-
-
+# Cancel a previous run workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true

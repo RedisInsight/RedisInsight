@@ -14,6 +14,11 @@ on:
         default: 'all'
         type: string
 
+      debug:
+        description: SSH Debug
+        default: false
+        type: boolean
+
 jobs:
   build:
     name: Build macos
@@ -21,6 +26,13 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
     - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Enable SSH
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
 
     - name: Add certificates to the keychain
       uses: ./.github/actions/install-apple-certs
@@ -56,7 +68,6 @@ jobs:
       run: |
         unset CSC_LINK
 
-        echo "$USE_HARD_LINKS"
         echo $APP_BUNDLE_VERSION
         echo $CSC_KEYCHAIN
 
@@ -69,57 +80,40 @@ jobs:
       if: inputs.target != vars.ALL
       run: |
         unset CSC_LINK
-        yarn package:stage --mac ${{ inputs.target }}
+        target=""
+
+        if [ ${{ startsWith(inputs.target, 'macos:') }} == 'true' ]; then
+          inputsTarget=${{inputs.target}}
+          target=--${inputsTarget#macos:}
+        fi
+
+        if [ ${{ contains(vars.ENV, 'production') }} ]; then
+          yarn package:prod --mac $target
+        else
+          yarn package:stage --mac $target
+        fi
+
         rm -rf release/mac
 
     - name: Repack dmg to tar
       if: vars.ENV == 'production'
       run: |
-        ARCH=x64 ./.circleci/redisstack/dmg.repack.sh
-        ARCH=arm64 ./.circleci/redisstack/dmg.repack.sh
+        ARCH=x64 ./.github/redisstack/dmg.repack.sh
+        ARCH=arm64 ./.github/redisstack/dmg.repack.sh
 
     - name: Upload x64 packages
       uses: actions/upload-artifact@v4
-      if: inputs.target == vars.ALL || endsWith(inputs.target, 'x64')
       with:
-        name: macos-x64-builds
+        name: macos-builds
         path: |
           ./release/Redis-Insight*x64.dmg
           ./release/Redis-Insight*x64.dmg.blockmap
-
-    - name: Upload zips packages
-      uses: actions/upload-artifact@v4
-      if: inputs.target == vars.ALL || endsWith(inputs.target, 'x64')
-      with:
-        name: macos-zip-builds
-        path: |
           ./release/Redis-Insight*.zip
-
-    - name: Upload ARM packages
-      uses: actions/upload-artifact@v4
-      if: inputs.target == vars.ALL || endsWith(inputs.target, 'arm64')
-      with:
-        name: macos-arm-builds
-        path: |
           ./release/Redis-Insight*arm64.dmg
           ./release/Redis-Insight*arm64.dmg.blockmap
-
-    - name: Upload MAS packages
-      uses: actions/upload-artifact@v4
-      if: inputs.target == vars.ALL
-      with:
-        name: macos-mas-builds
-        path: |
           ./release/Redis-Insight*.pkg
           ./release/*-mac.yml
-
-    - name: Upload redis stack packages
-      uses: actions/upload-artifact@v4
-      if: vars.ENV == 'production'
-      with:
-        name: 'redisstack'
-        path: |
-          ./release/redisstack/Redis-Insight-app-darwin.*.tar.gz
+          ./release/redisstack
 
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}

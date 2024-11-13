@@ -1,0 +1,28 @@
+name: Deploy pages
+on:
+  workflow_call:
+    inputs:
+      group:
+        description: Group matching the artifacts
+        type: string
+        default: '*'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: ${{ format('{0}*', inputs.group) }}
+        path: public/${{ github.run_id }}
+
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: public
+        clean: false

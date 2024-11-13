@@ -1,33 +1,6 @@
-name: 🚀 Build
+name: Build
 
 on:
-  # Manual trigger build
-  workflow_dispatch:
-    inputs:
-      target:
-        description: Build target
-        required: false
-        default: 'all'
-        type: choice
-        options:
-          - all
-          - docker
-          - windows:x64
-          - macos:x64
-          - macos:arm64
-          - macos:all
-          - linux:appimage:x64
-          - linux:deb:x64
-          - linux:rpm:x64
-          - linux:snap:x64
-          - linux:all
-
-      environment:
-        description: Environment to run build
-        type: environment
-        default: 'staging'
-        required: false
-
   # Called for Release workflows
   workflow_call:
     inputs:
@@ -35,41 +8,47 @@ on:
         description: Environment to run build
         type: string
         default: 'staging'
-        required: false
+
       target:
         description: Build target
         type: string
         default: 'all'
-        required: false
+
+      debug:
+        description: Enable SSH Debug
+        type: boolean
 
 jobs:
   build-linux:
-    if: startsWith(inputs.target, 'linux') || endsWith(inputs.target, 'all')
-    # concurrency: build
+    if: contains(inputs.target, 'linux') || inputs.target == 'all'
     uses: ./.github/workflows/pipeline-build-linux.yml
     secrets: inherit
     with:
       environment: ${{ inputs.environment }}
-      target: ${{ (endsWith(inputs.target, 'all') && 'all') || inputs.target }}
+      target: ${{ inputs.target }}
+      debug: ${{ inputs.debug }}
 
   build-macos:
-    if: startsWith(inputs.target, 'macos') || endsWith(inputs.target, 'all')
+    if: contains(inputs.target, 'macos') || inputs.target == 'all'
     uses: ./.github/workflows/pipeline-build-macos.yml
     secrets: inherit
     with:
       environment: ${{ inputs.environment }}
-      target: ${{ (endsWith(inputs.target, 'all') && 'all') || inputs.target }}
+      target: ${{ inputs.target }}
+      debug: ${{ inputs.debug }}
 
   build-windows:
-    if: startsWith(inputs.target, 'windows') || endsWith(inputs.target, 'all')
+    if: contains(inputs.target, 'windows') || inputs.target == 'all'
     uses: ./.github/workflows/pipeline-build-windows.yml
     secrets: inherit
     with:
       environment: ${{ inputs.environment }}
+      debug: ${{ inputs.debug }}
 
   build-docker:
-    if: startsWith(inputs.target, 'docker') || endsWith(inputs.target, 'all')
+    if: contains(inputs.target, 'docker') || inputs.target == 'all'
     uses: ./.github/workflows/pipeline-build-docker.yml
     secrets: inherit
     with:
       environment: ${{ inputs.environment }}
+      debug: ${{ inputs.debug }}

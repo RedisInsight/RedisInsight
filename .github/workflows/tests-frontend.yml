@@ -3,12 +3,18 @@ on:
   workflow_call:
 
 env:
+  SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
+  REPORT_NAME: "report-fe"
 
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
     name: Frontend tests
+    environment:
+      name: staging
+      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}
     steps:
     - uses: actions/checkout@v4
 
@@ -22,7 +28,7 @@ jobs:
         FILENAME=ui.prod.deps.audit.json
 
         yarn audit --groups dependencies --json > $FILENAME || true &&
-        FILENAME=$FILENAME DEPS="UI prod" node .circleci/deps-audit-report.js &&
+        FILENAME=$FILENAME DEPS="UI prod" node .github/deps-audit-report.js &&
         curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: UI DEV dependencies audit
@@ -30,7 +36,7 @@ jobs:
         FILENAME=ui.dev.deps.audit.json
 
         yarn audit --groups devDependencies --json > $FILENAME || true &&
-        FILENAME=$FILENAME DEPS="UI dev" node .circleci/deps-audit-report.js &&
+        FILENAME=$FILENAME DEPS="UI dev" node .github/deps-audit-report.js &&
         curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: Code analysis
@@ -39,23 +45,27 @@ jobs:
         WORKDIR="."
 
         yarn lint:ui -f json -o $FILENAME || true &&
-        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="UI" node .circleci/lint-report.js &&
+        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="UI" node .github/lint-report.js &&
         curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
         yarn lint -f json -o $FILENAME || true &&
-        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="REST" node .circleci/lint-report.js &&
+        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="REST" node .github/lint-report.js &&
         curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: Unit tests UI
       run: yarn test:cov --ci --silent
 
-    - name: Generate test results
-      uses: dorny/test-reporter@v1
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: 'Test results: FE unit tests'
-        path: reports/jest-*.xml
-        reporter: jest-junit
-        list-tests: 'failed'
-        list-suites: 'failed'
-        fail-on-error: 'false'
+        name: ${{ env.REPORT_NAME }}
+        path: report
+
+  deploy-pages:
+    name: Deploy report
+    uses: ./.github/workflows/deploy-pages.yml
+    needs: 'unit-tests'
+    if: always()
+    with:
+      group: 'report'

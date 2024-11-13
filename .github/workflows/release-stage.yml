@@ -13,6 +13,7 @@ jobs:
     with:
       group_tests: 'without_e2e'
       short_rte_list: false
+      pre_release: true
 
   builds:
     name: Release stage builds
@@ -49,5 +50,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v4
     - name: Remove all artifacts
       uses: ./.github/actions/remove-artifacts  # Remove artifacts from github actions

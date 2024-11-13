@@ -4,6 +4,7 @@ import { InsightsPanel } from '../insights-panel';
 export class NavigationHeader {
     insightsTriggerButton = Selector('[data-testid=insights-trigger]');
     cloudSignInButton = Selector('[data-testid=cloud-sign-in-btn]');
+    copilotButton = Selector('[data-testid=copilot-trigger]');
 
     /**
      * Open/Close  Panel

@@ -196,6 +196,8 @@ export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
   [RedisDefaultModules.AI]: 'AI',
   [RedisDefaultModules.Graph]: 'Graph',
   [RedisDefaultModules.Gears]: 'Gears',
+  [RedisDefaultModules.RedisGears]: 'Gears',
+  [RedisDefaultModules.RedisGears2]: 'Gears',
   [RedisDefaultModules.Bloom]: 'Probabilistic',
   [RedisDefaultModules.ReJSON]: 'JSON',
   [RedisDefaultModules.TimeSeries]: 'Time Series',

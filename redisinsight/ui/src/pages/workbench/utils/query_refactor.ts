@@ -1,5 +1,5 @@
 /* eslint-disable no-continue */
-import { findLastIndex, toNumber } from 'lodash'
+import { findLastIndex, isNumber, isUndefined, toNumber } from 'lodash'
 import { ICommandTokenType, IRedisCommand, IRedisCommandTree } from 'uiSrc/constants'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { ArgName } from 'uiSrc/pages/workbench/types'
@@ -21,29 +21,8 @@ export const findSuggestionsByQueryArgs = (
     ? commands.find((command) => isStringsEqual(command.token, firstQueryArg))
     : undefined
 
-  const getLastBlock = (
-    args: string[],
-    command?: IRedisCommand,
-    parent?: any,
-  ): BlockTokensTree => {
-    for (let i = args.length - 1; i >= 0; i--) {
-      const arg = args[i]
-      const currentArg = findArgByToken(command?.arguments || [], arg)
-      if (currentArg?.type === ICommandTokenType.Block) {
-        return getLastBlock(
-          args.slice(i),
-          currentArg,
-          { queryArgs: args.slice(i), command: currentArg, parent }
-        )
-      }
-    }
-
-    return parent
-  }
-
   const nextArgs = queryArgs.slice(scopeCommand ? 1 : 0)
   const blockToken: BlockTokensTree = { queryArgs: nextArgs, command: scopeCommand }
-  const lastFoundBlock = getLastBlock(nextArgs, scopeCommand, blockToken)
 
   return findStopArgumentWithSuggestions(blockToken)
 }
@@ -60,12 +39,9 @@ const skipOptionalArguments = (
   const optionalArguments = []
   let index = commandIndex + 1
   let currentArgument = commandArguments[index]
-
   while (index < commandArguments.length) {
-    const argumentToken = currentArgument.arguments?.[0]?.token || currentArgument.token
-    const isOptionalWithInput = (
-      currentArgument?.type !== ICommandTokenType.PureToken && isStringsEqual(queryArg, argumentToken)
-    )
+    const argumentToken = currentArgument.token || currentArgument.arguments?.[0]?.token
+    const isOptionalWithInput = isStringsEqual(queryArg, argumentToken)
 
     if (isOptionalWithInput || (currentArgument && !currentArgument.optional)) {
       return { optionalArguments, currentArgument, index }
@@ -80,10 +56,12 @@ const skipOptionalArguments = (
 }
 
 const isCountArg = (arg?: Nullable<IRedisCommand>) => arg?.name === ArgName.NArgs || arg?.name === ArgName.Count
-const findStopArgument = (
+const isCountPositive = (count?: Maybe<number>) => isNumber(count) && count > 0
+export const findStopArgument = (
   queryArgs: string[],
   command?: IRedisCommand,
-  count: number = 0,
+  count?: Maybe<number>,
+  forceReturn = false,
   skippedArguments: IRedisCommand[][] = []
 ) => {
   let commandIndex = 0
@@ -96,34 +74,34 @@ const findStopArgument = (
     const queryArg = queryArgs[i]
     let currentArgument: Maybe<IRedisCommand> = command?.arguments[commandIndex]
 
-    if (!currentArgument && argsCount > 0) {
-      commandIndex = 0
-      currentArgument = command?.arguments[commandIndex]
-    }
-
-    console.log(queryArgs, currentArgument)
-
-    // // if no argument, we still can apply all optional after last mandatory
-    // if (!currentArgument) {
-    //   const lastMandatoryIndex = findLastIndex(
-    //     command.arguments.slice(0, commandIndex),
-    //     (arg) => !arg.optional
-    //   )
-    //   commandIndex = lastMandatoryIndex > -1 ? lastMandatoryIndex + 1 : commandIndex
-    //   currentArgument = command?.arguments[commandIndex]
-    // }
+    console.log('before all - currentArgument', queryArg, currentArgument, argsCount)
 
     // handle optional arguments, iterate until we get token or non optional arguments
     // we check if we not blocked on optional token argument
-    if (!isBlocked && currentArgument?.optional) {
+    if (!isBlocked && (currentArgument?.optional || !forceReturn)) {
       const prevMandatoryIndex = findLastIndex(
         command.arguments.slice(0, commandIndex),
         (arg) => !arg.optional
       )
       const data = skipOptionalArguments(queryArg, prevMandatoryIndex, command.arguments)
       currentArgument = data.currentArgument
-      // skippedArguments.push(data.optionalArguments)
       commandIndex = data.index
+    }
+
+    if (!currentArgument && isCountPositive(count)) {
+      commandIndex = 0
+      currentArgument = command?.arguments[commandIndex]
+    }
+
+    console.log('currentArgument', currentArgument, queryArg)
+
+    if (!currentArgument && forceReturn) {
+      console.log('force return from multiple block', i, queryArgs)
+      return {
+        queryArgsIterated: i,
+        stopArgument: null,
+        skippedArguments: []
+      }
     }
 
     // handle pure token, if arg equals, then move to next command
@@ -133,12 +111,13 @@ const findStopArgument = (
     ) {
       isBlocked = false
       commandIndex++
+      isNumber(argsCount) && argsCount--
       continue
     }
 
     // handle first iteration of token, if arg equals - stay on it and move on to check itself
     if (currentArgument?.token) {
-      if (isStringsEqual(queryArg, currentArgument.token)) {
+      if (!isBlocked && isStringsEqual(queryArg, currentArgument.token)) {
         isBlocked = true
         continue
       }
@@ -147,6 +126,7 @@ const findStopArgument = (
       // token can be on block type
       if (currentArgument?.type !== ICommandTokenType.Block && !isCountArg(currentArgument)) {
         commandIndex++
+        isNumber(argsCount) && argsCount--
         continue
       }
     }
@@ -155,42 +135,35 @@ const findStopArgument = (
     if (currentArgument?.type === ICommandTokenType.Block) {
       console.log('handle block', currentArgument)
 
-      const a = findStopArgument(
+      const blockArgument: any = findStopArgument(
         queryArgs.slice(i),
         currentArgument,
-        argsCount
+        argsCount,
+        true
       )
-      console.log(a)
-      return {
-        stopArgument: null,
-        skippedArguments: []
+
+      console.log('blockArgument', blockArgument)
+      console.log('currentCommand', currentArgument)
+
+      if (blockArgument?.stopArgument) {
+        return {
+          ...blockArgument,
+          blockParent: currentArgument
+        }
       }
-      // const blockQueryArgs = queryArgs.slice(i)
-      // let blockArguments = currentArgument.arguments ? [...currentArgument.arguments] : []
-      // if (currentArgument.multiple && argsCount) {
-      //   blockArguments = Array(Math.round(argsCount / blockArguments?.length))
-      //     .fill(currentArgument.arguments).flat().slice(0, argsCount)
-      // }
-      //
-      // const command = {
-      //   ...currentArgument,
-      //   arguments: blockArguments
-      // }
-      // const block: any = findStopArgument(blockQueryArgs, command, skippedArguments)
-      // if (isBlocked || block.isBlocked || block.stopArgument) {
-      //   return {
-      //     ...block,
-      //     skippedArguments: [fillArgsByType([block.stopArgument])],
-      //     blockParent: currentArgument
-      //   }
-      // }
-      //
-      // // since we iterated throw the block and completed it we need to skip number of args from this block
-      // // TODO: wrong
-      // i += blockQueryArgs.length - 1
-      // commandIndex++
-      // isBlocked = false
-      // continue
+
+      i += (blockArgument?.queryArgsIterated || 1) - 1
+      isBlocked = false
+
+      const nextQueryArg = queryArgs[i]
+      if (!nextQueryArg) return blockArgument
+
+      if (currentArgument && !currentArgument.multiple) {
+        commandIndex++
+      }
+
+      argsCount = 0
+      continue
     }
 
     // handle one-of argument
@@ -198,6 +171,7 @@ const findStopArgument = (
       const isArgOneOf = currentArgument.arguments?.some(({ token }) => isStringsEqual(queryArg, token))
       if (isArgOneOf) {
         commandIndex++
+        isNumber(argsCount) && argsCount--
         isBlocked = false
         continue
       }
@@ -207,7 +181,7 @@ const findStopArgument = (
 
     // handle multiple arguments, argsCount - number of arguments which have to be inserted
     if (currentArgument?.multiple) {
-      argsCount--
+      isNumber(argsCount) && argsCount--
 
       if (argsCount === 0) {
         commandIndex++
@@ -235,44 +209,60 @@ const findStopArgument = (
       continue
     }
 
-    console.log('finished iteration', currentArgument, queryArg, command.arguments)
     commandIndex++
+    isNumber(argsCount) && argsCount--
     isBlocked = false
   }
 
   const lastArgument: Maybe<IRedisCommand> = command?.arguments?.[commandIndex]
-  // if (!lastArgument) {
-  //   const prevMandatoryIndex = findLastIndex(
-  //     command.arguments.slice(0, commandIndex),
-  //     (arg) => !arg.optional
-  //   )
-  //   const data = skipOptionalArguments('', prevMandatoryIndex, command.arguments)
-  //   lastArgument = data.currentArgument
-  //   if (data.optionalArguments.length) {
-  //     skippedArguments.push(data.optionalArguments)
-  //   }
-  // }
+
+  console.log('last argument', lastArgument)
+
+  const prevMandatoryIndex = findLastIndex(
+    command.arguments.slice(0, commandIndex),
+    (arg) => !arg.optional
+  )
+  console.log('return prevMandatoryIndex', prevMandatoryIndex)
+  console.log('argsCount', argsCount)
+  const data = skipOptionalArguments('', prevMandatoryIndex, command.arguments)
+  console.log(data)
 
   return {
-    skippedArguments,
-    stopArgument: lastArgument,
-    isBlocked
+    skippedArguments: [data.optionalArguments],
+    // TODO: check this condition
+    stopArgument: forceReturn
+      ? (isCountPositive(argsCount) || isUndefined(argsCount) || argsCount <= 0) ? lastArgument : undefined
+      : lastArgument,
+    isBlocked,
+    queryArgsIterated: queryArgs.length
   }
 }
 
-const findStopArgumentWithSuggestions = (currentBlock: BlockTokensTree) => {
+export const findStopArgumentWithSuggestions = (currentBlock: BlockTokensTree) => {
   console.log(currentBlock)
 
   const { queryArgs, command } = currentBlock
   const { isBlocked, stopArgument, skippedArguments, blockParent } = findStopArgument(queryArgs, command)
 
-  console.log({ stopArgument, isBlocked, skippedArguments, blockParent })
+  console.log(stopArgument)
 
   if (isBlocked) {
+    // TODO: check if it is blocked but next argument should suggest token
+    const isBlockedWithSuggestions = stopArgument.arguments?.[0]?.type === ICommandTokenType.OneOf
+    console.log(stopArgument.arguments?.[0]?.token)
     return {
       stopArg: stopArgument,
-      append: fillArgsByType([stopArgument]),
-      isBlocked: true,
+      append: [fillArgsByType([stopArgument.arguments?.[0]] || [stopArgument])],
+      isBlocked: !isBlockedWithSuggestions,
+      parent: blockParent || command
+    }
+  }
+
+  if (stopArgument && !stopArgument.optional) {
+    return {
+      append: [fillArgsByType([stopArgument])],
+      stopArg: stopArgument,
+      isBlocked: false,
       parent: blockParent || command
     }
   }
@@ -284,67 +274,6 @@ const findStopArgumentWithSuggestions = (currentBlock: BlockTokensTree) => {
     isBlocked,
     parent: blockParent || command
   }
-}
-
-export const getRestArguments = (
-  current: Maybe<any>,
-  stopArgument: Nullable<IRedisCommand>
-): IRedisCommandTree[] => {
-  const argumentIndexInArg = current?.arguments
-    ?.findIndex(({ name }) => name === stopArgument?.name)
-
-  const nextMandatoryIndex = stopArgument && !stopArgument.optional
-    ? argumentIndexInArg
-    : argumentIndexInArg && argumentIndexInArg > -1 ? current?.arguments
-      ?.findIndex(({ optional }, i) => !optional && i > argumentIndexInArg) : -1
-
-  const prevMandatory = current?.arguments?.slice(0, argumentIndexInArg).reverse()
-    .find(({ optional }) => !optional)
-  const prevMandatoryIndex = current?.arguments?.findIndex(({ name }) => name === prevMandatory?.name)
-
-  const beforeMandatoryOptionalArgs = (
-    nextMandatoryIndex && nextMandatoryIndex > -1
-      ? current?.arguments?.slice(prevMandatoryIndex, nextMandatoryIndex)
-      : current?.arguments?.slice((prevMandatoryIndex || 0) + 1)
-  ) || []
-
-  const nextMandatoryArg = nextMandatoryIndex && nextMandatoryIndex > -1
-    ? current?.arguments?.[nextMandatoryIndex]
-    : undefined
-
-  if (nextMandatoryArg?.token) {
-    beforeMandatoryOptionalArgs.unshift(nextMandatoryArg)
-  }
-
-  if (nextMandatoryArg?.type === ICommandTokenType.OneOf) {
-    beforeMandatoryOptionalArgs.unshift(...(nextMandatoryArg.arguments || []))
-  }
-
-  return beforeMandatoryOptionalArgs.map((arg) => ({ ...arg, parent: current }))
-}
-
-export const getAllRestArguments = (
-  current: any,
-  stopArgument: Nullable<IRedisCommand>
-) => {
-  const appendArgs: Array<IRedisCommand[]> = []
-  if (stopArgument) {
-    const restArgs = getRestArguments(current.command, stopArgument)
-    const currentLvlNextArgs = removeNotSuggestedArgs(
-      current.queryArgs,
-      restArgs
-    )
-    appendArgs.push(fillArgsByType(currentLvlNextArgs))
-  }
-
-  if (current?.parent) {
-    const parentArgs = getAllRestArguments(current.parent, current.parent.command)
-    if (parentArgs?.length) {
-      appendArgs.push(...parentArgs)
-    }
-  }
-
-  return appendArgs
 }
 
 export const removeNotSuggestedArgs = (args: string[], commandArgs: IRedisCommandTree[]) =>

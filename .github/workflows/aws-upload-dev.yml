@@ -25,64 +25,35 @@ jobs:
       id: date
       uses: ./.github/actions/get-current-date
 
-    - name: Merge builds by pattern
-      id: merge-builds
-      uses: actions/upload-artifact/merge@v4
-      with:
-        name: 'all-builds'
-        pattern: '*-builds'
-        delete-merged: true
-
     - name: Download builds
       uses: actions/download-artifact@v4
       with:
-        name: 'all-builds'
+        pattern: '*-builds'
         path: release
+        merge-multiple: true
 
     - run: ls -R ./release
 
-    - name: Set sub path for dev builds
+    - name: Upload builds to s3 bucket dev sub folder
       if: ${{ !inputs.pre-release }}
       run: |
-        echo "SUB_PATH=dev-builds/${{ steps.date.outputs.date }}/${{ github.run_id }}" >> $GITHUB_ENV
+        SUB_PATH="dev-builds/${{ steps.date.outputs.date }}/${{ github.run_id }}"
+        echo "SUB_PATH=${SUB_PATH}" >> $GITHUB_ENV
 
-    - name: Set sub path for pre-release builds and copy to upgrades folder
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
+
+    - name: Upload builds to s3 bucket pre-releasea sub folder
       if: inputs.pre-release
       run: |
         APP_VERSION=$(jq -r '.version' redisinsight/package.json)
-        echo "SUB_PATH=pre-release/${APP_VERSION}" >> $GITHUB_ENV
+        SUB_PATH="pre-release/${APP_VERSION}"
+
+        echo "SUB_PATH=${SUB_PATH}" >> $GITHUB_ENV
 
         aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/upgrades --recursive
-
-    - name: Upload builds to s3 bucket
-      run: |
-        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/pre-release/${APP_VERSION} --recursive
 
     - name: Generate job summary
       run: |
         node ./.github/generate-build-summary.js
 
-  # Remove artifacts from github actions
-  remove-artifacts:
-    name: Remove artifacts
-    needs: 's3'
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Merge artifacts by pattern
-      id: merge-artifacts
-      uses: actions/upload-artifact/merge@v4
-      with:
-        name: remove-artifacts
-        pattern: '*'
-        delete-merged: true
-
-    - name: Delete merged artifact
-      uses: actions/github-script@v7
-      with:
-        script: |
-          github.rest.actions.deleteArtifact({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            artifact_id: ${{ steps.merge-artifacts.outputs.artifact-id }}
-          });

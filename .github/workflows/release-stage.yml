@@ -26,6 +26,7 @@ jobs:
   aws:
     uses: ./.github/workflows/aws-upload-dev.yml
     needs: [builds]
+    secrets: inherit
     if: always()
     with:
       pre-release: true
@@ -40,7 +41,13 @@ jobs:
     uses: ./.github/workflows/tests-e2e-appimage.yml
     secrets: inherit
 
-# Cancel a previous run workflow
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Remove artifacts from github actions
+  remove-artifacts:
+    name: Remove artifacts
+    needs: [aws, e2e-docker-tests, e2e-appimage-tests]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Remove all artifacts
+      uses: ./.github/actions/remove-artifacts  # Remove artifacts from github actions

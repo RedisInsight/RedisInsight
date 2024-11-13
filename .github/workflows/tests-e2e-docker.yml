@@ -132,6 +132,7 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
     - name: Deploy report
       uses: ./.github/actions/deploy-test-reports
       with:

@@ -1,7 +1,10 @@
 import { Selector, t } from 'testcafe';
 import { TlsCertificates } from '../../../helpers/constants';
+import { RedisCloudSigninPanel } from '../redis-cloud-sign-in-panel';
 
 export class AddRedisDatabase {
+    RedisCloudSigninPanel = new RedisCloudSigninPanel();
+
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.

@@ -39,6 +39,10 @@ on:
         description: Use short rte list
         type: boolean
         default: true
+      pre_release:
+        description: Is pre-release
+        default: false
+        type: boolean
       debug:
         description: Enable SSH Debug
         default: false
@@ -141,15 +145,16 @@ jobs:
   clean:
     uses: ./.github/workflows/clean-deployments.yml
     needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
-    if: always()
+    if: ${{ !inputs.pre_release && always() }}
 
   # Remove artifacts from github actions
   remove-artifacts:
     name: Remove artifacts
     needs: [clean]
-    if: always()
+    if: ${{ !inputs.pre_release && always() }}
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v4
     - name: Remove all artifacts
       uses: ./.github/actions/remove-artifacts

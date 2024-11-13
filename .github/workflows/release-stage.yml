@@ -26,6 +26,7 @@ jobs:
   aws:
     uses: ./.github/workflows/aws-upload-dev.yml
     needs: [builds]
+    secrets: inherit
     if: always()
     with:
       pre-release: true

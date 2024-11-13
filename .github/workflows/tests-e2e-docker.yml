@@ -117,15 +117,11 @@ jobs:
         list-suites: 'failed'
         fail-on-error: 'false'
 
-    - name: Get current date
-      id: date
-      if: always()
-      uses: ./.github/actions/get-current-date
-
     - name: Add link to report in the workflow summary
       if: always()
       run: |
-        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${{ steps.date.outputs.date }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}/index.html"
+        DATE=$(date +'%Y-%m-%d')
+        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${DATE}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}/index.html"
 
         echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
 

@@ -13,10 +13,15 @@ import reducer, {
   instancesSelector,
   fetchConnectedInstanceAction,
   checkConnectToRdiInstanceAction,
-} from 'uiSrc/slices/rdi/instances'
+  editInstanceAction,
+  defaultInstanceChanging,
+  defaultInstanceChangingSuccess,
+  defaultInstanceChangingFailure,
+  updateConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, IAddInstanceErrorPayload } from 'uiSrc/slices/app/notifications'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
+import { Rdi } from 'apiSrc/modules/rdi/models'
 
 let store: typeof mockedStore
 
@@ -160,6 +165,31 @@ describe('rdi instances slice', () => {
     })
   })
 
+  describe('updateConnectedInstance', () => {
+    it('should properly update connected instance', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          ...mockRdiInstance,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, updateConnectedInstance(mockRdiInstance as Rdi))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          instances: nextState
+        },
+      })
+
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
   // thunks
 
   describe('thunks', () => {
@@ -203,6 +233,55 @@ describe('rdi instances slice', () => {
         const expectedActions = [
           setConnectedInstance(),
           setConnectedInstanceFailure(errorMessage),
+          addErrorNotification(responsePayload as AxiosError),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('editInstanceAction', () => {
+      it('succeed to edit data and calls a success callback', async () => {
+        const onSuccess = jest.fn()
+        const responsePayload = { data: mockRdiInstance, status: 200 }
+
+        apiService.patch = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          editInstanceAction('123', mockRdiInstance, onSuccess)
+        )
+
+        // Assert
+        const expectedActions = [
+          defaultInstanceChanging(),
+          defaultInstanceChangingSuccess(),
+        ]
+
+        expect(store.getActions()).toEqual(expect.arrayContaining(expectedActions))
+        expect(onSuccess).toBeCalledWith(mockRdiInstance)
+      })
+
+      it('failed to edit data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.patch = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          editInstanceAction('123', mockRdiInstance)
+        )
+
+        // Assert
+        const expectedActions = [
+          defaultInstanceChanging(),
+          defaultInstanceChangingFailure(errorMessage),
           addErrorNotification(responsePayload as AxiosError),
         ]
 

@@ -396,15 +396,36 @@ jobs:
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
+      - run: sudo apt-get install xdotool
+      - run: sudo apt-get install -y desktop-file-utils
+      - run:
+          name: Install Google Chrome
+          command: |
+            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+            sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+            sudo apt-get update
+            sudo apt-get install -y google-chrome-stable
+            sudo apt-get install -y \
+            libnss3 \
+            libgconf-2-4 \
+            libxss1 \
+            libasound2
+            xdg-settings set default-web-browser google-chrome.desktop
       - run:
           name: Install WM
           command: sudo apt install fluxbox
       - run:
-          name: Run X11
+          name: Install Xvfb
+          command: sudo apt-get install -y xvfb
+      - run:
+          name: Start Xvfb
           command: |
-            Xvfb :99 -screen 0 1920x1080x24 &
+            if [ -f /tmp/.X99-lock ]; then rm /tmp/.X99-lock; fi
+            Xvfb :99 -ac -screen 0 1920x1080x24 &
             sleep 3
             fluxbox &
+            export DISPLAY=:99
+            echo $DISPLAY
       # - run:
       #     name: Clone mocked RDI server
       #     command: |

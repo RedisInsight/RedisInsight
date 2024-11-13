@@ -6,6 +6,7 @@ import { BaseOverviewPage } from './base-overview-page';
 import { NavigationPanel } from './components/navigation-panel';
 import { NavigationHeader } from './components/navigation/navigation-header';
 import { AuthorizationDialog } from './dialogs/authorization-dialog';
+import { RedisCloudSigninPanel } from './components/redis-cloud-sign-in-panel';
 
 const databaseAPIRequests = new DatabaseAPIRequests();
 
@@ -86,9 +87,6 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     databaseContainer = Selector('.databaseContainer');
     connectionTypeTitle  = Selector('[data-test-subj=tableHeaderCell_connectionType_2]');
     signInAgreement = Selector('[class="euiCheckbox__square"]');
-    googleAuth = Selector('[data-testid=google-oauth]');
-    gitHubAuth = Selector('[data-testid=github-oauth]');
-    ssoAuth = Selector('[data-testid=sso-oauth]');
 
     /**
      * Click on the database by name

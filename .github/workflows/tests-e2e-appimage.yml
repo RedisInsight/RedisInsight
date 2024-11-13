@@ -49,10 +49,18 @@ jobs:
       with:
         detached: true
 
-    - name: Install WM
+    - name: Install necessary packages
       run: |
         sudo apt-get update -y
-        sudo apt-get install kmod libfuse2 xvfb net-tools fluxbox netcat -y
+        sudo apt-get install kmod libfuse2 xvfb net-tools xdotool desktop-file-utils fluxbox netcat -y
+
+    - name: Install Google Chrome
+      run: |
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable libnss3 libgconf-2-4 libxss1 libasound2
+        xdg-settings set default-web-browser google-chrome.desktop
 
     - name: Download AppImage Artifacts
       uses: actions/download-artifact@v4
@@ -60,11 +68,14 @@ jobs:
         name: linux-builds
         path: ./release
 
-    - name: Run X11
+    - name: Start Xvfb
       run: |
-        Xvfb :99 -screen 0 1920x1080x24 &
+        if [ -f /tmp/.X99-lock ]; then rm /tmp/.X99-lock; fi
+        Xvfb :99 -ac -screen 0 1920x1080x24 &
         sleep 3
         fluxbox &
+        export DISPLAY=:99
+        echo $DISPLAY
 
     - name: Run tests
       run: |

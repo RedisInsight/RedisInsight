@@ -40,7 +40,7 @@ on:
         type: boolean
         default: true
       pre_release:
-        description: Enable SSH Debug
+        description: Is pre-release
         default: false
         type: boolean
       debug:
@@ -155,5 +155,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v4
     - name: Remove all artifacts
       uses: ./.github/actions/remove-artifacts

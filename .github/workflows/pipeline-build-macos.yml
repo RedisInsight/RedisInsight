@@ -76,7 +76,7 @@ jobs:
         mv release/mas-universal/Redis-Insight-mac-universal-mas.pkg release/Redis-Insight-mac-universal-mas.pkg
 
     # handle manual builds
-    - name: Build macos dmg (dev)
+    - name: Build macos dmg (custom)
       if: inputs.target != vars.ALL
       run: |
         unset CSC_LINK

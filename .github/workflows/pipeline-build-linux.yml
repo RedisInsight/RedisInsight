@@ -66,7 +66,7 @@ jobs:
       if: (vars.ENV == 'staging' || vars.ENV == 'development') && inputs.target == vars.ALL
       run: yarn package:stage
 
-    - name: Build linux packages (development)
+    - name: Build linux packages (custom)
       if: inputs.target != vars.ALL
       run: |
         target=""

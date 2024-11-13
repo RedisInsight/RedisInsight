@@ -4,6 +4,7 @@ on:
 
 jobs:
   clean:
+    name: Clean deployments
     runs-on: ubuntu-latest
     steps:
     - name: 🗑 Delete deployment (staging)

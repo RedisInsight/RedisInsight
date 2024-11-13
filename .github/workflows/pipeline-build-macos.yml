@@ -80,9 +80,7 @@ jobs:
       if: inputs.target != vars.ALL
       run: |
         unset CSC_LINK
-        target=$(echo "${{inputs.target}}" | grep -oE 'build_macos_[^ ]+' | sed 's/build_macos_/--/' | paste -sd ' ' -)
-
-        echo $target
+        target=$(echo "${{inputs.target}}" | grep -oE 'build_macos_[^ ]+' | sed 's/build_macos_/dmg:/' | paste -sd ' ' -)
 
         if [ "${{ vars.ENV == 'production' }}" == "true" ]; then
           yarn package:prod --mac $target

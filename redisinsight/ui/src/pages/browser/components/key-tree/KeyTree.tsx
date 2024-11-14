@@ -69,7 +69,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
   const [items, setItems] = useState<IKeyPropTypes[]>(parseKeyNames(keysState.keys ?? []))
 
   // escape regexp symbols and join and transform to regexp
-  const delimiter = comboBoxToArray(treeViewDelimiter)
+  const delimiterPattern = comboBoxToArray(treeViewDelimiter)
     .map(escapeRegExp)
     .join('|')
 
@@ -92,8 +92,8 @@ const KeyTree = forwardRef((props: Props, ref) => {
   // open all parents for selected key
   const openSelectedKey = (selectedKeyName: Nullable<string> = '') => {
     if (selectedKeyName) {
-      const parts = selectedKeyName.split(delimiter)
-      const parents = parts.map((_, index) => parts.slice(0, index + 1).join(delimiter) + delimiter)
+      const parts = selectedKeyName.split(delimiterPattern)
+      const parents = parts.map((_, index) => parts.slice(0, index + 1).join(delimiterPattern) + delimiterPattern)
 
       // remove key name from parents
       parents.pop()
@@ -116,7 +116,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
     }
 
     setItems(parseKeyNames(keysState.keys))
-  }, [keysState.lastRefreshTime, delimiter, sorting])
+  }, [keysState.lastRefreshTime, delimiterPattern, sorting])
 
   useEffect(() => {
     openSelectedKey(selectedKeyName)
@@ -194,7 +194,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
         <VirtualTree
           items={items}
           loadingIcon={TreeViewSVG}
-          delimiter={delimiter}
+          delimiterPattern={delimiterPattern}
           sorting={sorting}
           deleting={deleting}
           statusSelected={selectedKeyName}

@@ -24,7 +24,6 @@ let store: typeof mockedStore
 const APPLY_BTN = 'tree-view-apply-btn'
 const TREE_SETTINGS_TRIGGER_BTN = 'tree-view-settings-btn'
 const SORTING_SELECT = 'tree-view-sorting-select'
-const DELIMITER_INPUT = 'tree-view-delimiter-input'
 const SORTING_DESC_ITEM = 'tree-view-sorting-item-DESC'
 
 beforeEach(() => {
@@ -130,7 +129,7 @@ describe('KeyTreeDelimiter', () => {
       event: TelemetryEvent.TREE_VIEW_DELIMITER_CHANGED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
-        from: comboBoxToArray(DEFAULT_DELIMITER),
+        from: comboBoxToArray([DEFAULT_DELIMITER]),
         to: [value],
       }
     })
@@ -164,7 +163,7 @@ describe('KeyTreeDelimiter', () => {
     })
 
     const expectedActions = [
-      setBrowserTreeDelimiter(DEFAULT_DELIMITER),
+      setBrowserTreeDelimiter([DEFAULT_DELIMITER]),
       resetBrowserTree(),
     ]
 

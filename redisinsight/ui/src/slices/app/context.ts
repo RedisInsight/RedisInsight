@@ -38,7 +38,7 @@ export const initialState: StateAppContext = {
   contextRdiInstanceId: '',
   lastPage: '',
   dbConfig: {
-    treeViewDelimiter: DEFAULT_DELIMITER,
+    treeViewDelimiter: [DEFAULT_DELIMITER],
     treeViewSort: DEFAULT_TREE_SORTING,
     slowLogDurationUnit: DEFAULT_SLOWLOG_DURATION_UNIT,
     showHiddenRecommendations: DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS,
@@ -127,7 +127,7 @@ const appContextSlice = createSlice({
       state.workspace = payload || AppWorkspace.Databases
     },
     setDbConfig: (state, { payload }) => {
-      state.dbConfig.treeViewDelimiter = payload?.treeViewDelimiter ?? DEFAULT_DELIMITER
+      state.dbConfig.treeViewDelimiter = payload?.treeViewDelimiter ?? [DEFAULT_DELIMITER]
       state.dbConfig.treeViewSort = payload?.treeViewSort ?? DEFAULT_TREE_SORTING
       state.dbConfig.slowLogDurationUnit = payload?.slowLogDurationUnit ?? DEFAULT_SLOWLOG_DURATION_UNIT
       state.dbConfig.showHiddenRecommendations = payload?.showHiddenRecommendations

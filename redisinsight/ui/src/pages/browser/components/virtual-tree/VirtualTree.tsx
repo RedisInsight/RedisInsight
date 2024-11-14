@@ -27,7 +27,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   items: IKeyPropTypes[]
-  delimiter: string
+  delimiterPattern: string
   loadingIcon?: string
   loading: boolean
   deleting: boolean
@@ -52,7 +52,7 @@ export const KEYS = 'keys'
 const VirtualTree = (props: Props) => {
   const {
     items,
-    delimiter,
+    delimiterPattern,
     loadingIcon = 'empty',
     statusOpen = {},
     statusSelected,
@@ -103,13 +103,13 @@ const VirtualTree = (props: Props) => {
       nodes.current = []
       elements.current = {}
       rerender({})
-      runWebworker?.({ items: [], delimiter, sorting })
+      runWebworker?.({ items: [], delimiterPattern, sorting })
       return
     }
 
     setConstructingTree(true)
-    runWebworker?.({ items, delimiter, sorting })
-  }, [items, delimiter])
+    runWebworker?.({ items, delimiterPattern, sorting })
+  }, [items, delimiterPattern])
 
   const handleUpdateSelected = useCallback((name: RedisString) => {
     onStatusSelected?.(name)
@@ -190,7 +190,7 @@ const VirtualTree = (props: Props) => {
       size: node.size,
       type: node.type,
       fullName: node.fullName,
-      shortName: node.nameString?.split(new RegExp(delimiter, 'g')).pop(),
+      shortName: node.nameString?.split(new RegExp(delimiterPattern, 'g')).pop(),
       nestingLevel,
       deleting,
       path: node.path,

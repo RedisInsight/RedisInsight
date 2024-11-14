@@ -3,20 +3,20 @@ import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 interface Props {
   items: IKeyPropTypes[]
-  delimiter?: string
+  delimiterPattern?: string
   sorting?: SortOrder
 }
 
 export const constructKeysToTree = (props: Props): any[] => {
-  const { items: keys, delimiter = ':', sorting = 'ASC' } = props
-  const keysSymbol = `keys${delimiter}keys`
+  const { items: keys, delimiterPattern = ':', sorting = 'ASC' } = props
+  const keysSymbol = `keys${delimiterPattern}keys`
   const tree: any = {}
 
   keys.forEach((key: any) => {
     // eslint-disable-next-line prefer-object-spread
     let currentNode: any = tree
     const { nameString: name = '' } = key
-    const nameSplitted = name.split(new RegExp(delimiter, 'g'))
+    const nameSplitted = name.split(new RegExp(delimiterPattern, 'g'))
     const lastIndex = nameSplitted.length - 1
 
     nameSplitted.forEach((value:any, index: number) => {
@@ -106,5 +106,5 @@ export const constructKeysToTree = (props: Props): any[] => {
     })
   }
 
-  return formatTreeData(tree, '', delimiter)
+  return formatTreeData(tree, '', delimiterPattern)
 }

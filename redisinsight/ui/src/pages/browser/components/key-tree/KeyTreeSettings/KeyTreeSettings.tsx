@@ -42,7 +42,7 @@ const sortOptions = [SortOrder.ASC, SortOrder.DESC].map((value) => ({
 const KeyTreeSettings = ({ loading }: Props) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const {
-    treeViewDelimiter = DEFAULT_DELIMITER,
+    treeViewDelimiter = [DEFAULT_DELIMITER],
     treeViewSort = DEFAULT_TREE_SORTING,
   } = useSelector(appContextDbConfig)
   const [sorting, setSorting] = useState<SortOrder>(treeViewSort)
@@ -86,7 +86,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
 
   const handleApply = () => {
     if (!isEqual(delimiters, treeViewDelimiter)) {
-      const delimitersValue = delimiters.length ? delimiters : DEFAULT_DELIMITER
+      const delimitersValue = delimiters.length ? delimiters : [DEFAULT_DELIMITER]
 
       dispatch(setBrowserTreeDelimiter(delimitersValue))
       sendEventTelemetry({

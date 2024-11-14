@@ -15,7 +15,7 @@ const constructKeysToTreeTests: any[] = [
       { nameString: 'keys:2', type: 'hash', ttl: -1, size: 71 },
       { nameString: 'keys_2', type: 'hash', ttl: -1, size: 71 },
     ],
-    delimiter: delimiterMock
+    delimiterPattern: delimiterMock
   },
   constructKeysToTreeMockResult
   ]

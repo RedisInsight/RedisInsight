@@ -1,4 +1,3 @@
-import { EuiComboBoxOptionOption } from '@elastic/eui'
 import { IpcInvokeEvent } from 'uiSrc/electron/constants'
 
 const baseApiUrl = process.env.RI_BASE_API_URL
@@ -51,5 +50,3 @@ export const openNewWindowDatabase = (location: string) => {
     { location },
   )
 }
-
-export const comboBoxToArray = (items: EuiComboBoxOptionOption[]) => [...items].map(({ label }) => label)

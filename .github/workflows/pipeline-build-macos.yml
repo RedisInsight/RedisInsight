@@ -80,14 +80,9 @@ jobs:
       if: inputs.target != vars.ALL
       run: |
         unset CSC_LINK
-        target=""
+        target=$(echo "${{inputs.target}}" | grep -oE 'build_macos_[^ ]+' | sed 's/build_macos_/dmg:/' | paste -sd ' ' -)
 
-        if [ ${{ startsWith(inputs.target, 'macos:') }} == 'true' ]; then
-          inputsTarget=${{inputs.target}}
-          target=--${inputsTarget#macos:}
-        fi
-
-        if [ ${{ contains(vars.ENV, 'production') }} ]; then
+        if [ "${{ vars.ENV == 'production' }}" == "true" ]; then
           yarn package:prod --mac $target
         else
           yarn package:stage --mac $target

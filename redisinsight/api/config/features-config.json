@@ -112,9 +112,9 @@
         "strategy": "ioredis"
       }
     },
-    "cloudDatabaseInTheList": {
+    "enhancedCloudUI": {
       "flag": true,
-      "perc": [[0, 20]]
+      "perc": [[0, 50]]
     }
   }
 }

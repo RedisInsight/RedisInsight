@@ -60,7 +60,7 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
-    this.strategies.set(KnownFeatures.CloudDatabaseInTheList, new WithDataFlagStrategy(
+    this.strategies.set(KnownFeatures.EnhancedCloudUI, new WithDataFlagStrategy(
       this.featuresConfigService,
       this.settingsService,
     ));

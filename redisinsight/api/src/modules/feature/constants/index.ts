@@ -29,7 +29,7 @@ export enum KnownFeatures {
   DatabaseChat = 'databaseChat',
   Rdi = 'redisDataIntegration',
   HashFieldExpiration = 'hashFieldExpiration',
-  CloudDatabaseInTheList = 'cloudDatabaseInTheList',
+  EnhancedCloudUI = 'enhancedCloudUI',
 }
 
 export interface IFeatureFlag {

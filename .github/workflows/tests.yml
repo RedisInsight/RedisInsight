@@ -17,6 +17,7 @@ on:
           - all
           - without_e2e
           - only_e2e
+
       redis_client:
         description: Library to use for redis connection
         default: 'ioredis'
@@ -24,6 +25,12 @@ on:
         options:
           - ioredis
           - node-redis
+
+      short_rte_list:
+        description: Use short RTE list for IT
+        type: boolean
+        default: true
+
       debug:
         description: Enable SSH Debug (IT and E2E)
         default: false

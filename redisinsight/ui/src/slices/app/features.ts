@@ -44,7 +44,7 @@ export const initialState: StateAppFeatures = {
       [FeatureFlags.rdi]: {
         flag: false
       },
-      [FeatureFlags.cloudDatabaseInTheList]: {
+      [FeatureFlags.enhancedCloudUI]: {
         flag: false
       }
     }

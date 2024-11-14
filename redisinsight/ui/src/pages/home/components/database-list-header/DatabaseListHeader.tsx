@@ -38,8 +38,8 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
 
   const { theme } = useContext(ThemeContext)
-  const { [FeatureFlags.cloudDatabaseInTheList]: cloudDatabaseInTheListFeature } = featureFlags
-  const isShowPromoBtn = !cloudDatabaseInTheListFeature?.flag
+  const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } = featureFlags
+  const isShowPromoBtn = !enhancedCloudUIFeature?.flag
 
   useEffect(() => {
     if (loading || !data || isEmpty(data)) {

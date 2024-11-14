@@ -9,7 +9,7 @@ const mockedProps = mock<Props>()
 jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    cloudDatabaseInTheList: {
+    enhancedCloudUI: {
       flag: false
     }
   }),
@@ -45,7 +45,7 @@ describe('DatabaseListHeader', () => {
 
   it('should not show promo cloud button with disabled feature flag', () => {
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      cloudDatabaseInTheList: {
+      enhancedCloudUI: {
         flag: true
       }
     })
@@ -57,7 +57,7 @@ describe('DatabaseListHeader', () => {
 
   it('should show promo cloud button with enabled feature flag', () => {
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      cloudDatabaseInTheList: {
+      enhancedCloudUI: {
         flag: false
       }
     })

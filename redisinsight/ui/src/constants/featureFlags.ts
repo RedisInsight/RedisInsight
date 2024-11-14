@@ -7,5 +7,5 @@ export enum FeatureFlags {
   disabledByEnv = 'disabledByEnv',
   rdi = 'redisDataIntegration',
   hashFieldExpiration = 'hashFieldExpiration',
-  cloudDatabaseInTheList = 'cloudDatabaseInTheList',
+  enhancedCloudUI = 'enhancedCloudUI',
 }

@@ -59,7 +59,7 @@ const HomePage = () => {
   const { instance: sentinelInstance } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
   const { data: createDbContent } = useSelector(contentSelector)
-  const { [FeatureFlags.cloudDatabaseInTheList]: cloudDatabaseInTheList } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const {
     loading,
@@ -75,7 +75,7 @@ const HomePage = () => {
 
   const { contextInstanceId } = useSelector(appContextSelector)
 
-  const predefinedInstances = cloudDatabaseInTheList?.flag && createDbContent?.cloud_list_of_databases ? [
+  const predefinedInstances = enhancedCloudUIFeature?.flag && createDbContent?.cloud_list_of_databases ? [
     { id: CREATE_CLOUD_DB_ID, ...createDbContent.cloud_list_of_databases } as Instance
   ] : []
   const isInstanceExists = instances.length > 0 || predefinedInstances.length > 0

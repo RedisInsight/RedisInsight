@@ -22,7 +22,7 @@ jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
 jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    cloudDatabaseInTheList: {
+    enhancedCloudUI: {
       flag: false
     }
   }),
@@ -41,8 +41,6 @@ describe('HomePage', () => {
   it('should render insights trigger', async () => {
     await render(<HomePage />)
 
-    screen.debug(undefined, 100_000)
-
     expect(screen.getByTestId('insights-trigger')).toBeInTheDocument()
   })
 
@@ -54,7 +52,7 @@ describe('HomePage', () => {
 
   it('should not render free cloud db with feature flag disabled', async () => {
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      cloudDatabaseInTheList: {
+      enhancedCloudUI: {
         flag: false
       }
     })
@@ -65,7 +63,7 @@ describe('HomePage', () => {
 
   it('should render free cloud db with feature flag enabled', async () => {
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      cloudDatabaseInTheList: {
+      enhancedCloudUI: {
         flag: true
       }
     })

@@ -66,16 +66,12 @@ jobs:
       if: (vars.ENV == 'staging' || vars.ENV == 'development') && inputs.target == vars.ALL
       run: yarn package:stage
 
-    - name: Build linux packages (development)
+    - name: Build linux packages (custom)
       if: inputs.target != vars.ALL
       run: |
-        target=""
-        if [ ${{ startsWith(inputs.target, 'linux:') }} == 'true' ]; then
-          inputsTarget=${{inputs.target}}
-          target=${inputsTarget#linux:}
-        fi
+        target=$(echo "${{inputs.target}}" | grep -oE 'build_linux_[^_ ]+' | sed 's/build_linux_//' | sort -u | paste -sd ' ' -)
 
-        if [ ${{ contains(vars.ENV, 'production') }} ]; then
+        if [ "${{ vars.ENV == 'production' }}" == "true" ]; then
           yarn package:prod --linux $target
         else
           yarn package:stage --linux $target

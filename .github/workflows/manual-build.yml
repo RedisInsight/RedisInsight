@@ -49,7 +49,7 @@ on:
       environment:
         description: Environment to run build
         type: environment
-        default: 'staging'
+        default: 'development'
         required: false
 
       debug:

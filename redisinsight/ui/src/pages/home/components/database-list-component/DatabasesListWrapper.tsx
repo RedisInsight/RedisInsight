@@ -2,7 +2,8 @@ import {
   Criteria,
   EuiButtonIcon,
   EuiIcon,
-  EuiLink, EuiResizeObserver,
+  EuiLink,
+  EuiResizeObserver,
   EuiTableFieldDataColumnType,
   EuiText,
   EuiTextColor,
@@ -53,7 +54,7 @@ import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
-import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
+import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -243,9 +244,18 @@ const DatabasesListWrapper = (props: Props) => {
   const handleClickFreeDb = () => {
     if (cloudSsoFeature?.flag) {
       dispatch(setSSOFlow(OAuthSocialAction.Create))
-      dispatch(setSocialDialogState(OAuthSocialSource.ListOfDatabases))
+      dispatch(setSocialDialogState(OAuthSocialSource.DatabaseConnectionList))
+      sendEventTelemetry({
+        event: TelemetryEvent.CLOUD_FREE_DATABASE_CLICKED,
+        eventData: { source: OAuthSocialSource.DatabaseConnectionList },
+      })
       return
     }
+
+    sendEventTelemetry({
+      event: HELP_LINKS.cloud.event,
+      eventData: { source: HELP_LINKS.cloud.sources.databaseConnectionList },
+    })
 
     const link = document.createElement('a')
     link.setAttribute('href', getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: 'list_of_databases' }))

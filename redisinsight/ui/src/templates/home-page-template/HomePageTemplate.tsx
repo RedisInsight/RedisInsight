@@ -2,7 +2,6 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 
-import cx from 'classnames'
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 import HomeTabs from 'uiSrc/components/home-tabs'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -11,7 +10,6 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
-import { CapabilityPromotion } from 'uiSrc/pages/home/components/capability-promotion'
 
 import styles from './styles.module.scss'
 
@@ -23,7 +21,6 @@ const HomePageTemplate = (props: Props) => {
   const { children } = props
 
   const {
-    [FeatureFlags.rdi]: rdiFeature,
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
@@ -33,9 +30,6 @@ const HomePageTemplate = (props: Props) => {
     <>
       <div className={styles.pageDefaultHeader}>
         <HomeTabs />
-        <CapabilityPromotion
-          wrapperClassName={cx(styles.capabilityWrapper, { [styles.rdiEnabled]: !!rdiFeature?.flag })}
-        />
         <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
           {isAnyChatAvailable && (
             <EuiFlexItem grow={false} style={{ marginRight: 12 }}>

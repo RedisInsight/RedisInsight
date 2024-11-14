@@ -21,4 +21,12 @@
       }
     }
   }
+
+  :global(.inMemoryTableDefault.noBorders) {
+    &.table {
+      :global(.euiTableHeaderCell:last-child) {
+        border-right: 1px solid var(--euiColorLightShade) !important;
+      }
+    }
+  }
 }

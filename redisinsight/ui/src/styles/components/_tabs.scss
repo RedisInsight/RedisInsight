@@ -90,3 +90,20 @@
     }
   }
 }
+
+.tabs__default {
+  .euiTab {
+    color: var(--euiTextSubduedColor);
+    padding: 6px 16px !important;
+    &.euiTab-isSelected {
+      background-color: var(--buttonDarkenBgColor);
+      color: var(--buttonSecondaryTextColor);
+    }
+  }
+}
+
+.tabs--noBorders {
+  .euiTab + .euiTab::after {
+    display: none !important;
+  }
+}

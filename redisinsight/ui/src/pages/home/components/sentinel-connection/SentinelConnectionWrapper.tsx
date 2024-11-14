@@ -16,7 +16,6 @@ import { InstanceType } from 'uiSrc/slices/interfaces'
 import SentinelConnectionForm from './sentinel-connection-form'
 
 export interface Props {
-  width: number
   onClose?: () => void
 }
 const DEFAULT_SENTINEL_HOST = '127.0.0.1'
@@ -37,7 +36,6 @@ const INITIAL_VALUES = {
 
 const SentinelConnectionWrapper = (props: Props) => {
   const {
-    width,
     onClose,
   } = props
   const [initialValues, setInitialValues] = useState(INITIAL_VALUES)
@@ -98,7 +96,6 @@ const SentinelConnectionWrapper = (props: Props) => {
   return (
     <div>
       <SentinelConnectionForm
-        width={width}
         initialValues={initialValues}
         loading={loading}
         onSubmit={handleConnectionFormSubmit}

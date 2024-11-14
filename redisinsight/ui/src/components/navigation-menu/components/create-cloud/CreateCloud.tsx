@@ -1,0 +1,44 @@
+import React from 'react'
+import cx from 'classnames'
+import { EuiIcon, EuiLink, EuiToolTip } from '@elastic/eui'
+
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
+
+import { getUtmExternalLink } from 'uiSrc/utils/links'
+import styles from '../../styles.module.scss'
+
+const CreateCloud = () => (
+  <EuiToolTip
+    content="Create FREE Redis Cloud database"
+    position="right"
+  >
+    <span className={cx(styles.iconNavItem)}>
+      <OAuthSsoHandlerDialog>
+        {(ssoCloudHandlerClick) => (
+          <EuiLink
+            external={false}
+            onClick={(e) => {
+              ssoCloudHandlerClick(e,
+                { source: OAuthSocialSource.NavigationMenu, action: OAuthSocialAction.Create })
+            }}
+            className={styles.cloudLink}
+            href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: 'navigation_menu' })}
+            target="_blank"
+            data-test-subj="create-cloud-nav-link"
+          >
+            <EuiIcon
+              className={styles.cloudIcon}
+              type={CloudIcon}
+              data-testid="cloud-db-icon"
+            />
+          </EuiLink>
+        )}
+      </OAuthSsoHandlerDialog>
+    </span>
+  </EuiToolTip>
+)
+
+export default CreateCloud

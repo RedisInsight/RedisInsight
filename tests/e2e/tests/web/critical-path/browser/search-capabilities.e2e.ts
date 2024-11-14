@@ -180,14 +180,14 @@ test
     })
     .after(async() => {
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-    })('No RediSearch module message', async t => {
-        const noRedisearchMessage = 'RediSearch is not available for this database';
+    })('No Redis Query Engine module message', async t => {
+        const noRedisearchMessage = 'Redis Query Engine is not available for this database';
         const externalPageLinkFirst = 'https://redis.io/try-free';
         const externalPageLinkSecond = '?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_browser_search'
 
         await t.click(browserPage.redisearchModeBtn);
-        // Verify that user can see message in the dialog when he doesn't have RediSearch module
-        await t.expect(browserPage.noReadySearchDialogTitle.textContent).contains(noRedisearchMessage, 'Invalid text in no redisearch popover');
+        // Verify that user can see message in the dialog when he doesn't have Redis Query Engine module
+        await t.expect(browserPage.noReadySearchDialogTitle.textContent).contains(noRedisearchMessage, 'Invalid text in no Redis Query Engine popover');
 
         // Verify that user can navigate by link to create a Redis db
         await t.click(browserPage.redisearchFreeLink);

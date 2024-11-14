@@ -7,6 +7,7 @@ import { BaseOverviewPage } from './base-overview-page';
 import { NavigationPanel } from './components/navigation-panel';
 import { NavigationHeader } from './components/navigation/navigation-header';
 import { AuthorizationDialog } from './dialogs/authorization-dialog';
+import { RedisCloudSigninPanel } from './components/redis-cloud-sign-in-panel';
 
 const databaseAPIRequests = new DatabaseAPIRequests();
 
@@ -55,13 +56,13 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', { timeout: 500 });
     //ICONS
     moduleColumn = Selector('[data-test-subj=tableHeaderCell_modules_3]');
-    moduleSearchIcon = Selector('[data-testid^=RediSearch]');
-    moduleGraphIcon = Selector('[data-testid^=RedisGraph]');
-    moduleJSONIcon = Selector('[data-testid^=RedisJSON]');
-    moduleTimeseriesIcon = Selector('[data-testid^=RedisTimeSeries]');
-    moduleBloomIcon = Selector('[data-testid^=RedisBloom]');
-    moduleAIIcon = Selector('[data-testid^=RedisAI]');
-    moduleGearsIcon = Selector('[data-testid^=RedisGears]');
+    moduleSearchIcon = Selector("[data-testid^='Redis Query Engine']");
+    moduleGraphIcon = Selector('[data-testid^=Graph]');
+    moduleJSONIcon = Selector('[data-testid^=JSON]');
+    moduleTimeseriesIcon = Selector("[data-testid^='Time Series']");
+    moduleBloomIcon = Selector('[data-testid^=Probabilistic]');
+    moduleAIIcon = Selector('[data-testid^=AI]');
+    moduleGearsIcon = Selector('[data-testid^=Gears]');
     redisStackIcon = Selector('[data-testid=redis-stack-icon]');
     tooltipRedisStackLogo = Selector('[data-testid=tooltip-redis-stack-icon]');
     //TEXT INPUTS (also referred to as 'Text fields')
@@ -91,9 +92,6 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     databaseContainer = Selector('.databaseContainer');
     connectionTypeTitle  = Selector('[data-test-subj=tableHeaderCell_connectionType_2]');
     signInAgreement = Selector('[class="euiCheckbox__square"]');
-    googleAuth = Selector('[data-testid=google-oauth]');
-    gitHubAuth = Selector('[data-testid=github-oauth]');
-    ssoAuth = Selector('[data-testid=sso-oauth]');
 
     /**
      * Click on the database by name

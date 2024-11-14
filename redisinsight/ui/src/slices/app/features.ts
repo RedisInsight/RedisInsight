@@ -43,6 +43,9 @@ export const initialState: StateAppFeatures = {
       },
       [FeatureFlags.rdi]: {
         flag: false
+      },
+      [FeatureFlags.cloudDatabaseInTheList]: {
+        flag: false
       }
     }
   }

@@ -120,7 +120,7 @@ describe('DatabasesListWrapper', () => {
 
     expect(store.getActions()).toEqual([
       setSSOFlow(OAuthSocialAction.Create),
-      setSocialDialogState(OAuthSocialSource.ListOfDatabases)
+      setSocialDialogState(OAuthSocialSource.DatabaseConnectionList)
     ])
   })
 

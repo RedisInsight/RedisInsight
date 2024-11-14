@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
 import { HomePageTemplate } from 'uiSrc/templates'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
@@ -41,6 +41,7 @@ import DatabasePanelDialog from './components/database-panel-dialog'
 
 import './styles.scss'
 import styles from './styles.module.scss'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 enum OpenDialogName {
   AddDatabase = 'add',
@@ -58,6 +59,7 @@ const HomePage = () => {
   const { instance: sentinelInstance } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
   const { data: createDbContent } = useSelector(contentSelector)
+  const { [FeatureFlags.cloudDatabaseInTheList]: cloudDatabaseInTheList } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const {
     loading,
@@ -73,7 +75,7 @@ const HomePage = () => {
 
   const { contextInstanceId } = useSelector(appContextSelector)
 
-  const predefinedInstances = createDbContent?.cloud_list_of_databases ? [
+  const predefinedInstances = cloudDatabaseInTheList?.flag && createDbContent?.cloud_list_of_databases ? [
     { id: CREATE_CLOUD_DB_ID, ...createDbContent.cloud_list_of_databases } as Instance
   ] : []
   const isInstanceExists = instances.length > 0 || predefinedInstances.length > 0

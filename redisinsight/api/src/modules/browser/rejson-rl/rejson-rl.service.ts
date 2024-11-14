@@ -279,7 +279,6 @@ export class RejsonRlService {
 
       // Get value in the path without any checks
       if (forceRetrieve) {
-        console.log('getJson forceRetrieve', forceRetrieve);
         result.data = await this.forceGetJson(client, keyName, path);
         return result;
       }

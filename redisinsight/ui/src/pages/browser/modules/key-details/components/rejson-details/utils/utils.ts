@@ -11,7 +11,7 @@ enum ClassNames {
 }
 
 export function isScalar(x: JSONScalarValue) {
-  return ['string', 'number', 'boolean'].indexOf(typeof x) !== -1 || x === null
+  return ['string', 'number', 'boolean', 'bigint'].indexOf(typeof x) !== -1 || x === null
 }
 
 export const isValidJSON = (value: string): boolean => {

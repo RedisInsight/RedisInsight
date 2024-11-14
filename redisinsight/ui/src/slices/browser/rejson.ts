@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
+import JSONBigInt from 'json-bigint'
 
 import { isNumber } from 'lodash'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -25,6 +26,26 @@ import { addErrorNotification, addMessageNotification } from '../app/notificatio
 import { AppDispatch, RootState } from '../store'
 
 const JSON_LENGTH_TO_FORCE_RETRIEVE = 200
+
+// Initialize parser with strict mode off to allow parsing of primitive values
+const JSONParser = JSONBigInt({ 
+  useNativeBigInt: true,
+  strict: false  // This allows parsing of primitive values
+})
+
+const parseJsonData = (data: any) => {
+  if (typeof data?.data === 'string') {
+    try {
+      return {
+        ...data,
+        data: JSONParser.parse(data.data)
+      }
+    } catch (e) {
+      return data
+    }
+  }
+  return data
+}
 
 export const initialState: InitialStateRejson = {
   loading: false,
@@ -158,7 +179,7 @@ export function fetchReJSON(
 
       sourceRejson = null
       if (isStatusSuccessful(status)) {
-        dispatch(loadRejsonBranchSuccess(data))
+        dispatch(loadRejsonBranchSuccess(parseJsonData(data)))
       }
     } catch (error) {
       if (!axios.isCancel(error)) {
@@ -352,7 +373,7 @@ export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
       )
 
       if (isStatusSuccessful(status)) {
-        return data
+        return parseJsonData(data)
       }
       throw new Error(data.toString())
     } catch (error) {

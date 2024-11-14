@@ -45,3 +45,28 @@
   margin-left: auto !important;
   padding-left: 12px;
 }
+
+.promo {
+  display: flex !important;
+  @media only screen and (max-width: 800px) {
+    display: none !important;
+  }
+}
+
+.cloudSsoPromoTooltip {
+  display: flex;
+  flex-direction: row;
+  line-height: normal;
+  font-size: 12px !important;
+}
+.cloudSsoPromoTooltipIcon {
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: 8px;
+}
+
+@include global.insights-open(1350px) {
+  .promo {
+    display: none !important;
+  }
+}

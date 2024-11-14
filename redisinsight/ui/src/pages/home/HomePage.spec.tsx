@@ -1,11 +1,30 @@
 import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import HomePage from './HomePage'
 
 jest.mock('uiSrc/slices/panels/sidePanels', () => ({
   ...jest.requireActual('uiSrc/slices/panels/sidePanels'),
   sidePanelsSelector: jest.fn().mockReturnValue({
     openedPanel: 'insights'
+  }),
+}))
+
+jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
+  ...jest.requireActual('uiSrc/slices/content/create-redis-buttons'),
+  contentSelector: jest.fn().mockReturnValue({
+    data: {
+      cloud_list_of_databases: {}
+    }
+  }),
+}))
+
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    enhancedCloudUI: {
+      flag: false
+    }
   }),
 }))
 
@@ -29,5 +48,27 @@ describe('HomePage', () => {
     await render(<HomePage />)
 
     expect(screen.getByTestId('side-panels-insights')).toBeInTheDocument()
+  })
+
+  it('should not render free cloud db with feature flag disabled', async () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      enhancedCloudUI: {
+        flag: false
+      }
+    })
+    await render(<HomePage />)
+
+    expect(screen.queryByTestId('db-row_create-free-cloud-db')).not.toBeInTheDocument()
+  })
+
+  it('should render free cloud db with feature flag enabled', async () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      enhancedCloudUI: {
+        flag: true
+      }
+    })
+    await render(<HomePage />)
+
+    expect(screen.getByTestId('db-row_create-free-cloud-db')).toBeInTheDocument()
   })
 })

@@ -66,16 +66,12 @@ jobs:
       if: (vars.ENV == 'staging' || vars.ENV == 'development') && inputs.target == vars.ALL
       run: yarn package:stage
 
-    - name: Build linux packages (development)
+    - name: Build linux packages (custom)
       if: inputs.target != vars.ALL
       run: |
-        target=""
-        if [ ${{ startsWith(inputs.target, 'linux:') }} == 'true' ]; then
-          inputsTarget=${{inputs.target}}
-          target=${inputsTarget#linux:}
-        fi
+        target=$(echo "${{inputs.target}}" | grep -oE 'build_linux_[^_ ]+' | sed 's/build_linux_//' | sort -u | paste -sd ' ' -)
 
-        if [ ${{ contains(vars.ENV, 'production') }} ]; then
+        if [ "${{ vars.ENV == 'production' }}" == "true" ]; then
           yarn package:prod --linux $target
         else
           yarn package:stage --linux $target
@@ -97,6 +93,7 @@ jobs:
       RI_AI_QUERY_PASS: ${{ secrets.RI_AI_QUERY_PASS }}
       RI_AI_QUERY_USER: ${{ secrets.RI_AI_QUERY_USER }}
       RI_CLOUD_API_URL: ${{ secrets.RI_CLOUD_API_URL }}
+      RI_CLOUD_API_TOKEN: ${{ secrets.RI_CLOUD_API_TOKEN }}
       RI_CLOUD_CAPI_URL: ${{ secrets.RI_CLOUD_CAPI_URL }}
       RI_CLOUD_IDP_AUTHORIZE_URL: ${{ secrets.RI_CLOUD_IDP_AUTHORIZE_URL }}
       RI_CLOUD_IDP_CLIENT_ID: ${{ secrets.RI_CLOUD_IDP_CLIENT_ID }}

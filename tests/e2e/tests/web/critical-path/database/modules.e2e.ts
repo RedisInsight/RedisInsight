@@ -11,7 +11,7 @@ const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const chance = new Chance();
 
-const moduleNameList = ['RediSearch', 'RedisJSON', 'RedisGraph', 'RedisTimeSeries', 'RedisBloom', 'RedisGears', 'RedisAI'];
+const moduleNameList = ['Redis Query Engine', 'JSON', 'Graph', 'Time Series', 'Probabilistic', 'Gears', 'AI'];
 const moduleList = [myRedisDatabasePage.moduleSearchIcon, myRedisDatabasePage.moduleJSONIcon, myRedisDatabasePage.moduleGraphIcon, myRedisDatabasePage.moduleTimeseriesIcon, myRedisDatabasePage.moduleBloomIcon, myRedisDatabasePage.moduleGearsIcon, myRedisDatabasePage.moduleAIIcon];
 const uniqueId = chance.string({ length: 10 });
 let database = {
@@ -42,7 +42,7 @@ test('Verify that user can see DB modules on DB list page for Standalone DB', as
     // Verify that user can see the following sorting order: Search, JSON, Graph, TimeSeries, Bloom, Gears, AI for modules
     const databaseLine = myRedisDatabasePage.dbNameList.withExactText(database.databaseName).parent('tr');
     await t.expect(databaseLine.visible).ok('Database not found in db list');
-    const moduleIcons = databaseLine.find('[data-testid^=Redi]');
+    const moduleIcons = databaseLine.find('[data-testid*=_module]');
     const numberOfIcons = await moduleIcons.count;
     for (let i = 0; i < numberOfIcons; i++) {
         const moduleName = await moduleIcons.nth(i).getAttribute('data-testid');

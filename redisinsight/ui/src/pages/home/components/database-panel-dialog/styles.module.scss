@@ -89,6 +89,10 @@
       border-color: var(--separatorColor) !important;
     }
 
+    .euiTextArea {
+      min-height: 80px;
+    }
+
     .euiFormControlLayout--group {
       border-color: var(--separatorColor) !important;
     }

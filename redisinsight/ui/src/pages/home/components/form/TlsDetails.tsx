@@ -99,7 +99,7 @@ const TlsDetails = (props: Props) => {
       value: cert.id,
       inputDisplay: cert.name,
       dropdownDisplay: (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>{truncateText(cert.name, 25)}</div>
           <PopoverDelete
             header={cert.name}
@@ -130,7 +130,7 @@ const TlsDetails = (props: Props) => {
       value: `${cert.id}`,
       inputDisplay: cert.name,
       dropdownDisplay: (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>{truncateText(cert.name, 25)}</div>
           <PopoverDelete
             header={cert.name}

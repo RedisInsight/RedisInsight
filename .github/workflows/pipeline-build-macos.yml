@@ -76,18 +76,13 @@ jobs:
         mv release/mas-universal/Redis-Insight-mac-universal-mas.pkg release/Redis-Insight-mac-universal-mas.pkg
 
     # handle manual builds
-    - name: Build macos dmg (dev)
+    - name: Build macos dmg (custom)
       if: inputs.target != vars.ALL
       run: |
         unset CSC_LINK
-        target=""
+        target=$(echo "${{inputs.target}}" | grep -oE 'build_macos_[^ ]+' | sed 's/build_macos_/dmg:/' | paste -sd ' ' -)
 
-        if [ ${{ startsWith(inputs.target, 'macos:') }} == 'true' ]; then
-          inputsTarget=${{inputs.target}}
-          target=--${inputsTarget#macos:}
-        fi
-
-        if [ ${{ contains(vars.ENV, 'production') }} ]; then
+        if [ "${{ vars.ENV == 'production' }}" == "true" ]; then
           yarn package:prod --mac $target
         else
           yarn package:stage --mac $target
@@ -127,6 +122,7 @@ jobs:
       RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}
       RI_AI_QUERY_PASS: ${{ secrets.RI_AI_QUERY_PASS }}
       RI_AI_QUERY_USER: ${{ secrets.RI_AI_QUERY_USER }}
+      RI_CLOUD_API_TOKEN: ${{ secrets.RI_CLOUD_API_TOKEN }}
       RI_CLOUD_API_URL: ${{ secrets.RI_CLOUD_API_URL }}
       RI_CLOUD_CAPI_URL: ${{ secrets.RI_CLOUD_CAPI_URL }}
       RI_CLOUD_IDP_AUTHORIZE_URL: ${{ secrets.RI_CLOUD_IDP_AUTHORIZE_URL }}

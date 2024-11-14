@@ -14,8 +14,9 @@ export class AddRedisDatabase {
     // BUTTONS
     addDatabaseButton = Selector('[data-testid^=add-redis-database]');
     addRedisDatabaseButton = Selector('[data-testid=btn-submit]');
-    addDatabaseManually = Selector('[data-testid=add-manual]');
-    addAutoDiscoverDatabase = Selector('[data-testid=add-auto]');
+    addDatabaseManually = Selector('[data-testid=add-database_tab_manual]');
+    addAutoDiscoverDatabase = Selector('[data-testid=add-database_tab_software]');
+    addCloudDatabaseTab = Selector('[data-testid=add-database_tab_cloud]');
     redisClusterType = Selector('[data-test-subj=radio-btn-enterprise-cluster]');
     redisCloudProType = Selector('[data-test-subj=radio-btn-cloud-pro]');
     redisSentinelType = Selector('[data-test-subj=radio-btn-sentinel]');
@@ -27,9 +28,7 @@ export class AddRedisDatabase {
     connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
     cloneDatabaseButton = Selector('[data-testid=clone-db-btn]');
     sentinelNavigation = Selector('[data-testid=sentinel-nav-group]');
-    cloneSentinelNavigation = Selector('[data-testid=sentinel-nav-group-clone]');
     sentinelDatabaseNavigation = Selector('[data-testid=database-nav-group]');
-    cloneSentinelDatabaseNavigation = Selector('[data-testid=database-nav-group-clone]');
     cancelButton = Selector('[data-testid=btn-cancel]');
     showPasswordBtn = Selector('[aria-label^="Show password"]');
     testConnectionBtn = Selector('[data-testid=btn-test-connection]');
@@ -60,17 +59,17 @@ export class AddRedisDatabase {
     caCertField = Selector('[data-testid=select-ca-cert]', { timeout: 500 });
     clientCertField = Selector('[data-testid=select-cert]', { timeout: 500 });
     selectCompressor = Selector('[data-testid=select-compressor]', { timeout: 1000 });
-    useCloudAccount = Selector('[data-testid=use-cloud-account-accordion]');
-    useCloudKeys = Selector('[data-testid=use-cloud-keys-accordion]');
     certificateDropdownList = Selector('div.euiSuperSelect__listbox div');
-
     // CHECKBOXES
     useSSHCheckbox = Selector('[data-testid=use-ssh]~div', { timeout: 500 });
     dataCompressorCheckbox = Selector('[data-testid=showCompressor] ~ label');
     requiresTlsClientCheckbox = Selector('[data-testid=tls-required-checkbox]  ~ label');
+    useCloudAccount = Selector('#cloud-account').parent();
+    useCloudKeys = Selector('#cloud-api-keys').parent();
     // RADIO BUTTONS
     sshPasswordRadioBtn = Selector('#password~div', { timeout: 500 });
     sshPrivateKeyRadioBtn = Selector('#privateKey~div', { timeout: 500 });
+    cloudOptionsRadioBtn =  Selector('[data-testid=cloud-options]');
     // LABELS
     dataCompressorLabel = Selector('[data-testid=showCompressor] ~ label', { timeout: 1000 });
     aiChatMessage = Selector('[data-testid=ai-chat-message-btn]');
@@ -221,7 +220,7 @@ export class AddRedisDatabase {
 
         await t
             .click(this.addDatabaseButton)
-            .click(this.addAutoDiscoverDatabase);
+            .click(this.addCloudDatabaseTab);
 
         await t
             .typeText(this.accessKeyInput, cloudAPIAccessKey, { replace: true, paste: true })

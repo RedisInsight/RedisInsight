@@ -49,7 +49,7 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
     // await t.click(myRedisDatabasePage.Modal.closeModalButton);
 
     await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
-    await t.click(myRedisDatabasePage.AddRedisDatabase.addAutoDiscoverDatabase);
+    await t.click(myRedisDatabasePage.AddRedisDatabase.addCloudDatabaseTab);
     // Verify that RE Cloud auto-discovery options Use Cloud Account and Use Cloud API Keys are displayed on Welcome screen
     await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudAccount.exists).ok('Use Cloud Account accordion not displayed when SSO feature enabled');
     await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudKeys.exists).ok('Use Cloud Keys accordion not displayed when SSO feature enabled');

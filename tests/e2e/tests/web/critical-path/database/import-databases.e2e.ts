@@ -97,39 +97,36 @@ test.before(async() => {
     await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
     await myRedisDatabasePage.reloadPage();
 })('Connection import modal window', async t => {
-    const tooltipText = 'Import Database Connections';
     const defaultText = 'Select or drag and drop a file';
     const parseFailedMsg = 'Failed to add database connections';
     const parseFailedMsg2 = `Unable to parse ${fileNames.racompassInvalidJson}`;
 
-    // Verify that user can see the “Import Database Connections” tooltip
+    // *** - outdated - Verify that user can see the “Import Database Connections” tooltip
+    await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
     await t.expect(myRedisDatabasePage.importDatabasesBtn.visible).ok('The import databases button not displayed');
-    await t.hover(myRedisDatabasePage.importDatabasesBtn);
-    await t.expect(browserPage.tooltip.innerText).contains(tooltipText, 'The tooltip message not displayed/correct');
 
     // Verify that Import dialogue is not closed when clicking any area outside the box
     await t.click(myRedisDatabasePage.importDatabasesBtn);
-    await t.expect(myRedisDatabasePage.importDbDialog.exists).ok('Import Database Connections dialog not opened');
+    await t.expect(myRedisDatabasePage.addDatabaseImport.exists).ok('Import Database Connections dialog not opened');
     await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-    await t.expect(myRedisDatabasePage.importDbDialog.exists).ok('Import Database Connections dialog not displayed');
+    await t.expect(myRedisDatabasePage.addDatabaseImport.exists).ok('Import Database Connections dialog not displayed');
 
     // Verify that user see the message when parse error appears
     await t
         .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [filePathes.racompassInvalidJsonPath])
-        .click(myRedisDatabasePage.submitImportBtn)
+        .click(myRedisDatabasePage.submitChangesButton)
         .expect(myRedisDatabasePage.failedImportMessage.exists).ok('Failed to add database message not displayed')
         .expect(myRedisDatabasePage.failedImportMessage.textContent).contains(parseFailedMsg)
         .expect(myRedisDatabasePage.failedImportMessage.textContent).contains(parseFailedMsg2);
 
     // Verify that user can remove file from import input
-    await t.click(myRedisDatabasePage.Modal.closeModalButton);
-    await t.click(myRedisDatabasePage.importDatabasesBtn);
+    await t.click(myRedisDatabasePage.retryImportBtn);
     await t.setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [rdmData.path]);
 
-    await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(fileNames.rdmFullJson, 'Filename not displayed in import input');
+    await t.expect(myRedisDatabasePage.importDatabaseInput.textContent).contains(fileNames.rdmFullJson, 'Filename not displayed in import input');
     // Click on remove button
     await t.click(myRedisDatabasePage.removeImportedFileBtn);
-    await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(defaultText, 'File not removed from import input');
+    await t.expect(myRedisDatabasePage.importDatabaseInput.textContent).contains(defaultText, 'File not removed from import input');
 });
 test('Connection import from JSON', async t => {
     // Verify that user can import database with mandatory/optional fields
@@ -146,7 +143,7 @@ test('Connection import from JSON', async t => {
         .contains(`${rdmData.failedNumber}`, 'Not correct import failed number');
 
     // Verify that list of databases is reloaded when database added
-    await t.click(myRedisDatabasePage.okDialogBtn);
+    await t.click(myRedisDatabasePage.closeImportBtn);
     await databasesActions.verifyDatabasesDisplayed(rdmData.dbImportedNames);
 
     await databaseHelper.clickOnEditDatabaseByName(rdmData.dbImportedNames[1]);
@@ -161,10 +158,10 @@ test('Connection import from JSON', async t => {
     await t.expect(myRedisDatabasePage.AddRedisDatabase.connectionType.textContent).eql(rdmData.connectionType, 'Connection type import incorrect');
 
     /*
-           Verify that user can import database with CA certificate
-           Verify that user can import database with certificates by an absolute folder path(CA certificate, Client certificate, Client private key)
-           Verify that user can see the certificate name as the certificate file name
-           */
+     Verify that user can import database with CA certificate
+     Verify that user can import database with certificates by an absolute folder path(CA certificate, Client certificate, Client private key)
+     Verify that user can see the certificate name as the certificate file name
+    */
     await databaseHelper.clickOnEditDatabaseByName(await findImportedRdmDbNameInList('rdmHost+Port+Name+CaCert'));
     await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).eql('ca', 'CA certificate import incorrect');
     await t.expect(myRedisDatabasePage.AddRedisDatabase.clientCertField.exists).notOk('Client certificate was imported');
@@ -190,7 +187,7 @@ test('Connection import from JSON', async t => {
     // Verify that user can import files from Racompass, ARDM, RDM
     for (const db of dbData) {
         await databasesActions.importDatabase(db);
-        await t.click(myRedisDatabasePage.okDialogBtn);
+        await t.click(myRedisDatabasePage.closeImportBtn);
         await databasesActions.verifyDatabasesDisplayed(db.dbNames);
     }
 
@@ -202,7 +199,7 @@ test('Connection import from JSON', async t => {
 });
 test('Certificates import with/without path', async t => {
     await databasesActions.importDatabase({ path: rdmData.sshPath });
-    await t.click(myRedisDatabasePage.okDialogBtn);
+    await t.click(myRedisDatabasePage.closeImportBtn);
 
     // Verify that when user imports a certificate and the same certificate body already exists, the existing certificate (with its name) is applied
     await databaseHelper.clickOnEditDatabaseByName(rdmListOfCertsDB[0].name);
@@ -234,7 +231,6 @@ test('Certificates import with/without path', async t => {
 });
 test('Import SSH parameters', async t => {
     const sshAgentsResult = 'SSH Agents are not supported';
-    // const sshPrivateKey = '-----BEGIN OPENSSH PRIVATE KEY-----';
 
     await databasesActions.importDatabase(racompSSHData);
     // Fully imported table with SSH
@@ -251,7 +247,7 @@ test('Import SSH parameters', async t => {
     // Verify that database is partially imported with corresponding message when the ssh_agent_path specified in imported JSON
     await t.expect(myRedisDatabasePage.importResult.withText(sshAgentsResult).exists).ok('SSH agents not supported message not displayed in result');
 
-    await t.click(myRedisDatabasePage.okDialogBtn);
+    await t.click(myRedisDatabasePage.closeImportBtn);
     await databaseHelper.clickOnEditDatabaseByName(racompListOfSSHDB[0].name);
     // Verify that user can import the SSH parameters with Password
     await t.expect(myRedisDatabasePage.AddRedisDatabase.sshHostInput.value).eql(racompListOfSSHDB[0].sshHost, 'SSH host import incorrect');

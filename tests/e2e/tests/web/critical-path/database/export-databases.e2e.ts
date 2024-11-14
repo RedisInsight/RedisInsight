@@ -79,7 +79,7 @@ test
         await databasesActions.importDatabase(exportedData);
         await t.expect(myRedisDatabasePage.successResultsAccordion.find(myRedisDatabasePage.cssNumberOfDbs).textContent)
             .contains(`${exportedData.successNumber}`, 'Not correct successfully imported number');
-        await t.click(myRedisDatabasePage.okDialogBtn);
+        await t.click(myRedisDatabasePage.closeImportBtn);
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
 
@@ -124,7 +124,7 @@ test
             .wait(2000);
 
         foundExportedFiles = await databasesActions.findFilesByFileStarts(fileDownloadPath, 'RedisInsight_connections_');
-        const parsedExportedJson = await databasesActions.parseDbJsonByPath(joinPath(fileDownloadPath, foundExportedFiles[0]));
+        const parsedExportedJson = databasesActions.parseDbJsonByPath(joinPath(fileDownloadPath, foundExportedFiles[0]));
         // Verify that user can export databases without database passwords and client key when “Export passwords” control not selected
         for (const db of parsedExportedJson) {
             await t.expect(db.hasOwnProperty('password')).eql(false, 'Databases exported with passwords');

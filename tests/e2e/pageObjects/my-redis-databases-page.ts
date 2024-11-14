@@ -33,19 +33,20 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     deleteButtonInPopover = Selector('#deletePopover button');
     confirmDeleteAllDbButton = Selector('[data-testid=delete-selected-dbs]');
     editDatabaseButton = Selector('[data-testid^=edit-instance]');
-    editAliasButton = Selector('[data-testid=edit-alias-btn]');
+    popoverHeader = Selector('#formModalHeader');
     submitChangesButton = Selector('[data-testid=btn-submit]');
     promoButton = Selector('[data-testid=promo-btn]');
     sortByDatabaseAlias = Selector('span').withAttribute('title', 'Database Alias');
     sortByHostAndPort = Selector('span').withAttribute('title', 'Host:Port');
     sortByConnectionType = Selector('span').withAttribute('title', 'Connection Type');
-    importDatabasesBtn = Selector('[data-testid=import-from-file-btn]');
+    importDatabasesBtn = Selector('[data-testid=add-database_tab_import]');
+    retryImportBtn = Selector('[data-testid=btn-retry]');
     submitImportBtn = Selector('[data-testid=submit-btn]');
-    okDialogBtn = Selector('[data-testid=ok-btn]');
     removeImportedFileBtn = Selector('[aria-label="Clear selected files"]');
     exportBtn = Selector('[data-testid=export-btn]');
     exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
     userProfileBtn = Selector('[data-testid=user-profile-btn]');
+    closeImportBtn = Selector('[data-testid=btn-close]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', { timeout: 500 });
@@ -74,12 +75,10 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     noResultsFoundMessage = Selector('div').withExactText('No results found');
     noResultsFoundText = Selector('div').withExactText('No results matched your search. Try reducing the criteria.');
     failedImportMessage = Selector('[data-testid=result-failed]');
-    importDialogTitle = Selector('[data-testid=import-file-modal-title]');
     importResult = Selector('[data-testid^=table-result-]');
     userProfileAccountInfo = Selector('[data-testid^=profile-account-]');
     portCloudDb = Selector('[class*=column_host]');
     // DIALOG
-    importDbDialog = Selector('[data-testid=import-file-modal]');
     successResultsAccordion = Selector('[data-testid^=success-results-]');
     partialResultsAccordion = Selector('[data-testid^=partial-results-]');
     failedResultsAccordion = Selector('[data-testid^=failed-results-]');
@@ -87,6 +86,7 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     databaseContainer = Selector('.databaseContainer');
     connectionTypeTitle  = Selector('[data-test-subj=tableHeaderCell_connectionType_2]');
     signInAgreement = Selector('[class="euiCheckbox__square"]');
+    addDatabaseImport = Selector('[data-testid=add-db_import]');
 
     /**
      * Click on the database by name

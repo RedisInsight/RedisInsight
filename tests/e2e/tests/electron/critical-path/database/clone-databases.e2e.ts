@@ -33,13 +33,13 @@ test('Verify that user can clone Standalone db', async t => {
     // Verify that user can cancel the Clone by clicking the “Cancel” or the “x” button
     await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
     await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
-    await t.expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).notOk('Clone panel is still displayed', { timeout: 2000 });
+    await t.expect(myRedisDatabasePage.popoverHeader.withText('Clone ').exists).notOk('Clone panel is still displayed', { timeout: 2000 });
     await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
     await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
     // Verify that user see the “Add Database Manually” form pre-populated with all the connection data when cloning DB
     await t
     // Verify that name in the header has the prefix “Clone”
-        .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
+        .expect(myRedisDatabasePage.popoverHeader.withText('Clone ').exists).ok('Clone panel is not displayed')
         .expect(myRedisDatabasePage.AddRedisDatabase.hostInput.getAttribute('value')).eql(ossStandaloneConfig.host, 'Wrong host value')
         .expect(myRedisDatabasePage.AddRedisDatabase.portInput.getAttribute('value')).eql(ossStandaloneConfig.port, 'Wrong port value')
         .expect(myRedisDatabasePage.AddRedisDatabase.databaseAliasInput.getAttribute('value')).eql(ossStandaloneConfig.databaseName, 'Wrong host value')

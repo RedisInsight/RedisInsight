@@ -51,8 +51,7 @@ test
 
         // Fill the add database form
         await myRedisDatabasePage.AddRedisDatabase.addDatabaseButton.with({ visibilityCheck: true, timeout: 10000 })();
-        await t
-            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
         // Verify that telemetry event 'CONFIG_DATABASES_CLICKED' sent and has all expected properties
         await telemetry.verifyEventHasProperties(telemetryEvents[1], clickButtonExpectedProperties, logger);
         await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);

@@ -1,8 +1,9 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-
 import { useParams } from 'react-router-dom'
+import { escapeRegExp } from 'lodash'
+
 import {
   appContextBrowserTree,
   resetBrowserTree,
@@ -13,7 +14,7 @@ import { constructKeysToTree } from 'uiSrc/helpers'
 import VirtualTree from 'uiSrc/pages/browser/components/virtual-tree'
 import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
-import { Nullable, bufferToString } from 'uiSrc/utils'
+import { Nullable, bufferToString, comboBoxToArray } from 'uiSrc/utils'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
@@ -59,13 +60,18 @@ const KeyTree = forwardRef((props: Props, ref) => {
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const { openNodes } = useSelector(appContextBrowserTree)
-  const { treeViewDelimiter: delimiter = '', treeViewSort: sorting } = useSelector(appContextDbConfig)
+  const { treeViewDelimiter, treeViewSort: sorting } = useSelector(appContextDbConfig)
   const { nameString: selectedKeyName = null } = useSelector(selectedKeyDataSelector) ?? {}
 
   const [statusOpen, setStatusOpen] = useState(openNodes)
   const [constructingTree, setConstructingTree] = useState(false)
   const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(!!keysState.keys.length)
   const [items, setItems] = useState<IKeyPropTypes[]>(parseKeyNames(keysState.keys ?? []))
+
+  // escape regexp symbols and join and transform to regexp
+  const delimiter = comboBoxToArray(treeViewDelimiter)
+    .map(escapeRegExp)
+    .join('|')
 
   const dispatch = useDispatch()
 

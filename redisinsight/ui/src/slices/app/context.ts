@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { EuiComboBoxOptionOption } from '@elastic/eui'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { CapabilityStorageItem, ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { Maybe, Nullable } from 'uiSrc/utils'
@@ -56,7 +57,6 @@ export const initialState: StateAppContext = {
     },
     panelSizes: {},
     tree: {
-      delimiter: DEFAULT_DELIMITER,
       openNodes: {},
       selectedLeaf: null,
     },
@@ -136,8 +136,8 @@ const appContextSlice = createSlice({
       state.dbConfig.slowLogDurationUnit = payload
       setDBConfigStorageField(state.contextInstanceId, ConfigDBStorageItem.slowLogDurationUnit, payload)
     },
-    setBrowserTreeDelimiter: (state, { payload }: { payload: string }) => {
-      state.dbConfig.treeViewDelimiter = payload
+    setBrowserTreeDelimiter: (state, { payload }: { payload: EuiComboBoxOptionOption[] }) => {
+      state.dbConfig.treeViewDelimiter = payload as any
       setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.treeViewDelimiter, payload)
     },
     setBrowserTreeSort: (state, { payload }: PayloadAction<SortOrder>) => {

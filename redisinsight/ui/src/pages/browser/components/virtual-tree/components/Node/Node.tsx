@@ -127,7 +127,7 @@ const Node = ({
   const Leaf = () => (
     <>
       <KeyRowType type={type} nameString={nameString} />
-      <KeyRowName nameString={shortName} />
+      <KeyRowName shortName={shortName} nameString={nameString} />
       <KeyRowTTL ttl={ttl} nameString={nameString} deletePopoverId={deletePopoverId} rowId={nodeId} />
       <KeyRowSize
         size={size}

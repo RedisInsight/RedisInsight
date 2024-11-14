@@ -16,7 +16,7 @@ export const constructKeysToTree = (props: Props): any[] => {
     // eslint-disable-next-line prefer-object-spread
     let currentNode: any = tree
     const { nameString: name = '' } = key
-    const nameSplitted = name.split(delimiter)
+    const nameSplitted = name.split(new RegExp(delimiter, 'g'))
     const lastIndex = nameSplitted.length - 1
 
     nameSplitted.forEach((value:any, index: number) => {

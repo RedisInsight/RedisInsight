@@ -1,25 +1,23 @@
 #!/bin/bash
 set -e
 
-ARCH=${ARCH:-x86_64}
-WORKING_DIRECTORY=$(pwd)
-SOURCE_APP=${SOURCE_APP:-"Redis-Insight-linux-$ARCH.AppImage"}
-RI_APP_FOLDER_NAME="Redis-Insight-linux"
-TAR_NAME="Redis-Insight-app-linux.$ARCH.tar.gz"
-TMP_FOLDER="/tmp/Redis-Insight-app-$ARCH"
+yarn --cwd tests/e2e install
 
-rm -rf "$TMP_FOLDER"
+# mount app resources
+chmod +x ./release/*.AppImage
+./release/*.AppImage --appimage-mount >> apppath &
 
-mkdir -p "$WORKING_DIRECTORY/release/redisstack"
-mkdir -p "$TMP_FOLDER"
+# create folder before tests run to prevent permissions issue
+mkdir -p tests/e2e/remote
+mkdir -p tests/e2e/rdi
 
-cp "./release/$SOURCE_APP" "$TMP_FOLDER"
-cd "$TMP_FOLDER" || exit 1
+# run rte
+docker compose -f tests/e2e/rte.docker-compose.yml build
+docker compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V
+./tests/e2e/wait-for-redis.sh localhost 12000 && \
 
-./"$SOURCE_APP" --appimage-extract
-mv squashfs-root "$RI_APP_FOLDER_NAME"
-
-tar -czvf "$TAR_NAME" "$RI_APP_FOLDER_NAME"
-
-cp "$TAR_NAME" "$WORKING_DIRECTORY/release/redisstack/"
-cd "$WORKING_DIRECTORY" || exit 1
+# run tests
+COMMON_URL=$(tail -n 1 apppath)/resources/app.asar/dist/renderer/index.html \
+ELECTRON_PATH=$(tail -n 1 apppath)/redisinsight \
+RI_SOCKETS_CORS=true \
+yarn --cwd tests/e2e dotenv -e .desktop.env yarn --cwd tests/e2e test:desktop:ci

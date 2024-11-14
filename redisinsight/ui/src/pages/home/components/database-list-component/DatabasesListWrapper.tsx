@@ -293,7 +293,7 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
     {
       field: 'modules',
       className: styles.columnModules,
-      name: 'Modules',
+      name: 'Capabilities',
       width: '30%',
       dataType: 'string',
       render: (_cellData, { modules = [], isRediStack }: Instance) => (

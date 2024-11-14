@@ -13,7 +13,7 @@ const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
-const moduleNameList = ['RediSearch', 'RedisGraph', 'RedisBloom', 'RedisJSON', 'RedisTimeSeries'];
+const moduleNameList = ['Redis Query Engine', 'Graph', 'Probabilistic', 'JSON', 'Time Series'];
 
 fixture `Redis Stack`
     .meta({ type: 'regression', rte: rte.standalone })

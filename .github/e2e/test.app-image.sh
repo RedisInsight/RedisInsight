@@ -43,8 +43,8 @@ update-desktop-database "$(pwd)/ri-test/"
 xdg-mime default redisinsight.desktop x-scheme-handler/redisinsight
 
 # Run rte
-docker-compose -f tests/e2e/rte.docker-compose.yml build
-docker-compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V
+docker compose -f tests/e2e/rte.docker-compose.yml build
+docker compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V
 ./tests/e2e/wait-for-redis.sh localhost 12000 && \
 
 # Run tests

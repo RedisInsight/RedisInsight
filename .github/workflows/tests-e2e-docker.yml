@@ -26,7 +26,6 @@ env:
   RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
   SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
-  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   E2E_VOLUME_PATH: "/usr/src/app"
   REPORT_NAME: "report-docker-node"
 
@@ -34,9 +33,8 @@ jobs:
   e2e-docker-tests:
     runs-on: ubuntu-latest
     name: E2E Docker tests
-    environment:
-      name: production
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}
+    # environment:
+      # name: production
     container:
       image: docker:latest
       options: --privileged
@@ -119,11 +117,29 @@ jobs:
         list-suites: 'failed'
         fail-on-error: 'false'
 
-  # Deploy report to Github Pages
-  deploy-pages:
-    name: Deploy reports
-    uses: ./.github/workflows/deploy-pages.yml
+    - name: Add link to report in the workflow summary
+      if: always()
+      run: |
+        DATE=$(date +'%Y-%m-%d')
+        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${DATE}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}/index.html"
+
+        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
+
+  # Deploy report to AWS test bucket
+  deploy-report:
+    name: Deploy report
     needs: 'e2e-docker-tests'
     if: always()
-    with:
-      group: 'report'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Deploy report
+      uses: ./.github/actions/deploy-test-reports
+      with:
+        group: 'report'
+        AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
+        AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+        AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+

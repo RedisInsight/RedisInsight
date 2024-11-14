@@ -13,6 +13,7 @@ jobs:
     with:
       group_tests: 'without_e2e'
       short_rte_list: false
+      pre_release: true
 
   builds-prod:
     name: Create all builds for release
@@ -55,7 +56,14 @@ jobs:
     needs: aws-upload-prod
     secrets: inherit
 
-# Cancel a previous run workflow
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Remove artifacts from github actions
+  remove-artifacts:
+    name: Remove artifacts
+    needs: [aws-upload-prod, e2e-docker-tests, e2e-appimage-tests]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Remove all artifacts
+      uses: ./.github/actions/remove-artifacts

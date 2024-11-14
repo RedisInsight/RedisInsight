@@ -16,7 +16,8 @@ export const HELP_LINKS = {
     event: TelemetryEvent.CREATE_FREE_CLOUD_DATABASE_CLICKED,
     sources: {
       welcome: 'Welcome page',
-      databaseList: 'Redis Databases',
+      databaseList: 'list of databases',
+      databaseConnectionList: 'database connection list',
       redisearch: 'RediSearch is not loaded'
     }
   },

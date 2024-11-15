@@ -107,13 +107,15 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
 
   /**
    * Delete history item by id
+   * @param _
    * @param databaseId
+   * @param mode
    * @param id
    */
-  async delete(_sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<void> {
+  async delete(_: SessionMetadata, databaseId: string, mode: BrowserHistoryMode, id: string): Promise<void> {
     this.logger.log(`Deleting browser history item: ${id}`);
     try {
-      await this.repository.delete({ id, databaseId });
+      await this.repository.delete({ id, databaseId, mode });
       // todo: rethink
       this.logger.log('Succeed to delete browser history item.');
     } catch (error) {
@@ -125,7 +127,9 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
   /**
    * Clean history for particular database to fit 5 items limitation for each mode
    * and remove duplicates
+   * @param _sessionMetadata
    * @param databaseId
+   * @param mode
    */
   async cleanupDatabaseHistory(_sessionMetadata: SessionMetadata, databaseId: string, mode: string): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works

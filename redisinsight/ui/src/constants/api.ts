@@ -1,3 +1,7 @@
+import { getConfig } from 'uiSrc/config'
+
+const riConfig = getConfig()
+
 enum ApiEndpoints {
   DATABASES = 'databases',
   DATABASES_IMPORT = 'databases/import',
@@ -162,13 +166,9 @@ export enum CustomHeaders {
 
 export const DEFAULT_SEARCH_MATCH = '*'
 
-const SCAN_COUNT_DEFAULT_ENV = process.env.RI_SCAN_COUNT_DEFAULT || '500'
-const PIPELINE_COUNT_DEFAULT_ENV = process.env.RI_PIPELINE_COUNT_DEFAULT || '5'
-const SCAN_TREE_COUNT_DEFAULT_ENV = process.env.RI_SCAN_TREE_COUNT_DEFAULT || '10000'
-
-export const SCAN_COUNT_DEFAULT = parseInt(SCAN_COUNT_DEFAULT_ENV, 10)
-export const PIPELINE_COUNT_DEFAULT = parseInt(PIPELINE_COUNT_DEFAULT_ENV, 10)
-export const SCAN_TREE_COUNT_DEFAULT = parseInt(SCAN_TREE_COUNT_DEFAULT_ENV, 10)
+export const PIPELINE_COUNT_DEFAULT = riConfig.workbench.pipelineCountDefault
+export const SCAN_COUNT_DEFAULT = riConfig.browser.scanCountDefault
+export const SCAN_TREE_COUNT_DEFAULT = riConfig.browser.scanTreeCountDefault
 export const SCAN_STREAM_START_DEFAULT = '-'
 export const SCAN_STREAM_END_DEFAULT = '+'
 

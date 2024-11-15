@@ -1,14 +1,24 @@
 import React from 'react'
 import { mock, instance } from 'ts-mockito'
 import reactRouterDom from 'react-router-dom'
-import { cloneDeep } from 'lodash'
-import { fireEvent, screen, render, mockedStore, cleanup, act } from 'uiSrc/utils/test-utils'
+import { cloneDeep, set } from 'lodash'
+import {
+  fireEvent,
+  screen,
+  render,
+  mockedStore,
+  cleanup,
+  act,
+  initialStateDefault,
+  mockStore
+} from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { updateRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 import { findTutorialPath } from 'uiSrc/utils'
+import { FeatureFlags } from 'uiSrc/constants'
 import Recommendation, { IProps } from './Recommendation'
 
 const recommendationsContent = MOCK_RECOMMENDATIONS
@@ -238,5 +248,26 @@ describe('Recommendation', () => {
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should render vote section if feature flag is on', () => {
+    const name = 'searchJSON'
+    render(<Recommendation {...instanceMock} name={name} />)
+
+    expect(screen.queryByText('Is this useful?')).toBeInTheDocument()
+  })
+
+  it('should not render vote section if feature flag is off', () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+    store = mockStore(initialStoreState)
+
+    const name = 'searchJSON'
+    render(<Recommendation {...instanceMock} name={name} />, { store })
+
+    expect(screen.queryByText('Is this useful?')).not.toBeInTheDocument()
   })
 })

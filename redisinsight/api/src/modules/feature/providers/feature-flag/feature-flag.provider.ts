@@ -11,6 +11,7 @@ import { CloudSsoFlagStrategy } from 'src/modules/feature/providers/feature-flag
 import { Feature } from 'src/modules/feature/model/feature';
 import { WithDataFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/with-data.flag.strategy';
 import { SwitchableFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/switchable.flag.strategy';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class FeatureFlagProvider {
@@ -66,9 +67,13 @@ export class FeatureFlagProvider {
     return this.strategies.get(name) || this.getStrategy('default');
   }
 
-  calculate(knownFeature: IFeatureFlag, featureConditions: any): Promise<Feature> {
+  async calculate(
+    sessionMetadata: SessionMetadata,
+    knownFeature: IFeatureFlag,
+    featureConditions: any,
+  ): Promise<Feature> {
     const strategy = this.getStrategy(knownFeature.name);
 
-    return strategy.calculate(knownFeature, featureConditions);
+    return strategy.calculate(sessionMetadata, knownFeature, featureConditions);
   }
 }

@@ -13,6 +13,6 @@ export abstract class BrowserHistoryRepository {
     databaseId: string,
     mode: BrowserHistoryMode
   ): Promise<BrowserHistory[]>;
-  abstract delete(sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<void>;
+  abstract delete(sessionMetadata: SessionMetadata, databaseId: string, mode: BrowserHistoryMode, id: string): Promise<void>;
   abstract cleanupDatabaseHistory(sessionMetadata: SessionMetadata, databaseId: string, mode: string): Promise<void>;
 }

@@ -75,7 +75,11 @@ export class DatabaseRecommendationService {
         recommendationName,
       );
       if (!isRecommendationExist) {
-        const recommendation = await this.scanner.determineRecommendation(recommendationName, data);
+        const recommendation = await this.scanner.determineRecommendation(
+          clientMetadata.sessionMetadata,
+          recommendationName,
+          data,
+        );
 
         if (recommendation) {
           const entity = plainToClass(

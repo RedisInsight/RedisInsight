@@ -1,9 +1,10 @@
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
 
-import { cleanup, mockedStore, render, act } from 'uiSrc/utils/test-utils'
+import { within } from '@testing-library/react'
+import { cleanup, mockedStore, render, act, mockStore, initialStateDefault } from 'uiSrc/utils/test-utils'
 import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
@@ -14,6 +15,7 @@ import {
   setAppContextInitialState,
   setDbConfig
 } from 'uiSrc/slices/app/context'
+import * as appFeaturesSlice from 'uiSrc/slices/app/features'
 import { resetCliHelperSettings } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
@@ -41,15 +43,6 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-jest.mock('uiSrc/slices/app/features', () => ({
-  ...jest.requireActual('uiSrc/slices/app/features'),
-  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    insightsRecommendations: {
-      flag: false
-    }
-  }),
-}))
-
 jest.mock('uiSrc/slices/app/context', () => ({
   ...jest.requireActual('uiSrc/slices/app/context'),
   appContextSelector: jest.fn().mockReturnValue({
@@ -59,6 +52,15 @@ jest.mock('uiSrc/slices/app/context', () => ({
 
 let store: typeof mockedStore
 beforeEach(() => {
+  jest.spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector').mockReturnValue({
+    insightsRecommendations: {
+      flag: false
+    },
+    envDependent: {
+      flag: true
+    }
+  })
+
   cleanup()
   store = cloneDeep(mockedStore)
   store.clearActions()
@@ -134,5 +136,59 @@ describe('InstancePage', () => {
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+  })
+
+  it('should not render connectivity error page when envDependent feature flag is on', () => {
+    const initialState = set(
+      cloneDeep(initialStateDefault),
+      'app.connectivity',
+      {
+        loading: false,
+        error: 'Test error'
+      }
+    )
+
+    const { queryByTestId } = render(
+      <BrowserRouter>
+        <InstancePage {...instance(mockedProps)} />
+      </BrowserRouter>,
+      {
+        store: mockStore(initialState)
+      }
+    )
+
+    expect(queryByTestId('connectivity-error-message')).not.toBeInTheDocument()
+  })
+
+  it('should render connectivity error page when error occurs and flag is off', () => {
+    jest.spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector').mockReturnValue({
+      insightsRecommendations: {
+        flag: false
+      },
+      envDependent: {
+        flag: false
+      }
+    })
+
+    const initialState = set(
+      cloneDeep(initialStateDefault),
+      'app.connectivity',
+      {
+        loading: false,
+        error: 'Test error'
+      }
+    )
+
+    const { getByTestId } = render(
+      <BrowserRouter>
+        <InstancePage {...instance(mockedProps)} />
+      </BrowserRouter>,
+      {
+        store: mockStore(initialState)
+      }
+    )
+
+    const { getByText } = within(getByTestId('connectivity-error-message'))
+    expect(getByText('Test error')).toBeInTheDocument()
   })
 })

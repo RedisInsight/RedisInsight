@@ -25,8 +25,8 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import GithubHelpCenterSVG from 'uiSrc/assets/img/github.svg?react'
 import BulbSVG from 'uiSrc/assets/img/bulb.svg?react'
 
-import { addMessageNotification } from 'uiSrc/slices/app/notifications'
-import successMessages from 'uiSrc/components/notifications/success-messages'
+import { FeatureFlags } from 'uiSrc/constants'
+import { FeatureFlagComponent } from 'uiSrc/components'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
@@ -110,22 +110,23 @@ const HelpMenu = () => {
           gutterSize="m"
           responsive={false}
         >
-          <EuiFlexItem grow={2} className={styles.helpMenuItem}>
-            <EuiLink
-              external={false}
-              className={styles.helpMenuItemLink}
-              href={EXTERNAL_LINKS.githubIssues}
-              target="_blank"
-              data-testid="submit-bug-btn"
-            >
-              <EuiIcon type={GithubHelpCenterSVG} size="xxl" />
-              <EuiSpacer size="m" />
-              <EuiText size="xs" textAlign="center" className={styles.helpMenuText}>
-                Provide <br /> Feedback
-              </EuiText>
-            </EuiLink>
-          </EuiFlexItem>
-
+          <FeatureFlagComponent name={FeatureFlags.envDependent}>
+            <EuiFlexItem grow={2} className={styles.helpMenuItem}>
+              <EuiLink
+                external={false}
+                className={styles.helpMenuItemLink}
+                href={EXTERNAL_LINKS.githubIssues}
+                target="_blank"
+                data-testid="submit-bug-btn"
+              >
+                <EuiIcon type={GithubHelpCenterSVG} size="xxl" />
+                <EuiSpacer size="m" />
+                <EuiText size="xs" textAlign="center" className={styles.helpMenuText}>
+                  Provide <br /> Feedback
+                </EuiText>
+              </EuiLink>
+            </EuiFlexItem>
+          </FeatureFlagComponent>
           <EuiFlexItem
             className={styles.helpMenuItemRow}
             grow={4}
@@ -160,18 +161,19 @@ const HelpMenu = () => {
                 <EuiText size="xs" className={styles.helpMenuTextLink}>Release Notes</EuiText>
               </EuiLink>
             </div>
-
-            <div className={styles.helpMenuItemLink}>
-              <EuiIcon type={BulbSVG} size="l" />
-              <EuiText
-                size="xs"
-                className={styles.helpMenuTextLink}
-                onClick={() => onResetOnboardingClick()}
-                data-testid="reset-onboarding-btn"
-              >
-                Reset Onboarding
-              </EuiText>
-            </div>
+            <FeatureFlagComponent name={FeatureFlags.envDependent}>
+              <div className={styles.helpMenuItemLink}>
+                <EuiIcon type={BulbSVG} size="l" />
+                <EuiText
+                  size="xs"
+                  className={styles.helpMenuTextLink}
+                  onClick={() => onResetOnboardingClick()}
+                  data-testid="reset-onboarding-btn"
+                >
+                  Reset Onboarding
+                </EuiText>
+              </div>
+            </FeatureFlagComponent>
           </EuiFlexItem>
         </EuiFlexGroup>
       </div>

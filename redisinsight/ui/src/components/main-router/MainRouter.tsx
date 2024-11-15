@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Switch, useHistory, useLocation } from 'react-router-dom'
 
@@ -15,8 +15,10 @@ import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import { appContextSelector, setCurrentWorkspace } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
+import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 import RedisStackRoutes from './components/RedisStackRoutes'
 import DEFAULT_ROUTES from './constants/defaultRoutes'
+import { startActivityMonitor, stopActivityMonitor } from './activityMonitor'
 
 const MainRouter = () => {
   const { server } = useSelector(appInfoSelector)
@@ -30,11 +32,18 @@ const MainRouter = () => {
   const isRedisStack = server?.buildType === BuildType.RedisStack
 
   useEffect(() => {
-    if (isRedisStack) return
+    if (!isRedisStack) {
+      const isRdiPageHome = localStorageService.get(BrowserStorageItem.homePage) === Pages.rdi
+      if (pathname === Pages.home && isRdiPageHome) {
+        history.push(Pages.rdi)
+      }
+    }
 
-    const isRdiPageHome = localStorageService.get(BrowserStorageItem.homePage) === Pages.rdi
-    if (pathname === Pages.home && isRdiPageHome) {
-      history.push(Pages.rdi)
+    // notify parent window of last activity
+    startActivityMonitor()
+
+    return () => {
+      stopActivityMonitor()
     }
   }, [])
 
@@ -62,18 +71,20 @@ const MainRouter = () => {
     <>
       {isShowConsents && (<ConsentsSettingsPopup />)}
       {!isRedisStack && <GlobalUrlHandler />}
-      <Switch>
-        {
-          isRedisStack
-            ? <RedisStackRoutes databaseId={server?.fixedDatabaseId} />
-            : (
-              DEFAULT_ROUTES.map((route, i) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <RouteWithSubRoutes key={i} {...route} />
-              ))
-            )
-        }
-      </Switch>
+      <Suspense fallback={<SuspenseLoader />}>
+        <Switch>
+          {
+            isRedisStack
+              ? <RedisStackRoutes databaseId={server?.fixedDatabaseId} />
+              : (
+                DEFAULT_ROUTES.map((route, i) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <RouteWithSubRoutes key={i} {...route} />
+                ))
+              )
+          }
+        </Switch>
+      </Suspense>
     </>
   )
 }

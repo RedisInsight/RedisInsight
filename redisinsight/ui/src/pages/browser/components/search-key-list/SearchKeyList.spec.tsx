@@ -113,7 +113,7 @@ describe('SearchKeyList', () => {
     )
   })
 
-  it('"loadKeys" should not be called after Enter if searchMode=Rediseach and index=null', async () => {
+  it('"loadKeys" should not be called after Enter if searchMode=Redisearch and index=null', async () => {
     const searchTerm = 'a';
 
     (keysSelector as jest.Mock).mockImplementation(() => ({
@@ -162,7 +162,7 @@ describe('SearchKeyList', () => {
     expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions([...expectedActions]))
   })
 
-  it('should cnot render ask copilot if feature is disabled', async () => {
+  it('should not render ask copilot if feature is disabled', async () => {
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       databaseChat: {
         flag: false

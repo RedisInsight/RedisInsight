@@ -595,7 +595,7 @@ export function exportInstancesAction(
 }
 
 // Asynchronous thunk action
-export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void) {
+export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void, onFail?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
     dispatch(setConnectedInstance())
@@ -613,6 +613,7 @@ export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void)
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
+      onFail?.()
     }
   }
 }

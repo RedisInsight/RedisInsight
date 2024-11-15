@@ -18,13 +18,16 @@ import {
   setAppContextConnectedInstanceId,
   setDbConfig,
 } from 'uiSrc/slices/app/context'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { InstancePageTemplate } from 'uiSrc/templates'
 import { getPageName } from 'uiSrc/utils/routing'
 import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { loadPluginsAction } from 'uiSrc/slices/app/plugins'
+import { appConnectivityError } from 'uiSrc/slices/app/connectivity'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import InstancePageRouter from './InstancePageRouter'
+import InstanceConnectionLost from './instanceConnectionLost'
 
 export interface Props {
   routes: any[]
@@ -39,6 +42,8 @@ const InstancePage = ({ routes = [] }: Props) => {
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
   const { data: modulesData } = useSelector(instancesSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
+  const connectivityError = useSelector(appConnectivityError)
+  const { [FeatureFlags.envDependent]: envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const lastPageRef = useRef<string>()
 
@@ -87,7 +92,11 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   return (
     <InstancePageTemplate>
-      <InstancePageRouter routes={routes} />
+      {
+        !envDependent?.flag && connectivityError
+          ? <InstanceConnectionLost />
+          : <InstancePageRouter routes={routes} />
+      }
     </InstancePageTemplate>
   )
 }

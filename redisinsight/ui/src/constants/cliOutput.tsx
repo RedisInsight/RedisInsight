@@ -91,21 +91,6 @@ export const cliTexts = {
       '\n',
     ]
   ),
-  MONITOR_COMMAND: (onClick: () => void) => (
-    <EuiTextColor color="danger" key={Date.now()}>
-      {'Use '}
-      <EuiLink onClick={onClick} className="btnLikeLink" color="text" data-test-subj="monitor-btn">
-        Profiler
-      </EuiLink>
-      {' tool to see all the requests processed by the server.'}
-    </EuiTextColor>
-  ),
-  MONITOR_COMMAND_CLI: (onClick: () => void) => (
-    [
-      cliTexts.MONITOR_COMMAND(onClick),
-      '\n',
-    ]
-  ),
   HELLO3_COMMAND: () => (
     <EuiTextColor color="danger" key={Date.now()}>
       {'Redis Insight does not support '}

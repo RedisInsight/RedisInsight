@@ -11,10 +11,14 @@ import CommonAppSubscription from './CommonAppSubscription'
 
 const GlobalSubscriptions = () => (
   <>
-    <CommonAppSubscription />
+    <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
+      <CommonAppSubscription />
+    </FeatureFlagComponent>
     <MonitorConfig />
     <PubSubConfig />
-    <BulkActionsConfig />
+    <FeatureFlagComponent name={FeatureFlags.envDependent}>
+      <BulkActionsConfig />
+    </FeatureFlagComponent>
     <FeatureFlagComponent name={FeatureFlags.cloudSso}>
       <OAuthJobs />
     </FeatureFlagComponent>

@@ -70,7 +70,7 @@ export class DatabaseConnectionService {
       generalInfo,
     );
 
-    const rdiFeature = await this.featureService.getByName(KnownFeatures.Rdi);
+    const rdiFeature = await this.featureService.getByName(clientMetadata.sessionMetadata, KnownFeatures.Rdi);
 
     if (rdiFeature?.flag) {
       const database = await this.repository.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);

@@ -7,6 +7,7 @@ import { ADD_NEW_CA_CERT, ADD_NEW } from 'uiSrc/pages/home/constants'
 import {
   appRedirectionSelector,
   setFromUrl,
+  setReturnUrl,
   setUrlDbConnection,
   setUrlHandlingInitialState,
   setUrlProperties
@@ -20,6 +21,8 @@ import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { setOnboarding } from 'uiSrc/slices/app/features'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { localStorageService } from 'uiSrc/services'
+import { AppStorageItem } from 'uiSrc/constants/storage'
 
 const GlobalUrlHandler = () => {
   const { fromUrl } = useSelector(appRedirectionSelector)
@@ -67,12 +70,18 @@ const GlobalUrlHandler = () => {
     try {
       const params = new URLSearchParams(search)
       const from = params.get('from')
+      const returnUrl = params.get('returnUrl')
 
       if (from) {
         dispatch(setFromUrl(from))
         history.replace({
           search: ''
         })
+      }
+      if (returnUrl) {
+        localStorageService.set(AppStorageItem.returnUrl, returnUrl)
+        dispatch(setReturnUrl(returnUrl))
+        history.push(location.pathname)
       }
     } catch {
       // do nothing

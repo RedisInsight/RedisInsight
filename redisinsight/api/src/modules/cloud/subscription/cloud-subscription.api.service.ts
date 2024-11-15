@@ -46,7 +46,7 @@ export class CloudSubscriptionApiService {
           ),
         ]);
 
-        const cloudSsoFeature = await this.featureService.getByName(KnownFeatures.CloudSso);
+        const cloudSsoFeature = await this.featureService.getByName(sessionMetadata, KnownFeatures.CloudSso);
 
         const freePlans = filter(
           fixedPlans,

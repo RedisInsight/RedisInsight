@@ -44,4 +44,9 @@ export const getPathToResource = (url: string = ''): string => {
 
 export const checkResourse = async (url: string = '') => resourcesService.head(url)
 
-export default resourcesService
+const localResourcesService = axios.create({
+  baseURL: riConfig.app.localResourcesBaseUrl,
+  withCredentials: false,
+})
+
+export default (riConfig.app.useLocalResources) ? localResourcesService : resourcesService

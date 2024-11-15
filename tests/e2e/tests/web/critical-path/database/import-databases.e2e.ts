@@ -1,13 +1,12 @@
 import * as path from 'path';
 import { rte } from '../../../../helpers/constants';
-import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
+import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { DatabasesActions } from '../../../../common-actions/databases-actions';
 import { Common } from '../../../../helpers/common';
 
-const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databasesActions = new DatabasesActions();
 const databaseHelper = new DatabaseHelper();

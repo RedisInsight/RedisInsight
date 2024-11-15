@@ -110,7 +110,6 @@ test('Adding database with SSH', async t => {
         .expect(myRedisDatabasePage.AddRedisDatabase.sshPassphraseInput.value).eql(hiddenPass, 'Edited Passphrase not saved');
 
     // Verify that user can clone database with SSH tunnel
-    await databaseHelper.clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);
     await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
     // Edit Database alias before cloning
     await t.typeText(myRedisDatabasePage.AddRedisDatabase.databaseAliasInput, newClonedDatabaseAlias, { replace: true });

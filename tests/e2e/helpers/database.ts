@@ -14,6 +14,7 @@ import { UserAgreementDialog } from '../pageObjects/dialogs';
 import { DatabaseAPIRequests } from './api/api-database';
 import { RedisOverviewPage } from './constants';
 import { RdiInstancesListPage } from '../pageObjects/rdi-instances-list-page';
+import { updateControlNumber } from './insights';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const discoverMasterGroupsPage = new DiscoverMasterGroupsPage();
@@ -348,6 +349,7 @@ export class DatabaseHelper {
     async acceptLicenseTerms(): Promise<void> {
         await t.maximizeWindow();
         await userAgreementDialog.acceptLicenseTerms();
+        await updateControlNumber(48.2);
         // Open default databases list tab if RDI opened
         if (await rdiInstancesListPage.rdiInstanceButton.exists) {
             await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase);

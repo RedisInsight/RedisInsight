@@ -83,6 +83,7 @@ test
         // Verify that connection timeout value saved
         await myRedisDatabasePage.clickOnEditDBByName(databaseName);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.timeoutInput.value).eql(connectionTimeout, 'Connection timeout is not customized');
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
     });
 test
     .meta({ rte: rte.ossCluster })

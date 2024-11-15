@@ -95,6 +95,7 @@ test
 
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.selectCompressor.textContent).eql(compressor, 'Compressor import incorrect');
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
     });
 test
     .before(async() => {

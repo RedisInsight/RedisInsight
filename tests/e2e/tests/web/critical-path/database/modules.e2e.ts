@@ -65,9 +65,9 @@ test('Verify that user can see full module list in the Edit mode', async t => {
     await t.expect(myRedisDatabasePage.connectionTypeTitle.visible).ok('connection type column not found');
     // Open Edit mode
     await t.click(myRedisDatabasePage.editDatabaseButton);
-    await myRedisDatabasePage.NavigationHeader.togglePanel(true);
-    // Verify that module column is not displayed
-    await t.expect(myRedisDatabasePage.connectionTypeTitle.visible).notOk('connection type column not found');
+    // **** Deprecated **** Verify that module column is not displayed
+    // await myRedisDatabasePage.NavigationHeader.togglePanel(true);
+    // await t.expect(myRedisDatabasePage.connectionTypeTitle.visible).notOk('connection type column not found');
     // Verify modules in Edit mode
     await myRedisDatabasePage.checkModulesOnPage(moduleList);
 });

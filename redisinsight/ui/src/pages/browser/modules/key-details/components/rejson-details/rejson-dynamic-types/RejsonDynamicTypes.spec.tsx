@@ -6,7 +6,7 @@ import RejsonDynamicTypes from './RejsonDynamicTypes'
 
 const mockedProps = mock<DynamicTypesProps>()
 
-const mockedDownloadedSimpleArray = [1, 2, 3]
+const mockedDownloadedSimpleArray = "[1, 2, 3]"
 
 describe('RejsonDynamicTypes Component', () => {
   it('renders correctly simple downloaded JSON', () => {

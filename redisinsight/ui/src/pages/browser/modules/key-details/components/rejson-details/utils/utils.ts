@@ -1,6 +1,7 @@
 import { isArray } from 'lodash'
 import { JSONScalarValue, ObjectTypes } from '../interfaces'
 import styles from '../styles.module.scss'
+import JSONBigInt from 'json-bigint'
 
 enum ClassNames {
   string = 'jsonString',
@@ -61,3 +62,72 @@ export const getBrackets = (type: string, position: 'start' | 'end' = 'start') =
 }
 
 export const isValidKey = (key: string): boolean => /^"([^"\\]|\\.)*"$/.test(key)
+
+const JSONParser = JSONBigInt({ 
+  useNativeBigInt: true,
+  strict: false
+})
+
+export const parseValue = (value: any, type?: string): any => {
+  try {
+    if (typeof value !== 'string' || !value) {
+      return value
+    }
+
+    if (type) {
+      switch (type) {
+        case 'integer': {
+          const num = BigInt(value)
+          return num > Number.MAX_SAFE_INTEGER ? num : Number(value)
+        }
+        case 'number':
+          return Number(value)
+        case 'boolean':
+          return value === 'true'
+        case 'null':
+          return null
+        case 'string':
+          if (value.startsWith('"') && value.endsWith('"')) {
+            value = value.slice(1, -1)
+          }
+          return value
+        default:
+          return value
+      }
+    }
+
+    const parsed = JSONParser.parse(value)
+    
+    if (typeof parsed === 'object' && parsed !== null) {
+      if (Array.isArray(parsed)) {
+        return parsed.map(val => parseValue(val))
+      }
+      const result: { [key: string]: any } = {}
+      Object.entries(parsed).forEach(([key, val]) => {
+        result[key] = parseValue(val)
+      })
+      return result
+    }
+    return parsed
+  } catch (e) {
+    return value
+  }
+}
+
+export const parseJsonData = (data: any) => {
+  if (!data) {
+    return data
+  }
+  try {
+    if (data && Array.isArray(data)) {
+      return data.map((item: { type?: string; value?: any }) => ({
+      ...item,
+      value: item.type && item.value ? parseValue(item.value, item.type) : item.value
+      }))        
+    }
+    
+    return parseValue(data)
+  } catch (e) {
+    return data
+  }
+}

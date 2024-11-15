@@ -1,4 +1,4 @@
-import { generatePath, getBrackets, isRealArray, isRealObject, isScalar, isValidKey, wrapPath } from './utils'
+import { generatePath, getBrackets, isRealArray, isRealObject, isScalar, isValidKey, parseJsonData, parseValue, wrapPath } from './utils'
 import { ObjectTypes } from '../interfaces'
 
 describe('JSONUtils', () => {
@@ -77,6 +77,90 @@ describe('JSONUtils', () => {
       expect(isValidKey('"a\'"')).toBeTruthy()
       expect(isValidKey('"a')).toBeFalsy()
       expect(isValidKey('"')).toBeFalsy()
+    })
+  })
+
+  describe('JSON Parsing Utils', () => {
+    const bigintAsString = '1188950299261208742'
+  
+    describe('parseValue', () => {
+      it('should handle non-string values', () => {
+        expect(parseValue(123)).toBe(123)
+        expect(parseValue(null)).toBe(null)
+        expect(parseValue(undefined)).toBe(undefined)
+      })
+  
+      it('should parse typed integer values', () => {
+        const result = parseValue(bigintAsString, 'integer')
+        expect(typeof result).toBe('bigint')
+        expect(result.toString()).toBe(bigintAsString)
+      })
+  
+      it('should parse regular numbers as numbers, not bigints', () => {
+        const result = parseValue('42', 'integer')
+        expect(typeof result).toBe('number')
+        expect(result).toBe(42)
+      })
+  
+      it('should handle string type with quotes', () => {
+        expect(parseValue('"test"', 'string')).toBe('test')
+        expect(parseValue('test', 'string')).toBe('test')
+      })
+  
+      it('should parse boolean values', () => {
+        expect(parseValue('true', 'boolean')).toBe(true)
+        expect(parseValue('false', 'boolean')).toBe(false)
+      })
+  
+      it('should parse null values', () => {
+        expect(parseValue('null', 'null')).toBe(null)
+      })
+  
+      it('should parse JSON objects without type', () => {
+        const input = `{"value": ${bigintAsString}, "text": "test"}`
+        const result = parseValue(input)
+        expect(typeof result.value).toBe('bigint')
+        expect(result.value.toString()).toBe(bigintAsString)
+        expect(result.text).toBe('test')
+      })
+  
+      it('should parse JSON arrays without type', () => {
+        const input = `[${bigintAsString}, "test"]`
+        const result = parseValue(input)
+        expect(typeof result[0]).toBe('bigint')
+        expect(result[0].toString()).toBe(bigintAsString)
+        expect(result[1]).toBe('test')
+      })
+    })
+  
+    describe('parseJsonData', () => {
+      it('should handle null or undefined data', () => {
+        expect(parseJsonData(null)).toBe(null)
+        expect(parseJsonData(undefined)).toBe(undefined)
+      })
+  
+      it('should parse array of typed values', () => {
+        const input = [
+          { type: 'string', value: '"John"' },
+          { type: 'integer', value: bigintAsString }
+        ]
+        const result = parseJsonData(input)
+        
+        expect(result[0].value).toBe('John')
+        expect(typeof result[1].value).toBe('bigint')
+        expect(result[1].value.toString()).toBe(bigintAsString)
+      })
+  
+      it('should preserve non-typed array items', () => {
+        const input = [
+          { value: '"John"' },
+          { someOtherProp: 'test' }
+        ]
+        const result = parseJsonData(input)
+        
+        expect(result[0].value).toBe('"John"')
+        expect(result[1].someOtherProp).toBe('test')
+      })
     })
   })
 })

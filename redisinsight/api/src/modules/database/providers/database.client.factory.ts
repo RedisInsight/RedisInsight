@@ -33,6 +33,43 @@ export class DatabaseClientFactory {
     private readonly redisClientFactory: RedisClientFactory,
   ) {}
 
+  private async processGetClient(clientId: string, clientMetadata: ClientMetadata) {
+    if (this.isConnecting[clientId]) {
+      this.logger.debug('Client already connecting. Queueing get client request', { clientId });
+      return;
+    }
+    if (!this.pendingGetClient[clientId].length) {
+      return;
+    }
+
+    const { resolve, reject } = this.pendingGetClient[clientId].shift();
+    this.isConnecting[clientId] = true;
+    try {
+      this.logger.log('Creating new client', { clientId });
+      const newClient = await this.createClient(clientMetadata);
+      this.redisClientStorage.set(newClient);
+
+      resolve(newClient);
+
+      // resolve pending gets
+      while (this.pendingGetClient[clientId]?.length) {
+        const next = this.pendingGetClient[clientId].shift();
+        next?.resolve(newClient);
+      }
+    } catch (error) {
+      reject(error);
+
+      // reject pending gets
+      while (this.pendingGetClient[clientId]?.length) {
+        const next = this.pendingGetClient[clientId].shift();
+        next?.reject(error);
+      }
+    } finally {
+      delete this.pendingGetClient[clientId];
+      delete this.isConnecting[clientId];
+    }
+  }
+
   /**
    * Gets existing database client by client metadata or
    * fetches database and create client new client for it
@@ -49,43 +86,17 @@ export class DatabaseClientFactory {
       return client;
     }
 
-    // queue request if we are already connecting
     const clientId = RedisClient.generateId(RedisClient.prepareClientMetadata(clientMetadata));
-    if (this.isConnecting[clientId]) {
-      this.logger.debug('Client already connecting. Queueing get client request', { clientId });
+
+    // add promise to queue and then process queue immediately
+    // in case another fetch is not already running
+    return new Promise((resolve, reject) => {
       if (!this.pendingGetClient[clientId]) {
         this.pendingGetClient[clientId] = [];
       }
-
-      return new Promise((resolve, reject) => {
-        this.pendingGetClient[clientId].push({ resolve, reject });
-      });
-    }
-
-    this.isConnecting[clientId] = true;
-    try {
-      this.logger.log('Creating new client', { clientId });
-      const newClient = await this.createClient(clientMetadata);
-      this.redisClientStorage.set(newClient);
-
-      // resolve pending gets
-      while (this.pendingGetClient[clientId]?.length) {
-        const next = this.pendingGetClient[clientId].shift();
-        next?.resolve(newClient);
-      }
-
-      return newClient;
-    } catch (error) {
-      // reject pending gets
-      while (this.pendingGetClient[clientId]?.length) {
-        const next = this.pendingGetClient[clientId].shift();
-        next?.reject(error);
-      }
-
-      throw error;
-    } finally {
-      delete this.isConnecting[clientId];
-    }
+      this.pendingGetClient[clientId].push(({ resolve, reject }));
+      this.processGetClient(clientId, clientMetadata);
+    });
   }
 
   /**

@@ -8,12 +8,12 @@ export interface Props {
   path: string
 }
 
-const UseProfilerLink = ({ path }: Props) => (
+const UsePubSubLink = ({ path }: Props) => (
   <FeatureFlagComponent
     name={FeatureFlags.envDependent}
-    otherwise={<EuiTextColor data-testid="user-profiler-link-disabled" color="accent">PubSub not supported in this environment.</EuiTextColor>}
+    otherwise={<EuiTextColor data-testid="user-pub-sub-link-disabled" color="accent">PubSub not supported in this environment.</EuiTextColor>}
   >
-    <EuiTextColor color="danger" key={Date.now()}>
+    <EuiTextColor color="danger" key={Date.now()} data-testid="user-pub-sub-link">
       {'Use '}
       <EuiLink {...getRouterLinkProps(path)} color="text" data-test-subj="pubsub-page-btn">
         Pub/Sub
@@ -23,4 +23,4 @@ const UseProfilerLink = ({ path }: Props) => (
   </FeatureFlagComponent>
 )
 
-export default UseProfilerLink
+export default UsePubSubLink

@@ -141,8 +141,12 @@ const LiveTimeRecommendations = () => {
               <br />
               New tips appear while you work with your database,
               including how to improve performance and optimize memory usage.
-              <br />
-              Eager for more tips? Run Database Analysis to get started.
+              <FeatureFlagComponent name={FeatureFlags.envDependent}>
+                <>
+                  <br />
+                  Eager for more tips? Run Database Analysis to get started.
+                </>
+              </FeatureFlagComponent>
             </>
             )}
         >

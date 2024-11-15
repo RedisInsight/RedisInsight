@@ -64,14 +64,11 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
   )
 
   const renderRejsonDataBeDownloaded = (item: any, i: number) => {
-    console.log('renderRejsonDataBeDownloaded', 1, item)
     if (isScalar(item)) return renderScalar({ key: i || null, value: item, parentPath })
 
-    console.log('renderRejsonDataBeDownloaded', 2, item)
     const data = { ...item, parentPath }
     if (['array', 'object'].includes(item.type)) return renderJSONObject(data, item.type)
 
-    console.log('renderRejsonDataBeDownloaded', 3, data)
     return renderScalar(data)
   }
 
@@ -90,21 +87,18 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
   }
 
   const renderResult = (data: any) => {
-    console.log('renderResult', 1, data)
     if (isScalar(data)) {
       return renderScalar({ key: null, value: data, parentPath })
     }
 
-    console.log('renderResult', 2, data)
     if (!isDownloaded) {
       return data?.map(renderRejsonDataBeDownloaded)
     }
 
-    console.log('renderResult', 3, data)
     if (Array.isArray(data)) {
       return data?.map((item, i) => renderArrayItem(i, item))
     }
-    console.log('renderResult', 4, data)
+
     return Object.entries(data).map(([key, value]) => renderArrayItem(key, value))
   }
 

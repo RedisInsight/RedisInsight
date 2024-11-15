@@ -46,9 +46,9 @@ import { appInfoSelector } from 'uiSrc/slices/app/info'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { selectOnFocus } from 'uiSrc/utils'
+import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import CloneConnection from './components/CloneConnection'
 import FooterActions from './components/FooterActions'
-import { useModalHeader } from '../../database-panel-dialog/ModalTitleProvider'
 
 export interface Props {
   formFields: DbConnectionInfo
@@ -108,7 +108,7 @@ const ManualConnectionForm = (props: Props) => {
     getInitFieldsDisplayNames({ host, port, name })
   )
 
-  const { setHeaderContent } = useModalHeader()
+  const { setModalHeader } = useModalHeader()
 
   const dispatch = useDispatch()
 
@@ -152,7 +152,7 @@ const ManualConnectionForm = (props: Props) => {
   useEffect(() =>
   // componentWillUnmount
     () => {
-      setHeaderContent(null)
+      setModalHeader(null)
       if (isEditMode) {
         dispatch(resetInstanceUpdateAction())
       }
@@ -161,7 +161,7 @@ const ManualConnectionForm = (props: Props) => {
 
   useEffect(() => {
     if (isCloneMode) {
-      setHeaderContent(
+      setModalHeader(
         <EuiFlexGroup responsive={false} alignItems="center" gutterSize="s">
           <EuiFlexItem grow={false}>
             <EuiButtonIcon
@@ -181,7 +181,7 @@ const ManualConnectionForm = (props: Props) => {
     }
 
     if (isEditMode) {
-      setHeaderContent(<EuiTitle size="s"><h4>Edit Database</h4></EuiTitle>)
+      setModalHeader(<EuiTitle size="s"><h4>Edit Database</h4></EuiTitle>)
     }
   }, [isEditMode, isCloneMode])
 

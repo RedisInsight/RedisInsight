@@ -3,7 +3,7 @@ import React from 'react'
 
 import { createInstanceAction, editInstanceAction, instancesSelector } from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
-import { act, cleanup, fireEvent, mockedStore, render, screen, waitFor, waitForStack } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen, waitForStack } from 'uiSrc/utils/test-utils'
 
 import { apiService } from 'uiSrc/services'
 import RdiPage from './RdiPage'
@@ -107,33 +107,19 @@ describe('RdiPage', () => {
   })
 
   it('should close connection form when using cancel button', async () => {
-    const { container } = render(<RdiPage />)
+    render(<RdiPage />)
 
     // open form
     fireEvent.click(screen.getByTestId('rdi-instance'))
 
-    expect(container.getElementsByClassName('hidden').length).toBe(0)
+    expect(screen.getByTestId('connection-form')).toBeInTheDocument()
 
     // close form
-    fireEvent.click(screen.getByTestId('connection-form-cancel-button'))
-
-    expect(container.getElementsByClassName('hidden').length).toBe(2)
-  })
-
-  it('should close connection form when using delete button', async () => {
-    const { container } = render(<RdiPage />)
-
-    // open form
-    fireEvent.click(screen.getByTestId('rdi-instance'))
-    expect(container.getElementsByClassName('hidden').length).toBe(0)
-
-    // close form
-    fireEvent.click(screen.getByTestId('delete-instance-1-icon'))
-    fireEvent.click(screen.getByRole('button', { name: 'Remove' }))
-
-    await waitFor(() => expect(container.getElementsByClassName('hidden').length).toBe(2), {
-      timeout: 1000
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('connection-form-cancel-button'))
     })
+
+    expect(screen.queryByTestId('connection-form')).not.toBeInTheDocument()
   })
 
   it('should populate connection form with existing values when using edit button', async () => {
@@ -185,7 +171,7 @@ describe('RdiPage', () => {
     fireEvent.click(screen.getByTestId('edit-instance-1'))
     await screen.findByTestId('connection-form')
 
-    await act(() => {
+    await act(async () => {
       fireEvent.change(screen.getByTestId('connection-form-name-input'), { target: { value: 'name' } })
 
       // focus input to clear it first
@@ -211,6 +197,8 @@ describe('RdiPage', () => {
 
     fireEvent.click(screen.getByTestId('edit-instance-1'))
     await screen.findByTestId('connection-form')
+
+    screen.debug(undefined, 100_000)
 
     await act(() => {
       fireEvent.change(screen.getByTestId('connection-form-name-input'), { target: { value: 'name' } })

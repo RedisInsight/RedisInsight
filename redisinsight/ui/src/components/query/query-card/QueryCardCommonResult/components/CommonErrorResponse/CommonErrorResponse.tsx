@@ -18,7 +18,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { showMonitor } from 'uiSrc/slices/cli/monitor'
 import UseProfilerLink from 'uiSrc/components/monitor/UseProfilerLink'
-import UsePubSubLink from 'uiSrc/components/pub-sub/UsePubSubLink'
+import UsePubSubLink from 'uiSrc/components/pub-sub/UsePubSubLink/UsePubSubLink';
 
 const CommonErrorResponse = (id: string, command = '', result?: any) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()

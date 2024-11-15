@@ -2,7 +2,7 @@ import { EuiLink, EuiTextColor } from '@elastic/eui'
 import React, { Fragment } from 'react'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { getDbIndex } from 'uiSrc/utils'
-import UsePubSubLink from 'uiSrc/components/pub-sub/UsePubSubLink'
+import UsePubSubLink from 'uiSrc/components/pub-sub/UsePubSubLink/UsePubSubLink'
 
 export const ClearCommand = 'clear'
 export const SelectCommand = 'select'

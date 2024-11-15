@@ -11,7 +11,7 @@ export interface Props {
 const UsePubSubLink = ({ path }: Props) => (
   <FeatureFlagComponent
     name={FeatureFlags.envDependent}
-    otherwise={<EuiTextColor data-testid="user-pub-sub-link-disabled" color="accent">PubSub not supported in this environment.</EuiTextColor>}
+    otherwise={<div className="cli-output-response-fail" data-testid="user-pub-sub-link-disabled">PubSub not supported in this environment.</div>}
   >
     <EuiTextColor color="danger" key={Date.now()} data-testid="user-pub-sub-link">
       {'Use '}

@@ -53,40 +53,31 @@ const parseValue = (value: any, type?: string): any => {
           return value === 'true';
         case 'null':
           return null;
+        case 'string':
+          if (value.startsWith('"') && value.endsWith('"')) {
+            value = value.slice(1, -1);
+          }
+          return value;
         default:
           return value;
       }
     }
 
-    // If it's a typed string, return it as is
-    if (type === 'string') {
-      // Handle string values (both typed and untyped)
-      if (value.startsWith('"') && value.endsWith('"')) {
-        value = value.slice(1, -1);
+    const parsed = JSONParser.parse(value);
+    
+    if (typeof parsed === 'object' && parsed !== null) {
+      if (Array.isArray(parsed)) {
+        return parsed.map(val => parseValue(val));
       }
-      return value;
+      const result: { [key: string]: any } = {};
+      Object.entries(parsed).forEach(([key, val]) => {
+        result[key] = parseValue(val);
+      });
+      return result;
     }
-
-    // Try parsing as JSON for nested structures
-    try {
-      const parsed = JSONParser.parse(value);
-      
-      if (typeof parsed === 'object' && parsed !== null) {
-        if (Array.isArray(parsed)) {
-          return parsed.map(val => parseValue(val));
-        }
-        const result: { [key: string]: any } = {};
-        Object.entries(parsed).forEach(([key, val]) => {
-          result[key] = parseValue(val);
-        });
-        return result;
-      }
-      return parsed;
-    } catch {
-      // If JSON parsing fails, return the processed string
-      return value;
-    }
+    return parsed;
   } catch (e) {
+    // If JSON parsing fails, return the processed string
     return value;
   }
 };

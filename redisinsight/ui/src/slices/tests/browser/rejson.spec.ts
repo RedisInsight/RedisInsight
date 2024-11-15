@@ -42,9 +42,6 @@ let store: typeof mockedStore
 let storeWithSelectedKey: typeof mockedStore
 let defaultData: GetRejsonRlResponseDto
 
-const key = 'key'
-const path = '.'
-
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
@@ -375,6 +372,10 @@ describe('rejson slice', () => {
   describe('thunks', () => {
     describe('fetchReJSON', () => {
       it('call both fetchReJSON and loadRejsonBranchSuccess when fetch is successed', async () => {
+        // Arrange
+        const key = 'key'
+        const path = '.'
+
         const responsePayload = { data: defaultData, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)

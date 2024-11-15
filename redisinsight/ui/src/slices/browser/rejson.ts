@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
-import JSONBigInt from 'json-bigint'
 
 import { isNumber } from 'lodash'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -352,7 +351,7 @@ export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
         }
       )
 
-      if (isStatusSuccessful(status)) {     
+      if (isStatusSuccessful(status)) {
         return data
       }
       throw new Error(data.toString())

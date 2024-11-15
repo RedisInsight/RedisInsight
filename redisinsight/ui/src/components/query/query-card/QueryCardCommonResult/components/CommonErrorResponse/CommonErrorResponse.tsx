@@ -18,6 +18,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { showMonitor } from 'uiSrc/slices/cli/monitor'
 import UseProfilerLink from 'uiSrc/components/monitor/UseProfilerLink'
+import UsePubSubLink from 'uiSrc/components/pub-sub/UsePubSubLink/UsePubSubLink';
 
 const CommonErrorResponse = (id: string, command = '', result?: any) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -33,7 +34,7 @@ const CommonErrorResponse = (id: string, command = '', result?: any) => {
   }
   // Flow if SUBSCRIBE command was executed
   if (checkUnsupportedCommand([CommandSubscribe.toLowerCase()], commandLine)) {
-    return cliTexts.SUBSCRIBE_COMMAND(Pages.pubSub(instanceId))
+    return <UsePubSubLink path={Pages.pubSub(instanceId)} />
   }
   // Flow if PSUBSCRIBE command was executed
   if (checkUnsupportedCommand([CommandPSubscribe.toLowerCase()], commandLine)) {

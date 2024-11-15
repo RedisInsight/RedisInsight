@@ -35,6 +35,7 @@ import {
 } from './recommendation'
 import { FormatedDate } from './formated-date'
 import { UploadWarning } from './upload-warning'
+import FormDialog from './form-dialog'
 
 export { FullScreen } from './full-screen'
 
@@ -81,4 +82,5 @@ export {
   RecommendationBadgesLegend,
   FormatedDate,
   UploadWarning,
+  FormDialog
 }

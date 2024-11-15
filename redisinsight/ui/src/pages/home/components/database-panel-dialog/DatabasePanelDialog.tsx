@@ -4,13 +4,9 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
-  EuiModal,
-  EuiModalBody,
-  EuiModalFooter,
-  EuiModalHeader,
-  EuiModalHeaderTitle,
   EuiRadioGroup,
-  EuiRadioGroupOption, EuiSpacer,
+  EuiRadioGroupOption,
+  EuiSpacer,
   EuiText,
   EuiTitle
 } from '@elastic/eui'
@@ -31,7 +27,8 @@ import AddDatabaseFlowTabs from 'uiSrc/pages/home/components/add-database-flow-t
 
 import CloudConnectionFormWrapper from 'uiSrc/pages/home/components/cloud-connection'
 import ImportDatabase from 'uiSrc/pages/home/components/import-database'
-import { HeaderProvider } from './ModalTitleProvider'
+import { FormDialog } from 'uiSrc/components'
+import { ModalHeaderProvider } from 'uiSrc/contexts/ModalTitleProvider'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -57,7 +54,7 @@ const DatabasePanelDialog = (props: Props) => {
     InstanceType.RedisEnterpriseCluster
   )
   const [connectionType, setConnectionType] = useState<AddDbType>(initConnectionType)
-  const [headerContent, setHeaderContent] = useState<Nullable<React.ReactNode>>(null)
+  const [modalHeader, setModalHeader] = useState<Nullable<React.ReactNode>>(null)
 
   const { credentials: clusterCredentials } = useSelector(clusterSelector)
   const { credentials: cloudCredentials } = useSelector(cloudSelector)
@@ -189,38 +186,28 @@ const DatabasePanelDialog = (props: Props) => {
     </>
   )
 
-  if (!isOpen) return null
-
   return (
-    <EuiModal
-      className={styles.modal}
+    <FormDialog
+      isOpen={isOpen}
       onClose={onClose}
+      header={modalHeader ?? (<EuiTitle size="s"><h4>Discover and Add Redis Databases</h4></EuiTitle>)}
+      footer={<div id="footerDatabaseForm" />}
     >
-      <EuiModalHeader>
-        <EuiModalHeaderTitle id="formModalHeader">
-          {headerContent ?? (<EuiTitle size="s"><h4>Discover and Add Redis Databases</h4></EuiTitle>)}
-        </EuiModalHeaderTitle>
-      </EuiModalHeader>
-      <EuiModalBody>
-        <div className={cx(styles.bodyWrapper, 'container relative', { addDbWrapper: !editMode })}>
-          {!editMode && (
-            <AddDatabaseFlowTabs
-              connectionType={connectionType}
-              onChange={changeConnectionType}
-            />
-          )}
-          <div className={styles.formWrapper}>
+      <div className={cx(styles.bodyWrapper, 'container relative', { addDbWrapper: !editMode })}>
+        {!editMode && (
+          <AddDatabaseFlowTabs
+            connectionType={connectionType}
+            onChange={changeConnectionType}
+          />
+        )}
+        <div className={styles.formWrapper}>
+          <ModalHeaderProvider value={{ modalHeader, setModalHeader }}>
             {connectionType === AddDbType.auto && <InstanceTypes />}
-            <HeaderProvider value={{ headerContent, setHeaderContent }}>
-              {Form()}
-            </HeaderProvider>
-          </div>
+            {Form()}
+          </ModalHeaderProvider>
         </div>
-      </EuiModalBody>
-      <EuiModalFooter>
-        <div id="footerDatabaseForm" />
-      </EuiModalFooter>
-    </EuiModal>
+      </div>
+    </FormDialog>
   )
 }
 

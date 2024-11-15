@@ -33,18 +33,98 @@ const JSONParser = JSONBigInt({
   strict: false  // This allows parsing of primitive values
 })
 
-const parseJsonData = (data: any) => {
-  if (typeof data?.data === 'string') {
+const parseValue = (value: any, type?: string): any => {
+  try {
+    // Handle non-strings or empty values
+    if (typeof value !== 'string' || !value) {
+      return value;
+    }
+
+    // If type is provided, handle typed values first
+    if (type) {
+      switch (type) {
+        case 'integer': {
+          const num = BigInt(value);
+          return num > Number.MAX_SAFE_INTEGER ? num : Number(value);
+        }
+        case 'number':
+          return Number(value);
+        case 'boolean':
+          return value === 'true';
+        case 'null':
+          return null;
+        default:
+          return value;
+      }
+    }
+
+    // If it's a typed string, return it as is
+    if (type === 'string') {
+      // Handle string values (both typed and untyped)
+      if (value.startsWith('"') && value.endsWith('"')) {
+        value = value.slice(1, -1);
+      }
+      return value;
+    }
+
+    // Try parsing as JSON for nested structures
     try {
+      const parsed = JSONParser.parse(value);
+      
+      if (typeof parsed === 'object' && parsed !== null) {
+        if (Array.isArray(parsed)) {
+          return parsed.map(val => parseValue(val));
+        }
+        const result: { [key: string]: any } = {};
+        Object.entries(parsed).forEach(([key, val]) => {
+          result[key] = parseValue(val);
+        });
+        return result;
+      }
+      return parsed;
+    } catch {
+      // If JSON parsing fails, return the processed string
+      return value;
+    }
+  } catch (e) {
+    return value;
+  }
+};
+
+const parseJsonData = (data: any) => {
+  try {
+    // Handle array of objects with metadata (from BE)
+    if (data?.data && Array.isArray(data.data)) {
       return {
         ...data,
-        data: JSONParser.parse(data.data)
-      }
-    } catch (e) {
-      return data
+        data: data.data.map((item: { type?: string; value?: any }) => ({
+          ...item,
+          value: item.type && item.value ? parseValue(item.value, item.type) : item.value
+        }))
+      };
     }
+    
+    // Handle regular JSON data
+    return {
+      ...data,
+      data: parseValue(data.data)
+    };
+  } catch (e) {
+    console.error('Error parsing JSON data:', e);
+    return data;
   }
-  return data
+};
+
+const parseSimpleJsonData = (data: any) => {
+  try {    
+    return {
+      ...data,
+      data: JSONParser.parse(data.data)
+    };
+  } catch (e) {
+    console.error('Error parsing JSON data:', e);
+    return data;
+  }
 }
 
 export const initialState: InitialStateRejson = {
@@ -179,7 +259,7 @@ export function fetchReJSON(
 
       sourceRejson = null
       if (isStatusSuccessful(status)) {
-        dispatch(loadRejsonBranchSuccess(parseJsonData(data)))
+        dispatch(loadRejsonBranchSuccess(parseSimpleJsonData(data)))
       }
     } catch (error) {
       if (!axios.isCancel(error)) {
@@ -372,11 +452,12 @@ export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
         }
       )
 
-      if (isStatusSuccessful(status)) {
+      if (isStatusSuccessful(status)) {     
         return parseJsonData(data)
       }
       throw new Error(data.toString())
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       if (!axios.isCancel(error)) {
         const errorMessage = getApiErrorMessage(error)
         dispatch(loadRejsonBranchFailure(errorMessage))

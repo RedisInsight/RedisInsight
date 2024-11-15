@@ -33,6 +33,7 @@ import reducer, {
 import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 import { refreshKeyInfo } from '../../browser/keys'
 
+
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))
@@ -40,6 +41,10 @@ jest.mock('uiSrc/services', () => ({
 let store: typeof mockedStore
 let storeWithSelectedKey: typeof mockedStore
 let defaultData: GetRejsonRlResponseDto
+
+const key = 'key'
+const path = '.'
+
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
@@ -370,10 +375,6 @@ describe('rejson slice', () => {
   describe('thunks', () => {
     describe('fetchReJSON', () => {
       it('call both fetchReJSON and loadRejsonBranchSuccess when fetch is successed', async () => {
-        // Arrange
-        const key = 'key'
-        const path = '.'
-
         const responsePayload = { data: defaultData, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
@@ -608,5 +609,156 @@ describe('rejson slice', () => {
         expect(result).toEqual(expectedResult)
       })
     })
-  })
+
+    describe('parse json data with bigints', () => {
+      const bigintAsString = '1188950299261208742'
+      it('should properly parse BigInt within object', async () => {
+        const input = {
+          data: `{"value": ${bigintAsString}, "text": "test"}`,
+          type: 'object'
+        }
+        
+        const responsePayload = { data: input, status: 200 }
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+        
+        await store.dispatch<any>(fetchReJSON(key, path))
+        
+        const successAction = store.getActions()[1]
+
+        const value = successAction.payload.data.value
+        expect(typeof value).toBe('bigint')
+        expect(value.toString()).toBe(bigintAsString)
+        expect(successAction.payload.data.text).toBe('test')
+      })
+
+      it('should properly parse BigInt within array', async () => {
+        const input = {
+          data: `[${bigintAsString}, "test"]`,
+          type: 'array'
+        }
+        
+        const responsePayload = { data: input, status: 200 }
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+        
+        await store.dispatch<any>(fetchReJSON(key, path))
+        
+        const successAction = store.getActions()[1]
+
+        const value = successAction.payload.data[0]
+        expect(typeof value).toBe('bigint')
+        expect(value.toString()).toBe(bigintAsString)
+        expect(successAction.payload.data[1]).toBe('test')
+      })
+
+      it('should properly keep BigInt that was a string as a string', async () => {
+        const input = {
+          data: `["${bigintAsString}", "test"]`,
+          type: 'array'
+        }
+        
+        const responsePayload = { data: input, status: 200 }
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+        
+        await store.dispatch<any>(fetchReJSON(key, path))
+        
+        const successAction = store.getActions()[1]
+
+        const value = successAction.payload.data[0]
+        expect(typeof value).toBe('string')
+        expect(value).toBe(bigintAsString)
+        expect(successAction.payload.data[1]).toBe('test')
+      })
+    })
+
+    describe('fetchVisualisationResults', () => {
+      it('should parse string values correctly', async () => {
+        const responseData = {
+          downloaded: false,
+          path: '[0]',
+          data: [
+            {
+              key: 'name',
+              path: '[0]["name"]',
+              cardinality: 1,
+              type: 'string',
+              value: '"John"'
+            }
+          ],
+          type: 'object'
+        };
+  
+        apiService.post = jest.fn().mockResolvedValue({ 
+          data: responseData, 
+          status: 200 
+        });
+  
+        const result = await store.dispatch<any>(fetchVisualisationResults());
+        expect(result.data[0].value).toBe('"John"');
+      });
+  
+      it('should parse numbers correctly', async () => {
+        const responseData = {
+          downloaded: false,
+          path: '[0]',
+          data: [
+            {
+              key: 'age',
+              path: '[0]["age"]',
+              cardinality: 1,
+              type: 'integer',
+              value: '30'
+            }
+          ],
+          type: 'object'
+        };
+  
+        apiService.post = jest.fn().mockResolvedValue({ 
+          data: responseData, 
+          status: 200 
+        });
+  
+        const result = await store.dispatch<any>(fetchVisualisationResults());
+        expect(result.data[0].value).toBe(30);
+      });
+  
+      it('should handle bigint values', async () => {
+        const bigintAsString = '1188950299261208942';
+        const responseData = {
+          downloaded: false,
+          path: '[0]',
+          data: [
+            {
+              key: 'bigNumber',
+              path: '[0]["bigNumber"]',
+              cardinality: 1,
+              type: 'integer',
+              value: bigintAsString
+            }
+          ],
+          type: 'object'
+        };
+  
+        apiService.post = jest.fn().mockResolvedValue({ 
+          data: responseData, 
+          status: 200 
+        });
+  
+        const result = await store.dispatch<any>(fetchVisualisationResults());
+        expect(typeof result.data[0].value).toBe('bigint');
+        expect(result.data[0].value.toString()).toBe(bigintAsString);
+      });
+  
+      it('should handle error cases', async () => {
+        const error = new Error('Test error');
+        apiService.post = jest.fn().mockRejectedValue(error);
+  
+        const result = await store.dispatch<any>(fetchVisualisationResults());
+        
+        expect(result).toBeNull();
+        const actions = store.getActions();
+        expect(actions).toHaveLength(2);
+        expect(actions[0].type).toBe('rejson/loadRejsonBranchFailure');
+      });
+    });
+  });
 })

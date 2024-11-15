@@ -73,6 +73,7 @@ export class DatabaseClientFactory {
         const next = this.pendingGetClient[clientId].shift();
         next?.resolve(newClient);
       }
+      delete this.pendingGetClient[clientId];
 
       return newClient;
     } catch (error) {
@@ -81,6 +82,7 @@ export class DatabaseClientFactory {
         const next = this.pendingGetClient[clientId].shift();
         next?.reject(error);
       }
+      delete this.pendingGetClient[clientId];
 
       throw error;
     } finally {

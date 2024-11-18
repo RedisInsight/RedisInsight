@@ -36,7 +36,15 @@ const RejsonScalar = (props: JSONScalarProps) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    setChangedValue(isString(value) ? `"${value}"` : isNull(value) ? 'null' : value)
+    if (typeof value === 'bigint') {
+      setChangedValue(value.toString())
+    } else if (isString(value)) {
+      setChangedValue(`"${value}"`)
+    } else if (isNull(value)) {
+      setChangedValue('null')
+    } else {
+      setChangedValue(value)
+    }
   }, [value])
 
   const onDeclineChanges = () => {

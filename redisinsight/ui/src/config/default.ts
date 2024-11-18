@@ -46,7 +46,9 @@ export const defaultConfig = {
     returnUrlLabel: process.env.RI_RETURN_URL_LABEL || 'Back',
     returnUrlTooltip: process.env.RI_RETURN_URL_TOOLTIP || 'Back',
     activityMonitorOrigin: process.env.RI_ACTIVITY_MONITOR_ORIGIN,
-    activityMonitorThrottleTimeout: intEnv('RI_ACTIVITY_MONITOR_THROTTLE_TIMEOUT', 30_000)
+    activityMonitorThrottleTimeout: intEnv('RI_ACTIVITY_MONITOR_THROTTLE_TIMEOUT', 30_000),
+    localResourcesBaseUrl: process.env.RI_LOCAL_RESOURCES_BASE_URL,
+    useLocalResources: booleanEnv('RI_USE_LOCAL_RESOURCES', false)
   },
   workbench: {
     pipelineCountDefault: intEnv('PIPELINE_COUNT_DEFAULT', 5),

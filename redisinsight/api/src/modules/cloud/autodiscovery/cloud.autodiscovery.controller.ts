@@ -13,7 +13,7 @@ import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor'
 import { ApiHeaders, ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Response } from 'express';
-import { ActionStatus } from 'src/common/models';
+import { ActionStatus, SessionMetadata } from 'src/common/models';
 import { BuildType } from 'src/modules/server/models/server';
 import { CloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.service';
 import { CloudAuthHeaders } from 'src/modules/cloud/common/decorators/cloud-auth.decorator';
@@ -75,8 +75,15 @@ export class CloudAutodiscoveryController {
       },
     ],
   })
-  async discoverSubscriptions(@CloudAuthHeaders() authDto: CloudCapiAuthDto): Promise<CloudSubscription[]> {
-    return await this.service.discoverSubscriptions(authDto, CloudAutodiscoveryAuthType.Credentials);
+  async discoverSubscriptions(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+      @CloudAuthHeaders() authDto: CloudCapiAuthDto,
+  ): Promise<CloudSubscription[]> {
+    return await this.service.discoverSubscriptions(
+      sessionMetadata,
+      authDto,
+      CloudAutodiscoveryAuthType.Credentials,
+    );
   }
 
   @Post('get-databases')
@@ -95,10 +102,16 @@ export class CloudAutodiscoveryController {
     ],
   })
   async discoverDatabases(
-    @CloudAuthHeaders() authDto: CloudCapiAuthDto,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+      @CloudAuthHeaders() authDto: CloudCapiAuthDto,
       @Body() dto: DiscoverCloudDatabasesDto,
   ): Promise<CloudDatabase[]> {
-    return await this.service.discoverDatabases(authDto, dto, CloudAutodiscoveryAuthType.Credentials);
+    return await this.service.discoverDatabases(
+      sessionMetadata,
+      authDto,
+      dto,
+      CloudAutodiscoveryAuthType.Credentials,
+    );
   }
 
   @Post('databases')

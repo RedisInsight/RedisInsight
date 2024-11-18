@@ -5,6 +5,7 @@ import { DEFAULT_MATCH, TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { RedisError, ReplyError } from 'src/models';
+import { SessionMetadata } from 'src/common/models';
 import { SubscriptionDto } from './dto';
 
 export interface IExecResult {
@@ -19,9 +20,10 @@ export class PubSubAnalyticsService extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendMessagePublishedEvent(databaseId: string, affected: number): void {
+  sendMessagePublishedEvent(sessionMetadata: SessionMetadata, databaseId: string, affected: number): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.PubSubMessagePublished,
         {
           databaseId,
@@ -33,9 +35,10 @@ export class PubSubAnalyticsService extends TelemetryBaseService {
     }
   }
 
-  sendChannelSubscribeEvent(databaseId: string, subs: SubscriptionDto[]): void {
+  sendChannelSubscribeEvent(sessionMetadata: SessionMetadata, databaseId: string, subs: SubscriptionDto[]): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.PubSubChannelSubscribed,
         {
           databaseId,
@@ -47,9 +50,10 @@ export class PubSubAnalyticsService extends TelemetryBaseService {
     }
   }
 
-  sendChannelUnsubscribeEvent(databaseId: string): void {
+  sendChannelUnsubscribeEvent(sessionMetadata: SessionMetadata, databaseId: string): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.PubSubChannelUnsubscribed,
         {
           databaseId,

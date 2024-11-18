@@ -4,6 +4,7 @@ import { TelemetryEvents } from 'src/constants';
 import { HttpException, InternalServerErrorException } from '@nestjs/common';
 import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics';
 import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
+import { mockSessionMetadata } from 'src/__mocks__';
 
 describe('CloudAuthAnalytics', () => {
   let service: CloudAuthAnalytics;
@@ -32,9 +33,14 @@ describe('CloudAuthAnalytics', () => {
 
   describe('sendCloudSignInSucceeded', () => {
     it('should emit event with deep link flow', () => {
-      service.sendCloudSignInSucceeded(CloudSsoFeatureStrategy.DeepLink, 'import-database');
+      service.sendCloudSignInSucceeded(
+        mockSessionMetadata,
+        CloudSsoFeatureStrategy.DeepLink,
+        'import-database',
+      );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.CloudSignInSucceeded,
         {
           flow: CloudSsoFeatureStrategy.DeepLink,
@@ -43,9 +49,13 @@ describe('CloudAuthAnalytics', () => {
       );
     });
     it('should emit event with web flow', () => {
-      service.sendCloudSignInSucceeded(CloudSsoFeatureStrategy.Web);
+      service.sendCloudSignInSucceeded(
+        mockSessionMetadata,
+        CloudSsoFeatureStrategy.Web,
+      );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.CloudSignInSucceeded,
         {
           flow: CloudSsoFeatureStrategy.Web,
@@ -53,9 +63,10 @@ describe('CloudAuthAnalytics', () => {
       );
     });
     it('should emit event without flow and not fail', () => {
-      service.sendCloudSignInSucceeded(undefined as CloudSsoFeatureStrategy);
+      service.sendCloudSignInSucceeded(mockSessionMetadata, undefined as CloudSsoFeatureStrategy);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.CloudSignInSucceeded,
         {
           flow: undefined,
@@ -66,27 +77,43 @@ describe('CloudAuthAnalytics', () => {
 
   describe('sendGetRECloudSubsFailedEvent', () => {
     it('should emit error event with deep link flow', () => {
-      service.sendCloudSignInFailed(httpException, CloudSsoFeatureStrategy.DeepLink, 'import');
+      service.sendCloudSignInFailed(
+        mockSessionMetadata,
+        httpException,
+        CloudSsoFeatureStrategy.DeepLink,
+        'import',
+      );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.CloudSignInFailed,
         httpException,
         { flow: CloudSsoFeatureStrategy.DeepLink, action: 'import' },
       );
     });
     it('should emit error event with web flow', () => {
-      service.sendCloudSignInFailed(httpException, CloudSsoFeatureStrategy.Web);
+      service.sendCloudSignInFailed(
+        mockSessionMetadata,
+        httpException,
+        CloudSsoFeatureStrategy.Web,
+      );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.CloudSignInFailed,
         httpException,
         { flow: CloudSsoFeatureStrategy.Web },
       );
     });
     it('should not fail if no exception passed', () => {
-      service.sendCloudSignInFailed(undefined, CloudSsoFeatureStrategy.Web);
+      service.sendCloudSignInFailed(
+        mockSessionMetadata,
+        undefined,
+        CloudSsoFeatureStrategy.Web,
+      );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.CloudSignInFailed,
         undefined,
         { flow: CloudSsoFeatureStrategy.Web },
@@ -96,9 +123,14 @@ describe('CloudAuthAnalytics', () => {
       const exception = new InternalServerErrorException() as any;
       exception.options = undefined;
 
-      service.sendCloudSignInFailed(exception as unknown as HttpException, undefined as CloudSsoFeatureStrategy);
+      service.sendCloudSignInFailed(
+        mockSessionMetadata,
+        exception as unknown as HttpException,
+        undefined as CloudSsoFeatureStrategy,
+      );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.CloudSignInFailed,
         exception,
         { flow: undefined },

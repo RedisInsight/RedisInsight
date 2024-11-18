@@ -74,7 +74,7 @@ describe('LocalFeaturesConfigService', () => {
 
   describe('getNewConfig', () => {
     it('should return remote config', async () => {
-      const result = await service['getNewConfig']();
+      const result = await service['getNewConfig'](mockSessionMetadata);
 
       expect(result).toEqual({ data: mockFeaturesConfigJson, type: FeatureConfigConfigDestination.Remote });
       expect(analytics.sendFeatureFlagInvalidRemoteConfig).not.toHaveBeenCalled();
@@ -82,13 +82,16 @@ describe('LocalFeaturesConfigService', () => {
     it('should return default config when unable to fetch remote config', async () => {
       mockedAxios.get.mockRejectedValueOnce(new Error('404 not found'));
 
-      const result = await service['getNewConfig']();
+      const result = await service['getNewConfig'](mockSessionMetadata);
 
       expect(result).toEqual({ data: defaultConfig, type: FeatureConfigConfigDestination.Default });
-      expect(analytics.sendFeatureFlagInvalidRemoteConfig).toHaveBeenCalledWith({
-        configVersion: undefined, // no config version since unable to fetch
-        error: new UnableToFetchRemoteConfigException(),
-      });
+      expect(analytics.sendFeatureFlagInvalidRemoteConfig).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        {
+          configVersion: undefined, // no config version since unable to fetch
+          error: new UnableToFetchRemoteConfigException(),
+        },
+      );
     });
     it('should return default config when invalid remote config fetched', async () => {
       const validateSpy = jest.spyOn(service['validator'], 'validateOrReject');
@@ -106,13 +109,16 @@ describe('LocalFeaturesConfigService', () => {
         },
       });
 
-      const result = await service['getNewConfig']();
+      const result = await service['getNewConfig'](mockSessionMetadata);
 
       expect(result).toEqual({ data: defaultConfig, type: FeatureConfigConfigDestination.Default });
-      expect(analytics.sendFeatureFlagInvalidRemoteConfig).toHaveBeenCalledWith({
-        configVersion: mockFeaturesConfigJson.version, // no config version since unable to fetch
-        error: [validationError],
-      });
+      expect(analytics.sendFeatureFlagInvalidRemoteConfig).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        {
+          configVersion: mockFeaturesConfigJson.version, // no config version since unable to fetch
+          error: [validationError],
+        },
+      );
     });
     it('should return default config when remote config version less then default', async () => {
       mockedAxios.get.mockResolvedValue({
@@ -122,7 +128,7 @@ describe('LocalFeaturesConfigService', () => {
         },
       });
 
-      const result = await service['getNewConfig']();
+      const result = await service['getNewConfig'](mockSessionMetadata);
 
       expect(result).toEqual({ data: defaultConfig, type: FeatureConfigConfigDestination.Default });
       expect(analytics.sendFeatureFlagInvalidRemoteConfig).not.toHaveBeenCalled();
@@ -140,11 +146,14 @@ describe('LocalFeaturesConfigService', () => {
 
       expect(repository.update).toHaveBeenCalledWith(mockSessionMetadata, mockFeaturesConfigJson);
       expect(eventEmitter.emit).toHaveBeenCalledWith(FeatureServerEvents.FeaturesRecalculate);
-      expect(analytics.sendFeatureFlagConfigUpdated).toHaveBeenCalledWith({
-        oldVersion: defaultConfig.version,
-        configVersion: mockFeaturesConfig.data.version,
-        type: FeatureConfigConfigDestination.Remote,
-      });
+      expect(analytics.sendFeatureFlagConfigUpdated).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        {
+          oldVersion: defaultConfig.version,
+          configVersion: mockFeaturesConfig.data.version,
+          type: FeatureConfigConfigDestination.Remote,
+        },
+      );
     });
     it('should not fail and not emit recalculate event in case of an error', async () => {
       repository.getOrCreate.mockResolvedValue({

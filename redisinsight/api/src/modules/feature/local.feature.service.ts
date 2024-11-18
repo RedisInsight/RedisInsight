@@ -162,12 +162,15 @@ export class LocalFeatureService extends FeatureService {
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculated, list);
 
       try {
-        this.analytics.sendFeatureFlagRecalculated({
-          configVersion: (await this.featuresConfigRepository.getOrCreate(sessionMetadata))
-            ?.data?.version,
-          features: list.features,
-          force: await this.listOfForceFlags(),
-        });
+        this.analytics.sendFeatureFlagRecalculated(
+          sessionMetadata,
+          {
+            configVersion: (await this.featuresConfigRepository.getOrCreate(sessionMetadata))
+              ?.data?.version,
+            features: list.features,
+            force: await this.listOfForceFlags(),
+          },
+        );
       } catch (e) {
         // ignore telemetry error
       }

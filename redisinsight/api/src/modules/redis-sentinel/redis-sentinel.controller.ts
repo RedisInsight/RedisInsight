@@ -50,8 +50,9 @@ export class RedisSentinelController {
   })
   async getMasters(
     @Body() dto: DiscoverSentinelMastersDto,
+      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<SentinelMaster[]> {
-    return await this.redisSentinelService.getSentinelMasters(dto as Database);
+    return await this.redisSentinelService.getSentinelMasters(sessionMetadata, dto as Database);
   }
 
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))

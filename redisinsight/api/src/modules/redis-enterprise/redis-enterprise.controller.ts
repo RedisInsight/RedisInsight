@@ -19,12 +19,12 @@ import { Response } from 'express';
 import { ActionStatus, SessionMetadata } from 'src/common/models';
 import { BuildType } from 'src/modules/server/models/server';
 import { RequestSessionMetadata } from 'src/common/decorators';
-import { ClusterConnectionDetailsDto, RedisEnterpriseDatabase } from '../dto/cluster.dto';
+import { ClusterConnectionDetailsDto, RedisEnterpriseDatabase } from 'src/modules/redis-enterprise/dto/cluster.dto';
 
 @ApiTags('Redis Enterprise Cluster')
 @UsePipes(new ValidationPipe({ transform: true }))
 @Controller('redis-enterprise/cluster')
-export class ClusterController {
+export class RedisEnterpriseController {
   constructor(private redisEnterpriseService: RedisEnterpriseService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -45,8 +45,9 @@ export class ClusterController {
   })
   async getDatabases(
     @Body() dto: ClusterConnectionDetailsDto,
+      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<RedisEnterpriseDatabase[]> {
-    return await this.redisEnterpriseService.getDatabases(dto);
+    return await this.redisEnterpriseService.getDatabases(sessionMetadata, dto);
   }
 
   @Post('databases')

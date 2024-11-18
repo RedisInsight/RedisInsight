@@ -35,7 +35,7 @@ export class DatabaseRecommendationService {
 
     const database = await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata?.databaseId);
 
-    this.analytics.sendCreatedRecommendationEvent(recommendation, database);
+    this.analytics.sendCreatedRecommendationEvent(clientMetadata.sessionMetadata, recommendation, database);
 
     return recommendation;
   }

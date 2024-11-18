@@ -47,6 +47,7 @@ export class RedisEnterpriseService {
   });
 
   async getDatabases(
+    sessionMetadata: SessionMetadata,
     dto: ClusterConnectionDetailsDto,
   ): Promise<RedisEnterpriseDatabase[]> {
     this.logger.log('Getting RE cluster databases.');
@@ -60,7 +61,7 @@ export class RedisEnterpriseService {
       });
       this.logger.log('Succeed to get RE cluster databases.');
       const result = this.parseClusterDbsResponse(data);
-      this.analytics.sendGetREClusterDbsSucceedEvent(result);
+      this.analytics.sendGetREClusterDbsSucceedEvent(sessionMetadata, result);
       return result;
     } catch (error) {
       const { response } = error;
@@ -75,7 +76,7 @@ export class RedisEnterpriseService {
           ERROR_MESSAGES.INCORRECT_DATABASE_URL(`${host}:${port}`),
         );
       }
-      this.analytics.sendGetREClusterDbsFailedEvent(exception);
+      this.analytics.sendGetREClusterDbsFailedEvent(sessionMetadata, exception);
       throw exception;
     }
   }
@@ -194,6 +195,7 @@ export class RedisEnterpriseService {
     let result: AddRedisEnterpriseDatabaseResponse[];
     try {
       const databases: RedisEnterpriseDatabase[] = await this.getDatabases(
+        sessionMetadata,
         connectionDetails,
       );
       result = await Promise.all(

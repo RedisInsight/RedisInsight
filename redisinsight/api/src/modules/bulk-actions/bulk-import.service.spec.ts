@@ -5,6 +5,7 @@ import {
   mockClientMetadata,
   mockClusterRedisClient, mockCombinedStream, mockDatabase,
   mockDatabaseClientFactory, mockDatabaseModules, mockDatabaseService, mockDefaultDataManifest,
+  mockSessionMetadata,
   mockStandaloneRedisClient,
   MockType,
 } from 'src/__mocks__';
@@ -164,10 +165,13 @@ describe('BulkImportService', () => {
         ...mockImportResult,
         duration: expect.anything(),
       });
-      expect(analytics.sendActionSucceed).toHaveBeenCalledWith({
-        ...mockImportResult,
-        duration: expect.anything(),
-      });
+      expect(analytics.sendActionSucceed).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        {
+          ...mockImportResult,
+          duration: expect.anything(),
+        },
+      );
     });
 
     it('should import data (100K) from file in batches 10K each', async () => {
@@ -249,6 +253,7 @@ describe('BulkImportService', () => {
       } catch (e) {
         expect(mockStandaloneRedisClient.disconnect).not.toHaveBeenCalled();
         expect(analytics.sendActionFailed).toHaveBeenCalledWith(
+          mockSessionMetadata,
           { ...mockEmptyImportResult },
           wrapHttpError(e),
         );

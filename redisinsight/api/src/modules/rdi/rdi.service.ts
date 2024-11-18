@@ -92,7 +92,7 @@ export class RdiService {
     return await this.repository.create(model);
   }
 
-  async delete(ids: string[]): Promise<void> {
+  async delete(sessionMetadata: SessionMetadata, ids: string[]): Promise<void> {
     try {
       await this.repository.delete(ids);
       await Promise.all(
@@ -101,10 +101,10 @@ export class RdiService {
         }),
       );
 
-      this.analytics.sendRdiInstanceDeleted(ids.length);
+      this.analytics.sendRdiInstanceDeleted(sessionMetadata, ids.length);
     } catch (error) {
       this.logger.error(`Failed to delete instance(s): ${ids}`, error.message);
-      this.analytics.sendRdiInstanceDeleted(ids.length, error.message);
+      this.analytics.sendRdiInstanceDeleted(sessionMetadata, ids.length, error.message);
       throw new InternalServerErrorException();
     }
   }

@@ -53,47 +53,73 @@ export class CloudAutodiscoveryService {
 
   /**
    * Get subscriptions by type
+   * @param sessionMetadata
    * @param authDto
    * @param type
    * @param authType
    */
   private async getSubscriptions(
+    sessionMetadata: SessionMetadata,
     authDto: CloudCapiAuthDto,
     type: CloudSubscriptionType,
     authType: CloudAutodiscoveryAuthType,
   ): Promise<CloudSubscription[]> {
     try {
       const subscriptions = await this.cloudSubscriptionCapiService.getSubscriptions(authDto, type);
-      this.analytics.sendGetRECloudSubsSucceedEvent(subscriptions, type, authType);
+      this.analytics.sendGetRECloudSubsSucceedEvent(
+        sessionMetadata,
+        subscriptions,
+        type,
+        authType,
+      );
       return subscriptions;
     } catch (e) {
-      this.analytics.sendGetRECloudSubsFailedEvent(e, type, authType);
+      this.analytics.sendGetRECloudSubsFailedEvent(
+        sessionMetadata,
+        e,
+        type,
+        authType,
+      );
       throw wrapHttpError(e);
     }
   }
 
   /**
    * Discover all subscriptions
+   * @param sessionMetadata
    * @param authDto
    * @param authType
    */
   async discoverSubscriptions(
+    sessionMetadata: SessionMetadata,
     authDto: CloudCapiAuthDto,
     authType: CloudAutodiscoveryAuthType,
   ): Promise<CloudSubscription[]> {
     return [].concat(...await Promise.all([
-      this.getSubscriptions(authDto, CloudSubscriptionType.Fixed, authType),
-      this.getSubscriptions(authDto, CloudSubscriptionType.Flexible, authType),
+      this.getSubscriptions(
+        sessionMetadata,
+        authDto,
+        CloudSubscriptionType.Fixed,
+        authType,
+      ),
+      this.getSubscriptions(
+        sessionMetadata,
+        authDto,
+        CloudSubscriptionType.Flexible,
+        authType,
+      ),
     ]));
   }
 
   /**
    * Get all databases from specified multiple subscriptions
+   * @param sessionMetadata
    * @param authDto
    * @param dto
    * @param authType
    */
   async discoverDatabases(
+    sessionMetadata: SessionMetadata,
     authDto: CloudCapiAuthDto,
     dto: DiscoverCloudDatabasesDto,
     authType: CloudAutodiscoveryAuthType,
@@ -114,10 +140,18 @@ export class CloudAutodiscoveryService {
         }),
       );
 
-      this.analytics.sendGetRECloudDbsSucceedEvent(result, authType);
+      this.analytics.sendGetRECloudDbsSucceedEvent(
+        sessionMetadata,
+        result,
+        authType,
+      );
       return result;
     } catch (e) {
-      this.analytics.sendGetRECloudDbsFailedEvent(e, authType);
+      this.analytics.sendGetRECloudDbsFailedEvent(
+        sessionMetadata,
+        e,
+        authType,
+      );
 
       throw wrapHttpError(e);
     }

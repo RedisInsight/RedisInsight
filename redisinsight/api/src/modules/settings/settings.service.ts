@@ -94,7 +94,7 @@ export class SettingsService {
       }
       this.logger.log('Succeed to update application settings.');
       const results = await this.getAppSettings(sessionMetadata);
-      this.analytics.sendSettingsUpdatedEvent(results, oldAppSettings);
+      this.analytics.sendSettingsUpdatedEvent(sessionMetadata, results, oldAppSettings);
 
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
 
@@ -206,6 +206,7 @@ export class SettingsService {
 
     if (dtoAgreements.has('analytics')) {
       this.analytics.sendAnalyticsAgreementChange(
+        sessionMetadata,
         dtoAgreements,
         new Map(Object.entries(oldAgreements.data || {})),
       );

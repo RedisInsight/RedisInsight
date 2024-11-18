@@ -113,9 +113,11 @@ export class RedisSentinelService {
 
   /**
    * Check connection and get sentinel masters
+   * @param sessionMetadata
    * @param dto
    */
   public async getSentinelMasters(
+    sessionMetadata: SessionMetadata,
     dto: Database,
   ): Promise<SentinelMaster[]> {
     this.logger.log('Connection and getting sentinel masters.');
@@ -128,12 +130,12 @@ export class RedisSentinelService {
         context: ClientContext.Common,
       }, database, { useRetry: false, enableReadyCheck: false });
       result = await discoverSentinelMasterGroups(client);
-      this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(result);
+      this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(sessionMetadata, result);
 
       await client.disconnect();
     } catch (error) {
       const exception: HttpException = getRedisConnectionException(error, dto);
-      this.redisSentinelAnalytics.sendGetSentinelMastersFailedEvent(exception);
+      this.redisSentinelAnalytics.sendGetSentinelMastersFailedEvent(sessionMetadata, exception);
       throw exception;
     }
     return result;

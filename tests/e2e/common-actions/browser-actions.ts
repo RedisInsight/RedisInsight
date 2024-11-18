@@ -88,9 +88,8 @@ export class BrowserActions {
      * @param folderName name of folder
      * @param delimiter string with delimiter value
      */
-    getNodeName(startFolder: string, folderName: string, delimiter: string): string {
-        return startFolder + folderName + delimiter;
-
+    getNodeName(startFolder: string, folderName: string, delimiters: string[]): string {
+        return `${startFolder}${folderName}${delimiters.join('|')}`;
     }
 
     /**
@@ -106,9 +105,9 @@ export class BrowserActions {
      * @param folders name of folders for tree view build
      * @param delimiter string with delimiter value
      */
-    async checkTreeViewFoldersStructure(folders: string[][], delimiter: string): Promise<void> {
+    async checkTreeViewFoldersStructure(folders: string[][], delimiters: string[]): Promise<void> {
         // Verify not patterned keys
-        await this.verifyNotPatternedKeys(delimiter);
+        await this.verifyNotPatternedKeys(delimiters[0]);
 
         const foldersNumber = folders.length;
 
@@ -117,7 +116,7 @@ export class BrowserActions {
             let prevNodeSelector = '';
 
             for (let j = 0; j < innerFoldersNumber; j++) {
-                const nodeName = this.getNodeName(prevNodeSelector, folders[i][j], delimiter);
+                const nodeName = this.getNodeName(prevNodeSelector, folders[i][j], delimiters);
                 const node = this.getNodeSelector(nodeName);
                 const fullTestIdSelector = await node.getAttribute('data-testid');
                 if (!fullTestIdSelector?.includes('expanded')) {
@@ -127,8 +126,8 @@ export class BrowserActions {
             }
 
             // Verify that the last folder level contains required keys
-            const foundKeyName = `${folders[i].join(delimiter)}`;
-            const firstFolderName = this.getNodeName('', folders[i][0], delimiter);
+            const foundKeyName = `${folders[i].join(delimiters.join('|'))}`;
+            const firstFolderName = this.getNodeName('', folders[i][0], delimiters);
             const firstFolder = this.getNodeSelector(firstFolderName);
             await t
                 .expect(Selector(`[data-testid*="node-item_${foundKeyName}"]`).find('[data-testid^="key-"]').exists).ok('Specific key not found')

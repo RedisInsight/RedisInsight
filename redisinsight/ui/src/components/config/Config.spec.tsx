@@ -10,6 +10,8 @@ import {
   mockedStore,
   cleanup,
   MOCKED_HIGHLIGHTING_FEATURES,
+  initialStateDefault,
+  mockStore
 } from 'uiSrc/utils/test-utils'
 
 import {
@@ -18,7 +20,7 @@ import {
   setSettingsPopupState,
   userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
-import { appServerInfoSelector, getServerInfo } from 'uiSrc/slices/app/info'
+import { appServerInfoSelector, getServerInfo, setServerLoaded } from 'uiSrc/slices/app/info'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { getRedisCommands } from 'uiSrc/slices/app/redis-commands'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
@@ -114,6 +116,28 @@ describe('Config', () => {
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
     await waitFor(() => expect(store.getActions()).not.toContainEqual(getUserSettingsSpec()))
+  })
+
+  it('should render expected actions when envDependant feature is off', () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+    const mockedStore = mockStore(initialStoreState)
+
+    render(<Config />, { store: mockedStore })
+    const afterRenderActions = [
+      setCapability(),
+      setServerLoaded(),
+      processCliClient(),
+      getRedisCommands(),
+      getContentRecommendations(),
+      getGuideLinks(),
+      getWBTutorials(),
+      getUserConfigSettings(),
+    ]
+    expect(mockedStore.getActions()).toEqual([...afterRenderActions])
   })
 
   it('should call the list of actions', () => {

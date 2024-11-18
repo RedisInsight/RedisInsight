@@ -50,8 +50,8 @@ test
         const compressor = 'Brotli';
 
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
-        await myRedisDatabasePage.AddRedisDatabase.setCompressorValue(compressor);
-        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        await myRedisDatabasePage.AddRedisDatabaseDialog.setCompressorValue(compressor);
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);
 
         // Select databases checkboxes
         await databasesActions.selectDatabasesByNames(databaseNames);
@@ -89,13 +89,13 @@ test
         await t.expect(modulesDbRedisStackIcon.exists).ok('module icon is displayed');
 
         await databaseHelper.clickOnEditDatabaseByName(databaseNames[1]);
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
-        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
+        await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
+        await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.cancelButton);
 
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.selectCompressor.textContent).eql(compressor, 'Compressor import incorrect');
-        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
+        await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.selectCompressor.textContent).eql(compressor, 'Compressor import incorrect');
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.cancelButton);
     });
 test
     .before(async() => {

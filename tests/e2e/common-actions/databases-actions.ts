@@ -24,7 +24,7 @@ export class DatabasesActions {
      */
     async importDatabase(fileParameters: ImportDatabaseParameters): Promise<void> {
         await t
-            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
+            .click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton)
             .click(myRedisDatabasePage.importDatabasesBtn)
             .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [fileParameters.path])
             .click(myRedisDatabasePage.submitChangesButton)

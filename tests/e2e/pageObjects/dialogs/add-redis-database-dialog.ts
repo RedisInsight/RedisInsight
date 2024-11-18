@@ -1,8 +1,8 @@
 import { Selector, t } from 'testcafe';
-import { TlsCertificates } from '../../../helpers/constants';
-import { RedisCloudSigninPanel } from '../redis-cloud-sign-in-panel';
+import { TlsCertificates } from '../../helpers/constants';
+import { RedisCloudSigninPanel } from '../components/redis-cloud-sign-in-panel';
 
-export class AddRedisDatabase {
+export class AddRedisDatabaseDialog {
     RedisCloudSigninPanel = new RedisCloudSigninPanel();
 
     //-------------------------------------------------------------------------------------------

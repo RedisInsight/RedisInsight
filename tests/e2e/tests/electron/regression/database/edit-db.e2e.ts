@@ -31,8 +31,8 @@ fixture `List of Databases`
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
-        await t.typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneConfig.port, { replace: true, paste: true });
-        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        await t.typeText(myRedisDatabasePage.AddRedisDatabaseDialog.portInput, ossStandaloneConfig.port, { replace: true, paste: true });
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteAllDatabasesApi();
@@ -49,8 +49,8 @@ test('Verify that context for previous database not saved after editing port/use
     await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     // Edit port of added database
     await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
-    await t.typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneBigConfig.port, { replace: true, paste: true });
-    await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+    await t.typeText(myRedisDatabasePage.AddRedisDatabaseDialog.portInput, ossStandaloneBigConfig.port, { replace: true, paste: true });
+    await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     // Verify that keys from the database with new port are displayed
     await t.expect(browserPage.keysSummary.find('b').withText('18 00').exists).ok('DB with new port not opened');

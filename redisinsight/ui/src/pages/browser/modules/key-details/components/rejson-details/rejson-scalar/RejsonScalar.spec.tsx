@@ -103,9 +103,9 @@ describe('JSONScalar', () => {
   })
 
   it('should render BigInt value when root', () => {
-    render(<RejsonScalar 
+    render(<RejsonScalar
       {...instance(mockedProps)}
-      isRoot={true}
+      isRoot
       value={BigInt('1188950299261208742')}
     />)
 
@@ -113,7 +113,7 @@ describe('JSONScalar', () => {
   })
 
   it('should render BigInt value when not root', () => {
-    render(<RejsonScalar 
+    render(<RejsonScalar
       {...instance(mockedProps)}
       isRoot={false}
       value={BigInt('1188950299261208742')}
@@ -123,9 +123,9 @@ describe('JSONScalar', () => {
   })
 
   it('should render regular number without n suffix', () => {
-    render(<RejsonScalar 
+    render(<RejsonScalar
       {...instance(mockedProps)}
-      isRoot={true}
+      isRoot
       value={123}
     />)
 
@@ -133,9 +133,9 @@ describe('JSONScalar', () => {
   })
 
   it('should render string value with quotes', () => {
-    render(<RejsonScalar 
+    render(<RejsonScalar
       {...instance(mockedProps)}
-      isRoot={true}
+      isRoot
       value="test"
     />)
 

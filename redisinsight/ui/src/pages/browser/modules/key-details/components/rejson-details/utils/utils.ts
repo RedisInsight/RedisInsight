@@ -63,7 +63,7 @@ export const getBrackets = (type: string, position: 'start' | 'end' = 'start') =
 
 export const isValidKey = (key: string): boolean => /^"([^"\\]|\\.)*"$/.test(key)
 
-const JSONParser = JSONBigInt({ 
+const JSONParser = JSONBigInt({
   useNativeBigInt: true,
   strict: false
 })
@@ -88,7 +88,7 @@ export const parseValue = (value: any, type?: string): any => {
           return null
         case 'string':
           if (value.startsWith('"') && value.endsWith('"')) {
-            value = value.slice(1, -1)
+            return value.slice(1, -1)
           }
           return value
         default:
@@ -97,10 +97,10 @@ export const parseValue = (value: any, type?: string): any => {
     }
 
     const parsed = JSONParser.parse(value)
-    
+
     if (typeof parsed === 'object' && parsed !== null) {
       if (Array.isArray(parsed)) {
-        return parsed.map(val => parseValue(val))
+        return parsed.map((val) => parseValue(val))
       }
       const result: { [key: string]: any } = {}
       Object.entries(parsed).forEach(([key, val]) => {
@@ -121,11 +121,11 @@ export const parseJsonData = (data: any) => {
   try {
     if (data && Array.isArray(data)) {
       return data.map((item: { type?: string; value?: any }) => ({
-      ...item,
-      value: item.type && item.value ? parseValue(item.value, item.type) : item.value
-      }))        
+        ...item,
+        value: item.type && item.value ? parseValue(item.value, item.type) : item.value
+      }))
     }
-    
+
     return parseValue(data)
   } catch (e) {
     return data

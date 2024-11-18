@@ -33,7 +33,6 @@ import reducer, {
 import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 import { refreshKeyInfo } from '../../browser/keys'
 
-
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))
@@ -41,7 +40,6 @@ jest.mock('uiSrc/services', () => ({
 let store: typeof mockedStore
 let storeWithSelectedKey: typeof mockedStore
 let defaultData: GetRejsonRlResponseDto
-
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)

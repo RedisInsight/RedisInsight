@@ -1,7 +1,7 @@
 import { isArray } from 'lodash'
+import JSONBigInt from 'json-bigint'
 import { JSONScalarValue, ObjectTypes } from '../interfaces'
 import styles from '../styles.module.scss'
-import JSONBigInt from 'json-bigint'
 
 enum ClassNames {
   string = 'jsonString',

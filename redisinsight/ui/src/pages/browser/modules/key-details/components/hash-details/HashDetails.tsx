@@ -68,7 +68,7 @@ const HashDetails = (props: Props) => {
             className={styles.showTtlCheckbox}
             checked={showTtl}
             onChange={(e) => handleSelectShow(e.target.checked)}
-            data-testId="test-check-ttl"
+            data-testid="test-check-ttl"
           />
           <Divider
             className={styles.divider}

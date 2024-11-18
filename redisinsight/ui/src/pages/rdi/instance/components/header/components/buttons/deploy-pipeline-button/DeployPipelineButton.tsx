@@ -110,7 +110,7 @@ const DeployPipelineButton = ({ loading, disabled }: Props) => {
             className={cx(styles.resetPipelineCheckbox, { [styles.checked]: resetPipeline })}
             checked={resetPipeline}
             onChange={(e) => handleSelectReset(e.target.checked)}
-            data-testId="reset-pipeline-checkbox"
+            data-testid="reset-pipeline-checkbox"
           />
 
           <EuiToolTip

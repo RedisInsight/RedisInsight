@@ -43,6 +43,7 @@ import { AiHistorySteps1714501203616 } from './1714501203616-ai-history-steps';
 import { Rdi1716370509836 } from './1716370509836-rdi';
 import { AiHistory1718260230164 } from './1718260230164-ai-history';
 import { UnifyChatbotHistory1728287148494 } from './1728287148494-unify-chatbot-history';
+import { CloudSession1729085495444 } from './1729085495444-cloud-session';
 import { CommandExecution1726058563737 } from './1726058563737-command-execution';
 
 export default [
@@ -91,5 +92,6 @@ export default [
   Rdi1716370509836,
   AiHistory1718260230164,
   UnifyChatbotHistory1728287148494,
+  CloudSession1729085495444,
   CommandExecution1726058563737,
 ];

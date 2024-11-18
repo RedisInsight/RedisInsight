@@ -13,6 +13,7 @@ jobs:
     with:
       group_tests: 'without_e2e'
       short_rte_list: false
+      pre_release: true
 
   builds:
     name: Release stage builds
@@ -22,6 +23,14 @@ jobs:
     with:
       environment: 'staging'
       target: 'all'
+
+  aws:
+    uses: ./.github/workflows/aws-upload-dev.yml
+    needs: [builds]
+    secrets: inherit
+    if: always()
+    with:
+      pre-release: true
 
   e2e-docker-tests:
     needs: builds
@@ -33,6 +42,14 @@ jobs:
     uses: ./.github/workflows/tests-e2e-appimage.yml
     secrets: inherit
 
+  # Remove artifacts from github actions
+  remove-artifacts:
+    name: Remove artifacts
+    needs: [aws, e2e-docker-tests, e2e-appimage-tests]
+    if: always()
+    runs-on: ubuntu-latest
 
-
-
+    steps:
+    - uses: actions/checkout@v4
+    - name: Remove all artifacts
+      uses: ./.github/actions/remove-artifacts  # Remove artifacts from github actions

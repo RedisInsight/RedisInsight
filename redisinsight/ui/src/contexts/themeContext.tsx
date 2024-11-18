@@ -1,9 +1,10 @@
 import React from 'react'
+import { ipcThemeChange } from 'uiSrc/electron/utils'
 import { BrowserStorageItem, Theme, THEMES, THEME_MATCH_MEDIA_DARK } from '../constants'
 import { localStorageService, themeService } from '../services'
 
 interface Props {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 const THEME_NAMES = THEMES.map(({ value }) => value)
@@ -36,14 +37,15 @@ export class ThemeProvider extends React.Component<Props> {
     }
   }
 
-  getSystemTheme = () => (window.matchMedia && window.matchMedia(THEME_MATCH_MEDIA_DARK).matches ? Theme.Dark : Theme.Light)
+  getSystemTheme = () => (window.matchMedia?.(THEME_MATCH_MEDIA_DARK)?.matches ? Theme.Dark : Theme.Light)
 
   changeTheme = (themeValue: any) => {
     let actualTheme = themeValue
     if (themeValue === Theme.System) {
       actualTheme = this.getSystemTheme()
     }
-    window.app?.ipc?.invoke?.('theme:change', themeValue)
+
+    ipcThemeChange(themeValue)
 
     this.setState({ theme: actualTheme, usingSystemTheme: themeValue === Theme.System }, () => {
       themeService.applyTheme(themeValue)

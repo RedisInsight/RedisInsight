@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover, EuiText } from '@elastic/eui'
@@ -27,17 +27,36 @@ export interface Props {
 const OAuthUserProfile = (props: Props) => {
   const { source } = props
   const [selectingAccountId, setSelectingAccountId] = useState<number>()
-  const { data } = useSelector(oauthCloudUserSelector)
+  const { loading, error, data } = useSelector(oauthCloudUserSelector)
   const { server } = useSelector(appInfoSelector)
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isImportLoading, setIsImportLoading] = useState(false)
+  const [profileLoading, setProfileLoading] = useState(true)
 
   const dispatch = useDispatch()
   const history = useHistory()
 
+  useEffect(() => {
+    if (!loading && (error || data)) {
+      setProfileLoading(false)
+    }
+  }, [data, loading, error])
+
   if (!data) {
     if (server?.packageType === PackageType.Mas) return null
+
+    if (profileLoading) {
+      return (
+        <div className={styles.loadingContainer}>
+          <EuiLoadingSpinner
+            className={cx('infiniteMessage__icon', styles.loading)}
+            size="l"
+            data-testid="oath-user-profile-spinner"
+          />
+        </div>
+      )
+    }
 
     return (
       <div className={styles.wrapper}>

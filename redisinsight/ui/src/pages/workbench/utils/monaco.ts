@@ -60,7 +60,8 @@ export const getRediSearchSignutureProvider = (options: Maybe<{
   if (token && numberOfArgsInside > 1) {
     const parentToken = token.token || token.arguments?.[0]?.token
     const parentTokenPosition = parentToken ? label.indexOf(parentToken) : 0
-    const startPosition = label.indexOf(arg, parentTokenPosition)
+    const wordRegex = new RegExp(`\\b${arg}\\b`, 'g')
+    const startPosition = (wordRegex.exec(label.slice(parentTokenPosition))?.index || 0) + parentTokenPosition
     signaturePosition = [startPosition, startPosition + arg.length]
   }
 

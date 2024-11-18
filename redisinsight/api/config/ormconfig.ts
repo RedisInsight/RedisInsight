@@ -23,6 +23,7 @@ import { RdiEntity } from 'src/modules/rdi/entities/rdi.entity';
 import { AiMessageEntity } from 'src/modules/ai/messages/entities/ai.message.entity';
 import { AiAgreementEntity } from 'src/modules/ai/agreements/entities/ai.agreement.entity';
 import { AiDatabaseAgreementEntity } from 'src/modules/ai/agreements/entities/ai.database.agreement.entity';
+import { CloudSessionEntity } from 'src/modules/cloud/session/entities/cloud.session.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
 
@@ -56,6 +57,7 @@ const ormConfig = {
     AiMessageEntity,
     AiAgreementEntity,
     AiDatabaseAgreementEntity,
+    CloudSessionEntity,
   ],
   migrations,
 };

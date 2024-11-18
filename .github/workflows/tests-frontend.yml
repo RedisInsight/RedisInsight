@@ -3,7 +3,9 @@ on:
   workflow_call:
 
 env:
+  SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+  REPORT_NAME: "report-fe"
 
 jobs:
   unit-tests:
@@ -22,7 +24,7 @@ jobs:
         FILENAME=ui.prod.deps.audit.json
 
         yarn audit --groups dependencies --json > $FILENAME || true &&
-        FILENAME=$FILENAME DEPS="UI prod" node .circleci/deps-audit-report.js &&
+        FILENAME=$FILENAME DEPS="UI prod" node .github/deps-audit-report.js &&
         curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: UI DEV dependencies audit
@@ -30,7 +32,7 @@ jobs:
         FILENAME=ui.dev.deps.audit.json
 
         yarn audit --groups devDependencies --json > $FILENAME || true &&
-        FILENAME=$FILENAME DEPS="UI dev" node .circleci/deps-audit-report.js &&
+        FILENAME=$FILENAME DEPS="UI dev" node .github/deps-audit-report.js &&
         curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: Code analysis
@@ -39,23 +41,41 @@ jobs:
         WORKDIR="."
 
         yarn lint:ui -f json -o $FILENAME || true &&
-        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="UI" node .circleci/lint-report.js &&
+        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="UI" node .github/lint-report.js &&
         curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
         yarn lint -f json -o $FILENAME || true &&
-        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="REST" node .circleci/lint-report.js &&
+        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="REST" node .github/lint-report.js &&
         curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
     - name: Unit tests UI
       run: yarn test:cov --ci --silent
 
-    - name: Generate test results
-      uses: dorny/test-reporter@v1
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: 'Test results: FE unit tests'
-        path: reports/jest-*.xml
-        reporter: jest-junit
-        list-tests: 'failed'
-        list-suites: 'failed'
-        fail-on-error: 'false'
+        name: ${{ env.REPORT_NAME }}
+        path: report
+
+    - name: Deploy report
+      uses: ./.github/actions/deploy-test-reports
+      if: always()
+      with:
+        group: 'report'
+        AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
+        AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+        AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Get current date
+      id: date
+      if: always()
+      uses: ./.github/actions/get-current-date
+
+    - name: Add link to report in the workflow summary
+      if: always()
+      run: |
+        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${{ steps.date.outputs.date }}/${{ github.run_id }}/${{ env.REPORT_NAME }}/index.html"
+        echo "[${link}](${link})" >> $GITHUB_STEP_SUMMARY

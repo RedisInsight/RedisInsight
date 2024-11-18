@@ -181,7 +181,7 @@ describe('JsonService', () => {
         } catch (err) {
           expect(err).toBeInstanceOf(BadRequestException);
           expect(err.message).toEqual(
-            ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+            ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
           );
         }
       });
@@ -923,7 +923,7 @@ describe('JsonService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
     });
@@ -1004,7 +1004,7 @@ describe('JsonService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
     });
@@ -1097,7 +1097,7 @@ describe('JsonService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
     });
@@ -1170,7 +1170,7 @@ describe('JsonService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
     });

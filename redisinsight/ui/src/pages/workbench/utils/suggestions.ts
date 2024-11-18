@@ -2,7 +2,14 @@ import { monaco } from 'react-monaco-editor'
 import * as monacoEditor from 'monaco-editor'
 import { findIndex } from 'lodash'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { bufferToString, formatLongName, generateArgsForInsertText, getCommandMarkdown, Nullable } from 'uiSrc/utils'
+import {
+  bufferToString,
+  formatLongName,
+  generateArgsForInsertText,
+  getCommandMarkdown,
+  getDocUrlForCommand,
+  Nullable
+} from 'uiSrc/utils'
 import { FoundCommandArgument } from 'uiSrc/pages/workbench/types'
 import {
   DefinedArgumentName,
@@ -117,7 +124,7 @@ export const getCommandsSuggestions = (commands: IRedisCommand[], range: monaco.
     detail: generateDetail(command),
     insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
     documentation: {
-      value: getCommandMarkdown(command as any)
+      value: getCommandMarkdown(command as any, command.name ? getDocUrlForCommand(command.name) : '')
     },
     sortText: getSortingForCommand(command)
   }))

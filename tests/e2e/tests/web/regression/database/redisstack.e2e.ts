@@ -40,7 +40,8 @@ test('Verify that user can see module list Redis Stack icon hovering (without Re
     // Check all Redis Stack modules inside
     await myRedisDatabasePage.checkModulesInTooltip(moduleNameList);
 });
-test('Verify that user can see Redis Stack icon in Edit mode near the DB name', async t => {
+// Deprecated since RI-6268, TODO remove after entire feature
+test.skip('Verify that user can see Redis Stack icon in Edit mode near the DB name', async t => {
     // Open Edit mode
     await t.click(myRedisDatabasePage.editDatabaseButton);
     // Check redis stack icon near the db name

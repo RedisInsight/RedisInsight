@@ -68,7 +68,11 @@ const Config = () => {
 
     // fetch config settings, after that take spec
     if (pathname !== SETTINGS_PAGE_PATH) {
-      dispatch(fetchUserConfigSettings(() => dispatch(fetchUserSettingsSpec())))
+      dispatch(fetchUserConfigSettings(() => {
+        if (envDependentFeature?.flag) {
+          dispatch(fetchUserSettingsSpec())
+        }
+      }))
     }
   }, [])
 

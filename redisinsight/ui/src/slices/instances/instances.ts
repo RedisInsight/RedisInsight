@@ -324,7 +324,13 @@ export let sourceInstance: Nullable<CancelTokenSource> = null
 
 // Asynchronous thunk action
 export function fetchInstancesAction(onSuccess?: (data: Instance[]) => void) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const envDependentFeature = get(stateInit(), ['app', 'features', 'featureFlags', 'features', 'envDependent'])
+
+    if (!envDependentFeature?.flag) {
+      return
+    }
+
     dispatch(loadInstances())
 
     try {

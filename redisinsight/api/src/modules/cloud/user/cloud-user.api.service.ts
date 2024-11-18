@@ -94,10 +94,10 @@ export class CloudUserApiService {
       if (!session?.apiSessionId) {
         this.logger.log('Trying to login user');
 
-        const preparedUtm = utm;
+        const preparedUtm = utm && { ...utm };
 
         if (preparedUtm && (!preparedUtm.amp || !preparedUtm.package)) {
-          await this.serverService.getInfo()
+          await this.serverService.getInfo(sessionMetadata)
             .then(({ id, packageType }) => {
               preparedUtm.amp = preparedUtm.amp || id;
               preparedUtm.package = preparedUtm.package || packageType;

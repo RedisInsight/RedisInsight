@@ -37,6 +37,12 @@ export abstract class RedisClientFactory {
   }
 
   /**
+   * Initialize provider with default value(s).
+   * Currently, set default client strategy based on feature flag
+   */
+  abstract init(): Promise<void>;
+
+  /**
    * Get strategy to create connection with
    * Default strategy is set during class initialization (ioredis for now) and overwritten
    * by feature config on module init

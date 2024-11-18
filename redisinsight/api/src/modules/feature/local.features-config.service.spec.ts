@@ -66,7 +66,7 @@ describe('LocalFeaturesConfigService', () => {
   describe('onApplicationBootstrap', () => {
     it('should sync on bootstrap', async () => {
       const spy = jest.spyOn(service, 'sync');
-      await service['onApplicationBootstrap']();
+      await service['init']();
 
       expect(spy).toHaveBeenCalledTimes(1);
     });

@@ -48,6 +48,7 @@ env:
     }
   ITESTS_NAMES_SHORT: |
     {
+      "mods-preview": "OSS Standalone and all preview modules",
       "oss-st-5-pass": "OSS Standalone v5 with admin pass required",
       "oss-st-6-tls-auth": "OSS Standalone v6 with TLS auth required",
       "oss-clu-tls": "OSS Cluster with TLS enabled",

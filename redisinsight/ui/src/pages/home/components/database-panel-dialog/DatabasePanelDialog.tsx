@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiFlexGroup,
@@ -60,9 +60,6 @@ const DatabasePanelDialog = (props: Props) => {
   const { credentials: cloudCredentials } = useSelector(cloudSelector)
   const { data: sentinelMasters } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
-
-  const typeSelectedRef = useRef(typeSelected)
-  const connectionTypeRef = useRef(connectionType)
 
   const dispatch = useDispatch()
 

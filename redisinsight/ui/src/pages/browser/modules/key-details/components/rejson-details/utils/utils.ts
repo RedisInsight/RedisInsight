@@ -66,7 +66,26 @@ export const isValidKey = (key: string): boolean => /^"([^"\\]|\\.)*"$/.test(key
 const JSONParser = JSONBigInt({
   useNativeBigInt: true,
   strict: false,
+  alwaysParseAsBig: false,
+  protoAction: 'preserve',
+  constructorAction: 'preserve'
 })
+
+const safeJSONParse = (value: string) => {
+  // Pre-process the string to handle scientific notation
+  const preprocessed = value.replace(/-?\d+\.?\d*e[+-]?\d+/gi, (match) => {
+    // Wrap scientific notation numbers in quotes to prevent BigInt conversion
+    return `"${match}"`
+  });
+  
+  return JSONParser.parse(preprocessed, (_key: string, value: any) => {
+    // Convert quoted scientific notation back to numbers
+    if (typeof value === 'string' && /^-?\d+\.?\d*e[+-]?\d+$/i.test(value)) {
+      return Number(value)
+    }
+    return value
+  })
+}
 
 export const parseValue = (value: any, type?: string): any => {
   try {
@@ -96,7 +115,7 @@ export const parseValue = (value: any, type?: string): any => {
       }
     }
 
-    const parsed = JSONParser.parse(value)
+    const parsed = safeJSONParse(value)
 
     if (typeof parsed === 'object' && parsed !== null) {
       if (Array.isArray(parsed)) {

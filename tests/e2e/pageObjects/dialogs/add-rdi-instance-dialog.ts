@@ -1,6 +1,6 @@
 import { Selector, t } from 'testcafe';
 
-export class AddRdiInstance {
+export class AddRdiInstanceDialog {
     //INPUTS
     rdiAliasInput = Selector('[data-testid=connection-form-name-input]');
     urlInput = Selector('[data-testid=connection-form-url-input]');

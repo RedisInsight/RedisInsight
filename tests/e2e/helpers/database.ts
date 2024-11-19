@@ -351,7 +351,7 @@ export class DatabaseHelper {
         await userAgreementDialog.acceptLicenseTerms();
         await updateControlNumber(48.2);
         // Open default databases list tab if RDI opened
-        if (await rdiInstancesListPage.rdiInstanceButton.exists) {
+        if (await rdiInstancesListPage.addRdiInstanceButton.exists) {
             await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase);
         }
         // TODO delete after releasing chatbot

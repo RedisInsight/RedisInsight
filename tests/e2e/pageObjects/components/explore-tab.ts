@@ -57,11 +57,11 @@ export class ExploreTab {
      * Run code
      * @param block Name of the block
      */
-    async   runBlockCode(block: string): Promise<void> {
+    async runBlockCode(block: string): Promise<void> {
         const runButton = Selector(this.runMask.replace(/\$name/g, block));
         await t.scrollIntoView(runButton);
         await t.click(runButton);
-        if(await this.tutorialPopoverConfirmRunButton.exists){
+        if (await this.tutorialPopoverConfirmRunButton.exists) {
             await t.click(this.tutorialPopoverConfirmRunButton);
         }
     }
@@ -148,5 +148,16 @@ export class ExploreTab {
      */
     getTutorialByName(name: string): Selector {
         return Selector('div').withText(name);
+    }
+
+    /**
+     * Expand/Collapse My tutorial Panel
+     * @param state State of panel
+     */
+    async toggleMyTutorialPanel(state: boolean = true): Promise<void> {
+        const currentState = await this.customTutorials.getAttribute('aria-expanded') === 'true';
+        if (currentState !== state) {
+            await t.click(this.customTutorials);
+        }
     }
 }

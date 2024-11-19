@@ -70,6 +70,25 @@
     border-radius: 4px;
   }
 
+  .footerAddDatabase {
+    margin: 0;
+    width: 100%;
+    bottom: 0;
+    float: right;
+    text-align: right;
+    vertical-align: bottom;
+    padding: 15px 24px 0;
+    border-radius: 0 0 4px 4px;
+
+    border-top: 1px solid var(--euiColorLightShade);
+
+    .btn-cancel,
+    .btn-back {
+      margin-right: 10px;
+      min-width: 71px !important;
+    }
+  }
+
   .clusterDatabaseList,
   .clusterDatabaseListResult,
   .cloudDatabaseList,

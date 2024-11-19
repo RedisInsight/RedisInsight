@@ -98,15 +98,16 @@ const DatabasePanelDialog = (props: Props) => {
     () => {
       if (connectionType === AddDbType.manual) return
 
+      if (connectionType === AddDbType.cloud) {
+        dispatch(resetDataRedisCluster())
+        dispatch(resetDataSentinel())
+        return
+      }
+
       switch (typeSelected) {
         case InstanceType.Sentinel: {
           dispatch(resetDataRedisCloud())
           dispatch(resetDataRedisCluster())
-          break
-        }
-        case InstanceType.RedisCloudPro: {
-          dispatch(resetDataRedisCluster())
-          dispatch(resetDataSentinel())
           break
         }
         case InstanceType.RedisEnterpriseCluster: {

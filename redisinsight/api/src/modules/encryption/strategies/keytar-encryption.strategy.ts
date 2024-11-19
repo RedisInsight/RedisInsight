@@ -108,7 +108,7 @@ export class KeytarEncryptionStrategy implements IEncryptionStrategy {
     }
 
     try {
-      await this.keytar.getPassword(SERVICE, ACCOUNT);
+      await this.keytar.getPassword(ENCRYPTION_CONFIG.keytarService, ACCOUNT);
       return true;
     } catch (e) {
       return false;

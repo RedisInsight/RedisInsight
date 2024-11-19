@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import { EuiListGroup } from '@elastic/eui'
 import { isArray } from 'lodash'
@@ -8,7 +8,11 @@ import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/inter
 
 import { ApiEndpoints, EAItemActions, EAManifestFirstKey } from 'uiSrc/constants'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import {
+  deleteCustomTutorial,
+  setWbCustomTutorialsState,
+  uploadCustomTutorial
+} from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
 import UploadWarning from 'uiSrc/components/upload-warning'
 import {
@@ -47,6 +51,10 @@ const Navigation = (props: Props) => {
   const dispatch = useDispatch()
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
+  useEffect(() => () => {
+    dispatch(setWbCustomTutorialsState())
+  }, [])
+
   const submitCreate = ({ file, link }: FormValues) => {
     const formData = new FormData()
 
@@ -66,7 +74,10 @@ const Navigation = (props: Props) => {
 
     dispatch(uploadCustomTutorial(
       formData,
-      () => setIsCreateOpen(false),
+      () => {
+        setIsCreateOpen(false)
+        dispatch(setWbCustomTutorialsState(true))
+      },
     ))
   }
 

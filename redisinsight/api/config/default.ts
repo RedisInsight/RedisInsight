@@ -87,6 +87,8 @@ export default {
   },
   encryption: {
     keytar: process.env.RI_ENCRYPTION_KEYTAR ? process.env.RI_ENCRYPTION_KEYTAR === 'true' : true, // enabled by default
+    // !!! DO NOT CHANGE THIS VARIABLE FOR REDIS INSIGHT!!! MUST BE "redisinsight"!!! It's only for vscode extension
+    keytarService: process.env.RI_ENCRYPTION_KEYTAR_SERVICE || 'redisinsight',
     encryptionIV: process.env.RI_ENCRYPTION_IV || Buffer.alloc(16, 0),
     encryptionAlgorithm: process.env.RI_ENCRYPTION_ALGORYTHM || 'aes-256-cbc',
   },

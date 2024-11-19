@@ -1,10 +1,19 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen, act } from 'uiSrc/utils/test-utils'
 
 import { defaultSelectedKeyAction, setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
+import { stringToBuffer } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { apiService } from 'uiSrc/services'
+import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import KeyDetails, { Props as KeyDetailsProps } from './KeyDetails'
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
 const mockedProps = mock<KeyDetailsProps>()
 
@@ -46,5 +55,24 @@ describe('KeyDetails', () => {
     render(<KeyDetails {...instance(mockedProps)} totalKeys={10} keysLastRefreshTime={1} />)
 
     expect(screen.getByTestId('select-key-message')).toBeInTheDocument()
+  })
+
+  it('should call proper telemetry after open key details', async () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    apiService.post = jest.fn().mockResolvedValueOnce({ status: 200, data: { length: 1, type: 'hash' } })
+
+    await act(async () => {
+      render(<KeyDetails {...instance(mockedProps)} keyProp={stringToBuffer('key')} />)
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.BROWSER_KEY_VALUE_VIEWED,
+      eventData: {
+        databaseId: INSTANCE_ID_MOCK,
+        length: 1,
+        keyType: 'hash'
+      }
+    })
   })
 })

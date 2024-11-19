@@ -1,16 +1,14 @@
-name: AWS
+name: AWS production
 
 on:
   workflow_call:
 
 env:
-  # TODO: remove after release 
-  # AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME_TEST }}
+  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
   AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
 
 jobs:
   release-private:
@@ -19,35 +17,26 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Download All Artifacts
+    - name: Merge builds by pattern
+      id: merge-builds
+      uses: actions/upload-artifact/merge@v4
+      with:
+        name: 'all-builds'
+        pattern: '*-builds'
+        delete-merged: true
+
+    - name: Download builds
       uses: actions/download-artifact@v4
       with:
-        path: ./release
+        name: 'all-builds'
+        path: release
 
     - run: ls -R ./release
 
     - name: Publish private
       run: |
-
-        # Define array of folders to exclude
-        exclude=("web" "web-mini" "redisstack" "docker")
-
-        # Iterate through first-level directories in ./release
-        for dir in ./release/*/; do
-          dir_name=$(basename "$dir")
-
-          # Check if the directory is not in the exclude list
-          if [[ ! " ${exclude[@]} " =~ " ${dir_name} " ]]; then
-            # Move all files from the subdirectory to the release directory
-            mv "$dir"* ./release/
-
-            # Remove the now-empty subdirectory
-            rmdir "$dir"
-          fi
-        done
-
-        chmod +x .circleci/build/sum_sha256.sh
-        .circleci/build/sum_sha256.sh
+        chmod +x .github/build/sum_sha256.sh
+        .github/build/sum_sha256.sh
         applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
         aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive

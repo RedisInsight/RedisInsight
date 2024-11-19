@@ -45,10 +45,10 @@ test('Verify that user can see options on what can be done to work with capabili
     await workbenchPage.NavigationHeader.togglePanel(true);
     await workbenchPage.sendCommandInWorkbench(commandJSON);
     // Verify change screens when capability not available - 'JSON'
-    await t.expect(await workbenchPage.commandExecutionResult.withText('RedisJSON is not available').visible)
-        .ok('Missing RedisJSON title is not visible');
+    await t.expect(await workbenchPage.commandExecutionResult.withText('JSON data structure is not available').visible)
+        .ok('Missing JSON title is not visible');
     await workbenchPage.sendCommandInWorkbench(commandFT);
     // Verify change screens when capability not available - 'Search'
-    await t.expect(await workbenchPage.commandExecutionResult.withText('RediSearch is not available').visible)
-        .ok('Missing RedisSearch title is not visible');
+    await t.expect(await workbenchPage.commandExecutionResult.withText('Redis Query Engine is not available').visible)
+        .ok('Missing Search title is not visible');
 });

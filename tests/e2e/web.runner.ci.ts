@@ -29,12 +29,12 @@ import testcafe from 'testcafe';
                     },
                     {
                         name: 'html',
-                        output: './report/report.html'
+                        output: './report/index.html'
                     }
                 ])
                 .run({
                     skipJsErrors: true,
-                    browserInitTimeout: 60000,
+                    browserInitTimeout: 120000,
                     selectorTimeout: 5000,
                     assertionTimeout: 5000,
                     speed: 1,

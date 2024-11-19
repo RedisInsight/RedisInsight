@@ -311,13 +311,13 @@ export const mockRdiConfigSchema = {
           default: 1000,
         },
         target_data_type: {
-          title: 'Target data type: hash/json - RedisJSON module must be in use in the target DB',
+          title: 'Target data type: hash/json - JSON module must be in use in the target DB',
           type: 'string',
           pattern: '^\\${.*}$|hash|json',
           default: 'hash',
         },
         json_update_strategy: {
-          title: 'Target update strategy: replace/merge - RedisJSON module must be in use in the target DB',
+          title: 'Target update strategy: replace/merge - JSON module must be in use in the target DB',
           type: 'string',
           pattern: '^\\${.*}$|replace|merge',
           default: 'replace',

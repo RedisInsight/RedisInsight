@@ -128,6 +128,10 @@ const instancesSlice = createSlice({
     // reset connected instance
     resetConnectedInstance: (state) => {
       state.connectedInstance = initialState.connectedInstance
+    },
+
+    updateConnectedInstance: (state, { payload }: { payload: RdiInstance }) => {
+      state.connectedInstance = { ...state.connectedInstance, ...payload }
     }
   }
 })
@@ -151,7 +155,8 @@ export const {
   setConnectedInstance,
   setConnectedInstanceSuccess,
   setConnectedInstanceFailure,
-  resetConnectedInstance
+  resetConnectedInstance,
+  updateConnectedInstance,
 } = instancesSlice.actions
 
 // selectors
@@ -219,7 +224,7 @@ export function editInstanceAction(
   payload: Partial<RdiInstance>,
   onSuccess?: (data: RdiInstanceResponse) => void
 ) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(defaultInstanceChanging())
 
     try {
@@ -231,6 +236,11 @@ export function editInstanceAction(
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch(fetchInstancesAction())
+
+        const state = stateInit()
+        if (state.rdi.instances.connectedInstance?.id === data.id) {
+          dispatch(updateConnectedInstance(data))
+        }
 
         onSuccess?.(data)
       }

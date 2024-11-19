@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiFlexGroup,
@@ -61,6 +61,9 @@ const DatabasePanelDialog = (props: Props) => {
   const { data: sentinelMasters } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
 
+  const typeSelectedRef = useRef(typeSelected)
+  const connectionTypeRef = useRef(connectionType)
+
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -98,15 +101,16 @@ const DatabasePanelDialog = (props: Props) => {
     () => {
       if (connectionType === AddDbType.manual) return
 
+      if (connectionType === AddDbType.cloud) {
+        dispatch(resetDataRedisCluster())
+        dispatch(resetDataSentinel())
+        return
+      }
+
       switch (typeSelected) {
         case InstanceType.Sentinel: {
           dispatch(resetDataRedisCloud())
           dispatch(resetDataRedisCluster())
-          break
-        }
-        case InstanceType.RedisCloudPro: {
-          dispatch(resetDataRedisCluster())
-          dispatch(resetDataSentinel())
           break
         }
         case InstanceType.RedisEnterpriseCluster: {

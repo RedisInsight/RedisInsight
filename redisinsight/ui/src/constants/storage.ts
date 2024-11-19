@@ -13,6 +13,7 @@ enum BrowserStorageItem {
   segmentAnonymousId = 'ajs_anonymous_id',
   wbClientUuid = 'wbClientUuid',
   wbInputHistory = 'wbInputHistory',
+  wbCommandsHistory = 'wbCommandsHistory',
   treeViewDelimiter = 'treeViewDelimiter',
   treeViewSort = 'treeViewSort',
   autoRefreshRate = 'autoRefreshRate',

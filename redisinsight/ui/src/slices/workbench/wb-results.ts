@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { chunk, reverse } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
@@ -258,9 +258,16 @@ export function fetchWBHistoryAction(
     try {
       const state = stateInit()
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
-      if (envDependentFlag) {
-        // TODO - 19.11.24 - Fetch commands from local storage?!
-        dispatch(loadWBHistorySuccess([]))
+      if (envDependentFlag === false) {
+        // Fetch commands from local storage?!
+        const commandsHistory = localStorageService.get(BrowserStorageItem.wbCommandsHistory) || []
+        if (Array.isArray(commandsHistory)) {
+          const commands = commandsHistory.map((chItem) => chItem.data[0])
+
+          dispatch(loadWBHistorySuccess(reverse(commands)))
+        } else {
+          dispatch(loadWBHistorySuccess([]))
+        }
         return
       }
       const { data, status } = await apiService.get<CommandExecution[]>(
@@ -331,7 +338,18 @@ export function sendWBCommandAction({
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
         dispatch(setDbIndexState(!!multiCommands?.length))
-        // TODO - 19.11.24 - Store command results in storage!
+        const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+        if (envDependentFlag === false) {
+          // Store command results in local storage!
+          const commandsHistory = localStorageService.get(BrowserStorageItem.wbCommandsHistory) || []
+          localStorageService.set(BrowserStorageItem.wbCommandsHistory, [
+            ...commandsHistory,
+            {
+              commandId,
+              data: reverse(data),
+            }
+          ])
+        }
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -396,8 +414,19 @@ export function sendWBCommandClusterAction({
       )
 
       if (isStatusSuccessful(status)) {
-        // TODO - 19.11.24 - Store command responses in  local storage?!
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
+        const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+        if (envDependentFlag === false) {
+          // Store command results in local storage!
+          const commandsHistory = localStorageService.get(BrowserStorageItem.wbCommandsHistory) || []
+          localStorageService.set(BrowserStorageItem.wbCommandsHistory, [
+            ...commandsHistory,
+            {
+              commandId,
+              data: reverse(data),
+            }
+          ])
+        }
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -426,9 +455,16 @@ export function fetchWBCommandAction(
 
       dispatch(processWBCommand(commandId))
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
-      if (envDependentFlag) {
-        // TODO - 19.11.24 - Fetch command from local storage?!
-        dispatch(fetchWBCommandSuccess({} as CommandExecution))
+      if (envDependentFlag === false) {
+        // Fetch command from local storage?!
+        const commandsHistory: {
+          commandId: string,
+          data: CommandExecution[]
+        }[] = localStorageService.get(BrowserStorageItem.wbCommandsHistory) || []
+        const command = commandsHistory.find((chItem) => chItem.commandId === commandId)
+
+        dispatch(fetchWBCommandSuccess(command?.data[0] || {} as CommandExecution))
+
         onSuccessAction?.()
         return
       }
@@ -468,8 +504,17 @@ export function deleteWBCommandAction(
 
       dispatch(processWBCommand(commandId))
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
-      if (envDependentFlag) {
-        // TODO - 19.11.24 - delete command from local storage?!
+      if (envDependentFlag === false) {
+        // Delete command from local storage?!
+        const commandsHistory: {
+          commandId: string,
+          data: CommandExecution[]
+        }[] = localStorageService.get(BrowserStorageItem.wbCommandsHistory) || []
+
+        const update = commandsHistory.filter((chItem) => chItem.data[0].id !== commandId)
+
+        localStorageService.set(BrowserStorageItem.wbCommandsHistory, update)
+
         dispatch(deleteWBCommandSuccess(commandId))
         onSuccessAction?.()
         return
@@ -511,8 +556,10 @@ export function clearWbResultsAction(
 
       dispatch(clearWbResults())
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
-      if (envDependentFlag) {
-        // TODO - 19.11.24 - Clear commands from local storage?!
+      if (envDependentFlag === false) {
+        // Delete commands history from local storage?!
+        localStorageService.set(BrowserStorageItem.wbCommandsHistory, [])
+
         dispatch(clearWbResultsSuccess())
         onSuccessAction?.()
         return
@@ -557,12 +604,12 @@ export function sendWbQueryAction(
 
     const {
       resultsMode: resultsModeInitial,
-      activeRunQueryMode: activeRunQueryModeInitinal
+      activeRunQueryMode: activeRunQueryModeInitial
     } = state.workbench.results || {}
     const { batchSize: batchSizeInitial = PIPELINE_COUNT_DEFAULT } = state.user.settings?.config || {}
     const currentExecuteParams = {
       resultsMode: resultsModeInitial,
-      activeRunQueryMode: activeRunQueryModeInitinal,
+      activeRunQueryMode: activeRunQueryModeInitial,
       batchSize: batchSizeInitial,
     }
 

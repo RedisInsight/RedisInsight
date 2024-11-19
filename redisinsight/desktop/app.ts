@@ -53,14 +53,11 @@ const init = async () => {
 
     // deep linking
     // register our application to handle custom protocol
-
     if (process.defaultApp) {
-      // Running in development
-      const electronExePath = process.execPath
-      const appPath = path.join(__dirname)
-      app.setAsDefaultProtocolClient(config.schema, electronExePath, [appPath])
+      if (deepLink) {
+        app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(deepLink)])
+      }
     } else {
-      // Running in production
       app.setAsDefaultProtocolClient(config.schema)
     }
 

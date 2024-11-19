@@ -35,14 +35,7 @@ switch (process.env.RI_BUILD_TYPE) {
     break;
 }
 
-const determineAppBuildType = () => {
-  if (process.env.RI_APP_TYPE?.toLowerCase() === 'electron') {
-    return { server:{ buildType: 'ELECTRON' } };
-  }
-  return {};
-};
-
-merge(config, envConfig, buildTypeConfig, determineAppBuildType());
+merge(config, envConfig, buildTypeConfig);
 
 export type Config = typeof config;
 export type KeyOfConfig = keyof typeof config;

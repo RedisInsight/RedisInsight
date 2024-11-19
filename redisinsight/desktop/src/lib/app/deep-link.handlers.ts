@@ -15,10 +15,7 @@ export interface IParsedDeepLink {
 export const deepLinkHandler = async (from?: string): Promise<undefined | IParsedDeepLink> => {
   if (from) {
     try {
-      // Remove the protocol part for parsing
-      const urlWithoutProtocol = from.replace(/^redisinsight-dev:\/\/|^redisinsight:\/\//, '')
-      const url = parse(`http://${urlWithoutProtocol}`, true)
-
+      const url = parse(from, true)
       switch (url?.hostname) {
         case 'cloud':
           await cloudDeepLinkHandler(url)

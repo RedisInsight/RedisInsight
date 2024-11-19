@@ -7,9 +7,9 @@ import { configMain as config } from 'desktopSrc/config'
 
 import { getWindows } from '../window'
 
-import { AbstractWindowAuthStrategy } from '../../../../api/dist/src/modules/auth/window-auth/strategies/abstract.window.auth.strategy'
 import { WindowAuthModule } from '../../../../api/dist/src/modules/auth/window-auth/window-auth.module'
 import { WindowAuthService } from '../../../../api/dist/src/modules/auth/window-auth/window-auth.service'
+import { AbstractWindowAuthStrategy } from '../../../../api/dist/src/modules/auth/window-auth/strategies/abstract.window.auth.strategy'
 import server from '../../../../api/dist/src/main'
 
 const port = config?.defaultPort
@@ -79,9 +79,9 @@ export const launchApiServer = async () => {
     const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server(detectPortConst)
     gracefulShutdown = gracefulShutdownFn
     beApp = apiApp
-    
-    const windowAuthService = beApp?.select?.(WindowAuthModule).get?.(WindowAuthService)
-    windowAuthService.setStrategy(new ElectronWindowAuthStrategy())
+
+    const winAuthService = beApp?.select?.(WindowAuthModule).get?.(WindowAuthService)
+    winAuthService.setStrategy(new ElectronWindowAuthStrategy())
   } catch (_err) {
     const error = _err as Error
     log.error('Catch server error:', wrapErrorMessageSensitiveData(error))

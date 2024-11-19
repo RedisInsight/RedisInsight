@@ -4,6 +4,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { API_HEADER_WINDOW_ID } from 'src/common/constants';
 import { WindowAuthService } from '../window-auth.service';
 import { WindowUnauthorizedException } from '../constants/exceptions';
+import config from 'src/utils/config';
 
 @Injectable()
 export class WindowAuthMiddleware implements NestMiddleware {
@@ -12,10 +13,6 @@ export class WindowAuthMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction): Promise<any> {
     const { windowId } = WindowAuthMiddleware.getWindowIdFromReq(req);
-    
-    if (!windowId && req.path.startsWith('/static/')) {
-      return next();
-    }
 
     const isAuthorized = await this.windowAuthService.isAuthorized(windowId);
 
@@ -27,8 +24,7 @@ export class WindowAuthMiddleware implements NestMiddleware {
   }
 
   private static getWindowIdFromReq(req: Request) {
-    const windowId = req?.headers?.[API_HEADER_WINDOW_ID];
-    return { windowId: windowId ? `${windowId}` : undefined };
+    return { windowId: `${req?.headers?.[API_HEADER_WINDOW_ID]}` };
   }
 
   private throwError(req: Request, message: string) {

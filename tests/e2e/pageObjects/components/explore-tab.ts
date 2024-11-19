@@ -134,6 +134,7 @@ export class ExploreTab {
      * @param name A tutorial name
      */
     async deleteTutorialByName(name: string): Promise<void> {
+        await this.toggleMyTutorialPanel();
         const deleteTutorialBtn = this.tutorialAccordionButton.withText(name).find(this.cssTutorialDeleteIcon);
         if (await this.closeEnablementPage.exists) {
             await t.click(this.closeEnablementPage);

@@ -79,7 +79,7 @@ const Group = (props: Props) => {
 
   const actionsContent = (
     <>
-      {actions?.includes(EAItemActions.Create) && (
+      {actions?.includes(EAItemActions.Create) && isGroupOpen && (
         <OnboardingTour
           options={ONBOARDING_FEATURES.EXPLORE_CUSTOM_TUTORIALS}
           anchorPosition="downLeft"

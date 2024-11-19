@@ -1,0 +1,24 @@
+name: Clean AWS S3 development builds
+on:
+  workflow_call:
+
+env:
+  AWS_BUCKET_NAME_TEST: ${{ secrets.AWS_BUCKET_NAME_TEST }}
+  AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+
+jobs:
+  deleting:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deleting builds and test reports older than 7 days
+      continue-on-error: true
+      run: |
+        DATE=$(date +'%Y-%m-%d')
+        DATE_EPIRED=$(date -d "$DATE - 7 days" +'%Y-%m-%d')
+
+        aws s3 rm s3://${AWS_BUCKET_NAME_TEST}/public/dev-builds/${DATE_EPIRED} --recursive
+        aws s3 rm s3://${AWS_BUCKET_NAME_TEST}/public/test-reports/${DATE_EPIRED} --recursive
+

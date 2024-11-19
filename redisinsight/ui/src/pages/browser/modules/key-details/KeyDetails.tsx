@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { isNull, isUndefined } from 'lodash'
+import { isNull } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
@@ -45,33 +45,34 @@ const KeyDetails = (props: Props) => {
   const { viewType } = useSelector(keysSelector)
   const { loading, error = '', data } = useSelector(selectedKeySelector)
   const isKeySelected = !isNull(useSelector(selectedKeyDataSelector))
-  const { type: keyType, length: keyLength } = useSelector(selectedKeyDataSelector) ?? {
-    type: KeyTypes.String,
-  }
+  const { type: keyType } = useSelector(selectedKeyDataSelector) ?? { type: KeyTypes.String }
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (keyProp === null) {
-      return
-    }
-    if (keyProp?.data) {
-      sendEventTelemetry({
-        event: getBasedOnViewTypeEvent(
-          viewType,
-          TelemetryEvent.BROWSER_KEY_VALUE_VIEWED,
-          TelemetryEvent.TREE_VIEW_KEY_VALUE_VIEWED
-        ),
-        eventData: {
-          keyType,
-          databaseId: instanceId,
-          length: keyLength,
-        }
-      })
-    }
-    // Restore key details from context in future
-    // (selectedKey.data?.name !== keyProp)
-    dispatch(fetchKeyInfo(keyProp))
+    if (keyProp === null) return
+
+    dispatch(fetchKeyInfo(
+      keyProp,
+      undefined,
+      (data) => {
+        if (!data) return
+
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            viewType,
+            TelemetryEvent.BROWSER_KEY_VALUE_VIEWED,
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_VIEWED
+          ),
+          eventData: {
+            keyType: data.type,
+            databaseId: instanceId,
+            length: data.length,
+          }
+        })
+      }
+    ))
+
     dispatch(setSelectedKeyRefreshDisabled(false))
   }, [keyProp])
 

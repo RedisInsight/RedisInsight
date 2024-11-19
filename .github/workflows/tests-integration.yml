@@ -28,7 +28,6 @@ env:
   SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
   TEST_MEDIUM_DB_DUMP: ${{ secrets.TEST_MEDIUM_DB_DUMP }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
-  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   REPORT_NAME: "report-it"
   ITESTS_NAMES: |
     {
@@ -49,6 +48,7 @@ env:
     }
   ITESTS_NAMES_SHORT: |
     {
+      "mods-preview": "OSS Standalone and all preview modules",
       "oss-st-5-pass": "OSS Standalone v5 with admin pass required",
       "oss-st-6-tls-auth": "OSS Standalone v6 with TLS auth required",
       "oss-clu-tls": "OSS Cluster with TLS enabled",
@@ -88,7 +88,6 @@ jobs:
     needs: set-matrix
     environment:
       name: production
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.rte }}
     strategy:
       fail-fast: false
       matrix:
@@ -143,6 +142,7 @@ jobs:
 
     - name: Generate test results
       uses: dorny/test-reporter@v1
+      id: test-reporter
       if: always()
       with:
         name: 'Test results: IT (${{ matrix.rte }}) tests'
@@ -151,6 +151,12 @@ jobs:
         list-tests: 'failed'
         list-suites: 'failed'
         fail-on-error: 'false'
+
+    - name: Add link to report in the workflow summary
+      if: always()
+      run: |
+        link="${{ steps.test-reporter.outputs.url_html }}"
+        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
 
   coverage:
     runs-on: ubuntu-latest

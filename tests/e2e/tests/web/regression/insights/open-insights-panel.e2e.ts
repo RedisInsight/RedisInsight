@@ -41,7 +41,7 @@ test
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel is not opened');
-        await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('Search and query capability', 'popover is not displayed');
+        await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('Redis Query Engine', 'popover is not displayed');
         const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.expect(tab.preselectArea.textContent).contains('How To Query Your Data', 'the tutorial is incorrect');
 
@@ -53,7 +53,7 @@ test
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel is not opened');
-        await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('Time series data', 'popover is not displayed');
+        await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('Time series data structure', 'popover is not displayed');
         await t.expect(tab.preselectArea.textContent).contains('Time Series', 'the tutorial is incorrect');
     });
 

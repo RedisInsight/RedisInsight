@@ -94,7 +94,7 @@ describe('bufferToSerializedFormat', () => {
 
   describe(KeyValueFormat.PHP, () => {
     describe('should properly serialize', () => {
-      const testValues = [[1], '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
+      const testValues = [[1], '""', '反序列化', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
         input: stringToBuffer(serialize(v)),
         expected: JSON.stringify(v)
       }))
@@ -156,7 +156,7 @@ describe('stringToSerializedBufferFormat', () => {
 
   describe(KeyValueFormat.PHP, () => {
     describe('should properly unserialize', () => {
-      const testValues = [[1], '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
+      const testValues = [[1], '""', '反序列化', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
         input: JSON.stringify(v),
         expected: stringToBuffer(serialize(v))
       }))

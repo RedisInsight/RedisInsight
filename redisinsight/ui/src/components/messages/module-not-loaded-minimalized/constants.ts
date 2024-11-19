@@ -9,11 +9,11 @@ export const MODULE_CAPABILITY_TEXT_NOT_AVAILABLE: { [key in RedisDefaultModules
     text: 'Create a free Redis Stack database with probabilistic data structures that extend the core capabilities of your Redis.'
   },
   [RedisDefaultModules.ReJSON]: {
-    title: 'JSON capability is not available',
+    title: 'JSON data structure is not available',
     text: 'Create a free Redis Stack database with JSON capability that extends the core capabilities of your Redis.'
   },
   [RedisDefaultModules.Search]: {
-    title: 'Search and query capability is not available',
+    title: 'Redis Query Engine capability is not available',
     text: 'Create a free Redis Stack database with search and query features that extend the core capabilities of your Redis.'
   },
   [RedisDefaultModules.TimeSeries]: {

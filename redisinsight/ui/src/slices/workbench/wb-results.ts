@@ -252,10 +252,17 @@ export function fetchWBHistoryAction(
   instanceId: string,
   executionType = CommandExecutionType.Workbench,
 ) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadWBHistory())
 
     try {
+      const state = stateInit()
+      const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+      if (envDependentFlag) {
+        // TODO - 19.11.24 - Fetch commands from local storage?!
+        dispatch(loadWBHistorySuccess([]))
+        return
+      }
       const { data, status } = await apiService.get<CommandExecution[]>(
         getUrl(
           instanceId,
@@ -324,6 +331,7 @@ export function sendWBCommandAction({
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
         dispatch(setDbIndexState(!!multiCommands?.length))
+        // TODO - 19.11.24 - Store command results in storage!
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -388,6 +396,7 @@ export function sendWBCommandClusterAction({
       )
 
       if (isStatusSuccessful(status)) {
+        // TODO - 19.11.24 - Store command responses in  local storage?!
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
         onSuccessAction?.(multiCommands)
       }
@@ -416,7 +425,13 @@ export function fetchWBCommandAction(
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(processWBCommand(commandId))
-
+      const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+      if (envDependentFlag) {
+        // TODO - 19.11.24 - Fetch command from local storage?!
+        dispatch(fetchWBCommandSuccess({} as CommandExecution))
+        onSuccessAction?.()
+        return
+      }
       const { data, status } = await apiService.get<CommandExecution>(
         getUrl(
           id,
@@ -452,6 +467,13 @@ export function deleteWBCommandAction(
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(processWBCommand(commandId))
+      const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+      if (envDependentFlag) {
+        // TODO - 19.11.24 - delete command from local storage?!
+        dispatch(deleteWBCommandSuccess(commandId))
+        onSuccessAction?.()
+        return
+      }
 
       const { status } = await apiService.delete<CommandExecution>(
         getUrl(
@@ -488,7 +510,13 @@ export function clearWbResultsAction(
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(clearWbResults())
-
+      const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+      if (envDependentFlag) {
+        // TODO - 19.11.24 - Clear commands from local storage?!
+        dispatch(clearWbResultsSuccess())
+        onSuccessAction?.()
+        return
+      }
       const { status } = await apiService.delete(
         getUrl(
           id,

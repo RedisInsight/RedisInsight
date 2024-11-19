@@ -66,10 +66,6 @@ export const isValidKey = (key: string): boolean => /^"([^"\\]|\\.)*"$/.test(key
 const JSONParser = JSONBigInt({
   useNativeBigInt: true,
   strict: false,
-  // Parse all numbers as BigInt if they exceed safe integer
-  alwaysParseAsBig: false,
-  // This option helps with scientific notation
-  storeAsString: true
 })
 
 export const parseValue = (value: any, type?: string): any => {
@@ -114,7 +110,11 @@ export const parseValue = (value: any, type?: string): any => {
     }
     return parsed
   } catch (e) {
-    return value
+    try {
+      return JSON.parse(value)
+    } catch (error) {
+      return value
+    }
   }
 }
 

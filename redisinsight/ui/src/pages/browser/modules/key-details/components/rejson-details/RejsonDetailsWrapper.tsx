@@ -25,9 +25,9 @@ const RejsonDetailsWrapper = (props: Props) => {
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
 
-  const updatedData = parseJsonData(data)
-
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
+
+  const updatedData = parseJsonData(data)
 
   useEffect(() => {
     setExpandedRows(new Set())

@@ -9,7 +9,7 @@ import {
 } from 'uiSrc/slices/browser/rejson'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
-import { getBrackets, isRealArray, isRealObject, wrapPath } from '../utils'
+import { getBrackets, isRealArray, isRealObject, parseJsonData, wrapPath } from '../utils'
 import { BaseProps, ObjectTypes } from '../interfaces'
 import RejsonDynamicTypes from '../rejson-dynamic-types'
 import { AddItem } from '../components'
@@ -32,8 +32,14 @@ const RejsonDetails = (props: BaseProps) => {
 
   const dispatch = useDispatch()
 
-  const handleFetchVisualisationResults = (path: string, forceRetrieve = false) =>
+  const handleFetchVisualisationResults = (path: string, forceRetrieve = false) => new Promise((resolve, reject) => {
     dispatch<any>(fetchVisualisationResults(path, forceRetrieve))
+      .then((data: any) => resolve({
+        ...data,
+        data: parseJsonData(data?.data)
+      }))
+      .catch(reject)
+  })
 
   const handleAppendRejsonArrayItemAction = (keyName: RedisResponseBuffer, path: string, data: string) => {
     dispatch(appendReJSONArrayItemAction(keyName, path, data, length))

@@ -3,7 +3,7 @@ import React from 'react'
 import { isNull, isObject } from 'lodash'
 import { MAX_LEFT_PADDING_NESTING } from '../constants'
 import { DynamicTypesProps, ObjectTypes } from '../interfaces'
-import { generatePath, isScalar, parseJsonData } from '../utils'
+import { generatePath, isScalar } from '../utils'
 
 import RejsonScalar from '../rejson-scalar'
 import RejsonObject from '../rejson-object'
@@ -102,7 +102,7 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
     return Object.entries(data).map(([key, value]) => renderArrayItem(key, value))
   }
 
-  return renderResult(parseJsonData(data))
+  return renderResult(data)
 }
 
 export default RejsonDynamicTypes

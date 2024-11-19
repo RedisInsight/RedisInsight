@@ -82,6 +82,7 @@ describe('JSONUtils', () => {
 
   describe('JSON Parsing Utils', () => {
     const bigintAsString = '1188950299261208742'
+    const scientificNotation = 1.2345678901234568e+29
 
     describe('parseValue', () => {
       it('should handle non-string values', () => {
@@ -130,6 +131,19 @@ describe('JSONUtils', () => {
         expect(typeof result[0]).toBe('bigint')
         expect(result[0].toString()).toBe(bigintAsString)
         expect(result[1]).toBe('test')
+      })
+
+      it('should handle extremely large integers and maintain scientific notation', () => {
+        const resultFromString = parseValue(`'${scientificNotation}'`, 'integer')
+        expect(resultFromString).toBe(`'${scientificNotation}'`)
+
+        const resultFromInt = parseValue(scientificNotation, 'integer')
+        expect(resultFromInt).toBe(scientificNotation)
+
+        // Also test parsing as part of JSON
+        const jsonWithLargeInt = `{"value": ${scientificNotation}}`
+        const parsedJson = parseValue(jsonWithLargeInt)
+        expect(parsedJson.value).toBe(scientificNotation)
       })
     })
 

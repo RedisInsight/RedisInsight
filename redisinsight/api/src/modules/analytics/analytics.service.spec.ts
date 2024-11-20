@@ -74,15 +74,32 @@ describe('AnalyticsService', () => {
         controlGroup: mockControlGroup,
         appVersion: mockAppVersion,
         firstStart: false,
+        sessionMetadata: mockSessionMetadata,
       });
 
       const anonymousId = service.getAnonymousId();
 
       expect(anonymousId).toEqual(mockAnonymousId);
       expect(sendEventSpy).toHaveBeenCalledTimes(1);
-      expect(sendEventSpy).toHaveBeenCalledWith(expect.objectContaining({
+      expect(sendEventSpy).toHaveBeenCalledWith(mockSessionMetadata, expect.objectContaining({
         event: TelemetryEvents.ApplicationStarted,
       }));
+    });
+    it('should NOT send application started event since sessionMetadata was not provided', () => {
+      service.init({
+        anonymousId: mockAnonymousId,
+        sessionId,
+        appType: AppType.Electron,
+        controlNumber: mockControlNumber,
+        controlGroup: mockControlGroup,
+        appVersion: mockAppVersion,
+        firstStart: false,
+      });
+
+      const anonymousId = service.getAnonymousId();
+
+      expect(anonymousId).toEqual(mockAnonymousId);
+      expect(sendEventSpy).toHaveBeenCalledTimes(0);
     });
     it('should set anonymousId and send application first start event', () => {
       service.init({
@@ -93,13 +110,14 @@ describe('AnalyticsService', () => {
         controlGroup: mockControlGroup,
         appVersion: mockAppVersion,
         firstStart: true,
+        sessionMetadata: mockSessionMetadata,
       });
 
       const anonymousId = service.getAnonymousId();
 
       expect(anonymousId).toEqual(mockAnonymousId);
       expect(sendEventSpy).toHaveBeenCalledTimes(1);
-      expect(sendEventSpy).toHaveBeenCalledWith(expect.objectContaining({
+      expect(sendEventSpy).toHaveBeenCalledWith(mockSessionMetadata, expect.objectContaining({
         event: TelemetryEvents.ApplicationFirstStart,
       }));
     });
@@ -179,11 +197,14 @@ describe('AnalyticsService', () => {
     it('should send event with anonymousId if permission are granted', async () => {
       settingsService.getAppSettings.mockResolvedValue(mockAppSettings);
 
-      await service.sendEvent({
-        event: TelemetryEvents.ApplicationStarted,
-        eventData: {},
-        nonTracking: false,
-      });
+      await service.sendEvent(
+        mockSessionMetadata,
+        {
+          event: TelemetryEvents.ApplicationStarted,
+          eventData: {},
+          nonTracking: false,
+        },
+      );
 
       expect(mockAnalyticsTrack).toHaveBeenCalledWith({
         anonymousId: mockAnonymousId,
@@ -207,11 +228,14 @@ describe('AnalyticsService', () => {
       settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
       mockAnalyticsTrack.mockReset(); // reset invocation during init()
 
-      await service.sendEvent({
-        event: 'SOME_EVENT',
-        eventData: {},
-        nonTracking: false,
-      });
+      await service.sendEvent(
+        mockSessionMetadata,
+        {
+          event: 'SOME_EVENT',
+          eventData: {},
+          nonTracking: false,
+        },
+      );
 
       expect(mockAnalyticsTrack).not.toHaveBeenCalled();
     });
@@ -219,11 +243,14 @@ describe('AnalyticsService', () => {
       settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
       mockAnalyticsTrack.mockReset(); // reset invocation during init()
 
-      await service.sendEvent({
-        event: TelemetryEvents.ApplicationStarted,
-        eventData: {},
-        nonTracking: true,
-      });
+      await service.sendEvent(
+        mockSessionMetadata,
+        {
+          event: TelemetryEvents.ApplicationStarted,
+          eventData: {},
+          nonTracking: true,
+        },
+      );
 
       expect(mockAnalyticsTrack).toHaveBeenCalledWith({
         anonymousId: NON_TRACKING_ANONYMOUS_ID,
@@ -247,11 +274,14 @@ describe('AnalyticsService', () => {
       settingsService.getAppSettings.mockResolvedValue(mockAppSettings);
       mockAnalyticsTrack.mockReset(); // reset invocation during init()
 
-      await service.sendEvent({
-        event: TelemetryEvents.ApplicationStarted,
-        eventData: {},
-        nonTracking: true,
-      });
+      await service.sendEvent(
+        mockSessionMetadata,
+        {
+          event: TelemetryEvents.ApplicationStarted,
+          eventData: {},
+          nonTracking: true,
+        },
+      );
 
       expect(mockAnalyticsTrack).toHaveBeenCalledWith({
         anonymousId: mockAnonymousId,

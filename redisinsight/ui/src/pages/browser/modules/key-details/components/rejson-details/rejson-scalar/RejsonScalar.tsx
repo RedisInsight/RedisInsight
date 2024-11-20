@@ -36,16 +36,21 @@ const RejsonScalar = (props: JSONScalarProps) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (typeof value === 'bigint') {
-      setChangedValue(value.toString())
-    } else if (isString(value)) {
-      setChangedValue(`"${value}"`)
-    } else if (isNull(value)) {
-      setChangedValue('null')
-    } else {
-      setChangedValue(value)
-    }
+    setChangedValue(stringify(value))
   }, [value])
+
+  const stringify = (value: string | number | boolean | bigint): string => {
+    if (typeof value === 'bigint') {
+      return value.toString()
+    }
+    if (isString(value)) {
+      return `"${value}"`
+    }
+    if (isNull(value)) {
+      return 'null'
+    }
+    return String(value)
+  }
 
   const onDeclineChanges = () => {
     setEditing(false)

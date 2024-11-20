@@ -35,12 +35,11 @@ jobs:
     name: E2E Docker tests
     # environment:
       # name: production
-    container:
-      image: docker:latest
-      options: --privileged
-      volumes:
-        - /usr/src/app/results:/usr/src/app/results
-        - /usr/src/app/report:/usr/src/app/report
+    # container:
+    #   image: docker:latest
+    #   volumes:
+    #     - /usr/src/app/results:/usr/src/app/results
+    #     - /usr/src/app/report:/usr/src/app/report
     strategy:
       fail-fast: false
       matrix:

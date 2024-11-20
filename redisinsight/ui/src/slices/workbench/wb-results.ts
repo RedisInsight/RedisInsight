@@ -253,6 +253,13 @@ type CommandHistoryItem = {
 }
 
 type CommandHistoryType = CommandHistoryItem[]
+function getLocalWbHistory(instanceId: string): CommandHistoryType {
+  return localStorageService.get(`${BrowserStorageItem.wbCommandsHistory}:${instanceId}`) || []
+}
+
+function saveLocalWbHistory(instanceId: string, commandsHistory: CommandHistoryType) {
+  localStorageService.set(`${BrowserStorageItem.wbCommandsHistory}:${instanceId}`, commandsHistory)
+}
 
 // Asynchronous thunk actions
 export function fetchWBHistoryAction(
@@ -267,7 +274,7 @@ export function fetchWBHistoryAction(
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
       if (envDependentFlag === false) {
         // Fetch commands from local storage
-        const commandsHistory: CommandHistoryType = localStorageService.get(BrowserStorageItem.wbCommandsHistory) || []
+        const commandsHistory: CommandHistoryType = getLocalWbHistory(instanceId)
         if (Array.isArray(commandsHistory)) {
           const commands = flatten(commandsHistory.map((chItem) => chItem.data))
 
@@ -348,8 +355,8 @@ export function sendWBCommandAction({
         const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
         if (envDependentFlag === false) {
           // Store command results in local storage!
-          const commandsHistory: CommandHistoryType = localStorageService.get(BrowserStorageItem.wbCommandsHistory) || []
-          localStorageService.set(BrowserStorageItem.wbCommandsHistory, [
+          const commandsHistory: CommandHistoryType = getLocalWbHistory(id)
+          saveLocalWbHistory(id, [
             ...commandsHistory,
             {
               commandId,
@@ -425,13 +432,13 @@ export function sendWBCommandClusterAction({
         const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
         if (envDependentFlag === false) {
           // Store command results in local storage!
-          const commandsHistory: CommandHistoryType = localStorageService.get(BrowserStorageItem.wbCommandsHistory) || []
-          localStorageService.set(BrowserStorageItem.wbCommandsHistory, [
+          const commandsHistory: CommandHistoryType = getLocalWbHistory(id)
+          saveLocalWbHistory(id, [
             ...commandsHistory,
             {
               commandId,
               data: reverse(data),
-            } as CommandHistoryItem
+            }
           ])
         }
         onSuccessAction?.(multiCommands)
@@ -463,10 +470,10 @@ export function fetchWBCommandAction(
       dispatch(processWBCommand(commandId))
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
       if (envDependentFlag === false) {
-        // Fetch command from local storage?!
-        const commandsHistory: CommandHistoryType = localStorageService.get(BrowserStorageItem.wbCommandsHistory) || []
+        // Fetch command from local storage
+        const commandsHistory = getLocalWbHistory(id)
 
-        const command = commandsHistory.reduce((acc: CommandExecution | null, chItem ) => {
+        const command = commandsHistory.reduce((acc: CommandExecution | null, chItem) => {
           if (chItem.commandId === commandId) {
             return chItem.data[0]
           }
@@ -517,7 +524,7 @@ export function deleteWBCommandAction(
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
       if (envDependentFlag === false) {
         // Delete command from local storage?!
-        const commandsHistory: CommandHistoryType = localStorageService.get(BrowserStorageItem.wbCommandsHistory) || []
+        const commandsHistory: CommandHistoryType = getLocalWbHistory(id)
 
         const update = commandsHistory.reduce((acc, commandsHistoryElement) => {
           const items = commandsHistoryElement.data.filter((chItem) => chItem.id !== commandId)
@@ -529,7 +536,7 @@ export function deleteWBCommandAction(
           return acc
         }, [] as CommandHistoryType)
 
-        localStorageService.set(BrowserStorageItem.wbCommandsHistory, update)
+        saveLocalWbHistory(id, update)
 
         dispatch(deleteWBCommandSuccess(commandId))
         onSuccessAction?.()
@@ -574,7 +581,7 @@ export function clearWbResultsAction(
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
       if (envDependentFlag === false) {
         // Delete commands history from local storage?!
-        localStorageService.set(BrowserStorageItem.wbCommandsHistory, [])
+        saveLocalWbHistory(id, [])
 
         dispatch(clearWbResultsSuccess())
         onSuccessAction?.()

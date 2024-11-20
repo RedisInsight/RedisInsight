@@ -101,7 +101,7 @@ const globalManifest = {
     'create',
   ],
   args: {
-    initialIsOpen: true,
+    initialIsOpen: false,
     withBorder: true,
   },
   children: [],

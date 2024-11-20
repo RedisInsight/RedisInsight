@@ -1,4 +1,4 @@
-import { isArray } from 'lodash'
+import { isArray, isNull, isString } from 'lodash'
 import JSONBigInt from 'json-bigint'
 import { JSONScalarValue, ObjectTypes } from '../interfaces'
 import styles from '../styles.module.scss'
@@ -153,4 +153,17 @@ export const parseJsonData = (data: any) => {
   } catch (e) {
     return data
   }
+}
+
+export const stringifyScalarValue = (value: string | number | boolean | bigint): string => {
+  if (typeof value === 'bigint') {
+    return value.toString()
+  }
+  if (isString(value)) {
+    return `"${value}"`
+  }
+  if (isNull(value)) {
+    return 'null'
+  }
+  return String(value)
 }

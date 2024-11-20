@@ -10,7 +10,7 @@ import { bufferToString, createDeleteFieldHeader, createDeleteFieldMessage, Null
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 
 import { JSONScalarProps } from '../interfaces'
-import { generatePath, getClassNameByValue, isValidJSON } from '../utils'
+import { generatePath, getClassNameByValue, isValidJSON, stringifyScalarValue } from '../utils'
 import { JSONErrors } from '../constants'
 
 import styles from '../styles.module.scss'
@@ -36,21 +36,8 @@ const RejsonScalar = (props: JSONScalarProps) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    setChangedValue(stringify(value))
+    setChangedValue(stringifyScalarValue(value))
   }, [value])
-
-  const stringify = (value: string | number | boolean | bigint): string => {
-    if (typeof value === 'bigint') {
-      return value.toString()
-    }
-    if (isString(value)) {
-      return `"${value}"`
-    }
-    if (isNull(value)) {
-      return 'null'
-    }
-    return String(value)
-  }
 
   const onDeclineChanges = () => {
     setEditing(false)

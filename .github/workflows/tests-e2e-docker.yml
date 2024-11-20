@@ -54,6 +54,11 @@ jobs:
     - name: Setup repository
       run: git config --global --add safe.directory /__w/RedisInsight/RedisInsight
 
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
     # SSH Debug
     - name: Enable SSH
       uses: mxschmitt/action-tmate@v3

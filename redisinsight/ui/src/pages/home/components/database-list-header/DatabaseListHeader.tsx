@@ -82,14 +82,12 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const AddInstanceBtn = () => (
     <EuiButton
       fill
-      size={isShowPromoBtn ? 'm' : 's'}
       color="secondary"
       onClick={handleOnAddDatabase}
       className={styles.addInstanceBtn}
       data-testid="add-redis-database-short"
     >
-      {!isShowPromoBtn ? (<span>+ DB</span>) : (<span>+ Add Redis database</span>)}
-
+      <span>+ Add Redis database</span>
     </EuiButton>
   )
 

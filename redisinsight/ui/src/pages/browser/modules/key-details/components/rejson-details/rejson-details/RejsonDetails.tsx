@@ -32,14 +32,9 @@ const RejsonDetails = (props: BaseProps) => {
 
   const dispatch = useDispatch()
 
-  const handleFetchVisualisationResults = (path: string, forceRetrieve = false) => new Promise((resolve, reject) => {
+  const handleFetchVisualisationResults = (path: string, forceRetrieve = false) =>
     dispatch<any>(fetchVisualisationResults(path, forceRetrieve))
-      .then((data: any) => resolve({
-        ...data,
-        data: parseJsonData(data?.data)
-      }))
-      .catch(reject)
-  })
+
 
   const handleAppendRejsonArrayItemAction = (keyName: RedisResponseBuffer, path: string, data: string) => {
     dispatch(appendReJSONArrayItemAction(keyName, path, data, length))

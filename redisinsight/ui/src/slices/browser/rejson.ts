@@ -23,6 +23,7 @@ import { refreshKeyInfoAction } from './keys'
 import { InitialStateRejson, RedisResponseBuffer } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
+import { parseJsonData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/utils'
 
 const JSON_LENGTH_TO_FORCE_RETRIEVE = 200
 
@@ -352,7 +353,10 @@ export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
       )
 
       if (isStatusSuccessful(status)) {
-        return data
+        return {
+          ...data,
+          data: parseJsonData(data?.data)
+        }
       }
       throw new Error(data.toString())
     } catch (_err) {

@@ -57,6 +57,7 @@ export class BrowserPage extends InstancePage {
     sortingButton = Selector('[data-testid=header-sorting-button]');
     editJsonObjectButton = Selector('[data-testid=edit-json-field]');
     applyEditButton = Selector('[data-testid=apply-edit-btn]');
+    cancelEditButton = Selector('[data-testid=cancel-edit-btn]');
     scanMoreButton = Selector('[data-testid=scan-more]');
     resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
     treeViewButton = Selector('[data-testid=view-type-list-btn]');

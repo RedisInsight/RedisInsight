@@ -13,6 +13,7 @@ import {
   Nullable,
 } from 'uiSrc/utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { parseJsonData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/utils'
 
 import {
   GetRejsonRlResponseDto,
@@ -23,7 +24,6 @@ import { refreshKeyInfoAction } from './keys'
 import { InitialStateRejson, RedisResponseBuffer } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
-import { parseJsonData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/utils'
 
 const JSON_LENGTH_TO_FORCE_RETRIEVE = 200
 

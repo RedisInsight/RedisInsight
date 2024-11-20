@@ -183,22 +183,22 @@ describe('JSONUtils', () => {
       const bigIntValue = BigInt('9007199254740991')
       expect(stringifyScalarValue(bigIntValue)).toBe('9007199254740991')
     })
-  
+
     it('should wrap string values in quotes', () => {
       expect(stringifyScalarValue('hello')).toBe('"hello"')
       expect(stringifyScalarValue('')).toBe('""')
     })
-  
+
     it('should convert null to "null" string', () => {
       expect(stringifyScalarValue(null as any)).toBe('null')
     })
-  
+
     it('should convert numbers to string representation', () => {
       expect(stringifyScalarValue(42)).toBe('42')
       expect(stringifyScalarValue(-123.456)).toBe('-123.456')
       expect(stringifyScalarValue(0)).toBe('0')
     })
-  
+
     it('should convert boolean values to string representation', () => {
       expect(stringifyScalarValue(true)).toBe('true')
       expect(stringifyScalarValue(false)).toBe('false')

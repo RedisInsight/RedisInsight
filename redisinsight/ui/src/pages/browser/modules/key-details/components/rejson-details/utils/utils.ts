@@ -73,11 +73,10 @@ const JSONParser = JSONBigInt({
 
 const safeJSONParse = (value: string) => {
   // Pre-process the string to handle scientific notation
-  const preprocessed = value.replace(/-?\d+\.?\d*e[+-]?\d+/gi, (match) => {
+  const preprocessed = value.replace(/-?\d+\.?\d*e[+-]?\d+/gi, (match) =>
     // Wrap scientific notation numbers in quotes to prevent BigInt conversion
-    return `"${match}"`
-  });
-  
+    `"${match}"`)
+
   return JSONParser.parse(preprocessed, (_key: string, value: any) => {
     // Convert quoted scientific notation back to numbers
     if (typeof value === 'string' && /^-?\d+\.?\d*e[+-]?\d+$/i.test(value)) {

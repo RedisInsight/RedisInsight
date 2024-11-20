@@ -5,6 +5,8 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import * as JSONBigInt from 'json-bigint';
+
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
@@ -51,7 +53,11 @@ export class RejsonRlService {
       );
     }
 
-    return JSON.parse(data);
+    try {
+      return JSONBigInt({ useNativeBigInt: true }).parse(data);
+    }catch (e) {
+      return JSON.parse(data);
+    }
   }
 
   private async estimateSize(

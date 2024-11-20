@@ -112,7 +112,8 @@ jobs:
     needs: changes
     timeout-minutes: 60
     if: inputs.group_tests == 'all' || inputs.group_tests == 'only_e2e' || startsWith(github.ref_name, 'e2e/')
-    environment: ${{ startsWith(github.ref_name, 'e2e/') && 'e2e-approve' || 'staging' }}
+    # environment: ${{ startsWith(github.ref_name, 'e2e/') && 'e2e-approve' || 'staging' }}
+    environment: 'staging'
     name: Approve E2E tests
     steps:
       - uses: actions/checkout@v4

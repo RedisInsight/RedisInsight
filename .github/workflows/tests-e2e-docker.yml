@@ -57,19 +57,26 @@ jobs:
     # SSH Debug
     - name: Enable SSH
       uses: mxschmitt/action-tmate@v3
-      if: inputs.debug
+      # if: inputs.debug
       with:
         detached: true
 
-    - name: Download Docker Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: docker-builds
-        path: ./release
+    # - name: Download Docker Artifacts
+    #   uses: actions/download-artifact@v4
+    #   with:
+    #     name: docker-builds
+    #     path: ./release
 
     - name: Load built docker image from workspace
       run: |
-        docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
+        # docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
+
+        OUTPUT_FILE="docker-linux-alpine.amd64.tar"
+        FILE_URL="https://s3.us-east-1.amazonaws.com/redisinsight.download/public/latest/docker/${OUTPUT_FILE}"
+
+        wget -O "$OUTPUT_FILE" "$FILE_URL"
+
+        docker image load -i ./docker-linux-alpine.amd64.tar
 
     - name: Generate short list of the test files
       working-directory: ./tests/e2e

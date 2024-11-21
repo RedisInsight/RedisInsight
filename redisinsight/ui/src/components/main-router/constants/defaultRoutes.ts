@@ -52,6 +52,7 @@ const INSTANCE_ROUTES: IRoute[] = [
     pageName: PageNames.pubSub,
     path: Pages.pubSub(':instanceId'),
     component: LAZY_LOAD ? LazyPubSubPage : PubSubPage,
+    featureFlag: FeatureFlags.envDependent
   },
   ...getRouteIncludedByEnv([{
     path: Pages.analytics(':instanceId'),

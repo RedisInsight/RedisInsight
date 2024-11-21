@@ -105,12 +105,12 @@ const VirtualTree = (props: Props) => {
       nodes.current = []
       elements.current = {}
       rerender({})
-      runWebworker?.({ items: [], delimiterPattern, sorting })
+      runWebworker?.({ items: [], delimiterPattern, delimiters, sorting })
       return
     }
 
     setConstructingTree(true)
-    runWebworker?.({ items, delimiterPattern, sorting })
+    runWebworker?.({ items, delimiterPattern, delimiters, sorting })
   }, [items, delimiterPattern])
 
   const handleUpdateSelected = useCallback((name: RedisString) => {

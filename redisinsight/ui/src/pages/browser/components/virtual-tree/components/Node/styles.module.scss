@@ -145,7 +145,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  white-space: nowrap;
+  word-break: break-all;
 }
 
 .delimiters {
@@ -154,7 +154,9 @@
 }
 
 .folderPattern {
+  font-weight: bold;
   margin-right: 4px;
+  white-space: normal;
 }
 
 .delimiter {

@@ -5,12 +5,7 @@ import reactRouterDom from 'react-router-dom'
 import { cleanup, clearStoreActions, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { OnboardingTour } from 'uiSrc/components'
-import {
-  appFeatureFlagsFeaturesSelector,
-  appFeatureOnboardingSelector,
-  setOnboardNextStep,
-  setOnboardPrevStep
-} from 'uiSrc/slices/app/features'
+import * as featureSlice from 'uiSrc/slices/app/features'
 import { keysDataSelector } from 'uiSrc/slices/browser/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
@@ -31,19 +26,32 @@ import {
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { ONBOARDING_FEATURES } from './OnboardingFeatures'
 
-jest.mock('uiSrc/slices/app/features', () => ({
-  ...jest.requireActual('uiSrc/slices/app/features'),
-  appFeatureOnboardingSelector: jest.fn().mockReturnValue({
-    currentStep: 0,
-    isActive: true,
-    totalSteps: 14
-  }),
-  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    databaseChat: {
-      flag: false,
-    }
-  }),
-}))
+const { setOnboardNextStep, setOnboardPrevStep } = featureSlice
+// jest.mock('uiSrc/slices/app/features', () => ({
+//   ...jest.requireActual('uiSrc/slices/app/features'),
+//   appFeatureOnboardingSelector: jest.fn().mockReturnValue({
+//     currentStep: 0,
+//     isActive: true,
+//     totalSteps: 14
+//   }),
+//   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+//     databaseChat: {
+//       flag: false,
+//     }
+//   }),
+// }))
+
+jest.spyOn(featureSlice, 'appFeatureOnboardingSelector').mockReturnValue({
+  currentStep: 2,
+  isActive: true,
+  totalSteps: 14
+})
+
+jest.spyOn(featureSlice, 'appFeatureFlagsFeaturesSelector').mockReturnValue({
+  databaseChat: {
+    flag: false,
+  }
+})
 
 jest.mock('uiSrc/slices/browser/keys', () => ({
   ...jest.requireActual('uiSrc/slices/browser/keys'),
@@ -112,7 +120,7 @@ beforeEach(() => {
 describe('ONBOARDING_FEATURES', () => {
   describe('BROWSER_PAGE', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.BrowserPage,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -157,7 +165,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('BROWSER_TREE_VIEW', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.BrowserTreeView,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -182,7 +190,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('BROWSER_FILTER_SEARCH', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.BrowserFilterSearch,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -213,7 +221,7 @@ describe('ONBOARDING_FEATURES', () => {
     })
 
     it('should call proper actions with enabled chat', () => {
-      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      (featureSlice.appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
         databaseChat: {
           flag: true,
         }
@@ -229,7 +237,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('BROWSER_COPILOT', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.BrowserCopilot,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -262,7 +270,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('BROWSER_CLI', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.BrowserCLI,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -301,7 +309,7 @@ describe('ONBOARDING_FEATURES', () => {
     })
 
     it('should call proper actions on back when chat available', () => {
-      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      (featureSlice.appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
         databaseChat: {
           flag: true,
         }
@@ -317,7 +325,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('BROWSER_COMMAND_HELPER', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.BrowserCommandHelper,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -358,7 +366,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('BROWSER_PROFILER', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.BrowserProfiler,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -413,7 +421,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe.skip('BROWSER_INSIGHTS', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.BrowserInsights,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -465,7 +473,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('WORKBENCH_PAGE', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.WorkbenchPage,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -548,7 +556,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('EXPLORE_REDIS', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.Tutorials,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -604,7 +612,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('WORKBENCH_CUSTOM_TUTORIALS', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.CustomTutorials,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -647,7 +655,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('ANALYTICS_OVERVIEW', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.AnalyticsOverview,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -690,7 +698,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('ANALYTICS_DATABASE_ANALYSIS', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.AnalyticsDatabaseAnalysis,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -753,7 +761,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('ANALYTICS_RECOMMENDATIONS', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.AnalyticsRecommendations,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -787,7 +795,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('ANALYTICS_SLOW_LOG', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.AnalyticsSlowLog,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -863,7 +871,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('PUB_SUB_PAGE', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.PubSubPage,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length
@@ -897,7 +905,7 @@ describe('ONBOARDING_FEATURES', () => {
 
   describe('FINISH', () => {
     beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+      (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.Finish,
         isActive: true,
         totalSteps: Object.keys(ONBOARDING_FEATURES).length

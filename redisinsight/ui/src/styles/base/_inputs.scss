@@ -53,13 +53,8 @@ input[name='sshPassphrase'] ~ .euiFormControlLayoutIcons {
 }
 
 .euiComboBox.euiComboBox-isOpen .euiComboBox__inputWrap {
-  background-image: linear-gradient(
-    to top,
-    var(--euiColorPrimary),
-    var(--euiColorPrimary) 2px,
-    transparent 2px,
-    transparent 100%
-  ) !important;
+  background-image: none !important;
+  border-bottom: solid 2px var(--euiColorPrimary) !important;
 }
 .euiComboBox .euiComboBox__inputWrap {
   .euiComboBoxPill {

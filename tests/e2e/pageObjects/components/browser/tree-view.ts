@@ -1,7 +1,10 @@
 import { Selector, t } from 'testcafe';
 import { Common } from '../../../helpers/common';
+import { FiltersDialog } from '../../dialogs';
 
 export class TreeView {
+    FiltersDialog = new FiltersDialog();
+
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -10,17 +13,10 @@ export class TreeView {
     //-------------------------------------------------------------------------------------------
     //BUTTONS
     treeViewSettingsBtn = Selector('[data-testid=tree-view-settings-btn]');
-    treeViewDelimiterValueSave = Selector('[data-testid=tree-view-apply-btn]');
-    treeViewDelimiterValueCancel = Selector('[data-testid=tree-view-cancel-btn]');
-    sortingBtn = Selector('[data-testid=tree-view-sorting-select]');
-    sortingASCoption = Selector('[id=ASC]');
-    sortingDESCoption = Selector('[id=DESC]');
     sortingProgressBar = Selector('[data-testid=progress-key-tree]');
     // TEXT ELEMENTS
     treeViewKeysNumber = Selector('[data-testid^=count_]');
     treeViewDeviceFolder = Selector('[data-testid^=node-item_device] div');
-    //INPUTS
-    treeViewDelimiterInput = Selector('[data-testid=tree-view-delimiter-input]');
 
     /**
      * Get folder selector by folder name
@@ -51,15 +47,16 @@ export class TreeView {
 
     /**
      * Change delimiter value
-     * @delimiter string with delimiter value
+     * @param delimiter string with delimiter value
      */
     async changeDelimiterInTreeView(delimiter: string): Promise<void> {
         // Open delimiter popup
         await t.click(this.treeViewSettingsBtn);
+        await this.FiltersDialog.clearDelimiterCombobox();
         // Apply new value to the field
-        await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true, paste: true });
+        await this.FiltersDialog.addDelimiterItem(delimiter);
         // Click on save button
-        await t.click(this.treeViewDelimiterValueSave);
+        await t.click(this.FiltersDialog.treeViewDelimiterValueSave);
     }
 
     /**
@@ -69,13 +66,13 @@ export class TreeView {
     async changeOrderingInTreeView(order: string): Promise<void> {
         // Open settings popup
         await t.click(this.treeViewSettingsBtn);
-        await t.click(this.sortingBtn);
+        await t.click(this.FiltersDialog.sortingBtn);
         order === 'ASC'
-            ? await t.click(this.sortingASCoption)
-            : await t.click(this.sortingDESCoption);
+            ? await t.click(this.FiltersDialog.sortingASCoption)
+            : await t.click(this.FiltersDialog.sortingDESCoption);
 
         // Click on save button
-        await t.click(this.treeViewDelimiterValueSave);
+        await t.click(this.FiltersDialog.treeViewDelimiterValueSave);
         await Common.waitForElementNotVisible(this.sortingProgressBar);
     }
 

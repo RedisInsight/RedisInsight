@@ -69,7 +69,8 @@ const KeyTree = forwardRef((props: Props, ref) => {
   const [items, setItems] = useState<IKeyPropTypes[]>(parseKeyNames(keysState.keys ?? []))
 
   // escape regexp symbols and join and transform to regexp
-  const delimiterPattern = comboBoxToArray(treeViewDelimiter)
+  const delimiters = comboBoxToArray(treeViewDelimiter)
+  const delimiterPattern = delimiters
     .map(escapeRegExp)
     .join('|')
 
@@ -194,6 +195,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
         <VirtualTree
           items={items}
           loadingIcon={TreeViewSVG}
+          delimiters={delimiters}
           delimiterPattern={delimiterPattern}
           sorting={sorting}
           deleting={deleting}

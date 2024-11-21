@@ -78,29 +78,29 @@ export const constructKeysToTree = (props: Props): any[] => {
     return treeNodes.map((key, index) => {
       const name = key?.toString()
       const node: any = { nameString: name }
-      const tillNowKeyName = previousKey + name + delimiter
       const path = prevIndex ? `${prevIndex}.${index}` : `${index}`
 
       // populate node with children nodes
       if (!tree[key].isLeaf && Object.keys(tree[key]).length > 0) {
         node.children = formatTreeData(
           tree[key],
-          tillNowKeyName,
+          `${previousKey + name}-`,
           delimiter,
           path,
         )
         node.keyCount = node.children.reduce((a: any, b:any) => a + (b.keyCount || 1), 0)
         node.keyApproximate = (node.keyCount / keys.length) * 100
+        node.fullName = previousKey + name
       } else {
         // populate leaf
         node.isLeaf = true
         node.children = []
         node.nameString = name.slice(0, -keysSymbol.length)
         node.nameBuffer = tree[key]?.name
+        node.fullName = previousKey + name + delimiter
       }
 
       node.path = path
-      node.fullName = tillNowKeyName
       node.id = getUniqueId()
       return node
     })

@@ -47,6 +47,7 @@ const Node = ({
     nameString,
     keyApproximate,
     isSelected,
+    delimiters = [],
     getMetadata,
     onDelete,
     onDeleteClicked,
@@ -163,8 +164,14 @@ const Node = ({
 
   const tooltipContent = (
     <>
-      <b>{`${fullName}*`}</b>
-      <br />
+      <div className={styles.folderTooltipHeader}>
+        <span className={styles.folderPattern}>{`${fullName}-*`}</span>
+        <span className={styles.delimiters}>
+          {delimiters.map((delimiter) => (
+            <span className={styles.delimiter}>{delimiter}</span>
+          ))}
+        </span>
+      </div>
       <span>{`${keyCount} key(s) (${Math.round(keyApproximate * 100) / 100}%)`}</span>
     </>
   )

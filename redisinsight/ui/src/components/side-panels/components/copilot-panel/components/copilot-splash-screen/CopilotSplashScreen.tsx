@@ -45,7 +45,7 @@ const CopilotSplashScreen = ({ onClose }: Props) => {
               medium: UTM_MEDIUMS.Main,
               campaign: UTM_CAMPAINGS.Copilot,
             })}
-          >More Info
+          >Redis Copilot FAQ
           </ExternalLink>
           <EuiButton
             aria-label="Get started with Copilot"

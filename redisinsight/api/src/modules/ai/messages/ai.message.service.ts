@@ -287,6 +287,10 @@ export class AiMessageService {
             AiMessageService.prepareHistory(history),
             {
               conversationId,
+              consents: {
+                share_search_context: databaseAgreement?.dataConsent,
+                share_index_context: databaseAgreement?.dataConsent,
+              },
             },
           )
             .then((ack) => {

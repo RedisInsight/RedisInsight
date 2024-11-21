@@ -8,11 +8,8 @@ export enum AiWsEvents {
   REPLY_FINAL = 'reply', // non-ackable, signals the final (non-streaming) reply, client should display it
   GET_INDEX = 'get_index', // ackable, signals a request to the client for an index context
   RUN_QUERY = 'run_query', // ackable, signals a request to the client to run a query
-  // TODO: return the right event names when new copilot events are ready
-  // STREAM = 'v2/stream',
-  // GENERAL = 'general',
-  STREAM = 'stream',
-  GENERAL = 'stream',
+  STREAM = 'router',
+  GENERAL = 'general_documentation',
 }
 
 export enum AiMessageRole {

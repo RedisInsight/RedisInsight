@@ -235,7 +235,7 @@
     "gzip-js": "^0.3.2",
     "html-entities": "^2.3.2",
     "html-react-parser": "^1.2.4",
-    "java-object-serialization": "^0.1.1",
+    "java-object-serialization": "^0.1.2",
     "js-yaml": "^4.1.0",
     "json-bigint": "^1.0.0",
     "jsonpath": "^1.1.1",

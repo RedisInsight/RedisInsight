@@ -1,16 +1,8 @@
 import { cloneDeep, set } from 'lodash'
 import React from 'react'
-import { cleanup, initialStateDefault, mockedStore, mockStore, render, screen } from 'uiSrc/utils/test-utils'
+import { initialStateDefault, mockStore, render, screen } from 'uiSrc/utils/test-utils'
 import { FeatureFlags } from 'uiSrc/constants'
 import UsePubSubLink from './UsePubSubLink'
-
-let store: typeof mockedStore
-
-beforeEach(() => {
-  cleanup()
-  store = cloneDeep(mockedStore)
-  store.clearActions()
-})
 
 const props = {
   path: '/pub-sub',

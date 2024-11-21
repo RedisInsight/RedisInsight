@@ -248,6 +248,7 @@ export const workbenchResultsSelector = (state: RootState) => state.workbench.re
 export default workbenchResultsSlice.reducer
 
 type CommandHistoryItem = {
+  dbId: string, // Instance Id
   commandId: string,
   data: CommandExecution[]
 }
@@ -256,11 +257,8 @@ type CommandHistoryType = CommandHistoryItem[]
 async function getLocalWbHistory(instanceId: string) {
   try {
     const key = `${BrowserStorageItem.wbCommandsHistory}:${instanceId}`
-    const storedValue = await wbHistoryStorage.getItem(key) as {
-      value: CommandHistoryType
-    }
-    const { value: history } = storedValue ?? { value: [] }
-
+    const history = await wbHistoryStorage.getItem(key) as CommandHistoryType
+    console.log({ history });
     return history || []
   } catch (e) {
     console.error(e)
@@ -268,10 +266,13 @@ async function getLocalWbHistory(instanceId: string) {
   }
 }
 
-function saveLocalWbHistory(instanceId: string, commandsHistory: CommandHistoryType) {
+function saveLocalWbHistory(commandsHistory: CommandHistoryType) {
   try {
     const key = BrowserStorageItem.wbCommandsHistory
-    return wbHistoryStorage.setItem(key, { dbId: instanceId, value: commandsHistory })
+    return Promise.all(commandsHistory.map((chItem) => {
+      return wbHistoryStorage.setItem(key, chItem)
+    }))
+    // return wbHistoryStorage.setItem(key, commandsHistory)
   } catch (e) {
     console.error(e)
     return null
@@ -373,9 +374,10 @@ export function sendWBCommandAction({
         if (envDependentFlag === false) {
           // Store command results in local storage!
           const commandsHistory: CommandHistoryType = await getLocalWbHistory(id)
-          await saveLocalWbHistory(id, [
+          await saveLocalWbHistory([
             ...commandsHistory,
             {
+              dbId: id,
               commandId,
               data: reverse(data),
             } as CommandHistoryItem
@@ -450,9 +452,10 @@ export function sendWBCommandClusterAction({
         if (envDependentFlag === false) {
           // Store command results in local storage!
           const commandsHistory: CommandHistoryType = await getLocalWbHistory(id)
-          await saveLocalWbHistory(id, [
+          await saveLocalWbHistory([
             ...commandsHistory,
             {
+              dbId: id,
               commandId,
               data: reverse(data),
             }
@@ -547,13 +550,13 @@ export function deleteWBCommandAction(
           const items = commandsHistoryElement.data.filter((chItem) => chItem.id !== commandId)
           if (items.length > 0) {
             // more commands left, keep in history, else remove from collection
-            acc.push({ data: items, commandId: commandsHistoryElement.commandId })
+            acc.push({ dbId: id, data: items, commandId: commandsHistoryElement.commandId })
           }
 
           return acc
         }, [] as CommandHistoryType)
 
-        await saveLocalWbHistory(id, update)
+        await saveLocalWbHistory(update)
 
         dispatch(deleteWBCommandSuccess(commandId))
         onSuccessAction?.()

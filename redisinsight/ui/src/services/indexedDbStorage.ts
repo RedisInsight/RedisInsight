@@ -43,8 +43,17 @@ export class IndexedDbStorage {
           reject(DBOpenRequest.error)
         }
 
-        try { // Create an objectStore for this database
-          this.db.createObjectStore(storeName, { keyPath: 'dbId' })
+        try {
+          if (event.newVersion && event.newVersion > event.oldVersion
+            && event.oldVersion > 0
+            && this.db.objectStoreNames.contains(storeName)) {
+            // if there is need to update
+            this.db.deleteObjectStore(storeName)
+          }
+          // Create an objectStore for this database
+          const objectStore = this.db.createObjectStore(storeName, { keyPath: ['dbId', 'commandId'] })
+          objectStore.createIndex('dbId', 'dbId', { unique: true })
+          objectStore.createIndex('commandId', 'commandId', { unique: true })
         } catch (ex) {
           if (ex instanceof DOMException && ex?.name === 'ConstraintError') {
             console.warn(
@@ -78,9 +87,10 @@ export class IndexedDbStorage {
             reject(new Error('Failed to retrieve item from IndexedDB'))
             return
           }
-          const req = db.transaction(storeName, 'readonly')?.objectStore(storeName)?.get(nKey)
+          const req = db.transaction(storeName, 'readonly')?.objectStore(storeName)?.getAll(nKey)
           if (req) {
             req.onsuccess = () => {
+              console.log('success', req.result)
               resolve(req.result)
             }
             req.onerror = () => {
@@ -105,6 +115,7 @@ export class IndexedDbStorage {
             return
           }
           const transaction = db.transaction(storeName, 'readwrite')
+
           const req = transaction?.objectStore(storeName)?.put(value)
           transaction.oncomplete = () => {
             resolve()

@@ -4,7 +4,7 @@ import {
     WorkbenchPage,
     BrowserPage
 } from '../../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
+import { commonUrl, ossStandaloneForSSHConfig } from '../../../../helpers/conf';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
@@ -20,15 +20,33 @@ const apiKeyRequests = new APIKeyRequests();
 const keyName = `${Common.generateWord(20)}-key`;
 const keyValue = `${Common.generateWord(10)}-value`;
 
+const sshParams = {
+    sshHost: '172.31.100.245',
+    sshPort: '2222',
+    sshUsername: 'u'
+};
+
+const sshWithPass = {
+    ...sshParams,
+    sshPassword: 'pass'
+};
+
+const sshDbPass = {
+    ...ossStandaloneForSSHConfig,
+    databaseName: `SSH_${Common.generateWord(5)}`
+};
+
 fixture `Monitor`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+        await databaseHelper.acceptLicenseTerms();
+        await myRedisDatabasePage.AddRedisDatabase.addStandaloneSSHDatabase(sshDbPass, sshWithPass);
+        await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
     })
     .afterEach(async() => {
-        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneForSSHConfig.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneForSSHConfig);
     });
 test('Verify that user can work with Monitor', async t => {
     const command = 'set';

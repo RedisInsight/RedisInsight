@@ -35,7 +35,6 @@ import { OutputFormatterManager } from './output-formatter/output-formatter-mana
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';
 import { RawFormatterStrategy } from './output-formatter/strategies/raw-formatter.strategy';
-import {inspect} from "util";
 
 @Injectable()
 export class CliBusinessService {
@@ -74,11 +73,17 @@ export class CliBusinessService {
       });
 
       this.logger.log('Succeed to create Redis client for CLI.');
-      this.cliAnalyticsService.sendClientCreatedEvent(clientMetadata.databaseId);
+      this.cliAnalyticsService.sendClientCreatedEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+      );
       return { uuid };
     } catch (error) {
       this.logger.error('Failed to create redis client for CLI.', error);
-      this.cliAnalyticsService.sendClientCreationFailedEvent(clientMetadata.databaseId, error);
+      this.cliAnalyticsService.sendClientCreationFailedEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId, error,
+      );
       throw error;
     }
   }
@@ -99,11 +104,18 @@ export class CliBusinessService {
       });
 
       this.logger.log('Succeed to re-create Redis client for CLI.');
-      this.cliAnalyticsService.sendClientRecreatedEvent(clientMetadata.databaseId);
+      this.cliAnalyticsService.sendClientRecreatedEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+      );
       return { uuid };
     } catch (error) {
       this.logger.error('Failed to re-create redis client for CLI.', error);
-      this.cliAnalyticsService.sendClientCreationFailedEvent(clientMetadata.databaseId, error);
+      this.cliAnalyticsService.sendClientCreationFailedEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+        error,
+      );
       throw error;
     }
   }
@@ -121,7 +133,11 @@ export class CliBusinessService {
       this.logger.log('Succeed to delete Redis client for CLI.');
 
       if (affected) {
-        this.cliAnalyticsService.sendClientDeletedEvent(affected, clientMetadata.databaseId);
+        this.cliAnalyticsService.sendClientDeletedEvent(
+          clientMetadata.sessionMetadata,
+          affected,
+          clientMetadata.databaseId,
+        );
       }
       return { affected };
     } catch (error) {
@@ -162,6 +178,7 @@ export class CliBusinessService {
       const reply = await client.sendCommand([command, ...args], { replyEncoding });
 
       this.cliAnalyticsService.sendCommandExecutedEvent(
+        clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
         {
           command,
@@ -171,6 +188,7 @@ export class CliBusinessService {
 
       if (command.toLowerCase() === 'ft.info') {
         this.cliAnalyticsService.sendIndexInfoEvent(
+          clientMetadata.sessionMetadata,
           clientMetadata.databaseId,
           getAnalyticsDataFromIndexInfo(reply as string[]),
         );
@@ -190,18 +208,28 @@ export class CliBusinessService {
         || error instanceof CommandNotSupportedError
         || error?.name === 'ReplyError'
       ) {
-        this.cliAnalyticsService.sendCommandErrorEvent(clientMetadata.databaseId, error, {
-          command,
-          outputFormat,
-        });
+        this.cliAnalyticsService.sendCommandErrorEvent(
+          clientMetadata.sessionMetadata,
+          clientMetadata.databaseId,
+          error,
+          {
+            command,
+            outputFormat,
+          },
+        );
 
         return { response: error.message, status: CommandExecutionStatus.Fail };
       }
 
-      this.cliAnalyticsService.sendConnectionErrorEvent(clientMetadata.databaseId, error, {
-        command,
-        outputFormat,
-      });
+      this.cliAnalyticsService.sendConnectionErrorEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+        error,
+        {
+          command,
+          outputFormat,
+        },
+      );
 
       if (error instanceof EncryptionServiceErrorException || error instanceof ClientNotFoundErrorException) {
         throw error;

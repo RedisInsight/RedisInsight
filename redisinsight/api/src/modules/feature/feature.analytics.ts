@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class FeatureAnalytics extends TelemetryBaseService {
@@ -20,13 +21,17 @@ export class FeatureAnalytics extends TelemetryBaseService {
     return reason?.constructor?.name || 'UncaughtError';
   }
 
-  sendFeatureFlagConfigUpdated(data: {
-    configVersion: number,
-    oldVersion: number,
-    type?: string,
-  }): void {
+  sendFeatureFlagConfigUpdated(
+    sessionMetadata: SessionMetadata,
+    data: {
+      configVersion: number,
+      oldVersion: number,
+      type?: string,
+    },
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.FeatureFlagConfigUpdated,
         {
           configVersion: data.configVersion,
@@ -39,13 +44,17 @@ export class FeatureAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendFeatureFlagConfigUpdateError(data: {
-    error: Error | Error[],
-    configVersion?: number,
-    type?: string,
-  }): void {
+  sendFeatureFlagConfigUpdateError(
+    sessionMetadata: SessionMetadata,
+    data: {
+      error: Error | Error[],
+      configVersion?: number,
+      type?: string,
+    },
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.FeatureFlagConfigUpdateError,
         {
           configVersion: data.configVersion,
@@ -58,13 +67,17 @@ export class FeatureAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendFeatureFlagInvalidRemoteConfig(data: {
-    error: Error | Error[],
-    configVersion?: number,
-    type?: string,
-  }): void {
+  sendFeatureFlagInvalidRemoteConfig(
+    sessionMetadata: SessionMetadata,
+    data: {
+      error: Error | Error[],
+      configVersion?: number,
+      type?: string,
+    },
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.FeatureFlagInvalidRemoteConfig,
         {
           configVersion: data.configVersion,
@@ -77,11 +90,14 @@ export class FeatureAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendFeatureFlagRecalculated(data: {
-    configVersion: number,
-    features: Record<string, { flag: boolean }>
-    force?: Record<string, boolean>
-  }): void {
+  sendFeatureFlagRecalculated(
+    sessionMetadata: SessionMetadata,
+    data: {
+      configVersion: number,
+      features: Record<string, { flag: boolean }>
+      force?: Record<string, boolean>
+    },
+  ): void {
     try {
       const features = {};
       forEach(data?.features || {}, (value, key) => {
@@ -89,6 +105,7 @@ export class FeatureAnalytics extends TelemetryBaseService {
       });
 
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.FeatureFlagRecalculated,
         {
           configVersion: data.configVersion,

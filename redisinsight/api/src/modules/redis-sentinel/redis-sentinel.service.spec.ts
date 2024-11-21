@@ -18,6 +18,7 @@ import {
   mockRedisSentinelMasterResponse,
   mockSentinelDatabaseWithTlsAuth,
   mockSentinelMasterDto,
+  mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
 import { RedisSentinelService } from 'src/modules/redis-sentinel/redis-sentinel.service';
@@ -68,7 +69,7 @@ describe('RedisSentinelService', () => {
       mockIORedisClient.call.mockResolvedValue(mockRedisSentinelMasterResponse);
       mockRedisSentinelUtil.discoverSentinelMasterGroups.mockResolvedValue([mockSentinelMasterDto]);
 
-      const result = await service.getSentinelMasters(mockSentinelDatabaseWithTlsAuth);
+      const result = await service.getSentinelMasters(mockSessionMetadata, mockSentinelDatabaseWithTlsAuth);
 
       expect(result).toEqual([mockSentinelMasterDto]);
       expect(mockIORedisClient.disconnect).toHaveBeenCalled();
@@ -80,7 +81,7 @@ describe('RedisSentinelService', () => {
       );
 
       await expect(
-        service.getSentinelMasters(mockSentinelDatabaseWithTlsAuth),
+        service.getSentinelMasters(mockSessionMetadata, mockSentinelDatabaseWithTlsAuth),
       ).rejects.toThrow(BadRequestException);
     });
   });

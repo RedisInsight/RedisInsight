@@ -85,9 +85,9 @@ export class CloudCapiKeyService {
 
           capiKey = await this.repository.create(plainToClass(CloudCapiKey, capiKey));
 
-          this.analytics.sendCloudAccountKeyGenerated();
+          this.analytics.sendCloudAccountKeyGenerated(sessionMetadata);
         } catch (e) {
-          this.analytics.sendCloudAccountKeyGenerationFailed(e);
+          this.analytics.sendCloudAccountKeyGenerationFailed(sessionMetadata, e);
           throw e;
         }
       }
@@ -112,9 +112,9 @@ export class CloudCapiKeyService {
             accounts: user.accounts,
           });
 
-          this.analytics.sendCloudAccountSecretGenerated();
+          this.analytics.sendCloudAccountSecretGenerated(sessionMetadata);
         } catch (e) {
-          this.analytics.sendCloudAccountSecretGenerationFailed(e);
+          this.analytics.sendCloudAccountSecretGenerationFailed(sessionMetadata, e);
           throw e;
         }
       }

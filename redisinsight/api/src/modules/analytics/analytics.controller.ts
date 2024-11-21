@@ -29,7 +29,7 @@ export class AnalyticsController {
     @Body() dto: SendEventDto,
       @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<void> {
-    return this.service.sendUserEvent(sessionMetadata, dto);
+    return this.service.sendEvent(sessionMetadata, dto);
   }
 
   @Post('send-page')

@@ -145,16 +145,19 @@ describe('FeatureService', () => {
           name: KnownFeatures.InsightsRecommendations,
           flag: mockFeaturesConfig.data.features.get(KnownFeatures.InsightsRecommendations).flag,
         });
-      expect(analytics.sendFeatureFlagRecalculated).toHaveBeenCalledWith({
-        configVersion: mockFeaturesConfig.data.version,
-        features: {
-          [KnownFeatures.InsightsRecommendations]: mockFeature,
-          [KnownFeatures.CloudSso]: mockFeatureSso,
+      expect(analytics.sendFeatureFlagRecalculated).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        {
+          configVersion: mockFeaturesConfig.data.version,
+          features: {
+            [KnownFeatures.InsightsRecommendations]: mockFeature,
+            [KnownFeatures.CloudSso]: mockFeatureSso,
+          },
+          force: {
+            [KnownFeatures.CloudSso]: false,
+          },
         },
-        force: {
-          [KnownFeatures.CloudSso]: false,
-        },
-      });
+      );
     });
     it('should not fail in case of an error', async () => {
       repository.list.mockRejectedValueOnce(new Error());

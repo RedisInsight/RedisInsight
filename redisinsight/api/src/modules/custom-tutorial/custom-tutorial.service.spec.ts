@@ -5,7 +5,7 @@ import {
   mockCustomTutorialFsProvider,
   mockCustomTutorialId, mockCustomTutorialManifest, mockCustomTutorialManifest2,
   mockCustomTutorialManifestProvider,
-  mockCustomTutorialRepository,
+  mockCustomTutorialRepository, mockSessionMetadata,
   MockType, mockUploadCustomTutorialDto, mockUploadCustomTutorialExternalLinkDto,
 } from 'src/__mocks__';
 import * as fs from 'fs-extra';
@@ -100,25 +100,31 @@ describe('CustomTutorialService', () => {
 
   describe('create', () => {
     it('Should create custom tutorial from file', async () => {
-      const result = await service.create(mockUploadCustomTutorialDto);
+      const result = await service.create(mockSessionMetadata, mockUploadCustomTutorialDto);
 
       expect(result).toEqual(mockCustomTutorialManifest);
-      expect(analytics.sendImportSucceeded).toHaveBeenCalledWith({ manifest: true });
+      expect(analytics.sendImportSucceeded).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        { manifest: true },
+      );
     });
 
     it('Should create custom tutorial from external url (w/o manifest)', async () => {
       customTutorialManifestProvider.getOriginalManifestJson.mockResolvedValue(null);
       customTutorialManifestProvider.isOriginalManifestExists.mockResolvedValue(false);
 
-      const result = await service.create(mockUploadCustomTutorialExternalLinkDto);
+      const result = await service.create(mockSessionMetadata, mockUploadCustomTutorialExternalLinkDto);
 
       expect(result).toEqual(mockCustomTutorialManifest);
-      expect(analytics.sendImportSucceeded).toHaveBeenCalledWith({ manifest: false });
+      expect(analytics.sendImportSucceeded).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        { manifest: false },
+      );
     });
 
     it('Should throw BadRequestException in case when either link or file was not provided', async () => {
       try {
-        await service.create({} as any);
+        await service.create(mockSessionMetadata, {} as any);
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
         expect(e.message).toEqual('File or external link should be provided');
@@ -130,7 +136,7 @@ describe('CustomTutorialService', () => {
       customTutorialManifestProvider.isOriginalManifestExists.mockResolvedValueOnce(true);
 
       try {
-        await service.create(mockUploadCustomTutorialExternalLinkDto);
+        await service.create(mockSessionMetadata, mockUploadCustomTutorialExternalLinkDto);
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
         expect(e.message).toEqual('Unable to parse manifest.json file');
@@ -141,7 +147,7 @@ describe('CustomTutorialService', () => {
       customTutorialManifestProvider.getOriginalManifestJson.mockResolvedValue([mockCustomTutorialManifest]);
 
       try {
-        await service.create(mockUploadCustomTutorialExternalLinkDto);
+        await service.create(mockSessionMetadata, mockUploadCustomTutorialExternalLinkDto);
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
         expect(e.message).toEqual('Manifest json should be an object');
@@ -156,7 +162,7 @@ describe('CustomTutorialService', () => {
       });
 
       try {
-        await service.create(mockUploadCustomTutorialExternalLinkDto);
+        await service.create(mockSessionMetadata, mockUploadCustomTutorialExternalLinkDto);
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
         expect(e.response?.message).toEqual([
@@ -170,7 +176,7 @@ describe('CustomTutorialService', () => {
       customTutorialRepository.create.mockRejectedValueOnce(new Error('Unable to create'));
 
       try {
-        await service.create(mockUploadCustomTutorialDto);
+        await service.create(mockSessionMetadata, mockUploadCustomTutorialDto);
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);
         expect(e.message).toEqual('Unable to create');

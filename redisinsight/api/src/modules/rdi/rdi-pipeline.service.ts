@@ -30,7 +30,7 @@ export class RdiPipelineService {
 
       const pipeline = await client.getPipeline();
 
-      this.analytics.sendRdiPipelineFetched(rdiClientMetadata.id, pipeline);
+      this.analytics.sendRdiPipelineFetched(rdiClientMetadata.sessionMetadata, rdiClientMetadata.id, pipeline);
 
       this.logger.log('Succeed to get RDI pipeline');
 
@@ -38,7 +38,7 @@ export class RdiPipelineService {
     } catch (e) {
       this.logger.error('Failed to get RDI pipeline', e);
 
-      this.analytics.sendRdiPipelineFetchFailed(e, rdiClientMetadata.id);
+      this.analytics.sendRdiPipelineFetchFailed(rdiClientMetadata.sessionMetadata, e, rdiClientMetadata.id);
       throw wrapHttpError(e);
     }
   }
@@ -59,10 +59,10 @@ export class RdiPipelineService {
 
       await client.deploy(dto);
 
-      this.analytics.sendRdiPipelineDeployed(rdiClientMetadata.id);
+      this.analytics.sendRdiPipelineDeployed(rdiClientMetadata.sessionMetadata, rdiClientMetadata.id);
       this.logger.log('Succeed to deploy pipeline');
     } catch (e) {
-      this.analytics.sendRdiPipelineDeployFailed(e, rdiClientMetadata.id);
+      this.analytics.sendRdiPipelineDeployFailed(rdiClientMetadata.sessionMetadata, e, rdiClientMetadata.id);
 
       this.logger.error('Failed to deploy pipeline', e);
 

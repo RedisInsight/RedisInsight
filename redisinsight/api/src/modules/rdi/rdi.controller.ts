@@ -70,8 +70,9 @@ export class RdiController {
   })
   async delete(
     @Body() body: { ids: string[] },
+      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<void> {
-    return this.rdiService.delete(body.ids);
+    return this.rdiService.delete(sessionMetadata, body.ids);
   }
 
   @Get(':id/connect')

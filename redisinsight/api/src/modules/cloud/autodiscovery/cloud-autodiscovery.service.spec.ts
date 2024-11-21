@@ -85,17 +85,20 @@ describe('CloudAutodiscoveryService', () => {
   describe('discoverSubscriptions', () => {
     it('successfully discover fixed and flexible cloud subscriptions', async () => {
       expect(await service.discoverSubscriptions(
+        mockSessionMetadata,
         mockCloudCapiAuthDto,
         CloudAutodiscoveryAuthType.Credentials,
       )).toEqual([mockCloudSubscription, mockCloudSubscription]);
       expect(analytics.sendGetRECloudSubsSucceedEvent)
         .toHaveBeenCalledWith(
+          mockSessionMetadata,
           [mockCloudSubscription],
           CloudSubscriptionType.Fixed,
           CloudAutodiscoveryAuthType.Credentials,
         );
       expect(analytics.sendGetRECloudSubsSucceedEvent)
         .toHaveBeenCalledWith(
+          mockSessionMetadata,
           [mockCloudSubscription],
           CloudSubscriptionType.Flexible,
           CloudAutodiscoveryAuthType.Credentials,
@@ -105,6 +108,7 @@ describe('CloudAutodiscoveryService', () => {
       cloudSubscriptionCapiService.getSubscriptions.mockRejectedValue(new CloudApiUnauthorizedException());
 
       await expect(service.discoverSubscriptions(
+        mockSessionMetadata,
         mockCloudCapiAuthDto,
         CloudAutodiscoveryAuthType.Credentials,
       )).rejects.toThrow(
@@ -113,6 +117,7 @@ describe('CloudAutodiscoveryService', () => {
 
       expect(analytics.sendGetRECloudSubsFailedEvent)
         .toHaveBeenCalledWith(
+          mockSessionMetadata,
           new CloudApiUnauthorizedException(),
           CloudSubscriptionType.Fixed,
           CloudAutodiscoveryAuthType.Credentials,
@@ -122,6 +127,7 @@ describe('CloudAutodiscoveryService', () => {
   describe('discoverDatabases', () => {
     it('should call getDatabases 2 times', async () => {
       expect(await service.discoverDatabases(
+        mockSessionMetadata,
         mockCloudCapiAuthDto,
         {
           subscriptions: [
@@ -152,12 +158,14 @@ describe('CloudAutodiscoveryService', () => {
         free: true,
       });
       expect(analytics.sendGetRECloudDbsSucceedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         [mockCloudDatabase, mockCloudDatabase],
         CloudAutodiscoveryAuthType.Credentials,
       );
     });
     it('should call getDatabases 2 times (same id but different types)', async () => {
       await service.discoverDatabases(
+        mockSessionMetadata,
         mockCloudCapiAuthDto,
         {
           subscriptions: [
@@ -172,6 +180,7 @@ describe('CloudAutodiscoveryService', () => {
     });
     it('should call getDatabases 2 times (uniq by id and type)', async () => {
       await service.discoverDatabases(
+        mockSessionMetadata,
         mockCloudCapiAuthDto,
         {
           subscriptions: [
@@ -192,6 +201,7 @@ describe('CloudAutodiscoveryService', () => {
 
       await expect(
         service.discoverDatabases(
+          mockSessionMetadata,
           mockCloudCapiAuthDto,
           {
             subscriptions: [
@@ -204,6 +214,7 @@ describe('CloudAutodiscoveryService', () => {
       ).rejects.toThrow(NotFoundException);
 
       expect(analytics.sendGetRECloudDbsFailedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         new NotFoundException(),
         CloudAutodiscoveryAuthType.Credentials,
       );

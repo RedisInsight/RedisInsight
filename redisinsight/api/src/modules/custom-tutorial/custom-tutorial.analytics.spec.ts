@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { CustomTutorialAnalytics } from 'src/modules/custom-tutorial/custom-tutorial.analytics';
 import { BadRequestException } from '@nestjs/common';
+import { mockSessionMetadata } from 'src/__mocks__';
 
 describe('CustomTutorialAnalytics', () => {
   let service: CustomTutorialAnalytics;
@@ -12,10 +13,7 @@ describe('CustomTutorialAnalytics', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        CustomTutorialAnalytics,
-      ],
+      providers: [EventEmitter2, CustomTutorialAnalytics],
     }).compile();
 
     service = await module.get(CustomTutorialAnalytics);
@@ -24,10 +22,11 @@ describe('CustomTutorialAnalytics', () => {
 
   describe('sendImportSucceeded', () => {
     it('should emit succeed event with manifest "yes"', () => {
-      service.sendImportSucceeded({ manifest: true });
+      service.sendImportSucceeded(mockSessionMetadata, { manifest: true });
 
       expect(sendEventSpy).toHaveBeenNthCalledWith(
         1,
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchEnablementAreaImportSucceeded,
         {
           manifest: 'yes',
@@ -35,10 +34,11 @@ describe('CustomTutorialAnalytics', () => {
       );
     });
     it('should emit succeed event with manifest "no"', () => {
-      service.sendImportSucceeded({ manifest: false });
+      service.sendImportSucceeded(mockSessionMetadata, { manifest: false });
 
       expect(sendEventSpy).toHaveBeenNthCalledWith(
         1,
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchEnablementAreaImportSucceeded,
         {
           manifest: 'no',
@@ -49,10 +49,11 @@ describe('CustomTutorialAnalytics', () => {
 
   describe('sendImportFailed', () => {
     it('should emit 1 event with "Error" cause', () => {
-      service.sendImportFailed(new Error());
+      service.sendImportFailed(mockSessionMetadata, new Error());
 
       expect(sendEventSpy).toHaveBeenNthCalledWith(
         1,
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchEnablementAreaImportFailed,
         {
           error: 'Error',
@@ -60,10 +61,11 @@ describe('CustomTutorialAnalytics', () => {
       );
     });
     it('should emit 1 event with "BadRequestException" cause', () => {
-      service.sendImportFailed(new BadRequestException());
+      service.sendImportFailed(mockSessionMetadata, new BadRequestException());
 
       expect(sendEventSpy).toHaveBeenNthCalledWith(
         1,
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchEnablementAreaImportFailed,
         {
           error: 'BadRequestException',

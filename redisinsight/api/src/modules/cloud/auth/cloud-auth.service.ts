@@ -164,6 +164,7 @@ export class CloudAuthService {
     return {
       idpType: authRequest.idpType,
       action: authRequest.action,
+      sessionMetadata: authRequest.sessionMetadata,
     };
   }
 
@@ -238,11 +239,20 @@ export class CloudAuthService {
     try {
       reqInfo = await this.getAuthRequestInfo(query);
       callback = await this.callback(query);
-      this.analytics.sendCloudSignInSucceeded(from, reqInfo?.action);
+      this.analytics.sendCloudSignInSucceeded(
+        reqInfo.sessionMetadata,
+        from,
+        reqInfo?.action,
+      );
     } catch (e) {
       this.logger.error(`Error on ${from} cloud oauth callback`, e);
 
-      this.analytics.sendCloudSignInFailed(e, from, reqInfo?.action);
+      this.analytics.sendCloudSignInFailed(
+        reqInfo?.sessionMetadata,
+        e,
+        from,
+        reqInfo?.action,
+      );
 
       result = {
         status: CloudAuthStatus.Failed,

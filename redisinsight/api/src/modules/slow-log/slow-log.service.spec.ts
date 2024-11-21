@@ -10,7 +10,7 @@ import {
 import { SlowLogService } from 'src/modules/slow-log/slow-log.service';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constants/commands';
-import { SlowLogAnalyticsService } from 'src/modules/slow-log/slow-log-analytics.service';
+import { SlowLogAnalytics } from 'src/modules/slow-log/slow-log.analytics';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
@@ -58,7 +58,7 @@ describe('SlowLogService', () => {
       providers: [
         SlowLogService,
         EventEmitter2,
-        SlowLogAnalyticsService,
+        SlowLogAnalytics,
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

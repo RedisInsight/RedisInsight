@@ -5,6 +5,7 @@ import { ReplyError } from 'src/models';
 import { CommandExecutionStatus, ICliExecResultFromNode } from 'src/modules/cli/dto/cli.dto';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { CommandTelemetryBaseService } from 'src/modules/analytics/command.telemetry.base.service';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class CliAnalyticsService extends CommandTelemetryBaseService {
@@ -16,10 +17,12 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
   }
 
   sendClientCreatedEvent(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     additionalData: object = {},
   ): void {
     this.sendEvent(
+      sessionMetadata,
       TelemetryEvents.CliClientCreated,
       {
         databaseId,
@@ -29,11 +32,13 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
   }
 
   sendClientCreationFailedEvent(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     exception: HttpException,
     additionalData: object = {},
   ): void {
     this.sendFailedEvent(
+      sessionMetadata,
       TelemetryEvents.CliClientCreationFailed,
       exception,
       {
@@ -44,10 +49,12 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
   }
 
   sendClientRecreatedEvent(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     additionalData: object = {},
   ): void {
     this.sendEvent(
+      sessionMetadata,
       TelemetryEvents.CliClientRecreated,
       {
         databaseId,
@@ -57,6 +64,7 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
   }
 
   sendClientDeletedEvent(
+    sessionMetadata: SessionMetadata,
     affected: number,
     databaseId: string,
     additionalData: object = {},
@@ -64,6 +72,7 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
     try {
       if (affected > 0) {
         this.sendEvent(
+          sessionMetadata,
           TelemetryEvents.CliClientDeleted,
           {
             databaseId,
@@ -77,6 +86,7 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
   }
 
   sendIndexInfoEvent(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     additionalData: object,
   ): void {
@@ -86,6 +96,7 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
 
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.CliIndexInfoSubmitted,
         {
           databaseId,
@@ -98,11 +109,13 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
   }
 
   public async sendCommandExecutedEvent(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     additionalData: object = {},
   ): Promise<void> {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.CliCommandExecuted,
         {
           databaseId,
@@ -116,12 +129,14 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
   }
 
   public async sendCommandErrorEvent(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     error: ReplyError,
     additionalData: object = {},
   ): Promise<void> {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.CliCommandErrorReceived,
         {
           databaseId,
@@ -137,6 +152,7 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
   }
 
   public async sendClusterCommandExecutedEvent(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     result: ICliExecResultFromNode,
     additionalData: object = {},
@@ -145,6 +161,7 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
     try {
       if (status === CommandExecutionStatus.Success) {
         this.sendEvent(
+          sessionMetadata,
           TelemetryEvents.CliClusterNodeCommandExecuted,
           {
             databaseId,
@@ -155,6 +172,7 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
       }
       if (status === CommandExecutionStatus.Fail) {
         this.sendEvent(
+          sessionMetadata,
           TelemetryEvents.CliCommandErrorReceived,
           {
             databaseId,
@@ -171,11 +189,13 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
   }
 
   public async sendConnectionErrorEvent(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     exception: HttpException,
     additionalData: object = {},
   ): Promise<void> {
     this.sendFailedEvent(
+      sessionMetadata,
       TelemetryEvents.CliClientConnectionError,
       exception,
       {

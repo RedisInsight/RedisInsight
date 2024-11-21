@@ -1,8 +1,8 @@
 import React from 'react'
 import { EuiLink, EuiTextColor } from '@elastic/eui'
-import { FeatureFlagComponent } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
 import { getRouterLinkProps } from 'uiSrc/services'
+import FeatureFlagComponent from 'uiSrc/components/feature-flag-component/FeatureFlagComponent'
 
 export interface Props {
   path: string

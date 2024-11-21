@@ -55,6 +55,8 @@ const Node = ({
     updateStatusSelected,
   } = data
 
+  const delimiterView = delimiters.length === 1 ? delimiters[0] : '-'
+
   const [deletePopoverId, setDeletePopoverId] = useState<Maybe<string>>(undefined)
 
   useEffect(() => {
@@ -165,12 +167,14 @@ const Node = ({
   const tooltipContent = (
     <>
       <div className={styles.folderTooltipHeader}>
-        <span className={styles.folderPattern}>{`${fullName}-*`}</span>
-        <span className={styles.delimiters}>
-          {delimiters.map((delimiter) => (
-            <span className={styles.delimiter}>{delimiter}</span>
-          ))}
-        </span>
+        <span className={styles.folderPattern}>{`${fullName + delimiterView}*`}</span>
+        {delimiters.length > 1 && (
+          <span className={styles.delimiters}>
+            {delimiters.map((delimiter) => (
+              <span className={styles.delimiter}>{delimiter}</span>
+            ))}
+          </span>
+        )}
       </div>
       <span>{`${keyCount} key(s) (${Math.round(keyApproximate * 100) / 100}%)`}</span>
     </>

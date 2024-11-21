@@ -4,11 +4,12 @@ import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 interface Props {
   items: IKeyPropTypes[]
   delimiterPattern?: string
+  delimiters?: string[]
   sorting?: SortOrder
 }
 
 export const constructKeysToTree = (props: Props): any[] => {
-  const { items: keys, delimiterPattern = ':', sorting = 'ASC' } = props
+  const { items: keys, delimiterPattern = ':', delimiters = [], sorting = 'ASC' } = props
   const keysSymbol = `keys${delimiterPattern}keys`
   const tree: any = {}
 
@@ -82,9 +83,10 @@ export const constructKeysToTree = (props: Props): any[] => {
 
       // populate node with children nodes
       if (!tree[key].isLeaf && Object.keys(tree[key]).length > 0) {
+        const delimiterView = delimiters.length === 1 ? delimiters[0] : '-'
         node.children = formatTreeData(
           tree[key],
-          `${previousKey + name}-`,
+          `${previousKey + name + delimiterView}`,
           delimiter,
           path,
         )

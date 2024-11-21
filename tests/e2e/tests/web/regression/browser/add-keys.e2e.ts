@@ -121,7 +121,7 @@ test('Verify that user can add json with BigInt', async t => {
     await t.click(browserPage.addKeyButton);
 
     await t.click(browserPage.editJsonObjectButton);
-    await t.expect(await browserPage.jsonValueInput.textContent).contains('result', 'edit value is empty');
+    await t.expect(await browserPage.jsonValueInput.textContent).contains('message', 'edit value is empty');
     await t.click(browserPage.cancelEditButton);
 
     await t.click(browserPage.expandJsonObject);

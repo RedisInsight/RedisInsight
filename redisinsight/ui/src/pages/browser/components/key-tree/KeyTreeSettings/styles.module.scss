@@ -91,6 +91,8 @@
     height: 30px !important;
   }
   :global(.euiComboBox__inputWrap) {
+    max-height: 200px;
+    overflow: auto;
     max-width: 210px !important;
     padding: 2px 4px !important;
     min-height: 34px !important;

@@ -28,6 +28,7 @@ import styles from './styles.module.scss'
 export interface Props {
   items: IKeyPropTypes[]
   delimiterPattern: string
+  delimiters: string[]
   loadingIcon?: string
   loading: boolean
   deleting: boolean
@@ -53,6 +54,7 @@ const VirtualTree = (props: Props) => {
   const {
     items,
     delimiterPattern,
+    delimiters,
     loadingIcon = 'empty',
     statusOpen = {},
     statusSelected,
@@ -191,6 +193,7 @@ const VirtualTree = (props: Props) => {
       type: node.type,
       fullName: node.fullName,
       shortName: node.nameString?.split(new RegExp(delimiterPattern, 'g')).pop(),
+      delimiters,
       nestingLevel,
       deleting,
       path: node.path,

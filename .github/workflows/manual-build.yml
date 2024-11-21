@@ -1,0 +1,113 @@
+name: 🚀 Manual build
+
+on:
+  # Manual trigger build
+  # No multi-select
+  # https://github.com/actions/runner/issues/2076
+  workflow_dispatch:
+    inputs:
+      build_docker:
+        description: Build Docker
+        type: boolean
+        required: false
+
+      build_windows_x64:
+        description: Build Windows x64
+        type: boolean
+        required: false
+
+      build_macos_x64:
+        description: Build macOS x64
+        type: boolean
+        required: false
+
+      build_macos_arm64:
+        description: Build macOS arm64
+        type: boolean
+        required: false
+
+      build_linux_appimage_x64:
+        description: Build Linux AppImage x64
+        type: boolean
+        required: false
+
+      build_linux_deb_x64:
+        description: Build Linux deb x64
+        type: boolean
+        required: false
+
+      build_linux_rpm_x64:
+        description: Build Linux rpm x64
+        type: boolean
+        required: false
+
+      build_linux_snap_x64:
+        description: Build Linux snap x64
+        type: boolean
+        required: false
+
+      environment:
+        description: Environment to run build
+        type: environment
+        default: 'development'
+        required: false
+
+      debug:
+        description: Enable SSH Debug
+        type: boolean
+
+# Cancel a previous same workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  get-selected:
+    runs-on: ubuntu-latest
+    outputs: # Set this to consume the output on other job
+      selected: ${{ steps.get-selected.outputs.selected}}
+    steps:
+    - uses: actions/checkout@v4
+
+    - id: get-selected
+      uses: joao-zanutto/get-selected@v1.1.1
+      with:
+        format: 'list'
+
+    - name: echo selected targets
+      run: echo ${{ steps.get-selected.outputs.selected }}
+
+  manual-build:
+    needs: get-selected
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+    with:
+      target: ${{ needs.get-selected.outputs.selected }}
+      debug: ${{ inputs.debug }}
+      environment: ${{ inputs.environment }}
+
+  aws-upload:
+    uses: ./.github/workflows/aws-upload-dev.yml
+    secrets: inherit
+    needs: [manual-build]
+    if: always()
+
+  clean:
+    uses: ./.github/workflows/clean-deployments.yml
+    # secrets: inherit
+    needs: [aws-upload]
+    if: always()
+
+  # Remove artifacts from github actions
+  remove-artifacts:
+    name: Remove artifacts
+    needs: [aws-upload]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Remove all artifacts
+      uses: ./.github/actions/remove-artifacts
+
+

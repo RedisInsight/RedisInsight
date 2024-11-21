@@ -35,6 +35,23 @@ fixture `Formatters`
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV8Config);
     });
 
+test.before(async t => {
+    await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV8Config);
+
+})('Verify that UTF8 in PHP serialized', async t => {
+    const phpValueChinese = '测试';
+    const phpValueCRussian = 'Привет мир!';
+    const setValue =`SET ${keyName} "a:3:{s:4:\\"name\\";s:6:\\"${phpValueChinese}\\";s:3:\\"age\\";i:30;s:7:\\"message\\";s:20:\\"${phpValueCRussian}\\";}"\n`;
+
+    await browserPage.Cli.sendCommandInCli(setValue);
+    await t.click(browserPage.refreshKeysButton);
+
+    await browserPage.openKeyDetailsByKeyName(keyName);
+    await browserPage.selectFormatter('PHP serialized');
+    await t.expect(await browserPage.getStringKeyValue()).contains(phpValueChinese, 'data is not serialized in php');
+    await t.expect(await browserPage.getStringKeyValue()).contains(phpValueCRussian, 'data is not serialized in php');
+});
+
 test('Verify that dataTime is displayed in Java serialized', async t => {
     const hexValue ='ACED00057372000E6A6176612E7574696C2E44617465686A81014B59741903000078707708000000BEACD0567278';
     const javaTimeValue = '"1995-12-14T12:12:01.010Z"'

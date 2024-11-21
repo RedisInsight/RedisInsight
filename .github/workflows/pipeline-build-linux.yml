@@ -15,6 +15,11 @@ on:
         default: 'all'
         type: string
 
+      debug:
+        description: SSH Debug
+        default: false
+        type: boolean
+
 jobs:
   build:
     name: Build linux
@@ -22,19 +27,14 @@ jobs:
     environment: ${{ inputs.environment }}
 
     steps:
-    #TODO: some debug tools
-    # - uses: crazy-max/ghaction-dump-context@v2
-    # - uses: hmarr/debug-action@v3
-    # ssh
-    # - run: sudo apt-get update -qy && sudo apt-get install -qy tmux;
-    # - name: Setup upterm session
-    # - uses: mxschmitt/action-tmate@v3 #1 better
-    #   uses: lhotari/action-upterm@v1 #2
-    #   with:
-    #     limit-access-to-actor: true
-    #     limit-access-to-users: zalenskiSofteq
-
     - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Enable SSH
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
 
     - name: Install all libs and dependencies
       uses: ./.github/actions/install-all-build-libs
@@ -66,44 +66,26 @@ jobs:
       if: (vars.ENV == 'staging' || vars.ENV == 'development') && inputs.target == vars.ALL
       run: yarn package:stage
 
-    - name: Build linux packages (development)
+    - name: Build linux packages (custom)
       if: inputs.target != vars.ALL
       run: |
-        target=""
-        if [ ${{ startsWith(inputs.target, 'linux:') }} == 'true' ]; then
-          inputsTarget=${{inputs.target}}
-          target=${inputsTarget#linux:}
+        target=$(echo "${{inputs.target}}" | grep -oE 'build_linux_[^_ ]+' | sed 's/build_linux_//' | sort -u | paste -sd ' ' -)
+
+        if [ "${{ vars.ENV == 'production' }}" == "true" ]; then
+          yarn package:prod --linux $target
+        else
+          yarn package:stage --linux $target
         fi
 
-        yarn package:stage --linux $target
-
     - uses: actions/upload-artifact@v4
-      name: Upload AppImage artifact
+      name: Upload linux builds
       with:
-        name: linux-appimage-build
+        name: linux-builds
         path: |
-          ./release/Redis-Insight*.AppImage
           ./release/latest-linux.yml
-
-    - uses: actions/upload-artifact@v4
-      name: Upload Deb artifact
-      with:
-        name: linux-deb-build
-        path: |
+          ./release/Redis-Insight*.AppImage
           ./release/Redis-Insight*.deb
-
-    - uses: actions/upload-artifact@v4
-      name: Upload rpm artifacts
-      with:
-        name: linux-rpm-build
-        path: |
           ./release/Redis-Insight*.rpm
-
-    - uses: actions/upload-artifact@v4
-      name: Upload snap artifact
-      with:
-        name: linux-snap-builds
-        path: |
           ./release/Redis-Insight*.snap
 
     env:
@@ -111,12 +93,14 @@ jobs:
       RI_AI_QUERY_PASS: ${{ secrets.RI_AI_QUERY_PASS }}
       RI_AI_QUERY_USER: ${{ secrets.RI_AI_QUERY_USER }}
       RI_CLOUD_API_URL: ${{ secrets.RI_CLOUD_API_URL }}
+      RI_CLOUD_API_TOKEN: ${{ secrets.RI_CLOUD_API_TOKEN }}
       RI_CLOUD_CAPI_URL: ${{ secrets.RI_CLOUD_CAPI_URL }}
       RI_CLOUD_IDP_AUTHORIZE_URL: ${{ secrets.RI_CLOUD_IDP_AUTHORIZE_URL }}
       RI_CLOUD_IDP_CLIENT_ID: ${{ secrets.RI_CLOUD_IDP_CLIENT_ID }}
       RI_CLOUD_IDP_GH_ID: ${{ secrets.RI_CLOUD_IDP_GH_ID }}
       RI_CLOUD_IDP_GOOGLE_ID: ${{ secrets.RI_CLOUD_IDP_GOOGLE_ID }}
       RI_CLOUD_IDP_ISSUER: ${{ secrets.RI_CLOUD_IDP_ISSUER }}
+      RI_CLOUD_IDP_REVOKE_TOKEN_URL: ${{ secrets.RI_CLOUD_IDP_REVOKE_TOKEN_URL }}
       RI_CLOUD_IDP_REDIRECT_URI: ${{ secrets.RI_CLOUD_IDP_REDIRECT_URI }}
       RI_CLOUD_IDP_TOKEN_URL: ${{ secrets.RI_CLOUD_IDP_TOKEN_URL }}
       RI_SEGMENT_WRITE_KEY: ${{ secrets.RI_SEGMENT_WRITE_KEY }}

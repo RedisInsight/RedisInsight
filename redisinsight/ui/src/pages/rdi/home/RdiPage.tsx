@@ -18,6 +18,7 @@ import {
 } from 'uiSrc/telemetry'
 import HomePageTemplate from 'uiSrc/templates/home-page-template'
 import { setTitle } from 'uiSrc/utils'
+import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 import EmptyMessage from './empty-message/EmptyMessage'
 import ConnectionForm from './connection-form/ConnectionForm'
 import RdiHeader from './header/RdiHeader'
@@ -62,7 +63,26 @@ const RdiPage = () => {
     if (editInstance) {
       dispatch(editInstanceAction(editInstance.id, instance, onSuccess))
     } else {
-      dispatch(createInstanceAction({ ...instance }, onSuccess))
+      dispatch(createInstanceAction(
+        { ...instance },
+        (data: RdiInstanceResponse) => {
+          sendEventTelemetry({
+            event: TelemetryEvent.RDI_ENDPOINT_ADDED,
+            eventData: {
+              rdiId: data.id,
+            }
+          })
+          onSuccess()
+        },
+        (error) => {
+          sendEventTelemetry({
+            event: TelemetryEvent.RDI_ENDPOINT_ADD_FAILED,
+            eventData: {
+              error,
+            }
+          })
+        }
+      ))
     }
 
     sendEventTelemetry({

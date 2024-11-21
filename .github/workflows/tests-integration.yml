@@ -18,11 +18,17 @@ on:
         description: Use short rte list
         type: boolean
         default: false
+      debug:
+        description: SSH Debug
+        type: boolean
+        default: false
 
 env:
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+  SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
   TEST_MEDIUM_DB_DUMP: ${{ secrets.TEST_MEDIUM_DB_DUMP }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
+  REPORT_NAME: "report-it"
   ITESTS_NAMES: |
     {
       "oss-st-5": "OSS Standalone v5",
@@ -42,6 +48,7 @@ env:
     }
   ITESTS_NAMES_SHORT: |
     {
+      "mods-preview": "OSS Standalone and all preview modules",
       "oss-st-5-pass": "OSS Standalone v5 with admin pass required",
       "oss-st-6-tls-auth": "OSS Standalone v6 with TLS auth required",
       "oss-clu-tls": "OSS Cluster with TLS enabled",
@@ -79,12 +86,21 @@ jobs:
     name: ITest
     runs-on: ubuntu-latest
     needs: set-matrix
+    environment:
+      name: production
     strategy:
       fail-fast: false
       matrix:
         rte: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
     steps:
     - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Enable SSH
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
 
     - name: Download Docker Artifacts
       if: inputs.build == 'docker'
@@ -126,6 +142,7 @@ jobs:
 
     - name: Generate test results
       uses: dorny/test-reporter@v1
+      id: test-reporter
       if: always()
       with:
         name: 'Test results: IT (${{ matrix.rte }}) tests'
@@ -135,10 +152,17 @@ jobs:
         list-suites: 'failed'
         fail-on-error: 'false'
 
+    - name: Add link to report in the workflow summary
+      if: always()
+      run: |
+        link="${{ steps.test-reporter.outputs.url_html }}"
+        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
+
   coverage:
     runs-on: ubuntu-latest
     name: Final coverage
     needs: run-tests
+    if: always()
     steps:
     - uses: actions/checkout@v4
 
@@ -153,7 +177,7 @@ jobs:
     - name: Download coverage artifacts
       uses: actions/download-artifact@v4
       with:
-        pattern: coverages-artifacts
+        name: coverages-artifacts
         path: ./coverages
 
     - name: Calculate coverage across all tests runs

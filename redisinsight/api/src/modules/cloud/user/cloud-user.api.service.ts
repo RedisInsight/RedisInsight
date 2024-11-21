@@ -67,11 +67,11 @@ export class CloudUserApiService {
     try {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
-      if (!session?.refreshToken) {
-        throw new CloudApiUnauthorizedException();
-      }
-
       if (!isValidToken(session?.accessToken)) {
+        if (!session?.refreshToken) {
+          throw new CloudApiUnauthorizedException();
+        }
+
         await this.cloudAuthService.renewTokens(sessionMetadata, session?.idpType, session?.refreshToken);
       }
     } catch (e) {

@@ -8,6 +8,12 @@ on:
         default: false
         type: boolean
 
+      debug:
+        description: Send report to Slack
+        required: false
+        default: false
+        type: boolean
+
 env:
   E2E_CLOUD_DATABASE_USERNAME: ${{ secrets.E2E_CLOUD_DATABASE_USERNAME }}
   E2E_CLOUD_DATABASE_PASSWORD: ${{ secrets.E2E_CLOUD_DATABASE_PASSWORD }}
@@ -25,29 +31,47 @@ env:
   DBUS_SESSION_BUS_ADDRESS: ${{ vars.DBUS_SESSION_BUS_ADDRESS }}
   DISPLAY: ${{ vars.DISPLAY }}
   APPIMAGE_PATH: ${{ vars.APPIMAGE_PATH }}
+  REPORT_NAME: "report-appimage"
 
 jobs:
   e2e-tests-appimage:
     runs-on: ubuntu-latest
     name: E2E AppImage tests
+    environment:
+      name: production
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install WM
+    # SSH Debug
+    - name: Enable SSH
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
+
+    - name: Install necessary packages
       run: |
         sudo apt-get update -y
-        sudo apt-get install kmod libfuse2 xvfb net-tools fluxbox netcat -y
-        # sudo apt-get install kmod libfuse2 xvfb net-tools fluxbox netcat appimagelauncher -y
+        sudo apt-get install kmod libfuse2 xvfb net-tools xdotool desktop-file-utils fluxbox netcat -y
+
+    - name: Install Google Chrome
+      run: |
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable libnss3 libgconf-2-4 libxss1 libasound2
+        xdg-settings set default-web-browser google-chrome.desktop
 
     - name: Download AppImage Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: linux-appimage-build
+        name: linux-builds
         path: ./release
 
-    - name: Run X11
+    - name: Start Xvfb
       run: |
-        Xvfb :99 -screen 0 1920x1080x24 &
+        if [ -f /tmp/.X99-lock ]; then rm /tmp/.X99-lock; fi
+        Xvfb :99 -ac -screen 0 1920x1080x24 &
         sleep 3
         fluxbox &
 
@@ -59,7 +83,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: report-appimage
+        name: ${{ env.REPORT_NAME }}
         path: tests/e2e/report
 
     - name: Send report to Slack
@@ -79,4 +103,26 @@ jobs:
         list-suites: 'failed'
         fail-on-error: 'false'
 
+    # Deploy report to AWS test bucket
+    - name: Deploy report
+      uses: ./.github/actions/deploy-test-reports
+      if: always()
+      with:
+        group: 'report'
+        AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
+        AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+        AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Get current date
+      id: date
+      if: always()
+      uses: ./.github/actions/get-current-date
+
+    - name: Add link to report in the workflow summary
+      if: always()
+      run: |
+        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${{ steps.date.outputs.date }}/${{ github.run_id }}/${{ env.REPORT_NAME }}/index.html"
+        echo "[${link}](${link})" >> $GITHUB_STEP_SUMMARY
 

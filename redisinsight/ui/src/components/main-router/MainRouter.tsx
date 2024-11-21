@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Switch, useHistory, useLocation } from 'react-router-dom'
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
 
 import extractRouter from 'uiSrc/hoc/extractRouter.hoc'
 import { registerRouter } from 'uiSrc/services/routing'
@@ -16,6 +16,7 @@ import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import { appContextSelector, setCurrentWorkspace } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
+import NotFoundErrorPage from 'uiSrc/pages/not-found-error/NotFoundErrorPage'
 import RedisStackRoutes from './components/RedisStackRoutes'
 import DEFAULT_ROUTES from './constants/defaultRoutes'
 import { startActivityMonitor, stopActivityMonitor } from './activityMonitor'
@@ -83,6 +84,10 @@ const MainRouter = () => {
                 ))
               )
           }
+          <Route
+            path="*"
+            component={NotFoundErrorPage}
+          />
         </Switch>
       </Suspense>
     </>

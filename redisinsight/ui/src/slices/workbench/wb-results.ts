@@ -270,8 +270,8 @@ async function getLocalWbHistory(instanceId: string) {
 
 function saveLocalWbHistory(instanceId: string, commandsHistory: CommandHistoryType) {
   try {
-    const key = `${BrowserStorageItem.wbCommandsHistory}:${instanceId}`
-    return wbHistoryStorage.setItem(key, commandsHistory)
+    const key = BrowserStorageItem.wbCommandsHistory
+    return wbHistoryStorage.setItem(key, { dbId: instanceId, value: commandsHistory })
   } catch (e) {
     console.error(e)
     return null

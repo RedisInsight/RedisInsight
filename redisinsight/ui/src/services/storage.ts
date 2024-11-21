@@ -189,24 +189,16 @@ class IndexedDbStorage {
     })
   }
 
-  setItem(key: string, value: any): Promise<void> {
+  setItem(storeName: string, value: any): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        const {
-          storeName,
-          keyName: nKey,
-        } = this._parseKey(key)
-
         this.getDb(storeName).then((db) => {
           if (db === undefined) {
             reject(new Error('Failed to set item in IndexedDB'))
             return
           }
           const transaction = db.transaction(storeName, 'readwrite')
-          const req = transaction?.objectStore(storeName)?.put({
-            value,
-            dbId: nKey,
-          })
+          const req = transaction?.objectStore(storeName)?.put(value)
           transaction.oncomplete = () => {
             resolve()
           }

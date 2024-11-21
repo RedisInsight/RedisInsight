@@ -51,6 +51,9 @@ test
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV8Config);
         keyNames = [
             `device:common-dev`,
+            `device-common:dev`,
+            `device:common:dev`,
+            `device-common-dev`,
             `device:common-stage`,
             `device:common1-stage`,
             `mobile:common-dev`,
@@ -82,7 +85,7 @@ test
         // Switch to tree view
         await t.click(browserPage.treeViewButton);
         // Verify folders ordering with default delimiter
-        await browserActions.checkTreeViewFoldersStructure([['device'], ['mobile']], [':']);
+        await browserActions.checkTreeViewFoldersStructure([['device', 'common'], ['device-common'], ['mobile']], [':']);
         await t.click(browserPage.TreeView.treeViewSettingsBtn);
         // Apply new value to the field
         await browserPage.TreeView.FiltersDialog.addDelimiterItem('-');
@@ -92,6 +95,6 @@ test
 
         // Verify that namespace names tooltip contains valid names and delimiter
         await t.click(browserActions.getNodeSelector('device'));
-        await t.hover(browserActions.getNodeSelector('device:|-common:|-'));
-        await browserActions.verifyTooltipContainsText('device:common-stage-*', true);
+        await t.hover(browserActions.getNodeSelector('device-common'));
+        await browserActions.verifyTooltipContainsText('device-common-*\n:\n-\n5 key(s)', true);
     });

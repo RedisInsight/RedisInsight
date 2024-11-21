@@ -70,10 +70,10 @@ export class BrowserActions {
     }
 
     /**
-     * Verify that not patterned keys not visible with delimiter
+     * Verify that not patterned keys not displayed with delimiter
      * @param delimiter string with delimiter value
      */
-    async verifyNotPatternedKeys(delimiter: string): Promise<void> {
+    async verifyNotPatternedKeysNotDisplayed(delimiter: string): Promise<void> {
         const notPatternedKeys = Selector('[data-testid^="badge"]').parent('[data-testid^="node-item_"]');
         const notPatternedKeysNumber = await notPatternedKeys.count;
 
@@ -88,8 +88,8 @@ export class BrowserActions {
      * @param folderName name of folder
      * @param delimiter string with delimiter value
      */
-    getNodeName(startFolder: string, folderName: string, delimiters: string[]): string {
-        return `${startFolder}${folderName}${delimiters.join('|')}`;
+    getNodeName(startFolder: string, folderName: string, delimiter?: string): string {
+        return delimiter ? `${startFolder}${delimiter}${folderName}` : `${startFolder}${folderName}`;
     }
 
     /**
@@ -106,28 +106,30 @@ export class BrowserActions {
      * @param delimiter string with delimiter value
      */
     async checkTreeViewFoldersStructure(folders: string[][], delimiters: string[]): Promise<void> {
-        // Verify not patterned keys
-        await this.verifyNotPatternedKeys(delimiters[0]);
+        await this.verifyNotPatternedKeysNotDisplayed(delimiters[0]);
 
-        const foldersNumber = folders.length;
+        for (let i = 0; i < folders.length; i++) {
+            const delimiter = delimiters.length > 1 ? '-' : delimiters[0];
+            let prevNodeName = '';
+            let prevDelimiter = '';
 
-        for (let i = 0; i < foldersNumber; i++) {
-            const innerFoldersNumber = folders[i].length;
-            let prevNodeSelector = '';
-
-            for (let j = 0; j < innerFoldersNumber; j++) {
-                const nodeName = this.getNodeName(prevNodeSelector, folders[i][j], delimiters);
+            // Expand subfolders
+            for (let j = 0; j < folders[i].length; j++) {
+                const nodeName = this.getNodeName(prevNodeName, folders[i][j], prevDelimiter);
                 const node = this.getNodeSelector(nodeName);
                 const fullTestIdSelector = await node.getAttribute('data-testid');
+
                 if (!fullTestIdSelector?.includes('expanded')) {
                     await t.click(node);
                 }
-                prevNodeSelector = nodeName;
+
+                prevNodeName = nodeName;
+                prevDelimiter = delimiter;
             }
 
             // Verify that the last folder level contains required keys
-            const foundKeyName = `${folders[i].join(delimiters.join('|'))}`;
-            const firstFolderName = this.getNodeName('', folders[i][0], delimiters);
+            const foundKeyName = `${folders[i].join(delimiter)}`;
+            const firstFolderName = this.getNodeName('', folders[i][0]);
             const firstFolder = this.getNodeSelector(firstFolderName);
             await t
                 .expect(Selector(`[data-testid*="node-item_${foundKeyName}"]`).find('[data-testid^="key-"]').exists).ok('Specific key not found')

@@ -34,7 +34,7 @@ import testcafe from 'testcafe';
                 ])
                 .run({
                     skipJsErrors: true,
-                    browserInitTimeout: 120000,
+                    browserInitTimeout: 240000,
                     selectorTimeout: 5000,
                     assertionTimeout: 5000,
                     speed: 1,

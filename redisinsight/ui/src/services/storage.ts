@@ -1,5 +1,4 @@
 import { isObjectLike } from 'lodash'
-import { IndexedDbStorage } from 'uiSrc/services/indexedDbStorage'
 import BrowserStorageItem from '../constants/storage'
 
 class StorageService {
@@ -92,5 +91,3 @@ export const setCapabilityStorageField = (field: string = '', value?: any) => {
 }
 
 export default StorageService
-
-export const wbHistoryStorage = new IndexedDbStorage('RI_WB_HISTORY', 1)

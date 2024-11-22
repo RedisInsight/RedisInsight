@@ -1,4 +1,13 @@
-export class IndexedDbStorage {
+import { reverse } from 'lodash'
+import { CommandExecution } from 'uiSrc/slices/interfaces'
+import { BrowserStorageItem } from 'uiSrc/constants'
+import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+import { getConfig } from 'uiSrc/config'
+import { formatBytes } from 'uiSrc/utils'
+
+const riConfig = getConfig()
+
+export class WorkbenchStorage {
   private db?: IDBDatabase
 
   constructor(private readonly dbName: string, private readonly version = 1, private readonly keySeparator = ':') {
@@ -159,7 +168,7 @@ export class IndexedDbStorage {
     })
   }
 
-  clear(storeName: string): Promise<void> {
+  clear(storeName: string, dbId: string): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         this.getDb(storeName).then((db) => {
@@ -167,13 +176,22 @@ export class IndexedDbStorage {
             reject(new Error('Failed to clear items in IndexedDB'))
             return
           }
-          const transaction = db.transaction(storeName, 'readwrite')
-          const req = transaction?.objectStore(storeName).clear()
-          transaction.oncomplete = () => {
-            resolve()
+
+          const objectStore = db.transaction(storeName, 'readwrite')?.objectStore(storeName)
+          const idbIndex = objectStore?.index('dbId')
+          const indexReq = idbIndex?.openCursor(dbId)
+          indexReq.onsuccess = () => {
+            const cursor = indexReq.result
+            if (cursor) {
+              cursor.delete()
+              cursor.continue()
+            } else {
+              // either deleted all items or there were none
+              resolve()
+            }
           }
-          transaction.onabort = () => {
-            reject(req?.error)
+          indexReq.onerror = () => {
+            reject(indexReq.error)
           }
         })
       } catch (e) {
@@ -206,4 +224,127 @@ export class IndexedDbStorage {
 
     return key
   }
+}
+
+export const wbHistoryStorage = new WorkbenchStorage('RI_WB_HISTORY', 1)
+
+type CommandHistoryItem = {
+  dbId: string, // Instance Id
+  commandId: string,
+  data: CommandExecution[]
+}
+
+type CommandHistoryType = CommandHistoryItem[]
+
+export async function getLocalWbHistory(instanceId: string) {
+  try {
+    const key = `${BrowserStorageItem.wbCommandsHistory}:${instanceId}`
+    const history = await wbHistoryStorage.getItem(key) as CommandHistoryType
+
+    return history || []
+  } catch (e) {
+    console.error(e)
+    return []
+  }
+}
+
+export function saveLocalWbHistory(commandsHistory: CommandHistoryType) {
+  try {
+    const key = BrowserStorageItem.wbCommandsHistory
+    return Promise.all(commandsHistory.map((chItem) => wbHistoryStorage.setItem(key, chItem)))
+  } catch (e) {
+    console.error(e)
+    return null
+  }
+}
+
+async function cleanupDatabaseHistory(dbId: string) {
+  const commandsHistory: CommandHistoryType = await getLocalWbHistory(dbId)
+  let size = 0
+  const update = commandsHistory.reduce((acc, commandsHistoryElement) => {
+    if (size > riConfig.workbench.maxItemsPerDb) {
+      return acc
+    }
+    let items = commandsHistoryElement.data
+    size += items.length
+    if (size > riConfig.workbench.maxItemsPerDb) {
+      const diff = riConfig.workbench.maxItemsPerDb - size
+      items = items.slice(diff)
+      acc.push({
+        dbId,
+        data: items,
+        commandId: commandsHistoryElement.commandId
+      })
+    }
+
+    return acc
+  }, [] as CommandHistoryType)
+
+  await saveLocalWbHistory(update)
+}
+
+export async function addCommands(dbId: string, commandId: string, data: CommandExecution[]) {
+  // Store command results in local storage!
+  const commandsHistory: CommandHistoryType = await getLocalWbHistory(dbId)
+  const storedData = data.map((item) => {
+    // Do not store command execution result that exceeded limitation
+    if (JSON.stringify(item.result).length > riConfig.workbench.maxResultSize) {
+      item.result = [
+        {
+          status: CommandExecutionStatus.Success,
+          response: `Results have been deleted since they exceed ${formatBytes(riConfig.workbench.maxResultSize)}. 
+          Re-run the command to see new results.`,
+        },
+      ]
+    }
+    return item
+  })
+  await saveLocalWbHistory([
+    ...commandsHistory,
+    {
+      dbId,
+      commandId,
+      data: reverse(storedData),
+    } as CommandHistoryItem
+  ])
+
+  return cleanupDatabaseHistory(dbId)
+}
+
+export async function removeCommand(dbId: string, commandId: string) {
+  // Delete command from local storage?!
+  const commandsHistory = await getLocalWbHistory(dbId)
+
+  const update = commandsHistory.reduce((acc, commandsHistoryElement) => {
+    const items = commandsHistoryElement.data.filter((chItem) => chItem.id !== commandId)
+    if (items.length > 0) {
+      // more commands left, keep in history, else remove from collection
+      acc.push({
+        dbId,
+        data: items,
+        commandId: commandsHistoryElement.commandId
+      })
+    }
+
+    return acc
+  }, [] as CommandHistoryType)
+
+  await saveLocalWbHistory(update)
+}
+
+export async function clearCommands(dbId: string) {
+  await wbHistoryStorage.clear(BrowserStorageItem.wbCommandsHistory, dbId)
+}
+
+export async function findCommand(dbId: string, commandId: string) {
+  // Fetch command from local storage
+  const commandsHistory = await getLocalWbHistory(dbId)
+
+  return commandsHistory.reduce((acc: CommandExecution | null, chItem) => {
+    if (chItem.commandId === commandId) {
+      return chItem.data[0]
+    }
+    const chCommand = chItem.data.find((item) => item.id === commandId)
+    return chCommand || acc
+  }, null)
 }

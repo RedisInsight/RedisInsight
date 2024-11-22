@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { chunk, flatten, reverse } from 'lodash'
-import { apiService, localStorageService, wbHistoryStorage } from 'uiSrc/services'
+import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, CodeButtonParams, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
@@ -21,6 +21,11 @@ import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { setDbIndexState } from 'uiSrc/slices/app/context'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import {
+  addCommands, clearCommands, findCommand,
+  getLocalWbHistory,
+  removeCommand,
+} from 'uiSrc/services/workbenchStorage'
 import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -247,35 +252,6 @@ export const workbenchResultsSelector = (state: RootState) => state.workbench.re
 // The reducer
 export default workbenchResultsSlice.reducer
 
-type CommandHistoryItem = {
-  dbId: string, // Instance Id
-  commandId: string,
-  data: CommandExecution[]
-}
-
-type CommandHistoryType = CommandHistoryItem[]
-async function getLocalWbHistory(instanceId: string) {
-  try {
-    const key = `${BrowserStorageItem.wbCommandsHistory}:${instanceId}`
-    const history = await wbHistoryStorage.getItem(key) as CommandHistoryType
-
-    return history || []
-  } catch (e) {
-    console.error(e)
-    return []
-  }
-}
-
-function saveLocalWbHistory(commandsHistory: CommandHistoryType) {
-  try {
-    const key = BrowserStorageItem.wbCommandsHistory
-    return Promise.all(commandsHistory.map((chItem) => wbHistoryStorage.setItem(key, chItem)))
-  } catch (e) {
-    console.error(e)
-    return null
-  }
-}
-
 // Asynchronous thunk actions
 export function fetchWBHistoryAction(
   instanceId: string,
@@ -289,7 +265,7 @@ export function fetchWBHistoryAction(
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
       if (envDependentFlag === false) {
         // Fetch commands from local storage
-        const commandsHistory: CommandHistoryType = await getLocalWbHistory(instanceId)
+        const commandsHistory = await getLocalWbHistory(instanceId)
         if (Array.isArray(commandsHistory)) {
           const commands = flatten(commandsHistory.map((chItem) => chItem.data))
 
@@ -369,16 +345,7 @@ export function sendWBCommandAction({
         dispatch(setDbIndexState(!!multiCommands?.length))
         const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
         if (envDependentFlag === false) {
-          // Store command results in local storage!
-          const commandsHistory: CommandHistoryType = await getLocalWbHistory(id)
-          await saveLocalWbHistory([
-            ...commandsHistory,
-            {
-              dbId: id,
-              commandId,
-              data: reverse(data),
-            } as CommandHistoryItem
-          ])
+          await addCommands(id, commandId, data)
         }
         onSuccessAction?.(multiCommands)
       }
@@ -447,16 +414,7 @@ export function sendWBCommandClusterAction({
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
         const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
         if (envDependentFlag === false) {
-          // Store command results in local storage!
-          const commandsHistory: CommandHistoryType = await getLocalWbHistory(id)
-          await saveLocalWbHistory([
-            ...commandsHistory,
-            {
-              dbId: id,
-              commandId,
-              data: reverse(data),
-            }
-          ])
+          await addCommands(id, commandId, data)
         }
         onSuccessAction?.(multiCommands)
       }
@@ -487,16 +445,7 @@ export function fetchWBCommandAction(
       dispatch(processWBCommand(commandId))
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
       if (envDependentFlag === false) {
-        // Fetch command from local storage
-        const commandsHistory = await getLocalWbHistory(id)
-
-        const command = commandsHistory.reduce((acc: CommandExecution | null, chItem) => {
-          if (chItem.commandId === commandId) {
-            return chItem.data[0]
-          }
-          const chCommand = chItem.data.find((item) => item.id === commandId)
-          return chCommand || acc
-        }, null)
+        const command = await findCommand(id, commandId)
 
         dispatch(fetchWBCommandSuccess(command || {} as CommandExecution))
 
@@ -540,20 +489,7 @@ export function deleteWBCommandAction(
       dispatch(processWBCommand(commandId))
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
       if (envDependentFlag === false) {
-        // Delete command from local storage?!
-        const commandsHistory: CommandHistoryType = await getLocalWbHistory(id)
-
-        const update = commandsHistory.reduce((acc, commandsHistoryElement) => {
-          const items = commandsHistoryElement.data.filter((chItem) => chItem.id !== commandId)
-          if (items.length > 0) {
-            // more commands left, keep in history, else remove from collection
-            acc.push({ dbId: id, data: items, commandId: commandsHistoryElement.commandId })
-          }
-
-          return acc
-        }, [] as CommandHistoryType)
-
-        await saveLocalWbHistory(update)
+        await removeCommand(id, commandId)
 
         dispatch(deleteWBCommandSuccess(commandId))
         onSuccessAction?.()
@@ -597,9 +533,7 @@ export function clearWbResultsAction(
       dispatch(clearWbResults())
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
       if (envDependentFlag === false) {
-        // Delete commands history from local storage?!
-        await wbHistoryStorage.clear(BrowserStorageItem.wbCommandsHistory)
-
+        await clearCommands(id)
         dispatch(clearWbResultsSuccess())
         onSuccessAction?.()
         return

@@ -154,134 +154,134 @@ services:
     logging: *logging
     image: redis:5
 
-  # # oss cluster (v7)
-  # cluster-plain-creator-7:
-  #   logging: *logging
-  #   build:
-  #     context: ./rte/oss-cluster-7
-  #     dockerfile: creator.Dockerfile
-  #   depends_on:
-  #     - master-plain-7-1
-  #     - master-plain-7-2
-  #     - master-plain-7-3
-  # master-plain-7-1:
-  #   logging: *logging
-  #   build: &cluster-plain-7-build ./rte/oss-cluster-7
-  #   ports:
-  #     - 8200:6379
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.211
-  #     ssh:
-  #       ipv4_address: 172.33.100.211
-  # master-plain-7-2:
-  #   logging: *logging
-  #   build: *cluster-plain-7-build
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.212
-  # master-plain-7-3:
-  #   logging: *logging
-  #   build: *cluster-plain-7-build
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.213
+  # oss cluster (v7)
+  cluster-plain-creator-7:
+    logging: *logging
+    build:
+      context: ./rte/oss-cluster-7
+      dockerfile: creator.Dockerfile
+    depends_on:
+      - master-plain-7-1
+      - master-plain-7-2
+      - master-plain-7-3
+  master-plain-7-1:
+    logging: *logging
+    build: &cluster-plain-7-build ./rte/oss-cluster-7
+    ports:
+      - 8200:6379
+    networks:
+      default:
+        ipv4_address: 172.31.100.211
+      ssh:
+        ipv4_address: 172.33.100.211
+  master-plain-7-2:
+    logging: *logging
+    build: *cluster-plain-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.212
+  master-plain-7-3:
+    logging: *logging
+    build: *cluster-plain-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.213
 
-  # # oss cluster (v7) with rediserch > 2.2
-  # cluster-rs-creator-7:
-  #   logging: *logging
-  #   build:
-  #     context: &cluster-rs-7-build ./rte/oss-cluster-7-rs
-  #     dockerfile: creator.Dockerfile
-  #   depends_on:
-  #     - master-rs-7-1
-  #     - master-rs-7-2
-  #     - master-rs-7-3
-  # master-rs-7-1:
-  #   logging: *logging
-  #   build: *cluster-rs-7-build
-  #   ports:
-  #     - 8221:6379
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.221
-  # master-rs-7-2:
-  #   logging: *logging
-  #   build: *cluster-rs-7-build
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.222
-  # master-rs-7-3:
-  #   logging: *logging
-  #   build: *cluster-rs-7-build
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.223
+  # oss cluster (v7) with rediserch > 2.2
+  cluster-rs-creator-7:
+    logging: *logging
+    build:
+      context: &cluster-rs-7-build ./rte/oss-cluster-7-rs
+      dockerfile: creator.Dockerfile
+    depends_on:
+      - master-rs-7-1
+      - master-rs-7-2
+      - master-rs-7-3
+  master-rs-7-1:
+    logging: *logging
+    build: *cluster-rs-7-build
+    ports:
+      - 8221:6379
+    networks:
+      default:
+        ipv4_address: 172.31.100.221
+  master-rs-7-2:
+    logging: *logging
+    build: *cluster-rs-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.222
+  master-rs-7-3:
+    logging: *logging
+    build: *cluster-rs-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.223
 
-  # # oss cluster with redisgears 2
-  # gears-cluster-2-0-creator:
-  #   logging: *logging
-  #   image: redis:latest
-  #   entrypoint: ['/bin/sh', '-c', 'redis-cli --cluster create 172.31.100.191:6379 172.31.100.192:6379 172.31.100.193:6379 172.31.100.194:6379 172.31.100.195:6379 172.31.100.196:6379 --cluster-replicas 1 --cluster-yes && tail -f /dev/null']
-  #   depends_on:
-  #     - gears-cluster-2-0-node-1
-  #     - gears-cluster-2-0-node-2
-  #     - gears-cluster-2-0-node-3
-  #     - gears-cluster-2-0-node-4
-  #     - gears-cluster-2-0-node-5
-  #     - gears-cluster-2-0-node-6
-  # gears-cluster-2-0-node-1:
-  #   logging: *logging
-  #   image: &gears-cluster-img redislabs/redisgears:edge
-  #   command: &gears-cluster-cmd redis-server --protected-mode no --loadmodule /build/target/release/libredisgears.so v8-plugin-path /build/target/release/libredisgears_v8_plugin.so --cluster-enabled yes
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.191
-  # gears-cluster-2-0-node-2:
-  #   logging: *logging
-  #   image: *gears-cluster-img
-  #   command: *gears-cluster-cmd
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.192
-  # gears-cluster-2-0-node-3:
-  #   logging: *logging
-  #   image: *gears-cluster-img
-  #   command: *gears-cluster-cmd
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.193
-  # gears-cluster-2-0-node-4:
-  #   logging: *logging
-  #   image: *gears-cluster-img
-  #   command: *gears-cluster-cmd
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.194
-  # gears-cluster-2-0-node-5:
-  #   logging: *logging
-  #   image: *gears-cluster-img
-  #   command: *gears-cluster-cmd
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.195
-  # gears-cluster-2-0-node-6:
-  #   logging: *logging
-  #   image: *gears-cluster-img
-  #   command: *gears-cluster-cmd
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.31.100.196
+  # oss cluster with redisgears 2
+  gears-cluster-2-0-creator:
+    logging: *logging
+    image: redis:latest
+    entrypoint: ['/bin/sh', '-c', 'redis-cli --cluster create 172.31.100.191:6379 172.31.100.192:6379 172.31.100.193:6379 172.31.100.194:6379 172.31.100.195:6379 172.31.100.196:6379 --cluster-replicas 1 --cluster-yes && tail -f /dev/null']
+    depends_on:
+      - gears-cluster-2-0-node-1
+      - gears-cluster-2-0-node-2
+      - gears-cluster-2-0-node-3
+      - gears-cluster-2-0-node-4
+      - gears-cluster-2-0-node-5
+      - gears-cluster-2-0-node-6
+  gears-cluster-2-0-node-1:
+    logging: *logging
+    image: &gears-cluster-img redislabs/redisgears:edge
+    command: &gears-cluster-cmd redis-server --protected-mode no --loadmodule /build/target/release/libredisgears.so v8-plugin-path /build/target/release/libredisgears_v8_plugin.so --cluster-enabled yes
+    networks:
+      default:
+        ipv4_address: 172.31.100.191
+  gears-cluster-2-0-node-2:
+    logging: *logging
+    image: *gears-cluster-img
+    command: *gears-cluster-cmd
+    networks:
+      default:
+        ipv4_address: 172.31.100.192
+  gears-cluster-2-0-node-3:
+    logging: *logging
+    image: *gears-cluster-img
+    command: *gears-cluster-cmd
+    networks:
+      default:
+        ipv4_address: 172.31.100.193
+  gears-cluster-2-0-node-4:
+    logging: *logging
+    image: *gears-cluster-img
+    command: *gears-cluster-cmd
+    networks:
+      default:
+        ipv4_address: 172.31.100.194
+  gears-cluster-2-0-node-5:
+    logging: *logging
+    image: *gears-cluster-img
+    command: *gears-cluster-cmd
+    networks:
+      default:
+        ipv4_address: 172.31.100.195
+  gears-cluster-2-0-node-6:
+    logging: *logging
+    image: *gears-cluster-img
+    command: *gears-cluster-cmd
+    networks:
+      default:
+        ipv4_address: 172.31.100.196
 
-  # # redis enterprise
-  # redis-enterprise:
-  #   logging: *logging
-  #   build: ./rte/redis-enterprise
-  #   cap_add:
-  #     - sys_resource
-  #   ports:
-  #     - 19443:9443
-  #     - 12000:12000
+  # redis enterprise
+  redis-enterprise:
+    logging: *logging
+    build: ./rte/redis-enterprise
+    cap_add:
+      - sys_resource
+    ports:
+      - 19443:9443
+      - 12000:12000
 networks:
   default:
     name: "e2e-private-network"

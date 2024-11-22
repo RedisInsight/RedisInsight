@@ -102,7 +102,6 @@ const oauthCloudSlice = createSlice({
     getUserInfoFailure: (state, { payload }: PayloadAction<string>) => {
       state.user.loading = false
       state.user.error = payload
-      state.user.data = null
     },
     addFreeDb: (state) => {
       state.user.freeDb.loading = true

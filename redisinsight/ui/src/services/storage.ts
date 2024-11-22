@@ -93,4 +93,4 @@ export const setCapabilityStorageField = (field: string = '', value?: any) => {
 
 export default StorageService
 
-export const wbHistoryStorage = new IndexedDbStorage('RI_WB_HISTORY', 3)
+export const wbHistoryStorage = new IndexedDbStorage('RI_WB_HISTORY', 1)

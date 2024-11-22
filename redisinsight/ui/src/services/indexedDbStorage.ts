@@ -52,8 +52,7 @@ export class IndexedDbStorage {
           }
           // Create an objectStore for this database
           const objectStore = this.db.createObjectStore(storeName, { keyPath: ['dbId', 'commandId'] })
-          objectStore.createIndex('dbId', 'dbId', { unique: true })
-          objectStore.createIndex('commandId', 'commandId', { unique: true })
+          objectStore.createIndex('dbId', 'dbId', { unique: false })
         } catch (ex) {
           if (ex instanceof DOMException && ex?.name === 'ConstraintError') {
             console.warn(
@@ -80,24 +79,26 @@ export class IndexedDbStorage {
       try {
         const {
           storeName,
-          keyName: nKey,
+          keyName: dbId,
         } = this._parseKey(key)
         this.getDb(storeName).then((db) => {
           if (db === undefined) {
             reject(new Error('Failed to retrieve item from IndexedDB'))
             return
           }
-          const req = db.transaction(storeName, 'readonly')?.objectStore(storeName)?.getAll(nKey)
-          if (req) {
-            req.onsuccess = () => {
-              console.log('success', req.result)
-              resolve(req.result)
+          const objectStore = db.transaction(storeName, 'readonly')?.objectStore(storeName)
+          const idbIndex = objectStore?.index('dbId')
+          const indexReq = idbIndex?.getAll(dbId)
+          indexReq.onsuccess = () => {
+            const values = indexReq.result
+            if (values && values.length > 0) {
+              resolve(values)
+            } else {
+              resolve([])
             }
-            req.onerror = () => {
-              reject(req.error)
-            }
-          } else {
-            reject(new Error('Failed to retrieve item from IndexedDB'))
+          }
+          indexReq.onerror = () => {
+            reject(indexReq.error)
           }
         })
       } catch (e) {
@@ -115,7 +116,6 @@ export class IndexedDbStorage {
             return
           }
           const transaction = db.transaction(storeName, 'readwrite')
-
           const req = transaction?.objectStore(storeName)?.put(value)
           transaction.oncomplete = () => {
             resolve()

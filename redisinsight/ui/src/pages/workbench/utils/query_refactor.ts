@@ -31,6 +31,7 @@ const skipOptionalArguments = (
   queryArg: string,
   commandIndex: number,
   commandArguments: IRedisCommand[],
+  withLastMandatory = false
 ): {
   currentArgument: Maybe<IRedisCommand>
   optionalArguments: IRedisCommand[]
@@ -44,7 +45,11 @@ const skipOptionalArguments = (
     const isOptionalWithInput = isStringsEqual(queryArg, argumentToken)
 
     if (isOptionalWithInput || (currentArgument && !currentArgument.optional)) {
-      return { optionalArguments, currentArgument, index }
+      return {
+        optionalArguments: withLastMandatory ? [...optionalArguments, currentArgument] : optionalArguments,
+        currentArgument,
+        index
+      }
     }
 
     optionalArguments.push(currentArgument)
@@ -74,8 +79,6 @@ export const findStopArgument = (
     const queryArg = queryArgs[i]
     let currentArgument: Maybe<IRedisCommand> = command?.arguments[commandIndex]
 
-    console.log('before all - currentArgument', queryArg, currentArgument, argsCount)
-
     // handle optional arguments, iterate until we get token or non optional arguments
     // we check if we not blocked on optional token argument
     if (!isBlocked && (currentArgument?.optional || !forceReturn)) {
@@ -93,10 +96,7 @@ export const findStopArgument = (
       currentArgument = command?.arguments[commandIndex]
     }
 
-    console.log('currentArgument', currentArgument, queryArg)
-
     if (!currentArgument && forceReturn) {
-      console.log('force return from multiple block', i, queryArgs)
       return {
         queryArgsIterated: i,
         stopArgument: null,
@@ -117,7 +117,7 @@ export const findStopArgument = (
 
     // handle first iteration of token, if arg equals - stay on it and move on to check itself
     if (currentArgument?.token) {
-      if (!isBlocked && isStringsEqual(queryArg, currentArgument.token)) {
+      if (isStringsEqual(queryArg, currentArgument.token)) {
         isBlocked = true
         continue
       }
@@ -133,17 +133,12 @@ export const findStopArgument = (
 
     // handle block, we call the same function for block arguments
     if (currentArgument?.type === ICommandTokenType.Block) {
-      console.log('handle block', currentArgument)
-
       const blockArgument: any = findStopArgument(
         queryArgs.slice(i),
         currentArgument,
         argsCount,
         true
       )
-
-      console.log('blockArgument', blockArgument)
-      console.log('currentCommand', currentArgument)
 
       if (blockArgument?.stopArgument) {
         return {
@@ -222,10 +217,7 @@ export const findStopArgument = (
     command.arguments.slice(0, commandIndex),
     (arg) => !arg.optional
   )
-  console.log('return prevMandatoryIndex', prevMandatoryIndex)
-  console.log('argsCount', argsCount)
-  const data = skipOptionalArguments('', prevMandatoryIndex, command.arguments)
-  console.log(data)
+  const data = skipOptionalArguments('', prevMandatoryIndex, command.arguments, true)
 
   return {
     skippedArguments: [data.optionalArguments],
@@ -248,11 +240,18 @@ export const findStopArgumentWithSuggestions = (currentBlock: BlockTokensTree) =
 
   if (isBlocked) {
     // TODO: check if it is blocked but next argument should suggest token
-    const isBlockedWithSuggestions = stopArgument.arguments?.[0]?.type === ICommandTokenType.OneOf
-    console.log(stopArgument.arguments?.[0]?.token)
+    const isBlockedWithSuggestions = stopArgument.type === ICommandTokenType.OneOf
+
     return {
       stopArg: stopArgument,
-      append: [fillArgsByType([stopArgument.arguments?.[0]] || [stopArgument])],
+      append: [
+        fillArgsByType(
+          isBlockedWithSuggestions
+            ? stopArgument.arguments
+            : [stopArgument.arguments?.[0]]
+        || [stopArgument]
+        )
+      ],
       isBlocked: !isBlockedWithSuggestions,
       parent: blockParent || command
     }
@@ -267,7 +266,7 @@ export const findStopArgumentWithSuggestions = (currentBlock: BlockTokensTree) =
     }
   }
 
-  const append = skippedArguments.map(fillArgsByType)
+  const append = skippedArguments.map((arg) => fillArgsByType(arg, true))
   return {
     append,
     stopArg: stopArgument,

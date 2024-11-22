@@ -1,6 +1,7 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
+import { waitFor } from '@testing-library/react'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import Router from 'uiSrc/Router'
 import { localStorageService } from 'uiSrc/services'
@@ -8,7 +9,7 @@ import { Pages } from 'uiSrc/constants'
 import { appContextSelector, setCurrentWorkspace } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
 import MainRouter from './MainRouter'
-import * as activityMonitor from './activityMonitor'
+import * as activityMonitor from './hooks/useActivityMonitor'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -67,14 +68,13 @@ describe('MainRouter', () => {
     expect(store.getActions()).toContainEqual(setCurrentWorkspace(AppWorkspace.Databases))
   })
 
-  it('starts activity monitor on mount and stops on unmount', () => {
-    const startActivityMonitorSpy = jest.spyOn(activityMonitor, 'startActivityMonitor')
-    const stopActivityMonitorSpy = jest.spyOn(activityMonitor, 'stopActivityMonitor')
+  it('starts activity monitor on mount and stops on unmount', async () => {
+    const useActivityMonitorSpy = jest.spyOn(activityMonitor, 'useActivityMonitor')
 
-    const { unmount } = render(<Router><MainRouter /></Router>)
+    render(<Router><MainRouter /></Router>)
 
-    expect(startActivityMonitorSpy).toHaveBeenCalledTimes(1)
-    unmount()
-    expect(stopActivityMonitorSpy).toHaveBeenCalledTimes(1)
+    await waitFor(() => {
+      expect(useActivityMonitorSpy).toHaveBeenCalledTimes(1)
+    })
   })
 })

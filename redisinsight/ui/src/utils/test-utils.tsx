@@ -318,6 +318,25 @@ export const getMswResourceURL = (path: string = '') => RESOURCES_BASE_URL.conca
 export const getMswURL = (path: string = '') =>
   apiService.defaults.baseURL?.concat(path.startsWith('/') ? path.slice(1) : path) ?? ''
 
+export const mockWindowLocation = (initialHref = '') => {
+  const setHrefMock = jest.fn()
+  let href = initialHref
+  Object.defineProperty(window, 'location', {
+    value: {
+      set href(url) {
+        setHrefMock(url)
+        href = url
+      },
+      get href() {
+        return href
+      },
+    },
+    writable: true,
+  })
+
+  return setHrefMock
+}
+
 // re-export everything
 export * from '@testing-library/react'
 // override render method

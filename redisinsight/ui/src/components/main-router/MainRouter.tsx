@@ -18,7 +18,7 @@ import { AppWorkspace } from 'uiSrc/slices/interfaces'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 import RedisStackRoutes from './components/RedisStackRoutes'
 import DEFAULT_ROUTES from './constants/defaultRoutes'
-import { startActivityMonitor, stopActivityMonitor } from './activityMonitor'
+import { useActivityMonitor } from './hooks/useActivityMonitor'
 
 const MainRouter = () => {
   const { server } = useSelector(appInfoSelector)
@@ -28,6 +28,7 @@ const MainRouter = () => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { pathname } = useLocation()
+  useActivityMonitor()
 
   const isRedisStack = server?.buildType === BuildType.RedisStack
 
@@ -37,13 +38,6 @@ const MainRouter = () => {
       if (pathname === Pages.home && isRdiPageHome) {
         history.push(Pages.rdi)
       }
-    }
-
-    // notify parent window of last activity
-    startActivityMonitor()
-
-    return () => {
-      stopActivityMonitor()
     }
   }, [])
 

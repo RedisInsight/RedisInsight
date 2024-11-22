@@ -7,7 +7,6 @@
     "node_modules",
     "package.json"
   ],
-  "npmRebuild": false,
   "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
   "compression": "normal",
   "asarUnpack": [

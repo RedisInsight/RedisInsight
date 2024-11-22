@@ -87,7 +87,7 @@ jobs:
       run: |
         # testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
 
-        testFiles=tests/web/critical-path/database/connecting-to-the-db.e2e.ts
+        # testFiles=tests/web/critical-path/database/connecting-to-the-db.e2e.ts
         echo $testFiles
 
         # Multi-Line value

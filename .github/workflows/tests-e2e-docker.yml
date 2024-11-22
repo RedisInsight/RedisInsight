@@ -61,7 +61,7 @@ jobs:
     # SSH Debug
     - name: Enable SSH
       uses: mxschmitt/action-tmate@v3
-      # if: inputs.debug
+      if: inputs.debug
       with:
         detached: true
 

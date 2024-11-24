@@ -47,11 +47,11 @@ export const launchApiServer = async () => {
       winAuthService.setStrategy(new ElectronWindowAuthStrategy())
 
       // Pass the service instance to the auth strategy
-      authStrategy = createAuthStrategy(false, apiApp)
+      authStrategy = createAuthStrategy(apiApp)
       await authStrategy.initialize()
       log.info('[Server] Production server initialized')
     } else {
-      authStrategy = createAuthStrategy(true, null)
+      authStrategy = createAuthStrategy()
       await authStrategy.initialize()
     }
   } catch (_err) {

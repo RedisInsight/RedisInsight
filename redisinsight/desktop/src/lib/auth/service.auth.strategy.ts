@@ -36,7 +36,6 @@ export class ServiceAuthStrategy implements AuthStrategy {
         throw new Error('[Service Auth] Backend app not provided')
       }
 
-      log.info('[Service Auth] Creating auth strategy with backend app', this.beApp)
       this.cloudAuthService = this.beApp.select(CloudAuthModule).get(CloudAuthService)
       this.initialized = true
       log.info('[Service Auth] Service auth initialized')

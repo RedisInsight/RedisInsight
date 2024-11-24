@@ -16,12 +16,12 @@ import { TcpCloudAuthStrategy } from './auth-strategy/tcp-cloud.auth.strategy';
     SsoIdpCloudAuthStrategy,
     CloudAuthService,
     CloudAuthAnalytics,
-    ...(process.env.NODE_ENV === 'development' ? [TcpCloudAuthStrategy] : [])
+    ...(process.env.USE_TCP_CLOUD_AUTH === 'true' ? [TcpCloudAuthStrategy] : [])
   ],
   controllers: [CloudAuthController],
   exports: [
     CloudAuthService,
-    ...(process.env.NODE_ENV === 'development' ? [TcpCloudAuthStrategy] : [])
+    ...(process.env.USE_TCP_CLOUD_AUTH === 'true' ? [TcpCloudAuthStrategy] : [])
   ],
 })
 export class CloudAuthModule { }

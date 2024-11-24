@@ -12,10 +12,7 @@ import { DEFAULT_SESSION_ID, DEFAULT_USER_ID } from 'apiSrc/common/constants'
 import { createAuthStrategy } from '../auth/auth.factory'
 import { getWindows } from '../window/browserWindow'
 
-const authStrategy = createAuthStrategy(
-  process.env.NODE_ENV === 'development',
-  null
-)
+const authStrategy = createAuthStrategy()
 
 export const getOauthIpcErrorResponse = (error: any): { status: CloudAuthStatus.Failed, error: {} } => {
   let errorResponse = new CloudOauthUnexpectedErrorException().getResponse()
@@ -39,10 +36,9 @@ export const getTokenCallbackFunction = (webContents: WebContents) => (response:
 
 export const initCloudOauthHandlers = () => {
   ipcMain.handle(IpcInvokeEvent.cloudOauth, async (event, options: CloudAuthRequestOptions) => {
-    log.log('oauth handler! pt2')
     try {
       await authStrategy.initialize()
-      const data = await authStrategy.getAuthUrl({
+      const { url } = await authStrategy.getAuthUrl({
         sessionMetadata: {
           sessionId: DEFAULT_SESSION_ID,
           userId: DEFAULT_USER_ID,
@@ -52,8 +48,6 @@ export const initCloudOauthHandlers = () => {
           callback: getTokenCallbackFunction(event?.sender as WebContents),
         }
       })
-
-      const { url } = data
 
       await open(url)
 

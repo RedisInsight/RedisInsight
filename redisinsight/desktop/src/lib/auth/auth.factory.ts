@@ -3,10 +3,9 @@ import { TcpAuthStrategy } from './tcp.auth.strategy'
 import { ServiceAuthStrategy } from './service.auth.strategy'
 
 export const createAuthStrategy = (
-  isDevelopment: boolean,
-  beApp: any
+  beApp?: any
 ): AuthStrategy => {
-  if (isDevelopment) {
+  if (process.env.USE_TCP_CLOUD_AUTH === 'true') {
     return TcpAuthStrategy.getInstance()
   }
   return ServiceAuthStrategy.getInstance(beApp)

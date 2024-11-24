@@ -107,62 +107,59 @@ jobs:
       debug: ${{ inputs.debug || false }}
 
   # # E2E Approve
-  # e2e-approve:
-  #   runs-on: ubuntu-latest
-  #   needs: changes
-  #   timeout-minutes: 60
-  #   if: inputs.group_tests == 'all' || inputs.group_tests == 'only_e2e' || startsWith(github.ref_name, 'e2e/')
-  #   # environment: ${{ startsWith(github.ref_name, 'e2e/') && 'e2e-approve' || 'staging' }}
-  #   environment: 'staging'
-  #   name: Approve E2E tests
-  #   steps:
-  #     - uses: actions/checkout@v4
+  e2e-approve:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: inputs.group_tests == 'all' || inputs.group_tests == 'only_e2e' || startsWith(github.ref_name, 'e2e/')
+    timeout-minutes: 60
+    environment: ${{ startsWith(github.ref_name, 'e2e/') && 'e2e-approve' || 'staging' }}
+    name: Approve E2E tests
+    steps:
+      - uses: actions/checkout@v4
 
   # E2E Docker
-  # build-docker:
-  #   uses: ./.github/workflows/pipeline-build-docker.yml
-  #   needs: e2e-approve
-  #   secrets: inherit
-  #   with:
-  #     debug: ${{ inputs.debug || false }}
-  #     only_docker: true
+  build-docker:
+    uses: ./.github/workflows/pipeline-build-docker.yml
+    needs: e2e-approve
+    secrets: inherit
+    with:
+      debug: ${{ inputs.debug || false }}
+      for_e2e_tests: true
 
   e2e-docker-tests:
-    # needs: build-docker
+    needs: build-docker
     uses: ./.github/workflows/tests-e2e-docker.yml
     secrets: inherit
     with:
       debug: ${{ inputs.debug || false }}
 
   # E2E AppImage
-  # build-appimage:
-  #   uses: ./.github/workflows/pipeline-build-linux.yml
-  #   needs: e2e-approve
-  #   secrets: inherit
-  #   with:
-  #     target: linux:appimage:x64
-  #     debug: ${{ inputs.debug || false }}
+  build-appimage:
+    uses: ./.github/workflows/pipeline-build-linux.yml
+    needs: e2e-approve
+    secrets: inherit
+    with:
+      target: build_linux_appimage_x64
+      debug: ${{ inputs.debug || false }}
 
-  # e2e-appimage-tests:
-  #   needs: build-appimage
-  #   uses: ./.github/workflows/tests-e2e-appimage.yml
-  #   secrets: inherit
-  #   with:
-  #     debug: ${{ inputs.debug || false }}
+  e2e-appimage-tests:
+    needs: build-appimage
+    uses: ./.github/workflows/tests-e2e-appimage.yml
+    secrets: inherit
+    with:
+      debug: ${{ inputs.debug || false }}
 
-  # clean:
-  #   uses: ./.github/workflows/clean-deployments.yml
-  #   needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
-  #   if: ${{ !inputs.pre_release && always() }}
+  clean:
+    uses: ./.github/workflows/clean-deployments.yml
+    if: always()
+    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
 
   # Remove artifacts from github actions
-  # remove-artifacts:
-  #   name: Remove artifacts
-  #   needs: [clean]
-  #   if: ${{ !inputs.pre_release && always() }}
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Remove all artifacts
-  #     uses: ./.github/actions/remove-artifacts
+  remove-artifacts:
+    name: Remove artifacts
+    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Remove all artifacts
+      uses: ./.github/actions/remove-artifacts

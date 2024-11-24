@@ -50,14 +50,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup repository
-      run: git config --global --add safe.directory /__w/RedisInsight/RedisInsight
-
-    # - name: Setup Python
-    #   uses: actions/setup-python@v5
-    #   with:
-    #     python-version: '3.11'
-
     # SSH Debug
     - name: Enable SSH
       uses: mxschmitt/action-tmate@v3
@@ -65,29 +57,21 @@ jobs:
       with:
         detached: true
 
-    # - name: Download Docker Artifacts
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     name: docker-builds
-    #     path: ./release
+    - name: Download Docker Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: docker-builds
+        path: ./release
 
     - name: Load built docker image from workspace
       run: |
-        # docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
-
-        OUTPUT_FILE="docker-linux-alpine.amd64.tar"
-        FILE_URL="https://s3.us-east-1.amazonaws.com/redisinsight.test/public/pre-release/2.62.0/docker/${OUTPUT_FILE}"
-
-        wget -O "$OUTPUT_FILE" "$FILE_URL"
-
-        docker image load -i ./docker-linux-alpine.amd64.tar
+        docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
 
     - name: Generate short list of the test files
       working-directory: ./tests/e2e
       run: |
         testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
 
-        # testFiles=tests/web/critical-path/database/connecting-to-the-db.e2e.ts
         echo $testFiles
 
         # Multi-Line value
@@ -131,23 +115,8 @@ jobs:
         list-suites: 'failed'
         fail-on-error: 'false'
 
-    - name: Add link to report in the workflow summary
-      if: always()
-      run: |
-        DATE=$(date +'%Y-%m-%d')
-        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${DATE}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}/index.html"
-
-        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
-
-  # Deploy report to AWS test bucket
-  deploy-report:
-    name: Deploy report
-    needs: 'e2e-docker-tests'
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
     - name: Deploy report
+      if: always()
       uses: ./.github/actions/deploy-test-reports
       with:
         group: 'report'
@@ -156,4 +125,13 @@ jobs:
         AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Add link to report in the workflow summary
+      if: always()
+      run: |
+        DATE=$(date +'%Y-%m-%d')
+        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${DATE}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}/index.html"
+
+        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
+
 

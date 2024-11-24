@@ -1,18 +1,18 @@
 import log from 'electron-log'
 import getPort, { portNumbers } from 'get-port'
-
-import { createServer } from 'net'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
-
-import { getWindows } from '../window'
-
+import { createAuthStrategy } from 'desktopSrc/lib/auth/auth.factory'
+import { AuthStrategy } from 'desktopSrc/lib/auth/auth.interface'
+import { AbstractWindowAuthStrategy } from 'apiSrc/modules/auth/window-auth/strategies/abstract.window.auth.strategy'
 import { WindowAuthModule } from '../../../../api/dist/src/modules/auth/window-auth/window-auth.module'
 import { WindowAuthService } from '../../../../api/dist/src/modules/auth/window-auth/window-auth.service'
-import { AbstractWindowAuthStrategy } from '../../../../api/dist/src/modules/auth/window-auth/strategies/abstract.window.auth.strategy'
 import server from '../../../../api/dist/src/main'
+import { getWindows } from '../window'
 
 const port = config?.defaultPort
+let gracefulShutdown: Function
+let beApp: any
 
 export class ElectronWindowAuthStrategy extends AbstractWindowAuthStrategy {
   async isAuthorized(id: string): Promise<boolean> {
@@ -20,76 +20,55 @@ export class ElectronWindowAuthStrategy extends AbstractWindowAuthStrategy {
   }
 }
 
-let gracefulShutdown: Function
-let beApp: any
+// Create auth strategy after beApp is initialized
+let authStrategy: AuthStrategy
+
 export const launchApiServer = async () => {
   try {
-    if (config.isDevelopment) {
-      console.log('Launching API server', 1)
-      // Define auth port
-      const TCP_LOCAL_AUTH_PORT = config.tcpLocalAuthPort
+    log.info('[Server] Launching API server')
 
-      // Create and start auth server first
-      const authServer = createServer((socket) => {
-        socket.setEncoding('utf8')
+    if (!config.isDevelopment) {
+      // Production code
+      const detectPortConst = await getPort({ port: portNumbers(port, port + 1_000) })
+      process.env.RI_APP_PORT = detectPortConst?.toString()
 
-        socket.on('data', (data) => {
-          const windowId = data.toString().trim()
-          const windows = getWindows()
-          const isValid = windows?.has(windowId)
+      if (process.env.APPIMAGE) {
+        process.env.BUILD_PACKAGE = 'appimage'
+      }
+      log.info('[Server] Starting production server with port:', detectPortConst)
+      log.info('[Server] Environment:', process.env.NODE_ENV)
 
-          // Write back the validation result
-          socket.write(isValid ? '1' : '0', () => {
-            socket.end()
-          })
-        })
+      const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server(detectPortConst)
+      gracefulShutdown = gracefulShutdownFn
+      beApp = apiApp
 
-        socket.on('error', () => {
-          socket.end()
-        })
-      })
+      // Get the WindowAuthService directly from the app
+      const winAuthService = beApp?.select?.(WindowAuthModule).get?.(WindowAuthService)
+      winAuthService.setStrategy(new ElectronWindowAuthStrategy())
 
-      authServer.on('error', (err) => {
-        log.error('Auth server error:', err)
-      })
-
-      authServer.on('listening', () => {
-        log.info('Auth server is listening on port:', TCP_LOCAL_AUTH_PORT)
-      })
-
-      // Wait for auth server to start
-      await new Promise<void>((resolve) => {
-        authServer.listen(TCP_LOCAL_AUTH_PORT, () => {
-          resolve()
-        })
-      })
-      return
+      // Pass the service instance to the auth strategy
+      authStrategy = createAuthStrategy(false, apiApp)
+      await authStrategy.initialize()
+      log.info('[Server] Production server initialized')
+    } else {
+      authStrategy = createAuthStrategy(true, null)
+      await authStrategy.initialize()
     }
-    // Production code
-    const detectPortConst = await getPort({ port: portNumbers(port, port + 1_000) })
-    process.env.RI_APP_PORT = detectPortConst?.toString()
-
-    if (process.env.APPIMAGE) {
-      process.env.BUILD_PACKAGE = 'appimage'
-    }
-
-    log.info('Starting server with port:', detectPortConst)
-    log.info('Environment:', process.env.NODE_ENV)
-
-    const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server(detectPortConst)
-    gracefulShutdown = gracefulShutdownFn
-    beApp = apiApp
-
-    const winAuthService = beApp?.select?.(WindowAuthModule).get?.(WindowAuthService)
-    winAuthService.setStrategy(new ElectronWindowAuthStrategy())
   } catch (_err) {
     const error = _err as Error
-    log.error('Catch server error:', wrapErrorMessageSensitiveData(error))
-    log.error('Server initialization error:', error)
-    log.error('Error stack:', error.stack)
+    log.error('[Server] Catch server error:', wrapErrorMessageSensitiveData(error))
+    log.error('[Server] Server initialization error:', error)
+    log.error('[Server] Error stack:', error.stack)
     throw error
   }
 }
 
-export const getBackendGracefulShutdown = () => gracefulShutdown?.()
-export const getBackendApp = () => beApp
+export const getBackendGracefulShutdown = () => {
+  log.info('[Server] Initiating graceful shutdown')
+  return gracefulShutdown?.()
+}
+
+export const getBackendApp = () => {
+  log.info('[Server] Getting backend app')
+  return beApp
+}

@@ -44,7 +44,7 @@ export class CloudAuthService {
     private readonly ssoIdpCloudAuthStrategy: SsoIdpCloudAuthStrategy,
     private readonly analytics: CloudAuthAnalytics,
     private readonly eventEmitter: EventEmitter2,
-  ) {}
+  ) { }
 
   static getOAuthHttpRequestHeaders() {
     return {
@@ -69,7 +69,7 @@ export class CloudAuthService {
     ) {
       return (
         authRequest?.idpType === CloudAuthIdpType.GitHub
-          && query?.error_description?.indexOf('email') > -1
+        && query?.error_description?.indexOf('email') > -1
       )
         ? new CloudOauthGithubEmailPermissionException(query.error_description)
         : new CloudOauthMissedRequiredDataException(query.error_description, {

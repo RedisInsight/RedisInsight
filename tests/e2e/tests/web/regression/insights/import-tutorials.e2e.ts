@@ -73,6 +73,11 @@ test
         const tutorials = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
 
         await t.expect(tutorials.customTutorials.visible).ok('custom tutorials sections is not visible');
+        // Verify that user can see "My Tutorials" tab is collapsed by default in tutorials
+        await t.expect(tutorials.customTutorials.getAttribute('aria-expanded')).eql('false', 'My tutorials not closed by default');
+
+        // Expand My tutorials
+        await tutorials.toggleMyTutorialPanel();
         await t.click(tutorials.tutorialOpenUploadButton);
         await t.expect(tutorials.tutorialSubmitButton.hasAttribute('disabled')).ok('submit button is not disabled');
 
@@ -138,6 +143,7 @@ test
 
         await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
+        await tutorials.toggleMyTutorialPanel();
         await t.click(tutorials.tutorialOpenUploadButton);
         // Verify that user can upload tutorials using a URL
         await t.typeText(tutorials.tutorialLinkField, link);
@@ -199,6 +205,7 @@ test
         // Upload custom tutorial
         await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
+        await tutorials.toggleMyTutorialPanel();
         await t
             .click(tutorials.tutorialOpenUploadButton)
             .setFilesToUpload(tutorials.tutorialImport, [zipFilePath])
@@ -269,6 +276,7 @@ test
         // Upload custom tutorial
         await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
+        await tutorials.toggleMyTutorialPanel();
         await t
             .click(tutorials.tutorialOpenUploadButton)
             .setFilesToUpload(tutorials.tutorialImport, [zipFilePath])

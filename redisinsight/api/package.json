@@ -48,6 +48,7 @@
     "@nestjs/platform-socket.io/socket.io": "^4.8.0",
     "@nestjs/cli/**/braces": "^3.0.3",
     "**/semver": "^7.5.2",
+    "**/cpu-features": "file:./stubs/cpu-features",
     "winston-daily-rotate-file/**/file-stream-rotator": "^1.0.0"
   },
   "dependencies": {

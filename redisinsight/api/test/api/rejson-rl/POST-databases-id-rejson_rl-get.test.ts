@@ -64,7 +64,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
           responseBody: {
             downloaded: true,
             path: '.',
-            data: constants.TEST_REJSON_VALUE_3,
+            data: JSON.stringify(constants.TEST_REJSON_VALUE_3),
           },
         },
       ].map(mainCheckFn);
@@ -83,7 +83,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
           responseBody: {
             downloaded: true,
             path: '.',
-            data: constants.TEST_REJSON_VALUE_3,
+            data: JSON.stringify(constants.TEST_REJSON_VALUE_3),
           },
         },
         {
@@ -97,7 +97,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
           responseBody: {
             downloaded: true,
             path: '.object.field',
-            data: 'value',
+            data: `"${'value'}"`,
           },
         },
         {
@@ -111,7 +111,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
           responseBody: {
             downloaded: true,
             path: '["array"][1]',
-            data: 2,
+            data: String(2),
           },
         },
         {
@@ -175,7 +175,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
           responseBody: {
             downloaded: false,
             path: '["object"]["some"]',
-            data: constants.TEST_REJSON_VALUE_3.object.some, // full value right now
+            data: `"${constants.TEST_REJSON_VALUE_3.object.some}"`, // full value right now
             type: 'string',
           },
         },

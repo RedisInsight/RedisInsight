@@ -6,6 +6,9 @@ export const MOCK_CUSTOM_TUTORIALS_ITEMS: IEnablementAreaItem[] = [
     label: 'MY TUTORIALS',
     type: EnablementAreaComponent.Group,
     _actions: ['create'],
+    args: {
+      initialIsOpen: true
+    },
     children: [
       {
         id: '12mfp-rem',

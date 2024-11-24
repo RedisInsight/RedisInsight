@@ -140,3 +140,29 @@
 .deletePopover {
   max-width: 400px !important;
 }
+
+.folderTooltipHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  word-break: break-all;
+}
+
+.delimiters {
+  display: inline-flex;
+  flex-wrap: wrap;
+}
+
+.folderPattern {
+  font-weight: bold;
+  margin-right: 4px;
+  white-space: normal;
+}
+
+.delimiter {
+  margin-bottom: 2px;
+  padding: 2px 5px;
+  margin-right: 4px;
+  border-radius: 2px;
+  background-color: var(--euiColorLightestShade);
+}

@@ -13,6 +13,7 @@ import {
   Nullable,
 } from 'uiSrc/utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { parseJsonData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/utils'
 
 import {
   GetRejsonRlResponseDto,
@@ -352,10 +353,14 @@ export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
       )
 
       if (isStatusSuccessful(status)) {
-        return data
+        return {
+          ...data,
+          data: parseJsonData(data?.data)
+        }
       }
       throw new Error(data.toString())
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       if (!axios.isCancel(error)) {
         const errorMessage = getApiErrorMessage(error)
         dispatch(loadRejsonBranchFailure(errorMessage))

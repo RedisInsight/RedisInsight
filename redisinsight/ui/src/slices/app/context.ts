@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { EuiComboBoxOptionOption } from '@elastic/eui'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { CapabilityStorageItem, ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { Maybe, Nullable } from 'uiSrc/utils'
@@ -37,7 +38,7 @@ export const initialState: StateAppContext = {
   contextRdiInstanceId: '',
   lastPage: '',
   dbConfig: {
-    treeViewDelimiter: DEFAULT_DELIMITER,
+    treeViewDelimiter: [DEFAULT_DELIMITER],
     treeViewSort: DEFAULT_TREE_SORTING,
     slowLogDurationUnit: DEFAULT_SLOWLOG_DURATION_UNIT,
     showHiddenRecommendations: DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS,
@@ -56,7 +57,6 @@ export const initialState: StateAppContext = {
     },
     panelSizes: {},
     tree: {
-      delimiter: DEFAULT_DELIMITER,
       openNodes: {},
       selectedLeaf: null,
     },
@@ -127,7 +127,7 @@ const appContextSlice = createSlice({
       state.workspace = payload || AppWorkspace.Databases
     },
     setDbConfig: (state, { payload }) => {
-      state.dbConfig.treeViewDelimiter = payload?.treeViewDelimiter ?? DEFAULT_DELIMITER
+      state.dbConfig.treeViewDelimiter = payload?.treeViewDelimiter ?? [DEFAULT_DELIMITER]
       state.dbConfig.treeViewSort = payload?.treeViewSort ?? DEFAULT_TREE_SORTING
       state.dbConfig.slowLogDurationUnit = payload?.slowLogDurationUnit ?? DEFAULT_SLOWLOG_DURATION_UNIT
       state.dbConfig.showHiddenRecommendations = payload?.showHiddenRecommendations
@@ -136,8 +136,8 @@ const appContextSlice = createSlice({
       state.dbConfig.slowLogDurationUnit = payload
       setDBConfigStorageField(state.contextInstanceId, ConfigDBStorageItem.slowLogDurationUnit, payload)
     },
-    setBrowserTreeDelimiter: (state, { payload }: { payload: string }) => {
-      state.dbConfig.treeViewDelimiter = payload
+    setBrowserTreeDelimiter: (state, { payload }: { payload: EuiComboBoxOptionOption[] }) => {
+      state.dbConfig.treeViewDelimiter = payload as any
       setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.treeViewDelimiter, payload)
     },
     setBrowserTreeSort: (state, { payload }: PayloadAction<SortOrder>) => {

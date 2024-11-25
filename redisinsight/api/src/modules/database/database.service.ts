@@ -184,7 +184,7 @@ export class DatabaseService {
           database,
         );
         const redisInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
-        this.analytics.sendInstanceAddedEvent(database, redisInfo);
+        this.analytics.sendInstanceAddedEvent(sessionMetadata, database, redisInfo);
         await client.disconnect();
       } catch (e) {
         // ignore error
@@ -196,7 +196,7 @@ export class DatabaseService {
 
       const exception = getRedisConnectionException(error, dto);
 
-      this.analytics.sendInstanceAddFailedEvent(exception);
+      this.analytics.sendInstanceAddFailedEvent(sessionMetadata, exception);
 
       throw exception;
     }
@@ -236,6 +236,7 @@ export class DatabaseService {
 
       // todo: rethink
       this.analytics.sendInstanceEditedEvent(
+        sessionMetadata,
         oldDatabase,
         database,
         manualUpdate,
@@ -310,7 +311,7 @@ export class DatabaseService {
       false,
     );
 
-    this.analytics.sendInstanceAddedEvent(createdDatabase);
+    this.analytics.sendInstanceAddedEvent(sessionMetadata, createdDatabase);
     return createdDatabase;
   }
 
@@ -330,7 +331,7 @@ export class DatabaseService {
       await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
       this.logger.log('Succeed to delete database instance.');
 
-      this.analytics.sendInstanceDeletedEvent(database);
+      this.analytics.sendInstanceDeletedEvent(sessionMetadata, database);
       this.eventEmitter.emit(AppRedisInstanceEvents.Deleted, id);
     } catch (error) {
       this.logger.error(`Failed to delete database: ${id}`, error);

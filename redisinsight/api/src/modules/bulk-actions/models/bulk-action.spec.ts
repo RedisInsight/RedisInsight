@@ -15,6 +15,7 @@ import {
   generateMockBulkActionErrors,
   MockType,
   mockBulkActionOverviewMatcher,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import {
   DeleteBulkActionSimpleRunner,
@@ -293,12 +294,12 @@ describe('AbstractBulkActionSimpleRunner', () => {
     it('Should not fail on emit error', () => {
       mockSocket.emit.mockImplementation(() => { throw new Error('some error'); });
 
-      bulkAction.sendOverview();
+      bulkAction.sendOverview(mockSessionMetadata);
     });
     it('Should send overview', () => {
       mockSocket.emit.mockReturnValue();
 
-      bulkAction.sendOverview();
+      bulkAction.sendOverview(mockSessionMetadata);
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
     });
@@ -308,12 +309,12 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
       bulkAction['status'] = BulkActionStatus.Completed;
 
-      bulkAction.sendOverview();
+      bulkAction.sendOverview(mockSessionMetadata);
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
       expect(analytics.sendActionFailed).not.toHaveBeenCalled();
       expect(analytics.sendActionStopped).not.toHaveBeenCalled();
-      expect(analytics.sendActionSucceed).toHaveBeenCalledWith(mockBulkActionOverviewMatcher);
+      expect(analytics.sendActionSucceed).toHaveBeenCalledWith(mockSessionMetadata, mockBulkActionOverviewMatcher);
     });
 
     it('Should call sendActionFailed', () => {
@@ -322,12 +323,13 @@ describe('AbstractBulkActionSimpleRunner', () => {
       bulkAction['status'] = BulkActionStatus.Failed;
       bulkAction['error'] = new Error('some error');
 
-      bulkAction.sendOverview();
+      bulkAction.sendOverview(mockSessionMetadata);
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
       expect(analytics.sendActionSucceed).not.toHaveBeenCalled();
       expect(analytics.sendActionStopped).not.toHaveBeenCalled();
       expect(analytics.sendActionFailed).toHaveBeenCalledWith(
+        mockSessionMetadata,
         {
           ...mockBulkActionOverviewMatcher,
           status: 'failed',
@@ -341,12 +343,13 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
       bulkAction['status'] = BulkActionStatus.Aborted;
 
-      bulkAction.sendOverview();
+      bulkAction.sendOverview(mockSessionMetadata);
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
       expect(analytics.sendActionSucceed).not.toHaveBeenCalled();
       expect(analytics.sendActionFailed).not.toHaveBeenCalled();
       expect(analytics.sendActionStopped).toHaveBeenCalledWith(
+        mockSessionMetadata,
         {
           ...mockBulkActionOverviewMatcher,
           status: 'aborted',

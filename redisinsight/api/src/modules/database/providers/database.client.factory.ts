@@ -133,7 +133,7 @@ export class DatabaseClientFactory {
         database,
         database.name,
       );
-      this.analytics.sendConnectionFailedEvent(database, exception);
+      this.analytics.sendConnectionFailedEvent(clientMetadata.sessionMetadata, database, exception);
       throw exception;
     }
   }

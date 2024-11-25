@@ -86,7 +86,7 @@ export class LocalFeaturesConfigService
     }
   }
 
-  private async getNewConfig(): Promise<{
+  private async getNewConfig(sessionMetadata: SessionMetadata): Promise<{
     data: any;
     type: FeatureConfigConfigDestination;
   }> {
@@ -113,10 +113,13 @@ export class LocalFeaturesConfigService
         };
       }
     } catch (error) {
-      this.analytics.sendFeatureFlagInvalidRemoteConfig({
-        configVersion: remoteConfig?.version,
-        error,
-      });
+      this.analytics.sendFeatureFlagInvalidRemoteConfig(
+        sessionMetadata,
+        {
+          configVersion: remoteConfig?.version,
+          error,
+        },
+      );
 
       this.logger.error('Something wrong with remote config', error);
     }
@@ -134,24 +137,30 @@ export class LocalFeaturesConfigService
       this.logger.log('Trying to sync features config...');
 
       const currentConfig = await this.repository.getOrCreate(sessionMetadata);
-      newConfig = await this.getNewConfig();
+      newConfig = await this.getNewConfig(sessionMetadata);
 
       if (newConfig?.data?.version > currentConfig?.data?.version) {
         await this.repository.update(sessionMetadata, newConfig.data);
-        this.analytics.sendFeatureFlagConfigUpdated({
-          oldVersion: currentConfig?.data?.version,
-          configVersion: newConfig.data.version,
-          type: newConfig.type,
-        });
+        this.analytics.sendFeatureFlagConfigUpdated(
+          sessionMetadata,
+          {
+            oldVersion: currentConfig?.data?.version,
+            configVersion: newConfig.data.version,
+            type: newConfig.type,
+          },
+        );
       }
 
       this.logger.log('Successfully updated stored remote config');
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
     } catch (error) {
-      this.analytics.sendFeatureFlagConfigUpdateError({
-        configVersion: newConfig?.version,
-        error,
-      });
+      this.analytics.sendFeatureFlagConfigUpdateError(
+        sessionMetadata,
+        {
+          configVersion: newConfig?.version,
+          error,
+        },
+      );
 
       this.logger.error('Unable to update features config', error);
     }

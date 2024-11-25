@@ -23,6 +23,7 @@ export class PubSubService {
 
   /**
    * Subscribe to multiple channels
+   * @param sessionMetadata
    * @param userClient
    * @param dto
    */
@@ -30,11 +31,15 @@ export class PubSubService {
     try {
       this.logger.log('Subscribing to channels(s)');
 
-      const session = await this.sessionProvider.getOrCreateUserSession(sessionMetadata, userClient);
+      const session = this.sessionProvider.getOrCreateUserSession(sessionMetadata, userClient);
       await Promise.all(dto.subscriptions.map((subDto) => session.subscribe(
         this.subscriptionProvider.createSubscription(userClient, subDto),
       )));
-      this.analyticsService.sendChannelSubscribeEvent(userClient.getDatabaseId(), dto.subscriptions);
+      this.analyticsService.sendChannelSubscribeEvent(
+        sessionMetadata,
+        userClient.getDatabaseId(),
+        dto.subscriptions,
+      );
     } catch (e) {
       this.logger.error('Unable to create subscriptions', e);
 
@@ -48,6 +53,7 @@ export class PubSubService {
 
   /**
    * Unsubscribe from multiple channels
+   * @param sessionMetadata
    * @param userClient
    * @param dto
    */
@@ -55,11 +61,11 @@ export class PubSubService {
     try {
       this.logger.log('Unsubscribing from channels(s)');
 
-      const session = await this.sessionProvider.getOrCreateUserSession(sessionMetadata, userClient);
+      const session = this.sessionProvider.getOrCreateUserSession(sessionMetadata, userClient);
       await Promise.all(dto.subscriptions.map((subDto) => session.unsubscribe(
         this.subscriptionProvider.createSubscription(userClient, subDto),
       )));
-      this.analyticsService.sendChannelUnsubscribeEvent(userClient.getDatabaseId());
+      this.analyticsService.sendChannelUnsubscribeEvent(sessionMetadata, userClient.getDatabaseId());
     } catch (e) {
       this.logger.error('Unable to unsubscribe', e);
 
@@ -84,7 +90,11 @@ export class PubSubService {
 
       const affected = await client.publish(dto.channel, dto.message);
 
-      this.analyticsService.sendMessagePublishedEvent(clientMetadata.databaseId, affected);
+      this.analyticsService.sendMessagePublishedEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+        affected,
+      );
 
       return {
         affected,

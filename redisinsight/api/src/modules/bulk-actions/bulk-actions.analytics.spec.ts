@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   mockBulkActionOverview,
   mockRedisNoAuthError,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
 import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
@@ -27,9 +28,10 @@ describe('BulkActionsAnalytics', () => {
 
   describe('sendActionStarted', () => {
     it('should emit event when action started (without summary)', () => {
-      service.sendActionStarted(mockBulkActionOverview);
+      service.sendActionStarted(mockSessionMetadata, mockBulkActionOverview);
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.BulkActionsStarted,
         {
           databaseId: mockBulkActionOverview.databaseId,
@@ -49,13 +51,17 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should emit event when action started without progress data and filter as "PATTERN"', () => {
-      service.sendActionStarted({
-        ...mockBulkActionOverview,
-        filter: { match: 'some query', type: null },
-        progress: undefined,
-      });
+      service.sendActionStarted(
+        mockSessionMetadata,
+        {
+          ...mockBulkActionOverview,
+          filter: { match: 'some query', type: null },
+          progress: undefined,
+        },
+      );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.BulkActionsStarted,
         {
           databaseId: mockBulkActionOverview.databaseId,
@@ -70,13 +76,17 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should emit event when action started without progress and filter', () => {
-      service.sendActionStarted({
-        ...mockBulkActionOverview,
-        filter: undefined,
-        progress: undefined,
-      });
+      service.sendActionStarted(
+        mockSessionMetadata,
+        {
+          ...mockBulkActionOverview,
+          filter: undefined,
+          progress: undefined,
+        },
+      );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.BulkActionsStarted,
         {
           databaseId: mockBulkActionOverview.databaseId,
@@ -90,16 +100,17 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should not emit event in case of an error and should not fail', () => {
-      service.sendActionStarted(undefined);
+      service.sendActionStarted(mockSessionMetadata, undefined);
       expect(sendEventSpy).not.toHaveBeenCalled();
     });
   });
 
   describe('sendActionStopped', () => {
     it('should emit event when action paused/stopped', () => {
-      service.sendActionStopped(mockBulkActionOverview);
+      service.sendActionStopped(mockSessionMetadata, mockBulkActionOverview);
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.BulkActionsStopped,
         {
           databaseId: mockBulkActionOverview.databaseId,
@@ -127,14 +138,18 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should emit event when action paused/stopped without progress, filter and summary', () => {
-      service.sendActionStopped({
-        ...mockBulkActionOverview,
-        filter: undefined,
-        progress: undefined,
-        summary: undefined,
-      });
+      service.sendActionStopped(
+        mockSessionMetadata,
+        {
+          ...mockBulkActionOverview,
+          filter: undefined,
+          progress: undefined,
+          summary: undefined,
+        },
+      );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.BulkActionsStopped,
         {
           databaseId: mockBulkActionOverview.databaseId,
@@ -149,16 +164,17 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should not emit event in case of an error and should not fail', () => {
-      service.sendActionStopped(undefined);
+      service.sendActionStopped(mockSessionMetadata, undefined);
       expect(sendEventSpy).not.toHaveBeenCalled();
     });
   });
 
   describe('sendActionSucceed', () => {
     it('should emit event when action succeed (without progress)', () => {
-      service.sendActionSucceed(mockBulkActionOverview);
+      service.sendActionSucceed(mockSessionMetadata, mockBulkActionOverview);
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.BulkActionsSucceed,
         {
           databaseId: mockBulkActionOverview.databaseId,
@@ -180,13 +196,17 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should emit event when action succeed without filter and summary', () => {
-      service.sendActionSucceed({
-        ...mockBulkActionOverview,
-        filter: undefined,
-        summary: undefined,
-      });
+      service.sendActionSucceed(
+        mockSessionMetadata,
+        {
+          ...mockBulkActionOverview,
+          filter: undefined,
+          summary: undefined,
+        },
+      );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.BulkActionsSucceed,
         {
           databaseId: mockBulkActionOverview.databaseId,
@@ -200,16 +220,21 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should not emit event in case of an error and should not fail', () => {
-      service.sendActionSucceed(undefined);
+      service.sendActionSucceed(mockSessionMetadata, undefined);
       expect(sendEventSpy).not.toHaveBeenCalled();
     });
   });
 
   describe('sendActionFailed', () => {
     it('should emit event when action failed (without progress)', () => {
-      service.sendActionFailed(mockBulkActionOverview, mockRedisNoAuthError);
+      service.sendActionFailed(
+        mockSessionMetadata,
+        mockBulkActionOverview,
+        mockRedisNoAuthError,
+      );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.BulkActionsFailed,
         {
           databaseId: mockBulkActionOverview.databaseId,
@@ -219,16 +244,17 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should not emit event in case of an error and should not fail', () => {
-      service.sendActionFailed(undefined, undefined);
+      service.sendActionFailed(mockSessionMetadata, undefined, undefined);
       expect(sendFailedEventSpy).not.toHaveBeenCalled();
     });
   });
 
   describe('sendImportSamplesUploaded', () => {
     it('should emit event when action succeed (without progress)', () => {
-      service.sendImportSamplesUploaded(mockBulkActionOverview);
+      service.sendImportSamplesUploaded(mockSessionMetadata, mockBulkActionOverview);
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.ImportSamplesUploaded,
         {
           databaseId: mockBulkActionOverview.databaseId,
@@ -246,13 +272,17 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should emit event when action succeed without filter and summary', () => {
-      service.sendImportSamplesUploaded({
-        ...mockBulkActionOverview,
-        filter: undefined,
-        summary: undefined,
-      });
+      service.sendImportSamplesUploaded(
+        mockSessionMetadata,
+        {
+          ...mockBulkActionOverview,
+          filter: undefined,
+          summary: undefined,
+        },
+      );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.ImportSamplesUploaded,
         {
           databaseId: mockBulkActionOverview.databaseId,
@@ -263,7 +293,7 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should not emit event in case of an error and should not fail', () => {
-      service.sendImportSamplesUploaded(undefined);
+      service.sendImportSamplesUploaded(mockSessionMetadata, undefined);
       expect(sendEventSpy).not.toHaveBeenCalled();
     });
   });

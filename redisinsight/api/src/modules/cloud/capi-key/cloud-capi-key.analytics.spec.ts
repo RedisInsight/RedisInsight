@@ -3,6 +3,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key.analytics';
+import { mockSessionMetadata } from 'src/__mocks__';
 
 describe('CloudCapiKeyAnalytics', () => {
   let service: CloudCapiKeyAnalytics;
@@ -30,10 +31,11 @@ describe('CloudCapiKeyAnalytics', () => {
 
   describe('sendCloudAccountKeyGenerated', () => {
     it('should emit succeed event with manifest "yes"', () => {
-      service.sendCloudAccountKeyGenerated();
+      service.sendCloudAccountKeyGenerated(mockSessionMetadata);
 
       expect(sendEventSpy).toHaveBeenNthCalledWith(
         1,
+        mockSessionMetadata,
         TelemetryEvents.CloudAccountKeyGenerated,
       );
     });
@@ -41,10 +43,11 @@ describe('CloudCapiKeyAnalytics', () => {
 
   describe('sendCloudAccountKeyGenerationFailed', () => {
     it('should emit 1 event with "Error" cause', () => {
-      service.sendCloudAccountKeyGenerationFailed(httpException);
+      service.sendCloudAccountKeyGenerationFailed(mockSessionMetadata, httpException);
 
       expect(sendFailedEventMethod).toHaveBeenNthCalledWith(
         1,
+        mockSessionMetadata,
         TelemetryEvents.CloudAccountKeyGenerationFailed,
         httpException,
       );

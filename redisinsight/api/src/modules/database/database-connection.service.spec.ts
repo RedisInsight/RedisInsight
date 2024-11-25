@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { get } from 'lodash';
-import { when, resetAllWhenMocks } from 'jest-when';
+import { resetAllWhenMocks } from 'jest-when';
 import {
   mockCommonClientMetadata,
   mockDatabase,
@@ -14,6 +14,7 @@ import {
   mockRedisClientListResult,
   mockDatabaseClientFactory,
   mockFeatureService,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -24,7 +25,6 @@ import { DatabaseConnectionService } from 'src/modules/database/database-connect
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { FeatureService } from 'src/modules/feature/feature.service';
-import { KnownFeatures } from 'src/modules/feature/constants';
 
 describe('DatabaseConnectionService', () => {
   let service: DatabaseConnectionService;
@@ -153,6 +153,7 @@ describe('DatabaseConnectionService', () => {
 
       expect(databaseInfoProvider.getClientListInfo).toHaveBeenCalled();
       expect(analytics.sendDatabaseConnectedClientListEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockDatabase.id,
         {
           clients: mockRedisClientListResult.map((c) => ({

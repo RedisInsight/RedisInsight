@@ -92,6 +92,7 @@ export class DatabaseConnectionService {
       const clients = await this.databaseInfoProvider.getClientListInfo(client) || [];
 
       this.analytics.sendDatabaseConnectedClientListEvent(
+        clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
         {
           clients: clients.map((c) => ({

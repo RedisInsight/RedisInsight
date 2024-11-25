@@ -1,4 +1,4 @@
-import { reverse } from 'lodash'
+import { flatten } from 'lodash'
 import { CommandExecution } from 'uiSrc/slices/interfaces'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
@@ -10,13 +10,14 @@ const riConfig = getConfig()
 export class WorkbenchStorage {
   private db?: IDBDatabase
 
-  constructor(private readonly dbName: string, private readonly version = 1, private readonly keySeparator = ':') {
+  constructor(private readonly dbName: string, private readonly version = 1) {
   }
 
   private initDb(storeName: string) {
     return new Promise((resolve, reject) => {
       if (!window.indexedDB) {
         reject(new Error('indexedDB is not supported'))
+        return
       }
       // Let us open our database
       const DBOpenRequest = window.indexedDB.open(this.dbName, this.version)
@@ -60,8 +61,9 @@ export class WorkbenchStorage {
             this.db.deleteObjectStore(storeName)
           }
           // Create an objectStore for this database
-          const objectStore = this.db.createObjectStore(storeName, { keyPath: ['dbId', 'commandId'] })
-          objectStore.createIndex('dbId', 'dbId', { unique: false })
+          const objectStore = this.db.createObjectStore(storeName, { keyPath: ['id', 'databaseId'] })
+          objectStore.createIndex('dbId', 'databaseId', { unique: false })
+          objectStore.createIndex('commandId', 'id', { unique: true })
         } catch (ex) {
           if (ex instanceof DOMException && ex?.name === 'ConstraintError') {
             console.warn(
@@ -83,13 +85,34 @@ export class WorkbenchStorage {
     return this.db
   }
 
-  getItem(key: string) {
+  getItem(storeName: string, commandId: string) {
     return new Promise((resolve, reject) => {
       try {
-        const {
-          storeName,
-          keyName: dbId,
-        } = this._parseKey(key)
+        this.getDb(storeName).then((db) => {
+          if (db === undefined) {
+            reject(new Error('Failed to retrieve item from IndexedDB'))
+            return
+          }
+          const objectStore = db.transaction(storeName, 'readonly')?.objectStore(storeName)
+          const idbIndex = objectStore?.index('commandId')
+          const indexReq = idbIndex?.get(commandId)
+          indexReq.onsuccess = () => {
+            const value = indexReq.result
+            resolve(value)
+          }
+          indexReq.onerror = () => {
+            reject(indexReq.error)
+          }
+        })
+      } catch (e) {
+        reject(e)
+      }
+    })
+  }
+
+  getItems(storeName: string, dbId: string) {
+    return new Promise((resolve, reject) => {
+      try {
         this.getDb(storeName).then((db) => {
           if (db === undefined) {
             reject(new Error('Failed to retrieve item from IndexedDB'))
@@ -139,20 +162,16 @@ export class WorkbenchStorage {
     })
   }
 
-  removeItem(key: string): Promise<void> {
+  removeItem(storeName: string, dbId: string, commandId: string): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        const {
-          storeName,
-          keyName: nKey,
-        } = this._parseKey(key)
         this.getDb(storeName).then((db) => {
           if (db === undefined) {
             reject(new Error('Failed to remove item from IndexedDB'))
             return
           }
           const transaction = db.transaction(storeName, 'readwrite')
-          const req = transaction.objectStore(storeName)?.delete(nKey)
+          const req = transaction.objectStore(storeName)?.delete([dbId, commandId])
 
           transaction.oncomplete = () => {
             resolve()
@@ -199,47 +218,15 @@ export class WorkbenchStorage {
       }
     })
   }
-
-  /**
-   * Parses the given key by normalizing it and splitting it using the key separator.
-   * Key can consist of <storeName>:<keyId> potentially more items
-   * @param {unknown} key - The key to be parsed.
-   */
-  private _parseKey(key: unknown) {
-    const nKey = this._normalizeKey(key)
-
-    const [storeName, keyName] = nKey.split(this.keySeparator)
-    return {
-      storeName,
-      keyName,
-    }
-  }
-
-  private _normalizeKey(key: unknown) {
-    // Cast the key to a string, as that's all we can set as a key.
-    if (typeof key !== 'string') {
-      console.warn(`${key} used as a key, but it is not a string.`)
-      return String(key)
-    }
-
-    return key
-  }
 }
 
 export const wbHistoryStorage = new WorkbenchStorage('RI_WB_HISTORY', 1)
 
-type CommandHistoryItem = {
-  dbId: string, // Instance Id
-  commandId: string,
-  data: CommandExecution[]
-}
+type CommandHistoryType = CommandExecution[]
 
-type CommandHistoryType = CommandHistoryItem[]
-
-export async function getLocalWbHistory(instanceId: string) {
+export async function getLocalWbHistory(dbId: string) {
   try {
-    const key = `${BrowserStorageItem.wbCommandsHistory}:${instanceId}`
-    const history = await wbHistoryStorage.getItem(key) as CommandHistoryType
+    const history = await wbHistoryStorage.getItems(BrowserStorageItem.wbCommandsHistory, dbId) as CommandHistoryType
 
     return history || []
   } catch (e) {
@@ -251,7 +238,7 @@ export async function getLocalWbHistory(instanceId: string) {
 export function saveLocalWbHistory(commandsHistory: CommandHistoryType) {
   try {
     const key = BrowserStorageItem.wbCommandsHistory
-    return Promise.all(commandsHistory.map((chItem) => wbHistoryStorage.setItem(key, chItem)))
+    return Promise.all(flatten(commandsHistory.map((chItem) => wbHistoryStorage.setItem(key, chItem))))
   } catch (e) {
     console.error(e)
     return null
@@ -261,31 +248,23 @@ export function saveLocalWbHistory(commandsHistory: CommandHistoryType) {
 async function cleanupDatabaseHistory(dbId: string) {
   const commandsHistory: CommandHistoryType = await getLocalWbHistory(dbId)
   let size = 0
+  // collect items up to maxItemsPerDb
   const update = commandsHistory.reduce((acc, commandsHistoryElement) => {
-    if (size > riConfig.workbench.maxItemsPerDb) {
+    if (size >= riConfig.workbench.maxItemsPerDb) {
       return acc
     }
-    let items = commandsHistoryElement.data
-    size += items.length
-    if (size > riConfig.workbench.maxItemsPerDb) {
-      const diff = riConfig.workbench.maxItemsPerDb - size
-      items = items.slice(diff)
-      acc.push({
-        dbId,
-        data: items,
-        commandId: commandsHistoryElement.commandId
-      })
-    }
-
+    size++
+    acc.push(commandsHistoryElement)
     return acc
   }, [] as CommandHistoryType)
-
+  // clear old items
+  await clearCommands(dbId)
+  // save
   await saveLocalWbHistory(update)
 }
 
-export async function addCommands(dbId: string, commandId: string, data: CommandExecution[]) {
+export async function addCommands(data: CommandExecution[]) {
   // Store command results in local storage!
-  const commandsHistory: CommandHistoryType = await getLocalWbHistory(dbId)
   const storedData = data.map((item) => {
     // Do not store command execution result that exceeded limitation
     if (JSON.stringify(item.result).length > riConfig.workbench.maxResultSize) {
@@ -299,52 +278,21 @@ export async function addCommands(dbId: string, commandId: string, data: Command
     }
     return item
   })
-  await saveLocalWbHistory([
-    ...commandsHistory,
-    {
-      dbId,
-      commandId,
-      data: reverse(storedData),
-    } as CommandHistoryItem
-  ])
-
-  return cleanupDatabaseHistory(dbId)
+  await saveLocalWbHistory(storedData)
+  const [{ databaseId }] = storedData
+  return cleanupDatabaseHistory(databaseId)
 }
 
 export async function removeCommand(dbId: string, commandId: string) {
   // Delete command from local storage?!
-  const commandsHistory = await getLocalWbHistory(dbId)
-
-  const update = commandsHistory.reduce((acc, commandsHistoryElement) => {
-    const items = commandsHistoryElement.data.filter((chItem) => chItem.id !== commandId)
-    if (items.length > 0) {
-      // more commands left, keep in history, else remove from collection
-      acc.push({
-        dbId,
-        data: items,
-        commandId: commandsHistoryElement.commandId
-      })
-    }
-
-    return acc
-  }, [] as CommandHistoryType)
-
-  await saveLocalWbHistory(update)
+  await wbHistoryStorage.removeItem(BrowserStorageItem.wbCommandsHistory, dbId, commandId)
 }
 
 export async function clearCommands(dbId: string) {
   await wbHistoryStorage.clear(BrowserStorageItem.wbCommandsHistory, dbId)
 }
 
-export async function findCommand(dbId: string, commandId: string) {
+export async function findCommand(commandId: string) {
   // Fetch command from local storage
-  const commandsHistory = await getLocalWbHistory(dbId)
-
-  return commandsHistory.reduce((acc: CommandExecution | null, chItem) => {
-    if (chItem.commandId === commandId) {
-      return chItem.data[0]
-    }
-    const chCommand = chItem.data.find((item) => item.id === commandId)
-    return chCommand || acc
-  }, null)
+  return wbHistoryStorage.getItem(BrowserStorageItem.wbCommandsHistory, commandId)
 }

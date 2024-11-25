@@ -5,6 +5,7 @@ import { RedisError, ReplyError } from 'src/models';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { CommandTelemetryBaseService } from 'src/modules/analytics/command.telemetry.base.service';
+import { SessionMetadata } from 'src/common/models';
 
 export interface IExecResult {
   response: any;
@@ -13,7 +14,7 @@ export interface IExecResult {
 }
 
 @Injectable()
-export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
+export class WorkbenchAnalytics extends CommandTelemetryBaseService {
   constructor(
     protected eventEmitter: EventEmitter2,
     protected readonly commandsService: CommandsService,
@@ -22,6 +23,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
   }
 
   sendIndexInfoEvent(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     additionalData: object,
   ): void {
@@ -31,6 +33,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
 
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.WorkbenchIndexInfoSubmitted,
         {
           databaseId,
@@ -43,6 +46,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
   }
 
   public async sendCommandExecutedEvents(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     results: IExecResult[],
     additionalData: object = {},
@@ -50,7 +54,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
     try {
       await Promise.all(
         results.map(
-          (result) => this.sendCommandExecutedEvent(databaseId, result, additionalData),
+          (result) => this.sendCommandExecutedEvent(sessionMetadata, databaseId, result, additionalData),
         ),
       );
     } catch (e) {
@@ -59,6 +63,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
   }
 
   public async sendCommandExecutedEvent(
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     result: IExecResult,
     additionalData: object = {},
@@ -67,6 +72,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
     try {
       if (status === CommandExecutionStatus.Success) {
         this.sendEvent(
+          sessionMetadata,
           TelemetryEvents.WorkbenchCommandExecuted,
           {
             databaseId,
@@ -76,7 +82,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
         );
       }
       if (status === CommandExecutionStatus.Fail) {
-        this.sendCommandErrorEvent(databaseId, result.error, {
+        this.sendCommandErrorEvent(sessionMetadata, databaseId, result.error, {
           ...(await this.getCommandAdditionalInfo(additionalData['command'])),
           ...additionalData,
         });
@@ -86,8 +92,9 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
     }
   }
 
-  sendCommandDeletedEvent(databaseId: string, additionalData: object = {}): void {
+  sendCommandDeletedEvent(sessionMetadata: SessionMetadata, databaseId: string, additionalData: object = {}): void {
     this.sendEvent(
+      sessionMetadata,
       TelemetryEvents.WorkbenchCommandDeleted,
       {
         databaseId,
@@ -96,10 +103,16 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
     );
   }
 
-  private sendCommandErrorEvent(databaseId: string, error: any, additionalData: object = {}): void {
+  private sendCommandErrorEvent(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    error: any,
+    additionalData: object = {},
+  ): void {
     try {
       if (error instanceof HttpException) {
         this.sendFailedEvent(
+          sessionMetadata,
           TelemetryEvents.WorkbenchCommandErrorReceived,
           error,
           {
@@ -109,6 +122,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
         );
       } else {
         this.sendEvent(
+          sessionMetadata,
           TelemetryEvents.WorkbenchCommandErrorReceived,
           {
             databaseId,

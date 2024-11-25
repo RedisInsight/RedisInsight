@@ -6,6 +6,7 @@ import { TelemetryEvents } from 'src/constants';
 import { getRedisModulesSummary } from 'src/utils/redis-modules-summary';
 import { getRangeForNumber, TOTAL_KEYS_BREAKPOINTS } from 'src/utils';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class DatabaseAnalytics extends TelemetryBaseService {
@@ -13,8 +14,9 @@ export class DatabaseAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendConnectionFailedEvent(instance: Database, exception: HttpException): void {
+  sendConnectionFailedEvent(sessionMetadata: SessionMetadata, instance: Database, exception: HttpException): void {
     this.sendFailedEvent(
+      sessionMetadata,
       TelemetryEvents.RedisInstanceConnectionFailed,
       exception,
       { databaseId: instance.id },
@@ -22,12 +24,14 @@ export class DatabaseAnalytics extends TelemetryBaseService {
   }
 
   sendInstanceAddedEvent(
+    sessionMetadata: SessionMetadata,
     instance: Database,
     additionalInfo?: RedisDatabaseInfoResponse,
   ): void {
     try {
       const modulesSummary = getRedisModulesSummary(instance.modules);
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.RedisInstanceAdded,
         {
           databaseId: instance.id,
@@ -59,11 +63,12 @@ export class DatabaseAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendInstanceAddFailedEvent(exception: HttpException): void {
-    this.sendFailedEvent(TelemetryEvents.RedisInstanceAddFailed, exception);
+  sendInstanceAddFailedEvent(sessionMetadata: SessionMetadata, exception: HttpException): void {
+    this.sendFailedEvent(sessionMetadata, TelemetryEvents.RedisInstanceAddFailed, exception);
   }
 
   sendInstanceEditedEvent(
+    sessionMetadata: SessionMetadata,
     prev: Database,
     cur: Database,
     manualUpdate: boolean = true,
@@ -71,6 +76,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
     try {
       if (manualUpdate) {
         this.sendEvent(
+          sessionMetadata,
           TelemetryEvents.RedisInstanceEditedByUser,
           {
             databaseId: cur.id,
@@ -106,8 +112,9 @@ export class DatabaseAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendInstanceDeletedEvent(instance: Database): void {
+  sendInstanceDeletedEvent(sessionMetadata: SessionMetadata, instance: Database): void {
     this.sendEvent(
+      sessionMetadata,
       TelemetryEvents.RedisInstanceDeleted,
       {
         databaseId: instance.id,
@@ -116,9 +123,14 @@ export class DatabaseAnalytics extends TelemetryBaseService {
     );
   }
 
-  sendDatabaseConnectedClientListEvent(databaseId: string, additionalData: object = {}): void {
+  sendDatabaseConnectedClientListEvent(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    additionalData: object = {},
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.DatabaseConnectedClientList,
         {
           databaseId,

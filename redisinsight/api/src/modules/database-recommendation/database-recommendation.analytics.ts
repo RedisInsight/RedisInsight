@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { TelemetryEvents } from 'src/constants';
+import { SessionMetadata } from 'src/common/models';
 import { DatabaseRecommendation } from './models';
 import { Database } from '../database/models/database';
 
@@ -11,9 +12,14 @@ export class DatabaseRecommendationAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendCreatedRecommendationEvent(recommendation: DatabaseRecommendation, database: Database): void {
+  sendCreatedRecommendationEvent(
+    sessionMetadata: SessionMetadata,
+    recommendation: DatabaseRecommendation,
+    database: Database,
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.InsightsTipGenerated,
         {
           recommendationName: recommendation.name,

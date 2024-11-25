@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { chunk, flatten, reverse } from 'lodash'
+import { chunk, reverse } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, CodeButtonParams, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -267,9 +267,7 @@ export function fetchWBHistoryAction(
         // Fetch commands from local storage
         const commandsHistory = await getLocalWbHistory(instanceId)
         if (Array.isArray(commandsHistory)) {
-          const commands = flatten(commandsHistory.map((chItem) => chItem.data))
-
-          dispatch(loadWBHistorySuccess(reverse(commands)))
+          dispatch(loadWBHistorySuccess(reverse(commandsHistory)))
         } else {
           dispatch(loadWBHistorySuccess([]))
         }
@@ -345,7 +343,7 @@ export function sendWBCommandAction({
         dispatch(setDbIndexState(!!multiCommands?.length))
         const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
         if (envDependentFlag === false) {
-          await addCommands(id, commandId, data)
+          await addCommands(reverse(data))
         }
         onSuccessAction?.(multiCommands)
       }
@@ -414,7 +412,7 @@ export function sendWBCommandClusterAction({
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
         const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
         if (envDependentFlag === false) {
-          await addCommands(id, commandId, data)
+          await addCommands(reverse(data))
         }
         onSuccessAction?.(multiCommands)
       }
@@ -445,9 +443,9 @@ export function fetchWBCommandAction(
       dispatch(processWBCommand(commandId))
       const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
       if (envDependentFlag === false) {
-        const command = await findCommand(id, commandId)
+        const command = await findCommand(commandId)
 
-        dispatch(fetchWBCommandSuccess(command || {} as CommandExecution))
+        dispatch(fetchWBCommandSuccess(command as CommandExecution))
 
         onSuccessAction?.()
         return

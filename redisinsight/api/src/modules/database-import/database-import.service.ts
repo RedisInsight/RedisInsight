@@ -125,13 +125,13 @@ export class DatabaseImportService {
 
       response = plainToClass(DatabaseImportResponse, response);
 
-      this.analytics.sendImportResults(response);
+      this.analytics.sendImportResults(sessionMetadata, response);
 
       return response;
     } catch (e) {
       this.logger.warn(`Unable to import databases: ${e?.constructor?.name || 'UncaughtError'}`, e);
 
-      this.analytics.sendImportFailed(e);
+      this.analytics.sendImportFailed(sessionMetadata, e);
 
       throw e;
     }
@@ -141,6 +141,7 @@ export class DatabaseImportService {
    * Map data to known model, validate it and create database if possible
    * Note: will not create connection, simply create database
    * @parama sessionMetadata
+   * @param sessionMetadata
    * @param item
    * @param index
    * @private

@@ -1,13 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ServiceUnavailableException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { mockRedisWrongTypeError, mockDatabase, MockType } from 'src/__mocks__';
+import {
+  mockRedisWrongTypeError, mockDatabase, MockType, mockSessionMetadata,
+} from 'src/__mocks__';
 import { CommandType, TelemetryEvents } from 'src/constants';
 import { ReplyError } from 'src/models';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { CommandParsingError } from 'src/modules/cli/constants/errors';
 import { CommandsService } from 'src/modules/commands/commands.service';
-import { WorkbenchAnalyticsService } from './workbench-analytics.service';
+import { WorkbenchAnalytics } from './workbench.analytics';
 
 const redisReplyError: ReplyError = {
   ...mockRedisWrongTypeError,
@@ -19,10 +21,10 @@ const mockCommandsService = {
   getCommandsGroups: jest.fn(),
 };
 
-describe('WorkbenchAnalyticsService', () => {
-  let service: WorkbenchAnalyticsService;
-  let sendEventMethod: jest.SpyInstance<WorkbenchAnalyticsService, unknown[]>;
-  let sendFailedEventMethod: jest.SpyInstance<WorkbenchAnalyticsService, unknown[]>;
+describe('WorkbenchAnalytics', () => {
+  let service: WorkbenchAnalytics;
+  let sendEventMethod: jest.SpyInstance<WorkbenchAnalytics, unknown[]>;
+  let sendFailedEventMethod: jest.SpyInstance<WorkbenchAnalytics, unknown[]>;
   let commandsService: MockType<CommandsService>;
 
   beforeEach(async () => {
@@ -35,16 +37,16 @@ describe('WorkbenchAnalyticsService', () => {
           provide: CommandsService,
           useFactory: () => mockCommandsService,
         },
-        WorkbenchAnalyticsService,
+        WorkbenchAnalytics,
       ],
     }).compile();
 
-    service = module.get<WorkbenchAnalyticsService>(WorkbenchAnalyticsService);
-    sendEventMethod = jest.spyOn<WorkbenchAnalyticsService, any>(
+    service = module.get<WorkbenchAnalytics>(WorkbenchAnalytics);
+    sendEventMethod = jest.spyOn<WorkbenchAnalytics, any>(
       service,
       'sendEvent',
     );
-    sendFailedEventMethod = jest.spyOn<WorkbenchAnalyticsService, any>(
+    sendFailedEventMethod = jest.spyOn<WorkbenchAnalytics, any>(
       service,
       'sendFailedEvent',
     );
@@ -85,6 +87,7 @@ describe('WorkbenchAnalyticsService', () => {
   describe('sendIndexInfoEvent', () => {
     it('should emit index info event', async () => {
       service.sendIndexInfoEvent(
+        mockSessionMetadata,
         instanceId,
         {
           any: 'fields',
@@ -92,6 +95,7 @@ describe('WorkbenchAnalyticsService', () => {
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchIndexInfoSubmitted,
         {
           databaseId: instanceId,
@@ -101,6 +105,7 @@ describe('WorkbenchAnalyticsService', () => {
     });
     it('should not fail and should not emit when no data to send', async () => {
       service.sendIndexInfoEvent(
+        mockSessionMetadata,
         instanceId,
         null,
       );
@@ -111,6 +116,7 @@ describe('WorkbenchAnalyticsService', () => {
   describe('sendCommandExecutedEvents', () => {
     it('should emit multiple events', async () => {
       await service.sendCommandExecutedEvents(
+        mockSessionMetadata,
         instanceId,
         [
           { response: 'OK', status: CommandExecutionStatus.Success },
@@ -121,6 +127,7 @@ describe('WorkbenchAnalyticsService', () => {
 
       expect(sendEventMethod).toHaveBeenCalledTimes(2);
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
@@ -135,12 +142,14 @@ describe('WorkbenchAnalyticsService', () => {
   describe('sendCommandExecutedEvent', () => {
     it('should emit WorkbenchCommandExecuted event', async () => {
       await service.sendCommandExecutedEvent(
+        mockSessionMetadata,
         instanceId,
         { response: 'OK', status: CommandExecutionStatus.Success },
         { command: 'set' },
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
@@ -155,12 +164,14 @@ describe('WorkbenchAnalyticsService', () => {
       commandsService.getCommandsGroups.mockRejectedValue(new Error('some error'));
 
       await service.sendCommandExecutedEvent(
+        mockSessionMetadata,
         instanceId,
         { response: 'OK', status: CommandExecutionStatus.Success },
         { command: 'set' },
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
@@ -170,12 +181,14 @@ describe('WorkbenchAnalyticsService', () => {
     });
     it('should emit WorkbenchCommandExecuted event (module with cap.)', async () => {
       await service.sendCommandExecutedEvent(
+        mockSessionMetadata,
         instanceId,
         { response: 'OK', status: CommandExecutionStatus.Success },
         { command: 'bF.rEsErvE' },
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
@@ -188,12 +201,14 @@ describe('WorkbenchAnalyticsService', () => {
     });
     it('should emit WorkbenchCommandExecuted event (module w\\o cap.)', async () => {
       await service.sendCommandExecutedEvent(
+        mockSessionMetadata,
         instanceId,
         { response: 'OK', status: CommandExecutionStatus.Success },
         { command: 'CUSTOM.COMMAnd' },
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
@@ -206,12 +221,14 @@ describe('WorkbenchAnalyticsService', () => {
     });
     it('should emit WorkbenchCommandExecuted event (custom module)', async () => {
       await service.sendCommandExecutedEvent(
+        mockSessionMetadata,
         instanceId,
         { response: 'OK', status: CommandExecutionStatus.Success },
         { command: 'some.command' },
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
@@ -224,11 +241,13 @@ describe('WorkbenchAnalyticsService', () => {
     });
     it('should emit WorkbenchCommandExecuted event without additional data', async () => {
       await service.sendCommandExecutedEvent(
+        mockSessionMetadata,
         instanceId,
         { response: 'OK', status: CommandExecutionStatus.Success },
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
@@ -237,12 +256,14 @@ describe('WorkbenchAnalyticsService', () => {
     });
     it('should emit WorkbenchCommandError event', async () => {
       await service.sendCommandExecutedEvent(
+        mockSessionMetadata,
         instanceId,
         { response: 'Error', error: redisReplyError, status: CommandExecutionStatus.Fail },
         { command: 'set', data: 'Some data' },
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandErrorReceived,
         {
           databaseId: instanceId,
@@ -257,11 +278,13 @@ describe('WorkbenchAnalyticsService', () => {
     });
     it('should emit WorkbenchCommandError event without additional data', async () => {
       await service.sendCommandExecutedEvent(
+        mockSessionMetadata,
         instanceId,
         { response: 'Error', error: redisReplyError, status: CommandExecutionStatus.Fail },
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandErrorReceived,
         {
           databaseId: instanceId,
@@ -273,11 +296,13 @@ describe('WorkbenchAnalyticsService', () => {
     it('should emit WorkbenchCommandError event for custom error', async () => {
       const error: any = CommandParsingError;
       await service.sendCommandExecutedEvent(
+        mockSessionMetadata,
         instanceId,
         { response: 'Error', status: CommandExecutionStatus.Fail, error },
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandErrorReceived,
         {
           databaseId: instanceId,
@@ -289,11 +314,13 @@ describe('WorkbenchAnalyticsService', () => {
     it('should emit WorkbenchCommandError event for HttpException', async () => {
       const error = new ServiceUnavailableException();
       await service.sendCommandExecutedEvent(
+        mockSessionMetadata,
         instanceId,
         { response: 'Error', status: CommandExecutionStatus.Fail, error },
       );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandErrorReceived,
         error,
         { databaseId: instanceId },
@@ -303,11 +330,13 @@ describe('WorkbenchAnalyticsService', () => {
   describe('sendCommandDeletedEvent', () => {
     it('should emit WorkbenchCommandDeleted event', () => {
       service.sendCommandDeletedEvent(
+        mockSessionMetadata,
         instanceId,
         { command: 'info' },
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandDeleted,
         {
           databaseId: instanceId,
@@ -317,10 +346,12 @@ describe('WorkbenchAnalyticsService', () => {
     });
     it('should emit WorkbenchCommandDeleted event without additional data', () => {
       service.sendCommandDeletedEvent(
+        mockSessionMetadata,
         instanceId,
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.WorkbenchCommandDeleted,
         {
           databaseId: instanceId,

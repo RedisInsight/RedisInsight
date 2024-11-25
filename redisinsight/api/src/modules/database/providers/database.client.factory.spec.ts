@@ -231,6 +231,7 @@ describe('DatabaseClientFactory', () => {
       jest.spyOn(redisClientFactory, 'createClient').mockRejectedValue(mockRedisNoAuthError);
       await expect(service.createClient(mockCommonClientMetadata)).rejects.toThrow(UnauthorizedException);
       expect(analytics.sendConnectionFailedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockDatabase,
         new UnauthorizedException(ERROR_MESSAGES.AUTHENTICATION_FAILED()),
       );

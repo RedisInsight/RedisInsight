@@ -30,6 +30,7 @@ export interface ITelemetryInitEvent {
   controlGroup: string;
   appVersion: string;
   firstStart?: boolean;
+  sessionMetadata?: SessionMetadata;
 }
 
 export enum Telemetry {
@@ -95,7 +96,7 @@ export class AnalyticsService {
 
   public async init(initConfig: ITelemetryInitEvent) {
     const {
-      anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion, firstStart,
+      anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion, firstStart, sessionMetadata
     } = initConfig;
     this.sessionId = sessionId;
     this.anonymousId = anonymousId;
@@ -113,8 +114,8 @@ export class AnalyticsService {
       }),
     });
 
-    if (ANALYTICS_CONFIG.startEvents) {
-      this.sendEvent({
+    if (ANALYTICS_CONFIG.startEvents && sessionMetadata) {
+      this.sendEvent(sessionMetadata, {
         event: firstStart ? TelemetryEvents.ApplicationFirstStart : TelemetryEvents.ApplicationStarted,
         eventData: {
           appVersion: SERVER_CONFIG.appVersion,
@@ -128,7 +129,8 @@ export class AnalyticsService {
     }
   }
 
-  async sendUserEvent(sessionMetadata: SessionMetadata, payload: ITelemetryEvent) {
+  @OnEvent(AppAnalyticsEvents.Track)
+  async sendEvent(sessionMetadata: SessionMetadata, payload: ITelemetryEvent) {
     try {
       // The event is reported only if the user's permission is granted.
       // The anonymousId is also sent along with the event.
@@ -149,12 +151,6 @@ export class AnalyticsService {
     } catch (e) {
       // continue regardless of error
     }
-  }
-
-  @OnEvent(AppAnalyticsEvents.Track)
-  async sendEvent(payload: ITelemetryEvent) {
-    // todo: USER_CONTEXT
-    return this.sendUserEvent(this.constantsProvider.getSystemSessionMetadata(), payload);
   }
 
   @OnEvent(AppAnalyticsEvents.Page)

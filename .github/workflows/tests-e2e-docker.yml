@@ -33,14 +33,6 @@ jobs:
   e2e-docker-tests:
     runs-on: ubuntu-latest
     name: E2E Docker tests
-    # environment:
-      # name: production
-    container:
-      image: docker:latest
-      options: --privileged
-      volumes:
-        - /usr/src/app/results:/usr/src/app/results
-        - /usr/src/app/report:/usr/src/app/report
     strategy:
       fail-fast: false
       matrix:
@@ -49,9 +41,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Setup repository
-      run: git config --global --add safe.directory /__w/RedisInsight/RedisInsight
 
     # SSH Debug
     - name: Enable SSH
@@ -74,6 +63,7 @@ jobs:
       working-directory: ./tests/e2e
       run: |
         testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+
         echo $testFiles
 
         # Multi-Line value
@@ -117,23 +107,8 @@ jobs:
         list-suites: 'failed'
         fail-on-error: 'false'
 
-    - name: Add link to report in the workflow summary
-      if: always()
-      run: |
-        DATE=$(date +'%Y-%m-%d')
-        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${DATE}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}/index.html"
-
-        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
-
-  # Deploy report to AWS test bucket
-  deploy-report:
-    name: Deploy report
-    needs: 'e2e-docker-tests'
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
     - name: Deploy report
+      if: always()
       uses: ./.github/actions/deploy-test-reports
       with:
         group: 'report'
@@ -142,4 +117,13 @@ jobs:
         AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Add link to report in the workflow summary
+      if: always()
+      run: |
+        DATE=$(date +'%Y-%m-%d')
+        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${DATE}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}/index.html"
+
+        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
+
 

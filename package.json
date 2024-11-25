@@ -78,7 +78,6 @@
     "**/trim": "0.0.3",
     "word-wrap": "1.2.4",
     "**/semver": "^7.5.2",
-    "@electron/notarize": "2.5.0",
     "rawproto/protobufjs": "^7.2.5",
     "webpack-bundle-analyzer/ws": "^7.5.10",
     "msw/path-to-regexp": "^6.3.0",

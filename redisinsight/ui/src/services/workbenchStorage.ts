@@ -162,7 +162,7 @@ export class WorkbenchStorage {
     })
   }
 
-  removeItem(storeName: string, dbId: string, commandId: string): Promise<void> {
+  removeItem(storeName: string, dbId: string, commandId: string): Promise<string | void> {
     return new Promise((resolve, reject) => {
       try {
         this.getDb(storeName).then((db) => {
@@ -171,10 +171,10 @@ export class WorkbenchStorage {
             return
           }
           const transaction = db.transaction(storeName, 'readwrite')
-          const req = transaction.objectStore(storeName)?.delete([dbId, commandId])
+          const req = transaction.objectStore(storeName)?.delete([commandId, dbId])
 
           transaction.oncomplete = () => {
-            resolve()
+            resolve(commandId)
           }
 
           transaction.onerror = () => {

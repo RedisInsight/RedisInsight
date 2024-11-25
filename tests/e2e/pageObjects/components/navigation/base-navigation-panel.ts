@@ -13,6 +13,7 @@ export class BaseNavigationPanel {
     settingsButton = Selector('[data-testid=settings-page-btn]');
     helpCenterButton = Selector('[data-testid=help-menu-button]');
     githubButton = Selector('[data-testid=github-repo-icon]');
+    cloudButton = Selector('[data-testid=cloud-db-icon]');
 
     buttonsLocator = Selector('[aria-label="Main navigation"] button');
 

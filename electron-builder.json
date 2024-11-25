@@ -7,13 +7,11 @@
     "node_modules",
     "package.json"
   ],
-  "npmRebuild": false,
   "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
   "compression": "normal",
   "asarUnpack": [
     "node_modules/keytar",
-    "node_modules/sqlite3",
-    "node_modules/cpu-features"
+    "node_modules/sqlite3"
   ],
   "protocols": [{
     "name": "RedisInsight",

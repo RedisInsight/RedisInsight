@@ -71,12 +71,10 @@ jobs:
         echo $APP_BUNDLE_VERSION
         echo $CSC_KEYCHAIN
 
-        yarn package:stage
+        yarn package:stage && yarn package:mas
         rm -rf release/mac
-        
-        # TODO: return MAS build
-        # yarn package:stage && yarn package:mas
-        # mv release/mas-universal/Redis-Insight-mac-universal-mas.pkg release/Redis-Insight-mac-universal-mas.pkg
+
+        mv release/mas-universal/Redis-Insight-mac-universal-mas.pkg release/Redis-Insight-mac-universal-mas.pkg
 
     # handle manual builds
     - name: Build macos dmg (custom)

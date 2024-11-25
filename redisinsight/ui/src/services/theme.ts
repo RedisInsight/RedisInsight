@@ -16,11 +16,7 @@ class ThemeService {
     let actualTheme = newTheme
 
     if (newTheme === Theme.System) {
-      if (window.matchMedia?.(THEME_MATCH_MEDIA_DARK)?.matches) {
-        actualTheme = Theme.Dark
-      } else {
-        actualTheme = Theme.Light
-      }
+      actualTheme = window.matchMedia?.(THEME_MATCH_MEDIA_DARK)?.matches ? Theme.Dark : Theme.Light
     }
 
     const sheet = new CSSStyleSheet()

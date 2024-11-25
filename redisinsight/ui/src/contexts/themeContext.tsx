@@ -41,12 +41,13 @@ export class ThemeProvider extends React.Component<Props> {
 
   changeTheme = async (themeValue: any) => {
     let actualTheme = themeValue
-    if (themeValue === Theme.System) {
-      actualTheme = this.getSystemTheme()
-    }
 
     // since change theme is async need to wait to have a proper prefers-color-scheme
     await ipcThemeChange(themeValue)
+
+    if (themeValue === Theme.System) {
+      actualTheme = this.getSystemTheme()
+    }
 
     this.setState({ theme: actualTheme, usingSystemTheme: themeValue === Theme.System }, () => {
       themeService.applyTheme(themeValue)

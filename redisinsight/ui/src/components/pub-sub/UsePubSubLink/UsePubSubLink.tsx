@@ -1,18 +1,24 @@
 import React from 'react'
 import { EuiLink, EuiTextColor } from '@elastic/eui'
-import { FeatureFlags } from 'uiSrc/constants'
+import { useSelector } from 'react-redux'
+import { FeatureFlags } from 'uiSrc/constants/featureFlags'
 import { getRouterLinkProps } from 'uiSrc/services'
-import FeatureFlagComponent from 'uiSrc/components/feature-flag-component/FeatureFlagComponent'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 export interface Props {
-  path: string
+  path: string;
 }
 
-const UsePubSubLink = ({ path }: Props) => (
-  <FeatureFlagComponent
-    name={FeatureFlags.envDependent}
-    otherwise={<div className="cli-output-response-fail" data-testid="user-pub-sub-link-disabled">PubSub not supported in this environment.</div>}
-  >
+const UsePubSubLink = ({ path }: Props) => {
+  const { [FeatureFlags.envDependent]: envDependentFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  if (envDependentFeature?.flag === false) {
+    return (
+      <div className="cli-output-response-fail" data-testid="user-pub-sub-link-disabled">PubSub not supported
+        in this environment.
+      </div>
+    )
+  }
+  return (
     <EuiTextColor color="danger" key={Date.now()} data-testid="user-pub-sub-link">
       {'Use '}
       <EuiLink {...getRouterLinkProps(path)} color="text" data-test-subj="pubsub-page-btn">
@@ -20,7 +26,7 @@ const UsePubSubLink = ({ path }: Props) => (
       </EuiLink>
       {' tool to subscribe to channels.'}
     </EuiTextColor>
-  </FeatureFlagComponent>
-)
+  )
+}
 
 export default UsePubSubLink

@@ -30,6 +30,11 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   }
 
   const { port, host } = serverConfig;
+
+  if (apiPort && apiPort !== port) {
+    serverConfig.port = apiPort;
+  }
+
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
 
   const options: NestApplicationOptions = {
@@ -77,7 +82,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
 
   await app.listen(apiPort || port, host);
   logger.log({
-    message: `Server is running on http(s)://${host}:${port}`,
+    message: `Server is running on http(s)://${host}:${apiPort || port}`,
     context: 'bootstrap',
   });
 

@@ -29,9 +29,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
     await migrateHomeFolder() && await removeOldFolders();
   }
 
-  const { port, host } = serverConfig;
-
-  if (apiPort && apiPort !== port) {
+  if (apiPort) {
     serverConfig.port = apiPort;
   }
 
@@ -80,9 +78,11 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
 
   const logFileProvider = app.get(LogFileProvider);
 
-  await app.listen(apiPort || port, host);
+  const { port, host } = serverConfig;
+
+  await app.listen(port, host);
   logger.log({
-    message: `Server is running on http(s)://${host}:${apiPort || port}`,
+    message: `Server is running on http(s)://${host}:${port}`,
     context: 'bootstrap',
   });
 

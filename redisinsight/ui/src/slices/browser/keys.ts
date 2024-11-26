@@ -306,7 +306,7 @@ const keysSlice = createSlice({
       state.selectedKey = {
         ...state.selectedKey,
         data: {
-          ...(state.selectedKey.data || {}),
+          ...state.selectedKey.data,
           length: payload,
         },
       }

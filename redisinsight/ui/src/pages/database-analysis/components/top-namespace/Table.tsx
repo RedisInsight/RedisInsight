@@ -63,7 +63,7 @@ const NameSpacesTable = (props: Props) => {
 
   const handleRedirect = (nsp: string, filter: string) => {
     dispatch(changeSearchMode(SearchMode.Pattern))
-    dispatch(setBrowserTreeDelimiter(delimiter))
+    dispatch(setBrowserTreeDelimiter([{ label: delimiter }]))
     dispatch(setFilter(filter))
     dispatch(setSearchMatch(`${nsp}${delimiter}*`, SearchMode.Pattern))
     dispatch(resetKeysData(SearchMode.Pattern))

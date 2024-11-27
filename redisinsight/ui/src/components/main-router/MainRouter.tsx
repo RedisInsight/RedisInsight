@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Switch, useHistory, useLocation } from 'react-router-dom'
+import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom'
 
 import extractRouter from 'uiSrc/hoc/extractRouter.hoc'
 import { registerRouter } from 'uiSrc/services/routing'
@@ -77,6 +77,10 @@ const MainRouter = () => {
                 ))
               )
           }
+          <Route
+            path="*"
+            render={() => <Redirect to={Pages.notFound} />}
+          />
         </Switch>
       </Suspense>
     </>

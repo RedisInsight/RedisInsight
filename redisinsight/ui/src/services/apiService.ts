@@ -74,9 +74,16 @@ export const hostedAuthInterceptor = (error: AxiosError) => {
 
 export const connectivityErrorsInterceptor = (error: AxiosError) => {
   const { response } = error
-  const responseData = response?.data as { message?: string, code?: string }
+  const responseData = response?.data as {
+    message?: string,
+    code?: string,
+    error?: string
+  }
 
-  if (response?.status === 503 && responseData.code === 'serviceUnavailable') {
+  if (response?.status === 503 && (
+    responseData.code === 'serviceUnavailable'
+    || responseData.error === 'Service Unavailable'
+  )) {
     store?.dispatch<any>(setConnectivityError('The connection to the server has been lost.'))
   }
 

@@ -319,15 +319,22 @@ export const getMswURL = (path: string = '') =>
   apiService.defaults.baseURL?.concat(path.startsWith('/') ? path.slice(1) : path) ?? ''
 
 export const mockWindowLocation = (initialHref = '') => {
+  const setHrefMock = jest.fn()
+  let href = initialHref
   Object.defineProperty(window, 'location', {
-    configurable: true,
     value: {
-      href: initialHref,
-      assign: jest.fn(),
-      replace: jest.fn(),
-      reload: jest.fn(),
+      set href(url) {
+        setHrefMock(url)
+        href = url
+      },
+      get href() {
+        return href
+      },
     },
+    writable: true,
   })
+
+  return setHrefMock
 }
 
 // re-export everything

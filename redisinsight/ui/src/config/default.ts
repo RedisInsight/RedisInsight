@@ -47,6 +47,7 @@ export const defaultConfig = {
     returnUrlTooltip: process.env.RI_RETURN_URL_TOOLTIP || 'Back',
     activityMonitorOrigin: process.env.RI_ACTIVITY_MONITOR_ORIGIN,
     activityMonitorThrottleTimeout: intEnv('RI_ACTIVITY_MONITOR_THROTTLE_TIMEOUT', 30_000),
+    sessionTtlSeconds: intEnv('RI_SESSION_TTL_SECONDS', 30 * 60),
     localResourcesBaseUrl: process.env.RI_LOCAL_RESOURCES_BASE_URL,
     useLocalResources: booleanEnv('RI_USE_LOCAL_RESOURCES', false)
   },

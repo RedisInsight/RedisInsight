@@ -9,6 +9,8 @@ export const commonUrl = process.env.COMMON_URL || 'https://localhost:5540';
 export const apiUrl = process.env.API_URL || 'https://localhost:5540/api';
 export const googleUser = process.env.GOOGLE_USER || '';
 export const googleUserPassword = process.env.GOOGLE_USER_PASSWORD || '';
+export const samlUser = process.env.E2E_SSO_EMAIL || '';
+export const samlUserPassword = process.env.E2E_SSO_PASSWORD || '';
 
 export const workingDirectory = process.env.RI_APP_FOLDER_ABSOLUTE_PATH
     || (joinPath(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redis-insight'));

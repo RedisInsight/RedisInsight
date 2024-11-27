@@ -250,6 +250,7 @@ describe('RdiPage', () => {
 
     expect(createInstanceAction).toBeCalledWith(
       { name: 'name', url: 'url', username: 'username', password: 'password' },
+      expect.any(Function),
       expect.any(Function)
     )
   })

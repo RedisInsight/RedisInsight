@@ -47,7 +47,6 @@ const TemplatePopover = (props: Props) => {
           <EuiButton
             fill
             size="s"
-            color="secondary"
             className={styles.btn}
             aria-label="Insert template"
             disabled={loading}

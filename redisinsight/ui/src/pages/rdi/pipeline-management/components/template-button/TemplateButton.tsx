@@ -48,7 +48,6 @@ const TemplateButton = ({ setFieldValue, value }: TemplateButtonProps) => {
       <EuiButton
         fill
         size="s"
-        color="secondary"
         className={styles.btn}
         aria-label="Insert template"
         isLoading={loading}

@@ -1,17 +1,26 @@
 import { isObjectLike } from 'lodash'
+import { Maybe } from 'uiSrc/utils'
 import BrowserStorageItem from '../constants/storage'
 
 class StorageService {
   private storage: Storage
 
-  constructor(storage: Storage) {
+  private envKey: Maybe<string>
+
+  constructor(storage: Storage, envKey?: string) {
     this.storage = storage
+    this.envKey = envKey
+  }
+
+  private getKey(itemName: string): string {
+    return this.envKey ? `${this.envKey}_${itemName}` : itemName
   }
 
   get(itemName: string = '') {
+    const key = this.getKey(itemName)
     let item
     try {
-      item = this.storage.getItem(itemName)
+      item = this.storage.getItem(key)
     } catch (error) {
       console.error(`getItem from storage error: ${error}`)
     }
@@ -26,16 +35,13 @@ class StorageService {
     return null
   }
 
-  getAll() {
-    return this.storage
-  }
-
   set(itemName: string = '', item: any) {
     try {
+      const key = this.getKey(itemName)
       if (isObjectLike(item)) {
-        this.storage.setItem(itemName, JSON.stringify(item))
+        this.storage.setItem(key, JSON.stringify(item))
       } else {
-        this.storage.setItem(itemName, item)
+        this.storage.setItem(key, item)
       }
     } catch (error) {
       console.error(`setItem to storage error: ${error}`)
@@ -43,11 +49,18 @@ class StorageService {
   }
 
   remove(itemName: string = '') {
-    this.storage.removeItem(itemName)
+    const key = this.getKey(itemName)
+    this.storage.removeItem(key)
+  }
+
+  getAll() {
+    return this.storage
   }
 }
-export const localStorageService = new StorageService(localStorage)
-export const sessionStorageService = new StorageService(sessionStorage)
+const envKey = window.__RI_PROXY_PATH__
+
+export const localStorageService = new StorageService(localStorage, envKey)
+export const sessionStorageService = new StorageService(sessionStorage, envKey)
 
 export const getObjectStorageField = (itemName = '', field = '') => {
   try {

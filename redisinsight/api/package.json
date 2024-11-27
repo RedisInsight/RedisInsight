@@ -1,6 +1,6 @@
 {
   "name": "redisinsight-api",
-  "version": "2.60.0",
+  "version": "2.62.0",
   "description": "Redis Insight API",
   "private": true,
   "author": {
@@ -48,6 +48,7 @@
     "@nestjs/platform-socket.io/socket.io": "^4.8.0",
     "@nestjs/cli/**/braces": "^3.0.3",
     "**/semver": "^7.5.2",
+    "**/cpu-features": "file:./stubs/cpu-features",
     "winston-daily-rotate-file/**/file-stream-rotator": "^1.0.0"
   },
   "dependencies": {
@@ -110,8 +111,8 @@
     "@types/node": "14.14.10",
     "@types/ssh2": "^1.11.6",
     "@types/supertest": "^2.0.8",
-    "@typescript-eslint/eslint-plugin": "^4.8.1",
-    "@typescript-eslint/parser": "^4.8.1",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
     "chai": "^4.3.4",
     "concurrently": "^5.3.0",
     "cross-env": "^7.0.3",
@@ -123,6 +124,8 @@
     "eslint-plugin-sonarjs": "^0.9.1",
     "ioredis-mock": "^8.2.2",
     "jest": "^29.7.0",
+    "jest-html-reporters": "^3.1.7",
+    "jest-junit": "^16.0.0",
     "jest-when": "^3.2.1",
     "joi": "^17.4.0",
     "mocha": "^8.4.0",
@@ -153,7 +156,7 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "../report/coverage",
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       ".entity.ts$",
@@ -167,6 +170,13 @@
       "src/(.*)": "<rootDir>/$1",
       "apiSrc/(.*)": "<rootDir>/$1",
       "tests/(.*)": "<rootDir>/__tests__/$1"
-    }
+    },
+    "reporters": [
+      "default",
+      ["jest-html-reporters", {
+        "publicPath": "./report",
+        "filename": "index.html"
+      }]
+    ]
   }
 }

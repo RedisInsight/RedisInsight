@@ -204,7 +204,6 @@ export class CloudAuthService {
   private async revokeRefreshToken(sessionMetadata: SessionMetadata): Promise<void> {
     try {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
-
       if (!session?.refreshToken) {
         return;
       }
@@ -274,6 +273,7 @@ export class CloudAuthService {
       await this.sessionService.updateSessionData(sessionMetadata.sessionId, {
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
+        idpType,
         csrf: null,
         apiSessionId: null,
       });

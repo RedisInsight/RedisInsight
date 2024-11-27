@@ -199,7 +199,7 @@ export function fetchDBAnalysisReportsHistory(
 
 export function createNewAnalysis(
   instanceId: string,
-  delimiter: string,
+  delimiters: string[],
   onSuccessAction?: (data: DatabaseAnalysis) => void,
   onFailAction?: () => void,
 ) {
@@ -213,7 +213,7 @@ export function createNewAnalysis(
           ApiEndpoints.DATABASE_ANALYSIS,
         ),
         {
-          delimiter,
+          delimiter: delimiters?.[0],
         }
       )
 

@@ -48,6 +48,7 @@ const RedisCloudSubscriptionsPage = () => {
   } = useSelector(cloudSelector)
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
   const currentAccountIdRef = useRef(userOAuthProfile?.id)
+  const ssoFlowRef = useRef(ssoFlow)
 
   setTitle('Redis Cloud Subscriptions')
 
@@ -58,7 +59,7 @@ const RedisCloudSubscriptionsPage = () => {
   }, [])
 
   useEffect(() => {
-    if (ssoFlow !== OAuthSocialAction.Import) return
+    if (ssoFlowRef.current !== OAuthSocialAction.Import) return
 
     if (!userOAuthProfile) {
       history.push(Pages.home)
@@ -69,7 +70,7 @@ const RedisCloudSubscriptionsPage = () => {
       dispatch(fetchSubscriptionsRedisCloud(null, true))
       currentAccountIdRef.current = userOAuthProfile?.id
     }
-  }, [ssoFlow, userOAuthProfile])
+  }, [userOAuthProfile])
 
   useEffect(() => {
     if (instancesLoaded) {

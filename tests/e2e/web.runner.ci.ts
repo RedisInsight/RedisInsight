@@ -11,7 +11,7 @@ import testcafe from 'testcafe';
                         experimentalDecorators: true
                     } })
                 .src((process.env.TEST_FILES || 'tests/web/**/*.e2e.ts').split('\n'))
-                .browsers(['chromium:headless --cache --allow-insecure-localhost --disable-search-engine-choice-screen --ignore-certificate-errors'])
+                .browsers(['firefox:headless --disable-search-engine-choice-screen --ignore-certificate-errors'])
                 .screenshots({
                     path: 'report/screenshots/',
                     takeOnFails: true,
@@ -29,12 +29,12 @@ import testcafe from 'testcafe';
                     },
                     {
                         name: 'html',
-                        output: './report/report.html'
+                        output: './report/index.html'
                     }
                 ])
                 .run({
                     skipJsErrors: true,
-                    browserInitTimeout: 60000,
+                    browserInitTimeout: 240000,
                     selectorTimeout: 5000,
                     assertionTimeout: 5000,
                     speed: 1,

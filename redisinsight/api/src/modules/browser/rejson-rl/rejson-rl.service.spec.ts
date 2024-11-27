@@ -181,7 +181,7 @@ describe('JsonService', () => {
         } catch (err) {
           expect(err).toBeInstanceOf(BadRequestException);
           expect(err.message).toEqual(
-            ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+            ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
           );
         }
       });
@@ -215,7 +215,7 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: true,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
         });
       });
       it('should return data (number)', async () => {
@@ -236,7 +236,7 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: true,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
         });
       });
       it('should return data (integer)', async () => {
@@ -257,7 +257,7 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: true,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
         });
       });
       it('should return data (boolean)', async () => {
@@ -278,7 +278,7 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: true,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
         });
       });
       it('should return data (null)', async () => {
@@ -299,7 +299,7 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: true,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
         });
       });
       it('should return data (array)', async () => {
@@ -328,7 +328,7 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: true,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
         });
       });
       it('should return data (object)', async () => {
@@ -355,7 +355,7 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: true,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
         });
       });
       it('should return full json data when forceRetrieve is true', async () => {
@@ -393,7 +393,7 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: true,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
         });
       });
     });
@@ -432,7 +432,7 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: true,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
         });
       });
 
@@ -462,7 +462,7 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: true,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
         });
       });
     });
@@ -503,11 +503,11 @@ describe('JsonService', () => {
         expect(result).toEqual({
           downloaded: false,
           path: testPath,
-          data: testData,
+          data: JSON.stringify(testData),
           type: 'string',
         });
       });
-      it('should return array with scalar values and safe struct types descriptions', async () => {
+      it('should return array with scalar values as strings and safe struct types descriptions', async () => {
         const testData = [
           12,
           3.14,
@@ -555,35 +555,35 @@ describe('JsonService', () => {
               path: '[0]',
               cardinality: 1,
               type: 'integer',
-              value: testData[0],
+              value: String(testData[0]),
             },
             {
               key: 1,
               path: '[1]',
               cardinality: 1,
               type: 'number',
-              value: testData[1],
+              value: String(testData[1]),
             },
             {
               key: 2,
               path: '[2]',
               cardinality: 1,
               type: 'string',
-              value: testData[2],
+              value: `"${testData[2]}"`,
             },
             {
               key: 3,
               path: '[3]',
               cardinality: 1,
               type: 'boolean',
-              value: testData[3],
+              value: String(testData[3]),
             },
             {
               key: 4,
               path: '[4]',
               cardinality: 1,
               type: 'null',
-              value: testData[4],
+              value: String(testData[4]),
             },
             {
               key: 5,
@@ -654,19 +654,19 @@ describe('JsonService', () => {
               path: `${path}[0]`,
               cardinality: 1,
               type: 'integer',
-              value: testData[0],
+              value: String(testData[0]),
             },
             {
               key: 1,
               path: `${path}[1]`,
               cardinality: 1,
               type: 'string',
-              value: testData[1],
+              value: `"${testData[1]}"`,
             },
           ],
         });
       });
-      it('should return object with scalar values and safe struct types descriptions', async () => {
+      it('should return object with scalar values as strings and safe struct types descriptions', async () => {
         const testData = {
           fInt: 12,
           fNum: 3.14,
@@ -752,35 +752,35 @@ describe('JsonService', () => {
               path: '["fInt"]',
               cardinality: 1,
               type: 'integer',
-              value: testData.fInt,
+              value: String(testData.fInt),
             },
             {
               key: 'fNum',
               path: '["fNum"]',
               cardinality: 1,
               type: 'number',
-              value: testData.fNum,
+              value: String(testData.fNum),
             },
             {
               key: 'fStr',
               path: '["fStr"]',
               cardinality: 1,
               type: 'string',
-              value: testData.fStr,
+              value: `"${testData.fStr}"`,
             },
             {
               key: 'fBool',
               path: '["fBool"]',
               cardinality: 1,
               type: 'boolean',
-              value: testData.fBool,
+              value: String(testData.fBool),
             },
             {
               key: 'fNull',
               path: '["fNull"]',
               cardinality: 1,
               type: 'null',
-              value: testData.fNull,
+              value: String(testData.fNull),
             },
             {
               key: 'fArr',
@@ -797,7 +797,7 @@ describe('JsonService', () => {
           ],
         });
       });
-      it('should return object with scalar values in a custom path', async () => {
+      it('should return object with scalar values as strings in a custom path', async () => {
         const path = '["customPath"]';
         const testData = {
           fInt: 12,
@@ -855,14 +855,14 @@ describe('JsonService', () => {
               path: `${path}["fInt"]`,
               cardinality: 1,
               type: 'integer',
-              value: testData.fInt,
+              value: String(testData.fInt),
             },
             {
               key: 'fStr',
               path: `${path}["fStr"]`,
               cardinality: 1,
               type: 'string',
-              value: testData.fStr,
+              value: `"${testData.fStr}"`,
             },
           ],
         });
@@ -923,7 +923,7 @@ describe('JsonService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
     });
@@ -1004,7 +1004,7 @@ describe('JsonService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
     });
@@ -1097,7 +1097,7 @@ describe('JsonService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
     });
@@ -1170,7 +1170,7 @@ describe('JsonService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(
-          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('RedisJSON'),
+          ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
         );
       }
     });

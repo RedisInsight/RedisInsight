@@ -18,6 +18,13 @@ import { getDbWithModuleLoaded } from 'uiSrc/utils'
 import { useCapability } from 'uiSrc/services'
 import styles from './styles.module.scss'
 
+export const MODULE_OAUTH_SOURCE_MAP: { [key in RedisDefaultModules]?: String } = {
+  [RedisDefaultModules.Bloom]: 'RedisBloom',
+  [RedisDefaultModules.ReJSON]: 'RedisJSON',
+  [RedisDefaultModules.Search]: 'RediSearch',
+  [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
+}
+
 export interface IProps {
   moduleName: RedisDefaultModules
   id: string
@@ -31,7 +38,7 @@ const MAX_ELEMENT_WIDTH = 1440
 const renderTitle = (width: number, moduleName?: string) => (
   <EuiTitle size="m" className={styles.title} data-testid="welcome-page-title">
     <h4>
-      {`${moduleName} ${moduleName === MODULE_TEXT_VIEW.redisgears ? 'are' : 'is'} not available `}
+      {`${moduleName} ${[MODULE_TEXT_VIEW.redisgears, MODULE_TEXT_VIEW.bf].includes(moduleName) ? 'are' : 'is'} not available `}
       {width > MAX_ELEMENT_WIDTH && <br />}
       for this database
     </h4>
@@ -51,7 +58,8 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
   const [width, setWidth] = useState(0)
   const freeInstances = useSelector(freeInstancesSelector) || []
 
-  const module = MODULE_TEXT_VIEW[moduleName]
+  const module = MODULE_OAUTH_SOURCE_MAP[moduleName]
+
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
   const source = type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
 
@@ -104,7 +112,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
           )}
         </div>
         <div className={styles.contentWrapper}>
-          {renderTitle(width, module)}
+          {renderTitle(width, MODULE_TEXT_VIEW[moduleName])}
           <EuiText className={styles.bigText}>
             {CONTENT[moduleName]?.text.map((item: string) => (
               width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
@@ -122,7 +130,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
               ))}
             </EuiText>
           )}
-          {renderText(module)}
+          {renderText(MODULE_TEXT_VIEW[moduleName])}
         </div>
       </div>
       <div className={styles.linksWrapper}>

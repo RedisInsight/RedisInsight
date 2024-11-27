@@ -64,7 +64,7 @@ export interface DynamicTypesProps {
 
 interface JSONCommonProps {
   keyName: string | number
-  value: IJSONValue
+  value: string | number | boolean | bigint
   cardinality?: number
   selectedKey: RedisResponseBuffer
   path?: string

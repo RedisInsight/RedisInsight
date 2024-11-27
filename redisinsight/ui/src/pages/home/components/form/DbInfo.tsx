@@ -130,7 +130,7 @@ const DbInfo = (props: Props) => {
             className={styles.dbInfoModulesLabel}
             label={(
               <EuiText color="subdued" size="s">
-                Modules:
+                Capabilities:
               </EuiText>
             )}
           />

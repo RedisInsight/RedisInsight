@@ -7,8 +7,8 @@ services:
       dockerfile: e2e.Dockerfile
     tty: true
     volumes:
-      - ./results:/usr/src/app/results
-      - ./report:/usr/src/app/report
+      - ${E2E_VOLUME_PATH:-.}/results:/usr/src/app/results
+      - ${E2E_VOLUME_PATH:-.}/report:/usr/src/app/report
       - ./plugins:/usr/src/app/plugins
       - rihomedir:/root/.redis-insight
       - tmp:/tmp
@@ -46,6 +46,7 @@ services:
       RI_ENCRYPTION_KEY: $E2E_RI_ENCRYPTION_KEY
       RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT
       RI_SERVER_TLS_KEY: $RI_SERVER_TLS_KEY
+      RI_STDOUT_LOGGER: 'false'
     volumes:
       - rihomedir:/data
       - tmp:/tmp

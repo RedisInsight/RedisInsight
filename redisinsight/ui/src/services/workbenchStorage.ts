@@ -85,7 +85,7 @@ export class WorkbenchStorage {
     return this.db
   }
 
-  getItem(storeName: string, commandId: string) {
+  getItem(storeName: string, commandId: string, onSuccess?: () => void, onError?: () => void) {
     return new Promise((resolve, reject) => {
       try {
         this.getDb(storeName).then((db) => {
@@ -98,19 +98,22 @@ export class WorkbenchStorage {
           const indexReq = idbIndex?.get(commandId)
           indexReq.onsuccess = () => {
             const value = indexReq.result
+            onSuccess?.()
             resolve(value)
           }
           indexReq.onerror = () => {
+            onError?.()
             reject(indexReq.error)
           }
         })
       } catch (e) {
+        onError?.()
         reject(e)
       }
     })
   }
 
-  getItems(storeName: string, dbId: string) {
+  getItems(storeName: string, dbId: string, onSuccess?: () => void, onError?: () => void) {
     return new Promise((resolve, reject) => {
       try {
         this.getDb(storeName).then((db) => {
@@ -123,6 +126,7 @@ export class WorkbenchStorage {
           const indexReq = idbIndex?.getAll(dbId)
           indexReq.onsuccess = () => {
             const values = indexReq.result
+            onSuccess?.()
             if (values && values.length > 0) {
               resolve(values)
             } else {
@@ -130,16 +134,18 @@ export class WorkbenchStorage {
             }
           }
           indexReq.onerror = () => {
+            onError?.()
             reject(indexReq.error)
           }
         })
       } catch (e) {
+        onError?.()
         reject(e)
       }
     })
   }
 
-  setItem(storeName: string, value: any): Promise<void> {
+  setItem(storeName: string, value: any, onSuccess?: () => void, onError?: () => void): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         this.getDb(storeName).then((db) => {
@@ -150,9 +156,11 @@ export class WorkbenchStorage {
           const transaction = db.transaction(storeName, 'readwrite')
           const req = transaction?.objectStore(storeName)?.put(value)
           transaction.oncomplete = () => {
+            onSuccess?.()
             resolve()
           }
           transaction.onerror = () => {
+            onError?.()
             reject(req?.error)
           }
         })
@@ -162,7 +170,13 @@ export class WorkbenchStorage {
     })
   }
 
-  removeItem(storeName: string, dbId: string, commandId: string): Promise<string | void> {
+  removeItem(
+    storeName: string,
+    dbId: string,
+    commandId: string,
+    onSuccess?: () => void,
+    onError?: () => void
+  ): Promise<string | void> {
     return new Promise((resolve, reject) => {
       try {
         this.getDb(storeName).then((db) => {
@@ -174,20 +188,23 @@ export class WorkbenchStorage {
           const req = transaction.objectStore(storeName)?.delete([commandId, dbId])
 
           transaction.oncomplete = () => {
+            onSuccess?.()
             resolve(commandId)
           }
 
           transaction.onerror = () => {
+            onError?.()
             reject(req?.error)
           }
         })
       } catch (e) {
+        onError?.()
         reject(e)
       }
     })
   }
 
-  clear(storeName: string, dbId: string): Promise<void> {
+  clear(storeName: string, dbId: string, onSuccess?: () => void, onError?: () => void): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         this.getDb(storeName).then((db) => {
@@ -201,6 +218,7 @@ export class WorkbenchStorage {
           const indexReq = idbIndex?.openCursor(dbId)
           indexReq.onsuccess = () => {
             const cursor = indexReq.result
+            onSuccess?.()
             if (cursor) {
               cursor.delete()
               cursor.continue()
@@ -210,10 +228,12 @@ export class WorkbenchStorage {
             }
           }
           indexReq.onerror = () => {
+            onError?.()
             reject(indexReq.error)
           }
         })
       } catch (e) {
+        onError?.()
         reject(e)
       }
     })

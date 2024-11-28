@@ -220,6 +220,7 @@ const QueryCard = (props: Props) => {
                               mode={mode}
                               setMessage={setMessage}
                               commandId={id}
+                              isNotStored={isNotStored}
                             />
                           ) : (
                             <div className={styles.loading}>

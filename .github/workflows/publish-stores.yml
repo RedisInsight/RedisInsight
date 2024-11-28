@@ -20,7 +20,7 @@ jobs:
     - name: Download Docker images
       run: |
         mkdir release
-        aws s3 cp s3://${AWS_BUCKET_NAME}/public/latest/docker ./release/docker --recursive
+        aws s3 cp s3://${AWS_BUCKET_NAME}/public/latest/docker ./release --recursive
 
     - name: Publish docker
       env:

@@ -46,6 +46,7 @@ services:
       RI_ENCRYPTION_KEY: $E2E_RI_ENCRYPTION_KEY
       RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT
       RI_SERVER_TLS_KEY: $RI_SERVER_TLS_KEY
+      RI_STDOUT_LOGGER: 'false'
     volumes:
       - rihomedir:/data
       - tmp:/tmp

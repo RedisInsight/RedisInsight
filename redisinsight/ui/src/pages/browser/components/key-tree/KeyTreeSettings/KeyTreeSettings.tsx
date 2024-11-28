@@ -2,7 +2,19 @@ import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiButton, EuiButtonIcon, EuiFieldText, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiPopover, EuiSuperSelect, EuiText } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiButtonIcon,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiPopover,
+  EuiSuperSelect,
+  EuiText,
+  EuiComboBox,
+  EuiComboBoxOptionOption,
+} from '@elastic/eui'
+import { isEqual } from 'lodash'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { DEFAULT_DELIMITER, DEFAULT_TREE_SORTING, SortOrder } from 'uiSrc/constants'
@@ -13,13 +25,13 @@ import {
   setBrowserTreeSort,
 } from 'uiSrc/slices/app/context'
 import TreeViewSort from 'uiSrc/assets/img/browser/treeViewSort.svg?react'
+import { comboBoxToArray } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   loading: boolean
 }
-const MAX_DELIMITER_LENGTH = 5
 const sortOptions = [SortOrder.ASC, SortOrder.DESC].map((value) => ({
   value,
   inputDisplay: (
@@ -29,9 +41,12 @@ const sortOptions = [SortOrder.ASC, SortOrder.DESC].map((value) => ({
 
 const KeyTreeSettings = ({ loading }: Props) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { treeViewDelimiter = '', treeViewSort = DEFAULT_TREE_SORTING } = useSelector(appContextDbConfig)
+  const {
+    treeViewDelimiter = [DEFAULT_DELIMITER],
+    treeViewSort = DEFAULT_TREE_SORTING,
+  } = useSelector(appContextDbConfig)
   const [sorting, setSorting] = useState<SortOrder>(treeViewSort)
-  const [delimiter, setDelimiter] = useState<string>(treeViewDelimiter)
+  const [delimiters, setDelimiters] = useState<EuiComboBoxOptionOption[]>(treeViewDelimiter)
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
@@ -42,7 +57,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
   }, [treeViewSort])
 
   useEffect(() => {
-    setDelimiter(treeViewDelimiter)
+    setDelimiters(treeViewDelimiter)
   }, [treeViewDelimiter])
 
   const onButtonClick = () => setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
@@ -55,7 +70,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
 
   const resetStates = useCallback(() => {
     setSorting(treeViewSort)
-    setDelimiter(treeViewDelimiter)
+    setDelimiters(treeViewDelimiter)
   }, [treeViewSort, treeViewDelimiter])
 
   const button = (
@@ -70,14 +85,16 @@ const KeyTreeSettings = ({ loading }: Props) => {
   )
 
   const handleApply = () => {
-    if (delimiter !== treeViewDelimiter) {
-      dispatch(setBrowserTreeDelimiter(delimiter || DEFAULT_DELIMITER))
+    if (!isEqual(delimiters, treeViewDelimiter)) {
+      const delimitersValue = delimiters.length ? delimiters : [DEFAULT_DELIMITER]
+
+      dispatch(setBrowserTreeDelimiter(delimitersValue))
       sendEventTelemetry({
         event: TelemetryEvent.TREE_VIEW_DELIMITER_CHANGED,
         eventData: {
           databaseId: instanceId,
-          from: treeViewDelimiter,
-          to: delimiter || DEFAULT_DELIMITER
+          from: comboBoxToArray(treeViewDelimiter),
+          to: comboBoxToArray(delimitersValue)
         }
       })
 
@@ -122,14 +139,16 @@ const KeyTreeSettings = ({ loading }: Props) => {
           </EuiFlexItem>
           <EuiFlexItem className={styles.row}>
             <div className={styles.label}>Delimiter</div>
-            <EuiFieldText
+            <EuiComboBox
+              noSuggestions
+              isClearable={false}
               placeholder=":"
-              value={delimiter}
-              className={styles.input}
-              onChange={(e) => setDelimiter(e.target.value)}
-              aria-label="Title"
-              maxLength={MAX_DELIMITER_LENGTH}
-              data-testid="tree-view-delimiter-input"
+              delimiter=" "
+              selectedOptions={delimiters}
+              onCreateOption={(del) => setDelimiters([...delimiters, { label: del }])}
+              onChange={(selectedOptions) => setDelimiters(selectedOptions)}
+              className={styles.combobox}
+              data-testid="delimiter-combobox"
             />
           </EuiFlexItem>
           <EuiFlexItem className={styles.row}>

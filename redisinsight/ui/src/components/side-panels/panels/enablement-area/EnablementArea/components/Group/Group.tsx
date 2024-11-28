@@ -73,13 +73,15 @@ const Group = (props: Props) => {
   }
 
   const handleOpen = (isOpen: boolean) => {
+    if (forceState === 'open') return
+
     setIsGroupOpen(isOpen)
     onToggle?.(isOpen)
   }
 
   const actionsContent = (
     <>
-      {actions?.includes(EAItemActions.Create) && (
+      {actions?.includes(EAItemActions.Create) && (isGroupOpen || forceState === 'open') && (
         <OnboardingTour
           options={ONBOARDING_FEATURES.EXPLORE_CUSTOM_TUTORIALS}
           anchorPosition="downLeft"

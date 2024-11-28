@@ -68,6 +68,7 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
 
     const data = { ...item, parentPath }
     if (['array', 'object'].includes(item.type)) return renderJSONObject(data, item.type)
+
     return renderScalar(data)
   }
 

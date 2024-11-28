@@ -16,7 +16,8 @@
   },
   "resolutions": {
     "**/semver": "^7.5.2",
-    "sqlite3/**/tar": "^6.2.1"
+    "sqlite3/**/tar": "^6.2.1",
+    "**/cpu-features": "file:./api/stubs/cpu-features"
   },
   "dependencies": {
     "keytar": "^7.9.0",

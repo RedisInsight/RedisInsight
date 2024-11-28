@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios'
+import { EuiComboBoxOptionOption } from '@elastic/eui'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { Nullable } from 'uiSrc/utils'
 import { DurationUnits, FeatureFlags, ICommands, SortOrder } from 'uiSrc/constants'
@@ -64,7 +65,7 @@ export interface StateAppContext {
   contextRdiInstanceId: string
   lastPage: string
   dbConfig: {
-    treeViewDelimiter: string
+    treeViewDelimiter: EuiComboBoxOptionOption[]
     treeViewSort: SortOrder
     slowLogDurationUnit: DurationUnits
     showHiddenRecommendations: boolean
@@ -85,7 +86,6 @@ export interface StateAppContext {
       [key: string]: number
     }
     tree: {
-      delimiter: string
       openNodes: {
         [key: string]: boolean
       }

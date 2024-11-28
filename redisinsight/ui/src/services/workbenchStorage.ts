@@ -241,7 +241,7 @@ export class WorkbenchStorage {
   }
 }
 
-export const wbHistoryStorage = new WorkbenchStorage(riConfig.app.indexedDbName, 1)
+export const wbHistoryStorage = new WorkbenchStorage(riConfig.app.indexedDbName, 2)
 
 type CommandHistoryType = CommandExecution[]
 

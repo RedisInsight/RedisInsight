@@ -52,6 +52,10 @@ class StorageService {
     const key = this.getKey(itemName)
     this.storage.removeItem(key)
   }
+
+  getAll() {
+    return this.storage
+  }
 }
 const envKey = window.__RI_PROXY_PATH__
 

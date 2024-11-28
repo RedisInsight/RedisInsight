@@ -1,16 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import { EuiListGroup } from '@elastic/eui'
 import { isArray } from 'lodash'
 import { useParams } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import { ApiEndpoints, EAItemActions, EAManifestFirstKey } from 'uiSrc/constants'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import {
+  deleteCustomTutorial,
+  setWbCustomTutorialsState,
+  uploadCustomTutorial
+} from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
 import UploadWarning from 'uiSrc/components/upload-warning'
+import { appFeatureOnboardingSelector } from 'uiSrc/slices/app/features'
+import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import {
   FormValues
 } from '../UploadTutorialForm/UploadTutorialForm'
@@ -41,11 +47,18 @@ const PATHS = {
 
 const Navigation = (props: Props) => {
   const { tutorials, customTutorials, isInternalPageVisible } = props
+  const { currentStep, isActive } = useSelector(appFeatureOnboardingSelector)
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
 
   const dispatch = useDispatch()
   const { instanceId = '' } = useParams<{ instanceId: string }>()
+
+  const isCustomTutorialsOnboarding = currentStep === OnboardingSteps.CustomTutorials && isActive
+
+  useEffect(() => () => {
+    dispatch(setWbCustomTutorialsState())
+  }, [])
 
   const submitCreate = ({ file, link }: FormValues) => {
     const formData = new FormData()
@@ -66,7 +79,10 @@ const Navigation = (props: Props) => {
 
     dispatch(uploadCustomTutorial(
       formData,
-      () => setIsCreateOpen(false),
+      () => {
+        setIsCreateOpen(false)
+        dispatch(setWbCustomTutorialsState(true))
+      },
     ))
   }
 
@@ -111,6 +127,7 @@ const Navigation = (props: Props) => {
             onCreate={() => setIsCreateOpen((v) => !v)}
             onDelete={onDeleteCustomTutorial}
             isPageOpened={isInternalPageVisible}
+            forceState={isCustomTutorials && isCustomTutorialsOnboarding ? 'open' : undefined}
             {...args}
           >
             {isCustomTutorials && actions?.includes(EAItemActions.Create) && (

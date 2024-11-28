@@ -12,7 +12,7 @@ import {
 } from '@elastic/eui'
 import { remove } from 'lodash'
 
-import { Pages } from 'uiSrc/constants'
+import { DEFAULT_DELIMITER, Pages } from 'uiSrc/constants'
 import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE } from 'uiSrc/constants/recommendations'
 import {
   recommendationsSelector,
@@ -26,6 +26,7 @@ import { IRecommendation } from 'uiSrc/slices/interfaces/recommendations'
 import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
+import { comboBoxToArray } from 'uiSrc/utils'
 
 import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
@@ -45,7 +46,7 @@ const LiveTimeRecommendations = () => {
   } = useSelector(recommendationsSelector)
   const {
     showHiddenRecommendations: isShowHidden,
-    treeViewDelimiter: delimiter = '',
+    treeViewDelimiter = [DEFAULT_DELIMITER],
   } = useSelector(appContextDbConfig)
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -68,7 +69,7 @@ const LiveTimeRecommendations = () => {
   }, [])
 
   const handleClickDbAnalysisLink = () => {
-    dispatch(createNewAnalysis(instanceId, delimiter))
+    dispatch(createNewAnalysis(instanceId, comboBoxToArray(treeViewDelimiter)))
     history.push(Pages.databaseAnalysis(instanceId))
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_TIPS_DATABASE_ANALYSIS_CLICKED,

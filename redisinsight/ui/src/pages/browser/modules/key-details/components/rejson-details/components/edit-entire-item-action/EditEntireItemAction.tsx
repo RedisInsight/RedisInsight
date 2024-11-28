@@ -83,6 +83,7 @@ const EditEntireItemAction = (props: Props) => {
                     aria-label="Cancel add"
                     className={styles.declineBtn}
                     onClick={onCancel}
+                    data-testid="cancel-edit-btn"
                   />
                   <EuiButtonIcon
                     iconSize="m"

@@ -519,7 +519,7 @@ export function fetchPatternKeysAction(
       sourceKeysFetch = CancelToken.source()
 
       const state = stateInit()
-      const scanThreshold  = state.user.settings.config?.scanThreshold || SCAN_COUNT_DEFAULT;
+      const scanThreshold = state.user.settings.config?.scanThreshold || SCAN_COUNT_DEFAULT
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
 
@@ -594,7 +594,7 @@ export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor
       sourceKeysFetch = CancelToken.source()
 
       const state = stateInit()
-      const scanThreshold = state.user.settings.config?.scanThreshold ?? SCAN_COUNT_DEFAULT;
+      const scanThreshold = state.user.settings.config?.scanThreshold ?? SCAN_COUNT_DEFAULT
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
       const { data, status } = await apiService.post(
@@ -643,7 +643,11 @@ export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor
 }
 
 // Asynchronous thunk action
-export function fetchKeyInfo(key: RedisResponseBuffer, resetData?: boolean) {
+export function fetchKeyInfo(
+  key: RedisResponseBuffer,
+  resetData?: boolean,
+  onSuccess?: (data: Nullable<IKeyPropTypes>) => void
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(defaultSelectedKeyAction())
 
@@ -662,6 +666,7 @@ export function fetchKeyInfo(key: RedisResponseBuffer, resetData?: boolean) {
       if (isStatusSuccessful(status)) {
         dispatch(loadKeyInfoSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
+        onSuccess?.(data)
       }
 
       if (data.type === KeyTypes.Hash) {

@@ -50,6 +50,7 @@ export interface TreeData extends FixedSizeNodeData {
   nestingLevel: number
   deleting: boolean
   isSelected: boolean
+  delimiters: string[]
   children?: TreeData[]
   updateStatusOpen: (fullName: string, value: boolean) => void
   updateStatusSelected: (key: RedisString) => void

@@ -79,6 +79,12 @@ export const mockDatabaseModules = [
     semanticVersion: '1.2.5',
   },
 ];
+
+export const mockDatabaseWithModules = Object.assign(new Database(), {
+  ...mockDatabase,
+  modules: mockDatabaseModules,
+});
+
 export const mockDatabaseWithCloudDetails = Object.assign(new Database(), {
   ...mockDatabase,
   cloudDetails: mockCloudDatabaseDetails,

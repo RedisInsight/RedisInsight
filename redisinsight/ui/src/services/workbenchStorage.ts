@@ -4,6 +4,7 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { getConfig } from 'uiSrc/config'
 import { formatBytes } from 'uiSrc/utils'
+import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
 
 const riConfig = getConfig()
 
@@ -240,7 +241,7 @@ export class WorkbenchStorage {
   }
 }
 
-export const wbHistoryStorage = new WorkbenchStorage('RI_WB_HISTORY', 1)
+export const wbHistoryStorage = new WorkbenchStorage(riConfig.app.indexedDbName, 1)
 
 type CommandHistoryType = CommandExecution[]
 
@@ -270,7 +271,7 @@ async function cleanupDatabaseHistory(dbId: string) {
   let size = 0
   // collect items up to maxItemsPerDb
   const update = commandsHistory.reduce((acc, commandsHistoryElement) => {
-    if (size >= riConfig.workbench.maxItemsPerDb) {
+    if (size >= WORKBENCH_HISTORY_MAX_LENGTH) {
       return acc
     }
     size++

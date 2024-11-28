@@ -39,13 +39,15 @@ export class ThemeProvider extends React.Component<Props> {
 
   getSystemTheme = () => (window.matchMedia?.(THEME_MATCH_MEDIA_DARK)?.matches ? Theme.Dark : Theme.Light)
 
-  changeTheme = (themeValue: any) => {
+  changeTheme = async (themeValue: any) => {
     let actualTheme = themeValue
+
+    // since change theme is async need to wait to have a proper prefers-color-scheme
+    await ipcThemeChange(themeValue)
+
     if (themeValue === Theme.System) {
       actualTheme = this.getSystemTheme()
     }
-
-    ipcThemeChange(themeValue)
 
     this.setState({ theme: actualTheme, usingSystemTheme: themeValue === Theme.System }, () => {
       themeService.applyTheme(themeValue)

@@ -7,7 +7,7 @@ import { act, cleanup, mockedStore, render, screen,
   mockedStoreFn,
 } from 'uiSrc/utils/test-utils'
 
-import { getUserInfo, logoutUser, oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
+import { getUserInfo, logoutUser, oauthCloudUserSelector, setInitialLoadingState } from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { loadSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
@@ -24,6 +24,7 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
     loading: false,
     data: null,
     error: '',
+    initialLoading: false
   }),
 }))
 
@@ -53,6 +54,12 @@ describe('OAuthUserProfile', () => {
   })
 
   it('should render loading spinner initially', () => {
+    (oauthCloudUserSelector as jest.Mock).mockReturnValueOnce({
+      loading: false,
+      data: null,
+      error: '',
+      initialLoading: true
+    })
     render(<OAuthUserProfile {...mockedProps} />)
 
     expect(screen.getByTestId('oath-user-profile-spinner')).toBeInTheDocument()
@@ -132,7 +139,11 @@ describe('OAuthUserProfile', () => {
       }
     })
 
-    expect(store.getActions()).toEqual([setSSOFlow(OAuthSocialAction.Import), loadSubscriptionsRedisCloud()]);
+    expect(store.getActions()).toEqual([
+      setInitialLoadingState(false),
+      setSSOFlow(OAuthSocialAction.Import),
+      loadSubscriptionsRedisCloud()
+    ]);
 
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
@@ -154,7 +165,7 @@ describe('OAuthUserProfile', () => {
 
     fireEvent.click(screen.getByTestId('profile-account-2'))
 
-    expect(store.getActions()).toEqual([getUserInfo()]);
+    expect(store.getActions()).toEqual([setInitialLoadingState(false), getUserInfo()]);
 
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
@@ -195,6 +206,6 @@ describe('OAuthUserProfile', () => {
 
     fireEvent.click(screen.getByTestId('profile-logout'))
 
-    expect(store.getActions()).toEqual([logoutUser(), setSSOFlow()])
+    expect(store.getActions()).toEqual([setInitialLoadingState(false), logoutUser(), setSSOFlow()])
   })
 })

@@ -29,7 +29,10 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
     await migrateHomeFolder() && await removeOldFolders();
   }
 
-  const { port, host } = serverConfig;
+  if (apiPort) {
+    serverConfig.port = apiPort;
+  }
+
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
 
   const options: NestApplicationOptions = {
@@ -75,7 +78,9 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
 
   const logFileProvider = app.get(LogFileProvider);
 
-  await app.listen(apiPort || port, host);
+  const { port, host } = serverConfig;
+
+  await app.listen(port, host);
   logger.log({
     message: `Server is running on http(s)://${host}:${port}`,
     context: 'bootstrap',

@@ -93,7 +93,7 @@ export class TreeView {
         await this.clickElementIfNotExpanded(base);
         if (names.length > 1) {
             for (let i = 1; i < names.length; i++) {
-                base = `${base  }${names[i]}:`;
+                base = `${base}:${names[i]}:`;
                 await this.clickElementIfNotExpanded(base);
             }
         }

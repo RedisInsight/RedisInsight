@@ -39,9 +39,9 @@ const CommonAppSubscription = () => {
       path: getProxyPath(),
       forceNew: false,
       reconnection: true,
+      query: token ? { [CustomHeaders.CsrfToken]: token } : {},
       extraHeaders: {
         [CustomHeaders.WindowId]: window.windowId || '',
-        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
       },
       rejectUnauthorized: false,
       transports: riConfig.api.socketTransports?.split(','),

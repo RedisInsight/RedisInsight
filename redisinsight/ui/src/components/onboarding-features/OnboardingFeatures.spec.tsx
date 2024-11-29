@@ -31,7 +31,6 @@ import {
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { ONBOARDING_FEATURES } from './OnboardingFeatures'
 
-// const { setOnboardNextStep, setOnboardPrevStep } = featureSlice
 jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureOnboardingSelector: jest.fn().mockReturnValue({

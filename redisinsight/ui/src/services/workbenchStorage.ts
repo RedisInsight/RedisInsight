@@ -296,7 +296,6 @@ export async function addCommands(data: CommandExecution[]) {
           Re-run the command to see new results.`,
         },
       ]
-      item.isNotStored = true
     }
     return item
   })

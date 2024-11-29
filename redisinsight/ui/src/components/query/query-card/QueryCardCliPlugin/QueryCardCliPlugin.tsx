@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { v4 as uuidv4 } from 'uuid'
-import { EuiFlexItem, EuiIcon, EuiLoadingContent, EuiText, EuiTextColor } from '@elastic/eui'
+import { EuiFlexItem, EuiIcon, EuiLoadingContent, EuiTextColor } from '@elastic/eui'
 import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { getBaseApiUrl, Nullable, formatToText, replaceEmptyValue } from 'uiSrc/utils'
@@ -28,7 +28,6 @@ export interface Props {
   setMessage: (text: string) => void
   commandId: string
   mode?: RunQueryMode
-  isNotStored?: boolean
 }
 
 enum StylesNamePostfix {
@@ -52,7 +51,6 @@ const QueryCardCliPlugin = (props: Props) => {
     setMessage,
     commandId,
     mode = RunQueryMode.Raw,
-    isNotStored
   } = props
   const { visualizations = [], staticPath } = useSelector(appPluginsSelector)
   const { modules = [] } = useSelector(connectedInstanceSelector)
@@ -242,7 +240,6 @@ const QueryCardCliPlugin = (props: Props) => {
   }
 
   useEffect(() => {
-    if (isNotStored) return
     const view = visualizations.find((visualization: IPluginVisualization) => visualization.uniqId === id)
     if (view) {
       generatedIframeNameRef.current = `${view.plugin.name}-${uuidv4()}`
@@ -267,15 +264,6 @@ const QueryCardCliPlugin = (props: Props) => {
 
   return (
     <div className={cx('queryResultsContainer', 'pluginStyles', styles.pluginWrapperResult)}>
-      {isNotStored && (
-      <div data-testid="query-plugin-result-not-stored">
-        <EuiText className={styles.alert} data-testid="query-cli-warning">
-          <EuiIcon type="alert" className={styles.alertIcon} />
-          {result[0].response}
-        </EuiText>
-      </div>
-      )}
-      {!isNotStored && (
       <div data-testid="query-plugin-result">
         <iframe
           seamless
@@ -292,14 +280,7 @@ const QueryCardCliPlugin = (props: Props) => {
           <EuiFlexItem className="query-card-output-response-fail">
             <span data-testid="query-card-no-module-output">
               <span className={styles.alertIconWrapper}>
-                <EuiIcon
-                  type="alert"
-                  color="danger"
-                  style={{
-                    display: 'inline',
-                    marginRight: 10,
-                  }}
-                />
+                  <EuiIcon type="alert" color="danger" style={{ display: 'inline', marginRight: 10 }} />
               </span>
               <EuiTextColor color="danger">{error}</EuiTextColor>
             </span>
@@ -312,7 +293,6 @@ const QueryCardCliPlugin = (props: Props) => {
         </div>
         )}
       </div>
-      )}
     </div>
   )
 }

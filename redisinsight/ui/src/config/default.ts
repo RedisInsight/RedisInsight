@@ -53,7 +53,7 @@ export const defaultConfig = {
   },
   workbench: {
     pipelineCountDefault: intEnv('PIPELINE_COUNT_DEFAULT', 5),
-    maxResultSize: intEnv('RI_COMMAND_EXECUTION_MAX_RESULT_SIZE', 1024 ),
+    maxResultSize: intEnv('RI_COMMAND_EXECUTION_MAX_RESULT_SIZE', 1024 * 1024),
   },
   browser: {
     scanCountDefault: intEnv('RI_SCAN_COUNT_DEFAULT', 500),

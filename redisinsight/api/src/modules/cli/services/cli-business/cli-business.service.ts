@@ -64,7 +64,7 @@ export class CliBusinessService {
    * @param clientMetadata
    */
   public async getClient(clientMetadata: ClientMetadata): Promise<CreateCliClientResponse> {
-    this.logger.log('Create Redis client for CLI.');
+    this.logger.debug('Create Redis client for CLI.');
     try {
       const uuid = uuidv4();
       await this.databaseClientFactory.getOrCreateClient({
@@ -72,7 +72,7 @@ export class CliBusinessService {
         uniqueId: uuid,
       });
 
-      this.logger.log('Succeed to create Redis client for CLI.');
+      this.logger.debug('Succeed to create Redis client for CLI.');
       this.cliAnalyticsService.sendClientCreatedEvent(
         clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
@@ -93,7 +93,7 @@ export class CliBusinessService {
    * @param clientMetadata
    */
   public async reCreateClient(clientMetadata: ClientMetadata): Promise<CreateCliClientResponse> {
-    this.logger.log('re-create Redis client for CLI.');
+    this.logger.debug('re-create Redis client for CLI.');
     try {
       await this.databaseClientFactory.deleteClient(clientMetadata);
 
@@ -103,7 +103,7 @@ export class CliBusinessService {
         uniqueId: uuid,
       });
 
-      this.logger.log('Succeed to re-create Redis client for CLI.');
+      this.logger.debug('Succeed to re-create Redis client for CLI.');
       this.cliAnalyticsService.sendClientRecreatedEvent(
         clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
@@ -127,10 +127,10 @@ export class CliBusinessService {
   public async deleteClient(
     clientMetadata: ClientMetadata,
   ): Promise<DeleteClientResponse> {
-    this.logger.log('Deleting Redis client for CLI.');
+    this.logger.debug('Deleting Redis client for CLI.');
     try {
       const affected = await this.databaseClientFactory.deleteClient(clientMetadata) as unknown as number;
-      this.logger.log('Succeed to delete Redis client for CLI.');
+      this.logger.debug('Succeed to delete Redis client for CLI.');
 
       if (affected) {
         this.cliAnalyticsService.sendClientDeletedEvent(
@@ -155,7 +155,7 @@ export class CliBusinessService {
     clientMetadata: ClientMetadata,
     dto: SendCommandDto,
   ): Promise<SendCommandResponse> {
-    this.logger.log('Executing redis CLI command.');
+    this.logger.debug('Executing redis CLI command.');
     const { command: commandLine } = dto;
     const outputFormat = dto.outputFormat || CliOutputFormatterTypes.Raw;
     let command: string = unknownCommand;
@@ -194,7 +194,7 @@ export class CliBusinessService {
         );
       }
 
-      this.logger.log('Succeed to execute redis CLI command.');
+      this.logger.debug('Succeed to execute redis CLI command.');
 
       return {
         response: formatter.format(reply),

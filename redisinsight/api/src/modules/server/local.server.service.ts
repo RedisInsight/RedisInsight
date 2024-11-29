@@ -23,12 +23,12 @@ export class LocalServerService extends ServerService {
    * @inheritDoc
    */
   public async init(sessionMetadata?: SessionMetadata): Promise<boolean> {
-    this.logger.log('Initializing server module...');
+    this.logger.debug('Initializing server module...');
 
     let firstStart = true;
 
     if (await this.repository.exists(sessionMetadata)) {
-      this.logger.log('First application launch.');
+      this.logger.debug('First application launch.');
       firstStart = false;
     }
 
@@ -41,7 +41,7 @@ export class LocalServerService extends ServerService {
    * @inheritDoc
    */
   public async getInfo(sessionMetadata: SessionMetadata): Promise<GetServerInfoResponse> {
-    this.logger.log('Getting server info.');
+    this.logger.debug('Getting server info.');
     try {
       const info = await this.repository.getOrCreate(sessionMetadata);
 
@@ -61,7 +61,7 @@ export class LocalServerService extends ServerService {
         packageType: ServerService.getPackageType(SERVER_CONFIG.buildType),
       };
 
-      this.logger.log('Succeed to get server info.');
+      this.logger.debug('Succeed to get server info.');
       return result;
     } catch (error) {
       this.logger.error('Failed to get application settings.', error);

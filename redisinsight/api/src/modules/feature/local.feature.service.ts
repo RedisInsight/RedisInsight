@@ -62,7 +62,7 @@ export class LocalFeatureService extends FeatureService {
    * @inheritDoc
    */
   async list(sessionMetadata: SessionMetadata): Promise<FeaturesFlags> {
-    this.logger.log('Getting features list');
+    this.logger.debug('Getting features list');
 
     const features = {};
 
@@ -107,7 +107,7 @@ export class LocalFeatureService extends FeatureService {
     // todo: [USER_CONTEXT] revise
     sessionMetadata = this.constantsProvider.getSystemSessionMetadata(),
   ) {
-    this.logger.log('Recalculating features flags');
+    this.logger.debug('Recalculating features flags');
 
     try {
       const actions = {
@@ -154,7 +154,7 @@ export class LocalFeatureService extends FeatureService {
         actions.toUpsert.map((feature) => this.repository.upsert(sessionMetadata, feature)),
       );
 
-      this.logger.log(
+      this.logger.debug(
         `Features flags recalculated. Updated: ${actions.toUpsert.length} deleted: ${actions.toDelete.length}`,
       );
 

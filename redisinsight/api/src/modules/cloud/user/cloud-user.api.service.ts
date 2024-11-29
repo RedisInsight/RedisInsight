@@ -43,7 +43,7 @@ export class CloudUserApiService {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       if (!session?.csrf) {
-        this.logger.log('Trying to get csrf token');
+        this.logger.debug('Trying to get csrf token');
         const csrf = await this.api.getCsrfToken(session);
 
         if (!csrf) {
@@ -92,7 +92,7 @@ export class CloudUserApiService {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       if (!session?.apiSessionId) {
-        this.logger.log('Trying to login user');
+        this.logger.debug('Trying to login user');
 
         const preparedUtm = utm && { ...utm };
 
@@ -143,7 +143,7 @@ export class CloudUserApiService {
         return;
       }
 
-      this.logger.log('Trying to sync user profile');
+      this.logger.debug('Trying to sync user profile');
 
       const userData = await this.api.getCurrentUser(session);
 
@@ -163,7 +163,7 @@ export class CloudUserApiService {
       }));
 
       await this.repository.update(sessionMetadata.sessionId, user);
-      this.logger.log('Successfully synchronized user profile');
+      this.logger.debug('Successfully synchronized user profile');
     } catch (e) {
       this.logger.error('Unable to sync user profile', e);
       throw wrapHttpError(e);
@@ -241,7 +241,7 @@ export class CloudUserApiService {
       try {
         await this.ensureCloudUser(sessionMetadata);
 
-        this.logger.log('Switching user account');
+        this.logger.debug('Switching user account');
 
         const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 

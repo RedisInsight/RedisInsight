@@ -45,7 +45,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
    * @param entity
    */
   async create(_: SessionMetadata, entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
-    this.logger.log('Creating database recommendation');
+    this.logger.debug('Creating database recommendation');
 
     try {
       const model = await this.repository.save(
@@ -71,7 +71,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
    * @param clientMetadata
    */
   async list({ databaseId }: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
-    this.logger.log('Getting database recommendations list');
+    this.logger.debug('Getting database recommendations list');
     const entities = await this.repository
       .createQueryBuilder('r')
       .where({ databaseId })
@@ -84,7 +84,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
       .where({ databaseId, read: false })
       .getCount();
 
-    this.logger.log('Succeed to get recommendations');
+    this.logger.debug('Succeed to get recommendations');
     const decryptedEntities = await Promise.all(
       entities.map(async (entity) => {
         try {
@@ -105,7 +105,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
    * @param clientMetadata
    */
   async read({ databaseId }: ClientMetadata): Promise<void> {
-    this.logger.log('Marking all recommendations as read');
+    this.logger.debug('Marking all recommendations as read');
     await this.repository
       .createQueryBuilder('r')
       .update()
@@ -125,7 +125,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
     id: string,
     recommendation: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
-    this.logger.log(`Updating database recommendation with id:${id}`);
+    this.logger.debug(`Updating database recommendation with id:${id}`);
     const oldEntity = await this.modelEncryptor.decryptEntity(await this.repository.findOneBy({ id }));
     const newEntity = plainToClass(DatabaseRecommendationEntity, recommendation);
 
@@ -137,7 +137,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
     const mergeResult = this.repository.merge(oldEntity, newEntity);
     await this.repository.update(id, await this.modelEncryptor.encryptEntity(mergeResult));
 
-    this.logger.log(`Updated database recommendation with id:${id}`);
+    this.logger.debug(`Updated database recommendation with id:${id}`);
 
     return this.get(clientMetadata.sessionMetadata, id);
   }
@@ -152,10 +152,10 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
     name: string,
   ): Promise<boolean> {
     try {
-      this.logger.log(`Checking is recommendation ${name} exist`);
+      this.logger.debug(`Checking is recommendation ${name} exist`);
       const recommendation = await this.repository.findOneBy({ databaseId, name });
 
-      this.logger.log(`Succeed to check is recommendation ${name} exist'`);
+      this.logger.debug(`Succeed to check is recommendation ${name} exist'`);
       return !!recommendation;
     } catch (err) {
       this.logger.error(`Failed to check is recommendation ${name} exist'`);
@@ -169,7 +169,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
    * @param id
    */
   public async get(_: SessionMetadata, id: string): Promise<DatabaseRecommendation> {
-    this.logger.log(`Getting recommendation with id: ${id}`);
+    this.logger.debug(`Getting recommendation with id: ${id}`);
 
     const entity = await this.repository.findOneBy({ id });
     const model = classToClass(DatabaseRecommendation, await this.modelEncryptor.decryptEntity(entity, true));
@@ -179,7 +179,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
       return null;
     }
 
-    this.logger.log(`Succeed to get recommendation with id: ${id}'`);
+    this.logger.debug(`Succeed to get recommendation with id: ${id}'`);
     return model;
   }
 
@@ -192,7 +192,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
     clientMetadata: ClientMetadata,
     dbAnalysisRecommendations: Recommendation[],
   ): Promise<void> {
-    this.logger.log('Synchronization of recommendations');
+    this.logger.debug('Synchronization of recommendations');
     try {
       const sortedRecommendations = sortRecommendations(dbAnalysisRecommendations);
       for (let i = 0; i < sortedRecommendations.length; i += 1) {
@@ -228,7 +228,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
         return Promise.reject(new NotFoundException(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND));
       }
 
-      this.logger.log('Succeed to delete recommendation.');
+      this.logger.debug('Succeed to delete recommendation.');
     } catch (error) {
       this.logger.error(`Failed to delete recommendation: ${id}`, error);
       throw new InternalServerErrorException(error.message);

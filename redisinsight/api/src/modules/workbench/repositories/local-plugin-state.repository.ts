@@ -53,7 +53,7 @@ export class LocalPluginStateRepository extends PluginStateRepository {
    * @param commandExecutionId
    */
   async getOne(_: SessionMetadata, visualizationId: string, commandExecutionId: string): Promise<PluginState> {
-    this.logger.log('Getting plugin state');
+    this.logger.debug('Getting plugin state');
 
     const entity = await this.repository.findOneBy({ visualizationId, commandExecutionId });
 
@@ -62,7 +62,7 @@ export class LocalPluginStateRepository extends PluginStateRepository {
       throw new NotFoundException(ERROR_MESSAGES.PLUGIN_STATE_NOT_FOUND);
     }
 
-    this.logger.log(`Succeed to get plugin state ${commandExecutionId}:${visualizationId}`);
+    this.logger.debug(`Succeed to get plugin state ${commandExecutionId}:${visualizationId}`);
 
     const decryptedEntity = await this.modelEncryptor.decryptEntity(entity, true);
 

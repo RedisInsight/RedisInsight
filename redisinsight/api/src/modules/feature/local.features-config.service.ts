@@ -75,7 +75,7 @@ export class LocalFeaturesConfigService
    */
   private async fetchRemoteConfig(): Promise<any> {
     try {
-      this.logger.log('Fetching remote config...');
+      this.logger.debug('Fetching remote config...');
 
       const { data } = await axios.get(FEATURES_CONFIG.url);
 
@@ -97,7 +97,7 @@ export class LocalFeaturesConfigService
     };
 
     try {
-      this.logger.log('Fetching remote config...');
+      this.logger.debug('Fetching remote config...');
 
       remoteConfig = await this.fetchRemoteConfig();
 
@@ -134,7 +134,7 @@ export class LocalFeaturesConfigService
     let newConfig;
 
     try {
-      this.logger.log('Trying to sync features config...');
+      this.logger.debug('Trying to sync features config...');
 
       const currentConfig = await this.repository.getOrCreate(sessionMetadata);
       newConfig = await this.getNewConfig(sessionMetadata);
@@ -151,7 +151,7 @@ export class LocalFeaturesConfigService
         );
       }
 
-      this.logger.log('Successfully updated stored remote config');
+      this.logger.debug('Successfully updated stored remote config');
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
     } catch (error) {
       this.analytics.sendFeatureFlagConfigUpdateError(

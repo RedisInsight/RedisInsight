@@ -27,7 +27,7 @@ export class RedisObserverProvider {
    * @param instanceId
    */
   async getOrCreateObserver(sessionMetadata: SessionMetadata, instanceId: string): Promise<RedisObserver> {
-    this.logger.log('Getting redis observer...');
+    this.logger.debug('Getting redis observer...');
 
     let redisObserver = this.redisObservers.get(instanceId);
 

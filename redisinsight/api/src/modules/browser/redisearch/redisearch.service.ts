@@ -48,7 +48,7 @@ export class RedisearchService {
    * @param clientMetadata
    */
   public async list(clientMetadata: ClientMetadata): Promise<ListRedisearchIndexesResponse> {
-    this.logger.log('Getting all redisearch indexes.');
+    this.logger.debug('Getting all redisearch indexes.');
 
     try {
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
@@ -80,7 +80,7 @@ export class RedisearchService {
     clientMetadata: ClientMetadata,
     dto: CreateRedisearchIndexDto,
   ): Promise<void> {
-    this.logger.log('Creating redisearch index.');
+    this.logger.debug('Creating redisearch index.');
 
     try {
       const {
@@ -150,7 +150,7 @@ export class RedisearchService {
     clientMetadata: ClientMetadata,
     dto: IndexInfoRequestBodyDto,
   ): Promise<IndexInfoDto> {
-    this.logger.log('Getting index info');
+    this.logger.debug('Getting index info');
 
     try {
       const { index } = dto;
@@ -183,7 +183,7 @@ export class RedisearchService {
     clientMetadata: ClientMetadata,
     dto: SearchRedisearchDto,
   ): Promise<GetKeysWithDetailsResponse> {
-    this.logger.log('Searching keys using redisearch.');
+    this.logger.debug('Searching keys using redisearch.');
 
     try {
       const {

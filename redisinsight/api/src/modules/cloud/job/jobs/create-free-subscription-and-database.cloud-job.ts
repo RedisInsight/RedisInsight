@@ -46,7 +46,7 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
   async iteration(sessionMetadata: SessionMetadata): Promise<Database> {
     let planId = this.data?.planId;
 
-    this.logger.log('Create free subscription and database');
+    this.logger.debug('Create free subscription and database');
 
     this.checkSignal();
 

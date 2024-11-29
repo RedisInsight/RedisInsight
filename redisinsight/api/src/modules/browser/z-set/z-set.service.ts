@@ -53,7 +53,7 @@ export class ZSetService {
     dto: CreateZSetWithExpireDto,
   ): Promise<void> {
     try {
-      this.logger.log('Creating ZSet data type.');
+      this.logger.debug('Creating ZSet data type.');
       const { keyName, expire } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -65,7 +65,7 @@ export class ZSetService {
         await this.createSimpleZSet(client, dto);
       }
 
-      this.logger.log('Succeed to create ZSet data type.');
+      this.logger.debug('Succeed to create ZSet data type.');
       return null;
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -81,7 +81,7 @@ export class ZSetService {
     getZSetDto: GetZSetMembersDto,
   ): Promise<GetZSetResponse> {
     try {
-      this.logger.log('Getting members of the ZSet data type stored at key.');
+      this.logger.debug('Getting members of the ZSet data type stored at key.');
       const { keyName, sortOrder } = getZSetDto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -106,7 +106,7 @@ export class ZSetService {
         { members, keyName },
       );
 
-      this.logger.log('Succeed to get members of the ZSet data type.');
+      this.logger.debug('Succeed to get members of the ZSet data type.');
       return plainToClass(GetZSetResponse, {
         keyName,
         total,
@@ -126,7 +126,7 @@ export class ZSetService {
     dto: AddMembersToZSetDto,
   ): Promise<void> {
     try {
-      this.logger.log('Adding members to the ZSet data type.');
+      this.logger.debug('Adding members to the ZSet data type.');
       const { keyName, members } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -135,7 +135,7 @@ export class ZSetService {
       const args = this.formatMembersDtoToCommandArgs(members);
       await client.sendCommand([BrowserToolZSetCommands.ZAdd, keyName, ...args]);
 
-      this.logger.log('Succeed to add members to ZSet data type.');
+      this.logger.debug('Succeed to add members to ZSet data type.');
       return null;
     } catch (error) {
       this.logger.error('Failed to add members to Set data type.', error);
@@ -151,7 +151,7 @@ export class ZSetService {
     dto: UpdateMemberInZSetDto,
   ): Promise<void> {
     try {
-      this.logger.log('Updating member in ZSet data type.');
+      this.logger.debug('Updating member in ZSet data type.');
       const { keyName, member } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -172,7 +172,7 @@ export class ZSetService {
         return Promise.reject(new NotFoundException(ERROR_MESSAGES.MEMBER_IN_SET_NOT_EXIST));
       }
 
-      this.logger.log('Succeed to update member in ZSet data type.');
+      this.logger.debug('Succeed to update member in ZSet data type.');
       return null;
     } catch (error) {
       this.logger.error('Failed to update member in ZSet data type.', error);
@@ -188,7 +188,7 @@ export class ZSetService {
     dto: DeleteMembersFromZSetDto,
   ): Promise<DeleteMembersFromZSetResponse> {
     try {
-      this.logger.log('Deleting members from the ZSet data type.');
+      this.logger.debug('Deleting members from the ZSet data type.');
       const { keyName, members } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -196,7 +196,7 @@ export class ZSetService {
 
       const result = await client.sendCommand([BrowserToolZSetCommands.ZRem, keyName, ...members]) as number;
 
-      this.logger.log('Succeed to delete members from the ZSet data type.');
+      this.logger.debug('Succeed to delete members from the ZSet data type.');
       return { affected: result };
     } catch (error) {
       this.logger.error('Failed to delete members from the ZSet data type.', error);
@@ -212,7 +212,7 @@ export class ZSetService {
     dto: SearchZSetMembersDto,
   ): Promise<SearchZSetMembersResponse> {
     try {
-      this.logger.log('Search members of the ZSet data type stored at key.');
+      this.logger.debug('Search members of the ZSet data type stored at key.');
       const { keyName, cursor, match } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       let result: SearchZSetMembersResponse = {
@@ -241,7 +241,7 @@ export class ZSetService {
         result = { ...result, ...scanResult };
       }
 
-      this.logger.log('Succeed to search members of the ZSet data type.');
+      this.logger.debug('Succeed to search members of the ZSet data type.');
       return plainToClass(SearchZSetMembersResponse, result);
     } catch (error) {
       this.logger.error('Failed to search members of the ZSet data type.', error);

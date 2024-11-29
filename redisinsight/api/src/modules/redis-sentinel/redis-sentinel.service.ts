@@ -39,7 +39,7 @@ export class RedisSentinelService {
     sessionMetadata: SessionMetadata,
     dto: CreateSentinelDatabasesDto,
   ): Promise<CreateSentinelDatabaseResponse[]> {
-    this.logger.log('Adding Sentinel masters.');
+    this.logger.debug('Adding Sentinel masters.');
     const result: CreateSentinelDatabaseResponse[] = [];
     const { masters, ...connectionOptions } = dto;
     try {
@@ -120,7 +120,7 @@ export class RedisSentinelService {
     sessionMetadata: SessionMetadata,
     dto: Database,
   ): Promise<SentinelMaster[]> {
-    this.logger.log('Connection and getting sentinel masters.');
+    this.logger.debug('Connection and getting sentinel masters.');
     let result: SentinelMaster[];
     try {
       const database = await this.databaseFactory.createStandaloneDatabaseModel(dto);

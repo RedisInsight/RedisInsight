@@ -10,7 +10,7 @@ export class UnsupportedKeyInfoStrategy extends KeyInfoStrategy {
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${type} type info.`);
+    this.logger.debug(`Getting ${type} type info.`);
 
     const [
       [, ttl = null],

@@ -116,7 +116,7 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
           false,
         );
       }
-      this.logger.log(`Succeed to set predefined database ${id}`);
+      this.logger.debug(`Succeed to set predefined database ${id}`);
     } catch (error) {
       this.logger.error('Failed to set predefined database', error);
     }

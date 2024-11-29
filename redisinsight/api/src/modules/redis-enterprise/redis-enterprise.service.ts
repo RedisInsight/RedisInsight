@@ -50,7 +50,7 @@ export class RedisEnterpriseService {
     sessionMetadata: SessionMetadata,
     dto: ClusterConnectionDetailsDto,
   ): Promise<RedisEnterpriseDatabase[]> {
-    this.logger.log('Getting RE cluster databases.');
+    this.logger.debug('Getting RE cluster databases.');
     const {
       host, port, username, password,
     } = dto;
@@ -59,7 +59,7 @@ export class RedisEnterpriseService {
       const { data } = await this.api.get(`https://${host}:${port}/v1/bdbs`, {
         auth,
       });
-      this.logger.log('Succeed to get RE cluster databases.');
+      this.logger.debug('Succeed to get RE cluster databases.');
       const result = this.parseClusterDbsResponse(data);
       this.analytics.sendGetREClusterDbsSucceedEvent(sessionMetadata, result);
       return result;
@@ -191,7 +191,7 @@ export class RedisEnterpriseService {
     connectionDetails: ClusterConnectionDetailsDto,
     uids: number[],
   ): Promise<AddRedisEnterpriseDatabaseResponse[]> {
-    this.logger.log('Adding Redis Enterprise databases.');
+    this.logger.debug('Adding Redis Enterprise databases.');
     let result: AddRedisEnterpriseDatabaseResponse[];
     try {
       const databases: RedisEnterpriseDatabase[] = await this.getDatabases(

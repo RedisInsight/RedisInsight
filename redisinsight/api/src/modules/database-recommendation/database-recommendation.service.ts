@@ -45,7 +45,7 @@ export class DatabaseRecommendationService {
    * @param clientMetadata
    */
   async list(clientMetadata: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
-    this.logger.log('Getting database recommendations');
+    this.logger.debug('Getting database recommendations');
     const db = clientMetadata.db
       ?? (await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId))?.db
       ?? 0;
@@ -103,7 +103,7 @@ export class DatabaseRecommendationService {
    * @param clientMetadata
    */
   public async read(clientMetadata: ClientMetadata): Promise<void> {
-    this.logger.log('Reading database recommendations');
+    this.logger.debug('Reading database recommendations');
     return this.databaseRecommendationRepository.read(clientMetadata);
   }
 
@@ -118,7 +118,7 @@ export class DatabaseRecommendationService {
     id: string,
     dto: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
-    this.logger.log(`Update database extended recommendations id:${id}`);
+    this.logger.debug(`Update database extended recommendations id:${id}`);
     return this.databaseRecommendationRepository.update(clientMetadata, id, dto);
   }
 
@@ -137,7 +137,7 @@ export class DatabaseRecommendationService {
    * @param id
    */
   async delete(clientMetadata: ClientMetadata, id: string): Promise<void> {
-    this.logger.log(`Deleting recommendation: ${id}`);
+    this.logger.debug(`Deleting recommendation: ${id}`);
     await this.databaseRecommendationRepository.delete(clientMetadata, id);
   }
 
@@ -148,7 +148,7 @@ export class DatabaseRecommendationService {
    * @param ids
    */
   async bulkDelete(clientMetadata: ClientMetadata, ids: string[]): Promise<DeleteDatabaseRecommendationResponse> {
-    this.logger.log(`Deleting many recommendations: ${ids}`);
+    this.logger.debug(`Deleting many recommendations: ${ids}`);
 
     return {
       affected: sum(await Promise.all(ids.map(async (id) => {

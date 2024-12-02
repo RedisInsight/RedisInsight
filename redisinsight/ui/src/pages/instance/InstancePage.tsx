@@ -64,7 +64,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
     dispatch(fetchConnectedInstanceInfoAction(connectionInstanceId))
     dispatch(fetchRecommendationsAction(connectionInstanceId))
-    let intervalId: NodeJS.Timeout
+    let intervalId: ReturnType<typeof setInterval>
 
     if (shouldGetRecommendations) {
       intervalId = setInterval(() => {

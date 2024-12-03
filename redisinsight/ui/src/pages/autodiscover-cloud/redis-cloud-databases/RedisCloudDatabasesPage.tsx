@@ -48,6 +48,7 @@ const RedisCloudDatabasesPage = () => {
   } = useSelector(cloudSelector)
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
   const currentAccountIdRef = useRef(userOAuthProfile?.id)
+  const ssoFlowRef = useRef(ssoFlow)
 
   setTitle('Redis Cloud Databases')
 
@@ -60,7 +61,7 @@ const RedisCloudDatabasesPage = () => {
   }, [])
 
   useEffect(() => {
-    if (ssoFlow !== OAuthSocialAction.Import) return
+    if (ssoFlowRef.current !== OAuthSocialAction.Import) return
 
     if (!userOAuthProfile) {
       dispatch(resetDataRedisCloud())
@@ -73,7 +74,7 @@ const RedisCloudDatabasesPage = () => {
         history.push(Pages.redisCloudSubscriptions)
       }))
     }
-  }, [ssoFlow, userOAuthProfile])
+  }, [userOAuthProfile])
 
   useEffect(() => {
     if (instancesAdded.length) {

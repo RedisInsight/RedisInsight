@@ -36,7 +36,7 @@ const NotificationCenter = () => {
     }
   }, [isCenterOpen])
 
-  const hasNotifications = !!notifications.length
+  const hasNotifications = !!notifications?.length
 
   return (
     <EuiPopover

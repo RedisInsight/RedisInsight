@@ -1080,7 +1080,6 @@ describe('JsonService', () => {
   describe('arrAppend', () => {
     beforeEach(() => {
       databaseService.get.mockResolvedValue(mockDatabaseWithModules);
-      client.sendCommand.mockReturnValue('OK');
     });
     it('should throw NotFound error when key does not exists', async () => {
       client.sendCommand.mockReturnValue(0);
@@ -1134,6 +1133,10 @@ describe('JsonService', () => {
       }
     });
     it('should successful modify data', async () => {
+      client.sendCommand.mockReturnValueOnce('OK');
+      // JSON.ARRAPEND returns an array of integer replies for each path, the array's new size,
+      // or nil, if the matching JSON value is not an array
+      client.sendCommand.mockReturnValueOnce([10]);
       await service.arrAppend(mockBrowserClientMetadata, {
         keyName: testKey,
         path: testPath,

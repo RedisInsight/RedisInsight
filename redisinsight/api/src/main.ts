@@ -11,6 +11,7 @@ import { get, Config } from 'src/utils';
 import { migrateHomeFolder, removeOldFolders } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
+import LoggerService from 'src/modules/logger/logger.service';
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
@@ -26,21 +27,25 @@ interface IApp {
 
 export default async function bootstrap(apiPort?: number): Promise<IApp> {
   if (serverConfig.migrateOldFolders) {
-    await migrateHomeFolder() && await removeOldFolders();
+    (await migrateHomeFolder()) && (await removeOldFolders());
   }
 
   const { port, host } = serverConfig;
-  const logger = WinstonModule.createLogger(LOGGER_CONFIG);
+  // const logger = WinstonModule.createLogger(LOGGER_CONFIG);
 
   const options: NestApplicationOptions = {
-    logger,
+    bufferLogs: true,
   };
 
   if (serverConfig.tlsCert && serverConfig.tlsKey) {
     options.httpsOptions = await createHttpOptions(serverConfig);
   }
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    options,
+  );
+  app.useLogger(new LoggerService(LOGGER_CONFIG));
   app.useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()));
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));

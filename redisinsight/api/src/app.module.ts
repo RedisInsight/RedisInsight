@@ -42,7 +42,7 @@ import {
   RedisConnectionMiddleware,
   redisConnectionControllers,
 } from './middleware/redis-connection';
-import LoggerService from 'src/modules/logger/logger.service';
+import LOGGER_CONFIG from '../config/logger';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -82,7 +82,7 @@ const STATICS_CONFIG = config.get('statics') as Config['statics'];
     InitModule.register([AutodiscoveryModule, AnalyticsModule]),
   ],
   controllers: [],
-  providers: [LoggerService],
+  providers: [],
 })
 export class AppModule implements OnModuleInit, NestModule {
   onModuleInit() {

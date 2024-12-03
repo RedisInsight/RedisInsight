@@ -31,7 +31,6 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   }
 
   const { port, host } = serverConfig;
-  // const logger = WinstonModule.createLogger(LOGGER_CONFIG);
 
   const options: NestApplicationOptions = {
     bufferLogs: true,

@@ -1,9 +1,10 @@
-import { WinstonModule } from 'nest-winston';
-import { ConsoleLogger } from '@nestjs/common';
+import { WinstonModule, WinstonModuleOptions } from 'nest-winston';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 
-import loggerConfig from '../../../config/logger';
+@Injectable({ scope: Scope.TRANSIENT })
+class LoggerService {
+  protected context?: string;
 
-class LoggerService extends ConsoleLogger {
   private readonly nestLogger: ReturnType<typeof WinstonModule.createLogger>;
 
   private readonly disableStartupLogs: boolean;
@@ -16,13 +17,18 @@ class LoggerService extends ConsoleLogger {
     'NestFactory',
   ];
 
-  constructor() {
-    super();
-    this.nestLogger = WinstonModule.createLogger(loggerConfig);
+  constructor(@Inject('LOGGER_CONFIG') loggerOptions: WinstonModuleOptions) {
+    console.log('logger options...', loggerOptions);
+    this.nestLogger = WinstonModule.createLogger(loggerOptions);
     this.disableStartupLogs = false;
   }
 
-  formatContext(context?: string, meta?: object) {
+  setContext(context: string) {
+    this.context = context;
+  }
+
+  formatMeta(meta?: object) {
+    const { context } = this;
     if (meta === undefined) {
       return context;
     }
@@ -39,27 +45,21 @@ class LoggerService extends ConsoleLogger {
   }
 
   // meta?: object, context?: string
-  log(message: unknown, ...rest: (string | object)[]) {
-    const context: string =
-      typeof rest[0] === 'string'
-        ? (rest[0] as string)
-        : (rest[1] as string) || this.context;
-    const meta: object | undefined =
-      typeof rest[0] === 'object' ? (rest[0] as object) : undefined;
-    console.log('REST', rest);
-    console.log(context);
-    console.log(meta);
-
+  log(message: unknown, context?: string) {
     if (
-      !this.disableStartupLogs ||
-      !LoggerService.contextsToIgnore.includes(context)
+      !this.disableStartupLogs
+      || !LoggerService.contextsToIgnore.includes(context)
     ) {
-      this.nestLogger.log(message, this.formatContext(context, meta));
+      this.nestLogger.log(message, context);
     }
   }
 
-  error(message: unknown, stack?: string, context?: string) {
-    this.nestLogger.error(message, stack, context);
+  info(message: unknown, meta?: object) {
+    this.nestLogger.log(message, this.formatMeta(meta));
+  }
+
+  error(message: unknown, stack?: string) {
+    this.nestLogger.error(message, stack);
   }
 
   fatal(message: unknown, stack?: string, context?: string) {

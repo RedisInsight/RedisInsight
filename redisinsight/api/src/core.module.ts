@@ -15,7 +15,6 @@ import { SessionModule } from 'src/modules/session/session.module';
 import { ServerModule } from 'src/modules/server/server.module';
 import { ConstantsModule } from 'src/modules/constants/constants.module';
 import { LoggerModule } from 'src/modules/logger/logger.module';
-import LOGGER_CONFIG from '../config/logger';
 
 @Global()
 @Module({

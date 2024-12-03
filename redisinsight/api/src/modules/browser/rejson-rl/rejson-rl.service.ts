@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-// import { JSONbig } from 'json-bigint';
+import * as JSONBigInt from 'json-bigint';
 import { AdditionalRedisModuleName, RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
@@ -31,7 +31,7 @@ import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils
 import { RedisClient } from 'src/modules/redis/client';
 import { DatabaseService } from 'src/modules/database/database.service';
 
-const JSONbig = require('json-bigint');
+const JSONbig = JSONBigInt();
 
 @Injectable()
 export class RejsonRlService {

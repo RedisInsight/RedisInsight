@@ -57,7 +57,7 @@ const createCheckFn = async (testCase) => {
       if (testCase.statusCode === 201) {
         expect(await rte.client.exists(testCase.data.keyName)).to.eql(1);
         expect(JSON.parse(await rte.data.executeCommand('json.get', testCase.data.keyName, '$'))[0])
-          .to.deep.eql(testCase.data.data);
+          .to.deep.eql(JSON.parse(testCase.data.data));
         if (testCase.data.expire) {
           expect(await rte.client.ttl(testCase.data.keyName)).to.gte(testCase.data.expire - 5);
         } else {

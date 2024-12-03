@@ -2,7 +2,7 @@ import { keyLength, rte } from '../../../../helpers/constants';
 import { addKeysViaCli, deleteKeysViaCli, keyTypes } from '../../../../helpers/keys';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
+import { commonUrl, ossStandaloneV6Config } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 
@@ -14,8 +14,8 @@ const databaseAPIRequests = new DatabaseAPIRequests();
 const keysData = keyTypes.map(object => ({ ...object }));
 keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${Common.generateWord(keyLength)}`);
 const databasesForAdding = [
-    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB1' },
-    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB2' }
+    { host: ossStandaloneV6Config.host, port: ossStandaloneV6Config.port, databaseName: 'testDB1' },
+    { host: ossStandaloneV6Config.host, port: ossStandaloneV6Config.port, databaseName: 'testDB2' }
 ];
 
 fixture `Format switcher functionality`
@@ -25,14 +25,14 @@ fixture `Format switcher functionality`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV6Config);
         // Create new keys
         await addKeysViaCli(keysData);
     })
     .afterEach(async() => {
         // Clear keys and database
         await deleteKeysViaCli(keysData);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV6Config);
     });
 test
     .before(async() => {

@@ -24,7 +24,7 @@ services:
   # ssh
   ssh:
     logging: *logging
-    image: lscr.io/linuxserver/openssh-server:latest
+    image: lscr.io/linuxserver/openssh-server:9.7_p1-r4-ls172
     environment:
       - PASSWORD_ACCESS=true
       - USER_PASSWORD=pass

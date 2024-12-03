@@ -1,10 +1,9 @@
 import { rte } from '../../../../helpers/constants';
-import { populateHashWithFields } from '../../../../helpers/keys';
 import { Common, DatabaseHelper } from '../../../../helpers';
 import { BrowserPage } from '../../../../pageObjects';
 import {
     commonUrl,
-    ossStandaloneV8Config
+    ossStandaloneV6Config
 } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
@@ -16,7 +15,6 @@ const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
 const keyName = `TestHashKey-${ Common.generateWord(10) }`;
-const keyToAddParameters = { fieldsCount: 1, keyName, fieldStartWith: 'hashField', fieldValueStartWith: 'hashValue' };
 
 fixture `Formatters`
     .meta({
@@ -25,13 +23,13 @@ fixture `Formatters`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV8Config);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV6Config);
 
     })
     .afterEach(async() => {
         // Clear keys and database
-        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneV8Config.databaseName);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV8Config);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneV6Config.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV6Config);
     });
 
 test('Verify that UTF8 in PHP serialized', async t => {

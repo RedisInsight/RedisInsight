@@ -18,7 +18,7 @@ export const fileDownloadPath = joinPath(os.homedir(), 'Downloads');
 const uniqueId = chance.string({ length: 10 });
 
 export const ossStandaloneConfig = {
-    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone',
+    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone-v8',
     port: process.env.OSS_STANDALONE_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,
@@ -49,10 +49,10 @@ export const ossStandaloneV7Config = {
     databasePassword: process.env.OSS_STANDALONE_V7_PASSWORD
 };
 
-export const ossStandaloneV8Config = {
-    host: process.env.OSS_STANDALONE_V8_HOST || 'oss-standalone-v8',
+export const ossStandaloneV6Config = {
+    host: process.env.OSS_STANDALONE_V8_HOST || 'oss-standalone',
     port: process.env.OSS_STANDALONE_V8_PORT || '6379',
-    databaseName: `${process.env.OSS_STANDALONE_V8_DATABASE_NAME || 'test_standalone-v8'}-${uniqueId}`,
+    databaseName: `${process.env.OSS_STANDALONE_V8_DATABASE_NAME || 'test_standalone-v6'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_V8_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_V8_PASSWORD
 };

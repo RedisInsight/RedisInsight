@@ -26,8 +26,14 @@ import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slice
 import { loadPluginsAction } from 'uiSrc/slices/app/plugins'
 import { appConnectivityError } from 'uiSrc/slices/app/connectivity'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { getConfig } from 'uiSrc/config'
 import InstancePageRouter from './InstancePageRouter'
 import InstanceConnectionLost from './instanceConnectionLost'
+
+const riConfig = getConfig()
+
+const { shouldGetRecommendations,
+  defaultTimeoutToGetRecommendations } = riConfig.database
 
 export interface Props {
   routes: any[]
@@ -58,6 +64,13 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
     dispatch(fetchConnectedInstanceInfoAction(connectionInstanceId))
     dispatch(fetchRecommendationsAction(connectionInstanceId))
+    let intervalId: ReturnType<typeof setInterval>
+
+    if (shouldGetRecommendations) {
+      intervalId = setInterval(() => {
+        dispatch(fetchRecommendationsAction(connectionInstanceId))
+      }, defaultTimeoutToGetRecommendations)
+    }
 
     if (contextInstanceId && contextInstanceId !== connectionInstanceId) {
       // rerender children only if the same page from scratch to clear all component states
@@ -73,6 +86,10 @@ const InstancePage = ({ routes = [] }: Props) => {
 
     // clear rdi connection
     dispatch(resetRdiConnectedInstance())
+
+    return () => {
+      intervalId && clearInterval(intervalId)
+    }
   }, [connectionInstanceId])
 
   useEffect(() => {

@@ -80,6 +80,7 @@ const oauthCloudSlice = createSlice({
     setOAuthInitialState: () => initialState,
 
     signIn: (state) => {
+      debugger
       state.loading = true
     },
     signInSuccess: (state, { payload }: PayloadAction<string>) => {

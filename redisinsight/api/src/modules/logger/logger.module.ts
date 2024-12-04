@@ -1,16 +1,33 @@
-import { Global, Module } from '@nestjs/common';
-import LoggerService from 'src/modules/logger/logger.service';
+import { DynamicModule, Global, Module, Scope } from '@nestjs/common';
+import { WinstonModuleOptions } from 'nest-winston';
+import { INQUIRER } from '@nestjs/core';
+import { LoggerService } from './logger.service';
 import LOGGER_CONFIG from '../../../config/logger';
 
 @Global()
-@Module({
-  providers: [
-  {
-  provide: 'LOGGER_CONFIG',
-  useValue: LOGGER_CONFIG,
-  },
-  LoggerService,
-  ],
-  exports: [LoggerService],
-  })
-export class LoggerModule {}
+@Module({})
+export class LoggerModule {
+  static register(
+    loggerOptions: WinstonModuleOptions = LOGGER_CONFIG,
+    disableStartupLogs = false,
+  ): DynamicModule {
+    return {
+      module: LoggerModule,
+      providers: [
+        {
+          provide: LoggerService,
+          useFactory: (parentClass: object) => {
+            return new LoggerService(
+              loggerOptions,
+              disableStartupLogs,
+              parentClass?.constructor?.name,
+            );
+          },
+          inject: [INQUIRER],
+          scope: Scope.TRANSIENT,
+        },
+      ],
+      exports: [LoggerService],
+    };
+  }
+}

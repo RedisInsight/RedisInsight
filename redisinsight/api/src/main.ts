@@ -5,16 +5,14 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { INestApplication, NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
-import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { get, Config } from 'src/utils';
 import { migrateHomeFolder, removeOldFolders } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
-import LOGGER_CONFIG from '../config/logger';
 import { createHttpOptions } from './utils/createHttpOptions';
 import { SessionMetadataAdapter } from './modules/auth/session-metadata/adapters/session-metadata.adapter';
 
@@ -33,7 +31,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   const { port, host } = serverConfig;
 
   const options: NestApplicationOptions = {
-    bufferLogs: true,
+    bufferLogs: true, // buffer logs until logger is attached
   };
 
   if (serverConfig.tlsCert && serverConfig.tlsKey) {
@@ -44,7 +42,9 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
     AppModule,
     options,
   );
-  app.useLogger(new LoggerService(LOGGER_CONFIG));
+
+  const logger = await app.resolve<LoggerService>(LoggerService);
+  app.useLogger(logger);
   app.useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()));
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));

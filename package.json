@@ -271,7 +271,13 @@
     "unified": "^10.1.1",
     "unist-util-visit": "^4.1.0",
     "url-parse": "^1.5.10",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "redisinsight-plugin-sdk": "latest",
+    "react-json-tree": "^0.18.0",
+    "@antv/x6": "^2.x",
+    "@antv/x6-react-shape": "^2.x",
+    "@antv/hierarchy": "^0.6.x",
+    "plotly.js-dist-min": "^2.x"
   },
   "devEngines": {
     "node": ">=16.x",
@@ -281,4 +287,13 @@
   "browser": {
     "uuid": "./node_modules/uuid/dist/esm-browser/index.js"
   }
+}
+
+    "node": ">=16.x",
+"npm": ">=6.x",
+"yarn": ">=1.21.3"
+},
+"browser": {
+"uuid": "./node_modules/uuid/dist/esm-browser/index.js"
+}
 }

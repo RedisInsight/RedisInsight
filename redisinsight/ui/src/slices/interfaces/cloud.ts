@@ -17,6 +17,7 @@ export interface StateAppOAuth {
   source: Nullable<OAuthSocialSource>
   job: Nullable<CloudJobInfoState>
   user: {
+    initialLoading: boolean
     error: string
     loading: boolean
     data: Nullable<CloudUser>

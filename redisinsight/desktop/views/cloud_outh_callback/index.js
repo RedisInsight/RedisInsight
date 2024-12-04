@@ -2,7 +2,8 @@ const protocol = 'redisinsight://'
 const callbackUrl = 'cloud/oauth/callback'
 
 const openAppButton = document.querySelector('#open-app')
-
+// this script is used to open the app from the callback url
+// it is also hosted, so changes here won't impact the app
 const openApp = (forceOpen) => {
   try {
     const currentUrl = new URL(window.location.href)

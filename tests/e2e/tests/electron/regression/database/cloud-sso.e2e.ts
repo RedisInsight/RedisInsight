@@ -20,8 +20,8 @@ const pathes = {
     electronConfig: path.join('.', 'test-data', 'features-configs', 'sso-electron-build.json')
 };
 const logsWithUrlFilePath = path.join('test-data', 'chrome_logs.txt');
-
-fixture `Cloud SSO`
+// TODO unskip after fixing testcafe issue with new electron RI-6365
+fixture.skip `Cloud SSO`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {

@@ -51,7 +51,7 @@ export class RejsonRlService {
       );
     }
 
-    return JSON.parse(data);
+    return data
   }
 
   private async estimateSize(

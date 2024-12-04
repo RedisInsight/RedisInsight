@@ -5,12 +5,12 @@ import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { getApiErrorMessage, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 
 import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
-import { InitialStateRdiInstances, RdiInstance } from '../interfaces/rdi'
+import { IErrorData, InitialStateRdiInstances, RdiInstance } from '../interfaces/rdi'
 
 export const initialState: InitialStateRdiInstances = {
   loading: true,
@@ -189,7 +189,11 @@ export function fetchInstancesAction(onSuccess?: (data: RdiInstance[]) => void) 
 }
 
 // Asynchronous thunk action
-export function createInstanceAction(payload: Partial<RdiInstance>, onSuccess?: (data: RdiInstanceResponse) => void) {
+export function createInstanceAction(
+  payload: Partial<RdiInstance>,
+  onSuccess?: (data: RdiInstanceResponse) => void,
+  onFail?: (error: Maybe<string | number>) => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
 
@@ -207,6 +211,8 @@ export function createInstanceAction(payload: Partial<RdiInstance>, onSuccess?: 
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(defaultInstanceChangingFailure(errorMessage))
+      const errorData = error?.response?.data as IErrorData
+      onFail?.(errorData?.errorCode || errorData?.error)
       dispatch(addErrorNotification(error))
     }
   }

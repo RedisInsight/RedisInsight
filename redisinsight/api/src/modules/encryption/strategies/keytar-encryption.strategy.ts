@@ -11,7 +11,6 @@ import {
 } from 'src/modules/encryption/exceptions';
 import config, { Config } from 'src/utils/config';
 
-const SERVICE = 'redisinsight';
 const ACCOUNT = 'app';
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const ENCRYPTION_CONFIG = config.get('encryption') as Config['encryption'];
@@ -54,7 +53,7 @@ export class KeytarEncryptionStrategy implements IEncryptionStrategy {
    */
   private async getPassword(): Promise<string | null> {
     try {
-      return await this.keytar.getPassword(SERVICE, ACCOUNT);
+      return await this.keytar.getPassword(ENCRYPTION_CONFIG.keytarService, ACCOUNT);
     } catch (error) {
       this.logger.error('Unable to get password');
       throw new KeytarUnavailableException();
@@ -68,7 +67,7 @@ export class KeytarEncryptionStrategy implements IEncryptionStrategy {
    */
   private async setPassword(password: string): Promise<void> {
     try {
-      await this.keytar.setPassword(SERVICE, ACCOUNT, password);
+      await this.keytar.setPassword(ENCRYPTION_CONFIG.keytarService, ACCOUNT, password);
     } catch (error) {
       this.logger.error('Unable to set password');
       throw new KeytarUnavailableException();
@@ -109,7 +108,7 @@ export class KeytarEncryptionStrategy implements IEncryptionStrategy {
     }
 
     try {
-      await this.keytar.getPassword(SERVICE, ACCOUNT);
+      await this.keytar.getPassword(ENCRYPTION_CONFIG.keytarService, ACCOUNT);
       return true;
     } catch (e) {
       return false;

@@ -51,3 +51,42 @@ input[name='sshPassphrase'] ~ .euiFormControlLayoutIcons {
   width: 34px !important;
   height: 29px !important;
 }
+
+.euiComboBox.euiComboBox-isOpen .euiComboBox__inputWrap {
+  background-image: none !important;
+  border-bottom: solid 2px var(--euiColorPrimary) !important;
+}
+.euiComboBox .euiComboBox__inputWrap {
+  .euiComboBoxPill {
+    background-color: var(--buttonDarkenBgColor) !important;
+  }
+  .euiBadge__iconButton {
+    margin-top: 1px;
+    margin-left: 8px;
+    margin-right: 3px;
+    border-radius: 50%;
+    background-color: var(--euiColorPrimary);
+    color: var(--rdiSecondaryBgColor);
+    width: 13px;
+    height: 13px;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+    &:active {
+      transform: translateY(1px);
+    }
+
+    svg {
+      width: 10px;
+      height: 10px;
+
+      &:focus {
+        background: inherit;
+      }
+    }
+  }
+  .euiComboBox__input > input {
+    color: var(--inputTextColor) !important;
+  }
+}

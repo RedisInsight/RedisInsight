@@ -50,9 +50,9 @@ jobs:
     needs: virustotal-prod
     secrets: inherit
 
-  docker-prod:
-    name: Release docker images
-    uses: ./.github/workflows/release-docker.yml
+  publish-stores:
+    name: Publish to stores
+    uses: ./.github/workflows/publish-stores.yml
     needs: aws-upload-prod
     secrets: inherit
 

@@ -11,46 +11,40 @@ describe('DatabasePanelDialog', () => {
     expect(render(<DatabasePanelDialog {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  it('should change tab to manual and render proper form', () => {
+  it('should render proper form by dfeault', () => {
     render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
 
-    fireEvent.click(screen.getByTestId('add-database_tab_manual'))
-
-    expect(screen.getByTestId('add-db_manual')).toBeInTheDocument()
+    expect(screen.getByTestId('connection-url')).toBeInTheDocument()
   })
 
-  it('should change tab to cloud and render proper form', () => {
+  it('should change screen to cloud and render proper form', () => {
     render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
 
-    fireEvent.click(screen.getByTestId('add-database_tab_cloud'))
+    fireEvent.click(screen.getByTestId('discover-cloud-btn'))
 
     expect(screen.getByTestId('add-db_cloud-api')).toBeInTheDocument()
   })
 
-  it('should change tab to software and render proper form', () => {
+  it('should change screen to software and render proper form', () => {
     render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
 
-    fireEvent.click(screen.getByTestId('add-database_tab_software'))
+    fireEvent.click(screen.getByTestId('option-btn-software'))
 
     expect(screen.getByTestId('add-db_cluster')).toBeInTheDocument()
   })
 
-  it('should change tab to software sentinel and render proper form', async () => {
+  it('should change tab to sentinel and render proper form', async () => {
     render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
 
-    fireEvent.click(screen.getByTestId('add-database_tab_software'))
-
-    await act(async () => {
-      fireEvent.click(document.querySelector('[data-test-subj="radio-btn-sentinel"] label') as Element)
-    })
+    fireEvent.click(screen.getByTestId('option-btn-sentinel'))
 
     expect(screen.getByTestId('add-db_sentinel')).toBeInTheDocument()
   })
 
-  it('should change tab to import render proper form', async () => {
+  it('should change screen to import render proper form', async () => {
     render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
 
-    fireEvent.click(screen.getByTestId('add-database_tab_import'))
+    fireEvent.click(screen.getByTestId('option-btn-import'))
 
     expect(screen.getByTestId('add-db_import')).toBeInTheDocument()
   })

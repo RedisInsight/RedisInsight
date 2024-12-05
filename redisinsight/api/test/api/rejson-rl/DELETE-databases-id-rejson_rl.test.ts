@@ -27,7 +27,7 @@ const dataSchema = Joi.object({
 
 const validInputData = {
   keyName: constants.getRandomString(),
-  path: '.',
+  path: '$',
 };
 
 const responseSchema = Joi.object().keys({
@@ -56,34 +56,38 @@ describe('DELETE /databases/:instanceId/rejson-rl', () => {
             type: 'Buffer',
             data: [...Buffer.from(constants.TEST_REJSON_KEY_3)],
           },
-          path: '.object.field',
-        },
-        responseSchema,
-        responseBody: {
-          affected: 1,
-        },
-        after: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '.'));
-          expect(json).to.deep.eql(_.omit(constants.TEST_REJSON_VALUE_3, 'object.field'))
-        },
-      },
-      {
-        name: 'Should delete element from array by path',
-        data: {
-          keyName: constants.TEST_REJSON_KEY_3,
-          path: '.array[1]',
+          path: '$.object.field',
         },
         responseSchema,
         responseBody: {
           affected: 1,
         },
         before: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '.'));
-          expect(json.array.length).to.eql(3);
+          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '$'));
+          expect(json[0].object).to.have.property('field')
         },
         after: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '.'));
-          expect(json.array.length).to.eql(2);
+          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '$'));
+          expect(json[0]).to.deep.eql(_.omit(constants.TEST_REJSON_VALUE_3, 'object.field'))
+        },
+      },
+      {
+        name: 'Should delete element from array by path',
+        data: {
+          keyName: constants.TEST_REJSON_KEY_3,
+          path: '$.array[1]',
+        },
+        responseSchema,
+        responseBody: {
+          affected: 1,
+        },
+        before: async () => {
+          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '$'));
+          expect(json[0].array.length).to.eql(3);
+        },
+        after: async () => {
+          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '$'));
+          expect(json[0].array.length).to.eql(2);
         },
       },
       {
@@ -101,7 +105,7 @@ describe('DELETE /databases/:instanceId/rejson-rl', () => {
         name: 'Should delete entire json and remove the key',
         data: {
           keyName: constants.TEST_REJSON_KEY_3,
-          path: '.',
+          path: '$',
         },
         responseSchema,
         responseBody: {
@@ -126,8 +130,8 @@ describe('DELETE /databases/:instanceId/rejson-rl', () => {
         },
         after: async () => {
           // check that value was not overwritten
-          expect(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '.'))
-            .to.deep.eql(JSON.stringify(constants.TEST_REJSON_VALUE_1));
+          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '$'))
+          expect(json[0]).to.deep.eql(constants.TEST_REJSON_VALUE_1);
         },
       },
     ].map(mainCheckFn);

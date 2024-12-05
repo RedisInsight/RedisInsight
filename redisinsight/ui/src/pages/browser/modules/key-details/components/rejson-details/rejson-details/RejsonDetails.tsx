@@ -46,7 +46,7 @@ const RejsonDetails = (props: BaseProps) => {
   const handleFormSubmit = ({ key, value }: { key?: string, value: string }) => {
     setAddRootKVPair(false)
     if (isRealArray(data, dataType)) {
-      handleAppendRejsonArrayItemAction(selectedKey, '.', value)
+      handleAppendRejsonArrayItemAction(selectedKey, '$', value)
       return
     }
 
@@ -57,7 +57,7 @@ const RejsonDetails = (props: BaseProps) => {
   }
 
   const onClickRemoveKey = (path: string, keyName: string) => {
-    dispatch(removeReJSONKeyAction(selectedKey, path || '.', keyName, length))
+    dispatch(removeReJSONKeyAction(selectedKey, path || '$', keyName, length))
   }
 
   const onClickSetRootKVPair = () => {

@@ -130,5 +130,9 @@ test('Adding OSS Cluster database with SSH', async t => {
     // Verify that user can add SSH tunnel with Password for OSS Cluster database
     await myRedisDatabasePage.AddRedisDatabase.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
     await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
-    await Common.checkURLContainsText('browser');
+
+    //verify that db is added and profiler works
+    await t.click(browserPage.Profiler.expandMonitor);
+    await t.click(browserPage.Profiler.startMonitorButton);
+    await t.expect(browserPage.Profiler.monitorIsStartedText.innerText).eql('Profiler is started.');
 });

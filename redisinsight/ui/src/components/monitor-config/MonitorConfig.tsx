@@ -1,33 +1,32 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { debounce } from 'lodash'
-import { io, Socket } from 'socket.io-client'
+import { Socket } from 'socket.io-client'
 import { v4 as uuidv4 } from 'uuid'
 
 import {
-  setSocket,
-  monitorSelector,
   concatMonitorItems,
-  stopMonitor,
-  setError,
+  lockResume,
+  monitorSelector,
+  pauseMonitor,
   resetMonitorItems,
-  setStartTimestamp,
-  setMonitorLoadingPause,
+  setError,
   setLogFileId,
-  pauseMonitor, lockResume
+  setMonitorLoadingPause,
+  setSocket,
+  setStartTimestamp,
+  stopMonitor,
 } from 'uiSrc/slices/cli/monitor'
-import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
-import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
+import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
+import { FeatureFlags, MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { CustomHeaders } from 'uiSrc/constants/api'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
-import { getConfig } from 'uiSrc/config'
+import { wsService } from 'uiSrc/services/wsService'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
 import ApiStatusCode from '../../constants/apiStatusCode'
-
-const riConfig = getConfig()
 
 interface IProps {
   retryDelay?: number
@@ -35,6 +34,7 @@ interface IProps {
 const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
   const { socket, isRunning, isPaused, isSaveToFile, isMinimizedMonitor, isShowMonitor } = useSelector(monitorSelector)
+  const { [FeatureFlags.envDependent]: envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
   const { token } = useSelector(appCsrfSelector)
 
   const socketRef = useRef<Nullable<Socket>>(null)
@@ -68,18 +68,8 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
     timestampRef.current = Date.now()
 
     // Create SocketIO connection to instance by instanceId
-    socketRef.current = io(`${getBaseApiUrl()}/monitor`, {
-      path: getProxyPath(),
-      forceNew: true,
-      query: { instanceId },
-      extraHeaders: {
-        [CustomHeaders.WindowId]: window.windowId || '',
-        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
-      },
-      rejectUnauthorized: false,
-      transports: riConfig.api.socketTransports?.split(','),
-      withCredentials: riConfig.api.socketCredentials,
-    })
+    socketRef.current = wsService(`${getBaseApiUrl()}/monitor`, { token, }, envDependent?.flag)
+
     dispatch(setSocket(socketRef.current))
 
     const handleDisconnect = () => {

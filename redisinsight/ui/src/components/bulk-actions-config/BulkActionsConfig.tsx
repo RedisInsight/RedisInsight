@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { io, Socket } from 'socket.io-client'
+import { Socket } from 'socket.io-client'
 
 import {
   setLoading,
@@ -13,24 +13,23 @@ import {
   bulkActionsDeleteSelector,
   setDeleteOverviewStatus,
 } from 'uiSrc/slices/browser/bulkActions'
-import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
+import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
 import { sessionStorageService } from 'uiSrc/services'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { isProcessingBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
-import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, SocketEvent } from 'uiSrc/constants'
+import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, FeatureFlags, SocketEvent, } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { CustomHeaders } from 'uiSrc/constants/api'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
-import { getConfig } from 'uiSrc/config'
-
-const riConfig = getConfig()
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { wsService } from 'uiSrc/services/wsService'
 
 const BulkActionsConfig = () => {
   const { id: instanceId = '', db } = useSelector(connectedInstanceSelector)
   const { isConnected } = useSelector(bulkActionsSelector)
   const { isActionTriggered: isDeleteTriggered } = useSelector(bulkActionsDeleteSelector)
   const { filter, search } = useSelector(keysSelector)
+  const { [FeatureFlags.envDependent]: envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
   const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
 
@@ -42,19 +41,19 @@ const BulkActionsConfig = () => {
     }
 
     let retryTimer: NodeJS.Timer
-
-    socketRef.current = io(`${getBaseApiUrl()}/bulk-actions`, {
-      path: getProxyPath(),
-      forceNew: true,
-      query: { instanceId },
-      extraHeaders: {
-        [CustomHeaders.WindowId]: window.windowId || '',
-        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
-      },
-      rejectUnauthorized: false,
-      transports: riConfig.api.socketTransports?.split(','),
-      withCredentials: riConfig.api.socketCredentials,
-    })
+    socketRef.current = wsService(`${getBaseApiUrl()}/bulk-actions`, { token, }, envDependent?.flag)
+    // socketRef.current = io(`${getBaseApiUrl()}/bulk-actions`, {
+    //   path: getProxyPath(),
+    //   forceNew: true,
+    //   query: { instanceId },
+    //   extraHeaders: {
+    //     [CustomHeaders.WindowId]: window.windowId || '',
+    //     ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
+    //   },
+    //   rejectUnauthorized: false,
+    //   transports: riConfig.api.socketTransports?.split(','),
+    //   withCredentials: riConfig.api.socketCredentials,
+    // })
 
     socketRef.current.on(SocketEvent.Connect, () => {
       clearTimeout(retryTimer)

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 
-import { SocketEvent } from 'uiSrc/constants'
+import { FeatureFlags, SocketEvent } from 'uiSrc/constants'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { PubSubEvent } from 'uiSrc/constants/pubSub'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -19,6 +19,8 @@ import {
 import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
 import { getConfig } from 'uiSrc/config'
+import { wsService } from 'uiSrc/services/wsService'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 const riConfig = getConfig()
 
@@ -30,6 +32,7 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
   const { isSubscribeTriggered, isConnected, subscriptions } = useSelector(pubSubSelector)
   const { token } = useSelector(appCsrfSelector)
+  const { [FeatureFlags.envDependent]: envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
 
   const dispatch = useDispatch()
@@ -40,18 +43,19 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
     }
     let retryTimer: NodeJS.Timer
 
-    socketRef.current = io(`${getBaseApiUrl()}/pub-sub`, {
-      path: getProxyPath(),
-      forceNew: true,
-      query: { instanceId },
-      extraHeaders: {
-        [CustomHeaders.WindowId]: window.windowId || '',
-        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
-      },
-      rejectUnauthorized: false,
-      transports: riConfig.api.socketTransports?.split(','),
-      withCredentials: riConfig.api.socketCredentials,
-    })
+    socketRef.current = wsService(`${getBaseApiUrl()}/pub-sub`, { token }, envDependent?.flag)
+    // socketRef.current = io(``, {
+    //   path: getProxyPath(),
+    //   forceNew: true,
+    //   query: { instanceId },
+    //   extraHeaders: {
+    //     [CustomHeaders.WindowId]: window.windowId || '',
+    //     ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
+    //   },
+    //   rejectUnauthorized: false,
+    //   transports: riConfig.api.socketTransports?.split(','),
+    //   withCredentials: riConfig.api.socketCredentials,
+    // })
 
     socketRef.current.on(SocketEvent.Connect, () => {
       clearTimeout(retryTimer)

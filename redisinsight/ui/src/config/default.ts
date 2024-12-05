@@ -51,10 +51,12 @@ export const defaultConfig = {
     activityMonitorThrottleTimeout: intEnv('RI_ACTIVITY_MONITOR_THROTTLE_TIMEOUT', 30_000),
     sessionTtlSeconds: intEnv('RI_SESSION_TTL_SECONDS', 30 * 60),
     localResourcesBaseUrl: process.env.RI_LOCAL_RESOURCES_BASE_URL,
-    useLocalResources: booleanEnv('RI_USE_LOCAL_RESOURCES', false)
+    useLocalResources: booleanEnv('RI_USE_LOCAL_RESOURCES', false),
+    indexedDbName: process.env.RI_INDEXED_DB_NAME || 'RI_LOCAL_STORAGE',
   },
   workbench: {
     pipelineCountDefault: intEnv('PIPELINE_COUNT_DEFAULT', 5),
+    maxResultSize: intEnv('RI_COMMAND_EXECUTION_MAX_RESULT_SIZE', 1024 * 1024),
   },
   browser: {
     scanCountDefault: intEnv('RI_SCAN_COUNT_DEFAULT', 500),

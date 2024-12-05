@@ -1,5 +1,5 @@
 import {
-  HttpException, 
+  HttpException,
   Injectable,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,7 +15,7 @@ import { DatabaseFactory } from 'src/modules/database/providers/database.factory
 import { discoverSentinelMasterGroups } from 'src/modules/redis/utils';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RedisSentinelService {

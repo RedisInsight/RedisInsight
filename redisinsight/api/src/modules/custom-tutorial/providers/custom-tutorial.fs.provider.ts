@@ -10,7 +10,7 @@ import * as AdmZip from 'adm-zip';
 import axios from 'axios';
 import { wrapHttpError } from 'src/common/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const PATH_CONFIG = config.get('dir_path');
 

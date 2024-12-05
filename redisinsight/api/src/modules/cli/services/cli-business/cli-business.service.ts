@@ -30,7 +30,7 @@ import { RedisClient } from 'src/modules/redis/client';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { v4 as uuidv4 } from 'uuid';
 import { getAnalyticsDataFromIndexInfo } from 'src/utils';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';

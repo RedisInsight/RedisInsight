@@ -115,6 +115,6 @@ export class StaticsManagementModule {
           }),
         },
       ],
-    }
+    };
   }
 }

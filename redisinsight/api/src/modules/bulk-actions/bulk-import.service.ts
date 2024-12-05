@@ -19,7 +19,7 @@ import config, { Config } from 'src/utils/config';
 import * as CombinedStream from 'combined-stream';
 import { DatabaseService } from 'src/modules/database/database.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const BATCH_LIMIT = 10_000;
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];

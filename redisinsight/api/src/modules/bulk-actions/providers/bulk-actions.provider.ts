@@ -11,7 +11,7 @@ import {
 import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class BulkActionsProvider {

@@ -8,7 +8,7 @@ import { ClientMetadata } from 'src/common/models';
 import { RedisClient } from 'src/modules/redis/client';
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 type IsClientConnectingMap = {
   [key: string]: boolean

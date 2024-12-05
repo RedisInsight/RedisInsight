@@ -10,7 +10,7 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class DatabaseConnectionService {

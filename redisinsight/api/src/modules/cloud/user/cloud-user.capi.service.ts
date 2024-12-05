@@ -4,7 +4,7 @@ import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { CloudAccountInfo } from 'src/modules/cloud/user/models';
 import { parseCloudAccountCapiResponse } from 'src/modules/cloud/user/utils';
 import { CloudUserCapiProvider } from 'src/modules/cloud/user/providers/cloud-user.capi.provider';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class CloudUserCapiService {

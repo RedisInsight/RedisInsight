@@ -39,8 +39,7 @@ merge(config, envConfig, buildTypeConfig);
 
 export type Config = typeof config;
 export type KeyOfConfig = keyof typeof config;
-export const get: (key?: KeyOfConfig) => Config | any = (key?: KeyOfConfig) =>
-  key ? config[key] : config;
+export const get: (key?: KeyOfConfig) => Config | any = (key?: KeyOfConfig) => (key ? config[key] : config);
 
 export default {
   get,

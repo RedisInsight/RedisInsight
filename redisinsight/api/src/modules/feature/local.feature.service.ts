@@ -16,7 +16,7 @@ import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/
 import { SessionMetadata } from 'src/common/models';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class LocalFeatureService extends FeatureService {

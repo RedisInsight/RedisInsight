@@ -8,7 +8,7 @@ import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/model
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
 import { RedisClientLib } from 'src/modules/redis/redis.client.factory';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const serverConfig = config.get('server') as Config['server'];
 

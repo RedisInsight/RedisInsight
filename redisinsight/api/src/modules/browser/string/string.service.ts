@@ -22,7 +22,7 @@ import { Readable } from 'stream';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientCommand } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class StringService {

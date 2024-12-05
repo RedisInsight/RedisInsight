@@ -12,7 +12,7 @@ import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
 import { classToClass } from 'src/utils';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class CaCertificateService {

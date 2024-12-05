@@ -14,7 +14,7 @@ import { LocalDatabaseRepository } from 'src/modules/database/repositories/local
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import config from 'src/utils/config';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
 

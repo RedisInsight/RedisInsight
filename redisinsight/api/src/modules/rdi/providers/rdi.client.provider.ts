@@ -5,7 +5,7 @@ import { RdiClientStorage } from 'src/modules/rdi/providers/rdi.client.storage';
 import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { RdiRepository } from 'src/modules/rdi/repository/rdi.repository';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RdiClientProvider {

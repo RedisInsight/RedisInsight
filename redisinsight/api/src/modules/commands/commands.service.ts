@@ -33,11 +33,9 @@ export class CommandsService implements OnModuleInit {
   async getAll(): Promise<any> {
     const commands = {};
 
-    Object.entries(await this.getCommandsGroups()).forEach(([provider, groupCommands]) => {
-      return forEach(groupCommands as {}, (value: {}, command) => {
-        commands[command] = { ...value, provider };
-      });
-    });
+    Object.entries(await this.getCommandsGroups()).forEach(([provider, groupCommands]) => forEach(groupCommands as {}, (value: {}, command) => {
+      commands[command] = { ...value, provider };
+    }));
 
     return commands;
   }

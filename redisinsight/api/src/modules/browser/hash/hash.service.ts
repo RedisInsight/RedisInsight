@@ -27,7 +27,7 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { RedisClient, RedisClientCommand, RedisFeature } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 import { RedisString } from 'src/common/constants';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan') as Config['redis_scan'];
 

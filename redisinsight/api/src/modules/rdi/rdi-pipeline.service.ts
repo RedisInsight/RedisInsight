@@ -5,7 +5,7 @@ import { RdiDryRunJobDto, RdiTemplateResponseDto, RdiTestConnectionsResponseDto 
 import { RdiDryRunJobResponseDto } from 'src/modules/rdi/dto/rdi.dry-run.job.response.dto';
 import { RdiPipelineAnalytics } from 'src/modules/rdi/rdi-pipeline.analytics';
 import { wrapHttpError } from 'src/common/utils';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RdiPipelineService {

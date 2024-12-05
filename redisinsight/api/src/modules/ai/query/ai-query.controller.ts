@@ -4,7 +4,6 @@ import {
   Controller,
   Delete,
   Get,
-  Logger,
   Param,
   Post,
   Res,
@@ -34,7 +33,7 @@ export class AiQueryController {
     responses: [{ type: String }],
   })
   async streamQuestion(
-    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+  @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') databaseId: string,
     @Body() dto: SendAiQueryMessageDto,
     @Res() res: Response,
@@ -49,7 +48,7 @@ export class AiQueryController {
     responses: [{ type: String }],
   })
   async getHistory(
-    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+  @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') databaseId: string,
   ) {
     return this.service.getHistory(sessionMetadata, databaseId);
@@ -62,7 +61,7 @@ export class AiQueryController {
     responses: [{ type: String }],
   })
   async clearHistory(
-    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+  @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') databaseId: string,
   ) {
     return this.service.clearHistory(sessionMetadata, databaseId);

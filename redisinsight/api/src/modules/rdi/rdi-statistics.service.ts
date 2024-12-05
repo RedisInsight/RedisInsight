@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RdiClientMetadata, RdiStatisticsResult } from 'src/modules/rdi/models';
 import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RdiStatisticsService {

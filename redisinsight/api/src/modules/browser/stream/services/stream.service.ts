@@ -29,7 +29,7 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { RedisClient } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 import { convertArrayReplyToObject } from 'src/modules/redis/utils';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class StreamService {

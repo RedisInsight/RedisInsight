@@ -29,7 +29,7 @@ import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto
 import { KeyInfoProvider } from 'src/modules/browser/keys/key-info/key-info.provider';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { checkIfKeyNotExists } from 'src/modules/browser/utils';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class KeysService {

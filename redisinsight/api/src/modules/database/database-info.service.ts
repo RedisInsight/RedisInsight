@@ -8,8 +8,8 @@ import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { DatabaseService } from './database.service';
-import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class DatabaseInfoService {

@@ -9,7 +9,7 @@ import { filter, isNull } from 'lodash';
 import { classToClass, Config } from 'src/utils';
 import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import config from 'src/utils/config';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const aiConfig = config.get('ai') as Config['ai'];
 

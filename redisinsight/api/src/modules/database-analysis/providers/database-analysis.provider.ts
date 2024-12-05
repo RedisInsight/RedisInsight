@@ -10,7 +10,7 @@ import { RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { classToClass } from 'src/utils';
 import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const DATABASE_ANALYSIS_CONFIG = config.get('database_analysis');
 

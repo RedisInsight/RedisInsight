@@ -11,7 +11,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { BrowserHistoryMode } from 'src/common/constants';
 import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import { SessionMetadata } from 'src/common/models';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { BrowserHistoryEntity } from '../entities/browser-history.entity';
 import { BrowserHistoryRepository } from './browser-history.repository';
 import { BrowserHistory } from '../dto';

@@ -18,8 +18,8 @@ import { CreateNotificationsDto } from 'src/modules/notification/dto';
 import { Notification } from 'src/modules/notification/models/notification';
 import { getFile } from 'src/utils';
 import config from 'src/utils/config';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { NotificationRepository } from '../repositories/notification.repository';
-import LoggerService from 'src/modules/logger/logger.service';
 
 const NOTIFICATIONS_CONFIG = config.get('notifications');
 

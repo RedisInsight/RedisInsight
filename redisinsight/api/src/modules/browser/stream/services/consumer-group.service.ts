@@ -25,13 +25,13 @@ import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
 import { checkIfKeyNotExists } from 'src/modules/browser/utils';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class ConsumerGroupService {
   constructor(
     private logger: LoggerService,
-    private databaseClientFactory: DatabaseClientFactory
+    private databaseClientFactory: DatabaseClientFactory,
   ) {}
 
   /**
@@ -63,7 +63,7 @@ export class ConsumerGroupService {
         group,
       )));
     } catch (error) {
-      this.logger.error("Error getting consumer groups list", error, clientMetadata)
+      this.logger.error('Error getting consumer groups list', error, clientMetadata);
       if (error instanceof NotFoundException) {
         throw error;
       }

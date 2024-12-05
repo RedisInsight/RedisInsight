@@ -1,5 +1,5 @@
 import {
-  Injectable, InternalServerErrorException, Logger, NotFoundException,
+  Injectable, InternalServerErrorException, NotFoundException,
 } from '@nestjs/common';
 import {
   isEmpty, omit, reject, sum, omitBy, isUndefined,
@@ -25,7 +25,7 @@ import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class DatabaseService {

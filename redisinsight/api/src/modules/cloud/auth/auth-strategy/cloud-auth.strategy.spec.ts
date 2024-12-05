@@ -13,7 +13,7 @@ import {
   mockCloudAuthGoogleTokenUrl,
   mockCloudRefreshToken,
   mockCloudRevokeRefreshTokenHint,
-  mockOktaAuthClient
+  mockOktaAuthClient,
 } from 'src/__mocks__/cloud-auth';
 import { OktaAuth } from '@okta/okta-auth-js';
 import { GoogleIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/google-idp.cloud.auth-strategy';

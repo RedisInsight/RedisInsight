@@ -16,8 +16,8 @@ import { filter, find } from 'lodash';
 import config from 'src/utils/config';
 import { parseCloudTaskCapiResponse } from 'src/modules/cloud/task/utils';
 import { CloudTask } from 'src/modules/cloud/task/models';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { CloudSubscriptionCapiProvider } from './providers/cloud-subscription.capi.provider';
-import LoggerService from 'src/modules/logger/logger.service';
 
 const cloudConfig = config.get('cloud');
 

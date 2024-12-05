@@ -30,11 +30,10 @@ import { plainToClass } from 'class-transformer';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientCommandReply } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class ListService {
-
   constructor(
     private logger: LoggerService,
     private databaseClientFactory: DatabaseClientFactory,
@@ -241,7 +240,7 @@ export class ListService {
     await client.sendCommand([
       BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPush' : 'LPush'],
       keyName,
-      ...elements
+      ...elements,
     ]);
   }
 
@@ -249,12 +248,14 @@ export class ListService {
     client: RedisClient,
     dto: CreateListWithExpireDto,
   ): Promise<void> {
-    const { keyName, elements, expire, destination } = dto;
+    const {
+      keyName, elements, expire, destination,
+    } = dto;
     const transactionResults = await client.sendPipeline([
       [
         BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPush' : 'LPush'],
         keyName,
-        ...elements
+        ...elements,
       ],
       [BrowserToolKeysCommands.Expire, keyName, expire],
     ]);

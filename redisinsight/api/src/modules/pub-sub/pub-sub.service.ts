@@ -9,7 +9,7 @@ import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.se
 import { catchAclError } from 'src/utils';
 import { ClientMetadata, SessionMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class PubSubService {

@@ -27,7 +27,7 @@ import { RedisString } from 'src/common/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 import { RedisClient } from 'src/modules/redis/client';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RejsonRlService {

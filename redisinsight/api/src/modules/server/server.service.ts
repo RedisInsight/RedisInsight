@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AppType, BuildType, PackageType } from 'src/modules/server/models/server';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
 import { SessionMetadata } from 'src/common/models';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export abstract class ServerService {

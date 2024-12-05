@@ -15,8 +15,8 @@ import { UnableToFetchRemoteConfigException } from 'src/modules/feature/exceptio
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 import { SessionMetadata } from 'src/common/models';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import * as defaultConfig from '../../../config/features-config.json';
-import LoggerService from '../logger/logger.service';
 
 const FEATURES_CONFIG = config.get('features_config');
 

@@ -100,7 +100,7 @@ describe('PubSubService', () => {
       await service.subscribe(
         mockSessionMetadata,
         mockUserClient,
-        { subscriptions: [mockSubscriptionDto, mockPSubscriptionDto] }
+        { subscriptions: [mockSubscriptionDto, mockPSubscriptionDto] },
       );
       expect(mockUserSession.subscribe).toHaveBeenCalledTimes(2);
     });
@@ -131,7 +131,7 @@ describe('PubSubService', () => {
     });
     it('should unsubscribe from multiple channels', async () => {
       await service.unsubscribe(
-        mockSessionMetadata, mockUserClient, { subscriptions: [mockSubscriptionDto, mockPSubscriptionDto] }
+        mockSessionMetadata, mockUserClient, { subscriptions: [mockSubscriptionDto, mockPSubscriptionDto] },
       );
       expect(mockUserSession.unsubscribe).toHaveBeenCalledTimes(2);
     });

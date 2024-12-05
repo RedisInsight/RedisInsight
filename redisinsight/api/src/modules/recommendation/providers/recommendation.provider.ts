@@ -28,11 +28,12 @@ import {
 } from 'src/common/constants';
 import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RecommendationProvider {
   constructor(protected logger: LoggerService) {}
+
   /**
    * Check lua script recommendation
    * @param redisClient

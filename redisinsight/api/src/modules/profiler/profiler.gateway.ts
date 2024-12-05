@@ -24,7 +24,7 @@ const SOCKETS_CONFIG = config.get('sockets') as Config['sockets'];
   namespace: 'monitor',
   cors: SOCKETS_CONFIG.cors.enabled
     ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
-  serveClient: SOCKETS_CONFIG.serveClient
+  serveClient: SOCKETS_CONFIG.serveClient,
 })
 export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;

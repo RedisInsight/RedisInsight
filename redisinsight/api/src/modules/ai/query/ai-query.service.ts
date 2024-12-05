@@ -23,7 +23,7 @@ import { classToClass, Config } from 'src/utils';
 import { plainToClass } from 'class-transformer';
 import { AiQueryContextRepository } from 'src/modules/ai/query/repositories/ai-query.context.repository';
 import config from 'src/utils/config';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const aiConfig = config.get('ai') as Config['ai'];
 

@@ -13,7 +13,7 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class DatabaseAnalysisService {

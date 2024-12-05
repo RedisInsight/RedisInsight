@@ -6,7 +6,7 @@ import { NodeRedisConnectionStrategy } from 'src/modules/redis/connection/node.r
 import { KnownFeatures } from 'src/modules/feature/constants';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class LocalRedisClientFactory extends RedisClientFactory {

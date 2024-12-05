@@ -6,7 +6,7 @@ import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import config, { Config } from 'src/utils/config';
 import { SessionMetadata } from 'src/common/models';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const REDIS_STACK_CONFIG = config.get('redisStack') as Config['redisStack'];

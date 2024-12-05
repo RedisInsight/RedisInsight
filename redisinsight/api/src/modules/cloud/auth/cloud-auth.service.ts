@@ -28,7 +28,7 @@ import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptio
 import {
   CloudOauthSsoUnsupportedEmailException,
 } from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class CloudAuthService {

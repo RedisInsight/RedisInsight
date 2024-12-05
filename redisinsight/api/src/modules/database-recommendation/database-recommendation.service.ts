@@ -10,10 +10,10 @@ import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { ModifyDatabaseRecommendationDto, DeleteDatabaseRecommendationResponse } from './dto';
 import { DatabaseRecommendationAnalytics } from './database-recommendation.analytics';
 import { DatabaseService } from '../database/database.service';
-import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class DatabaseRecommendationService {

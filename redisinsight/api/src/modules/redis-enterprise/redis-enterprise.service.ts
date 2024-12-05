@@ -28,7 +28,7 @@ import {
 import { HostingProvider } from 'src/modules/database/entities/database.entity';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { ActionStatus, SessionMetadata } from 'src/common/models';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RedisEnterpriseService {

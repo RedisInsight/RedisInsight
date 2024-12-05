@@ -24,8 +24,8 @@ import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IAgreementSpecFile } from 'src/modules/settings/models/agreements.interface';
 import { SessionMetadata } from 'src/common/models';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from './dto/settings.dto';
-import LoggerService from '../logger/logger.service';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 

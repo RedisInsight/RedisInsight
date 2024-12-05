@@ -19,7 +19,7 @@ import {
   BigAmountConnectedClientsStrategy,
   TryRdiStrategyStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RecommendationProvider {

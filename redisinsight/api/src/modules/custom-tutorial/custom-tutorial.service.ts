@@ -23,7 +23,7 @@ import * as URL from 'url';
 import { Validator } from 'class-validator';
 import { CustomTutorialAnalytics } from 'src/modules/custom-tutorial/custom-tutorial.analytics';
 import { SessionMetadata } from 'src/common/models';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class CustomTutorialService {

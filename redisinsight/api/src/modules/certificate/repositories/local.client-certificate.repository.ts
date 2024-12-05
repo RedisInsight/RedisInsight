@@ -13,7 +13,7 @@ import { ClientCertificateRepository } from 'src/modules/certificate/repositorie
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class LocalClientCertificateRepository extends ClientCertificateRepository {

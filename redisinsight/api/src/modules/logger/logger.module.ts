@@ -1,4 +1,6 @@
-import { DynamicModule, Global, Module, Scope } from '@nestjs/common';
+import {
+  DynamicModule, Global, Module, Scope,
+} from '@nestjs/common';
 import { WinstonModuleOptions } from 'nest-winston';
 import { INQUIRER } from '@nestjs/core';
 import { LoggerService } from './logger.service';
@@ -16,13 +18,11 @@ export class LoggerModule {
       providers: [
         {
           provide: LoggerService,
-          useFactory: (parentClass: object) => {
-            return new LoggerService(
-              loggerOptions,
-              disableStartupLogs,
-              parentClass?.constructor?.name,
-            );
-          },
+          useFactory: (parentClass: object) => new LoggerService(
+            loggerOptions,
+            disableStartupLogs,
+            parentClass?.constructor?.name,
+          ),
           inject: [INQUIRER],
           scope: Scope.TRANSIENT,
         },

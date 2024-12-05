@@ -135,7 +135,7 @@ export const mockRedisFtInfoReply = [
     '0',
     'dialect_2',
     '0',
-  ]
+  ],
 ];
 
 export const mockFtInfoAnalyticsData = {
@@ -172,7 +172,7 @@ export const mockFtInfoAnalyticsData = {
   dialect_stats: {
     dialect_1: '0',
     dialect_2: '0',
-  }
+  },
 };
 
 type InfoReplyRaw = string | number | InfoReplyRaw[];

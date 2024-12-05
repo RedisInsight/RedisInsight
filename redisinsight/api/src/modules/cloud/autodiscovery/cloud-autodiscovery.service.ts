@@ -23,7 +23,7 @@ import { CloudAccountInfo } from 'src/modules/cloud/user/models';
 import { CloudSubscription, CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { CloudDatabase, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
 import config from 'src/utils/config';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const cloudConfig = config.get('cloud');
 

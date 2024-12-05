@@ -25,7 +25,7 @@ import { ValidationException } from 'src/common/exceptions';
 import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
 import { SshImportService } from 'src/modules/database-import/ssh-import.service';
 import { SessionMetadata } from 'src/common/models';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class DatabaseImportService {

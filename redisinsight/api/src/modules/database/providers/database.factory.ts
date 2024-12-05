@@ -14,7 +14,7 @@ import {
   discoverClusterNodes, discoverSentinelMasterGroups, isCluster, isSentinel,
 } from 'src/modules/redis/utils';
 import { RedisClient } from 'src/modules/redis/client';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class DatabaseFactory {

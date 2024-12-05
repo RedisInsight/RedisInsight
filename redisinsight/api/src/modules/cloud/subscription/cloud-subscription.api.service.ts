@@ -6,13 +6,13 @@ import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { CloudSubscriptionCapiService } from './cloud-subscription.capi.service';
 import { CloudSubscriptionRegion, CloudSubscriptionType } from './models';
 import { CloudSessionService } from '../session/cloud-session.service';
 import { parseCloudSubscriptionsCloudRegionsApiResponse } from './utils';
 import { CloudSubscriptionApiProvider } from './providers/cloud-subscription.api.provider';
 import { CloudSubscriptionPlanResponse } from './dto';
-import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class CloudSubscriptionApiService {

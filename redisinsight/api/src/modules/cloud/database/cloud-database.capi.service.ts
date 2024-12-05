@@ -13,7 +13,7 @@ import {
 import { parseCloudDatabaseCapiResponse, parseCloudDatabasesCapiResponse } from 'src/modules/cloud/database/utils';
 import config from 'src/utils/config';
 import { parseCloudTaskCapiResponse } from 'src/modules/cloud/task/utils';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const cloudConfig = config.get('cloud');
 

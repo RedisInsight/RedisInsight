@@ -10,7 +10,7 @@ import {
 } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
 import { plainToClass } from 'class-transformer';
 import { winPathToNormalPath } from 'src/utils';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const MANIFEST_FILE = 'manifest.json';
 const SYS_MANIFEST_FILE = '_manifest.json';

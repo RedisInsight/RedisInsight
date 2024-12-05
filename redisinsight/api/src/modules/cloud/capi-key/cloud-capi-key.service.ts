@@ -15,7 +15,7 @@ import {
   CloudCapiKeyUnauthorizedException,
 } from 'src/modules/cloud/capi-key/exceptions';
 import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key.analytics';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class CloudCapiKeyService {

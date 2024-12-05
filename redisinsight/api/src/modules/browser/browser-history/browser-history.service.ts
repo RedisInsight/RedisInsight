@@ -9,7 +9,7 @@ import {
   CreateBrowserHistoryDto,
   DeleteBrowserHistoryItemsResponse,
 } from 'src/modules/browser/browser-history/dto';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { BrowserHistoryRepository } from './repositories/browser-history.repository';
 
 @Injectable()

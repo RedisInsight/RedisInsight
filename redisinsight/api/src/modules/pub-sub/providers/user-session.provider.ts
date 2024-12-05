@@ -3,7 +3,7 @@ import { UserSession } from 'src/modules/pub-sub/model/user-session';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
 import { ClientContext, SessionMetadata } from 'src/common/models';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class UserSessionProvider {

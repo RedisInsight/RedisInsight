@@ -15,7 +15,7 @@ import { CommandExecutionRepository } from 'src/modules/workbench/repositories/c
 import config from 'src/utils/config';
 import { SessionMetadata } from 'src/common/models';
 import { CommandExecutionFilter } from 'src/modules/workbench/models/command-executions.filter';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const WORKBENCH_CONFIG = config.get('workbench');
 

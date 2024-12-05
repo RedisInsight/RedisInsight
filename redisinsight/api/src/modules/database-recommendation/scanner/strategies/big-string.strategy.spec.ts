@@ -37,7 +37,6 @@ describe('BigStringStrategy', () => {
       expect(await strategy.isRecommendationReached(mockStringInfo)).toEqual({ isReached: false });
     });
 
-
     it('should return true when string size > 5 000 000', async () => {
       expect(await strategy.isRecommendationReached(mockBigStringInfo))
         .toEqual({ isReached: true, params: { keys: [mockBigStringInfo.name] } });
@@ -46,6 +45,5 @@ describe('BigStringStrategy', () => {
     it('should return false when not string key', async () => {
       expect(await strategy.isRecommendationReached(mockHashInfo)).toEqual({ isReached: false });
     });
-
   });
 });

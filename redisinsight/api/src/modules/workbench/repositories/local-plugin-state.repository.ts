@@ -10,7 +10,7 @@ import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin-state.repository';
 import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import { SessionMetadata } from 'src/common/models';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class LocalPluginStateRepository extends PluginStateRepository {
@@ -52,7 +52,11 @@ export class LocalPluginStateRepository extends PluginStateRepository {
    * @param visualizationId
    * @param commandExecutionId
    */
-  async getOne(sessionMetadata: SessionMetadata, visualizationId: string, commandExecutionId: string): Promise<PluginState> {
+  async getOne(
+    sessionMetadata: SessionMetadata,
+    visualizationId: string,
+    commandExecutionId: string,
+  ): Promise<PluginState> {
     this.logger.debug('Getting plugin state', sessionMetadata);
 
     const entity = await this.repository.findOneBy({ visualizationId, commandExecutionId });

@@ -7,7 +7,7 @@ import {
   mockRepository,
   mockSessionMetadata,
   MockType,
-} from 'src/__mocks__'
+} from 'src/__mocks__';
 import { LocalFeaturesConfigRepository } from 'src/modules/feature/repositories/local.features-config.repository';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import { plainToClass } from 'class-transformer';

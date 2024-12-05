@@ -26,7 +26,7 @@ import { ClientMetadata } from 'src/common/models';
 import { RedisClient } from 'src/modules/redis/client';
 import { checkIfKeyNotExists } from 'src/modules/browser/utils';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class ConsumerService {

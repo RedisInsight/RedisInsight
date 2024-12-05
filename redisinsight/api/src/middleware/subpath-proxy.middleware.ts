@@ -14,7 +14,7 @@ export default class SubpathProxyMiddleware implements NestMiddleware {
         const regex = /\/?__RIPROXYPATH__/g;
 
         // for vite build proxyPath if exists should starts with '/'
-        content = content.replace(regex, proxyPath ? '/' + proxyPath : '');
+        content = content.replace(regex, proxyPath ? `/${proxyPath}` : '');
         res.send(content);
         return;
       }

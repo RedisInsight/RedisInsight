@@ -10,7 +10,7 @@ import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/model
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { plainToClass } from 'class-transformer';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 

@@ -22,7 +22,7 @@ import {
 import { RecommendationEvents } from 'src/modules/database-recommendation/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class LocalDatabaseRecommendationRepository extends DatabaseRecommendationRepository {

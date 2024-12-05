@@ -29,7 +29,7 @@ import {
   RedisClientConnectionType,
   RedisClientNodeRole,
 } from 'src/modules/redis/client';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { convertIndexInfoReply } from '../utils/redisIndexInfo';
 
 @Injectable()

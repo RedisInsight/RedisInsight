@@ -7,7 +7,7 @@ import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provide
 import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
 import { ProfilerClientProvider } from 'src/modules/profiler/providers/profiler-client.provider';
 import { SessionMetadata } from 'src/common/models';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class ProfilerService {

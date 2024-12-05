@@ -2,8 +2,8 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { SessionMetadata } from 'src/common/models';
 import { NotificationsDto, ReadNotificationsDto } from 'src/modules/notification/dto';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { NotificationRepository } from './repositories/notification.repository';
-import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class NotificationService {

@@ -13,7 +13,7 @@ import { classToClass } from 'src/utils';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class LocalCaCertificateRepository extends CaCertificateRepository {

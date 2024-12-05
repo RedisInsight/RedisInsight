@@ -32,8 +32,8 @@ export class LoggerService implements NestLoggerService {
 
   private isException(error?: unknown) {
     return (
-      error instanceof Error ||
-      ((error as Error)?.stack && (error as Error)?.message)
+      error instanceof Error
+      || ((error as Error)?.stack && (error as Error)?.message)
     );
   }
 
@@ -62,11 +62,11 @@ export class LoggerService implements NestLoggerService {
       meta,
       ...(error
         ? {
-            error: {
-              stack: error.stack,
-              message: error.message,
-            },
-          }
+          error: {
+            stack: error.stack,
+            message: error.message,
+          },
+        }
         : {}),
     };
   }
@@ -77,8 +77,8 @@ export class LoggerService implements NestLoggerService {
 
   log(message: unknown, context?: string, meta?: object) {
     if (
-      !this.disableStartupLogs ||
-      !LoggerService.startupContexts.includes(context)
+      !this.disableStartupLogs
+      || !LoggerService.startupContexts.includes(context)
     ) {
       this.nestLogger.log(message, this.formatMeta([context, meta]));
     }

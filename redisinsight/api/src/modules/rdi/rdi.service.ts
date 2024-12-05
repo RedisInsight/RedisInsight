@@ -14,8 +14,8 @@ import { SessionMetadata } from 'src/common/models';
 import { RdiPipelineNotFoundException, wrapRdiPipelineError } from 'src/modules/rdi/exceptions';
 import { isUndefined, omitBy } from 'lodash';
 import { deepMerge } from 'src/common/utils';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { RdiAnalytics } from './rdi.analytics';
-import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class RdiService {

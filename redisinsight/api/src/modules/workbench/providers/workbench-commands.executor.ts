@@ -22,7 +22,7 @@ import { RedisClient } from 'src/modules/redis/client';
 import { getAnalyticsDataFromIndexInfo } from 'src/utils';
 import { RunQueryMode } from 'src/modules/workbench/models/command-execution';
 import { WorkbenchAnalytics } from 'src/modules/workbench/workbench.analytics';
-import LoggerService from 'src/modules/logger/logger.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class WorkbenchCommandsExecutor {

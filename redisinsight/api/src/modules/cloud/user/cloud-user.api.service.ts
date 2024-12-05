@@ -11,8 +11,8 @@ import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 import { CloudSession } from 'src/modules/cloud/session/models/cloud-session';
 import { ServerService } from 'src/modules/server/server.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { isValidToken } from './utils';
-import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class CloudUserApiService {

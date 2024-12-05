@@ -83,7 +83,7 @@ export class DatabaseConnectionService {
 
     this.collectClientInfo(clientMetadata, client, generalInfo?.version);
 
-    this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
+    this.logger.debug(`Succeed to connect to database ${clientMetadata.databaseId}`);
   }
 
   private async collectClientInfo(clientMetadata: ClientMetadata, client: RedisClient, version?: string) {

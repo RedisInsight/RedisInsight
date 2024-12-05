@@ -43,7 +43,7 @@ export class ListService {
     dto: CreateListWithExpireDto,
   ): Promise<void> {
     try {
-      this.logger.log('Creating list data type.');
+      this.logger.debug('Creating list data type.');
       const { keyName, expire } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -55,7 +55,7 @@ export class ListService {
         await this.createSimpleList(client, dto);
       }
 
-      this.logger.log('Succeed to create list data type.');
+      this.logger.debug('Succeed to create list data type.');
       return null;
     } catch (error) {
       this.logger.error('Failed to create list data type.', error);
@@ -68,7 +68,7 @@ export class ListService {
     dto: PushElementToListDto,
   ): Promise<PushListElementsResponse> {
     try {
-      this.logger.log('Insert element at the tail/head of the list data type.');
+      this.logger.debug('Insert element at the tail/head of the list data type.');
       const { keyName, elements, destination } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -84,7 +84,7 @@ export class ListService {
         return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
       }
 
-      this.logger.log(`Succeed to insert element at the ${destination} of the list data type.`);
+      this.logger.debug(`Succeed to insert element at the ${destination} of the list data type.`);
       return plainToClass(PushListElementsResponse, { keyName, total });
     } catch (error) {
       this.logger.error('Failed to inserts element to the list data type.', error);
@@ -100,7 +100,7 @@ export class ListService {
     dto: GetListElementsDto,
   ): Promise<GetListElementsResponse> {
     try {
-      this.logger.log('Getting elements of the list stored at key.');
+      this.logger.debug('Getting elements of the list stored at key.');
       const { keyName, offset, count } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -117,7 +117,7 @@ export class ListService {
         offset + count - 1,
       ]);
 
-      this.logger.log('Succeed to get elements of the list.');
+      this.logger.debug('Succeed to get elements of the list.');
       return plainToClass(GetListElementsResponse, { keyName, total, elements });
     } catch (error) {
       this.logger.error('Failed to to get elements of the list.', error);
@@ -141,7 +141,7 @@ export class ListService {
     dto: KeyDto,
   ): Promise<GetListElementResponse> {
     try {
-      this.logger.log('Getting List element by index.');
+      this.logger.debug('Getting List element by index.');
       const { keyName } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -152,7 +152,7 @@ export class ListService {
         return Promise.reject(new NotFoundException(ERROR_MESSAGES.INDEX_OUT_OF_RANGE()));
       }
 
-      this.logger.log('Succeed to get List element by index.');
+      this.logger.debug('Succeed to get List element by index.');
       return plainToClass(GetListElementResponse, { keyName, value });
     } catch (error) {
       this.logger.error('Failed to to get List element by index.', error);
@@ -168,14 +168,14 @@ export class ListService {
     dto: SetListElementDto,
   ): Promise<SetListElementResponse> {
     try {
-      this.logger.log('Setting the list element at index');
+      this.logger.debug('Setting the list element at index');
       const { keyName, element, index } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
       await client.sendCommand([BrowserToolListCommands.LSet, keyName, index, element]);
 
-      this.logger.log('Succeed to set the list element at index.');
+      this.logger.debug('Succeed to set the list element at index.');
       return plainToClass(SetListElementResponse, { index, element });
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -200,7 +200,7 @@ export class ListService {
     dto: DeleteListElementsDto,
   ): Promise<DeleteListElementsResponse> {
     try {
-      this.logger.log('Deleting elements from the list stored at key.');
+      this.logger.debug('Deleting elements from the list stored at key.');
       const { keyName, count, destination } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const execArgs = !!count && count > 1 ? [keyName, count] : [keyName];

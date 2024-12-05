@@ -13,7 +13,7 @@ export class GraphKeyInfoStrategy extends KeyInfoStrategy {
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${RedisDataType.Graph} type info.`);
+    this.logger.debug(`Getting ${RedisDataType.Graph} type info.`);
     const [
       [, ttl = null],
       [, size = null],

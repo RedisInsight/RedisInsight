@@ -76,7 +76,7 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
     databaseId: string,
     mode: BrowserHistoryMode,
   ): Promise<BrowserHistory[]> {
-    this.logger.log('Getting browser history list');
+    this.logger.debug('Getting browser history list');
     const entities = await this.repository
       .createQueryBuilder('a')
       .where({ databaseId, mode })
@@ -90,7 +90,7 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
       .limit(BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb)
       .getMany();
 
-    this.logger.log('Succeed to get history list');
+    this.logger.debug('Succeed to get history list');
 
     const decryptedEntities = await Promise.all(
       entities.map<Promise<BrowserHistoryEntity>>(async (entity) => {
@@ -113,11 +113,11 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
    * @param id
    */
   async delete(_: SessionMetadata, databaseId: string, mode: BrowserHistoryMode, id: string): Promise<void> {
-    this.logger.log(`Deleting browser history item: ${id}`);
+    this.logger.debug(`Deleting browser history item: ${id}`);
     try {
       await this.repository.delete({ id, databaseId, mode });
       // todo: rethink
-      this.logger.log('Succeed to delete browser history item.');
+      this.logger.debug('Succeed to delete browser history item.');
     } catch (error) {
       this.logger.error(`Failed to delete history items: ${id}`, error);
       throw new InternalServerErrorException();

@@ -299,7 +299,7 @@ export class CloudAuthService {
    */
   async logout(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      this.logger.log('Logout cloud user');
+      this.logger.debug('Logout cloud user');
 
       await this.revokeRefreshToken(sessionMetadata);
 

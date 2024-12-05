@@ -56,9 +56,9 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    * Update static files if needed
    */
   async autoUpdate() {
-    this.logger.log('Checking for updates...');
+    this.logger.debug('Checking for updates...');
     if (!this.options.devMode && await this.isUpdatesAvailable()) {
-      this.logger.log('Updates available! Updating...');
+      this.logger.debug('Updates available! Updating...');
 
       try {
         await this.updateStaticFiles();

@@ -2,6 +2,7 @@ import { EuiLink, EuiTextColor } from '@elastic/eui'
 import React, { Fragment } from 'react'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { getDbIndex } from 'uiSrc/utils'
+import UsePubSubLink from 'uiSrc/components/pub-sub/UsePubSubLink'
 
 export const ClearCommand = 'clear'
 export const SelectCommand = 'select'
@@ -70,15 +71,6 @@ export const cliTexts = {
       {' to see the messages published to all channels in your database.'}
     </EuiTextColor>
   ),
-  SUBSCRIBE_COMMAND: (path: string = '') => (
-    <EuiTextColor color="danger" key={Date.now()}>
-      {'Use '}
-      <EuiLink {...getRouterLinkProps(path)} color="text" data-test-subj="pubsub-page-btn">
-        Pub/Sub
-      </EuiLink>
-      {' tool to subscribe to channels.'}
-    </EuiTextColor>
-  ),
   PSUBSCRIBE_COMMAND_CLI: (path: string = '') => (
     [
       cliTexts.PSUBSCRIBE_COMMAND(path),
@@ -87,7 +79,7 @@ export const cliTexts = {
   ),
   SUBSCRIBE_COMMAND_CLI: (path: string = '') => (
     [
-      cliTexts.SUBSCRIBE_COMMAND(path),
+      <UsePubSubLink path={path} />,
       '\n',
     ]
   ),

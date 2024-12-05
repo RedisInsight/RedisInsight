@@ -1,4 +1,4 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { catchAclError } from 'src/utils';
 import { sum } from 'lodash';
 import { plainToClass } from 'class-transformer';
@@ -9,13 +9,13 @@ import {
   CreateBrowserHistoryDto,
   DeleteBrowserHistoryItemsResponse,
 } from 'src/modules/browser/browser-history/dto';
+import LoggerService from 'src/modules/logger/logger.service';
 import { BrowserHistoryRepository } from './repositories/browser-history.repository';
 
 @Injectable()
 export class BrowserHistoryService {
-  private logger = new Logger('BrowserHistoryService');
-
   constructor(
+    private logger: LoggerService,
     private readonly browserHistoryRepository: BrowserHistoryRepository,
   ) {}
 
@@ -32,7 +32,7 @@ export class BrowserHistoryService {
       const history = plainToClass(BrowserHistory, { ...dto, databaseId: clientMetadata.databaseId });
       return this.browserHistoryRepository.create(clientMetadata.sessionMetadata, history);
     } catch (e) {
-      this.logger.error('Unable to create browser history item', e);
+      this.logger.error('Unable to create browser history item', e, clientMetadata);
 
       if (e instanceof HttpException) {
         throw e;
@@ -92,7 +92,7 @@ export class BrowserHistoryService {
     mode: BrowserHistoryMode,
     ids: string[],
   ): Promise<DeleteBrowserHistoryItemsResponse> {
-    this.logger.debug(`Deleting many browser history items: ${ids}`);
+    this.logger.debug(`Deleting many browser history items: ${ids}`, sessionMetadata);
 
     return {
       affected: sum(await Promise.all(ids.map(async (id) => {

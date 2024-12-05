@@ -1,5 +1,5 @@
 import {
-  Injectable, Logger,
+  Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,15 +9,15 @@ import { FeaturesConfigRepository } from 'src/modules/feature/repositories/featu
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import { FeaturesConfig } from 'src/modules/feature/model/features-config';
 import { SessionMetadata } from 'src/common/models';
+import LoggerService from 'src/modules/logger/logger.service';
 import * as defaultConfig from '../../../../config/features-config.json';
 
 @Injectable()
 export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
-  private readonly logger = new Logger('LocalFeaturesConfigRepository');
-
   private readonly id = '1';
 
   constructor(
+    protected logger: LoggerService,
     @InjectRepository(FeaturesConfigEntity)
     private readonly repository: Repository<FeaturesConfigEntity>,
   ) {
@@ -30,7 +30,7 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
    */
   private generateControlNumber(): number {
     const controlNumber = Number((parseInt((Math.random() * 10_000).toString(), 10) / 100).toFixed(2));
-    this.logger.debug('Control number is generated', controlNumber);
+    this.logger.debug(`Control number is generated: ${controlNumber}`);
 
     return controlNumber;
   }

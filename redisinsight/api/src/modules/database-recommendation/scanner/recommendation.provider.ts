@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { IRecommendationStrategy } from
   'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { RECOMMENDATION_NAMES } from 'src/constants';
@@ -19,14 +19,13 @@ import {
   BigAmountConnectedClientsStrategy,
   TryRdiStrategyStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RecommendationProvider {
-  private logger = new Logger('ZSetTypeInfoStrategy');
-
   private strategies: Map<string, IRecommendationStrategy> = new Map();
 
-  constructor() {
+  constructor(private logger: LoggerService) {
     this.strategies.set('default', new DefaultRecommendationStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.REDIS_VERSION, new RedisVersionStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.SEARCH_JSON, new SearchJSONStrategy());

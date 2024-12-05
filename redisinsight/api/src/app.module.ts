@@ -1,9 +1,6 @@
 import * as fs from 'fs';
 import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  OnModuleInit,
+  MiddlewareConsumer, Module, NestModule, OnModuleInit,
 } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import config, { Config } from 'src/utils/config';
@@ -38,11 +35,7 @@ import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import SubpathProxyMiddleware from './middleware/subpath-proxy.middleware';
 import XFrameOptionsMiddleware from './middleware/x-frame-options.middleware';
 import { routes } from './app.routes';
-import {
-  RedisConnectionMiddleware,
-  redisConnectionControllers,
-} from './middleware/redis-connection';
-import LOGGER_CONFIG from '../config/logger';
+import { RedisConnectionMiddleware, redisConnectionControllers } from './middleware/redis-connection';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -111,7 +104,9 @@ export class AppModule implements OnModuleInit, NestModule {
 
     consumer
       .apply(ExcludeRouteMiddleware)
-      .forRoutes(...SERVER_CONFIG.excludeRoutes);
+      .forRoutes(
+        ...SERVER_CONFIG.excludeRoutes,
+      );
 
     consumer
       .apply(RedisConnectionMiddleware)

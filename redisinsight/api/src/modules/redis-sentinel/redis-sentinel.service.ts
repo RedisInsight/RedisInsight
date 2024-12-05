@@ -1,5 +1,6 @@
 import {
-  HttpException, Injectable, Logger,
+  HttpException, 
+  Injectable,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/create.sentinel.database.response';
@@ -14,12 +15,12 @@ import { DatabaseFactory } from 'src/modules/database/providers/database.factory
 import { discoverSentinelMasterGroups } from 'src/modules/redis/utils';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class RedisSentinelService {
-  private logger = new Logger('RedisSentinelService');
-
   constructor(
+    protected logger: LoggerService,
     private readonly redisClientFactory: RedisClientFactory,
     private readonly databaseService: DatabaseService,
     private readonly databaseFactory: DatabaseFactory,
@@ -39,7 +40,7 @@ export class RedisSentinelService {
     sessionMetadata: SessionMetadata,
     dto: CreateSentinelDatabasesDto,
   ): Promise<CreateSentinelDatabaseResponse[]> {
-    this.logger.debug('Adding Sentinel masters.');
+    this.logger.debug('Adding Sentinel masters.', sessionMetadata);
     const result: CreateSentinelDatabaseResponse[] = [];
     const { masters, ...connectionOptions } = dto;
     try {
@@ -106,7 +107,7 @@ export class RedisSentinelService {
 
       return result;
     } catch (error) {
-      this.logger.error('Failed to add Sentinel masters.', error);
+      this.logger.error('Failed to add Sentinel masters.', error, sessionMetadata);
       throw getRedisConnectionException(error, connectionOptions);
     }
   }
@@ -120,7 +121,7 @@ export class RedisSentinelService {
     sessionMetadata: SessionMetadata,
     dto: Database,
   ): Promise<SentinelMaster[]> {
-    this.logger.debug('Connection and getting sentinel masters.');
+    this.logger.debug('Connection and getting sentinel masters.', sessionMetadata);
     let result: SentinelMaster[];
     try {
       const database = await this.databaseFactory.createStandaloneDatabaseModel(dto);

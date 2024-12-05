@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AppRedisInstanceEvents } from 'src/constants';
 import { MonitorSettings } from 'src/modules/profiler/models/monitor-settings';
@@ -7,12 +7,12 @@ import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provide
 import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
 import { ProfilerClientProvider } from 'src/modules/profiler/providers/profiler-client.provider';
 import { SessionMetadata } from 'src/common/models';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class ProfilerService {
-  private logger = new Logger('ProfilerService');
-
   constructor(
+    private logger: LoggerService,
     private logFileProvider: LogFileProvider,
     private redisObserverProvider: RedisObserverProvider,
     private profilerClientProvider: ProfilerClientProvider,
@@ -33,7 +33,7 @@ export class ProfilerService {
     client: Socket,
     settings: MonitorSettings = null,
   ) {
-    this.logger.debug(`Add listener for instance: ${instanceId}.`);
+    this.logger.debug(`Add listener for instance: ${instanceId}.`, sessionMetadata);
 
     const profilerClient = await this.profilerClientProvider.getOrCreateClient(
       sessionMetadata,

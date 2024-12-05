@@ -193,7 +193,7 @@ export class BulkAction implements IBulkAction {
     try {
       this.socket.emit('overview', overview);
     } catch (e) {
-      this.logger.error('Unable to send overview', e);
+      this.logger.error('Unable to send overview', e, sessionMetadata);
     }
   }
 }

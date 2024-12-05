@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Database } from 'src/modules/database/models/database';
 import { cloneClassInstance } from 'src/utils';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
@@ -25,8 +25,6 @@ export interface IRedisConnectionOptions {
 
 @Injectable()
 export abstract class RedisClientFactory {
-  protected logger = new Logger('RedisClientFactory');
-
   protected defaultConnectionStrategy: RedisConnectionStrategy;
 
   protected constructor(

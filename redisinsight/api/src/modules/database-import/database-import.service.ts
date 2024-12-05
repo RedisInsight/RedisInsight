@@ -1,5 +1,5 @@
 import {
-  HttpException, Injectable, InternalServerErrorException, Logger,
+  HttpException, Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 import { get, isArray, set } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
@@ -25,11 +25,10 @@ import { ValidationException } from 'src/common/exceptions';
 import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
 import { SshImportService } from 'src/modules/database-import/ssh-import.service';
 import { SessionMetadata } from 'src/common/models';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class DatabaseImportService {
-  private logger = new Logger('DatabaseImportService');
-
   private validator = new Validator();
 
   private fieldsMapSchema: Array<[string, string[]]> = [
@@ -67,6 +66,7 @@ export class DatabaseImportService {
   ];
 
   constructor(
+    private logger: LoggerService,
     private readonly certificateImportService: CertificateImportService,
     private readonly sshImportService: SshImportService,
     private readonly databaseRepository: DatabaseRepository,
@@ -129,7 +129,7 @@ export class DatabaseImportService {
 
       return response;
     } catch (e) {
-      this.logger.warn(`Unable to import databases: ${e?.constructor?.name || 'UncaughtError'}`, e);
+      this.logger.warn(`Unable to import databases: ${e?.constructor?.name || 'UncaughtError'}`, e, sessionMetadata);
 
       this.analytics.sendImportFailed(sessionMetadata, e);
 
@@ -279,7 +279,7 @@ export class DatabaseImportService {
         return error;
       });
 
-      this.logger.warn(`Unable to import database: ${errors[0]?.constructor?.name || 'UncaughtError'}`, errors[0]);
+      this.logger.warn(`Unable to import database: ${errors[0]?.constructor?.name || 'UncaughtError'}`, errors[0], sessionMetadata);
 
       return {
         index,

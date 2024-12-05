@@ -16,6 +16,7 @@ import { FeaturesConfigService } from 'src/modules/feature/features-config.servi
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 import { SessionMetadata } from 'src/common/models';
 import * as defaultConfig from '../../../config/features-config.json';
+import LoggerService from '../logger/logger.service';
 
 const FEATURES_CONFIG = config.get('features_config');
 
@@ -28,6 +29,7 @@ export class LocalFeaturesConfigService
   private autoSyncTimeout: NodeJS.Timeout;
 
   constructor(
+    private logger: LoggerService,
     private readonly repository: FeaturesConfigRepository,
     private readonly eventEmitter: EventEmitter2,
     private readonly analytics: FeatureAnalytics,
@@ -97,7 +99,7 @@ export class LocalFeaturesConfigService
     };
 
     try {
-      this.logger.debug('Fetching remote config...');
+      this.logger.debug('Fetching remote config...', sessionMetadata);
 
       remoteConfig = await this.fetchRemoteConfig();
 
@@ -121,7 +123,7 @@ export class LocalFeaturesConfigService
         },
       );
 
-      this.logger.error('Something wrong with remote config', error);
+      this.logger.error('Something wrong with remote config', error, sessionMetadata);
     }
 
     return newConfig;
@@ -134,7 +136,7 @@ export class LocalFeaturesConfigService
     let newConfig;
 
     try {
-      this.logger.debug('Trying to sync features config...');
+      this.logger.debug('Trying to sync features config...', sessionMetadata);
 
       const currentConfig = await this.repository.getOrCreate(sessionMetadata);
       newConfig = await this.getNewConfig(sessionMetadata);
@@ -151,7 +153,7 @@ export class LocalFeaturesConfigService
         );
       }
 
-      this.logger.debug('Successfully updated stored remote config');
+      this.logger.debug('Successfully updated stored remote config', sessionMetadata);
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
     } catch (error) {
       this.analytics.sendFeatureFlagConfigUpdateError(
@@ -162,7 +164,7 @@ export class LocalFeaturesConfigService
         },
       );
 
-      this.logger.error('Unable to update features config', error);
+      this.logger.error('Unable to update features config', error, sessionMetadata);
     }
   }
 
@@ -173,7 +175,7 @@ export class LocalFeaturesConfigService
     controlNumber: number;
     controlGroup: string;
   }> {
-    this.logger.debug('Trying to get controlGroup field');
+    this.logger.debug('Trying to get controlGroup field', sessionMetadata);
 
     const model = await this.repository.getOrCreate(sessionMetadata);
 

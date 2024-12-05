@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  Logger,
 } from '@nestjs/common';
 import { RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
 import { catchAclError } from 'src/utils';
@@ -23,12 +22,12 @@ import { Readable } from 'stream';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientCommand } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class StringService {
-  private logger = new Logger('StringService');
-
   constructor(
+    private logger: LoggerService,
     private databaseClientFactory: DatabaseClientFactory,
     private recommendationService: DatabaseRecommendationService,
   ) {}
@@ -38,7 +37,7 @@ export class StringService {
     dto: SetStringWithExpireDto,
   ): Promise<void> {
     try {
-      this.logger.debug('Setting string key type.');
+      this.logger.debug('Setting string key type.', clientMetadata);
       const { keyName, value, expire } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -62,10 +61,10 @@ export class StringService {
         ]);
       }
 
-      this.logger.debug('Succeed to set string key type.');
+      this.logger.debug('Succeed to set string key type.', clientMetadata);
       return null;
     } catch (error) {
-      this.logger.error('Failed to set string key type', error);
+      this.logger.error('Failed to set string key type', error, clientMetadata);
       throw catchAclError(error);
     }
   }
@@ -75,7 +74,7 @@ export class StringService {
     dto: GetStringInfoDto,
   ): Promise<GetStringValueResponse> {
     try {
-      this.logger.debug('Getting string value.');
+      this.logger.debug('Getting string value.', clientMetadata);
       const { keyName, start, end } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -99,10 +98,10 @@ export class StringService {
         { value, keyName },
       );
 
-      this.logger.debug('Succeed to get string value.');
+      this.logger.debug('Succeed to get string value.', clientMetadata);
       return plainToClass(GetStringValueResponse, { value, keyName });
     } catch (error) {
-      this.logger.error('Failed to get string value.', error);
+      this.logger.error('Failed to get string value.', error, clientMetadata);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -128,7 +127,7 @@ export class StringService {
     dto: SetStringDto,
   ): Promise<void> {
     try {
-      this.logger.debug('Updating string value.');
+      this.logger.debug('Updating string value.', clientMetadata);
       const { keyName, value } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -140,10 +139,10 @@ export class StringService {
         await client.sendCommand(<RedisClientCommand>[BrowserToolKeysCommands.Expire, keyName, ttl]);
       }
 
-      this.logger.debug('Succeed to update string value.');
+      this.logger.debug('Succeed to update string value.', clientMetadata);
       return null;
     } catch (error) {
-      this.logger.error('Failed to update string value.', error);
+      this.logger.error('Failed to update string value.', error, clientMetadata);
       throw catchAclError(error);
     }
   }

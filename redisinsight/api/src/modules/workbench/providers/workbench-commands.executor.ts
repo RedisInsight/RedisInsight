@@ -1,5 +1,5 @@
 import {
-  BadRequestException, Injectable, Logger,
+  BadRequestException, Injectable,
 } from '@nestjs/common';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { checkHumanReadableCommands, splitCliCommandLine } from 'src/utils/cli-helper';
@@ -22,14 +22,14 @@ import { RedisClient } from 'src/modules/redis/client';
 import { getAnalyticsDataFromIndexInfo } from 'src/utils';
 import { RunQueryMode } from 'src/modules/workbench/models/command-execution';
 import { WorkbenchAnalytics } from 'src/modules/workbench/workbench.analytics';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class WorkbenchCommandsExecutor {
-  private logger = new Logger('WorkbenchCommandsExecutor');
-
   private formatterManager: FormatterManager;
 
   constructor(
+    private logger: LoggerService,
     private analyticsService: WorkbenchAnalytics,
   ) {
     this.formatterManager = new FormatterManager();

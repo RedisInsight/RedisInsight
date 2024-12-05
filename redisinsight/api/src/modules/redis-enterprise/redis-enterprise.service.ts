@@ -2,7 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  Logger, NotFoundException,
+  NotFoundException,
 } from '@nestjs/common';
 import axios from 'axios';
 import * as https from 'https';
@@ -28,12 +28,12 @@ import {
 import { HostingProvider } from 'src/modules/database/entities/database.entity';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { ActionStatus, SessionMetadata } from 'src/common/models';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class RedisEnterpriseService {
-  private logger = new Logger('RedisEnterpriseBusinessService');
-
   constructor(
+    protected logger: LoggerService,
     private readonly databaseService: DatabaseService,
     private readonly analytics: RedisEnterpriseAnalytics,
   ) {}
@@ -50,7 +50,7 @@ export class RedisEnterpriseService {
     sessionMetadata: SessionMetadata,
     dto: ClusterConnectionDetailsDto,
   ): Promise<RedisEnterpriseDatabase[]> {
-    this.logger.debug('Getting RE cluster databases.');
+    this.logger.debug('Getting RE cluster databases.', sessionMetadata);
     const {
       host, port, username, password,
     } = dto;
@@ -59,14 +59,14 @@ export class RedisEnterpriseService {
       const { data } = await this.api.get(`https://${host}:${port}/v1/bdbs`, {
         auth,
       });
-      this.logger.debug('Succeed to get RE cluster databases.');
+      this.logger.debug('Succeed to get RE cluster databases.', sessionMetadata);
       const result = this.parseClusterDbsResponse(data);
       this.analytics.sendGetREClusterDbsSucceedEvent(sessionMetadata, result);
       return result;
     } catch (error) {
       const { response } = error;
       let exception;
-      this.logger.error(`Failed to get RE cluster databases. ${error.message}`);
+      this.logger.error(`Failed to get RE cluster databases. ${error.message}`, error, sessionMetadata);
       if (response?.status === 401 || response?.status === 403) {
         exception = new ForbiddenException(
           ERROR_MESSAGES.INCORRECT_CREDENTIALS(`${host}:${port}`),
@@ -191,7 +191,7 @@ export class RedisEnterpriseService {
     connectionDetails: ClusterConnectionDetailsDto,
     uids: number[],
   ): Promise<AddRedisEnterpriseDatabaseResponse[]> {
-    this.logger.debug('Adding Redis Enterprise databases.');
+    this.logger.debug('Adding Redis Enterprise databases.', sessionMetadata);
     let result: AddRedisEnterpriseDatabaseResponse[];
     try {
       const databases: RedisEnterpriseDatabase[] = await this.getDatabases(
@@ -249,7 +249,7 @@ export class RedisEnterpriseService {
         ),
       );
     } catch (error) {
-      this.logger.error('Failed to add Redis Enterprise databases', error);
+      this.logger.error('Failed to add Redis Enterprise databases', error, sessionMetadata);
       throw error;
     }
     return result;

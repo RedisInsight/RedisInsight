@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  Logger,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { plainToClass } from 'class-transformer';
@@ -20,18 +19,18 @@ import { Notification } from 'src/modules/notification/models/notification';
 import { getFile } from 'src/utils';
 import config from 'src/utils/config';
 import { NotificationRepository } from '../repositories/notification.repository';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const NOTIFICATIONS_CONFIG = config.get('notifications');
 
 @Injectable()
 export class GlobalNotificationProvider {
-  private logger: Logger = new Logger('GlobalNotificationProvider');
-
   private validator = new Validator();
 
   private interval: NodeJS.Timeout;
 
   constructor(
+    private logger: LoggerService,
     private notificationRepository: NotificationRepository,
     private eventEmitter: EventEmitter2,
   ) {}
@@ -100,7 +99,7 @@ export class GlobalNotificationProvider {
         ),
       );
     } catch (e) {
-      this.logger.error('Unable to sync notifications with remote', e);
+      this.logger.error('Unable to sync notifications with remote', e, sessionMetadata);
     }
   }
 

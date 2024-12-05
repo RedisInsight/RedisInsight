@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { GoogleIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/google-idp.cloud.auth-strategy';
 import {
@@ -28,16 +28,16 @@ import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptio
 import {
   CloudOauthSsoUnsupportedEmailException,
 } from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class CloudAuthService {
-  private readonly logger = new Logger('CloudAuthService');
-
   private authRequests: Map<string, CloudAuthRequest> = new Map();
 
   private inProgressRequests: Map<string, CloudAuthRequest> = new Map();
 
   constructor(
+    private logger: LoggerService,
     private readonly sessionService: CloudSessionService,
     private readonly googleIdpAuthStrategy: GoogleIdpCloudAuthStrategy,
     private readonly githubIdpCloudAuthStrategy: GithubIdpCloudAuthStrategy,
@@ -219,7 +219,7 @@ export class CloudAuthService {
       });
     } catch (e) {
       // ignore error
-      this.logger.error('Unable to revoke tokens', e);
+      this.logger.error('Unable to revoke tokens', e, sessionMetadata);
     }
   }
 
@@ -299,7 +299,7 @@ export class CloudAuthService {
    */
   async logout(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      this.logger.debug('Logout cloud user');
+      this.logger.debug('Logout cloud user', sessionMetadata);
 
       await this.revokeRefreshToken(sessionMetadata);
 
@@ -307,7 +307,7 @@ export class CloudAuthService {
 
       this.eventEmitter.emit(CloudAuthServerEvent.Logout, sessionMetadata);
     } catch (e) {
-      this.logger.error('Unable to logout', e);
+      this.logger.error('Unable to logout', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }

@@ -1,6 +1,5 @@
 import {
   Injectable,
-  Logger,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { uniqBy } from 'lodash';
@@ -24,14 +23,14 @@ import { CloudAccountInfo } from 'src/modules/cloud/user/models';
 import { CloudSubscription, CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { CloudDatabase, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
 import config from 'src/utils/config';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const cloudConfig = config.get('cloud');
 
 @Injectable()
 export class CloudAutodiscoveryService {
-  private logger = new Logger('CloudAutodiscoveryService');
-
   constructor(
+    private logger: LoggerService,
     private readonly databaseService: DatabaseService,
     private readonly cloudSubscriptionCapiService: CloudSubscriptionCapiService,
     private readonly cloudUserCapiService: CloudUserCapiService,
@@ -126,7 +125,7 @@ export class CloudAutodiscoveryService {
   ): Promise<CloudDatabase[]> {
     let result = [];
     try {
-      this.logger.debug('Discovering cloud databases from subscription(s)');
+      this.logger.debug('Discovering cloud databases from subscription(s)', sessionMetadata);
 
       const subscriptions = uniqBy(
         dto.subscriptions,
@@ -168,7 +167,7 @@ export class CloudAutodiscoveryService {
     authDto: CloudCapiAuthDto,
     addDatabasesDto: ImportCloudDatabaseDto[],
   ): Promise<ImportCloudDatabaseResponse[]> {
-    this.logger.debug('Adding Redis Cloud databases.');
+    this.logger.debug('Adding Redis Cloud databases.', sessionMetadata);
 
     return Promise.all(
       addDatabasesDto.map(

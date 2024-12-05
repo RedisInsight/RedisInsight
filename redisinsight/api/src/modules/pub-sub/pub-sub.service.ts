@@ -1,4 +1,4 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscribeDto } from 'src/modules/pub-sub/dto';
@@ -9,12 +9,12 @@ import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.se
 import { catchAclError } from 'src/utils';
 import { ClientMetadata, SessionMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class PubSubService {
-  private logger: Logger = new Logger('PubSubService');
-
   constructor(
+    private logger: LoggerService,
     private readonly sessionProvider: UserSessionProvider,
     private readonly subscriptionProvider: SubscriptionProvider,
     private databaseClientFactory: DatabaseClientFactory,
@@ -29,7 +29,7 @@ export class PubSubService {
    */
   async subscribe(sessionMetadata: SessionMetadata, userClient: UserClient, dto: SubscribeDto) {
     try {
-      this.logger.debug('Subscribing to channels(s)');
+      this.logger.debug('Subscribing to channels(s)', sessionMetadata);
 
       const session = this.sessionProvider.getOrCreateUserSession(sessionMetadata, userClient);
       await Promise.all(dto.subscriptions.map((subDto) => session.subscribe(
@@ -41,7 +41,7 @@ export class PubSubService {
         dto.subscriptions,
       );
     } catch (e) {
-      this.logger.error('Unable to create subscriptions', e);
+      this.logger.error('Unable to create subscriptions', e, sessionMetadata);
 
       if (e instanceof HttpException) {
         throw e;
@@ -59,7 +59,7 @@ export class PubSubService {
    */
   async unsubscribe(sessionMetadata: SessionMetadata, userClient: UserClient, dto: SubscribeDto) {
     try {
-      this.logger.debug('Unsubscribing from channels(s)');
+      this.logger.debug('Unsubscribing from channels(s)', sessionMetadata);
 
       const session = this.sessionProvider.getOrCreateUserSession(sessionMetadata, userClient);
       await Promise.all(dto.subscriptions.map((subDto) => session.unsubscribe(
@@ -67,7 +67,7 @@ export class PubSubService {
       )));
       this.analyticsService.sendChannelUnsubscribeEvent(sessionMetadata, userClient.getDatabaseId());
     } catch (e) {
-      this.logger.error('Unable to unsubscribe', e);
+      this.logger.error('Unable to unsubscribe', e, sessionMetadata);
 
       if (e instanceof HttpException) {
         throw e;
@@ -84,7 +84,7 @@ export class PubSubService {
    */
   async publish(clientMetadata: ClientMetadata, dto: PublishDto): Promise<PublishResponse> {
     try {
-      this.logger.debug('Publishing message.');
+      this.logger.debug('Publishing message.', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -100,7 +100,7 @@ export class PubSubService {
         affected,
       };
     } catch (e) {
-      this.logger.error('Unable to publish a message', e);
+      this.logger.error('Unable to publish a message', e, clientMetadata);
 
       if (e instanceof HttpException) {
         throw e;

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { join, parse } from 'path';
 import { isPlainObject } from 'lodash';
 import * as fs from 'fs-extra';
@@ -10,13 +10,14 @@ import {
 } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
 import { plainToClass } from 'class-transformer';
 import { winPathToNormalPath } from 'src/utils';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const MANIFEST_FILE = 'manifest.json';
 const SYS_MANIFEST_FILE = '_manifest.json';
 
 @Injectable()
 export class CustomTutorialManifestProvider {
-  private logger = new Logger('CustomTutorialManifestProvider');
+  constructor(protected logger: LoggerService) {}
 
   /**
    * Auto generate system manifest json (_manifest.json)

@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
 import { catchRedisConnectionError, getHostingProvider } from 'src/utils';
@@ -14,12 +14,12 @@ import {
   discoverClusterNodes, discoverSentinelMasterGroups, isCluster, isSentinel,
 } from 'src/modules/redis/utils';
 import { RedisClient } from 'src/modules/redis/client';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class DatabaseFactory {
-  private readonly logger = new Logger('DatabaseFactory');
-
   constructor(
+    private logger: LoggerService,
     private redisClientFactory: RedisClientFactory,
     private databaseInfoProvider: DatabaseInfoProvider,
     private caCertificateService: CaCertificateService,
@@ -130,7 +130,7 @@ export class DatabaseFactory {
 
       return model;
     } catch (error) {
-      this.logger.error('Failed to add oss cluster.', error);
+      this.logger.error('Failed to add oss cluster.', error, sessionMetadata);
       throw catchRedisConnectionError(error, database);
     }
   }
@@ -177,7 +177,7 @@ export class DatabaseFactory {
 
       return model;
     } catch (error) {
-      this.logger.error('Failed to create database sentinel model.', error);
+      this.logger.error('Failed to create database sentinel model.', error, sessionMetadata);
       throw catchRedisConnectionError(error, database);
     }
   }

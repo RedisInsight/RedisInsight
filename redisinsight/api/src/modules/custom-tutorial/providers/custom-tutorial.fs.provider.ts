@@ -1,5 +1,5 @@
 import {
-  BadRequestException, Injectable, InternalServerErrorException, Logger,
+  BadRequestException, Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { join } from 'path';
@@ -10,6 +10,7 @@ import * as AdmZip from 'adm-zip';
 import axios from 'axios';
 import { wrapHttpError } from 'src/common/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const PATH_CONFIG = config.get('dir_path');
 
@@ -22,7 +23,7 @@ const UPLOAD_FROM_REMOTE_ORIGINS_WHITELIST = [
 
 @Injectable()
 export class CustomTutorialFsProvider {
-  private logger = new Logger('CustomTutorialFsProvider');
+  constructor(protected logger: LoggerService) {}
 
   /**
    * Custom implementation of AdmZip.extractAllTo to ignore __MACOSX folder in the root of archive

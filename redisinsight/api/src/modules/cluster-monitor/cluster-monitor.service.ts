@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import {
-  BadRequestException, HttpException, Injectable, Logger,
+  BadRequestException, HttpException, Injectable,
 } from '@nestjs/common';
 import { catchAclError, convertRedisInfoReplyToObject } from 'src/utils';
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
@@ -10,6 +10,7 @@ import { ClusterDetails } from 'src/modules/cluster-monitor/models';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClientConnectionType } from 'src/modules/redis/client';
+import LoggerService from '../logger/logger.service';
 
 export enum ClusterInfoStrategies {
   CLUSTER_NODES = 'CLUSTER_NODES',
@@ -18,11 +19,10 @@ export enum ClusterInfoStrategies {
 
 @Injectable()
 export class ClusterMonitorService {
-  private logger = new Logger('ClusterMonitorService');
-
   private infoStrategies: Map<string, IClusterInfo> = new Map();
 
   constructor(
+    private logger: LoggerService,
     private readonly databaseClientFactory: DatabaseClientFactory,
   ) {
     this.infoStrategies.set(ClusterInfoStrategies.CLUSTER_NODES, new ClusterNodesInfoStrategy());
@@ -50,7 +50,7 @@ export class ClusterMonitorService {
 
       return await strategy.getClusterDetails(client);
     } catch (e) {
-      this.logger.error('Unable to get cluster details', e);
+      this.logger.error('Unable to get cluster details', e, clientMetadata);
 
       if (e instanceof HttpException) {
         throw e;

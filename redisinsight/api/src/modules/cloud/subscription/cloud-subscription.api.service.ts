@@ -1,5 +1,5 @@
 import { filter, find } from 'lodash';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { wrapHttpError } from 'src/common/utils';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
@@ -12,12 +12,12 @@ import { CloudSessionService } from '../session/cloud-session.service';
 import { parseCloudSubscriptionsCloudRegionsApiResponse } from './utils';
 import { CloudSubscriptionApiProvider } from './providers/cloud-subscription.api.provider';
 import { CloudSubscriptionPlanResponse } from './dto';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class CloudSubscriptionApiService {
-  private logger = new Logger('CloudSubscriptionApiService');
-
   constructor(
+    private logger: LoggerService,
     private readonly api: CloudSubscriptionApiProvider,
     private readonly sessionService: CloudSessionService,
     private readonly cloudCapiKeyService: CloudCapiKeyService,

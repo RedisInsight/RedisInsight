@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { sum } from 'lodash';
 import { plainToClass } from 'class-transformer';
 import { DatabaseRecommendationRepository }
@@ -13,12 +13,12 @@ import { Recommendation } from 'src/modules/database-analysis/models/recommendat
 import { ModifyDatabaseRecommendationDto, DeleteDatabaseRecommendationResponse } from './dto';
 import { DatabaseRecommendationAnalytics } from './database-recommendation.analytics';
 import { DatabaseService } from '../database/database.service';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class DatabaseRecommendationService {
-  private logger = new Logger('DatabaseRecommendationService');
-
   constructor(
+    private logger: LoggerService,
     private readonly databaseRecommendationRepository: DatabaseRecommendationRepository,
     private readonly scanner: RecommendationScanner,
     private readonly databaseService: DatabaseService,
@@ -45,7 +45,7 @@ export class DatabaseRecommendationService {
    * @param clientMetadata
    */
   async list(clientMetadata: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
-    this.logger.debug('Getting database recommendations');
+    this.logger.debug('Getting database recommendations', clientMetadata);
     const db = clientMetadata.db
       ?? (await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId))?.db
       ?? 0;
@@ -93,7 +93,7 @@ export class DatabaseRecommendationService {
 
       return null;
     } catch (e) {
-      this.logger.warn('Unable to check recommendation', e);
+      this.logger.warn('Unable to check recommendation', e, clientMetadata);
       return null;
     }
   }
@@ -118,7 +118,7 @@ export class DatabaseRecommendationService {
     id: string,
     dto: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
-    this.logger.debug(`Update database extended recommendations id:${id}`);
+    this.logger.debug(`Update database extended recommendations id:${id}`, clientMetadata);
     return this.databaseRecommendationRepository.update(clientMetadata, id, dto);
   }
 
@@ -137,7 +137,7 @@ export class DatabaseRecommendationService {
    * @param id
    */
   async delete(clientMetadata: ClientMetadata, id: string): Promise<void> {
-    this.logger.debug(`Deleting recommendation: ${id}`);
+    this.logger.debug(`Deleting recommendation: ${id}`, clientMetadata);
     await this.databaseRecommendationRepository.delete(clientMetadata, id);
   }
 
@@ -148,7 +148,7 @@ export class DatabaseRecommendationService {
    * @param ids
    */
   async bulkDelete(clientMetadata: ClientMetadata, ids: string[]): Promise<DeleteDatabaseRecommendationResponse> {
-    this.logger.debug(`Deleting many recommendations: ${ids}`);
+    this.logger.debug(`Deleting many recommendations: ${ids}`, clientMetadata);
 
     return {
       affected: sum(await Promise.all(ids.map(async (id) => {

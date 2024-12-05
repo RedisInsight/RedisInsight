@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  Logger,
   NestMiddleware,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,12 +8,12 @@ import { NextFunction, Request, Response } from 'express';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { sessionMetadataFromRequest } from 'src/common/decorators';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RedisConnectionMiddleware implements NestMiddleware {
-  private logger = new Logger('RedisConnectionMiddleware');
-
   constructor(
+    protected logger: LoggerService,
     private databaseService: DatabaseService,
   ) {}
 

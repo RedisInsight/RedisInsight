@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/database-analysis.entity';
 import { isUndefined } from 'lodash';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,13 +10,12 @@ import { RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { classToClass } from 'src/utils';
 import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const DATABASE_ANALYSIS_CONFIG = config.get('database_analysis');
 
 @Injectable()
 export class DatabaseAnalysisProvider {
-  private readonly logger = new Logger('DatabaseAnalysisProvider');
-
   private readonly encryptedFields = [
     'totalKeys',
     'totalMemory',
@@ -31,6 +30,7 @@ export class DatabaseAnalysisProvider {
   ];
 
   constructor(
+    private logger: LoggerService,
     @InjectRepository(DatabaseAnalysisEntity)
     private readonly repository: Repository<DatabaseAnalysisEntity>,
     private readonly encryptionService: EncryptionService,

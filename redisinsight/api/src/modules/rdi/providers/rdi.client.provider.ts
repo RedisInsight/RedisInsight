@@ -1,16 +1,16 @@
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Rdi, RdiClientMetadata } from 'src/modules/rdi/models';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { RdiClientMetadata } from 'src/modules/rdi/models';
 import { RdiClientStorage } from 'src/modules/rdi/providers/rdi.client.storage';
 import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { RdiRepository } from 'src/modules/rdi/repository/rdi.repository';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RdiClientProvider {
-  private logger: Logger = new Logger('RdiClientProvider');
-
   constructor(
+    private logger: LoggerService,
     private readonly repository: RdiRepository,
     private readonly rdiClientStorage: RdiClientStorage,
     private readonly rdiClientFactory: RdiClientFactory,
@@ -33,7 +33,7 @@ export class RdiClientProvider {
     const rdi = await this.repository.get(clientMetadata.id);
 
     if (!rdi) {
-      this.logger.error(`RDI with ${clientMetadata.id} was not Found`);
+      this.logger.error(`RDI with ${clientMetadata.id} was not Found`, clientMetadata);
       throw new NotFoundException(ERROR_MESSAGES.INVALID_RDI_INSTANCE_ID);
     }
     const rdiClient = await this.rdiClientFactory.createClient(clientMetadata, rdi);

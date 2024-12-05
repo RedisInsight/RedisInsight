@@ -38,10 +38,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
     options.httpsOptions = await createHttpOptions(serverConfig);
   }
 
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-    options,
-  );
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
 
   const logger = await app.resolve<LoggerService>(LoggerService);
   app.useLogger(logger);

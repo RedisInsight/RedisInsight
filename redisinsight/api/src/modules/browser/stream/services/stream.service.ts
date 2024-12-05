@@ -2,7 +2,6 @@ import { chunk, flatMap, map } from 'lodash';
 import {
   BadRequestException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { catchAclError, catchMultiTransactionError } from 'src/utils';
@@ -30,12 +29,14 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { RedisClient } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 import { convertArrayReplyToObject } from 'src/modules/redis/utils';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class StreamService {
-  private logger = new Logger('StreamService');
-
-  constructor(private databaseClientFactory: DatabaseClientFactory) {}
+  constructor(
+    private logger: LoggerService,
+    private databaseClientFactory: DatabaseClientFactory,
+  ) {}
 
   /**
    * Get stream entries
@@ -50,7 +51,7 @@ export class StreamService {
     dto: GetStreamEntriesDto,
   ): Promise<GetStreamEntriesResponse> {
     try {
-      this.logger.debug('Getting entries of the Stream data type stored at key.');
+      this.logger.debug('Getting entries of the Stream data type stored at key.', clientMetadata);
       const { keyName, sortOrder } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -68,7 +69,7 @@ export class StreamService {
         entries = await this.getRevRange(client, dto);
       }
 
-      this.logger.debug('Succeed to get entries from the stream.');
+      this.logger.debug('Succeed to get entries from the stream.', clientMetadata);
 
       return plainToClass(GetStreamEntriesResponse, {
         keyName,
@@ -79,7 +80,7 @@ export class StreamService {
         entries,
       });
     } catch (error) {
-      this.logger.error('Failed to get entries from the stream.', error);
+      this.logger.error('Failed to get entries from the stream.', error, clientMetadata);
 
       if (error instanceof NotFoundException) {
         throw error;
@@ -155,7 +156,7 @@ export class StreamService {
     dto: CreateStreamDto,
   ): Promise<void> {
     try {
-      this.logger.debug('Creating stream data type.');
+      this.logger.debug('Creating stream data type.', clientMetadata);
       const { keyName, entries } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -184,10 +185,10 @@ export class StreamService {
       const transactionResults = await client.sendPipeline(toolCommands);
       catchMultiTransactionError(transactionResults);
 
-      this.logger.debug('Succeed to create stream.');
+      this.logger.debug('Succeed to create stream.', clientMetadata);
       return undefined;
     } catch (error) {
-      this.logger.error('Failed to create stream.', error);
+      this.logger.error('Failed to create stream.', error, clientMetadata);
 
       if (error instanceof NotFoundException) {
         throw error;
@@ -214,7 +215,7 @@ export class StreamService {
     dto: AddStreamEntriesDto,
   ): Promise<AddStreamEntriesResponse> {
     try {
-      this.logger.debug('Adding entries to stream.');
+      this.logger.debug('Adding entries to stream.', clientMetadata);
       const { keyName, entries } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -239,13 +240,13 @@ export class StreamService {
       const transactionResults = await client.sendPipeline(toolCommands);
       catchMultiTransactionError(transactionResults);
 
-      this.logger.debug('Succeed to add entries to the stream.');
+      this.logger.debug('Succeed to add entries to the stream.', clientMetadata);
       return plainToClass(AddStreamEntriesResponse, {
         keyName,
         entries: transactionResults.map((entryResult) => entryResult[1].toString()),
       });
     } catch (error) {
-      this.logger.error('Failed to add entries to the stream.', error);
+      this.logger.error('Failed to add entries to the stream.', error, clientMetadata);
 
       if (error instanceof NotFoundException) {
         throw error;
@@ -272,7 +273,7 @@ export class StreamService {
     dto: DeleteStreamEntriesDto,
   ): Promise<DeleteStreamEntriesResponse> {
     try {
-      this.logger.debug('Deleting entries from the Stream data type.');
+      this.logger.debug('Deleting entries from the Stream data type.', clientMetadata);
       const { keyName, entries } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -284,10 +285,10 @@ export class StreamService {
         ...entries,
       ]) as number;
 
-      this.logger.debug('Succeed to delete entries from the Stream data type.');
+      this.logger.debug('Succeed to delete entries from the Stream data type.', clientMetadata);
       return { affected: result };
     } catch (error) {
-      this.logger.error('Failed to delete entries from the Stream data type.', error);
+      this.logger.error('Failed to delete entries from the Stream data type.', error, clientMetadata);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }

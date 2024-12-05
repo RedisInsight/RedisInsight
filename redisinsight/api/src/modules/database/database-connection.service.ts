@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
@@ -10,12 +10,12 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class DatabaseConnectionService {
-  private logger = new Logger('DatabaseConnectionService');
-
   constructor(
+    private logger: LoggerService,
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly databaseInfoProvider: DatabaseInfoProvider,
     private readonly repository: DatabaseRepository,
@@ -83,7 +83,7 @@ export class DatabaseConnectionService {
 
     this.collectClientInfo(clientMetadata, client, generalInfo?.version);
 
-    this.logger.debug(`Succeed to connect to database ${clientMetadata.databaseId}`);
+    this.logger.debug(`Succeed to connect to database ${clientMetadata.databaseId}`, clientMetadata);
   }
 
   private async collectClientInfo(clientMetadata: ClientMetadata, client: RedisClient, version?: string) {

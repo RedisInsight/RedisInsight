@@ -1,15 +1,16 @@
 import { io, Socket } from 'socket.io-client';
 import config, { Config } from 'src/utils/config';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AiQueryAuthData } from 'src/modules/ai/query/models/ai-query.auth-data';
 import { AiQueryWsEvents } from 'src/modules/ai/query/models';
 import { wrapAiQueryError } from 'src/modules/ai/query/exceptions';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const aiConfig = config.get('ai') as Config['ai'];
 
 @Injectable()
 export class AiQueryProvider {
-  private readonly logger = new Logger('AiQueryProvider');
+  constructor(private logger: LoggerService){}
 
   async getSocket(auth: AiQueryAuthData): Promise<Socket> {
     try {

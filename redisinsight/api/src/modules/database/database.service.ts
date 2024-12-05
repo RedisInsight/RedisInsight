@@ -25,11 +25,10 @@ import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class DatabaseService {
-  private logger = new Logger('DatabaseService');
-
   private readonly exportSecurityFields: string[] = [
     'password',
     'clientCert.key',
@@ -61,6 +60,7 @@ export class DatabaseService {
   ];
 
   constructor(
+    private logger: LoggerService,
     private repository: DatabaseRepository,
     private redisClientStorage: RedisClientStorage,
     private redisClientFactory: RedisClientFactory,
@@ -96,7 +96,7 @@ export class DatabaseService {
    * @param id
    */
   async exists(sessionMetadata: SessionMetadata, id: string): Promise<boolean> {
-    this.logger.debug(`Checking if database with ${id} exists.`);
+    this.logger.debug(`Checking if database with ${id} exists.`, sessionMetadata);
     return this.repository.exists(sessionMetadata, id);
   }
 
@@ -107,10 +107,10 @@ export class DatabaseService {
    */
   async list(sessionMetadata: SessionMetadata): Promise<Database[]> {
     try {
-      this.logger.debug('Getting databases list');
+      this.logger.debug('Getting databases list', sessionMetadata);
       return await this.repository.list(sessionMetadata);
     } catch (e) {
-      this.logger.error('Failed to get database instance list.', e);
+      this.logger.error('Failed to get database instance list.', e, sessionMetadata);
       throw new InternalServerErrorException();
     }
   }
@@ -127,17 +127,17 @@ export class DatabaseService {
     ignoreEncryptionErrors = false,
     omitFields?: string[],
   ): Promise<Database> {
-    this.logger.debug(`Getting database ${id}`);
+    this.logger.debug(`Getting database ${id}`, sessionMetadata);
 
     if (!id) {
-      this.logger.error('Database id was not provided');
+      this.logger.error('Database id was not provided', sessionMetadata);
       throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
     }
 
     const model = await this.repository.get(sessionMetadata, id, ignoreEncryptionErrors, omitFields);
 
     if (!model) {
-      this.logger.error(`Database with ${id} was not Found`);
+      this.logger.error(`Database with ${id} was not Found`, sessionMetadata);
       throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
     }
 
@@ -158,7 +158,7 @@ export class DatabaseService {
     options: IRedisConnectionOptions = {},
   ): Promise<Database> {
     try {
-      this.logger.debug('Creating new database.');
+      this.logger.debug('Creating new database.', sessionMetadata);
 
       const database = await this.repository.create(
         sessionMetadata,
@@ -192,7 +192,7 @@ export class DatabaseService {
 
       return database;
     } catch (error) {
-      this.logger.error('Failed to add database.', error);
+      this.logger.error('Failed to add database.', error, sessionMetadata);
 
       const exception = getRedisConnectionException(error, dto);
 
@@ -215,7 +215,7 @@ export class DatabaseService {
     dto: UpdateDatabaseDto,
     manualUpdate: boolean = true, // todo: remove manualUpdate flag logic
   ): Promise<Database> {
-    this.logger.debug(`Updating database: ${id}`);
+    this.logger.debug(`Updating database: ${id}`, sessionMetadata);
     const oldDatabase = await this.get(sessionMetadata, id, true);
 
     let database: Database;
@@ -244,7 +244,7 @@ export class DatabaseService {
 
       return database;
     } catch (error) {
-      this.logger.error(`Failed to update database instance ${id}`, error);
+      this.logger.error(`Failed to update database instance ${id}`, error, sessionMetadata);
       throw catchRedisConnectionError(error, database);
     }
   }
@@ -263,11 +263,11 @@ export class DatabaseService {
     let database: Database;
 
     if (id) {
-      this.logger.debug('Testing existing database connection');
+      this.logger.debug('Testing existing database connection', sessionMetadata);
 
       database = await this.merge(await this.get(sessionMetadata, id, false), dto);
     } else {
-      this.logger.debug('Testing new database connection');
+      this.logger.debug('Testing new database connection', sessionMetadata);
       database = classToClass(Database, dto);
     }
 
@@ -281,7 +281,7 @@ export class DatabaseService {
         return;
       }
 
-      this.logger.error('Connection test failed', error);
+      this.logger.error('Connection test failed', error, sessionMetadata);
       throw catchRedisConnectionError(error, database);
     }
   }
@@ -293,7 +293,7 @@ export class DatabaseService {
    * @param dto
    */
   public async clone(sessionMetadata: SessionMetadata, id: string, dto: UpdateDatabaseDto): Promise<Database> {
-    this.logger.debug('Clone existing database');
+    this.logger.debug('Clone existing database', sessionMetadata);
     const database = await this.merge(
       await this.get(sessionMetadata, id, false, ['id', 'sshOptions.id']),
       dto,
@@ -323,18 +323,18 @@ export class DatabaseService {
    * @param id
    */
   async delete(sessionMetadata: SessionMetadata, id: string): Promise<void> {
-    this.logger.debug(`Deleting database: ${id}`);
+    this.logger.debug(`Deleting database: ${id}`, sessionMetadata);
     const database = await this.get(sessionMetadata, id, true);
     try {
       await this.repository.delete(sessionMetadata, id);
       // todo: rethink
       await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
-      this.logger.debug('Succeed to delete database instance.');
+      this.logger.debug('Succeed to delete database instance.', sessionMetadata);
 
       this.analytics.sendInstanceDeletedEvent(sessionMetadata, database);
       this.eventEmitter.emit(AppRedisInstanceEvents.Deleted, id);
     } catch (error) {
-      this.logger.error(`Failed to delete database: ${id}`, error);
+      this.logger.error(`Failed to delete database: ${id}`, error, sessionMetadata);
       throw new InternalServerErrorException();
     }
   }
@@ -346,7 +346,7 @@ export class DatabaseService {
    * @param ids
    */
   async bulkDelete(sessionMetadata: SessionMetadata, ids: string[]): Promise<DeleteDatabasesResponse> {
-    this.logger.debug(`Deleting many database: ${ids}`);
+    this.logger.debug(`Deleting many database: ${ids}`, sessionMetadata);
 
     return {
       affected: sum(await Promise.all(ids.map(async (id) => {
@@ -370,10 +370,10 @@ export class DatabaseService {
   async export(sessionMetadata: SessionMetadata, ids: string[], withSecrets = false): Promise<ExportDatabase[]> {
     const paths = !withSecrets ? this.exportSecurityFields : [];
 
-    this.logger.debug(`Exporting many database: ${ids}`);
+    this.logger.debug(`Exporting many database: ${ids}`, sessionMetadata);
 
     if (!ids.length) {
-      this.logger.error('Database ids were not provided');
+      this.logger.error('Database ids were not provided', sessionMetadata);
       throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
     }
 

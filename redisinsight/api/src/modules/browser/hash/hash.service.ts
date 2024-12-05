@@ -1,5 +1,5 @@
 import {
-  BadRequestException, Injectable, Logger, NotFoundException,
+  BadRequestException, Injectable, NotFoundException,
 } from '@nestjs/common';
 import { chunk, flatMap, isNull } from 'lodash';
 import {
@@ -27,14 +27,14 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { RedisClient, RedisClientCommand, RedisFeature } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 import { RedisString } from 'src/common/constants';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan') as Config['redis_scan'];
 
 @Injectable()
 export class HashService {
-  private logger = new Logger('HashService');
-
   constructor(
+    private logger: LoggerService,
     private databaseClientFactory: DatabaseClientFactory,
     private recommendationService: DatabaseRecommendationService,
   ) {}
@@ -55,7 +55,7 @@ export class HashService {
     dto: CreateHashWithExpireDto,
   ): Promise<void> {
     try {
-      this.logger.debug('Creating Hash data type.');
+      this.logger.debug('Creating Hash data type.', clientMetadata);
       const { keyName, fields, expire } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -79,9 +79,9 @@ export class HashService {
       // todo: rethink
       catchMultiTransactionError(transactionResults);
 
-      this.logger.debug('Succeed to create Hash data type.');
+      this.logger.debug('Succeed to create Hash data type.', clientMetadata);
     } catch (error) {
-      this.logger.error('Failed to create Hash data type.', error);
+      this.logger.error('Failed to create Hash data type.', error, clientMetadata);
       throw catchAclError(error);
     }
   }
@@ -91,7 +91,7 @@ export class HashService {
     dto: GetHashFieldsDto,
   ): Promise<GetHashFieldsResponse> {
     try {
-      this.logger.debug('Getting fields of the Hash data type stored at key.');
+      this.logger.debug('Getting fields of the Hash data type stored at key.', clientMetadata);
       const { keyName, cursor, match } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       let result: GetHashFieldsResponse = {
@@ -103,7 +103,7 @@ export class HashService {
 
       result.total = await client.sendCommand([BrowserToolHashCommands.HLen, keyName]) as number;
       if (!result.total) {
-        this.logger.error(`Failed to get fields of the Hash data type. Not Found key: ${keyName}.`);
+        this.logger.error(`Failed to get fields of the Hash data type. Not Found key: ${keyName}.`, clientMetadata);
         return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
       }
       if (match && !isRedisGlob(match)) {
@@ -133,7 +133,7 @@ export class HashService {
           });
         }
       } catch (e) {
-        this.logger.warn('Unable to get ttl for hash fields');
+        this.logger.warn('Unable to get ttl for hash fields', e, clientMetadata);
         // ignore error
       }
 
@@ -143,10 +143,10 @@ export class HashService {
         { total: result.total, keyName },
       );
 
-      this.logger.debug('Succeed to get fields of the Hash data type.');
+      this.logger.debug('Succeed to get fields of the Hash data type.', clientMetadata);
       return plainToClass(GetHashFieldsResponse, result);
     } catch (error) {
-      this.logger.error('Failed to get fields of the Hash data type.', error);
+      this.logger.error('Failed to get fields of the Hash data type.', error, clientMetadata);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -159,7 +159,7 @@ export class HashService {
     dto: AddFieldsToHashDto,
   ): Promise<void> {
     try {
-      this.logger.debug('Adding fields to the Hash data type.');
+      this.logger.debug('Adding fields to the Hash data type.', clientMetadata);
       const { keyName, fields } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -179,9 +179,9 @@ export class HashService {
       // todo: rethink
       catchMultiTransactionError(transactionResults);
 
-      this.logger.debug('Succeed to add fields to Hash data type.');
+      this.logger.debug('Succeed to add fields to Hash data type.', clientMetadata);
     } catch (error) {
-      this.logger.error('Failed to add fields to Hash data type.', error);
+      this.logger.error('Failed to add fields to Hash data type.', error, clientMetadata);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -194,7 +194,7 @@ export class HashService {
     dto: UpdateHashFieldsTtlDto,
   ): Promise<void> {
     try {
-      this.logger.debug('Updating hash fields ttl.');
+      this.logger.debug('Updating hash fields ttl.', clientMetadata);
       const { keyName, fields } = dto;
 
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
@@ -217,9 +217,9 @@ export class HashService {
         catchMultiTransactionError(transactionResults);
       }
 
-      this.logger.debug('Successfully updated hash fields ttl');
+      this.logger.debug('Successfully updated hash fields ttl', clientMetadata);
     } catch (error) {
-      this.logger.error('Failed to update hash fields ttl.', error);
+      this.logger.error('Failed to update hash fields ttl.', error, clientMetadata);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -232,7 +232,7 @@ export class HashService {
     dto: DeleteFieldsFromHashDto,
   ): Promise<DeleteFieldsFromHashResponse> {
     try {
-      this.logger.debug('Deleting fields from the Hash data type.');
+      this.logger.debug('Deleting fields from the Hash data type.', clientMetadata);
       const { keyName, fields } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -240,10 +240,10 @@ export class HashService {
 
       const result = await client.sendCommand([BrowserToolHashCommands.HDel, keyName, ...fields]) as number;
 
-      this.logger.debug('Succeed to delete fields from the Hash data type.');
+      this.logger.debug('Succeed to delete fields from the Hash data type.', clientMetadata);
       return { affected: result };
     } catch (error) {
-      this.logger.error('Failed to delete fields from the Hash data type.', error);
+      this.logger.error('Failed to delete fields from the Hash data type.', error, clientMetadata);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }

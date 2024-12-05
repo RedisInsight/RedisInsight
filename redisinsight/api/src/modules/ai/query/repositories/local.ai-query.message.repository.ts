@@ -9,16 +9,15 @@ import { filter, isNull } from 'lodash';
 import { classToClass, Config } from 'src/utils';
 import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import config from 'src/utils/config';
-import { Logger } from '@nestjs/common';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const aiConfig = config.get('ai') as Config['ai'];
 
 export class LocalAiQueryMessageRepository extends AiQueryMessageRepository {
-  private logger = new Logger('LocalAiQueryMessageRepository');
-
   private readonly modelEncryptor: ModelEncryptor;
 
   constructor(
+    protected logger: LoggerService,
     @InjectRepository(AiQueryMessageEntity)
     private readonly repository: Repository<AiQueryMessageEntity>,
     private readonly encryptionService: EncryptionService,
@@ -71,7 +70,7 @@ export class LocalAiQueryMessageRepository extends AiQueryMessageRepository {
       .map((entity) => classToClass(AiQueryMessage, entity));
   }
 
-  async createMany(_sessionMetadata: SessionMetadata, messages: AiQueryMessage[]): Promise<void> {
+  async createMany(sessionMetadata: SessionMetadata, messages: AiQueryMessage[]): Promise<void> {
     const entities = await Promise.all(messages.map(async (message) => {
       const entity = classToClass(AiQueryMessageEntity, message);
 
@@ -84,7 +83,7 @@ export class LocalAiQueryMessageRepository extends AiQueryMessageRepository {
     try {
       await this.cleanupDatabaseHistory(entities[0].databaseId, entities[0].accountId);
     } catch (e) {
-      this.logger.error('Error when trying to cleanup history after insert', e);
+      this.logger.error('Error when trying to cleanup history after insert', e, sessionMetadata);
     }
   }
 

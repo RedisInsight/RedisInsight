@@ -1,5 +1,5 @@
 import {
-  Injectable, Logger, NotImplementedException, OnApplicationBootstrap,
+  Injectable, NotImplementedException, OnApplicationBootstrap,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { merge } from 'lodash';
@@ -14,14 +14,14 @@ import { LocalDatabaseRepository } from 'src/modules/database/repositories/local
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import config from 'src/utils/config';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
 
 @Injectable()
 export class StackDatabasesRepository extends LocalDatabaseRepository implements OnApplicationBootstrap {
-  protected logger = new Logger('StackDatabasesRepository');
-
   constructor(
+    private logger: LoggerService,
     @InjectRepository(DatabaseEntity)
     protected readonly repository: Repository<DatabaseEntity>,
     @InjectRepository(SshOptionsEntity)
@@ -116,9 +116,9 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
           false,
         );
       }
-      this.logger.debug(`Succeed to set predefined database ${id}`);
+      this.logger.debug(`Succeed to set predefined database ${id}`, sessionMetadata);
     } catch (error) {
-      this.logger.error('Failed to set predefined database', error);
+      this.logger.error('Failed to set predefined database', error, sessionMetadata);
     }
   }
 }

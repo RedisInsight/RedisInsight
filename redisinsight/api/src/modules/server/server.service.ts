@@ -1,13 +1,12 @@
-import {
-  Injectable, Logger,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AppType, BuildType, PackageType } from 'src/modules/server/models/server';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
 import { SessionMetadata } from 'src/common/models';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export abstract class ServerService {
-  protected logger = new Logger(this.constructor.name);
+  constructor(protected logger: LoggerService) {}
 
   protected sessionId: number = new Date().getTime();
 

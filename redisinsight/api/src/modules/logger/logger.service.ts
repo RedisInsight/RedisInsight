@@ -9,7 +9,7 @@ export class LoggerService implements NestLoggerService {
 
   private readonly nestLogger: ReturnType<typeof WinstonModule.createLogger>;
 
-  static contextsToIgnore = [
+  static startupContexts = [
     'InstanceLoader',
     'RoutesResolver',
     'RouterExplorer',
@@ -22,7 +22,6 @@ export class LoggerService implements NestLoggerService {
     private readonly disableStartupLogs = false,
     context?: string,
   ) {
-    console.log('logger options...', loggerOptions);
     this.nestLogger = WinstonModule.createLogger(loggerOptions);
     this.context = context;
   }
@@ -31,11 +30,22 @@ export class LoggerService implements NestLoggerService {
     this.context = context;
   }
 
+  private isException(error?: unknown) {
+    return (
+      error instanceof Error ||
+      ((error as Error)?.stack && (error as Error)?.message)
+    );
+  }
+
   formatMeta(contextOrMetaArgs: ContextOrMetaArgs) {
     const argsCopy = cloneDeep(contextOrMetaArgs);
     let context: string | null = null;
     let meta: object | null = null;
+    let error: Error | null = null;
 
+    if (argsCopy[0] instanceof Error) {
+      error = argsCopy.shift() as Error;
+    }
     if (typeof argsCopy[0] === 'string') {
       context = argsCopy.shift() as string;
     }
@@ -44,12 +54,20 @@ export class LoggerService implements NestLoggerService {
     }
 
     const localContext = context || this.context;
-    if (!meta) {
+    if (!meta && !error) {
       return localContext;
     }
     return {
       context: localContext,
       meta,
+      ...(error
+        ? {
+            error: {
+              stack: error.stack,
+              message: error.message,
+            },
+          }
+        : {}),
     };
   }
 
@@ -59,8 +77,8 @@ export class LoggerService implements NestLoggerService {
 
   log(message: unknown, context?: string, meta?: object) {
     if (
-      !this.disableStartupLogs
-      || !LoggerService.contextsToIgnore.includes(context)
+      !this.disableStartupLogs ||
+      !LoggerService.startupContexts.includes(context)
     ) {
       this.nestLogger.log(message, this.formatMeta([context, meta]));
     }
@@ -70,20 +88,25 @@ export class LoggerService implements NestLoggerService {
     this.nestLogger.log(message, this.formatMeta(contextOrMetaArgs));
   }
 
-  error(
-    message: unknown,
-    stack?: string,
-    ...contextOrMetaArgs: ContextOrMetaArgs
-  ) {
-    this.nestLogger.error(message, stack, this.formatMeta(contextOrMetaArgs));
+  error(message: unknown, ...contextOrMetaArgs: ContextOrMetaArgs) {
+    console.log('error type...', contextOrMetaArgs[0] instanceof Error);
+    this.nestLogger.error(
+      message,
+      this.isException(contextOrMetaArgs[0])
+        ? (contextOrMetaArgs[0] as Error).stack
+        : undefined,
+      this.formatMeta(contextOrMetaArgs),
+    );
   }
 
-  fatal(
-    message: unknown,
-    stack?: string,
-    ...contextOrMetaArgs: ContextOrMetaArgs
-  ) {
-    this.nestLogger.fatal(message, stack, this.formatMeta(contextOrMetaArgs));
+  fatal(message: unknown, ...contextOrMetaArgs: ContextOrMetaArgs) {
+    this.nestLogger.fatal(
+      message,
+      this.isException(contextOrMetaArgs[0])
+        ? (contextOrMetaArgs[0] as Error).stack
+        : undefined,
+      this.formatMeta(contextOrMetaArgs),
+    );
   }
 
   verbose(message: unknown, ...contextOrMetaArgs: ContextOrMetaArgs) {

@@ -1,4 +1,4 @@
-import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { RedisObserver } from 'src/modules/profiler/models/redis.observer';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { withTimeout } from 'src/utils/promise-with-timeout';
@@ -8,16 +8,16 @@ import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/model
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
 import { RedisClientLib } from 'src/modules/redis/redis.client.factory';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const serverConfig = config.get('server') as Config['server'];
 
 @Injectable()
 export class RedisObserverProvider {
-  private logger = new Logger('RedisObserverProvider');
-
   private redisObservers: Map<string, RedisObserver> = new Map();
 
   constructor(
+    private logger: LoggerService,
     private databaseClientFactory: DatabaseClientFactory,
   ) {}
 
@@ -27,13 +27,13 @@ export class RedisObserverProvider {
    * @param instanceId
    */
   async getOrCreateObserver(sessionMetadata: SessionMetadata, instanceId: string): Promise<RedisObserver> {
-    this.logger.debug('Getting redis observer...');
+    this.logger.debug('Getting redis observer...', sessionMetadata);
 
     let redisObserver = this.redisObservers.get(instanceId);
 
     try {
       if (!redisObserver) {
-        this.logger.debug('Creating new RedisObserver');
+        this.logger.debug('Creating new RedisObserver', sessionMetadata);
         redisObserver = new RedisObserver();
         this.redisObservers.set(instanceId, redisObserver);
 
@@ -47,12 +47,12 @@ export class RedisObserverProvider {
       } else {
         switch (redisObserver.status) {
           case RedisObserverStatus.Ready:
-            this.logger.debug(`Using existing RedisObserver with status: ${redisObserver.status}`);
+            this.logger.debug(`Using existing RedisObserver with status: ${redisObserver.status}`, sessionMetadata);
             return redisObserver;
           case RedisObserverStatus.Empty:
           case RedisObserverStatus.End:
           case RedisObserverStatus.Error:
-            this.logger.debug(`Trying to reconnect. Current status: ${redisObserver.status}`);
+            this.logger.debug(`Trying to reconnect. Current status: ${redisObserver.status}`, sessionMetadata);
             // todo: add multiuser support
             // try to reconnect
             redisObserver.init(this.getRedisClientFn({
@@ -66,7 +66,7 @@ export class RedisObserverProvider {
           case RedisObserverStatus.Connected:
           default:
             // wait until connect or error
-            this.logger.debug(`Waiting for ready. Current status: ${redisObserver.status}`);
+            this.logger.debug(`Waiting for ready. Current status: ${redisObserver.status}`, sessionMetadata);
         }
       }
 
@@ -79,7 +79,7 @@ export class RedisObserverProvider {
         });
       });
     } catch (error) {
-      this.logger.error(`Failed to get monitor observer. ${error.message}.`, JSON.stringify(error));
+      this.logger.error(`Failed to get monitor observer. ${error.message}.`, error, sessionMetadata);
       throw error;
     }
   }

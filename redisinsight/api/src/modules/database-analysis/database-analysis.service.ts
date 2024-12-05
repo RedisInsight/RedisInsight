@@ -1,4 +1,4 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { isNull, flatten, concat } from 'lodash';
 import { RecommendationService } from 'src/modules/recommendation/recommendation.service';
 import { catchAclError } from 'src/utils';
@@ -13,12 +13,12 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class DatabaseAnalysisService {
-  private logger = new Logger('DatabaseAnalysisService');
-
   constructor(
+    private logger: LoggerService,
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly recommendationService: RecommendationService,
     private readonly analyzer: DatabaseAnalyzer,
@@ -96,7 +96,7 @@ export class DatabaseAnalysisService {
       return this.databaseAnalysisProvider.create(analysis);
     } catch (e) {
       client?.disconnect();
-      this.logger.error('Unable to analyze database', e);
+      this.logger.error('Unable to analyze database', e, clientMetadata);
 
       if (e instanceof HttpException) {
         throw e;

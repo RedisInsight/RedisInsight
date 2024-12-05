@@ -12,7 +12,6 @@ import { FeatureService } from 'src/modules/feature/feature.service';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { SessionMetadata } from 'src/common/models';
-import { LoggerService } from 'src/modules/logger/logger.service';
 
 @ApiTags('Info')
 @Controller('features')
@@ -21,10 +20,7 @@ export class FeatureController {
   constructor(
     private featureService: FeatureService,
     private featuresConfigService: FeaturesConfigService,
-    private logger: LoggerService,
-  ) {
-    // this.logger.setContext('FeatureController');
-  }
+  ) {}
 
   @Get('')
   @ApiEndpoint({
@@ -40,7 +36,6 @@ export class FeatureController {
   async list(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<any> {
-    // this.logger.log('custom logger in features controller!', { foo: 'bar' });
     return this.featureService.list(sessionMetadata);
   }
 

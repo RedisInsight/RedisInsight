@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RedisConnectionStrategy } from 'src/modules/redis/connection/redis.connection.strategy';
 import { IoredisRedisConnectionStrategy } from 'src/modules/redis/connection/ioredis.redis.connection.strategy';
 import { FeatureService } from 'src/modules/feature/feature.service';
@@ -6,14 +6,14 @@ import { NodeRedisConnectionStrategy } from 'src/modules/redis/connection/node.r
 import { KnownFeatures } from 'src/modules/feature/constants';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class LocalRedisClientFactory extends RedisClientFactory {
-  protected logger = new Logger('LocalRedisClientFactory');
-
   protected defaultConnectionStrategy: RedisConnectionStrategy;
 
   constructor(
+    protected logger: LoggerService,
     protected readonly ioredisConnectionStrategy: IoredisRedisConnectionStrategy,
     protected readonly nodeRedisConnectionStrategy: NodeRedisConnectionStrategy,
     private readonly featureService: FeatureService,

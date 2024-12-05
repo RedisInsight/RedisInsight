@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
 import {
@@ -28,11 +28,11 @@ import {
 } from 'src/common/constants';
 import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class RecommendationProvider {
-  private logger = new Logger('RecommendationProvider');
-
+  constructor(protected logger: LoggerService) {}
   /**
    * Check lua script recommendation
    * @param redisClient

@@ -1,16 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserSession } from 'src/modules/pub-sub/model/user-session';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
 import { ClientContext, SessionMetadata } from 'src/common/models';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class UserSessionProvider {
-  private readonly logger: Logger = new Logger('UserSessionProvider');
-
   private sessions: Map<string, UserSession> = new Map();
 
-  constructor(private readonly redisClientProvider: RedisClientProvider) {}
+  constructor(private logger: LoggerService, private readonly redisClientProvider: RedisClientProvider) {}
 
   getOrCreateUserSession(sessionMetadata: SessionMetadata, userClient: UserClient) {
     let session = this.getUserSession(userClient.getId());
@@ -25,7 +24,7 @@ export class UserSessionProvider {
         }),
       );
       this.sessions.set(session.getId(), session);
-      this.logger.debug(`New session was added ${this}`);
+      this.logger.debug(`New session was added ${this}`, sessionMetadata);
     }
 
     return session;

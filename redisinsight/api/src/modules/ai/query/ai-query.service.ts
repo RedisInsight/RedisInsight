@@ -1,7 +1,7 @@
 import { isArray } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Socket } from 'socket.io-client';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { AiQueryProvider } from 'src/modules/ai/query/providers/ai-query.provider';
 import { SendAiQueryMessageDto } from 'src/modules/ai/query/dto/send.ai-query.message.dto';
@@ -23,6 +23,7 @@ import { classToClass, Config } from 'src/utils';
 import { plainToClass } from 'class-transformer';
 import { AiQueryContextRepository } from 'src/modules/ai/query/repositories/ai-query.context.repository';
 import config from 'src/utils/config';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const aiConfig = config.get('ai') as Config['ai'];
 
@@ -33,9 +34,8 @@ const COMMANDS_WHITELIST = {
 
 @Injectable()
 export class AiQueryService {
-  private readonly logger = new Logger('AiQueryService');
-
   constructor(
+    private logger: LoggerService,
     private readonly aiQueryProvider: AiQueryProvider,
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly aiQueryMessageRepository: AiQueryMessageRepository,
@@ -54,7 +54,7 @@ export class AiQueryService {
           steps.push([AiQueryMessageRole.TOOL_CALL, step.data]);
           break;
         default:
-          // ignore
+        // ignore
       }
     });
 
@@ -91,7 +91,7 @@ export class AiQueryService {
           history.push([AiQueryMessageRole.HUMAN, message.content]);
           break;
         default:
-          // ignore
+        // ignore
       }
     });
 
@@ -178,7 +178,7 @@ export class AiQueryService {
 
             return cb(indexContext);
           } catch (e) {
-            this.logger.warn('Unable to create index context', e);
+            this.logger.warn('Unable to create index context', e, sessionMetadata);
             return cb(e.message);
           }
         });
@@ -191,7 +191,7 @@ export class AiQueryService {
 
             return cb(await client.sendCommand(data, { replyEncoding: 'utf8' }));
           } catch (e) {
-            this.logger.warn('Query execution error', e);
+            this.logger.warn('Query execution error', e, sessionMetadata);
             return cb(e.message);
           }
         });

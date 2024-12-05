@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
@@ -10,14 +10,14 @@ import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin-state.repository';
 import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import { SessionMetadata } from 'src/common/models';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class LocalPluginStateRepository extends PluginStateRepository {
-  private logger = new Logger('LocalPluginStateRepository');
-
   private readonly modelEncryptor: ModelEncryptor;
 
   constructor(
+    private logger: LoggerService,
     @InjectRepository(PluginStateEntity)
     private readonly repository: Repository<PluginStateEntity>,
     private readonly encryptionService: EncryptionService,
@@ -52,17 +52,17 @@ export class LocalPluginStateRepository extends PluginStateRepository {
    * @param visualizationId
    * @param commandExecutionId
    */
-  async getOne(_: SessionMetadata, visualizationId: string, commandExecutionId: string): Promise<PluginState> {
-    this.logger.debug('Getting plugin state');
+  async getOne(sessionMetadata: SessionMetadata, visualizationId: string, commandExecutionId: string): Promise<PluginState> {
+    this.logger.debug('Getting plugin state', sessionMetadata);
 
     const entity = await this.repository.findOneBy({ visualizationId, commandExecutionId });
 
     if (!entity) {
-      this.logger.error(`Plugin state ${commandExecutionId}:${visualizationId} was not Found`);
+      this.logger.error(`Plugin state ${commandExecutionId}:${visualizationId} was not Found`, sessionMetadata);
       throw new NotFoundException(ERROR_MESSAGES.PLUGIN_STATE_NOT_FOUND);
     }
 
-    this.logger.debug(`Succeed to get plugin state ${commandExecutionId}:${visualizationId}`);
+    this.logger.debug(`Succeed to get plugin state ${commandExecutionId}:${visualizationId}`, sessionMetadata);
 
     const decryptedEntity = await this.modelEncryptor.decryptEntity(entity, true);
 

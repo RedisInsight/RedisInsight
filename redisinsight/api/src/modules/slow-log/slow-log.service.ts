@@ -1,6 +1,6 @@
 import { concat } from 'lodash';
 import {
-  BadRequestException, HttpException, Injectable, Logger,
+  BadRequestException, HttpException, Injectable,
 } from '@nestjs/common';
 import { SlowLog, SlowLogConfig } from 'src/modules/slow-log/models';
 import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constants/commands';
@@ -12,12 +12,12 @@ import { ClientMetadata } from 'src/common/models';
 import { convertArrayReplyToObject } from 'src/modules/redis/utils';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class SlowLogService {
-  private logger = new Logger('SlowLogService');
-
   constructor(
+    private logger: LoggerService,
     private databaseClientFactory: DatabaseClientFactory,
     private analyticsService: SlowLogAnalytics,
   ) {}
@@ -29,7 +29,7 @@ export class SlowLogService {
    */
   async getSlowLogs(clientMetadata: ClientMetadata, dto: GetSlowLogsDto) {
     try {
-      this.logger.debug('Getting slow logs');
+      this.logger.debug('Getting slow logs', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const nodes = await client.nodes();
@@ -74,7 +74,7 @@ export class SlowLogService {
    */
   async reset(clientMetadata: ClientMetadata): Promise<void> {
     try {
-      this.logger.debug('Resetting slow logs');
+      this.logger.debug('Resetting slow logs', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const nodes = await client.nodes();

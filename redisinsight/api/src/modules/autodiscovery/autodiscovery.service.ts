@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { getAvailableEndpoints } from 'src/modules/autodiscovery/utils/autodiscovery.util';
 import { convertRedisInfoReplyToObject } from 'src/utils';
 import config, { Config } from 'src/utils/config';
@@ -10,14 +10,14 @@ import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/model
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { plainToClass } from 'class-transformer';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class AutodiscoveryService {
-  private logger = new Logger('AutoDiscoveryService');
-
   constructor(
+    private logger: LoggerService,
     private settingsService: SettingsService,
     private redisClientFactory: RedisClientFactory,
     private databaseService: DatabaseService,

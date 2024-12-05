@@ -1,7 +1,7 @@
 import { join } from 'path';
 import * as fs from 'fs-extra';
 import {
-  BadRequestException, Injectable, InternalServerErrorException, Logger,
+  BadRequestException, Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 import { Readable } from 'stream';
 import * as readline from 'readline';
@@ -19,6 +19,7 @@ import config, { Config } from 'src/utils/config';
 import * as CombinedStream from 'combined-stream';
 import { DatabaseService } from 'src/modules/database/database.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import LoggerService from '../logger/logger.service';
 
 const BATCH_LIMIT = 10_000;
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -26,9 +27,8 @@ const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class BulkImportService {
-  private logger = new Logger('BulkImportService');
-
   constructor(
+    private logger: LoggerService,
     private readonly databaseService: DatabaseService,
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly analytics: BulkActionsAnalytics,
@@ -145,7 +145,7 @@ export class BulkImportService {
 
       return result;
     } catch (e) {
-      this.logger.error('Unable to process an import file', e);
+      this.logger.error('Unable to process an import file', e, clientMetadata);
       const exception = wrapHttpError(e);
       this.analytics.sendActionFailed(clientMetadata.sessionMetadata, result, exception);
       client?.disconnect();
@@ -180,7 +180,7 @@ export class BulkImportService {
 
       return this.import(clientMetadata, fs.createReadStream(path));
     } catch (e) {
-      this.logger.error('Unable to process an import file path from tutorial', e);
+      this.logger.error('Unable to process an import file path from tutorial', e, clientMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -218,7 +218,7 @@ export class BulkImportService {
 
       return result;
     } catch (e) {
-      this.logger.error('Unable to process an import file path from tutorial', e);
+      this.logger.error('Unable to process an import file path from tutorial', e, clientMetadata);
       throw new InternalServerErrorException(ERROR_MESSAGES.COMMON_DEFAULT_IMPORT_ERROR);
     }
   }

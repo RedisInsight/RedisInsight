@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { getRedisConnectionException } from 'src/utils';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
@@ -8,6 +8,7 @@ import { ClientMetadata } from 'src/common/models';
 import { RedisClient } from 'src/modules/redis/client';
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
+import LoggerService from 'src/modules/logger/logger.service';
 
 type IsClientConnectingMap = {
   [key: string]: boolean
@@ -19,13 +20,12 @@ type PendingGetByClientIdMap = {
 
 @Injectable()
 export class DatabaseClientFactory {
-  private logger = new Logger('DatabaseClientFactory');
-
   private isConnecting: IsClientConnectingMap = {};
 
   private pendingGetClient: PendingGetByClientIdMap = {};
 
   constructor(
+    private logger: LoggerService,
     private readonly databaseService: DatabaseService,
     private readonly repository: DatabaseRepository,
     private readonly analytics: DatabaseAnalytics,
@@ -45,7 +45,7 @@ export class DatabaseClientFactory {
     const { resolve, reject } = this.pendingGetClient[clientId].shift();
     this.isConnecting[clientId] = true;
     try {
-      this.logger.log('Creating new client', { clientId });
+      this.logger.debug('Creating new client', { clientId });
       const newClient = await this.createClient(clientMetadata);
       this.redisClientStorage.set(newClient);
 
@@ -78,7 +78,7 @@ export class DatabaseClientFactory {
    * @param clientMetadata
    */
   async getOrCreateClient(clientMetadata: ClientMetadata): Promise<RedisClient> {
-    this.logger.debug('Trying to get existing redis client.');
+    this.logger.debug('Trying to get existing redis client.', clientMetadata);
 
     const client = await this.redisClientStorage.getByMetadata(clientMetadata);
 
@@ -109,7 +109,7 @@ export class DatabaseClientFactory {
    * @param options
    */
   async createClient(clientMetadata: ClientMetadata, options?: IRedisConnectionOptions): Promise<RedisClient> {
-    this.logger.debug('Creating new redis client.');
+    this.logger.debug('Creating new redis client.', clientMetadata);
     const database = await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);
 
     try {

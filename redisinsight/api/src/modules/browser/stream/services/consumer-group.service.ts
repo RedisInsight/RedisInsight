@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
@@ -26,12 +25,14 @@ import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
 import { checkIfKeyNotExists } from 'src/modules/browser/utils';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class ConsumerGroupService {
-  private logger = new Logger('ConsumerGroupService');
-
-  constructor(private databaseClientFactory: DatabaseClientFactory) {}
+  constructor(
+    private logger: LoggerService,
+    private databaseClientFactory: DatabaseClientFactory
+  ) {}
 
   /**
    * Get consumer groups list for particular stream
@@ -45,7 +46,7 @@ export class ConsumerGroupService {
     dto: KeyDto,
   ): Promise<ConsumerGroupDto[]> {
     try {
-      this.logger.debug('Getting consumer groups list.');
+      this.logger.debug('Getting consumer groups list.', clientMetadata);
       const { keyName } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -62,6 +63,7 @@ export class ConsumerGroupService {
         group,
       )));
     } catch (error) {
+      this.logger.error("Error getting consumer groups list", error, clientMetadata)
       if (error instanceof NotFoundException) {
         throw error;
       }
@@ -108,7 +110,7 @@ export class ConsumerGroupService {
     dto: CreateConsumerGroupsDto,
   ): Promise<void> {
     try {
-      this.logger.debug('Creating consumer groups.');
+      this.logger.debug('Creating consumer groups.', clientMetadata);
       const { keyName, consumerGroups } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -129,7 +131,7 @@ export class ConsumerGroupService {
       const transactionResults = await client.sendPipeline(toolCommands);
       catchMultiTransactionError(transactionResults);
 
-      this.logger.debug('Stream consumer group(s) created.');
+      this.logger.debug('Stream consumer group(s) created.', clientMetadata);
       return undefined;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -158,7 +160,7 @@ export class ConsumerGroupService {
     dto: UpdateConsumerGroupDto,
   ): Promise<void> {
     try {
-      this.logger.debug('Updating consumer group.');
+      this.logger.debug('Updating consumer group.', clientMetadata);
       const { keyName, name, lastDeliveredId } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -171,7 +173,7 @@ export class ConsumerGroupService {
         lastDeliveredId,
       ]);
 
-      this.logger.debug('Consumer group was updated.');
+      this.logger.debug('Consumer group was updated.', clientMetadata);
       return undefined;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -200,7 +202,7 @@ export class ConsumerGroupService {
     dto: DeleteConsumerGroupsDto,
   ): Promise<DeleteConsumerGroupsResponse> {
     try {
-      this.logger.debug('Deleting consumer group.');
+      this.logger.debug('Deleting consumer group.', clientMetadata);
       const { keyName, consumerGroups } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -220,7 +222,7 @@ export class ConsumerGroupService {
       const transactionResults = await client.sendPipeline(toolCommands);
       catchMultiTransactionError(transactionResults);
 
-      this.logger.debug('Consumer group(s) successfully deleted.');
+      this.logger.debug('Consumer group(s) successfully deleted.', clientMetadata);
       return { affected: toolCommands.length };
     } catch (error) {
       if (error instanceof NotFoundException) {

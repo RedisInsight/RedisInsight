@@ -1,5 +1,5 @@
 import {
-  BadRequestException, Injectable, Logger, NotFoundException,
+  BadRequestException, Injectable, NotFoundException,
 } from '@nestjs/common';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
@@ -11,14 +11,14 @@ import {
 import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class BulkActionsProvider {
   private bulkActions: Map<string, BulkAction> = new Map();
 
-  private logger: Logger = new Logger('BulkActionsProvider');
-
   constructor(
+    private logger: LoggerService,
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly analytics: BulkActionsAnalytics,
   ) {}

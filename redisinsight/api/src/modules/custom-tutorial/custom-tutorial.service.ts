@@ -1,6 +1,6 @@
 import {
   BadRequestException,
-  Injectable, Logger, NotFoundException, ValidationPipe,
+  Injectable, NotFoundException, ValidationPipe,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CustomTutorialRepository } from 'src/modules/custom-tutorial/repositories/custom-tutorial.repository';
@@ -23,16 +23,16 @@ import * as URL from 'url';
 import { Validator } from 'class-validator';
 import { CustomTutorialAnalytics } from 'src/modules/custom-tutorial/custom-tutorial.analytics';
 import { SessionMetadata } from 'src/common/models';
+import LoggerService from '../logger/logger.service';
 
 @Injectable()
 export class CustomTutorialService {
-  private logger = new Logger('CustomTutorialService');
-
   private validator = new Validator();
 
   private exceptionFactory = (new ValidationPipe()).createExceptionFactory();
 
   constructor(
+    private logger: LoggerService,
     private readonly customTutorialRepository: CustomTutorialRepository,
     private readonly customTutorialFsProvider: CustomTutorialFsProvider,
     private readonly customTutorialManifestProvider: CustomTutorialManifestProvider,
@@ -116,7 +116,7 @@ export class CustomTutorialService {
       return await this.customTutorialManifestProvider.generateTutorialManifest(tutorial);
     } catch (e) {
       this.analytics.sendImportFailed(sessionMetadata, e);
-      this.logger.error('Unable to create custom tutorials', e);
+      this.logger.error('Unable to create custom tutorials', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }

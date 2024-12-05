@@ -1,11 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { RedisString } from 'src/common/constants';
 import { RedisClient } from 'src/modules/redis/client';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export abstract class KeyInfoStrategy {
-  protected readonly logger = new Logger(this.constructor.name);
+  constructor(protected logger: LoggerService) {}
 
   abstract getInfo(
     client: RedisClient,

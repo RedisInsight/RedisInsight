@@ -1,5 +1,5 @@
 import { find } from 'lodash';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
 import { CloudUser, CloudUserAccount } from 'src/modules/cloud/user/models';
@@ -12,12 +12,12 @@ import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 import { CloudSession } from 'src/modules/cloud/session/models/cloud-session';
 import { ServerService } from 'src/modules/server/server.service';
 import { isValidToken } from './utils';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class CloudUserApiService {
-  private logger = new Logger('CloudUserApiService');
-
   constructor(
+    private logger: LoggerService,
     private readonly cloudAuthService: CloudAuthService,
     private readonly repository: CloudUserRepository,
     private readonly sessionService: CloudSessionService,
@@ -43,7 +43,7 @@ export class CloudUserApiService {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       if (!session?.csrf) {
-        this.logger.debug('Trying to get csrf token');
+        this.logger.debug('Trying to get csrf token', sessionMetadata);
         const csrf = await this.api.getCsrfToken(session);
 
         if (!csrf) {
@@ -53,7 +53,7 @@ export class CloudUserApiService {
         await this.sessionService.updateSessionData(sessionMetadata.sessionId, { csrf });
       }
     } catch (e) {
-      this.logger.error('Unable to get csrf token', e);
+      this.logger.error('Unable to get csrf token', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -92,7 +92,7 @@ export class CloudUserApiService {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       if (!session?.apiSessionId) {
-        this.logger.debug('Trying to login user');
+        this.logger.debug('Trying to login user', sessionMetadata);
 
         const preparedUtm = utm && { ...utm };
 
@@ -103,7 +103,7 @@ export class CloudUserApiService {
               preparedUtm.package = preparedUtm.package || packageType;
             })
             .catch(() => {
-              this.logger.warn('Unable to get server id for utm parameters');
+              this.logger.warn('Unable to get server id for utm parameters', sessionMetadata);
             });
         }
 
@@ -118,7 +118,7 @@ export class CloudUserApiService {
 
       await this.ensureCsrf(sessionMetadata);
     } catch (e) {
-      this.logger.error('Unable to login user', e);
+      this.logger.error('Unable to login user', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -143,7 +143,7 @@ export class CloudUserApiService {
         return;
       }
 
-      this.logger.debug('Trying to sync user profile');
+      this.logger.debug('Trying to sync user profile', sessionMetadata);
 
       const userData = await this.api.getCurrentUser(session);
 
@@ -163,9 +163,9 @@ export class CloudUserApiService {
       }));
 
       await this.repository.update(sessionMetadata.sessionId, user);
-      this.logger.debug('Successfully synchronized user profile');
+      this.logger.debug('Successfully synchronized user profile', sessionMetadata);
     } catch (e) {
-      this.logger.error('Unable to sync user profile', e);
+      this.logger.error('Unable to sync user profile', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -241,7 +241,7 @@ export class CloudUserApiService {
       try {
         await this.ensureCloudUser(sessionMetadata);
 
-        this.logger.debug('Switching user account');
+        this.logger.debug('Switching user account', sessionMetadata);
 
         const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
@@ -249,7 +249,7 @@ export class CloudUserApiService {
 
         return this.getCloudUser(sessionMetadata, true);
       } catch (e) {
-        this.logger.error('Unable to switch current account', e);
+        this.logger.error('Unable to switch current account', e, sessionMetadata);
         throw wrapHttpError(e);
       }
     });

@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { filter, isNull } from 'lodash';
@@ -15,16 +15,16 @@ import { CommandExecutionRepository } from 'src/modules/workbench/repositories/c
 import config from 'src/utils/config';
 import { SessionMetadata } from 'src/common/models';
 import { CommandExecutionFilter } from 'src/modules/workbench/models/command-executions.filter';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const WORKBENCH_CONFIG = config.get('workbench');
 
 @Injectable()
 export class LocalCommandExecutionRepository extends CommandExecutionRepository {
-  private logger = new Logger('LocalCommandExecutionRepository');
-
   private readonly modelEncryptor: ModelEncryptor;
 
   constructor(
+    private logger: LoggerService,
     @InjectRepository(CommandExecutionEntity)
     private readonly commandExecutionRepository: Repository<CommandExecutionEntity>,
     private readonly encryptionService: EncryptionService,
@@ -39,7 +39,7 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
    * Should encrypt command executions
    * Should always throw and error in case when unable to encrypt for some reason
    */
-  async createMany(_: SessionMetadata, commandExecutions: Partial<CommandExecution>[]): Promise<CommandExecution[]> {
+  async createMany(sessionMetadata: SessionMetadata, commandExecutions: Partial<CommandExecution>[]): Promise<CommandExecution[]> {
     // todo: limit by 30 max to insert
     const response = await Promise.all(commandExecutions.map(async (commandExecution, idx) => {
       const entity = plainToClass(CommandExecutionEntity, commandExecution);
@@ -72,7 +72,7 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
     try {
       await this.cleanupDatabaseHistory(response[0].databaseId, { type: commandExecutions[0].type });
     } catch (e) {
-      this.logger.error('Error when trying to cleanup history after insert', e);
+      this.logger.error('Error when trying to cleanup history after insert', e, sessionMetadata);
     }
 
     return response;
@@ -82,11 +82,11 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
    * @inheritDoc
    */
   async getList(
-    _: SessionMetadata,
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     queryFilter: CommandExecutionFilter,
   ): Promise<ShortCommandExecution[]> {
-    this.logger.debug('Getting command executions');
+    this.logger.debug('Getting command executions', sessionMetadata);
     const entities = await this.commandExecutionRepository
       .createQueryBuilder('e')
       .where({ databaseId, type: queryFilter.type })
@@ -107,7 +107,7 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
       .limit(WORKBENCH_CONFIG.maxItemsPerDb)
       .getMany();
 
-    this.logger.debug('Succeed to get command executions');
+    this.logger.debug('Succeed to get command executions', sessionMetadata);
 
     const decryptedEntities = await Promise.all(
       entities.map<Promise<CommandExecutionEntity>>(async (entity) => {
@@ -126,17 +126,17 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
   /**
    * @inheritDoc
    */
-  async getOne(_: SessionMetadata, databaseId: string, id: string): Promise<CommandExecution> {
-    this.logger.debug('Getting command executions');
+  async getOne(sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<CommandExecution> {
+    this.logger.debug('Getting command executions', sessionMetadata);
 
     const entity = await this.commandExecutionRepository.findOneBy({ id, databaseId });
 
     if (!entity) {
-      this.logger.error(`Command execution with id:${id} and databaseId:${databaseId} was not Found`);
+      this.logger.error(`Command execution with id:${id} and databaseId:${databaseId} was not Found`, sessionMetadata);
       throw new NotFoundException(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND);
     }
 
-    this.logger.debug(`Succeed to get command execution ${id}`);
+    this.logger.debug(`Succeed to get command execution ${id}`, sessionMetadata);
 
     const decryptedEntity = await this.modelEncryptor.decryptEntity(entity, true);
 
@@ -146,23 +146,23 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
   /**
    * @inheritDoc
    */
-  async delete(_: SessionMetadata, databaseId: string, id: string): Promise<void> {
-    this.logger.debug('Delete command execution');
+  async delete(sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<void> {
+    this.logger.debug('Delete command execution', sessionMetadata);
 
     await this.commandExecutionRepository.delete({ id, databaseId });
 
-    this.logger.debug('Command execution deleted');
+    this.logger.debug('Command execution deleted', sessionMetadata);
   }
 
   /**
    * @inheritDoc
    */
-  async deleteAll(_: SessionMetadata, databaseId: string, queryFilter: CommandExecutionFilter): Promise<void> {
-    this.logger.debug('Delete all command executions');
+  async deleteAll(sessionMetadata: SessionMetadata, databaseId: string, queryFilter: CommandExecutionFilter): Promise<void> {
+    this.logger.debug('Delete all command executions', sessionMetadata);
 
     await this.commandExecutionRepository.delete({ databaseId, type: queryFilter.type });
 
-    this.logger.debug('Command executions deleted');
+    this.logger.debug('Command executions deleted', sessionMetadata);
   }
 
   /**

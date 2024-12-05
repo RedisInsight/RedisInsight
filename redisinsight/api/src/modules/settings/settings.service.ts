@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  Logger,
 } from '@nestjs/common';
 import {
   difference,
@@ -26,14 +25,14 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IAgreementSpecFile } from 'src/modules/settings/models/agreements.interface';
 import { SessionMetadata } from 'src/common/models';
 import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from './dto/settings.dto';
+import LoggerService from '../logger/logger.service';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class SettingsService {
-  private logger = new Logger('SettingsService');
-
   constructor(
+    private logger: LoggerService,
     private readonly settingsRepository: SettingsRepository,
     private readonly agreementRepository: AgreementsRepository,
     private readonly analytics: SettingsAnalytics,
@@ -46,11 +45,11 @@ export class SettingsService {
    * Method to get settings
    */
   public async getAppSettings(sessionMetadata: SessionMetadata): Promise<GetAppSettingsResponse> {
-    this.logger.debug('Getting application settings.');
+    this.logger.debug('Getting application settings.', sessionMetadata);
     try {
       const agreements = await this.agreementRepository.getOrCreate(sessionMetadata);
       const settings = await this.settingsRepository.getOrCreate(sessionMetadata);
-      this.logger.debug('Succeed to get application settings.');
+      this.logger.debug('Succeed to get application settings.', sessionMetadata);
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,
         agreements: agreements?.version ? {
@@ -59,7 +58,7 @@ export class SettingsService {
         } : null,
       });
     } catch (error) {
-      this.logger.error('Failed to get application settings.', error);
+      this.logger.error('Failed to get application settings.', error, sessionMetadata);
       throw new InternalServerErrorException();
     }
   }
@@ -73,7 +72,7 @@ export class SettingsService {
     sessionMetadata: SessionMetadata,
     dto: UpdateSettingsDto,
   ): Promise<GetAppSettingsResponse> {
-    this.logger.debug('Updating application settings.');
+    this.logger.debug('Updating application settings.', sessionMetadata);
     const { agreements, ...settings } = dto;
     try {
       const oldAppSettings = await this.getAppSettings(sessionMetadata);
@@ -92,7 +91,7 @@ export class SettingsService {
       if (agreements) {
         await this.updateAgreements(sessionMetadata, agreements);
       }
-      this.logger.debug('Succeed to update application settings.');
+      this.logger.debug('Succeed to update application settings.', sessionMetadata);
       const results = await this.getAppSettings(sessionMetadata);
       this.analytics.sendSettingsUpdatedEvent(sessionMetadata, results, oldAppSettings);
 
@@ -100,7 +99,7 @@ export class SettingsService {
 
       return results;
     } catch (error) {
-      this.logger.error('Failed to update application settings.', error);
+      this.logger.error('Failed to update application settings.', error, sessionMetadata);
       if (
         error instanceof AgreementIsNotDefinedException
         || error instanceof BadRequestException
@@ -178,7 +177,7 @@ export class SettingsService {
     sessionMetadata: SessionMetadata,
     dtoAgreements: Map<string, boolean> = new Map(),
   ): Promise<void> {
-    this.logger.debug('Updating application agreements.');
+    this.logger.debug('Updating application agreements.', sessionMetadata);
     const oldAgreements = await this.agreementRepository.getOrCreate(sessionMetadata);
 
     const newAgreements = {

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { wrapHttpError } from 'src/common/utils';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { GetCloudSubscriptionDatabaseDto, GetCloudSubscriptionDatabasesDto } from 'src/modules/cloud/database/dto';
@@ -13,14 +13,14 @@ import {
 import { parseCloudDatabaseCapiResponse, parseCloudDatabasesCapiResponse } from 'src/modules/cloud/database/utils';
 import config from 'src/utils/config';
 import { parseCloudTaskCapiResponse } from 'src/modules/cloud/task/utils';
+import LoggerService from 'src/modules/logger/logger.service';
 
 const cloudConfig = config.get('cloud');
 
 @Injectable()
 export class CloudDatabaseCapiService {
-  private logger = new Logger('CloudDatabaseCapiService');
-
   constructor(
+    private logger: LoggerService,
     private readonly capi: CloudDatabaseCapiProvider,
   ) {}
 

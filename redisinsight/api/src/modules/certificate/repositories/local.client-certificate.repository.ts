@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,14 +13,14 @@ import { ClientCertificateRepository } from 'src/modules/certificate/repositorie
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import LoggerService from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class LocalClientCertificateRepository extends ClientCertificateRepository {
-  private readonly logger = new Logger('LocalCaCertificateRepository');
-
   private modelEncryptor: ModelEncryptor;
 
   constructor(
+    private logger: LoggerService,
     @InjectRepository(ClientCertificateEntity)
     private readonly repository: Repository<ClientCertificateEntity>,
     @InjectRepository(DatabaseEntity)

@@ -1,7 +1,6 @@
 import {
   Injectable,
   InternalServerErrorException,
-  Logger,
 } from '@nestjs/common';
 import { ClientMetadata } from 'src/common/models';
 import { RECOMMENDATION_NAMES, unknownCommand } from 'src/constants';
@@ -31,6 +30,7 @@ import { RedisClient } from 'src/modules/redis/client';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { v4 as uuidv4 } from 'uuid';
 import { getAnalyticsDataFromIndexInfo } from 'src/utils';
+import LoggerService from 'src/modules/logger/logger.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';
@@ -38,11 +38,10 @@ import { RawFormatterStrategy } from './output-formatter/strategies/raw-formatte
 
 @Injectable()
 export class CliBusinessService {
-  private logger = new Logger('CliService');
-
   private outputFormatterManager: OutputFormatterManager;
 
   constructor(
+    private logger: LoggerService,
     private cliAnalyticsService: CliAnalyticsService,
     private recommendationService: DatabaseRecommendationService,
     private readonly commandsService: CommandsService,
@@ -64,7 +63,7 @@ export class CliBusinessService {
    * @param clientMetadata
    */
   public async getClient(clientMetadata: ClientMetadata): Promise<CreateCliClientResponse> {
-    this.logger.debug('Create Redis client for CLI.');
+    this.logger.debug('Create Redis client for CLI.', clientMetadata);
     try {
       const uuid = uuidv4();
       await this.databaseClientFactory.getOrCreateClient({
@@ -72,14 +71,14 @@ export class CliBusinessService {
         uniqueId: uuid,
       });
 
-      this.logger.debug('Succeed to create Redis client for CLI.');
+      this.logger.debug('Succeed to create Redis client for CLI.', clientMetadata);
       this.cliAnalyticsService.sendClientCreatedEvent(
         clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
       );
       return { uuid };
     } catch (error) {
-      this.logger.error('Failed to create redis client for CLI.', error);
+      this.logger.error('Failed to create redis client for CLI.', error, clientMetadata);
       this.cliAnalyticsService.sendClientCreationFailedEvent(
         clientMetadata.sessionMetadata,
         clientMetadata.databaseId, error,
@@ -93,7 +92,7 @@ export class CliBusinessService {
    * @param clientMetadata
    */
   public async reCreateClient(clientMetadata: ClientMetadata): Promise<CreateCliClientResponse> {
-    this.logger.debug('re-create Redis client for CLI.');
+    this.logger.debug('re-create Redis client for CLI.', clientMetadata);
     try {
       await this.databaseClientFactory.deleteClient(clientMetadata);
 
@@ -103,14 +102,14 @@ export class CliBusinessService {
         uniqueId: uuid,
       });
 
-      this.logger.debug('Succeed to re-create Redis client for CLI.');
+      this.logger.debug('Succeed to re-create Redis client for CLI.', clientMetadata);
       this.cliAnalyticsService.sendClientRecreatedEvent(
         clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
       );
       return { uuid };
     } catch (error) {
-      this.logger.error('Failed to re-create redis client for CLI.', error);
+      this.logger.error('Failed to re-create redis client for CLI.', error, clientMetadata);
       this.cliAnalyticsService.sendClientCreationFailedEvent(
         clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
@@ -127,10 +126,10 @@ export class CliBusinessService {
   public async deleteClient(
     clientMetadata: ClientMetadata,
   ): Promise<DeleteClientResponse> {
-    this.logger.debug('Deleting Redis client for CLI.');
+    this.logger.debug('Deleting Redis client for CLI.', clientMetadata);
     try {
       const affected = await this.databaseClientFactory.deleteClient(clientMetadata) as unknown as number;
-      this.logger.debug('Succeed to delete Redis client for CLI.');
+      this.logger.debug('Succeed to delete Redis client for CLI.', clientMetadata);
 
       if (affected) {
         this.cliAnalyticsService.sendClientDeletedEvent(
@@ -141,7 +140,7 @@ export class CliBusinessService {
       }
       return { affected };
     } catch (error) {
-      this.logger.error('Failed to delete Redis client for CLI.', error);
+      this.logger.error('Failed to delete Redis client for CLI.', error, clientMetadata);
       throw new InternalServerErrorException(error.message);
     }
   }
@@ -155,7 +154,7 @@ export class CliBusinessService {
     clientMetadata: ClientMetadata,
     dto: SendCommandDto,
   ): Promise<SendCommandResponse> {
-    this.logger.debug('Executing redis CLI command.');
+    this.logger.debug('Executing redis CLI command.', clientMetadata);
     const { command: commandLine } = dto;
     const outputFormat = dto.outputFormat || CliOutputFormatterTypes.Raw;
     let command: string = unknownCommand;
@@ -194,14 +193,14 @@ export class CliBusinessService {
         );
       }
 
-      this.logger.debug('Succeed to execute redis CLI command.');
+      this.logger.debug('Succeed to execute redis CLI command.', clientMetadata);
 
       return {
         response: formatter.format(reply),
         status: CommandExecutionStatus.Success,
       };
     } catch (error) {
-      this.logger.error('Failed to execute redis CLI command.', error);
+      this.logger.error('Failed to execute redis CLI command.', error, clientMetadata);
 
       if (
         error instanceof CommandParsingError

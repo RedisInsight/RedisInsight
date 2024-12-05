@@ -50,7 +50,6 @@ enum OpenDialogName {
 
 const HomePage = () => {
   const [openDialog, setOpenDialog] = useState<Nullable<OpenDialogName>>(null)
-  const initialDbTypeRef = useRef<AddDbType>(AddDbType.cloud)
 
   const dispatch = useDispatch()
 
@@ -176,7 +175,6 @@ const HomePage = () => {
   }
 
   const handleAddInstance = (addDbType = AddDbType.manual) => {
-    initialDbTypeRef.current = addDbType
     setOpenDialog(OpenDialogName.AddDatabase)
     dispatch(setEditedInstance(null))
   }
@@ -226,7 +224,6 @@ const HomePage = () => {
                   : handleClose
               }
               onDbEdited={onDbEdited}
-              initConnectionType={initialDbTypeRef.current}
             />
             <div key="homePage" className="homePage">
               {(!isInstanceExists && !loading && !loadingChanging ? (

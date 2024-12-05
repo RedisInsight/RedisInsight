@@ -1,0 +1,46 @@
+.sectionTitle {
+  font-weight: 400 !important;
+  display: flex;
+  align-items: center;
+
+  .cloudIcon {
+    margin-right: 8px;
+  }
+}
+
+.recommendedBox {
+  display: flex;
+  align-items: center;
+
+  border: 1px solid var(--euiColorSecondary);
+  background-color: var(--tableRowSelectedColor);
+
+  margin-left: 8px;
+
+  font-size: 10px;
+  padding: 5px 8px;
+  line-height: 1;
+
+  > svg {
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+  }
+}
+
+.typeBtn {
+  width: 100%;
+  height: 76px !important;
+
+  border-color: var(--separatorColorLight) !important;
+  color: var(--buttonSecondaryTextColor) !important;
+  box-shadow: none !important;
+
+  &.primary {
+    border-color: var(--euiColorSecondary) !important;
+  }
+
+  &:hover {
+    background-color: transparent !important;
+  }
+}

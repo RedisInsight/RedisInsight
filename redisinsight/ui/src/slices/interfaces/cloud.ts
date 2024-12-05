@@ -93,7 +93,8 @@ export enum OAuthSocialSource {
   DiscoveryForm = 'discovery form',
   UserProfile = 'user profile',
   AiChat = 'ai chat',
-  NavigationMenu = 'navigation menu'
+  NavigationMenu = 'navigation menu',
+  AddDbForm = 'add db form',
 }
 
 export enum OAuthSocialAction {

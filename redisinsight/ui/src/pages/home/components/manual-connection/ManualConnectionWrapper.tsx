@@ -38,6 +38,7 @@ export interface Props {
   initialValues?: Nullable<Record<string, any>>
   editedInstance: Nullable<Instance>
   onClose?: () => void
+  onClickBack?: () => void
   onDbEdited?: () => void
   onAliasEdited?: (value: string) => void
 }
@@ -46,6 +47,7 @@ const ManualConnectionWrapper = (props: Props) => {
   const {
     editMode,
     onClose,
+    onClickBack,
     onDbEdited,
     onAliasEdited,
     editedInstance,
@@ -271,6 +273,7 @@ const ManualConnectionWrapper = (props: Props) => {
       isCloneMode={isCloneMode}
       setIsCloneMode={setIsCloneMode}
       onAliasEdited={onAliasEdited}
+      onClickBack={onClickBack}
     />
   )
 }

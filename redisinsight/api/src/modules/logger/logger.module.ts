@@ -1,12 +1,13 @@
 import {
-  DynamicModule, Global, Module, Scope,
+  DynamicModule,
+  Module,
+  Scope,
 } from '@nestjs/common';
 import { WinstonModuleOptions } from 'nest-winston';
 import { INQUIRER } from '@nestjs/core';
 import { LoggerService } from './logger.service';
 import LOGGER_CONFIG from '../../../config/logger';
 
-@Global()
 @Module({})
 export class LoggerModule {
   static register(

@@ -35,8 +35,8 @@ const getPayload = (connectionUrl: string, returnOnError = false) => {
   if (!details && returnOnError) return null
 
   return {
-    name: details?.hostname || 'localhost:6379',
-    host: details?.host || 'localhost',
+    name: details?.hostname || '127.0.0.1:6379',
+    host: details?.host || '127.0.0.1',
     port: details?.port || 6379,
     username: details?.username || undefined,
     password: details?.password || undefined,
@@ -129,7 +129,7 @@ const ConnectionUrl = (props: Props) => {
                 value={formik.values.connectionURL}
                 onChange={formik.handleChange}
                 fullWidth
-                placeholder="redis://localhost:6379"
+                placeholder="redis://127.0.0.1:6379"
                 resize="none"
                 style={{ height: 88 }}
                 data-testid="connection-url"

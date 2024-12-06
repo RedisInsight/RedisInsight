@@ -143,6 +143,10 @@
   &:hover {
     text-decoration: none !important;
   }
+
+  &.external:global(.euiLink) {
+    color: var(--externalLinkColor) !important;
+  }
 }
 
 .fullWidth {

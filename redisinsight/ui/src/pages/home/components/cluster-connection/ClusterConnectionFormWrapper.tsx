@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
+import { EuiTitle } from '@elastic/eui'
 import {
   clusterSelector,
   fetchInstancesRedisCluster,
@@ -12,6 +13,7 @@ import { ICredentialsRedisCluster, InstanceType } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { autoFillFormDetails } from 'uiSrc/pages/home/utils'
 
+import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import ClusterConnectionForm from './cluster-connection-form/ClusterConnectionForm'
 
 export interface Props {
@@ -28,17 +30,23 @@ const ClusterConnectionFormWrapper = ({ onClose }: Props) => {
 
   const history = useHistory()
   const dispatch = useDispatch()
+  const { setModalHeader } = useModalHeader()
 
   const formRef = useRef<HTMLDivElement>(null)
 
   const { loading, credentials } = useSelector(clusterSelector)
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    setModalHeader(
+      <EuiTitle size="s"><h4>Redis Software</h4></EuiTitle>,
+      true
+    )
+
+    return () => {
+      setModalHeader(null)
       dispatch(resetErrors())
-    },
-    []
-  )
+    }
+  }, [])
 
   useEffect(() => {
     if (credentials) {

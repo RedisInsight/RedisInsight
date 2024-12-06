@@ -3,7 +3,7 @@ import { Nullable } from 'uiSrc/utils'
 
 interface ModalHeaderContextType {
   modalHeader: Nullable<React.ReactNode>
-  setModalHeader: (content: Nullable<React.ReactNode>) => void
+  setModalHeader: (content: Nullable<React.ReactNode>, withBack?: boolean) => void
 }
 
 // Create a context

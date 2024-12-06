@@ -9,7 +9,7 @@ import {
   EuiLoadingSpinner,
   EuiSpacer,
   EuiText,
-  EuiTextColor, EuiToolTip
+  EuiTextColor, EuiTitle, EuiToolTip
 } from '@elastic/eui'
 import ReactDOM from 'react-dom'
 import {
@@ -21,6 +21,7 @@ import {
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { UploadWarning } from 'uiSrc/components'
+import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -41,9 +42,19 @@ const ImportDatabase = (props: Props) => {
   const [domReady, setDomReady] = useState(false)
 
   const dispatch = useDispatch()
+  const { setModalHeader } = useModalHeader()
 
   useEffect(() => {
     setDomReady(true)
+
+    setModalHeader(
+      <EuiTitle size="s"><h4>Import from file</h4></EuiTitle>,
+      true
+    )
+
+    return () => {
+      setModalHeader(null)
+    }
   }, [])
 
   const onFileChange = (files: FileList | null) => {

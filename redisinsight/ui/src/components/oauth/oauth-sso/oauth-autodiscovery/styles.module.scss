@@ -55,6 +55,26 @@
       font-size: 12px !important;
     }
   }
+
+  .createDbSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    border: 1px solid var(--controlsBorderColor);
+    border-radius: 8px;
+    padding: 8px 16px;
+
+    .createDbTitle {
+      display: flex;
+      align-items: center;
+
+      > svg {
+        margin-right: 8px;
+      }
+    }
+  }
 }
 
 .withAdvantagesWrapper {

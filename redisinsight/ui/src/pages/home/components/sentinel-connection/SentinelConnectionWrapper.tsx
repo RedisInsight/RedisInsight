@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 
+import { EuiTitle } from '@elastic/eui'
 import { fetchMastersSentinelAction, sentinelSelector, } from 'uiSrc/slices/instances/sentinel'
 import { removeEmpty } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -13,6 +14,7 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { applyTlSDatabase, autoFillFormDetails, getTlsSettings } from 'uiSrc/pages/home/utils'
 import { ADD_NEW, NO_CA_CERT } from 'uiSrc/pages/home/constants'
 import { InstanceType } from 'uiSrc/slices/interfaces'
+import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import SentinelConnectionForm from './sentinel-connection-form'
 
 export interface Props {
@@ -46,10 +48,20 @@ const SentinelConnectionWrapper = (props: Props) => {
 
   const history = useHistory()
   const dispatch = useDispatch()
+  const { setModalHeader } = useModalHeader()
 
   useEffect(() => {
     dispatch(fetchCaCerts())
     dispatch(fetchClientCerts())
+
+    setModalHeader(
+      <EuiTitle size="s"><h4>Redis Sentinel</h4></EuiTitle>,
+      true
+    )
+
+    return () => {
+      setModalHeader(null)
+    }
   }, [])
 
   const onMastersSentinelFetched = () => {

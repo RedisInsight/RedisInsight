@@ -28,7 +28,6 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import {
   DbIndex,
   DbInfo,
-  MessageStandalone,
   TlsDetails,
   DatabaseForm,
   DbCompressor,
@@ -62,6 +61,7 @@ export interface Props {
   onTestConnection: (values: DbConnectionInfo) => void
   onHostNamePaste: (content: string) => boolean
   onClose?: () => void
+  onClickBack?: () => void
 }
 
 const getInitFieldsDisplayNames = ({ host, port, name }: any) => {
@@ -75,6 +75,7 @@ const ManualConnectionForm = (props: Props) => {
   const {
     formFields,
     onClose,
+    onClickBack,
     onSubmit,
     onTestConnection,
     onHostNamePaste,
@@ -182,7 +183,13 @@ const ManualConnectionForm = (props: Props) => {
 
     if (isEditMode) {
       setModalHeader(<EuiTitle size="s"><h4>Edit Database</h4></EuiTitle>)
+      return
     }
+
+    setModalHeader(
+      <EuiTitle size="s"><h4>Connection Settings</h4></EuiTitle>,
+      true
+    )
   }, [isEditMode, isCloneMode])
 
   useEffect(() => {
@@ -228,9 +235,6 @@ const ManualConnectionForm = (props: Props) => {
         <CloneConnection id={id} setIsCloneMode={setIsCloneMode} />
       )}
       <div className="getStartedForm" ref={formRef}>
-        {!isEditMode && !isFromCloud && (
-          <><MessageStandalone /><br /></>
-        )}
         {!isEditMode && !isFromCloud && (
           <EuiForm
             component="form"

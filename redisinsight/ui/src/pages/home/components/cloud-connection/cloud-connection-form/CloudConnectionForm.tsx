@@ -234,9 +234,11 @@ const CloudConnectionForm = (props: Props) => {
             />
           </EuiFlexItem>
         </EuiFlexGroup>
-        <EuiSpacer />
+        <EuiSpacer size="s" />
       </FeatureFlagComponent>
-      {type === CloudConnectionOptions.Account && (<OAuthAutodiscovery source={OAuthSocialSource.DiscoveryForm} />)}
+      {type === CloudConnectionOptions.Account && (
+        <OAuthAutodiscovery source={OAuthSocialSource.DiscoveryForm} onClose={onClose} />
+      )}
       {type === CloudConnectionOptions.ApiKeys && CloudApiForm}
     </div>
   )

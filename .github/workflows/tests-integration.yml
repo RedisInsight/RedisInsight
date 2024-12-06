@@ -106,13 +106,13 @@ jobs:
       if: inputs.build == 'docker'
       uses: actions/download-artifact@v4
       with:
-        name: docker
+        name: docker-builds
         path: ./release
 
     - name: Load built docker image from workspace
       if: inputs.build == 'docker'
       run: |
-        docker image load -i ./release/docker-linux-alpine.amd64.tar
+        docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
 
     - name: Run tests
       run: |

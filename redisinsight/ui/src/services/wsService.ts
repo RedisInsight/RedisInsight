@@ -5,7 +5,7 @@ import { getConfig } from 'uiSrc/config'
 
 const riConfig = getConfig()
 
-type Params = {
+export type WsParams = {
   forceNew?: boolean,
   token?: string,
   reconnection?: boolean
@@ -19,7 +19,7 @@ export function wsService(wsUrl: string, {
   reconnection,
   query,
   extraHeaders
-}: Params, passTokenViaHeaders: boolean = true,) {
+}: WsParams, passTokenViaHeaders: boolean = true,) {
   let queryParams: Record<string, any> = !passTokenViaHeaders ? { [CustomHeaders.CsrfToken]: token } : {}
   if (query) {
     queryParams = { ...queryParams, ...query }
@@ -32,6 +32,9 @@ export function wsService(wsUrl: string, {
   if (extraHeaders) {
     headers = { ...headers, ...extraHeaders }
   }
+  const transports = riConfig.api.socketTransports?.split(',')
+  const withCredentials = riConfig.api.socketCredentials
+
   const ioOptions = {
     path: getProxyPath(),
     forceNew,
@@ -39,10 +42,19 @@ export function wsService(wsUrl: string, {
     query: queryParams,
     extraHeaders: headers,
     rejectUnauthorized: false,
-    transports: riConfig.api.socketTransports?.split(','),
-    withCredentials: riConfig.api.socketCredentials,
+    transports,
+    withCredentials,
     auth: { token }
   }
+  // eslint-disable-next-line no-console
+  console.log({
+    passTokenViaHeaders,
+    token,
+    queryParams,
+    headers,
+    transports,
+    ioOptions
+  })
 
   return io(wsUrl, ioOptions)
 }

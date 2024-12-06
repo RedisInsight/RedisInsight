@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Socket } from 'socket.io-client'
 
 import { remove } from 'lodash'
-import { CloudJobEvents, FeatureFlags, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
+import { CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
@@ -11,11 +11,11 @@ import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
-import { appFeatureFlagsFeaturesSelector, getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
+import { getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
 import { oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
 import { CloudJobName } from 'uiSrc/electron/constants'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
-import { wsService } from 'uiSrc/services/wsService'
+import { useIoConnection } from 'uiSrc/services/hooks/useIoConnection'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 
 const CommonAppSubscription = () => {
@@ -24,7 +24,11 @@ const CommonAppSubscription = () => {
   const { token } = useSelector(appCsrfSelector)
   const [recommendationsSubscriptions, setRecommendationsSubscriptions] = useState<string[]>([])
   const socketRef = useRef<Nullable<Socket>>(null)
-  const { [FeatureFlags.envDependent]: envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
+  const connectIo = useIoConnection(getBaseApiUrl(), {
+    forceNew: false,
+    token,
+    reconnection: true }
+  )
 
   const dispatch = useDispatch()
 
@@ -33,11 +37,7 @@ const CommonAppSubscription = () => {
       return
     }
 
-    socketRef.current = wsService(`${getBaseApiUrl()}`, {
-      forceNew: false,
-      token,
-      reconnection: true,
-    }, envDependent?.flag)
+    socketRef.current = connectIo()
 
     socketRef.current.on(SocketEvent.Connect, () => {
       dispatch(setIsConnected(true))

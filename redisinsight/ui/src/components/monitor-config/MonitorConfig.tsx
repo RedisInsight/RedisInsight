@@ -18,12 +18,11 @@ import {
   stopMonitor,
 } from 'uiSrc/slices/cli/monitor'
 import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
-import { FeatureFlags, MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
+import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
-import { wsService } from 'uiSrc/services/wsService'
-import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { useIoConnection } from 'uiSrc/services/hooks/useIoConnection'
 import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
 import ApiStatusCode from '../../constants/apiStatusCode'
@@ -34,10 +33,10 @@ interface IProps {
 const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
   const { socket, isRunning, isPaused, isSaveToFile, isMinimizedMonitor, isShowMonitor } = useSelector(monitorSelector)
-  const { [FeatureFlags.envDependent]: envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
   const { token } = useSelector(appCsrfSelector)
 
   const socketRef = useRef<Nullable<Socket>>(null)
+  const connectIo = useIoConnection(`${getBaseApiUrl()}/monitor`, { token })
   const logFileIdRef = useRef<string>()
   const timestampRef = useRef<number>()
   const retryTimerRef = useRef<NodeJS.Timer>()
@@ -68,7 +67,7 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
     timestampRef.current = Date.now()
 
     // Create SocketIO connection to instance by instanceId
-    socketRef.current = wsService(`${getBaseApiUrl()}/monitor`, { token, }, envDependent?.flag)
+    socketRef.current = connectIo()
 
     dispatch(setSocket(socketRef.current))
 

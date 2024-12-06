@@ -1,7 +1,7 @@
 import React from 'react'
 import { isArray } from 'lodash'
 import { useSelector } from 'react-redux'
-import { FeatureFlags } from 'uiSrc/constants'
+import { FeatureFlags } from 'uiSrc/constants/featureFlags'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 export interface Props {

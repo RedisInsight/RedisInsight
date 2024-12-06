@@ -10,12 +10,10 @@ import {
   clearStoreActions,
 } from 'uiSrc/utils/test-utils'
 
-import {
-  processUnsupportedCommand,
-  sendCliClusterCommandAction,
-} from 'uiSrc/slices/cli/cli-output'
+import { sendCliClusterCommandAction } from 'uiSrc/slices/cli/cli-output'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { processUnsupportedCommand } from 'uiSrc/utils/cliOutputActions'
 
 import CliBodyWrapper from './CliBodyWrapper'
 

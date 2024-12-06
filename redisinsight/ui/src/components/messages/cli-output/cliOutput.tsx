@@ -2,15 +2,8 @@ import { EuiLink, EuiTextColor } from '@elastic/eui'
 import React, { Fragment } from 'react'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { getDbIndex } from 'uiSrc/utils'
-import UsePubSubLink from 'uiSrc/components/pub-sub/UsePubSubLink'
-
-export const ClearCommand = 'clear'
-export const SelectCommand = 'select'
-
-export enum CliOutputFormatterType {
-  Text = 'TEXT',
-  Raw = 'RAW',
-}
+import { FeatureFlagComponent } from 'uiSrc/components'
+import { FeatureFlags } from 'uiSrc/constants/featureFlags'
 
 export const InitOutputText = (
   host: string = '',
@@ -77,11 +70,46 @@ export const cliTexts = {
       '\n',
     ]
   ),
+  MONITOR_NOT_SUPPORTED_ENV: (
+    <div className="cli-output-response-fail" data-testid="user-profiler-link-disabled">
+      Monitor not supported in this environment.
+    </div>
+  ),
+  USE_PROFILER_TOOL: (onClick: () => void) => (
+    <EuiTextColor color="danger" key={Date.now()}>
+      {'Use '}
+      <EuiLink onClick={onClick} className="btnLikeLink" color="text" data-testid="monitor-btn">
+        Profiler
+      </EuiLink>
+      {' tool to see all the requests processed by the server.'}
+    </EuiTextColor>
+  ),
+  MONITOR_COMMAND: (onClick: () => void) => (
+    <FeatureFlagComponent
+      name={FeatureFlags.envDependent}
+      otherwise={cliTexts.MONITOR_NOT_SUPPORTED_ENV}
+    >
+      {cliTexts.USE_PROFILER_TOOL(onClick)}
+    </FeatureFlagComponent>
+  ),
+  PUB_SUB_NOT_SUPPORTED_ENV: (
+    <div className="cli-output-response-fail" data-testid="user-pub-sub-link-disabled">
+      PubSub not supported in this environment.
+    </div>
+  ),
+  USE_PUB_SUB_TOOL: (path: string = '') => (
+    <EuiTextColor color="danger" key={Date.now()} data-testid="user-pub-sub-link">
+      {'Use '}
+      <EuiLink {...getRouterLinkProps(path)} color="text" data-test-subj="pubsub-page-btn">
+        Pub/Sub
+      </EuiLink>
+      {' tool to subscribe to channels.'}
+    </EuiTextColor>
+  ),
   SUBSCRIBE_COMMAND_CLI: (path: string = '') => (
-    [
-      <UsePubSubLink path={path} />,
-      '\n',
-    ]
+    <FeatureFlagComponent name={FeatureFlags.envDependent} otherwise={cliTexts.PUB_SUB_NOT_SUPPORTED_ENV}>
+      {cliTexts.USE_PUB_SUB_TOOL(path)}
+    </FeatureFlagComponent>
   ),
   HELLO3_COMMAND: () => (
     <EuiTextColor color="danger" key={Date.now()}>

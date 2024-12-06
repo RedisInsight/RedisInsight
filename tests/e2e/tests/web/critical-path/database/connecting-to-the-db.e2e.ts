@@ -68,7 +68,7 @@ test
 
         await t
             .click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton)
-            .click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseManually);
+            .click(myRedisDatabasePage.AddRedisDatabaseDialog.customSettingsButton);
 
         // Verify that the Host, Port, Database Alias values pre-populated by default for the manual flow
         await t
@@ -113,7 +113,7 @@ test
 
         await t
             .click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton)
-            .click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseManually);
+            .click(myRedisDatabasePage.AddRedisDatabaseDialog.customSettingsButton);
 
         await t
             .click(myRedisDatabasePage.AddRedisDatabaseDialog.useSSHCheckbox)

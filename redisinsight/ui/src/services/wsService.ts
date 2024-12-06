@@ -20,7 +20,7 @@ export function wsService(wsUrl: string, {
   query,
   extraHeaders
 }: WsParams, passTokenViaHeaders: boolean = true,) {
-  let queryParams: Record<string, any> = !passTokenViaHeaders ? { [CustomHeaders.CsrfToken]: token } : {}
+  let queryParams: Record<string, any> = !passTokenViaHeaders ? { [CustomHeaders.CsrfToken.toLowerCase()]: token } : {}
   if (query) {
     queryParams = { ...queryParams, ...query }
   }

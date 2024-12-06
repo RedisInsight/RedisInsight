@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiButtonIcon, EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiListGroupItem, EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
 
+import cx from 'classnames'
 import styles from '../../styles.module.scss'
 
 export interface Props {
@@ -17,7 +18,7 @@ const SentinelHostPort = (props: Props) => {
 
   return (
     <EuiText color="subdued" className={styles.sentinelCollapsedField}>
-      Host:Port:
+      Sentinel Host & Port:
       <div className={styles.hostPort}>
         <EuiTextColor>{`${host}:${port}`}</EuiTextColor>
         <EuiToolTip

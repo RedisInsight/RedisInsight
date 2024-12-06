@@ -3,27 +3,23 @@ import {
   EuiCheckbox,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
+  EuiFormRow, EuiSpacer,
   EuiSuperSelect,
   EuiSuperSelectOption,
   htmlIdGenerator,
 } from '@elastic/eui'
-import cx from 'classnames'
 import { FormikProps } from 'formik'
 
 import { KeyValueCompressor } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { NONE } from 'uiSrc/pages/home/constants'
-import styles from '../styles.module.scss'
 
 export interface Props {
-  flexGroupClassName?: string
-  flexItemClassName?: string
   formik: FormikProps<DbConnectionInfo>
 }
 
 const DbCompressor = (props: Props) => {
-  const { flexGroupClassName = '', flexItemClassName = '', formik } = props
+  const { formik } = props
 
   const optionsCompressor: EuiSuperSelectOption<string>[] = [
     {
@@ -70,16 +66,8 @@ const DbCompressor = (props: Props) => {
 
   return (
     <>
-      <EuiFlexGroup
-        className={cx(flexGroupClassName, {
-          [styles.tlsContainer]: !flexGroupClassName
-        })}
-        responsive={false}
-      >
-        <EuiFlexItem
-          grow={false}
-          className={flexItemClassName}
-        >
+      <EuiFlexGroup responsive={false}>
+        <EuiFlexItem grow={false}>
           <EuiFormRow>
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db compressor`}
@@ -94,33 +82,31 @@ const DbCompressor = (props: Props) => {
       </EuiFlexGroup>
 
       {formik.values.showCompressor && (
-        <EuiFlexGroup
-          className={flexGroupClassName}
-        >
-          <EuiFlexItem
-            className={cx(
-              flexItemClassName,
-            )}
-          >
-            <EuiFormRow label="Decompression format">
-              <EuiSuperSelect
-                name="compressor"
-                placeholder="Decompression format"
-                valueOfSelected={
+        <>
+          <EuiSpacer />
+          <EuiFlexGroup responsive={false}>
+            <EuiFlexItem>
+              <EuiFormRow label="Decompression format">
+                <EuiSuperSelect
+                  name="compressor"
+                  placeholder="Decompression format"
+                  valueOfSelected={
                     formik.values.compressor ?? NONE
                   }
-                options={optionsCompressor}
-                onChange={(value) => {
-                  formik.setFieldValue(
-                    'compressor',
-                    value || NONE
-                  )
-                }}
-                data-testid="select-compressor"
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+                  options={optionsCompressor}
+                  onChange={(value) => {
+                    formik.setFieldValue(
+                      'compressor',
+                      value || NONE
+                    )
+                  }}
+                  data-testid="select-compressor"
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+            <EuiFlexItem />
+          </EuiFlexGroup>
+        </>
       )}
     </>
   )

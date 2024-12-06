@@ -23,10 +23,10 @@ test('Verify that if user enters any index of the logical database that does not
     const index = '0';
 
     // Add database with logical index
-    await myRedisDatabasePage.AddRedisDatabase.addRedisDataBase(ossStandaloneConfig);
-    await t.click(myRedisDatabasePage.AddRedisDatabase.databaseIndexCheckbox);
-    await t.typeText(myRedisDatabasePage.AddRedisDatabase.databaseIndexInput, index, { paste: true });
-    await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+    await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDataBase(ossStandaloneConfig);
+    await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.databaseIndexCheckbox);
+    await t.typeText(myRedisDatabasePage.AddRedisDatabaseDialog.databaseIndexInput, index, { paste: true });
+    await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);
     // Open database and run command with non-existing index
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await t.click(browserPage.Cli.cliExpandButton);

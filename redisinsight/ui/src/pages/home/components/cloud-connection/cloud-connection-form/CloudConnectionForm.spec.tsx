@@ -24,14 +24,11 @@ describe('CloudConnectionForm', () => {
 
   it('should not render cloud sso form by default', () => {
     render(<CloudConnectionForm {...instance(mockedProps)} />)
-    expect(screen.queryByTestId('use-cloud-account-accordion')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('use-cloud-keys-accordion')).not.toBeInTheDocument()
-
     expect(screen.getByTestId('access-key')).toBeInTheDocument()
     expect(screen.getByTestId('secret-key')).toBeInTheDocument()
   })
 
-  it('should render cloud sso form and collapsible nav groups with feature flag', () => {
+  it('should render cloud sso form with feature flag', () => {
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       cloudSso: {
         flag: true
@@ -40,10 +37,6 @@ describe('CloudConnectionForm', () => {
 
     render(<CloudConnectionForm {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('use-cloud-account-accordion')).toBeInTheDocument()
-    expect(screen.getByTestId('use-cloud-keys-accordion')).toBeInTheDocument()
-
-    expect(screen.getByTestId('access-key')).toBeInTheDocument()
-    expect(screen.getByTestId('secret-key')).toBeInTheDocument()
+    expect(screen.getByTestId('oauth-container-social-buttons')).toBeInTheDocument()
   })
 })

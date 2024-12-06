@@ -7,7 +7,7 @@ import {
     databaseParameters,
     SentinelParameters,
     ClusterNodes
-} from '../../pageObjects/components/myRedisDatabase/add-redis-database';
+} from '../../pageObjects/dialogs/add-redis-database-dialog';
 import { ResourcePath } from '../constants';
 import {
     sendGetRequest,

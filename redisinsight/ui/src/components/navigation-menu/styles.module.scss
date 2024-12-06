@@ -182,3 +182,16 @@ $sideBarWidth: 60px;
     background-color: #465282 !important;
   }
 }
+
+.cloudLink {
+  border-radius: 8px;
+  border: 1px solid #8BA2FF;
+  max-width: 44px;
+  max-height: 44px;
+
+  .cloudIcon {
+    fill:none;
+    max-width: 26px;
+    color: #BDC3D7;
+  }
+}

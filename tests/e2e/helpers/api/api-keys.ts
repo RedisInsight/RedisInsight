@@ -1,5 +1,5 @@
 import { t } from 'testcafe';
-import { AddNewDatabaseParameters } from '../../pageObjects/components/myRedisDatabase/add-redis-database';
+import { AddNewDatabaseParameters } from '../../pageObjects/dialogs/add-redis-database-dialog';
 import {
     HashKeyParameters,
     StringKeyParameters,

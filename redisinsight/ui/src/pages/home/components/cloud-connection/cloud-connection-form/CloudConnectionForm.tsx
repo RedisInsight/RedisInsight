@@ -4,25 +4,29 @@ import { FormikErrors, useFormik } from 'formik'
 import { isEmpty } from 'lodash'
 import {
   EuiButton,
-  EuiCollapsibleNavGroup,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
   EuiFormRow,
-  EuiLink,
+  EuiRadioGroup,
+  EuiSpacer,
   EuiText,
   EuiToolTip,
   EuiWindowEvent,
   keys,
 } from '@elastic/eui'
 
+import { useSelector } from 'react-redux'
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
-import { OAuthAutodiscovery } from 'uiSrc/components/oauth/oauth-sso'
+import { CloudConnectionOptions } from 'uiSrc/pages/home/constants'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthAutodiscovery } from 'uiSrc/components/oauth/oauth-sso'
+import { MessageCloudApiKeys } from 'uiSrc/pages/home/components/form/Messages'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -30,21 +34,19 @@ import styles from '../styles.module.scss'
 export interface Props {
   accessKey: string
   secretKey: string
-  flexGroupClassName: string
-  flexItemClassName: string
   onClose?: () => void
   onSubmit: ({ accessKey, secretKey }: ICloudConnectionSubmit) => void
   loading: boolean
 }
 
 interface ISubmitButton {
-  onClick: () => void;
-  submitIsDisabled: boolean;
+  onClick: () => void
+  submitIsDisabled: boolean
 }
 
 interface Values {
-  accessKey: string;
-  secretKey: string;
+  accessKey: string
+  secretKey: string
 }
 
 const fieldDisplayNames: Values = {
@@ -52,39 +54,28 @@ const fieldDisplayNames: Values = {
   secretKey: 'Enter API User Key',
 }
 
-const Message = () => (
-  <>
-    <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
-      {`Enter API keys to discover and add databases.
-    API keys can be enabled by following the steps
-    mentioned in the `}
-      <EuiLink
-        color="text"
-        className={styles.link}
-        external={false}
-        target="_blank"
-        href="https://docs.redis.com/latest/rc/api/get-started/enable-the-api/"
-      >
-        documentation.
-      </EuiLink>
-    </EuiText>
-  </>
-)
+const options = [
+  { id: CloudConnectionOptions.Account, label: 'Redis Cloud account' },
+  { id: CloudConnectionOptions.ApiKeys, label: 'Redis Cloud API keys' },
+]
 
 const CloudConnectionForm = (props: Props) => {
   const {
     accessKey,
     secretKey,
-    flexGroupClassName,
-    flexItemClassName,
     onClose,
     onSubmit,
     loading,
   } = props
 
+  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+
   const [domReady, setDomReady] = useState(false)
   const [errors, setErrors] = useState<FormikErrors<Values>>(
     accessKey || secretKey ? {} : fieldDisplayNames
+  )
+  const [type, setType] = useState<CloudConnectionOptions>(
+    cloudSsoFeature?.flag ? CloudConnectionOptions.Account : CloudConnectionOptions.ApiKeys
   )
 
   useEffect(() => {
@@ -124,10 +115,11 @@ const CloudConnectionForm = (props: Props) => {
 
   const CancelButton = ({ onClick }: { onClick: () => void }) => (
     <EuiButton
+      size="s"
       color="secondary"
       className="btn-cancel"
       onClick={onClick}
-      style={{ marginRight: '20px' }}
+      style={{ marginRight: 12 }}
     >
       Cancel
     </EuiButton>
@@ -150,6 +142,7 @@ const CloudConnectionForm = (props: Props) => {
     >
       <EuiButton
         fill
+        size="s"
         color="secondary"
         type="submit"
         onClick={onClick}
@@ -180,13 +173,13 @@ const CloudConnectionForm = (props: Props) => {
   }
 
   const CloudApiForm = (
-    <div className={styles.cloudApi}>
-      <Message />
-      <br />
+    <div className={styles.cloudApi} data-testid="add-db_cloud-api">
+      <MessageCloudApiKeys />
+      <EuiSpacer />
       <EuiWindowEvent event="keydown" handler={onKeyDown} />
       <EuiForm component="form" onSubmit={formik.handleSubmit}>
-        <EuiFlexGroup className={flexGroupClassName}>
-          <EuiFlexItem className={flexItemClassName}>
+        <EuiFlexGroup>
+          <EuiFlexItem>
             <EuiFormRow label="API Account Key*">
               <EuiFieldText
                 name="accessKey"
@@ -203,8 +196,8 @@ const CloudConnectionForm = (props: Props) => {
             </EuiFormRow>
           </EuiFlexItem>
         </EuiFlexGroup>
-        <EuiFlexGroup className={flexGroupClassName}>
-          <EuiFlexItem className={flexItemClassName}>
+        <EuiFlexGroup>
+          <EuiFlexItem>
             <EuiFormRow label="API User Key*">
               <EuiFieldText
                 name="secretKey"
@@ -227,33 +220,27 @@ const CloudConnectionForm = (props: Props) => {
   )
 
   return (
-    <>
-      <div className="getStartedForm">
-        <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-          <EuiText color="subdued" size="s">Connect with:</EuiText>
-          <EuiCollapsibleNavGroup
-            isCollapsible
-            className={styles.accordion}
-            title="Use Cloud Account"
-            initialIsOpen={false}
-            data-testid="use-cloud-account-accordion"
-          >
-            <OAuthAutodiscovery inline source={OAuthSocialSource.DiscoveryForm} />
-          </EuiCollapsibleNavGroup>
-        </FeatureFlagComponent>
-        <FeatureFlagComponent name={FeatureFlags.cloudSso} otherwise={CloudApiForm}>
-          <EuiCollapsibleNavGroup
-            isCollapsible
-            className={styles.accordion}
-            title="Use Cloud API Keys"
-            initialIsOpen={false}
-            data-testid="use-cloud-keys-accordion"
-          >
-            {CloudApiForm}
-          </EuiCollapsibleNavGroup>
-        </FeatureFlagComponent>
-      </div>
-    </>
+    <div className="getStartedForm">
+      <FeatureFlagComponent name={FeatureFlags.cloudSso}>
+        <EuiFlexGroup direction="column" gutterSize="s">
+          <EuiFlexItem><EuiText color="subdued" size="s">Connect with:</EuiText></EuiFlexItem>
+          <EuiFlexItem>
+            <EuiRadioGroup
+              options={options}
+              idSelected={type}
+              className={styles.cloudOptions}
+              onChange={(id) => setType(id as CloudConnectionOptions)}
+              data-testid="cloud-options"
+            />
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiSpacer size="s" />
+      </FeatureFlagComponent>
+      {type === CloudConnectionOptions.Account && (
+        <OAuthAutodiscovery source={OAuthSocialSource.DiscoveryForm} onClose={onClose} />
+      )}
+      {type === CloudConnectionOptions.ApiKeys && CloudApiForm}
+    </div>
   )
 }
 

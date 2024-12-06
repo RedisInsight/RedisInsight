@@ -777,7 +777,7 @@ describe('InstanceForm', () => {
       expect(screen.getByTestId('db')).toHaveValue('5')
     })
 
-    it('should render proper database alias', () => {
+    it('should render proper database alias as field', () => {
       render(
         <ManualConnectionForm
           {...instance(mockedProps)}
@@ -789,7 +789,7 @@ describe('InstanceForm', () => {
           }}
         />
       )
-      expect(screen.getByTestId('db-alias')).toHaveTextContent('Clone ')
+      expect(screen.getByTestId('name')).toHaveValue('lala')
     })
 
   //   it('should render proper default values for standalone', () => {

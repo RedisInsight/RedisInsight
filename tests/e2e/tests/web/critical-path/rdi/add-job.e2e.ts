@@ -94,7 +94,7 @@ test('Verify that user insert template for jobs', async() => {
     await t.expect(enteredText).contains(templateWords, 'template is incorrect');
 
     // Verify that user can see a standard validation on disabled Insert template button when the editor is not empty
-    await t.hover(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
+    await t.hover(myRedisDatabasePage.AddRedisDatabaseDialog.testConnectionBtn);
     await rdiInstancePage.verifyTooltipContainsText(templateInsertedTooltip);
     const buttonClass = rdiInstancePage.templateButton.getAttribute('class');
     await t.expect(buttonClass).contains(disabledAttribute, 'Insert Template button is not disabled');

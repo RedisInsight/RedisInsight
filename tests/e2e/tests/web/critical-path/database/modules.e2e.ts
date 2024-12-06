@@ -49,15 +49,15 @@ test('Verify that user can see DB modules on DB list page for Standalone DB', as
         const expectedName = await moduleList[i].getAttribute('data-testid');
         await t.expect(moduleName).eql(expectedName, `${moduleName} icon not found`);
     }
-    //Minimize the window to check quantifier
+    // Minimize the window to check quantifier
     await t.resizeWindow(1000, 700);
-    //Verify that user can see +N icon (where N>1) on DB list page when modules icons don't fit the Module column width
+    // Verify that user can see +N icon (where N>1) on DB list page when modules icons don't fit the Module column width
     await t.expect(myRedisDatabasePage.moduleQuantifier.textContent).eql('+3');
     await t.expect(myRedisDatabasePage.moduleQuantifier.exists).ok('Quantifier icon not found');
-    //Verify that user can hover over the module icons and see tooltip with all modules name
+    // Verify that user can hover over the module icons and see tooltip with all modules name
     await t.hover(myRedisDatabasePage.moduleQuantifier);
     await t.expect(myRedisDatabasePage.moduleTooltip.visible).ok('Module tooltip not found');
-    //Verify that user can hover over the module icons and see tooltip with version.
+    // Verify that user can hover over the module icons and see tooltip with version.
     await myRedisDatabasePage.checkModulesInTooltip(moduleNameList);
 });
 test('Verify that user can see full module list in the Edit mode', async t => {
@@ -65,9 +65,9 @@ test('Verify that user can see full module list in the Edit mode', async t => {
     await t.expect(myRedisDatabasePage.connectionTypeTitle.visible).ok('connection type column not found');
     // Open Edit mode
     await t.click(myRedisDatabasePage.editDatabaseButton);
-    await myRedisDatabasePage.NavigationHeader.togglePanel(true);
-    // Verify that module column is not displayed
-    await t.expect(myRedisDatabasePage.connectionTypeTitle.visible).notOk('connection type column not found');
+    // **** Deprecated **** Verify that module column is not displayed
+    // await myRedisDatabasePage.NavigationHeader.togglePanel(true);
+    // await t.expect(myRedisDatabasePage.connectionTypeTitle.visible).notOk('connection type column not found');
     // Verify modules in Edit mode
     await myRedisDatabasePage.checkModulesOnPage(moduleList);
 });

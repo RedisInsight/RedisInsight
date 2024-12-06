@@ -1,65 +1,21 @@
 .addInstanceBtn {
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 0;
+  padding-right: 0;
   height: 43px;
   margin: 0 auto;
   text-decoration: none !important;
+
+  &:global(.euiButton) {
+    min-width: 54px !important;
+  }
 
   :global(.euiButton__text) {
     font-weight: 500 !important;
   }
 }
 
-.importDatabasesBtn:global(.euiButton) {
-  height: 43px;
-  min-width: auto !important;
-
-  :global(.euiButton__text) {
-    display: flex;
-    align-items: center;
-  }
-}
-
-.followText {
-  padding-top: 4px;
-  font-size: 12px !important;
-  text-align: left;
-  color: var(--euiTextColor) !important;
-  opacity: 0.7;
-}
-
 .clearMarginFlexItem {
   margin-bottom: 0 !important;
-}
-
-.links {
-  font-size: 14px;
-  a {
-    color: var(--euiTextColor);
-    text-decoration: underline;
-
-    &:hover {
-      text-decoration: none;
-    }
-  }
-}
-
-.containerDl {
-  .links {
-    margin-left: 6px;
-    position: relative;
-    min-width: 235px;
-    top: -5px;
-
-    :global(.euiFlexItem) {
-      margin-left: 0px !important;
-      margin-right: 12px !important;
-
-      &:last-of-type {
-        margin-right: 0 !important;
-      }
-    }
-  }
 }
 
 .contentDL {
@@ -78,7 +34,7 @@
     height: 6px !important;
   }
   @include eui.euiBreakpoint("m", "l", "xl") {
-    height: 18px !important;
+    height: 12px !important;
   }
 }
 

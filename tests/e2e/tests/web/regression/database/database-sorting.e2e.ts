@@ -80,9 +80,8 @@ test('Verify that user has the same sorting if db name is changed', async t => {
     await myRedisDatabasePage.compareInstances(actualDatabaseList, await sortList());
     // Change DB name inside of sorted list
     await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
-    await t.click(myRedisDatabasePage.editAliasButton);
-    await t.typeText(myRedisDatabasePage.aliasInput, newDBName, { replace: true, paste: true });
-    await t.pressKey('enter');
+    await t.typeText(myRedisDatabasePage.AddRedisDatabaseDialog.databaseAliasInput, newDBName, { replace: true, paste: true });
+    await t.click(myRedisDatabasePage.submitChangesButton);
     // Change DB is control list
     const index = databases.findIndex((item) => {
         return item.databaseName === oldDBName;

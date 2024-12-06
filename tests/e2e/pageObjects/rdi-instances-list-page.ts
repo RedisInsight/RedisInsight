@@ -1,13 +1,13 @@
 import { Selector, t } from 'testcafe';
-import { AddRdiInstance, RdiInstance } from './components/myRedisDatabase/add-rdi-instance';
 import { BaseOverviewPage } from './base-overview-page';
 import { RdiNavigationPanel } from './components/navigation/rdi-navigation-panel';
+import { AddRdiInstanceDialog, RdiInstance } from './dialogs/add-rdi-instance-dialog';
 
 export class RdiInstancesListPage extends BaseOverviewPage {
     NavigationPanel = new RdiNavigationPanel();
-    AddRdiInstance = new AddRdiInstance();
+    AddRdiInstanceDialog = new AddRdiInstanceDialog();
 
-    rdiInstanceButton = Selector('[data-testid=rdi-instance]');
+    addRdiInstanceButton = Selector('[data-testid=rdi-instance]');
     addRdiFromEmptyListBtn = Selector('[data-testid=empty-rdi-instance-button]');
 
     quickstartBtn = Selector('[data-testid=empty-rdi-quickstart-button]');
@@ -30,13 +30,13 @@ export class RdiInstancesListPage extends BaseOverviewPage {
      * @param instanceValue rdi instance data
      */
     async addRdi(instanceValue: RdiInstance): Promise<void> {
-        await t.click(this.rdiInstanceButton);
+        await t.click(this.addRdiInstanceButton);
         await t
-            .typeText(this.AddRdiInstance.rdiAliasInput, instanceValue.alias)
-            .typeText(this.AddRdiInstance.urlInput, instanceValue.url)
-            .typeText(this.AddRdiInstance.usernameInput, instanceValue.username as string)
-            .typeText(this.AddRdiInstance.passwordInput, instanceValue.password as string);
-        await t.click(this.AddRdiInstance.addInstanceButton);
+            .typeText(this.AddRdiInstanceDialog.rdiAliasInput, instanceValue.alias)
+            .typeText(this.AddRdiInstanceDialog.urlInput, instanceValue.url)
+            .typeText(this.AddRdiInstanceDialog.usernameInput, instanceValue.username as string)
+            .typeText(this.AddRdiInstanceDialog.passwordInput, instanceValue.password as string);
+        await t.click(this.AddRdiInstanceDialog.addInstanceButton);
     }
 
     /**
@@ -81,7 +81,7 @@ export class RdiInstancesListPage extends BaseOverviewPage {
      * Edit Rdi by name
      * @param dbName The name of the rdi to be deleted
      */
-    async editRdiByName(dbName: string): Promise<void> {
+    async clickEditRdiByName(dbName: string): Promise<void> {
         const rdiNames = this.rdiInstanceRow;
         const count = await rdiNames.count;
 

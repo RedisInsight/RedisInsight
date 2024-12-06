@@ -45,10 +45,10 @@ test
             redirect: 'workbench'
         };
         await t.navigateTo(generateLink(connectUrlParams, redisConnect,commonUrl));
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(0).getAttribute('title')).contains(host, 'Wrong host value');
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(1).getAttribute('title')).contains(port, 'Wrong port value');
+        await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.disabledDatabaseInfo.nth(0).getAttribute('title')).contains(host, 'Wrong host value');
+        await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.disabledDatabaseInfo.nth(1).getAttribute('title')).contains(port, 'Wrong port value');
         await t.wait(5_000);
-        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);
         // wait for db is added
         await t.wait(10_000);
         await t.expect(workbenchPage.submitCommandButton.exists).ok('Redirection to Workbench is not correct');

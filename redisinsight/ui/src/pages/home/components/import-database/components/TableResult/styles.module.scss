@@ -1,0 +1,32 @@
+.tableWrapper {
+  max-height: 200px;
+  @include eui.scrollBar;
+
+  overflow: auto;
+
+  .table {
+    :global {
+      .euiTableHeaderCell {
+        background-color: var(--browserTableRowEven);
+      }
+
+      .euiTableRowCell {
+        vertical-align: top !important;
+      }
+
+      .euiTableCellContent {
+        white-space: normal !important;
+        font-size: 12px !important;
+        padding: 8px 14px;
+      }
+    }
+  }
+
+  :global(.inMemoryTableDefault.noBorders) {
+    &.table {
+      :global(.euiTableHeaderCell:last-child) {
+        border-right: 1px solid var(--euiColorLightShade) !important;
+      }
+    }
+  }
+}

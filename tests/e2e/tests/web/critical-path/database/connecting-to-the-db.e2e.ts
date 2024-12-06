@@ -1,18 +1,31 @@
 import { rte } from '../../../../helpers/constants';
 import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
-import { commonUrl, invalidOssStandaloneConfig, ossClusterForSSHConfig, ossStandaloneForSSHConfig } from '../../../../helpers/conf';
+import {
+    commonUrl,
+    invalidOssStandaloneConfig,
+    ossClusterForSSHConfig,
+    ossStandaloneForSSHConfig,
+    ossStandaloneRedisGears,
+} from '../../../../helpers/conf';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../../test-data/sshPrivateKeys';
 import { Common } from '../../../../helpers/common';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
 import { goBackHistory } from '../../../../helpers/utils';
+import { t } from 'testcafe';
+import { AddRedisDatabaseDialog } from '../../../../pageObjects/dialogs';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const browserActions = new BrowserActions();
+const addDbDialog = new AddRedisDatabaseDialog();
+
+const { host, port, databaseName, databaseUsername = '', databasePassword = '' } = ossStandaloneRedisGears;
+const username = 'alice&&';
+const password = 'p1pp0@&';
 
 const sshParams = {
     sshHost: '172.31.100.245',
@@ -205,4 +218,32 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.cloudButton);
         await Common.checkURL(externalPageLinkNavigation);
         await goBackHistory();
+    });
+test.only
+    .meta({ rte: rte.none })
+    .before(async t  => {
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisGears);
+        await browserPage.Cli.sendCommandInCli(`acl DELUSER ${username}`);
+        await browserPage.Cli.sendCommandInCli(`ACL SETUSER ${username} on >${password} +@all ~*`);
+        await t.click(browserPage.NavigationPanel.myRedisDBButton);
+    })
+    .after(async t => {
+        // Delete all existing connections
+        await t.click(addDbDialog.cancelButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
+        await myRedisDatabasePage.clickOnDBByName(databaseName);
+        await browserPage.Cli.sendCommandInCli(`acl DELUSER ${username}`);
+        await databaseAPIRequests.deleteAllDatabasesApi();
+    })
+    ('Verify that inserted URL is parsed', async t => {
+        const codedUrl = `redis://${username}:${password}@${host}:${port}`;
+        await t
+            .click(addDbDialog.addDatabaseButton);
+        await t.typeText(addDbDialog.urlInput, codedUrl);
+        await t.click(addDbDialog.customSettingsButton);
+        await t.expect(addDbDialog.databaseAliasInput.getAttribute('value')).eql(`${host}:${port}`, 'name is incorrected');
+        await t.expect(addDbDialog.hostInput.getAttribute('value')).eql(`${host}`, 'host is incorrected');
+        await t.expect(addDbDialog.portInput.getAttribute('value')).eql(`${port}`, 'port is incorrected');
+        await t.expect(addDbDialog.usernameInput.getAttribute('value')).eql(`${username}`, 'username is incorrected');
+        await t.expect(addDbDialog.passwordInput.getAttribute('value')).eql(`${password}`, 'username is incorrected');
     });

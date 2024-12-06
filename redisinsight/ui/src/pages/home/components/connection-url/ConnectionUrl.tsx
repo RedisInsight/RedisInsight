@@ -129,7 +129,7 @@ const ConnectionUrl = (props: Props) => {
                 value={formik.values.connectionURL}
                 onChange={formik.handleChange}
                 fullWidth
-                placeholder="Enter Connection URL"
+                placeholder="redis://localhost:6379"
                 resize="none"
                 style={{ height: 88 }}
                 data-testid="connection-url"

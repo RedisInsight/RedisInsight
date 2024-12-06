@@ -45,7 +45,7 @@ const ConnectivityOptions = (props: Props) => {
           </EuiFlexItem>
           <EuiFlexItem grow={1}>
             <OAuthSsoHandlerDialog>
-              {(ssoCloudHandlerClick) => (
+              {(ssoCloudHandlerClick, isSSOEnabled) => (
                 <EuiButton
                   color="secondary"
                   className={cx(styles.typeBtn, styles.primary)}
@@ -58,7 +58,7 @@ const ConnectivityOptions = (props: Props) => {
                       source: OAuthSocialSource.AddDbForm,
                       action: OAuthSocialAction.Create
                     })
-                    onClose?.()
+                    isSSOEnabled && onClose?.()
                   }}
                   data-testid="create-free-db-btn"
                 >

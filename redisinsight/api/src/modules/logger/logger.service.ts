@@ -1,10 +1,14 @@
 import { WinstonModule, WinstonModuleOptions } from 'nest-winston';
-import { LoggerService as NestLoggerService } from '@nestjs/common';
-import { cloneDeep } from 'lodash';
 
-type ContextOrMetaArgs = (string | object)[];
+type LogMeta = object;
 
-export class LoggerService implements NestLoggerService {
+type LogObject = {
+  [key: string]: unknown
+};
+
+type ErrorOrMeta = Error | LogMeta;
+
+export class LoggerService {
   protected context?: string;
 
   private readonly nestLogger: ReturnType<typeof WinstonModule.createLogger>;
@@ -26,10 +30,6 @@ export class LoggerService implements NestLoggerService {
     this.context = context;
   }
 
-  setContext(context: string) {
-    this.context = context;
-  }
-
   private isException(error?: unknown) {
     return (
       error instanceof Error
@@ -37,73 +37,82 @@ export class LoggerService implements NestLoggerService {
     );
   }
 
-  formatMeta(contextOrMetaArgs: ContextOrMetaArgs) {
-    const argsCopy = cloneDeep(contextOrMetaArgs);
-    let context: string | null = null;
-    let meta: object | null = null;
+  private formatLog(message: string | LogObject, meta?: LogMeta, error?: Error) {
+    const messageObj: LogObject = (typeof message === 'string' ? { message } : message) as LogObject;
 
-    if (argsCopy[0] instanceof Error) {
-      argsCopy.shift();
-    }
-    if (typeof argsCopy[0] === 'string') {
-      context = argsCopy.shift() as string;
-    }
-    if (typeof argsCopy[0] === 'object') {
-      meta = argsCopy.shift() as object;
-    }
-
-    const localContext = context || this.context;
-    if (!meta) {
-      return localContext;
-    }
+    messageObj.context = this.context;
     return {
-      context: localContext,
-      meta,
+      context: this.context,
+      stack: error && error.stack,
+      message: {
+        ...(typeof meta === 'object' ? meta : {}),
+        ...(messageObj || {}),
+        ...(error ? { error: error.message } : {}),
+      },
     };
   }
 
-  debug(message: unknown, ...contextOrMetaArgs: ContextOrMetaArgs) {
-    this.nestLogger.debug(message, this.formatMeta(contextOrMetaArgs));
+  private parseErrorOrMeta(errorOrMeta: ErrorOrMeta[]) {
+    let error: Error;
+    let meta: LogMeta;
+    if (this.isException(errorOrMeta[0])) {
+      error = errorOrMeta.shift() as Error;
+    }
+    if (errorOrMeta[0]) {
+      meta = errorOrMeta.shift() as LogMeta;
+    }
+    return { error, meta };
   }
 
-  log(message: unknown, context?: string, meta?: object) {
+  debug(message: string | LogObject, meta?: LogMeta) {
+    const { message: formattedMessage } = this.formatLog(message, meta);
+    this.nestLogger.debug(formattedMessage);
+  }
+
+  // reserved for Nest.js
+  log(message: unknown, context?: string) {
     if (
       !this.disableStartupLogs
       || !LoggerService.startupContexts.includes(context)
     ) {
-      this.nestLogger.log(message, this.formatMeta([context, meta]));
+      this.nestLogger.log(message, context || this.context);
     }
   }
 
-  info(message: unknown, ...contextOrMetaArgs: ContextOrMetaArgs) {
-    this.nestLogger.log(message, this.formatMeta(contextOrMetaArgs));
+  info(message: string | LogObject, meta?: LogMeta) {
+    const { message: formattedMessage } = this.formatLog(message, meta);
+    this.nestLogger.log(formattedMessage);
   }
 
-  error(message: unknown, ...contextOrMetaArgs: ContextOrMetaArgs) {
+  error(message: string | LogObject, ...errorOrMeta: ErrorOrMeta[]) {
+    const { error, meta } = this.parseErrorOrMeta(errorOrMeta);
+    const data = this.formatLog(message, meta, error);
     this.nestLogger.error(
-      message,
-      this.isException(contextOrMetaArgs[0])
-        ? (contextOrMetaArgs[0] as Error).stack
-        : undefined,
-      this.formatMeta(contextOrMetaArgs),
+      data.message,
+      data.stack,
     );
   }
 
-  fatal(message: unknown, ...contextOrMetaArgs: ContextOrMetaArgs) {
+  fatal(message: string | LogObject, ...errorOrMeta: ErrorOrMeta[]) {
+    const { error, meta } = this.parseErrorOrMeta(errorOrMeta);
+    const data = this.formatLog(message, meta, error);
     this.nestLogger.fatal(
-      message,
-      this.isException(contextOrMetaArgs[0])
-        ? (contextOrMetaArgs[0] as Error).stack
-        : undefined,
-      this.formatMeta(contextOrMetaArgs),
+      data.message,
+      data.stack,
     );
   }
 
-  verbose(message: unknown, ...contextOrMetaArgs: ContextOrMetaArgs) {
-    this.nestLogger.verbose(message, this.formatMeta(contextOrMetaArgs));
+  verbose(message: string | LogObject, meta?: LogMeta) {
+    const { message: formattedMessage } = this.formatLog(message, meta);
+    this.nestLogger.verbose(formattedMessage);
   }
 
-  warn(message: unknown, ...contextOrMetaArgs: ContextOrMetaArgs) {
-    this.nestLogger.warn(message, this.formatMeta(contextOrMetaArgs));
+  warn(message: string | LogObject, ...errorOrMeta: ErrorOrMeta[]) {
+    const { error, meta } = this.parseErrorOrMeta(errorOrMeta);
+    const data = this.formatLog(message, meta, error);
+    this.nestLogger.warn(
+      data.message,
+      data.stack,
+    );
   }
 }

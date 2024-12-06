@@ -17,7 +17,7 @@ export class CommandsJsonProvider {
   constructor(name, url) {
     this.name = name;
     this.url = url;
-    this.logger = new Logger(`CommandsJsonProvider:${this.name}`);
+    this.logger = new Logger();
   }
 
   /**

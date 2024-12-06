@@ -43,7 +43,7 @@ describe('POST /ai/assistant/chats/:id/messages', () => {
       responseBody: {
         statusCode: 401,
         error: 'ConvAiUnauthorized',
-        message: 'Request failed with status code 401',,
+        message: 'Request failed with status code 401',
         errorCode: 11301,
       },
     },

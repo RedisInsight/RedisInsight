@@ -22,6 +22,7 @@ import {
   mockSentinelRedisClient,
   mockSessionMetadata,
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
@@ -32,6 +33,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { NotFoundException } from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('DatabaseFactory', () => {
   let service: DatabaseFactory;
@@ -42,6 +44,10 @@ describe('DatabaseFactory', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseFactory,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: RedisClientFactory,
           useFactory: mockRedisClientFactory,

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import {
   BrowserToolHashCommands,
@@ -10,6 +11,7 @@ import {
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { HashKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/hash.key-info.strategy';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testHash',
@@ -26,6 +28,10 @@ describe('HashKeyInfoStrategy', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         HashKeyInfoStrategy,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
       ],
     }).compile();
 

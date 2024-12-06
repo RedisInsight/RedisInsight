@@ -15,6 +15,7 @@ import {
   mockSendAiChatMessageDto,
   mockSessionMetadata,
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { LocalAiQueryAuthProvider } from 'src/modules/ai/query/providers/auth/local.ai-query-auth.provider';
@@ -32,6 +33,7 @@ import { io } from 'socket.io-client';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
 import { AiQueryRateLimitRequestException } from 'src/modules/ai/query/exceptions';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import * as ContextUtil from './utils/context.util';
 
 describe('AiQueryService', () => {
@@ -66,6 +68,10 @@ describe('AiQueryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AiQueryService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: AiQueryProvider,
           useFactory: mockAiQueryProvider,

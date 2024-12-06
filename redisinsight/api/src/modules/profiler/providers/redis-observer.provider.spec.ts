@@ -2,12 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockDatabaseClientFactory,
   mockLogFile,
-  mockRedisShardObserver, mockSessionMetadata,
+  mockLoggerServiceFactory,
+  mockRedisShardObserver,
+  mockSessionMetadata,
   mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('RedisObserverProvider', () => {
   const client = mockStandaloneRedisClient;
@@ -19,6 +22,10 @@ describe('RedisObserverProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RedisObserverProvider,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

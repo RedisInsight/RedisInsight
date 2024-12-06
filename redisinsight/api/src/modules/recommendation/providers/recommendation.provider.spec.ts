@@ -1,6 +1,8 @@
 import { when, resetAllWhenMocks } from 'jest-when';
 import { RECOMMENDATION_NAMES } from 'src/constants';
-import { mockRedisNoAuthError, mockRedisNoPasswordError, mockStandaloneRedisClient } from 'src/__mocks__';
+import {
+  mockRedisNoAuthError, mockStandaloneRedisClient, mockLoggerServiceFactory,
+} from 'src/__mocks__';
 import { RecommendationProvider } from 'src/modules/recommendation/providers/recommendation.provider';
 import { RedisClientConnectionType } from 'src/modules/redis/client';
 
@@ -146,7 +148,7 @@ const mockZScanResponse1 = [
 
 describe('RecommendationProvider', () => {
   const client = mockStandaloneRedisClient;
-  const service = new RecommendationProvider();
+  const service = new RecommendationProvider(mockLoggerServiceFactory());
 
   describe('determineLuaScriptRecommendation', () => {
     it('should not return luaScript recommendation', async () => {

@@ -3,11 +3,13 @@ import {
   mockSocket,
   MockType,
   mockSessionMetadata,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
 import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-subscriber';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const mockUserClient = new UserClient('socketId', mockSocket, 'databaseId');
 const mockUserClient2 = new UserClient('socketId2', mockSocket, 'databaseId');
@@ -19,10 +21,12 @@ describe('UserSessionProvider', () => {
   let redisClientProvider: MockType<RedisClientProvider>;
 
   beforeEach(async () => {
-    jest.resetAllMocks();
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         UserSessionProvider,
         {
           provide: RedisClientProvider,

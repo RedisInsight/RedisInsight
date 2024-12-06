@@ -8,11 +8,13 @@ import {
   mockGetCloudSubscriptionDatabaseDto,
   mockGetCloudSubscriptionDatabasesDto,
   mockGetCloudSubscriptionDatabasesDtoFixed,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
 import { CloudDatabaseCapiProvider } from 'src/modules/cloud/database/cloud-database.capi.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('CloudDatabaseCapiService', () => {
   let service: CloudDatabaseCapiService;
@@ -22,6 +24,10 @@ describe('CloudDatabaseCapiService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CloudDatabaseCapiService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: CloudDatabaseCapiProvider,
           useFactory: mockCloudDatabaseCapiProvider,

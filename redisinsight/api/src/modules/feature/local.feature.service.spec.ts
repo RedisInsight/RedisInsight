@@ -1,12 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
 import {
-  mockConstantsProvider, mockControlGroup, mockControlNumber,
-  mockFeature, mockFeatureAnalytics, mockFeatureFlagProvider, mockFeatureRepository,
+  mockConstantsProvider,
+  mockControlGroup,
+  mockControlNumber,
+  mockFeature,
+  mockFeatureAnalytics,
+  mockFeatureFlagProvider,
+  mockFeatureRepository,
   mockFeaturesConfig,
   mockFeaturesConfigJson,
-  mockFeaturesConfigRepository, mockFeaturesConfigService, mockFeatureSso, mockSessionMetadata,
-  MockType, mockUnknownFeature,
+  mockFeaturesConfigRepository,
+  mockFeaturesConfigService,
+  mockFeatureSso,
+  mockLoggerServiceFactory,
+  mockSessionMetadata,
+  MockType,
+  mockUnknownFeature,
 } from 'src/__mocks__';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -18,6 +28,7 @@ import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/
 import * as fs from 'fs-extra';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 jest.mock('fs-extra');
 const mockedFs = fs as jest.Mocked<typeof fs>;
@@ -44,6 +55,10 @@ describe('FeatureService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalFeatureService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: EventEmitter2,
           useFactory: () => ({

@@ -11,6 +11,7 @@ import {
   mockCloudSession,
   mockCloudCapiAccount,
   mockCloudApiUser,
+  mockLoggerServiceFactory,
   mockCloudApiCsrfToken, mockServerService, mockCloudRequestUtm, mockCompleteCloudUtm, mockUtmCompleteBody, mockUtmBody,
 } from 'src/__mocks__';
 import { when, resetAllWhenMocks } from 'jest-when';
@@ -24,6 +25,7 @@ import { mockCloudAuthService } from 'src/__mocks__/cloud-auth';
 import axios from 'axios';
 import { ServerService } from 'src/modules/server/server.service';
 import { CloudAuthIdpType } from 'src/modules/cloud/auth/models';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -43,6 +45,10 @@ describe('CloudUserApiService', () => {
       providers: [
         CloudUserApiService,
         CloudUserApiProvider,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: CloudUserRepository,
           useFactory: mockCloudUserRepository,

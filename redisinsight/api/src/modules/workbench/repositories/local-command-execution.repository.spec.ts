@@ -12,6 +12,7 @@ import {
   mockShortCommandExecutionEntity,
   mockShortCommandExecution,
   mockCommandExecutionFilter,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { NotFoundException } from '@nestjs/common';
@@ -23,6 +24,7 @@ import { KeytarDecryptionErrorException } from 'src/modules/encryption/exception
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
 import { LocalCommandExecutionRepository } from 'src/modules/workbench/repositories/local-command-execution.repository';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const WORKBENCH_CONFIG = config.get('workbench');
 
@@ -37,6 +39,10 @@ describe('LocalCommandExecutionRepository', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalCommandExecutionRepository,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: getRepositoryToken(CommandExecutionEntity),
           useFactory: mockRepository,

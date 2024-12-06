@@ -6,6 +6,7 @@ import {
   mockEncryptResult, mockQueryBuilderGetMany, mockQueryBuilderGetManyRaw,
   mockRepository,
   mockDatabase,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -21,6 +22,7 @@ import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/d
 import { NotFoundException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { KeytarDecryptionErrorException } from 'src/modules/encryption/exceptions';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 export const mockCreateDatabaseAnalysisDto: CreateDatabaseAnalysisDto = {
   delimiter: ':',
@@ -169,6 +171,10 @@ describe('DatabaseAnalysisProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseAnalysisProvider,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: getRepositoryToken(DatabaseAnalysisEntity),
           useFactory: mockRepository,

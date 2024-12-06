@@ -39,6 +39,7 @@ import {
   mockRedisHScanResponse,
   mockRedisHScanWithFieldsExpireResponse,
   mockRedisHTtlResponse, mockUpdateHashFieldsTtlDto,
+  mockLoggerServiceFactory,
 } from 'src/modules/browser/__mocks__';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { RECOMMENDATION_NAMES } from 'src/constants';
@@ -46,6 +47,7 @@ import { HashService } from 'src/modules/browser/hash/hash.service';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisFeature } from 'src/modules/redis/client';
 import apiConfig, { Config } from 'src/utils/config';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const REDIS_SCAN_CONFIG = apiConfig.get('redis_scan') as Config['redis_scan'];
 
@@ -59,6 +61,10 @@ describe('HashService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         HashService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

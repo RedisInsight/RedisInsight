@@ -28,6 +28,8 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { StringService } from 'src/modules/browser/string/string.service';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
+import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
 
 const mockSetStringDto: SetStringDto = {
   keyName: Buffer.from('foo'),
@@ -43,6 +45,10 @@ describe('StringService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StringService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

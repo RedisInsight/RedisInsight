@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MockType, mockRdiClientProvider } from 'src/__mocks__';
+import { MockType, mockRdiClientProvider, mockLoggerServiceFactory } from 'src/__mocks__';
 import { RdiClientMetadata, RdiStatisticsResult, RdiStatisticsStatus } from 'src/modules/rdi/models';
 import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
 import { RdiStatisticsService } from 'src/modules/rdi/rdi-statistics.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('RdiStatisticsService', () => {
   let service: RdiStatisticsService;
@@ -12,6 +13,10 @@ describe('RdiStatisticsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RdiStatisticsService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: RdiClientProvider,
           useFactory: mockRdiClientProvider,

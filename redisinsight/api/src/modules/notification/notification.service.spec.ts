@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockNotificationRepository, mockNotificationsDto,
+  mockLoggerServiceFactory,
+  mockNotificationRepository,
+  mockNotificationsDto,
   mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
@@ -8,6 +10,7 @@ import { NotificationType } from 'src/modules/notification/constants';
 import axios from 'axios';
 import { InternalServerErrorException } from '@nestjs/common';
 import { NotificationService } from 'src/modules/notification/notification.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { NotificationRepository } from './repositories/notification.repository';
 
 jest.mock('axios');
@@ -23,6 +26,10 @@ describe('NotificationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         NotificationService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: NotificationRepository,
           useFactory: mockNotificationRepository,

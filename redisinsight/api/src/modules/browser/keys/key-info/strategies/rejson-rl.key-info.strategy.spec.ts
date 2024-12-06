@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import {
@@ -11,6 +12,7 @@ import {
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { mockKeyDto } from 'src/modules/browser/__mocks__';
 import { RejsonRlKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/rejson-rl.key-info.strategy';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: mockKeyDto.keyName,
@@ -27,6 +29,10 @@ describe('RejsonRlKeyInfoStrategy', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RejsonRlKeyInfoStrategy,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
       ],
     }).compile();
 

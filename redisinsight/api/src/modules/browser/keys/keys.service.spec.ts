@@ -12,6 +12,7 @@ import {
   mockBrowserClientMetadata,
   mockBrowserHistoryService,
   mockDatabaseRecommendationService, mockDatabaseClientFactory, mockStandaloneRedisClient, mockClusterRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RECOMMENDATION_NAMES } from 'src/constants';
@@ -30,6 +31,7 @@ import { Scanner } from 'src/modules/browser/keys/scanner/scanner';
 import { mockScanner, mockScannerStrategy, mockTypeInfoStrategy } from 'src/modules/browser/__mocks__';
 import { KeyInfoProvider } from 'src/modules/browser/keys/key-info/key-info.provider';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: Buffer.from('testString'),
@@ -55,6 +57,10 @@ describe('KeysService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         KeysService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
   mockBrowserClientMetadata, mockDatabaseClientFactory, mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
@@ -29,6 +30,7 @@ import {
   mockStreamInfoReply,
 } from 'src/modules/browser/__mocks__';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('StreamService', () => {
   const client = mockStandaloneRedisClient;
@@ -38,6 +40,10 @@ describe('StreamService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StreamService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

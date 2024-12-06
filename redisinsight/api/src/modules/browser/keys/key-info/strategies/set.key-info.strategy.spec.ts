@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
@@ -10,6 +11,7 @@ import {
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { SetKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/set.key-info.strategy';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testSet',
@@ -26,6 +28,10 @@ describe('SetKeyInfoStrategy', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SetKeyInfoStrategy,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
       ],
     }).compile();
 

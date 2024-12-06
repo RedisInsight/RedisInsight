@@ -12,6 +12,7 @@ import {
   mockBrowserClientMetadata,
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import {
@@ -28,6 +29,7 @@ import {
 import { SetService } from 'src/modules/browser/set/set.service';
 import { CreateSetWithExpireDto, GetSetMembersDto } from 'src/modules/browser/set/dto';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('SetService', () => {
   const client = mockStandaloneRedisClient;
@@ -39,6 +41,10 @@ describe('SetService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SetService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

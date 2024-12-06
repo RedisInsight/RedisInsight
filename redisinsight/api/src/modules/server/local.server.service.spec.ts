@@ -5,6 +5,7 @@ import {
   mockEncryptionService,
   mockFeaturesConfigService,
   mockGetServerInfoResponse,
+  mockLoggerServiceFactory,
   mockServerRepository,
   mockSessionMetadata,
   MockType,
@@ -19,6 +20,7 @@ import { ServerService } from 'src/modules/server/server.service';
 import { ServerRepository } from 'src/modules/server/repositories/server.repository';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { LocalServerService } from 'src/modules/server/local.server.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('LocalServerService', () => {
   let service: ServerService;
@@ -31,6 +33,10 @@ describe('LocalServerService', () => {
       providers: [
         EventEmitter2,
         LocalServerService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: ServerRepository,
           useFactory: mockServerRepository,

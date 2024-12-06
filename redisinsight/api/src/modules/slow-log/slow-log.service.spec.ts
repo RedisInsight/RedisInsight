@@ -6,6 +6,7 @@ import {
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
   mockClusterRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { SlowLogService } from 'src/modules/slow-log/slow-log.service';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constant
 import { SlowLogAnalytics } from 'src/modules/slow-log/slow-log.analytics';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const getSlowLogDto = { count: 100 };
 const mockSlowLog = {
@@ -59,6 +61,10 @@ describe('SlowLogService', () => {
         SlowLogService,
         EventEmitter2,
         SlowLogAnalytics,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

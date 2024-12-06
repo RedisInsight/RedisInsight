@@ -15,6 +15,7 @@ import {
   mockBrowserHistoryEntity,
   mockBrowserHistoryPartial,
   mockSessionMetadata,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { BrowserHistoryEntity } from 'src/modules/browser/browser-history/entities/browser-history.entity';
@@ -22,6 +23,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { KeytarDecryptionErrorException } from 'src/modules/encryption/exceptions';
 import { BrowserHistory } from 'src/modules/browser/browser-history/dto';
 import { BrowserHistoryMode } from 'src/common/constants';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { LocalBrowserHistoryRepository } from './local.browser-history.repository';
 
 describe('LocalBrowserHistoryRepository', () => {
@@ -33,6 +35,10 @@ describe('LocalBrowserHistoryRepository', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalBrowserHistoryRepository,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: getRepositoryToken(BrowserHistoryEntity),
           useFactory: mockRepository,

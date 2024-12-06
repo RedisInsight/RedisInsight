@@ -3,10 +3,13 @@ import axios from 'axios';
 import {
   mockConstantsProvider,
   mockControlGroup,
-  mockControlNumber, mockFeatureAnalytics,
+  mockControlNumber,
+  mockFeatureAnalytics,
   mockFeaturesConfig,
   mockFeaturesConfigJson,
-  mockFeaturesConfigRepository, mockSessionMetadata,
+  mockFeaturesConfigRepository,
+  mockLoggerServiceFactory,
+  mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
@@ -18,6 +21,7 @@ import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { UnableToFetchRemoteConfigException } from 'src/modules/feature/exceptions';
 import { LocalFeaturesConfigService } from 'src/modules/feature/local.features-config.service';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import * as defaultConfig from '../../../config/features-config.json';
 
 jest.mock('axios');
@@ -34,6 +38,10 @@ describe('LocalFeaturesConfigService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalFeaturesConfigService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: EventEmitter2,
           useFactory: () => ({

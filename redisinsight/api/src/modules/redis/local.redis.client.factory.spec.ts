@@ -10,6 +10,7 @@ import {
   mockSentinelDatabaseWithTlsAuth,
   mockSentinelRedisClient, mockSessionMetadata,
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { Database } from 'src/modules/database/models/database';
@@ -20,6 +21,7 @@ import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
 import { LocalRedisClientFactory } from 'src/modules/redis/local.redis.client.factory';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 jest.mock('ioredis', () => ({
   ...jest.requireActual('ioredis') as object,
@@ -36,6 +38,10 @@ describe('LocalRedisClientFactory', () => {
     module = await Test.createTestingModule({
       providers: [
         LocalRedisClientFactory,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: IoredisRedisConnectionStrategy,
           useFactory: mockIoRedisRedisConnectionStrategy,

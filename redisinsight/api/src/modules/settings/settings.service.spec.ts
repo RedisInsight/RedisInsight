@@ -5,6 +5,7 @@ import {
   mockAgreementsRepository, mockAppSettings,
   mockEncryptionStrategyInstance, mockKeyEncryptionStrategyInstance, mockSessionMetadata, mockSettings,
   mockSettingsAnalyticsService, mockSettingsRepository,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
@@ -21,6 +22,7 @@ import { Settings } from 'src/modules/settings/models/settings';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { KeyEncryptionStrategy } from 'src/modules/encryption/strategies/key-encryption.strategy';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');
@@ -45,6 +47,10 @@ describe('SettingsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SettingsService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: SettingsAnalytics,
           useFactory: mockSettingsAnalyticsService,

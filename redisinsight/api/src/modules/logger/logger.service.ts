@@ -41,10 +41,9 @@ export class LoggerService implements NestLoggerService {
     const argsCopy = cloneDeep(contextOrMetaArgs);
     let context: string | null = null;
     let meta: object | null = null;
-    let error: Error | null = null;
 
     if (argsCopy[0] instanceof Error) {
-      error = argsCopy.shift() as Error;
+      argsCopy.shift();
     }
     if (typeof argsCopy[0] === 'string') {
       context = argsCopy.shift() as string;
@@ -54,20 +53,12 @@ export class LoggerService implements NestLoggerService {
     }
 
     const localContext = context || this.context;
-    if (!meta && !error) {
+    if (!meta) {
       return localContext;
     }
     return {
       context: localContext,
       meta,
-      ...(error
-        ? {
-          error: {
-            stack: error.stack,
-            message: error.message,
-          },
-        }
-        : {}),
     };
   }
 
@@ -89,7 +80,6 @@ export class LoggerService implements NestLoggerService {
   }
 
   error(message: unknown, ...contextOrMetaArgs: ContextOrMetaArgs) {
-    console.log('error type...', contextOrMetaArgs[0] instanceof Error);
     this.nestLogger.error(
       message,
       this.isException(contextOrMetaArgs[0])
@@ -117,5 +107,3 @@ export class LoggerService implements NestLoggerService {
     this.nestLogger.warn(message, this.formatMeta(contextOrMetaArgs));
   }
 }
-
-export default LoggerService;

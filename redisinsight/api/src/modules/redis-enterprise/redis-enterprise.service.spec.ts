@@ -3,7 +3,7 @@ import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import axios from 'axios';
 import { RedisErrorCodes } from 'src/constants';
 import {
-  mockDatabaseService, mockRedisEnterpriseAnalytics, mockSessionMetadata,
+  mockDatabaseService, mockRedisEnterpriseAnalytics, mockSessionMetadata, mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import {
   IRedisEnterpriseDatabase,
@@ -17,6 +17,7 @@ import { RedisEnterpriseService } from 'src/modules/redis-enterprise/redis-enter
 import { ClusterConnectionDetailsDto } from 'src/modules/redis-enterprise/dto/cluster.dto';
 import { RedisEnterpriseAnalytics } from 'src/modules/redis-enterprise/redis-enterprise.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -137,6 +138,10 @@ describe('RedisEnterpriseService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseService,
           useFactory: mockDatabaseService,

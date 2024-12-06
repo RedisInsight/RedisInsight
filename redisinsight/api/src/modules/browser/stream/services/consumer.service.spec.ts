@@ -28,6 +28,8 @@ import {
   mockPendingMessageReply,
 } from 'src/modules/browser/__mocks__';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
+import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
 
 describe('ConsumerService', () => {
   const client = mockStandaloneRedisClient;
@@ -39,6 +41,10 @@ describe('ConsumerService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ConsumerService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

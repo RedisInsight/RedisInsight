@@ -17,6 +17,7 @@ import {
   mockDatabaseRecommendationService,
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
@@ -39,6 +40,7 @@ import {
 } from 'src/modules/browser/z-set/dto';
 import { ZSetService } from 'src/modules/browser/z-set/z-set.service';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('ZSetService', () => {
   const client = mockStandaloneRedisClient;
@@ -49,6 +51,10 @@ describe('ZSetService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ZSetService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

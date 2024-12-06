@@ -8,6 +8,7 @@ import {
   mockDatabaseImportResponse,
   mockSessionMetadata,
   mockSshImportService,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -24,6 +25,7 @@ import {
 } from 'src/modules/database-import/exceptions';
 import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
 import { SshImportService } from 'src/modules/database-import/ssh-import.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('DatabaseImportService', () => {
   let service: DatabaseImportService;
@@ -38,6 +40,10 @@ describe('DatabaseImportService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseImportService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseRepository,
           useFactory: jest.fn(() => ({

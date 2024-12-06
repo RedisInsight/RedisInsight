@@ -6,6 +6,7 @@ import {
   mockCustomTutorialId, mockCustomTutorialManifest, mockCustomTutorialManifest2,
   mockCustomTutorialManifestProvider,
   mockCustomTutorialRepository, mockSessionMetadata,
+  mockLoggerServiceFactory,
   MockType, mockUploadCustomTutorialDto, mockUploadCustomTutorialExternalLinkDto,
 } from 'src/__mocks__';
 import * as fs from 'fs-extra';
@@ -18,6 +19,7 @@ import {
 } from 'src/modules/custom-tutorial/providers/custom-tutorial.manifest.provider';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CustomTutorialAnalytics } from 'src/modules/custom-tutorial/custom-tutorial.analytics';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 jest.mock('fs-extra');
 const mockedFs = fs as jest.Mocked<typeof fs>;
@@ -42,6 +44,10 @@ describe('CustomTutorialService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CustomTutorialService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: CustomTutorialRepository,
           useFactory: mockCustomTutorialRepository,

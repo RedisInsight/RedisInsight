@@ -7,6 +7,7 @@ import {
   mockDatabaseClientFactory, mockDatabaseModules, mockDatabaseService, mockDefaultDataManifest,
   mockSessionMetadata,
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
@@ -23,6 +24,7 @@ import { RedisClientCommand } from 'src/modules/redis/client';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { Readable } from 'stream';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const PATH_CONFIG = config.get('dir_path');
 
@@ -106,6 +108,10 @@ describe('BulkImportService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         BulkImportService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

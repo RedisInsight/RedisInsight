@@ -6,6 +6,7 @@ import {
   mockCloudTaskInit,
   mockCreateFreeCloudSubscriptionDto,
   mockFreeCloudSubscriptionPlan1,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
@@ -13,6 +14,7 @@ import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import {
   CloudSubscriptionCapiProvider,
 } from 'src/modules/cloud/subscription/providers/cloud-subscription.capi.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { CloudSubscriptionCapiService } from './cloud-subscription.capi.service';
 
 describe('CloudSubscriptionCapiService', () => {
@@ -23,6 +25,10 @@ describe('CloudSubscriptionCapiService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CloudSubscriptionCapiService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: CloudSubscriptionCapiProvider,
           useFactory: mockCloudSubscriptionCapiProvider,

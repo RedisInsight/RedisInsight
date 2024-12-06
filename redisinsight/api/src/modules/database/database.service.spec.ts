@@ -18,6 +18,7 @@ import {
   mockDatabaseWithTlsAuth,
   mockDatabaseWithSshPrivateKey,
   mockSentinelDatabaseWithTlsAuth,
+  mockLoggerServiceFactory,
   mockDatabaseWithCloudDetails, mockRedisClientFactory, mockRedisClientStorage, mockSessionMetadata,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
@@ -31,6 +32,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { Compressor } from 'src/modules/database/entities/database.entity';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { ExportDatabase } from './models/export-database';
 
 const updateDatabaseTests = [
@@ -72,6 +74,10 @@ describe('DatabaseService', () => {
       providers: [
         EventEmitter2,
         DatabaseService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseRepository,
           useFactory: mockDatabaseRepository,

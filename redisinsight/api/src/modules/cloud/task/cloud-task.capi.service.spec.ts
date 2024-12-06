@@ -4,10 +4,12 @@ import {
   MockType,
   mockCloudTaskCapiProvider,
   mockCloudTaskInit,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudTaskNotFoundException } from 'src/modules/cloud/job/exceptions';
 import { CloudTaskCapiProvider } from 'src/modules/cloud/task/providers/cloud-task.capi.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { CloudTaskCapiService } from './cloud-task.capi.service';
 
 describe('CloudTaskCapiService', () => {
@@ -18,6 +20,10 @@ describe('CloudTaskCapiService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CloudTaskCapiService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: CloudTaskCapiProvider,
           useFactory: mockCloudTaskCapiProvider,

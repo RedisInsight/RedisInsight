@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import {
   mockFeaturesConfig,
   mockFeaturesConfigEntity,
+  mockLoggerServiceFactory,
   mockRepository,
   mockSessionMetadata,
   MockType,
@@ -11,6 +12,7 @@ import {
 import { LocalFeaturesConfigRepository } from 'src/modules/feature/repositories/local.features-config.repository';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import { plainToClass } from 'class-transformer';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import * as defaultConfig from '../../../../config/features-config.json';
 
 describe('LocalFeaturesConfigRepository', () => {
@@ -23,6 +25,10 @@ describe('LocalFeaturesConfigRepository', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalFeaturesConfigRepository,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: getRepositoryToken(FeaturesConfigEntity),
           useFactory: mockRepository,

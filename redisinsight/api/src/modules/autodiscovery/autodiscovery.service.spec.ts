@@ -5,6 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockAutodiscoveryEndpoint,
   mockDatabaseService,
+  mockLoggerServiceFactory,
   mockRedisClientFactory,
   mockSessionMetadata,
   mockSettingsService,
@@ -17,6 +18,7 @@ import config, { Config } from 'src/utils/config';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 import { mockConstantsProvider } from 'src/__mocks__/constants';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 jest.mock(
   'src/modules/autodiscovery/utils/autodiscovery.util',
@@ -59,6 +61,10 @@ describe('AutodiscoveryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AutodiscoveryService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: SettingsService,
           useFactory: mockSettingsService,

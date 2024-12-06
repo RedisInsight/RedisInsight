@@ -21,7 +21,6 @@ const REDIS_STACK_CONFIG = config.get('redisStack');
 @Injectable()
 export class StackDatabasesRepository extends LocalDatabaseRepository implements OnApplicationBootstrap {
   constructor(
-    private logger: LoggerService,
     @InjectRepository(DatabaseEntity)
     protected readonly repository: Repository<DatabaseEntity>,
     @InjectRepository(SshOptionsEntity)
@@ -30,6 +29,7 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
     protected readonly clientCertificateRepository: ClientCertificateRepository,
     protected readonly encryptionService: EncryptionService,
     protected readonly constantsProvider: ConstantsProvider,
+    protected logger: LoggerService,
   ) {
     super(repository, sshOptionsRepository, caCertificateRepository, clientCertificateRepository, encryptionService);
   }

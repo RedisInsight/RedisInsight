@@ -6,8 +6,15 @@ import { NotFoundException } from '@nestjs/common';
 import { RdiClientMetadata } from 'src/modules/rdi/models';
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
-  MockType, generateMockRdiClient, mockRdi, mockRdiClientFactory, mockRdiClientStorage, mockRdiRepository,
+  MockType,
+  generateMockRdiClient,
+  mockRdi,
+  mockRdiClientFactory,
+  mockRdiClientStorage,
+  mockRdiRepository,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { RdiClientProvider } from './rdi.client.provider';
 
 describe('RdiClientProvider', () => {
@@ -20,6 +27,10 @@ describe('RdiClientProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RdiClientProvider,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: RdiRepository,
           useFactory: mockRdiRepository,

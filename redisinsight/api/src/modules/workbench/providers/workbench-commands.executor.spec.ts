@@ -6,6 +6,7 @@ import {
   mockStandaloneRedisClient,
   mockWorkbenchAnalyticsService,
   mockWorkbenchClientMetadata,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { unknownCommand } from 'src/constants';
@@ -21,6 +22,7 @@ import { FormatterManager, IFormatterStrategy, FormatterTypes } from 'src/common
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RunQueryMode } from 'src/modules/workbench/models/command-execution';
 import { WorkbenchAnalytics } from 'src/modules/workbench/workbench.analytics';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
 
@@ -50,6 +52,10 @@ describe('WorkbenchCommandsExecutor', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkbenchCommandsExecutor,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: WorkbenchAnalytics,
           useFactory: () => mockAnalyticsService,

@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
+  mockLoggerServiceFactory,
   mockNotification1,
   mockNotification1UPD,
   mockNotification2,
@@ -12,6 +13,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import axios from 'axios';
 import { CreateNotificationDto, CreateNotificationsDto } from 'src/modules/notification/dto';
 import { InternalServerErrorException } from '@nestjs/common';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { NotificationRepository } from '../repositories/notification.repository';
 
 jest.mock('axios');
@@ -29,6 +31,10 @@ describe('GlobalNotificationProvider', () => {
       providers: [
         GlobalNotificationProvider,
         EventEmitter2,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: NotificationRepository,
           useFactory: mockNotificationRepository,

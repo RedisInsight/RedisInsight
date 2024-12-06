@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { io } from 'socket.io-client';
 import * as MockedSocket from 'socket.io-mock';
-import { mockAiQueryAuth } from 'src/__mocks__';
+import { mockAiQueryAuth, mockLoggerServiceFactory } from 'src/__mocks__';
 import { AiQueryProvider } from 'src/modules/ai/query/providers/ai-query.provider';
 import { AiQueryWsEvents } from 'src/modules/ai/query/models';
 import { BadRequestException } from '@nestjs/common';
 import { AiQueryBadRequestException } from 'src/modules/ai/query/exceptions';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const mockSocketClient = (new MockedSocket());
 jest.mock('socket.io-client');
@@ -21,6 +22,10 @@ describe('AiQueryProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AiQueryProvider,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
       ],
     }).compile();
 

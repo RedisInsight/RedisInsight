@@ -13,6 +13,7 @@ import {
   mockImportCloudDatabaseResponse,
   mockImportCloudDatabaseResponseFixed,
   mockSessionMetadata,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -26,6 +27,7 @@ import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptio
 import { CloudUserCapiService } from 'src/modules/cloud/user/cloud-user.capi.service';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('CloudAutodiscoveryService', () => {
   let service: CloudAutodiscoveryService;
@@ -40,6 +42,10 @@ describe('CloudAutodiscoveryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CloudAutodiscoveryService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseService,
           useFactory: mockDatabaseService,

@@ -17,6 +17,7 @@ import {
   mockRedisFtInfoReply,
   mockFtInfoAnalyticsData,
   mockSessionMetadata,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import {
   CommandExecutionStatus,
@@ -35,6 +36,7 @@ import { KeytarUnavailableException } from 'src/modules/encryption/exceptions';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes, IOutputFormatterStrategy } from './output-formatter/output-formatter.interface';
 import { CliBusinessService } from './cli-business.service';
@@ -71,6 +73,10 @@ describe('CliBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CliBusinessService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: CliAnalyticsService,
           useFactory: mockCliAnalyticsService,

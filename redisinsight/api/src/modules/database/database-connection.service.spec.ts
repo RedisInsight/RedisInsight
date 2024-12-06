@@ -15,6 +15,7 @@ import {
   mockDatabaseClientFactory,
   mockFeatureService,
   mockSessionMetadata,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -25,6 +26,7 @@ import { DatabaseConnectionService } from 'src/modules/database/database-connect
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { FeatureService } from 'src/modules/feature/feature.service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('DatabaseConnectionService', () => {
   let service: DatabaseConnectionService;
@@ -40,6 +42,10 @@ describe('DatabaseConnectionService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseConnectionService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseRepository,
           useFactory: mockDatabaseRepository,

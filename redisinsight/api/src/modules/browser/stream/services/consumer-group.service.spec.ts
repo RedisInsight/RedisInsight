@@ -22,6 +22,8 @@ import {
   mockKeyDto,
 } from 'src/modules/browser/__mocks__';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
+import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
 
 describe('ConsumerGroupService', () => {
   const client = mockStandaloneRedisClient;
@@ -31,6 +33,10 @@ describe('ConsumerGroupService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ConsumerGroupService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

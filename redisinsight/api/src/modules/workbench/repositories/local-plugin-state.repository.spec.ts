@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockEncryptionService,
   mockEncryptResult,
+  mockLoggerServiceFactory,
   mockRepository,
   mockSessionMetadata,
   MockType,
@@ -16,6 +17,7 @@ import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.entity';
 import { Repository } from 'typeorm';
 import { KeytarDecryptionErrorException } from 'src/modules/encryption/exceptions';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const mockVisualizationId = 'pluginName_visualizationName';
 const mockCommandExecutionId = uuidv4();
@@ -50,6 +52,10 @@ describe('LocalPluginStateRepository', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalPluginStateRepository,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: getRepositoryToken(PluginStateEntity),
           useFactory: mockRepository,

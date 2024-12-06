@@ -4,9 +4,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
-  mockCaCertificate, mockCaCertificateCertificateEncrypted, mockCaCertificateCertificatePlain, mockCaCertificateEntity,
+  mockCaCertificate,
+  mockCaCertificateCertificateEncrypted,
+  mockCaCertificateCertificatePlain,
+  mockCaCertificateEntity,
   mockCaCertificateId,
   mockEncryptionService,
+  mockLoggerServiceFactory,
   mockRepository,
   MockType,
 } from 'src/__mocks__';
@@ -16,6 +20,7 @@ import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('LocalCaCertificateRepository', () => {
   let service: LocalCaCertificateRepository;
@@ -29,6 +34,10 @@ describe('LocalCaCertificateRepository', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalCaCertificateRepository,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: getRepositoryToken(CaCertificateEntity),
           useFactory: mockRepository,

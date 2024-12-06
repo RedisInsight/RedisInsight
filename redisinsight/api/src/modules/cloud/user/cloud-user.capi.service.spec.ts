@@ -3,11 +3,13 @@ import {
   mockCloudAccountInfo,
   mockCloudCapiAuthDto,
   mockCloudUserCapiProvider,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { CloudUserCapiService } from 'src/modules/cloud/user/cloud-user.capi.service';
 import { CloudUserCapiProvider } from 'src/modules/cloud/user/providers/cloud-user.capi.provider';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('CloudUserCapiService', () => {
   let service: CloudUserCapiService;
@@ -17,6 +19,10 @@ describe('CloudUserCapiService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CloudUserCapiService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: CloudUserCapiProvider,
           useFactory: mockCloudUserCapiProvider,

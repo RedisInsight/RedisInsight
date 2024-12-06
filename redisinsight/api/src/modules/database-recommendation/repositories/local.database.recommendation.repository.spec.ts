@@ -11,6 +11,7 @@ import {
   mockRecommendationName,
   mockClientMetadata,
   mockDatabaseRecommendation,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -19,6 +20,7 @@ import { LocalDatabaseRecommendationRepository }
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('LocalDatabaseRecommendationRepository', () => {
   let service: LocalDatabaseRecommendationRepository;
@@ -31,6 +33,10 @@ describe('LocalDatabaseRecommendationRepository', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalDatabaseRecommendationRepository,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: getRepositoryToken(DatabaseRecommendationEntity),
           useFactory: mockRepository,

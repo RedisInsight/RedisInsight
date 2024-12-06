@@ -13,6 +13,7 @@ import {
   mockDatabaseFactory,
   mockDatabaseService,
   mockIORedisClient,
+  mockLoggerServiceFactory,
   mockRedisClientFactory,
   mockRedisSentinelAnalytics,
   mockRedisSentinelMasterResponse,
@@ -27,6 +28,7 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('RedisSentinelService', () => {
   let service: RedisSentinelService;
@@ -36,6 +38,10 @@ describe('RedisSentinelService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RedisSentinelService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: RedisSentinelAnalytics,
           useFactory: mockRedisSentinelAnalytics,

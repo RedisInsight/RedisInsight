@@ -11,6 +11,7 @@ import {
   mockRedisGeneralInfo,
   mockSessionMetadata,
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
@@ -19,6 +20,7 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { DatabaseService } from './database.service';
 
 describe('DatabaseInfoService', () => {
@@ -34,6 +36,10 @@ describe('DatabaseInfoService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseInfoService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

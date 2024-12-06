@@ -38,6 +38,8 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { mockDatabaseClientFactory } from 'src/__mocks__/databases-client';
 import { mockStandaloneRedisClient } from 'src/__mocks__/redis-client';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { LoggerService } from 'src/modules/logger/logger.service';
+import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
 import { ListService } from './list.service';
 
 describe('ListService', () => {
@@ -47,6 +49,10 @@ describe('ListService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ListService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

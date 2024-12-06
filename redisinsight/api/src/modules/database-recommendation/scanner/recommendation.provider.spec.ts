@@ -17,16 +17,22 @@ import {
   BigAmountConnectedClientsStrategy,
   TryRdiStrategyStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
+import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('RecommendationProvider', () => {
   beforeAll(async () => {
     await Test.createTestingModule({
       providers: [
         RecommendationProvider,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
       ],
     }).compile();
   });
-  const service = new RecommendationProvider();
+  const service = new RecommendationProvider(mockLoggerServiceFactory());
 
   describe('getStrategy', () => {
     [

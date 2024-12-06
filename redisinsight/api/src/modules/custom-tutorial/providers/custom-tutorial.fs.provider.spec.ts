@@ -4,6 +4,7 @@ import {
   mockCustomTutorialAdmZipEntry,
   mockCustomTutorialMacosxAdmZipEntry, mockCustomTutorialsHttpLink, mockCustomTutorialsHttpLink2,
   mockCustomTutorialTmpPath,
+  mockLoggerServiceFactory,
   mockCustomTutorialZipFile, mockCustomTutorialZipFileAxiosResponse,
 } from 'src/__mocks__';
 import * as fs from 'fs-extra';
@@ -14,6 +15,7 @@ import AdmZip from 'adm-zip';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
 import { Dirent, Stats } from 'fs';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const PATH_CONFIG = config.get('dir_path');
 
@@ -43,6 +45,10 @@ describe('CustomTutorialFsProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CustomTutorialFsProvider,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
       ],
     }).compile();
 

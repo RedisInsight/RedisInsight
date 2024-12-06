@@ -31,6 +31,8 @@ import {
 } from 'src/__mocks__/redis-client';
 import { RedisClient } from 'src/modules/redis/client';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import { LoggerService } from 'src/modules/logger/logger.service';
+import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
 
 describe('DatabaseClientFactory', () => {
   let service: DatabaseClientFactory;
@@ -46,6 +48,10 @@ describe('DatabaseClientFactory', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseClientFactory,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseService,
           useFactory: mockDatabaseService,

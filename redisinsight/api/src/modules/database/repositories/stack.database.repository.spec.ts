@@ -18,6 +18,7 @@ import {
   mockEncryptionService,
   mockRepository,
   mockSessionMetadata,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -29,6 +30,7 @@ import config from 'src/utils/config';
 import { NotImplementedException } from '@nestjs/common';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
 
@@ -50,6 +52,10 @@ describe('StackDatabasesRepository', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StackDatabasesRepository,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: getRepositoryToken(DatabaseEntity),
           useFactory: mockRepository,

@@ -12,6 +12,7 @@ import {
   mockRedisNoPermError,
   mockRedisWrongTypeError,
   mockBrowserClientMetadata, mockDatabaseClientFactory, mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -21,6 +22,7 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { mockAddFieldsDto } from 'src/modules/browser/__mocks__';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { RejsonRlService } from './rejson-rl.service';
 
 const testKey = Buffer.from('somejson');
@@ -35,6 +37,10 @@ describe('JsonService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         RejsonRlService,
         {
           provide: DatabaseClientFactory,

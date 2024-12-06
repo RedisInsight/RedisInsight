@@ -43,6 +43,8 @@ import { SsoIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/ss
 import {
   CloudOauthSsoUnsupportedEmailException,
 } from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
+import { LoggerService } from 'src/modules/logger/logger.service';
+import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -60,6 +62,10 @@ describe('CloudAuthService', () => {
       providers: [
         EventEmitter2,
         CloudAuthService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: CloudSessionService,
           useFactory: mockCloudSessionService,

@@ -15,7 +15,8 @@ import {
   MockType,
   mockCloudCapiKeyRepository,
   mockCloudApiCapiKey,
-  mockServer, mockCapiUnauthorizedError, mockCloudApiCapiAccessKey, mockCloudSession,
+  mockServer, mockCloudApiCapiAccessKey, mockCloudSession,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { when, resetAllWhenMocks } from 'jest-when';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
@@ -25,6 +26,7 @@ import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key
 import { CloudApiBadRequestException, CloudCapiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import axios from 'axios';
 import { CloudCapiKeyNotFoundException, CloudCapiKeyUnauthorizedException } from 'src/modules/cloud/capi-key/exceptions';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -45,6 +47,10 @@ describe('CloudCapiKeyService', () => {
       providers: [
         CloudCapiKeyService,
         CloudCapiKeyApiProvider,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: CloudCapiKeyRepository,
           useFactory: mockCloudCapiKeyRepository,

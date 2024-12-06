@@ -13,6 +13,7 @@ import {
   mockRedisNoPermError,
   mockRedisUnknownIndexName,
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { RedisearchService } from 'src/modules/browser/redisearch/redisearch.service';
 import {
@@ -22,6 +23,7 @@ import {
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { mockIndexInfoDto, mockIndexInfoRaw } from 'src/__mocks__/redisearch';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const keyName1 = Buffer.from('keyName1');
 const keyName2 = Buffer.from('keyName2');
@@ -59,6 +61,10 @@ describe('RedisearchService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RedisearchService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

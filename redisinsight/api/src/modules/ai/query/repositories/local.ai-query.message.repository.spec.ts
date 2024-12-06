@@ -13,6 +13,7 @@ import {
   mockEncryptionService,
   mockRepository,
   mockSessionMetadata,
+  mockLoggerServiceFactory,
   MockType,
 } from 'src/__mocks__';
 import { when } from 'jest-when';
@@ -22,6 +23,7 @@ import { AiQueryMessageEntity } from 'src/modules/ai/query/entities/ai-query.mes
 import { Repository } from 'typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('LocalAiQueryAuthProvider', () => {
   let service: LocalAiQueryMessageRepository;
@@ -34,6 +36,10 @@ describe('LocalAiQueryAuthProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalAiQueryMessageRepository,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: getRepositoryToken(AiQueryMessageEntity),
           useFactory: mockRepository,

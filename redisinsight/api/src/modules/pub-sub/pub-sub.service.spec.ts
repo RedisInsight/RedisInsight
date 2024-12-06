@@ -7,6 +7,7 @@ import {
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
   mockSessionMetadata,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
@@ -18,6 +19,7 @@ import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-su
 import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const mockUserClient = new UserClient('socketId', mockSocket, 'databaseId');
 
@@ -60,6 +62,10 @@ describe('PubSubService', () => {
         PubSubService,
         UserSessionProvider,
         SubscriptionProvider,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: UserSessionProvider,
           useFactory: () => ({

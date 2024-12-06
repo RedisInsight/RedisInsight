@@ -4,14 +4,17 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   mockClientCertificate,
-  mockClientCertificateRepository, mockCreateClientCertificateDto,
+  mockClientCertificateRepository,
+  mockCreateClientCertificateDto,
   MockType,
   mockRedisClientStorage,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('ClientCertificateService', () => {
   let service: ClientCertificateService;
@@ -22,6 +25,10 @@ describe('ClientCertificateService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ClientCertificateService,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: ClientCertificateRepository,
           useFactory: mockClientCertificateRepository,

@@ -1,12 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockCapiUnauthorizedError,
-  mockCloudApiAuthDto, mockCloudApiCloudRegions, mockCloudApiCsrfToken, mockCloudCapiKeyService,
+  mockCloudApiAuthDto,
+  mockCloudApiCloudRegions,
+  mockCloudCapiKeyService,
   mockCloudSessionService,
-  mockCloudSubscriptionApiProvider,
   mockCloudSubscriptionCapiService,
   mockCloudSubscriptionRegions,
   mockFeatureService,
+  mockLoggerServiceFactory,
   mockSessionMetadata,
   mockSubscriptionPlanResponse,
   MockType,
@@ -16,6 +18,7 @@ import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptio
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import axios from 'axios';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { CloudSubscriptionApiService } from './cloud-subscription.api.service';
 import { CloudSessionService } from '../session/cloud-session.service';
 import { CloudSubscriptionCapiService } from './cloud-subscription.capi.service';
@@ -39,6 +42,10 @@ describe('CloudSubscriptionApiService', () => {
       providers: [
         CloudSubscriptionApiService,
         CloudSubscriptionApiProvider,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: CloudSessionService,
           useFactory: mockCloudSessionService,

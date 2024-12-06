@@ -12,6 +12,7 @@ import {
   mockClientCertificateKeyEncrypted,
   mockClientCertificateKeyPlain,
   mockEncryptionService,
+  mockLoggerServiceFactory,
   mockRepository,
   MockType,
 } from 'src/__mocks__';
@@ -23,6 +24,7 @@ import {
 } from 'src/modules/certificate/repositories/local.client-certificate.repository';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 describe('LocalClientCertificateRepository', () => {
   let service: LocalClientCertificateRepository;
@@ -36,6 +38,10 @@ describe('LocalClientCertificateRepository', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalClientCertificateRepository,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: getRepositoryToken(ClientCertificateEntity),
           useFactory: mockRepository,

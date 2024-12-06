@@ -7,6 +7,7 @@ import {
   mockSentinelDatabaseWithTlsAuth,
   mockSshTunnelProvider,
   mockStandaloneRedisClient,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { EventEmitter } from 'events';
 import apiConfig, { Config } from 'src/utils/config';
@@ -16,6 +17,7 @@ import { ClusterIoredisClient, SentinelIoredisClient, StandaloneIoredisClient } 
 import { InternalServerErrorException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ReplyError } from 'src/models';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients') as Config['redis_clients'];
 
@@ -44,6 +46,10 @@ describe('IoredisRedisConnectionStrategy', () => {
     const module = await Test.createTestingModule({
       providers: [
         IoredisRedisConnectionStrategy,
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: SshTunnelProvider,
           useFactory: mockSshTunnelProvider,

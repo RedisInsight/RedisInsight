@@ -6,8 +6,10 @@ import {
   mockDatabaseRecommendationRepository,
   mockDatabaseService,
   mockRecommendationScanner,
+  mockLoggerServiceFactory,
 } from 'src/__mocks__';
 import { ClientContext, ClientMetadata } from 'src/common/models';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { DatabaseService } from '../database/database.service';
 import { DatabaseRecommendationAnalytics } from './database-recommendation.analytics';
 import { DatabaseRecommendationService } from './database-recommendation.service';
@@ -33,6 +35,10 @@ describe('DatabaseRecommendationService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        {
+          provide: LoggerService,
+          useFactory: mockLoggerServiceFactory,
+        },
         {
           provide: DatabaseRecommendationRepository,
           useFactory: mockDatabaseRecommendationRepository,

@@ -73,7 +73,7 @@ export class LoggerService {
   log(message: unknown, context?: string) {
     if (
       !this.disableStartupLogs
-      || !LoggerService.startupContexts.includes(context)
+      || !LoggerService.startupContexts.includes(context || this.context)
     ) {
       this.nestLogger.log(message, context || this.context);
     }
@@ -100,11 +100,6 @@ export class LoggerService {
       data.message,
       data.stack,
     );
-  }
-
-  verbose(message: string | LogObject, meta?: LogMeta) {
-    const { message: formattedMessage } = this.formatLog(message, meta);
-    this.nestLogger.verbose(formattedMessage);
   }
 
   warn(message: string | LogObject, ...errorOrMeta: ErrorOrMeta[]) {

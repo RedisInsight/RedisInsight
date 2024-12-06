@@ -15,7 +15,7 @@ import {
   mockDatabaseClientFactory,
   mockFeatureService,
   mockSessionMetadata,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -44,7 +44,7 @@ describe('DatabaseConnectionService', () => {
         DatabaseConnectionService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseRepository,

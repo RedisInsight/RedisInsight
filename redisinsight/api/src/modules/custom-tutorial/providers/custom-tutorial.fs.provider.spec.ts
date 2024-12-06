@@ -4,7 +4,7 @@ import {
   mockCustomTutorialAdmZipEntry,
   mockCustomTutorialMacosxAdmZipEntry, mockCustomTutorialsHttpLink, mockCustomTutorialsHttpLink2,
   mockCustomTutorialTmpPath,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockCustomTutorialZipFile, mockCustomTutorialZipFileAxiosResponse,
 } from 'src/__mocks__';
 import * as fs from 'fs-extra';
@@ -47,7 +47,7 @@ describe('CustomTutorialFsProvider', () => {
         CustomTutorialFsProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
       ],
     }).compile();

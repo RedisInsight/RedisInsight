@@ -12,7 +12,7 @@ import {
   mockRedisNoPermError,
   mockRedisWrongTypeError,
   mockBrowserClientMetadata, mockDatabaseClientFactory, mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -39,7 +39,7 @@ describe('JsonService', () => {
       providers: [
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         RejsonRlService,
         {

@@ -18,7 +18,7 @@ import {
   mockEncryptionService,
   mockRepository,
   mockSessionMetadata,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -54,7 +54,7 @@ describe('StackDatabasesRepository', () => {
         StackDatabasesRepository,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: getRepositoryToken(DatabaseEntity),

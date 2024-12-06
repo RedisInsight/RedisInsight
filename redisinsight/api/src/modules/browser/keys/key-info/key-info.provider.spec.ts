@@ -14,7 +14,7 @@ import { StringKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strateg
 import { TsKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/ts.key-info.strategy';
 import { ZSetKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/z-set.key-info.strategy';
 import { LoggerService } from 'src/modules/logger/logger.service';
-import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
+import { mockLoggerService } from 'src/__mocks__';
 
 describe('KeyInfoProvider', () => {
   let service: KeyInfoProvider;
@@ -35,7 +35,7 @@ describe('KeyInfoProvider', () => {
         UnsupportedKeyInfoStrategy,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
       ],
     }).compile();

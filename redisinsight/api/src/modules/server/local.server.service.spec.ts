@@ -5,7 +5,7 @@ import {
   mockEncryptionService,
   mockFeaturesConfigService,
   mockGetServerInfoResponse,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockServerRepository,
   mockSessionMetadata,
   MockType,
@@ -35,7 +35,7 @@ describe('LocalServerService', () => {
         LocalServerService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: ServerRepository,

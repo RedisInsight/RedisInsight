@@ -8,7 +8,7 @@ import {
   mockGetCloudSubscriptionDatabaseDto,
   mockGetCloudSubscriptionDatabasesDto,
   mockGetCloudSubscriptionDatabasesDtoFixed,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
@@ -26,7 +26,7 @@ describe('CloudDatabaseCapiService', () => {
         CloudDatabaseCapiService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: CloudDatabaseCapiProvider,

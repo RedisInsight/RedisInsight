@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockNotificationRepository,
   mockNotificationsDto,
   mockSessionMetadata,
@@ -28,7 +28,7 @@ describe('NotificationService', () => {
         NotificationService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: NotificationRepository,

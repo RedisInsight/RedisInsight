@@ -10,7 +10,7 @@ import {
   mockCaCertificateEntity,
   mockCaCertificateId,
   mockEncryptionService,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockRepository,
   MockType,
 } from 'src/__mocks__';
@@ -36,7 +36,7 @@ describe('LocalCaCertificateRepository', () => {
         LocalCaCertificateRepository,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: getRepositoryToken(CaCertificateEntity),

@@ -3,7 +3,7 @@ import {
   mockCloudAccountInfo,
   mockCloudCapiAuthDto,
   mockCloudUserCapiProvider,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { CloudUserCapiService } from 'src/modules/cloud/user/cloud-user.capi.service';
@@ -21,7 +21,7 @@ describe('CloudUserCapiService', () => {
         CloudUserCapiService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: CloudUserCapiProvider,

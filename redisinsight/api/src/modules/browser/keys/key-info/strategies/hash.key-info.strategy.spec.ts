@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
   mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import {
   BrowserToolHashCommands,
@@ -30,7 +30,7 @@ describe('HashKeyInfoStrategy', () => {
         HashKeyInfoStrategy,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
       ],
     }).compile();

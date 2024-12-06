@@ -11,7 +11,7 @@ import {
   mockRedisGeneralInfo,
   mockSessionMetadata,
   mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
@@ -38,7 +38,7 @@ describe('DatabaseInfoService', () => {
         DatabaseInfoService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

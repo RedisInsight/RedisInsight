@@ -13,7 +13,7 @@ import {
   mockFeaturesConfigRepository,
   mockFeaturesConfigService,
   mockFeatureSso,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockSessionMetadata,
   MockType,
   mockUnknownFeature,
@@ -57,7 +57,7 @@ describe('FeatureService', () => {
         LocalFeatureService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: EventEmitter2,

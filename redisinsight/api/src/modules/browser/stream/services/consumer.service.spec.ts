@@ -3,7 +3,7 @@ import { when } from 'jest-when';
 import {
   mockBrowserClientMetadata,
   mockStandaloneRedisClient,
-  mockDatabaseClientFactory,
+  mockDatabaseClientFactory, mockLoggerService,
 } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands, BrowserToolStreamCommands,
@@ -29,7 +29,6 @@ import {
 } from 'src/modules/browser/__mocks__';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { LoggerService } from 'src/modules/logger/logger.service';
-import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
 
 describe('ConsumerService', () => {
   const client = mockStandaloneRedisClient;
@@ -43,7 +42,7 @@ describe('ConsumerService', () => {
         ConsumerService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

@@ -7,7 +7,7 @@ import {
   mockCreateCaCertificateDto,
   MockType,
   mockRedisClientStorage,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
@@ -27,7 +27,7 @@ describe('CaCertificateService', () => {
         CaCertificateService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: CaCertificateRepository,

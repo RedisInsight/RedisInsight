@@ -11,7 +11,7 @@ import {
   mockRedisNoPermError,
   mockRedisWrongNumberOfArgumentsError,
   mockRedisWrongTypeError,
-  mockBrowserClientMetadata,
+  mockBrowserClientMetadata, mockLoggerService,
 } from 'src/__mocks__';
 import {
   CreateListWithExpireDto,
@@ -39,7 +39,6 @@ import { mockDatabaseClientFactory } from 'src/__mocks__/databases-client';
 import { mockStandaloneRedisClient } from 'src/__mocks__/redis-client';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { LoggerService } from 'src/modules/logger/logger.service';
-import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
 import { ListService } from './list.service';
 
 describe('ListService', () => {
@@ -51,7 +50,7 @@ describe('ListService', () => {
         ListService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

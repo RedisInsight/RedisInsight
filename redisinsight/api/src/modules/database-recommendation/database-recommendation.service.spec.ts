@@ -6,7 +6,7 @@ import {
   mockDatabaseRecommendationRepository,
   mockDatabaseService,
   mockRecommendationScanner,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { LoggerService } from 'src/modules/logger/logger.service';
@@ -37,7 +37,7 @@ describe('DatabaseRecommendationService', () => {
       providers: [
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseRecommendationRepository,

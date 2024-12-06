@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
   mockBrowserClientMetadata, mockDatabaseClientFactory, mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
@@ -42,7 +42,7 @@ describe('StreamService', () => {
         StreamService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

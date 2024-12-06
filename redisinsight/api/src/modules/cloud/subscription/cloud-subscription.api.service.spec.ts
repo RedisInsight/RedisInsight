@@ -8,7 +8,7 @@ import {
   mockCloudSubscriptionCapiService,
   mockCloudSubscriptionRegions,
   mockFeatureService,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockSessionMetadata,
   mockSubscriptionPlanResponse,
   MockType,
@@ -44,7 +44,7 @@ describe('CloudSubscriptionApiService', () => {
         CloudSubscriptionApiProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: CloudSessionService,

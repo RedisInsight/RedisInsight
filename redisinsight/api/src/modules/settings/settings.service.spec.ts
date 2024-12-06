@@ -5,7 +5,7 @@ import {
   mockAgreementsRepository, mockAppSettings,
   mockEncryptionStrategyInstance, mockKeyEncryptionStrategyInstance, mockSessionMetadata, mockSettings,
   mockSettingsAnalyticsService, mockSettingsRepository,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
@@ -49,7 +49,7 @@ describe('SettingsService', () => {
         SettingsService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: SettingsAnalytics,

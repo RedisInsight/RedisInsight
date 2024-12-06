@@ -8,7 +8,7 @@ import {
   mockDatabaseImportResponse,
   mockSessionMetadata,
   mockSshImportService,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -42,7 +42,7 @@ describe('DatabaseImportService', () => {
         DatabaseImportService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseRepository,

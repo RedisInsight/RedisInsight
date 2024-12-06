@@ -4,7 +4,7 @@ import {
   MockType,
   mockCloudTaskCapiProvider,
   mockCloudTaskInit,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudTaskNotFoundException } from 'src/modules/cloud/job/exceptions';
@@ -22,7 +22,7 @@ describe('CloudTaskCapiService', () => {
         CloudTaskCapiService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: CloudTaskCapiProvider,

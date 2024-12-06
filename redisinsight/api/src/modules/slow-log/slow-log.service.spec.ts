@@ -6,7 +6,7 @@ import {
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
   mockClusterRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { SlowLogService } from 'src/modules/slow-log/slow-log.service';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
@@ -63,7 +63,7 @@ describe('SlowLogService', () => {
         SlowLogAnalytics,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

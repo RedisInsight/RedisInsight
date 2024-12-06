@@ -6,7 +6,7 @@ import {
   mockEncryptResult, mockQueryBuilderGetMany, mockQueryBuilderGetManyRaw,
   mockRepository,
   mockDatabase,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -173,7 +173,7 @@ describe('DatabaseAnalysisProvider', () => {
         DatabaseAnalysisProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: getRepositoryToken(DatabaseAnalysisEntity),

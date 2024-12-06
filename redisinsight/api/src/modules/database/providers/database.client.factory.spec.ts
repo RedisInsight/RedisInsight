@@ -12,6 +12,7 @@ import {
   mockStandaloneRedisClient,
   mockSessionMetadata,
   MockRedisClient,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -32,7 +33,6 @@ import {
 import { RedisClient } from 'src/modules/redis/client';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { LoggerService } from 'src/modules/logger/logger.service';
-import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
 
 describe('DatabaseClientFactory', () => {
   let service: DatabaseClientFactory;
@@ -50,7 +50,7 @@ describe('DatabaseClientFactory', () => {
         DatabaseClientFactory,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseService,

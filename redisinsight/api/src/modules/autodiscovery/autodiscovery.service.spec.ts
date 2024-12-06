@@ -5,7 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockAutodiscoveryEndpoint,
   mockDatabaseService,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockRedisClientFactory,
   mockSessionMetadata,
   mockSettingsService,
@@ -63,7 +63,7 @@ describe('AutodiscoveryService', () => {
         AutodiscoveryService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: SettingsService,

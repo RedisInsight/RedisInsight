@@ -14,7 +14,7 @@ import {
   mockBrowserClientMetadata,
   mockDatabaseRecommendationService,
   mockDatabaseClientFactory,
-  mockStandaloneRedisClient,
+  mockStandaloneRedisClient, mockLoggerService,
 } from 'src/__mocks__';
 import {
   GetHashFieldsDto,
@@ -39,7 +39,6 @@ import {
   mockRedisHScanResponse,
   mockRedisHScanWithFieldsExpireResponse,
   mockRedisHTtlResponse, mockUpdateHashFieldsTtlDto,
-  mockLoggerServiceFactory,
 } from 'src/modules/browser/__mocks__';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { RECOMMENDATION_NAMES } from 'src/constants';
@@ -63,7 +62,7 @@ describe('HashService', () => {
         HashService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

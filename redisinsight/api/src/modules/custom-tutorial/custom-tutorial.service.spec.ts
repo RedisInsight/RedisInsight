@@ -6,7 +6,7 @@ import {
   mockCustomTutorialId, mockCustomTutorialManifest, mockCustomTutorialManifest2,
   mockCustomTutorialManifestProvider,
   mockCustomTutorialRepository, mockSessionMetadata,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType, mockUploadCustomTutorialDto, mockUploadCustomTutorialExternalLinkDto,
 } from 'src/__mocks__';
 import * as fs from 'fs-extra';
@@ -46,7 +46,7 @@ describe('CustomTutorialService', () => {
         CustomTutorialService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: CustomTutorialRepository,

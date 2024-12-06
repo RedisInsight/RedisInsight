@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockDatabaseClientFactory,
   mockLogFile,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockRedisShardObserver,
   mockSessionMetadata,
   mockStandaloneRedisClient,
@@ -24,7 +24,7 @@ describe('RedisObserverProvider', () => {
         RedisObserverProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

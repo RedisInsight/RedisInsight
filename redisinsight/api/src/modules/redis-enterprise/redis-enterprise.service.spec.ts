@@ -3,7 +3,7 @@ import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import axios from 'axios';
 import { RedisErrorCodes } from 'src/constants';
 import {
-  mockDatabaseService, mockRedisEnterpriseAnalytics, mockSessionMetadata, mockLoggerServiceFactory,
+  mockDatabaseService, mockRedisEnterpriseAnalytics, mockSessionMetadata, mockLoggerService,
 } from 'src/__mocks__';
 import {
   IRedisEnterpriseDatabase,
@@ -140,7 +140,7 @@ describe('RedisEnterpriseService', () => {
       providers: [
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseService,

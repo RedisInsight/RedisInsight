@@ -7,7 +7,7 @@ import {
   mockDatabaseClientFactory, mockDatabaseModules, mockDatabaseService, mockDefaultDataManifest,
   mockSessionMetadata,
   mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
@@ -110,7 +110,7 @@ describe('BulkImportService', () => {
         BulkImportService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

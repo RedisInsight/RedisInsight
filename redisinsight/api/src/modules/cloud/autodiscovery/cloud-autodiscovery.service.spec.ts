@@ -13,7 +13,7 @@ import {
   mockImportCloudDatabaseResponse,
   mockImportCloudDatabaseResponseFixed,
   mockSessionMetadata,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -44,7 +44,7 @@ describe('CloudAutodiscoveryService', () => {
         CloudAutodiscoveryService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseService,

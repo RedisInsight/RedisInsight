@@ -13,7 +13,7 @@ import {
   mockRedisNoPermError,
   mockRedisUnknownIndexName,
   mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { RedisearchService } from 'src/modules/browser/redisearch/redisearch.service';
 import {
@@ -63,7 +63,7 @@ describe('RedisearchService', () => {
         RedisearchService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

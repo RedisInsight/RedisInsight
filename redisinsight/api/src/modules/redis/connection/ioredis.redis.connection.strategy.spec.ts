@@ -7,7 +7,7 @@ import {
   mockSentinelDatabaseWithTlsAuth,
   mockSshTunnelProvider,
   mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { EventEmitter } from 'events';
 import apiConfig, { Config } from 'src/utils/config';
@@ -48,7 +48,7 @@ describe('IoredisRedisConnectionStrategy', () => {
         IoredisRedisConnectionStrategy,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: SshTunnelProvider,

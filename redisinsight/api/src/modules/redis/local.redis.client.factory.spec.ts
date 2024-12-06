@@ -10,7 +10,7 @@ import {
   mockSentinelDatabaseWithTlsAuth,
   mockSentinelRedisClient, mockSessionMetadata,
   mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { Database } from 'src/modules/database/models/database';
@@ -40,7 +40,7 @@ describe('LocalRedisClientFactory', () => {
         LocalRedisClientFactory,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: IoredisRedisConnectionStrategy,

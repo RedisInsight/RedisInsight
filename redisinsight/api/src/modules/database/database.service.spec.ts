@@ -18,7 +18,7 @@ import {
   mockDatabaseWithTlsAuth,
   mockDatabaseWithSshPrivateKey,
   mockSentinelDatabaseWithTlsAuth,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockDatabaseWithCloudDetails, mockRedisClientFactory, mockRedisClientStorage, mockSessionMetadata,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
@@ -76,7 +76,7 @@ describe('DatabaseService', () => {
         DatabaseService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseRepository,

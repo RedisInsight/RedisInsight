@@ -13,7 +13,7 @@ import {
   mockDatabaseFactory,
   mockDatabaseService,
   mockIORedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockRedisClientFactory,
   mockRedisSentinelAnalytics,
   mockRedisSentinelMasterResponse,
@@ -40,7 +40,7 @@ describe('RedisSentinelService', () => {
         RedisSentinelService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: RedisSentinelAnalytics,

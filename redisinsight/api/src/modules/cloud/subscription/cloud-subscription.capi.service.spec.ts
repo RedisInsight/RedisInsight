@@ -6,7 +6,7 @@ import {
   mockCloudTaskInit,
   mockCreateFreeCloudSubscriptionDto,
   mockFreeCloudSubscriptionPlan1,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
@@ -27,7 +27,7 @@ describe('CloudSubscriptionCapiService', () => {
         CloudSubscriptionCapiService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: CloudSubscriptionCapiProvider,

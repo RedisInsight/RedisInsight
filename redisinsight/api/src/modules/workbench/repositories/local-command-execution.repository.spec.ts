@@ -12,7 +12,7 @@ import {
   mockShortCommandExecutionEntity,
   mockShortCommandExecution,
   mockCommandExecutionFilter,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { NotFoundException } from '@nestjs/common';
@@ -41,7 +41,7 @@ describe('LocalCommandExecutionRepository', () => {
         LocalCommandExecutionRepository,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: getRepositoryToken(CommandExecutionEntity),

@@ -9,11 +9,11 @@ import {
   mockClientMetadata,
   mockSessionMetadata,
   mockCreateBrowserHistoryDto,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { BrowserHistoryMode } from 'src/common/constants';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { LoggerService } from 'src/modules/logger/logger.service';
-import { mockLoggerServiceFactory } from 'src/__mocks__/logger-service';
 import { BrowserHistoryRepository } from './repositories/browser-history.repository';
 
 describe('BrowserHistoryService', () => {
@@ -28,7 +28,7 @@ describe('BrowserHistoryService', () => {
         BrowserHistoryService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: BrowserHistoryRepository,

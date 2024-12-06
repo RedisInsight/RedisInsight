@@ -12,7 +12,7 @@ import {
   mockBrowserClientMetadata,
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import {
@@ -43,7 +43,7 @@ describe('SetService', () => {
         SetService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

@@ -7,7 +7,7 @@ import {
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
   mockSessionMetadata,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
@@ -64,7 +64,7 @@ describe('PubSubService', () => {
         SubscriptionProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: UserSessionProvider,

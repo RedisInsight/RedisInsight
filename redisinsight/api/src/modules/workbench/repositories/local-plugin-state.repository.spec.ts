@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockEncryptionService,
   mockEncryptResult,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockRepository,
   mockSessionMetadata,
   MockType,
@@ -54,7 +54,7 @@ describe('LocalPluginStateRepository', () => {
         LocalPluginStateRepository,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: getRepositoryToken(PluginStateEntity),

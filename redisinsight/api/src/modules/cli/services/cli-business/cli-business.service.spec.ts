@@ -17,7 +17,7 @@ import {
   mockRedisFtInfoReply,
   mockFtInfoAnalyticsData,
   mockSessionMetadata,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import {
   CommandExecutionStatus,
@@ -75,7 +75,7 @@ describe('CliBusinessService', () => {
         CliBusinessService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: CliAnalyticsService,

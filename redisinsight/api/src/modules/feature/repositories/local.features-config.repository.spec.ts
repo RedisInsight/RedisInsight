@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import {
   mockFeaturesConfig,
   mockFeaturesConfigEntity,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockRepository,
   mockSessionMetadata,
   MockType,
@@ -27,7 +27,7 @@ describe('LocalFeaturesConfigRepository', () => {
         LocalFeaturesConfigRepository,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: getRepositoryToken(FeaturesConfigEntity),

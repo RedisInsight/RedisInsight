@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { io } from 'socket.io-client';
 import * as MockedSocket from 'socket.io-mock';
-import { mockAiQueryAuth, mockLoggerServiceFactory } from 'src/__mocks__';
+import { mockAiQueryAuth, mockLoggerService } from 'src/__mocks__';
 import { AiQueryProvider } from 'src/modules/ai/query/providers/ai-query.provider';
 import { AiQueryWsEvents } from 'src/modules/ai/query/models';
 import { BadRequestException } from '@nestjs/common';
@@ -24,7 +24,7 @@ describe('AiQueryProvider', () => {
         AiQueryProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
       ],
     }).compile();

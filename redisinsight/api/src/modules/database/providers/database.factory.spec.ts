@@ -22,7 +22,7 @@ import {
   mockSentinelRedisClient,
   mockSessionMetadata,
   mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
@@ -46,7 +46,7 @@ describe('DatabaseFactory', () => {
         DatabaseFactory,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: RedisClientFactory,

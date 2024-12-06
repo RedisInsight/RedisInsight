@@ -3,7 +3,7 @@ import {
   mockSocket,
   MockType,
   mockSessionMetadata,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
 import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
@@ -25,7 +25,7 @@ describe('UserSessionProvider', () => {
       providers: [
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         UserSessionProvider,
         {

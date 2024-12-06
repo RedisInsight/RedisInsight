@@ -15,7 +15,7 @@ import {
   mockBrowserHistoryEntity,
   mockBrowserHistoryPartial,
   mockSessionMetadata,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { BrowserHistoryEntity } from 'src/modules/browser/browser-history/entities/browser-history.entity';
@@ -37,7 +37,7 @@ describe('LocalBrowserHistoryRepository', () => {
         LocalBrowserHistoryRepository,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: getRepositoryToken(BrowserHistoryEntity),

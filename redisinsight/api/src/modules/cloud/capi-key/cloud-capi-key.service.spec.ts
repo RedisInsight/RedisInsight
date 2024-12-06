@@ -16,7 +16,7 @@ import {
   mockCloudCapiKeyRepository,
   mockCloudApiCapiKey,
   mockServer, mockCloudApiCapiAccessKey, mockCloudSession,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { when, resetAllWhenMocks } from 'jest-when';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
@@ -49,7 +49,7 @@ describe('CloudCapiKeyService', () => {
         CloudCapiKeyApiProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: CloudCapiKeyRepository,

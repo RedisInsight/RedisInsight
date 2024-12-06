@@ -15,7 +15,7 @@ import {
   mockSendAiChatMessageDto,
   mockSessionMetadata,
   mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   MockType,
 } from 'src/__mocks__';
 import { LocalAiQueryAuthProvider } from 'src/modules/ai/query/providers/auth/local.ai-query-auth.provider';
@@ -70,7 +70,7 @@ describe('AiQueryService', () => {
         AiQueryService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: AiQueryProvider,

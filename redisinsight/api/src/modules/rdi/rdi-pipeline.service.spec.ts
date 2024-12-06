@@ -9,7 +9,7 @@ import {
   mockRdiDryRunJob,
   mockRdiPipelineAnalytics,
   mockSessionMetadata,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { LoggerService } from 'src/modules/logger/logger.service';
 import { RdiPipelineService } from './rdi-pipeline.service';
@@ -28,7 +28,7 @@ describe('RdiPipelineService', () => {
         RdiPipelineService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: RdiClientProvider,

@@ -17,7 +17,7 @@ import {
   mockDatabaseRecommendationService,
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
@@ -53,7 +53,7 @@ describe('ZSetService', () => {
         ZSetService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

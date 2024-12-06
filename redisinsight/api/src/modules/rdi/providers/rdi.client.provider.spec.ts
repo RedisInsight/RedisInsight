@@ -12,7 +12,7 @@ import {
   mockRdiClientFactory,
   mockRdiClientStorage,
   mockRdiRepository,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { LoggerService } from 'src/modules/logger/logger.service';
 import { RdiClientProvider } from './rdi.client.provider';
@@ -29,7 +29,7 @@ describe('RdiClientProvider', () => {
         RdiClientProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: RdiRepository,

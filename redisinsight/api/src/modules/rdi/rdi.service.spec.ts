@@ -13,7 +13,7 @@ import {
   mockRdiClientProvider,
   mockRdiRepository,
   mockSessionMetadata,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { AxiosError } from 'axios';
 import { LoggerService } from 'src/modules/logger/logger.service';
@@ -33,7 +33,7 @@ describe('RdiService', () => {
         RdiService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: RdiRepository,

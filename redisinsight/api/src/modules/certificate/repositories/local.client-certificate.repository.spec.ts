@@ -12,7 +12,7 @@ import {
   mockClientCertificateKeyEncrypted,
   mockClientCertificateKeyPlain,
   mockEncryptionService,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockRepository,
   MockType,
 } from 'src/__mocks__';
@@ -40,7 +40,7 @@ describe('LocalClientCertificateRepository', () => {
         LocalClientCertificateRepository,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: getRepositoryToken(ClientCertificateEntity),

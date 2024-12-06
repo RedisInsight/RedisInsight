@@ -11,7 +11,7 @@ import {
   mockCloudSession,
   mockCloudCapiAccount,
   mockCloudApiUser,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockCloudApiCsrfToken, mockServerService, mockCloudRequestUtm, mockCompleteCloudUtm, mockUtmCompleteBody, mockUtmBody,
 } from 'src/__mocks__';
 import { when, resetAllWhenMocks } from 'jest-when';
@@ -47,7 +47,7 @@ describe('CloudUserApiService', () => {
         CloudUserApiProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: CloudUserRepository,

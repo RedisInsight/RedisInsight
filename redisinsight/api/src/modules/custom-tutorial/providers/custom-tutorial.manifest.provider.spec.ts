@@ -7,7 +7,7 @@ import {
   mockCustomTutorial,
   mockCustomTutorialManifest,
   mockCustomTutorialManifestJson,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import * as Utils from 'src/utils/path';
 import { LoggerService } from 'src/modules/logger/logger.service';
@@ -27,7 +27,7 @@ describe('CustomTutorialManifestProvider', () => {
         CustomTutorialManifestProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
       ],
     }).compile();

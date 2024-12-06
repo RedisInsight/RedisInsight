@@ -8,7 +8,7 @@ import {
   mockCreateClientCertificateDto,
   MockType,
   mockRedisClientStorage,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
@@ -27,7 +27,7 @@ describe('ClientCertificateService', () => {
         ClientCertificateService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: ClientCertificateRepository,

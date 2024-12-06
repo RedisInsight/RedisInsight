@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockBulkActionsAnalytics,
   mockDatabaseClientFactory,
-  mockLoggerServiceFactory,
+  mockLoggerService,
   mockSessionMetadata,
 } from 'src/__mocks__';
 import { BulkActionsProvider } from 'src/modules/bulk-actions/providers/bulk-actions.provider';
@@ -47,7 +47,7 @@ describe('BulkActionsProvider', () => {
         BulkActionsProvider,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

@@ -12,7 +12,7 @@ import {
   mockBrowserClientMetadata,
   mockBrowserHistoryService,
   mockDatabaseRecommendationService, mockDatabaseClientFactory, mockStandaloneRedisClient, mockClusterRedisClient,
-  mockLoggerServiceFactory,
+  mockLoggerService,
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RECOMMENDATION_NAMES } from 'src/constants';
@@ -59,7 +59,7 @@ describe('KeysService', () => {
         KeysService,
         {
           provide: LoggerService,
-          useFactory: mockLoggerServiceFactory,
+          useValue: mockLoggerService,
         },
         {
           provide: DatabaseClientFactory,

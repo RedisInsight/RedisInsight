@@ -7,6 +7,7 @@ import {
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
   mockSessionMetadata,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
@@ -18,6 +19,7 @@ import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-su
 import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const mockUserClient = new UserClient('socketId', mockSocket, 'databaseId');
 
@@ -61,6 +63,10 @@ describe('PubSubService', () => {
         UserSessionProvider,
         SubscriptionProvider,
         {
+          provide: LoggerService,
+          useValue: mockLoggerService,
+        },
+        {
           provide: UserSessionProvider,
           useFactory: () => ({
             getOrCreateUserSession: jest.fn(),
@@ -100,7 +106,7 @@ describe('PubSubService', () => {
       await service.subscribe(
         mockSessionMetadata,
         mockUserClient,
-        { subscriptions: [mockSubscriptionDto, mockPSubscriptionDto] }
+        { subscriptions: [mockSubscriptionDto, mockPSubscriptionDto] },
       );
       expect(mockUserSession.subscribe).toHaveBeenCalledTimes(2);
     });
@@ -131,7 +137,7 @@ describe('PubSubService', () => {
     });
     it('should unsubscribe from multiple channels', async () => {
       await service.unsubscribe(
-        mockSessionMetadata, mockUserClient, { subscriptions: [mockSubscriptionDto, mockPSubscriptionDto] }
+        mockSessionMetadata, mockUserClient, { subscriptions: [mockSubscriptionDto, mockPSubscriptionDto] },
       );
       expect(mockUserSession.unsubscribe).toHaveBeenCalledTimes(2);
     });

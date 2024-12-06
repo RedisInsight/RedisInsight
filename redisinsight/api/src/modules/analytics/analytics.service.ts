@@ -96,7 +96,7 @@ export class AnalyticsService {
 
   public async init(initConfig: ITelemetryInitEvent) {
     const {
-      anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion, firstStart, sessionMetadata
+      anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion, firstStart, sessionMetadata,
     } = initConfig;
     this.sessionId = sessionId;
     this.anonymousId = anonymousId;

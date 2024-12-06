@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
@@ -8,13 +8,13 @@ import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { DatabaseService } from './database.service';
 
 @Injectable()
 export class DatabaseInfoService {
-  private logger = new Logger('DatabaseInfoService');
-
   constructor(
+    private logger: LoggerService,
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly databaseOverviewProvider: DatabaseOverviewProvider,
     private readonly databaseInfoProvider: DatabaseInfoProvider,
@@ -27,7 +27,7 @@ export class DatabaseInfoService {
    * @param clientMetadata
    */
   public async getInfo(clientMetadata: ClientMetadata): Promise<RedisDatabaseInfoResponse> {
-    this.logger.log(`Getting database info for: ${clientMetadata.databaseId}`);
+    this.logger.debug(`Getting database info for: ${clientMetadata.databaseId}`, clientMetadata);
 
     const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -40,7 +40,7 @@ export class DatabaseInfoService {
    * @param clientMetadata
    */
   public async getOverview(clientMetadata: ClientMetadata): Promise<DatabaseOverview> {
-    this.logger.log(`Getting database overview for: ${clientMetadata.databaseId}`);
+    this.logger.debug(`Getting database overview for: ${clientMetadata.databaseId}`, clientMetadata);
 
     const client: RedisClient = await this.databaseClientFactory.getOrCreateClient({
       ...clientMetadata,
@@ -68,7 +68,7 @@ export class DatabaseInfoService {
    * @param db
    */
   public async getDatabaseIndex(clientMetadata: ClientMetadata, db: number): Promise<void> {
-    this.logger.log(`Connection to database index: ${db}`);
+    this.logger.debug(`Connection to database index: ${db}`, clientMetadata);
 
     let client;
     const prevDb = clientMetadata.db
@@ -89,7 +89,7 @@ export class DatabaseInfoService {
       );
       return undefined;
     } catch (e) {
-      this.logger.error(`Unable to connect to logical database: ${db}`, e);
+      this.logger.error(`Unable to connect to logical database: ${db}`, e, clientMetadata);
       client?.disconnect?.();
       throw e;
     }

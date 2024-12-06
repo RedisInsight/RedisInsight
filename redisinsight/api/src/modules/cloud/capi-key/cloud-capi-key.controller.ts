@@ -1,6 +1,6 @@
 import {
   ClassSerializerInterceptor,
-  Controller, Delete, Get, Param, UseInterceptors, UsePipes, ValidationPipe
+  Controller, Delete, Get, Param, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { ApiTags } from '@nestjs/swagger';

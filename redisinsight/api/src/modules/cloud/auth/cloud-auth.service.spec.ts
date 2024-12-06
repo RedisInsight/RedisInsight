@@ -24,7 +24,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 import {
-  mockAxiosBadRequestError, mockCloudApiAuthDto, mockCloudSessionService, mockSessionMetadata, MockType,
+  mockAxiosBadRequestError,
+  mockCloudApiAuthDto,
+  mockCloudSessionService,
+  mockLoggerService,
+  mockSessionMetadata,
+  MockType,
 } from 'src/__mocks__';
 import { GithubIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/github-idp.cloud.auth-strategy';
 import { GoogleIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/google-idp.cloud.auth-strategy';
@@ -43,6 +48,7 @@ import { SsoIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/ss
 import {
   CloudOauthSsoUnsupportedEmailException,
 } from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -60,6 +66,10 @@ describe('CloudAuthService', () => {
       providers: [
         EventEmitter2,
         CloudAuthService,
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
+        },
         {
           provide: CloudSessionService,
           useFactory: mockCloudSessionService,

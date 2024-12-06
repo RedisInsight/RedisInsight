@@ -10,7 +10,7 @@ import { ReplyError } from 'src/models/redis-client';
 import {
   mockBrowserClientMetadata,
   mockDatabaseClientFactory,
-  mockDatabaseRecommendationService,
+  mockDatabaseRecommendationService, mockLoggerService,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
   mockStandaloneRedisClient,
@@ -28,6 +28,7 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { StringService } from 'src/modules/browser/string/string.service';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const mockSetStringDto: SetStringDto = {
   keyName: Buffer.from('foo'),
@@ -43,6 +44,10 @@ describe('StringService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StringService,
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

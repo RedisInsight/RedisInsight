@@ -1,5 +1,5 @@
 import { find, forEach, isBoolean } from 'lodash';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
 import {
   FeatureServerEvents,
@@ -16,12 +16,12 @@ import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/
 import { SessionMetadata } from 'src/common/models';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class LocalFeatureService extends FeatureService {
-  private logger = new Logger('LocalFeatureService');
-
   constructor(
+    private logger: LoggerService,
     private readonly repository: FeatureRepository,
     private readonly featuresConfigRepository: FeaturesConfigRepository,
     private readonly featureFlagProvider: FeatureFlagProvider,
@@ -62,7 +62,7 @@ export class LocalFeatureService extends FeatureService {
    * @inheritDoc
    */
   async list(sessionMetadata: SessionMetadata): Promise<FeaturesFlags> {
-    this.logger.log('Getting features list');
+    this.logger.debug('Getting features list', sessionMetadata);
 
     const features = {};
 
@@ -107,7 +107,7 @@ export class LocalFeatureService extends FeatureService {
     // todo: [USER_CONTEXT] revise
     sessionMetadata = this.constantsProvider.getSystemSessionMetadata(),
   ) {
-    this.logger.log('Recalculating features flags');
+    this.logger.debug('Recalculating features flags', sessionMetadata);
 
     try {
       const actions = {
@@ -154,8 +154,9 @@ export class LocalFeatureService extends FeatureService {
         actions.toUpsert.map((feature) => this.repository.upsert(sessionMetadata, feature)),
       );
 
-      this.logger.log(
+      this.logger.debug(
         `Features flags recalculated. Updated: ${actions.toUpsert.length} deleted: ${actions.toDelete.length}`,
+        sessionMetadata,
       );
 
       const list = await this.list(sessionMetadata);
@@ -175,7 +176,7 @@ export class LocalFeatureService extends FeatureService {
         // ignore telemetry error
       }
     } catch (e) {
-      this.logger.error('Unable to recalculate features flags', e);
+      this.logger.error('Unable to recalculate features flags', e, sessionMetadata);
     }
   }
 

@@ -360,7 +360,7 @@ describe('Cli helper', () => {
       { input: Buffer.from('\\x02\\x00\\x00\\x00zipcode'), output: '\\x02\\x00\\x00\\x00zipcode' },
       { input: Buffer.from('€ != \\e2\\xzs\\02'), output: '€ != \\e2\\xzs\\02' },
     ];
-    tests.forEach(({input, output}) => {
+    tests.forEach(({ input, output }) => {
       it(`should be output: ${output} for input: ${input} `, async () => {
         const result = getUTF8FromRedisString(input);
 

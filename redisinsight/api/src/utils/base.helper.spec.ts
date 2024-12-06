@@ -24,7 +24,7 @@ describe('numberWithSpaces', () => {
 
 const isJsonTests = [
   { input: {}, output: true },
-  { input: {foo: 'bar'}, output: true },
+  { input: { foo: 'bar' }, output: true },
   { input: [], output: true },
   { input: [123, '123'], output: true },
   { input: '[]', output: true },

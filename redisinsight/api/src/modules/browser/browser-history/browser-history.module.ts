@@ -1,4 +1,6 @@
-import { DynamicModule, Global, Module, Type } from '@nestjs/common';
+import {
+  DynamicModule, Global, Module, Type,
+} from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { BrowserHistoryController } from 'src/modules/browser/browser-history/browser-history.controller';

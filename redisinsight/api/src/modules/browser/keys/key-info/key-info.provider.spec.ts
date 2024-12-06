@@ -13,6 +13,8 @@ import { StreamKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strateg
 import { StringKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/string.key-info.strategy';
 import { TsKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/ts.key-info.strategy';
 import { ZSetKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/z-set.key-info.strategy';
+import { LoggerService } from 'src/modules/logger/logger.service';
+import { mockLoggerService } from 'src/__mocks__';
 
 describe('KeyInfoProvider', () => {
   let service: KeyInfoProvider;
@@ -31,6 +33,10 @@ describe('KeyInfoProvider', () => {
         TsKeyInfoStrategy,
         ZSetKeyInfoStrategy,
         UnsupportedKeyInfoStrategy,
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
+        },
       ],
     }).compile();
 

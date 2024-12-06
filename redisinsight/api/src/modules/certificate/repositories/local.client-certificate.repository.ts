@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,14 +13,14 @@ import { ClientCertificateRepository } from 'src/modules/certificate/repositorie
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class LocalClientCertificateRepository extends ClientCertificateRepository {
-  private readonly logger = new Logger('LocalCaCertificateRepository');
-
   private modelEncryptor: ModelEncryptor;
 
   constructor(
+    private logger: LoggerService,
     @InjectRepository(ClientCertificateEntity)
     private readonly repository: Repository<ClientCertificateEntity>,
     @InjectRepository(DatabaseEntity)
@@ -75,7 +74,7 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
    * @inheritDoc
    */
   async delete(id: string): Promise<{ affectedDatabases: string[] }> {
-    this.logger.log(`Deleting certificate. id: ${id}`);
+    this.logger.debug(`Deleting certificate. id: ${id}`);
 
     // todo: 1. why we need to check if entity exists?
     //  2. why we fetch it instead of check delete response?
@@ -94,7 +93,7 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
       .getMany()).map((e) => e.id);
 
     await this.repository.delete(id);
-    this.logger.log(`Succeed to delete client certificate: ${id}`);
+    this.logger.debug(`Succeed to delete client certificate: ${id}`);
 
     return { affectedDatabases };
   }

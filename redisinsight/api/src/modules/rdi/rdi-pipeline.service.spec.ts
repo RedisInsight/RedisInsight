@@ -9,7 +9,9 @@ import {
   mockRdiDryRunJob,
   mockRdiPipelineAnalytics,
   mockSessionMetadata,
+  mockLoggerService,
 } from 'src/__mocks__';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { RdiPipelineService } from './rdi-pipeline.service';
 import { RdiDryRunJobDto } from './dto';
 import { RdiDyRunJobStatus, RdiPipeline } from './models';
@@ -24,6 +26,10 @@ describe('RdiPipelineService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RdiPipelineService,
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
+        },
         {
           provide: RdiClientProvider,
           useFactory: mockRdiClientProvider,

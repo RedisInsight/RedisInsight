@@ -1,7 +1,7 @@
 import {
   ClassSerializerInterceptor,
   Controller, HttpCode, Post, UploadedFile,
-  UseInterceptors, UsePipes, ValidationPipe
+  UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody, ApiConsumes, ApiResponse, ApiTags,

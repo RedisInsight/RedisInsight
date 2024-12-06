@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { DEFAULT_MATCH, RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
@@ -30,12 +29,12 @@ import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto
 import { KeyInfoProvider } from 'src/modules/browser/keys/key-info/key-info.provider';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { checkIfKeyNotExists } from 'src/modules/browser/utils';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Injectable()
 export class KeysService {
-  private logger = new Logger('KeysService');
-
   constructor(
+    private logger: LoggerService,
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly scanner: Scanner,
     private readonly keyInfoProvider: KeyInfoProvider,
@@ -48,7 +47,7 @@ export class KeysService {
     dto: GetKeysDto,
   ): Promise<GetKeysWithDetailsResponse[]> {
     try {
-      this.logger.log('Getting keys with details.');
+      this.logger.debug('Getting keys with details.', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.getConnectionType());
@@ -75,6 +74,7 @@ export class KeysService {
     } catch (error) {
       this.logger.error(
         `Failed to get keys with details info. ${error.message}.`,
+        clientMetadata,
       );
       if (
         error.message.includes(RedisErrorCodes.CommandSyntaxError)
@@ -112,7 +112,7 @@ export class KeysService {
 
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
-      this.logger.error(`Failed to get keys info: ${error.message}.`);
+      this.logger.error(`Failed to get keys info: ${error.message}.`, clientMetadata);
       throw catchAclError(error);
     }
   }
@@ -122,7 +122,7 @@ export class KeysService {
     key: RedisString,
   ): Promise<GetKeyInfoResponse> {
     try {
-      this.logger.log('Getting key info.');
+      this.logger.debug('Getting key info.', clientMetadata);
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       const type = await client.sendCommand(
@@ -136,14 +136,14 @@ export class KeysService {
       ) as string;
 
       if (type === 'none') {
-        this.logger.error(`Failed to get key info. Not found key: ${key}`);
+        this.logger.error(`Failed to get key info. Not found key: ${key}`, clientMetadata);
         return Promise.reject(
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
 
       const result = await this.keyInfoProvider.getStrategy(type).getInfo(client, key, type);
-      this.logger.log('Succeed to get key info');
+      this.logger.debug('Succeed to get key info', clientMetadata);
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.BIG_SETS,
@@ -161,7 +161,7 @@ export class KeysService {
       );
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
-      this.logger.error('Failed to get key info.', error);
+      this.logger.error('Failed to get key info.', error, clientMetadata);
       throw catchAclError(error);
     }
   }
@@ -173,7 +173,7 @@ export class KeysService {
    */
   public async deleteKeys(clientMetadata: ClientMetadata, keys: RedisString[]): Promise<DeleteKeysResponse> {
     try {
-      this.logger.log('Deleting keys');
+      this.logger.debug('Deleting keys', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -183,15 +183,15 @@ export class KeysService {
       ]) as number;
 
       if (!result) {
-        this.logger.error('Failed to delete keys. Not Found keys');
+        this.logger.error('Failed to delete keys. Not Found keys', clientMetadata);
         return Promise.reject(new NotFoundException());
       }
 
-      this.logger.log('Succeed to delete keys');
+      this.logger.debug('Succeed to delete keys', clientMetadata);
 
       return { affected: result };
     } catch (error) {
-      this.logger.error('Failed to delete keys.', error);
+      this.logger.error('Failed to delete keys.', error, clientMetadata);
       throw catchAclError(error);
     }
   }
@@ -203,7 +203,7 @@ export class KeysService {
    */
   public async renameKey(clientMetadata: ClientMetadata, dto: RenameKeyDto): Promise<RenameKeyResponse> {
     try {
-      this.logger.log('Renaming key');
+      this.logger.debug('Renaming key', clientMetadata);
       const { keyName, newKeyName } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -221,10 +221,10 @@ export class KeysService {
         );
         return Promise.reject(new BadRequestException(ERROR_MESSAGES.NEW_KEY_NAME_EXIST));
       }
-      this.logger.log('Succeed to rename key');
+      this.logger.debug('Succeed to rename key', clientMetadata);
       return plainToClass(RenameKeyResponse, { keyName: newKeyName });
     } catch (error) {
-      this.logger.error('Failed to rename key.', error);
+      this.logger.error('Failed to rename key.', error, clientMetadata);
       throw catchAclError(error);
     }
   }
@@ -246,7 +246,7 @@ export class KeysService {
    */
   public async setKeyExpiration(clientMetadata: ClientMetadata, dto: UpdateKeyTtlDto): Promise<KeyTtlResponse> {
     try {
-      this.logger.log('Setting a timeout on key.');
+      this.logger.debug('Setting a timeout on key.', clientMetadata);
       const { keyName, ttl } = dto;
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
@@ -260,16 +260,17 @@ export class KeysService {
       if (!result) {
         this.logger.error(
           `Failed to set a timeout on key. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
+          clientMetadata,
         );
         return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
       }
 
-      this.logger.log('Succeed to set a timeout on key.');
+      this.logger.debug('Succeed to set a timeout on key.', clientMetadata);
       return {
         ttl: ttl >= 0 ? ttl : -2,
       };
     } catch (error) {
-      this.logger.error('Failed to set a timeout on key.', error);
+      this.logger.error('Failed to set a timeout on key.', error, clientMetadata);
       throw catchAclError(error);
     }
   }
@@ -281,7 +282,7 @@ export class KeysService {
    */
   public async removeKeyExpiration(clientMetadata: ClientMetadata, dto: UpdateKeyTtlDto): Promise<KeyTtlResponse> {
     try {
-      this.logger.log('Removing the existing timeout on key.');
+      this.logger.debug('Removing the existing timeout on key.', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -293,6 +294,7 @@ export class KeysService {
       if (currentTtl === -2) {
         this.logger.error(
           `Failed to remove the existing timeout on key. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${dto.keyName}`,
+          clientMetadata,
         );
         return Promise.reject(
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
@@ -306,10 +308,10 @@ export class KeysService {
         ]);
       }
 
-      this.logger.log('Succeed to remove the existing timeout on key.');
+      this.logger.debug('Succeed to remove the existing timeout on key.', clientMetadata);
       return { ttl: -1 };
     } catch (error) {
-      this.logger.error('Failed to remove the existing timeout on key.', error);
+      this.logger.error('Failed to remove the existing timeout on key.', error, clientMetadata);
       throw catchAclError(error);
     }
   }

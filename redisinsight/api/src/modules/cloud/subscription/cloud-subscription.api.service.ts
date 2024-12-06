@@ -1,11 +1,12 @@
 import { filter, find } from 'lodash';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { wrapHttpError } from 'src/common/utils';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { CloudSubscriptionCapiService } from './cloud-subscription.capi.service';
 import { CloudSubscriptionRegion, CloudSubscriptionType } from './models';
 import { CloudSessionService } from '../session/cloud-session.service';
@@ -15,9 +16,8 @@ import { CloudSubscriptionPlanResponse } from './dto';
 
 @Injectable()
 export class CloudSubscriptionApiService {
-  private logger = new Logger('CloudSubscriptionApiService');
-
   constructor(
+    private logger: LoggerService,
     private readonly api: CloudSubscriptionApiProvider,
     private readonly sessionService: CloudSessionService,
     private readonly cloudCapiKeyService: CloudCapiKeyService,
@@ -81,11 +81,11 @@ export class CloudSubscriptionApiService {
   private async getCloudRegions(
     credentials: ICloudApiCredentials,
   ): Promise<CloudSubscriptionRegion[]> {
-    this.logger.log('Getting cloud regions.');
+    this.logger.debug('Getting cloud regions.');
     try {
       const regions = await this.api.getCloudRegions(credentials);
 
-      this.logger.log('Succeed to get cloud regions');
+      this.logger.debug('Succeed to get cloud regions');
 
       return parseCloudSubscriptionsCloudRegionsApiResponse(regions);
     } catch (error) {

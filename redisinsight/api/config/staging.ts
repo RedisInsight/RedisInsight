@@ -23,7 +23,7 @@ export default {
       process.env.RI_GUIDES_PATH || join(homedir, 'guides'),
       join(os.homedir(), '.redisinsight-preview-stage'),
       join(os.homedir(), '.redisinsight-v2-stage'),
-    ]
+    ],
   },
   server: {
     env: 'staging',

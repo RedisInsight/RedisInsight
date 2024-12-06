@@ -14,6 +14,8 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { SessionModule } from 'src/modules/session/session.module';
 import { ServerModule } from 'src/modules/server/server.module';
 import { ConstantsModule } from 'src/modules/constants/constants.module';
+import { LoggerModule } from 'src/modules/logger/logger.module';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 @Global()
 @Module({
@@ -33,6 +35,7 @@ import { ConstantsModule } from 'src/modules/constants/constants.module';
     AuthModule.register(),
     SessionModule.register(),
     ServerModule.register(),
+    LoggerModule.register(),
   ],
   exports: [
     ConstantsModule,
@@ -47,6 +50,7 @@ import { ConstantsModule } from 'src/modules/constants/constants.module';
     FeatureModule,
     SessionModule,
     ServerModule,
+    LoggerModule,
   ],
 })
 export class CoreModule {}

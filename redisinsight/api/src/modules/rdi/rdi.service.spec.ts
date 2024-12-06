@@ -13,8 +13,10 @@ import {
   mockRdiClientProvider,
   mockRdiRepository,
   mockSessionMetadata,
+  mockLoggerService,
 } from 'src/__mocks__';
 import { AxiosError } from 'axios';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { wrapRdiPipelineError } from './exceptions';
 import { RdiService } from './rdi.service';
 
@@ -29,6 +31,10 @@ describe('RdiService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RdiService,
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
+        },
         {
           provide: RdiRepository,
           useFactory: mockRdiRepository,

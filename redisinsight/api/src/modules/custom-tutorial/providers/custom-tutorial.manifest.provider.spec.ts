@@ -5,9 +5,12 @@ import { Dirent, Stats } from 'fs';
 import { join } from 'path';
 import {
   mockCustomTutorial,
-  mockCustomTutorialManifest, mockCustomTutorialManifestJson,
+  mockCustomTutorialManifest,
+  mockCustomTutorialManifestJson,
+  mockLoggerService,
 } from 'src/__mocks__';
 import * as Utils from 'src/utils/path';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 jest.mock('fs-extra');
 const mFs = fs as jest.Mocked<typeof fs>;
@@ -22,6 +25,10 @@ describe('CustomTutorialManifestProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CustomTutorialManifestProvider,
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
+        },
       ],
     }).compile();
 

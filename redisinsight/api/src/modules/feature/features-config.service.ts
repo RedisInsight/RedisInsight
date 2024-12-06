@@ -1,10 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export abstract class FeaturesConfigService {
-  protected logger = new Logger(this.constructor.name);
-
   /**
    * Should initialize all required values
    * Sync config on startup (in background)

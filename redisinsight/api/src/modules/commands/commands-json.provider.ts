@@ -17,7 +17,7 @@ export class CommandsJsonProvider {
   constructor(name, url) {
     this.name = name;
     this.url = url;
-    this.logger = new Logger(`CommandsJsonProvider:${this.name}`);
+    this.logger = new Logger();
   }
 
   /**
@@ -25,7 +25,7 @@ export class CommandsJsonProvider {
    */
   async updateLatestJson() {
     try {
-      this.logger.log(`Trying to update ${this.name} commands...`);
+      this.logger.debug(`Trying to update ${this.name} commands...`);
       const { data } = await axios.get(this.url, {
         responseType: 'text',
         transformResponse: [(raw) => raw],
@@ -37,7 +37,7 @@ export class CommandsJsonProvider {
         path.join(PATH_CONFIG.commands, `${this.name}.json`),
         JSON.stringify(JSON.parse(data)), // check that we received proper json object
       );
-      this.logger.log(`Successfully updated ${this.name} commands`);
+      this.logger.debug(`Successfully updated ${this.name} commands`);
     } catch (error) {
       this.logger.error(`Unable to update ${this.name} commands`, error);
     }
@@ -53,8 +53,8 @@ export class CommandsJsonProvider {
         [this.name]: JSON.parse(await fs.readFile(
           path.join(PATH_CONFIG.commands, `${this.name}.json`),
           'utf8',
-        ))
-      })
+        )),
+      });
     } catch (error) {
       this.logger.warn(`Unable to get latest ${this.name} commands. Return default.`, error);
       return this.getDefaultCommands();
@@ -71,7 +71,7 @@ export class CommandsJsonProvider {
         [this.name]: JSON.parse(await fs.readFile(
           path.join(PATH_CONFIG.defaultCommandsDir, `${this.name}.json`),
           'utf8',
-        ))
+        )),
       });
     } catch (error) {
       this.logger.error(`Unable to get default ${this.name} commands.`, error);

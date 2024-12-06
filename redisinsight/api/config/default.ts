@@ -101,7 +101,7 @@ export default {
     cors: {
       enabled: process.env.RI_SOCKETS_CORS === 'true',
       origin: process.env.RI_SOCKETS_CORS_ORIGIN ? process.env.RI_SOCKETS_CORS_ORIGIN : '*',
-      credentials: process.env.RI_SOCKETS_CORS_CREDENTIALS === 'true' ? true : false,
+      credentials: process.env.RI_SOCKETS_CORS_CREDENTIALS === 'true',
     },
   },
   db: {

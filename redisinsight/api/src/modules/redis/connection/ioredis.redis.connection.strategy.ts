@@ -158,7 +158,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<RedisClient> {
-    this.logger.debug('Creating ioredis standalone client');
+    this.logger.debug('Creating ioredis standalone client', clientMetadata);
 
     // Additional validation
     ClientMetadata.validate(clientMetadata);
@@ -182,15 +182,15 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             db: config.db > 0 && !database.sentinelMaster ? config.db : 0,
           });
           connection.on('error', (e): void => {
-            this.logger.error('Failed connection to the redis database.', e);
+            this.logger.error('Failed connection to the redis database.', e, clientMetadata);
             reject(e);
           });
           connection.on('end', (): void => {
-            this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+            this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION, clientMetadata);
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           connection.on('ready', (): void => {
-            this.logger.log('Successfully connected to the redis database');
+            this.logger.debug('Successfully connected to the redis database', clientMetadata);
             resolve(new StandaloneIoredisClient(
               clientMetadata,
               connection,
@@ -201,7 +201,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             ));
           });
           connection.on('reconnecting', (): void => {
-            this.logger.log('Reconnecting to the redis database');
+            this.logger.debug('Reconnecting to the redis database', clientMetadata);
           });
         } catch (e) {
           reject(e);
@@ -262,15 +262,15 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
         try {
           const cluster = new Cluster(rootNodes, config);
           cluster.on('error', (e): void => {
-            this.logger.error('Failed connection to the redis oss cluster', e);
+            this.logger.error('Failed connection to the redis oss cluster', e, clientMetadata);
             reject(!isEmpty(e.lastNodeError) ? e.lastNodeError : e);
           });
           cluster.on('end', (): void => {
-            this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+            this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION, clientMetadata);
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           cluster.on('ready', (): void => {
-            this.logger.log('Successfully connected to the redis oss cluster.');
+            this.logger.debug('Successfully connected to the redis oss cluster.', clientMetadata);
             resolve(new ClusterIoredisClient(
               clientMetadata,
               cluster,
@@ -308,15 +308,15 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
       try {
         const client = new Redis(config);
         client.on('error', (e): void => {
-          this.logger.error('Failed connection to the redis oss sentinel', e);
+          this.logger.error('Failed connection to the redis oss sentinel', e, clientMetadata);
           reject(e);
         });
         client.on('end', (): void => {
-          this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+          this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION, clientMetadata);
           reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
         });
         client.on('ready', (): void => {
-          this.logger.log('Successfully connected to the redis oss sentinel.');
+          this.logger.debug('Successfully connected to the redis oss sentinel.', clientMetadata);
           resolve(new SentinelIoredisClient(
             clientMetadata,
             client,

@@ -35,10 +35,10 @@ export const migrateHomeFolder = async () => {
       )));
     }
 
-    return true
+    return true;
   } catch (e) {
     // continue initialization even without migration
-    return false
+    return false;
   }
 };
 
@@ -48,7 +48,7 @@ export const migrateHomeFolder = async () => {
 export const removeOldFolders = async () => {
   try {
     // remove old folders
-    await PATH_CONFIG.oldFolders?.map(removeFolder)
+    await PATH_CONFIG.oldFolders?.map(removeFolder);
   } catch (e) {
     // continue initialization even without removing
   }

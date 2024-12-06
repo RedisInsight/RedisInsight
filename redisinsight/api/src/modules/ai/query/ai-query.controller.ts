@@ -1,8 +1,12 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Delete, Get, Logger, Param,
-  Post, Res,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -20,11 +24,7 @@ import { Response } from 'express';
 @Controller('ai/expert/:id/messages')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class AiQueryController {
-  private readonly logger = new Logger('AiQueryController');
-
-  constructor(
-    private readonly service: AiQueryService,
-  ) {}
+  constructor(private readonly service: AiQueryService) {}
 
   @Post()
   @ApiEndpoint({

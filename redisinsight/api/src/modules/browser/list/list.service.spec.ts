@@ -11,7 +11,7 @@ import {
   mockRedisNoPermError,
   mockRedisWrongNumberOfArgumentsError,
   mockRedisWrongTypeError,
-  mockBrowserClientMetadata,
+  mockBrowserClientMetadata, mockLoggerService,
 } from 'src/__mocks__';
 import {
   CreateListWithExpireDto,
@@ -38,6 +38,7 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { mockDatabaseClientFactory } from 'src/__mocks__/databases-client';
 import { mockStandaloneRedisClient } from 'src/__mocks__/redis-client';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { LoggerService } from 'src/modules/logger/logger.service';
 import { ListService } from './list.service';
 
 describe('ListService', () => {
@@ -47,6 +48,10 @@ describe('ListService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ListService,
+        {
+          provide: LoggerService,
+          useValue: mockLoggerService,
+        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

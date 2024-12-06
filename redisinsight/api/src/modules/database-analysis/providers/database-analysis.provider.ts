@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/database-analysis.entity';
 import { isUndefined } from 'lodash';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,13 +10,12 @@ import { RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { classToClass } from 'src/utils';
 import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { LoggerService } from 'src/modules/logger/logger.service';
 
 const DATABASE_ANALYSIS_CONFIG = config.get('database_analysis');
 
 @Injectable()
 export class DatabaseAnalysisProvider {
-  private readonly logger = new Logger('DatabaseAnalysisProvider');
-
   private readonly encryptedFields = [
     'totalKeys',
     'totalMemory',
@@ -31,6 +30,7 @@ export class DatabaseAnalysisProvider {
   ];
 
   constructor(
+    private logger: LoggerService,
     @InjectRepository(DatabaseAnalysisEntity)
     private readonly repository: Repository<DatabaseAnalysisEntity>,
     private readonly encryptionService: EncryptionService,
@@ -77,7 +77,7 @@ export class DatabaseAnalysisProvider {
    * @param dto
    */
   async recommendationVote(id: string, dto: RecommendationVoteDto): Promise<DatabaseAnalysis> {
-    this.logger.log('Updating database analysis with recommendation vote');
+    this.logger.debug('Updating database analysis with recommendation vote');
     const { name, vote } = dto;
     const oldDatabaseAnalysis = await this.repository.findOneBy({ id });
 
@@ -101,7 +101,7 @@ export class DatabaseAnalysisProvider {
    * @param databaseId
    */
   async list(databaseId: string): Promise<ShortDatabaseAnalysis[]> {
-    this.logger.log('Getting database analysis list');
+    this.logger.debug('Getting database analysis list');
     const entities = await this.repository
       .createQueryBuilder('a')
       .where({ databaseId })
@@ -110,7 +110,7 @@ export class DatabaseAnalysisProvider {
       .limit(DATABASE_ANALYSIS_CONFIG.maxItemsPerDb)
       .getMany();
 
-    this.logger.log('Succeed to get command executions');
+    this.logger.debug('Succeed to get command executions');
 
     return entities.map((entity) => classToClass(ShortDatabaseAnalysis, entity));
   }

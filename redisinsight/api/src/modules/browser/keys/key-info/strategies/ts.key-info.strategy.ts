@@ -27,7 +27,7 @@ export class TsKeyInfoStrategy extends KeyInfoStrategy {
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${RedisDataType.TS} type info.`);
+    this.logger.debug(`Getting ${RedisDataType.TS} type info.`);
 
     const [
       [, ttl = null],

@@ -53,7 +53,7 @@ describe('GET /ai/assistant/chats/:id', () => {
       responseBody: {
         statusCode: 401,
         error: 'ConvAiUnauthorized',
-        message: 'Authorization failed',
+        message: 'Request failed with status code 401',
         errorCode: 11301,
       },
     },

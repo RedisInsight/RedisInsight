@@ -139,6 +139,8 @@ export class CloudAuthService {
         headers: CloudAuthService.getOAuthHttpRequestHeaders(),
       });
 
+      this.logger.log('Succeeded to exchangeCode');
+
       return data;
     } catch (e) {
       this.logger.error('Unable to exchange code', e);

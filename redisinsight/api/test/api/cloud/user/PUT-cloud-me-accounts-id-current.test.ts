@@ -77,7 +77,9 @@ describe('PUT /cloud/me/accounts/:id/current', () => {
         },
         statusCode: 401,
         checkFn: ({ body }) => {
-          expect(body).to.deep.eq(mockCloudApiUnauthorizedExceptionResponse);
+          expect(body).to.deep.eq({...mockCloudApiUnauthorizedExceptionResponse,
+            message: "Request failed with status code 401"}
+          );
         },
       },
       {
@@ -89,7 +91,9 @@ describe('PUT /cloud/me/accounts/:id/current', () => {
         },
         statusCode: 400,
         checkFn: ({ body }) => {
-          expect(body).to.deep.eq(mockCloudApiBadRequestExceptionResponse);
+          expect(body).to.deep.eq({...mockCloudApiBadRequestExceptionResponse,
+            message: "Request failed with status code 400"}
+          );
         },
       },
     ].map(mainCheckFn);

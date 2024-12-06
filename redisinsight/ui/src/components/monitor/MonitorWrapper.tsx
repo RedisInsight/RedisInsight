@@ -2,7 +2,6 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { EuiTextColor } from '@elastic/eui'
 import { monitorSelector, startMonitor, togglePauseMonitor } from 'uiSrc/slices/cli/monitor'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'

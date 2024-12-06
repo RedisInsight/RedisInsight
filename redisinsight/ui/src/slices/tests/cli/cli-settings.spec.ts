@@ -6,7 +6,7 @@ import {
   cliTexts,
   ConnectionSuccessOutputText,
   InitOutputText,
-} from 'uiSrc/constants/cliOutput'
+} from 'uiSrc/components/messages/cli-output/cliOutput'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import reducer, {
   initialState,

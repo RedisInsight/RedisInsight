@@ -69,12 +69,14 @@ export class CloudUserApiService {
 
       if (!isValidToken(session?.accessToken)) {
         if (!session?.refreshToken) {
+          this.logger.error('Refresh token is undefined');
           throw new CloudApiUnauthorizedException();
         }
 
         await this.cloudAuthService.renewTokens(sessionMetadata, session?.idpType, session?.refreshToken);
       }
     } catch (e) {
+      this.logger.error('Error trying renew token', e);
       throw new CloudApiUnauthorizedException(e.message);
     }
   }

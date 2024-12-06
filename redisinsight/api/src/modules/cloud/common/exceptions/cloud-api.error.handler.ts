@@ -15,21 +15,27 @@ export const wrapCloudApiError = (error: AxiosError, message?: string): HttpExce
 
   const { response } = error;
 
+  let errorMessage = message || error.message;
+  if (!errorMessage) {
+    const data = response?.data as any;
+    errorMessage = data?.message;
+  }
+
   if (response) {
     const errorOptions = { cause: new Error(response?.data as string) };
     switch (response?.status) {
       case 401:
-        return new CloudApiUnauthorizedException(message, errorOptions);
+        return new CloudApiUnauthorizedException(errorMessage, errorOptions);
       case 403:
-        return new CloudApiForbiddenException(message, errorOptions);
+        return new CloudApiForbiddenException(errorMessage, errorOptions);
       case 400:
-        return new CloudApiBadRequestException(message, errorOptions);
+        return new CloudApiBadRequestException(errorMessage, errorOptions);
       case 404:
-        return new CloudApiNotFoundException(message, errorOptions);
+        return new CloudApiNotFoundException(errorMessage, errorOptions);
       default:
-        return new CloudApiInternalServerErrorException(message, errorOptions);
+        return new CloudApiInternalServerErrorException(errorMessage, errorOptions);
     }
   }
 
-  return new CloudApiInternalServerErrorException(message);
+  return new CloudApiInternalServerErrorException(errorMessage);
 };

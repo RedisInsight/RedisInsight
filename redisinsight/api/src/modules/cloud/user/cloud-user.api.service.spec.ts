@@ -455,7 +455,7 @@ describe('CloudUserApiService', () => {
       mockedAxios.post.mockRejectedValueOnce(mockCapiUnauthorizedError);
 
       await expect(service.setCurrentAccount(mockSessionMetadata, mockCloudUser.currentAccountId))
-        .rejects.toEqual(new CloudApiUnauthorizedException());
+        .rejects.toEqual(new CloudApiUnauthorizedException(mockCapiUnauthorizedError.message));
       expect(mockedAxios.post).toHaveBeenCalledTimes(2);
     });
   });

@@ -36,6 +36,7 @@ export function wsService(wsUrl: string, {
   const withCredentials = riConfig.api.socketCredentials
 
   const ioOptions = {
+    addTrailingSlash: false,
     path: getProxyPath(),
     forceNew,
     reconnection,

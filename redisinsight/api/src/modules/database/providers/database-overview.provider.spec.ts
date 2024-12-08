@@ -55,6 +55,7 @@ const mockGetTotalResponse1 = 1;
 
 export const mockDatabaseOverview: DatabaseOverview = {
   version: mockServerInfo.redis_version,
+  serverName: null,
   usedMemory: 1,
   totalKeys: 2,
   totalKeysPerDb: {
@@ -100,6 +101,28 @@ describe('OverviewService', () => {
         expect(result).toEqual({
           ...mockDatabaseOverview,
           version: '6.0.5',
+          connectedClients: 1,
+          totalKeys: 1,
+          totalKeysPerDb: undefined,
+          usedMemory: 1000000,
+          cpuUsagePercentage: undefined,
+          opsPerSecond: undefined,
+          networkInKbps: undefined,
+          networkOutKbps: undefined,
+        });
+      });
+      it('should return overview with serverName if server_name is present in redis info', async () => {
+        const redisInfoReplyWithServerName = `${mockStandaloneRedisInfoReply.slice(0, 11)}server_name:valkey\r\n${mockStandaloneRedisInfoReply.slice(11)}`;
+        when(standaloneClient.sendCommand)
+          .calledWith(['info'], { replyEncoding: 'utf8' })
+          .mockResolvedValue(redisInfoReplyWithServerName);
+
+        const result = await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace);
+
+        expect(result).toEqual({
+          ...mockDatabaseOverview,
+          version: '6.0.5',
+          serverName: 'valkey',
           connectedClients: 1,
           totalKeys: 1,
           totalKeysPerDb: undefined,

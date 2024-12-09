@@ -55,6 +55,7 @@ export class DatabaseOverviewProvider {
 
     return {
       version: this.getVersion(nodesInfo),
+      serverName: this.getServerName(nodesInfo),
       totalKeys,
       totalKeysPerDb,
       usedMemory: this.calculateUsedMemory(nodesInfo),
@@ -124,6 +125,15 @@ export class DatabaseOverviewProvider {
    */
   private getVersion(nodes = []): string {
     return get(nodes, [0, 'server', 'redis_version'], null);
+  }
+
+  /**
+   * Get server_name from the first shard in the list
+   * @param nodes
+   * @private
+   */
+  private getServerName(nodes = []): string {
+    return get(nodes, [0, 'server', 'server_name'], null);
   }
 
   /**

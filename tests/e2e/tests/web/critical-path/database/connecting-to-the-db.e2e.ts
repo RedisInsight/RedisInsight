@@ -95,7 +95,7 @@ test
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.hostInput.value).eql(defaultHost, 'Default sentinel host not prepopulated')
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.portInput.value).eql(defaultSentinelPort, 'Default sentinel port not prepopulated');
     });
-test.only
+test
     .meta({ rte: rte.standalone })
     .after(async() => {
         // Delete databases

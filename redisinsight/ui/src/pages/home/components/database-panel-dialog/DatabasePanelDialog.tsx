@@ -83,39 +83,40 @@ const DatabasePanelDialog = (props: Props) => {
     }
   }, [editMode])
 
+  useEffect(() => {
+    if (!isOpen) {
+      // clear state after closing dialog
+      setConnectionType(null)
+      if (connectionType === AddDbType.manual) return
+
+      switch (connectionType) {
+        case AddDbType.cloud: {
+          dispatch(resetDataRedisCluster())
+          dispatch(resetDataSentinel())
+          break
+        }
+
+        case AddDbType.sentinel: {
+          dispatch(resetDataRedisCloud())
+          dispatch(resetDataRedisCluster())
+          break
+        }
+
+        case AddDbType.software: {
+          dispatch(resetDataRedisCloud())
+          dispatch(resetDataSentinel())
+          break
+        }
+        default:
+          break
+      }
+    }
+  }, [isOpen, connectionType])
+
   const changeConnectionType = (connectionType: AddDbType, db: any) => {
     dispatch(setUrlHandlingInitialState())
     setInitialValues(db)
     setConnectionType(connectionType)
-  }
-
-  const handleClose = () => {
-    setConnectionType(null)
-    onClose?.()
-
-    if (connectionType === AddDbType.manual) return
-
-    switch (connectionType) {
-      case AddDbType.cloud: {
-        dispatch(resetDataRedisCluster())
-        dispatch(resetDataSentinel())
-        break
-      }
-
-      case AddDbType.sentinel: {
-        dispatch(resetDataRedisCloud())
-        dispatch(resetDataRedisCluster())
-        break
-      }
-
-      case AddDbType.software: {
-        dispatch(resetDataRedisCloud())
-        dispatch(resetDataSentinel())
-        break
-      }
-      default:
-        break
-    }
   }
 
   const handleClickBack = () => {
@@ -127,29 +128,21 @@ const DatabasePanelDialog = (props: Props) => {
       {connectionType === null && (
         <ConnectionUrlForm
           onSelectOption={changeConnectionType}
-          onClose={handleClose}
         />
       )}
       {connectionType === AddDbType.manual && (
         <ManualConnectionWrapper
           {...props}
           initialValues={initialValues}
-          onClose={handleClose}
           onClickBack={handleClickBack}
         />
       )}
       {connectionType === AddDbType.cloud && (
-        <CloudConnectionFormWrapper {...props} onClose={handleClose} />
+        <CloudConnectionFormWrapper {...props} />
       )}
-      {connectionType === AddDbType.import && (
-        <ImportDatabase onClose={handleClose} />
-      )}
-      {connectionType === AddDbType.sentinel && (
-        <SentinelConnectionWrapper {...props} onClose={handleClose} />
-      )}
-      {connectionType === AddDbType.software && (
-        <ClusterConnectionFormWrapper {...props} onClose={handleClose} />
-      )}
+      {connectionType === AddDbType.import && (<ImportDatabase onClose={onClose} />)}
+      {connectionType === AddDbType.sentinel && (<SentinelConnectionWrapper {...props} />)}
+      {connectionType === AddDbType.software && (<ClusterConnectionFormWrapper {...props} />)}
     </>
   )
 
@@ -179,7 +172,7 @@ const DatabasePanelDialog = (props: Props) => {
   return (
     <FormDialog
       isOpen={isOpen}
-      onClose={handleClose}
+      onClose={onClose}
       header={modalHeader ?? (<EuiTitle size="s"><h4>Add Database</h4></EuiTitle>)}
       footer={<div id="footerDatabaseForm" />}
     >

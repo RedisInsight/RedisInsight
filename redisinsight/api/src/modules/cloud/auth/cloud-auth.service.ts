@@ -144,12 +144,10 @@ export class CloudAuthService {
         headers: CloudAuthService.getOAuthHttpRequestHeaders(),
       });
 
-      // Extract Entra ID (tenant ID) from id_token for Microsoft authentication
+      // Extract Entra ID (oid ID) from id_token for Microsoft authentication
       if (authRequest.idpType === CloudAuthIdpType.Microsoft && data.id_token) {
         const [, payload] = data.id_token.split('.')
         const decodedPayload = JSON.parse(Buffer.from(payload, 'base64').toString())
-        const { oid } = decodedPayload
-        log.info('entra id', oid)
         log.info('the entire payload', decodedPayload)
       }
 

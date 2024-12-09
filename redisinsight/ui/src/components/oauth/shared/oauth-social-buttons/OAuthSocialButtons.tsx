@@ -27,6 +27,7 @@ const OAuthSocialButtons = (props: Props) => {
     {
       text: 'Microsoft',
       className: styles.microsoftButton,
+      // reusing the sso icon for microsoft for testing
       icon: SsoIcon,
       label: 'microsoft-oauth',
       strategy: OAuthStrategy.Microsoft,

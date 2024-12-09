@@ -123,7 +123,7 @@ test('Adding database with SSH', async t => {
     await myRedisDatabasePage.clickOnDBByName(sshDbPasscode.databaseName);
     await Common.checkURLContainsText('browser');
 });
-test('Verify taht  OSS Cluster database with SSH can be added and work correctly', async t => {
+test('Verify that  OSS Cluster database with SSH can be added and work correctly', async t => {
     const sshWithPass = {
         ...sshParams,
         sshPassword: 'pass'
@@ -139,5 +139,5 @@ test('Verify taht  OSS Cluster database with SSH can be added and work correctly
 
     await t.click(browserPage.NavigationPanel.analysisPageButton);
     await t.click(clusterPage.overviewTab);
-    await t.expect(await clusterPage.getPrimaryNodesCount()).eql('3', 'Primary nodes in table are not corrected');
+    await t.expect(await clusterPage.getPrimaryNodesCount()).eql(Number('3'), 'Primary nodes in table are not corrected');
 });

@@ -1,22 +1,22 @@
 import React from 'react'
-import { EuiLink, EuiText } from '@elastic/eui'
+import { EuiText } from '@elastic/eui'
+import cx from 'classnames'
 import { APPLICATION_NAME } from 'uiSrc/constants'
 
 import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { ExternalLink } from 'uiSrc/components'
 import styles from '../styles.module.scss'
 
 const MessageCloudApiKeys = () => (
   <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
     {'Enter Redis Cloud API keys to discover and add databases. API keys can be enabled by following the steps mentioned in the '}
-    <EuiLink
-      color="text"
-      className={styles.link}
-      external={false}
-      target="_blank"
+
+    <ExternalLink
+      className={cx(styles.link, styles.external)}
       href="https://docs.redis.com/latest/rc/api/get-started/enable-the-api/"
     >
       documentation.
-    </EuiLink>
+    </ExternalLink>
   </EuiText>
 )
 
@@ -26,15 +26,12 @@ const MessageStandalone = () => (
     {' '}
     {APPLICATION_NAME}
     . &nbsp;
-    <EuiLink
-      color="text"
+    <ExternalLink
+      className={cx(styles.link, styles.external)}
       href={getUtmExternalLink('https://redis.io/docs/latest/develop/connect/insight#connection-management', { campaign: 'redisinsight' })}
-      className={styles.link}
-      external={false}
-      target="_blank"
     >
       Learn more here.
-    </EuiLink>
+    </ExternalLink>
   </EuiText>
 )
 
@@ -45,15 +42,12 @@ const MessageSentinel = () => (
     {' '}
     {APPLICATION_NAME}
     . &nbsp;
-    <EuiLink
-      color="text"
+    <ExternalLink
+      className={cx(styles.link, styles.external)}
       href={getUtmExternalLink('https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/', { campaign: 'redisinsight' })}
-      className={styles.link}
-      external={false}
-      target="_blank"
     >
       Learn more here.
-    </EuiLink>
+    </ExternalLink>
   </EuiText>
 )
 
@@ -64,15 +58,12 @@ const MessageEnterpriceSoftware = () => (
     {' '}
     {APPLICATION_NAME}
     . &nbsp;
-    <EuiLink
-      color="text"
+    <ExternalLink
+      className={cx(styles.link, styles.external)}
       href={getUtmExternalLink('https://redis.io/redis-enterprise-software/overview/', { campaign: 'redisinsight' })}
-      className={styles.link}
-      external={false}
-      target="_blank"
     >
       Learn more here.
-    </EuiLink>
+    </ExternalLink>
   </EuiText>
 )
 

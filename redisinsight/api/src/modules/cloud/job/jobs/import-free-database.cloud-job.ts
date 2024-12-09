@@ -41,7 +41,7 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
   }
 
   async iteration(sessionMetadata: SessionMetadata): Promise<Database> {
-    this.logger.log('Importing free database');
+    this.logger.debug('Importing free database');
 
     this.checkSignal();
 

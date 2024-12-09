@@ -13,7 +13,7 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${RedisDataType.JSON} type info.`);
+    this.logger.debug(`Getting ${RedisDataType.JSON} type info.`);
     const [
       [, ttl = null],
       [, size = null],

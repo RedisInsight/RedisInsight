@@ -50,7 +50,7 @@ export class ClusterMonitorService {
 
       return await strategy.getClusterDetails(client);
     } catch (e) {
-      this.logger.error('Unable to get cluster details', e);
+      this.logger.error('Unable to get cluster details', e, clientMetadata);
 
       if (e instanceof HttpException) {
         throw e;

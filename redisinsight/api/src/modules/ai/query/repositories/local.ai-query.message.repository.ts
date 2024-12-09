@@ -71,7 +71,7 @@ export class LocalAiQueryMessageRepository extends AiQueryMessageRepository {
       .map((entity) => classToClass(AiQueryMessage, entity));
   }
 
-  async createMany(_sessionMetadata: SessionMetadata, messages: AiQueryMessage[]): Promise<void> {
+  async createMany(sessionMetadata: SessionMetadata, messages: AiQueryMessage[]): Promise<void> {
     const entities = await Promise.all(messages.map(async (message) => {
       const entity = classToClass(AiQueryMessageEntity, message);
 
@@ -84,7 +84,7 @@ export class LocalAiQueryMessageRepository extends AiQueryMessageRepository {
     try {
       await this.cleanupDatabaseHistory(entities[0].databaseId, entities[0].accountId);
     } catch (e) {
-      this.logger.error('Error when trying to cleanup history after insert', e);
+      this.logger.error('Error when trying to cleanup history after insert', e, sessionMetadata);
     }
   }
 

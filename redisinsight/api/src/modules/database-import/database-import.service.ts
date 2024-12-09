@@ -129,7 +129,7 @@ export class DatabaseImportService {
 
       return response;
     } catch (e) {
-      this.logger.warn(`Unable to import databases: ${e?.constructor?.name || 'UncaughtError'}`, e);
+      this.logger.warn(`Unable to import databases: ${e?.constructor?.name || 'UncaughtError'}`, e, sessionMetadata);
 
       this.analytics.sendImportFailed(sessionMetadata, e);
 
@@ -279,7 +279,7 @@ export class DatabaseImportService {
         return error;
       });
 
-      this.logger.warn(`Unable to import database: ${errors[0]?.constructor?.name || 'UncaughtError'}`, errors[0]);
+      this.logger.warn(`Unable to import database: ${errors[0]?.constructor?.name || 'UncaughtError'}`, errors[0], sessionMetadata);
 
       return {
         index,

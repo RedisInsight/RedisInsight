@@ -11,7 +11,7 @@ export class RdiStatisticsService {
   ) {}
 
   async getStatistics(rdiClientMetadata: RdiClientMetadata, sections?: string): Promise<RdiStatisticsResult> {
-    this.logger.log('Getting RDI statistics');
+    this.logger.debug('Getting RDI statistics', rdiClientMetadata);
 
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 

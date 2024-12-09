@@ -30,7 +30,7 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
    */
   private generateControlNumber(): number {
     const controlNumber = Number((parseInt((Math.random() * 10_000).toString(), 10) / 100).toFixed(2));
-    this.logger.log('Control number is generated', controlNumber);
+    this.logger.debug(`Control number is generated: ${controlNumber}`);
 
     return controlNumber;
   }
@@ -39,13 +39,13 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
    * @inheritDoc
    */
   async getOrCreate(): Promise<FeaturesConfig> {
-    this.logger.log('Getting features config entity');
+    this.logger.debug('Getting features config entity');
 
     let entity = await this.repository.findOneBy({ id: this.id });
 
     if (!entity) {
       try {
-        this.logger.log('Creating features config entity');
+        this.logger.debug('Creating features config entity');
 
         entity = await this.repository.save(plainToClass(FeaturesConfigEntity, {
           id: this.id,

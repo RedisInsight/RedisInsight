@@ -27,13 +27,13 @@ export class RedisObserverProvider {
    * @param instanceId
    */
   async getOrCreateObserver(sessionMetadata: SessionMetadata, instanceId: string): Promise<RedisObserver> {
-    this.logger.log('Getting redis observer...');
+    this.logger.debug('Getting redis observer...', sessionMetadata);
 
     let redisObserver = this.redisObservers.get(instanceId);
 
     try {
       if (!redisObserver) {
-        this.logger.debug('Creating new RedisObserver');
+        this.logger.debug('Creating new RedisObserver', sessionMetadata);
         redisObserver = new RedisObserver();
         this.redisObservers.set(instanceId, redisObserver);
 
@@ -47,12 +47,12 @@ export class RedisObserverProvider {
       } else {
         switch (redisObserver.status) {
           case RedisObserverStatus.Ready:
-            this.logger.debug(`Using existing RedisObserver with status: ${redisObserver.status}`);
+            this.logger.debug(`Using existing RedisObserver with status: ${redisObserver.status}`, sessionMetadata);
             return redisObserver;
           case RedisObserverStatus.Empty:
           case RedisObserverStatus.End:
           case RedisObserverStatus.Error:
-            this.logger.debug(`Trying to reconnect. Current status: ${redisObserver.status}`);
+            this.logger.debug(`Trying to reconnect. Current status: ${redisObserver.status}`, sessionMetadata);
             // todo: add multiuser support
             // try to reconnect
             redisObserver.init(this.getRedisClientFn({
@@ -66,7 +66,7 @@ export class RedisObserverProvider {
           case RedisObserverStatus.Connected:
           default:
             // wait until connect or error
-            this.logger.debug(`Waiting for ready. Current status: ${redisObserver.status}`);
+            this.logger.debug(`Waiting for ready. Current status: ${redisObserver.status}`, sessionMetadata);
         }
       }
 
@@ -79,7 +79,7 @@ export class RedisObserverProvider {
         });
       });
     } catch (error) {
-      this.logger.error(`Failed to get monitor observer. ${error.message}.`, JSON.stringify(error));
+      this.logger.error(`Failed to get monitor observer. ${error.message}.`, error, sessionMetadata);
       throw error;
     }
   }

@@ -316,7 +316,7 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
     //       reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
     //     });
     //     client.on('ready', (): void => {
-    //       this.logger.log('Successfully connected to the redis oss sentinel.');
+    //       this.logger.debug('Successfully connected to the redis oss sentinel.');
     //       resolve(new IoredisClient(clientMetadata, client));
     //     });
     //   } catch (e) {

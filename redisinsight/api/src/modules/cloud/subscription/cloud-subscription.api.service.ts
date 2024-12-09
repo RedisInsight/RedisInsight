@@ -81,11 +81,11 @@ export class CloudSubscriptionApiService {
   private async getCloudRegions(
     credentials: ICloudApiCredentials,
   ): Promise<CloudSubscriptionRegion[]> {
-    this.logger.log('Getting cloud regions.');
+    this.logger.debug('Getting cloud regions.');
     try {
       const regions = await this.api.getCloudRegions(credentials);
 
-      this.logger.log('Succeed to get cloud regions');
+      this.logger.debug('Succeed to get cloud regions');
 
       return parseCloudSubscriptionsCloudRegionsApiResponse(regions);
     } catch (error) {

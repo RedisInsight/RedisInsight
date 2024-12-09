@@ -45,7 +45,7 @@ export class RecommendationProvider {
   }
 
   getStrategy(type: string): IRecommendationStrategy {
-    this.logger.log(`Getting ${type} recommendation strategy.`);
+    this.logger.debug(`Getting ${type} recommendation strategy.`);
 
     const strategy = this.strategies.get(type);
 

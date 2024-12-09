@@ -32,7 +32,7 @@ export class BrowserHistoryService {
       const history = plainToClass(BrowserHistory, { ...dto, databaseId: clientMetadata.databaseId });
       return this.browserHistoryRepository.create(clientMetadata.sessionMetadata, history);
     } catch (e) {
-      this.logger.error('Unable to create browser history item', e);
+      this.logger.error('Unable to create browser history item', e, clientMetadata);
 
       if (e instanceof HttpException) {
         throw e;
@@ -92,7 +92,7 @@ export class BrowserHistoryService {
     mode: BrowserHistoryMode,
     ids: string[],
   ): Promise<DeleteBrowserHistoryItemsResponse> {
-    this.logger.log(`Deleting many browser history items: ${ids}`);
+    this.logger.debug(`Deleting many browser history items: ${ids}`, sessionMetadata);
 
     return {
       affected: sum(await Promise.all(ids.map(async (id) => {

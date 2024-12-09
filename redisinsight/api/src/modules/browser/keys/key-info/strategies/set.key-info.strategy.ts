@@ -13,7 +13,7 @@ export class SetKeyInfoStrategy extends KeyInfoStrategy {
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${RedisDataType.Set} type info.`);
+    this.logger.debug(`Getting ${RedisDataType.Set} type info.`);
 
     const [
       [, ttl = null],

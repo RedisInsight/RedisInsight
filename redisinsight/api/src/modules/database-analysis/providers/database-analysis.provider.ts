@@ -77,7 +77,7 @@ export class DatabaseAnalysisProvider {
    * @param dto
    */
   async recommendationVote(id: string, dto: RecommendationVoteDto): Promise<DatabaseAnalysis> {
-    this.logger.log('Updating database analysis with recommendation vote');
+    this.logger.debug('Updating database analysis with recommendation vote');
     const { name, vote } = dto;
     const oldDatabaseAnalysis = await this.repository.findOneBy({ id });
 
@@ -101,7 +101,7 @@ export class DatabaseAnalysisProvider {
    * @param databaseId
    */
   async list(databaseId: string): Promise<ShortDatabaseAnalysis[]> {
-    this.logger.log('Getting database analysis list');
+    this.logger.debug('Getting database analysis list');
     const entities = await this.repository
       .createQueryBuilder('a')
       .where({ databaseId })
@@ -110,7 +110,7 @@ export class DatabaseAnalysisProvider {
       .limit(DATABASE_ANALYSIS_CONFIG.maxItemsPerDb)
       .getMany();
 
-    this.logger.log('Succeed to get command executions');
+    this.logger.debug('Succeed to get command executions');
 
     return entities.map((entity) => classToClass(ShortDatabaseAnalysis, entity));
   }

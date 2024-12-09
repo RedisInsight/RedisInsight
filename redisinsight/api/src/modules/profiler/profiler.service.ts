@@ -33,7 +33,7 @@ export class ProfilerService {
     client: Socket,
     settings: MonitorSettings = null,
   ) {
-    this.logger.log(`Add listener for instance: ${instanceId}.`);
+    this.logger.debug(`Add listener for instance: ${instanceId}.`, sessionMetadata);
 
     const profilerClient = await this.profilerClientProvider.getOrCreateClient(
       sessionMetadata,
@@ -52,7 +52,7 @@ export class ProfilerService {
    * @param listenerId
    */
   async removeListenerFromInstance(instanceId: string, listenerId: string) {
-    this.logger.log(`Remove listener from instance: ${instanceId}.`);
+    this.logger.debug(`Remove listener from instance: ${instanceId}.`);
     const redisObserver = await this.redisObserverProvider.getObserver(instanceId);
     if (redisObserver) {
       redisObserver.unsubscribe(listenerId);
@@ -67,7 +67,7 @@ export class ProfilerService {
    * @param listenerId
    */
   async disconnectListenerFromInstance(instanceId: string, listenerId: string) {
-    this.logger.log(`Disconnect listener from instance: ${instanceId}.`);
+    this.logger.debug(`Disconnect listener from instance: ${instanceId}.`);
     const redisObserver = await this.redisObserverProvider.getObserver(instanceId);
     if (redisObserver) {
       redisObserver.disconnect(listenerId);
@@ -80,7 +80,7 @@ export class ProfilerService {
    * @param listenerId
    */
   async flushLogs(listenerId: string) {
-    this.logger.log(`Flush logs for client ${listenerId}.`);
+    this.logger.debug(`Flush logs for client ${listenerId}.`);
     const profilerClient = await this.profilerClientProvider.getClient(listenerId);
     if (profilerClient) {
       await profilerClient.flushLogs();
@@ -89,7 +89,7 @@ export class ProfilerService {
 
   @OnEvent(AppRedisInstanceEvents.Deleted)
   async handleInstanceDeletedEvent(instanceId: string) {
-    this.logger.log(`Handle instance deleted event. instance: ${instanceId}.`);
+    this.logger.debug(`Handle instance deleted event. instance: ${instanceId}.`);
     try {
       const redisObserver = await this.redisObserverProvider.getObserver(instanceId);
       if (redisObserver) {

@@ -69,11 +69,12 @@ const PageHeader = (props: Props) => {
               </EuiFlexItem>
             )}
             <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
-            <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-              <EuiFlexItem style={{ marginLeft: 16 }}>
-                <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
-              </EuiFlexItem>
-            </FeatureFlagComponent>
+            {/* hardcoded skip for testing */}
+            {/* <FeatureFlagComponent name={FeatureFlags.cloudSso}> */}
+            <EuiFlexItem style={{ marginLeft: 16 }}>
+              <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
+            </EuiFlexItem>
+            {/* </FeatureFlagComponent> */}
           </EuiFlexGroup>
         ) : (
           <div className={styles.pageHeaderLogo}>

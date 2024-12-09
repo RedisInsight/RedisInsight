@@ -13,7 +13,6 @@ import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../../test-data/
 import { Common } from '../../../../helpers/common';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
 import { goBackHistory } from '../../../../helpers/utils';
-import { t } from 'testcafe';
 import { AddRedisDatabaseDialog } from '../../../../pageObjects/dialogs';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -96,7 +95,7 @@ test
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.hostInput.value).eql(defaultHost, 'Default sentinel host not prepopulated')
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.portInput.value).eql(defaultSentinelPort, 'Default sentinel port not prepopulated');
     });
-test
+test.only
     .meta({ rte: rte.standalone })
     .after(async() => {
         // Delete databases
@@ -219,7 +218,7 @@ test
         await Common.checkURL(externalPageLinkNavigation);
         await goBackHistory();
     });
-test.only
+test
     .meta({ rte: rte.none })
     .before(async t  => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisGears);

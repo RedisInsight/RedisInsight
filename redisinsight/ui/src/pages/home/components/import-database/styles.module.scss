@@ -1,0 +1,39 @@
+.formWrapper {
+  .loading {
+    margin-top: 40px;
+    text-align: center;
+  }
+}
+
+.fileDrop {
+  width: 100%;
+  max-width: none !important;
+
+  :global {
+    .euiFilePicker__showDrop .euiFilePicker__prompt, .euiFilePicker__input:focus + .euiFilePicker__prompt {
+      background-color: var(--browserTableRowEven);
+    }
+
+    .euiFilePicker__prompt {
+      background-color: var(--browserTableRowEven);
+      height: 140px;
+      border-radius: 4px;
+      box-shadow: none;
+      border: 1px dashed var(--controlsBorderColor);
+      color: var(--htmlColor);
+    }
+
+    .euiFilePicker {
+      width: 400px;
+    }
+
+    .euiFilePicker__clearButton {
+      margin-top: 4px;
+    }
+  }
+}
+
+.result {
+  text-align: center;
+  margin-top: 32px;
+}

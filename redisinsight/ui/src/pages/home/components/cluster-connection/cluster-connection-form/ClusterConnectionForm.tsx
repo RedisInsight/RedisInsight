@@ -12,8 +12,6 @@ import {
   EuiForm,
   EuiFormRow,
   EuiIcon,
-  EuiLink,
-  EuiText,
   EuiToolTip,
   EuiWindowEvent,
   keys,
@@ -24,25 +22,22 @@ import {
   validateField,
   validatePortNumber,
 } from 'uiSrc/utils/validations'
-import { APPLICATION_NAME } from 'uiSrc/constants'
 import { handlePasteHostName } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { ICredentialsRedisCluster } from 'uiSrc/slices/interfaces'
 
-import styles from '../styles.module.scss'
+import { MessageEnterpriceSoftware } from 'uiSrc/pages/home/components/form/Messages'
 
 export interface Props {
-  host: string;
-  port: string;
-  username: string;
-  password: string;
-  onHostNamePaste: (text: string) => boolean;
-  flexGroupClassName: string;
-  flexItemClassName: string;
-  onClose?: () => void;
-  initialValues: Values;
-  onSubmit: (values: ICredentialsRedisCluster) => void;
-  loading: boolean;
+  host: string
+  port: string
+  username: string
+  password: string
+  onHostNamePaste: (text: string) => boolean
+  onClose?: () => void
+  initialValues: Values
+  onSubmit: (values: ICredentialsRedisCluster) => void
+  loading: boolean
 }
 
 interface ISubmitButton {
@@ -65,26 +60,6 @@ const fieldDisplayNames: Values = {
   password: 'Admin Password',
 }
 
-const Message = () => (
-  <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
-    Your Redis Enterprise databases can be automatically added. Enter the
-    connection details of your Redis Enterprise Cluster to automatically
-    discover your databases and add them to
-    {' '}
-    {APPLICATION_NAME}
-    . &nbsp;
-    <EuiLink
-      color="text"
-      href="https://redis.io/redis-enterprise-software/overview/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight"
-      className={styles.link}
-      external={false}
-      target="_blank"
-    >
-      Learn more here.
-    </EuiLink>
-  </EuiText>
-)
-
 const ClusterConnectionForm = (props: Props) => {
   const {
     host,
@@ -93,8 +68,6 @@ const ClusterConnectionForm = (props: Props) => {
     password,
     initialValues: initialValuesProp,
     onHostNamePaste,
-    flexGroupClassName,
-    flexItemClassName,
     onClose,
     onSubmit,
     loading,
@@ -191,10 +164,11 @@ const ClusterConnectionForm = (props: Props) => {
 
   const CancelButton = ({ onClick }: { onClick: () => void }) => (
     <EuiButton
+      size="s"
       color="secondary"
       className="btn-cancel"
       onClick={onClick}
-      style={{ marginRight: '20px' }}
+      style={{ marginRight: 12 }}
     >
       Cancel
     </EuiButton>
@@ -219,6 +193,7 @@ const ClusterConnectionForm = (props: Props) => {
     >
       <EuiButton
         fill
+        size="s"
         color="secondary"
         type="submit"
         onClick={onClick}
@@ -250,105 +225,102 @@ const ClusterConnectionForm = (props: Props) => {
   }
 
   return (
-    <>
-      <div className="getStartedForm">
-        <Message />
-        <br />
+    <div className="getStartedForm" data-testid="add-db_cluster">
+      <MessageEnterpriceSoftware />
+      <br />
 
-        <EuiForm>
-          <EuiWindowEvent event="keydown" handler={onKeyDown} />
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow label="Cluster Host*">
-                <EuiFieldText
-                  name="host"
-                  id="host"
-                  data-testid="host"
-                  maxLength={200}
-                  placeholder="Enter Cluster Host"
-                  value={formik.values.host}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validateField(e.target.value.trim())
-                    )
-                  }}
-                  onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
-                    handlePasteHostName(onHostNamePaste, event)}
-                  append={<AppendHostName />}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
+      <EuiForm>
+        <EuiWindowEvent event="keydown" handler={onKeyDown} />
+        <EuiFlexGroup>
+          <EuiFlexItem grow={4}>
+            <EuiFormRow label="Cluster Host*">
+              <EuiFieldText
+                name="host"
+                id="host"
+                data-testid="host"
+                maxLength={200}
+                placeholder="Enter Cluster Host"
+                value={formik.values.host}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(
+                    e.target.name,
+                    validateField(e.target.value.trim())
+                  )
+                }}
+                onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
+                  handlePasteHostName(onHostNamePaste, event)}
+                append={<AppendHostName />}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
 
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow
-                label="Cluster Port*"
-                helpText="Should not exceed 65535."
-              >
-                <EuiFieldNumber
-                  name="port"
-                  id="port"
-                  data-testid="port"
-                  style={{ width: '100%' }}
-                  placeholder="Enter Cluster Port"
-                  value={formik.values.port || ''}
-                  maxLength={6}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validatePortNumber(e.target.value.trim())
-                    )
-                  }}
-                  type="text"
-                  min={0}
-                  max={MAX_PORT_NUMBER}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+          <EuiFlexItem grow={2}>
+            <EuiFormRow
+              label="Cluster Port*"
+              helpText="Should not exceed 65535."
+            >
+              <EuiFieldNumber
+                name="port"
+                id="port"
+                data-testid="port"
+                style={{ width: '100%' }}
+                placeholder="Enter Cluster Port"
+                value={formik.values.port || ''}
+                maxLength={6}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(
+                    e.target.name,
+                    validatePortNumber(e.target.value.trim())
+                  )
+                }}
+                type="text"
+                min={0}
+                max={MAX_PORT_NUMBER}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
 
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow
-                label="Admin Username*"
-              >
-                <EuiFieldText
-                  name="username"
-                  id="username"
-                  data-testid="username"
-                  fullWidth
-                  maxLength={200}
-                  placeholder="Enter Admin Username"
-                  value={formik.values.username}
-                  onChange={formik.handleChange}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
+        <EuiFlexGroup>
+          <EuiFlexItem>
+            <EuiFormRow
+              label="Admin Username*"
+            >
+              <EuiFieldText
+                name="username"
+                id="username"
+                data-testid="username"
+                fullWidth
+                maxLength={200}
+                placeholder="Enter Admin Username"
+                value={formik.values.username}
+                onChange={formik.handleChange}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
 
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow label="Admin Password*">
-                <EuiFieldPassword
-                  type="dual"
-                  name="password"
-                  id="password"
-                  data-testid="password"
-                  fullWidth
-                  className="passwordField"
-                  maxLength={200}
-                  placeholder="Enter Password"
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  dualToggleProps={{ color: 'text' }}
-                  autoComplete="new-password"
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiForm>
-
-        <Footer />
-      </div>
-    </>
+          <EuiFlexItem>
+            <EuiFormRow label="Admin Password*">
+              <EuiFieldPassword
+                type="dual"
+                name="password"
+                id="password"
+                data-testid="password"
+                fullWidth
+                className="passwordField"
+                maxLength={200}
+                placeholder="Enter Password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                dualToggleProps={{ color: 'text' }}
+                autoComplete="new-password"
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiForm>
+      <Footer />
+    </div>
   )
 }
 

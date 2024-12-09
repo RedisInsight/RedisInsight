@@ -27,7 +27,7 @@ test
         await databaseHelper.deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user open edit view of database', async t => {
         await userAgreementDialog.acceptLicenseTerms();
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton.exists).ok('The add redis database view not found', { timeout: 10000 });
+        await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton.exists).ok('The add redis database view not found', { timeout: 10000 });
         await databaseHelper.addNewStandaloneDatabase(ossStandaloneConfig);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.expect(getPageUrl()).contains('browser', 'Browser page not opened');

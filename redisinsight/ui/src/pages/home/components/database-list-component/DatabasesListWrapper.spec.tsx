@@ -3,12 +3,12 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 
 import ItemList, { Props as ItemListProps } from 'uiSrc/components/item-list/ItemList'
-import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
-import { mswServer } from 'uiSrc/mocks/server'
 import { ConnectionType, Instance, RedisCloudSubscriptionType } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 
+import { mswServer } from 'uiSrc/mocks/server'
+import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
 
 const mockedProps = mock<Props>()
@@ -121,25 +121,11 @@ describe('DatabasesListWrapper', () => {
     (ItemList as jest.Mock).mockImplementation(mockDatabasesList)
   })
 
-  it('should render', () => {
-    expect(render(<DatabasesListWrapper {...instance(mockedProps)} />)).toBeTruthy()
-  })
-
-  it('should show indicator for a new connection', () => {
-    const { queryByTestId } = render(<DatabasesListWrapper {...instance(mockedProps)} />)
-
-    const dbIdWithNewIndicator = mockInstances.find(({ new: newState }) => newState)?.id
-    const dbIdWithoutNewIndicator = mockInstances.find(({ new: newState }) => !newState)?.id
-
-    expect(queryByTestId(`database-status-new-${dbIdWithNewIndicator}`)).toBeInTheDocument()
-    expect(queryByTestId(`database-status-new-${dbIdWithoutNewIndicator}`)).not.toBeInTheDocument()
-  })
-
   it('should call proper telemetry on success export', async () => {
     const sendEventTelemetryMock = jest.fn();
 
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} />)
+    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('onExport-btn'))
@@ -160,7 +146,7 @@ describe('DatabasesListWrapper', () => {
     const sendEventTelemetryMock = jest.fn();
 
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} />)
+    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('onExport-btn'))
@@ -176,53 +162,11 @@ describe('DatabasesListWrapper', () => {
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
-  it('should call proper telemetry on delete multiple databases', async () => {
-    const sendEventTelemetryMock = jest.fn();
-
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} />)
-
-    await act(() => {
-      fireEvent.click(screen.getByTestId('onDelete-btn'))
-    })
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_DATABASES_MULTIPLE_DATABASES_DELETE_CLICKED,
-      eventData: {
-        ids: ['a0db1bc8-a353-4c43-a856-b72f4811d2d4']
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
-  })
-
-  it('should show link to cloud console', () => {
-    render(<DatabasesListWrapper {...instance(mockedProps)} />)
-
-    expect(screen.queryByTestId(`cloud-link-${mockInstances[0].id}`)).not.toBeInTheDocument()
-    expect(screen.getByTestId(`cloud-link-${mockInstances[1].id}`)).toBeInTheDocument()
-  })
-
-  it('should call proper telemetry on click cloud console link', () => {
-    const sendEventTelemetryMock = jest.fn();
-
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} />)
-
-    fireEvent.click(screen.getByTestId(`cloud-link-${mockInstances[1].id}`))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CLOUD_LINK_CLICKED
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
-  })
-
   it('should call proper telemetry on copy host:port', async () => {
     const sendEventTelemetryMock = jest.fn();
 
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} />)
+    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
 
     await act(() => {
       const copyHostPortButtons = screen.getAllByLabelText(/Copy host:port/i)
@@ -239,94 +183,11 @@ describe('DatabasesListWrapper', () => {
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
-  it('should call proper telemetry on open database', async () => {
-    const sendEventTelemetryMock = jest.fn();
-
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} />)
-
-    await act(() => {
-      fireEvent.click(screen.getByTestId('instance-name-e37cc441-a4f2-402c-8bdb-fc2413cbbaff'))
-    })
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
-      eventData: {
-        databaseId: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
-        provider: 'provider',
-        RediSearch: {
-          loaded: false
-        },
-        RedisAI: {
-          loaded: false
-        },
-        RedisBloom: {
-          loaded: false
-        },
-        RedisGears: {
-          loaded: false
-        },
-        RedisGraph: {
-          loaded: false
-        },
-        RedisJSON: {
-          loaded: false
-        },
-        RedisTimeSeries: {
-          loaded: false
-        },
-        customModules: []
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
-  })
-
-  it('should call proper telemetry on delete database', async () => {
-    const sendEventTelemetryMock = jest.fn();
-
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} />)
-
-    await act(() => {
-      fireEvent.click(screen.getByTestId('delete-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4-icon'))
-    })
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_DATABASES_SINGLE_DATABASE_DELETE_CLICKED,
-      eventData: {
-        databaseId: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4'
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
-  })
-
-  it('should call proper telemetry on edit database', async () => {
-    const sendEventTelemetryMock = jest.fn();
-
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} onEditInstance={() => {}} />)
-
-    await act(() => {
-      fireEvent.click(screen.getByTestId('edit-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4'))
-    })
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_EDIT_CLICKED,
-      eventData: {
-        databaseId: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4'
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
-  })
-
   it('should call proper telemetry on list sort', async () => {
     const sendEventTelemetryMock = jest.fn();
 
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} onEditInstance={() => {}} />)
+    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} onEditInstance={() => {}} />)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('onTableChange-btn'))
@@ -335,6 +196,26 @@ describe('DatabasesListWrapper', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SORTED,
       eventData: { field: 'name', direction: 'asc' }
+    });
+
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should call proper telemetry on delete multiple databases', async () => {
+    const sendEventTelemetryMock = jest.fn();
+
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('onDelete-btn'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CONFIG_DATABASES_MULTIPLE_DATABASES_DELETE_CLICKED,
+      eventData: {
+        ids: ['a0db1bc8-a353-4c43-a856-b72f4811d2d4']
+      }
     });
 
     (sendEventTelemetry as jest.Mock).mockRestore()

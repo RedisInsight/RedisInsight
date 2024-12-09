@@ -50,16 +50,16 @@ test
         ];
 
         await t.navigateTo(generateLink(connectUrlParams));
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('Add new CA certificate', 'add CA certificate is not shown');
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.clientCertField.textContent).contains('Add new certificate', 'add client certificate is not shown');
-        await t.hover(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.caCertField.textContent).contains('Add new CA certificate', 'add CA certificate is not shown');
+        await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.clientCertField.textContent).contains('Add new certificate', 'add client certificate is not shown');
+        await t.hover(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);
 
         for (const text of tooltipText) {
             await browserActions.verifyTooltipContainsText(text, true);
         }
 
         // Verify that user can see the Test Connection button enabled/disabled with the same rules as the button to add/apply the changes
-        await t.hover(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
+        await t.hover(myRedisDatabasePage.AddRedisDatabaseDialog.testConnectionBtn);
         for (const text of tooltipText) {
             await browserActions.verifyTooltipContainsText(text, true);
         }

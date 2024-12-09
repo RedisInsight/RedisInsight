@@ -2,25 +2,25 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
+import { EuiTitle } from '@elastic/eui'
 import {
   clusterSelector,
   fetchInstancesRedisCluster,
 } from 'uiSrc/slices/instances/cluster'
 import { Pages } from 'uiSrc/constants'
-import { useResizableFormField } from 'uiSrc/services'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { ICredentialsRedisCluster, InstanceType } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { autoFillFormDetails } from 'uiSrc/pages/home/utils'
 
+import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import ClusterConnectionForm from './cluster-connection-form/ClusterConnectionForm'
 
 export interface Props {
-  width: number;
-  onClose?: () => void;
+  onClose?: () => void
 }
 
-const ClusterConnectionFormWrapper = ({ onClose, width }: Props) => {
+const ClusterConnectionFormWrapper = ({ onClose }: Props) => {
   const [initialValues, setInitialValues] = useState({
     host: '',
     port: '',
@@ -30,22 +30,23 @@ const ClusterConnectionFormWrapper = ({ onClose, width }: Props) => {
 
   const history = useHistory()
   const dispatch = useDispatch()
+  const { setModalHeader } = useModalHeader()
 
   const formRef = useRef<HTMLDivElement>(null)
 
   const { loading, credentials } = useSelector(clusterSelector)
 
-  const [flexGroupClassName, flexItemClassName] = useResizableFormField(
-    formRef,
-    width
-  )
+  useEffect(() => {
+    setModalHeader(
+      <EuiTitle size="s"><h4>Redis Software</h4></EuiTitle>,
+      true
+    )
 
-  useEffect(
-    () => () => {
+    return () => {
+      setModalHeader(null)
       dispatch(resetErrors())
-    },
-    []
-  )
+    }
+  }, [])
 
   useEffect(() => {
     if (credentials) {
@@ -83,8 +84,6 @@ const ClusterConnectionFormWrapper = ({ onClose, width }: Props) => {
         password={credentials?.password ?? ''}
         initialValues={initialValues}
         onHostNamePaste={handlePostHostName}
-        flexGroupClassName={flexGroupClassName}
-        flexItemClassName={flexItemClassName}
         onClose={onClose}
         onSubmit={formSubmit}
         loading={loading}

@@ -1,17 +1,17 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
+import { EuiTitle } from '@elastic/eui'
 import { Pages } from 'uiSrc/constants'
 import { cloudSelector, fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { useResizableFormField } from 'uiSrc/services'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import CloudConnectionForm from './cloud-connection-form'
 
 export interface Props {
-  width: number
   onClose?: () => void
 }
 
@@ -20,21 +20,25 @@ export interface ICloudConnectionSubmit {
   secretKey: string
 }
 
-const CloudConnectionFormWrapper = ({ onClose, width }: Props) => {
+const CloudConnectionFormWrapper = ({ onClose }: Props) => {
   const dispatch = useDispatch()
-  const formRef = useRef<HTMLDivElement>(null)
 
   const history = useHistory()
   const { loading, credentials } = useSelector(cloudSelector)
 
-  const [flexGroupClassName, flexItemClassName] = useResizableFormField(formRef, width)
+  const { setModalHeader } = useModalHeader()
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    setModalHeader(
+      <EuiTitle size="s"><h4>Discover Cloud databases</h4></EuiTitle>,
+      true
+    )
+
+    return () => {
+      setModalHeader(null)
       dispatch(resetErrors())
-    },
-    []
-  )
+    }
+  }, [])
 
   const formSubmit = (credentials: ICloudConnectionSubmit) => {
     sendEventTelemetry({
@@ -49,17 +53,13 @@ const CloudConnectionFormWrapper = ({ onClose, width }: Props) => {
   }
 
   return (
-    <div ref={formRef}>
-      <CloudConnectionForm
-        accessKey={credentials?.accessKey ?? ''}
-        secretKey={credentials?.secretKey ?? ''}
-        flexGroupClassName={flexGroupClassName}
-        flexItemClassName={flexItemClassName}
-        onClose={onClose}
-        onSubmit={formSubmit}
-        loading={loading}
-      />
-    </div>
+    <CloudConnectionForm
+      accessKey={credentials?.accessKey ?? ''}
+      secretKey={credentials?.secretKey ?? ''}
+      onClose={onClose}
+      onSubmit={formSubmit}
+      loading={loading}
+    />
   )
 }
 

@@ -3,25 +3,25 @@ import {
   EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiIcon,
   EuiSpacer,
-  EuiToolTip,
 } from '@elastic/eui'
-import { isEmpty } from 'lodash'
 import { useSelector } from 'react-redux'
+import { isEmpty } from 'lodash'
 import cx from 'classnames'
-import { ImportDatabasesDialog, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import PromoLink from 'uiSrc/components/promo-link/PromoLink'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
-import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
-import { getPathToResource } from 'uiSrc/services/resourcesService'
-import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { getContentByFeature } from 'uiSrc/utils/content'
+import PromoLink from 'uiSrc/components/promo-link/PromoLink'
+
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { getPathToResource } from 'uiSrc/services/resourcesService'
+import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
+import { HELP_LINKS } from 'uiSrc/pages/home/constants'
+import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { getContentByFeature } from 'uiSrc/utils/content'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { FeatureFlags } from 'uiSrc/constants'
 import SearchDatabasesList from '../search-databases-list'
 
 import styles from './styles.module.scss'
@@ -31,13 +31,15 @@ export interface Props {
 }
 
 const DatabaseListHeader = ({ onAddInstance }: Props) => {
-  const { theme } = useContext(ThemeContext)
   const { data: instances } = useSelector(instancesSelector)
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
   const { loading, data } = useSelector(contentSelector)
 
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
-  const [isImportDialogOpen, setIsImportDialogOpen] = useState<boolean>(false)
+
+  const { theme } = useContext(ThemeContext)
+  const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } = featureFlags
+  const isShowPromoBtn = !enhancedCloudUIFeature?.flag
 
   useEffect(() => {
     if (loading || !data || isEmpty(data)) {
@@ -70,20 +72,6 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
     }
   }
 
-  const handleClickImportDbBtn = () => {
-    setIsImportDialogOpen(true)
-    sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_CLICKED,
-    })
-  }
-
-  const handleCloseImportDb = (isCancelled: boolean) => {
-    setIsImportDialogOpen(false)
-    isCancelled && sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_CANCELLED,
-    })
-  }
-
   const handleCreateDatabaseClick = (
     event: TelemetryEvent,
     eventData: any = {},
@@ -92,37 +80,20 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   }
 
   const AddInstanceBtn = () => (
-    <>
-      <EuiButton
-        fill
-        color="secondary"
-        onClick={handleOnAddDatabase}
-        className={styles.addInstanceBtn}
-        data-testid="add-redis-database-short"
-      >
-        <span className={cx('eui-showFor--s', 'eui-showFor--xs')}>+ DATABASE</span>
-        <span className={cx('eui-hideFor--s', 'eui-hideFor--xs')}>+ Add Redis database</span>
-      </EuiButton>
-    </>
-  )
-
-  const ImportDatabasesBtn = () => (
-    <EuiToolTip
-      content="Import Database Connections"
+    <EuiButton
+      fill
+      color="secondary"
+      onClick={handleOnAddDatabase}
+      className={styles.addInstanceBtn}
+      data-testid="add-redis-database-short"
     >
-      <EuiButton
-        color="secondary"
-        onClick={handleClickImportDbBtn}
-        className={styles.importDatabasesBtn}
-        size="m"
-        data-testid="import-from-file-btn"
-      >
-        <EuiIcon type="importAction" />
-      </EuiButton>
-    </EuiToolTip>
+      <span>+ Add Redis database</span>
+    </EuiButton>
   )
 
   const CreateBtn = ({ content }: { content: ContentCreateRedis }) => {
+    if (!isShowPromoBtn) return null
+
     const { title, description, styles: stylesCss, links } = content
     // @ts-ignore
     const linkStyles = stylesCss ? stylesCss[theme] : {}
@@ -155,36 +126,30 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   }
 
   return (
-    <>
-      {isImportDialogOpen && <ImportDatabasesDialog onClose={handleCloseImportDb} />}
-      <div className={styles.containerDl}>
-        <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false} gutterSize="s">
-          <EuiFlexItem grow={false}>
-            <AddInstanceBtn />
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <ImportDatabasesBtn />
-          </EuiFlexItem>
-          {!loading && !isEmpty(data) && (
-            <EuiFlexItem grow={false} className={cx(styles.promo)}>
-              <EuiFlexGroup alignItems="center" gutterSize="s">
-                {promoData && (
+    <div className={styles.containerDl}>
+      <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false} gutterSize="s">
+        <EuiFlexItem grow={false}>
+          <AddInstanceBtn />
+        </EuiFlexItem>
+        {!loading && !isEmpty(data) && (
+          <EuiFlexItem grow={false} className={cx(styles.promo)}>
+            <EuiFlexGroup alignItems="center" gutterSize="s">
+              {promoData && (
                 <EuiFlexItem grow={false}>
                   <CreateBtn content={promoData} />
                 </EuiFlexItem>
-                )}
-              </EuiFlexGroup>
-            </EuiFlexItem>
-          )}
-          {instances.length > 0 && (
-            <EuiFlexItem grow={false} className={styles.searchContainer}>
-              <SearchDatabasesList />
-            </EuiFlexItem>
-          )}
-        </EuiFlexGroup>
-        <EuiSpacer className={styles.spacerDl} />
-      </div>
-    </>
+              )}
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        )}
+        {instances.length > 0 && (
+          <EuiFlexItem grow={false} className={styles.searchContainer}>
+            <SearchDatabasesList />
+          </EuiFlexItem>
+        )}
+      </EuiFlexGroup>
+      <EuiSpacer className={styles.spacerDl} />
+    </div>
   )
 }
 

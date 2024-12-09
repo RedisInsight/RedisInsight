@@ -55,9 +55,8 @@ test('Verify DB list search', async t => {
 
     // Search for DB by Invalid search
     await t.typeText(myRedisDatabasePage.searchInput, searchedDBHostInvalid, { replace: true, paste: true });
-    // Verify that user sees "No results found" message when pattern doesn`t match any database
-    await t.expect(myRedisDatabasePage.noResultsFoundMessage.exists).ok('"No results found message" not displayed');
-    await t.expect(myRedisDatabasePage.noResultsFoundText.exists).ok('"No results matched your search" message not displayed');
+    // Verify that free cloud db is displayed always
+    await t.expect(myRedisDatabasePage.tableRowContent.textContent).contains('Free Redis Cloud DB', `create free db row is not displayed`);
 
     // Search for DB by name
     await t.typeText(myRedisDatabasePage.searchInput, searchedDBName, { replace: true, paste: true });

@@ -1,29 +1,36 @@
-import { within } from '@testing-library/react'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
-import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
+import { render, screen } from 'uiSrc/utils/test-utils'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import DatabaseListHeader, { Props } from './DatabaseListHeader'
 
 const mockedProps = mock<Props>()
 
-jest.mock('uiSrc/slices/content/create-redis-buttons', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/content/create-redis-buttons').initialState
-  return {
-    contentSelector: () => jest.fn().mockReturnValue({
-      ...defaultState,
-      loading: false,
-      data: { cloud: { title: 'Limited offer', description: 'Try Redis Cloud' } }
-    }),
-  }
-})
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    enhancedCloudUI: {
+      flag: false
+    }
+  }),
+}))
 
-jest.mock('uiSrc/slices/content/guide-links', () => ({
-  ...jest.requireActual('uiSrc/slices/content/guide-links'),
-  guideLinksSelector: jest.fn().mockReturnValue({
-    data: MOCK_EXPLORE_GUIDES
-  })
+jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
+  ...jest.requireActual('uiSrc/slices/content/create-redis-buttons'),
+  contentSelector: jest.fn().mockReturnValue({
+    data: {
+      cloud: {
+        title: 'Try Redis Cloud: your ultimate Redis starting point',
+        description: 'Includes native support for JSON, Search and Query, and more',
+        links: {
+          main: {
+            altText: 'Try Redis Cloud.',
+            url: 'https://redis.io/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
+          }
+        },
+      }
+    }
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -35,34 +42,28 @@ describe('DatabaseListHeader', () => {
   it('should render', () => {
     expect(render(<DatabaseListHeader {...instance(mockedProps)} />)).toBeTruthy()
   })
-  it('should open import dbs dialog', () => {
+
+  it('should not show promo cloud button with disabled feature flag', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      enhancedCloudUI: {
+        flag: true
+      }
+    })
+
     render(<DatabaseListHeader {...instance(mockedProps)} />)
 
-    fireEvent.click(screen.getByTestId('import-from-file-btn'))
-
-    expect(screen.getByTestId('import-file-modal')).toBeInTheDocument()
+    expect(screen.queryByTestId('promo-btn')).not.toBeInTheDocument()
   })
 
-  it('should call proper telemetry on open and close import databases dialog', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+  it('should show promo cloud button with enabled feature flag', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      enhancedCloudUI: {
+        flag: false
+      }
+    })
 
     render(<DatabaseListHeader {...instance(mockedProps)} />)
 
-    fireEvent.click(screen.getByTestId('import-from-file-btn'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_CLICKED
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
-
-    fireEvent.click(within(screen.getByTestId('import-file-modal')).getByTestId('cancel-btn'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_CANCELLED
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    expect(screen.getByTestId('promo-btn')).toBeInTheDocument()
   })
 })

@@ -500,13 +500,13 @@ export function cloneInstanceAction({ id, ...payload }: Partial<Instance>, onSuc
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status } = await apiService.post(`${ApiEndpoints.DATABASES}/clone/${id}`, payload)
+      const { status, data } = await apiService.post(`${ApiEndpoints.DATABASES}/clone/${id}`, payload)
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch<any>(fetchInstancesAction())
 
-        dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(payload.name ?? '')))
+        dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(data.name ?? '')))
         onSuccess?.(id)
       }
     } catch (_err) {
@@ -798,7 +798,7 @@ export function resetInstanceUpdateAction() {
 // Asynchronous thunk action
 export function uploadInstancesFile(
   file: FormData,
-  onSuccessAction?: () => void,
+  onSuccessAction?: (data: any) => void,
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
@@ -818,7 +818,7 @@ export function uploadInstancesFile(
 
       if (isStatusSuccessful(status)) {
         dispatch(importInstancesFromFileSuccess(data))
-        onSuccessAction?.()
+        onSuccessAction?.(data)
       }
     } catch (_err) {
       const error = _err as AxiosError

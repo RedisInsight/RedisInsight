@@ -1,8 +1,11 @@
 .pageHeader, .pageDefaultHeader {
-  height: 70px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: var(--euiColorEmptyShade);
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--separatorColor);
 }
 
 .pageDefaultHeader {

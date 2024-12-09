@@ -118,19 +118,9 @@
 }
 
 .sentinelCollapsedField {
-  font-size: 12px !important;
+  padding: 4px 8px;
+  font-size: 13px !important;
   word-break: break-all;
-  padding-bottom: 5px;
-}
-
-:global(.euiFlexGroup--gutterLarge) > .dbInput {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  padding-bottom: 20px;
-
-  &.dbInputBig{
-    max-width: calc(50% - 24px);
-  }
 }
 
 #dbAliasInputIcon {
@@ -139,12 +129,8 @@
 }
 
 .message {
-  margin-top: 5px;
-  padding: 16px;
-  background-color: var(--euiColorLightestShade);
   font-family: 'Graphik', sans-serif;
   color: var(--euiTextSubduedColor) !important;
-  border: 1px solid var(--euiColorLightShade);
 
   :global(.euiTextColor), :global(.euiLink) {
     color: currentColor !important;
@@ -157,25 +143,10 @@
   &:hover {
     text-decoration: none !important;
   }
-}
 
-.tlsContainer {
-  margin: 12px 0 10px;
-  flex-wrap: wrap;
-
-  :global(.euiCheckbox) {
-    padding-bottom: 10px !important;
+  &.external:global(.euiLink) {
+    color: var(--externalLinkColor) !important;
   }
-}
-
-.tslBoxSection {
-  @media screen and (min-width: 767px) {
-    margin-bottom: 20px;
-  }
-}
-
-.tlsSniOpened {
-  padding-bottom: 0;
 }
 
 .fullWidth {
@@ -185,13 +156,12 @@
 .sshPassTypeWrapper {
   .sshPassType {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+
     :global {
       .euiRadioGroup__item {
-        margin-bottom: 8px !important;
-        &:last-child {
-          margin-bottom: 0 !important;
-        }
+        margin-right: 12px;
+        margin-top: 0;
       }
     }
   }

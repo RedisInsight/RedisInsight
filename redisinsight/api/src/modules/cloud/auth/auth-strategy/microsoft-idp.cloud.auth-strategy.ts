@@ -42,10 +42,8 @@ export class MicrosoftIdpCloudAuthStrategy extends CloudAuthStrategy {
         sessionMetadata: SessionMetadata,
         options?: CloudAuthRequestOptions,
     ): Promise<CloudAuthRequest> {
-        // Generate PKCE Codes
         const { verifier, challenge } = await this.cryptoProvider.generatePkceCodes();
 
-        // Generate state and nonce
         const state = this.cryptoProvider.createNewGuid();
         const nonce = this.cryptoProvider.createNewGuid();
 

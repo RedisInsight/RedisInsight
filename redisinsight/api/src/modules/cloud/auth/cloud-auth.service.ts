@@ -156,6 +156,9 @@ export class CloudAuthService {
    */
   private async getAuthRequestInfo(query): Promise<CloudAuthRequestInfo> {
     if (!this.authRequests.has(query?.state)) {
+      this.logger.log(
+        `${query?.state ? 'Auth Request matching query state not found' : 'Query state field is empty'}`,
+      );
       throw new CloudOauthUnknownAuthorizationRequestException();
     }
 
@@ -175,12 +178,17 @@ export class CloudAuthService {
    */
   private async callback(query): Promise<Function | void> {
     if (!this.authRequests.has(query?.state)) {
+      this.logger.log(
+        `${query?.state ? 'Auth Request matching query state not found' : 'Query state field is empty'}`,
+      );
       throw new CloudOauthUnknownAuthorizationRequestException();
     }
 
     const authRequest = this.authRequests.get(query.state);
 
     if (query?.error) {
+      this.logger.error(`Query has error field: query.error: ${query.error},
+        query.error_description: ${query.error_description}`);
       throw CloudAuthService.getAuthorizationServerRedirectError(query, authRequest);
     }
 
@@ -228,6 +236,7 @@ export class CloudAuthService {
    * @param from
    */
   async handleCallback(query, from = CloudSsoFeatureStrategy.DeepLink): Promise<CloudAuthResponse> {
+    this.logger.log(`Handling a callback with a query having ${Object.keys(query || {}).toString()} keys`);
     let result: CloudAuthResponse = {
       status: CloudAuthStatus.Succeed,
       message: 'Successfully authenticated',
@@ -240,7 +249,7 @@ export class CloudAuthService {
       callback = await this.callback(query);
       this.analytics.sendCloudSignInSucceeded(from, reqInfo?.action);
     } catch (e) {
-      this.logger.error(`Error on ${from} cloud oauth callback`, e);
+      this.logger.error(`Error on ${from} cloud oauth callback: ${e.message}`, e);
 
       this.analytics.sendCloudSignInFailed(e, from, reqInfo?.action);
 
@@ -251,6 +260,9 @@ export class CloudAuthService {
     }
 
     try {
+      if (!callback) {
+        this.logger.log('Callback is undefined');
+      }
       callback?.(result)?.catch((e: Error) => this.logger.error('Async callback failed', e));
     } catch (e) {
       this.logger.error('Callback failed', e);
@@ -278,7 +290,8 @@ export class CloudAuthService {
         apiSessionId: null,
       });
     } catch (e) {
-      throw new CloudApiUnauthorizedException();
+      this.logger.error('Unable to renew tokens', e);
+      throw new CloudApiUnauthorizedException(e.message);
     }
   }
 

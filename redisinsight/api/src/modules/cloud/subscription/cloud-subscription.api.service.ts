@@ -69,6 +69,7 @@ export class CloudSubscriptionApiService {
           details: find(regions, { regionId: plan.regionId }),
         }));
       } catch (e) {
+        this.logger.error('Error getting subscription plans', e);
         throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
       }
     });
@@ -89,6 +90,7 @@ export class CloudSubscriptionApiService {
 
       return parseCloudSubscriptionsCloudRegionsApiResponse(regions);
     } catch (error) {
+      this.logger.error('Error getting cloud regions', error);
       throw wrapHttpError(error);
     }
   }

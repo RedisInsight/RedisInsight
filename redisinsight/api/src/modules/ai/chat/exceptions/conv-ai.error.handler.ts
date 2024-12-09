@@ -13,22 +13,28 @@ export const wrapConvAiError = (error: AxiosError, message?: string): HttpExcept
   }
 
   const { response } = error;
+  let errorMessage = message || error?.message;
+
+  if (!errorMessage) {
+    const data = response?.data as any;
+    errorMessage = data?.message;
+  }
 
   if (response) {
     const errorOptions = { cause: new Error(response?.data as string) };
     switch (response?.status) {
       case 401:
-        return new ConvAiUnauthorizedException(message, errorOptions);
+        return new ConvAiUnauthorizedException(errorMessage, errorOptions);
       case 403:
-        return new ConvAiForbiddenException(message, errorOptions);
+        return new ConvAiForbiddenException(errorMessage, errorOptions);
       case 400:
-        return new ConvAiBadRequestException(message, errorOptions);
+        return new ConvAiBadRequestException(errorMessage, errorOptions);
       case 404:
-        return new ConvAiNotFoundException(message, errorOptions);
+        return new ConvAiNotFoundException(errorMessage, errorOptions);
       default:
-        return new ConvAiInternalServerErrorException(message, errorOptions);
+        return new ConvAiInternalServerErrorException(errorMessage, errorOptions);
     }
   }
 
-  return new ConvAiInternalServerErrorException(message);
+  return new ConvAiInternalServerErrorException(errorMessage);
 };

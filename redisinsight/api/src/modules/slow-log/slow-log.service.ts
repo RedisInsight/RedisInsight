@@ -29,7 +29,7 @@ export class SlowLogService {
    */
   async getSlowLogs(clientMetadata: ClientMetadata, dto: GetSlowLogsDto) {
     try {
-      this.logger.log('Getting slow logs');
+      this.logger.debug('Getting slow logs', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const nodes = await client.nodes();
@@ -74,7 +74,7 @@ export class SlowLogService {
    */
   async reset(clientMetadata: ClientMetadata): Promise<void> {
     try {
-      this.logger.log('Resetting slow logs');
+      this.logger.debug('Resetting slow logs', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const nodes = await client.nodes();

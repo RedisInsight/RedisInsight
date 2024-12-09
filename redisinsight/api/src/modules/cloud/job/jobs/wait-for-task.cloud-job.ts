@@ -25,7 +25,7 @@ export class WaitForTaskCloudJob extends CloudJob {
   }
 
   async iteration(sessionMetadata: SessionMetadata): Promise<CloudTask> {
-    this.logger.log('Wait for cloud task complete');
+    this.logger.debug('Wait for cloud task complete');
 
     this.checkSignal();
 

@@ -30,7 +30,7 @@ export class WaitForActiveSubscriptionCloudJob extends CloudJob {
   }
 
   async iteration(sessionMetadata: SessionMetadata): Promise<CloudSubscription> {
-    this.logger.log('Waiting for cloud subscription active state');
+    this.logger.debug('Waiting for cloud subscription active state');
 
     this.checkSignal();
 

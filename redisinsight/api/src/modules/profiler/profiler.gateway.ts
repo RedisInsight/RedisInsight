@@ -81,13 +81,13 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   async handleConnection(client: Socket): Promise<void> {
     const instanceId = ProfilerGateway.getInstanceId(client);
-    this.logger.log(`Client connected: ${client.id}, instanceId: ${instanceId}`);
+    this.logger.debug(`Client connected: ${client.id}, instanceId: ${instanceId}`);
   }
 
   async handleDisconnect(client: Socket): Promise<void> {
     const instanceId = ProfilerGateway.getInstanceId(client);
     await this.service.disconnectListenerFromInstance(instanceId, client.id);
-    this.logger.log(`Client disconnected: ${client.id}, instanceId: ${instanceId}`);
+    this.logger.debug(`Client disconnected: ${client.id}, instanceId: ${instanceId}`);
   }
 
   static getInstanceId(client: Socket): string {

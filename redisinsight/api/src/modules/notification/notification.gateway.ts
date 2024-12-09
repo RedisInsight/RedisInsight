@@ -34,7 +34,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
   ) {}
 
   async handleConnection(client: Socket): Promise<void> {
-    this.logger.log(`Client connected: ${client.id}`);
+    this.logger.debug(`Client connected: ${client.id}`);
     // TODO: [USER_CONTEXT] how to get middleware into socket connection?
     this.globalNotificationsProvider.init(
       this.constantsProvider.getSystemSessionMetadata(),
@@ -42,7 +42,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
   }
 
   async handleDisconnect(client: Socket): Promise<void> {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    this.logger.debug(`Client disconnected: ${client.id}`);
   }
 
   @OnEvent(NotificationServerEvents.Notification)

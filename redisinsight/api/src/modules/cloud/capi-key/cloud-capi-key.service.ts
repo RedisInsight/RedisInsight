@@ -62,17 +62,17 @@ export class CloudCapiKeyService {
 
           // enable capi if needed
           if (!currentAccount.capiKey) {
-            this.logger.log('Trying to enable capi');
+            this.logger.debug('Trying to enable capi', sessionMetadata);
 
             await this.api.enableCapi(session);
 
-            this.logger.log('Successfully enabled capi');
+            this.logger.debug('Successfully enabled capi', sessionMetadata);
 
             user = await this.cloudUserApiService.getCloudUser(sessionMetadata, true, utm);
             currentAccount = CloudUserApiService.getCurrentAccount(user);
           }
 
-          this.logger.log('Creating new capi key');
+          this.logger.debug('Creating new capi key', sessionMetadata);
 
           capiKey = {
             userId: sessionMetadata.userId,
@@ -121,7 +121,7 @@ export class CloudCapiKeyService {
 
       return capiKey;
     } catch (e) {
-      this.logger.error('Unable to generate capi keys', e);
+      this.logger.error('Unable to generate capi keys', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -145,7 +145,7 @@ export class CloudCapiKeyService {
    */
   async get(id: string): Promise<CloudCapiKey> {
     try {
-      this.logger.log('Getting capi key by id');
+      this.logger.debug('Getting capi key by id');
 
       const model = await this.repository.get(id);
 
@@ -155,7 +155,7 @@ export class CloudCapiKeyService {
 
       return model;
     } catch (e) {
-      this.logger.log('Unable to get capi key by id', e);
+      this.logger.debug('Unable to get capi key by id', e);
 
       throw wrapHttpError(e);
     }
@@ -173,7 +173,7 @@ export class CloudCapiKeyService {
     cloudAccountId: number,
   ): Promise<CloudCapiKey> {
     try {
-      this.logger.log('Getting user\'s capi key by cloud user and cloud account');
+      this.logger.debug('Getting user\'s capi key by cloud user and cloud account', sessionMetadata);
 
       const model = await this.repository.getByUserAccount(sessionMetadata.userId, cloudUserId, cloudAccountId);
 
@@ -183,7 +183,7 @@ export class CloudCapiKeyService {
 
       return model;
     } catch (e) {
-      this.logger.error('Unable to get user\'s capi key by cloud user and cloud account', e);
+      this.logger.error('Unable to get user\'s capi key by cloud user and cloud account', e, sessionMetadata);
 
       throw wrapHttpError(e);
     }
@@ -195,11 +195,11 @@ export class CloudCapiKeyService {
    */
   async list(sessionMetadata: SessionMetadata): Promise<CloudCapiKey[]> {
     try {
-      this.logger.log('Getting list of local capi keys');
+      this.logger.debug('Getting list of local capi keys', sessionMetadata);
 
       return await this.repository.list(sessionMetadata.userId);
     } catch (e) {
-      this.logger.error('Unable to get list of local capi keys', e);
+      this.logger.error('Unable to get list of local capi keys', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -211,11 +211,11 @@ export class CloudCapiKeyService {
    */
   async delete(sessionMetadata: SessionMetadata, id: string): Promise<void> {
     try {
-      this.logger.log('Removing capi key');
+      this.logger.debug('Removing capi key');
 
       await this.repository.delete(sessionMetadata.userId, id);
     } catch (e) {
-      this.logger.error('Unable to remove capi key', e);
+      this.logger.error('Unable to remove capi key', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -226,11 +226,11 @@ export class CloudCapiKeyService {
    */
   async deleteAll(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      this.logger.log('Removing all capi keys');
+      this.logger.debug('Removing all capi keys', sessionMetadata);
 
       await this.repository.deleteAll(sessionMetadata.userId);
     } catch (e) {
-      this.logger.error('Unable to remove all capi keys', e);
+      this.logger.error('Unable to remove all capi keys', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }

@@ -54,7 +54,7 @@ test
         await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton);
         // Verify that telemetry event 'CONFIG_DATABASES_CLICKED' sent and has all expected properties
         await telemetry.verifyEventHasProperties(telemetryEvents[1], clickButtonExpectedProperties, logger);
-        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseManually);
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.customSettingsButton);
         await t
             .typeText(myRedisDatabasePage.AddRedisDatabaseDialog.hostInput, ossStandaloneConfig.host, { replace: true, paste: true })
             .typeText(myRedisDatabasePage.AddRedisDatabaseDialog.portInput, ossStandaloneConfig.port, { replace: true, paste: true })

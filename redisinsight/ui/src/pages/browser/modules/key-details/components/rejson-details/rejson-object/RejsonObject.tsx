@@ -79,7 +79,11 @@ const RejsonObject = (props: JSONObjectProps) => {
   const onClickEditEntireObject = () => {
     handleFetchVisualisationResults(path, true).then((data: REJSONResponse) => {
       setEditEntireObject(true)
-      setValueOfEntireObject(typeof data.data === 'object' ? JSON.stringify(data.data, undefined, 4) : data.data)
+      setValueOfEntireObject(typeof data.data === 'object' ? JSON.stringify(data.data, (_key, value) => (
+        typeof value === 'bigint'
+          ? value.toString()
+          : value
+      ), 4) : data.data)
     })
   }
 

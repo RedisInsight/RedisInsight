@@ -5,11 +5,14 @@ import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../..
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
+import path from 'path';
 
 const browserPage = new BrowserPage();
 const browserActions = new BrowserActions();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+
+const jsonFilePath = path.join('..', '..', '..', '..', 'test-data', 'big-json', 'json-BigInt.json');
 
 const jsonKeys = [['JSON-string', '"test"'], ['JSON-number', '782364'], ['JSON-boolean', 'true'], ['JSON-null', 'null'], ['JSON-array', '[1, 2, 3]']];
 let keyNames: string[];
@@ -105,3 +108,32 @@ test
         // Verify that the new key is not displayed at the top for the Search capability
         await browserActions.verifyKeyIsNotDisplayedTop(keyName3);
     });
+test('Verify that user can add json with BigInt', async t => {
+    const keyName = Common.generateWord(12);
+
+    // Add Json key with json object
+    await t.click(browserPage.plusAddKeyButton);
+    await t.click(browserPage.keyTypeDropDown);
+    await t.click(browserPage.jsonOption);
+    await t.click(browserPage.addKeyNameInput);
+    await t.typeText(browserPage.addKeyNameInput, keyName, { replace: true, paste: true });
+    await t.setFilesToUpload(browserPage.jsonUploadInput, [jsonFilePath]);
+    await t.click(browserPage.addKeyButton);
+
+    await t.click(browserPage.editJsonObjectButton);
+    await t.expect(await browserPage.jsonValueInput.textContent).contains('message', 'edit value is empty');
+    await t.click(browserPage.cancelEditButton);
+
+    await t.click(browserPage.expandJsonObject);
+    await t.click(browserPage.expandJsonObject);
+    await t.expect(await browserPage.jsonKeyValue.textContent).contains('1.2345678998765432e+24', 'BigInt is not displayed');
+    await t.expect(await browserPage.jsonKeyValue.textContent).contains('123456789987654321', 'BigInt is not displayed');
+
+    await browserPage.addJsonKeyOnTheSameLevel('"key2"', '7777777777888889455');
+    await t.expect(await browserPage.jsonKeyValue.textContent).contains('7777777777888889455', 'BigInt is not displayed');
+
+    await t.click(browserPage.editJsonObjectButton.nth(3));
+    await t.typeText(browserPage.jsonValueInput, '121212121111112121212111', { paste: true, replace: true });
+    await t.click(browserPage.applyEditButton);
+    await t.expect(await browserPage.jsonKeyValue.textContent).contains('1.2121212111111212e+23', 'BigInt is not displayed');
+});

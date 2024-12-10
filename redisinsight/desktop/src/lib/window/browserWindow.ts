@@ -78,7 +78,11 @@ export const createWindow = async ({
     }
   }
 
-  newWindow.loadURL(resolveHtmlPath(htmlFileName, options?.parsedDeepLink))
+  if (config.isDevelopment) {
+    newWindow.loadURL(`http://localhost:8080`)
+  } else {
+    newWindow.loadURL(resolveHtmlPath(htmlFileName, options?.parsedDeepLink))
+  }
 
   initWindowHandlers(newWindow, prevWindow, windows, id)
 
@@ -100,7 +104,7 @@ export const windowFactory = async (
     case WindowType.Splash:
       return createWindow({
         prevWindow,
-        htmlFileName: 'splash.html',
+        htmlFileName: config.isDevelopment ? '../../../splash.html' : 'splash.html',
         windowType,
         options: {
           ...config.splashWindow,
@@ -110,7 +114,7 @@ export const windowFactory = async (
     case WindowType.Main:
       return createWindow({
         prevWindow,
-        htmlFileName: 'index.html',
+        htmlFileName: config.isDevelopment ? '../src/index.html' : 'index.html',
         windowType,
         options: {
           ...options,

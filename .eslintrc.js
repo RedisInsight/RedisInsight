@@ -2,6 +2,7 @@ module.exports = {
   root: true,
   env: {
     node: true,
+    browser: true,
   },
   extends: ['airbnb-typescript'],
   plugins: ['@typescript-eslint'],

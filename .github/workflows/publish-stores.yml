@@ -1,0 +1,71 @@
+name: Publish to stores
+
+on:
+  workflow_call:
+
+env:
+  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+  AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+  AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    name: Publish to Dockerhub
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download Docker images
+      run: |
+        mkdir release
+        aws s3 cp s3://${AWS_BUCKET_NAME}/public/latest/docker ./release --recursive
+
+    - name: Publish docker
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+        DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+        DOCKER_V1_USER: ${{ secrets.DOCKER_V1_USER }}
+        DOCKER_V1_PASS: ${{ secrets.DOCKER_V1_PASS }}
+        DOCKER_V1_REPO: ${{ secrets.DOCKER_V1_REPO }}
+      run: |
+        appVersion=$(jq -r '.version' redisinsight/package.json)
+
+        docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+        ./.github/build/release-docker.sh \
+        -d redisinsight \
+        -r $DOCKER_REPO \
+        -v $appVersion
+
+        docker login -u $DOCKER_V1_USER -p $DOCKER_V1_PASS
+
+        ./.github/build/release-docker.sh \
+        -d redisinsight \
+        -r $DOCKER_V1_REPO \
+        -v $appVersion
+
+  snapcraft:
+    runs-on: ubuntu-latest
+    name: Publish to Snapcraft
+    env:
+      SNAPCRAFT_FILE_NAME: 'Redis-Insight-linux-amd64.snap'
+      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download Snapcraft package
+      id: snap
+      run: |
+        mkdir release
+        aws s3 cp s3://${AWS_BUCKET_NAME}/public/latest/${SNAPCRAFT_FILE_NAME} ./release
+        echo "snap-path=$(readlink -e ./release/${SNAPCRAFT_FILE_NAME})" >> "$GITHUB_OUTPUT"
+
+    - uses: snapcore/action-publish@v1
+      name: Publish Snapcraft
+      with:
+        snap: ${{ steps.snap.outputs.snap-path }}
+        release: stable
+

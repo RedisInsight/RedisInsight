@@ -1,5 +1,5 @@
 import { rte } from '../../../../helpers/constants';
-import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
+import { BrowserPage, ClusterDetailsPage, MyRedisDatabasePage } from '../../../../pageObjects';
 import { commonUrl, ossClusterForSSHConfig, ossStandaloneForSSHConfig } from '../../../../helpers/conf';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
@@ -9,6 +9,7 @@ import { BrowserActions } from '../../../../common-actions/browser-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const clusterPage = new ClusterDetailsPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const browserActions = new BrowserActions();
@@ -122,7 +123,7 @@ test('Adding database with SSH', async t => {
     await myRedisDatabasePage.clickOnDBByName(sshDbPasscode.databaseName);
     await Common.checkURLContainsText('browser');
 });
-test('Adding OSS Cluster database with SSH', async t => {
+test('Verify that  OSS Cluster database with SSH can be added and work correctly', async t => {
     const sshWithPass = {
         ...sshParams,
         sshPassword: 'pass'
@@ -130,5 +131,13 @@ test('Adding OSS Cluster database with SSH', async t => {
     // Verify that user can add SSH tunnel with Password for OSS Cluster database
     await myRedisDatabasePage.AddRedisDatabase.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
     await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
-    await Common.checkURLContainsText('browser');
+
+    //verify that db is added and profiler works
+    await t.click(browserPage.Profiler.expandMonitor);
+    await t.click(browserPage.Profiler.startMonitorButton);
+    await t.expect(browserPage.Profiler.monitorIsStartedText.innerText).eql('Profiler is started.');
+
+    await t.click(browserPage.NavigationPanel.analysisPageButton);
+    await t.click(clusterPage.overviewTab);
+    await t.expect(await clusterPage.getPrimaryNodesCount()).eql(Number('3'), 'Primary nodes in table are not corrected');
 });

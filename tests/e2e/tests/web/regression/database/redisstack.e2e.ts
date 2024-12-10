@@ -4,7 +4,7 @@ import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig,
-    ossStandaloneV8Config
+    ossStandaloneV6Config,
 } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
@@ -21,7 +21,7 @@ fixture `Redis Stack`
     .beforeEach(async() => {
         // Add new databases using API
         await databaseHelper.acceptLicenseTerms();
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV6Config);
         // Reload Page
         await browserPage.reloadPage();
     })
@@ -54,7 +54,7 @@ test('Verify that user can see Redis Stack icon in Edit mode near the DB name', 
 test.before(async() => {
     // Add new databases using API
     await databaseHelper.acceptLicenseTerms();
-    await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV8Config);
+    await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
     // Reload Page
     await browserPage.reloadPage();
 })('Verify that Redis Stack is not displayed for stack >8', async t => {

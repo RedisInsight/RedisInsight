@@ -1,6 +1,6 @@
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import {
-  Controller, Get, Param, UseInterceptors, UsePipes, ValidationPipe,
+  Controller, Get, Param, Query, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
@@ -10,6 +10,7 @@ import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.d
 import { ClientMetadata, DatabaseIndex } from 'src/common/models';
 import { ClientMetadataParam } from 'src/common/decorators';
 import { DbIndexValidationPipe } from 'src/common/pipes';
+import { DatabaseOverviewKeyspace } from './constants/overview';
 
 @ApiTags('Database Instances')
 @Controller('databases')
@@ -54,13 +55,19 @@ export class DatabaseInfoController {
       },
     ],
   })
+  @ApiQuery({
+    name: 'keyspace',
+    required: false,
+    enum: DatabaseOverviewKeyspace,
+  })
   async getDatabaseOverview(
     @ClientMetadataParam({
       databaseIdParam: 'id',
       ignoreDbIndex: false, // do not ignore db index to calculate current (selected) keys in db
     }) clientMetadata: ClientMetadata,
+      @Query() { keyspace = DatabaseOverviewKeyspace.Current }: { keyspace: DatabaseOverviewKeyspace },
   ): Promise<DatabaseOverview> {
-    return this.databaseInfoService.getOverview(clientMetadata);
+    return this.databaseInfoService.getOverview(clientMetadata, keyspace);
   }
 
   @Get(':id/db/:index')

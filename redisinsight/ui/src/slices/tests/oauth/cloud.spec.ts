@@ -56,7 +56,7 @@ import reducer, {
   logoutUser,
   logoutUserSuccess,
   logoutUserFailure,
-  logoutUserAction, oauthCloudUserSelector
+  logoutUserAction, oauthCloudUserSelector, setInitialLoadingState
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -845,6 +845,27 @@ describe('oauth cloud slice', () => {
         }
       })
       expect(oauthCloudUserSelector(rootState)).toEqual(initialState.user)
+    })
+  })
+
+  describe('setInitialLoadingState', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const userState = {
+        ...initialState.user,
+        initialLoading: false
+      }
+
+      // Act
+      const nextState = reducer(initialState as any, setInitialLoadingState(false))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudUserSelector(rootState)).toEqual(userState)
     })
   })
 

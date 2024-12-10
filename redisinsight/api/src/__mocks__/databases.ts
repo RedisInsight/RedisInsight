@@ -17,6 +17,7 @@ import {
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 import { mockCloudDatabaseDetails, mockCloudDatabaseDetailsEntity } from 'src/__mocks__/cloud-database';
 import { mockRedisClientListResult } from 'src/__mocks__/database-info';
+import { DatabaseOverviewKeyspace } from 'src/modules/database/constants/overview';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';
 
@@ -79,6 +80,12 @@ export const mockDatabaseModules = [
     semanticVersion: '1.2.5',
   },
 ];
+
+export const mockDatabaseWithModules = Object.assign(new Database(), {
+  ...mockDatabase,
+  modules: mockDatabaseModules,
+});
+
 export const mockDatabaseWithCloudDetails = Object.assign(new Database(), {
   ...mockDatabase,
   cloudDetails: mockCloudDatabaseDetails,
@@ -219,6 +226,8 @@ export const mockDatabaseOverview: DatabaseOverview = {
   networkOutKbps: 1,
   cpuUsagePercentage: null,
 };
+
+export const mockDatabaseOverviewCurrentKeyspace = DatabaseOverviewKeyspace.Current;
 
 export const mockRedisServerInfoDto = {
   redis_version: '7.0.5',

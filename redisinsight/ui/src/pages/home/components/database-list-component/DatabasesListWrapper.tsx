@@ -55,6 +55,9 @@ import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
+
+import DbStatus from '../db-status'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -295,16 +298,18 @@ const DatabasesListWrapper = (props: Props) => {
           )
         }
 
-        const { id, db, new: newStatus = false } = instance
+        const { id, db, new: newStatus = false, lastConnection, createdAt, cloudDetails } = instance
         const cellContent = replaceSpaces(name.substring(0, 200))
 
         return (
           <div role="presentation">
-            {newStatus && (
-              <EuiToolTip content="New" position="top" anchorClassName={styles.newStatusAnchor}>
-                <div className={styles.newStatus} data-testid={`database-status-new-${id}`} />
-              </EuiToolTip>
-            )}
+            <DbStatus
+              id={id}
+              isNew={newStatus}
+              lastConnection={lastConnection}
+              createdAt={createdAt}
+              isFree={cloudDetails?.free}
+            />
             <EuiToolTip
               position="bottom"
               title="Database Alias"

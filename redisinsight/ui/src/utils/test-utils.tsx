@@ -186,13 +186,13 @@ const clearStoreActions = (actions: any[]) => {
 /**
  * Ensure the EuiToolTip being tested is open and visible before continuing
  */
-const waitForEuiToolTipVisible = async () => {
+const waitForEuiToolTipVisible = async (timeout = 500) => {
   await waitFor(
     () => {
       const tooltip = document.querySelector('.euiToolTipPopover')
       expect(tooltip).toBeInTheDocument()
     },
-    { timeout: 500 } // Account for long delay on tooltips
+    { timeout } // Account for long delay on tooltips
   )
 }
 

@@ -21,6 +21,7 @@ export function processUnsupportedCommand(
   // Due to requirements, the monitor command should not appear in the list of supported commands
   // That is why we exclude it here
   const unsupportedCommands = cliUnsupportedCommandsSelector(state, [CommandMonitor.toLowerCase()])
+
   dispatch(
     concatToOutput(
       cliParseTextResponseWithOffset(
@@ -79,7 +80,7 @@ export function cliCommandError(error: AxiosError, command: string) {
   const errorName = getApiErrorName(error)
   const errorMessage = getApiErrorMessage(error)
 
-  const cliClientUuid = getState()?.cli?.settings?.cliClientUuid
+  const { cliClientUuid } = getState()?.cli?.settings
 
   if (errorName === ApiErrors.ClientNotFound && cliClientUuid) {
     handleRecreateClient(command)

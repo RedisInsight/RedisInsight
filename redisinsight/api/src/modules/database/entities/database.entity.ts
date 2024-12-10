@@ -1,5 +1,5 @@
 import {
-  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn,
+  Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -171,6 +171,12 @@ export class DatabaseEntity {
   @Expose()
   @Column({ type: 'datetime', nullable: true })
   lastConnection: Date;
+
+  @CreateDateColumn({
+    nullable: true,
+  })
+  @Expose()
+  createdAt: Date;
 
   @Expose()
   @Column({

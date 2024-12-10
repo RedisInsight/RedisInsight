@@ -25,14 +25,14 @@ export function wsService(wsUrl: string, {
     queryParams = { ...queryParams, ...query }
   }
   let headers: Record<string, any> = { [CustomHeaders.WindowId]: window.windowId || '' }
-  if (passTokenViaHeaders) {
+  if (!passTokenViaHeaders) {
     headers = { ...headers, [CustomHeaders.CsrfToken]: token || '' }
   }
 
   if (extraHeaders) {
     headers = { ...headers, ...extraHeaders }
   }
-  const transports = ['polling'] // riConfig.api.socketTransports?.split(',')
+  const transports = riConfig.api.socketTransports?.split(',')
   const withCredentials = riConfig.api.socketCredentials
 
   const ioOptions = {

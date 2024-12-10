@@ -18,19 +18,14 @@ export class AddRedisDatabaseDialog {
     addAutoDiscoverDatabase = Selector('[data-testid=add-database_tab_software]');
     addCloudDatabaseButton = Selector('[data-testid=create-free-db-btn]');
     redisSotfwareButton = Selector('[data-testid=option-btn-software]');
-    redisCloudProType = Selector('[data-test-subj=radio-btn-cloud-pro]');
-    redisSentinelButton = Selector('[data-test-subj=option-btn-sentinel]');
+    redisSentinelButton = Selector('[data-testid=option-btn-sentinel]');
     showDatabasesButton = Selector('[data-testid=btn-show-databases]');
     databaseName = Selector('.euiTableCellContent.column_name');
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     databaseIndexCheckbox = Selector('[data-testid=showDb]~div', { timeout: 500 });
-    connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
     connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
     cloneDatabaseButton = Selector('[data-testid=clone-db-btn]');
-    sentinelNavigation = Selector('[data-testid=sentinel-nav-group]');
-    sentinelDatabaseNavigation = Selector('[data-testid=database-nav-group]');
     cancelButton = Selector('[data-testid=btn-cancel]');
-    showPasswordBtn = Selector('[aria-label^="Show password"]');
     testConnectionBtn = Selector('[data-testid=btn-test-connection]');
 
     // TEXT INPUTS (also referred to as 'Text fields')

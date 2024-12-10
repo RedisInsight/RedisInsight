@@ -103,6 +103,22 @@ describe('JSONUtils', () => {
         expect(result).toBe(42)
       })
 
+      it('should preserve string values in JSON objects', () => {
+        const input = '{"a":"111"}'
+        const result = parseValue(input)
+        expect(result.a).toBe('111')
+        expect(typeof result.a).toBe('string')
+      })
+
+      it('should handle mixed string and number values in JSON objects', () => {
+        const input = '{"stringVal":"111","numberVal":111}'
+        const result = parseValue(input)
+        expect(result.stringVal).toBe('111')
+        expect(typeof result.stringVal).toBe('string')
+        expect(result.numberVal).toBe(111)
+        expect(typeof result.numberVal).toBe('number')
+      })
+
       it('should handle string type with quotes', () => {
         expect(parseValue('"test"', 'string')).toBe('test')
         expect(parseValue('test', 'string')).toBe('test')

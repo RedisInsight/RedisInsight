@@ -3,7 +3,7 @@ import {
   EuiPageBody,
   EuiPanel,
 } from '@elastic/eui'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
@@ -33,6 +33,7 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { AddDbType, CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 import DatabasesList from './components/database-list-component'
 import DatabaseListHeader from './components/database-list-header'
@@ -41,7 +42,6 @@ import DatabasePanelDialog from './components/database-panel-dialog'
 
 import './styles.scss'
 import styles from './styles.module.scss'
-import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 enum OpenDialogName {
   AddDatabase = 'add',
@@ -208,23 +208,24 @@ const HomePage = () => {
               key="instance-controls"
               onAddInstance={handleAddInstance}
             />
-            <DatabasePanelDialog
-              isOpen={!!openDialog}
-              editMode={openDialog === OpenDialogName.EditDatabase}
-              urlHandlingAction={action}
-              initialValues={dbConnection ?? null}
-              editedInstance={
-                openDialog === OpenDialogName.EditDatabase
-                  ? editedInstance
-                  : sentinelInstance ?? null
-              }
-              onClose={
-                openDialog === OpenDialogName.EditDatabase
-                  ? closeEditDialog
-                  : handleClose
-              }
-              onDbEdited={onDbEdited}
-            />
+            {!!openDialog && (
+              <DatabasePanelDialog
+                editMode={openDialog === OpenDialogName.EditDatabase}
+                urlHandlingAction={action}
+                initialValues={dbConnection ?? null}
+                editedInstance={
+                  openDialog === OpenDialogName.EditDatabase
+                    ? editedInstance
+                    : sentinelInstance ?? null
+                }
+                onClose={
+                  openDialog === OpenDialogName.EditDatabase
+                    ? closeEditDialog
+                    : handleClose
+                }
+                onDbEdited={onDbEdited}
+              />
+            )}
             <div key="homePage" className="homePage">
               {(!isInstanceExists && !loading && !loadingChanging ? (
                 <EuiPanel className={styles.emptyPanel} borderRadius="none">

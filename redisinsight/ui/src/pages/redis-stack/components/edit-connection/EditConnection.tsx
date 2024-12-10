@@ -120,7 +120,6 @@ const EditConnection = () => {
                     editedInstance={state.data}
                     onDbEdited={onInstanceChanged}
                     onClose={onClose}
-                    isOpen
                   />
                 </div>
               </div>

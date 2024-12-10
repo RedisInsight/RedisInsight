@@ -32,11 +32,11 @@ export function wsService(wsUrl: string, {
   if (extraHeaders) {
     headers = { ...headers, ...extraHeaders }
   }
-  const transports = riConfig.api.socketTransports?.split(',')
+  const transports = ['polling'] // riConfig.api.socketTransports?.split(',')
   const withCredentials = riConfig.api.socketCredentials
 
   const ioOptions = {
-    addTrailingSlash: false,
+    // addTrailingSlash: false,
     path: getProxyPath(),
     forceNew,
     reconnection,
@@ -45,7 +45,7 @@ export function wsService(wsUrl: string, {
     rejectUnauthorized: false,
     transports,
     withCredentials,
-    auth: { token }
+    // auth: { token }
   }
   // eslint-disable-next-line no-console
   console.log({

@@ -112,60 +112,63 @@ const DatabaseForm = (props: Props) => {
           </EuiFlexItem>
         </EuiFlexGroup>
       )}
-      <EuiFlexGroup responsive={false}>
-        {showFields.host && (
-          <EuiFlexItem grow={4}>
-            <EuiFormRow label="Host*">
-              <EuiFieldText
-                autoFocus={autoFocus}
-                name="ip"
-                id="host"
-                data-testid="host"
-                color="secondary"
-                maxLength={200}
-                placeholder="Enter Hostname / IP address / Connection URL"
-                value={formik.values.host ?? ''}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    'host',
-                    validateField(e.target.value.trim())
-                  )
-                }}
-                onPaste={(event: React.ClipboardEvent<HTMLInputElement>) => handlePasteHostName(onHostNamePaste, event)}
-                onFocus={selectOnFocus}
-                append={<AppendHostName />}
-                disabled={isFieldDisabled('host')}
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-        )}
-        {isShowPort && (
-          <EuiFlexItem grow={2}>
-            <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
-              <EuiFieldNumber
-                name="port"
-                id="port"
-                data-testid="port"
-                style={{ width: '100%' }}
-                placeholder="Enter Port"
-                value={formik.values.port ?? ''}
-                maxLength={6}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validatePortNumber(e.target.value.trim())
-                  )
-                }}
-                onFocus={selectOnFocus}
-                type="text"
-                min={0}
-                max={MAX_PORT_NUMBER}
-                disabled={isFieldDisabled('port')}
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-        )}
-      </EuiFlexGroup>
+
+      {(showFields.host || isShowPort) && (
+        <EuiFlexGroup responsive={false}>
+          {showFields.host && (
+            <EuiFlexItem grow={4}>
+              <EuiFormRow label="Host*">
+                <EuiFieldText
+                  autoFocus={autoFocus}
+                  name="ip"
+                  id="host"
+                  data-testid="host"
+                  color="secondary"
+                  maxLength={200}
+                  placeholder="Enter Hostname / IP address / Connection URL"
+                  value={formik.values.host ?? ''}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    formik.setFieldValue(
+                      'host',
+                      validateField(e.target.value.trim())
+                    )
+                  }}
+                  onPaste={(event: React.ClipboardEvent<HTMLInputElement>) => handlePasteHostName(onHostNamePaste, event)}
+                  onFocus={selectOnFocus}
+                  append={<AppendHostName />}
+                  disabled={isFieldDisabled('host')}
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          )}
+          {isShowPort && (
+            <EuiFlexItem grow={2}>
+              <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
+                <EuiFieldNumber
+                  name="port"
+                  id="port"
+                  data-testid="port"
+                  style={{ width: '100%' }}
+                  placeholder="Enter Port"
+                  value={formik.values.port ?? ''}
+                  maxLength={6}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    formik.setFieldValue(
+                      e.target.name,
+                      validatePortNumber(e.target.value.trim())
+                    )
+                  }}
+                  onFocus={selectOnFocus}
+                  type="text"
+                  min={0}
+                  max={MAX_PORT_NUMBER}
+                  disabled={isFieldDisabled('port')}
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          )}
+        </EuiFlexGroup>
+      )}
 
       <EuiFlexGroup responsive={false}>
         <EuiFlexItem grow={1}>

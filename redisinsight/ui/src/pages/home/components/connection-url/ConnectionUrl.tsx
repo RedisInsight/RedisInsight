@@ -12,13 +12,17 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import { useFormik } from 'formik'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 import { Nullable, parseRedisUrl } from 'uiSrc/utils'
 
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { Instance } from 'uiSrc/slices/interfaces'
-import { createInstanceStandaloneAction, testInstanceStandaloneAction } from 'uiSrc/slices/instances/instances'
+import {
+  createInstanceStandaloneAction,
+  instancesSelector,
+  testInstanceStandaloneAction
+} from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
 import ConnectivityOptions from './components/connectivity-options'
 
@@ -56,6 +60,7 @@ const ConnectionUrlError = (
 const ConnectionUrl = (props: Props) => {
   const { onSelectOption, onClose } = props
   const [isInvalid, setIsInvalid] = useState<Boolean>(false)
+  const { loadingChanging: isLoading } = useSelector(instancesSelector)
 
   const dispatch = useDispatch()
   const history = useHistory()
@@ -153,6 +158,7 @@ const ConnectionUrl = (props: Props) => {
                 isDisabled={!!isInvalid}
                 iconType={isInvalid ? 'iInCircle' : undefined}
                 onClick={handleTestConnection}
+                isLoading={isLoading}
                 data-testid="btn-test-connection"
               >
                 Test Connection

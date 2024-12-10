@@ -1,6 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
+import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
 import DatabasePanelDialog, { Props } from './DatabasePanelDialog'
 
@@ -12,13 +12,13 @@ describe('DatabasePanelDialog', () => {
   })
 
   it('should render proper form by dfeault', () => {
-    render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
+    render(<DatabasePanelDialog {...instance(mockedProps)} onClose={jest.fn()} />)
 
     expect(screen.getByTestId('connection-url')).toBeInTheDocument()
   })
 
   it('should change screen to cloud and render proper form', () => {
-    render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
+    render(<DatabasePanelDialog {...instance(mockedProps)} onClose={jest.fn()} />)
 
     fireEvent.click(screen.getByTestId('discover-cloud-btn'))
 
@@ -26,7 +26,7 @@ describe('DatabasePanelDialog', () => {
   })
 
   it('should change screen to software and render proper form', () => {
-    render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
+    render(<DatabasePanelDialog {...instance(mockedProps)} onClose={jest.fn()} />)
 
     fireEvent.click(screen.getByTestId('option-btn-software'))
 
@@ -34,7 +34,7 @@ describe('DatabasePanelDialog', () => {
   })
 
   it('should change tab to sentinel and render proper form', async () => {
-    render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
+    render(<DatabasePanelDialog {...instance(mockedProps)} onClose={jest.fn()} />)
 
     fireEvent.click(screen.getByTestId('option-btn-sentinel'))
 
@@ -42,7 +42,7 @@ describe('DatabasePanelDialog', () => {
   })
 
   it('should change screen to import render proper form', async () => {
-    render(<DatabasePanelDialog {...instance(mockedProps)} isOpen onClose={jest.fn()} />)
+    render(<DatabasePanelDialog {...instance(mockedProps)} onClose={jest.fn()} />)
 
     fireEvent.click(screen.getByTestId('option-btn-import'))
 

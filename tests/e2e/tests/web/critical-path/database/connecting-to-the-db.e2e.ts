@@ -90,7 +90,7 @@ test
         // Verify that the Host, Port, Database Alias values pre-populated by default for Sentinel
         await t
             .click(myRedisDatabasePage.AddRedisDatabaseDialog.addAutoDiscoverDatabase)
-            .click(myRedisDatabasePage.AddRedisDatabaseDialog.redisSentinelType);
+            .click(myRedisDatabasePage.AddRedisDatabaseDialog.redisSentinelButton);
         await t
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.hostInput.value).eql(defaultHost, 'Default sentinel host not prepopulated')
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.portInput.value).eql(defaultSentinelPort, 'Default sentinel port not prepopulated');

@@ -16,10 +16,10 @@ export class AddRedisDatabaseDialog {
     addRedisDatabaseButton = Selector('[data-testid=btn-submit]');
     customSettingsButton = Selector('[data-testid=btn-connection-settings]');
     addAutoDiscoverDatabase = Selector('[data-testid=add-database_tab_software]');
-    addCloudDatabaseTab = Selector('[data-testid=add-database_tab_cloud]');
+    addCloudDatabaseButton = Selector('[data-testid=create-free-db-btn]');
     redisSotfwareButton = Selector('[data-testid=option-btn-software]');
     redisCloudProType = Selector('[data-test-subj=radio-btn-cloud-pro]');
-    redisSentinelType = Selector('[data-test-subj=radio-btn-sentinel]');
+    redisSentinelButton = Selector('[data-test-subj=option-btn-sentinel]');
     showDatabasesButton = Selector('[data-testid=btn-show-databases]');
     databaseName = Selector('.euiTableCellContent.column_name');
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
@@ -181,9 +181,8 @@ export class AddRedisDatabaseDialog {
 
         await t
             .click(this.addDatabaseButton)
-            .click(this.addAutoDiscoverDatabase);
 
-        await t.click(this.redisSentinelType);
+        await t.click(this.redisSentinelButton);
         if (!!parameters.sentinelHost) {
             await t.typeText(this.hostInput, parameters.sentinelHost, { replace: true, paste: true });
         }
@@ -220,7 +219,7 @@ export class AddRedisDatabaseDialog {
 
         await t
             .click(this.addDatabaseButton)
-            .click(this.addCloudDatabaseTab);
+            .click(this.addCloudDatabaseButton);
 
         await t
             .typeText(this.accessKeyInput, cloudAPIAccessKey, { replace: true, paste: true })

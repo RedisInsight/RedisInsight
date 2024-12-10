@@ -14,23 +14,18 @@ export class AddRedisDatabaseDialog {
     // BUTTONS
     addDatabaseButton = Selector('[data-testid^=add-redis-database]');
     addRedisDatabaseButton = Selector('[data-testid=btn-submit]');
-    addDatabaseManually = Selector('[data-testid=add-database_tab_manual]');
+    customSettingsButton = Selector('[data-testid=btn-connection-settings]');
     addAutoDiscoverDatabase = Selector('[data-testid=add-database_tab_software]');
-    addCloudDatabaseTab = Selector('[data-testid=add-database_tab_cloud]');
-    redisClusterType = Selector('[data-test-subj=radio-btn-enterprise-cluster]');
-    redisCloudProType = Selector('[data-test-subj=radio-btn-cloud-pro]');
-    redisSentinelType = Selector('[data-test-subj=radio-btn-sentinel]');
+    addCloudDatabaseButton = Selector('[data-testid=create-free-db-btn]');
+    redisSotfwareButton = Selector('[data-testid=option-btn-software]');
+    redisSentinelButton = Selector('[data-testid=option-btn-sentinel]');
     showDatabasesButton = Selector('[data-testid=btn-show-databases]');
     databaseName = Selector('.euiTableCellContent.column_name');
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     databaseIndexCheckbox = Selector('[data-testid=showDb]~div', { timeout: 500 });
-    connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
     connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
     cloneDatabaseButton = Selector('[data-testid=clone-db-btn]');
-    sentinelNavigation = Selector('[data-testid=sentinel-nav-group]');
-    sentinelDatabaseNavigation = Selector('[data-testid=database-nav-group]');
     cancelButton = Selector('[data-testid=btn-cancel]');
-    showPasswordBtn = Selector('[aria-label^="Show password"]');
     testConnectionBtn = Selector('[data-testid=btn-test-connection]');
 
     // TEXT INPUTS (also referred to as 'Text fields')
@@ -55,6 +50,7 @@ export class AddRedisDatabaseDialog {
     sshPrivateKeyInput = Selector('[data-testid=sshPrivateKey]');
     sshPassphraseInput = Selector('[data-testid=sshPassphrase]');
     timeoutInput = Selector('[data-testid=timeout]');
+    urlInput = Selector('[data-testid=connection-url]');
     // DROPDOWNS
     caCertField = Selector('[data-testid=select-ca-cert]', { timeout: 500 });
     clientCertField = Selector('[data-testid=select-cert]', { timeout: 500 });
@@ -84,7 +80,7 @@ export class AddRedisDatabaseDialog {
         await this.addDatabaseButton.with({ visibilityCheck: true, timeout: 10000 })();
         await t
             .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually);
+            .click(this.customSettingsButton);
 
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
@@ -107,7 +103,7 @@ export class AddRedisDatabaseDialog {
 
         await t
             .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually);
+            .click(this.customSettingsButton);
 
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
@@ -135,7 +131,7 @@ export class AddRedisDatabaseDialog {
 
         await t
             .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually);
+            .click(this.customSettingsButton);
 
         await t
             .typeText(this.hostInput, databaseParameters.host, { replace: true, paste: true })
@@ -180,9 +176,8 @@ export class AddRedisDatabaseDialog {
 
         await t
             .click(this.addDatabaseButton)
-            .click(this.addAutoDiscoverDatabase);
 
-        await t.click(this.redisSentinelType);
+        await t.click(this.redisSentinelButton);
         if (!!parameters.sentinelHost) {
             await t.typeText(this.hostInput, parameters.sentinelHost, { replace: true, paste: true });
         }
@@ -202,9 +197,8 @@ export class AddRedisDatabaseDialog {
 
         await t
             .click(this.addDatabaseButton)
-            .click(this.addAutoDiscoverDatabase);
 
-        await t.click(this.redisClusterType);
+        await t.click(this.redisSotfwareButton);
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
             .typeText(this.portInput, parameters.port, { replace: true, paste: true })
@@ -220,7 +214,7 @@ export class AddRedisDatabaseDialog {
 
         await t
             .click(this.addDatabaseButton)
-            .click(this.addCloudDatabaseTab);
+            .click(this.addCloudDatabaseButton);
 
         await t
             .typeText(this.accessKeyInput, cloudAPIAccessKey, { replace: true, paste: true })
@@ -235,7 +229,7 @@ export class AddRedisDatabaseDialog {
 
         await t
             .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually);
+            .click(this.customSettingsButton);
 
         if (!!parameters.ossClusterHost) {
             await t.typeText(this.hostInput, parameters.ossClusterHost, { replace: true, paste: true });

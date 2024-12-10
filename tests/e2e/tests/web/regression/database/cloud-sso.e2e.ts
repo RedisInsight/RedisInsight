@@ -40,7 +40,7 @@ test('Verify that user can not see the promo Cloud databases for docker build', 
     await t.click(
         myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton);
     await t.click(
-        myRedisDatabasePage.AddRedisDatabaseDialog.addCloudDatabaseTab);
+        myRedisDatabasePage.AddRedisDatabaseDialog.addCloudDatabaseButton);
     await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.useCloudAccount.exists).notOk('Use Cloud Account accordion displayed for docker build');
     await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.useCloudKeys.exists).notOk('Use Cloud Keys accordion displayed for docker build');
 });

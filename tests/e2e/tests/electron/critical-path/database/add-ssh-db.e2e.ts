@@ -71,7 +71,7 @@ test('Adding database with SSH', async t => {
     // Verify that if user have not entered any required value he can see that this field should be specified when hover over the button to add a database
     await t
         .click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton)
-        .click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseManually)
+        .click(myRedisDatabasePage.AddRedisDatabaseDialog.customSettingsButton)
         .click(myRedisDatabasePage.AddRedisDatabaseDialog.useSSHCheckbox)
         .click(myRedisDatabasePage.AddRedisDatabaseDialog.sshPrivateKeyRadioBtn)
         .hover(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);

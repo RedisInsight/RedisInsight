@@ -85,7 +85,7 @@ jobs:
     secrets: inherit
 
   integration-tests:
-    needs: changes
+    needs: build-docker
     if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'be/')
     uses: ./.github/workflows/tests-integration.yml
     secrets: inherit

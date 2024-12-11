@@ -28,6 +28,7 @@ export const mockCommandExecutionSuccessResult = Object.assign(new CommandExecut
 export const mockCommendExecutionHugeResultPlaceholder = Object.assign(new CommandExecutionResult(), {
   status: CommandExecutionStatus.Success,
   response: 'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
+  sizeLimitExceeded: true,
 });
 
 export const mockCommendExecutionHugeResultPlaceholderEncrypted = 'huge_result_placeholder_encrypted';

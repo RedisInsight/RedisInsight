@@ -32,7 +32,7 @@ import {
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
-import { AddDbType, CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
+import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 import DatabasesList from './components/database-list-component'
@@ -174,7 +174,7 @@ const HomePage = () => {
     })
   }
 
-  const handleAddInstance = (addDbType = AddDbType.manual) => {
+  const handleAddInstance = () => {
     setOpenDialog(OpenDialogName.AddDatabase)
     dispatch(setEditedInstance(null))
   }
@@ -212,7 +212,6 @@ const HomePage = () => {
               <DatabasePanelDialog
                 editMode={openDialog === OpenDialogName.EditDatabase}
                 urlHandlingAction={action}
-                initialValues={dbConnection ?? null}
                 editedInstance={
                   openDialog === OpenDialogName.EditDatabase
                     ? editedInstance

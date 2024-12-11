@@ -29,7 +29,6 @@ import styles from './styles.module.scss'
 export interface Props {
   editMode: boolean
   urlHandlingAction?: Nullable<UrlHandlingActions>
-  initialValues?: Nullable<Record<string, any>>
   editedInstance: Nullable<Instance>
   onClose: () => void
   onDbEdited?: () => void
@@ -40,10 +39,9 @@ const DatabasePanelDialog = (props: Props) => {
   const {
     editMode,
     onClose,
-    initialValues: initialValuesProp,
   } = props
 
-  const [initialValues, setInitialValues] = useState(initialValuesProp)
+  const [initialValues, setInitialValues] = useState(null)
   const [connectionType, setConnectionType] = useState<Nullable<AddDbType>>(null)
   const [modalHeader, setModalHeader] = useState<Nullable<React.ReactNode>>(null)
 
@@ -72,6 +70,7 @@ const DatabasePanelDialog = (props: Props) => {
   useEffect(() => {
     if (action === UrlHandlingActions.Connect) {
       setConnectionType(AddDbType.manual)
+      setInitialValues(dbConnection)
     }
   }, [action, dbConnection])
 

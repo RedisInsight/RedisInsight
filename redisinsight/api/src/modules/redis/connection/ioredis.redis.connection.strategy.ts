@@ -190,7 +190,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           connection.on('ready', (): void => {
-            this.logger.log('Successfully connected to the redis database');
+            this.logger.debug('Successfully connected to the redis database');
             resolve(new StandaloneIoredisClient(
               clientMetadata,
               connection,
@@ -201,7 +201,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             ));
           });
           connection.on('reconnecting', (): void => {
-            this.logger.log('Reconnecting to the redis database');
+            this.logger.debug('Reconnecting to the redis database');
           });
         } catch (e) {
           reject(e);
@@ -270,7 +270,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           cluster.on('ready', (): void => {
-            this.logger.log('Successfully connected to the redis oss cluster.');
+            this.logger.debug('Successfully connected to the redis oss cluster.');
             resolve(new ClusterIoredisClient(
               clientMetadata,
               cluster,
@@ -316,7 +316,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
           reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
         });
         client.on('ready', (): void => {
-          this.logger.log('Successfully connected to the redis oss sentinel.');
+          this.logger.debug('Successfully connected to the redis oss sentinel.');
           resolve(new SentinelIoredisClient(
             clientMetadata,
             client,

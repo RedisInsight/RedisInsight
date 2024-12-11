@@ -24,7 +24,7 @@ export class CaCertificateService {
   ) {}
 
   async get(id: string): Promise<CaCertificate> {
-    this.logger.log(`Getting CA certificate with id: ${id}.`);
+    this.logger.debug(`Getting CA certificate with id: ${id}.`);
     const model = await this.repository.get(id);
 
     if (!model) {
@@ -36,13 +36,13 @@ export class CaCertificateService {
   }
 
   async list(): Promise<CaCertificate[]> {
-    this.logger.log('Getting CA certificate list.');
+    this.logger.debug('Getting CA certificate list.');
 
     return this.repository.list();
   }
 
   async create(dto: CreateCaCertificateDto): Promise<CaCertificate> {
-    this.logger.log('Creating certificate.');
+    this.logger.debug('Creating certificate.');
     try {
       return await this.repository.create(classToClass(CaCertificate, dto));
     } catch (error) {

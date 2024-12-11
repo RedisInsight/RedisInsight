@@ -50,7 +50,7 @@ export class StreamService {
     dto: GetStreamEntriesDto,
   ): Promise<GetStreamEntriesResponse> {
     try {
-      this.logger.log('Getting entries of the Stream data type stored at key.');
+      this.logger.debug('Getting entries of the Stream data type stored at key.');
       const { keyName, sortOrder } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -68,7 +68,7 @@ export class StreamService {
         entries = await this.getRevRange(client, dto);
       }
 
-      this.logger.log('Succeed to get entries from the stream.');
+      this.logger.debug('Succeed to get entries from the stream.');
 
       return plainToClass(GetStreamEntriesResponse, {
         keyName,
@@ -155,7 +155,7 @@ export class StreamService {
     dto: CreateStreamDto,
   ): Promise<void> {
     try {
-      this.logger.log('Creating stream data type.');
+      this.logger.debug('Creating stream data type.');
       const { keyName, entries } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -184,7 +184,7 @@ export class StreamService {
       const transactionResults = await client.sendPipeline(toolCommands);
       catchMultiTransactionError(transactionResults);
 
-      this.logger.log('Succeed to create stream.');
+      this.logger.debug('Succeed to create stream.');
       return undefined;
     } catch (error) {
       this.logger.error('Failed to create stream.', error);
@@ -214,7 +214,7 @@ export class StreamService {
     dto: AddStreamEntriesDto,
   ): Promise<AddStreamEntriesResponse> {
     try {
-      this.logger.log('Adding entries to stream.');
+      this.logger.debug('Adding entries to stream.');
       const { keyName, entries } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -239,7 +239,7 @@ export class StreamService {
       const transactionResults = await client.sendPipeline(toolCommands);
       catchMultiTransactionError(transactionResults);
 
-      this.logger.log('Succeed to add entries to the stream.');
+      this.logger.debug('Succeed to add entries to the stream.');
       return plainToClass(AddStreamEntriesResponse, {
         keyName,
         entries: transactionResults.map((entryResult) => entryResult[1].toString()),
@@ -272,7 +272,7 @@ export class StreamService {
     dto: DeleteStreamEntriesDto,
   ): Promise<DeleteStreamEntriesResponse> {
     try {
-      this.logger.log('Deleting entries from the Stream data type.');
+      this.logger.debug('Deleting entries from the Stream data type.');
       const { keyName, entries } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -284,7 +284,7 @@ export class StreamService {
         ...entries,
       ]) as number;
 
-      this.logger.log('Succeed to delete entries from the Stream data type.');
+      this.logger.debug('Succeed to delete entries from the Stream data type.');
       return { affected: result };
     } catch (error) {
       this.logger.error('Failed to delete entries from the Stream data type.', error);

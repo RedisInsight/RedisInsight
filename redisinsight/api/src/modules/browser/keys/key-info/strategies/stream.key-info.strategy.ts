@@ -13,7 +13,7 @@ export class StreamKeyInfoStrategy extends KeyInfoStrategy {
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${RedisDataType.Stream} type info.`);
+    this.logger.debug(`Getting ${RedisDataType.Stream} type info.`);
 
     const [
       [, ttl = null],

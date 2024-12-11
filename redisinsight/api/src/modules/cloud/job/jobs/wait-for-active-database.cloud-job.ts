@@ -28,7 +28,7 @@ export class WaitForActiveDatabaseCloudJob extends CloudJob {
   }
 
   async iteration(sessionMetadata: SessionMetadata): Promise<CloudDatabase> {
-    this.logger.log('Waiting for cloud database active state');
+    this.logger.debug('Waiting for cloud database active state');
 
     this.checkSignal();
 

@@ -16,14 +16,14 @@ export class RdiPipelineService {
   ) {}
 
   async getSchema(rdiClientMetadata: RdiClientMetadata): Promise<object> {
-    this.logger.log('Getting RDI pipeline schema');
+    this.logger.debug('Getting RDI pipeline schema');
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
     return await client.getSchema();
   }
 
   async getPipeline(rdiClientMetadata: RdiClientMetadata): Promise<RdiPipeline> {
-    this.logger.log('Getting RDI pipeline');
+    this.logger.debug('Getting RDI pipeline');
 
     try {
       const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
@@ -32,7 +32,7 @@ export class RdiPipelineService {
 
       this.analytics.sendRdiPipelineFetched(rdiClientMetadata.sessionMetadata, rdiClientMetadata.id, pipeline);
 
-      this.logger.log('Succeed to get RDI pipeline');
+      this.logger.debug('Succeed to get RDI pipeline');
 
       return pipeline;
     } catch (e) {
@@ -44,7 +44,7 @@ export class RdiPipelineService {
   }
 
   async dryRunJob(rdiClientMetadata: RdiClientMetadata, dto: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
-    this.logger.log('Trying dry run job');
+    this.logger.debug('Trying dry run job');
 
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
@@ -52,7 +52,7 @@ export class RdiPipelineService {
   }
 
   async deploy(rdiClientMetadata: RdiClientMetadata, dto: RdiPipeline): Promise<void> {
-    this.logger.log('Trying to deploy pipeline');
+    this.logger.debug('Trying to deploy pipeline');
 
     try {
       const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
@@ -60,7 +60,7 @@ export class RdiPipelineService {
       await client.deploy(dto);
 
       this.analytics.sendRdiPipelineDeployed(rdiClientMetadata.sessionMetadata, rdiClientMetadata.id);
-      this.logger.log('Succeed to deploy pipeline');
+      this.logger.debug('Succeed to deploy pipeline');
     } catch (e) {
       this.analytics.sendRdiPipelineDeployFailed(rdiClientMetadata.sessionMetadata, e, rdiClientMetadata.id);
 
@@ -71,28 +71,28 @@ export class RdiPipelineService {
   }
 
   async stopPipeline(rdiClientMetadata: RdiClientMetadata): Promise<void> {
-    this.logger.log('Stopping running pipeline');
+    this.logger.debug('Stopping running pipeline');
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
     return await client.stopPipeline();
   }
 
   async startPipeline(rdiClientMetadata: RdiClientMetadata): Promise<void> {
-    this.logger.log('Starting stopped pipeline');
+    this.logger.debug('Starting stopped pipeline');
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
     return await client.startPipeline();
   }
 
   async resetPipeline(rdiClientMetadata: RdiClientMetadata): Promise<void> {
-    this.logger.log('Resetting default pipeline');
+    this.logger.debug('Resetting default pipeline');
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
     return await client.resetPipeline();
   }
 
   async testConnections(rdiClientMetadata: RdiClientMetadata, config: object): Promise<RdiTestConnectionsResponseDto> {
-    this.logger.log('Trying to test connections');
+    this.logger.debug('Trying to test connections');
 
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
@@ -100,14 +100,14 @@ export class RdiPipelineService {
   }
 
   async getStrategies(rdiClientMetadata: RdiClientMetadata): Promise<object> {
-    this.logger.log('Getting RDI pipeline strategies');
+    this.logger.debug('Getting RDI pipeline strategies');
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
     return await client.getStrategies();
   }
 
   async getConfigTemplate(rdiClientMetadata: RdiClientMetadata, pipelineType: string, dbType: string): Promise<RdiTemplateResponseDto> {
-    this.logger.log('Getting RDI config template');
+    this.logger.debug('Getting RDI config template');
 
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
@@ -115,7 +115,7 @@ export class RdiPipelineService {
   }
 
   async getJobTemplate(rdiClientMetadata: RdiClientMetadata, pipelineType: string): Promise<RdiTemplateResponseDto> {
-    this.logger.log('Getting RDI job template');
+    this.logger.debug('Getting RDI job template');
 
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
@@ -123,7 +123,7 @@ export class RdiPipelineService {
   }
 
   async getPipelineStatus(rdiClientMetadata: RdiClientMetadata): Promise<unknown> {
-    this.logger.log('Getting RDI pipeline status');
+    this.logger.debug('Getting RDI pipeline status');
 
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
@@ -131,7 +131,7 @@ export class RdiPipelineService {
   }
 
   async getJobFunctions(rdiClientMetadata: RdiClientMetadata): Promise<object> {
-    this.logger.log('Getting RDI job functions');
+    this.logger.debug('Getting RDI job functions');
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
     return await client.getJobFunctions();

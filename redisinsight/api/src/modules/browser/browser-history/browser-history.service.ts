@@ -92,7 +92,7 @@ export class BrowserHistoryService {
     mode: BrowserHistoryMode,
     ids: string[],
   ): Promise<DeleteBrowserHistoryItemsResponse> {
-    this.logger.log(`Deleting many browser history items: ${ids}`);
+    this.logger.debug(`Deleting many browser history items: ${ids}`);
 
     return {
       affected: sum(await Promise.all(ids.map(async (id) => {

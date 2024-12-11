@@ -88,7 +88,7 @@ export class RdiService {
       throw wrapRdiPipelineError(error);
     }
 
-    this.logger.log('Succeed to create rdi instance');
+    this.logger.debug('Succeed to create rdi instance');
     return await this.repository.create(model);
   }
 
@@ -121,6 +121,6 @@ export class RdiService {
       throw wrapRdiPipelineError(error);
     }
 
-    this.logger.log(`Succeed to connect to rdi instance ${rdiClientMetadata.id}`);
+    this.logger.debug(`Succeed to connect to rdi instance ${rdiClientMetadata.id}`);
   }
 }

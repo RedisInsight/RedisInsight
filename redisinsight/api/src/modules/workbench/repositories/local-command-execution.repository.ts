@@ -86,7 +86,7 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
     databaseId: string,
     queryFilter: CommandExecutionFilter,
   ): Promise<ShortCommandExecution[]> {
-    this.logger.log('Getting command executions');
+    this.logger.debug('Getting command executions');
     const entities = await this.commandExecutionRepository
       .createQueryBuilder('e')
       .where({ databaseId, type: queryFilter.type })
@@ -107,7 +107,7 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
       .limit(WORKBENCH_CONFIG.maxItemsPerDb)
       .getMany();
 
-    this.logger.log('Succeed to get command executions');
+    this.logger.debug('Succeed to get command executions');
 
     const decryptedEntities = await Promise.all(
       entities.map<Promise<CommandExecutionEntity>>(async (entity) => {
@@ -127,7 +127,7 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
    * @inheritDoc
    */
   async getOne(_: SessionMetadata, databaseId: string, id: string): Promise<CommandExecution> {
-    this.logger.log('Getting command executions');
+    this.logger.debug('Getting command executions');
 
     const entity = await this.commandExecutionRepository.findOneBy({ id, databaseId });
 
@@ -136,7 +136,7 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
       throw new NotFoundException(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND);
     }
 
-    this.logger.log(`Succeed to get command execution ${id}`);
+    this.logger.debug(`Succeed to get command execution ${id}`);
 
     const decryptedEntity = await this.modelEncryptor.decryptEntity(entity, true);
 
@@ -147,22 +147,22 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
    * @inheritDoc
    */
   async delete(_: SessionMetadata, databaseId: string, id: string): Promise<void> {
-    this.logger.log('Delete command execution');
+    this.logger.debug('Delete command execution');
 
     await this.commandExecutionRepository.delete({ id, databaseId });
 
-    this.logger.log('Command execution deleted');
+    this.logger.debug('Command execution deleted');
   }
 
   /**
    * @inheritDoc
    */
   async deleteAll(_: SessionMetadata, databaseId: string, queryFilter: CommandExecutionFilter): Promise<void> {
-    this.logger.log('Delete all command executions');
+    this.logger.debug('Delete all command executions');
 
     await this.commandExecutionRepository.delete({ databaseId, type: queryFilter.type });
 
-    this.logger.log('Command executions deleted');
+    this.logger.debug('Command executions deleted');
   }
 
   /**

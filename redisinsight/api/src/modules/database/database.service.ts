@@ -96,7 +96,7 @@ export class DatabaseService {
    * @param id
    */
   async exists(sessionMetadata: SessionMetadata, id: string): Promise<boolean> {
-    this.logger.log(`Checking if database with ${id} exists.`);
+    this.logger.debug(`Checking if database with ${id} exists.`);
     return this.repository.exists(sessionMetadata, id);
   }
 
@@ -107,7 +107,7 @@ export class DatabaseService {
    */
   async list(sessionMetadata: SessionMetadata): Promise<Database[]> {
     try {
-      this.logger.log('Getting databases list');
+      this.logger.debug('Getting databases list');
       return await this.repository.list(sessionMetadata);
     } catch (e) {
       this.logger.error('Failed to get database instance list.', e);
@@ -127,7 +127,7 @@ export class DatabaseService {
     ignoreEncryptionErrors = false,
     omitFields?: string[],
   ): Promise<Database> {
-    this.logger.log(`Getting database ${id}`);
+    this.logger.debug(`Getting database ${id}`);
 
     if (!id) {
       this.logger.error('Database id was not provided');
@@ -158,7 +158,7 @@ export class DatabaseService {
     options: IRedisConnectionOptions = {},
   ): Promise<Database> {
     try {
-      this.logger.log('Creating new database.');
+      this.logger.debug('Creating new database.');
 
       const database = await this.repository.create(
         sessionMetadata,
@@ -215,7 +215,7 @@ export class DatabaseService {
     dto: UpdateDatabaseDto,
     manualUpdate: boolean = true, // todo: remove manualUpdate flag logic
   ): Promise<Database> {
-    this.logger.log(`Updating database: ${id}`);
+    this.logger.debug(`Updating database: ${id}`);
     const oldDatabase = await this.get(sessionMetadata, id, true);
 
     let database: Database;
@@ -263,11 +263,11 @@ export class DatabaseService {
     let database: Database;
 
     if (id) {
-      this.logger.log('Testing existing database connection');
+      this.logger.debug('Testing existing database connection');
 
       database = await this.merge(await this.get(sessionMetadata, id, false), dto);
     } else {
-      this.logger.log('Testing new database connection');
+      this.logger.debug('Testing new database connection');
       database = classToClass(Database, dto);
     }
 
@@ -293,7 +293,7 @@ export class DatabaseService {
    * @param dto
    */
   public async clone(sessionMetadata: SessionMetadata, id: string, dto: UpdateDatabaseDto): Promise<Database> {
-    this.logger.log('Clone existing database');
+    this.logger.debug('Clone existing database');
     const database = await this.merge(
       await this.get(sessionMetadata, id, false, ['id', 'sshOptions.id']),
       dto,
@@ -323,13 +323,13 @@ export class DatabaseService {
    * @param id
    */
   async delete(sessionMetadata: SessionMetadata, id: string): Promise<void> {
-    this.logger.log(`Deleting database: ${id}`);
+    this.logger.debug(`Deleting database: ${id}`);
     const database = await this.get(sessionMetadata, id, true);
     try {
       await this.repository.delete(sessionMetadata, id);
       // todo: rethink
       await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
-      this.logger.log('Succeed to delete database instance.');
+      this.logger.debug('Succeed to delete database instance.');
 
       this.analytics.sendInstanceDeletedEvent(sessionMetadata, database);
       this.eventEmitter.emit(AppRedisInstanceEvents.Deleted, id);
@@ -346,7 +346,7 @@ export class DatabaseService {
    * @param ids
    */
   async bulkDelete(sessionMetadata: SessionMetadata, ids: string[]): Promise<DeleteDatabasesResponse> {
-    this.logger.log(`Deleting many database: ${ids}`);
+    this.logger.debug(`Deleting many database: ${ids}`);
 
     return {
       affected: sum(await Promise.all(ids.map(async (id) => {
@@ -370,7 +370,7 @@ export class DatabaseService {
   async export(sessionMetadata: SessionMetadata, ids: string[], withSecrets = false): Promise<ExportDatabase[]> {
     const paths = !withSecrets ? this.exportSecurityFields : [];
 
-    this.logger.log(`Exporting many database: ${ids}`);
+    this.logger.debug(`Exporting many database: ${ids}`);
 
     if (!ids.length) {
       this.logger.error('Database ids were not provided');

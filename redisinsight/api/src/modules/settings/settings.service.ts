@@ -46,11 +46,11 @@ export class SettingsService {
    * Method to get settings
    */
   public async getAppSettings(sessionMetadata: SessionMetadata): Promise<GetAppSettingsResponse> {
-    this.logger.log('Getting application settings.');
+    this.logger.debug('Getting application settings.');
     try {
       const agreements = await this.agreementRepository.getOrCreate(sessionMetadata);
       const settings = await this.settingsRepository.getOrCreate(sessionMetadata);
-      this.logger.log('Succeed to get application settings.');
+      this.logger.debug('Succeed to get application settings.');
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,
         agreements: agreements?.version ? {
@@ -73,7 +73,7 @@ export class SettingsService {
     sessionMetadata: SessionMetadata,
     dto: UpdateSettingsDto,
   ): Promise<GetAppSettingsResponse> {
-    this.logger.log('Updating application settings.');
+    this.logger.debug('Updating application settings.');
     const { agreements, ...settings } = dto;
     try {
       const oldAppSettings = await this.getAppSettings(sessionMetadata);
@@ -92,7 +92,7 @@ export class SettingsService {
       if (agreements) {
         await this.updateAgreements(sessionMetadata, agreements);
       }
-      this.logger.log('Succeed to update application settings.');
+      this.logger.debug('Succeed to update application settings.');
       const results = await this.getAppSettings(sessionMetadata);
       this.analytics.sendSettingsUpdatedEvent(sessionMetadata, results, oldAppSettings);
 
@@ -178,7 +178,7 @@ export class SettingsService {
     sessionMetadata: SessionMetadata,
     dtoAgreements: Map<string, boolean> = new Map(),
   ): Promise<void> {
-    this.logger.log('Updating application agreements.');
+    this.logger.debug('Updating application agreements.');
     const oldAgreements = await this.agreementRepository.getOrCreate(sessionMetadata);
 
     const newAgreements = {

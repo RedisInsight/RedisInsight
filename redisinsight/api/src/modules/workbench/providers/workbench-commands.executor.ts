@@ -54,7 +54,7 @@ export class WorkbenchCommandsExecutor {
     client: RedisClient,
     dto: CreateCommandExecutionDto,
   ): Promise<CommandExecutionResult[]> {
-    this.logger.log('Executing workbench command.');
+    this.logger.debug('Executing workbench command.');
     let command = unknownCommand;
     let commandArgs: string[] = [];
 
@@ -70,7 +70,7 @@ export class WorkbenchCommandsExecutor {
       );
       const result: CommandExecutionResult[] = [{ response, status: CommandExecutionStatus.Success }];
 
-      this.logger.log('Succeed to execute workbench command.');
+      this.logger.debug('Succeed to execute workbench command.');
       this.analyticsService.sendCommandExecutedEvents(
         client.clientMetadata.sessionMetadata,
         client.clientMetadata.databaseId,

@@ -40,7 +40,7 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
   }
 
   async iteration(sessionMetadata: SessionMetadata): Promise<CloudSubscription> {
-    this.logger.log('Ensure free cloud subscription');
+    this.logger.debug('Ensure free cloud subscription');
 
     this.checkSignal();
 

@@ -40,7 +40,6 @@ const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
 )
 const App = ({ children }: { children?: ReactElement[] }) => {
   const { loading: serverLoading } = useSelector(appInfoSelector)
-  console.log('Test');
   return (
     <div className="main-container">
       <ThemeComponent />

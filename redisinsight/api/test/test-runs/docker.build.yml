@@ -15,7 +15,7 @@ services:
     tty: true
     volumes:
       - ${COV_FOLDER}:/usr/src/app/coverage
-      - ${COV_FOLDER}:/root/.redisinsight-v2.0
+      - ${COV_FOLDER}:/data
     depends_on:
       - redis
       - app
@@ -25,7 +25,7 @@ services:
       TEST_REDIS_HOST: "redis"
       RI_DB_SYNC: "true"
       TEST_BE_SERVER: ${TEST_BE_SERVER}
-      TEST_LOCAL_DB_FILE_PATH: "/root/.redisinsight-v2.0/redisinsight.db"
+      TEST_LOCAL_DB_FILE_PATH: "/data/redisinsight.db"
       RI_SECRET_STORAGE_PASSWORD: "somepassword"
   app:
     cap_add:
@@ -34,7 +34,8 @@ services:
     depends_on:
       - redis
     volumes:
-      - ${COV_FOLDER}:/root/.redisinsight-v2.0
+      # - ${COV_FOLDER}:/root/.redisinsight-v2.0
+      - ${COV_FOLDER}:/data
     environment:
       RI_REDIS_CLIENTS_FORCE_STRATEGY: ${RI_REDIS_CLIENTS_FORCE_STRATEGY}
       CERTS_FOLDER: "/root/.redisinsight-v2.0"

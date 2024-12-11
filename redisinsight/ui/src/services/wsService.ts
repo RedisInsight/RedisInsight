@@ -25,7 +25,7 @@ export function wsService(wsUrl: string, {
     queryParams = { ...queryParams, ...query }
   }
   let headers: Record<string, any> = { [CustomHeaders.WindowId]: window.windowId || '' }
-  if (!passTokenViaHeaders) {
+  if (passTokenViaHeaders) {
     headers = { ...headers, [CustomHeaders.CsrfToken]: token || '' }
   }
 

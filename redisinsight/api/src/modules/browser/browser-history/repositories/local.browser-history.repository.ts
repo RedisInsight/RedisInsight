@@ -45,7 +45,7 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
     try {
       await this.cleanupDatabaseHistory(sessionMetadata, entity.databaseId, entity.mode);
     } catch (e) {
-      this.logger.error('Error when trying to cleanup history after insert', e);
+      this.logger.error('Error when trying to cleanup history after insert', e, sessionMetadata);
     }
 
     return classToClass(BrowserHistory, await this.modelEncryptor.decryptEntity(entity));
@@ -55,11 +55,11 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
    * Fetches entity, decrypt and return full BrowserHistory model
    * @param id
    */
-  async get(_sessionMetadata: SessionMetadata, id: string): Promise<BrowserHistory> {
+  async get(sessionMetadata: SessionMetadata, id: string): Promise<BrowserHistory> {
     const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
-      this.logger.error(`Browser history item with id:${id} was not Found`);
+      this.logger.error(`Browser history item with id:${id} was not Found`, sessionMetadata);
       throw new NotFoundException(ERROR_MESSAGES.BROWSER_HISTORY_ITEM_NOT_FOUND);
     }
 
@@ -72,11 +72,11 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
    * @param mode
    */
   async list(
-    _sessionMetadata: SessionMetadata,
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     mode: BrowserHistoryMode,
   ): Promise<BrowserHistory[]> {
-    this.logger.log('Getting browser history list');
+    this.logger.debug('Getting browser history list', sessionMetadata);
     const entities = await this.repository
       .createQueryBuilder('a')
       .where({ databaseId, mode })
@@ -90,7 +90,7 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
       .limit(BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb)
       .getMany();
 
-    this.logger.log('Succeed to get history list');
+    this.logger.debug('Succeed to get history list', sessionMetadata);
 
     const decryptedEntities = await Promise.all(
       entities.map<Promise<BrowserHistoryEntity>>(async (entity) => {
@@ -112,14 +112,14 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
    * @param mode
    * @param id
    */
-  async delete(_: SessionMetadata, databaseId: string, mode: BrowserHistoryMode, id: string): Promise<void> {
-    this.logger.log(`Deleting browser history item: ${id}`);
+  async delete(sessionMetadata: SessionMetadata, databaseId: string, mode: BrowserHistoryMode, id: string): Promise<void> {
+    this.logger.debug(`Deleting browser history item: ${id}`, sessionMetadata);
     try {
       await this.repository.delete({ id, databaseId, mode });
       // todo: rethink
-      this.logger.log('Succeed to delete browser history item.');
+      this.logger.debug('Succeed to delete browser history item.', sessionMetadata);
     } catch (error) {
-      this.logger.error(`Failed to delete history items: ${id}`, error);
+      this.logger.error(`Failed to delete history items: ${id}`, error, sessionMetadata);
       throw new InternalServerErrorException();
     }
   }

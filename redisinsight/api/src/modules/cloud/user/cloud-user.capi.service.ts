@@ -18,15 +18,15 @@ export class CloudUserCapiService {
    * @param authDto
    */
   async getCurrentAccount(authDto: CloudCapiAuthDto): Promise<CloudAccountInfo> {
-    this.logger.log('Getting cloud account.');
+    this.logger.debug('Getting cloud account.');
     try {
       const account = await this.capi.getCurrentAccount(authDto);
 
-      this.logger.log('Succeed to get cloud account.');
+      this.logger.debug('Succeed to get cloud account.');
 
       return parseCloudAccountCapiResponse(account);
     } catch (e) {
-      this.logger.log('Failed to get cloud account', e);
+      this.logger.error('Failed to get cloud account', e);
       throw wrapHttpError(e);
     }
   }

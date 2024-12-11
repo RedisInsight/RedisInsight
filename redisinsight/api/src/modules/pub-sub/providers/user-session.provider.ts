@@ -25,7 +25,7 @@ export class UserSessionProvider {
         }),
       );
       this.sessions.set(session.getId(), session);
-      this.logger.debug(`New session was added ${this}`);
+      this.logger.debug(`New session was added ${this}`, sessionMetadata);
     }
 
     return session;

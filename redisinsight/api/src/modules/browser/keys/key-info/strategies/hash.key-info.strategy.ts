@@ -13,7 +13,7 @@ export class HashKeyInfoStrategy extends KeyInfoStrategy {
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${RedisDataType.Hash} type info.`);
+    this.logger.debug(`Getting ${RedisDataType.Hash} type info.`);
 
     const [
       [, ttl = null],

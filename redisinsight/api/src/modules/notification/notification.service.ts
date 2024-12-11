@@ -13,7 +13,7 @@ export class NotificationService {
   ) {}
 
   async getNotifications(sessionMetadata: SessionMetadata): Promise<NotificationsDto> {
-    this.logger.debug('Getting notifications list.');
+    this.logger.debug('Getting notifications list.', sessionMetadata);
 
     try {
       const [notifications, totalUnread] = await Promise.all([
@@ -26,7 +26,7 @@ export class NotificationService {
         totalUnread,
       });
     } catch (e) {
-      this.logger.error('Unable to get notifications list', e);
+      this.logger.error('Unable to get notifications list', e, sessionMetadata);
       throw new InternalServerErrorException('Unable to get notifications list');
     }
   }
@@ -41,7 +41,7 @@ export class NotificationService {
    */
   async readNotifications(sessionMetadata: SessionMetadata, dto: ReadNotificationsDto): Promise<NotificationsDto> {
     try {
-      this.logger.debug('Updating "read=true" status for notification(s).');
+      this.logger.debug('Updating "read=true" status for notification(s).', sessionMetadata);
       const { type, timestamp } = dto;
 
       const notifications = await this.notificationRepository.readNotifications(sessionMetadata, type, timestamp);
@@ -51,7 +51,7 @@ export class NotificationService {
         totalUnread: await this.notificationRepository.getTotalUnread(sessionMetadata),
       });
     } catch (e) {
-      this.logger.error('Unable to "read" notification(s)', e);
+      this.logger.error('Unable to "read" notification(s)', e, sessionMetadata);
       throw new InternalServerErrorException('Unable to "read" notification(s)');
     }
   }

@@ -126,7 +126,7 @@ export class CloudAutodiscoveryService {
   ): Promise<CloudDatabase[]> {
     let result = [];
     try {
-      this.logger.log('Discovering cloud databases from subscription(s)');
+      this.logger.debug('Discovering cloud databases from subscription(s)', sessionMetadata);
 
       const subscriptions = uniqBy(
         dto.subscriptions,
@@ -168,7 +168,7 @@ export class CloudAutodiscoveryService {
     authDto: CloudCapiAuthDto,
     addDatabasesDto: ImportCloudDatabaseDto[],
   ): Promise<ImportCloudDatabaseResponse[]> {
-    this.logger.log('Adding Redis Cloud databases.');
+    this.logger.debug('Adding Redis Cloud databases.', sessionMetadata);
 
     return Promise.all(
       addDatabasesDto.map(

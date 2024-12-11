@@ -44,7 +44,7 @@ export class ConsumerService {
     dto: GetConsumersDto,
   ): Promise<ConsumerDto[]> {
     try {
-      this.logger.log('Getting consumers list.');
+      this.logger.debug('Getting consumers list.', clientMetadata);
       const { keyName, groupName } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -82,7 +82,7 @@ export class ConsumerService {
     dto: DeleteConsumersDto,
   ): Promise<void> {
     try {
-      this.logger.log('Deleting consumers from the group.');
+      this.logger.debug('Deleting consumers from the group.', clientMetadata);
       const { keyName, groupName, consumerNames } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -131,7 +131,7 @@ export class ConsumerService {
     dto: GetPendingEntriesDto,
   ): Promise<PendingEntryDto[]> {
     try {
-      this.logger.log('Getting pending entries list.');
+      this.logger.debug('Getting pending entries list.', clientMetadata);
       const {
         keyName, groupName, start, end, count, consumerName,
       } = dto;
@@ -175,7 +175,7 @@ export class ConsumerService {
     dto: AckPendingEntriesDto,
   ): Promise<AckPendingEntriesResponse> {
     try {
-      this.logger.log('Acknowledging pending entries.');
+      this.logger.debug('Acknowledging pending entries.', clientMetadata);
       const { keyName, groupName, entries } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -188,7 +188,7 @@ export class ConsumerService {
         ...entries,
       ]) as number;
 
-      this.logger.log('Successfully acknowledged pending entries.');
+      this.logger.debug('Successfully acknowledged pending entries.', clientMetadata);
       return { affected };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -213,7 +213,7 @@ export class ConsumerService {
     dto: ClaimPendingEntryDto,
   ): Promise<ClaimPendingEntriesResponse> {
     try {
-      this.logger.log('Claiming pending entries.');
+      this.logger.debug('Claiming pending entries.', clientMetadata);
       const {
         keyName, groupName, consumerName, minIdleTime, entries, idle, time, retryCount, force,
       } = dto;
@@ -245,7 +245,7 @@ export class ConsumerService {
         ...args,
       ], { replyEncoding: 'utf8' }) as string[];
 
-      this.logger.log('Successfully claimed pending entries.');
+      this.logger.debug('Successfully claimed pending entries.', clientMetadata);
       return { affected };
     } catch (error) {
       if (error instanceof NotFoundException) {

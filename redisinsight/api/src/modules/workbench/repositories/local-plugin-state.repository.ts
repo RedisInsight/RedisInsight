@@ -52,17 +52,21 @@ export class LocalPluginStateRepository extends PluginStateRepository {
    * @param visualizationId
    * @param commandExecutionId
    */
-  async getOne(_: SessionMetadata, visualizationId: string, commandExecutionId: string): Promise<PluginState> {
-    this.logger.log('Getting plugin state');
+  async getOne(
+    sessionMetadata: SessionMetadata,
+    visualizationId: string,
+    commandExecutionId: string,
+  ): Promise<PluginState> {
+    this.logger.debug('Getting plugin state', sessionMetadata);
 
     const entity = await this.repository.findOneBy({ visualizationId, commandExecutionId });
 
     if (!entity) {
-      this.logger.error(`Plugin state ${commandExecutionId}:${visualizationId} was not Found`);
+      this.logger.error(`Plugin state ${commandExecutionId}:${visualizationId} was not Found`, sessionMetadata);
       throw new NotFoundException(ERROR_MESSAGES.PLUGIN_STATE_NOT_FOUND);
     }
 
-    this.logger.log(`Succeed to get plugin state ${commandExecutionId}:${visualizationId}`);
+    this.logger.debug(`Succeed to get plugin state ${commandExecutionId}:${visualizationId}`, sessionMetadata);
 
     const decryptedEntity = await this.modelEncryptor.decryptEntity(entity, true);
 

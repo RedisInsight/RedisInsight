@@ -184,6 +184,7 @@ export class DatabaseService {
           database,
         );
         const redisInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
+
         this.analytics.sendInstanceAddedEvent(database, redisInfo);
         await client.disconnect();
       } catch (e) {

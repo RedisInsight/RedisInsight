@@ -19,7 +19,12 @@ if (LOGGER_CONFIG.stdout) {
       format: format.combine(
         sensitiveDataFormatter({ omitSensitiveData: LOGGER_CONFIG.omitSensitiveData }),
         format.timestamp(),
-        nestWinstonModuleUtilities.format.nestLike(),
+        nestWinstonModuleUtilities.format.nestLike('Redis Insight', {
+          colors: true,
+          prettyPrint: true,
+          processId: true,
+          appName: true,
+        }),
       ),
     }),
   );

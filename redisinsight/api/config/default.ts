@@ -38,7 +38,7 @@ const pluginsAssetsUri = posix.join(
   'plugins',
 );
 
-const socketPath = posix.join('/socket.io');
+const socketPath = posix.join('/api', 'socket.io');
 const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'data')
   : join(__dirname, '..', 'data');

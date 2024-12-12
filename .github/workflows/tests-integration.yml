@@ -104,12 +104,20 @@ jobs:
           detached: true
 
       - name: Restore Docker Image from Cache
+        id: restore-cache
         uses: actions/cache@v3
         with:
           path: ./release/docker-linux-alpine.*64.tar
           key: docker-image-${{ github.ref_name }}-v1
           restore-keys: |
             docker-image-
+
+      - name: Download Docker Artifacts
+        if: inputs.build == 'docker' && steps.restore-cache.outputs.cache-hit == 'false'
+        uses: actions/download-artifact@v4
+        with:
+          name: docker
+          path: ./release
 
       - name: Load built docker image from workspace
         if: inputs.build == 'docker'

@@ -89,6 +89,13 @@ jobs:
           docker image save -o release/docker/docker-linux-alpine.amd64.tar redisinsight:amd64
           docker image save -o release/docker/docker-linux-alpine.arm64.tar redisinsight:arm64
 
+      - uses: actions/upload-artifact@v4
+        name: Upload docker images
+        with:
+          if-no-files-found: error
+          name: docker
+          path: ./release/docker/docker-linux-alpine.*64.tar
+
       - name: Cache Docker Image
         uses: actions/cache@v3
         with:

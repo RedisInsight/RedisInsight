@@ -35,6 +35,7 @@ export class AddRedisDatabaseDialog {
     databaseAliasInput = Selector('[data-testid=name]');
     passwordInput = Selector('[data-testid=password]');
     usernameInput = Selector('[data-testid=username]');
+    connectionUrlInput = Selector('[data-testid=connectionURL]');
     accessKeyInput = Selector('[data-testid=access-key]');
     secretKeyInput = Selector('[data-testid=secret-key]');
     databaseIndexInput = Selector('[data-testid=db]');

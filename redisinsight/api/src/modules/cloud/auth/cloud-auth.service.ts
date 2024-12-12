@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+import log from 'electron-log'
 import axios from 'axios';
 import { GoogleIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/google-idp.cloud.auth-strategy';
+import { MicrosoftIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/microsoft-idp.cloud.auth-strategy';
 import {
   CloudAuthIdpType,
   CloudAuthRequest,
@@ -40,6 +42,7 @@ export class CloudAuthService {
   constructor(
     private readonly sessionService: CloudSessionService,
     private readonly googleIdpAuthStrategy: GoogleIdpCloudAuthStrategy,
+    private readonly microsoftIdpAuthStrategy: MicrosoftIdpCloudAuthStrategy,
     private readonly githubIdpCloudAuthStrategy: GithubIdpCloudAuthStrategy,
     private readonly ssoIdpCloudAuthStrategy: SsoIdpCloudAuthStrategy,
     private readonly analytics: CloudAuthAnalytics,
@@ -86,6 +89,8 @@ export class CloudAuthService {
     switch (strategy) {
       case CloudAuthIdpType.Google:
         return this.googleIdpAuthStrategy;
+      case CloudAuthIdpType.Microsoft:
+        return this.microsoftIdpAuthStrategy;
       case CloudAuthIdpType.GitHub:
         return this.githubIdpCloudAuthStrategy;
       case CloudAuthIdpType.Sso:
@@ -138,6 +143,13 @@ export class CloudAuthService {
       const { data } = await axios.post(tokenUrl.toString().split('?')[0], tokenUrl.searchParams, {
         headers: CloudAuthService.getOAuthHttpRequestHeaders(),
       });
+
+      // Extract Entra ID (oid ID) from id_token for Microsoft authentication
+      if (authRequest.idpType === CloudAuthIdpType.Microsoft && data.id_token) {
+        const [, payload] = data.id_token.split('.')
+        const decodedPayload = JSON.parse(Buffer.from(payload, 'base64').toString())
+        log.info('the entire payload', decodedPayload)
+      }
 
       return data;
     } catch (e) {

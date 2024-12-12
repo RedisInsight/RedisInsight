@@ -107,10 +107,15 @@ jobs:
         id: restore-cache
         uses: actions/cache@v3
         with:
-          path: ./release/docker-linux-alpine.*64.tar
+          path: ./release/docker-linux-alpine.amd64.tar
           key: docker-image-${{ github.ref_name }}-v1
           restore-keys: |
             docker-image-
+
+      - name: Debug Cache Hit
+        run: |
+          echo "Cache hit: ${{ steps.restore-cache.outputs.cache-hit }}"
+          ls -la ./release
 
       - name: Download Docker Artifacts
         if: inputs.build == 'docker' && steps.restore-cache.outputs.cache-hit == 'false'

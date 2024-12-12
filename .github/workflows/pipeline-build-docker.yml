@@ -99,7 +99,7 @@ jobs:
       - name: Cache Docker Image
         uses: actions/cache@v3
         with:
-          path: ./release/docker/docker-linux-alpine.*64.tar
+          path: ./release/docker/docker-linux-alpine.amd64.tar
           key: docker-image-${{ github.ref_name }}-v1
           restore-keys: |
             docker-image-

@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client'
+import path from 'path'
 import { getProxyPath } from 'uiSrc/utils'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { getConfig } from 'uiSrc/config'
@@ -6,25 +7,27 @@ import { getConfig } from 'uiSrc/config'
 const riConfig = getConfig()
 
 export type WsParams = {
-  forceNew?: boolean,
-  token?: string,
-  reconnection?: boolean
-  query?: Record<string, any>
-  extraHeaders?: Record<string, any>
+  forceNew?: boolean;
+  token?: string;
+  reconnection?: boolean;
+  query?: Record<string, any>;
+  extraHeaders?: Record<string, any>;
 }
 
-export function wsService(wsUrl: string, {
-  forceNew = true,
-  token,
-  reconnection,
-  query,
-  extraHeaders
-}: WsParams, passTokenViaHeaders: boolean = true,) {
-  let queryParams: Record<string, any> = !passTokenViaHeaders ? { [CustomHeaders.CsrfToken.toLowerCase()]: token } : {}
+export function wsService(
+  wsUrl: string,
+  { forceNew = true, token, reconnection, query, extraHeaders }: WsParams,
+  passTokenViaHeaders: boolean = true,
+) {
+  let queryParams: Record<string, any> = !passTokenViaHeaders
+    ? { [CustomHeaders.CsrfToken.toLowerCase()]: token }
+    : {}
   if (query) {
     queryParams = { ...queryParams, ...query }
   }
-  let headers: Record<string, any> = { [CustomHeaders.WindowId]: window.windowId || '' }
+  let headers: Record<string, any> = {
+    [CustomHeaders.WindowId]: window.windowId || '',
+  }
   if (passTokenViaHeaders) {
     headers = { ...headers, [CustomHeaders.CsrfToken]: token || '' }
   }
@@ -37,7 +40,7 @@ export function wsService(wsUrl: string, {
 
   const ioOptions = {
     // addTrailingSlash: false,
-    path: getProxyPath(),
+    path: '/redis-insight/api/socket.io',
     forceNew,
     reconnection,
     query: queryParams,
@@ -47,15 +50,18 @@ export function wsService(wsUrl: string, {
     withCredentials,
     // auth: { token }
   }
+  const fullWsUrl = `${wsUrl}/socket.io`
   // eslint-disable-next-line no-console
   console.log({
+    wsUrl,
+    fullWsUrl,
     passTokenViaHeaders,
     token,
     queryParams,
     headers,
     transports,
-    ioOptions
+    ioOptions,
   })
 
-  return io(wsUrl, ioOptions)
+  return io('https://app-sm.k8s-mw.sm-qa.qa.redislabs.com', ioOptions)
 }

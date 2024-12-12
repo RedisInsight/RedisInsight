@@ -35,6 +35,7 @@ export class AddRedisDatabaseDialog {
     databaseAliasInput = Selector('[data-testid=name]');
     passwordInput = Selector('[data-testid=password]');
     usernameInput = Selector('[data-testid=username]');
+    connectionUrlInput = Selector('[data-testid=connectionURL]');
     accessKeyInput = Selector('[data-testid=access-key]');
     secretKeyInput = Selector('[data-testid=secret-key]');
     databaseIndexInput = Selector('[data-testid=db]');
@@ -50,7 +51,6 @@ export class AddRedisDatabaseDialog {
     sshPrivateKeyInput = Selector('[data-testid=sshPrivateKey]');
     sshPassphraseInput = Selector('[data-testid=sshPassphrase]');
     timeoutInput = Selector('[data-testid=timeout]');
-    urlInput = Selector('[data-testid=connection-url]');
     // DROPDOWNS
     caCertField = Selector('[data-testid=select-ca-cert]', { timeout: 500 });
     clientCertField = Selector('[data-testid=select-cert]', { timeout: 500 });

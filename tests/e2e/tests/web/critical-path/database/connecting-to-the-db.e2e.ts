@@ -238,7 +238,11 @@ test
         const codedUrl = `redis://${username}:${password}@${host}:${port}`;
         await t
             .click(addDbDialog.addDatabaseButton);
-        await t.typeText(addDbDialog.urlInput, codedUrl);
+
+        // Verify that 'redis://default@127.0.0.1:6379' default value prepopulated for connection URL field and the same for placeholder
+        await t.expect(addDbDialog.connectionUrlInput.textContent).eql(`redis://default@127.0.0.1:6379`, 'Connection URL not prepopulated');
+
+        await t.typeText(addDbDialog.connectionUrlInput, codedUrl);
         await t.click(addDbDialog.customSettingsButton);
         await t.expect(addDbDialog.databaseAliasInput.getAttribute('value')).eql(`${host}:${port}`, 'name is incorrected');
         await t.expect(addDbDialog.hostInput.getAttribute('value')).eql(`${host}`, 'host is incorrected');

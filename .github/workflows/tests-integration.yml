@@ -103,12 +103,13 @@ jobs:
         with:
           detached: true
 
-      - name: Download Docker Artifacts
-        if: inputs.build == 'docker'
-        uses: actions/download-artifact@v4
+      - name: Restore Docker Image from Cache
+        uses: actions/cache@v3
         with:
-          name: docker
           path: ./release
+          key: test-docker-cache
+          restore-keys: |
+            test-docker-cache
 
       - name: Load built docker image from workspace
         if: inputs.build == 'docker'

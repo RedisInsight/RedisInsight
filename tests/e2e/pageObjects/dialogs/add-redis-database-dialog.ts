@@ -51,7 +51,6 @@ export class AddRedisDatabaseDialog {
     sshPrivateKeyInput = Selector('[data-testid=sshPrivateKey]');
     sshPassphraseInput = Selector('[data-testid=sshPassphrase]');
     timeoutInput = Selector('[data-testid=timeout]');
-    urlInput = Selector('[data-testid=connection-url]');
     // DROPDOWNS
     caCertField = Selector('[data-testid=select-ca-cert]', { timeout: 500 });
     clientCertField = Selector('[data-testid=select-cert]', { timeout: 500 });

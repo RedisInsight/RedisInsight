@@ -174,7 +174,7 @@ describe('decompressingBuffer', () => {
     const result = decompressingBuffer(input, compressorInit || compressor)
     let value: UintArray = output
 
-    if (compressor && compressor !== KeyValueCompressor.GZIP) {
+    if (compressor) {
       value = new Uint8Array(output)
     }
 

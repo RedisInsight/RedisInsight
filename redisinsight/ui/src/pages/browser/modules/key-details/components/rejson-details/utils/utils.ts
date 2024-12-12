@@ -122,7 +122,12 @@ export const parseValue = (value: any, type?: string): any => {
       }
       const result: { [key: string]: any } = {}
       Object.entries(parsed).forEach(([key, val]) => {
-        result[key] = parseValue(val)
+        // This prevents double-parsing of JSON string values.
+        if (typeof val === 'string') {
+          result[key] = val
+        } else {
+          result[key] = parseValue(val)
+        }
       })
       return result
     }

@@ -1,5 +1,7 @@
 import { LoggerService, Injectable } from '@nestjs/common';
 import { WinstonModule, WinstonModuleOptions } from 'nest-winston';
+import { isString } from 'lodash';
+import { ClientMetadata, SessionMetadata } from 'src/common/models';
 
 type LogMeta = object;
 
@@ -7,7 +9,7 @@ type LogObject = {
   [key: string]: unknown;
 };
 
-type ErrorOrMeta = Error | LogMeta | string;
+type ErrorOrMeta = Error | LogMeta | string | ClientMetadata | SessionMetadata;
 
 @Injectable()
 export class AppLogger implements LoggerService {
@@ -25,57 +27,103 @@ export class AppLogger implements LoggerService {
     this.logger = WinstonModule.createLogger(loggerConfig);
   }
 
-  private isException(error?: unknown) {
-    return !!(
-      error instanceof Error
-      || ((error as Error)?.stack && (error as Error)?.message)
-    );
+  /**
+   * Get context from optional arguments
+   * If the last argument is a string - it will be handled like a context
+   * since nest passes the logger context as the last argument
+   * Note: args array might be mutated
+   * @param args
+   */
+  static getContext(args: ErrorOrMeta[] = []): string {
+    const lastArg = args?.[args.length - 1];
+
+    if (isString(lastArg)) {
+      return args.pop() as string;
+    }
+
+    return 'TODO: generic name or null?';
+  }
+
+  /**
+   * Get an error from the optional arguments
+   * Will find first entry which is error type
+   * Note: args array might be mutated
+   * @param args
+   */
+  static getError(args: ErrorOrMeta[] = []): void | {} {
+    let error = null;
+    const index = args.findIndex((arg) => (arg instanceof Error));
+    if (index > -1) {
+      [error] = args.splice(index, 1);
+    }
+
+    if (error) {
+      return {
+        message: error.message,
+        stack: error.stack,
+        response: error.response,
+      };
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Get clientMetadata and/or sessionMetadata object(s) from args
+   * Will find first entry of ClientMetadata and get SessionMetadata, from it and return both
+   * otherwise will find SessionMetadata and return only it
+   * otherwise will return empty object
+   * Note: args array might be mutated
+   * @param args
+   */
+  static getUserMetadata(args: ErrorOrMeta[] = []): {
+    clientMetadata?: Partial<ClientMetadata>,
+    sessionMetadata?: SessionMetadata,
+  } {
+    // check for client metadata in args
+    const clientMetadataIndex = args.findIndex((arg) => (arg instanceof ClientMetadata));
+    if (clientMetadataIndex > -1) {
+      const [clientMetadata] = args.splice(clientMetadataIndex, 1) as ClientMetadata[];
+      return {
+        clientMetadata: {
+          ...clientMetadata,
+          sessionMetadata: undefined,
+        },
+        sessionMetadata: clientMetadata.sessionMetadata,
+      };
+    }
+
+    // check for session metadata in args
+    const sessionMetadataIndex = args.findIndex((arg) => (arg instanceof SessionMetadata));
+    if (sessionMetadataIndex > -1) {
+      const [sessionMetadata] = args.splice(sessionMetadataIndex, 1) as SessionMetadata[];
+      return {
+        sessionMetadata,
+      };
+    }
+
+    // by default will return empty object
+    return {};
   }
 
   private parseLoggerArgs(
     message: string | LogObject,
-    optionalParams: ErrorOrMeta[],
-    isErrorLevel = false,
+    optionalParams: ErrorOrMeta[] = [],
   ) {
     const messageObj: LogObject = (
       typeof message === 'object' ? message : { message }
     ) as LogObject;
-    const meta = [];
-    let errorMessage: string;
-    let errorStack: string;
 
-    // nest passes the logger context as the last argument
-    const contextArg = optionalParams?.[optionalParams.length - 1];
-
-    // the global exception filter converts the error object to strings
-    if (
-      isErrorLevel
-      && typeof optionalParams[0] === 'string'
-      && optionalParams.length > 1
-    ) {
-      errorStack = optionalParams.shift() as string;
-    }
-
-    for (const k in optionalParams) {
-      if (this.isException(optionalParams[k])) {
-        errorMessage = (optionalParams[k] as Error).message;
-        errorStack = (optionalParams[k] as Error).stack;
-      } else if (optionalParams[k] !== contextArg) {
-        meta.push(optionalParams[k]);
-      }
-    }
-    const metaObj = meta.length > 1 ? meta : meta[0];
+    const context = AppLogger.getContext(optionalParams);
+    const error = AppLogger.getError(optionalParams);
+    const userMetadata = AppLogger.getUserMetadata(optionalParams);
 
     return {
-      context: contextArg && typeof contextArg === 'string' ? contextArg : null,
-      ...metaObj,
-      ...(messageObj || {}),
-      ...(errorMessage || errorStack
-        ? {
-          error: errorMessage,
-          stack: [errorStack],
-        }
-        : {}),
+      ...messageObj,
+      context,
+      error,
+      ...userMetadata,
+      data: optionalParams?.length ? optionalParams : undefined,
     };
   }
 
@@ -83,31 +131,28 @@ export class AppLogger implements LoggerService {
    * Write a 'log' level log.
    */
   log(message: string | LogObject, ...optionalParams: ErrorOrMeta[]) {
-    const parsedArgs = this.parseLoggerArgs(message, optionalParams);
-    if (!AppLogger.startupContexts.includes(parsedArgs.context)) {
-      this.logger.log(parsedArgs);
-    }
+    this.logger.log(this.parseLoggerArgs(message, optionalParams));
   }
 
   /**
    * Write a 'fatal' level log.
    */
   fatal(message: string | LogObject, ...optionalParams: ErrorOrMeta[]) {
-    this.logger.fatal(this.parseLoggerArgs(message, optionalParams, true));
+    this.logger.fatal(this.parseLoggerArgs(message, optionalParams));
   }
 
   /**
    * Write an 'error' level log.
    */
   error(message: string | LogObject, ...optionalParams: ErrorOrMeta[]) {
-    this.logger.error(this.parseLoggerArgs(message, optionalParams, true));
+    this.logger.error(this.parseLoggerArgs(message, optionalParams));
   }
 
   /**
    * Write a 'warn' level log.
    */
   warn(message: string | LogObject, ...optionalParams: ErrorOrMeta[]) {
-    this.logger.warn(this.parseLoggerArgs(message, optionalParams, true));
+    this.logger.warn(this.parseLoggerArgs(message, optionalParams));
   }
 
   /**

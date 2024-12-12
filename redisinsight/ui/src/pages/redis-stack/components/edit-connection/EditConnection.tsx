@@ -18,7 +18,7 @@ import { HELP_LINKS } from 'uiSrc/pages/home/constants'
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
-import DatabasePanel from 'uiSrc/pages/home/components/database-panel/DatabasePanel'
+import DatabasePanelDialog from 'uiSrc/pages/home/components/database-panel-dialog'
 
 import './styles.scss'
 import styles from './styles.module.scss'
@@ -74,10 +74,6 @@ const EditConnection = () => {
     }
   }
 
-  const onAliasChanged = (value: string) => {
-    setState({ ...state, data: state.data ? { ...state.data, name: value } : null })
-  }
-
   const CreateCloudBtn = ({ content }: { content: ContentCreateRedis }) => {
     const { title, description, styles, links } = content
 
@@ -119,16 +115,13 @@ const EditConnection = () => {
               )}
               <div className={styles.formContainer}>
                 <div className={styles.form}>
-                  <DatabasePanel
+                  <DatabasePanelDialog
                     editMode
-                    width={600}
                     editedInstance={state.data}
                     onDbEdited={onInstanceChanged}
-                    onAliasEdited={onAliasChanged}
                     onClose={onClose}
                   />
                 </div>
-                <div id="footerDatabaseForm" />
               </div>
             </EuiPageBody>
           </EuiPage>

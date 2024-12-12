@@ -530,6 +530,8 @@ describe('DatabaseService', () => {
         mockSessionMetadata,
         omit({ ...mockDatabase, username: 'new-name', timeout: 40_000 }, ['sshOptions.id']),
       );
+      expect(databaseRepository.get)
+        .toHaveBeenCalledWith(mockSessionMetadata, mockDatabase.id, false, ['id', 'sshOptions.id', 'createdAt']);
     });
 
     it('should create new database with merged ssh options', async () => {

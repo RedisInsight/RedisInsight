@@ -43,6 +43,9 @@ export const initialState: StateAppFeatures = {
       },
       [FeatureFlags.rdi]: {
         flag: false
+      },
+      [FeatureFlags.enhancedCloudUI]: {
+        flag: false
       }
     }
   }

@@ -33,5 +33,5 @@ test('Verify that rdi recommendation is displayed for oss cluster', async() => {
     await t.expect(tab.getRecommendationByName(rdiRecommendation).exists).ok('Redis Version recommendation not displayed');
     await tab.clickOnNavigationButton(rdiRecommendation);
 
-    await t.expect(rdiInstancesListPage.rdiInstanceButton.exists).ok('Navigation for recommendation is not correct');
+    await t.expect(rdiInstancesListPage.addRdiInstanceButton.exists).ok('Navigation for recommendation is not correct');
 });

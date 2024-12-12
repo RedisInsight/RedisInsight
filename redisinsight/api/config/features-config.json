@@ -1,5 +1,5 @@
 {
-  "version": 2.56,
+  "version": 2.57,
   "features": {
     "redisDataIntegration": {
       "flag": true,
@@ -111,6 +111,10 @@
       "data": {
         "strategy": "ioredis"
       }
+    },
+    "enhancedCloudUI": {
+      "flag": true,
+      "perc": [[0, 50]]
     }
   }
 }

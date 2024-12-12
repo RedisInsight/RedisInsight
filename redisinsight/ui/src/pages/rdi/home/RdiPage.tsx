@@ -1,4 +1,4 @@
-import { EuiPage, EuiPageBody, EuiPanel, EuiResizableContainer, EuiResizeObserver } from '@elastic/eui'
+import { EuiPage, EuiPageBody, EuiPanel, EuiResizeObserver } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -20,7 +20,7 @@ import HomePageTemplate from 'uiSrc/templates/home-page-template'
 import { setTitle } from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 import EmptyMessage from './empty-message/EmptyMessage'
-import ConnectionForm from './connection-form/ConnectionForm'
+import ConnectionForm from './connection-form/ConnectionFormWrapper'
 import RdiHeader from './header/RdiHeader'
 import RdiInstancesListWrapper from './instance-list/RdiInstancesListWrapper'
 
@@ -141,54 +141,14 @@ const RdiPage = () => {
       <EuiPage className={cx(styles.page, 'homePage')}>
         <EuiPageBody component="div">
           <RdiHeader onRdiInstanceClick={handleOpenConnectionForm} />
-          <EuiResizableContainer style={{ height: 'calc(100% - 60px)' }}>
-            {(EuiResizablePanel, EuiResizableButton) => (
-              <>
-                <EuiResizablePanel
-                  scrollable={false}
-                  initialSize={65}
-                  id="instances"
-                  minSize="50%"
-                  paddingSize="none"
-                  wrapperProps={{
-                    className: cx('home__resizePanelLeft', {
-                      fullWidth: !isConnectionFormOpen,
-                      openedRightPanel: isConnectionFormOpen,
-                    })
-                  }}
-                >
-                  <InstanceList />
-                </EuiResizablePanel>
-                <EuiResizableButton
-                  style={{ margin: 0 }}
-                  className={cx('home__resizableButton', {
-                    hidden: !isConnectionFormOpen,
-                  })}
-                />
-                <EuiResizablePanel
-                  scrollable={false}
-                  initialSize={35}
-                  id="connection-form"
-                  paddingSize="none"
-                  style={{ minWidth: '474px' }}
-                  wrapperProps={{
-                    className: cx('home__resizePanelRight', {
-                      hidden: !isConnectionFormOpen
-                    })
-                  }}
-                >
-                  {isConnectionFormOpen && (
-                    <ConnectionForm
-                      onSubmit={handleFormSubmit}
-                      onCancel={handleCloseConnectionForm}
-                      editInstance={editInstance}
-                      isLoading={loading || loadingChanging}
-                    />
-                  )}
-                </EuiResizablePanel>
-              </>
-            )}
-          </EuiResizableContainer>
+          <InstanceList />
+          <ConnectionForm
+            isOpen={isConnectionFormOpen}
+            onSubmit={handleFormSubmit}
+            onCancel={handleCloseConnectionForm}
+            editInstance={editInstance}
+            isLoading={loading || loadingChanging}
+          />
         </EuiPageBody>
       </EuiPage>
     </HomePageTemplate>

@@ -72,5 +72,37 @@ describe('cliTexts', () => {
         expect(screen.queryByTestId('user-pub-sub-link-disabled')).not.toBeInTheDocument()
       })
     })
+
+    describe('PSUBSCRIBE_COMMAND_CLI', () => {
+      it('should render proper content with flag disabled', async () => {
+        const initialStoreState = set(
+          cloneDeep(initialStateDefault),
+          `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+          { flag: false }
+        )
+
+        render(cliTexts.PSUBSCRIBE_COMMAND(), {
+          store: mockStore(initialStoreState)
+        })
+
+        expect(screen.getByTestId('user-pub-sub-link-disabled')).toBeInTheDocument()
+        expect(screen.queryByTestId('user-pub-sub-link')).not.toBeInTheDocument()
+      })
+
+      it('should render proper content with flag enabled', () => {
+        const initialStoreState = set(
+          cloneDeep(initialStateDefault),
+          `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+          { flag: true }
+        )
+
+        render(cliTexts.PSUBSCRIBE_COMMAND(), {
+          store: mockStore(initialStoreState)
+        })
+
+        expect(screen.getByTestId('user-pub-sub-link')).toBeInTheDocument()
+        expect(screen.queryByTestId('user-pub-sub-link-disabled')).not.toBeInTheDocument()
+      })
+    })
   })
 })

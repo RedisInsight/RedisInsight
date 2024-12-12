@@ -108,12 +108,10 @@ jobs:
 
       - name: Restore Docker Image from Cache
         id: restore-cache
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v4
         with:
           path: ./release/docker-linux-alpine.amd64.tar
           key: docker-image-${{ github.ref_name }}-v1
-          restore-keys: |
-            docker-image-
 
       - name: Check we have everything needed
         run: |

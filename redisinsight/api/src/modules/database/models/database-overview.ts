@@ -54,4 +54,10 @@ export class DatabaseOverview {
     type: Number,
   })
   cpuUsagePercentage?: number;
+
+  @ApiProperty({
+    description: 'Database server name',
+    type: String,
+  })
+  serverName?: string;
 }

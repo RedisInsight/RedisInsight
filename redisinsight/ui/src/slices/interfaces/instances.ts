@@ -307,6 +307,7 @@ export interface DatabaseConfigInfo {
   networkInKbps?: Nullable<number>
   networkOutKbps?: Nullable<number>
   cpuUsagePercentage?: Nullable<number>
+  serverName?: Nullable<string>
 }
 
 export interface InitialStateInstances {

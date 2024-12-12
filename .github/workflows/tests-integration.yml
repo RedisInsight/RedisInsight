@@ -106,20 +106,23 @@ jobs:
       - name: Ensure Release Directory Exists
         run: mkdir -p ./release
 
-      - name: Download Docker Artifact
-        run: |
-          curl -L -o ./release/docker.zip https://github.com/RedisInsight/RedisInsight/actions/runs/12296738488/artifacts/2311621134
-
-      - name: Check File Type
-        run: file ./release/docker.zip
-
-      - name: Extract ZIP File
-        run: |
-          unzip ./release/docker.zip -d ./release
+      - name: Restore Docker Image from Cache
+        id: restore-cache
+        uses: actions/cache@v3
+        with:
+          path: ./release/docker-linux-alpine.amd64.tar
+          key: docker-image-${{ github.ref_name }}-v1
+          restore-keys: |
+            docker-image-
 
       - name: Check we have everything needed
         run: |
           ls -la ./release
+
+      - name: Load built docker image from workspace
+        if: inputs.build == 'docker'
+        run: |
+          docker image load -i ./release/docker-linux-alpine.amd64.tar
 
       - name: Run tests
         run: |

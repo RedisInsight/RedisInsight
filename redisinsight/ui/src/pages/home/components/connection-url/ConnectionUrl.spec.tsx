@@ -83,7 +83,7 @@ describe('ConnectionUrl', () => {
         password: undefined,
         port: 6322,
         tls: false,
-        username: undefined
+        username: 'default'
       }
     )
   })

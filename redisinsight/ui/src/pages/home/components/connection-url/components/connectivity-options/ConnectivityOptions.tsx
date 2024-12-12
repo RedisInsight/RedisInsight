@@ -28,7 +28,6 @@ const ConnectivityOptions = (props: Props) => {
         <EuiTitle size="xs" className={styles.sectionTitle}>
           <span>
             <CloudIcon className={styles.cloudIcon} />Get started with Redis Cloud account
-            <div className={styles.recommendedBox}><StarIcon />Recommended</div>
           </span>
         </EuiTitle>
         <EuiSpacer />
@@ -40,7 +39,7 @@ const ConnectivityOptions = (props: Props) => {
               onClick={() => onClickOption(AddDbType.cloud)}
               data-testid="discover-cloud-btn"
             >
-              Discover Cloud dbs
+              Add Cloud databases
             </EuiButton>
           </EuiFlexItem>
           <EuiFlexItem grow={1}>
@@ -62,6 +61,7 @@ const ConnectivityOptions = (props: Props) => {
                   }}
                   data-testid="create-free-db-btn"
                 >
+                  <StarIcon className={styles.star} />
                   Create free database
                 </EuiButton>
               )}

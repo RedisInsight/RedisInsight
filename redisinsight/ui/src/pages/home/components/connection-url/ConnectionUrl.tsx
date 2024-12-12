@@ -42,7 +42,7 @@ const getPayload = (connectionUrl: string, returnOnError = false) => {
     name: details?.hostname || '127.0.0.1:6379',
     host: details?.host || '127.0.0.1',
     port: details?.port || 6379,
-    username: details?.username || undefined,
+    username: details?.username || 'default',
     password: details?.password || undefined,
     tls: details?.protocol === 'rediss',
     db: details?.dbNumber,
@@ -91,7 +91,7 @@ const ConnectionUrl = (props: Props) => {
 
   const formik = useFormik({
     initialValues: {
-      connectionURL: ''
+      connectionURL: 'redis://default@127.0.0.1:6379'
     },
     validate,
     enableReinitialize: true,
@@ -134,7 +134,7 @@ const ConnectionUrl = (props: Props) => {
                 value={formik.values.connectionURL}
                 onChange={formik.handleChange}
                 fullWidth
-                placeholder="redis://127.0.0.1:6379"
+                placeholder="redis://default@127.0.0.1:6379"
                 resize="none"
                 style={{ height: 88 }}
                 data-testid="connection-url"

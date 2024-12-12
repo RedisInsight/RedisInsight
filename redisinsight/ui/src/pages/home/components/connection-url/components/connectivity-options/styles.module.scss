@@ -8,26 +8,6 @@
   }
 }
 
-.recommendedBox {
-  display: flex;
-  align-items: center;
-
-  border: 1px solid var(--euiColorSecondary);
-  background-color: var(--tableRowSelectedColor);
-
-  margin-left: 8px;
-
-  font-size: 10px;
-  padding: 5px 8px;
-  line-height: 1;
-
-  > svg {
-    width: 10px;
-    height: 10px;
-    margin-right: 4px;
-  }
-}
-
 .typeBtn {
   width: 100%;
   height: 76px !important;
@@ -43,4 +23,8 @@
   &:hover {
     background-color: transparent !important;
   }
+}
+
+.star {
+  margin-right: 4px;
 }

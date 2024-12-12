@@ -232,6 +232,7 @@ export const mockDatabaseOverviewCurrentKeyspace = DatabaseOverviewKeyspace.Curr
 export const mockRedisServerInfoDto = {
   redis_version: '7.0.5',
   redis_mode: 'standalone',
+  server_name: 'valkey',
   os: 'Linux 4.15.0-1087-gcp x86_64',
   arch_bits: '64',
   tcp_port: '11113',

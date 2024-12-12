@@ -61,17 +61,3 @@ jobs:
       build: 'docker'
       report: true
       short_rte_list: false
-
-  # E2E tests
-  build-appimage:
-    uses: ./.github/workflows/pipeline-build-linux.yml
-    secrets: inherit
-    with:
-      target: 'linux:appimage:x64'
-
-  e2e-appimage-nightly:
-    uses: ./.github/workflows/tests-e2e-appimage.yml
-    needs: build-appimage
-    secrets: inherit
-    with:
-      report: true

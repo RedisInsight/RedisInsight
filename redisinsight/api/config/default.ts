@@ -8,14 +8,12 @@ const homedir = join(__dirname, '..');
 const buildInfoFileName = 'build.json';
 const dataZipFileName = 'data.zip';
 
-const staticDir =
-  process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
-    ? join(process['resourcesPath'], 'static')
-    : join(__dirname, '..', 'static');
+const staticDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
+  ? join(process['resourcesPath'], 'static')
+  : join(__dirname, '..', 'static');
 
-const defaultsDir =
-  process.env.RI_DEFAULTS_DIR ||
-  (process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
+const defaultsDir = process.env.RI_DEFAULTS_DIR
+  || (process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
     ? join(process['resourcesPath'], 'defaults')
     : join(__dirname, '..', 'defaults'));
 
@@ -40,11 +38,10 @@ const pluginsAssetsUri = posix.join(
   'plugins',
 );
 
-const socketPath = posix.join('/api', 'socket.io');
-const dataDir =
-  process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
-    ? join(process['resourcesPath'], 'data')
-    : join(__dirname, '..', 'data');
+const socketPath = posix.join('/socket.io');
+const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
+  ? join(process['resourcesPath'], 'data')
+  : join(__dirname, '..', 'data');
 
 export default {
   dir_path: {
@@ -130,7 +127,7 @@ export default {
         ? process.env.RI_SOCKETS_CORS_ORIGIN
         : '*',
       credentials:
-        process.env.RI_SOCKETS_CORS_CREDENTIALS === 'true' ? true : false,
+        process.env.RI_SOCKETS_CORS_CREDENTIALS === 'true',
     },
   },
   db: {
@@ -145,8 +142,8 @@ export default {
   redis_clients: {
     forceStrategy: process.env.RI_REDIS_CLIENTS_FORCE_STRATEGY,
     idleThreshold:
-      parseInt(process.env.RI_REDIS_CLIENTS_IDLE_THRESHOLD, 10) ||
-      1000 * 60 * 60, // 1h
+      parseInt(process.env.RI_REDIS_CLIENTS_IDLE_THRESHOLD, 10)
+      || 1000 * 60 * 60, // 1h
     syncInterval:
       parseInt(process.env.RI_REDIS_CLIENTS_SYNC_INTERVAL, 10) || 1000 * 60, // 1m
     idleSyncInterval:
@@ -179,8 +176,8 @@ export default {
   },
   profiler: {
     logFileIdleThreshold:
-      parseInt(process.env.RI_PROFILER_LOG_FILE_IDLE_THRESHOLD, 10) ||
-      1000 * 60, // 1min
+      parseInt(process.env.RI_PROFILER_LOG_FILE_IDLE_THRESHOLD, 10)
+      || 1000 * 60, // 1min
   },
   analytics: {
     writeKey: process.env.RI_SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY',
@@ -210,25 +207,25 @@ export default {
   },
   tutorials: {
     updateUrl:
-      process.env.RI_TUTORIALS_UPDATE_URL ||
-      'https://github.com/RedisInsight/Tutorials/releases/download/2.42',
+      process.env.RI_TUTORIALS_UPDATE_URL
+      || 'https://github.com/RedisInsight/Tutorials/releases/download/2.42',
     zip: process.env.RI_TUTORIALS_ZIP || dataZipFileName,
     buildInfo: process.env.RI_TUTORIALS_INFO || buildInfoFileName,
     devMode: !!process.env.RI_TUTORIALS_PATH,
   },
   content: {
     updateUrl:
-      process.env.RI_CONTENT_UPDATE_URL ||
-      'https://github.com/RedisInsight/Statics/releases/download/2.54',
+      process.env.RI_CONTENT_UPDATE_URL
+      || 'https://github.com/RedisInsight/Statics/releases/download/2.54',
     zip: process.env.RI_CONTENT_ZIP || dataZipFileName,
     buildInfo: process.env.RI_CONTENT_INFO || buildInfoFileName,
     devMode: !!process.env.RI_CONTENT_PATH,
   },
   notifications: {
     updateUrl:
-      process.env.RI_NOTIFICATION_DEV_PATH ||
-      process.env.RI_NOTIFICATION_UPDATE_URL ||
-      'https://github.com/RedisInsight/Notifications/releases/download/latest/notifications.json',
+      process.env.RI_NOTIFICATION_DEV_PATH
+      || process.env.RI_NOTIFICATION_UPDATE_URL
+      || 'https://github.com/RedisInsight/Notifications/releases/download/latest/notifications.json',
     syncInterval:
       parseInt(process.env.RI_NOTIFICATION_SYNC_INTERVAL, 10) || 60 * 60 * 1000,
     queryLimit: parseInt(process.env.RI_NOTIFICATION_QUERY_LIMIT, 10) || 20,
@@ -236,8 +233,8 @@ export default {
   },
   workbench: {
     maxResultSize:
-      parseInt(process.env.RI_COMMAND_EXECUTION_MAX_RESULT_SIZE, 10) ||
-      1024 * 1024,
+      parseInt(process.env.RI_COMMAND_EXECUTION_MAX_RESULT_SIZE, 10)
+      || 1024 * 1024,
     maxItemsPerDb:
       parseInt(process.env.RI_COMMAND_EXECUTION_MAX_ITEMS_PER_DB, 10) || 30,
     unsupportedCommands: JSON.parse(
@@ -251,57 +248,57 @@ export default {
   },
   browser_history: {
     maxItemsPerModeInDb:
-      parseInt(process.env.RI_BROWSER_HISTORY_MAX_ITEMS_PER_MODE_IN_DB, 10) ||
-      10,
+      parseInt(process.env.RI_BROWSER_HISTORY_MAX_ITEMS_PER_MODE_IN_DB, 10)
+      || 10,
   },
   commands: [
     {
       name: 'main',
       url:
-        process.env.RI_COMMANDS_MAIN_URL ||
-        'https://raw.githubusercontent.com/redis/redis-doc/master/commands.json',
+        process.env.RI_COMMANDS_MAIN_URL
+        || 'https://raw.githubusercontent.com/redis/redis-doc/master/commands.json',
     },
     {
       name: 'redisearch',
       url:
-        process.env.RI_COMMANDS_REDISEARCH_URL ||
-        'https://raw.githubusercontent.com/RediSearch/RediSearch/master/commands.json',
+        process.env.RI_COMMANDS_REDISEARCH_URL
+        || 'https://raw.githubusercontent.com/RediSearch/RediSearch/master/commands.json',
     },
     {
       name: 'redisjson',
       url:
-        process.env.RI_COMMANDS_REDIJSON_URL ||
-        'https://raw.githubusercontent.com/RedisJSON/RedisJSON/master/commands.json',
+        process.env.RI_COMMANDS_REDIJSON_URL
+        || 'https://raw.githubusercontent.com/RedisJSON/RedisJSON/master/commands.json',
     },
     {
       name: 'redistimeseries',
       url:
-        process.env.RI_COMMANDS_REDISTIMESERIES_URL ||
-        'https://raw.githubusercontent.com/RedisTimeSeries/RedisTimeSeries/master/commands.json',
+        process.env.RI_COMMANDS_REDISTIMESERIES_URL
+        || 'https://raw.githubusercontent.com/RedisTimeSeries/RedisTimeSeries/master/commands.json',
     },
     {
       name: 'redisai',
       url:
-        process.env.RI_COMMANDS_REDISAI_URL ||
-        'https://raw.githubusercontent.com/RedisAI/RedisAI/master/commands.json',
+        process.env.RI_COMMANDS_REDISAI_URL
+        || 'https://raw.githubusercontent.com/RedisAI/RedisAI/master/commands.json',
     },
     {
       name: 'redisgraph',
       url:
-        process.env.RI_COMMANDS_REDISGRAPH_URL ||
-        'https://raw.githubusercontent.com/RedisGraph/RedisGraph/master/commands.json',
+        process.env.RI_COMMANDS_REDISGRAPH_URL
+        || 'https://raw.githubusercontent.com/RedisGraph/RedisGraph/master/commands.json',
     },
     {
       name: 'redisgears',
       url:
-        process.env.RI_COMMANDS_REDISGEARS_URL ||
-        'https://raw.githubusercontent.com/RedisGears/RedisGears/v1.2.5/commands.json',
+        process.env.RI_COMMANDS_REDISGEARS_URL
+        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/v1.2.5/commands.json',
     },
     {
       name: 'redisbloom',
       url:
-        process.env.RI_COMMANDS_REDISBLOOM_URL ||
-        'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
+        process.env.RI_COMMANDS_REDISBLOOM_URL
+        || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
   ],
   connections: {
@@ -319,117 +316,117 @@ export default {
   },
   features_config: {
     url:
-      process.env.RI_FEATURES_CONFIG_URL ||
+      process.env.RI_FEATURES_CONFIG_URL
       // eslint-disable-next-line max-len
-      'https://raw.githubusercontent.com/RedisInsight/RedisInsight/main/redisinsight/api/config/features-config.json',
+      || 'https://raw.githubusercontent.com/RedisInsight/RedisInsight/main/redisinsight/api/config/features-config.json',
     syncInterval:
-      parseInt(process.env.RI_FEATURES_CONFIG_SYNC_INTERVAL, 10) ||
-      1_000 * 60 * 60 * 24, // 24h
+      parseInt(process.env.RI_FEATURES_CONFIG_SYNC_INTERVAL, 10)
+      || 1_000 * 60 * 60 * 24, // 24h
   },
   cloud: {
     apiUrl:
-      process.env.RI_CLOUD_API_URL ||
-      'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com/api/v1',
+      process.env.RI_CLOUD_API_URL
+      || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com/api/v1',
     apiToken: process.env.RI_CLOUD_API_TOKEN || 'token',
     capiUrl:
-      process.env.RI_CLOUD_CAPI_URL ||
-      'https://api-k8s-cloudapi.qa.redislabs.com/v1',
+      process.env.RI_CLOUD_CAPI_URL
+      || 'https://api-k8s-cloudapi.qa.redislabs.com/v1',
     capiKeyName: process.env.RI_CLOUD_CAPI_KEY_NAME || 'RedisInsight',
     freeSubscriptionName:
       process.env.RI_CLOUD_FREE_SUBSCRIPTION_NAME || 'My free subscription',
     freeDatabaseName:
-      process.env.RI_CLOUD_FREE_DATABASE_NAME ||
-      'Redis-Stack-in-Redis-Enterprise-Cloud',
+      process.env.RI_CLOUD_FREE_DATABASE_NAME
+      || 'Redis-Stack-in-Redis-Enterprise-Cloud',
     defaultPlanRegion: process.env.RI_CLOUD_DEFAULT_PLAN_REGION || 'eu-west-1',
     jobIterationInterval:
       parseInt(process.env.RI_CLOUD_JOB_ITERATION_INTERVAL, 10) || 10_000, // 10 sec
     discoveryTimeout:
       parseInt(process.env.RI_CLOUD_DISCOVERY_TIMEOUT, 10) || 60 * 1000, // 1 min
     databaseConnectionTimeout:
-      parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) ||
-      30 * 1000,
+      parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10)
+      || 30 * 1000,
     renewTokensBeforeExpire:
-      parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) ||
-      2 * 60_000, // 2min
+      parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10)
+      || 2 * 60_000, // 2min
     idp: {
       google: {
         authorizeUrl:
-          process.env.RI_CLOUD_IDP_GOOGLE_AUTHORIZE_URL ||
-          process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
+          process.env.RI_CLOUD_IDP_GOOGLE_AUTHORIZE_URL
+          || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
         tokenUrl:
-          process.env.RI_CLOUD_IDP_GOOGLE_TOKEN_URL ||
-          process.env.RI_CLOUD_IDP_TOKEN_URL,
+          process.env.RI_CLOUD_IDP_GOOGLE_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_TOKEN_URL,
         revokeTokenUrl:
-          process.env.RI_CLOUD_IDP_GOOGLE_REVOKE_TOKEN_URL ||
-          process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
+          process.env.RI_CLOUD_IDP_GOOGLE_REVOKE_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
         issuer:
-          process.env.RI_CLOUD_IDP_GOOGLE_ISSUER ||
-          process.env.RI_CLOUD_IDP_ISSUER,
+          process.env.RI_CLOUD_IDP_GOOGLE_ISSUER
+          || process.env.RI_CLOUD_IDP_ISSUER,
         clientId:
-          process.env.RI_CLOUD_IDP_GOOGLE_CLIENT_ID ||
-          process.env.RI_CLOUD_IDP_CLIENT_ID,
+          process.env.RI_CLOUD_IDP_GOOGLE_CLIENT_ID
+          || process.env.RI_CLOUD_IDP_CLIENT_ID,
         redirectUri:
-          process.env.RI_CLOUD_IDP_GOOGLE_REDIRECT_URI ||
-          process.env.RI_CLOUD_IDP_REDIRECT_URI,
+          process.env.RI_CLOUD_IDP_GOOGLE_REDIRECT_URI
+          || process.env.RI_CLOUD_IDP_REDIRECT_URI,
         idp: process.env.RI_CLOUD_IDP_GOOGLE_ID,
       },
       github: {
         authorizeUrl:
-          process.env.RI_CLOUD_IDP_GH_AUTHORIZE_URL ||
-          process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
+          process.env.RI_CLOUD_IDP_GH_AUTHORIZE_URL
+          || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
         tokenUrl:
-          process.env.RI_CLOUD_IDP_GH_TOKEN_URL ||
-          process.env.RI_CLOUD_IDP_TOKEN_URL,
+          process.env.RI_CLOUD_IDP_GH_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_TOKEN_URL,
         revokeTokenUrl:
-          process.env.RI_CLOUD_IDP_GH_REVOKE_TOKEN_URL ||
-          process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
+          process.env.RI_CLOUD_IDP_GH_REVOKE_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
         issuer:
           process.env.RI_CLOUD_IDP_GH_ISSUER || process.env.RI_CLOUD_IDP_ISSUER,
         clientId:
-          process.env.RI_CLOUD_IDP_GH_CLIENT_ID ||
-          process.env.RI_CLOUD_IDP_CLIENT_ID,
+          process.env.RI_CLOUD_IDP_GH_CLIENT_ID
+          || process.env.RI_CLOUD_IDP_CLIENT_ID,
         redirectUri:
-          process.env.RI_CLOUD_IDP_GH_REDIRECT_URI ||
-          process.env.RI_CLOUD_IDP_REDIRECT_URI,
+          process.env.RI_CLOUD_IDP_GH_REDIRECT_URI
+          || process.env.RI_CLOUD_IDP_REDIRECT_URI,
         idp: process.env.RI_CLOUD_IDP_GH_ID,
       },
       sso: {
         authorizeUrl:
-          process.env.RI_CLOUD_IDP_SSO_AUTHORIZE_URL ||
-          process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
+          process.env.RI_CLOUD_IDP_SSO_AUTHORIZE_URL
+          || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
         tokenUrl:
-          process.env.RI_CLOUD_IDP_SSO_TOKEN_URL ||
-          process.env.RI_CLOUD_IDP_TOKEN_URL,
+          process.env.RI_CLOUD_IDP_SSO_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_TOKEN_URL,
         revokeTokenUrl:
-          process.env.RI_CLOUD_IDP_SSO_REVOKE_TOKEN_URL ||
-          process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
+          process.env.RI_CLOUD_IDP_SSO_REVOKE_TOKEN_URL
+          || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
         issuer:
-          process.env.RI_CLOUD_IDP_SSO_ISSUER ||
-          process.env.RI_CLOUD_IDP_ISSUER,
+          process.env.RI_CLOUD_IDP_SSO_ISSUER
+          || process.env.RI_CLOUD_IDP_ISSUER,
         clientId:
-          process.env.RI_CLOUD_IDP_SSO_CLIENT_ID ||
-          process.env.RI_CLOUD_IDP_CLIENT_ID,
+          process.env.RI_CLOUD_IDP_SSO_CLIENT_ID
+          || process.env.RI_CLOUD_IDP_CLIENT_ID,
         redirectUri:
-          process.env.RI_CLOUD_IDP_SSO_REDIRECT_URI ||
-          process.env.RI_CLOUD_IDP_REDIRECT_URI,
+          process.env.RI_CLOUD_IDP_SSO_REDIRECT_URI
+          || process.env.RI_CLOUD_IDP_REDIRECT_URI,
         emailVerificationUri:
-          process.env.RI_CLOUD_IDP_SSO_EMAIL_VERIFICATION_URI ||
-          'saml/okta_idp_id',
+          process.env.RI_CLOUD_IDP_SSO_EMAIL_VERIFICATION_URI
+          || 'saml/okta_idp_id',
         idp: process.env.RI_CLOUD_IDP_SSO_ID,
       },
     },
   },
   ai: {
     convAiApiUrl:
-      process.env.RI_AI_CONVAI_API_URL ||
-      'https://staging.learn.redis.com/convai/api',
+      process.env.RI_AI_CONVAI_API_URL
+      || 'https://staging.learn.redis.com/convai/api',
     convAiToken: process.env.RI_AI_CONVAI_TOKEN,
     querySocketUrl:
-      process.env.RI_AI_QUERY_SOCKET_URL ||
-      'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com',
+      process.env.RI_AI_QUERY_SOCKET_URL
+      || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com',
     querySocketPath:
-      process.env.RI_AI_QUERY_SOCKET_PATH ||
-      '/api/v1/cloud-copilot-service/socket.io/',
+      process.env.RI_AI_QUERY_SOCKET_PATH
+      || '/api/v1/cloud-copilot-service/socket.io/',
     queryHistoryLimit:
       parseInt(process.env.RI_AI_QUERY_HISTORY_LIMIT, 10) || 20,
     queryMaxResults: parseInt(process.env.RI_AI_QUERY_MAX_RESULTS, 10) || 50,

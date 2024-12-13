@@ -5,10 +5,6 @@ import { ClientMetadata, SessionMetadata } from 'src/common/models';
 
 type LogMeta = object;
 
-type LogObject = {
-  [key: string]: unknown;
-};
-
 type ErrorOrMeta = Error | LogMeta | string | ClientMetadata | SessionMetadata;
 
 @Injectable()
@@ -108,21 +104,14 @@ export class AppLogger implements LoggerService {
     return {};
   }
 
-  private parseLoggerArgs(
-    message: string | LogObject,
-    optionalParams: ErrorOrMeta[] = [],
-  ) {
+  private parseLoggerArgs(message: string, optionalParams: ErrorOrMeta[] = []) {
     const optionalParamsCopy = cloneDeep(optionalParams);
-    const messageObj: LogObject = (
-      typeof message === 'object' ? message : { message }
-    ) as LogObject;
-
     const context = AppLogger.getContext(optionalParamsCopy);
     const error = AppLogger.getError(optionalParamsCopy);
     const userMetadata = AppLogger.getUserMetadata(optionalParamsCopy);
 
     return {
-      ...messageObj,
+      message,
       context,
       error,
       ...userMetadata,
@@ -133,42 +122,42 @@ export class AppLogger implements LoggerService {
   /**
    * Write a 'log' level log.
    */
-  log(message: string | LogObject, ...optionalParams: ErrorOrMeta[]) {
+  log(message: string, ...optionalParams: ErrorOrMeta[]) {
     this.logger.log(this.parseLoggerArgs(message, optionalParams));
   }
 
   /**
    * Write a 'fatal' level log.
    */
-  fatal(message: string | LogObject, ...optionalParams: ErrorOrMeta[]) {
+  fatal(message: string, ...optionalParams: ErrorOrMeta[]) {
     this.logger.fatal(this.parseLoggerArgs(message, optionalParams));
   }
 
   /**
    * Write an 'error' level log.
    */
-  error(message: string | LogObject, ...optionalParams: ErrorOrMeta[]) {
+  error(message: string, ...optionalParams: ErrorOrMeta[]) {
     this.logger.error(this.parseLoggerArgs(message, optionalParams));
   }
 
   /**
    * Write a 'warn' level log.
    */
-  warn(message: string | LogObject, ...optionalParams: ErrorOrMeta[]) {
+  warn(message: string, ...optionalParams: ErrorOrMeta[]) {
     this.logger.warn(this.parseLoggerArgs(message, optionalParams));
   }
 
   /**
    * Write a 'debug' level log.
    */
-  debug?(message: string | LogObject, ...optionalParams: ErrorOrMeta[]) {
+  debug?(message: string, ...optionalParams: ErrorOrMeta[]) {
     this.logger.debug(this.parseLoggerArgs(message, optionalParams));
   }
 
   /**
    * Write a 'verbose' level log.
    */
-  verbose?(message: string | LogObject, ...optionalParams: ErrorOrMeta[]) {
+  verbose?(message: string, ...optionalParams: ErrorOrMeta[]) {
     this.logger.verbose(this.parseLoggerArgs(message, optionalParams));
   }
 }

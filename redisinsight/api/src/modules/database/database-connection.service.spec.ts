@@ -90,21 +90,15 @@ describe('DatabaseConnectionService', () => {
     it('should call recommendationService', async () => {
       expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
 
-      expect(recommendationService.check).toHaveBeenCalledTimes(3);
+      expect(recommendationService.checkMulti).toHaveBeenCalledTimes(1);
 
-      expect(recommendationService.check).toBeCalledWith(
+      expect(recommendationService.checkMulti).toBeCalledWith(
         mockCommonClientMetadata,
-        RECOMMENDATION_NAMES.REDIS_VERSION,
-        mockRedisGeneralInfo,
-      );
-      expect(recommendationService.check).toBeCalledWith(
-        mockCommonClientMetadata,
-        RECOMMENDATION_NAMES.LUA_SCRIPT,
-        mockRedisGeneralInfo,
-      );
-      expect(recommendationService.check).toBeCalledWith(
-        mockCommonClientMetadata,
-        RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+        [
+          RECOMMENDATION_NAMES.REDIS_VERSION,
+          RECOMMENDATION_NAMES.LUA_SCRIPT,
+          RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+        ],
         mockRedisGeneralInfo,
       );
     });
@@ -116,21 +110,16 @@ describe('DatabaseConnectionService', () => {
 
       expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
 
-      expect(recommendationService.check).toHaveBeenCalledTimes(4);
+      expect(recommendationService.check).toHaveBeenCalledTimes(1);
+      expect(recommendationService.checkMulti).toHaveBeenCalledTimes(1);
 
-      expect(recommendationService.check).toBeCalledWith(
+      expect(recommendationService.checkMulti).toBeCalledWith(
         mockCommonClientMetadata,
-        RECOMMENDATION_NAMES.REDIS_VERSION,
-        mockRedisGeneralInfo,
-      );
-      expect(recommendationService.check).toBeCalledWith(
-        mockCommonClientMetadata,
-        RECOMMENDATION_NAMES.LUA_SCRIPT,
-        mockRedisGeneralInfo,
-      );
-      expect(recommendationService.check).toBeCalledWith(
-        mockCommonClientMetadata,
-        RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+        [
+          RECOMMENDATION_NAMES.REDIS_VERSION,
+          RECOMMENDATION_NAMES.LUA_SCRIPT,
+          RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+        ],
         mockRedisGeneralInfo,
       );
 

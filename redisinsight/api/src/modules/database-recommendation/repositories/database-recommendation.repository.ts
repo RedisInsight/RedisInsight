@@ -44,10 +44,10 @@ export abstract class DatabaseRecommendationRepository {
   /**
    * Check is recommendation already exist in repository
    * @param clientMetadata
-   * @param name
-   * @return Boolean
+   * @param names
+   * @return Map<string, boolean>
    */
-  abstract isExist(clientMetadata: ClientMetadata, name: string): Promise<boolean>;
+  abstract isExist(clientMetadata: ClientMetadata, names: string[]): Promise<Map<string, boolean>>;
 
   /**
    * Get database recommendation by id

@@ -64,17 +64,17 @@ describe('LocalDatabaseRecommendationRepository', () => {
 
   describe('isExist', () => {
     it('should return true when receive database entity', async () => {
-      expect(await service.isExist(mockClientMetadata, mockRecommendationName)).toEqual(true);
+      expect(await service.isExist(mockClientMetadata, [mockRecommendationName])).toEqual({ [mockRecommendationName]: true });
     });
 
     it('should return false when no database received', async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
-      expect(await service.isExist(mockClientMetadata, mockRecommendationName)).toEqual(false);
+      expect(await service.isExist(mockClientMetadata, [mockRecommendationName])).toEqual({ [mockRecommendationName]: false });
     });
 
-    it('should return false when received error', async () => {
+    it('should return empty object when received error', async () => {
       repository.findOneBy.mockRejectedValueOnce(new Error());
-      expect(await service.isExist(mockClientMetadata, mockRecommendationName)).toEqual(false);
+      expect(await service.isExist(mockClientMetadata, [mockRecommendationName])).toEqual({});
     });
   });
 

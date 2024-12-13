@@ -54,19 +54,13 @@ export class DatabaseConnectionService {
 
     const generalInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
 
-    this.recommendationService.check(
+    this.recommendationService.checkMulti(
       clientMetadata,
-      RECOMMENDATION_NAMES.REDIS_VERSION,
-      generalInfo,
-    );
-    this.recommendationService.check(
-      clientMetadata,
-      RECOMMENDATION_NAMES.LUA_SCRIPT,
-      generalInfo,
-    );
-    this.recommendationService.check(
-      clientMetadata,
-      RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+      [
+        RECOMMENDATION_NAMES.REDIS_VERSION,
+        RECOMMENDATION_NAMES.LUA_SCRIPT,
+        RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+      ],
       generalInfo,
     );
 

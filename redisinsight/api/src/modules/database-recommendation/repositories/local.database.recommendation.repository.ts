@@ -147,22 +147,25 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
   /**
    * Check is recommendation exist in database
    * @param clientMetadata
-   * @param name
+   * @param names
    */
   async isExist(
     clientMetadata: ClientMetadata,
-    name: string,
-  ): Promise<boolean> {
+    names: string[],
+  ): Promise<Map<string, boolean>> {
     const { databaseId } = clientMetadata;
     try {
-      this.logger.debug(`Checking is recommendation ${name} exist`, clientMetadata);
-      const recommendation = await this.repository.findOneBy({ databaseId, name });
+      this.logger.debug('Checking if recommendations exist', clientMetadata, names);
 
-      this.logger.debug(`Succeed to check is recommendation ${name} exist'`, clientMetadata);
-      return !!recommendation;
+      const results = await Promise.all(names.map((name) => this.repository.findOneBy({ databaseId, name })));
+
+      return results.reduce((acc, result, idx) => ({
+        ...acc,
+        [names[idx]]: !!result,
+      }), {} as Map<string, boolean>);
     } catch (err) {
-      this.logger.error(`Failed to check is recommendation ${name} exist'`, err, clientMetadata);
-      return false;
+      this.logger.error('Failed to check existence of recommendations', err, clientMetadata, names);
+      return {} as Map<string, boolean>;
     }
   }
 

@@ -160,6 +160,7 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
             expect(localDb.encryptData(JSON.stringify([{
               status: 'success',
               response: 'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
+              sizeLimitExceeded: true,
             }]))).to.eql(entity.result);
           }
         },

@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -29,6 +30,7 @@ import { ExportDatabasesDto } from 'src/modules/database/dto/export.databases.dt
 import { ExportDatabase } from 'src/modules/database/models/export-database';
 import { DatabaseResponse } from 'src/modules/database/dto/database.response';
 import { classToClass } from 'src/utils';
+import { DisableModificationGuard } from './disable-modification.guard';
 
 @ApiTags('Database')
 @Controller('databases')
@@ -108,6 +110,7 @@ export class DatabaseController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @Patch(':id')
+  @UseGuards(DisableModificationGuard)
   @ApiEndpoint({
     description: 'Update database instance by id',
     statusCode: 200,
@@ -214,6 +217,7 @@ export class DatabaseController {
   }
 
   @Delete('/:id')
+  @UseGuards(DisableModificationGuard)
   @ApiEndpoint({
     statusCode: 200,
     description: 'Delete database instance by id',
@@ -227,6 +231,7 @@ export class DatabaseController {
   }
 
   @Delete('')
+  @UseGuards(DisableModificationGuard)
   @ApiEndpoint({
     statusCode: 200,
     description: 'Delete many databases by ids',

@@ -1,6 +1,6 @@
 import { LoggerService, Injectable } from '@nestjs/common';
 import { WinstonModule, WinstonModuleOptions } from 'nest-winston';
-import { isString } from 'lodash';
+import { cloneDeep, isString } from 'lodash';
 import { ClientMetadata, SessionMetadata } from 'src/common/models';
 
 type LogMeta = object;
@@ -15,14 +15,6 @@ type ErrorOrMeta = Error | LogMeta | string | ClientMetadata | SessionMetadata;
 export class AppLogger implements LoggerService {
   private readonly logger: ReturnType<typeof WinstonModule.createLogger>;
 
-  static startupContexts = [
-    'InstanceLoader',
-    'RoutesResolver',
-    'RouterExplorer',
-    'WebSocketsController',
-    'NestFactory',
-  ];
-
   constructor(loggerConfig: WinstonModuleOptions) {
     this.logger = WinstonModule.createLogger(loggerConfig);
   }
@@ -34,14 +26,14 @@ export class AppLogger implements LoggerService {
    * Note: args array might be mutated
    * @param args
    */
-  static getContext(args: ErrorOrMeta[] = []): string {
+  static getContext(args: ErrorOrMeta[] = []) {
     const lastArg = args?.[args.length - 1];
 
     if (isString(lastArg)) {
       return args.pop() as string;
     }
 
-    return 'TODO: generic name or null?';
+    return null;
   }
 
   /**
@@ -52,7 +44,7 @@ export class AppLogger implements LoggerService {
    */
   static getError(args: ErrorOrMeta[] = []): void | {} {
     let error = null;
-    const index = args.findIndex((arg) => (arg instanceof Error));
+    const index = args.findIndex((arg) => arg instanceof Error);
     if (index > -1) {
       [error] = args.splice(index, 1);
     }
@@ -77,13 +69,18 @@ export class AppLogger implements LoggerService {
    * @param args
    */
   static getUserMetadata(args: ErrorOrMeta[] = []): {
-    clientMetadata?: Partial<ClientMetadata>,
-    sessionMetadata?: SessionMetadata,
+    clientMetadata?: Partial<ClientMetadata>;
+    sessionMetadata?: SessionMetadata;
   } {
     // check for client metadata in args
-    const clientMetadataIndex = args.findIndex((arg) => (arg instanceof ClientMetadata));
+    const clientMetadataIndex = args.findIndex(
+      (arg) => arg instanceof ClientMetadata,
+    );
     if (clientMetadataIndex > -1) {
-      const [clientMetadata] = args.splice(clientMetadataIndex, 1) as ClientMetadata[];
+      const [clientMetadata] = args.splice(
+        clientMetadataIndex,
+        1,
+      ) as ClientMetadata[];
       return {
         clientMetadata: {
           ...clientMetadata,
@@ -94,9 +91,14 @@ export class AppLogger implements LoggerService {
     }
 
     // check for session metadata in args
-    const sessionMetadataIndex = args.findIndex((arg) => (arg instanceof SessionMetadata));
+    const sessionMetadataIndex = args.findIndex(
+      (arg) => arg instanceof SessionMetadata,
+    );
     if (sessionMetadataIndex > -1) {
-      const [sessionMetadata] = args.splice(sessionMetadataIndex, 1) as SessionMetadata[];
+      const [sessionMetadata] = args.splice(
+        sessionMetadataIndex,
+        1,
+      ) as SessionMetadata[];
       return {
         sessionMetadata,
       };
@@ -110,20 +112,21 @@ export class AppLogger implements LoggerService {
     message: string | LogObject,
     optionalParams: ErrorOrMeta[] = [],
   ) {
+    const optionalParamsCopy = cloneDeep(optionalParams);
     const messageObj: LogObject = (
       typeof message === 'object' ? message : { message }
     ) as LogObject;
 
-    const context = AppLogger.getContext(optionalParams);
-    const error = AppLogger.getError(optionalParams);
-    const userMetadata = AppLogger.getUserMetadata(optionalParams);
+    const context = AppLogger.getContext(optionalParamsCopy);
+    const error = AppLogger.getError(optionalParamsCopy);
+    const userMetadata = AppLogger.getUserMetadata(optionalParamsCopy);
 
     return {
       ...messageObj,
       context,
       error,
       ...userMetadata,
-      data: optionalParams?.length ? optionalParams : undefined,
+      data: optionalParamsCopy?.length ? optionalParamsCopy : undefined,
     };
   }
 

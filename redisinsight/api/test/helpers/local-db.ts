@@ -23,6 +23,8 @@ export const repositories = {
   RDI: 'RdiEntity',
 }
 
+console.log('here it is TEST_LOCAL_DB_FILE_PATH :>> ', constants.TEST_LOCAL_DB_FILE_PATH);
+
 let localDbConnection;
 const getDBConnection = async (): Promise<Connection> => {
   if (!localDbConnection) {

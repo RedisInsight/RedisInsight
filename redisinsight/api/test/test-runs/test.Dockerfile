@@ -17,7 +17,5 @@ ARG GNOME_KEYRING_PASS="somepass"
 ENV GNOME_KEYRING_PASS=${GNOME_KEYRING_PASS}
 
 ENTRYPOINT ["./test-docker-entry.sh"]
-RUN echo $COV_FOLDER
-RUN ls -la ./coverage
 CMD ["yarn", "test:api:ci:cov"]
 

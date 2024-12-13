@@ -55,14 +55,24 @@ export const cliTexts = {
   REPEAT_COUNT_INVALID: 'Invalid repeat command option value',
   CONNECTION_CLOSED: 'Client connection previously closed. Run the command after the connection is re-created.',
   UNABLE_TO_DECRYPT: 'Unable to decrypt. Check the system keychain or re-run the command.',
-  PSUBSCRIBE_COMMAND: (path: string = '') => (
-    <EuiTextColor color="danger" key={Date.now()}>
+  PUB_SUB_NOT_SUPPORTED_ENV: (
+    <div className="cli-output-response-fail" data-testid="user-pub-sub-link-disabled">
+      PubSub not supported in this environment.
+    </div>
+  ),
+  USE_PSUBSCRIBE_COMMAND: (path: string = '') => (
+    <EuiTextColor color="danger" key={Date.now()} data-testid="user-pub-sub-link">
       {'Use '}
       <EuiLink {...getRouterLinkProps(path)} color="text" data-test-subj="pubsub-page-btn">
         Pub/Sub
       </EuiLink>
       {' to see the messages published to all channels in your database.'}
     </EuiTextColor>
+  ),
+  PSUBSCRIBE_COMMAND: (path: string = '') => (
+    <FeatureFlagComponent name={FeatureFlags.envDependent} otherwise={cliTexts.PUB_SUB_NOT_SUPPORTED_ENV}>
+      {cliTexts.USE_PSUBSCRIBE_COMMAND(path)}
+    </FeatureFlagComponent>
   ),
   PSUBSCRIBE_COMMAND_CLI: (path: string = '') => (
     [
@@ -91,11 +101,6 @@ export const cliTexts = {
     >
       {cliTexts.USE_PROFILER_TOOL(onClick)}
     </FeatureFlagComponent>
-  ),
-  PUB_SUB_NOT_SUPPORTED_ENV: (
-    <div className="cli-output-response-fail" data-testid="user-pub-sub-link-disabled">
-      PubSub not supported in this environment.
-    </div>
   ),
   USE_PUB_SUB_TOOL: (path: string = '') => (
     <EuiTextColor color="danger" key={Date.now()} data-testid="user-pub-sub-link">

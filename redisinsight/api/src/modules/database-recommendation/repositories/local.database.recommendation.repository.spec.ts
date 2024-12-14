@@ -64,17 +64,33 @@ describe('LocalDatabaseRecommendationRepository', () => {
 
   describe('isExist', () => {
     it('should return true when receive database entity', async () => {
-      expect(await service.isExist(mockClientMetadata, [mockRecommendationName])).toEqual({ [mockRecommendationName]: true });
+      expect(await service.isExist(mockClientMetadata, mockRecommendationName)).toEqual(true);
     });
 
     it('should return false when no database received', async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
-      expect(await service.isExist(mockClientMetadata, [mockRecommendationName])).toEqual({ [mockRecommendationName]: false });
+      expect(await service.isExist(mockClientMetadata, mockRecommendationName)).toEqual(false);
     });
 
-    it('should return empty object when received error', async () => {
+    it('should return false when received error', async () => {
       repository.findOneBy.mockRejectedValueOnce(new Error());
-      expect(await service.isExist(mockClientMetadata, [mockRecommendationName])).toEqual({});
+      expect(await service.isExist(mockClientMetadata, mockRecommendationName)).toEqual(false);
+    });
+  });
+
+  describe('isExistMulti', () => {
+    it('should return results for multiple recommendation names', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
+      repository.findOneBy.mockResolvedValueOnce({});
+      expect(await service.isExistMulti(mockClientMetadata, ['test1', 'test2'])).toEqual({
+        test1: false,
+        test2: true,
+      });
+    });
+
+    it('should return empty Map when received error', async () => {
+      repository.findOneBy.mockRejectedValueOnce(new Error());
+      expect(await service.isExistMulti(mockClientMetadata, ['test1', 'test2'])).toEqual({});
     });
   });
 

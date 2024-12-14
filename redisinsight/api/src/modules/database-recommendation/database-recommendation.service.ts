@@ -57,23 +57,21 @@ export class DatabaseRecommendationService {
     exists: boolean,
     clientMetadata: ClientMetadata, data: any,
   ): Promise<DatabaseRecommendation> {
-    if (exists) {
-      return null;
-    }
-
-    const recommendation = await this.scanner.determineRecommendation(
-      clientMetadata.sessionMetadata,
-      recommendationName,
-      data,
-    );
-
-    if (recommendation) {
-      const entity = plainToClass(
-        DatabaseRecommendation,
-        { databaseId: clientMetadata?.databaseId, ...recommendation },
+    if (!exists) {
+      const recommendation = await this.scanner.determineRecommendation(
+        clientMetadata.sessionMetadata,
+        recommendationName,
+        data,
       );
 
-      return await this.create(clientMetadata, entity);
+      if (recommendation) {
+        const entity = plainToClass(
+          DatabaseRecommendation,
+          { databaseId: clientMetadata?.databaseId, ...recommendation },
+        );
+
+        return await this.create(clientMetadata, entity);
+      }
     }
 
     return null;
@@ -91,14 +89,19 @@ export class DatabaseRecommendationService {
           ?? (await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId))?.db
           ?? 0,
       };
-      const isRecommendationExist = await this.databaseRecommendationRepository.isExist(
+      const isRecommendationExist = await this.databaseRecommendationRepository.isExistMulti(
         newClientMetadata,
         recommendationNames,
       );
 
       const results = await Promise.all(
         recommendationNames.map(
-          (name) => this.checkRecommendation(name, isRecommendationExist[name], newClientMetadata, data),
+          (name) => this.checkRecommendation(
+            name,
+            isRecommendationExist[name],
+            newClientMetadata,
+            data,
+          ),
         ),
       );
 

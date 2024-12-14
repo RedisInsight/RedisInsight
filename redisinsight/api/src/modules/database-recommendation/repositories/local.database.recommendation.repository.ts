@@ -41,7 +41,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
 
   /**
    * Save entire entity
-   * @param _
+   * @param sessionMetadata
    * @param entity
    */
   async create(sessionMetadata: SessionMetadata, entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
@@ -102,7 +102,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
   }
 
   /**
-   * Read all recommendations recommendations
+   * Read all recommendations
    * @param clientMetadata
    */
   async read(clientMetadata: ClientMetadata): Promise<void> {
@@ -147,24 +147,46 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
   /**
    * Check is recommendation exist in database
    * @param clientMetadata
-   * @param names
+   * @param name
    */
   async isExist(
     clientMetadata: ClientMetadata,
-    names: string[],
-  ): Promise<Map<string, boolean>> {
+    name: string,
+  ): Promise<boolean> {
     const { databaseId } = clientMetadata;
     try {
-      this.logger.debug('Checking if recommendations exist', clientMetadata, names);
+      this.logger.debug(`Checking is recommendation ${name} exist`, clientMetadata);
+      const recommendation = await this.repository.findOneBy({ databaseId, name });
 
-      const results = await Promise.all(names.map((name) => this.repository.findOneBy({ databaseId, name })));
+      this.logger.debug(`Succeed to check is recommendation ${name} exist'`, clientMetadata);
+      return !!recommendation;
+    } catch (err) {
+      this.logger.error(`Failed to check is recommendation ${name} exist'`, err, clientMetadata);
+      return false;
+    }
+  }
+
+  /**
+   * Check if one or more recommendations exist in database
+   * @param clientMetadata
+   * @param names
+   */
+  async isExistMulti(clientMetadata: ClientMetadata, names: string[]): Promise<Map<string, boolean>> {
+    const { databaseId } = clientMetadata;
+
+    try {
+      this.logger.debug('Checking if recommendations exist', names, clientMetadata);
+
+      const results = await Promise.all(
+        names.map((name) => this.repository.findOneBy({ databaseId, name })),
+      );
 
       return results.reduce((acc, result, idx) => ({
         ...acc,
         [names[idx]]: !!result,
       }), {} as Map<string, boolean>);
     } catch (err) {
-      this.logger.error('Failed to check existence of recommendations', err, clientMetadata, names);
+      this.logger.error('Failed to check existence of recommendations', err, names, clientMetadata);
       return {} as Map<string, boolean>;
     }
   }

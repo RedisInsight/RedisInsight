@@ -42,18 +42,6 @@ if test -f "$PRESTART"; then
     ID=$ID ./$PRESTART``
 fi
 
-echo "Pulling RTE... ${RTE}"
-eval "ID=$ID RTE=$RTE docker compose \
-  -f $BASEDIR/$BUILD.build.yml \
-  -f $BASEDIR/$RTE/docker-compose.yml \
-  --env-file $BASEDIR/$BUILD.build.env pull redis"
-
-echo "Building RTE... ${RTE}"
-eval "ID=$ID RTE=$RTE docker compose \
-  -f $BASEDIR/$BUILD.build.yml \
-  -f $BASEDIR/$RTE/docker-compose.yml \
-  --env-file $BASEDIR/$BUILD.build.env build --no-cache redis"
-
 echo "Checking /data directory at runtime:"
 ls -la /data || echo "/data not found"
 
@@ -66,7 +54,17 @@ whoami
 mkdir -p $BASEDIR/coverage
 ls -ld $BASEDIR/coverage
 
-export BASEDIR=$(dirname $0)
+echo "Pulling RTE... ${RTE}"
+eval "ID=$ID RTE=$RTE docker compose \
+  -f $BASEDIR/$BUILD.build.yml \
+  -f $BASEDIR/$RTE/docker-compose.yml \
+  --env-file $BASEDIR/$BUILD.build.env pull redis"
+
+echo "Building RTE... ${RTE}"
+eval "ID=$ID RTE=$RTE docker compose \
+  -f $BASEDIR/$BUILD.build.yml \
+  -f $BASEDIR/$RTE/docker-compose.yml \
+  --env-file $BASEDIR/$BUILD.build.env build --no-cache redis"
 
 echo "Test run is starting... ${RTE}"
 eval "BASEDIR=$BASEDIR ID=$ID RTE=$RTE docker compose -p $ID \

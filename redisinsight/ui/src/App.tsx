@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react'
 import { Provider, useSelector } from 'react-redux'
 import { EuiPage, EuiPageBody } from '@elastic/eui'
+import * as Sentry from '@sentry/react'
 
 import { Route, Switch } from 'react-router-dom'
 import { store } from 'uiSrc/slices/store'
@@ -44,37 +45,39 @@ const App = ({ children }: { children?: ReactElement[] }) => {
     <div className="main-container">
       <ThemeComponent />
       <MonacoEnvironmentInitializer />
-      <Switch>
-        <Route
-          exact
-          path={Pages.notFound}
-          component={NotFoundErrorPage}
-        />
-        <Route
-          path="*"
-          render={() => (
-            <>
-              { serverLoading
-                ? <PagePlaceholder />
-                : (
-                  <EuiPage className="main">
-                    <GlobalDialogs />
-                    <GlobalSubscriptions />
-                    <NavigationMenu />
-                    <EuiPageBody component="main">
-                      <MainComponent />
-                    </EuiPageBody>
-                  </EuiPage>
-                )}
-              <Notifications />
-              <Config />
-              <ShortcutsFlyout />
-              <MonacoLanguages />
-              {children}
-            </>
-          )}
-        />
-      </Switch>
+      <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
+        <Switch>
+          <Route
+            exact
+            path={Pages.notFound}
+            component={NotFoundErrorPage}
+          />
+          <Route
+            path="*"
+            render={() => (
+              <>
+                {serverLoading
+                  ? <PagePlaceholder />
+                  : (
+                    <EuiPage className="main">
+                      <GlobalDialogs />
+                      <GlobalSubscriptions />
+                      <NavigationMenu />
+                      <EuiPageBody component="main">
+                        <MainComponent />
+                      </EuiPageBody>
+                    </EuiPage>
+                  )}
+                <Notifications />
+                <Config />
+                <ShortcutsFlyout />
+                <MonacoLanguages />
+                {children}
+              </>
+            )}
+          />
+        </Switch>
+      </Sentry.ErrorBoundary>
     </div>
   )
 }

@@ -8,6 +8,7 @@ import {
 } from 'uiSrc/slices/app/init'
 import ConnectivityError from 'uiSrc/components/connectivity-error/ConnectivityError'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
+import useSentry from './useSentry'
 
 type Props = {
   children: ReactElement
@@ -20,6 +21,8 @@ const AppInit = ({ children, onSuccess, onFail }: Props) => {
   const {
     status,
   } = useSelector(appInitSelector)
+
+  useSentry()
 
   const initApp = useCallback(() => dispatch(initializeAppAction(onSuccess, onFail)), [onSuccess, onFail])
 

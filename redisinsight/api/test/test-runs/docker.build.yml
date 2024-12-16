@@ -14,9 +14,12 @@ services:
     tty: true
     volumes:
       - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
+      # - ${COV_FOLDER}:/data
     depends_on:
-      - redis
-      - app
+      redis:
+        condition: service_healthy
+      wait:
+        condition: service_healthy
     environment:
       RI_REDIS_CLIENTS_FORCE_STRATEGY: ${RI_REDIS_CLIENTS_FORCE_STRATEGY}
       CERTS_FOLDER: '/root/.redisinsight-v2.0'
@@ -27,6 +30,21 @@ services:
       RI_SECRET_STORAGE_PASSWORD: 'somepassword'
       TEST_BASE_DIR: ${BASEDIR}
 
+  wait:
+    image: alpine:latest
+    depends_on:
+      - app
+    volumes:
+      - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
+      # - ${COV_FOLDER}:/data
+    entrypoint: sh -c "echo 'Waiting for app to produce content...' && sleep 30 && touch /data/wait.done"
+    healthcheck:
+      test: ['CMD', 'test', '-f', '/data/wait.done']
+      interval: 10s
+      retries: 3
+      start_period: 0s
+      timeout: 2s
+
   app:
     cap_add:
       - ipc_lock
@@ -35,6 +53,7 @@ services:
       - redis
     volumes:
       # - ${COV_FOLDER}:/root/.redisinsight-v2.0
+      # - ${COV_FOLDER}:/data
       # - ${BASEDIR}/coverage:/data
       - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
     environment:

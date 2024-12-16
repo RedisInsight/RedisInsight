@@ -15,7 +15,7 @@ services:
     tty: true
     volumes:
       - ${COV_FOLDER}:/usr/src/app/coverage
-      - ${COV_FOLDER}:/data
+      - ./coverage:/data
     depends_on:
       - redis
       - app

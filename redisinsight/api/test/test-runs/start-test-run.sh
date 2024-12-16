@@ -57,6 +57,8 @@ eval "ID=$ID RTE=$RTE docker compose \
 echo "Checking /data directory at runtime:"
 ls -la /data || echo "/data not found"
 
+ls -la .
+
 echo "Test run is starting... ${RTE}"
 eval "ID=$ID RTE=$RTE docker compose -p $ID \
   -f $BASEDIR/$BUILD.build.yml \

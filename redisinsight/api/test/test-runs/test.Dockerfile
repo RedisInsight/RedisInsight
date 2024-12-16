@@ -16,10 +16,6 @@ RUN chmod +x wait-for-it.sh
 ARG GNOME_KEYRING_PASS="somepass"
 ENV GNOME_KEYRING_PASS=${GNOME_KEYRING_PASS}
 
-RUN mkdir /data
-
-RUN ls -la
-RUN ls -la ./data
 RUN ls -la /data || echo "/data not found"
 
 ENTRYPOINT ["./test-docker-entry.sh"]

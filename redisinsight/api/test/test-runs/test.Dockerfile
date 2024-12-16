@@ -20,6 +20,7 @@ RUN mkdir ./coverage
 
 RUN ls -la
 RUN ls -la ./data
+RUN ls -la /data
 RUN echo $COV_FOLDER
 
 ENTRYPOINT ["./test-docker-entry.sh"]

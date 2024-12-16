@@ -57,6 +57,9 @@ RUN apk update && apk upgrade --no-cache libcrypto3 libssl3
 # set workdir
 WORKDIR /usr/src/app
 
+RUN echo $COV_FOLDER
+RUN echo "Is this part of the building process"
+
 # copy artifacts built in previous stage to this one
 COPY --from=build --chown=node:node /usr/src/app/redisinsight/api/dist ./redisinsight/api/dist
 COPY --from=build --chown=node:node /usr/src/app/redisinsight/api/node_modules ./redisinsight/api/node_modules

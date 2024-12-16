@@ -59,6 +59,8 @@ ls -la /data || echo "/data not found"
 
 ls -la .
 
+mkdir -p $BASEDIR/coverage
+
 echo "Test run is starting... ${RTE}"
 eval "ID=$ID RTE=$RTE docker compose -p $ID \
   -f $BASEDIR/$BUILD.build.yml \

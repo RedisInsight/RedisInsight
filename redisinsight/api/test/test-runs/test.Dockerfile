@@ -20,8 +20,7 @@ RUN mkdir ./coverage
 
 RUN ls -la
 RUN ls -la ./data
-RUN ls -la /data
-RUN echo $COV_FOLDER
+RUN ls -la /data || echo "/data not found"
 
 ENTRYPOINT ["./test-docker-entry.sh"]
 CMD ["yarn", "test:api:ci:cov"]

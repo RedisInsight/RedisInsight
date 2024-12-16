@@ -59,8 +59,15 @@ jobs:
       - name: Ensure Coverage Directory Exists
         run: mkdir -p ./coverage
 
-  integration-tests-nightly:
+  test-something2:
+    runs-on: ubuntu-latest
     needs: test-something
+    steps:
+      - name: List here
+        run: ls .
+
+  integration-tests-nightly:
+    needs: test-something2
     uses: ./.github/workflows/tests-integration.yml
     secrets: inherit
     with:

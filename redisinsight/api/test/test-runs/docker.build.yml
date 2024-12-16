@@ -13,8 +13,8 @@ services:
       context: *apiRoot
       dockerfile: ./test/test-runs/test.Dockerfile
     tty: true
-    volumes:
-      - /data:/data
+    # volumes:
+      # - /data:/data
     depends_on:
       - redis
       - app

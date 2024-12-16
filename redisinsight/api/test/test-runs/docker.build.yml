@@ -16,8 +16,6 @@ services:
       - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
       # - ${COV_FOLDER}:/data
     depends_on:
-      redis:
-        condition: service_healthy
       wait:
         condition: service_healthy
     environment:
@@ -53,9 +51,9 @@ services:
       - redis
     volumes:
       # - ${COV_FOLDER}:/root/.redisinsight-v2.0
-      # - ${COV_FOLDER}:/data
       # - ${BASEDIR}/coverage:/data
       - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
+      # - ${COV_FOLDER}:/data
     environment:
       RI_REDIS_CLIENTS_FORCE_STRATEGY: ${RI_REDIS_CLIENTS_FORCE_STRATEGY}
       CERTS_FOLDER: '/root/.redisinsight-v2.0'

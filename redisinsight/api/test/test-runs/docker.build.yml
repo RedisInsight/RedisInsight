@@ -42,6 +42,7 @@ services:
       retries: 3
       start_period: 0s
       timeout: 2s
+    restart: 'no'
 
   app:
     cap_add:

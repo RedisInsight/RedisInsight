@@ -16,6 +16,8 @@ RUN chmod +x wait-for-it.sh
 ARG GNOME_KEYRING_PASS="somepass"
 ENV GNOME_KEYRING_PASS=${GNOME_KEYRING_PASS}
 
+RUN mkdir ./coverage
+
 RUN ls -la
 RUN ls -la ./data
 RUN echo $COV_FOLDER

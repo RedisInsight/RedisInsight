@@ -46,6 +46,9 @@ ls -la .
 
 mkdir -p $BASEDIR/coverage
 ls -ld $BASEDIR/coverage
+chmod -R g+w $BASEDIR/coverage
+ls -ld $BASEDIR/coverage
+
 
 echo "Pulling RTE... ${RTE}"
 eval "BASEDIR=$BASEDIR ID=$ID RTE=$RTE docker compose \

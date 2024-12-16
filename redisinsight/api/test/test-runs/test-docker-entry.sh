@@ -11,4 +11,7 @@ eval "$(echo "$GNOME_KEYRING_PASS" | gnome-keyring-daemon --unlock)"
 sleep 1
 eval "$(echo "$GNOME_KEYRING_PASS" | gnome-keyring-daemon --start)"
 
+echo "Checking /data at runtime:"
+ls -la /data || echo "/data not found or inaccessible"
+
 exec "$@"

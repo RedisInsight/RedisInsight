@@ -55,13 +55,13 @@ mkdir -p $BASEDIR/coverage
 ls -ld $BASEDIR/coverage
 
 echo "Pulling RTE... ${RTE}"
-eval "ID=$ID RTE=$RTE docker compose \
+eval "BASEDIR=$BASEDIR ID=$ID RTE=$RTE docker compose \
   -f $BASEDIR/$BUILD.build.yml \
   -f $BASEDIR/$RTE/docker-compose.yml \
   --env-file $BASEDIR/$BUILD.build.env pull redis"
 
 echo "Building RTE... ${RTE}"
-eval "ID=$ID RTE=$RTE docker compose \
+eval "BASEDIR=$BASEDIR ID=$ID RTE=$RTE docker compose \
   -f $BASEDIR/$BUILD.build.yml \
   -f $BASEDIR/$RTE/docker-compose.yml \
   --env-file $BASEDIR/$BUILD.build.env build --no-cache redis"

@@ -18,6 +18,8 @@ ENV GNOME_KEYRING_PASS=${GNOME_KEYRING_PASS}
 
 RUN ls -la /data || echo "/data not found"
 
+RUN echo ${TEST_BASE_DIR}
+
 ENTRYPOINT ["./test-docker-entry.sh"]
 CMD ["yarn", "test:api:ci:cov"]
 

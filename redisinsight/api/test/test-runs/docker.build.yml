@@ -25,6 +25,7 @@ services:
       TEST_BE_SERVER: ${TEST_BE_SERVER}
       TEST_LOCAL_DB_FILE_PATH: '/data/redisinsight.db'
       RI_SECRET_STORAGE_PASSWORD: 'somepassword'
+      TEST_BASE_DIR: ${BASEDIR}
 
   app:
     cap_add:

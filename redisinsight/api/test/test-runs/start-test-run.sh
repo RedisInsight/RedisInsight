@@ -42,14 +42,7 @@ if test -f "$PRESTART"; then
     ID=$ID ./$PRESTART``
 fi
 
-echo "Checking /data directory at runtime:"
-ls -la /data || echo "/data not found"
-
-mkdir -p /data
-
-echo "Checking permissions for /data:"
-ls -ld /data
-whoami
+ls -la .
 
 mkdir -p $BASEDIR/coverage
 ls -ld $BASEDIR/coverage

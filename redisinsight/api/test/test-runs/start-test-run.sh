@@ -66,20 +66,22 @@ whoami
 mkdir -p $BASEDIR/coverage
 ls -ld $BASEDIR/coverage
 
+export BASEDIR=$(dirname $0)
+
 echo "Test run is starting... ${RTE}"
-eval "ID=$ID RTE=$RTE docker compose -p $ID \
+eval "BASEDIR=$BASEDIR ID=$ID RTE=$RTE docker compose -p $ID \
   -f $BASEDIR/$BUILD.build.yml \
   -f $BASEDIR/$RTE/docker-compose.yml \
   --env-file $BASEDIR/$BUILD.build.env run --use-aliases --build test"
 
 echo "Stop all containers... ${RTE}"
-eval "ID=$ID RTE=$RTE docker compose -p $ID \
+eval "BASEDIR=$BASEDIR ID=$ID RTE=$RTE docker compose -p $ID \
   -f $BASEDIR/$BUILD.build.yml \
   -f $BASEDIR/$RTE/docker-compose.yml \
   --env-file $BASEDIR/$BUILD.build.env stop"
 
 echo "Remove containers with anonymous volumes... ${RTE}"
-eval "ID=$ID RTE=$RTE docker compose -p $ID \
+eval "BASEDIR=$BASEDIR ID=$ID RTE=$RTE docker compose -p $ID \
   -f $BASEDIR/$BUILD.build.yml \
   -f $BASEDIR/$RTE/docker-compose.yml \
   --env-file $BASEDIR/$BUILD.build.env rm -v -f"

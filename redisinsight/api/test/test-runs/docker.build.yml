@@ -14,7 +14,7 @@ services:
       dockerfile: ./test/test-runs/test.Dockerfile
     tty: true
     volumes:
-      - ./coverage:/data
+      - /data:/data
     depends_on:
       - redis
       - app

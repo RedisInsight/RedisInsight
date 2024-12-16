@@ -41,6 +41,7 @@ const getDBConnection = async (): Promise<Connection> => {
         if (err.name === "AlreadyHasActiveConnectionError") {
           return getConnectionManager().get("default");
         }
+        console.log('err :>> ', err);
         throw err;
       });
   }

@@ -53,8 +53,14 @@ jobs:
   #   uses: ./.github/workflows/pipeline-build-docker.yml
   #   secrets: inherit
 
+  test-something:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure Coverage Directory Exists
+        run: mkdir -p ./coverage
+
   integration-tests-nightly:
-    # needs: build-docker
+    needs: test-something
     uses: ./.github/workflows/tests-integration.yml
     secrets: inherit
     with:

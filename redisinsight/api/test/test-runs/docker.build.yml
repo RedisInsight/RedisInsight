@@ -13,7 +13,7 @@ services:
       dockerfile: ./test/test-runs/test.Dockerfile
     tty: true
     volumes:
-      - ./redisinsight/api/test/test-runs/coverage:/data
+      - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
     depends_on:
       - redis
       - app
@@ -36,7 +36,7 @@ services:
     volumes:
       # - ${COV_FOLDER}:/root/.redisinsight-v2.0
       # - ${BASEDIR}/coverage:/data
-      - ./redisinsight/api/test/test-runs/coverage:/data
+      - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
     environment:
       RI_REDIS_CLIENTS_FORCE_STRATEGY: ${RI_REDIS_CLIENTS_FORCE_STRATEGY}
       CERTS_FOLDER: '/root/.redisinsight-v2.0'

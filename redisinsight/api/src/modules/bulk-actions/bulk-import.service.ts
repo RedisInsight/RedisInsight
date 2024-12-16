@@ -145,7 +145,7 @@ export class BulkImportService {
 
       return result;
     } catch (e) {
-      this.logger.error('Unable to process an import file', e);
+      this.logger.error('Unable to process an import file', e, clientMetadata);
       const exception = wrapHttpError(e);
       this.analytics.sendActionFailed(clientMetadata.sessionMetadata, result, exception);
       client?.disconnect();
@@ -180,7 +180,7 @@ export class BulkImportService {
 
       return this.import(clientMetadata, fs.createReadStream(path));
     } catch (e) {
-      this.logger.error('Unable to process an import file path from tutorial', e);
+      this.logger.error('Unable to process an import file path from tutorial', e, clientMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -218,7 +218,7 @@ export class BulkImportService {
 
       return result;
     } catch (e) {
-      this.logger.error('Unable to process an import file path from tutorial', e);
+      this.logger.error('Unable to process an import file path from tutorial', e, clientMetadata);
       throw new InternalServerErrorException(ERROR_MESSAGES.COMMON_DEFAULT_IMPORT_ERROR);
     }
   }

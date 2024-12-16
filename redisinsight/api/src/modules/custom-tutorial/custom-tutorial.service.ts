@@ -116,7 +116,7 @@ export class CustomTutorialService {
       return await this.customTutorialManifestProvider.generateTutorialManifest(tutorial);
     } catch (e) {
       this.analytics.sendImportFailed(sessionMetadata, e);
-      this.logger.error('Unable to create custom tutorials', e);
+      this.logger.error('Unable to create custom tutorials', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }

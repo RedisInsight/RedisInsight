@@ -13,7 +13,7 @@ export class ZSetKeyInfoStrategy extends KeyInfoStrategy {
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${RedisDataType.ZSet} type info.`);
+    this.logger.debug(`Getting ${RedisDataType.ZSet} type info.`);
 
     const [
       [, ttl = null],

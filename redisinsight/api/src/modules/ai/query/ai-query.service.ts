@@ -178,7 +178,7 @@ export class AiQueryService {
 
             return cb(indexContext);
           } catch (e) {
-            this.logger.warn('Unable to create index context', e);
+            this.logger.warn('Unable to create index context', e, sessionMetadata);
             return cb(e.message);
           }
         });
@@ -191,7 +191,7 @@ export class AiQueryService {
 
             return cb(await client.sendCommand(data, { replyEncoding: 'utf8' }));
           } catch (e) {
-            this.logger.warn('Query execution error', e);
+            this.logger.warn('Query execution error', e, sessionMetadata);
             return cb(e.message);
           }
         });

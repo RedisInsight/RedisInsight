@@ -219,7 +219,7 @@ export class CloudAuthService {
       });
     } catch (e) {
       // ignore error
-      this.logger.error('Unable to revoke tokens', e);
+      this.logger.error('Unable to revoke tokens', e, sessionMetadata);
     }
   }
 
@@ -299,7 +299,7 @@ export class CloudAuthService {
    */
   async logout(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      this.logger.log('Logout cloud user');
+      this.logger.debug('Logout cloud user', sessionMetadata);
 
       await this.revokeRefreshToken(sessionMetadata);
 
@@ -307,7 +307,7 @@ export class CloudAuthService {
 
       this.eventEmitter.emit(CloudAuthServerEvent.Logout, sessionMetadata);
     } catch (e) {
-      this.logger.error('Unable to logout', e);
+      this.logger.error('Unable to logout', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }

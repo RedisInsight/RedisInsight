@@ -29,7 +29,7 @@ export class PubSubService {
    */
   async subscribe(sessionMetadata: SessionMetadata, userClient: UserClient, dto: SubscribeDto) {
     try {
-      this.logger.log('Subscribing to channels(s)');
+      this.logger.debug('Subscribing to channels(s)', sessionMetadata);
 
       const session = this.sessionProvider.getOrCreateUserSession(sessionMetadata, userClient);
       await Promise.all(dto.subscriptions.map((subDto) => session.subscribe(
@@ -41,7 +41,7 @@ export class PubSubService {
         dto.subscriptions,
       );
     } catch (e) {
-      this.logger.error('Unable to create subscriptions', e);
+      this.logger.error('Unable to create subscriptions', e, sessionMetadata);
 
       if (e instanceof HttpException) {
         throw e;
@@ -59,7 +59,7 @@ export class PubSubService {
    */
   async unsubscribe(sessionMetadata: SessionMetadata, userClient: UserClient, dto: SubscribeDto) {
     try {
-      this.logger.log('Unsubscribing from channels(s)');
+      this.logger.debug('Unsubscribing from channels(s)', sessionMetadata);
 
       const session = this.sessionProvider.getOrCreateUserSession(sessionMetadata, userClient);
       await Promise.all(dto.subscriptions.map((subDto) => session.unsubscribe(
@@ -67,7 +67,7 @@ export class PubSubService {
       )));
       this.analyticsService.sendChannelUnsubscribeEvent(sessionMetadata, userClient.getDatabaseId());
     } catch (e) {
-      this.logger.error('Unable to unsubscribe', e);
+      this.logger.error('Unable to unsubscribe', e, sessionMetadata);
 
       if (e instanceof HttpException) {
         throw e;
@@ -84,7 +84,7 @@ export class PubSubService {
    */
   async publish(clientMetadata: ClientMetadata, dto: PublishDto): Promise<PublishResponse> {
     try {
-      this.logger.log('Publishing message.');
+      this.logger.debug('Publishing message.', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -100,7 +100,7 @@ export class PubSubService {
         affected,
       };
     } catch (e) {
-      this.logger.error('Unable to publish a message', e);
+      this.logger.error('Unable to publish a message', e, clientMetadata);
 
       if (e instanceof HttpException) {
         throw e;
@@ -116,7 +116,7 @@ export class PubSubService {
    * @param id
    */
   async handleDisconnect(id: string) {
-    this.logger.log(`Handle disconnect event: ${id}`);
+    this.logger.debug(`Handle disconnect event: ${id}`);
     const session = this.sessionProvider.getUserSession(id);
 
     if (session) {

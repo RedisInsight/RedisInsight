@@ -63,17 +63,17 @@ COPY --from=build --chown=node:node /usr/src/app/redisinsight/api/node_modules .
 COPY --from=build --chown=node:node /usr/src/app/redisinsight/ui/dist ./redisinsight/ui/dist
 
 # folder to store local database, plugins, logs and all other files
-RUN mkdir -p /data && chown -R node:node /data
+RUN mkdir -p /data
 
 # copy the docker entry point script and make it executable
-COPY --chown=node:node ./docker-entry.sh ./
+COPY ./docker-entry.sh ./
 RUN chmod +x docker-entry.sh
 
 # since RI is hard-code to port 5540, expose it from the container
 EXPOSE 5540
 
 # don't run the node process as root
-USER node
+# USER node
 
 # serve the application 🚀
 ENTRYPOINT ["./docker-entry.sh", "node", "redisinsight/api/dist/src/main"]

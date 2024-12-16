@@ -54,6 +54,9 @@ eval "ID=$ID RTE=$RTE docker compose \
   -f $BASEDIR/$RTE/docker-compose.yml \
   --env-file $BASEDIR/$BUILD.build.env build --no-cache redis"
 
+echo "Checking /data directory at runtime:"
+ls -la /data || echo "/data not found"
+
 echo "Test run is starting... ${RTE}"
 eval "ID=$ID RTE=$RTE docker compose -p $ID \
   -f $BASEDIR/$BUILD.build.yml \

@@ -56,18 +56,14 @@ jobs:
   test-something:
     runs-on: ubuntu-latest
     steps:
-      - name: Ensure Coverage Directory Exists
-        run: mkdir -p ./coverage
-
-  test-something2:
-    runs-on: ubuntu-latest
-    needs: test-something
-    steps:
-      - name: List here
-        run: ls .
+      - name: Verify Coverage Directory on Host
+        run: |
+          echo "Host coverage directory before container start:"
+          mkdir -p ./coverage
+          ls -la ./coverage
 
   integration-tests-nightly:
-    needs: test-something2
+    needs: test-something
     uses: ./.github/workflows/tests-integration.yml
     secrets: inherit
     with:

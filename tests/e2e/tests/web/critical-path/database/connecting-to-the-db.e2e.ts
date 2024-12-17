@@ -49,7 +49,7 @@ const sshDbClusterPass = {
     databaseName: `SSH_Cluster_${Common.generateWord(5)}`
 };
 
-fixture `Connecting to the databases verifications`
+fixture.only `Connecting to the databases verifications`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {

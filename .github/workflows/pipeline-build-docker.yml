@@ -100,7 +100,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ./release/docker/docker-linux-alpine.amd64.tar
-          key: docker-image-${{ github.ref_name }}-v2
+          key: docker-image-${{ github.ref_name }}-v3
 
       - uses: actions/upload-artifact@v4
         name: Upload web-mini artifacts

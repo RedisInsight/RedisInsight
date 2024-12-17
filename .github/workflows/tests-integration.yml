@@ -111,13 +111,12 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./release/docker/docker-linux-alpine.amd64.tar
-          key: docker-image-${{ github.ref_name }}-v2
+          key: docker-image-${{ github.ref_name }}-v3
 
       - name: Check we have everything needed
         run: |
           ls -la ./release
           ls -la ./release/docker
-
 
       - name: Load built docker image from workspace
         if: inputs.build == 'docker'

@@ -60,6 +60,7 @@ services:
     entrypoint: >
       sh -c '
       echo "Debug container in the house!";
+      docker ps;
       docker ps | grep "app" | awk "{print \$1}";
         docker logs $(docker ps | grep "app" | awk "{print \$1}") > /data/app.log 2>&1;'
 

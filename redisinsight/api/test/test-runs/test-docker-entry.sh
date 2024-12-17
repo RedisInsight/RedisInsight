@@ -12,7 +12,7 @@ sleep 1
 eval "$(echo "$GNOME_KEYRING_PASS" | gnome-keyring-daemon --start)"
 
 echo "Waiting for /data/redisinsight.db to be available..."
-RETRIES=180 
+RETRIES=10 
 while [ $RETRIES -gt 0 ]; do
   if [ -f /data/redisinsight.db ]; then
     echo "/data/redisinsight.db is ready!"

@@ -1,5 +1,5 @@
 spec:
-  - 'test/api/string/**/*.test.ts'
+  - 'test/string/**/*.test.ts'
 require: 'test/api/api.deps.init.ts'
 retries: 2
 timeout: 60000

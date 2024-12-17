@@ -53,12 +53,14 @@ services:
     image: alpine:latest
     depends_on:
       - app
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # Allow access to Docker CLI
+      - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
+      # - ${COV_FOLDER}:/data
     entrypoint: sh -c "
       echo 'Fetching app logs...';
-      docker logs $(docker ps -aqf 'name=app') || echo 'Failed to fetch logs';
-      tail -f /dev/null"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      timeout 30s sh -c 'docker logs $(docker ps -aqf name=app) > /data/app.log 2>&1';
+      echo 'Logs captured. Debug service exiting after timeout.';"
 
 networks:
   default:

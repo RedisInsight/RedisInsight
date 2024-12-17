@@ -7,6 +7,13 @@ const isWebApp = riConfig.app.type === 'web'
 const { apiPort } = window.app?.config || { apiPort: riConfig.api.port }
 const hostedApiBaseUrl = riConfig.api.hostedBaseUrl
 
+export const getSocketApiUrl = (path = '') => {
+  const baseUrl = getBaseApiUrl()
+  const proxyPath = getProxyPath()
+
+  return `${baseUrl}${proxyPath}${path}`
+}
+
 export const getBaseApiUrl = () => {
   if (hostedApiBaseUrl) {
     return hostedApiBaseUrl

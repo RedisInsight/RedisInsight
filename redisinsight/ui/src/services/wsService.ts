@@ -1,6 +1,5 @@
 import { io } from 'socket.io-client'
-import path from 'path'
-import { getProxyPath } from 'uiSrc/utils'
+// import { getProxyPath } from 'uiSrc/utils'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { getConfig } from 'uiSrc/config'
 
@@ -39,8 +38,7 @@ export function wsService(
   const withCredentials = riConfig.api.socketCredentials
 
   const ioOptions = {
-    // addTrailingSlash: false,
-    path: '/redis-insight/api/socket.io',
+    // path: getProxyPath(), // '/redis-insight/api/socket.io',
     forceNew,
     reconnection,
     query: queryParams,
@@ -48,13 +46,12 @@ export function wsService(
     rejectUnauthorized: false,
     transports,
     withCredentials,
-    // auth: { token }
   }
-  const fullWsUrl = `${wsUrl}/socket.io`
+  // const fullWsUrl = `${wsUrl}/socket.io`
   // eslint-disable-next-line no-console
   console.log({
     wsUrl,
-    fullWsUrl,
+    // fullWsUrl,
     passTokenViaHeaders,
     token,
     queryParams,
@@ -63,5 +60,6 @@ export function wsService(
     ioOptions,
   })
 
-  return io('https://app-sm.k8s-mw.sm-qa.qa.redislabs.com', ioOptions)
+  return io(wsUrl, ioOptions)
+  // return io('https://app-sm.k8s-mw.sm-qa.qa.redislabs.com', ioOptions)
 }

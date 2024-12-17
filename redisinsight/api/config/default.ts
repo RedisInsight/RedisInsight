@@ -18,6 +18,7 @@ const defaultsDir = process.env.RI_DEFAULTS_DIR
     : join(__dirname, '..', 'defaults'));
 
 const proxyPath = trim(process.env.RI_PROXY_PATH, '/');
+const socketProxyPath = trim(process.env.RI_SOCKET_PROXY_PATH, '/api');
 
 const customPluginsUri = posix.join('/', proxyPath, 'plugins');
 const staticUri = posix.join('/', proxyPath, 'static');
@@ -27,7 +28,7 @@ const contentUri = posix.join('/', proxyPath, 'static', 'content');
 const defaultPluginsUri = posix.join('/', proxyPath, 'static', 'plugins');
 const pluginsAssetsUri = posix.join('/', proxyPath, 'static', 'resources', 'plugins');
 
-const socketPath = posix.join('/', proxyPath, 'socket.io');
+const socketPath = posix.join('/', socketProxyPath, 'socket.io');
 const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'data')
   : join(__dirname, '..', 'data');

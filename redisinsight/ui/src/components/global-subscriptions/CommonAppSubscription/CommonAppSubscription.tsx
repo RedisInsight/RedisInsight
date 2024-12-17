@@ -7,7 +7,7 @@ import { CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constant
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
-import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
+import { getSocketApiUrl, Nullable } from 'uiSrc/utils';
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
@@ -24,7 +24,7 @@ const CommonAppSubscription = () => {
   const { token } = useSelector(appCsrfSelector)
   const [recommendationsSubscriptions, setRecommendationsSubscriptions] = useState<string[]>([])
   const socketRef = useRef<Nullable<Socket>>(null)
-  const connectIo = useIoConnection(getBaseApiUrl(), {
+  const connectIo = useIoConnection(getSocketApiUrl(), {
     forceNew: false,
     token,
     reconnection: true }

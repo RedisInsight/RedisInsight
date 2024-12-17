@@ -50,11 +50,11 @@ services:
       RI_FEATURES_CONFIG_URL: 'http://test:5551/remote/features-config.json'
 
   debug:
-    image: alpine:latest
+    image: docker:latest
     depends_on:
       - app
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock  # Allow access to Docker CLI
+      - /var/run/docker.sock:/var/run/docker.sock # Allow access to Docker CLI
       - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
       # - ${COV_FOLDER}:/data
     entrypoint: sh -c "

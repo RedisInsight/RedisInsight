@@ -3,7 +3,7 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { INestApplication, NestApplicationOptions } from '@nestjs/common';
+import { INestApplication, Logger, NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { get, Config } from 'src/utils';
@@ -76,14 +76,13 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   const logFileProvider = app.get(LogFileProvider);
 
   await app.listen(apiPort || port, host);
-  logger.log({
-    message: `Server is running on http(s)://${host}:${port}`,
-    context: 'bootstrap',
-  });
+
+  const bootstrapLogger = new Logger('boostrap');
+  bootstrapLogger.log(`Server is running on http(s)://${host}:${port}`);
 
   const gracefulShutdown = (signal) => {
     try {
-      logger.log(`Signal ${signal} received. Shutting down...`);
+      bootstrapLogger.log(`Signal ${signal} received. Shutting down...`);
       logFileProvider.onModuleDestroy();
     } catch (e) {
       // ignore errors if any

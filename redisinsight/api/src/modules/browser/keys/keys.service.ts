@@ -145,21 +145,17 @@ export class KeysService {
 
       const result = await this.keyInfoProvider.getStrategy(type).getInfo(client, key, type);
       this.logger.debug('Succeed to get key info', clientMetadata);
-      this.recommendationService.check(
+
+      this.recommendationService.checkMulti(
         clientMetadata,
-        RECOMMENDATION_NAMES.BIG_SETS,
+        [
+          RECOMMENDATION_NAMES.BIG_SETS,
+          RECOMMENDATION_NAMES.BIG_STRINGS,
+          RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
+        ],
         result,
       );
-      this.recommendationService.check(
-        clientMetadata,
-        RECOMMENDATION_NAMES.BIG_STRINGS,
-        result,
-      );
-      this.recommendationService.check(
-        clientMetadata,
-        RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
-        result,
-      );
+
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error('Failed to get key info.', error, clientMetadata);

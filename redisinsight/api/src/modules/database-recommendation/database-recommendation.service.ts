@@ -52,6 +52,69 @@ export class DatabaseRecommendationService {
     return this.databaseRecommendationRepository.list({ ...clientMetadata, db });
   }
 
+  private async checkRecommendation(
+    recommendationName: string,
+    exists: boolean,
+    clientMetadata: ClientMetadata, data: any,
+  ): Promise<DatabaseRecommendation> {
+    if (!exists) {
+      const recommendation = await this.scanner.determineRecommendation(
+        clientMetadata.sessionMetadata,
+        recommendationName,
+        data,
+      );
+
+      if (recommendation) {
+        const entity = plainToClass(
+          DatabaseRecommendation,
+          { databaseId: clientMetadata?.databaseId, ...recommendation },
+        );
+
+        return await this.create(clientMetadata, entity);
+      }
+    }
+
+    return null;
+  }
+
+  public async checkMulti(
+    clientMetadata: ClientMetadata,
+    recommendationNames: string[],
+    data: any,
+  ): Promise<Map<string, DatabaseRecommendation[]>> {
+    try {
+      const newClientMetadata = {
+        ...clientMetadata,
+        db: clientMetadata.db
+          ?? (await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId))?.db
+          ?? 0,
+      };
+      const isRecommendationExist = await this.databaseRecommendationRepository.isExistMulti(
+        newClientMetadata,
+        recommendationNames,
+      );
+
+      const results = await Promise.all(
+        recommendationNames.map(
+          (name) => this.checkRecommendation(
+            name,
+            isRecommendationExist[name],
+            newClientMetadata,
+            data,
+          ),
+        ),
+      );
+
+      return results.reduce((acc, result, idx) => ({
+        ...acc,
+        [recommendationNames[idx]]: result,
+      }), {} as Map<string, DatabaseRecommendation[]>);
+    } catch (e) {
+      this.logger.warn('Unable to check recommendation', e, clientMetadata);
+      return null;
+    }
+  }
+
   /**
    * Check recommendation condition
    * @param clientMetadata
@@ -63,39 +126,8 @@ export class DatabaseRecommendationService {
     recommendationName: string,
     data: any,
   ): Promise<DatabaseRecommendation> {
-    try {
-      const newClientMetadata = {
-        ...clientMetadata,
-        db: clientMetadata.db
-          ?? (await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId))?.db
-          ?? 0,
-      };
-      const isRecommendationExist = await this.databaseRecommendationRepository.isExist(
-        newClientMetadata,
-        recommendationName,
-      );
-      if (!isRecommendationExist) {
-        const recommendation = await this.scanner.determineRecommendation(
-          clientMetadata.sessionMetadata,
-          recommendationName,
-          data,
-        );
-
-        if (recommendation) {
-          const entity = plainToClass(
-            DatabaseRecommendation,
-            { databaseId: newClientMetadata?.databaseId, ...recommendation },
-          );
-
-          return await this.create(newClientMetadata, entity);
-        }
-      }
-
-      return null;
-    } catch (e) {
-      this.logger.warn('Unable to check recommendation', e, clientMetadata);
-      return null;
-    }
+    const result = await this.checkMulti(clientMetadata, [recommendationName], data);
+    return result[recommendationName];
   }
 
   /**

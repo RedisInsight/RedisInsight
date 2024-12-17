@@ -10,7 +10,8 @@ const hostedApiBaseUrl = riConfig.api.hostedBaseUrl
 export const getSocketApiUrl = (path = '') => {
   const baseUrl = getBaseApiUrl()
   const proxyPath = getProxyPath()
-
+  // eslint-disable-next-line no-console
+  console.log({ baseUrl, proxyPath, path })
   return `${baseUrl}${proxyPath}${path}`
 }
 

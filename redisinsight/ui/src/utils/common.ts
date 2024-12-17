@@ -11,7 +11,7 @@ export const getSocketApiUrl = (path = '') => {
   let baseUrl = getBaseApiUrl()
   try {
     const url = new URL(baseUrl)
-    baseUrl = baseUrl.replace(url.pathname, '/api')
+    baseUrl = baseUrl.replace(url.pathname, '/')
   } catch (e) {
     console.error(e)
   }

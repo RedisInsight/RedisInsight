@@ -16,6 +16,12 @@ export const getSocketApiUrl = (path = '') => {
 }
 
 export const getBaseApiUrl = () => {
+  // eslint-disable-next-line no-console
+  console.log({
+    hostedApiBaseUrl,
+    isWebApp,
+    origin: window.location.origin
+  })
   if (hostedApiBaseUrl) {
     return hostedApiBaseUrl
   }

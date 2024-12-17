@@ -39,7 +39,7 @@ export function wsService(
 
   const ioOptions = {
     // path: getProxyPath(), // '/redis-insight/api/socket.io',
-    path: '/redis-insight/api/socket.io',
+    path: '/redis-insight/socket.io',
     forceNew,
     reconnection,
     query: queryParams,

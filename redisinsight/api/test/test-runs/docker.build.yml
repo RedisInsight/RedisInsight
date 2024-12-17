@@ -57,10 +57,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock # Allow access to Docker CLI
       - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
       # - ${COV_FOLDER}:/data
-    entrypoint: sh -c "
-      echo 'Fetching app logs...';
-      timeout 30s sh -c 'docker logs $(docker ps -aqf name=app) > /data/app.log 2>&1';
-      echo 'Logs captured. Debug service exiting after timeout.';"
+    entrypoint: >
+      sh -c '
+        docker logs $(docker ps | grep "app" | awk "{print \$1}") > /data/app.log 2>&1;'
 
 networks:
   default:

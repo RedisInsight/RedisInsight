@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client'
-import { getProxyPath } from 'uiSrc/utils'
+// import { getProxyPath } from 'uiSrc/utils'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { getConfig } from 'uiSrc/config'
 
@@ -38,7 +38,8 @@ export function wsService(
   const withCredentials = riConfig.api.socketCredentials
 
   const ioOptions = {
-    path: getProxyPath(), // '/redis-insight/api/socket.io',
+    // path: getProxyPath(), // '/redis-insight/api/socket.io',
+    path: '/redis-insight/api/socket.io',
     forceNew,
     reconnection,
     query: queryParams,

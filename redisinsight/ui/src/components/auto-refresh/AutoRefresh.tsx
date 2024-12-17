@@ -26,6 +26,7 @@ export interface Props {
   postfix: string
   loading: boolean
   displayText?: boolean
+  displayLastRefresh?: boolean
   lastRefreshTime: Nullable<number>
   testid?: string
   containerClassName?: string
@@ -45,6 +46,7 @@ const AutoRefresh = ({
   postfix,
   loading,
   displayText = true,
+  displayLastRefresh = true,
   lastRefreshTime,
   containerClassName = '',
   testid = '',
@@ -121,7 +123,7 @@ const AutoRefresh = ({
     return () => clearInterval(intervalRefresh)
   }, [enableAutoRefresh, refreshRate, loading, disabled, lastRefreshTime])
 
-  const getLastRefreshDelta = (time:Nullable<number>) => (Date.now() - (time || 0)) / 1_000
+  const getLastRefreshDelta = (time: Nullable<number>) => (Date.now() - (time || 0)) / 1_000
 
   const getDataTestid = (suffix: string) => (testid ? `${testid}-${suffix}` : suffix)
 
@@ -172,9 +174,11 @@ const AutoRefresh = ({
         {displayText && (
           <span data-testid={getDataTestid('refresh-message-label')}>{enableAutoRefresh ? 'Auto refresh:' : 'Last refresh:'}</span>
         )}
-        <span className={cx('refresh-message-time', styles.time, { [styles.disabled]: disabled })} data-testid={getDataTestid('refresh-message')}>
-          {` ${enableAutoRefresh ? refreshRateMessage : refreshMessage}`}
-        </span>
+        {displayLastRefresh && (
+          <span className={cx('refresh-message-time', styles.time, { [styles.disabled]: disabled })} data-testid={getDataTestid('refresh-message')}>
+            {` ${enableAutoRefresh ? refreshRateMessage : refreshMessage}`}
+          </span>
+        )}
       </EuiTextColor>
 
       <EuiToolTip

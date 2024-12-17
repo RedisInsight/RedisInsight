@@ -4,6 +4,7 @@ import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
 
 import { IMetric } from './components/OverviewMetrics'
 
+import AutoRefresh from '../auto-refresh'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -56,46 +57,62 @@ const DatabaseOverview = (props: Props) => {
     <EuiFlexGroup className={styles.container} gutterSize="none" responsive={false}>
       {metrics?.length! > 0 && (
         <EuiFlexItem key="overview">
-          <div className={cx(
-            'flex-row',
-            styles.itemContainer,
-            styles.overview,
-          )}
+          <EuiFlexGroup
+            className={cx(
+              'flex-row',
+              styles.itemContainer,
+              styles.overview,
+            )}
+            gutterSize="none"
+            responsive={false}
           >
-            <EuiFlexGroup gutterSize="none" responsive={false}>
-              {
-                metrics?.map((overviewItem) => (
-                  <EuiFlexItem
-                    className={cx(styles.overviewItem, overviewItem.className ?? '')}
-                    key={overviewItem.id}
-                    data-test-subj={overviewItem.id}
-                    grow={false}
+            {
+              metrics?.map((overviewItem) => (
+                <EuiFlexItem
+                  className={cx(styles.overviewItem, overviewItem.className ?? '')}
+                  key={overviewItem.id}
+                  data-test-subj={overviewItem.id}
+                  grow={false}
+                >
+                  <EuiToolTip
+                    position="bottom"
+                    className={styles.tooltip}
+                    content={getTooltipContent(overviewItem)}
                   >
-                    <EuiToolTip
-                      position="bottom"
-                      className={styles.tooltip}
-                      content={getTooltipContent(overviewItem)}
-                    >
-                      <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center" justifyContent="center">
-                        {overviewItem.icon && (
-                          <EuiFlexItem grow={false}>
-                            <EuiIcon
-                              size="m"
-                              type={overviewItem.icon}
-                              className={styles.icon}
-                            />
-                          </EuiFlexItem>
-                        )}
-                        <EuiFlexItem grow={false} className={styles.overviewItemContent}>
-                          {overviewItem.content}
+                    <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center" justifyContent="center">
+                      {overviewItem.icon && (
+                        <EuiFlexItem grow={false} className={styles.icon}>
+                          <EuiIcon
+                            size="m"
+                            type={overviewItem.icon}
+                            className={styles.icon}
+                          />
                         </EuiFlexItem>
-                      </EuiFlexGroup>
-                    </EuiToolTip>
-                  </EuiFlexItem>
-                ))
-              }
-            </EuiFlexGroup>
-          </div>
+                      )}
+                      <EuiFlexItem grow={false} className={styles.overviewItemContent}>
+                        {overviewItem.content}
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  </EuiToolTip>
+                </EuiFlexItem>
+              ))
+            }
+            <EuiFlexItem
+              className={cx(styles.overviewItem, styles.autoRefresh)}
+              // key={overviewItem.id}
+              // data-test-subj={overviewItem.id}
+              grow={false}
+            >
+              <EuiFlexItem grow={false} className={styles.overviewItemContent}>
+                <AutoRefresh
+                  displayText={false}
+                  displayLastRefresh={false}
+                  iconSize="xs"
+                  containerClassName=""
+                />
+              </EuiFlexItem>
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </EuiFlexItem>
       )}
     </EuiFlexGroup>

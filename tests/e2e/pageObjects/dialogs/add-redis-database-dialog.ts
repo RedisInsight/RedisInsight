@@ -27,6 +27,7 @@ export class AddRedisDatabaseDialog {
     cloneDatabaseButton = Selector('[data-testid=clone-db-btn]');
     cancelButton = Selector('[data-testid=btn-cancel]');
     testConnectionBtn = Selector('[data-testid=btn-test-connection]');
+    backButton = Selector('[data-testid=back-btn]');
 
     // TEXT INPUTS (also referred to as 'Text fields')
     disabledDatabaseInfo = Selector('[class=euiListGroupItem__label]');
@@ -35,7 +36,7 @@ export class AddRedisDatabaseDialog {
     databaseAliasInput = Selector('[data-testid=name]');
     passwordInput = Selector('[data-testid=password]');
     usernameInput = Selector('[data-testid=username]');
-    connectionUrlInput = Selector('[data-testid=connectionURL]');
+    connectionUrlInput = Selector('[data-testid=connection-url]');
     accessKeyInput = Selector('[data-testid=access-key]');
     secretKeyInput = Selector('[data-testid=secret-key]');
     databaseIndexInput = Selector('[data-testid=db]');

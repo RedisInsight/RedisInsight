@@ -1,10 +1,9 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { BasePage } from '../pageObjects';
 import { syncFeaturesApi } from './api/api-info';
 import { DatabaseScripts, DbTableParameters } from './database-scripts';
+import { t } from 'testcafe';
 
-const basePage = new BasePage();
 const dbTableParams: DbTableParameters = {
     tableName: 'features_config',
     columnName: 'controlNumber',
@@ -41,7 +40,7 @@ export async function updateControlNumber(controlNumber: number): Promise<void> 
     await syncFeaturesApi();
     await DatabaseScripts.updateColumnValueInDBTable({ ...dbTableParams, rowValue: controlNumber });
     await syncFeaturesApi();
-    await basePage.reloadPage();
+    await t.eval(() => location.reload());
 }
 
 /**

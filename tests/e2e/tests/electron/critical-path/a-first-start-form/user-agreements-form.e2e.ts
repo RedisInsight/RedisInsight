@@ -15,7 +15,7 @@ test('Verify that user should accept User Agreements to continue working with th
         await t.expect(userAgreementDialog.userAgreementsPopup.exists).ok('User Agreements Popup is shown');
         // Verify that I still has agreements popup & cannot add a database
         await t.expect(userAgreementDialog.submitButton.hasAttribute('disabled')).ok('Submit button not disabled by default');
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually.exists).notOk('User can\'t add a database');
+        await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.customSettingsButton.exists).notOk('User can\'t add a database');
     });
 test('Verify that the encryption enabled by default and specific message', async t => {
     const expectedPluginText = 'To avoid automatic execution of malicious code, when adding new Workbench plugins, use files from trusted authors only.';

@@ -49,7 +49,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
 
-  if (process.env.RI_APP_TYPE !== 'electron') {
+  if (process.env.RI_APP_TYPE !== 'electron' || process.env.NODE_ENV === 'development') {
     let prefix = serverConfig.globalPrefix;
     if (serverConfig.proxyPath) {
       prefix = posix.join(serverConfig.proxyPath, prefix);

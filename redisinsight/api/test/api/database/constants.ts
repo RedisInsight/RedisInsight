@@ -36,6 +36,7 @@ export const databaseSchema = Joi.object().keys({
   compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').required(),
   nameFromProvider: Joi.string().allow(null),
   lastConnection: Joi.string().isoDate().allow(null),
+  createdAt: Joi.string().isoDate(),
   provider: Joi.string().valid(...providers),
   new: Joi.boolean().allow(null),
   tls: Joi.boolean().allow(null),

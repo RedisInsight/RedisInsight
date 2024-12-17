@@ -2682,13 +2682,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/gzip-js@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@types/gzip-js/-/gzip-js-0.3.3.tgz#b485ce6f007c57fbac9ea7256c30f437ceb5fa1a"
-  integrity sha512-Bp4dv9hfpD49sjn59+8VPMDm4O5Lx1qSLKn4GqV9ENbvoKrCV7GntIr7e85cFjtRWRPTXkIxWTCk4DKMXostMg==
-  dependencies:
-    "@types/node" "*"
-
 "@types/hast@^2.0.0":
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/@types/hast/-/hast-2.3.4.tgz#8aa5ef92c117d20d974a82bdfb6a648b08c0bafc"
@@ -4794,11 +4787,6 @@ cosmiconfig@^8.1.3:
     parse-json "^5.2.0"
     path-type "^4.0.0"
 
-"crc32@>= 0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/crc32/-/crc32-0.2.2.tgz#7ad220d6ffdcd119f9fc127a7772cacea390a4ba"
-  integrity sha512-PFZEGbDUeoNbL2GHIEpJRQGheXReDody/9axKTxhXtQqIL443wnNigtVZO9iuCIMPApKZRv7k2xr8euXHqNxQQ==
-
 crc@^3.8.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/crc/-/crc-3.8.0.tgz#ad60269c2c856f8c299e2c4cc0de4556914056c6"
@@ -4831,10 +4819,10 @@ cross-env@^7.0.2:
   dependencies:
     cross-spawn "^7.0.1"
 
-cross-spawn@^7.0.0, cross-spawn@^7.0.1, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.3.tgz#f73a85b9d5d41d045551c177e2882d4ac85728a6"
-  integrity sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==
+cross-spawn@^7.0.0, cross-spawn@^7.0.1, cross-spawn@^7.0.2, cross-spawn@^7.0.3, cross-spawn@^7.0.5:
+  version "7.0.6"
+  resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.6.tgz#8a58fe78f00dcd70c370451759dfbfaf03e8ee9f"
+  integrity sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==
   dependencies:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
@@ -5451,11 +5439,6 @@ define-properties@^1.1.3, define-properties@^1.1.4, define-properties@^1.2.0, de
     define-data-property "^1.0.1"
     has-property-descriptors "^1.0.0"
     object-keys "^1.1.1"
-
-"deflate-js@>= 0.2.2":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/deflate-js/-/deflate-js-0.2.3.tgz#f85abb58ebc5151a306147473d57c3e4f7e4426b"
-  integrity sha512-r5KgHJ/yTiWQs23nVeQz5dSL/kmW0MBszsssNyEqDCjjFDj4XG/c6QUN/I0JtY3ZHwwcaNBtGE8s+oV33acTfQ==
 
 delaunator@5:
   version "5.0.0"
@@ -7185,14 +7168,6 @@ gunzip-maybe@^1.4.2:
     peek-stream "^1.1.0"
     pumpify "^1.3.3"
     through2 "^2.0.3"
-
-gzip-js@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/gzip-js/-/gzip-js-0.3.2.tgz#23117efeeb28cf385248deff0dffad894836d96b"
-  integrity sha512-BFTiwtEN12koJsnhVo77SzW+u6VANzhaK0HEtdwFwgFzFOq1WQJ8eSPEyGAueUfs1C/WqdgtuYnUwCRuRm1A5Q==
-  dependencies:
-    crc32 ">= 0.2.2"
-    deflate-js ">= 0.2.2"
 
 gzip-size@^6.0.0:
   version "6.0.0"
@@ -10071,7 +10046,7 @@ no-case@^3.0.4:
     lower-case "^2.0.2"
     tslib "^2.0.3"
 
-node-abi@^3.45.0:
+node-abi@^3.45.0, node-abi@^3.71.0:
   version "3.71.0"
   resolved "https://registry.yarnpkg.com/node-abi/-/node-abi-3.71.0.tgz#52d84bbcd8575efb71468fbaa1f9a49b2c242038"
   integrity sha512-SZ40vRiy/+wRTf21hxkkEjPJZpARzUMVcJoQse2EF8qkUWbbO2z7vd5oA/H6bVH6SZQ5STGcu0KRDS7biNRfxw==

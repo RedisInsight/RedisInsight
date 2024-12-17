@@ -50,26 +50,26 @@ test
         databaseName = `test_standalone-${chance.string({ length: 10 })}`;
 
         // Fill the add database form
-        await myRedisDatabasePage.AddRedisDatabase.addDatabaseButton.with({ visibilityCheck: true, timeout: 10000 })();
-        await t
-            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
+        await myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton.with({ visibilityCheck: true, timeout: 10000 })();
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton);
         // Verify that telemetry event 'CONFIG_DATABASES_CLICKED' sent and has all expected properties
         await telemetry.verifyEventHasProperties(telemetryEvents[1], clickButtonExpectedProperties, logger);
-        await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.customSettingsButton);
         await t
-            .typeText(myRedisDatabasePage.AddRedisDatabase.hostInput, ossStandaloneConfig.host, { replace: true, paste: true })
-            .typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneConfig.port, { replace: true, paste: true })
-            .typeText(myRedisDatabasePage.AddRedisDatabase.databaseAliasInput, databaseName, { replace: true, paste: true })
+            .typeText(myRedisDatabasePage.AddRedisDatabaseDialog.hostInput, ossStandaloneConfig.host, { replace: true, paste: true })
+            .typeText(myRedisDatabasePage.AddRedisDatabaseDialog.portInput, ossStandaloneConfig.port, { replace: true, paste: true })
+            .typeText(myRedisDatabasePage.AddRedisDatabaseDialog.databaseAliasInput, databaseName, { replace: true, paste: true })
             // Verify that user can customize the connection timeout for the manual flow
-            .typeText(myRedisDatabasePage.AddRedisDatabase.timeoutInput, connectionTimeout, { replace: true, paste: true });
+            .typeText(myRedisDatabasePage.AddRedisDatabaseDialog.timeoutInput, connectionTimeout, { replace: true, paste: true });
         await t
-            .click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton)
+            .click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton)
             // Wait for database to be exist
             .expect(myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The database not displayed', { timeout: 10000 })
             // Close message
             .click(myRedisDatabasePage.Toast.toastCloseButton);
 
         // Verify that user can see an indicator of databases that are added manually and not opened yet
+        await t.expect(myRedisDatabasePage.starFreeDbCheckbox.exists).ok('free db link is not displayed when db is added')
         await myRedisDatabasePage.verifyDatabaseStatusIsVisible(databaseName);
         await myRedisDatabasePage.clickOnDBByName(databaseName);
 
@@ -82,7 +82,8 @@ test
 
         // Verify that connection timeout value saved
         await myRedisDatabasePage.clickOnEditDBByName(databaseName);
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.timeoutInput.value).eql(connectionTimeout, 'Connection timeout is not customized');
+        await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.timeoutInput.value).eql(connectionTimeout, 'Connection timeout is not customized');
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.cancelButton);
     });
 test
     .meta({ rte: rte.ossCluster })

@@ -158,6 +158,13 @@ describe('NavigationMenu', () => {
       expect(screen.getByTestId('settings-page-btn')).toBeTruthy()
     })
 
+    it('should render cloud link', () => {
+      const { container } = render(<NavigationMenu />)
+
+      const createCloudLink = container.querySelector('[data-test-subj="create-cloud-nav-link"]')
+      expect(createCloudLink).toBeTruthy()
+    })
+
     it('should render github btn with proper link', () => {
       (appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,

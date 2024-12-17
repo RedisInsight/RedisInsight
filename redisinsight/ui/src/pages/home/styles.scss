@@ -58,11 +58,6 @@
     }
   }
 
-  .databasePanelWrapper {
-    height: 100%;
-    background-color: var(--euiColorEmptyShade);
-  }
-
   .container {
     @include eui.scrollBar;
 
@@ -75,104 +70,22 @@
     border-radius: 4px;
   }
 
-  .formDataTypes {
-    padding-top: 20px;
-  }
-
-  .dbTypes {
-    padding-bottom: 10px;
-  }
-
-  .getStartedForm {
-    max-width: 752px;
-    padding-top: 3px;
-    font-family: "Graphik", sans-serif;
-    font-weight: 400 !important;
-  }
-
-  .boxSection {
-    padding: 3px 18px 18px;
-    background-color: var(--euiColorLightestShade) !important;
-    border: 1px solid var(--euiColorLightShade);
-    border-radius: 4px;
-    margin-top: 10px;
-
-    .euiSelect,
-    .euiSuperSelectControl,
-    .euiFieldText,
-    .euiTextArea {
-      background-color: var(--euiColorLightestShade) !important;
-    }
-  }
-
   .footerAddDatabase {
+    margin: 0;
+    width: 100%;
     bottom: 0;
     float: right;
     text-align: right;
     vertical-align: bottom;
-    width: 100%;
     padding: 15px 24px 0;
     border-radius: 0 0 4px 4px;
 
     border-top: 1px solid var(--euiColorLightShade);
-  }
 
-  .euiResizableContainer {
-    .container {
-      margin-right: 0;
-      padding: 12px 24px;
-
-      &.addDbWrapper {
-        padding: 20px 30px;
-      }
-    }
-
-    .footerAddDatabase {
-      margin: 0px;
-      width: 100%;
-    }
-    .euiFormLegend {
-      display: none;
-    }
-
-    .euiRadioGroup__item {
-      margin-right: 0 !important;
-      width: auto;
-      padding-right: 40px;
-    }
-  }
-
-  .passwordField {
-    padding: 12px;
-  }
-
-  .euiButton.btn-cancel,
-  .euiButton.btn-back {
-    margin-right: 10px;
-    min-width: 71px !important;
-  }
-
-  .flexGroupResponsiveForm {
-    flex-wrap: wrap;
-    margin-left: 0;
-    margin-right: 0;
-    padding-top: 10px;
-  }
-
-  .flexItemResponsiveForm {
-    width: 100% !important;
-    flex-basis: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    min-height: 20px;
-
-    .euiFormRow {
-      padding-top: 0px;
-      .euiCheckbox {
-        display: flex;
-        min-height: 24px;
-        align-items: center;
-      }
+    .btn-cancel,
+    .btn-back {
+      margin-right: 10px;
+      min-width: 71px !important;
     }
   }
 

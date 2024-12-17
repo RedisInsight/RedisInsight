@@ -48,16 +48,16 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
     // await t.expect(myRedisDatabasePage.AuthorizationDialog.ssoAuth.exists).ok('SSO auth button not displayed in Sigh in modal');
     // await t.click(myRedisDatabasePage.Modal.closeModalButton);
 
-    await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
-    await t.click(myRedisDatabasePage.AddRedisDatabase.addAutoDiscoverDatabase);
+    await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton);
+    await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addCloudDatabaseButton);
     // Verify that RE Cloud auto-discovery options Use Cloud Account and Use Cloud API Keys are displayed on Welcome screen
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudAccount.exists).ok('Use Cloud Account accordion not displayed when SSO feature enabled');
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudKeys.exists).ok('Use Cloud Keys accordion not displayed when SSO feature enabled');
-    await t.click(myRedisDatabasePage.AddRedisDatabase.useCloudAccount);
+    await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.useCloudAccount.exists).ok('Use Cloud Account accordion not displayed when SSO feature enabled');
+    await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.useCloudKeys.exists).ok('Use Cloud Keys accordion not displayed when SSO feature enabled');
+    await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.useCloudAccount);
     // Verify that Auth buttons are displayed for auto-discovery panel on Electron app
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.RedisCloudSigninPanel.googleOauth.exists).ok('Google auth button not displayed when SSO feature enabled');
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.RedisCloudSigninPanel.githubOauth.exists).ok('Github auth button not displayed when SSO feature enabled');
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.RedisCloudSigninPanel.ssoOauth.exists).ok('SSO auth button not displayed when SSO feature enabled');
+    await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.RedisCloudSigninPanel.googleOauth.exists).ok('Google auth button not displayed when SSO feature enabled');
+    await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.RedisCloudSigninPanel.githubOauth.exists).ok('Github auth button not displayed when SSO feature enabled');
+    await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.RedisCloudSigninPanel.ssoOauth.exists).ok('SSO auth button not displayed when SSO feature enabled');
 });
 // skip until adding tests for SSO feature
 test.skip('Verify that user can sign in using SSO SAML auth', async t => {

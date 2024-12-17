@@ -24,7 +24,7 @@ export const getTutorialCapability = (source: any = '') => {
     case getSourceTutorialByCapability(RedisDefaultModules.FTL):
       return getCapability(
         'searchAndQuery',
-        'Redis Query Engine capability',
+        'Redis Query Engine',
         findMarkdownPath(store.getState()?.workbench?.tutorials?.items, { id: 'sq-intro' })
       )
 
@@ -33,7 +33,7 @@ export const getTutorialCapability = (source: any = '') => {
     case getSourceTutorialByCapability(RedisDefaultModules.ReJSON):
       return getCapability(
         'JSON',
-        'JSON capability',
+        'JSON data structure',
         findMarkdownPath(store.getState()?.workbench?.tutorials?.items, { id: 'ds-json-intro' })
       )
 

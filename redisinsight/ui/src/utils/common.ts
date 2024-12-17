@@ -8,7 +8,13 @@ const { apiPort } = window.app?.config || { apiPort: riConfig.api.port }
 const hostedApiBaseUrl = riConfig.api.hostedBaseUrl
 
 export const getSocketApiUrl = (path = '') => {
-  const baseUrl = getBaseApiUrl()
+  let baseUrl = getBaseApiUrl()
+  try {
+    const url = new URL(baseUrl)
+    baseUrl = baseUrl.replace(url.pathname, '')
+  } catch (e) {
+    console.error(e)
+  }
   const proxyPath = getProxyPath()
   // eslint-disable-next-line no-console
   console.log({ baseUrl, proxyPath, path })
@@ -16,12 +22,6 @@ export const getSocketApiUrl = (path = '') => {
 }
 
 export const getBaseApiUrl = () => {
-  // eslint-disable-next-line no-console
-  console.log({
-    hostedApiBaseUrl,
-    isWebApp,
-    origin: window.location.origin
-  })
   if (hostedApiBaseUrl) {
     return hostedApiBaseUrl
   }

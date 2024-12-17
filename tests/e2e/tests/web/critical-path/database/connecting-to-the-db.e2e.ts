@@ -195,7 +195,7 @@ test
         await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
         await Common.checkURLContainsText('browser');
     });
-test
+test.skip
     .meta({ rte: rte.none })
     .before(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();

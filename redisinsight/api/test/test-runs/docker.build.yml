@@ -49,6 +49,17 @@ services:
       RI_NOTIFICATION_UPDATE_URL: 'https://s3.amazonaws.com/redisinsight.test/public/tests/notifications.json'
       RI_FEATURES_CONFIG_URL: 'http://test:5551/remote/features-config.json'
 
+  debug:
+    image: alpine:latest
+    depends_on:
+      - app
+    entrypoint: sh -c "
+      echo 'Fetching app logs...';
+      docker logs $(docker ps -aqf 'name=app') || echo 'Failed to fetch logs';
+      tail -f /dev/null"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
 networks:
   default:
     name: ${ID}

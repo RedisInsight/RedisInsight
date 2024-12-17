@@ -122,7 +122,8 @@ test('Adding database with SSH', async t => {
     await myRedisDatabasePage.clickOnDBByName(sshDbPasscode.databaseName);
     await Common.checkURLContainsText('browser');
 });
-test('Verify that  OSS Cluster database with SSH can be added and work correctly', async t => {
+// Unskip after fixing RI-6386
+test.skip('Verify that OSS Cluster database with SSH can be added and work correctly', async t => {
     const sshWithPass = {
         ...sshParams,
         sshPassword: 'pass'

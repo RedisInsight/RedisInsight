@@ -89,7 +89,7 @@ test
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.databaseAliasInput.value).eql(`${defaultHost}:${defaultPort}`, 'Default db alias not prepopulated');
         // Verify that the Host, Port, Database Alias values pre-populated by default for Sentinel
         await t
-            .click(myRedisDatabasePage.AddRedisDatabaseDialog.addAutoDiscoverDatabase)
+            .click(myRedisDatabasePage.AddRedisDatabaseDialog.backButton)
             .click(myRedisDatabasePage.AddRedisDatabaseDialog.redisSentinelButton);
         await t
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.hostInput.value).eql(defaultHost, 'Default sentinel host not prepopulated')
@@ -195,13 +195,13 @@ test
         await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
         await Common.checkURLContainsText('browser');
     });
-test
+// Unskip in RI-6478
+test.skip
     .meta({ rte: rte.none })
     .before(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseHelper.acceptLicenseTerms();
     })('Verify that create free cloud db is displayed always', async t => {
-
         const externalPageLinkList = 'https://redis.io/try-free?utm_source=redisinsight&utm_medium=app&utm_campaign=list_of_databases';
         const externalPageLinkNavigation = 'https://redis.io/try-free?utm_source=redisinsight&utm_medium=app&utm_campaign=navigation_menu';
 

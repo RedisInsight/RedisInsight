@@ -2,7 +2,6 @@ import { Connection, createConnection, getConnectionManager } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
-import {writeFile} from 'fs'
 
 
 export const repositories = {
@@ -24,16 +23,6 @@ export const repositories = {
   CLOUD_DATABASE_DETAILS: 'CloudDatabaseDetailsEntity',
   RDI: 'RdiEntity',
 }
-
-console.log('here it is TEST_LOCAL_DB_FILE_PATH :>> ', constants.TEST_LOCAL_DB_FILE_PATH);
-const content = 'Some content!';
-writeFile('/data/test.txt', content, err => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log('dir is OK for writting :>> ');
-  }
-});
 
 let localDbConnection;
 const getDBConnection = async (): Promise<Connection> => {

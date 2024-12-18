@@ -48,6 +48,7 @@ export function wsService(
     rejectUnauthorized: false,
     transports,
     withCredentials,
+    some: "stupid value"
   }
   // const fullWsUrl = `${wsUrl}/socket.io`
   // eslint-disable-next-line no-console

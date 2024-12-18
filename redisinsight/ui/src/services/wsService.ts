@@ -61,6 +61,6 @@ export function wsService(
     ioOptions,
   })
 
-  // return io(wsUrl, ioOptions)
-  return io('https://app-sm.k8s-mw.sm-qa.qa.redislabs.com', ioOptions)
+  return io(wsUrl, ioOptions)
+  // return io('https://app-sm.k8s-mw.sm-qa.qa.redislabs.com', ioOptions)
 }

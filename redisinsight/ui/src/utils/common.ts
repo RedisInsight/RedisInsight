@@ -17,7 +17,7 @@ export const getSocketApiUrl = (path = '') => {
   }
   const proxyPath = getProxyPath()
   // eslint-disable-next-line no-console
-  console.log({ baseUrl, proxyPath, path })
+  // console.log({ baseUrl, proxyPath, path })
   return `${baseUrl}${proxyPath}${path}`
 }
 

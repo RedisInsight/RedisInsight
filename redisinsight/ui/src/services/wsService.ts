@@ -16,7 +16,7 @@ export type WsParams = {
 
 export function wsService(
   wsUrl: string,
-  { forceNew = true, token, reconnection, query, extraHeaders, path = '/redis-insight/api/socket.io' }: WsParams,
+  { forceNew = true, token, reconnection, query, extraHeaders, path = '/api/socket.io' }: WsParams,
   passTokenViaHeaders: boolean = true,
 ) {
   let queryParams: Record<string, any> = !passTokenViaHeaders

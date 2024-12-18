@@ -11,11 +11,12 @@ export type WsParams = {
   reconnection?: boolean;
   query?: Record<string, any>;
   extraHeaders?: Record<string, any>;
+  path?: string;
 }
 
 export function wsService(
   wsUrl: string,
-  { forceNew = true, token, reconnection, query, extraHeaders }: WsParams,
+  { forceNew = true, token, reconnection, query, extraHeaders, path = '/redis-insight/api/socket.io' }: WsParams,
   passTokenViaHeaders: boolean = true,
 ) {
   let queryParams: Record<string, any> = !passTokenViaHeaders
@@ -38,8 +39,8 @@ export function wsService(
   const withCredentials = riConfig.api.socketCredentials
 
   const ioOptions = {
-    // path: getProxyPath(), // '/redis-insight/api/socket.io',
-    path: '/redis-insight/api/socket.io',
+    // path: getProxyPath(),
+    path,
     forceNew,
     reconnection,
     query: queryParams,
@@ -61,6 +62,6 @@ export function wsService(
     ioOptions,
   })
 
-  // return io(wsUrl, ioOptions)
-  return io('https://app-sm.k8s-mw.sm-qa.qa.redislabs.com', ioOptions)
+  return io(wsUrl, ioOptions)
+  // return io('https://app-sm.k8s-mw.sm-qa.qa.redislabs.com', ioOptions)
 }

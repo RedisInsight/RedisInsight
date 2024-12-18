@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client'
-// import { getProxyPath } from 'uiSrc/utils'
+import { getProxyPath } from 'uiSrc/utils'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { getConfig } from 'uiSrc/config'
 
@@ -16,7 +16,7 @@ export type WsParams = {
 
 export function wsService(
   wsUrl: string,
-  { forceNew = true, token, reconnection, query, extraHeaders, path = '/api/socket.io' }: WsParams,
+  { forceNew = true, token, reconnection, query, extraHeaders, path = getProxyPath() }: WsParams,
   passTokenViaHeaders: boolean = true,
 ) {
   let queryParams: Record<string, any> = !passTokenViaHeaders
@@ -39,7 +39,6 @@ export function wsService(
   const withCredentials = riConfig.api.socketCredentials
 
   const ioOptions = {
-    // path: getProxyPath(),
     path,
     forceNew,
     reconnection,
@@ -48,7 +47,6 @@ export function wsService(
     rejectUnauthorized: false,
     transports,
     withCredentials,
-    some: "stupid value"
   }
   // const fullWsUrl = `${wsUrl}/socket.io`
   // eslint-disable-next-line no-console

@@ -323,6 +323,7 @@ const TlsDetails = (props: Props) => {
                 <EuiSuperSelect
                   placeholder="Select certificate"
                   valueOfSelected={formik.values.selectedTlsClientCertId}
+                  className={styles.selectWithLongTextSupport}
                   options={optionsCertsClient}
                   onChange={(value) => {
                     formik.setFieldValue('selectedTlsClientCertId', value)

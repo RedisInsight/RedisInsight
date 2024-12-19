@@ -20,26 +20,25 @@ const ENCRYPTION_CONFIG = config.get('encryption') as Config['encryption'];
 export class KeytarEncryptionStrategy implements IEncryptionStrategy {
   private logger = new Logger('KeytarEncryptionStrategy');
 
-  private readonly keytar;
+  private _keytar;
 
-  private cipherKey;
-
-  constructor() {
-    try {
-      if (!ENCRYPTION_CONFIG.keytar) {
-        return;
-      }
-
-      // Have to require keytar here since during tests of keytar module
+  get keytar() {
+    if (!this._keytar && ENCRYPTION_CONFIG.keytar) {
+      try {
+        // Have to require keytar here since during tests of keytar module
       // at some point it threw an error when OS secure storage was unavailable
       // Since it is difficult to reproduce we keep module require here to be
       // ready for such cases
       // eslint-disable-next-line global-require
-      this.keytar = require('keytar');
-    } catch (e) {
-      this.logger.error('Failed to initialize keytar module', e);
+        this._keytar = require('keytar');
+      } catch (e) {
+        this.logger.error('Failed to initialize keytar module', e);
+      }
     }
+    return this._keytar;
   }
+
+  private cipherKey;
 
   /**
    * Generates random password

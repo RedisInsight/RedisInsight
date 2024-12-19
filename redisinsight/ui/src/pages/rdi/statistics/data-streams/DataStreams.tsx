@@ -3,6 +3,7 @@ import React from 'react'
 
 import { IDataStreams } from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
+import { FormatedDate } from 'uiSrc/components'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
 import Table from '../components/table'
@@ -103,6 +104,9 @@ const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoR
     {
       name: 'Last arrival',
       field: 'lastArrival',
+      render: (dateStr) => (
+        <FormatedDate date={dateStr} />
+      ),
       sortable: true,
       footer: '',
     }

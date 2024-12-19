@@ -51,6 +51,7 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
           {
             status: CommandExecutionStatus.Success,
             response: ERROR_MESSAGES.WORKBENCH_RESPONSE_TOO_BIG(),
+            sizeLimitExceeded: true,
           },
         ]);
         // Hack, do not store isNotStored. Send once to show warning
@@ -61,7 +62,10 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
         ...(await this.commandExecutionRepository.save(await this.modelEncryptor.encryptEntity(entity))),
         command: commandExecutions[idx].command, // avoid decryption
         mode: commandExecutions[idx].mode,
-        result: commandExecutions[idx].result, // avoid decryption + show original response when it was huge
+        // avoid decryption + show original response when it was huge
+        // also will return original response even if it wasn't stored
+        // so flag sizeLimitExceeded will be undefined
+        result: commandExecutions[idx].result,
         summary: commandExecutions[idx].summary,
         executionTime: commandExecutions[idx].executionTime,
         isNotStored,

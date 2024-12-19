@@ -37,10 +37,14 @@ jobs:
       fail-fast: false
       matrix:
         # Number of threads to run tests
-        parallel: [0, 1, 2, 3]
+        parallel: [0, 1, 2, 3, 4, 5]
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Get current date
+      id: date
+      uses: ./.github/actions/get-current-date
 
     # SSH Debug
     - name: Enable SSH
@@ -62,7 +66,7 @@ jobs:
     - name: Generate short list of the test files
       working-directory: ./tests/e2e
       run: |
-        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 6 == ${{ matrix.parallel }}")
 
         echo $testFiles
 
@@ -72,6 +76,7 @@ jobs:
         echo "EOF" >> $GITHUB_ENV
 
     - name: Run tests
+      timeout-minutes: 80
       run: |
         export NODE_INDEX=${{ matrix.parallel }}
 
@@ -112,18 +117,10 @@ jobs:
       uses: ./.github/actions/deploy-test-reports
       with:
         group: 'report'
+        path: "${{ vars.DEFAULT_TEST_REPORTS_URL }}/${{ steps.date.outputs.date }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}"
         AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
         AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
         AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-    - name: Add link to report in the workflow summary
-      if: always()
-      run: |
-        DATE=$(date +'%Y-%m-%d')
-        link="${{ vars.DEFAULT_TEST_REPORTS_URL }}/${DATE}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}/index.html"
-
-        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
-
 

@@ -115,6 +115,7 @@ jobs:
         docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
 
     - name: Run tests
+      timeout-minutes: 20
       run: |
         if [ ${{ inputs.redis_client }} == "node-redis" ]; then
           export RI_REDIS_CLIENTS_FORCE_STRATEGY=${{ inputs.redis_client }}

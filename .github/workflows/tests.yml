@@ -152,12 +152,12 @@ jobs:
   clean:
     uses: ./.github/workflows/clean-deployments.yml
     if: always()
-    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
+    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests]
 
   # Remove artifacts from github actions
   remove-artifacts:
     name: Remove artifacts
-    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
+    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

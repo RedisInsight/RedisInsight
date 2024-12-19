@@ -6,6 +6,10 @@ inputs:
     description: Group matching the artifacts
     required: false
     default: '*'
+  path:
+    description: Path for link to the report
+    required: false
+    default: ''
 
   AWS_BUCKET_NAME_TEST:
     required: true
@@ -46,4 +50,9 @@ runs:
 
         aws s3 cp public/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
 
+    - name: Add link to report in the workflow summary
+      shell: bash
+      run: |
+        link="${{ inputs.path }}/index.html"
 
+        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY

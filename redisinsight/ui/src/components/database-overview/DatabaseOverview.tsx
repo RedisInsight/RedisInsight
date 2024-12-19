@@ -106,6 +106,7 @@ const DatabaseOverview = (props: Props) => {
             <EuiFlexItem
               className={cx(styles.overviewItem, styles.autoRefresh)}
               grow={false}
+              data-testid="overview-auto-refresh"
             >
               <EuiFlexItem grow={false} className={styles.overviewItemContent}>
                 <AutoRefresh
@@ -116,6 +117,7 @@ const DatabaseOverview = (props: Props) => {
                   lastRefreshTime={lastRefreshTime}
                   containerClassName=""
                   postfix="overview"
+                  testid="auto-refresh-overview"
                   defaultRefreshRate={TIMEOUT_TO_GET_INFO.toString()}
                   minimumRefreshRate={parseInt(MINIMUM_INTERVAL_TIME || '0')}
                   onRefresh={loadData}

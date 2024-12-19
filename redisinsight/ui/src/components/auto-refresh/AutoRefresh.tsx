@@ -57,9 +57,9 @@ const AutoRefresh = ({
   onRefreshClicked,
   onEnableAutoRefresh,
   onChangeAutoRefreshRate,
-  minimumRefreshRate,
   iconSize = 'm',
   disabled,
+  minimumRefreshRate,
   defaultRefreshRate,
   enableAutoRefreshDefault = false
 }: Props) => {
@@ -81,7 +81,7 @@ const AutoRefresh = ({
 
   useEffect(() => {
     const refreshRateStorage = localStorageService.get(BrowserStorageItem.autoRefreshRate + postfix)
-      || DEFAULT_REFRESH_RATE
+      || defaultRefreshRate || DEFAULT_REFRESH_RATE
 
     setRefreshRate(refreshRateStorage)
   }, [postfix])
@@ -173,7 +173,7 @@ const AutoRefresh = ({
   }
 
   return (
-    <div className={cx(styles.container, containerClassName, { [styles.enable]: !disabled && enableAutoRefresh })}>
+    <div className={cx(styles.container, containerClassName, { [styles.enable]: !disabled && enableAutoRefresh })} data-testid={getDataTestid('auto-refresh-container')}>
       <EuiTextColor className={styles.summary}>
         {displayText && (
           <span data-testid={getDataTestid('refresh-message-label')}>{enableAutoRefresh ? 'Auto refresh:' : 'Last refresh:'}</span>

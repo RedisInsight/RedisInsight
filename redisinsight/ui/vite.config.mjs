@@ -123,6 +123,8 @@ export default defineConfig({
       RI_CONNECTIONS_TIMEOUT_DEFAULT: 30 * 1000,
       RI_HOSTED_API_BASE_URL: hostedApiBaseUrl,
       RI_CSRF_ENDPOINT: process.env.RI_CSRF_ENDPOINT,
+      RI_DATABASE_OVERVIEW_REFRESH_INTERVAL: 5000,
+      RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL: 5000,
     },
   },
   // hack: apply proxy path to monaco webworker

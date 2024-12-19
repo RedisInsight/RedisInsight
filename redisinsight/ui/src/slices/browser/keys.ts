@@ -348,12 +348,12 @@ const keysSlice = createSlice({
       state.filter = payload
     },
 
-    changeKeyViewType: (state, { payload }:{ payload: KeyViewType }) => {
+    changeKeyViewType: (state, { payload }: { payload: KeyViewType }) => {
       state.viewType = payload
       localStorageService?.set(BrowserStorageItem.browserViewType, payload)
     },
 
-    changeSearchMode: (state, { payload }:{ payload: SearchMode }) => {
+    changeSearchMode: (state, { payload }: { payload: SearchMode }) => {
       state.searchMode = payload
     },
 
@@ -1055,7 +1055,7 @@ export function fetchKeysMetadataTree(
           state.connections.instances?.connectedInstance?.id,
           ApiEndpoints.KEYS_METADATA
         ),
-        { keys: keys.map(([,nameBuffer]) => nameBuffer), type: filter || undefined },
+        { keys: keys.map(([, nameBuffer]) => nameBuffer), type: filter || undefined },
         { params: { encoding: state.app.info.encoding }, signal }
       )
 

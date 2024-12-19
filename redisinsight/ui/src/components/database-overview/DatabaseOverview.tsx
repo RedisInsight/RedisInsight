@@ -9,10 +9,15 @@ import styles from './styles.module.scss'
 
 interface Props {
   metrics?: Array<IMetric>
+  loadData: () => void
+  lastRefreshTime: number | null
 }
 
+const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 60_000
+const MINIMUM_INTERVAL_TIME = process.env.RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL
+
 const DatabaseOverview = (props: Props) => {
-  const { metrics } = props
+  const { metrics, loadData, lastRefreshTime } = props
 
   const getTooltipContent = (metric: IMetric) => {
     if (!metric.children?.length) {
@@ -108,7 +113,13 @@ const DatabaseOverview = (props: Props) => {
                   displayText={false}
                   displayLastRefresh={false}
                   iconSize="xs"
+                  loading={false}
+                  lastRefreshTime={lastRefreshTime}
                   containerClassName=""
+                  postfix="overview"
+                  defaultRefreshRate={TIMEOUT_TO_GET_INFO.toString()}
+                  minimumRefreshRate={parseInt(MINIMUM_INTERVAL_TIME || '0')}
+                  onRefresh={loadData}
                 />
               </EuiFlexItem>
             </EuiFlexItem>

@@ -35,6 +35,8 @@ export interface Props {
   onRefreshClicked?: () => void
   onEnableAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
   onChangeAutoRefreshRate?: (enableAutoRefresh: boolean, refreshRate: string) => void
+  minimumRefreshRate?: number
+  defaultRefreshRate?: string
   iconSize?: EuiButtonIconSizes
   disabled?: boolean
   enableAutoRefreshDefault?: boolean
@@ -55,8 +57,10 @@ const AutoRefresh = ({
   onRefreshClicked,
   onEnableAutoRefresh,
   onChangeAutoRefreshRate,
+  minimumRefreshRate,
   iconSize = 'm',
   disabled,
+  defaultRefreshRate,
   enableAutoRefreshDefault = false
 }: Props) => {
   let intervalText: NodeJS.Timeout
@@ -64,7 +68,7 @@ const AutoRefresh = ({
 
   const [refreshMessage, setRefreshMessage] = useState(NOW)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
-  const [refreshRate, setRefreshRate] = useState<string>('')
+  const [refreshRate, setRefreshRate] = useState<string>(defaultRefreshRate || '')
   const [refreshRateMessage, setRefreshRateMessage] = useState<string>('')
   const [enableAutoRefresh, setEnableAutoRefresh] = useState(enableAutoRefreshDefault)
   const [editingRate, setEditingRate] = useState(false)
@@ -130,7 +134,6 @@ const AutoRefresh = ({
   const updateLastRefresh = () => {
     const delta = getLastRefreshDelta(lastRefreshTime)
     const text = getTextByRefreshTime(delta, lastRefreshTime ?? 0)
-
     lastRefreshTime && setRefreshMessage(text)
   }
 
@@ -142,7 +145,8 @@ const AutoRefresh = ({
   }
 
   const handleApplyAutoRefreshRate = (initValue: string) => {
-    const value = +initValue >= MIN_REFRESH_RATE ? initValue : `${MIN_REFRESH_RATE}`
+    const minRefreshRate = minimumRefreshRate || MIN_REFRESH_RATE
+    const value = +initValue >= minRefreshRate ? initValue : `${minRefreshRate}`
     setRefreshRate(value)
     setEditingRate(false)
     localStorageService.set(BrowserStorageItem.autoRefreshRate + postfix, value)

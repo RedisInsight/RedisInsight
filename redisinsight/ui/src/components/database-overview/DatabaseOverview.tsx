@@ -11,13 +11,14 @@ interface Props {
   metrics?: Array<IMetric>
   loadData: () => void
   lastRefreshTime: number | null
+  handleEnableAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
 const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 60_000
 const MINIMUM_INTERVAL_TIME = process.env.RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL
 
 const DatabaseOverview = (props: Props) => {
-  const { metrics, loadData, lastRefreshTime } = props
+  const { metrics, loadData, lastRefreshTime, handleEnableAutoRefresh } = props
 
   const getTooltipContent = (metric: IMetric) => {
     if (!metric.children?.length) {
@@ -120,6 +121,7 @@ const DatabaseOverview = (props: Props) => {
                   defaultRefreshRate={TIMEOUT_TO_GET_INFO.toString()}
                   minimumRefreshRate={parseInt(MINIMUM_INTERVAL_TIME || '0')}
                   onRefresh={loadData}
+                  onEnableAutoRefresh={handleEnableAutoRefresh}
                 />
               </EuiFlexItem>
             </EuiFlexItem>

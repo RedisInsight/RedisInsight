@@ -8,6 +8,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getOverviewMetrics } from './components/OverviewMetrics'
 
 const DatabaseOverviewWrapper = () => {
@@ -23,11 +24,24 @@ const DatabaseOverviewWrapper = () => {
     setLastRefreshTime(Date.now())
   }
 
+  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+    sendEventTelemetry({
+      event: enableAutoRefresh
+        ? TelemetryEvent.OVERVIEW_AUTO_REFRESH_ENABLED
+        : TelemetryEvent.OVERVIEW_AUTO_REFRESH_DISABLED,
+      eventData: {
+        databaseId: connectedInstanceId,
+        refreshRate: +refreshRate
+      }
+    })
+  }
+
   return (
     <DatabaseOverview
       metrics={getOverviewMetrics({ theme, items: overview, db })}
       loadData={loadData}
       lastRefreshTime={lastRefreshTime}
+      handleEnableAutoRefresh={handleEnableAutoRefresh}
     />
   )
 }

@@ -105,8 +105,6 @@ const DatabaseOverview = (props: Props) => {
             }
             <EuiFlexItem
               className={cx(styles.overviewItem, styles.autoRefresh)}
-              // key={overviewItem.id}
-              // data-test-subj={overviewItem.id}
               grow={false}
             >
               <EuiFlexItem grow={false} className={styles.overviewItemContent}>

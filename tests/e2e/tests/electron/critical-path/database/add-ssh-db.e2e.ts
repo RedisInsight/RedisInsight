@@ -38,16 +38,17 @@ const sshDbClusterPass = {
 };
 
 fixture `Adding database with SSH`
-    .meta({ type: 'critical_path', rte: rte.standalone })
+    .meta({ type: 'critical_path'})
     .page(commonUrl)
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
     })
     .after(async() => {
         // Delete databases
-        await databaseAPIRequests.deleteStandaloneDatabasesByNamesApi([sshDbPass.databaseName, sshDbPrivateKey.databaseName, sshDbPasscode.databaseName, newClonedDatabaseAlias]);
+        await databaseAPIRequests.deleteStandaloneDatabasesByNamesApi([sshDbPass.databaseName, sshDbPrivateKey.databaseName, sshDbPasscode.databaseName, newClonedDatabaseAlias, sshDbClusterPass.databaseName]);
     });
-test('Adding database with SSH', async t => {
+test
+    .meta({ rte: rte.standalone })('Adding database with SSH', async t => {
     const tooltipText = [
         'Enter a value for required fields (3):',
         'SSH Host',
@@ -122,14 +123,15 @@ test('Adding database with SSH', async t => {
     await myRedisDatabasePage.clickOnDBByName(sshDbPasscode.databaseName);
     await Common.checkURLContainsText('browser');
 });
-test('Verify that  OSS Cluster database with SSH can be added and work correctly', async t => {
+test
+    .meta({ rte: rte.ossCluster })('Verify that  OSS Cluster database with SSH can be added and work correctly', async t => {
     const sshWithPass = {
         ...sshParams,
         sshPassword: 'pass'
     };
     // Verify that user can add SSH tunnel with Password for OSS Cluster database
     await myRedisDatabasePage.AddRedisDatabaseDialog.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
-    await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
+    await myRedisDatabasePage.clickOnDBByName(sshDbClusterPass.databaseName);
 
     //verify that db is added and profiler works
     await t.click(browserPage.Profiler.expandMonitor);

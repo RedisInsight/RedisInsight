@@ -36,7 +36,6 @@ describe('DatabaseOverview', () => {
       />
     )
 
-    // Verify metrics are displayed
     expect(container.querySelector('[data-test-subj="overview-cpu"]')).toBeInTheDocument()
     expect(container.querySelector('[data-test-subj="overview-commands-sec"]')).toBeInTheDocument()
     expect(container.querySelector('[data-test-subj="overview-total-memory"]')).toBeInTheDocument()

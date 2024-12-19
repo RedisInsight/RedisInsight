@@ -153,37 +153,42 @@ describe('AutoRefresh', () => {
 
     it('should respect minimumRefreshRate when setting refresh rate', async () => {
       const onChangeAutoRefreshRate = jest.fn()
+      const minimumRefreshRate = 6
       render(
         <AutoRefresh
           {...instance(mockedProps)}
-          minimumRefreshRate={5}
+          minimumRefreshRate={minimumRefreshRate}
           onChangeAutoRefreshRate={onChangeAutoRefreshRate}
         />
       )
 
       fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
       fireEvent.click(screen.getByTestId('refresh-rate'))
-      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: '3' } })
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: (minimumRefreshRate / 2).toString() } })
       screen.getByTestId(/apply-btn/).click()
-      expect(onChangeAutoRefreshRate).toHaveBeenLastCalledWith(false, '5')
+      expect(onChangeAutoRefreshRate).toHaveBeenLastCalledWith(false, minimumRefreshRate.toString())
     })
 
     it('should allow valid refresh rates above minimumRefreshRate', async () => {
       const onChangeAutoRefreshRate = jest.fn()
+      const minimumRefreshRate = 6
       render(
         <AutoRefresh
           {...instance(mockedProps)}
-          minimumRefreshRate={5}
+          minimumRefreshRate={minimumRefreshRate}
           onChangeAutoRefreshRate={onChangeAutoRefreshRate}
         />
       )
 
       fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
       fireEvent.click(screen.getByTestId('refresh-rate'))
-      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: '10' } })
+      fireEvent.change(
+        screen.getByTestId(INLINE_ITEM_EDITOR),
+        { target: { value: (minimumRefreshRate * 2).toString() } }
+      )
       screen.getByTestId(/apply-btn/).click()
 
-      expect(onChangeAutoRefreshRate).toHaveBeenLastCalledWith(false, '10')
+      expect(onChangeAutoRefreshRate).toHaveBeenLastCalledWith(false, (minimumRefreshRate * 2).toString())
     })
 
     it('should use defaultRefreshRate when provided', () => {

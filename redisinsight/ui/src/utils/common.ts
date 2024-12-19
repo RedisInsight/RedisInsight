@@ -1,3 +1,4 @@
+import { trim } from 'lodash'
 import { IpcInvokeEvent } from 'uiSrc/electron/constants'
 import { getConfig } from 'uiSrc/config'
 
@@ -15,10 +16,7 @@ export const getSocketApiUrl = (path = '') => {
   } catch (e) {
     console.error(e)
   }
-  const proxyPath = getProxyPath()
-  // eslint-disable-next-line no-console
-  // console.log({ baseUrl, proxyPath, path })
-  return `${baseUrl}${proxyPath}${path}`
+  return `${baseUrl}/${trim(path, '/')}`
 }
 
 export const getBaseApiUrl = () => {

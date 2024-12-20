@@ -114,6 +114,7 @@ const DatabaseOverview = (props: Props) => {
                   displayLastRefresh={false}
                   iconSize="xs"
                   loading={false}
+                  enableAutoRefreshDefault
                   lastRefreshTime={lastRefreshTime}
                   containerClassName=""
                   postfix="overview"

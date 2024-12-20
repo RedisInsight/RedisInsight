@@ -13,11 +13,15 @@ import {
   DatabaseRecommendationEmitter,
 } from 'src/modules/database-recommendation/providers/database-recommendation.emitter';
 import { DatabaseRecommendationAnalytics } from 'src/modules/database-recommendation/database-recommendation.analytics';
+import {
+  LocalDatabaseRecommendationGateway,
+} from 'src/modules/database-recommendation/local.database-recommendation.gateway';
 
 @Module({})
 export class DatabaseRecommendationModule {
   static register(
     databaseRecommendationRepository: Type<DatabaseRecommendationRepository> = LocalDatabaseRecommendationRepository,
+    databaseRecommendationGateway: Type<DatabaseRecommendationGateway> = LocalDatabaseRecommendationGateway,
   ) {
     return {
       module: DatabaseRecommendationModule,
@@ -26,7 +30,7 @@ export class DatabaseRecommendationModule {
         DatabaseRecommendationService,
         RecommendationScanner,
         RecommendationProvider,
-        DatabaseRecommendationGateway,
+        databaseRecommendationGateway,
         DatabaseRecommendationEmitter,
         DatabaseRecommendationAnalytics,
         {

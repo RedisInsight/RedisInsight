@@ -45,7 +45,6 @@
     "jest/**/micromatch": "^4.0.8",
     "mocha/minimatch": "^3.0.5",
     "@nestjs/serve-static/path-to-regexp": "^1.9.0",
-    "@nestjs/platform-socket.io/socket.io": "^4.8.0",
     "@nestjs/cli/**/braces": "^3.0.3",
     "**/semver": "^7.5.2",
     "winston-daily-rotate-file/**/file-stream-rotator": "^1.0.0"
@@ -87,8 +86,8 @@
     "redis": "^4.6.10",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.6",
-    "socket.io": "^4.8.0",
-    "socket.io-client": "^4.8.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "source-map-support": "^0.5.19",
     "sqlite3": "5.1.7",
     "swagger-ui-express": "^4.1.4",
@@ -172,10 +171,13 @@
     },
     "reporters": [
       "default",
-      ["jest-html-reporters", {
-        "publicPath": "./report",
-        "filename": "index.html"
-      }]
+      [
+        "jest-html-reporters",
+        {
+          "publicPath": "./report",
+          "filename": "index.html"
+        }
+      ]
     ]
   }
 }

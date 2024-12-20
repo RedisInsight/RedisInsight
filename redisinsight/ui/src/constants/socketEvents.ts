@@ -11,3 +11,7 @@ export enum SocketFeaturesEvent {
 export enum CloudJobEvents {
   Monitor = 'cloud:job:monitor',
 }
+
+export enum RecommendationEvents {
+  Subscribe = 'recommendation:subscribe',
+}

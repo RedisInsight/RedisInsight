@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 
 import { remove } from 'lodash'
-import { CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
+import { CloudJobEvents, RecommendationEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
@@ -91,6 +91,12 @@ const CommonAppSubscription = () => {
 
     unSubscribeFromAllRecommendations()
     setRecommendationsSubscriptions((ids) => [...ids, instanceId])
+
+    // subscribe to recommendations for the current instanceId
+    socketRef.current?.emit(
+      RecommendationEvents.Subscribe,
+      { instanceId },
+    )
 
     socketRef.current?.on(`${RecommendationsSocketEvents.Recommendation}:${instanceId}`, (data) => {
       dispatch(addUnreadRecommendations(data))

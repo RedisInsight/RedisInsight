@@ -6,6 +6,7 @@ import {
 import { wrapCloudApiError } from 'src/modules/cloud/common/exceptions';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudApiProvider } from 'src/modules/cloud/common/providers/cloud.api.provider';
+import { inspect } from 'util';
 
 @Injectable()
 export class CloudUserApiProvider extends CloudApiProvider {
@@ -57,7 +58,11 @@ export class CloudUserApiProvider extends CloudApiProvider {
       )
         ?.match(/JSESSIONID=([^;]+)/)?.[1];
     } catch (e) {
-      this.logger.error('Error getting apiSessionId: ', JSON.stringify(e?.response));
+      try {
+        this.logger.error('Error getting apiSessionId: ', inspect(e?.response, false, 5));
+      } catch (err) {
+        this.logger.log('Error on logging');
+      }
       throw wrapCloudApiError(e);
     }
   }

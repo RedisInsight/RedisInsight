@@ -15,10 +15,15 @@ export const wrapCloudApiError = (error: AxiosError, message?: string): HttpExce
 
   const { response } = error;
 
-  let errorMessage = message || error.message;
+  let errorMessage = message;
+
   if (!errorMessage) {
     const data = response?.data as any;
     errorMessage = data?.message;
+  }
+
+  if (!errorMessage) {
+    errorMessage = error.message;
   }
 
   if (response) {

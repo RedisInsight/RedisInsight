@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   ICloudApiAccount, ICloudApiUser,
 } from 'src/modules/cloud/user/models';
@@ -9,6 +9,8 @@ import { CloudApiProvider } from 'src/modules/cloud/common/providers/cloud.api.p
 
 @Injectable()
 export class CloudUserApiProvider extends CloudApiProvider {
+  private logger = new Logger('CloudUserApiProvider');
+
   /**
    * Login user to api using accessToken from oauth flow
    * returns JSESSIONID
@@ -37,6 +39,8 @@ export class CloudUserApiProvider extends CloudApiProvider {
    */
   async getApiSessionId(credentials: ICloudApiCredentials, utm?: CloudRequestUtm): Promise<string> {
     try {
+      this.logger.log(`Getting apiSessionId ${Object.keys(credentials || {}).toString()}`);
+      this.logger.log('UTM: ', JSON.stringify(utm));
       const { headers } = await this.api.post(
         'login',
         {
@@ -47,12 +51,13 @@ export class CloudUserApiProvider extends CloudApiProvider {
           ...CloudApiProvider.getHeaders(credentials),
         },
       );
-
+      this.logger.log('headers: ', JSON.stringify(headers));
       return get(headers, 'set-cookie', []).find(
         (header) => header.indexOf('JSESSIONID=') > -1,
       )
         ?.match(/JSESSIONID=([^;]+)/)?.[1];
     } catch (e) {
+      this.logger.error('Error getting apiSessionId: ', JSON.stringify(e?.response));
       throw wrapCloudApiError(e);
     }
   }
@@ -70,6 +75,7 @@ export class CloudUserApiProvider extends CloudApiProvider {
 
       return data;
     } catch (e) {
+      this.logger.error('Error when getting current user', e);
       throw wrapCloudApiError(e);
     }
   }
@@ -87,6 +93,7 @@ export class CloudUserApiProvider extends CloudApiProvider {
 
       return data?.accounts;
     } catch (e) {
+      this.logger.error('Error getting accounts ', e);
       throw wrapCloudApiError(e);
     }
   }
@@ -104,6 +111,7 @@ export class CloudUserApiProvider extends CloudApiProvider {
         CloudApiProvider.getHeaders(credentials),
       );
     } catch (e) {
+      this.logger.error('Error setting current account', e);
       throw wrapCloudApiError(e);
     }
   }

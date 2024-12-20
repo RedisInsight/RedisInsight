@@ -24,7 +24,7 @@ const CommonAppSubscription = () => {
   const { token } = useSelector(appCsrfSelector)
   const [recommendationsSubscriptions, setRecommendationsSubscriptions] = useState<string[]>([])
   const socketRef = useRef<Nullable<Socket>>(null)
-  const connectIo = useIoConnection(getSocketApiUrl('/pub-sub'), {
+  const connectIo = useIoConnection(getSocketApiUrl(), {
     forceNew: false,
     token,
     reconnection: true })

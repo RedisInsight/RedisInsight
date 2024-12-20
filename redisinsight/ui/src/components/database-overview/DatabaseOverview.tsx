@@ -14,8 +14,8 @@ interface Props {
   handleEnableAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
-const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 60_000
-const MINIMUM_INTERVAL_TIME = process.env.RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL
+const TIMEOUT_TO_GET_INFO = process.env.RI_DATABASE_OVERVIEW_REFRESH_INTERVAL || '5'
+const MINIMUM_INTERVAL_TIME = process.env.RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL || '1'
 
 const DatabaseOverview = (props: Props) => {
   const { metrics, loadData, lastRefreshTime, handleEnableAutoRefresh } = props
@@ -118,8 +118,8 @@ const DatabaseOverview = (props: Props) => {
                   containerClassName=""
                   postfix="overview"
                   testid="auto-refresh-overview"
-                  defaultRefreshRate={TIMEOUT_TO_GET_INFO.toString()}
-                  minimumRefreshRate={parseInt(MINIMUM_INTERVAL_TIME || '0')}
+                  defaultRefreshRate={TIMEOUT_TO_GET_INFO}
+                  minimumRefreshRate={parseInt(MINIMUM_INTERVAL_TIME)}
                   onRefresh={loadData}
                   onEnableAutoRefresh={handleEnableAutoRefresh}
                 />

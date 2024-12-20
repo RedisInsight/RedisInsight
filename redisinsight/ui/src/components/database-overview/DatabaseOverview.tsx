@@ -4,14 +4,21 @@ import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
 
 import { IMetric } from './components/OverviewMetrics'
 
+import AutoRefresh from '../auto-refresh'
 import styles from './styles.module.scss'
 
 interface Props {
   metrics?: Array<IMetric>
+  loadData: () => void
+  lastRefreshTime: number | null
+  handleEnableAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
+const TIMEOUT_TO_GET_INFO = process.env.RI_DATABASE_OVERVIEW_REFRESH_INTERVAL || '5'
+const MINIMUM_INTERVAL_TIME = process.env.RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL || '1'
+
 const DatabaseOverview = (props: Props) => {
-  const { metrics } = props
+  const { metrics, loadData, lastRefreshTime, handleEnableAutoRefresh } = props
 
   const getTooltipContent = (metric: IMetric) => {
     if (!metric.children?.length) {
@@ -56,46 +63,70 @@ const DatabaseOverview = (props: Props) => {
     <EuiFlexGroup className={styles.container} gutterSize="none" responsive={false}>
       {metrics?.length! > 0 && (
         <EuiFlexItem key="overview">
-          <div className={cx(
-            'flex-row',
-            styles.itemContainer,
-            styles.overview,
-          )}
+          <EuiFlexGroup
+            className={cx(
+              'flex-row',
+              styles.itemContainer,
+              styles.overview,
+            )}
+            gutterSize="none"
+            responsive={false}
           >
-            <EuiFlexGroup gutterSize="none" responsive={false}>
-              {
-                metrics?.map((overviewItem) => (
-                  <EuiFlexItem
-                    className={cx(styles.overviewItem, overviewItem.className ?? '')}
-                    key={overviewItem.id}
-                    data-test-subj={overviewItem.id}
-                    grow={false}
+            {
+              metrics?.map((overviewItem) => (
+                <EuiFlexItem
+                  className={cx(styles.overviewItem, overviewItem.className ?? '')}
+                  key={overviewItem.id}
+                  data-test-subj={overviewItem.id}
+                  grow={false}
+                >
+                  <EuiToolTip
+                    position="bottom"
+                    className={styles.tooltip}
+                    content={getTooltipContent(overviewItem)}
                   >
-                    <EuiToolTip
-                      position="bottom"
-                      className={styles.tooltip}
-                      content={getTooltipContent(overviewItem)}
-                    >
-                      <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center" justifyContent="center">
-                        {overviewItem.icon && (
-                          <EuiFlexItem grow={false}>
-                            <EuiIcon
-                              size="m"
-                              type={overviewItem.icon}
-                              className={styles.icon}
-                            />
-                          </EuiFlexItem>
-                        )}
-                        <EuiFlexItem grow={false} className={styles.overviewItemContent}>
-                          {overviewItem.content}
+                    <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center" justifyContent="center">
+                      {overviewItem.icon && (
+                        <EuiFlexItem grow={false} className={styles.icon}>
+                          <EuiIcon
+                            size="m"
+                            type={overviewItem.icon}
+                            className={styles.icon}
+                          />
                         </EuiFlexItem>
-                      </EuiFlexGroup>
-                    </EuiToolTip>
-                  </EuiFlexItem>
-                ))
-              }
-            </EuiFlexGroup>
-          </div>
+                      )}
+                      <EuiFlexItem grow={false} className={styles.overviewItemContent}>
+                        {overviewItem.content}
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  </EuiToolTip>
+                </EuiFlexItem>
+              ))
+            }
+            <EuiFlexItem
+              className={cx(styles.overviewItem, styles.autoRefresh)}
+              grow={false}
+              data-testid="overview-auto-refresh"
+            >
+              <EuiFlexItem grow={false} className={styles.overviewItemContent}>
+                <AutoRefresh
+                  displayText={false}
+                  displayLastRefresh={false}
+                  iconSize="xs"
+                  loading={false}
+                  enableAutoRefreshDefault
+                  lastRefreshTime={lastRefreshTime}
+                  containerClassName=""
+                  postfix="overview"
+                  testid="auto-refresh-overview"
+                  defaultRefreshRate={TIMEOUT_TO_GET_INFO}
+                  minimumRefreshRate={parseInt(MINIMUM_INTERVAL_TIME)}
+                  onRefresh={loadData}
+                  onEnableAutoRefresh={handleEnableAutoRefresh}
+                />
+              </EuiFlexItem>
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </EuiFlexItem>
       )}
     </EuiFlexGroup>

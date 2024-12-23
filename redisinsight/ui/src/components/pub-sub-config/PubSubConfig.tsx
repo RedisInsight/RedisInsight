@@ -15,7 +15,7 @@ import {
   setLoading,
   setPubSubConnected,
 } from 'uiSrc/slices/pubsub/pubsub'
-import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
+import { getSocketApiUrl, Nullable } from 'uiSrc/utils';
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
 import { useIoConnection } from 'uiSrc/services/hooks/useIoConnection'
 
@@ -28,7 +28,7 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
   const { isSubscribeTriggered, isConnected, subscriptions } = useSelector(pubSubSelector)
   const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
-  const connectIo = useIoConnection(`${getBaseApiUrl()}/pub-sub`, { token })
+  const connectIo = useIoConnection(getSocketApiUrl('pub-sub'), { token })
 
   const dispatch = useDispatch()
 

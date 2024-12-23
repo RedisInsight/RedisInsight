@@ -13,7 +13,7 @@ import {
   setDeleteOverviewStatus,
   setLoading,
 } from 'uiSrc/slices/browser/bulkActions'
-import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
+import { getSocketApiUrl, Nullable } from 'uiSrc/utils'
 import { sessionStorageService } from 'uiSrc/services'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -36,7 +36,7 @@ const BulkActionsConfig = () => {
   const { filter, search } = useSelector(keysSelector)
   const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
-  const connectIo = useIoConnection(`${getBaseApiUrl()}/bulk-actions`, { token })
+  const connectIo = useIoConnection(getSocketApiUrl('bulk-actions'), { token })
 
   const dispatch = useDispatch()
 

@@ -17,7 +17,7 @@ import {
   setStartTimestamp,
   stopMonitor,
 } from 'uiSrc/slices/cli/monitor'
-import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
+import { getSocketApiUrl, Nullable } from 'uiSrc/utils';
 import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -36,7 +36,7 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
   const { token } = useSelector(appCsrfSelector)
 
   const socketRef = useRef<Nullable<Socket>>(null)
-  const connectIo = useIoConnection(`${getBaseApiUrl()}/monitor`, { token })
+  const connectIo = useIoConnection(getSocketApiUrl('monitor'), { token })
   const logFileIdRef = useRef<string>()
   const timestampRef = useRef<number>()
   const retryTimerRef = useRef<NodeJS.Timer>()

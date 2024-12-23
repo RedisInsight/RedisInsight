@@ -59,7 +59,22 @@ export class CloudUserApiProvider extends CloudApiProvider {
         ?.match(/JSESSIONID=([^;]+)/)?.[1];
     } catch (e) {
       try {
-        this.logger.error('Error getting apiSessionId: ', inspect(e?.response, false, 5));
+        this.logger.log(`Error keys: ${Object.keys(e).toString()}`);
+        this.logger.log(`Error response message: ${JSON.stringify(e.response.message)}`);
+        this.logger.log(`Error response.keys: ${Object.keys(e.response).toString()}`);
+
+        this.logger.log(`Error code: ${JSON.stringify(e.code)}`);
+
+        this.logger.log(`Error message: ${JSON.stringify(e.message)}`);
+
+        const { response } = e;
+
+        if (response.request) {
+          delete response.request;
+        }
+
+        this.logger.error(`Error getting apiSessionId: ${JSON.stringify(e?.response?.data)}`);
+        this.logger.error(`Error getting apiSessionId with inspect: ${inspect(e, false, 5)}}`);
       } catch (err) {
         this.logger.log('Error on logging');
       }

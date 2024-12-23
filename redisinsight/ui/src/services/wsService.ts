@@ -48,19 +48,6 @@ export function wsService(
     transports,
     withCredentials,
   }
-  // const fullWsUrl = `${wsUrl}/socket.io`
-  // eslint-disable-next-line no-console
-  console.log({
-    wsUrl,
-    // fullWsUrl,
-    passTokenViaHeaders,
-    token,
-    queryParams,
-    headers,
-    transports,
-    ioOptions,
-  })
 
   return io(wsUrl, ioOptions)
-  // return io('https://app-sm.k8s-mw.sm-qa.qa.redislabs.com', ioOptions)
 }

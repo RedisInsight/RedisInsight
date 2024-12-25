@@ -192,7 +192,7 @@ test
         };
         // Verify that user can add SSH tunnel with Password for OSS Cluster database
         await myRedisDatabasePage.AddRedisDatabaseDialog.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
-        await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
+        await myRedisDatabasePage.clickOnDBByName(sshDbClusterPass.databaseName);
         await Common.checkURLContainsText('browser');
     });
 test

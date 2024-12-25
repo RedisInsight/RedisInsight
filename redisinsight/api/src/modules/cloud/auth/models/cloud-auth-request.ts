@@ -2,6 +2,7 @@ import { SessionMetadata } from 'src/common/models';
 
 export enum CloudAuthIdpType {
   Google = 'google',
+  Microsoft = 'microsoft',
   GitHub = 'github',
   Sso = 'sso',
 }

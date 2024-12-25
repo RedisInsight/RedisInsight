@@ -1766,7 +1766,7 @@ describe('instances slice', () => {
           timeout: 45_000,
         }
 
-        const responsePayload = { status: 201 }
+        const responsePayload = { status: 201, data: { name: mockName } }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 

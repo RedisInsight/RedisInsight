@@ -4,7 +4,6 @@ import cx from 'classnames'
 import {
   EuiProgress,
   EuiText,
-  EuiToolTip,
 } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
@@ -13,7 +12,7 @@ import {
   bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
-  formatLongName,
+  createTooltipContent,
   formattingBuffer,
 } from 'uiSrc/utils'
 import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
@@ -35,6 +34,7 @@ import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/Popover
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
+import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
 import styles from './styles.module.scss'
 
@@ -50,7 +50,6 @@ const cellCache = new CellMeasurerCache({
 })
 
 export interface Props {
-  isFooterOpen?: boolean
   onRemoveKey: () => void
 }
 
@@ -191,10 +190,8 @@ const SetDetailsTable = (props: Props) => {
       truncateText: true,
       render: function Name(_name: string, memberItem: RedisResponseBuffer, expanded: boolean = false) {
         const { value: decompressedMemberItem } = decompressingBuffer(memberItem, compressor)
-        const member = bufferToString(memberItem)
-        // Better to cut the long string, because it could affect virtual scroll performance
-        const tooltipContent = formatLongName(member)
         const { value, isValid } = formattingBuffer(decompressedMemberItem, viewFormatProp, { expanded })
+        const tooltipContent = createTooltipContent(value, decompressedMemberItem, viewFormatProp)
         const cellContent = value?.substring?.(0, 200) ?? value
 
         return (
@@ -203,18 +200,13 @@ const SetDetailsTable = (props: Props) => {
               style={{ display: 'flex' }}
               data-testid={`set-member-value-${cellContent}`}
             >
-              {!expanded && (
-                <EuiToolTip
-                  title={isValid ? 'Member' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                  className={styles.tooltip}
-                  anchorClassName="truncateText"
-                  position="left"
-                  content={tooltipContent}
-                >
-                  <>{cellContent}</>
-                </EuiToolTip>
-              )}
-              {expanded && value}
+              <FormattedValue
+                value={value}
+                expanded={expanded}
+                title={isValid ? 'Member' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                tooltipContent={tooltipContent}
+                position="left"
+              />
             </div>
           </EuiText>
         )

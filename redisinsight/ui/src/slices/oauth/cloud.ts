@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { remove } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { getApiErrorCode, getApiErrorMessage, getAxiosError, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { getApiErrorCode, getApiErrorMessage, getAxiosError, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 
 import { CloudJobName, CloudJobStatus } from 'uiSrc/electron/constants'
 import {
@@ -12,6 +12,7 @@ import {
 } from 'uiSrc/components/notifications/components'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getCloudSsoUtmParams } from 'uiSrc/utils/oauth/cloudSsoUtm'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
@@ -51,6 +52,7 @@ export const initialState: StateAppOAuth = {
   isOpenSelectAccountDialog: false,
   showProgress: true,
   user: {
+    initialLoading: true,
     loading: false,
     error: '',
     data: null,
@@ -190,6 +192,9 @@ const oauthCloudSlice = createSlice({
     logoutUserFailure: (state) => {
       state.user.loading = false
       state.user.data = null
+    },
+    setInitialLoadingState: (state, { payload }: PayloadAction<boolean>) => {
+      state.user.initialLoading = payload
     }
   },
 })
@@ -227,7 +232,8 @@ export const {
   removeAllCapiKeysFailure,
   logoutUser,
   logoutUserSuccess,
-  logoutUserFailure
+  logoutUserFailure,
+  setInitialLoadingState
 } = oauthCloudSlice.actions
 
 // A selector
@@ -242,7 +248,7 @@ export const oauthCapiKeysSelector = (state: RootState) => state.oauth.cloud.cap
 // The reducer
 export default oauthCloudSlice.reducer
 
-export function createFreeDbSuccess(result: CloudSuccessResult, history: any) {
+export function createFreeDbSuccess(result: CloudSuccessResult, history: any, jobName: Maybe<CloudJobName>) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const { resourceId: id, ...details } = result
     try {
@@ -257,12 +263,12 @@ export function createFreeDbSuccess(result: CloudSuccessResult, history: any) {
           dispatch(checkConnectToInstanceAction(id))
         }
 
-        history.push(Pages.workbench(id))
+        history.push(Pages.browser(id))
       }
 
       dispatch(showOAuthProgress(true))
       dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
-      dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(details, onConnect)))
+      dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(details, onConnect, jobName)))
       dispatch(setSelectAccountDialogState(false))
     } catch (_err) {
       const error = _err as AxiosError
@@ -543,6 +549,7 @@ export function logoutUserAction(
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(logoutUser())
+    dispatch(setSSOFlow())
 
     try {
       const { status } = await apiService.get(

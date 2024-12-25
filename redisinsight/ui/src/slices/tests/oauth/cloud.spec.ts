@@ -13,6 +13,7 @@ import {
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { CloudJobStatus, CloudJobName } from 'uiSrc/electron/constants'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import reducer, {
   initialState,
   oauthCloudSelector,
@@ -55,7 +56,7 @@ import reducer, {
   logoutUser,
   logoutUserSuccess,
   logoutUserFailure,
-  logoutUserAction, oauthCloudUserSelector
+  logoutUserAction, oauthCloudUserSelector, setInitialLoadingState
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -847,6 +848,27 @@ describe('oauth cloud slice', () => {
     })
   })
 
+  describe('setInitialLoadingState', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const userState = {
+        ...initialState.user,
+        initialLoading: false
+      }
+
+      // Act
+      const nextState = reducer(initialState as any, setInitialLoadingState(false))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudUserSelector(rootState)).toEqual(userState)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchUserInfo', () => {
       it('call both fetchUserInfo and getUserInfoSuccess when fetch is successed', async () => {
@@ -1024,13 +1046,13 @@ describe('oauth cloud slice', () => {
         const onConnect = () => {}
 
         // Act
-        await store.dispatch<any>(createFreeDbSuccess(result, {}))
+        await store.dispatch<any>(createFreeDbSuccess(result, {}, CloudJobName.CreateFreeDatabase))
 
         // Assert
         const expectedActions = [
           showOAuthProgress(true),
           removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
-          addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB({}, onConnect)),
+          addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB({}, onConnect, CloudJobName.CreateFreeDatabase)),
           setSelectAccountDialogState(false),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
@@ -1276,6 +1298,7 @@ describe('oauth cloud slice', () => {
         // Assert
         const expectedActions = [
           logoutUser(),
+          setSSOFlow(),
           logoutUserSuccess(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1298,6 +1321,7 @@ describe('oauth cloud slice', () => {
         // Assert
         const expectedActions = [
           logoutUser(),
+          setSSOFlow(),
           addErrorNotification(responsePayload as AxiosError),
           logoutUserFailure(),
         ]

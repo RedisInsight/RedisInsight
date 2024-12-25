@@ -1,19 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockDatabase,
+  mockClientMetadata,
+  mockCommandExecutionUnsupportedCommandResult,
+  mockCreateCommandExecutionDto,
   mockDatabaseClientFactory,
+  mockPluginCommandExecution,
   mockWhitelistCommandsResponse,
   mockWorkbenchClientMetadata,
+  mockWorkbenchCommandsExecutor,
 } from 'src/__mocks__';
 import { v4 as uuidv4 } from 'uuid';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import {
-  CreateCommandExecutionDto,
-  ResultsMode,
-  RunQueryMode,
-} from 'src/modules/workbench/dto/create-command-execution.dto';
-import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
-import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { PluginsService } from 'src/modules/workbench/plugins.service';
@@ -23,26 +20,9 @@ import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import config from 'src/utils/config';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import {CommandExecutionType, ResultsMode, RunQueryMode} from 'src/modules/workbench/models/command-execution'
 
 const PLUGINS_CONFIG = config.get('plugins');
-
-const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
-  command: 'get foo',
-  mode: RunQueryMode.ASCII,
-  resultsMode: ResultsMode.Default,
-};
-
-const mockCommandExecutionResults: CommandExecutionResult[] = [
-  new CommandExecutionResult({
-    status: CommandExecutionStatus.Success,
-    response: 'OK',
-  }),
-];
-const mockPluginCommandExecution = new PluginCommandExecution({
-  ...mockCreateCommandExecutionDto,
-  databaseId: mockDatabase.id,
-  result: mockCommandExecutionResults,
-});
 
 const mockVisualizationId = 'pluginName_visualizationName';
 const mockCommandExecutionId = uuidv4();
@@ -79,9 +59,7 @@ describe('PluginsService', () => {
         PluginsService,
         {
           provide: WorkbenchCommandsExecutor,
-          useFactory: () => ({
-            sendCommand: jest.fn(),
-          }),
+          useFactory: mockWorkbenchCommandsExecutor,
         },
         {
           provide: PluginCommandsWhitelistProvider,
@@ -106,7 +84,6 @@ describe('PluginsService', () => {
 
   describe('sendCommand', () => {
     it('should successfully execute command', async () => {
-      workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
       pluginsCommandsWhitelistProvider.getWhitelistCommands.mockResolvedValueOnce(mockWhitelistCommandsResponse);
 
       const result = await service.sendCommand(mockWorkbenchClientMetadata, mockCreateCommandExecutionDto);
@@ -124,14 +101,13 @@ describe('PluginsService', () => {
 
       const result = await service.sendCommand(mockWorkbenchClientMetadata, dto);
 
-      expect(result).toEqual(new PluginCommandExecution({
+      expect(result).toEqual({
         ...dto,
         databaseId: mockWorkbenchClientMetadata.databaseId,
-        result: [new CommandExecutionResult({
-          response: ERROR_MESSAGES.PLUGIN_COMMAND_NOT_SUPPORTED('subscribe'.toUpperCase()),
-          status: CommandExecutionStatus.Fail,
-        })],
-      }));
+        result: [mockCommandExecutionUnsupportedCommandResult],
+        resultsMode: ResultsMode.Default,
+        type: CommandExecutionType.Workbench,
+      });
       expect(workbenchCommandsExecutor.sendCommand).not.toHaveBeenCalled();
     });
     it('should throw an error when command execution failed', async () => {
@@ -139,7 +115,6 @@ describe('PluginsService', () => {
       workbenchCommandsExecutor.sendCommand.mockRejectedValueOnce(new BadRequestException('error'));
 
       const dto = {
-        ...mockCommandExecutionResults,
         command: 'get foo',
         mode: RunQueryMode.ASCII,
       };
@@ -154,7 +129,6 @@ describe('PluginsService', () => {
   });
   describe('getWhitelistCommands', () => {
     it('should successfully return whitelisted commands', async () => {
-      workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
       pluginsCommandsWhitelistProvider.getWhitelistCommands.mockResolvedValueOnce(mockWhitelistCommandsResponse);
 
       const result = await service.getWhitelistCommands(mockWorkbenchClientMetadata);
@@ -169,7 +143,7 @@ describe('PluginsService', () => {
       const dto = {
         state: mockState,
       };
-      const result = await service.saveState(mockVisualizationId, mockCommandExecutionId, dto);
+      const result = await service.saveState(mockClientMetadata, mockVisualizationId, mockCommandExecutionId, dto);
 
       expect(result).toEqual(undefined);
     });
@@ -180,7 +154,7 @@ describe('PluginsService', () => {
         const dto = {
           state: Buffer.alloc(PLUGINS_CONFIG.stateMaxSize + 1, 0),
         };
-        await service.saveState(mockVisualizationId, mockCommandExecutionId, dto);
+        await service.saveState(mockClientMetadata, mockVisualizationId, mockCommandExecutionId, dto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
@@ -193,7 +167,7 @@ describe('PluginsService', () => {
     it('should successfully get state', async () => {
       pluginStateProvider.getOne.mockResolvedValueOnce(mockPluginState);
 
-      const result = await service.getState(mockVisualizationId, mockCommandExecutionId);
+      const result = await service.getState(mockClientMetadata, mockVisualizationId, mockCommandExecutionId);
 
       expect(result).toEqual(mockPluginState);
     });

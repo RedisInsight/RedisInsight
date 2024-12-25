@@ -1,6 +1,7 @@
 import * as os from 'os';
 import * as fs from 'fs';
 import { join as joinPath } from 'path';
+import * as path from 'path';
 import { Chance } from 'chance';
 const chance = new Chance();
 
@@ -9,6 +10,8 @@ export const commonUrl = process.env.COMMON_URL || 'https://localhost:5540';
 export const apiUrl = process.env.API_URL || 'https://localhost:5540/api';
 export const googleUser = process.env.GOOGLE_USER || '';
 export const googleUserPassword = process.env.GOOGLE_USER_PASSWORD || '';
+export const samlUser = process.env.E2E_SSO_EMAIL || '';
+export const samlUserPassword = process.env.E2E_SSO_PASSWORD || '';
 
 export const workingDirectory = process.env.RI_APP_FOLDER_ABSOLUTE_PATH
     || (joinPath(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redis-insight'));
@@ -16,7 +19,7 @@ export const fileDownloadPath = joinPath(os.homedir(), 'Downloads');
 const uniqueId = chance.string({ length: 10 });
 
 export const ossStandaloneConfig = {
-    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone',
+    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone-v8',
     port: process.env.OSS_STANDALONE_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,
@@ -37,6 +40,22 @@ export const ossStandaloneV5Config = {
     databaseName: `${process.env.OSS_STANDALONE_V5_DATABASE_NAME || 'test_standalone-v5'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_V5_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_V5_PASSWORD
+};
+
+export const ossStandaloneV7Config = {
+    host: process.env.OSS_STANDALONE_V7_HOST || 'oss-standalone-v7',
+    port: process.env.OSS_STANDALONE_V7_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_V7_DATABASE_NAME || 'test_standalone-v7'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_V7_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_V7_PASSWORD
+};
+
+export const ossStandaloneV6Config = {
+    host: process.env.OSS_STANDALONE_V8_HOST || 'oss-standalone',
+    port: process.env.OSS_STANDALONE_V8_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_V8_DATABASE_NAME || 'test_standalone-v6'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_V8_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_V8_PASSWORD
 };
 
 export const ossStandaloneRedisearch = {
@@ -123,11 +142,11 @@ export const ossStandaloneForSSHConfig = {
 };
 
 export const ossClusterForSSHConfig = {
-    host: process.env.OSS_STANDALONE_SSH_HOST || '172.33.100.211',
-    port: process.env.OSS_STANDALONE_SSH_PORT || '6379',
-    databaseName: `${process.env.OSS_STANDALONE_SSH_DATABASE_NAME || 'oss-cluster-for-ssh'}-${uniqueId}`,
-    databaseUsername: process.env.OSS_STANDALONE_SSH_USERNAME,
-    databasePassword: process.env.OSS_STANDALONE_SSH_PASSWORD
+    host: process.env.OSS_CLUSTER_SSH_HOST || '172.31.100.211',
+    port: process.env.OSS_CLUSTER_SSH_PORT || '6379',
+    databaseName: `${process.env.OSS_CLUSTER_SSH_DATABASE_NAME || 'oss-cluster-for-ssh'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_CLUSTER_SSH_USERNAME,
+    databasePassword: process.env.OSS_CLUSTER_SSH_PASSWORD
 };
 
 export const ossStandaloneTlsConfig = {
@@ -138,12 +157,12 @@ export const ossStandaloneTlsConfig = {
     databasePassword: process.env.OSS_STANDALONE_TLS_PASSWORD,
     caCert: {
         name: `ca}-${uniqueId}`,
-        certificate: process.env.E2E_CA_CRT || fs.readFileSync('./rte/oss-standalone-tls/certs/redisCA.crt', 'utf-8')
+        certificate: process.env.E2E_CA_CRT || fs.readFileSync(path.resolve(__dirname, '../rte/oss-standalone-tls/certs/redisCA.crt'), 'utf-8')
     },
     clientCert: {
         name: `client}-${uniqueId}`,
-        certificate: process.env.E2E_CLIENT_CRT || fs.readFileSync('./rte/oss-standalone-tls/certs/redis.crt', 'utf-8'),
-        key: process.env.E2E_CLIENT_KEY || fs.readFileSync('./rte/oss-standalone-tls/certs/redis.key', 'utf-8')
+        certificate: process.env.E2E_CLIENT_CRT || fs.readFileSync(path.resolve(__dirname, '../rte/oss-standalone-tls/certs/redis.crt'), 'utf-8'),
+        key: process.env.E2E_CLIENT_KEY || fs.readFileSync(path.resolve(__dirname, '../rte/oss-standalone-tls/certs/redis.key'), 'utf-8')
     }
 };
 

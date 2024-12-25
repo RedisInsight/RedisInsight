@@ -11,7 +11,7 @@ import {
 } from '@elastic/eui'
 import { find } from 'lodash'
 import cx from 'classnames'
-import { CloudJobStep } from 'uiSrc/electron/constants'
+import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import ExternalLink from 'uiSrc/components/base/external-link'
 import ChampagneIcon from 'uiSrc/assets/img/icons/champagne.svg'
 import Divider from 'uiSrc/components/divider/Divider'
@@ -19,6 +19,9 @@ import { OAuthProviders } from 'uiSrc/components/oauth/oauth-select-plan/constan
 
 import { CloudSuccessResult } from 'uiSrc/slices/interfaces'
 
+import { Maybe } from 'uiSrc/utils'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { EXTERNAL_LINKS, UTM_CAMPAINGS, UTM_MEDIUMS } from 'uiSrc/constants/links'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
@@ -28,10 +31,13 @@ export enum InfiniteMessagesIds {
   databaseExists = 'databaseExists',
   subscriptionExists = 'subscriptionExists',
   appUpdateAvailable = 'appUpdateAvailable',
+  pipelineDeploySuccess = 'pipelineDeploySuccess'
 }
 
-// TODO: after merge insights - remove and change to function
-const MANAGE_DB_LINK = 'https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
+const MANAGE_DB_LINK = getUtmExternalLink(
+  EXTERNAL_LINKS.cloudConsole,
+  { campaign: UTM_CAMPAINGS.Main, medium: UTM_MEDIUMS.Main }
+)
 
 export const INFINITE_MESSAGES = {
   AUTHENTICATING: () => ({
@@ -91,8 +97,11 @@ export const INFINITE_MESSAGES = {
       </div>
     )
   }),
-  SUCCESS_CREATE_DB: (details: Omit<CloudSuccessResult, 'resourceId'>, onSuccess: () => void) => {
+  SUCCESS_CREATE_DB: (details: Omit<CloudSuccessResult, 'resourceId'>, onSuccess: () => void, jobName: Maybe<CloudJobName>) => {
     const vendor = find(OAuthProviders, ({ id }) => id === details.provider)
+    const withFeed = jobName
+      && [CloudJobName.CreateFreeDatabase, CloudJobName.CreateFreeSubscriptionAndDatabase].includes(jobName)
+    const text = `You can now use your Redis Stack database in Redis Cloud${withFeed ? ' with pre-loaded sample data' : ''}.`
     return ({
       id: InfiniteMessagesIds.oAuthSuccess,
       className: 'wide',
@@ -110,7 +119,7 @@ export const INFINITE_MESSAGES = {
             <EuiFlexItem grow>
               <EuiTitle className="infiniteMessage__title"><span>Congratulations!</span></EuiTitle>
               <EuiText size="xs">
-                You can now use your Redis Stack database in Redis Cloud.
+                {text}
                 <EuiSpacer size="s" />
                 <b>Notice:</b> the database will be deleted after 15 days of inactivity.
               </EuiText>
@@ -313,7 +322,7 @@ export const INFINITE_MESSAGES = {
     )
   }),
   SUCCESS_DEPLOY_PIPELINE: () => ({
-    id: InfiniteMessagesIds.appUpdateAvailable,
+    id: InfiniteMessagesIds.pipelineDeploySuccess,
     className: 'wide',
     Inner: (
       <div

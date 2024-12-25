@@ -1,1 +1,2 @@
 export const STRING_MAX_LENGTH = 4999
+export const TOOLTIP_CONTENT_MAX_LENGTH = 500

@@ -5,6 +5,8 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { appContextSelector } from 'uiSrc/slices/app/context'
 import NavigationMenu from './NavigationMenu'
 
 let store: typeof mockedStore
@@ -16,11 +18,41 @@ beforeEach(() => {
 
 const mockAppInfoSelector = jest.requireActual('uiSrc/slices/app/info')
 
+jest.mock('uiSrc/slices/app/context', () => ({
+  ...jest.requireActual('uiSrc/slices/app/context'),
+  appContextSelector: jest.fn().mockReturnValue({
+    workspace: 'database',
+  }),
+}))
+
 jest.mock('uiSrc/slices/app/info', () => ({
   ...jest.requireActual('uiSrc/slices/app/info'),
   appInfoSelector: jest.fn().mockReturnValue({
     server: {}
   })
+}))
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: ''
+  }),
+}))
+
+jest.mock('uiSrc/slices/rdi/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/rdi/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: 'mockRdiId',
+  }),
+}))
+
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    appSettings: {
+      flag: true,
+    },
+  }),
 }))
 
 describe('NavigationMenu', () => {
@@ -45,7 +77,6 @@ describe('NavigationMenu', () => {
       render(<NavigationMenu />)
 
       expect(screen.queryByTestId('browser-page-btn"')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('workbench-page-btn')).not.toBeInTheDocument()
     })
 
     it('should render help menu', () => {
@@ -84,15 +115,12 @@ describe('NavigationMenu', () => {
   })
 
   describe('with connectedInstance', () => {
-    beforeAll(() => {
-      jest.mock('uiSrc/slices/instances/instances', () => ({
-        ...jest.requireActual('uiSrc/slices/instances/instances'),
-        connectedInstanceSelector: jest.fn().mockReturnValue({
-          id: '123',
-          connectionType: 'STANDALONE',
-          db: 0,
-        })
-      }))
+    beforeEach(() => {
+      (connectedInstanceSelector as jest.Mock).mockReturnValue({
+        id: '123',
+        connectionType: 'STANDALONE',
+        db: 0,
+      })
     })
 
     it('should render', () => {
@@ -114,8 +142,8 @@ describe('NavigationMenu', () => {
       }))
       render(<NavigationMenu />)
 
-      expect(screen.findByTestId('browser-page-btn')).toBeTruthy()
-      expect(screen.findByTestId('workbench-page-btn')).toBeTruthy()
+      expect(screen.getByTestId('browser-page-btn')).toBeTruthy()
+      expect(screen.getByTestId('workbench-page-btn')).toBeTruthy()
     })
 
     it('should render public routes', () => {
@@ -128,6 +156,13 @@ describe('NavigationMenu', () => {
       render(<NavigationMenu />)
 
       expect(screen.getByTestId('settings-page-btn')).toBeTruthy()
+    })
+
+    it('should render cloud link', () => {
+      const { container } = render(<NavigationMenu />)
+
+      const createCloudLink = container.querySelector('[data-test-subj="create-cloud-nav-link"]')
+      expect(createCloudLink).toBeTruthy()
     })
 
     it('should render github btn with proper link', () => {
@@ -143,5 +178,17 @@ describe('NavigationMenu', () => {
       expect(githubBtn).toBeTruthy()
       expect(githubBtn?.getAttribute('href')).toEqual(EXTERNAL_LINKS.githubRepo)
     })
+  })
+
+  it('should render private routes with connectedRdiInstanceId', () => {
+    (appContextSelector as jest.Mock).mockImplementation(() => ({
+      ...appContextSelector,
+      workspace: 'redisDataIntegration'
+    }))
+
+    render(<NavigationMenu />)
+
+    expect(screen.getByTestId('pipeline-status-page-btn')).toBeTruthy()
+    expect(screen.getByTestId('pipeline-management-page-btn')).toBeTruthy()
   })
 })

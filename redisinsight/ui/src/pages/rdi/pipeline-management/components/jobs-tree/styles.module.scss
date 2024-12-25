@@ -1,6 +1,7 @@
 .wrapper {
   .navItem {
     cursor: pointer;
+    white-space: pre !important;
 
     &:hover {
       text-decoration: underline;

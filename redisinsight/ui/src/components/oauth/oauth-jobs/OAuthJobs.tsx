@@ -26,6 +26,7 @@ import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 const OAuthJobs = () => {
   const {
     status,
+    name: jobName,
     error,
     step,
     result,
@@ -44,7 +45,7 @@ const OAuthJobs = () => {
         break
 
       case CloudJobStatus.Finished:
-        dispatch(fetchInstancesAction(() => dispatch(createFreeDbSuccess(result, history))))
+        dispatch(fetchInstancesAction(() => dispatch(createFreeDbSuccess(result, history, jobName))))
         dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
         localStorageService.remove(BrowserStorageItem.OAuthJobId)
         break

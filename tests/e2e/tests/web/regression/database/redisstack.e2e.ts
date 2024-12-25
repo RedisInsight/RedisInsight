@@ -1,7 +1,11 @@
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
+import {
+    commonUrl,
+    ossStandaloneConfig,
+    ossStandaloneV6Config,
+} from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -9,7 +13,7 @@ const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
-const moduleNameList = ['RediSearch', 'RedisGraph', 'RedisBloom', 'RedisJSON', 'RedisTimeSeries'];
+const moduleNameList = ['Redis Query Engine', 'Graph', 'Probabilistic', 'JSON', 'Time Series'];
 
 fixture `Redis Stack`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -17,13 +21,13 @@ fixture `Redis Stack`
     .beforeEach(async() => {
         // Add new databases using API
         await databaseHelper.acceptLicenseTerms();
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV6Config);
         // Reload Page
         await browserPage.reloadPage();
     })
     .afterEach(async() => {
         // Delete database
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Verify that user can see module list Redis Stack icon hovering (without Redis Stack text)', async t => {
     // Verify that user can see Redis Stack icon when Redis Stack DB is added in the application
@@ -36,7 +40,8 @@ test('Verify that user can see module list Redis Stack icon hovering (without Re
     // Check all Redis Stack modules inside
     await myRedisDatabasePage.checkModulesInTooltip(moduleNameList);
 });
-test('Verify that user can see Redis Stack icon in Edit mode near the DB name', async t => {
+// Deprecated since RI-6268, TODO remove after entire feature
+test.skip('Verify that user can see Redis Stack icon in Edit mode near the DB name', async t => {
     // Open Edit mode
     await t.click(myRedisDatabasePage.editDatabaseButton);
     // Check redis stack icon near the db name
@@ -46,4 +51,17 @@ test('Verify that user can see Redis Stack icon in Edit mode near the DB name', 
     await t.expect(myRedisDatabasePage.tooltipRedisStackLogo.visible).ok('Redis Stack logo not found');
     const databaseName = myRedisDatabasePage.redisStackIcon.parent().nextSibling();
     await t.expect(databaseName.withAttribute('data-testid', 'edit-alias-btn').exists).ok('Edit button not found');
+});
+test.before(async() => {
+    // Add new databases using API
+    await databaseHelper.acceptLicenseTerms();
+    await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
+    // Reload Page
+    await browserPage.reloadPage();
+})('Verify that Redis Stack is not displayed for stack >8', async t => {
+    // Verify that user can not see Redis Stack icon when Redis Stack DB > 8 is added in the application
+    await t.expect(myRedisDatabasePage.redisStackIcon.visible).notOk('Redis Stack icon found');
+    await t.click(myRedisDatabasePage.editDatabaseButton);
+    // Check redis stack icon near the db name
+    await t.expect(myRedisDatabasePage.redisStackIcon.visible).notOk('Redis Stack icon found');
 });

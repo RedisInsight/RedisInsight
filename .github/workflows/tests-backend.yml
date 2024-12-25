@@ -1,0 +1,80 @@
+name: Tests BE
+on:
+  workflow_call:
+    inputs:
+      skip-electron-deps:
+        description: Skip install electron dependencies
+        type: boolean
+        default: false
+        required: false
+
+env:
+  SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
+  SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
+  REPORT_NAME: "report-be"
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install all libs and dependencies for BE
+      uses: ./.github/actions/install-all-build-libs
+      with:
+        skip-electron-deps: '1'
+
+    - name: API PROD dependencies scan
+      run: |
+        FILENAME=api.prod.deps.audit.json
+
+        yarn --cwd redisinsight/api audit --groups dependencies --json > $FILENAME || true &&
+        FILENAME=$FILENAME DEPS="API prod" node .github/deps-audit-report.js &&
+        curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+
+    - name: API DEV dependencies scan
+      run: |
+        FILENAME=api.dev.deps.audit.json
+
+        yarn --cwd redisinsight/api audit --groups devDependencies --json > $FILENAME || true &&
+        FILENAME=$FILENAME DEPS="API dev" node .github/deps-audit-report.js &&
+        curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+
+    - name: Code analysis
+      run: |
+        FILENAME=api.lint.audit.json
+        WORKDIR="./redisinsight/api"
+
+        yarn lint:api -f json -o $FILENAME || true &&
+        FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="API" node .github/lint-report.js &&
+        curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+
+    - name: Unit tests API
+      timeout-minutes: 20
+      run: yarn --cwd redisinsight/api/ test:cov --ci --silent
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ env.REPORT_NAME }}
+        path: redisinsight/api/report
+
+    - name: Get current date
+      id: date
+      if: always()
+      uses: ./.github/actions/get-current-date
+
+    - name: Deploy report
+      uses: ./.github/actions/deploy-test-reports
+      if: always()
+      with:
+        group: 'report'
+        path: "${{ vars.DEFAULT_TEST_REPORTS_URL }}/${{ steps.date.outputs.date }}/${{ github.run_id }}/${{ env.REPORT_NAME }}"
+        AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
+        AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+        AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+

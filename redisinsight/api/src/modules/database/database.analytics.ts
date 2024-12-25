@@ -51,6 +51,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
           timeout: instance.timeout / 1_000, // milliseconds to seconds
           databaseIndex: instance.db || 0,
           useDecompression: instance.compressor || null,
+          serverName: additionalInfo?.server?.server_name || null,
           ...modulesSummary,
         },
       );
@@ -116,12 +117,12 @@ export class DatabaseAnalytics extends TelemetryBaseService {
     );
   }
 
-  sendDatabaseConnectedClientListEvent(instanceId: string, additionalData: object = {}): void {
+  sendDatabaseConnectedClientListEvent(databaseId: string, additionalData: object = {}): void {
     try {
       this.sendEvent(
         TelemetryEvents.DatabaseConnectedClientList,
         {
-          instanceId,
+          databaseId,
           ...additionalData,
         },
       );

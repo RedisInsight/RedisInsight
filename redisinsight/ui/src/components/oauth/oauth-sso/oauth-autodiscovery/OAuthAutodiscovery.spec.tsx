@@ -1,13 +1,13 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { CloudAuthSocial, IpcInvokeEvent } from 'uiSrc/electron/constants'
+import { OAuthSocialAction, OAuthSocialSource, OAuthStrategy } from 'uiSrc/slices/interfaces'
+import { IpcInvokeEvent } from 'uiSrc/electron/constants'
 import { oauthCloudUserSelector, setOAuthCloudSource, signIn } from 'uiSrc/slices/oauth/cloud'
 import { loadSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { MOCK_OAUTH_USER_PROFILE } from 'uiSrc/mocks/data/oauth'
+import { MOCK_OAUTH_SSO_EMAIL, MOCK_OAUTH_USER_PROFILE } from 'uiSrc/mocks/data/oauth'
 import OAuthAutodiscovery from './OAuthAutodiscovery'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -47,9 +47,6 @@ describe('OAuthAutodiscovery', () => {
   })
 
   it('should send telemetry after click on github btn', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-
     render(<OAuthAutodiscovery />)
 
     fireEvent.click(screen.queryByTestId('github-oauth') as HTMLButtonElement)
@@ -57,8 +54,8 @@ describe('OAuthAutodiscovery', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {
-        accountOption: 'GitHub',
-        action: 'import',
+        accountOption: OAuthStrategy.GitHub,
+        action: OAuthSocialAction.Import,
         source: OAuthSocialSource.Autodiscovery
       }
     })
@@ -68,15 +65,72 @@ describe('OAuthAutodiscovery', () => {
       IpcInvokeEvent.cloudOauth,
       {
         action: OAuthSocialAction.Import,
-        strategy: CloudAuthSocial.Github
+        strategy: OAuthStrategy.GitHub
       }
     )
     invokeMock.mockRestore()
 
     const expectedActions = [
-      signIn(),
       setSSOFlow(OAuthSocialAction.Import),
-      setOAuthCloudSource(OAuthSocialSource.Autodiscovery)
+      setOAuthCloudSource(OAuthSocialSource.Autodiscovery),
+      signIn(),
+    ]
+    expect(store.getActions()).toEqual(expectedActions)
+
+    invokeMock.mockRestore();
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should send telemetry after click on sso btn', async () => {
+    render(<OAuthAutodiscovery />)
+
+    fireEvent.click(screen.queryByTestId('sso-oauth') as HTMLButtonElement)
+
+    expect(screen.getByTestId('sso-email')).toBeInTheDocument()
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      eventData: {
+        accountOption: OAuthStrategy.SSO,
+        action: OAuthSocialAction.Import,
+        source: OAuthSocialSource.Autodiscovery
+      }
+    })
+
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('sso-email'), { target: { value: MOCK_OAUTH_SSO_EMAIL } })
+    })
+
+    expect(screen.getByTestId('btn-submit')).not.toBeDisabled()
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('btn-submit'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
+      eventData: {
+        action: OAuthSocialAction.Import,
+      }
+    })
+
+    expect(invokeMock).toBeCalledTimes(1)
+    expect(invokeMock).toBeCalledWith(
+      IpcInvokeEvent.cloudOauth,
+      {
+        action: OAuthSocialAction.Import,
+        strategy: OAuthStrategy.SSO,
+        data: {
+          email: MOCK_OAUTH_SSO_EMAIL
+        }
+      }
+    )
+    invokeMock.mockRestore()
+
+    const expectedActions = [
+      setSSOFlow(OAuthSocialAction.Import),
+      setOAuthCloudSource(OAuthSocialSource.Autodiscovery),
+      signIn(),
     ]
     expect(store.getActions()).toEqual(expectedActions)
 

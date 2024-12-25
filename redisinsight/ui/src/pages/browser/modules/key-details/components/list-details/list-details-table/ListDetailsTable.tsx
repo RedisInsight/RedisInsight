@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -43,7 +43,8 @@ import {
   stringToBuffer,
   stringToSerializedBufferFormat,
   validateListIndex,
-  Nullable
+  Nullable,
+  createTooltipContent, bufferToSerializedFormat
 } from 'uiSrc/utils'
 import {
   selectedKeyDataSelector,
@@ -53,11 +54,10 @@ import {
 } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
-import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
-import { EditableTextArea } from 'uiSrc/pages/browser/modules/key-details/shared'
+import { EditableTextArea, FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -77,11 +77,7 @@ const cellCache = new CellMeasurerCache({
 
 interface IListElement extends SetListElementResponse {}
 
-export interface Props {
-  isFooterOpen: boolean
-}
-
-const ListDetailsTable = (props: Props) => {
+const ListDetailsTable = () => {
   const { loading } = useSelector(listSelector)
   const { loading: updateLoading } = useSelector(updateListValueStateSelector)
   const { elements: loadedElements, total, searchedIndex } = useSelector(
@@ -280,16 +276,18 @@ const ListDetailsTable = (props: Props) => {
         const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
           && !isEqualBuffers(elementItem, stringToBuffer(element))
         const isEditable = !isCompressed && isFormatEditable(viewFormat)
+        const isEditing = index === editingIndex
 
-        const tooltipContent = formatLongName(element)
+        const tooltipContent = createTooltipContent(value, decompressedElementItem, viewFormatProp)
         const editTooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
+        const serializedValue = isEditing ? bufferToSerializedFormat(viewFormat, elementItem, 4) : ''
 
         return (
           <EditableTextArea
-            initialValue={element}
+            initialValue={serializedValue}
             isLoading={updateLoading}
             isDisabled={disabled}
-            isEditing={index === editingIndex}
+            isEditing={isEditing}
             isEditDisabled={!isEditable || updateLoading}
             disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
             onDecline={() => handleEditElement(index, false)}
@@ -300,25 +298,19 @@ const ListDetailsTable = (props: Props) => {
                 stringToSerializedBufferFormat(viewFormat, value),
                 viewFormat
               )?.isValid}
-            onEdit={(isEditing) => handleEditElement(rowIndex, isEditing)}
+            onEdit={(isEditing) => handleEditElement(index, isEditing)}
             editToolTipContent={!isEditable ? editTooltipContent : null}
             onUpdateTextAreaHeight={() => clearCache(rowIndex)}
-            field={rowIndex.toString()}
+            field={index.toString()}
             testIdPrefix="list"
           >
             <div className="innerCellAsCell">
-              {!expanded && (
-                <EuiToolTip
-                  title={isValid ? 'Element' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                  className={styles.tooltip}
-                  position="bottom"
-                  content={tooltipContent}
-                  anchorClassName="truncateText"
-                >
-                  <>{(value as any)?.substring?.(0, 200) ?? value}</>
-                </EuiToolTip>
-              )}
-              {expanded && value}
+              <FormattedValue
+                value={value}
+                expanded={expanded}
+                title={isValid ? 'Element' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                tooltipContent={tooltipContent}
+              />
             </div>
           </EditableTextArea>
         )

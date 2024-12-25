@@ -8,33 +8,33 @@ import {
 } from 'uiSrc/utils/modules'
 
 const modules1: IDatabaseModule[] = [
-  { moduleName: 'RedisJSON', abbreviation: 'RS' },
+  { moduleName: 'JSON', abbreviation: 'RS' },
   { moduleName: 'My1Module', abbreviation: 'MD' },
-  { moduleName: 'RediSearch', abbreviation: 'RS' },
+  { moduleName: 'Redis Query Engine', abbreviation: 'RS' },
 ]
 const modules2: IDatabaseModule[] = [
   { moduleName: '', abbreviation: '' },
   { moduleName: '', abbreviation: '' },
-  { moduleName: 'RedisBloom', abbreviation: 'RS' },
+  { moduleName: 'Probabilistic', abbreviation: 'RS' },
   { moduleName: '', abbreviation: '' },
   { moduleName: '', abbreviation: '' },
   { moduleName: 'MycvModule', abbreviation: 'MC' },
   { moduleName: 'My1Module', abbreviation: 'MD' },
-  { moduleName: 'RedisJSON', abbreviation: 'RS' },
+  { moduleName: 'JSON', abbreviation: 'RS' },
   { moduleName: 'My2Modul2e', abbreviation: 'MX' },
-  { moduleName: 'RediSearch', abbreviation: 'RS' },
+  { moduleName: 'Redis Query Engine', abbreviation: 'RS' },
 ]
 
 const result1: IDatabaseModule[] = [
-  { moduleName: 'RediSearch', abbreviation: 'RS' },
-  { moduleName: 'RedisJSON', abbreviation: 'RS' },
+  { moduleName: 'Redis Query Engine', abbreviation: 'RS' },
+  { moduleName: 'JSON', abbreviation: 'RS' },
   { moduleName: 'My1Module', abbreviation: 'MD' }
 ]
 
 const result2: IDatabaseModule[] = [
-  { moduleName: 'RediSearch', abbreviation: 'RS' },
-  { moduleName: 'RedisJSON', abbreviation: 'RS' },
-  { moduleName: 'RedisBloom', abbreviation: 'RS' },
+  { moduleName: 'Redis Query Engine', abbreviation: 'RS' },
+  { moduleName: 'JSON', abbreviation: 'RS' },
+  { moduleName: 'Probabilistic', abbreviation: 'RS' },
   { moduleName: 'MycvModule', abbreviation: 'MC' },
   { moduleName: 'My1Module', abbreviation: 'MD' },
   { moduleName: 'My2Modul2e', abbreviation: 'MX' },

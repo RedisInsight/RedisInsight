@@ -14,6 +14,7 @@ import { RemoveListElements } from './remove-list-elements'
 
 import AddListElements from './add-list-elements/AddListElements'
 import { AddItemsAction, RemoveItemsAction } from '../key-details-actions'
+import { KeyDetailsSubheader } from '../key-details-subheader/KeyDetailsSubheader'
 import styles from './styles.module.scss'
 
 export interface Props extends KeyDetailsHeaderProps {
@@ -55,7 +56,9 @@ const ListDetails = (props: Props) => {
   const Actions = ({ width }: { width: number }) => (
     <>
       <AddItemsAction title="Add Elements" width={width} openAddItemPanel={openAddItemPanel} />
-      <RemoveItemsAction title="Remove Elements" openRemoveItemPanel={openRemoveItemPanel} />
+      <div className={styles.removeBtnContainer}>
+        <RemoveItemsAction title="Remove Elements" openRemoveItemPanel={openRemoveItemPanel} />
+      </div>
     </>
   )
 
@@ -64,13 +67,15 @@ const ListDetails = (props: Props) => {
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
+      />
+      <KeyDetailsSubheader
         keyType={keyType}
         Actions={Actions}
       />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <ListDetailsTable isFooterOpen={isAddItemPanelOpen} />
+            <ListDetailsTable />
           </div>
         )}
         {isAddItemPanelOpen && (

@@ -238,11 +238,11 @@ const keysSlice = createSlice({
       state.deleting = false
     },
     deletePatternKeyFromList: (state, { payload }) => {
-      remove(state.data?.keys, (key) => isEqualBuffers(key.name, payload))
+      remove(state.data?.keys, (key) => isEqualBuffers(key.name as RedisResponseBuffer, payload))
 
       state.data = {
         ...state.data,
-        total: state.data.total - 1,
+        total: Math.max(state.data.total - 1, 0),
         scanned: state.data.scanned - 1,
       }
     },
@@ -271,9 +271,12 @@ const keysSlice = createSlice({
     },
     editPatternKeyFromList: (state, { payload }) => {
       const keys = state.data.keys.map((key) => {
-        if (isEqualBuffers(key.name, payload?.key)) {
-          key.name = payload?.newKey
-          key.nameString = bufferToString(payload?.newKey)
+        if (isEqualBuffers(key.name as RedisResponseBuffer, payload?.key)) {
+          return {
+            ...key,
+            name: payload?.newKey,
+            nameString: bufferToString(payload?.newKey)
+          }
         }
         return key
       })
@@ -286,7 +289,7 @@ const keysSlice = createSlice({
 
     editPatternKeyTTLFromList: (state, { payload: [key, ttl] }: PayloadAction<[RedisResponseBuffer, number]>) => {
       const keys = state.data.keys.map((keyData) => {
-        if (isEqualBuffers(keyData.name, key)) {
+        if (isEqualBuffers(keyData.name as RedisResponseBuffer, key)) {
           keyData.ttl = ttl
         }
         return keyData
@@ -348,12 +351,12 @@ const keysSlice = createSlice({
       state.filter = payload
     },
 
-    changeKeyViewType: (state, { payload }:{ payload: KeyViewType }) => {
+    changeKeyViewType: (state, { payload }: { payload: KeyViewType }) => {
       state.viewType = payload
       localStorageService?.set(BrowserStorageItem.browserViewType, payload)
     },
 
-    changeSearchMode: (state, { payload }:{ payload: SearchMode }) => {
+    changeSearchMode: (state, { payload }: { payload: SearchMode }) => {
       state.searchMode = payload
     },
 
@@ -519,6 +522,7 @@ export function fetchPatternKeysAction(
       sourceKeysFetch = CancelToken.source()
 
       const state = stateInit()
+      const scanThreshold = state.user.settings.config?.scanThreshold || SCAN_COUNT_DEFAULT
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
 
@@ -528,7 +532,7 @@ export function fetchPatternKeysAction(
           ApiEndpoints.KEYS
         ),
         {
-          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false,
+          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false, scanThreshold
         },
         {
           params: { encoding },
@@ -540,7 +544,7 @@ export function fetchPatternKeysAction(
       if (isStatusSuccessful(status)) {
         dispatch(
           loadKeysSuccess({
-            data: parseKeysListResponse({}, data),
+            data: parseKeysListResponse({}, data as never[]),
             isSearched: !!match,
             isFiltered: !!type,
           })
@@ -570,7 +574,8 @@ export function fetchPatternKeysAction(
         }
         onSuccess?.(data)
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       if (!axios.isCancel(error)) {
         const errorMessage = getApiErrorMessage(error)
         dispatch(addErrorNotification(error))
@@ -593,6 +598,7 @@ export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor
       sourceKeysFetch = CancelToken.source()
 
       const state = stateInit()
+      const scanThreshold = state.user.settings.config?.scanThreshold ?? SCAN_COUNT_DEFAULT
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
       const { data, status } = await apiService.post(
@@ -601,7 +607,7 @@ export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor
           ApiEndpoints.KEYS
         ),
         {
-          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false,
+          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false, scanThreshold
         },
         {
           params: { encoding },
@@ -630,7 +636,8 @@ export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor
           }
         })
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       if (!axios.isCancel(error)) {
         const errorMessage = getApiErrorMessage(error)
         dispatch(addErrorNotification(error))
@@ -641,7 +648,11 @@ export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor
 }
 
 // Asynchronous thunk action
-export function fetchKeyInfo(key: RedisResponseBuffer, resetData?: boolean) {
+export function fetchKeyInfo(
+  key: RedisResponseBuffer,
+  resetData?: boolean,
+  onSuccess?: (data: Nullable<IKeyPropTypes>) => void
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(defaultSelectedKeyAction())
 
@@ -660,6 +671,7 @@ export function fetchKeyInfo(key: RedisResponseBuffer, resetData?: boolean) {
       if (isStatusSuccessful(status)) {
         dispatch(loadKeyInfoSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
+        onSuccess?.(data)
       }
 
       if (data.type === KeyTypes.Hash) {
@@ -683,7 +695,7 @@ export function fetchKeyInfo(key: RedisResponseBuffer, resetData?: boolean) {
         dispatch<any>(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, '*', resetData))
       }
       if (data.type === KeyTypes.ReJSON) {
-        dispatch<any>(fetchReJSON(key, '.', data.length, resetData))
+        dispatch<any>(fetchReJSON(key, '$', data.length, resetData))
       }
       if (data.type === KeyTypes.Stream) {
         const { viewType } = state.browser.stream
@@ -725,10 +737,12 @@ export function refreshKeyInfoAction(key: RedisResponseBuffer) {
         dispatch(refreshKeyInfoSuccess(data))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       dispatch(refreshKeyInfoFail())
       dispatch(addErrorNotification(error))
-      if (isStatusNotFoundError(get(error, ['response', 'status']))) {
+      const status = get(error, ['response', 'status'])
+      if (status && isStatusNotFoundError(status)) {
         dispatch(resetKeyInfo())
         dispatch(deleteKeyFromList(key))
       }
@@ -776,7 +790,8 @@ function addTypedKey(
           }
         })
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       if (onFailAction) {
         onFailAction()
       }
@@ -878,7 +893,8 @@ export function deleteSelectedKeyAction(
         onSuccessAction?.()
         dispatch(addMessageNotification(successMessages.DELETED_KEY(key)))
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error as AxiosError)
       dispatch(addErrorNotification(error as AxiosError))
       dispatch(deleteSelectedKeyFailure(errorMessage))
@@ -913,7 +929,8 @@ export function deleteKeyAction(
         onSuccessAction?.()
         dispatch(addMessageNotification(successMessages.DELETED_KEY(key)))
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       dispatch(addErrorNotification(error as AxiosError))
       dispatch(deleteKeyFailure())
     }
@@ -946,7 +963,8 @@ export function editKey(
         dispatch<any>(editKeyFromList({ key, newKey }))
         onSuccess?.()
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(defaultSelectedKeyActionFailure(errorMessage))
@@ -993,7 +1011,8 @@ export function editKeyTTL(key: RedisResponseBuffer, ttl: number) {
         }
         dispatch(defaultSelectedKeyActionSuccess())
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(defaultSelectedKeyActionFailure(errorMessage))
@@ -1048,7 +1067,7 @@ export function fetchKeysMetadataTree(
           state.connections.instances?.connectedInstance?.id,
           ApiEndpoints.KEYS_METADATA
         ),
-        { keys: keys.map(([,nameBuffer]) => nameBuffer), type: filter || undefined },
+        { keys: keys.map(([, nameBuffer]) => nameBuffer), type: filter || undefined },
         { params: { encoding: state.app.info.encoding }, signal }
       )
 
@@ -1286,7 +1305,7 @@ export function refreshKey(
         break
       }
       case KeyTypes.ReJSON: {
-        dispatch(fetchReJSON(key, '.', length, true))
+        dispatch(fetchReJSON(key, '$', length, true))
         break
       }
       case KeyTypes.Stream: {

@@ -18,7 +18,7 @@ fixture `Workbench Context`
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Delete database
@@ -27,9 +27,7 @@ fixture `Workbench Context`
 test('Verify that user can see saved CLI state when navigates away to any other page', async t => {
     // Expand CLI and navigate to Browser
     await t.click(workbenchPage.Cli.cliExpandButton);
-    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-    // Return back to Workbench and check CLI
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     await t.expect(workbenchPage.Cli.cliCollapseButton.exists).ok('CLI is not expanded');
 });
 // Update after resolving https://redislabs.atlassian.net/browse/RI-3299
@@ -53,9 +51,7 @@ test('Verify that user can see all the information removed when reloads the page
     // Create context modificaions and navigate to Browser
     await t.typeText(workbenchPage.queryInput, command, { replace: true, speed: speed });
     await t.click(workbenchPage.Cli.cliExpandButton);
-    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-    // Open Workbench page and verify context
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     await t.expect(workbenchPage.Cli.cliCollapseButton.exists).ok('CLI is not expanded');
     await t.expect(workbenchPage.queryInputScriptArea.textContent).eql(command, 'Input in Editor is not saved');
     // Reload the window and chek context
@@ -65,11 +61,11 @@ test('Verify that user can see all the information removed when reloads the page
 });
 test('Verify that user can see saved state of the Enablement area when navigates back to the Workbench from other page', async t => {
     // Collapse the Enablement area and open Settings
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
-    await workbenchPage.InsightsPanel.togglePanel(false);
+    await workbenchPage.NavigationHeader.togglePanel(false);
     await t.expect(tutorials.preselectArea.exists).notOk('the panel is not closed');
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     await t.click(workbenchPage.NavigationPanel.browserButton);
     await t.expect(tutorials.preselectArea.exists).ok('the panel is opened');
     await t.click(browserPage.InsightsPanel.closeButton);

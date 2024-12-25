@@ -30,7 +30,7 @@ export class UserAgreementDialog {
     /**
      * Get state of Recommended switcher
      */
-    async getRecommendedSwitcherValue(): Promise<string> {
+    async getRecommendedSwitcherValue(): Promise<string | null> {
         return await this.recommendedSwitcher.getAttribute('aria-checked');
     }
 }

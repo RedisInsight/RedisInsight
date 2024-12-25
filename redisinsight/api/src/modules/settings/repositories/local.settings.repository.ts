@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
 import { Settings } from 'src/modules/settings/models/settings';
 import { classToClass } from 'src/utils';
+import { SessionMetadata } from 'src/common/models';
 
 export class LocalSettingsRepository extends SettingsRepository {
   constructor(
@@ -17,14 +18,24 @@ export class LocalSettingsRepository extends SettingsRepository {
     let entity = await this.repository.findOneBy({});
 
     if (!entity) {
-      entity = await this.repository.save(this.repository.create());
+      try {
+        entity = await this.repository.save(this.repository.create({ id : 1 }));
+      } catch (e) {
+        if (e.code === 'SQLITE_CONSTRAINT') {
+          return this.getOrCreate();
+        }
+
+        throw e;
+      }
     }
 
     return classToClass(Settings, entity);
   }
 
-  async update(id: string, settings: Settings): Promise<Settings> {
-    await this.repository.update({}, classToClass(SettingsEntity, settings));
+  async update(_: SessionMetadata, settings: Settings): Promise<Settings> {
+    const entity = classToClass(SettingsEntity, settings);
+
+    await this.repository.save(entity);
 
     return this.getOrCreate();
   }

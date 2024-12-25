@@ -532,3 +532,30 @@ export function deleteRedisearchHistoryAction(
     }
   }
 }
+
+export function fetchRedisearchInfoAction(
+  index: string,
+  onSuccess?: (value: RedisResponseBuffer[]) => void,
+  onFailed?: () => void,
+) {
+  return async (_: AppDispatch, stateInit: () => RootState) => {
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.post(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.REDISEARCH_INFO
+        ),
+        {
+          index
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      onFailed?.()
+    }
+  }
+}

@@ -1,0 +1,85 @@
+name: Install all libraries action
+description: Install all libraries and dependencies
+inputs:
+  skip-electron-deps:
+    description:  Skip install electron dependencies
+    default: '0'
+    required: false
+
+  skip-backend-deps:
+    description:  Skip install backend dependencies
+    default: '0'
+    required: false
+
+  skip-postinstall:
+    description:  Skip postinstall
+    default: '0'
+    required: false
+
+  keytar-host-mirror:
+    description: Keytar binary host mirror
+    required: false
+
+  sqlite3-host-mirror:
+    description: SQLite3 binary host mirror
+    required: false
+
+#TODO: check !contains
+
+runs:
+  using: 'composite'
+  steps:
+    # OS libraries
+    - name: Setup Node
+      uses: actions/setup-node@v4.0.4
+      with:
+        node-version: '20.18.0'
+        # disable cache for windows
+        # https://github.com/actions/setup-node/issues/975
+        cache: ${{ runner.os != 'Windows' && 'yarn' || '' }}
+        cache-dependency-path: ${{ runner.os != 'Windows' && '**/yarn.lock' || '' }}
+
+    - name: Setup Python
+      # if: ${{ contains(inputs.skip-electron-deps, '1') }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install linux libraries
+      if: ${{ runner.os == 'Linux' }}
+      # if: ${{ runner.os == 'Linux' && !contains(inputs.skip-electron-deps, '1') }}
+      shell: bash
+      run: |
+        sudo apt-get update -qy
+        sudo apt-get install -qy libsecret-1-dev rpm
+
+    - name: Install macos libraries
+      if: ${{ runner.os == 'macOS' }}
+      # if: ${{ runner.os == 'macOS' && !contains(inputs.skip-electron-deps, '1') }}
+      shell: bash
+      run: |
+        brew install libsecret
+
+    # TODO: matrix?
+    # Javascript dependencies
+    - name: Install dependencies for redisinsight package.js
+      # if: ${{ contains(inputs.skip-electron-deps, '1') }}
+      uses: ./.github/actions/install-deps
+      with:
+        dir-path: './redisinsight'
+        keytar-host-mirror: ${{ inputs.keytar-host-mirror }}
+        sqlite3-host-mirror: ${{ inputs.sqlite3-host-mirror }}
+
+    - name: Install dependencies for BE package.js
+      # if: ${{ !contains(inputs.skip-backend-deps, '1') }}
+      uses: ./.github/actions/install-deps
+      with:
+        dir-path: './redisinsight/api'
+
+    - name: Install dependencies for root package.js
+      # if: ${{ contains(inputs.skip-electron-deps, '1') }}
+      uses: ./.github/actions/install-deps
+      with:
+        dir-path: './'
+        keytar-host-mirror: ${{ inputs.keytar-host-mirror }}
+        sqlite3-host-mirror: ${{ inputs.sqlite3-host-mirror }}

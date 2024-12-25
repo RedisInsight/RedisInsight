@@ -3,11 +3,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 
+import cx from 'classnames'
 import ItemList from 'uiSrc/components/item-list'
 import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { localStorageService } from 'uiSrc/services'
-import { RdiInstance } from 'uiSrc/slices/interfaces'
+import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import {
   deleteInstancesAction,
   checkConnectToRdiInstanceAction,
@@ -16,6 +17,7 @@ import {
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
 
+import { setAppContextConnectedRdiInstanceId } from 'uiSrc/slices/app/context'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -68,7 +70,17 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
   }, [width])
 
   const handleCheckConnectToInstance = (id: string) => {
-    dispatch(checkConnectToRdiInstanceAction(id, (id: string) => history.push(Pages.rdiPipeline(id))))
+    sendEventTelemetry({
+      event: TelemetryEvent.OPEN_RDI_CLICKED,
+      eventData: {
+        rdiId: id,
+      }
+    })
+    dispatch(checkConnectToRdiInstanceAction(
+      id,
+      (id: string) => history.push(Pages.rdiPipeline(id)),
+      () => dispatch(setAppContextConnectedRdiInstanceId(''))
+    ))
   }
 
   const handleCopy = (text = '', id: string) => {
@@ -108,6 +120,12 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     })
     dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
+
+  const getRowProps = (instance: Instance) => ({
+    className: cx({
+      'euiTableRow-isSelected': instance?.id === editedInstance?.id
+    })
+  })
 
   const columns: EuiTableFieldDataColumnType<RdiInstance>[] = [
     {
@@ -181,7 +199,7 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
           />
           <PopoverDelete
             header={formatLongName(instance.name, 50, 10, '...')}
-            text="will be deleted from RedisInsight."
+            text="will be removed from RedisInsight."
             item={instance.id}
             suffix={suffix}
             deleting={deleting.id}
@@ -217,13 +235,13 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     <div className={styles.container}>
       <ItemList<RdiInstance>
         width={width}
-        editedInstance={editedInstance}
         columns={columns}
         onDelete={handleDeleteInstances}
         onWheel={closePopover}
         loading={instances.loading}
         data={instances.data}
         onTableChange={onTableChange}
+        rowProps={getRowProps}
         sort={sort}
         hideExport
       />

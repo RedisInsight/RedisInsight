@@ -11,6 +11,7 @@ import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/mod
 import { SetDetailsTable } from './set-details-table'
 import { AddSetMembers } from './add-set-members'
 import { AddItemsAction } from '../key-details-actions'
+import { KeyDetailsSubheader } from '../key-details-subheader/KeyDetailsSubheader'
 
 export interface Props extends KeyDetailsHeaderProps {
   onRemoveKey: () => void
@@ -47,13 +48,15 @@ const SetDetails = (props: Props) => {
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
+      />
+      <KeyDetailsSubheader
         keyType={keyType}
         Actions={Actions}
       />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <SetDetailsTable isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />
+            <SetDetailsTable onRemoveKey={onRemoveKey} />
           </div>
         )}
         {isAddItemPanelOpen && (

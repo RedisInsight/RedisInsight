@@ -17,6 +17,7 @@ export interface StateAppOAuth {
   source: Nullable<OAuthSocialSource>
   job: Nullable<CloudJobInfoState>
   user: {
+    initialLoading: boolean
     error: string
     loading: boolean
     data: Nullable<CloudUser>
@@ -72,6 +73,7 @@ export interface CloudSuccessResult {
 export enum OAuthSocialSource {
   Browser = 'browser',
   ListOfDatabases = 'list of databases',
+  DatabaseConnectionList = 'database connection list',
   WelcomeScreen = 'welcome screen',
   BrowserContentMenu = 'browser content menu',
   BrowserFiltering = 'browser filtering',
@@ -90,13 +92,21 @@ export enum OAuthSocialSource {
   DatabasesList = 'db_list',
   DiscoveryForm = 'discovery form',
   UserProfile = 'user profile',
-  AiChat = 'ai chat'
+  AiChat = 'ai chat',
+  NavigationMenu = 'navigation menu',
+  AddDbForm = 'add db form',
 }
 
 export enum OAuthSocialAction {
   Create = 'create',
   Import = 'import',
   SignIn = 'signIn'
+}
+
+export enum OAuthStrategy {
+  Google = 'google',
+  GitHub = 'github',
+  SSO = 'sso'
 }
 
 export enum CloudSsoUtmCampaign {

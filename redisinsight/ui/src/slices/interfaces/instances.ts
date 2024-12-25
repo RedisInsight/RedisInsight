@@ -189,16 +189,18 @@ export const COMMAND_MODULES = {
   [RedisDefaultModules.Bloom]: [RedisDefaultModules.Bloom],
 }
 
-const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'RediSearch' }), {})
+const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'Redis Query Engine' }), {})
 
 // Enums don't allow to use dynamic key
 export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
-  [RedisDefaultModules.AI]: 'RedisAI',
-  [RedisDefaultModules.Graph]: 'RedisGraph',
-  [RedisDefaultModules.Gears]: 'RedisGears',
-  [RedisDefaultModules.Bloom]: 'RedisBloom',
-  [RedisDefaultModules.ReJSON]: 'RedisJSON',
-  [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
+  [RedisDefaultModules.AI]: 'AI',
+  [RedisDefaultModules.Graph]: 'Graph',
+  [RedisDefaultModules.Gears]: 'Gears',
+  [RedisDefaultModules.RedisGears]: 'Gears',
+  [RedisDefaultModules.RedisGears2]: 'Gears',
+  [RedisDefaultModules.Bloom]: 'Probabilistic',
+  [RedisDefaultModules.ReJSON]: 'JSON',
+  [RedisDefaultModules.TimeSeries]: 'Time Series',
   [RedisCustomModulesName.Proto]: 'redis-protobuf',
   [RedisCustomModulesName.IpTables]: 'RedisPushIpTables',
   ...RediSearchModulesText,
@@ -305,6 +307,7 @@ export interface DatabaseConfigInfo {
   networkInKbps?: Nullable<number>
   networkOutKbps?: Nullable<number>
   cpuUsagePercentage?: Nullable<number>
+  serverName?: Nullable<string>
 }
 
 export interface InitialStateInstances {
@@ -490,7 +493,7 @@ export interface ICredentialsRedisCloud {
 export enum InstanceType {
   Standalone = 'Redis Database',
   RedisCloudPro = 'Redis Cloud',
-  RedisEnterpriseCluster = 'Redis Enterprise Cluster',
+  RedisEnterpriseCluster = 'Enterprise Software',
   AWSElasticache = 'AWS Elasticache',
-  Sentinel = 'Redis Sentinel',
+  Sentinel = 'Sentinel',
 }

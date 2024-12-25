@@ -13,7 +13,7 @@ import {
 import { CloudAutodiscoveryAuthType } from 'src/modules/cloud/autodiscovery/models';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { HostingProvider } from 'src/modules/database/entities/database.entity';
-import { ActionStatus } from 'src/common/models';
+import { ActionStatus, SessionMetadata } from 'src/common/models';
 import { CloudAutodiscoveryAnalytics } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.analytics';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
@@ -47,6 +47,7 @@ export class CloudAutodiscoveryService {
     try {
       return await this.cloudUserCapiService.getCurrentAccount(authDto);
     } catch (e) {
+      this.logger.error('Error when getting current user account', e);
       throw wrapHttpError(e);
     }
   }
@@ -67,6 +68,7 @@ export class CloudAutodiscoveryService {
       this.analytics.sendGetRECloudSubsSucceedEvent(subscriptions, type, authType);
       return subscriptions;
     } catch (e) {
+      this.logger.error('Failed get redis cloud subscriptions', e);
       this.analytics.sendGetRECloudSubsFailedEvent(e, type, authType);
       throw wrapHttpError(e);
     }
@@ -117,6 +119,7 @@ export class CloudAutodiscoveryService {
       this.analytics.sendGetRECloudDbsSucceedEvent(result, authType);
       return result;
     } catch (e) {
+      this.logger.error('Error when discovering cloud databases from subscription(s)', e);
       this.analytics.sendGetRECloudDbsFailedEvent(e, authType);
 
       throw wrapHttpError(e);
@@ -125,10 +128,12 @@ export class CloudAutodiscoveryService {
 
   /**
    * Add database from cloud
+   * @param sessionMetadata
    * @param authDto
    * @param addDatabasesDto
    */
   async addRedisCloudDatabases(
+    sessionMetadata: SessionMetadata,
     authDto: CloudCapiAuthDto,
     addDatabasesDto: ImportCloudDatabaseDto[],
   ): Promise<ImportCloudDatabaseResponse[]> {
@@ -158,16 +163,19 @@ export class CloudAutodiscoveryService {
             }
             const [host, port] = publicEndpoint.split(':');
 
-            await this.databaseService.create({
-              host,
-              port: parseInt(port, 10),
-              name,
-              nameFromProvider: name,
-              password,
-              provider: HostingProvider.RE_CLOUD,
-              cloudDetails: database?.cloudDetails,
-              timeout: cloudConfig.cloudDatabaseConnectionTimeout,
-            });
+            await this.databaseService.create(
+              sessionMetadata,
+              {
+                host,
+                port: parseInt(port, 10),
+                name,
+                nameFromProvider: name,
+                password,
+                provider: HostingProvider.RE_CLOUD,
+                cloudDetails: database?.cloudDetails,
+                timeout: cloudConfig.cloudDatabaseConnectionTimeout,
+              },
+            );
 
             return {
               ...dto,
@@ -176,6 +184,7 @@ export class CloudAutodiscoveryService {
               databaseDetails: database,
             };
           } catch (error) {
+            this.logger.error('Adding cloud database failed with an error', error);
             return {
               ...dto,
               status: ActionStatus.Fail,

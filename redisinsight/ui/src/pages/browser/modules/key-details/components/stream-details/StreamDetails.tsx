@@ -14,6 +14,7 @@ import { StreamDetailsBody } from './stream-details-body'
 import AddStreamEntries from './add-stream-entity'
 import AddStreamGroup from './add-stream-group'
 import { StreamItemsAction } from '../key-details-actions'
+import { KeyDetailsSubheader } from '../key-details-subheader/KeyDetailsSubheader'
 
 export interface Props extends KeyDetailsHeaderProps {
   onRemoveKey: () => void
@@ -58,13 +59,15 @@ const StreamDetails = (props: Props) => {
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
+      />
+      <KeyDetailsSubheader
         keyType={keyType}
         Actions={Actions}
       />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <StreamDetailsBody isFooterOpen={isAddItemPanelOpen} />
+            <StreamDetailsBody />
           </div>
         )}
         {isAddItemPanelOpen && (

@@ -275,4 +275,8 @@ export default {
     title: 'Database already exists',
     message: 'No new database connections have been added.',
   }),
+  SUCCESS_RESET_PIPELINE: () => ({
+    title: 'Pipeline has been reset',
+    message: 'The RDI pipeline has been reset, consider flushing the target Redis database.',
+  }),
 }

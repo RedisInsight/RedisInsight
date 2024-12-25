@@ -138,7 +138,6 @@ describe('RdiInstancesListWrapper', () => {
 
     const expectedActions = [
       setDefaultInstance(),
-      resetConnectedInstance()
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
@@ -193,6 +192,24 @@ describe('RdiInstancesListWrapper', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_INSTANCE_LIST_SORTED,
       eventData: { field: 'name', direction: 'asc' }
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should call proper telemetry on instance click', async () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    render(<RdiInstancesListWrapper {...instance(mockedProps)} />)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('rdi-alias-1'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.OPEN_RDI_CLICKED,
+      eventData: {
+        rdiId: '1',
+      }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()
   })

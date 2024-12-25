@@ -29,6 +29,7 @@ export function getApiErrorMessage(error: AxiosError): string {
   if (isArray(errorMessage)) {
     return first(errorMessage)
   }
+
   return errorMessage
 }
 

@@ -9,6 +9,7 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { RedisClient } from 'src/modules/redis/client';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseService } from './database.service';
+import { DatabaseOverviewKeyspace } from './constants/overview';
 
 @Injectable()
 export class DatabaseInfoService {
@@ -38,8 +39,12 @@ export class DatabaseInfoService {
    * Get redis database overview
    *
    * @param clientMetadata
+   * @param keyspace
    */
-  public async getOverview(clientMetadata: ClientMetadata): Promise<DatabaseOverview> {
+  public async getOverview(
+    clientMetadata: ClientMetadata,
+    keyspace: DatabaseOverviewKeyspace,
+  ): Promise<DatabaseOverview> {
     this.logger.log(`Getting database overview for: ${clientMetadata.databaseId}`);
 
     const client: RedisClient = await this.databaseClientFactory.getOrCreateClient({
@@ -47,7 +52,18 @@ export class DatabaseInfoService {
       db: undefined, // connect to default db index
     });
 
-    return this.databaseOverviewProvider.getOverview(clientMetadata, client);
+    return this.databaseOverviewProvider.getOverview(clientMetadata, client, keyspace);
+  }
+
+  /**
+   * Get redis database number of keys
+   *
+   * @param clientMetadata
+   */
+  async getDBSize(clientMetadata: ClientMetadata): Promise<number> {
+    const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+    return this.databaseInfoProvider.getRedisDBSize(client);
   }
 
   /**
@@ -60,7 +76,9 @@ export class DatabaseInfoService {
     this.logger.log(`Connection to database index: ${db}`);
 
     let client;
-    const prevDb = clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0;
+    const prevDb = clientMetadata.db
+      ?? (await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId))?.db
+      ?? 0;
 
     try {
       client = await this.databaseClientFactory.createClient({

@@ -7,7 +7,7 @@ import { act, cleanup, mockedStore, render, screen,
   mockedStoreFn,
 } from 'uiSrc/utils/test-utils'
 
-import { getUserInfo, logoutUser, oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
+import { getUserInfo, logoutUser, oauthCloudUserSelector, setInitialLoadingState } from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { loadSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
@@ -21,7 +21,10 @@ const mockedProps = mock<Props>()
 jest.mock('uiSrc/slices/oauth/cloud', () => ({
   ...jest.requireActual('uiSrc/slices/oauth/cloud'),
   oauthCloudUserSelector: jest.fn().mockReturnValue({
-    data: null
+    loading: false,
+    data: null,
+    error: '',
+    initialLoading: false
   }),
 }))
 
@@ -50,7 +53,26 @@ describe('OAuthUserProfile', () => {
     expect(render(<OAuthUserProfile {...mockedProps} />)).toBeTruthy()
   })
 
+  it('should render loading spinner initially', () => {
+    (oauthCloudUserSelector as jest.Mock).mockReturnValueOnce({
+      loading: false,
+      data: null,
+      error: '',
+      initialLoading: true
+    })
+    render(<OAuthUserProfile {...mockedProps} />)
+
+    expect(screen.getByTestId('oath-user-profile-spinner')).toBeInTheDocument()
+    expect(screen.queryByTestId('cloud-sign-in-btn')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('user-profile-btn')).not.toBeInTheDocument()
+  })
+
   it('should render sign in button if no profile', () => {
+    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
+      loading: false,
+      data: null,
+      error: 'Some error',
+    })
     render(<OAuthUserProfile {...mockedProps} />)
 
     expect(screen.getByTestId('cloud-sign-in-btn')).toBeInTheDocument()
@@ -117,7 +139,11 @@ describe('OAuthUserProfile', () => {
       }
     })
 
-    expect(store.getActions()).toEqual([setSSOFlow(OAuthSocialAction.Import), loadSubscriptionsRedisCloud()]);
+    expect(store.getActions()).toEqual([
+      setInitialLoadingState(false),
+      setSSOFlow(OAuthSocialAction.Import),
+      loadSubscriptionsRedisCloud()
+    ]);
 
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
@@ -139,7 +165,7 @@ describe('OAuthUserProfile', () => {
 
     fireEvent.click(screen.getByTestId('profile-account-2'))
 
-    expect(store.getActions()).toEqual([getUserInfo()]);
+    expect(store.getActions()).toEqual([setInitialLoadingState(false), getUserInfo()]);
 
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
@@ -180,6 +206,6 @@ describe('OAuthUserProfile', () => {
 
     fireEvent.click(screen.getByTestId('profile-logout'))
 
-    expect(store.getActions()).toEqual([logoutUser()])
+    expect(store.getActions()).toEqual([setInitialLoadingState(false), logoutUser(), setSSOFlow()])
   })
 })

@@ -1,5 +1,5 @@
 import { DatabaseHelper } from '../../../../helpers/database';
-import { WorkbenchPage, MyRedisDatabasePage } from '../../../../pageObjects';
+import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../../pageObjects';
 import { rte } from '../../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
@@ -8,6 +8,7 @@ import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const apiKeyRequests = new APIKeyRequests();
@@ -37,7 +38,7 @@ fixture `Workbench modes to non-auto guides`
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Delete database
@@ -46,7 +47,7 @@ fixture `Workbench modes to non-auto guides`
 test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
         await workbenchPage.sendCommandInWorkbench(`set ${keyName} "${keyValue}"`);
     })
     .after(async t => {
@@ -110,7 +111,7 @@ test
 test('Workbench Silent mode', async t => {
     const silentCommandSuccessResultName = `${counter} Command(s) - ${counter} success`;
     const silentCommandErrorsResultName = `${counter + 1} Command(s) - ${counter} success, 1 error(s)`;
-    const errorResult = `"ERR unknown command \`${commands[3]}\`, with args beginning with: "`;
+    const errorResult = `"ERR unknown command \'${commands[3]}\', with args beginning with: "`;
 
     await workbenchPage.sendMultipleCommandsInWorkbench([parameters[5], commands[0]]);
     // Verify that user can see the success command output with header: {number} Command(s) - {number} success

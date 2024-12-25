@@ -1,6 +1,5 @@
 import React from 'react'
 import cx from 'classnames'
-import { format } from 'date-fns'
 import {
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -21,15 +20,15 @@ import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
-import { Nullable, getDbIndex } from 'uiSrc/utils'
+import { Nullable, comboBoxToArray, getDbIndex } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE } from 'uiSrc/constants/recommendations'
+import { FormatedDate } from 'uiSrc/components'
+import { DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
 
 import styles from './styles.module.scss'
-
-const dateFormat = 'd MMM yyyy HH:mm'
 
 export interface Props {
   items: ShortDatabaseAnalysis[]
@@ -52,16 +51,19 @@ const Header = (props: Props) => {
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
-  const { treeViewDelimiter: delimiter = '' } = useSelector(appContextDbConfig)
+  const { treeViewDelimiter = [DEFAULT_DELIMITER] } = useSelector(appContextDbConfig)
 
   const analysisOptions: EuiSuperSelectOption<any>[] = items.map((item) => {
     const { createdAt, id, db } = item
     return {
       value: id,
       inputDisplay: (
-        <span>
-          {`${getDbIndex(db)} ${format(new Date(createdAt ?? ''), dateFormat)}`}
-        </span>
+        <>
+          <span>
+            {`${getDbIndex(db)} `}
+          </span>
+          <FormatedDate date={createdAt || ''} />
+        </>
       ),
       'data-test-subj': `items-report-${id}`,
     }
@@ -75,7 +77,7 @@ const Header = (props: Props) => {
         provider,
       }
     })
-    dispatch(createNewAnalysis(instanceId, delimiter))
+    dispatch(createNewAnalysis(instanceId, comboBoxToArray(treeViewDelimiter)))
   }
 
   return (

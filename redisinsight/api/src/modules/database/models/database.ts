@@ -146,6 +146,13 @@ export class Database {
   @Expose()
   lastConnection: Date;
 
+  @ApiProperty({
+    description: 'Date of creation',
+    type: Date,
+  })
+  @Expose()
+  createdAt?: Date;
+
   @ApiPropertyOptional({
     description: 'Redis OSS Sentinel master group.',
     type: SentinelMaster,

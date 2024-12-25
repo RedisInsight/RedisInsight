@@ -1,12 +1,11 @@
 import { forIn } from 'lodash'
-import { unzip } from 'gzip-js'
 import { decompress as decompressFzstd } from 'fzstd'
 // @ts-ignore
 import { decompress as decompressLz4 } from 'lz4js'
 import { decompress as decompressSnappy } from '@stablelib/snappy'
 // @ts-ignore
 import brotliPromise from 'brotli-wasm'
-import { inflate } from 'pako'
+import { inflate, ungzip } from 'pako'
 import { COMPRESSOR_MAGIC_SYMBOLS, ICompressorMagicSymbols, KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { anyToBuffer, bufferToString, bufferToUint8Array, isEqualBuffers, Nullable } from 'uiSrc/utils'
@@ -26,7 +25,7 @@ const decompressingBuffer = (
   try {
     switch (compressor) {
       case KeyValueCompressor.GZIP: {
-        const value = unzip(Buffer.from(reply))
+        const value = ungzip(Buffer.from(reply))
 
         return {
           compressor,

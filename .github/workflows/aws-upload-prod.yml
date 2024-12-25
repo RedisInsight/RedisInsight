@@ -1,0 +1,181 @@
+name: AWS production
+
+on:
+  workflow_call:
+
+env:
+  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+  AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+
+jobs:
+  release-private:
+    name: Release s3 private
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Merge builds by pattern
+      id: merge-builds
+      uses: actions/upload-artifact/merge@v4
+      with:
+        name: 'all-builds'
+        pattern: '*-builds'
+        delete-merged: true
+
+    - name: Download builds
+      uses: actions/download-artifact@v4
+      with:
+        name: 'all-builds'
+        path: release
+
+    - run: ls -R ./release
+
+    - name: Publish private
+      run: |
+        chmod +x .github/build/sum_sha256.sh
+        .github/build/sum_sha256.sh
+        applicationVersion=$(jq -r '.version' redisinsight/package.json)
+
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive
+
+  release-public:
+    name: Release s3 public
+    runs-on: ubuntu-latest
+    needs: 'release-private'
+    environment: 'production-approve'
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Init variables
+      run: |
+        latestYmlFileName="latest.yml"
+        downloadLatestFolderPath="public/latest"
+        upgradeLatestFolderPath="public/upgrades"
+        releasesFolderPath="public/releases"
+        appName=$(jq -r '.productName' electron-builder.json)
+        appVersion=$(jq -r '.version' redisinsight/package.json)
+
+        echo "downloadLatestFolderPath=${downloadLatestFolderPath}" >> $GITHUB_ENV
+        echo "upgradeLatestFolderPath=${upgradeLatestFolderPath}" >> $GITHUB_ENV
+        echo "releasesFolderPath=${releasesFolderPath}" >> $GITHUB_ENV
+        echo "applicationName=${appName}" >> $GITHUB_ENV
+        echo "applicationVersion=${appVersion}" >> $GITHUB_ENV
+        echo "appFileName=Redis-Insight" >> $GITHUB_ENV
+
+        # download latest.yml file to get last public version
+        aws s3 cp s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath}/${latestYmlFileName} .
+
+        versionLine=$(head -1 ${latestYmlFileName})
+        versionLineArr=(${versionLine/:// })
+        previousAppVersion=${versionLineArr[1]}
+
+        echo "previousApplicationVersion=${previousAppVersion}" >> $GITHUB_ENV
+
+    - name: Publish AWS S3
+      run: |
+
+        # check if sub directories exists
+        if [[ -z "$downloadLatestFolderPath" || -z "$upgradeLatestFolderPath" ]]; then
+          exit 1;
+        fi
+        # remove previous build from the latest directory /public/latest
+        aws s3 rm s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} --recursive
+
+        # remove previous build from the upgrade directory /public/upgrades
+        aws s3 rm s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} --recursive
+
+        # copy current version apps for download to /public/latest
+        aws s3 cp s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
+          s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} --recursive  --exclude "*.zip"
+
+        # copy current version apps for upgrades to /public/upgrades
+        aws s3 cp s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
+          s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} --recursive
+
+        # !MOVE current version apps to releases folder /public/releases
+        aws s3 mv s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
+          s3://${AWS_BUCKET_NAME}/${releasesFolderPath}/${applicationVersion} --recursive
+
+        # invalidate cloudfront cash
+        aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID} --paths "/*"
+
+    - name: Add tags for all objects and create S3 metrics
+      run: |
+
+        # declare all tags
+        declare -A tag0=(
+          [arch]='x64'
+          [platform]='macos'
+          [objectDownload]=${appFileName}'-mac-x64.dmg'
+          [objectUpgrade]=${appFileName}'-mac-x64.zip'
+        )
+
+        declare -A tag1=(
+          [arch]='arm64'
+          [platform]='macos'
+          [objectDownload]=${appFileName}'-mac-arm64.dmg'
+          [objectUpgrade]=${appFileName}'-mac-arm64.zip'
+        )
+
+        declare -A tag2=(
+          [arch]='x64'
+          [platform]='windows'
+          [objectDownload]=${appFileName}'-win-installer.exe'
+        )
+
+        declare -A tag3=(
+          [arch]='x64'
+          [platform]='linux_AppImage'
+          [objectDownload]=${appFileName}'-linux-x86_64.AppImage'
+        )
+
+        declare -A tag4=(
+          [arch]='x64'
+          [platform]='linux_deb'
+          [objectDownload]=${appFileName}'-linux-amd64.deb'
+        )
+
+        declare -A tag5=(
+          [arch]='x64'
+          [platform]='linux_rpm'
+          [objectDownload]=${appFileName}'-linux-x86_64.rpm'
+        )
+
+        # loop for add all tags to each app and create metrics
+        declare -n tag
+        for tag in ${!tag@}; do
+
+          designation0="downloads"
+          designation1="upgrades"
+
+          id0="${tag[platform]}_${tag[arch]}_${designation0}_${applicationVersion}"
+          id1="${tag[platform]}_${tag[arch]}_${designation1}_${applicationVersion}"
+
+          # add tags to each app for download
+          aws s3api put-object-tagging \
+            --bucket ${AWS_BUCKET_NAME} \
+            --key ${downloadLatestFolderPath}/${tag[objectDownload]} \
+            --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation0}"'" }]}'
+
+          # add tags to each app for upgrades
+          aws s3api put-object-tagging \
+            --bucket ${AWS_BUCKET_NAME} \
+            --key ${upgradeLatestFolderPath}/${tag[objectUpgrade]:=${tag[objectDownload]}} \
+            --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation1}"'" }]}'
+
+          # Create metrics for all tags for downloads to S3
+          aws s3api put-bucket-metrics-configuration \
+            --bucket ${AWS_BUCKET_NAME} \
+            --id ${id0} \
+            --metrics-configuration '{"Id": "'"${id0}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation0}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"} ]}}}'
+
+          # Create metrics for all tags for upgrades to S3
+          aws s3api put-bucket-metrics-configuration \
+            --bucket ${AWS_BUCKET_NAME} \
+            --id ${id1} \
+            --metrics-configuration '{"Id": "'"${id1}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation1}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"}]}}}'
+
+        done

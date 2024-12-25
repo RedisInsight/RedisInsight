@@ -16,7 +16,8 @@ export interface Props {
   isDisabled?: boolean
   isInvalid?: boolean
   isEditDisabled?: boolean
-  disabledTooltipText?: { title: string, text: string }
+  textAreaMaxHeight?: number
+  disabledTooltipText?: { title: string, content: string }
   approveText?: { title: string, text: string }
   editToolTipContent?: React.ReactNode
   approveByValidation?: (value: string) => boolean
@@ -33,6 +34,7 @@ const EditableTextArea = (props: Props) => {
     children,
     initialValue = '',
     field = '',
+    textAreaMaxHeight = 300,
     isEditing,
     isEditDisabled,
     isLoading,
@@ -163,7 +165,7 @@ const EditableTextArea = (props: Props) => {
                 inputRef={textAreaRef}
                 className={cx(styles.textArea, { [styles.areaWarning]: isDisabled })}
                 spellCheck={false}
-                style={{ height: textAreaRef.current?.scrollHeight || 0 }}
+                style={{ height: textAreaRef.current?.scrollHeight || 0, maxHeight: textAreaMaxHeight }}
                 data-testid={`${testIdPrefix}_value-editor-${field}`}
               />
             </InlineItemEditor>

@@ -113,6 +113,7 @@ enum ApiEndpoints {
 
   REDISEARCH = 'redisearch',
   REDISEARCH_SEARCH = 'redisearch/search',
+  REDISEARCH_INFO = 'redisearch/info',
   HISTORY = 'history',
 
   FEATURES = 'features',
@@ -148,11 +149,15 @@ enum ApiEndpoints {
   RDI_PIPELINE_JOB_FUNCTIONS = 'pipeline/job-functions',
   RDI_STATISTICS = 'statistics',
   RDI_PIPELINE_STATUS = 'pipeline/status',
+  RDI_PIPELINE_STOP = 'pipeline/stop',
+  RDI_PIPELINE_START = 'pipeline/start',
+  RDI_PIPELINE_RESET = 'pipeline/reset',
 }
 
 export enum CustomHeaders {
   DbIndex = 'ri-db-index',
   WindowId = 'x-window-id',
+  CsrfToken = 'X-CSRF-Token',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

@@ -1,0 +1,86 @@
+name: Build windows pipeline
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: Environment for build
+        default: 'staging'
+        type: string
+
+      debug:
+        description: SSH Debug
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    name: Build windows
+    runs-on: windows-2022
+    environment: ${{ inputs.environment }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Enable SSH
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
+
+    - name: Install all libs and dependencies
+      uses: ./.github/actions/install-all-build-libs
+
+    - name: Setup certs
+      uses: ./.github/actions/install-windows-certs
+      with:
+        WIN_CSC_PFX_BASE64: ${{ secrets.WIN_CSC_PFX_BASE64 }}
+
+    - name: Install plugins dependencies and build plugins
+      run: yarn build:statics:win
+
+    - name: Build windows exe (production)
+      if: vars.ENV == 'production'
+      run: |
+        yarn package:prod
+        rm -rf release/win-unpacked
+      shell: bash
+
+    - name: Build windows exe (staging)
+      if: (vars.ENV == 'staging' ||  vars.ENV == 'development')
+      run: |
+        yarn package:stage
+        rm -rf release/win-unpacked
+      shell: bash
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: windows-builds
+        if-no-files-found: error
+        path: |
+          ./release/Redis-Insight*.exe
+          ./release/Redis-Insight*.exe.blockmap
+          ./release/latest.yml
+
+    env:
+      WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+      WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+      RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}
+      RI_AI_QUERY_PASS: ${{ secrets.RI_AI_QUERY_PASS }}
+      RI_AI_QUERY_USER: ${{ secrets.RI_AI_QUERY_USER }}
+      RI_CLOUD_API_URL: ${{ secrets.RI_CLOUD_API_URL }}
+      RI_CLOUD_API_TOKEN: ${{ secrets.RI_CLOUD_API_TOKEN }}
+      RI_CLOUD_CAPI_URL: ${{ secrets.RI_CLOUD_CAPI_URL }}
+      RI_CLOUD_IDP_AUTHORIZE_URL: ${{ secrets.RI_CLOUD_IDP_AUTHORIZE_URL }}
+      RI_CLOUD_IDP_CLIENT_ID: ${{ secrets.RI_CLOUD_IDP_CLIENT_ID }}
+      RI_CLOUD_IDP_GH_ID: ${{ secrets.RI_CLOUD_IDP_GH_ID }}
+      RI_CLOUD_IDP_GOOGLE_ID: ${{ secrets.RI_CLOUD_IDP_GOOGLE_ID }}
+      RI_CLOUD_IDP_ISSUER: ${{ secrets.RI_CLOUD_IDP_ISSUER }}
+      RI_CLOUD_IDP_REVOKE_TOKEN_URL: ${{ secrets.RI_CLOUD_IDP_REVOKE_TOKEN_URL }}
+      RI_CLOUD_IDP_REDIRECT_URI: ${{ secrets.RI_CLOUD_IDP_REDIRECT_URI }}
+      RI_CLOUD_IDP_TOKEN_URL: ${{ secrets.RI_CLOUD_IDP_TOKEN_URL }}
+      RI_SEGMENT_WRITE_KEY: ${{ secrets.RI_SEGMENT_WRITE_KEY }}
+      RI_SERVER_TLS_CERT: ${{ secrets.RI_SERVER_TLS_CERT }}
+      RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
+      RI_FEATURES_CONFIG_URL: ${{ secrets.RI_FEATURES_CONFIG_URL }}
+      RI_UPGRADES_LINK: ${{ secrets.RI_UPGRADES_LINK }}

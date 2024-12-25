@@ -7,7 +7,6 @@ import { MyRedisDatabasePage } from '../../../../pageObjects';
 import {
     RdiPopoverOptions,
     RdiTemplateDatabaseType,
-    RdiTemplatePipelineType,
     RedisOverviewPage
 } from '../../../../helpers/constants';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
@@ -79,11 +78,11 @@ test('Verify that context is saved after navigation panel', async() => {
 });
 
 test('Verify that Insight and Sign in buttons are displayed ', async() => {
-    await t.expect(rdiInstancePage.RdiHeader.InsightsPanel.explorePanelButton.exists).ok('Insight panel is not exist');
-    await rdiInstancePage.RdiHeader.InsightsPanel.togglePanel(true);
+    await t.expect(rdiInstancePage.NavigationHeader.insightsTriggerButton.exists).ok('Insight panel is not exist');
+    await rdiInstancePage.NavigationHeader.togglePanel(true);
     const tab = await rdiInstancePage.RdiHeader.InsightsPanel.getActiveTabName();
     await t.expect(tab).eql('Tutorials');
-    await t.expect(rdiInstancePage.RdiHeader.cloudSignInButton.exists).ok('sight in button is not exist');
+    await t.expect(rdiInstancePage.NavigationHeader.cloudSignInButton.exists).ok('sight in button is not exist');
 });
 
 test('Verify that confirmation message is displayed, if there are unsaved changes ', async() => {
@@ -103,8 +102,8 @@ test('Verify that confirmation message is displayed, if there are unsaved change
 
     await t.click(rdiInstancePage.PipelineManagementPanel.configurationTabLink);
     await t.click(rdiInstancePage.templateButton);
-    await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.Ingest, RdiTemplateDatabaseType.MySql);
+    await rdiInstancePage.setTemplateDropdownValue(RdiTemplateDatabaseType.MySql);
     await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
     await t.click(rdiInstancePage.proceedNavigateDialog);
-    await t.expect(rdiInstancesListPage.rdiInstanceButton.exists).ok('the user is not navigated to the panel');
+    await t.expect(rdiInstancesListPage.addRdiInstanceButton.exists).ok('the user is not navigated to the panel');
 });

@@ -26,7 +26,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { setConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
-import { setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
+import { getPipelineStatus, setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 
 import InstancePage, { Props } from './InstancePage'
@@ -70,6 +70,9 @@ describe('InstancePage', () => {
   })
 
   it('should call proper actions with resetting context', async () => {
+    (appContextSelector as jest.Mock).mockReturnValue({
+      contextRdiInstanceId: ''
+    })
     await act(() => {
       render(
         <BrowserRouter>
@@ -93,10 +96,14 @@ describe('InstancePage', () => {
       setRedisearchInitialState(),
       setInitialRecommendationsState(),
       clearExpertChatHistory(),
-      setConnectedInstance(),
     ]
 
     const expectedActions = [
+      getPipelineStatus(),
+      setAppContextConnectedRdiInstanceId(''),
+      setPipelineInitialState(),
+      resetPipelineManagement(),
+      setConnectedInstance(),
       setAppContextConnectedRdiInstanceId('rdiInstanceId'),
       resetConnectedDatabaseInstance(),
       ...resetContextActions,
@@ -119,6 +126,7 @@ describe('InstancePage', () => {
     })
 
     const expectedActions = [
+      getPipelineStatus(),
       setAppContextConnectedRdiInstanceId(''),
       setPipelineInitialState(),
       resetPipelineManagement(),

@@ -10,7 +10,6 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
-import { CapabilityPromotion } from 'uiSrc/pages/home/components/capability-promotion'
 
 import styles from './styles.module.scss'
 
@@ -31,7 +30,6 @@ const HomePageTemplate = (props: Props) => {
     <>
       <div className={styles.pageDefaultHeader}>
         <HomeTabs />
-        <CapabilityPromotion />
         <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
           {isAnyChatAvailable && (
             <EuiFlexItem grow={false} style={{ marginRight: 12 }}>

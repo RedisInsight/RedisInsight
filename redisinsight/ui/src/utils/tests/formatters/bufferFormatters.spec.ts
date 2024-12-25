@@ -1,4 +1,6 @@
+import { input } from '@testing-library/user-event/dist/types/event'
 import { RedisResponseBufferType } from 'uiSrc/slices/interfaces'
+import JavaDate from 'uiSrc/utils/formatters/java-date'
 import {
   bufferToString,
   anyToBuffer,
@@ -14,6 +16,12 @@ import {
   bufferToJava,
   bufferToUint8Array,
 } from 'uiSrc/utils'
+
+try {
+  // Register JavaDate class for deserialization
+  ObjectInputStream.RegisterObjectClass(JavaDate, JavaDate.ClassName, JavaDate.SerialVersionUID)
+  // eslint-disable-next-line no-empty
+} catch (e) {}
 
 const defaultValues = [
   { unicode: 'test', ascii: 'test', hex: '74657374', uint8Array: [116, 101, 115, 116], binary: '01110100011001010111001101110100' },
@@ -105,6 +113,7 @@ const getBuffersTest = [
   { input1: anyToBuffer([16, 101, 5435, 116]), input2: anyToBuffer([116, 101, 543]), expected: false },
   { input1: { data: [16, 101, 35, 116] }, input2: anyToBuffer([16, 101, 35, 116]), expected: true },
   { input1: { data: [16, 101, 35, 116] }, input2: { data: [16, 101, 35, 116] }, expected: true },
+  { input1: anyToBuffer([116, 101, 115, 116]), input2: anyToBuffer([116, 101, 115]), expected: false },
 ]
 
 describe('isEqualBuffers', () => {
@@ -132,6 +141,7 @@ describe('binaryToBuffer', () => {
 const javaValues = [
   { uint8Array: [172, 237, 0, 5, 115, 114, 0, 8, 69, 109, 112, 108, 111, 121, 101, 101, 2, 94, 116, 52, 103, 198, 18, 60, 2, 0, 3, 73, 0, 6, 110, 117, 109, 98, 101, 114, 76, 0, 7, 97, 100, 100, 114, 101, 115, 115, 116, 0, 18, 76, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 116, 114, 105, 110, 103, 59, 76, 0, 4, 110, 97, 109, 101, 113, 0, 126, 0, 1, 120, 112, 0, 0, 0, 101, 116, 0, 25, 80, 104, 111, 107, 107, 97, 32, 75, 117, 97, 110, 44, 32, 65, 109, 98, 101, 104, 116, 97, 32, 80, 101, 101, 114, 116, 0, 9, 82, 101, 121, 97, 110, 32, 65, 108, 105], value: { annotations: [], className: 'Employee', fields: [{ number: 101 }, { address: 'Phokka Kuan, Ambehta Peer' }, { name: 'Reyan Ali' }], serialVersionUid: 170701604314812988n } },
   { uint8Array: [172, 237, 0, 5, 115, 114, 0, 32, 115, 101, 114, 105, 97, 108, 105, 122, 97, 116, 105, 111, 110, 68, 101, 109, 111, 46, 65, 110, 110, 111, 116, 97, 116, 105, 111, 110, 84, 101, 115, 116, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 1, 73, 0, 6, 110, 117, 109, 98, 101, 114, 120, 112, 0, 0, 0, 90], value: { annotations: [], className: 'serializationDemo.AnnotationTest', fields: [{ number: 90 }], serialVersionUid: 2n } },
+  { uint8Array: [ 172, 237, 0, 5, 115, 114, 0, 14, 106, 97, 118, 97, 46, 117, 116, 105, 108, 46, 68, 97, 116, 101, 104, 106, 129, 1, 75, 89, 116, 25, 3, 0, 0, 120, 112, 119, 8, 0, 0, 1, 146, 226, 121, 165, 136, 120, ], value: new Date(Number(1730376476040n)) },
 ]
 
 const getBufferToJavaTests = javaValues.map(({ uint8Array, value }) =>
@@ -148,3 +158,4 @@ describe('bufferToUint8Array', () => {
     expect(bufferToUint8Array(anyToBuffer(uint8Array))).toEqual(new Uint8Array(uint8Array))
   })
 })
+

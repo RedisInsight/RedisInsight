@@ -51,28 +51,38 @@ export interface IRdiPipelineStrategies {
   data: IRdiPipelineStrategy[]
 }
 
+export enum StatisticsConnectionStatus {
+  notYetUsed = 'not yet used',
+  connected = 'connected'
+}
+
 export interface IConnections {
   [key: string]: {
     host: string
     port: number
-    status: string
+    status: StatisticsConnectionStatus
     type: string
     database: string
     user: string
   }
 }
 
+export interface IDataStreamsData {
+  total: number
+  pending: number
+  inserted: number
+  updated: number
+  deleted: number
+  filtered: number
+  rejected: number
+  deduplicated: number
+  lastArrival?: string
+}
+
 export interface IDataStreams {
-  [key: string]: {
-    total: number
-    pending: number
-    inserted: number
-    updated: number
-    deleted: number
-    filtered: number
-    rejected: number
-    deduplicated: number
-    lastArrival: string
+  totals: IDataStreamsData,
+  streams: {
+    [key: string]: IDataStreamsData
   }
 }
 
@@ -135,21 +145,40 @@ export enum PipelineStatus {
   Stopped = 'stopped',
 }
 
+export enum PipelineState {
+  InitialSync = 'initial-sync',
+  CDC = 'cdc',
+  NotRunning = 'not-running',
+}
+
+export enum CollectorStatus {
+  Ready = 'ready',
+  Stopped = 'stopped',
+  NotReady = 'not-ready',
+}
+
 export interface IPipelineStatus {
   components: Record<string, unknown>
   pipelines: {
     default?: {
       status: PipelineStatus
-      state: unknown
-      tasks: unknown
+      state: PipelineState,
+      tasks: unknown,
     }
   }
+}
+
+export enum PipelineAction {
+  Start = 'start',
+  Stop = 'stop',
+  Reset = 'reset',
 }
 
 export interface IStateRdiPipeline {
   loading: boolean
   error: string
   data: Nullable<IPipeline>
+  resetChecked: boolean
   schema: Nullable<object>
   strategies: IRdiPipelineStrategies
   changes: Record<string, FileChangeType>
@@ -158,6 +187,11 @@ export interface IStateRdiPipeline {
     loading: boolean
     error: string
     data: Nullable<IPipelineStatus>
+  }
+  pipelineAction: {
+    loading: boolean
+    error: string
+    action: Nullable<PipelineAction>
   }
 }
 
@@ -177,6 +211,14 @@ export interface RdiInstance extends RdiInstanceResponse {
   visible?: boolean
   loading: boolean
   error: string
+}
+
+export interface IErrorData {
+  message: string
+  statusCode: number
+  error: string
+  errorCode?: number
+  errors?: string[]
 }
 
 export interface InitialStateRdiInstances {
@@ -237,4 +279,9 @@ export type TJMESPathFunctions = {
 export interface IYamlFormatError {
   filename: string
   msg: string
+}
+
+export interface IActionPipelineResultProps {
+  success: boolean
+  error: Nullable<string>
 }

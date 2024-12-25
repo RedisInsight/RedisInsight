@@ -1,9 +1,9 @@
 {
-  "version": 2.5203,
+  "version": 2.57,
   "features": {
     "redisDataIntegration": {
       "flag": true,
-      "perc": [[0,0]],
+      "perc": [[0,100]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -22,7 +22,7 @@
     },
     "documentationChat": {
       "flag": true,
-      "perc": [[0,20]],
+      "perc": [[0,100]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -33,7 +33,7 @@
     },
     "databaseChat": {
       "flag": true,
-      "perc": [[0,20]],
+      "perc": [[0,100]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -63,11 +63,11 @@
             "redisStackPreview": [
               {
                 "provider": "AWS",
-                "regions": ["us-east-2", "ap-southeast-1", "sa-east-1"]
+                "regions": []
               },
               {
                 "provider": "GCP",
-                "regions": ["asia-northeast1", "europe-west1", "us-central1"]
+                "regions": []
               }
             ]
           }
@@ -111,6 +111,10 @@
       "data": {
         "strategy": "ioredis"
       }
+    },
+    "enhancedCloudUI": {
+      "flag": true,
+      "perc": [[0, 50]]
     }
   }
 }

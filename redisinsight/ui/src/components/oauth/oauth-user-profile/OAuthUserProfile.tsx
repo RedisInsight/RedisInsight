@@ -1,11 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import { useHistory } from 'react-router-dom'
 import OAuthSignInButton from 'uiSrc/components/oauth/oauth-sign-in-button'
-import { activateAccount, logoutUserAction, oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
+import {
+  activateAccount,
+  logoutUserAction,
+  oauthCloudUserSelector,
+  setInitialLoadingState
+} from 'uiSrc/slices/oauth/cloud'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud.svg?react'
 
 import { getUtmExternalLink } from 'uiSrc/utils/links'
@@ -27,7 +32,7 @@ export interface Props {
 const OAuthUserProfile = (props: Props) => {
   const { source } = props
   const [selectingAccountId, setSelectingAccountId] = useState<number>()
-  const { data } = useSelector(oauthCloudUserSelector)
+  const { error, data, initialLoading } = useSelector(oauthCloudUserSelector)
   const { server } = useSelector(appInfoSelector)
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
@@ -36,8 +41,26 @@ const OAuthUserProfile = (props: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
+  useEffect(() => {
+    if (data || error) {
+      dispatch(setInitialLoadingState(false))
+    }
+  }, [data, error])
+
   if (!data) {
     if (server?.packageType === PackageType.Mas) return null
+
+    if (initialLoading) {
+      return (
+        <div className={styles.loadingContainer}>
+          <EuiLoadingSpinner
+            className={cx('infiniteMessage__icon', styles.loading)}
+            size="l"
+            data-testid="oath-user-profile-spinner"
+          />
+        </div>
+      )
+    }
 
     return (
       <div className={styles.wrapper}>

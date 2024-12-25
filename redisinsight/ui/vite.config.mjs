@@ -7,6 +7,7 @@ import { reactClickToComponent } from 'vite-plugin-react-click-to-component'
 import { fileURLToPath, URL } from 'url'
 import path from 'path'
 
+const hostedApiBaseUrl = process.env.RI_HOSTED_API_BASE_URL
 const isElectron = process.env.RI_APP_TYPE === 'electron'
 // set path to index.tsx in the index.html
 process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx'
@@ -16,7 +17,12 @@ const apiUrl = process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
   ? 'https://localhost'
   : 'http://localhost'
 
-const base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
+let base
+if (hostedApiBaseUrl) {
+  base = '/'
+} else {
+  base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
+}
 
 /**
  * @type {import('vite').UserConfig}
@@ -56,7 +62,16 @@ export default defineConfig({
       'monaco-editor',
       'monaco-yaml/yaml.worker',
     ],
-    exclude: ["brotli-wasm", "brotli-wasm/pkg.bundler/brotli_wasm_bg.wasm"],
+    exclude: [
+      'brotli-wasm',
+      'brotli-wasm/pkg.bundler/brotli_wasm_bg.wasm',
+      'react-json-tree',
+      'redisinsight-plugin-sdk',
+      'plotly.js-dist-min',
+      '@antv/x6',
+      '@antv/x6-react-shape',
+      '@antv/hierarchy'
+    ],
     esbuildOptions: {
       // fix for https://github.com/bvaughn/react-virtualized/issues/1722
       plugins: [fixReactVirtualized],
@@ -117,6 +132,8 @@ export default defineConfig({
       RI_SCAN_TREE_COUNT_DEFAULT: '10000',
       RI_APP_TYPE: process.env.RI_APP_TYPE,
       RI_CONNECTIONS_TIMEOUT_DEFAULT: 30 * 1000,
+      RI_HOSTED_API_BASE_URL: hostedApiBaseUrl,
+      RI_CSRF_ENDPOINT: process.env.RI_CSRF_ENDPOINT,
     },
   },
   // hack: apply proxy path to monaco webworker

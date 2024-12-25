@@ -1,7 +1,7 @@
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
+import { commonUrl, ossStandaloneV6Config } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
@@ -23,10 +23,10 @@ fixture `Key messages`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV6Config);
     })
     .afterEach(async() => {
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV6Config);
     });
 test('Verify that user can see updated message in Browser for TimeSeries and Graph data types', async t => {
     for(let i = 0; i < dataTypes.length; i++) {
@@ -49,7 +49,7 @@ test('Verify that user can see updated message in Browser for TimeSeries and Gra
         for(const message of messages) {
             await t.expect(browserPage.modulesTypeDetails.textContent).contains(message, `The message for ${dataTypes[i]} key is not displayed`);
         }
-        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneV6Config.databaseName);
     }
 });
 test('Verify that user can see link to Workbench under word “Workbench” in the RedisTimeSeries and Graph key details', async t => {
@@ -62,11 +62,12 @@ test('Verify that user can see link to Workbench under word “Workbench” in t
 
         // Add key and verify Workbench link
         await browserPage.Cli.sendCommandInCli(commands[i]);
+        await t.click(browserPage.NavigationPanel.browserButton);
         await browserPage.searchByKeyName(keyName);
         await t.click(browserPage.keyNameInTheList);
         await t.click(browserPage.internalLinkToWorkbench);
         await t.expect(workbenchPage.queryInput.visible).ok(`The message for ${dataTypes[i]} key is not displayed`);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneV6Config.databaseName);
     }
 });

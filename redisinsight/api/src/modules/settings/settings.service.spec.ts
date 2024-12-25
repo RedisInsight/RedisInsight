@@ -3,9 +3,9 @@ import { InternalServerErrorException } from '@nestjs/common';
 import {
   mockAgreements,
   mockAgreementsRepository, mockAppSettings,
-  mockEncryptionStrategyInstance, mockKeyEncryptionStrategyInstance, mockSettings,
+  mockEncryptionStrategyInstance, mockKeyEncryptionStrategyInstance, mockSessionMetadata, mockSettings,
   mockSettingsAnalyticsService, mockSettingsRepository,
-  MockType, mockUserId,
+  MockType,
 } from 'src/__mocks__';
 import { UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
@@ -38,7 +38,6 @@ describe('SettingsService', () => {
   let settingsRepository: MockType<SettingsRepository>;
   let analyticsService: SettingsAnalytics;
   let keytarStrategy: MockType<KeytarEncryptionStrategy>;
-  let keyStrategy: MockType<KeyEncryptionStrategy>;
   let eventEmitter: EventEmitter2;
 
   beforeEach(async () => {
@@ -75,13 +74,12 @@ describe('SettingsService', () => {
       ],
     }).compile();
 
-    agreementsRepository = await module.get(AgreementsRepository);
-    settingsRepository = await module.get(SettingsRepository);
-    keytarStrategy = await module.get(KeytarEncryptionStrategy);
-    keyStrategy = await module.get(KeyEncryptionStrategy);
-    analyticsService = await module.get<SettingsAnalytics>(SettingsAnalytics);
-    service = await module.get(SettingsService);
-    eventEmitter = await module.get(EventEmitter2);
+    agreementsRepository = module.get(AgreementsRepository);
+    settingsRepository = module.get(SettingsRepository);
+    keytarStrategy = module.get(KeytarEncryptionStrategy);
+    analyticsService = module.get(SettingsAnalytics);
+    service = module.get(SettingsService);
+    eventEmitter = module.get(EventEmitter2);
   });
 
   describe('getAppSettings', () => {
@@ -89,22 +87,25 @@ describe('SettingsService', () => {
       agreementsRepository.getOrCreate.mockResolvedValue(new Agreements());
       settingsRepository.getOrCreate.mockResolvedValue(new Settings());
 
-      const result = await service.getAppSettings(mockUserId);
+      const result = await service.getAppSettings(mockSessionMetadata);
 
       expect(result).toEqual({
         theme: null,
-        scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
+        scanThreshold: REDIS_SCAN_CONFIG.scanThreshold,
         batchSize: WORKBENCH_CONFIG.countBatch,
+        dateFormat: null,
+        timezone: null,
         agreements: null,
       });
 
       expect(eventEmitter.emit).not.toHaveBeenCalled();
     });
+
     it('should return some application settings already defined by user', async () => {
       agreementsRepository.getOrCreate.mockResolvedValue(mockAgreements);
       settingsRepository.getOrCreate.mockResolvedValue(mockSettings);
 
-      const result = await service.getAppSettings(mockUserId);
+      const result = await service.getAppSettings(mockSessionMetadata);
 
       expect(result).toEqual({
         ...mockSettings.data,
@@ -114,11 +115,12 @@ describe('SettingsService', () => {
         },
       });
     });
+
     it('should throw InternalServerError', async () => {
       agreementsRepository.getOrCreate.mockRejectedValue(new Error('some error'));
 
       try {
-        await service.getAppSettings(mockUserId);
+        await service.getAppSettings(mockSessionMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
@@ -138,9 +140,9 @@ describe('SettingsService', () => {
         scanThreshold: 1001,
       };
 
-      const response = await service.updateAppSettings(mockUserId, dto);
+      const response = await service.updateAppSettings(mockSessionMetadata, dto);
       expect(agreementsRepository.update).not.toHaveBeenCalled();
-      expect(settingsRepository.update).toHaveBeenCalledWith(mockUserId, {
+      expect(settingsRepository.update).toHaveBeenCalledWith(mockSessionMetadata, {
         ...mockSettings,
         data: {
           ...mockSettings.data,
@@ -157,9 +159,9 @@ describe('SettingsService', () => {
         })),
       };
 
-      const response = await service.updateAppSettings(mockUserId, dto);
+      const response = await service.updateAppSettings(mockSessionMetadata, dto);
       expect(settingsRepository.update).not.toHaveBeenCalled();
-      expect(agreementsRepository.update).toHaveBeenCalledWith(mockUserId, {
+      expect(agreementsRepository.update).toHaveBeenCalledWith(mockSessionMetadata, {
         ...mockAgreements,
         version: AGREEMENTS_SPEC.version,
         data: {
@@ -187,20 +189,24 @@ describe('SettingsService', () => {
 
       const dto: UpdateSettingsDto = {
         batchSize: 6,
+        dateFormat: 'hh-mmm-ss',
+        timezone: 'UTC',
         agreements: new Map(Object.entries({
           notifications: false,
         })),
       };
 
-      const response = await service.updateAppSettings(mockUserId, dto);
-      expect(settingsRepository.update).toHaveBeenCalledWith(mockUserId, {
+      const response = await service.updateAppSettings(mockSessionMetadata, dto);
+      expect(settingsRepository.update).toHaveBeenCalledWith(mockSessionMetadata, {
         ...mockSettings,
         data: {
           batchSize: 6,
+          dateFormat: 'hh-mmm-ss',
+          timezone: 'UTC',
         },
 
       });
-      expect(agreementsRepository.update).toHaveBeenCalledWith(mockUserId, {
+      expect(agreementsRepository.update).toHaveBeenCalledWith(mockSessionMetadata, {
         ...mockAgreements,
         version: AGREEMENTS_SPEC.version,
         data: {
@@ -212,7 +218,7 @@ describe('SettingsService', () => {
       expect(analyticsService.sendAnalyticsAgreementChange).not.toHaveBeenCalled();
       expect(analyticsService.sendSettingsUpdatedEvent).toHaveBeenCalledWith(mockAppSettings, {
         ...mockAppSettings,
-        scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
+        scanThreshold: REDIS_SCAN_CONFIG.scanThreshold,
         batchSize: WORKBENCH_CONFIG.countBatch,
         theme: null,
       });
@@ -224,7 +230,7 @@ describe('SettingsService', () => {
       });
 
       try {
-        await service.updateAppSettings(mockUserId, { agreements: new Map([]) });
+        await service.updateAppSettings(mockSessionMetadata, { agreements: new Map([]) });
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(AgreementIsNotDefinedException);
@@ -238,7 +244,7 @@ describe('SettingsService', () => {
       };
 
       try {
-        await service.updateAppSettings(mockUserId, dto);
+        await service.updateAppSettings(mockSessionMetadata, dto);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);

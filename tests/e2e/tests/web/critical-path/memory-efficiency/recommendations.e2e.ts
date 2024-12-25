@@ -12,6 +12,7 @@ import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { RecommendationsActions } from '../../../../common-actions/recommendations-actions';
 import { Common } from '../../../../helpers/common';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
+import { Telemetry } from '../../../../helpers';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -21,6 +22,16 @@ const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const apiKeyRequests = new APIKeyRequests();
+const telemetry = new Telemetry();
+
+const logger = telemetry.createLogger();
+
+const telemetryEvent = 'DATABASE_ANALYSIS_TIPS_COLLAPSED';
+const expectedProperties = [
+    'databaseId',
+    'provider',
+    'recommendation'
+];
 
 // const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
 let keyName = `recomKey-${Common.generateWord(10)}`;
@@ -46,6 +57,7 @@ fixture `Memory Efficiency Recommendations`
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
+    .requestHooks(logger)
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
         // Go to Analysis Tools page
@@ -82,6 +94,10 @@ test
         // Verify that user can expand/collapse recommendation
         const expandedTextContaiterSize = await memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).offsetHeight;
         await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecommendation));
+
+        //Verify telemetry event
+        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+
         await t.expect(memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).offsetHeight)
             .lt(expandedTextContaiterSize, 'Lua script recommendation not collapsed');
         await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecommendation));
@@ -110,7 +126,7 @@ test
         keyName = `recomKey-${Common.generateWord(10)}`;
         await browserPage.addStringKey(stringKeyName, '2147476121', 'field');
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneConfig, index);
+        await myRedisDatabasePage.AddRedisDatabaseDialog.addLogicalRedisDatabase(ossStandaloneConfig, index);
         await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName} [db${index}]`);
         await browserPage.addHashKey(keyName, '2147476121', 'field', 'value');
     })
@@ -192,7 +208,7 @@ test
         await t.expect(recommendation.exists).ok('Query and search JSON documents recommendation not displayed');
         // Verify that tutorial opened
         await t.click(memoryEfficiencyPage.getToTutorialBtnByRecomName(searchJsonRecommendation));
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorial = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.expect(tutorial.preselectArea.visible).ok('Workbench Enablement area not opened');
         // Verify that REDIS FOR TIME SERIES tutorial expanded

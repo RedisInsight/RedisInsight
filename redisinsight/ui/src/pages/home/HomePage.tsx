@@ -2,14 +2,9 @@ import {
   EuiPage,
   EuiPageBody,
   EuiPanel,
-  EuiResizableContainer,
-  EuiResizeObserver
 } from '@elastic/eui'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
-import { throttle } from 'lodash'
-import DatabasePanel from 'uiSrc/pages/home/components/database-panel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
 import { HomePageTemplate } from 'uiSrc/templates'
@@ -25,46 +20,36 @@ import {
   fetchEditedInstanceAction,
   fetchInstancesAction,
   instancesSelector,
+  resetImportInstances,
   setEditedInstance
 } from 'uiSrc/slices/instances/instances'
 import { localStorageService } from 'uiSrc/services'
 import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
-import { fetchContentAction as fetchCreateRedisButtonsAction } from 'uiSrc/slices/content/create-redis-buttons'
+import {
+  contentSelector,
+  fetchContentAction as fetchCreateRedisButtonsAction
+} from 'uiSrc/slices/content/create-redis-buttons'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
-import { AddDbType } from 'uiSrc/pages/home/constants'
-import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
-import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import AiChatbotMessage from 'uiSrc/components/hightlighted-feature/components/ai-chatbot-message'
-import { appFeatureFlagsFeaturesSelector, appFeatureHighlightingSelector } from 'uiSrc/slices/app/features'
-import { getHighlightingFeatures, isAnyFeatureEnabled } from 'uiSrc/utils/features'
+import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 import DatabasesList from './components/database-list-component'
 import DatabaseListHeader from './components/database-list-header'
 import EmptyMessage from './components/empty-message/EmptyMessage'
+import DatabasePanelDialog from './components/database-panel-dialog'
 
 import './styles.scss'
 import styles from './styles.module.scss'
 
-enum RightPanelName {
+enum OpenDialogName {
   AddDatabase = 'add',
   EditDatabase = 'edit'
 }
 
 const HomePage = () => {
-  const [width, setWidth] = useState(0)
-  const [openRightPanel, setOpenRightPanel] = useState<Nullable<RightPanelName>>(null)
-
-  const { features } = useSelector(appFeatureHighlightingSelector)
-  const { aiChatbot: aiChatbotHighlighting } = getHighlightingFeatures(features)
-  const {
-    [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
-
-  const initialDbTypeRef = useRef<AddDbType>(AddDbType.manual)
+  const [openDialog, setOpenDialog] = useState<Nullable<OpenDialogName>>(null)
 
   const dispatch = useDispatch()
 
@@ -72,6 +57,8 @@ const HomePage = () => {
   const { credentials: cloudCredentials } = useSelector(cloudSelector)
   const { instance: sentinelInstance } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
+  const { data: createDbContent } = useSelector(contentSelector)
+  const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const {
     loading,
@@ -86,6 +73,11 @@ const HomePage = () => {
   } = useSelector(editedInstanceSelector)
 
   const { contextInstanceId } = useSelector(appContextSelector)
+
+  const predefinedInstances = enhancedCloudUIFeature?.flag && createDbContent?.cloud_list_of_databases ? [
+    { id: CREATE_CLOUD_DB_ID, ...createDbContent.cloud_list_of_databases } as Instance
+  ] : []
+  const isInstanceExists = instances.length > 0 || predefinedInstances.length > 0
 
   useEffect(() => {
     setTitle('Redis databases')
@@ -108,20 +100,20 @@ const HomePage = () => {
 
   useEffect(() => {
     if (isChangedInstance) {
-      setOpenRightPanel(null)
+      setOpenDialog(null)
       dispatch(setEditedInstance(null))
     }
   }, [isChangedInstance])
 
   useEffect(() => {
     if (clusterCredentials || cloudCredentials || sentinelInstance) {
-      setOpenRightPanel(RightPanelName.AddDatabase)
+      setOpenDialog(OpenDialogName.AddDatabase)
     }
   }, [clusterCredentials, cloudCredentials, sentinelInstance])
 
   useEffect(() => {
     if (action === UrlHandlingActions.Connect) {
-      setOpenRightPanel(RightPanelName.AddDatabase)
+      setOpenDialog(OpenDialogName.AddDatabase)
     }
   }, [action, dbConnection])
 
@@ -155,7 +147,7 @@ const HomePage = () => {
 
   const closeEditDialog = () => {
     dispatch(setEditedInstance(null))
-    setOpenRightPanel(null)
+    setOpenDialog(null)
 
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_EDIT_CANCELLED_CLICKED,
@@ -168,8 +160,9 @@ const HomePage = () => {
   const handleClose = () => {
     dispatch(resetDataRedisCluster())
     dispatch(resetDataSentinel())
+    dispatch(resetImportInstances())
 
-    setOpenRightPanel(null)
+    setOpenDialog(null)
     dispatch(setEditedInstance(null))
 
     if (action === UrlHandlingActions.Connect) {
@@ -181,25 +174,24 @@ const HomePage = () => {
     })
   }
 
-  const handleAddInstance = (addDbType = AddDbType.manual) => {
-    initialDbTypeRef.current = addDbType
-    setOpenRightPanel(RightPanelName.AddDatabase)
+  const handleAddInstance = () => {
+    setOpenDialog(OpenDialogName.AddDatabase)
     dispatch(setEditedInstance(null))
   }
 
   const handleEditInstance = (editedInstance: Instance) => {
     if (editedInstance) {
       dispatch(fetchEditedInstanceAction(editedInstance))
-      setOpenRightPanel(RightPanelName.EditDatabase)
+      setOpenDialog(OpenDialogName.EditDatabase)
     }
   }
   const handleDeleteInstances = (instances: Instance[]) => {
     if (
       instances.find((instance) => instance.id === editedInstance?.id)
-      && openRightPanel === RightPanelName.EditDatabase
+      && openDialog === OpenDialogName.EditDatabase
     ) {
       dispatch(setEditedInstance(null))
-      setOpenRightPanel(null)
+      setOpenDialog(null)
     }
 
     instances.forEach((instance) => {
@@ -207,115 +199,47 @@ const HomePage = () => {
     })
   }
 
-  const onResize = ({ width: innerWidth }: { width: number }) => {
-    setWidth(innerWidth)
-  }
-  const onResizeTrottled = useCallback(throttle(onResize, 100), [])
-
-  const InstanceList = () =>
-    (!instances.length && !loading && !loadingChanging ? (
-      <EuiPanel className={styles.emptyPanel} borderRadius="none">
-        <EmptyMessage onAddInstanceClick={handleAddInstance} />
-      </EuiPanel>
-    ) : (
-      <EuiResizeObserver onResize={onResizeTrottled}>
-        {(resizeRef) => (
-          <div ref={resizeRef} style={{ height: '100%' }}>
-            <DatabasesList
-              width={width}
-              editedInstance={editedInstance}
-              onEditInstance={handleEditInstance}
-              onDeleteInstances={handleDeleteInstances}
-            />
-          </div>
-        )}
-      </EuiResizeObserver>
-    ))
-
   return (
     <HomePageTemplate>
-      <HighlightedFeature
-        isHighlight={isAnyChatAvailable && aiChatbotHighlighting}
-        {...(BUILD_FEATURES.aiChatbot || {})}
-      >
-        <AiChatbotMessage />
-      </HighlightedFeature>
       <div className={styles.pageWrapper}>
-
         <EuiPage className={styles.page}>
           <EuiPageBody component="div">
             <DatabaseListHeader
               key="instance-controls"
               onAddInstance={handleAddInstance}
             />
+            {!!openDialog && (
+              <DatabasePanelDialog
+                editMode={openDialog === OpenDialogName.EditDatabase}
+                urlHandlingAction={action}
+                editedInstance={
+                  openDialog === OpenDialogName.EditDatabase
+                    ? editedInstance
+                    : sentinelInstance ?? null
+                }
+                onClose={
+                  openDialog === OpenDialogName.EditDatabase
+                    ? closeEditDialog
+                    : handleClose
+                }
+                onDbEdited={onDbEdited}
+              />
+            )}
             <div key="homePage" className="homePage">
-              <EuiResizableContainer style={{ height: '100%' }}>
-                {(EuiResizablePanel, EuiResizableButton) => (
-                  <>
-                    <EuiResizablePanel
-                      scrollable={false}
-                      initialSize={62}
-                      id="databases"
-                      minSize="50%"
-                      paddingSize="none"
-                      wrapperProps={{
-                        className: cx('home__resizePanelLeft', {
-                          fullWidth: !openRightPanel,
-                          openedRightPanel: !!openRightPanel,
-                          hidden: !!openRightPanel && !instances.length,
-                        })
-                      }}
-                    >
-                      <InstanceList />
-                    </EuiResizablePanel>
-
-                    <EuiResizableButton
-                      className={cx('home__resizableButton', {
-                        hidden: !openRightPanel || !instances.length,
-                      })}
-                      style={{ margin: 0 }}
-                    />
-
-                    <EuiResizablePanel
-                      scrollable={false}
-                      initialSize={38}
-                      wrapperProps={{
-                        className: cx('home__resizePanelRight', {
-                          hidden: !openRightPanel,
-                          fullWidth: !instances.length,
-                        })
-                      }}
-                      id="form"
-                      paddingSize="none"
-                      style={{ minWidth: '474px' }}
-                    >
-                      {!!openRightPanel && (
-                        <DatabasePanel
-                          editMode={openRightPanel === RightPanelName.EditDatabase}
-                          width={width}
-                          isResizablePanel
-                          urlHandlingAction={action}
-                          initialValues={dbConnection ?? null}
-                          editedInstance={
-                            openRightPanel === RightPanelName.EditDatabase
-                              ? editedInstance
-                              : sentinelInstance ?? null
-                          }
-                          onClose={
-                            openRightPanel === RightPanelName.EditDatabase
-                              ? closeEditDialog
-                              : handleClose
-                          }
-                          onDbEdited={onDbEdited}
-                          isFullWidth={!instances.length}
-                          initConnectionType={initialDbTypeRef.current}
-                        />
-                      )}
-                      <div id="footerDatabaseForm" />
-                    </EuiResizablePanel>
-                  </>
-                )}
-              </EuiResizableContainer>
+              {(!isInstanceExists && !loading && !loadingChanging ? (
+                <EuiPanel className={styles.emptyPanel} borderRadius="none">
+                  <EmptyMessage onAddInstanceClick={handleAddInstance} />
+                </EuiPanel>
+              ) : (
+                <DatabasesList
+                  loading={loading}
+                  instances={instances}
+                  predefinedInstances={predefinedInstances}
+                  editedInstance={editedInstance}
+                  onEditInstance={handleEditInstance}
+                  onDeleteInstances={handleDeleteInstances}
+                />
+              ))}
             </div>
           </EuiPageBody>
         </EuiPage>

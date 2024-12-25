@@ -15,6 +15,7 @@ import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
 import { createHttpOptions } from './utils/createHttpOptions';
+import { SessionMetadataAdapter } from './modules/auth/session-metadata/adapters/session-metadata.adapter';
 
 const serverConfig = get('server') as Config['server'];
 
@@ -24,9 +25,14 @@ interface IApp {
 }
 
 export default async function bootstrap(apiPort?: number): Promise<IApp> {
-  await migrateHomeFolder() && await removeOldFolders();
+  if (serverConfig.migrateOldFolders) {
+    await migrateHomeFolder() && await removeOldFolders();
+  }
 
-  const { port, host } = serverConfig;
+  if (apiPort) {
+    serverConfig.port = apiPort;
+  }
+
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
 
   const options: NestApplicationOptions = {
@@ -43,7 +49,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
 
-  if (process.env.RI_APP_TYPE !== 'electron') {
+  if (process.env.RI_APP_TYPE !== 'electron' || process.env.NODE_ENV === 'development') {
     let prefix = serverConfig.globalPrefix;
     if (serverConfig.proxyPath) {
       prefix = posix.join(serverConfig.proxyPath, prefix);
@@ -68,9 +74,13 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
     app.useWebSocketAdapter(new WindowsAuthAdapter(app));
   }
 
+  app.useWebSocketAdapter(new SessionMetadataAdapter(app));
+
   const logFileProvider = app.get(LogFileProvider);
 
-  await app.listen(apiPort || port, host);
+  const { port, host } = serverConfig;
+
+  await app.listen(port, host);
   logger.log({
     message: `Server is running on http(s)://${host}:${port}`,
     context: 'bootstrap',
@@ -92,6 +102,6 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   return { app, gracefulShutdown };
 }
 
-if (process.env.RI_APP_TYPE !== 'electron') {
+if (serverConfig.autoBootstrap) {
   bootstrap();
 }

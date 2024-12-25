@@ -33,22 +33,20 @@ interface IShowFields {
 }
 
 export interface Props {
-  flexGroupClassName?: string
-  flexItemClassName?: string
   formik: FormikProps<DbConnectionInfo>
   onHostNamePaste: (content: string) => boolean
   showFields: IShowFields
   autoFocus?: boolean
+  readyOnlyFields?: string[]
 }
 
 const DatabaseForm = (props: Props) => {
   const {
-    flexGroupClassName = '',
-    flexItemClassName = '',
     formik,
     onHostNamePaste,
     autoFocus = false,
     showFields,
+    readyOnlyFields = []
   } = props
 
   const { server } = useSelector(appInfoSelector)
@@ -89,64 +87,14 @@ const DatabaseForm = (props: Props) => {
     </EuiToolTip>
   )
 
+  const isShowPort = server?.buildType !== BuildType.RedisStack && showFields.port
+  const isFieldDisabled = (name: string) => readyOnlyFields.includes(name)
+
   return (
     <>
-      <EuiFlexGroup className={flexGroupClassName}>
-        {showFields.host && (
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiFormRow label="Host*">
-              <EuiFieldText
-                autoFocus={autoFocus}
-                name="ip"
-                id="host"
-                data-testid="host"
-                color="secondary"
-                maxLength={200}
-                placeholder="Enter Hostname / IP address / Connection URL"
-                value={formik.values.host ?? ''}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    'host',
-                    validateField(e.target.value.trim())
-                  )
-                }}
-                onPaste={(event: React.ClipboardEvent<HTMLInputElement>) => handlePasteHostName(onHostNamePaste, event)}
-                onFocus={selectOnFocus}
-                append={<AppendHostName />}
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-        )}
-        {server?.buildType !== BuildType.RedisStack && showFields.port && (
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
-              <EuiFieldNumber
-                name="port"
-                id="port"
-                data-testid="port"
-                style={{ width: '100%' }}
-                placeholder="Enter Port"
-                value={formik.values.port ?? ''}
-                maxLength={6}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validatePortNumber(e.target.value.trim())
-                  )
-                }}
-                onFocus={selectOnFocus}
-                type="text"
-                min={0}
-                max={MAX_PORT_NUMBER}
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-        )}
-      </EuiFlexGroup>
-
       {showFields.alias && (
-        <EuiFlexGroup className={flexGroupClassName}>
-          <EuiFlexItem className={flexItemClassName}>
+        <EuiFlexGroup responsive={false}>
+          <EuiFlexItem>
             <EuiFormRow label="Database Alias*">
               <EuiFieldText
                 fullWidth
@@ -158,14 +106,72 @@ const DatabaseForm = (props: Props) => {
                 value={formik.values.name ?? ''}
                 maxLength={500}
                 onChange={formik.handleChange}
+                disabled={isFieldDisabled('alias')}
               />
             </EuiFormRow>
           </EuiFlexItem>
         </EuiFlexGroup>
       )}
 
-      <EuiFlexGroup className={flexGroupClassName}>
-        <EuiFlexItem className={flexItemClassName}>
+      {(showFields.host || isShowPort) && (
+        <EuiFlexGroup responsive={false}>
+          {showFields.host && (
+            <EuiFlexItem grow={4}>
+              <EuiFormRow label="Host*">
+                <EuiFieldText
+                  autoFocus={autoFocus}
+                  name="ip"
+                  id="host"
+                  data-testid="host"
+                  color="secondary"
+                  maxLength={200}
+                  placeholder="Enter Hostname / IP address / Connection URL"
+                  value={formik.values.host ?? ''}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    formik.setFieldValue(
+                      'host',
+                      validateField(e.target.value.trim())
+                    )
+                  }}
+                  onPaste={(event: React.ClipboardEvent<HTMLInputElement>) => handlePasteHostName(onHostNamePaste, event)}
+                  onFocus={selectOnFocus}
+                  append={<AppendHostName />}
+                  disabled={isFieldDisabled('host')}
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          )}
+          {isShowPort && (
+            <EuiFlexItem grow={2}>
+              <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
+                <EuiFieldNumber
+                  name="port"
+                  id="port"
+                  data-testid="port"
+                  style={{ width: '100%' }}
+                  placeholder="Enter Port"
+                  value={formik.values.port ?? ''}
+                  maxLength={6}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    formik.setFieldValue(
+                      e.target.name,
+                      validatePortNumber(e.target.value.trim())
+                    )
+                  }}
+                  onFocus={selectOnFocus}
+                  type="text"
+                  min={0}
+                  max={MAX_PORT_NUMBER}
+                  disabled={isFieldDisabled('port')}
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          )}
+        </EuiFlexGroup>
+      )}
+
+      <EuiFlexGroup responsive={false}>
+        <EuiFlexItem grow={1}>
           <EuiFormRow label="Username">
             <EuiFieldText
               name="username"
@@ -176,11 +182,12 @@ const DatabaseForm = (props: Props) => {
               placeholder="Enter Username"
               value={formik.values.username ?? ''}
               onChange={formik.handleChange}
+              disabled={isFieldDisabled('username')}
             />
           </EuiFormRow>
         </EuiFlexItem>
 
-        <EuiFlexItem className={flexItemClassName}>
+        <EuiFlexItem grow={1}>
           <EuiFormRow label="Password">
             <EuiFieldPassword
               type="password"
@@ -203,12 +210,15 @@ const DatabaseForm = (props: Props) => {
               }}
               dualToggleProps={{ color: 'text' }}
               autoComplete="new-password"
+              disabled={isFieldDisabled('password')}
             />
           </EuiFormRow>
         </EuiFlexItem>
+      </EuiFlexGroup>
 
-        {showFields.timeout && (
-          <EuiFlexItem className={flexItemClassName}>
+      {showFields.timeout && (
+        <EuiFlexGroup>
+          <EuiFlexItem grow={1}>
             <EuiFormRow label="Timeout (s)">
               <EuiFieldNumber
                 name="timeout"
@@ -228,11 +238,13 @@ const DatabaseForm = (props: Props) => {
                 type="text"
                 min={1}
                 max={MAX_TIMEOUT_NUMBER}
+                disabled={isFieldDisabled('timeout')}
               />
             </EuiFormRow>
           </EuiFlexItem>
-        )}
-      </EuiFlexGroup>
+          <EuiFlexItem grow={1} />
+        </EuiFlexGroup>
+      )}
     </>
   )
 }

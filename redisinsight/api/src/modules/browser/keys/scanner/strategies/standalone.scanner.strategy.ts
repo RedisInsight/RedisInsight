@@ -72,19 +72,18 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
     node: IScannerNodeKeys,
     match: string,
     count: number,
+    scanThreshold: number,
     type?: RedisDataType,
   ): Promise<void> {
     const COUNT = Math.min(2000, count);
 
     let fullScanned = false;
-    // todo: remove settings from here. threshold should be part of query?
-    const settings = await this.settingsService.getAppSettings('1');
     while (
       (node.total >= 0 || isNull(node.total))
       && !fullScanned
       && node.keys.length < count
       && (
-        node.scanned < settings.scanThreshold
+        node.scanned < scanThreshold
       )
     ) {
       let commandArgs = [`${node.cursor}`, 'MATCH', match, 'COUNT', COUNT];
@@ -112,6 +111,7 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
   public async getKeys(client: RedisClient, args: IScannerGetKeysArgs): Promise<GetKeysWithDetailsResponse[]> {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
+    const scanThreshold = args.scanThreshold || REDIS_SCAN_CONFIG.scanThreshold;
 
     const node = {
       total: 0,
@@ -139,7 +139,7 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
       return [node];
     }
 
-    await this.scan(client, node, match, count, args.type);
+    await this.scan(client, node, match, count, scanThreshold, args.type);
 
     if (node.keys.length && args.keysInfo) {
       node.keys = await this.getKeysInfo(client, node.keys, args.type);

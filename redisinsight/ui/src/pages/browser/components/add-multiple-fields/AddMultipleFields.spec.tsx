@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { render } from 'uiSrc/utils/test-utils'
 
 import AddMultipleFields from './AddMultipleFields'
 

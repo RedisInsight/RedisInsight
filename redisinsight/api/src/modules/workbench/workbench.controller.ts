@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -19,10 +20,11 @@ import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-com
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { ClientMetadata } from 'src/common/models';
 import { WorkbenchClientMetadata } from 'src/modules/workbench/decorators/workbench-client-metadata.decorator';
+import { CommandExecutionFilter } from 'src/modules/workbench/models/command-executions.filter';
 
 @ApiTags('Workbench')
 @UsePipes(new ValidationPipe({ transform: true }))
-@Controller('workbench')
+@Controller('workbench/command-executions')
 export class WorkbenchController {
   constructor(private service: WorkbenchService) { }
 
@@ -36,7 +38,7 @@ export class WorkbenchController {
       },
     ],
   })
-  @Post('/command-executions')
+  @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
   async sendCommands(
@@ -57,13 +59,14 @@ export class WorkbenchController {
       },
     ],
   })
-  @Get('/command-executions')
+  @Get()
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
   async listCommandExecutions(
-    @Param('dbInstance') databaseId: string,
+    @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
+      @Query() filter: CommandExecutionFilter,
   ): Promise<ShortCommandExecution[]> {
-    return this.service.listCommandExecutions(databaseId);
+    return this.service.listCommandExecutions(clientMetadata, filter);
   }
 
   @ApiEndpoint({
@@ -76,38 +79,39 @@ export class WorkbenchController {
       },
     ],
   })
-  @Get('/command-executions/:id')
+  @Get('/:id')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
   async getCommandExecution(
-    @Param('dbInstance') databaseId: string,
+    @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
       @Param('id') id: string,
   ): Promise<CommandExecution> {
-    return this.service.getCommandExecution(databaseId, id);
+    return this.service.getCommandExecution(clientMetadata, id);
   }
 
   @ApiEndpoint({
     description: 'Delete command execution',
     statusCode: 200,
   })
-  @Delete('/command-executions/:id')
+  @Delete('/:id')
   @ApiRedisParams()
   async deleteCommandExecution(
-    @Param('dbInstance') databaseId: string,
+    @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
       @Param('id') id: string,
   ): Promise<void> {
-    return this.service.deleteCommandExecution(databaseId, id);
+    return this.service.deleteCommandExecution(clientMetadata, id);
   }
 
   @ApiEndpoint({
     description: 'Delete command executions',
     statusCode: 200,
   })
-  @Delete('/command-executions')
+  @Delete()
   @ApiRedisParams()
   async deleteCommandExecutions(
-    @Param('dbInstance') databaseId: string,
+    @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
+      @Body() filter: CommandExecutionFilter,
   ): Promise<void> {
-    return this.service.deleteCommandExecutions(databaseId);
+    return this.service.deleteCommandExecutions(clientMetadata, filter);
   }
 }

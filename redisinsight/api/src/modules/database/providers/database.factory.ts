@@ -1,4 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
 import { catchRedisConnectionError, getHostingProvider } from 'src/utils';
 import { Database } from 'src/modules/database/models/database';
@@ -8,7 +9,7 @@ import { DatabaseInfoProvider } from 'src/modules/database/providers/database-in
 import { RedisErrorCodes } from 'src/constants';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
-import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import {
   discoverClusterNodes, discoverSentinelMasterGroups, isCluster, isSentinel,
 } from 'src/modules/redis/utils';
@@ -27,19 +28,25 @@ export class DatabaseFactory {
 
   /**
    * Create model
+   * @param sessionMetadata
    * @param database
+   * @param options
    */
-  async createDatabaseModel(database: Database): Promise<Database> {
+  async createDatabaseModel(
+    sessionMetadata: SessionMetadata,
+    database: Database,
+    options: IRedisConnectionOptions = {},
+  ): Promise<Database> {
     let model = await this.createStandaloneDatabaseModel(database);
 
     const client = await this.redisClientFactory.getConnectionStrategy().createStandaloneClient(
       {
-        sessionMetadata: {} as SessionMetadata,
-        databaseId: database.id,
+        sessionMetadata,
+        databaseId: database.id || uuidv4(), // we assume that if no database id defined we are in creation process
         context: ClientContext.Common,
       },
       database,
-      { useRetry: true },
+      { ...options, useRetry: true },
     );
 
     if (!HostingProvider[model.provider]) {
@@ -50,9 +57,9 @@ export class DatabaseFactory {
       if (!database.sentinelMaster) {
         throw new Error(RedisErrorCodes.SentinelParamsRequired);
       }
-      model = await this.createSentinelDatabaseModel(database, client);
+      model = await this.createSentinelDatabaseModel(sessionMetadata, database, client);
     } else if (await isCluster(client)) {
-      model = await this.createClusterDatabaseModel(database, client);
+      model = await this.createClusterDatabaseModel(sessionMetadata, database, client);
     }
 
     model.modules = await this.databaseInfoProvider.determineDatabaseModules(client);
@@ -97,7 +104,11 @@ export class DatabaseFactory {
    * @param client
    * @private
    */
-  async createClusterDatabaseModel(database: Database, client: RedisClient): Promise<Database> {
+  async createClusterDatabaseModel(
+    sessionMetadata: SessionMetadata,
+    database: Database,
+    client: RedisClient,
+  ): Promise<Database> {
     try {
       const model = database;
 
@@ -105,8 +116,8 @@ export class DatabaseFactory {
 
       const clusterClient = await this.redisClientFactory.getConnectionStrategy().createClusterClient(
         {
-          sessionMetadata: {} as SessionMetadata,
-          databaseId: model.id,
+          sessionMetadata,
+          databaseId: model.id || uuidv4(), // we assume that if no database id defined we are in creation process
           context: ClientContext.Common,
         },
         model,
@@ -132,7 +143,11 @@ export class DatabaseFactory {
    * @param client
    * @private
    */
-  async createSentinelDatabaseModel(database: Database, client: RedisClient): Promise<Database> {
+  async createSentinelDatabaseModel(
+    sessionMetadata: SessionMetadata,
+    database: Database,
+    client: RedisClient,
+  ): Promise<Database> {
     try {
       const model = database;
       const masterGroups = await discoverSentinelMasterGroups(client);
@@ -148,8 +163,8 @@ export class DatabaseFactory {
 
       const sentinelClient = await this.redisClientFactory.getConnectionStrategy().createSentinelClient(
         {
-          sessionMetadata: {} as SessionMetadata,
-          databaseId: model.id,
+          sessionMetadata,
+          databaseId: model.id || uuidv4(), // we assume that if no database id defined we are in creation process
           context: ClientContext.Common,
         },
         model,

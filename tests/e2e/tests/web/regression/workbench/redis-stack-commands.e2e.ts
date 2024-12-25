@@ -1,11 +1,11 @@
 import { t } from 'testcafe';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { WorkbenchPage, MyRedisDatabasePage } from '../../../../pageObjects';
+import { WorkbenchPage, BrowserPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
+const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
@@ -17,7 +17,7 @@ fixture `Redis Stack command in Workbench`
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Drop key and database
@@ -27,7 +27,7 @@ fixture `Redis Stack command in Workbench`
     });
 test('Verify that user can switches between Chart and Text for TimeSeries command and see results corresponding to their views', async t => {
     // Send TimeSeries command
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.click(tutorials.timeSeriesLink);

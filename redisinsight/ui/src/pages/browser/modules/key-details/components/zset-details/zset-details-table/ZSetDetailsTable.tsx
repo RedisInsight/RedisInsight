@@ -17,7 +17,7 @@ import {
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
 } from 'uiSrc/slices/browser/zset'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, SortOrder, TableCellAlignment, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, SortOrder, TEXT_FAILED_CONVENT_FORMATTER, TableCellAlignment } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
@@ -33,6 +33,7 @@ import {
   bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
+  createTooltipContent,
   formatLongName,
   formattingBuffer,
   isEqualBuffers,
@@ -45,7 +46,7 @@ import { IColumnSearchState, ITableColumn, RelativeWidthSizes } from 'uiSrc/comp
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
-import { EditableInput } from 'uiSrc/pages/browser/modules/key-details/shared'
+import { EditableInput, FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/z-set/dto'
 
@@ -65,7 +66,6 @@ interface IZsetMember extends ZsetMember {
 }
 
 export interface Props {
-  isFooterOpen?: boolean
   onRemoveKey: () => void
 }
 
@@ -274,9 +274,8 @@ const ZSetDetailsTable = (props: Props) => {
       render: function Name(_name: string, { name: nameItem }: IZsetMember, expanded?: boolean) {
         const { value: decompressedNameItem } = decompressingBuffer(nameItem, compressor)
         const name = bufferToString(nameItem)
-        const tooltipContent = formatLongName(name)
         const { value, isValid } = formattingBuffer(decompressedNameItem, viewFormat, { expanded })
-        const cellContent = value?.substring?.(0, 200) ?? value
+        const tooltipContent = createTooltipContent(value, decompressedNameItem, viewFormat)
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
@@ -284,18 +283,12 @@ const ZSetDetailsTable = (props: Props) => {
               style={{ display: 'flex' }}
               data-testid={`zset-member-value-${name}`}
             >
-              {!expanded && (
-                <EuiToolTip
-                  title={isValid ? 'Member' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                  className={styles.tooltip}
-                  anchorClassName="truncateText"
-                  position="bottom"
-                  content={tooltipContent}
-                >
-                  <>{cellContent}</>
-                </EuiToolTip>
-              )}
-              {expanded && value}
+              <FormattedValue
+                value={value}
+                expanded={expanded}
+                title={isValid ? 'Member' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                tooltipContent={tooltipContent}
+              />
             </div>
           </EuiText>
         )

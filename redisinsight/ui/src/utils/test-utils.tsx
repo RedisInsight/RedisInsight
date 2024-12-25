@@ -38,6 +38,7 @@ import { initialState as initialStateUserSettings } from 'uiSrc/slices/user/user
 import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb-results'
 import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { initialState as initialStateWBECustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import { initialState as initialStateSearchAndQuery } from 'uiSrc/slices/search/searchAndQuery'
 import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
 import { initialState as initialStateGuideLinks } from 'uiSrc/slices/content/guide-links'
 import { initialState as initialStateSlowLog } from 'uiSrc/slices/analytics/slowlog'
@@ -109,6 +110,9 @@ const initialStateDefault: RootState = {
     results: cloneDeep(initialStateWBResults),
     tutorials: cloneDeep(initialStateWBETutorials),
     customTutorials: cloneDeep(initialStateWBECustomTutorials),
+  },
+  search: {
+    query: cloneDeep(initialStateSearchAndQuery),
   },
   content: {
     createRedisButtons: cloneDeep(initialStateCreateRedisButtons),
@@ -182,13 +186,13 @@ const clearStoreActions = (actions: any[]) => {
 /**
  * Ensure the EuiToolTip being tested is open and visible before continuing
  */
-const waitForEuiToolTipVisible = async () => {
+const waitForEuiToolTipVisible = async (timeout = 500) => {
   await waitFor(
     () => {
       const tooltip = document.querySelector('.euiToolTipPopover')
       expect(tooltip).toBeInTheDocument()
     },
-    { timeout: 500 } // Account for long delay on tooltips
+    { timeout } // Account for long delay on tooltips
   )
 }
 

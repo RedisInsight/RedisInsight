@@ -1,7 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import { mockDatabaseService, mockStandaloneRedisClient } from 'src/__mocks__';
-import { DatabaseService } from 'src/modules/database/database.service';
+import { mockStandaloneRedisClient } from 'src/__mocks__';
 import { GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { SearchJSONStrategy } from 'src/modules/database-recommendation/scanner/strategies';
 
@@ -27,31 +25,16 @@ const mockIndexes = ['foo'];
 describe('SearchJSONStrategy', () => {
   const client = mockStandaloneRedisClient;
   let strategy: SearchJSONStrategy;
-  let databaseService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        {
-          provide: DatabaseService,
-          useFactory: mockDatabaseService,
-        },
-      ],
-    }).compile();
-
-    databaseService = module.get<DatabaseService>(DatabaseService);
-    strategy = new SearchJSONStrategy(databaseService);
+    strategy = new SearchJSONStrategy();
   });
 
   describe('isRecommendationReached', () => {
     describe('with search module', () => {
-      beforeEach(() => {
-        databaseService.get.mockResolvedValue({ modules: [{ name: 'search' }] });
-      });
-
       it('should return true when there is JSON key', async () => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['FT._LIST']), expect.anything())
+          .calledWith(expect.arrayContaining(['FT._LIST']), expect.anything())
           .mockResolvedValue(mockEmptyIndexes);
 
         expect(await strategy.isRecommendationReached({
@@ -71,7 +54,7 @@ describe('SearchJSONStrategy', () => {
 
       it('should return false when FT._LIST return indexes', async () => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['FT._LIST']), expect.anything())
+          .calledWith(expect.arrayContaining(['FT._LIST']), expect.anything())
           .mockResolvedValue(mockIndexes);
 
         expect(await strategy.isRecommendationReached({
@@ -84,7 +67,9 @@ describe('SearchJSONStrategy', () => {
 
     describe('without search module', () => {
       beforeEach(() => {
-        databaseService.get.mockResolvedValue({ modules: [] });
+        when(client.sendCommand)
+          .calledWith(expect.arrayContaining(['FT._LIST']), expect.anything())
+          .mockReturnValue(new Error('Unsupported command'));
       });
 
       it('should return true when there is JSON key', async () => {

@@ -1,11 +1,11 @@
 import { ClientFunction } from 'testcafe';
-import { ExploreTabs, rte } from '../../../../helpers/constants';
+import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
+import { BrowserPage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneV5Config } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
+const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
@@ -18,7 +18,7 @@ fixture `Redisearch module not available`
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config);
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Delete database
@@ -42,13 +42,13 @@ test('Verify that user can see options on what can be done to work with capabili
     const commandJSON = 'JSON.ARRAPPEND key value';
     const commandFT = 'FT.LIST';
 
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     await workbenchPage.sendCommandInWorkbench(commandJSON);
     // Verify change screens when capability not available - 'JSON'
-    await t.expect(await workbenchPage.commandExecutionResult.withText('RedisJSON is not available').visible)
-        .ok('Missing RedisJSON title is not visible');
+    await t.expect(await workbenchPage.commandExecutionResult.withText('JSON data structure is not available').visible)
+        .ok('Missing JSON title is not visible');
     await workbenchPage.sendCommandInWorkbench(commandFT);
     // Verify change screens when capability not available - 'Search'
-    await t.expect(await workbenchPage.commandExecutionResult.withText('RediSearch is not available').visible)
-        .ok('Missing RedisSearch title is not visible');
+    await t.expect(await workbenchPage.commandExecutionResult.withText('Redis Query Engine is not available').visible)
+        .ok('Missing Search title is not visible');
 });

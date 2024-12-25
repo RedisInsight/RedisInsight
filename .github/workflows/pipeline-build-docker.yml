@@ -1,0 +1,134 @@
+name: Build docker pipeline
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: Environment for build
+        default: 'staging'
+        type: string
+
+      for_e2e_tests:
+        description: Build for e2e docker tests
+        default: false
+        type: boolean
+
+      debug:
+        description: SSH Debug
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    name: Build docker
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment }}
+    steps:
+    - uses: actions/checkout@v4
+
+    # SSH Debug
+    - name: Enable SSH
+      uses: mxschmitt/action-tmate@v3
+      if: inputs.debug
+      with:
+        detached: true
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Install all libs and dependencies
+      uses: ./.github/actions/install-all-build-libs
+      with:
+        keytar-host-mirror: ${{ secrets.NPM_CONFIG_KEYTAR_BINARY_HOST_MIRROR }}
+        sqlite3-host-mirror: ${{ secrets.NPM_CONFIG_NODE_SQLITE3_BINARY_HOST_MIRROR }}
+
+    - name: Build sources
+      run: ./.github/build/build.sh
+
+      # todo: matrix
+    - name: Build web archives for e2e tests
+      if: inputs.for_e2e_tests
+      run: |
+        unset npm_config_keytar_binary_host_mirror
+        unset npm_config_node_sqlite3_binary_host_mirror
+        # Docker sources
+        PLATFORM=linux ARCH=x64 LIBC=musl .github/build/build_modules.sh
+
+    - name: Build web archives
+      if: ${{ !inputs.for_e2e_tests }}
+      run: |
+        unset npm_config_keytar_binary_host_mirror
+        unset npm_config_node_sqlite3_binary_host_mirror
+        # Docker sources
+        PLATFORM=linux ARCH=x64 LIBC=musl .github/build/build_modules.sh
+        PLATFORM=linux ARCH=arm64 LIBC=musl .github/build/build_modules.sh
+        # Redis Stack + VSC Linux
+        PLATFORM=linux ARCH=x64 .github/build/build_modules.sh
+        PLATFORM=linux ARCH=arm64 .github/build/build_modules.sh
+        # VSC Darwin
+        PLATFORM=darwin ARCH=x64 .github/build/build_modules.sh
+        PLATFORM=darwin ARCH=arm64 .github/build/build_modules.sh
+        # VSC Windows
+        PLATFORM=win32 ARCH=x64 .github/build/build_modules.sh
+
+    - name: Build Docker (x64)
+      run: |
+        # Build alpine x64 image
+        docker buildx build \
+        -f .github/build/build.Dockerfile \
+        --platform linux/amd64 \
+        --build-arg DIST=release/web/Redis-Insight-web-linux-musl.x64.tar.gz \
+        --build-arg NODE_ENV="$ENV" \
+        --build-arg RI_SEGMENT_WRITE_KEY="$RI_SEGMENT_WRITE_KEY" \
+        -t redisinsight:amd64 \
+        .
+
+        mkdir -p release/docker
+        docker image save -o release/docker/docker-linux-alpine.amd64.tar redisinsight:amd64
+
+    - name: Build Docker (arm64)
+      if: ${{ !inputs.for_e2e_tests }}
+      run: |
+        # Build alpine arm64 image
+        docker buildx build \
+        -f .github/build/build.Dockerfile \
+        --platform linux/arm64 \
+        --build-arg DIST=release/web/Redis-Insight-web-linux-musl.arm64.tar.gz \
+        --build-arg NODE_ENV="$ENV" \
+        --build-arg RI_SEGMENT_WRITE_KEY="$RI_SEGMENT_WRITE_KEY" \
+        -t redisinsight:arm64 \
+        .
+
+        mkdir -p release/docker
+        docker image save -o release/docker/docker-linux-alpine.arm64.tar redisinsight:arm64
+
+    - uses: actions/upload-artifact@v4
+      name: Upload docker builds
+      with:
+        if-no-files-found: warn
+        name: docker-builds
+        path: |
+          ./release/docker
+          ./release/web
+          ./release/web-mini
+
+    env:
+      ENV: ${{ vars.ENV }}
+      RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}
+      RI_AI_QUERY_PASS: ${{ secrets.RI_AI_QUERY_PASS }}
+      RI_AI_QUERY_USER: ${{ secrets.RI_AI_QUERY_USER }}
+      RI_CLOUD_API_URL: ${{ secrets.RI_CLOUD_API_URL }}
+      RI_CLOUD_CAPI_URL: ${{ secrets.RI_CLOUD_CAPI_URL }}
+      RI_CLOUD_IDP_AUTHORIZE_URL: ${{ secrets.RI_CLOUD_IDP_AUTHORIZE_URL }}
+      RI_CLOUD_IDP_CLIENT_ID: ${{ secrets.RI_CLOUD_IDP_CLIENT_ID }}
+      RI_CLOUD_IDP_GH_ID: ${{ secrets.RI_CLOUD_IDP_GH_ID }}
+      RI_CLOUD_IDP_GOOGLE_ID: ${{ secrets.RI_CLOUD_IDP_GOOGLE_ID }}
+      RI_CLOUD_IDP_ISSUER: ${{ secrets.RI_CLOUD_IDP_ISSUER }}
+      RI_CLOUD_IDP_REDIRECT_URI: ${{ secrets.RI_CLOUD_IDP_REDIRECT_URI }}
+      RI_CLOUD_IDP_TOKEN_URL: ${{ secrets.RI_CLOUD_IDP_TOKEN_URL }}
+      RI_SEGMENT_WRITE_KEY: ${{ secrets.RI_SEGMENT_WRITE_KEY }}
+      RI_SERVER_TLS_CERT: ${{ secrets.RI_SERVER_TLS_CERT }}
+      RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
+      RI_FEATURES_CONFIG_URL: ${{ secrets.RI_FEATURES_CONFIG_URL }}
+      RI_UPGRADES_LINK: ${{ secrets.RI_UPGRADES_LINK }}
+
+

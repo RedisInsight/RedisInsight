@@ -1,0 +1,7 @@
+.btn {
+  display: flex;
+  align-items: center;
+  background-color: var(--insightsTriggerBgColor) !important;
+  border-radius: 4px;
+  border-color: var(--tableRowSelectedColor) !important;
+}

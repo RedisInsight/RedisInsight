@@ -33,12 +33,20 @@ import reducer, {
   getPipelineStatusAction,
   rdiPipelineSelector,
   rdiPipelineStatusSelector,
+  resetPipelineAction,
+  stopPipelineAction,
+  startPipelineAction,
+  triggerPipelineAction,
+  triggerPipelineActionSuccess,
+  triggerPipelineActionFailure,
+  rdiPipelineActionSelector,
 } from 'uiSrc/slices/rdi/pipeline'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, addInfiniteNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
-import { FileChangeType } from 'uiSrc/slices/interfaces'
+import { FileChangeType, PipelineAction } from 'uiSrc/slices/interfaces'
 import { parseJMESPathFunctions } from 'uiSrc/utils'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 
 let store: typeof mockedStore
 
@@ -459,6 +467,74 @@ describe('rdi pipe slice', () => {
     })
   })
 
+  describe('triggerPipelineAction', () => {
+    it('should set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState.pipelineAction,
+        loading: true,
+        action: PipelineAction.Start,
+        error: '',
+      }
+
+      // Act
+      const nextState = reducer(initialState, triggerPipelineAction(PipelineAction.Start))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineActionSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('triggerPipelineActionSuccess', () => {
+    it('should set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState.pipelineAction,
+        loading: false,
+        error: '',
+      }
+
+      // Act
+      const nextState = reducer(initialState, triggerPipelineActionSuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineActionSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('triggerPipelineActionFailure', () => {
+    it('should set loading = true', () => {
+      const error = 'Some reset error'
+      // Arrange
+      const state = {
+        ...initialState.pipelineAction,
+        loading: false,
+        error,
+      }
+
+      // Act
+      const nextState = reducer(initialState, triggerPipelineActionFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineActionSelector(rootState)).toEqual(state)
+    })
+  })
+
   // thunks
   describe('thunks', () => {
     describe('fetchRdiPipeline', () => {
@@ -555,6 +631,154 @@ describe('rdi pipe slice', () => {
           deployPipeline(),
           addErrorNotification(responsePayload as AxiosError),
           deployPipelineFailure()
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('resetPipelineAction', () => {
+      it('succeed to post data', async () => {
+        const cb = jest.fn()
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          resetPipelineAction('123', cb, cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          triggerPipelineAction(PipelineAction.Reset),
+          triggerPipelineActionSuccess(),
+          addMessageNotification(successMessages.SUCCESS_RESET_PIPELINE()),
+        ]
+
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('failed to post data', async () => {
+        const cb = jest.fn()
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          resetPipelineAction('123', cb, cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          triggerPipelineAction(PipelineAction.Reset),
+          addErrorNotification(responsePayload as AxiosError),
+          triggerPipelineActionFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('stopPipelineAction', () => {
+      it('succeed to post data', async () => {
+        const cb = jest.fn()
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          stopPipelineAction('123', cb, cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          triggerPipelineAction(PipelineAction.Stop),
+          triggerPipelineActionSuccess(),
+        ]
+
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('failed to post data', async () => {
+        const cb = jest.fn()
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          stopPipelineAction('123', cb, cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          triggerPipelineAction(PipelineAction.Stop),
+          addErrorNotification(responsePayload as AxiosError),
+          triggerPipelineActionFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('startPipelineAction', () => {
+      it('succeed to post data', async () => {
+        const cb = jest.fn()
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          startPipelineAction('123', cb, cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          triggerPipelineAction(PipelineAction.Start),
+          triggerPipelineActionSuccess(),
+        ]
+
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('failed to post data', async () => {
+        const cb = jest.fn()
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          startPipelineAction('123', cb, cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          triggerPipelineAction(PipelineAction.Start),
+          addErrorNotification(responsePayload as AxiosError),
+          triggerPipelineActionFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

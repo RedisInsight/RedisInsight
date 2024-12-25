@@ -3,6 +3,7 @@ import { ObjectInputStream } from 'java-object-serialization'
 import { TextDecoder, TextEncoder } from 'text-encoding'
 import { Buffer } from 'buffer'
 import { KeyValueFormat } from 'uiSrc/constants'
+import JavaDate from './java-date'
 // eslint-disable-next-line import/order
 import {
   RedisResponseBuffer,
@@ -12,11 +13,15 @@ import {
 } from 'uiSrc/slices/interfaces'
 import { Nullable } from '../types'
 
+ObjectInputStream.RegisterObjectClass(JavaDate, JavaDate.ClassName, JavaDate.SerialVersionUID)
+
 const decoder = new TextDecoder('utf-8')
 const encoder = new TextEncoder()
 
-const isEqualBuffers = (a?: Nullable<RedisResponseBuffer>, b?: Nullable<RedisResponseBuffer>) =>
-  a?.data?.join(',') === b?.data?.join(',')
+const isEqualBuffers = (a?: Nullable<RedisResponseBuffer>, b?: Nullable<RedisResponseBuffer>) => {
+  if (a?.data?.length !== b?.data?.length) return false
+  return a?.data?.join(',') === b?.data?.join(',')
+}
 
 // eslint-disable-next-line no-control-regex
 const IS_NON_PRINTABLE_ASCII_CHARACTER = /[^ -~\u0007\b\t\n\r]/
@@ -166,6 +171,10 @@ const bufferToJava = (reply: RedisResponseBuffer) => {
   const decoded = stream.readObject()
 
   if (typeof decoded !== 'object') {
+    return decoded
+  }
+
+  if (decoded instanceof Date) {
     return decoded
   }
 

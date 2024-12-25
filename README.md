@@ -1,7 +1,7 @@
 [![Release](https://img.shields.io/github/v/release/RedisInsight/RedisInsight.svg?sort=semver)](https://github.com/RedisInsight/RedisInsight/releases)
 [![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main)
 
-# <img src="https://redis.com/wp-content/uploads/2019/11/ico-redisinsight.svg" alt="logo" width="25"/>  Redis Insight - Developer GUI for Redis, by Redis.
+# <img src="https://github.com/RedisInsight/RedisInsight/blob/main/resources/icon.png" alt="logo" width="25"/>  Redis Insight - Developer GUI for Redis, by Redis.
 [![Forum](https://img.shields.io/badge/Forum-RedisInsight-red)](https://forum.redis.com/c/redisinsight/65)
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/QUkjSsk)
 
@@ -53,6 +53,9 @@ Alternatively you can also build from source. See our wiki for instructions.
 If you have any issues occurring in Redis Insight, you can follow the steps below to get more information about the errors and find their root cause.
 
 * [How to debug](https://github.com/RedisInsight/RedisInsight/wiki/How-to-debug)
+
+## Redis Insight API (only for Docker)
+If you are running Redis Insight from [Docker](https://hub.docker.com/r/redis/redisinsight), you can access the API from `http://localhost:5540/api/docs`.
 
 ## Feedback
 

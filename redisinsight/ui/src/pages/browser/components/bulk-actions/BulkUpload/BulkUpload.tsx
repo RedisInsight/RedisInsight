@@ -29,6 +29,7 @@ import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkA
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
+import { UploadWarning } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -130,6 +131,7 @@ const BulkUpload = (props: Props) => {
               File should not exceed {MAX_MB_FILE} MB
             </EuiTextColor>
           )}
+          <UploadWarning />
           <EuiSpacer size="l" />
         </div>
       ) : (

@@ -1,0 +1,55 @@
+name: 📖 Release (stage)
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+jobs:
+  tests:
+    name: Release stage tests
+    uses: ./.github/workflows/tests.yml
+    secrets: inherit
+    with:
+      group_tests: 'without_e2e'
+      short_rte_list: false
+      pre_release: true
+
+  builds:
+    name: Release stage builds
+    uses: ./.github/workflows/build.yml
+    needs: tests
+    secrets: inherit
+    with:
+      environment: 'staging'
+      target: 'all'
+
+  aws:
+    uses: ./.github/workflows/aws-upload-dev.yml
+    needs: [builds]
+    secrets: inherit
+    if: always()
+    with:
+      pre-release: true
+
+  e2e-docker-tests:
+    needs: builds
+    uses: ./.github/workflows/tests-e2e-docker.yml
+    secrets: inherit
+
+  e2e-appimage-tests:
+    needs: builds
+    uses: ./.github/workflows/tests-e2e-appimage.yml
+    secrets: inherit
+
+  # Remove artifacts from github actions
+  remove-artifacts:
+    name: Remove artifacts
+    needs: [aws, e2e-docker-tests, e2e-appimage-tests]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Remove all artifacts
+      uses: ./.github/actions/remove-artifacts  # Remove artifacts from github actions

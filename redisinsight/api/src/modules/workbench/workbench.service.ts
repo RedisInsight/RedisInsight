@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { omit } from 'lodash';
 import { ClientMetadata } from 'src/common/models';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { CommandExecution } from 'src/modules/workbench/models/command-execution';
-import { CreateCommandExecutionDto, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { CommandExecution, ResultsMode } from 'src/modules/workbench/models/command-execution';
+import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { getBlockingCommands, multilineCommandToOneLine } from 'src/utils/cli-helper';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -12,6 +12,7 @@ import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
+import { CommandExecutionFilter } from 'src/modules/workbench/models/command-executions.filter';
 import { getUnsupportedCommands } from './utils/getUnsupportedCommands';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
@@ -139,6 +140,7 @@ export class WorkbenchService {
 
     if (dto.resultsMode === ResultsMode.GroupMode || dto.resultsMode === ResultsMode.Silent) {
       return this.commandExecutionRepository.createMany(
+        clientMetadata.sessionMetadata,
         [await this.createCommandsExecution(client, dto, dto.commands, dto.resultsMode === ResultsMode.Silent)],
       );
     }
@@ -152,46 +154,51 @@ export class WorkbenchService {
 
     // save history
     // todo: rework
-    return this.commandExecutionRepository.createMany(commandExecutions);
+    return this.commandExecutionRepository.createMany(clientMetadata.sessionMetadata, commandExecutions);
   }
 
   /**
    * Get list command execution history per instance (last 30 items)
    *
-   * @param databaseId
+   * @param clientMetadata
+   * @param filter
    */
-  async listCommandExecutions(databaseId: string): Promise<ShortCommandExecution[]> {
-    return this.commandExecutionRepository.getList(databaseId);
+  async listCommandExecutions(
+    clientMetadata: ClientMetadata,
+    filter: CommandExecutionFilter,
+  ): Promise<ShortCommandExecution[]> {
+    return this.commandExecutionRepository.getList(clientMetadata.sessionMetadata, clientMetadata.databaseId, filter);
   }
 
   /**
    * Get command execution details
    *
-   * @param databaseId
+   * @param clientMetadata
    * @param id
    */
-  async getCommandExecution(databaseId: string, id: string): Promise<CommandExecution> {
-    return this.commandExecutionRepository.getOne(databaseId, id);
+  async getCommandExecution(clientMetadata: ClientMetadata, id: string): Promise<CommandExecution> {
+    return this.commandExecutionRepository.getOne(clientMetadata.sessionMetadata, clientMetadata.databaseId, id);
   }
 
   /**
    * Delete command execution by id and databaseId
    *
-   * @param databaseId
+   * @param clientMetadata
    * @param id
    */
-  async deleteCommandExecution(databaseId: string, id: string): Promise<void> {
-    await this.commandExecutionRepository.delete(databaseId, id);
-    this.analyticsService.sendCommandDeletedEvent(databaseId);
+  async deleteCommandExecution(clientMetadata: ClientMetadata, id: string): Promise<void> {
+    await this.commandExecutionRepository.delete(clientMetadata.sessionMetadata, clientMetadata.databaseId, id);
+    this.analyticsService.sendCommandDeletedEvent(clientMetadata.databaseId);
   }
 
   /**
    * Delete command executions by databaseId
    *
-   * @param databaseId
+   * @param clientMetadata
+   * @param filter
    */
-  async deleteCommandExecutions(databaseId: string): Promise<void> {
-    await this.commandExecutionRepository.deleteAll(databaseId);
+  async deleteCommandExecutions(clientMetadata: ClientMetadata, filter: CommandExecutionFilter): Promise<void> {
+    await this.commandExecutionRepository.deleteAll(clientMetadata.sessionMetadata, clientMetadata.databaseId, filter);
   }
 
   /**

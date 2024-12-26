@@ -29,11 +29,17 @@ export class Profiler {
      * Check specific command in Monitor
      * @param command A command which should be displayed in monitor
      * @param parameters An arguments which should be displayed in monitor
+     * @param expected specify is the command is present or not
      */
-    async checkCommandInMonitorResults(command: string, parameters?: string[]): Promise<void> {
+    async checkCommandInMonitorResults(command: string, parameters?: string[], expected: boolean = true): Promise<void> {
         const commandArray = command.split(' ');
         for (const value of commandArray) {
-            await t.expect(this.monitorCommandLinePart.withText(value).exists).ok({ timeout: 6000 });
+            if(expected){
+                await t.expect(this.monitorCommandLinePart.withText(value).exists).ok({ timeout: 6000 });
+            }
+            else {
+                await t.expect(this.monitorCommandLinePart.withText(value).exists).notOk({ timeout: 1000 });
+            }
         }
         if (!!parameters) {
             for (const argument of parameters) {
@@ -42,15 +48,28 @@ export class Profiler {
         }
     }
     /**
-     * Start monitor function
+     * Start monitor function and verify info
      */
-    async startMonitor(): Promise<void> {
+    async startMonitorAndVerifyStart(): Promise<void> {
         await t
             .click(this.expandMonitor)
             .click(this.startMonitorButton);
         //Check for "info" command that is sent automatically every 5 seconds from BE side
         await this.checkCommandInMonitorResults('info');
     }
+
+    /**
+     * Start monitor function and verify info
+     */
+    async startMonitor(): Promise<void> {
+        if (!(await this.startMonitorButton.exists)){
+            await t
+                .click(this.expandMonitor)
+        }
+        await t
+            .click(this.startMonitorButton);
+    }
+
     /**
      * Start monitor with Save log function
      */

@@ -32,7 +32,7 @@ fixture `Monitor`
     });
 test('Verify Monitor refresh/stop', async t => {
     // Run monitor
-    await browserPage.Profiler.startMonitor();
+    await browserPage.Profiler.startMonitorAndVerifyStart();
     // Close Monitor
     await t.click(browserPage.Profiler.closeMonitor);
     // Verify that monitor is not displayed
@@ -99,7 +99,7 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see monitor results in high DB load', async t => {
         // Run monitor
-        await browserPage.Profiler.startMonitor();
+        await browserPage.Profiler.startMonitorAndVerifyStart();
         // Search by not existed key pattern
         await browserPage.searchByKeyName(`${chance.string({ length: 10 })}*`);
         // Check that the last child is updated

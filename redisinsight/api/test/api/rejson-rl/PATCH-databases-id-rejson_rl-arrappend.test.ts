@@ -33,7 +33,7 @@ const dataSchema = Joi.object({
 const validInputData = {
   keyName: constants.getRandomString(),
   data: [JSON.stringify(constants.getRandomString())],
-  path: '$',
+  path: '.',
 };
 
 const mainCheckFn = getMainCheckFn(endpoint);
@@ -59,13 +59,12 @@ describe('PATCH /databases/:instanceId/rejson-rl/arrappend', () => {
             data: [...Buffer.from(constants.TEST_REJSON_KEY_2)],
           },
           data: [JSON.stringify([1, 2])],
-          path: '$'
+          path: '.'
         },
         statusCode: 200,
         after: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_2,'$'))
-          expect(json[0])
-            .to.eql([...constants.TEST_REJSON_VALUE_2, [1, 2]]);
+          expect(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_2, '.'))
+            .to.eql(JSON.stringify([...constants.TEST_REJSON_VALUE_2, [1, 2]]));
         }
       },
       {
@@ -73,17 +72,12 @@ describe('PATCH /databases/:instanceId/rejson-rl/arrappend', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_2,
           data: [JSON.stringify(null), JSON.stringify('somestring')],
-          path: '$[1]'
+          path: '[1]'
         },
         statusCode: 200,
-        before: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_2, '$[1]'))
-          expect(json[0]).to.eql([1,2])
-        },
         after: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_2, '$'))
-          expect(json[0])
-            .to.eql([...constants.TEST_REJSON_VALUE_2, [1, 2, null, 'somestring']]);
+          expect(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_2, '.'))
+            .to.eql(JSON.stringify([...constants.TEST_REJSON_VALUE_2, [1, 2, null, 'somestring']]));
         }
       },
       {
@@ -91,7 +85,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/arrappend', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_2,
           data: [JSON.stringify(constants.getRandomString())],
-          path: '$[1][1]'
+          path: '[1][1]'
         },
         // todo: handle error to return 400 instead of 500 (BE)
         statusCode: 500,
@@ -105,7 +99,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/arrappend', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_2,
           data: JSON.stringify(constants.getRandomString()),
-          path: '$'
+          path: '.'
         },
         statusCode: 404,
         responseBody: {
@@ -128,7 +122,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/arrappend', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_2,
           data: [JSON.stringify([1, 2])],
-          path: '$'
+          path: '.'
         },
         statusCode: 200,
       },
@@ -138,7 +132,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/arrappend', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_2,
           data: [JSON.stringify(constants.getRandomString())],
-          path: '$',
+          path: '.',
         },
         statusCode: 403,
         responseBody: {

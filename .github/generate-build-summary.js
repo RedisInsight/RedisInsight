@@ -26,8 +26,8 @@ async function generateBuildSummary() {
 
     // Mapping file names to Markdown links and categories
     const fileMappings = {
-      'Redis-Insight-mac-arm64.dmg': { name: 'Redis Insight for Mac (arm64 DMG)', category: Categories.MacOS },
-      'Redis-Insight-mac-x64.dmg': { name: 'Redis Insight for Mac (x64 DMG)', category: Categories.MacOS },
+      // 'Redis-Insight-mac-arm64.dmg': { name: 'Redis Insight for Mac (arm64 DMG)', category: Categories.MacOS },
+      // 'Redis-Insight-mac-x64.dmg': { name: 'Redis Insight for Mac (x64 DMG)', category: Categories.MacOS },
       'Redis-Insight-win-installer.exe': { name: 'Redis Insight Windows Installer (exe)', category: Categories.Windows },
       'Redis-Insight-linux-x86_64.AppImage': { name: 'Redis Insight for Linux (AppImage)', category: Categories.Linux },
       'Redis-Insight-linux-amd64.deb': { name: 'Redis Insight for Linux (deb)', category: Categories.Linux },

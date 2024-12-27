@@ -106,19 +106,19 @@ jobs:
       run: |
 
         # declare all tags
-        declare -A tag0=(
-          [arch]='x64'
-          [platform]='macos'
-          [objectDownload]=${appFileName}'-mac-x64.dmg'
-          [objectUpgrade]=${appFileName}'-mac-x64.zip'
-        )
+        # declare -A tag0=(
+        #   [arch]='x64'
+        #   [platform]='macos'
+        #   [objectDownload]=${appFileName}'-mac-x64.dmg'
+        #   [objectUpgrade]=${appFileName}'-mac-x64.zip'
+        # )
 
-        declare -A tag1=(
-          [arch]='arm64'
-          [platform]='macos'
-          [objectDownload]=${appFileName}'-mac-arm64.dmg'
-          [objectUpgrade]=${appFileName}'-mac-arm64.zip'
-        )
+        # declare -A tag1=(
+        #   [arch]='arm64'
+        #   [platform]='macos'
+        #   [objectDownload]=${appFileName}'-mac-arm64.dmg'
+        #   [objectUpgrade]=${appFileName}'-mac-arm64.zip'
+        # )
 
         declare -A tag2=(
           [arch]='x64'

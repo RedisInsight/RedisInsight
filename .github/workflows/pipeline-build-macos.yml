@@ -91,11 +91,11 @@ jobs:
 
         rm -rf release/mac
 
-    - name: Repack dmg to tar
-      if: vars.ENV == 'production' && inputs.target == vars.ALL
-      run: |
-        ARCH=x64 ./.github/redisstack/dmg.repack.sh
-        ARCH=arm64 ./.github/redisstack/dmg.repack.sh
+    # - name: Repack dmg to tar
+    #   if: vars.ENV == 'production' && inputs.target == vars.ALL
+    #   run: |
+    #     ARCH=x64 ./.github/redisstack/dmg.repack.sh
+    #     ARCH=arm64 ./.github/redisstack/dmg.repack.sh
 
     - name: Upload macos packages
       uses: actions/upload-artifact@v4

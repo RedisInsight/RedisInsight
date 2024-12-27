@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'latest'
+      - 'latest_hf'
 
 jobs:
   tests-prod:

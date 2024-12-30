@@ -31,17 +31,17 @@ test
 // unskip after closing https://redislabs.atlassian.net/browse/RI-5768
 test.skip
     .meta({ rte: rte.reCloud })('Verify that user can add a subscription via auto-discover flow', async t => {
-        await myRedisDatabasePage.AddRedisDatabase.addAutodiscoverRECloudDatabase(
+        await myRedisDatabasePage.AddRedisDatabaseDialog.addAutodiscoverRECloudDatabase(
             cloudDatabaseConfig.accessKey,
             cloudDatabaseConfig.secretKey
         );
         await t.click(
-            myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+            myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);
         await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Cloud Subscriptions').exists)
             .ok('Subscriptions list not displayed', { timeout: 120000 });
         // Select subscriptions
-        await t.click(myRedisDatabasePage.AddRedisDatabase.selectAllCheckbox);
-        await t.click(myRedisDatabasePage.AddRedisDatabase.showDatabasesButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.selectAllCheckbox);
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.showDatabasesButton);
         await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Cloud Databases').exists)
             .ok('database page is not displayed', { timeout: 120000 });
     });

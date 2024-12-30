@@ -28,7 +28,7 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
 
   const renderScalar = (data: any) => (
     <RejsonScalar
-      isRoot={isNull(data.key) && data.parentPath === '.'}
+      isRoot={isNull(data.key) && data.parentPath === '$'}
       leftPadding={nextLeftPadding}
       selectedKey={selectedKey}
       path={data.path}
@@ -68,6 +68,7 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
 
     const data = { ...item, parentPath }
     if (['array', 'object'].includes(item.type)) return renderJSONObject(data, item.type)
+
     return renderScalar(data)
   }
 

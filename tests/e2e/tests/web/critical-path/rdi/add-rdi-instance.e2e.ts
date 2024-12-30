@@ -1,7 +1,6 @@
 import { t } from 'testcafe';
 
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
-import { RdiInstance } from '../../../../pageObjects/components/myRedisDatabase/add-rdi-instance';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { commonUrl } from '../../../../helpers/conf';
@@ -10,6 +9,7 @@ import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { Common, DatabaseHelper, Telemetry } from '../../../../helpers';
 import { RdiApiRequests } from '../../../../helpers/api/api-rdi';
 import { goBackHistory } from '../../../../helpers/utils';
+import { RdiInstance } from '../../../../pageObjects/dialogs/add-rdi-instance-dialog';
 
 const rdiInstancesListPage = new RdiInstancesListPage();
 const browserActions = new BrowserActions();
@@ -75,34 +75,34 @@ fixture.skip `Rdi instance`
 
     });
 test('Verify that user can add and remove RDI', async() => {
-    await t.click(rdiInstancesListPage.rdiInstanceButton);
+    await t.click(rdiInstancesListPage.addRdiInstanceButton);
     // Verify that URL input contains placeholder "Enter the RDI host IP as: https://[IP-Address]" on adding RDI panel
-    await t.expect(rdiInstancesListPage.AddRdiInstance.urlInput.getAttribute('placeholder')).eql('Enter the RDI host IP as: https://[IP-Address]', 'Invalid placeholder for URL input');
+    await t.expect(rdiInstancesListPage.AddRdiInstanceDialog.urlInput.getAttribute('placeholder')).eql('Enter the RDI host IP as: https://[IP-Address]', 'Invalid placeholder for URL input');
     // Verify that URL input contains icon with tooltip "The RDI machine servers REST API via port 443. Ensure that Redis Insight can access the RDI host over port 443." on adding RDI panel
-    await t.hover(rdiInstancesListPage.AddRdiInstance.urlInputInfoIcon);
+    await t.hover(rdiInstancesListPage.AddRdiInstanceDialog.urlInputInfoIcon);
     await browserActions.verifyTooltipContainsText(urlTooltipText, true);
 
     // Verify that Username input default value prepopulated by "default" on adding RDI panel
-    await t.expect(rdiInstancesListPage.AddRdiInstance.usernameInput.textContent).eql('default', 'No default value for username');
-    await t.typeText(rdiInstancesListPage.AddRdiInstance.usernameInput, '');
+    await t.expect(rdiInstancesListPage.AddRdiInstanceDialog.usernameInput.textContent).eql('default', 'No default value for username');
+    await t.typeText(rdiInstancesListPage.AddRdiInstanceDialog.usernameInput, '');
     // Verify that Username input contains placeholder "Enter the RDI Redis username" on adding RDI panel
-    await t.expect(rdiInstancesListPage.AddRdiInstance.usernameInput.getAttribute('placeholder')).eql('Enter the RDI Redis username', 'Invalid placeholder for Username input');
+    await t.expect(rdiInstancesListPage.AddRdiInstanceDialog.usernameInput.getAttribute('placeholder')).eql('Enter the RDI Redis username', 'Invalid placeholder for Username input');
     // Verify that Username input contains icon with tooltip "The RDI REST API authentication is using the RDI REDIS username and password." on adding RDI panel
-    await t.hover(rdiInstancesListPage.AddRdiInstance.usernameInputInfoIcon);
+    await t.hover(rdiInstancesListPage.AddRdiInstanceDialog.usernameInputInfoIcon);
     await browserActions.verifyTooltipContainsText(usernameTooltipText, true);
 
     // Verify that Password input contains placeholder "Enter the RDI Redis password" on adding RDI panel
-    await t.expect(rdiInstancesListPage.AddRdiInstance.passwordInput.getAttribute('placeholder')).eql('Enter the RDI Redis password', 'Invalid placeholder for Password input');
+    await t.expect(rdiInstancesListPage.AddRdiInstanceDialog.passwordInput.getAttribute('placeholder')).eql('Enter the RDI Redis password', 'Invalid placeholder for Password input');
     // Verify that Password input contains icon with tooltip "The RDI REST API authentication is using the RDI REDIS username and password." on adding RDI panel
-    await t.hover(rdiInstancesListPage.AddRdiInstance.passwordInputInfoIcon);
+    await t.hover(rdiInstancesListPage.AddRdiInstanceDialog.passwordInputInfoIcon);
     await browserActions.verifyTooltipContainsText(passwordTooltipText, true);
 
     await t
-        .typeText(rdiInstancesListPage.AddRdiInstance.rdiAliasInput, rdiInstance.alias)
-        .typeText(rdiInstancesListPage.AddRdiInstance.urlInput, rdiInstance.url)
-        .typeText(rdiInstancesListPage.AddRdiInstance.usernameInput, rdiInstance.username as string)
-        .typeText(rdiInstancesListPage.AddRdiInstance.passwordInput, rdiInstance.password as string);
-    await t.click(rdiInstancesListPage.AddRdiInstance.addInstanceButton);
+        .typeText(rdiInstancesListPage.AddRdiInstanceDialog.rdiAliasInput, rdiInstance.alias)
+        .typeText(rdiInstancesListPage.AddRdiInstanceDialog.urlInput, rdiInstance.url)
+        .typeText(rdiInstancesListPage.AddRdiInstanceDialog.usernameInput, rdiInstance.username as string)
+        .typeText(rdiInstancesListPage.AddRdiInstanceDialog.passwordInput, rdiInstance.password as string);
+    await t.click(rdiInstancesListPage.AddRdiInstanceDialog.addInstanceButton);
     const addRdiInstance = await rdiInstancesListPage.getRdiInstanceValuesByIndex(0);
 
     await t.expect(addRdiInstance.alias).eql(rdiInstance.alias, 'added alias is not corrected');
@@ -170,20 +170,20 @@ test('Verify that user has the same sorting if db name is changed', async t => {
     let actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByAliasType);
     // Change DB name insides of sorted list
-    await rdiInstancesListPage.editRdiByName(rdiInstance.alias);
+    await rdiInstancesListPage.clickEditRdiByName(rdiInstance.alias);
     // Verify that inputs info is displayed on Edit RDI panel
-    await t.expect(rdiInstancesListPage.AddRdiInstance.urlInput.getAttribute('placeholder')).eql('Enter the RDI host IP as: https://[IP-Address]', 'Invalid placeholder for URL input');
-    await t.hover(rdiInstancesListPage.AddRdiInstance.urlInputInfoIcon);
+    await t.expect(rdiInstancesListPage.AddRdiInstanceDialog.urlInput.getAttribute('placeholder')).eql('Enter the RDI host IP as: https://[IP-Address]', 'Invalid placeholder for URL input');
+    await t.hover(rdiInstancesListPage.AddRdiInstanceDialog.urlInputInfoIcon);
     await browserActions.verifyTooltipContainsText(urlTooltipText, true);
-    await t.expect(rdiInstancesListPage.AddRdiInstance.usernameInput.getAttribute('placeholder')).eql('Enter the RDI Redis username', 'Invalid placeholder for Username input');
-    await t.hover(rdiInstancesListPage.AddRdiInstance.usernameInputInfoIcon);
+    await t.expect(rdiInstancesListPage.AddRdiInstanceDialog.usernameInput.getAttribute('placeholder')).eql('Enter the RDI Redis username', 'Invalid placeholder for Username input');
+    await t.hover(rdiInstancesListPage.AddRdiInstanceDialog.usernameInputInfoIcon);
     await browserActions.verifyTooltipContainsText(usernameTooltipText, true);
-    await t.expect(rdiInstancesListPage.AddRdiInstance.passwordInput.getAttribute('placeholder')).eql('Enter the RDI Redis password', 'Invalid placeholder for Password input');
-    await t.hover(rdiInstancesListPage.AddRdiInstance.passwordInputInfoIcon);
+    await t.expect(rdiInstancesListPage.AddRdiInstanceDialog.passwordInput.getAttribute('placeholder')).eql('Enter the RDI Redis password', 'Invalid placeholder for Password input');
+    await t.hover(rdiInstancesListPage.AddRdiInstanceDialog.passwordInputInfoIcon);
     await browserActions.verifyTooltipContainsText(passwordTooltipText, true);
 
-    await t.typeText(rdiInstancesListPage.AddRdiInstance.rdiAliasInput, newAliasName, { replace: true });
-    await t.click(rdiInstancesListPage.AddRdiInstance.addInstanceButton);
+    await t.typeText(rdiInstancesListPage.AddRdiInstanceDialog.rdiAliasInput, newAliasName, { replace: true });
+    await t.click(rdiInstancesListPage.AddRdiInstanceDialog.addInstanceButton);
 
     rdiInstance.alias = newAliasName;
     const addRdiInstance = await rdiInstancesListPage.getRdiInstanceValuesByIndex(1);
@@ -203,10 +203,10 @@ test('Verify that button is displayed if user does not enter all mandatory infor
         'URL'
     ];
 
-    await t.click(rdiInstancesListPage.rdiInstanceButton);
-    await t.typeText(rdiInstancesListPage.AddRdiInstance.rdiAliasInput, rdiInstance.alias);
+    await t.click(rdiInstancesListPage.addRdiInstanceButton);
+    await t.typeText(rdiInstancesListPage.AddRdiInstanceDialog.rdiAliasInput, rdiInstance.alias);
 
-    await t.click(rdiInstancesListPage.AddRdiInstance.addInstanceButton);
+    await t.click(rdiInstancesListPage.AddRdiInstanceDialog.addInstanceButton);
 
     for (const text of tooltipText) {
         await browserActions.verifyTooltipContainsText(text, true);
@@ -219,8 +219,8 @@ test('Verify that user can see the Redis Data Integration message on the empty R
     await t.expect(rdiInstancesListPage.emptyRdiList.withText(noInstancesMessage).exists).ok('Empty RDI page message not displayed');
 
     await t.click(rdiInstancesListPage.addRdiFromEmptyListBtn);
-    await t.expect(rdiInstancesListPage.AddRdiInstance.connectToRdiForm.exists).ok('Add rdi form not opened');
-    await t.click(rdiInstancesListPage.AddRdiInstance.cancelInstanceBtn);
+    await t.expect(rdiInstancesListPage.AddRdiInstanceDialog.connectToRdiForm.exists).ok('Add rdi form not opened');
+    await t.click(rdiInstancesListPage.AddRdiInstanceDialog.cancelInstanceBtn);
 
     await t.click(rdiInstancesListPage.quickstartBtn);
     await Common.checkURL(externalPageLink);

@@ -12,6 +12,7 @@ import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/mod
 import { stringToBuffer } from 'uiSrc/utils'
 import { IJSONData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
 import RejsonDetails from './rejson-details'
+import { parseJsonData } from './utils'
 
 import styles from './styles.module.scss'
 
@@ -25,6 +26,8 @@ const RejsonDetailsWrapper = (props: Props) => {
   const { viewType } = useSelector(keysSelector)
 
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
+
+  const updatedData = parseJsonData(data)
 
   useEffect(() => {
     setExpandedRows(new Set())
@@ -96,11 +99,11 @@ const RejsonDetailsWrapper = (props: Props) => {
                 data-testid="progress-key-json"
               />
             )}
-            {!isUndefined(data) && (
+            {!isUndefined(updatedData) && (
               <RejsonDetails
                 selectedKey={selectedKey || stringToBuffer('')}
                 dataType={type || ''}
-                data={data as IJSONData}
+                data={updatedData as IJSONData}
                 length={length}
                 parentPath={path}
                 expandedRows={expandedRows}

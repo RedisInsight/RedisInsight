@@ -61,6 +61,14 @@ export default defineConfig({
       'monaco-editor',
       'monaco-yaml/yaml.worker',
     ],
+    exclude: [
+      'react-json-tree',
+      'redisinsight-plugin-sdk',
+      'plotly.js-dist-min',
+      '@antv/x6',
+      '@antv/x6-react-shape',
+      '@antv/hierarchy'
+    ],
     esbuildOptions: {
       // fix for https://github.com/bvaughn/react-virtualized/issues/1722
       plugins: [fixReactVirtualized],

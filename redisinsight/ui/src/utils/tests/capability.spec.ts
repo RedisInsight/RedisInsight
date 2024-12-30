@@ -16,8 +16,8 @@ describe('getSourceTutorialByCapability', () => {
 })
 
 const emptyCapability = { name: '', telemetryName: '', path: null, }
-const searchCapability = { name: 'Redis Query Engine capability', telemetryName: 'searchAndQuery', path: null, }
-const jsonCapability = { name: 'JSON capability', telemetryName: 'JSON', path: null, }
+const searchCapability = { name: 'Redis Query Engine', telemetryName: 'searchAndQuery', path: null, }
+const jsonCapability = { name: 'JSON data structure', telemetryName: 'JSON', path: null, }
 const tsCapability = { name: 'Time series data structure', telemetryName: 'timeSeries', path: null, }
 const bloomCapability = { name: 'Probabilistic data structures', telemetryName: 'probabilistic', path: null, }
 

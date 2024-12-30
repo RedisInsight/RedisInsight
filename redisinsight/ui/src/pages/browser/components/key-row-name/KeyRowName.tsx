@@ -11,12 +11,13 @@ import styles from './styles.module.scss'
 
 export interface Props {
   nameString: Maybe<string>
+  shortName: Maybe<string>
 }
 
 const KeyRowName = (props: Props) => {
-  const { nameString } = props
+  const { nameString, shortName } = props
 
-  if (isUndefined(nameString)) {
+  if (isUndefined(shortName)) {
     return (
       <EuiLoadingContent
         lines={1}
@@ -27,13 +28,13 @@ const KeyRowName = (props: Props) => {
   }
 
   // Better to cut the long string, because it could affect virtual scroll performance
-  const nameContent = replaceSpaces(nameString?.substring?.(0, 200))
+  const nameContent = replaceSpaces(shortName?.substring?.(0, 200))
   const nameTooltipContent = formatLongName(nameString)
 
   return (
     <div className={styles.keyName}>
       <EuiText color="subdued" size="s" style={{ maxWidth: '100%', display: 'flex' }}>
-        <div style={{ display: 'flex' }} className="truncateText" data-testid={`key-${nameString}`}>
+        <div style={{ display: 'flex' }} className="truncateText" data-testid={`key-${shortName}`}>
           <EuiToolTip
             title="Key Name"
             className={styles.tooltip}

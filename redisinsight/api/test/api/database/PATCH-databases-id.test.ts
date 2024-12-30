@@ -233,7 +233,7 @@ describe(`PATCH /databases/:id`, () => {
           after: async () => {
             newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
             expect(newDatabase).to.contain({
-              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'timeout', 'compressor', 'version']),
+              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'timeout', 'compressor', 'version', 'createdAt']),
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
             });

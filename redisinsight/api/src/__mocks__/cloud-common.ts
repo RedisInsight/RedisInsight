@@ -1,9 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CustomErrorCodes } from 'src/constants';
 
 export const mockCapiUnauthorizedError = {
-  message: 'Request failed with status code 401',
+  message: 'Custom unauthorized message',
   response: {
     status: 401,
   },
@@ -12,14 +11,14 @@ export const mockCapiUnauthorizedError = {
 export const mockSmApiUnauthorizedError = mockCapiUnauthorizedError;
 
 export const mockSmApiInternalServerError = {
-  message: 'Something wrong',
+  message: 'Custom server error message',
   response: {
     status: 500,
   },
 };
 
 export const mockSmApiBadRequestError = {
-  message: 'Bad Request',
+  message: 'Custom bad request message',
   response: {
     status: 400,
   },
@@ -34,13 +33,13 @@ export const mockUtm = {
 export const mockCloudApiUnauthorizedExceptionResponse = {
   error: 'CloudApiUnauthorized',
   errorCode: CustomErrorCodes.CloudApiUnauthorized,
-  message: ERROR_MESSAGES.UNAUTHORIZED,
+  message: mockCapiUnauthorizedError.message,
   statusCode: HttpStatus.UNAUTHORIZED,
 };
 
 export const mockCloudApiBadRequestExceptionResponse = {
   error: 'CloudApiBadRequest',
   errorCode: CustomErrorCodes.CloudApiBadRequest,
-  message: ERROR_MESSAGES.BAD_REQUEST,
+  message: mockSmApiBadRequestError.message,
   statusCode: HttpStatus.BAD_REQUEST,
 };

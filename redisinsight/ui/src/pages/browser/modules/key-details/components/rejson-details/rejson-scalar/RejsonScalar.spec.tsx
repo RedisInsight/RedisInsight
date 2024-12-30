@@ -101,4 +101,44 @@ describe('JSONScalar', () => {
 
     expect(handleEdit).not.toBeCalled()
   })
+
+  it('should render BigInt value when root', () => {
+    render(<RejsonScalar
+      {...instance(mockedProps)}
+      isRoot
+      value={BigInt('1188950299261208742')}
+    />)
+
+    expect(screen.getByText('1188950299261208742')).toBeInTheDocument()
+  })
+
+  it('should render BigInt value when not root', () => {
+    render(<RejsonScalar
+      {...instance(mockedProps)}
+      isRoot={false}
+      value={BigInt('1188950299261208742')}
+    />)
+
+    expect(screen.getByTestId('json-scalar-value')).toHaveTextContent('1188950299261208742')
+  })
+
+  it('should render regular number without n suffix', () => {
+    render(<RejsonScalar
+      {...instance(mockedProps)}
+      isRoot
+      value={123}
+    />)
+
+    expect(screen.getByText('123')).toBeInTheDocument()
+  })
+
+  it('should render string value with quotes', () => {
+    render(<RejsonScalar
+      {...instance(mockedProps)}
+      isRoot
+      value="test"
+    />)
+
+    expect(screen.getByText('"test"')).toBeInTheDocument()
+  })
 })

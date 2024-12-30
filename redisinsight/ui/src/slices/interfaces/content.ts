@@ -1,7 +1,7 @@
 import { Theme } from 'uiSrc/constants'
 
 export interface StateContentCreateRedis {
-  data: Record<string, ContentCreateRedis>
+  data: Record<string, ContentCreateRedis | Record<string, any>>
   loading: boolean
   error: string
 }

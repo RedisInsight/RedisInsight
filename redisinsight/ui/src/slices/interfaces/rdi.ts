@@ -213,6 +213,14 @@ export interface RdiInstance extends RdiInstanceResponse {
   error: string
 }
 
+export interface IErrorData {
+  message: string
+  statusCode: number
+  error: string
+  errorCode?: number
+  errors?: string[]
+}
+
 export interface InitialStateRdiInstances {
   loading: boolean
   error: string

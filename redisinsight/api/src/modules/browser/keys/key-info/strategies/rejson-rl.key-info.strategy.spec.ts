@@ -35,7 +35,6 @@ describe('RejsonRlKeyInfoStrategy', () => {
 
   describe('getInfo', () => {
     const key = getKeyInfoResponse.name;
-    const path = '.';
     beforeEach(() => {
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
@@ -48,13 +47,13 @@ describe('RejsonRlKeyInfoStrategy', () => {
         ]);
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(
-          [BrowserToolRejsonRlCommands.JsonType, key, path],
+          [BrowserToolRejsonRlCommands.JsonType, key],
           { replyEncoding: 'utf8' },
         )
         .mockResolvedValue('object');
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(
-          [BrowserToolRejsonRlCommands.JsonObjLen, key, path],
+          [BrowserToolRejsonRlCommands.JsonObjLen, key],
           { replyEncoding: 'utf8' },
         )
         .mockResolvedValue(10);
@@ -71,13 +70,13 @@ describe('RejsonRlKeyInfoStrategy', () => {
     it('should return appropriate value for key that store string', async () => {
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(
-          [BrowserToolRejsonRlCommands.JsonType, key, path],
+          [BrowserToolRejsonRlCommands.JsonType, key],
           { replyEncoding: 'utf8' },
         )
         .mockResolvedValue('string');
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(
-          [BrowserToolRejsonRlCommands.JsonStrLen, key, path],
+          [BrowserToolRejsonRlCommands.JsonStrLen, key],
           { replyEncoding: 'utf8' },
         )
         .mockResolvedValue(10);
@@ -93,13 +92,13 @@ describe('RejsonRlKeyInfoStrategy', () => {
     it('should return appropriate value for key that store array', async () => {
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(
-          [BrowserToolRejsonRlCommands.JsonType, key, path],
+          [BrowserToolRejsonRlCommands.JsonType, key],
           { replyEncoding: 'utf8' },
         )
         .mockResolvedValue('array');
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(
-          [BrowserToolRejsonRlCommands.JsonArrLen, key, path],
+          [BrowserToolRejsonRlCommands.JsonArrLen, key],
           { replyEncoding: 'utf8' },
         )
         .mockResolvedValue(10);
@@ -115,7 +114,7 @@ describe('RejsonRlKeyInfoStrategy', () => {
     it('should return appropriate value for key that store not iterable type', async () => {
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(
-          [BrowserToolRejsonRlCommands.JsonType, key, path],
+          [BrowserToolRejsonRlCommands.JsonType, key],
           { replyEncoding: 'utf8' },
         )
         .mockResolvedValue('boolean');

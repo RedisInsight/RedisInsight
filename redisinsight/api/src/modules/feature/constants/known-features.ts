@@ -39,4 +39,8 @@ export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
     name: KnownFeatures.Rdi,
     storage: FeatureStorage.Database,
   },
+  [KnownFeatures.EnhancedCloudUI]: {
+    name: KnownFeatures.EnhancedCloudUI,
+    storage: FeatureStorage.Database,
+  },
 };

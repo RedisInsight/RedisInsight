@@ -184,6 +184,7 @@ export class DatabaseService {
           database,
         );
         const redisInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
+
         this.analytics.sendInstanceAddedEvent(database, redisInfo);
         await client.disconnect();
       } catch (e) {
@@ -294,7 +295,7 @@ export class DatabaseService {
   public async clone(sessionMetadata: SessionMetadata, id: string, dto: UpdateDatabaseDto): Promise<Database> {
     this.logger.log('Clone existing database');
     const database = await this.merge(
-      await this.get(sessionMetadata, id, false, ['id', 'sshOptions.id']),
+      await this.get(sessionMetadata, id, false, ['id', 'sshOptions.id', 'createdAt']),
       dto,
     );
     if (DatabaseService.isConnectionAffected(dto)) {

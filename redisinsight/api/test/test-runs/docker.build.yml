@@ -16,6 +16,7 @@ services:
     volumes:
       - ${COV_FOLDER}:/usr/src/app/coverage
       - ${COV_FOLDER}:/root/.redisinsight-v2.0
+      - ${COV_FOLDER}:/data
     depends_on:
       - redis
       - app
@@ -35,6 +36,7 @@ services:
       - redis
     volumes:
       - ${COV_FOLDER}:/root/.redisinsight-v2.0
+      - ${COV_FOLDER}:/data
     environment:
       RI_REDIS_CLIENTS_FORCE_STRATEGY: ${RI_REDIS_CLIENTS_FORCE_STRATEGY}
       CERTS_FOLDER: "/root/.redisinsight-v2.0"

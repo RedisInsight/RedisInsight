@@ -13,6 +13,7 @@ fixture `tls certificates`
     .meta({ type: 'regression', rte: rte.none })
     .page(commonUrl)
     .beforeEach(async() => {
+        await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneTlsConfig);
@@ -20,8 +21,7 @@ fixture `tls certificates`
     })
     .afterEach(async() => {
         // Delete database
-        await databaseHelper.deleteDatabase(ossStandaloneTlsConfig.databaseName);
-        await databaseHelper.deleteDatabase(ossStandaloneConfig.databaseName);
+        await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Verify that user can remove added certificates', async t => {
     await t.click(browserPage.NavigationPanel.myRedisDBButton);
@@ -52,7 +52,7 @@ test('Verify that user can remove added certificates', async t => {
     await myRedisDatabasePage.reloadPage();
 
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName!);
-    
+
     await t.click(browserPage.NavigationPanel.myRedisDBButton);
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneTlsConfig.databaseName);
     await t.expect(browserPage.Toast.toastError.textContent).contains('CA or Client certificate', 'user can connect to db without certificates');

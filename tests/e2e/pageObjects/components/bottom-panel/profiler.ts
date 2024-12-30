@@ -30,12 +30,13 @@ export class Profiler {
      * @param command A command which should be displayed in monitor
      * @param parameters An arguments which should be displayed in monitor
      * @param expected specify is the command is present or not
+     * @param timeout timeout
      */
-    async checkCommandInMonitorResults(command: string, parameters?: string[], expected: boolean = true): Promise<void> {
+    async checkCommandInMonitorResults(command: string, parameters?: string[], expected: boolean = true, timeout: number = 6000): Promise<void> {
         const commandArray = command.split(' ');
         for (const value of commandArray) {
             if(expected){
-                await t.expect(this.monitorCommandLinePart.withText(value).exists).ok({ timeout: 6000 });
+                await t.expect(this.monitorCommandLinePart.withText(value).exists).ok({ timeout: timeout });
             }
             else {
                 await t.expect(this.monitorCommandLinePart.withText(value).exists).notOk({ timeout: 1000 });
@@ -43,7 +44,7 @@ export class Profiler {
         }
         if (!!parameters) {
             for (const argument of parameters) {
-                await t.expect(this.monitorCommandLinePart.withText(argument).exists).ok({ timeout: 6000 });
+                await t.expect(this.monitorCommandLinePart.withText(argument).exists).ok({ timeout: timeout });
             }
         }
     }

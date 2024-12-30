@@ -185,13 +185,14 @@ test
     .after(async() => {
         // Delete databases
         await databaseAPIRequests.deleteStandaloneDatabaseApi(sshDbClusterPass);
-    })('Adding OSS Cluster database with SSH', async() => {
+    })('Adding OSS Cluster database with SSH', async t => {
         const sshWithPass = {
             ...sshParams,
             sshPassword: 'pass'
         };
         // Verify that user can add SSH tunnel with Password for OSS Cluster database
         await myRedisDatabasePage.AddRedisDatabaseDialog.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
+        await t.wait(6000)
         await myRedisDatabasePage.clickOnDBByName(sshDbClusterPass.databaseName);
         await Common.checkURLContainsText('browser');
     });

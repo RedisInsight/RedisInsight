@@ -4,10 +4,11 @@ import {
   EuiTableFieldDataColumnType,
   EuiTableSelectionType,
   PropertySort,
+  EuiBasicTableProps
 } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useRef, useState } from 'react'
-import { Maybe, Nullable } from 'uiSrc/utils'
+import { Maybe } from 'uiSrc/utils'
 import { findColumn, getColumnWidth, hideColumn } from './utils'
 
 import { ActionBar, DeleteAction, ExportAction } from './components'
@@ -16,13 +17,14 @@ import styles from './styles.module.scss'
 
 export interface Props<T> {
   width: number
-  editedInstance: Nullable<T>
   columns: EuiTableFieldDataColumnType<T>[]
   columnsToHide?: string[]
   onDelete: (ids: T[]) => void
   hideExport?: boolean
   onExport?: (ids: T[], withSecrets: boolean) => void
   onWheel: () => void
+  rowProps?: EuiBasicTableProps<T>['rowProps']
+  getSelectableItems?: (item: T) => boolean
   loading: boolean
   data: T[]
   onTableChange: ({ sort, page }: Criteria<T>) => void
@@ -37,7 +39,8 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   hideExport = false,
   onExport,
   onWheel,
-  editedInstance,
+  rowProps,
+  getSelectableItems,
   loading,
   data: instances,
   onTableChange,
@@ -143,7 +146,10 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   }
 
   const selectionValue: EuiTableSelectionType<T> = {
-    onSelectionChange: (selected: T[]) => setSelection(selected)
+    selectable: (item) => (getSelectableItems ? getSelectableItems?.(item) : true),
+    onSelectionChange: (selected: T[]) => {
+      setSelection(selected)
+    }
   }
 
   const handleResetSelection = () => {
@@ -158,12 +164,6 @@ function ItemList<T extends { id: string; visible?: boolean }>({
     onExport?.(instances, withSecrets)
     tableRef.current?.setSelection([])
   }
-
-  const toggleSelectedRow = (instance: T) => ({
-    className: cx({
-      'euiTableRow-isSelected': instance?.id === editedInstance?.id
-    })
-  })
 
   const actionMsg = (action: string) => `
     Selected
@@ -183,7 +183,7 @@ function ItemList<T extends { id: string; visible?: boolean }>({
         loading={loading}
         message={message}
         columns={columns ?? []}
-        rowProps={toggleSelectedRow}
+        rowProps={rowProps}
         sorting={{ sort }}
         selection={selectionValue}
         onWheel={onWheel}

@@ -61,6 +61,14 @@ export default defineConfig({
       'monaco-editor',
       'monaco-yaml/yaml.worker',
     ],
+    exclude: [
+      'react-json-tree',
+      'redisinsight-plugin-sdk',
+      'plotly.js-dist-min',
+      '@antv/x6',
+      '@antv/x6-react-shape',
+      '@antv/hierarchy'
+    ],
     esbuildOptions: {
       // fix for https://github.com/bvaughn/react-virtualized/issues/1722
       plugins: [fixReactVirtualized],
@@ -123,8 +131,8 @@ export default defineConfig({
       RI_CONNECTIONS_TIMEOUT_DEFAULT: 30 * 1000,
       RI_HOSTED_API_BASE_URL: hostedApiBaseUrl,
       RI_CSRF_ENDPOINT: process.env.RI_CSRF_ENDPOINT,
-      RI_DATABASE_OVERVIEW_REFRESH_INTERVAL: 5000,
-      RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL: 5, // in seconds
+      RI_DATABASE_OVERVIEW_REFRESH_INTERVAL: 5,
+      RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL: 1, // in seconds
     },
   },
   // hack: apply proxy path to monaco webworker

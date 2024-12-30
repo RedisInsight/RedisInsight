@@ -105,5 +105,5 @@ test('Verify that confirmation message is displayed, if there are unsaved change
     await rdiInstancePage.setTemplateDropdownValue(RdiTemplateDatabaseType.MySql);
     await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
     await t.click(rdiInstancePage.proceedNavigateDialog);
-    await t.expect(rdiInstancesListPage.rdiInstanceButton.exists).ok('the user is not navigated to the panel');
+    await t.expect(rdiInstancesListPage.addRdiInstanceButton.exists).ok('the user is not navigated to the panel');
 });

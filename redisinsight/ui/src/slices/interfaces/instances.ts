@@ -307,6 +307,7 @@ export interface DatabaseConfigInfo {
   networkInKbps?: Nullable<number>
   networkOutKbps?: Nullable<number>
   cpuUsagePercentage?: Nullable<number>
+  serverName?: Nullable<string>
 }
 
 export interface InitialStateInstances {
@@ -492,7 +493,7 @@ export interface ICredentialsRedisCloud {
 export enum InstanceType {
   Standalone = 'Redis Database',
   RedisCloudPro = 'Redis Cloud',
-  RedisEnterpriseCluster = 'Redis Enterprise Cluster',
+  RedisEnterpriseCluster = 'Enterprise Software',
   AWSElasticache = 'AWS Elasticache',
-  Sentinel = 'Redis Sentinel',
+  Sentinel = 'Sentinel',
 }

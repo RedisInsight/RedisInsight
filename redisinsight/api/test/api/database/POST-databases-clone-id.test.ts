@@ -161,7 +161,7 @@ describe(`POST /databases/clone/:id`, () => {
           after: async () => {
             newDatabase = await localDb.getInstanceByName('some name');
             expect(newDatabase).to.contain({
-              ..._.omit(oldDatabase, ['id', 'modules', 'name', 'provider', 'lastConnection', 'new', 'timeout', 'compressor', 'version']),
+              ..._.omit(oldDatabase, ['id', 'modules', 'name', 'provider', 'lastConnection', 'new', 'timeout', 'compressor', 'version', 'createdAt']),
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
             });

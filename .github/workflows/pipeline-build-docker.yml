@@ -7,8 +7,8 @@ on:
         default: 'staging'
         type: string
 
-      only_docker:
-        description: Build only docker
+      for_e2e_tests:
+        description: Build for e2e docker tests
         default: false
         type: boolean
 
@@ -45,7 +45,16 @@ jobs:
       run: ./.github/build/build.sh
 
       # todo: matrix
+    - name: Build web archives for e2e tests
+      if: inputs.for_e2e_tests
+      run: |
+        unset npm_config_keytar_binary_host_mirror
+        unset npm_config_node_sqlite3_binary_host_mirror
+        # Docker sources
+        PLATFORM=linux ARCH=x64 LIBC=musl .github/build/build_modules.sh
+
     - name: Build web archives
+      if: ${{ !inputs.for_e2e_tests }}
       run: |
         unset npm_config_keytar_binary_host_mirror
         unset npm_config_node_sqlite3_binary_host_mirror
@@ -60,10 +69,8 @@ jobs:
         PLATFORM=darwin ARCH=arm64 .github/build/build_modules.sh
         # VSC Windows
         PLATFORM=win32 ARCH=x64 .github/build/build_modules.sh
-    - name: Build Docker (x64, arm64)
-      env:
-        ENV: ${{ vars.ENV }}
-        RI_SEGMENT_WRITE_KEY: ${{ secrets.RI_SEGMENT_WRITE_KEY }}
+
+    - name: Build Docker (x64)
       run: |
         # Build alpine x64 image
         docker buildx build \
@@ -75,6 +82,12 @@ jobs:
         -t redisinsight:amd64 \
         .
 
+        mkdir -p release/docker
+        docker image save -o release/docker/docker-linux-alpine.amd64.tar redisinsight:amd64
+
+    - name: Build Docker (arm64)
+      if: ${{ !inputs.for_e2e_tests }}
+      run: |
         # Build alpine arm64 image
         docker buildx build \
         -f .github/build/build.Dockerfile \
@@ -86,7 +99,6 @@ jobs:
         .
 
         mkdir -p release/docker
-        docker image save -o release/docker/docker-linux-alpine.amd64.tar redisinsight:amd64
         docker image save -o release/docker/docker-linux-alpine.arm64.tar redisinsight:arm64
 
     - uses: actions/upload-artifact@v4
@@ -100,6 +112,7 @@ jobs:
           ./release/web-mini
 
     env:
+      ENV: ${{ vars.ENV }}
       RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}
       RI_AI_QUERY_PASS: ${{ secrets.RI_AI_QUERY_PASS }}
       RI_AI_QUERY_USER: ${{ secrets.RI_AI_QUERY_USER }}

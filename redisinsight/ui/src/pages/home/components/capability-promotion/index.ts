@@ -1,1 +1,0 @@
-export { CapabilityPromotion } from './CapabilityPromotion'

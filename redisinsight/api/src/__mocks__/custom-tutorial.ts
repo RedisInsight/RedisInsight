@@ -143,7 +143,7 @@ export const globalCustomTutorialManifest = {
   _actions: [CustomTutorialActions.CREATE],
   args: {
     withBorder: true,
-    initialIsOpen: true,
+    initialIsOpen: false,
   },
   children: [
     mockCustomTutorialManifest,

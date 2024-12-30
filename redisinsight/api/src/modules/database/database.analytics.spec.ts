@@ -57,6 +57,7 @@ describe('DatabaseAnalytics', () => {
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           databaseIndex: 0,
           useDecompression: mockDatabaseWithTlsAuth.compressor,
+          serverName: 'valkey',
           ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
@@ -88,6 +89,7 @@ describe('DatabaseAnalytics', () => {
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           databaseIndex: 0,
           useDecompression: mockDatabaseWithTlsAuth.compressor,
+          serverName: 'valkey',
           ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
@@ -127,6 +129,7 @@ describe('DatabaseAnalytics', () => {
             version: 20000,
           },
           customModules: [{ name: 'rediSQL', version: 1 }],
+          serverName: null,
         },
       );
     });
@@ -166,6 +169,7 @@ describe('DatabaseAnalytics', () => {
             version: 20000,
           },
           customModules: [{ name: 'rediSQL', version: 1 }],
+          serverName: null,
         },
       );
     });

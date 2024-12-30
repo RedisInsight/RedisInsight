@@ -65,7 +65,7 @@ const Table = (props: Props) => {
 
   const handleRedirect = (name: string) => {
     dispatch(changeSearchMode(SearchMode.Pattern))
-    dispatch(setBrowserTreeDelimiter(delimiter))
+    dispatch(setBrowserTreeDelimiter([{ label: delimiter }]))
     dispatch(setFilter(null))
     dispatch(setSearchMatch(name, SearchMode.Pattern))
     dispatch(resetKeysData(SearchMode.Pattern))

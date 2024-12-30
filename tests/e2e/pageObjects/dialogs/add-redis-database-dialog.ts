@@ -72,6 +72,8 @@ export class AddRedisDatabaseDialog {
     aiChatMessage = Selector('[data-testid=ai-chat-message-btn]');
     aiCloseMessage = Selector('[aria-label="Closes this modal window"]');
 
+    getDeleteCertificate = (certificate: TlsCertificates) => Selector(`[data-testid^=delete-${certificate}-cert]`);
+
     /**
      * Adding a new redis database
      * @param parameters the parameters of the database
@@ -266,7 +268,7 @@ export class AddRedisDatabaseDialog {
         const row =  Selector('button')
             .find('div')
             .withText(name);
-        const removeButton = `[data-testid^=delete-${certificate}-cert]`;
+        const removeButton = String(this.getDeleteCertificate(certificate));
         const removeButtonFooter = Selector('[class^=_popoverFooter]');
 
         if(certificate === TlsCertificates.CA){

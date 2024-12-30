@@ -27,6 +27,10 @@ test('Verify that user can remove added certificates', async t => {
     await t.click(browserPage.NavigationPanel.myRedisDBButton);
     await myRedisDatabasePage.clickOnEditDBByName(ossStandaloneTlsConfig.databaseName);
     await myRedisDatabasePage.AddRedisDatabaseDialog.removeCertificateButton(TlsCertificates.CA, 'ca');
+    // remove if other Certificates were added
+    if( await myRedisDatabasePage.AddRedisDatabaseDialog.getDeleteCertificate(TlsCertificates.CA).exists){
+        await myRedisDatabasePage.AddRedisDatabaseDialog.removeCertificateButton(TlsCertificates.CA, 'ca');
+    }
     await myRedisDatabasePage.reloadPage();
     // wait for dbs are displayed
     await t.expect(myRedisDatabasePage.dbNameList.count).gt(0);

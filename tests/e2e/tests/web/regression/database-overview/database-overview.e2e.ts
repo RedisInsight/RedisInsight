@@ -49,7 +49,7 @@ test('Verify that user can set overview refresh', async t => {
     const common_command = 'info';
 
     await t.click(browserPage.OverviewPanel.autoRefreshArrow);
-    await t.expect(browserPage.OverviewPanel.autoRefreshRateInput.textContent).eql('5000 s', 'default value is incorrect');
+    await t.expect(browserPage.OverviewPanel.autoRefreshRateInput.textContent).eql('5 s', 'default value is incorrect');
     await t.click(browserPage.OverviewPanel.autoRefreshCheckbox);
     //Start Monitor
     await browserPage.Profiler.startMonitor();

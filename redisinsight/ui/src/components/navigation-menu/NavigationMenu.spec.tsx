@@ -47,15 +47,6 @@ jest.mock('uiSrc/slices/rdi/instances', () => ({
   }),
 }))
 
-jest.mock('uiSrc/slices/app/features', () => ({
-  ...jest.requireActual('uiSrc/slices/app/features'),
-  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    appSettings: {
-      flag: true,
-    },
-  }),
-}))
-
 describe('NavigationMenu', () => {
   describe('without connectedInstance', () => {
     it('should render', () => {

@@ -24,10 +24,11 @@ export class DatabasesActions {
      */
     async importDatabase(fileParameters: ImportDatabaseParameters): Promise<void> {
         await t
-            .click(await myRedisDatabasePage.importDatabasesBtn)
+            .click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton)
+            .click(myRedisDatabasePage.importDatabasesBtn)
             .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [fileParameters.path])
-            .click(myRedisDatabasePage.submitImportBtn)
-            .expect(myRedisDatabasePage.importDialogTitle.textContent).eql('Import Results', `Databases from ${fileParameters.type} not imported`);
+            .click(myRedisDatabasePage.submitChangesButton)
+            .expect(myRedisDatabasePage.successResultsAccordion.exists).ok(`Databases from ${fileParameters.type} not imported`);
     }
 
     /**

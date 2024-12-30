@@ -80,7 +80,7 @@ export default {
     migrateOldFolders: process.env.RI_MIGRATE_OLD_FOLDERS ? process.env.RI_MIGRATE_OLD_FOLDERS === 'true' : true,
     autoBootstrap: process.env.RI_AUTO_BOOTSTRAP ? process.env.RI_AUTO_BOOTSTRAP === 'true' : true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.60.0',
+    appVersion: process.env.RI_APP_VERSION || '2.62.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -91,6 +91,8 @@ export default {
   },
   encryption: {
     keytar: process.env.RI_ENCRYPTION_KEYTAR ? process.env.RI_ENCRYPTION_KEYTAR === 'true' : true, // enabled by default
+    // !!! DO NOT CHANGE THIS VARIABLE FOR REDIS INSIGHT!!! MUST BE "redisinsight"!!! It's only for vscode extension
+    keytarService: process.env.RI_ENCRYPTION_KEYTAR_SERVICE || 'redisinsight',
     encryptionIV: process.env.RI_ENCRYPTION_IV || Buffer.alloc(16, 0),
     encryptionAlgorithm: process.env.RI_ENCRYPTION_ALGORYTHM || 'aes-256-cbc',
   },

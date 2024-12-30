@@ -15,6 +15,7 @@ import { getTotalKeys, convertMultilineReplyToObject } from 'src/modules/redis/u
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { ClientMetadata } from 'src/common/models';
 import { RedisClient, RedisClientConnectionType, RedisClientNodeRole } from 'src/modules/redis/client';
+import { DatabaseOverviewKeyspace } from '../constants/overview';
 
 @Injectable()
 export class DatabaseOverviewProvider {
@@ -24,10 +25,12 @@ export class DatabaseOverviewProvider {
    * Calculates redis database metrics based on connection type (eg Cluster or Standalone)
    * @param clientMetadata
    * @param client
+   * @param keyspace
    */
   async getOverview(
     clientMetadata: ClientMetadata,
     client: RedisClient,
+    keyspace: DatabaseOverviewKeyspace,
   ): Promise<DatabaseOverview> {
     let nodesInfo = [];
     let totalKeys;
@@ -42,13 +45,17 @@ export class DatabaseOverviewProvider {
       totalKeys = await this.calculateNodesTotalKeys(client);
     } else {
       nodesInfo = [await this.getNodeInfo(client)];
-      const [calculatedTotalKeys, calculatedTotalKeysPerDb] = this.calculateTotalKeys(nodesInfo, currentDbIndex);
+      const [
+        calculatedTotalKeys,
+        calculatedTotalKeysPerDb,
+      ] = this.calculateTotalKeys(nodesInfo, currentDbIndex, keyspace);
       totalKeys = calculatedTotalKeys;
       totalKeysPerDb = calculatedTotalKeysPerDb;
     }
 
     return {
       version: this.getVersion(nodesInfo),
+      serverName: this.getServerName(nodesInfo),
       totalKeys,
       totalKeysPerDb,
       usedMemory: this.calculateUsedMemory(nodesInfo),
@@ -118,6 +125,15 @@ export class DatabaseOverviewProvider {
    */
   private getVersion(nodes = []): string {
     return get(nodes, [0, 'server', 'redis_version'], null);
+  }
+
+  /**
+   * Get server_name from the first shard in the list
+   * @param nodes
+   * @private
+   */
+  private getServerName(nodes = []): string {
+    return get(nodes, [0, 'server', 'server_name'], null);
   }
 
   /**
@@ -209,9 +225,14 @@ export class DatabaseOverviewProvider {
    * In case when shard has multiple logical databases shard total keys = sum of all dbs keys
    * @param nodes
    * @param index
+   * @param keyspace
    * @private
    */
-  private calculateTotalKeys(nodes = [], index: number): [number, Record<string, number>] {
+  private calculateTotalKeys(
+    nodes = [],
+    index: number,
+    keyspace: DatabaseOverviewKeyspace,
+  ): [number, Record<string, number>] {
     try {
       const masterNodes = DatabaseOverviewProvider.getMasterNodesToWorkWith(nodes);
 
@@ -219,7 +240,7 @@ export class DatabaseOverviewProvider {
         return [undefined, undefined];
       }
 
-      const totalKeysPerDb = {};
+      const totalKeysPerDb: Record<string, number> = {};
 
       masterNodes.forEach((node) => {
         map(
@@ -238,7 +259,11 @@ export class DatabaseOverviewProvider {
 
       const totalKeys = totalKeysPerDb ? sum(Object.values(totalKeysPerDb)) : undefined;
       const dbIndexKeys = totalKeysPerDb[`db${index}`] || 0;
-      return [totalKeys, dbIndexKeys === totalKeys ? undefined : { [`db${index}`]: dbIndexKeys }];
+      const calculatedTotalKeysPerDb = keyspace === DatabaseOverviewKeyspace.Full
+        ? totalKeysPerDb
+        : { [`db${index}`]: dbIndexKeys };
+
+      return [totalKeys, dbIndexKeys === totalKeys ? undefined : calculatedTotalKeysPerDb];
     } catch (e) {
       return [null, null];
     }

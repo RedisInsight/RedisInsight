@@ -14,7 +14,6 @@ const define = {
 
 const external = [
   '@nestjs/microservices',
-  'class-transformer/storage',
   '@fastify/static',
   // packages with binaries
   ...Object.keys(dependencies),

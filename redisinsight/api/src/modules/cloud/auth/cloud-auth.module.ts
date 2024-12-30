@@ -6,6 +6,7 @@ import { SsoIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/ss
 import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 import { CloudAuthController } from 'src/modules/cloud/auth/cloud-auth.controller';
 import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics';
+import { TcpCloudAuthStrategy } from './auth-strategy/tcp-cloud.auth.strategy';
 
 @Module({
   imports: [CloudSessionModule],
@@ -15,8 +16,12 @@ import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics'
     SsoIdpCloudAuthStrategy,
     CloudAuthService,
     CloudAuthAnalytics,
+    ...(process.env.USE_TCP_CLOUD_AUTH === 'true' ? [TcpCloudAuthStrategy] : [])
   ],
   controllers: [CloudAuthController],
-  exports: [CloudAuthService],
+  exports: [
+    CloudAuthService,
+    ...(process.env.USE_TCP_CLOUD_AUTH === 'true' ? [TcpCloudAuthStrategy] : [])
+  ],
 })
-export class CloudAuthModule {}
+export class CloudAuthModule { }

@@ -47,6 +47,7 @@ export class CloudCapiKeyService {
       let currentAccount = CloudUserApiService.getCurrentAccount(user);
 
       if (!currentAccount) {
+        this.logger.error('Cannot get current account', sessionMetadata);
         throw new CloudApiBadRequestException('No active account');
       }
 
@@ -87,6 +88,7 @@ export class CloudCapiKeyService {
 
           this.analytics.sendCloudAccountKeyGenerated(sessionMetadata);
         } catch (e) {
+          this.logger.error('Failed to create new capi key', sessionMetadata, e);
           this.analytics.sendCloudAccountKeyGenerationFailed(sessionMetadata, e);
           throw e;
         }
@@ -94,6 +96,7 @@ export class CloudCapiKeyService {
 
       // Throw an error. User action required in this case
       if (capiKey.valid === false) {
+        this.logger.error('Capi key is not valid', sessionMetadata);
         return Promise.reject(new CloudCapiKeyUnauthorizedException(
           undefined,
           { resourceId: capiKey.id },
@@ -114,6 +117,7 @@ export class CloudCapiKeyService {
 
           this.analytics.sendCloudAccountSecretGenerated(sessionMetadata);
         } catch (e) {
+          this.logger.error('Failed create capi secret', sessionMetadata);
           this.analytics.sendCloudAccountSecretGenerationFailed(sessionMetadata, e);
           throw e;
         }

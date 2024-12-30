@@ -7,6 +7,7 @@ const endpoint = (id = constants.TEST_INSTANCE_ID) =>
 
 const responseSchema = Joi.object().keys({
   version: Joi.string().required(),
+  serverName: Joi.string().allow(null),
   totalKeys: Joi.number().integer().allow(null),
   totalKeysPerDb: Joi.object().allow(null),
   usedMemory: Joi.number().integer().allow(null),

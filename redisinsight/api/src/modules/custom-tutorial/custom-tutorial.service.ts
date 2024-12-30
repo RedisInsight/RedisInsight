@@ -153,7 +153,7 @@ export class CustomTutorialService {
       _actions: [CustomTutorialActions.CREATE],
       args: {
         withBorder: true,
-        initialIsOpen: true,
+        initialIsOpen: false,
       },
       children,
     };

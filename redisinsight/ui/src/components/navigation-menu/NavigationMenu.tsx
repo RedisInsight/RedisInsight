@@ -43,6 +43,7 @@ import { FeatureFlagComponent } from 'uiSrc/components'
 
 import { appContextSelector } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
+import CreateCloud from './components/create-cloud'
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
 
@@ -310,6 +311,7 @@ const NavigationMenu = () => {
       </div>
       <div className={styles.bottomContainer}>
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
+          <CreateCloud />
           <NotificationMenu />
         </FeatureFlagComponent>
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>

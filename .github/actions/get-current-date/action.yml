@@ -1,0 +1,17 @@
+name: Get current date
+
+outputs:
+  date:
+    description: Current date
+    value: ${{ steps.date.outputs.date }}
+
+runs:
+  using: 'composite'
+  steps:
+  - name: Get current date
+    id: date
+    shell: bash
+    run: |
+      DATE=$(date +'%Y-%m-%d')
+      echo "date=$DATE" >> $GITHUB_OUTPUT
+

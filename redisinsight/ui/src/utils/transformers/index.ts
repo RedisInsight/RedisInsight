@@ -11,6 +11,7 @@ export * from './extrapolation'
 export * from './transformQueryParams'
 export * from './getTruncatedName'
 export * from './transformRdiPipeline'
+export * from './browser'
 
 export {
   replaceSpaces,

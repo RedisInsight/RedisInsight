@@ -18,6 +18,13 @@ jobs:
       report: true
       short_rte_list: false
 
+  e2e-docker-nightly:
+    uses: ./.github/workflows/tests-e2e-docker.yml
+    needs: build-docker
+    secrets: inherit
+    with:
+      report: true
+
   # E2E tests
   build-appimage:
     uses: ./.github/workflows/pipeline-build-linux.yml
@@ -31,3 +38,7 @@ jobs:
     secrets: inherit
     with:
       report: true
+
+  clean-dev-s3:
+    uses: ./.github/workflows/clean-s3-dev-builds.yml
+    secrets: inherit

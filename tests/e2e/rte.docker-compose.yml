@@ -24,7 +24,7 @@ services:
   # ssh
   ssh:
     logging: *logging
-    image: lscr.io/linuxserver/openssh-server:latest
+    image: lscr.io/linuxserver/openssh-server:9.7_p1-r4-ls172
     environment:
       - PASSWORD_ACCESS=true
       - USER_PASSWORD=pass
@@ -95,7 +95,7 @@ services:
   # oss standalone v8
   oss-standalone-v8:
     logging: *logging
-    image: redis:8.0-M01
+    image: redis:8.0-M02
     ports:
       - 8109:6379
     networks:

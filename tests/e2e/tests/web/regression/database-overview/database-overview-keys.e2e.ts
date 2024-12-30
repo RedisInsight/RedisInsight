@@ -32,7 +32,7 @@ fixture `Database overview`
         await databaseHelper.acceptLicenseTermsAndAddDatabase(ossStandaloneRedisearch);
         await browserPage.addStringKey(keyName);
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneRedisearch, index);
+        await myRedisDatabasePage.AddRedisDatabaseDialog.addLogicalRedisDatabase(ossStandaloneRedisearch, index);
         await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [db${index}]`);
         keys = await Common.createArrayWithKeyValue(keysAmount);
         await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);

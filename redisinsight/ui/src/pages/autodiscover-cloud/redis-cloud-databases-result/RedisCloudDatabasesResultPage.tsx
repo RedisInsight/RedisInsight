@@ -173,7 +173,7 @@ const RedisCloudDatabasesResultPage = () => {
     {
       field: 'modules',
       className: 'column_modules',
-      name: 'Modules',
+      name: 'Capabilities',
       dataType: 'auto',
       align: 'left',
       width: '200px',

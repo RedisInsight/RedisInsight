@@ -47,12 +47,15 @@ const Node = ({
     nameString,
     keyApproximate,
     isSelected,
+    delimiters = [],
     getMetadata,
     onDelete,
     onDeleteClicked,
     updateStatusOpen,
     updateStatusSelected,
   } = data
+
+  const delimiterView = delimiters.length === 1 ? delimiters[0] : '-'
 
   const [deletePopoverId, setDeletePopoverId] = useState<Maybe<string>>(undefined)
 
@@ -127,7 +130,7 @@ const Node = ({
   const Leaf = () => (
     <>
       <KeyRowType type={type} nameString={nameString} />
-      <KeyRowName nameString={shortName} />
+      <KeyRowName shortName={shortName} nameString={nameString} />
       <KeyRowTTL ttl={ttl} nameString={nameString} deletePopoverId={deletePopoverId} rowId={nodeId} />
       <KeyRowSize
         size={size}
@@ -163,8 +166,16 @@ const Node = ({
 
   const tooltipContent = (
     <>
-      <b>{`${fullName}*`}</b>
-      <br />
+      <div className={styles.folderTooltipHeader}>
+        <span className={styles.folderPattern}>{`${fullName + delimiterView}*`}</span>
+        {delimiters.length > 1 && (
+          <span className={styles.delimiters}>
+            {delimiters.map((delimiter) => (
+              <span className={styles.delimiter}>{delimiter}</span>
+            ))}
+          </span>
+        )}
+      </div>
       <span>{`${keyCount} key(s) (${Math.round(keyApproximate * 100) / 100}%)`}</span>
     </>
   )

@@ -28,6 +28,7 @@ import reducer, {
   uploadDataBulkFailed,
   uploadDataBulkAction,
   defaultItems,
+  setWbCustomTutorialsState,
 } from '../../workbench/wb-custom-tutorials'
 
 let store: typeof mockedStore
@@ -370,6 +371,85 @@ describe('slices', () => {
       })
 
       expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+    })
+
+    describe('setWbCustomTutorialsState', () => {
+      it('should properly set open state', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          items: [{
+            ...defaultItems[0],
+            args: {
+              initialIsOpen: false
+            },
+            children: MOCK_TUTORIALS_ITEMS
+          }]
+        }
+
+        const state = {
+          ...initialState,
+          items: [{
+            ...defaultItems[0],
+            args: {
+              defaultInitialIsOpen: false,
+              initialIsOpen: true
+            },
+            children: MOCK_TUTORIALS_ITEMS
+          }]
+        }
+
+        // Act
+        const nextState = reducer(currentState, setWbCustomTutorialsState(true))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          workbench: {
+            customTutorials: nextState,
+          },
+        })
+
+        expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+      })
+
+      it('should properly return open state', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          items: [{
+            ...defaultItems[0],
+            args: {
+              defaultInitialIsOpen: false,
+              initialIsOpen: true
+            },
+            children: MOCK_TUTORIALS_ITEMS
+          }]
+        }
+
+        const state = {
+          ...initialState,
+          items: [{
+            ...defaultItems[0],
+            args: {
+              defaultInitialIsOpen: false,
+              initialIsOpen: false
+            },
+            children: MOCK_TUTORIALS_ITEMS
+          }]
+        }
+
+        // Act
+        const nextState = reducer(currentState, setWbCustomTutorialsState())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          workbench: {
+            customTutorials: nextState,
+          },
+        })
+
+        expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+      })
     })
   })
 

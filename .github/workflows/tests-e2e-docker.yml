@@ -26,7 +26,6 @@ env:
   RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
   SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
   TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
-  DEFAULT_GITHUB_PAGES_URL: ${{ vars.DEFAULT_GITHUB_PAGES_URL }}
   E2E_VOLUME_PATH: "/usr/src/app"
   REPORT_NAME: "report-docker-node"
 
@@ -34,26 +33,18 @@ jobs:
   e2e-docker-tests:
     runs-on: ubuntu-latest
     name: E2E Docker tests
-    environment:
-      name: production
-      url: ${{ env.DEFAULT_GITHUB_PAGES_URL }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}
-    container:
-      image: docker:latest
-      options: --privileged
-      volumes:
-        - /usr/src/app/results:/usr/src/app/results
-        - /usr/src/app/report:/usr/src/app/report
     strategy:
       fail-fast: false
       matrix:
         # Number of threads to run tests
-        parallel: [0, 1, 2, 3]
+        parallel: [0, 1, 2, 3, 4, 5]
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup repository
-      run: git config --global --add safe.directory /__w/RedisInsight/RedisInsight
+    - name: Get current date
+      id: date
+      uses: ./.github/actions/get-current-date
 
     # SSH Debug
     - name: Enable SSH
@@ -65,17 +56,18 @@ jobs:
     - name: Download Docker Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: docker
+        name: docker-builds
         path: ./release
 
     - name: Load built docker image from workspace
       run: |
-        docker image load -i ./release/docker-linux-alpine.amd64.tar
+        docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
 
     - name: Generate short list of the test files
       working-directory: ./tests/e2e
       run: |
-        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 4 == ${{ matrix.parallel }}")
+        testFiles=$(find tests/web -type f -name '*.e2e.ts' | sort | awk "NR % 6 == ${{ matrix.parallel }}")
+
         echo $testFiles
 
         # Multi-Line value
@@ -84,6 +76,7 @@ jobs:
         echo "EOF" >> $GITHUB_ENV
 
     - name: Run tests
+      timeout-minutes: 80
       run: |
         export NODE_INDEX=${{ matrix.parallel }}
 
@@ -119,11 +112,15 @@ jobs:
         list-suites: 'failed'
         fail-on-error: 'false'
 
-  # Deploy report to Github Pages
-  deploy-pages:
-    name: Deploy reports
-    uses: ./.github/workflows/deploy-pages.yml
-    needs: 'e2e-docker-tests'
-    if: always()
-    with:
-      group: 'report'
+    - name: Deploy report
+      if: always()
+      uses: ./.github/actions/deploy-test-reports
+      with:
+        group: 'report'
+        path: "${{ vars.DEFAULT_TEST_REPORTS_URL }}/${{ steps.date.outputs.date }}/${{ github.run_id }}/${{ env.REPORT_NAME }}-${{ matrix.parallel }}"
+        AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
+        AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+        AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+

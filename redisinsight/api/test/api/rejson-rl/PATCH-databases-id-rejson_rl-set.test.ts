@@ -30,7 +30,7 @@ const dataSchema = Joi.object({
 const validInputData = {
   keyName: constants.getRandomString(),
   data: JSON.stringify(constants.TEST_REJSON_VALUE_1),
-  path: '$',
+  path: '.',
 };
 
 const mainCheckFn = getMainCheckFn(endpoint);
@@ -60,8 +60,8 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
         },
         statusCode: 200,
         after: async () => {
-          expect(JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '$'))[0])
-            .to.eql({ test: '' });
+          expect(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '.'))
+            .to.eql(JSON.stringify({ test: '' }));
         }
       },
       {
@@ -73,8 +73,8 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
         },
         statusCode: 200,
         after: async () => {
-          expect(JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '$'))[0])
-            .to.eql({ test: null });
+          expect(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '.'))
+            .to.eql(JSON.stringify({ test: null }));
         }
       },
       {
@@ -82,12 +82,12 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_1,
           data: JSON.stringify([1, 2]),
-          path: '$'
+          path: '.'
         },
         statusCode: 200,
         after: async () => {
-          expect(JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '$'))[0])
-            .to.eql([1, 2]);
+          expect(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '.'))
+            .to.eql(JSON.stringify([1, 2]));
         }
       },
       {
@@ -95,12 +95,12 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_1,
           data: JSON.stringify({ test: 'test' }),
-          path: '$'
+          path: '.'
         },
         statusCode: 200,
         after: async () => {
-          expect(JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '$'))[0])
-            .to.eql({ test: 'test' });
+          expect(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '.'))
+            .to.eql(JSON.stringify({ test: 'test' }));
         }
       },
       {
@@ -109,7 +109,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_1,
           data: JSON.stringify(constants.getRandomString()),
-          path: '$'
+          path: '.'
         },
         statusCode: 404,
         responseBody: {
@@ -132,12 +132,12 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_1,
           data: JSON.stringify([1, 2]),
-          path: '$'
+          path: '.'
         },
         statusCode: 200,
         after: async () => {
-          expect(JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '$'))[0])
-            .to.eql([1, 2]);
+          expect(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '.'))
+            .to.eql(JSON.stringify([1, 2]));
         }
       },
       {
@@ -146,7 +146,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_1,
           data: JSON.stringify(constants.getRandomString()),
-          path: '$',
+          path: '.',
         },
         statusCode: 403,
         responseBody: {

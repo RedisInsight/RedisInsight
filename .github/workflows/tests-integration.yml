@@ -102,12 +102,20 @@ jobs:
       with:
         detached: true
 
-    - name: Download Docker Artifacts
-      if: inputs.build == 'docker'
-      uses: actions/download-artifact@v4
+    - name: Ensure Release Directory Exists
+      run: mkdir -p ./release
+
+    - name: Restore Docker Image from Cache
+      id: restore-cache
+      uses: actions/cache/restore@v4
       with:
-        name: docker-builds
-        path: ./release
+        path: ./release/docker/docker-linux-alpine.amd64.tar
+        key: docker-image-${{ github.ref_name }}-v7
+
+    - name: Check we have everything needed
+      run: |
+        ls -la ./release
+        ls -la ./release/docker
 
     - name: Load built docker image from workspace
       if: inputs.build == 'docker'

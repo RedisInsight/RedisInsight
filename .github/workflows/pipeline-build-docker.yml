@@ -111,6 +111,12 @@ jobs:
           ./release/web
           ./release/web-mini
 
+    - name: Cache Docker Image
+      uses: actions/cache/save@v4
+      with:
+        path: ./release/docker/docker-linux-alpine.amd64.tar
+        key: docker-image-${{ github.ref_name }}-v7
+
     env:
       ENV: ${{ vars.ENV }}
       RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}

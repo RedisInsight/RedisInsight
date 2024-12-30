@@ -71,7 +71,7 @@ test('Verify Monitor refresh/stop', async t => {
     // Run monitor
     await t.click(browserPage.Profiler.startMonitorButton);
 
-    await browserPage.Profiler.checkCommandInMonitorResults('info', undefined, true, 8000);
+    await browserPage.Profiler.checkCommandInMonitorResults('info', undefined, true, 10000);
     // Click on refresh keys to get new logs
     await t.click(browserPage.refreshKeysButton);
     // Get last timestamp

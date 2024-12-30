@@ -11,4 +11,23 @@ eval "$(echo "$GNOME_KEYRING_PASS" | gnome-keyring-daemon --unlock)"
 sleep 1
 eval "$(echo "$GNOME_KEYRING_PASS" | gnome-keyring-daemon --start)"
 
+echo "Waiting for /data/redisinsight.db to be available..."
+RETRIES=10 
+while [ $RETRIES -gt 0 ]; do
+  if [ -f /data/redisinsight.db ]; then
+    echo "/data/redisinsight.db is ready!"
+    break
+  fi
+  echo "File not found yet, retrying... ($RETRIES retries left)"
+  RETRIES=$((RETRIES - 1))
+  sleep 1
+done
+
+if [ $RETRIES -eq 0 ]; then
+  echo "Timeout reached. Proceeding anyway..."
+fi
+
+echo "Checking /data at runtime:"
+ls -la /data || echo "/data not found or inaccessible"
+
 exec "$@"

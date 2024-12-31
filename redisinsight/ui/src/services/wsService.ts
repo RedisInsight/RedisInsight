@@ -19,22 +19,18 @@ export function wsService(
   { forceNew = true, token, reconnection, query, extraHeaders, path = getProxyPath() }: WsParams,
   passTokenViaHeaders: boolean = true,
 ) {
-  let queryParams: Record<string, any> = !passTokenViaHeaders
-    ? { [CustomHeaders.CsrfToken.toLowerCase()]: token }
-    : {}
-  if (query) {
-    queryParams = { ...queryParams, ...query }
-  }
-  let headers: Record<string, any> = {
-    [CustomHeaders.WindowId]: window.windowId || '',
-  }
-  if (passTokenViaHeaders) {
-    headers = { ...headers, [CustomHeaders.CsrfToken]: token || '' }
+  const tokenObj = { [CustomHeaders.CsrfToken.toLowerCase()]: token }
+  const queryParams = {
+    ...(passTokenViaHeaders ? {} : tokenObj),
+    ...(query || {}),
   }
 
-  if (extraHeaders) {
-    headers = { ...headers, ...extraHeaders }
+  const headers = {
+    [CustomHeaders.WindowId]: window.windowId || '',
+    ...(passTokenViaHeaders ? tokenObj : {}),
+    ...(extraHeaders || {}),
   }
+
   const transports = riConfig.api.socketTransports?.split(',')
   const withCredentials = riConfig.api.socketCredentials
 

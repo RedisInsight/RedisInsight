@@ -197,8 +197,8 @@ test
         await myRedisDatabasePage.clickOnDBByName(sshDbClusterPass.databaseName);
         await Common.checkURLContainsText('browser');
     });
-// Unskip in RI-6478
-test.skip
+
+test
     .meta({ rte: rte.none })
     .before(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
@@ -212,9 +212,10 @@ test.skip
         await t.expect(myRedisDatabasePage.starFreeDbCheckbox.exists).ok('star checkbox is not displayed next to free db link');
         await t.expect(myRedisDatabasePage.portCloudDb.textContent).contains('Set up in a few clicks', `create free db row is not displayed`);
 
-        await t.click(myRedisDatabasePage.tableRowContent);
-        await Common.checkURL(externalPageLinkList);
-        await goBackHistory();
+        // skipped until https://redislabs.atlassian.net/browse/RI-6556
+        // await t.click(myRedisDatabasePage.tableRowContent);
+        // await Common.checkURL(externalPageLinkList);
+        // await goBackHistory();
 
         await t.click(myRedisDatabasePage.NavigationPanel.cloudButton);
         await Common.checkURL(externalPageLinkNavigation);

@@ -132,7 +132,7 @@ test
     // Verify that user can add SSH tunnel with Password for OSS Cluster database
     await myRedisDatabasePage.AddRedisDatabaseDialog.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
     // should be deleted after https://redislabs.atlassian.net/browse/RI-5995
-    await t.expect(6000);
+    await t.wait(6000);
     await myRedisDatabasePage.clickOnDBByName(sshDbClusterPass.databaseName);
 
     //verify that db is added and profiler works

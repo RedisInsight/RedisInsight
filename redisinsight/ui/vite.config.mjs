@@ -52,6 +52,7 @@ export default defineConfig({
       allow: [
         '..',
         '../../node_modules/monaco-editor',
+        '../../node_modules/brotli-wasm',
       ],
     },
   },
@@ -62,6 +63,8 @@ export default defineConfig({
       'monaco-yaml/yaml.worker',
     ],
     exclude: [
+      'brotli-wasm',
+      'brotli-wasm/pkg.bundler/brotli_wasm_bg.wasm',
       'react-json-tree',
       'redisinsight-plugin-sdk',
       'plotly.js-dist-min',
@@ -79,7 +82,7 @@ export default defineConfig({
       exclude: ['./packages'],
     },
     outDir,
-    target: 'es2020',
+    target: 'es2022',
     minify: 'esbuild',
     rollupOptions: {
       output: {

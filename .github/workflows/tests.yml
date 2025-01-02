@@ -49,14 +49,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # build-docker:
-  #   uses: ./.github/workflows/pipeline-build-docker.yml
-  #   secrets: inherit
+  build-docker:
+    uses: ./.github/workflows/pipeline-build-docker.yml
+    secrets: inherit
 
   integration-tests-nightly:
     uses: ./.github/workflows/tests-integration.yml
     secrets: inherit
-    # needs: build-docker
+    needs: build-docker
     with:
       build: 'docker'
       report: true

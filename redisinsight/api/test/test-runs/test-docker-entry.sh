@@ -25,6 +25,7 @@ done
 
 if [ $RETRIES -eq 0 ]; then
   echo "Timeout reached. Proceeding anyway..."
+  exit 1
 fi
 
 echo "Checking /data at runtime:"

@@ -2,6 +2,7 @@ import React from 'react'
 import cx from 'classnames'
 import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
 
+import { DATABASE_OVERVIEW_REFRESH_INTERVAL, DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL } from 'uiSrc/constants/browser'
 import { IMetric } from './components/OverviewMetrics'
 
 import AutoRefresh from '../auto-refresh'
@@ -13,9 +14,6 @@ interface Props {
   lastRefreshTime: number | null
   handleEnableAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
-
-const TIMEOUT_TO_GET_INFO = process.env.RI_DATABASE_OVERVIEW_REFRESH_INTERVAL || '5'
-const MINIMUM_INTERVAL_TIME = process.env.RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL || '1'
 
 const DatabaseOverview = (props: Props) => {
   const { metrics, loadData, lastRefreshTime, handleEnableAutoRefresh } = props
@@ -119,8 +117,8 @@ const DatabaseOverview = (props: Props) => {
                   containerClassName=""
                   postfix="overview"
                   testid="auto-refresh-overview"
-                  defaultRefreshRate={TIMEOUT_TO_GET_INFO}
-                  minimumRefreshRate={parseInt(MINIMUM_INTERVAL_TIME)}
+                  defaultRefreshRate={DATABASE_OVERVIEW_REFRESH_INTERVAL}
+                  minimumRefreshRate={parseInt(DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL)}
                   onRefresh={loadData}
                   onEnableAutoRefresh={handleEnableAutoRefresh}
                 />

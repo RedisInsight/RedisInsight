@@ -27,7 +27,10 @@ const contentUri = posix.join('/', proxyPath, 'static', 'content');
 const defaultPluginsUri = posix.join('/', proxyPath, 'static', 'plugins');
 const pluginsAssetsUri = posix.join('/', proxyPath, 'static', 'resources', 'plugins');
 
-const socketPath = posix.join('/', proxyPath, 'socket.io');
+const socketProxyPath = trim(process.env.RI_SOCKET_PROXY_PATH || 'api', '/');
+
+const socketPath = posix.join('/', socketProxyPath, 'socket.io');
+
 const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'data')
   : join(__dirname, '..', 'data');

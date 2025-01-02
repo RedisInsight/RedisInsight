@@ -141,7 +141,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: docker-logs-${{ github.sha}}-${{ matrix.rte }}-${{ github.run_id}}
-        path: ./redisinsight/api/test/test-runs/coverage/*
+        path: /data/*
 
     - name: Upload coverage files as artifact
       if: always()

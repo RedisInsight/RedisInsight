@@ -127,6 +127,6 @@ export const mockNodeRedisConnectionStrategy = jest.fn(() => ({
 
 export const mockRedisClientFactory = jest.fn(() => ({
   getConnectionStrategy: jest.fn().mockReturnValue(mockIoRedisRedisConnectionStrategy()),
-  createClient: jest.fn().mockResolvedValue(mockStandaloneRedisClient),
+  createClient: jest.fn().mockImplementation(async (clientMetadata: ClientMetadata) => Promise.resolve(new MockRedisClient(clientMetadata))),
   createClientAutomatically: jest.fn().mockResolvedValue(mockStandaloneRedisClient),
 }));

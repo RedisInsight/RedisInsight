@@ -20,11 +20,11 @@ import {
   RecommendationBadges,
   RecommendationBadgesLegend,
   RecommendationVoting,
-  RecommendationCopyComponent,
+  RecommendationCopyComponent, FeatureFlagComponent,
 } from 'uiSrc/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { Theme } from 'uiSrc/constants'
+import { FeatureFlags, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
@@ -180,7 +180,9 @@ const Recommendations = () => {
                 </EuiPanel>
               </EuiAccordion>
               <div className={styles.footer}>
-                <RecommendationVoting vote={vote as Vote} name={name} />
+                <FeatureFlagComponent name={FeatureFlags.envDependent}>
+                  <RecommendationVoting vote={vote as Vote} name={name} />
+                </FeatureFlagComponent>
                 {tutorialId && (
                   <EuiButton
                     fill

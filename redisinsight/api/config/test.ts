@@ -21,6 +21,9 @@ export default {
     url: process.env.RI_FEATURES_CONFIG_URL
       || 'http://localhost:5551/remote/features-config.json',
   },
+  analytics: {
+    startEvents: process.env.RI_ANALYTICS_START_EVENTS ? process.env.RI_ANALYTICS_START_EVENTS === 'true' : true,
+  },
   cloud: {
     apiUrl: process.env.RI_CLOUD_API_URL || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com/api/v1',
     apiToken: process.env.RI_CLOUD_API_TOKEN || 'token',

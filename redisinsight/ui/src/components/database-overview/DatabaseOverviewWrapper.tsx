@@ -8,9 +8,12 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
+import { getConfig } from 'uiSrc/config'
 import { getOverviewMetrics } from './components/OverviewMetrics'
 
-const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 60_000
+const riConfig = getConfig()
+
+const TIMEOUT_TO_GET_INFO = riConfig.app.env !== 'development' ? riConfig.database.defaultTimeoutToGetInfo : 60_000
 
 const DatabaseOverviewWrapper = () => {
   let interval: NodeJS.Timeout

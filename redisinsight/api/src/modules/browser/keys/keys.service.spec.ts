@@ -153,19 +153,13 @@ describe('KeysService', () => {
         getKeyInfoResponse.name,
       );
 
-      expect(recommendationService.check).toBeCalledWith(
+      expect(recommendationService.checkMulti).toBeCalledWith(
         mockBrowserClientMetadata,
-        RECOMMENDATION_NAMES.BIG_SETS,
-        result,
-      );
-      expect(recommendationService.check).toBeCalledWith(
-        mockBrowserClientMetadata,
-        RECOMMENDATION_NAMES.BIG_STRINGS,
-        result,
-      );
-      expect(recommendationService.check).toBeCalledWith(
-        mockBrowserClientMetadata,
-        RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
+        [
+          RECOMMENDATION_NAMES.BIG_SETS,
+          RECOMMENDATION_NAMES.BIG_STRINGS,
+          RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
+        ],
         result,
       );
     });

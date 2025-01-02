@@ -3,12 +3,17 @@ import { TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { getRangeForNumber, BULK_ACTIONS_BREAKPOINTS } from 'src/utils';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class BulkActionsAnalytics extends TelemetryBaseService {
-  sendActionStarted(overview: IBulkActionOverview): void {
+  sendActionStarted(
+    sessionMetadata: SessionMetadata,
+    overview: IBulkActionOverview,
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.BulkActionsStarted,
         {
           databaseId: overview.databaseId,
@@ -31,9 +36,13 @@ export class BulkActionsAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendActionStopped(overview: IBulkActionOverview): void {
+  sendActionStopped(
+    sessionMetadata: SessionMetadata,
+    overview: IBulkActionOverview,
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.BulkActionsStopped,
         {
           databaseId: overview.databaseId,
@@ -64,9 +73,13 @@ export class BulkActionsAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendActionSucceed(overview: IBulkActionOverview): void {
+  sendActionSucceed(
+    sessionMetadata: SessionMetadata,
+    overview: IBulkActionOverview,
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.BulkActionsSucceed,
         {
           databaseId: overview.databaseId,
@@ -91,9 +104,14 @@ export class BulkActionsAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendActionFailed(overview: IBulkActionOverview, error: HttpException | Error): void {
+  sendActionFailed(
+    sessionMetadata: SessionMetadata,
+    overview: IBulkActionOverview,
+    error: HttpException | Error,
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.BulkActionsFailed,
         {
           databaseId: overview.databaseId,
@@ -106,9 +124,13 @@ export class BulkActionsAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendImportSamplesUploaded(overview: IBulkActionOverview): void {
+  sendImportSamplesUploaded(
+    sessionMetadata: SessionMetadata,
+    overview: IBulkActionOverview,
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.ImportSamplesUploaded,
         {
           databaseId: overview.databaseId,

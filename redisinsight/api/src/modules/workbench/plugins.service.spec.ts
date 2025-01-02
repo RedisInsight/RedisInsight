@@ -15,12 +15,11 @@ import { BadRequestException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { PluginsService } from 'src/modules/workbench/plugins.service';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
-import { PluginCommandExecution } from 'src/modules/workbench/models/plugin-command-execution';
 import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin-state.repository';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import config from 'src/utils/config';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import {CommandExecutionType, ResultsMode, RunQueryMode} from 'src/modules/workbench/models/command-execution'
+import { CommandExecutionType, ResultsMode, RunQueryMode } from 'src/modules/workbench/models/command-execution';
 
 const PLUGINS_CONFIG = config.get('plugins');
 

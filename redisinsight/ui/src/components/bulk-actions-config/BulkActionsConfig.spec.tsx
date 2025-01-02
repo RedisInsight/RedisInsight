@@ -1,10 +1,10 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import MockedSocket from 'socket.io-mock'
 import socketIO from 'socket.io-client'
-import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, SocketEvent } from 'uiSrc/constants'
+import { cleanup, initialStateDefault, mockedStore, mockStore, render } from 'uiSrc/utils/test-utils'
+import { BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, FeatureFlags, SocketEvent } from 'uiSrc/constants'
 import {
   bulkActionsDeleteSelector,
   bulkActionsSelector,
@@ -12,6 +12,7 @@ import {
   setBulkActionConnected,
   setBulkDeleteLoading, setDeleteOverviewStatus
 } from 'uiSrc/slices/browser/bulkActions'
+import { GlobalSubscriptions } from 'uiSrc/components'
 import BulkActionsConfig from './BulkActionsConfig'
 
 let store: typeof mockedStore
@@ -74,6 +75,24 @@ describe('BulkActionsConfig', () => {
       setBulkDeleteLoading(true)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
+  })
+
+  it('should not connect socket', () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+
+    const { unmount } = render(<GlobalSubscriptions />, {
+      store: mockStore(initialStoreState)
+    })
+
+    socket.socketClient.emit(SocketEvent.Connect)
+
+    expect(store.getActions()).toEqual([])
+
+    unmount()
   })
 
   it('should emit Create a delete type', () => {

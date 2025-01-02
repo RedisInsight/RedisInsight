@@ -59,6 +59,11 @@ export interface StateAppInfo {
   isShortcutsFlyoutOpen: boolean
 }
 
+export interface StateAppConnectivity {
+  loading: boolean;
+  error?: string;
+}
+
 export interface StateAppContext {
   workspace: AppWorkspace
   contextInstanceId: string

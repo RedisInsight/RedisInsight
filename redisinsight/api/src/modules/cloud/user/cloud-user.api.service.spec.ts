@@ -11,7 +11,7 @@ import {
   mockCloudSession,
   mockCloudCapiAccount,
   mockCloudApiUser,
-  mockCloudApiCsrfToken, mockServerService,
+  mockCloudApiCsrfToken, mockServerService, mockCloudRequestUtm, mockCompleteCloudUtm, mockUtmCompleteBody, mockUtmBody,
 } from 'src/__mocks__';
 import { when, resetAllWhenMocks } from 'jest-when';
 import { CloudApiInternalServerErrorException, CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
@@ -34,6 +34,7 @@ describe('CloudUserApiService', () => {
   let repository: MockType<CloudUserRepository>;
   let sessionService: MockType<CloudSessionService>;
   let authService: MockType<CloudAuthService>;
+  let serverService: MockType<ServerService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -65,6 +66,7 @@ describe('CloudUserApiService', () => {
     repository = module.get(CloudUserRepository);
     sessionService = module.get(CloudSessionService);
     authService = module.get(CloudAuthService);
+    serverService = module.get(ServerService);
   });
 
   describe('ensureCsrf', () => {
@@ -219,7 +221,7 @@ describe('CloudUserApiService', () => {
       expect(sessionService.updateSessionData).not.toHaveBeenCalled();
       expect(mockedAxios.post).toHaveBeenCalledTimes(0);
     });
-    it('should login and get csrf when no apiSessionId', async () => {
+    it('should login and get csrf when no apiSessionId (should ignore utm)', async () => {
       sessionService.getSession.mockResolvedValueOnce(null);
 
       expect(await service['ensureLogin'](mockSessionMetadata)).toEqual(undefined);
@@ -230,7 +232,50 @@ describe('CloudUserApiService', () => {
         apiSessionId: mockCloudApiAuthDto.apiSessionId,
       });
       expect(mockedAxios.post).toHaveBeenCalledTimes(1);
-      expect(mockedAxios.post).toHaveBeenNthCalledWith(1, 'login', expect.anything(), expect.anything());
+      expect(mockedAxios.post).toHaveBeenNthCalledWith(1, 'login', {}, expect.anything());
+    });
+    it('should login and get csrf when no apiSessionId and use passed utm parameters', async () => {
+      sessionService.getSession.mockResolvedValueOnce(null);
+
+      expect(await service['ensureLogin'](mockSessionMetadata, mockCompleteCloudUtm)).toEqual(undefined);
+      expect(spyEnsureAccessToken).toHaveBeenCalledTimes(1);
+      expect(spyEnsureCsrf).toHaveBeenCalledTimes(1);
+      expect(sessionService.getSession).toHaveBeenCalledWith(mockSessionMetadata.sessionId);
+      expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockSessionMetadata.sessionId, {
+        apiSessionId: mockCloudApiAuthDto.apiSessionId,
+      });
+      expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+      expect(mockedAxios.post).toHaveBeenNthCalledWith(1, 'login', mockUtmCompleteBody, expect.anything());
+      expect(serverService.getInfo).not.toHaveBeenCalled();
+    });
+    it('should login and get csrf when no apiSessionId and calculate additional utm parameters', async () => {
+      sessionService.getSession.mockResolvedValueOnce(null);
+
+      expect(await service['ensureLogin'](mockSessionMetadata, mockCloudRequestUtm)).toEqual(undefined);
+      expect(spyEnsureAccessToken).toHaveBeenCalledTimes(1);
+      expect(spyEnsureCsrf).toHaveBeenCalledTimes(1);
+      expect(sessionService.getSession).toHaveBeenCalledWith(mockSessionMetadata.sessionId);
+      expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockSessionMetadata.sessionId, {
+        apiSessionId: mockCloudApiAuthDto.apiSessionId,
+      });
+      expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+      expect(mockedAxios.post).toHaveBeenNthCalledWith(1, 'login', mockUtmCompleteBody, expect.anything());
+      expect(serverService.getInfo).toHaveBeenCalledWith(mockSessionMetadata);
+    });
+    it('should login and get csrf when no apiSessionId and not fail when calculating utm caused an error', async () => {
+      sessionService.getSession.mockResolvedValueOnce(null);
+      serverService.getInfo.mockRejectedValueOnce(new Error());
+
+      expect(await service['ensureLogin'](mockSessionMetadata, mockCloudRequestUtm)).toEqual(undefined);
+      expect(spyEnsureAccessToken).toHaveBeenCalledTimes(1);
+      expect(spyEnsureCsrf).toHaveBeenCalledTimes(1);
+      expect(sessionService.getSession).toHaveBeenCalledWith(mockSessionMetadata.sessionId);
+      expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockSessionMetadata.sessionId, {
+        apiSessionId: mockCloudApiAuthDto.apiSessionId,
+      });
+      expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+      expect(mockedAxios.post).toHaveBeenNthCalledWith(1, 'login', mockUtmBody, expect.anything());
+      expect(serverService.getInfo).toHaveBeenCalledWith(mockSessionMetadata);
     });
     it('should login and get csrf when no apiSessionId login should be sent with "auth_mode"', async () => {
       sessionService.getSession.mockResolvedValueOnce({ idpType: CloudAuthIdpType.Sso });

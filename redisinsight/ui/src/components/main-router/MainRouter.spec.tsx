@@ -1,6 +1,7 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
+import { waitFor } from '@testing-library/react'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import Router from 'uiSrc/Router'
 import { localStorageService } from 'uiSrc/services'
@@ -8,6 +9,7 @@ import { Pages } from 'uiSrc/constants'
 import { appContextSelector, setCurrentWorkspace } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
 import MainRouter from './MainRouter'
+import * as activityMonitor from './hooks/useActivityMonitor'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -64,5 +66,15 @@ describe('MainRouter', () => {
     render(<Router><MainRouter /></Router>)
 
     expect(store.getActions()).toContainEqual(setCurrentWorkspace(AppWorkspace.Databases))
+  })
+
+  it('starts activity monitor on mount and stops on unmount', async () => {
+    const useActivityMonitorSpy = jest.spyOn(activityMonitor, 'useActivityMonitor')
+
+    render(<Router><MainRouter /></Router>)
+
+    await waitFor(() => {
+      expect(useActivityMonitorSpy).toHaveBeenCalledTimes(1)
+    })
   })
 })

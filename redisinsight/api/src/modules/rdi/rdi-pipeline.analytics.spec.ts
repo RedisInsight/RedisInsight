@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InternalServerErrorException } from '@nestjs/common';
 import { TelemetryEvents } from 'src/constants';
 import { RdiPipelineAnalytics } from 'src/modules/rdi/rdi-pipeline.analytics';
+import { mockSessionMetadata } from 'src/__mocks__';
 
 describe('RdiPipelineAnalytics', () => {
   let service: RdiPipelineAnalytics;
@@ -25,17 +26,22 @@ describe('RdiPipelineAnalytics', () => {
 
   describe('sendRdiInstanceDeleted', () => {
     it('should emit event when rdi pipeline deployed successfully', () => {
-      service.sendRdiPipelineDeployed('id');
+      service.sendRdiPipelineDeployed(mockSessionMetadata, 'id');
 
-      expect(sendEventMethod).toHaveBeenCalledWith(TelemetryEvents.RdiPipelineDeploymentSucceeded, {
-        id: 'id',
-      });
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        TelemetryEvents.RdiPipelineDeploymentSucceeded,
+        {
+          id: 'id',
+        },
+      );
     });
 
     it('should emit event when rdi pipeline is not deployed successfully', () => {
-      service.sendRdiPipelineDeployFailed(httpException, 'id');
+      service.sendRdiPipelineDeployFailed(mockSessionMetadata, httpException, 'id');
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RdiPipelineDeploymentFailed,
         httpException,
         { id: 'id' },

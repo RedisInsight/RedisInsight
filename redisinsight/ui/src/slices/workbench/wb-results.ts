@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { chunk, reverse } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
@@ -21,6 +21,11 @@ import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { setDbIndexState } from 'uiSrc/slices/app/context'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import {
+  addCommands, clearCommands, findCommand,
+  getLocalWbHistory,
+  removeCommand,
+} from 'uiSrc/services/workbenchStorage'
 import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -252,10 +257,22 @@ export function fetchWBHistoryAction(
   instanceId: string,
   executionType = CommandExecutionType.Workbench,
 ) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadWBHistory())
 
     try {
+      const state = stateInit()
+      const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+      if (envDependentFlag === false) {
+        // Fetch commands from local storage
+        const commandsHistory = await getLocalWbHistory(instanceId)
+        if (Array.isArray(commandsHistory)) {
+          dispatch(loadWBHistorySuccess(reverse(commandsHistory)))
+        } else {
+          dispatch(loadWBHistorySuccess([]))
+        }
+        return
+      }
       const { data, status } = await apiService.get<CommandExecution[]>(
         getUrl(
           instanceId,
@@ -324,6 +341,10 @@ export function sendWBCommandAction({
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
         dispatch(setDbIndexState(!!multiCommands?.length))
+        const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+        if (envDependentFlag === false) {
+          await addCommands(reverse(data))
+        }
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -389,6 +410,10 @@ export function sendWBCommandClusterAction({
 
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
+        const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+        if (envDependentFlag === false) {
+          await addCommands(reverse(data))
+        }
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -416,7 +441,15 @@ export function fetchWBCommandAction(
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(processWBCommand(commandId))
+      const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+      if (envDependentFlag === false) {
+        const command = await findCommand(commandId)
 
+        dispatch(fetchWBCommandSuccess(command as CommandExecution))
+
+        onSuccessAction?.()
+        return
+      }
       const { data, status } = await apiService.get<CommandExecution>(
         getUrl(
           id,
@@ -452,6 +485,14 @@ export function deleteWBCommandAction(
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(processWBCommand(commandId))
+      const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+      if (envDependentFlag === false) {
+        await removeCommand(id, commandId)
+
+        dispatch(deleteWBCommandSuccess(commandId))
+        onSuccessAction?.()
+        return
+      }
 
       const { status } = await apiService.delete<CommandExecution>(
         getUrl(
@@ -488,7 +529,13 @@ export function clearWbResultsAction(
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(clearWbResults())
-
+      const envDependentFlag = state.app.features.featureFlags.features.envDependent?.flag
+      if (envDependentFlag === false) {
+        await clearCommands(id)
+        dispatch(clearWbResultsSuccess())
+        onSuccessAction?.()
+        return
+      }
       const { status } = await apiService.delete(
         getUrl(
           id,
@@ -529,12 +576,12 @@ export function sendWbQueryAction(
 
     const {
       resultsMode: resultsModeInitial,
-      activeRunQueryMode: activeRunQueryModeInitinal
+      activeRunQueryMode: activeRunQueryModeInitial
     } = state.workbench.results || {}
     const { batchSize: batchSizeInitial = PIPELINE_COUNT_DEFAULT } = state.user.settings?.config || {}
     const currentExecuteParams = {
       resultsMode: resultsModeInitial,
-      activeRunQueryMode: activeRunQueryModeInitinal,
+      activeRunQueryMode: activeRunQueryModeInitial,
       batchSize: batchSizeInitial,
     }
 

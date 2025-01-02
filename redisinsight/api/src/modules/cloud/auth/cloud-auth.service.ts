@@ -167,6 +167,7 @@ export class CloudAuthService {
     return {
       idpType: authRequest.idpType,
       action: authRequest.action,
+      sessionMetadata: authRequest.sessionMetadata,
     };
   }
 
@@ -226,7 +227,7 @@ export class CloudAuthService {
       });
     } catch (e) {
       // ignore error
-      this.logger.error('Unable to revoke tokens', e);
+      this.logger.error('Unable to revoke tokens', e, sessionMetadata);
     }
   }
 
@@ -247,11 +248,20 @@ export class CloudAuthService {
     try {
       reqInfo = await this.getAuthRequestInfo(query);
       callback = await this.callback(query);
-      this.analytics.sendCloudSignInSucceeded(from, reqInfo?.action);
+      this.analytics.sendCloudSignInSucceeded(
+        reqInfo.sessionMetadata,
+        from,
+        reqInfo?.action,
+      );
     } catch (e) {
       this.logger.error(`Error on ${from} cloud oauth callback: ${e.message}`, e);
 
-      this.analytics.sendCloudSignInFailed(e, from, reqInfo?.action);
+      this.analytics.sendCloudSignInFailed(
+        reqInfo?.sessionMetadata,
+        e,
+        from,
+        reqInfo?.action,
+      );
 
       result = {
         status: CloudAuthStatus.Failed,
@@ -302,7 +312,7 @@ export class CloudAuthService {
    */
   async logout(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      this.logger.log('Logout cloud user');
+      this.logger.debug('Logout cloud user', sessionMetadata);
 
       await this.revokeRefreshToken(sessionMetadata);
 
@@ -310,7 +320,7 @@ export class CloudAuthService {
 
       this.eventEmitter.emit(CloudAuthServerEvent.Logout, sessionMetadata);
     } catch (e) {
-      this.logger.error('Unable to logout', e);
+      this.logger.error('Unable to logout', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }

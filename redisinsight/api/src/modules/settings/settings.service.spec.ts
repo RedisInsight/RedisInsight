@@ -170,11 +170,15 @@ describe('SettingsService', () => {
         },
       });
       expect(response).toEqual(mockAppSettings);
-      expect(analyticsService.sendAnalyticsAgreementChange).toHaveBeenCalledWith(new Map(Object.entries({
-        analytics: false,
-      })), new Map(Object.entries({
-        ...mockAgreements.data,
-      })));
+      expect(analyticsService.sendAnalyticsAgreementChange).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        new Map(Object.entries({
+          analytics: false,
+        })),
+        new Map(Object.entries({
+          ...mockAgreements.data,
+        })),
+      );
     });
     it('should update agreements and settings', async () => {
       settingsRepository.getOrCreate.mockResolvedValueOnce({
@@ -216,12 +220,16 @@ describe('SettingsService', () => {
       });
       expect(response).toEqual(mockAppSettings);
       expect(analyticsService.sendAnalyticsAgreementChange).not.toHaveBeenCalled();
-      expect(analyticsService.sendSettingsUpdatedEvent).toHaveBeenCalledWith(mockAppSettings, {
-        ...mockAppSettings,
-        scanThreshold: REDIS_SCAN_CONFIG.scanThreshold,
-        batchSize: WORKBENCH_CONFIG.countBatch,
-        theme: null,
-      });
+      expect(analyticsService.sendSettingsUpdatedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockAppSettings,
+        {
+          ...mockAppSettings,
+          scanThreshold: REDIS_SCAN_CONFIG.scanThreshold,
+          batchSize: WORKBENCH_CONFIG.countBatch,
+          theme: null,
+        },
+      );
     });
     it('should throw AgreementIsNotDefinedException', async () => {
       agreementsRepository.getOrCreate.mockResolvedValue({

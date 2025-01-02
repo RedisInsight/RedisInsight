@@ -55,6 +55,7 @@ const BrowserLeftPanel = (props: Props) => {
     isSearched: patternIsSearched,
     filter,
     deleting,
+    error: keysError,
   } = useSelector(keysSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
   const {
@@ -119,7 +120,6 @@ const BrowserLeftPanel = (props: Props) => {
     },
     [selectedKey],
   )
-
   return (
     <div className={styles.container}>
       <KeysHeader
@@ -130,7 +130,8 @@ const BrowserLeftPanel = (props: Props) => {
         handleScanMoreClick={handleScanMoreClick}
         nextCursor={keysState.nextCursor}
       />
-      {viewType === KeyViewType.Browser && (
+      {keysError && <div className={styles.error}><div>{keysError}</div></div>}
+      {viewType === KeyViewType.Browser && !keysError && (
         <KeyList
           hideFooter
           ref={keyListRef}
@@ -144,7 +145,7 @@ const BrowserLeftPanel = (props: Props) => {
           onAddKeyPanel={handleAddKeyPanel}
         />
       )}
-      {viewType === KeyViewType.Tree && (
+      {viewType === KeyViewType.Tree && !keysError && (
         <KeyTree
           ref={keyListRef}
           keysState={keysState}

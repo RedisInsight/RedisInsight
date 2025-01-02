@@ -1,6 +1,7 @@
 import { createBrowserHistory } from 'history'
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 
+import { getConfig } from 'uiSrc/config'
 import instancesReducer from './instances/instances'
 import caCertsReducer from './instances/caCerts'
 import clientCertsReducer from './instances/clientCerts'
@@ -22,7 +23,10 @@ import outputReducer from './cli/cli-output'
 import monitorReducer from './cli/monitor'
 import userSettingsReducer from './user/user-settings'
 import appInfoReducer from './app/info'
+import appInitReducer from './app/init'
+import appConnectivityReducer from './app/connectivity'
 import appContextReducer from './app/context'
+import appCsrfReducer from './app/csrf'
 import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
 import appsSocketConnectionReducer from './app/socket-connection'
@@ -50,6 +54,8 @@ import rdiTestConnectionsReducer from './rdi/testConnections'
 import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
 
+const riConfig = getConfig()
+
 export const history = createBrowserHistory()
 
 export const rootReducer = combineReducers({
@@ -62,6 +68,9 @@ export const rootReducer = combineReducers({
     socketConnection: appsSocketConnectionReducer,
     features: appFeaturesReducer,
     urlHandling: appUrlHandlingReducer,
+    csrf: appCsrfReducer,
+    init: appInitReducer,
+    connectivity: appConnectivityReducer
   }),
   connections: combineReducers({
     instances: instancesReducer,
@@ -130,7 +139,7 @@ export const rootReducer = combineReducers({
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, }),
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: riConfig.app.env !== 'production',
 })
 
 export { store }

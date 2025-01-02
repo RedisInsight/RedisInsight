@@ -8,7 +8,6 @@ import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import { localStorageService } from 'uiSrc/services'
 import {
   appFeatureFlagsFeaturesSelector,
-  fetchFeatureFlags,
   setFeaturesToHighlight,
   setOnboarding
 } from 'uiSrc/slices/app/features'
@@ -23,9 +22,10 @@ import {
 import {
   fetchServerInfo,
   appServerInfoSelector,
+  setServerLoaded
 } from 'uiSrc/slices/app/info'
 
-import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
+import { isDifferentConsentsExists } from 'uiSrc/utils'
 import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
 import { fetchTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
@@ -35,43 +35,49 @@ import { fetchContentRecommendations } from 'uiSrc/slices/recommendations/recomm
 import { fetchGuideLinksAction } from 'uiSrc/slices/content/guide-links'
 import { setCapability } from 'uiSrc/slices/app/context'
 
-import favicon from 'uiSrc/assets/favicon.svg'
 import { fetchProfile } from 'uiSrc/slices/oauth/cloud'
 
 const SETTINGS_PAGE_PATH = '/settings'
 const Config = () => {
   const serverInfo = useSelector(appServerInfoSelector)
   const { config, spec } = useSelector(userSettingsSelector)
-  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const {
+    [FeatureFlags.cloudSso]: cloudSsoFeature,
+    [FeatureFlags.envDependent]: envDependentFeature
+  } = useSelector(appFeatureFlagsFeaturesSelector)
   const { pathname } = useLocation()
 
   const dispatch = useDispatch()
   useEffect(() => {
-    setFavicon(favicon)
-
     dispatch(setCapability(localStorageService?.get(BrowserStorageItem.capability)))
+    if (envDependentFeature?.flag) {
+      dispatch(fetchServerInfo())
+      dispatch(fetchNotificationsAction())
+      dispatch(fetchCustomTutorials())
+    } else {
+      dispatch(setServerLoaded())
+    }
 
-    dispatch(fetchServerInfo())
     dispatch(fetchUnsupportedCliCommandsAction())
     dispatch(fetchRedisCommandsInfo())
-    dispatch(fetchNotificationsAction())
     dispatch(fetchContentRecommendations())
     dispatch(fetchGuideLinksAction())
 
     // get tutorials
     dispatch(fetchTutorials())
-    dispatch(fetchCustomTutorials())
-
-    dispatch(fetchFeatureFlags())
 
     // fetch config settings, after that take spec
     if (pathname !== SETTINGS_PAGE_PATH) {
-      dispatch(fetchUserConfigSettings(() => dispatch(fetchUserSettingsSpec())))
+      dispatch(fetchUserConfigSettings(() => {
+        if (envDependentFeature?.flag) {
+          dispatch(fetchUserSettingsSpec())
+        }
+      }))
     }
   }, [])
 
   useEffect(() => {
-    if (config && spec) {
+    if (config && spec && envDependentFeature?.flag) {
       checkSettingsToShowPopup()
     }
   }, [spec])

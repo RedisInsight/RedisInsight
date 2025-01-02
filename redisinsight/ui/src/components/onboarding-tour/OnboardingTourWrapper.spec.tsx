@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
-import { appFeatureOnboardingSelector } from 'uiSrc/slices/app/features'
+import * as featureSlice from 'uiSrc/slices/app/features'
 import OnboardingTourWrapper from './OnboardingTourWrapper'
 
 const mockedOptions = {
@@ -12,14 +12,11 @@ const mockedOptions = {
   })
 }
 
-jest.mock('uiSrc/slices/app/features', () => ({
-  ...jest.requireActual('uiSrc/slices/app/features'),
-  appFeatureOnboardingSelector: jest.fn().mockReturnValue({
-    currentStep: 2,
-    isActive: true,
-    totalSteps: 10
-  })
-}))
+jest.spyOn(featureSlice, 'appFeatureOnboardingSelector').mockReturnValue({
+  currentStep: 2,
+  isActive: true,
+  totalSteps: 10
+})
 
 describe('OnboardingTourWrapper', () => {
   it('should render', () => {
@@ -33,7 +30,7 @@ describe('OnboardingTourWrapper', () => {
   })
 
   it('should not render tour with isActive = false', () => {
-    (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+    (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
       currentStep: 2,
       isActive: false,
       totalSteps: 10
@@ -45,7 +42,7 @@ describe('OnboardingTourWrapper', () => {
   })
 
   it('should not render tour with isActive = true & different step', () => {
-    (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+    (featureSlice.appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
       currentStep: 3,
       isActive: true,
       totalSteps: 10

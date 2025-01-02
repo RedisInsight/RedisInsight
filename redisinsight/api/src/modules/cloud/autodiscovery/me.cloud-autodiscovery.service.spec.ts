@@ -80,6 +80,7 @@ describe('MeCloudAutodiscoveryService', () => {
         mockSessionMetadata,
       )).toEqual([mockCloudSubscription, mockCloudSubscriptionFixed]);
       expect(cloudAutodiscoveryService.discoverSubscriptions).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCloudCapiAuthDto,
         CloudAutodiscoveryAuthType.Sso,
       );
@@ -119,6 +120,7 @@ describe('MeCloudAutodiscoveryService', () => {
       )).toEqual([mockCloudDatabase, mockCloudDatabaseFixed]);
 
       expect(cloudAutodiscoveryService.discoverDatabases).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCloudCapiAuthDto,
         {
           subscriptions: [

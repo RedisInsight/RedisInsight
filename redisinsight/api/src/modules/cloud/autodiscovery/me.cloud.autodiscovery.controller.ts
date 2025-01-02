@@ -14,7 +14,7 @@ import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor'
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Response } from 'express';
-import { ActionStatus } from 'src/common/models';
+import { ActionStatus, SessionMetadata } from 'src/common/models';
 import { BuildType } from 'src/modules/server/models/server';
 import config from 'src/utils/config';
 import { CloudAccountInfo } from 'src/modules/cloud/user/models';
@@ -52,7 +52,7 @@ export class MeCloudAutodiscoveryController {
     ],
   })
   async getAccount(
-    @RequestSessionMetadata() sessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Query() utm: CloudRequestUtm,
   ): Promise<CloudAccountInfo> {
     return await this.service.getAccount(sessionMetadata, utm);
@@ -73,7 +73,7 @@ export class MeCloudAutodiscoveryController {
     ],
   })
   async discoverSubscriptions(
-    @RequestSessionMetadata() sessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Query() utm: CloudRequestUtm,
   ): Promise<CloudSubscription[]> {
     return await this.service.discoverSubscriptions(sessionMetadata, utm);
@@ -95,7 +95,7 @@ export class MeCloudAutodiscoveryController {
     ],
   })
   async discoverDatabases(
-    @RequestSessionMetadata() sessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Body() dto: DiscoverCloudDatabasesDto,
       @Query() utm: CloudRequestUtm,
   ): Promise<CloudDatabase[]> {
@@ -117,7 +117,7 @@ export class MeCloudAutodiscoveryController {
     ],
   })
   async addDiscoveredDatabases(
-    @RequestSessionMetadata() sessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Body() dto: ImportCloudDatabasesDto,
       @Res() res: Response,
       @Query() utm: CloudRequestUtm,

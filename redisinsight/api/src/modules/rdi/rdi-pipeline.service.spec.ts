@@ -3,8 +3,12 @@ import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider
 import { RdiPipelineAnalytics } from 'src/modules/rdi/rdi-pipeline.analytics';
 import { wrapHttpError } from 'src/common/utils';
 import {
-  MockType, generateMockRdiClient, mockRdiClientProvider, mockRdiDryRunJob,
+  MockType,
+  generateMockRdiClient,
+  mockRdiClientProvider,
+  mockRdiDryRunJob,
   mockRdiPipelineAnalytics,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { RdiPipelineService } from './rdi-pipeline.service';
 import { RdiDryRunJobDto } from './dto';
@@ -14,7 +18,7 @@ describe('RdiPipelineService', () => {
   let service: RdiPipelineService;
   let rdiClientProvider: MockType<RdiClientProvider>;
   let analytics: MockType<RdiPipelineAnalytics>;
-  const rdiClientMetadata = { id: '123', sessionMetadata: undefined };
+  const rdiClientMetadata = { id: '123', sessionMetadata: mockSessionMetadata };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -76,7 +80,8 @@ describe('RdiPipelineService', () => {
 
       await service.getPipeline(rdiClientMetadata);
 
-      expect(analytics.sendRdiPipelineFetched).toHaveBeenCalledWith(rdiClientMetadata.id, pipeline);
+      expect(analytics.sendRdiPipelineFetched)
+        .toHaveBeenCalledWith(mockSessionMetadata, rdiClientMetadata.id, pipeline);
     });
 
     it('should call sendRdiPipelineFetchFailed on the RdiPipelineAnalytics and throw an error if unsuccessful',
@@ -85,7 +90,8 @@ describe('RdiPipelineService', () => {
         rdiClientProvider.getOrCreate.mockRejectedValue(error);
 
         await expect(service.getPipeline(rdiClientMetadata)).rejects.toThrow(wrapHttpError(error));
-        expect(analytics.sendRdiPipelineFetchFailed).toHaveBeenCalledWith(error, rdiClientMetadata.id);
+        expect(analytics.sendRdiPipelineFetchFailed)
+          .toHaveBeenCalledWith(mockSessionMetadata, error, rdiClientMetadata.id);
       });
   });
 
@@ -172,7 +178,8 @@ describe('RdiPipelineService', () => {
 
       await service.deploy(rdiClientMetadata, dto);
 
-      expect(analytics.sendRdiPipelineDeployed).toHaveBeenCalledWith(rdiClientMetadata.id);
+      expect(analytics.sendRdiPipelineDeployed)
+        .toHaveBeenCalledWith(mockSessionMetadata, rdiClientMetadata.id);
     });
 
     it('should call sendRdiPipelineDeployFailed on analytics if deploy fails', async () => {
@@ -183,7 +190,8 @@ describe('RdiPipelineService', () => {
       try {
         await service.deploy(rdiClientMetadata, dto);
       } catch (e) {
-        expect(analytics.sendRdiPipelineDeployFailed).toHaveBeenCalledWith(error, rdiClientMetadata.id);
+        expect(analytics.sendRdiPipelineDeployFailed)
+          .toHaveBeenCalledWith(mockSessionMetadata, error, rdiClientMetadata.id);
       }
     });
 

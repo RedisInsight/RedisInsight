@@ -256,7 +256,7 @@ export class RejsonRlService {
     dto: CreateRejsonRlWithExpireDto,
   ): Promise<void> {
     try {
-      this.logger.log('Creating REJSON-RL data type.');
+      this.logger.debug('Creating REJSON-RL data type.', clientMetadata);
       const { keyName, data, expire } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -280,13 +280,13 @@ export class RejsonRlService {
             expire,
           ]);
         } catch (err) {
-          this.logger.error(`Unable to set expire ${expire} for REJSON-RL key ${keyName}.`);
+          this.logger.error(`Unable to set expire ${expire} for REJSON-RL key ${keyName}.`, err, clientMetadata);
         }
       }
 
-      this.logger.log('Succeed to create REJSON-RL key type.');
+      this.logger.debug('Succeed to create REJSON-RL key type.', clientMetadata);
     } catch (error) {
-      this.logger.error('Failed to create REJSON-RL key type.', error);
+      this.logger.error('Failed to create REJSON-RL key type.', error, clientMetadata);
 
       if (error instanceof ConflictException) {
         throw error;
@@ -307,7 +307,7 @@ export class RejsonRlService {
     dto: GetRejsonRlDto,
   ): Promise<GetRejsonRlResponseDto> {
     try {
-      this.logger.log('Getting json by key.'); // todo: investigate logger implementation
+      this.logger.debug('Getting json by key.', clientMetadata); // todo: investigate logger implementation
       const { keyName, path, forceRetrieve } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -342,7 +342,7 @@ export class RejsonRlService {
 
       return result;
     } catch (error) {
-      this.logger.error('Failed to get json.', error);
+      this.logger.error('Failed to get json.', error, clientMetadata);
 
       if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
@@ -373,7 +373,7 @@ export class RejsonRlService {
     dto: ModifyRejsonRlSetDto,
   ): Promise<void> {
     try {
-      this.logger.log('Modifying REJSON-RL data type.');
+      this.logger.debug('Modifying REJSON-RL data type.', clientMetadata);
       const { keyName, path, data } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -389,9 +389,9 @@ export class RejsonRlService {
         data,
       ]);
 
-      this.logger.log('Succeed to modify REJSON-RL key type.');
+      this.logger.debug('Succeed to modify REJSON-RL key type.', clientMetadata);
     } catch (error) {
-      this.logger.error('Failed to modify REJSON-RL key type.', error);
+      this.logger.error('Failed to modify REJSON-RL key type.', error, clientMetadata);
 
       if (error instanceof NotFoundException) {
         throw error;
@@ -424,7 +424,7 @@ export class RejsonRlService {
     dto: ModifyRejsonRlArrAppendDto,
   ): Promise<void> {
     try {
-      this.logger.log('Modifying REJSON-RL data type.');
+      this.logger.debug('Modifying REJSON-RL data type.', clientMetadata);
       const { keyName, path, data } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -447,9 +447,9 @@ export class RejsonRlService {
         });
       }
 
-      this.logger.log('Succeed to modify REJSON-RL key type.');
+      this.logger.debug('Succeed to modify REJSON-RL key type.', clientMetadata);
     } catch (error) {
-      this.logger.error('Failed to modify REJSON-RL key type', error);
+      this.logger.error('Failed to modify REJSON-RL key type', error, clientMetadata);
 
       if (error instanceof NotFoundException) {
         throw error;
@@ -475,7 +475,7 @@ export class RejsonRlService {
     dto: RemoveRejsonRlDto,
   ): Promise<RemoveRejsonRlResponse> {
     try {
-      this.logger.log('Removing REJSON-RL data.');
+      this.logger.debug('Removing REJSON-RL data.', clientMetadata);
       const { keyName, path } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -489,10 +489,10 @@ export class RejsonRlService {
         jsonPath,
       ]) as number;
 
-      this.logger.log('Succeed to remove REJSON-RL path.');
+      this.logger.debug('Succeed to remove REJSON-RL path.', clientMetadata);
       return { affected };
     } catch (error) {
-      this.logger.error('Failed to remove REJSON-RL path.', error);
+      this.logger.error('Failed to remove REJSON-RL path.', error, clientMetadata);
 
       if (error instanceof NotFoundException) {
         throw error;

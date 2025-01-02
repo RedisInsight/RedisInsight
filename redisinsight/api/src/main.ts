@@ -29,7 +29,10 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
     (await migrateHomeFolder()) && (await removeOldFolders());
   }
 
-  const { port, host } = serverConfig;
+  if (apiPort) {
+    serverConfig.port = apiPort;
+  }
+
   const logger = new AppLogger(LOGGER_CONFIG);
 
   const options: NestApplicationOptions = {
@@ -46,7 +49,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
 
-  if (process.env.RI_APP_TYPE !== 'electron') {
+  if (process.env.RI_APP_TYPE !== 'electron' || process.env.NODE_ENV === 'development') {
     let prefix = serverConfig.globalPrefix;
     if (serverConfig.proxyPath) {
       prefix = posix.join(serverConfig.proxyPath, prefix);
@@ -75,7 +78,9 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
 
   const logFileProvider = app.get(LogFileProvider);
 
-  await app.listen(apiPort || port, host);
+  const { port, host } = serverConfig;
+
+  await app.listen(port, host);
 
   const bootstrapLogger = new Logger('boostrap');
   bootstrapLogger.log(`Server is running on http(s)://${host}:${port}`);

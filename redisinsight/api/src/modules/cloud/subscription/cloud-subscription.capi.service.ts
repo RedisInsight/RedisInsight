@@ -68,6 +68,7 @@ export class CloudSubscriptionCapiService {
 
       return parseCloudSubscriptionsCapiResponse(subscriptions, type);
     } catch (error) {
+      this.logger.error(`Error getting ${type} subscriptions`, error);
       throw wrapHttpError(error);
     }
   }
@@ -91,6 +92,7 @@ export class CloudSubscriptionCapiService {
 
       return parseCloudSubscriptionCapiResponse(subscription, type);
     } catch (error) {
+      this.logger.error(`Error getting ${type} subscription`, error);
       throw wrapHttpError(error);
     }
   }
@@ -112,6 +114,7 @@ export class CloudSubscriptionCapiService {
 
       return parseCloudSubscriptionsPlansCapiResponse(plans, type);
     } catch (error) {
+      this.logger.error('Error getting subscriptions plans', error);
       throw wrapHttpError(error);
     }
   }
@@ -137,6 +140,7 @@ export class CloudSubscriptionCapiService {
 
       return parseCloudTaskCapiResponse(task);
     } catch (error) {
+      this.logger.error('Error when creating free subscription task', error);
       throw wrapHttpError(error);
     }
   }

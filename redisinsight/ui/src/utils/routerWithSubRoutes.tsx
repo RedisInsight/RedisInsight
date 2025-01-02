@@ -28,7 +28,11 @@ const PrivateRoute = (route: IRoute) => {
           )
         }
 
-        return haveToAcceptAgreements || feature?.flag === false
+        if (haveToAcceptAgreements) {
+          return <Redirect to="/" />
+        }
+
+        return feature?.flag === false
           ? <Redirect to={Pages.notFound} />
           : (
             // pass the sub-routes down to keep nesting

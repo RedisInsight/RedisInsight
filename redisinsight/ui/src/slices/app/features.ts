@@ -47,6 +47,9 @@ export const initialState: StateAppFeatures = {
       [FeatureFlags.rdi]: {
         flag: false
       },
+      [FeatureFlags.enhancedCloudUI]: {
+        flag: false
+      },
       [FeatureFlags.envDependent]: {
         flag: riConfig.features.envDependent.defaultFlag
       }

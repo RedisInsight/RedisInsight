@@ -7,6 +7,7 @@ import { cleanup, mockedStore, render, screen, fireEvent, initialStateDefault, m
 
 import { FeatureFlags } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { appContextSelector } from 'uiSrc/slices/app/context'
 import NavigationMenu from './NavigationMenu'
 
 let store: typeof mockedStore
@@ -17,6 +18,13 @@ beforeEach(() => {
 })
 
 const mockAppInfoSelector = jest.requireActual('uiSrc/slices/app/info')
+
+jest.mock('uiSrc/slices/app/context', () => ({
+  ...jest.requireActual('uiSrc/slices/app/context'),
+  appContextSelector: jest.fn().mockReturnValue({
+    workspace: 'database',
+  }),
+}))
 
 jest.mock('uiSrc/slices/app/info', () => ({
   ...jest.requireActual('uiSrc/slices/app/info'),
@@ -29,6 +37,13 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: ''
+  }),
+}))
+
+jest.mock('uiSrc/slices/rdi/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/rdi/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: 'mockRdiId',
   }),
 }))
 
@@ -135,6 +150,13 @@ describe('NavigationMenu', () => {
       expect(screen.getByTestId('settings-page-btn')).toBeTruthy()
     })
 
+    it('should render cloud link', () => {
+      const { container } = render(<NavigationMenu />)
+
+      const createCloudLink = container.querySelector('[data-test-subj="create-cloud-nav-link"]')
+      expect(createCloudLink).toBeTruthy()
+    })
+
     it('should render github btn with proper link', () => {
       (appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,
@@ -148,6 +170,18 @@ describe('NavigationMenu', () => {
       expect(githubBtn).toBeTruthy()
       expect(githubBtn?.getAttribute('href')).toEqual(EXTERNAL_LINKS.githubRepo)
     })
+  })
+
+  it('should render private routes with connectedRdiInstanceId', () => {
+    (appContextSelector as jest.Mock).mockImplementation(() => ({
+      ...appContextSelector,
+      workspace: 'redisDataIntegration'
+    }))
+
+    render(<NavigationMenu />)
+
+    expect(screen.getByTestId('pipeline-status-page-btn')).toBeTruthy()
+    expect(screen.getByTestId('pipeline-management-page-btn')).toBeTruthy()
   })
 
   describe('feature flags tests', () => {

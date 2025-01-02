@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import cx from 'classnames'
 
-import { isNull, isString } from 'lodash'
 import { setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
@@ -10,7 +9,7 @@ import { bufferToString, createDeleteFieldHeader, createDeleteFieldMessage, Null
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 
 import { JSONScalarProps } from '../interfaces'
-import { generatePath, getClassNameByValue, isValidJSON } from '../utils'
+import { generatePath, getClassNameByValue, isValidJSON, stringifyScalarValue } from '../utils'
 import { JSONErrors } from '../constants'
 
 import styles from '../styles.module.scss'
@@ -36,7 +35,7 @@ const RejsonScalar = (props: JSONScalarProps) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    setChangedValue(isString(value) ? `"${value}"` : isNull(value) ? 'null' : value)
+    setChangedValue(stringifyScalarValue(value))
   }, [value])
 
   const onDeclineChanges = () => {

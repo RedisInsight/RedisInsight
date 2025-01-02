@@ -1,0 +1,30 @@
+name: Delete deployments
+on:
+  workflow_call:
+
+jobs:
+  clean:
+    name: Clean deployments
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🗑 Delete deployment (staging)
+      uses: strumwolf/delete-deployment-environment@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        environment: staging
+        onlyRemoveDeployments: true
+
+    - name: 🗑 Delete deployment (production)
+      uses: strumwolf/delete-deployment-environment@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        environment: production
+        onlyRemoveDeployments: true
+
+    - name: 🗑 Delete deployment (gh-actions)
+      uses: strumwolf/delete-deployment-environment@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        environment: gh-pages
+        onlyRemoveDeployments: true
+

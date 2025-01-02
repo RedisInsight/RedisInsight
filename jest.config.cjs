@@ -42,7 +42,7 @@ module.exports = {
     '<rootDir>/redisinsight/ui/src/packages',
     '<rootDir>/redisinsight/ui/src/mocks',
   ],
-  coverageDirectory: './coverage',
+  coverageDirectory: './report/coverage',
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '<rootDir>/redisinsight/api',

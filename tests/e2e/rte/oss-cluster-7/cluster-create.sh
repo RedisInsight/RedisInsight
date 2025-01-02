@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo 'Try to sleep for a while...'
-sleep 5
+sleep 25
 echo 'Creating cluster...'
 echo "yes" | redis-cli \
   --cluster create \

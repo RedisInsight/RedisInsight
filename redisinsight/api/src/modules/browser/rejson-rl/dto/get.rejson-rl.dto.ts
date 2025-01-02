@@ -6,16 +6,16 @@ export class GetRejsonRlDto extends KeyDto {
   @ApiPropertyOptional({
     type: String,
     description: 'Path to look for data',
-  })
+    })
   @IsString()
   @IsNotEmpty()
-  path?: string = '.';
+  path?: string = '$';
 
   @ApiPropertyOptional({
     type: Boolean,
     description:
-      "Don't check for json size and return whole json in path when enabled",
-  })
+    "Don't check for json size and return whole json in path when enabled",
+    })
   @IsBoolean()
   forceRetrieve?: boolean;
 }

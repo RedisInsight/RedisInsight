@@ -1,8 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { remove } from 'lodash'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { isUndefined, remove } from 'lodash'
 import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, } from 'uiSrc/utils'
 import { apiService } from 'uiSrc/services'
 import {
   EnablementAreaComponent,
@@ -86,7 +86,19 @@ const workbenchCustomTutorialsSlice = createSlice({
     },
     uploadDataBulkFailed: (state, { payload }) => {
       remove(state.bulkUpload.pathsInProgress, (p) => p === payload)
-    }
+    },
+    setWbCustomTutorialsState: (state, { payload }: PayloadAction<Maybe<boolean>>) => {
+      if (state.items[0].args) {
+        const { defaultInitialIsOpen, initialIsOpen } = state.items[0].args
+        if (isUndefined(payload)) {
+          state.items[0].args.initialIsOpen = defaultInitialIsOpen ?? initialIsOpen
+          return
+        }
+
+        state.items[0].args.defaultInitialIsOpen = initialIsOpen
+        state.items[0].args.initialIsOpen = payload
+      }
+    },
   }
 })
 
@@ -108,6 +120,7 @@ export const {
   uploadDataBulk,
   uploadDataBulkSuccess,
   uploadDataBulkFailed,
+  setWbCustomTutorialsState,
 } = workbenchCustomTutorialsSlice.actions
 
 // The reducer

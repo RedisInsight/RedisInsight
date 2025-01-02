@@ -33,7 +33,11 @@ const NavButton = () => {
   return (
     <div className={styles.navBtnWrapper}>
       {!isCenterOpen && !isNotificationOpen ? (<EuiToolTip content="Notification Center" position="right">{Btn}</EuiToolTip>) : Btn}
-      {(totalUnread > 0 && !isCenterOpen) && (<div className={styles.badgeUnreadCount} data-testid="total-unread-badge">{totalUnread}</div>)}
+      {(totalUnread > 0 && !isCenterOpen) && (
+        <div className={styles.badgeUnreadCount} data-testid="total-unread-badge">
+          {totalUnread > 9 ? '9+' : totalUnread}
+        </div>
+      )}
     </div>
   )
 }

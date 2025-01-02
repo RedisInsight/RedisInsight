@@ -1,5 +1,6 @@
 /* eslint-disable import/first */
 export * from './storage'
+export * from './migrateStorageData'
 
 import apiService from './apiService'
 import resourcesService from './resourcesService'

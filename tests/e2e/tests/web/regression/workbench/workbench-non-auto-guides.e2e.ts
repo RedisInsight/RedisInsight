@@ -111,7 +111,7 @@ test
 test('Workbench Silent mode', async t => {
     const silentCommandSuccessResultName = `${counter} Command(s) - ${counter} success`;
     const silentCommandErrorsResultName = `${counter + 1} Command(s) - ${counter} success, 1 error(s)`;
-    const errorResult = `"ERR unknown command \`${commands[3]}\`, with args beginning with: "`;
+    const errorResult = `"ERR unknown command \'${commands[3]}\', with args beginning with: "`;
 
     await workbenchPage.sendMultipleCommandsInWorkbench([parameters[5], commands[0]]);
     // Verify that user can see the success command output with header: {number} Command(s) - {number} success

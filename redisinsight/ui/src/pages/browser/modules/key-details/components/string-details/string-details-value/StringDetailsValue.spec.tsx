@@ -1,6 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { KeyValueCompressor } from 'uiSrc/constants'
+import { KeyValueCompressor, KeyValueFormat } from 'uiSrc/constants'
 import {
   fetchDownloadStringValue,
   stringDataSelector
@@ -16,6 +16,7 @@ import {
 } from 'uiSrc/utils/tests/decompressors'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
+import { selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { StringDetailsValue, Props } from './StringDetailsValue'
 
 const STRING_VALUE = 'string-value'
@@ -46,6 +47,7 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
     type: 'string',
     length: STRING_LENGTH
   }),
+  selectedKeySelector: jest.fn(),
 }))
 
 jest.mock('uiSrc/constants', () => ({
@@ -69,6 +71,13 @@ jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: () => jest.fn().mockReturnValue(() => jest.fn()),
 }))
+
+beforeEach(async () => {
+  const selectedKeySelectorMock = jest.fn().mockReturnValue({
+    viewFormat: KeyValueFormat.Unicode,
+  });
+  (selectedKeySelector as jest.Mock).mockImplementation(selectedKeySelectorMock)
+})
 
 describe('StringDetailsValue', () => {
   it('should render', () => {
@@ -202,6 +211,26 @@ describe('StringDetailsValue', () => {
       />
     )
     expect(screen.getByTestId(STRING_VALUE)).toHaveTextContent(`${bufferToString(partValue)}...`)
+  })
+
+  it('Should render partValue in the Unicode format', async () => {
+    const stringDataSelectorMock = jest.fn().mockReturnValue({
+      // vector value
+      value: anyToBuffer(new Float32Array([1.0]).buffer)
+    })
+    const selectedKeySelectorMock = jest.fn().mockReturnValue({
+      viewFormat: KeyValueFormat.Vector32Bit,
+    });
+    (selectedKeySelector as jest.Mock).mockImplementation(selectedKeySelectorMock);
+    (stringDataSelector as jest.Mock).mockImplementation(stringDataSelectorMock)
+
+    render(
+      <StringDetailsValue
+        {...instance(mockedProps)}
+      />
+    )
+    expect(screen.getByTestId(STRING_VALUE)).toHaveTextContent('�?...')
+    expect(screen.getByTestId(STRING_VALUE)).not.toHaveTextContent('[object Object]')
   })
 
   it('Should not add "..." in the end of the full value', async () => {

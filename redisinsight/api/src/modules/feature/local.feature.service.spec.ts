@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
 import {
+  mockConstantsProvider, mockControlGroup, mockControlNumber,
   mockFeature, mockFeatureAnalytics, mockFeatureFlagProvider, mockFeatureRepository,
   mockFeaturesConfig,
   mockFeaturesConfigJson,
-  mockFeaturesConfigRepository, mockFeatureSso,
+  mockFeaturesConfigRepository, mockFeaturesConfigService, mockFeatureSso, mockSessionMetadata,
   MockType, mockUnknownFeature,
 } from 'src/__mocks__';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
@@ -15,6 +16,8 @@ import { LocalFeatureService } from 'src/modules/feature/local.feature.service';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
 import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/feature-flag.provider';
 import * as fs from 'fs-extra';
+import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 jest.mock('fs-extra');
 const mockedFs = fs as jest.Mocked<typeof fs>;
@@ -26,6 +29,7 @@ describe('FeatureService', () => {
   let service: LocalFeatureService;
   let repository: MockType<FeatureRepository>;
   let configsRepository: MockType<FeaturesConfigRepository>;
+  let featureRepository: MockType<FeatureRepository>;
   let analytics: MockType<FeatureAnalytics>;
 
   beforeEach(async () => {
@@ -62,35 +66,62 @@ describe('FeatureService', () => {
           provide: FeatureFlagProvider,
           useFactory: mockFeatureFlagProvider,
         },
+        {
+          provide: FeaturesConfigService,
+          useFactory: mockFeaturesConfigService,
+        },
+        {
+          provide: ConstantsProvider,
+          useFactory: mockConstantsProvider,
+        },
       ],
     }).compile();
 
     service = module.get(LocalFeatureService);
     repository = module.get(FeatureRepository);
     configsRepository = module.get(FeaturesConfigRepository);
+    featureRepository = module.get(FeatureRepository);
     analytics = module.get(FeatureAnalytics);
 
     mockedAxios.get.mockResolvedValue({ data: mockFeaturesConfigJson });
   });
 
+  describe('getByName', () => {
+    it('should return feature when exists', async () => {
+      expect(await service.getByName(mockSessionMetadata, KnownFeatures.InsightsRecommendations)).toEqual(mockFeature);
+      expect(featureRepository.get).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.InsightsRecommendations);
+    });
+    it('should return null when feature doesn\'t exists', async () => {
+      featureRepository.get.mockResolvedValueOnce(null);
+      expect(await service.getByName(mockSessionMetadata, KnownFeatures.InsightsRecommendations)).toEqual(null);
+    });
+    it('should return null in case of an error', async () => {
+      featureRepository.get.mockRejectedValueOnce(new Error('Unable to fetch flag from db'));
+      expect(await service.getByName(mockSessionMetadata, KnownFeatures.InsightsRecommendations)).toEqual(null);
+    });
+  });
+
   describe('isFeatureEnabled', () => {
     it('should return true when in db: true', async () => {
-      expect(await service.isFeatureEnabled(KnownFeatures.InsightsRecommendations)).toEqual(true);
+      expect(await service.isFeatureEnabled(mockSessionMetadata, KnownFeatures.InsightsRecommendations)).toEqual(true);
+      expect(featureRepository.get).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.InsightsRecommendations);
     });
     it('should return false when in db: false', async () => {
       repository.get.mockResolvedValue({ flag: false });
-      expect(await service.isFeatureEnabled(KnownFeatures.InsightsRecommendations)).toEqual(false);
+      expect(await service.isFeatureEnabled(mockSessionMetadata, KnownFeatures.InsightsRecommendations)).toEqual(false);
     });
     it('should return false in case of an error', async () => {
       repository.get.mockRejectedValueOnce(new Error('Unable to fetch flag from db'));
-      expect(await service.isFeatureEnabled(KnownFeatures.InsightsRecommendations)).toEqual(false);
+      expect(await service.isFeatureEnabled(mockSessionMetadata, KnownFeatures.InsightsRecommendations)).toEqual(false);
     });
   });
 
   describe('list', () => {
     it('should return list of features flags', async () => {
-      expect(await service.list())
+      expect(await service.list(mockSessionMetadata))
         .toEqual({
+          controlGroup: mockControlGroup,
+          controlNumber: mockControlNumber,
           features: {
             [KnownFeatures.InsightsRecommendations]: mockFeature,
             [KnownFeatures.CloudSso]: mockFeatureSso,
@@ -108,22 +139,25 @@ describe('FeatureService', () => {
       await service.recalculateFeatureFlags();
 
       expect(repository.delete)
-        .toHaveBeenCalledWith(mockUnknownFeature.name);
+        .toHaveBeenCalledWith(mockSessionMetadata, mockUnknownFeature.name);
       expect(repository.upsert)
-        .toHaveBeenCalledWith({
+        .toHaveBeenCalledWith(mockSessionMetadata, {
           name: KnownFeatures.InsightsRecommendations,
           flag: mockFeaturesConfig.data.features.get(KnownFeatures.InsightsRecommendations).flag,
         });
-      expect(analytics.sendFeatureFlagRecalculated).toHaveBeenCalledWith({
-        configVersion: mockFeaturesConfig.data.version,
-        features: {
-          [KnownFeatures.InsightsRecommendations]: mockFeature,
-          [KnownFeatures.CloudSso]: mockFeatureSso,
+      expect(analytics.sendFeatureFlagRecalculated).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        {
+          configVersion: mockFeaturesConfig.data.version,
+          features: {
+            [KnownFeatures.InsightsRecommendations]: mockFeature,
+            [KnownFeatures.CloudSso]: mockFeatureSso,
+          },
+          force: {
+            [KnownFeatures.CloudSso]: false,
+          },
         },
-        force: {
-          [KnownFeatures.CloudSso]: false,
-        },
-      });
+      );
     });
     it('should not fail in case of an error', async () => {
       repository.list.mockRejectedValueOnce(new Error());

@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiIcon, EuiLink, EuiText, EuiTextColor, EuiTitle, } from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiLink, EuiText, EuiTextColor, EuiTitle } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import MobileIcon from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg?react'
 import DesktopIcon from 'uiSrc/assets/img/icons/module_not_loaded.svg?react'
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
 import CheerIcon from 'uiSrc/assets/img/icons/cheer.svg?react'
-import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
+import { FeatureFlags, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 
@@ -141,47 +141,49 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
           />
         )}
         {!freeDbWithModule && (
-          <>
-            <EuiLink
-              className={cx(styles.text, styles.link)}
-              external={false}
-              target="_blank"
-              href={getUtmExternalLink(CONTENT[moduleName]?.link, { campaign: utmCampaign })}
-              data-testid="learn-more-link"
-            >
-              Learn More
-            </EuiLink>
-            <OAuthSsoHandlerDialog>
-              {(ssoCloudHandlerClick) => (
-                <EuiLink
-                  className={styles.link}
-                  external={false}
-                  target="_blank"
-                  href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
-                  onClick={(e) => {
-                    ssoCloudHandlerClick(
-                      e,
-                      {
-                        source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
-                        action: OAuthSocialAction.Create
-                      }
-                    )
-                    onFreeDatabaseClick()
-                  }}
-                  data-testid="get-started-link"
-                >
-                  <EuiButton
-                    fill
-                    size="s"
-                    color="secondary"
-                    className={styles.btnLink}
+          <FeatureFlagComponent name={FeatureFlags.envDependent}>
+            <>
+              <EuiLink
+                className={cx(styles.text, styles.link)}
+                external={false}
+                target="_blank"
+                href={getUtmExternalLink(CONTENT[moduleName]?.link, { campaign: utmCampaign })}
+                data-testid="learn-more-link"
+              >
+                Learn More
+              </EuiLink>
+              <OAuthSsoHandlerDialog>
+                {(ssoCloudHandlerClick) => (
+                  <EuiLink
+                    className={styles.link}
+                    external={false}
+                    target="_blank"
+                    href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
+                    onClick={(e) => {
+                      ssoCloudHandlerClick(
+                        e,
+                        {
+                          source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
+                          action: OAuthSocialAction.Create
+                        }
+                      )
+                      onFreeDatabaseClick()
+                    }}
+                    data-testid="get-started-link"
                   >
-                    Get Started For Free
-                  </EuiButton>
-                </EuiLink>
-              )}
-            </OAuthSsoHandlerDialog>
-          </>
+                    <EuiButton
+                      fill
+                      size="s"
+                      color="secondary"
+                      className={styles.btnLink}
+                    >
+                      Get Started For Free
+                    </EuiButton>
+                  </EuiLink>
+                )}
+              </OAuthSsoHandlerDialog>
+            </>
+          </FeatureFlagComponent>
         )}
       </div>
     </div>

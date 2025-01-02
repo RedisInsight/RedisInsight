@@ -166,3 +166,9 @@
     }
   }
 }
+
+.selectedOptionWithLongTextSupport {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 1.5rem;
+}

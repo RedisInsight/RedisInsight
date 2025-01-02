@@ -73,12 +73,22 @@ describe('BrowserHistoryService', () => {
   describe('delete', () => {
     it('should remove existing browser history item', async () => {
       browserHistoryRepository.delete.mockResolvedValue(mockBrowserHistory);
-      expect(await service.delete(mockSessionMetadata, mockBrowserHistory.databaseId, BrowserHistoryMode.Pattern))
+      expect(await service.delete(
+        mockSessionMetadata,
+        mockBrowserHistory.databaseId,
+        BrowserHistoryMode.Pattern,
+        mockBrowserHistory.id,
+      ))
         .toEqual(mockBrowserHistory);
     });
     it('should throw NotFoundException? on any error during deletion', async () => {
       browserHistoryRepository.delete.mockRejectedValueOnce(new NotFoundException());
-      await expect(service.delete(mockSessionMetadata, mockBrowserHistory.databaseId, BrowserHistoryMode.Pattern))
+      await expect(service.delete(
+        mockSessionMetadata,
+        mockBrowserHistory.databaseId,
+        BrowserHistoryMode.Pattern,
+        mockBrowserHistory.id,
+      ))
         .rejects.toThrow(NotFoundException);
     });
   });
@@ -88,13 +98,19 @@ describe('BrowserHistoryService', () => {
       expect(await service.bulkDelete(
         mockSessionMetadata,
         mockBrowserHistory.databaseId,
-        [mockDatabase.id],
+        BrowserHistoryMode.Pattern,
+        [mockBrowserHistory.id],
       ))
         .toEqual({ affected: 1 });
     });
     it('should ignore errors and do not count affected', async () => {
       browserHistoryRepository.delete.mockRejectedValueOnce(new NotFoundException());
-      expect(await service.bulkDelete(mockSessionMetadata, mockBrowserHistory.databaseId, [mockDatabase.id]))
+      expect(await service.bulkDelete(
+        mockSessionMetadata,
+        mockBrowserHistory.databaseId,
+        BrowserHistoryMode.Pattern,
+        [mockBrowserHistory.id],
+      ))
         .toEqual({ affected: 0 });
     });
   });

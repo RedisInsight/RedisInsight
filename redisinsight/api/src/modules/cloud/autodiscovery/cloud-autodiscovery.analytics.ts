@@ -12,6 +12,7 @@ import {
   CloudSubscriptionType,
 } from 'src/modules/cloud/subscription/models';
 import { CloudDatabase, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
@@ -20,12 +21,14 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
   }
 
   sendGetRECloudSubsSucceedEvent(
+    sessionMetadata: SessionMetadata,
     subscriptions: CloudSubscription[] = [],
     type: CloudSubscriptionType,
     authType: CloudAutodiscoveryAuthType,
   ) {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: subscriptions.filter(
@@ -42,11 +45,13 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
   }
 
   sendGetRECloudSubsFailedEvent(
+    sessionMetadata: SessionMetadata,
     exception: HttpException,
     type: CloudSubscriptionType,
     authType: CloudAutodiscoveryAuthType,
   ) {
     this.sendFailedEvent(
+      sessionMetadata,
       TelemetryEvents.RECloudSubscriptionsDiscoveryFailed,
       exception,
       {
@@ -56,9 +61,14 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
     );
   }
 
-  sendGetRECloudDbsSucceedEvent(databases: CloudDatabase[] = [], authType: CloudAutodiscoveryAuthType) {
+  sendGetRECloudDbsSucceedEvent(
+    sessionMetadata: SessionMetadata,
+    databases: CloudDatabase[] = [],
+    authType: CloudAutodiscoveryAuthType,
+  ) {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: databases.filter(
@@ -79,7 +89,16 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendGetRECloudDbsFailedEvent(exception: HttpException, authType: CloudAutodiscoveryAuthType) {
-    this.sendFailedEvent(TelemetryEvents.RECloudDatabasesDiscoveryFailed, exception, { authType });
+  sendGetRECloudDbsFailedEvent(
+    sessionMetadata: SessionMetadata,
+    exception: HttpException,
+    authType: CloudAutodiscoveryAuthType,
+  ) {
+    this.sendFailedEvent(
+      sessionMetadata,
+      TelemetryEvents.RECloudDatabasesDiscoveryFailed,
+      exception,
+      { authType },
+    );
   }
 }

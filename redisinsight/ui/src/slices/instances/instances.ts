@@ -324,7 +324,13 @@ export let sourceInstance: Nullable<CancelTokenSource> = null
 
 // Asynchronous thunk action
 export function fetchInstancesAction(onSuccess?: (data: Instance[]) => void) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const envDependentFeature = get(stateInit(), ['app', 'features', 'featureFlags', 'features', 'envDependent'])
+
+    if (!envDependentFeature?.flag) {
+      return
+    }
+
     dispatch(loadInstances())
 
     try {
@@ -595,7 +601,7 @@ export function exportInstancesAction(
 }
 
 // Asynchronous thunk action
-export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void) {
+export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void, onFail?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
     dispatch(setConnectedInstance())
@@ -613,6 +619,7 @@ export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void)
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
+      onFail?.()
     }
   }
 }

@@ -64,7 +64,7 @@ export class RdiService {
 
       return await this.repository.update(rdiClientMetadata.id, newRdiInstance);
     } catch (error) {
-      this.logger.error(`Failed to update rdi instance ${rdiClientMetadata.id}`, error);
+      this.logger.error(`Failed to update rdi instance ${rdiClientMetadata.id}`, error, rdiClientMetadata);
       throw wrapRdiPipelineError(error);
     }
   }
@@ -83,16 +83,16 @@ export class RdiService {
     try {
       await this.rdiClientFactory.createClient(rdiClientMetadata, model);
     } catch (error) {
-      this.logger.error('Failed to create rdi instance');
+      this.logger.error('Failed to create rdi instance', sessionMetadata);
 
       throw wrapRdiPipelineError(error);
     }
 
-    this.logger.log('Succeed to create rdi instance');
+    this.logger.debug('Succeed to create rdi instance', sessionMetadata);
     return await this.repository.create(model);
   }
 
-  async delete(ids: string[]): Promise<void> {
+  async delete(sessionMetadata: SessionMetadata, ids: string[]): Promise<void> {
     try {
       await this.repository.delete(ids);
       await Promise.all(
@@ -101,10 +101,10 @@ export class RdiService {
         }),
       );
 
-      this.analytics.sendRdiInstanceDeleted(ids.length);
+      this.analytics.sendRdiInstanceDeleted(sessionMetadata, ids.length);
     } catch (error) {
-      this.logger.error(`Failed to delete instance(s): ${ids}`, error.message);
-      this.analytics.sendRdiInstanceDeleted(ids.length, error.message);
+      this.logger.error(`Failed to delete instance(s): ${ids}`, error.message, sessionMetadata);
+      this.analytics.sendRdiInstanceDeleted(sessionMetadata, ids.length, error.message);
       throw new InternalServerErrorException();
     }
   }
@@ -117,10 +117,10 @@ export class RdiService {
     try {
       await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
     } catch (error) {
-      this.logger.error(`Failed to connect to rdi instance ${rdiClientMetadata.id}`);
+      this.logger.error(`Failed to connect to rdi instance ${rdiClientMetadata.id}`, rdiClientMetadata);
       throw wrapRdiPipelineError(error);
     }
 
-    this.logger.log(`Succeed to connect to rdi instance ${rdiClientMetadata.id}`);
+    this.logger.debug(`Succeed to connect to rdi instance ${rdiClientMetadata.id}`, rdiClientMetadata);
   }
 }

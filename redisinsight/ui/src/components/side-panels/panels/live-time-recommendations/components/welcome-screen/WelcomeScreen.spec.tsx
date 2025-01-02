@@ -1,10 +1,18 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { fireEvent, mockedStore, screen, cleanup, render, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
-import { Pages } from 'uiSrc/constants'
+import {
+  fireEvent,
+  mockedStore,
+  screen,
+  cleanup,
+  render,
+  waitForEuiPopoverVisible,
+  initialStateDefault, mockStore,
+} from 'uiSrc/utils/test-utils'
+import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { getDBAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 
 import WelcomeScreen from './WelcomeScreen'
@@ -108,5 +116,33 @@ describe('WelcomeScreen', () => {
 
     expect(screen.queryByTestId('insights-db-analysis-link')).not.toBeInTheDocument()
     expect(screen.getByTestId('no-recommendations-analyse-text')).toHaveTextContent('Eager for tips? Connect to a database to get started.')
+  })
+
+  it('should show feature dependent items when feature flag is on', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: true }
+    )
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 1 })
+
+    render(<WelcomeScreen />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('insights-db-analysis-link')).toBeInTheDocument()
+  })
+
+  it('should hide feature dependent items when feature flag is off', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 1 })
+
+    render(<WelcomeScreen />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('insights-db-analysis-link')).not.toBeInTheDocument()
   })
 })

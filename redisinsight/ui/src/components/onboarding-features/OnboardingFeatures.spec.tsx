@@ -9,7 +9,7 @@ import {
   appFeatureFlagsFeaturesSelector,
   appFeatureOnboardingSelector,
   setOnboardNextStep,
-  setOnboardPrevStep
+  setOnboardPrevStep,
 } from 'uiSrc/slices/app/features'
 import { keysDataSelector } from 'uiSrc/slices/browser/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'

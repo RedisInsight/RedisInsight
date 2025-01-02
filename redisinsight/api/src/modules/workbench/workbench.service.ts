@@ -13,8 +13,8 @@ import { CommandExecutionRepository } from 'src/modules/workbench/repositories/c
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
 import { CommandExecutionFilter } from 'src/modules/workbench/models/command-executions.filter';
+import { WorkbenchAnalytics } from 'src/modules/workbench/workbench.analytics';
 import { getUnsupportedCommands } from './utils/getUnsupportedCommands';
-import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
 export class WorkbenchService {
@@ -22,7 +22,7 @@ export class WorkbenchService {
     private readonly databaseClientFactory: DatabaseClientFactory,
     private commandsExecutor: WorkbenchCommandsExecutor,
     private commandExecutionRepository: CommandExecutionRepository,
-    private analyticsService: WorkbenchAnalyticsService,
+    private analyticsService: WorkbenchAnalytics,
   ) {}
 
   /**
@@ -188,7 +188,7 @@ export class WorkbenchService {
    */
   async deleteCommandExecution(clientMetadata: ClientMetadata, id: string): Promise<void> {
     await this.commandExecutionRepository.delete(clientMetadata.sessionMetadata, clientMetadata.databaseId, id);
-    this.analyticsService.sendCommandDeletedEvent(clientMetadata.databaseId);
+    this.analyticsService.sendCommandDeletedEvent(clientMetadata.sessionMetadata, clientMetadata.databaseId);
   }
 
   /**

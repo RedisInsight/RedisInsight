@@ -9,9 +9,21 @@ import { RedisClient } from 'src/modules/redis/client';
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
+type IsClientConnectingMap = {
+  [key: string]: boolean
+};
+
+type PendingGetByClientIdMap = {
+  [key: string]: { resolve: (value: RedisClient) => void, reject: (reason?: any) => void }[]
+};
+
 @Injectable()
 export class DatabaseClientFactory {
   private logger = new Logger('DatabaseClientFactory');
+
+  private isConnecting: IsClientConnectingMap = {};
+
+  private pendingGetClient: PendingGetByClientIdMap = {};
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -21,6 +33,43 @@ export class DatabaseClientFactory {
     private readonly redisClientFactory: RedisClientFactory,
   ) {}
 
+  private async processGetClient(clientId: string, clientMetadata: ClientMetadata) {
+    if (this.isConnecting[clientId]) {
+      this.logger.debug('Client already connecting. Queueing get client request', { clientId });
+      return;
+    }
+    if (!this.pendingGetClient[clientId].length) {
+      return;
+    }
+
+    const { resolve, reject } = this.pendingGetClient[clientId].shift();
+    this.isConnecting[clientId] = true;
+    try {
+      this.logger.debug('Creating new client', { clientId });
+      const newClient = await this.createClient(clientMetadata);
+      this.redisClientStorage.set(newClient);
+
+      resolve(newClient);
+
+      // resolve pending gets
+      while (this.pendingGetClient[clientId]?.length) {
+        const next = this.pendingGetClient[clientId].shift();
+        next?.resolve(newClient);
+      }
+    } catch (error) {
+      reject(error);
+
+      // reject pending gets
+      while (this.pendingGetClient[clientId]?.length) {
+        const next = this.pendingGetClient[clientId].shift();
+        next?.reject(error);
+      }
+    } finally {
+      delete this.pendingGetClient[clientId];
+      delete this.isConnecting[clientId];
+    }
+  }
+
   /**
    * Gets existing database client by client metadata or
    * fetches database and create client new client for it
@@ -29,7 +78,7 @@ export class DatabaseClientFactory {
    * @param clientMetadata
    */
   async getOrCreateClient(clientMetadata: ClientMetadata): Promise<RedisClient> {
-    this.logger.log('Trying to get existing redis client.');
+    this.logger.debug('Trying to get existing redis client.', clientMetadata);
 
     const client = await this.redisClientStorage.getByMetadata(clientMetadata);
 
@@ -37,7 +86,17 @@ export class DatabaseClientFactory {
       return client;
     }
 
-    return this.redisClientStorage.set(await this.createClient(clientMetadata));
+    const clientId = RedisClient.generateId(RedisClient.prepareClientMetadata(clientMetadata));
+
+    // add promise to queue and then process queue immediately
+    // in case another fetch is not already running
+    return new Promise((resolve, reject) => {
+      if (!this.pendingGetClient[clientId]) {
+        this.pendingGetClient[clientId] = [];
+      }
+      this.pendingGetClient[clientId].push(({ resolve, reject }));
+      this.processGetClient(clientId, clientMetadata);
+    });
   }
 
   /**
@@ -50,7 +109,7 @@ export class DatabaseClientFactory {
    * @param options
    */
   async createClient(clientMetadata: ClientMetadata, options?: IRedisConnectionOptions): Promise<RedisClient> {
-    this.logger.log('Creating new redis client.');
+    this.logger.debug('Creating new redis client.', clientMetadata);
     const database = await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);
 
     try {
@@ -74,7 +133,7 @@ export class DatabaseClientFactory {
         database,
         database.name,
       );
-      this.analytics.sendConnectionFailedEvent(database, exception);
+      this.analytics.sendConnectionFailedEvent(clientMetadata.sessionMetadata, database, exception);
       throw exception;
     }
   }
@@ -84,7 +143,7 @@ export class DatabaseClientFactory {
    * @param clientMetadata
    */
   async deleteClient(clientMetadata: ClientMetadata): Promise<number> {
-    this.logger.log('Trying to delete existing redis client.');
+    this.logger.debug('Trying to delete existing redis client.');
 
     const client = await this.redisClientStorage.getByMetadata(clientMetadata);
     return this.redisClientStorage.remove(client?.id);

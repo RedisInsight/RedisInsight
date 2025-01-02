@@ -75,7 +75,7 @@ export abstract class CloudJob {
     }
   }
 
-  public async run() {
+  public async run(sessionMetadata: SessionMetadata): Promise<void> {
     try {
       this.changeState({
         status: CloudJobStatus.Running,
@@ -92,7 +92,7 @@ export abstract class CloudJob {
         );
       }
 
-      return await this.iteration();
+      return await this.iteration(sessionMetadata);
     } catch (e) {
       this.logger.error('Cloud job failed', e);
 
@@ -142,12 +142,17 @@ export abstract class CloudJob {
     );
   }
 
-  public async runChildJob(TargetJob: ClassType<CloudJob>, data: {}, options: CloudJobOptions): Promise<any> {
+  public async runChildJob(
+    sessionMetadata: SessionMetadata,
+    TargetJob: ClassType<CloudJob>,
+    data: {},
+    options: CloudJobOptions,
+  ): Promise<any> {
     const child = this.createChildJob(TargetJob, data, options);
 
     this.changeState({ child });
 
-    const result = await child.run();
+    const result = await child.run(sessionMetadata);
 
     this.changeState({ child: null });
 
@@ -177,13 +182,16 @@ export abstract class CloudJob {
     }
   }
 
-  protected runNextIteration(timeout = cloudConfig.jobIterationInterval): Promise<any> {
+  protected runNextIteration(
+    sessionMetadata: SessionMetadata,
+    timeout = cloudConfig.jobIterationInterval,
+  ): Promise<any> {
     return new Promise((res, rej) => {
       setTimeout(() => {
-        this.iteration().then(res).catch(rej);
+        this.iteration(sessionMetadata).then(res).catch(rej);
       }, timeout);
     });
   }
 
-  protected abstract iteration(): Promise<any>;
+  protected abstract iteration(sessionMetadata: SessionMetadata): Promise<any>;
 }

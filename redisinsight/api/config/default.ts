@@ -85,6 +85,10 @@ export default {
     excludeRoutes: [],
     excludeAuthRoutes: [],
   },
+  statics: {
+    initDefaults: process.env.RI_STATICS_INIT_DEFAULTS ? process.env.RI_STATICS_INIT_DEFAULTS === 'true' : true,
+    autoUpdate: process.env.RI_STATICS_AUTO_UPDATE ? process.env.RI_STATICS_AUTO_UPDATE === 'true' : true,
+  },
   encryption: {
     keytar: process.env.RI_ENCRYPTION_KEYTAR ? process.env.RI_ENCRYPTION_KEYTAR === 'true' : true, // enabled by default
     // !!! DO NOT CHANGE THIS VARIABLE FOR REDIS INSIGHT!!! MUST BE "redisinsight"!!! It's only for vscode extension
@@ -93,9 +97,14 @@ export default {
     encryptionAlgorithm: process.env.RI_ENCRYPTION_ALGORYTHM || 'aes-256-cbc',
   },
   sockets: {
-    cors: process.env.RI_SOCKETS_CORS ? process.env.RI_SOCKETS_CORS === 'true' : false,
     serveClient: process.env.RI_SOCKETS_SERVE_CLIENT ? process.env.RI_SOCKETS_SERVE_CLIENT === 'true' : false,
     path: socketPath,
+    namespacePrefix: process.env.RI_SOCKETS_NAMESPACE_PREFIX ?? '',
+    cors: {
+      enabled: process.env.RI_SOCKETS_CORS === 'true',
+      origin: process.env.RI_SOCKETS_CORS_ORIGIN ? process.env.RI_SOCKETS_CORS_ORIGIN : '*',
+      credentials: process.env.RI_SOCKETS_CORS_CREDENTIALS === 'true' ? true : false,
+    },
   },
   db: {
     database: join(homedir, 'redisinsight.db'),

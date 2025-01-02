@@ -6,7 +6,13 @@ import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { CreateRdiDto, UpdateRdiDto } from 'src/modules/rdi/dto';
 import { Rdi, RdiClientMetadata } from 'src/modules/rdi/models';
 import {
-  MockType, mockRdi, mockRdiAnalytics, mockRdiClientFactory, mockRdiClientProvider, mockRdiRepository,
+  MockType,
+  mockRdi,
+  mockRdiAnalytics,
+  mockRdiClientFactory,
+  mockRdiClientProvider,
+  mockRdiRepository,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { AxiosError } from 'axios';
 import { wrapRdiPipelineError } from './exceptions';
@@ -180,12 +186,12 @@ describe('RdiService', () => {
       rdiClientProvider.deleteManyByRdiId.mockResolvedValue(undefined);
       jest.spyOn(analytics, 'sendRdiInstanceDeleted').mockResolvedValue(undefined as never);
 
-      await service.delete(ids);
+      await service.delete(mockSessionMetadata, ids);
 
       expect(repository.delete).toHaveBeenCalledWith(ids);
       expect(rdiClientProvider.deleteManyByRdiId).toHaveBeenCalledWith(ids[0]);
       expect(rdiClientProvider.deleteManyByRdiId).toHaveBeenCalledWith(ids[1]);
-      expect(analytics.sendRdiInstanceDeleted).toHaveBeenCalledWith(ids.length);
+      expect(analytics.sendRdiInstanceDeleted).toHaveBeenCalledWith(mockSessionMetadata, ids.length);
     });
 
     it('should throw an error if delete fails', async () => {
@@ -194,8 +200,9 @@ describe('RdiService', () => {
       rdiClientProvider.deleteManyByRdiId.mockRejectedValue(new Error('Delete client failed'));
       jest.spyOn(analytics, 'sendRdiInstanceDeleted').mockResolvedValue(undefined as never);
 
-      await expect(service.delete(ids)).rejects.toThrowError('Internal Server Error');
-      expect(analytics.sendRdiInstanceDeleted).toHaveBeenCalledWith(ids.length, expect.any(String));
+      await expect(service.delete(mockSessionMetadata, ids)).rejects.toThrowError('Internal Server Error');
+      expect(analytics.sendRdiInstanceDeleted)
+        .toHaveBeenCalledWith(mockSessionMetadata, ids.length, expect.any(String));
     });
   });
 

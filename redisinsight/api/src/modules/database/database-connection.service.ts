@@ -54,23 +54,17 @@ export class DatabaseConnectionService {
 
     const generalInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
 
-    this.recommendationService.check(
+    this.recommendationService.checkMulti(
       clientMetadata,
-      RECOMMENDATION_NAMES.REDIS_VERSION,
-      generalInfo,
-    );
-    this.recommendationService.check(
-      clientMetadata,
-      RECOMMENDATION_NAMES.LUA_SCRIPT,
-      generalInfo,
-    );
-    this.recommendationService.check(
-      clientMetadata,
-      RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+      [
+        RECOMMENDATION_NAMES.REDIS_VERSION,
+        RECOMMENDATION_NAMES.LUA_SCRIPT,
+        RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+      ],
       generalInfo,
     );
 
-    const rdiFeature = await this.featureService.getByName(KnownFeatures.Rdi);
+    const rdiFeature = await this.featureService.getByName(clientMetadata.sessionMetadata, KnownFeatures.Rdi);
 
     if (rdiFeature?.flag) {
       const database = await this.repository.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);
@@ -83,7 +77,7 @@ export class DatabaseConnectionService {
 
     this.collectClientInfo(clientMetadata, client, generalInfo?.version);
 
-    this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
+    this.logger.debug(`Succeed to connect to database ${clientMetadata.databaseId}`, clientMetadata);
   }
 
   private async collectClientInfo(clientMetadata: ClientMetadata, client: RedisClient, version?: string) {
@@ -92,6 +86,7 @@ export class DatabaseConnectionService {
       const clients = await this.databaseInfoProvider.getClientListInfo(client) || [];
 
       this.analytics.sendDatabaseConnectedClientListEvent(
+        clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
         {
           clients: clients.map((c) => ({

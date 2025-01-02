@@ -22,6 +22,7 @@ import { isPlainObject } from 'lodash';
 import * as URL from 'url';
 import { Validator } from 'class-validator';
 import { CustomTutorialAnalytics } from 'src/modules/custom-tutorial/custom-tutorial.analytics';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class CustomTutorialService {
@@ -74,9 +75,13 @@ export class CustomTutorialService {
   /**
    * Create custom tutorial entity + static files based on input
    * Currently from zip file only
+   * @param sessionMetadata
    * @param dto
    */
-  public async create(dto: UploadCustomTutorialDto): Promise<RootCustomTutorialManifest> {
+  public async create(
+    sessionMetadata: SessionMetadata,
+    dto: UploadCustomTutorialDto,
+  ): Promise<RootCustomTutorialManifest> {
     try {
       let tmpPath = '';
 
@@ -101,14 +106,17 @@ export class CustomTutorialService {
       model.name = await this.determineTutorialName(model.absolutePath, dto?.file?.originalName || dto.link);
       const tutorial = await this.customTutorialRepository.create(model);
 
-      this.analytics.sendImportSucceeded({
-        manifest: !!(await this.customTutorialManifestProvider.getOriginalManifestJson(tutorial.absolutePath)),
-      });
+      this.analytics.sendImportSucceeded(
+        sessionMetadata,
+        {
+          manifest: !!(await this.customTutorialManifestProvider.getOriginalManifestJson(tutorial.absolutePath)),
+        },
+      );
 
       return await this.customTutorialManifestProvider.generateTutorialManifest(tutorial);
     } catch (e) {
-      this.analytics.sendImportFailed(e);
-      this.logger.error('Unable to create custom tutorials', e);
+      this.analytics.sendImportFailed(sessionMetadata, e);
+      this.logger.error('Unable to create custom tutorials', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }

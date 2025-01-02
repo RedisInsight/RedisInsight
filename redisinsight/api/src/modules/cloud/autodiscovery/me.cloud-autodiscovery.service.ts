@@ -56,6 +56,7 @@ export class MeCloudAutodiscoveryService {
     return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
       try {
         return await this.cloudAutodiscoveryService.discoverSubscriptions(
+          sessionMetadata,
           await this.getCapiCredentials(sessionMetadata, utm),
           CloudAutodiscoveryAuthType.Sso,
         );
@@ -79,6 +80,7 @@ export class MeCloudAutodiscoveryService {
     return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
       try {
         return await this.cloudAutodiscoveryService.discoverDatabases(
+          sessionMetadata,
           await this.getCapiCredentials(sessionMetadata, utm),
           dto,
           CloudAutodiscoveryAuthType.Sso,

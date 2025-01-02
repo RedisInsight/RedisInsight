@@ -1,3 +1,5 @@
+require('dotenv').config({ path: './redisinsight/ui/.env.test' })
+
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   testEnvironmentOptions: {
@@ -65,4 +67,7 @@ module.exports = {
       lines: 80,
     },
   },
+  globals: {
+    riConfig: {}
+  }
 };

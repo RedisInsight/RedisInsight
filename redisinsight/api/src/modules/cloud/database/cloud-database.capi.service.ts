@@ -34,11 +34,11 @@ export class CloudDatabaseCapiService {
     dto: GetCloudSubscriptionDatabaseDto,
   ): Promise<CloudDatabase> {
     try {
-      this.logger.log('Getting cloud database', dto);
+      this.logger.debug('Getting cloud database', dto);
 
       const database = await this.capi.getDatabase(authDto, dto);
 
-      this.logger.log('Succeed to get databases in RE cloud subscription.');
+      this.logger.debug('Succeed to get databases in RE cloud subscription.');
 
       return parseCloudDatabaseCapiResponse(database, dto.subscriptionId, dto.subscriptionType, dto.free);
     } catch (e) {
@@ -57,11 +57,11 @@ export class CloudDatabaseCapiService {
     dto: GetCloudSubscriptionDatabasesDto,
   ): Promise<CloudDatabase[]> {
     try {
-      this.logger.log('Getting cloud databases from subscription');
+      this.logger.debug('Getting cloud databases from subscription');
 
       const data = await this.capi.getDatabases(authDto, dto);
 
-      this.logger.log('Succeed to get cloud databases from subscription.');
+      this.logger.debug('Succeed to get cloud databases from subscription.');
 
       return parseCloudDatabasesCapiResponse(data, dto.subscriptionType, dto.free);
     } catch (e) {
@@ -79,7 +79,7 @@ export class CloudDatabaseCapiService {
     dto: GetCloudSubscriptionDatabasesDto,
   ) {
     try {
-      this.logger.log('Creating free database');
+      this.logger.debug('Creating free database');
 
       const task = await this.capi.createFreeDatabase(
         authDto,

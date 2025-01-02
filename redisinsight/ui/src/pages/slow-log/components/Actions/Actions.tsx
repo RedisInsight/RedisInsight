@@ -33,7 +33,7 @@ export interface Props {
 const HIDE_REFRESH_LABEL_WIDTH = 850
 
 const Actions = (props: Props) => {
-  const { isEmptySlowLog, durationUnit, width, onClear = () => {}, onRefresh } = props
+  const { isEmptySlowLog, durationUnit, width, onClear = () => { }, onRefresh } = props
   const { instanceId } = useParams<{ instanceId: string }>()
   const { name = '' } = useSelector(connectedInstanceSelector)
   const { loading, lastRefreshTime } = useSelector(slowLogSelector)
@@ -138,7 +138,7 @@ const Actions = (props: Props) => {
           anchorPosition="downRight"
           isOpen={isPopoverConfigOpen}
           panelPaddingSize="m"
-          closePopover={() => {}}
+          closePopover={() => { }}
           panelClassName={cx('popover-without-top-tail', styles.configWrapper)}
           button={(
             <EuiButton
@@ -157,32 +157,32 @@ const Actions = (props: Props) => {
         </EuiPopover>
       </EuiFlexItem>
       {!isEmptySlowLog && (
-      <EuiFlexItem>
-        <EuiPopover
-          anchorPosition="leftCenter"
-          ownFocus
-          isOpen={isPopoverClearOpen}
-          closePopover={closePopoverClear}
-          panelPaddingSize="m"
-          button={(
-            <EuiToolTip
-              position="left"
-              anchorClassName={styles.icon}
-              content="Clear Slow Log"
-            >
-              <EuiButtonIcon
-                iconType="eraser"
-                color="primary"
-                aria-label="Clear Slow Log"
-                onClick={() => showClearPopover()}
-                data-testid="clear-btn"
-              />
-            </EuiToolTip>
-          )}
-        >
-          {ToolTipContent}
-        </EuiPopover>
-      </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiPopover
+            anchorPosition="leftCenter"
+            ownFocus
+            isOpen={isPopoverClearOpen}
+            closePopover={closePopoverClear}
+            panelPaddingSize="m"
+            button={(
+              <EuiToolTip
+                position="left"
+                anchorClassName={styles.icon}
+                content="Clear Slow Log"
+              >
+                <EuiButtonIcon
+                  iconType="eraser"
+                  color="primary"
+                  aria-label="Clear Slow Log"
+                  onClick={() => showClearPopover()}
+                  data-testid="clear-btn"
+                />
+              </EuiToolTip>
+            )}
+          >
+            {ToolTipContent}
+          </EuiPopover>
+        </EuiFlexItem>
       )}
       <EuiFlexItem>
         <EuiToolTip

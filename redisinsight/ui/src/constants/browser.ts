@@ -21,3 +21,6 @@ export const TEXT_INVALID_VALUE = {
 export const TEXT_DISABLED_COMPRESSED_VALUE: string = 'Cannot edit the decompressed value'
 
 export const TEXT_FAILED_CONVENT_FORMATTER = (format: KeyValueFormat) => `Failed to convert to ${format}`
+
+export const DATABASE_OVERVIEW_REFRESH_INTERVAL = riConfig.browser.databaseOverviewRefreshInterval
+export const DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL = riConfig.browser.databaseOverviewMinimumRefreshInterval

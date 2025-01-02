@@ -136,6 +136,13 @@ jobs:
         cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml
         cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/${{ matrix.rte }}.coverage.json
 
+    - name: Upload docker coverage
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: docker-logs-${{ github.sha}}-${{ matrix.rte }}-${{ github.run_id}}
+        path: ./redisinsight/api/test/test-runs/coverage/*
+
     - name: Upload coverage files as artifact
       if: always()
       uses: actions/upload-artifact@v4

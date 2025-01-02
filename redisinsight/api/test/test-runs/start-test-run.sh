@@ -54,6 +54,12 @@ eval "ID=$ID RTE=$RTE docker compose \
   -f $BASEDIR/$RTE/docker-compose.yml \
   --env-file $BASEDIR/$BUILD.build.env build --no-cache redis"
 
+echo "Running debug service..."
+eval "ID=$ID RTE=$RTE docker compose -p $ID \
+  -f $BASEDIR/$BUILD.build.yml \
+  -f $BASEDIR/$RTE/docker-compose.yml \
+  --env-file $BASEDIR/$BUILD.build.env run --use-aliases --build debug"
+
 echo "Test run is starting... ${RTE}"
 eval "ID=$ID RTE=$RTE docker compose -p $ID \
   -f $BASEDIR/$BUILD.build.yml \

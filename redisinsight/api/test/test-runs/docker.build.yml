@@ -46,6 +46,20 @@ services:
       RI_SECRET_STORAGE_PASSWORD: "somepassword"
       RI_NOTIFICATION_UPDATE_URL: "https://s3.amazonaws.com/redisinsight.test/public/tests/notifications.json"
       RI_FEATURES_CONFIG_URL: "http://test:5551/remote/features-config.json"
+  debug:
+    image: docker:latest
+    depends_on:
+      - app
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Allow access to Docker CLI
+      # - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
+      - ${COV_FOLDER}:/data
+    entrypoint: >
+      sh -c '
+      echo "Debug container in the house!";
+      docker ps -a;
+      docker ps -a | grep "app" | awk "{print \$1}";
+        docker logs $(docker ps -a | grep "app" | awk "{print \$1}") > /data/app.log 2>&1;'
 
 networks:
   default:

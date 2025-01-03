@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Socket } from 'socket.io-client'
 
-import { remove } from 'lodash'
 import { CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
@@ -22,7 +21,6 @@ const CommonAppSubscription = () => {
   const { id: jobId = '' } = useSelector(oauthCloudJobSelector) ?? {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { token } = useSelector(appCsrfSelector)
-  const [recommendationsSubscriptions, setRecommendationsSubscriptions] = useState<string[]>([])
   const socketRef = useRef<Nullable<Socket>>(null)
   const connectIo = useIoConnection(getSocketApiUrl(), {
     forceNew: false,
@@ -66,7 +64,7 @@ const CommonAppSubscription = () => {
 
     // Catch disconnect
     socketRef.current?.on(SocketEvent.Disconnect, () => {
-      unSubscribeFromAllRecommendations()
+      unSubscribeFromRecommendations()
     })
 
     emitCloudJobMonitor(jobId)
@@ -76,28 +74,27 @@ const CommonAppSubscription = () => {
     emitCloudJobMonitor(jobId)
   }, [jobId])
 
+  const unSubscribeFromRecommendations = () => {
+    const subscription = RecommendationsSocketEvents.Recommendation
+    const isListenerExist = !!socketRef.current?.listeners(subscription).length
+
+    if (isListenerExist) {
+      socketRef.current?.removeListener(subscription)
+    }
+  }
+
   useEffect(() => {
     if (!instanceId) return
 
-    unSubscribeFromAllRecommendations()
-    setRecommendationsSubscriptions((ids) => [...ids, instanceId])
+    unSubscribeFromRecommendations()
 
-    socketRef.current?.on(`${RecommendationsSocketEvents.Recommendation}:${instanceId}`, (data) => {
-      dispatch(addUnreadRecommendations(data))
-    })
-  }, [instanceId])
-
-  const unSubscribeFromAllRecommendations = () => {
-    recommendationsSubscriptions.forEach((id) => {
-      const subscription = `${RecommendationsSocketEvents.Recommendation}:${id}`
-      const isListenerExist = !!socketRef.current?.listeners(subscription).length
-
-      if (isListenerExist) {
-        setRecommendationsSubscriptions((ids) => remove(ids, id))
-        socketRef.current?.removeListener(subscription)
+    socketRef.current?.on(RecommendationsSocketEvents.Recommendation, (data) => {
+      const databaseId = data.recommendations[0]?.databaseId as string
+      if (databaseId === instanceId) {
+        dispatch(addUnreadRecommendations(data))
       }
     })
-  }
+  }, [instanceId])
 
   const emitCloudJobMonitor = (jobId: string) => {
     if (!jobId) return

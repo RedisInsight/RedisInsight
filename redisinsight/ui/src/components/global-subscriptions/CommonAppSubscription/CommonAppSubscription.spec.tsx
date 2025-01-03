@@ -113,17 +113,36 @@ describe('CommonAppSubscription', () => {
     })
 
     const { unmount } = render(<CommonAppSubscription />)
-    const mockData = { totalUnread: 10 }
-    const mockData2 = { totalUnread: 20 }
+    const mockData = { totalUnread: 10, recommendations: [{ databaseId: '123' }] }
+    const mockData2 = { totalUnread: 20, recommendations: [{ databaseId: '123' }] }
 
-    socket.socketClient.emit(`${RecommendationsSocketEvents.Recommendation}:123`, mockData)
-    socket.socketClient.emit(`${RecommendationsSocketEvents.Recommendation}:123`, mockData2)
+    socket.socketClient.emit(RecommendationsSocketEvents.Recommendation, mockData)
+    socket.socketClient.emit(RecommendationsSocketEvents.Recommendation, mockData2)
 
     const afterRenderActions = [
-      addUnreadRecommendations({ totalUnread: 10 }),
-      addUnreadRecommendations({ totalUnread: 20 }),
+      addUnreadRecommendations({ totalUnread: 10, recommendations: [{ databaseId: '123' }] }),
+      addUnreadRecommendations({ totalUnread: 20, recommendations: [{ databaseId: '123' }] }),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
+
+    unmount()
+  })
+
+  it('should ignore recommendations from non-connected instances', async () => {
+    (connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
+      id: '456',
+      connectionType: 'STANDALONE',
+      db: 0,
+    })
+
+    const { unmount } = render(<CommonAppSubscription />)
+    const mockData = { totalUnread: 10, recommendations: [{ databaseId: '123' }] }
+    const mockData2 = { totalUnread: 20, recommendations: [{ databaseId: '123' }] }
+
+    socket.socketClient.emit(RecommendationsSocketEvents.Recommendation, mockData)
+    socket.socketClient.emit(RecommendationsSocketEvents.Recommendation, mockData2)
+
+    expect(store.getActions()).toEqual([])
 
     unmount()
   })

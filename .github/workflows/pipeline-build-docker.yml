@@ -115,7 +115,7 @@ jobs:
       uses: actions/cache/save@v4
       with:
         path: ./release/docker/docker-linux-alpine.amd64.tar
-        key: docker-image-${{ github.ref_name }}-v8
+        key: docker-image-${{ github.ref_name }}-v9
 
     env:
       ENV: ${{ vars.ENV }}

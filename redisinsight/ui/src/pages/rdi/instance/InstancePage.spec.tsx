@@ -22,9 +22,11 @@ import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalys
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
 import {
+  loadInstances,
+  loadInstancesSuccess,
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
-import { setConnectedInstance } from 'uiSrc/slices/rdi/instances'
+import { setConnectedInstance, loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
 import { getPipelineStatus, setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
@@ -99,6 +101,8 @@ describe('InstancePage', () => {
     ]
 
     const expectedActions = [
+      loadInstances(),
+      loadRdiInstances(),
       getPipelineStatus(),
       setAppContextConnectedRdiInstanceId(''),
       setPipelineInitialState(),
@@ -107,6 +111,7 @@ describe('InstancePage', () => {
       setAppContextConnectedRdiInstanceId('rdiInstanceId'),
       resetConnectedDatabaseInstance(),
       ...resetContextActions,
+      loadInstancesSuccess(expect.any(Array)),
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
@@ -126,6 +131,8 @@ describe('InstancePage', () => {
     })
 
     const expectedActions = [
+      loadInstances(),
+      loadRdiInstances(),
       getPipelineStatus(),
       setAppContextConnectedRdiInstanceId(''),
       setPipelineInitialState(),

@@ -46,6 +46,7 @@ services:
       RI_SECRET_STORAGE_PASSWORD: "somepassword"
       RI_NOTIFICATION_UPDATE_URL: "https://s3.amazonaws.com/redisinsight.test/public/tests/notifications.json"
       RI_FEATURES_CONFIG_URL: "http://test:5551/remote/features-config.json"
+      RI_APP_FOLDER_ABSOLUTE_PATH: "/data"
   debug:
     image: docker:latest
     depends_on:

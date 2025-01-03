@@ -1,13 +1,23 @@
 import { SessionMetadata } from 'src/common/models';
-import { DatabaseSettings } from '../models/database-settings';
+import { DatabaseSetting } from 'src/modules/database-settings/dto/database-setting.dto';
 
 export abstract class DatabaseSettingsRepository {
-  abstract createOrUpdate(
+  abstract create(
     sessionMetadata: SessionMetadata,
-    setting: Partial<DatabaseSettings>
-  ): Promise<DatabaseSettings>;
+    setting: Partial<DatabaseSetting>
+  ): Promise<DatabaseSetting>;
 
-  abstract get(sessionMetadata: SessionMetadata, databaseId: string): Promise<DatabaseSettings>;
+  abstract update(
+    sessionMetadata: SessionMetadata,
+    setting: Partial<DatabaseSetting>
+  ): Promise<DatabaseSetting>;
+
+  abstract get(sessionMetadata: SessionMetadata, id: string): Promise<DatabaseSetting>;
+
+  abstract list(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+  ): Promise<DatabaseSetting[]>;
 
   abstract delete(sessionMetadata: SessionMetadata, databaseId: string): Promise<void>;
 }

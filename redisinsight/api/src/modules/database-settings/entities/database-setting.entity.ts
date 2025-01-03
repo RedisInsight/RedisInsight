@@ -2,12 +2,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import {
-  Column, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn,
+  Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn,
 } from 'typeorm';
 import { DataAsJsonString } from 'src/common/decorators';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
-@Entity('database_settings')
+@Entity('database-settings')
 export class DatabaseSettingsEntity {
   @PrimaryGeneratedColumn()
   @Expose()
@@ -18,24 +18,28 @@ export class DatabaseSettingsEntity {
   @Expose()
   databaseId: string;
 
-  @OneToOne(
+  @ManyToOne(
     () => DatabaseEntity,
-    (database) => database.dbSettings,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-    },
+    { nullable: false, onDelete: 'CASCADE', },
   )
-  @JoinColumn()
+  @JoinColumn({ name: 'databaseId' })
   database: DatabaseEntity;
 
   @ApiProperty({
     description: 'Applied settings by user, by database',
-  })
+    })
   @Column({ nullable: true })
   @DataAsJsonString()
   @Expose()
-  data: string;
+  data: Record<string, number | string | boolean>;
+
+  @CreateDateColumn()
+  @Expose()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  @Expose()
+  updatedAt: Date;
 
   constructor(entity: Partial<DatabaseSettingsEntity>) {
     Object.assign(this, entity);

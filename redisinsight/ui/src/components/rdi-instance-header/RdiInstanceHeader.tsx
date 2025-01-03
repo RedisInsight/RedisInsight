@@ -1,20 +1,22 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiText,
   EuiToolTip
 } from '@elastic/eui'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
+import { connectedInstanceSelector, fetchInstancesAction as fetchRdiInstancesAction } from 'uiSrc/slices/rdi/instances'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
+import { fetchInstancesAction } from 'uiSrc/slices/instances/instances'
+import InstancesNavigationPopover from '../instance-header/components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
 const RdiInstanceHeader = () => {
@@ -25,6 +27,12 @@ const RdiInstanceHeader = () => {
   } = useSelector(appFeatureFlagsFeaturesSelector)
   const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
   const history = useHistory()
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchInstancesAction())
+    dispatch(fetchRdiInstancesAction())
+  }, [])
 
   const goHome = () => {
     history.push(Pages.rdi)
@@ -57,7 +65,7 @@ const RdiInstanceHeader = () => {
                   <EuiText className={styles.divider}>&#62;</EuiText>
                 </EuiFlexItem>
                 <EuiFlexItem style={{ overflow: 'hidden' }}>
-                  <b className={styles.rdiName} data-testid="rdi-instance-name">{name}</b>
+                  <InstancesNavigationPopover name={name} />
                 </EuiFlexItem>
               </EuiFlexGroup>
             </div>

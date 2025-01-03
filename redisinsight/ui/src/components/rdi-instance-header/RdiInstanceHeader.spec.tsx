@@ -55,7 +55,7 @@ describe('RdiInstanceHeader', () => {
   it('should render proper instance name', () => {
     expect(render(<RdiInstanceHeader />)).toBeTruthy()
 
-    expect(screen.getByTestId('rdi-instance-name')).toHaveTextContent('name')
+    expect(screen.getByText('name')).toBeInTheDocument()
   })
 
   it('should show feature dependent items when feature flag is on', async () => {

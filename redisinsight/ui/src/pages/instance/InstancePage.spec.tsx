@@ -24,11 +24,12 @@ import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { getRecommendations, setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
 import {
   getDatabaseConfigInfo,
+  loadInstances,
   setConnectedInfoInstance,
   setConnectedInstance,
   setDefaultInstance
 } from 'uiSrc/slices/instances/instances'
-import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slices/rdi/instances'
+import { resetConnectedInstance as resetRdiConnectedInstance, loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { getAllPlugins } from 'uiSrc/slices/app/plugins'
 import { FeatureFlags } from 'uiSrc/constants'
@@ -125,6 +126,8 @@ describe('InstancePage', () => {
     ]
 
     const expectedActions = [
+      loadInstances(),
+      loadRdiInstances(),
       getAllPlugins(),
       setDefaultInstance(),
       setConnectedInstance(),
@@ -163,7 +166,7 @@ describe('InstancePage', () => {
       )
     })
 
-    await waitFor(() => expect(getDatabasesApiSpy).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(getDatabasesApiSpy).toHaveBeenCalledTimes(2))
   })
 
   it('should not call databases list api when flag disabled', async () => {

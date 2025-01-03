@@ -22,7 +22,8 @@ ADD $DIST /usr/src/app/redisinsight
 RUN ls -la /usr/src/app/redisinsight
 
 # folder to store local database, plugins, logs and all other files
-RUN mkdir -p /data && chown -R node:node /data
+RUN mkdir -p /data && chmod -R 777 /data
+# RUN mkdir -p /data && chown -R node:node /data
 
 # copy the docker entry point script and make it executable
 COPY --chown=node:node ./docker-entry.sh ./

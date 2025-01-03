@@ -10,6 +10,7 @@ export interface IMonacoCommand {
 export interface IMonacoQuery {
   name: string
   fullQuery: string
+  commandQuery: string
   args: [string[], string[]],
   cursor: {
     isCursorInQuotes: boolean,

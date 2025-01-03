@@ -77,9 +77,9 @@ export const getRediSearchSubRedisMonarchTokensProvider = (
           [/[\w@#$.]+/, 'identifier']
         ],
         keywords: [
-          [`^\\s*(${generateKeywords(withNextQueryIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@index.query' }],
-          [`^\\s*(${generateKeywords(withNextIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@index' }],
-          [`^\\s*(${generateKeywords(withoutIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@root' }],
+          [`^\\s*(\\d\\s)?(${generateKeywords(withNextQueryIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@index.query' }],
+          [`^\\s*(\\d\\s)?(${generateKeywords(withNextIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@index' }],
+          [`^\\s*(\\d\\s)?(${generateKeywords(withoutIndexSuggestions).join('|')})\\b`, { token: 'keyword', next: '@root' }],
         ],
         ...tokens,
         ...generateQuery(),

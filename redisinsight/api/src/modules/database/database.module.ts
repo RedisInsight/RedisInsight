@@ -14,6 +14,7 @@ import { DatabaseInfoService } from 'src/modules/database/database-info.service'
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import { StackDatabasesRepository } from 'src/modules/database/repositories/stack.databases.repository';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { DatabaseGateway } from 'src/modules/database/database.gateway';
 import { DatabaseInfoProvider } from './providers/database-info.provider';
 import { ConnectionMiddleware } from './middleware/connection.middleware';
 
@@ -44,6 +45,7 @@ export class DatabaseModule {
           provide: DatabaseRepository,
           useClass: databaseRepository,
         },
+        DatabaseGateway,
       ],
       exports: [
         DatabaseRepository,

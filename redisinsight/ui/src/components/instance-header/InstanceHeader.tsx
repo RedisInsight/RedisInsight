@@ -14,7 +14,9 @@ import {
   connectedInstanceInfoSelector,
   connectedInstanceOverviewSelector,
   connectedInstanceSelector,
+  fetchInstancesAction,
 } from 'uiSrc/slices/instances/instances'
+import { fetchInstancesAction as fetchRdiInstancesAction } from 'uiSrc/slices/rdi/instances'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 
@@ -30,6 +32,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { getConfig } from 'uiSrc/config'
 import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
+import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
 const riConfig = getConfig()
@@ -69,6 +72,11 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => { setDbIndex(String(db || 0)) }, [db])
+
+  useEffect(() => {
+    dispatch(fetchInstancesAction())
+    dispatch(fetchRdiInstancesAction())
+  }, [])
 
   const goHome = () => {
     history.push(Pages.home)
@@ -160,7 +168,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                   />
                   )}
                   <EuiFlexItem style={{ overflow: 'hidden' }}>
-                    <b className={styles.dbName}>{name}</b>
+                    <InstancesNavigationPopover name={name} />
                   </EuiFlexItem>
                   {databases > 1 && (
                     <EuiFlexItem style={{ padding: '4px 0 4px 12px' }} grow={false}>

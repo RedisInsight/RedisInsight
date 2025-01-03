@@ -6,8 +6,10 @@ import { cleanup, mockedStore, render, screen, fireEvent, initialStateDefault, m
 import {
   checkDatabaseIndex,
   connectedInstanceInfoSelector,
-  connectedInstanceSelector
+  connectedInstanceSelector,
+  loadInstances,
 } from 'uiSrc/slices/instances/instances'
+import { loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
 import { appContextDbIndex } from 'uiSrc/slices/app/context'
 
 import { FeatureFlags } from 'uiSrc/constants'
@@ -99,6 +101,8 @@ describe('InstanceHeader', () => {
     fireEvent.click(screen.getByTestId('apply-btn'))
 
     const expectedActions = [
+      loadInstances(),
+      loadRdiInstances(),
       checkDatabaseIndex()
     ]
     expect(store.getActions()).toEqual([...expectedActions])

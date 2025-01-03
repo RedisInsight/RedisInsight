@@ -43,24 +43,27 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
             <EuiText color="subdued" size="s">
               {moduleText?.text}
             </EuiText>
+            <EuiSpacer size="s" />
+            <OAuthSsoHandlerDialog>
+              {(ssoCloudHandlerClick) => (
+                <ExternalLink
+                  iconSize="s"
+                  href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
+                  onClick={(e: React.MouseEvent) => {
+                    ssoCloudHandlerClick(e, {
+                      source,
+                      action: OAuthSocialAction.Create
+                    }, `${moduleName}_${source}`)
+                    onClose?.()
+                  }}
+                  data-testid="tutorials-get-started-link"
+                >
+                  Start with Cloud for free
+                </ExternalLink>
+              )}
+            </OAuthSsoHandlerDialog>
             <FeatureFlagComponent name={FeatureFlags.envDependent}>
               <>
-                <EuiSpacer size="s" />
-                <OAuthSsoHandlerDialog>
-                  {(ssoCloudHandlerClick) => (
-                    <ExternalLink
-                      iconSize="s"
-                      href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
-                      onClick={(e: React.MouseEvent) => {
-                        ssoCloudHandlerClick(e, { source, action: OAuthSocialAction.Create }, `${moduleName}_${source}`)
-                        onClose?.()
-                      }}
-                      data-testid="tutorials-get-started-link"
-                    >
-                      Start with Cloud for free
-                    </ExternalLink>
-                  )}
-                </OAuthSsoHandlerDialog>
                 <EuiSpacer size="xs" />
                 <ExternalLink
                   iconSize="s"

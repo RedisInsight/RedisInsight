@@ -43,7 +43,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./release/docker/docker-linux-alpine.amd64.tar
-          key: docker-image-${{ github.ref_name }}-v9
+          key: docker-image-${{ github.ref_name }}-v10
 
       - name: Check we have everything needed
         run: |

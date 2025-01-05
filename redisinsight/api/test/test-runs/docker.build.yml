@@ -14,9 +14,12 @@ services:
       dockerfile: ./test/test-runs/test.Dockerfile
     tty: true
     volumes:
-      - ${COV_FOLDER}:/usr/src/app/coverage
-      - ${COV_FOLDER}:/root/.redisinsight-v2.0
-      - ${COV_FOLDER}:/data
+      # - ${COV_FOLDER}:/usr/src/app/coverage
+      # - ${COV_FOLDER}:/root/.redisinsight-v2.0
+      # - ${COV_FOLDER}:/data
+      - shared-data:/usr/src/app/coverage
+      - shared-data:/root/.redisinsight-v2.0
+      - shared-data:/data
     depends_on:
       - redis
       - app
@@ -35,8 +38,10 @@ services:
     depends_on:
       - redis
     volumes:
-      - ${COV_FOLDER}:/root/.redisinsight-v2.0
-      - ${COV_FOLDER}:/data
+      # - ${COV_FOLDER}:/root/.redisinsight-v2.0
+      # - ${COV_FOLDER}:/data
+      - shared-data:/root/.redisinsight-v2.0
+      - shared-data:/data
     environment:
       RI_REDIS_CLIENTS_FORCE_STRATEGY: ${RI_REDIS_CLIENTS_FORCE_STRATEGY}
       CERTS_FOLDER: "/root/.redisinsight-v2.0"
@@ -54,7 +59,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Allow access to Docker CLI
       # - /home/runner/work/RedisInsight/RedisInsight/redisinsight/api/test/test-runs/coverage:/data
-      - ${COV_FOLDER}:/data
+      # - ${COV_FOLDER}:/data
+      - shared-data:/data
     entrypoint: >
       sh -c '
       echo "Debug container in the house!";
@@ -66,3 +72,10 @@ networks:
   default:
     name: ${ID}
 
+volumes:
+  shared-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${COV_FOLDER}
+      o: bind

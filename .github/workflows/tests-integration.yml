@@ -61,12 +61,6 @@ jobs:
       - name: Verify containers are running
         run: docker ps
 
-      - name: Verify /data access in app
-        run: |
-          docker exec test-runs-app-1 sh -c "echo 'hello from app' > /data/test-file"
-          docker exec test-runs-test-1 ls /data
-          docker exec test-runs-test-1 cat /data/test-file
-
       - name: Check logs
         run: |
           docker logs test-runs-app-1

@@ -63,15 +63,14 @@ jobs:
 
       - name: Verify /data access in app
         run: |
-          docker exec app sh -c "echo 'hello from app' > /data/test-file"
-          docker exec test ls /data
-          docker exec test cat /data/test-file
+          docker exec test-runs-app-1 sh -c "echo 'hello from app' > /data/test-file"
+          docker exec test-runs-test-1 ls /data
+          docker exec test-runs-test-1 cat /data/test-file
 
       - name: Check logs
         run: |
-          docker logs redis
-          docker logs app
-          docker logs test
+          docker logs test-runs-app-1
+          docker logs test-runs-test-1
 
       - name: Clean up
         if: always()

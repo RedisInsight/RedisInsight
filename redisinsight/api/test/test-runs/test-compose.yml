@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:6.2.14-alpine
+
+  app:
+    image: redisinsight:amd64
+    depends_on:
+      - redis
+    volumes:
+      - shared-data:/data
+    environment:
+      RI_REDIS_CLIENTS_FORCE_STRATEGY: ioredis
+      RI_DB_SYNC: 'true'
+
+  test:
+    build:
+      context: .
+      dockerfile: ./test/test-runs/test.Dockerfile
+    depends_on:
+      - redis
+      - app
+    volumes:
+      - shared-data:/data
+    environment:
+      RI_REDIS_CLIENTS_FORCE_STRATEGY: ioredis
+      TEST_REDIS_HOST: 'redis'
+
+volumes:
+  shared-data:
+    driver: local

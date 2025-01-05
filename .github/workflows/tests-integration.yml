@@ -11,7 +11,7 @@ on:
         type: string
         default: 'ioredis'
       report:
-        description:  Send report for test run to slack
+        description: Send report for test run to slack
         type: boolean
         default: false
       short_rte_list:
@@ -26,113 +26,53 @@ on:
 env:
   SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
   SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
-  TEST_MEDIUM_DB_DUMP: ${{ secrets.TEST_MEDIUM_DB_DUMP }}
-  TEST_BIG_DB_DUMP: ${{ secrets.TEST_BIG_DB_DUMP }}
-  REPORT_NAME: "report-it"
 
 jobs:
-  run-tests:
-    name: ITest
+  run-cluster:
+    name: Run Simplified Cluster
     runs-on: ubuntu-latest
-    environment:
-      name: production
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # SSH Debug
-    - name: Enable SSH
-      uses: mxschmitt/action-tmate@v3
-      if: inputs.debug
-      with:
-        detached: true
+      - name: Ensure Release Directory Exists
+        run: mkdir -p ./release
 
-    - name: Ensure Release Directory Exists
-      run: mkdir -p ./release
+      - name: Restore Docker Image from Cache
+        id: restore-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ./release/docker/docker-linux-alpine.amd64.tar
+          key: docker-image-${{ github.ref_name }}-v9
 
-    - name: Restore Docker Image from Cache
-      id: restore-cache
-      uses: actions/cache/restore@v4
-      with:
-        path: ./release/docker/docker-linux-alpine.amd64.tar
-        key: docker-image-${{ github.ref_name }}-v9
+      - name: Check we have everything needed
+        run: |
+          ls -la ./release
+          ls -la ./release/docker
 
-    - name: Check we have everything needed
-      run: |
-        ls -la ./release
-        ls -la ./release/docker
+      - name: Load built docker image from workspace
+        if: inputs.build == 'docker'
+        run: |
+          docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
 
-    - name: Load built docker image from workspace
-      if: inputs.build == 'docker'
-      run: |
-        docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
+      - name: Start the cluster
+        run: docker compose -f ./redisinsight/api/test/test-runs/test-compose.yml up -d
 
-    - name: Run tests
-      timeout-minutes: 20
-      run: |
-        export RTE="oss-st-6"
-        ./redisinsight/api/test/test-runs/start-test-run.sh -r $RTE -t ${{ inputs.build }}
-        mkdir -p itest/coverages && mkdir -p itest/results
+      - name: Verify containers are running
+        run: docker ps
 
-        cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/$RTE.result.json
-        cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/$RTE.result.xml
-        cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/$RTE.coverage.json
+      - name: Verify /data access in app
+        run: |
+          docker exec app sh -c "echo 'hello from app' > /data/test-file"
+          docker exec test ls /data
+          docker exec test cat /data/test-file
 
-    - name: Upload docker coverage
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: docker-logs-${{ github.sha}}-$RTE-${{ github.run_id}}
-        path: /data/*
+      - name: Check logs
+        run: |
+          docker logs redis
+          docker logs app
+          docker logs test
 
-    - name: Upload coverage files as artifact
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverages-$RTE
-        path: itest/coverages
-
-    # - name: Send report to Slack
-    #   if: inputs.report && always()
-    #   run: |
-    #     ITEST_NAME=$RTE node ./.github/itest-results.js
-    #     curl -H "Content-type: application/json" --data @itests.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
-
-    - name: Generate test results
-      uses: dorny/test-reporter@v1
-      id: test-reporter
-      if: always()
-      with:
-        name: 'Test results: IT ($RTE) tests'
-        path: itest/results/*.result.xml
-        reporter: jest-junit
-        list-tests: 'failed'
-        list-suites: 'failed'
-        fail-on-error: 'false'
-
-    - name: Add link to report in the workflow summary
-      if: always()
-      run: |
-        link="${{ steps.test-reporter.outputs.url_html }}"
-        echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY
-
-  coverage:
-    runs-on: ubuntu-latest
-    name: Final coverage
-    needs: run-tests
-    if: always()
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Download coverage artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: coverages-$RTE
-        path: ./coverages
-
-    # - name: Calculate coverage across all tests runs
-    #   run: |
-    #     npx nyc report -t ./coverages -r text -r text-summary
-    #     sudo mkdir -p /usr/src/app
-    #     sudo cp -a ./redisinsight/api/. /usr/src/app/
-    #     sudo cp -R ./coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
-    #     cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
+      - name: Clean up
+        if: always()
+        run: docker compose -f ./redisinsight/api/test/test-runs/test-compose.yml down -v

@@ -28,8 +28,8 @@ RUN mkdir -p /data && chmod -R 777 /data
 COPY ./docker-entry.sh ./
 RUN chmod +x docker-entry.sh
 
-# since RI is hard-code to port 5000, expose it from the container
-EXPOSE 5000
+# since RI is hard-code to port 5540, expose it from the container
+EXPOSE 5540
 
 # serve the application 🚀
 ENTRYPOINT ["./docker-entry.sh", "node", "redisinsight/api/dist/src/main"]

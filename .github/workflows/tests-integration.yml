@@ -61,6 +61,9 @@ jobs:
       - name: Verify containers are running
         run: docker ps
 
+      - name: Wait for services a bit
+        run: sleep 60
+
       - name: Check logs
         run: |
           docker logs test-runs-app-1

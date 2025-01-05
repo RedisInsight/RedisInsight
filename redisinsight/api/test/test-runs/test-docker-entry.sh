@@ -23,27 +23,6 @@ while [ $RETRIES -gt 0 ]; do
   sleep 1
 done
 
-echo "Waiting for /.redisinsight-v2.0 to be available..."
-RETRIES_OTHER=10 
-while [ $RETRIES_OTHER -gt 0 ]; do
-  if [ -f /.redisinsight-v2.0/redisinsight.db ]; then
-    echo "/.redisinsight-v2.0/redisinsight.db is ready!"
-    break
-  fi
-  echo "File not found yet, retrying... ($RETRIES_OTHER retries left)"
-  RETRIES_OTHER=$((RETRIES_OTHER - 1))
-  sleep 1
-done
-
-ls -la /data || echo "/data not found or inaccessible"
-ls -la /.redisinsight-v2.0/redisinsight.db || echo "/.redisinsight-v2.0 not found or inaccessible"
-
-if [ $RETRIES -eq 0 ] || [ ${RETRIES_OTHER:-0} -eq 0 ]; then
-  echo "Timeout reached or other condition met. Exiting with error."
-  exit 1
-fi
-
-echo "Checking /data at runtime:"
 ls -la /data || echo "/data not found or inaccessible"
 
 exec "$@"

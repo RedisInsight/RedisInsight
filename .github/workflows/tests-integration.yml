@@ -72,6 +72,20 @@ jobs:
           docker logs test-runs-app-1
           docker logs test-runs-test-1
 
+      - name: Extract Docker Logs
+        run: |
+          mkdir -p docker-logs
+          docker ps --format "{{.Names}}" | while read -r container; do
+            docker logs "$container" > "docker-logs/${container}.log" 2>&1
+          done
+
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-logs-${{ github.sha }}-${{ github.run_id }}
+          path: docker-logs/
+
       - name: Clean up
         if: always()
         run: docker compose -f ./redisinsight/api/test/test-runs/test-compose.yml down -v

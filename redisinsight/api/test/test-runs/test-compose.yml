@@ -1,5 +1,8 @@
 version: '3.8'
 
+x-constants:
+  - &apiRoot ./../../
+
 services:
   redis:
     image: redis:6.2.14-alpine
@@ -16,7 +19,7 @@ services:
 
   test:
     build:
-      context: .
+      context: *apiRoot
       dockerfile: ./test/test-runs/test.Dockerfile
     depends_on:
       - redis

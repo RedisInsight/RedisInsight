@@ -121,4 +121,7 @@ export default {
   RDI_TIMEOUT_ERROR: 'Encountered a timeout error while attempting to retrieve data',
   RDI_VALIDATION_ERROR: 'Validation error',
   INVALID_RDI_INSTANCE_ID: 'Invalid rdi instance id.',
+
+  // database settings
+  DATABASE_SETTINGS_NOT_FOUND: 'Could not find settings for this database',
 };

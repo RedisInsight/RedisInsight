@@ -131,10 +131,12 @@ test
     };
     // Verify that user can add SSH tunnel with Password for OSS Cluster database
     await myRedisDatabasePage.AddRedisDatabaseDialog.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
-    // should be deleted after https://redislabs.atlassian.net/browse/RI-5995
+    //TODO should be deleted after https://redislabs.atlassian.net/browse/RI-5995
     await t.wait(6000);
     await myRedisDatabasePage.clickOnDBByName(sshDbClusterPass.databaseName);
-
+    if(! await browserPage.plusAddKeyButton.exists){
+        await myRedisDatabasePage.clickOnDBByName(sshDbClusterPass.databaseName);
+    }
     //verify that db is added and profiler works
     await t.click(browserPage.Profiler.expandMonitor);
     await t.click(browserPage.Profiler.startMonitorButton);

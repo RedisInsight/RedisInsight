@@ -20,14 +20,14 @@ export class DatabaseSettingsEntity {
 
   @ManyToOne(
     () => DatabaseEntity,
-    { nullable: false, onDelete: 'CASCADE', },
+    { nullable: false, onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'databaseId' })
   database: DatabaseEntity;
 
   @ApiProperty({
     description: 'Applied settings by user, by database',
-    })
+  })
   @Column({ nullable: true })
   @DataAsJsonString()
   @Expose()

@@ -39,8 +39,7 @@ fixture `DB expire notifications`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl);
 
-test.only
-    .before(async() => {
+test.before(async() => {
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV5Config);

@@ -1,25 +1,65 @@
 import { SessionMetadata } from 'src/common/models';
-import { DatabaseSettingsRepository } from './database-settings.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { DatabaseSettingsEntity } from 'src/modules/database-settings/entities/database-setting.entity';
+import { classToClass } from 'src/utils';
+import { InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { plainToClass } from 'class-transformer';
 import { DatabaseSetting } from '../dto/database-setting.dto';
+import { DatabaseSettingsRepository } from './database-settings.repository';
+import { DatabaseSettings } from '../models/database-settings';
 
 export class LocalDatabaseSettingsRepository extends DatabaseSettingsRepository {
-  create(sessionMetadata: SessionMetadata, setting: Partial<DatabaseSetting>): Promise<DatabaseSetting> {
-    throw new Error('Method not implemented.');
+  private readonly logger = new Logger('LocalDatabaseSettingsRepository');
+
+  constructor(
+    @InjectRepository(DatabaseSettingsEntity)
+    private readonly repository: Repository<DatabaseSettingsEntity>,
+  ) {
+    super();
   }
 
-  update(sessionMetadata: SessionMetadata, setting: Partial<DatabaseSetting>): Promise<DatabaseSetting> {
-    throw new Error('Method not implemented.');
+  async create(_sessionMetadata: SessionMetadata, setting: Partial<DatabaseSetting>): Promise<DatabaseSettings> {
+    const settingsEntity = (plainToClass(DatabaseSettingsEntity, setting));
+    const entity = await this.repository.save(settingsEntity);
+    return classToClass(DatabaseSettings, entity);
   }
 
-  get(sessionMetadata: SessionMetadata, id: string): Promise<DatabaseSetting> {
-    throw new Error('Method not implemented.');
+  async update(sessionMetadata: SessionMetadata, setting: Partial<DatabaseSetting>): Promise<DatabaseSettings> {
+    const existing = await this.repository.findOneBy({ databaseId: setting.databaseId });
+    if (!existing) {
+      this.logger.error(`Database settings item with id:${setting.databaseId} was not Found`, sessionMetadata);
+      throw new NotFoundException(ERROR_MESSAGES.DATABASE_SETTINGS_NOT_FOUND);
+    }
+    const settingsEntity = plainToClass(DatabaseSettingsEntity, setting);
+    const entity = await this.repository.save(settingsEntity);
+    return classToClass(DatabaseSettings, entity);
   }
 
-  list(sessionMetadata: SessionMetadata, databaseId: string): Promise<DatabaseSetting[]> {
-    throw new Error('Method not implemented.');
+  async get(sessionMetadata: SessionMetadata, databaseId: string): Promise<DatabaseSettings> {
+    const entity = await this.repository.findOneBy({ databaseId });
+
+    if (!entity) {
+      this.logger.error(`Database settings item with id:${databaseId} was not Found`, sessionMetadata);
+      throw new NotFoundException(ERROR_MESSAGES.DATABASE_SETTINGS_NOT_FOUND);
+    }
+
+    return classToClass(DatabaseSettings, entity);
   }
 
-  delete(sessionMetadata: SessionMetadata, databaseId: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  /**
+   * Delete settings per database
+   * @param sessionMetadata
+   * @param databaseId
+   */
+  async delete(sessionMetadata: SessionMetadata, databaseId: string): Promise<void> {
+    this.logger.debug(`Deleting database settings item: ${databaseId}`, sessionMetadata);
+    try {
+      await this.repository.delete({ databaseId });
+    } catch (error) {
+      this.logger.error(`Failed to database settings item: ${databaseId}`, error, sessionMetadata);
+      throw new InternalServerErrorException();
+    }
   }
 }

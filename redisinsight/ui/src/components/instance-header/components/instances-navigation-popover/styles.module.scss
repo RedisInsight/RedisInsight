@@ -69,22 +69,16 @@
     font-size: 14px !important;
     line-height: 16.8px !important;
     color: var(--euiTextSubduedColor) !important;
-    &:hover, &:active {
-      background-color: var(--hoverInListColorDarken) !important;
-      color: var(--euiTextSubduedColorHover) !important;
-      border-left-color: var(--externalLinkColor) !important;
-      border-left-width: 3px !important;
-      border-left-style: solid !important;
-      text-decoration: none !important;
-
-
-        :global {
-          .euiListGroupItem__label:hover {
-            text-decoration: none;
-          }
-        }
-    }
   }
+}
+
+.listContainer :global(.euiListGroupItem-isActive), :global(.euiListGroupItem:hover) {
+  background-color: var(--hoverInListColorDarken) !important;
+  color: var(--euiTextSubduedColorHover) !important;
+  border-left-color: var(--externalLinkColor) !important;
+  border-left-width: 3px !important;
+  border-left-style: solid !important;
+  text-decoration: none !important;
 }
 
 .footerContainer {

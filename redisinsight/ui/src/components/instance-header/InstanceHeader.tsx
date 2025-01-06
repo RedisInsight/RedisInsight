@@ -78,6 +78,8 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
     dispatch(fetchRdiInstancesAction())
   }, [])
 
+  const isRedisStack = server?.buildType === BuildType.RedisStack
+
   const goHome = () => {
     history.push(Pages.home)
   }
@@ -168,7 +170,11 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                   />
                   )}
                   <EuiFlexItem style={{ overflow: 'hidden' }}>
-                    <InstancesNavigationPopover name={name} />
+                    {isRedisStack ? (
+                      <b className={styles.dbName}>{name}</b>
+                    ) : (
+                      <InstancesNavigationPopover name={name} />
+                    )}
                   </EuiFlexItem>
                   {databases > 1 && (
                     <EuiFlexItem style={{ padding: '4px 0 4px 12px' }} grow={false}>

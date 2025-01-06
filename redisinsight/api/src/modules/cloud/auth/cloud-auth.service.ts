@@ -138,24 +138,147 @@ export class CloudAuthService {
    */
   private async exchangeCode(authRequest: CloudAuthRequest, code: string): Promise<any> {
     try {
+      // Step 1: Exchange authorization code for tokens
       const tokenUrl = CloudAuthStrategy.generateExchangeCodeUrl(authRequest, code);
 
       const { data } = await axios.post(tokenUrl.toString().split('?')[0], tokenUrl.searchParams, {
         headers: CloudAuthService.getOAuthHttpRequestHeaders(),
       });
 
-      // Extract Entra ID (oid ID) from id_token for Microsoft authentication
-      if (authRequest.idpType === CloudAuthIdpType.Microsoft && data.id_token) {
-        const [, payload] = data.id_token.split('.')
-        const decodedPayload = JSON.parse(Buffer.from(payload, 'base64').toString())
-        log.info('the entire payload', decodedPayload)
+      if (authRequest.idpType === CloudAuthIdpType.Microsoft && data.access_token) {
+        const accessToken = data.access_token;
+
+        // Step 2: List Azure Subscriptions
+        const listAzureSubscriptions = async (): Promise<any[]> => {
+          try {
+            const url = `https://management.azure.com/subscriptions?api-version=2024-08-01`;
+            const response = await axios.get(url, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            this.logger.log('Subscriptions found:', response.data.value);
+            return response.data.value;
+          } catch (e) {
+            this.logger.error('Failed to fetch Azure subscriptions', e.response?.data || e.message);
+            throw wrapHttpError(e);
+          }
+        };
+
+        const subscriptions = await listAzureSubscriptions();
+
+        // Step 3: For each subscription, fetch Resource Groups and Redis instances
+        const listResourceGroups = async (subscriptionId: string): Promise<any[]> => {
+          try {
+            const url = `https://management.azure.com/subscriptions/${subscriptionId}/resourcegroups?api-version=2024-08-01`;
+            const response = await axios.get(url, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            return response.data.value;
+          } catch (e) {
+            this.logger.error('Failed to fetch Resource Groups', e.response?.data || e.message);
+            throw wrapHttpError(e);
+          }
+        };
+
+        // Step 4: Get access keys for each Redis instance. Access key is used as a password for the authentication with the current auth implementation
+        const getRedisInstanceAccessKeys = async (
+          subscriptionId: string,
+          resourceGroupName: string,
+          redisInstanceName: string
+        ): Promise<any[]> => {
+          try {
+            const keysUrl = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cache/Redis/${redisInstanceName}/listKeys?api-version=2024-11-01`;
+            const keysResponse = await axios.post(keysUrl, null, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+
+            return keysResponse.data.primaryKey
+          } catch (e) {
+            this.logger.error(`Failed to fetch keys for Redis instance ${redisInstanceName}`, e.response?.data || e.message);
+            return null;
+          }
+        };
+
+        const listAzureRedisDatabases = async (
+          subscriptionId: string,
+          resourceGroupName: string
+        ): Promise<any[]> => {
+          try {
+            // Get Redis instances list
+            const url = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Cache/Redis?api-version=2024-11-01`;
+            const response = await axios.get(url, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+
+            // For each Redis instance, get access keys
+            const redisInstances = await Promise.all(response.data.value.map(async (instance) => {
+              const accessKey = await getRedisInstanceAccessKeys(subscriptionId, resourceGroupName, instance.name)
+              return {
+                ...instance,
+                connectionDetails: {
+                  hostName: instance.properties.hostName,
+                  port: instance.properties.sslPort, // might need to check additionally if there are other available ports
+                  accessKey,
+                  username: instance.properties.userName || 'default',
+                }
+              }
+            }))
+
+            return redisInstances;
+          } catch (e) {
+            console.log('Failed to fetch Redis Databases', subscriptionId, resourceGroupName, e.response?.data || e.message);
+            // removed throwing for the POC because we are going over ALL resources and don't want to stop due to 1 error
+            // throw wrapHttpError(e);
+          }
+        };
+
+        const results: any[] = [];
+
+        for (const subscription of subscriptions) {
+          const subscriptionId = subscription.subscriptionId;
+          const resourceGroups = await listResourceGroups(subscriptionId);
+
+          for (const resourceGroup of resourceGroups) {
+            const redisInstances = await listAzureRedisDatabases(subscriptionId, resourceGroup.name);
+            // Only add to results if redisInstances exists and has length
+            if (redisInstances?.length > 0) {
+              results.push({
+                subscriptionId,
+                resourceGroup: resourceGroup.name,
+                redisInstances,
+              });
+            }
+          }
+        }
+
+        // Log only results with Redis instances
+        results.forEach(result => {
+          console.log('Azure Redis Databases result', result);
+          result.redisInstances.forEach(redisInstance => {
+            console.log('Azure Redis Database instance details:', {
+              name: redisInstance.name,
+              connectionDetails: redisInstance.connectionDetails,
+              properties: redisInstance.properties
+            });
+          });
+        });
+
+        return {
+          accessToken,
+          redisData: results,
+        };
       }
 
-      return data;
+      return data; // Default return if idpType is not Microsoft
     } catch (e) {
       this.logger.error('Unable to exchange code', e);
-
-      // todo: handle this?
       throw wrapHttpError(e);
     }
   }

@@ -16,7 +16,7 @@ import { RdiPipelineNotFoundException, wrapRdiPipelineError } from 'src/modules/
 import { isUndefined, omitBy } from 'lodash';
 import { deepMerge } from 'src/common/utils';
 import { RdiAnalytics } from './rdi.analytics';
-import { CloudAuthService } from '../cloud/auth/cloud-auth.service';
+import { RdiClient } from './client/rdi.client';
 
 @Injectable()
 export class RdiService {
@@ -36,6 +36,12 @@ export class RdiService {
 
   static isConnectionAffected(dto: UpdateRdiDto) {
     return Object.keys(omitBy(dto, isUndefined)).some((field) => this.connectionFields.includes(field));
+  }
+
+  private static async getRdiVersion(client: RdiClient): Promise<string> {
+    const pipelineStatus = await client.getPipelineStatus();
+    const version = pipelineStatus.components.processor.version;
+    return version;
   }
 
   async list(): Promise<Rdi[]> {
@@ -72,8 +78,6 @@ export class RdiService {
   async create(sessionMetadata: SessionMetadata, dto: CreateRdiDto): Promise<Rdi> {
     const model = classToClass(Rdi, dto);
     model.lastConnection = new Date();
-    // TODO add request to get version
-    model.version = '1.2';
 
     const rdiClientMetadata = {
       sessionMetadata,
@@ -81,7 +85,8 @@ export class RdiService {
     };
 
     try {
-      await this.rdiClientFactory.createClient(rdiClientMetadata, model);
+      const client = await this.rdiClientFactory.createClient(rdiClientMetadata, model);
+      model.version = await RdiService.getRdiVersion(client);
     } catch (error) {
       this.logger.error('Failed to create rdi instance', sessionMetadata);
 

@@ -1,21 +1,20 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiText,
   EuiToolTip
 } from '@elastic/eui'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { connectedInstanceSelector, fetchInstancesAction as fetchRdiInstancesAction } from 'uiSrc/slices/rdi/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
-import { fetchInstancesAction } from 'uiSrc/slices/instances/instances'
 import InstancesNavigationPopover from '../instance-header/components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -27,12 +26,6 @@ const RdiInstanceHeader = () => {
   } = useSelector(appFeatureFlagsFeaturesSelector)
   const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
   const history = useHistory()
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(fetchInstancesAction())
-    dispatch(fetchRdiInstancesAction())
-  }, [])
 
   const goHome = () => {
     history.push(Pages.rdi)

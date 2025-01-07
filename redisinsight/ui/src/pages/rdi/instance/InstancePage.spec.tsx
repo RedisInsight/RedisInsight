@@ -101,9 +101,9 @@ describe('InstancePage', () => {
     ]
 
     const expectedActions = [
+      getPipelineStatus(),
       loadInstances(),
       loadRdiInstances(),
-      getPipelineStatus(),
       setAppContextConnectedRdiInstanceId(''),
       setPipelineInitialState(),
       resetPipelineManagement(),
@@ -131,9 +131,9 @@ describe('InstancePage', () => {
     })
 
     const expectedActions = [
+      getPipelineStatus(),
       loadInstances(),
       loadRdiInstances(),
-      getPipelineStatus(),
       setAppContextConnectedRdiInstanceId(''),
       setPipelineInitialState(),
       resetPipelineManagement(),

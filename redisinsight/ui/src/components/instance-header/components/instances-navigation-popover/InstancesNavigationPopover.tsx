@@ -1,21 +1,18 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { EuiDescriptionListDescription, EuiFieldText, EuiIcon, EuiListGroup, EuiListGroupItem, EuiLoadingSpinner, EuiPopover, EuiSpacer, EuiTab, EuiTabs, EuiText } from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiPopover, EuiSpacer, EuiTab, EuiTabs, EuiText } from '@elastic/eui'
 import cx from 'classnames'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { checkConnectToRdiInstanceAction, instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/instances'
-import { checkConnectToInstanceAction, instancesSelector as dbInstancesSelector, setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
+import { instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/instances'
+import { instancesSelector as dbInstancesSelector } from 'uiSrc/slices/instances/instances'
 import Divider from 'uiSrc/components/divider/Divider'
 import { Pages } from 'uiSrc/constants'
-import { resetRdiContext, setAppContextInitialState, setAppContextConnectedRdiInstanceId } from 'uiSrc/slices/app/context'
-import { resetKeys } from 'uiSrc/slices/browser/keys'
-import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
-import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import Down from 'uiSrc/assets/img/Down.svg?react'
 import Search from 'uiSrc/assets/img/Search.svg'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
-import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { getDbIndex } from 'uiSrc/utils'
+import InstancesList from './components/instances-list'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -32,16 +29,13 @@ const InstancesNavigationPopover = ({ name }: Props) => {
   const [searchFilter, setSearchFilter] = useState('')
   const [filteredDbInstances, setFilteredDbInstances] = useState<Instance[]>([])
   const [filteredRdiInstances, setFilteredRdiInstances] = useState<RdiInstance[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
-  const [selected, setSelected] = useState<string>('')
 
   const { instanceId, rdiInstanceId } = useParams<{ instanceId: string, rdiInstanceId: string }>()
   const [selectedTab, setSelectedTab] = useState(rdiInstanceId ? InstancesTabs.RDI : InstancesTabs.Databases)
 
-  const { data: rdiInstances, connectedInstance: connectedRdiInstance } = useSelector(rdiInstancesSelector)
-  const { data: dbInstances, connectedInstance: connectedDbInstance } = useSelector(dbInstancesSelector)
+  const { data: rdiInstances } = useSelector(rdiInstancesSelector)
+  const { data: dbInstances } = useSelector(dbInstancesSelector)
   const history = useHistory()
-  const dispatch = useDispatch()
 
   useEffect(() => {
     const dbFiltered = dbInstances?.filter((db) => {
@@ -72,105 +66,10 @@ const InstancesNavigationPopover = ({ name }: Props) => {
     setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
   }
 
-  const connectToInstance = (id = '') => {
-    // reset rdi context
-    dispatch(resetRdiContext())
-
-    dispatch(resetKeys())
-    dispatch(resetRedisearchKeysData())
-    dispatch(resetCliSettingsAction())
-    dispatch(resetCliHelperSettings())
-    dispatch(setAppContextInitialState())
-
-    dispatch(setConnectedInstanceId(id))
-    setLoading(false)
-    history.push(Pages.browser(id))
-  }
-
   const btnLabel = selectedTab === InstancesTabs.Databases ? 'Redis Databases page' : 'Redis Data Integration page'
 
   const goHome = () => {
     history.push(selectedTab === InstancesTabs.Databases ? Pages.home : Pages.rdi)
-  }
-  const renderInstances = () => {
-    const instances = selectedTab === InstancesTabs.Databases ? filteredDbInstances : filteredRdiInstances
-
-    const goToInstance = (instance: Instance) => {
-      if (connectedDbInstance?.id === instance.id) {
-        // already connected so do nothing
-        return
-      }
-      setLoading(true)
-      const modulesSummary = getRedisModulesSummary(instance.modules)
-      sendEventTelemetry({
-        event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
-        eventData: {
-          databaseId: instance.id,
-          source: 'navigation_panel',
-          provider: instance.provider,
-          ...modulesSummary,
-        }
-      })
-      dispatch(checkConnectToInstanceAction(instance.id, connectToInstance, () => setLoading(false), false))
-    }
-
-    const goToRdiInstance = (instance: RdiInstance) => {
-      if (connectedRdiInstance?.id === instance.id) {
-        // already connected so do nothing
-        return
-      }
-      setLoading(true)
-      dispatch(checkConnectToRdiInstanceAction(
-        instance.id,
-        (id: string) => {
-          setLoading(false)
-          history.push(Pages.rdiPipeline(id))
-        },
-        () => setLoading(false)
-      ))
-    }
-
-    const goToPage = (instance: Instance | RdiInstance) => {
-      if (selectedTab === InstancesTabs.Databases) {
-        goToInstance(instance as Instance)
-      } else {
-        goToRdiInstance(instance as RdiInstance)
-      }
-    }
-
-    const isInstanceActive = (id: string) => {
-      if (selectedTab === InstancesTabs.Databases) {
-        return id === instanceId
-      }
-      return id === rdiInstanceId
-    }
-
-    return (
-      <div className={styles.listContainer}>
-        <EuiListGroup flush maxWidth="none" gutterSize="none">
-          {instances?.map((instance) => (
-            <EuiListGroupItem
-              className={styles.item}
-              isActive={isInstanceActive(instance.id)}
-              disabled={loading}
-              key={instance.id}
-              label={(
-                <EuiText style={{ display: 'flex', alignItems: 'center' }}>
-                  {loading && instance?.id === selected && <EuiLoadingSpinner size="s" style={{ marginRight: '8px' }} />}
-                  {instance.name}
-                  {' '}
-                  {getDbIndex(instance.db)}
-                </EuiText>
-          )}
-              onClick={() => {
-                setSelected(instance.id)
-                goToPage(instance)
-              }}
-            />
-          ))}
-        </EuiListGroup>
-      </div>
-    )
   }
 
   return (
@@ -231,7 +130,11 @@ const InstancesNavigationPopover = ({ name }: Props) => {
             </EuiTabs>
           </div>
           <EuiSpacer size="m" />
-          {renderInstances()}
+          <InstancesList
+            selectedTab={selectedTab}
+            filteredDbInstances={filteredDbInstances}
+            filteredRdiInstances={filteredRdiInstances}
+          />
           <div>
             <EuiSpacer size="m" />
             <Divider />

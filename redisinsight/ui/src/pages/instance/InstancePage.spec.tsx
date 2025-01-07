@@ -166,7 +166,7 @@ describe('InstancePage', () => {
       )
     })
 
-    await waitFor(() => expect(getDatabasesApiSpy).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(getDatabasesApiSpy).toHaveBeenCalledTimes(1))
   })
 
   it('should not call databases list api when flag disabled', async () => {

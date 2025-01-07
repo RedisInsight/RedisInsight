@@ -109,13 +109,13 @@ describe('InstancesNavigationPopover', () => {
     act(() => {
       fireEvent.click(screen.getByTestId(`${InstancesTabs.RDI}-tab-id`))
     })
-    expect(screen.getByText('All RDIs')).toBeInTheDocument()
+    expect(screen.getByText('Redis Data Integration page')).toBeInTheDocument()
 
     act(() => {
       fireEvent.click(screen.getByTestId(`${InstancesTabs.Databases}-tab-id`))
     })
 
-    expect(screen.getByText('All Databases')).toBeInTheDocument()
+    expect(screen.getByText('Redis Databases page')).toBeInTheDocument()
   })
 
   it('should send event telemetry', () => {

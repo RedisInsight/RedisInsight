@@ -101,8 +101,6 @@ describe('InstanceHeader', () => {
     fireEvent.click(screen.getByTestId('apply-btn'))
 
     const expectedActions = [
-      loadInstances(),
-      loadRdiInstances(),
       checkDatabaseIndex()
     ]
     expect(store.getActions()).toEqual([...expectedActions])

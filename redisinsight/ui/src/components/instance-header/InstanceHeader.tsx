@@ -14,9 +14,7 @@ import {
   connectedInstanceInfoSelector,
   connectedInstanceOverviewSelector,
   connectedInstanceSelector,
-  fetchInstancesAction,
 } from 'uiSrc/slices/instances/instances'
-import { fetchInstancesAction as fetchRdiInstancesAction } from 'uiSrc/slices/rdi/instances'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 
@@ -72,11 +70,6 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => { setDbIndex(String(db || 0)) }, [db])
-
-  useEffect(() => {
-    dispatch(fetchInstancesAction())
-    dispatch(fetchRdiInstancesAction())
-  }, [])
 
   const isRedisStack = server?.buildType === BuildType.RedisStack
 

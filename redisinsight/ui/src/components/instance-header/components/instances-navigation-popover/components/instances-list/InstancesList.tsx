@@ -5,7 +5,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import { checkConnectToRdiInstanceAction, instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/instances'
 import { checkConnectToInstanceAction, instancesSelector as dbInstancesSelector, setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
-import { setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { resetRdiContext, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
@@ -37,6 +37,8 @@ const InstancesList = ({
   const instances = selectedTab === InstancesTabs.Databases ? filteredDbInstances : filteredRdiInstances
 
   const connectToInstance = (id = '') => {
+    dispatch(resetRdiContext())
+
     dispatch(setConnectedInstanceId(id))
     setLoading(false)
     history.push(Pages.browser(id))

@@ -135,6 +135,8 @@ const DatabasesListWrapper = (props: Props) => {
   }
 
   const connectToInstance = (id = '') => {
+    dispatch(resetRdiContext())
+
     dispatch(setConnectedInstanceId(id))
 
     history.push(Pages.browser(id))

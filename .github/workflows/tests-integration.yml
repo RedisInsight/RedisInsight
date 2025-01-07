@@ -28,12 +28,73 @@ env:
   SLACK_AUDIT_REPORT_CHANNEL: ${{ secrets.SLACK_AUDIT_REPORT_CHANNEL }}
 
 jobs:
-  run-cluster:
-    name: Run Simplified Cluster
+  # run-cluster:
+  # name: Run Simplified Cluster
+  # runs-on: ubuntu-latest
+  # steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+
+  #   - name: Ensure Release Directory Exists
+  #     run: mkdir -p ./release
+
+  #   - name: Restore Docker Image from Cache
+  #     id: restore-cache
+  #     uses: actions/cache/restore@v4
+  #     with:
+  #       path: ./release/docker/docker-linux-alpine.amd64.tar
+  #       key: docker-image-${{ github.ref_name }}-v10
+
+  #   - name: Check we have everything needed
+  #     run: |
+  #       ls -la ./release
+  #       ls -la ./release/docker
+
+  #   - name: Load built docker image from workspace
+  #     if: inputs.build == 'docker'
+  #     run: |
+  #       docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
+
+  #   - name: Start the cluster
+  #     run: docker compose -f ./redisinsight/api/test/test-runs/test-compose.yml up -d
+
+  #   - name: Verify containers are running
+  #     run: docker ps
+
+  #   - name: Wait for services a bit
+  #     run: sleep 60
+
+  #   - name: Check logs
+  #     run: |
+  #       docker logs test-runs-app-1
+  #       docker logs test-runs-test-1
+
+  #   - name: Extract Docker Logs
+  #     run: |
+  #       mkdir -p docker-logs
+  #       docker ps --format "{{.Names}}" | while read -r container; do
+  #         docker logs "$container" > "docker-logs/${container}.log" 2>&1
+  #       done
+
+  #   - name: Upload Logs
+  #     if: always()
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: docker-logs-${{ github.sha }}-${{ github.run_id }}
+  #       path: docker-logs/
+
+  #   - name: Clean up
+  #     if: always()
+  #     run: docker compose -f ./redisinsight/api/test/test-runs/test-compose.yml down -v
+  run-tests:
+    name: ITest
     runs-on: ubuntu-latest
+    environment:
+      name: production
+    strategy:
+      fail-fast: false
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Ensure Release Directory Exists
         run: mkdir -p ./release
@@ -47,6 +108,7 @@ jobs:
 
       - name: Check we have everything needed
         run: |
+          ls -la .
           ls -la ./release
           ls -la ./release/docker
 
@@ -55,34 +117,39 @@ jobs:
         run: |
           docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
 
-      - name: Start the cluster
-        run: docker compose -f ./redisinsight/api/test/test-runs/test-compose.yml up -d
-
-      - name: Verify containers are running
-        run: docker ps
-
-      - name: Wait for services a bit
-        run: sleep 60
-
-      - name: Check logs
+      - name: Run tests
+        timeout-minutes: 20
         run: |
-          docker logs test-runs-app-1
-          docker logs test-runs-test-1
+          if [ ${{ inputs.redis_client }} == "node-redis" ]; then
+            export RI_REDIS_CLIENTS_FORCE_STRATEGY=${{ inputs.redis_client }}
+          fi
+          ./redisinsight/api/test/test-runs/start-test-run.sh -r oss-st-6 -t docker
+          mkdir -p itest/coverages && mkdir -p itest/results
+          cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/oss-st-6.result.json
+          cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/oss-st-6.result.xml
+          cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/oss-st-6.coverage.json
 
-      - name: Extract Docker Logs
-        run: |
-          mkdir -p docker-logs
-          docker ps --format "{{.Names}}" | while read -r container; do
-            docker logs "$container" > "docker-logs/${container}.log" 2>&1
-          done
-
-      - name: Upload Logs
+      - name: Upload coverage files as artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: docker-logs-${{ github.sha }}-${{ github.run_id }}
-          path: docker-logs/
+          name: coverages-oss-st-6
+          path: itest/coverages
 
-      - name: Clean up
+      - name: Generate test results
+        uses: dorny/test-reporter@v1
+        id: test-reporter
         if: always()
-        run: docker compose -f ./redisinsight/api/test/test-runs/test-compose.yml down -v
+        with:
+          name: 'Test results: IT (oss-st-6) tests'
+          path: itest/results/*.result.xml
+          reporter: jest-junit
+          list-tests: 'failed'
+          list-suites: 'failed'
+          fail-on-error: 'false'
+
+      - name: Add link to report in the workflow summary
+        if: always()
+        run: |
+          link="${{ steps.test-reporter.outputs.url_html }}"
+          echo "- [${link}](${link})" >> $GITHUB_STEP_SUMMARY

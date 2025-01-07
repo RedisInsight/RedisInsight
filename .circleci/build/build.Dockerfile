@@ -22,14 +22,17 @@ ADD $DIST /usr/src/app/redisinsight
 RUN ls -la /usr/src/app/redisinsight
 
 # folder to store local database, plugins, logs and all other files
-RUN mkdir -p /data && chmod -R 777 /data
+RUN mkdir -p /data && chown -R node:node /data
 
 # copy the docker entry point script and make it executable
-COPY ./docker-entry.sh ./
+COPY --chown=node:node ./docker-entry.sh ./
 RUN chmod +x docker-entry.sh
 
 # since RI is hard-code to port 5540, expose it from the container
 EXPOSE 5540
+
+# don't run the node process as root
+USER node
 
 # serve the application 🚀
 ENTRYPOINT ["./docker-entry.sh", "node", "redisinsight/api/dist/src/main"]

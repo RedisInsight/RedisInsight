@@ -7,9 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import TreeViewIcon from 'uiSrc/assets/img/icons/treeview.svg?react'
 import KeysSummary from 'uiSrc/components/keys-summary'
-import { BrowserStorageItem } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { localStorageService } from 'uiSrc/services'
 import { resetBrowserTree, setBrowserKeyListDataLoaded, } from 'uiSrc/slices/app/context'
 
 import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData, } from 'uiSrc/slices/browser/keys'
@@ -212,8 +210,8 @@ const KeysHeader = (props: Props) => {
                   totalItemsCount={keysState.total}
                   scanned={
                     isSearched
-                    || (isFiltered && searchMode === SearchMode.Pattern)
-                    || viewType === KeyViewType.Tree ? keysState.scanned : 0
+                      || (isFiltered && searchMode === SearchMode.Pattern)
+                      || viewType === KeyViewType.Tree ? keysState.scanned : 0
                   }
                   loading={loading}
                   showScanMore={

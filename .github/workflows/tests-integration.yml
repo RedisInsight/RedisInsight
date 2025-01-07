@@ -99,6 +99,9 @@ jobs:
       - name: Ensure Release Directory Exists
         run: mkdir -p ./release
 
+      - name: Make sure coverage dir exists
+        run: mkdir -p ./redisinsight/api/test/test-runs/coverage
+
       - name: Restore Docker Image from Cache
         id: restore-cache
         uses: actions/cache/restore@v4
@@ -111,6 +114,7 @@ jobs:
           ls -la .
           ls -la ./release
           ls -la ./release/docker
+          ls -la ./redisinsight/api/test/test-runs
 
       - name: Load built docker image from workspace
         if: inputs.build == 'docker'

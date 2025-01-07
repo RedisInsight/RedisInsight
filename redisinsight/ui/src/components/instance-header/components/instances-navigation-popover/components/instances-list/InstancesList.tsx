@@ -37,12 +37,6 @@ const InstancesList = ({
   const instances = selectedTab === InstancesTabs.Databases ? filteredDbInstances : filteredRdiInstances
 
   const connectToInstance = (id = '') => {
-    dispatch(resetKeys())
-    dispatch(resetRedisearchKeysData())
-    dispatch(resetCliSettingsAction())
-    dispatch(resetCliHelperSettings())
-    dispatch(setAppContextInitialState())
-
     dispatch(setConnectedInstanceId(id))
     setLoading(false)
     history.push(Pages.browser(id))
@@ -110,7 +104,12 @@ const InstancesList = ({
             key={instance.id}
             label={(
               <EuiText style={{ display: 'flex', alignItems: 'center' }}>
-                {loading && instance?.id === selected && <EuiLoadingSpinner size="s" style={{ marginRight: '8px' }} />}
+                {loading && instance?.id === selected && (
+                <EuiLoadingSpinner
+                  size="s"
+                  className={styles.loading}
+                />
+                )}
                 {instance.name}
                 {' '}
                 {getDbIndex(instance.db)}

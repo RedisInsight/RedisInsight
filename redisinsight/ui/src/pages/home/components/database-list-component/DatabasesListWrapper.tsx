@@ -135,16 +135,6 @@ const DatabasesListWrapper = (props: Props) => {
   }
 
   const connectToInstance = (id = '') => {
-    // reset rdi context
-    dispatch(resetRdiContext())
-
-    if (contextInstanceId && contextInstanceId !== id) {
-      dispatch(resetKeys())
-      dispatch(resetRedisearchKeysData())
-      dispatch(resetCliSettingsAction())
-      dispatch(resetCliHelperSettings())
-      dispatch(setAppContextInitialState())
-    }
     dispatch(setConnectedInstanceId(id))
 
     history.push(Pages.browser(id))

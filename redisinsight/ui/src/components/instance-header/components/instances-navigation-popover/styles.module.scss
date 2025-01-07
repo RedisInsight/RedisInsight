@@ -70,6 +70,13 @@
     line-height: 16.8px !important;
     color: var(--euiTextSubduedColor) !important;
   }
+
+  .loading {
+    margin-right: 8px;
+    border-color: var(--separatorDropdownColor) !important;
+
+    border-top-color: var(--euiColorGhost) !important;
+  }
 }
 
 .listContainer :global(.euiListGroupItem-isActive), :global(.euiListGroupItem:hover) {

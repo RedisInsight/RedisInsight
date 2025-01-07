@@ -32,8 +32,6 @@ export class DatabaseRecommendationEmitter {
 
       this.logger.debug(`${recommendations.length} new recommendation(s) to emit`);
 
-      // TODO: [USER_CONTEXT] how to get a client metadata here?
-      // do we even need it since it isn't used to grab the database id?
       const totalUnread = await this.databaseRecommendationRepository
         .getTotalUnread(sessionMetadata, recommendations[0].databaseId);
 

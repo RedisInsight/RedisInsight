@@ -10,8 +10,6 @@ import { getUserRoom } from 'src/constants/websocket-rooms';
 
 @Injectable()
 export class SessionMetadataAdapter extends IoAdapter {
-  private logger = new Logger('SessionMetadataAdapter');
-
   async bindMessageHandlers(
     socket: Socket,
     handlers: MessageMappingProperties[],

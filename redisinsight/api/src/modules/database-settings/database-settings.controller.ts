@@ -14,7 +14,7 @@ import { DatabaseSettings } from 'src/modules/database-settings/models/database-
 @UseInterceptors(BrowserSerializeInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
 @ApiTags('Database: Database settings')
-@Controller('')
+@Controller('/')
 export class DatabaseSettingsController {
   constructor(private readonly service: DatabaseSettingsService) {}
 

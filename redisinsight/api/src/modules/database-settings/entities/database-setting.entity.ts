@@ -2,7 +2,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import {
-  Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn,
+  Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DataAsJsonString } from 'src/common/decorators';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
@@ -32,14 +32,6 @@ export class DatabaseSettingsEntity {
   @DataAsJsonString()
   @Expose()
   data: Record<string, number | string | boolean>;
-
-  @CreateDateColumn()
-  @Expose()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  @Expose()
-  updatedAt: Date;
 
   constructor(entity: Partial<DatabaseSettingsEntity>) {
     Object.assign(this, entity);

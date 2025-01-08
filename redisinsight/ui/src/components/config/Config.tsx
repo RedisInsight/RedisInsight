@@ -36,10 +36,13 @@ import { fetchGuideLinksAction } from 'uiSrc/slices/content/guide-links'
 import { setCapability } from 'uiSrc/slices/app/context'
 
 import { fetchProfile } from 'uiSrc/slices/oauth/cloud'
+import { fetchDBSettings } from 'uiSrc/slices/app/db-settings'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 const SETTINGS_PAGE_PATH = '/settings'
 const Config = () => {
   const serverInfo = useSelector(appServerInfoSelector)
+  const { id } = useSelector(connectedInstanceSelector)
   const { config, spec } = useSelector(userSettingsSelector)
   const {
     [FeatureFlags.cloudSso]: cloudSsoFeature,
@@ -75,6 +78,12 @@ const Config = () => {
       }))
     }
   }, [])
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchDBSettings())
+    }
+  }, [id])
 
   useEffect(() => {
     if (config && spec && envDependentFeature?.flag) {

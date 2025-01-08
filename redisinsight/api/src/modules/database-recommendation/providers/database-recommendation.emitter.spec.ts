@@ -19,6 +19,11 @@ const mockEventEmitter = {
   emit: jest.fn(),
 };
 
+const mockSessionMetadata = {
+  userId: '1',
+  sessionId: 'abc',
+};
+
 describe('DatabaseRecommendationEmitter', () => {
   let service: DatabaseRecommendationEmitter;
   let databaseRecommendationRepositoryMock: MockType<DatabaseRecommendationRepository>;
@@ -50,17 +55,23 @@ describe('DatabaseRecommendationEmitter', () => {
 
   describe('newRecommendation', () => {
     it('should return undefined if no recommendations passed', async () => {
-      await service.newRecommendation([]);
+      await service.newRecommendation({
+        sessionMetadata: mockSessionMetadata,
+        recommendations: [],
+      });
       expect(emitter.emit).toHaveBeenCalledTimes(0);
     });
     it('should emit 2 new recommendations', async () => {
       databaseRecommendationRepositoryMock.getTotalUnread.mockResolvedValueOnce(2);
 
-      await service.newRecommendation([mockDatabaseRecommendation, mockDatabaseRecommendation]);
+      await service.newRecommendation({
+        sessionMetadata: mockSessionMetadata,
+        recommendations: [mockDatabaseRecommendation, mockDatabaseRecommendation],
+      });
       expect(emitter.emit).toHaveBeenCalledTimes(1);
       expect(emitter.emit).toHaveBeenCalledWith(
         RecommendationServerEvents.Recommendation,
-        mockDatabaseRecommendation.databaseId,
+        mockSessionMetadata,
         {
           recommendations: [
             mockDatabaseRecommendation,
@@ -73,7 +84,10 @@ describe('DatabaseRecommendationEmitter', () => {
     it('should log an error but not fail', async () => {
       databaseRecommendationRepositoryMock.getTotalUnread.mockRejectedValueOnce(new Error('test error'));
 
-      await service.newRecommendation([mockDatabaseRecommendation]);
+      await service.newRecommendation({
+        sessionMetadata: mockSessionMetadata,
+        recommendations: [mockDatabaseRecommendation],
+      });
 
       expect(emitter.emit).toHaveBeenCalledTimes(0);
     });

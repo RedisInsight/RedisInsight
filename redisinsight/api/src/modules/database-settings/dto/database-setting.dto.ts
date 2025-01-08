@@ -12,14 +12,6 @@ export class CreateOrUpdateDatabaseSettingDto {
 
 export class DatabaseSetting {
   @ApiProperty({
-    description: 'Setting id',
-    type: Number,
-    default: 1,
-  })
-  @Expose()
-  id: number;
-
-  @ApiProperty({
     description: 'Database id',
     type: String,
     default: '123',
@@ -32,20 +24,4 @@ export class DatabaseSetting {
   })
   @Expose()
   data: Record<string, number | string | boolean>;
-
-  @ApiProperty({
-    description: 'Setting created date (ISO string)',
-    type: Date,
-    default: '2025-01-2T06:29:20.000Z',
-  })
-  @Expose()
-  createdAt: Date;
-
-  @ApiProperty({
-    description: 'Setting updated date (ISO string)',
-    type: Date,
-    default: '2025-01-2T06:29:20.000Z',
-  })
-  @Expose()
-  updatedAt: Date;
 }

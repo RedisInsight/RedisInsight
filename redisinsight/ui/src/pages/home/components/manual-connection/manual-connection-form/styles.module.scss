@@ -1,0 +1,11 @@
+.tabs {
+  border-bottom: 1px solid var(--separatorColor);
+
+  :global(.euiTab) {
+    margin-right: 12px;
+  }
+
+  :global(.euiTab:not(.euiTab-isSelected)) {
+    border-bottom-color: transparent !important;
+  }
+}

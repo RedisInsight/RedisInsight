@@ -5,7 +5,7 @@ import { render, screen, fireEvent, mockedStore, cleanup, act } from 'uiSrc/util
 
 import { defaultInstanceChanging } from 'uiSrc/slices/instances/instances'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import ConnectionUrl, { Props } from './ConnectionUrl'
+import AddDatabaseScreen, { Props } from './AddDatabaseScreen'
 
 const mockedProps = mock<Props>()
 
@@ -16,13 +16,13 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('ConnectionUrl', () => {
+describe('AddDatabaseScreen', () => {
   it('should render', () => {
-    expect(render(<ConnectionUrl {...mockedProps} />)).toBeTruthy()
+    expect(render(<AddDatabaseScreen {...mockedProps} />)).toBeTruthy()
   })
 
   it('should call proper actions with empty connection url', async () => {
-    render(<ConnectionUrl {...mockedProps} />)
+    render(<AddDatabaseScreen {...mockedProps} />)
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('btn-submit'))
@@ -32,7 +32,7 @@ describe('ConnectionUrl', () => {
   })
 
   it('should disable test connection and submit buttons when connection url is invalid', async () => {
-    render(<ConnectionUrl {...mockedProps} />)
+    render(<AddDatabaseScreen {...mockedProps} />)
 
     await act(async () => {
       fireEvent.change(
@@ -46,7 +46,7 @@ describe('ConnectionUrl', () => {
   })
 
   it('should not disable buttons with proper connection url', async () => {
-    render(<ConnectionUrl {...mockedProps} />)
+    render(<AddDatabaseScreen {...mockedProps} />)
 
     await act(async () => {
       fireEvent.change(
@@ -61,7 +61,7 @@ describe('ConnectionUrl', () => {
 
   it('should call proper actions after click manual settings', async () => {
     const onSelectOptionMock = jest.fn()
-    render(<ConnectionUrl {...mockedProps} onSelectOption={onSelectOptionMock} />)
+    render(<AddDatabaseScreen {...mockedProps} onSelectOption={onSelectOptionMock} />)
 
     await act(async () => {
       fireEvent.change(
@@ -90,7 +90,7 @@ describe('ConnectionUrl', () => {
 
   it('should call proper actions after click connectivity option', async () => {
     const onSelectOptionMock = jest.fn()
-    render(<ConnectionUrl {...mockedProps} onSelectOption={onSelectOptionMock} />)
+    render(<AddDatabaseScreen {...mockedProps} onSelectOption={onSelectOptionMock} />)
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('option-btn-sentinel'))

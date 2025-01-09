@@ -5,10 +5,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiForm,
-  EuiFormRow,
-  EuiIcon,
   EuiSpacer,
-  EuiTextArea,
   EuiToolTip
 } from '@elastic/eui'
 import { useFormik } from 'formik'
@@ -25,6 +22,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
 import ConnectivityOptions from './components/connectivity-options'
+import ConnectionUrl from './components/connection-url'
 
 import styles from './styles.module.scss'
 
@@ -57,7 +55,7 @@ const ConnectionUrlError = (
   </>
 )
 
-const ConnectionUrl = (props: Props) => {
+const AddDatabaseScreen = (props: Props) => {
   const { onSelectOption, onClose } = props
   const [isInvalid, setIsInvalid] = useState<Boolean>(false)
   const { loadingChanging: isLoading } = useSelector(instancesSelector)
@@ -108,38 +106,7 @@ const ConnectionUrl = (props: Props) => {
       >
         <EuiFlexGroup>
           <EuiFlexItem>
-            <EuiFormRow label={(
-              <div className={styles.connectionUrlInfo}>
-                <div>Connection URL</div>
-                <EuiToolTip
-                  title="The following connection URLs are supported:"
-                  className="homePage_tooltip"
-                  position="right"
-                  content={(
-                    <ul className="homePage_toolTipUl">
-                      <li><span className="dot" />redis://[[username]:[password]]@host:port</li>
-                      <li><span className="dot" />rediss://[[username]:[password]]@host:port</li>
-                      <li><span className="dot" />host:port</li>
-                    </ul>
-                  )}
-                >
-                  <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-                </EuiToolTip>
-              </div>
-            )}
-            >
-              <EuiTextArea
-                name="connectionURL"
-                id="connectionURL"
-                value={formik.values.connectionURL}
-                onChange={formik.handleChange}
-                fullWidth
-                placeholder="redis://default@127.0.0.1:6379"
-                resize="none"
-                style={{ height: 88 }}
-                data-testid="connection-url"
-              />
-            </EuiFormRow>
+            <ConnectionUrl value={formik.values.connectionURL} onChange={formik.handleChange} />
           </EuiFlexItem>
         </EuiFlexGroup>
 
@@ -210,4 +177,4 @@ const ConnectionUrl = (props: Props) => {
   )
 }
 
-export default ConnectionUrl
+export default AddDatabaseScreen

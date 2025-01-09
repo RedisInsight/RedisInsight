@@ -37,8 +37,6 @@ const InstancesList = ({
   const instances = selectedTab === InstancesTabs.Databases ? filteredDbInstances : filteredRdiInstances
 
   const connectToInstance = (id = '') => {
-    dispatch(resetRdiContext())
-
     dispatch(setConnectedInstanceId(id))
     setLoading(false)
     history.push(Pages.browser(id))
@@ -93,6 +91,13 @@ const InstancesList = ({
       return id === instanceId
     }
     return id === rdiInstanceId
+  }
+
+  if (!instances?.length) {
+    const emptyMsg = selectedTab === InstancesTabs.Databases ? 'No databases' : 'No RDI endpoints'
+    return (
+      <div className={styles.emptyMsg}>{emptyMsg}</div>
+    )
   }
 
   return (

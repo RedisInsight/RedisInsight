@@ -152,6 +152,7 @@ const DatabasesListWrapper = (props: Props) => {
       eventData: {
         databaseId: id,
         provider,
+        source: 'db_list',
         ...modulesSummary,
       }
     })

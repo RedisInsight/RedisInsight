@@ -37,6 +37,13 @@ jest.mock('uiSrc/slices/app/features', () => ({
   }),
 }))
 
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    isFreeDb: true,
+  }),
+}))
+
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -183,7 +190,8 @@ describe('DatabasesListWrapper', () => {
         RedisTimeSeries: {
           loaded: false
         },
-        customModules: []
+        customModules: [],
+        isFree: true,
       }
     });
 

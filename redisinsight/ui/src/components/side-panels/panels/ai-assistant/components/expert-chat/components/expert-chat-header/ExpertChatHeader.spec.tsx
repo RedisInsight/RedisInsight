@@ -25,6 +25,13 @@ beforeEach(() => {
   store.clearActions()
 })
 
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    isFreeDb: true,
+  }),
+}))
+
 describe('ExpertChatHeader', () => {
   it('should render', () => {
     expect(render(<ExpertChatHeader databaseId="1" />)).toBeTruthy()
@@ -64,6 +71,7 @@ describe('ExpertChatHeader', () => {
       eventData: {
         databaseId: '1',
         source: 'chatbot_tutorials_button',
+        isFree: true,
       }
     })
   })

@@ -18,7 +18,8 @@ jest.mock('uiSrc/telemetry', () => ({
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    provider: 'RE_CLOUD'
+    provider: 'RE_CLOUD',
+    isFreeDb: true,
   }),
 }))
 
@@ -84,7 +85,8 @@ describe('Code', () => {
           buttonName: label,
           databaseId: 'instanceId',
           path: 'path',
-          provider: 'RE_CLOUD'
+          provider: 'RE_CLOUD',
+          isFree: true,
         }
     })
   })
@@ -107,7 +109,8 @@ describe('Code', () => {
         {
           databaseId: 'instanceId',
           path: 'path',
-          provider: 'RE_CLOUD'
+          provider: 'RE_CLOUD',
+          isFree: true,
         }
     })
   })

@@ -1,11 +1,12 @@
 import React from 'react'
 
 import { EuiLink, EuiText } from '@elastic/eui'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { findTutorialPath } from 'uiSrc/utils'
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import styles from './styles.module.scss'
 
@@ -21,6 +22,7 @@ const QueryTutorials = ({ tutorials, source }: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { instanceId } = useParams<{ instanceId: string }>()
+  const { isFreeDb } = useSelector(connectedInstanceSelector)
 
   const handleClickTutorial = (id: string) => {
     const tutorialPath = findTutorialPath({ id })
@@ -32,6 +34,7 @@ const QueryTutorials = ({ tutorials, source }: Props) => {
         path: tutorialPath,
         databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         source,
+        isFree: isFreeDb,
       }
     })
   }

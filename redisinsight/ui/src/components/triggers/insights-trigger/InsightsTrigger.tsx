@@ -30,7 +30,7 @@ const InsightsTrigger = (props: Props) => {
   const { openedPanel } = useSelector(sidePanelsSelector)
   const { tabSelected } = useSelector(insightsPanelSelector)
   const { isHighlighted, } = useSelector(recommendationsSelector)
-  const { provider } = useSelector(connectedInstanceSelector)
+  const { provider, isFreeDb } = useSelector(connectedInstanceSelector)
 
   const isInsightsOpen = openedPanel === SidePanels.Insights
 
@@ -67,6 +67,7 @@ const InsightsTrigger = (props: Props) => {
         source,
         databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         tab: isHighlighted ? InsightsPanelTabs.Recommendations : tabSelected,
+        isFree: isFreeDb,
       },
     })
   }

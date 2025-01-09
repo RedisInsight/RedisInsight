@@ -15,7 +15,7 @@ import TriggerIcon from 'uiSrc/assets/img/bulb.svg?react'
 import styles from './styles.module.scss'
 
 const WbNoResultsMessage = () => {
-  const { provider } = useSelector(connectedInstanceSelector)
+  const { provider, isFreeDb } = useSelector(connectedInstanceSelector)
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -30,6 +30,7 @@ const WbNoResultsMessage = () => {
         databaseId: instanceId,
         provider,
         source: 'workbench',
+        isFree: isFreeDb,
       },
     })
   }

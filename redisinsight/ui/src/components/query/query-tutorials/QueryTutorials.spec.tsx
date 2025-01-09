@@ -34,6 +34,13 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn(),
 }))
 
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    isFreeDb: true,
+  }),
+}))
+
 describe('QueryTutorial', () => {
   it('should render', () => {
     expect(render(<QueryTutorials tutorials={mockedTutorials} source="source" />)).toBeTruthy()
@@ -68,6 +75,7 @@ describe('QueryTutorial', () => {
         path: 'path',
         databaseId: 'instanceId',
         source: 'source',
+        isFree: true,
       }
     })
   })

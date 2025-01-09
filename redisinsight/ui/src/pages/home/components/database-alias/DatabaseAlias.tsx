@@ -30,6 +30,7 @@ import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSr
 import {
   changeInstanceAliasAction,
   checkConnectToInstanceAction,
+  connectedInstanceSelector,
   setConnectedInstanceId
 } from 'uiSrc/slices/instances/instances'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
@@ -66,6 +67,7 @@ const DatabaseAlias = (props: Props) => {
 
   const { server } = useSelector(appInfoSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
+  const { isFreeDb } = useSelector(connectedInstanceSelector)
 
   const [isEditing, setIsEditing] = useState(false)
   const [value, setValue] = useState(alias)

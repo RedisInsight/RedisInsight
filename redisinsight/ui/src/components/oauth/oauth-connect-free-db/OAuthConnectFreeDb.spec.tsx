@@ -24,6 +24,9 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   freeInstancesSelector: jest.fn().mockReturnValue([{
     id: 'instanceId',
   }]),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    isFreeDb: true,
+  }),
 }))
 
 let store: typeof mockedStore
@@ -53,6 +56,7 @@ describe('OAuthConnectFreeDb', () => {
         databaseId: 'providedId',
         provider: undefined,
         source: OAuthSocialSource.ListOfDatabases,
+        isFree: true,
         ...getRedisModulesSummary(),
       }
     })

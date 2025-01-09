@@ -49,7 +49,8 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: 'instanceId',
     connectionType: 'CLUSTER',
-    provider: 'RE_CLOUD'
+    provider: 'RE_CLOUD',
+    isFreeDb: true,
   }),
   connectedInstanceCDSelector: jest.fn().mockReturnValue({
     free: false,
@@ -203,7 +204,8 @@ describe('SidePanels', () => {
         databaseId: 'instanceId',
         provider: 'RE_CLOUD',
         page: '/pub-sub',
-        tab: 'tips'
+        tab: 'tips',
+        isFree: true,
       },
     });
 

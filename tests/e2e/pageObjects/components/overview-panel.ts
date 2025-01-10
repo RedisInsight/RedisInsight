@@ -14,15 +14,19 @@ export class OverviewPanel {
     overviewSpinner = Selector('[class*=euiLoadingSpinner--medium]');
     // BUTTONS
     myRedisDBLink = Selector('[data-testid=my-redis-db-btn]', { timeout: 1000 });
-    overviewRedisStackLogo = Selector('[data-testid=redis-stack-logo]');
-    overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
     changeIndexBtn = Selector('[data-testid=change-index-btn]');
     databaseInfoIcon = Selector('[data-testid=db-info-icon]');
+    dbName = Selector('[data-testid=nav-instance-popover-btn]');
+    homeLinkNavigation = Selector('[class*=homePageLink]');
+    dbListInstance = Selector('[data-testid^=instance-item-]');
+    rdiNavigationTab = Selector('[data-testid*=Integration-tab-id]');
     // PANEL
     overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
     databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]', { timeout: 2000 });
     // INPUTS
     changeIndexInput = Selector('[data-testid=change-index-input]');
+    dbListInput = Selector('[data-testid=instances-nav-popover-search]');
+
 
     /**
      * Change database index
@@ -48,5 +52,19 @@ export class OverviewPanel {
      */
     async waitForCpuIsCalculated(): Promise<void> {
         await t.expect(this.overviewSpinner.visible).notOk('cpu is not calculated, spinner is still displayed');
+    }
+
+    /**
+     * Get all databases from List of DBs page
+     */
+    async getAllDatabases(): Promise<string[]> {
+        const databases: string[] = [];
+        const n = await this.dbListInstance.count;
+
+        for(let k = 0; k < n; k++) {
+            const name = await this.dbListInstance.nth(k).textContent;
+            databases.push(name);
+        }
+        return databases;
     }
 }

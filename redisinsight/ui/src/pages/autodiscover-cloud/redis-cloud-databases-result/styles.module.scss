@@ -1,15 +1,3 @@
-:global(.homePage) :global(.cloudDatabaseListResult) {
-  height: calc(100vh - 292px) !important;
-
-  @media (min-width: 1130px) {
-    height: calc(100vh - 236px) !important;
-  }
-
-  @media only screen and (max-width: 767px) {
-    height: calc(100vh - 360px) !important;
-  }
-}
-
 .footer {
   padding: 15px 14px 10px 30px !important;
 }

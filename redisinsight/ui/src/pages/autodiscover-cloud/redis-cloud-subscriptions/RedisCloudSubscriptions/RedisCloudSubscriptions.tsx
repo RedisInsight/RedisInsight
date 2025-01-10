@@ -248,19 +248,19 @@ const RedisCloudSubscriptions = ({
               <SummaryText />
             </MessageBar>
           </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiFormRow className={styles.searchForm}>
+              <EuiFieldSearch
+                placeholder="Search..."
+                className={styles.search}
+                onChange={onQueryChange}
+                isClearable
+                aria-label="Search"
+                data-testid="search"
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
         </EuiFlexGroup>
-        <EuiFlexItem grow={false}>
-          <EuiFormRow className={styles.searchForm}>
-            <EuiFieldSearch
-              placeholder="Search..."
-              className={styles.search}
-              onChange={onQueryChange}
-              isClearable
-              aria-label="Search"
-              data-testid="search"
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
         <br />
 
         <div className={cx('databaseList', 'itemList', styles.cloudSubscriptions)}>

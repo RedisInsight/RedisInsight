@@ -151,13 +151,7 @@ const KeyList = forwardRef((props: Props, ref) => {
         formatItem
       )
 
-      dispatch(fetchKeysMetadata(
-        visibleItems.map(({ name }) => name),
-        commonFilterType,
-        controller.current?.signal,
-        (loadedItems) => onSuccessFetchedMetadata(startIndex, loadedItems),
-        () => { rerender({}) }
-      ))
+      getMetadata(startIndex, visibleItems, true)
     }
 
     // Update previous values
@@ -266,23 +260,31 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const getMetadata = useCallback((
-    startIndex: number,
-    itemsInit: IKeyPropTypes[] = []
+    initialStartIndex: number,
+    itemsInit: IKeyPropTypes[] = [],
+    forceRefresh?: boolean
   ): void => {
     const isSomeNotUndefined = ({ type, size, length }: IKeyPropTypes) =>
       (!commonFilterType && !isUndefined(type)) || !isUndefined(size) || !isUndefined(length)
 
-    const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
-    if (firstEmptyItemIndex === -1) return
+    let startIndex = initialStartIndex
+    let itemsToProcess = itemsInit
 
-    const emptyItems = reject(itemsInit, isSomeNotUndefined)
+    if (!forceRefresh) {
+      const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
+      if (firstEmptyItemIndex === -1) return
+
+      startIndex = initialStartIndex + firstEmptyItemIndex
+      itemsToProcess = itemsInit.slice(firstEmptyItemIndex)
+    }
+
+    const itemsToFetch = forceRefresh ? itemsToProcess : reject(itemsToProcess, isSomeNotUndefined)
 
     dispatch(fetchKeysMetadata(
-      emptyItems.map(({ name }) => name),
+      itemsToFetch.map(({ name }) => name),
       commonFilterType,
       controller.current?.signal,
-      (loadedItems) =>
-        onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
+      (loadedItems) => onSuccessFetchedMetadata(startIndex, loadedItems),
       () => { rerender({}) }
     ))
   }, [commonFilterType])

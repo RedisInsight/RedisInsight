@@ -3,7 +3,6 @@ import { EuiFieldText, EuiIcon, EuiPopover, EuiSpacer, EuiTab, EuiTabs, EuiText 
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { orderBy } from 'lodash'
 import { instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/instances'
 import { instancesSelector as dbInstancesSelector } from 'uiSrc/slices/instances/instances'
 import Divider from 'uiSrc/components/divider/Divider'
@@ -12,8 +11,8 @@ import Down from 'uiSrc/assets/img/Down.svg?react'
 import Search from 'uiSrc/assets/img/Search.svg'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { getDbIndex } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
+import { filterAndSort } from 'uiSrc/utils'
 import InstancesList from './components/instances-list'
 import styles from './styles.module.scss'
 
@@ -40,35 +39,6 @@ const InstancesNavigationPopover = ({ name }: Props) => {
   const history = useHistory()
 
   useEffect(() => {
-    const filterAndSort = (
-      arr: Instance[] | RdiInstance[],
-      search: string,
-      sort: { field: string, direction: 'asc' | 'desc' }
-    ): (Instance | RdiInstance
-      )[] => {
-      if (!arr?.length) return arr
-      const filtered = arr.filter((instance) => {
-        const label = `${instance.name} ${getDbIndex(instance.db)}`
-        return label.toLowerCase?.().includes(search)
-      })
-
-      const sortingFunc = (ins) => {
-        if (sort.field === 'lastConnection') {
-          return ins.lastConnection ? -new Date(`${ins.lastConnection}`) : -Infinity
-        }
-        if (sort.field === 'host') {
-          return `${ins.host}:${ins.port}`
-        }
-        return sort.field
-      }
-
-      return orderBy(
-        filtered,
-        sortingFunc,
-        sort.direction
-      )
-    }
-
     const dbSort = localStorageService.get(BrowserStorageItem.instancesSorting) ?? {
       field: 'lastConnection',
       direction: 'asc'

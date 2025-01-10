@@ -264,14 +264,21 @@ const KeysHeader = (props: Props) => {
                       </EuiButton>
                     )}
                   >
-                    <EuiCheckbox
-                      id="show-key-size"
-                      name="show-key-size"
-                      label="Key size"
-                      checked={getSize}
-                      onChange={(e) => dispatch(setGetSize(e.target.checked))}
-                      data-testid="show-key-size"
-                    />
+                    <EuiToolTip
+                      content="Hide the key size to optimize space and avoid performance issues when working with large keys."
+                      position="top"
+                      display="inlineBlock"
+                      anchorClassName="flex-row"
+                    >
+                      <EuiCheckbox
+                        id="show-key-size"
+                        name="show-key-size"
+                        label="Key size"
+                        checked={getSize}
+                        onChange={(e) => dispatch(setGetSize(e.target.checked))}
+                        data-testid="show-key-size"
+                      />
+                    </EuiToolTip>
                     <EuiCheckbox
                       id="show-ttl"
                       name="show-ttl"

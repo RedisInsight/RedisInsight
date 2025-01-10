@@ -8,7 +8,7 @@ module.exports = {
   plugins: ['@typescript-eslint'],
   parser: '@typescript-eslint/parser',
   rules: {
-    semi: ['error', 'never'],
+    semi: ['error', 'always'],
     quotes: [2, 'single', { avoidEscape: true }],
     'max-len': [
       'error',
@@ -59,6 +59,22 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      rules: {
+        '@typescript-eslint/semi': ['error', 'never'],
+        semi: 'off',
+      },
+    },
+    {
+      files: ['*.js', '*.jsx'],
+      rules: {
+        semi: ['error', 'always'],
+        '@typescript-eslint/semi': 'off',
+      },
+    },
+  ],
   parserOptions: {
     project: './tsconfig.json',
     ecmaVersion: 2020,

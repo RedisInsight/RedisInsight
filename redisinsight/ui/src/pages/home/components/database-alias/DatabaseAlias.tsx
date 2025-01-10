@@ -101,15 +101,6 @@ const DatabaseAlias = (props: Props) => {
   const handleOpen = (event: any) => {
     event.stopPropagation()
     event.preventDefault()
-    const modulesSummary = getRedisModulesSummary(modules)
-    sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE_BUTTON_CLICKED,
-      eventData: {
-        databaseId: id,
-        provider,
-        ...modulesSummary,
-      }
-    })
     dispatch(checkConnectToInstanceAction(id, connectToInstance))
     // onOpen()
   }

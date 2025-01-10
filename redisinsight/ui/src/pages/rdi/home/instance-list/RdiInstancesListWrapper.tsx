@@ -13,6 +13,7 @@ import {
   deleteInstancesAction,
   checkConnectToRdiInstanceAction,
   instancesSelector,
+  resetConnectedInstance as resetConnectedRdiInstance,
 } from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
@@ -79,7 +80,10 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     dispatch(checkConnectToRdiInstanceAction(
       id,
       (id: string) => history.push(Pages.rdiPipeline(id)),
-      () => dispatch(setAppContextConnectedRdiInstanceId(''))
+      () => {
+        dispatch(resetConnectedRdiInstance())
+        dispatch(setAppContextConnectedRdiInstanceId(''))
+      }
     ))
   }
 

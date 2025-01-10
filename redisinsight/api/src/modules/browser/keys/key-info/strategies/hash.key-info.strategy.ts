@@ -23,11 +23,11 @@ export class HashKeyInfoStrategy extends KeyInfoStrategy {
       [BrowserToolHashCommands.HLen, key],
     ]) as [any, number][];
 
-    let size = null;
+    let size = -1;
     if (length < 50_000) {
       const sizeData = await client.sendPipeline([
         [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-      ]);
+      ]) as [any, number][];
       size = sizeData && sizeData[0] && sizeData[0][1];
     }
 

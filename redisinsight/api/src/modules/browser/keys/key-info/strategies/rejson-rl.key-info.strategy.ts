@@ -22,11 +22,11 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
 
     const length = await this.getLength(client, key);
 
-    let size = null;
+    let size = -1;
     if (length < 100) {
       const sizeData = await client.sendPipeline([
         [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-      ]);
+      ]) as [any, number][];
       size = sizeData && sizeData[0] && sizeData[0][1];
     }
 

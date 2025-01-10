@@ -532,7 +532,12 @@ export function fetchPatternKeysAction(
           ApiEndpoints.KEYS
         ),
         {
-          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false, scanThreshold
+          cursor,
+          count,
+          type,
+          match: match || DEFAULT_SEARCH_MATCH,
+          keysInfo: false,
+          scanThreshold
         },
         {
           params: { encoding },

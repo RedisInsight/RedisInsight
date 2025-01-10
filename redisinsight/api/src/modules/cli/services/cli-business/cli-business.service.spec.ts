@@ -13,7 +13,10 @@ import {
   mockCliClientMetadata,
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
-  mockClusterRedisClient, mockRedisFtInfoReply, mockFtInfoAnalyticsData,
+  mockClusterRedisClient,
+  mockRedisFtInfoReply,
+  mockFtInfoAnalyticsData,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import {
   CommandExecutionStatus,
@@ -114,6 +117,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual({ uuid: mockCliClientMetadata.uniqueId });
       expect(analyticsService.sendClientCreatedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
       );
     });
@@ -129,6 +133,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
         expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockCliClientMetadata.databaseId,
           new InternalServerErrorException(mockENotFoundMessage),
         );
@@ -146,6 +151,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
         expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
         );
@@ -162,6 +168,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual({ uuid: mockCliClientMetadata.uniqueId });
       expect(analyticsService.sendClientRecreatedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
       );
     });
@@ -178,6 +185,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
         expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockCliClientMetadata.databaseId,
           new InternalServerErrorException(mockENotFoundMessage),
         );
@@ -196,6 +204,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
         expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
         );
@@ -211,6 +220,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual({ affected: 1 });
       expect(analyticsService.sendClientDeletedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         1,
         mockCliClientMetadata.databaseId,
       );
@@ -248,6 +258,7 @@ describe('CliBusinessService', () => {
       expect(result).toEqual(mockResult);
       expect(formatSpy).toHaveBeenCalled();
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         {
           command: 'ft.info',
@@ -255,6 +266,7 @@ describe('CliBusinessService', () => {
         },
       );
       expect(analyticsService.sendIndexInfoEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         mockFtInfoAnalyticsData,
       );
@@ -276,6 +288,7 @@ describe('CliBusinessService', () => {
       expect(result).toEqual(mockResult);
       expect(formatSpy).toHaveBeenCalled();
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         {
           command: 'memory',
@@ -303,6 +316,7 @@ describe('CliBusinessService', () => {
       expect(result).toEqual(mockResult);
       expect(formatSpy).toHaveBeenCalled();
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         {
           command: 'memory',
@@ -325,6 +339,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         new CommandNotSupportedError(
           ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED(command.toUpperCase()),
@@ -348,6 +363,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         new CommandParsingError(
           ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
@@ -376,6 +392,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         replyError,
         {
@@ -398,6 +415,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         new Error(mockENotFoundMessage),
         {
@@ -417,6 +435,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
           {
@@ -441,6 +460,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         {
           command: 'info',
@@ -485,6 +505,7 @@ describe('CliBusinessService', () => {
       expect(result).toEqual(mockResult);
       expect(formatSpy).toHaveBeenCalled();
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         {
           command: 'memory',
@@ -512,6 +533,7 @@ describe('CliBusinessService', () => {
       expect(result).toEqual(mockResult);
       expect(formatSpy).toHaveBeenCalled();
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         {
           command: 'memory',
@@ -534,6 +556,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         new CommandNotSupportedError(
           ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED(command.toUpperCase()),
@@ -557,6 +580,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         new CommandParsingError(
           ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
@@ -585,6 +609,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         replyError,
         {
@@ -607,6 +632,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         new Error(mockENotFoundMessage),
         {
@@ -626,6 +652,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
           {
@@ -650,6 +677,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCliClientMetadata.databaseId,
         {
           command: 'info',

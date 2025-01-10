@@ -87,7 +87,7 @@ export class BulkImportService {
       duration: 0,
     };
 
-    this.analytics.sendActionStarted(result);
+    this.analytics.sendActionStarted(clientMetadata.sessionMetadata, result);
 
     let parseErrors = 0;
 
@@ -122,7 +122,7 @@ export class BulkImportService {
       } catch (e) {
         result.summary.errors.push(e);
         result.status = BulkActionStatus.Failed;
-        this.analytics.sendActionFailed(result, e);
+        this.analytics.sendActionFailed(clientMetadata.sessionMetadata, result, e);
       }
 
       batchResults.push(await this.executeBatch(client, batch));
@@ -138,16 +138,16 @@ export class BulkImportService {
       result.summary.failed += parseErrors;
 
       if (result.status === BulkActionStatus.Completed) {
-        this.analytics.sendActionSucceed(result);
+        this.analytics.sendActionSucceed(clientMetadata.sessionMetadata, result);
       }
 
       client.disconnect();
 
       return result;
     } catch (e) {
-      this.logger.error('Unable to process an import file', e);
+      this.logger.error('Unable to process an import file', e, clientMetadata);
       const exception = wrapHttpError(e);
-      this.analytics.sendActionFailed(result, exception);
+      this.analytics.sendActionFailed(clientMetadata.sessionMetadata, result, exception);
       client?.disconnect();
       throw exception;
     }
@@ -180,7 +180,7 @@ export class BulkImportService {
 
       return this.import(clientMetadata, fs.createReadStream(path));
     } catch (e) {
-      this.logger.error('Unable to process an import file path from tutorial', e);
+      this.logger.error('Unable to process an import file path from tutorial', e, clientMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -214,11 +214,11 @@ export class BulkImportService {
 
       const result = await this.import(clientMetadata, commandsStream);
 
-      this.analytics.sendImportSamplesUploaded(result);
+      this.analytics.sendImportSamplesUploaded(clientMetadata.sessionMetadata, result);
 
       return result;
     } catch (e) {
-      this.logger.error('Unable to process an import file path from tutorial', e);
+      this.logger.error('Unable to process an import file path from tutorial', e, clientMetadata);
       throw new InternalServerErrorException(ERROR_MESSAGES.COMMON_DEFAULT_IMPORT_ERROR);
     }
   }

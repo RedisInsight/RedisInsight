@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import axios from 'axios';
 import { RedisErrorCodes } from 'src/constants';
-import { mockDatabaseService, mockRedisEnterpriseAnalytics } from 'src/__mocks__';
+import {
+  mockDatabaseService, mockRedisEnterpriseAnalytics, mockSessionMetadata,
+} from 'src/__mocks__';
 import {
   IRedisEnterpriseDatabase,
   IRedisEnterpriseEndpoint,
@@ -159,7 +161,7 @@ describe('RedisEnterpriseService', () => {
       mockedAxios.get.mockResolvedValue(response);
 
       await expect(
-        service.getDatabases(mockGetDatabasesDto),
+        service.getDatabases(mockSessionMetadata, mockGetDatabasesDto),
       ).resolves.not.toThrow();
       expect(mockedAxios.get).toHaveBeenCalled();
       expect(parseClusterDbsResponse).toHaveBeenCalledWith(
@@ -175,7 +177,7 @@ describe('RedisEnterpriseService', () => {
       };
       mockedAxios.get.mockRejectedValue(apiResponse);
 
-      await expect(service.getDatabases(mockGetDatabasesDto)).rejects.toThrow(
+      await expect(service.getDatabases(mockSessionMetadata, mockGetDatabasesDto)).rejects.toThrow(
         ForbiddenException,
       );
     });
@@ -186,7 +188,7 @@ describe('RedisEnterpriseService', () => {
       };
       mockedAxios.get.mockRejectedValue(apiResponse);
 
-      await expect(service.getDatabases(mockGetDatabasesDto)).rejects.toThrow(
+      await expect(service.getDatabases(mockSessionMetadata, mockGetDatabasesDto)).rejects.toThrow(
         BadRequestException,
       );
     });

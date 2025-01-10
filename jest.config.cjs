@@ -1,3 +1,5 @@
+require('dotenv').config({ path: './redisinsight/ui/.env.test' })
+
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   testEnvironmentOptions: {
@@ -23,6 +25,7 @@ module.exports = {
     d3: '<rootDir>/node_modules/d3/dist/d3.min.js',
     '^uuid$': require.resolve('uuid'),
     msgpackr: require.resolve('msgpackr'),
+    'brotli-dec-wasm': '<rootDir>/redisinsight/__mocks__/brotli-dec-wasm.js',
   },
   setupFiles: [
     'construct-style-sheets-polyfill',
@@ -33,7 +36,7 @@ module.exports = {
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
   testEnvironment: 'jest-environment-jsdom',
   transformIgnorePatterns: [
-    'node_modules/(?!(monaco-editor|react-monaco-editor)/)',
+    'node_modules/(?!(monaco-editor|react-monaco-editor|brotli-dec-wasm)/)',
   ],
   // TODO: add tests for plugins
   modulePathIgnorePatterns: [
@@ -65,4 +68,7 @@ module.exports = {
       lines: 80,
     },
   },
-};
+  globals: {
+    riConfig: {}
+  }
+}

@@ -130,7 +130,7 @@ export class DatabaseFactory {
 
       return model;
     } catch (error) {
-      this.logger.error('Failed to add oss cluster.', error);
+      this.logger.error('Failed to add oss cluster.', error, sessionMetadata);
       throw catchRedisConnectionError(error, database);
     }
   }
@@ -177,7 +177,7 @@ export class DatabaseFactory {
 
       return model;
     } catch (error) {
-      this.logger.error('Failed to create database sentinel model.', error);
+      this.logger.error('Failed to create database sentinel model.', error, sessionMetadata);
       throw catchRedisConnectionError(error, database);
     }
   }

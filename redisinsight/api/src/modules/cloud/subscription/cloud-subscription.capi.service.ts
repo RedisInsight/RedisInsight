@@ -60,11 +60,11 @@ export class CloudSubscriptionCapiService {
     authDto: CloudCapiAuthDto,
     type: CloudSubscriptionType,
   ): Promise<CloudSubscription[]> {
-    this.logger.log(`Getting cloud ${type} subscriptions.`);
+    this.logger.debug(`Getting cloud ${type} subscriptions.`);
     try {
       const subscriptions = await this.capi.getSubscriptionsByType(authDto, type);
 
-      this.logger.log(`Succeed to get cloud ${type} subscriptions.`);
+      this.logger.debug(`Succeed to get cloud ${type} subscriptions.`);
 
       return parseCloudSubscriptionsCapiResponse(subscriptions, type);
     } catch (error) {
@@ -84,11 +84,11 @@ export class CloudSubscriptionCapiService {
     id: number,
     type: CloudSubscriptionType,
   ): Promise<CloudSubscription> {
-    this.logger.log(`Getting cloud ${type} subscription.`);
+    this.logger.debug(`Getting cloud ${type} subscription.`);
     try {
       const subscription = await this.capi.getSubscriptionByType(authDto, id, type);
 
-      this.logger.log(`Succeed to get cloud ${type} subscription.`);
+      this.logger.debug(`Succeed to get cloud ${type} subscription.`);
 
       return parseCloudSubscriptionCapiResponse(subscription, type);
     } catch (error) {
@@ -106,11 +106,11 @@ export class CloudSubscriptionCapiService {
     authDto: CloudCapiAuthDto,
     type: CloudSubscriptionType,
   ): Promise<CloudSubscriptionPlan[]> {
-    this.logger.log(`Getting cloud ${type} plans.`);
+    this.logger.debug(`Getting cloud ${type} plans.`);
     try {
       const plans = await this.capi.getSubscriptionsPlansByType(authDto, type);
 
-      this.logger.log(`Succeed to get cloud ${type} plans.`);
+      this.logger.debug(`Succeed to get cloud ${type} plans.`);
 
       return parseCloudSubscriptionsPlansCapiResponse(plans, type);
     } catch (error) {
@@ -128,7 +128,7 @@ export class CloudSubscriptionCapiService {
     authDto: CloudCapiAuthDto,
     planId: number,
   ): Promise<CloudTask> {
-    this.logger.log('Creating free subscription');
+    this.logger.debug('Creating free subscription');
     try {
       const task = await this.capi.createFreeSubscription(authDto, {
         name: cloudConfig.freeSubscriptionName,
@@ -136,7 +136,7 @@ export class CloudSubscriptionCapiService {
         subscriptionType: CloudSubscriptionType.Fixed,
       });
 
-      this.logger.log('Task to creating free subscription was sent');
+      this.logger.debug('Task to creating free subscription was sent');
 
       return parseCloudTaskCapiResponse(task);
     } catch (error) {

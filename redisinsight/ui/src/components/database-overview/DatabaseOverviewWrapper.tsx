@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { DatabaseOverview } from 'uiSrc/components'
 import {
@@ -8,34 +8,40 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getOverviewMetrics } from './components/OverviewMetrics'
 
-const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 60_000
-
 const DatabaseOverviewWrapper = () => {
-  let interval: NodeJS.Timeout
   const { theme } = useContext(ThemeContext)
+  const [lastRefreshTime, setLastRefreshTime] = useState<number | null>(null)
   const { id: connectedInstanceId = '', db } = useSelector(connectedInstanceSelector)
   const overview = useSelector(connectedInstanceOverviewSelector)
 
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    interval = setInterval(() => {
-      if (document.hidden) return
+  const loadData = () => {
+    dispatch(getDatabaseConfigInfoAction(connectedInstanceId))
+    setLastRefreshTime(Date.now())
+  }
 
-      dispatch(getDatabaseConfigInfoAction(
-        connectedInstanceId,
-        () => {},
-        () => clearInterval(interval)
-      ))
-    }, TIMEOUT_TO_GET_INFO)
-    return () => clearInterval(interval)
-  }, [connectedInstanceId])
+  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+    sendEventTelemetry({
+      event: enableAutoRefresh
+        ? TelemetryEvent.OVERVIEW_AUTO_REFRESH_ENABLED
+        : TelemetryEvent.OVERVIEW_AUTO_REFRESH_DISABLED,
+      eventData: {
+        databaseId: connectedInstanceId,
+        refreshRate: +refreshRate
+      }
+    })
+  }
 
   return (
     <DatabaseOverview
       metrics={getOverviewMetrics({ theme, items: overview, db })}
+      loadData={loadData}
+      lastRefreshTime={lastRefreshTime}
+      handleEnableAutoRefresh={handleEnableAutoRefresh}
     />
   )
 }

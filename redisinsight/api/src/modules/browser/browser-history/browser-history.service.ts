@@ -32,7 +32,7 @@ export class BrowserHistoryService {
       const history = plainToClass(BrowserHistory, { ...dto, databaseId: clientMetadata.databaseId });
       return this.browserHistoryRepository.create(clientMetadata.sessionMetadata, history);
     } catch (e) {
-      this.logger.error('Unable to create browser history item', e);
+      this.logger.error('Unable to create browser history item', e, clientMetadata);
 
       if (e instanceof HttpException) {
         throw e;
@@ -66,28 +66,38 @@ export class BrowserHistoryService {
   /**
    * Delete browser history item by id
    * @param databaseId
+   * @param mode
    * @param id
    */
-  async delete(sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<void> {
-    return this.browserHistoryRepository.delete(sessionMetadata, databaseId, id);
+  async delete(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    mode: BrowserHistoryMode,
+    id: string,
+  ): Promise<void> {
+    return this.browserHistoryRepository.delete(sessionMetadata, databaseId, mode, id);
   }
 
   /**
    * Bulk delete browser history items. Uses "delete" method and skipping error
    * Returns successfully deleted browser history items number
+   * @param sessionMetadata
    * @param databaseId
+   * @param mode
    * @param ids
    */
   async bulkDelete(
     sessionMetadata: SessionMetadata,
-    databaseId: string, ids: string[],
+    databaseId: string,
+    mode: BrowserHistoryMode,
+    ids: string[],
   ): Promise<DeleteBrowserHistoryItemsResponse> {
-    this.logger.log(`Deleting many browser history items: ${ids}`);
+    this.logger.debug(`Deleting many browser history items: ${ids}`, sessionMetadata);
 
     return {
       affected: sum(await Promise.all(ids.map(async (id) => {
         try {
-          await this.delete(sessionMetadata, databaseId, id);
+          await this.delete(sessionMetadata, databaseId, mode, id);
           return 1;
         } catch (e) {
           return 0;

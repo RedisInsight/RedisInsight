@@ -42,3 +42,4 @@ export * from './database-info';
 export * from './cloud-job';
 export * from './rdi';
 export * from './workbench';
+export * from './utm';

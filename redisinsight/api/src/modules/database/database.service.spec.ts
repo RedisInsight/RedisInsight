@@ -139,14 +139,22 @@ describe('DatabaseService', () => {
   describe('create', () => {
     it('should create new database and send analytics event', async () => {
       expect(await service.create(mockSessionMetadata, mockDatabase)).toEqual(mockDatabase);
-      expect(analytics.sendInstanceAddedEvent).toHaveBeenCalledWith(mockDatabase, mockRedisGeneralInfo);
+      expect(analytics.sendInstanceAddedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockDatabase,
+        mockRedisGeneralInfo,
+      );
       expect(analytics.sendInstanceAddFailedEvent).not.toHaveBeenCalled();
     });
     it('should create new database with cloud details and send analytics event', async () => {
       databaseRepository.create.mockResolvedValueOnce(mockDatabaseWithCloudDetails);
       expect(await service.create(mockSessionMetadata, mockDatabaseWithCloudDetails))
         .toEqual(mockDatabaseWithCloudDetails);
-      expect(analytics.sendInstanceAddedEvent).toHaveBeenCalledWith(mockDatabaseWithCloudDetails, mockRedisGeneralInfo);
+      expect(analytics.sendInstanceAddedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockDatabaseWithCloudDetails,
+        mockRedisGeneralInfo,
+      );
       expect(analytics.sendInstanceAddFailedEvent).not.toHaveBeenCalled();
     });
     it('should not fail when collecting data for analytics event', async () => {
@@ -158,7 +166,10 @@ describe('DatabaseService', () => {
     it('should throw NotFound if no database?', async () => {
       databaseRepository.create.mockRejectedValueOnce(new NotFoundException());
       await expect(service.create(mockSessionMetadata, mockDatabase)).rejects.toThrow(NotFoundException);
-      expect(analytics.sendInstanceAddFailedEvent).toHaveBeenCalledWith(new NotFoundException());
+      expect(analytics.sendInstanceAddFailedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        new NotFoundException(),
+      );
     });
   });
 
@@ -177,6 +188,7 @@ describe('DatabaseService', () => {
         true,
       )).toEqual({ ...mockDatabase, port: 6380, password: 'password' });
       expect(analytics.sendInstanceEditedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockDatabase,
         { ...mockDatabase, port: 6380, password: 'password' },
         true,
@@ -404,7 +416,10 @@ describe('DatabaseService', () => {
   describe('delete', () => {
     it('should remove existing database', async () => {
       expect(await service.delete(mockSessionMetadata, mockDatabase.id)).toEqual(undefined);
-      expect(analytics.sendInstanceDeletedEvent).toHaveBeenCalledWith(mockDatabase);
+      expect(analytics.sendInstanceDeletedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockDatabase,
+      );
     });
     it('should throw NotFound if no database', async () => {
       databaseRepository.get.mockResolvedValueOnce(null);

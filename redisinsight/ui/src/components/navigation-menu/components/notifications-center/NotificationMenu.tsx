@@ -43,7 +43,7 @@ const NavButton = () => {
 }
 
 const NotificationMenu = () => (
-  <div className={styles.wrapper}>
+  <div className={styles.wrapper} data-testid="notification-menu">
     <NavButton />
     <NotificationCenter />
     <PopoverNotification />

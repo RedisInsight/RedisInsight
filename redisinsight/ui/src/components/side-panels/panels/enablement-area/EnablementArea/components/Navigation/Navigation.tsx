@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
-import { ApiEndpoints, EAItemActions, EAManifestFirstKey } from 'uiSrc/constants'
+import { ApiEndpoints, EAItemActions, EAManifestFirstKey, FeatureFlags } from 'uiSrc/constants'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   deleteCustomTutorial,
@@ -15,7 +15,7 @@ import {
 } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
 import UploadWarning from 'uiSrc/components/upload-warning'
-import { appFeatureOnboardingSelector } from 'uiSrc/slices/app/features'
+import { appFeatureFlagsFeaturesSelector, appFeatureOnboardingSelector } from 'uiSrc/slices/app/features'
 import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import {
   FormValues
@@ -48,6 +48,9 @@ const PATHS = {
 const Navigation = (props: Props) => {
   const { tutorials, customTutorials, isInternalPageVisible } = props
   const { currentStep, isActive } = useSelector(appFeatureOnboardingSelector)
+  const {
+    [FeatureFlags.envDependent]: envDependentFeature
+  } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
 
@@ -194,7 +197,9 @@ const Navigation = (props: Props) => {
       className={cx(styles.innerContainer)}
     >
       {tutorials && renderTreeView(getManifestItems(tutorials), PATHS.tutorials)}
-      {customTutorials && renderTreeView(getManifestItems(customTutorials), PATHS.customTutorials)}
+      {customTutorials
+        && envDependentFeature?.flag
+        && renderTreeView(getManifestItems(customTutorials), PATHS.customTutorials)}
     </EuiListGroup>
   )
 }

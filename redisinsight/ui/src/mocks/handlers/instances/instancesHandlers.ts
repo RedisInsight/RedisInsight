@@ -2,13 +2,14 @@ import { rest, RestHandler } from 'msw'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { ConnectionType, Instance } from 'uiSrc/slices/interfaces'
 import { getMswURL } from 'uiSrc/utils/test-utils'
+import { getUrl } from 'uiSrc/utils'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
 
 export const INSTANCE_ID_MOCK = 'instanceId'
 export const INSTANCES_MOCK: Instance[] = [
   {
-    id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
+    id: INSTANCE_ID_MOCK,
     host: 'localhost',
     port: 6379,
     name: 'localhost',
@@ -63,16 +64,22 @@ export const INSTANCES_MOCK: Instance[] = [
   },
 ]
 
+export const getDatabasesApiSpy = jest.fn().mockImplementation(async (req, res, ctx) => res(
+  ctx.status(200),
+  ctx.json(INSTANCES_MOCK),
+))
+
 const handlers: RestHandler[] = [
   // fetchInstancesAction
-  rest.get<DatabaseInstanceResponse[]>(getMswURL(ApiEndpoints.DATABASES), async (req, res, ctx) => res(
-    ctx.status(200),
-    ctx.json(INSTANCES_MOCK),
-  )),
+  rest.get<DatabaseInstanceResponse[]>(getMswURL(ApiEndpoints.DATABASES), getDatabasesApiSpy),
   rest.post<ExportDatabase>(getMswURL(ApiEndpoints.DATABASES_EXPORT), async (req, res, ctx) => res(
     ctx.status(200),
     ctx.json(INSTANCES_MOCK),
-  ))
+  )),
+  rest.get<DatabaseInstanceResponse>(getMswURL(getUrl(INSTANCE_ID_MOCK)), async (_req, res, ctx) => res(
+    ctx.status(200),
+    ctx.json(INSTANCES_MOCK[0]),
+  )),
 ]
 
 // rest.post(`${ApiEndpoints.INSTANCE}`, (req, res, ctx) => {

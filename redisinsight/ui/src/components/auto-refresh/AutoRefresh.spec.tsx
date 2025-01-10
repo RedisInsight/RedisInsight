@@ -1,6 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, screen, render, act } from 'uiSrc/utils/test-utils'
+import { localStorageService } from 'uiSrc/services'
 import AutoRefresh, { Props } from './AutoRefresh'
 import { DEFAULT_REFRESH_RATE } from './utils'
 
@@ -9,6 +10,11 @@ const mockedProps = mock<Props>()
 const INLINE_ITEM_EDITOR = 'inline-item-editor'
 
 describe('AutoRefresh', () => {
+  beforeEach(() => {
+    // Clear any stored refresh rate before each test
+    jest.clearAllMocks()
+    jest.spyOn(localStorageService, 'get').mockImplementation(() => null)
+  })
   it('should render', () => {
     expect(render(<AutoRefresh {...instance(mockedProps)} />)).toBeTruthy()
   })
@@ -23,6 +29,18 @@ describe('AutoRefresh', () => {
     const { queryByTestId } = render(<AutoRefresh {...instance(mockedProps)} displayText={false} />)
 
     expect(queryByTestId('refresh-message-label')).not.toBeInTheDocument()
+  })
+
+  it('prop "displayLastRefresh = true" should show refresh time message', () => {
+    const { queryByTestId } = render(<AutoRefresh {...instance(mockedProps)} displayLastRefresh />)
+
+    expect(queryByTestId('refresh-message')).toBeInTheDocument()
+  })
+
+  it('prop "displayLastRefresh = false" should hide refresh time message', () => {
+    const { queryByTestId } = render(<AutoRefresh {...instance(mockedProps)} displayLastRefresh={false} />)
+
+    expect(queryByTestId('refresh-message')).not.toBeInTheDocument()
   })
 
   it('should call onRefresh', () => {
@@ -131,6 +149,67 @@ describe('AutoRefresh', () => {
         await new Promise((r) => setTimeout(r, 1300))
       })
       expect(onRefresh).toBeCalledTimes(3)
+    })
+
+    it('should respect minimumRefreshRate when setting refresh rate', async () => {
+      const onChangeAutoRefreshRate = jest.fn()
+      const minimumRefreshRate = 6
+      render(
+        <AutoRefresh
+          {...instance(mockedProps)}
+          minimumRefreshRate={minimumRefreshRate}
+          onChangeAutoRefreshRate={onChangeAutoRefreshRate}
+        />
+      )
+
+      fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+      fireEvent.click(screen.getByTestId('refresh-rate'))
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: (minimumRefreshRate / 2).toString() } })
+      screen.getByTestId(/apply-btn/).click()
+      expect(onChangeAutoRefreshRate).toHaveBeenLastCalledWith(false, minimumRefreshRate.toString())
+    })
+
+    it('should allow valid refresh rates above minimumRefreshRate', async () => {
+      const onChangeAutoRefreshRate = jest.fn()
+      const minimumRefreshRate = 6
+      render(
+        <AutoRefresh
+          {...instance(mockedProps)}
+          minimumRefreshRate={minimumRefreshRate}
+          onChangeAutoRefreshRate={onChangeAutoRefreshRate}
+        />
+      )
+
+      fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+      fireEvent.click(screen.getByTestId('refresh-rate'))
+      fireEvent.change(
+        screen.getByTestId(INLINE_ITEM_EDITOR),
+        { target: { value: (minimumRefreshRate * 2).toString() } }
+      )
+      screen.getByTestId(/apply-btn/).click()
+
+      expect(onChangeAutoRefreshRate).toHaveBeenLastCalledWith(false, (minimumRefreshRate * 2).toString())
+    })
+
+    it('should use defaultRefreshRate when provided', () => {
+      const customDefaultRate = '30'
+      render(
+        <AutoRefresh
+          {...instance(mockedProps)}
+          defaultRefreshRate={customDefaultRate}
+        />
+      )
+
+      fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+      expect(screen.getByTestId('refresh-rate')).toHaveTextContent(`${customDefaultRate} s`)
+    })
+
+    it('should use DEFAULT_REFRESH_RATE when defaultRefreshRate is not provided', () => {
+      render(<AutoRefresh {...instance(mockedProps)} />)
+
+      // Open config and check default value
+      fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+      expect(screen.getByTestId('refresh-rate')).toHaveTextContent(`${DEFAULT_REFRESH_RATE} s`)
     })
   })
 

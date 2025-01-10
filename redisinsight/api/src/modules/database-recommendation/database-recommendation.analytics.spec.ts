@@ -4,6 +4,7 @@ import {
   mockDatabase,
   mockDatabaseRecommendation,
   mockDatabaseWithTlsAuth,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
 import { DatabaseRecommendationAnalytics } from './database-recommendation.analytics';
@@ -31,11 +32,13 @@ describe('DatabaseRecommendationAnalytics', () => {
   describe('sendInstanceAddedEvent', () => {
     it('should emit event with recommendationName and provider', () => {
       service.sendCreatedRecommendationEvent(
+        mockSessionMetadata,
         mockDatabaseRecommendation,
         mockDatabaseWithTlsAuth,
       );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.InsightsTipGenerated,
         {
           recommendationName: mockDatabaseRecommendation.name,

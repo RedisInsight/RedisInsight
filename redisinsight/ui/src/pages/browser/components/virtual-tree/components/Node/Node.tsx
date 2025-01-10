@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { NodePublicState } from 'react-vtree/dist/es/Tree'
 import cx from 'classnames'
 import {
@@ -60,15 +60,20 @@ const Node = ({
   const delimiterView = delimiters.length === 1 ? delimiters[0] : '-'
 
   const [deletePopoverId, setDeletePopoverId] = useState<Maybe<string>>(undefined)
+  const prevGetSize = useRef(getSize)
+  const prevGetTtl = useRef(getTtl)
 
   useEffect(() => {
-    if (!isLeaf || !nameBuffer) {
-      return
-    }
-    if (!size || !ttl) {
+    const isSizeReenabled = !prevGetSize.current && getSize
+    const isTtlReenabled = !prevGetTtl.current && getTtl
+
+    if (isLeaf && nameBuffer && ((isSizeReenabled || isTtlReenabled) || (!size && !ttl))) {
       getMetadata?.(nameBuffer, path)
     }
-  }, [])
+
+    prevGetSize.current = getSize
+    prevGetTtl.current = getTtl
+  }, [getSize, getTtl, isLeaf, nameBuffer, size, ttl])
 
   const handleClick = () => {
     if (isLeaf) {

@@ -96,6 +96,10 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const dispatch = useDispatch()
 
+  // Add refs to track previous values
+  const prevGetSize = useRef(getSize)
+  const prevGetTtl = useRef(getTtl)
+
   useImperativeHandle(ref, () => ({
     handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
       onLoadMoreItems(config)
@@ -130,6 +134,36 @@ const KeyList = forwardRef((props: Props, ref) => {
     onRowsRendered(startIndex, lastIndex)
     rerender({})
   }, [keysState.keys])
+
+  useEffect(() => {
+    const isSizeReenabled = !prevGetSize.current && getSize
+    const isTtlReenabled = !prevGetTtl.current && getTtl
+
+    if ((isSizeReenabled || isTtlReenabled) && firstDataLoaded && itemsRef.current.length > 0) {
+      cancelAllMetadataRequests()
+      controller.current = new AbortController()
+
+      const { startIndex, lastIndex } = renderedRowsIndexesRef.current
+      const visibleItems = bufferFormatRangeItems(
+        itemsRef.current,
+        startIndex,
+        lastIndex,
+        formatItem
+      )
+
+      dispatch(fetchKeysMetadata(
+        visibleItems.map(({ name }) => name),
+        commonFilterType,
+        controller.current?.signal,
+        (loadedItems) => onSuccessFetchedMetadata(startIndex, loadedItems),
+        () => { rerender({}) }
+      ))
+    }
+
+    // Update previous values
+    prevGetSize.current = getSize
+    prevGetTtl.current = getTtl
+  }, [getSize, getTtl])
 
   const cancelAllMetadataRequests = () => {
     controller.current?.abort()

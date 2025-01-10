@@ -217,6 +217,7 @@ const ManualConnectionForm = (props: Props) => {
     <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>
       {MANUAL_FORM_TABS.map(({ id, title }) => (
         <EuiTab
+          key={id}
           isSelected={activeTab === id}
           onClick={() => handleTabClick(id)}
           data-testid={`manual-form-tab-${id}`}
@@ -298,6 +299,7 @@ const ManualConnectionForm = (props: Props) => {
             <Tabs />
             <EuiSpacer />
             <EditSentinelConnection
+              activeTab={activeTab}
               isCloneMode={isCloneMode}
               formik={formik}
               onKeyDown={onKeyDown}

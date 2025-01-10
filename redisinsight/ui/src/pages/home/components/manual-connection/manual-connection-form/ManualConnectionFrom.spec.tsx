@@ -770,11 +770,13 @@ describe('InstanceForm', () => {
         'username',
         'password',
         'showDb',
-        'tls'
       ]
       fieldsTestIds.forEach((id) => {
         expect(screen.getByTestId(id)).toBeTruthy()
       })
+
+      fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+      expect(screen.getByTestId('tls')).toBeTruthy()
     })
 
     it('should render selected logical database with proper db index', () => {

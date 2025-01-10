@@ -6,8 +6,6 @@ export class OverviewPanel {
     // TEXT ELEMENTS
     overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
-    databaseModules = Selector('[data-testid$=module]');
-    overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
     overviewCpu = Selector('[data-test-subj=overview-cpu]');
     overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
     overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
@@ -20,13 +18,16 @@ export class OverviewPanel {
     homeLinkNavigation = Selector('[class*=homePageLink]');
     dbListInstance = Selector('[data-testid^=instance-item-]');
     rdiNavigationTab = Selector('[data-testid*=Integration-tab-id]');
+    autoRefreshArrow = Selector('[data-testid=auto-refresh-overview-auto-refresh-config-btn]');
+    autoRefreshCheckbox = Selector('[data-testid=auto-refresh-overview-auto-refresh-switch]');
     // PANEL
-    overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
     databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]', { timeout: 2000 });
     // INPUTS
     changeIndexInput = Selector('[data-testid=change-index-input]');
     dbListInput = Selector('[data-testid=instances-nav-popover-search]');
 
+    autoRefreshRateInput = Selector('[data-testid=auto-refresh-overview-refresh-rate]');
+    inlineItemEditor = Selector('[data-testid=inline-item-editor]');
 
     /**
      * Change database index
@@ -66,5 +67,18 @@ export class OverviewPanel {
             databases.push(name);
         }
         return databases;
+    }
+
+     /**
+     * set auto refresh rate
+     * @param rate rate value
+     */
+    async setAutoRefreshValue(rate: string): Promise<void> {
+        if(!(await this.autoRefreshRateInput.exists)){
+            await t.click(this.autoRefreshArrow)
+        }
+        await t.click(this.autoRefreshRateInput);
+        await t.typeText(this.inlineItemEditor, rate);
+        await t.click(this.EditorButton.applyBtn);
     }
 }

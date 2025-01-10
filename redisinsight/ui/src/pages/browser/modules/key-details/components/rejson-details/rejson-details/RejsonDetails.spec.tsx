@@ -10,21 +10,21 @@ const mockedProps = mock<BaseProps>()
 const mockedJSONObject = [
   {
     key: '_id',
-    path: '$["_id"]',
+    path: '["_id"]',
     cardinality: 1,
     type: 'string',
     value: '60adf79282e738b05531b345'
   },
   {
     key: '_id2',
-    path: '$["_id2"]',
+    path: '["_id2"]',
     cardinality: 1,
     type: 'string',
     value: '60adf79282b05531b345'
   },
   {
     key: '_id3',
-    path: '$["_id3"]',
+    path: '["_id3"]',
     cardinality: 3,
     type: 'array',
     value: [1, 2, 3]
@@ -93,7 +93,7 @@ describe('RejsonDetails', () => {
           {...instance(mockedProps)}
           data={mockedJSONString}
           dataType="string"
-          parentPath="$"
+          parentPath="."
           selectedKey={mockedSelectedKey}
           isDownloaded={false}
         />
@@ -105,7 +105,7 @@ describe('RejsonDetails', () => {
           {...instance(mockedProps)}
           data={mockedJSONString}
           dataType="string"
-          parentPath="$"
+          parentPath="."
           selectedKey={mockedSelectedKey}
           isDownloaded
         />
@@ -120,7 +120,7 @@ describe('RejsonDetails', () => {
           {...instance(mockedProps)}
           data={mockedJSONNull}
           dataType="null"
-          parentPath="$"
+          parentPath="."
           selectedKey={mockedSelectedKey}
           isDownloaded={false}
         />
@@ -132,7 +132,7 @@ describe('RejsonDetails', () => {
           {...instance(mockedProps)}
           data={mockedJSONNull}
           dataType="null"
-          parentPath="$"
+          parentPath="."
           selectedKey={mockedSelectedKey}
           isDownloaded
         />
@@ -146,7 +146,7 @@ describe('RejsonDetails', () => {
         {...instance(mockedProps)}
         data={mockedJSONBoolean}
         dataType="boolean"
-        parentPath="$"
+        parentPath="."
         selectedKey={mockedSelectedKey}
       />
     )).toBeTruthy()
@@ -158,7 +158,7 @@ describe('RejsonDetails', () => {
         {...instance(mockedProps)}
         data={mockedJSONNumber}
         dataType="number"
-        parentPath="$"
+        parentPath="."
         selectedKey={mockedSelectedKey}
       />
     )).toBeTruthy()

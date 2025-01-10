@@ -41,7 +41,7 @@ export class KeysService {
     private readonly keyInfoProvider: KeyInfoProvider,
     private readonly browserHistory: BrowserHistoryService,
     private readonly recommendationService: DatabaseRecommendationService,
-  ) {}
+  ) { }
 
   public async getKeys(
     clientMetadata: ClientMetadata,
@@ -103,7 +103,7 @@ export class KeysService {
     try {
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.getConnectionType());
-      const result = await scanner.getKeysInfo(client, dto.keys, dto.type);
+      const result = await scanner.getKeysInfo(client, dto.keys, dto.type, dto.getSize, dto.getTtl);
 
       this.recommendationService.check(
         clientMetadata,

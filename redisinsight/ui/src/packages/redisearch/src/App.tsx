@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react'
+import { isArray } from 'lodash'
 import { setHeaderText } from 'redisinsight-plugin-sdk'
 import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon'
 
@@ -42,11 +43,19 @@ const App = (props: Props) => {
     commandUpper.startsWith(Command.Aggregate)
     || (isProfileCommand && profileQueryType.toUpperCase() === ProfileType.Aggregate)
   ) {
-    const [matched, ...arrayResponse] = isProfileCommand ? response[0] : response
+    const isResponseInArray = isArray(response[0])
+    const [matched, ...arrayResponse] = isResponseInArray ? response[0] : response
     setHeaderText(`Matched:${matched}`)
 
     const result = parseAggregateRawResponse(arrayResponse)
-    return <TableResult query={command} result={result} matched={matched} />
+    return (
+      <TableResult
+        query={command}
+        result={result}
+        matched={matched}
+        cursorId={isResponseInArray ? response[1] : null}
+      />
+    )
   }
 
   if (

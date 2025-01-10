@@ -1,13 +1,13 @@
 import { CloudJob, CloudJobOptions } from 'src/modules/cloud/job/jobs/cloud-job';
 import { CloudTask, CloudTaskStatus } from 'src/modules/cloud/task/models';
 import { CloudTaskCapiService } from 'src/modules/cloud/task/cloud-task.capi.service';
-import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { CloudJobStatus } from 'src/modules/cloud/job/models';
 import {
   CloudJobUnexpectedErrorException,
   CloudTaskProcessingErrorException,
 } from 'src/modules/cloud/job/exceptions';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
+import { SessionMetadata } from 'src/common/models';
 
 export class WaitForTaskCloudJob extends CloudJob {
   protected name = CloudJobName.WaitForTask;
@@ -24,8 +24,8 @@ export class WaitForTaskCloudJob extends CloudJob {
     super(options);
   }
 
-  async iteration(): Promise<CloudTask> {
-    this.logger.log('Wait for cloud task complete');
+  async iteration(sessionMetadata: SessionMetadata): Promise<CloudTask> {
+    this.logger.debug('Wait for cloud task complete');
 
     this.checkSignal();
 
@@ -38,7 +38,7 @@ export class WaitForTaskCloudJob extends CloudJob {
       case CloudTaskStatus.Received:
       case CloudTaskStatus.ProcessingInProgress:
         this.logger.debug('Cloud task processing is in progress. Scheduling new iteration.');
-        return await this.runNextIteration();
+        return await this.runNextIteration(sessionMetadata);
       case CloudTaskStatus.ProcessingCompleted:
         this.logger.debug('Cloud task processing successfully completed.');
 

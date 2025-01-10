@@ -42,12 +42,13 @@ export class CloudJobProvider {
       this.jobs.set(job.id, job);
 
       if (dto.runMode === CloudJobRunMode.Async) {
-        job.run().catch(() => {});
+        job.run(sessionMetadata).catch(() => {});
 
         return job.getState();
       }
 
-      return await job.run();
+      await job.run(sessionMetadata);
+      return job.getState();
     } catch (e) {
       throw wrapHttpError(e);
     }

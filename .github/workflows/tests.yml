@@ -16,6 +16,7 @@ on:
         options:
           - all
           - without_e2e
+          - only_e2e
 
       redis_client:
         description: Library to use for redis connection
@@ -24,6 +25,16 @@ on:
         options:
           - ioredis
           - node-redis
+
+      short_rte_list:
+        description: Use short RTE list for IT
+        type: boolean
+        default: true
+
+      debug:
+        description: Enable SSH Debug (IT and E2E)
+        default: false
+        type: boolean
 
   workflow_call:
     inputs:
@@ -35,7 +46,19 @@ on:
         description: Use short rte list
         type: boolean
         default: true
+      pre_release:
+        description: Is pre-release
+        default: false
+        type: boolean
+      debug:
+        description: Enable SSH Debug
+        default: false
+        type: boolean
 
+# Cancel a previous run workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   changes:
@@ -61,8 +84,6 @@ jobs:
           e2e:
             - 'tests/e2e/**'
 
-  # TODO: concurrency
-
   frontend-tests:
     needs: changes
     if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'fe/')
@@ -82,14 +103,15 @@ jobs:
     secrets: inherit
     with:
       short_rte_list: ${{ inputs.short_rte_list || true }}
-      redis_client: ${{ inputs.redis_client }}
+      redis_client: ${{ inputs.redis_client || '' }}
+      debug: ${{ inputs.debug || false }}
 
-  # E2E Approve
+  # # E2E Approve
   e2e-approve:
     runs-on: ubuntu-latest
     needs: changes
+    if: inputs.group_tests == 'all' || inputs.group_tests == 'only_e2e' || startsWith(github.ref_name, 'e2e/')
     timeout-minutes: 60
-    if: inputs.group_tests == 'all' || startsWith(github.ref_name, 'e2e/')
     environment: ${{ startsWith(github.ref_name, 'e2e/') && 'e2e-approve' || 'staging' }}
     name: Approve E2E tests
     steps:
@@ -101,13 +123,15 @@ jobs:
     needs: e2e-approve
     secrets: inherit
     with:
-      only_docker: true
+      debug: ${{ inputs.debug || false }}
+      for_e2e_tests: true
 
   e2e-docker-tests:
     needs: build-docker
     uses: ./.github/workflows/tests-e2e-docker.yml
     secrets: inherit
-
+    with:
+      debug: ${{ inputs.debug || false }}
 
   # E2E AppImage
   build-appimage:
@@ -115,9 +139,27 @@ jobs:
     needs: e2e-approve
     secrets: inherit
     with:
-      target: linux:appimage:x64
+      target: build_linux_appimage_x64
+      debug: ${{ inputs.debug || false }}
 
   e2e-appimage-tests:
     needs: build-appimage
     uses: ./.github/workflows/tests-e2e-appimage.yml
     secrets: inherit
+    with:
+      debug: ${{ inputs.debug || false }}
+
+  clean:
+    uses: ./.github/workflows/clean-deployments.yml
+    if: always()
+    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
+
+  # Remove artifacts from github actions
+  remove-artifacts:
+    name: Remove artifacts
+    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Remove all artifacts
+      uses: ./.github/actions/remove-artifacts

@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { InitOutputText } from 'uiSrc/constants/cliOutput'
+import { InitOutputText } from 'uiSrc/components/messages/cli-output/cliOutput'
 import { concatToOutput } from 'uiSrc/slices/cli/cli-output'
 import { setCliEnteringCommand } from 'uiSrc/slices/cli/cli-settings'
 import { cleanup, clearStoreActions, mockedStore, render } from 'uiSrc/utils/test-utils'

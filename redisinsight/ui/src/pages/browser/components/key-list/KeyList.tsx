@@ -279,7 +279,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       minWidth: 94,
       truncateText: true,
       render: (cellData: string) => (
-        <KeyRowName nameString={cellData} />
+        <KeyRowName nameString={cellData} shortName={cellData} />
       )
     },
     {

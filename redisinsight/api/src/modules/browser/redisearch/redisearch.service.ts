@@ -48,7 +48,7 @@ export class RedisearchService {
    * @param clientMetadata
    */
   public async list(clientMetadata: ClientMetadata): Promise<ListRedisearchIndexesResponse> {
-    this.logger.log('Getting all redisearch indexes.');
+    this.logger.debug('Getting all redisearch indexes.', clientMetadata);
 
     try {
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
@@ -66,7 +66,7 @@ export class RedisearchService {
         ).map((idx) => Buffer.from(idx, 'hex')),
       });
     } catch (e) {
-      this.logger.error('Failed to get redisearch indexes', e);
+      this.logger.error('Failed to get redisearch indexes', e, clientMetadata);
       throw catchAclError(e);
     }
   }
@@ -80,7 +80,7 @@ export class RedisearchService {
     clientMetadata: ClientMetadata,
     dto: CreateRedisearchIndexDto,
   ): Promise<void> {
-    this.logger.log('Creating redisearch index.');
+    this.logger.debug('Creating redisearch index.', clientMetadata);
 
     try {
       const {
@@ -98,6 +98,7 @@ export class RedisearchService {
         if (indexInfo) {
           this.logger.error(
             `Failed to create redisearch index. ${ERROR_MESSAGES.REDISEARCH_INDEX_EXIST}`,
+            clientMetadata,
           );
           return Promise.reject(new ConflictException(ERROR_MESSAGES.REDISEARCH_INDEX_EXIST));
         }
@@ -136,7 +137,7 @@ export class RedisearchService {
 
       return undefined;
     } catch (e) {
-      this.logger.error('Failed to create redisearch index', e);
+      this.logger.error('Failed to create redisearch index', e, clientMetadata);
       throw catchAclError(e);
     }
   }
@@ -150,7 +151,7 @@ export class RedisearchService {
     clientMetadata: ClientMetadata,
     dto: IndexInfoRequestBodyDto,
   ): Promise<IndexInfoDto> {
-    this.logger.log('Getting index info');
+    this.logger.debug('Getting index info', clientMetadata);
 
     try {
       const { index } = dto;
@@ -168,7 +169,7 @@ export class RedisearchService {
 
       return plainToClass(IndexInfoDto, convertIndexInfoReply(infoReply));
     } catch (e) {
-      this.logger.error('Failed to get index info', e);
+      this.logger.error('Failed to get index info', e, clientMetadata);
       throw catchAclError(e);
     }
   }
@@ -183,7 +184,7 @@ export class RedisearchService {
     clientMetadata: ClientMetadata,
     dto: SearchRedisearchDto,
   ): Promise<GetKeysWithDetailsResponse> {
-    this.logger.log('Searching keys using redisearch.');
+    this.logger.debug('Searching keys using redisearch.', clientMetadata);
 
     try {
       const {
@@ -250,7 +251,7 @@ export class RedisearchService {
         maxResults: maxSearchResult,
       });
     } catch (e) {
-      this.logger.error('Failed to search keys using redisearch index', e);
+      this.logger.error('Failed to search keys using redisearch index', e, clientMetadata);
       if (e instanceof HttpException) {
         throw e;
       }

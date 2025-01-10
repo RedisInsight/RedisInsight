@@ -1,6 +1,8 @@
 import {
   Controller,
-  Get, HttpCode, Post,
+  Get,
+  HttpCode,
+  Post,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -8,6 +10,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
+import { RequestSessionMetadata } from 'src/common/decorators';
+import { SessionMetadata } from 'src/common/models';
 
 @ApiTags('Info')
 @Controller('features')
@@ -29,13 +33,17 @@ export class FeatureController {
       },
     ],
   })
-  async list(): Promise<any> {
-    return this.featureService.list();
+  async list(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+  ): Promise<any> {
+    return this.featureService.list(sessionMetadata);
   }
 
   @Post('/sync')
   @HttpCode(200)
-  async sync(): Promise<void> {
-    return this.featuresConfigService.sync();
+  async sync(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+  ): Promise<void> {
+    return this.featuresConfigService.sync(sessionMetadata);
   }
 }

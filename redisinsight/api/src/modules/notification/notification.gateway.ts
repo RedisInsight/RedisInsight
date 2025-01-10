@@ -17,7 +17,12 @@ import { ConstantsProvider } from 'src/modules/constants/providers/constants.pro
 
 const SOCKETS_CONFIG = config.get('sockets');
 
-@WebSocketGateway({ path: SOCKETS_CONFIG.path, cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
+@WebSocketGateway({
+  path: SOCKETS_CONFIG.path,
+  cors: SOCKETS_CONFIG.cors.enabled
+    ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
+  serveClient: SOCKETS_CONFIG.serveClient
+})
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 
@@ -29,7 +34,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
   ) {}
 
   async handleConnection(client: Socket): Promise<void> {
-    this.logger.log(`Client connected: ${client.id}`);
+    this.logger.debug(`Client connected: ${client.id}`);
     // TODO: [USER_CONTEXT] how to get middleware into socket connection?
     this.globalNotificationsProvider.init(
       this.constantsProvider.getSystemSessionMetadata(),
@@ -37,7 +42,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
   }
 
   async handleDisconnect(client: Socket): Promise<void> {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    this.logger.debug(`Client disconnected: ${client.id}`);
   }
 
   @OnEvent(NotificationServerEvents.Notification)

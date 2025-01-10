@@ -2,8 +2,11 @@ import { Selector, t } from 'testcafe';
 import { ChatBotTabs } from '../../../helpers/constants';
 import { DatabaseChatBotTab } from './database-chatbot-tab';
 import { GeneralChatBotTab } from './general-chatbot-tab';
+import { RedisCloudSigninPanel } from '../redis-cloud-sign-in-panel';
 
 export class AiChatBotPanel {
+    RedisCloudSigninPanel = new RedisCloudSigninPanel();
+
     // CONTAINERS
     sidePanel = Selector('[data-testid=redis-copilot]');
     copilotButton = Selector('[data-testid=]');

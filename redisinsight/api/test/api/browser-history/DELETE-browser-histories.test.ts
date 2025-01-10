@@ -34,11 +34,6 @@ describe(`DELETE /databases/:instanceId/history`, () => {
       databaseId: constants.TEST_INSTANCE_ID,
       mode: BrowserHistoryMode.Pattern,
     }, 10, true)
-
-    await localDb.generateBrowserHistory({
-      databaseId: constants.TEST_INSTANCE_ID,
-      mode: BrowserHistoryMode.Redisearch,
-    }, 10, true)
   });
 
   describe('Validation', () => {
@@ -53,6 +48,9 @@ describe(`DELETE /databases/:instanceId/history`, () => {
         name: 'Should remove multiple browser history items by ids',
         data: {
           ids: [constants.TEST_BROWSER_HISTORY_ID_1, constants.TEST_BROWSER_HISTORY_ID_2]
+        },
+        query: {
+          mode: BrowserHistoryMode.Pattern,
         },
         responseBody: {
           affected: 2,

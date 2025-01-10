@@ -13,12 +13,12 @@ import { bufferToString, Maybe, Nullable } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { DEFAULT_DELIMITER, DEFAULT_TREE_SORTING, KeyTypes, ModulesKeyTypes, SortOrder, Theme } from 'uiSrc/constants'
+import { DEFAULT_TREE_SORTING, KeyTypes, ModulesKeyTypes, SortOrder, Theme } from 'uiSrc/constants'
 import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { fetchKeysMetadataTree } from 'uiSrc/slices/browser/keys'
-import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import { Node } from './components/Node'
 import { NodeMeta, TreeData, TreeNode } from './interfaces'
@@ -27,7 +27,8 @@ import styles from './styles.module.scss'
 
 export interface Props {
   items: IKeyPropTypes[]
-  delimiter?: string
+  delimiterPattern: string
+  delimiters: string[]
   loadingIcon?: string
   loading: boolean
   deleting: boolean
@@ -52,7 +53,8 @@ export const KEYS = 'keys'
 const VirtualTree = (props: Props) => {
   const {
     items,
-    delimiter = DEFAULT_DELIMITER,
+    delimiterPattern,
+    delimiters,
     loadingIcon = 'empty',
     statusOpen = {},
     statusSelected,
@@ -103,13 +105,13 @@ const VirtualTree = (props: Props) => {
       nodes.current = []
       elements.current = {}
       rerender({})
-      runWebworker?.({ items: [], delimiter, sorting })
+      runWebworker?.({ items: [], delimiterPattern, delimiters, sorting })
       return
     }
 
     setConstructingTree(true)
-    runWebworker?.({ items, delimiter, sorting })
-  }, [items, delimiter])
+    runWebworker?.({ items, delimiterPattern, delimiters, sorting })
+  }, [items, delimiterPattern])
 
   const handleUpdateSelected = useCallback((name: RedisString) => {
     onStatusSelected?.(name)
@@ -154,7 +156,7 @@ const VirtualTree = (props: Props) => {
   ) => {
     const items = loadedItems.map(formatItem)
 
-    items.forEach((item) => updateNodeByPath(item.path, item))
+    items.forEach((item: any) => updateNodeByPath(item.path, item))
 
     rerender({})
   }
@@ -190,7 +192,8 @@ const VirtualTree = (props: Props) => {
       size: node.size,
       type: node.type,
       fullName: node.fullName,
-      shortName: node.nameString?.split(delimiter).pop(),
+      shortName: node.nameString?.split(new RegExp(delimiterPattern, 'g')).pop(),
+      delimiters,
       nestingLevel,
       deleting,
       path: node.path,

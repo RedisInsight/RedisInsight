@@ -1,6 +1,5 @@
-import { AppType, Server } from 'src/modules/server/models/server';
+import { AppType, PackageType, Server } from 'src/modules/server/models/server';
 import { ServerEntity } from 'src/modules/server/entities/server.entity';
-import { mockControlGroup, mockControlNumber } from 'src/__mocks__/feature';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import config, { Config } from 'src/utils/config';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
@@ -25,12 +24,11 @@ export const mockGetServerInfoResponse = Object.assign(new GetServerInfoResponse
   osPlatform: process.platform,
   buildType: SERVER_CONFIG.buildType,
   appType: AppType.Docker,
-  controlGroup: mockControlGroup,
-  controlNumber: mockControlNumber,
   encryptionStrategies: [
     EncryptionStrategy.PLAIN,
     EncryptionStrategy.KEYTAR,
   ],
+  packageType: PackageType.Unknown,
 });
 
 export const mockServerRepository = jest.fn(() => ({

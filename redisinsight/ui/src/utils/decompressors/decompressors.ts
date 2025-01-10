@@ -1,15 +1,19 @@
 import { forIn } from 'lodash'
-import { unzip } from 'gzip-js'
 import { decompress as decompressFzstd } from 'fzstd'
 // @ts-ignore
 import { decompress as decompressLz4 } from 'lz4js'
 import { decompress as decompressSnappy } from '@stablelib/snappy'
-// @ts-ignore
-import { decompress as decompressBrotli } from 'brotli-unicode/js'
-import { inflate } from 'pako'
+import { inflate, ungzip } from 'pako'
 import { COMPRESSOR_MAGIC_SYMBOLS, ICompressorMagicSymbols, KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
-import { anyToBuffer, bufferToString, bufferToUint8Array, isEqualBuffers, Nullable } from 'uiSrc/utils'
+import { anyToBuffer, bufferToUint8Array, isEqualBuffers, Nullable } from 'uiSrc/utils'
+
+// workaround for brotli-wasm
+// https://github.com/httptoolkit/brotli-wasm/issues/8#issuecomment-1746768478
+import init, * as brotli from '../../../../../node_modules/brotli-dec-wasm/pkg/brotli_dec_wasm'
+import brotliWasmUrl from '../../../../../node_modules/brotli-dec-wasm/pkg/brotli_dec_wasm_bg.wasm?url'
+
+init(brotliWasmUrl).then(() => brotli)
 
 const decompressingBuffer = (
   reply: RedisResponseBuffer,
@@ -24,7 +28,7 @@ const decompressingBuffer = (
   try {
     switch (compressor) {
       case KeyValueCompressor.GZIP: {
-        const value = unzip(Buffer.from(reply))
+        const value = ungzip(Buffer.from(reply))
 
         return {
           compressor,
@@ -61,8 +65,7 @@ const decompressingBuffer = (
         }
       }
       case KeyValueCompressor.Brotli: {
-        const value = anyToBuffer(decompressBrotli(bufferToString(reply)))
-
+        const value = anyToBuffer(brotli.decompress(bufferToUint8Array(reply)))
         return {
           value,
           compressor,

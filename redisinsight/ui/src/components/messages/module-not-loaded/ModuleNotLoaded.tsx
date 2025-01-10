@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiIcon, EuiLink, EuiText, EuiTextColor, EuiTitle, } from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiLink, EuiText, EuiTextColor, EuiTitle } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import MobileIcon from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg?react'
 import DesktopIcon from 'uiSrc/assets/img/icons/module_not_loaded.svg?react'
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
 import CheerIcon from 'uiSrc/assets/img/icons/cheer.svg?react'
-import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
+import { FeatureFlags, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 
@@ -17,6 +17,13 @@ import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { getDbWithModuleLoaded } from 'uiSrc/utils'
 import { useCapability } from 'uiSrc/services'
 import styles from './styles.module.scss'
+
+export const MODULE_OAUTH_SOURCE_MAP: { [key in RedisDefaultModules]?: String } = {
+  [RedisDefaultModules.Bloom]: 'RedisBloom',
+  [RedisDefaultModules.ReJSON]: 'RedisJSON',
+  [RedisDefaultModules.Search]: 'RediSearch',
+  [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
+}
 
 export interface IProps {
   moduleName: RedisDefaultModules
@@ -31,7 +38,7 @@ const MAX_ELEMENT_WIDTH = 1440
 const renderTitle = (width: number, moduleName?: string) => (
   <EuiTitle size="m" className={styles.title} data-testid="welcome-page-title">
     <h4>
-      {`${moduleName} ${moduleName === MODULE_TEXT_VIEW.redisgears ? 'are' : 'is'} not available `}
+      {`${moduleName} ${[MODULE_TEXT_VIEW.redisgears, MODULE_TEXT_VIEW.bf].includes(moduleName) ? 'are' : 'is'} not available `}
       {width > MAX_ELEMENT_WIDTH && <br />}
       for this database
     </h4>
@@ -51,7 +58,8 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
   const [width, setWidth] = useState(0)
   const freeInstances = useSelector(freeInstancesSelector) || []
 
-  const module = MODULE_TEXT_VIEW[moduleName]
+  const module = MODULE_OAUTH_SOURCE_MAP[moduleName]
+
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
   const source = type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
 
@@ -104,7 +112,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
           )}
         </div>
         <div className={styles.contentWrapper}>
-          {renderTitle(width, module)}
+          {renderTitle(width, MODULE_TEXT_VIEW[moduleName])}
           <EuiText className={styles.bigText}>
             {CONTENT[moduleName]?.text.map((item: string) => (
               width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
@@ -122,7 +130,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
               ))}
             </EuiText>
           )}
-          {renderText(module)}
+          {renderText(MODULE_TEXT_VIEW[moduleName])}
         </div>
       </div>
       <div className={styles.linksWrapper}>
@@ -133,47 +141,49 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
           />
         )}
         {!freeDbWithModule && (
-          <>
-            <EuiLink
-              className={cx(styles.text, styles.link)}
-              external={false}
-              target="_blank"
-              href={getUtmExternalLink(CONTENT[moduleName]?.link, { campaign: utmCampaign })}
-              data-testid="learn-more-link"
-            >
-              Learn More
-            </EuiLink>
-            <OAuthSsoHandlerDialog>
-              {(ssoCloudHandlerClick) => (
-                <EuiLink
-                  className={styles.link}
-                  external={false}
-                  target="_blank"
-                  href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
-                  onClick={(e) => {
-                    ssoCloudHandlerClick(
-                      e,
-                      {
-                        source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
-                        action: OAuthSocialAction.Create
-                      }
-                    )
-                    onFreeDatabaseClick()
-                  }}
-                  data-testid="get-started-link"
-                >
-                  <EuiButton
-                    fill
-                    size="s"
-                    color="secondary"
-                    className={styles.btnLink}
+          <FeatureFlagComponent name={FeatureFlags.envDependent}>
+            <>
+              <EuiLink
+                className={cx(styles.text, styles.link)}
+                external={false}
+                target="_blank"
+                href={getUtmExternalLink(CONTENT[moduleName]?.link, { campaign: utmCampaign })}
+                data-testid="learn-more-link"
+              >
+                Learn More
+              </EuiLink>
+              <OAuthSsoHandlerDialog>
+                {(ssoCloudHandlerClick) => (
+                  <EuiLink
+                    className={styles.link}
+                    external={false}
+                    target="_blank"
+                    href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
+                    onClick={(e) => {
+                      ssoCloudHandlerClick(
+                        e,
+                        {
+                          source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
+                          action: OAuthSocialAction.Create
+                        }
+                      )
+                      onFreeDatabaseClick()
+                    }}
+                    data-testid="get-started-link"
                   >
-                    Get Started For Free
-                  </EuiButton>
-                </EuiLink>
-              )}
-            </OAuthSsoHandlerDialog>
-          </>
+                    <EuiButton
+                      fill
+                      size="s"
+                      color="secondary"
+                      className={styles.btnLink}
+                    >
+                      Get Started For Free
+                    </EuiButton>
+                  </EuiLink>
+                )}
+              </OAuthSsoHandlerDialog>
+            </>
+          </FeatureFlagComponent>
         )}
       </div>
     </div>

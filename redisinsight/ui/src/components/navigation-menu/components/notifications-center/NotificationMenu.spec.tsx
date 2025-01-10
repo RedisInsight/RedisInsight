@@ -1,7 +1,7 @@
 import { fireEvent } from '@testing-library/react'
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { setIsCenterOpen } from 'uiSrc/slices/app/notifications'
+import { notificationCenterSelector, setIsCenterOpen } from 'uiSrc/slices/app/notifications'
 import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import NotificationMenu from './NotificationMenu'
 
@@ -40,5 +40,16 @@ describe('NotificationMenu', () => {
 
     expect(screen.getByTestId('total-unread-badge')).toBeInTheDocument()
     expect(screen.getByTestId('total-unread-badge')).toHaveTextContent('1')
+  })
+
+  it('should show badge with count 9+ of unread messages', async () => {
+    (notificationCenterSelector as jest.Mock).mockReturnValueOnce({
+      notifications: [],
+      totalUnread: 13,
+      isCenterOpen: false,
+    })
+    render(<NotificationMenu />)
+
+    expect(screen.getByTestId('total-unread-badge')).toHaveTextContent('9+')
   })
 })

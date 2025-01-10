@@ -9,6 +9,7 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { RedisClient } from 'src/modules/redis/client';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseService } from './database.service';
+import { DatabaseOverviewKeyspace } from './constants/overview';
 
 @Injectable()
 export class DatabaseInfoService {
@@ -27,7 +28,7 @@ export class DatabaseInfoService {
    * @param clientMetadata
    */
   public async getInfo(clientMetadata: ClientMetadata): Promise<RedisDatabaseInfoResponse> {
-    this.logger.log(`Getting database info for: ${clientMetadata.databaseId}`);
+    this.logger.debug(`Getting database info for: ${clientMetadata.databaseId}`, clientMetadata);
 
     const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -38,16 +39,20 @@ export class DatabaseInfoService {
    * Get redis database overview
    *
    * @param clientMetadata
+   * @param keyspace
    */
-  public async getOverview(clientMetadata: ClientMetadata): Promise<DatabaseOverview> {
-    this.logger.log(`Getting database overview for: ${clientMetadata.databaseId}`);
+  public async getOverview(
+    clientMetadata: ClientMetadata,
+    keyspace: DatabaseOverviewKeyspace,
+  ): Promise<DatabaseOverview> {
+    this.logger.debug(`Getting database overview for: ${clientMetadata.databaseId}`, clientMetadata);
 
     const client: RedisClient = await this.databaseClientFactory.getOrCreateClient({
       ...clientMetadata,
       db: undefined, // connect to default db index
     });
 
-    return this.databaseOverviewProvider.getOverview(clientMetadata, client);
+    return this.databaseOverviewProvider.getOverview(clientMetadata, client, keyspace);
   }
 
   /**
@@ -68,7 +73,7 @@ export class DatabaseInfoService {
    * @param db
    */
   public async getDatabaseIndex(clientMetadata: ClientMetadata, db: number): Promise<void> {
-    this.logger.log(`Connection to database index: ${db}`);
+    this.logger.debug(`Connection to database index: ${db}`, clientMetadata);
 
     let client;
     const prevDb = clientMetadata.db
@@ -89,7 +94,7 @@ export class DatabaseInfoService {
       );
       return undefined;
     } catch (e) {
-      this.logger.error(`Unable to connect to logical database: ${db}`, e);
+      this.logger.error(`Unable to connect to logical database: ${db}`, e, clientMetadata);
       client?.disconnect?.();
       throw e;
     }

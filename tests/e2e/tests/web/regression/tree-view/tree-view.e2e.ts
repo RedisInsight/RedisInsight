@@ -133,7 +133,7 @@ test('Verify that when user deletes the key he can see the key is removed from t
     await t.click(browserPage.treeViewButton);
     // Verify the default separator
     await t.click(browserPage.TreeView.treeViewSettingsBtn);
-    await t.expect(browserPage.TreeView.treeViewDelimiterInput.value).eql(':', 'The “:” (colon) not used as a default separator for namespaces');
+    await t.expect(browserPage.TreeView.FiltersDialog.getDelimiterBadgeByTitle(':').exists).eql(true, 'The “:” (colon) not used as a default separator for namespaces');
     // Verify that user can see that “:” (colon) used as a default separator for namespaces and see the number of keys found per each namespace
     await t.expect(browserPage.TreeView.treeViewKeysNumber.visible).ok('The user can not see the number of keys');
 

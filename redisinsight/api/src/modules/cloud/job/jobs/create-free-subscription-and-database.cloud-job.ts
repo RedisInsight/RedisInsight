@@ -13,6 +13,7 @@ import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.s
 import { CloudSubscription } from 'src/modules/cloud/subscription/models';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
+import { SessionMetadata } from 'src/common/models';
 import { CloudSubscriptionApiService } from '../../subscription/cloud-subscription.api.service';
 import { CloudSubscriptionPlanResponse } from '../../subscription/dto';
 
@@ -42,10 +43,10 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
     super(options);
   }
 
-  async iteration(): Promise<Database> {
+  async iteration(sessionMetadata: SessionMetadata): Promise<Database> {
     let planId = this.data?.planId;
 
-    this.logger.log('Create free subscription and database');
+    this.logger.debug('Create free subscription and database');
 
     this.checkSignal();
 
@@ -60,6 +61,7 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
     }
 
     const freeSubscription: CloudSubscription = await this.runChildJob(
+      sessionMetadata,
       CreateFreeSubscriptionCloudJob,
       { planId },
       this.options,
@@ -72,6 +74,7 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
     this.changeState({ step: CloudJobStep.Database });
 
     const database = await this.runChildJob(
+      sessionMetadata,
       CreateFreeDatabaseCloudJob,
       {
         subscriptionId: freeSubscription.id,

@@ -15,7 +15,7 @@ const databaseAPIRequests = new DatabaseAPIRequests();
 const headerColumns = {
     'Type': 'OSS Cluster',
     'Version': '7.0.0',
-    'User': 'Default'
+    'User': 'default'
 };
 type HeaderColumn = keyof typeof headerColumns;
 

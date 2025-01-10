@@ -19,9 +19,53 @@ const overviewMetrics = getOverviewMetrics({
 })
 
 describe('DatabaseOverview', () => {
-  it('should render', () => {
-    expect(render(
-      <DatabaseOverview metrics={overviewMetrics} />
-    )).toBeTruthy()
+  const mockLoadData = jest.fn()
+  const mockHandleEnableAutoRefresh = jest.fn()
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('should render with metrics', () => {
+    const { container } = render(
+      <DatabaseOverview
+        metrics={overviewMetrics}
+        loadData={mockLoadData}
+        lastRefreshTime={null}
+        handleEnableAutoRefresh={mockHandleEnableAutoRefresh}
+      />
+    )
+
+    expect(container.querySelector('[data-test-subj="overview-cpu"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-test-subj="overview-commands-sec"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-test-subj="overview-total-memory"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-test-subj="overview-total-keys"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-test-subj="overview-connected-clients"]')).toBeInTheDocument()
+  })
+
+  it('should render auto-refresh component', () => {
+    const { container } = render(
+      <DatabaseOverview
+        metrics={overviewMetrics}
+        loadData={mockLoadData}
+        lastRefreshTime={Date.now()}
+        handleEnableAutoRefresh={mockHandleEnableAutoRefresh}
+      />
+    )
+
+    expect(container.querySelector('[data-testid="auto-refresh-overview-auto-refresh-container"]')).toBeInTheDocument()
+  })
+
+  it('should not render anything when metrics are empty', () => {
+    const { container } = render(
+      <DatabaseOverview
+        metrics={[]}
+        loadData={mockLoadData}
+        lastRefreshTime={null}
+        handleEnableAutoRefresh={mockHandleEnableAutoRefresh}
+      />
+    )
+
+    expect(container.firstChild?.childNodes.length).toBe(0)
   })
 })

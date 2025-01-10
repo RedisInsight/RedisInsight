@@ -3,7 +3,7 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage } from '../../../../pageObjects';
 import {
     commonUrl,
-    ossStandaloneV8Config,
+    ossStandaloneV6Config,
 } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { populateListWithElements } from '../../../../helpers/keys';
@@ -17,7 +17,7 @@ const databaseAPIRequests = new DatabaseAPIRequests();
 const apiKeyRequests = new APIKeyRequests();
 const telemetry = new Telemetry();
 
-const dbParameters = { host: ossStandaloneV8Config.host, port: ossStandaloneV8Config.port };
+const dbParameters = { host: ossStandaloneV6Config.host, port: ossStandaloneV6Config.port };
 const keyName = `TestListKey-${ Common.generateWord(10) }`;
 const elementForSearch = `SearchField-${ Common.generateWord(5) }`;
 const keyToAddParameters = { elementsCount: 500000, keyName, elementStartWith: 'listElement' };
@@ -34,12 +34,12 @@ fixture `List Key verification`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV8Config);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV6Config);
         await browserPage.addListKey(keyName, '2147476121', ['testElement']);
     })
     .afterEach(async() => {
-        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneV8Config.databaseName);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV8Config);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneV6Config.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV6Config);
     });
 test.requestHooks(logger)
   ('Verify that user can search per exact element index in List key in DB with 1 million of fields', async t => {
@@ -63,12 +63,12 @@ test.requestHooks(logger)
 
 test
     .before(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV8Config);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV6Config);
 
     })
     .after(async() => {
         await browserPage.Cli.sendCommandInCli('flushdb');
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV8Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV6Config);
     })
     ('Verify that user can add a multiple fields', async t => {
 

@@ -47,60 +47,88 @@ export class CloudAutodiscoveryService {
     try {
       return await this.cloudUserCapiService.getCurrentAccount(authDto);
     } catch (e) {
+      this.logger.error('Error when getting current user account', e);
       throw wrapHttpError(e);
     }
   }
 
   /**
    * Get subscriptions by type
+   * @param sessionMetadata
    * @param authDto
    * @param type
    * @param authType
    */
   private async getSubscriptions(
+    sessionMetadata: SessionMetadata,
     authDto: CloudCapiAuthDto,
     type: CloudSubscriptionType,
     authType: CloudAutodiscoveryAuthType,
   ): Promise<CloudSubscription[]> {
     try {
       const subscriptions = await this.cloudSubscriptionCapiService.getSubscriptions(authDto, type);
-      this.analytics.sendGetRECloudSubsSucceedEvent(subscriptions, type, authType);
+      this.analytics.sendGetRECloudSubsSucceedEvent(
+        sessionMetadata,
+        subscriptions,
+        type,
+        authType,
+      );
       return subscriptions;
     } catch (e) {
-      this.analytics.sendGetRECloudSubsFailedEvent(e, type, authType);
+      this.logger.error('Failed get redis cloud subscriptions', sessionMetadata, e);
+      this.analytics.sendGetRECloudSubsFailedEvent(
+        sessionMetadata,
+        e,
+        type,
+        authType,
+      );
       throw wrapHttpError(e);
     }
   }
 
   /**
    * Discover all subscriptions
+   * @param sessionMetadata
    * @param authDto
    * @param authType
    */
   async discoverSubscriptions(
+    sessionMetadata: SessionMetadata,
     authDto: CloudCapiAuthDto,
     authType: CloudAutodiscoveryAuthType,
   ): Promise<CloudSubscription[]> {
     return [].concat(...await Promise.all([
-      this.getSubscriptions(authDto, CloudSubscriptionType.Fixed, authType),
-      this.getSubscriptions(authDto, CloudSubscriptionType.Flexible, authType),
+      this.getSubscriptions(
+        sessionMetadata,
+        authDto,
+        CloudSubscriptionType.Fixed,
+        authType,
+      ),
+      this.getSubscriptions(
+        sessionMetadata,
+        authDto,
+        CloudSubscriptionType.Flexible,
+        authType,
+      ),
     ]));
   }
 
   /**
    * Get all databases from specified multiple subscriptions
+   * @param sessionMetadata
    * @param authDto
    * @param dto
    * @param authType
    */
   async discoverDatabases(
+    sessionMetadata: SessionMetadata,
     authDto: CloudCapiAuthDto,
     dto: DiscoverCloudDatabasesDto,
     authType: CloudAutodiscoveryAuthType,
   ): Promise<CloudDatabase[]> {
     let result = [];
     try {
-      this.logger.log('Discovering cloud databases from subscription(s)');
+      this.logger.debug('Discovering cloud databases from subscription(s)', sessionMetadata);
 
       const subscriptions = uniqBy(
         dto.subscriptions,
@@ -114,10 +142,19 @@ export class CloudAutodiscoveryService {
         }),
       );
 
-      this.analytics.sendGetRECloudDbsSucceedEvent(result, authType);
+      this.analytics.sendGetRECloudDbsSucceedEvent(
+        sessionMetadata,
+        result,
+        authType,
+      );
       return result;
     } catch (e) {
-      this.analytics.sendGetRECloudDbsFailedEvent(e, authType);
+      this.logger.error('Error when discovering cloud databases from subscription(s)', sessionMetadata, e);
+      this.analytics.sendGetRECloudDbsFailedEvent(
+        sessionMetadata,
+        e,
+        authType,
+      );
 
       throw wrapHttpError(e);
     }
@@ -134,7 +171,7 @@ export class CloudAutodiscoveryService {
     authDto: CloudCapiAuthDto,
     addDatabasesDto: ImportCloudDatabaseDto[],
   ): Promise<ImportCloudDatabaseResponse[]> {
-    this.logger.log('Adding Redis Cloud databases.');
+    this.logger.debug('Adding Redis Cloud databases.', sessionMetadata);
 
     return Promise.all(
       addDatabasesDto.map(
@@ -181,6 +218,7 @@ export class CloudAutodiscoveryService {
               databaseDetails: database,
             };
           } catch (error) {
+            this.logger.error('Adding cloud database failed with an error', sessionMetadata, error);
             return {
               ...dto,
               status: ActionStatus.Fail,

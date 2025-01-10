@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { get } from 'lodash';
 import {
   mockDatabaseClientFactory, mockFtInfoAnalyticsData, mockRedisFtInfoReply,
+  mockSessionMetadata,
   mockStandaloneRedisClient,
   mockWorkbenchAnalyticsService,
   mockWorkbenchClientMetadata,
@@ -19,7 +20,7 @@ import { CommandNotSupportedError, CommandParsingError } from 'src/modules/cli/c
 import { FormatterManager, IFormatterStrategy, FormatterTypes } from 'src/common/transformers';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RunQueryMode } from 'src/modules/workbench/models/command-execution';
-import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
+import { WorkbenchAnalytics } from 'src/modules/workbench/workbench.analytics';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
 
@@ -50,7 +51,7 @@ describe('WorkbenchCommandsExecutor', () => {
       providers: [
         WorkbenchCommandsExecutor,
         {
-          provide: WorkbenchAnalyticsService,
+          provide: WorkbenchAnalytics,
           useFactory: () => mockAnalyticsService,
         },
         {
@@ -88,6 +89,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockWorkbenchClientMetadata.databaseId,
           [
             {
@@ -101,6 +103,7 @@ describe('WorkbenchCommandsExecutor', () => {
           },
         );
         expect(mockAnalyticsService.sendIndexInfoEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockWorkbenchClientMetadata.databaseId,
           mockFtInfoAnalyticsData,
         );
@@ -119,6 +122,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockWorkbenchClientMetadata.databaseId,
           [
             {
@@ -146,6 +150,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockWorkbenchClientMetadata.databaseId,
           {
             response: MOCK_ERROR_MESSAGE,
@@ -177,6 +182,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockWorkbenchClientMetadata.databaseId,
           {
             response: MOCK_ERROR_MESSAGE,
@@ -206,6 +212,7 @@ describe('WorkbenchCommandsExecutor', () => {
         expect(formatSpy).toHaveBeenCalled();
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockWorkbenchClientMetadata.databaseId,
           [
             {
@@ -236,6 +243,7 @@ describe('WorkbenchCommandsExecutor', () => {
         expect(formatSpy).toHaveBeenCalled();
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockWorkbenchClientMetadata.databaseId,
           [
             {
@@ -263,6 +271,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockWorkbenchClientMetadata.databaseId,
           {
             response: MOCK_ERROR_MESSAGE,
@@ -292,6 +301,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         expect(result).toEqual(mockResult);
         expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockSessionMetadata,
           mockWorkbenchClientMetadata.databaseId,
           {
             response: ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),

@@ -369,7 +369,7 @@ describe('db analysis slice', () => {
 
         // Act
         await store.dispatch<any>(
-          createNewAnalysis('instanceId', 'delimiter')
+          createNewAnalysis('instanceId', ['delimiter'])
         )
 
         // Assert
@@ -403,7 +403,7 @@ describe('db analysis slice', () => {
 
         // Act
         await store.dispatch<any>(
-          createNewAnalysis('instanceId', 'delimiter')
+          createNewAnalysis('instanceId', ['delimiter'])
         )
 
         // Assert

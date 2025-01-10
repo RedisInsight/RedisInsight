@@ -3,14 +3,14 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { INestApplication, NestApplicationOptions } from '@nestjs/common';
+import { INestApplication, Logger, NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
-import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { get, Config } from 'src/utils';
 import { migrateHomeFolder, removeOldFolders } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
+import { AppLogger } from 'src/common/logger/app-logger';
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
@@ -26,11 +26,14 @@ interface IApp {
 
 export default async function bootstrap(apiPort?: number): Promise<IApp> {
   if (serverConfig.migrateOldFolders) {
-    await migrateHomeFolder() && await removeOldFolders();
+    (await migrateHomeFolder()) && (await removeOldFolders());
   }
 
-  const { port, host } = serverConfig;
-  const logger = WinstonModule.createLogger(LOGGER_CONFIG);
+  if (apiPort) {
+    serverConfig.port = apiPort;
+  }
+
+  const logger = new AppLogger(LOGGER_CONFIG);
 
   const options: NestApplicationOptions = {
     logger,
@@ -46,7 +49,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
 
-  if (process.env.RI_APP_TYPE !== 'electron') {
+  if (process.env.RI_APP_TYPE !== 'electron' || process.env.NODE_ENV === 'development') {
     let prefix = serverConfig.globalPrefix;
     if (serverConfig.proxyPath) {
       prefix = posix.join(serverConfig.proxyPath, prefix);
@@ -75,15 +78,16 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
 
   const logFileProvider = app.get(LogFileProvider);
 
-  await app.listen(apiPort || port, host);
-  logger.log({
-    message: `Server is running on http(s)://${host}:${port}`,
-    context: 'bootstrap',
-  });
+  const { port, host } = serverConfig;
+
+  await app.listen(port, host);
+
+  const bootstrapLogger = new Logger('boostrap');
+  bootstrapLogger.log(`Server is running on http(s)://${host}:${port}`);
 
   const gracefulShutdown = (signal) => {
     try {
-      logger.log(`Signal ${signal} received. Shutting down...`);
+      bootstrapLogger.log(`Signal ${signal} received. Shutting down...`);
       logFileProvider.onModuleDestroy();
     } catch (e) {
       // ignore errors if any

@@ -3,7 +3,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { InternalServerErrorException } from '@nestjs/common';
 import { CloudAutodiscoveryAnalytics } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.analytics';
-import { mockCloudDatabase, mockCloudDatabaseFixed, mockCloudSubscription } from 'src/__mocks__';
+import {
+  mockCloudDatabase, mockCloudDatabaseFixed, mockCloudSubscription, mockSessionMetadata,
+} from 'src/__mocks__';
 import { CloudAutodiscoveryAuthType } from 'src/modules/cloud/autodiscovery/models';
 import { CloudSubscriptionStatus, CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { CloudDatabaseStatus } from 'src/modules/cloud/database/models';
@@ -36,6 +38,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
   describe('sendGetRECloudSubsSucceedEvent', () => {
     it('should emit event with active subscriptions', () => {
       service.sendGetRECloudSubsSucceedEvent(
+        mockSessionMetadata,
         [
           mockCloudSubscription,
           mockCloudSubscription,
@@ -45,6 +48,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: 2,
@@ -56,6 +60,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
     });
     it('should emit event with active and not active subscription', () => {
       service.sendGetRECloudSubsSucceedEvent(
+        mockSessionMetadata,
         [
           {
             ...mockCloudSubscription,
@@ -68,6 +73,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: 1,
@@ -79,6 +85,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
     });
     it('should emit event without active subscriptions', () => {
       service.sendGetRECloudSubsSucceedEvent(
+        mockSessionMetadata,
         [
           {
             ...mockCloudSubscription,
@@ -93,6 +100,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
         CloudAutodiscoveryAuthType.Credentials,
       );
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: 0,
@@ -104,12 +112,14 @@ describe('CloudAutodiscoveryAnalytics', () => {
     });
     it('should emit GetRECloudSubsSucceedEvent event for empty list', () => {
       service.sendGetRECloudSubsSucceedEvent(
+        mockSessionMetadata,
         [],
         CloudSubscriptionType.Flexible,
         CloudAutodiscoveryAuthType.Sso,
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: 0,
@@ -121,12 +131,14 @@ describe('CloudAutodiscoveryAnalytics', () => {
     });
     it('should emit GetRECloudSubsSucceedEvent event for undefined input value', () => {
       service.sendGetRECloudSubsSucceedEvent(
+        mockSessionMetadata,
         undefined,
         CloudSubscriptionType.Fixed,
         CloudAutodiscoveryAuthType.Credentials,
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: 0,
@@ -140,6 +152,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
       const input: any = {};
 
       expect(() => service.sendGetRECloudSubsSucceedEvent(
+        mockSessionMetadata,
         input,
         CloudSubscriptionType.Flexible,
         CloudAutodiscoveryAuthType.Credentials,
@@ -151,12 +164,14 @@ describe('CloudAutodiscoveryAnalytics', () => {
   describe('sendGetRECloudSubsFailedEvent', () => {
     it('should emit GetRECloudSubsFailedEvent event', () => {
       service.sendGetRECloudSubsFailedEvent(
+        mockSessionMetadata,
         httpException,
         CloudSubscriptionType.Fixed,
         CloudAutodiscoveryAuthType.Credentials,
       );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudSubscriptionsDiscoveryFailed,
         httpException,
         {
@@ -170,6 +185,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
   describe('sendGetRECloudDbsSucceedEvent', () => {
     it('should emit event with active databases', () => {
       service.sendGetRECloudDbsSucceedEvent(
+        mockSessionMetadata,
         [
           mockCloudDatabase,
           mockCloudDatabaseFixed,
@@ -178,6 +194,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: 2,
@@ -191,6 +208,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
     });
     it('should emit event with active and not active database', () => {
       service.sendGetRECloudDbsSucceedEvent(
+        mockSessionMetadata,
         [
           {
             ...mockCloudDatabase,
@@ -202,6 +220,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: 1,
@@ -215,6 +234,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
     });
     it('should emit event without active databases', () => {
       service.sendGetRECloudDbsSucceedEvent(
+        mockSessionMetadata,
         [
           {
             ...mockCloudDatabase,
@@ -225,6 +245,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: 0,
@@ -237,9 +258,14 @@ describe('CloudAutodiscoveryAnalytics', () => {
       );
     });
     it('should emit event for empty list', () => {
-      service.sendGetRECloudDbsSucceedEvent([], CloudAutodiscoveryAuthType.Credentials);
+      service.sendGetRECloudDbsSucceedEvent(
+        mockSessionMetadata,
+        [],
+        CloudAutodiscoveryAuthType.Credentials,
+      );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: 0,
@@ -252,9 +278,14 @@ describe('CloudAutodiscoveryAnalytics', () => {
       );
     });
     it('should emit event for undefined input value', () => {
-      service.sendGetRECloudDbsSucceedEvent(undefined, CloudAutodiscoveryAuthType.Credentials);
+      service.sendGetRECloudDbsSucceedEvent(
+        mockSessionMetadata,
+        undefined,
+        CloudAutodiscoveryAuthType.Credentials,
+      );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: 0,
@@ -269,16 +300,25 @@ describe('CloudAutodiscoveryAnalytics', () => {
     it('should not throw on error', () => {
       const input: any = {};
 
-      expect(() => service.sendGetRECloudDbsSucceedEvent(input, CloudAutodiscoveryAuthType.Credentials)).not.toThrow();
+      expect(() => service.sendGetRECloudDbsSucceedEvent(
+        mockSessionMetadata,
+        input,
+        CloudAutodiscoveryAuthType.Credentials,
+      )).not.toThrow();
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
   });
 
   describe('sendGetRECloudDbsFailedEvent', () => {
     it('should emit event', () => {
-      service.sendGetRECloudDbsFailedEvent(httpException, CloudAutodiscoveryAuthType.Credentials);
+      service.sendGetRECloudDbsFailedEvent(
+        mockSessionMetadata,
+        httpException,
+        CloudAutodiscoveryAuthType.Credentials,
+      );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.RECloudDatabasesDiscoveryFailed,
         httpException,
         {

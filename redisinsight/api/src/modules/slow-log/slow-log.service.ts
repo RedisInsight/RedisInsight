@@ -7,7 +7,7 @@ import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constant
 import { catchAclError } from 'src/utils';
 import { UpdateSlowLogConfigDto } from 'src/modules/slow-log/dto/update-slow-log-config.dto';
 import { GetSlowLogsDto } from 'src/modules/slow-log/dto/get-slow-logs.dto';
-import { SlowLogAnalyticsService } from 'src/modules/slow-log/slow-log-analytics.service';
+import { SlowLogAnalytics } from 'src/modules/slow-log/slow-log.analytics';
 import { ClientMetadata } from 'src/common/models';
 import { convertArrayReplyToObject } from 'src/modules/redis/utils';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
@@ -19,7 +19,7 @@ export class SlowLogService {
 
   constructor(
     private databaseClientFactory: DatabaseClientFactory,
-    private analyticsService: SlowLogAnalyticsService,
+    private analyticsService: SlowLogAnalytics,
   ) {}
 
   /**
@@ -29,7 +29,7 @@ export class SlowLogService {
    */
   async getSlowLogs(clientMetadata: ClientMetadata, dto: GetSlowLogsDto) {
     try {
-      this.logger.log('Getting slow logs');
+      this.logger.debug('Getting slow logs', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const nodes = await client.nodes();
@@ -74,7 +74,7 @@ export class SlowLogService {
    */
   async reset(clientMetadata: ClientMetadata): Promise<void> {
     try {
-      this.logger.log('Resetting slow logs');
+      this.logger.debug('Resetting slow logs', clientMetadata);
 
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const nodes = await client.nodes();
@@ -133,7 +133,8 @@ export class SlowLogService {
         commands.push({
           command: SlowLogCommands.Config,
           args: [SlowLogArguments.Set, 'slowlog-log-slower-than', dto.slowlogLogSlowerThan],
-          analytics: () => this.analyticsService.slowlogLogSlowerThanUpdated(
+          analytics: () => this.analyticsService.slowLogLogSlowerThanUpdated(
+            clientMetadata.sessionMetadata,
             clientMetadata.databaseId,
             slowlogLogSlowerThan,
             dto.slowlogLogSlowerThan,
@@ -147,7 +148,8 @@ export class SlowLogService {
         commands.push({
           command: SlowLogCommands.Config,
           args: [SlowLogArguments.Set, 'slowlog-max-len', dto.slowlogMaxLen],
-          analytics: () => this.analyticsService.slowlogMaxLenUpdated(
+          analytics: () => this.analyticsService.slowLogMaxLenUpdated(
+            clientMetadata.sessionMetadata,
             clientMetadata.databaseId,
             slowlogMaxLen,
             dto.slowlogMaxLen,

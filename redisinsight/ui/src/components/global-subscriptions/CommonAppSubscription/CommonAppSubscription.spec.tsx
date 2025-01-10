@@ -1,21 +1,20 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import MockedSocket from 'socket.io-mock'
 import socketIO from 'socket.io-client'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
-import { setNewNotificationReceived, setLastReceivedNotification } from 'uiSrc/slices/app/notifications'
+import { setLastReceivedNotification, setNewNotificationReceived } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
 import { NotificationType } from 'uiSrc/slices/interfaces'
-import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { CloudJobEvents, SocketEvent } from 'uiSrc/constants'
+import { cleanup, initialStateDefault, mockedStore, mockStore, render } from 'uiSrc/utils/test-utils'
+import { FeatureFlags, SocketEvent } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommendations'
-import { logoutUser } from 'uiSrc/slices/oauth/cloud'
-import { NotificationsDto } from 'apiSrc/modules/notification/dto'
 
-import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
+import { GlobalSubscriptions } from 'uiSrc/components'
+import { NotificationsDto } from 'apiSrc/modules/notification/dto'
 import CommonAppSubscription from './CommonAppSubscription'
 
 let store: typeof mockedStore
@@ -53,6 +52,24 @@ describe('CommonAppSubscription', () => {
       setIsConnected(true)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
+
+    unmount()
+  })
+
+  it('should not connect socket', () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+
+    const { unmount } = render(<GlobalSubscriptions />, {
+      store: mockStore(initialStoreState)
+    })
+
+    socket.socketClient.emit(SocketEvent.Connect)
+
+    expect(store.getActions()).toEqual([])
 
     unmount()
   })

@@ -35,7 +35,6 @@ import { OutputFormatterManager } from './output-formatter/output-formatter-mana
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';
 import { RawFormatterStrategy } from './output-formatter/strategies/raw-formatter.strategy';
-import {inspect} from "util";
 
 @Injectable()
 export class CliBusinessService {
@@ -65,7 +64,7 @@ export class CliBusinessService {
    * @param clientMetadata
    */
   public async getClient(clientMetadata: ClientMetadata): Promise<CreateCliClientResponse> {
-    this.logger.log('Create Redis client for CLI.');
+    this.logger.debug('Create Redis client for CLI.', clientMetadata);
     try {
       const uuid = uuidv4();
       await this.databaseClientFactory.getOrCreateClient({
@@ -73,12 +72,18 @@ export class CliBusinessService {
         uniqueId: uuid,
       });
 
-      this.logger.log('Succeed to create Redis client for CLI.');
-      this.cliAnalyticsService.sendClientCreatedEvent(clientMetadata.databaseId);
+      this.logger.debug('Succeed to create Redis client for CLI.', clientMetadata);
+      this.cliAnalyticsService.sendClientCreatedEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+      );
       return { uuid };
     } catch (error) {
-      this.logger.error('Failed to create redis client for CLI.', error);
-      this.cliAnalyticsService.sendClientCreationFailedEvent(clientMetadata.databaseId, error);
+      this.logger.error('Failed to create redis client for CLI.', error, clientMetadata);
+      this.cliAnalyticsService.sendClientCreationFailedEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId, error,
+      );
       throw error;
     }
   }
@@ -88,7 +93,7 @@ export class CliBusinessService {
    * @param clientMetadata
    */
   public async reCreateClient(clientMetadata: ClientMetadata): Promise<CreateCliClientResponse> {
-    this.logger.log('re-create Redis client for CLI.');
+    this.logger.debug('re-create Redis client for CLI.', clientMetadata);
     try {
       await this.databaseClientFactory.deleteClient(clientMetadata);
 
@@ -98,12 +103,19 @@ export class CliBusinessService {
         uniqueId: uuid,
       });
 
-      this.logger.log('Succeed to re-create Redis client for CLI.');
-      this.cliAnalyticsService.sendClientRecreatedEvent(clientMetadata.databaseId);
+      this.logger.debug('Succeed to re-create Redis client for CLI.', clientMetadata);
+      this.cliAnalyticsService.sendClientRecreatedEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+      );
       return { uuid };
     } catch (error) {
-      this.logger.error('Failed to re-create redis client for CLI.', error);
-      this.cliAnalyticsService.sendClientCreationFailedEvent(clientMetadata.databaseId, error);
+      this.logger.error('Failed to re-create redis client for CLI.', error, clientMetadata);
+      this.cliAnalyticsService.sendClientCreationFailedEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+        error,
+      );
       throw error;
     }
   }
@@ -115,17 +127,21 @@ export class CliBusinessService {
   public async deleteClient(
     clientMetadata: ClientMetadata,
   ): Promise<DeleteClientResponse> {
-    this.logger.log('Deleting Redis client for CLI.');
+    this.logger.debug('Deleting Redis client for CLI.', clientMetadata);
     try {
       const affected = await this.databaseClientFactory.deleteClient(clientMetadata) as unknown as number;
-      this.logger.log('Succeed to delete Redis client for CLI.');
+      this.logger.debug('Succeed to delete Redis client for CLI.', clientMetadata);
 
       if (affected) {
-        this.cliAnalyticsService.sendClientDeletedEvent(affected, clientMetadata.databaseId);
+        this.cliAnalyticsService.sendClientDeletedEvent(
+          clientMetadata.sessionMetadata,
+          affected,
+          clientMetadata.databaseId,
+        );
       }
       return { affected };
     } catch (error) {
-      this.logger.error('Failed to delete Redis client for CLI.', error);
+      this.logger.error('Failed to delete Redis client for CLI.', error, clientMetadata);
       throw new InternalServerErrorException(error.message);
     }
   }
@@ -139,7 +155,7 @@ export class CliBusinessService {
     clientMetadata: ClientMetadata,
     dto: SendCommandDto,
   ): Promise<SendCommandResponse> {
-    this.logger.log('Executing redis CLI command.');
+    this.logger.debug('Executing redis CLI command.', clientMetadata);
     const { command: commandLine } = dto;
     const outputFormat = dto.outputFormat || CliOutputFormatterTypes.Raw;
     let command: string = unknownCommand;
@@ -162,6 +178,7 @@ export class CliBusinessService {
       const reply = await client.sendCommand([command, ...args], { replyEncoding });
 
       this.cliAnalyticsService.sendCommandExecutedEvent(
+        clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
         {
           command,
@@ -171,37 +188,48 @@ export class CliBusinessService {
 
       if (command.toLowerCase() === 'ft.info') {
         this.cliAnalyticsService.sendIndexInfoEvent(
+          clientMetadata.sessionMetadata,
           clientMetadata.databaseId,
           getAnalyticsDataFromIndexInfo(reply as string[]),
         );
       }
 
-      this.logger.log('Succeed to execute redis CLI command.');
+      this.logger.debug('Succeed to execute redis CLI command.', clientMetadata);
 
       return {
         response: formatter.format(reply),
         status: CommandExecutionStatus.Success,
       };
     } catch (error) {
-      this.logger.error('Failed to execute redis CLI command.', error);
+      this.logger.error('Failed to execute redis CLI command.', error, clientMetadata);
 
       if (
         error instanceof CommandParsingError
         || error instanceof CommandNotSupportedError
         || error?.name === 'ReplyError'
       ) {
-        this.cliAnalyticsService.sendCommandErrorEvent(clientMetadata.databaseId, error, {
-          command,
-          outputFormat,
-        });
+        this.cliAnalyticsService.sendCommandErrorEvent(
+          clientMetadata.sessionMetadata,
+          clientMetadata.databaseId,
+          error,
+          {
+            command,
+            outputFormat,
+          },
+        );
 
         return { response: error.message, status: CommandExecutionStatus.Fail };
       }
 
-      this.cliAnalyticsService.sendConnectionErrorEvent(clientMetadata.databaseId, error, {
-        command,
-        outputFormat,
-      });
+      this.cliAnalyticsService.sendConnectionErrorEvent(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+        error,
+        {
+          command,
+          outputFormat,
+        },
+      );
 
       if (error instanceof EncryptionServiceErrorException || error instanceof ClientNotFoundErrorException) {
         throw error;

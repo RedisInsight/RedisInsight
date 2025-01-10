@@ -38,6 +38,7 @@ export type PageValues = typeof Pages[keyof typeof Pages]
 export const Pages = {
   home: '/',
   homeEditInstance: (instanceId: string) => `/?editInstance=${instanceId}`,
+  notFound: '/not-found',
   redisEnterpriseAutodiscovery: '/redis-enterprise-autodiscovery',
   settings: `/${PageNames.settings}`,
   redisCloud,

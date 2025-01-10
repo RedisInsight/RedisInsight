@@ -52,6 +52,7 @@ export const initialState: StateAppOAuth = {
   isOpenSelectAccountDialog: false,
   showProgress: true,
   user: {
+    initialLoading: true,
     loading: false,
     error: '',
     data: null,
@@ -191,6 +192,9 @@ const oauthCloudSlice = createSlice({
     logoutUserFailure: (state) => {
       state.user.loading = false
       state.user.data = null
+    },
+    setInitialLoadingState: (state, { payload }: PayloadAction<boolean>) => {
+      state.user.initialLoading = payload
     }
   },
 })
@@ -228,7 +232,8 @@ export const {
   removeAllCapiKeysFailure,
   logoutUser,
   logoutUserSuccess,
-  logoutUserFailure
+  logoutUserFailure,
+  setInitialLoadingState
 } = oauthCloudSlice.actions
 
 // A selector

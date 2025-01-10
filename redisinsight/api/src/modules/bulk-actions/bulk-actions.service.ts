@@ -17,7 +17,7 @@ export class BulkActionsService {
     const bulkAction = await this.bulkActionsProvider.create(sessionMetadata, dto, socket);
     const overview = bulkAction.getOverview();
 
-    this.analytics.sendActionStarted(overview);
+    this.analytics.sendActionStarted(sessionMetadata, overview);
 
     return overview;
   }

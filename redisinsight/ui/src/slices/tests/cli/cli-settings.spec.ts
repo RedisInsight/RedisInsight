@@ -1,12 +1,7 @@
 import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { cleanup, mockedStore, initialStateDefault, clearStoreActions } from 'uiSrc/utils/test-utils'
-import { concatToOutput, setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
-import {
-  cliTexts,
-  ConnectionSuccessOutputText,
-  InitOutputText,
-} from 'uiSrc/constants/cliOutput'
+import { setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import reducer, {
   initialState,
@@ -490,9 +485,7 @@ describe('cliSettings slice', () => {
       // Assert
       const expectedActions = [
         processCliClient(),
-        concatToOutput(InitOutputText('', 0, 0, true, () => {})),
         processCliClientSuccess(responsePayload.data?.uuid),
-        concatToOutput(ConnectionSuccessOutputText),
         setCliDbIndex(0)
       ]
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
@@ -516,9 +509,7 @@ describe('cliSettings slice', () => {
       // Assert
       const expectedActions = [
         processCliClient(),
-        concatToOutput(InitOutputText('', 0, 0, true, () => {})),
         processCliClientFailure(responsePayload.response.data.message),
-        concatToOutput(cliTexts.CLI_ERROR_MESSAGE(errorMessage))
       ]
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })

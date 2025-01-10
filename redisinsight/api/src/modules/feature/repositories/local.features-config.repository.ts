@@ -8,6 +8,7 @@ import { classToClass } from 'src/utils';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import { FeaturesConfig } from 'src/modules/feature/model/features-config';
+import { SessionMetadata } from 'src/common/models';
 import * as defaultConfig from '../../../../config/features-config.json';
 
 @Injectable()
@@ -29,7 +30,7 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
    */
   private generateControlNumber(): number {
     const controlNumber = Number((parseInt((Math.random() * 10_000).toString(), 10) / 100).toFixed(2));
-    this.logger.log('Control number is generated', controlNumber);
+    this.logger.debug(`Control number is generated: ${controlNumber}`);
 
     return controlNumber;
   }
@@ -38,13 +39,13 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
    * @inheritDoc
    */
   async getOrCreate(): Promise<FeaturesConfig> {
-    this.logger.log('Getting features config entity');
+    this.logger.debug('Getting features config entity');
 
     let entity = await this.repository.findOneBy({ id: this.id });
 
     if (!entity) {
       try {
-        this.logger.log('Creating features config entity');
+        this.logger.debug('Creating features config entity');
 
         entity = await this.repository.save(plainToClass(FeaturesConfigEntity, {
           id: this.id,
@@ -66,7 +67,7 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
   /**
    * @inheritDoc
    */
-  async update(data: any): Promise<FeaturesConfig> {
+  async update(_sessionMetadata: SessionMetadata, data: Record<string, any>): Promise<FeaturesConfig> {
     await this.repository.update(
       { id: this.id },
       plainToClass(FeaturesConfigEntity, { data, id: this.id }),

@@ -209,6 +209,7 @@ describe('CloudAuthService', () => {
       )).toEqual({
         action: mockCloudAuthGoogleRequest.action,
         idpType: mockCloudAuthGoogleRequest.idpType,
+        sessionMetadata: mockCloudAuthGoogleRequest.sessionMetadata,
       });
       expect(service['authRequests'].size).toEqual(1);
     });
@@ -379,6 +380,7 @@ describe('CloudAuthService', () => {
       )).toEqual(mockCloudAuthResponse);
       expect(callback).toHaveBeenCalledWith(mockCloudAuthResponse);
       expect(analytics.sendCloudSignInSucceeded).toHaveBeenCalledWith(
+        mockSessionMetadata,
         CloudSsoFeatureStrategy.DeepLink,
         mockCloudAuthGoogleRequest.action,
       );
@@ -411,6 +413,7 @@ describe('CloudAuthService', () => {
       )).toEqual(errorResponse);
       expect(callback).not.toHaveBeenCalled();
       expect(analytics.sendCloudSignInFailed).toHaveBeenCalledWith(
+        mockSessionMetadata,
         error,
         CloudSsoFeatureStrategy.DeepLink,
         mockCloudAuthGoogleRequest.action,

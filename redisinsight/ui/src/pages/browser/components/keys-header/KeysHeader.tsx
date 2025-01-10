@@ -179,6 +179,35 @@ const KeysHeader = (props: Props) => {
     }, 0)
   }
 
+  const changeColumnsShown = (status: boolean, type: 'size' | 'ttl') => {
+    const shown = []
+    const hidden = []
+    if ((type === 'ttl' && status) || (getTtl && type !== 'ttl')) {
+      shown.push('key-ttl')
+    } else {
+      hidden.push('key-ttl')
+    }
+    if ((type === 'size' && status) || (getSize && type !== 'size')) {
+      shown.push('key-size')
+    } else {
+      hidden.push('key-size')
+    }
+
+    if (type === 'size') {
+      dispatch(setGetSize(status))
+    } else if (type === 'ttl') {
+      dispatch(setGetTtl(status))
+    }
+    sendEventTelemetry({
+      event: TelemetryEvent.SHOW_BROWSER_COLUMN_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        shown,
+        hidden
+      }
+    })
+  }
+
   const ViewSwitch = () => (
     <div
       className={styles.viewTypeSwitch}
@@ -275,7 +304,7 @@ const KeysHeader = (props: Props) => {
                         name="show-key-size"
                         label="Key size"
                         checked={getSize}
-                        onChange={(e) => dispatch(setGetSize(e.target.checked))}
+                        onChange={(e) => changeColumnsShown(e.target.checked, 'size')}
                         data-testid="show-key-size"
                       />
                     </EuiToolTip>
@@ -284,7 +313,7 @@ const KeysHeader = (props: Props) => {
                       name="show-ttl"
                       label="TTL"
                       checked={getTtl}
-                      onChange={(e) => dispatch(setGetTtl(e.target.checked))}
+                      onChange={(e) => changeColumnsShown(e.target.checked, 'ttl')}
                       data-testid="show-ttl"
                     />
                   </EuiPopover>

@@ -79,8 +79,6 @@ export const initialState: KeysStore = {
   isBrowserFullScreen: false,
   searchMode: localStorageService?.get(BrowserStorageItem.browserSearchMode) ?? SearchMode.Pattern,
   viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
-  getSize: true,
-  getTtl: true,
   data: {
     total: 0,
     scanned: 0,
@@ -423,13 +421,7 @@ const keysSlice = createSlice({
     },
     setSelectedKeyRefreshDisabled: (state, { payload }: PayloadAction<boolean>) => {
       state.selectedKey.isRefreshDisabled = payload
-    },
-    setGetSize: (state, { payload }: PayloadAction<boolean>) => {
-      state.getSize = payload
-    },
-    setGetTtl: (state, { payload }: PayloadAction<boolean>) => {
-      state.getTtl = payload
-    },
+    }
   },
 })
 
@@ -480,8 +472,6 @@ export const {
   deleteSearchHistorySuccess,
   deleteSearchHistoryFailure,
   setSelectedKeyRefreshDisabled,
-  setGetSize,
-  setGetTtl,
 } = keysSlice.actions
 
 // A selector
@@ -547,7 +537,7 @@ export function fetchPatternKeysAction(
           type,
           match: match || DEFAULT_SEARCH_MATCH,
           keysInfo: false,
-          scanThreshold,
+          scanThreshold
         },
         {
           params: { encoding },
@@ -1046,18 +1036,12 @@ export function fetchKeysMetadata(
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
-      const { getSize, getTtl } = state.browser.keys
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id,
           ApiEndpoints.KEYS_METADATA
         ),
-        {
-          keys,
-          type: filter || undefined,
-          getSize,
-          getTtl
-        },
+        { keys, type: filter || undefined },
         { params: { encoding: state.app.info.encoding }, signal }
       )
 
@@ -1083,18 +1067,12 @@ export function fetchKeysMetadataTree(
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
-      const { getSize, getTtl } = state.browser.keys
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id,
           ApiEndpoints.KEYS_METADATA
         ),
-        {
-          keys: keys.map(([, nameBuffer]) => nameBuffer),
-          type: filter || undefined,
-          getSize,
-          getTtl
-        },
+        { keys: keys.map(([, nameBuffer]) => nameBuffer), type: filter || undefined },
         { params: { encoding: state.app.info.encoding }, signal }
       )
 

@@ -52,8 +52,6 @@ export interface KeysStore {
     data: null | Array<SearchHistoryItem>
     loading: boolean
   }
-  getSize: boolean
-  getTtl: boolean
 }
 
 export interface SearchHistoryItem {

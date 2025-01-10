@@ -6,7 +6,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import { instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/instances'
 import { instancesSelector as dbInstancesSelector } from 'uiSrc/slices/instances/instances'
 import Divider from 'uiSrc/components/divider/Divider'
-import { BrowserStorageItem, Pages } from 'uiSrc/constants'
+import { BrowserStorageItem, DEFAULT_SORT, Pages } from 'uiSrc/constants'
 import Down from 'uiSrc/assets/img/Down.svg?react'
 import Search from 'uiSrc/assets/img/Search.svg'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
@@ -39,17 +39,11 @@ const InstancesNavigationPopover = ({ name }: Props) => {
   const history = useHistory()
 
   useEffect(() => {
-    const dbSort = localStorageService.get(BrowserStorageItem.instancesSorting) ?? {
-      field: 'lastConnection',
-      direction: 'asc'
-    }
+    const dbSort = localStorageService.get(BrowserStorageItem.instancesSorting) ?? DEFAULT_SORT
 
     const dbFiltered = filterAndSort(dbInstances, searchFilter, dbSort)
 
-    const rdiSort = localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ?? {
-      field: 'lastConnection',
-      direction: 'asc'
-    }
+    const rdiSort = localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ?? DEFAULT_SORT
 
     const rdiFiltered = filterAndSort(rdiInstances, searchFilter, rdiSort)
     setFilteredDbInstances(dbFiltered)

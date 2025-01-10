@@ -1,13 +1,13 @@
 import { orderBy } from 'lodash'
+import { PropertySort } from '@elastic/eui'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import { getDbIndex } from '../longNames'
 
 export const filterAndSort = (
-  arr: Instance[] | RdiInstance[],
+  arr: Array<Instance | RdiInstance>,
   search: string,
-  sort: { field: string, direction: 'asc' | 'desc' }
-): (Instance | RdiInstance
-  )[] => {
+  sort: PropertySort
+): Array<Instance | RdiInstance> => {
   if (!arr?.length) return arr
   const filtered = arr.filter((instance) => {
     const label = `${instance.name} ${getDbIndex(instance.db)}`

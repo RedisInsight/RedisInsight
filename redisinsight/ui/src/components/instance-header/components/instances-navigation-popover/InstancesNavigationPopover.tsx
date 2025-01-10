@@ -6,12 +6,13 @@ import { useHistory, useParams } from 'react-router-dom'
 import { instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/instances'
 import { instancesSelector as dbInstancesSelector } from 'uiSrc/slices/instances/instances'
 import Divider from 'uiSrc/components/divider/Divider'
-import { Pages } from 'uiSrc/constants'
+import { BrowserStorageItem, DEFAULT_SORT, Pages } from 'uiSrc/constants'
 import Down from 'uiSrc/assets/img/Down.svg?react'
 import Search from 'uiSrc/assets/img/Search.svg'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { getDbIndex } from 'uiSrc/utils'
+import { localStorageService } from 'uiSrc/services'
+import { filterAndSort } from 'uiSrc/utils'
 import InstancesList from './components/instances-list'
 import styles from './styles.module.scss'
 
@@ -38,11 +39,13 @@ const InstancesNavigationPopover = ({ name }: Props) => {
   const history = useHistory()
 
   useEffect(() => {
-    const dbFiltered = dbInstances?.filter((db) => {
-      const label = `${db.name} ${getDbIndex(db.db)}`
-      return label.toLowerCase?.().includes(searchFilter)
-    })
-    const rdiFiltered = rdiInstances?.filter((rdi) => rdi.name?.toLowerCase?.().includes(searchFilter))
+    const dbSort = localStorageService.get(BrowserStorageItem.instancesSorting) ?? DEFAULT_SORT
+
+    const dbFiltered = filterAndSort(dbInstances, searchFilter, dbSort)
+
+    const rdiSort = localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ?? DEFAULT_SORT
+
+    const rdiFiltered = filterAndSort(rdiInstances, searchFilter, rdiSort)
     setFilteredDbInstances(dbFiltered)
     setFilteredRdiInstances(rdiFiltered)
   }, [dbInstances, rdiInstances, searchFilter])

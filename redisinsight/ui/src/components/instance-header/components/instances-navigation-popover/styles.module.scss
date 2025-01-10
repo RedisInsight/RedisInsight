@@ -60,6 +60,14 @@
   }
 }
 
+.emptyMsg {
+  padding: 20px;
+  text-align: center;
+  font-size: 14px !important;
+  line-height: 16.8px !important;
+  color: var(--euiTextSubduedColor) !important;
+}
+
 .listContainer {
   @include eui.scrollBar;
   max-height: 160px;
@@ -74,7 +82,6 @@
   .loading {
     margin-right: 8px;
     border-color: var(--separatorDropdownColor) !important;
-
     border-top-color: var(--euiColorGhost) !important;
   }
 }

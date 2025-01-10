@@ -84,11 +84,11 @@ jobs:
           e2e:
             - 'tests/e2e/**'
 
-  # frontend-tests:
-  #   needs: changes
-  #   if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'fe/')
-  #   uses: ./.github/workflows/tests-frontend.yml
-  #   secrets: inherit
+  frontend-tests:
+    needs: changes
+    if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'fe/')
+    uses: ./.github/workflows/tests-frontend.yml
+    secrets: inherit
 
   backend-tests:
     needs: changes
@@ -152,12 +152,12 @@ jobs:
   clean:
     uses: ./.github/workflows/clean-deployments.yml
     if: always()
-    needs: [backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
+    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
 
   # Remove artifacts from github actions
   remove-artifacts:
     name: Remove artifacts
-    needs: [backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
+    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

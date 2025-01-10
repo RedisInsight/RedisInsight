@@ -17,13 +17,19 @@ export class ListKeyInfoStrategy extends KeyInfoStrategy {
 
     const [
       [, ttl = null],
-      [, size = null],
       [, length = null],
     ] = await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
-      [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
       [BrowserToolListCommands.LLen, key],
     ]) as [any, number][];
+
+    let size = null;
+    if (length < 50_000) {
+      const sizeData = await client.sendPipeline([
+        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+      ]);
+      size = sizeData && sizeData[0] && sizeData[0][1];
+    }
 
     return {
       name: key,

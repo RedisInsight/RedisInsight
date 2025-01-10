@@ -290,13 +290,13 @@ export const commonfindCurrentArgumentCases = [
     appendIncludes: ['APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
   },
   {
-    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' SORTBY nargs property ',
+    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' SORTBY 1 property ',
     result: expect.any(Object),
     appendIncludes: ['ASC', 'DESC'],
     appendNotIncludes: ['REDUCE', 'APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
   },
   {
-    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' SORTBY nargs property ASC ',
+    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' SORTBY 1 property ASC ',
     result: expect.any(Object),
     appendIncludes: ['MAX', 'APPLY', 'LOAD', 'GROUPBY'],
     appendNotIncludes: ['SORTBY'],
@@ -343,7 +343,7 @@ export const commonfindCurrentArgumentCases = [
     appendNotIncludes: ['LIMITED'],
   },
   {
-    input: 'FT.SPELLCHECK \'idx:articles\' \'test\' DIALECT dialect DISTANCE distance TERMS ',
+    input: 'FT.SPELLCHECK \'idx:articles\' \'test\' DIALECT d DISTANCE d TERMS ',
     result: expect.any(Object),
     appendIncludes: ['EXCLUDE', 'INCLUDE'],
     appendNotIncludes: ['DIALECT', 'DISTANCE', 'TERMS'],

@@ -89,20 +89,14 @@ export const findStopArgument = (
       const data = skipOptionalArguments(queryArg, prevMandatoryIndex, command.arguments)
       currentArgument = data.currentArgument
       commandIndex = data.index
-
-      console.log('set index', commandIndex)
     }
 
-    console.log('CURRENT ARGUMENT', currentArgument)
-
     if (!currentArgument && isCountPositive(count)) {
-      console.log('set index to zero')
       commandIndex = 0
       currentArgument = command?.arguments[commandIndex]
     }
 
     if (!currentArgument && forceReturn) {
-      console.log('no current index, return')
       // TODO, can be still optional arguments on the same level
       return {
         queryArgsIterated: i,
@@ -161,18 +155,17 @@ export const findStopArgument = (
       i += (blockArgument?.queryArgsIterated || 1) - 1
       isBlocked = false
 
-      const nextQueryArg = queryArgs[i]
-      if (!nextQueryArg) return blockArgument
+      if (isNumber(argsCount) && argsCount > 0 && blockArgument.finishedArgsCount === 0) {
+        commandIndex++
+      }
 
-      if (currentArgument && !currentArgument.multiple) {
+      if (currentArgument && (!currentArgument.multiple)) {
         commandIndex++
       }
 
       argsCount = 0
       continue
     }
-
-    console.log('continue', currentArgument)
 
     // handle one-of argument
     if (currentArgument?.type === ICommandTokenType.OneOf) {
@@ -219,35 +212,33 @@ export const findStopArgument = (
 
     commandIndex++
     isNumber(argsCount) && argsCount--
+
+    if (isNumber(argsCount) && argsCount > 0) {
+      continue
+    }
+
     isBlocked = false
   }
 
   const lastArgument: Maybe<IRedisCommand> = command?.arguments?.[commandIndex]
-
-  console.log('last argument', lastArgument)
-
   const prevMandatoryIndex = findLastIndex(
     command.arguments.slice(0, commandIndex),
     (arg) => !arg.optional
   )
+
   const data = skipOptionalArguments('', prevMandatoryIndex, command.arguments, true)
-
-  console.log('data', data)
-
   const currentLvlArgs = removeNotSuggestedArgs(queryArgs, data.optionalArguments)
-  console.log('currentLvlArgs', currentLvlArgs)
-  console.log('parentSkippedArguments', parentSkippedArguments)
+
   return {
-    // TODO: check arguments, need to understand in another way
     skippedArguments: lastArgument && !lastArgument.optional
       ? [currentLvlArgs]
       : [currentLvlArgs, ...parentSkippedArguments],
-    // TODO: check this condition
     stopArgument: forceReturn
       ? (isCountPositive(argsCount) || isUndefined(argsCount) || argsCount <= 0) ? lastArgument : undefined
       : lastArgument,
     isBlocked,
     queryArgsIterated: queryArgs.length,
+    finishedArgsCount: argsCount
   }
 }
 
@@ -280,15 +271,6 @@ export const findStopArgumentWithSuggestions = (currentBlock: BlockTokensTree) =
       parent: blockParent || command
     }
   }
-
-  // if (stopArgument && !stopArgument.optional) {
-  //   return {
-  //     append: [fillArgsByType([stopArgument])],
-  //     stopArg: stopArgument,
-  //     isBlocked: false,
-  //     parent: blockParent || command
-  //   }
-  // }
 
   console.log('skippedArguments', skippedArguments)
 

@@ -7,6 +7,7 @@ import {
   keys as ElasticKeys,
 } from '@elastic/eui'
 
+import { useSelector } from 'react-redux'
 import {
   Maybe,
 } from 'uiSrc/utils'
@@ -16,6 +17,7 @@ import KeyRowSize from 'uiSrc/pages/browser/components/key-row-size'
 import KeyRowName from 'uiSrc/pages/browser/components/key-row-name'
 import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { TreeData } from '../../interfaces'
 import styles from './styles.module.scss'
 
@@ -54,7 +56,7 @@ const Node = ({
     updateStatusOpen,
     updateStatusSelected,
   } = data
-
+  const { getSize, getTtl } = useSelector(keysSelector)
   const delimiterView = delimiters.length === 1 ? delimiters[0] : '-'
 
   const [deletePopoverId, setDeletePopoverId] = useState<Maybe<string>>(undefined)
@@ -119,7 +121,7 @@ const Node = ({
         </div>
         <div className={styles.options}>
           <div className={styles.approximate} data-testid={`percentage_${fullName}`}>
-            {keyApproximate ? `${keyApproximate < 1 ? '<1' : Math.round(keyApproximate)}%` : '' }
+            {keyApproximate ? `${keyApproximate < 1 ? '<1' : Math.round(keyApproximate)}%` : ''}
           </div>
           <div className={styles.keyCount} data-testid={`count_${fullName}`}>{keyCount ?? ''}</div>
         </div>
@@ -131,19 +133,21 @@ const Node = ({
     <>
       <KeyRowType type={type} nameString={nameString} />
       <KeyRowName shortName={shortName} nameString={nameString} />
-      <KeyRowTTL ttl={ttl} nameString={nameString} deletePopoverId={deletePopoverId} rowId={nodeId} />
-      <KeyRowSize
-        size={size}
-        nameString={nameString}
-        nameBuffer={nameBuffer}
-        deletePopoverId={deletePopoverId}
-        rowId={nodeId}
-        type={type}
-        deleting={deleting}
-        setDeletePopoverId={setDeletePopoverId}
-        handleDeletePopoverOpen={handleDeletePopoverOpen}
-        handleDelete={handleDelete}
-      />
+      {getTtl && <KeyRowTTL ttl={ttl} nameString={nameString} deletePopoverId={deletePopoverId} rowId={nodeId} />}
+      {getSize && (
+        <KeyRowSize
+          size={size}
+          nameString={nameString}
+          nameBuffer={nameBuffer}
+          deletePopoverId={deletePopoverId}
+          rowId={nodeId}
+          type={type}
+          deleting={deleting}
+          setDeletePopoverId={setDeletePopoverId}
+          handleDeletePopoverOpen={handleDeletePopoverOpen}
+          handleDelete={handleDelete}
+        />
+      )}
     </>
   )
 
@@ -156,7 +160,7 @@ const Node = ({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
-      onFocus={() => {}}
+      onFocus={() => { }}
       data-testid={`node-item_${fullName}${isOpen && !isLeaf ? '--expanded' : ''}`}
     >
       {!isLeaf && <Folder />}
@@ -188,9 +192,9 @@ const Node = ({
       }}
       className={cx(
         styles.nodeContainer, {
-          [styles.nodeSelected]: isSelected && isLeaf,
-          [styles.nodeRowEven]: index % 2 === 0,
-        }
+        [styles.nodeSelected]: isSelected && isLeaf,
+        [styles.nodeRowEven]: index % 2 === 0,
+      }
       )}
     >
       {Node}

@@ -81,7 +81,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const selectedKey = useSelector(selectedKeySelector)
   const { nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered, searchMode, deleting } = useSelector(keysSelector)
+  const { isSearched, isFiltered, searchMode, deleting, getSize, getTtl } = useSelector(keysSelector)
   const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
@@ -282,7 +282,7 @@ const KeyList = forwardRef((props: Props, ref) => {
         <KeyRowName nameString={cellData} shortName={cellData} />
       )
     },
-    {
+    getTtl ? {
       id: 'ttl',
       label: 'TTL',
       absoluteWidth: 86,
@@ -292,8 +292,8 @@ const KeyList = forwardRef((props: Props, ref) => {
       render: (cellData: number, { nameString }: IKeyPropTypes, _expanded, rowIndex) => (
         <KeyRowTTL ttl={cellData} nameString={nameString} deletePopoverId={deletePopoverIndex} rowId={rowIndex || 0} />
       )
-    },
-    {
+    } : null,
+    getSize ? {
       id: 'size',
       label: 'Size',
       absoluteWidth: 90,
@@ -319,8 +319,8 @@ const KeyList = forwardRef((props: Props, ref) => {
           handleDelete={handleRemoveKey}
         />
       )
-    },
-  ]
+    } : null,
+  ].filter((el) => !!el)
 
   const noItemsMessage = NoItemsMessage()
 

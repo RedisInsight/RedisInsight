@@ -4,13 +4,21 @@ module.exports = {
     node: true,
     browser: true,
   },
-  extends: ['airbnb-typescript'],
+  extends: ['airbnb-typescript', 'prettier'],
   plugins: ['@typescript-eslint'],
   parser: '@typescript-eslint/parser',
   rules: {
     semi: ['error', 'never'],
     quotes: [2, 'single', { avoidEscape: true }],
-    'max-len': ['error', { ignoreComments: true, ignoreStrings: true, ignoreRegExpLiterals: true, code: 120 }],
+    'max-len': [
+      'error',
+      {
+        ignoreComments: true,
+        ignoreStrings: true,
+        ignoreRegExpLiterals: true,
+        code: 120,
+      },
+    ],
     'class-methods-use-this': 'off',
     'import/no-extraneous-dependencies': 'off', // temporary disabled
     '@typescript-eslint/semi': ['error', 'never'],
@@ -33,21 +41,21 @@ module.exports = {
           {
             pattern: 'desktopSrc/**',
             group: 'internal',
-            position: 'after'
+            position: 'after',
           },
           {
             pattern: 'uiSrc/**',
             group: 'internal',
-            position: 'after'
+            position: 'after',
           },
           {
             pattern: 'apiSrc/**',
             group: 'internal',
-            position: 'after'
+            position: 'after',
           },
         ],
         warnOnUnassignedImports: true,
-        pathGroupsExcludedImportTypes: ['builtin']
+        pathGroupsExcludedImportTypes: ['builtin'],
       },
     ],
   },
@@ -57,8 +65,5 @@ module.exports = {
     sourceType: 'module',
     createDefaultProgram: true,
   },
-  ignorePatterns: [
-    'redisinsight/ui',
-    'redisinsight/api',
-  ],
+  ignorePatterns: ['redisinsight/ui', 'redisinsight/api'],
 }

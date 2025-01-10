@@ -16,13 +16,19 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
     this.logger.debug(`Getting ${RedisDataType.JSON} type info.`);
     const [
       [, ttl = null],
-      [, size = null],
     ] = await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
-      [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
     ]) as [any, number][];
 
     const length = await this.getLength(client, key);
+
+    let size = null;
+    if (length < 100) {
+      const sizeData = await client.sendPipeline([
+        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+      ]);
+      size = sizeData && sizeData[0] && sizeData[0][1];
+    }
 
     return {
       name: key,

@@ -48,7 +48,7 @@ export const FILTER_KEY_TYPE_OPTIONS = [
     featureFlag: FeatureFlags.envDependent
   },
   {
-    text: 'TS',
+    text: 'Time Series',
     value: ModulesKeyTypes.TimeSeries,
     color: GROUP_TYPES_COLORS[ModulesKeyTypes.TimeSeries],
   },

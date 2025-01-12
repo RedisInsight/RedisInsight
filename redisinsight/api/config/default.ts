@@ -122,6 +122,8 @@ export default {
     maxRetriesPerRequest: parseInt(process.env.RI_CLIENTS_MAX_RETRIES_PER_REQUEST, 10) || 1,
     maxRedirections: parseInt(process.env.RI_CLIENTS_MAX_REDIRECTIONS, 10) || 3,
     slotsRefreshTimeout: parseInt(process.env.RI_CLIENTS_SLOTS_REQUEST_TIMEOUT, 10) || 5000,
+    maxStringSize: parseInt(process.env.RI_CLIENTS_MAX_STRING_SIZE, 10),
+    truncatedStringPrefix: process.env.RI_CLIENTS_TRUNCATED_STRING_PREFIX || '[Truncated due to length]',
   },
   redis_scan: {
     countDefault: parseInt(process.env.RI_SCAN_COUNT_DEFAULT, 10) || 200,

@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux'
 import {
   Maybe,
 } from 'uiSrc/utils'
-import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
+import { KeyTypes, ModulesKeyTypes, BrowserColumns } from 'uiSrc/constants'
 import KeyRowTTL from 'uiSrc/pages/browser/components/key-row-ttl'
 import KeyRowSize from 'uiSrc/pages/browser/components/key-row-size'
 import KeyRowName from 'uiSrc/pages/browser/components/key-row-name'
@@ -56,8 +56,9 @@ const Node = ({
     updateStatusOpen,
     updateStatusSelected,
   } = data
-  const { getSize, getTtl } = useSelector(keysSelector)
-  const delimiterView = delimiters.length === 1 ? delimiters[0] : '-'
+  const { shownColumns } = useSelector(keysSelector)
+  const getSize = shownColumns.includes(BrowserColumns.Size)
+  const getTtl = shownColumns.includes(BrowserColumns.TTL)
 
   const [deletePopoverId, setDeletePopoverId] = useState<Maybe<string>>(undefined)
   const prevGetSize = useRef(getSize)

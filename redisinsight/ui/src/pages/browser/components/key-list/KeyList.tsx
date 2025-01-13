@@ -29,7 +29,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { KeyTypes, ModulesKeyTypes, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { BrowserColumns, KeyTypes, ModulesKeyTypes, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
@@ -81,7 +81,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const selectedKey = useSelector(selectedKeySelector)
   const { nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered, searchMode, deleting, getSize, getTtl } = useSelector(keysSelector)
+  const { isSearched, isFiltered, searchMode, deleting, shownColumns } = useSelector(keysSelector)
   const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
@@ -97,8 +97,8 @@ const KeyList = forwardRef((props: Props, ref) => {
   const dispatch = useDispatch()
 
   // Add refs to track previous values
-  const prevGetSize = useRef(getSize)
-  const prevGetTtl = useRef(getTtl)
+  const prevGetSize = useRef(shownColumns.includes(BrowserColumns.Size))
+  const prevGetTtl = useRef(shownColumns.includes(BrowserColumns.TTL))
 
   useImperativeHandle(ref, () => ({
     handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
@@ -136,8 +136,8 @@ const KeyList = forwardRef((props: Props, ref) => {
   }, [keysState.keys])
 
   useEffect(() => {
-    const isSizeReenabled = !prevGetSize.current && getSize
-    const isTtlReenabled = !prevGetTtl.current && getTtl
+    const isSizeReenabled = !prevGetSize.current && shownColumns.includes(BrowserColumns.Size)
+    const isTtlReenabled = !prevGetTtl.current && shownColumns.includes(BrowserColumns.TTL)
 
     if ((isSizeReenabled || isTtlReenabled) && firstDataLoaded && itemsRef.current.length > 0) {
       cancelAllMetadataRequests()
@@ -154,10 +154,9 @@ const KeyList = forwardRef((props: Props, ref) => {
       getMetadata(startIndex, visibleItems, true)
     }
 
-    // Update previous values
-    prevGetSize.current = getSize
-    prevGetTtl.current = getTtl
-  }, [getSize, getTtl])
+    prevGetSize.current = shownColumns.includes(BrowserColumns.Size)
+    prevGetTtl.current = shownColumns.includes(BrowserColumns.TTL)
+  }, [shownColumns])
 
   const cancelAllMetadataRequests = () => {
     controller.current?.abort()
@@ -318,7 +317,7 @@ const KeyList = forwardRef((props: Props, ref) => {
         <KeyRowName nameString={cellData} shortName={cellData} />
       )
     },
-    getTtl ? {
+    shownColumns.includes(BrowserColumns.TTL) ? {
       id: 'ttl',
       label: 'TTL',
       absoluteWidth: 86,
@@ -329,7 +328,7 @@ const KeyList = forwardRef((props: Props, ref) => {
         <KeyRowTTL ttl={cellData} nameString={nameString} deletePopoverId={deletePopoverIndex} rowId={rowIndex || 0} />
       )
     } : null,
-    getSize ? {
+    shownColumns.includes(BrowserColumns.Size) ? {
       id: 'size',
       label: 'Size',
       absoluteWidth: 90,

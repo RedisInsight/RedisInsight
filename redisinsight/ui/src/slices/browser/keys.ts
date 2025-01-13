@@ -12,7 +12,8 @@ import {
   SearchHistoryMode,
   SortOrder,
   STRING_MAX_LENGTH,
-  ModulesKeyTypes
+  ModulesKeyTypes,
+  BrowserColumns
 } from 'uiSrc/constants'
 import {
   getApiErrorMessage,
@@ -79,8 +80,8 @@ export const initialState: KeysStore = {
   isBrowserFullScreen: false,
   searchMode: localStorageService?.get(BrowserStorageItem.browserSearchMode) ?? SearchMode.Pattern,
   viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
-  getSize: true,
-  getTtl: true,
+  shownColumns: localStorageService?.get(BrowserStorageItem.browserShownColumns)
+    ?? [BrowserColumns.Size, BrowserColumns.TTL],
   data: {
     total: 0,
     scanned: 0,
@@ -424,11 +425,9 @@ const keysSlice = createSlice({
     setSelectedKeyRefreshDisabled: (state, { payload }: PayloadAction<boolean>) => {
       state.selectedKey.isRefreshDisabled = payload
     },
-    setGetSize: (state, { payload }: PayloadAction<boolean>) => {
-      state.getSize = payload
-    },
-    setGetTtl: (state, { payload }: PayloadAction<boolean>) => {
-      state.getTtl = payload
+    setShownColumns: (state, { payload }: PayloadAction<BrowserColumns[]>) => {
+      state.shownColumns = payload
+      localStorageService?.set(BrowserStorageItem.browserShownColumns, payload)
     },
   },
 })
@@ -480,8 +479,7 @@ export const {
   deleteSearchHistorySuccess,
   deleteSearchHistoryFailure,
   setSelectedKeyRefreshDisabled,
-  setGetSize,
-  setGetTtl,
+  setShownColumns
 } = keysSlice.actions
 
 // A selector

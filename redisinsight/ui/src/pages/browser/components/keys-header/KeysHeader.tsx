@@ -11,7 +11,7 @@ import KeysSummary from 'uiSrc/components/keys-summary'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { resetBrowserTree, setBrowserKeyListDataLoaded, } from 'uiSrc/slices/app/context'
 
-import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData, setGetSize, setGetTtl, } from 'uiSrc/slices/browser/keys'
+import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData, setShownColumns } from 'uiSrc/slices/browser/keys'
 import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -22,6 +22,7 @@ import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 import { AutoRefresh, OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
+import { BrowserColumns } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 640
@@ -58,7 +59,7 @@ const KeysHeader = (props: Props) => {
   } = props
 
   const { id: instanceId } = useSelector(connectedInstanceSelector)
-  const { viewType, searchMode, isFiltered, getSize, getTtl } = useSelector(keysSelector)
+  const { viewType, searchMode, isFiltered, shownColumns } = useSelector(keysSelector)
   const { selectedIndex } = useSelector(redisearchSelector)
 
   const [columnsConfigShown, setColumnsConfigShown] = useState(false)
@@ -179,25 +180,20 @@ const KeysHeader = (props: Props) => {
     }, 0)
   }
 
-  const changeColumnsShown = (status: boolean, type: 'size' | 'ttl') => {
+  const changeColumnsShown = (status: boolean, columnType: BrowserColumns) => {
     const shown = []
     const hidden = []
-    if ((type === 'ttl' && status) || (getTtl && type !== 'ttl')) {
-      shown.push('key-ttl')
-    } else {
-      hidden.push('key-ttl')
-    }
-    if ((type === 'size' && status) || (getSize && type !== 'size')) {
-      shown.push('key-size')
-    } else {
-      hidden.push('key-size')
+    const newColumns = status
+      ? [...shownColumns, columnType]
+      : shownColumns.filter((col) => col !== columnType)
+
+    if (columnType === BrowserColumns.TTL) {
+      status ? shown.push('key-ttl') : hidden.push('key-ttl')
+    } else if (columnType === BrowserColumns.Size) {
+      status ? shown.push('key-size') : hidden.push('key-size')
     }
 
-    if (type === 'size') {
-      dispatch(setGetSize(status))
-    } else if (type === 'ttl') {
-      dispatch(setGetTtl(status))
-    }
+    dispatch(setShownColumns(newColumns))
     sendEventTelemetry({
       event: TelemetryEvent.SHOW_BROWSER_COLUMN_CLICKED,
       eventData: {
@@ -303,8 +299,8 @@ const KeysHeader = (props: Props) => {
                         id="show-key-size"
                         name="show-key-size"
                         label="Key size"
-                        checked={getSize}
-                        onChange={(e) => changeColumnsShown(e.target.checked, 'size')}
+                        checked={shownColumns.includes(BrowserColumns.Size)}
+                        onChange={(e) => changeColumnsShown(e.target.checked, BrowserColumns.Size)}
                         data-testid="show-key-size"
                       />
                     </EuiToolTip>
@@ -312,8 +308,8 @@ const KeysHeader = (props: Props) => {
                       id="show-ttl"
                       name="show-ttl"
                       label="TTL"
-                      checked={getTtl}
-                      onChange={(e) => changeColumnsShown(e.target.checked, 'ttl')}
+                      checked={shownColumns.includes(BrowserColumns.TTL)}
+                      onChange={(e) => changeColumnsShown(e.target.checked, BrowserColumns.TTL)}
                       data-testid="show-ttl"
                     />
                   </EuiPopover>

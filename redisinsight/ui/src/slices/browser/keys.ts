@@ -1044,7 +1044,7 @@ export function fetchKeysMetadata(
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
-      const { getSize, getTtl } = state.browser.keys
+      const { shownColumns } = state.browser.keys
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id,
@@ -1053,8 +1053,7 @@ export function fetchKeysMetadata(
         {
           keys,
           type: filter || undefined,
-          getSize,
-          getTtl
+          shownColumns
         },
         { params: { encoding: state.app.info.encoding }, signal }
       )
@@ -1081,7 +1080,7 @@ export function fetchKeysMetadataTree(
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
-      const { getSize, getTtl } = state.browser.keys
+      const { shownColumns } = state.browser.keys
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id,
@@ -1090,8 +1089,7 @@ export function fetchKeysMetadataTree(
         {
           keys: keys.map(([, nameBuffer]) => nameBuffer),
           type: filter || undefined,
-          getSize,
-          getTtl
+          shownColumns
         },
         { params: { encoding: state.app.info.encoding }, signal }
       )

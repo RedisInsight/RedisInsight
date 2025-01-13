@@ -13,7 +13,9 @@
 }
 
 .itemContainer {
-  height: 58px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--euiColorEmptyShade);
   align-items: center;
   justify-content: center;
   margin-left: 6px;
@@ -26,14 +28,17 @@
 
 .overviewItem {
   min-width: 78px;
-  padding: 4px 14px;
+  height: 17px;
+  margin: 10px 0;
   color: var(--euiTextSubduedColor);
 
   &:not(:last-child) {
     border-right: 1px solid var(--separatorColor);
   }
 }
+
 .icon {
+  color: var(--euiColorMediumShade);
   margin-right: 6px;
   width: auto !important;
   height: 14px !important;
@@ -55,6 +60,7 @@
   &:last-child {
     margin-bottom: 0;
   }
+
   .moreInfoOverviewIcon {
     margin-right: 8px;
     width: auto !important;
@@ -87,14 +93,17 @@
   .redistackLogoIcon {
     width: 24px;
     height: 24px;
+
     @media only screen and (min-width: 1124px) {
       display: none;
     }
   }
+
   .redistackIcon {
     display: none;
     width: 114px;
     height: 18px;
+
     @media only screen and (min-width: 1124px) {
       display: block;
     }
@@ -107,5 +116,17 @@
 
   @media only screen and (min-width: 1124px) {
     display: none !important;
+  }
+}
+
+.autoRefresh {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 5px;
+  min-width: 78px;
+  padding-left: 16px;
+
+  :global(.popover-without-top-tail) {
+    margin-top: 0;
   }
 }

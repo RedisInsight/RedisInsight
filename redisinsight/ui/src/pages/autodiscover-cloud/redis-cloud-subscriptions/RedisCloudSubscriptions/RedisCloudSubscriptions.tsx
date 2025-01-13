@@ -13,6 +13,8 @@ import {
   EuiFormRow,
   EuiLoadingContent,
   EuiToolTip,
+  EuiFlexGroup,
+  EuiFlexItem,
 } from '@elastic/eui'
 import cx from 'classnames'
 import {
@@ -240,19 +242,25 @@ const RedisCloudSubscriptions = ({
           <h1>Redis Cloud Subscriptions</h1>
         </EuiTitle>
 
-        <MessageBar opened={countStatusActive + countStatusFailed > 0}>
-          <SummaryText />
-        </MessageBar>
-        <EuiFormRow className={styles.searchForm}>
-          <EuiFieldSearch
-            placeholder="Search..."
-            className={styles.search}
-            onChange={onQueryChange}
-            isClearable
-            aria-label="Search"
-            data-testid="search"
-          />
-        </EuiFormRow>
+        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
+          <EuiFlexItem>
+            <MessageBar opened={countStatusActive + countStatusFailed > 0}>
+              <SummaryText />
+            </MessageBar>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiFormRow className={styles.searchForm}>
+              <EuiFieldSearch
+                placeholder="Search..."
+                className={styles.search}
+                onChange={onQueryChange}
+                isClearable
+                aria-label="Search"
+                data-testid="search"
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
         <br />
 
         <div className={cx('databaseList', 'itemList', styles.cloudSubscriptions)}>

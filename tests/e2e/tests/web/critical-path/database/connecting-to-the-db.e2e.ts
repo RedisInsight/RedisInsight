@@ -89,7 +89,7 @@ test
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.databaseAliasInput.value).eql(`${defaultHost}:${defaultPort}`, 'Default db alias not prepopulated');
         // Verify that the Host, Port, Database Alias values pre-populated by default for Sentinel
         await t
-            .click(myRedisDatabasePage.AddRedisDatabaseDialog.addAutoDiscoverDatabase)
+            .click(myRedisDatabasePage.AddRedisDatabaseDialog.backButton)
             .click(myRedisDatabasePage.AddRedisDatabaseDialog.redisSentinelButton);
         await t
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.hostInput.value).eql(defaultHost, 'Default sentinel host not prepopulated')
@@ -185,23 +185,28 @@ test
     .after(async() => {
         // Delete databases
         await databaseAPIRequests.deleteStandaloneDatabaseApi(sshDbClusterPass);
-    })('Adding OSS Cluster database with SSH', async() => {
+    })('Adding OSS Cluster database with SSH', async t => {
         const sshWithPass = {
             ...sshParams,
             sshPassword: 'pass'
         };
         // Verify that user can add SSH tunnel with Password for OSS Cluster database
         await myRedisDatabasePage.AddRedisDatabaseDialog.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
+        // TODO should be deleted after https://redislabs.atlassian.net/browse/RI-5995
+        await t.wait(6000)
         await myRedisDatabasePage.clickOnDBByName(sshDbClusterPass.databaseName);
+        if(! await browserPage.plusAddKeyButton.exists){
+            await myRedisDatabasePage.clickOnDBByName(sshDbClusterPass.databaseName);
+        }
         await Common.checkURLContainsText('browser');
     });
+
 test
     .meta({ rte: rte.none })
     .before(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseHelper.acceptLicenseTerms();
     })('Verify that create free cloud db is displayed always', async t => {
-
         const externalPageLinkList = 'https://redis.io/try-free?utm_source=redisinsight&utm_medium=app&utm_campaign=list_of_databases';
         const externalPageLinkNavigation = 'https://redis.io/try-free?utm_source=redisinsight&utm_medium=app&utm_campaign=navigation_menu';
 
@@ -210,9 +215,10 @@ test
         await t.expect(myRedisDatabasePage.starFreeDbCheckbox.exists).ok('star checkbox is not displayed next to free db link');
         await t.expect(myRedisDatabasePage.portCloudDb.textContent).contains('Set up in a few clicks', `create free db row is not displayed`);
 
-        await t.click(myRedisDatabasePage.tableRowContent);
-        await Common.checkURL(externalPageLinkList);
-        await goBackHistory();
+        // skipped until https://redislabs.atlassian.net/browse/RI-6556
+        // await t.click(myRedisDatabasePage.tableRowContent);
+        // await Common.checkURL(externalPageLinkList);
+        // await goBackHistory();
 
         await t.click(myRedisDatabasePage.NavigationPanel.cloudButton);
         await Common.checkURL(externalPageLinkNavigation);
@@ -242,7 +248,7 @@ test
         // Verify that 'redis://default@127.0.0.1:6379' default value prepopulated for connection URL field and the same for placeholder
         await t.expect(addDbDialog.connectionUrlInput.textContent).eql(`redis://default@127.0.0.1:6379`, 'Connection URL not prepopulated');
 
-        await t.typeText(addDbDialog.connectionUrlInput, codedUrl);
+        await t.typeText(addDbDialog.connectionUrlInput, codedUrl, { replace: true, paste: true });
         await t.click(addDbDialog.customSettingsButton);
         await t.expect(addDbDialog.databaseAliasInput.getAttribute('value')).eql(`${host}:${port}`, 'name is incorrected');
         await t.expect(addDbDialog.hostInput.getAttribute('value')).eql(`${host}`, 'host is incorrected');

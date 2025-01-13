@@ -70,6 +70,7 @@ export function fetchDBSettings(onSuccessAction?: () => void, onFailAction?: () 
         onSuccessAction?.()
       } else {
         getDBSettingsFailure(data)
+        onFailAction?.()
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error as AxiosError)

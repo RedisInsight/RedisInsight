@@ -7,23 +7,6 @@ $breakpoint-to-wrap-buttons: 660px;
   }
 }
 
-:global(.homePage) {
-  :global(.clusterDatabaseList) {
-    height: calc(100vh - 316px) !important;
-
-    @media (min-width: 1130px) {
-      height: calc(100vh - 256px) !important;
-    }
-  }
-
-  :global(.clusterDatabaseListResult) {
-    height: calc(100vh - 296px) !important;
-
-    @media (min-width: 1130px) {
-      height: calc(100vh - 232px) !important;
-    }
-  }
-}
 
 .footerClusterDatabases {
   @media only screen and (max-width: $breakpoint-to-wrap-buttons) {
@@ -56,12 +39,6 @@ $breakpoint-to-wrap-buttons: 660px;
 
 .searchForm {
   width: 266px !important;
-
-  @media (min-width: 1130px) {
-    position: absolute;
-    right: 30px;
-    margin-top: -70px;
-  }
 }
 
 .search {
@@ -73,10 +50,6 @@ $breakpoint-to-wrap-buttons: 660px;
   @include eui.scrollBar;
   overflow: auto;
   max-height: calc(100vh - 370px) !important;
-
-  @media (min-width: 1130px) {
-    max-height: calc(100vh - 300px) !important;
-  }
 }
 
 .tableEmpty tbody {

@@ -20,8 +20,7 @@ import { FilterNotAvailable } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { ModulesKeyTypes } from 'uiSrc/constants'
-import { AdditionalRedisModule, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { AdditionalRedisModule } from 'uiSrc/slices/interfaces'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
@@ -59,8 +58,8 @@ const FilterKeyType = ({ modules }: Props) => {
   }, [filter])
 
   const options: EuiSuperSelectOption<string>[] = FILTER_KEY_TYPE_OPTIONS
-    .filter(({ featureFlag, value }) => {
-      if (value === ModulesKeyTypes.Graph && !modules?.some(({ name }) => name === RedisDefaultModules.Graph)) {
+    .filter(({ featureFlag, skipIfNoModule }) => {
+      if (skipIfNoModule && !modules?.some(({ name }) => name === skipIfNoModule)) {
         return false
       }
       return !featureFlag || features[featureFlag]?.flag

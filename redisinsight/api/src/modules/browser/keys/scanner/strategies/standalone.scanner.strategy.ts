@@ -165,15 +165,12 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
     getSize?: boolean,
     getTtl?: boolean,
   ): Promise<GetKeyInfoResponse[]> {
-    console.log('getKeysInfo', keys, filterType, getSize, getTtl);
     const sizeResults = getSize ? await this.getKeysSize(client, keys) : [];
     const typeResults = filterType
       ? Array(keys.length).fill(filterType)
       : await this.getKeysType(client, keys);
     const ttlResults = getTtl ? await this.getKeysTtl(client, keys) : [];
-    console.log('sizeResults', sizeResults);
-    console.log('typeResults', typeResults);
-    console.log('ttlResults', ttlResults);
+
     return keys.map(
       (key: string, index: number): GetKeyInfoResponse => {
         const data: GetKeyInfoResponse = {

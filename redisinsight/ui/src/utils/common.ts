@@ -1,3 +1,4 @@
+import { trim } from 'lodash'
 import { IpcInvokeEvent } from 'uiSrc/electron/constants'
 import { getConfig } from 'uiSrc/config'
 
@@ -6,6 +7,17 @@ const isDevelopment = riConfig.app.env === 'development'
 const isWebApp = riConfig.app.type === 'web'
 const { apiPort } = window.app?.config || { apiPort: riConfig.api.port }
 const hostedApiBaseUrl = riConfig.api.hostedBaseUrl
+
+export const getSocketApiUrl = (path = '') => {
+  let baseUrl = getBaseApiUrl()
+  try {
+    const url = new URL(baseUrl)
+    baseUrl = url.origin
+  } catch (e) {
+    console.error(e)
+  }
+  return `${baseUrl}/${trim(path, '/')}`
+}
 
 export const getBaseApiUrl = () => {
   if (hostedApiBaseUrl) {

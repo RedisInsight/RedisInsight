@@ -80,7 +80,7 @@ export const createWindow = async ({
   }
 
   if (config.isDevelopment) {
-    newWindow.loadURL(`http://localhost:8080`)
+    newWindow.loadURL('http://localhost:8080')
   } else {
     newWindow.loadURL(resolveHtmlPath(htmlFileName, options?.parsedDeepLink))
   }

@@ -12,6 +12,7 @@ export class TcpAuthStrategy implements AuthStrategy {
     10,
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
   public static getInstance(): TcpAuthStrategy {

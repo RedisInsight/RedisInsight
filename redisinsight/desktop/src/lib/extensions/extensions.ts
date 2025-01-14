@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
   REDUX_DEVTOOLS,

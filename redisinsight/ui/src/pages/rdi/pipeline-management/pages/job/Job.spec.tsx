@@ -1,6 +1,5 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
-import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import {
@@ -11,7 +10,6 @@ import {
 } from 'uiSrc/slices/rdi/pipeline'
 import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
-import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import Job, { Props } from './Job'
@@ -28,10 +26,25 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
     schema: { jobs: { test: {} } },
+    config: `connections:
+            target:
+              type: redis
+          `,
+    jobs: [{
+      name: 'jobName',
+      value: `job:
+      transform:
+        type: sql
+    `
+    }, {
+      name: 'job2',
+      value: `job2:
+      transform:
+        type: redis
+    `
+    }],
   }),
 }))
-
-jest.mock('formik')
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -41,14 +54,6 @@ beforeEach(() => {
 })
 
 describe('Job', () => {
-  beforeEach(() => {
-    const mockUseFormikContext = {
-      setFieldValue: jest.fn,
-      values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
-  })
-
   it('should render', () => {
     expect(render(<Job {...instance(mockedProps)} />)).toBeTruthy()
   })

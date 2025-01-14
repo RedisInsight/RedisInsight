@@ -31,7 +31,7 @@
     "lint:desktop": "eslint ./redisinsight/desktop",
     "lint:e2e": "yarn --cwd tests/e2e lint",
     "prettier": "prettier --check .",
-    "prettier:update": "prettier --update .",
+    "prettier:update": "prettier --write .",
     "package": "yarn package:dev",
     "package:prod": "ts-node ./scripts/prebuild.js dist && yarn build:prod && electron-builder build -p never",
     "package:stage": "ts-node ./scripts/prebuild.js dist && yarn build:stage && electron-builder build -p never -c.mac.bundleVersion=$GITHUB_RUN_ID",

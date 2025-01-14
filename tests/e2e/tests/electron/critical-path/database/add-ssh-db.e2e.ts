@@ -116,6 +116,7 @@ test
 
     // Verify that user can clone database with SSH tunnel
     await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.cloneDatabaseButton);
+    await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.generalTab);
     // Edit Database alias before cloning
     await t.typeText(myRedisDatabasePage.AddRedisDatabaseDialog.databaseAliasInput, newClonedDatabaseAlias, { replace: true });
     await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);

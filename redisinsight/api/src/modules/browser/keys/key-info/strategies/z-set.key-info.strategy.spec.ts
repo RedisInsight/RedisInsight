@@ -34,17 +34,24 @@ describe('ZSetKeyInfoStrategy', () => {
 
   describe('getInfo', () => {
     const key = getKeyInfoResponse.name;
+
     it('should return appropriate value', async () => {
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.Ttl, key],
-          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           [BrowserToolZSetCommands.ZCard, key],
         ])
-        .mockResolvedValue([
+        .mockResolvedValueOnce([
           [null, -1],
-          [null, 50],
           [null, 10],
+        ]);
+
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
+          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+        ])
+        .mockResolvedValueOnce([
+          [null, 50],
         ]);
 
       const result = await strategy.getInfo(
@@ -55,7 +62,8 @@ describe('ZSetKeyInfoStrategy', () => {
 
       expect(result).toEqual(getKeyInfoResponse);
     });
-    it('should return size with null value', async () => {
+
+    it('should return size with null when memory usage fails', async () => {
       const replyError: ReplyError = {
         name: 'ReplyError',
         command: BrowserToolKeysCommands.MemoryUsage,
@@ -64,13 +72,20 @@ describe('ZSetKeyInfoStrategy', () => {
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.Ttl, key],
-          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           [BrowserToolZSetCommands.ZCard, key],
         ])
-        .mockResolvedValue([
+        .mockResolvedValueOnce([
           [null, -1],
-          [replyError, null],
           [null, 10],
+        ]);
+
+      // Second pipeline fails
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
+          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+        ])
+        .mockResolvedValueOnce([
+          [replyError, null],
         ]);
 
       const result = await strategy.getInfo(
@@ -80,6 +95,31 @@ describe('ZSetKeyInfoStrategy', () => {
       );
 
       expect(result).toEqual({ ...getKeyInfoResponse, size: null });
+    });
+
+    it('should not check size when length >= 50,000', async () => {
+      // First pipeline with large length
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
+          [BrowserToolKeysCommands.Ttl, key],
+          [BrowserToolZSetCommands.ZCard, key],
+        ])
+        .mockResolvedValueOnce([
+          [null, -1],
+          [null, 50000],
+        ]);
+
+      const result = await strategy.getInfo(
+        mockStandaloneRedisClient,
+        key,
+        RedisDataType.ZSet,
+      );
+
+      expect(result).toEqual({
+        ...getKeyInfoResponse,
+        length: 50000,
+        size: -1
+      });
     });
   });
 });

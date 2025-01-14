@@ -9,8 +9,8 @@ export class RedisNodeInfoResponse {
 
   @ApiPropertyOptional({
     description:
-      'Value is "master" if the instance is replica of no one, '
-      + 'or "slave" if the instance is a replica of some master instance',
+      'Value is "master" if the instance is replica of no one, ' +
+      'or "slave" if the instance is a replica of some master instance',
     enum: ['master', 'slave'],
     default: 'master',
   })

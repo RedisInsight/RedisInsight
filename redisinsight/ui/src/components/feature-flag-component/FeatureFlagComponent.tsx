@@ -24,9 +24,14 @@ const FeatureFlagComponent = (props: Props) => {
     return null
   }
 
-  const cloneElement = (child: React.ReactElement) => React.cloneElement(child, { variant })
+  const cloneElement = (child: React.ReactElement) =>
+    React.cloneElement(child, { variant })
 
-  return isArray(children) ? <>{React.Children.map(children, cloneElement)}</> : cloneElement(children)
+  return isArray(children) ? (
+    <>{React.Children.map(children, cloneElement)}</>
+  ) : (
+    cloneElement(children)
+  )
 }
 
 export default FeatureFlagComponent

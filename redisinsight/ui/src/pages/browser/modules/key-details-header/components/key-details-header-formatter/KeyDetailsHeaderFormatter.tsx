@@ -1,13 +1,35 @@
 import cx from 'classnames'
 import React, { useContext, useEffect, useState } from 'react'
-import { EuiIcon, EuiSuperSelect, EuiSuperSelectOption, EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import {
+  EuiIcon,
+  EuiSuperSelect,
+  EuiSuperSelectOption,
+  EuiText,
+  EuiTextColor,
+  EuiToolTip,
+} from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { KeyTypes, KeyValueFormat, MIDDLE_SCREEN_RESOLUTION, TEXT_DISABLED_STRING_FORMATTING, Theme } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  KeyValueFormat,
+  MIDDLE_SCREEN_RESOLUTION,
+  TEXT_DISABLED_STRING_FORMATTING,
+  Theme,
+} from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { keysSelector, selectedKeyDataSelector, selectedKeySelector, setViewFormat } from 'uiSrc/slices/browser/keys'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  keysSelector,
+  selectedKeyDataSelector,
+  selectedKeySelector,
+  setViewFormat,
+} from 'uiSrc/slices/browser/keys'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import FormattersLight from 'uiSrc/assets/img/icons/formatter_light.svg'
 import FormattersDark from 'uiSrc/assets/img/icons/formatter_dark.svg'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
@@ -30,28 +52,37 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
 
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
   const [typeSelected, setTypeSelected] = useState<KeyValueFormat>(viewFormat)
-  const [options, setOptions] = useState<EuiSuperSelectOption<KeyValueFormat>[]>([])
+  const [options, setOptions] = useState<
+    EuiSuperSelectOption<KeyValueFormat>[]
+  >([])
 
   const dispatch = useDispatch()
 
-  const isStringFormattingEnabled = keyType === KeyTypes.String
-    ? isFullStringLoaded(keyValue?.data?.length, length)
-    : true
+  const isStringFormattingEnabled =
+    keyType === KeyTypes.String
+      ? isFullStringLoaded(keyValue?.data?.length, length)
+      : true
 
   useEffect(() => {
-    const newOptions: EuiSuperSelectOption<KeyValueFormat>[] = getKeyValueFormatterOptions(keyType).map(
-      ({ value, text }) => ({
+    const newOptions: EuiSuperSelectOption<KeyValueFormat>[] =
+      getKeyValueFormatterOptions(keyType).map(({ value, text }) => ({
         value,
         inputDisplay: (
           <EuiToolTip
-            content={!isStringFormattingEnabled ? TEXT_DISABLED_STRING_FORMATTING : typeSelected}
+            content={
+              !isStringFormattingEnabled
+                ? TEXT_DISABLED_STRING_FORMATTING
+                : typeSelected
+            }
             position="top"
             display="inlineBlock"
             anchorClassName="flex-row"
           >
             <>
               {width > MIDDLE_SCREEN_RESOLUTION && (
-                <EuiTextColor color="subdued" className={styles.optionText}>{text}</EuiTextColor>
+                <EuiTextColor color="subdued" className={styles.optionText}>
+                  {text}
+                </EuiTextColor>
               )}
               {width <= MIDDLE_SCREEN_RESOLUTION && (
                 <EuiIcon
@@ -63,10 +94,13 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
             </>
           </EuiToolTip>
         ),
-        dropdownDisplay: <EuiText size="s" className={styles.dropdownDisplay}>{text}</EuiText>,
+        dropdownDisplay: (
+          <EuiText size="s" className={styles.dropdownDisplay}>
+            {text}
+          </EuiText>
+        ),
         'data-test-subj': `format-option-${value}`,
-      })
-    )
+      }))
 
     setOptions(newOptions)
   }, [viewFormat, keyType, width, isStringFormattingEnabled])
@@ -75,14 +109,15 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,
-        TelemetryEvent.BROWSER_KEY_DETAILS_FORMATTER_CHANGED, TelemetryEvent.TREE_VIEW_KEY_DETAILS_FORMATTER_CHANGED
+        TelemetryEvent.BROWSER_KEY_DETAILS_FORMATTER_CHANGED,
+        TelemetryEvent.TREE_VIEW_KEY_DETAILS_FORMATTER_CHANGED,
       ),
       eventData: {
         keyType,
         databaseId: instanceId,
         fromFormatter: viewFormat,
         toFormatter: value,
-      }
+      },
     })
 
     setTypeSelected(value)
@@ -95,7 +130,11 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
   }
 
   return (
-    <div className={cx(styles.container, { [styles.fullWidth]: width > MIDDLE_SCREEN_RESOLUTION })}>
+    <div
+      className={cx(styles.container, {
+        [styles.fullWidth]: width > MIDDLE_SCREEN_RESOLUTION,
+      })}
+    >
       <div className={styles.selectWrapper}>
         <EuiSuperSelect
           disabled={!isStringFormattingEnabled}

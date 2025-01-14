@@ -55,26 +55,19 @@ describe('FilterKeyType', () => {
   })
 
   it('should not be info anchor with database redis version > 6.0', () => {
-    const { queryByTestId } = render(
-      <FilterKeyType />
-    )
+    const { queryByTestId } = render(<FilterKeyType />)
     expect(queryByTestId(unsupportedAnchorId)).not.toBeInTheDocument()
   })
 
   it('"setFilter" and "loadKeys" should be called after select "Hash" type', () => {
-    const { queryByText } = render(
-      <FilterKeyType />
-    )
+    const { queryByText } = render(<FilterKeyType />)
 
     fireEvent.click(screen.getByTestId(filterSelectId))
     fireEvent.click(queryByText('Hash') || document)
 
-    const expectedActions = [
-      setFilter(KeyTypes.Hash),
-      loadKeys(),
-    ]
+    const expectedActions = [setFilter(KeyTypes.Hash), loadKeys()]
     expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions(expectedActions)
+      clearStoreActions(expectedActions),
     )
   })
 
@@ -116,14 +109,12 @@ describe('FilterKeyType', () => {
       event: TelemetryEvent.BROWSER_FILTER_MODE_CHANGE_FAILED,
       eventData: {
         databaseId: 'instanceId',
-      }
+      },
     })
   })
 
   it('should not filter out items if required feature flags are set to true', () => {
-    const { queryByText } = render(
-      <FilterKeyType />
-    )
+    const { queryByText } = render(<FilterKeyType />)
 
     fireEvent.click(screen.getByTestId(filterSelectId))
 
@@ -135,14 +126,11 @@ describe('FilterKeyType', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
-    const { queryByText } = render(
-      <FilterKeyType />,
-      {
-        store: mockStore(initialStoreState)
-      }
-    )
+    const { queryByText } = render(<FilterKeyType />, {
+      store: mockStore(initialStoreState),
+    })
 
     fireEvent.click(screen.getByTestId(filterSelectId))
 

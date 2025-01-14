@@ -1,5 +1,10 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -84,37 +89,34 @@ export class DatabaseEntity {
 
   @Expose()
   @Column({ nullable: true })
-  @Transform((_, obj) => (
-    obj?.sentinelMaster?.name
-  ), { toClassOnly: true })
+  @Transform((_, obj) => obj?.sentinelMaster?.name, { toClassOnly: true })
   sentinelMasterName: string;
 
   @Expose()
   @Column({ nullable: true })
-  @Transform((_, obj) => (
-    obj?.sentinelMaster?.username
-  ), { toClassOnly: true })
+  @Transform((_, obj) => obj?.sentinelMaster?.username, { toClassOnly: true })
   sentinelMasterUsername: string;
 
   @Expose()
   @Column({ nullable: true })
-  @Transform((_, obj) => (
-    obj?.sentinelMaster?.password
-  ), { toClassOnly: true })
+  @Transform((_, obj) => obj?.sentinelMaster?.password, { toClassOnly: true })
   sentinelMasterPassword: string;
 
   @Expose()
-  @Transform((_, obj) => {
-    if (obj?.sentinelMasterName) {
-      return {
-        name: obj?.sentinelMasterName,
-        username: obj?.sentinelMasterUsername,
-        password: obj?.sentinelMasterPassword,
-      };
-    }
+  @Transform(
+    (_, obj) => {
+      if (obj?.sentinelMasterName) {
+        return {
+          name: obj?.sentinelMasterName,
+          username: obj?.sentinelMasterUsername,
+          password: obj?.sentinelMasterPassword,
+        };
+      }
 
-    return undefined;
-  }, { toPlainOnly: true })
+      return undefined;
+    },
+    { toPlainOnly: true },
+  )
   @Transform(() => undefined, { toClassOnly: true })
   sentinelMaster: SentinelMaster;
 
@@ -202,15 +204,11 @@ export class DatabaseEntity {
   ssh: boolean;
 
   @Expose()
-  @OneToOne(
-    () => SshOptionsEntity,
-    (sshOptions) => sshOptions.database,
-    {
-      eager: true,
-      onDelete: 'CASCADE',
-      cascade: true,
-    },
-  )
+  @OneToOne(() => SshOptionsEntity, (sshOptions) => sshOptions.database, {
+    eager: true,
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   @Type(() => SshOptionsEntity)
   sshOptions: SshOptionsEntity;
 

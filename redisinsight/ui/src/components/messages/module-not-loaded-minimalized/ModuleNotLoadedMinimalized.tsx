@@ -3,13 +3,25 @@ import { useSelector } from 'react-redux'
 import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
-import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import {
+  OAuthSocialAction,
+  OAuthSocialSource,
+  RedisDefaultModules,
+} from 'uiSrc/slices/interfaces'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
-import { ExternalLink, FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import {
+  ExternalLink,
+  FeatureFlagComponent,
+  OAuthConnectFreeDb,
+  OAuthSsoHandlerDialog,
+} from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
-import { getDbWithModuleLoaded, getSourceTutorialByCapability } from 'uiSrc/utils'
+import {
+  getDbWithModuleLoaded,
+  getSourceTutorialByCapability,
+} from 'uiSrc/utils'
 import { useCapability } from 'uiSrc/services'
 import { FeatureFlags } from 'uiSrc/constants'
 import { MODULE_CAPABILITY_TEXT_NOT_AVAILABLE } from './constants'
@@ -50,9 +62,15 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
                   {(ssoCloudHandlerClick) => (
                     <ExternalLink
                       iconSize="s"
-                      href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
+                      href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
+                        campaign: UTM_CAMPAINGS[source] ?? source,
+                      })}
                       onClick={(e: React.MouseEvent) => {
-                        ssoCloudHandlerClick(e, { source, action: OAuthSocialAction.Create }, `${moduleName}_${source}`)
+                        ssoCloudHandlerClick(
+                          e,
+                          { source, action: OAuthSocialAction.Create },
+                          `${moduleName}_${source}`,
+                        )
                         onClose?.()
                       }}
                       data-testid="tutorials-get-started-link"
@@ -64,7 +82,9 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
                 <EuiSpacer size="xs" />
                 <ExternalLink
                   iconSize="s"
-                  href={getUtmExternalLink(EXTERNAL_LINKS.docker, { campaign: UTM_CAMPAINGS[source] ?? source })}
+                  href={getUtmExternalLink(EXTERNAL_LINKS.docker, {
+                    campaign: UTM_CAMPAINGS[source] ?? source,
+                  })}
                   data-testid="tutorials-docker-link"
                 >
                   Start with Docker
@@ -76,7 +96,8 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
         {!!freeDbWithModule && (
           <>
             <EuiText color="subdued" size="s">
-              Use your free all-in-one Redis Cloud database to start exploring these capabilities.
+              Use your free all-in-one Redis Cloud database to start exploring
+              these capabilities.
             </EuiText>
             <EuiSpacer size="s" />
             <OAuthConnectFreeDb

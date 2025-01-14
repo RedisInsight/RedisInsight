@@ -27,10 +27,16 @@ export class DatabaseInfoService {
    * Get database general info
    * @param clientMetadata
    */
-  public async getInfo(clientMetadata: ClientMetadata): Promise<RedisDatabaseInfoResponse> {
-    this.logger.debug(`Getting database info for: ${clientMetadata.databaseId}`, clientMetadata);
+  public async getInfo(
+    clientMetadata: ClientMetadata,
+  ): Promise<RedisDatabaseInfoResponse> {
+    this.logger.debug(
+      `Getting database info for: ${clientMetadata.databaseId}`,
+      clientMetadata,
+    );
 
-    const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+    const client =
+      await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
     return this.databaseInfoProvider.getRedisGeneralInfo(client);
   }
@@ -45,14 +51,22 @@ export class DatabaseInfoService {
     clientMetadata: ClientMetadata,
     keyspace: DatabaseOverviewKeyspace,
   ): Promise<DatabaseOverview> {
-    this.logger.debug(`Getting database overview for: ${clientMetadata.databaseId}`, clientMetadata);
+    this.logger.debug(
+      `Getting database overview for: ${clientMetadata.databaseId}`,
+      clientMetadata,
+    );
 
-    const client: RedisClient = await this.databaseClientFactory.getOrCreateClient({
-      ...clientMetadata,
-      db: undefined, // connect to default db index
-    });
+    const client: RedisClient =
+      await this.databaseClientFactory.getOrCreateClient({
+        ...clientMetadata,
+        db: undefined, // connect to default db index
+      });
 
-    return this.databaseOverviewProvider.getOverview(clientMetadata, client, keyspace);
+    return this.databaseOverviewProvider.getOverview(
+      clientMetadata,
+      client,
+      keyspace,
+    );
   }
 
   /**
@@ -61,7 +75,8 @@ export class DatabaseInfoService {
    * @param clientMetadata
    */
   async getDBSize(clientMetadata: ClientMetadata): Promise<number> {
-    const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+    const client: RedisClient =
+      await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
     return this.databaseInfoProvider.getRedisDBSize(client);
   }
@@ -72,13 +87,22 @@ export class DatabaseInfoService {
    * @param clientMetadata
    * @param db
    */
-  public async getDatabaseIndex(clientMetadata: ClientMetadata, db: number): Promise<void> {
+  public async getDatabaseIndex(
+    clientMetadata: ClientMetadata,
+    db: number,
+  ): Promise<void> {
     this.logger.debug(`Connection to database index: ${db}`, clientMetadata);
 
     let client;
-    const prevDb = clientMetadata.db
-      ?? (await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId))?.db
-      ?? 0;
+    const prevDb =
+      clientMetadata.db ??
+      (
+        await this.databaseService.get(
+          clientMetadata.sessionMetadata,
+          clientMetadata.databaseId,
+        )
+      )?.db ??
+      0;
 
     try {
       client = await this.databaseClientFactory.createClient({
@@ -94,7 +118,11 @@ export class DatabaseInfoService {
       );
       return undefined;
     } catch (e) {
-      this.logger.error(`Unable to connect to logical database: ${db}`, e, clientMetadata);
+      this.logger.error(
+        `Unable to connect to logical database: ${db}`,
+        e,
+        clientMetadata,
+      );
       client?.disconnect?.();
       throw e;
     }

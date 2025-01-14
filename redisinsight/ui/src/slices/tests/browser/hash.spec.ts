@@ -44,7 +44,10 @@ import reducer, {
   updateHashFieldsAction,
   refreshHashFieldsAction,
 } from '../../browser/hash'
-import { addErrorNotification, addMessageNotification } from '../../app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from '../../app/notifications'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -369,7 +372,9 @@ describe('hash slice', () => {
         data: {
           ...initialStateRemove.data,
           total: initialStateRemove.data.total - 1,
-          fields: [{ field: stringToBuffer('hash field2'), value: 'hash value' }],
+          fields: [
+            { field: stringToBuffer('hash field2'), value: 'hash value' },
+          ],
         },
       }
 
@@ -507,8 +512,8 @@ describe('hash slice', () => {
 
     describe('fetchMoreHashFields', () => {
       it(
-        'call fetchMoreHashFields, loadMoreHashFieldsSuccess,'
-          + ' when fetch is successed',
+        'call fetchMoreHashFields, loadMoreHashFieldsSuccess,' +
+          ' when fetch is successed',
         async () => {
           // Arrange
           const data = {
@@ -523,7 +528,7 @@ describe('hash slice', () => {
 
           // Act
           await store.dispatch<any>(
-            fetchMoreHashFields(data.keyName, 0, 20, '*')
+            fetchMoreHashFields(data.keyName, 0, 20, '*'),
           )
 
           // Assert
@@ -533,7 +538,7 @@ describe('hash slice', () => {
           ]
 
           expect(mockedStore.getActions()).toEqual(expectedActions)
-        }
+        },
       )
     })
 
@@ -565,13 +570,15 @@ describe('hash slice', () => {
 
     describe('deleteHashFields', () => {
       it(
-        'call removeHashFields, removeHashFieldsSuccess,'
-          + ' and removeFieldsFromList when fetch is successed',
+        'call removeHashFields, removeHashFieldsSuccess,' +
+          ' and removeFieldsFromList when fetch is successed',
         async () => {
           // Arrange
 
           const key = stringToBuffer('key')
-          const fields = ['hash field', 'hash field 2'].map((field) => stringToBuffer(field))
+          const fields = ['hash field', 'hash field 2'].map((field) =>
+            stringToBuffer(field),
+          )
           const responsePayload = { status: 200, data: { affected: 2 } }
           const nextState = Object.assign(initialStateDefault, {
             browser: {
@@ -579,9 +586,9 @@ describe('hash slice', () => {
                 ...initialState,
                 data: {
                   ...initialState.data,
-                  total: 10
-                }
-              }
+                  total: 10,
+                },
+              },
             },
           })
 
@@ -603,57 +610,54 @@ describe('hash slice', () => {
               successMessages.REMOVED_KEY_VALUE(
                 key,
                 fields.map((field) => bufferToString(field)).join(''),
-                'Field'
-              )
+                'Field',
+              ),
             ),
             refreshKeyInfoSuccess({ affected: 2 }),
-            updateSelectedKeyRefreshTime(MOCK_TIMESTAMP)
+            updateSelectedKeyRefreshTime(MOCK_TIMESTAMP),
           ]
 
           expect(mockedStore.getActions()).toEqual(expectedActions)
-        }
+        },
       )
 
-      it(
-        'succeed to delete all fields from hast',
-        async () => {
-          // Arrange
+      it('succeed to delete all fields from hast', async () => {
+        // Arrange
 
-          const key = 'key'
-          const fields = ['hash field', 'hash field 2']
-          const responsePayload = { status: 200, data: { affected: 2 } }
-          const nextState = Object.assign(initialStateDefault, {
-            browser: {
-              hash: {
-                ...initialState,
-                data: {
-                  ...initialState.data,
-                  total: 2
-                }
-              }
+        const key = 'key'
+        const fields = ['hash field', 'hash field 2']
+        const responsePayload = { status: 200, data: { affected: 2 } }
+        const nextState = Object.assign(initialStateDefault, {
+          browser: {
+            hash: {
+              ...initialState,
+              data: {
+                ...initialState.data,
+                total: 2,
+              },
             },
-          })
+          },
+        })
 
-          const mockedStore = mockStore(nextState)
+        const mockedStore = mockStore(nextState)
 
-          apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
 
-          // Act
-          await mockedStore.dispatch<any>(deleteHashFields(key, fields))
+        // Act
+        await mockedStore.dispatch<any>(deleteHashFields(key, fields))
 
-          // Assert
-          const expectedActions = [
-            removeHashFields(),
-            removeHashFieldsSuccess(),
-            removeFieldsFromList(fields),
-            deleteSelectedKeySuccess(),
-            deleteRedisearchKeyFromList(key),
-            addMessageNotification(successMessages.DELETED_KEY(key))
-          ]
+        // Assert
+        const expectedActions = [
+          removeHashFields(),
+          removeHashFieldsSuccess(),
+          removeFieldsFromList(fields),
+          deleteSelectedKeySuccess(),
+          deleteRedisearchKeyFromList(key),
+          addMessageNotification(successMessages.DELETED_KEY(key)),
+        ]
 
-          expect(mockedStore.getActions()).toEqual(expectedActions)
-        }
-      )
+        expect(mockedStore.getActions()).toEqual(expectedActions)
+      })
     })
 
     describe('addHashFields', () => {

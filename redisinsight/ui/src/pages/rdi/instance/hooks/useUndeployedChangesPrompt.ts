@@ -9,7 +9,8 @@ import { Nullable } from 'uiSrc/utils'
 export const useUndeployedChangesPrompt = () => {
   const { changes } = useSelector(rdiPipelineSelector)
   const [showModal, setShowModal] = useState<boolean>(false)
-  const [nextLocation, setNextLocation] = useState<Nullable<Location<unknown>>>(null)
+  const [nextLocation, setNextLocation] =
+    useState<Nullable<Location<unknown>>>(null)
   const [shouldBlockLeaving, setShouldBlockLeaving] = useState<boolean>(false)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
@@ -21,14 +22,19 @@ export const useUndeployedChangesPrompt = () => {
 
   useEffect(() => {
     // @ts-ignore
-    const unlistenBlockChecker = history.block((location: Location<unknown>) => {
-      if (shouldBlockLeaving && !location?.pathname.startsWith(Pages.rdiPipeline(rdiInstanceId))) {
-        setNextLocation(location)
-        setShowModal(true)
-        return false
-      }
-      return true
-    })
+    const unlistenBlockChecker = history.block(
+      (location: Location<unknown>) => {
+        if (
+          shouldBlockLeaving &&
+          !location?.pathname.startsWith(Pages.rdiPipeline(rdiInstanceId))
+        ) {
+          setNextLocation(location)
+          setShowModal(true)
+          return false
+        }
+        return true
+      },
+    )
 
     return () => {
       unlistenBlockChecker()
@@ -54,6 +60,6 @@ export const useUndeployedChangesPrompt = () => {
   return {
     showModal,
     handleCloseModal,
-    handleConfirmLeave
+    handleConfirmLeave,
   }
 }

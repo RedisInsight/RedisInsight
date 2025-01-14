@@ -1,11 +1,12 @@
 import {
-  ApiExtraModels, ApiPropertyOptional, getSchemaPath, PickType,
+  ApiExtraModels,
+  ApiPropertyOptional,
+  getSchemaPath,
+  PickType,
 } from '@nestjs/swagger';
 import { Database } from 'src/modules/database/models/database';
 import { Expose, Type } from 'class-transformer';
-import {
-  IsNotEmptyObject, IsOptional, ValidateNested,
-} from 'class-validator';
+import { IsNotEmptyObject, IsOptional, ValidateNested } from 'class-validator';
 import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.client-certificate.dto';
 import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
 import { UseCaCertificateDto } from 'src/modules/certificate/dto/use.ca-certificate.dto';
@@ -18,13 +19,30 @@ import { sshOptionsTransformer } from 'src/modules/ssh/transformers/ssh-options.
 import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-database-details';
 
 @ApiExtraModels(
-  CreateCaCertificateDto, UseCaCertificateDto,
-  CreateClientCertificateDto, UseClientCertificateDto,
-  CreateBasicSshOptionsDto, CreateCertSshOptionsDto,
+  CreateCaCertificateDto,
+  UseCaCertificateDto,
+  CreateClientCertificateDto,
+  UseClientCertificateDto,
+  CreateBasicSshOptionsDto,
+  CreateCertSshOptionsDto,
 )
 export class CreateDatabaseDto extends PickType(Database, [
-  'host', 'port', 'name', 'db', 'username', 'password', 'timeout', 'nameFromProvider', 'provider',
-  'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster', 'ssh', 'compressor', 'cloudDetails',
+  'host',
+  'port',
+  'name',
+  'db',
+  'username',
+  'password',
+  'timeout',
+  'nameFromProvider',
+  'provider',
+  'tls',
+  'tlsServername',
+  'verifyServerCert',
+  'sentinelMaster',
+  'ssh',
+  'compressor',
+  'cloudDetails',
 ] as const) {
   @ApiPropertyOptional({
     description: 'CA Certificate',

@@ -7,22 +7,32 @@ const mockedProps = mock<Props>()
 
 const mockValues = {
   host: 'host',
-  port: '123'
+  port: '123',
 }
 
 describe('SentinelConnectionForm', () => {
   it('should render', () => {
     expect(
-      render(<SentinelConnectionForm {...instance(mockedProps)} />)
+      render(<SentinelConnectionForm {...instance(mockedProps)} />),
     ).toBeTruthy()
   })
 
   it('should call submit form on press Enter', async () => {
     const mockSubmit = jest.fn()
-    render(<SentinelConnectionForm {...instance(mockedProps)} onSubmit={mockSubmit} initialValues={mockValues} />)
+    render(
+      <SentinelConnectionForm
+        {...instance(mockedProps)}
+        onSubmit={mockSubmit}
+        initialValues={mockValues}
+      />,
+    )
 
     await act(() => {
-      fireEvent.keyDown(screen.getByTestId('form'), { key: 'Enter', code: 13, charCode: 13 })
+      fireEvent.keyDown(screen.getByTestId('form'), {
+        key: 'Enter',
+        code: 13,
+        charCode: 13,
+      })
     })
 
     expect(mockSubmit).toBeCalled()
@@ -32,7 +42,7 @@ describe('SentinelConnectionForm', () => {
     render(
       <div id="footerDatabaseForm">
         <SentinelConnectionForm {...instance(mockedProps)} />
-      </div>
+      </div>,
     )
 
     expect(screen.getByTestId('btn-submit')).toBeInTheDocument()

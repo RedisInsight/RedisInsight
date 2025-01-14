@@ -4,7 +4,10 @@ import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner'
 import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
 import { mockCreateDatabaseAnalysisDto } from 'src/modules/database-analysis/providers/database-analysis.provider.spec';
 import * as Utils from 'src/modules/redis/utils/keys.util';
-import { mockClusterRedisClient, mockStandaloneRedisClient } from 'src/__mocks__';
+import {
+  mockClusterRedisClient,
+  mockStandaloneRedisClient,
+} from 'src/__mocks__';
 
 const standaloneClient = mockStandaloneRedisClient;
 const clusterClient = mockClusterRedisClient;
@@ -62,25 +65,23 @@ describe('KeysScanner', () => {
     infoStrategy = mockInfoStrategy();
     infoProvider.getStrategy.mockReturnValue(infoStrategy);
     infoStrategy.getLengthSafe.mockResolvedValue(2);
-    clusterClient.nodes.mockReturnValue([standaloneClient, standaloneClient, standaloneClient]);
+    clusterClient.nodes.mockReturnValue([
+      standaloneClient,
+      standaloneClient,
+      standaloneClient,
+    ]);
     when(standaloneClient.sendCommand)
       .calledWith(expect.arrayContaining(['scan']))
       .mockResolvedValue(['0', [mockKey.name]]);
     when(standaloneClient.sendPipeline)
-      .calledWith(expect.arrayContaining([
-        expect.arrayContaining(['memory']),
-      ]))
+      .calledWith(expect.arrayContaining([expect.arrayContaining(['memory'])]))
       .mockReturnValue([[null, 10]]);
     when(standaloneClient.sendPipeline)
-      .calledWith(expect.arrayContaining([
-        expect.arrayContaining(['ttl']),
-      ]))
+      .calledWith(expect.arrayContaining([expect.arrayContaining(['ttl'])]))
       .mockReturnValue([[null, -1]]);
     when(standaloneClient.sendPipeline)
       .calledWith(
-        expect.arrayContaining([
-          expect.arrayContaining(['type']),
-        ]),
+        expect.arrayContaining([expect.arrayContaining(['type'])]),
         expect.anything(),
       )
       .mockReturnValue([[null, 'string']]);
@@ -92,24 +93,30 @@ describe('KeysScanner', () => {
   describe('scan', () => {
     it('should scan standalone database', async () => {
       jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse);
-      expect(await service.scan(standaloneClient, {
-        filter: mockCreateDatabaseAnalysisDto.filter,
-      })).toEqual([mockScanResult]);
+      expect(
+        await service.scan(standaloneClient, {
+          filter: mockCreateDatabaseAnalysisDto.filter,
+        }),
+      ).toEqual([mockScanResult]);
     });
     it('should scan cluster database', async () => {
       jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse);
-      expect(await service.scan(clusterClient, {
-        filter: mockCreateDatabaseAnalysisDto.filter,
-      })).toEqual([mockScanResult, mockScanResult, mockScanResult]);
+      expect(
+        await service.scan(clusterClient, {
+          filter: mockCreateDatabaseAnalysisDto.filter,
+        }),
+      ).toEqual([mockScanResult, mockScanResult, mockScanResult]);
     });
   });
 
   describe('nodeScan', () => {
     it('should scan node keys', async () => {
       jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse);
-      expect(await service.nodeScan(standaloneClient, {
-        filter: mockCreateDatabaseAnalysisDto.filter,
-      })).toEqual(mockScanResult);
+      expect(
+        await service.nodeScan(standaloneClient, {
+          filter: mockCreateDatabaseAnalysisDto.filter,
+        }),
+      ).toEqual(mockScanResult);
     });
   });
 });

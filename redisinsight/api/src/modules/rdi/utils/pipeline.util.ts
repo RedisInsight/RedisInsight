@@ -1,10 +1,10 @@
-import {
-  isArray, unset, set, forEach, isObjectLike, isEmpty,
-} from 'lodash';
+import { isArray, unset, set, forEach, isObjectLike, isEmpty } from 'lodash';
 import { plainToClass } from 'class-transformer';
 import { RdiPipeline } from 'src/modules/rdi/models';
 
-export const convertApiDataToRdiJobs = (jobs?: [Record<string, any>]): Record<string, any> => {
+export const convertApiDataToRdiJobs = (
+  jobs?: [Record<string, any>],
+): Record<string, any> => {
   const jobsMap = {};
 
   if (jobs && isArray(jobs)) {
@@ -21,7 +21,9 @@ export const convertApiDataToRdiJobs = (jobs?: [Record<string, any>]): Record<st
   return jobsMap;
 };
 
-export const convertApiDataToRdiPipeline = (data: Record<string, any> = {}): RdiPipeline => {
+export const convertApiDataToRdiPipeline = (
+  data: Record<string, any> = {},
+): RdiPipeline => {
   const entries = data;
 
   // ignore empty root-level entries for pipeline
@@ -44,7 +46,9 @@ export const convertApiDataToRdiPipeline = (data: Record<string, any> = {}): Rdi
   return plainToClass(RdiPipeline, pipeline, { excludeExtraneousValues: true });
 };
 
-export const convertRdiJobsToApiPayload = (jobs: Record<string, any>): Record<string, any>[] => {
+export const convertRdiJobsToApiPayload = (
+  jobs: Record<string, any>,
+): Record<string, any>[] => {
   const payload = [];
 
   forEach(jobs, (job, key) => {
@@ -57,7 +61,9 @@ export const convertRdiJobsToApiPayload = (jobs: Record<string, any>): Record<st
   return payload;
 };
 
-export const convertRdiPipelineToApiPayload = (pipeline: RdiPipeline): Record<string, any> => {
+export const convertRdiPipelineToApiPayload = (
+  pipeline: RdiPipeline,
+): Record<string, any> => {
   const payload = {
     ...pipeline.config,
   };

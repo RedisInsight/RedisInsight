@@ -10,26 +10,26 @@ export default defineConfig({
     outDir: 'dist/renderer',
     rollupOptions: {
       input: {
-        index: path.join(__dirname, './src/index.html')
+        index: path.join(__dirname, './src/index.html'),
       },
       output: {
         format: 'es',
         chunkFileNames: '[name].[hash].js',
         entryFileNames: '[name].[hash].js',
-      }
+      },
     },
     commonjsOptions: {
       include: [/node_modules/],
-      transformMixedEsModules: true
-    }
+      transformMixedEsModules: true,
+    },
   },
   resolve: {
     alias: {
       uiSrc: path.resolve(__dirname, '../ui/src'),
       apiSrc: path.resolve(__dirname, '../api/src'),
-    }
+    },
   },
   optimizeDeps: {
-    include: ['electron']
-  }
+    include: ['electron'],
+  },
 })

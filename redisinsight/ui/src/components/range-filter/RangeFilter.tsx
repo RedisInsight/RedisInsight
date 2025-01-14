@@ -38,7 +38,7 @@ const RangeFilter = (props: Props) => {
     handleChangeEnd,
     handleUpdateRangeMax,
     handleUpdateRangeMin,
-    handleResetFilter
+    handleResetFilter,
   } = props
 
   const [startVal, setStartVal] = useState(start)
@@ -46,7 +46,7 @@ const RangeFilter = (props: Props) => {
 
   const getPercent = useCallback(
     (value) => Math.round(((value - min) / (max - min)) * 100),
-    [min, max]
+    [min, max],
   )
 
   const minValRef = useRef<HTMLInputElement>(null)
@@ -60,29 +60,23 @@ const RangeFilter = (props: Props) => {
       const newValue = Math.min(+value, endVal - 1)
       setStartVal(newValue)
     },
-    [endVal]
+    [endVal],
   )
 
-  const onMouseUpStart = useCallback(
-    ({ target: { value } }) => {
-      handleChangeStart(value, true)
-    },
-    []
-  )
+  const onMouseUpStart = useCallback(({ target: { value } }) => {
+    handleChangeStart(value, true)
+  }, [])
 
-  const onMouseUpEnd = useCallback(
-    ({ target: { value } }) => {
-      handleChangeEnd(value, true)
-    },
-    []
-  )
+  const onMouseUpEnd = useCallback(({ target: { value } }) => {
+    handleChangeEnd(value, true)
+  }, [])
 
   const onChangeEnd = useCallback(
     ({ target: { value } }) => {
       const newValue = Math.max(+value, startVal + 1)
       setEndVal(newValue)
     },
-    [startVal]
+    [startVal],
   )
 
   useEffect(() => {
@@ -137,8 +131,18 @@ const RangeFilter = (props: Props) => {
     return (
       <div data-testid="mock-fill-range" className={styles.rangeWrapper}>
         <div className={cx(styles.sliderRange, styles.mockRange)}>
-          <div className={styles.sliderLeftValue} data-testid="range-left-timestamp"><FormatedDate date={start?.toString()} /></div>
-          <div className={styles.sliderRightValue} data-testid="range-right-timestamp"><FormatedDate date={end?.toString()} /></div>
+          <div
+            className={styles.sliderLeftValue}
+            data-testid="range-left-timestamp"
+          >
+            <FormatedDate date={start?.toString()} />
+          </div>
+          <div
+            className={styles.sliderRightValue}
+            data-testid="range-right-timestamp"
+          >
+            <FormatedDate date={end?.toString()} />
+          </div>
         </div>
       </div>
     )
@@ -175,31 +179,24 @@ const RangeFilter = (props: Props) => {
           <div className={styles.sliderTrack} />
           <div
             ref={range}
-            className={
-              cx(styles.sliderRange,
-                {
-                  [styles.leftPosition]: max - startVal < (max - min) / 2,
-                  [styles.disabled]: disabled
-                })
-            }
+            className={cx(styles.sliderRange, {
+              [styles.leftPosition]: max - startVal < (max - min) / 2,
+              [styles.disabled]: disabled,
+            })}
           >
-            <div className={
-              cx(styles.sliderLeftValue,
-                {
-                  [styles.leftPosition]: max - startVal < (max - min) / 2,
-                  [styles.disabled]: disabled
-                })
-              }
+            <div
+              className={cx(styles.sliderLeftValue, {
+                [styles.leftPosition]: max - startVal < (max - min) / 2,
+                [styles.disabled]: disabled,
+              })}
             >
               <FormatedDate date={startVal?.toString()} />
             </div>
-            <div className={
-              cx(styles.sliderRightValue,
-                {
-                  [styles.rightPosition]: max - endVal > (max - min) / 2,
-                  [styles.disabled]: disabled
-                })
-              }
+            <div
+              className={cx(styles.sliderRightValue, {
+                [styles.rightPosition]: max - endVal > (max - min) / 2,
+                [styles.disabled]: disabled,
+              })}
             >
               <FormatedDate date={endVal?.toString()} />
             </div>

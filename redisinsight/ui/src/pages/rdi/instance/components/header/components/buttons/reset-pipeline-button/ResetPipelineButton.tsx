@@ -10,18 +10,28 @@ export interface PipelineButtonProps {
   loading: boolean
 }
 
-const ResetPipelineButton = ({ onClick, disabled, loading }: PipelineButtonProps) => (
+const ResetPipelineButton = ({
+  onClick,
+  disabled,
+  loading,
+}: PipelineButtonProps) => (
   <EuiToolTip
-    content={!(disabled || loading) ? (
-      <>
-        <p>The pipeline will take a new snapshot of the data and process it, then continue tracking changes.</p>
-        <EuiSpacer size="m" />
-        <p>
-          Before resetting the RDI pipeline, consider stopping the pipeline and flushing the target Redis database.
-        </p>
-      </>
-    ) : null}
-    anchorClassName={(disabled || loading) ? styles.disabled : styles.tooltip}
+    content={
+      !(disabled || loading) ? (
+        <>
+          <p>
+            The pipeline will take a new snapshot of the data and process it,
+            then continue tracking changes.
+          </p>
+          <EuiSpacer size="m" />
+          <p>
+            Before resetting the RDI pipeline, consider stopping the pipeline
+            and flushing the target Redis database.
+          </p>
+        </>
+      ) : null
+    }
+    anchorClassName={disabled || loading ? styles.disabled : styles.tooltip}
   >
     <EuiButton
       aria-label="Reset pipeline button"

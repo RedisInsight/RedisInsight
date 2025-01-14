@@ -7,6 +7,8 @@ const mockedProps = mock<Props>()
 
 describe('PopoverRunAnalyze', () => {
   it('should render', () => {
-    expect(render(<PopoverRunAnalyze {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<PopoverRunAnalyze {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 })

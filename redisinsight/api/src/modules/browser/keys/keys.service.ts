@@ -4,7 +4,11 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { DEFAULT_MATCH, RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
+import {
+  DEFAULT_MATCH,
+  RECOMMENDATION_NAMES,
+  RedisErrorCodes,
+} from 'src/constants';
 import { catchAclError } from 'src/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
@@ -50,7 +54,8 @@ export class KeysService {
     try {
       this.logger.debug('Getting keys with details.', clientMetadata);
 
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.getConnectionType());
       const result = await scanner.getKeys(client, dto);
 
@@ -58,10 +63,10 @@ export class KeysService {
       if (dto.match !== DEFAULT_MATCH) {
         await this.browserHistory.create(
           clientMetadata,
-          plainToClass(
-            CreateBrowserHistoryDto,
-            { filter: pick(dto, 'type', 'match'), mode: BrowserHistoryMode.Pattern },
-          ),
+          plainToClass(CreateBrowserHistoryDto, {
+            filter: pick(dto, 'type', 'match'),
+            mode: BrowserHistoryMode.Pattern,
+          }),
         );
       }
 
@@ -71,15 +76,17 @@ export class KeysService {
         result[0]?.total,
       );
 
-      return result.map((nodeResult) => plainToClass(GetKeysWithDetailsResponse, nodeResult));
+      return result.map((nodeResult) =>
+        plainToClass(GetKeysWithDetailsResponse, nodeResult),
+      );
     } catch (error) {
       this.logger.error(
         `Failed to get keys with details info. ${error.message}.`,
         clientMetadata,
       );
       if (
-        error.message.includes(RedisErrorCodes.CommandSyntaxError)
-        && dto.type
+        error.message.includes(RedisErrorCodes.CommandSyntaxError) &&
+        dto.type
       ) {
         throw new BadRequestException(
           ERROR_MESSAGES.SCAN_PER_KEY_TYPE_NOT_SUPPORT(),
@@ -101,7 +108,8 @@ export class KeysService {
     dto: GetKeysInfoDto,
   ): Promise<GetKeyInfoResponse[]> {
     try {
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.getConnectionType());
       const result = await scanner.getKeysInfo(client, dto.keys, dto.type);
 
@@ -113,7 +121,10 @@ export class KeysService {
 
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
-      this.logger.error(`Failed to get keys info: ${error.message}.`, clientMetadata);
+      this.logger.error(
+        `Failed to get keys info: ${error.message}.`,
+        clientMetadata,
+      );
       throw catchAclError(error);
     }
   }
@@ -124,26 +135,29 @@ export class KeysService {
   ): Promise<GetKeyInfoResponse> {
     try {
       this.logger.debug('Getting key info.', clientMetadata);
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const type = await client.sendCommand(
-        [
-          BrowserToolKeysCommands.Type,
-          key,
-        ],
+      const type = (await client.sendCommand(
+        [BrowserToolKeysCommands.Type, key],
         {
           replyEncoding: 'utf8',
         },
-      ) as string;
+      )) as string;
 
       if (type === 'none') {
-        this.logger.error(`Failed to get key info. Not found key: ${key}`, clientMetadata);
+        this.logger.error(
+          `Failed to get key info. Not found key: ${key}`,
+          clientMetadata,
+        );
         return Promise.reject(
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
 
-      const result = await this.keyInfoProvider.getStrategy(type).getInfo(client, key, type);
+      const result = await this.keyInfoProvider
+        .getStrategy(type)
+        .getInfo(client, key, type);
       this.logger.debug('Succeed to get key info', clientMetadata);
 
       this.recommendationService.checkMulti(
@@ -168,19 +182,26 @@ export class KeysService {
    * @param clientMetadata
    * @param keys
    */
-  public async deleteKeys(clientMetadata: ClientMetadata, keys: RedisString[]): Promise<DeleteKeysResponse> {
+  public async deleteKeys(
+    clientMetadata: ClientMetadata,
+    keys: RedisString[],
+  ): Promise<DeleteKeysResponse> {
     try {
       this.logger.debug('Deleting keys', clientMetadata);
 
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const result = await client.sendCommand([
+      const result = (await client.sendCommand([
         BrowserToolKeysCommands.Del,
         ...keys,
-      ]) as number;
+      ])) as number;
 
       if (!result) {
-        this.logger.error('Failed to delete keys. Not Found keys', clientMetadata);
+        this.logger.error(
+          'Failed to delete keys. Not Found keys',
+          clientMetadata,
+        );
         return Promise.reject(new NotFoundException());
       }
 
@@ -198,11 +219,15 @@ export class KeysService {
    * @param clientMetadata
    * @param dto
    */
-  public async renameKey(clientMetadata: ClientMetadata, dto: RenameKeyDto): Promise<RenameKeyResponse> {
+  public async renameKey(
+    clientMetadata: ClientMetadata,
+    dto: RenameKeyDto,
+  ): Promise<RenameKeyResponse> {
     try {
       this.logger.debug('Renaming key', clientMetadata);
       const { keyName, newKeyName } = dto;
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
 
@@ -216,7 +241,9 @@ export class KeysService {
         this.logger.error(
           `Failed to rename key. ${ERROR_MESSAGES.NEW_KEY_NAME_EXIST} key: ${newKeyName}`,
         );
-        return Promise.reject(new BadRequestException(ERROR_MESSAGES.NEW_KEY_NAME_EXIST));
+        return Promise.reject(
+          new BadRequestException(ERROR_MESSAGES.NEW_KEY_NAME_EXIST),
+        );
       }
       this.logger.debug('Succeed to rename key', clientMetadata);
       return plainToClass(RenameKeyResponse, { keyName: newKeyName });
@@ -241,12 +268,16 @@ export class KeysService {
    * @param clientMetadata
    * @param dto
    */
-  public async setKeyExpiration(clientMetadata: ClientMetadata, dto: UpdateKeyTtlDto): Promise<KeyTtlResponse> {
+  public async setKeyExpiration(
+    clientMetadata: ClientMetadata,
+    dto: UpdateKeyTtlDto,
+  ): Promise<KeyTtlResponse> {
     try {
       this.logger.debug('Setting a timeout on key.', clientMetadata);
       const { keyName, ttl } = dto;
 
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       const result = await client.sendCommand([
         BrowserToolKeysCommands.Expire,
@@ -259,7 +290,9 @@ export class KeysService {
           `Failed to set a timeout on key. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
           clientMetadata,
         );
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+        return Promise.reject(
+          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
+        );
       }
 
       this.logger.debug('Succeed to set a timeout on key.', clientMetadata);
@@ -267,7 +300,11 @@ export class KeysService {
         ttl: ttl >= 0 ? ttl : -2,
       };
     } catch (error) {
-      this.logger.error('Failed to set a timeout on key.', error, clientMetadata);
+      this.logger.error(
+        'Failed to set a timeout on key.',
+        error,
+        clientMetadata,
+      );
       throw catchAclError(error);
     }
   }
@@ -277,11 +314,18 @@ export class KeysService {
    * @param clientMetadata
    * @param dto
    */
-  public async removeKeyExpiration(clientMetadata: ClientMetadata, dto: UpdateKeyTtlDto): Promise<KeyTtlResponse> {
+  public async removeKeyExpiration(
+    clientMetadata: ClientMetadata,
+    dto: UpdateKeyTtlDto,
+  ): Promise<KeyTtlResponse> {
     try {
-      this.logger.debug('Removing the existing timeout on key.', clientMetadata);
+      this.logger.debug(
+        'Removing the existing timeout on key.',
+        clientMetadata,
+      );
 
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       const currentTtl = await client.sendCommand([
         BrowserToolKeysCommands.Ttl,
@@ -305,10 +349,17 @@ export class KeysService {
         ]);
       }
 
-      this.logger.debug('Succeed to remove the existing timeout on key.', clientMetadata);
+      this.logger.debug(
+        'Succeed to remove the existing timeout on key.',
+        clientMetadata,
+      );
       return { ttl: -1 };
     } catch (error) {
-      this.logger.error('Failed to remove the existing timeout on key.', error, clientMetadata);
+      this.logger.error(
+        'Failed to remove the existing timeout on key.',
+        error,
+        clientMetadata,
+      );
       throw catchAclError(error);
     }
   }

@@ -37,8 +37,8 @@ describe('RdiPipelineHeader', () => {
     const mockUseFormikContext = {
       handleSubmit: mockHandleSubmit,
       values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+    }
+    ;(useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
   })
 
   it('should render', () => {
@@ -48,10 +48,10 @@ describe('RdiPipelineHeader', () => {
   it('should call proper actions', () => {
     render(<RdiPipelineHeader />)
 
-    const expectedActions = [
-      getPipelineStatus(),
-    ]
+    const expectedActions = [getPipelineStatus()]
 
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+      expectedActions,
+    )
   })
 })

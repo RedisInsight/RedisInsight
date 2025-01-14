@@ -1,6 +1,9 @@
 import { map } from 'rxjs/operators';
 import {
-  CallHandler, ClassSerializerInterceptor, ExecutionContext, PlainLiteralObject,
+  CallHandler,
+  ClassSerializerInterceptor,
+  ExecutionContext,
+  PlainLiteralObject,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { RedisStringResponseEncoding } from 'src/common/constants';
@@ -25,7 +28,9 @@ export class BrowserSerializeInterceptor extends ClassSerializerInterceptor {
     return next
       .handle()
       .pipe(
-        map((res: PlainLiteralObject | Array<PlainLiteralObject>) => this.serialize(res, options)),
+        map((res: PlainLiteralObject | Array<PlainLiteralObject>) =>
+          this.serialize(res, options),
+        ),
       );
   }
 }

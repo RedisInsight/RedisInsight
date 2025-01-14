@@ -26,9 +26,11 @@ const BulkDelete = (props: Props) => {
   const {
     status,
     filter: { match, type: filterType },
-    progress
+    progress,
   } = useSelector(bulkActionsDeleteOverviewSelector) ?? { filter: {} }
-  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(!isSearched && !isFiltered)
+  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(
+    !isSearched && !isFiltered,
+  )
 
   useEffect(() => {
     setShowPlaceholder(!status && !isSearched && !isFiltered)
@@ -51,8 +53,13 @@ const BulkDelete = (props: Props) => {
         </>
       )}
       {showPlaceholder && (
-        <div className={styles.placeholder} data-testid="bulk-actions-placeholder">
-          <EuiText color="subdued" className={styles.placeholderTitle}>No pattern or key type set</EuiText>
+        <div
+          className={styles.placeholder}
+          data-testid="bulk-actions-placeholder"
+        >
+          <EuiText color="subdued" className={styles.placeholderTitle}>
+            No pattern or key type set
+          </EuiText>
           <EuiText color="subdued" className={styles.placeholderSummary}>
             To perform a bulk action, set the pattern or select the key type
           </EuiText>

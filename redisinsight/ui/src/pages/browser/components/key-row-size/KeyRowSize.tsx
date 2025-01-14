@@ -55,7 +55,12 @@ const KeyRowSize = (props: Props) => {
 
   if (!size) {
     return (
-      <EuiText color="subdued" size="s" className={cx(styles.keySize)} data-testid={`size-${nameString}`}>
+      <EuiText
+        color="subdued"
+        size="s"
+        className={cx(styles.keySize)}
+        data-testid={`size-${nameString}`}
+      >
         -
       </EuiText>
     )
@@ -65,53 +70,51 @@ const KeyRowSize = (props: Props) => {
       <EuiText
         color="subdued"
         size="s"
-        className={cx(
-          styles.keySize,
-          'moveOnHoverKey',
-          { hide: deletePopoverId === rowId },
-        )}
+        className={cx(styles.keySize, 'moveOnHoverKey', {
+          hide: deletePopoverId === rowId,
+        })}
         style={{ maxWidth: '100%' }}
       >
-        <div style={{ display: 'flex' }} className="truncateText" data-testid={`size-${nameString}`}>
+        <div
+          style={{ display: 'flex' }}
+          className="truncateText"
+          data-testid={`size-${nameString}`}
+        >
           <EuiToolTip
             title="Key Size"
             className={styles.tooltip}
             anchorClassName="truncateText"
             position="right"
-            content={(
-              <>
-                {formatBytes(size, 3)}
-              </>
-            )}
+            content={<>{formatBytes(size, 3)}</>}
           >
             <>{formatBytes(size, 0)}</>
           </EuiToolTip>
         </div>
       </EuiText>
       <EuiPopover
-        anchorClassName={cx(
-          styles.deleteAnchor,
-          'showOnHoverKey',
-          { show: deletePopoverId === rowId },
-        )}
+        anchorClassName={cx(styles.deleteAnchor, 'showOnHoverKey', {
+          show: deletePopoverId === rowId,
+        })}
         anchorPosition="rightUp"
         isOpen={deletePopoverId === rowId}
         closePopover={() => setDeletePopoverId(undefined)}
         panelPaddingSize="l"
         panelClassName={styles.deletePopover}
-        button={(
+        button={
           <EuiButtonIcon
             iconType="trash"
             onClick={() => handleDeletePopoverOpen(rowId, type)}
             aria-label="Delete Key"
             data-testid={`delete-key-btn-${nameString}`}
           />
-        )}
+        }
         onClick={(e) => e.stopPropagation()}
       >
         <>
           <EuiText size="m">
-            <h4 style={{ wordBreak: 'break-all' }}><b>{formatLongName(nameString)}</b></h4>
+            <h4 style={{ wordBreak: 'break-all' }}>
+              <b>{formatLongName(nameString)}</b>
+            </h4>
             <EuiText size="s">will be deleted.</EuiText>
           </EuiText>
           <EuiSpacer size="m" />

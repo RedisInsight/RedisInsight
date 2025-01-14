@@ -4,7 +4,8 @@ import {
   IsBoolean,
   IsEnum,
   IsInt,
-  IsNotEmpty, IsNumber,
+  IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';

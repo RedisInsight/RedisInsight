@@ -12,19 +12,13 @@ describe('SettingsAnalytics', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        SettingsAnalytics,
-      ],
+      providers: [EventEmitter2, SettingsAnalytics],
     }).compile();
 
     service = module.get<SettingsAnalytics>(SettingsAnalytics);
     eventEmitter = module.get<EventEmitter2>(EventEmitter2);
     eventEmitter.emit = jest.fn();
-    sendEventMethod = jest.spyOn<SettingsAnalytics, any>(
-      service,
-      'sendEvent',
-    );
+    sendEventMethod = jest.spyOn<SettingsAnalytics, any>(service, 'sendEvent');
   });
 
   describe('sendAnalyticsAgreementChange', () => {

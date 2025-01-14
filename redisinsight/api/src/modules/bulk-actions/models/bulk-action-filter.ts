@@ -1,7 +1,5 @@
 import { RedisDataType } from 'src/modules/browser/keys/dto';
-import {
-  IsEnum, IsInt, IsOptional, IsString,
-} from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { IBulkActionFilterOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-filter-overview.interface';
 
 export class BulkActionFilter {

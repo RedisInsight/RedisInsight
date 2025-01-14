@@ -2,7 +2,7 @@ import {
   GROUP_TYPES_COLORS,
   KeyTypes,
   ModulesKeyTypes,
-  FeatureFlags
+  FeatureFlags,
 } from 'uiSrc/constants'
 
 export const FILTER_KEY_TYPE_OPTIONS = [
@@ -45,7 +45,7 @@ export const FILTER_KEY_TYPE_OPTIONS = [
     text: 'Graph',
     value: ModulesKeyTypes.Graph,
     color: GROUP_TYPES_COLORS[ModulesKeyTypes.Graph],
-    featureFlag: FeatureFlags.envDependent
+    featureFlag: FeatureFlags.envDependent,
   },
   {
     text: 'TS',

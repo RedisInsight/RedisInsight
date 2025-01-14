@@ -1,4 +1,7 @@
-import { CloudDatabaseProtocol, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
+import {
+  CloudDatabaseProtocol,
+  CloudDatabaseStatus,
+} from 'src/modules/cloud/database/models';
 
 interface ICloudCapiDatabaseAlert {
   name: string;
@@ -68,5 +71,7 @@ export interface ICloudCapiSubscriptionDatabasesSubscription {
 
 export interface ICloudCapiSubscriptionDatabases {
   accountId: number;
-  subscription: ICloudCapiSubscriptionDatabasesSubscription | ICloudCapiSubscriptionDatabasesSubscription[];
+  subscription:
+    | ICloudCapiSubscriptionDatabasesSubscription
+    | ICloudCapiSubscriptionDatabasesSubscription[];
 }

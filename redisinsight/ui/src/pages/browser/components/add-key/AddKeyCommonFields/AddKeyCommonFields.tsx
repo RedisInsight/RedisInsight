@@ -6,7 +6,7 @@ import {
   EuiFlexItem,
   EuiFormFieldset,
   EuiFormRow,
-  EuiSuperSelect
+  EuiSuperSelect,
 } from '@elastic/eui'
 import { MAX_TTL_NUMBER, Maybe, validateTTLNumberForAddKey } from 'uiSrc/utils'
 
@@ -34,7 +34,7 @@ const AddKeyCommonFields = (props: Props) => {
     keyName,
     setKeyName,
     keyTTL,
-    setKeyTTL
+    setKeyTTL,
   } = props
 
   const handleTTLChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -55,10 +55,7 @@ const AddKeyCommonFields = (props: Props) => {
           <EuiFormFieldset
             legend={{ children: 'Select key type', display: 'hidden' }}
           >
-            <EuiFormRow
-              label="Key Type*"
-              fullWidth
-            >
+            <EuiFormRow label="Key Type*" fullWidth>
               <EuiSuperSelect
                 itemClassName="withColorDefinition"
                 fullWidth
@@ -98,7 +95,8 @@ const AddKeyCommonFields = (props: Props) => {
           value={keyName}
           placeholder={config.keyName.placeholder}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setKeyName(e.target.value)}
+            setKeyName(e.target.value)
+          }
           disabled={loading}
           autoComplete="off"
           data-testid="key"

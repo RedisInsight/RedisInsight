@@ -1,11 +1,18 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import {
   deleteConsumerGroups,
   loadConsumerGroups,
-  setSelectedGroup
+  setSelectedGroup,
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { stringToBuffer } from 'uiSrc/utils'
@@ -30,27 +37,30 @@ jest.mock('./GroupsView', () => ({
 }))
 
 const mockGroupName = 'group'
-const mockGroups: ConsumerGroupDto[] = [{
-  name: {
-    ...stringToBuffer('test'),
-    viewValue: 'test',
+const mockGroups: ConsumerGroupDto[] = [
+  {
+    name: {
+      ...stringToBuffer('test'),
+      viewValue: 'test',
+    },
+    consumers: 123,
+    pending: 321,
+    smallestPendingId: '123',
+    greatestPendingId: '123',
+    lastDeliveredId: '123',
   },
-  consumers: 123,
-  pending: 321,
-  smallestPendingId: '123',
-  greatestPendingId: '123',
-  lastDeliveredId: '123'
-}, {
-  name: {
-    ...stringToBuffer('test2'),
-    viewValue: 'test2',
+  {
+    name: {
+      ...stringToBuffer('test2'),
+      viewValue: 'test2',
+    },
+    consumers: 13,
+    pending: 31,
+    smallestPendingId: '3',
+    greatestPendingId: '23',
+    lastDeliveredId: '12',
   },
-  consumers: 13,
-  pending: 31,
-  smallestPendingId: '3',
-  greatestPendingId: '23',
-  lastDeliveredId: '12'
-}]
+]
 
 const mockGroupsView = (props: GroupsViewProps) => (
   <div data-testid="stream-groups-container">
@@ -73,11 +83,13 @@ const mockGroupsView = (props: GroupsViewProps) => (
 
 describe('GroupsViewWrapper', () => {
   beforeAll(() => {
-    (GroupsView as jest.Mock).mockImplementation(mockGroupsView)
+    ;(GroupsView as jest.Mock).mockImplementation(mockGroupsView)
   })
 
   it('should render', () => {
-    expect(render(<GroupsViewWrapper {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<GroupsViewWrapper {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
   it('should render Groups container', () => {
@@ -96,7 +108,7 @@ describe('GroupsViewWrapper', () => {
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
       setSelectedGroup(),
-      loadConsumerGroups(false)
+      loadConsumerGroups(false),
     ])
   })
 
@@ -108,7 +120,10 @@ describe('GroupsViewWrapper', () => {
     fireEvent.click(screen.getByTestId('remove-groups-button-test-icon'))
     fireEvent.click(screen.getByTestId('remove-groups-button-test'))
 
-    expect(store.getActions()).toEqual([...afterRenderActions, deleteConsumerGroups()])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      deleteConsumerGroups(),
+    ])
   })
 
   it('should disable refresh when editing Group', () => {
@@ -121,6 +136,9 @@ describe('GroupsViewWrapper', () => {
     })
     fireEvent.click(screen.getByTestId('stream-group_edit-btn-123'))
 
-    expect(store.getActions()).toEqual([...afterRenderActions, setSelectedKeyRefreshDisabled(true)])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true),
+    ])
   })
 })

@@ -1,24 +1,29 @@
-import 'dotenv/config'
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import svgr from 'vite-plugin-svgr'
-import fixReactVirtualized from 'esbuild-plugin-react-virtualized'
-import { reactClickToComponent } from 'vite-plugin-react-click-to-component'
+import 'dotenv/config';
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import svgr from 'vite-plugin-svgr';
+import fixReactVirtualized from 'esbuild-plugin-react-virtualized';
+import { reactClickToComponent } from 'vite-plugin-react-click-to-component';
 // import { compression } from 'vite-plugin-compression2'
-import { fileURLToPath, URL } from 'url'
-import path from 'path'
-import { defaultConfig } from './src/config/default'
+import { fileURLToPath, URL } from 'url';
+import path from 'path';
+import { defaultConfig } from './src/config/default';
 
-const isElectron = defaultConfig.app.type === 'electron'
+const isElectron = defaultConfig.app.type === 'electron';
 // set path to index.tsx in the index.html
-process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx'
-const outDir = isElectron ? '../dist/renderer' : './dist'
+process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx';
+const outDir = isElectron ? '../dist/renderer' : './dist';
 
-let base
+let base;
 if (defaultConfig.api.hostedBase) {
-  base = defaultConfig.api.hostedBase
+  base = defaultConfig.api.hostedBase;
 } else {
-  base = defaultConfig.app.env === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
+  base =
+    defaultConfig.app.env === 'development'
+      ? '/'
+      : isElectron
+        ? ''
+        : '/__RIPROXYPATH__';
 }
 
 /**
@@ -46,27 +51,19 @@ export default defineConfig({
   server: {
     port: 8080,
     fs: {
-      allow: [
-        '..',
-        '../../node_modules/monaco-editor',
-        'static',
-        'defaults'
-      ],
+      allow: ['..', '../../node_modules/monaco-editor', 'static', 'defaults'],
     },
   },
   envPrefix: 'RI_',
   optimizeDeps: {
-    include: [
-      'monaco-editor',
-      'monaco-yaml/yaml.worker',
-    ],
+    include: ['monaco-editor', 'monaco-yaml/yaml.worker'],
     exclude: [
       'react-json-tree',
       'redisinsight-plugin-sdk',
       'plotly.js-dist-min',
       '@antv/x6',
       '@antv/x6-react-shape',
-      '@antv/hierarchy'
+      '@antv/hierarchy',
     ],
     esbuildOptions: {
       // fix for https://github.com/bvaughn/react-virtualized/issues/1722
@@ -85,9 +82,9 @@ export default defineConfig({
         // TODO chunks
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            return 'vendor'
+            return 'vendor';
           }
-          return 'index'
+          return 'index';
         },
       },
     },
@@ -102,16 +99,16 @@ export default defineConfig({
         // https://github.com/vitejs/vite/issues/3924
         additionalData: (source, filename) => {
           if (path.extname(filename) === '.scss') {
-            const skipFiles = ['/main.scss', '/App.scss']
+            const skipFiles = ['/main.scss', '/App.scss'];
             if (skipFiles.every((file) => !filename.endsWith(file))) {
               return `
                 @use "uiSrc/styles/mixins/_eui.scss";
                 @use "uiSrc/styles/mixins/_global.scss";
                 @layer app { ${source} }
-              `
+              `;
             }
           }
-          return source
+          return source;
         },
       },
     },
@@ -124,7 +121,7 @@ export default defineConfig({
   // hack: apply proxy path to monaco webworker
   experimental: {
     renderBuiltUrl() {
-      return { relative: true }
+      return { relative: true };
     },
-  }
-})
+  },
+});

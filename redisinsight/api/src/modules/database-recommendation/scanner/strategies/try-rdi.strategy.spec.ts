@@ -17,23 +17,39 @@ describe('TryRdiStrategyStrategy', () => {
 
   describe('isRecommendationReached', () => {
     it('should return true when connectionType is cluster', async () => {
-      expect(await strategy.isRecommendationReached({ connectionType: mockClusterConnectionType, provider: mockNotREProvider }))
-        .toEqual({ isReached: true });
+      expect(
+        await strategy.isRecommendationReached({
+          connectionType: mockClusterConnectionType,
+          provider: mockNotREProvider,
+        }),
+      ).toEqual({ isReached: true });
     });
 
     it('should return true when provider is Redis Enterprise', async () => {
-      expect(await strategy.isRecommendationReached({ connectionType: mockNotClusterConnectionType, provider: mockREProvider }))
-        .toEqual({ isReached: true });
+      expect(
+        await strategy.isRecommendationReached({
+          connectionType: mockNotClusterConnectionType,
+          provider: mockREProvider,
+        }),
+      ).toEqual({ isReached: true });
     });
 
     it('should return true when provider is Redis Enterprise and connectionType is cluster', async () => {
-      expect(await strategy.isRecommendationReached({ connectionType: mockClusterConnectionType, provider: mockREProvider }))
-        .toEqual({ isReached: true });
+      expect(
+        await strategy.isRecommendationReached({
+          connectionType: mockClusterConnectionType,
+          provider: mockREProvider,
+        }),
+      ).toEqual({ isReached: true });
     });
 
     it('should return false when provider is not Redis Enterprise and connectionType is not cluster', async () => {
-      expect(await strategy.isRecommendationReached({ connectionType: mockNotClusterConnectionType, provider: mockNotREProvider }))
-        .toEqual({ isReached: false });
+      expect(
+        await strategy.isRecommendationReached({
+          connectionType: mockNotClusterConnectionType,
+          provider: mockNotREProvider,
+        }),
+      ).toEqual({ isReached: false });
     });
   });
 });

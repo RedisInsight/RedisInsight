@@ -31,8 +31,10 @@ describe('TestConnectionsPanel', () => {
   it('should render loading', () => {
     const rdiTestConnectionsSelectorMock = jest.fn().mockReturnValue({
       loading: true,
-    });
-    (rdiTestConnectionsSelector as jest.Mock).mockImplementation(rdiTestConnectionsSelectorMock)
+    })
+    ;(rdiTestConnectionsSelector as jest.Mock).mockImplementation(
+      rdiTestConnectionsSelectorMock,
+    )
 
     render(<TestConnectionsPanel {...instance(mockedProps)} />)
 

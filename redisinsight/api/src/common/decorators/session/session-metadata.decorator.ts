@@ -1,5 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
-import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
+import {
+  BadRequestException,
+  createParamDecorator,
+  ExecutionContext,
+} from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
 import { Request } from 'express';
@@ -7,7 +11,9 @@ import { SessionMetadata } from 'src/common/models';
 
 const validator = new Validator();
 
-export const sessionMetadataFromRequest = (request: Request): SessionMetadata => {
+export const sessionMetadataFromRequest = (
+  request: Request,
+): SessionMetadata => {
   const userId = request.res?.locals?.session?.data?.userId.toString();
   const sessionId = request.res?.locals?.session?.data?.sessionId.toString();
   const correlationId = request.res?.locals?.session?.correlationId || uuidv4();
@@ -26,16 +32,23 @@ export const sessionMetadataFromRequest = (request: Request): SessionMetadata =>
   });
 
   if (errors?.length) {
-    throw new BadRequestException(Object.values(errors[0].constraints) || 'Bad request');
+    throw new BadRequestException(
+      Object.values(errors[0].constraints) || 'Bad request',
+    );
   }
 
   return session;
 };
 
-export const sessionMetadataFromRequestExecutionContext = (_: unknown, ctx: ExecutionContext): SessionMetadata => {
+export const sessionMetadataFromRequestExecutionContext = (
+  _: unknown,
+  ctx: ExecutionContext,
+): SessionMetadata => {
   const request = ctx.switchToHttp().getRequest();
 
   return sessionMetadataFromRequest(request);
 };
 
-export const RequestSessionMetadata = createParamDecorator(sessionMetadataFromRequestExecutionContext);
+export const RequestSessionMetadata = createParamDecorator(
+  sessionMetadataFromRequestExecutionContext,
+);

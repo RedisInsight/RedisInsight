@@ -3,7 +3,11 @@ import { useParams } from 'react-router-dom'
 import { ExternalLink } from 'uiSrc/components'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
-import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  sendEventTelemetry,
+  TELEMETRY_EMPTY_VALUE,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
 
 const CreateTutorialLink = () => {
@@ -12,8 +16,8 @@ const CreateTutorialLink = () => {
     sendEventTelemetry({
       event: TelemetryEvent.EXPLORE_PANEL_CREATE_TUTORIAL_LINK_CLICKED,
       eventData: {
-        databaseId: instanceId || TELEMETRY_EMPTY_VALUE
-      }
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
+      },
     })
   }
 

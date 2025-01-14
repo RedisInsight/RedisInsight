@@ -2,7 +2,10 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { isShowCapabilityTutorialPopover, setCapabilityPopoverShown } from 'uiSrc/services'
+import {
+  isShowCapabilityTutorialPopover,
+  setCapabilityPopoverShown,
+} from 'uiSrc/services'
 import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
 import { getTutorialCapability } from 'uiSrc/utils'
 
@@ -30,7 +33,9 @@ jest.mock('uiSrc/services', () => ({
 
 jest.mock('uiSrc/utils', () => ({
   ...jest.requireActual('uiSrc/utils'),
-  getTutorialCapability: jest.fn().mockReturnValue({ path: 'path', telemetryName: 'searchAndQuery' }),
+  getTutorialCapability: jest
+    .fn()
+    .mockReturnValue({ path: 'path', telemetryName: 'searchAndQuery' }),
 }))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
@@ -50,18 +55,24 @@ describe('InternalPage', () => {
     expect(render(<InternalPage {...instance(mockedProps)} />)).toBeTruthy()
   })
   it('should display loader', () => {
-    const { queryByTestId } = render(<InternalPage {...instance(mockedProps)} isLoading />)
+    const { queryByTestId } = render(
+      <InternalPage {...instance(mockedProps)} isLoading />,
+    )
 
     expect(queryByTestId('enablement-area__page-loader')).toBeTruthy()
   })
   it('should display empty prompt on error', () => {
-    const { queryByTestId } = render(<InternalPage {...instance(mockedProps)} error="Some error" />)
+    const { queryByTestId } = render(
+      <InternalPage {...instance(mockedProps)} error="Some error" />,
+    )
 
     expect(queryByTestId('enablement-area__empty-prompt')).toBeTruthy()
   })
   it('should call onClose function in click BackButton empty prompt on error', () => {
     const onClose = jest.fn()
-    const { queryByTestId } = render(<InternalPage {...instance(mockedProps)} onClose={onClose} />)
+    const { queryByTestId } = render(
+      <InternalPage {...instance(mockedProps)} onClose={onClose} />,
+    )
 
     const button = queryByTestId(/enablement-area__page-close/)
     fireEvent.click(button as Element)
@@ -70,20 +81,28 @@ describe('InternalPage', () => {
   })
   it('should parse and render JSX string', () => {
     const content = '<h1 data-testid="header">Header</h1>'
-    const { queryByTestId } = render(<InternalPage {...instance(mockedProps)} content={content} />)
+    const { queryByTestId } = render(
+      <InternalPage {...instance(mockedProps)} content={content} />,
+    )
 
     expect(queryByTestId('header')).toBeInTheDocument()
   })
 
   describe('capability', () => {
     beforeEach(() => {
-      (connectedInstanceCDSelector as jest.Mock).mockReturnValueOnce({ free: true })
+      ;(connectedInstanceCDSelector as jest.Mock).mockReturnValueOnce({
+        free: true,
+      })
     })
     it('should call isShowCapabilityTutorialPopover, setCapabilityPopoverShown and getTutorialCapability', async () => {
       const isShowCapabilityTutorialPopoverMock = jest.fn()
-      const setCapabilityPopoverShownMock = jest.fn();
-      (isShowCapabilityTutorialPopover as jest.Mock).mockImplementation(() => isShowCapabilityTutorialPopoverMock);
-      (setCapabilityPopoverShown as jest.Mock).mockImplementation(() => setCapabilityPopoverShownMock)
+      const setCapabilityPopoverShownMock = jest.fn()
+      ;(isShowCapabilityTutorialPopover as jest.Mock).mockImplementation(
+        () => isShowCapabilityTutorialPopoverMock,
+      )
+      ;(setCapabilityPopoverShown as jest.Mock).mockImplementation(
+        () => setCapabilityPopoverShownMock,
+      )
 
       render(<InternalPage {...instance(mockedProps)} />)
 
@@ -93,8 +112,10 @@ describe('InternalPage', () => {
     })
 
     it('should send CAPABILITY_POPOVER_DISPLAYED telemetry event', () => {
-      const sendEventTelemetryMock = jest.fn();
-      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+      const sendEventTelemetryMock = jest.fn()
+      ;(sendEventTelemetry as jest.Mock).mockImplementation(
+        () => sendEventTelemetryMock,
+      )
 
       render(<InternalPage {...instance(mockedProps)} />)
 
@@ -103,7 +124,7 @@ describe('InternalPage', () => {
         eventData: {
           databaseId: 'instanceId',
           capabilityName: 'searchAndQuery',
-        }
+        },
       })
     })
   })

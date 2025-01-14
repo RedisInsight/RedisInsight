@@ -15,32 +15,48 @@ import {
   EuiText,
   EuiCheckbox,
   EuiSpacer,
-  EuiToolTip
+  EuiToolTip,
 } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { orderBy, filter } from 'lodash'
 
 import { isEqualBuffers, validateNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { selectedGroupSelector, selectedConsumerSelector } from 'uiSrc/slices/browser/stream'
-import { prepareDataForClaimRequest, getDefaultConsumer, ClaimTimeOptions } from 'uiSrc/utils/streamUtils'
-import { ClaimPendingEntryDto, ClaimPendingEntriesResponse, ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
+import {
+  selectedGroupSelector,
+  selectedConsumerSelector,
+} from 'uiSrc/slices/browser/stream'
+import {
+  prepareDataForClaimRequest,
+  getDefaultConsumer,
+  ClaimTimeOptions,
+} from 'uiSrc/utils/streamUtils'
+import {
+  ClaimPendingEntryDto,
+  ClaimPendingEntriesResponse,
+  ConsumerDto,
+} from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
 
-const getConsumersOptions = (consumers: ConsumerDto[]) => (
+const getConsumersOptions = (consumers: ConsumerDto[]) =>
   consumers.map((consumer) => ({
     value: consumer.name?.viewValue,
     inputDisplay: (
       <EuiText size="m" className={styles.option} data-testid="consumer-option">
-        <EuiText className={styles.consumerName}>{consumer.name?.viewValue}</EuiText>
-        <EuiText size="s" className={styles.pendingCount} data-testid="pending-count">
+        <EuiText className={styles.consumerName}>
+          {consumer.name?.viewValue}
+        </EuiText>
+        <EuiText
+          size="s"
+          className={styles.pendingCount}
+          data-testid="pending-count"
+        >
           {`pending: ${consumer.pending}`}
         </EuiText>
       </EuiText>
-    )
+    ),
   }))
-)
 
 const timeOptions: EuiSuperSelectOption<ClaimTimeOptions>[] = [
   { value: ClaimTimeOptions.RELATIVE, inputDisplay: 'Relative Time' },
@@ -54,7 +70,7 @@ export interface Props {
   showPopover: () => void
   claimMessage: (
     data: Partial<ClaimPendingEntryDto>,
-    successAction: (data: ClaimPendingEntriesResponse) => void
+    successAction: (data: ClaimPendingEntriesResponse) => void,
   ) => void
   handleCancelClaim: () => void
 }
@@ -66,23 +82,25 @@ const MessageClaimPopover = (props: Props) => {
     closePopover,
     showPopover,
     claimMessage,
-    handleCancelClaim
+    handleCancelClaim,
   } = props
 
-  const {
-    data: consumers = [],
-  } = useSelector(selectedGroupSelector) ?? {}
-  const { name: currentConsumerName, pending = 0 } = useSelector(selectedConsumerSelector) ?? { name: '' }
+  const { data: consumers = [] } = useSelector(selectedGroupSelector) ?? {}
+  const { name: currentConsumerName, pending = 0 } = useSelector(
+    selectedConsumerSelector,
+  ) ?? { name: '' }
 
   const [isOptionalShow, setIsOptionalShow] = useState<boolean>(false)
-  const [consumerOptions, setConsumerOptions] = useState<EuiSuperSelectOption<string>[]>([])
+  const [consumerOptions, setConsumerOptions] = useState<
+    EuiSuperSelectOption<string>[]
+  >([])
   const [initialValues, setInitialValues] = useState({
     consumerName: '',
     minIdleTime: '0',
     timeCount: '0',
     timeOption: ClaimTimeOptions.RELATIVE,
     retryCount: '0',
-    force: false
+    force: false,
   })
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -102,8 +120,8 @@ const MessageClaimPopover = (props: Props) => {
       event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_CLAIMED,
       eventData: {
         databaseId: instanceId,
-        pending: pending - data.affected.length
-      }
+        pending: pending - data.affected.length,
+      },
     })
     setIsOptionalShow(false)
     formik.resetForm()
@@ -119,10 +137,7 @@ const MessageClaimPopover = (props: Props) => {
   const handleChangeTimeFormat = (value: ClaimTimeOptions) => {
     formik.setFieldValue('timeOption', value)
     if (value === ClaimTimeOptions.ABSOLUTE) {
-      formik.setFieldValue(
-        'timeCount',
-        new Date().getTime()
-      )
+      formik.setFieldValue('timeCount', new Date().getTime())
     } else {
       formik.setFieldValue('timeCount', '0')
     }
@@ -134,14 +149,21 @@ const MessageClaimPopover = (props: Props) => {
   }
 
   useEffect(() => {
-    const consumersWithoutCurrent = filter(consumers, (consumer) =>
-      !isEqualBuffers(consumer.name, currentConsumerName))
-    const sortedConsumers = orderBy(getConsumersOptions(consumersWithoutCurrent), ['name.viewValue'], ['asc'])
+    const consumersWithoutCurrent = filter(
+      consumers,
+      (consumer) => !isEqualBuffers(consumer.name, currentConsumerName),
+    )
+    const sortedConsumers = orderBy(
+      getConsumersOptions(consumersWithoutCurrent),
+      ['name.viewValue'],
+      ['asc'],
+    )
     if (sortedConsumers.length) {
       setConsumerOptions(sortedConsumers)
       setInitialValues({
         ...initialValues,
-        consumerName: getDefaultConsumer(consumersWithoutCurrent)?.name?.viewValue
+        consumerName: getDefaultConsumer(consumersWithoutCurrent)?.name
+          ?.viewValue,
       })
     }
   }, [consumers, currentConsumerName])
@@ -196,15 +218,15 @@ const MessageClaimPopover = (props: Props) => {
                 options={consumerOptions}
                 className={styles.consumerField}
                 name="consumerName"
-                onChange={(value) => formik.setFieldValue('consumerName', value)}
+                onChange={(value) =>
+                  formik.setFieldValue('consumerName', value)
+                }
                 data-testid="destination-select"
               />
             </EuiFormRow>
           </EuiFlexItem>
           <EuiFlexItem className={styles.relative}>
-            <EuiFormRow
-              label="Min Idle Time"
-            >
+            <EuiFormRow label="Min Idle Time">
               <EuiFieldNumber
                 name="minIdleTime"
                 id="minIdleTime"
@@ -216,7 +238,7 @@ const MessageClaimPopover = (props: Props) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     e.target.name,
-                    validateNumber(e.target.value.trim())
+                    validateNumber(e.target.value.trim()),
                   )
                 }}
                 type="text"
@@ -242,7 +264,7 @@ const MessageClaimPopover = (props: Props) => {
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                       formik.setFieldValue(
                         e.target.name,
-                        validateNumber(e.target.value.trim())
+                        validateNumber(e.target.value.trim()),
                       )
                     }}
                     type="text"
@@ -275,7 +297,7 @@ const MessageClaimPopover = (props: Props) => {
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                       formik.setFieldValue(
                         e.target.name,
-                        validateNumber(e.target.value.trim())
+                        validateNumber(e.target.value.trim()),
                       )
                     }}
                     type="text"

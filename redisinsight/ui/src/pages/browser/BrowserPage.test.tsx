@@ -2,10 +2,21 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import { useSelector } from 'react-redux'
-import { render, screen, fireEvent, mockedStore, cleanup, act, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  screen,
+  fireEvent,
+  mockedStore,
+  cleanup,
+  act,
+  waitForEuiToolTipVisible,
+} from 'uiSrc/utils/test-utils'
 import { KeyTypes } from 'uiSrc/constants'
 import { RootState } from 'uiSrc/slices/store'
-import { setSelectedKeyRefreshDisabled, toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
+import {
+  setSelectedKeyRefreshDisabled,
+  toggleBrowserFullScreen,
+} from 'uiSrc/slices/browser/keys'
 import BrowserPage from './BrowserPage'
 import KeyList, { Props as KeyListProps } from './components/key-list/KeyList'
 
@@ -22,7 +33,7 @@ jest.mock('./components/key-list/KeyList', () => ({
 
 const unprintableStringBuffer = {
   type: 'Buffer',
-  data: [172, 237, 0]
+  data: [172, 237, 0],
 }
 
 const mockKeyList = (props: KeyListProps) => (
@@ -30,7 +41,9 @@ const mockKeyList = (props: KeyListProps) => (
     <button
       type="button"
       data-testid="loadMoreItems-btn"
-      onClick={() => props?.handleScanMoreClick?.({ startIndex: 1, stopIndex: 2 })}
+      onClick={() =>
+        props?.handleScanMoreClick?.({ startIndex: 1, stopIndex: 2 })
+      }
     >
       loadMoreItems
     </button>
@@ -45,36 +58,39 @@ beforeEach(() => {
 })
 
 const selectKey = (state: any, selectedKey: any, data?: any = {}) => {
-  (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-    ...state,
-    app: {
-      ...state.app,
-      context: {
-        ...state.app.context,
-        contextInstanceId: 'instanceId',
-        browser: {
-          ...state.app.context.browser,
-          bulkActions: {
-            opened: false
+  ;(useSelector as jest.Mock).mockImplementation(
+    (callback: (arg0: RootState) => RootState) =>
+      callback({
+        ...state,
+        app: {
+          ...state.app,
+          context: {
+            ...state.app.context,
+            contextInstanceId: 'instanceId',
+            browser: {
+              ...state.app.context.browser,
+              bulkActions: {
+                opened: false,
+              },
+              keyList: {
+                ...state.app.context.keyList,
+                isDataLoaded: true,
+                selectedKey,
+              },
+            },
           },
-          keyList: {
-            ...state.app.context.keyList,
-            isDataLoaded: true,
+        },
+
+        browser: {
+          ...state.browser,
+          ...data,
+          keys: {
+            ...state.browser.keys,
             selectedKey,
           },
-        }
-      }
-    },
-
-    browser: {
-      ...state.browser,
-      ...data,
-      keys: {
-        ...state.browser.keys,
-        selectedKey,
-      },
-    }
-  }))
+        },
+      }),
+  )
 }
 
 /**
@@ -101,7 +117,7 @@ describe('KeyDetailsHeader', () => {
         size: 57,
         length: 7,
         nameString: '��',
-      }
+      },
     }
 
     selectKey(state, selectedKey)
@@ -115,7 +131,9 @@ describe('KeyDetailsHeader', () => {
     fireEvent.click(screen.getByTestId(/edit-key-btn/))
 
     expect(screen.getByTestId(/edit-key-btn/)).toBeInTheDocument()
-    fireEvent.change(screen.getByTestId(/edit-key-input/), { target: { value: 'val123' } })
+    fireEvent.change(screen.getByTestId(/edit-key-input/), {
+      target: { value: 'val123' },
+    })
 
     expect(queryByTestId('apply-btn')).toBeInTheDocument()
     fireEvent.click(screen.getByTestId(/apply-btn/))
@@ -150,7 +168,7 @@ describe('KeyDetailsWrapper', () => {
         size: 57,
         length: 7,
         nameString: '��',
-      }
+      },
     }
 
     selectKey(state, selectedKey)
@@ -168,7 +186,7 @@ describe('KeyDetailsWrapper', () => {
         size: 57,
         length: 7,
         nameString: '��',
-      }
+      },
     }
 
     // String value with unprintable characters
@@ -180,10 +198,10 @@ describe('KeyDetailsWrapper', () => {
           key: unprintableStringBuffer,
           value: {
             type: 'Buffer',
-            data: [172, 237, 0, 5, 115, 114, 0]
+            data: [172, 237, 0, 5, 115, 114, 0],
           },
-        }
-      }
+        },
+      },
     }
     selectKey(state, selectedKey, data)
 
@@ -194,12 +212,17 @@ describe('KeyDetailsWrapper', () => {
     fireEvent.click(screen.getByTestId(/string-value/))
 
     expect(screen.getByTestId(/string-value/)).toBeInTheDocument()
-    fireEvent.change(screen.getByTestId(/string-value/), { target: { value: 'val123' } })
+    fireEvent.change(screen.getByTestId(/string-value/), {
+      target: { value: 'val123' },
+    })
 
     expect(queryByTestId('apply-btn')).toBeInTheDocument()
     expect(queryByTestId('apply-btn')).toBeDisabled()
 
-    expect(store.getActions()).toEqual([...afterRenderActions, setSelectedKeyRefreshDisabled(true)])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true),
+    ])
 
     await act(async () => {
       fireEvent.mouseOver(screen.getByTestId('apply-btn'))
@@ -220,7 +243,7 @@ describe('KeyDetailsWrapper', () => {
         size: 57,
         length: 7,
         nameString: '��',
-      }
+      },
     }
 
     // Hash value with unprintable characters
@@ -233,18 +256,20 @@ describe('KeyDetailsWrapper', () => {
           match: '*',
           key: unprintableStringBuffer,
           total: 1,
-          fields: [{
-            value: unprintableStringBuffer,
-            field: {
-              type: 'Buffer',
-              data: [49], // 1
+          fields: [
+            {
+              value: unprintableStringBuffer,
+              field: {
+                type: 'Buffer',
+                data: [49], // 1
+              },
             },
-          }]
+          ],
         },
         updateValue: {
-          loading: false
-        }
-      }
+          loading: false,
+        },
+      },
     }
     selectKey(state, selectedKey, data)
 
@@ -259,12 +284,17 @@ describe('KeyDetailsWrapper', () => {
     fireEvent.click(screen.getByTestId(/hash_edit-btn-1/))
 
     expect(screen.getByTestId(/hash_value-editor-1/)).toBeInTheDocument()
-    fireEvent.change(screen.getByTestId(/hash_value-editor-1/), { target: { value: 'val123' } })
+    fireEvent.change(screen.getByTestId(/hash_value-editor-1/), {
+      target: { value: 'val123' },
+    })
 
     expect(queryByTestId('apply-btn')).toBeInTheDocument()
     expect(queryByTestId('apply-btn')).toBeDisabled()
 
-    expect(store.getActions()).toEqual([...afterRenderActions, setSelectedKeyRefreshDisabled(true)])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true),
+    ])
   })
 
   it('Verify that user cannot save key value (List) with unprintable characters', () => {
@@ -278,7 +308,7 @@ describe('KeyDetailsWrapper', () => {
         size: 57,
         length: 7,
         nameString: '��',
-      }
+      },
     }
 
     // List value with unprintable characters
@@ -291,18 +321,20 @@ describe('KeyDetailsWrapper', () => {
           offset: 0,
           key: unprintableStringBuffer,
           total: 1,
-          elements: [{
-            index: 0,
-            element: {
-              type: 'Buffer',
-              data: [172, 237, 0]
+          elements: [
+            {
+              index: 0,
+              element: {
+                type: 'Buffer',
+                data: [172, 237, 0],
+              },
             },
-          }]
+          ],
         },
         updateValue: {
-          loading: false
-        }
-      }
+          loading: false,
+        },
+      },
     }
     selectKey(state, selectedKey, data)
 
@@ -317,12 +349,17 @@ describe('KeyDetailsWrapper', () => {
     fireEvent.click(screen.getByTestId(/list_edit-btn-0/))
 
     expect(screen.getByTestId(/list_value-editor-0/)).toBeInTheDocument()
-    fireEvent.change(screen.getByTestId(/list_value-editor-0/), { target: { value: 'val123' } })
+    fireEvent.change(screen.getByTestId(/list_value-editor-0/), {
+      target: { value: 'val123' },
+    })
 
     expect(queryByTestId('apply-btn')).toBeInTheDocument()
     expect(queryByTestId('apply-btn')).toBeDisabled()
 
-    expect(store.getActions()).toEqual([...afterRenderActions, setSelectedKeyRefreshDisabled(true)])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true),
+    ])
   })
 })
 
@@ -344,7 +381,7 @@ describe('back btn', () => {
         size: 57,
         length: 7,
         nameString: '��',
-      }
+      },
     }
 
     selectKey(state, selectedKey)
@@ -362,7 +399,7 @@ describe('back btn', () => {
         size: 57,
         length: 7,
         nameString: '��',
-      }
+      },
     }
 
     // String value with unprintable characters
@@ -374,10 +411,10 @@ describe('back btn', () => {
           key: unprintableStringBuffer,
           value: {
             type: 'Buffer',
-            data: [172, 237, 0]
+            data: [172, 237, 0],
           },
-        }
-      }
+        },
+      },
     }
     selectKey(state, selectedKey, data)
 
@@ -386,6 +423,9 @@ describe('back btn', () => {
     const afterRenderActions = [...store.getActions()]
 
     fireEvent.click(screen.getByTestId('back-right-panel-btn'))
-    expect(store.getActions()).toEqual([...afterRenderActions, toggleBrowserFullScreen(true)])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      toggleBrowserFullScreen(true),
+    ])
   })
 })

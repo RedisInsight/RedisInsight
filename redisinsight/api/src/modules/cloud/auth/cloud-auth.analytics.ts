@@ -13,13 +13,13 @@ export class CloudAuthAnalytics extends TelemetryBaseService {
 
   sendCloudSignInSucceeded(
     sessionMetadata: SessionMetadata,
-    flow: CloudSsoFeatureStrategy, action?: string,
+    flow: CloudSsoFeatureStrategy,
+    action?: string,
   ) {
-    this.sendEvent(
-      sessionMetadata,
-      TelemetryEvents.CloudSignInSucceeded,
-      { flow, action },
-    );
+    this.sendEvent(sessionMetadata, TelemetryEvents.CloudSignInSucceeded, {
+      flow,
+      action,
+    });
   }
 
   sendCloudSignInFailed(

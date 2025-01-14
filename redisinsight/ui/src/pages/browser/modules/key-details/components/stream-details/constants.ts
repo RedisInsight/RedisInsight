@@ -5,8 +5,8 @@ export const MAX_FORMAT_LENGTH_STREAM_TIMESTAMP = 16
 export const MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP = 25
 
 interface StreamTabs {
-  id: StreamViewType,
-  label: string,
+  id: StreamViewType
+  label: string
   separator?: React.ReactElement
 }
 

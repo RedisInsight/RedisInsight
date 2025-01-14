@@ -2,7 +2,15 @@ import React from 'react'
 import { cloneDeep, set } from 'lodash'
 
 import { toggleCli, toggleCliHelper } from 'uiSrc/slices/cli/cli-settings'
-import { cleanup, fireEvent, mockedStore, render, screen, initialStateDefault, mockStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+  initialStateDefault,
+  mockStore,
+} from 'uiSrc/utils/test-utils'
 import { FeatureFlags } from 'uiSrc/constants'
 import BottomGroupMinimized from './BottomGroupMinimized'
 
@@ -15,9 +23,7 @@ beforeEach(() => {
 
 describe('BottomGroupMinimized', () => {
   it('should render', () => {
-    expect(
-      render(<BottomGroupMinimized />)
-    ).toBeTruthy()
+    expect(render(<BottomGroupMinimized />)).toBeTruthy()
   })
 
   it('should "toggleCli" action be called after click "expand-cli" button', () => {
@@ -39,11 +45,11 @@ describe('BottomGroupMinimized', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: true }
+      { flag: true },
     )
 
     render(<BottomGroupMinimized />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('expand-monitor')).toBeInTheDocument()
     expect(screen.queryByTestId('user-survey-link')).toBeInTheDocument()
@@ -53,11 +59,11 @@ describe('BottomGroupMinimized', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
 
     render(<BottomGroupMinimized />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('expand-monitor')).not.toBeInTheDocument()
     expect(screen.queryByTestId('user-survey-link')).not.toBeInTheDocument()

@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CloudCapiProvider } from 'src/modules/cloud/common/providers/cloud.capi.provider';
-import { ICloudCapiDatabase, ICloudCapiSubscriptionDatabases } from 'src/modules/cloud/database/models';
+import {
+  ICloudCapiDatabase,
+  ICloudCapiSubscriptionDatabases,
+} from 'src/modules/cloud/database/models';
 import { ICloudCapiCredentials } from 'src/modules/cloud/common/models';
 import {
   CreateFreeCloudDatabaseDto,

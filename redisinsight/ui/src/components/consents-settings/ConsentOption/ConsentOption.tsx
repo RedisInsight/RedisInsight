@@ -26,7 +26,7 @@ const ConsentOption = (props: Props) => {
     onChangeAgreement,
     checked,
     isSettingsPage = false,
-    withoutSpacer = false
+    withoutSpacer = false,
   } = props
   return (
     <EuiFlexItem key={consent.agreementName}>
@@ -49,16 +49,16 @@ const ConsentOption = (props: Props) => {
             showLabel={false}
             label=""
             checked={checked}
-            onChange={(e) => onChangeAgreement(e.target.checked, consent.agreementName)}
+            onChange={(e) =>
+              onChangeAgreement(e.target.checked, consent.agreementName)
+            }
             className={styles.switchOption}
             data-testid={`switch-option-${consent.agreementName}`}
             disabled={consent?.disabled}
           />
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiText className={styles.smallText}>
-            {parse(consent.label)}
-          </EuiText>
+          <EuiText className={styles.smallText}>{parse(consent.label)}</EuiText>
           {!isSettingsPage && consent.description && (
             <EuiText
               size="s"
@@ -71,7 +71,7 @@ const ConsentOption = (props: Props) => {
           )}
         </EuiFlexItem>
       </EuiFlexGroup>
-      {!withoutSpacer && (<EuiSpacer size="l" />)}
+      {!withoutSpacer && <EuiSpacer size="l" />}
     </EuiFlexItem>
   )
 }

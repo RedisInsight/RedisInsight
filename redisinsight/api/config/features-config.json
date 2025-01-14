@@ -3,7 +3,7 @@
   "features": {
     "redisDataIntegration": {
       "flag": true,
-      "perc": [[0,100]],
+      "perc": [[0, 100]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -14,15 +14,15 @@
     },
     "insightsRecommendations": {
       "flag": true,
-      "perc": [[0,100]]
+      "perc": [[0, 100]]
     },
     "hashFieldExpiration": {
       "flag": true,
-      "perc": [[0,100]]
+      "perc": [[0, 100]]
     },
     "documentationChat": {
       "flag": true,
-      "perc": [[0,100]],
+      "perc": [[0, 100]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -33,7 +33,7 @@
     },
     "databaseChat": {
       "flag": true,
-      "perc": [[0,100]],
+      "perc": [[0, 100]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -44,7 +44,7 @@
     },
     "cloudSso": {
       "flag": true,
-      "perc": [[0,100]],
+      "perc": [[0, 100]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -53,11 +53,13 @@
         }
       ],
       "data": {
-        "filterFreePlan": [{
-          "field": "name",
-          "expression": "^(No HA?.)|(Cache?.)|(30MB$)",
-          "options": "i"
-        }],
+        "filterFreePlan": [
+          {
+            "field": "name",
+            "expression": "^(No HA?.)|(Cache?.)|(30MB$)",
+            "options": "i"
+          }
+        ],
         "selectPlan": {
           "components": {
             "redisStackPreview": [

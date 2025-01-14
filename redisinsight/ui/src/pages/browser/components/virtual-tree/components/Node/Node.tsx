@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { NodePublicState } from 'react-vtree/dist/es/Tree'
 import cx from 'classnames'
-import {
-  EuiIcon,
-  EuiToolTip,
-  keys as ElasticKeys,
-} from '@elastic/eui'
+import { EuiIcon, EuiToolTip, keys as ElasticKeys } from '@elastic/eui'
 
-import {
-  Maybe,
-} from 'uiSrc/utils'
+import { Maybe } from 'uiSrc/utils'
 import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
 import KeyRowTTL from 'uiSrc/pages/browser/components/key-row-ttl'
 import KeyRowSize from 'uiSrc/pages/browser/components/key-row-size'
@@ -57,7 +51,8 @@ const Node = ({
 
   const delimiterView = delimiters.length === 1 ? delimiters[0] : '-'
 
-  const [deletePopoverId, setDeletePopoverId] = useState<Maybe<string>>(undefined)
+  const [deletePopoverId, setDeletePopoverId] =
+    useState<Maybe<string>>(undefined)
 
   useEffect(() => {
     if (!isLeaf || !nameBuffer) {
@@ -88,7 +83,10 @@ const Node = ({
     setDeletePopoverId(undefined)
   }
 
-  const handleDeletePopoverOpen = (index: Maybe<string>, type: KeyTypes | ModulesKeyTypes) => {
+  const handleDeletePopoverOpen = (
+    index: Maybe<string>,
+    type: KeyTypes | ModulesKeyTypes,
+  ) => {
     if (index !== deletePopoverId) {
       onDeleteClicked(type)
     }
@@ -118,10 +116,17 @@ const Node = ({
           </span>
         </div>
         <div className={styles.options}>
-          <div className={styles.approximate} data-testid={`percentage_${fullName}`}>
-            {keyApproximate ? `${keyApproximate < 1 ? '<1' : Math.round(keyApproximate)}%` : '' }
+          <div
+            className={styles.approximate}
+            data-testid={`percentage_${fullName}`}
+          >
+            {keyApproximate
+              ? `${keyApproximate < 1 ? '<1' : Math.round(keyApproximate)}%`
+              : ''}
           </div>
-          <div className={styles.keyCount} data-testid={`count_${fullName}`}>{keyCount ?? ''}</div>
+          <div className={styles.keyCount} data-testid={`count_${fullName}`}>
+            {keyCount ?? ''}
+          </div>
         </div>
       </>
     </EuiToolTip>
@@ -131,7 +136,12 @@ const Node = ({
     <>
       <KeyRowType type={type} nameString={nameString} />
       <KeyRowName shortName={shortName} nameString={nameString} />
-      <KeyRowTTL ttl={ttl} nameString={nameString} deletePopoverId={deletePopoverId} rowId={nodeId} />
+      <KeyRowTTL
+        ttl={ttl}
+        nameString={nameString}
+        deletePopoverId={deletePopoverId}
+        rowId={nodeId}
+      />
       <KeyRowSize
         size={size}
         nameString={nameString}
@@ -167,7 +177,9 @@ const Node = ({
   const tooltipContent = (
     <>
       <div className={styles.folderTooltipHeader}>
-        <span className={styles.folderPattern}>{`${fullName + delimiterView}*`}</span>
+        <span
+          className={styles.folderPattern}
+        >{`${fullName + delimiterView}*`}</span>
         {delimiters.length > 1 && (
           <span className={styles.delimiters}>
             {delimiters.map((delimiter) => (
@@ -184,14 +196,15 @@ const Node = ({
     <div
       style={{
         ...style,
-        paddingLeft: (nestingLevel > MAX_NESTING_LEVEL ? MAX_NESTING_LEVEL : nestingLevel) * 8,
+        paddingLeft:
+          (nestingLevel > MAX_NESTING_LEVEL
+            ? MAX_NESTING_LEVEL
+            : nestingLevel) * 8,
       }}
-      className={cx(
-        styles.nodeContainer, {
-          [styles.nodeSelected]: isSelected && isLeaf,
-          [styles.nodeRowEven]: index % 2 === 0,
-        }
-      )}
+      className={cx(styles.nodeContainer, {
+        [styles.nodeSelected]: isSelected && isLeaf,
+        [styles.nodeRowEven]: index % 2 === 0,
+      })}
     >
       {Node}
     </div>

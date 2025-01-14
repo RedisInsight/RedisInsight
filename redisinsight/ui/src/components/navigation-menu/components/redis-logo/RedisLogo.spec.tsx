@@ -20,14 +20,11 @@ describe('RedisLogo', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: true }
+      { flag: true },
     )
-    render(
-      <RedisLogo isRdiWorkspace={false} />,
-      {
-        store: mockStore(initialStoreState)
-      }
-    )
+    render(<RedisLogo isRdiWorkspace={false} />, {
+      store: mockStore(initialStoreState),
+    })
 
     expect(screen.getByTestId('redis-logo-link')).toBeInTheDocument()
   })
@@ -36,14 +33,11 @@ describe('RedisLogo', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
-    render(
-      <RedisLogo isRdiWorkspace={false} />,
-      {
-        store: mockStore(initialStoreState)
-      }
-    )
+    render(<RedisLogo isRdiWorkspace={false} />, {
+      store: mockStore(initialStoreState),
+    })
 
     expect(screen.queryByTestId('redis-logo-link')).not.toBeInTheDocument()
   })

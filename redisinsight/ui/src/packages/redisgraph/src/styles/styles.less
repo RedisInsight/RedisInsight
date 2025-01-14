@@ -1,6 +1,6 @@
 @charset "UTF-8";
-@import (less) "_dark_theme.less";
-@import (less) "_light_theme.less";
+@import (less) '_dark_theme.less';
+@import (less) '_light_theme.less';
 
 * {
   margin: 0px;
@@ -8,19 +8,18 @@
 }
 
 .theme_DARK {
-  --info-background: #20222B;
+  --info-background: #20222b;
   --info-color: white;
   --svg-background: #010101;
-  --tooltip-background: #3E4B5E;
+  --tooltip-background: #3e4b5e;
 }
 
 .theme_LIGHT {
   --info-background: white;
   --info-color: black;
-  --svg-background: #FFFFFF;
+  --svg-background: #ffffff;
   --tooltip-background: white;
 }
-
 
 * div,
 * span {
@@ -32,11 +31,9 @@
   padding-inline-start: 0px;
 }
 
-
 .table-view {
-
   // top-align-table json content
-  .euiTableRowCell  {
+  .euiTableRowCell {
     vertical-align: top;
   }
 
@@ -44,9 +41,7 @@
   .euiTableCellContent ul li ul li {
     padding-left: 0 !important;
   }
-
 }
-
 
 .neo4jd3-graph {
 }
@@ -81,17 +76,16 @@
 
       .euiButtonIcon {
         position: relative;
-	      top: 0px !important;
-	      right:6px !important;
+        top: 0px !important;
+        right: 6px !important;
       }
-
     }
 
     .info-props {
       display: grid;
       grid-template-columns: auto auto;
       gap: 5px 18px;
-      padding: 12px 18px 18px 18px
+      padding: 12px 18px 18px 18px;
     }
   }
 
@@ -132,7 +126,6 @@
   .graph-legends {
     display: flex;
   }
-
 }
 
 .node {
@@ -140,7 +133,7 @@
     .ring {
       -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=50)';
       filter: alpha(opacity=50);
-      opacity: .5;
+      opacity: 0.5;
       stroke: #888;
       stroke-width: 12px;
     }
@@ -174,11 +167,10 @@
 .node:hover .ring {
   -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=30)';
   filter: alpha(opacity=50);
-  opacity: .5;
+  opacity: 0.5;
 }
 
 .relationship {
-
   cursor: default;
 
   line {
@@ -206,7 +198,7 @@
 .relationship:hover .overlay {
   -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=30)';
   filter: alpha(opacity=50);
-  opacity: .5;
+  opacity: 0.5;
 }
 
 #graphd3 {
@@ -217,7 +209,6 @@
   cursor: move;
   background-color: var(--svg-background);
 }
-
 
 .box-node-label {
   display: flex;
@@ -241,7 +232,6 @@
   padding-right: 5px !important;
   margin-right: 12px !important;
 }
-
 
 .responseFail {
   color: #e06c75;
@@ -271,7 +261,6 @@
 .euiToolTip__arrow {
   background-color: var(--tooltip-background) !important;
 }
-
 
 .automatic-edges-switch {
   border-radius: 4px;

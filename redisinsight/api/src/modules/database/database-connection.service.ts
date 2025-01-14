@@ -7,7 +7,10 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { Database } from 'src/modules/database/models/database';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
+import {
+  RedisClient,
+  RedisClientConnectionType,
+} from 'src/modules/redis/client';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
 
@@ -29,7 +32,8 @@ export class DatabaseConnectionService {
    * @param clientMetadata
    */
   async connect(clientMetadata: ClientMetadata): Promise<void> {
-    const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+    const client =
+      await this.databaseClientFactory.getOrCreateClient(clientMetadata);
     // refresh modules list and last connected time
     // mark database as not a new
     // will be refreshed after user navigate to particular database from the databases list
@@ -50,9 +54,14 @@ export class DatabaseConnectionService {
       }));
     }
 
-    await this.repository.update(clientMetadata.sessionMetadata, clientMetadata.databaseId, toUpdate);
+    await this.repository.update(
+      clientMetadata.sessionMetadata,
+      clientMetadata.databaseId,
+      toUpdate,
+    );
 
-    const generalInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
+    const generalInfo =
+      await this.databaseInfoProvider.getRedisGeneralInfo(client);
 
     this.recommendationService.checkMulti(
       clientMetadata,
@@ -64,10 +73,16 @@ export class DatabaseConnectionService {
       generalInfo,
     );
 
-    const rdiFeature = await this.featureService.getByName(clientMetadata.sessionMetadata, KnownFeatures.Rdi);
+    const rdiFeature = await this.featureService.getByName(
+      clientMetadata.sessionMetadata,
+      KnownFeatures.Rdi,
+    );
 
     if (rdiFeature?.flag) {
-      const database = await this.repository.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);
+      const database = await this.repository.get(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+      );
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.TRY_RDI,
@@ -77,13 +92,21 @@ export class DatabaseConnectionService {
 
     this.collectClientInfo(clientMetadata, client, generalInfo?.version);
 
-    this.logger.debug(`Succeed to connect to database ${clientMetadata.databaseId}`, clientMetadata);
+    this.logger.debug(
+      `Succeed to connect to database ${clientMetadata.databaseId}`,
+      clientMetadata,
+    );
   }
 
-  private async collectClientInfo(clientMetadata: ClientMetadata, client: RedisClient, version?: string) {
+  private async collectClientInfo(
+    clientMetadata: ClientMetadata,
+    client: RedisClient,
+    version?: string,
+  ) {
     try {
       const intVersion = parseInt(version, 10) || 0;
-      const clients = await this.databaseInfoProvider.getClientListInfo(client) || [];
+      const clients =
+        (await this.databaseInfoProvider.getClientListInfo(client)) || [];
 
       this.analytics.sendDatabaseConnectedClientListEvent(
         clientMetadata.sessionMetadata,

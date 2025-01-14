@@ -1,6 +1,11 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
-import { fireEvent, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
+import {
+  fireEvent,
+  render,
+  screen,
+  waitForEuiPopoverVisible,
+} from 'uiSrc/utils/test-utils'
 
 import { Props, KeyDetailsHeaderFormatter } from './KeyDetailsHeaderFormatter'
 
@@ -34,6 +39,8 @@ describe('KeyValueFormatter', () => {
 
     await waitForEuiPopoverVisible()
 
-    expect(document.querySelector('.euiSuperSelect__listbox')).toHaveTextContent(strictOrder.join(''))
+    expect(
+      document.querySelector('.euiSuperSelect__listbox'),
+    ).toHaveTextContent(strictOrder.join(''))
   })
 })

@@ -17,12 +17,7 @@ export interface Props {
 }
 
 const UploadModal = (props: Props) => {
-  const {
-    children,
-    visible,
-    onUploadedPipeline,
-    onClose,
-  } = props
+  const { children, visible, onUploadedPipeline, onClose } = props
 
   const [isModalVisible, setIsModalVisible] = useState(visible)
   const [file, setFile] = useState<File>()
@@ -44,7 +39,9 @@ const UploadModal = (props: Props) => {
     }
 
     // check if job files exist
-    const jobFiles = Object.keys(zip.files).filter((filename) => filename.startsWith('jobs/'))
+    const jobFiles = Object.keys(zip.files).filter((filename) =>
+      filename.startsWith('jobs/'),
+    )
     if (!jobFiles.length) {
       throw new Error('No jobs folder found')
     }
@@ -54,8 +51,8 @@ const UploadModal = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FROM_FILE_CLICKED,
       eventData: {
-        id: rdiInstanceId
-      }
+        id: rdiInstanceId,
+      },
     })
 
     setIsModalVisible(true)
@@ -75,19 +72,26 @@ const UploadModal = (props: Props) => {
       const config = await zip.file('config.yaml')?.async('string')
       const jobs = await Promise.all(
         Object.keys(zip.files)
-          .filter((filename) => filename.startsWith('jobs/') && filename.endsWith('.yaml'))
+          .filter(
+            (filename) =>
+              filename.startsWith('jobs/') && filename.endsWith('.yaml'),
+          )
           .map(async (filename) => ({
             name: filename.split('/')[1].split('.')[0],
-            value: await zip.files[filename].async('string')
-          }))
+            value: await zip.files[filename].async('string'),
+          })),
       )
 
       const uploadFiles = {
         config: FileChangeType.Added,
-        ...jobs.reduce((acc, { name }) => {
-          acc[name] = FileChangeType.Added
-          return acc
-        }, {} as Record<string, FileChangeType>) }
+        ...jobs.reduce(
+          (acc, { name }) => {
+            acc[name] = FileChangeType.Added
+            return acc
+          },
+          {} as Record<string, FileChangeType>,
+        ),
+      }
 
       dispatch(setChangedFiles(uploadFiles))
 
@@ -101,7 +105,7 @@ const UploadModal = (props: Props) => {
           id: rdiInstanceId,
           jobsNumber: jobs.length,
           source: 'file',
-        }
+        },
       })
 
       setIsUploaded(true)
@@ -115,7 +119,7 @@ const UploadModal = (props: Props) => {
           id: rdiInstanceId,
           errorMessage,
           source: 'file',
-        }
+        },
       })
 
       setError(errorMessage)
@@ -134,7 +138,10 @@ const UploadModal = (props: Props) => {
   }
 
   const button = children
-    ? React.cloneElement(children, { disabled: loading, onClick: handleUploadClick })
+    ? React.cloneElement(children, {
+        disabled: loading,
+        onClick: handleUploadClick,
+      })
     : null
 
   return (
@@ -145,7 +152,11 @@ const UploadModal = (props: Props) => {
           onConfirm={handleConfirmModal}
           onFileChange={handleFileChangeModal}
           isUploaded={isUploaded}
-          showWarning={(!!values?.config || !!values?.jobs?.length) && !isUploaded && !error}
+          showWarning={
+            (!!values?.config || !!values?.jobs?.length) &&
+            !isUploaded &&
+            !error
+          }
           error={error}
           loading={loading}
         />

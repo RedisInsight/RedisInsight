@@ -11,10 +11,12 @@ export class SingleUserSessionProvider extends SessionProvider {
   }
 
   async createSession(session: Session): Promise<Session> {
-    return this.sessionStorage.createSession(plainToClass(Session, {
-      ...session,
-      id: DEFAULT_SESSION_ID,
-    }));
+    return this.sessionStorage.createSession(
+      plainToClass(Session, {
+        ...session,
+        id: DEFAULT_SESSION_ID,
+      }),
+    );
   }
 
   async updateSessionData(id: string, data: object) {

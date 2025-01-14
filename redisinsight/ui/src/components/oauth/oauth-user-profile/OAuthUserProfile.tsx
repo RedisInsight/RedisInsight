@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover, EuiText } from '@elastic/eui'
+import {
+  EuiIcon,
+  EuiLink,
+  EuiLoadingSpinner,
+  EuiPopover,
+  EuiText,
+} from '@elastic/eui'
 import cx from 'classnames'
 import { useHistory } from 'react-router-dom'
 import OAuthSignInButton from 'uiSrc/components/oauth/oauth-sign-in-button'
@@ -9,7 +15,7 @@ import {
   activateAccount,
   logoutUserAction,
   oauthCloudUserSelector,
-  setInitialLoadingState
+  setInitialLoadingState,
 } from 'uiSrc/slices/oauth/cloud'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud.svg?react'
 
@@ -19,7 +25,10 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getTruncatedName } from 'uiSrc/utils'
-import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import {
+  fetchSubscriptionsRedisCloud,
+  setSSOFlow,
+} from 'uiSrc/slices/instances/cloud'
 import { Pages } from 'uiSrc/constants'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { PackageType } from 'uiSrc/constants/env'
@@ -73,23 +82,25 @@ const OAuthUserProfile = (props: Props) => {
     if (selectingAccountId) return
 
     setSelectingAccountId(id)
-    dispatch(activateAccount(
-      `${id}`,
-      () => {
-        setSelectingAccountId(undefined)
-        sendEventTelemetry({
-          event: TelemetryEvent.CLOUD_ACCOUNT_SWITCHED
-        })
-      },
-      () => {
-        setSelectingAccountId(undefined)
-      }
-    ))
+    dispatch(
+      activateAccount(
+        `${id}`,
+        () => {
+          setSelectingAccountId(undefined)
+          sendEventTelemetry({
+            event: TelemetryEvent.CLOUD_ACCOUNT_SWITCHED,
+          })
+        },
+        () => {
+          setSelectingAccountId(undefined)
+        },
+      ),
+    )
   }
 
   const handleClickCloudAccount = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.CLOUD_CONSOLE_CLICKED
+      event: TelemetryEvent.CLOUD_CONSOLE_CLICKED,
     })
   }
 
@@ -98,39 +109,41 @@ const OAuthUserProfile = (props: Props) => {
 
     setIsImportLoading(true)
     dispatch(setSSOFlow(OAuthSocialAction.Import))
-    dispatch(fetchSubscriptionsRedisCloud(
-      null,
-      true,
-      () => {
-        history.push(Pages.redisCloudSubscriptions)
-        setIsImportLoading(false)
-      },
-      () => setIsImportLoading(false)
-    ))
+    dispatch(
+      fetchSubscriptionsRedisCloud(
+        null,
+        true,
+        () => {
+          history.push(Pages.redisCloudSubscriptions)
+          setIsImportLoading(false)
+        },
+        () => setIsImportLoading(false),
+      ),
+    )
 
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_IMPORT_DATABASES_SUBMITTED,
       eventData: {
-        source: OAuthSocialSource.UserProfile
-      }
+        source: OAuthSocialSource.UserProfile,
+      },
     })
   }
 
   const handleClickLogout = () => {
     setIsProfileOpen(false)
-    dispatch(logoutUserAction(
-      () => {
+    dispatch(
+      logoutUserAction(() => {
         sendEventTelemetry({
-          event: TelemetryEvent.CLOUD_SIGN_OUT_CLICKED
+          event: TelemetryEvent.CLOUD_SIGN_OUT_CLICKED,
         })
-      }
-    ))
+      }),
+    )
   }
 
   const handleToggleProfile = () => {
     if (!isProfileOpen) {
       sendEventTelemetry({
-        event: TelemetryEvent.CLOUD_PROFILE_OPENED
+        event: TelemetryEvent.CLOUD_PROFILE_OPENED,
       })
     }
     setIsProfileOpen((v) => !v)
@@ -147,7 +160,7 @@ const OAuthUserProfile = (props: Props) => {
         isOpen={isProfileOpen}
         closePopover={() => setIsProfileOpen(false)}
         panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
-        button={(
+        button={
           <div
             role="presentation"
             onClick={handleToggleProfile}
@@ -156,43 +169,52 @@ const OAuthUserProfile = (props: Props) => {
           >
             {getTruncatedName(name) || 'R'}
           </div>
-        )}
+        }
       >
         <div className={styles.popoverOptions}>
           <div className={styles.option}>
-            <EuiText className={styles.optionTitle}>Redis Cloud account</EuiText>
+            <EuiText className={styles.optionTitle}>
+              Redis Cloud account
+            </EuiText>
             <div className={styles.accounts}>
               {accounts?.map(({ name, id }) => (
                 <div
                   role="presentation"
                   key={id}
-                  className={cx(
-                    styles.account,
-                    {
-                      [styles.isCurrent]: id === currentAccountId,
-                      [styles.isSelected]: id === currentAccountId && accounts?.length > 1,
-                      [styles.isDisabled]: selectingAccountId,
-                    }
-                  )}
+                  className={cx(styles.account, {
+                    [styles.isCurrent]: id === currentAccountId,
+                    [styles.isSelected]:
+                      id === currentAccountId && accounts?.length > 1,
+                    [styles.isDisabled]: selectingAccountId,
+                  })}
                   onClick={() => handleClickSelectAccount(id)}
                   data-testid={`profile-account-${id}${id === currentAccountId ? '-selected' : ''}`}
                 >
                   <EuiText className={styles.accountNameId}>
                     <span className={styles.accountName}>{name}</span> #{id}
                   </EuiText>
-                  {id === currentAccountId && (<EuiIcon type="check" />)}
-                  {id === selectingAccountId && (<EuiLoadingSpinner className={styles.loadingSpinner} size="m" />)}
+                  {id === currentAccountId && <EuiIcon type="check" />}
+                  {id === selectingAccountId && (
+                    <EuiLoadingSpinner
+                      className={styles.loadingSpinner}
+                      size="m"
+                    />
+                  )}
                 </div>
               ))}
             </div>
           </div>
           <div
             role="presentation"
-            className={cx(styles.option, styles.clickableOption, { [styles.isDisabled]: isImportLoading })}
+            className={cx(styles.option, styles.clickableOption, {
+              [styles.isDisabled]: isImportLoading,
+            })}
             onClick={handleClickImport}
             data-testid="profile-import-cloud-databases"
           >
-            <EuiText className={styles.optionTitle}>Import Cloud databases</EuiText>
+            <EuiText className={styles.optionTitle}>
+              Import Cloud databases
+            </EuiText>
             {isImportLoading ? (
               <EuiLoadingSpinner className={styles.loadingSpinner} size="m" />
             ) : (
@@ -203,7 +225,9 @@ const OAuthUserProfile = (props: Props) => {
             external={false}
             target="_blank"
             className={cx(styles.option, styles.clickableOption)}
-            href={getUtmExternalLink(EXTERNAL_LINKS.cloudConsole, { campaign: 'cloud_account' })}
+            href={getUtmExternalLink(EXTERNAL_LINKS.cloudConsole, {
+              campaign: 'cloud_account',
+            })}
             onClick={handleClickCloudAccount}
             data-testid="cloud-console-link"
           >
@@ -216,7 +240,12 @@ const OAuthUserProfile = (props: Props) => {
                 {name}
               </EuiText>
             </div>
-            <EuiIcon type={CloudIcon} style={{ fill: 'none' }} viewBox="-1 0 30 20" strokeWidth={1.8} />
+            <EuiIcon
+              type={CloudIcon}
+              style={{ fill: 'none' }}
+              viewBox="-1 0 30 20"
+              strokeWidth={1.8}
+            />
           </EuiLink>
           <div
             role="presentation"

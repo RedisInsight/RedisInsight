@@ -11,9 +11,15 @@ import {
   mockStandaloneRedisClient,
   mockClusterRedisClient,
 } from 'src/__mocks__';
-import { REDIS_MODULES_COMMANDS, AdditionalRedisModuleName } from 'src/constants';
+import {
+  REDIS_MODULES_COMMANDS,
+  AdditionalRedisModuleName,
+} from 'src/constants';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
-import { ForbiddenException, InternalServerErrorException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 
@@ -47,7 +53,7 @@ const mockRedisModuleList = [
   { name: 'search', ver: 10000 },
   { name: 'timeseries', ver: 10000 },
   { name: 'customModule', ver: 10000 },
-].map((item) => ([].concat(...Object.entries(item))));
+].map((item) => [].concat(...Object.entries(item)));
 
 const mockUnknownCommandModule = new Error("unknown command 'module'");
 
@@ -163,15 +169,46 @@ describe('DatabaseInfoProvider', () => {
 
       const result = await service.determineDatabaseModules(standaloneClient);
 
-      expect(standaloneClient.call).not.toHaveBeenCalledWith('command', expect.anything());
+      expect(standaloneClient.call).not.toHaveBeenCalledWith(
+        'command',
+        expect.anything(),
+      );
       expect(result).toEqual([
-        { name: AdditionalRedisModuleName.RedisAI, version: 10000, semanticVersion: '1.0.0' },
-        { name: AdditionalRedisModuleName.RedisGraph, version: 10000, semanticVersion: '1.0.0' },
-        { name: AdditionalRedisModuleName.RedisGears, version: 10000, semanticVersion: '1.0.0' },
-        { name: AdditionalRedisModuleName.RedisBloom, version: 10000, semanticVersion: '1.0.0' },
-        { name: AdditionalRedisModuleName.RedisJSON, version: 10000, semanticVersion: '1.0.0' },
-        { name: AdditionalRedisModuleName.RediSearch, version: 10000, semanticVersion: '1.0.0' },
-        { name: AdditionalRedisModuleName.RedisTimeSeries, version: 10000, semanticVersion: '1.0.0' },
+        {
+          name: AdditionalRedisModuleName.RedisAI,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
+        {
+          name: AdditionalRedisModuleName.RedisGraph,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
+        {
+          name: AdditionalRedisModuleName.RedisGears,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
+        {
+          name: AdditionalRedisModuleName.RedisBloom,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
+        {
+          name: AdditionalRedisModuleName.RedisJSON,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
+        {
+          name: AdditionalRedisModuleName.RediSearch,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
+        {
+          name: AdditionalRedisModuleName.RedisTimeSeries,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
         { name: 'customModule', version: 10000, semanticVersion: undefined },
       ]);
     });
@@ -193,15 +230,42 @@ describe('DatabaseInfoProvider', () => {
 
       const result = await service.determineDatabaseModules(standaloneClient);
 
-      expect(standaloneClient.call).not.toHaveBeenCalledWith('command', expect.anything());
+      expect(standaloneClient.call).not.toHaveBeenCalledWith(
+        'command',
+        expect.anything(),
+      );
       expect(result).toEqual([
-        { name: AdditionalRedisModuleName.RedisAI, version: 10000, semanticVersion: '1.0.0' },
-        { name: AdditionalRedisModuleName.RedisGraph, version: 10000, semanticVersion: '1.0.0' },
-        { name: AdditionalRedisModuleName.RedisGears, version: 10000, semanticVersion: '1.0.0' },
-        { name: AdditionalRedisModuleName.RedisBloom, version: 10000, semanticVersion: '1.0.0' },
+        {
+          name: AdditionalRedisModuleName.RedisAI,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
+        {
+          name: AdditionalRedisModuleName.RedisGraph,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
+        {
+          name: AdditionalRedisModuleName.RedisGears,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
+        {
+          name: AdditionalRedisModuleName.RedisBloom,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
         // { name: AdditionalRedisModuleName.RedisJSON, version: 10000, semanticVersion: '1.0.0' }, should be ignored
-        { name: AdditionalRedisModuleName.RediSearch, version: 10000, semanticVersion: '1.0.0' },
-        { name: AdditionalRedisModuleName.RedisTimeSeries, version: 10000, semanticVersion: '1.0.0' },
+        {
+          name: AdditionalRedisModuleName.RediSearch,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
+        {
+          name: AdditionalRedisModuleName.RedisTimeSeries,
+          version: 10000,
+          semanticVersion: '1.0.0',
+        },
         { name: 'customModule', version: 10000, semanticVersion: undefined },
       ]);
     });
@@ -210,7 +274,10 @@ describe('DatabaseInfoProvider', () => {
         .calledWith(['module', 'list'], expect.anything())
         .mockRejectedValue(mockUnknownCommandModule);
       when(standaloneClient.call)
-        .calledWith(expect.arrayContaining(['command', 'info']), expect.anything())
+        .calledWith(
+          expect.arrayContaining(['command', 'info']),
+          expect.anything(),
+        )
         .mockResolvedValue([
           null,
           ['somecommand', -1, ['readonly'], 0, 0, -1, []],
@@ -218,7 +285,9 @@ describe('DatabaseInfoProvider', () => {
 
       const result = await service.determineDatabaseModules(standaloneClient);
 
-      expect(standaloneClient.call).toHaveBeenCalledTimes(REDIS_MODULES_COMMANDS.size + 1);
+      expect(standaloneClient.call).toHaveBeenCalledTimes(
+        REDIS_MODULES_COMMANDS.size + 1,
+      );
       expect(result).toEqual([
         { name: AdditionalRedisModuleName.RedisAI },
         { name: AdditionalRedisModuleName.RedisGraph },
@@ -234,7 +303,10 @@ describe('DatabaseInfoProvider', () => {
         .calledWith(['module', 'list'], expect.anything())
         .mockRejectedValue(mockUnknownCommandModule);
       when(standaloneClient.call)
-        .calledWith(expect.arrayContaining(['command', 'info']), expect.anything())
+        .calledWith(
+          expect.arrayContaining(['command', 'info']),
+          expect.anything(),
+        )
         .mockResolvedValue([
           null,
           ['somecommand', -1, ['readonly'], 0, 0, -1, []],
@@ -253,7 +325,9 @@ describe('DatabaseInfoProvider', () => {
 
       const result = await service.determineDatabaseModules(standaloneClient);
 
-      expect(standaloneClient.call).toHaveBeenCalledTimes(REDIS_MODULES_COMMANDS.size + 1);
+      expect(standaloneClient.call).toHaveBeenCalledTimes(
+        REDIS_MODULES_COMMANDS.size + 1,
+      );
       expect(result).toEqual([
         { name: AdditionalRedisModuleName.RedisAI },
         { name: AdditionalRedisModuleName.RedisGraph },
@@ -270,24 +344,31 @@ describe('DatabaseInfoProvider', () => {
         .mockRejectedValue(mockUnknownCommandModule);
       when(standaloneClient.call)
         .calledWith(
-          ['command', 'info', ...REDIS_MODULES_COMMANDS.get(AdditionalRedisModuleName.RediSearch)],
+          [
+            'command',
+            'info',
+            ...REDIS_MODULES_COMMANDS.get(AdditionalRedisModuleName.RediSearch),
+          ],
           expect.anything(),
         )
         .mockResolvedValue([['FT.INFO', -1, ['readonly'], 0, 0, -1, []]]);
 
       const result = await service.determineDatabaseModules(standaloneClient);
 
-      expect(standaloneClient.call).toHaveBeenCalledTimes(REDIS_MODULES_COMMANDS.size + 1);
-      expect(result).toEqual([
-        { name: AdditionalRedisModuleName.RediSearch },
-      ]);
+      expect(standaloneClient.call).toHaveBeenCalledTimes(
+        REDIS_MODULES_COMMANDS.size + 1,
+      );
+      expect(result).toEqual([{ name: AdditionalRedisModuleName.RediSearch }]);
     });
     it('should return empty array if MODULE LIST and COMMAND command not allowed', async () => {
       when(standaloneClient.call)
         .calledWith(['module', 'list'], expect.anything())
         .mockRejectedValue(mockUnknownCommandModule);
       when(standaloneClient.call)
-        .calledWith(expect.arrayContaining(['command', 'info']), expect.anything())
+        .calledWith(
+          expect.arrayContaining(['command', 'info']),
+          expect.anything(),
+        )
         .mockRejectedValue(mockUnknownCommandModule);
 
       const result = await service.determineDatabaseModules(standaloneClient);
@@ -319,7 +400,10 @@ describe('DatabaseInfoProvider', () => {
     });
 
     it('get general info for redis cluster', async () => {
-      clusterClient.nodes.mockResolvedValueOnce([standaloneClient, standaloneClient]);
+      clusterClient.nodes.mockResolvedValueOnce([
+        standaloneClient,
+        standaloneClient,
+      ]);
       when(standaloneClient.sendCommand)
         .calledWith(['dbsize'], { replyEncoding: 'utf8' })
         .mockResolvedValueOnce('1')
@@ -345,8 +429,7 @@ describe('DatabaseInfoProvider', () => {
       expect(result).toEqual(mockRedisGeneralInfo);
     });
     it('get general info for redis standalone without some optional fields', async () => {
-      const reply: string = `${mockRedisServerInfoResponse
-      }\r\n${
+      const reply: string = `${mockRedisServerInfoResponse}\r\n${
         mockRedisClientsInfoResponse
       }\r\n`;
       when(standaloneClient.sendCommand)
@@ -364,7 +447,10 @@ describe('DatabaseInfoProvider', () => {
       });
     });
     it('get general info for redis cluster', async () => {
-      clusterClient.nodes.mockResolvedValueOnce([standaloneClient, standaloneClient]);
+      clusterClient.nodes.mockResolvedValueOnce([
+        standaloneClient,
+        standaloneClient,
+      ]);
       when(standaloneClient.sendCommand)
         .calledWith(['info'], { replyEncoding: 'utf8' })
         .mockResolvedValueOnce(mockStandaloneRedisInfoReply)
@@ -379,11 +465,12 @@ describe('DatabaseInfoProvider', () => {
         nodes: [mockRedisGeneralInfo, mockRedisGeneralInfo],
       });
     });
-    it('should throw an error if no permission to run \'info\' command', async () => {
+    it("should throw an error if no permission to run 'info' command", async () => {
       when(standaloneClient.sendCommand)
         .calledWith(['info'], { replyEncoding: 'utf8' })
         .mockRejectedValue({
-          message: 'NOPERM this user has no permissions to run the \'info\' command',
+          message:
+            "NOPERM this user has no permissions to run the 'info' command",
         });
 
       try {

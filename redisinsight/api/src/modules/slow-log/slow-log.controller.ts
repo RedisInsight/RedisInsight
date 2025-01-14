@@ -1,5 +1,12 @@
 import {
-  Body, Controller, Delete, Get, Patch, Query, UsePipes, ValidationPipe,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { SlowLogService } from 'src/modules/slow-log/slow-log.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -14,9 +21,7 @@ import { ClientMetadata } from 'src/common/models';
 @Controller('slow-logs')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class SlowLogController {
-  constructor(
-    private service: SlowLogService,
-  ) {}
+  constructor(private service: SlowLogService) {}
 
   @ApiEndpoint({
     description: 'List of slow logs',
@@ -33,8 +38,9 @@ export class SlowLogController {
   async getSlowLogs(
     @ClientMetadataParam({
       ignoreDbIndex: true,
-    }) clientMetadata: ClientMetadata,
-      @Query() getSlowLogsDto: GetSlowLogsDto,
+    })
+    clientMetadata: ClientMetadata,
+    @Query() getSlowLogsDto: GetSlowLogsDto,
   ): Promise<any> {
     return this.service.getSlowLogs(clientMetadata, getSlowLogsDto);
   }
@@ -47,7 +53,8 @@ export class SlowLogController {
   async resetSlowLogs(
     @ClientMetadataParam({
       ignoreDbIndex: true,
-    }) clientMetadata: ClientMetadata,
+    })
+    clientMetadata: ClientMetadata,
   ): Promise<void> {
     return this.service.reset(clientMetadata);
   }
@@ -66,7 +73,8 @@ export class SlowLogController {
   async getConfig(
     @ClientMetadataParam({
       ignoreDbIndex: true,
-    }) clientMetadata: ClientMetadata,
+    })
+    clientMetadata: ClientMetadata,
   ): Promise<SlowLogConfig> {
     return this.service.getConfig(clientMetadata);
   }
@@ -85,8 +93,9 @@ export class SlowLogController {
   async updateConfig(
     @ClientMetadataParam({
       ignoreDbIndex: true,
-    }) clientMetadata: ClientMetadata,
-      @Body() dto: UpdateSlowLogConfigDto,
+    })
+    clientMetadata: ClientMetadata,
+    @Body() dto: UpdateSlowLogConfigDto,
   ): Promise<SlowLogConfig> {
     return this.service.updateConfig(clientMetadata, dto);
   }

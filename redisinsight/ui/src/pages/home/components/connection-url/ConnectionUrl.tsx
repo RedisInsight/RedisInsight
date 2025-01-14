@@ -9,7 +9,7 @@ import {
   EuiIcon,
   EuiSpacer,
   EuiTextArea,
-  EuiToolTip
+  EuiToolTip,
 } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,7 +21,7 @@ import { Instance } from 'uiSrc/slices/interfaces'
 import {
   createInstanceStandaloneAction,
   instancesSelector,
-  testInstanceStandaloneAction
+  testInstanceStandaloneAction,
 } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
 import ConnectivityOptions from './components/connectivity-options'
@@ -84,19 +84,21 @@ const ConnectionUrl = (props: Props) => {
     if (isInvalid) return
 
     const payload = getPayload(formik.values.connectionURL)
-    dispatch(createInstanceStandaloneAction(payload as Instance, () => {
-      history.push(Pages.sentinelDatabases)
-    }))
+    dispatch(
+      createInstanceStandaloneAction(payload as Instance, () => {
+        history.push(Pages.sentinelDatabases)
+      }),
+    )
   }
 
   const formik = useFormik({
     initialValues: {
-      connectionURL: 'redis://default@127.0.0.1:6379'
+      connectionURL: 'redis://default@127.0.0.1:6379',
     },
     validate,
     enableReinitialize: true,
     validateOnMount: true,
-    onSubmit
+    onSubmit,
   })
 
   return (
@@ -108,25 +110,35 @@ const ConnectionUrl = (props: Props) => {
       >
         <EuiFlexGroup>
           <EuiFlexItem>
-            <EuiFormRow label={(
-              <div className={styles.connectionUrlInfo}>
-                <div>Connection URL</div>
-                <EuiToolTip
-                  title="The following connection URLs are supported:"
-                  className="homePage_tooltip"
-                  position="right"
-                  content={(
-                    <ul className="homePage_toolTipUl">
-                      <li><span className="dot" />redis://[[username]:[password]]@host:port</li>
-                      <li><span className="dot" />rediss://[[username]:[password]]@host:port</li>
-                      <li><span className="dot" />host:port</li>
-                    </ul>
-                  )}
-                >
-                  <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-                </EuiToolTip>
-              </div>
-            )}
+            <EuiFormRow
+              label={
+                <div className={styles.connectionUrlInfo}>
+                  <div>Connection URL</div>
+                  <EuiToolTip
+                    title="The following connection URLs are supported:"
+                    className="homePage_tooltip"
+                    position="right"
+                    content={
+                      <ul className="homePage_toolTipUl">
+                        <li>
+                          <span className="dot" />
+                          redis://[[username]:[password]]@host:port
+                        </li>
+                        <li>
+                          <span className="dot" />
+                          rediss://[[username]:[password]]@host:port
+                        </li>
+                        <li>
+                          <span className="dot" />
+                          host:port
+                        </li>
+                      </ul>
+                    }
+                  >
+                    <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+                  </EuiToolTip>
+                </div>
+              }
             >
               <EuiTextArea
                 name="connectionURL"
@@ -149,7 +161,11 @@ const ConnectionUrl = (props: Props) => {
               position="top"
               anchorClassName="euiToolTip__btn-disabled"
               content={
-                isInvalid ? (<span className="euiToolTip__content">{ConnectionUrlError}</span>) : null
+                isInvalid ? (
+                  <span className="euiToolTip__content">
+                    {ConnectionUrlError}
+                  </span>
+                ) : null
               }
             >
               <EuiButtonEmpty
@@ -182,7 +198,11 @@ const ConnectionUrl = (props: Props) => {
                   position="top"
                   anchorClassName="euiToolTip__btn-disabled"
                   content={
-                    isInvalid ? (<span className="euiToolTip__content">{ConnectionUrlError}</span>) : null
+                    isInvalid ? (
+                      <span className="euiToolTip__content">
+                        {ConnectionUrlError}
+                      </span>
+                    ) : null
                   }
                 >
                   <EuiButton
@@ -205,7 +225,10 @@ const ConnectionUrl = (props: Props) => {
       <EuiSpacer />
       <div className={styles.hr}>Or</div>
       <EuiSpacer />
-      <ConnectivityOptions onClickOption={handleProceedForm} onClose={onClose} />
+      <ConnectivityOptions
+        onClickOption={handleProceedForm}
+        onClose={onClose}
+      />
     </div>
   )
 }

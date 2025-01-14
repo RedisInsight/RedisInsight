@@ -6,10 +6,14 @@ import {
   mockDatabaseClientFactory,
 } from 'src/__mocks__';
 import {
-  BrowserToolKeysCommands, BrowserToolStreamCommands,
+  BrowserToolKeysCommands,
+  BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import {
-  BadRequestException, ConflictException, InternalServerErrorException, NotFoundException,
+  BadRequestException,
+  ConflictException,
+  InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
@@ -52,14 +56,25 @@ describe('ConsumerGroupService', () => {
         .calledWith([BrowserToolKeysCommands.Exists, expect.anything()])
         .mockResolvedValueOnce(true);
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XInfoGroups]))
+        .calledWith(
+          expect.arrayContaining([BrowserToolStreamCommands.XInfoGroups]),
+        )
         .mockResolvedValue([mockConsumerGroupsReply, mockConsumerGroupsReply]);
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XPending]))
-        .mockResolvedValue(['s', mockConsumerGroup.smallestPendingId, mockConsumerGroup.greatestPendingId]);
+        .calledWith(
+          expect.arrayContaining([BrowserToolStreamCommands.XPending]),
+        )
+        .mockResolvedValue([
+          's',
+          mockConsumerGroup.smallestPendingId,
+          mockConsumerGroup.greatestPendingId,
+        ]);
     });
     it('should get consumer groups with info', async () => {
-      const groups = await service.getGroups(mockBrowserClientMetadata, mockKeyDto);
+      const groups = await service.getGroups(
+        mockBrowserClientMetadata,
+        mockKeyDto,
+      );
       expect(groups).toEqual([mockConsumerGroup, mockConsumerGroup]);
     });
     it('should throw error when key does not exists', async () => {
@@ -77,7 +92,9 @@ describe('ConsumerGroupService', () => {
     it('should throw Not Found error', async () => {
       when(client.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, expect.anything()])
-        .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
+        .mockRejectedValueOnce(
+          new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID),
+        );
 
       try {
         await service.getGroups(mockBrowserClientMetadata, mockKeyDto);
@@ -88,7 +105,9 @@ describe('ConsumerGroupService', () => {
     });
     it('should throw Wrong Type error', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XPending]))
+        .calledWith(
+          expect.arrayContaining([BrowserToolStreamCommands.XPending]),
+        )
         .mockRejectedValueOnce(new Error(RedisErrorCodes.WrongType));
 
       try {
@@ -103,7 +122,9 @@ describe('ConsumerGroupService', () => {
     });
     it('should throw Internal Server error', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XPending]))
+        .calledWith(
+          expect.arrayContaining([BrowserToolStreamCommands.XPending]),
+        )
         .mockRejectedValueOnce(new Error('oO'));
 
       try {
@@ -128,17 +149,24 @@ describe('ConsumerGroupService', () => {
       await expect(
         service.createGroups(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
+          consumerGroups: [
+            mockCreateConsumerGroupDto,
+            mockCreateConsumerGroupDto,
+          ],
         }),
       ).resolves.not.toThrow();
       expect(client.sendPipeline).toHaveBeenCalledWith([
         [
-          BrowserToolStreamCommands.XGroupCreate, mockKeyDto.keyName,
-          mockConsumerGroup.name, mockConsumerGroup.lastDeliveredId,
+          BrowserToolStreamCommands.XGroupCreate,
+          mockKeyDto.keyName,
+          mockConsumerGroup.name,
+          mockConsumerGroup.lastDeliveredId,
         ],
         [
-          BrowserToolStreamCommands.XGroupCreate, mockKeyDto.keyName,
-          mockConsumerGroup.name, mockConsumerGroup.lastDeliveredId,
+          BrowserToolStreamCommands.XGroupCreate,
+          mockKeyDto.keyName,
+          mockConsumerGroup.name,
+          mockConsumerGroup.lastDeliveredId,
         ],
       ]);
     });
@@ -150,7 +178,10 @@ describe('ConsumerGroupService', () => {
       try {
         await service.createGroups(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
+          consumerGroups: [
+            mockCreateConsumerGroupDto,
+            mockCreateConsumerGroupDto,
+          ],
         });
         fail();
       } catch (e) {
@@ -161,12 +192,17 @@ describe('ConsumerGroupService', () => {
     it('should throw Not Found error', async () => {
       when(client.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, expect.anything()])
-        .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
+        .mockRejectedValueOnce(
+          new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID),
+        );
 
       try {
         await service.createGroups(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
+          consumerGroups: [
+            mockCreateConsumerGroupDto,
+            mockCreateConsumerGroupDto,
+          ],
         });
         fail();
       } catch (e) {
@@ -175,12 +211,17 @@ describe('ConsumerGroupService', () => {
       }
     });
     it('should throw Wrong Type error', async () => {
-      client.sendPipeline.mockResolvedValue([[new Error(RedisErrorCodes.WrongType), '123-1']]);
+      client.sendPipeline.mockResolvedValue([
+        [new Error(RedisErrorCodes.WrongType), '123-1'],
+      ]);
 
       try {
         await service.createGroups(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
+          consumerGroups: [
+            mockCreateConsumerGroupDto,
+            mockCreateConsumerGroupDto,
+          ],
         });
         fail();
       } catch (e) {
@@ -189,14 +230,17 @@ describe('ConsumerGroupService', () => {
       }
     });
     it('should throw Conflict when trying to create existing group', async () => {
-      client.sendPipeline.mockResolvedValue([[
-        new Error('BUSYGROUP such group already there!'), '123-1',
-      ]]);
+      client.sendPipeline.mockResolvedValue([
+        [new Error('BUSYGROUP such group already there!'), '123-1'],
+      ]);
 
       try {
         await service.createGroups(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
+          consumerGroups: [
+            mockCreateConsumerGroupDto,
+            mockCreateConsumerGroupDto,
+          ],
         });
         fail();
       } catch (e) {
@@ -210,7 +254,10 @@ describe('ConsumerGroupService', () => {
       try {
         await service.createGroups(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto, mockCreateConsumerGroupDto],
+          consumerGroups: [
+            mockCreateConsumerGroupDto,
+            mockCreateConsumerGroupDto,
+          ],
         });
         fail();
       } catch (e) {
@@ -225,7 +272,9 @@ describe('ConsumerGroupService', () => {
         .calledWith([BrowserToolKeysCommands.Exists, expect.anything()])
         .mockResolvedValueOnce(true);
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XGroupSetId]))
+        .calledWith(
+          expect.arrayContaining([BrowserToolStreamCommands.XGroupSetId]),
+        )
         .mockResolvedValue('OK');
     });
     it('update group', async () => {
@@ -260,7 +309,9 @@ describe('ConsumerGroupService', () => {
     it('should throw Not Found error', async () => {
       when(client.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, expect.anything()])
-        .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
+        .mockRejectedValueOnce(
+          new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID),
+        );
 
       try {
         await service.updateGroup(mockBrowserClientMetadata, {
@@ -273,7 +324,9 @@ describe('ConsumerGroupService', () => {
       }
     });
     it('should throw Wrong Type error', async () => {
-      client.sendCommand.mockRejectedValueOnce(new Error(RedisErrorCodes.WrongType));
+      client.sendCommand.mockRejectedValueOnce(
+        new Error(RedisErrorCodes.WrongType),
+      );
 
       try {
         await service.updateGroup(mockBrowserClientMetadata, {
@@ -287,7 +340,9 @@ describe('ConsumerGroupService', () => {
       }
     });
     it('should throw NotFound when trying to modify not-existing group', async () => {
-      client.sendCommand.mockRejectedValueOnce(new Error('NOGROUP no such group'));
+      client.sendCommand.mockRejectedValueOnce(
+        new Error('NOGROUP no such group'),
+      );
 
       try {
         await service.updateGroup(mockBrowserClientMetadata, {
@@ -326,12 +381,23 @@ describe('ConsumerGroupService', () => {
       await expect(
         service.deleteGroup(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.name],
+          consumerGroups: [
+            mockCreateConsumerGroupDto.name,
+            mockCreateConsumerGroupDto.name,
+          ],
         }),
       ).resolves.not.toThrow();
       expect(client.sendPipeline).toHaveBeenCalledWith([
-        [BrowserToolStreamCommands.XGroupDestroy, mockKeyDto.keyName, mockConsumerGroup.name],
-        [BrowserToolStreamCommands.XGroupDestroy, mockKeyDto.keyName, mockConsumerGroup.name],
+        [
+          BrowserToolStreamCommands.XGroupDestroy,
+          mockKeyDto.keyName,
+          mockConsumerGroup.name,
+        ],
+        [
+          BrowserToolStreamCommands.XGroupDestroy,
+          mockKeyDto.keyName,
+          mockConsumerGroup.name,
+        ],
       ]);
     });
     it('should throw Not Found when key does not exists', async () => {
@@ -342,7 +408,10 @@ describe('ConsumerGroupService', () => {
       try {
         await service.deleteGroup(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.name],
+          consumerGroups: [
+            mockCreateConsumerGroupDto.name,
+            mockCreateConsumerGroupDto.name,
+          ],
         });
         fail();
       } catch (e) {
@@ -353,12 +422,17 @@ describe('ConsumerGroupService', () => {
     it('should throw Not Found error', async () => {
       when(client.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, expect.anything()])
-        .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
+        .mockRejectedValueOnce(
+          new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID),
+        );
 
       try {
         await service.deleteGroup(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.name],
+          consumerGroups: [
+            mockCreateConsumerGroupDto.name,
+            mockCreateConsumerGroupDto.name,
+          ],
         });
         fail();
       } catch (e) {
@@ -367,12 +441,17 @@ describe('ConsumerGroupService', () => {
       }
     });
     it('should throw Wrong Type error', async () => {
-      client.sendPipeline.mockResolvedValue([[new Error(RedisErrorCodes.WrongType), '123-1']]);
+      client.sendPipeline.mockResolvedValue([
+        [new Error(RedisErrorCodes.WrongType), '123-1'],
+      ]);
 
       try {
         await service.deleteGroup(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.name],
+          consumerGroups: [
+            mockCreateConsumerGroupDto.name,
+            mockCreateConsumerGroupDto.name,
+          ],
         });
         fail();
       } catch (e) {
@@ -386,7 +465,10 @@ describe('ConsumerGroupService', () => {
       try {
         await service.deleteGroup(mockBrowserClientMetadata, {
           ...mockKeyDto,
-          consumerGroups: [mockCreateConsumerGroupDto.name, mockCreateConsumerGroupDto.name],
+          consumerGroups: [
+            mockCreateConsumerGroupDto.name,
+            mockCreateConsumerGroupDto.name,
+          ],
         });
         fail();
       } catch (e) {

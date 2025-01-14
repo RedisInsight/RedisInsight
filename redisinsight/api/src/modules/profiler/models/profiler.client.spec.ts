@@ -1,6 +1,9 @@
 import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
 import {
-  mockLogEmitter, mockMonitorDataItem, mockMonitorDataItemEmitted, mockSocket,
+  mockLogEmitter,
+  mockMonitorDataItem,
+  mockMonitorDataItemEmitted,
+  mockSocket,
 } from 'src/__mocks__';
 import { ProfilerServerEvents } from 'src/modules/profiler/constants';
 import { WsException } from '@nestjs/websockets';
@@ -28,7 +31,10 @@ describe('ProfilerClient', () => {
     expect(profilerClient['items'].length).toEqual(2);
     expect(mockLogEmitter.emit).not.toHaveBeenCalled();
     await new Promise((res) => setTimeout(res, 100));
-    expect(mockLogEmitter.emit).toHaveBeenCalledWith([mockMonitorDataItemEmitted, mockMonitorDataItemEmitted]);
+    expect(mockLogEmitter.emit).toHaveBeenCalledWith([
+      mockMonitorDataItemEmitted,
+      mockMonitorDataItemEmitted,
+    ]);
     expect(profilerClient['items'].length).toEqual(0);
   });
 
@@ -42,10 +48,14 @@ describe('ProfilerClient', () => {
 
   it('addLogsEmitter', () => {
     profilerClient.addLogsEmitter(mockLogEmitter);
-    expect(mockLogEmitter.addProfilerClient).toHaveBeenCalledWith(profilerClient.id);
+    expect(mockLogEmitter.addProfilerClient).toHaveBeenCalledWith(
+      profilerClient.id,
+    );
     expect(profilerClient['logsEmitters'].size).toEqual(1);
     profilerClient.addLogsEmitter(mockLogEmitter);
-    expect(mockLogEmitter.addProfilerClient).toHaveBeenCalledWith(profilerClient.id);
+    expect(mockLogEmitter.addProfilerClient).toHaveBeenCalledWith(
+      profilerClient.id,
+    );
     expect(profilerClient['logsEmitters'].size).toEqual(1);
   });
 
@@ -54,6 +64,8 @@ describe('ProfilerClient', () => {
     profilerClient.flushLogs();
     expect(mockLogEmitter.flushLogs).toHaveBeenCalled();
     profilerClient.destroy();
-    expect(mockLogEmitter.removeProfilerClient).toHaveBeenCalledWith(profilerClient.id);
+    expect(mockLogEmitter.removeProfilerClient).toHaveBeenCalledWith(
+      profilerClient.id,
+    );
   });
 });

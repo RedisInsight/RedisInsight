@@ -1,5 +1,9 @@
 import React from 'react'
-import { KeyTypes, MODULES_KEY_TYPES_NAMES, ModulesKeyTypes } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  MODULES_KEY_TYPES_NAMES,
+  ModulesKeyTypes,
+} from 'uiSrc/constants'
 import { KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 import ModulesTypeDetails from '../modules-type-details/ModulesTypeDetails'
 import UnsupportedTypeDetails from '../unsupported-type-details/UnsupportedTypeDetails'
@@ -36,8 +40,14 @@ const DynamicTypeDetails = (props: Props) => {
   }
 
   // Unsupported redis modules key type
-  if (Object.values(ModulesKeyTypes).includes(selectedKeyType as ModulesKeyTypes)) {
-    return <ModulesTypeDetails moduleName={MODULES_KEY_TYPES_NAMES[selectedKeyType]} />
+  if (
+    Object.values(ModulesKeyTypes).includes(selectedKeyType as ModulesKeyTypes)
+  ) {
+    return (
+      <ModulesTypeDetails
+        moduleName={MODULES_KEY_TYPES_NAMES[selectedKeyType]}
+      />
+    )
   }
 
   // Unsupported key type

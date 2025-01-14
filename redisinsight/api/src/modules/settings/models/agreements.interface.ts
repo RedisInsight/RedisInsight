@@ -11,7 +11,7 @@ export interface IAgreement {
   description?: string;
   options?: {
     [key: string]: IAgreement;
-  }
+  };
 }
 
 export interface IAgreementSpec {

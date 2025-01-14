@@ -39,8 +39,8 @@ describe('RedisCloudSubscriptions', () => {
           {...instance(mockedProps)}
           columns={columnsMock}
           subscriptions={subscriptionsMock}
-        />
-      )
+        />,
+      ),
     ).toBeTruthy()
   })
 })

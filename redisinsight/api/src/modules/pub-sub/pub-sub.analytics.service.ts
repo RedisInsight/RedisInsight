@@ -11,7 +11,7 @@ import { SubscriptionDto } from './dto';
 export interface IExecResult {
   response: any;
   status: CommandExecutionStatus;
-  error?: RedisError | ReplyError | Error,
+  error?: RedisError | ReplyError | Error;
 }
 
 @Injectable()
@@ -20,37 +20,40 @@ export class PubSubAnalyticsService extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendMessagePublishedEvent(sessionMetadata: SessionMetadata, databaseId: string, affected: number): void {
+  sendMessagePublishedEvent(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    affected: number,
+  ): void {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.PubSubMessagePublished,
-        {
-          databaseId,
-          clients: affected,
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.PubSubMessagePublished, {
+        databaseId,
+        clients: affected,
+      });
     } catch (e) {
       // continue regardless of error
     }
   }
 
-  sendChannelSubscribeEvent(sessionMetadata: SessionMetadata, databaseId: string, subs: SubscriptionDto[]): void {
+  sendChannelSubscribeEvent(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    subs: SubscriptionDto[],
+  ): void {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.PubSubChannelSubscribed,
-        {
-          databaseId,
-          allChannels: some(subs, { channel: DEFAULT_MATCH }) ? 'yes' : 'no',
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.PubSubChannelSubscribed, {
+        databaseId,
+        allChannels: some(subs, { channel: DEFAULT_MATCH }) ? 'yes' : 'no',
+      });
     } catch (e) {
       // continue regardless of error
     }
   }
 
-  sendChannelUnsubscribeEvent(sessionMetadata: SessionMetadata, databaseId: string): void {
+  sendChannelUnsubscribeEvent(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+  ): void {
     try {
       this.sendEvent(
         sessionMetadata,

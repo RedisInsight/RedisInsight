@@ -1,6 +1,10 @@
 import { Cluster } from 'ioredis';
 import {
-  RedisClient, RedisClientConnectionType, IoredisClient, StandaloneIoredisClient, RedisClientNodeRole,
+  RedisClient,
+  RedisClientConnectionType,
+  IoredisClient,
+  StandaloneIoredisClient,
+  RedisClientNodeRole,
 } from 'src/modules/redis/client';
 import { findKey } from 'lodash';
 
@@ -18,7 +22,8 @@ export class ClusterIoredisClient extends IoredisClient {
   }
 
   async nodes(role?: RedisClientNodeRole): Promise<RedisClient[]> {
-    return this.client.nodes(role ? IoredisNodeRole[role] : IoredisNodeRole.ALL)
+    return this.client
+      .nodes(role ? IoredisNodeRole[role] : IoredisNodeRole.ALL)
       .map((node) => {
         let natAddress = {};
 
@@ -37,15 +42,11 @@ export class ClusterIoredisClient extends IoredisClient {
           }
         }
 
-        return new StandaloneIoredisClient(
-          this.clientMetadata,
-          node,
-          {
-            host: node.options.host,
-            port: node.options.port,
-            ...natAddress,
-          },
-        );
+        return new StandaloneIoredisClient(this.clientMetadata, node, {
+          host: node.options.host,
+          port: node.options.port,
+          ...natAddress,
+        });
       });
   }
 }

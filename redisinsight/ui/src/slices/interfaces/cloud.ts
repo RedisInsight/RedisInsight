@@ -39,7 +39,7 @@ export interface StateAppOAuth {
 }
 
 export interface CloudImportDatabaseResources {
-  subscriptionId: number,
+  subscriptionId: number
   databaseId?: number
   region: string
   provider?: string
@@ -100,13 +100,13 @@ export enum OAuthSocialSource {
 export enum OAuthSocialAction {
   Create = 'create',
   Import = 'import',
-  SignIn = 'signIn'
+  SignIn = 'signIn',
 }
 
 export enum OAuthStrategy {
   Google = 'google',
   GitHub = 'github',
-  SSO = 'sso'
+  SSO = 'sso',
 }
 
 export enum CloudSsoUtmCampaign {

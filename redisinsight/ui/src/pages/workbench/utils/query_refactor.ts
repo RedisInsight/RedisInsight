@@ -28,14 +28,21 @@ export const findSuggestionsByQueryArgs = (
       const currentArg = findArgByToken(command?.arguments || [], arg)
 
       if (currentArg?.type === ICommandTokenType.Block) {
-        return getLastBlock(args.slice(i), currentArg, { queryArgs: queryArgs.slice(i), command: currentArg, parent })
+        return getLastBlock(args.slice(i), currentArg, {
+          queryArgs: queryArgs.slice(i),
+          command: currentArg,
+          parent,
+        })
       }
     }
 
     return parent
   }
 
-  const blockToken: BlockTokensTree = { queryArgs: queryArgs.slice(scopeCommand ? 1 : 0), command: scopeCommand }
+  const blockToken: BlockTokensTree = {
+    queryArgs: queryArgs.slice(scopeCommand ? 1 : 0),
+    command: scopeCommand,
+  }
   const currentBlock = getLastBlock(queryArgs, scopeCommand, blockToken)
   const stopArgument = findStopArgumentWithSuggestions(currentBlock)
 
@@ -46,7 +53,7 @@ export const findSuggestionsByQueryArgs = (
 
 const getStopArgument = (
   queryArgs: string[],
-  command: Maybe<IRedisCommand>
+  command: Maybe<IRedisCommand>,
 ) => {
   let currentCommandArgIndex = 0
 
@@ -62,10 +69,16 @@ const getStopArgument = (
 
 const findStopArgumentWithSuggestions = (currentBlock: BlockTokensTree) => {
   console.log(currentBlock)
-  const stopArgument = getStopArgument(currentBlock.queryArgs, currentBlock.command)
+  const stopArgument = getStopArgument(
+    currentBlock.queryArgs,
+    currentBlock.command,
+  )
 
   return null
 }
 
-const findArgByToken = (list: IRedisCommand[], arg: string): Maybe<IRedisCommand> =>
+const findArgByToken = (
+  list: IRedisCommand[],
+  arg: string,
+): Maybe<IRedisCommand> =>
   list.find((command) => isTokenEqualsArg(command, arg))

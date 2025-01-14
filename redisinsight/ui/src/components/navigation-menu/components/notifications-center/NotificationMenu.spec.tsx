@@ -1,7 +1,10 @@
 import { fireEvent } from '@testing-library/react'
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { notificationCenterSelector, setIsCenterOpen } from 'uiSrc/slices/app/notifications'
+import {
+  notificationCenterSelector,
+  setIsCenterOpen,
+} from 'uiSrc/slices/app/notifications'
 import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import NotificationMenu from './NotificationMenu'
 
@@ -11,7 +14,7 @@ jest.mock('uiSrc/slices/app/notifications', () => ({
     notifications: [],
     totalUnread: 1,
     isCenterOpen: false,
-  })
+  }),
 }))
 
 let store: typeof mockedStore
@@ -43,7 +46,7 @@ describe('NotificationMenu', () => {
   })
 
   it('should show badge with count 9+ of unread messages', async () => {
-    (notificationCenterSelector as jest.Mock).mockReturnValueOnce({
+    ;(notificationCenterSelector as jest.Mock).mockReturnValueOnce({
       notifications: [],
       totalUnread: 13,
       isCenterOpen: false,

@@ -14,8 +14,14 @@ export interface Props {
   headerLoading: boolean
 }
 
-const CurrentPipelineStatus = ({ pipelineState, statusError, headerLoading }: Props) => {
-  const getPipelineStateIconAndLabel = (pipelineState: Maybe<PipelineState>) => {
+const CurrentPipelineStatus = ({
+  pipelineState,
+  statusError,
+  headerLoading,
+}: Props) => {
+  const getPipelineStateIconAndLabel = (
+    pipelineState: Maybe<PipelineState>,
+  ) => {
     switch (pipelineState) {
       case PipelineState.InitialSync:
         return { icon: initialSyncIcon, label: 'Initial sync' }
@@ -43,9 +49,7 @@ const CurrentPipelineStatus = ({ pipelineState, statusError, headerLoading }: Pr
           anchorClassName={statusError && styles.tooltip}
         >
           <div className={styles.stateBadge} data-testid="pipeline-state-badge">
-            <EuiIcon
-              type={stateInfo.icon}
-            />
+            <EuiIcon type={stateInfo.icon} />
             <span>{stateInfo.label}</span>
           </div>
         </EuiToolTip>

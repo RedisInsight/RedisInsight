@@ -8,14 +8,16 @@ import { SettingsPage } from 'uiSrc/pages'
 
 describe('RouteWithSubRoutes', () => {
   it('should render', () => {
-    expect(render(
-      <Router>
-        <RouteWithSubRoutes
-          key={1}
-          path={Pages.settings}
-          component={SettingsPage}
-        />
-      </Router>
-    )).toBeTruthy()
+    expect(
+      render(
+        <Router>
+          <RouteWithSubRoutes
+            key={1}
+            path={Pages.settings}
+            component={SettingsPage}
+          />
+        </Router>,
+      ),
+    ).toBeTruthy()
   })
 })

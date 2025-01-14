@@ -1,11 +1,17 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import {
   deleteConsumers,
   loadConsumerGroups,
-  setSelectedConsumer
+  setSelectedConsumer,
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { bufferToString } from 'uiSrc/utils'
@@ -29,21 +35,24 @@ jest.mock('./ConsumersView', () => ({
 }))
 
 const mockConsumerName = 'group'
-const mockConsumers: ConsumerDto[] = [{
-  name: {
-    ...bufferToString('test'),
-    viewValue: 'test'
+const mockConsumers: ConsumerDto[] = [
+  {
+    name: {
+      ...bufferToString('test'),
+      viewValue: 'test',
+    },
+    idle: 123,
+    pending: 321,
   },
-  idle: 123,
-  pending: 321,
-}, {
-  name: {
-    ...bufferToString('test2'),
-    viewValue: 'test2'
+  {
+    name: {
+      ...bufferToString('test2'),
+      viewValue: 'test2',
+    },
+    idle: 13,
+    pending: 31,
   },
-  idle: 13,
-  pending: 31,
-}]
+]
 
 const mockConsumersView = (props: ConsumersViewProps) => (
   <div data-testid="stream-consumers-container">
@@ -70,7 +79,9 @@ describe('ConsumersViewWrapper', () => {
   })
 
   it('should render', () => {
-    expect(render(<ConsumersViewWrapper {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<ConsumersViewWrapper {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
   it('should render Consumers container', () => {
@@ -86,7 +97,11 @@ describe('ConsumersViewWrapper', () => {
 
     fireEvent.click(screen.getByTestId('select-consumer-btn'))
 
-    expect(store.getActions()).toEqual([...afterRenderActions, setSelectedConsumer(), loadConsumerGroups(false)])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedConsumer(),
+      loadConsumerGroups(false),
+    ])
   })
 
   it('should delete Consumer', () => {
@@ -97,6 +112,9 @@ describe('ConsumersViewWrapper', () => {
     fireEvent.click(screen.getByTestId('remove-consumer-button-test-icon'))
     fireEvent.click(screen.getByTestId('remove-consumer-button-test'))
 
-    expect(store.getActions()).toEqual([...afterRenderActions, deleteConsumers()])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      deleteConsumers(),
+    ])
   })
 })

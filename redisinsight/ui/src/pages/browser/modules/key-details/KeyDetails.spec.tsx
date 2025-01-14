@@ -1,9 +1,18 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen, act } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  screen,
+  act,
+} from 'uiSrc/utils/test-utils'
 
-import { defaultSelectedKeyAction, setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
+import {
+  defaultSelectedKeyAction,
+  setSelectedKeyRefreshDisabled,
+} from 'uiSrc/slices/browser/keys'
 import { stringToBuffer } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { apiService } from 'uiSrc/services'
@@ -34,36 +43,63 @@ describe('KeyDetails', () => {
 
     expect(store.getActions()).toEqual([
       defaultSelectedKeyAction(),
-      setSelectedKeyRefreshDisabled(false)
+      setSelectedKeyRefreshDisabled(false),
     ])
   })
 
   it('should render nothing when there are no keys', () => {
-    render(<KeyDetails {...instance(mockedProps)} totalKeys={0} keysLastRefreshTime={null} />)
+    render(
+      <KeyDetails
+        {...instance(mockedProps)}
+        totalKeys={0}
+        keysLastRefreshTime={null}
+      />,
+    )
 
     expect(screen.queryByTestId('explore-guides')).not.toBeInTheDocument()
     expect(screen.queryByTestId('select-key-message')).not.toBeInTheDocument()
   })
 
   it('should render explore-guides when there are no keys', () => {
-    render(<KeyDetails {...instance(mockedProps)} totalKeys={0} keysLastRefreshTime={1} />)
+    render(
+      <KeyDetails
+        {...instance(mockedProps)}
+        totalKeys={0}
+        keysLastRefreshTime={1}
+      />,
+    )
 
     expect(screen.getByTestId('explore-guides')).toBeInTheDocument()
   })
 
   it('should render proper message when there are keys', () => {
-    render(<KeyDetails {...instance(mockedProps)} totalKeys={10} keysLastRefreshTime={1} />)
+    render(
+      <KeyDetails
+        {...instance(mockedProps)}
+        totalKeys={10}
+        keysLastRefreshTime={1}
+      />,
+    )
 
     expect(screen.getByTestId('select-key-message')).toBeInTheDocument()
   })
 
   it('should call proper telemetry after open key details', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    apiService.post = jest.fn().mockResolvedValueOnce({ status: 200, data: { length: 1, type: 'hash' } })
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    apiService.post = jest
+      .fn()
+      .mockResolvedValueOnce({ status: 200, data: { length: 1, type: 'hash' } })
 
     await act(async () => {
-      render(<KeyDetails {...instance(mockedProps)} keyProp={stringToBuffer('key')} />)
+      render(
+        <KeyDetails
+          {...instance(mockedProps)}
+          keyProp={stringToBuffer('key')}
+        />,
+      )
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -71,8 +107,8 @@ describe('KeyDetails', () => {
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         length: 1,
-        keyType: 'hash'
-      }
+        keyType: 'hash',
+      },
     })
   })
 })

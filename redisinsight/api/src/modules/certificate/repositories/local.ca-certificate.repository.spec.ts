@@ -4,7 +4,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
-  mockCaCertificate, mockCaCertificateCertificateEncrypted, mockCaCertificateCertificatePlain, mockCaCertificateEntity,
+  mockCaCertificate,
+  mockCaCertificateCertificateEncrypted,
+  mockCaCertificateCertificatePlain,
+  mockCaCertificateEntity,
   mockCaCertificateId,
   mockEncryptionService,
   mockRepository,
@@ -50,16 +53,20 @@ describe('LocalCaCertificateRepository', () => {
     service = await module.get(LocalCaCertificateRepository);
 
     repository.findOneBy.mockResolvedValue(mockCaCertificateEntity);
-    repository.createQueryBuilder().getMany.mockResolvedValue([
-      pick(mockCaCertificateEntity, 'id', 'name'),
-      pick(mockCaCertificateEntity, 'id', 'name'),
-    ]);
+    repository
+      .createQueryBuilder()
+      .getMany.mockResolvedValue([
+        pick(mockCaCertificateEntity, 'id', 'name'),
+        pick(mockCaCertificateEntity, 'id', 'name'),
+      ]);
     repository.save.mockResolvedValue(mockCaCertificateEntity);
     repository.create.mockReturnValue(mockCaCertificate); // not entity since it happens before encryption
 
-    when(encryptionService.decrypt).calledWith(mockCaCertificateCertificateEncrypted, expect.anything())
+    when(encryptionService.decrypt)
+      .calledWith(mockCaCertificateCertificateEncrypted, expect.anything())
       .mockResolvedValue(mockCaCertificateCertificatePlain);
-    when(encryptionService.encrypt).calledWith(mockCaCertificateCertificatePlain)
+    when(encryptionService.encrypt)
+      .calledWith(mockCaCertificateCertificatePlain)
       .mockResolvedValue({
         data: mockCaCertificateCertificateEncrypted,
         encryption: mockCaCertificateEntity.encryption,
@@ -114,7 +121,9 @@ describe('LocalCaCertificateRepository', () => {
 
       // Mock findOneBy to return a certificate
       repository.findOneBy.mockResolvedValue(mockCaCertificate);
-      databaseRepository.createQueryBuilder().getMany.mockResolvedValue(mockAffectedDatabases.map((id) => ({ id })));
+      databaseRepository
+        .createQueryBuilder()
+        .getMany.mockResolvedValue(mockAffectedDatabases.map((id) => ({ id })));
 
       // Mock delete operation
       repository.delete.mockResolvedValue(undefined);
@@ -124,9 +133,15 @@ describe('LocalCaCertificateRepository', () => {
       expect(result).toEqual({ affectedDatabases: mockAffectedDatabases });
       expect(repository.findOneBy).toHaveBeenCalledWith({ id: mockId });
       expect(databaseRepository.createQueryBuilder).toHaveBeenCalledWith('d');
-      expect(databaseRepository.createQueryBuilder().leftJoinAndSelect).toHaveBeenCalledWith('d.caCert', 'c');
-      expect(databaseRepository.createQueryBuilder().where).toHaveBeenCalledWith({ caCert: mockId });
-      expect(databaseRepository.createQueryBuilder().select).toHaveBeenCalledWith(['d.id']);
+      expect(
+        databaseRepository.createQueryBuilder().leftJoinAndSelect,
+      ).toHaveBeenCalledWith('d.caCert', 'c');
+      expect(
+        databaseRepository.createQueryBuilder().where,
+      ).toHaveBeenCalledWith({ caCert: mockId });
+      expect(
+        databaseRepository.createQueryBuilder().select,
+      ).toHaveBeenCalledWith(['d.id']);
       expect(repository.delete).toHaveBeenCalledWith(mockId);
     });
 

@@ -22,7 +22,7 @@ export const SHORTCUTS: ShortcutGroup[] = [
     items: [
       KEYBOARD_SHORTCUTS.desktop.newWindow,
       KEYBOARD_SHORTCUTS.desktop.reloadPage,
-    ]
+    ],
   },
   {
     name: 'CLI',
@@ -32,7 +32,7 @@ export const SHORTCUTS: ShortcutGroup[] = [
       KEYBOARD_SHORTCUTS.cli.clearSearch,
       KEYBOARD_SHORTCUTS.cli.prevCommand,
       KEYBOARD_SHORTCUTS.cli.nextCommand,
-    ]
+    ],
   },
   {
     name: 'Workbench',
@@ -43,6 +43,6 @@ export const SHORTCUTS: ShortcutGroup[] = [
       KEYBOARD_SHORTCUTS.workbench.triggerHints,
       KEYBOARD_SHORTCUTS.workbench.quickHistoryAccess,
       KEYBOARD_SHORTCUTS.workbench.nonRedisEditor,
-    ]
+    ],
   },
 ]

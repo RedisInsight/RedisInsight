@@ -28,7 +28,9 @@ const mockComponentRoutes = [
 describe('InstancePageRouter', () => {
   it('should render', () => {
     expect(
-      render(<InstancePageRouter routes={mockedRoutes} />, { withRouter: true })
+      render(<InstancePageRouter routes={mockedRoutes} />, {
+        withRouter: true,
+      }),
     ).toBeTruthy()
   })
 
@@ -39,7 +41,7 @@ describe('InstancePageRouter', () => {
         <Route path="/not-found">
           <div>Not found</div>
         </Route>
-      </MemoryRouter>
+      </MemoryRouter>,
     )
 
     expect(screen.queryByText('Not found')).not.toBeInTheDocument()
@@ -48,7 +50,9 @@ describe('InstancePageRouter', () => {
 
   it('should redirect to the 404 page when unmatched route is used', async () => {
     const pushMock = jest.fn()
-    jest.spyOn(reactRouterDom, 'useHistory').mockReturnValue({ push: pushMock } as any)
+    jest
+      .spyOn(reactRouterDom, 'useHistory')
+      .mockReturnValue({ push: pushMock } as any)
 
     render(
       <MemoryRouter initialEntries={['/foo/bar']}>
@@ -56,7 +60,7 @@ describe('InstancePageRouter', () => {
         <Route path="/not-found">
           <div>Not found</div>
         </Route>
-      </MemoryRouter>
+      </MemoryRouter>,
     )
 
     expect(screen.queryByText('Not found')).toBeInTheDocument()

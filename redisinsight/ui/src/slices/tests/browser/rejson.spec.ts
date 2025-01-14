@@ -30,7 +30,10 @@ import reducer, {
   appendReJSONArrayItemAction,
   removeReJSONKeyAction,
 } from '../../browser/rejson'
-import { addErrorNotification, addMessageNotification } from '../../app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from '../../app/notifications'
 import { refreshKeyInfo } from '../../browser/keys'
 
 jest.mock('uiSrc/services', () => ({
@@ -117,7 +120,7 @@ describe('rejson slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadRejsonBranchSuccess(defaultData)
+        loadRejsonBranchSuccess(defaultData),
       )
 
       // Assert
@@ -200,7 +203,7 @@ describe('rejson slice', () => {
     it('should properly set the state after append', () => {
       const state = {
         ...initialState,
-        loading: false
+        loading: false,
       }
 
       // Act
@@ -227,7 +230,10 @@ describe('rejson slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, appendReJSONArrayItemFailure(data))
+      const nextState = reducer(
+        initialState,
+        appendReJSONArrayItemFailure(data),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -264,7 +270,7 @@ describe('rejson slice', () => {
     it('should properly set the state after append', () => {
       const state = {
         ...initialState,
-        loading: false
+        loading: false,
       }
 
       // Act
@@ -328,7 +334,7 @@ describe('rejson slice', () => {
     it('should properly set the state after append', () => {
       const state = {
         ...initialState,
-        loading: false
+        loading: false,
       }
 
       // Act
@@ -384,7 +390,7 @@ describe('rejson slice', () => {
         // Assert
         const expectedActions = [
           loadRejsonBranch(),
-          loadRejsonBranchSuccess(responsePayload.data)
+          loadRejsonBranchSuccess(responsePayload.data),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -393,7 +399,8 @@ describe('rejson slice', () => {
         // Arrange
         const key = 'key'
         const path = '.'
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -439,9 +446,11 @@ describe('rejson slice', () => {
           setReJSONData(),
           setReJSONDataSuccess(),
           loadRejsonBranch(),
-          refreshKeyInfo()
+          refreshKeyInfo(),
         ]
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('failed to fetch set json data', async () => {
@@ -494,9 +503,11 @@ describe('rejson slice', () => {
           appendReJSONArrayItem(),
           appendReJSONArrayItemSuccess(),
           loadRejsonBranch(),
-          refreshKeyInfo()
+          refreshKeyInfo(),
         ]
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('failed to fetch append array data', async () => {
@@ -551,14 +562,12 @@ describe('rejson slice', () => {
           loadRejsonBranch(),
           refreshKeyInfo(),
           addMessageNotification(
-            successMessages.REMOVED_KEY_VALUE(
-              key,
-              jsonKeyName,
-              'JSON key'
-            )
-          )
+            successMessages.REMOVED_KEY_VALUE(key, jsonKeyName, 'JSON key'),
+          ),
         ]
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('failed to fetch remove json key', async () => {
@@ -601,7 +610,7 @@ describe('rejson slice', () => {
 
         // Act
         const result = await storeWithSelectedKey.dispatch<any>(
-          fetchVisualisationResults(path)
+          fetchVisualisationResults(path),
         )
 
         // Assert

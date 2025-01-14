@@ -5,7 +5,8 @@ import { clientMetadataParamFactory } from 'src/common/decorators';
 
 export const WorkbenchClientMetadata = (
   databaseIdParam = API_PARAM_DATABASE_ID,
-) => createParamDecorator(clientMetadataParamFactory)({
-  context: ClientContext.Workbench,
-  databaseIdParam,
-});
+) =>
+  createParamDecorator(clientMetadataParamFactory)({
+    context: ClientContext.Workbench,
+    databaseIdParam,
+  });

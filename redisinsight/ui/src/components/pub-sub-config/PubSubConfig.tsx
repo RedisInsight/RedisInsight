@@ -23,12 +23,13 @@ import { getConfig } from 'uiSrc/config'
 const riConfig = getConfig()
 
 interface IProps {
-  retryDelay?: number;
+  retryDelay?: number
 }
 
-const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
+const PubSubConfig = ({ retryDelay = 5000 }: IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
-  const { isSubscribeTriggered, isConnected, subscriptions } = useSelector(pubSubSelector)
+  const { isSubscribeTriggered, isConnected, subscriptions } =
+    useSelector(pubSubSelector)
   const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
 
@@ -95,7 +96,7 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
     socketRef.current?.emit(
       PubSubEvent.Subscribe,
       { subscriptions },
-      onChannelsSubscribe
+      onChannelsSubscribe,
     )
   }
 
@@ -104,7 +105,7 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
     socketRef.current?.emit(
       PubSubEvent.Unsubscribe,
       { subscriptions },
-      onChannelsUnSubscribe
+      onChannelsUnSubscribe,
     )
   }
 
@@ -113,7 +114,8 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
     dispatch(setIsPubSubSubscribed())
     subscriptions.forEach(({ channel, type }: PubSubSubscription) => {
       const subscription = `${type}:${channel}`
-      const isListenerExist = !!socketRef.current?.listeners(subscription).length
+      const isListenerExist =
+        !!socketRef.current?.listeners(subscription).length
 
       if (!isListenerExist) {
         socketRef.current?.on(subscription, (data) => {

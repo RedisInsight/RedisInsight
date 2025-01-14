@@ -14,7 +14,9 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/streams/entries/get`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/streams/entries/get`,
+  );
 
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
@@ -37,14 +39,16 @@ const entrySchema = Joi.object().keys({
   fields: Joi.array().required(),
 });
 
-const responseSchema = Joi.object().keys({
-  keyName: JoiRedisString.required(),
-  total: Joi.number().integer().required(),
-  lastGeneratedId: Joi.string().required(),
-  firstEntry: entrySchema.required(),
-  lastEntry: entrySchema.required(),
-  entries: Joi.array().items(entrySchema.required()).required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    keyName: JoiRedisString.required(),
+    total: Joi.number().integer().required(),
+    lastGeneratedId: Joi.string().required(),
+    firstEntry: entrySchema.required(),
+    lastEntry: entrySchema.required(),
+    entries: Joi.array().items(entrySchema.required()).required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -71,7 +75,7 @@ describe('POST /databases/:instanceId/streams/entries/get', () => {
             {
               name: constants.TEST_STREAM_FIELD_BIN_UTF8_1,
               value: constants.TEST_STREAM_VALUE_BIN_UTF8_1,
-            }
+            },
           ]);
         },
       },
@@ -92,7 +96,7 @@ describe('POST /databases/:instanceId/streams/entries/get', () => {
             {
               name: constants.TEST_STREAM_FIELD_BIN_BUF_OBJ_1,
               value: constants.TEST_STREAM_VALUE_BIN_BUF_OBJ_1,
-            }
+            },
           ]);
         },
       },
@@ -113,7 +117,7 @@ describe('POST /databases/:instanceId/streams/entries/get', () => {
             {
               name: constants.TEST_STREAM_FIELD_BIN_ASCII_1,
               value: constants.TEST_STREAM_VALUE_BIN_ASCII_1,
-            }
+            },
           ]);
         },
       },
@@ -299,7 +303,7 @@ describe('POST /databases/:instanceId/streams/entries/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xinfo')
+          before: () => rte.data.setAclUserRules('~* +@all -xinfo'),
         },
         {
           name: 'Should throw error if no permissions for "xrange" command',
@@ -315,7 +319,7 @@ describe('POST /databases/:instanceId/streams/entries/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xrange')
+          before: () => rte.data.setAclUserRules('~* +@all -xrange'),
         },
         {
           name: 'Should throw error if no permissions for "xrevrange" command',
@@ -331,7 +335,7 @@ describe('POST /databases/:instanceId/streams/entries/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xrevrange')
+          before: () => rte.data.setAclUserRules('~* +@all -xrevrange'),
         },
       ].map(mainCheckFn);
     });

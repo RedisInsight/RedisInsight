@@ -7,14 +7,14 @@ import ConfirmLeavePagePopup, { Props } from './ConfirmLeavePagePopup'
 
 const mockProps: Props = {
   onClose: jest.fn(),
-  onConfirm: jest.fn()
+  onConfirm: jest.fn(),
 }
 
 jest.mock('formik')
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 describe('ConfirmLeavePagePopup', () => {
@@ -22,8 +22,8 @@ describe('ConfirmLeavePagePopup', () => {
     const mockUseFormikContext = {
       setFieldValue: jest.fn,
       values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+    }
+    ;(useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
   })
 
   it('should render', () => {
@@ -31,8 +31,10 @@ describe('ConfirmLeavePagePopup', () => {
   })
 
   it('should call proper telemetry event', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<ConfirmLeavePagePopup {...mockProps} />)
 
@@ -40,9 +42,9 @@ describe('ConfirmLeavePagePopup', () => {
       event: TelemetryEvent.RDI_UNSAVED_CHANGES_MESSAGE_DISPLAYED,
       eventData: {
         id: 'rdiInstanceId',
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call onConfirm', async () => {

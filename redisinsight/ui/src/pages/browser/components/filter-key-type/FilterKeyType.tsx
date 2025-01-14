@@ -10,10 +10,18 @@ import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import {
+  SCAN_COUNT_DEFAULT,
+  SCAN_TREE_COUNT_DEFAULT,
+} from 'uiSrc/constants/api'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
-import { fetchKeys, fetchSearchHistoryAction, keysSelector, setFilter } from 'uiSrc/slices/browser/keys'
+import {
+  fetchKeys,
+  fetchSearchHistoryAction,
+  keysSelector,
+  setFilter,
+} from 'uiSrc/slices/browser/keys'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { FilterNotAvailable } from 'uiSrc/components'
@@ -43,8 +51,8 @@ const FilterKeyType = () => {
     setIsVersionSupported(
       isVersionHigherOrEquals(
         version,
-        CommandsVersions.FILTER_PER_KEY_TYPES.since
-      )
+        CommandsVersions.FILTER_PER_KEY_TYPES.since,
+      ),
     )
   }, [version])
 
@@ -52,26 +60,35 @@ const FilterKeyType = () => {
     setTypeSelected(filter ?? ALL_KEY_TYPES_VALUE)
   }, [filter])
 
-  const options: EuiSuperSelectOption<string>[] = FILTER_KEY_TYPE_OPTIONS
-    .filter(({ featureFlag }) => !featureFlag || features[featureFlag]?.flag)
-    .map(
-      (item) => {
-        const { value, color, text } = item
-        return {
-          value,
-          inputDisplay: (
-            <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>
-          ),
-          dropdownDisplay: <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>,
-          'data-test-subj': `filter-option-type-${value}`,
-        }
+  const options: EuiSuperSelectOption<string>[] =
+    FILTER_KEY_TYPE_OPTIONS.filter(
+      ({ featureFlag }) => !featureFlag || features[featureFlag]?.flag,
+    ).map((item) => {
+      const { value, color, text } = item
+      return {
+        value,
+        inputDisplay: (
+          <EuiHealth color={color} className={styles.dropdownDisplay}>
+            {text}
+          </EuiHealth>
+        ),
+        dropdownDisplay: (
+          <EuiHealth color={color} className={styles.dropdownDisplay}>
+            {text}
+          </EuiHealth>
+        ),
+        'data-test-subj': `filter-option-type-${value}`,
       }
-    )
+    })
 
   options.unshift({
     value: ALL_KEY_TYPES_VALUE,
-    inputDisplay: (<div className={styles.dropdownOption} data-testid="all-key-types-option">All Key Types</div>),
-    dropdownDisplay: 'All Key Types'
+    inputDisplay: (
+      <div className={styles.dropdownOption} data-testid="all-key-types-option">
+        All Key Types
+      </div>
+    ),
+    dropdownDisplay: 'All Key Types',
   })
 
   const onChangeType = (initValue: string) => {
@@ -87,10 +104,15 @@ const FilterKeyType = () => {
         {
           searchMode,
           cursor: '0',
-          count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+          count:
+            viewType === KeyViewType.Browser
+              ? SCAN_COUNT_DEFAULT
+              : SCAN_TREE_COUNT_DEFAULT,
         },
-        () => { dispatch(fetchSearchHistoryAction(searchMode)) }
-      )
+        () => {
+          dispatch(fetchSearchHistoryAction(searchMode))
+        },
+      ),
     )
   }
 
@@ -100,7 +122,7 @@ const FilterKeyType = () => {
       event: TelemetryEvent.BROWSER_FILTER_MODE_CHANGE_FAILED,
       eventData: {
         databaseId: instanceId,
-      }
+      },
     })
   }
 
@@ -111,7 +133,7 @@ const FilterKeyType = () => {
       <div
         className={cx(
           styles.container,
-          !isVersionSupported && styles.unsupported
+          !isVersionSupported && styles.unsupported,
         )}
       >
         {!isVersionSupported && isInfoPopoverOpen && (

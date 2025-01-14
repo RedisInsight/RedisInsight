@@ -1,8 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import {
-  StateContentGuideLinks
-} from 'uiSrc/slices/interfaces/content'
+import { StateContentGuideLinks } from 'uiSrc/slices/interfaces/content'
 import { resourcesService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
@@ -35,11 +33,8 @@ const guideLinksContentSlice = createSlice({
 })
 
 // Actions generated from the slice
-export const {
-  getGuideLinks,
-  getGuideLinksSuccess,
-  getGuideLinksFailure,
-} = guideLinksContentSlice.actions
+export const { getGuideLinks, getGuideLinksSuccess, getGuideLinksFailure } =
+  guideLinksContentSlice.actions
 
 // A selector
 export const guideLinksSelector = (state: RootState) => state.content.guideLinks
@@ -53,8 +48,9 @@ export function fetchGuideLinksAction() {
     dispatch(getGuideLinks())
 
     try {
-      const { data, status } = await resourcesService
-        .get(ApiEndpoints.CONTENT_GUIDE_LINKS)
+      const { data, status } = await resourcesService.get(
+        ApiEndpoints.CONTENT_GUIDE_LINKS,
+      )
       if (isStatusSuccessful(status)) {
         dispatch(getGuideLinksSuccess(data))
       }

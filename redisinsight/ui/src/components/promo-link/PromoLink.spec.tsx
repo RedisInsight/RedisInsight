@@ -20,7 +20,7 @@ describe('PromoLink', () => {
         title={title}
         description={description}
         testId={testId}
-      />
+      />,
     )
 
     expect(container).toHaveTextContent(title)
@@ -34,7 +34,7 @@ describe('PromoLink', () => {
         {...instance(mockedProps)}
         onClick={handleClick}
         testId={testId}
-      />
+      />,
     )
 
     expect(renderer).toBeTruthy()

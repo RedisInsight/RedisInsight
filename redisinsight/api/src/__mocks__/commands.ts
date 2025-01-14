@@ -63,10 +63,7 @@ export const mockRedistimeseriesCommands = {
       {
         type: 'enum',
         command: 'ENCODING',
-        enum: [
-          'UNCOMPRESSED',
-          'COMPRESSED',
-        ],
+        enum: ['UNCOMPRESSED', 'COMPRESSED'],
         optional: true,
       },
       {
@@ -79,26 +76,13 @@ export const mockRedistimeseriesCommands = {
         type: 'enum',
         command: 'DUPLICATE_POLICY',
         name: 'policy',
-        enum: [
-          'BLOCK',
-          'FIRST',
-          'LAST',
-          'MIN',
-          'MAX',
-          'SUM',
-        ],
+        enum: ['BLOCK', 'FIRST', 'LAST', 'MIN', 'MAX', 'SUM'],
         optional: true,
       },
       {
         command: 'LABELS',
-        name: [
-          'label',
-          'value',
-        ],
-        type: [
-          'string',
-          'string',
-        ],
+        name: ['label', 'value'],
+        type: ['string', 'string'],
         multiple: true,
         optional: true,
       },
@@ -122,7 +106,16 @@ export const mockRedisaiCommands = {
         name: 'type',
         type: 'enum',
         enum: [
-          'FLOAT', 'DOUBLE', 'INT8', 'INT16', 'INT32', 'INT64', 'UINT8', 'UINT16', 'STRING', 'BOOL',
+          'FLOAT',
+          'DOUBLE',
+          'INT8',
+          'INT16',
+          'INT32',
+          'INT64',
+          'UINT8',
+          'UINT16',
+          'STRING',
+          'BOOL',
         ],
       },
       {
@@ -143,7 +136,6 @@ export const mockRedisaiCommands = {
         multiple: true,
         optional: true,
       },
-
     ],
     since: '1.2.5',
     group: 'tensor',

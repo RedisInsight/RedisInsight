@@ -5,7 +5,9 @@ import {
   mockCloudSubscriptionRegion1,
 } from 'src/__mocks__/cloud-subscription';
 import {
-  CloudSubscriptionType, ICloudCapiSubscriptionPlan, CloudSubscriptionPlan,
+  CloudSubscriptionType,
+  ICloudCapiSubscriptionPlan,
+  CloudSubscriptionPlan,
 } from 'src/modules/cloud/subscription/models';
 import {
   parseCloudSubscriptionCapiResponse,
@@ -30,35 +32,40 @@ export const mockCloudSubscriptionPlan: CloudSubscriptionPlan = {
 
 describe('parseCloudSubscriptionCapiResponse', () => {
   it('Should return subscription', () => {
-    expect(parseCloudSubscriptionCapiResponse(
-      mockCloudCapiSubscription,
-      CloudSubscriptionType.Flexible,
-    )).toEqual(mockCloudSubscription);
+    expect(
+      parseCloudSubscriptionCapiResponse(
+        mockCloudCapiSubscription,
+        CloudSubscriptionType.Flexible,
+      ),
+    ).toEqual(mockCloudSubscription);
   });
 });
 
 describe('parseCloudSubscriptionCapiResponse', () => {
   it('Should return empty array', () => {
-    expect(parseCloudSubscriptionsCapiResponse(
-      [],
-      CloudSubscriptionType.Flexible,
-    )).toEqual([]);
+    expect(
+      parseCloudSubscriptionsCapiResponse([], CloudSubscriptionType.Flexible),
+    ).toEqual([]);
   });
 
   it('Should return parsed array of subscriptions', () => {
-    expect(parseCloudSubscriptionsCapiResponse(
-      [mockCloudCapiSubscription],
-      CloudSubscriptionType.Flexible,
-    )).toEqual([mockCloudSubscription]);
+    expect(
+      parseCloudSubscriptionsCapiResponse(
+        [mockCloudCapiSubscription],
+        CloudSubscriptionType.Flexible,
+      ),
+    ).toEqual([mockCloudSubscription]);
   });
 });
 
 describe('parseCloudSubscriptionsPlansCapiResponse', () => {
   it('Should return parsed array of regions', () => {
-    expect(parseCloudSubscriptionsPlansCapiResponse(
-      [mockCloudCapiSubscriptionPlan],
-      CloudSubscriptionType.Fixed,
-    )).toEqual([mockCloudSubscriptionPlan]);
+    expect(
+      parseCloudSubscriptionsPlansCapiResponse(
+        [mockCloudCapiSubscriptionPlan],
+        CloudSubscriptionType.Fixed,
+      ),
+    ).toEqual([mockCloudSubscriptionPlan]);
   });
 });
 
@@ -68,8 +75,10 @@ describe('parseCloudSubscriptionsCloudRegionsApiResponse', () => {
   });
 
   it('Should return parsed array of regions', () => {
-    expect(parseCloudSubscriptionsCloudRegionsApiResponse(
-      [mockCloudApiCloudRegion1],
-    )).toEqual([mockCloudSubscriptionRegion1]);
+    expect(
+      parseCloudSubscriptionsCloudRegionsApiResponse([
+        mockCloudApiCloudRegion1,
+      ]),
+    ).toEqual([mockCloudSubscriptionRegion1]);
   });
 });

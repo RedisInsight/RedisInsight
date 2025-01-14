@@ -23,18 +23,18 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
-      subscriptionId: number,
-      databaseId: number,
-      region: string,
-      provider: string,
+      subscriptionId: number;
+      databaseId: number;
+      region: string;
+      provider: string;
     },
     protected readonly dependencies: {
-      cloudDatabaseCapiService: CloudDatabaseCapiService,
-      cloudSubscriptionCapiService: CloudSubscriptionCapiService,
-      cloudTaskCapiService: CloudTaskCapiService,
-      cloudDatabaseAnalytics: CloudDatabaseAnalytics,
-      databaseService: DatabaseService,
-      cloudCapiKeyService: CloudCapiKeyService,
+      cloudDatabaseCapiService: CloudDatabaseCapiService;
+      cloudSubscriptionCapiService: CloudSubscriptionCapiService;
+      cloudTaskCapiService: CloudTaskCapiService;
+      cloudDatabaseAnalytics: CloudDatabaseAnalytics;
+      databaseService: DatabaseService;
+      cloudCapiKeyService: CloudCapiKeyService;
     },
   ) {
     super(options);
@@ -66,11 +66,7 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
 
     this.checkSignal();
 
-    const {
-      publicEndpoint,
-      name,
-      password,
-    } = cloudDatabase;
+    const { publicEndpoint, name, password } = cloudDatabase;
 
     const [host, port] = publicEndpoint.split(':');
 

@@ -18,7 +18,7 @@ describe('PopoverDelete', () => {
         {...instance(mockedProps)}
         item="name"
         showPopover={showPopover}
-      />
+      />,
     )
     fireEvent.click(screen.getByLabelText(/remove field/i))
 
@@ -34,7 +34,7 @@ describe('PopoverDelete', () => {
         suffix="_"
         deleting="name_"
         handleDeleteItem={handleDeleteItem}
-      />
+      />,
     )
 
     const deleteBtn = screen.getByTestId('remove')
@@ -53,7 +53,7 @@ describe('PopoverDelete', () => {
         suffix="_"
         deleting="name_"
         handleDeleteItem={handleDeleteItem}
-      />
+      />,
     )
 
     const deleteBtn = screen.getByTestId('remove')
@@ -73,7 +73,7 @@ describe('PopoverDelete', () => {
         suffix="_"
         deleting="name_"
         handleDeleteItem={handleDeleteItem}
-      />
+      />,
     )
 
     const deleteBtn = screen.getByTestId('remove')

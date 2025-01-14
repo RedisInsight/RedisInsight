@@ -5,9 +5,10 @@ import {
   deps,
   expect,
   requirements,
-  _, sleep
+  _,
+  sleep,
 } from '../../deps';
-import { Socket } from "socket.io-client";
+import { Socket } from 'socket.io-client';
 const { getSocket, constants, rte } = deps;
 
 const getClient = async (instanceId): Promise<Socket> => {
@@ -45,13 +46,22 @@ describe('pub-sub', function () {
 
   describe('Connection edge cases', () => {
     it('should not crash on 100 concurrent pub-sub connections to the same db', async () => {
-      await Promise.all((new Array(10).fill(1)).map(() => new Promise((res, rej) => {
-        client.emit('subscribe', { subscriptions: [pSubscription, subscription] }, (ack) => {
-          expect(ack).to.eql({ status: 'ok' });
-          res(ack);
-        });
-        client.on('exception', rej);
-      })));
+      await Promise.all(
+        new Array(10).fill(1).map(
+          () =>
+            new Promise((res, rej) => {
+              client.emit(
+                'subscribe',
+                { subscriptions: [pSubscription, subscription] },
+                (ack) => {
+                  expect(ack).to.eql({ status: 'ok' });
+                  res(ack);
+                },
+              );
+              client.on('exception', rej);
+            }),
+        ),
+      );
     });
   });
 
@@ -72,7 +82,7 @@ describe('pub-sub', function () {
         client.emit('subscribe', { subscriptions: [pSubscription] }, (ack) => {
           expect(ack).to.eql({ status: 'ok' });
           resolve(ack);
-        })
+        });
       });
     });
     it('Should return Not Found acknowledge when incorrect instanceId', async () => {
@@ -88,7 +98,7 @@ describe('pub-sub', function () {
           } catch (e) {
             reject(e);
           }
-        })
+        });
       });
     });
   });
@@ -96,26 +106,32 @@ describe('pub-sub', function () {
   describe('on message', () => {
     it('Should receive message on particular channel only', async () => {
       await new Promise((resolve, reject) => {
-        client.emit('subscribe', { subscriptions: [subscription, subscriptionB] },  async (ack) => {
-          expect(ack).to.eql({ status: 'ok' });
+        client.emit(
+          'subscribe',
+          { subscriptions: [subscription, subscriptionB] },
+          async (ack) => {
+            expect(ack).to.eql({ status: 'ok' });
 
-          client.on('s:channel-a', (data) => {
-            expect(data.count).to.be.eql(1);
-            expect(data.messages.length).to.be.eql(1);
-            const [message] = data.messages;
-            expect(message.channel).to.eq('channel-a');
-            expect(message.message).to.eq('message-a');
-            expect(message.time).to.be.a('number');
-            resolve(null);
-          });
+            client.on('s:channel-a', (data) => {
+              expect(data.count).to.be.eql(1);
+              expect(data.messages.length).to.be.eql(1);
+              const [message] = data.messages;
+              expect(message.channel).to.eq('channel-a');
+              expect(message.message).to.eq('message-a');
+              expect(message.time).to.be.a('number');
+              resolve(null);
+            });
 
-          client.on('s:channel-b', (data) => {
-            reject(new Error('Should not receive message-a in this listener-b'))
-          });
+            client.on('s:channel-b', (data) => {
+              reject(
+                new Error('Should not receive message-a in this listener-b'),
+              );
+            });
 
-          await rte.data.sendCommand('publish', ['channel-c', 'message-c']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-        })
+            await rte.data.sendCommand('publish', ['channel-c', 'message-c']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+          },
+        );
       });
     });
     describe('on message [unstable test]', () => {
@@ -129,28 +145,36 @@ describe('pub-sub', function () {
           '*': [],
         };
 
-        client.on('s:channel-a', (data) => messages['channel-a'].push(...data.messages));
-        client.on('s:channel-b', (data) => messages['channel-b'].push(...data.messages));
+        client.on('s:channel-a', (data) =>
+          messages['channel-a'].push(...data.messages),
+        );
+        client.on('s:channel-b', (data) =>
+          messages['channel-b'].push(...data.messages),
+        );
         client.on('p:*', (data) => messages['*'].push(...data.messages));
 
         await new Promise((resolve) => {
-          client.emit('subscribe', { subscriptions: [subscription, subscriptionB, pSubscription] },  (ack) => {
-            expect(ack).to.eql({ status: 'ok' });
+          client.emit(
+            'subscribe',
+            { subscriptions: [subscription, subscriptionB, pSubscription] },
+            (ack) => {
+              expect(ack).to.eql({ status: 'ok' });
 
-            client.on('s:channel-b', resolve);
+              client.on('s:channel-b', resolve);
 
-            rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-            rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-            rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-            rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-            rte.data.sendCommand('publish', ['channel-b', 'message-b']);
-          })
+              rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+              rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+              rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+              rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+              rte.data.sendCommand('publish', ['channel-b', 'message-b']);
+            },
+          );
         });
 
         await sleep(3000);
 
         expect(messages['channel-a'].length).to.eql(4);
-        messages['channel-a'].forEach(message => {
+        messages['channel-a'].forEach((message) => {
           expect(message.channel).to.eql('channel-a');
         });
         expect(messages['channel-b'].length).to.eql(1);
@@ -167,41 +191,52 @@ describe('pub-sub', function () {
         '*': [],
       };
 
-      client.on('s:channel-a', (data) => messages['channel-a'].push(...data.messages));
-      client.on('s:channel-b', (data) => messages['channel-b'].push(...data.messages));
+      client.on('s:channel-a', (data) =>
+        messages['channel-a'].push(...data.messages),
+      );
+      client.on('s:channel-b', (data) =>
+        messages['channel-b'].push(...data.messages),
+      );
       client.on('p:*', (data) => messages['*'].push(...data.messages));
 
       await new Promise((resolve) => {
-        client.emit('subscribe', { subscriptions: [subscription, subscriptionB, pSubscription] },  async (ack) => {
-          expect(ack).to.eql({ status: 'ok' });
+        client.emit(
+          'subscribe',
+          { subscriptions: [subscription, subscriptionB, pSubscription] },
+          async (ack) => {
+            expect(ack).to.eql({ status: 'ok' });
 
-          client.on('s:channel-b', resolve);
+            client.on('s:channel-b', resolve);
 
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-b', 'message-b']);
-        })
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-b', 'message-b']);
+          },
+        );
       });
 
-
       await new Promise((resolve) => {
-        client.emit('unsubscribe', { subscriptions: [subscription, pSubscription] },  async (ack) => {
-          expect(ack).to.eql({ status: 'ok' });
+        client.emit(
+          'unsubscribe',
+          { subscriptions: [subscription, pSubscription] },
+          async (ack) => {
+            expect(ack).to.eql({ status: 'ok' });
 
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-b', 'message-b']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-b', 'message-b']);
 
-          client.on('s:channel-b', resolve);
-        })
+            client.on('s:channel-b', resolve);
+          },
+        );
       });
 
       expect(messages['channel-a'].length).to.eql(4);
-      messages['channel-a'].forEach(message => {
+      messages['channel-a'].forEach((message) => {
         expect(message.channel).to.eql('channel-a');
       });
       expect(messages['channel-b'].length).to.eql(2);
@@ -215,41 +250,52 @@ describe('pub-sub', function () {
         '*': [],
       };
 
-      client.on('s:channel-a', (data) => messages['channel-a'].push(...data.messages));
-      client.on('s:channel-b', (data) => messages['channel-b'].push(...data.messages));
+      client.on('s:channel-a', (data) =>
+        messages['channel-a'].push(...data.messages),
+      );
+      client.on('s:channel-b', (data) =>
+        messages['channel-b'].push(...data.messages),
+      );
       client.on('p:*', (data) => messages['*'].push(...data.messages));
 
       await new Promise((resolve) => {
-        client.emit('subscribe', { subscriptions: [subscription, subscriptionB, pSubscription] },  async (ack) => {
-          expect(ack).to.eql({ status: 'ok' });
+        client.emit(
+          'subscribe',
+          { subscriptions: [subscription, subscriptionB, pSubscription] },
+          async (ack) => {
+            expect(ack).to.eql({ status: 'ok' });
 
-          client.on('s:channel-b', resolve);
+            client.on('s:channel-b', resolve);
 
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-b', 'message-b']);
-        })
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-b', 'message-b']);
+          },
+        );
       });
 
-
       await new Promise((resolve) => {
-        client.emit('unsubscribe', { subscriptions: [subscription, subscriptionB, pSubscription] },  async (ack) => {
-          expect(ack).to.eql({ status: 'ok' });
+        client.emit(
+          'unsubscribe',
+          { subscriptions: [subscription, subscriptionB, pSubscription] },
+          async (ack) => {
+            expect(ack).to.eql({ status: 'ok' });
 
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          await rte.data.sendCommand('publish', ['channel-b', 'message-b']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            await rte.data.sendCommand('publish', ['channel-b', 'message-b']);
 
-          resolve(null);
-        })
+            resolve(null);
+          },
+        );
       });
 
       expect(messages['channel-a'].length).to.eql(4);
-      messages['channel-a'].forEach(message => {
+      messages['channel-a'].forEach((message) => {
         expect(message.channel).to.eql('channel-a');
       });
       expect(messages['channel-b'].length).to.eql(1);
@@ -276,7 +322,7 @@ describe('pub-sub', function () {
           expect(ack.error.status).to.eql(403);
           expect(ack.error.message).to.have.string('NOPERM');
           resolve(null);
-        })
+        });
       });
     });
 
@@ -293,7 +339,7 @@ describe('pub-sub', function () {
           expect(ack.error.status).to.eql(403);
           expect(ack.error.message).to.have.string('NOPERM');
           resolve(null);
-        })
+        });
       });
     });
 
@@ -307,12 +353,16 @@ describe('pub-sub', function () {
       await new Promise((resolve) => {
         client.emit('subscribe', { subscriptions: [subscription] }, (ack) => {
           expect(ack).to.deep.eql({ status: 'ok' });
-          client.emit('unsubscribe', { subscriptions: [subscription] }, (ack) => {
-            expect(ack.status).to.eql('error');
-            expect(ack.error.status).to.eql(403);
-            expect(ack.error.message).to.have.string('NOPERM');
-            resolve(null);
-          });
+          client.emit(
+            'unsubscribe',
+            { subscriptions: [subscription] },
+            (ack) => {
+              expect(ack.status).to.eql('error');
+              expect(ack.error.status).to.eql(403);
+              expect(ack.error.message).to.have.string('NOPERM');
+              resolve(null);
+            },
+          );
         });
       });
     });
@@ -327,12 +377,16 @@ describe('pub-sub', function () {
       await new Promise((resolve) => {
         client.emit('subscribe', { subscriptions: [pSubscription] }, (ack) => {
           expect(ack).to.deep.eql({ status: 'ok' });
-          client.emit('unsubscribe', { subscriptions: [pSubscription] }, (ack) => {
-            expect(ack.status).to.eql('error');
-            expect(ack.error.status).to.eql(403);
-            expect(ack.error.message).to.have.string('NOPERM');
-            resolve(null);
-          });
+          client.emit(
+            'unsubscribe',
+            { subscriptions: [pSubscription] },
+            (ack) => {
+              expect(ack.status).to.eql('error');
+              expect(ack.error.status).to.eql(403);
+              expect(ack.error.message).to.have.string('NOPERM');
+              resolve(null);
+            },
+          );
         });
       });
     });

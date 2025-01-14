@@ -30,17 +30,24 @@ const Tab = (props: IProps) => {
       className={cx(styles.wrapper, className, { [styles.active]: isSelected })}
       data-testid={testID}
     >
-      <EuiText className="rdi-pipeline-nav__title" size="m">{title}</EuiText>
+      <EuiText className="rdi-pipeline-nav__title" size="m">
+        {title}
+      </EuiText>
       {fileName ? (
-        <div
-          className="rdi-pipeline-nav__file"
-        >
+        <div className="rdi-pipeline-nav__file">
           <EuiIcon type="document" className="rdi-pipeline-nav__fileIcon" />
           <EuiText className="rdi-pipeline-nav__text">{fileName}</EuiText>
-          {isLoading && <EuiLoadingSpinner data-testid="rdi-nav-config-loader" className={styles.loader} />}
+          {isLoading && (
+            <EuiLoadingSpinner
+              data-testid="rdi-nav-config-loader"
+              className={styles.loader}
+            />
+          )}
           {children}
         </div>
-      ) : children}
+      ) : (
+        children
+      )}
     </div>
   )
 }

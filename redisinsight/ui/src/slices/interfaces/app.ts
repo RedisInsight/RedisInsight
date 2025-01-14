@@ -2,12 +2,17 @@ import { AxiosError } from 'axios'
 import { EuiComboBoxOptionOption } from '@elastic/eui'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { Nullable } from 'uiSrc/utils'
-import { DurationUnits, FeatureFlags, ICommands, SortOrder } from 'uiSrc/constants'
+import {
+  DurationUnits,
+  FeatureFlags,
+  ICommands,
+  SortOrder,
+} from 'uiSrc/constants'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 
 export interface CustomError {
-  details?: any[];
+  details?: any[]
   error: string
   message: string
   statusCode: number
@@ -23,8 +28,7 @@ export interface ErrorOptions {
   response?: object
 }
 
-export interface EnhancedAxiosError extends AxiosError<CustomError> {
-}
+export interface EnhancedAxiosError extends AxiosError<CustomError> {}
 
 export interface IError extends AxiosError {
   id: string
@@ -43,14 +47,14 @@ export interface IMessage {
 
 export enum AppWorkspace {
   Databases = 'databases',
-  RDI = 'redisDataIntegration'
+  RDI = 'redisDataIntegration',
 }
 
 export interface StateAppInfo {
   loading: boolean
   error: string
   server: Nullable<GetServerInfoResponse>
-  encoding: RedisResponseEncoding,
+  encoding: RedisResponseEncoding
   electron: {
     isUpdateAvailable: Nullable<boolean>
     updateDownloadedVersion: string
@@ -60,8 +64,8 @@ export interface StateAppInfo {
 }
 
 export interface StateAppConnectivity {
-  loading: boolean;
-  error?: string;
+  loading: boolean
+  error?: string
 }
 
 export interface StateAppContext {
@@ -98,7 +102,7 @@ export interface StateAppContext {
     }
     bulkActions: {
       opened: boolean
-    },
+    }
     keyDetailsSizes: {
       [key: string]: Nullable<RelativeWidthSizes>
     }
@@ -198,7 +202,7 @@ export interface StateAppFeatures {
     currentStep: number
     totalSteps: number
     isActive: boolean
-  },
+  }
   featureFlags: {
     loading: boolean
     features: {
@@ -207,7 +211,7 @@ export interface StateAppFeatures {
   }
 }
 export enum NotificationType {
-  Global = 'global'
+  Global = 'global',
 }
 
 export interface IGlobalNotification {
@@ -255,7 +259,7 @@ export enum RedisResponseEncoding {
 }
 
 export enum RedisResponseBufferType {
-  Buffer = 'Buffer'
+  Buffer = 'Buffer',
 }
 
 export type RedisResponseBuffer = {

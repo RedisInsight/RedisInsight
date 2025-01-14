@@ -2,7 +2,9 @@ import React, { useEffect } from 'react'
 import {
   EuiModal,
   EuiModalBody,
-  EuiTitle, EuiText, EuiButton,
+  EuiTitle,
+  EuiText,
+  EuiButton,
 } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
@@ -26,20 +28,24 @@ const ConfirmLeavePagePopup = (props: Props) => {
       event: TelemetryEvent.RDI_UNSAVED_CHANGES_MESSAGE_DISPLAYED,
       eventData: {
         id: rdiInstanceId,
-      }
+      },
     })
   }, [])
 
   return (
-    <EuiModal className={styles.container} onClose={onClose} data-testid="oauth-select-account-dialog">
+    <EuiModal
+      className={styles.container}
+      onClose={onClose}
+      data-testid="oauth-select-account-dialog"
+    >
       <EuiModalBody className={styles.modalBody}>
         <section className={styles.content}>
           <EuiTitle size="s">
             <h3 className={styles.title}>Leaving pipeline?</h3>
           </EuiTitle>
           <EuiText className={styles.text}>
-            There are undeployed changes that could be lost if you navigate away.
-            Consider downloading the pipeline to save changes locally.
+            There are undeployed changes that could be lost if you navigate
+            away. Consider downloading the pipeline to save changes locally.
           </EuiText>
         </section>
         <div className={styles.footer}>

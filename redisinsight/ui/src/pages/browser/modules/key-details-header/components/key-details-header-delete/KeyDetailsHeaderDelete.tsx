@@ -1,19 +1,20 @@
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiPopover,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButton, EuiButtonIcon, EuiPopover, EuiText } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import { initialKeyInfo, keysSelector, selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import {
+  initialKeyInfo,
+  keysSelector,
+  selectedKeyDataSelector,
+} from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
-  formatLongName,
-} from 'uiSrc/utils'
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
+import { formatLongName } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -44,13 +45,13 @@ const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_DELETE_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_DELETE_CLICKED
+        TelemetryEvent.TREE_VIEW_KEY_DELETE_CLICKED,
       ),
       eventData: {
         databaseId: instanceId,
         source: 'keyValue',
-        keyType: type
-      }
+        keyType: type,
+      },
     })
   }
 
@@ -62,7 +63,7 @@ const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
       isOpen={isPopoverDeleteOpen}
       closePopover={closePopoverDelete}
       panelPaddingSize="l"
-      button={(
+      button={
         <EuiButtonIcon
           iconType="trash"
           color="primary"
@@ -71,16 +72,14 @@ const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
           onClick={showPopoverDelete}
           data-testid="delete-key-btn"
         />
-      )}
+      }
     >
       <div className={styles.popoverDeleteContainer}>
         <EuiText size="m">
           <h4 style={{ wordBreak: 'break-all' }}>
             <b>{tooltipContent}</b>
           </h4>
-          <EuiText size="s">
-            will be deleted.
-          </EuiText>
+          <EuiText size="s">will be deleted.</EuiText>
         </EuiText>
         <div className={styles.popoverFooter}>
           <EuiButton

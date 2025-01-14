@@ -38,10 +38,10 @@ export class CloudJobFactory {
     name: CloudJobName,
     data: any,
     options: {
-      sessionMetadata: SessionMetadata,
-      utm?: CloudRequestUtm,
-      capiCredentials?: CloudCapiAuthDto,
-      stateCallbacks?: ((self: CloudJob) => any)[],
+      sessionMetadata: SessionMetadata;
+      utm?: CloudRequestUtm;
+      capiCredentials?: CloudCapiAuthDto;
+      stateCallbacks?: ((self: CloudJob) => any)[];
     },
   ): Promise<CloudJob> {
     switch (name) {

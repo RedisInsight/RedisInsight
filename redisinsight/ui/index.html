@@ -1,27 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" dir="ltr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Redis Insight</title>
-  <link rel="icon" href="/favicon-180x180.png" sizes="180x180">
-  <link rel="icon" href="/favicon-48x48.ico" />
-  <link rel="icon" href="/favicon-32x32.png" sizes="32x32">
-  <link rel="icon" href="/favicon-16x16.png" sizes="16x16">
-  <script>
-    var RIPROXYPATH = '__RIPROXYPATH__';
-    // for vite RIPROXYPATH is a "base" field in the config
-    // in the vite base must starts with '/', for app we should remove the first '/'
-    window.__RI_PROXY_PATH__ = RIPROXYPATH.startsWith('/') ? RIPROXYPATH.slice(1) : RIPROXYPATH;
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Redis Insight</title>
+    <link rel="icon" href="/favicon-180x180.png" sizes="180x180" />
+    <link rel="icon" href="/favicon-48x48.ico" />
+    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
+    <script>
+      var RIPROXYPATH = '__RIPROXYPATH__';
+      // for vite RIPROXYPATH is a "base" field in the config
+      // in the vite base must starts with '/', for app we should remove the first '/'
+      window.__RI_PROXY_PATH__ = RIPROXYPATH.startsWith('/')
+        ? RIPROXYPATH.slice(1)
+        : RIPROXYPATH;
 
-    // If the RIPROXYPATH is not set, then we need to set it to undefined
-    if (RIPROXYPATH.startsWith('__') || RIPROXYPATH.endsWith('__')) {
-      window.__RI_PROXY_PATH__ = undefined;
-    }
-  </script>
-</head>
-<body>
-  <div id="root"></div>
-  <script type="module" src="/%RI_INDEX_NAME%"></script>
-</body>
+      // If the RIPROXYPATH is not set, then we need to set it to undefined
+      if (RIPROXYPATH.startsWith('__') || RIPROXYPATH.endsWith('__')) {
+        window.__RI_PROXY_PATH__ = undefined;
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/%RI_INDEX_NAME%"></script>
+  </body>
 </html>

@@ -2,11 +2,16 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import {
   cleanup,
-  fireEvent, mockedStore,
+  fireEvent,
+  mockedStore,
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-import { resetCliHelperSettings, toggleCliHelper, toggleHideCliHelper } from 'uiSrc/slices/cli/cli-settings'
+import {
+  resetCliHelperSettings,
+  toggleCliHelper,
+  toggleHideCliHelper,
+} from 'uiSrc/slices/cli/cli-settings'
 import CommandHelperHeader from './CommandHelperHeader'
 
 let store: typeof mockedStore

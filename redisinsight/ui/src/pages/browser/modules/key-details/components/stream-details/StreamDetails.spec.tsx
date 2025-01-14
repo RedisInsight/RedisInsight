@@ -20,7 +20,9 @@ describe('StreamDetails', () => {
   })
 
   it('"add-key-value-items-btn" should render', () => {
-    const { queryByTestId } = render(<StreamDetails {...instance(mockedProps)} />)
+    const { queryByTestId } = render(
+      <StreamDetails {...instance(mockedProps)} />,
+    )
     expect(queryByTestId('add-key-value-items-btn')).toBeInTheDocument()
   })
 
@@ -29,28 +31,40 @@ describe('StreamDetails', () => {
       <StreamDetails
         {...instance(mockedProps)}
         onOpenAddItemPanel={() => {}}
-      />
+      />,
     )
 
     fireEvent.click(queryByTestId('add-key-value-items-btn')!)
-    expect(container.querySelector('[data-test-subj="add-stream-field-panel"]')).toBeInTheDocument()
-    expect(container.querySelector('[data-test-subj="add-stream-groups-field-panel"]')).not.toBeInTheDocument()
+    expect(
+      container.querySelector('[data-test-subj="add-stream-field-panel"]'),
+    ).toBeInTheDocument()
+    expect(
+      container.querySelector(
+        '[data-test-subj="add-stream-groups-field-panel"]',
+      ),
+    ).not.toBeInTheDocument()
   })
   it('"add-stream-groups-field-panel" should render', () => {
     const streamSelectorMock = jest.fn().mockReturnValue({
       viewType: StreamViewType.Groups,
-    });
-    (streamSelector as jest.Mock).mockImplementation(streamSelectorMock)
+    })
+    ;(streamSelector as jest.Mock).mockImplementation(streamSelectorMock)
 
     const { container, queryByTestId } = render(
       <StreamDetails
         {...instance(mockedProps)}
         onOpenAddItemPanel={() => {}}
-      />
+      />,
     )
 
     fireEvent.click(queryByTestId('add-key-value-items-btn')!)
-    expect(container.querySelector('[data-test-subj="add-stream-field-panel"]')).not.toBeInTheDocument()
-    expect(container.querySelector('[data-test-subj="add-stream-groups-field-panel"]')).toBeInTheDocument()
+    expect(
+      container.querySelector('[data-test-subj="add-stream-field-panel"]'),
+    ).not.toBeInTheDocument()
+    expect(
+      container.querySelector(
+        '[data-test-subj="add-stream-groups-field-panel"]',
+      ),
+    ).toBeInTheDocument()
   })
 })

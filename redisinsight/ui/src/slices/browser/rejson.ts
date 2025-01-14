@@ -4,7 +4,12 @@ import axios, { AxiosError, CancelTokenSource } from 'axios'
 import { isNumber } from 'lodash'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getJsonPathLevel } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+  getJsonPathLevel,
+} from 'uiSrc/telemetry'
 import {
   getApiErrorMessage,
   getUrl,
@@ -22,7 +27,10 @@ import {
 
 import { refreshKeyInfoAction } from './keys'
 import { InitialStateRejson, RedisResponseBuffer } from '../interfaces'
-import { addErrorNotification, addMessageNotification } from '../app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
 
 const JSON_LENGTH_TO_FORCE_RETRIEVE = 200
@@ -43,7 +51,10 @@ const rejsonSlice = createSlice({
   initialState,
   reducers: {
     // load reJSON part
-    loadRejsonBranch: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
+    loadRejsonBranch: (
+      state,
+      { payload: resetData = true }: PayloadAction<Maybe<boolean>>,
+    ) => {
       state.loading = true
       state.error = null
 
@@ -146,15 +157,16 @@ export function fetchReJSON(
       const { data, status } = await apiService.post<GetRejsonRlResponseDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.REJSON_GET
+          ApiEndpoints.REJSON_GET,
         ),
         {
           keyName: key,
           path,
-          forceRetrieve: isNumber(length) && length > JSON_LENGTH_TO_FORCE_RETRIEVE,
+          forceRetrieve:
+            isNumber(length) && length > JSON_LENGTH_TO_FORCE_RETRIEVE,
           encoding,
         },
-        { cancelToken: sourceRejson.token }
+        { cancelToken: sourceRejson.token },
       )
 
       sourceRejson = null
@@ -179,7 +191,7 @@ export function setReJSONDataAction(
   isEditMode: boolean,
   length?: number,
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(setReJSONData())
@@ -189,13 +201,13 @@ export function setReJSONDataAction(
       const { status } = await apiService.patch<GetRejsonRlResponseDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.REJSON_SET
+          ApiEndpoints.REJSON_SET,
         ),
         {
           keyName: key,
           path,
           data,
-        }
+        },
       )
 
       if (isStatusSuccessful(status)) {
@@ -203,13 +215,17 @@ export function setReJSONDataAction(
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(
               state.browser.keys?.viewType,
-              TelemetryEvent[`BROWSER_JSON_PROPERTY_${isEditMode ? 'EDITED' : 'ADDED'}`],
-              TelemetryEvent[`TREE_VIEW_JSON_PROPERTY_${isEditMode ? 'EDITED' : 'ADDED'}`],
+              TelemetryEvent[
+                `BROWSER_JSON_PROPERTY_${isEditMode ? 'EDITED' : 'ADDED'}`
+              ],
+              TelemetryEvent[
+                `TREE_VIEW_JSON_PROPERTY_${isEditMode ? 'EDITED' : 'ADDED'}`
+              ],
             ),
             eventData: {
               databaseId: state.connections.instances?.connectedInstance?.id,
               keyLevel: getJsonPathLevel(path),
-            }
+            },
           })
         } catch (error) {
           // console.log(error)
@@ -234,7 +250,7 @@ export function appendReJSONArrayItemAction(
   key: RedisResponseBuffer,
   path: string,
   data: string,
-  length?: number
+  length?: number,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(appendReJSONArrayItem())
@@ -244,13 +260,13 @@ export function appendReJSONArrayItemAction(
       const { status } = await apiService.patch<GetRejsonRlResponseDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.REJSON_ARRAPPEND
+          ApiEndpoints.REJSON_ARRAPPEND,
         ),
         {
           keyName: key,
           path,
           data: [data],
-        }
+        },
       )
 
       if (isStatusSuccessful(status)) {
@@ -259,12 +275,12 @@ export function appendReJSONArrayItemAction(
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_JSON_PROPERTY_ADDED,
-            TelemetryEvent.TREE_VIEW_JSON_PROPERTY_ADDED
+            TelemetryEvent.TREE_VIEW_JSON_PROPERTY_ADDED,
           ),
           eventData: {
             databaseId: state.connections.instances?.connectedInstance?.id,
-            keyLevel
-          }
+            keyLevel,
+          },
         })
         dispatch(appendReJSONArrayItemSuccess())
         dispatch<any>(fetchReJSON(key, '.', length))
@@ -283,7 +299,7 @@ export function removeReJSONKeyAction(
   key: RedisResponseBuffer,
   path = '.',
   jsonKeyName = '',
-  length?: number
+  length?: number,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeRejsonKey())
@@ -293,14 +309,14 @@ export function removeReJSONKeyAction(
       const { status } = await apiService.delete<RemoveRejsonRlResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.REJSON
+          ApiEndpoints.REJSON,
         ),
         {
           data: {
             keyName: key,
             path,
           },
-        }
+        },
       )
 
       if (isStatusSuccessful(status)) {
@@ -308,20 +324,20 @@ export function removeReJSONKeyAction(
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_JSON_PROPERTY_DELETED,
-            TelemetryEvent.TREE_VIEW_JSON_PROPERTY_DELETED
+            TelemetryEvent.TREE_VIEW_JSON_PROPERTY_DELETED,
           ),
           eventData: {
             databaseId: state.connections.instances?.connectedInstance?.id,
             keyLevel: getJsonPathLevel(path),
-          }
+          },
         })
         dispatch(removeRejsonKeySuccess())
         dispatch<any>(fetchReJSON(key, '.', length))
         dispatch<any>(refreshKeyInfoAction(key))
         dispatch(
           addMessageNotification(
-            successMessages.REMOVED_KEY_VALUE(key, jsonKeyName, 'JSON key')
-          )
+            successMessages.REMOVED_KEY_VALUE(key, jsonKeyName, 'JSON key'),
+          ),
         )
       }
     } catch (error) {
@@ -342,20 +358,20 @@ export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
       const { data, status } = await apiService.post<GetRejsonRlResponseDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.REJSON_GET
+          ApiEndpoints.REJSON_GET,
         ),
         {
           keyName: key,
           path,
           forceRetrieve,
           encoding,
-        }
+        },
       )
 
       if (isStatusSuccessful(status)) {
         return {
           ...data,
-          data: parseJsonData(data?.data)
+          data: parseJsonData(data?.data),
         }
       }
       throw new Error(data.toString())

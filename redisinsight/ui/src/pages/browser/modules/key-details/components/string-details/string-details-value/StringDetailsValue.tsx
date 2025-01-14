@@ -9,7 +9,15 @@ import React, {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiProgress,
+  EuiText,
+  EuiTextArea,
+  EuiToolTip,
+} from '@elastic/eui'
 
 import {
   bufferToSerializedFormat,
@@ -32,9 +40,13 @@ import {
 } from 'uiSrc/slices/browser/string'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import {
-  KeyTypes, ModulesKeyTypes,
+  selectedKeyDataSelector,
+  selectedKeySelector,
+} from 'uiSrc/slices/browser/keys'
+import {
+  KeyTypes,
+  ModulesKeyTypes,
   TEXT_DISABLED_COMPRESSED_VALUE,
   TEXT_FAILED_CONVENT_FORMATTER,
   TEXT_INVALID_VALUE,
@@ -57,9 +69,13 @@ const APPROXIMATE_WIDTH_OF_SIGN = 8.6
 const MAX_LENGTH = STRING_MAX_LENGTH + 1
 
 export interface Props {
-  isEditItem: boolean;
-  setIsEdit: (isEdit: boolean) => void;
-  onRefresh: (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes, args: IFetchKeyArgs) => void;
+  isEditItem: boolean
+  setIsEdit: (isEdit: boolean) => void
+  onRefresh: (
+    key: RedisResponseBuffer,
+    type: KeyTypes | ModulesKeyTypes,
+    args: IFetchKeyArgs,
+  ) => void
 }
 
 const StringDetailsValue = (props: Props) => {
@@ -69,7 +85,11 @@ const StringDetailsValue = (props: Props) => {
   const { loading } = useSelector(stringSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { value: initialValue } = useSelector(stringDataSelector)
-  const { name: key, type: keyType, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const {
+    name: key,
+    type: keyType,
+    length,
+  } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
   const [rows, setRows] = useState<number>(MIN_ROWS)
@@ -79,7 +99,9 @@ const StringDetailsValue = (props: Props) => {
   const [isValid, setIsValid] = useState(true)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isEditable, setIsEditable] = useState(true)
-  const [noEditableText, setNoEditableText] = useState<string>(TEXT_DISABLED_COMPRESSED_VALUE)
+  const [noEditableText, setNoEditableText] = useState<string>(
+    TEXT_DISABLED_COMPRESSED_VALUE,
+  )
 
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
   const viewValueRef: Ref<HTMLPreElement> = useRef(null)
@@ -87,37 +109,48 @@ const StringDetailsValue = (props: Props) => {
 
   const dispatch = useDispatch()
 
-  useEffect(() => () => {
-    dispatch(resetStringValue())
-  }, [])
+  useEffect(
+    () => () => {
+      dispatch(resetStringValue())
+    },
+    [],
+  )
 
   useEffect(() => {
     if (!initialValue) return
 
-    const { value: decompressedValue, isCompressed } = decompressingBuffer(initialValue, compressor)
+    const { value: decompressedValue, isCompressed } = decompressingBuffer(
+      initialValue,
+      compressor,
+    )
 
     const initialValueString = bufferToString(decompressedValue, viewFormat)
-    const fullStringLoaded = isFullStringLoaded(initialValue?.data?.length, length)
+    const fullStringLoaded = isFullStringLoaded(
+      initialValue?.data?.length,
+      length,
+    )
 
     const { value: formattedValue, isValid } = formattingBuffer(
       decompressedValue,
       fullStringLoaded ? viewFormatProp : KeyValueFormat.Unicode,
-      { expanded: true }
+      { expanded: true },
     )
     setAreaValue(initialValueString)
 
     setValue(!fullStringLoaded ? `${formattedValue}...` : formattedValue)
     setIsValid(isValid)
     setIsDisabled(
-      !isNonUnicodeFormatter(viewFormatProp, isValid)
-        && !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
+      !isNonUnicodeFormatter(viewFormatProp, isValid) &&
+        !isEqualBuffers(initialValue, stringToBuffer(initialValueString)),
     )
     setIsEditable(
-      !isCompressed
-      && isFormatEditable(viewFormatProp)
-      && fullStringLoaded
+      !isCompressed && isFormatEditable(viewFormatProp) && fullStringLoaded,
     )
-    setNoEditableText(isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp))
+    setNoEditableText(
+      isCompressed
+        ? TEXT_DISABLED_COMPRESSED_VALUE
+        : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp),
+    )
 
     dispatch(setIsStringCompressed(isCompressed))
 
@@ -131,7 +164,11 @@ const StringDetailsValue = (props: Props) => {
     if (!isEditItem || !textAreaRef.current || value === null) {
       return
     }
-    const calculatedRows = calculateTextareaLines(areaValue, textAreaRef.current.clientWidth, APPROXIMATE_WIDTH_OF_SIGN)
+    const calculatedRows = calculateTextareaLines(
+      areaValue,
+      textAreaRef.current.clientWidth,
+      APPROXIMATE_WIDTH_OF_SIGN,
+    )
     if (calculatedRows > MIN_ROWS) {
       setRows(calculatedRows)
     }
@@ -139,7 +176,7 @@ const StringDetailsValue = (props: Props) => {
 
   useMemo(() => {
     if (isEditItem && initialValue) {
-      (document.activeElement as HTMLElement)?.blur()
+      ;(document.activeElement as HTMLElement)?.blur()
       setAreaValue(bufferToSerializedFormat(viewFormat, initialValue, 4))
     }
   }, [isEditItem])
@@ -162,7 +199,10 @@ const StringDetailsValue = (props: Props) => {
 
   const isLoading = loading || value === null
 
-  const handleLoadAll = (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => {
+  const handleLoadAll = (
+    key: RedisResponseBuffer,
+    type: KeyTypes | ModulesKeyTypes,
+  ) => {
     const endString = length - 1
     onRefresh(key, type, { end: endString })
     sendEventTelemetry({
@@ -170,7 +210,7 @@ const StringDetailsValue = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         length,
-      }
+      },
     })
   }
 
@@ -182,7 +222,7 @@ const StringDetailsValue = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         length,
-      }
+      },
     })
   }
 
@@ -196,7 +236,7 @@ const StringDetailsValue = (props: Props) => {
       >
         {areaValue !== ''
           ? value
-          : (!isLoading && (<span style={{ fontStyle: 'italic' }}>Empty</span>))}
+          : !isLoading && <span style={{ fontStyle: 'italic' }}>Empty</span>}
       </EuiText>
     )
 
@@ -215,7 +255,11 @@ const StringDetailsValue = (props: Props) => {
 
   return (
     <>
-      <div className={styles.container} ref={containerRef} data-testid="string-details">
+      <div
+        className={styles.container}
+        ref={containerRef}
+        data-testid="string-details"
+      >
         {isLoading && (
           <EuiProgress
             color="primary"
@@ -224,9 +268,7 @@ const StringDetailsValue = (props: Props) => {
             data-testid="progress-key-string"
           />
         )}
-        {!isEditItem && (
-          renderValue(value as string)
-        )}
+        {!isEditItem && renderValue(value as string)}
         {isEditItem && (
           <InlineItemEditor
             controlsPosition="bottom"
@@ -243,8 +285,9 @@ const StringDetailsValue = (props: Props) => {
             approveByValidation={() =>
               formattingBuffer(
                 stringToSerializedBufferFormat(viewFormat, areaValue),
-                viewFormat
-              )?.isValid}
+                viewFormat,
+              )?.isValid
+            }
           >
             <EuiTextArea
               fullWidth
@@ -259,8 +302,14 @@ const StringDetailsValue = (props: Props) => {
               }}
               disabled={loading}
               inputRef={textAreaRef}
-              className={cx(styles.stringTextArea, { [styles.areaWarning]: isDisabled })}
-              style={{ maxHeight: containerRef.current ? containerRef.current?.clientHeight - 80 : '100%' }}
+              className={cx(styles.stringTextArea, {
+                [styles.areaWarning]: isDisabled,
+              })}
+              style={{
+                maxHeight: containerRef.current
+                  ? containerRef.current?.clientHeight - 80
+                  : '100%',
+              }}
               data-testid="string-value"
             />
           </InlineItemEditor>

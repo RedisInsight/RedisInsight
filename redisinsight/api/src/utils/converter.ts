@@ -1,6 +1,4 @@
-import {
-  chunk, isInteger, isString, isNumber, isNaN,
-} from 'lodash';
+import { chunk, isInteger, isString, isNumber, isNaN } from 'lodash';
 
 export const convertIntToSemanticVersion = (input: number): string => {
   const separator = '.';
@@ -19,7 +17,10 @@ export const convertIntToSemanticVersion = (input: number): string => {
   }
 };
 
-export const convertStringToNumber = (value: any, defaultValue?: number): number => {
+export const convertStringToNumber = (
+  value: any,
+  defaultValue?: number,
+): number => {
   if (isNumber(value)) {
     return value;
   }

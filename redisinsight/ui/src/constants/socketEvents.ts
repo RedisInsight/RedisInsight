@@ -5,7 +5,7 @@ export enum SocketEvent {
 }
 
 export enum SocketFeaturesEvent {
-  Features = 'features'
+  Features = 'features',
 }
 
 export enum CloudJobEvents {

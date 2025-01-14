@@ -1,5 +1,11 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiTextColor } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiSpacer,
+  EuiTextColor,
+} from '@elastic/eui'
 
 export interface Props {
   message: string

@@ -1,7 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
-  IsDefined, IsEnum, IsInt, IsNotEmpty, IsOptional,
+  IsDefined,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
 } from 'class-validator';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 

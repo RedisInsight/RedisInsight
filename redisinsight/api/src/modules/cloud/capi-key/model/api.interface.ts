@@ -1,5 +1,5 @@
 export interface ICloudApiCapiAccessKey {
-  accessKey: string,
+  accessKey: string;
 }
 
 export interface ICloudApiCapiKey {

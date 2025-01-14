@@ -174,10 +174,13 @@
     },
     "reporters": [
       "default",
-      ["jest-html-reporters", {
-        "publicPath": "./report",
-        "filename": "index.html"
-      }]
+      [
+        "jest-html-reporters",
+        {
+          "publicPath": "./report",
+          "filename": "index.html"
+        }
+      ]
     ]
   }
 }

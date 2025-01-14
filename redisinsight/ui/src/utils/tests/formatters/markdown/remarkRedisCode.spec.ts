@@ -3,7 +3,12 @@ import { remarkCode } from 'uiSrc/utils/formatters/markdown'
 
 jest.mock('unist-util-visit')
 
-const getValue = (meta: string, lang: string, params?: string, value?: string) =>
+const getValue = (
+  meta: string,
+  lang: string,
+  params?: string,
+  value?: string,
+) =>
   `<Code label="${meta}" params="${params}" path={path} lang="${lang}">{${JSON.stringify(value)}}</Code>`
 
 describe('remarkRedisCode', () => {
@@ -11,16 +16,19 @@ describe('remarkRedisCode', () => {
     const codeNode = {
       lang: 'html',
       value: '1',
-      meta: '2'
-    };
+      meta: '2',
+    }
     // mock implementation
-    (visit as jest.Mock)
-      .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
+    ;(visit as jest.Mock).mockImplementation(
+      (_tree: any, _name: string, callback: (codeNode: any) => void) => {
+        callback(codeNode)
+      },
+    )
 
     const remark = remarkCode()
     remark({} as Node)
     expect(codeNode).toEqual({
-      ...codeNode
+      ...codeNode,
     })
   })
 
@@ -28,18 +36,21 @@ describe('remarkRedisCode', () => {
     const codeNode = {
       lang: 'redis',
       value: '1',
-      meta: '2'
-    };
+      meta: '2',
+    }
     // mock implementation
-    (visit as jest.Mock)
-      .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
+    ;(visit as jest.Mock).mockImplementation(
+      (_tree: any, _name: string, callback: (codeNode: any) => void) => {
+        callback(codeNode)
+      },
+    )
 
     const remark = remarkCode()
     remark({} as Node)
     expect(codeNode).toEqual({
       ...codeNode,
       type: 'html',
-      value: getValue(codeNode.meta, 'redis', undefined, '1')
+      value: getValue(codeNode.meta, 'redis', undefined, '1'),
     })
   })
 
@@ -47,18 +58,21 @@ describe('remarkRedisCode', () => {
     const codeNode = {
       lang: 'java',
       value: '1',
-      meta: '2'
-    };
+      meta: '2',
+    }
     // mock implementation
-    (visit as jest.Mock)
-      .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
+    ;(visit as jest.Mock).mockImplementation(
+      (_tree: any, _name: string, callback: (codeNode: any) => void) => {
+        callback(codeNode)
+      },
+    )
 
     const remark = remarkCode({ allLangs: true })
     remark({} as Node)
     expect(codeNode).toEqual({
       ...codeNode,
       type: 'html',
-      value: `<Code label="2" lang="java">{${JSON.stringify('1')}}</Code>`
+      value: `<Code label="2" lang="java">{${JSON.stringify('1')}}</Code>`,
     })
   })
 
@@ -68,18 +82,21 @@ describe('remarkRedisCode', () => {
       const codeNode = {
         lang: `redis:${params}`,
         value: '1',
-        meta: '2'
-      };
+        meta: '2',
+      }
       // mock implementation
-      (visit as jest.Mock)
-        .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
+      ;(visit as jest.Mock).mockImplementation(
+        (_tree: any, _name: string, callback: (codeNode: any) => void) => {
+          callback(codeNode)
+        },
+      )
 
       const remark = remarkCode()
       remark({} as Node)
       expect(codeNode).toEqual({
         ...codeNode,
         type: 'html',
-        value: getValue(codeNode.meta, 'redis', params, '1')
+        value: getValue(codeNode.meta, 'redis', params, '1'),
       })
     })
     it('without auto execute param redis:[results=group;pipeline=2]', () => {
@@ -87,18 +104,21 @@ describe('remarkRedisCode', () => {
       const codeNode = {
         lang: `redis:${params}`,
         value: '1',
-        meta: '2'
-      };
+        meta: '2',
+      }
       // mock implementation
-      (visit as jest.Mock)
-        .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
+      ;(visit as jest.Mock).mockImplementation(
+        (_tree: any, _name: string, callback: (codeNode: any) => void) => {
+          callback(codeNode)
+        },
+      )
 
       const remark = remarkCode()
       remark({} as Node)
       expect(codeNode).toEqual({
         ...codeNode,
         type: 'html',
-        value: getValue(codeNode.meta, 'redis', params, '1')
+        value: getValue(codeNode.meta, 'redis', params, '1'),
       })
     })
   })

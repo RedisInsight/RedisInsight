@@ -20,7 +20,9 @@ const ArrayRedisStringToASCII = (value) => {
   return value;
 };
 
-export const RedisStringToASCIITransformer = (opts?: RedisStringTransformOptions) => {
+export const RedisStringToASCIITransformer = (
+  opts?: RedisStringTransformOptions,
+) => {
   if (opts?.each === true) {
     return Transform(ArrayRedisStringToASCII, opts);
   }

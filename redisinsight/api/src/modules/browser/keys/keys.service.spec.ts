@@ -11,7 +11,10 @@ import {
   MockType,
   mockBrowserClientMetadata,
   mockBrowserHistoryService,
-  mockDatabaseRecommendationService, mockDatabaseClientFactory, mockStandaloneRedisClient, mockClusterRedisClient,
+  mockDatabaseRecommendationService,
+  mockDatabaseClientFactory,
+  mockStandaloneRedisClient,
+  mockClusterRedisClient,
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RECOMMENDATION_NAMES } from 'src/constants';
@@ -27,7 +30,11 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { KeysService } from 'src/modules/browser/keys/keys.service';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { Scanner } from 'src/modules/browser/keys/scanner/scanner';
-import { mockScanner, mockScannerStrategy, mockTypeInfoStrategy } from 'src/modules/browser/__mocks__';
+import {
+  mockScanner,
+  mockScannerStrategy,
+  mockTypeInfoStrategy,
+} from 'src/modules/browser/__mocks__';
 import { KeyInfoProvider } from 'src/modules/browser/keys/key-info/key-info.provider';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
@@ -89,11 +96,9 @@ describe('KeysService', () => {
   describe('getKeyInfo', () => {
     beforeEach(() => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Type,
-          getKeyInfoResponse.name,
-        ],
-        { replyEncoding: 'utf8' })
+        .calledWith([BrowserToolKeysCommands.Type, getKeyInfoResponse.name], {
+          replyEncoding: 'utf8',
+        })
         .mockResolvedValue(RedisDataType.String);
     });
 
@@ -113,11 +118,9 @@ describe('KeysService', () => {
     });
     it('throw NotFound error when key not found for getKeyInfo', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Type,
-          getKeyInfoResponse.name,
-        ],
-        { replyEncoding: 'utf8' })
+        .calledWith([BrowserToolKeysCommands.Type, getKeyInfoResponse.name], {
+          replyEncoding: 'utf8',
+        })
         .mockResolvedValue('none');
 
       await expect(
@@ -130,11 +133,9 @@ describe('KeysService', () => {
         command: 'TYPE',
       };
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Type,
-          getKeyInfoResponse.name,
-        ],
-        { replyEncoding: 'utf8' })
+        .calledWith([BrowserToolKeysCommands.Type, getKeyInfoResponse.name], {
+          replyEncoding: 'utf8',
+        })
         .mockRejectedValue(replyError);
 
       await expect(
@@ -171,24 +172,26 @@ describe('KeysService', () => {
     });
 
     it('should return keys with info', async () => {
-      const result = await service.getKeysInfo(
-        mockBrowserClientMetadata,
-        { keys: [getKeyInfoResponse.name] },
-      );
+      const result = await service.getKeysInfo(mockBrowserClientMetadata, {
+        keys: [getKeyInfoResponse.name],
+      });
 
       expect(result).toEqual([getKeyInfoResponse]);
     });
     it('should call recommendationService', async () => {
-      const result = await service.getKeysInfo(
-        mockBrowserClientMetadata,
-        { keys: [getKeyInfoResponse.name] },
-      );
+      const result = await service.getKeysInfo(mockBrowserClientMetadata, {
+        keys: [getKeyInfoResponse.name],
+      });
 
       expect(recommendationService.check).toBeCalledTimes(1);
       expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
         RECOMMENDATION_NAMES.SEARCH_JSON,
-        { keys: result, client: mockStandaloneRedisClient, databaseId: mockBrowserClientMetadata.databaseId },
+        {
+          keys: result,
+          client: mockStandaloneRedisClient,
+          databaseId: mockBrowserClientMetadata.databaseId,
+        },
       );
     });
     it("user don't have required permissions for getKeyInfo", async () => {
@@ -200,26 +203,44 @@ describe('KeysService', () => {
       mockScannerStrategy.getKeysInfo.mockRejectedValueOnce(replyError);
 
       await expect(
-        service.getKeysInfo(mockBrowserClientMetadata, { keys: [getKeyInfoResponse.name] }),
+        service.getKeysInfo(mockBrowserClientMetadata, {
+          keys: [getKeyInfoResponse.name],
+        }),
       ).rejects.toThrow(ForbiddenException);
     });
   });
 
   describe('getKeys', () => {
-    const getKeysDto: GetKeysDto = { cursor: '0', count: 15, scanThreshold: 10000 };
+    const getKeysDto: GetKeysDto = {
+      cursor: '0',
+      count: 15,
+      scanThreshold: 10000,
+    };
     it('should return appropriate value for standalone database', async () => {
-      mockScannerStrategy.getKeys.mockResolvedValue([mockGetKeysWithDetailsResponse]);
+      mockScannerStrategy.getKeys.mockResolvedValue([
+        mockGetKeysWithDetailsResponse,
+      ]);
 
-      const result = await service.getKeys(mockBrowserClientMetadata, getKeysDto);
+      const result = await service.getKeys(
+        mockBrowserClientMetadata,
+        getKeysDto,
+      );
 
       expect(mockScannerStrategy.getKeys).toHaveBeenCalled();
       expect(result).toEqual([mockGetKeysWithDetailsResponse]);
     });
     it('should return appropriate value for cluster', async () => {
-      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(mockClusterRedisClient);
-      mockScannerStrategy.getKeys.mockResolvedValue([mockGetKeysWithDetailsResponse]);
+      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(
+        mockClusterRedisClient,
+      );
+      mockScannerStrategy.getKeys.mockResolvedValue([
+        mockGetKeysWithDetailsResponse,
+      ]);
 
-      const result = await service.getKeys(mockBrowserClientMetadata, getKeysDto);
+      const result = await service.getKeys(
+        mockBrowserClientMetadata,
+        getKeysDto,
+      );
 
       expect(mockScannerStrategy.getKeys).toHaveBeenCalled();
       expect(result).toEqual([mockGetKeysWithDetailsResponse]);
@@ -258,17 +279,27 @@ describe('KeysService', () => {
       }
     });
     it('should call create browser history item if match !== "*"', async () => {
-      mockScannerStrategy.getKeys.mockResolvedValue([mockGetKeysWithDetailsResponse]);
+      mockScannerStrategy.getKeys.mockResolvedValue([
+        mockGetKeysWithDetailsResponse,
+      ]);
 
-      await service.getKeys(mockBrowserClientMetadata, { ...getKeysDto, match: '1' });
+      await service.getKeys(mockBrowserClientMetadata, {
+        ...getKeysDto,
+        match: '1',
+      });
 
       expect(mockScannerStrategy.getKeys).toHaveBeenCalled();
       expect(browserHistoryService.create).toHaveBeenCalled();
     });
     it('should do not call create browser history item if match === "*"', async () => {
-      mockScannerStrategy.getKeys.mockResolvedValue([mockGetKeysWithDetailsResponse]);
+      mockScannerStrategy.getKeys.mockResolvedValue([
+        mockGetKeysWithDetailsResponse,
+      ]);
 
-      await service.getKeys(mockBrowserClientMetadata, { ...getKeysDto, match: '*' });
+      await service.getKeys(mockBrowserClientMetadata, {
+        ...getKeysDto,
+        match: '*',
+      });
 
       expect(mockScannerStrategy.getKeys).toHaveBeenCalled();
       expect(browserHistoryService.create).not.toHaveBeenCalled();
@@ -277,7 +308,10 @@ describe('KeysService', () => {
       const response = [mockGetKeysWithDetailsResponse];
       mockScannerStrategy.getKeys.mockResolvedValue(response);
 
-      await service.getKeys(mockBrowserClientMetadata, { ...getKeysDto, match: '*' });
+      await service.getKeys(mockBrowserClientMetadata, {
+        ...getKeysDto,
+        match: '*',
+      });
 
       expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
@@ -292,10 +326,7 @@ describe('KeysService', () => {
 
     it('succeeded to delete keys', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Del,
-          ...keyNames,
-        ])
+        .calledWith([BrowserToolKeysCommands.Del, ...keyNames])
         .mockResolvedValue(keyNames.length);
 
       const result = await service.deleteKeys(mockBrowserClientMetadata, [
@@ -306,10 +337,7 @@ describe('KeysService', () => {
     });
     it('keys not found', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Del,
-          ...keyNames,
-        ])
+        .calledWith([BrowserToolKeysCommands.Del, ...keyNames])
         .mockResolvedValue(null);
 
       await expect(
@@ -337,10 +365,7 @@ describe('KeysService', () => {
 
     it('succeeded to rename key', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Exists,
-          renameKeyDto.keyName,
-        ])
+        .calledWith([BrowserToolKeysCommands.Exists, renameKeyDto.keyName])
         .mockResolvedValue(true);
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith([
@@ -356,10 +381,7 @@ describe('KeysService', () => {
     });
     it('key with keyName not exist', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Exists,
-          renameKeyDto.keyName,
-        ])
+        .calledWith([BrowserToolKeysCommands.Exists, renameKeyDto.keyName])
         .mockResolvedValue(false);
 
       await expect(
@@ -368,10 +390,7 @@ describe('KeysService', () => {
     });
     it('key with newKeyName already exists', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Exists,
-          renameKeyDto.keyName,
-        ])
+        .calledWith([BrowserToolKeysCommands.Exists, renameKeyDto.keyName])
         .mockResolvedValue(true);
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith([
@@ -406,11 +425,7 @@ describe('KeysService', () => {
         .calledWith([BrowserToolKeysCommands.Ttl, keyName])
         .mockResolvedValue(-1);
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Expire,
-          keyName,
-          dto.ttl,
-        ])
+        .calledWith([BrowserToolKeysCommands.Expire, keyName, dto.ttl])
         .mockResolvedValue(1);
 
       const result = await service.updateTtl(mockBrowserClientMetadata, dto);
@@ -423,10 +438,7 @@ describe('KeysService', () => {
         .calledWith([BrowserToolKeysCommands.Ttl, keyName])
         .mockResolvedValue(1000);
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Persist,
-          keyName,
-        ])
+        .calledWith([BrowserToolKeysCommands.Persist, keyName])
         .mockResolvedValue(1);
 
       const result = await service.updateTtl(mockBrowserClientMetadata, dto);
@@ -434,11 +446,7 @@ describe('KeysService', () => {
     });
     it('key not found', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([
-          BrowserToolKeysCommands.Expire,
-          keyName,
-          1000,
-        ])
+        .calledWith([BrowserToolKeysCommands.Expire, keyName, 1000])
         .mockResolvedValue(0);
 
       await expect(
@@ -465,14 +473,18 @@ describe('KeysService', () => {
         .calledWith([BrowserToolKeysCommands.Ttl, keyName])
         .mockResolvedValue(1000);
 
-      const result = await service.removeKeyExpiration(mockBrowserClientMetadata, {
-        keyName,
-        ttl: -1,
-      });
-      expect(result).toEqual({ ttl: -1 });
-      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith(
-        [BrowserToolKeysCommands.Persist, keyName],
+      const result = await service.removeKeyExpiration(
+        mockBrowserClientMetadata,
+        {
+          keyName,
+          ttl: -1,
+        },
       );
+      expect(result).toEqual({ ttl: -1 });
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith([
+        BrowserToolKeysCommands.Persist,
+        keyName,
+      ]);
     });
     it('key not found', async () => {
       when(mockStandaloneRedisClient.sendCommand)
@@ -480,7 +492,10 @@ describe('KeysService', () => {
         .mockResolvedValue(-2);
 
       await expect(
-        service.removeKeyExpiration(mockBrowserClientMetadata, { keyName, ttl: -1 }),
+        service.removeKeyExpiration(mockBrowserClientMetadata, {
+          keyName,
+          ttl: -1,
+        }),
       ).rejects.toThrow(NotFoundException);
     });
     it("user don't have required permissions for removeKeyExpiration", async () => {
@@ -491,7 +506,10 @@ describe('KeysService', () => {
       mockStandaloneRedisClient.sendCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.removeKeyExpiration(mockBrowserClientMetadata, { keyName, ttl: -1 }),
+        service.removeKeyExpiration(mockBrowserClientMetadata, {
+          keyName,
+          ttl: -1,
+        }),
       ).rejects.toThrow(ForbiddenException);
     });
   });

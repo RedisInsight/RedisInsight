@@ -13,12 +13,14 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   userSettingsConfigSelector: jest.fn().mockReturnValue({
     dateFormat: 'y',
     timezone: 'UTC',
-  })
+  }),
 }))
 
 describe('FormatedDate', () => {
   it('should render', () => {
-    expect(render(<FormatedDate {...instance(mockedProps)} date={mockedDate} />)).toBeTruthy()
+    expect(
+      render(<FormatedDate {...instance(mockedProps)} date={mockedDate} />),
+    ).toBeTruthy()
   })
 
   it('should formatDate relying on user config settings', () => {
@@ -27,7 +29,7 @@ describe('FormatedDate', () => {
   })
 
   it('should formatDate relying on default settings if no settings saved yet', () => {
-    (userSettingsConfigSelector as jest.Mock).mockImplementation(() => ({
+    ;(userSettingsConfigSelector as jest.Mock).mockImplementation(() => ({
       dateFormat: null,
       timezone: null,
     }))

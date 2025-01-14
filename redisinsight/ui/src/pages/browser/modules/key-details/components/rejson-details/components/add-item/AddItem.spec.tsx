@@ -19,7 +19,9 @@ describe('AddItem', () => {
     fireEvent.change(screen.getByTestId('json-key'), { target: { value: '"' } })
     fireEvent.click(screen.getByTestId('apply-btn'))
 
-    expect(screen.getByTestId('edit-json-error')).toHaveTextContent(JSONErrors.keyCorrectSyntax)
+    expect(screen.getByTestId('edit-json-error')).toHaveTextContent(
+      JSONErrors.keyCorrectSyntax,
+    )
   })
 
   it('should show error with invalid value', () => {
@@ -27,18 +29,33 @@ describe('AddItem', () => {
 
     expect(screen.queryByTestId('json-key')).not.toBeInTheDocument()
 
-    fireEvent.change(screen.getByTestId('json-value'), { target: { value: '"' } })
+    fireEvent.change(screen.getByTestId('json-value'), {
+      target: { value: '"' },
+    })
     fireEvent.click(screen.getByTestId('apply-btn'))
 
-    expect(screen.getByTestId('edit-json-error')).toHaveTextContent(JSONErrors.valueJSONFormat)
+    expect(screen.getByTestId('edit-json-error')).toHaveTextContent(
+      JSONErrors.valueJSONFormat,
+    )
   })
 
   it('should submit with proper key and value', () => {
     const onSubmit = jest.fn()
-    render(<AddItem {...mockedProps} isPair onCancel={jest.fn} onSubmit={onSubmit} />)
+    render(
+      <AddItem
+        {...mockedProps}
+        isPair
+        onCancel={jest.fn}
+        onSubmit={onSubmit}
+      />,
+    )
 
-    fireEvent.change(screen.getByTestId('json-key'), { target: { value: '"key"' } })
-    fireEvent.change(screen.getByTestId('json-value'), { target: { value: '1' } })
+    fireEvent.change(screen.getByTestId('json-key'), {
+      target: { value: '"key"' },
+    })
+    fireEvent.change(screen.getByTestId('json-value'), {
+      target: { value: '1' },
+    })
     fireEvent.click(screen.getByTestId('apply-btn'))
 
     expect(onSubmit).toBeCalledWith({ key: '"key"', value: '1' })

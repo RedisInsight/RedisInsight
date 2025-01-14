@@ -1,6 +1,4 @@
-import {
-  Injectable, Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
@@ -29,7 +27,9 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
    * @private
    */
   private generateControlNumber(): number {
-    const controlNumber = Number((parseInt((Math.random() * 10_000).toString(), 10) / 100).toFixed(2));
+    const controlNumber = Number(
+      (parseInt((Math.random() * 10_000).toString(), 10) / 100).toFixed(2),
+    );
     this.logger.debug(`Control number is generated: ${controlNumber}`);
 
     return controlNumber;
@@ -47,11 +47,13 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
       try {
         this.logger.debug('Creating features config entity');
 
-        entity = await this.repository.save(plainToClass(FeaturesConfigEntity, {
-          id: this.id,
-          data: defaultConfig,
-          controlNumber: this.generateControlNumber(),
-        }));
+        entity = await this.repository.save(
+          plainToClass(FeaturesConfigEntity, {
+            id: this.id,
+            data: defaultConfig,
+            controlNumber: this.generateControlNumber(),
+          }),
+        );
       } catch (e) {
         if (e.code === 'SQLITE_CONSTRAINT') {
           return this.getOrCreate();
@@ -67,7 +69,10 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
   /**
    * @inheritDoc
    */
-  async update(_sessionMetadata: SessionMetadata, data: Record<string, any>): Promise<FeaturesConfig> {
+  async update(
+    _sessionMetadata: SessionMetadata,
+    data: Record<string, any>,
+  ): Promise<FeaturesConfig> {
     await this.repository.update(
       { id: this.id },
       plainToClass(FeaturesConfigEntity, { data, id: this.id }),

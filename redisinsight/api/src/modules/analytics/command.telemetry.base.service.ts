@@ -29,9 +29,12 @@ export abstract class CommandTelemetryBaseService extends TelemetryBaseService {
       const commandToFind = command.toUpperCase();
       forEach(modules, (module, moduleName) => {
         if (module[commandToFind]) {
-          result.commandType = moduleName === 'main' ? CommandType.Core : CommandType.Module;
+          result.commandType =
+            moduleName === 'main' ? CommandType.Core : CommandType.Module;
           result.moduleName = moduleName === 'main' ? 'n/a' : moduleName;
-          result.capability = module[commandToFind]?.group ? module[commandToFind]?.group : 'n/a';
+          result.capability = module[commandToFind]?.group
+            ? module[commandToFind]?.group
+            : 'n/a';
         }
       });
 

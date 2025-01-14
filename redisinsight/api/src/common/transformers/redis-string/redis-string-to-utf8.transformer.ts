@@ -18,7 +18,9 @@ const ArrayRedisStringToUTF8 = (value) => {
   return value;
 };
 
-export const RedisStringToUTF8Transformer = (opts?: RedisStringTransformOptions) => {
+export const RedisStringToUTF8Transformer = (
+  opts?: RedisStringTransformOptions,
+) => {
   if (opts?.each) {
     return Transform(ArrayRedisStringToUTF8, opts);
   }

@@ -1,8 +1,22 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { keys } from '@elastic/eui'
-import { act, cleanup, clearStoreActions, fireEvent, mockedStore, render, screen, } from 'uiSrc/utils/test-utils'
-import { keysSelector, loadKeys, loadSearchHistory, setFilter, setPatternSearchMatch } from 'uiSrc/slices/browser/keys'
+import {
+  act,
+  cleanup,
+  clearStoreActions,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
+import {
+  keysSelector,
+  loadKeys,
+  loadSearchHistory,
+  setFilter,
+  setPatternSearchMatch,
+} from 'uiSrc/slices/browser/keys'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -19,7 +33,7 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
     data: [
       { id: '1', mode: 'pattern', filter: { type: 'list', match: '*' } },
       { id: '2', mode: 'pattern', filter: { type: 'list', match: '*' } },
-    ]
+    ],
   }),
   keysSelector: jest.fn().mockReturnValue({
     searchMode: 'Pattern',
@@ -48,8 +62,8 @@ jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     databaseChat: {
-      flag: true
-    }
+      flag: true,
+    },
   }),
 }))
 
@@ -68,14 +82,16 @@ describe('SearchKeyList', () => {
   })
 
   it('should load history after render', () => {
-    (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
-      id: '1'
+    ;(connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
+      id: '1',
     }))
 
     render(<SearchKeyList />)
     const expectedActions = [loadSearchHistory()]
 
-    expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+    expect(clearStoreActions(store.getActions())).toEqual(
+      clearStoreActions(expectedActions),
+    )
   })
 
   it('"setSearchMatch" should be called after "onChange"', () => {
@@ -92,7 +108,7 @@ describe('SearchKeyList', () => {
     const expectedActions = [setPatternSearchMatch(searchTerm), loadKeys()]
 
     expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions(expectedActions)
+      clearStoreActions(expectedActions),
     )
   })
 
@@ -106,17 +122,21 @@ describe('SearchKeyList', () => {
     fireEvent.click(screen.getByTestId('show-suggestions-btn'))
     fireEvent.click(screen.getByTestId('suggestion-item-2'))
 
-    const expectedActions = [setFilter('list'), setPatternSearchMatch('*'), loadKeys()]
+    const expectedActions = [
+      setFilter('list'),
+      setPatternSearchMatch('*'),
+      loadKeys(),
+    ]
 
     expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions([...afterRenderActions, ...expectedActions])
+      clearStoreActions([...afterRenderActions, ...expectedActions]),
     )
   })
 
   it('"loadKeys" should not be called after Enter if searchMode=Redisearch and index=null', async () => {
-    const searchTerm = 'a';
+    const searchTerm = 'a'
 
-    (keysSelector as jest.Mock).mockImplementation(() => ({
+    ;(keysSelector as jest.Mock).mockImplementation(() => ({
       searchMode: SearchMode.Redisearch,
       viewType: KeyViewType.Browser,
       isSearch: false,
@@ -134,16 +154,18 @@ describe('SearchKeyList', () => {
     const afterRenderActions = [...store.getActions()]
 
     expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions([...afterRenderActions])
+      clearStoreActions([...afterRenderActions]),
     )
 
     fireEvent.click(screen.getByTestId('search-btn'))
 
-    expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions([...afterRenderActions]))
+    expect(clearStoreActions(store.getActions())).toEqual(
+      clearStoreActions([...afterRenderActions]),
+    )
   })
 
   it('should call proper actions after click on ask copilot', async () => {
-    (keysSelector as jest.Mock).mockImplementation(() => ({
+    ;(keysSelector as jest.Mock).mockImplementation(() => ({
       searchMode: SearchMode.Redisearch,
       viewType: KeyViewType.Browser,
       isSearch: false,
@@ -159,16 +181,18 @@ describe('SearchKeyList', () => {
       changeSidePanel(SidePanels.AiAssistant),
     ]
 
-    expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions([...expectedActions]))
+    expect(clearStoreActions(store.getActions())).toEqual(
+      clearStoreActions([...expectedActions]),
+    )
   })
 
   it('should not render ask copilot if feature is disabled', async () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       databaseChat: {
-        flag: false
-      }
-    });
-    (keysSelector as jest.Mock).mockImplementation(() => ({
+        flag: false,
+      },
+    })
+    ;(keysSelector as jest.Mock).mockImplementation(() => ({
       searchMode: SearchMode.Redisearch,
       viewType: KeyViewType.Browser,
       isSearch: false,
@@ -177,6 +201,8 @@ describe('SearchKeyList', () => {
 
     render(<SearchKeyList />)
 
-    expect(screen.queryByTestId('ask-redis-copilot-btn')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('ask-redis-copilot-btn'),
+    ).not.toBeInTheDocument()
   })
 })

@@ -68,13 +68,16 @@ export interface KeysStoreData {
   scanned: number
   nextCursor: string
   keys: GetKeyInfoResponse[]
-  shardsMeta: Record<string, {
-    cursor: number
-    scanned: number
-    total: number
-    host?: string
-    port?: number
-  }>
+  shardsMeta: Record<
+    string,
+    {
+      cursor: number
+      scanned: number
+      total: number
+      host?: string
+      port?: number
+    }
+  >
   previousResultCount: number
   lastRefreshTime: Nullable<number>
   maxResults?: Nullable<number>

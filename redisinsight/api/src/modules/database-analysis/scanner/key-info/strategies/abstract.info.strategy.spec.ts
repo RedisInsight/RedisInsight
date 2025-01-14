@@ -17,7 +17,9 @@ describe('AbstractInfoStrategy', () => {
 
   describe('getLengthSafe', () => {
     it('should get length', async () => {
-      expect(await strategy.getLengthSafe(client, mockKey)).toEqual(mockRedisResponse);
+      expect(await strategy.getLengthSafe(client, mockKey)).toEqual(
+        mockRedisResponse,
+      );
     });
     it('should return null in case of error', async () => {
       when(client.sendCommand)

@@ -10,10 +10,13 @@ export class UnableToCreateTunnelException extends HttpException {
       msg = 'Cannot parse privateKey';
     }
 
-    super({
-      message: `${prepend} ${msg}`,
-      name: 'UnableToCreateTunnelException',
-      statusCode: 500,
-    }, 500);
+    super(
+      {
+        message: `${prepend} ${msg}`,
+        name: 'UnableToCreateTunnelException',
+        statusCode: 500,
+      },
+      500,
+    );
   }
 }

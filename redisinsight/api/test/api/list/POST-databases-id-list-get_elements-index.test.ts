@@ -6,13 +6,16 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, JoiRedisString,
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID, index = 0) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/list/get-elements/${index}`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/list/get-elements/${index}`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -23,10 +26,12 @@ const validInputData = {
   keyName: constants.getRandomString(),
 };
 
-const responseSchema = Joi.object().keys({
-  keyName: JoiRedisString.required(),
-  value: JoiRedisString.allow('').required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    keyName: JoiRedisString.required(),
+    value: JoiRedisString.allow('').required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -196,7 +201,11 @@ describe('POST /databases/:instanceId/list/get-elements/:index', () => {
         requirements('rte.bigData');
         [
           {
-            endpoint: () => endpoint(constants.TEST_INSTANCE_ID, constants.TEST_LIST_HUGE_INDEX),
+            endpoint: () =>
+              endpoint(
+                constants.TEST_INSTANCE_ID,
+                constants.TEST_LIST_HUGE_INDEX,
+              ),
             name: 'Should get element from particular position',
             data: {
               keyName: constants.TEST_LIST_HUGE_KEY,
@@ -239,7 +248,7 @@ describe('POST /databases/:instanceId/list/get-elements/:index', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -lindex')
+          before: () => rte.data.setAclUserRules('~* +@all -lindex'),
         },
       ].map(mainCheckFn);
     });

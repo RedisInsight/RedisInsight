@@ -2,35 +2,47 @@ import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
 import { RdiTestConnectionStatus } from 'src/modules/rdi/dto';
 import {
-  describe, expect, deps, getMainCheckFn, generateInvalidDataTestCases,
+  describe,
+  expect,
+  deps,
+  getMainCheckFn,
+  generateInvalidDataTestCases,
   validateInvalidDataTestCase,
 } from '../../deps';
 import { Joi, nock } from '../../../helpers/test';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST_pipeline_test_connections';
 const notExistedRdiId = 'notExisted';
 const testRdiUrl = 'http://rdilocal.test';
 
-const endpoint = (id) => request(server).post(`/${constants.API.RDI}/${id || testRdiId}/pipeline/test-connections`);
+const endpoint = (id) =>
+  request(server).post(
+    `/${constants.API.RDI}/${id || testRdiId}/pipeline/test-connections`,
+  );
 
 const dataSchema = Joi.object().optional().strict(true);
 
-const validInputData = {
-};
+const validInputData = {};
 
-const responseSchema = Joi.object().keys({
-  sources: Joi.object().keys({
-    status: Joi.string().allow(RdiTestConnectionStatus.Success, RdiTestConnectionStatus.Fail).required(),
-    error: Joi.object().keys({
-      code: Joi.string(),
-      message: Joi.string(),
-    }).allow(null).optional(),
-  }),
-}).required().strict(true);
+const responseSchema = Joi.object()
+  .keys({
+    sources: Joi.object().keys({
+      status: Joi.string()
+        .allow(RdiTestConnectionStatus.Success, RdiTestConnectionStatus.Fail)
+        .required(),
+      error: Joi.object()
+        .keys({
+          code: Joi.string(),
+          message: Joi.string(),
+        })
+        .allow(null)
+        .optional(),
+    }),
+  })
+  .required()
+  .strict(true);
 
 const mockResponse = {
   sources: {
@@ -49,8 +61,10 @@ const mockResponseFailed = {
   },
 };
 
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
-
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -75,7 +89,10 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
           nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
             access_token: mockedAccessToken,
           });
-          nock(testRdiUrl).post(`/${RdiUrl.TestConnections}`).query(true).reply(200, mockResponse);
+          nock(testRdiUrl)
+            .post(`/${RdiUrl.TestConnections}`)
+            .query(true)
+            .reply(200, mockResponse);
         },
       },
       {
@@ -91,7 +108,10 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
           nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
             access_token: mockedAccessToken,
           });
-          nock(testRdiUrl).post(`/${RdiUrl.TestConnections}`).query(true).reply(200, mockResponseFailed);
+          nock(testRdiUrl)
+            .post(`/${RdiUrl.TestConnections}`)
+            .query(true)
+            .reply(200, mockResponseFailed);
         },
       },
       {
@@ -127,10 +147,13 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
           nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
             access_token: mockedAccessToken,
           });
-          nock(testRdiUrl).post(`/${RdiUrl.TestConnections}`).query(true).reply(401, {
-            message: 'Request failed with status code 401',
-            detail: 'Unauthorized',
-          });
+          nock(testRdiUrl)
+            .post(`/${RdiUrl.TestConnections}`)
+            .query(true)
+            .reply(401, {
+              message: 'Request failed with status code 401',
+              detail: 'Unauthorized',
+            });
         },
       },
     ].forEach(mainCheckFn);

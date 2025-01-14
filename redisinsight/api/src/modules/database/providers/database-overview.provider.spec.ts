@@ -84,7 +84,10 @@ describe('OverviewService', () => {
     service = await module.get(DatabaseOverviewProvider);
     spyGetNodeInfo = jest.spyOn<any, any>(service, 'getNodeInfo');
     spyCalculateTotalKeys = jest.spyOn<any, any>(service, 'calculateTotalKeys');
-    spyCalculateNodesTotalKeys = jest.spyOn<any, any>(service, 'calculateNodesTotalKeys');
+    spyCalculateNodesTotalKeys = jest.spyOn<any, any>(
+      service,
+      'calculateNodesTotalKeys',
+    );
     standaloneClient.call = jest.fn();
     standaloneClient.sendCommand = jest.fn();
   });
@@ -96,7 +99,11 @@ describe('OverviewService', () => {
           .calledWith(['info'], { replyEncoding: 'utf8' })
           .mockResolvedValue(mockStandaloneRedisInfoReply);
 
-        const result = await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace);
+        const result = await service.getOverview(
+          mockClientMetadata,
+          standaloneClient,
+          mockCurrentKeyspace,
+        );
 
         expect(result).toEqual({
           ...mockDatabaseOverview,
@@ -117,7 +124,11 @@ describe('OverviewService', () => {
           .calledWith(['info'], { replyEncoding: 'utf8' })
           .mockResolvedValue(redisInfoReplyWithServerName);
 
-        const result = await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace);
+        const result = await service.getOverview(
+          mockClientMetadata,
+          standaloneClient,
+          mockCurrentKeyspace,
+        );
 
         expect(result).toEqual({
           ...mockDatabaseOverview,
@@ -141,7 +152,13 @@ describe('OverviewService', () => {
           },
         });
 
-        expect(await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            standaloneClient,
+            mockCurrentKeyspace,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
           totalKeys: 0,
           totalKeysPerDb: undefined,
@@ -158,7 +175,13 @@ describe('OverviewService', () => {
           },
         });
 
-        expect(await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            standaloneClient,
+            mockCurrentKeyspace,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
           totalKeys: 3,
           totalKeysPerDb: undefined,
@@ -175,7 +198,13 @@ describe('OverviewService', () => {
           clients: undefined,
         });
 
-        expect(await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            standaloneClient,
+            mockCurrentKeyspace,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
           totalKeys: undefined,
           usedMemory: undefined,
@@ -198,11 +227,23 @@ describe('OverviewService', () => {
           },
         });
 
-        expect(await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            standaloneClient,
+            mockCurrentKeyspace,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
         });
 
-        expect(await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            standaloneClient,
+            mockCurrentKeyspace,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
           cpuUsagePercentage: 50,
         });
@@ -222,11 +263,23 @@ describe('OverviewService', () => {
           },
         });
 
-        expect(await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            standaloneClient,
+            mockCurrentKeyspace,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
         });
 
-        expect(await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            standaloneClient,
+            mockCurrentKeyspace,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
           cpuUsagePercentage: 100,
         });
@@ -245,7 +298,13 @@ describe('OverviewService', () => {
           },
         });
 
-        expect(await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            standaloneClient,
+            mockCurrentKeyspace,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
           cpuUsagePercentage: undefined,
         });
@@ -253,7 +312,13 @@ describe('OverviewService', () => {
       it('should full data of keyspace if query keyspace = "full" ', async () => {
         spyGetNodeInfo.mockResolvedValueOnce(mockNodeInfo);
 
-        expect(await service.getOverview(mockClientMetadata, standaloneClient, DatabaseOverviewKeyspace.Full)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            standaloneClient,
+            DatabaseOverviewKeyspace.Full,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
           totalKeysPerDb: {
             db0: 1,
@@ -265,8 +330,11 @@ describe('OverviewService', () => {
     });
     describe('Cluster', () => {
       it('Should calculate overview and ignore replica where needed', async () => {
-        const getTotal = jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
-        clusterClient.nodes = jest.fn()
+        const getTotal = jest
+          .spyOn(Utils, 'getTotalKeys')
+          .mockResolvedValue(mockGetTotalResponse1);
+        clusterClient.nodes = jest
+          .fn()
           .mockReturnValue(new Array(6).fill(Promise.resolve()));
 
         spyGetNodeInfo.mockResolvedValueOnce({
@@ -297,7 +365,13 @@ describe('OverviewService', () => {
           replication: { role: 'slave' },
         });
 
-        expect(await service.getOverview(mockClientMetadata, clusterClient, mockCurrentKeyspace)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            clusterClient,
+            mockCurrentKeyspace,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
           connectedClients: 1,
           totalKeys: 6,
@@ -316,43 +390,73 @@ describe('OverviewService', () => {
           ...mockNodeInfo,
           port: 12001,
           server: { ...mockNodeInfo.server, uptime_in_seconds: '3' },
-          cpu: { ...mockNodeInfo.cpu, used_cpu_sys: '1.5', used_cpu_user: '1.5' },
+          cpu: {
+            ...mockNodeInfo.cpu,
+            used_cpu_sys: '1.5',
+            used_cpu_user: '1.5',
+          },
         });
         spyGetNodeInfo.mockResolvedValueOnce({
           ...mockNodeInfo,
           port: 12002,
           server: { ...mockNodeInfo.server, uptime_in_seconds: '3' },
-          cpu: { ...mockNodeInfo.cpu, used_cpu_sys: '1.5', used_cpu_user: '1.5' },
+          cpu: {
+            ...mockNodeInfo.cpu,
+            used_cpu_sys: '1.5',
+            used_cpu_user: '1.5',
+          },
         });
         spyGetNodeInfo.mockResolvedValueOnce({
           ...mockNodeInfo,
           port: 12003,
           server: { ...mockNodeInfo.server, uptime_in_seconds: '3' },
-          cpu: { ...mockNodeInfo.cpu, used_cpu_sys: '1.5', used_cpu_user: '1.5' },
+          cpu: {
+            ...mockNodeInfo.cpu,
+            used_cpu_sys: '1.5',
+            used_cpu_user: '1.5',
+          },
         });
         spyGetNodeInfo.mockResolvedValueOnce({
           ...mockNodeInfo,
           port: 12004,
           replication: { role: 'slave' },
           server: { ...mockNodeInfo.server, uptime_in_seconds: '3' },
-          cpu: { ...mockNodeInfo.cpu, used_cpu_sys: '1.5', used_cpu_user: '1.5' },
+          cpu: {
+            ...mockNodeInfo.cpu,
+            used_cpu_sys: '1.5',
+            used_cpu_user: '1.5',
+          },
         });
         spyGetNodeInfo.mockResolvedValueOnce({
           ...mockNodeInfo,
           port: 12005,
           replication: { role: 'slave' },
           server: { ...mockNodeInfo.server, uptime_in_seconds: '3' },
-          cpu: { ...mockNodeInfo.cpu, used_cpu_sys: '1.5', used_cpu_user: '1.5' },
+          cpu: {
+            ...mockNodeInfo.cpu,
+            used_cpu_sys: '1.5',
+            used_cpu_user: '1.5',
+          },
         });
         spyGetNodeInfo.mockResolvedValueOnce({
           ...mockNodeInfo,
           port: 12006,
           replication: { role: 'slave' },
           server: { ...mockNodeInfo.server, uptime_in_seconds: '3' },
-          cpu: { ...mockNodeInfo.cpu, used_cpu_sys: '1.5', used_cpu_user: '1.5' },
+          cpu: {
+            ...mockNodeInfo.cpu,
+            used_cpu_sys: '1.5',
+            used_cpu_user: '1.5',
+          },
         });
 
-        expect(await service.getOverview(mockClientMetadata, clusterClient, mockCurrentKeyspace)).toEqual({
+        expect(
+          await service.getOverview(
+            mockClientMetadata,
+            clusterClient,
+            mockCurrentKeyspace,
+          ),
+        ).toEqual({
           ...mockDatabaseOverview,
           connectedClients: 1,
           totalKeys: 6,

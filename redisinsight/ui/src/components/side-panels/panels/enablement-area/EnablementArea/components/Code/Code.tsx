@@ -5,11 +5,15 @@ import { useSelector } from 'react-redux'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { CodeButtonParams } from 'uiSrc/constants'
 import { parseParams } from 'uiSrc/utils'
-import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  sendEventTelemetry,
+  TELEMETRY_EMPTY_VALUE,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import CodeButtonBlock from 'uiSrc/components/markdown/CodeButtonBlock'
 
-import { getFileInfo, getTutorialSection, } from '../../utils'
+import { getFileInfo, getTutorialSection } from '../../utils'
 
 export interface Props {
   label: string
@@ -21,7 +25,11 @@ export interface Props {
 
 const Code = (props: Props) => {
   const { children, params = '', label, path, lang, ...rest } = props
-  const { provider, modules = [], isFreeDb } = useSelector(connectedInstanceSelector)
+  const {
+    provider,
+    modules = [],
+    isFreeDb,
+  } = useSelector(connectedInstanceSelector)
 
   const { search } = useLocation()
   const { setScript } = useContext(EnablementAreaContext)
@@ -31,7 +39,7 @@ const Code = (props: Props) => {
   const getFile = () => {
     const pagePath = new URLSearchParams(search).get('item')
     const manifestPath = new URLSearchParams(search).get('path')
-    const file: { path?: string, name?: string, section?: string } = {}
+    const file: { path?: string; name?: string; section?: string } = {}
 
     if (pagePath) {
       const pageInfo = getFileInfo({ path: pagePath })
@@ -56,8 +64,8 @@ const Code = (props: Props) => {
         databaseId: instanceId,
         path,
         provider,
-        ...file
-      }
+        ...file,
+      },
     })
   }
 
@@ -70,8 +78,8 @@ const Code = (props: Props) => {
         buttonName: label,
         path,
         provider,
-        ...file
-      }
+        ...file,
+      },
     })
   }
 

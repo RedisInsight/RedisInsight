@@ -1,6 +1,12 @@
 import {
   Body,
-  ClassSerializerInterceptor, Controller, Get, Post, UseInterceptors, UsePipes, ValidationPipe,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Post,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
   Param,
 } from '@nestjs/common';
 import { RdiPipeline, RdiClientMetadata } from 'src/modules/rdi/models';
@@ -8,7 +14,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { RdiPipelineService } from 'src/modules/rdi/rdi-pipeline.service';
 import { RequestRdiClientMetadata } from 'src/modules/rdi/decorators';
-import { RdiDryRunJobDto, RdiTemplateResponseDto, RdiTestConnectionsResponseDto } from 'src/modules/rdi/dto';
+import {
+  RdiDryRunJobDto,
+  RdiTemplateResponseDto,
+  RdiTestConnectionsResponseDto,
+} from 'src/modules/rdi/dto';
 import { RdiDryRunJobResponseDto } from 'src/modules/rdi/dto/rdi.dry-run.job.response.dto';
 
 @ApiTags('RDI')
@@ -16,9 +26,7 @@ import { RdiDryRunJobResponseDto } from 'src/modules/rdi/dto/rdi.dry-run.job.res
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('rdi/:id/pipeline')
 export class RdiPipelineController {
-  constructor(
-    private readonly rdiPipelineService: RdiPipelineService,
-  ) {}
+  constructor(private readonly rdiPipelineService: RdiPipelineService) {}
 
   @Get('/schema')
   @ApiEndpoint({
@@ -49,7 +57,7 @@ export class RdiPipelineController {
   })
   async dryRunJob(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Body() dto: RdiDryRunJobDto,
+    @Body() dto: RdiDryRunJobDto,
   ): Promise<RdiDryRunJobResponseDto> {
     return this.rdiPipelineService.dryRunJob(rdiClientMetadata, dto);
   }
@@ -61,7 +69,7 @@ export class RdiPipelineController {
   })
   async deploy(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Body() dto: RdiPipeline,
+    @Body() dto: RdiPipeline,
   ): Promise<void> {
     return this.rdiPipelineService.deploy(rdiClientMetadata, dto);
   }
@@ -106,7 +114,7 @@ export class RdiPipelineController {
   })
   async testConnections(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Body() config: object,
+    @Body() config: object,
   ): Promise<RdiTestConnectionsResponseDto> {
     return this.rdiPipelineService.testConnections(rdiClientMetadata, config);
   }
@@ -129,9 +137,12 @@ export class RdiPipelineController {
   })
   async getJobTemplate(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Param('pipelineType') pipelineType: string,
+    @Param('pipelineType') pipelineType: string,
   ): Promise<RdiTemplateResponseDto> {
-    return this.rdiPipelineService.getJobTemplate(rdiClientMetadata, pipelineType);
+    return this.rdiPipelineService.getJobTemplate(
+      rdiClientMetadata,
+      pipelineType,
+    );
   }
 
   @Get('/config/template/:pipelineType/:dbType')
@@ -141,10 +152,14 @@ export class RdiPipelineController {
   })
   async getConfigTemplate(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Param('pipelineType') pipelineType: string,
-      @Param('dbType') dbType: string,
+    @Param('pipelineType') pipelineType: string,
+    @Param('dbType') dbType: string,
   ): Promise<RdiTemplateResponseDto> {
-    return this.rdiPipelineService.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
+    return this.rdiPipelineService.getConfigTemplate(
+      rdiClientMetadata,
+      pipelineType,
+      dbType,
+    );
   }
 
   @Get('/status')

@@ -1,14 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Model, Graph } from '@antv/x6'
-import { register} from '@antv/x6-react-shape'
+import { register } from '@antv/x6-react-shape'
 import Hierarchy from '@antv/hierarchy'
 import { formatRedisReply } from 'redisinsight-plugin-sdk'
 
-import {
-  EuiButtonIcon,
-  EuiToolTip,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip, EuiIcon } from '@elastic/eui'
 
 import {
   EDGE_COLOR_BODY_DARK,
@@ -32,7 +28,7 @@ import { ExplainNode, ProfileNode } from './Node'
 
 interface IExplain {
   command: string
-  data: [{response: string[] | string | any}]
+  data: [{ response: string[] | string | any }]
 }
 
 function getEdgeSize(c: number) {
@@ -50,14 +46,14 @@ function getEdgeColor(isDarkTheme: boolean) {
 export default function Explain(props: IExplain): JSX.Element {
   const command = props.command.split(' ')[0].toLowerCase()
   if (command.startsWith('graph')) {
-    const info  = props.data[0].response
+    const info = props.data[0].response
     const resp = ParseGraphV2(info)
 
     let profilingTime: IProfilingTime = {}
     let t = command.endsWith('explain') ? CoreType.Explain : CoreType.Profile
     if (t === CoreType.Profile) {
       profilingTime = {
-        'Total Execution Time': GetTotalExecutionTime(resp)
+        'Total Execution Time': GetTotalExecutionTime(resp),
       }
     }
 
@@ -78,7 +74,10 @@ export default function Explain(props: IExplain): JSX.Element {
   useEffect(() => {
     if (command == 'ft.profile') {
       const getParsedResponse = async () => {
-        const formattedResponse = await formatRedisReply(props.data[0].response, props.command)
+        const formattedResponse = await formatRedisReply(
+          props.data[0].response,
+          props.command,
+        )
         setParsedRedisReply(formattedResponse)
       }
       getParsedResponse()
@@ -91,17 +90,28 @@ export default function Explain(props: IExplain): JSX.Element {
     let data: EntityInfo
     let profilingTime: IProfilingTime = {}
 
-    if (info.length > 5 && typeof info[0] === 'string' && info[0].toLowerCase().startsWith('shard')) {
+    if (
+      info.length > 5 &&
+      typeof info[0] === 'string' &&
+      info[0].toLowerCase().startsWith('shard')
+    ) {
       let [cluster, entityInfo] = ParseProfileCluster(info)
-      cluster['Coordinator'].forEach((kv: [string, string]) => profilingTime[kv[0]] = kv[1])
+      cluster['Coordinator'].forEach(
+        (kv: [string, string]) => (profilingTime[kv[0]] = kv[1]),
+      )
       data = entityInfo
       return (
         <>
-          <div className="responseFail">Visualization is not supported for a clustered database.</div>
+          <div className="responseFail">
+            Visualization is not supported for a clustered database.
+          </div>
           <div className="parsedRedisReply">{parsedRedisReply}</div>
         </>
       )
-    } else if (typeof info[0] === 'string' && info[0].toLowerCase().startsWith('coordinator')) {
+    } else if (
+      typeof info[0] === 'string' &&
+      info[0].toLowerCase().startsWith('coordinator')
+    ) {
       const resultsProfile = info[2]
       data = ParseProfile(resultsProfile)
       profilingTime = {
@@ -112,7 +122,9 @@ export default function Explain(props: IExplain): JSX.Element {
       }
       return (
         <>
-          <div className="responseFail">Visualization is not supported for a clustered database.</div>
+          <div className="responseFail">
+            Visualization is not supported for a clustered database.
+          </div>
           <div className="parsedRedisReply">{parsedRedisReply}</div>
         </>
       )
@@ -138,22 +150,16 @@ export default function Explain(props: IExplain): JSX.Element {
   const resp = props.data[0].response
 
   const data = ParseExplain(
-    Array.isArray(resp) ? resp.join('\n') : resp.split('\\n').join('\n')
+    Array.isArray(resp) ? resp.join('\n') : resp.split('\\n').join('\n'),
   )
-  return (
-    <ExplainDraw
-      data={data}
-      module={module}
-      type={CoreType.Explain}
-    />
-  )
+  return <ExplainDraw data={data} module={module} type={CoreType.Explain} />
 }
 
 register({
   shape: 'react-explain-node',
   width: 100,
   height: 100,
-  component: ExplainNode as any
+  component: ExplainNode as any,
 })
 
 register({
@@ -169,7 +175,17 @@ interface IProfilingTime {
   [key: string]: string
 }
 
-function ExplainDraw({data, type, module, profilingTime}: {data: any, type: CoreType, module: ModuleType, profilingTime?: IProfilingTime}): JSX.Element {
+function ExplainDraw({
+  data,
+  type,
+  module,
+  profilingTime,
+}: {
+  data: any
+  type: CoreType
+  module: ModuleType
+  profilingTime?: IProfilingTime
+}): JSX.Element {
   const container = useRef<HTMLDivElement | null>(null)
 
   const [done, setDone] = useState(false)
@@ -178,15 +194,19 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
   const [core, setCore] = useState<Graph>()
 
   function resize() {
-    const isFullScreen = parent.document.body.getElementsByClassName('fullscreen').length > 0
+    const isFullScreen =
+      parent.document.body.getElementsByClassName('fullscreen').length > 0
     const b = core?.getAllCellsBBox()
     const width = Math.max((b?.width || 1080) + 100, document.body.offsetWidth)
     if (isFullScreen) {
       setIsFullScreen(true)
-      const height = Math.max((b?.height || 585) + 100, parent.document.body.offsetHeight)
+      const height = Math.max(
+        (b?.height || 585) + 100,
+        parent.document.body.offsetHeight,
+      )
       if (type !== CoreType.Profile && collapse) {
         core?.resize(width, window.outerHeight - 250)
-        core?.positionContent("top")
+        core?.positionContent('top')
       } else {
         core?.resize(width, height)
       }
@@ -194,7 +214,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       setIsFullScreen(false)
       if (type !== CoreType.Profile && collapse) {
         core?.resize(width, 400)
-        core?.positionContent("top")
+        core?.positionContent('top')
       } else {
         core?.resize(width, (b?.height || 585) + 100)
       }
@@ -203,7 +223,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
 
   window.addEventListener('resize', resize)
   useEffect(() => {
-
     if (done) return
     setDone(true)
 
@@ -223,14 +242,16 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
 
     setCore(graph)
 
-    graph.on("resize", () => graph.centerContent())
-    graph.on("node:mouseenter", x => {
-      const {id} = x.node.getData()
+    graph.on('resize', () => graph.centerContent())
+    graph.on('node:mouseenter', (x) => {
+      const { id } = x.node.getData()
       // Find ancestors of a node
-      const ancestors = GetAncestors(data, id, {found: false, pairs: []})
-      ancestors.pairs.forEach(p => {
+      const ancestors = GetAncestors(data, id, { found: false, pairs: [] })
+      ancestors.pairs.forEach((p) => {
         // Highlight ancestor and their ancestor
-        document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "outline: 1px solid #85A2FE !important;")
+        document
+          .querySelector(`#node-${p[0]}`)
+          ?.setAttribute('style', 'outline: 1px solid #85A2FE !important;')
         // Get edge size of parent ancestor to apply the right edge stroke
         const edge = graph.getCellById(`${p[0]}-${p[1]}`)
         const edgeColor = '#85A2FE'
@@ -243,11 +264,11 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       })
     })
 
-    graph.on("node:mouseleave", x => {
-      const {id} = x.node.getData()
-      const ancestors = GetAncestors(data, id, {found: false, pairs: []})
-      ancestors.pairs.forEach(p => {
-        document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "")
+    graph.on('node:mouseleave', (x) => {
+      const { id } = x.node.getData()
+      const ancestors = GetAncestors(data, id, { found: false, pairs: [] })
+      ancestors.pairs.forEach((p) => {
+        document.querySelector(`#node-${p[0]}`)?.setAttribute('style', '')
         const edge = graph.getCellById(`${p[0]}-${p[1]}`)
         const edgeColor = getEdgeColor(isDarkTheme)
         edge.setAttrs({
@@ -291,7 +312,11 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
         // expressions which has ':' at the center.
         //
         // Example child data with parent snippet: <PARENT_SNIPPET>:<DATA>
-        if (!info.snippet && info.parentSnippet && info.data?.startsWith(`${info.parentSnippet}:`)) {
+        if (
+          !info.snippet &&
+          info.parentSnippet &&
+          info.data?.startsWith(`${info.parentSnippet}:`)
+        ) {
           info.data = info.data.substr(info.parentSnippet.length + 1)
           info.snippet = info.parentSnippet
         }
@@ -305,29 +330,31 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
         let nodeProps = {
           shape: 'react-explain-node',
           width: 240,
-          height: (info.snippet ? 64 : 42),
+          height: info.snippet ? 64 : 42,
         }
         if (type === CoreType.Profile) {
           nodeProps = {
             shape: 'react-profile-node',
             width: 320,
-            height: (info.snippet ? 114 : 86),
+            height: info.snippet ? 114 : 86,
           }
         }
-
 
         const portId = data.id + '-source'
         let targetPort = {}
         const targetItem: any = []
         if (info.parentId) {
-          targetItem.push({id: `${info.id}-${info.parentId}-target`, group: `${info.parentId}-target`})
-          targetPort[info.parentId+'-target'] = {
+          targetItem.push({
+            id: `${info.id}-${info.parentId}-target`,
+            group: `${info.parentId}-target`,
+          })
+          targetPort[info.parentId + '-target'] = {
             position: { name: 'bottom' },
             attrs: {
               circle: {
-                r: 0
-              }
-            }
+                r: 0,
+              },
+            },
           }
         }
         model.nodes?.push({
@@ -348,15 +375,16 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
                 position: { name: 'top' },
                 attrs: {
                   circle: {
-                    r: 0
-                  }
-                }
+                    r: 0,
+                  },
+                },
               },
               ...targetPort,
             },
             items: [
-              ...data.children.map(c => ({
-                id: `${data.id}-${c.id}`, group: portId
+              ...data.children.map((c) => ({
+                id: `${data.id}-${c.id}`,
+                group: portId,
               })),
               ...targetItem,
             ],
@@ -375,7 +403,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
             },
             target: {
               cell: item.id,
-              port: `${data.id}-${item.id}`
+              port: `${data.id}-${item.id}`,
             },
             router: {
               name: 'manhattan',
@@ -389,7 +417,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
                   bottom: 10,
                   right: 20,
                   left: 10,
-                }
+                },
               },
             },
             attrs: {
@@ -409,161 +437,175 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
     graph.fromJSON(model)
 
     graph.centerContent()
-
   }, [done])
 
-    const ele = document.querySelector("#container-parent")
+  const ele = document.querySelector('#container-parent')
 
-    let pos = { top: 0, left: 0, x: 0, y: 0 }
+  let pos = { top: 0, left: 0, x: 0, y: 0 }
 
-    const mouseMoveHandler = function (e) {
-      // How far the mouse has been moved
-      const dx = e.clientX - pos.x
-      const dy = e.clientY - pos.y
+  const mouseMoveHandler = function (e) {
+    // How far the mouse has been moved
+    const dx = e.clientX - pos.x
+    const dy = e.clientY - pos.y
 
-      // Scroll the element
-      if (ele) {
-        ele.scrollTop = pos.top - dy
-        ele.scrollLeft = pos.left - dx
-      }
+    // Scroll the element
+    if (ele) {
+      ele.scrollTop = pos.top - dy
+      ele.scrollLeft = pos.left - dx
+    }
+  }
+
+  const mouseUpHandler = function () {
+    document.removeEventListener('mousemove', mouseMoveHandler)
+    document.removeEventListener('mouseup', mouseUpHandler)
+  }
+
+  const mouseDownHandler = function (e) {
+    pos = {
+      // The current scroll
+      left: ele?.scrollLeft || 0,
+      top: ele?.scrollTop || 0,
+      // Get the current mouse position
+      x: e.clientX,
+      y: e.clientY,
     }
 
+    document.addEventListener('mousemove', mouseMoveHandler)
+    setTimeout(() => document.addEventListener('mouseup', mouseUpHandler), 100)
+  }
 
-    const mouseUpHandler = function () {
-      document.removeEventListener('mousemove', mouseMoveHandler)
-      document.removeEventListener('mouseup', mouseUpHandler)
-    }
-
-
-    const mouseDownHandler = function (e) {
-      pos = {
-        // The current scroll
-        left: ele?.scrollLeft || 0,
-        top: ele?.scrollTop || 0,
-        // Get the current mouse position
-        x: e.clientX,
-        y: e.clientY,
-      }
-
-      document.addEventListener('mousemove', mouseMoveHandler)
-      setTimeout(() => document.addEventListener('mouseup', mouseUpHandler), 100)
-    }
-
-    ele?.addEventListener('mousedown', mouseDownHandler)
-
+  ele?.addEventListener('mousedown', mouseDownHandler)
 
   if (type !== CoreType.Profile && collapse) {
-    core?.resize(undefined, isFullScreen ? (window.outerHeight - 250) : 400)
-    core?.positionContent("top")
+    core?.resize(undefined, isFullScreen ? window.outerHeight - 250 : 400)
+    core?.positionContent('top')
   } else {
     core?.resize(undefined, core?.getContentBBox().height + 100)
   }
 
   return (
     <div>
-      { type !== CoreType.Profile && collapse && <div style={{ paddingTop: '50px' }}></div> }
+      {type !== CoreType.Profile && collapse && (
+        <div style={{ paddingTop: '50px' }}></div>
+      )}
       <div
         id="container-parent"
         style={{
-          height: isFullScreen ? (window.outerHeight - 170) + 'px' : type !== CoreType.Profile && collapse ? '500px' : '585px',
+          height: isFullScreen
+            ? window.outerHeight - 170 + 'px'
+            : type !== CoreType.Profile && collapse
+              ? '500px'
+              : '585px',
           width: '100%',
           overflow: 'auto',
         }}
       >
-        <div style={{ margin: 0, width: '100vw' }} ref={container} id="container" />
-        { !(collapse) && (
+        <div
+          style={{ margin: 0, width: '100vw' }}
+          ref={container}
+          id="container"
+        />
+        {!collapse && (
           <div className="ZoomMenu">
-            {
-              [
-                {
-                  name: 'Zoom In',
-                  onClick: () => {
-                    setTimeout(() => document.addEventListener('mouseup', mouseUpHandler), 100)
-                    core && Math.floor(core.zoom()) <= 3 && core?.zoom(0.5)
-                    core?.resize(undefined, core?.getContentBBox().height + 50)
-                  },
-                  icon: 'magnifyWithPlus'
+            {[
+              {
+                name: 'Zoom In',
+                onClick: () => {
+                  setTimeout(
+                    () => document.addEventListener('mouseup', mouseUpHandler),
+                    100,
+                  )
+                  core && Math.floor(core.zoom()) <= 3 && core?.zoom(0.5)
+                  core?.resize(undefined, core?.getContentBBox().height + 50)
                 },
-                {
-                  name: 'Zoom Out',
-                  onClick: () => {
-                    setTimeout(() => document.addEventListener('mouseup', mouseUpHandler), 100)
-                    if (Math.floor(core?.zoom() || 0) <= 0.5) {
-                      core?.centerContent()
-                    } else {
-                      core?.zoom(-0.5)
-                    }
-                    core?.resize(undefined, core?.getContentBBox().height + 50)
-                  },
-                  icon: 'magnifyWithMinus'
+                icon: 'magnifyWithPlus',
+              },
+              {
+                name: 'Zoom Out',
+                onClick: () => {
+                  setTimeout(
+                    () => document.addEventListener('mouseup', mouseUpHandler),
+                    100,
+                  )
+                  if (Math.floor(core?.zoom() || 0) <= 0.5) {
+                    core?.centerContent()
+                  } else {
+                    core?.zoom(-0.5)
+                  }
+                  core?.resize(undefined, core?.getContentBBox().height + 50)
                 },
-                {
-                  name: 'Reset Zoom',
-                  onClick: () => {
-                    setTimeout(() => document.addEventListener('mouseup', mouseUpHandler), 100)
-                    core?.zoomTo(1)
-                    core?.resize(undefined, core?.getContentBBox().height + 50)
-                  },
-                  icon: 'bullseye'
+                icon: 'magnifyWithMinus',
+              },
+              {
+                name: 'Reset Zoom',
+                onClick: () => {
+                  setTimeout(
+                    () => document.addEventListener('mouseup', mouseUpHandler),
+                    100,
+                  )
+                  core?.zoomTo(1)
+                  core?.resize(undefined, core?.getContentBBox().height + 50)
                 },
-              ].map(item => (
-                <EuiToolTip position="left" content={item.name}>
-                  <EuiButtonIcon
-                    color='text'
-                    onClick={item.onClick}
-                    iconType={item.icon}
-                    aria-label={item.name}
-                  />
-                </EuiToolTip>
-              ))
-            }
+                icon: 'bullseye',
+              },
+            ].map((item) => (
+              <EuiToolTip position="left" content={item.name}>
+                <EuiButtonIcon
+                  color="text"
+                  onClick={item.onClick}
+                  iconType={item.icon}
+                  aria-label={item.name}
+                />
+              </EuiToolTip>
+            ))}
           </div>
         )}
-        { type !== CoreType.Profile &&
+        {type !== CoreType.Profile && (
           <div
-            style={{ paddingBottom: (isFullScreen && profilingTime && ModuleType.Search ? '60px' : '35px')}}
+            style={{
+              paddingBottom:
+                isFullScreen && profilingTime && ModuleType.Search
+                  ? '60px'
+                  : '35px',
+            }}
             className="CollapseButton"
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault()
-              setTimeout(() => document.addEventListener('mouseup', mouseUpHandler), 100)
-              if (!collapse) {     // About to collapse?
+              setTimeout(
+                () => document.addEventListener('mouseup', mouseUpHandler),
+                100,
+              )
+              if (!collapse) {
+                // About to collapse?
                 core?.zoomTo(1)
                 core?.resize(undefined, core?.getContentBBox().height + 50)
               }
               setCollapse(!collapse)
             }}
           >
-            {
-              collapse
-                ?
-                <>
-                  <div>Expand</div>
-                  <EuiIcon className="NodeIcon" size="m" type="arrowDown" />
-                </>
-                :
-                <>
-                  <div>Collapse</div>
-                  <EuiIcon className="NodeIcon" size="m" type="arrowUp" />
-                </>
-            }
+            {collapse ? (
+              <>
+                <div>Expand</div>
+                <EuiIcon className="NodeIcon" size="m" type="arrowDown" />
+              </>
+            ) : (
+              <>
+                <div>Collapse</div>
+                <EuiIcon className="NodeIcon" size="m" type="arrowUp" />
+              </>
+            )}
           </div>
-        }
-        { profilingTime &&
-          (
-            module === ModuleType.Search &&
-              (
-                <div className="ProfileInfo ProfileTimeInfo">
-                  {
-                    Object.keys(profilingTime).map(key => (
-                      <div className="Item">
-                        <div className="Value">{profilingTime[key]}</div>
-                        <div className="Key">{key}</div>
-                      </div>
-                    ))
-                  }
-                </div>
-              )
-          )}
+        )}
+        {profilingTime && module === ModuleType.Search && (
+          <div className="ProfileInfo ProfileTimeInfo">
+            {Object.keys(profilingTime).map((key) => (
+              <div className="Item">
+                <div className="Value">{profilingTime[key]}</div>
+                <div className="Key">{key}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

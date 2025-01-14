@@ -6,9 +6,11 @@ import { CommonProps } from 'uiSrc/components/monaco-editor/MonacoEditor'
 
 const MonacoJS = (props: CommonProps) => {
   const editorDidMount = (
-    editor: monacoEditor.editor.IStandaloneCodeEditor
+    editor: monacoEditor.editor.IStandaloneCodeEditor,
   ) => {
-    const messageContribution = editor.getContribution('editor.contrib.messageController')
+    const messageContribution = editor.getContribution(
+      'editor.contrib.messageController',
+    )
     editor.onDidAttemptReadOnlyEdit(() => messageContribution?.dispose())
   }
 

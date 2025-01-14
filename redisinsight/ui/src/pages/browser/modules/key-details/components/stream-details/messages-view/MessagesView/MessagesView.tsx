@@ -2,9 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 
-import {
-  streamGroupsSelector,
-} from 'uiSrc/slices/browser/stream'
+import { streamGroupsSelector } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
@@ -26,10 +24,16 @@ export interface Props {
 }
 
 const MessagesView = (props: Props) => {
-  const { data = [], columns = [], total, onClosePopover, loadMoreItems } = props
+  const {
+    data = [],
+    columns = [],
+    total,
+    onClosePopover,
+    loadMoreItems,
+  } = props
 
-  const { loading, } = useSelector(streamGroupsSelector)
-  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }
+  const { loading } = useSelector(streamGroupsSelector)
+  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? {}
 
   return (
     <>

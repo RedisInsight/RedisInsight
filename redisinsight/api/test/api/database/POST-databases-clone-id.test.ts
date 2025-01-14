@@ -6,7 +6,10 @@ import {
   validateInvalidDataTestCase,
   requirements,
   getMainCheckFn,
-  _, it, validateApiCall, after
+  _,
+  it,
+  validateApiCall,
+  after,
 } from '../deps';
 import { databaseSchema } from './constants';
 import { Joi } from '../../helpers/test';
@@ -19,9 +22,10 @@ const baseDatabaseData = {
   port: constants.TEST_REDIS_PORT,
   username: constants.TEST_REDIS_USER || undefined,
   password: constants.TEST_REDIS_PASSWORD || undefined,
-}
+};
 
-const endpoint = (id = constants.TEST_INSTANCE_ID) => request(server).post(`/${constants.API.DATABASES}/clone/${id}`);
+const endpoint = (id = constants.TEST_INSTANCE_ID) =>
+  request(server).post(`/${constants.API.DATABASES}/clone/${id}`);
 
 // input data schema
 const dataSchema = Joi.object({
@@ -32,7 +36,9 @@ const dataSchema = Joi.object({
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
   timeout: Joi.number().integer().allow(null),
-  compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').allow(null),
+  compressor: Joi.string()
+    .valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY')
+    .allow(null),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),
@@ -81,11 +87,21 @@ describe(`POST /databases/clone/:id`, () => {
           error: 'Bad Request',
         },
         checkFn: ({ body }) => {
-          expect(body.message).to.contain('caCert.property name should not exist');
-          expect(body.message).to.contain('caCert.property certificate should not exist');
-          expect(body.message).to.contain('clientCert.property name should not exist');
-          expect(body.message).to.contain('clientCert.property certificate should not exist');
-          expect(body.message).to.contain('clientCert.property key should not exist');
+          expect(body.message).to.contain(
+            'caCert.property name should not exist',
+          );
+          expect(body.message).to.contain(
+            'caCert.property certificate should not exist',
+          );
+          expect(body.message).to.contain(
+            'clientCert.property name should not exist',
+          );
+          expect(body.message).to.contain(
+            'clientCert.property certificate should not exist',
+          );
+          expect(body.message).to.contain(
+            'clientCert.property key should not exist',
+          );
         },
       },
     ].map(mainCheckFn);
@@ -105,7 +121,7 @@ describe(`POST /databases/clone/:id`, () => {
           statusCode: 503,
           // message: `Could not connect to ${constants.TEST_REDIS_HOST}:1111, please check the connection details.`,
           // todo: verify error handling because right now messages are different
-          error: 'Service Unavailable'
+          error: 'Service Unavailable',
         },
         after: async () => {
           expect(await localDb.getInstanceByName('new name')).to.eq(null);
@@ -123,7 +139,7 @@ describe(`POST /databases/clone/:id`, () => {
         responseBody: {
           statusCode: 404,
           message: 'Invalid database instance id.',
-          error: 'Not Found'
+          error: 'Not Found',
         },
       },
     ].map(mainCheckFn);
@@ -144,7 +160,9 @@ describe(`POST /databases/clone/:id`, () => {
           },
           responseSchema,
           before: async () => {
-            oldDatabase = await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_3);
+            oldDatabase = await localDb.getInstanceByName(
+              constants.TEST_INSTANCE_NAME_3,
+            );
             expect(oldDatabase.name).to.eq(constants.TEST_INSTANCE_NAME_3);
           },
           responseBody: {
@@ -161,7 +179,18 @@ describe(`POST /databases/clone/:id`, () => {
           after: async () => {
             newDatabase = await localDb.getInstanceByName('some name');
             expect(newDatabase).to.contain({
-              ..._.omit(oldDatabase, ['id', 'modules', 'name', 'provider', 'lastConnection', 'new', 'timeout', 'compressor', 'version', 'createdAt']),
+              ..._.omit(oldDatabase, [
+                'id',
+                'modules',
+                'name',
+                'provider',
+                'lastConnection',
+                'new',
+                'timeout',
+                'compressor',
+                'version',
+                'createdAt',
+              ]),
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
             });
@@ -178,7 +207,7 @@ describe(`POST /databases/clone/:id`, () => {
             endpoint,
             statusCode: 400,
             data: {
-              db: constants.TEST_REDIS_DB_INDEX
+              db: constants.TEST_REDIS_DB_INDEX,
             },
           });
         });
@@ -204,44 +233,59 @@ describe(`POST /databases/clone/:id`, () => {
             },
             checkFn: ({ body }) => {
               addedId = body.id;
-            }
+            },
           });
 
           // Create string using Browser API to particular db index
           await validateApiCall({
-            endpoint: () => request(server).post(`/${constants.API.DATABASES}/${addedId}/string`),
+            endpoint: () =>
+              request(server).post(
+                `/${constants.API.DATABASES}/${addedId}/string`,
+              ),
             statusCode: 201,
             data: {
               keyName: browserKeyName,
-              value: 'somevalue'
+              value: 'somevalue',
             },
           });
 
           // Create client for CLI
           await validateApiCall({
-            endpoint: () => request(server).patch(`/${constants.API.DATABASES}/${addedId}/cli/${cliUuid}`),
+            endpoint: () =>
+              request(server).patch(
+                `/${constants.API.DATABASES}/${addedId}/cli/${cliUuid}`,
+              ),
             statusCode: 200,
           });
 
           // Create string using CLI API to 0 db index
           await validateApiCall({
-            endpoint: () => request(server).post(`/${constants.API.DATABASES}/${addedId}/cli/${cliUuid}/send-command`),
+            endpoint: () =>
+              request(server).post(
+                `/${constants.API.DATABASES}/${addedId}/cli/${cliUuid}/send-command`,
+              ),
             statusCode: 200,
             data: {
               command: `set ${cliKeyName} somevalue`,
             },
           });
 
-
           // check data created by db index
-          await rte.data.executeCommand('select', `${constants.TEST_REDIS_DB_INDEX}`);
-          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(1)
-          expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(1)
+          await rte.data.executeCommand(
+            'select',
+            `${constants.TEST_REDIS_DB_INDEX}`,
+          );
+          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(1);
+          expect(
+            await rte.data.executeCommand('exists', browserKeyName),
+          ).to.eql(1);
 
           // check data created by db index
           await rte.data.executeCommand('select', '0');
-          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0)
-          expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(0)
+          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0);
+          expect(
+            await rte.data.executeCommand('exists', browserKeyName),
+          ).to.eql(0);
 
           // switch back to db index 0
           await validateApiCall({
@@ -255,7 +299,7 @@ describe(`POST /databases/clone/:id`, () => {
             },
             checkFn: ({ body }) => {
               addedId = body.id;
-            }
+            },
           });
         });
       });
@@ -352,10 +396,15 @@ describe(`POST /databases/clone/:id`, () => {
             expect(body.caCert.name).to.eq(newCaName);
             expect(body.caCert.certificate).to.be.undefined;
 
-            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOneBy({ id: body.caCert.id });
+            const ca: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CA_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.caCert.id });
 
-            expect(ca.certificate).to.eql(localDb.encryptData(constants.TEST_REDIS_TLS_CA));
+            expect(ca.certificate).to.eql(
+              localDb.encryptData(constants.TEST_REDIS_TLS_CA),
+            );
           },
         });
 
@@ -382,7 +431,7 @@ describe(`POST /databases/clone/:id`, () => {
             statusCode: 400,
             // todo: verify error handling because right now messages are different
             // message: 'Could not connect to',
-            error: 'Bad Request'
+            error: 'Bad Request',
           },
         });
 
@@ -404,14 +453,14 @@ describe(`POST /databases/clone/:id`, () => {
             verifyServerCert: true,
             caCert: {
               name: dbName,
-              certificate: 'invalid'
+              certificate: 'invalid',
             },
           },
           responseBody: {
             statusCode: 400,
             // todo: verify error handling because right now messages are different
             // message: 'Could not connect to',
-            error: 'Bad Request'
+            error: 'Bad Request',
           },
         });
 
@@ -421,7 +470,10 @@ describe(`POST /databases/clone/:id`, () => {
     describe('TLS AUTH', function () {
       requirements('rte.tls', 'rte.tlsAuth');
 
-      let existingCACertId, existingClientCertId, existingCACertName, existingClientCertName;
+      let existingCACertId,
+        existingClientCertId,
+        existingCACertName,
+        existingClientCertName;
 
       beforeEach(localDb.initAgreements);
       after(localDb.initAgreements);
@@ -474,13 +526,19 @@ describe(`POST /databases/clone/:id`, () => {
             expect(body.clientCert.certificate).to.be.undefined;
             expect(body.clientCert.key).to.be.undefined;
 
-            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOneBy({ id: body.caCert.id });
+            const ca: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CA_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.caCert.id });
 
             expect(ca.certificate).to.eql(constants.TEST_REDIS_TLS_CA);
 
-            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOneBy({ id: body.clientCert.id });
+            const clientPair: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CLIENT_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.clientCert.id });
 
             expect(clientPair.certificate).to.eql(constants.TEST_USER_TLS_CERT);
             expect(clientPair.key).to.eql(constants.TEST_USER_TLS_KEY);
@@ -491,8 +549,9 @@ describe(`POST /databases/clone/:id`, () => {
       });
       it('Update standalone instance and verify users certs (new certificates)', async () => {
         const dbName = constants.getRandomString();
-        const newCaName = existingCACertName = constants.getRandomString();
-        const newClientCertName = existingClientCertName = constants.getRandomString();
+        const newCaName = (existingCACertName = constants.getRandomString());
+        const newClientCertName = (existingClientCertName =
+          constants.getRandomString());
         // preconditions
         expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
@@ -532,16 +591,28 @@ describe(`POST /databases/clone/:id`, () => {
             expect(body.clientCert.certificate).to.be.undefined;
             expect(body.clientCert.key).to.be.undefined;
 
-            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOneBy({ id: body.caCert.id });
+            const ca: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CA_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.caCert.id });
 
-            expect(ca.certificate).to.eql(localDb.encryptData(constants.TEST_REDIS_TLS_CA));
+            expect(ca.certificate).to.eql(
+              localDb.encryptData(constants.TEST_REDIS_TLS_CA),
+            );
 
-            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOneBy({ id: body.clientCert.id });
+            const clientPair: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CLIENT_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.clientCert.id });
 
-            expect(clientPair.certificate).to.eql(localDb.encryptData(constants.TEST_USER_TLS_CERT));
-            expect(clientPair.key).to.eql(localDb.encryptData(constants.TEST_USER_TLS_KEY));
+            expect(clientPair.certificate).to.eql(
+              localDb.encryptData(constants.TEST_USER_TLS_CERT),
+            );
+            expect(clientPair.key).to.eql(
+              localDb.encryptData(constants.TEST_USER_TLS_KEY),
+            );
           },
         });
 
@@ -686,7 +757,7 @@ describe(`POST /databases/clone/:id`, () => {
             name: dbName,
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
-            db: constants.TEST_REDIS_DB_INDEX
+            db: constants.TEST_REDIS_DB_INDEX,
           },
         });
       });

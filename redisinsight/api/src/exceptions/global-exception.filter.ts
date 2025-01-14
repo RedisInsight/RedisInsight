@@ -15,11 +15,10 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
       const message = `Error when trying to fetch ${request.url}`;
 
       this.staticServerLogger.error(message, { ...exception } as any);
-      return response.status(statusCode)
-        .json({
-          statusCode,
-          message,
-        });
+      return response.status(statusCode).json({
+        statusCode,
+        message,
+      });
     }
 
     return super.catch(exception, host);

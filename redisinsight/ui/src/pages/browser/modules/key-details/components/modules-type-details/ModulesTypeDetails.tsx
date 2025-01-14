@@ -8,9 +8,15 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import styles from '../unsupported-type-details/styles.module.scss'
 
-const ModulesTypeDetails = ({ moduleName = 'unsupported' }: { moduleName: string }) => {
+const ModulesTypeDetails = ({
+  moduleName = 'unsupported',
+}: {
+  moduleName: string
+}) => {
   const history = useHistory()
-  const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '' } = useSelector(
+    connectedInstanceSelector,
+  )
 
   const handleGoWorkbenchPage = (e: React.MouseEvent) => {
     e.preventDefault()

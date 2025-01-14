@@ -6,14 +6,15 @@ import EmptyMessagesList from './EmptyMessagesList'
 
 describe('EmptyMessagesList', () => {
   it('should render', () => {
-    expect(
-      render(<EmptyMessagesList isSpublishNotSupported />)
-    ).toBeTruthy()
+    expect(render(<EmptyMessagesList isSpublishNotSupported />)).toBeTruthy()
   })
 
   it('should render cluster info for Cluster connection type', () => {
     const { queryByTestId } = render(
-      <EmptyMessagesList connectionType={ConnectionType.Cluster} isSpublishNotSupported />
+      <EmptyMessagesList
+        connectionType={ConnectionType.Cluster}
+        isSpublishNotSupported
+      />,
     )
 
     expect(queryByTestId('empty-messages-list-cluster')).toBeInTheDocument()
@@ -21,7 +22,10 @@ describe('EmptyMessagesList', () => {
 
   it(' not render cluster info for Cluster connection type', () => {
     const { queryByTestId } = render(
-      <EmptyMessagesList connectionType={ConnectionType.Cluster} isSpublishNotSupported={false} />
+      <EmptyMessagesList
+        connectionType={ConnectionType.Cluster}
+        isSpublishNotSupported={false}
+      />,
     )
 
     expect(queryByTestId('empty-messages-list-cluster')).not.toBeInTheDocument()
@@ -29,7 +33,10 @@ describe('EmptyMessagesList', () => {
 
   it('should not render cluster info for Cluster connection type', () => {
     const { queryByTestId } = render(
-      <EmptyMessagesList connectionType={ConnectionType.Standalone} isSpublishNotSupported />
+      <EmptyMessagesList
+        connectionType={ConnectionType.Standalone}
+        isSpublishNotSupported
+      />,
     )
 
     expect(queryByTestId('empty-messages-list-cluster')).not.toBeInTheDocument()

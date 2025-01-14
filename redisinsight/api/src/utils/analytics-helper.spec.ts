@@ -3,7 +3,11 @@ import {
   getRangeForNumber,
   getAnalyticsDataFromIndexInfo,
 } from 'src/utils/analytics-helper';
-import {mockFtInfoAnalyticsData, mockRedisFtInfoReply, replyToBuffer} from "src/__mocks__";
+import {
+  mockFtInfoAnalyticsData,
+  mockRedisFtInfoReply,
+  replyToBuffer,
+} from 'src/__mocks__';
 
 /* eslint-disable sonarjs/no-duplicate-string */
 const getRangeForNumberTests = [
@@ -76,9 +80,15 @@ describe('calculateRedisHitRatio', () => {
 
 describe('getAnalyticsDataFromIndexInfo', () => {
   it('should return proper analytics data', () => {
-    expect(getAnalyticsDataFromIndexInfo(mockRedisFtInfoReply as string[])).toEqual(mockFtInfoAnalyticsData);
-  })
+    expect(
+      getAnalyticsDataFromIndexInfo(mockRedisFtInfoReply as string[]),
+    ).toEqual(mockFtInfoAnalyticsData);
+  });
   it('should return proper analytics data when buffers received', () => {
-    expect(getAnalyticsDataFromIndexInfo(replyToBuffer(mockRedisFtInfoReply) as string[])).toEqual(mockFtInfoAnalyticsData);
-  })
+    expect(
+      getAnalyticsDataFromIndexInfo(
+        replyToBuffer(mockRedisFtInfoReply) as string[],
+      ),
+    ).toEqual(mockFtInfoAnalyticsData);
+  });
 });

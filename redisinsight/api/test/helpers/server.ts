@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import * as bodyParser from 'body-parser';
 import { constants } from './constants';
-import { connect, Socket } from "socket.io-client";
+import { connect, Socket } from 'socket.io-client';
 import * as express from 'express';
 import { serverConfig } from './test';
 import { SessionMetadataAdapter } from 'src/modules/auth/session-metadata/adapters/session-metadata.adapter';
@@ -15,7 +15,7 @@ import { sign } from 'jsonwebtoken';
  */
 export let server = process.env.TEST_BE_SERVER;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
-process.env.MOCK_AKEY = sign({exp: Date.now() + 360_000 }, 'test');
+process.env.MOCK_AKEY = sign({ exp: Date.now() + 360_000 }, 'test');
 process.env.MOCK_RKEY = 'rk_asdasdasd';
 process.env.MOCK_IDP_TYPE = 'google';
 
@@ -29,9 +29,12 @@ export const getServer = async () => {
     const keytar = require('keytar');
     let keytarPassword = await keytar.getPassword('redisinsight', 'app');
     if (!keytarPassword) {
-      await keytar.setPassword('redisinsight', 'app', constants.TEST_KEYTAR_PASSWORD);
-    }
-    else {
+      await keytar.setPassword(
+        'redisinsight',
+        'app',
+        constants.TEST_KEYTAR_PASSWORD,
+      );
+    } else {
       constants.TEST_KEYTAR_PASSWORD = keytarPassword;
     }
   } catch (e) {
@@ -46,7 +49,7 @@ export const getServer = async () => {
     const app = moduleFixture.createNestApplication();
     app.use(bodyParser.json({ limit: '512mb' }));
     app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
-    app.use('/static', express.static(serverConfig.get('dir_path').staticDir))
+    app.use('/static', express.static(serverConfig.get('dir_path').staticDir));
     app.useWebSocketAdapter(new SessionMetadataAdapter(app));
 
     await app.init();
@@ -57,19 +60,25 @@ export const getServer = async () => {
   }
 
   return server;
-}
+};
 
 export const getBaseURL = (): string => baseUrl;
 
-export const getSocket = async (namespace: string, options = {}): Promise<Socket> => {
+export const getSocket = async (
+  namespace: string,
+  options = {},
+): Promise<Socket> => {
   return new Promise((resolve, reject) => {
     const base = new URL(baseUrl);
-    const client = connect(`ws${base.protocol === 'https:' ? 's' : ''}://${base.host}/${namespace}`, {
-      forceNew: true,
-      rejectUnauthorized: false,
-      ...options,
-    });
+    const client = connect(
+      `ws${base.protocol === 'https:' ? 's' : ''}://${base.host}/${namespace}`,
+      {
+        forceNew: true,
+        rejectUnauthorized: false,
+        ...options,
+      },
+    );
     client.on('connect_error', reject);
     client.on('connect', () => resolve(client));
   });
-}
+};

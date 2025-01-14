@@ -9,7 +9,9 @@ import {
   pauseMonitor,
   setSocket,
   stopMonitor,
-  lockResume, setLogFileId, setStartTimestamp
+  lockResume,
+  setLogFileId,
+  setStartTimestamp,
 } from 'uiSrc/slices/cli/monitor'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { MonitorEvent, SocketEvent } from 'uiSrc/constants'
@@ -39,7 +41,7 @@ jest.mock('uiSrc/slices/cli/monitor', () => ({
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    id: '1'
+    id: '1',
   }),
 }))
 
@@ -57,10 +59,7 @@ describe('MonitorConfig', () => {
     monitorSelector.mockImplementation(monitorSelectorMock)
 
     const { unmount } = render(<MonitorConfig />)
-    const afterRenderActions = [
-      setSocket(socket),
-      setMonitorLoadingPause(true)
-    ]
+    const afterRenderActions = [setSocket(socket), setMonitorLoadingPause(true)]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
     unmount()
@@ -69,7 +68,7 @@ describe('MonitorConfig', () => {
   it(`should emit ${MonitorEvent.Monitor} event`, () => {
     const monitorSelectorMock = jest.fn().mockReturnValue({
       isRunning: true,
-      isSaveToFile: true
+      isSaveToFile: true,
     })
     monitorSelector.mockImplementation(monitorSelectorMock)
 
@@ -85,7 +84,7 @@ describe('MonitorConfig', () => {
       setSocket(socket),
       setMonitorLoadingPause(true),
       setLogFileId(expect.any(String)),
-      setStartTimestamp(expect.any(Number))
+      setStartTimestamp(expect.any(Number)),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
@@ -95,7 +94,7 @@ describe('MonitorConfig', () => {
   it(`should not emit ${MonitorEvent.Monitor} event when paused`, () => {
     const monitorSelectorMock = jest.fn().mockReturnValue({
       isRunning: true,
-      isPaused: true
+      isPaused: true,
     })
     monitorSelector.mockImplementation(monitorSelectorMock)
 
@@ -123,12 +122,15 @@ describe('MonitorConfig', () => {
       // done()
     })
 
-    socket.socketClient.emit(MonitorEvent.Exception, { message: 'test', name: 'error' })
+    socket.socketClient.emit(MonitorEvent.Exception, {
+      message: 'test',
+      name: 'error',
+    })
 
     const afterRenderActions = [
       setSocket(socket),
       setMonitorLoadingPause(true),
-      pauseMonitor()
+      pauseMonitor(),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
@@ -147,12 +149,12 @@ describe('MonitorConfig', () => {
       expect(error).toEqual({ message: 'test', name: 'error' })
     })
 
-    socket.socketClient.emit(SocketEvent.ConnectionError, { message: 'test', name: 'error' })
+    socket.socketClient.emit(SocketEvent.ConnectionError, {
+      message: 'test',
+      name: 'error',
+    })
 
-    const afterRenderActions = [
-      setSocket(socket),
-      setMonitorLoadingPause(true)
-    ]
+    const afterRenderActions = [setSocket(socket), setMonitorLoadingPause(true)]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
     unmount()
@@ -173,7 +175,7 @@ describe('MonitorConfig', () => {
       setMonitorLoadingPause(true),
       pauseMonitor(),
       stopMonitor(),
-      lockResume()
+      lockResume(),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 

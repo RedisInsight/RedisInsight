@@ -1,10 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-} from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { isEmpty } from 'lodash'
 import cx from 'classnames'
@@ -38,7 +33,8 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
 
   const { theme } = useContext(ThemeContext)
-  const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } = featureFlags
+  const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } =
+    featureFlags
   const isShowPromoBtn = !enhancedCloudUIFeature?.flag
 
   useEffect(() => {
@@ -56,7 +52,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
       event: TelemetryEvent.CONFIG_DATABASES_CLICKED,
       eventData: {
         source: OAuthSocialSource.DatabasesList,
-      }
+      },
     })
     onAddInstance()
   }
@@ -66,8 +62,8 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
       sendEventTelemetry({
         event,
         eventData: {
-          ...eventData
-        }
+          ...eventData,
+        },
       })
     }
   }
@@ -110,14 +106,17 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
               ...linkStyles,
               backgroundImage: linkStyles?.backgroundImage
                 ? `url(${getPathToResource(linkStyles.backgroundImage)})`
-                : undefined
+                : undefined,
             }}
             onClick={(e) => {
-              !isSSOEnabled && handleCreateDatabaseClick(
-                HELP_LINKS.cloud.event,
-                { source: HELP_LINKS.cloud.sources.databaseList },
-              )
-              ssoCloudHandlerClick(e, { source: OAuthSocialSource.ListOfDatabases, action: OAuthSocialAction.Create })
+              !isSSOEnabled &&
+                handleCreateDatabaseClick(HELP_LINKS.cloud.event, {
+                  source: HELP_LINKS.cloud.sources.databaseList,
+                })
+              ssoCloudHandlerClick(e, {
+                source: OAuthSocialSource.ListOfDatabases,
+                action: OAuthSocialAction.Create,
+              })
             }}
           />
         )}
@@ -127,7 +126,12 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
 
   return (
     <div className={styles.containerDl}>
-      <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false} gutterSize="s">
+      <EuiFlexGroup
+        className={styles.contentDL}
+        alignItems="center"
+        responsive={false}
+        gutterSize="s"
+      >
         <EuiFlexItem grow={false}>
           <AddInstanceBtn />
         </EuiFlexItem>

@@ -12,9 +12,17 @@ import reducer, {
   STATUS_LOADING,
   STATUS_SUCCESS,
 } from 'uiSrc/slices/app/init'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
-import { getFeatureFlags, getFeatureFlagsFailure, getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
+import {
+  getFeatureFlags,
+  getFeatureFlagsFailure,
+  getFeatureFlagsSuccess,
+} from 'uiSrc/slices/app/features'
 import { getConfig } from 'uiSrc/config'
 import { fetchCsrfToken, fetchCsrfTokenFail } from 'uiSrc/slices/app/csrf'
 
@@ -32,7 +40,7 @@ describe('init slice', () => {
     it('should properly initialize app state', () => {
       const state = {
         ...initialState,
-        status: STATUS_LOADING
+        status: STATUS_LOADING,
       }
 
       // Act
@@ -51,7 +59,7 @@ describe('init slice', () => {
     it('should have success state', () => {
       const state = {
         ...initialState,
-        status: STATUS_SUCCESS
+        status: STATUS_SUCCESS,
       }
 
       // Act
@@ -71,13 +79,16 @@ describe('init slice', () => {
       const state = {
         ...initialState,
         status: STATUS_FAIL,
-        error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR
+        error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR,
       }
 
       // Act
-      const nextState = reducer(initialState, initializeAppStateFail({
-        error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR
-      }))
+      const nextState = reducer(
+        initialState,
+        initializeAppStateFail({
+          error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR,
+        }),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -137,7 +148,9 @@ describe('init slice', () => {
     it('failed to init csrf', async () => {
       riConfig.api.csrfEndpoint = 'http://localhost'
 
-      apiService.get = jest.fn().mockRejectedValueOnce(new Error('something went wrong'))
+      apiService.get = jest
+        .fn()
+        .mockRejectedValueOnce(new Error('something went wrong'))
 
       // Act
       await store.dispatch<any>(initializeAppAction())

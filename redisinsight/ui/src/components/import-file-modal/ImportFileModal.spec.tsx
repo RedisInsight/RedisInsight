@@ -15,7 +15,7 @@ const mockProps: Props<Object> = {
   errorMessage: '',
   invalidMessage: '',
   isInvalid: false,
-  isSubmitDisabled: false
+  isSubmitDisabled: false,
 }
 
 describe('ImportFileModal', () => {
@@ -35,7 +35,7 @@ describe('ImportFileModal', () => {
     render(<ImportFileModal {...mockProps} />)
 
     fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
-      target: { files: ['file'] }
+      target: { files: ['file'] },
     })
 
     expect(mockProps.onFileChange).toBeCalled()
@@ -52,19 +52,27 @@ describe('ImportFileModal', () => {
   it('should show title before submit', () => {
     render(<ImportFileModal {...mockProps} />)
 
-    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('title')
+    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent(
+      'title',
+    )
   })
 
   it('should show custom results title after submit', () => {
-    render(<ImportFileModal {...mockProps} data={{}} resultsTitle="resultsTitle" />)
+    render(
+      <ImportFileModal {...mockProps} data={{}} resultsTitle="resultsTitle" />,
+    )
 
-    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('resultsTitle')
+    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent(
+      'resultsTitle',
+    )
   })
 
   it('should show default results title after submit', () => {
     render(<ImportFileModal {...mockProps} data={{}} />)
 
-    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('Import Results')
+    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent(
+      'Import Results',
+    )
   })
 
   it('should show submit results after submit', () => {
@@ -85,9 +93,17 @@ describe('ImportFileModal', () => {
   })
 
   it('should render invalid message', () => {
-    render(<ImportFileModal {...mockProps} isInvalid invalidMessage="invalidMessage" />)
+    render(
+      <ImportFileModal
+        {...mockProps}
+        isInvalid
+        invalidMessage="invalidMessage"
+      />,
+    )
 
-    expect(screen.getByTestId('input-file-error-msg')).toHaveTextContent('invalidMessage')
+    expect(screen.getByTestId('input-file-error-msg')).toHaveTextContent(
+      'invalidMessage',
+    )
   })
 
   it('submit btn should be disabled without file', () => {
@@ -100,7 +116,7 @@ describe('ImportFileModal', () => {
     render(<ImportFileModal {...mockProps} />)
 
     fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
-      target: { files: ['file'] }
+      target: { files: ['file'] },
     })
 
     expect(screen.getByTestId('submit-btn')).not.toBeDisabled()
@@ -119,7 +135,12 @@ describe('ImportFileModal', () => {
   })
 
   it('should render warning message', () => {
-    render(<ImportFileModal {...mockProps} warning={<div data-testid="warning">warning</div>} />)
+    render(
+      <ImportFileModal
+        {...mockProps}
+        warning={<div data-testid="warning">warning</div>}
+      />,
+    )
 
     expect(screen.getByTestId('warning')).toHaveTextContent('warning')
   })
@@ -127,6 +148,10 @@ describe('ImportFileModal', () => {
   it('should contain the upload warning text', () => {
     render(<ImportFileModal {...mockProps} />)
 
-    expect(screen.getByText('Use files only from trusted authors to avoid automatic execution of malicious code.')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Use files only from trusted authors to avoid automatic execution of malicious code.',
+      ),
+    ).toBeInTheDocument()
   })
 })

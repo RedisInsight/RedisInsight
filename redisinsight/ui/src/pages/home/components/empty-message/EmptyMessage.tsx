@@ -15,13 +15,14 @@ export interface Props {
 }
 
 const EmptyMessage = ({ onAddInstanceClick }: Props) => (
-  <div className={styles.noResultsContainer} data-testid="empty-database-instance-list">
-    <EuiImage
-      src={CakeIcon}
-      className={styles.icon}
-      alt="empty"
-    />
-    <EuiText className={styles.text}>No databases yet, let&apos;s add one!</EuiText>
+  <div
+    className={styles.noResultsContainer}
+    data-testid="empty-database-instance-list"
+  >
+    <EuiImage src={CakeIcon} className={styles.icon} alt="empty" />
+    <EuiText className={styles.text}>
+      No databases yet, let&apos;s add one!
+    </EuiText>
     <EuiButton
       fill
       size="m"
@@ -31,7 +32,7 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => (
           event: TelemetryEvent.CONFIG_DATABASES_CLICKED,
           eventData: {
             source: OAuthSocialSource.EmptyDatabasesList,
-          }
+          },
         })
         onAddInstanceClick?.()
       }}
@@ -46,10 +47,10 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => (
           target="_blank"
           className={styles.link}
           external={false}
-          href={getUtmExternalLink(
-            EXTERNAL_LINKS.tryFree,
-            { campaign: UTM_CAMPAINGS[OAuthSocialSource.EmptyDatabasesList], medium: 'main' }
-          )}
+          href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
+            campaign: UTM_CAMPAINGS[OAuthSocialSource.EmptyDatabasesList],
+            medium: 'main',
+          })}
           onClick={(e) => {
             ssoCloudHandlerClick(e, {
               action: OAuthSocialAction.Create,

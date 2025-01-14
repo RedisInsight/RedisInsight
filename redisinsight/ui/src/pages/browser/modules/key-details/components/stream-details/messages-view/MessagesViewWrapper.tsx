@@ -10,9 +10,12 @@ import {
   selectedConsumerSelector,
   selectedGroupSelector,
   ackPendingEntriesAction,
-  claimPendingMessages
+  claimPendingMessages,
 } from 'uiSrc/slices/browser/stream'
-import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
+import {
+  selectedKeyDataSelector,
+  updateSelectedKeyRefreshTime,
+} from 'uiSrc/slices/browser/keys'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { getFormatTime, getNextId } from 'uiSrc/utils/streamUtils'
 import { SortOrder } from 'uiSrc/constants'
@@ -22,7 +25,7 @@ import {
   AckPendingEntriesResponse,
   PendingEntryDto,
   ClaimPendingEntryDto,
-  ClaimPendingEntriesResponse
+  ClaimPendingEntriesResponse,
 } from 'apiSrc/modules/browser/stream/dto'
 
 import MessagesView from './MessagesView'
@@ -36,14 +39,13 @@ const minColumnWidth = 195
 const claimPrefix = '-claim'
 const ackPrefix = '-ack'
 
-export interface Props {
-}
+export interface Props {}
 
 const MessagesViewWrapper = (props: Props) => {
   const {
     lastRefreshTime,
     data: loadedMessages = [],
-    pending = 0
+    pending = 0,
   } = useSelector(selectedConsumerSelector) ?? {}
   const { name: group } = useSelector(selectedGroupSelector) ?? { name: '' }
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
@@ -70,8 +72,8 @@ const MessagesViewWrapper = (props: Props) => {
       event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_CLAIM_CANCELED,
       eventData: {
         databaseId: instanceId,
-        pending
-      }
+        pending,
+      },
     })
   }
 
@@ -79,13 +81,13 @@ const MessagesViewWrapper = (props: Props) => {
     setOpenPopover(id + claimPrefix)
   }
 
-  const onSuccessAck = (data :AckPendingEntriesResponse) => {
+  const onSuccessAck = (data: AckPendingEntriesResponse) => {
     sendEventTelemetry({
       event: TelemetryEvent.STREAM_CONSUMER_MESSAGE_ACKNOWLEDGED,
       eventData: {
         databaseId: instanceId,
-        pending: pending - data.affected
-      }
+        pending: pending - data.affected,
+      },
     })
     setOpenPopover('')
   }
@@ -96,7 +98,7 @@ const MessagesViewWrapper = (props: Props) => {
 
   const handleClaimingId = (
     data: Partial<ClaimPendingEntryDto>,
-    onSuccess: (data: ClaimPendingEntriesResponse) => void
+    onSuccess: (data: ClaimPendingEntriesResponse) => void,
   ) => {
     dispatch(claimPendingMessages(data, onSuccess))
   }
@@ -120,12 +122,19 @@ const MessagesViewWrapper = (props: Props) => {
         return (
           <div>
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="truncateText streamItem" style={{ display: 'flex' }} data-testid={`stream-message-${id}-date`}>
+              <div
+                className="truncateText streamItem"
+                style={{ display: 'flex' }}
+                data-testid={`stream-message-${id}-date`}
+              >
                 {getFormatTime(timestamp)}
               </div>
             </EuiText>
             <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamItemId" data-testid={`stream-message-${id}`}>
+              <div
+                className="streamItemId"
+                data-testid={`stream-message-${id}`}
+              >
                 {id}
               </div>
             </EuiText>

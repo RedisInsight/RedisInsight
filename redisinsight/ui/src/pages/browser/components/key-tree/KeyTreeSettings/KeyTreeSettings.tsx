@@ -17,7 +17,11 @@ import {
 import { isEqual } from 'lodash'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { DEFAULT_DELIMITER, DEFAULT_TREE_SORTING, SortOrder } from 'uiSrc/constants'
+import {
+  DEFAULT_DELIMITER,
+  DEFAULT_TREE_SORTING,
+  SortOrder,
+} from 'uiSrc/constants'
 import {
   appContextDbConfig,
   resetBrowserTree,
@@ -35,7 +39,9 @@ export interface Props {
 const sortOptions = [SortOrder.ASC, SortOrder.DESC].map((value) => ({
   value,
   inputDisplay: (
-    <span data-testid={`tree-view-sorting-item-${value}`}>Key name {value}</span>
+    <span data-testid={`tree-view-sorting-item-${value}`}>
+      Key name {value}
+    </span>
   ),
 }))
 
@@ -46,7 +52,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
     treeViewSort = DEFAULT_TREE_SORTING,
   } = useSelector(appContextDbConfig)
   const [sorting, setSorting] = useState<SortOrder>(treeViewSort)
-  const [delimiters, setDelimiters] = useState<EuiComboBoxOptionOption[]>(treeViewDelimiter)
+  const [delimiters, setDelimiters] =
+    useState<EuiComboBoxOptionOption[]>(treeViewDelimiter)
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
@@ -60,7 +67,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
     setDelimiters(treeViewDelimiter)
   }, [treeViewDelimiter])
 
-  const onButtonClick = () => setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
+  const onButtonClick = () =>
+    setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
   const closePopover = () => {
     setIsPopoverOpen(false)
     setTimeout(() => {
@@ -86,7 +94,9 @@ const KeyTreeSettings = ({ loading }: Props) => {
 
   const handleApply = () => {
     if (!isEqual(delimiters, treeViewDelimiter)) {
-      const delimitersValue = delimiters.length ? delimiters : [DEFAULT_DELIMITER]
+      const delimitersValue = delimiters.length
+        ? delimiters
+        : [DEFAULT_DELIMITER]
 
       dispatch(setBrowserTreeDelimiter(delimitersValue))
       sendEventTelemetry({
@@ -94,8 +104,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
         eventData: {
           databaseId: instanceId,
           from: comboBoxToArray(treeViewDelimiter),
-          to: comboBoxToArray(delimitersValue)
-        }
+          to: comboBoxToArray(delimitersValue),
+        },
       })
 
       dispatch(resetBrowserTree())
@@ -109,7 +119,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
         eventData: {
           databaseId: instanceId,
           sorting: sorting || DEFAULT_TREE_SORTING,
-        }
+        },
       })
 
       dispatch(resetBrowserTree())
@@ -145,7 +155,9 @@ const KeyTreeSettings = ({ loading }: Props) => {
               placeholder=":"
               delimiter=" "
               selectedOptions={delimiters}
-              onCreateOption={(del) => setDelimiters([...delimiters, { label: del }])}
+              onCreateOption={(del) =>
+                setDelimiters([...delimiters, { label: del }])
+              }
               onChange={(selectedOptions) => setDelimiters(selectedOptions)}
               className={styles.combobox}
               data-testid="delimiter-combobox"

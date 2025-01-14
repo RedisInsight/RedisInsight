@@ -7,7 +7,11 @@ import {
   appServerInfoSelector,
   appElectronInfoSelector,
 } from 'uiSrc/slices/app/info'
-import { ipcAppRestart, ipcCheckUpdates, ipcSendEvents } from 'uiSrc/electron/utils'
+import {
+  ipcAppRestart,
+  ipcCheckUpdates,
+  ipcSendEvents,
+} from 'uiSrc/electron/utils'
 import { ipcDeleteDownloadedVersion } from 'uiSrc/electron/utils/ipcDeleteStoreValues'
 import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
@@ -49,17 +53,23 @@ const ConfigElectron = () => {
     if (url.from) {
       const fromUrl = encodeURIComponent(url.from)
       history.push({
-        search: `from=${fromUrl}`
+        search: `from=${fromUrl}`,
       })
     }
   }
 
   const updateAvailableAction = (_e: any, { version }: UpdateInfo) => {
     sendEventTelemetry({ event: TelemetryEvent.UPDATE_NOTIFICATION_DISPLAYED })
-    dispatch(addInfiniteNotification(INFINITE_MESSAGES.APP_UPDATE_AVAILABLE(version, () => {
-      sendEventTelemetry({ event: TelemetryEvent.UPDATE_NOTIFICATION_RESTART_CLICKED })
-      ipcAppRestart()
-    })))
+    dispatch(
+      addInfiniteNotification(
+        INFINITE_MESSAGES.APP_UPDATE_AVAILABLE(version, () => {
+          sendEventTelemetry({
+            event: TelemetryEvent.UPDATE_NOTIFICATION_RESTART_CLICKED,
+          })
+          ipcAppRestart()
+        }),
+      ),
+    )
   }
 
   return null

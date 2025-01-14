@@ -31,10 +31,14 @@ describe('CloudTaskCapiService', () => {
 
   describe('getTask', () => {
     it('successfully get task', async () => {
-      expect(await service.getTask(mockCloudCapiAuthDto, 'id')).toEqual(mockCloudTaskInit);
+      expect(await service.getTask(mockCloudCapiAuthDto, 'id')).toEqual(
+        mockCloudTaskInit,
+      );
     });
     it('should throw CloudApiUnauthorizedException exception', async () => {
-      cloudTaskCapiProvider.getTask.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+      cloudTaskCapiProvider.getTask.mockRejectedValueOnce(
+        new CloudApiUnauthorizedException(),
+      );
       await expect(service.getTask(mockCloudCapiAuthDto, 'id')).rejects.toThrow(
         CloudApiUnauthorizedException,
       );

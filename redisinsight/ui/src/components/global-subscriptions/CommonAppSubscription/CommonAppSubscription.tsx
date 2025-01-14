@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 
 import { remove } from 'lodash'
-import { CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
+import {
+  CloudJobEvents,
+  SocketEvent,
+  SocketFeaturesEvent,
+} from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
@@ -25,7 +29,8 @@ const CommonAppSubscription = () => {
   const { id: jobId = '' } = useSelector(oauthCloudJobSelector) ?? {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { token } = useSelector(appCsrfSelector)
-  const [recommendationsSubscriptions, setRecommendationsSubscriptions] = useState<string[]>([])
+  const [recommendationsSubscriptions, setRecommendationsSubscriptions] =
+    useState<string[]>([])
   const socketRef = useRef<Nullable<Socket>>(null)
 
   const dispatch = useDispatch()
@@ -67,9 +72,10 @@ const CommonAppSubscription = () => {
       const jobName = data.name as unknown
 
       if (
-        jobName === CloudJobName.CreateFreeDatabase
-        || jobName === CloudJobName.CreateFreeSubscriptionAndDatabase
-        || jobName === CloudJobName.ImportFreeDatabase) {
+        jobName === CloudJobName.CreateFreeDatabase ||
+        jobName === CloudJobName.CreateFreeSubscriptionAndDatabase ||
+        jobName === CloudJobName.ImportFreeDatabase
+      ) {
         dispatch(setJob(data))
       }
     })
@@ -92,15 +98,19 @@ const CommonAppSubscription = () => {
     unSubscribeFromAllRecommendations()
     setRecommendationsSubscriptions((ids) => [...ids, instanceId])
 
-    socketRef.current?.on(`${RecommendationsSocketEvents.Recommendation}:${instanceId}`, (data) => {
-      dispatch(addUnreadRecommendations(data))
-    })
+    socketRef.current?.on(
+      `${RecommendationsSocketEvents.Recommendation}:${instanceId}`,
+      (data) => {
+        dispatch(addUnreadRecommendations(data))
+      },
+    )
   }, [instanceId])
 
   const unSubscribeFromAllRecommendations = () => {
     recommendationsSubscriptions.forEach((id) => {
       const subscription = `${RecommendationsSocketEvents.Recommendation}:${id}`
-      const isListenerExist = !!socketRef.current?.listeners(subscription).length
+      const isListenerExist =
+        !!socketRef.current?.listeners(subscription).length
 
       if (isListenerExist) {
         setRecommendationsSubscriptions((ids) => remove(ids, id))
@@ -112,10 +122,7 @@ const CommonAppSubscription = () => {
   const emitCloudJobMonitor = (jobId: string) => {
     if (!jobId) return
 
-    socketRef.current?.emit(
-      CloudJobEvents.Monitor,
-      { jobId },
-    )
+    socketRef.current?.emit(CloudJobEvents.Monitor, { jobId })
   }
 
   return null

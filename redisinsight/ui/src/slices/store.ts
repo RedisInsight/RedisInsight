@@ -70,7 +70,7 @@ export const rootReducer = combineReducers({
     urlHandling: appUrlHandlingReducer,
     csrf: appCsrfReducer,
     init: appInitReducer,
-    connectivity: appConnectivityReducer
+    connectivity: appConnectivityReducer,
   }),
   connections: combineReducers({
     instances: instancesReducer,
@@ -133,12 +133,13 @@ export const rootReducer = combineReducers({
     dryRun: rdiDryRunJobReducer,
     testConnections: rdiTestConnectionsReducer,
     statistics: rdiStatisticsReducer,
-  })
+  }),
 })
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, }),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }),
   devTools: riConfig.app.env !== 'production',
 })
 

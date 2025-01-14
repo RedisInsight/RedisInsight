@@ -30,25 +30,40 @@ const mockedDataWithMetadata = {
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
-  useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() }),
+  useDisposableWebworker: () => ({
+    result: mockVirtualTreeResult,
+    run: jest.fn(),
+  }),
 }))
 
 describe('Node', () => {
   it('should render', () => {
-    expect(render(<Node {...instance(mockedProps)} data={mockedData} />)).toBeTruthy()
+    expect(
+      render(<Node {...instance(mockedProps)} data={mockedData} />),
+    ).toBeTruthy()
   })
 
   it('should render arrow and folder icons for Node properly', () => {
     const mockData: TreeData = {
       ...mockedData,
       isLeaf: false,
-      fullName: mockDataFullName
+      fullName: mockDataFullName,
     }
 
-    const { container } = render(<Node {...instance(mockedProps)} data={mockData} />)
+    const { container } = render(
+      <Node {...instance(mockedProps)} data={mockData} />,
+    )
 
-    expect(container.querySelector(`[data-test-subj="node-arrow-icon_${mockDataFullName}"`)).toBeInTheDocument()
-    expect(container.querySelector(`[data-test-subj="node-folder-icon_${mockDataFullName}"`)).toBeInTheDocument()
+    expect(
+      container.querySelector(
+        `[data-test-subj="node-arrow-icon_${mockDataFullName}"`,
+      ),
+    ).toBeInTheDocument()
+    expect(
+      container.querySelector(
+        `[data-test-subj="node-folder-icon_${mockDataFullName}"`,
+      ),
+    ).toBeInTheDocument()
   })
 
   it('"setItems", "updateStatusSelected", "mockGetMetadata" should be called after click on Leaf', () => {
@@ -64,12 +79,14 @@ describe('Node', () => {
       getMetadata: mockGetMetadata,
     }
 
-    render(<Node
-      {...instance(mockedProps)}
-      setOpen={mockSetOpen}
-      isOpen={false}
-      data={mockData}
-    />)
+    render(
+      <Node
+        {...instance(mockedProps)}
+        setOpen={mockSetOpen}
+        isOpen={false}
+        data={mockData}
+      />,
+    )
 
     screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
@@ -92,12 +109,14 @@ describe('Node', () => {
       getMetadata: mockGetMetadata,
     }
 
-    render(<Node
-      {...instance(mockedProps)}
-      setOpen={mockSetOpen}
-      isOpen={false}
-      data={mockData}
-    />)
+    render(
+      <Node
+        {...instance(mockedProps)}
+        setOpen={mockSetOpen}
+        isOpen={false}
+        data={mockData}
+      />,
+    )
 
     screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
@@ -108,13 +127,14 @@ describe('Node', () => {
   })
 
   it('name, ttl and size should be rendered', () => {
-    const { getByTestId } = render(<Node
-      {...instance(mockedProps)}
-      data={mockedDataWithMetadata}
-    />)
+    const { getByTestId } = render(
+      <Node {...instance(mockedProps)} data={mockedDataWithMetadata} />,
+    )
 
     expect(getByTestId(`node-item_${mockDataFullName}`)).toBeInTheDocument()
-    expect(getByTestId(`badge-${mockedDataWithMetadata.type}_${mockDataFullName}`)).toBeInTheDocument()
+    expect(
+      getByTestId(`badge-${mockedDataWithMetadata.type}_${mockDataFullName}`),
+    ).toBeInTheDocument()
     expect(getByTestId(`ttl-${mockDataFullName}`)).toBeInTheDocument()
     expect(getByTestId(`size-${mockDataFullName}`)).toBeInTheDocument()
   })
@@ -133,17 +153,22 @@ describe('Node', () => {
       updateStatusOpen: mockUpdateStatusOpen,
     }
 
-    render(<Node
-      {...instance(mockedProps)}
-      isOpen={false}
-      setOpen={mockSetOpen}
-      data={mockData}
-    />)
+    render(
+      <Node
+        {...instance(mockedProps)}
+        isOpen={false}
+        setOpen={mockSetOpen}
+        data={mockData}
+      />,
+    )
 
     screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
     expect(mockUpdateStatusSelected).not.toBeCalled()
-    expect(mockUpdateStatusOpen).toHaveBeenCalledWith(mockDataFullName, !mockIsOpen)
+    expect(mockUpdateStatusOpen).toHaveBeenCalledWith(
+      mockDataFullName,
+      !mockIsOpen,
+    )
     expect(mockSetOpen).toBeCalledWith(!mockIsOpen)
   })
 })

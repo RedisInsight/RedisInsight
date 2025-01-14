@@ -12,9 +12,8 @@ const UnsupportedTypeDetails = () => (
           <h4>This data type is coming soon!</h4>
         </EuiTitle>
         <EuiText size="s">
-          We are constantly working to launch support for more data types.
-          If you have any ideas or suggestions, please
-          {' '}
+          We are constantly working to launch support for more data types. If
+          you have any ideas or suggestions, please{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
             className={styles.link}

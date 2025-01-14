@@ -1,14 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import {
-  mockStandaloneRedisClient,
-} from 'src/__mocks__';
+import { mockStandaloneRedisClient } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import { ZSetKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/z-set.key-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
@@ -24,9 +25,7 @@ describe('ZSetKeyInfoStrategy', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ZSetKeyInfoStrategy,
-      ],
+      providers: [ZSetKeyInfoStrategy],
     }).compile();
 
     strategy = module.get(ZSetKeyInfoStrategy);

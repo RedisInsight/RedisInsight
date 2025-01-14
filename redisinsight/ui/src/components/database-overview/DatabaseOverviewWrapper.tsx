@@ -4,7 +4,7 @@ import { DatabaseOverview } from 'uiSrc/components'
 import {
   connectedInstanceOverviewSelector,
   connectedInstanceSelector,
-  getDatabaseConfigInfoAction
+  getDatabaseConfigInfoAction,
 } from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
@@ -14,7 +14,9 @@ import { getOverviewMetrics } from './components/OverviewMetrics'
 const DatabaseOverviewWrapper = () => {
   const { theme } = useContext(ThemeContext)
   const [lastRefreshTime, setLastRefreshTime] = useState<number | null>(null)
-  const { id: connectedInstanceId = '', db } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '', db } = useSelector(
+    connectedInstanceSelector,
+  )
   const overview = useSelector(connectedInstanceOverviewSelector)
 
   const dispatch = useDispatch()
@@ -24,15 +26,18 @@ const DatabaseOverviewWrapper = () => {
     setLastRefreshTime(Date.now())
   }
 
-  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+  const handleEnableAutoRefresh = (
+    enableAutoRefresh: boolean,
+    refreshRate: string,
+  ) => {
     sendEventTelemetry({
       event: enableAutoRefresh
         ? TelemetryEvent.OVERVIEW_AUTO_REFRESH_ENABLED
         : TelemetryEvent.OVERVIEW_AUTO_REFRESH_DISABLED,
       eventData: {
         databaseId: connectedInstanceId,
-        refreshRate: +refreshRate
-      }
+        refreshRate: +refreshRate,
+      },
     })
   }
 

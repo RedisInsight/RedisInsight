@@ -10,13 +10,13 @@ import {
   getMainCheckFn,
 } from '../deps';
 
-const {
-  server, request, constants, rte, localDb,
-} = deps;
+const { server, request, constants, rte, localDb } = deps;
 
 // endpoint to test
-const endpoint = (instanceId = constants.TEST_INSTANCE_ID) => request(server)
-  .post(`/${constants.API.DATABASES}/${instanceId}/redisearch/info`);
+const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/redisearch/info`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -81,14 +81,20 @@ const responseSchema = Joi.object({
     attribute: Joi.string(),
     'Index Errors': Joi.object(),
   }),
-}).required().strict();
+})
+  .required()
+  .strict();
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /databases/:id/redisearch/info', () => {
   requirements('!rte.bigData', 'rte.modules.search');
   before(async () => {
     await rte.data.generateRedisearchIndexes(true);
-    await localDb.createTestDbInstance(rte, {}, { id: constants.TEST_INSTANCE_ID_2 });
+    await localDb.createTestDbInstance(
+      rte,
+      {},
+      { id: constants.TEST_INSTANCE_ID_2 },
+    );
   });
 
   describe('Validation', () => {

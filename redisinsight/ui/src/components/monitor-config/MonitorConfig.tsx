@@ -14,10 +14,16 @@ import {
   setStartTimestamp,
   setMonitorLoadingPause,
   setLogFileId,
-  pauseMonitor, lockResume
+  pauseMonitor,
+  lockResume,
 } from 'uiSrc/slices/cli/monitor'
 import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
-import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
+import {
+  MonitorErrorMessages,
+  MonitorEvent,
+  SocketErrors,
+  SocketEvent,
+} from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { CustomHeaders } from 'uiSrc/constants/api'
@@ -32,9 +38,16 @@ const riConfig = getConfig()
 interface IProps {
   retryDelay?: number
 }
-const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
+const MonitorConfig = ({ retryDelay = 15000 }: IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
-  const { socket, isRunning, isPaused, isSaveToFile, isMinimizedMonitor, isShowMonitor } = useSelector(monitorSelector)
+  const {
+    socket,
+    isRunning,
+    isPaused,
+    isSaveToFile,
+    isMinimizedMonitor,
+    isShowMonitor,
+  } = useSelector(monitorSelector)
   const { token } = useSelector(appCsrfSelector)
 
   const socketRef = useRef<Nullable<Socket>>(null)
@@ -45,14 +58,22 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
 
   const dispatch = useDispatch()
 
-  const setNewItems = debounce((items, onSuccess?) => {
-    dispatch(concatMonitorItems(items))
-    onSuccess?.()
-  }, 50, {
-    maxWait: 150,
-  })
+  const setNewItems = debounce(
+    (items, onSuccess?) => {
+      dispatch(concatMonitorItems(items))
+      onSuccess?.()
+    },
+    50,
+    {
+      maxWait: 150,
+    },
+  )
 
-  const getErrorMessage = (error: { type: string; name: any; message: any }): string => {
+  const getErrorMessage = (error: {
+    type: string
+    name: any
+    message: any
+  }): string => {
     if (error?.type === SocketErrors.TransportError) {
       return MonitorErrorMessages.LostConnection
     }
@@ -98,8 +119,14 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
         return
       }
 
-      payloadsRef.current.push({ isError: true, time: `${Date.now()}`, ...payload })
-      setNewItems(payloadsRef.current, () => { payloadsRef.current.length = 0 })
+      payloadsRef.current.push({
+        isError: true,
+        time: `${Date.now()}`,
+        ...payload,
+      })
+      setNewItems(payloadsRef.current, () => {
+        payloadsRef.current.length = 0
+      })
       dispatch(pauseMonitor())
     })
 
@@ -114,8 +141,14 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
 
     // Catch connect error
     socketRef.current?.on(SocketEvent.ConnectionError, (error) => {
-      payloadsRef.current.push({ isError: true, time: `${Date.now()}`, message: getErrorMessage(error) })
-      setNewItems(payloadsRef.current, () => { payloadsRef.current.length = 0 })
+      payloadsRef.current.push({
+        isError: true,
+        time: `${Date.now()}`,
+        message: getErrorMessage(error),
+      })
+      setNewItems(payloadsRef.current, () => {
+        payloadsRef.current.length = 0
+      })
     })
   }, [instanceId, isRunning, isPaused])
 
@@ -148,8 +181,14 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
     if (!isRunning) return
 
     const pauseUnpause = async () => {
-      !isPaused && await new Promise<void>((resolve) => socket?.emit(MonitorEvent.Monitor, () => resolve()))
-      isPaused && await new Promise<void>((resolve) => socket?.emit(MonitorEvent.Pause, () => resolve()))
+      !isPaused &&
+        (await new Promise<void>((resolve) =>
+          socket?.emit(MonitorEvent.Monitor, () => resolve()),
+        ))
+      isPaused &&
+        (await new Promise<void>((resolve) =>
+          socket?.emit(MonitorEvent.Pause, () => resolve()),
+        ))
       dispatch(setMonitorLoadingPause(false))
     }
     dispatch(setMonitorLoadingPause(true))
@@ -169,22 +208,25 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
     socketRef.current?.emit(
       MonitorEvent.Monitor,
       { logFileId: isSaveToFile ? logFileIdRef.current : null },
-      handleMonitorEvents
+      handleMonitorEvents,
     )
   }
 
   const handleMonitorEvents = () => {
     dispatch(setMonitorLoadingPause(false))
-    socketRef.current?.on(MonitorEvent.MonitorData, (payload: IMonitorData[]) => {
-      payloadsRef.current = payloadsRef.current.concat(payload)
+    socketRef.current?.on(
+      MonitorEvent.MonitorData,
+      (payload: IMonitorData[]) => {
+        payloadsRef.current = payloadsRef.current.concat(payload)
 
-      // set batch of payloads and then clear batch
-      setNewItems(payloadsRef.current, () => {
-        payloadsRef.current.length = 0
-        // reset all timings after items were changed
-        setNewItems.cancel()
-      })
-    })
+        // set batch of payloads and then clear batch
+        setNewItems(payloadsRef.current, () => {
+          payloadsRef.current.length = 0
+          // reset all timings after items were changed
+          setNewItems.cancel()
+        })
+      },
+    )
   }
 
   return null

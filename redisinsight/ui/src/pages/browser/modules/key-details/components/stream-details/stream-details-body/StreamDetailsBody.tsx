@@ -34,36 +34,52 @@ import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP } from '../constants'
 
 import styles from './styles.module.scss'
 
-export interface Props {
-}
+export interface Props {}
 
 const StreamDetailsBody = (props: Props) => {
-  const { viewType, loading, sortOrder: entryColumnSortOrder } = useSelector(streamSelector)
+  const {
+    viewType,
+    loading,
+    sortOrder: entryColumnSortOrder,
+  } = useSelector(streamSelector)
   const { loading: loadingGroups } = useSelector(streamGroupsSelector)
   const { start, end } = useSelector(streamRangeSelector)
-  const { firstEntry, lastEntry, entries, } = useSelector(streamDataSelector)
+  const { firstEntry, lastEntry, entries } = useSelector(streamDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { id: instanceId } = useSelector(connectedInstanceSelector)
 
   const dispatch = useDispatch()
 
-  const firstEntryTimeStamp = useMemo(() => getTimestampFromId(firstEntry?.id), [firstEntry?.id])
-  const lastEntryTimeStamp = useMemo(() => getTimestampFromId(lastEntry?.id), [lastEntry?.id])
+  const firstEntryTimeStamp = useMemo(
+    () => getTimestampFromId(firstEntry?.id),
+    [firstEntry?.id],
+  )
+  const lastEntryTimeStamp = useMemo(
+    () => getTimestampFromId(lastEntry?.id),
+    [lastEntry?.id],
+  )
 
-  const startNumber = useMemo(() => (start === '' ? 0 : parseInt(start, 10)), [start])
+  const startNumber = useMemo(
+    () => (start === '' ? 0 : parseInt(start, 10)),
+    [start],
+  )
   const endNumber = useMemo(() => (end === '' ? 0 : parseInt(end, 10)), [end])
 
-  const shouldFilterRender = !isNull(firstEntry)
-    && (firstEntry.id !== '')
-    && !isNull(lastEntry)
-    && lastEntry.id !== ''
-    && toString(firstEntryTimeStamp)?.length < MAX_FORMAT_LENGTH_STREAM_TIMESTAMP
-    && toString(lastEntryTimeStamp)?.length < MAX_FORMAT_LENGTH_STREAM_TIMESTAMP
+  const shouldFilterRender =
+    !isNull(firstEntry) &&
+    firstEntry.id !== '' &&
+    !isNull(lastEntry) &&
+    lastEntry.id !== '' &&
+    toString(firstEntryTimeStamp)?.length <
+      MAX_FORMAT_LENGTH_STREAM_TIMESTAMP &&
+    toString(lastEntryTimeStamp)?.length < MAX_FORMAT_LENGTH_STREAM_TIMESTAMP
 
-  useEffect(() =>
-    () => {
+  useEffect(
+    () => () => {
       dispatch(setStreamInitialState())
-    }, [])
+    },
+    [],
+  )
 
   useEffect(() => {
     if (isNull(firstEntry)) {
@@ -87,8 +103,12 @@ const StreamDetailsBody = (props: Props) => {
     const lastLoadedEntryId = last(entries)?.id ?? ''
     const lastLoadedEntryTimeStamp = getTimestampFromId(lastLoadedEntryId)
 
-    const lastRangeEntryTimestamp = end ? parseInt(end, 10) : getTimestampFromId(lastEntry?.id)
-    const firstRangeEntryTimestamp = start ? parseInt(start, 10) : getTimestampFromId(firstEntry?.id)
+    const lastRangeEntryTimestamp = end
+      ? parseInt(end, 10)
+      : getTimestampFromId(lastEntry?.id)
+    const firstRangeEntryTimestamp = start
+      ? parseInt(start, 10)
+      : getTimestampFromId(firstEntry?.id)
     const shouldLoadMore = () => {
       if (!lastLoadedEntryTimeStamp) {
         return false
@@ -107,7 +127,7 @@ const StreamDetailsBody = (props: Props) => {
           entryColumnSortOrder === SortOrder.DESC ? nextId : end,
           SCAN_COUNT_DEFAULT,
           entryColumnSortOrder,
-        )
+        ),
       )
     }
   }
@@ -118,7 +138,7 @@ const StreamDetailsBody = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         total: data.total,
-      }
+      },
     })
   }
 
@@ -128,18 +148,22 @@ const StreamDetailsBody = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         total: data.total,
-      }
+      },
     })
   }
 
-  const loadEntries = (telemetryAction?: (data: GetStreamEntriesResponse) => void) => {
-    dispatch(fetchStreamEntries(
-      key,
-      SCAN_COUNT_DEFAULT,
-      entryColumnSortOrder,
-      false,
-      telemetryAction
-    ))
+  const loadEntries = (
+    telemetryAction?: (data: GetStreamEntriesResponse) => void,
+  ) => {
+    dispatch(
+      fetchStreamEntries(
+        key,
+        SCAN_COUNT_DEFAULT,
+        entryColumnSortOrder,
+        false,
+        telemetryAction,
+      ),
+    )
   }
 
   const handleChangeStartFilter = useCallback(
@@ -147,7 +171,7 @@ const StreamDetailsBody = (props: Props) => {
       dispatch(updateStart(value.toString()))
       loadEntries(shouldSentEventTelemetry ? filterTelemetry : undefined)
     },
-    []
+    [],
   )
 
   const handleChangeEndFilter = useCallback(
@@ -155,37 +179,25 @@ const StreamDetailsBody = (props: Props) => {
       dispatch(updateEnd(value.toString()))
       loadEntries(shouldSentEventTelemetry ? filterTelemetry : undefined)
     },
-    []
+    [],
   )
 
-  const handleResetFilter = useCallback(
-    () => {
-      dispatch(updateStart(firstEntryTimeStamp.toString()))
-      dispatch(updateEnd(lastEntryTimeStamp.toString()))
-      loadEntries(resetFilterTelemetry)
-    },
-    [lastEntryTimeStamp, firstEntryTimeStamp]
-  )
+  const handleResetFilter = useCallback(() => {
+    dispatch(updateStart(firstEntryTimeStamp.toString()))
+    dispatch(updateEnd(lastEntryTimeStamp.toString()))
+    loadEntries(resetFilterTelemetry)
+  }, [lastEntryTimeStamp, firstEntryTimeStamp])
 
-  const handleUpdateRangeMin = useCallback(
-    (min: number) => {
-      dispatch(updateStart(min.toString()))
-    },
-    []
-  )
+  const handleUpdateRangeMin = useCallback((min: number) => {
+    dispatch(updateStart(min.toString()))
+  }, [])
 
-  const handleUpdateRangeMax = useCallback(
-    (max: number) => {
-      dispatch(updateEnd(max.toString()))
-    },
-    []
-  )
+  const handleUpdateRangeMax = useCallback((max: number) => {
+    dispatch(updateEnd(max.toString()))
+  }, [])
 
   return (
-    <div
-      data-testid="stream-details"
-      className={styles.container}
-    >
+    <div data-testid="stream-details" className={styles.container}>
       {(loading || loadingGroups) && (
         <EuiProgress
           color="primary"
@@ -207,19 +219,16 @@ const StreamDetailsBody = (props: Props) => {
           handleUpdateRangeMax={handleUpdateRangeMax}
           handleUpdateRangeMin={handleUpdateRangeMin}
         />
-      )
-        : (
-          <div className={styles.rangeWrapper}>
-            <div className={cx(styles.sliderTrack, styles.mockRange)} />
-          </div>
-        )}
+      ) : (
+        <div className={styles.rangeWrapper}>
+          <div className={cx(styles.sliderTrack, styles.mockRange)} />
+        </div>
+      )}
       <StreamTabs />
       {viewType === StreamViewType.Data && (
         <StreamDataViewWrapper loadMoreItems={loadMoreItems} {...props} />
       )}
-      {viewType === StreamViewType.Groups && (
-        <GroupsViewWrapper {...props} />
-      )}
+      {viewType === StreamViewType.Groups && <GroupsViewWrapper {...props} />}
       {viewType === StreamViewType.Consumers && (
         <ConsumersViewWrapper {...props} />
       )}

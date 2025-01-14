@@ -27,7 +27,9 @@ const CliInputWrapper = (props: Props) => {
   const firstCommandMatch = firstCommand.toUpperCase()
   const secondCommandMatch = `${firstCommandMatch} ${secondCommand ? secondCommand.toUpperCase() : null}`
 
-  const matchedCmd = ALL_REDIS_COMMANDS[secondCommandMatch] || ALL_REDIS_COMMANDS[firstCommandMatch]
+  const matchedCmd =
+    ALL_REDIS_COMMANDS[secondCommandMatch] ||
+    ALL_REDIS_COMMANDS[firstCommandMatch]
   const provider = matchedCmd?.provider || CommandProvider.Unknown
   const commandName = !isUndefined(ALL_REDIS_COMMANDS[secondCommandMatch])
     ? `${firstCommand} ${secondCommand}`

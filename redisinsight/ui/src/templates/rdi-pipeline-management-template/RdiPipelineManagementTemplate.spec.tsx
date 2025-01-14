@@ -14,11 +14,15 @@ describe('RdiPipelineManagementTemplate', () => {
     const mockUseFormikContext = {
       setFieldValue: jest.fn,
       values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+    }
+    ;(useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
   })
 
   it('should render', () => {
-    expect(render(<RdiPipelineManagementTemplate>{child}</RdiPipelineManagementTemplate>)).toBeTruthy()
+    expect(
+      render(
+        <RdiPipelineManagementTemplate>{child}</RdiPipelineManagementTemplate>,
+      ),
+    ).toBeTruthy()
   })
 })

@@ -2,9 +2,20 @@ import React from 'react'
 import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { rdiPipelineSelector, setChangedFile, deleteChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import {
+  rdiPipelineSelector,
+  setChangedFile,
+  deleteChangedFile,
+} from 'uiSrc/slices/rdi/pipeline'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
@@ -48,8 +59,8 @@ describe('Config', () => {
     const mockUseFormikContext = {
       setFieldValue: mockSetFieldValue,
       values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+    }
+    ;(useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
   })
 
   it('should render', () => {
@@ -57,8 +68,10 @@ describe('Config', () => {
   })
 
   it('should call proper sendPageViewTelemetry', () => {
-    const sendPageViewTelemetryMock = jest.fn();
-    (sendPageViewTelemetry as jest.Mock).mockImplementation(() => sendPageViewTelemetryMock)
+    const sendPageViewTelemetryMock = jest.fn()
+    ;(sendPageViewTelemetry as jest.Mock).mockImplementation(
+      () => sendPageViewTelemetryMock,
+    )
 
     render(<Config />)
 
@@ -66,17 +79,14 @@ describe('Config', () => {
       name: TelemetryPageView.RDI_CONFIG,
       eventData: {
         rdiInstanceId: 'rdiInstanceId',
-      }
+      },
     })
   })
 
   it('should call setFieldValue with proper values', () => {
     render(<Config />)
     const fieldName = screen.getByTestId('rdi-monaco-config')
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
+    fireEvent.change(fieldName, { target: { value: '123' } })
 
     expect(mockSetFieldValue).toBeCalledWith('config', '123')
   })
@@ -84,13 +94,10 @@ describe('Config', () => {
   it('should call proper actions', () => {
     render(<Config />)
     const fieldName = screen.getByTestId('rdi-monaco-config')
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
+    fireEvent.change(fieldName, { target: { value: '123' } })
 
     const expectedActions = [
-      setChangedFile({ name: 'config', status: FileChangeType.Added })
+      setChangedFile({ name: 'config', status: FileChangeType.Added }),
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
@@ -101,20 +108,17 @@ describe('Config', () => {
       loading: false,
       schema: { config: { test: {} } },
       data: { config: '123' },
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+    })
+    ;(rdiPipelineSelector as jest.Mock).mockImplementation(
+      rdiPipelineSelectorMock,
+    )
 
     render(<Config />)
 
     const fieldName = screen.getByTestId('rdi-monaco-config')
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
+    fireEvent.change(fieldName, { target: { value: '123' } })
 
-    const expectedActions = [
-      deleteChangedFile('config')
-    ]
+    const expectedActions = [deleteChangedFile('config')]
 
     expect(store.getActions()).toEqual(expectedActions)
   })
@@ -124,19 +128,18 @@ describe('Config', () => {
       loading: false,
       schema: { config: { test: {} } },
       data: { config: '11' },
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+    })
+    ;(rdiPipelineSelector as jest.Mock).mockImplementation(
+      rdiPipelineSelectorMock,
+    )
 
     render(<Config />)
 
     const fieldName = screen.getByTestId('rdi-monaco-config')
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
+    fireEvent.change(fieldName, { target: { value: '123' } })
 
     const expectedActions = [
-      setChangedFile({ name: 'config', status: FileChangeType.Modified })
+      setChangedFile({ name: 'config', status: FileChangeType.Modified }),
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
@@ -176,8 +179,8 @@ describe('Config', () => {
     const mockUseFormikContext = {
       setFieldValue: mockSetFieldValue,
       values: { config: 'sources:incorrect\n target:' },
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+    }
+    ;(useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
 
     const { queryByTestId } = render(<Config />)
 
@@ -197,21 +200,25 @@ describe('Config', () => {
                 <br />
                 end of the stream or a document separator is expected
               </>
-            )
-          }
-        }
-      } as AxiosError)
+            ),
+          },
+        },
+      } as AxiosError),
     ]
 
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+      expectedActions,
+    )
     expect(queryByTestId('test-connection-panel')).not.toBeInTheDocument()
   })
 
   it('should render loading spinner', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: true,
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+    })
+    ;(rdiPipelineSelector as jest.Mock).mockImplementation(
+      rdiPipelineSelectorMock,
+    )
 
     render(<Config />)
 
@@ -221,24 +228,32 @@ describe('Config', () => {
   it('should render loader on btn', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: true,
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+    })
+    ;(rdiPipelineSelector as jest.Mock).mockImplementation(
+      rdiPipelineSelectorMock,
+    )
 
     render(<Config />)
 
     // check is btn has loader
-    expect(screen.getByTestId('rdi-test-connection-btn').children[0].children[0]).toHaveClass('euiLoadingSpinner')
+    expect(
+      screen.getByTestId('rdi-test-connection-btn').children[0].children[0],
+    ).toHaveClass('euiLoadingSpinner')
   })
 
   it('should render loader on btn', () => {
     const rdiTestConnectionsSelectorMock = jest.fn().mockReturnValue({
       loading: true,
-    });
-    (rdiTestConnectionsSelector as jest.Mock).mockImplementation(rdiTestConnectionsSelectorMock)
+    })
+    ;(rdiTestConnectionsSelector as jest.Mock).mockImplementation(
+      rdiTestConnectionsSelectorMock,
+    )
 
     render(<Config />)
 
     // check is btn has loader
-    expect(screen.getByTestId('rdi-test-connection-btn').children[0].children[0]).toHaveClass('euiLoadingSpinner')
+    expect(
+      screen.getByTestId('rdi-test-connection-btn').children[0].children[0],
+    ).toHaveClass('euiLoadingSpinner')
   })
 })

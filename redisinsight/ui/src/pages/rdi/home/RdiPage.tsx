@@ -8,13 +8,13 @@ import {
   createInstanceAction,
   editInstanceAction,
   fetchInstancesAction,
-  instancesSelector
+  instancesSelector,
 } from 'uiSrc/slices/rdi/instances'
 import {
   TelemetryEvent,
   TelemetryPageView,
   sendEventTelemetry,
-  sendPageViewTelemetry
+  sendPageViewTelemetry,
 } from 'uiSrc/telemetry'
 import HomePageTemplate from 'uiSrc/templates/home-page-template'
 import { setTitle } from 'uiSrc/utils'
@@ -45,8 +45,8 @@ const RdiPage = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_INSTANCES_PAGE,
       eventData: {
-        instancesCount: data.length
-      }
+        instancesCount: data.length,
+      },
     })
   }
 
@@ -63,30 +63,32 @@ const RdiPage = () => {
     if (editInstance) {
       dispatch(editInstanceAction(editInstance.id, instance, onSuccess))
     } else {
-      dispatch(createInstanceAction(
-        { ...instance },
-        (data: RdiInstanceResponse) => {
-          sendEventTelemetry({
-            event: TelemetryEvent.RDI_ENDPOINT_ADDED,
-            eventData: {
-              rdiId: data.id,
-            }
-          })
-          onSuccess()
-        },
-        (error) => {
-          sendEventTelemetry({
-            event: TelemetryEvent.RDI_ENDPOINT_ADD_FAILED,
-            eventData: {
-              error,
-            }
-          })
-        }
-      ))
+      dispatch(
+        createInstanceAction(
+          { ...instance },
+          (data: RdiInstanceResponse) => {
+            sendEventTelemetry({
+              event: TelemetryEvent.RDI_ENDPOINT_ADDED,
+              eventData: {
+                rdiId: data.id,
+              },
+            })
+            onSuccess()
+          },
+          (error) => {
+            sendEventTelemetry({
+              event: TelemetryEvent.RDI_ENDPOINT_ADD_FAILED,
+              eventData: {
+                error,
+              },
+            })
+          },
+        ),
+      )
     }
 
     sendEventTelemetry({
-      event: TelemetryEvent.RDI_INSTANCE_SUBMITTED
+      event: TelemetryEvent.RDI_INSTANCE_SUBMITTED,
     })
   }
 
@@ -94,7 +96,7 @@ const RdiPage = () => {
     setIsConnectionFormOpen(true)
     setEditInstance(null)
     sendEventTelemetry({
-      event: TelemetryEvent.RDI_INSTANCE_ADD_CLICKED
+      event: TelemetryEvent.RDI_INSTANCE_ADD_CLICKED,
     })
   }
 
@@ -102,7 +104,7 @@ const RdiPage = () => {
     setIsConnectionFormOpen(false)
     setEditInstance(null)
     sendEventTelemetry({
-      event: TelemetryEvent.RDI_INSTANCE_ADD_CANCELLED
+      event: TelemetryEvent.RDI_INSTANCE_ADD_CANCELLED,
     })
   }
 
@@ -117,14 +119,20 @@ const RdiPage = () => {
   }
 
   const InstanceList = () =>
-    (!data.length ? (
+    !data.length ? (
       <EuiPanel className={styles.emptyPanel} borderRadius="none">
-        {!loading && !loadingChanging && <EmptyMessage onAddInstanceClick={handleOpenConnectionForm} />}
+        {!loading && !loadingChanging && (
+          <EmptyMessage onAddInstanceClick={handleOpenConnectionForm} />
+        )}
       </EuiPanel>
     ) : (
       <EuiResizeObserver onResize={onResize}>
         {(resizeRef) => (
-          <div data-testid="rdi-instance-list" className={styles.fullHeight} ref={resizeRef}>
+          <div
+            data-testid="rdi-instance-list"
+            className={styles.fullHeight}
+            ref={resizeRef}
+          >
             <RdiInstancesListWrapper
               width={width}
               editedInstance={editInstance}
@@ -134,7 +142,7 @@ const RdiPage = () => {
           </div>
         )}
       </EuiResizeObserver>
-    ))
+    )
 
   return (
     <HomePageTemplate>

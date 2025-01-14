@@ -7,7 +7,10 @@ import {
   mockedStore,
   mockStore,
 } from 'uiSrc/utils/test-utils'
-import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { stringToBuffer } from 'uiSrc/utils'
 import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
@@ -104,7 +107,7 @@ describe('set slice', () => {
         total: 1,
         nextCursor: 67,
         members: ['1', '2'],
-        match: '*1*'
+        match: '*1*',
       }
 
       const state = {
@@ -126,7 +129,7 @@ describe('set slice', () => {
     it('should properly set the state with empty data', () => {
       // Arrange
       const data: any = {
-        keyName: 'key'
+        keyName: 'key',
       }
 
       const state = {
@@ -135,7 +138,7 @@ describe('set slice', () => {
         data: {
           ...initialState.data,
           ...data,
-          key: data.keyName
+          key: data.keyName,
         },
       }
 
@@ -163,7 +166,7 @@ describe('set slice', () => {
           keyName: '',
           members: [],
           nextCursor: 0,
-          match: '*'
+          match: '*',
         },
       }
 
@@ -190,7 +193,7 @@ describe('set slice', () => {
           keyName: '',
           members: [],
           nextCursor: 0,
-          match: '*'
+          match: '*',
         },
       }
 
@@ -215,7 +218,7 @@ describe('set slice', () => {
         nextCursor: 0,
         total: 0,
         members: ['2', '3'],
-        match: '*2*'
+        match: '*2*',
       }
 
       const state = {
@@ -277,7 +280,7 @@ describe('set slice', () => {
           keyName: '',
           members: [],
           nextCursor: 0,
-          match: '*'
+          match: '*',
         },
       }
 
@@ -337,7 +340,7 @@ describe('set slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        error: data
+        error: data,
       }
 
       // Act
@@ -406,7 +409,7 @@ describe('set slice', () => {
           keyName: '',
           members: [],
           nextCursor: 0,
-          match: '*'
+          match: '*',
         },
       }
 
@@ -444,10 +447,7 @@ describe('set slice', () => {
       }
 
       // Act
-      const nextState = reducer(
-        initialStateRemove,
-        removeMembersFromList(data)
-      )
+      const nextState = reducer(initialStateRemove, removeMembersFromList(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -465,7 +465,7 @@ describe('set slice', () => {
         nextCursor: 0,
         members: ['123', '123', '1'],
         total: 3,
-        match: '*'
+        match: '*',
       }
       it('call fetchSetMembers, loadSetMembersSuccess when fetch is successed', async () => {
         // Arrange
@@ -569,7 +569,9 @@ describe('set slice', () => {
       apiService.put = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(addSetMembersAction({ keyName, members }, jest.fn))
+      await store.dispatch<any>(
+        addSetMembersAction({ keyName, members }, jest.fn),
+      )
 
       // Assert
       const expectedActions = [
@@ -578,7 +580,9 @@ describe('set slice', () => {
         defaultSelectedKeyAction(),
       ]
 
-      expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+      expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+        expectedActions,
+      )
     })
     it('failed to add members to set', async () => {
       // Arrange
@@ -592,7 +596,9 @@ describe('set slice', () => {
       apiService.put = jest.fn().mockRejectedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(addSetMembersAction({ keyName, members }, jest.fn(), jest.fn()))
+      await store.dispatch<any>(
+        addSetMembersAction({ keyName, members }, jest.fn(), jest.fn()),
+      )
 
       // Assert
       const expectedActions = [
@@ -619,9 +625,9 @@ describe('set slice', () => {
             ...initialState,
             data: {
               ...initialState.data,
-              total: 10
-            }
-          }
+              total: 10,
+            },
+          },
         },
       })
 
@@ -637,15 +643,13 @@ describe('set slice', () => {
         removeMembersFromList(members),
         refreshKeyInfo(),
         addMessageNotification(
-          successMessages.REMOVED_KEY_VALUE(
-            key,
-            members.join(''),
-            'Member'
-          )
-        )
+          successMessages.REMOVED_KEY_VALUE(key, members.join(''), 'Member'),
+        ),
       ]
 
-      expect(mockedStore.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+      expect(mockedStore.getActions().slice(0, expectedActions.length)).toEqual(
+        expectedActions,
+      )
     })
 
     it('succeed to delete all members from set', async () => {
@@ -659,9 +663,9 @@ describe('set slice', () => {
             ...initialState,
             data: {
               ...initialState.data,
-              total: 2
-            }
-          }
+              total: 2,
+            },
+          },
         },
       })
 
@@ -677,7 +681,7 @@ describe('set slice', () => {
         removeMembersFromList(members),
         deleteSelectedKeySuccess(),
         deleteRedisearchKeyFromList(key),
-        addMessageNotification(successMessages.DELETED_KEY(key))
+        addMessageNotification(successMessages.DELETED_KEY(key)),
       ]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)

@@ -23,9 +23,9 @@ export class PushElementToListDto extends KeyDto {
 
   @ApiPropertyOptional({
     description:
-      'In order to append elements to the end of the list, '
-      + 'use the TAIL value, to prepend use HEAD value. '
-      + 'Default: TAIL (when not specified)',
+      'In order to append elements to the end of the list, ' +
+      'use the TAIL value, to prepend use HEAD value. ' +
+      'Default: TAIL (when not specified)',
     default: ListElementDestination.Tail,
     enum: ListElementDestination,
   })

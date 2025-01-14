@@ -8,16 +8,16 @@ export const CONNECTIVITY_OPTIONS = [
   {
     id: 'sentinel',
     title: 'Redis Sentinel',
-    type: AddDbType.sentinel
+    type: AddDbType.sentinel,
   },
   {
     id: 'software',
     title: 'Redis Software',
-    type: AddDbType.software
+    type: AddDbType.software,
   },
   {
     id: 'import',
     title: 'Import from file',
-    type: AddDbType.import
-  }
+    type: AddDbType.import,
+  },
 ]

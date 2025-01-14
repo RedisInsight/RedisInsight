@@ -1,4 +1,11 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
@@ -29,7 +36,12 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { KeyTypes, ModulesKeyTypes, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  ModulesKeyTypes,
+  TableCellAlignment,
+  TableCellTextAlignment,
+} from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
@@ -51,7 +63,7 @@ export interface Props {
   selectKey: ({ rowData }: { rowData: any }) => void
   loadMoreItems?: (
     oldKeys: IKeyPropTypes[],
-    { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
+    { startIndex, stopIndex }: { startIndex: number; stopIndex: number },
   ) => void
   onDelete: (key: RedisResponseBuffer) => void
   commonFilterType: Nullable<KeyTypes>
@@ -81,14 +93,18 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const selectedKey = useSelector(selectedKeySelector)
   const { nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered, searchMode, deleting } = useSelector(keysSelector)
-  const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
+  const { isSearched, isFiltered, searchMode, deleting } =
+    useSelector(keysSelector)
+  const {
+    keyList: { isNotRendered: isNotRenderedContext },
+  } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
   const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(
-    !!keysState.keys.length || !isNotRenderedContext
+    !!keysState.keys.length || !isNotRenderedContext,
   )
-  const [deletePopoverIndex, setDeletePopoverIndex] = useState<Maybe<number>>(undefined)
+  const [deletePopoverIndex, setDeletePopoverIndex] =
+    useState<Maybe<number>>(undefined)
 
   const controller = useRef<Nullable<AbortController>>(null)
   const itemsRef = useRef(keysState.keys)
@@ -99,7 +115,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   useImperativeHandle(ref, () => ({
     handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
       onLoadMoreItems(config)
-    }
+    },
   }))
 
   useEffect(() => {
@@ -110,8 +126,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     itemsRef.current = [...keysState.keys]
 
     if (
-      (!firstDataLoaded && keysState.lastRefreshTime)
-      || (searchMode === SearchMode.Redisearch && itemsRef.current.length === 0)
+      (!firstDataLoaded && keysState.lastRefreshTime) ||
+      (searchMode === SearchMode.Redisearch && itemsRef.current.length === 0)
     ) {
       setFirstDataLoaded(true)
       dispatch(setBrowserIsNotRendered(false))
@@ -144,10 +160,14 @@ const KeyList = forwardRef((props: Props, ref) => {
     />
   )
 
-  const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
-    if (searchMode === SearchMode.Redisearch
-      && keysState.maxResults
-      && keysState.keys.length >= keysState.maxResults
+  const onLoadMoreItems = (props: {
+    startIndex: number
+    stopIndex: number
+  }) => {
+    if (
+      searchMode === SearchMode.Redisearch &&
+      keysState.maxResults &&
+      keysState.keys.length >= keysState.maxResults
     ) {
       return
     }
@@ -157,12 +177,12 @@ const KeyList = forwardRef((props: Props, ref) => {
   const onWheelSearched = (event: React.WheelEvent) => {
     setDeletePopoverIndex(undefined)
     if (
-      !loading
-      && (isSearched || isFiltered)
-      && event.deltaY > 0
-      && !sourceKeysFetch
-      && nextCursor !== '0'
-      && previousResultCount === 0
+      !loading &&
+      (isSearched || isFiltered) &&
+      event.deltaY > 0 &&
+      !sourceKeysFetch &&
+      nextCursor !== '0' &&
+      previousResultCount === 0
     ) {
       clearTimeout(wheelTimer)
       wheelTimer = window.setTimeout(() => {
@@ -171,39 +191,50 @@ const KeyList = forwardRef((props: Props, ref) => {
     }
   }
 
-  const handleDeletePopoverOpen = (index: Maybe<number>, type: KeyTypes | ModulesKeyTypes) => {
+  const handleDeletePopoverOpen = (
+    index: Maybe<number>,
+    type: KeyTypes | ModulesKeyTypes,
+  ) => {
     if (index !== deletePopoverIndex) {
       sendEventTelemetry({
         event: TelemetryEvent.BROWSER_KEY_DELETE_CLICKED,
         eventData: {
           databaseId: instanceId,
           keyType: type,
-          source: 'keyList'
-        }
+          source: 'keyList',
+        },
       })
     }
     setDeletePopoverIndex(index !== deletePopoverIndex ? index : undefined)
   }
 
   const handleRemoveKey = (key: RedisResponseBuffer) => {
-    dispatch(deleteKeyAction(key, () => {
-      setDeletePopoverIndex(undefined)
-      onDelete(key)
-    }))
+    dispatch(
+      deleteKeyAction(key, () => {
+        setDeletePopoverIndex(undefined)
+        onDelete(key)
+      }),
+    )
   }
 
-  const setScrollTopPosition = useCallback((position: number) => {
-    if (searchMode === SearchMode.Pattern) {
-      dispatch(setBrowserPatternScrollPosition(position))
-    } else {
-      dispatch(setBrowserRedisearchScrollPosition(position))
-    }
-  }, [searchMode])
+  const setScrollTopPosition = useCallback(
+    (position: number) => {
+      if (searchMode === SearchMode.Pattern) {
+        dispatch(setBrowserPatternScrollPosition(position))
+      } else {
+        dispatch(setBrowserRedisearchScrollPosition(position))
+      }
+    },
+    [searchMode],
+  )
 
-  const formatItem = useCallback((item: GetKeyInfoResponse) => ({
-    ...item,
-    nameString: bufferToString(item.name as string)
-  }), [])
+  const formatItem = useCallback(
+    (item: GetKeyInfoResponse) => ({
+      ...item,
+      nameString: bufferToString(item.name as string),
+    }),
+    [],
+  )
 
   const onRowsRendered = (startIndex: number, lastIndex: number) => {
     renderedRowsIndexesRef.current = { lastIndex, startIndex }
@@ -215,43 +246,62 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const onRowsRenderedOverscan = (startIndex: number, lastIndex: number) => {
-    const { startIndex: prevStartIndex, lastIndex: prevLastIndex } = renderedRowsIndexesRef.current
+    const { startIndex: prevStartIndex, lastIndex: prevLastIndex } =
+      renderedRowsIndexesRef.current
     if (prevStartIndex === startIndex && prevLastIndex === lastIndex) return
 
     onRowsRendered(startIndex, lastIndex)
   }
   const onRowsRenderedDebounced = debounce(onRowsRenderedOverscan, 100)
 
-  const bufferFormatRows = (startIndex: number, lastIndex: number): IKeyPropTypes[] => {
+  const bufferFormatRows = (
+    startIndex: number,
+    lastIndex: number,
+  ): IKeyPropTypes[] => {
     const newItems = bufferFormatRangeItems(
-      itemsRef.current, startIndex, lastIndex, formatItem
+      itemsRef.current,
+      startIndex,
+      lastIndex,
+      formatItem,
     )
     itemsRef.current.splice(startIndex, newItems.length, ...newItems)
 
     return newItems
   }
 
-  const getMetadata = useCallback((
-    startIndex: number,
-    itemsInit: IKeyPropTypes[] = []
-  ): void => {
-    const isSomeNotUndefined = ({ type, size, length }: IKeyPropTypes) =>
-      (!commonFilterType && !isUndefined(type)) || !isUndefined(size) || !isUndefined(length)
+  const getMetadata = useCallback(
+    (startIndex: number, itemsInit: IKeyPropTypes[] = []): void => {
+      const isSomeNotUndefined = ({ type, size, length }: IKeyPropTypes) =>
+        (!commonFilterType && !isUndefined(type)) ||
+        !isUndefined(size) ||
+        !isUndefined(length)
 
-    const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
-    if (firstEmptyItemIndex === -1) return
+      const firstEmptyItemIndex = findIndex(
+        itemsInit,
+        (item) => !isSomeNotUndefined(item),
+      )
+      if (firstEmptyItemIndex === -1) return
 
-    const emptyItems = reject(itemsInit, isSomeNotUndefined)
+      const emptyItems = reject(itemsInit, isSomeNotUndefined)
 
-    dispatch(fetchKeysMetadata(
-      emptyItems.map(({ name }) => name),
-      commonFilterType,
-      controller.current?.signal,
-      (loadedItems) =>
-        onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
-      () => { rerender({}) }
-    ))
-  }, [commonFilterType])
+      dispatch(
+        fetchKeysMetadata(
+          emptyItems.map(({ name }) => name),
+          commonFilterType,
+          controller.current?.signal,
+          (loadedItems) =>
+            onSuccessFetchedMetadata(
+              startIndex + firstEmptyItemIndex,
+              loadedItems,
+            ),
+          () => {
+            rerender({})
+          },
+        ),
+      )
+    },
+    [commonFilterType],
+  )
 
   const onSuccessFetchedMetadata = (
     startIndex: number,
@@ -271,7 +321,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       minWidth: 126,
       render: (cellData: any, { nameString }: any) => (
         <KeyRowType type={cellData} nameString={nameString} />
-      )
+      ),
     },
     {
       id: 'nameString',
@@ -280,7 +330,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       truncateText: true,
       render: (cellData: string) => (
         <KeyRowName nameString={cellData} shortName={cellData} />
-      )
+      ),
     },
     {
       id: 'ttl',
@@ -289,9 +339,19 @@ const KeyList = forwardRef((props: Props, ref) => {
       minWidth: 86,
       truncateText: true,
       alignment: TableCellAlignment.Right,
-      render: (cellData: number, { nameString }: IKeyPropTypes, _expanded, rowIndex) => (
-        <KeyRowTTL ttl={cellData} nameString={nameString} deletePopoverId={deletePopoverIndex} rowId={rowIndex || 0} />
-      )
+      render: (
+        cellData: number,
+        { nameString }: IKeyPropTypes,
+        _expanded,
+        rowIndex,
+      ) => (
+        <KeyRowTTL
+          ttl={cellData}
+          nameString={nameString}
+          deletePopoverId={deletePopoverIndex}
+          rowId={rowIndex || 0}
+        />
+      ),
     },
     {
       id: 'size',
@@ -304,7 +364,7 @@ const KeyList = forwardRef((props: Props, ref) => {
         cellData: number,
         { nameString, type, name: bufferName }: IKeyPropTypes,
         _expanded,
-        rowIndex
+        rowIndex,
       ) => (
         <KeyRowSize
           size={cellData}
@@ -318,7 +378,7 @@ const KeyList = forwardRef((props: Props, ref) => {
           handleDeletePopoverOpen={handleDeletePopoverOpen}
           handleDelete={handleRemoveKey}
         />
-      )
+      ),
     },
   ]
 
@@ -345,14 +405,19 @@ const KeyList = forwardRef((props: Props, ref) => {
       setScrollTopPosition={setScrollTopPosition}
       hideFooter={hideFooter}
       onRowsRendered={({ overscanStartIndex, overscanStopIndex }) =>
-        onRowsRenderedDebounced(overscanStartIndex, overscanStopIndex)}
+        onRowsRenderedDebounced(overscanStartIndex, overscanStopIndex)
+      }
     />
   )
 
   return (
     <div className={styles.page}>
       <div className={styles.content}>
-        <div className={cx(styles.table, { [styles.table__withoutFooter]: hideFooter })}>
+        <div
+          className={cx(styles.table, {
+            [styles.table__withoutFooter]: hideFooter,
+          })}
+        >
           <div className="key-list-table" data-testid="keyList-table">
             {searchMode === SearchMode.Pattern && VirtualizeTable()}
             {searchMode !== SearchMode.Pattern && VirtualizeTable()}

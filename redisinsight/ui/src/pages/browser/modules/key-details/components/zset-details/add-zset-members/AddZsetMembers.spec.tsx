@@ -16,53 +16,36 @@ describe('AddZsetMembers', () => {
   it('should set member value properly', () => {
     render(<AddZsetMembers {...instance(mockedProps)} />)
     const memberInput = screen.getByTestId(MEMBER_NAME)
-    fireEvent.change(
-      memberInput,
-      { target: { value: 'member name' } }
-    )
+    fireEvent.change(memberInput, { target: { value: 'member name' } })
     expect(memberInput).toHaveValue('member name')
   })
 
   it('should set score value properly if input wrong value', () => {
     render(<AddZsetMembers {...instance(mockedProps)} />)
     const scoreInput = screen.getByTestId(MEMBER_SCORE)
-    fireEvent.change(
-      scoreInput,
-      { target: { value: '100q' } }
-    )
+    fireEvent.change(scoreInput, { target: { value: '100q' } })
     expect(scoreInput).toHaveValue('100')
   })
 
   it('should set by blur score value properly if input wrong value', () => {
     render(<AddZsetMembers {...instance(mockedProps)} />)
     const scoreInput = screen.getByTestId(MEMBER_SCORE)
-    fireEvent.change(
-      scoreInput,
-      { target: { value: '.1' } }
-    )
-    fireEvent.focusOut(
-      scoreInput
-    )
+    fireEvent.change(scoreInput, { target: { value: '.1' } })
+    fireEvent.focusOut(scoreInput)
     expect(scoreInput).toHaveValue('0.1')
   })
 
   it('should render add button after input score', () => {
     render(<AddZsetMembers {...instance(mockedProps)} />)
     const scoreInput = screen.getByTestId(MEMBER_SCORE)
-    fireEvent.change(
-      scoreInput,
-      { target: { value: '100q' } }
-    )
+    fireEvent.change(scoreInput, { target: { value: '100q' } })
     expect(screen.getByTestId('add-item')).toBeTruthy()
   })
 
   it('should render one more member & score inputs after click add item', () => {
     render(<AddZsetMembers {...instance(mockedProps)} />)
     const scoreInput = screen.getByTestId(MEMBER_SCORE)
-    fireEvent.change(
-      scoreInput,
-      { target: { value: '100q' } }
-    )
+    fireEvent.change(scoreInput, { target: { value: '100q' } })
     fireEvent.click(screen.getByTestId('add-item'))
 
     expect(screen.getAllByTestId(MEMBER_NAME)).toHaveLength(2)
@@ -73,14 +56,8 @@ describe('AddZsetMembers', () => {
     render(<AddZsetMembers {...instance(mockedProps)} />)
     const memberInput = screen.getByTestId(MEMBER_NAME)
     const scoreInput = screen.getByTestId(MEMBER_SCORE)
-    fireEvent.change(
-      memberInput,
-      { target: { value: 'member' } }
-    )
-    fireEvent.change(
-      scoreInput,
-      { target: { value: '100q' } }
-    )
+    fireEvent.change(memberInput, { target: { value: 'member' } })
+    fireEvent.change(scoreInput, { target: { value: '100q' } })
     fireEvent.click(screen.getByTestId('remove-item'))
 
     expect(memberInput).toHaveValue('')

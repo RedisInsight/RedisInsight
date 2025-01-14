@@ -6,6 +6,12 @@
       "options": {
         "semi": false
       }
+    },
+    {
+      "files": "*.tsx",
+      "options": {
+        "semi": false
+      }
     }
   ]
 }

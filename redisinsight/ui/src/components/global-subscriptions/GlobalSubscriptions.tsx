@@ -1,19 +1,11 @@
 import React from 'react'
-import {
-  MonitorConfig,
-  PubSubConfig,
-  BulkActionsConfig,
-  FeatureFlagComponent,
-  OAuthJobs,
-} from 'uiSrc/components'
+import { BulkActionsConfig, FeatureFlagComponent, MonitorConfig, OAuthJobs, PubSubConfig } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
 import CommonAppSubscription from './CommonAppSubscription'
 
 const GlobalSubscriptions = () => (
   <>
-    <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
-      <CommonAppSubscription />
-    </FeatureFlagComponent>
+    <CommonAppSubscription />
     <MonitorConfig />
     <PubSubConfig />
     <FeatureFlagComponent name={FeatureFlags.envDependent}>

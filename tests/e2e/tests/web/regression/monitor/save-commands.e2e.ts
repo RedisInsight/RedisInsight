@@ -24,7 +24,7 @@ fixture `Save commands`
     });
 test('Verify that when clicks on “Reset Profiler” button he brought back to Profiler home screen', async t => {
     // Start Monitor without Save logs
-    await browserPage.Profiler.startMonitor();
+    await browserPage.Profiler.startMonitorAndVerifyStart();
     // Remember the number of files in Temp
     const numberOfTempFiles = fs.readdirSync(tempDir).length;
     // Reset profiler
@@ -44,7 +44,7 @@ test('Verify that when clicks on “Reset Profiler” button he brought back to 
 });
 test('Verify that when user clears the Profiler he doesn\'t brought back to Profiler home screen', async t => {
     // Start Monitor
-    await browserPage.Profiler.startMonitor();
+    await browserPage.Profiler.startMonitorAndVerifyStart();
     // Clear monitor and check the view
     await t.click(browserPage.Profiler.clearMonitorButton);
     await t.expect(browserPage.Profiler.monitorNotStartedElement.visible).notOk('Profiler home screen is still opened after Clear');

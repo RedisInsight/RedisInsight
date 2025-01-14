@@ -144,6 +144,10 @@ const formattingBuffer = (
     }
     case KeyValueFormat.Protobuf: {
       try {
+        if (reply.data?.length === 0) {
+          throw new Error()
+        }
+
         const decoded = getData(Buffer.from(reply.data))
         const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })

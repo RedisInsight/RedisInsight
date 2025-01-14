@@ -81,5 +81,5 @@ export abstract class DatabaseRecommendationRepository {
   /**
    * Get total unread recommendations
    */
-  abstract getTotalUnread(clientMetadata: ClientMetadata, databaseId: string): Promise<number>;
+  abstract getTotalUnread(sessionMetadata: SessionMetadata, databaseId: string): Promise<number>;
 }

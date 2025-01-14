@@ -5,8 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import * as JSONBigInt from 'json-bigint';
-import { AdditionalRedisModuleName, RedisErrorCodes } from 'src/constants';
+import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
 import config from 'src/utils/config';
@@ -29,37 +28,12 @@ import { RedisString } from 'src/common/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 import { RedisClient } from 'src/modules/redis/client';
-import { DatabaseService } from 'src/modules/database/database.service';
-
-const JSONbig = JSONBigInt();
 
 @Injectable()
 export class RejsonRlService {
   private logger = new Logger('JsonService');
 
-  constructor(
-    private databaseClientFactory: DatabaseClientFactory,
-    private databaseService: DatabaseService,
-  ) {}
-
-  private async prepareJsonPath(
-    clientMetadata: ClientMetadata,
-    path: string,
-  ): Promise<string> {
-    const database = await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);
-
-    const jsonModule = database.modules?.find((module) => module.name === AdditionalRedisModuleName.RedisJSON);
-
-    // first version needs to have different path
-    if (jsonModule && jsonModule.semanticVersion[0] === '1') {
-      if (path.length === 1) {
-        return '.';
-      }
-      return path[0] === '$' ? path.slice(1) : path;
-    }
-
-    return path;
-  }
+  constructor(private databaseClientFactory: DatabaseClientFactory) {}
 
   private async forceGetJson(
     client: RedisClient,
@@ -77,7 +51,7 @@ export class RejsonRlService {
       );
     }
 
-    return path[0] === '$' ? JSONbig.stringify(JSONbig.parse(data)[0]) : data;
+    return data
   }
 
   private async estimateSize(
@@ -112,13 +86,11 @@ export class RejsonRlService {
     keyName: RedisString,
     path: string,
   ): Promise<string[]> {
-    const keys = await client.sendCommand([
+    return await client.sendCommand([
       BrowserToolRejsonRlCommands.JsonObjKeys,
       keyName,
       path,
-    ], { replyEncoding: 'utf8' });
-
-    return path[0] === '$' ? keys[0] : keys;
+    ], { replyEncoding: 'utf8' }) as string[];
   }
 
   private async getJsonDataType(
@@ -126,13 +98,11 @@ export class RejsonRlService {
     keyName: RedisString,
     path: string,
   ): Promise<string> {
-    const type = await client.sendCommand([
+    return await client.sendCommand([
       BrowserToolRejsonRlCommands.JsonType,
       keyName,
       path,
-    ], { replyEncoding: 'utf8' });
-
-    return path[0] === '$' ? type[0] : type;
+    ], { replyEncoding: 'utf8' }) as string;
   }
 
   private async getDetails(
@@ -154,29 +124,24 @@ export class RejsonRlService {
     );
 
     details['type'] = objectKeyType;
-    let cardinality;
     switch (objectKeyType) {
       case 'object':
-        cardinality = await client.sendCommand([
+        details[
+          'cardinality'
+        ] = await client.sendCommand([
           BrowserToolRejsonRlCommands.JsonObjLen,
           keyName,
           path,
-        ], { replyEncoding: 'utf8' });
-
-        details[
-          'cardinality'
-        ] = path[0] === '$' ? cardinality[0] : cardinality;
+        ], { replyEncoding: 'utf8' }) as number;
         break;
       case 'array':
-        cardinality = await client.sendCommand([
+        details[
+          'cardinality'
+        ] = await client.sendCommand([
           BrowserToolRejsonRlCommands.JsonArrLen,
           keyName,
           path,
-        ], { replyEncoding: 'utf8' });
-
-        details[
-          'cardinality'
-        ] = path[0] === '$' ? cardinality[0] : cardinality;
+        ], { replyEncoding: 'utf8' }) as number;
         break;
       default:
         details['value'] = await this.forceGetJson(
@@ -184,6 +149,7 @@ export class RejsonRlService {
           keyName,
           path,
         );
+        break;
     }
 
     return details;
@@ -202,7 +168,6 @@ export class RejsonRlService {
     switch (type) {
       case 'object':
         objectKeys = await this.getObjectKeys(client, keyName, path);
-
         for (const objectKey of objectKeys) {
           const rootPath = path === '.' ? '' : path;
           const childPath = objectKey.includes('"')
@@ -226,9 +191,6 @@ export class RejsonRlService {
           keyName,
           path,
         ], { replyEncoding: 'utf8' }) as number;
-        if (Array.isArray(arrayLength)) {
-          [arrayLength] = arrayLength;
-        }
 
         for (let i = 0; i < arrayLength; i += 1) {
           const fullObjectKeyPath = `${path === '.' ? '' : path}[${i}]`;
@@ -260,14 +222,12 @@ export class RejsonRlService {
       const { keyName, data, expire } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const path = await this.prepareJsonPath(clientMetadata, '$');
-
       await checkIfKeyExists(keyName, client);
 
       await client.sendCommand([
         BrowserToolRejsonRlCommands.JsonSet,
         keyName,
-        path,
+        '.',
         data,
         'NX',
       ]);
@@ -307,11 +267,9 @@ export class RejsonRlService {
     dto: GetRejsonRlDto,
   ): Promise<GetRejsonRlResponseDto> {
     try {
-      this.logger.debug('Getting json by key.', clientMetadata); // todo: investigate logger implementation
+      this.logger.debug('Getting json by key.', clientMetadata);
       const { keyName, path, forceRetrieve } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
-
-      const jsonPath = await this.prepareJsonPath(clientMetadata, path);
 
       const result: GetRejsonRlResponseDto = {
         downloaded: true,
@@ -321,23 +279,23 @@ export class RejsonRlService {
 
       // Get value in the path without any checks
       if (forceRetrieve) {
-        result.data = await this.forceGetJson(client, keyName, jsonPath);
+        result.data = await this.forceGetJson(client, keyName, path);
         return result;
       }
 
-      const jsonSize = await this.estimateSize(client, keyName, jsonPath);
+      const jsonSize = await this.estimateSize(client, keyName, path);
       if (jsonSize > config.get('modules')['json']['sizeThreshold']) {
-        const type = await this.getJsonDataType(client, keyName, jsonPath);
+        const type = await this.getJsonDataType(client, keyName, path);
         result.downloaded = false;
         result.type = type;
         result.data = await this.safeGetJsonByType(
           client,
           keyName,
-          jsonPath,
+          path,
           type,
         );
       } else {
-        result.data = await this.forceGetJson(client, keyName, jsonPath);
+        result.data = await this.forceGetJson(client, keyName, path);
       }
 
       return result;
@@ -350,7 +308,7 @@ export class RejsonRlService {
 
       if (error.message.includes(RedisErrorCodes.UnknownCommand)) {
         throw new BadRequestException({
-          message: ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON'),
+          message: ERROR_MESSAGES.REDIS_MODULE_IS_REQUIRED('JSON')
         });
       }
 
@@ -377,15 +335,13 @@ export class RejsonRlService {
       const { keyName, path, data } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const jsonPath = await this.prepareJsonPath(clientMetadata, path);
-
       await checkIfKeyNotExists(keyName, client);
 
-      await this.getJsonDataType(client, keyName, jsonPath);
+      await this.getJsonDataType(client, keyName, path);
       await client.sendCommand([
         BrowserToolRejsonRlCommands.JsonSet,
         keyName,
-        jsonPath,
+        path,
         data,
       ]);
 
@@ -428,26 +384,16 @@ export class RejsonRlService {
       const { keyName, path, data } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const jsonPath = await this.prepareJsonPath(clientMetadata, path);
-
       await checkIfKeyNotExists(keyName, client);
 
-      const result = await client.sendCommand([
+      await client.sendCommand([
         BrowserToolRejsonRlCommands.JsonArrAppend,
         keyName,
-        jsonPath,
+        path,
         ...data,
       ]);
 
-      // JSON.ARRAPEND returns an array of integer replies for each path, the array's new size,
-      // or nil, if the matching JSON value is not an array.
-      if (jsonPath[0] === '$' && typeof result?.[0] !== 'number') {
-        throw new BadRequestException({
-          message: `ReplyError: ERR Path ${jsonPath} does not exist or not an array`,
-        });
-      }
-
-      this.logger.debug('Succeed to modify REJSON-RL key type.', clientMetadata);
+      this.logger.log('Succeed to modify REJSON-RL key type.', clientMetadata);
     } catch (error) {
       this.logger.error('Failed to modify REJSON-RL key type', error, clientMetadata);
 
@@ -479,14 +425,12 @@ export class RejsonRlService {
       const { keyName, path } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const jsonPath = await this.prepareJsonPath(clientMetadata, path);
-
       await checkIfKeyNotExists(keyName, client);
 
       const affected = await client.sendCommand([
         BrowserToolRejsonRlCommands.JsonDel,
         keyName,
-        jsonPath,
+        path,
       ]) as number;
 
       this.logger.debug('Succeed to remove REJSON-RL path.', clientMetadata);

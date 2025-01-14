@@ -700,7 +700,7 @@ export function fetchKeyInfo(
         dispatch<any>(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, '*', resetData))
       }
       if (data.type === KeyTypes.ReJSON) {
-        dispatch<any>(fetchReJSON(key, '$', data.length, resetData))
+        dispatch<any>(fetchReJSON(key, '.', data.length, resetData))
       }
       if (data.type === KeyTypes.Stream) {
         const { viewType } = state.browser.stream
@@ -1310,7 +1310,7 @@ export function refreshKey(
         break
       }
       case KeyTypes.ReJSON: {
-        dispatch(fetchReJSON(key, '$', length, true))
+        dispatch(fetchReJSON(key, '.', length, true))
         break
       }
       case KeyTypes.Stream: {

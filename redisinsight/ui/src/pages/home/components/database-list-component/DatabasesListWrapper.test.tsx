@@ -161,6 +161,7 @@ describe('DatabasesListWrapper', () => {
       eventData: {
         databaseId: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
         provider: 'provider',
+        source: 'db_list',
         RediSearch: {
           loaded: false
         },

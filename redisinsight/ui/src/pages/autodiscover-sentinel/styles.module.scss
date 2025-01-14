@@ -1,11 +1,3 @@
-:global(.homePage) :global(.sentinelDatabaseList) {
-  height: calc(100vh - 356px) !important;
-
-  @media (min-width: 1180px) {
-    height: calc(100vh - 292px) !important;
-  }
-}
-
 .footer {
   padding: 15px 14px 10px 30px !important;
 }
@@ -20,12 +12,6 @@
 
 .searchForm {
   width: 266px !important;
-
-  @media (min-width: 1180px) {
-    position: absolute;
-    right: 30px;
-    margin-top: -70px;
-  }
 }
 
 .search {

@@ -4,7 +4,7 @@ import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
-import { verifySearchFilterValue } from '../../../../helpers/keys';
+import { deleteAllKeysFromDB, verifySearchFilterValue } from '../../../../helpers/keys';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
@@ -140,6 +140,7 @@ test
 test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+        await deleteAllKeysFromDB(ossStandaloneConfig.host, ossStandaloneConfig.port);
         await browserPage.addHashKey(keySpaces[4], keysTTL[2], hashValue);
         await browserPage.Cli.addKeysFromCliWithDelimiter('MSET', 5);
         await t.click(browserPage.treeViewButton);

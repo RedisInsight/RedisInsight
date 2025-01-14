@@ -23,26 +23,10 @@
   padding-bottom: 5px !important;
 }
 
-.subTitle {
-}
-
-.cloudSubscriptions {
-  overflow: hidden !important;
-  height: calc(100vh - 292px) !important;
-
-  @media (min-width: 1230px) {
-    height: calc(100vh - 238px) !important;
-  }
-}
-
 .table {
   @include eui.scrollBar;
   overflow: auto;
   max-height: calc(100vh - 370px) !important;
-
-  @media (min-width: 1230px) {
-    max-height: calc(100vh - 300px) !important;
-  }
 }
 
 .tableEmpty tbody {
@@ -57,12 +41,6 @@
 
 .searchForm {
   width: 266px !important;
-
-  @media (min-width: 1230px) {
-    position: absolute;
-    right: 30px;
-    margin-top: -70px;
-  }
 }
 
 .search {

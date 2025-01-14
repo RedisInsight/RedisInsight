@@ -11,6 +11,8 @@ import {
   EuiFieldSearch,
   EuiFormRow,
   EuiToolTip,
+  EuiFlexGroup,
+  EuiFlexItem,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { map } from 'lodash'
@@ -133,32 +135,36 @@ const RedisClusterDatabases = ({ columns, onClose, onBack, onSubmit }: Props) =>
             Auto-Discover Redis Enterprise Databases
           </h1>
         </EuiTitle>
-
-        {!!items.length && (
-        <EuiText color="subdued" className={styles.subTitle}>
-          <span>
-            These are the
-            {' '}
-            {items.length > 1 ? 'databases ' : 'database '}
-            in your Redis Enterprise Cluster. Select the
-            {items.length > 1 ? ' databases ' : ' database '}
-            {' '}
-            that you want to add.
-          </span>
-        </EuiText>
-        )}
-        <EuiFormRow className={styles.searchForm}>
-          <EuiFieldSearch
-            placeholder="Search..."
-            className={styles.search}
-            onChange={onQueryChange}
-            isClearable
-            aria-label="Search"
-            data-testid="search"
-          />
-        </EuiFormRow>
+        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
+          <EuiFlexItem>
+            {!!items.length && (
+              <EuiText color="subdued" className={styles.subTitle}>
+                <span>
+                  These are the
+                  {' '}
+                  {items.length > 1 ? 'databases ' : 'database '}
+                  in your Redis Enterprise Cluster. Select the
+                  {items.length > 1 ? ' databases ' : ' database '}
+                  {' '}
+                  that you want to add.
+                </span>
+              </EuiText>
+            )}
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiFormRow className={styles.searchForm}>
+              <EuiFieldSearch
+                placeholder="Search..."
+                className={styles.search}
+                onChange={onQueryChange}
+                isClearable
+                aria-label="Search"
+                data-testid="search"
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
         <br />
-
         <div className={cx('itemList databaseList clusterDatabaseList', styles.databaseListWrapper)}>
           <EuiInMemoryTable
             items={items}

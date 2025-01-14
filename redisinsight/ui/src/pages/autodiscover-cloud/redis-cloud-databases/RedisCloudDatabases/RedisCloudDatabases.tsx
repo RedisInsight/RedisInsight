@@ -11,6 +11,8 @@ import {
   EuiFieldSearch,
   EuiFormRow,
   EuiToolTip,
+  EuiFlexGroup,
+  EuiFlexItem,
 } from '@elastic/eui'
 import { map, pick } from 'lodash'
 import { useSelector } from 'react-redux'
@@ -101,14 +103,14 @@ const RedisCloudDatabasesPage = ({
   const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value?.toLowerCase()
 
-    const itemsTemp = instances.filter(
+    const itemsTemp = instances?.filter(
       (item: InstanceRedisCloud) =>
         item.name?.toLowerCase().indexOf(value) !== -1
         || item.publicEndpoint?.toLowerCase().indexOf(value) !== -1
         || item.subscriptionId?.toString()?.indexOf(value) !== -1
         || item.subscriptionName?.toLowerCase().indexOf(value) !== -1
         || item.databaseId?.toString()?.indexOf(value) !== -1
-    )
+    ) || []
 
     if (!itemsTemp.length) {
       setMessage(notFoundMsg)
@@ -183,28 +185,34 @@ const RedisCloudDatabasesPage = ({
           </h1>
         </EuiTitle>
 
-        <EuiText color="subdued" className={styles.subTitle}>
-          <span>
-            These are
-            {' '}
-            {items.length > 1 ? 'databases ' : 'database '}
-            in your Redis Cloud. Select the
-            {items.length > 1 ? ' databases ' : ' database '}
-            {' '}
-            that you
-            want to add.
-          </span>
-        </EuiText>
-        <EuiFormRow className={styles.searchForm}>
-          <EuiFieldSearch
-            placeholder="Search..."
-            className={styles.search}
-            onChange={onQueryChange}
-            isClearable
-            aria-label="Search"
-            data-testid="search"
-          />
-        </EuiFormRow>
+        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
+          <EuiFlexItem>
+            <EuiText color="subdued" className={styles.subTitle}>
+              <span>
+                These are
+                {' '}
+                {items.length > 1 ? 'databases ' : 'database '}
+                in your Redis Cloud. Select the
+                {items.length > 1 ? ' databases ' : ' database '}
+                {' '}
+                that you
+                want to add.
+              </span>
+            </EuiText>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiFlexItem grow={false}>
+          <EuiFormRow className={styles.searchForm}>
+            <EuiFieldSearch
+              placeholder="Search..."
+              className={styles.search}
+              onChange={onQueryChange}
+              isClearable
+              aria-label="Search"
+              data-testid="search"
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
         <br />
 
         <div className="itemList databaseList cloudDatabaseList">

@@ -97,7 +97,7 @@ const TlsDetails = (props: Props) => {
   caCertificates?.forEach((cert) => {
     optionsCertsCA.push({
       value: cert.id,
-      inputDisplay: cert.name,
+      inputDisplay: <span className={styles.selectedOptionWithLongTextSupport}>{cert.name}</span>,
       dropdownDisplay: (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>{truncateText(cert.name, 25)}</div>
@@ -128,7 +128,7 @@ const TlsDetails = (props: Props) => {
   certificates?.forEach((cert) => {
     optionsCertsClient.push({
       value: `${cert.id}`,
-      inputDisplay: cert.name,
+      inputDisplay: <span className={styles.selectedOptionWithLongTextSupport}>{cert.name}</span>,
       dropdownDisplay: (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>{truncateText(cert.name, 25)}</div>

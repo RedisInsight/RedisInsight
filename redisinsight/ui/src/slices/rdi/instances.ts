@@ -330,7 +330,6 @@ export function checkConnectToRdiInstanceAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
 
-      dispatch(resetConnectedInstance())
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification({ ...error, instanceId: id }))
       onFailAction?.()

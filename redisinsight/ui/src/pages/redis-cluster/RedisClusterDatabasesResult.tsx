@@ -8,6 +8,8 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
+  EuiFlexGroup,
+  EuiFlexItem,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -107,23 +109,28 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
             Added
           </h1>
         </EuiTitle>
-        <MessageBar
-          opened={!!countSuccessAdded || !!countFailAdded}
-        >
-          <SummaryText />
-        </MessageBar>
-        <EuiFormRow className={styles.searchForm}>
-          <EuiFieldSearch
-            placeholder="Search..."
-            className={styles.search}
-            onChange={onQueryChange}
-            isClearable
-            aria-label="Search"
-            data-testid="search"
-          />
-        </EuiFormRow>
+        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
+          <EuiFlexItem>
+            <MessageBar
+              opened={!!countSuccessAdded || !!countFailAdded}
+            >
+              <SummaryText />
+            </MessageBar>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiFormRow className={styles.searchForm}>
+              <EuiFieldSearch
+                placeholder="Search..."
+                className={styles.search}
+                onChange={onQueryChange}
+                isClearable
+                aria-label="Search"
+                data-testid="search"
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
         <br />
-
         <div className="itemList databaseList clusterDatabaseListResult">
           <EuiInMemoryTable
             items={items}

@@ -382,7 +382,6 @@ describe('rdi instances slice', () => {
         // Assert
         const expectedActions = [
           setDefaultInstance(),
-          resetConnectedInstance(),
           setDefaultInstanceFailure(errorMessage),
           addErrorNotification({ ...responsePayload, instanceId: '123' } as IAddInstanceErrorPayload),
         ]

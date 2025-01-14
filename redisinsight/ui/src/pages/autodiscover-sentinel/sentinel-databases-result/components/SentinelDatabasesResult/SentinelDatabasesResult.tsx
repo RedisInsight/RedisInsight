@@ -9,6 +9,8 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
+  EuiFlexGroup,
+  EuiFlexItem,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
@@ -108,23 +110,28 @@ const SentinelDatabasesResult = ({
           <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
         </EuiTitle>
 
-        <MessageBar
-          opened={!!countSuccessAdded || !!countFailAdded}
-        >
-          <SummaryText />
-        </MessageBar>
-        <EuiFormRow className={styles.searchForm}>
-          <EuiFieldSearch
-            placeholder="Search..."
-            className={styles.search}
-            onChange={onQueryChange}
-            isClearable
-            aria-label="Search"
-            data-testid="search"
-          />
-        </EuiFormRow>
+        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
+          <EuiFlexItem>
+            <MessageBar
+              opened={!!countSuccessAdded || !!countFailAdded}
+            >
+              <SummaryText />
+            </MessageBar>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiFlexItem grow={false}>
+          <EuiFormRow className={styles.searchForm}>
+            <EuiFieldSearch
+              placeholder="Search..."
+              className={styles.search}
+              onChange={onQueryChange}
+              isClearable
+              aria-label="Search"
+              data-testid="search"
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
         <br />
-
         <div className="itemList databaseList sentinelDatabaseListResult">
           <EuiInMemoryTable
             items={items}

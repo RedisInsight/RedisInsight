@@ -12,9 +12,15 @@ import {
   setPipelineDialogState,
 } from 'uiSrc/slices/app/context'
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
-import { fetchConnectedInstanceAction } from 'uiSrc/slices/rdi/instances'
+import {
+  fetchConnectedInstanceAction,
+  fetchInstancesAction as fetchRdiInstancesAction,
+  instancesSelector as rdiInstancesSelector
+} from 'uiSrc/slices/rdi/instances'
 import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
+  fetchInstancesAction,
+  instancesSelector as dbInstancesSelector
 } from 'uiSrc/slices/instances/instances'
 import {
   deployPipelineAction,
@@ -25,7 +31,7 @@ import {
   setPipelineInitialState,
 } from 'uiSrc/slices/rdi/pipeline'
 import { IActionPipelineResultProps, IPipeline } from 'uiSrc/slices/interfaces'
-import { createAxiosError, Nullable, pipelineToJson } from 'uiSrc/utils'
+import { createAxiosError, isContainJSONModule, Nullable, pipelineToJson } from 'uiSrc/utils'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
@@ -54,10 +60,21 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const { lastPage, contextRdiInstanceId } = useSelector(appContextSelector)
   const { data, resetChecked } = useSelector(rdiPipelineSelector)
+  const { data: rdiInstances } = useSelector(rdiInstancesSelector)
+  const { data: dbInstances } = useSelector(dbInstancesSelector)
   const { showModal, handleCloseModal, handleConfirmLeave } = useUndeployedChangesPrompt()
 
   const [initialFormValues, setInitialFormValues] = useState<IPipeline>(getInitialValues(data))
   const formikRef = useRef<FormikProps<IPipeline>>(null)
+
+  useEffect(() => {
+    if (!dbInstances?.length) {
+      dispatch(fetchInstancesAction())
+    }
+    if (!rdiInstances?.length) {
+      dispatch(fetchRdiInstancesAction())
+    }
+  }, [])
 
   useEffect(() => {
     if (!contextRdiInstanceId || contextRdiInstanceId !== rdiInstanceId) {

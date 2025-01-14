@@ -27,7 +27,10 @@ const contentUri = posix.join('/', proxyPath, 'static', 'content');
 const defaultPluginsUri = posix.join('/', proxyPath, 'static', 'plugins');
 const pluginsAssetsUri = posix.join('/', proxyPath, 'static', 'resources', 'plugins');
 
-const socketPath = posix.join('/', proxyPath, 'socket.io');
+const socketProxyPath = trim(process.env.RI_SOCKET_PROXY_PATH || 'api', '/');
+
+const socketPath = posix.join('/', socketProxyPath, 'socket.io');
+
 const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'data')
   : join(__dirname, '..', 'data');
@@ -80,7 +83,7 @@ export default {
     migrateOldFolders: process.env.RI_MIGRATE_OLD_FOLDERS ? process.env.RI_MIGRATE_OLD_FOLDERS === 'true' : true,
     autoBootstrap: process.env.RI_AUTO_BOOTSTRAP ? process.env.RI_AUTO_BOOTSTRAP === 'true' : true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.62.0',
+    appVersion: process.env.RI_APP_VERSION || '2.64.1',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],

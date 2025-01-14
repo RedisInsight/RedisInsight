@@ -33,4 +33,5 @@ export * from './redisearch'
 export * from './browser/keyDetailsHeader'
 export * from './tutorials'
 export * from './datetime'
+export * from './sorting'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

@@ -43,6 +43,7 @@ const MonacoLanguages = () => {
     }
 
     monaco.languages.setLanguageConfiguration(MonacoLanguage.Redis, redisLanguageConfig)
+    monaco.languages.setLanguageConfiguration(MonacoLanguage.RediSearch, redisLanguageConfig)
     const REDIS_COMMANDS = mergeRedisCommandsSpecs(COMMANDS_SPEC, SEARCH_COMMANDS_SPEC) as IRedisCommandTree[]
     const REDIS_SEARCH_COMMANDS = REDIS_COMMANDS.filter(({ name }) => name?.startsWith(ModuleCommandPrefix.RediSearch))
 

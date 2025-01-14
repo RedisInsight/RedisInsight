@@ -8,8 +8,8 @@ const STRING_DOUBLE = 'string.double'
 export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monacoEditor.languages.IMonarchLanguage => {
   const commandRedisCommands = [...commands]
   const searchCommands = remove(commandRedisCommands, ({ token }) => token?.startsWith(ModuleCommandPrefix.RediSearch))
-  const COMMON_COMMANDS_REGEX = `^\\s*(${commandRedisCommands.map(({ token }) => token).join('|')})\\b`
-  const SEARCH_COMMANDS_REGEX = `^\\s*(${searchCommands.map(({ token }) => token).join('|')})\\b`
+  const COMMON_COMMANDS_REGEX = `^\\s*(\\d+\\s+)?(${commandRedisCommands.map(({ token }) => token).join('|')})\\b`
+  const SEARCH_COMMANDS_REGEX = `^\\s*(\\d+\\s+)?(${searchCommands.map(({ token }) => token).join('|')})\\b`
 
   return {
     defaultToken: '',
@@ -20,13 +20,12 @@ export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monaco
       { open: '[', close: ']', token: 'delimiter.square' },
       { open: '(', close: ')', token: 'delimiter.parenthesis' },
     ],
-    keywords: commands.map(({ token }) => token),
+    keywords: [],
     operators: [],
     tokenizer: {
       root: [
         { include: '@startOfLine' },
         { include: '@whitespace' },
-        { include: '@numbers' },
         { include: '@strings' },
         { include: '@keyword' },
         [/[;,.]/, 'delimiter'],
@@ -42,6 +41,7 @@ export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monaco
           },
         ],
         [/[<>=!%&+\-*/|~^]/, 'operator'],
+        { include: '@numbers' },
       ],
       keyword: [
         [COMMON_COMMANDS_REGEX, { token: 'keyword' }],

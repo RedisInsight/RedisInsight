@@ -25,7 +25,7 @@ import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLog
 import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import ItemList from 'uiSrc/components/item-list'
-import { BrowserStorageItem, FeatureFlags, Pages, Theme } from 'uiSrc/constants'
+import { BrowserStorageItem, DEFAULT_SORT, FeatureFlags, Pages, Theme } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
@@ -93,10 +93,7 @@ const DatabasesListWrapper = (props: Props) => {
   const [width, setWidth] = useState(0)
   const [, forceRerender] = useState({})
   const sortingRef = useRef<PropertySort>(
-    localStorageService.get(BrowserStorageItem.instancesSorting) ?? {
-      field: 'lastConnection',
-      direction: 'asc'
-    }
+    localStorageService.get(BrowserStorageItem.instancesSorting) ?? DEFAULT_SORT
   )
 
   const deletingIdRef = useRef('')
@@ -135,16 +132,8 @@ const DatabasesListWrapper = (props: Props) => {
   }
 
   const connectToInstance = (id = '') => {
-    // reset rdi context
     dispatch(resetRdiContext())
 
-    if (contextInstanceId && contextInstanceId !== id) {
-      dispatch(resetKeys())
-      dispatch(resetRedisearchKeysData())
-      dispatch(resetCliSettingsAction())
-      dispatch(resetCliHelperSettings())
-      dispatch(setAppContextInitialState())
-    }
     dispatch(setConnectedInstanceId(id))
 
     history.push(Pages.browser(id))
@@ -160,6 +149,7 @@ const DatabasesListWrapper = (props: Props) => {
       eventData: {
         databaseId: id,
         provider,
+        source: 'db_list',
         ...modulesSummary,
       }
     })

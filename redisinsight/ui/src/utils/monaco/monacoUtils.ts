@@ -1,5 +1,5 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
-import { first, isEmpty, isUndefined, reject, without } from 'lodash'
+import { first, isEmpty, isNaN, isUndefined, reject, toNumber, without } from 'lodash'
 import { decode } from 'html-entities'
 import { ICommand, ICommands } from 'uiSrc/constants'
 import {
@@ -266,13 +266,15 @@ export const findCompleteQuery = (
     compositeArgs,
   )
 
-  const [[commandNameFromQuery]] = args
+  const [beforeCursorArgs] = args
+  const commandNameFromQuery = isNaN(toNumber(beforeCursorArgs[0])) ? beforeCursorArgs[0] : beforeCursorArgs[1]
   const matchedCommand = commandsArray
     .find((command) => commandNameFromQuery?.toUpperCase() === command.toUpperCase())
 
   const cursorContext = {
     position,
     fullQuery,
+    commandQuery: fullQuery.replace(/^\d+\s+/, ''),
     args,
     allArgs: args.flat(),
     cursor,

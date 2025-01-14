@@ -61,6 +61,8 @@ export const defaultConfig = {
   browser: {
     scanCountDefault: intEnv('RI_SCAN_COUNT_DEFAULT', 500),
     scanTreeCountDefault: intEnv('RI_SCAN_TREE_COUNT_DEFAULT', 10_000),
+    databaseOverviewRefreshInterval: intEnv('RI_DATABASE_OVERVIEW_REFRESH_INTERVAL', 5),
+    databaseOverviewMinimumRefreshInterval: intEnv('RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL', 1),
   },
   features: {
     envDependent: {

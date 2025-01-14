@@ -114,6 +114,10 @@ jobs:
       run: |
         docker image load -i ./release/docker/docker-linux-alpine.amd64.tar
 
+    - name: Make sure coverage dir exists
+      # Important: this directory is mounted on both the `app` and `test` Docker containers.
+      run: mkdir -p ./redisinsight/api/test/test-runs/coverage
+
     - name: Run tests
       timeout-minutes: 20
       run: |
@@ -122,7 +126,7 @@ jobs:
         fi
 
         ./redisinsight/api/test/test-runs/start-test-run.sh -r ${{ matrix.rte }} -t ${{ inputs.build }}
-        mkdir -p mkdir itest/coverages && mkdir -p itest/results
+        mkdir -p itest/coverages && mkdir -p itest/results
 
         cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/${{ matrix.rte }}.result.json
         cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml

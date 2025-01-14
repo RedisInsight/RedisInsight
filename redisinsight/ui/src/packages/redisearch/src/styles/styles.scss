@@ -37,6 +37,15 @@ html {
   word-break: break-word;
 }
 
+.queryHeader {
+  display: flex;
+  align-items: center;
+
+  .matched {
+    margin-right: 12px;
+  }
+}
+
 .matched {
   color: var(--euiColorFullShade);
   padding-bottom: 12px;

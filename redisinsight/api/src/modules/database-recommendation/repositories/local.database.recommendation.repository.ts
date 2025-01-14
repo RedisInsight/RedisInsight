@@ -56,7 +56,10 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
         DatabaseRecommendation,
         await this.modelEncryptor.decryptEntity(model, true),
       );
-      this.eventEmitter.emit(RecommendationEvents.NewRecommendation, [recommendation]);
+      this.eventEmitter.emit(RecommendationEvents.NewRecommendation, {
+        sessionMetadata,
+        recommendations: [recommendation],
+      });
 
       return recommendation;
     } catch (err) {
@@ -264,7 +267,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
     }
   }
 
-  public async getTotalUnread(clientMetadata: ClientMetadata, databaseId: string): Promise<number> {
+  public async getTotalUnread(_: SessionMetadata, databaseId: string): Promise<number> {
     return await this.repository
       .createQueryBuilder()
       .where({ read: false, databaseId })

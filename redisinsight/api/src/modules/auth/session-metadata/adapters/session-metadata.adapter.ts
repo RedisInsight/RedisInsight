@@ -6,11 +6,10 @@ import { Observable } from 'rxjs';
 import { Socket } from 'socket.io';
 import { DEFAULT_SESSION_ID, DEFAULT_USER_ID } from 'src/common/constants';
 import { SessionMetadata } from 'src/common/models';
+import { getUserRoom } from 'src/constants/websocket-rooms';
 
 @Injectable()
 export class SessionMetadataAdapter extends IoAdapter {
-  private logger = new Logger('SessionMetadataAdapter');
-
   async bindMessageHandlers(
     socket: Socket,
     handlers: MessageMappingProperties[],
@@ -22,6 +21,9 @@ export class SessionMetadataAdapter extends IoAdapter {
     };
 
     socket.data['sessionMetadata'] = sessionMetadata;
+
+    // join room for the userId
+    socket.join(getUserRoom(sessionMetadata.userId));
 
     super.bindMessageHandlers(socket, handlers, transform);
   }

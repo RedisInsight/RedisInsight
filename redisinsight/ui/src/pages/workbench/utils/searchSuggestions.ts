@@ -62,7 +62,7 @@ export const findSuggestionsByArg = (
 
   if (foundArg?.stopArg?.token && !foundArg?.isBlocked) {
     return handleCommonSuggestions(
-      command.fullQuery,
+      command.commandQuery,
       foundArg,
       allArgs,
       additionData.fields || [],
@@ -80,7 +80,7 @@ export const findSuggestionsByArg = (
       return handleQuerySuggestions(foundArg)
     }
     default: {
-      return handleCommonSuggestions(command.fullQuery, foundArg, allArgs, fields, cursorContext, isEscaped)
+      return handleCommonSuggestions(command.commandQuery, foundArg, allArgs, fields, cursorContext, isEscaped)
     }
   }
 }

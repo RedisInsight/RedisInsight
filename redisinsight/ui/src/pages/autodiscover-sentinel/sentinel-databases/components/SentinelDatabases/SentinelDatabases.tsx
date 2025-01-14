@@ -12,6 +12,8 @@ import {
   EuiFieldSearch,
   EuiFormRow,
   EuiToolTip,
+  EuiFlexGroup,
+  EuiFlexItem,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
@@ -195,25 +197,31 @@ const SentinelDatabases = ({
           <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
         </EuiTitle>
 
-        <EuiText color="subdued" className={styles.subTitle}>
-          <span>
-            Redis Sentinel instance found.
-            {' '}
-            <br />
-            Here is a list of primary groups your Sentinel instance is
-            managing. Select the primary group(s) you want to add:
-          </span>
-        </EuiText>
-        <EuiFormRow className={styles.searchForm}>
-          <EuiFieldSearch
-            placeholder="Search..."
-            className={styles.search}
-            onChange={onQueryChange}
-            isClearable
-            aria-label="Search"
-            data-testid="search"
-          />
-        </EuiFormRow>
+        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
+          <EuiFlexItem>
+            <EuiText color="subdued" className={styles.subTitle}>
+              <span>
+                Redis Sentinel instance found.
+                {' '}
+                <br />
+                Here is a list of primary groups your Sentinel instance is
+                managing. Select the primary group(s) you want to add:
+              </span>
+            </EuiText>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiFormRow className={styles.searchForm}>
+              <EuiFieldSearch
+                placeholder="Search..."
+                className={styles.search}
+                onChange={onQueryChange}
+                isClearable
+                aria-label="Search"
+                data-testid="search"
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
         <br />
 
         <div className="itemList databaseList sentinelDatabaseList">

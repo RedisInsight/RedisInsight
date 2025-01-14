@@ -53,7 +53,7 @@ test('Verify that user can see the list of all commands from all clients ran for
     const common_command = 'info';
     const browser_command = 'hset';
     //Start Monitor
-    await browserPage.Profiler.startMonitor();
+    await browserPage.Profiler.startMonitorAndVerifyStart();
     //Send command in CLI
     await browserPage.Cli.getSuccessCommandResultFromCli(cli_command);
     //Check that command from CLI is displayed in monitor

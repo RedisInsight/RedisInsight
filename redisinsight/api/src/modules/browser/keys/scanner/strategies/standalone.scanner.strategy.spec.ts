@@ -578,14 +578,12 @@ describe('StandaloneScannerStrategy', () => {
         message: "ERR unknown command 'memory'",
       };
 
-      // Pipeline for TTL
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith(
           keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
         )
         .mockResolvedValue(Array(keys.length).fill([null, -1]));
 
-      // Pipeline for size fails
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith(
           keys.map((key: string) => [
@@ -597,7 +595,6 @@ describe('StandaloneScannerStrategy', () => {
         )
         .mockResolvedValue(Array(keys.length).fill([replyError, null]));
 
-      // Pipeline for type
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith(
           keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),

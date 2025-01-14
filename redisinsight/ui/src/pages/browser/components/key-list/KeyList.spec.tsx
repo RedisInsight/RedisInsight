@@ -4,7 +4,7 @@ import { fireEvent } from '@testing-library/react'
 import * as reactRedux from 'react-redux'
 import { cleanup, mockedStore, render, waitFor, screen, clearStoreActions } from 'uiSrc/utils/test-utils'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { deleteKey, keysSelector, setLastBatchKeys } from 'uiSrc/slices/browser/keys'
+import { deleteKey, setLastBatchKeys } from 'uiSrc/slices/browser/keys'
 import { apiService } from 'uiSrc/services'
 import { BrowserColumns } from 'uiSrc/constants'
 import KeyList from './KeyList'
@@ -58,14 +58,8 @@ beforeEach(() => {
   store.clearActions()
 })
 
-// afterEach(() => {
-//   setLastBatchKeys.mockRestore()
-// })
-
 describe('KeyList', () => {
   it('should render', () => {
-    const state = store.getState()
-    console.log('Keys state:', state.browser.keys)
     expect(render(<KeyList {...propsMock} />)).toBeTruthy()
   })
 
@@ -79,12 +73,12 @@ describe('KeyList', () => {
 
   // TODO: find solution for mock "setLastBatchKeys" action
   it.skip('should call "setLastBatchKeys" after unmount for Browser view', () => {
-    keysSelector.mockImplementation(() => ({
+    jest.spyOn(reactRedux, 'useSelector').mockReturnValue({
       searchMode: SearchMode.Pattern,
       viewType: KeyViewType.Browser,
       isSearch: false,
       isFiltered: false,
-    }))
+    })
 
     const { unmount } = render(<KeyList {...propsMock} />)
     expect(setLastBatchKeys).not.toBeCalled()
@@ -96,11 +90,11 @@ describe('KeyList', () => {
 
   // TODO: find solution for mock "setLastBatchKeys" action
   it.skip('should not call "setLastBatchKeys" after unmount for Tree view', () => {
-    keysSelector.mockImplementation(() => ({
+    jest.spyOn(reactRedux, 'useSelector').mockReturnValue({
       viewType: KeyViewType.Tree,
       isSearch: false,
       isFiltered: false,
-    }))
+    })
 
     const { unmount } = render(<KeyList {...propsMock} />)
     expect(setLastBatchKeys).not.toBeCalled()
@@ -236,7 +230,7 @@ describe('KeyList shownColumns functionality', () => {
 
   it('should refetch metadata when size column is enabled', () => {
     // Initial render without size
-    jest.spyOn(reactRedux, 'useSelector').mockImplementation((selector) => ({
+    jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
       ...baseState,
       shownColumns: [BrowserColumns.TTL],
     }))
@@ -262,7 +256,7 @@ describe('KeyList shownColumns functionality', () => {
   })
 
   it('should refetch metadata when ttl column is enabled', () => {
-    jest.spyOn(reactRedux, 'useSelector').mockImplementation((selector) => ({
+    jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
       ...baseState,
       shownColumns: [],
     }))

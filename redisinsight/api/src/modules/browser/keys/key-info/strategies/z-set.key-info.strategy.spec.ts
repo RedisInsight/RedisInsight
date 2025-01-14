@@ -79,7 +79,6 @@ describe('ZSetKeyInfoStrategy', () => {
           [null, 10],
         ]);
 
-      // Second pipeline fails
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
@@ -98,7 +97,6 @@ describe('ZSetKeyInfoStrategy', () => {
     });
 
     it('should not check size when length >= 50,000', async () => {
-      // First pipeline with large length
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.Ttl, key],

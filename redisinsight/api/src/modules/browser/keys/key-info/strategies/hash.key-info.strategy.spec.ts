@@ -45,7 +45,6 @@ describe('HashKeyInfoStrategy', () => {
           [null, 10],
         ]);
 
-      // Second pipeline call for size (since length < 50,000)
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
@@ -79,7 +78,6 @@ describe('HashKeyInfoStrategy', () => {
           [null, 10],
         ]);
 
-      // Second pipeline call fails
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
@@ -98,7 +96,6 @@ describe('HashKeyInfoStrategy', () => {
     });
 
     it('should not check size when length >= 50,000', async () => {
-      // First pipeline call with large length
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.Ttl, key],

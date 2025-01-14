@@ -38,7 +38,6 @@ describe('RejsonRlKeyInfoStrategy', () => {
     const path = '.';
 
     it('should return appropriate value for key that store object', async () => {
-      // First pipeline for TTL
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.Ttl, key],
@@ -59,7 +58,6 @@ describe('RejsonRlKeyInfoStrategy', () => {
         )
         .mockResolvedValue(10);
 
-      // Memory usage pipeline (since length < 100)
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],

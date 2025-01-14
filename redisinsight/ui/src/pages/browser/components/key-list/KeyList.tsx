@@ -96,7 +96,6 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const dispatch = useDispatch()
 
-  // Add refs to track previous values
   const prevGetSize = useRef(shownColumns?.includes(BrowserColumns.Size))
   const prevGetTtl = useRef(shownColumns?.includes(BrowserColumns.TTL))
 

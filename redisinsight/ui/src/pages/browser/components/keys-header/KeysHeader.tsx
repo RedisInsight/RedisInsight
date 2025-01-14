@@ -227,9 +227,7 @@ const KeysHeader = (props: Props) => {
       </OnboardingTour>
     </div>
   )
-  console.log('keysState test', searchMode, nextCursor, SearchMode.Redisearch, keysState.maxResults, keysState.keys.length, !(searchMode === SearchMode.Redisearch
-    && keysState.maxResults
-    && keysState.keys.length >= keysState.maxResults), keysState.maxResults, keysState)
+
   return (
     <div className={styles.content} ref={rootDivRef}>
       <AutoSizer disableHeight>

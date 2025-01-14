@@ -11,10 +11,6 @@ jest.mock('react-redux', () => ({
 }))
 
 describe('KeyDetailsHeaderSizeLength', () => {
-  const mockProps: Props = {
-    width: 1920
-  }
-
   it('should render normal size correctly', () => {
     // Mock the Redux selector for normal size
     jest.spyOn(require('react-redux'), 'useSelector').mockReturnValue({
@@ -23,7 +19,7 @@ describe('KeyDetailsHeaderSizeLength', () => {
       length: 1
     })
 
-    render(<KeyDetailsHeaderSizeLength {...mockProps} />)
+    render(<KeyDetailsHeaderSizeLength {...mockedProps} />)
 
     expect(screen.getByTestId('key-size-text')).toBeInTheDocument()
     expect(screen.queryByTestId('key-size-info-icon')).not.toBeInTheDocument()
@@ -37,7 +33,7 @@ describe('KeyDetailsHeaderSizeLength', () => {
       length: 1
     })
 
-    render(<KeyDetailsHeaderSizeLength {...mockProps} />)
+    render(<KeyDetailsHeaderSizeLength {...mockedProps} />)
 
     expect(screen.getByTestId('key-size-text')).toBeInTheDocument()
     expect(screen.getByTestId('key-size-info-icon')).toBeInTheDocument()
@@ -50,7 +46,7 @@ describe('KeyDetailsHeaderSizeLength', () => {
       length: 1
     })
 
-    render(<KeyDetailsHeaderSizeLength {...mockProps} />)
+    render(<KeyDetailsHeaderSizeLength {...mockedProps} />)
 
     const infoIcon = screen.getByTestId('key-size-info-icon')
     userEvent.hover(infoIcon)

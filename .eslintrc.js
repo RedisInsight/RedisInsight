@@ -68,7 +68,7 @@ module.exports = {
       },
     },
     {
-      files: ['*.js', '*.jsx'],
+      files: ['*.js', '*.jsx', '*.cjs'],
       rules: {
         semi: ['error', 'always'],
         '@typescript-eslint/semi': 'off',

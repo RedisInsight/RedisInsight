@@ -106,17 +106,6 @@
     }
   }
 
-  .sentinelDatabaseList {
-    height: calc(100vh - 335px) !important;
-
-    @media (min-width: 1180px) {
-      height: calc(100vh - 280px) !important;
-    }
-
-    @media only screen and (max-width: 900px) {
-      height: calc(100vh - 357px) !important;
-    }
-  }
 
   .clusterDatabaseListResult .euiTableRowCell:first-child,
   .clusterDatabaseListResult .euiTableHeaderCell:first-child,

@@ -20,19 +20,16 @@ export class LocalDatabaseSettingsRepository extends DatabaseSettingsRepository 
     super();
   }
 
-  async create(_sessionMetadata: SessionMetadata, setting: Partial<DatabaseSetting>): Promise<DatabaseSettings> {
-    const settingsEntity = (plainToClass(DatabaseSettingsEntity, setting));
-    const entity = await this.repository.save(settingsEntity);
-    return classToClass(DatabaseSettings, entity);
-  }
-
-  async update(sessionMetadata: SessionMetadata, setting: Partial<DatabaseSetting>): Promise<DatabaseSettings> {
-    const existing = await this.repository.findOneBy({ databaseId: setting.databaseId });
-    if (!existing) {
-      this.logger.error(`Database settings item with id:${setting.databaseId} was not Found`, sessionMetadata);
-      throw new NotFoundException(ERROR_MESSAGES.DATABASE_SETTINGS_NOT_FOUND);
-    }
+  async createOrUpdate(
+    _sessionMetadata: SessionMetadata, setting: Partial<DatabaseSetting>,
+  ): Promise<DatabaseSettings> {
     const settingsEntity = plainToClass(DatabaseSettingsEntity, setting);
+    const existing = await this.repository.findOneBy({ databaseId: setting.databaseId });
+
+    if (existing) {
+      // update
+      settingsEntity.id = existing.id;
+    }
     const entity = await this.repository.save(settingsEntity);
     return classToClass(DatabaseSettings, entity);
   }

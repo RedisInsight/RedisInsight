@@ -5,7 +5,7 @@ import { isNumber } from 'lodash'
 import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { BuildType } from 'uiSrc/constants/env'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import { localStorageService } from 'uiSrc/services'
+import { localStorageService, setObjectStorage } from 'uiSrc/services'
 import {
   appFeatureFlagsFeaturesSelector,
   setFeaturesToHighlight,
@@ -38,6 +38,7 @@ import { setCapability } from 'uiSrc/slices/app/context'
 import { fetchProfile } from 'uiSrc/slices/oauth/cloud'
 import { fetchDBSettings } from 'uiSrc/slices/app/db-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { DatabaseSettingsData } from 'uiSrc/slices/interfaces'
 
 const SETTINGS_PAGE_PATH = '/settings'
 const Config = () => {
@@ -81,7 +82,14 @@ const Config = () => {
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchDBSettings())
+      // fetch db settings and store them in local storage
+      dispatch(fetchDBSettings((payload: {
+        id: string,
+        data: DatabaseSettingsData
+      }) => {
+        // set DB Config Storage
+        setObjectStorage(BrowserStorageItem.dbConfig + payload.id, payload.data)
+      }))
     }
   }, [id])
 

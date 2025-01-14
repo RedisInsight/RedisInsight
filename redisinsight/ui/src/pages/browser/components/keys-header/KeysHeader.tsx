@@ -188,9 +188,9 @@ const KeysHeader = (props: Props) => {
       : shownColumns.filter((col) => col !== columnType)
 
     if (columnType === BrowserColumns.TTL) {
-      status ? shown.push('key-ttl') : hidden.push('key-ttl')
+      status ? shown.push(BrowserColumns.TTL) : hidden.push(BrowserColumns.TTL)
     } else if (columnType === BrowserColumns.Size) {
-      status ? shown.push('key-size') : hidden.push('key-size')
+      status ? shown.push(BrowserColumns.Size) : hidden.push(BrowserColumns.Size)
     }
 
     dispatch(setShownColumns(newColumns))
@@ -227,7 +227,9 @@ const KeysHeader = (props: Props) => {
       </OnboardingTour>
     </div>
   )
-
+  console.log('keysState test', searchMode, nextCursor, SearchMode.Redisearch, keysState.maxResults, keysState.keys.length, !(searchMode === SearchMode.Redisearch
+    && keysState.maxResults
+    && keysState.keys.length >= keysState.maxResults), keysState.maxResults, keysState)
   return (
     <div className={styles.content} ref={rootDivRef}>
       <AutoSizer disableHeight>

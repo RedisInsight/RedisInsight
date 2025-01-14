@@ -46,7 +46,7 @@ const KeysSummary = (props: Props) => {
     ? '~' : ''
 
   const { viewType } = useSelector(keysSelector)
-
+  console.log('KeysSummary test', totalItemsCount, isNull(totalItemsCount), scanned, showScanMore)
   return (
     <>
       {(!!totalItemsCount || isNull(totalItemsCount)) && (

@@ -2,13 +2,7 @@
   "semi": true,
   "overrides": [
     {
-      "files": "*.ts",
-      "options": {
-        "semi": false
-      }
-    },
-    {
-      "files": "*.tsx",
+      "files": ["**/*.ts", "**/*.tsx"],
       "options": {
         "semi": false
       }

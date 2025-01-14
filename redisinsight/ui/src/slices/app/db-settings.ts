@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { ApiEndpoints } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
-import { apiService } from 'uiSrc/services'
+import { getDbSettings } from 'uiSrc/services/databaseSettingsService'
 import { DatabaseSettings, DatabaseSettingsData } from '../interfaces'
 import { AppDispatch, RootState } from '../store'
 
@@ -51,7 +50,10 @@ export const appDBSettingsSelector = (state: RootState) => state.app.dbSettings
 export default appDbSettingsSlice.reducer
 
 // Asynchronous thunk action
-export function fetchDBSettings(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchDBSettings(onSuccessAction?: (payload: {
+  id: string,
+  data: DatabaseSettingsData
+}) => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(getDBSettings())
 
@@ -62,12 +64,14 @@ export function fetchDBSettings(onSuccessAction?: () => void, onFailAction?: () 
       getDBSettingsFailure('DB not connected')
       return
     }
-    const url = `${ApiEndpoints.DATABASES}/${id}/settings`
     try {
-      const { data: { data }, status } = await apiService.get<{ data:Record<string, any> }>(url)
+      const { data, status } = await getDbSettings(id)
       if (isStatusSuccessful(status)) {
         getDBSettingsSuccess({ id, data })
-        onSuccessAction?.()
+        onSuccessAction?.({
+          id,
+          data
+        })
       } else {
         getDBSettingsFailure(data)
         onFailAction?.()

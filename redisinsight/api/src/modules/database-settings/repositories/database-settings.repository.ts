@@ -3,12 +3,7 @@ import { DatabaseSetting as DatabaseSettingDto } from '../dto/database-setting.d
 import { DatabaseSettings as DatabaseSettingsModel } from '../models/database-settings';
 
 export abstract class DatabaseSettingsRepository {
-  abstract create(
-    sessionMetadata: SessionMetadata,
-    setting: Partial<DatabaseSettingDto>
-  ): Promise<DatabaseSettingsModel>;
-
-  abstract update(
+  abstract createOrUpdate(
     sessionMetadata: SessionMetadata,
     setting: Partial<DatabaseSettingDto>
   ): Promise<DatabaseSettingsModel>;

@@ -1,5 +1,6 @@
 import { isObjectLike } from 'lodash'
 import { Maybe } from 'uiSrc/utils'
+import { updateDbSettings } from 'uiSrc/services/databaseSettingsService'
 import BrowserStorageItem from '../constants/storage'
 
 class StorageService {
@@ -69,6 +70,13 @@ export const getObjectStorageField = (itemName = '', field = '') => {
     return null
   }
 }
+export const getObjectStorage = (itemName = '',) => {
+  try {
+    return localStorageService?.get(itemName)
+  } catch (e) {
+    return null
+  }
+}
 
 export const setObjectStorageField = (itemName = '', field = '', value?: any) => {
   try {
@@ -89,11 +97,35 @@ export const setObjectStorageField = (itemName = '', field = '', value?: any) =>
   }
 }
 
+export const setObjectStorage = (itemName = '', obj?: Record<string, any>) => {
+  try {
+    const config = localStorageService?.get(itemName) || {}
+
+    if (obj === undefined) {
+      localStorageService?.remove(itemName)
+      return
+    }
+
+    localStorageService?.set(itemName, {
+      ...config,
+      ...obj
+    })
+  } catch (e) {
+    console.error(e)
+  }
+}
+
 export const getDBConfigStorageField = (instanceId: string, field: string = '') =>
   getObjectStorageField(BrowserStorageItem.dbConfig + instanceId, field)
 
 export const setDBConfigStorageField = (instanceId: string, field: string = '', value?: any) => {
-  setObjectStorageField(BrowserStorageItem.dbConfig + instanceId, field, value)
+  const itemName = BrowserStorageItem.dbConfig + instanceId
+  setObjectStorageField(itemName, field, value)
+  // on each update of config value, update db settings via the API
+  const config = getObjectStorage(itemName)
+  if (config) {
+    updateDbSettings(instanceId, config)
+  }
 }
 
 export const getCapabilityStorageField = (field: string = '') =>

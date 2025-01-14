@@ -1,9 +1,10 @@
 import React from 'react'
 import { NodePublicState } from 'react-vtree/dist/es/Tree'
 import { instance, mock } from 'ts-mockito'
+import * as reactRedux from 'react-redux'
 import { render, screen } from 'uiSrc/utils/test-utils'
 import { stringToBuffer } from 'uiSrc/utils'
-import { KeyTypes } from 'uiSrc/constants'
+import { KeyTypes, BrowserColumns } from 'uiSrc/constants'
 import Node from './Node'
 import { TreeData } from '../../interfaces'
 import { mockVirtualTreeResult } from '../../VirtualTree.spec'
@@ -145,5 +146,108 @@ describe('Node', () => {
     expect(mockUpdateStatusSelected).not.toBeCalled()
     expect(mockUpdateStatusOpen).toHaveBeenCalledWith(mockDataFullName, !mockIsOpen)
     expect(mockSetOpen).toBeCalledWith(!mockIsOpen)
+  })
+
+  describe('Column visibility and metadata fetching', () => {
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+
+    it('should fetch metadata when TTL column is enabled', () => {
+      const mockGetMetadata = jest.fn()
+      const mockData = {
+        ...mockedData,
+        getMetadata: mockGetMetadata,
+        isLeaf: true,
+        nameBuffer: stringToBuffer('test-key'),
+        path: '0.0.1'
+      }
+
+      // Initial render without TTL
+      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
+        shownColumns: []
+      }))
+
+      const { rerender } = render(
+        <Node {...instance(mockedProps)} data={mockData} />
+      )
+
+      // Re-render with TTL enabled
+      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
+        shownColumns: [BrowserColumns.TTL]
+      }))
+
+      rerender(<Node {...instance(mockedProps)} data={mockData} />)
+
+      expect(mockGetMetadata).toHaveBeenCalledWith(mockData.nameBuffer, mockData.path)
+    })
+
+    it('should fetch metadata when Size column is enabled', () => {
+      const mockGetMetadata = jest.fn()
+      const mockData = {
+        ...mockedData,
+        getMetadata: mockGetMetadata,
+        isLeaf: true,
+        nameBuffer: stringToBuffer('test-key'),
+        path: '0.0.1'
+      }
+
+      // Initial render without Size
+      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
+        shownColumns: []
+      }))
+
+      const { rerender } = render(
+        <Node {...instance(mockedProps)} data={mockData} />
+      )
+
+      // Re-render with Size enabled
+      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
+        shownColumns: [BrowserColumns.Size]
+      }))
+
+      rerender(<Node {...instance(mockedProps)} data={mockData} />)
+
+      expect(mockGetMetadata).toHaveBeenCalledWith(mockData.nameBuffer, mockData.path)
+    })
+
+    it('should render KeyRowTTL only when TTL column is enabled', () => {
+      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
+        shownColumns: [BrowserColumns.TTL]
+      }))
+
+      const { getByTestId, queryByTestId } = render(
+        <Node {...instance(mockedProps)} data={mockedDataWithMetadata} />
+      )
+
+      expect(getByTestId(`ttl-${mockDataFullName}`)).toBeInTheDocument()
+      expect(queryByTestId(`size-${mockDataFullName}`)).not.toBeInTheDocument()
+    })
+
+    it('should render KeyRowSize only when Size column is enabled', () => {
+      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
+        shownColumns: [BrowserColumns.Size]
+      }))
+
+      const { getByTestId, queryByTestId } = render(
+        <Node {...instance(mockedProps)} data={mockedDataWithMetadata} />
+      )
+
+      expect(getByTestId(`size-${mockDataFullName}`)).toBeInTheDocument()
+      expect(queryByTestId(`ttl-${mockDataFullName}`)).not.toBeInTheDocument()
+    })
+
+    it('should not render KeyRowTTL and KeyRowSize when columns are disabled', () => {
+      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
+        shownColumns: []
+      }))
+
+      const { queryByTestId } = render(
+        <Node {...instance(mockedProps)} data={mockedDataWithMetadata} />
+      )
+
+      expect(queryByTestId(`ttl-${mockDataFullName}`)).not.toBeInTheDocument()
+      expect(queryByTestId(`size-${mockDataFullName}`)).not.toBeInTheDocument()
+    })
   })
 })

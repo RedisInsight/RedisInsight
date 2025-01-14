@@ -2,10 +2,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import {
-  Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn,
+  Column, Entity, Index, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DataAsJsonString } from 'src/common/decorators';
-import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Entity('database-settings')
 export class DatabaseSettingsEntity {
@@ -17,13 +16,6 @@ export class DatabaseSettingsEntity {
   @Index({ unique: true })
   @Expose()
   databaseId: string;
-
-  @ManyToOne(
-    () => DatabaseEntity,
-    { nullable: false, onDelete: 'CASCADE' },
-  )
-  @JoinColumn({ name: 'databaseId' })
-  database: DatabaseEntity;
 
   @ApiProperty({
     description: 'Applied settings by user, by database',

@@ -17,7 +17,7 @@ export const initialState: StateAppInfo = {
     updateDownloadedVersion: '',
     isReleaseNotesViewed: null,
   },
-  isShortcutsFlyoutOpen: false
+  isShortcutsFlyoutOpen: false,
 }
 
 // A slice for recipes
@@ -52,7 +52,7 @@ const appInfoSlice = createSlice({
     },
     setServerLoaded: (state) => {
       state.loading = false
-    }
+    },
   },
 })
 
@@ -71,18 +71,24 @@ export const {
 // A selector
 export const appInfoSelector = (state: RootState) => state.app.info
 export const appServerInfoSelector = (state: RootState) => state.app.info.server
-export const appElectronInfoSelector = (state: RootState) => state.app.info.electron
+export const appElectronInfoSelector = (state: RootState) =>
+  state.app.info.electron
 
 // The reducer
 export default appInfoSlice.reducer
 
 // Asynchronous thunk action
-export function fetchServerInfo(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchServerInfo(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getServerInfo())
 
     try {
-      const { data, status } = await apiService.get<GetServerInfoResponse>(ApiEndpoints.INFO)
+      const { data, status } = await apiService.get<GetServerInfoResponse>(
+        ApiEndpoints.INFO,
+      )
 
       if (isStatusSuccessful(status)) {
         dispatch(getServerInfoSuccess(data))

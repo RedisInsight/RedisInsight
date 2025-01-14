@@ -1,6 +1,12 @@
 import React, { Suspense, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom'
+import {
+  Redirect,
+  Route,
+  Switch,
+  useHistory,
+  useLocation,
+} from 'react-router-dom'
 
 import extractRouter from 'uiSrc/hoc/extractRouter.hoc'
 import { registerRouter } from 'uiSrc/services/routing'
@@ -13,7 +19,10 @@ import GlobalUrlHandler from 'uiSrc/components/global-url-handler'
 
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { appContextSelector, setCurrentWorkspace } from 'uiSrc/slices/app/context'
+import {
+  appContextSelector,
+  setCurrentWorkspace,
+} from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 import RedisStackRoutes from './components/RedisStackRoutes'
@@ -22,7 +31,8 @@ import { useActivityMonitor } from './hooks/useActivityMonitor'
 
 const MainRouter = () => {
   const { server } = useSelector(appInfoSelector)
-  const { isShowConceptsPopup: isShowConsents } = useSelector(userSettingsSelector)
+  const { isShowConceptsPopup: isShowConsents } =
+    useSelector(userSettingsSelector)
   const { workspace } = useSelector(appContextSelector)
 
   const dispatch = useDispatch()
@@ -34,7 +44,8 @@ const MainRouter = () => {
 
   useEffect(() => {
     if (!isRedisStack) {
-      const isRdiPageHome = localStorageService.get(BrowserStorageItem.homePage) === Pages.rdi
+      const isRdiPageHome =
+        localStorageService.get(BrowserStorageItem.homePage) === Pages.rdi
       if (pathname === Pages.home && isRdiPageHome) {
         history.push(Pages.rdi)
       }
@@ -43,10 +54,13 @@ const MainRouter = () => {
 
   useEffect(() => {
     const isRdiWorkspace = pathname.startsWith(Pages.rdi)
-    const isWorkspaceMatch = isRdiWorkspace === (workspace === AppWorkspace.Databases)
+    const isWorkspaceMatch =
+      isRdiWorkspace === (workspace === AppWorkspace.Databases)
 
     if (isWorkspaceMatch && !pathname.startsWith(Pages.settings)) {
-      const newWorkspace = isRdiWorkspace ? AppWorkspace.RDI : AppWorkspace.Databases
+      const newWorkspace = isRdiWorkspace
+        ? AppWorkspace.RDI
+        : AppWorkspace.Databases
       dispatch(setCurrentWorkspace(newWorkspace))
     }
 
@@ -58,29 +72,27 @@ const MainRouter = () => {
   }, [pathname, workspace])
 
   const beforeUnload = () => {
-    localStorageService.set(BrowserStorageItem.homePage, workspace === AppWorkspace.RDI ? Pages.rdi : Pages.home)
+    localStorageService.set(
+      BrowserStorageItem.homePage,
+      workspace === AppWorkspace.RDI ? Pages.rdi : Pages.home,
+    )
   }
 
   return (
     <>
-      {isShowConsents && (<ConsentsSettingsPopup />)}
+      {isShowConsents && <ConsentsSettingsPopup />}
       {!isRedisStack && <GlobalUrlHandler />}
       <Suspense fallback={<SuspenseLoader />}>
         <Switch>
-          {
-            isRedisStack
-              ? <RedisStackRoutes databaseId={server?.fixedDatabaseId} />
-              : (
-                DEFAULT_ROUTES.map((route, i) => (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <RouteWithSubRoutes key={i} {...route} />
-                ))
-              )
-          }
-          <Route
-            path="*"
-            render={() => <Redirect to={Pages.notFound} />}
-          />
+          {isRedisStack ? (
+            <RedisStackRoutes databaseId={server?.fixedDatabaseId} />
+          ) : (
+            DEFAULT_ROUTES.map((route, i) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <RouteWithSubRoutes key={i} {...route} />
+            ))
+          )}
+          <Route path="*" render={() => <Redirect to={Pages.notFound} />} />
         </Switch>
       </Suspense>
     </>

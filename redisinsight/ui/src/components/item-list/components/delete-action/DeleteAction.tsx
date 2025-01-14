@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiPopover,
+  EuiText,
+} from '@elastic/eui'
 import { formatLongName } from 'uiSrc/utils'
 
 import styles from '../styles.module.scss'
@@ -10,7 +17,9 @@ export interface Props<T> {
   subTitle: string
 }
 
-const DeleteAction = <T extends { id: string; name?: string }>(props: Props<T>) => {
+const DeleteAction = <T extends { id: string; name?: string }>(
+  props: Props<T>,
+) => {
   const { selection, onDelete, subTitle } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
@@ -51,7 +60,12 @@ const DeleteAction = <T extends { id: string; name?: string }>(props: Props<T>) 
       </EuiText>
       <div className={styles.boxSection}>
         {selection.map((select) => (
-          <EuiFlexGroup key={select.id} gutterSize="s" responsive={false} className={styles.nameList}>
+          <EuiFlexGroup
+            key={select.id}
+            gutterSize="s"
+            responsive={false}
+            className={styles.nameList}
+          >
             <EuiFlexItem grow={false}>
               <EuiIcon type="check" />
             </EuiFlexItem>

@@ -23,33 +23,35 @@ export const getSpawnArgs = (): [string, string[]] => {
 /**
  * Get list of processes running on local machine
  */
-export const getRunningProcesses = async (): Promise<string[]> => new Promise((resolve, reject) => {
-  try {
-    let stdoutData = '';
-    const proc = spawn(...getSpawnArgs());
+export const getRunningProcesses = async (): Promise<string[]> =>
+  new Promise((resolve, reject) => {
+    try {
+      let stdoutData = '';
+      const proc = spawn(...getSpawnArgs());
 
-    proc.stdout.on('data', (data) => {
-      stdoutData += data.toString();
-    });
+      proc.stdout.on('data', (data) => {
+        stdoutData += data.toString();
+      });
 
-    proc.on('error', (e) => {
+      proc.on('error', (e) => {
+        reject(e);
+      });
+
+      proc.stdout.on('end', () => {
+        resolve(stdoutData.split('\n'));
+      });
+    } catch (e) {
       reject(e);
-    });
-
-    proc.stdout.on('end', () => {
-      resolve(stdoutData.split('\n'));
-    });
-  } catch (e) {
-    reject(e);
-  }
-});
+    }
+  });
 
 /**
  * Return list of unique endpoints (host is hardcoded) to test
  * @param processes
  */
 export const getTCPEndpoints = (processes: string[]): IEndpoint[] => {
-  const regExp = /\s((\d+\.\d+\.\d+\.\d+|\*)[:.]|([0-9a-fA-F\][]{0,4}[.:]){1,8})(\d+)\s/;
+  const regExp =
+    /\s((\d+\.\d+\.\d+\.\d+|\*)[:.]|([0-9a-fA-F\][]{0,4}[.:]){1,8})(\d+)\s/;
   const endpoints = new Map();
 
   processes.forEach((line) => {
@@ -70,33 +72,37 @@ export const getTCPEndpoints = (processes: string[]): IEndpoint[] => {
  * Check RESP protocol response from tcp connection
  * @param endpoint
  */
-export const testEndpoint = async (endpoint: IEndpoint): Promise<IEndpoint> => new Promise((resolve) => {
-  const client = net.createConnection({
-    host: endpoint.host,
-    port: endpoint.port,
-  }, () => {
-    client.write('PING\r\n');
-  });
+export const testEndpoint = async (endpoint: IEndpoint): Promise<IEndpoint> =>
+  new Promise((resolve) => {
+    const client = net.createConnection(
+      {
+        host: endpoint.host,
+        port: endpoint.port,
+      },
+      () => {
+        client.write('PING\r\n');
+      },
+    );
 
-  client.on('data', (data) => {
-    client.end();
+    client.on('data', (data) => {
+      client.end();
 
-    if (data.toString().startsWith('+PONG')) {
-      resolve(endpoint);
-    } else {
+      if (data.toString().startsWith('+PONG')) {
+        resolve(endpoint);
+      } else {
+        resolve(null);
+      }
+    });
+
+    client.on('error', () => {
       resolve(null);
-    }
-  });
+    });
 
-  client.on('error', () => {
-    resolve(null);
+    setTimeout(() => {
+      client.end();
+      resolve(null);
+    }, 1000);
   });
-
-  setTimeout(() => {
-    client.end();
-    resolve(null);
-  }, 1000);
-});
 
 /**
  * Get endpoints that we are able to connect and receive expected RESP protocol response

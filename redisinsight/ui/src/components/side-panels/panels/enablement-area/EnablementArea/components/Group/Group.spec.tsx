@@ -8,16 +8,20 @@ const testId = 'quick-guides'
 
 describe('Group', () => {
   it('should render', () => {
-    expect(render(<Group {...instance(mockedProps)} id={testId} />)).toBeTruthy()
+    expect(
+      render(<Group {...instance(mockedProps)} id={testId} />),
+    ).toBeTruthy()
   })
   it('should correctly render content', () => {
     const label = 'Quick Guides'
     const children = [
       <span key="item-1">Item 1</span>,
-      <span key="item-2">Item 2</span>
+      <span key="item-2">Item 2</span>,
     ]
     const { queryByTestId } = render(
-      <Group {...instance(mockedProps)} id={testId} label={label}>{children}</Group>
+      <Group {...instance(mockedProps)} id={testId} label={label}>
+        {children}
+      </Group>,
     )
     const accordionButton = queryByTestId(`accordion-button-${testId}`)
 
@@ -27,7 +31,14 @@ describe('Group', () => {
     const callback = jest.fn()
     const label = 'Quick Guides'
 
-    render(<Group {...instance(mockedProps)} id={testId} label={label} onToggle={callback} />)
+    render(
+      <Group
+        {...instance(mockedProps)}
+        id={testId}
+        label={label}
+        onToggle={callback}
+      />,
+    )
     fireEvent.click(screen.getByTestId(`accordion-button-${testId}`))
 
     expect(callback).toHaveBeenCalled()

@@ -1,7 +1,15 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { render, cleanup, mockedStore, fireEvent, screen, act, waitFor } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  cleanup,
+  mockedStore,
+  fireEvent,
+  screen,
+  act,
+  waitFor,
+} from 'uiSrc/utils/test-utils'
 import { OAuthStrategy } from 'uiSrc/slices/interfaces'
 import { MOCK_OAUTH_SSO_EMAIL } from 'uiSrc/mocks/data/oauth'
 import OAuthForm from './OAuthForm'
@@ -28,7 +36,7 @@ beforeEach(() => {
   store = cloneDeep(mockedStore)
   store.clearActions()
   window.app = {
-    ipc: { invoke: invokeMock }
+    ipc: { invoke: invokeMock },
   } as any
 })
 
@@ -38,11 +46,15 @@ describe('OAuthForm', () => {
   })
 
   it('should render', () => {
-    expect(render(<OAuthForm>{(children) => (<>{children}</>)}</OAuthForm>)).toBeTruthy()
+    expect(
+      render(<OAuthForm>{(children) => <>{children}</>}</OAuthForm>),
+    ).toBeTruthy()
   })
 
   it('should call proper actions after click on google', () => {
-    render(<OAuthForm onClick={onClick}>{(children) => (<>{children}</>)}</OAuthForm>)
+    render(
+      <OAuthForm onClick={onClick}>{(children) => <>{children}</>}</OAuthForm>,
+    )
 
     fireEvent.click(screen.getByTestId('google-oauth'))
 
@@ -50,14 +62,18 @@ describe('OAuthForm', () => {
   })
 
   it('should call proper actions after click on sso', async () => {
-    render(<OAuthForm onClick={onClick}>{(children) => (<>{children}</>)}</OAuthForm>)
+    render(
+      <OAuthForm onClick={onClick}>{(children) => <>{children}</>}</OAuthForm>,
+    )
 
     fireEvent.click(screen.getByTestId('sso-oauth'))
 
     expect(screen.getByTestId('sso-email')).toBeInTheDocument()
 
     await act(async () => {
-      fireEvent.change(screen.getByTestId('sso-email'), { target: { value: MOCK_OAUTH_SSO_EMAIL } })
+      fireEvent.change(screen.getByTestId('sso-email'), {
+        target: { value: MOCK_OAUTH_SSO_EMAIL },
+      })
     })
 
     expect(screen.getByTestId('btn-submit')).not.toBeDisabled()
@@ -68,14 +84,16 @@ describe('OAuthForm', () => {
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
-      eventData: {}
+      eventData: {},
     })
 
     expect(onClick).toBeCalledWith(OAuthStrategy.SSO)
   })
 
   it('should go back to main oauth form by clicking to back button', async () => {
-    render(<OAuthForm onClick={onClick}>{(children) => (<>{children}</>)}</OAuthForm>)
+    render(
+      <OAuthForm onClick={onClick}>{(children) => <>{children}</>}</OAuthForm>,
+    )
 
     fireEvent.click(screen.getByTestId('sso-oauth'))
 
@@ -86,21 +104,25 @@ describe('OAuthForm', () => {
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_CANCELED,
-      eventData: {}
+      eventData: {},
     })
 
     expect(screen.getByTestId('sso-oauth')).toBeInTheDocument()
   })
 
   it('should disable submit button id incorrect email provided', async () => {
-    render(<OAuthForm onClick={onClick}>{(children) => (<>{children}</>)}</OAuthForm>)
+    render(
+      <OAuthForm onClick={onClick}>{(children) => <>{children}</>}</OAuthForm>,
+    )
 
     fireEvent.click(screen.getByTestId('sso-oauth'))
 
     expect(screen.getByTestId('sso-email')).toBeInTheDocument()
 
     await act(async () => {
-      fireEvent.change(screen.getByTestId('sso-email'), { target: { value: 'bad-email' } })
+      fireEvent.change(screen.getByTestId('sso-email'), {
+        target: { value: 'bad-email' },
+      })
     })
 
     expect(screen.getByTestId('btn-submit')).toBeDisabled()

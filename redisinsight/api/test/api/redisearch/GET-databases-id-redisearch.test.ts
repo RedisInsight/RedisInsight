@@ -24,7 +24,7 @@ describe('GET /databases/:id/redisearch', () => {
       {
         name: 'Should get index list',
         checkFn: async ({ body }) => {
-          expect(body.indexes.length).to.eq(2)
+          expect(body.indexes.length).to.eq(2);
           expect(body.indexes).to.include(
             constants.TEST_SEARCH_HASH_INDEX_1,
             constants.TEST_SEARCH_HASH_INDEX_2,
@@ -51,7 +51,7 @@ describe('GET /databases/:id/redisearch', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -ft._list')
+        before: () => rte.data.setAclUserRules('~* +@all -ft._list'),
       },
     ].map(mainCheckFn);
   });

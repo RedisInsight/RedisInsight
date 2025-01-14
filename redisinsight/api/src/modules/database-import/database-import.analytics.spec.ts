@@ -23,10 +23,7 @@ describe('DatabaseImportAnalytics', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        DatabaseImportAnalytics,
-      ],
+      providers: [EventEmitter2, DatabaseImportAnalytics],
     }).compile();
 
     service = await module.get(DatabaseImportAnalytics);

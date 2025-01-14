@@ -1,4 +1,15 @@
-import { generatePath, getBrackets, isRealArray, isRealObject, isScalar, isValidKey, parseJsonData, parseValue, stringifyScalarValue, wrapPath } from './utils'
+import {
+  generatePath,
+  getBrackets,
+  isRealArray,
+  isRealObject,
+  isScalar,
+  isValidKey,
+  parseJsonData,
+  parseValue,
+  stringifyScalarValue,
+  wrapPath,
+} from './utils'
 import { ObjectTypes } from '../interfaces'
 
 describe('JSONUtils', () => {
@@ -82,7 +93,7 @@ describe('JSONUtils', () => {
 
   describe('JSON Parsing Utils', () => {
     const bigintAsString = '1188950299261208742'
-    const scientificNotation = 1.2345678901234568e+29
+    const scientificNotation = 1.2345678901234568e29
 
     describe('parseValue', () => {
       it('should handle non-string values', () => {
@@ -150,7 +161,10 @@ describe('JSONUtils', () => {
       })
 
       it('should handle extremely large integers and maintain scientific notation', () => {
-        const resultFromString = parseValue(`'${scientificNotation}'`, 'integer')
+        const resultFromString = parseValue(
+          `'${scientificNotation}'`,
+          'integer',
+        )
         expect(resultFromString).toBe(`'${scientificNotation}'`)
 
         const resultFromInt = parseValue(scientificNotation, 'integer')
@@ -172,7 +186,7 @@ describe('JSONUtils', () => {
       it('should parse array of typed values', () => {
         const input = [
           { type: 'string', value: '"John"' },
-          { type: 'integer', value: bigintAsString }
+          { type: 'integer', value: bigintAsString },
         ]
         const result = parseJsonData(input)
 
@@ -182,10 +196,7 @@ describe('JSONUtils', () => {
       })
 
       it('should preserve non-typed array items', () => {
-        const input = [
-          { value: '"John"' },
-          { someOtherProp: 'test' }
-        ]
+        const input = [{ value: '"John"' }, { someOtherProp: 'test' }]
         const result = parseJsonData(input)
 
         expect(result[0].value).toBe('"John"')

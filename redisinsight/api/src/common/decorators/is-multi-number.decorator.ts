@@ -1,7 +1,4 @@
-import {
-  registerDecorator,
-  ValidationOptions,
-} from 'class-validator';
+import { registerDecorator, ValidationOptions } from 'class-validator';
 import { MultiNumberValidator } from 'src/common/validators';
 
 export function IsMultiNumber(validationOptions?: ValidationOptions) {

@@ -1,6 +1,12 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  screen,
+  fireEvent,
+} from 'uiSrc/utils/test-utils'
 import { setSearchedCommand } from 'uiSrc/slices/cli/cli-settings'
 
 import CHSearchOutput from './CHSearchOutput'
@@ -15,9 +21,9 @@ beforeEach(() => {
 })
 
 interface IMockedCommands {
-  matchedCommand: string;
-  argStr?: string;
-  summary?: string;
+  matchedCommand: string
+  argStr?: string
+  summary?: string
 }
 
 const mockedCommands: IMockedCommands[] = [
@@ -27,11 +33,13 @@ const mockedCommands: IMockedCommands[] = [
   },
   {
     matchedCommand: 'GEOADD',
-    argStr: 'key [NX | XX] [CH] longitude latitude member [longitude latitude member ...]',
+    argStr:
+      'key [NX | XX] [CH] longitude latitude member [longitude latitude member ...]',
   },
   {
     matchedCommand: 'ZADD',
-    argStr: 'key [NX | XX] [GT | LT] [CH] [INCR] score member [score member ...]',
+    argStr:
+      'key [NX | XX] [GT | LT] [CH] [INCR] score member [score member ...]',
   },
   {
     matchedCommand: 'RESET',
@@ -41,13 +49,14 @@ const mockedCommands: IMockedCommands[] = [
 
 jest.mock(redisCommandsPath, () => {
   const defaultState = jest.requireActual(redisCommandsPath).initialState
-  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } = jest.requireActual('uiSrc/constants')
+  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } =
+    jest.requireActual('uiSrc/constants')
   return {
     ...jest.requireActual(redisCommandsPath),
     appRedisCommandsSelector: jest.fn().mockReturnValue({
       ...defaultState,
       spec: MOCK_COMMANDS_SPEC,
-      commandsArray: MOCK_COMMANDS_ARRAY
+      commandsArray: MOCK_COMMANDS_ARRAY,
     }),
   }
 })
@@ -63,34 +72,48 @@ describe('CHSearchOutput', () => {
   })
 
   it('should render searched commands results', () => {
-    const searchedCommands = mockedCommands.map((command) => command.matchedCommand)
+    const searchedCommands = mockedCommands.map(
+      (command) => command.matchedCommand,
+    )
     render(<CHSearchOutput searchedCommands={searchedCommands} />)
     searchedCommands.forEach((command) => {
-      expect(screen.getByTestId(`cli-helper-output-title-${command}`)).toBeInTheDocument()
+      expect(
+        screen.getByTestId(`cli-helper-output-title-${command}`),
+      ).toBeInTheDocument()
     })
   })
 
   it('should render searched commands results with proper args or summary', () => {
-    const searchedCommands = mockedCommands.map((command) => command.matchedCommand)
+    const searchedCommands = mockedCommands.map(
+      (command) => command.matchedCommand,
+    )
     render(<CHSearchOutput searchedCommands={searchedCommands} />)
     mockedCommands.forEach((command) => {
       if (command.argStr) {
         expect(
-          screen.getByTestId(`cli-helper-output-args-${command.matchedCommand}`)
+          screen.getByTestId(
+            `cli-helper-output-args-${command.matchedCommand}`,
+          ),
         ).toHaveTextContent(command.argStr || '')
       } else {
         expect(
-          screen.getByTestId(`cli-helper-output-summary-${command.matchedCommand}`)
+          screen.getByTestId(
+            `cli-helper-output-summary-${command.matchedCommand}`,
+          ),
         ).toHaveTextContent(command.summary || '')
       }
     })
   })
 
   it('should call setSearchedCommand after click any command', () => {
-    const searchedCommands = mockedCommands.map((command) => command.matchedCommand)
+    const searchedCommands = mockedCommands.map(
+      (command) => command.matchedCommand,
+    )
     const anySearchCommand = searchedCommands[0]
     render(<CHSearchOutput searchedCommands={searchedCommands} />)
-    fireEvent.click(screen.getByTestId(`cli-helper-output-title-${anySearchCommand}`))
+    fireEvent.click(
+      screen.getByTestId(`cli-helper-output-title-${anySearchCommand}`),
+    )
     expect(store.getActions()).toEqual([setSearchedCommand(anySearchCommand)])
   })
 })

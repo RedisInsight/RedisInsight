@@ -15,7 +15,7 @@ export const initialState: StateSlowLog = {
   error: '',
   data: [],
   lastRefreshTime: null,
-  config: null
+  config: null,
 }
 
 const slowLogSlice = createSlice({
@@ -28,7 +28,7 @@ const slowLogSlice = createSlice({
     },
     getSlowLogsSuccess: (
       state,
-      { payload: data }: PayloadAction<SlowLog[]>
+      { payload: data }: PayloadAction<SlowLog[]>,
     ) => {
       state.loading = false
       state.data = data
@@ -54,7 +54,7 @@ const slowLogSlice = createSlice({
     },
     getSlowLogConfigSuccess: (
       state,
-      { payload: data }: PayloadAction<SlowLogConfig>
+      { payload: data }: PayloadAction<SlowLogConfig>,
     ) => {
       state.loading = false
       state.config = data
@@ -63,11 +63,12 @@ const slowLogSlice = createSlice({
       state.loading = false
       state.error = payload
     },
-  }
+  },
 })
 
 export const slowLogSelector = (state: RootState) => state.analytics.slowlog
-export const slowLogConfigSelector = (state: RootState) => state.analytics.slowlog.config || {}
+export const slowLogConfigSelector = (state: RootState) =>
+  state.analytics.slowlog.config || {}
 
 export const {
   setSlowLogInitialState,
@@ -79,7 +80,7 @@ export const {
   deleteSlowLogsError,
   getSlowLogConfig,
   getSlowLogConfigSuccess,
-  getSlowLogConfigError
+  getSlowLogConfigError,
 } = slowLogSlice.actions
 
 // The reducer
@@ -97,13 +98,10 @@ export function fetchSlowLogsAction(
       dispatch(getSlowLogs())
 
       const { data, status } = await apiService.get<SlowLog[]>(
-        getUrl(
-          instanceId,
-          ApiEndpoints.SLOW_LOGS
-        ),
+        getUrl(instanceId, ApiEndpoints.SLOW_LOGS),
         {
-          params: { count }
-        }
+          params: { count },
+        },
       )
 
       if (isStatusSuccessful(status)) {
@@ -132,10 +130,7 @@ export function clearSlowLogAction(
       dispatch(deleteSlowLogs())
 
       const { status } = await apiService.delete<any>(
-        getUrl(
-          instanceId,
-          ApiEndpoints.SLOW_LOGS
-        ),
+        getUrl(instanceId, ApiEndpoints.SLOW_LOGS),
       )
 
       if (isStatusSuccessful(status)) {
@@ -164,10 +159,7 @@ export function getSlowLogConfigAction(
       dispatch(getSlowLogConfig())
 
       const { data, status } = await apiService.get<SlowLogConfig>(
-        getUrl(
-          instanceId,
-          ApiEndpoints.SLOW_LOGS_CONFIG
-        ),
+        getUrl(instanceId, ApiEndpoints.SLOW_LOGS_CONFIG),
       )
 
       if (isStatusSuccessful(status)) {
@@ -198,11 +190,8 @@ export function patchSlowLogConfigAction(
       dispatch(getSlowLogConfig())
 
       const { data, status } = await apiService.patch<SlowLogConfig>(
-        getUrl(
-          instanceId,
-          ApiEndpoints.SLOW_LOGS_CONFIG
-        ),
-        config
+        getUrl(instanceId, ApiEndpoints.SLOW_LOGS_CONFIG),
+        config,
       )
 
       if (isStatusSuccessful(status)) {

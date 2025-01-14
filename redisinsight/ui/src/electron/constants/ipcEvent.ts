@@ -15,7 +15,4 @@ enum IpcOnEvent {
   appUpdateAvailable = 'app:update:available',
 }
 
-export {
-  IpcInvokeEvent,
-  IpcOnEvent,
-}
+export { IpcInvokeEvent, IpcOnEvent }

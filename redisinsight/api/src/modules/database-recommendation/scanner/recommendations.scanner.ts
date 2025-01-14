@@ -11,8 +11,17 @@ export class RecommendationScanner {
     private readonly featureService: FeatureService,
   ) {}
 
-  async determineRecommendation(sessionMetadata: SessionMetadata, name: string, data: any) {
-    if (!await this.featureService.isFeatureEnabled(sessionMetadata, KnownFeatures.InsightsRecommendations)) {
+  async determineRecommendation(
+    sessionMetadata: SessionMetadata,
+    name: string,
+    data: any,
+  ) {
+    if (
+      !(await this.featureService.isFeatureEnabled(
+        sessionMetadata,
+        KnownFeatures.InsightsRecommendations,
+      ))
+    ) {
       return null;
     }
 

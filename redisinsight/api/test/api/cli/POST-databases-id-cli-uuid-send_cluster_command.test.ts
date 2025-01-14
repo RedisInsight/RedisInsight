@@ -9,13 +9,18 @@ import {
   validateApiCall,
   requirements,
   generateInvalidDataTestCases,
-  validateInvalidDataTestCase
+  validateInvalidDataTestCase,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
-const endpoint = (instanceId = constants.TEST_INSTANCE_ID, uuid = constants.TEST_CLI_UUID_1) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/cli/${uuid}/send-cluster-command`);
+const endpoint = (
+  instanceId = constants.TEST_INSTANCE_ID,
+  uuid = constants.TEST_CLI_UUID_1,
+) =>
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/cli/${uuid}/send-cluster-command`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -29,15 +34,19 @@ const validInputData = {
   command: 'set foo bar',
 };
 
-const responseSchema = Joi.object().keys({
-  response: Joi.string().required(),
-  status: Joi.string().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    response: Joi.string().required(),
+    status: Joi.string().required(),
+  })
+  .required();
 
-const responseRawSchema = Joi.object().keys({
-  response: Joi.any().required(),
-  status: Joi.string().required(),
-}).required();
+const responseRawSchema = Joi.object()
+  .keys({
+    response: Joi.any().required(),
+    status: Joi.string().required(),
+  })
+  .required();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -63,7 +72,12 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
 
   before(rte.data.truncate);
   // Create Redis client for CLI
-  before(async () => await request(server).patch(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`))
+  before(
+    async () =>
+      await request(server).patch(
+        `/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`,
+      ),
+  );
 
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
@@ -81,11 +95,15 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
         },
         responseSchema,
         before: async () => {
-          expect(await rte.client.exists(constants.TEST_STRING_KEY_1)).to.eql(0);
+          expect(await rte.client.exists(constants.TEST_STRING_KEY_1)).to.eql(
+            0,
+          );
         },
         after: async () => {
-          expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(constants.TEST_STRING_VALUE_1);
-        }
+          expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(
+            constants.TEST_STRING_VALUE_1,
+          );
+        },
       },
       {
         name: 'Should get string',
@@ -95,8 +113,8 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
         },
         responseSchema,
         checkFn: async ({ body }) => {
-          expect(body.response).to.have.string(constants.TEST_STRING_VALUE_1)
-        }
+          expect(body.response).to.have.string(constants.TEST_STRING_VALUE_1);
+        },
       },
       {
         name: 'Should remove string',
@@ -106,8 +124,10 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
         },
         responseSchema,
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_STRING_KEY_1)).to.eql(0);
-        }
+          expect(await rte.client.exists(constants.TEST_STRING_KEY_1)).to.eql(
+            0,
+          );
+        },
       },
     ].map(mainCheckFn);
   });
@@ -123,11 +143,15 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           },
           responseSchema,
           before: async () => {
-            expect(await rte.client.exists(constants.TEST_STRING_KEY_1)).to.eql(0);
+            expect(await rte.client.exists(constants.TEST_STRING_KEY_1)).to.eql(
+              0,
+            );
           },
           after: async () => {
-            expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(constants.TEST_STRING_VALUE_1);
-          }
+            expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(
+              constants.TEST_STRING_VALUE_1,
+            );
+          },
         },
         {
           name: 'Should get string',
@@ -138,7 +162,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.response).to.have.string(constants.TEST_STRING_VALUE_1);
-          }
+          },
         },
         {
           name: 'Should remove string',
@@ -148,11 +172,13 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           },
           responseSchema,
           after: async () => {
-            expect(await rte.client.exists(constants.TEST_STRING_KEY_1)).to.eql(0);
-          }
+            expect(await rte.client.exists(constants.TEST_STRING_KEY_1)).to.eql(
+              0,
+            );
+          },
         },
       ].map(mainCheckFn);
-    })
+    });
     describe('Raw output', () => {
       [
         {
@@ -163,8 +189,8 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           },
           responseRawSchema,
           checkFn: ({ body }) => {
-            expect(body.response).to.eql('OK')
-          }
+            expect(body.response).to.eql('OK');
+          },
         },
         {
           name: 'Should return a number type response',
@@ -174,8 +200,8 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           },
           responseRawSchema,
           checkFn: ({ body }) => {
-            expect(body.response).to.be.a('number')
-          }
+            expect(body.response).to.be.a('number');
+          },
         },
         {
           name: 'Should return an array type response',
@@ -185,20 +211,24 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           },
           responseRawSchema,
           before: async () => {
-            await rte.client.lpush(constants.TEST_LIST_KEY_1, constants.TEST_LIST_ELEMENT_1, constants.TEST_LIST_ELEMENT_2)
+            await rte.client.lpush(
+              constants.TEST_LIST_KEY_1,
+              constants.TEST_LIST_ELEMENT_1,
+              constants.TEST_LIST_ELEMENT_2,
+            );
           },
           after: async () => {
-            await rte.client.del(constants.TEST_LIST_KEY_1)
+            await rte.client.del(constants.TEST_LIST_KEY_1);
           },
           checkFn: ({ body }) => {
             expect(body.response).to.eql([
               constants.TEST_LIST_ELEMENT_2,
               constants.TEST_LIST_ELEMENT_1,
             ]);
-          }
+          },
         },
       ].map(mainCheckFn);
-    })
+    });
   });
 
   // Skip 'Commands redirection' and 'Client' tests because tested functionalities were removed
@@ -213,17 +243,22 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           host: node.host,
           port: node.port,
           enableRedirection: true,
-        }
+        },
       },
       responseSchema,
       checkFn: ({ body }) => {
-        expect(body[0].response === '"OK"' || body[0].response.toLowerCase().includes('redirected')).to.eql(true);
+        expect(
+          body[0].response === '"OK"' ||
+            body[0].response.toLowerCase().includes('redirected'),
+        ).to.eql(true);
       },
       after: async () => {
-        expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(node.host);
-      }
+        expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(
+          node.host,
+        );
+      },
     })).map(mainCheckFn);
-  })
+  });
   xdescribe('Client', () => {
     [
       {
@@ -239,12 +274,16 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           name: 'ClientNotFoundError',
         },
         before: async function () {
-          await request(server).delete(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`)
+          await request(server).delete(
+            `/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`,
+          );
         },
         after: async function () {
-          await request(server).patch(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`)
+          await request(server).patch(
+            `/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`,
+          );
         },
       },
     ].map(mainCheckFn);
-  })
+  });
 });

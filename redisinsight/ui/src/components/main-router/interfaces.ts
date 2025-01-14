@@ -1,3 +1,3 @@
 export interface RouteParams {
-  instanceId: string;
+  instanceId: string
 }

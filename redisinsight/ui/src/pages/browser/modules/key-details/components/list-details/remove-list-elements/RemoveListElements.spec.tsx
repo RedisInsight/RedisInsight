@@ -23,7 +23,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
 describe('RemoveListElements', () => {
   it('should render', () => {
     expect(
-      render(<RemoveListElements {...instance(mockedProps)} />)
+      render(<RemoveListElements {...instance(mockedProps)} />),
     ).toBeTruthy()
   })
 

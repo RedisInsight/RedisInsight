@@ -13,12 +13,12 @@ export interface BarChartData {
   ylabel: string
 }
 
-interface IDatum extends BarChartData{
+interface IDatum extends BarChartData {
   index: number
 }
 
 export enum BarChartDataType {
-  Bytes = 'bytes'
+  Bytes = 'bytes',
 }
 
 interface IProps {
@@ -85,27 +85,26 @@ const BarChart = (props: IProps) => {
       return undefined
     }
 
-    const tooltip = d3.select('body').append('div')
+    const tooltip = d3
+      .select('body')
+      .append('div')
       .attr('class', cx(styles.tooltip, classNames?.tooltip || ''))
       .style('opacity', 0)
 
-    d3
-      .select(svgRef.current)
-      .select('g')
-      .remove()
+    d3.select(svgRef.current).select('g').remove()
 
     // append the svg object to the body of the page
-    const svg = d3.select(svgRef.current)
+    const svg = d3
+      .select(svgRef.current)
       .attr('data-testid', `bar-${name}`)
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom + 30)
       .append('g')
-      .attr('transform',
-        `translate(${margin.left},${margin.top})`)
+      .attr('transform', `translate(${margin.left},${margin.top})`)
 
     const tempData = [...data]
 
-    tempData.push({ x: 0, y: 0, xlabel: '', ylabel: '', })
+    tempData.push({ x: 0, y: 0, xlabel: '', ylabel: '' })
     cleanedData = tempData.map((datum, index) => ({
       index,
       xlabel: `${datum?.xlabel || ''}`,
@@ -115,7 +114,8 @@ const BarChart = (props: IProps) => {
     }))
 
     // Add X axis
-    const xAxis = d3.scaleLinear()
+    const xAxis = d3
+      .scaleLinear()
       .domain(d3.extent(cleanedData, (d) => d.index) as [number, number])
       .range([0, width])
 
@@ -129,18 +129,20 @@ const BarChart = (props: IProps) => {
         toNumber,
         Math.ceil,
         getRoundedYMaxValue,
-        curriedTyBytes(`${type}`)
+        curriedTyBytes(`${type}`),
       )(maxYFormatted)
     }
 
     // Add Y axis
-    const yAxis = d3.scaleLinear()
+    const yAxis = d3
+      .scaleLinear()
       .domain([0, maxY || 0])
       .range([height, 0])
 
     // divider for last column
     if (divideLastColumn) {
-      svg.append('line')
+      svg
+        .append('line')
         .attr('class', cx(styles.dashedLine, classNames?.dashedLine))
         .attr('x1', xAxis(cleanedData.length - 2.3))
         .attr('x2', xAxis(cleanedData.length - 2.3))
@@ -149,43 +151,46 @@ const BarChart = (props: IProps) => {
     }
 
     // squared background for Y axis
-    svg.append('g')
-      .call(
-        d3.axisLeft(yAxis)
-          .tickSize(-width + ((2 * width) / ((cleanedData.length) * multiplierGrid)) + 6)
-          .tickValues([...d3.range(0, maxY, maxY / yCountTicks), maxY])
-          .tickFormat((d, i) => leftAxiosValidation(d, i))
-          .ticks(cleanedData.length * multiplierGrid)
-          .tickPadding(10)
-      )
+    svg.append('g').call(
+      d3
+        .axisLeft(yAxis)
+        .tickSize(
+          -width + (2 * width) / (cleanedData.length * multiplierGrid) + 6,
+        )
+        .tickValues([...d3.range(0, maxY, maxY / yCountTicks), maxY])
+        .tickFormat((d, i) => leftAxiosValidation(d, i))
+        .ticks(cleanedData.length * multiplierGrid)
+        .tickPadding(10),
+    )
 
     const yTicks = d3.selectAll('.tick')
     yTicks.attr('data-testid', (d, i) => `ytick-${d}-${i}`)
 
     // squared background for X axis
-    svg.append('g')
+    svg
+      .append('g')
       .attr('transform', `translate(0,${height})`)
       .call(
-        d3.axisBottom(xAxis)
+        d3
+          .axisBottom(xAxis)
           .ticks(cleanedData.length * multiplierGrid)
           .tickFormat((d, i) => bottomAxiosValidation(d, i))
           .tickSize(-height)
-          .tickPadding(22)
+          .tickPadding(22),
       )
 
     // TODO: hide last 2 columns of background grid
     const allTicks = d3.selectAll('.tick')
     allTicks.attr('opacity', (_a, i) =>
-      (i === allTicks.size() - 1 || i === allTicks.size() - 2 ? 0 : 1))
+      i === allTicks.size() - 1 || i === allTicks.size() - 2 ? 0 : 1,
+    )
 
     // moving X axios labels under the center of Bar
-    svg.selectAll('text')
-      .attr('x', barWidth / 2)
+    svg.selectAll('text').attr('x', barWidth / 2)
 
     // roll back all changes for Y axios labels
     yTicks.attr('opacity', '1')
-    yTicks.selectAll('text')
-      .attr('x', -10)
+    yTicks.selectAll('text').attr('x', -10)
 
     // bars
     svg
@@ -197,23 +202,28 @@ const BarChart = (props: IProps) => {
       .attr('x', (d) => xAxis(d.index))
       .attr('width', barWidth)
       // set minimal height for Bar
-      .attr('y', (d) => (d.y && height - yAxis(d.y) < minBarHeight ? height - minBarHeight : yAxis(d.y)))
+      .attr('y', (d) =>
+        d.y && height - yAxis(d.y) < minBarHeight
+          ? height - minBarHeight
+          : yAxis(d.y),
+      )
       .attr('height', (d) => {
         const initialHeight = height - yAxis(d.y)
-        return initialHeight && initialHeight < minBarHeight ? minBarHeight : initialHeight
+        return initialHeight && initialHeight < minBarHeight
+          ? minBarHeight
+          : initialHeight
       })
       .attr('data-testid', (d) => `bar-${d.x}-${d.y}`)
       .on('mouseenter mousemove', (event, d) => {
+        tooltip.style('opacity', 1)
         tooltip
-          .style('opacity', 1)
-        tooltip.html(tooltipValidation(d.y, d.index))
+          .html(tooltipValidation(d.y, d.index))
           .style('left', `${event.pageX + 16}px`)
           .style('top', `${event.pageY + 16}px`)
           .attr('data-testid', 'bar-tooltip')
       })
       .on('mouseleave', () => {
-        tooltip
-          .style('opacity', 0)
+        tooltip.style('opacity', 0)
       })
 
     return () => {
@@ -226,7 +236,10 @@ const BarChart = (props: IProps) => {
   }
 
   return (
-    <div className={styles.wrapper} style={{ width: propWidth, height: propHeight }}>
+    <div
+      className={styles.wrapper}
+      style={{ width: propWidth, height: propHeight }}
+    >
       <svg ref={svgRef} className={styles.svg} />
     </div>
   )

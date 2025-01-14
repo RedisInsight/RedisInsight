@@ -21,7 +21,9 @@ export interface Props {
 const OnboardingTourWrapper = (props: Props) => {
   const { options, children, delay, rerenderWithDelay } = props
   const { step } = options
-  const { currentStep, isActive, totalSteps } = useSelector(appFeatureOnboardingSelector)
+  const { currentStep, isActive, totalSteps } = useSelector(
+    appFeatureOnboardingSelector,
+  )
   const [isDelayed, setIsDelayed] = useState(true)
 
   const isCurrentStep = step === currentStep && isActive
@@ -37,17 +39,18 @@ const OnboardingTourWrapper = (props: Props) => {
   }, [isCurrentStep, delay, rerenderWithDelay])
 
   // render tour only when it needed due to side effect calls
-  return !isDelayed && isCurrentStep
-    ? (
-      <OnboardingTour
-        currentStep={currentStep}
-        totalSteps={totalSteps}
-        isActive={isActive}
-        {...props}
-      >
-        {children}
-      </OnboardingTour>
-    ) : children
+  return !isDelayed && isCurrentStep ? (
+    <OnboardingTour
+      currentStep={currentStep}
+      totalSteps={totalSteps}
+      isActive={isActive}
+      {...props}
+    >
+      {children}
+    </OnboardingTour>
+  ) : (
+    children
+  )
 }
 
 export default OnboardingTourWrapper

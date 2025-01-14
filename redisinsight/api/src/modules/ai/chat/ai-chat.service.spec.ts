@@ -6,7 +6,8 @@ import {
   mockAiResponseStream,
   mockConvAiProvider,
   mockSendAiChatMessageDto,
-  mockSessionMetadata, MockType,
+  mockSessionMetadata,
+  MockType,
 } from 'src/__mocks__';
 import { AiChatService } from 'src/modules/ai/chat/ai-chat.service';
 import { ConvAiProvider } from 'src/modules/ai/chat/providers/conv-ai.provider';
@@ -47,27 +48,45 @@ describe('AiChatService', () => {
   });
   describe('postMessage', () => {
     it('should send message and return stream as result', async () => {
-      const result = await service.postMessage(mockSessionMetadata, mockAiChatId, mockSendAiChatMessageDto);
+      const result = await service.postMessage(
+        mockSessionMetadata,
+        mockAiChatId,
+        mockSendAiChatMessageDto,
+      );
       expect(result).toEqual(mockAiResponseStream);
-      expect(convAiProvider.postMessage)
-        .toHaveBeenCalledWith(mockSessionMetadata, mockAiChatId, mockSendAiChatMessageDto.content);
+      expect(convAiProvider.postMessage).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockAiChatId,
+        mockSendAiChatMessageDto.content,
+      );
     });
   });
   describe('getHistory', () => {
     it('should get history', async () => {
-      const result = await service.getHistory(mockSessionMetadata, mockAiChatId);
+      const result = await service.getHistory(
+        mockSessionMetadata,
+        mockAiChatId,
+      );
       expect(result).toEqual(mockAiChat);
       expect(result).toBeInstanceOf(AiChat);
       result.messages.forEach((message) => {
         expect(message).toBeInstanceOf(AiChatMessage);
       });
-      expect(convAiProvider.getHistory).toHaveBeenCalledWith(mockSessionMetadata, mockAiChatId);
+      expect(convAiProvider.getHistory).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockAiChatId,
+      );
     });
   });
   describe('delete', () => {
     it('should delete chat', async () => {
-      expect(await service.delete(mockSessionMetadata, mockAiChatId)).toEqual(undefined);
-      expect(convAiProvider.reset).toHaveBeenCalledWith(mockSessionMetadata, mockAiChatId);
+      expect(await service.delete(mockSessionMetadata, mockAiChatId)).toEqual(
+        undefined,
+      );
+      expect(convAiProvider.reset).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockAiChatId,
+      );
     });
   });
 });

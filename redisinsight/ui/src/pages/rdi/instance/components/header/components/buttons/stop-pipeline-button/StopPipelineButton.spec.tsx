@@ -19,8 +19,16 @@ describe('StopPipelineButton', () => {
     render(<StopPipelineButton {...mockedProps} />)
 
     fireEvent.mouseOver(screen.getByTestId('stop-pipeline-btn'))
-    await waitFor(() => screen.getByText(/Stop the pipeline to prevent processing of new data arrivals/))
-    expect(screen.getByText(/Stop the pipeline to prevent processing of new data arrivals/)).toBeInTheDocument()
+    await waitFor(() =>
+      screen.getByText(
+        /Stop the pipeline to prevent processing of new data arrivals/,
+      ),
+    )
+    expect(
+      screen.getByText(
+        /Stop the pipeline to prevent processing of new data arrivals/,
+      ),
+    ).toBeInTheDocument()
   })
 
   it('should call onClick when clicked', () => {

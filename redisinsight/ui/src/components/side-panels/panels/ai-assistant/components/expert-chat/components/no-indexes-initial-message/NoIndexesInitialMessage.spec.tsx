@@ -21,14 +21,16 @@ describe('NoIndexesInitialMessage', () => {
   })
 
   it('should call telemetry on init', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<NoIndexesInitialMessage />)
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.AI_CHAT_BOT_NO_INDEXES_MESSAGE_DISPLAYED
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      event: TelemetryEvent.AI_CHAT_BOT_NO_INDEXES_MESSAGE_DISPLAYED,
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

@@ -48,9 +48,7 @@ const InternalLink = (props: Props) => {
       <>
         <div className={styles.title}>{children || label}</div>
         {!!summary && (
-          <div className={styles.summary}>
-            {truncateText(summary, 140)}
-          </div>
+          <div className={styles.summary}>{truncateText(summary, 140)}</div>
         )}
       </>
     </EuiToolTip>
@@ -60,7 +58,7 @@ const InternalLink = (props: Props) => {
       data-testid={`internal-link-${testId}`}
       className={cx(
         styles.link,
-        iconPosition === 'right' && styles.linkIconRight
+        iconPosition === 'right' && styles.linkIconRight,
       )}
       iconType={iconType}
       size={size}

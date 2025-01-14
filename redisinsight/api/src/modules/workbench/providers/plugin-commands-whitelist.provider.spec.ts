@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockRedisCommandReply,
-  mockWhitelistCommandsResponse, mockStandaloneRedisClient,
+  mockWhitelistCommandsResponse,
+  mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
 
@@ -11,12 +12,12 @@ describe('PluginCommandsWhitelistProvider', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        PluginCommandsWhitelistProvider,
-      ],
+      providers: [PluginCommandsWhitelistProvider],
     }).compile();
 
-    service = await module.get<PluginCommandsWhitelistProvider>(PluginCommandsWhitelistProvider);
+    service = await module.get<PluginCommandsWhitelistProvider>(
+      PluginCommandsWhitelistProvider,
+    );
   });
 
   describe('getWhitelistCommands', () => {
@@ -29,16 +30,16 @@ describe('PluginCommandsWhitelistProvider', () => {
     it('should fetch commands when no cache and return from cache when possible', async () => {
       calculateCommandsSpy.mockResolvedValueOnce(mockWhitelistCommandsResponse);
 
-      expect(
-        await service.getWhitelistCommands(client),
-      ).toEqual(mockWhitelistCommandsResponse);
+      expect(await service.getWhitelistCommands(client)).toEqual(
+        mockWhitelistCommandsResponse,
+      );
       expect(calculateCommandsSpy).toHaveBeenCalled();
 
       calculateCommandsSpy.mockClear();
 
-      expect(
-        await service.getWhitelistCommands(client),
-      ).toEqual(mockWhitelistCommandsResponse);
+      expect(await service.getWhitelistCommands(client)).toEqual(
+        mockWhitelistCommandsResponse,
+      );
       expect(calculateCommandsSpy).not.toHaveBeenCalled();
     });
   });

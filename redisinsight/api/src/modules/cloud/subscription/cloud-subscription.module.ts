@@ -9,23 +9,14 @@ import { CloudSubscriptionApiProvider } from './providers/cloud-subscription.api
 import { CloudSubscriptionCapiProvider } from './providers/cloud-subscription.capi.provider';
 
 @Module({
-  imports: [
-    CloudUserModule,
-    CloudSessionModule,
-    CloudCapiKeyModule,
-  ],
+  imports: [CloudUserModule, CloudSessionModule, CloudCapiKeyModule],
   providers: [
     CloudSubscriptionApiService,
     CloudSubscriptionApiProvider,
     CloudSubscriptionCapiProvider,
     CloudSubscriptionCapiService,
   ],
-  controllers: [
-    CloudSubscriptionController,
-  ],
-  exports: [
-    CloudSubscriptionCapiService,
-    CloudSubscriptionApiService,
-  ],
+  controllers: [CloudSubscriptionController],
+  exports: [CloudSubscriptionCapiService, CloudSubscriptionApiService],
 })
 export class CloudSubscriptionModule {}

@@ -22,8 +22,8 @@ export const initialState: StateMonitor = {
     start: 0,
     paused: 0,
     unPaused: 0,
-    duration: 0
-  }
+    duration: 0,
+  },
 }
 
 export const MONITOR_ITEMS_MAX_COUNT = 10_000
@@ -82,14 +82,16 @@ const monitorSlice = createSlice({
       }
       if (state.isPaused) {
         state.timestamp.paused = Date.now()
-        state.timestamp.duration += state.timestamp.paused - state.timestamp.unPaused
+        state.timestamp.duration +=
+          state.timestamp.paused - state.timestamp.unPaused
       }
     },
 
     pauseMonitor: (state) => {
       state.isPaused = true
       state.timestamp.paused = Date.now()
-      state.timestamp.duration += state.timestamp.paused - state.timestamp.unPaused
+      state.timestamp.duration +=
+        state.timestamp.paused - state.timestamp.unPaused
     },
 
     setMonitorLoadingPause: (state, { payload }) => {
@@ -107,11 +109,14 @@ const monitorSlice = createSlice({
       return {
         ...initialState,
         isShowMonitor: state.isShowMonitor,
-        isMinimizedMonitor: state.isMinimizedMonitor
+        isMinimizedMonitor: state.isMinimizedMonitor,
       }
     },
 
-    concatMonitorItems: (state, { payload }: { payload: IMonitorDataPayload[] }) => {
+    concatMonitorItems: (
+      state,
+      { payload }: { payload: IMonitorDataPayload[] },
+    ) => {
       // small optimization to not unnecessary concat big arrays since we know max logs to show limitations
       if (payload.length >= MONITOR_ITEMS_MAX_COUNT) {
         state.items = payload.slice(-MONITOR_ITEMS_MAX_COUNT)
@@ -120,7 +125,9 @@ const monitorSlice = createSlice({
 
       if (state.items.length + payload.length >= MONITOR_ITEMS_MAX_COUNT) {
         // concat is faster for arrays
-        state.items = state.items.slice(payload.length - MONITOR_ITEMS_MAX_COUNT).concat(payload)
+        state.items = state.items
+          .slice(payload.length - MONITOR_ITEMS_MAX_COUNT)
+          .concat(payload)
         return
       }
 
@@ -137,7 +144,7 @@ const monitorSlice = createSlice({
     lockResume: (state) => {
       state.isResumeLocked = true
       state.isPaused = true
-    }
+    },
   },
 })
 
@@ -159,7 +166,7 @@ export const {
   resetProfiler,
   concatMonitorItems,
   resetMonitorItems,
-  setError
+  setError,
 } = monitorSlice.actions
 
 // A selector

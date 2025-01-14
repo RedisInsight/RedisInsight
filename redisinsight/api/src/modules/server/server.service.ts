@@ -1,7 +1,9 @@
+import { Injectable, Logger } from '@nestjs/common';
 import {
-  Injectable, Logger,
-} from '@nestjs/common';
-import { AppType, BuildType, PackageType } from 'src/modules/server/models/server';
+  AppType,
+  BuildType,
+  PackageType,
+} from 'src/modules/server/models/server';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
 import { SessionMetadata } from 'src/common/models';
 
@@ -79,5 +81,7 @@ export abstract class ServerService {
    * Get general server info
    * @param sessionMetadata
    */
-  public abstract getInfo(sessionMetadata: SessionMetadata): Promise<GetServerInfoResponse>;
+  public abstract getInfo(
+    sessionMetadata: SessionMetadata,
+  ): Promise<GetServerInfoResponse>;
 }

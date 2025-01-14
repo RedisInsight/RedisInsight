@@ -1,8 +1,4 @@
-import {
-  isBigInt,
-  isArray,
-  isObject,
-} from './utils'
+import { isBigInt, isArray, isObject } from './utils'
 
 const isBigIntTests = [
   ['', false],
@@ -53,25 +49,31 @@ const isObjectTests = [
 ]
 
 describe('isBigInt', () => {
-  it.each(isBigIntTests)('for input: %s (name), should be output: %s',
+  it.each(isBigIntTests)(
+    'for input: %s (name), should be output: %s',
     (value, expected) => {
       const result = isBigInt(value)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })
 
 describe('isArray', () => {
-  it.each(isArrayTests)('for input: %s (name), should be output: %s',
+  it.each(isArrayTests)(
+    'for input: %s (name), should be output: %s',
     (value, expected) => {
       const result = isArray(value)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })
 
 describe('isObject', () => {
-  it.each(isObjectTests)('for input: %s (name), should be output: %s',
+  it.each(isObjectTests)(
+    'for input: %s (name), should be output: %s',
     (value, expected) => {
       const result = isObject(value)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })

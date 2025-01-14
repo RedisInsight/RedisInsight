@@ -91,7 +91,8 @@ export class DatabaseAnalysis {
   topMemoryNsp: NspSummary[];
 
   @ApiProperty({
-    description: 'Top keys by key length (string length, list elements count, etc.)',
+    description:
+      'Top keys by key length (string length, list elements count, etc.)',
     isArray: true,
     type: () => Key,
   })

@@ -11,7 +11,11 @@ describe('PlainText', () => {
   })
   it('should contain provided children', () => {
     const text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'
-    const { container } = render(<PlainText {...instance(mockedProps)}><span>{text}</span></PlainText>)
+    const { container } = render(
+      <PlainText {...instance(mockedProps)}>
+        <span>{text}</span>
+      </PlainText>,
+    )
     expect(container).toHaveTextContent(text)
   })
 })

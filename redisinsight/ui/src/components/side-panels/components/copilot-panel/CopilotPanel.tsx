@@ -15,22 +15,25 @@ export interface Props {
 const CopilotPanel = (props: Props) => {
   const { isFullScreen, onToggleFullScreen, onClose } = props
 
-  const CopilotHeader = useCallback(() => (
-    <div className={styles.assistantHeader}>
-      <div className={styles.title}>
-        <OnboardingTour
-          options={ONBOARDING_FEATURES.BROWSER_COPILOT}
-          anchorPosition={isFullScreen ? 'rightUp' : 'leftUp'}
-          anchorWrapperClassName={styles.onboardingAnchorWrapper}
-          fullSize
-        >
-          <div className={styles.titleWrapper}>
-            <span className={styles.title}>Redis Copilot</span>
-          </div>
-        </OnboardingTour>
+  const CopilotHeader = useCallback(
+    () => (
+      <div className={styles.assistantHeader}>
+        <div className={styles.title}>
+          <OnboardingTour
+            options={ONBOARDING_FEATURES.BROWSER_COPILOT}
+            anchorPosition={isFullScreen ? 'rightUp' : 'leftUp'}
+            anchorWrapperClassName={styles.onboardingAnchorWrapper}
+            fullSize
+          >
+            <div className={styles.titleWrapper}>
+              <span className={styles.title}>Redis Copilot</span>
+            </div>
+          </OnboardingTour>
+        </div>
       </div>
-    </div>
-  ), [isFullScreen])
+    ),
+    [isFullScreen],
+  )
 
   return (
     <>

@@ -1,10 +1,18 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { act } from 'react-dom/test-utils'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import { instancesSelector } from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import InstancesNavigationPopover, { InstancesTabs } from './InstancesNavigationPopover'
+import InstancesNavigationPopover, {
+  InstancesTabs,
+} from './InstancesNavigationPopover'
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -16,23 +24,23 @@ beforeEach(() => {
 const mockRdis = [
   {
     id: 'rdiDB_1',
-    name: 'RdiDB_1'
+    name: 'RdiDB_1',
   },
   {
     id: 'rdiDB_2',
-    name: 'RdiDB_2'
-  }
+    name: 'RdiDB_2',
+  },
 ]
 
 const mockDbs = [
   {
     id: 'db_1',
-    name: 'DB_1'
+    name: 'DB_1',
   },
   {
     id: 'db_2',
-    name: 'DB_2'
-  }
+    name: 'DB_2',
+  },
 ]
 
 jest.mock('uiSrc/slices/rdi/instances', () => ({
@@ -41,9 +49,9 @@ jest.mock('uiSrc/slices/rdi/instances', () => ({
     data: mockRdis,
     connectedInstance: {
       id: 'rdiDB_1',
-      name: 'RdiDB_1'
+      name: 'RdiDB_1',
     },
-  })
+  }),
 }))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
@@ -52,9 +60,9 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
     data: mockDbs,
     connectedInstance: {
       id: 'db_1',
-      name: 'DB_1'
+      name: 'DB_1',
     },
-  })
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -78,7 +86,7 @@ describe('InstancesNavigationPopover', () => {
   })
 
   it('should filter instances list', () => {
-    (instancesSelector as jest.Mock).mockReturnValue({
+    ;(instancesSelector as jest.Mock).mockReturnValue({
       data: mockRdis,
     })
     render(<InstancesNavigationPopover name="db" />)
@@ -119,8 +127,10 @@ describe('InstancesNavigationPopover', () => {
   })
 
   it('should send event telemetry', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<InstancesNavigationPopover name="db" />)
 
@@ -134,7 +144,7 @@ describe('InstancesNavigationPopover', () => {
         databaseId: 'instanceId',
         numOfRdiDbs: 2,
         numOfRedisDbs: 0,
-      }
+      },
     })
   })
 })

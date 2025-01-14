@@ -7,5 +7,5 @@ export {
   AddItem,
   AddItemFieldAction,
   EditEntireItemAction,
-  EditItemFieldAction
+  EditItemFieldAction,
 }

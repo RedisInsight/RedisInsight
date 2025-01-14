@@ -3,9 +3,19 @@
 import React, { FC, SVGProps, useCallback, useState } from 'react'
 
 import cx from 'classnames'
-import { EuiButton, EuiButtonIcon, EuiModal, EuiModalBody, EuiToolTip } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiButtonIcon,
+  EuiModal,
+  EuiModalBody,
+  EuiToolTip,
+} from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
-import { FeatureFlagComponent, ModuleNotLoaded, OnboardingTour } from 'uiSrc/components'
+import {
+  FeatureFlagComponent,
+  ModuleNotLoaded,
+  OnboardingTour,
+} from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import FilterKeyType from 'uiSrc/pages/browser/components/filter-key-type'
@@ -18,10 +28,18 @@ import RediSearchIcon from 'uiSrc/assets/img/modules/RedisSearchLight.svg?react'
 
 import { changeSearchMode, keysSelector } from 'uiSrc/slices/browser/keys'
 import { isRedisearchAvailable } from 'uiSrc/utils'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { localStorageService } from 'uiSrc/services'
-import { BrowserStorageItem, BulkActionsType, FeatureFlags } from 'uiSrc/constants'
+import {
+  BrowserStorageItem,
+  BulkActionsType,
+  FeatureFlags,
+} from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { setBulkActionType } from 'uiSrc/slices/browser/bulkActions'
 
@@ -47,7 +65,8 @@ export interface Props {
 }
 
 const BrowserSearchPanel = (props: Props) => {
-  const { handleCreateIndexPanel, handleAddKeyPanel, handleBulkActionsPanel } = props
+  const { handleCreateIndexPanel, handleAddKeyPanel, handleBulkActionsPanel } =
+    props
   const { viewType, searchMode } = useSelector(keysSelector)
   const { id: instanceId, modules } = useSelector(connectedInstanceSelector)
 
@@ -61,14 +80,20 @@ const BrowserSearchPanel = (props: Props) => {
       tooltipText: 'Filter by Key Name or Pattern',
       ariaLabel: 'Filter by Key Name or Pattern button',
       dataTestId: 'search-mode-pattern-btn',
-      isActiveView() { return searchMode === this.type },
+      isActiveView() {
+        return searchMode === this.type
+      },
       getClassName() {
-        return cx(styles.viewTypeBtn, styles.iconVector, { [styles.active]: this.isActiveView?.() })
+        return cx(styles.viewTypeBtn, styles.iconVector, {
+          [styles.active]: this.isActiveView?.(),
+        })
       },
       getIconType() {
         return VectorIcon
       },
-      onClick() { handleSwitchSearchMode(this.type) }
+      onClick() {
+        handleSwitchSearchMode(this.type)
+      },
     },
     {
       type: SearchMode.Redisearch,
@@ -76,9 +101,13 @@ const BrowserSearchPanel = (props: Props) => {
       ariaLabel: 'Search by Values of Keys button',
       dataTestId: 'search-mode-redisearch-btn',
       disabled: !isRedisearchAvailable(modules),
-      isActiveView() { return searchMode === this.type },
+      isActiveView() {
+        return searchMode === this.type
+      },
       getClassName() {
-        return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView?.() })
+        return cx(styles.viewTypeBtn, {
+          [styles.active]: this.isActiveView?.(),
+        })
       },
       getIconType() {
         return RediSearchIcon
@@ -91,12 +120,12 @@ const BrowserSearchPanel = (props: Props) => {
             eventData: {
               databaseId: instanceId,
               view: viewType,
-            }
+            },
           })
         } else {
           handleSwitchSearchMode(this.type)
         }
-      }
+      },
     },
   ]
 
@@ -106,11 +135,11 @@ const BrowserSearchPanel = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_ADD_BUTTON_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_ADD_BUTTON_CLICKED
+        TelemetryEvent.TREE_VIEW_KEY_ADD_BUTTON_CLICKED,
       ),
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
   }
 
@@ -128,7 +157,7 @@ const BrowserSearchPanel = (props: Props) => {
           previous: searchMode,
           current: mode,
           view: viewType,
-        }
+        },
       })
     }
 
@@ -188,13 +217,15 @@ const BrowserSearchPanel = (props: Props) => {
 
   const SearchModeSwitch = () => (
     <div
-      className={
-        cx(styles.searchModeSwitch)
-      }
+      className={cx(styles.searchModeSwitch)}
       data-testid="search-mode-switcher"
     >
       {searchModes.map((mode) => (
-        <EuiToolTip content={mode.tooltipText} position="bottom" key={mode.tooltipText}>
+        <EuiToolTip
+          content={mode.tooltipText}
+          position="bottom"
+          key={mode.tooltipText}
+        >
           {SwitchModeBtn(mode)}
         </EuiToolTip>
       ))}

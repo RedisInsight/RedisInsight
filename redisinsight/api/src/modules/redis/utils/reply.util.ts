@@ -25,16 +25,15 @@ import { IRedisClusterNode } from 'src/models';
 export const convertArrayReplyToObject = (
   input: string[],
   options: { utf?: boolean } = {},
-): { [key: string]: any } => chunk(
-  input,
-  2,
-).reduce((prev: any, current: string[]) => {
-  const [key, value] = current;
-  return {
-    ...prev,
-    [key.toString().toLowerCase()]: options.utf && !isArray(value) ? value?.toString() : value,
-  };
-}, {});
+): { [key: string]: any } =>
+  chunk(input, 2).reduce((prev: any, current: string[]) => {
+    const [key, value] = current;
+    return {
+      ...prev,
+      [key.toString().toLowerCase()]:
+        options.utf && !isArray(value) ? value?.toString() : value,
+    };
+  }, {});
 
 /**
  * Based on separators converts multiline RESP reply to object
@@ -105,7 +104,9 @@ export const convertMultilineReplyToObject = (
  * ```
  * @param info
  */
-export const parseNodesFromClusterInfoReply = (info: string): IRedisClusterNode[] => {
+export const parseNodesFromClusterInfoReply = (
+  info: string,
+): IRedisClusterNode[] => {
   try {
     const lines = info.split('\n');
     const nodes = [];
@@ -113,13 +114,7 @@ export const parseNodesFromClusterInfoReply = (info: string): IRedisClusterNode[
       if (line && line.split) {
         // fields = [id, endpoint, flags, master, pingSent, pongRecv, configEpoch, linkState, slot]
         const fields = line.split(' ');
-        const [
-          id,
-          endpoint,,
-          master,,,,
-          linkState,
-          slot,
-        ] = fields;
+        const [id, endpoint, , master, , , , linkState, slot] = fields;
         const host = endpoint.split(':')[0];
         const port = endpoint.split(':')[1].split('@')[0];
         nodes.push({

@@ -4,7 +4,10 @@ import DEFAULT_ROUTES from 'uiSrc/components/main-router/constants/defaultRoutes
 
 const CURRENT_PAGE_URL_SYNTAX = '/_'
 
-export const findRouteByPathname = (routes: IRoute[], pathname: string): Maybe<IRoute> => {
+export const findRouteByPathname = (
+  routes: IRoute[],
+  pathname: string,
+): Maybe<IRoute> => {
   let findRoute
 
   // eslint-disable-next-line no-restricted-syntax
@@ -29,7 +32,7 @@ export const findRouteByPathname = (routes: IRoute[], pathname: string): Maybe<I
 export const getRedirectionPage = (
   pageInput: string,
   databaseId?: string,
-  currentPathname?: string
+  currentPathname?: string,
 ): Nullable<Maybe<string>> => {
   let page = pageInput.replace(/^\//, '')
   try {
@@ -59,4 +62,5 @@ export const getRedirectionPage = (
   }
 }
 
-export const getPageName = (databaseId: string, path: string) => path?.replace(`/${databaseId}`, '')
+export const getPageName = (databaseId: string, path: string) =>
+  path?.replace(`/${databaseId}`, '')

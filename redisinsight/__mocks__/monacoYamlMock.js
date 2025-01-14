@@ -1,3 +1,3 @@
 export const configureMonacoYaml = () => ({
-  update: jest.fn()
-})
+  update: jest.fn(),
+});

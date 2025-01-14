@@ -1,4 +1,7 @@
-import { prepareIframeHtml, importPluginScript } from 'uiSrc/plugins/pluginImport'
+import {
+  prepareIframeHtml,
+  importPluginScript,
+} from 'uiSrc/plugins/pluginImport'
 
 describe('pluginImport', () => {
   it('should render html with required tags', () => {
@@ -18,13 +21,13 @@ describe('pluginImport', () => {
 describe('importPluginScript', () => {
   it('should set proper methods to Plugin SDK', () => {
     globalThis.ResizeObserver = jest.fn(() => ({
-      observe: jest.fn()
+      observe: jest.fn(),
     }))
 
     importPluginScript()(JSON.stringify({}))
     expect(globalThis.PluginSDK).toEqual({
       setPluginLoadFailed: expect.any(Function),
-      setPluginLoadSucceed: expect.any(Function)
+      setPluginLoadSucceed: expect.any(Function),
     })
   })
 })

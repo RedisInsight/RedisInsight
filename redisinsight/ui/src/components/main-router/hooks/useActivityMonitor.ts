@@ -21,7 +21,10 @@ const onActivity = throttle(() => {
 
   try {
     // post event to parent window
-    window.opener?.postMessage({ name: 'setLastActivity' }, riConfig.app.activityMonitorOrigin)
+    window.opener?.postMessage(
+      { name: 'setLastActivity' },
+      riConfig.app.activityMonitorOrigin,
+    )
   } catch {
     // ignore errors
   }
@@ -40,7 +43,10 @@ export const startActivityMonitor = () => {
       }, CHECK_SESSION_INTERVAL_MS)
 
       windowEvents.forEach((event) => {
-        window.addEventListener(event, onActivity, { passive: true, capture: true })
+        window.addEventListener(event, onActivity, {
+          passive: true,
+          capture: true,
+        })
       })
     }
   } catch {

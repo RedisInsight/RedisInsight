@@ -12,7 +12,6 @@ jobs:
     steps:
       - checkout
 
-
 workflows:
   # Placeholder workflow
   placeholder:

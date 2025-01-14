@@ -7,7 +7,7 @@ export enum AppEnv {
 export enum BuildType {
   RedisStack = 'REDIS_STACK',
   Electron = 'ELECTRON',
-  DockerOnPremise = 'DOCKER_ON_PREMISE'
+  DockerOnPremise = 'DOCKER_ON_PREMISE',
 }
 
 export enum PackageType {

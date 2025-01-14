@@ -5,7 +5,9 @@ describe('AbstractRecommendationStrategy', () => {
 
   describe('isRecommendationReached', () => {
     it('should get is recommendation reached', async () => {
-      expect(await strategy.isRecommendationReached()).toEqual({ isReached: false });
+      expect(await strategy.isRecommendationReached()).toEqual({
+        isReached: false,
+      });
     });
   });
 });

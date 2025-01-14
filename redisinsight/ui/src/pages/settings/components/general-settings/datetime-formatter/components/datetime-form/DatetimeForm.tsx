@@ -9,11 +9,19 @@ import {
   EuiRadioGroupOption,
   EuiSuperSelect,
   EuiText,
-  EuiToolTip
+  EuiToolTip,
 } from '@elastic/eui'
 import { checkDateTimeFormat, formatTimestamp } from 'uiSrc/utils'
-import { DATETIME_FORMATTER_DEFAULT, DatetimeRadioOption, TimezoneOption, dateTimeOptions } from 'uiSrc/constants'
-import { updateUserConfigSettingsAction, userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import {
+  DATETIME_FORMATTER_DEFAULT,
+  DatetimeRadioOption,
+  TimezoneOption,
+  dateTimeOptions,
+} from 'uiSrc/constants'
+import {
+  updateUserConfigSettingsAction,
+  userSettingsConfigSelector,
+} from 'uiSrc/slices/user/user-settings'
 import icheck from 'uiSrc/assets/img/icons/check.svg'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
@@ -37,15 +45,21 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
 
   const getInitialDateTime = (): InitialValuesType => {
     const format = config?.dateFormat || DATETIME_FORMATTER_DEFAULT
-    const selectedRadioOption = dateTimeOptions.some((opt) => opt.value === format)
+    const selectedRadioOption = dateTimeOptions.some(
+      (opt) => opt.value === format,
+    )
       ? DatetimeRadioOption.Common
       : DatetimeRadioOption.Custom
 
     return {
       selectedRadioOption,
       format,
-      customFormat: selectedRadioOption === DatetimeRadioOption.Custom ? format : '',
-      commonFormat: selectedRadioOption === DatetimeRadioOption.Common ? format : dateTimeOptions[0].value,
+      customFormat:
+        selectedRadioOption === DatetimeRadioOption.Custom ? format : '',
+      commonFormat:
+        selectedRadioOption === DatetimeRadioOption.Common
+          ? format
+          : dateTimeOptions[0].value,
     }
   }
 
@@ -56,7 +70,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
     enableReinitialize: true,
     onSubmit: (values) => {
       submitForm(values)
-    }
+    },
   })
 
   const submitForm = async (values: InitialValuesType) => {
@@ -70,8 +84,8 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
           },
           () => {
             formik.setSubmitting(false)
-          }
-        )
+          },
+        ),
       )
     } else {
       setError('This format is not supported.')
@@ -80,7 +94,12 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
   }
 
   const showError = !!error || !formik.values.customFormat
-  const getBtnIconType = () => (showError ? 'iInCircle' : ((!formik.isSubmitting && saveFormatSucceed) ? icheck : undefined))
+  const getBtnIconType = () =>
+    showError
+      ? 'iInCircle'
+      : !formik.isSubmitting && saveFormatSucceed
+        ? icheck
+        : undefined
 
   const handleFormatCheck = (format = formik.values.format) => {
     const { valid, error: errorMsg } = checkDateTimeFormat(format)
@@ -91,7 +110,11 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       onFormatChange?.('Invalid Format')
     } else {
       setError('')
-      const newPreview = formatTimestamp(new Date(), format, config?.timezone || TimezoneOption.Local)
+      const newPreview = formatTimestamp(
+        new Date(),
+        format,
+        config?.timezone || TimezoneOption.Local,
+      )
       onFormatChange?.(newPreview)
     }
     return valid
@@ -107,7 +130,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
         event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
         eventData: {
           currentFormat: formik.values.commonFormat,
-        }
+        },
       })
       formik.handleSubmit()
     }
@@ -128,7 +151,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
       eventData: {
         currentFormat: value,
-      }
+      },
     })
     formik.handleSubmit()
   }
@@ -138,7 +161,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
       eventData: {
         currentFormat: formik.values.customFormat,
-      }
+      },
     })
     setSaveFormatSucceed(true)
     formik.handleSubmit()
@@ -150,15 +173,21 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       label: (
         <div className={styles.radioLabelWrapper}>
           <div className={styles.radioLabelTextContainer}>
-            <EuiText color="subdued" className={styles.radioLabelText}>Pre-selected formats</EuiText>
+            <EuiText color="subdued" className={styles.radioLabelText}>
+              Pre-selected formats
+            </EuiText>
           </div>
           <EuiSuperSelect
             className={styles.datetimeInput}
-            options={dateTimeOptions
-              .map((option) => ({ ...option, 'data-test-subj': `date-option-${option.value}` }))}
+            options={dateTimeOptions.map((option) => ({
+              ...option,
+              'data-test-subj': `date-option-${option.value}`,
+            }))}
             valueOfSelected={formik.values.commonFormat}
             onChange={(option) => onCommonFormatChange(option)}
-            disabled={formik.values.selectedRadioOption !== DatetimeRadioOption.Common}
+            disabled={
+              formik.values.selectedRadioOption !== DatetimeRadioOption.Common
+            }
             data-test-subj="select-datetime"
             data-testid="select-datetime-testid"
           />
@@ -170,7 +199,9 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       label: (
         <div className={styles.radioLabelWrapper}>
           <div className={styles.radioLabelTextContainer}>
-            <EuiText color="subdued" className={styles.radioLabelText}>Custom</EuiText>
+            <EuiText color="subdued" className={styles.radioLabelText}>
+              Custom
+            </EuiText>
           </div>
           {formik.values.selectedRadioOption === DatetimeRadioOption.Custom && (
             <>
@@ -185,7 +216,9 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
               <EuiToolTip
                 position="top"
                 anchorClassName="euiToolTip__btn-disabled"
-                content={showError ? (error || 'This format is not supported') : null}
+                content={
+                  showError ? error || 'This format is not supported' : null
+                }
               >
                 <EuiButton
                   aria-label="Save"
@@ -198,17 +231,23 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
                   data-testid="datetime-custom-btn"
                   iconType={getBtnIconType()}
                   disabled={showError}
-                >Save
+                >
+                  Save
                 </EuiButton>
               </EuiToolTip>
             </>
           )}
-        </div>)
-    }
+        </div>
+      ),
+    },
   ]
 
   return (
-    <EuiForm component="form" onSubmit={formik.handleSubmit} data-testid="format-timestamp-form">
+    <EuiForm
+      component="form"
+      onSubmit={formik.handleSubmit}
+      data-testid="format-timestamp-form"
+    >
       <EuiRadioGroup
         options={dateTimeFormatOptions}
         className={styles.radios}

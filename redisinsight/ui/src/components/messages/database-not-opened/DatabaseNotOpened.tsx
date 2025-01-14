@@ -32,9 +32,14 @@ const DatabaseNotOpened = (props: Props) => {
             {(ssoCloudHandlerClick) => (
               <ExternalLink
                 iconSize="s"
-                href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
+                href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
+                  campaign: UTM_CAMPAINGS[source] ?? source,
+                })}
                 onClick={(e: React.MouseEvent) => {
-                  ssoCloudHandlerClick(e, { source, action: OAuthSocialAction.Create })
+                  ssoCloudHandlerClick(e, {
+                    source,
+                    action: OAuthSocialAction.Create,
+                  })
                   onClose?.()
                 }}
                 data-testid="tutorials-get-started-link"
@@ -46,7 +51,9 @@ const DatabaseNotOpened = (props: Props) => {
           <EuiSpacer size="xs" />
           <ExternalLink
             iconSize="s"
-            href={getUtmExternalLink(EXTERNAL_LINKS.docker, { campaign: UTM_CAMPAINGS[source] ?? source })}
+            href={getUtmExternalLink(EXTERNAL_LINKS.docker, {
+              campaign: UTM_CAMPAINGS[source] ?? source,
+            })}
             data-testid="tutorials-docker-link"
           >
             Install using Docker

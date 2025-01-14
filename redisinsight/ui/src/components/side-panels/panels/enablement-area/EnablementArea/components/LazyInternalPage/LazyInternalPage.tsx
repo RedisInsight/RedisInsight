@@ -16,11 +16,15 @@ import {
   resetExplorePanelSearch,
   setExplorePanelContent,
   setExplorePanelSearch,
-  setExplorePanelScrollTop
+  setExplorePanelScrollTop,
 } from 'uiSrc/slices/panels/sidePanels'
 import FormatSelector from 'uiSrc/services/formatter/FormatSelector'
 import InternalPage from '../InternalPage'
-import { getFileInfo, getPagesInsideGroup, IFileInfo } from '../../utils/getFileInfo'
+import {
+  getFileInfo,
+  getPagesInsideGroup,
+  IFileInfo,
+} from '../../utils/getFileInfo'
 
 interface IPageData extends IFileInfo {
   content: string
@@ -34,7 +38,7 @@ const DEFAULT_PAGE_DATA: IPageData = {
   extension: '',
   location: '',
   relatedPages: [],
-  parents: []
+  parents: [],
 }
 
 export interface Props {
@@ -48,12 +52,24 @@ export interface Props {
 }
 
 const LazyInternalPage = ({
-  onClose, title, path, sourcePath, manifest, manifestPath, search,
+  onClose,
+  title,
+  path,
+  sourcePath,
+  manifest,
+  manifestPath,
+  search,
 }: Props) => {
   const history = useHistory()
-  const { itemScrollTop, data: contentContext, url } = useSelector(explorePanelSelector)
+  const {
+    itemScrollTop,
+    data: contentContext,
+    url,
+  } = useSelector(explorePanelSelector)
   const { loading: tutorialsLoading } = useSelector(workbenchTutorialsSelector)
-  const { loading: customTutorialsLoading } = useSelector(workbenchCustomTutorialsSelector)
+  const { loading: customTutorialsLoading } = useSelector(
+    workbenchCustomTutorialsSelector,
+  )
   const [isLoading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
   const [pageData, setPageData] = useState<IPageData>(DEFAULT_PAGE_DATA)
@@ -62,9 +78,12 @@ const LazyInternalPage = ({
 
   const scrollTopRef = useRef(0)
 
-  useEffect(() => () => {
-    dispatch(setExplorePanelScrollTop(scrollTopRef.current))
-  }, [])
+  useEffect(
+    () => () => {
+      dispatch(setExplorePanelScrollTop(scrollTopRef.current))
+    },
+    [],
+  )
 
   useEffect(() => {
     const startLoadContent = async () => {
@@ -73,8 +92,10 @@ const LazyInternalPage = ({
     startLoadContent()
   }, [path, sourcePath])
 
-  const isMarkdownLoading = isLoading || tutorialsLoading || customTutorialsLoading
-  const getRelatedPages = () => (manifest ? getPagesInsideGroup(manifest, manifestPath) : [])
+  const isMarkdownLoading =
+    isLoading || tutorialsLoading || customTutorialsLoading
+  const getRelatedPages = () =>
+    manifest ? getPagesInsideGroup(manifest, manifestPath) : []
   const loadContent = async () => {
     setLoading(true)
     setError('')
@@ -97,7 +118,10 @@ const LazyInternalPage = ({
       }
 
       dispatch(setExplorePanelSearch(search))
-      const contentData = await formatter.format({ data: content, path }, { history })
+      const contentData = await formatter.format(
+        { data: content, path },
+        { history },
+      )
       setPageData((prevState) => ({ ...prevState, content: contentData }))
       setLoading(false)
     } catch (error) {

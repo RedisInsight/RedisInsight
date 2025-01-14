@@ -3,7 +3,11 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { INestApplication, Logger, NestApplicationOptions } from '@nestjs/common';
+import {
+  INestApplication,
+  Logger,
+  NestApplicationOptions,
+} from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { get, Config } from 'src/utils';
@@ -43,13 +47,19 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
     options.httpsOptions = await createHttpOptions(serverConfig);
   }
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    options,
+  );
   app.useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()));
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
 
-  if (process.env.RI_APP_TYPE !== 'electron' || process.env.NODE_ENV === 'development') {
+  if (
+    process.env.RI_APP_TYPE !== 'electron' ||
+    process.env.NODE_ENV === 'development'
+  ) {
     let prefix = serverConfig.globalPrefix;
     if (serverConfig.proxyPath) {
       prefix = posix.join(serverConfig.proxyPath, prefix);

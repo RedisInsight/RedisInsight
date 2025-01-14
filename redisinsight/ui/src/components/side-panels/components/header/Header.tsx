@@ -14,7 +14,13 @@ export interface Props {
 }
 
 const Header = (props: Props) => {
-  const { panelName = '', isFullScreen, onToggleFullScreen, onClose, children } = props
+  const {
+    panelName = '',
+    isFullScreen,
+    onToggleFullScreen,
+    onClose,
+    children,
+  } = props
   return (
     <div className={styles.header}>
       {children}

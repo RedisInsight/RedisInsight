@@ -61,15 +61,16 @@ describe('SwitchableFlagStrategy', () => {
       isInTargetRangeSpy.mockReturnValueOnce(false);
       filterSpy.mockReturnValueOnce(false);
 
-      expect(await service.calculate(
-        mockSessionMetadata,
-        knownFeatures[KnownFeatures.DatabaseChat],
-        null,
-      ))
-        .toEqual({
-          name: KnownFeatures.DatabaseChat,
-          flag: expect.any(Boolean),
-        });
+      expect(
+        await service.calculate(
+          mockSessionMetadata,
+          knownFeatures[KnownFeatures.DatabaseChat],
+          null,
+        ),
+      ).toEqual({
+        name: KnownFeatures.DatabaseChat,
+        flag: expect.any(Boolean),
+      });
 
       expect(isInTargetRangeSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
@@ -79,19 +80,20 @@ describe('SwitchableFlagStrategy', () => {
       isInTargetRangeSpy.mockReturnValueOnce(true);
       filterSpy.mockReturnValueOnce(true);
 
-      expect(await service.calculate(
-        mockSessionMetadata,
-        knownFeatures[KnownFeatures.DatabaseChat],
-        {
-          perc: [[0, 10]],
-          flag: true,
-          filters: [],
-        },
-      ))
-        .toEqual({
-          name: KnownFeatures.DatabaseChat,
-          flag: true,
-        });
+      expect(
+        await service.calculate(
+          mockSessionMetadata,
+          knownFeatures[KnownFeatures.DatabaseChat],
+          {
+            perc: [[0, 10]],
+            flag: true,
+            filters: [],
+          },
+        ),
+      ).toEqual({
+        name: KnownFeatures.DatabaseChat,
+        flag: true,
+      });
 
       expect(isInTargetRangeSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
@@ -99,25 +101,28 @@ describe('SwitchableFlagStrategy', () => {
     it('should return flag:true when unexpected force flag defined', async () => {
       isInTargetRangeSpy.mockReturnValueOnce(true);
       filterSpy.mockReturnValueOnce(true);
-      mockedFs.readFile.mockResolvedValueOnce(JSON.stringify({
-        features: {
-          [KnownFeatures.DatabaseChat]: 'something',
-        },
-      }) as any);
+      mockedFs.readFile.mockResolvedValueOnce(
+        JSON.stringify({
+          features: {
+            [KnownFeatures.DatabaseChat]: 'something',
+          },
+        }) as any,
+      );
 
-      expect(await service.calculate(
-        mockSessionMetadata,
-        knownFeatures[KnownFeatures.DatabaseChat],
-        {
-          perc: [[0, 10]],
-          flag: true,
-          filters: [],
-        },
-      ))
-        .toEqual({
-          name: KnownFeatures.DatabaseChat,
-          flag: true,
-        });
+      expect(
+        await service.calculate(
+          mockSessionMetadata,
+          knownFeatures[KnownFeatures.DatabaseChat],
+          {
+            perc: [[0, 10]],
+            flag: true,
+            filters: [],
+          },
+        ),
+      ).toEqual({
+        name: KnownFeatures.DatabaseChat,
+        flag: true,
+      });
 
       expect(isInTargetRangeSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
@@ -125,25 +130,28 @@ describe('SwitchableFlagStrategy', () => {
     it('should return flag:false when feature is force disabled', async () => {
       isInTargetRangeSpy.mockReturnValueOnce(true);
       filterSpy.mockReturnValueOnce(true);
-      mockedFs.readFile.mockResolvedValueOnce(JSON.stringify({
-        features: {
-          [KnownFeatures.DatabaseChat]: false,
-        },
-      }) as any);
+      mockedFs.readFile.mockResolvedValueOnce(
+        JSON.stringify({
+          features: {
+            [KnownFeatures.DatabaseChat]: false,
+          },
+        }) as any,
+      );
 
-      expect(await service.calculate(
-        mockSessionMetadata,
-        knownFeatures[KnownFeatures.DatabaseChat],
-        {
-          perc: [[0, 10]],
-          flag: true,
-          filters: [],
-        },
-      ))
-        .toEqual({
-          name: KnownFeatures.DatabaseChat,
-          flag: false,
-        });
+      expect(
+        await service.calculate(
+          mockSessionMetadata,
+          knownFeatures[KnownFeatures.DatabaseChat],
+          {
+            perc: [[0, 10]],
+            flag: true,
+            filters: [],
+          },
+        ),
+      ).toEqual({
+        name: KnownFeatures.DatabaseChat,
+        flag: false,
+      });
 
       expect(isInTargetRangeSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
@@ -153,19 +161,20 @@ describe('SwitchableFlagStrategy', () => {
       isInTargetRangeSpy.mockReturnValueOnce(false);
       filterSpy.mockReturnValueOnce(true);
 
-      expect(await service.calculate(
-        mockSessionMetadata,
-        knownFeatures[KnownFeatures.DatabaseChat],
-        {
-          perc: [[0, 10]],
-          flag: true,
-          filters: [],
-        },
-      ))
-        .toEqual({
-          name: KnownFeatures.DatabaseChat,
-          flag: false,
-        });
+      expect(
+        await service.calculate(
+          mockSessionMetadata,
+          knownFeatures[KnownFeatures.DatabaseChat],
+          {
+            perc: [[0, 10]],
+            flag: true,
+            filters: [],
+          },
+        ),
+      ).toEqual({
+        name: KnownFeatures.DatabaseChat,
+        flag: false,
+      });
 
       expect(isInTargetRangeSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
@@ -173,25 +182,28 @@ describe('SwitchableFlagStrategy', () => {
     it('should return flag:false when unexpected force flag defined', async () => {
       isInTargetRangeSpy.mockReturnValueOnce(false);
       filterSpy.mockReturnValueOnce(true);
-      mockedFs.readFile.mockResolvedValueOnce(JSON.stringify({
-        feature: {
-          [KnownFeatures.DatabaseChat]: 'unexpected value',
-        },
-      }) as any);
+      mockedFs.readFile.mockResolvedValueOnce(
+        JSON.stringify({
+          feature: {
+            [KnownFeatures.DatabaseChat]: 'unexpected value',
+          },
+        }) as any,
+      );
 
-      expect(await service.calculate(
-        mockSessionMetadata,
-        knownFeatures[KnownFeatures.DatabaseChat],
-        {
-          perc: [[0, 10]],
-          flag: true,
-          filters: [],
-        },
-      ))
-        .toEqual({
-          name: KnownFeatures.DatabaseChat,
-          flag: false,
-        });
+      expect(
+        await service.calculate(
+          mockSessionMetadata,
+          knownFeatures[KnownFeatures.DatabaseChat],
+          {
+            perc: [[0, 10]],
+            flag: true,
+            filters: [],
+          },
+        ),
+      ).toEqual({
+        name: KnownFeatures.DatabaseChat,
+        flag: false,
+      });
 
       expect(isInTargetRangeSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
@@ -199,25 +211,28 @@ describe('SwitchableFlagStrategy', () => {
     it('should return flag:true when feature force enabled', async () => {
       isInTargetRangeSpy.mockReturnValueOnce(false);
       filterSpy.mockReturnValueOnce(true);
-      mockedFs.readFile.mockResolvedValueOnce(JSON.stringify({
-        features: {
-          [KnownFeatures.DatabaseChat]: true,
-        },
-      }) as any);
+      mockedFs.readFile.mockResolvedValueOnce(
+        JSON.stringify({
+          features: {
+            [KnownFeatures.DatabaseChat]: true,
+          },
+        }) as any,
+      );
 
-      expect(await service.calculate(
-        mockSessionMetadata,
-        knownFeatures[KnownFeatures.DatabaseChat],
-        {
-          perc: [[0, 10]],
-          flag: true,
-          filters: [],
-        },
-      ))
-        .toEqual({
-          name: KnownFeatures.DatabaseChat,
-          flag: true,
-        });
+      expect(
+        await service.calculate(
+          mockSessionMetadata,
+          knownFeatures[KnownFeatures.DatabaseChat],
+          {
+            perc: [[0, 10]],
+            flag: true,
+            filters: [],
+          },
+        ),
+      ).toEqual({
+        name: KnownFeatures.DatabaseChat,
+        flag: true,
+      });
 
       expect(isInTargetRangeSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
@@ -226,25 +241,28 @@ describe('SwitchableFlagStrategy', () => {
     it('should return flag:false even if feature forced enabled but filter returned false', async () => {
       isInTargetRangeSpy.mockReturnValueOnce(true);
       filterSpy.mockReturnValueOnce(false);
-      mockedFs.readFile.mockResolvedValueOnce(JSON.stringify({
-        features: {
-          [KnownFeatures.DatabaseChat]: true,
-        },
-      }) as any);
+      mockedFs.readFile.mockResolvedValueOnce(
+        JSON.stringify({
+          features: {
+            [KnownFeatures.DatabaseChat]: true,
+          },
+        }) as any,
+      );
 
-      expect(await service.calculate(
-        mockSessionMetadata,
-        knownFeatures[KnownFeatures.DatabaseChat],
-        {
-          perc: [[0, 10]],
-          flag: true,
-          filters: [],
-        },
-      ))
-        .toEqual({
-          name: KnownFeatures.DatabaseChat,
-          flag: false,
-        });
+      expect(
+        await service.calculate(
+          mockSessionMetadata,
+          knownFeatures[KnownFeatures.DatabaseChat],
+          {
+            perc: [[0, 10]],
+            flag: true,
+            filters: [],
+          },
+        ),
+      ).toEqual({
+        name: KnownFeatures.DatabaseChat,
+        flag: false,
+      });
 
       expect(isInTargetRangeSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
@@ -253,24 +271,27 @@ describe('SwitchableFlagStrategy', () => {
     it('should return flag:false even if feature force enabled but flag in config = false', async () => {
       isInTargetRangeSpy.mockReturnValueOnce(true);
       filterSpy.mockReturnValueOnce(true);
-      mockedFs.readFile.mockResolvedValueOnce(JSON.stringify({
-        features: {
-          [KnownFeatures.DatabaseChat]: true,
-        },
-      }) as any);
+      mockedFs.readFile.mockResolvedValueOnce(
+        JSON.stringify({
+          features: {
+            [KnownFeatures.DatabaseChat]: true,
+          },
+        }) as any,
+      );
 
-      expect(await service.calculate(
-        mockSessionMetadata,
-        knownFeatures[KnownFeatures.DatabaseChat],
-        {
-          perc: [[0, 100]],
-          flag: false,
-        },
-      ))
-        .toEqual({
-          name: KnownFeatures.DatabaseChat,
-          flag: false,
-        });
+      expect(
+        await service.calculate(
+          mockSessionMetadata,
+          knownFeatures[KnownFeatures.DatabaseChat],
+          {
+            perc: [[0, 100]],
+            flag: false,
+          },
+        ),
+      ).toEqual({
+        name: KnownFeatures.DatabaseChat,
+        flag: false,
+      });
 
       expect(isInTargetRangeSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();

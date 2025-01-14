@@ -34,7 +34,9 @@ describe('LocalAgreementsRepository', () => {
 
     repository.findOneBy.mockResolvedValue(mockAgreementsEntity);
     repository.update.mockResolvedValue(true); // no meter of response
-    repository.save.mockResolvedValue(Object.assign(new AgreementsEntity(), { id: mockUserId }));
+    repository.save.mockResolvedValue(
+      Object.assign(new AgreementsEntity(), { id: mockUserId }),
+    );
     repository.create.mockReturnValue(new AgreementsEntity());
   });
 

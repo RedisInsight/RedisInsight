@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { EncryptionResult, EncryptionStrategy } from 'src/modules/encryption/models';
+import {
+  EncryptionResult,
+  EncryptionStrategy,
+} from 'src/modules/encryption/models';
 import { IEncryptionStrategy } from 'src/modules/encryption/strategies/encryption-strategy.interface';
 
 @Injectable()

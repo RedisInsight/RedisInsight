@@ -3,13 +3,16 @@ import { Nullable } from 'uiSrc/utils'
 
 interface ModalHeaderContextType {
   modalHeader: Nullable<React.ReactNode>
-  setModalHeader: (content: Nullable<React.ReactNode>, withBack?: boolean) => void
+  setModalHeader: (
+    content: Nullable<React.ReactNode>,
+    withBack?: boolean,
+  ) => void
 }
 
 // Create a context
 const ModalHeaderContext = createContext<ModalHeaderContextType>({
   modalHeader: null,
-  setModalHeader: () => {}
+  setModalHeader: () => {},
 })
 
 // Custom hook to access the header context

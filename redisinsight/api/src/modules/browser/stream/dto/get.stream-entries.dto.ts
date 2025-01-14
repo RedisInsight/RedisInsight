@@ -1,8 +1,6 @@
 import { KeyDto } from 'src/modules/browser/keys/dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsEnum, IsInt, IsString, Min,
-} from 'class-validator';
+import { IsEnum, IsInt, IsString, Min } from 'class-validator';
 import { SortOrder } from 'src/constants';
 
 export class GetStreamEntriesDto extends KeyDto {
@@ -23,8 +21,7 @@ export class GetStreamEntriesDto extends KeyDto {
   end?: string = '+';
 
   @ApiPropertyOptional({
-    description:
-      'Specifying the number of entries to return.',
+    description: 'Specifying the number of entries to return.',
     type: Number,
     minimum: 1,
     default: 500,

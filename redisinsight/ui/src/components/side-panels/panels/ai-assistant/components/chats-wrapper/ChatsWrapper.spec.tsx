@@ -1,6 +1,13 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  screen,
+  fireEvent,
+  act,
+} from 'uiSrc/utils/test-utils'
 
 import { aiChatSelector, setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
@@ -16,19 +23,19 @@ jest.mock('uiSrc/telemetry', () => ({
 jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
   ...jest.requireActual('uiSrc/slices/panels/aiAssistant'),
   aiChatSelector: jest.fn().mockReturnValue({
-    activeTab: ''
-  })
+    activeTab: '',
+  }),
 }))
 
 jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     documentationChat: {
-      flag: true
+      flag: true,
     },
     databaseChat: {
-      flag: true
-    }
+      flag: true,
+    },
   }),
 }))
 
@@ -62,7 +69,9 @@ describe('ChatsWrapper', () => {
   })
 
   it('should render general chat when tab is selected', () => {
-    (aiChatSelector as jest.Mock).mockReturnValue({ activeTab: AiChatType.Assistance })
+    ;(aiChatSelector as jest.Mock).mockReturnValue({
+      activeTab: AiChatType.Assistance,
+    })
     render(<ChatsWrapper />)
 
     fireEvent.click(screen.getByTestId('ai-database-chat_tab'))
@@ -71,7 +80,9 @@ describe('ChatsWrapper', () => {
   })
 
   it('should render database chat when tab is selected', () => {
-    (aiChatSelector as jest.Mock).mockReturnValue({ activeTab: AiChatType.Query })
+    ;(aiChatSelector as jest.Mock).mockReturnValue({
+      activeTab: AiChatType.Query,
+    })
     render(<ChatsWrapper />)
 
     fireEvent.click(screen.getByTestId('ai-database-chat_tab'))
@@ -80,13 +91,13 @@ describe('ChatsWrapper', () => {
   })
 
   it('shoud not render tabs if chats are disabled', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       documentationChat: {
-        flag: false
+        flag: false,
       },
       databaseChat: {
-        flag: false
-      }
+        flag: false,
+      },
     })
 
     render(<ChatsWrapper />)
@@ -96,14 +107,16 @@ describe('ChatsWrapper', () => {
   })
 
   it('shoud not render tabs if only 1 chat is available', () => {
-    (aiChatSelector as jest.Mock).mockReturnValue({ activeTab: AiChatType.Assistance });
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(aiChatSelector as jest.Mock).mockReturnValue({
+      activeTab: AiChatType.Assistance,
+    })
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       documentationChat: {
-        flag: true
+        flag: true,
       },
       databaseChat: {
-        flag: false
-      }
+        flag: false,
+      },
     })
 
     render(<ChatsWrapper />)
@@ -115,14 +128,16 @@ describe('ChatsWrapper', () => {
   })
 
   it('shoud switch to another chat if current is not available', async () => {
-    (aiChatSelector as jest.Mock).mockReturnValue({ activeTab: AiChatType.Query });
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(aiChatSelector as jest.Mock).mockReturnValue({
+      activeTab: AiChatType.Query,
+    })
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       documentationChat: {
-        flag: true
+        flag: true,
       },
       databaseChat: {
-        flag: false
-      }
+        flag: false,
+      },
     })
 
     await act(async () => {
@@ -133,26 +148,29 @@ describe('ChatsWrapper', () => {
   })
 
   it('should call proper telemetry after open chat', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-
-    (aiChatSelector as jest.Mock).mockReturnValue({ activeTab: AiChatType.Query });
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(aiChatSelector as jest.Mock).mockReturnValue({
+      activeTab: AiChatType.Query,
+    })
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       documentationChat: {
-        flag: true
+        flag: true,
       },
       databaseChat: {
-        flag: true
-      }
+        flag: true,
+      },
     })
     render(<ChatsWrapper />)
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.AI_CHAT_OPENED,
       eventData: {
-        chat: AiChatType.Query
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        chat: AiChatType.Query,
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

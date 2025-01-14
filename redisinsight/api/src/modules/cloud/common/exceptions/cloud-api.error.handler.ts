@@ -4,11 +4,12 @@ import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptio
 import { CloudApiForbiddenException } from 'src/modules/cloud/common/exceptions/cloud-api.forbidden.exception';
 import { CloudApiBadRequestException } from 'src/modules/cloud/common/exceptions/cloud-api.bad-request.exception';
 import { CloudApiNotFoundException } from 'src/modules/cloud/common/exceptions/cloud-api.not-found.exception';
-import {
-  CloudApiInternalServerErrorException,
-} from 'src/modules/cloud/common/exceptions/cloud-api.internal-server-error.exception';
+import { CloudApiInternalServerErrorException } from 'src/modules/cloud/common/exceptions/cloud-api.internal-server-error.exception';
 
-export const wrapCloudApiError = (error: AxiosError, message?: string): HttpException => {
+export const wrapCloudApiError = (
+  error: AxiosError,
+  message?: string,
+): HttpException => {
   if (error instanceof HttpException) {
     return error;
   }
@@ -33,7 +34,10 @@ export const wrapCloudApiError = (error: AxiosError, message?: string): HttpExce
       case 404:
         return new CloudApiNotFoundException(errorMessage, errorOptions);
       default:
-        return new CloudApiInternalServerErrorException(errorMessage, errorOptions);
+        return new CloudApiInternalServerErrorException(
+          errorMessage,
+          errorOptions,
+        );
     }
   }
 

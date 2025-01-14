@@ -1,4 +1,8 @@
-import { InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { omit, get, update } from 'lodash';
@@ -18,7 +22,10 @@ import {
   mockDatabaseWithTlsAuth,
   mockDatabaseWithSshPrivateKey,
   mockSentinelDatabaseWithTlsAuth,
-  mockDatabaseWithCloudDetails, mockRedisClientFactory, mockRedisClientStorage, mockSessionMetadata,
+  mockDatabaseWithCloudDetails,
+  mockRedisClientFactory,
+  mockRedisClientStorage,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -108,37 +115,52 @@ describe('DatabaseService', () => {
 
   describe('exists', () => {
     it('should return true if database exists', async () => {
-      expect(await service.exists(mockSessionMetadata, mockDatabase.id)).toEqual(true);
+      expect(
+        await service.exists(mockSessionMetadata, mockDatabase.id),
+      ).toEqual(true);
     });
   });
 
   describe('list', () => {
     it('should return databases and send analytics event', async () => {
       databaseRepository.list.mockResolvedValue([mockDatabase, mockDatabase]);
-      expect(await service.list(mockSessionMetadata)).toEqual([mockDatabase, mockDatabase]);
+      expect(await service.list(mockSessionMetadata)).toEqual([
+        mockDatabase,
+        mockDatabase,
+      ]);
     });
     it('should throw InternalServerErrorException?', async () => {
       databaseRepository.list.mockRejectedValueOnce(new Error());
-      await expect(service.list(mockSessionMetadata)).rejects.toThrow(InternalServerErrorException);
+      await expect(service.list(mockSessionMetadata)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
   describe('get', () => {
     it('should return database by id', async () => {
-      expect(await service.get(mockSessionMetadata, mockDatabase.id)).toEqual(mockDatabase);
+      expect(await service.get(mockSessionMetadata, mockDatabase.id)).toEqual(
+        mockDatabase,
+      );
     });
     it('should throw NotFound if no database found', async () => {
       databaseRepository.get.mockResolvedValueOnce(null);
-      await expect(service.get(mockSessionMetadata, mockDatabase.id)).rejects.toThrow(NotFoundException);
+      await expect(
+        service.get(mockSessionMetadata, mockDatabase.id),
+      ).rejects.toThrow(NotFoundException);
     });
     it('should throw NotFound if no database id was provided', async () => {
-      await expect(service.get(mockSessionMetadata, '')).rejects.toThrow(NotFoundException);
+      await expect(service.get(mockSessionMetadata, '')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('create', () => {
     it('should create new database and send analytics event', async () => {
-      expect(await service.create(mockSessionMetadata, mockDatabase)).toEqual(mockDatabase);
+      expect(await service.create(mockSessionMetadata, mockDatabase)).toEqual(
+        mockDatabase,
+      );
       expect(analytics.sendInstanceAddedEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockDatabase,
@@ -147,9 +169,12 @@ describe('DatabaseService', () => {
       expect(analytics.sendInstanceAddFailedEvent).not.toHaveBeenCalled();
     });
     it('should create new database with cloud details and send analytics event', async () => {
-      databaseRepository.create.mockResolvedValueOnce(mockDatabaseWithCloudDetails);
-      expect(await service.create(mockSessionMetadata, mockDatabaseWithCloudDetails))
-        .toEqual(mockDatabaseWithCloudDetails);
+      databaseRepository.create.mockResolvedValueOnce(
+        mockDatabaseWithCloudDetails,
+      );
+      expect(
+        await service.create(mockSessionMetadata, mockDatabaseWithCloudDetails),
+      ).toEqual(mockDatabaseWithCloudDetails);
       expect(analytics.sendInstanceAddedEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockDatabaseWithCloudDetails,
@@ -159,13 +184,17 @@ describe('DatabaseService', () => {
     });
     it('should not fail when collecting data for analytics event', async () => {
       redisClientFactory.createClient.mockRejectedValueOnce(new Error());
-      expect(await service.create(mockSessionMetadata, mockDatabase)).toEqual(mockDatabase);
+      expect(await service.create(mockSessionMetadata, mockDatabase)).toEqual(
+        mockDatabase,
+      );
       expect(analytics.sendInstanceAddedEvent).not.toHaveBeenCalled();
       expect(analytics.sendInstanceAddFailedEvent).not.toHaveBeenCalled();
     });
     it('should throw NotFound if no database?', async () => {
       databaseRepository.create.mockRejectedValueOnce(new NotFoundException());
-      await expect(service.create(mockSessionMetadata, mockDatabase)).rejects.toThrow(NotFoundException);
+      await expect(
+        service.create(mockSessionMetadata, mockDatabase),
+      ).rejects.toThrow(NotFoundException);
       expect(analytics.sendInstanceAddFailedEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         new NotFoundException(),
@@ -181,12 +210,14 @@ describe('DatabaseService', () => {
         password: 'password',
       });
 
-      expect(await service.update(
-        mockSessionMetadata,
-        mockDatabase.id,
-        classToClass(UpdateDatabaseDto, { password: 'password', port: 6380 }),
-        true,
-      )).toEqual({ ...mockDatabase, port: 6380, password: 'password' });
+      expect(
+        await service.update(
+          mockSessionMetadata,
+          mockDatabase.id,
+          classToClass(UpdateDatabaseDto, { password: 'password', port: 6380 }),
+          true,
+        ),
+      ).toEqual({ ...mockDatabase, port: 6380, password: 'password' });
       expect(analytics.sendInstanceEditedEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockDatabase,
@@ -196,12 +227,17 @@ describe('DatabaseService', () => {
     });
 
     it('should update existing database with merged ssh options', async () => {
-      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
+      databaseRepository.get.mockResolvedValueOnce(
+        mockDatabaseWithSshPrivateKey,
+      );
 
       await service.update(
         mockSessionMetadata,
         mockDatabase.id,
-        classToClass(UpdateDatabaseDto, { password: 'pass', sshOptions: { password: 'new password' } }),
+        classToClass(UpdateDatabaseDto, {
+          password: 'pass',
+          sshOptions: { password: 'new password' },
+        }),
         true,
       );
       expect(databaseFactory.createDatabaseModel).toBeCalledWith(
@@ -276,45 +312,53 @@ describe('DatabaseService', () => {
     });
 
     describe('test connection', () => {
-      test.each(updateDatabaseTests)(
-        '%j',
-        async ({ input, expected }) => {
-          databaseRepository.update.mockReturnValue(null);
-          await service.update(
-            mockSessionMetadata,
-            mockDatabase.id,
-            input as UpdateDatabaseDto,
-            true,
-          );
-          expect(databaseFactory.createDatabaseModel).toBeCalledTimes(expected);
-        },
-      );
+      test.each(updateDatabaseTests)('%j', async ({ input, expected }) => {
+        databaseRepository.update.mockReturnValue(null);
+        await service.update(
+          mockSessionMetadata,
+          mockDatabase.id,
+          input as UpdateDatabaseDto,
+          true,
+        );
+        expect(databaseFactory.createDatabaseModel).toBeCalledTimes(expected);
+      });
     });
     it('should throw NotFound if no database?', async () => {
       databaseRepository.update.mockRejectedValueOnce(new NotFoundException());
-      await expect(service.update(
-        mockSessionMetadata,
-        mockDatabase.id,
-        classToClass(UpdateDatabaseDto, { password: 'password' }),
-        true,
-      )).rejects.toThrow(NotFoundException);
+      await expect(
+        service.update(
+          mockSessionMetadata,
+          mockDatabase.id,
+          classToClass(UpdateDatabaseDto, { password: 'password' }),
+          true,
+        ),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('test', () => {
     describe('new connection', () => {
       it('should successfully test valid connection config', async () => {
-        expect(await service.testConnection(mockSessionMetadata, mockDatabase)).toEqual(undefined);
+        expect(
+          await service.testConnection(mockSessionMetadata, mockDatabase),
+        ).toEqual(undefined);
       });
       it('should successfully test valid sentinel config (without sentinelMaster)', async () => {
-        databaseFactory.createDatabaseModel.mockRejectedValueOnce(new Error(RedisErrorCodes.SentinelParamsRequired));
-        expect(await service.testConnection(mockSessionMetadata, mockDatabase)).toEqual(undefined);
+        databaseFactory.createDatabaseModel.mockRejectedValueOnce(
+          new Error(RedisErrorCodes.SentinelParamsRequired),
+        );
+        expect(
+          await service.testConnection(mockSessionMetadata, mockDatabase),
+        ).toEqual(undefined);
       });
       it('should throw connection error', async () => {
-        databaseFactory.createDatabaseModel.mockRejectedValueOnce(new Error(RedisErrorCodes.ConnectionRefused));
+        databaseFactory.createDatabaseModel.mockRejectedValueOnce(
+          new Error(RedisErrorCodes.ConnectionRefused),
+        );
 
-        await expect(service.testConnection(mockSessionMetadata, mockDatabase))
-          .rejects.toThrow(ServiceUnavailableException);
+        await expect(
+          service.testConnection(mockSessionMetadata, mockDatabase),
+        ).rejects.toThrow(ServiceUnavailableException);
       });
       it('should not call get database by id', async () => {
         const spy = jest.spyOn(service as any, 'get');
@@ -326,19 +370,30 @@ describe('DatabaseService', () => {
 
     describe('exist connection', () => {
       it('should get database by id', async () => {
-        const spy = jest.spyOn(service as any, 'get').mockResolvedValueOnce(mockDatabase);
+        const spy = jest
+          .spyOn(service as any, 'get')
+          .mockResolvedValueOnce(mockDatabase);
 
-        await service.testConnection(mockSessionMetadata, classToClass(UpdateDatabaseDto, {}), mockDatabase.id);
+        await service.testConnection(
+          mockSessionMetadata,
+          classToClass(UpdateDatabaseDto, {}),
+          mockDatabase.id,
+        );
 
         expect(spy).toBeCalledWith(mockSessionMetadata, mockDatabase.id, false);
       });
 
       it('should test database connection with merged ssh options', async () => {
-        databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
+        databaseRepository.get.mockResolvedValueOnce(
+          mockDatabaseWithSshPrivateKey,
+        );
 
         await service.testConnection(
           mockSessionMetadata,
-          classToClass(UpdateDatabaseDto, { password: 'pass', sshOptions: { passphrase: 'new passphrase' } }),
+          classToClass(UpdateDatabaseDto, {
+            password: 'pass',
+            sshOptions: { passphrase: 'new passphrase' },
+          }),
           mockDatabase.id,
         );
         expect(databaseFactory.createDatabaseModel).toBeCalledWith(
@@ -346,7 +401,10 @@ describe('DatabaseService', () => {
           {
             ...mockDatabaseWithSshPrivateKey,
             password: 'pass',
-            sshOptions: { ...mockDatabaseWithSshPrivateKey.sshOptions, passphrase: 'new passphrase' },
+            sshOptions: {
+              ...mockDatabaseWithSshPrivateKey.sshOptions,
+              passphrase: 'new passphrase',
+            },
           },
         );
       });
@@ -356,17 +414,14 @@ describe('DatabaseService', () => {
 
         await service.testConnection(
           mockSessionMetadata,
-          classToClass(
-            UpdateDatabaseDto,
-            {
-              compressor: Compressor.GZIP,
-              tls: true,
-              caCert: {
-                name: 'name',
-                certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
-              },
+          classToClass(UpdateDatabaseDto, {
+            compressor: Compressor.GZIP,
+            tls: true,
+            caCert: {
+              name: 'name',
+              certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
             },
-          ),
+          }),
           mockDatabase.id,
         );
         expect(databaseFactory.createDatabaseModel).toBeCalledWith(
@@ -387,16 +442,13 @@ describe('DatabaseService', () => {
 
         await service.testConnection(
           mockSessionMetadata,
-          classToClass(
-            UpdateDatabaseDto,
-            {
-              compressor: Compressor.GZIP,
-              tls: true,
-              caCert: {
-                id: 'new id',
-              },
+          classToClass(UpdateDatabaseDto, {
+            compressor: Compressor.GZIP,
+            tls: true,
+            caCert: {
+              id: 'new id',
             },
-          ),
+          }),
           mockDatabase.id,
         );
         expect(databaseFactory.createDatabaseModel).toBeCalledWith(
@@ -415,7 +467,9 @@ describe('DatabaseService', () => {
 
   describe('delete', () => {
     it('should remove existing database', async () => {
-      expect(await service.delete(mockSessionMetadata, mockDatabase.id)).toEqual(undefined);
+      expect(
+        await service.delete(mockSessionMetadata, mockDatabase.id),
+      ).toEqual(undefined);
       expect(analytics.sendInstanceDeletedEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockDatabase,
@@ -423,21 +477,29 @@ describe('DatabaseService', () => {
     });
     it('should throw NotFound if no database', async () => {
       databaseRepository.get.mockResolvedValueOnce(null);
-      await expect(service.delete(mockSessionMetadata, mockDatabase.id)).rejects.toThrow(NotFoundException);
+      await expect(
+        service.delete(mockSessionMetadata, mockDatabase.id),
+      ).rejects.toThrow(NotFoundException);
     });
     it('should throw InternalServerErrorException? on any error during deletion', async () => {
       databaseRepository.delete.mockRejectedValueOnce(new NotFoundException());
-      await expect(service.delete(mockSessionMetadata, mockDatabase.id)).rejects.toThrow(InternalServerErrorException);
+      await expect(
+        service.delete(mockSessionMetadata, mockDatabase.id),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 
   describe('bulkDelete', () => {
     it('should remove multiple databases', async () => {
-      expect(await service.bulkDelete(mockSessionMetadata, [mockDatabase.id])).toEqual({ affected: 1 });
+      expect(
+        await service.bulkDelete(mockSessionMetadata, [mockDatabase.id]),
+      ).toEqual({ affected: 1 });
     });
     it('should ignore errors and do not count affected', async () => {
       databaseRepository.delete.mockRejectedValueOnce(new NotFoundException());
-      expect(await service.bulkDelete(mockSessionMetadata, [mockDatabase.id])).toEqual({ affected: 0 });
+      expect(
+        await service.bulkDelete(mockSessionMetadata, [mockDatabase.id]),
+      ).toEqual({ affected: 0 });
     });
   });
 
@@ -445,33 +507,47 @@ describe('DatabaseService', () => {
     it('should return multiple databases without Standalone secrets', async () => {
       databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTlsAuth);
 
-      expect(await service.export(
-        mockSessionMetadata,
-        [mockDatabaseWithTlsAuth.id],
-        false,
-      )).toEqual([classToClass(ExportDatabase, omit(mockDatabaseWithTlsAuth, 'password'))]);
+      expect(
+        await service.export(
+          mockSessionMetadata,
+          [mockDatabaseWithTlsAuth.id],
+          false,
+        ),
+      ).toEqual([
+        classToClass(ExportDatabase, omit(mockDatabaseWithTlsAuth, 'password')),
+      ]);
     });
 
     it('should return multiple databases without SSH secrets', async () => {
       // remove SSH secrets
-      const mockDatabaseWithSshPrivateKeyTemp = { ...mockDatabaseWithSshPrivateKey };
+      const mockDatabaseWithSshPrivateKeyTemp = {
+        ...mockDatabaseWithSshPrivateKey,
+      };
       exportSecurityFields.forEach((field) => {
         if (get(mockDatabaseWithSshPrivateKeyTemp, field)) {
           update(mockDatabaseWithSshPrivateKeyTemp, field, () => undefined);
         }
       });
 
-      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
-      expect(await service.export(
-        mockSessionMetadata,
-        [mockDatabaseWithSshPrivateKey.id],
-        false,
-      )).toEqual([classToClass(ExportDatabase, mockDatabaseWithSshPrivateKeyTemp)]);
+      databaseRepository.get.mockResolvedValueOnce(
+        mockDatabaseWithSshPrivateKey,
+      );
+      expect(
+        await service.export(
+          mockSessionMetadata,
+          [mockDatabaseWithSshPrivateKey.id],
+          false,
+        ),
+      ).toEqual([
+        classToClass(ExportDatabase, mockDatabaseWithSshPrivateKeyTemp),
+      ]);
     });
 
     it('should return multiple databases without Sentinel secrets', async () => {
       // remove secrets
-      const mockSentinelDatabaseWithTlsAuthTemp = { ...mockSentinelDatabaseWithTlsAuth };
+      const mockSentinelDatabaseWithTlsAuthTemp = {
+        ...mockSentinelDatabaseWithTlsAuth,
+      };
       exportSecurityFields.forEach((field) => {
         if (get(mockSentinelDatabaseWithTlsAuthTemp, field)) {
           update(mockSentinelDatabaseWithTlsAuthTemp, field, () => null);
@@ -480,52 +556,77 @@ describe('DatabaseService', () => {
 
       databaseRepository.get.mockResolvedValue(mockSentinelDatabaseWithTlsAuth);
 
-      expect(await service.export(
-        mockSessionMetadata,
-        [mockSentinelDatabaseWithTlsAuth.id],
-        false,
-      )).toEqual([classToClass(ExportDatabase, omit(mockSentinelDatabaseWithTlsAuthTemp, 'password'))]);
+      expect(
+        await service.export(
+          mockSessionMetadata,
+          [mockSentinelDatabaseWithTlsAuth.id],
+          false,
+        ),
+      ).toEqual([
+        classToClass(
+          ExportDatabase,
+          omit(mockSentinelDatabaseWithTlsAuthTemp, 'password'),
+        ),
+      ]);
     });
 
     it('should return multiple databases with secrets', async () => {
       // Standalone
       databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTls);
-      expect(await service.export(
-        mockSessionMetadata,
-        [mockDatabaseWithTls.id],
-        true,
-      )).toEqual([classToClass(ExportDatabase, mockDatabaseWithTls)]);
+      expect(
+        await service.export(
+          mockSessionMetadata,
+          [mockDatabaseWithTls.id],
+          true,
+        ),
+      ).toEqual([classToClass(ExportDatabase, mockDatabaseWithTls)]);
 
       // SSH
-      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
-      expect(await service.export(
-        mockSessionMetadata,
-        [mockDatabaseWithSshPrivateKey.id],
-        true,
-      )).toEqual([classToClass(ExportDatabase, mockDatabaseWithSshPrivateKey)]);
+      databaseRepository.get.mockResolvedValueOnce(
+        mockDatabaseWithSshPrivateKey,
+      );
+      expect(
+        await service.export(
+          mockSessionMetadata,
+          [mockDatabaseWithSshPrivateKey.id],
+          true,
+        ),
+      ).toEqual([classToClass(ExportDatabase, mockDatabaseWithSshPrivateKey)]);
 
       // Sentinel
-      databaseRepository.get.mockResolvedValueOnce(mockSentinelDatabaseWithTlsAuth);
-      expect(await service.export(
-        mockSessionMetadata,
-        [mockSentinelDatabaseWithTlsAuth.id],
-        true,
-      )).toEqual([classToClass(ExportDatabase, mockSentinelDatabaseWithTlsAuth)]);
+      databaseRepository.get.mockResolvedValueOnce(
+        mockSentinelDatabaseWithTlsAuth,
+      );
+      expect(
+        await service.export(
+          mockSessionMetadata,
+          [mockSentinelDatabaseWithTlsAuth.id],
+          true,
+        ),
+      ).toEqual([
+        classToClass(ExportDatabase, mockSentinelDatabaseWithTlsAuth),
+      ]);
     });
 
     it('should ignore errors', async () => {
       databaseRepository.get.mockRejectedValueOnce(new NotFoundException());
-      expect(await service.export(mockSessionMetadata, [mockDatabase.id])).toEqual([]);
+      expect(
+        await service.export(mockSessionMetadata, [mockDatabase.id]),
+      ).toEqual([]);
     });
 
     it('should throw NotFoundException', async () => {
-      await expect(service.export(mockSessionMetadata, [])).rejects.toThrow(NotFoundException);
+      await expect(service.export(mockSessionMetadata, [])).rejects.toThrow(
+        NotFoundException,
+      );
       try {
         await service.export(mockSessionMetadata, []);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(NotFoundException);
-        expect(err.message).toEqual(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
+        expect(err.message).toEqual(
+          ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID,
+        );
       }
     });
   });
@@ -543,22 +644,34 @@ describe('DatabaseService', () => {
       );
       expect(spy).toBeCalledWith(
         mockSessionMetadata,
-        omit({ ...mockDatabase, username: 'new-name', timeout: 40_000 }, ['sshOptions.id']),
+        omit({ ...mockDatabase, username: 'new-name', timeout: 40_000 }, [
+          'sshOptions.id',
+        ]),
       );
-      expect(databaseRepository.get)
-        .toHaveBeenCalledWith(mockSessionMetadata, mockDatabase.id, false, ['id', 'sshOptions.id', 'createdAt']);
+      expect(databaseRepository.get).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockDatabase.id,
+        false,
+        ['id', 'sshOptions.id', 'createdAt'],
+      );
     });
 
     it('should create new database with merged ssh options', async () => {
-      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
+      databaseRepository.get.mockResolvedValueOnce(
+        mockDatabaseWithSshPrivateKey,
+      );
 
       await service.clone(
         mockSessionMetadata,
         mockDatabase.id,
-        classToClass(
-          UpdateDatabaseDto,
-          { password: 'pass', sshOptions: { password: 'new password', passphrase: null, privateKey: null } },
-        ),
+        classToClass(UpdateDatabaseDto, {
+          password: 'pass',
+          sshOptions: {
+            password: 'new password',
+            passphrase: null,
+            privateKey: null,
+          },
+        }),
       );
       expect(databaseFactory.createDatabaseModel).toBeCalledWith(
         mockSessionMetadata,
@@ -618,17 +731,14 @@ describe('DatabaseService', () => {
       await service.clone(
         mockSessionMetadata,
         mockDatabase.id,
-        classToClass(
-          UpdateDatabaseDto,
-          {
-            compressor: Compressor.GZIP,
-            tls: true,
-            caCert: {
-              name: 'name',
-              certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
-            },
+        classToClass(UpdateDatabaseDto, {
+          compressor: Compressor.GZIP,
+          tls: true,
+          caCert: {
+            name: 'name',
+            certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
           },
-        ),
+        }),
       );
       expect(databaseFactory.createDatabaseModel).toBeCalledWith(
         mockSessionMetadata,
@@ -650,16 +760,13 @@ describe('DatabaseService', () => {
       await service.clone(
         mockSessionMetadata,
         mockDatabase.id,
-        classToClass(
-          UpdateDatabaseDto,
-          {
-            compressor: Compressor.GZIP,
-            tls: true,
-            caCert: {
-              id: 'new id',
-            },
+        classToClass(UpdateDatabaseDto, {
+          compressor: Compressor.GZIP,
+          tls: true,
+          caCert: {
+            id: 'new id',
           },
-        ),
+        }),
       );
       expect(databaseFactory.createDatabaseModel).toBeCalledWith(
         mockSessionMetadata,
@@ -675,21 +782,18 @@ describe('DatabaseService', () => {
     });
 
     describe('create database model', () => {
-      test.each(updateDatabaseTests)(
-        '%j',
-        async ({ input, expected }) => {
-          const spy = jest.spyOn(service as any, 'create');
+      test.each(updateDatabaseTests)('%j', async ({ input, expected }) => {
+        const spy = jest.spyOn(service as any, 'create');
 
-          databaseRepository.update.mockReturnValue(null);
-          await service.clone(
-            mockSessionMetadata,
-            mockDatabase.id,
-            input as UpdateDatabaseDto,
-          );
-          expect(spy).toBeCalledTimes(expected);
-          expect(analytics.sendInstanceAddedEvent).toBeCalled();
-        },
-      );
+        databaseRepository.update.mockReturnValue(null);
+        await service.clone(
+          mockSessionMetadata,
+          mockDatabase.id,
+          input as UpdateDatabaseDto,
+        );
+        expect(spy).toBeCalledTimes(expected);
+        expect(analytics.sendInstanceAddedEvent).toBeCalled();
+      });
     });
   });
 });

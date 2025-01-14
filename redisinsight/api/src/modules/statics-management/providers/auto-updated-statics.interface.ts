@@ -5,7 +5,7 @@ export interface IStaticsProviderOptions {
   updateUrl: string;
   zip: string;
   buildInfo: string;
-  devMode?: boolean
+  devMode?: boolean;
   autoUpdate?: boolean;
   initDefaults?: boolean;
 }

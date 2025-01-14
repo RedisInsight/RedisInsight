@@ -19,7 +19,14 @@ export interface Props {
 }
 
 const TemplatePopover = (props: Props) => {
-  const { isPopoverOpen, setIsPopoverOpen, value, loading, setFieldValue, source } = props
+  const {
+    isPopoverOpen,
+    setIsPopoverOpen,
+    value,
+    loading,
+    setFieldValue,
+    source,
+  } = props
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
@@ -43,7 +50,7 @@ const TemplatePopover = (props: Props) => {
         closePopover={handleClose}
         className={styles.anchor}
         panelClassName={styles.popoverWrapper}
-        button={(
+        button={
           <EuiButton
             fill
             size="s"
@@ -55,9 +62,14 @@ const TemplatePopover = (props: Props) => {
           >
             Insert template
           </EuiButton>
-      )}
+        }
       >
-        <TemplateForm closePopover={handleClose} setTemplate={setFieldValue} source={source} value={value} />
+        <TemplateForm
+          closePopover={handleClose}
+          setTemplate={setFieldValue}
+          source={source}
+          value={value}
+        />
       </EuiPopover>
     </EuiOutsideClickDetector>
   )

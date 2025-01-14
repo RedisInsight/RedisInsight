@@ -13,12 +13,19 @@ import {
 } from 'uiSrc/slices/interfaces'
 import { Nullable } from '../types'
 
-ObjectInputStream.RegisterObjectClass(JavaDate, JavaDate.ClassName, JavaDate.SerialVersionUID)
+ObjectInputStream.RegisterObjectClass(
+  JavaDate,
+  JavaDate.ClassName,
+  JavaDate.SerialVersionUID,
+)
 
 const decoder = new TextDecoder('utf-8')
 const encoder = new TextEncoder()
 
-const isEqualBuffers = (a?: Nullable<RedisResponseBuffer>, b?: Nullable<RedisResponseBuffer>) => {
+const isEqualBuffers = (
+  a?: Nullable<RedisResponseBuffer>,
+  b?: Nullable<RedisResponseBuffer>,
+) => {
   if (a?.data?.length !== b?.data?.length) return false
   return a?.data?.join(',') === b?.data?.join(',')
 }
@@ -36,17 +43,21 @@ const bufferToHex = (reply: RedisResponseBuffer): string => {
 
   reply.data.forEach((byte: number) => {
     // eslint-disable-next-line
-    result += ('0' + (byte & 0xFF).toString(16)).slice(-2)
+    result += ('0' + (byte & 0xff).toString(16)).slice(-2)
   })
 
   return result
 }
 
 const bufferToBinary = (reply: RedisResponseBuffer): string =>
-  Array.from(reply.data).reduce((str, byte) => str + byte.toString(2).padStart(8, '0'), '')
+  Array.from(reply.data).reduce(
+    (str, byte) => str + byte.toString(2).padStart(8, '0'),
+    '',
+  )
 
 const binaryToBuffer = (reply: string) => {
-  const data: number[] = reply.match(/.{1,8}/g)?.map((v) => parseInt(v, 2)) || []
+  const data: number[] =
+    reply.match(/.{1,8}/g)?.map((v) => parseInt(v, 2)) || []
   return anyToBuffer(data)
 }
 
@@ -100,7 +111,7 @@ const ASCIIToBuffer = (strInit: string) => {
     .replace(/\\n/g, '\n')
     .replace(/\\r/g, '\r')
 
-  for (let i = 0; i < str.length;) {
+  for (let i = 0; i < str.length; ) {
     if (str.substring(i, i + 2) === '\\x') {
       result += str.substring(i + 2, i + 4)
       i += 4
@@ -134,15 +145,22 @@ const bufferToFloat64Array = (data: Uint8Array) => {
   return new Float64Array(vector)
 }
 
-const bufferToUint8Array = (reply: RedisResponseBuffer): Uint8Array => new Uint8Array(reply.data)
-const bufferToUTF8 = (reply: RedisResponseBuffer): string => decoder.decode(bufferToUint8Array(reply))
+const bufferToUint8Array = (reply: RedisResponseBuffer): Uint8Array =>
+  new Uint8Array(reply.data)
+const bufferToUTF8 = (reply: RedisResponseBuffer): string =>
+  decoder.decode(bufferToUint8Array(reply))
 
-const UintArrayToString = (reply: UintArray): string => decoder.decode(new Uint8Array(reply))
+const UintArrayToString = (reply: UintArray): string =>
+  decoder.decode(new Uint8Array(reply))
 
-const UTF8ToBuffer = (reply: string): RedisResponseBuffer => anyToBuffer(encoder.encode(reply))
+const UTF8ToBuffer = (reply: string): RedisResponseBuffer =>
+  anyToBuffer(encoder.encode(reply))
 
 // common formatters
-const stringToBuffer = (data: string, formatResult: KeyValueFormat = KeyValueFormat.Unicode): RedisResponseBuffer => {
+const stringToBuffer = (
+  data: string,
+  formatResult: KeyValueFormat = KeyValueFormat.Unicode,
+): RedisResponseBuffer => {
   switch (formatResult) {
     case KeyValueFormat.Unicode: {
       return UTF8ToBuffer(data)
@@ -163,7 +181,10 @@ const hexToBuffer = (data: string): RedisResponseBuffer => {
     result.push(parseInt(string.substring(0, 2), 16))
     string = string.substring(2, string.length)
   }
-  return { type: RedisResponseBufferType.Buffer, data: result } as RedisResponseBuffer
+  return {
+    type: RedisResponseBufferType.Buffer,
+    data: result,
+  } as RedisResponseBuffer
 }
 
 const bufferToJava = (reply: RedisResponseBuffer) => {
@@ -183,7 +204,10 @@ const bufferToJava = (reply: RedisResponseBuffer) => {
   return { ...decoded, fields: fieldsArray }
 }
 
-const bufferToString = (data: RedisString = '', formatResult: KeyValueFormat = KeyValueFormat.Unicode): string => {
+const bufferToString = (
+  data: RedisString = '',
+  formatResult: KeyValueFormat = KeyValueFormat.Unicode,
+): string => {
   if (!isString(data) && data?.type === RedisResponseBufferType.Buffer) {
     switch (formatResult) {
       case KeyValueFormat.Unicode: {
@@ -235,7 +259,7 @@ window.ri = {
   bufferToHex,
   hexToBuffer,
   bufferToBinary,
-  binaryToBuffer
+  binaryToBuffer,
 }
 
 // for BE libraries which work with Buffer

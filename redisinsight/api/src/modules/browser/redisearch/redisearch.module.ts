@@ -9,15 +9,15 @@ export class RedisearchModule {
     return {
       module: RedisearchModule,
       imports: [
-        RouterModule.register([{
-          path: route,
-          module: RedisearchModule,
-        }]),
+        RouterModule.register([
+          {
+            path: route,
+            module: RedisearchModule,
+          },
+        ]),
       ],
       controllers: [RedisearchController],
-      providers: [
-        RedisearchService,
-      ],
+      providers: [RedisearchService],
     };
   }
 }

@@ -6,8 +6,8 @@ export type SshTunnelServer = Awaited<ReturnType<typeof createTunnel>>[0];
 export type SshTunnelClient = Awaited<ReturnType<typeof createTunnel>>[1];
 
 export interface ISshTunnelOptions {
-  targetHost: string,
-  targetPort: number,
+  targetHost: string;
+  targetPort: number;
 }
 
 export class SshTunnel {

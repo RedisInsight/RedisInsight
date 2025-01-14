@@ -4,7 +4,7 @@ import HtmlToJsxString from './HtmlToJsxString'
 
 export enum FileExtension {
   Html = 'html',
-  Markdown = 'md'
+  Markdown = 'md',
 }
 
 class FormatSelector {
@@ -14,7 +14,8 @@ class FormatSelector {
   }
 
   static selectFor(extension: string): IFormatter {
-    const FormatterFactory = FormatSelector.formatters[extension as FileExtension]
+    const FormatterFactory =
+      FormatSelector.formatters[extension as FileExtension]
     if (FormatterFactory) {
       return FormatterFactory
     }

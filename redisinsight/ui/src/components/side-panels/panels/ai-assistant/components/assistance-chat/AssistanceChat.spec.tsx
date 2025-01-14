@@ -8,7 +8,7 @@ import {
   mockedStoreFn,
   render,
   screen,
-  waitForEuiPopoverVisible
+  waitForEuiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 
 import {
@@ -16,7 +16,8 @@ import {
   createAssistantChat,
   getAssistantChatHistory,
   removeAssistantChatHistory,
-  sendQuestion, updateAssistantChatAgreements
+  sendQuestion,
+  updateAssistantChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
@@ -32,8 +33,8 @@ jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
   aiAssistantChatSelector: jest.fn().mockReturnValue({
     id: '',
     messages: [],
-    agreements: true
-  })
+    agreements: true,
+  }),
 }))
 
 let store: typeof mockedStore
@@ -51,7 +52,9 @@ describe('AssistanceChat', () => {
   it('should proper components render by default', () => {
     render(<AssistanceChat />, { store })
 
-    expect(screen.getByTestId('ai-general-restart-session-btn')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('ai-general-restart-session-btn'),
+    ).toBeInTheDocument()
     expect(screen.getByTestId('ai-chat-empty-history')).toBeInTheDocument()
     expect(screen.getByTestId('ai-submit-message-btn')).toBeInTheDocument()
   })
@@ -63,10 +66,10 @@ describe('AssistanceChat', () => {
   })
 
   it('should get history', () => {
-    (aiAssistantChatSelector as jest.Mock).mockReturnValue({
+    ;(aiAssistantChatSelector as jest.Mock).mockReturnValue({
       id: '1',
       messages: [],
-      agreements: true
+      agreements: true,
     })
     render(<AssistanceChat />, { store })
 
@@ -74,18 +77,17 @@ describe('AssistanceChat', () => {
   })
 
   it('should call action to create an id after submit first message', () => {
-    (aiAssistantChatSelector as jest.Mock).mockReturnValue({
+    ;(aiAssistantChatSelector as jest.Mock).mockReturnValue({
       id: '',
       messages: [],
-      agreements: true
+      agreements: true,
     })
     render(<AssistanceChat />, { store })
 
     act(() => {
-      fireEvent.change(
-        screen.getByTestId('ai-message-textarea'),
-        { target: { value: 'test' } }
-      )
+      fireEvent.change(screen.getByTestId('ai-message-textarea'), {
+        target: { value: 'test' },
+      })
     })
 
     fireEvent.click(screen.getByTestId('ai-submit-message-btn'))
@@ -94,59 +96,59 @@ describe('AssistanceChat', () => {
   })
 
   it('should call action after submit message', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-
-    (aiAssistantChatSelector as jest.Mock).mockReturnValue({
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(aiAssistantChatSelector as jest.Mock).mockReturnValue({
       id: '1',
       messages: [],
-      agreements: true
+      agreements: true,
     })
     render(<AssistanceChat />, { store })
 
     const afterRenderActions = [...store.getActions()]
 
     act(() => {
-      fireEvent.change(
-        screen.getByTestId('ai-message-textarea'),
-        { target: { value: 'test' } }
-      )
+      fireEvent.change(screen.getByTestId('ai-message-textarea'), {
+        target: { value: 'test' },
+      })
     })
 
     fireEvent.click(screen.getByTestId('ai-submit-message-btn'))
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      sendQuestion(expect.objectContaining({ content: 'test' }))
+      sendQuestion(expect.objectContaining({ content: 'test' })),
     ])
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
       eventData: {
-        chat: AiChatType.Assistance
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        chat: AiChatType.Assistance,
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should show agreements', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-
-    (aiAssistantChatSelector as jest.Mock).mockReturnValue({
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(aiAssistantChatSelector as jest.Mock).mockReturnValue({
       id: '1',
       messages: [],
-      agreements: false
+      agreements: false,
     })
     render(<AssistanceChat />, { store })
 
     const afterRenderActions = [...store.getActions()]
 
     act(() => {
-      fireEvent.change(
-        screen.getByTestId('ai-message-textarea'),
-        { target: { value: 'test' } }
-      )
+      fireEvent.change(screen.getByTestId('ai-message-textarea'), {
+        target: { value: 'test' },
+      })
     })
 
     fireEvent.click(screen.getByTestId('ai-submit-message-btn'))
@@ -156,10 +158,10 @@ describe('AssistanceChat', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.AI_CHAT_BOT_TERMS_DISPLAYED,
       eventData: {
-        chat: AiChatType.Assistance
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        chat: AiChatType.Assistance,
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     act(() => {
       fireEvent.click(screen.getByTestId('ai-accept-agreements'))
@@ -169,25 +171,26 @@ describe('AssistanceChat', () => {
       event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
       eventData: {
         chat: AiChatType.Assistance,
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
       updateAssistantChatAgreements(true),
-      sendQuestion(expect.objectContaining({ content: 'test' }))
+      sendQuestion(expect.objectContaining({ content: 'test' })),
     ])
   })
 
   it('should call action after click on restart session', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-
-    (aiAssistantChatSelector as jest.Mock).mockReturnValue({
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(aiAssistantChatSelector as jest.Mock).mockReturnValue({
       id: '1',
       messages: [{}],
-      agreements: true
+      agreements: true,
     })
 
     render(<AssistanceChat />, { store })
@@ -203,15 +206,15 @@ describe('AssistanceChat', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      removeAssistantChatHistory()
+      removeAssistantChatHistory(),
     ])
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
       eventData: {
-        chat: AiChatType.Assistance
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        chat: AiChatType.Assistance,
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

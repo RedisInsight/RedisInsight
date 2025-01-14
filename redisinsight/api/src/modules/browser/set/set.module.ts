@@ -1,7 +1,4 @@
-import {
-  DynamicModule,
-  Module,
-} from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { SetService } from 'src/modules/browser/set/set.service';
 import { SetController } from 'src/modules/browser/set/set.controller';
@@ -12,10 +9,12 @@ export class SetModule {
     return {
       module: SetModule,
       imports: [
-        RouterModule.register([{
-          path: route,
-          module: SetModule,
-        }]),
+        RouterModule.register([
+          {
+            path: route,
+            module: SetModule,
+          },
+        ]),
       ],
       controllers: [SetController],
       providers: [SetService],

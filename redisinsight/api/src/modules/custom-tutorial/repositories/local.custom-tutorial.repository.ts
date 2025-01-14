@@ -40,7 +40,10 @@ export class LocalCustomTutorialRepository extends CustomTutorialRepository {
    * @inheritDoc
    */
   public async get(id: string): Promise<CustomTutorial> {
-    return classToClass(CustomTutorial, await this.repository.findOneBy({ id }));
+    return classToClass(
+      CustomTutorial,
+      await this.repository.findOneBy({ id }),
+    );
   }
 
   /**

@@ -10,11 +10,15 @@ describe('caCertTransformer', () => {
       output: CreateBasicSshOptionsDto,
     },
     {
-      input: { object: { sshOptions: { privateKey: 'asd' } } } as unknown as TypeHelpOptions,
+      input: {
+        object: { sshOptions: { privateKey: 'asd' } },
+      } as unknown as TypeHelpOptions,
       output: CreateCertSshOptionsDto,
     },
     {
-      input: { object: { sshOptions: { privateKey: null } } } as unknown as TypeHelpOptions,
+      input: {
+        object: { sshOptions: { privateKey: null } },
+      } as unknown as TypeHelpOptions,
       output: CreateBasicSshOptionsDto,
     },
     {

@@ -14,15 +14,18 @@ import {
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
-import { CreateListWithExpireDto, ListElementDestination } from 'apiSrc/modules/browser/list/dto'
-
 import {
-  AddListFormConfig as config,
-} from '../constants/fields-config'
+  CreateListWithExpireDto,
+  ListElementDestination,
+} from 'apiSrc/modules/browser/list/dto'
+
+import { AddListFormConfig as config } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import AddMultipleFields from '../../add-multiple-fields'
-import { optionsDestinations, TAIL_DESTINATION } from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
-
+import {
+  optionsDestinations,
+  TAIL_DESTINATION,
+} from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
 
 export interface Props {
   keyName: string
@@ -33,7 +36,8 @@ export interface Props {
 const AddKeyList = (props: Props) => {
   const { keyName = '', keyTTL, onCancel } = props
   const [elements, setElements] = useState<string[]>([''])
-  const [destination, setDestination] = useState<ListElementDestination>(TAIL_DESTINATION)
+  const [destination, setDestination] =
+    useState<ListElementDestination>(TAIL_DESTINATION)
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
@@ -64,7 +68,8 @@ const AddKeyList = (props: Props) => {
     }
   }
 
-  const isClearDisabled = (item:string) => elements.length === 1 && !item.length
+  const isClearDisabled = (item: string) =>
+    elements.length === 1 && !item.length
 
   const handleElementChange = (value: string, index: number) => {
     const newElements = [...elements]
@@ -107,7 +112,8 @@ const AddKeyList = (props: Props) => {
             value={item}
             disabled={loading}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              handleElementChange(e.target.value, index)}
+              handleElementChange(e.target.value, index)
+            }
             data-testid={`element-${index}`}
           />
         )}

@@ -4,8 +4,4 @@ import RestartChat from './restart-chat'
 
 export * from './chat-history/texts'
 
-export {
-  ChatHistory,
-  ChatForm,
-  RestartChat,
-}
+export { ChatHistory, ChatForm, RestartChat }

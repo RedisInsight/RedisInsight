@@ -11,7 +11,11 @@ export class RdiPipelineAnalytics extends TelemetryBaseService {
   }
 
   sendRdiPipelineDeployed(sessionMetadata: SessionMetadata, id: string) {
-    this.sendEvent(sessionMetadata, TelemetryEvents.RdiPipelineDeploymentSucceeded, { id });
+    this.sendEvent(
+      sessionMetadata,
+      TelemetryEvents.RdiPipelineDeploymentSucceeded,
+      { id },
+    );
   }
 
   sendRdiPipelineDeployFailed(
@@ -27,7 +31,11 @@ export class RdiPipelineAnalytics extends TelemetryBaseService {
     );
   }
 
-  sendRdiPipelineFetched(sessionMetadata: SessionMetadata, id: string, pipeline: any) {
+  sendRdiPipelineFetched(
+    sessionMetadata: SessionMetadata,
+    id: string,
+    pipeline: any,
+  ) {
     try {
       this.sendEvent(
         sessionMetadata,

@@ -13,11 +13,16 @@ import {
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseImportAnalytics } from 'src/modules/database-import/database-import.analytics';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConnectionType, Compressor } from 'src/modules/database/entities/database.entity';
+import {
+  ConnectionType,
+  Compressor,
+} from 'src/modules/database/entities/database.entity';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import {
-  InvalidCaCertificateBodyException, InvalidCertificateNameException, InvalidClientCertificateBodyException,
+  InvalidCaCertificateBodyException,
+  InvalidCertificateNameException,
+  InvalidClientCertificateBodyException,
   NoDatabaseImportFileProvidedException,
   SizeLimitExceededDatabaseImportFileException,
   UnableToParseDatabaseImportFileException,
@@ -68,7 +73,9 @@ describe('DatabaseImportService', () => {
 
   describe('importDatabase', () => {
     beforeEach(() => {
-      databaseRepository.create.mockRejectedValueOnce(new BadRequestException());
+      databaseRepository.create.mockRejectedValueOnce(
+        new BadRequestException(),
+      );
       databaseRepository.create.mockRejectedValueOnce(new ForbiddenException());
       validatoSpy.mockRejectedValueOnce([new ValidationError()]);
       certificateImportService.processCaCertificate
@@ -85,7 +92,10 @@ describe('DatabaseImportService', () => {
     });
 
     it('should import databases from json', async () => {
-      const response = await service.import(mockSessionMetadata, mockDatabaseImportFile);
+      const response = await service.import(
+        mockSessionMetadata,
+        mockDatabaseImportFile,
+      );
 
       expect(response).toEqual(mockDatabaseImportResponse);
       expect(analytics.sendImportResults).toHaveBeenCalledWith(
@@ -95,14 +105,11 @@ describe('DatabaseImportService', () => {
     });
 
     it('should import databases from base64', async () => {
-      const response = await service.import(
-        mockSessionMetadata,
-        {
-          ...mockDatabaseImportFile,
-          mimetype: 'binary/octet-stream',
-          buffer: Buffer.from(mockDatabaseImportFile.buffer.toString('base64')),
-        },
-      );
+      const response = await service.import(mockSessionMetadata, {
+        ...mockDatabaseImportFile,
+        mimetype: 'binary/octet-stream',
+        buffer: Buffer.from(mockDatabaseImportFile.buffer.toString('base64')),
+      });
 
       expect(response).toEqual({
         ...mockDatabaseImportResponse,
@@ -129,51 +136,48 @@ describe('DatabaseImportService', () => {
 
     it('should fail due to file exceeded size limitations', async () => {
       try {
-        await service.import(
-          mockSessionMetadata,
-          {
-            ...mockDatabaseImportFile,
-            size: 10 * 1024 * 1024 + 1,
-          },
-        );
+        await service.import(mockSessionMetadata, {
+          ...mockDatabaseImportFile,
+          size: 10 * 1024 * 1024 + 1,
+        });
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(SizeLimitExceededDatabaseImportFileException);
-        expect(e.message).toEqual('Import file is too big. Maximum 10mb allowed');
+        expect(e.message).toEqual(
+          'Import file is too big. Maximum 10mb allowed',
+        );
       }
     });
 
     it('should fail due to incorrect json', async () => {
       try {
-        await service.import(
-          mockSessionMetadata,
-          {
-            ...mockDatabaseImportFile,
-            buffer: Buffer.from([0, 21]),
-          },
-        );
+        await service.import(mockSessionMetadata, {
+          ...mockDatabaseImportFile,
+          buffer: Buffer.from([0, 21]),
+        });
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(UnableToParseDatabaseImportFileException);
-        expect(e.message).toEqual(`Unable to parse ${mockDatabaseImportFile.originalname}`);
+        expect(e.message).toEqual(
+          `Unable to parse ${mockDatabaseImportFile.originalname}`,
+        );
       }
     });
 
     it('should fail due to incorrect base64 + truncate filename', async () => {
       try {
-        await service.import(
-          mockSessionMetadata,
-          {
-            ...mockDatabaseImportFile,
-            originalname: (new Array(1_000).fill(1)).join(''),
-            mimetype: 'binary/octet-stream',
-            buffer: Buffer.from([0, 21]),
-          },
-        );
+        await service.import(mockSessionMetadata, {
+          ...mockDatabaseImportFile,
+          originalname: new Array(1_000).fill(1).join(''),
+          mimetype: 'binary/octet-stream',
+          buffer: Buffer.from([0, 21]),
+        });
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(UnableToParseDatabaseImportFileException);
-        expect(e.message).toEqual(`Unable to parse ${(new Array(50).fill(1)).join('')}...`);
+        expect(e.message).toEqual(
+          `Unable to parse ${new Array(50).fill(1).join('')}...`,
+        );
       }
     });
   });
@@ -192,7 +196,14 @@ describe('DatabaseImportService', () => {
       expect(databaseRepository.create).toHaveBeenCalledWith(
         mockSessionMetadata,
         {
-          ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'compressor', 'modules']),
+          ...pick(mockDatabase, [
+            'host',
+            'port',
+            'name',
+            'connectionType',
+            'compressor',
+            'modules',
+          ]),
           provider: 'RE_CLOUD',
           new: true,
         },
@@ -212,7 +223,14 @@ describe('DatabaseImportService', () => {
       expect(databaseRepository.create).toHaveBeenCalledWith(
         mockSessionMetadata,
         {
-          ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'compressor', 'modules']),
+          ...pick(mockDatabase, [
+            'host',
+            'port',
+            'name',
+            'connectionType',
+            'compressor',
+            'modules',
+          ]),
           name: `${mockDatabase.host}:${mockDatabase.port}`,
           new: true,
         },
@@ -232,7 +250,14 @@ describe('DatabaseImportService', () => {
       expect(databaseRepository.create).toHaveBeenCalledWith(
         mockSessionMetadata,
         {
-          ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'compressor', 'modules']),
+          ...pick(mockDatabase, [
+            'host',
+            'port',
+            'name',
+            'connectionType',
+            'compressor',
+            'modules',
+          ]),
           compressor: Compressor.NONE,
           new: true,
         },
@@ -253,7 +278,15 @@ describe('DatabaseImportService', () => {
       expect(databaseRepository.create).toHaveBeenCalledWith(
         mockSessionMetadata,
         {
-          ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'compressor', 'modules', 'tlsServername']),
+          ...pick(mockDatabase, [
+            'host',
+            'port',
+            'name',
+            'connectionType',
+            'compressor',
+            'modules',
+            'tlsServername',
+          ]),
           compressor: Compressor.GZIP,
           tlsServername: 'redis-insight',
           new: true,
@@ -275,7 +308,13 @@ describe('DatabaseImportService', () => {
       expect(databaseRepository.create).toHaveBeenCalledWith(
         mockSessionMetadata,
         {
-          ...pick(mockDatabase, ['host', 'port', 'name', 'compressor', 'modules']),
+          ...pick(mockDatabase, [
+            'host',
+            'port',
+            'name',
+            'compressor',
+            'modules',
+          ]),
           connectionType: ConnectionType.CLUSTER,
           new: true,
         },
@@ -293,17 +332,35 @@ describe('DatabaseImportService', () => {
       { input: { isCluster: false }, output: ConnectionType.NOT_CONNECTED },
       { input: { isCluster: undefined }, output: ConnectionType.NOT_CONNECTED },
       // sentinelMasterName
-      { input: { sentinelMasterName: 'some name' }, output: ConnectionType.SENTINEL },
+      {
+        input: { sentinelMasterName: 'some name' },
+        output: ConnectionType.SENTINEL,
+      },
       // connectionType
-      { input: { connectionType: ConnectionType.STANDALONE }, output: ConnectionType.STANDALONE },
-      { input: { connectionType: ConnectionType.CLUSTER }, output: ConnectionType.CLUSTER },
-      { input: { connectionType: ConnectionType.SENTINEL }, output: ConnectionType.SENTINEL },
-      { input: { connectionType: 'something not supported' }, output: ConnectionType.NOT_CONNECTED },
+      {
+        input: { connectionType: ConnectionType.STANDALONE },
+        output: ConnectionType.STANDALONE,
+      },
+      {
+        input: { connectionType: ConnectionType.CLUSTER },
+        output: ConnectionType.CLUSTER,
+      },
+      {
+        input: { connectionType: ConnectionType.SENTINEL },
+        output: ConnectionType.SENTINEL,
+      },
+      {
+        input: { connectionType: 'something not supported' },
+        output: ConnectionType.NOT_CONNECTED,
+      },
       // type
       { input: { type: 'standalone' }, output: ConnectionType.STANDALONE },
       { input: { type: 'cluster' }, output: ConnectionType.CLUSTER },
       { input: { type: 'sentinel' }, output: ConnectionType.SENTINEL },
-      { input: { type: 'something not supported' }, output: ConnectionType.NOT_CONNECTED },
+      {
+        input: { type: 'something not supported' },
+        output: ConnectionType.NOT_CONNECTED,
+      },
       // priority tests
       {
         input: {
@@ -339,7 +396,9 @@ describe('DatabaseImportService', () => {
 
     tcs.forEach((tc) => {
       it(`should return ${tc.output} when called with ${JSON.stringify(tc.input)}`, () => {
-        expect(DatabaseImportService.determineConnectionType(tc.input)).toEqual(tc.output);
+        expect(DatabaseImportService.determineConnectionType(tc.input)).toEqual(
+          tc.output,
+        );
       });
     });
   });

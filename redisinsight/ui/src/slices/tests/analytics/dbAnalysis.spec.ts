@@ -24,7 +24,11 @@ import reducer, {
   putRecommendationVote,
 } from 'uiSrc/slices/analytics/dbAnalysis'
 import { Vote } from 'uiSrc/constants/recommendations'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 
 let store: typeof mockedStore
 
@@ -37,36 +41,42 @@ const mockAnalysis = {
   createdAt: new Date('2021-04-22T09:03:56.917Z'),
   totalKeys: {
     total: 14209,
-    types: [{ type: 'zset', total: 1 }]
+    types: [{ type: 'zset', total: 1 }],
   },
   totalMemory: {
     total: 1026830,
-    types: [{ type: 'zset', total: 96 }]
+    types: [{ type: 'zset', total: 96 }],
   },
-  topKeysNsp: [{
-    nsp: 'delimiter_4',
-    memory: 1399,
-    keys: 7,
-    types: [{ type: 'zset', memory: 96, keys: 1 }]
-  }],
-  topMemoryNsp: [{
-    nsp: 'delimiter_3',
-    memory: 114768,
-    keys: 1,
-    types: [{ type: 'string', memory: 114768, keys: 1 }]
-  }],
-  topKeysMemory: [{
-    name: 'delimiter_3:big',
-    type: 'string',
-    memory: 114768,
-    length: 100331,
-    ttl: -1
-  }]
+  topKeysNsp: [
+    {
+      nsp: 'delimiter_4',
+      memory: 1399,
+      keys: 7,
+      types: [{ type: 'zset', memory: 96, keys: 1 }],
+    },
+  ],
+  topMemoryNsp: [
+    {
+      nsp: 'delimiter_3',
+      memory: 114768,
+      keys: 1,
+      types: [{ type: 'string', memory: 114768, keys: 1 }],
+    },
+  ],
+  topKeysMemory: [
+    {
+      name: 'delimiter_3:big',
+      type: 'string',
+      memory: 114768,
+      length: 100331,
+      ttl: -1,
+    },
+  ],
 }
 
 const mockHistoryReport = {
   id: 'id',
-  created: new Date('2021-04-22T09:03:56.917Z')
+  created: new Date('2021-04-22T09:03:56.917Z'),
 }
 
 beforeEach(() => {
@@ -90,7 +100,10 @@ describe('db analysis slice', () => {
 
     describe('setDatabaseAnalysisInitialState', () => {
       it('should properly set initial state', () => {
-        const nextState = reducer(initialState, setDatabaseAnalysisInitialState())
+        const nextState = reducer(
+          initialState,
+          setDatabaseAnalysisInitialState(),
+        )
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState },
         })
@@ -105,7 +118,7 @@ describe('db analysis slice', () => {
         // Arrange
         const stateHistory = {
           ...initialState.history,
-          selectedAnalysis: 'id'
+          selectedAnalysis: 'id',
         }
 
         // Act
@@ -131,11 +144,14 @@ describe('db analysis slice', () => {
             data: [],
             selectedAnalysis: null,
             showNoExpiryGroup: false,
-          }
+          },
         }
 
         // Act
-        const nextState = reducer(initialState, loadDBAnalysisReportsError(error))
+        const nextState = reducer(
+          initialState,
+          loadDBAnalysisReportsError(error),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -175,7 +191,10 @@ describe('db analysis slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, setRecommendationVoteError(error))
+        const nextState = reducer(
+          initialState,
+          setRecommendationVoteError(error),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -209,8 +228,8 @@ describe('db analysis slice', () => {
           ...initialState,
           history: {
             ...initialState.history,
-            loading: true
-          }
+            loading: true,
+          },
         }
 
         // Act
@@ -230,7 +249,7 @@ describe('db analysis slice', () => {
         const state = {
           ...initialState,
           loading: false,
-          data: mockAnalysis
+          data: mockAnalysis,
         }
 
         // Act
@@ -250,11 +269,14 @@ describe('db analysis slice', () => {
         const state = {
           ...initialState,
           loading: false,
-          data: mockAnalysis
+          data: mockAnalysis,
         }
 
         // Act
-        const nextState = reducer(initialState, setRecommendationVoteSuccess(payload))
+        const nextState = reducer(
+          initialState,
+          setRecommendationVoteSuccess(payload),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -270,11 +292,14 @@ describe('db analysis slice', () => {
         const stateHistory = {
           ...initialState.history,
           loading: false,
-          data: [{ id: 'id', created: new Date('2021-04-22T09:03:56.917Z') }]
+          data: [{ id: 'id', created: new Date('2021-04-22T09:03:56.917Z') }],
         }
 
         // Act
-        const nextState = reducer(initialState, loadDBAnalysisReportsSuccess(payload))
+        const nextState = reducer(
+          initialState,
+          loadDBAnalysisReportsSuccess(payload),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -314,15 +339,10 @@ describe('db analysis slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchDBAnalysisAction('instanceId', 'id')
-        )
+        await store.dispatch<any>(fetchDBAnalysisAction('instanceId', 'id'))
 
         // Assert
-        const expectedActions = [
-          getDBAnalysis(),
-          getDBAnalysisSuccess(data),
-        ]
+        const expectedActions = [getDBAnalysis(), getDBAnalysisSuccess(data)]
 
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -339,15 +359,13 @@ describe('db analysis slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchDBAnalysisAction('instanceId', 'id')
-        )
+        await store.dispatch<any>(fetchDBAnalysisAction('instanceId', 'id'))
 
         // Assert
         const expectedActions = [
           getDBAnalysis(),
           addErrorNotification(responsePayload as AxiosError),
-          getDBAnalysisError(errorMessage)
+          getDBAnalysisError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -362,14 +380,14 @@ describe('db analysis slice', () => {
 
         const responsePayloadGet = {
           data: [{ id: data.id, createdAt: data.createdAt }, mockHistoryReport],
-          status: 200
+          status: 200,
         }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayloadGet)
 
         // Act
         await store.dispatch<any>(
-          createNewAnalysis('instanceId', ['delimiter'])
+          createNewAnalysis('instanceId', ['delimiter']),
         )
 
         // Assert
@@ -384,7 +402,7 @@ describe('db analysis slice', () => {
               id: mockAnalysis.id,
             },
             mockHistoryReport,
-          ])
+          ]),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -403,14 +421,14 @@ describe('db analysis slice', () => {
 
         // Act
         await store.dispatch<any>(
-          createNewAnalysis('instanceId', ['delimiter'])
+          createNewAnalysis('instanceId', ['delimiter']),
         )
 
         // Assert
         const expectedActions = [
           getDBAnalysis(),
           addErrorNotification(responsePayload as AxiosError),
-          getDBAnalysisError(errorMessage)
+          getDBAnalysisError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -424,9 +442,7 @@ describe('db analysis slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchDBAnalysisReportsHistory('instanceId')
-        )
+        await store.dispatch<any>(fetchDBAnalysisReportsHistory('instanceId'))
 
         // Assert
         const expectedActions = [
@@ -449,15 +465,13 @@ describe('db analysis slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchDBAnalysisReportsHistory('instanceId')
-        )
+        await store.dispatch<any>(fetchDBAnalysisReportsHistory('instanceId'))
 
         // Assert
         const expectedActions = [
           loadDBAnalysisReports(),
           addErrorNotification(responsePayload as AxiosError),
-          loadDBAnalysisReportsError(errorMessage)
+          loadDBAnalysisReportsError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -471,9 +485,7 @@ describe('db analysis slice', () => {
         apiService.patch = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          putRecommendationVote('name', Vote.Like)
-        )
+        await store.dispatch<any>(putRecommendationVote('name', Vote.Like))
 
         // Assert
         const expectedActions = [
@@ -496,15 +508,13 @@ describe('db analysis slice', () => {
         apiService.patch = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          putRecommendationVote('name', Vote.Like)
-        )
+        await store.dispatch<any>(putRecommendationVote('name', Vote.Like))
 
         // Assert
         const expectedActions = [
           setRecommendationVote(),
           addErrorNotification(responsePayload as AxiosError),
-          setRecommendationVoteError(errorMessage)
+          setRecommendationVoteError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

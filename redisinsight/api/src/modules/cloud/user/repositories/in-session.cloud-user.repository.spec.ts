@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockCloudSession, mockCloudSessionService, mockInitSession, MockType,
+  mockCloudSession,
+  mockCloudSessionService,
+  mockInitSession,
+  MockType,
 } from 'src/__mocks__';
 import { InSessionCloudUserRepository } from 'src/modules/cloud/user/repositories/in-session.cloud-user.repository';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
@@ -26,14 +29,20 @@ describe('InSessionCloudUserRepository', () => {
 
   describe('get', () => {
     it('successfully get current user', async () => {
-      expect(await service.get(mockInitSession.id)).toEqual(mockCloudSession.user);
-      expect(sessionService.getSession).toHaveBeenCalledWith(mockInitSession.id);
+      expect(await service.get(mockInitSession.id)).toEqual(
+        mockCloudSession.user,
+      );
+      expect(sessionService.getSession).toHaveBeenCalledWith(
+        mockInitSession.id,
+      );
     });
     it('should return null when there is no cloud session data', async () => {
       sessionService.getSession.mockResolvedValueOnce(null);
 
       expect(await service.get(mockInitSession.id)).toEqual(null);
-      expect(sessionService.getSession).toHaveBeenCalledWith(mockInitSession.id);
+      expect(sessionService.getSession).toHaveBeenCalledWith(
+        mockInitSession.id,
+      );
     });
   });
 
@@ -43,12 +52,15 @@ describe('InSessionCloudUserRepository', () => {
         name: 'new name',
       });
 
-      expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockInitSession.id, {
-        user: {
-          ...mockCloudSession.user,
-          name: 'new name',
+      expect(sessionService.updateSessionData).toHaveBeenCalledWith(
+        mockInitSession.id,
+        {
+          user: {
+            ...mockCloudSession.user,
+            name: 'new name',
+          },
         },
-      });
+      );
     });
     it('successfully update current user accounts (replace array data)', async () => {
       const account = {
@@ -60,12 +72,15 @@ describe('InSessionCloudUserRepository', () => {
         accounts: [account],
       });
 
-      expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockInitSession.id, {
-        user: {
-          ...mockCloudSession.user,
-          accounts: [account],
+      expect(sessionService.updateSessionData).toHaveBeenCalledWith(
+        mockInitSession.id,
+        {
+          user: {
+            ...mockCloudSession.user,
+            accounts: [account],
+          },
         },
-      });
+      );
     });
   });
 });

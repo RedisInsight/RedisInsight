@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
 import { PlainEncryptionStrategy } from 'src/modules/encryption/strategies/plain-encryption.strategy';
-import { EncryptionResult, EncryptionStrategy } from 'src/modules/encryption/models';
-import { IEncryptionStrategy } from 'src/modules/encryption/strategies/encryption-strategy.interface';
 import {
-  UnsupportedEncryptionStrategyException,
-} from 'src/modules/encryption/exceptions';
+  EncryptionResult,
+  EncryptionStrategy,
+} from 'src/modules/encryption/models';
+import { IEncryptionStrategy } from 'src/modules/encryption/strategies/encryption-strategy.interface';
+import { UnsupportedEncryptionStrategyException } from 'src/modules/encryption/exceptions';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { KeyEncryptionStrategy } from 'src/modules/encryption/strategies/key-encryption.strategy';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
@@ -25,9 +26,7 @@ export class EncryptionService {
    * It is needed for users to choose one and save it in the app settings
    */
   async getAvailableEncryptionStrategies(): Promise<string[]> {
-    const strategies = [
-      EncryptionStrategy.PLAIN,
-    ];
+    const strategies = [EncryptionStrategy.PLAIN];
 
     if (await this.keyEncryptionStrategy.isAvailable()) {
       strategies.push(EncryptionStrategy.KEY);

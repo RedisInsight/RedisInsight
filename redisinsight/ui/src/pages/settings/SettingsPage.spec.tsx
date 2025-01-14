@@ -13,8 +13,8 @@ jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
-      flag: false
-    }
+      flag: false,
+    },
   }),
 }))
 
@@ -31,7 +31,9 @@ describe('SettingsPage', () => {
   it('Accordion "Appearance" should render', () => {
     const { container } = render(<SettingsPage />)
 
-    expect(container.querySelector('[data-test-subj="accordion-appearance"]')).toBeInTheDocument()
+    expect(
+      container.querySelector('[data-test-subj="accordion-appearance"]'),
+    ).toBeInTheDocument()
     expect(render(<SettingsPage />)).toBeTruthy()
   })
 
@@ -39,7 +41,7 @@ describe('SettingsPage', () => {
     const { container } = render(<SettingsPage />)
 
     expect(
-      container.querySelector('[data-test-subj="accordion-privacy-settings"]')
+      container.querySelector('[data-test-subj="accordion-privacy-settings"]'),
     ).toBeInTheDocument()
     expect(render(<SettingsPage />)).toBeTruthy()
   })
@@ -48,7 +50,7 @@ describe('SettingsPage', () => {
     const { container } = render(<SettingsPage />)
 
     expect(
-      container.querySelector('[data-test-subj="accordion-advanced-settings"]')
+      container.querySelector('[data-test-subj="accordion-advanced-settings"]'),
     ).toBeInTheDocument()
     expect(render(<SettingsPage />)).toBeTruthy()
   })
@@ -57,7 +59,9 @@ describe('SettingsPage', () => {
     const { container } = render(<SettingsPage />)
 
     expect(
-      container.querySelector('[data-test-subj="accordion-workbench-settings"]')
+      container.querySelector(
+        '[data-test-subj="accordion-workbench-settings"]',
+      ),
     ).toBeInTheDocument()
     expect(render(<SettingsPage />)).toBeTruthy()
   })
@@ -66,21 +70,21 @@ describe('SettingsPage', () => {
     const { container } = render(<SettingsPage />)
 
     expect(
-      container.querySelector('[data-test-subj="accordion-cloud-settings"]')
+      container.querySelector('[data-test-subj="accordion-cloud-settings"]'),
     ).not.toBeInTheDocument()
     expect(render(<SettingsPage />)).toBeTruthy()
   })
 
   it('should render cloud accordion with feature flag', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       cloudSso: {
-        flag: true
-      }
+        flag: true,
+      },
     })
     const { container } = render(<SettingsPage />)
 
     expect(
-      container.querySelector('[data-test-subj="accordion-cloud-settings"]')
+      container.querySelector('[data-test-subj="accordion-cloud-settings"]'),
     ).toBeInTheDocument()
     expect(render(<SettingsPage />)).toBeTruthy()
   })

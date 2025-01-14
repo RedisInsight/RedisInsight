@@ -1,5 +1,9 @@
 import { cloneDeep } from 'lodash'
-import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { resourcesService } from 'uiSrc/services'
 import reducer, {
   initialState,
@@ -7,7 +11,7 @@ import reducer, {
   getContentSuccess,
   getContentFailure,
   contentSelector,
-  fetchContentAction
+  fetchContentAction,
 } from '../../content/create-redis-buttons'
 
 const MOCK_CONTENT = {
@@ -17,10 +21,10 @@ const MOCK_CONTENT = {
     links: {
       main: {
         altText: 'Try Redis Cloud.',
-        url: 'url'
-      }
+        url: 'url',
+      },
     },
-  }
+  },
 }
 let store: typeof mockedStore
 beforeEach(() => {
@@ -49,7 +53,7 @@ describe('slices', () => {
       const loading = true
       const state = {
         ...initialState,
-        loading
+        loading,
       }
 
       // Act
@@ -93,7 +97,7 @@ describe('slices', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
@@ -122,10 +126,7 @@ describe('slices', () => {
       await store.dispatch<any>(fetchContentAction())
 
       // Assert
-      const expectedActions = [
-        getContent(),
-        getContentSuccess(data),
-      ]
+      const expectedActions = [getContent(), getContentSuccess(data)]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
     })
@@ -145,10 +146,7 @@ describe('slices', () => {
       await store.dispatch<any>(fetchContentAction())
 
       // Assert
-      const expectedActions = [
-        getContent(),
-        getContentFailure(errorMessage),
-      ]
+      const expectedActions = [getContent(), getContentFailure(errorMessage)]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
     })

@@ -11,14 +11,16 @@ export class ClusterDetails {
 
   @ApiProperty({
     type: String,
-    description: 'Redis mode. Currently one of: standalone, cluster or sentinel',
+    description:
+      'Redis mode. Currently one of: standalone, cluster or sentinel',
     example: 'cluster',
   })
   mode: string;
 
   @ApiProperty({
     type: String,
-    description: 'Username from the connection or undefined in case when connected with default user',
+    description:
+      'Username from the connection or undefined in case when connected with default user',
     example: 'user1',
   })
   user?: string;
@@ -67,7 +69,8 @@ export class ClusterDetails {
 
   @ApiProperty({
     type: String,
-    description: 'Calculated from (16384 - cluster_slots_assigned from CLUSTER INFO command)',
+    description:
+      'Calculated from (16384 - cluster_slots_assigned from CLUSTER INFO command)',
     example: 0,
   })
   slotsUnassigned: number;
@@ -109,7 +112,8 @@ export class ClusterDetails {
 
   @ApiProperty({
     type: String,
-    description: 'All nodes number in the Cluster. cluster_known_nodes from CLUSTER INFO command',
+    description:
+      'All nodes number in the Cluster. cluster_known_nodes from CLUSTER INFO command',
     example: 9,
   })
   knownNodes: number;

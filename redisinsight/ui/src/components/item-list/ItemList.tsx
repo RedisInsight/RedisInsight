@@ -4,7 +4,7 @@ import {
   EuiTableFieldDataColumnType,
   EuiTableSelectionType,
   PropertySort,
-  EuiBasicTableProps
+  EuiBasicTableProps,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useRef, useState } from 'react'
@@ -44,9 +44,10 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   loading,
   data: instances,
   onTableChange,
-  sort
+  sort,
 }: Props<T>) {
-  const [columns, setColumns] = useState<EuiTableFieldDataColumnType<T>[]>(columnsProp)
+  const [columns, setColumns] =
+    useState<EuiTableFieldDataColumnType<T>[]>(columnsProp)
   const [selection, setSelection] = useState<T[]>([])
   const [message, setMessage] = useState<Maybe<string | JSX.Element>>(undefined)
 
@@ -88,7 +89,7 @@ function ItemList<T extends { id: string; visible?: boolean }>({
         <div className={styles.noResults}>
           <div className={styles.tableMsgTitle}>No results found</div>
           <div>No results matched your search. Try reducing the criteria.</div>
-        </div>
+        </div>,
       )
     }
   }, [instances, loading])
@@ -111,7 +112,9 @@ function ItemList<T extends { id: string; visible?: boolean }>({
         sum -= getColumnWidth(initialCol?.width)
         hiddenCols.current.add(colToHide)
         lastHiddenColumn.current = initialCol
-        resultsCol = resultsCol.map((item) => (item.field === colToHide ? hideColumn(item) : item))
+        resultsCol = resultsCol.map((item) =>
+          item.field === colToHide ? hideColumn(item) : item,
+        )
       }
 
       return resultsCol
@@ -126,18 +129,22 @@ function ItemList<T extends { id: string; visible?: boolean }>({
       }
 
       let resultsCol = [...cols]
-      Array.from(hiddenCols.current).reverse().forEach((hiddenCol) => {
-        const initialCol = findColumn(columnsProp, hiddenCol)
-        if (!initialCol) return
+      Array.from(hiddenCols.current)
+        .reverse()
+        .forEach((hiddenCol) => {
+          const initialCol = findColumn(columnsProp, hiddenCol)
+          if (!initialCol) return
 
-        const hiddenColWidth = getColumnWidth(initialCol.width)
-        if (hiddenColWidth + sum < offsetWidth) {
-          hiddenCols.current.delete(hiddenCol)
-          sum += hiddenColWidth
-          lastHiddenColumn.current = initialCol
-          resultsCol = resultsCol.map((item) => (item.field === hiddenCol ? initialCol : item))
-        }
-      })
+          const hiddenColWidth = getColumnWidth(initialCol.width)
+          if (hiddenColWidth + sum < offsetWidth) {
+            hiddenCols.current.delete(hiddenCol)
+            sum += hiddenColWidth
+            lastHiddenColumn.current = initialCol
+            resultsCol = resultsCol.map((item) =>
+              item.field === hiddenCol ? initialCol : item,
+            )
+          }
+        })
 
       return resultsCol
     }
@@ -146,10 +153,11 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   }
 
   const selectionValue: EuiTableSelectionType<T> = {
-    selectable: (item) => (getSelectableItems ? getSelectableItems?.(item) : true),
+    selectable: (item) =>
+      getSelectableItems ? getSelectableItems?.(item) : true,
     onSelectionChange: (selected: T[]) => {
       setSelection(selected)
-    }
+    },
   }
 
   const handleResetSelection = () => {
@@ -188,10 +196,7 @@ function ItemList<T extends { id: string; visible?: boolean }>({
         selection={selectionValue}
         onWheel={onWheel}
         onTableChange={onTableChange}
-        className={cx(
-          'stickyHeader',
-          styles.table
-        )}
+        className={cx('stickyHeader', styles.table)}
         isSelectable
       />
 
@@ -200,12 +205,18 @@ function ItemList<T extends { id: string; visible?: boolean }>({
           selectionCount={selection.length}
           onCloseActionBar={handleResetSelection}
           actions={[
-            !hideExport ? <ExportAction<T> selection={selection} onExport={handleExport} subTitle={actionMsg('exported')} /> : null,
+            !hideExport ? (
+              <ExportAction<T>
+                selection={selection}
+                onExport={handleExport}
+                subTitle={actionMsg('exported')}
+              />
+            ) : null,
             <DeleteAction<T>
               selection={selection}
               onDelete={handleDelete}
               subTitle={actionMsg('deleted')}
-            />
+            />,
           ]}
           width={width}
         />

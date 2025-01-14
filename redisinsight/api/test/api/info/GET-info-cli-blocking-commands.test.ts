@@ -1,16 +1,10 @@
-import {
-  describe,
-  it,
-  deps,
-  Joi,
-  validateApiCall,
-} from '../deps';
+import { describe, it, deps, Joi, validateApiCall } from '../deps';
 const { server, request } = deps;
 
 // endpoint to test
 const endpoint = () => request(server).get('/info/cli-blocking-commands');
 
-const responseSchema = Joi.array().items(Joi.string())
+const responseSchema = Joi.array().items(Joi.string());
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -35,7 +29,7 @@ describe('GET /info/cli-blocking-commands', () => {
         'bzpopmin',
         'bzpopmax',
         'xread',
-        'xreadgroup'
+        'xreadgroup',
       ],
     },
   ].map(mainCheckFn);

@@ -2,7 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsBoolean,
-  IsDefined, IsEnum, IsInt, IsNotEmpty, IsString,
+  IsDefined,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsString,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';

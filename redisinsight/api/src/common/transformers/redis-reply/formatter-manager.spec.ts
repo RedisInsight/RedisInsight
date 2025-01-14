@@ -14,9 +14,7 @@ describe('FormatterManager', () => {
       providers: [FormatterManager],
     }).compile();
 
-    formatter = module.get<FormatterManager>(
-      FormatterManager,
-    );
+    formatter = module.get<FormatterManager>(FormatterManager);
   });
   it('Should throw error if no strategy', () => {
     try {
@@ -32,12 +30,9 @@ describe('FormatterManager', () => {
     expect(formatter.getStrategy(strategyName)).toEqual(testStrategy);
   });
   it('Should support TextFormatter strategy', () => {
-    formatter.addStrategy(
-      FormatterTypes.UTF8,
-      new UTF8FormatterStrategy(),
+    formatter.addStrategy(FormatterTypes.UTF8, new UTF8FormatterStrategy());
+    expect(formatter.getStrategy(FormatterTypes.UTF8)).toBeInstanceOf(
+      UTF8FormatterStrategy,
     );
-    expect(
-      formatter.getStrategy(FormatterTypes.UTF8),
-    ).toBeInstanceOf(UTF8FormatterStrategy);
   });
 });

@@ -1,4 +1,10 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiTextColor } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiSpacer,
+  EuiTextColor,
+} from '@elastic/eui'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -13,25 +19,25 @@ export interface Props {
   onClose?: () => void
 }
 
-const CloudCapiUnAuthorizedErrorContent = (
-  {
-    text,
-    onClose = () => {},
-    resourceId,
-  }: Props
-) => {
+const CloudCapiUnAuthorizedErrorContent = ({
+  text,
+  onClose = () => {},
+  resourceId,
+}: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
   const handleRemoveCapi = () => {
-    dispatch(removeCapiKeyAction({ id: resourceId, name: 'Api Key' }, () => {
-      sendEventTelemetry({
-        event: TelemetryEvent.CLOUD_API_KEY_REMOVED,
-        eventData: {
-          source: OAuthSocialSource.ConfirmationMessage
-        }
-      })
-    }))
+    dispatch(
+      removeCapiKeyAction({ id: resourceId, name: 'Api Key' }, () => {
+        sendEventTelemetry({
+          event: TelemetryEvent.CLOUD_API_KEY_REMOVED,
+          eventData: {
+            source: OAuthSocialSource.ConfirmationMessage,
+          },
+        })
+      }),
+    )
     onClose?.()
   }
 

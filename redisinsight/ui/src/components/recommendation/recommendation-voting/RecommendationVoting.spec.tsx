@@ -36,28 +36,37 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   userSettingsConfigSelector: jest.fn().mockReturnValue({
     agreements: {
       analytics: true,
-    }
+    },
   }),
 }))
 
 describe('RecommendationVoting', () => {
   it('should render', () => {
-    expect(render(<RecommendationVoting {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<RecommendationVoting {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
   it('should render popover after click "not-useful-vote-btn"', async () => {
     render(<RecommendationVoting {...instance(mockedProps)} />)
 
-    expect(document.querySelector('[data-test-subj="github-repo-link"]')).not.toBeInTheDocument()
+    expect(
+      document.querySelector('[data-test-subj="github-repo-link"]'),
+    ).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByTestId('not useful-vote-btn'))
     await waitForEuiPopoverVisible()
 
-    expect(document.querySelector('[data-test-subj="github-repo-link"]')).toHaveAttribute('href', 'https://github.com/RedisInsight/RedisInsight/issues/new/choose')
+    expect(
+      document.querySelector('[data-test-subj="github-repo-link"]'),
+    ).toHaveAttribute(
+      'href',
+      'https://github.com/RedisInsight/RedisInsight/issues/new/choose',
+    )
   })
 
   it('should render proper popover and btn should be disabled"', async () => {
-    (userSettingsConfigSelector as jest.Mock).mockImplementation(() => ({
+    ;(userSettingsConfigSelector as jest.Mock).mockImplementation(() => ({
       agreements: {
         analytics: false,
       },
@@ -69,7 +78,9 @@ describe('RecommendationVoting', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('not useful-vote-tooltip')).toHaveTextContent('Enable Analytics on the Settings page to vote for a tip')
+    expect(screen.getByTestId('not useful-vote-tooltip')).toHaveTextContent(
+      'Enable Analytics on the Settings page to vote for a tip',
+    )
     expect(screen.getByTestId('not useful-vote-btn')).toBeDisabled()
   })
 })

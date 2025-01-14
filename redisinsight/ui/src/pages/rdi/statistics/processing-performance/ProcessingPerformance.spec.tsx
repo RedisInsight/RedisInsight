@@ -21,9 +21,7 @@ const mockedProps = {
 
 describe('ProcessingPerformance', () => {
   it('renders the processing performance information correctly', () => {
-    render(
-      <ProcessingPerformance {...mockedProps} />
-    )
+    render(<ProcessingPerformance {...mockedProps} />)
 
     expect(screen.getByText('Total batches')).toBeInTheDocument()
     expect(screen.getByText('Batch size average')).toBeInTheDocument()

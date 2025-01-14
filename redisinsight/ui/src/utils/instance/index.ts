@@ -4,6 +4,4 @@ export * from './instanceModules'
 export * from './instanceOptions'
 export * from './instanceNavigation'
 
-export {
-  getUrl
-}
+export { getUrl }

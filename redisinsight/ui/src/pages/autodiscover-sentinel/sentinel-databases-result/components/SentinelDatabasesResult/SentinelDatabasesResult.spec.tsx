@@ -44,8 +44,8 @@ describe('SentinelDatabasesResult', () => {
           {...instance(mockedProps)}
           columns={columnsMock}
           masters={mastersMock}
-        />
-      )
+        />,
+      ),
     ).toBeTruthy()
   })
 
@@ -55,7 +55,7 @@ describe('SentinelDatabasesResult', () => {
         {...instance(mockedProps)}
         columns={columnsMock}
         masters={mastersMock}
-      />
+      />,
     )
     expect(screen.getByTestId(/search/i)).toBeTruthy()
   })
@@ -66,7 +66,7 @@ describe('SentinelDatabasesResult', () => {
         {...instance(mockedProps)}
         columns={columnsMock}
         masters={mastersMock}
-      />
+      />,
     )
     const searchInput = screen.getByTestId(/search/i)
 
@@ -83,7 +83,7 @@ describe('SentinelDatabasesResult', () => {
         {...instance(mockedProps)}
         columns={columnsMock}
         masters={mastersMock}
-      />
+      />,
     )
     const searchQuery = 'mymaster2'
     const searchInput = screen.getByTestId(/search/i)

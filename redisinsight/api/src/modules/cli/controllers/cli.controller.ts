@@ -60,7 +60,7 @@ export class CliController {
   })
   async sendCommand(
     @CliClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: SendCommandDto,
+    @Body() dto: SendCommandDto,
   ): Promise<SendCommandResponse> {
     return this.service.sendCommand(clientMetadata, dto);
   }
@@ -81,7 +81,7 @@ export class CliController {
   })
   async sendClusterCommand(
     @CliClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: SendCommandDto,
+    @Body() dto: SendCommandDto,
   ): Promise<SendCommandResponse> {
     return this.service.sendCommand(clientMetadata, dto);
   }

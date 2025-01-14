@@ -11,7 +11,8 @@ import {
   replaceEmptyValue,
   removeDeprecatedModuleCommands,
   checkDeprecatedModuleCommand,
-  checkDeprecatedCommandGroup, getUnsupportedModulesFromQuery,
+  checkDeprecatedCommandGroup,
+  getUnsupportedModulesFromQuery,
 } from 'uiSrc/utils'
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import { render, screen } from 'uiSrc/utils/test-utils'
@@ -25,8 +26,8 @@ const getDbIndexFromSelectQueryTests = [
   { input: 'SeLeCt 10', expected: 10 },
   { input: 'select "1"', expected: 1 },
   { input: '   select "1"   ', expected: 1 },
-  { input: 'select \'1\'', expected: 1 },
-  { input: 'select \'1\'', expected: 1 },
+  { input: "select '1'", expected: 1 },
+  { input: "select '1'", expected: 1 },
   { input: 'info', expected: new Error('Invalid command') },
   { input: 'select "1 1231"', expected: new Error('Parsing error') },
   { input: 'select abc', expected: new Error('Parsing error') },
@@ -69,23 +70,51 @@ const getCommandNameFromQueryTests = [
   { input: ['  SET       foo bar', MOCK_COMMANDS_SPEC], expected: 'SET' },
   { input: ['client kill 1', MOCK_COMMANDS_SPEC], expected: 'client kill' },
   { input: ['client kill 1', {}], expected: 'client' },
-  { input: ['custom.command foo bar', MOCK_COMMANDS_SPEC], expected: 'custom.command' },
-  { input: ['FT._LIST', MOCK_COMMANDS_SPEC], expected: 'FT._LIST' },
-  { input: [`${' '.repeat(20)} CLIENT ${' '.repeat(100)} KILL`, MOCK_COMMANDS_SPEC], expected: 'CLIENT' },
   {
-    input: [`${' '.repeat(20)} CLIENT ${' '.repeat(100)} KILL`, MOCK_COMMANDS_SPEC, 500],
-    expected: 'CLIENT KILL'
+    input: ['custom.command foo bar', MOCK_COMMANDS_SPEC],
+    expected: 'custom.command',
+  },
+  { input: ['FT._LIST', MOCK_COMMANDS_SPEC], expected: 'FT._LIST' },
+  {
+    input: [
+      `${' '.repeat(20)} CLIENT ${' '.repeat(100)} KILL`,
+      MOCK_COMMANDS_SPEC,
+    ],
+    expected: 'CLIENT',
+  },
+  {
+    input: [
+      `${' '.repeat(20)} CLIENT ${' '.repeat(100)} KILL`,
+      MOCK_COMMANDS_SPEC,
+      500,
+    ],
+    expected: 'CLIENT KILL',
   },
   { input: [1], expected: undefined },
 ]
 
 const checkUnsupportedModuleCommandTests = [
   { input: [[], 'FT.foo bar'], expected: RedisDefaultModules.Search },
-  { input: [[{ name: RedisDefaultModules.Search }], 'foo bar'], expected: null },
-  { input: [[{ name: RedisDefaultModules.Search }], 'ft.foo bar'], expected: null },
-  { input: [[{ name: RedisDefaultModules.SearchLight }], 'ft.foo bar'], expected: null },
-  { input: [[{ name: RedisDefaultModules.FT }], ' FT.foo bar'], expected: null },
-  { input: [[{ name: RedisDefaultModules.FTL }], '  ft.foo bar'], expected: null },
+  {
+    input: [[{ name: RedisDefaultModules.Search }], 'foo bar'],
+    expected: null,
+  },
+  {
+    input: [[{ name: RedisDefaultModules.Search }], 'ft.foo bar'],
+    expected: null,
+  },
+  {
+    input: [[{ name: RedisDefaultModules.SearchLight }], 'ft.foo bar'],
+    expected: null,
+  },
+  {
+    input: [[{ name: RedisDefaultModules.FT }], ' FT.foo bar'],
+    expected: null,
+  },
+  {
+    input: [[{ name: RedisDefaultModules.FTL }], '  ft.foo bar'],
+    expected: null,
+  },
 ]
 
 const checkCommandModuleTests = [
@@ -123,7 +152,10 @@ const checkDeprecatedModuleCommandTests = [
 const removeDeprecatedModuleCommandsTests = [
   { input: ['FT.foo'], expected: ['FT.foo'] },
   { input: ['GRAPH.foo', 'FT.foo'], expected: ['FT.foo'] },
-  { input: ['FOO', 'GRAPH.FOO', 'CF.FOO', 'GRAPH.BAR'], expected: ['FOO', 'CF.FOO'] },
+  {
+    input: ['FOO', 'GRAPH.FOO', 'CF.FOO', 'GRAPH.BAR'],
+    expected: ['FOO', 'CF.FOO'],
+  },
 ]
 
 const checkDeprecatedCommandGroupTests = [
@@ -156,7 +188,7 @@ const checkDeprecatedCommandGroupTests = [
 ]
 
 const getUnsupportedModulesFromQueryTests: Array<{
-  input: [Array<any>, string],
+  input: [Array<any>, string]
   expected: Set<string>
 }> = [
   { input: [[], 'ft.info'], expected: new Set(['search']) },
@@ -176,14 +208,16 @@ describe('cliParseCommandsGroupResult success status', () => {
   const mockResult = {
     command: 'command',
     response: 'response',
-    status: CommandExecutionStatus.Success
+    status: CommandExecutionStatus.Success,
   }
   const parsedResult = cliParseCommandsGroupResult(mockResult)
   render(parsedResult)
 
   expect(screen.queryByTestId('wb-command')).toBeInTheDocument()
   expect(screen.getByText('> command')).toBeInTheDocument()
-  expect(screen.queryByTestId(`${CliPrefix.Cli}-output-response-fail`)).not.toBeInTheDocument()
+  expect(
+    screen.queryByTestId(`${CliPrefix.Cli}-output-response-fail`),
+  ).not.toBeInTheDocument()
   expect(parsedResult[1]).toEqual('"response"')
 })
 
@@ -191,11 +225,13 @@ describe('cliParseCommandsGroupResult error status', () => {
   const mockResult = {
     command: 'command',
     response: 'response',
-    status: CommandExecutionStatus.Fail
+    status: CommandExecutionStatus.Fail,
   }
   render(cliParseCommandsGroupResult(mockResult))
 
-  expect(screen.queryByTestId(`${CliPrefix.Cli}-output-response-fail`)).toBeInTheDocument()
+  expect(
+    screen.queryByTestId(`${CliPrefix.Cli}-output-response-fail`),
+  ).toBeInTheDocument()
 })
 
 const wbSummaryCommandTests: any[] = [
@@ -207,11 +243,13 @@ const wbSummaryCommandTests: any[] = [
 ]
 
 describe('wbSummaryCommand', () => {
-  it.each(wbSummaryCommandTests)('for input: %s (command), should be output: %s',
+  it.each(wbSummaryCommandTests)(
+    'for input: %s (command), should be output: %s',
     (command, db, expected) => {
       const { container } = render(wbSummaryCommand(command, db))
       expect(container).toHaveTextContent(expected)
-    })
+    },
+  )
 })
 
 describe('checkUnsupportedModuleCommand', () => {
@@ -248,9 +286,12 @@ describe('checkDeprecatedModuleCommand', () => {
 })
 
 describe('removeDeprecatedModuleCommands', () => {
-  test.each(removeDeprecatedModuleCommandsTests)('%j', ({ input, expected }) => {
-    expect(removeDeprecatedModuleCommands(input)).toEqual(expected)
-  })
+  test.each(removeDeprecatedModuleCommandsTests)(
+    '%j',
+    ({ input, expected }) => {
+      expect(removeDeprecatedModuleCommands(input)).toEqual(expected)
+    },
+  )
 })
 
 describe('checkDeprecatedCommandGroup', () => {
@@ -260,7 +301,10 @@ describe('checkDeprecatedCommandGroup', () => {
 })
 
 describe('getUnsupportedModulesFromQuery', () => {
-  test.each(getUnsupportedModulesFromQueryTests)('%j', ({ input, expected }) => {
-    expect(getUnsupportedModulesFromQuery(...input)).toEqual(expected)
-  })
+  test.each(getUnsupportedModulesFromQueryTests)(
+    '%j',
+    ({ input, expected }) => {
+      expect(getUnsupportedModulesFromQuery(...input)).toEqual(expected)
+    },
+  )
 })

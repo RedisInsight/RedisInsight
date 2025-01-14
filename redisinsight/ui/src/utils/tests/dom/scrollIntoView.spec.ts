@@ -22,7 +22,9 @@ describe('scrollIntoView', () => {
       block: 'nearest',
     }
 
-    Object.defineProperty(global.document.documentElement, 'style', { value: {} })
+    Object.defineProperty(global.document.documentElement, 'style', {
+      value: {},
+    })
     const newDiv = document.createElement('div')
     newDiv.scrollIntoView = mockScrollIntoView
     scrollIntoView(newDiv, opts)

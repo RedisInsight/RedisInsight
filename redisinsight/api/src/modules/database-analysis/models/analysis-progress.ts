@@ -19,7 +19,8 @@ export class AnalysisProgress {
   scanned: number = 0;
 
   @ApiProperty({
-    description: 'Total keys processed for entire database. (Filtered keys returned by scan command)',
+    description:
+      'Total keys processed for entire database. (Filtered keys returned by scan command)',
     type: Number,
     example: 5_000,
   })

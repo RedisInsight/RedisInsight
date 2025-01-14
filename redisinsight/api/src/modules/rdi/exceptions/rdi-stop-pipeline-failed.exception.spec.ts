@@ -20,7 +20,9 @@ describe('RdiStopPipelineFailedException', () => {
   it('should create an exception with custom message and error', () => {
     const customMessage = 'Custom error message';
     const customError = 'Custom error';
-    const exception = new RdiStopPipelineFailedException(customMessage, { error: customError });
+    const exception = new RdiStopPipelineFailedException(customMessage, {
+      error: customError,
+    });
     expect(exception.message).toEqual(customMessage);
     expect(exception.getStatus()).toEqual(HttpStatus.BAD_REQUEST);
     expect(exception.getResponse()).toEqual({

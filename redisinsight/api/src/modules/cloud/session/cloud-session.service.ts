@@ -37,12 +37,19 @@ export class CloudSessionService {
   async updateSessionData(id: string, cloud: any): Promise<CloudSession> {
     const session = await this.getSession(id);
 
-    const cloudSession = (await this.sessionService.updateSessionData(id, {
-      cloud: plainToClass(CloudSession, {
-        ...classToPlain(session, { groups: [TransformGroup.Secure] }),
-        ...classToPlain(cloud, { groups: [TransformGroup.Secure] }),
-      }, { groups: [TransformGroup.Secure] }),
-    }))?.data?.cloud || null;
+    const cloudSession =
+      (
+        await this.sessionService.updateSessionData(id, {
+          cloud: plainToClass(
+            CloudSession,
+            {
+              ...classToPlain(session, { groups: [TransformGroup.Secure] }),
+              ...classToPlain(cloud, { groups: [TransformGroup.Secure] }),
+            },
+            { groups: [TransformGroup.Secure] },
+          ),
+        })
+      )?.data?.cloud || null;
 
     if (cloudSession && cloud?.refreshToken && cloud?.idpType) {
       try {

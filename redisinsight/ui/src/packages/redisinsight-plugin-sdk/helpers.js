@@ -4,10 +4,10 @@
  * @param data
  */
 export const sendMessageToMain = (data = {}) => {
-  const event = document.createEvent('Event')
-  event.initEvent('message', true, true)
-  event.data = data
-  event.origin = '*'
+  const event = document.createEvent('Event');
+  event.initEvent('message', true, true);
+  event.data = data;
+  event.origin = '*';
   // eslint-disable-next-line no-restricted-globals
-  parent.dispatchEvent(event)
-}
+  parent.dispatchEvent(event);
+};

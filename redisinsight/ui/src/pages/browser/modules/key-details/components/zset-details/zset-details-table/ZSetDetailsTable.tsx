@@ -4,7 +4,10 @@ import { toNumber, isNumber } from 'lodash'
 import cx from 'classnames'
 import { EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
-import { appContextBrowserKeyDetails, updateKeyDetailsSizes } from 'uiSrc/slices/app/context'
+import {
+  appContextBrowserKeyDetails,
+  updateKeyDetailsSizes,
+} from 'uiSrc/slices/app/context'
 
 import {
   zsetSelector,
@@ -17,7 +20,13 @@ import {
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
 } from 'uiSrc/slices/browser/zset'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, SortOrder, TEXT_FAILED_CONVENT_FORMATTER, TableCellAlignment } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  OVER_RENDER_BUFFER_COUNT,
+  SortOrder,
+  TEXT_FAILED_CONVENT_FORMATTER,
+  TableCellAlignment,
+} from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
@@ -25,7 +34,7 @@ import {
   selectedKeyDataSelector,
   keysSelector,
   selectedKeySelector,
-  setSelectedKeyRefreshDisabled
+  setSelectedKeyRefreshDisabled,
 } from 'uiSrc/slices/browser/keys'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { ZsetMember } from 'uiSrc/slices/interfaces/zset'
@@ -37,18 +46,33 @@ import {
   formatLongName,
   formattingBuffer,
   isEqualBuffers,
-  validateScoreNumber
+  validateScoreNumber,
 } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
+import {
+  sendEventTelemetry,
+  TelemetryEvent,
+  getBasedOnViewTypeEvent,
+  getMatchType,
+} from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
-import { IColumnSearchState, ITableColumn, RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
+import {
+  IColumnSearchState,
+  ITableColumn,
+  RelativeWidthSizes,
+} from 'uiSrc/components/virtual-table/interfaces'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
-import { EditableInput, FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
+import {
+  EditableInput,
+  FormattedValue,
+} from 'uiSrc/pages/browser/modules/key-details/shared'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/z-set/dto'
+import {
+  AddMembersToZSetDto,
+  SearchZSetMembersResponse,
+} from 'apiSrc/modules/browser/z-set/dto'
 
 import styles from './styles.module.scss'
 
@@ -62,7 +86,7 @@ const cellCache = new CellMeasurerCache({
 })
 
 interface IZsetMember extends ZsetMember {
-  editing: boolean;
+  editing: boolean
 }
 
 export interface Props {
@@ -75,12 +99,22 @@ const ZSetDetailsTable = (props: Props) => {
   const { loading, searching } = useSelector(zsetSelector)
   const { loading: updateLoading } = useSelector(updateZsetScoreStateSelector)
   const [sortedColumnOrder, setSortedColumnOrder] = useState(SortOrder.ASC)
-  const { name: key, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
-  const { total, nextCursor, members: loadedMembers } = useSelector(zsetDataSelector)
-  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
+  const { name: key, length } = useSelector(selectedKeyDataSelector) ?? {
+    name: '',
+  }
+  const {
+    total,
+    nextCursor,
+    members: loadedMembers,
+  } = useSelector(zsetDataSelector)
+  const { id: instanceId, compressor = null } = useSelector(
+    connectedInstanceSelector,
+  )
   const { viewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
-  const { [KeyTypes.ZSet]: ZSetSizes } = useSelector(appContextBrowserKeyDetails)
+  const { [KeyTypes.ZSet]: ZSetSizes } = useSelector(
+    appContextBrowserKeyDetails,
+  )
 
   const [match, setMatch] = useState<string>('')
   const [deleting, setDeleting] = useState('')
@@ -139,13 +173,13 @@ const ZSetDetailsTable = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED,
       ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.ZSet,
         numberOfRemoved: 1,
-      }
+      },
     })
   }
 
@@ -154,7 +188,11 @@ const ZSetDetailsTable = (props: Props) => {
     closePopover()
   }
 
-  const handleEditMember = (name: RedisResponseBuffer, editing: boolean, index?: number) => {
+  const handleEditMember = (
+    name: RedisResponseBuffer,
+    editing: boolean,
+    index?: number,
+  ) => {
     const newMemberState = members.map((item) => {
       if (isEqualBuffers(item.name, name)) {
         return { ...item, editing }
@@ -167,20 +205,20 @@ const ZSetDetailsTable = (props: Props) => {
     clearCache(index)
   }
 
-  const handleApplyEditScore = (name: RedisResponseBuffer, score: string = '') => {
+  const handleApplyEditScore = (
+    name: RedisResponseBuffer,
+    score: string = '',
+  ) => {
     const data: AddMembersToZSetDto = {
       keyName: key,
-      members: [{
-        name,
-        score: toNumber(score),
-      }]
+      members: [
+        {
+          name,
+          score: toNumber(score),
+        },
+      ],
     }
-    dispatch(
-      updateZSetMembers(
-        data,
-        () => handleEditMember(name, false)
-      )
-    )
+    dispatch(updateZSetMembers(data, () => handleEditMember(name, false)))
   }
 
   const handleRemoveIconClick = () => {
@@ -188,18 +226,20 @@ const ZSetDetailsTable = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED,
       ),
       eventData: {
         databaseId: instanceId,
-        keyType: KeyTypes.ZSet
-      }
+        keyType: KeyTypes.ZSet,
+      },
     })
   }
 
   const handleSearch = (search: IColumnSearchState[]) => {
     const fieldColumn = search.find((column) => column.id === 'name')
-    if (!fieldColumn) { return }
+    if (!fieldColumn) {
+      return
+    }
 
     const { value: match } = fieldColumn
     const onSuccess = (data: SearchZSetMembersResponse) => {
@@ -208,25 +248,23 @@ const ZSetDetailsTable = (props: Props) => {
         event: getBasedOnViewTypeEvent(
           viewType,
           TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
-          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED,
         ),
         eventData: {
           databaseId: instanceId,
           keyType: KeyTypes.ZSet,
           match: matchValue,
           length: data.total,
-        }
+        },
       })
     }
     setMatch(match)
     if (match === '') {
-      dispatch(
-        fetchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, sortedColumnOrder)
-      )
+      dispatch(fetchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, sortedColumnOrder))
       return
     }
     dispatch(
-      fetchSearchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, match, onSuccess)
+      fetchSearchZSetMembers(key, 0, SCAN_COUNT_DEFAULT, match, onSuccess),
     )
   }
 
@@ -244,20 +282,22 @@ const ZSetDetailsTable = (props: Props) => {
         keyType: KeyTypes.ZSet,
         databaseId: instanceId,
         largestCellLength: members[rowIndex]?.name?.length || 0,
-      }
+      },
     })
 
     cellCache.clearAll()
   }
 
   const onColResizeEnd = (sizes: RelativeWidthSizes) => {
-    dispatch(updateKeyDetailsSizes({
-      type: KeyTypes.ZSet,
-      sizes
-    }))
+    dispatch(
+      updateKeyDetailsSizes({
+        type: KeyTypes.ZSet,
+        sizes,
+      }),
+    )
   }
 
-  const columns:ITableColumn[] = [
+  const columns: ITableColumn[] = [
     {
       id: 'name',
       label: 'Member',
@@ -271,14 +311,33 @@ const ZSetDetailsTable = (props: Props) => {
       alignment: TableCellAlignment.Left,
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
-      render: function Name(_name: string, { name: nameItem }: IZsetMember, expanded?: boolean) {
-        const { value: decompressedNameItem } = decompressingBuffer(nameItem, compressor)
+      render: function Name(
+        _name: string,
+        { name: nameItem }: IZsetMember,
+        expanded?: boolean,
+      ) {
+        const { value: decompressedNameItem } = decompressingBuffer(
+          nameItem,
+          compressor,
+        )
         const name = bufferToString(nameItem)
-        const { value, isValid } = formattingBuffer(decompressedNameItem, viewFormat, { expanded })
-        const tooltipContent = createTooltipContent(value, decompressedNameItem, viewFormat)
+        const { value, isValid } = formattingBuffer(
+          decompressedNameItem,
+          viewFormat,
+          { expanded },
+        )
+        const tooltipContent = createTooltipContent(
+          value,
+          decompressedNameItem,
+          viewFormat,
+        )
 
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
+          <EuiText
+            color="subdued"
+            size="s"
+            style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}
+          >
             <div
               style={{ display: 'flex' }}
               data-testid={`zset-member-value-${name}`}
@@ -286,7 +345,11 @@ const ZSetDetailsTable = (props: Props) => {
               <FormattedValue
                 value={value}
                 expanded={expanded}
-                title={isValid ? 'Member' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                title={
+                  isValid
+                    ? 'Member'
+                    : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)
+                }
                 tooltipContent={tooltipContent}
               />
             </div>
@@ -305,11 +368,13 @@ const ZSetDetailsTable = (props: Props) => {
         _name: string,
         { name: nameItem, score, editing }: IZsetMember,
         expanded?: boolean,
-        rowIndex?: number
+        rowIndex?: number,
       ) {
         const cellContent = score.toString().substring(0, 200)
         const tooltipContent = formatLongName(score.toString())
-        const editToolTipContent = !isNumber(score) ? 'Use CLI or Workbench to edit the score' : null
+        const editToolTipContent = !isNumber(score)
+          ? 'Use CLI or Workbench to edit the score'
+          : null
 
         return (
           <EditableInput
@@ -319,7 +384,9 @@ const ZSetDetailsTable = (props: Props) => {
             editToolTipContent={editToolTipContent}
             isEditing={editing}
             isEditDisabled={updateLoading || !isNumber(score)}
-            onEdit={(value: boolean) => handleEditMember(nameItem, value, rowIndex)}
+            onEdit={(value: boolean) =>
+              handleEditMember(nameItem, value, rowIndex)
+            }
             onDecline={() => handleEditMember(nameItem, false, rowIndex)}
             onApply={(value) => handleApplyEditScore(nameItem, value)}
             validation={validateScoreNumber}
@@ -341,7 +408,7 @@ const ZSetDetailsTable = (props: Props) => {
             </div>
           </EditableInput>
         )
-      }
+      },
     },
     {
       id: 'actions',
@@ -369,7 +436,9 @@ const ZSetDetailsTable = (props: Props) => {
                 handleDeleteItem={handleDeleteMember}
                 handleButtonClick={handleRemoveIconClick}
                 testid={`zset-remove-button-${name}`}
-                appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Member') : null}
+                appendInfo={
+                  length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Member') : null
+                }
               />
             </div>
           </StopPropagation>
@@ -392,19 +461,14 @@ const ZSetDetailsTable = (props: Props) => {
           key,
           startIndex,
           stopIndex - startIndex + 1,
-          sortedColumnOrder
-        )
+          sortedColumnOrder,
+        ),
       )
       return
     }
     if (nextCursor !== 0) {
       dispatch(
-        fetchSearchMoreZSetMembers(
-          key,
-          nextCursor,
-          SCAN_COUNT_DEFAULT,
-          match
-        )
+        fetchSearchMoreZSetMembers(key, nextCursor, SCAN_COUNT_DEFAULT, match),
       )
     }
   }
@@ -443,7 +507,7 @@ const ZSetDetailsTable = (props: Props) => {
           onChangeWidth={setWidth}
           columns={columns.map((column, i, arr) => ({
             ...column,
-            width: getColumnWidth(i, width, arr)
+            width: getColumnWidth(i, width, arr),
           }))}
           footerHeight={0}
           loadMoreItems={loadMoreItems}

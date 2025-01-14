@@ -19,16 +19,13 @@ const CreateCloud = () => {
     sendEventTelemetry({
       event: HELP_LINKS.cloud.event,
       eventData: {
-        source: OAuthSocialSource.NavigationMenu
-      }
+        source: OAuthSocialSource.NavigationMenu,
+      },
     })
   }
 
   return (
-    <EuiToolTip
-      content="Create FREE Redis Cloud database"
-      position="right"
-    >
+    <EuiToolTip content="Create FREE Redis Cloud database" position="right">
       <span className={cx(styles.iconNavItem)}>
         <OAuthSsoHandlerDialog>
           {(ssoCloudHandlerClick, isSSOEnabled) => (
@@ -36,11 +33,15 @@ const CreateCloud = () => {
               external={false}
               onClick={(e) => {
                 onCLickLink(isSSOEnabled)
-                ssoCloudHandlerClick(e,
-                  { source: OAuthSocialSource.NavigationMenu, action: OAuthSocialAction.Create })
+                ssoCloudHandlerClick(e, {
+                  source: OAuthSocialSource.NavigationMenu,
+                  action: OAuthSocialAction.Create,
+                })
               }}
               className={styles.cloudLink}
-              href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: 'navigation_menu' })}
+              href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
+                campaign: 'navigation_menu',
+              })}
               target="_blank"
               data-test-subj="create-cloud-nav-link"
             >

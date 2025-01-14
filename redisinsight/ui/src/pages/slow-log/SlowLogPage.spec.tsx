@@ -20,7 +20,7 @@ const mockedData = [
     durationUs: 56,
     args: 'info',
     source: '0.0.0.1:50834',
-    client: 'redisinsight-common-0'
+    client: 'redisinsight-common-0',
   },
   {
     id: 1,
@@ -28,8 +28,8 @@ const mockedData = [
     durationUs: 11,
     args: 'config get slowlog*',
     source: '0.0.0.1:50834',
-    client: 'redisinsight-common-0'
-  }
+    client: 'redisinsight-common-0',
+  },
 ]
 
 /**
@@ -43,7 +43,7 @@ describe('SlowLogPage', () => {
   })
 
   it('should render empty slow log with empty data', () => {
-    (slowLogSelector as jest.Mock).mockImplementation(() => ({
+    ;(slowLogSelector as jest.Mock).mockImplementation(() => ({
       data: [],
       config: null,
       loading: false,
@@ -54,7 +54,7 @@ describe('SlowLogPage', () => {
   })
 
   it('should render slow log table with mocked data', () => {
-    (slowLogSelector as jest.Mock).mockImplementation(() => ({
+    ;(slowLogSelector as jest.Mock).mockImplementation(() => ({
       data: mockedData,
       config: null,
       loading: false,

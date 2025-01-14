@@ -30,16 +30,16 @@ export class ConvAiProvider {
     }
   }
 
-  async getHistory(sessionMetadata: SessionMetadata, chatId: string): Promise<object[]> {
+  async getHistory(
+    sessionMetadata: SessionMetadata,
+    chatId: string,
+  ): Promise<object[]> {
     try {
-      const { data } = await this.api.get(
-        '/history',
-        {
-          headers: {
-            'session-id': chatId,
-          },
+      const { data } = await this.api.get('/history', {
+        headers: {
+          'session-id': chatId,
         },
-      );
+      });
 
       return data;
     } catch (e) {
@@ -47,7 +47,11 @@ export class ConvAiProvider {
     }
   }
 
-  async postMessage(sessionMetadata: SessionMetadata, chatId: string, message: string): Promise<Stream> {
+  async postMessage(
+    sessionMetadata: SessionMetadata,
+    chatId: string,
+    message: string,
+  ): Promise<Stream> {
     try {
       const { data } = await this.api.post(
         '/chat',

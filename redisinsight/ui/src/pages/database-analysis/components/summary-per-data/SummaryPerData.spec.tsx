@@ -11,102 +11,106 @@ const mockData = {
     types: [
       {
         type: 'hash',
-        total: 18
+        total: 18,
       },
       {
         type: 'TSDB-TYPE',
-        total: 11
+        total: 11,
       },
       {
         type: 'string',
-        total: 10
+        total: 10,
       },
       {
         type: 'list',
-        total: 9
+        total: 9,
       },
       {
         type: 'stream',
-        total: 8
+        total: 8,
       },
       {
         type: 'zset',
-        total: 8
+        total: 8,
       },
       {
         type: 'set',
-        total: 7
+        total: 7,
       },
       {
         type: 'graphdata',
-        total: 2
+        total: 2,
       },
       {
         type: 'ReJSON-RL',
-        total: 1
+        total: 1,
       },
       {
         type: 'MBbloom--',
-        total: 1
-      }
-    ]
+        total: 1,
+      },
+    ],
   },
   totalKeys: {
     total: 1168424,
     types: [
       {
         type: 'hash',
-        total: 572813
+        total: 572813,
       },
       {
         type: 'zset',
-        total: 233571
+        total: 233571,
       },
       {
         type: 'set',
-        total: 138184
+        total: 138184,
       },
       {
         type: 'list',
-        total: 95886
+        total: 95886,
       },
       {
         type: 'stream',
-        total: 79532
+        total: 79532,
       },
       {
         type: 'TSDB-TYPE',
-        total: 47143
+        total: 47143,
       },
       {
         type: 'string',
-        total: 891
+        total: 891,
       },
       {
         type: 'MBbloom--',
-        total: 272
+        total: 272,
       },
       {
         type: 'graphdata',
-        total: 72
+        total: 72,
       },
       {
         type: 'ReJSON-RL',
-        total: 60
-      }
-    ]
-  }
+        total: 60,
+      },
+    ],
+  },
 } as DatabaseAnalysis
 
 describe('SummaryPerData', () => {
   it('should render', () => {
-    expect(render(<SummaryPerData data={mockData} loading={false} />)).toBeTruthy()
+    expect(
+      render(<SummaryPerData data={mockData} loading={false} />),
+    ).toBeTruthy()
   })
 
   it('should render nothing without data', () => {
     render(<SummaryPerData data={null} loading={false} />)
 
-    expect(screen.queryByTestId('summary-per-data-loading')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('summary-per-data-loading'),
+    ).not.toBeInTheDocument()
     expect(screen.queryByTestId('summary-per-data')).not.toBeInTheDocument()
   })
 
@@ -126,11 +130,15 @@ describe('SummaryPerData', () => {
     render(<SummaryPerData data={mockData} loading={false} />)
 
     mockData.totalKeys.types.forEach((t) => {
-      expect(screen.getByTestId(`arc-${getGroupTypeDisplay(t.type)}-${t.total}`)).toBeInTheDocument()
+      expect(
+        screen.getByTestId(`arc-${getGroupTypeDisplay(t.type)}-${t.total}`),
+      ).toBeInTheDocument()
     })
 
     mockData.totalMemory.types.forEach((t) => {
-      expect(screen.getByTestId(`arc-${getGroupTypeDisplay(t.type)}-${t.total}`)).toBeInTheDocument()
+      expect(
+        screen.getByTestId(`arc-${getGroupTypeDisplay(t.type)}-${t.total}`),
+      ).toBeInTheDocument()
     })
   })
 
@@ -138,11 +146,15 @@ describe('SummaryPerData', () => {
     render(<SummaryPerData data={mockData} loading={false} />)
 
     mockData.totalKeys.types.forEach((t) => {
-      expect(screen.getByTestId(`label-${getGroupTypeDisplay(t.type)}-${t.total}`)).toBeInTheDocument()
+      expect(
+        screen.getByTestId(`label-${getGroupTypeDisplay(t.type)}-${t.total}`),
+      ).toBeInTheDocument()
     })
 
     mockData.totalMemory.types.forEach((t) => {
-      expect(screen.getByTestId(`label-${getGroupTypeDisplay(t.type)}-${t.total}`)).toBeInTheDocument()
+      expect(
+        screen.getByTestId(`label-${getGroupTypeDisplay(t.type)}-${t.total}`),
+      ).toBeInTheDocument()
     })
   })
 })

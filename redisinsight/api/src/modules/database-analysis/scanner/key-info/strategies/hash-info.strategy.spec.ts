@@ -17,7 +17,9 @@ describe('HashInfoStrategy', () => {
 
   describe('getLength', () => {
     it('should scan standalone database', async () => {
-      expect(await strategy.getLength(client, mockKey)).toEqual(mockRedisResponse);
+      expect(await strategy.getLength(client, mockKey)).toEqual(
+        mockRedisResponse,
+      );
     });
   });
 });

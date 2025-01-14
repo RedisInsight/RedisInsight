@@ -105,25 +105,37 @@ describe('EncryptionService', () => {
 
   describe('getEncryptionStrategy', () => {
     it('Should return KEYTAR strategy based on app agreements', async () => {
-      expect(await service.getEncryptionStrategy()).toEqual(keytarEncryptionStrategy);
+      expect(await service.getEncryptionStrategy()).toEqual(
+        keytarEncryptionStrategy,
+      );
     });
     it('Should return KEY strategy based on app agreements even when KEYTAR available', async () => {
       keytarEncryptionStrategy.isAvailable.mockResolvedValueOnce(true);
       keyEncryptionStrategy.isAvailable.mockResolvedValueOnce(true);
 
-      expect(await service.getEncryptionStrategy()).toEqual(keyEncryptionStrategy);
+      expect(await service.getEncryptionStrategy()).toEqual(
+        keyEncryptionStrategy,
+      );
     });
     it('Should return PLAIN strategy based on app agreements even when KEY available', async () => {
       keyEncryptionStrategy.isAvailable.mockResolvedValueOnce(true);
 
-      settingsService.getAppSettings.mockResolvedValueOnce(mockAppSettingsWithoutPermissions);
+      settingsService.getAppSettings.mockResolvedValueOnce(
+        mockAppSettingsWithoutPermissions,
+      );
 
-      expect(await service.getEncryptionStrategy()).toEqual(plainEncryptionStrategy);
+      expect(await service.getEncryptionStrategy()).toEqual(
+        plainEncryptionStrategy,
+      );
     });
     it('Should throw an error if encryption strategy was not set by user', async () => {
-      settingsService.getAppSettings.mockResolvedValueOnce(mockAppSettingsInitial);
+      settingsService.getAppSettings.mockResolvedValueOnce(
+        mockAppSettingsInitial,
+      );
 
-      await expect(service.getEncryptionStrategy()).rejects.toThrow(UnsupportedEncryptionStrategyException);
+      await expect(service.getEncryptionStrategy()).rejects.toThrow(
+        UnsupportedEncryptionStrategyException,
+      );
     });
   });
 
@@ -148,19 +160,29 @@ describe('EncryptionService', () => {
     it('Should return decrypted string (KEYTAR)', async () => {
       keyEncryptionStrategy.isAvailable.mockResolvedValueOnce(false);
 
-      keytarEncryptionStrategy.decrypt.mockResolvedValueOnce(mockEncryptResult.data);
+      keytarEncryptionStrategy.decrypt.mockResolvedValueOnce(
+        mockEncryptResult.data,
+      );
 
-      expect(await service.decrypt('string', EncryptionStrategy.KEYTAR)).toEqual(mockEncryptResult.data);
+      expect(
+        await service.decrypt('string', EncryptionStrategy.KEYTAR),
+      ).toEqual(mockEncryptResult.data);
     });
     it('Should return decrypted string (KEY)', async () => {
       keyEncryptionStrategy.isAvailable.mockResolvedValueOnce(true);
 
-      keyEncryptionStrategy.decrypt.mockResolvedValueOnce(mockKeyEncryptResult.data);
+      keyEncryptionStrategy.decrypt.mockResolvedValueOnce(
+        mockKeyEncryptResult.data,
+      );
 
-      expect(await service.decrypt('string', EncryptionStrategy.KEY)).toEqual(mockKeyEncryptResult.data);
+      expect(await service.decrypt('string', EncryptionStrategy.KEY)).toEqual(
+        mockKeyEncryptResult.data,
+      );
     });
     it('Should return null when no data passed', async () => {
-      expect(await service.decrypt(null, EncryptionStrategy.KEYTAR)).toEqual(null);
+      expect(await service.decrypt(null, EncryptionStrategy.KEYTAR)).toEqual(
+        null,
+      );
     });
   });
 });

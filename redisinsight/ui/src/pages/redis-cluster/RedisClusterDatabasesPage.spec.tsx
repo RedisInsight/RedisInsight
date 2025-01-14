@@ -55,9 +55,9 @@ describe('RedisClusterDatabasesPage', () => {
     expect(queryByTestId('db_name_localhost')).toBeInTheDocument()
   })
   it('should render', () => {
-    (clusterSelector as jest.Mock).mockReturnValueOnce({
+    ;(clusterSelector as jest.Mock).mockReturnValueOnce({
       data: [],
-      dataAdded: [{}]
+      dataAdded: [{}],
     })
 
     expect(render(<RedisClusterDatabasesPage />)).toBeTruthy()

@@ -1,9 +1,9 @@
-import path from 'path';
-import webpack from 'webpack';
-import { merge } from 'webpack-merge';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import baseConfig from './webpack.config.base';
-import webpackPaths from './webpack.paths';
+import path from 'path'
+import webpack from 'webpack'
+import { merge } from 'webpack-merge'
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+import baseConfig from './webpack.config.base'
+import webpackPaths from './webpack.paths'
 
 const configuration: webpack.Configuration = {
   devtool: 'inline-source-map',
@@ -59,6 +59,6 @@ const configuration: webpack.Configuration = {
   },
 
   watch: true,
-};
+}
 
-export default merge(baseConfig, configuration);
+export default merge(baseConfig, configuration)

@@ -3,7 +3,8 @@ import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import {
   cleanup,
-  fireEvent, mockedStore,
+  fireEvent,
+  mockedStore,
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
@@ -28,7 +29,7 @@ jest.mock(monitorPath, () => {
       ...defaultState,
       isMinimizedMonitor: false,
       isShowMonitor: true,
-    })
+    }),
   }
 })
 

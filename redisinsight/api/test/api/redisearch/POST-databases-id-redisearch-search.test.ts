@@ -8,13 +8,16 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, JoiRedisString
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte, localDb } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/redisearch/search`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/redisearch/search`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -36,18 +39,28 @@ const responseSchema = Joi.object({
   scanned: Joi.number().integer().required(),
   total: Joi.number().integer().required(),
   maxResults: Joi.number().integer().allow(null).required(),
-  keys: Joi.array().items(Joi.object({
-    name: JoiRedisString.required(),
-    type: Joi.string(),
-  })).required(),
-}).required().strict(true);
+  keys: Joi.array()
+    .items(
+      Joi.object({
+        name: JoiRedisString.required(),
+        type: Joi.string(),
+      }),
+    )
+    .required(),
+})
+  .required()
+  .strict(true);
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /databases/:id/redisearch/search', () => {
   requirements('!rte.bigData', 'rte.modules.search');
   before(async () => {
-    await rte.data.generateRedisearchIndexes(true)
-    await localDb.createTestDbInstance(rte, {}, { id: constants.TEST_INSTANCE_ID_2 })
+    await rte.data.generateRedisearchIndexes(true);
+    await localDb.createTestDbInstance(
+      rte,
+      {},
+      { id: constants.TEST_INSTANCE_ID_2 },
+    );
   });
 
   describe('Main', () => {
@@ -109,7 +122,7 @@ describe('POST /databases/:id/redisearch/search', () => {
             expect(body.maxResults).to.gte(1);
           },
           before: async () => {
-            await rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1')
+            await rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1');
           },
         },
         {
@@ -127,7 +140,7 @@ describe('POST /databases/:id/redisearch/search', () => {
             message: `Set MAXSEARCHRESULTS to at least ${numberWithSpaces(validInputData.limit)}.`,
           },
           before: async () => {
-            await rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1')
+            await rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1');
           },
         },
       ].map(mainCheckFn);
@@ -136,8 +149,8 @@ describe('POST /databases/:id/redisearch/search', () => {
     describe('ACL', () => {
       requirements('rte.acl');
       before(async () => {
-        await rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '10000')
-        await rte.data.setAclUserRules('~* +@all')
+        await rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '10000');
+        await rte.data.setAclUserRules('~* +@all');
       });
 
       [
@@ -153,7 +166,7 @@ describe('POST /databases/:id/redisearch/search', () => {
             expect(body.total).to.eq(2000);
             expect(body.maxResults).to.eq(null);
           },
-          before: () => rte.data.setAclUserRules('~* +@all -ft.config')
+          before: () => rte.data.setAclUserRules('~* +@all -ft.config'),
         },
         {
           name: 'Should search',
@@ -173,7 +186,7 @@ describe('POST /databases/:id/redisearch/search', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -ft.search')
+          before: () => rte.data.setAclUserRules('~* +@all -ft.search'),
         },
       ].map(mainCheckFn);
     });

@@ -13,10 +13,8 @@ export const getGenericTotal = (start: number, end: number) => {
   return total;
 };
 
-export const calculateTypeIdx = (
-  idx: number,
-  perGroup = 25,
-) => Math.trunc(idx / perGroup) + (idx % perGroup === 0 ? 0 : 1);
+export const calculateTypeIdx = (idx: number, perGroup = 25) =>
+  Math.trunc(idx / perGroup) + (idx % perGroup === 0 ? 0 : 1);
 
 const shuffleKeys = (keys) => [...keys].sort(() => Math.random() - 0.5);
 
@@ -70,82 +68,99 @@ describe('DatabaseAnalyzer', () => {
 
   describe('calculateSimpleSummary', () => {
     it('should calculate simple summary by memory', async () => {
-      const summary = await analyzer.calculateSimpleSummary(shuffleKeys(mockKeys), 'memory');
-      expect(summary)
-        .toEqual({
-          total: genericTotal,
-          types: [
-            {
-              type: 'type_4',
-              total: getGenericTotal(76, 100),
-            },
-            {
-              type: 'type_3',
-              total: getGenericTotal(51, 75),
-            },
-            {
-              type: 'type_2',
-              total: getGenericTotal(26, 50),
-            },
-            {
-              type: 'type_1',
-              total: getGenericTotal(1, 25),
-            },
-          ],
-        });
+      const summary = await analyzer.calculateSimpleSummary(
+        shuffleKeys(mockKeys),
+        'memory',
+      );
+      expect(summary).toEqual({
+        total: genericTotal,
+        types: [
+          {
+            type: 'type_4',
+            total: getGenericTotal(76, 100),
+          },
+          {
+            type: 'type_3',
+            total: getGenericTotal(51, 75),
+          },
+          {
+            type: 'type_2',
+            total: getGenericTotal(26, 50),
+          },
+          {
+            type: 'type_1',
+            total: getGenericTotal(1, 25),
+          },
+        ],
+      });
     });
     it('should calculate simple summary by memory (null handled)', async () => {
-      const summary = await analyzer.calculateSimpleSummary(shuffleKeys(mockKeysWithNulls), 'memory');
-      expect(summary)
-        .toEqual({
-          total: 3,
-          types: [
-            {
-              type: 'type_1',
-              total: 3,
-            },
-            {
-              type: 'wo',
-              total: 0,
-            },
-          ],
-        });
+      const summary = await analyzer.calculateSimpleSummary(
+        shuffleKeys(mockKeysWithNulls),
+        'memory',
+      );
+      expect(summary).toEqual({
+        total: 3,
+        types: [
+          {
+            type: 'type_1',
+            total: 3,
+          },
+          {
+            type: 'wo',
+            total: 0,
+          },
+        ],
+      });
     });
     it('should calculate simple summary by keys number', async () => {
-      const summary = await analyzer.calculateSimpleSummary(shuffleKeys(mockKeys), 1);
+      const summary = await analyzer.calculateSimpleSummary(
+        shuffleKeys(mockKeys),
+        1,
+      );
       expect(summary.total).toEqual(keysCount);
       expect(summary.types.length).toEqual(4);
       summary.types.forEach((type) => {
         expect(type.total).toEqual(25);
-        expect(['type_1', 'type_2', 'type_3', 'type_4'].includes(type.type)).toEqual(true);
+        expect(
+          ['type_1', 'type_2', 'type_3', 'type_4'].includes(type.type),
+        ).toEqual(true);
       });
     });
     it('should calculate simple summary by keys number (null handled)', async () => {
-      const summary = await analyzer.calculateSimpleSummary(shuffleKeys(mockKeysWithNulls), 1);
-      expect(summary)
-        .toEqual({
-          total: mockKeysWithNulls.length,
-          types: [
-            {
-              type: 'type_1',
-              total: 3,
-            },
-            {
-              type: 'wo',
-              total: 1,
-            },
-          ],
-        });
+      const summary = await analyzer.calculateSimpleSummary(
+        shuffleKeys(mockKeysWithNulls),
+        1,
+      );
+      expect(summary).toEqual({
+        total: mockKeysWithNulls.length,
+        types: [
+          {
+            type: 'type_1',
+            total: 3,
+          },
+          {
+            type: 'wo',
+            total: 1,
+          },
+        ],
+      });
     });
   });
 
   describe('calculateTopKeys', () => {
     it('should calculate top keys by memory', async () => {
-      const summary = await analyzer.calculateTopKeys([shuffleKeys(mockKeys)], 'memory');
+      const summary = await analyzer.calculateTopKeys(
+        [shuffleKeys(mockKeys)],
+        'memory',
+      );
       expect(summary).toEqual([...mockKeys].reverse().slice(0, 15));
     });
     it('should calculate top keys by memory (with null)', async () => {
-      const summary = await analyzer.calculateTopKeys([mockKeysWithNulls], 'memory');
+      const summary = await analyzer.calculateTopKeys(
+        [mockKeysWithNulls],
+        'memory',
+      );
       expect(summary).toEqual([
         ...mockKeys.slice(0, 2).reverse(),
         mockKeysWithNulls[0],
@@ -153,11 +168,17 @@ describe('DatabaseAnalyzer', () => {
       ]);
     });
     it('should calculate top keys by length', async () => {
-      const summary = await analyzer.calculateTopKeys([shuffleKeys(mockKeys)], 'length');
+      const summary = await analyzer.calculateTopKeys(
+        [shuffleKeys(mockKeys)],
+        'length',
+      );
       expect(summary).toEqual(mockKeys.slice(0, 15));
     });
     it('should calculate top keys by length (with null)', async () => {
-      const summary = await analyzer.calculateTopKeys([mockKeysWithNulls], 'length');
+      const summary = await analyzer.calculateTopKeys(
+        [mockKeysWithNulls],
+        'length',
+      );
       expect(summary).toEqual([
         ...mockKeys.slice(0, 2),
         mockKeysWithNulls[0],
@@ -168,64 +189,74 @@ describe('DatabaseAnalyzer', () => {
 
   describe('getNamespacesMap', () => {
     it('should get namespaces map', async () => {
-      const summary = await analyzer.getNamespacesMap(mockKeys, mockPartialAnalysis.delimiter);
-      expect(summary).toEqual(new Map([
-        [
-          Buffer.from('nsp_1').toString('hex'),
-          {
-            keys: 25,
-            memory: getGenericTotal(1, 25),
-            types: new Map([
-              ['type_1', { keys: 25, memory: getGenericTotal(1, 25) }],
-            ]),
-          },
-        ],
-        [
-          Buffer.from('nsp_2').toString('hex'),
-          {
-            keys: 25,
-            memory: getGenericTotal(26, 50),
-            types: new Map([
-              ['type_2', { keys: 25, memory: getGenericTotal(26, 50) }],
-            ]),
-          },
-        ],
-        [
-          Buffer.from('nsp_3').toString('hex'),
-          {
-            keys: 25,
-            memory: getGenericTotal(51, 75),
-            types: new Map([
-              ['type_3', { keys: 25, memory: getGenericTotal(51, 75) }],
-            ]),
-          },
-        ],
-        [
-          Buffer.from('nsp_4').toString('hex'),
-          {
-            keys: 25,
-            memory: getGenericTotal(76, 100),
-            types: new Map([
-              ['type_4', { keys: 25, memory: getGenericTotal(76, 100) }],
-            ]),
-          },
-        ],
-      ]));
+      const summary = await analyzer.getNamespacesMap(
+        mockKeys,
+        mockPartialAnalysis.delimiter,
+      );
+      expect(summary).toEqual(
+        new Map([
+          [
+            Buffer.from('nsp_1').toString('hex'),
+            {
+              keys: 25,
+              memory: getGenericTotal(1, 25),
+              types: new Map([
+                ['type_1', { keys: 25, memory: getGenericTotal(1, 25) }],
+              ]),
+            },
+          ],
+          [
+            Buffer.from('nsp_2').toString('hex'),
+            {
+              keys: 25,
+              memory: getGenericTotal(26, 50),
+              types: new Map([
+                ['type_2', { keys: 25, memory: getGenericTotal(26, 50) }],
+              ]),
+            },
+          ],
+          [
+            Buffer.from('nsp_3').toString('hex'),
+            {
+              keys: 25,
+              memory: getGenericTotal(51, 75),
+              types: new Map([
+                ['type_3', { keys: 25, memory: getGenericTotal(51, 75) }],
+              ]),
+            },
+          ],
+          [
+            Buffer.from('nsp_4').toString('hex'),
+            {
+              keys: 25,
+              memory: getGenericTotal(76, 100),
+              types: new Map([
+                ['type_4', { keys: 25, memory: getGenericTotal(76, 100) }],
+              ]),
+            },
+          ],
+        ]),
+      );
     });
     it('should get namespaces map (for keys without nsps)', async () => {
-      const summary = await analyzer.getNamespacesMap(mockKeysWithNulls, mockPartialAnalysis.delimiter);
-      expect(summary).toEqual(new Map([
-        [
-          Buffer.from('nsp_1').toString('hex'),
-          {
-            keys: 2,
-            memory: getGenericTotal(1, 2),
-            types: new Map([
-              ['type_1', { keys: 2, memory: getGenericTotal(1, 2) }],
-            ]),
-          },
-        ],
-      ]));
+      const summary = await analyzer.getNamespacesMap(
+        mockKeysWithNulls,
+        mockPartialAnalysis.delimiter,
+      );
+      expect(summary).toEqual(
+        new Map([
+          [
+            Buffer.from('nsp_1').toString('hex'),
+            {
+              keys: 2,
+              memory: getGenericTotal(1, 2),
+              types: new Map([
+                ['type_1', { keys: 2, memory: getGenericTotal(1, 2) }],
+              ]),
+            },
+          ],
+        ]),
+      );
     });
   });
 
@@ -241,41 +272,49 @@ describe('DatabaseAnalyzer', () => {
             nsp: Buffer.from('nsp_4'),
             keys: 25,
             memory: getGenericTotal(76, 100),
-            types: [{
-              type: 'type_4',
-              keys: 25,
-              memory: getGenericTotal(76, 100),
-            }],
+            types: [
+              {
+                type: 'type_4',
+                keys: 25,
+                memory: getGenericTotal(76, 100),
+              },
+            ],
           },
           {
             nsp: Buffer.from('nsp_3'),
             keys: 25,
             memory: getGenericTotal(51, 75),
-            types: [{
-              type: 'type_3',
-              keys: 25,
-              memory: getGenericTotal(51, 75),
-            }],
+            types: [
+              {
+                type: 'type_3',
+                keys: 25,
+                memory: getGenericTotal(51, 75),
+              },
+            ],
           },
           {
             nsp: Buffer.from('nsp_2'),
             keys: 25,
             memory: getGenericTotal(26, 50),
-            types: [{
-              type: 'type_2',
-              keys: 25,
-              memory: getGenericTotal(26, 50),
-            }],
+            types: [
+              {
+                type: 'type_2',
+                keys: 25,
+                memory: getGenericTotal(26, 50),
+              },
+            ],
           },
           {
             nsp: Buffer.from('nsp_1'),
             keys: 25,
             memory: getGenericTotal(1, 25),
-            types: [{
-              type: 'type_1',
-              keys: 25,
-              memory: getGenericTotal(1, 25),
-            }],
+            types: [
+              {
+                type: 'type_1',
+                keys: 25,
+                memory: getGenericTotal(1, 25),
+              },
+            ],
           },
         ],
         topKeysNsp: [
@@ -283,41 +322,49 @@ describe('DatabaseAnalyzer', () => {
             nsp: Buffer.from('nsp_4'),
             keys: 25,
             memory: getGenericTotal(76, 100),
-            types: [{
-              type: 'type_4',
-              keys: 25,
-              memory: getGenericTotal(76, 100),
-            }],
+            types: [
+              {
+                type: 'type_4',
+                keys: 25,
+                memory: getGenericTotal(76, 100),
+              },
+            ],
           },
           {
             nsp: Buffer.from('nsp_3'),
             keys: 25,
             memory: getGenericTotal(51, 75),
-            types: [{
-              type: 'type_3',
-              keys: 25,
-              memory: getGenericTotal(51, 75),
-            }],
+            types: [
+              {
+                type: 'type_3',
+                keys: 25,
+                memory: getGenericTotal(51, 75),
+              },
+            ],
           },
           {
             nsp: Buffer.from('nsp_2'),
             keys: 25,
             memory: getGenericTotal(26, 50),
-            types: [{
-              type: 'type_2',
-              keys: 25,
-              memory: getGenericTotal(26, 50),
-            }],
+            types: [
+              {
+                type: 'type_2',
+                keys: 25,
+                memory: getGenericTotal(26, 50),
+              },
+            ],
           },
           {
             nsp: Buffer.from('nsp_1'),
             keys: 25,
             memory: getGenericTotal(1, 25),
-            types: [{
-              type: 'type_1',
-              keys: 25,
-              memory: getGenericTotal(1, 25),
-            }],
+            types: [
+              {
+                type: 'type_1',
+                keys: 25,
+                memory: getGenericTotal(1, 25),
+              },
+            ],
           },
         ],
         totalMemory: {

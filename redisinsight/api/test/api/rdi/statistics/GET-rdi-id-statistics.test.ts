@@ -1,13 +1,9 @@
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
 import { Joi, nock } from '../../../helpers/test';
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../../deps';
+import { describe, expect, deps, getMainCheckFn } from '../../deps';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST_statistics';
 const notExistedRdiId = 'notExisted';
@@ -29,19 +25,27 @@ const mockResponseSuccess = {
   clients: '',
 };
 
-const responseSchema = Joi.object().keys({
-  status: Joi.string().allow('success', 'failed').required(),
-  data: Joi.object().keys({
-    connections: Joi.any(),
-    dataStreams: Joi.any(),
-    processingPerformance: Joi.any(),
-    rdiPipelineStatus: Joi.any(),
-    clients: Joi.any(),
-  }).optional(),
-  error: Joi.string().optional(),
-}).required().strict(true);
+const responseSchema = Joi.object()
+  .keys({
+    status: Joi.string().allow('success', 'failed').required(),
+    data: Joi.object()
+      .keys({
+        connections: Joi.any(),
+        dataStreams: Joi.any(),
+        processingPerformance: Joi.any(),
+        rdiPipelineStatus: Joi.any(),
+        clients: Joi.any(),
+      })
+      .optional(),
+    error: Joi.string().optional(),
+  })
+  .required()
+  .strict(true);
 
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
   access_token: mockedAccessToken,
 });
@@ -59,7 +63,10 @@ describe('GET /rdi/:id/statistics/', () => {
       },
       before: async () => {
         await localDb.generateRdis({ id: testRdiId, url: testRdiUrl }, 1);
-        nock(testRdiUrl).get(`/${RdiUrl.GetStatistics}`).query(true).reply(200, mockResponseSuccess);
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetStatistics}`)
+          .query(true)
+          .reply(200, mockResponseSuccess);
       },
     },
     {
@@ -82,13 +89,19 @@ describe('GET /rdi/:id/statistics/', () => {
       responseSchema,
       statusCode: 200,
       checkFn: ({ body }) => {
-        expect(body).to.eql({ status: 'failed', error: 'Request failed with status code 401' });
+        expect(body).to.eql({
+          status: 'failed',
+          error: 'Request failed with status code 401',
+        });
       },
       before: async () => {
         await localDb.generateRdis({ id: testRdiId, url: testRdiUrl }, 1);
-        nock(testRdiUrl).get(`/${RdiUrl.GetStatistics}`).query(true).reply(401, {
-          message: 'Request failed with status code 401',
-        });
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetStatistics}`)
+          .query(true)
+          .reply(401, {
+            message: 'Request failed with status code 401',
+          });
       },
     },
   ].forEach(mainCheckFn);

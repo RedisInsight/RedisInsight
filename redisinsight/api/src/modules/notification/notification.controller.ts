@@ -42,7 +42,7 @@ export class NotificationController {
   @Patch('/read')
   readNotifications(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Body() dto: ReadNotificationsDto,
+    @Body() dto: ReadNotificationsDto,
   ): Promise<NotificationsDto> {
     return this.service.readNotifications(sessionMetadata, dto);
   }

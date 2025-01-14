@@ -19,8 +19,16 @@ describe('StartPipelineButton', () => {
     render(<StartPipelineButton {...mockedProps} />)
 
     fireEvent.mouseOver(screen.getByTestId('start-pipeline-btn'))
-    await waitFor(() => screen.getByText(/Start the pipeline to resume processing new data arrivals/))
-    expect(screen.getByText(/Start the pipeline to resume processing new data arrivals/)).toBeInTheDocument()
+    await waitFor(() =>
+      screen.getByText(
+        /Start the pipeline to resume processing new data arrivals/,
+      ),
+    )
+    expect(
+      screen.getByText(
+        /Start the pipeline to resume processing new data arrivals/,
+      ),
+    ).toBeInTheDocument()
   })
 
   it('should call onClick when clicked', () => {

@@ -7,7 +7,9 @@ const mockedProps = mock<Props>()
 
 describe('StreamDataViewWrapper', () => {
   it('should render', () => {
-    expect(render(<StreamDataViewWrapper {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<StreamDataViewWrapper {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
   it('should render Stream Data container', () => {

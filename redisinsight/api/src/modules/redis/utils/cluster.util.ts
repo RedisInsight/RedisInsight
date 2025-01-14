@@ -3,7 +3,10 @@ import {
   convertMultilineReplyToObject,
   parseNodesFromClusterInfoReply,
 } from 'src/modules/redis/utils/reply.util';
-import { IRedisClusterNodeAddress, RedisClusterNodeLinkState } from 'src/models';
+import {
+  IRedisClusterNodeAddress,
+  RedisClusterNodeLinkState,
+} from 'src/models';
 
 /**
  * Check weather database is a cluster
@@ -15,10 +18,9 @@ import { IRedisClusterNodeAddress, RedisClusterNodeLinkState } from 'src/models'
  */
 export const isCluster = async (client: RedisClient): Promise<boolean> => {
   try {
-    const reply = await client.sendCommand(
-      ['cluster', 'info'],
-      { replyEncoding: 'utf8' },
-    ) as string;
+    const reply = (await client.sendCommand(['cluster', 'info'], {
+      replyEncoding: 'utf8',
+    })) as string;
 
     const clusterInfo = convertMultilineReplyToObject(reply);
     return clusterInfo.cluster_state === 'ok';
@@ -31,11 +33,14 @@ export const isCluster = async (client: RedisClient): Promise<boolean> => {
  * Discover all cluster nodes for current connection
  * @param client
  */
-export const discoverClusterNodes = async (client: RedisClient): Promise<IRedisClusterNodeAddress[]> => {
+export const discoverClusterNodes = async (
+  client: RedisClient,
+): Promise<IRedisClusterNodeAddress[]> => {
   const nodes = parseNodesFromClusterInfoReply(
-    await client.sendCommand(['cluster', 'nodes'], { replyEncoding: 'utf8' }) as string,
-  )
-    .filter((node) => node.linkState === RedisClusterNodeLinkState.Connected);
+    (await client.sendCommand(['cluster', 'nodes'], {
+      replyEncoding: 'utf8',
+    })) as string,
+  ).filter((node) => node.linkState === RedisClusterNodeLinkState.Connected);
 
   return nodes.map((node) => ({
     host: node.host,

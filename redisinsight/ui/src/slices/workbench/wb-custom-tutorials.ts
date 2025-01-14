@@ -2,7 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { isUndefined, remove } from 'lodash'
 import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, } from 'uiSrc/utils'
+import {
+  getApiErrorMessage,
+  getUrl,
+  isStatusSuccessful,
+  Maybe,
+} from 'uiSrc/utils'
 import { apiService } from 'uiSrc/services'
 import {
   EnablementAreaComponent,
@@ -11,7 +16,10 @@ import {
   StateWorkbenchCustomTutorials,
 } from 'uiSrc/slices/interfaces'
 
-import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getFileNameFromPath } from 'uiSrc/utils/pathUtil'
 import { AppDispatch, RootState } from '../store'
@@ -21,8 +29,8 @@ export const defaultItems: IEnablementAreaItem[] = [
     id: 'custom-tutorials',
     label: 'MY TUTORIALS',
     type: EnablementAreaComponent.Group,
-    children: []
-  }
+    children: [],
+  },
 ]
 
 export const initialState: StateWorkbenchCustomTutorials = {
@@ -31,8 +39,8 @@ export const initialState: StateWorkbenchCustomTutorials = {
   error: '',
   items: defaultItems,
   bulkUpload: {
-    pathsInProgress: []
-  }
+    pathsInProgress: [],
+  },
 }
 
 // A slice for recipes
@@ -43,7 +51,10 @@ const workbenchCustomTutorialsSlice = createSlice({
     getWBCustomTutorials: (state) => {
       state.loading = true
     },
-    getWBCustomTutorialsSuccess: (state, { payload }: { payload: IEnablementAreaItem }) => {
+    getWBCustomTutorialsSuccess: (
+      state,
+      { payload }: { payload: IEnablementAreaItem },
+    ) => {
       state.loading = false
       state.items = [payload]
     },
@@ -87,11 +98,15 @@ const workbenchCustomTutorialsSlice = createSlice({
     uploadDataBulkFailed: (state, { payload }) => {
       remove(state.bulkUpload.pathsInProgress, (p) => p === payload)
     },
-    setWbCustomTutorialsState: (state, { payload }: PayloadAction<Maybe<boolean>>) => {
+    setWbCustomTutorialsState: (
+      state,
+      { payload }: PayloadAction<Maybe<boolean>>,
+    ) => {
       if (state.items[0].args) {
         const { defaultInitialIsOpen, initialIsOpen } = state.items[0].args
         if (isUndefined(payload)) {
-          state.items[0].args.initialIsOpen = defaultInitialIsOpen ?? initialIsOpen
+          state.items[0].args.initialIsOpen =
+            defaultInitialIsOpen ?? initialIsOpen
           return
         }
 
@@ -99,12 +114,14 @@ const workbenchCustomTutorialsSlice = createSlice({
         state.items[0].args.initialIsOpen = payload
       }
     },
-  }
+  },
 })
 
 // A selector
-export const workbenchCustomTutorialsSelector = (state: RootState) => state.workbench.customTutorials
-export const customTutorialsBulkUploadSelector = (state: RootState) => state.workbench.customTutorials.bulkUpload
+export const workbenchCustomTutorialsSelector = (state: RootState) =>
+  state.workbench.customTutorials
+export const customTutorialsBulkUploadSelector = (state: RootState) =>
+  state.workbench.customTutorials.bulkUpload
 
 // Actions generated from the slice
 export const {
@@ -127,12 +144,17 @@ export const {
 export default workbenchCustomTutorialsSlice.reducer
 
 // Asynchronous thunk action
-export function fetchCustomTutorials(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchCustomTutorials(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getWBCustomTutorials())
 
     try {
-      const { data, status } = await apiService.get(ApiEndpoints.CUSTOM_TUTORIALS_MANIFEST)
+      const { data, status } = await apiService.get(
+        ApiEndpoints.CUSTOM_TUTORIALS_MANIFEST,
+      )
       if (isStatusSuccessful(status)) {
         dispatch(getWBCustomTutorialsSuccess(data))
         onSuccessAction?.()
@@ -148,7 +170,7 @@ export function fetchCustomTutorials(onSuccessAction?: () => void, onFailAction?
 export function uploadCustomTutorial(
   formData: FormData,
   onSuccessAction?: () => void,
-  onFailAction?: (error?: string) => void
+  onFailAction?: (error?: string) => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(uploadWbCustomTutorial())
@@ -159,9 +181,9 @@ export function uploadCustomTutorial(
         {
           headers: {
             Accept: 'application/json',
-            'Content-Type': 'multipart/form-data'
-          }
-        }
+            'Content-Type': 'multipart/form-data',
+          },
+        },
       )
       if (isStatusSuccessful(status)) {
         dispatch(uploadWBCustomTutorialSuccess(data))
@@ -177,11 +199,17 @@ export function uploadCustomTutorial(
   }
 }
 
-export function deleteCustomTutorial(id: string, onSuccessAction?: () => void, onFailAction?: () => void) {
+export function deleteCustomTutorial(
+  id: string,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(deleteWbCustomTutorial())
     try {
-      const { status } = await apiService.delete(`${ApiEndpoints.CUSTOM_TUTORIALS}/${id}`)
+      const { status } = await apiService.delete(
+        `${ApiEndpoints.CUSTOM_TUTORIALS}/${id}`,
+      )
       if (isStatusSuccessful(status)) {
         dispatch(deleteWBCustomTutorialSuccess(id))
         onSuccessAction?.()
@@ -199,16 +227,13 @@ export function uploadDataBulkAction(
   instanceId: string,
   path: string,
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(uploadDataBulk(path))
     try {
       const { status, data } = await apiService.post(
-        getUrl(
-          instanceId,
-          ApiEndpoints.BULK_ACTIONS_IMPORT_TUTORIAL_DATA
-        ),
+        getUrl(instanceId, ApiEndpoints.BULK_ACTIONS_IMPORT_TUTORIAL_DATA),
         { path },
       )
 
@@ -216,8 +241,11 @@ export function uploadDataBulkAction(
         dispatch(uploadDataBulkSuccess(path))
         dispatch(
           addMessageNotification(
-            successMessages.UPLOAD_DATA_BULK(data as IBulkActionOverview, getFileNameFromPath(path))
-          )
+            successMessages.UPLOAD_DATA_BULK(
+              data as IBulkActionOverview,
+              getFileNameFromPath(path),
+            ),
+          ),
         )
         onSuccessAction?.()
       }

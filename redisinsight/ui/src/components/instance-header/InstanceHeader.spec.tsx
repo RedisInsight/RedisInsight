@@ -2,7 +2,15 @@ import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, mockedStore, render, screen, fireEvent, initialStateDefault, mockStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  screen,
+  fireEvent,
+  initialStateDefault,
+  mockStore,
+} from 'uiSrc/utils/test-utils'
 import {
   checkDatabaseIndex,
   connectedInstanceInfoSelector,
@@ -41,14 +49,14 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
     username: 'username',
     id: 'instanceId',
     loading: false,
-  })
+  }),
 }))
 
 jest.mock('uiSrc/slices/app/context', () => ({
   ...jest.requireActual('uiSrc/slices/app/context'),
   appContextDbIndex: jest.fn().mockReturnValue({
     disabled: false,
-  })
+  }),
 }))
 
 jest.mock('react-router-dom', () => ({
@@ -64,7 +72,7 @@ describe('InstanceHeader', () => {
   })
 
   it('should render change index button with databases = 1', () => {
-    (connectedInstanceInfoSelector as jest.Mock).mockReturnValueOnce({
+    ;(connectedInstanceInfoSelector as jest.Mock).mockReturnValueOnce({
       databases: 1,
     })
 
@@ -92,22 +100,19 @@ describe('InstanceHeader', () => {
 
     fireEvent.click(screen.getByTestId('change-index-btn'))
 
-    fireEvent.change(
-      screen.getByTestId('change-index-input'),
-      { target: { value: 3 } }
-    )
+    fireEvent.change(screen.getByTestId('change-index-input'), {
+      target: { value: 3 },
+    })
 
     expect(screen.getByTestId('change-index-input')).toHaveValue('3')
     fireEvent.click(screen.getByTestId('apply-btn'))
 
-    const expectedActions = [
-      checkDatabaseIndex()
-    ]
+    const expectedActions = [checkDatabaseIndex()]
     expect(store.getActions()).toEqual([...expectedActions])
   })
 
   it('should be disabled db index button with loading state', () => {
-    (connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
+    ;(connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
       loading: true,
     })
 
@@ -117,7 +122,7 @@ describe('InstanceHeader', () => {
   })
 
   it('should be disabled db index button with disabled state', () => {
-    (appContextDbIndex as jest.Mock).mockReturnValueOnce({
+    ;(appContextDbIndex as jest.Mock).mockReturnValueOnce({
       disabled: true,
     })
 
@@ -142,27 +147,31 @@ describe('InstanceHeader', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: true }
+      { flag: true },
     )
 
     render(<InstanceHeader {...instance(mockedProps)} />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('my-redis-db-btn')).toBeInTheDocument()
-    expect(screen.queryByTestId('instance-header-divider-env-dependent')).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('instance-header-divider-env-dependent'),
+    ).toBeInTheDocument()
   })
 
   it('should not show env dependent items button when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
 
     render(<InstanceHeader {...instance(mockedProps)} />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('my-redis-db-btn')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('instance-header-divider-env-dependent')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('instance-header-divider-env-dependent'),
+    ).not.toBeInTheDocument()
   })
 })

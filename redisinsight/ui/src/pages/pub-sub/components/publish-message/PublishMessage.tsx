@@ -6,13 +6,22 @@ import {
   EuiFlexItem,
   EuiForm,
   EuiFormRow,
-  EuiIcon
+  EuiIcon,
 } from '@elastic/eui'
 import cx from 'classnames'
-import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { appContextPubSub, setPubSubFieldsContext } from 'uiSrc/slices/app/context'
+import {
+  appContextPubSub,
+  setPubSubFieldsContext,
+} from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { publishMessageAction } from 'uiSrc/slices/pubsub/pubsub'
@@ -23,7 +32,8 @@ import styles from './styles.module.scss'
 const HIDE_BADGE_TIMER = 3000
 
 const PublishMessage = () => {
-  const { channel: channelContext, message: messageContext } = useSelector(appContextPubSub)
+  const { channel: channelContext, message: messageContext } =
+    useSelector(appContextPubSub)
   const { connectionType } = useSelector(connectedInstanceSelector)
 
   const [channel, setChannel] = useState<string>(channelContext)
@@ -37,10 +47,13 @@ const PublishMessage = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
-  useEffect(() => () => {
-    dispatch(setPubSubFieldsContext(fieldsRef.current))
-    timeOutRef.current && clearTimeout(timeOutRef.current)
-  }, [])
+  useEffect(
+    () => () => {
+      dispatch(setPubSubFieldsContext(fieldsRef.current))
+      timeOutRef.current && clearTimeout(timeOutRef.current)
+    },
+    [],
+  )
 
   useEffect(() => {
     fieldsRef.current = { channel, message }
@@ -71,7 +84,11 @@ const PublishMessage = () => {
   }
 
   return (
-    <EuiForm className={styles.container} component="form" onSubmit={onFormSubmit}>
+    <EuiForm
+      className={styles.container}
+      component="form"
+      onSubmit={onFormSubmit}
+    >
       <EuiFlexItem className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}>
         <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
           <EuiFlexItem className={styles.channelWrapper} grow>
@@ -82,7 +99,9 @@ const PublishMessage = () => {
                 id="channel"
                 placeholder="Enter Channel Name"
                 value={channel}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setChannel(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setChannel(e.target.value)
+                }
                 autoComplete="off"
                 data-testid="field-channel-name"
               />
@@ -93,21 +112,36 @@ const PublishMessage = () => {
               <>
                 <EuiFieldText
                   fullWidth
-                  className={cx(styles.messageField, { [styles.showBadge]: isShowBadge })}
+                  className={cx(styles.messageField, {
+                    [styles.showBadge]: isShowBadge,
+                  })}
                   name="message"
                   id="message"
                   placeholder="Enter Message"
                   value={message}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setMessage(e.target.value)
+                  }
                   autoComplete="off"
                   data-testid="field-message"
                 />
-                <EuiBadge className={cx(styles.badge, { [styles.show]: isShowBadge })} data-testid="affected-clients-badge">
+                <EuiBadge
+                  className={cx(styles.badge, { [styles.show]: isShowBadge })}
+                  data-testid="affected-clients-badge"
+                >
                   <EuiIcon className={styles.iconCheckBadge} type="check" />
                   {connectionType !== ConnectionType.Cluster && (
                     <>
-                      <span className={styles.affectedClients} data-testid="affected-clients">{affectedClients}</span>
-                      <EuiIcon className={styles.iconUserBadge} type={UserIcon || 'user'} />
+                      <span
+                        className={styles.affectedClients}
+                        data-testid="affected-clients"
+                      >
+                        {affectedClients}
+                      </span>
+                      <EuiIcon
+                        className={styles.iconUserBadge}
+                        type={UserIcon || 'user'}
+                      />
                     </>
                   )}
                 </EuiBadge>
@@ -116,7 +150,11 @@ const PublishMessage = () => {
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlexItem>
-      <EuiFlexGroup responsive={false} justifyContent="flexEnd" style={{ marginTop: 6 }}>
+      <EuiFlexGroup
+        responsive={false}
+        justifyContent="flexEnd"
+        style={{ marginTop: 6 }}
+      >
         <EuiFlexItem grow={false}>
           <EuiButton
             fill

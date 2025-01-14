@@ -10,11 +10,18 @@ import {
   insightsPanelSelector,
   resetExplorePanelSearch,
   setExplorePanelIsPageOpen,
-  sidePanelsSelector
+  sidePanelsSelector,
 } from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
-import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { connectedInstanceCDSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import {
+  sendEventTelemetry,
+  TELEMETRY_EMPTY_VALUE,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
+import {
+  connectedInstanceCDSelector,
+  connectedInstanceSelector,
+} from 'uiSrc/slices/instances/instances'
 import { appContextCapability } from 'uiSrc/slices/app/context'
 import { getTutorialCapability } from 'uiSrc/utils'
 import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
@@ -41,7 +48,10 @@ const SidePanelsWrapper = (props: Props) => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  const isAnyChatAvailable = isAnyFeatureEnabled([
+    databaseChatFeature,
+    documentationChatFeature,
+  ])
 
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
 
@@ -51,9 +61,7 @@ const SidePanelsWrapper = (props: Props) => {
   const { instanceId } = useParams<{ instanceId: string }>()
   const pathnameRef = useRef<string>(pathname)
 
-  const page = pathname
-    .replace(instanceId, '')
-    .replace(/^\//g, '')
+  const page = pathname.replace(instanceId, '').replace(/^\//g, '')
 
   useEffect(() => {
     if (openedPanel === SidePanels.AiAssistant && !isAnyChatAvailable) {
@@ -81,12 +89,16 @@ const SidePanelsWrapper = (props: Props) => {
       return
     }
 
-    const tutorialCapabilityPath = getTutorialCapability(capabilitySource)?.path || ''
+    const tutorialCapabilityPath =
+      getTutorialCapability(capabilitySource)?.path || ''
 
     // set 'path' with the path to capability tutorial
     if (tutorialCapabilityPath) {
       const search = new URLSearchParams(window.location.search)
-      search.set('path', `${EAManifestFirstKey.TUTORIALS}/${tutorialCapabilityPath}`)
+      search.set(
+        'path',
+        `${EAManifestFirstKey.TUTORIALS}/${tutorialCapabilityPath}`,
+      )
       history.push({ search: search.toString() })
     } else {
       // reset explore if tutorial is not found
@@ -113,7 +125,7 @@ const SidePanelsWrapper = (props: Props) => {
         databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         provider,
         page,
-        tab: tabSelected
+        tab: tabSelected,
       },
     })
   }
@@ -124,7 +136,7 @@ const SidePanelsWrapper = (props: Props) => {
         event: TelemetryEvent.INSIGHTS_PANEL_FULL_SCREEN_CLICKED,
         eventData: {
           databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
-          state: value ? 'exit' : 'open'
+          state: value ? 'exit' : 'open',
         },
       })
 
@@ -136,7 +148,9 @@ const SidePanelsWrapper = (props: Props) => {
     <>
       {!!openedPanel && (
         <div
-          className={cx(styles.panel, panelClassName, { [styles.fullScreen]: isFullScreen })}
+          className={cx(styles.panel, panelClassName, {
+            [styles.fullScreen]: isFullScreen,
+          })}
           data-testid={`side-panels-${openedPanel}`}
         >
           <div className={styles.panelInner}>

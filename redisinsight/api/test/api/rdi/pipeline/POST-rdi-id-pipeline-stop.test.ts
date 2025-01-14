@@ -1,23 +1,22 @@
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../../deps';
+import { describe, expect, deps, getMainCheckFn } from '../../deps';
 import { nock } from '../../../helpers/test';
 import { CustomErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { mockedAccessToken } from 'src/__mocks__';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST_pipeline_stop';
 const notExistedRdiId = 'notExisted';
 const testRdiUrl = 'http://rdilocal.test';
 const errorMessage = 'Authorization failed';
 
-const endpoint = (id) => request(server).post(`/${constants.API.RDI}/${id || testRdiId}/pipeline/stop`);
+const endpoint = (id) =>
+  request(server).post(
+    `/${constants.API.RDI}/${id || testRdiId}/pipeline/stop`,
+  );
 
 const mockResponse = {
   action_id: 'some_action_id_123',
@@ -27,7 +26,7 @@ const mockActionResponse = {
   data: 'Some successful data',
   error: null,
 };
-const mockErrorMessage = 'Error when stopping a pipeline'
+const mockErrorMessage = 'Error when stopping a pipeline';
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -44,8 +43,12 @@ describe('POST /rdi/:id/pipeline/stop', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).post(`/${RdiUrl.StopPipeline}`).query(true).reply(200, mockResponse);
-        nock(testRdiUrl).get(`/${RdiUrl.Action}/${mockResponse.action_id}`)
+        nock(testRdiUrl)
+          .post(`/${RdiUrl.StopPipeline}`)
+          .query(true)
+          .reply(200, mockResponse);
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.Action}/${mockResponse.action_id}`)
           .query(true)
           .reply(200, mockActionResponse);
       },
@@ -67,12 +70,18 @@ describe('POST /rdi/:id/pipeline/stop', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).post(`/${RdiUrl.StopPipeline}`).query(true).reply(200, mockResponse);
-        nock(testRdiUrl).get(`/${RdiUrl.Action}/${mockResponse.action_id}`).query(true).reply(200, {
-          status: 'failed',
-          data: null,
-          error: mockErrorMessage,
-        });
+        nock(testRdiUrl)
+          .post(`/${RdiUrl.StopPipeline}`)
+          .query(true)
+          .reply(200, mockResponse);
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.Action}/${mockResponse.action_id}`)
+          .query(true)
+          .reply(200, {
+            status: 'failed',
+            data: null,
+            error: mockErrorMessage,
+          });
       },
     },
     {
@@ -106,10 +115,13 @@ describe('POST /rdi/:id/pipeline/stop', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).post(`/${RdiUrl.StopPipeline}`).query(true).reply(401, {
-          message: errorMessage,
-          detail: errorMessage,
-        });
+        nock(testRdiUrl)
+          .post(`/${RdiUrl.StopPipeline}`)
+          .query(true)
+          .reply(401, {
+            message: errorMessage,
+            detail: errorMessage,
+          });
       },
     },
     {
@@ -128,11 +140,17 @@ describe('POST /rdi/:id/pipeline/stop', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).post(`/${RdiUrl.StopPipeline}`).query(true).reply(200, mockResponse);
-        nock(testRdiUrl).get(`/${RdiUrl.Action}/${mockResponse.action_id}`).query(true).reply(401, {
-          message: 'Authorization 2 failed',
-          detail: errorMessage
-        });
+        nock(testRdiUrl)
+          .post(`/${RdiUrl.StopPipeline}`)
+          .query(true)
+          .reply(200, mockResponse);
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.Action}/${mockResponse.action_id}`)
+          .query(true)
+          .reply(401, {
+            message: 'Authorization 2 failed',
+            detail: errorMessage,
+          });
       },
     },
   ].forEach(mainCheckFn);

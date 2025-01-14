@@ -5,18 +5,24 @@ import {
   Joi,
   deps,
   validateApiCall,
-  after, requirements, before,
+  after,
+  requirements,
+  before,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).get(`/${constants.API.DATABASES}/${instanceId}/slow-logs/config`);
+  request(server).get(
+    `/${constants.API.DATABASES}/${instanceId}/slow-logs/config`,
+  );
 
-const responseSchema = Joi.object().keys({
-  slowlogMaxLen: Joi.number().required(),
-  slowlogLogSlowerThan: Joi.number().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    slowlogMaxLen: Joi.number().required(),
+    slowlogLogSlowerThan: Joi.number().required(),
+  })
+  .required();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -55,7 +61,7 @@ describe('GET /databases/:instanceId/slow-logs/config', () => {
         responseBody: {
           statusCode: 404,
           message: 'Invalid database instance id.',
-          error: 'Not Found'
+          error: 'Not Found',
         },
       },
     ].map(mainCheckFn);
@@ -78,7 +84,7 @@ describe('GET /databases/:instanceId/slow-logs/config', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -config')
+        before: () => rte.data.setAclUserRules('~* +@all -config'),
       },
     ].map(mainCheckFn);
   });

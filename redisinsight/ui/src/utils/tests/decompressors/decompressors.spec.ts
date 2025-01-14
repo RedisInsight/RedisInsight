@@ -23,17 +23,33 @@ import {
 } from './constants'
 
 const defaultValues = [
-  { input: [49], compressor: null, output: [49], outputStr: '1', isCompressed: false },
-  { input: [49, 50], compressor: null, output: [49, 50], outputStr: '12', isCompressed: false },
   {
-    input: COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.GZIP].split(',').map((symbol) => toNumber(symbol)),
+    input: [49],
+    compressor: null,
+    output: [49],
+    outputStr: '1',
+    isCompressed: false,
+  },
+  {
+    input: [49, 50],
+    compressor: null,
+    output: [49, 50],
+    outputStr: '12',
+    isCompressed: false,
+  },
+  {
+    input: COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.GZIP]
+      .split(',')
+      .map((symbol) => toNumber(symbol)),
     compressor: null,
     output: [31, 139],
     outputStr: '\\x1f\\x8b',
     isCompressed: false,
   },
   {
-    input: COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.ZSTD].split(',').map((symbol) => toNumber(symbol)),
+    input: COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.ZSTD]
+      .split(',')
+      .map((symbol) => toNumber(symbol)),
     compressor: null,
     output: [40, 181, 47, 253],
     outputStr: '(\\xb5/\\xfd',
@@ -150,35 +166,46 @@ const defaultValues = [
   },
 ].map((value) => ({
   ...value,
-  input: anyToBuffer(value.input)
+  input: anyToBuffer(value.input),
 }))
 
 describe('getCompressor', () => {
-  test.each(defaultValues)('%j', ({ input, compressor, compressorByValue = null }) => {
-    let expected = compressorByValue || compressor
+  test.each(defaultValues)(
+    '%j',
+    ({ input, compressor, compressorByValue = null }) => {
+      let expected = compressorByValue || compressor
 
-    // SNAPPY doesn't have magic symbols
-    if (compressor === KeyValueCompressor.SNAPPY
-      || compressor === KeyValueCompressor.Brotli
-      || compressor === KeyValueCompressor.PHPGZCompress
-    ) {
-      expected = null
-    }
+      // SNAPPY doesn't have magic symbols
+      if (
+        compressor === KeyValueCompressor.SNAPPY ||
+        compressor === KeyValueCompressor.Brotli ||
+        compressor === KeyValueCompressor.PHPGZCompress
+      ) {
+        expected = null
+      }
 
-    const result = getCompressor(input)
-    expect(result).toEqual(expected)
-  })
+      const result = getCompressor(input)
+      expect(result).toEqual(expected)
+    },
+  )
 })
 
 describe('decompressingBuffer', () => {
-  test.each(defaultValues)('%j', ({ input, compressor, output, compressorInit = null, isCompressed }) => {
-    const result = decompressingBuffer(input, compressorInit || compressor)
-    let value: UintArray = output
+  test.each(defaultValues)(
+    '%j',
+    ({ input, compressor, output, compressorInit = null, isCompressed }) => {
+      const result = decompressingBuffer(input, compressorInit || compressor)
+      let value: UintArray = output
 
-    if (compressor) {
-      value = new Uint8Array(output)
-    }
+      if (compressor) {
+        value = new Uint8Array(output)
+      }
 
-    expect(result).toEqual({ value: anyToBuffer(value), compressor, isCompressed })
-  })
+      expect(result).toEqual({
+        value: anyToBuffer(value),
+        compressor,
+        isCompressed,
+      })
+    },
+  )
 })

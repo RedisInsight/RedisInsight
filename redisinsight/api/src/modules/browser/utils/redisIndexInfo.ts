@@ -44,13 +44,22 @@ export const convertIndexInfoReply = (input: ArrayReplyEntry[]): object => {
     infoReply[field] = convertArrayReplyToObject(infoReply[field]);
   });
 
-  infoReply['attributes'] = infoReply['attributes']?.map?.(convertIndexInfoAttributeReply);
-  infoReply['field statistics'] = infoReply['field statistics']?.map?.((sField) => {
-    const convertedField = convertArrayReplyToObject(sField);
-    if (convertedField[errorField] && Array.isArray(convertedField[errorField])) {
-      convertedField[errorField] = convertArrayReplyToObject(convertedField[errorField]);
-    }
-    return convertedField;
-  });
+  infoReply['attributes'] = infoReply['attributes']?.map?.(
+    convertIndexInfoAttributeReply,
+  );
+  infoReply['field statistics'] = infoReply['field statistics']?.map?.(
+    (sField) => {
+      const convertedField = convertArrayReplyToObject(sField);
+      if (
+        convertedField[errorField] &&
+        Array.isArray(convertedField[errorField])
+      ) {
+        convertedField[errorField] = convertArrayReplyToObject(
+          convertedField[errorField],
+        );
+      }
+      return convertedField;
+    },
+  );
   return infoReply;
 };

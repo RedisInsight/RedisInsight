@@ -5,9 +5,20 @@ import { useParams } from 'react-router-dom'
 import { EuiLoadingSpinner, EuiText } from '@elastic/eui'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import { getPipelineStatusAction, rdiPipelineStatusSelector } from 'uiSrc/slices/rdi/pipeline'
-import { fetchRdiStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
-import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
+import {
+  getPipelineStatusAction,
+  rdiPipelineStatusSelector,
+} from 'uiSrc/slices/rdi/pipeline'
+import {
+  fetchRdiStatistics,
+  rdiStatisticsSelector,
+} from 'uiSrc/slices/rdi/statistics'
+import {
+  TelemetryEvent,
+  TelemetryPageView,
+  sendEventTelemetry,
+  sendPageViewTelemetry,
+} from 'uiSrc/telemetry'
 import { formatLongName, Nullable, setTitle } from 'uiSrc/utils'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
 import { PageNames } from 'uiSrc/constants'
@@ -21,9 +32,8 @@ import TargetConnections from './target-connections'
 
 import styles from './styles.module.scss'
 
-const isPipelineDeployed = (
-  data: Nullable<IPipelineStatus>
-) => get(data, ['pipelines', 'default', 'status']) === PipelineStatus.Ready
+const isPipelineDeployed = (data: Nullable<IPipelineStatus>) =>
+  get(data, ['pipelines', 'default', 'status']) === PipelineStatus.Ready
 
 const StatisticsPage = () => {
   const [pageLoading, setPageLoading] = useState(true)
@@ -31,8 +41,11 @@ const StatisticsPage = () => {
 
   const dispatch = useDispatch()
 
-  const { loading: isStatisticsLoading, results: statisticsResults } = useSelector(rdiStatisticsSelector)
-  const { name: connectedRdiInstanceName } = useSelector(connectedInstanceSelector)
+  const { loading: isStatisticsLoading, results: statisticsResults } =
+    useSelector(rdiStatisticsSelector)
+  const { name: connectedRdiInstanceName } = useSelector(
+    connectedInstanceSelector,
+  )
   const { data: statusData } = useSelector(rdiPipelineStatusSelector)
   const rdiInstanceName = formatLongName(connectedRdiInstanceName, 33, 0, '...')
   setTitle(`${rdiInstanceName} - Pipeline Status`)
@@ -46,12 +59,16 @@ const StatisticsPage = () => {
       event: TelemetryEvent.RDI_STATISTICS_REFRESH_CLICKED,
       eventData: {
         rdiInstanceId,
-        section
-      }
+        section,
+      },
     })
   }
 
-  const onChangeAutoRefresh = (section: string, enableAutoRefresh: boolean, refreshRate: string) => {
+  const onChangeAutoRefresh = (
+    section: string,
+    enableAutoRefresh: boolean,
+    refreshRate: string,
+  ) => {
     sendEventTelemetry({
       event: enableAutoRefresh
         ? TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_ENABLED
@@ -60,8 +77,8 @@ const StatisticsPage = () => {
         rdiInstanceId,
         section,
         enableAutoRefresh,
-        refreshRate
-      }
+        refreshRate,
+      },
     })
   }
 
@@ -71,20 +88,25 @@ const StatisticsPage = () => {
 
   useEffect(() => {
     dispatch(getPipelineStatusAction(rdiInstanceId))
-    dispatch(fetchRdiStatistics(rdiInstanceId, undefined, hideSpinner, hideSpinner))
+    dispatch(
+      fetchRdiStatistics(rdiInstanceId, undefined, hideSpinner, hideSpinner),
+    )
 
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_STATUS,
       eventData: {
-        rdiInstanceId
-      }
+        rdiInstanceId,
+      },
     })
   }, [])
 
-  useEffect(() => () => {
-    // unmount
-    dispatch(setLastPageContext(PageNames.rdiStatistics))
-  }, [])
+  useEffect(
+    () => () => {
+      // unmount
+      dispatch(setLastPageContext(PageNames.rdiStatistics))
+    },
+    [],
+  )
 
   if (!statisticsResults) {
     return null
@@ -92,7 +114,11 @@ const StatisticsPage = () => {
 
   // todo add interface
   if (statisticsResults.status === 'failed') {
-    return <EuiText style={{ margin: '20px auto' }}>Unexpected error in your RDI endpoint, please refresh the page</EuiText>
+    return (
+      <EuiText style={{ margin: '20px auto' }}>
+        Unexpected error in your RDI endpoint, please refresh the page
+      </EuiText>
+    )
   }
 
   const { data: statisticsData } = statisticsResults
@@ -106,7 +132,7 @@ const StatisticsPage = () => {
           </div>
         )}
         {!isPipelineDeployed(statusData) ? (
-        // TODO add loader
+          // TODO add loader
           <Empty rdiInstanceId={rdiInstanceId} />
         ) : (
           <>
@@ -115,9 +141,19 @@ const StatisticsPage = () => {
               data={statisticsData.processingPerformance}
               loading={isStatisticsLoading}
               onRefresh={() => onRefresh('processing_performance')}
-              onRefreshClicked={() => onRefreshClicked('processing_performance')}
-              onChangeAutoRefresh={(enableAutoRefresh: boolean, refreshRate: string) =>
-                onChangeAutoRefresh('processing_performance', enableAutoRefresh, refreshRate)}
+              onRefreshClicked={() =>
+                onRefreshClicked('processing_performance')
+              }
+              onChangeAutoRefresh={(
+                enableAutoRefresh: boolean,
+                refreshRate: string,
+              ) =>
+                onChangeAutoRefresh(
+                  'processing_performance',
+                  enableAutoRefresh,
+                  refreshRate,
+                )
+              }
             />
             <TargetConnections data={statisticsData.connections} />
             <DataStreams
@@ -127,8 +163,16 @@ const StatisticsPage = () => {
                 dispatch(fetchRdiStatistics(rdiInstanceId, 'data_streams'))
               }}
               onRefreshClicked={() => onRefreshClicked('data_streams')}
-              onChangeAutoRefresh={(enableAutoRefresh: boolean, refreshRate: string) =>
-                onChangeAutoRefresh('data_streams', enableAutoRefresh, refreshRate)}
+              onChangeAutoRefresh={(
+                enableAutoRefresh: boolean,
+                refreshRate: string,
+              ) =>
+                onChangeAutoRefresh(
+                  'data_streams',
+                  enableAutoRefresh,
+                  refreshRate,
+                )
+              }
             />
             <Clients
               data={statisticsData.clients}
@@ -137,8 +181,12 @@ const StatisticsPage = () => {
                 dispatch(fetchRdiStatistics(rdiInstanceId, 'clients'))
               }}
               onRefreshClicked={() => onRefreshClicked('clients')}
-              onChangeAutoRefresh={(enableAutoRefresh: boolean, refreshRate: string) =>
-                onChangeAutoRefresh('clients', enableAutoRefresh, refreshRate)}
+              onChangeAutoRefresh={(
+                enableAutoRefresh: boolean,
+                refreshRate: string,
+              ) =>
+                onChangeAutoRefresh('clients', enableAutoRefresh, refreshRate)
+              }
             />
           </>
         )}

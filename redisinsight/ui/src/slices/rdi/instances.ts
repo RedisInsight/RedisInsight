@@ -5,12 +5,24 @@ import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { getApiErrorMessage, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
+import {
+  getApiErrorMessage,
+  isStatusSuccessful,
+  Maybe,
+  Nullable,
+} from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 
 import { AppDispatch, RootState } from '../store'
-import { addErrorNotification, addMessageNotification } from '../app/notifications'
-import { IErrorData, InitialStateRdiInstances, RdiInstance } from '../interfaces/rdi'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from '../app/notifications'
+import {
+  IErrorData,
+  InitialStateRdiInstances,
+  RdiInstance,
+} from '../interfaces/rdi'
 
 export const initialState: InitialStateRdiInstances = {
   loading: true,
@@ -27,7 +39,7 @@ export const initialState: InitialStateRdiInstances = {
   },
   loadingChanging: false,
   errorChanging: '',
-  changedSuccessfully: false
+  changedSuccessfully: false,
 }
 
 // A slice for recipes
@@ -40,7 +52,10 @@ const instancesSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    loadInstancesSuccess: (state, { payload }: { payload: RdiInstanceResponse[] }) => {
+    loadInstancesSuccess: (
+      state,
+      { payload }: { payload: RdiInstanceResponse[] },
+    ) => {
       state.data = payload
       state.loading = false
     },
@@ -96,12 +111,15 @@ const instancesSlice = createSlice({
     setConnectedInstanceId: (state, { payload }: { payload: string }) => {
       state.connectedInstance = {
         ...state.connectedInstance,
-        id: payload
+        id: payload,
       }
     },
 
     // set edited instance
-    setEditedInstance: (state, { payload }: { payload: Nullable<RdiInstance> }) => {
+    setEditedInstance: (
+      state,
+      { payload }: { payload: Nullable<RdiInstance> },
+    ) => {
       state.editedInstance.data = payload
     },
 
@@ -114,7 +132,10 @@ const instancesSlice = createSlice({
     },
 
     // set connected instance success
-    setConnectedInstanceSuccess: (state, { payload }: { payload: RdiInstance }) => {
+    setConnectedInstanceSuccess: (
+      state,
+      { payload }: { payload: RdiInstance },
+    ) => {
       state.connectedInstance = payload
       state.connectedInstance.loading = false
     },
@@ -132,8 +153,8 @@ const instancesSlice = createSlice({
 
     updateConnectedInstance: (state, { payload }: { payload: RdiInstance }) => {
       state.connectedInstance = { ...state.connectedInstance, ...payload }
-    }
-  }
+    },
+  },
 })
 
 // Actions generated from the slice
@@ -168,12 +189,16 @@ export const connectedInstanceSelector = (state: RootState) =>
 export default instancesSlice.reducer
 
 // Asynchronous thunk action
-export function fetchInstancesAction(onSuccess?: (data: RdiInstance[]) => void) {
+export function fetchInstancesAction(
+  onSuccess?: (data: RdiInstance[]) => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(loadInstances())
 
     try {
-      const { data, status } = await apiService.get<RdiInstanceResponse[]>(ApiEndpoints.RDI_INSTANCES)
+      const { data, status } = await apiService.get<RdiInstanceResponse[]>(
+        ApiEndpoints.RDI_INSTANCES,
+      )
 
       if (isStatusSuccessful(status)) {
         onSuccess?.(data as RdiInstance[])
@@ -198,13 +223,20 @@ export function createInstanceAction(
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status, data } = await apiService.post<RdiInstanceResponse>(`${ApiEndpoints.RDI_INSTANCES}`, payload)
+      const { status, data } = await apiService.post<RdiInstanceResponse>(
+        `${ApiEndpoints.RDI_INSTANCES}`,
+        payload,
+      )
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch(fetchInstancesAction())
 
-        dispatch(addMessageNotification(successMessages.ADDED_NEW_RDI_INSTANCE(payload.name ?? '')))
+        dispatch(
+          addMessageNotification(
+            successMessages.ADDED_NEW_RDI_INSTANCE(payload.name ?? ''),
+          ),
+        )
         onSuccess?.(data)
       }
     } catch (_err) {
@@ -222,7 +254,7 @@ export function createInstanceAction(
 export function editInstanceAction(
   id: string,
   payload: Partial<RdiInstance>,
-  onSuccess?: (data: RdiInstanceResponse) => void
+  onSuccess?: (data: RdiInstanceResponse) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(defaultInstanceChanging())
@@ -230,7 +262,7 @@ export function editInstanceAction(
     try {
       const { status, data } = await apiService.patch<RdiInstanceResponse>(
         `${ApiEndpoints.RDI_INSTANCES}/${id}`,
-        payload
+        payload,
       )
 
       if (isStatusSuccessful(status)) {
@@ -254,7 +286,10 @@ export function editInstanceAction(
 }
 
 // Asynchronous thunk action
-export function deleteInstancesAction(instances: RdiInstance[], onSuccess?: () => void) {
+export function deleteInstancesAction(
+  instances: RdiInstance[],
+  onSuccess?: () => void,
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(setDefaultInstance())
 
@@ -263,7 +298,7 @@ export function deleteInstancesAction(instances: RdiInstance[], onSuccess?: () =
       const instancesIds = map(instances, 'id')
 
       const { status } = await apiService.delete(ApiEndpoints.RDI_INSTANCES, {
-        data: { ids: instancesIds }
+        data: { ids: instancesIds },
       })
 
       if (isStatusSuccessful(status)) {
@@ -276,9 +311,17 @@ export function deleteInstancesAction(instances: RdiInstance[], onSuccess?: () =
         onSuccess?.()
 
         if (instances.length === 1) {
-          dispatch(addMessageNotification(successMessages.DELETE_RDI_INSTANCE(first(instances)?.name ?? '')))
+          dispatch(
+            addMessageNotification(
+              successMessages.DELETE_RDI_INSTANCE(first(instances)?.name ?? ''),
+            ),
+          )
         } else {
-          dispatch(addMessageNotification(successMessages.DELETE_RDI_INSTANCES(map(instances, 'name'))))
+          dispatch(
+            addMessageNotification(
+              successMessages.DELETE_RDI_INSTANCES(map(instances, 'name')),
+            ),
+          )
         }
       }
     } catch (_err) {
@@ -291,12 +334,17 @@ export function deleteInstancesAction(instances: RdiInstance[], onSuccess?: () =
 }
 
 // Asynchronous thunk action
-export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void) {
+export function fetchConnectedInstanceAction(
+  id: string,
+  onSuccess?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(setConnectedInstance())
 
     try {
-      const { data, status } = await apiService.get<RdiInstanceResponse>(`${ApiEndpoints.RDI_INSTANCES}/${id}`)
+      const { data, status } = await apiService.get<RdiInstanceResponse>(
+        `${ApiEndpoints.RDI_INSTANCES}/${id}`,
+      )
 
       if (isStatusSuccessful(status)) {
         dispatch(setConnectedInstanceSuccess(data))
@@ -320,7 +368,9 @@ export function checkConnectToRdiInstanceAction(
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
     try {
-      const { status } = await apiService.get(`${ApiEndpoints.RDI_INSTANCES}/${id}/connect`)
+      const { status } = await apiService.get(
+        `${ApiEndpoints.RDI_INSTANCES}/${id}/connect`,
+      )
 
       if (isStatusSuccessful(status)) {
         dispatch(setDefaultInstanceSuccess())

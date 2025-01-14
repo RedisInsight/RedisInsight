@@ -17,9 +17,7 @@ describe('CloudUserCapiProvider', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CloudUserCapiProvider,
-      ],
+      providers: [CloudUserCapiProvider],
     }).compile();
 
     service = module.get(CloudUserCapiProvider);
@@ -33,14 +31,16 @@ describe('CloudUserCapiProvider', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getCurrentAccount(mockCloudCapiAuthDto)).toEqual(mockCloudCapiAccount);
+      expect(await service.getCurrentAccount(mockCloudCapiAuthDto)).toEqual(
+        mockCloudCapiAccount,
+      );
     });
     it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
 
-      await expect(service.getCurrentAccount(mockCloudCapiAuthDto)).rejects.toThrow(
-        CloudCapiUnauthorizedException,
-      );
+      await expect(
+        service.getCurrentAccount(mockCloudCapiAuthDto),
+      ).rejects.toThrow(CloudCapiUnauthorizedException);
     });
   });
 });

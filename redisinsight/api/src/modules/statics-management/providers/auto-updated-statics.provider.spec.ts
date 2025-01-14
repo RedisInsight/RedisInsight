@@ -25,7 +25,9 @@ describe('AutoUpdatedStaticsProvider', () => {
   beforeEach(async () => {
     jest.mock('fs-extra', () => mockedFs);
     jest.mock('axios', () => mockedAxios);
-    jest.mock('adm-zip', () => jest.fn().mockImplementation(() => mockedAdmZip));
+    jest.mock('adm-zip', () =>
+      jest.fn().mockImplementation(() => mockedAdmZip),
+    );
 
     service = new AutoUpdatedStaticsProvider({
       name: 'TutorialsProvider',
@@ -101,7 +103,9 @@ describe('AutoUpdatedStaticsProvider', () => {
     });
     it('should not fail when there is an error during copying default files', async () => {
       mockedFs.pathExists.mockImplementationOnce(async () => false);
-      mockedFs.copy.mockImplementationOnce(async () => { throw new Error(); });
+      mockedFs.copy.mockImplementationOnce(async () => {
+        throw new Error();
+      });
 
       await service.initDefaults();
     });
@@ -211,7 +215,9 @@ describe('AutoUpdatedStaticsProvider', () => {
   describe('getRemoteBuildInfo', () => {
     it('should return remote build info json', async () => {
       const mockRemoteBuildInfo = { timestamp: 1 };
-      mockedAxios.get.mockResolvedValueOnce({ data: Buffer.from(JSON.stringify(mockRemoteBuildInfo)) });
+      mockedAxios.get.mockResolvedValueOnce({
+        data: Buffer.from(JSON.stringify(mockRemoteBuildInfo)),
+      });
       expect(await service.getRemoteBuildInfo()).toEqual(mockRemoteBuildInfo);
     });
     it('should return empty object on fail', async () => {
@@ -223,11 +229,15 @@ describe('AutoUpdatedStaticsProvider', () => {
   describe('getCurrentBuildInfo', () => {
     it('should return current build info json', async () => {
       const mockCurrentBuildInfo = { timestamp: 3 };
-      mockedFs.readFile.mockImplementationOnce(async () => Buffer.from(JSON.stringify(mockCurrentBuildInfo)));
+      mockedFs.readFile.mockImplementationOnce(async () =>
+        Buffer.from(JSON.stringify(mockCurrentBuildInfo)),
+      );
       expect(await service.getCurrentBuildInfo()).toEqual(mockCurrentBuildInfo);
     });
     it('should return empty object on fail', async () => {
-      mockedFs.readFile.mockImplementationOnce(async () => { throw new Error(); });
+      mockedFs.readFile.mockImplementationOnce(async () => {
+        throw new Error();
+      });
 
       expect(await service.getCurrentBuildInfo()).toEqual({});
     });

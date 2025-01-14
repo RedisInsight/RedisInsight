@@ -24,7 +24,7 @@ import {
 import { AddZsetFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import {
   INITIAL_ZSET_MEMBER_STATE,
-  IZsetMemberState
+  IZsetMemberState,
 } from 'uiSrc/pages/browser/components/add-key/AddKeyZset/interfaces'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { ISetMemberState } from 'uiSrc/pages/browser/components/add-key/AddKeySet/interfaces'
@@ -39,17 +39,23 @@ const AddZsetMembers = (props: Props) => {
   const { closePanel } = props
   const dispatch = useDispatch()
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
-  const [members, setMembers] = useState<IZsetMemberState[]>([{ ...INITIAL_ZSET_MEMBER_STATE }])
+  const [members, setMembers] = useState<IZsetMemberState[]>([
+    { ...INITIAL_ZSET_MEMBER_STATE },
+  ])
   const { loading } = useSelector(updateZsetScoreStateSelector)
-  const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
+  const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? {
+    name: undefined,
+  }
   const lastAddedMemberName = useRef<HTMLInputElement>(null)
 
-  useEffect(() =>
-    // componentWillUnmount
-    () => {
-      dispatch(resetUpdateScore())
-    },
-  [])
+  useEffect(
+    () =>
+      // componentWillUnmount
+      () => {
+        dispatch(resetUpdateScore())
+      },
+    [],
+  )
 
   useEffect(() => {
     members.every((member) => {
@@ -90,13 +96,15 @@ const AddZsetMembers = (props: Props) => {
   }
 
   const clearMemberValues = (id: number) => {
-    const newState = members.map((item) => (item.id === id
-      ? {
-        ...item,
-        name: '',
-        score: '',
-      }
-      : item))
+    const newState = members.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            name: '',
+            score: '',
+          }
+        : item,
+    )
     setMembers(newState)
   }
 
@@ -176,7 +184,12 @@ const AddZsetMembers = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-zset-field-panel"
-        className={cx(styles.container, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx(
+          styles.container,
+          'eui-yScroll',
+          'flexItemNoFullWidth',
+          'inlineFieldsNoSpace',
+        )}
       >
         <AddMultipleFields
           items={members}
@@ -195,8 +208,11 @@ const AddZsetMembers = (props: Props) => {
                     placeholder={config.member.placeholder}
                     value={item.name}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleMemberChange('name', item.id, e.target.value)}
-                    inputRef={index === members.length - 1 ? lastAddedMemberName : null}
+                      handleMemberChange('name', item.id, e.target.value)
+                    }
+                    inputRef={
+                      index === members.length - 1 ? lastAddedMemberName : null
+                    }
                     disabled={loading}
                     data-testid="member-name"
                   />
@@ -212,7 +228,8 @@ const AddZsetMembers = (props: Props) => {
                     placeholder={config.score.placeholder}
                     value={item.score}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleMemberChange('score', item.id, e.target.value)}
+                      handleMemberChange('score', item.id, e.target.value)
+                    }
                     onBlur={() => {
                       handleScoreBlur(item)
                     }}
@@ -234,7 +251,11 @@ const AddZsetMembers = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-members-btn">
+              <EuiButton
+                color="secondary"
+                onClick={() => closePanel(true)}
+                data-testid="cancel-members-btn"
+              >
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

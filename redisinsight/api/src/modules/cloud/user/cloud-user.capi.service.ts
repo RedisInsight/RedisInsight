@@ -9,15 +9,15 @@ import { CloudUserCapiProvider } from 'src/modules/cloud/user/providers/cloud-us
 export class CloudUserCapiService {
   private logger = new Logger('CloudUserCapiService');
 
-  constructor(
-    private readonly capi: CloudUserCapiProvider,
-  ) {}
+  constructor(private readonly capi: CloudUserCapiProvider) {}
 
   /**
    * Get cloud account short info
    * @param authDto
    */
-  async getCurrentAccount(authDto: CloudCapiAuthDto): Promise<CloudAccountInfo> {
+  async getCurrentAccount(
+    authDto: CloudCapiAuthDto,
+  ): Promise<CloudAccountInfo> {
     this.logger.debug('Getting cloud account.');
     try {
       const account = await this.capi.getCurrentAccount(authDto);

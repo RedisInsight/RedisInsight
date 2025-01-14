@@ -4,4 +4,4 @@ export const POST_MESSAGE_EVENTS = {
   getState: 'getState',
   setState: 'setState',
   formatRedisReply: 'formatRedisReply',
-}
+};

@@ -5,22 +5,25 @@ import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import EditablePopover, { Props } from './EditablePopover'
 
 const mockedProps = mock<Props>()
-const Input = () => (<input data-testid="input" />)
-const Text = () => (<span data-testid="text" />)
+const Input = () => <input data-testid="input" />
+const Text = () => <span data-testid="text" />
 
 describe('EditableInput', () => {
   it('should render', () => {
-    expect(render(<EditablePopover {...mockedProps}><Input /></EditablePopover>)).toBeTruthy()
+    expect(
+      render(
+        <EditablePopover {...mockedProps}>
+          <Input />
+        </EditablePopover>,
+      ),
+    ).toBeTruthy()
   })
 
   it('should not display popover, display content', () => {
     render(
-      <EditablePopover
-        {...mockedProps}
-        content={(<Text />)}
-      >
+      <EditablePopover {...mockedProps} content={<Text />}>
         <Input />
-      </EditablePopover>
+      </EditablePopover>,
     )
 
     expect(screen.queryByTestId('input')).not.toBeInTheDocument()
@@ -29,11 +32,9 @@ describe('EditableInput', () => {
 
   it('should display popover', () => {
     render(
-      <EditablePopover
-        {...mockedProps}
-      >
+      <EditablePopover {...mockedProps}>
         <Text />
-      </EditablePopover>
+      </EditablePopover>,
     )
 
     act(() => {
@@ -51,13 +52,15 @@ describe('EditableInput', () => {
         isOpen
         onDecline={jest.fn()}
         onApply={onApply}
-        content={(<Input />)}
+        content={<Input />}
       >
         <Text />
-      </EditablePopover>
+      </EditablePopover>,
     )
 
-    fireEvent.change(screen.getByTestId('input'), { target: { value: 'value' } })
+    fireEvent.change(screen.getByTestId('input'), {
+      target: { value: 'value' },
+    })
     fireEvent.click(screen.getByTestId('save-btn'))
 
     expect(onApply).toBeCalled()
@@ -66,13 +69,9 @@ describe('EditableInput', () => {
   it('should call on decline', () => {
     const onDecline = jest.fn()
     render(
-      <EditablePopover
-        {...mockedProps}
-        isOpen
-        onDecline={onDecline}
-      >
+      <EditablePopover {...mockedProps} isOpen onDecline={onDecline}>
         <Text />
-      </EditablePopover>
+      </EditablePopover>,
     )
 
     fireEvent.click(screen.getByTestId('cancel-btn'))

@@ -1,7 +1,14 @@
 import {
-  Body, Query,
+  Body,
+  Query,
   ClassSerializerInterceptor,
-  Controller, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
@@ -18,9 +25,7 @@ import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 @Controller('cloud/me/jobs')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class CloudJobController {
-  constructor(
-    private readonly service: CloudJobService,
-  ) {}
+  constructor(private readonly service: CloudJobService) {}
 
   @Post('/')
   @ApiEndpoint({
@@ -30,8 +35,8 @@ export class CloudJobController {
   })
   async createFreeDatabase(
     @RequestSessionMetadata() sessionMetadata,
-      @Body() dto: CreateCloudJobDto,
-      @Query() utm: CloudRequestUtm,
+    @Body() dto: CreateCloudJobDto,
+    @Query() utm: CloudRequestUtm,
   ): Promise<CloudJobInfo> {
     return this.service.create(sessionMetadata, dto, utm);
   }
@@ -56,7 +61,7 @@ export class CloudJobController {
   })
   async getJobInfo(
     @RequestSessionMetadata() sessionMetadata,
-      @Param('id') id: string,
+    @Param('id') id: string,
   ): Promise<CloudJobInfo> {
     return this.service.getJobInfo(sessionMetadata, id);
   }

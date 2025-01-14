@@ -8,21 +8,22 @@ import {
   KEYWORDS as cypherKeywords,
   FUNCTIONS as cypherFunctions,
 } from './cypher'
+import { jmespathLanguageConfiguration } from './jmespath'
 import {
-  jmespathLanguageConfiguration,
-} from './jmespath'
-import { sqliteFunctionsLanguageConfiguration, SQLITE_FUNCTIONS } from './sqliteFunctions'
+  sqliteFunctionsLanguageConfiguration,
+  SQLITE_FUNCTIONS,
+} from './sqliteFunctions'
 import { DSL, DSLNaming } from '../commands'
 
 export interface MonacoSyntaxLang {
   name: string
   id: string
   language: string
-  config?: monacoEditor.languages.LanguageConfiguration,
+  config?: monacoEditor.languages.LanguageConfiguration
   completionProvider?: (
     keywords?: string[],
     functions?: monacoEditor.languages.CompletionItem[],
-  ) => monacoEditor.languages.CompletionItemProvider,
+  ) => monacoEditor.languages.CompletionItemProvider
   tokensProvider?: (
     keywords?: string[],
     functions?: monacoEditor.languages.CompletionItem[],
@@ -42,28 +43,29 @@ export enum MonacoLanguage {
   RediSearch = 'redisearch',
 }
 
-export const defaultMonacoOptions: monacoEditor.editor.IStandaloneEditorConstructionOptions = {
-  tabCompletion: 'on',
-  wordWrap: 'on',
-  padding: { top: 10 },
-  automaticLayout: true,
-  formatOnPaste: false,
-  glyphMargin: true,
-  bracketPairColorization: {
-    enabled: true,
-    independentColorPoolPerBracketType: true
-  },
-  stickyScroll: {
-    enabled: true,
-    defaultModel: 'indentationModel'
-  },
-  suggest: {
-    preview: true,
-    showStatusBar: true,
-    showIcons: false,
-  },
-  lineNumbersMinChars: 4
-}
+export const defaultMonacoOptions: monacoEditor.editor.IStandaloneEditorConstructionOptions =
+  {
+    tabCompletion: 'on',
+    wordWrap: 'on',
+    padding: { top: 10 },
+    automaticLayout: true,
+    formatOnPaste: false,
+    glyphMargin: true,
+    bracketPairColorization: {
+      enabled: true,
+      independentColorPoolPerBracketType: true,
+    },
+    stickyScroll: {
+      enabled: true,
+      defaultModel: 'indentationModel',
+    },
+    suggest: {
+      preview: true,
+      showStatusBar: true,
+      showIcons: false,
+    },
+    lineNumbersMinChars: 4,
+  }
 
 export const DEFAULT_MONACO_YAML_URI = 'http://example.com/schema-name.json'
 export const DEFAULT_MONACO_FILE_MATCH = '*'
@@ -85,12 +87,13 @@ export const DEDICATED_EDITOR_LANGUAGES: MonacoSyntaxObject = {
     language: MonacoLanguage.SQLiteFunctions,
     config: sqliteFunctionsLanguageConfiguration,
     completionProvider: () => ({
-      ...getCompletionProvider([], SQLITE_FUNCTIONS)
+      ...getCompletionProvider([], SQLITE_FUNCTIONS),
     }),
-    tokensProvider: () => (
-      { ...getSqliteFunctionsMonarchTokensProvider(
-        SQLITE_FUNCTIONS.map(({ label }) => label.toString())
-      ) }),
+    tokensProvider: () => ({
+      ...getSqliteFunctionsMonarchTokensProvider(
+        SQLITE_FUNCTIONS.map(({ label }) => label.toString()),
+      ),
+    }),
   },
   [DSL.jmespath]: {
     name: DSLNaming[DSL.jmespath],
@@ -101,21 +104,23 @@ export const DEDICATED_EDITOR_LANGUAGES: MonacoSyntaxObject = {
       keywords: string[] = [],
       functions: monacoEditor.languages.CompletionItem[] = [],
     ) => ({
-      ...getCompletionProvider(keywords, functions)
+      ...getCompletionProvider(keywords, functions),
     }),
     tokensProvider: (
       _,
       functions: monacoEditor.languages.CompletionItem[] = [],
-    ) => (
-      { ...getJmespathMonarchTokensProvider(
-        functions.map(({ label }) => label.toString())
-      ) }),
+    ) => ({
+      ...getJmespathMonarchTokensProvider(
+        functions.map(({ label }) => label.toString()),
+      ),
+    }),
   },
 }
 
-export const MONACO_MANUAL = '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.\n'
-  + '// Enter multiple commands at different rows to run them at once.\n'
-  + '// Start a new line with an indent (Tab) to specify arguments for any Redis command in multiple line mode.\n'
-  + '// Use F1 to see the full list of shortcuts available in Workbench.\n'
-  + '// Use Ctrl+Space (Cmd+Space) to see the list of commands and information about commands and their arguments in the suggestion list.\n'
-  + '// Use Ctrl+Shift+Space (Cmd+Shift+Space) to see the list of arguments for commands.\n'
+export const MONACO_MANUAL =
+  '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.\n' +
+  '// Enter multiple commands at different rows to run them at once.\n' +
+  '// Start a new line with an indent (Tab) to specify arguments for any Redis command in multiple line mode.\n' +
+  '// Use F1 to see the full list of shortcuts available in Workbench.\n' +
+  '// Use Ctrl+Space (Cmd+Space) to see the list of commands and information about commands and their arguments in the suggestion list.\n' +
+  '// Use Ctrl+Shift+Space (Cmd+Shift+Space) to see the list of arguments for commands.\n'

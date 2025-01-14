@@ -25,7 +25,7 @@ const mockedProps = {
         filtered: 0,
         rejected: 0,
         deduplicated: 0,
-        lastArrival: '2022-01-01'
+        lastArrival: '2022-01-01',
       },
       stream2: {
         total: 20,
@@ -36,14 +36,14 @@ const mockedProps = {
         filtered: 0,
         rejected: 0,
         deduplicated: 0,
-        lastArrival: '2022-01-02'
-      }
-    }
+        lastArrival: '2022-01-02',
+      },
+    },
   },
   loading: false,
   onRefresh: jest.fn(),
   onRefreshClicked: jest.fn(),
-  onChangeAutoRefresh: jest.fn()
+  onChangeAutoRefresh: jest.fn(),
 }
 
 describe('DataStreams', () => {

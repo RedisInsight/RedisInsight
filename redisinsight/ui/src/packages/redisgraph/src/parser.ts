@@ -1,28 +1,27 @@
 function resolveProps(d: Object | Array<unknown>): any {
-    if (!Array.isArray(d) && typeof (d) === 'object') {
-        return d
-    } else if (Array.isArray(d)) {
-        const key = d[0]
-        if (d.length === 2) {
-            const value = d[1];
-            return ({
-                key,
-                value,
-            })
-        } else {
-            return ({
-                key,
-                value: d.filter((_, i) => i !== 0)
-            })
-        }
+  if (!Array.isArray(d) && typeof d === 'object') {
+    return d
+  } else if (Array.isArray(d)) {
+    const key = d[0]
+    if (d.length === 2) {
+      const value = d[1]
+      return {
+        key,
+        value,
+      }
+    } else {
+      return {
+        key,
+        value: d.filter((_, i) => i !== 0),
+      }
     }
+  }
 }
-
 
 interface INode {
   id: string
   labels: string[]
-  properties: {[key: string]: string | number | object }
+  properties: { [key: string]: string | number | object }
 }
 
 interface IEdge {
@@ -30,17 +29,16 @@ interface IEdge {
   type: string
   source: string
   target: string
-  properties: {[key: string]: string | number | object }
+  properties: { [key: string]: string | number | object }
 }
-
 
 interface IResponseParser {
   nodes: INode[]
   edges: IEdge[]
   nodeIds: Set<string>
   edgeIds: Set<string>
-  labels: {[key: string]: number}
-  types: {[key: string]: number}
+  labels: { [key: string]: number }
+  types: { [key: string]: number }
   headers: any
   hasNamedPathItem: boolean
   npNodeIds: string[]
@@ -49,21 +47,31 @@ interface IResponseParser {
 }
 
 function responseParser(data: any): IResponseParser {
-
   const headers = data[0]
   let nodes: INode[] = []
   let nodeIds = new Set<string>()
   let edgeIds = new Set<string>()
   let edges: IEdge[] = []
-  let types: {[key: string]: number} = {}
-  let labels: {[key: string]: number} = {}
+  let types: { [key: string]: number } = {}
+  let labels: { [key: string]: number } = {}
   let hasNamedPathItem = false
   let npNodeIds: string[] = []
   let npEdgeIds: string[] = []
   let danglingEdgeIds = new Set<string>()
-  if (data.length < 2) return {
-    nodes, edges, types, labels, headers, nodeIds, edgeIds, hasNamedPathItem, npNodeIds, npEdgeIds, danglingEdgeIds,
-  }
+  if (data.length < 2)
+    return {
+      nodes,
+      edges,
+      types,
+      labels,
+      headers,
+      nodeIds,
+      edgeIds,
+      hasNamedPathItem,
+      npNodeIds,
+      npEdgeIds,
+      danglingEdgeIds,
+    }
 
   const entries = data[1].map((entry: any) => {
     /* entry -> has headers number of items */
@@ -73,9 +81,9 @@ function responseParser(data: any): IResponseParser {
           const node: INode = {
             id: item[0][1],
             labels: item[1][1],
-            properties: {}
+            properties: {},
           }
-          labels[item[1][1]] = (labels[item[1][1]] + 1) || 1
+          labels[item[1][1]] = labels[item[1][1]] + 1 || 1
           const propValues = item[2][1]
           propValues.map((x: any) => {
             const v = resolveProps(x)
@@ -90,9 +98,9 @@ function responseParser(data: any): IResponseParser {
             type: item[1][1],
             source: item[2][1],
             target: item[3][1],
-            properties: {}
+            properties: {},
           }
-          types[item[1][1]] = (types[item[1][1]] + 1) || 1
+          types[item[1][1]] = types[item[1][1]] + 1 || 1
           const propValues = item[4][1]
           propValues.map((x: any) => {
             const v = resolveProps(x)
@@ -105,11 +113,11 @@ function responseParser(data: any): IResponseParser {
         } else {
           // unknown item?
         }
-      } else if (typeof(item) === 'string'){
+      } else if (typeof item === 'string') {
         try {
           // If named path response, try to parse it
           hasNamedPathItem = true
-          let[nIds, eIds] = ParseEntitesFromNamedPathResponse(item)
+          let [nIds, eIds] = ParseEntitesFromNamedPathResponse(item)
           nodeIds = new Set([...nodeIds, ...nIds])
           edgeIds = new Set([...edgeIds, ...eIds])
 
@@ -122,8 +130,7 @@ function responseParser(data: any): IResponseParser {
     })
   })
 
-
-  danglingEdgeIds = new Set([...edgeIds].filter(eId => !nodeIds.has(eId)))
+  danglingEdgeIds = new Set([...edgeIds].filter((eId) => !nodeIds.has(eId)))
 
   return {
     headers,
@@ -140,8 +147,8 @@ function responseParser(data: any): IResponseParser {
   }
 }
 
-function ResultsParser(data: any[][]) : {headers: any[], results: any[] }{
-  if (data.length === 0) return {headers: [], results: []}
+function ResultsParser(data: any[][]): { headers: any[]; results: any[] } {
+  if (data.length === 0) return { headers: [], results: [] }
 
   const headers = data[0]
   const records = data[1]
@@ -156,7 +163,7 @@ function ResultsParser(data: any[][]) : {headers: any[], results: any[] }{
         if (entity[0][0] === 'id') {
           const item: any = {
             id: entity[0][1],
-            properties: {}
+            properties: {},
           }
           let propValues = []
           if (entity[1][0] === 'labels') {
@@ -172,7 +179,7 @@ function ResultsParser(data: any[][]) : {headers: any[], results: any[] }{
             const v = resolveProps(x)
             item['properties'][v.key] = v.value
           })
-          result[headers[i]] = item.properties/* here */
+          result[headers[i]] = item.properties /* here */
         } else {
           result[headers[i]] = entity
         }
@@ -188,8 +195,6 @@ function ResultsParser(data: any[][]) : {headers: any[], results: any[] }{
   }
 }
 
-
-
 function isDigit(c: string): boolean {
   return '0' <= c && c <= '9'
 }
@@ -198,15 +203,15 @@ function parseDigit(resp: string, i: number): [string, number] {
   let k = ''
   while (isDigit(resp[i])) {
     k += resp[i]
-    i += 1;
+    i += 1
   }
   return [k, i]
 }
 
 function ParseEntitesFromNamedPathResponse(resp: string): [string[], string[]] {
-  const EOF = -1;
-  let tok = 0;
-  let k = 1;
+  const EOF = -1
+  let tok = 0
+  let k = 1
 
   let nodes: string[] = []
   let edges: string[] = []
@@ -214,34 +219,34 @@ function ParseEntitesFromNamedPathResponse(resp: string): [string[], string[]] {
   while (tok !== EOF) {
     switch (resp[k]) {
       case '(':
-        k += 1;
-        let nodeId = '';
-        [nodeId, k] = parseDigit(resp, k)
+        k += 1
+        let nodeId = ''
+        ;[nodeId, k] = parseDigit(resp, k)
         if (nodeId !== '') nodes.push(nodeId)
-        else throw Error("Parse error: Unable to parse Node id");
-        k += 1;
-        break;
+        else throw Error('Parse error: Unable to parse Node id')
+        k += 1
+        break
       case ' ':
-        k += 1;
-        break;
+        k += 1
+        break
       case '[':
-        k += 1;
-        let edgeId = '';
-        [edgeId, k] = parseDigit(resp, k)
+        k += 1
+        let edgeId = ''
+        ;[edgeId, k] = parseDigit(resp, k)
         if (edgeId !== '') edges.push(edgeId)
-        else throw Error("Parse error: Unable to parse Edge id");
-        k += 1;
-        break;
+        else throw Error('Parse error: Unable to parse Edge id')
+        k += 1
+        break
       case ',':
-        k += 1;
-        break;
+        k += 1
+        break
       case ']':
         if (k === resp.length - 1) {
-          tok = EOF;
+          tok = EOF
         }
-        break;
+        break
       default:
-        throw Error("Parse error: Unknown");
+        throw Error('Parse error: Unknown')
     }
   }
 

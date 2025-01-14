@@ -1,8 +1,14 @@
 import { applyDecorators } from '@nestjs/common';
 import {
-  AnyToRedisString, RedisStringToASCII, RedisStringToBuffer, RedisStringToUTF8,
+  AnyToRedisString,
+  RedisStringToASCII,
+  RedisStringToBuffer,
+  RedisStringToUTF8,
 } from 'src/common/decorators';
-import { RedisStringResponseEncoding, RedisStringTransformOptions } from 'src/common/constants';
+import {
+  RedisStringResponseEncoding,
+  RedisStringTransformOptions,
+} from 'src/common/constants';
 
 export function RedisStringType(opts?: RedisStringTransformOptions) {
   return applyDecorators(

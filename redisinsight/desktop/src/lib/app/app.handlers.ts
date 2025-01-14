@@ -1,7 +1,10 @@
 import { app } from 'electron'
 import log from 'electron-log'
 import { getBackendGracefulShutdown } from 'desktopSrc/lib'
-import { deepLinkHandler, deepLinkWindowHandler } from 'desktopSrc/lib/app/deep-link.handlers'
+import {
+  deepLinkHandler,
+  deepLinkWindowHandler,
+} from 'desktopSrc/lib/app/deep-link.handlers'
 import { showOrCreateWindow } from 'desktopSrc/utils'
 
 export const initAppHandlers = () => {
@@ -11,11 +14,14 @@ export const initAppHandlers = () => {
     await showOrCreateWindow()
   })
 
-  app.on('certificate-error', (event, _webContents, _url, _error, _certificate, callback) => {
-    // Skip error due to self-signed certificate
-    event.preventDefault()
-    callback(true)
-  })
+  app.on(
+    'certificate-error',
+    (event, _webContents, _url, _error, _certificate, callback) => {
+      // Skip error due to self-signed certificate
+      event.preventDefault()
+      callback(true)
+    },
+  )
 
   app.on('window-all-closed', () => {
     log.info('window-all-closed')

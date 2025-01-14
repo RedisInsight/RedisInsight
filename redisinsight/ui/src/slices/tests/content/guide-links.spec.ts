@@ -1,5 +1,9 @@
 import { cloneDeep } from 'lodash'
-import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { resourcesService } from 'uiSrc/services'
 import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
 import reducer, {
@@ -8,7 +12,7 @@ import reducer, {
   getGuideLinksSuccess,
   getGuideLinksFailure,
   fetchGuideLinksAction,
-  guideLinksSelector
+  guideLinksSelector,
 } from '../../content/guide-links'
 
 let store: typeof mockedStore
@@ -38,7 +42,7 @@ describe('slices', () => {
       const loading = true
       const state = {
         ...initialState,
-        loading
+        loading,
       }
 
       // Act
@@ -82,7 +86,7 @@ describe('slices', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
@@ -111,10 +115,7 @@ describe('slices', () => {
       await store.dispatch<any>(fetchGuideLinksAction())
 
       // Assert
-      const expectedActions = [
-        getGuideLinks(),
-        getGuideLinksSuccess(data),
-      ]
+      const expectedActions = [getGuideLinks(), getGuideLinksSuccess(data)]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
     })

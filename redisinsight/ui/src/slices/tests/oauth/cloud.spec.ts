@@ -1,16 +1,24 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 
-import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  clearStoreActions,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { apiService } from 'uiSrc/services'
 import {
   addErrorNotification,
   addInfiniteNotification,
   addMessageNotification,
-  removeInfiniteNotification
+  removeInfiniteNotification,
 } from 'uiSrc/slices/app/notifications'
-import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
+import {
+  INFINITE_MESSAGES,
+  InfiniteMessagesIds,
+} from 'uiSrc/components/notifications/components'
 import { CloudJobStatus, CloudJobName } from 'uiSrc/electron/constants'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
@@ -56,7 +64,9 @@ import reducer, {
   logoutUser,
   logoutUserSuccess,
   logoutUserFailure,
-  logoutUserAction, oauthCloudUserSelector, setInitialLoadingState
+  logoutUserAction,
+  oauthCloudUserSelector,
+  setInitialLoadingState,
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -94,8 +104,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -117,8 +127,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -140,8 +150,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -155,7 +165,7 @@ describe('oauth cloud slice', () => {
         user: {
           ...initialState.user,
           loading: true,
-        }
+        },
       }
 
       // Act
@@ -164,8 +174,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -181,7 +191,7 @@ describe('oauth cloud slice', () => {
           ...initialState.user,
           loading: false,
           data,
-        }
+        },
       }
 
       // Act
@@ -190,8 +200,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -207,7 +217,7 @@ describe('oauth cloud slice', () => {
           ...initialState.user,
           loading: false,
           error: data,
-        }
+        },
       }
 
       // Act
@@ -216,8 +226,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -233,8 +243,8 @@ describe('oauth cloud slice', () => {
           freeDb: {
             ...initialState.user.freeDb,
             loading: true,
-          }
-        }
+          },
+        },
       }
 
       // Act
@@ -243,8 +253,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -252,7 +262,13 @@ describe('oauth cloud slice', () => {
 
   describe('addFreeDbSuccess', () => {
     it('should properly set the state with fetched data', () => {
-      const data = { host: 'localhost', port: 6379, id: 'id', modules: [], version: '1' }
+      const data = {
+        host: 'localhost',
+        port: 6379,
+        id: 'id',
+        modules: [],
+        version: '1',
+      }
       // Arrange
       const state = {
         ...initialState,
@@ -262,8 +278,8 @@ describe('oauth cloud slice', () => {
             ...initialState.user.freeDb,
             data,
             loading: false,
-          }
-        }
+          },
+        },
       }
 
       // Act
@@ -272,8 +288,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -291,8 +307,8 @@ describe('oauth cloud slice', () => {
             ...initialState.user.freeDb,
             loading: false,
             error: data,
-          }
-        }
+          },
+        },
       }
 
       // Act
@@ -301,8 +317,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -314,7 +330,7 @@ describe('oauth cloud slice', () => {
       const data = true
       const state = {
         ...initialState,
-        isOpenSelectAccountDialog: true
+        isOpenSelectAccountDialog: true,
       }
 
       // Act
@@ -323,8 +339,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -338,8 +354,8 @@ describe('oauth cloud slice', () => {
         ...initialState,
         plan: {
           ...initialState.plan,
-          isOpenDialog: true
-        }
+          isOpenDialog: true,
+        },
       }
 
       // Act
@@ -348,8 +364,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -362,8 +378,8 @@ describe('oauth cloud slice', () => {
         ...initialState,
         plan: {
           ...initialState.plan,
-          loading: true
-        }
+          loading: true,
+        },
       }
 
       // Act
@@ -372,8 +388,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -382,27 +398,29 @@ describe('oauth cloud slice', () => {
   describe('getPlansSuccess', () => {
     it('should properly set the state', () => {
       // Arrange
-      const data = [{
-        id: 12148,
-        type: 'fixed',
-        name: 'Cache 30MB',
-        provider: 'AWS',
-        region: 'eu-west-1',
-        price: 0,
-        details: {
-          countryName: 'Poland',
-          cityName: 'Warsaw',
+      const data = [
+        {
           id: 12148,
+          type: 'fixed',
+          name: 'Cache 30MB',
+          provider: 'AWS',
           region: 'eu-west-1',
-        }
-      }]
+          price: 0,
+          details: {
+            countryName: 'Poland',
+            cityName: 'Warsaw',
+            id: 12148,
+            region: 'eu-west-1',
+          },
+        },
+      ]
       const state = {
         ...initialState,
         plan: {
           ...initialState.plan,
           loading: false,
           data,
-        }
+        },
       }
 
       // Act
@@ -411,8 +429,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -426,7 +444,7 @@ describe('oauth cloud slice', () => {
         plan: {
           ...initialState.plan,
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -435,8 +453,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -452,7 +470,10 @@ describe('oauth cloud slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, setSocialDialogState(OAuthSocialSource.BrowserSearch))
+      const nextState = reducer(
+        initialState,
+        setSocialDialogState(OAuthSocialSource.BrowserSearch),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -516,7 +537,7 @@ describe('oauth cloud slice', () => {
         capiKeys: {
           ...initialState.capiKeys,
           loading: true,
-        }
+        },
       }
 
       // Act
@@ -525,8 +546,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -537,8 +558,8 @@ describe('oauth cloud slice', () => {
       // Arrange
       const data = [
         {
-          id: '1'
-        }
+          id: '1',
+        },
       ]
       const state = {
         ...initialState,
@@ -546,7 +567,7 @@ describe('oauth cloud slice', () => {
           ...initialState.capiKeys,
           data,
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -555,8 +576,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -570,7 +591,7 @@ describe('oauth cloud slice', () => {
         capiKeys: {
           ...initialState.capiKeys,
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -579,8 +600,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -594,7 +615,7 @@ describe('oauth cloud slice', () => {
         capiKeys: {
           ...initialState.capiKeys,
           loading: true,
-        }
+        },
       }
 
       // Act
@@ -603,8 +624,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -616,23 +637,16 @@ describe('oauth cloud slice', () => {
       const currentState = {
         ...initialState,
         capiKeys: {
-          data: [
-            { id: '1' },
-            { id: '2' },
-            { id: '3' },
-          ]
-        }
+          data: [{ id: '1' }, { id: '2' }, { id: '3' }],
+        },
       }
       const state = {
         ...initialState,
         capiKeys: {
           ...initialState.capiKeys,
           loading: false,
-          data: [
-            { id: '1' },
-            { id: '3' },
-          ]
-        }
+          data: [{ id: '1' }, { id: '3' }],
+        },
       }
 
       // Act
@@ -641,8 +655,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -656,7 +670,7 @@ describe('oauth cloud slice', () => {
         capiKeys: {
           ...initialState.capiKeys,
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -665,8 +679,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -680,7 +694,7 @@ describe('oauth cloud slice', () => {
         capiKeys: {
           ...initialState.capiKeys,
           loading: true,
-        }
+        },
       }
 
       // Act
@@ -689,8 +703,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -702,20 +716,16 @@ describe('oauth cloud slice', () => {
       const currentState = {
         ...initialState,
         capiKeys: {
-          data: [
-            { id: '1' },
-            { id: '2' },
-            { id: '3' },
-          ]
-        }
+          data: [{ id: '1' }, { id: '2' }, { id: '3' }],
+        },
       }
       const state = {
         ...initialState,
         capiKeys: {
           ...initialState.capiKeys,
           loading: false,
-          data: []
-        }
+          data: [],
+        },
       }
 
       // Act
@@ -724,8 +734,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -739,7 +749,7 @@ describe('oauth cloud slice', () => {
         capiKeys: {
           ...initialState.capiKeys,
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -748,8 +758,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -761,7 +771,7 @@ describe('oauth cloud slice', () => {
       const data = OAuthSocialSource.Autodiscovery
       const state = {
         ...initialState,
-        source: data
+        source: data,
       }
 
       // Act
@@ -770,8 +780,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -782,7 +792,7 @@ describe('oauth cloud slice', () => {
       // Arrange
       const state = {
         ...initialState.user,
-        loading: true
+        loading: true,
       }
 
       // Act
@@ -791,8 +801,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudUserSelector(rootState)).toEqual(state)
     })
@@ -806,8 +816,8 @@ describe('oauth cloud slice', () => {
         user: {
           ...initialState.user,
           loading: true,
-          data: {}
-        }
+          data: {},
+        },
       }
 
       // Act
@@ -816,8 +826,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudUserSelector(rootState)).toEqual(initialState.user)
     })
@@ -831,8 +841,8 @@ describe('oauth cloud slice', () => {
         user: {
           ...initialState.user,
           loading: true,
-          data: {}
-        }
+          data: {},
+        },
       }
 
       // Act
@@ -841,8 +851,8 @@ describe('oauth cloud slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudUserSelector(rootState)).toEqual(initialState.user)
     })
@@ -853,17 +863,20 @@ describe('oauth cloud slice', () => {
       // Arrange
       const userState = {
         ...initialState.user,
-        initialLoading: false
+        initialLoading: false,
       }
 
       // Act
-      const nextState = reducer(initialState as any, setInitialLoadingState(false))
+      const nextState = reducer(
+        initialState as any,
+        setInitialLoadingState(false),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: {
-          cloud: nextState
-        }
+          cloud: nextState,
+        },
       })
       expect(oauthCloudUserSelector(rootState)).toEqual(userState)
     })
@@ -872,7 +885,7 @@ describe('oauth cloud slice', () => {
   describe('thunks', () => {
     describe('fetchUserInfo', () => {
       it('call both fetchUserInfo and getUserInfoSuccess when fetch is successed', async () => {
-      // Arrange
+        // Arrange
         const data = { id: 123123 }
         const responsePayload = { data, status: 200 }
 
@@ -890,7 +903,7 @@ describe('oauth cloud slice', () => {
         expect(store.getActions()).toEqual(expectedActions)
       })
       it('call setSelectAccountDialogState and setSocialDialogState when fetch is successed and accounts > 1', async () => {
-      // Arrange
+        // Arrange
         const data = { id: 123123, accounts: [{}, {}] }
         const responsePayload = { data, status: 200 }
 
@@ -911,8 +924,9 @@ describe('oauth cloud slice', () => {
       })
 
       it('call both fetchAccountInfo and getUserInfoFailure when fetch is fail', async () => {
-      // Arrange
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        // Arrange
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -938,7 +952,7 @@ describe('oauth cloud slice', () => {
 
     describe('createFreeDb', () => {
       it('call both addFreeDb and setJob when post is successed', async () => {
-      // Arrange
+        // Arrange
         const data = {
           id: '123123',
           name: CloudJobName.CreateFreeSubscriptionAndDatabase,
@@ -950,19 +964,21 @@ describe('oauth cloud slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(createFreeDbJob({ name: CloudJobName.CreateFreeSubscriptionAndDatabase }))
+        await store.dispatch<any>(
+          createFreeDbJob({
+            name: CloudJobName.CreateFreeSubscriptionAndDatabase,
+          }),
+        )
 
         // Assert
-        const expectedActions = [
-          addFreeDb(),
-          setJob(data),
-        ]
+        const expectedActions = [addFreeDb(), setJob(data)]
         expect(store.getActions()).toEqual(expectedActions)
       })
 
       it('call both fetchAccountInfo and addFreeDbFailure when post is fail', async () => {
-      // Arrange
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        // Arrange
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -973,7 +989,11 @@ describe('oauth cloud slice', () => {
         apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(createFreeDbJob({ name: CloudJobName.CreateFreeSubscriptionAndDatabase }))
+        await store.dispatch<any>(
+          createFreeDbJob({
+            name: CloudJobName.CreateFreeSubscriptionAndDatabase,
+          }),
+        )
 
         // Assert
         const expectedActions = [
@@ -988,13 +1008,13 @@ describe('oauth cloud slice', () => {
 
     describe('activateAccount', () => {
       it('call both getUserInfo and getUserInfoSuccess when put is successed', async () => {
-      // Arrange
+        // Arrange
         const data = {
           id: 3,
           accounts: [
             { id: 3, name: 'name' },
             { id: 4, name: 'name' },
-          ]
+          ],
         }
         const responseAccountPayload = { data, status: 200 }
 
@@ -1004,16 +1024,14 @@ describe('oauth cloud slice', () => {
         await store.dispatch<any>(activateAccount('123'))
 
         // Assert
-        const expectedActions = [
-          getUserInfo(),
-          getUserInfoSuccess(data),
-        ]
+        const expectedActions = [getUserInfo(), getUserInfoSuccess(data)]
         expect(store.getActions()).toEqual(expectedActions)
       })
 
       it('call both getUserInfo and getUserInfoFailure when put is fail', async () => {
-      // Arrange
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        // Arrange
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -1039,43 +1057,55 @@ describe('oauth cloud slice', () => {
 
     describe('createFreeDbSuccess', () => {
       it('should call proper actions without error', async () => {
-      // Arrange
+        // Arrange
         const result = {
           resourceId: '123',
         }
         const onConnect = () => {}
 
         // Act
-        await store.dispatch<any>(createFreeDbSuccess(result, {}, CloudJobName.CreateFreeDatabase))
+        await store.dispatch<any>(
+          createFreeDbSuccess(result, {}, CloudJobName.CreateFreeDatabase),
+        )
 
         // Assert
         const expectedActions = [
           showOAuthProgress(true),
           removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
-          addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB({}, onConnect, CloudJobName.CreateFreeDatabase)),
+          addInfiniteNotification(
+            INFINITE_MESSAGES.SUCCESS_CREATE_DB(
+              {},
+              onConnect,
+              CloudJobName.CreateFreeDatabase,
+            ),
+          ),
           setSelectAccountDialogState(false),
         ]
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
     })
 
     describe('fetchPlans', () => {
       it('call both fetchPlans and getPlansSuccess when fetch is successed', async () => {
-      // Arrange
-        const data = [{
-          id: 12148,
-          type: 'fixed',
-          name: 'Cache 30MB',
-          provider: 'AWS',
-          region: 'eu-west-1',
-          price: 0,
-          details: {
-            countryName: 'Poland',
-            cityName: 'Warsaw',
+        // Arrange
+        const data = [
+          {
             id: 12148,
+            type: 'fixed',
+            name: 'Cache 30MB',
+            provider: 'AWS',
             region: 'eu-west-1',
-          }
-        }]
+            price: 0,
+            details: {
+              countryName: 'Poland',
+              cityName: 'Warsaw',
+              id: 12148,
+              region: 'eu-west-1',
+            },
+          },
+        ]
         const responsePayload = { data, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
@@ -1090,26 +1120,28 @@ describe('oauth cloud slice', () => {
           setIsOpenSelectPlanDialog(true),
           setSocialDialogState(null),
           setSelectAccountDialogState(false),
-          removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress)
+          removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
       it('call setIsOpenSelectPlanDialog and setSocialDialogState when fetch is successed and accounts > 1', async () => {
-      // Arrange
-        const data = [{
-          id: 12148,
-          type: 'fixed',
-          name: 'Cache 30MB',
-          provider: 'AWS',
-          region: 'eu-west-1',
-          price: 0,
-          details: {
-            countryName: 'Poland',
-            cityName: 'Warsaw',
+        // Arrange
+        const data = [
+          {
             id: 12148,
+            type: 'fixed',
+            name: 'Cache 30MB',
+            provider: 'AWS',
             region: 'eu-west-1',
-          }
-        }]
+            price: 0,
+            details: {
+              countryName: 'Poland',
+              cityName: 'Warsaw',
+              id: 12148,
+              region: 'eu-west-1',
+            },
+          },
+        ]
         const responsePayload = { data, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
@@ -1130,8 +1162,9 @@ describe('oauth cloud slice', () => {
       })
 
       it('call both getPlans and getPlansFailure when fetch is fail', async () => {
-      // Arrange
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        // Arrange
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -1158,10 +1191,7 @@ describe('oauth cloud slice', () => {
 
     describe('getCapiKeysAction', () => {
       it('should call proper actions on succeed', async () => {
-        const data = [
-          { id: '1' },
-          { id: '2' },
-        ]
+        const data = [{ id: '1' }, { id: '2' }]
 
         const responsePayload = { data, status: 200 }
 
@@ -1171,10 +1201,7 @@ describe('oauth cloud slice', () => {
         await store.dispatch<any>(getCapiKeysAction())
 
         // Assert
-        const expectedActions = [
-          getCapiKeys(),
-          getCapiKeysSuccess(data),
-        ]
+        const expectedActions = [getCapiKeys(), getCapiKeysSuccess(data)]
         expect(store.getActions()).toEqual(expectedActions)
       })
 
@@ -1215,7 +1242,7 @@ describe('oauth cloud slice', () => {
         const expectedActions = [
           removeAllCapiKeys(),
           removeAllCapiKeysSuccess(),
-          addMessageNotification(successMessages.REMOVED_ALL_CAPI_KEYS())
+          addMessageNotification(successMessages.REMOVED_ALL_CAPI_KEYS()),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -1257,7 +1284,7 @@ describe('oauth cloud slice', () => {
         const expectedActions = [
           removeCapiKey(),
           removeCapiKeySuccess('1'),
-          addMessageNotification(successMessages.REMOVED_CAPI_KEY('Key'))
+          addMessageNotification(successMessages.REMOVED_CAPI_KEY('Key')),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

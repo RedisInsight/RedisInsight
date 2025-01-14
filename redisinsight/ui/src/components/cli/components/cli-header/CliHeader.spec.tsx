@@ -11,7 +11,11 @@ import {
   act,
 } from 'uiSrc/utils/test-utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import { processCliClient, resetCliSettings, toggleCli } from 'uiSrc/slices/cli/cli-settings'
+import {
+  processCliClient,
+  resetCliSettings,
+  toggleCli,
+} from 'uiSrc/slices/cli/cli-settings'
 import { sessionStorageService } from 'uiSrc/services'
 import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 import CliHeader from './CliHeader'
@@ -99,12 +103,16 @@ it('should "processCliClient" action be called after close cli with mocked sessi
     fireEvent.click(screen.getByTestId('close-cli'))
   })
 
-  expect(sessionStorageService.get).toBeCalledWith(BrowserStorageItem.cliClientUuid)
+  expect(sessionStorageService.get).toBeCalledWith(
+    BrowserStorageItem.cliClientUuid,
+  )
 
   const expectedActions = [
     processCliClient(),
     resetCliSettings(),
     resetOutputLoading(),
   ]
-  expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+  expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+    expectedActions,
+  )
 })

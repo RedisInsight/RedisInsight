@@ -10,9 +10,9 @@ const containerStyle = {
 }
 
 const CircularSpinnerPage = (props: {
-  style?: CSSProperties;
-  msg?: string;
-  msgStyle?: CSSProperties;
+  style?: CSSProperties
+  msg?: string
+  msgStyle?: CSSProperties
 }) => {
   const { style = {}, msg, msgStyle = {} } = props
   return (

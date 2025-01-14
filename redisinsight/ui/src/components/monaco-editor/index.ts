@@ -4,10 +4,4 @@ import MonacoJson from './components/monaco-json'
 import MonacoYaml from './components/monaco-yaml'
 import DedicatedEditor from './components/dedicated-editor'
 
-export {
-  MonacoEditor,
-  MonacoJS,
-  MonacoJson,
-  MonacoYaml,
-  DedicatedEditor,
-}
+export { MonacoEditor, MonacoJS, MonacoJson, MonacoYaml, DedicatedEditor }

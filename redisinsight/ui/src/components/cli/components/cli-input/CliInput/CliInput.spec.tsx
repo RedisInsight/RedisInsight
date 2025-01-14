@@ -1,7 +1,13 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  screen,
+  fireEvent,
+} from 'uiSrc/utils/test-utils'
 import CliInput, { Props } from './CliInput'
 
 const mockedProps = mock<Props>()
@@ -19,7 +25,9 @@ describe('CliInput', () => {
   })
 
   it('should render db index if it is greater than 0', () => {
-    const { queryByTestId } = render(<CliInput {...instance(mockedProps)} dbIndex={1} />)
+    const { queryByTestId } = render(
+      <CliInput {...instance(mockedProps)} dbIndex={1} />,
+    )
     const dbIndexEl = queryByTestId('cli-db-index')
 
     expect(dbIndexEl).toBeInTheDocument()
@@ -27,7 +35,9 @@ describe('CliInput', () => {
   })
 
   it('should not render db index if it is 0', () => {
-    const { queryByTestId } = render(<CliInput {...instance(mockedProps)} dbIndex={0} />)
+    const { queryByTestId } = render(
+      <CliInput {...instance(mockedProps)} dbIndex={0} />,
+    )
     const dbIndexEl = queryByTestId('cli-db-index')
 
     expect(dbIndexEl).not.toBeInTheDocument()

@@ -1,6 +1,4 @@
-import {
-  ArgumentsHost, Catch, HttpException,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
 import { PubSubWsException } from 'src/modules/pub-sub/errors/pub-sub-ws.exception';
 
 @Catch()

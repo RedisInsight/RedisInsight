@@ -5,7 +5,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
 
 interface IProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 const ProtectedRoute = ({ children, ...rest }: IProps) => {

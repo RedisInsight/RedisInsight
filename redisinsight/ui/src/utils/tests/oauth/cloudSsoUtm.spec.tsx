@@ -19,14 +19,13 @@ const getCloudSsoUtmCampaignTestCases = [
 ]
 
 describe('getCloudSsoUtmCampaign', () => {
-  test.each(getCloudSsoUtmCampaignTestCases)(
-    '%j',
-    (input, expected) => {
-      expect(getCloudSsoUtmParams(input)).toEqual(new URLSearchParams([
+  test.each(getCloudSsoUtmCampaignTestCases)('%j', (input, expected) => {
+    expect(getCloudSsoUtmParams(input)).toEqual(
+      new URLSearchParams([
         ['source', 'redisinsight'],
         ['medium', 'sso'],
         ['campaign', expected],
-      ]))
-    }
-  )
+      ]),
+    )
+  })
 })

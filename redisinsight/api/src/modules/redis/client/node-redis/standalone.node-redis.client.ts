@@ -4,7 +4,10 @@ import {
   RedisClientCommandReply,
   RedisClientConnectionType,
 } from 'src/modules/redis/client';
-import { NodeRedis, NodeRedisClient } from 'src/modules/redis/client/node-redis/node-redis.client';
+import {
+  NodeRedis,
+  NodeRedisClient,
+} from 'src/modules/redis/client/node-redis/node-redis.client';
 
 export class StandaloneNodeRedisClient extends NodeRedisClient {
   protected readonly client: NodeRedis;
@@ -24,8 +27,8 @@ export class StandaloneNodeRedisClient extends NodeRedisClient {
     options?: IRedisClientCommandOptions,
   ): Promise<Array<[Error | null, RedisClientCommandReply]>> {
     return Promise.all(
-      commands.map(
-        (cmd) => this.sendCommand(cmd, options)
+      commands.map((cmd) =>
+        this.sendCommand(cmd, options)
           .then((res): [null, RedisClientCommandReply] => [null, res])
           .catch((e): [Error, null] => [e, null]),
       ),
@@ -63,7 +66,10 @@ export class StandaloneNodeRedisClient extends NodeRedisClient {
   /**
    * @inheritDoc
    */
-  async call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply> {
+  async call(
+    command: RedisClientCommand,
+    options?: IRedisClientCommandOptions,
+  ): Promise<RedisClientCommandReply> {
     return this.sendCommand(command, options);
   }
 }

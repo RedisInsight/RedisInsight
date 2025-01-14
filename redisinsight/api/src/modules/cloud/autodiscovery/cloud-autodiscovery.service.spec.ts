@@ -4,12 +4,15 @@ import {
   mockCloudAccountInfo,
   mockCloudAutodiscoveryAnalytics,
   mockCloudCapiAuthDto,
-  mockCloudDatabase, mockCloudDatabaseCapiService,
+  mockCloudDatabase,
+  mockCloudDatabaseCapiService,
   mockCloudDatabaseFixed,
-  mockCloudSubscription, mockCloudSubscriptionCapiService,
+  mockCloudSubscription,
+  mockCloudSubscriptionCapiService,
   mockCloudUserCapiService,
   mockDatabaseService,
-  mockImportCloudDatabaseDto, mockImportCloudDatabaseDtoFixed,
+  mockImportCloudDatabaseDto,
+  mockImportCloudDatabaseDtoFixed,
   mockImportCloudDatabaseResponse,
   mockImportCloudDatabaseResponseFixed,
   mockSessionMetadata,
@@ -73,10 +76,14 @@ describe('CloudAutodiscoveryService', () => {
 
   describe('getAccount', () => {
     it('successfully get cloud account info', async () => {
-      expect(await service.getAccount(mockCloudCapiAuthDto)).toEqual(mockCloudAccountInfo);
+      expect(await service.getAccount(mockCloudCapiAuthDto)).toEqual(
+        mockCloudAccountInfo,
+      );
     });
     it('should throw CloudApiUnauthorizedException exception', async () => {
-      cloudUserCapiService.getCurrentAccount.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+      cloudUserCapiService.getCurrentAccount.mockRejectedValueOnce(
+        new CloudApiUnauthorizedException(),
+      );
       await expect(service.getAccount(mockCloudCapiAuthDto)).rejects.toThrow(
         CloudApiUnauthorizedException,
       );
@@ -84,79 +91,88 @@ describe('CloudAutodiscoveryService', () => {
   });
   describe('discoverSubscriptions', () => {
     it('successfully discover fixed and flexible cloud subscriptions', async () => {
-      expect(await service.discoverSubscriptions(
+      expect(
+        await service.discoverSubscriptions(
+          mockSessionMetadata,
+          mockCloudCapiAuthDto,
+          CloudAutodiscoveryAuthType.Credentials,
+        ),
+      ).toEqual([mockCloudSubscription, mockCloudSubscription]);
+      expect(analytics.sendGetRECloudSubsSucceedEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
-        mockCloudCapiAuthDto,
+        [mockCloudSubscription],
+        CloudSubscriptionType.Fixed,
         CloudAutodiscoveryAuthType.Credentials,
-      )).toEqual([mockCloudSubscription, mockCloudSubscription]);
-      expect(analytics.sendGetRECloudSubsSucceedEvent)
-        .toHaveBeenCalledWith(
-          mockSessionMetadata,
-          [mockCloudSubscription],
-          CloudSubscriptionType.Fixed,
-          CloudAutodiscoveryAuthType.Credentials,
-        );
-      expect(analytics.sendGetRECloudSubsSucceedEvent)
-        .toHaveBeenCalledWith(
-          mockSessionMetadata,
-          [mockCloudSubscription],
-          CloudSubscriptionType.Flexible,
-          CloudAutodiscoveryAuthType.Credentials,
-        );
+      );
+      expect(analytics.sendGetRECloudSubsSucceedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        [mockCloudSubscription],
+        CloudSubscriptionType.Flexible,
+        CloudAutodiscoveryAuthType.Credentials,
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
-      cloudSubscriptionCapiService.getSubscriptions.mockRejectedValue(new CloudApiUnauthorizedException());
-
-      await expect(service.discoverSubscriptions(
-        mockSessionMetadata,
-        mockCloudCapiAuthDto,
-        CloudAutodiscoveryAuthType.Credentials,
-      )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+      cloudSubscriptionCapiService.getSubscriptions.mockRejectedValue(
+        new CloudApiUnauthorizedException(),
       );
 
-      expect(analytics.sendGetRECloudSubsFailedEvent)
-        .toHaveBeenCalledWith(
+      await expect(
+        service.discoverSubscriptions(
           mockSessionMetadata,
-          new CloudApiUnauthorizedException(),
-          CloudSubscriptionType.Fixed,
+          mockCloudCapiAuthDto,
           CloudAutodiscoveryAuthType.Credentials,
-        );
+        ),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
+
+      expect(analytics.sendGetRECloudSubsFailedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        new CloudApiUnauthorizedException(),
+        CloudSubscriptionType.Fixed,
+        CloudAutodiscoveryAuthType.Credentials,
+      );
     });
   });
   describe('discoverDatabases', () => {
     it('should call getDatabases 2 times', async () => {
-      expect(await service.discoverDatabases(
-        mockSessionMetadata,
-        mockCloudCapiAuthDto,
-        {
-          subscriptions: [
-            {
-              subscriptionId: 86070,
-              subscriptionType: CloudSubscriptionType.Flexible,
-              free: false,
-            },
-            {
-              subscriptionId: 86071,
-              subscriptionType: CloudSubscriptionType.Fixed,
-              free: true,
-            },
-          ],
-        },
-        CloudAutodiscoveryAuthType.Credentials,
-      )).toEqual([mockCloudDatabase, mockCloudDatabase]);
+      expect(
+        await service.discoverDatabases(
+          mockSessionMetadata,
+          mockCloudCapiAuthDto,
+          {
+            subscriptions: [
+              {
+                subscriptionId: 86070,
+                subscriptionType: CloudSubscriptionType.Flexible,
+                free: false,
+              },
+              {
+                subscriptionId: 86071,
+                subscriptionType: CloudSubscriptionType.Fixed,
+                free: true,
+              },
+            ],
+          },
+          CloudAutodiscoveryAuthType.Credentials,
+        ),
+      ).toEqual([mockCloudDatabase, mockCloudDatabase]);
 
       expect(cloudDatabaseCapiService.getDatabases).toHaveBeenCalledTimes(2);
-      expect(cloudDatabaseCapiService.getDatabases).toHaveBeenCalledWith(mockCloudCapiAuthDto, {
-        subscriptionId: 86070,
-        subscriptionType: CloudSubscriptionType.Flexible,
-        free: false,
-      });
-      expect(cloudDatabaseCapiService.getDatabases).toHaveBeenCalledWith(mockCloudCapiAuthDto, {
-        subscriptionId: 86071,
-        subscriptionType: CloudSubscriptionType.Fixed,
-        free: true,
-      });
+      expect(cloudDatabaseCapiService.getDatabases).toHaveBeenCalledWith(
+        mockCloudCapiAuthDto,
+        {
+          subscriptionId: 86070,
+          subscriptionType: CloudSubscriptionType.Flexible,
+          free: false,
+        },
+      );
+      expect(cloudDatabaseCapiService.getDatabases).toHaveBeenCalledWith(
+        mockCloudCapiAuthDto,
+        {
+          subscriptionId: 86071,
+          subscriptionType: CloudSubscriptionType.Fixed,
+          free: true,
+        },
+      );
       expect(analytics.sendGetRECloudDbsSucceedEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         [mockCloudDatabase, mockCloudDatabase],
@@ -169,8 +185,14 @@ describe('CloudAutodiscoveryService', () => {
         mockCloudCapiAuthDto,
         {
           subscriptions: [
-            { subscriptionId: 86070, subscriptionType: CloudSubscriptionType.Flexible },
-            { subscriptionId: 86070, subscriptionType: CloudSubscriptionType.Fixed },
+            {
+              subscriptionId: 86070,
+              subscriptionType: CloudSubscriptionType.Flexible,
+            },
+            {
+              subscriptionId: 86070,
+              subscriptionType: CloudSubscriptionType.Fixed,
+            },
           ],
         },
         CloudAutodiscoveryAuthType.Credentials,
@@ -184,9 +206,18 @@ describe('CloudAutodiscoveryService', () => {
         mockCloudCapiAuthDto,
         {
           subscriptions: [
-            { subscriptionId: 86070, subscriptionType: CloudSubscriptionType.Flexible },
-            { subscriptionId: 86071, subscriptionType: CloudSubscriptionType.Fixed },
-            { subscriptionId: 86071, subscriptionType: CloudSubscriptionType.Fixed },
+            {
+              subscriptionId: 86070,
+              subscriptionType: CloudSubscriptionType.Flexible,
+            },
+            {
+              subscriptionId: 86071,
+              subscriptionType: CloudSubscriptionType.Fixed,
+            },
+            {
+              subscriptionId: 86071,
+              subscriptionType: CloudSubscriptionType.Fixed,
+            },
           ],
         },
         CloudAutodiscoveryAuthType.Credentials,
@@ -205,8 +236,14 @@ describe('CloudAutodiscoveryService', () => {
           mockCloudCapiAuthDto,
           {
             subscriptions: [
-              { subscriptionId: 86070, subscriptionType: CloudSubscriptionType.Flexible },
-              { subscriptionId: 86071, subscriptionType: CloudSubscriptionType.Fixed },
+              {
+                subscriptionId: 86070,
+                subscriptionType: CloudSubscriptionType.Flexible,
+              },
+              {
+                subscriptionId: 86071,
+                subscriptionType: CloudSubscriptionType.Fixed,
+              },
             ],
           },
           CloudAutodiscoveryAuthType.Credentials,
@@ -222,16 +259,17 @@ describe('CloudAutodiscoveryService', () => {
   });
   describe('addRedisCloudDatabases', () => {
     it('should successfully add 1 fixed and 1 flexible databases', async () => {
-      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(mockCloudDatabase);
-      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(mockCloudDatabaseFixed);
+      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(
+        mockCloudDatabase,
+      );
+      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(
+        mockCloudDatabaseFixed,
+      );
 
       const result = await service.addRedisCloudDatabases(
         mockSessionMetadata,
         mockCloudCapiAuthDto,
-        [
-          mockImportCloudDatabaseDto,
-          mockImportCloudDatabaseDtoFixed,
-        ],
+        [mockImportCloudDatabaseDto, mockImportCloudDatabaseDtoFixed],
       );
 
       expect(result).toEqual([
@@ -240,16 +278,17 @@ describe('CloudAutodiscoveryService', () => {
       ]);
     });
     it('should successfully add 1 fixed database and report 1 error without database details (404)', async () => {
-      cloudDatabaseCapiService.getDatabase.mockRejectedValueOnce(new NotFoundException());
-      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(mockCloudDatabaseFixed);
+      cloudDatabaseCapiService.getDatabase.mockRejectedValueOnce(
+        new NotFoundException(),
+      );
+      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(
+        mockCloudDatabaseFixed,
+      );
 
       const result = await service.addRedisCloudDatabases(
         mockSessionMetadata,
         mockCloudCapiAuthDto,
-        [
-          mockImportCloudDatabaseDto,
-          mockImportCloudDatabaseDtoFixed,
-        ],
+        [mockImportCloudDatabaseDto, mockImportCloudDatabaseDtoFixed],
       );
 
       expect(result).toEqual([
@@ -267,17 +306,20 @@ describe('CloudAutodiscoveryService', () => {
       ]);
     });
     it('should successfully add 1 fixed database and report 1 error with database details', async () => {
-      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(mockCloudDatabase);
-      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(mockCloudDatabaseFixed);
-      databaseService.create.mockRejectedValueOnce(new Error('Connectivity issue'));
+      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(
+        mockCloudDatabase,
+      );
+      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(
+        mockCloudDatabaseFixed,
+      );
+      databaseService.create.mockRejectedValueOnce(
+        new Error('Connectivity issue'),
+      );
 
       const result = await service.addRedisCloudDatabases(
         mockSessionMetadata,
         mockCloudCapiAuthDto,
-        [
-          mockImportCloudDatabaseDto,
-          mockImportCloudDatabaseDtoFixed,
-        ],
+        [mockImportCloudDatabaseDto, mockImportCloudDatabaseDtoFixed],
       );
 
       expect(result).toEqual([
@@ -294,15 +336,14 @@ describe('CloudAutodiscoveryService', () => {
         ...mockCloudDatabase,
         status: CloudDatabaseStatus.Pending,
       });
-      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(mockCloudDatabaseFixed);
+      cloudDatabaseCapiService.getDatabase.mockResolvedValueOnce(
+        mockCloudDatabaseFixed,
+      );
 
       const result = await service.addRedisCloudDatabases(
         mockSessionMetadata,
         mockCloudCapiAuthDto,
-        [
-          mockImportCloudDatabaseDto,
-          mockImportCloudDatabaseDtoFixed,
-        ],
+        [mockImportCloudDatabaseDto, mockImportCloudDatabaseDtoFixed],
       );
 
       expect(result).toEqual([

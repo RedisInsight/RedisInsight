@@ -14,7 +14,8 @@ import { randomBytes } from 'crypto';
 import { cloneDeep, set } from 'lodash';
 const { rte, request, server, localDb, constants } = deps;
 
-const endpoint = () => request(server).post(`/${constants.API.DATABASES}/import`);
+const endpoint = () =>
+  request(server).post(`/${constants.API.DATABASES}/import`);
 
 // input data schema
 const databaseSchema = Joi.object({
@@ -24,9 +25,11 @@ const databaseSchema = Joi.object({
   db: Joi.number().integer().allow(null, ''),
   username: Joi.string().allow(null, ''),
   password: Joi.string().allow(null, ''),
-}).messages({
-  'any.required': '{#label} should not be empty',
-}).strict(true);
+})
+  .messages({
+    'any.required': '{#label} should not be empty',
+  })
+  .strict(true);
 
 const validInputData = {
   name: constants.getRandomString(),
@@ -41,28 +44,35 @@ const baseDatabaseData = {
   username: constants.TEST_REDIS_USER || '',
   password: constants.TEST_REDIS_PASSWORD || '',
   compressor: constants.TEST_REDIS_COMPRESSOR,
-}
+};
 
 const baseTls = {
   tls: constants.TEST_REDIS_TLS_CA ? true : undefined,
-  caCert: constants.TEST_REDIS_TLS_CA ? {
-    name: constants.TEST_CA_NAME,
-    certificate: constants.TEST_REDIS_TLS_CA,
-  } : undefined,
-  clientCert: constants.TEST_USER_TLS_CERT ? {
-    name: constants.TEST_CLIENT_CERT_NAME,
-    certificate: constants.TEST_USER_TLS_CERT,
-    key: constants.TEST_USER_TLS_KEY,
-  } : undefined,
+  caCert: constants.TEST_REDIS_TLS_CA
+    ? {
+        name: constants.TEST_CA_NAME,
+        certificate: constants.TEST_REDIS_TLS_CA,
+      }
+    : undefined,
+  clientCert: constants.TEST_USER_TLS_CERT
+    ? {
+        name: constants.TEST_CLIENT_CERT_NAME,
+        certificate: constants.TEST_USER_TLS_CERT,
+        key: constants.TEST_USER_TLS_KEY,
+      }
+    : undefined,
 };
 
 const baseSentinelData = {
-  sentinelMaster: constants.TEST_RTE_TYPE === 'SENTINEL' ? {
-    name: constants.TEST_SENTINEL_MASTER_GROUP,
-    username: constants.TEST_SENTINEL_MASTER_USER || null,
-    password: constants.TEST_SENTINEL_MASTER_PASS || null,
-  } : undefined,
-}
+  sentinelMaster:
+    constants.TEST_RTE_TYPE === 'SENTINEL'
+      ? {
+          name: constants.TEST_SENTINEL_MASTER_GROUP,
+          username: constants.TEST_SENTINEL_MASTER_USER || null,
+          password: constants.TEST_SENTINEL_MASTER_PASS || null,
+        }
+      : undefined,
+};
 
 const sshBasicData = {
   ssh: true,
@@ -71,8 +81,8 @@ const sshBasicData = {
     port: constants.TEST_SSH_PORT,
     username: constants.TEST_SSH_USER,
     password: constants.TEST_SSH_PASSWORD,
-  }
-}
+  },
+};
 
 const sshPKData = {
   ...sshBasicData,
@@ -80,8 +90,8 @@ const sshPKData = {
     ...sshBasicData.sshOptions,
     password: undefined,
     privateKey: constants.TEST_SSH_PRIVATE_KEY,
-  }
-}
+  },
+};
 
 const sshPKPData = {
   ...sshBasicData,
@@ -89,8 +99,8 @@ const sshPKPData = {
     ...sshPKData.sshOptions,
     privateKey: constants.TEST_SSH_PRIVATE_KEY_P,
     passphrase: constants.TEST_SSH_PASSPHRASE,
-  }
-}
+  },
+};
 
 const importDatabaseFormat0 = {
   ...baseDatabaseData,
@@ -101,10 +111,12 @@ const importDatabaseFormat0 = {
 };
 
 const baseSentinelDataFormat1 = {
-  sentinelOptions: baseSentinelData.sentinelMaster ? {
-    sentinelPassword: baseSentinelData.sentinelMaster.password,
-    name: baseSentinelData.sentinelMaster.name,
-  } : undefined,
+  sentinelOptions: baseSentinelData.sentinelMaster
+    ? {
+        sentinelPassword: baseSentinelData.sentinelMaster.password,
+        name: baseSentinelData.sentinelMaster.name,
+      }
+    : undefined,
 };
 
 const sshBasicDataFormat1 = {
@@ -112,22 +124,22 @@ const sshBasicDataFormat1 = {
   sshPort: constants.TEST_SSH_PORT,
   sshUser: constants.TEST_SSH_USER,
   sshPassword: constants.TEST_SSH_PASSWORD,
-}
+};
 
 const sshPKDataFormat1 = {
   ...sshBasicDataFormat1,
   sshPassword: undefined,
   sshKeyFile: constants.TEST_SSH_PRIVATE_KEY,
-}
+};
 
 const sshPKPDataFormat1 = {
   ...sshPKDataFormat1,
   sshKeyFile: constants.TEST_SSH_PRIVATE_KEY_P,
   sshKeyPassphrase: constants.TEST_SSH_PASSPHRASE,
-}
+};
 
 const importDatabaseFormat1 = {
-  id: "1393c216-3fd0-4ad5-8412-209a8e8ec77c",
+  id: '1393c216-3fd0-4ad5-8412-209a8e8ec77c',
   name: baseDatabaseData.name,
   type: 'standalone',
   keyPrefix: null,
@@ -141,14 +153,15 @@ const importDatabaseFormat1 = {
   certificate: baseTls.clientCert ? constants.TEST_CLIENT_CERT_PATH : null,
   keyFile: baseTls.clientCert ? constants.TEST_CLIENT_KEY_PATH : null,
   ...baseSentinelDataFormat1,
-}
-
+};
 
 const baseSentinelDataFormat2 = {
-  sentinelOptions: baseSentinelData.sentinelMaster ? {
-    masterName: baseSentinelData.sentinelMaster.name,
-    nodePassword: baseSentinelData.sentinelMaster.password,
-  } : undefined,
+  sentinelOptions: baseSentinelData.sentinelMaster
+    ? {
+        masterName: baseSentinelData.sentinelMaster.name,
+        nodePassword: baseSentinelData.sentinelMaster.password,
+      }
+    : undefined,
 };
 
 const sshBasicDataFormat2 = {
@@ -158,8 +171,8 @@ const sshBasicDataFormat2 = {
     port: constants.TEST_SSH_PORT,
     username: constants.TEST_SSH_USER,
     password: constants.TEST_SSH_PASSWORD,
-  }
-}
+  },
+};
 
 const sshPKDataFormat2 = {
   ...sshBasicDataFormat2,
@@ -167,8 +180,8 @@ const sshPKDataFormat2 = {
     ...sshBasicDataFormat2.sshOptions,
     password: undefined,
     privatekey: constants.TEST_SSH_PRIVATE_KEY,
-  }
-}
+  },
+};
 
 const sshPKPDataFormat2 = {
   ...sshBasicDataFormat2,
@@ -176,8 +189,8 @@ const sshPKPDataFormat2 = {
     ...sshBasicDataFormat2.sshOptions,
     privatekey: constants.TEST_SSH_PRIVATE_KEY_P,
     passphrase: constants.TEST_SSH_PASSPHRASE,
-  }
-}
+  },
+};
 
 const importDatabaseFormat2 = {
   host: baseDatabaseData.host,
@@ -186,32 +199,34 @@ const importDatabaseFormat2 = {
   username: baseDatabaseData.username,
   connectionName: baseDatabaseData.name,
   cluster: false,
-  sslOptions: baseTls.caCert ? {
-    key: baseTls.clientCert ? constants.TEST_CLIENT_KEY_PATH : undefined,
-    cert: baseTls.clientCert ? constants.TEST_CLIENT_CERT_PATH : undefined,
-    ca: baseTls.caCert ? constants.TEST_CA_CERT_PATH : undefined,
-  } : undefined,
+  sslOptions: baseTls.caCert
+    ? {
+        key: baseTls.clientCert ? constants.TEST_CLIENT_KEY_PATH : undefined,
+        cert: baseTls.clientCert ? constants.TEST_CLIENT_CERT_PATH : undefined,
+        ca: baseTls.caCert ? constants.TEST_CA_CERT_PATH : undefined,
+      }
+    : undefined,
   ...baseSentinelDataFormat2,
-}
+};
 
 const sshBasicDataFormat3 = {
   ssh_host: constants.TEST_SSH_HOST,
   ssh_port: constants.TEST_SSH_PORT,
   ssh_user: constants.TEST_SSH_USER,
   ssh_password: constants.TEST_SSH_PASSWORD,
-}
+};
 
 const sshPKDataFormat3 = {
   ...sshBasicDataFormat3,
   ssh_password: undefined,
   ssh_private_key_path: constants.TEST_SSH_PRIVATE_KEY,
-}
+};
 
 const sshPKPDataFormat3 = {
   ...sshPKDataFormat3,
   ssh_private_key_path: constants.TEST_SSH_PRIVATE_KEY_P,
   ssh_password: constants.TEST_SSH_PASSPHRASE,
-}
+};
 
 const importDatabaseFormat3 = {
   name: baseDatabaseData.name,
@@ -221,31 +236,41 @@ const importDatabaseFormat3 = {
   username: baseDatabaseData.username,
   ssl: !!baseTls.tls,
   ssl_ca_cert_path: baseTls.caCert ? constants.TEST_CA_CERT_PATH : undefined,
-  ssl_local_cert_path: baseTls.clientCert ? constants.TEST_CLIENT_CERT_PATH : undefined,
-  ssl_private_key_path: baseTls.clientCert ? constants.TEST_CLIENT_KEY_PATH : undefined,
-}
+  ssl_local_cert_path: baseTls.clientCert
+    ? constants.TEST_CLIENT_CERT_PATH
+    : undefined,
+  ssl_private_key_path: baseTls.clientCert
+    ? constants.TEST_CLIENT_KEY_PATH
+    : undefined,
+};
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
 const checkConnection = async (databaseId: string, statusCode = 200) => {
   await validateApiCall({
-    endpoint: () => request(server).get(`/${constants.API.DATABASES}/${databaseId}/connect`),
+    endpoint: () =>
+      request(server).get(`/${constants.API.DATABASES}/${databaseId}/connect`),
     statusCode,
   });
 };
 
 const checkDataManagement = async (databaseId: string) => {
   await validateApiCall({
-    endpoint: () => request(server).post(`/${constants.API.DATABASES}/${databaseId}/workbench/command-executions`),
+    endpoint: () =>
+      request(server).post(
+        `/${constants.API.DATABASES}/${databaseId}/workbench/command-executions`,
+      ),
     data: {
       commands: ['set string value'],
     },
     checkFn: ({ body }) => {
-      expect(body[0].result).to.deep.eq([{
-        status: 'success',
-        response: 'OK',
-      }])
-    }
+      expect(body[0].result).to.deep.eq([
+        {
+          status: 'success',
+          response: 'OK',
+        },
+      ]);
+    },
   });
 };
 
@@ -266,7 +291,7 @@ const validateImportedDatabase = async (
   expect(database.new).to.eq(false);
 
   if (dataCheck) {
-    await checkDataManagement(database.id)
+    await checkDataManagement(database.id);
   }
 };
 
@@ -290,14 +315,22 @@ const validatePartialImportedDatabase = async (
 let name;
 
 describe('POST /databases/import', () => {
-  beforeEach(() => { name = constants.getRandomString(); })
+  beforeEach(() => {
+    name = constants.getRandomString();
+  });
   describe('Validation', function () {
     generateInvalidDataArray(databaseSchema)
       .map(({ path, value }) => {
-        const database = path?.length ? set(cloneDeep(validInputData), path, value) : value;
+        const database = path?.length
+          ? set(cloneDeep(validInputData), path, value)
+          : value;
         return {
           name: `Should not import when database: ${path.join('.')} = "${value}"`,
-          attach: ['file', Buffer.from(JSON.stringify([database])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(JSON.stringify([database])),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
             success: [],
@@ -317,17 +350,17 @@ describe('POST /databases/import', () => {
             if (body.fail[0].port) {
               expect(body.fail[0].port).to.be.a('number');
             }
-          }
-        }
+          },
+        };
       })
       .map(async (testCase) => {
-      it(testCase.name, async () => {
-        await validateApiCall({
-          endpoint,
-          ...testCase,
+        it(testCase.name, async () => {
+          await validateApiCall({
+            endpoint,
+            ...testCase,
+          });
         });
       });
-    });
 
     [
       {
@@ -386,24 +419,34 @@ describe('POST /databases/import', () => {
       it('Should create only 1 certificate', async () => {
         const caCertName = constants.getRandomString();
 
-        const caCerts = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).find();
+        const caCerts = await (
+          await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+        ).find();
 
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify((new Array(10).fill(1)).map((c, idx) => {
-            return {
-              ...baseDatabaseData,
-              tls: true,
-              caCert: {
-                name: caCertName,
-                certificate: `-----BEGIN CERTIFICATE-----caCert`,
-              },
-              name,
-            }
-          }))), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify(
+                new Array(10).fill(1).map((c, idx) => {
+                  return {
+                    ...baseDatabaseData,
+                    tls: true,
+                    caCert: {
+                      name: caCertName,
+                      certificate: `-----BEGIN CERTIFICATE-----caCert`,
+                    },
+                    name,
+                  };
+                }),
+              ),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 10,
-            success: (new Array(10).fill(1)).map((_v, index) => ({
+            success: new Array(10).fill(1).map((_v, index) => ({
               index,
               status: 'success',
               host: importDatabaseFormat0.host,
@@ -414,7 +457,9 @@ describe('POST /databases/import', () => {
           },
         });
 
-        const caCerts2 = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).find();
+        const caCerts2 = await (
+          await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+        ).find();
         const diff = _.differenceWith(caCerts2, caCerts, _.isEqual);
 
         expect(diff.length).to.eq(1);
@@ -423,20 +468,28 @@ describe('POST /databases/import', () => {
         // import more
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify((new Array(10).fill(1)).map((c, idx) => {
-            return {
-              ...baseDatabaseData,
-              tls: true,
-              caCert: {
-                name: caCertName,
-                certificate: `-----BEGIN CERTIFICATE-----caCert`,
-              },
-              name,
-            }
-          }))), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify(
+                new Array(10).fill(1).map((c, idx) => {
+                  return {
+                    ...baseDatabaseData,
+                    tls: true,
+                    caCert: {
+                      name: caCertName,
+                      certificate: `-----BEGIN CERTIFICATE-----caCert`,
+                    },
+                    name,
+                  };
+                }),
+              ),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 10,
-            success: (new Array(10).fill(1)).map((_v, index) => ({
+            success: new Array(10).fill(1).map((_v, index) => ({
               index,
               status: 'success',
               host: importDatabaseFormat0.host,
@@ -447,7 +500,9 @@ describe('POST /databases/import', () => {
           },
         });
 
-        const caCerts3 = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).find();
+        const caCerts3 = await (
+          await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+        ).find();
         const diff2 = _.differenceWith(caCerts3, caCerts2, _.isEqual);
 
         expect(diff2.length).to.eq(0);
@@ -455,24 +510,34 @@ describe('POST /databases/import', () => {
       it('Should create multiple certs with name prefixes', async () => {
         const caCertName = constants.getRandomString();
 
-        const caCerts = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).find();
+        const caCerts = await (
+          await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+        ).find();
 
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify((new Array(10).fill(1)).map((c, idx) => {
-            return {
-              ...baseDatabaseData,
-              tls: true,
-              caCert: {
-                name: caCertName,
-                certificate: `-----BEGIN CERTIFICATE-----caCert_${idx}`,
-              },
-              name,
-            }
-          }))), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify(
+                new Array(10).fill(1).map((c, idx) => {
+                  return {
+                    ...baseDatabaseData,
+                    tls: true,
+                    caCert: {
+                      name: caCertName,
+                      certificate: `-----BEGIN CERTIFICATE-----caCert_${idx}`,
+                    },
+                    name,
+                  };
+                }),
+              ),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 10,
-            success: (new Array(10).fill(1)).map((_v, index) => ({
+            success: new Array(10).fill(1).map((_v, index) => ({
               index,
               status: 'success',
               host: importDatabaseFormat0.host,
@@ -483,7 +548,9 @@ describe('POST /databases/import', () => {
           },
         });
 
-        const caCerts2 = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).find();
+        const caCerts2 = await (
+          await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+        ).find();
         const diff = _.differenceWith(caCerts2, caCerts, _.isEqual);
 
         expect(diff.length).to.eq(10);
@@ -499,30 +566,44 @@ describe('POST /databases/import', () => {
         const caCertName = constants.getRandomString();
         const clientCertName = constants.getRandomString();
 
-        const caCerts = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).find();
-        const clientCerts = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY)).find();
+        const caCerts = await (
+          await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+        ).find();
+        const clientCerts = await (
+          await localDb.getRepository(
+            localDb.repositories.CLIENT_CERT_REPOSITORY,
+          )
+        ).find();
 
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify((new Array(10).fill(1)).map((c, idx) => {
-            return {
-              ...baseDatabaseData,
-              tls: true,
-              caCert: {
-                name: caCertName,
-                certificate: `-----BEGIN CERTIFICATE-----caCert__`,
-              },
-              clientCert: {
-                name: clientCertName,
-                certificate: `-----BEGIN CERTIFICATE-----clientCert__`,
-                key: `-----BEGIN PRIVATE KEY-----clientKey__`,
-              },
-              name,
-            }
-          }))), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify(
+                new Array(10).fill(1).map((c, idx) => {
+                  return {
+                    ...baseDatabaseData,
+                    tls: true,
+                    caCert: {
+                      name: caCertName,
+                      certificate: `-----BEGIN CERTIFICATE-----caCert__`,
+                    },
+                    clientCert: {
+                      name: clientCertName,
+                      certificate: `-----BEGIN CERTIFICATE-----clientCert__`,
+                      key: `-----BEGIN PRIVATE KEY-----clientKey__`,
+                    },
+                    name,
+                  };
+                }),
+              ),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 10,
-            success: (new Array(10).fill(1)).map((_v, index) => ({
+            success: new Array(10).fill(1).map((_v, index) => ({
               index,
               status: 'success',
               host: importDatabaseFormat0.host,
@@ -533,39 +614,56 @@ describe('POST /databases/import', () => {
           },
         });
 
-        const caCerts2 = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).find();
+        const caCerts2 = await (
+          await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+        ).find();
         const diff = _.differenceWith(caCerts2, caCerts, _.isEqual);
         expect(diff.length).to.eq(1);
         expect(diff[0].name).to.eq(caCertName);
 
-        const clientCerts2 = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY)).find();
-        const clientDiff = _.differenceWith(clientCerts2, clientCerts, _.isEqual);
+        const clientCerts2 = await (
+          await localDb.getRepository(
+            localDb.repositories.CLIENT_CERT_REPOSITORY,
+          )
+        ).find();
+        const clientDiff = _.differenceWith(
+          clientCerts2,
+          clientCerts,
+          _.isEqual,
+        );
         expect(clientDiff.length).to.eq(1);
         expect(clientDiff[0].name).to.eq(clientCertName);
-
 
         // import more
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify((new Array(10).fill(1)).map((c, idx) => {
-            return {
-              ...baseDatabaseData,
-              tls: true,
-              caCert: {
-                name: caCertName,
-                certificate: `-----BEGIN CERTIFICATE-----caCert__`,
-              },
-              clientCert: {
-                name: clientCertName,
-                certificate: `-----BEGIN CERTIFICATE-----clientCert__`,
-                key: `-----BEGIN PRIVATE KEY-----clientKey__`,
-              },
-              name,
-            }
-          }))), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify(
+                new Array(10).fill(1).map((c, idx) => {
+                  return {
+                    ...baseDatabaseData,
+                    tls: true,
+                    caCert: {
+                      name: caCertName,
+                      certificate: `-----BEGIN CERTIFICATE-----caCert__`,
+                    },
+                    clientCert: {
+                      name: clientCertName,
+                      certificate: `-----BEGIN CERTIFICATE-----clientCert__`,
+                      key: `-----BEGIN PRIVATE KEY-----clientKey__`,
+                    },
+                    name,
+                  };
+                }),
+              ),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 10,
-            success: (new Array(10).fill(1)).map((_v, index) => ({
+            success: new Array(10).fill(1).map((_v, index) => ({
               index,
               status: 'success',
               host: importDatabaseFormat0.host,
@@ -576,42 +674,66 @@ describe('POST /databases/import', () => {
           },
         });
 
-        const caCerts3 = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).find();
+        const caCerts3 = await (
+          await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+        ).find();
         const diff2 = _.differenceWith(caCerts3, caCerts2, _.isEqual);
         expect(diff2.length).to.eq(0);
 
-        const clientCerts3 = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY)).find();
-        const clientDiff2 = _.differenceWith(clientCerts3, clientCerts2, _.isEqual);
+        const clientCerts3 = await (
+          await localDb.getRepository(
+            localDb.repositories.CLIENT_CERT_REPOSITORY,
+          )
+        ).find();
+        const clientDiff2 = _.differenceWith(
+          clientCerts3,
+          clientCerts2,
+          _.isEqual,
+        );
         expect(clientDiff2.length).to.eq(0);
       });
       it('Should create multiple certs with name prefixes', async () => {
         const caCertName = constants.getRandomString();
         const clientCertName = constants.getRandomString();
 
-        const caCerts = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).find();
-        const clientCerts = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY)).find();
+        const caCerts = await (
+          await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+        ).find();
+        const clientCerts = await (
+          await localDb.getRepository(
+            localDb.repositories.CLIENT_CERT_REPOSITORY,
+          )
+        ).find();
 
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify((new Array(10).fill(1)).map((c, idx) => {
-            return {
-              ...baseDatabaseData,
-              tls: true,
-              caCert: {
-                name: caCertName,
-                certificate: `-----BEGIN CERTIFICATE-----caCert__${idx}`,
-              },
-              clientCert: {
-                name: clientCertName,
-                certificate: `-----BEGIN CERTIFICATE-----clientCert__${idx}`,
-                key: `-----BEGIN PRIVATE KEY-----clientKey__${idx}`,
-              },
-              name,
-            }
-          }))), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify(
+                new Array(10).fill(1).map((c, idx) => {
+                  return {
+                    ...baseDatabaseData,
+                    tls: true,
+                    caCert: {
+                      name: caCertName,
+                      certificate: `-----BEGIN CERTIFICATE-----caCert__${idx}`,
+                    },
+                    clientCert: {
+                      name: clientCertName,
+                      certificate: `-----BEGIN CERTIFICATE-----clientCert__${idx}`,
+                      key: `-----BEGIN PRIVATE KEY-----clientKey__${idx}`,
+                    },
+                    name,
+                  };
+                }),
+              ),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 10,
-            success: (new Array(10).fill(1)).map((_v, index) => ({
+            success: new Array(10).fill(1).map((_v, index) => ({
               index,
               status: 'success',
               host: importDatabaseFormat0.host,
@@ -622,7 +744,9 @@ describe('POST /databases/import', () => {
           },
         });
 
-        const caCerts2 = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).find();
+        const caCerts2 = await (
+          await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+        ).find();
         const diff = _.differenceWith(caCerts2, caCerts, _.isEqual);
         expect(diff.length).to.eq(10);
         expect(diff[0].name).to.eq(caCertName);
@@ -631,8 +755,16 @@ describe('POST /databases/import', () => {
         expect(diff[3].name).to.eq(`3_${caCertName}`);
         expect(diff[9].name).to.eq(`9_${caCertName}`);
 
-        const clientCerts2 = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY)).find();
-        const clientDiff = _.differenceWith(clientCerts2, clientCerts, _.isEqual);
+        const clientCerts2 = await (
+          await localDb.getRepository(
+            localDb.repositories.CLIENT_CERT_REPOSITORY,
+          )
+        ).find();
+        const clientDiff = _.differenceWith(
+          clientCerts2,
+          clientCerts,
+          _.isEqual,
+        );
         expect(clientDiff.length).to.eq(10);
         expect(clientDiff[0].name).to.eq(clientCertName);
         expect(clientDiff[1].name).to.eq(`1_${clientCertName}`);
@@ -649,20 +781,28 @@ describe('POST /databases/import', () => {
       it('Import standalone (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -673,20 +813,28 @@ describe('POST /databases/import', () => {
       it('Import standalone (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -697,20 +845,30 @@ describe('POST /databases/import', () => {
       it('Import standalone (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              name,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    name,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -723,20 +881,28 @@ describe('POST /databases/import', () => {
 
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat3,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat3,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat3.host,
-              port: importDatabaseFormat3.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat3.host,
+                port: importDatabaseFormat3.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -754,21 +920,29 @@ describe('POST /databases/import', () => {
 
           await validateApiCall({
             endpoint,
-            attach: ['file', Buffer.from(JSON.stringify([
-              {
-                ...importDatabaseFormat0,
-                name,
-                db: constants.TEST_REDIS_DB_INDEX,
-              }
-            ])), 'file.json'],
+            attach: [
+              'file',
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat0,
+                    name,
+                    db: constants.TEST_REDIS_DB_INDEX,
+                  },
+                ]),
+              ),
+              'file.json',
+            ],
             responseBody: {
               total: 1,
-              success: [{
-                index: 0,
-                status: 'success',
-                host: importDatabaseFormat0.host,
-                port: importDatabaseFormat0.port,
-              }],
+              success: [
+                {
+                  index: 0,
+                  status: 'success',
+                  host: importDatabaseFormat0.host,
+                  port: importDatabaseFormat0.port,
+                },
+              ],
               partial: [],
               fail: [],
             },
@@ -777,45 +951,63 @@ describe('POST /databases/import', () => {
           // check connection
           const database = await localDb.getInstanceByName(name);
           await validateApiCall({
-            endpoint: () => request(server).get(`/${constants.API.DATABASES}/${database.id}/connect`),
+            endpoint: () =>
+              request(server).get(
+                `/${constants.API.DATABASES}/${database.id}/connect`,
+              ),
             statusCode: 200,
           });
 
           // Create string using Browser API to particular db index
           await validateApiCall({
-            endpoint: () => request(server).post(`/${constants.API.DATABASES}/${database.id}/string`),
+            endpoint: () =>
+              request(server).post(
+                `/${constants.API.DATABASES}/${database.id}/string`,
+              ),
             statusCode: 201,
             data: {
               keyName: browserKeyName,
-              value: 'somevalue'
+              value: 'somevalue',
             },
           });
 
           // Create client for CLI
           await validateApiCall({
-            endpoint: () => request(server).patch(`/${constants.API.DATABASES}/${database.id}/cli/${cliUuid}`),
+            endpoint: () =>
+              request(server).patch(
+                `/${constants.API.DATABASES}/${database.id}/cli/${cliUuid}`,
+              ),
             statusCode: 200,
           });
 
           // Create string using CLI API to 0 db index
           await validateApiCall({
-            endpoint: () => request(server).post(`/${constants.API.DATABASES}/${database.id}/cli/${cliUuid}/send-command`),
+            endpoint: () =>
+              request(server).post(
+                `/${constants.API.DATABASES}/${database.id}/cli/${cliUuid}/send-command`,
+              ),
             statusCode: 200,
             data: {
               command: `set ${cliKeyName} somevalue`,
             },
           });
 
-
           // check data created by db index
-          await rte.data.executeCommand('select', `${constants.TEST_REDIS_DB_INDEX}`);
-          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(1)
-          expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(1)
+          await rte.data.executeCommand(
+            'select',
+            `${constants.TEST_REDIS_DB_INDEX}`,
+          );
+          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(1);
+          expect(
+            await rte.data.executeCommand('exists', browserKeyName),
+          ).to.eql(1);
 
           // check data created by db index
           await rte.data.executeCommand('select', '0');
-          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0)
-          expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(0)
+          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0);
+          expect(
+            await rte.data.executeCommand('exists', browserKeyName),
+          ).to.eql(0);
         });
       });
     });
@@ -824,20 +1016,28 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA tls (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -848,32 +1048,40 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA tls partial with wrong body (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              caCert: {
-                ...importDatabaseFormat0.caCert,
-                certificate: 'bad body',
-              },
-              name,
-            }
-          ])), 'file'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  caCert: {
+                    ...importDatabaseFormat0.caCert,
+                    certificate: 'bad body',
+                  },
+                  name,
+                },
+              ]),
+            ),
+            'file',
+          ],
           responseBody: {
             total: 1,
             success: [],
-            partial: [{
-              index: 0,
-              status: 'partial',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-              errors: [
-                {
-                  message: 'Invalid CA body',
-                  statusCode: 400,
-                  error: 'Invalid Ca Certificate Body',
-                }
-              ],
-            }],
+            partial: [
+              {
+                index: 0,
+                status: 'partial',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+                errors: [
+                  {
+                    message: 'Invalid CA body',
+                    statusCode: 400,
+                    error: 'Invalid Ca Certificate Body',
+                  },
+                ],
+              },
+            ],
             fail: [],
           },
         });
@@ -883,32 +1091,40 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA tls partial with no ca name (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              caCert: {
-                ...importDatabaseFormat0.caCert,
-                name: undefined,
-              },
-              name,
-            }
-          ])), 'file'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  caCert: {
+                    ...importDatabaseFormat0.caCert,
+                    name: undefined,
+                  },
+                  name,
+                },
+              ]),
+            ),
+            'file',
+          ],
           responseBody: {
             total: 1,
             success: [],
-            partial: [{
-              index: 0,
-              status: 'partial',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-              errors: [
-                {
-                  message: 'Certificate name is not defined',
-                  statusCode: 400,
-                  error: 'Invalid Certificate Name',
-                },
-              ],
-            }],
+            partial: [
+              {
+                index: 0,
+                status: 'partial',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+                errors: [
+                  {
+                    message: 'Certificate name is not defined',
+                    statusCode: 400,
+                    error: 'Invalid Certificate Name',
+                  },
+                ],
+              },
+            ],
             fail: [],
           },
         });
@@ -918,20 +1134,28 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA tls (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -942,29 +1166,37 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA tls partial with no ca file (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              caCert: 'not-existing-path',
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  caCert: 'not-existing-path',
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
             success: [],
-            partial: [{
-              index: 0,
-              status: 'partial',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-              errors: [
-                {
-                  message: 'Invalid CA body',
-                  statusCode: 400,
-                  error: 'Invalid Ca Certificate Body',
-                }
-              ],
-            }],
+            partial: [
+              {
+                index: 0,
+                status: 'partial',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+                errors: [
+                  {
+                    message: 'Invalid CA body',
+                    statusCode: 400,
+                    error: 'Invalid Ca Certificate Body',
+                  },
+                ],
+              },
+            ],
             fail: [],
           },
         });
@@ -974,20 +1206,30 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA tls (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              name,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    name,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -998,20 +1240,28 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA tls (format 3)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat3,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat3,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat3.host,
-              port: importDatabaseFormat3.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat3.host,
+                port: importDatabaseFormat3.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1019,27 +1269,34 @@ describe('POST /databases/import', () => {
 
         await validateImportedDatabase(name, 'NOT CONNECTED', 'STANDALONE');
       });
-
     });
     describe('TLS AUTH', function () {
       requirements('rte.tls', 'rte.tlsAuth');
       it('Import standalone with CA + CLIENT tls (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1050,41 +1307,49 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls partial with wrong bodies (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              caCert: {
-                ...importDatabaseFormat0.caCert,
-                certificate: 'bad body',
-              },
-              clientCert: {
-                ...importDatabaseFormat0.clientCert,
-                certificate: 'bad body',
-              },
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  caCert: {
+                    ...importDatabaseFormat0.caCert,
+                    certificate: 'bad body',
+                  },
+                  clientCert: {
+                    ...importDatabaseFormat0.clientCert,
+                    certificate: 'bad body',
+                  },
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
             success: [],
-            partial: [{
-              index: 0,
-              status: 'partial',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-              errors: [
-                {
-                  message: 'Invalid CA body',
-                  statusCode: 400,
-                  error: 'Invalid Ca Certificate Body'
-                },
-                {
-                  message: 'Invalid certificate body',
-                  statusCode: 400,
-                  error: 'Invalid Client Certificate Body'
-                }
-              ],
-            }],
+            partial: [
+              {
+                index: 0,
+                status: 'partial',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+                errors: [
+                  {
+                    message: 'Invalid CA body',
+                    statusCode: 400,
+                    error: 'Invalid Ca Certificate Body',
+                  },
+                  {
+                    message: 'Invalid certificate body',
+                    statusCode: 400,
+                    error: 'Invalid Client Certificate Body',
+                  },
+                ],
+              },
+            ],
             fail: [],
           },
         });
@@ -1094,41 +1359,49 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls partial with no cert name (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              caCert: {
-                ...importDatabaseFormat0.caCert,
-                certificate: 'bad body',
-              },
-              clientCert: {
-                ...importDatabaseFormat0.clientCert,
-                name: undefined,
-              },
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  caCert: {
+                    ...importDatabaseFormat0.caCert,
+                    certificate: 'bad body',
+                  },
+                  clientCert: {
+                    ...importDatabaseFormat0.clientCert,
+                    name: undefined,
+                  },
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
             success: [],
-            partial: [{
-              index: 0,
-              status: 'partial',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-              errors: [
-                {
-                  message: 'Invalid CA body',
-                  statusCode: 400,
-                  error: 'Invalid Ca Certificate Body'
-                },
-                {
-                  message: 'Certificate name is not defined',
-                  statusCode: 400,
-                  error: 'Invalid Certificate Name',
-                },
-              ],
-            }],
+            partial: [
+              {
+                index: 0,
+                status: 'partial',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+                errors: [
+                  {
+                    message: 'Invalid CA body',
+                    statusCode: 400,
+                    error: 'Invalid Ca Certificate Body',
+                  },
+                  {
+                    message: 'Certificate name is not defined',
+                    statusCode: 400,
+                    error: 'Invalid Certificate Name',
+                  },
+                ],
+              },
+            ],
             fail: [],
           },
         });
@@ -1138,20 +1411,28 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1162,32 +1443,40 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls partial with wrong key (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              clientCert: {
-                ...importDatabaseFormat0.clientCert,
-                key: 'bad path',
-              },
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  clientCert: {
+                    ...importDatabaseFormat0.clientCert,
+                    key: 'bad path',
+                  },
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
             success: [],
-            partial: [{
-              index: 0,
-              status: 'partial',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-              errors: [
-                {
-                  message: 'Invalid private key',
-                  statusCode: 400,
-                  error: 'Invalid Client Private Key',
-                },
-              ],
-            }],
+            partial: [
+              {
+                index: 0,
+                status: 'partial',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+                errors: [
+                  {
+                    message: 'Invalid private key',
+                    statusCode: 400,
+                    error: 'Invalid Client Private Key',
+                  },
+                ],
+              },
+            ],
             fail: [],
           },
         });
@@ -1197,20 +1486,30 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              name,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    name,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1221,20 +1520,28 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls (format 3)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat3,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat3,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat3.host,
-              port: importDatabaseFormat3.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat3.host,
+                port: importDatabaseFormat3.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1251,21 +1558,29 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh basic (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              ...sshBasicData,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  ...sshBasicData,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1276,21 +1591,29 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh PK (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              ...sshPKData,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  ...sshPKData,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1301,21 +1624,29 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh PKP (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              ...sshPKPData,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  ...sshPKPData,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1326,21 +1657,29 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh basic (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              ...sshBasicDataFormat1,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  ...sshBasicDataFormat1,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1351,21 +1690,29 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh PK (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              ...sshPKDataFormat1,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  ...sshPKDataFormat1,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1376,21 +1723,29 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh PKP (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              ...sshPKPDataFormat1,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  ...sshPKPDataFormat1,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1401,21 +1756,31 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh basic (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              ...sshBasicDataFormat2,
-              name,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    ...sshBasicDataFormat2,
+                    name,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1426,21 +1791,31 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh PK (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              ...sshPKDataFormat2,
-              name,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    ...sshPKDataFormat2,
+                    name,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1451,21 +1826,31 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh PKP (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              ...sshPKPDataFormat2,
-              name,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    ...sshPKPDataFormat2,
+                    name,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1476,21 +1861,29 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh basic (format 3)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat3,
-              ...sshBasicDataFormat3,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat3,
+                  ...sshBasicDataFormat3,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat3.host,
-              port: importDatabaseFormat3.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat3.host,
+                port: importDatabaseFormat3.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1501,21 +1894,29 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh PK (format 3)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat3,
-              ...sshPKDataFormat3,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat3,
+                  ...sshPKDataFormat3,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat3.host,
-              port: importDatabaseFormat3.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat3.host,
+                port: importDatabaseFormat3.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1526,21 +1927,29 @@ describe('POST /databases/import', () => {
       it('Import standalone with CA + CLIENT tls + ssh PKP (format 3)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat3,
-              ...sshPKPDataFormat3,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat3,
+                  ...sshPKPDataFormat3,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat3.host,
-              port: importDatabaseFormat3.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat3.host,
+                port: importDatabaseFormat3.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1557,21 +1966,29 @@ describe('POST /databases/import', () => {
       it('Import cluster (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              connectionType: 'CLUSTER',
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  connectionType: 'CLUSTER',
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1582,21 +1999,29 @@ describe('POST /databases/import', () => {
       it('Import cluster (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              type: 'cluster',
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  type: 'cluster',
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1607,21 +2032,31 @@ describe('POST /databases/import', () => {
       it('Import cluster (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              name,
-              cluster: true,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    name,
+                    cluster: true,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1632,21 +2067,31 @@ describe('POST /databases/import', () => {
       it('Import cluster auto discovered (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              name,
-              cluster: false,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    name,
+                    cluster: false,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1657,20 +2102,28 @@ describe('POST /databases/import', () => {
       it('Import cluster (format 3)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat3,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat3,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat3.host,
-              port: importDatabaseFormat3.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat3.host,
+                port: importDatabaseFormat3.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1684,21 +2137,29 @@ describe('POST /databases/import', () => {
       it('Import cluster with CA tls (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              connectionType: 'CLUSTER',
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  connectionType: 'CLUSTER',
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1709,21 +2170,29 @@ describe('POST /databases/import', () => {
       it('Import cluster with CA tls (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              type: 'cluster',
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  type: 'cluster',
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1734,21 +2203,31 @@ describe('POST /databases/import', () => {
       it('Import cluster with CA tls (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              name,
-              cluster: true,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    name,
+                    cluster: true,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1759,20 +2238,28 @@ describe('POST /databases/import', () => {
       it('Import cluster with CA tls (format 3)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat3,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat3,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat3.host,
-              port: importDatabaseFormat3.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat3.host,
+                port: importDatabaseFormat3.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1789,21 +2276,29 @@ describe('POST /databases/import', () => {
       it('Import sentinel (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              connectionType: 'SENTINEL',
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  connectionType: 'SENTINEL',
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1814,21 +2309,29 @@ describe('POST /databases/import', () => {
       it('Import sentinel (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              type: 'sentinel',
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  type: 'sentinel',
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1839,20 +2342,30 @@ describe('POST /databases/import', () => {
       it('Import sentinel (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              name,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    name,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1865,27 +2378,40 @@ describe('POST /databases/import', () => {
       xit('Import sentinel (format 3)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat3,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat3,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat3.host,
-              port: importDatabaseFormat3.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat3.host,
+                port: importDatabaseFormat3.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
         });
 
         // should determine connection type as standalone since we don't have sentinel auto discovery
-        await validateImportedDatabase(name, 'NOT CONNECTED', 'STANDALONE', false);
+        await validateImportedDatabase(
+          name,
+          'NOT CONNECTED',
+          'STANDALONE',
+          false,
+        );
       });
     });
     describe('TLS AUTH', function () {
@@ -1893,21 +2419,29 @@ describe('POST /databases/import', () => {
       it('Import sentinel with CA + CLIENT tls (format 0)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat0,
-              connectionType: 'SENTINEL',
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat0,
+                  connectionType: 'SENTINEL',
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat0.host,
-              port: importDatabaseFormat0.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat0.host,
+                port: importDatabaseFormat0.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1918,21 +2452,29 @@ describe('POST /databases/import', () => {
       it('Import sentinel with CA + CLIENT tls (format 1)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat1,
-              type: 'sentinel',
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat1,
+                  type: 'sentinel',
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat1.host,
-              port: importDatabaseFormat1.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: importDatabaseFormat1.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1943,20 +2485,30 @@ describe('POST /databases/import', () => {
       it('Import sentinel with CA + CLIENT tls (format 2)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat2,
-              name,
-            }
-          ])).toString('base64')), 'file.ano'],
+          attach: [
+            'file',
+            Buffer.from(
+              Buffer.from(
+                JSON.stringify([
+                  {
+                    ...importDatabaseFormat2,
+                    name,
+                  },
+                ]),
+              ).toString('base64'),
+            ),
+            'file.ano',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat2.host,
-              port: parseInt(importDatabaseFormat2.port, 10),
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat2.host,
+                port: parseInt(importDatabaseFormat2.port, 10),
+              },
+            ],
             partial: [],
             fail: [],
           },
@@ -1967,27 +2519,40 @@ describe('POST /databases/import', () => {
       it('Import sentinel with CA + CLIENT tls (format 3)', async () => {
         await validateApiCall({
           endpoint,
-          attach: ['file', Buffer.from(JSON.stringify([
-            {
-              ...importDatabaseFormat3,
-              name,
-            }
-          ])), 'file.json'],
+          attach: [
+            'file',
+            Buffer.from(
+              JSON.stringify([
+                {
+                  ...importDatabaseFormat3,
+                  name,
+                },
+              ]),
+            ),
+            'file.json',
+          ],
           responseBody: {
             total: 1,
-            success: [{
-              index: 0,
-              status: 'success',
-              host: importDatabaseFormat3.host,
-              port: importDatabaseFormat3.port,
-            }],
+            success: [
+              {
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat3.host,
+                port: importDatabaseFormat3.port,
+              },
+            ],
             partial: [],
             fail: [],
           },
         });
 
         // should determine connection type as standalone since we don't have sentinel auto discovery
-        await validateImportedDatabase(name, 'NOT CONNECTED', 'STANDALONE', false);
+        await validateImportedDatabase(
+          name,
+          'NOT CONNECTED',
+          'STANDALONE',
+          false,
+        );
       });
     });
   });

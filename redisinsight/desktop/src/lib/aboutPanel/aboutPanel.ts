@@ -12,5 +12,5 @@ export const AboutPanelOptions = {
     !config.isProduction ? `-dev-${process.getCreationTime()}` : ''
   }`,
   copyright: `Copyright © ${new Date().getFullYear()} Redis Ltd.`,
-  iconPath: ICON_PATH
+  iconPath: ICON_PATH,
 }

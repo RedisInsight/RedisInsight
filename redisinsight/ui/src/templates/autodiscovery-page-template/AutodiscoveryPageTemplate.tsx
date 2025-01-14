@@ -18,9 +18,7 @@ const AutodiscoveryPageTemplate = (props: Props) => {
       <ExplorePanelTemplate panelClassName={styles.explorePanel}>
         <EuiPage className={styles.page}>
           <EuiPageBody component="div">
-            <div className="homePage">
-              {children}
-            </div>
+            <div className="homePage">{children}</div>
           </EuiPageBody>
         </EuiPage>
       </ExplorePanelTemplate>

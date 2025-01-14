@@ -47,12 +47,12 @@ const EditableInput = (props: Props) => {
         onMouseLeave={() => setIsHovering(false)}
         data-testid={`${testIdPrefix}_content-value-${field}`}
       >
-        <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
-          <div
-            style={{ display: 'flex' }}
-          >
-            {children}
-          </div>
+        <EuiText
+          color="subdued"
+          size="s"
+          style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}
+        >
+          <div style={{ display: 'flex' }}>{children}</div>
         </EuiText>
         {isHovering && (
           <EuiToolTip

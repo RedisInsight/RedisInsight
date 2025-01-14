@@ -6,7 +6,7 @@ import {
   EuiFlexItem,
   EuiFormRow,
   EuiText,
-  EuiTextColor
+  EuiTextColor,
 } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
@@ -25,10 +25,16 @@ export interface Props {
 }
 
 const SentinelMasterDatabase = (props: Props) => {
-  const { db, isCloneMode, flexGroupClassName = '', flexItemClassName = '', formik } = props
+  const {
+    db,
+    isCloneMode,
+    flexGroupClassName = '',
+    flexItemClassName = '',
+    formik,
+  } = props
   return (
     <>
-      {(!!db && !isCloneMode) && (
+      {!!db && !isCloneMode && (
         <EuiText color="subdued" className={styles.sentinelCollapsedField}>
           Database Index:
           <span style={{ paddingLeft: 5 }}>
@@ -63,14 +69,15 @@ const SentinelMasterDatabase = (props: Props) => {
               className="passwordField"
               maxLength={200}
               placeholder="Enter Password"
-              value={formik.values.sentinelMasterPassword === true ? SECURITY_FIELD : formik.values.sentinelMasterPassword ?? ''}
+              value={
+                formik.values.sentinelMasterPassword === true
+                  ? SECURITY_FIELD
+                  : (formik.values.sentinelMasterPassword ?? '')
+              }
               onChange={formik.handleChange}
               onFocus={() => {
                 if (formik.values.sentinelMasterPassword === true) {
-                  formik.setFieldValue(
-                    'sentinelMasterPassword',
-                    '',
-                  )
+                  formik.setFieldValue('sentinelMasterPassword', '')
                 }
               }}
               dualToggleProps={{ color: 'text' }}

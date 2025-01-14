@@ -13,7 +13,10 @@ import { setOnboarding } from 'uiSrc/slices/app/features'
 
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { setReleaseNotesViewed, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
+import {
+  setReleaseNotesViewed,
+  setShortcutsFlyoutState,
+} from 'uiSrc/slices/app/info'
 
 import { FeatureFlags } from 'uiSrc/constants'
 import HelpMenu from './HelpMenu'
@@ -26,8 +29,8 @@ jest.mock('uiSrc/telemetry', () => ({
 jest.mock('uiSrc/slices/app/info', () => ({
   ...jest.requireActual('uiSrc/slices/app/info'),
   appElectronInfoSelector: jest.fn().mockReturnValue({
-    isReleaseNotesViewed: false
-  })
+    isReleaseNotesViewed: false,
+  }),
 }))
 
 let store: typeof mockedStore
@@ -68,16 +71,20 @@ describe('HelpMenu', () => {
     fireEvent.click(screen.getByTestId('help-menu-button'))
     fireEvent.click(screen.getByTestId('reset-onboarding-btn'))
 
-    const expectedActions = [setOnboarding({
-      currentStep: 0,
-      totalSteps: Object.keys(ONBOARDING_FEATURES || {}).length
-    })]
+    const expectedActions = [
+      setOnboarding({
+        currentStep: 0,
+        totalSteps: Object.keys(ONBOARDING_FEATURES || {}).length,
+      }),
+    ]
     expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should call proper telemetry after click reset onboarding', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<HelpMenu />)
 
     fireEvent.click(screen.getByTestId('help-menu-button'))
@@ -87,21 +94,20 @@ describe('HelpMenu', () => {
       event: TelemetryEvent.ONBOARDING_TOUR_TRIGGERED,
       eventData: {
         databaseId: '-',
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should show feature dependent items when feature flag is on', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: true }
+      { flag: true },
     )
 
     render(<HelpMenu />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     fireEvent.click(screen.getByTestId('help-menu-button'))
 
@@ -113,11 +119,11 @@ describe('HelpMenu', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
 
     render(<HelpMenu />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     fireEvent.click(screen.getByTestId('help-menu-button'))
 

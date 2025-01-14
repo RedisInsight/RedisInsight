@@ -10,8 +10,14 @@ export class SlowLogAnalytics extends TelemetryBaseService {
 
   constructor(protected eventEmitter: EventEmitter2) {
     super(eventEmitter);
-    this.events.set(TelemetryEvents.SlowlogSetLogSlowerThan, this.slowLogLogSlowerThanUpdated.bind(this));
-    this.events.set(TelemetryEvents.SlowlogSetMaxLen, this.slowLogMaxLenUpdated.bind(this));
+    this.events.set(
+      TelemetryEvents.SlowlogSetLogSlowerThan,
+      this.slowLogLogSlowerThanUpdated.bind(this),
+    );
+    this.events.set(
+      TelemetryEvents.SlowlogSetMaxLen,
+      this.slowLogMaxLenUpdated.bind(this),
+    );
   }
 
   updateSlowLogConfig(

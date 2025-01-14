@@ -19,14 +19,10 @@ const ExternalLink = (props: Props) => {
   )
 
   return (
-    <EuiLink
-      {...rest}
-      external={false}
-      target="_blank"
-    >
-      {iconPosition === 'left' && (<ArrowIcon />)}
+    <EuiLink {...rest} external={false} target="_blank">
+      {iconPosition === 'left' && <ArrowIcon />}
       {children}
-      {iconPosition === 'right' && (<ArrowIcon />)}
+      {iconPosition === 'right' && <ArrowIcon />}
     </EuiLink>
   )
 }

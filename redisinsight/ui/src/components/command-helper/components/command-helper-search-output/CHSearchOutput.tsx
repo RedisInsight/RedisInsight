@@ -1,7 +1,13 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiFlexItem, EuiLink, EuiText, EuiFlexGroup, EuiTextColor } from '@elastic/eui'
+import {
+  EuiFlexItem,
+  EuiLink,
+  EuiText,
+  EuiFlexGroup,
+  EuiTextColor,
+} from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import { generateArgsNames } from 'uiSrc/utils'
@@ -12,7 +18,7 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import styles from './styles.module.scss'
 
 export interface Props {
-  searchedCommands: string[];
+  searchedCommands: string[]
 }
 
 const CHSearchOutput = ({ searchedCommands }: Props) => {
@@ -20,14 +26,17 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
   const dispatch = useDispatch()
   const { spec: ALL_REDIS_COMMANDS } = useSelector(appRedisCommandsSelector)
 
-  const handleClickCommand = (e: React.MouseEvent<HTMLAnchorElement>, command: string) => {
+  const handleClickCommand = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    command: string,
+  ) => {
     e.preventDefault()
     sendEventTelemetry({
       event: TelemetryEvent.COMMAND_HELPER_COMMAND_OPENED,
       eventData: {
         databaseId: instanceId,
-        command
-      }
+        command,
+      },
     })
     dispatch(setSearchedCommand(command))
   }
@@ -35,7 +44,10 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
   const renderDescription = (command: string) => {
     const args = ALL_REDIS_COMMANDS[command].arguments || []
     if (args.length) {
-      const argString = generateArgsNames(ALL_REDIS_COMMANDS[command]?.provider, args).join(' ')
+      const argString = generateArgsNames(
+        ALL_REDIS_COMMANDS[command]?.provider,
+        args,
+      ).join(' ')
       return (
         <EuiText
           size="s"
@@ -88,10 +100,7 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
       )}
       {searchedCommands.length === 0 && (
         <div className={styles.defaultScreen}>
-          <EuiTextColor
-            color="subdued"
-            data-testid="search-cmds-no-results"
-          >
+          <EuiTextColor color="subdued" data-testid="search-cmds-no-results">
             No results found.
           </EuiTextColor>
         </div>

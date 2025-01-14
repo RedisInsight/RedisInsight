@@ -1,11 +1,11 @@
 import { CommandExecution } from './api'
 
 export interface StateWorkbenchSettings {
-  wbClientUuid: string;
-  loading: boolean;
-  error: string;
-  errorClient: string;
-  unsupportedCommands: string[];
+  wbClientUuid: string
+  loading: boolean
+  error: string
+  errorClient: string
+  unsupportedCommands: string[]
 }
 
 export interface StateWorkbenchResults {
@@ -44,7 +44,8 @@ export interface StateWorkbenchEnablementArea {
   error: string
   items: IEnablementAreaItem[]
 }
-export interface StateWorkbenchCustomTutorials extends StateWorkbenchEnablementArea {
+export interface StateWorkbenchCustomTutorials
+  extends StateWorkbenchEnablementArea {
   bulkUpload: {
     pathsInProgress: string[]
   }

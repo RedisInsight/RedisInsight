@@ -26,16 +26,28 @@ const LazyHomePage = lazy(() => import('uiSrc/pages/home'))
 const LazyWorkbenchPage = lazy(() => import('uiSrc/pages/workbench'))
 const LazyPubSubPage = lazy(() => import('uiSrc/pages/pub-sub'))
 const LazyInstancePage = lazy(() => import('uiSrc/pages/instance'))
-const LazyRedisCloudDatabasesPage = lazy(() => import('uiSrc/pages/autodiscover-cloud/redis-cloud-databases'))
-const LazyRedisCloudDatabasesResultPage = lazy(() => import('uiSrc/pages/autodiscover-cloud/redis-cloud-databases-result'))
-const LazyRedisCloudSubscriptionsPage = lazy(() => import('uiSrc/pages/autodiscover-cloud/redis-cloud-subscriptions'))
-const LazyRedisClusterDatabasesPage = lazy(() => import('uiSrc/pages/redis-cluster'))
+const LazyRedisCloudDatabasesPage = lazy(
+  () => import('uiSrc/pages/autodiscover-cloud/redis-cloud-databases'),
+)
+const LazyRedisCloudDatabasesResultPage = lazy(
+  () => import('uiSrc/pages/autodiscover-cloud/redis-cloud-databases-result'),
+)
+const LazyRedisCloudSubscriptionsPage = lazy(
+  () => import('uiSrc/pages/autodiscover-cloud/redis-cloud-subscriptions'),
+)
+const LazyRedisClusterDatabasesPage = lazy(
+  () => import('uiSrc/pages/redis-cluster'),
+)
 const LazyAnalyticsPage = lazy(() => import('uiSrc/pages/analytics'))
-const LazyRedisCloudPage = lazy(() => import('uiSrc/pages/autodiscover-cloud/redis-cloud'))
+const LazyRedisCloudPage = lazy(
+  () => import('uiSrc/pages/autodiscover-cloud/redis-cloud'),
+)
 const LazyRdiPage = lazy(() => import('uiSrc/pages/rdi/home'))
 const LazyRdiInstancePage = lazy(() => import('uiSrc/pages/rdi/instance'))
 const LazyRdiStatisticsPage = lazy(() => import('uiSrc/pages/rdi/statistics'))
-const LazyPipelineManagementPage = lazy(() => import('uiSrc/pages/rdi/pipeline-management'))
+const LazyPipelineManagementPage = lazy(
+  () => import('uiSrc/pages/rdi/pipeline-management'),
+)
 
 const INSTANCE_ROUTES: IRoute[] = [
   {
@@ -52,13 +64,15 @@ const INSTANCE_ROUTES: IRoute[] = [
     pageName: PageNames.pubSub,
     path: Pages.pubSub(':instanceId'),
     component: LAZY_LOAD ? LazyPubSubPage : PubSubPage,
-    featureFlag: FeatureFlags.envDependent
+    featureFlag: FeatureFlags.envDependent,
   },
-  ...getRouteIncludedByEnv([{
-    path: Pages.analytics(':instanceId'),
-    component: LAZY_LOAD ? LazyAnalyticsPage : AnalyticsPage,
-    routes: ANALYTICS_ROUTES,
-  }])
+  ...getRouteIncludedByEnv([
+    {
+      path: Pages.analytics(':instanceId'),
+      component: LAZY_LOAD ? LazyAnalyticsPage : AnalyticsPage,
+      routes: ANALYTICS_ROUTES,
+    },
+  ]),
 ]
 
 const RDI_INSTANCE_ROUTES: IRoute[] = getRouteIncludedByEnv([
@@ -70,7 +84,7 @@ const RDI_INSTANCE_ROUTES: IRoute[] = getRouteIncludedByEnv([
     path: Pages.rdiPipelineManagement(':rdiInstanceId'),
     component: LAZY_LOAD ? LazyPipelineManagementPage : PipelineManagementPage,
     routes: RDI_PIPELINE_MANAGEMENT_ROUTES,
-  }
+  },
 ])
 
 const ROUTES: IRoute[] = [
@@ -80,12 +94,14 @@ const ROUTES: IRoute[] = [
       exact: true,
       component: LAZY_LOAD ? LazyHomePage : HomePage,
       isAvailableWithoutAgreements: true,
-      featureFlag: FeatureFlags.envDependent
+      featureFlag: FeatureFlags.envDependent,
     },
     ...COMMON_ROUTES,
     {
       path: Pages.redisEnterpriseAutodiscovery,
-      component: LAZY_LOAD ? LazyRedisClusterDatabasesPage : RedisClusterDatabasesPage,
+      component: LAZY_LOAD
+        ? LazyRedisClusterDatabasesPage
+        : RedisClusterDatabasesPage,
     },
     {
       path: Pages.redisCloud,
@@ -93,15 +109,21 @@ const ROUTES: IRoute[] = [
       routes: [
         {
           path: Pages.redisCloudSubscriptions,
-          component: LAZY_LOAD ? LazyRedisCloudSubscriptionsPage : RedisCloudSubscriptionsPage,
+          component: LAZY_LOAD
+            ? LazyRedisCloudSubscriptionsPage
+            : RedisCloudSubscriptionsPage,
         },
         {
           path: Pages.redisCloudDatabases,
-          component: LAZY_LOAD ? LazyRedisCloudDatabasesPage : RedisCloudDatabasesPage,
+          component: LAZY_LOAD
+            ? LazyRedisCloudDatabasesPage
+            : RedisCloudDatabasesPage,
         },
         {
           path: Pages.redisCloudDatabasesResult,
-          component: LAZY_LOAD ? LazyRedisCloudDatabasesResultPage : RedisCloudDatabasesResultPage,
+          component: LAZY_LOAD
+            ? LazyRedisCloudDatabasesResultPage
+            : RedisCloudDatabasesResultPage,
         },
       ],
     },
@@ -121,7 +143,7 @@ const ROUTES: IRoute[] = [
   {
     path: '/:instanceId',
     component: LAZY_LOAD ? LazyInstancePage : InstancePage,
-    routes: INSTANCE_ROUTES
+    routes: INSTANCE_ROUTES,
   },
 ]
 

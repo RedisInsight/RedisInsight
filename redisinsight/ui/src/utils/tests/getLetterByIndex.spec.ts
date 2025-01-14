@@ -11,8 +11,10 @@ const getLetterByIndexTests: any[] = [
 ]
 
 describe('getLetterByIndex', () => {
-  it.each(getLetterByIndexTests)('for input: %s (index), should be output: %s',
+  it.each(getLetterByIndexTests)(
+    'for input: %s (index), should be output: %s',
     (index, expected) => {
       expect(getLetterByIndex(index)).toBe(expected)
-    })
+    },
+  )
 })

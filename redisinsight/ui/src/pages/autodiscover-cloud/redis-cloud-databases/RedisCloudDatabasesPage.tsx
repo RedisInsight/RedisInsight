@@ -24,7 +24,8 @@ import {
 } from 'uiSrc/utils'
 import {
   InstanceRedisCloud,
-  LoadedCloud, OAuthSocialAction,
+  LoadedCloud,
+  OAuthSocialAction,
   RedisCloudSubscriptionType,
   RedisCloudSubscriptionTypeText,
 } from 'uiSrc/slices/interfaces'
@@ -70,9 +71,11 @@ const RedisCloudDatabasesPage = () => {
     }
 
     if (currentAccountIdRef.current !== userOAuthProfile?.id) {
-      dispatch(fetchSubscriptionsRedisCloud(null, true, () => {
-        history.push(Pages.redisCloudSubscriptions)
-      }))
+      dispatch(
+        fetchSubscriptionsRedisCloud(null, true, () => {
+          history.push(Pages.redisCloudSubscriptions)
+        }),
+      )
     }
   }, [userOAuthProfile])
 
@@ -101,9 +104,17 @@ const RedisCloudDatabasesPage = () => {
   }
 
   const handleAddInstances = (
-    databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId' | 'free'>[]
+    databases: Pick<
+      InstanceRedisCloud,
+      'subscriptionId' | 'databaseId' | 'free'
+    >[],
   ) => {
-    dispatch(addInstancesRedisCloud({ databases, credentials }, ssoFlow === OAuthSocialAction.Import))
+    dispatch(
+      addInstancesRedisCloud(
+        { databases, credentials },
+        ssoFlow === OAuthSocialAction.Import,
+      ),
+    )
   }
 
   const handleCopy = (text = '') => {
@@ -143,8 +154,9 @@ const RedisCloudDatabasesPage = () => {
       sortable: true,
       width: '170px',
       truncateText: true,
-      render: (subscriptionId: string) =>
-        <span data-testid={`sub_id_${subscriptionId}`}>{subscriptionId}</span>,
+      render: (subscriptionId: string) => (
+        <span data-testid={`sub_id_${subscriptionId}`}>{subscriptionId}</span>
+      ),
     },
     {
       field: 'subscriptionName',
@@ -178,7 +190,8 @@ const RedisCloudDatabasesPage = () => {
       dataType: 'string',
       sortable: true,
       truncateText: true,
-      render: (type: RedisCloudSubscriptionType) => RedisCloudSubscriptionTypeText[type] ?? '-',
+      render: (type: RedisCloudSubscriptionType) =>
+        RedisCloudSubscriptionTypeText[type] ?? '-',
     },
     {
       field: 'status',
@@ -228,7 +241,11 @@ const RedisCloudDatabasesPage = () => {
       width: '200px',
       sortable: true,
       render: function Modules(_, instance: InstanceRedisCloud) {
-        return <DatabaseListModules modules={instance.modules.map((name) => ({ name }))} />
+        return (
+          <DatabaseListModules
+            modules={instance.modules.map((name) => ({ name }))}
+          />
+        )
       },
     },
     {
@@ -242,7 +259,7 @@ const RedisCloudDatabasesPage = () => {
       render: function Opitions(_, instance: InstanceRedisCloud) {
         const options = parseInstanceOptionsCloud(
           instance.databaseId,
-          instances || []
+          instances || [],
         )
         return <DatabaseListOptions options={options} />
       },

@@ -10,10 +10,15 @@ describe('getCypherCompletionProvider', () => {
 
     const modelMock = {
       getWordUntilPosition: jest.fn().mockImplementation(() => ({})),
-      getValueInRange: jest.fn().mockImplementation(() => ('')),
+      getValueInRange: jest.fn().mockImplementation(() => ''),
     }
 
-    provider.provideCompletionItems(modelMock, positionMock, contextMock, tokenMock)
+    provider.provideCompletionItems(
+      modelMock,
+      positionMock,
+      contextMock,
+      tokenMock,
+    )
 
     expect(modelMock.getWordUntilPosition).toBeCalled()
     expect(modelMock.getValueInRange).toBeCalled()

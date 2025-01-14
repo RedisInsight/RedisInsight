@@ -8,7 +8,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -45,7 +46,9 @@ const updateCheckFn = async (testCase) => {
     if (testCase.after) {
       await testCase.after();
     } else {
-      expect(await rte.client.get(testCase.data.keyName)).to.eql(testCase.data.value);
+      expect(await rte.client.get(testCase.data.keyName)).to.eql(
+        testCase.data.value,
+      );
     }
   });
 };
@@ -63,8 +66,9 @@ describe('PUT /databases/:instanceId/string', () => {
           value: constants.TEST_STRING_VALUE_BIN_BUF_OBJ_1,
         },
         after: async () => {
-          expect(await rte.client.getBuffer(constants.TEST_STRING_KEY_BIN_BUFFER_1))
-            .to.eql(constants.TEST_STRING_VALUE_BIN_BUFFER_1);
+          expect(
+            await rte.client.getBuffer(constants.TEST_STRING_KEY_BIN_BUFFER_1),
+          ).to.eql(constants.TEST_STRING_VALUE_BIN_BUFFER_1);
         },
       },
       {
@@ -74,8 +78,9 @@ describe('PUT /databases/:instanceId/string', () => {
           value: constants.TEST_STRING_VALUE_BIN_ASCII_1,
         },
         after: async () => {
-          expect(await rte.client.getBuffer(constants.TEST_STRING_KEY_BIN_BUFFER_1))
-            .to.eql(constants.TEST_STRING_VALUE_BIN_BUFFER_1);
+          expect(
+            await rte.client.getBuffer(constants.TEST_STRING_KEY_BIN_BUFFER_1),
+          ).to.eql(constants.TEST_STRING_VALUE_BIN_BUFFER_1);
         },
       },
       {
@@ -117,7 +122,9 @@ describe('PUT /databases/:instanceId/string', () => {
           },
           after: async () =>
             // check that value was not overwritten
-            expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(constants.TEST_STRING_VALUE_1)
+            expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(
+              constants.TEST_STRING_VALUE_1,
+            ),
         },
         {
           name: 'Should return NotFound error if key does not exists',
@@ -130,7 +137,7 @@ describe('PUT /databases/:instanceId/string', () => {
             statusCode: 404,
             error: 'Not Found',
           },
-          after: () => {}
+          after: () => {},
         },
         {
           name: 'Should edit existing value',
@@ -144,13 +151,17 @@ describe('PUT /databases/:instanceId/string', () => {
           name: 'Should edit existing value and do not edit ttl',
           data: {
             keyName: constants.TEST_STRING_KEY_2,
-            value: ''
+            value: '',
           },
           statusCode: 200,
           after: async function () {
-            expect(await rte.client.get(constants.TEST_STRING_KEY_2)).to.eql('');
-            expect(await rte.client.ttl(constants.TEST_STRING_KEY_2)).to.lte(constants.TEST_STRING_EXPIRE_2).gte(-1);
-          }
+            expect(await rte.client.get(constants.TEST_STRING_KEY_2)).to.eql(
+              '',
+            );
+            expect(await rte.client.ttl(constants.TEST_STRING_KEY_2))
+              .to.lte(constants.TEST_STRING_EXPIRE_2)
+              .gte(-1);
+          },
         },
         {
           name: 'Should edit existing value for different key type',
@@ -190,7 +201,10 @@ describe('PUT /databases/:instanceId/string', () => {
             error: 'Forbidden',
           },
           before: () => rte.data.setAclUserRules('~* +@all -set'),
-          after: async () => expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(constants.TEST_STRING_VALUE_1)
+          after: async () =>
+            expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(
+              constants.TEST_STRING_VALUE_1,
+            ),
         },
         {
           name: 'Should throw error if no permissions for "ttl" command',
@@ -205,7 +219,10 @@ describe('PUT /databases/:instanceId/string', () => {
             error: 'Forbidden',
           },
           before: () => rte.data.setAclUserRules('~* +@all -ttl'),
-          after: async () => expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(constants.TEST_STRING_VALUE_1)
+          after: async () =>
+            expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(
+              constants.TEST_STRING_VALUE_1,
+            ),
         },
         {
           name: 'Should throw error if no permissions for "expire" command',

@@ -17,14 +17,16 @@ const mockedItems = [
 
 export const mockVirtualTreeResult = [
   {
-    children: [{
-      children: [],
-      fullName: 'car:110:',
-      id: '0.snc1rc3zwgo',
-      keyApproximate: 0.01,
-      keyCount: 1,
-      name: '110',
-    }],
+    children: [
+      {
+        children: [],
+        fullName: 'car:110:',
+        id: '0.snc1rc3zwgo',
+        keyApproximate: 0.01,
+        keyCount: 1,
+        name: '110',
+      },
+    ],
     fullName: 'car:',
     id: '0.sz1ie1koqi8',
     keyApproximate: 47.18,
@@ -38,13 +40,16 @@ export const mockVirtualTreeResult = [
     keyApproximate: 0.01,
     keyCount: 1,
     name: 'test',
-  }
+  },
 ]
 
 jest.mock('uiSrc/services', () => ({
   __esModule: true,
   ...jest.requireActual('uiSrc/services'),
-  useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() })
+  useDisposableWebworker: () => ({
+    result: mockVirtualTreeResult,
+    run: jest.fn(),
+  }),
 }))
 
 describe('VirtualTree', () => {
@@ -59,7 +64,7 @@ describe('VirtualTree', () => {
         {...instance(mockedProps)}
         loading
         setConstructingTree={mockFn}
-      />
+      />,
     )
 
     expect(queryByTestId('virtual-tree-spinner')).toBeInTheDocument()
@@ -72,7 +77,7 @@ describe('VirtualTree', () => {
         {...instance(mockedProps)}
         items={mockedItems}
         setConstructingTree={mockFn}
-      />
+      />,
     )
 
     expect(queryByTestId('node-item_test')).toBeInTheDocument()
@@ -87,7 +92,7 @@ describe('VirtualTree', () => {
         {...instance(mockedProps)}
         onStatusOpen={mockOnStatusOpen}
         setConstructingTree={mockFn}
-      />
+      />,
     )
 
     expect(mockOnStatusOpen).not.toHaveBeenCalled()

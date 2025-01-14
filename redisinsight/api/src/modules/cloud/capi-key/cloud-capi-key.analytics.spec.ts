@@ -15,10 +15,7 @@ describe('CloudCapiKeyAnalytics', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        CloudCapiKeyAnalytics,
-      ],
+      providers: [EventEmitter2, CloudCapiKeyAnalytics],
     }).compile();
 
     service = await module.get(CloudCapiKeyAnalytics);
@@ -43,7 +40,10 @@ describe('CloudCapiKeyAnalytics', () => {
 
   describe('sendCloudAccountKeyGenerationFailed', () => {
     it('should emit 1 event with "Error" cause', () => {
-      service.sendCloudAccountKeyGenerationFailed(mockSessionMetadata, httpException);
+      service.sendCloudAccountKeyGenerationFailed(
+        mockSessionMetadata,
+        httpException,
+      );
 
       expect(sendFailedEventMethod).toHaveBeenNthCalledWith(
         1,

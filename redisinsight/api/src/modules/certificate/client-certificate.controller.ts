@@ -4,7 +4,9 @@ import {
   Delete,
   Get,
   Param,
-  UseInterceptors, UsePipes, ValidationPipe,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiOkResponse,
@@ -20,9 +22,7 @@ import { ClientCertificate } from 'src/modules/certificate/models/client-certifi
 @UseInterceptors(ClassSerializerInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
 export class ClientCertificateController {
-  constructor(
-    private service: ClientCertificateService,
-  ) {}
+  constructor(private service: ClientCertificateService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('')

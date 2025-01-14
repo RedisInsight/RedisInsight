@@ -15,8 +15,10 @@ import {
   isValidPemPrivateKey,
 } from 'src/common/utils';
 import {
-  InvalidCaCertificateBodyException, InvalidCertificateNameException,
-  InvalidClientCertificateBodyException, InvalidClientPrivateKeyException,
+  InvalidCaCertificateBodyException,
+  InvalidCertificateNameException,
+  InvalidClientCertificateBodyException,
+  InvalidClientPrivateKeyException,
 } from 'src/modules/database-import/exceptions';
 
 @Injectable()
@@ -32,15 +34,22 @@ export class CertificateImportService {
     private readonly clientCertRepository: Repository<ClientCertificateEntity>,
     private readonly encryptionService: EncryptionService,
   ) {
-    this.caCertEncryptor = new ModelEncryptor(encryptionService, ['certificate']);
-    this.clientCertEncryptor = new ModelEncryptor(encryptionService, ['certificate', 'key']);
+    this.caCertEncryptor = new ModelEncryptor(encryptionService, [
+      'certificate',
+    ]);
+    this.clientCertEncryptor = new ModelEncryptor(encryptionService, [
+      'certificate',
+      'key',
+    ]);
   }
 
   /**
    * Validate data + prepare CA certificate to be imported along with new database
    * @param cert
    */
-  async processCaCertificate(cert: Partial<CaCertificate>): Promise<CaCertificate> {
+  async processCaCertificate(
+    cert: Partial<CaCertificate>,
+  ): Promise<CaCertificate> {
     let toImport: Partial<CaCertificate> = {
       certificate: null,
       name: cert.name,
@@ -58,7 +67,10 @@ export class CertificateImportService {
       }
     }
 
-    if (!toImport?.certificate || !isValidPemCertificate(toImport.certificate)) {
+    if (
+      !toImport?.certificate ||
+      !isValidPemCertificate(toImport.certificate)
+    ) {
       throw new InvalidCaCertificateBodyException();
     }
 
@@ -75,9 +87,14 @@ export class CertificateImportService {
    * @param cert
    * @private
    */
-  private async prepareCaCertificateForImport(cert: Partial<CaCertificate>): Promise<CaCertificate> {
-    const encryptedModel = await this.caCertEncryptor.encryptEntity(cert as CaCertificate);
-    const existing = await this.caCertRepository.createQueryBuilder('c')
+  private async prepareCaCertificateForImport(
+    cert: Partial<CaCertificate>,
+  ): Promise<CaCertificate> {
+    const encryptedModel = await this.caCertEncryptor.encryptEntity(
+      cert as CaCertificate,
+    );
+    const existing = await this.caCertRepository
+      .createQueryBuilder('c')
       .select('c.id')
       .where({ certificate: cert.certificate })
       .orWhere({ certificate: encryptedModel.certificate })
@@ -102,7 +119,9 @@ export class CertificateImportService {
    * Validate data + prepare CA certificate to be imported along with new database
    * @param cert
    */
-  async processClientCertificate(cert: Partial<ClientCertificateEntity>): Promise<ClientCertificate> {
+  async processClientCertificate(
+    cert: Partial<ClientCertificateEntity>,
+  ): Promise<ClientCertificate> {
     const toImport: Partial<ClientCertificate> = {
       certificate: null,
       key: null,
@@ -133,7 +152,10 @@ export class CertificateImportService {
       }
     }
 
-    if (!toImport?.certificate || !isValidPemCertificate(toImport.certificate)) {
+    if (
+      !toImport?.certificate ||
+      !isValidPemCertificate(toImport.certificate)
+    ) {
       throw new InvalidClientCertificateBodyException();
     }
 
@@ -154,9 +176,14 @@ export class CertificateImportService {
    * @param cert
    * @private
    */
-  private async prepareClientCertificateForImport(cert: Partial<ClientCertificate>): Promise<ClientCertificate> {
-    const encryptedModel = await this.clientCertEncryptor.encryptEntity(cert as ClientCertificate);
-    const existing = await this.clientCertRepository.createQueryBuilder('c')
+  private async prepareClientCertificateForImport(
+    cert: Partial<ClientCertificate>,
+  ): Promise<ClientCertificate> {
+    const encryptedModel = await this.clientCertEncryptor.encryptEntity(
+      cert as ClientCertificate,
+    );
+    const existing = await this.clientCertRepository
+      .createQueryBuilder('c')
       .select('c.id')
       .where({
         certificate: cert.certificate,
@@ -188,7 +215,10 @@ export class CertificateImportService {
    * @param originalName
    * @param repository
    */
-  static async determineAvailableName(originalName: string, repository: Repository<any>): Promise<string> {
+  static async determineAvailableName(
+    originalName: string,
+    repository: Repository<any>,
+  ): Promise<string> {
     let index = 0;
 
     // temporary solution
@@ -202,11 +232,13 @@ export class CertificateImportService {
         name = `${index}_${name}`;
       }
 
-      if (!await repository
-        .createQueryBuilder('c')
-        .where({ name })
-        .select(['c.id'])
-        .getOne()) {
+      if (
+        !(await repository
+          .createQueryBuilder('c')
+          .where({ name })
+          .select(['c.id'])
+          .getOne())
+      ) {
         return name;
       }
 

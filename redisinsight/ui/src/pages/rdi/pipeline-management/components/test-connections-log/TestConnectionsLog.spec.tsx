@@ -12,24 +12,41 @@ describe('TestConnectionsLog', () => {
 
   it('should be a collapsed nav group', () => {
     const mockedData: ITestConnection = {
-      fail: [{ index: 0, status: TestConnectionStatus.Fail, endpoint: 'localhost:1233', error: 'some error' }],
-      success: []
+      fail: [
+        {
+          index: 0,
+          status: TestConnectionStatus.Fail,
+          endpoint: 'localhost:1233',
+          error: 'some error',
+        },
+      ],
+      success: [],
     }
     render(<TestConnectionsLog data={mockedData} />)
 
-    expect(screen.queryByTestId('success-connections-closed')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('success-connections-closed'),
+    ).not.toBeInTheDocument()
     expect(screen.getByTestId('failed-connections-closed')).toBeInTheDocument()
   })
 
   it('should open and collapse other groups', () => {
     const mockedData: ITestConnection = {
       fail: [],
-      success: [{ index: 1, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' }]
+      success: [
+        {
+          index: 1,
+          status: TestConnectionStatus.Success,
+          endpoint: 'localhost:1233',
+        },
+      ],
     }
     render(<TestConnectionsLog data={mockedData} />)
 
     fireEvent.click(
-      within(screen.getByTestId('success-connections-closed')).getByRole('button')
+      within(screen.getByTestId('success-connections-closed')).getByRole(
+        'button',
+      ),
     )
     expect(screen.getByTestId('success-connections-open')).toBeInTheDocument()
   })
@@ -38,14 +55,24 @@ describe('TestConnectionsLog', () => {
     const mockedData: ITestConnection = {
       fail: [],
       success: [
-        { index: 1, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' },
-        { index: 2, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' }
-      ]
+        {
+          index: 1,
+          status: TestConnectionStatus.Success,
+          endpoint: 'localhost:1233',
+        },
+        {
+          index: 2,
+          status: TestConnectionStatus.Success,
+          endpoint: 'localhost:1233',
+        },
+      ],
     }
     render(<TestConnectionsLog data={mockedData} />)
 
     expect(
-      within(screen.getByTestId('success-connections-closed')).getByTestId('number-of-connections')
+      within(screen.getByTestId('success-connections-closed')).getByTestId(
+        'number-of-connections',
+      ),
     ).toHaveTextContent('2')
   })
 })

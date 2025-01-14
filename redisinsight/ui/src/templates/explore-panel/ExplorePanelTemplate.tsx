@@ -20,7 +20,11 @@ const ExplorePanelTemplate = (props: Props) => {
       <div className={cx(styles.mainPanel, { insightsOpen: !!openedPanel })}>
         {children}
       </div>
-      <div className={cx(styles.insigtsWrapper, { [styles.insightsOpen]: !!openedPanel })}>
+      <div
+        className={cx(styles.insigtsWrapper, {
+          [styles.insightsOpen]: !!openedPanel,
+        })}
+      >
         <SidePanels panelClassName={panelClassName} />
       </div>
     </div>

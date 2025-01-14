@@ -16,10 +16,7 @@ describe('AddZsetMembers', () => {
   it('should set member value properly', () => {
     render(<AddSetMembers {...instance(mockedProps)} />)
     const memberInput = screen.getByTestId(MEMBER_NAME)
-    fireEvent.change(
-      memberInput,
-      { target: { value: 'member name' } }
-    )
+    fireEvent.change(memberInput, { target: { value: 'member name' } })
     expect(memberInput).toHaveValue('member name')
   })
 
@@ -50,10 +47,7 @@ describe('AddZsetMembers', () => {
   it('should clear member after click clear button', () => {
     render(<AddSetMembers {...instance(mockedProps)} />)
     const memberInput = screen.getByTestId(MEMBER_NAME)
-    fireEvent.change(
-      memberInput,
-      { target: { value: 'member' } }
-    )
+    fireEvent.change(memberInput, { target: { value: 'member' } })
     fireEvent.click(screen.getByTestId('remove-item'))
 
     expect(memberInput).toHaveValue('')

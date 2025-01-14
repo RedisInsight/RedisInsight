@@ -25,7 +25,9 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
   async onModuleInit() {
     if (this.options.initDefaults) {
       // wait for populating default data (should take milliseconds)
-      await this.initDefaults().catch((e) => this.logger.warn('Unable to populate default data', e));
+      await this.initDefaults().catch((e) =>
+        this.logger.warn('Unable to populate default data', e),
+      );
     }
 
     if (this.options.autoUpdate) {
@@ -39,13 +41,19 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   async initDefaults() {
     try {
-      if (!await fs.pathExists(
-        join(this.options.destinationPath, this.options.buildInfo),
-      )) {
+      if (
+        !(await fs.pathExists(
+          join(this.options.destinationPath, this.options.buildInfo),
+        ))
+      ) {
         await fs.ensureDir(this.options.destinationPath);
-        await fs.copy(this.options.defaultSourcePath, this.options.destinationPath, {
-          overwrite: true,
-        });
+        await fs.copy(
+          this.options.defaultSourcePath,
+          this.options.destinationPath,
+          {
+            overwrite: true,
+          },
+        );
       }
     } catch (e) {
       this.logger.error('Unable to create static files from default', e);
@@ -57,7 +65,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   async autoUpdate() {
     this.logger.debug('Checking for updates...');
-    if (!this.options.devMode && await this.isUpdatesAvailable()) {
+    if (!this.options.devMode && (await this.isUpdatesAvailable())) {
       this.logger.debug('Updates available! Updating...');
 
       try {
@@ -87,7 +95,9 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   async getLatestArchive() {
     try {
-      return await getFile(new URL(join(this.options.updateUrl, this.options.zip)).toString());
+      return await getFile(
+        new URL(join(this.options.updateUrl, this.options.zip)).toString(),
+      );
     } catch (e) {
       this.logger.warn('Unable to get remote archive', e);
       return null;
@@ -103,7 +113,10 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
     const currentBuildInfo = await this.getCurrentBuildInfo();
     const remoteBuildInfo = await this.getRemoteBuildInfo();
 
-    return get(remoteBuildInfo, ['timestamp'], 0) > get(currentBuildInfo, ['timestamp'], 0);
+    return (
+      get(remoteBuildInfo, ['timestamp'], 0) >
+      get(currentBuildInfo, ['timestamp'], 0)
+    );
   }
 
   /**
@@ -111,7 +124,11 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   async getRemoteBuildInfo(): Promise<Record<string, any>> {
     try {
-      const buildInfoBuffer = await getFile(new URL(join(this.options.updateUrl, this.options.buildInfo)).toString());
+      const buildInfoBuffer = await getFile(
+        new URL(
+          join(this.options.updateUrl, this.options.buildInfo),
+        ).toString(),
+      );
       return JSON.parse(buildInfoBuffer.toString());
     } catch (e) {
       this.logger.warn('Unable to get remote build info', e);
@@ -124,10 +141,12 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    */
   async getCurrentBuildInfo(): Promise<Record<string, any>> {
     try {
-      return JSON.parse(await fs.readFile(
-        join(this.options.destinationPath, this.options.buildInfo),
-        'utf8',
-      ));
+      return JSON.parse(
+        await fs.readFile(
+          join(this.options.destinationPath, this.options.buildInfo),
+          'utf8',
+        ),
+      );
     } catch (e) {
       this.logger.warn('Unable to get local checksum', e);
       return {};

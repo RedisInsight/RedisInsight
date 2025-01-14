@@ -8,8 +8,8 @@ export class SetScanResponse extends KeyResponse {
     type: Number,
     minimum: 0,
     description:
-      'The new cursor to use in the next call.'
-      + ' If the property has value of 0, then the iteration is completed.',
+      'The new cursor to use in the next call.' +
+      ' If the property has value of 0, then the iteration is completed.',
   })
   nextCursor: number;
 

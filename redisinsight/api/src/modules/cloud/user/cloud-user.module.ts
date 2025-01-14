@@ -23,9 +23,6 @@ import { CloudAuthModule } from 'src/modules/cloud/auth/cloud-auth.module';
     },
   ],
   controllers: [CloudUserController],
-  exports: [
-    CloudUserCapiService,
-    CloudUserApiService,
-  ],
+  exports: [CloudUserCapiService, CloudUserApiService],
 })
 export class CloudUserModule {}

@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
 import {
   mockCapiUnauthorizedError,
-  mockCloudApiCapiAccessKey, mockCloudApiCapiKey,
+  mockCloudApiCapiAccessKey,
+  mockCloudApiCapiKey,
   mockCloudApiHeaders,
   mockCloudSession,
   mockCloudSessionService,
@@ -41,8 +42,14 @@ describe('CloudCapiKeyApiProvider', () => {
       };
       mockedAxios.post.mockResolvedValue(response);
 
-      expect(await service.enableCapi(mockCloudSession)).toEqual(mockCloudApiCapiAccessKey.accessKey);
-      expect(mockedAxios.post).toHaveBeenCalledWith('/accounts/cloud-api/cloudApiAccessKey', {}, mockCloudApiHeaders);
+      expect(await service.enableCapi(mockCloudSession)).toEqual(
+        mockCloudApiCapiAccessKey.accessKey,
+      );
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        '/accounts/cloud-api/cloudApiAccessKey',
+        {},
+        mockCloudApiHeaders,
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
       mockedAxios.post.mockRejectedValue(mockCapiUnauthorizedError);
@@ -61,8 +68,13 @@ describe('CloudCapiKeyApiProvider', () => {
       };
       mockedAxios.post.mockResolvedValue(response);
 
-      expect(await service.createCapiKey(mockCloudSession, mockCloudUser.id, mockCloudApiCapiKey.name))
-        .toEqual(mockCloudApiCapiKey);
+      expect(
+        await service.createCapiKey(
+          mockCloudSession,
+          mockCloudUser.id,
+          mockCloudApiCapiKey.name,
+        ),
+      ).toEqual(mockCloudApiCapiKey);
       expect(mockedAxios.post).toHaveBeenCalledWith(
         '/accounts/cloud-api/cloudApiKeys',
         {
@@ -78,9 +90,13 @@ describe('CloudCapiKeyApiProvider', () => {
     it('throw CloudApiUnauthorizedException exception', async () => {
       mockedAxios.post.mockRejectedValue(mockCapiUnauthorizedError);
 
-      await expect(service.createCapiKey(mockCloudSession, mockCloudUser.id, mockCloudApiCapiKey.name)).rejects.toThrow(
-        CloudApiUnauthorizedException,
-      );
+      await expect(
+        service.createCapiKey(
+          mockCloudSession,
+          mockCloudUser.id,
+          mockCloudApiCapiKey.name,
+        ),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
     });
   });
 });

@@ -1,6 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { RedisClientSubscriberEvents, RedisClientSubscriberStatus } from 'src/modules/pub-sub/constants';
+import {
+  RedisClientSubscriberEvents,
+  RedisClientSubscriberStatus,
+} from 'src/modules/pub-sub/constants';
 import { RedisClient } from 'src/modules/redis/client';
 
 export class RedisClientSubscriber extends EventEmitter2 {
@@ -14,10 +17,7 @@ export class RedisClientSubscriber extends EventEmitter2 {
 
   private status: RedisClientSubscriberStatus;
 
-  constructor(
-    databaseId: string,
-    connectFn: () => Promise<RedisClient>,
-  ) {
+  constructor(databaseId: string, connectFn: () => Promise<RedisClient>) {
     super();
     this.databaseId = databaseId;
     this.connectFn = connectFn;
@@ -75,13 +75,16 @@ export class RedisClientSubscriber extends EventEmitter2 {
       });
     });
 
-    this.client.on('pmessage', (pattern: string, channel: string, message: string) => {
-      this.emit(RedisClientSubscriberEvents.Message, `p:${pattern}`, {
-        channel,
-        message,
-        time: Date.now(),
-      });
-    });
+    this.client.on(
+      'pmessage',
+      (pattern: string, channel: string, message: string) => {
+        this.emit(RedisClientSubscriberEvents.Message, `p:${pattern}`, {
+          channel,
+          message,
+          time: Date.now(),
+        });
+      },
+    );
 
     this.client.on('end', () => {
       this.status = RedisClientSubscriberStatus.End;

@@ -28,11 +28,22 @@ export const RedisLogo = ({ isRdiWorkspace }: Props) => {
 
   return (
     <EuiToolTip
-      content={server?.buildType === BuildType.RedisStack ? 'Edit database' : isRdiWorkspace ? 'Redis Data Integration' : 'Redis Databases'}
+      content={
+        server?.buildType === BuildType.RedisStack
+          ? 'Edit database'
+          : isRdiWorkspace
+            ? 'Redis Data Integration'
+            : 'Redis Databases'
+      }
       position="right"
     >
       <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-        <EuiLink {...getRouterLinkProps(isRdiWorkspace ? Pages.rdi : Pages.home)} className={styles.logo} data-test-subj="home-page-btn" data-testid="redis-logo-link">
+        <EuiLink
+          {...getRouterLinkProps(isRdiWorkspace ? Pages.rdi : Pages.home)}
+          className={styles.logo}
+          data-test-subj="home-page-btn"
+          data-testid="redis-logo-link"
+        >
           <EuiIcon aria-label="Redis Insight Homepage" type={LogoSVG} />
         </EuiLink>
       </span>

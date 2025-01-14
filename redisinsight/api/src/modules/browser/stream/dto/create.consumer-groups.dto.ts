@@ -2,7 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
 import {
-  ArrayNotEmpty, IsArray, IsNotEmpty, IsString, ValidateNested,
+  ArrayNotEmpty,
+  IsArray,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
 } from 'class-validator';
 import { KeyDto } from 'src/modules/browser/keys/dto';
 import { Type } from 'class-transformer';

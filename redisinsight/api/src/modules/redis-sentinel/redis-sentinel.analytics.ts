@@ -1,5 +1,8 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
+import {
+  SentinelMaster,
+  SentinelMasterStatus,
+} from 'src/modules/redis-sentinel/models/sentinel-master';
 import { TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -11,7 +14,10 @@ export class RedisSentinelAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendGetSentinelMastersSucceedEvent(sessionMetadata: SessionMetadata, groups: SentinelMaster[] = []) {
+  sendGetSentinelMastersSucceedEvent(
+    sessionMetadata: SessionMetadata,
+    groups: SentinelMaster[] = [],
+  ) {
     try {
       this.sendEvent(
         sessionMetadata,
@@ -32,7 +38,14 @@ export class RedisSentinelAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendGetSentinelMastersFailedEvent(sessionMetadata: SessionMetadata, exception: HttpException) {
-    this.sendFailedEvent(sessionMetadata, TelemetryEvents.SentinelMasterGroupsDiscoveryFailed, exception);
+  sendGetSentinelMastersFailedEvent(
+    sessionMetadata: SessionMetadata,
+    exception: HttpException,
+  ) {
+    this.sendFailedEvent(
+      sessionMetadata,
+      TelemetryEvents.SentinelMasterGroupsDiscoveryFailed,
+      exception,
+    );
   }
 }

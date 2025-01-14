@@ -1,6 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  ArrayMinSize, IsDefined, IsEnum, IsOptional, ValidateNested,
+  ArrayMinSize,
+  IsDefined,
+  IsEnum,
+  IsOptional,
+  ValidateNested,
 } from 'class-validator';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';

@@ -6,19 +6,19 @@ import { icon as EuiIconArrowRight } from '@elastic/eui/es/components/icon/asset
 import App from './App'
 
 appendIconComponentCache({
-    arrowRight: EuiIconArrowRight,
+  arrowRight: EuiIconArrowRight,
 })
 
 interface Props {
   command?: string
-  data?: { response: any, status: string }[]
+  data?: { response: any; status: string }[]
 }
 
-const renderChart = (props:Props) => {
+const renderChart = (props: Props) => {
   const { command = '', data: result = [] } = props
   render(
     <App command={command} result={result} />,
-    document.getElementById('app')
+    document.getElementById('app'),
   )
 }
 

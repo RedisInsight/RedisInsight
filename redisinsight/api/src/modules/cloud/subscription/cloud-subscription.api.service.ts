@@ -2,7 +2,10 @@ import { filter, find } from 'lodash';
 import { Injectable, Logger } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { wrapHttpError } from 'src/common/utils';
-import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
+import {
+  CloudRequestUtm,
+  ICloudApiCredentials,
+} from 'src/modules/cloud/common/models';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
@@ -38,7 +41,10 @@ export class CloudSubscriptionApiService {
       try {
         const [fixedPlans, regions] = await Promise.all([
           this.cloudSubscriptionCapiService.getSubscriptionsPlans(
-            await this.cloudCapiKeyService.getCapiCredentials(sessionMetadata, utm),
+            await this.cloudCapiKeyService.getCapiCredentials(
+              sessionMetadata,
+              utm,
+            ),
             CloudSubscriptionType.Fixed,
           ),
           this.getCloudRegions(
@@ -46,23 +52,26 @@ export class CloudSubscriptionApiService {
           ),
         ]);
 
-        const cloudSsoFeature = await this.featureService.getByName(sessionMetadata, KnownFeatures.CloudSso);
-
-        const freePlans = filter(
-          fixedPlans,
-          (plan) => {
-            if (plan.price !== 0) {
-              return false;
-            }
-
-            if (!cloudSsoFeature?.data?.filterFreePlan?.length) {
-              return true;
-            }
-
-            return !!((cloudSsoFeature.data.filterFreePlan).find((f) => f.expression
-              && (new RegExp(f.expression, f.options)).test(plan[f?.field])));
-          },
+        const cloudSsoFeature = await this.featureService.getByName(
+          sessionMetadata,
+          KnownFeatures.CloudSso,
         );
+
+        const freePlans = filter(fixedPlans, (plan) => {
+          if (plan.price !== 0) {
+            return false;
+          }
+
+          if (!cloudSsoFeature?.data?.filterFreePlan?.length) {
+            return true;
+          }
+
+          return !!cloudSsoFeature.data.filterFreePlan.find(
+            (f) =>
+              f.expression &&
+              new RegExp(f.expression, f.options).test(plan[f?.field]),
+          );
+        });
 
         return freePlans.map((plan) => ({
           ...plan,
@@ -70,7 +79,12 @@ export class CloudSubscriptionApiService {
         }));
       } catch (e) {
         this.logger.error('Error getting subscription plans', e);
-        throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
+        throw wrapHttpError(
+          await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(
+            e,
+            sessionMetadata,
+          ),
+        );
       }
     });
   }

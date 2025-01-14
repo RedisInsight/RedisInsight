@@ -32,7 +32,6 @@ export const EDGE_COLORS_DARK = [
   { color: '#C7B0EA', borderColor: '#C7B0EA', textColor: '#FFFFFF' },
 ]
 
-
 export const COLORS = [
   { color: '#C7B0EA', borderColor: '#C7B0EA', textColor: '#000000' },
   { color: '#CDDDF8', borderColor: '#CDDDF8', textColor: '#000000' },
@@ -60,9 +59,9 @@ export const EDGE_COLORS = [
 ]
 
 interface IColor {
-    color: string
-    textColor: string
-    borderColor: string
+  color: string
+  textColor: string
+  borderColor: string
 }
 
 export interface IGoodColor extends IColor {}
@@ -71,7 +70,6 @@ export interface IGoodColor extends IColor {}
  * ColorPicker: Get colors based on `label`.
  */
 export class ColorPicker<T extends IColor> {
-
   // All the default colors are stored here.
   private readonly colors: T[]
 
@@ -80,7 +78,6 @@ export class ColorPicker<T extends IColor> {
 
   // cache for label and its chosen color.
   private labelStore: { [keyName: string]: T }
-
 
   constructor(colors: T[]) {
     this.colors = [...colors]
@@ -103,10 +100,13 @@ export class ColorPicker<T extends IColor> {
       this.currentColorStore = [...this.colors]
     }
     // get the color by hashing the label.
-    const goodColor = this.currentColorStore[charCodeSum(label) % this.currentColorStore.length]
+    const goodColor =
+      this.currentColorStore[charCodeSum(label) % this.currentColorStore.length]
 
     // since the color has been taken by `label`, remove it from the current color store.
-    this.currentColorStore = this.currentColorStore.filter(color => color !== goodColor)
+    this.currentColorStore = this.currentColorStore.filter(
+      (color) => color !== goodColor,
+    )
 
     // cache the label and color key value pair.
     this.labelStore[label] = goodColor
@@ -125,12 +125,12 @@ export class GoodColorPicker extends ColorPicker<IGoodColor> {
 
 export function hexToRGBA(hex: string, alpha: number): string {
   const r = parseInt(hex.slice(1, 3), 16),
-        g = parseInt(hex.slice(3, 5), 16),
-        b = parseInt(hex.slice(5, 7), 16)
+    g = parseInt(hex.slice(3, 5), 16),
+    b = parseInt(hex.slice(5, 7), 16)
 
   if (alpha) {
-    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")"
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')'
   } else {
-    return "rgb(" + r + ", " + g + ", " + b + ")"
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')'
   }
 }

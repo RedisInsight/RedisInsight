@@ -1,7 +1,15 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen, fireEvent, waitForEuiPopoverVisible, act } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  screen,
+  fireEvent,
+  waitForEuiPopoverVisible,
+  act,
+} from 'uiSrc/utils/test-utils'
 
 import { removeCapiKey } from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -61,17 +69,24 @@ describe('UserApiKeysTable', () => {
   it('should render row content properly', () => {
     render(<UserApiKeysTable {...mockedProps} items={mockedCapiKeys} />)
 
-    expect(screen.getByTestId(`row-${mockedCapiKeys[0].name}`))
-      .toHaveTextContent('API Key NameRedisInsight-f4868252-a128-4a02-af75-bd3c99898267-2020-11-01T-123Created2 Aug 2023Last used2 Aug 2023')
+    expect(
+      screen.getByTestId(`row-${mockedCapiKeys[0].name}`),
+    ).toHaveTextContent(
+      'API Key NameRedisInsight-f4868252-a128-4a02-af75-bd3c99898267-2020-11-01T-123Created2 Aug 2023Last used2 Aug 2023',
+    )
   })
 
   it('should show delete popover and call proper action on delete', async () => {
     render(<UserApiKeysTable {...mockedProps} items={mockedCapiKeys} />)
 
-    fireEvent.click(screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}-icon`))
+    fireEvent.click(
+      screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}-icon`),
+    )
     await waitForEuiPopoverVisible()
 
-    fireEvent.click(screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}`))
+    fireEvent.click(
+      screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}`),
+    )
 
     expect(store.getActions()).toEqual([removeCapiKey()])
   })
@@ -82,9 +97,15 @@ describe('UserApiKeysTable', () => {
 
     apiService.delete = jest.fn().mockResolvedValue({ status: 200 })
 
-    const { container } = render(<UserApiKeysTable {...mockedProps} items={mockedCapiKeys} />)
+    const { container } = render(
+      <UserApiKeysTable {...mockedProps} items={mockedCapiKeys} />,
+    )
 
-    fireEvent.click(container.querySelector('[data-test-subj="tableHeaderSortButton"]') as HTMLElement)
+    fireEvent.click(
+      container.querySelector(
+        '[data-test-subj="tableHeaderSortButton"]',
+      ) as HTMLElement,
+    )
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_SORTED,
@@ -92,40 +113,46 @@ describe('UserApiKeysTable', () => {
         direction: 'asc',
         field: 'name',
         numberOfKeys: 3,
-      }
+      },
     })
 
     sendEventTelemetry.mockRestore()
 
-    fireEvent.click(screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}-icon`))
+    fireEvent.click(
+      screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}-icon`),
+    )
     await waitForEuiPopoverVisible()
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_REMOVE_CLICKED,
       eventData: {
-        source: OAuthSocialSource.SettingsPage
-      }
+        source: OAuthSocialSource.SettingsPage,
+      },
     })
 
     sendEventTelemetry.mockRestore()
 
     await act(() => {
-      fireEvent.click(screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}`))
+      fireEvent.click(
+        screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}`),
+      )
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_API_KEY_REMOVED,
       eventData: {
-        source: OAuthSocialSource.SettingsPage
-      }
+        source: OAuthSocialSource.SettingsPage,
+      },
     })
 
     sendEventTelemetry.mockRestore()
 
-    fireEvent.click(screen.getByTestId(`copy-api-key-${mockedCapiKeys[0].name}`))
+    fireEvent.click(
+      screen.getByTestId(`copy-api-key-${mockedCapiKeys[0].name}`),
+    )
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_NAME_COPIED
+      event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_NAME_COPIED,
     })
   })
 })

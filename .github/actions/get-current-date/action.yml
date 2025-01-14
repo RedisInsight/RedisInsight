@@ -8,10 +8,9 @@ outputs:
 runs:
   using: 'composite'
   steps:
-  - name: Get current date
-    id: date
-    shell: bash
-    run: |
-      DATE=$(date +'%Y-%m-%d')
-      echo "date=$DATE" >> $GITHUB_OUTPUT
-
+    - name: Get current date
+      id: date
+      shell: bash
+      run: |
+        DATE=$(date +'%Y-%m-%d')
+        echo "date=$DATE" >> $GITHUB_OUTPUT

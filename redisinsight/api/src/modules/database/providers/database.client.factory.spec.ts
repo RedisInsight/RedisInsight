@@ -166,14 +166,16 @@ describe('DatabaseClientFactory', () => {
       const createClientSpy = jest
         .spyOn(service, 'createClient')
         .mockImplementationOnce(
-          () => new Promise((_, reject) => {
-            reject(error1);
-          }),
+          () =>
+            new Promise((_, reject) => {
+              reject(error1);
+            }),
         )
         .mockImplementationOnce(
-          () => new Promise((_, reject) => {
-            reject(error2);
-          }),
+          () =>
+            new Promise((_, reject) => {
+              reject(error2);
+            }),
         );
 
       const clients = await Promise.all([
@@ -209,16 +211,33 @@ describe('DatabaseClientFactory', () => {
 
   describe('createClient', () => {
     it('should create new client and not update connection type', async () => {
-      jest.spyOn(redisClientFactory, 'createClient').mockResolvedValueOnce(mockStandaloneRedisClient);
-      expect(await service.createClient(mockCommonClientMetadata)).toEqual(mockStandaloneRedisClient);
-      expect(databaseService.get).toHaveBeenCalledWith(mockSessionMetadata, mockCommonClientMetadata.databaseId);
+      jest
+        .spyOn(redisClientFactory, 'createClient')
+        .mockResolvedValueOnce(mockStandaloneRedisClient);
+      expect(await service.createClient(mockCommonClientMetadata)).toEqual(
+        mockStandaloneRedisClient,
+      );
+      expect(databaseService.get).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockCommonClientMetadata.databaseId,
+      );
       expect(databaseRepository.update).not.toHaveBeenCalled();
     });
     it('should create new client and update connection type (first connection)', async () => {
-      jest.spyOn(redisClientFactory, 'createClient').mockResolvedValueOnce(mockStandaloneRedisClient);
-      databaseService.get.mockResolvedValueOnce({ ...mockDatabase, connectionType: ConnectionType.NOT_CONNECTED });
-      expect(await service.createClient(mockCommonClientMetadata)).toEqual(mockStandaloneRedisClient);
-      expect(databaseService.get).toHaveBeenCalledWith(mockSessionMetadata, mockCommonClientMetadata.databaseId);
+      jest
+        .spyOn(redisClientFactory, 'createClient')
+        .mockResolvedValueOnce(mockStandaloneRedisClient);
+      databaseService.get.mockResolvedValueOnce({
+        ...mockDatabase,
+        connectionType: ConnectionType.NOT_CONNECTED,
+      });
+      expect(await service.createClient(mockCommonClientMetadata)).toEqual(
+        mockStandaloneRedisClient,
+      );
+      expect(databaseService.get).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockCommonClientMetadata.databaseId,
+      );
       expect(databaseRepository.update).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockCommonClientMetadata.databaseId,
@@ -228,8 +247,12 @@ describe('DatabaseClientFactory', () => {
       );
     });
     it('should throw Unauthorized error in case of NOAUTH', async () => {
-      jest.spyOn(redisClientFactory, 'createClient').mockRejectedValue(mockRedisNoAuthError);
-      await expect(service.createClient(mockCommonClientMetadata)).rejects.toThrow(UnauthorizedException);
+      jest
+        .spyOn(redisClientFactory, 'createClient')
+        .mockRejectedValue(mockRedisNoAuthError);
+      await expect(
+        service.createClient(mockCommonClientMetadata),
+      ).rejects.toThrow(UnauthorizedException);
       expect(analytics.sendConnectionFailedEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockDatabase,

@@ -24,11 +24,20 @@ import {
   setSelectAccountDialogState,
 } from 'uiSrc/slices/oauth/cloud'
 import { Nullable } from 'uiSrc/utils'
-import { cloudSelector, fetchSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
+import {
+  cloudSelector,
+  fetchSubscriptionsRedisCloud,
+} from 'uiSrc/slices/instances/cloud'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
-import { addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
-import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
+import {
+  addInfiniteNotification,
+  removeInfiniteNotification,
+} from 'uiSrc/slices/app/notifications'
+import {
+  INFINITE_MESSAGES,
+  InfiniteMessagesIds,
+} from 'uiSrc/components/notifications/components'
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 
@@ -40,7 +49,8 @@ interface FormValues {
 
 const OAuthSelectAccountDialog = () => {
   const { ssoFlow, isRecommendedSettings } = useSelector(cloudSelector)
-  const { accounts = [], currentAccountId } = useSelector(oauthCloudUserDataSelector) ?? {}
+  const { accounts = [], currentAccountId } =
+    useSelector(oauthCloudUserDataSelector) ?? {}
   const { isOpenSelectAccountDialog } = useSelector(oauthCloudSelector)
   const { loading } = useSelector(oauthCloudUserSelector)
   const { loading: plansLoadings } = useSelector(oauthCloudPlanSelector)
@@ -64,37 +74,57 @@ const OAuthSelectAccountDialog = () => {
   })
 
   const onSubmit = ({ accountId }: FormValues) => {
-    dispatch(activateAccount(accountId || '', onActivateAccountSuccess, onActivateAccountFail))
+    dispatch(
+      activateAccount(
+        accountId || '',
+        onActivateAccountSuccess,
+        onActivateAccountFail,
+      ),
+    )
   }
 
   const onActivateAccountSuccess = useCallback(() => {
     if (isAutodiscoverySSO) {
-      dispatch(fetchSubscriptionsRedisCloud(
-        null,
-        true,
-        () => {
-          dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
-          history.push(Pages.redisCloudSubscriptions)
-        },
-        () => {
-          dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
-        }
-      ))
+      dispatch(
+        fetchSubscriptionsRedisCloud(
+          null,
+          true,
+          () => {
+            dispatch(
+              removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
+            )
+            history.push(Pages.redisCloudSubscriptions)
+          },
+          () => {
+            dispatch(
+              removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
+            )
+          },
+        ),
+      )
       dispatch(setSelectAccountDialogState(false))
     } else if (isRecommendedSettings) {
-      dispatch(createFreeDbJob({
-        name: CloudJobName.CreateFreeSubscriptionAndDatabase,
-        resources: {
-          isRecommendedSettings
-        },
-        onSuccessAction: () => {
-          dispatch(setSelectAccountDialogState(false))
-          dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
-        },
-        onFailAction: () => {
-          dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
-        }
-      }))
+      dispatch(
+        createFreeDbJob({
+          name: CloudJobName.CreateFreeSubscriptionAndDatabase,
+          resources: {
+            isRecommendedSettings,
+          },
+          onSuccessAction: () => {
+            dispatch(setSelectAccountDialogState(false))
+            dispatch(
+              addInfiniteNotification(
+                INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials),
+              ),
+            )
+          },
+          onFailAction: () => {
+            dispatch(
+              removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
+            )
+          },
+        }),
+      )
     } else {
       dispatch(fetchPlans())
     }
@@ -103,20 +133,23 @@ const OAuthSelectAccountDialog = () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_ACCOUNT_SELECTED,
       eventData: {
         action: ssoFlow,
-        accountsCount: accounts.length
+        accountsCount: accounts.length,
       },
     })
   }, [isAutodiscoverySSO, isRecommendedSettings, accounts])
 
-  const onActivateAccountFail = useCallback((error: string) => {
-    sendEventTelemetry({
-      event: TelemetryEvent.CLOUD_SIGN_IN_ACCOUNT_FAILED,
-      eventData: {
-        error,
-        accountsCount: accounts.length,
-      },
-    })
-  }, [accounts])
+  const onActivateAccountFail = useCallback(
+    (error: string) => {
+      sendEventTelemetry({
+        event: TelemetryEvent.CLOUD_SIGN_IN_ACCOUNT_FAILED,
+        eventData: {
+          error,
+          accountsCount: accounts.length,
+        },
+      })
+    },
+    [accounts],
+  )
 
   const handleOnClose = useCallback(() => {
     sendEventTelemetry({
@@ -133,15 +166,22 @@ const OAuthSelectAccountDialog = () => {
     formik.setFieldValue('accountId', value)
   }
 
-  const radios: EuiRadioGroupOption[] = accounts.map(
-    ({ id, name = '' }) => ({
-      id: `${id}`,
-      label: <EuiTextColor className={styles.label}>{name}<span>{id}</span></EuiTextColor>
-    })
-  )
+  const radios: EuiRadioGroupOption[] = accounts.map(({ id, name = '' }) => ({
+    id: `${id}`,
+    label: (
+      <EuiTextColor className={styles.label}>
+        {name}
+        <span>{id}</span>
+      </EuiTextColor>
+    ),
+  }))
 
   return (
-    <EuiModal className={styles.container} onClose={handleOnClose} data-testid="oauth-select-account-dialog">
+    <EuiModal
+      className={styles.container}
+      onClose={handleOnClose}
+      data-testid="oauth-select-account-dialog"
+    >
       <EuiModalBody className={styles.modalBody}>
         <section className={styles.content}>
           <EuiTitle size="s">

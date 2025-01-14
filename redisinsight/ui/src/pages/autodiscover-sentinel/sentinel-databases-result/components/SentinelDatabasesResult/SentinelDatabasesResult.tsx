@@ -22,11 +22,11 @@ import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 import styles from './styles.module.scss'
 
 export interface Props {
-  countSuccessAdded: number;
-  columns: EuiBasicTableColumn<ModifiedSentinelMaster>[];
-  masters: ModifiedSentinelMaster[];
-  onBack: () => void;
-  onViewDatabases: () => void;
+  countSuccessAdded: number
+  columns: EuiBasicTableColumn<ModifiedSentinelMaster>[]
+  masters: ModifiedSentinelMaster[]
+  onBack: () => void
+  onViewDatabases: () => void
 }
 
 const loadingMsg = 'loading...'
@@ -66,12 +66,12 @@ const SentinelDatabasesResult = ({
 
     const itemsTemp = masters.filter(
       (item: ModifiedSentinelMaster) =>
-        item.name?.toLowerCase().includes(value)
-        || item.host?.toLowerCase().includes(value)
-        || item.alias?.toLowerCase().includes(value)
-        || item.username?.toLowerCase().includes(value)
-        || item.port?.toString()?.includes(value)
-        || item.numberOfSlaves?.toString().includes(value)
+        item.name?.toLowerCase().includes(value) ||
+        item.host?.toLowerCase().includes(value) ||
+        item.alias?.toLowerCase().includes(value) ||
+        item.username?.toLowerCase().includes(value) ||
+        item.port?.toString()?.includes(value) ||
+        item.numberOfSlaves?.toString().includes(value),
     )
 
     if (!itemsTemp.length) {
@@ -85,18 +85,14 @@ const SentinelDatabasesResult = ({
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
-          Successfully added
-          {' '}
-          {countSuccessAdded}
+          Successfully added {countSuccessAdded}
           {' primary group(s)'}
           {countFailAdded ? '; ' : ' '}
         </span>
       ) : null}
       {countFailAdded ? (
         <span>
-          Failed to add
-          {' '}
-          {countFailAdded}
+          Failed to add {countFailAdded}
           {' primary group(s)'}
         </span>
       ) : null}
@@ -112,9 +108,7 @@ const SentinelDatabasesResult = ({
 
         <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
           <EuiFlexItem>
-            <MessageBar
-              opened={!!countSuccessAdded || !!countFailAdded}
-            >
+            <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>
               <SummaryText />
             </MessageBar>
           </EuiFlexItem>

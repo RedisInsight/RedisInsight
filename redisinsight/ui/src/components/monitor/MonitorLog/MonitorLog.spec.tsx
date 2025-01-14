@@ -1,7 +1,18 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { monitorSelector, resetProfiler, stopMonitor } from 'uiSrc/slices/cli/monitor'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  monitorSelector,
+  resetProfiler,
+  stopMonitor,
+} from 'uiSrc/slices/cli/monitor'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import { sendCliCommand } from 'uiSrc/slices/cli/cli-output'
 import MonitorLog from './MonitorLog'
 
@@ -24,7 +35,7 @@ jest.mock('uiSrc/slices/cli/monitor', () => ({
       paused: 2,
       unPaused: 3,
       duration: 123,
-    }
+    },
   }),
 }))
 
@@ -36,7 +47,9 @@ beforeEach(() => {
 
 describe('MonitorLog', () => {
   beforeAll(() => {
-    URLMock = jest.spyOn(URL, 'revokeObjectURL').mockImplementation(() => mockURLrevokeObjectURL)
+    URLMock = jest
+      .spyOn(URL, 'revokeObjectURL')
+      .mockImplementation(() => mockURLrevokeObjectURL)
   })
 
   it('should render', () => {
@@ -60,10 +73,10 @@ describe('MonitorLog', () => {
         paused: 2,
         unPaused: 3,
         duration: 123,
-      }
-    });
+      },
+    })
 
-    (monitorSelector as jest.Mock).mockImplementation(monitorSelectorMock)
+    ;(monitorSelector as jest.Mock).mockImplementation(monitorSelectorMock)
 
     render(<MonitorLog />)
 
@@ -72,6 +85,8 @@ describe('MonitorLog', () => {
     })
 
     const expectedActions = [sendCliCommand()]
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+      expectedActions,
+    )
   })
 })

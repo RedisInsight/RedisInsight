@@ -5,11 +5,16 @@ export const MINUTE = 60
 export const DURATION_FIRST_REFRESH_TIME = 5
 export const DEFAULT_REFRESH_RATE = '5.0'
 
-export const getTextByRefreshTime = (delta: number, lastRefreshTime: number) => {
+export const getTextByRefreshTime = (
+  delta: number,
+  lastRefreshTime: number,
+) => {
   let text = ''
 
   if (delta > MINUTE) {
-    text = truncateNumberToFirstUnit((Date.now() - (lastRefreshTime || 0)) / 1_000)
+    text = truncateNumberToFirstUnit(
+      (Date.now() - (lastRefreshTime || 0)) / 1_000,
+    )
   }
   if (delta < MINUTE) {
     text = '< 1 min'

@@ -43,7 +43,9 @@ describe('CloudUserApiProvider', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getCsrfToken(mockCloudSession)).toEqual(mockCloudApiCsrfToken.csrf_token);
+      expect(await service.getCsrfToken(mockCloudSession)).toEqual(
+        mockCloudApiCsrfToken.csrf_token,
+      );
       expect(mockedAxios.get).toHaveBeenCalledWith('csrf', mockCloudApiHeaders);
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
@@ -59,56 +61,84 @@ describe('CloudUserApiProvider', () => {
     it('successfully get api session id (login to api)', async () => {
       const response = {
         status: 200,
-        headers: { 'set-cookie': [`anything;JSESSIONID=${mockCloudApiAuthDto.apiSessionId};anything;`] },
+        headers: {
+          'set-cookie': [
+            `anything;JSESSIONID=${mockCloudApiAuthDto.apiSessionId};anything;`,
+          ],
+        },
       };
       mockedAxios.post.mockResolvedValue(response);
 
-      expect(await service.getApiSessionId(mockCloudSession)).toEqual(mockCloudApiAuthDto.apiSessionId);
-      expect(mockedAxios.post).toHaveBeenCalledWith('login', {
-        auth_mode: mockCloudSession.idpType,
-      }, {
-        ...mockCloudApiHeaders,
-      });
+      expect(await service.getApiSessionId(mockCloudSession)).toEqual(
+        mockCloudApiAuthDto.apiSessionId,
+      );
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        'login',
+        {
+          auth_mode: mockCloudSession.idpType,
+        },
+        {
+          ...mockCloudApiHeaders,
+        },
+      );
     });
     it('successfully get api session id (login to api) with utm parameters', async () => {
       const response = {
         status: 200,
-        headers: { 'set-cookie': [`anything;JSESSIONID=${mockCloudApiAuthDto.apiSessionId};anything;`] },
+        headers: {
+          'set-cookie': [
+            `anything;JSESSIONID=${mockCloudApiAuthDto.apiSessionId};anything;`,
+          ],
+        },
       };
       mockedAxios.post.mockResolvedValue(response);
 
-      expect(await service.getApiSessionId(
-        mockCloudSession,
-        { source: 's', medium: 'm', campaign: 'c' },
-      )).toEqual(mockCloudApiAuthDto.apiSessionId);
+      expect(
+        await service.getApiSessionId(mockCloudSession, {
+          source: 's',
+          medium: 'm',
+          campaign: 'c',
+        }),
+      ).toEqual(mockCloudApiAuthDto.apiSessionId);
 
-      expect(mockedAxios.post).toHaveBeenCalledWith('login', {
-        auth_mode: mockCloudSession.idpType,
-        utm_source: 's',
-        utm_medium: 'm',
-        utm_campaign: 'c',
-      }, {
-        ...mockCloudApiHeaders,
-      });
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        'login',
+        {
+          auth_mode: mockCloudSession.idpType,
+          utm_source: 's',
+          utm_medium: 'm',
+          utm_campaign: 'c',
+        },
+        {
+          ...mockCloudApiHeaders,
+        },
+      );
     });
     it('successfully get api session id (login to api) with defined only utm parameters', async () => {
       const response = {
         status: 200,
-        headers: { 'set-cookie': [`anything;JSESSIONID=${mockCloudApiAuthDto.apiSessionId};anything;`] },
+        headers: {
+          'set-cookie': [
+            `anything;JSESSIONID=${mockCloudApiAuthDto.apiSessionId};anything;`,
+          ],
+        },
       };
       mockedAxios.post.mockResolvedValue(response);
 
-      expect(await service.getApiSessionId(
-        mockCloudSession,
-        { medium: 'm' },
-      )).toEqual(mockCloudApiAuthDto.apiSessionId);
+      expect(
+        await service.getApiSessionId(mockCloudSession, { medium: 'm' }),
+      ).toEqual(mockCloudApiAuthDto.apiSessionId);
 
-      expect(mockedAxios.post).toHaveBeenCalledWith('login', {
-        auth_mode: mockCloudSession.idpType,
-        utm_medium: 'm',
-      }, {
-        ...mockCloudApiHeaders,
-      });
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        'login',
+        {
+          auth_mode: mockCloudSession.idpType,
+          utm_medium: 'm',
+        },
+        {
+          ...mockCloudApiHeaders,
+        },
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
       mockedAxios.post.mockRejectedValue(mockCapiUnauthorizedError);
@@ -127,8 +157,13 @@ describe('CloudUserApiProvider', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getCurrentUser(mockCloudSession)).toEqual(mockCloudApiUser);
-      expect(mockedAxios.get).toHaveBeenCalledWith('/users/me', mockCloudApiHeaders);
+      expect(await service.getCurrentUser(mockCloudSession)).toEqual(
+        mockCloudApiUser,
+      );
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        '/users/me',
+        mockCloudApiHeaders,
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
@@ -147,8 +182,13 @@ describe('CloudUserApiProvider', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getAccounts(mockCloudSession)).toEqual([mockCloudCapiAccount]);
-      expect(mockedAxios.get).toHaveBeenCalledWith('/accounts', mockCloudApiHeaders);
+      expect(await service.getAccounts(mockCloudSession)).toEqual([
+        mockCloudCapiAccount,
+      ]);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        '/accounts',
+        mockCloudApiHeaders,
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
@@ -167,16 +207,24 @@ describe('CloudUserApiProvider', () => {
       };
       mockedAxios.post.mockResolvedValue(response);
 
-      expect(await service.setCurrentAccount(mockCloudSession, mockCloudCapiAccount.id)).toEqual(undefined);
-      expect(mockedAxios.post)
-        .toHaveBeenCalledWith(`/accounts/setcurrent/${mockCloudCapiAccount.id}`, {}, mockCloudApiHeaders);
+      expect(
+        await service.setCurrentAccount(
+          mockCloudSession,
+          mockCloudCapiAccount.id,
+        ),
+      ).toEqual(undefined);
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        `/accounts/setcurrent/${mockCloudCapiAccount.id}`,
+        {},
+        mockCloudApiHeaders,
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
       mockedAxios.post.mockRejectedValue(mockCapiUnauthorizedError);
 
-      await expect(service.setCurrentAccount(mockCloudSession, mockCloudCapiAccount.id)).rejects.toThrow(
-        CloudApiUnauthorizedException,
-      );
+      await expect(
+        service.setCurrentAccount(mockCloudSession, mockCloudCapiAccount.id),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
     });
   });
 });

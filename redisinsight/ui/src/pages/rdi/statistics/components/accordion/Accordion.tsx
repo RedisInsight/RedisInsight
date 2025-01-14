@@ -12,7 +12,10 @@ interface Props {
   loading?: boolean
   onRefresh?: () => void
   onRefreshClicked?: () => void
-  onChangeAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
+  onChangeAutoRefresh?: (
+    enableAutoRefresh: boolean,
+    refreshRate: string,
+  ) => void
   hideAutoRefresh?: boolean
   enableAutoRefreshDefault?: boolean
 }
@@ -26,7 +29,7 @@ const Accordion = ({
   onRefreshClicked,
   onChangeAutoRefresh,
   hideAutoRefresh = false,
-  enableAutoRefreshDefault
+  enableAutoRefreshDefault,
 }: Props) => {
   const [lastRefreshTime, setLastRefreshTime] = React.useState(Date.now())
 

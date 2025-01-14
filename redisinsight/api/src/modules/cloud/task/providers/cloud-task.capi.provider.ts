@@ -11,7 +11,10 @@ export class CloudTaskCapiProvider extends CloudCapiProvider {
    * @param credentials
    * @param id
    */
-  async getTask(credentials: ICloudCapiCredentials, id: string): Promise<ICloudCapiTask> {
+  async getTask(
+    credentials: ICloudCapiCredentials,
+    id: string,
+  ): Promise<ICloudCapiTask> {
     try {
       const { data } = await this.api.get(
         `/tasks/${id}`,

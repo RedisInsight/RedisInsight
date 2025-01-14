@@ -15,7 +15,12 @@ export interface IProps {
   live?: boolean
 }
 
-const RecommendationCopyComponent = ({ live = false, keyName, telemetryEvent, provider } : IProps) => {
+const RecommendationCopyComponent = ({
+  live = false,
+  keyName,
+  telemetryEvent,
+  provider,
+}: IProps) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const formattedName = bufferToString(keyName)
@@ -28,19 +33,23 @@ const RecommendationCopyComponent = ({ live = false, keyName, telemetryEvent, pr
       eventData: {
         databaseId: instanceId,
         name: telemetryEvent,
-        provider
-      }
+        provider,
+      },
     })
     navigator?.clipboard?.writeText(formattedName)
   }
 
   return (
     <div className={styles.wrapper}>
-      <EuiText className={styles.text}>Example of a key that may be relevant:</EuiText>
+      <EuiText className={styles.text}>
+        Example of a key that may be relevant:
+      </EuiText>
       <div className={styles.keyNameWrapper}>
         <EuiTextColor
           color="subdued"
-          className={cx(styles.keyName, 'truncateText', { [styles.dbAnalysis]: !live })}
+          className={cx(styles.keyName, 'truncateText', {
+            [styles.dbAnalysis]: !live,
+          })}
           component="div"
           data-testid="recommendation-key-name"
         >

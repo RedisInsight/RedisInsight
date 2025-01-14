@@ -70,7 +70,7 @@ export function fetchCaCerts() {
 
     try {
       const { data, status } = await apiService.get(
-        `${ApiEndpoints.CA_CERTIFICATES}`
+        `${ApiEndpoints.CA_CERTIFICATES}`,
       )
 
       if (isStatusSuccessful(status)) {
@@ -84,13 +84,16 @@ export function fetchCaCerts() {
   }
 }
 
-export function deleteCaCertificateAction(id: string, onSuccessAction?: (id: string) => void,) {
+export function deleteCaCertificateAction(
+  id: string,
+  onSuccessAction?: (id: string) => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(deleteCaCertificate(id))
 
     try {
       const { status } = await apiService.delete(
-        `${ApiEndpoints.CA_CERTIFICATES}/${id}`
+        `${ApiEndpoints.CA_CERTIFICATES}/${id}`,
       )
 
       if (isStatusSuccessful(status)) {

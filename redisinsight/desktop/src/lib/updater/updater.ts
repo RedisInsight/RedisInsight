@@ -23,7 +23,7 @@ export const checkForUpdate = async (url: string = '') => {
   try {
     autoUpdater.setFeedURL({
       provider: 'generic',
-      url
+      url,
     })
   } catch (_err) {
     const error = _err as Error

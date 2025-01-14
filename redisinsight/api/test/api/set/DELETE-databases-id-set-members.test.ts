@@ -14,7 +14,9 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).delete(`/${constants.API.DATABASES}/${instanceId}/set/members`);
+  request(server).delete(
+    `/${constants.API.DATABASES}/${instanceId}/set/members`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -27,9 +29,11 @@ const validInputData = {
   members: [constants.getRandomString()],
 };
 
-const responseSchema = Joi.object().keys({
-  affected: Joi.number().integer().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    affected: Joi.number().integer().required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -49,7 +53,9 @@ describe('DELETE /databases/:instanceId/set/members', () => {
           affected: 1,
         },
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1)).to.eql(0);
+          expect(
+            await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1),
+          ).to.eql(0);
         },
       },
       {
@@ -62,7 +68,9 @@ describe('DELETE /databases/:instanceId/set/members', () => {
           affected: 1,
         },
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1)).to.eql(0);
+          expect(
+            await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1),
+          ).to.eql(0);
         },
       },
     ].map(mainCheckFn);
@@ -89,10 +97,15 @@ describe('DELETE /databases/:instanceId/set/members', () => {
           },
           responseSchema,
           responseBody: {
-            affected: 1
+            affected: 1,
           },
           after: async () => {
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_2,
+              0,
+              'count',
+              1000,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1].length).to.eql(99);
           },
@@ -105,10 +118,15 @@ describe('DELETE /databases/:instanceId/set/members', () => {
           },
           responseSchema,
           responseBody: {
-            affected: 3
+            affected: 3,
           },
           after: async () => {
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_2,
+              0,
+              'count',
+              1000,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1].length).to.eql(96);
           },
@@ -121,10 +139,15 @@ describe('DELETE /databases/:instanceId/set/members', () => {
           },
           responseSchema,
           responseBody: {
-            affected: 0
+            affected: 0,
           },
           after: async () => {
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_2,
+              0,
+              'count',
+              1000,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1].length).to.eql(96);
           },
@@ -157,7 +180,12 @@ describe('DELETE /databases/:instanceId/set/members', () => {
           },
           after: async () => {
             // check that value was not overwritten
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_1,
+              0,
+              'count',
+              100,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
           },
@@ -180,7 +208,7 @@ describe('DELETE /databases/:instanceId/set/members', () => {
           responseSchema,
           responseBody: {
             affected: 0,
-          }
+          },
         },
         {
           name: 'Should throw error if no permissions for "exists" command',
@@ -194,7 +222,7 @@ describe('DELETE /databases/:instanceId/set/members', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
         {
           name: 'Should throw error if no permissions for "srem" command',
@@ -208,7 +236,7 @@ describe('DELETE /databases/:instanceId/set/members', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -srem')
+          before: () => rte.data.setAclUserRules('~* +@all -srem'),
         },
       ].map(mainCheckFn);
     });

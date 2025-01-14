@@ -75,7 +75,9 @@ describe('convertMultilineReplyToObject', () => {
 
 describe('parseNodesFromClusterInfoReply', () => {
   it('should return array object in a defined format', async () => {
-    const result = parseNodesFromClusterInfoReply(mockRedisClusterNodesResponse);
+    const result = parseNodesFromClusterInfoReply(
+      mockRedisClusterNodesResponse,
+    );
 
     expect(result).toEqual(mockRedisClusterNodes);
   });

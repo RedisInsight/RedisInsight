@@ -6,9 +6,7 @@ import { SetKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies
 import { StreamKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/stream.key-info.strategy';
 import { StringKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/string.key-info.strategy';
 import { TsKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/ts.key-info.strategy';
-import {
-  UnsupportedKeyInfoStrategy,
-} from 'src/modules/browser/keys/key-info/strategies/unsupported.key-info.strategy';
+import { UnsupportedKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/unsupported.key-info.strategy';
 import { ZSetKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/z-set.key-info.strategy';
 import { KeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/key-info.strategy';
 import { RedisDataType } from 'src/modules/browser/keys/dto';

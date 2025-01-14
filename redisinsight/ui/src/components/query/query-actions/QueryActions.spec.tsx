@@ -22,7 +22,7 @@ describe('QueryActions', () => {
         onChangeMode={onChangeMode}
         onChangeGroupMode={onChangeGroupMode}
         onSubmit={onSubmit}
-      />
+      />,
     )
 
     fireEvent.click(screen.getByTestId('btn-change-mode'))

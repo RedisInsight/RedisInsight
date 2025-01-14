@@ -3,7 +3,7 @@ import {
   EuiButton,
   EuiContextMenuPanel,
   EuiContextMenuItem,
-  EuiPopover
+  EuiPopover,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { isNil } from 'lodash'
@@ -20,7 +20,12 @@ export interface Props {
   compressed?: boolean
 }
 
-const Pagination = ({ items = [], sourcePath, activePageKey, compressed }: Props) => {
+const Pagination = ({
+  items = [],
+  sourcePath,
+  activePageKey,
+  compressed,
+}: Props) => {
   const [isPopoverOpen, setPopover] = useState(false)
   const [activePage, setActivePage] = useState(0)
   const { openPage } = useContext(EnablementAreaContext)
@@ -47,13 +52,18 @@ const Pagination = ({ items = [], sourcePath, activePageKey, compressed }: Props
 
     closePopover()
     if (index !== activePage && openPage && path) {
-      openPage({ path: sourcePath + path, manifestPath: !isNil(key) ? (`${groupPath}/${key}`) : '' })
+      openPage({
+        path: sourcePath + path,
+        manifestPath: !isNil(key) ? `${groupPath}/${key}` : '',
+      })
     }
   }
 
   const pages = items.map((item, index) => (
     <EuiContextMenuItem
-      className={cx(styles.pagesItem, { [styles.pagesItemActive]: index === activePage })}
+      className={cx(styles.pagesItem, {
+        [styles.pagesItemActive]: index === activePage,
+      })}
       key={item.id}
       onClick={() => handleOpenPage(index)}
     >
@@ -64,7 +74,7 @@ const Pagination = ({ items = [], sourcePath, activePageKey, compressed }: Props
   const PagesControl = () => (
     <EuiPopover
       id="enablementAreaPagesMenu"
-      button={(
+      button={
         <button
           data-testid="enablement-area__pagination-popover-btn"
           className={styles.popoverButton}
@@ -73,7 +83,7 @@ const Pagination = ({ items = [], sourcePath, activePageKey, compressed }: Props
         >
           {`${activePage + 1} of ${items.length}`}
         </button>
-      )}
+      }
       isOpen={isPopoverOpen}
       closePopover={closePopover}
       panelClassName={styles.popover}
@@ -90,7 +100,11 @@ const Pagination = ({ items = [], sourcePath, activePageKey, compressed }: Props
   )
 
   return (
-    <div className={cx(styles.pagination, { [styles.paginationCompressed]: compressed })}>
+    <div
+      className={cx(styles.pagination, {
+        [styles.paginationCompressed]: compressed,
+      })}
+    >
       <div>
         {activePage > 0 && (
           <EuiButton
@@ -102,7 +116,9 @@ const Pagination = ({ items = [], sourcePath, activePageKey, compressed }: Props
             iconSide="left"
             onClick={() => handleOpenPage(activePage - 1)}
             size={compressed ? 's' : 'm'}
-            className={cx(styles.prevPage, { [styles.prevPageCompressed]: compressed })}
+            className={cx(styles.prevPage, {
+              [styles.prevPageCompressed]: compressed,
+            })}
           >
             Back
           </EuiButton>
@@ -112,7 +128,7 @@ const Pagination = ({ items = [], sourcePath, activePageKey, compressed }: Props
         <PagesControl />
       </div>
       <div>
-        {(activePage < items.length - 1) && (
+        {activePage < items.length - 1 && (
           <EuiButton
             aria-label="Next page"
             fill
@@ -121,7 +137,9 @@ const Pagination = ({ items = [], sourcePath, activePageKey, compressed }: Props
             iconType="arrowRight"
             iconSide="right"
             onClick={() => handleOpenPage(activePage + 1)}
-            className={cx(styles.nextPage, { [styles.nextPageCompressed]: compressed })}
+            className={cx(styles.nextPage, {
+              [styles.nextPageCompressed]: compressed,
+            })}
             size={compressed ? 's' : 'm'}
           >
             Next

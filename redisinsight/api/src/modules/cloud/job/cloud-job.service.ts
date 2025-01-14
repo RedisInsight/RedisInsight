@@ -13,9 +13,7 @@ import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
 @Injectable()
 export class CloudJobService {
-  constructor(
-    private readonly cloudJobProvider: CloudJobProvider,
-  ) {}
+  constructor(private readonly cloudJobProvider: CloudJobProvider) {}
 
   /**
    * Create cloud job
@@ -39,7 +37,9 @@ export class CloudJobService {
    * Get list of current user jobs infos
    * @param sessionMetadata
    */
-  async getUserJobsInfo(sessionMetadata: SessionMetadata): Promise<CloudJobInfo[]> {
+  async getUserJobsInfo(
+    sessionMetadata: SessionMetadata,
+  ): Promise<CloudJobInfo[]> {
     try {
       const jobs = await this.cloudJobProvider.findUserJobs(sessionMetadata);
 
@@ -63,7 +63,7 @@ export class CloudJobService {
       }
 
       if (job.options?.sessionMetadata?.userId !== sessionMetadata.userId) {
-        throw new ForbiddenException('This job doesn\'t belong to the user');
+        throw new ForbiddenException("This job doesn't belong to the user");
       }
 
       return job;
@@ -77,7 +77,10 @@ export class CloudJobService {
    * @param sessionMetadata
    * @param id
    */
-  async getJobInfo(sessionMetadata: SessionMetadata, id: string): Promise<CloudJobInfo> {
+  async getJobInfo(
+    sessionMetadata: SessionMetadata,
+    id: string,
+  ): Promise<CloudJobInfo> {
     try {
       const job = await this.get(sessionMetadata, id);
 
@@ -87,7 +90,11 @@ export class CloudJobService {
     }
   }
 
-  async monitorJob(sessionMetadata: SessionMetadata, dto: MonitorCloudJobDto, client: Socket): Promise<CloudJobInfo> {
+  async monitorJob(
+    sessionMetadata: SessionMetadata,
+    dto: MonitorCloudJobDto,
+    client: Socket,
+  ): Promise<CloudJobInfo> {
     const job = await this.get(sessionMetadata, dto.jobId);
 
     job.addStateCallback(async (cloudJob) => {

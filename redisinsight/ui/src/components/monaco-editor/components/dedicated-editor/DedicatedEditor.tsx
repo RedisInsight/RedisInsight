@@ -4,16 +4,26 @@ import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import ReactMonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { Rnd } from 'react-rnd'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
+import {
+  EuiButtonIcon,
+  EuiSuperSelect,
+  EuiSuperSelectOption,
+} from '@elastic/eui'
 
 import {
   decoration,
   getMonacoAction,
   MonacoAction,
   Nullable,
-  toModelDeltaDecoration
+  toModelDeltaDecoration,
 } from 'uiSrc/utils'
-import { DEDICATED_EDITOR_LANGUAGES, DSL, MonacoLanguage, MonacoSyntaxLang, Theme } from 'uiSrc/constants'
+import {
+  DEDICATED_EDITOR_LANGUAGES,
+  DSL,
+  MonacoLanguage,
+  MonacoSyntaxLang,
+  Theme,
+} from 'uiSrc/constants'
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
@@ -37,7 +47,8 @@ const WRAPPER_PADDINGS_HEIGHT = 18
 const BOTTOM_INDENT_PADDING = 6
 
 const notCommandRegEx = /^\s|\/\//
-let decorationCollection: Nullable<monacoEditor.editor.IEditorDecorationsCollection> = null
+let decorationCollection: Nullable<monacoEditor.editor.IEditorDecorationsCollection> =
+  null
 
 const DedicatedEditor = (props: Props) => {
   const {
@@ -55,7 +66,9 @@ const DedicatedEditor = (props: Props) => {
 
   const [value, setValue] = useState<string>(query)
   const [height, setHeight] = useState(initialHeight)
-  const [selectedLang, setSelectedLang] = useState(DEDICATED_EDITOR_LANGUAGES[!langs.length ? langId! : first(langs)!])
+  const [selectedLang, setSelectedLang] = useState(
+    DEDICATED_EDITOR_LANGUAGES[!langs.length ? langId! : first(langs)!],
+  )
 
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
   const rndRef = useRef<Nullable<any>>(null)
@@ -69,12 +82,14 @@ const DedicatedEditor = (props: Props) => {
 
   let disposeCompletionItemProvider = () => {}
 
-  useEffect(() =>
-  // componentWillUnmount
-    () => {
-      disposeCompletionItemProvider()
-    },
-  [])
+  useEffect(
+    () =>
+      // componentWillUnmount
+      () => {
+        disposeCompletionItemProvider()
+      },
+    [],
+  )
 
   useEffect(() => {
     if (height === 0) return
@@ -82,7 +97,10 @@ const DedicatedEditor = (props: Props) => {
     const rndHeight = rndRef.current?.resizableElement.current.offsetHeight || 0
     const rndTop = rndRef.current?.draggable.state.y
     if (height < rndTop + rndHeight + WRAPPER_PADDINGS_HEIGHT) {
-      rndRef?.current.updatePosition({ x: 0, y: height - rndHeight - WRAPPER_PADDINGS_HEIGHT })
+      rndRef?.current.updatePosition({
+        x: 0,
+        y: height - rndHeight - WRAPPER_PADDINGS_HEIGHT,
+      })
     }
   }, [height])
 
@@ -91,14 +109,23 @@ const DedicatedEditor = (props: Props) => {
     const commands = value.split('\n')
     const { monaco } = monacoObjects.current
 
-    const newDecorations = compact(commands.map((command, index) => {
-      if (!command || notCommandRegEx.test(command)) return null
-      const lineNumber = index + 1
+    const newDecorations = compact(
+      commands.map((command, index) => {
+        if (!command || notCommandRegEx.test(command)) return null
+        const lineNumber = index + 1
 
-      return toModelDeltaDecoration(
-        decoration(monaco, `decoration_${lineNumber}`, lineNumber, 1, lineNumber, 1)
-      )
-    }))
+        return toModelDeltaDecoration(
+          decoration(
+            monaco,
+            `decoration_${lineNumber}`,
+            lineNumber,
+            1,
+            lineNumber,
+            1,
+          ),
+        )
+      }),
+    )
 
     decorationCollection?.set(newDecorations)
   }, [value])
@@ -115,16 +142,19 @@ const DedicatedEditor = (props: Props) => {
 
   const handleSubmit = () => {
     const { editor } = monacoObjects?.current || {}
-    const val = editor?.getValue()
+    const val = editor
+      ?.getValue()
       .split('\n')
-      .map((line: string, i: number) => ((i > 0 && !notCommandRegEx.test(line)) ? `\t${line}` : line))
+      .map((line: string, i: number) =>
+        i > 0 && !notCommandRegEx.test(line) ? `\t${line}` : line,
+      )
       .join('\n')
     onSubmit(val || '', selectedLang.id as DSL)
   }
 
   const editorDidMount = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
-    monaco: typeof monacoEditor
+    monaco: typeof monacoEditor,
   ) => {
     monacoObjects.current = { editor, monaco }
 
@@ -132,33 +162,41 @@ const DedicatedEditor = (props: Props) => {
 
     setupMonacoLang(monaco, selectedLang)
     editor.addAction(
-      getMonacoAction(MonacoAction.Submit, () => handleSubmit(), monaco)
+      getMonacoAction(MonacoAction.Submit, () => handleSubmit(), monaco),
     )
 
     decorationCollection = editor.createDecorationsCollection()
   }
 
-  const setupMonacoLang = (monaco: typeof monacoEditor, selectedLang: MonacoSyntaxLang) => {
+  const setupMonacoLang = (
+    monaco: typeof monacoEditor,
+    selectedLang: MonacoSyntaxLang,
+  ) => {
     const languages = monaco.languages.getLanguages()
 
     if (!selectedLang) return
 
-    const isLangRegistered = findIndex(languages, { id: selectedLang.language }) > -1
+    const isLangRegistered =
+      findIndex(languages, { id: selectedLang.language }) > -1
     if (isLangRegistered) {
       return
     }
     monaco.languages.register({ id: selectedLang.language })
 
-    monaco.languages.setLanguageConfiguration(selectedLang.language, selectedLang.config!)
-
-    disposeCompletionItemProvider = monaco.languages.registerCompletionItemProvider(
+    monaco.languages.setLanguageConfiguration(
       selectedLang.language,
-      selectedLang.completionProvider?.(keywords, functions)!
-    ).dispose
+      selectedLang.config!,
+    )
+
+    disposeCompletionItemProvider =
+      monaco.languages.registerCompletionItemProvider(
+        selectedLang.language,
+        selectedLang.completionProvider?.(keywords, functions)!,
+      ).dispose
 
     monaco.languages.setMonarchTokensProvider(
       selectedLang.language,
-      selectedLang.tokensProvider?.(keywords, functions)!
+      selectedLang.tokensProvider?.(keywords, functions)!,
     )
   }
 
@@ -171,26 +209,29 @@ const DedicatedEditor = (props: Props) => {
     onChangeLanguage?.(id as DSL)
   }
 
-  const options: monacoEditor.editor.IStandaloneEditorConstructionOptions = merge({
-    tabCompletion: 'on',
-    wordWrap: 'on',
-    padding: { top: 10 },
-    automaticLayout: true,
-    formatOnPaste: false,
-    suggest: {
-      preview: false,
-      showStatusBar: false,
-      showIcons: true,
-    },
-    minimap: {
-      enabled: false
-    },
-    overviewRulerLanes: 0,
-    hideCursorInOverviewRuler: true,
-    overviewRulerBorder: false,
-    lineNumbersMinChars: 4
-  },
-  customOptions)
+  const options: monacoEditor.editor.IStandaloneEditorConstructionOptions =
+    merge(
+      {
+        tabCompletion: 'on',
+        wordWrap: 'on',
+        padding: { top: 10 },
+        automaticLayout: true,
+        formatOnPaste: false,
+        suggest: {
+          preview: false,
+          showStatusBar: false,
+          showIcons: true,
+        },
+        minimap: {
+          enabled: false,
+        },
+        overviewRulerLanes: 0,
+        hideCursorInOverviewRuler: true,
+        overviewRulerBorder: false,
+        lineNumbersMinChars: 4,
+      },
+      customOptions,
+    )
 
   return (
     <AutoSizer onResize={onResize}>
@@ -202,7 +243,7 @@ const DedicatedEditor = (props: Props) => {
               x: 0,
               y: initialHeight * 0.4 - BOTTOM_INDENT_PADDING,
               width: '100%',
-              height: '60%'
+              height: '60%',
             }}
             minHeight="80px"
             enableResizing={{
@@ -213,11 +254,11 @@ const DedicatedEditor = (props: Props) => {
               topRight: false,
               bottomRight: false,
               bottomLeft: false,
-              topLeft: false
+              topLeft: false,
             }}
             resizeHandleClasses={{
               top: 't_resize-top',
-              bottom: 't_resize-bottom'
+              bottom: 't_resize-bottom',
             }}
             dragAxis="y"
             bounds=".editorBounder"
@@ -225,7 +266,12 @@ const DedicatedEditor = (props: Props) => {
             className={styles.rnd}
             data-testid="draggable-area"
           >
-            <div className={styles.container} onKeyDown={handleKeyDown} role="textbox" tabIndex={0}>
+            <div
+              className={styles.container}
+              onKeyDown={handleKeyDown}
+              role="textbox"
+              tabIndex={0}
+            >
               <div className="draggable-area" />
               <div className={styles.input} data-testid="query-input-container">
                 <ReactMonacoEditor
@@ -239,7 +285,7 @@ const DedicatedEditor = (props: Props) => {
                 />
               </div>
               <div className={cx(styles.actions)}>
-                {langs?.length < 2 && <span>{ selectedLang?.name }</span>}
+                {langs?.length < 2 && <span>{selectedLang?.name}</span>}
                 {langs?.length >= 2 && (
                   <EuiSuperSelect
                     name="dedicated-editor-language-select"

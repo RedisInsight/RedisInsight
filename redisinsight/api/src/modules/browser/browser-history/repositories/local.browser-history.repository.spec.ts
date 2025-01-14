@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import {
   mockEncryptionService,
@@ -44,7 +47,9 @@ describe('LocalBrowserHistoryRepository', () => {
       ],
     }).compile();
 
-    browserHistoryRepository = module.get<LocalBrowserHistoryRepository>(LocalBrowserHistoryRepository);
+    browserHistoryRepository = module.get<LocalBrowserHistoryRepository>(
+      LocalBrowserHistoryRepository,
+    );
     repository = module.get(getRepositoryToken(BrowserHistoryEntity));
     encryptionService = module.get<EncryptionService>(EncryptionService);
 
@@ -57,7 +62,10 @@ describe('LocalBrowserHistoryRepository', () => {
           data: mockBrowserHistoryEntity[field],
         });
       when(encryptionService.decrypt)
-        .calledWith(mockBrowserHistoryEntity[field], mockEncryptResult.encryption)
+        .calledWith(
+          mockBrowserHistoryEntity[field],
+          mockEncryptResult.encryption,
+        )
         .mockReturnValue(JSON.stringify(mockBrowserHistory[field]));
     });
   });
@@ -65,10 +73,12 @@ describe('LocalBrowserHistoryRepository', () => {
   describe('create', () => {
     it('should process new entity', async () => {
       repository.save.mockReturnValueOnce(mockBrowserHistoryEntity);
-      expect(await browserHistoryRepository.create(
-        mockSessionMetadata,
-        mockBrowserHistoryPartial,
-      )).toEqual(mockBrowserHistory);
+      expect(
+        await browserHistoryRepository.create(
+          mockSessionMetadata,
+          mockBrowserHistoryPartial,
+        ),
+      ).toEqual(mockBrowserHistory);
     });
   });
 
@@ -76,18 +86,28 @@ describe('LocalBrowserHistoryRepository', () => {
     it('should get browser history item', async () => {
       repository.findOneBy.mockReturnValueOnce(mockBrowserHistoryEntity);
 
-      expect(await browserHistoryRepository.get(
-        mockSessionMetadata,
-        mockBrowserHistory.id,
-      )).toEqual(mockBrowserHistory);
+      expect(
+        await browserHistoryRepository.get(
+          mockSessionMetadata,
+          mockBrowserHistory.id,
+        ),
+      ).toEqual(mockBrowserHistory);
     });
     it('should return null fields in case of decryption errors', async () => {
       when(encryptionService.decrypt)
-        .calledWith(mockBrowserHistoryEntity['filter'], mockEncryptResult.encryption)
+        .calledWith(
+          mockBrowserHistoryEntity['filter'],
+          mockEncryptResult.encryption,
+        )
         .mockRejectedValueOnce(new KeytarDecryptionErrorException());
       repository.findOneBy.mockReturnValueOnce(mockBrowserHistoryEntity);
 
-      expect(await browserHistoryRepository.get(mockSessionMetadata, mockBrowserHistory.id)).toEqual({
+      expect(
+        await browserHistoryRepository.get(
+          mockSessionMetadata,
+          mockBrowserHistory.id,
+        ),
+      ).toEqual({
         ...mockBrowserHistory,
         filter: null,
       });
@@ -96,11 +116,16 @@ describe('LocalBrowserHistoryRepository', () => {
       repository.findOneBy.mockReturnValueOnce(null);
 
       try {
-        await browserHistoryRepository.get(mockSessionMetadata, mockBrowserHistory.id);
+        await browserHistoryRepository.get(
+          mockSessionMetadata,
+          mockBrowserHistory.id,
+        );
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
-        expect(e.message).toEqual(ERROR_MESSAGES.BROWSER_HISTORY_ITEM_NOT_FOUND);
+        expect(e.message).toEqual(
+          ERROR_MESSAGES.BROWSER_HISTORY_ITEM_NOT_FOUND,
+        );
       }
     });
   });
@@ -108,40 +133,48 @@ describe('LocalBrowserHistoryRepository', () => {
   describe('list', () => {
     it('should get list of browser history', async () => {
       mockQueryBuilderGetMany.mockReturnValueOnce([mockBrowserHistoryEntity]);
-      expect(await browserHistoryRepository.list(
-        mockSessionMetadata,
-        mockBrowserHistory.databaseId,
-        BrowserHistoryMode.Pattern,
-      )).toMatchObject([{
-        id: mockBrowserHistoryEntity.id,
-        createdAt: mockBrowserHistoryEntity.createdAt,
-        mode: mockBrowserHistoryEntity.mode,
-        filter: {
-          type: mockBrowserHistory.filter.type,
-          match: mockBrowserHistory.filter.match,
+      expect(
+        await browserHistoryRepository.list(
+          mockSessionMetadata,
+          mockBrowserHistory.databaseId,
+          BrowserHistoryMode.Pattern,
+        ),
+      ).toMatchObject([
+        {
+          id: mockBrowserHistoryEntity.id,
+          createdAt: mockBrowserHistoryEntity.createdAt,
+          mode: mockBrowserHistoryEntity.mode,
+          filter: {
+            type: mockBrowserHistory.filter.type,
+            match: mockBrowserHistory.filter.match,
+          },
         },
-      }]);
+      ]);
     });
   });
 
   describe('delete', () => {
     it('Should not return anything on cleanup', async () => {
       repository.delete.mockReturnValueOnce(mockBrowserHistoryEntity);
-      expect(await browserHistoryRepository.delete(
-        mockSessionMetadata,
-        mockBrowserHistory.databaseId,
-        mockBrowserHistory.mode,
-        mockBrowserHistory.id,
-      )).toEqual(undefined);
+      expect(
+        await browserHistoryRepository.delete(
+          mockSessionMetadata,
+          mockBrowserHistory.databaseId,
+          mockBrowserHistory.mode,
+          mockBrowserHistory.id,
+        ),
+      ).toEqual(undefined);
     });
     it('Should throw InternalServerErrorException when error during delete', async () => {
       repository.delete.mockRejectedValueOnce(new Error());
-      await expect(browserHistoryRepository.delete(
-        mockSessionMetadata,
-        mockBrowserHistory.databaseId,
-        mockBrowserHistory.mode,
-        mockBrowserHistory.id,
-      )).rejects.toThrowError(InternalServerErrorException);
+      await expect(
+        browserHistoryRepository.delete(
+          mockSessionMetadata,
+          mockBrowserHistory.databaseId,
+          mockBrowserHistory.mode,
+          mockBrowserHistory.id,
+        ),
+      ).rejects.toThrowError(InternalServerErrorException);
     });
   });
 
@@ -152,11 +185,13 @@ describe('LocalBrowserHistoryRepository', () => {
         { id: mockBrowserHistoryEntity.id },
       ]);
 
-      expect(await browserHistoryRepository.cleanupDatabaseHistory(
-        mockSessionMetadata,
-        mockDatabase.id,
-        BrowserHistoryMode.Pattern,
-      )).toEqual(undefined);
+      expect(
+        await browserHistoryRepository.cleanupDatabaseHistory(
+          mockSessionMetadata,
+          mockDatabase.id,
+          BrowserHistoryMode.Pattern,
+        ),
+      ).toEqual(undefined);
     });
   });
 });

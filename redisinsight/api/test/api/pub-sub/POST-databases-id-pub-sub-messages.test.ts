@@ -7,13 +7,15 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall
+  validateApiCall,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/pub-sub/messages`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/pub-sub/messages`,
+  );
 
 const dataSchema = Joi.object({
   channel: Joi.string().allow('').required(),
@@ -25,9 +27,12 @@ const validInputData = {
   message: constants.TEST_PUB_SUB_MESSAGE_1,
 };
 
-const responseSchema = Joi.object().keys({
-  affected: Joi.number().integer().required().min(0),
-}).required().strict();
+const responseSchema = Joi.object()
+  .keys({
+    affected: Joi.number().integer().required().min(0),
+  })
+  .required()
+  .strict();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -107,7 +112,7 @@ describe('POST /databases/:instanceId/pub-sub/messages', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -publish')
+        before: () => rte.data.setAclUserRules('~* +@all -publish'),
       },
     ].map(mainCheckFn);
   });

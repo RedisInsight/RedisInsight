@@ -17,7 +17,9 @@ export abstract class ClientCertificateRepository {
    * @return ClientCertificate
    * @throws BadRequestException with ERROR_MESSAGES.CLIENT_CERT_EXIST when such CA exists
    */
-  abstract create(clientCertificate: ClientCertificate): Promise<ClientCertificate>;
+  abstract create(
+    clientCertificate: ClientCertificate,
+  ): Promise<ClientCertificate>;
 
   /**
    * Delete certificate by id

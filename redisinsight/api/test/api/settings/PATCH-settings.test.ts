@@ -17,18 +17,24 @@ const { server, request, constants } = deps;
 // endpoint to test
 const endpoint = () => request(server).patch('/settings');
 
-const responseSchema = Joi.object().keys({
-  theme: Joi.string().allow(null).required(),
-  scanThreshold: Joi.number().required(),
-  batchSize: Joi.number().required(),
-  dateFormat: Joi.string().allow(null),
-  timezone: Joi.string().allow(null),
-  agreements: Joi.object().keys({
-    version: Joi.string().required(),
-    eula: Joi.bool().required(),
-    encryption: Joi.bool(),
-  }).pattern(/./, Joi.boolean()).allow(null).required()
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    theme: Joi.string().allow(null).required(),
+    scanThreshold: Joi.number().required(),
+    batchSize: Joi.number().required(),
+    dateFormat: Joi.string().allow(null),
+    timezone: Joi.string().allow(null),
+    agreements: Joi.object()
+      .keys({
+        version: Joi.string().required(),
+        eula: Joi.bool().required(),
+        encryption: Joi.bool(),
+      })
+      .pattern(/./, Joi.boolean())
+      .allow(null)
+      .required(),
+  })
+  .required();
 
 // input data schema
 const dataSchema = Joi.object({
@@ -36,13 +42,17 @@ const dataSchema = Joi.object({
   scanThreshold: Joi.number().allow(null).min(500).optional(),
   dateFormat: Joi.string().allow(null),
   timezone: Joi.string().allow(null),
-  agreements: Joi.object().keys({
-    eula: Joi.boolean().label('.eula').optional(),
-    encryption: Joi.boolean().label('.encryption').optional(),
-  }).allow(null).optional().messages({
-    'boolean.base': 'each value in agreements must be a boolean value',
-    'object.base': 'agreements must be an instance of Map',
-  }),
+  agreements: Joi.object()
+    .keys({
+      eula: Joi.boolean().label('.eula').optional(),
+      encryption: Joi.boolean().label('.encryption').optional(),
+    })
+    .allow(null)
+    .optional()
+    .messages({
+      'boolean.base': 'each value in agreements must be a boolean value',
+      'object.base': 'agreements must be an instance of Map',
+    }),
 }).strict();
 
 const validInputData = {
@@ -80,7 +90,7 @@ describe('PATCH /settings', () => {
   describe('settings', () => {
     before(resetSettings);
 
-    return ([
+    return [
       {
         name: 'Should update only scanThreshold value',
         statusCode: 200,
@@ -90,7 +100,7 @@ describe('PATCH /settings', () => {
           expect(body).to.include({
             ...constants.APP_DEFAULT_SETTINGS,
             scanThreshold: 10000000,
-            batchSize: 5
+            batchSize: 5,
           });
         },
       },
@@ -112,20 +122,23 @@ describe('PATCH /settings', () => {
         data: { scanThreshold: null, theme: null, batchSize: null },
         responseSchema,
         checkFn: ({ body }) => {
-          const { agreements, ...defaultSettings } = constants.APP_DEFAULT_SETTINGS;
+          const { agreements, ...defaultSettings } =
+            constants.APP_DEFAULT_SETTINGS;
 
           expect(body).to.include(defaultSettings);
         },
       },
-    ].map(mainCheckFn));
+    ].map(mainCheckFn);
   });
 
   describe('agreements', () => {
     before(resetSettings);
 
-    const allAcceptedAgreements = {}
-    Object.keys(AGREEMENTS_SPEC.agreements).forEach(agreement => allAcceptedAgreements[agreement] = true);
-    return ([
+    const allAcceptedAgreements = {};
+    Object.keys(AGREEMENTS_SPEC.agreements).forEach(
+      (agreement) => (allAcceptedAgreements[agreement] = true),
+    );
+    return [
       {
         name: 'Should throw [Bad Request] if some agreements are missed in dto',
         data: {
@@ -145,12 +158,13 @@ describe('PATCH /settings', () => {
         data: { agreements: allAcceptedAgreements },
         responseSchema,
         checkFn: ({ body }) => {
-          const { agreements, ...defaultSettings } = constants.APP_DEFAULT_SETTINGS;
+          const { agreements, ...defaultSettings } =
+            constants.APP_DEFAULT_SETTINGS;
 
           expect(body).to.include(defaultSettings);
           expect(body.agreements).to.eql({
             version: AGREEMENTS_SPEC.version,
-            ...allAcceptedAgreements
+            ...allAcceptedAgreements,
           });
         },
       },
@@ -160,7 +174,8 @@ describe('PATCH /settings', () => {
         data: { agreements: { analytics: false } },
         responseSchema,
         checkFn: ({ body }) => {
-          const { agreements, ...defaultSettings } = constants.APP_DEFAULT_SETTINGS;
+          const { agreements, ...defaultSettings } =
+            constants.APP_DEFAULT_SETTINGS;
 
           expect(body).to.include(defaultSettings);
           expect(body.agreements).to.eql({
@@ -170,6 +185,6 @@ describe('PATCH /settings', () => {
           });
         },
       },
-    ].map(mainCheckFn));
+    ].map(mainCheckFn);
   });
 });

@@ -4,7 +4,7 @@ import {
   EuiInMemoryTable,
   EuiTextColor,
   EuiToolTip,
-  PropertySort
+  PropertySort,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { isNil } from 'lodash'
@@ -13,12 +13,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { GroupBadge } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import {
+  SCAN_COUNT_DEFAULT,
+  SCAN_TREE_COUNT_DEFAULT,
+} from 'uiSrc/constants/api'
 import {
   resetBrowserTree,
   setBrowserKeyListDataLoaded,
   setBrowserSelectedKey,
-  setBrowserTreeDelimiter
+  setBrowserTreeDelimiter,
 } from 'uiSrc/slices/app/context'
 import {
   changeSearchMode,
@@ -26,7 +29,7 @@ import {
   keysSelector,
   resetKeysData,
   setFilter,
-  setSearchMatch
+  setSearchMatch,
 } from 'uiSrc/slices/browser/keys'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 
@@ -38,7 +41,7 @@ import {
   stringToBuffer,
   truncateNumberToDuration,
   truncateNumberToFirstUnit,
-  truncateTTLToSeconds
+  truncateTTLToSeconds,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { Key } from 'apiSrc/modules/database-analysis/models/key'
@@ -54,7 +57,10 @@ export interface Props {
 
 const Table = (props: Props) => {
   const { data, defaultSortField, delimiter = ':', dataTestid = '' } = props
-  const [sort, setSort] = useState<PropertySort>({ field: defaultSortField, direction: 'desc' })
+  const [sort, setSort] = useState<PropertySort>({
+    field: defaultSortField,
+    direction: 'desc',
+  })
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -69,15 +75,20 @@ const Table = (props: Props) => {
     dispatch(setFilter(null))
     dispatch(setSearchMatch(name, SearchMode.Pattern))
     dispatch(resetKeysData(SearchMode.Pattern))
-    dispatch(fetchKeys(
-      {
-        searchMode: SearchMode.Pattern,
-        cursor: '0',
-        count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      },
-      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, true)),
-      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, false)),
-    ))
+    dispatch(
+      fetchKeys(
+        {
+          searchMode: SearchMode.Pattern,
+          cursor: '0',
+          count:
+            viewType === KeyViewType.Browser
+              ? SCAN_COUNT_DEFAULT
+              : SCAN_TREE_COUNT_DEFAULT,
+        },
+        () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, true)),
+        () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, false)),
+      ),
+    )
     dispatch(resetBrowserTree())
     dispatch(setBrowserSelectedKey(stringToBuffer(name)))
 
@@ -85,7 +96,7 @@ const Table = (props: Props) => {
   }
 
   const setDataTestId = ({ name }: { name: string }) => ({
-    'data-testid': `row-${name}`
+    'data-testid': `row-${name}`,
   })
 
   const columns: EuiBasicTableColumn<Key>[] = [
@@ -99,7 +110,7 @@ const Table = (props: Props) => {
         <div className={styles.badgesContainer}>
           <GroupBadge key={type} type={type} className={styles.badge} />
         </div>
-      )
+      ),
     },
     {
       name: 'Key Name',
@@ -114,7 +125,10 @@ const Table = (props: Props) => {
         const tooltipContent = formatLongName(name)
         const cellContent = (name as string).substring(0, 200)
         return (
-          <div data-testid="top-keys-table-name" className={cx(styles.delimiter, 'truncateText')}>
+          <div
+            data-testid="top-keys-table-name"
+            className={cx(styles.delimiter, 'truncateText')}
+          >
             <EuiToolTip
               title="Key Name"
               anchorClassName={styles.tooltip}
@@ -131,7 +145,7 @@ const Table = (props: Props) => {
             </EuiToolTip>
           </div>
         )
-      }
+      },
     },
     {
       name: 'TTL',
@@ -142,7 +156,11 @@ const Table = (props: Props) => {
       render: (value: number, { name }) => {
         if (isNil(value)) {
           return (
-            <EuiTextColor color="subdued" style={{ maxWidth: '100%' }} data-testid={`ttl-empty-${value}`}>
+            <EuiTextColor
+              color="subdued"
+              style={{ maxWidth: '100%' }}
+              data-testid={`ttl-empty-${value}`}
+            >
               -
             </EuiTextColor>
           )
@@ -162,19 +180,19 @@ const Table = (props: Props) => {
               className={styles.tooltip}
               anchorClassName="truncateText"
               position="bottom"
-              content={(
+              content={
                 <>
                   {`${truncateTTLToSeconds(value)} s`}
                   <br />
                   {`(${truncateNumberToDuration(value)})`}
                 </>
-              )}
+              }
             >
               <>{truncateNumberToFirstUnit(value)}</>
             </EuiToolTip>
           </span>
         )
-      }
+      },
     },
     {
       name: 'Key Size',
@@ -185,7 +203,11 @@ const Table = (props: Props) => {
       render: (value: number, { type }) => {
         if (isNil(value)) {
           return (
-            <EuiTextColor color="subdued" style={{ maxWidth: '100%' }} data-testid={`size-empty-${value}`}>
+            <EuiTextColor
+              color="subdued"
+              style={{ maxWidth: '100%' }}
+              data-testid={`size-empty-${value}`}
+            >
               -
             </EuiTextColor>
           )
@@ -194,12 +216,17 @@ const Table = (props: Props) => {
         const isHighlight = isBigKey(type, HighlightType.Memory, value)
         return (
           <EuiToolTip
-            content={(
+            content={
               <>
-                {isHighlight ? (<>Consider splitting it into multiple keys<br /></>) : null}
+                {isHighlight ? (
+                  <>
+                    Consider splitting it into multiple keys
+                    <br />
+                  </>
+                ) : null}
                 {numberWithSpaces(value)} B
               </>
-            )}
+            }
             anchorClassName={cx({ [styles.highlight]: isHighlight })}
             data-testid="usedMemory-tooltip"
           >
@@ -214,7 +241,7 @@ const Table = (props: Props) => {
             </>
           </EuiToolTip>
         )
-      }
+      },
     },
     {
       name: 'Length',
@@ -225,7 +252,11 @@ const Table = (props: Props) => {
       render: (value: number, { name, type }) => {
         if (isNil(value)) {
           return (
-            <EuiTextColor color="subdued" style={{ maxWidth: '100%' }} data-testid={`length-empty-${name}`}>
+            <EuiTextColor
+              color="subdued"
+              style={{ maxWidth: '100%' }}
+              data-testid={`length-empty-${name}`}
+            >
               -
             </EuiTextColor>
           )
@@ -234,16 +265,21 @@ const Table = (props: Props) => {
         const isHighlight = isBigKey(type, HighlightType.Length, value)
         return (
           <EuiToolTip
-            content={isHighlight ? 'Consider splitting it into multiple keys' : ''}
+            content={
+              isHighlight ? 'Consider splitting it into multiple keys' : ''
+            }
             anchorClassName={cx({ [styles.highlight]: isHighlight })}
             data-testid="usedMemory-tooltip"
           >
-            <span className={styles.count} data-testid={`length-value-${name}${isHighlight ? '-highlighted' : ''}`}>
+            <span
+              className={styles.count}
+              data-testid={`length-value-${name}${isHighlight ? '-highlighted' : ''}`}
+            >
               {numberWithSpaces(value)}
             </span>
           </EuiToolTip>
         )
-      }
+      },
     },
   ]
 
@@ -253,7 +289,12 @@ const Table = (props: Props) => {
         <EuiInMemoryTable
           items={data ?? []}
           columns={columns}
-          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', styles.table)}
+          className={cx(
+            'inMemoryTableDefault',
+            'noHeaderBorders',
+            'stickyHeader',
+            styles.table,
+          )}
           responsive={false}
           itemId="name"
           rowProps={setDataTestId}

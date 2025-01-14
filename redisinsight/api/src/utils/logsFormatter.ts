@@ -2,10 +2,7 @@ import { format } from 'winston';
 import { pick, get, map } from 'lodash';
 import { inspect } from 'util';
 
-const errorWhiteListFields = [
-  'message',
-  'command.name',
-];
+const errorWhiteListFields = ['message', 'command.name'];
 
 const sanitizeStack = (stack: any[]) => {
   try {
@@ -36,7 +33,9 @@ const sanitizeStack = (stack: any[]) => {
 export const sensitiveDataFormatter = format((info, opts = {}) => {
   let stack;
   if (opts?.omitSensitiveData) {
-    stack = map(get(info, 'stack', []), (stackItem) => pick(stackItem, errorWhiteListFields));
+    stack = map(get(info, 'stack', []), (stackItem) =>
+      pick(stackItem, errorWhiteListFields),
+    );
   } else {
     stack = map(get(info, 'stack', []), (stackItem) => {
       if (stackItem?.stack) {
@@ -70,10 +69,14 @@ export const jsonFormat = format.printf((info) => {
 export const prettyFormat = format.printf((info) => {
   const separator = ' | ';
   const timestamp = new Date().toLocaleString();
-  const {
-    level, context, message, stack,
-  } = info;
+  const { level, context, message, stack } = info;
 
-  const logData = [timestamp, `${level}`.toUpperCase(), context, message, { stack: sanitizeStack(stack) }];
+  const logData = [
+    timestamp,
+    `${level}`.toUpperCase(),
+    context,
+    message,
+    { stack: sanitizeStack(stack) },
+  ];
   return logData.join(separator);
 });

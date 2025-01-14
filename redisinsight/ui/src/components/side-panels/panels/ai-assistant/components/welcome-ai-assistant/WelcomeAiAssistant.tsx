@@ -22,27 +22,33 @@ const WelcomeAiAssistant = () => {
       eventData: {
         accountOption,
         action: OAuthSocialAction.SignIn,
-        source: OAuthSocialSource.AiChat
-      }
+        source: OAuthSocialSource.AiChat,
+      },
     })
   }
 
   return (
     <div className={styles.wrapper} data-testid="copilot-welcome">
       <div className={styles.container}>
-        <OAuthForm
-          action={OAuthSocialAction.SignIn}
-          onClick={handleSsoClick}
-        >
+        <OAuthForm action={OAuthSocialAction.SignIn} onClick={handleSsoClick}>
           {(form: React.ReactNode) => (
             <>
-              <EuiText style={{ lineHeight: '1.35' }}>Welcome to Redis Copilot.</EuiText>
+              <EuiText style={{ lineHeight: '1.35' }}>
+                Welcome to Redis Copilot.
+              </EuiText>
               <EuiSpacer size="s" />
-              <EuiText style={{ lineHeight: '1.35' }}>Learn about Redis and explore your data, in a conversational manner.</EuiText>
+              <EuiText style={{ lineHeight: '1.35' }}>
+                Learn about Redis and explore your data, in a conversational
+                manner.
+              </EuiText>
               <EuiSpacer size="s" />
-              <EuiText style={{ lineHeight: '1.35' }}>Build faster with Redis Copilot.</EuiText>
+              <EuiText style={{ lineHeight: '1.35' }}>
+                Build faster with Redis Copilot.
+              </EuiText>
               <EuiSpacer size="xl" />
-              <EuiTitle size="xs"><h5>Sign in to get started.</h5></EuiTitle>
+              <EuiTitle size="xs">
+                <h5>Sign in to get started.</h5>
+              </EuiTitle>
 
               <EuiSpacer size="l" />
               {form}

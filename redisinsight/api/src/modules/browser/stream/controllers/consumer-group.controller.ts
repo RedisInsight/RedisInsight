@@ -50,7 +50,7 @@ export class ConsumerGroupController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async getGroups(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: KeyDto,
+    @Body() dto: KeyDto,
   ): Promise<ConsumerGroupDto[]> {
     return this.service.getGroups(clientMetadata, dto);
   }
@@ -62,7 +62,7 @@ export class ConsumerGroupController extends BrowserBaseController {
   })
   async createGroups(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: CreateConsumerGroupsDto,
+    @Body() dto: CreateConsumerGroupsDto,
   ): Promise<void> {
     return this.service.createGroups(clientMetadata, dto);
   }
@@ -74,7 +74,7 @@ export class ConsumerGroupController extends BrowserBaseController {
   })
   async updateGroup(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: UpdateConsumerGroupDto,
+    @Body() dto: UpdateConsumerGroupDto,
   ): Promise<void> {
     return this.service.updateGroup(clientMetadata, dto);
   }
@@ -93,7 +93,7 @@ export class ConsumerGroupController extends BrowserBaseController {
   })
   async deleteGroup(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DeleteConsumerGroupsDto,
+    @Body() dto: DeleteConsumerGroupsDto,
   ): Promise<DeleteConsumerGroupsResponse> {
     return this.service.deleteGroup(clientMetadata, dto);
   }

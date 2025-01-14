@@ -1,6 +1,4 @@
-import {
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   DiscoverCloudDatabasesDto,
   ImportCloudDatabaseDto,
@@ -26,7 +24,10 @@ export class MeCloudAutodiscoveryService {
     private readonly api: CloudCapiKeyApiProvider,
   ) {}
 
-  private async getCapiCredentials(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<CloudCapiAuthDto> {
+  private async getCapiCredentials(
+    sessionMetadata: SessionMetadata,
+    utm?: CloudRequestUtm,
+  ): Promise<CloudCapiAuthDto> {
     return this.cloudCapiKeyService.getCapiCredentials(sessionMetadata, utm);
   }
 
@@ -35,14 +36,22 @@ export class MeCloudAutodiscoveryService {
    * @param sessionMetadata
    * @param utm
    */
-  async getAccount(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<CloudAccountInfo> {
+  async getAccount(
+    sessionMetadata: SessionMetadata,
+    utm?: CloudRequestUtm,
+  ): Promise<CloudAccountInfo> {
     return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
       try {
         return await this.cloudAutodiscoveryService.getAccount(
           await this.getCapiCredentials(sessionMetadata, utm),
         );
       } catch (e) {
-        throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
+        throw wrapHttpError(
+          await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(
+            e,
+            sessionMetadata,
+          ),
+        );
       }
     });
   }
@@ -52,7 +61,10 @@ export class MeCloudAutodiscoveryService {
    * @param sessionMetadata
    * @param utm
    */
-  async discoverSubscriptions(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<CloudSubscription[]> {
+  async discoverSubscriptions(
+    sessionMetadata: SessionMetadata,
+    utm?: CloudRequestUtm,
+  ): Promise<CloudSubscription[]> {
     return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
       try {
         return await this.cloudAutodiscoveryService.discoverSubscriptions(
@@ -61,7 +73,12 @@ export class MeCloudAutodiscoveryService {
           CloudAutodiscoveryAuthType.Sso,
         );
       } catch (e) {
-        throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
+        throw wrapHttpError(
+          await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(
+            e,
+            sessionMetadata,
+          ),
+        );
       }
     });
   }
@@ -86,7 +103,12 @@ export class MeCloudAutodiscoveryService {
           CloudAutodiscoveryAuthType.Sso,
         );
       } catch (e) {
-        throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
+        throw wrapHttpError(
+          await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(
+            e,
+            sessionMetadata,
+          ),
+        );
       }
     });
   }
@@ -110,7 +132,12 @@ export class MeCloudAutodiscoveryService {
           addDatabasesDto,
         );
       } catch (e) {
-        throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
+        throw wrapHttpError(
+          await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(
+            e,
+            sessionMetadata,
+          ),
+        );
       }
     });
   }

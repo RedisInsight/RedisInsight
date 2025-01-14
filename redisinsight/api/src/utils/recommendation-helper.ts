@@ -12,16 +12,18 @@ import {
 
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 
-export const isRedisearchModule = (modules: AdditionalRedisModule[]): boolean => modules?.some(
-  ({ name }) => REDISEARCH_MODULES.some((search) => name === search),
-);
+export const isRedisearchModule = (modules: AdditionalRedisModule[]): boolean =>
+  modules?.some(({ name }) =>
+    REDISEARCH_MODULES.some((search) => name === search),
+  );
 
-export const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [
-  ({ name }) => name !== RECOMMENDATION_NAMES.SEARCH_JSON,
-  ({ name }) => name !== RECOMMENDATION_NAMES.SEARCH_INDEXES,
-  ({ name }) => !REDIS_STACK.includes(name),
-  ({ name }) => name,
-]);
+export const sortRecommendations = (recommendations: any[]) =>
+  sortBy(recommendations, [
+    ({ name }) => name !== RECOMMENDATION_NAMES.SEARCH_JSON,
+    ({ name }) => name !== RECOMMENDATION_NAMES.SEARCH_INDEXES,
+    ({ name }) => !REDIS_STACK.includes(name),
+    ({ name }) => name,
+  ]);
 
 export const checkTimestamp = (value: string): boolean => {
   try {
@@ -45,6 +47,5 @@ export const checkTimestamp = (value: string): boolean => {
 };
 
 // https://redis.io/docs/manual/keyspace-notifications/
-export const checkKeyspaceNotification = (reply: string): boolean => (
-  reply.indexOf('K') > -1 || reply.indexOf('E') > -1
-);
+export const checkKeyspaceNotification = (reply: string): boolean =>
+  reply.indexOf('K') > -1 || reply.indexOf('E') > -1;

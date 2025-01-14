@@ -5,9 +5,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import {
-  Logger,
-} from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import config from 'src/utils/config';
 import { OnEvent } from '@nestjs/event-emitter';
 import { NotificationServerEvents } from 'src/modules/notification/constants';
@@ -20,10 +18,16 @@ const SOCKETS_CONFIG = config.get('sockets');
 @WebSocketGateway({
   path: SOCKETS_CONFIG.path,
   cors: SOCKETS_CONFIG.cors.enabled
-    ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
-  serveClient: SOCKETS_CONFIG.serveClient
+    ? {
+        origin: SOCKETS_CONFIG.cors.origin,
+        credentials: SOCKETS_CONFIG.cors.credentials,
+      }
+    : false,
+  serveClient: SOCKETS_CONFIG.serveClient,
 })
-export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class NotificationGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer() wss: Server;
 
   private logger: Logger = new Logger('NotificationGateway');

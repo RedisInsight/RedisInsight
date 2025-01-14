@@ -84,11 +84,15 @@ describe('DatabaseConnectionService', () => {
 
   describe('connect', () => {
     it('should connect to database', async () => {
-      expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
+      expect(await service.connect(mockCommonClientMetadata)).toEqual(
+        undefined,
+      );
     });
 
     it('should call recommendationService', async () => {
-      expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
+      expect(await service.connect(mockCommonClientMetadata)).toEqual(
+        undefined,
+      );
 
       expect(recommendationService.checkMulti).toHaveBeenCalledTimes(1);
 
@@ -108,7 +112,9 @@ describe('DatabaseConnectionService', () => {
         flag: true,
       });
 
-      expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
+      expect(await service.connect(mockCommonClientMetadata)).toEqual(
+        undefined,
+      );
 
       expect(recommendationService.check).toHaveBeenCalledTimes(1);
       expect(recommendationService.checkMulti).toHaveBeenCalledTimes(1);
@@ -131,28 +137,30 @@ describe('DatabaseConnectionService', () => {
     });
 
     it('should call databaseInfoProvider', async () => {
-      expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
+      expect(await service.connect(mockCommonClientMetadata)).toEqual(
+        undefined,
+      );
 
       expect(databaseInfoProvider.determineDatabaseServer).toHaveBeenCalled();
       expect(databaseInfoProvider.determineDatabaseModules).toHaveBeenCalled();
     });
 
     it('should call getClientListInfo', async () => {
-      expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
+      expect(await service.connect(mockCommonClientMetadata)).toEqual(
+        undefined,
+      );
 
       expect(databaseInfoProvider.getClientListInfo).toHaveBeenCalled();
-      expect(analytics.sendDatabaseConnectedClientListEvent).toHaveBeenCalledWith(
-        mockSessionMetadata,
-        mockDatabase.id,
-        {
-          clients: mockRedisClientListResult.map((c) => ({
-            version: mockRedisGeneralInfo.version,
-            resp: get(c, 'resp', 'n/a'),
-            libVer: get(c, 'lib-ver', 'n/a'),
-            libName: get(c, 'lib-name', 'n/a'),
-          })),
-        },
-      );
+      expect(
+        analytics.sendDatabaseConnectedClientListEvent,
+      ).toHaveBeenCalledWith(mockSessionMetadata, mockDatabase.id, {
+        clients: mockRedisClientListResult.map((c) => ({
+          version: mockRedisGeneralInfo.version,
+          resp: get(c, 'resp', 'n/a'),
+          libVer: get(c, 'lib-ver', 'n/a'),
+          libName: get(c, 'lib-name', 'n/a'),
+        })),
+      });
     });
   });
 });

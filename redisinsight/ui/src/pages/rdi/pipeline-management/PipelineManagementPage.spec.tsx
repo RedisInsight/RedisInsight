@@ -37,8 +37,8 @@ describe('PipelineManagementPage', () => {
     const mockUseFormikContext = {
       setFieldValue: jest.fn,
       values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+    }
+    ;(useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
   })
 
   it('should render', () => {
@@ -46,57 +46,65 @@ describe('PipelineManagementPage', () => {
       render(
         <BrowserRouter>
           <PipelineManagementPage {...instance(mockedProps)} />
-        </BrowserRouter>
-      )
+        </BrowserRouter>,
+      ),
     ).toBeTruthy()
   })
 
   it('should redirect to the config tab by default', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipelineManagement('rdiInstanceId') })
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({
+      pathname: Pages.rdiPipelineManagement('rdiInstanceId'),
+    })
 
     render(
       <BrowserRouter>
         <PipelineManagementPage {...instance(mockedProps)} />
-      </BrowserRouter>
+      </BrowserRouter>,
     )
 
     expect(pushMock).toBeCalledWith(Pages.rdiPipelineConfig('rdiInstanceId'))
   })
 
   it('should redirect to the prev page from context', () => {
-    (appContextPipelineManagement as jest.Mock).mockReturnValueOnce({
-      lastViewedPage: Pages.rdiPipelineConfig('rdiInstanceId')
+    ;(appContextPipelineManagement as jest.Mock).mockReturnValueOnce({
+      lastViewedPage: Pages.rdiPipelineConfig('rdiInstanceId'),
     })
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipelineManagement('rdiInstanceId') })
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({
+      pathname: Pages.rdiPipelineManagement('rdiInstanceId'),
+    })
 
     render(
       <BrowserRouter>
         <PipelineManagementPage {...instance(mockedProps)} />
-      </BrowserRouter>
+      </BrowserRouter>,
     )
 
     expect(pushMock).toBeCalledWith(Pages.rdiPipelineConfig('rdiInstanceId'))
   })
 
   it('should save proper page on unmount', () => {
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipelineConfig('rdiInstanceId') })
+    reactRouterDom.useLocation = jest
+      .fn()
+      .mockReturnValue({ pathname: Pages.rdiPipelineConfig('rdiInstanceId') })
 
     const { unmount } = render(
       <BrowserRouter>
         <PipelineManagementPage {...instance(mockedProps)} />
-      </BrowserRouter>
+      </BrowserRouter>,
     )
 
     unmount()
     const expectedActions = [
       setLastPageContext(PageNames.rdiPipelineManagement),
-      setLastPipelineManagementPage(Pages.rdiPipelineConfig('rdiInstanceId'))
+      setLastPipelineManagementPage(Pages.rdiPipelineConfig('rdiInstanceId')),
     ]
 
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+      expectedActions,
+    )
   })
 })

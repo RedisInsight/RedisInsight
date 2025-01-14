@@ -25,15 +25,28 @@ import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLog
 import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import ItemList from 'uiSrc/components/item-list'
-import { BrowserStorageItem, DEFAULT_SORT, FeatureFlags, Pages, Theme } from 'uiSrc/constants'
+import {
+  BrowserStorageItem,
+  DEFAULT_SORT,
+  FeatureFlags,
+  Pages,
+  Theme,
+} from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { localStorageService } from 'uiSrc/services'
-import { appContextSelector, resetRdiContext, setAppContextInitialState } from 'uiSrc/slices/app/context'
+import {
+  appContextSelector,
+  resetRdiContext,
+  setAppContextInitialState,
+} from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
-import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
+import {
+  resetCliHelperSettings,
+  resetCliSettingsAction,
+} from 'uiSrc/slices/cli/cli-settings'
 import {
   checkConnectToInstanceAction,
   deleteInstancesAction,
@@ -45,10 +58,20 @@ import {
   ConnectionType,
   Instance,
   OAuthSocialAction,
-  OAuthSocialSource
+  OAuthSocialSource,
 } from 'uiSrc/slices/interfaces'
-import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { formatLongName, getDbIndex, lastConnectionFormat, Nullable, replaceSpaces } from 'uiSrc/utils'
+import {
+  getRedisModulesSummary,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
+import {
+  formatLongName,
+  getDbIndex,
+  lastConnectionFormat,
+  Nullable,
+  replaceSpaces,
+} from 'uiSrc/utils'
 
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
@@ -80,7 +103,7 @@ const DatabasesListWrapper = (props: Props) => {
     onEditInstance,
     editedInstance,
     onDeleteInstances,
-    loading
+    loading,
   } = props
   const dispatch = useDispatch()
   const history = useHistory()
@@ -88,12 +111,15 @@ const DatabasesListWrapper = (props: Props) => {
   const { theme } = useContext(ThemeContext)
 
   const { contextInstanceId } = useSelector(appContextSelector)
-  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
 
   const [width, setWidth] = useState(0)
   const [, forceRerender] = useState({})
   const sortingRef = useRef<PropertySort>(
-    localStorageService.get(BrowserStorageItem.instancesSorting) ?? DEFAULT_SORT
+    localStorageService.get(BrowserStorageItem.instancesSorting) ??
+      DEFAULT_SORT,
   )
 
   const deletingIdRef = useRef('')
@@ -113,7 +139,9 @@ const DatabasesListWrapper = (props: Props) => {
   useEffect(() => {
     const editInstanceId = new URLSearchParams(search).get('editInstance')
     if (editInstanceId && instances?.length) {
-      const instance = instances.find((item: Instance) => item.id === editInstanceId)
+      const instance = instances.find(
+        (item: Instance) => item.id === editInstanceId,
+      )
       if (instance) {
         handleClickEditInstance(instance)
         history.replace(Pages.home)
@@ -126,8 +154,8 @@ const DatabasesListWrapper = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_HOST_PORT_COPIED,
       eventData: {
-        databaseId
-      }
+        databaseId,
+      },
     })
   }
 
@@ -140,7 +168,7 @@ const DatabasesListWrapper = (props: Props) => {
   }
   const handleCheckConnectToInstance = (
     event: React.MouseEvent | React.KeyboardEvent,
-    { id, provider, modules }: Instance
+    { id, provider, modules }: Instance,
   ) => {
     event.preventDefault()
     const modulesSummary = getRedisModulesSummary(modules)
@@ -151,9 +179,16 @@ const DatabasesListWrapper = (props: Props) => {
         provider,
         source: 'db_list',
         ...modulesSummary,
-      }
+      },
     })
-    dispatch(checkConnectToInstanceAction(id, connectToInstance, undefined, contextInstanceId !== id))
+    dispatch(
+      checkConnectToInstanceAction(
+        id,
+        connectToInstance,
+        undefined,
+        contextInstanceId !== id,
+      ),
+    )
   }
 
   const handleClickDeleteInstance = ({ id, provider }: Instance) => {
@@ -161,8 +196,8 @@ const DatabasesListWrapper = (props: Props) => {
       event: TelemetryEvent.CONFIG_DATABASES_SINGLE_DATABASE_DELETE_CLICKED,
       eventData: {
         databaseId: id,
-        provider
-      }
+        provider,
+      },
     })
     showPopover(id)
   }
@@ -173,54 +208,65 @@ const DatabasesListWrapper = (props: Props) => {
       eventData: {
         databaseId: instance.id,
         provider: instance.provider,
-      }
+      },
     })
     onEditInstance(instance)
   }
 
   const handleDeleteInstance = (instance: Instance) => {
-    dispatch(deleteInstancesAction([instance], () => onDeleteInstances([instance])))
+    dispatch(
+      deleteInstancesAction([instance], () => onDeleteInstances([instance])),
+    )
   }
 
   const handleDeleteInstances = (instances: Instance[]) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_MULTIPLE_DATABASES_DELETE_CLICKED,
       eventData: {
-        ids: instances.map((instance) => instance.id)
-      }
+        ids: instances.map((instance) => instance.id),
+      },
     })
-    dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
+    dispatch(
+      deleteInstancesAction(instances, () => onDeleteInstances(instances)),
+    )
   }
 
-  const handleExportInstances = (instances: Instance[], withSecrets: boolean) => {
+  const handleExportInstances = (
+    instances: Instance[],
+    withSecrets: boolean,
+  ) => {
     const ids = map(instances, 'id')
 
-    sendEventTelemetry({ event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_CLICKED })
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_CLICKED,
+    })
 
     dispatch(
       exportInstancesAction(
         ids,
         withSecrets,
         (data) => {
-          const file = new Blob([JSON.stringify(data, null, 2)], { type: 'text/plain;charset=utf-8' })
+          const file = new Blob([JSON.stringify(data, null, 2)], {
+            type: 'text/plain;charset=utf-8',
+          })
           saveAs(file, `RedisInsight_connections_${Date.now()}.json`)
 
           sendEventTelemetry({
             event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_SUCCEEDED,
             eventData: {
-              numberOfDatabases: ids.length
-            }
+              numberOfDatabases: ids.length,
+            },
           })
         },
         () => {
           sendEventTelemetry({
             event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_FAILED,
             eventData: {
-              numberOfDatabases: ids.length
-            }
+              numberOfDatabases: ids.length,
+            },
           })
-        }
-      )
+        },
+      ),
     )
   }
 
@@ -251,7 +297,12 @@ const DatabasesListWrapper = (props: Props) => {
     })
 
     const link = document.createElement('a')
-    link.setAttribute('href', getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: 'list_of_databases' }))
+    link.setAttribute(
+      'href',
+      getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
+        campaign: 'list_of_databases',
+      }),
+    )
     link.setAttribute('target', '_blank')
 
     link.click()
@@ -261,11 +312,11 @@ const DatabasesListWrapper = (props: Props) => {
   const getRowProps = (instance: Instance) => ({
     className: cx({
       'euiTableRow-isSelected': instance?.id === editedInstance?.id,
-      cloudDbRow: isCreateCloudDb(instance?.id)
+      cloudDbRow: isCreateCloudDb(instance?.id),
     }),
     onClick: isCreateCloudDb(instance?.id) ? handleClickFreeDb : undefined,
     isSelectable: !isCreateCloudDb(instance?.id),
-    'data-testid': `db-row_${instance?.id}`
+    'data-testid': `db-row_${instance?.id}`,
   })
 
   const columns: EuiTableFieldDataColumnType<Instance>[] = [
@@ -277,18 +328,28 @@ const DatabasesListWrapper = (props: Props) => {
       truncateText: true,
       'data-test-subj': 'database-alias-column',
       sortable: ({ name, id }) => {
-        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
+        if (isCreateCloudDb(id))
+          return sortingRef.current.direction === 'asc' ? '' : false
         return name?.toLowerCase()
       },
       width: '30%',
       render: function InstanceCell(name: string = '', instance: Instance) {
         if (isCreateCloudDb(instance.id)) {
           return (
-            <EuiText className={cx(styles.tooltipAnchorColumnName)}>{instance.name}</EuiText>
+            <EuiText className={cx(styles.tooltipAnchorColumnName)}>
+              {instance.name}
+            </EuiText>
           )
         }
 
-        const { id, db, new: newStatus = false, lastConnection, createdAt, cloudDetails } = instance
+        const {
+          id,
+          db,
+          new: newStatus = false,
+          lastConnection,
+          createdAt,
+          cloudDetails,
+        } = instance
         const cellContent = replaceSpaces(name.substring(0, 200))
 
         return (
@@ -309,10 +370,18 @@ const DatabasesListWrapper = (props: Props) => {
               <EuiText
                 className={styles.tooltipAnchorColumnName}
                 data-testid={`instance-name-${id}`}
-                onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, instance)}
-                onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, instance)}
+                onClick={(e: React.MouseEvent) =>
+                  handleCheckConnectToInstance(e, instance)
+                }
+                onKeyDown={(e: React.KeyboardEvent) =>
+                  handleCheckConnectToInstance(e, instance)
+                }
               >
-                <EuiTextColor className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}>
+                <EuiTextColor
+                  className={cx(styles.tooltipColumnNameText, {
+                    [styles.withDb]: db,
+                  })}
+                >
                   {cellContent}
                 </EuiTextColor>
                 <EuiTextColor>{` ${getDbIndex(db)}`}</EuiTextColor>
@@ -330,7 +399,8 @@ const DatabasesListWrapper = (props: Props) => {
       dataType: 'string',
       truncateText: true,
       sortable: ({ host, port, id }) => {
-        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
+        if (isCreateCloudDb(id))
+          return sortingRef.current.direction === 'asc' ? '' : false
         return `${host}:${port}`
       },
       render: function HostPort(name: string, { host, port, id }: Instance) {
@@ -340,7 +410,11 @@ const DatabasesListWrapper = (props: Props) => {
         return (
           <div className="host_port" data-testid="host-port">
             <EuiText className="copyHostPortText">{text}</EuiText>
-            <EuiToolTip position="right" content="Copy" anchorClassName="copyHostPortTooltip">
+            <EuiToolTip
+              position="right"
+              content="Copy"
+              anchorClassName="copyHostPortTooltip"
+            >
               <EuiButtonIcon
                 iconType="copy"
                 aria-label="Copy host:port"
@@ -358,13 +432,15 @@ const DatabasesListWrapper = (props: Props) => {
       name: 'Connection Type',
       dataType: 'string',
       sortable: ({ id, connectionType }) => {
-        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
+        if (isCreateCloudDb(id))
+          return sortingRef.current.direction === 'asc' ? '' : false
         return connectionType
       },
       width: '180px',
       truncateText: true,
       hideForMobile: true,
-      render: (cellData: ConnectionType) => CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData)
+      render: (cellData: ConnectionType) =>
+        CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
     },
     {
       field: 'modules',
@@ -381,7 +457,11 @@ const DatabasesListWrapper = (props: Props) => {
                   content={
                     isRediStack ? (
                       <EuiIcon
-                        type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+                        type={
+                          theme === Theme.Dark
+                            ? RediStackDarkMin
+                            : RediStackLightMin
+                        }
                         data-testid="redis-stack-icon"
                       />
                     ) : undefined
@@ -390,18 +470,29 @@ const DatabasesListWrapper = (props: Props) => {
                     isRediStack ? (
                       <>
                         <EuiIcon
-                          type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
+                          type={
+                            theme === Theme.Dark
+                              ? RediStackDarkLogo
+                              : RediStackLightLogo
+                          }
                           className={styles.tooltipLogo}
                           data-testid="tooltip-redis-stack-icon"
                         />
-                        <EuiText color="subdued" style={{ marginTop: 4, marginBottom: -4 }}>
+                        <EuiText
+                          color="subdued"
+                          style={{ marginTop: 4, marginBottom: -4 }}
+                        >
                           Includes
                         </EuiText>
                       </>
                     ) : undefined
                   }
                   modules={modules}
-                  maxViewModules={columnWidth && columnWidth > 40 ? Math.floor((columnWidth - 12) / 28) - 1 : 0}
+                  maxViewModules={
+                    columnWidth && columnWidth > 40
+                      ? Math.floor((columnWidth - 12) / 28) - 1
+                      : 0
+                  }
                 />
               </div>
             )}
@@ -417,8 +508,9 @@ const DatabasesListWrapper = (props: Props) => {
       align: 'right',
       width: '170px',
       sortable: ({ lastConnection, id }) => {
-        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? -Infinity : +Infinity
-        return (lastConnection ? -new Date(`${lastConnection}`) : -Infinity)
+        if (isCreateCloudDb(id))
+          return sortingRef.current.direction === 'asc' ? -Infinity : +Infinity
+        return lastConnection ? -new Date(`${lastConnection}`) : -Infinity
       },
       render: (date: Date, { id }) => {
         if (id === CREATE_CLOUD_DB_ID) return null
@@ -480,15 +572,12 @@ const DatabasesListWrapper = (props: Props) => {
       localStorageService.set(BrowserStorageItem.instancesSorting, sort)
       sendEventTelemetry({
         event: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SORTED,
-        eventData: sort
+        eventData: sort,
       })
     }
   }
 
-  const listOfInstances = [
-    ...predefinedInstances,
-    ...instances
-  ]
+  const listOfInstances = [...predefinedInstances, ...instances]
 
   return (
     <EuiResizeObserver onResize={onResize}>

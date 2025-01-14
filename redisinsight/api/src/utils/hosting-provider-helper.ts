@@ -14,15 +14,18 @@ const PROVIDER_HOST_REGEX = {
 
 // Because we do not bind potentially dangerous logic to this.
 // We define a hosting provider for telemetry only.
-export const getHostingProvider = async (client: RedisClient, databaseHost: string): Promise<HostingProvider> => {
+export const getHostingProvider = async (
+  client: RedisClient,
+  databaseHost: string,
+): Promise<HostingProvider> => {
   try {
     const host = databaseHost.toLowerCase();
 
     // Tries to detect the hosting provider from the hostname.
     if (
-      PROVIDER_HOST_REGEX.RLCP.test(host)
-      || PROVIDER_HOST_REGEX.REDISLABS.test(host)
-      || PROVIDER_HOST_REGEX.REDISCLOUD.test(host)
+      PROVIDER_HOST_REGEX.RLCP.test(host) ||
+      PROVIDER_HOST_REGEX.REDISLABS.test(host) ||
+      PROVIDER_HOST_REGEX.REDISCLOUD.test(host)
     ) {
       return HostingProvider.RE_CLOUD;
     }
@@ -40,10 +43,11 @@ export const getHostingProvider = async (client: RedisClient, databaseHost: stri
     }
 
     try {
-      const hello = JSON.stringify(await client.sendCommand(
-        ['hello'],
-        { replyEncoding: 'utf8' },
-      ) as string[]).toLowerCase();
+      const hello = JSON.stringify(
+        (await client.sendCommand(['hello'], {
+          replyEncoding: 'utf8',
+        })) as string[],
+      ).toLowerCase();
 
       if (hello.includes('/enterprise-managed')) {
         return HostingProvider.REDIS_ENTERPRISE;
@@ -57,10 +61,11 @@ export const getHostingProvider = async (client: RedisClient, databaseHost: stri
     }
 
     try {
-      const info = (await client.sendCommand(
-        ['info'],
-        { replyEncoding: 'utf8' },
-      ) as string).toLowerCase();
+      const info = (
+        (await client.sendCommand(['info'], {
+          replyEncoding: 'utf8',
+        })) as string
+      ).toLowerCase();
 
       if (info.includes('elasticache')) {
         return HostingProvider.AWS_ELASTICACHE;

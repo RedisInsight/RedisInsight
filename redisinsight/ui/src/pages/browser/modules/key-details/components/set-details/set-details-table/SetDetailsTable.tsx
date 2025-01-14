@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiProgress,
-  EuiText,
-} from '@elastic/eui'
+import { EuiProgress, EuiText } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 
@@ -15,10 +12,23 @@ import {
   createTooltipContent,
   formattingBuffer,
 } from 'uiSrc/utils'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
+import {
+  KeyTypes,
+  OVER_RENDER_BUFFER_COUNT,
+  TEXT_FAILED_CONVENT_FORMATTER,
+} from 'uiSrc/constants'
+import {
+  sendEventTelemetry,
+  TelemetryEvent,
+  getBasedOnViewTypeEvent,
+  getMatchType,
+} from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import {
+  selectedKeyDataSelector,
+  keysSelector,
+  selectedKeySelector,
+} from 'uiSrc/slices/browser/keys'
 import {
   deleteSetMembers,
   fetchSetMembers,
@@ -32,7 +42,10 @@ import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
-import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
+import {
+  IColumnSearchState,
+  ITableColumn,
+} from 'uiSrc/components/virtual-table/interfaces'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
@@ -57,9 +70,15 @@ const SetDetailsTable = (props: Props) => {
   const { onRemoveKey } = props
 
   const { loading } = useSelector(setSelector)
-  const { members: loadedMembers, total, nextCursor } = useSelector(setDataSelector)
+  const {
+    members: loadedMembers,
+    total,
+    nextCursor,
+  } = useSelector(setDataSelector)
   const { length = 0, name: key } = useSelector(selectedKeyDataSelector) ?? {}
-  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(
+    connectedInstanceSelector,
+  )
   const { viewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
@@ -106,13 +125,13 @@ const SetDetailsTable = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED,
       ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Set,
         numberOfRemoved: 1,
-      }
+      },
     })
   }
 
@@ -126,18 +145,20 @@ const SetDetailsTable = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED,
       ),
       eventData: {
         databaseId: instanceId,
-        keyType: KeyTypes.Set
-      }
+        keyType: KeyTypes.Set,
+      },
     })
   }
 
   const handleSearch = (search: IColumnSearchState[]) => {
     const fieldColumn = search.find((column) => column.id === 'name')
-    if (!fieldColumn) { return }
+    if (!fieldColumn) {
+      return
+    }
 
     const { value: match } = fieldColumn
     const onSuccess = (data: GetSetMembersResponse) => {
@@ -146,18 +167,27 @@ const SetDetailsTable = (props: Props) => {
         event: getBasedOnViewTypeEvent(
           viewType,
           TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
-          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED,
         ),
         eventData: {
           databaseId: instanceId,
           keyType: KeyTypes.Set,
           match: matchValue,
           length: data.total,
-        }
+        },
       })
     }
     setMatch(match)
-    dispatch(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, true, onSuccess))
+    dispatch(
+      fetchSetMembers(
+        key,
+        0,
+        SCAN_COUNT_DEFAULT,
+        match || matchAllValue,
+        true,
+        onSuccess,
+      ),
+    )
   }
 
   const handleRowToggleViewClick = (expanded: boolean, rowIndex: number) => {
@@ -174,13 +204,13 @@ const SetDetailsTable = (props: Props) => {
         keyType: KeyTypes.Set,
         databaseId: instanceId,
         largestCellLength: members[rowIndex]?.length || 0,
-      }
+      },
     })
 
     cellCache.clearAll()
   }
 
-  const columns:ITableColumn[] = [
+  const columns: ITableColumn[] = [
     {
       id: 'name',
       label: 'Member',
@@ -188,14 +218,33 @@ const SetDetailsTable = (props: Props) => {
       staySearchAlwaysOpen: true,
       initialSearchValue: '',
       truncateText: true,
-      render: function Name(_name: string, memberItem: RedisResponseBuffer, expanded: boolean = false) {
-        const { value: decompressedMemberItem } = decompressingBuffer(memberItem, compressor)
-        const { value, isValid } = formattingBuffer(decompressedMemberItem, viewFormatProp, { expanded })
-        const tooltipContent = createTooltipContent(value, decompressedMemberItem, viewFormatProp)
+      render: function Name(
+        _name: string,
+        memberItem: RedisResponseBuffer,
+        expanded: boolean = false,
+      ) {
+        const { value: decompressedMemberItem } = decompressingBuffer(
+          memberItem,
+          compressor,
+        )
+        const { value, isValid } = formattingBuffer(
+          decompressedMemberItem,
+          viewFormatProp,
+          { expanded },
+        )
+        const tooltipContent = createTooltipContent(
+          value,
+          decompressedMemberItem,
+          viewFormatProp,
+        )
         const cellContent = value?.substring?.(0, 200) ?? value
 
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
+          <EuiText
+            color="subdued"
+            size="s"
+            style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}
+          >
             <div
               style={{ display: 'flex' }}
               data-testid={`set-member-value-${cellContent}`}
@@ -203,7 +252,11 @@ const SetDetailsTable = (props: Props) => {
               <FormattedValue
                 value={value}
                 expanded={expanded}
-                title={isValid ? 'Member' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                title={
+                  isValid
+                    ? 'Member'
+                    : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)
+                }
                 tooltipContent={tooltipContent}
                 position="left"
               />
@@ -236,7 +289,9 @@ const SetDetailsTable = (props: Props) => {
               handleDeleteItem={handleDeleteMember}
               handleButtonClick={handleRemoveIconClick}
               testid={`set-remove-btn-${member}`}
-              appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Member') : null}
+              appendInfo={
+                length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Member') : null
+              }
             />
           </div>
         )
@@ -247,7 +302,12 @@ const SetDetailsTable = (props: Props) => {
   const loadMoreItems = () => {
     if (nextCursor !== 0) {
       dispatch(
-        fetchMoreSetMembers(key, nextCursor, SCAN_COUNT_DEFAULT, match || matchAllValue)
+        fetchMoreSetMembers(
+          key,
+          nextCursor,
+          SCAN_COUNT_DEFAULT,
+          match || matchAllValue,
+        ),
       )
     }
   }
@@ -255,13 +315,11 @@ const SetDetailsTable = (props: Props) => {
   return (
     <div
       data-testid="set-details"
-      className={
-        cx(
-          'key-details-table',
-          'set-members-container',
-          styles.container,
-        )
-      }
+      className={cx(
+        'key-details-table',
+        'set-members-container',
+        styles.container,
+      )}
     >
       {loading && (
         <EuiProgress
@@ -290,7 +348,7 @@ const SetDetailsTable = (props: Props) => {
         onSearch={handleSearch}
         columns={columns.map((column, i, arr) => ({
           ...column,
-          width: getColumnWidth(i, width, arr)
+          width: getColumnWidth(i, width, arr),
         }))}
         onChangeWidth={setWidth}
         cellCache={cellCache}
@@ -298,7 +356,6 @@ const SetDetailsTable = (props: Props) => {
         expandedRows={expandedRows}
         setExpandedRows={setExpandedRows}
       />
-
     </div>
   )
 }

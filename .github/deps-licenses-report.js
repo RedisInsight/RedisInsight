@@ -13,7 +13,6 @@ const summaryFilePath = `./${licenseFolderName}/summary.csv`;
 const allData = [];
 let csvFiles = [];
 
-
 // Main function
 async function main() {
   const folderPath = './';
@@ -29,8 +28,8 @@ async function main() {
   try {
     await Promise.all(packageJsons.map(runLicenseCheck));
     console.log('All csv files was generated');
-    await generateSummary()
-    await sendLicensesToGoogleSheet()
+    await generateSummary();
+    await sendLicensesToGoogleSheet();
   } catch (error) {
     console.error('An error occurred:', error);
     process.exit(1);
@@ -43,7 +42,13 @@ main();
 function findPackageJsonFiles(folderPath) {
   const packageJsonPaths = [];
   const packageJsonName = 'package.json';
-  const excludeFolders = ['dist', 'node_modules', 'static', 'electron', 'redisgraph'];
+  const excludeFolders = [
+    'dist',
+    'node_modules',
+    'static',
+    'electron',
+    'redisgraph',
+  ];
 
   // Recursive function to search for package.json files
   function searchForPackageJson(currentPath) {
@@ -56,7 +61,9 @@ function findPackageJsonFiles(folderPath) {
       if (stats.isDirectory() && !excludeFolders.includes(file)) {
         searchForPackageJson(filePath);
       } else if (file === packageJsonName) {
-        packageJsonPaths.push(`./${filePath.slice(0, -packageJsonName.length - 1)}`);
+        packageJsonPaths.push(
+          `./${filePath.slice(0, -packageJsonName.length - 1)}`,
+        );
       }
     }
   }
@@ -72,32 +79,36 @@ async function runLicenseCheck(path) {
   const COMMANDS = [
     `license-checker --start ${path} --csv --out ./${licenseFolderName}/${name}_prod.csv --production`,
     `license-checker --start ${path} --csv --out ./${licenseFolderName}/${name}_dev.csv --development`,
-  ]
+  ];
 
-  return await Promise.all(COMMANDS.map((command) => {
-    const [cmd, ...args] = command.split(' ');
-    return new Promise((resolve, reject) => {
-      execFile(cmd, args, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Failed command: ${command}, error:`, stderr);
-          reject(error);
-        }
-        resolve();
+  return await Promise.all(
+    COMMANDS.map((command) => {
+      const [cmd, ...args] = command.split(' ');
+      return new Promise((resolve, reject) => {
+        execFile(cmd, args, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Failed command: ${command}, error:`, stderr);
+            reject(error);
+          }
+          resolve();
+        });
       });
-    });
-  }));
+    }),
+  );
 }
 
 async function sendLicensesToGoogleSheet() {
   try {
-    const serviceAccountKey = JSON.parse(fs.readFileSync('./gasKey.json', 'utf-8'));
+    const serviceAccountKey = JSON.parse(
+      fs.readFileSync('./gasKey.json', 'utf-8'),
+    );
 
     // Set up JWT client
     const jwtClient = new google.auth.JWT(
       serviceAccountKey.client_email,
       null,
       serviceAccountKey.private_key,
-      ['https://www.googleapis.com/auth/spreadsheets']
+      ['https://www.googleapis.com/auth/spreadsheets'],
     );
 
     const sheets = google.sheets('v4');
@@ -122,7 +133,9 @@ async function sendLicensesToGoogleSheet() {
               spreadsheetId,
             });
 
-            const sheet = response.data.sheets.find((sheet) => sheet.properties.title === sheetName);
+            const sheet = response.data.sheets.find(
+              (sheet) => sheet.properties.title === sheetName,
+            );
             if (sheet) {
               // Clear contents of the sheet starting from cell A2
               await sheets.spreadsheets.values.clear({
@@ -135,11 +148,18 @@ async function sendLicensesToGoogleSheet() {
               await sheets.spreadsheets.batchUpdate({
                 auth: jwtClient,
                 spreadsheetId,
-                resource: set({}, 'requests[0].addSheet.properties.title', sheetName),
+                resource: set(
+                  {},
+                  'requests[0].addSheet.properties.title',
+                  sheetName,
+                ),
               });
             }
           } catch (error) {
-            console.error(`Error checking/creating sheet for ${sheetName}:`, error);
+            console.error(
+              `Error checking/creating sheet for ${sheetName}:`,
+              error,
+            );
           }
 
           try {
@@ -163,7 +183,7 @@ async function sendLicensesToGoogleSheet() {
             console.error(`Error inserting data for ${sheetName}:`, err);
           }
         });
-      });
+    });
   } catch (error) {
     console.error('Error loading service account key:', error);
   }
@@ -236,7 +256,10 @@ const stringifyPromise = (data) => {
 };
 
 async function generateSummary() {
-  csvFiles = fs.readdirSync(licenseFolderName).filter(file => file.endsWith('.csv')).sort();
+  csvFiles = fs
+    .readdirSync(licenseFolderName)
+    .filter((file) => file.endsWith('.csv'))
+    .sort();
 
   for (const file of csvFiles) {
     try {

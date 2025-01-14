@@ -22,23 +22,26 @@ const copySource = async (source, destination) => {
  */
 export const migrateHomeFolder = async () => {
   try {
-    if (!(await fs.pathExists(DB_CONFIG.database)) && await fs.pathExists(PATH_CONFIG.prevHomedir)) {
+    if (
+      !(await fs.pathExists(DB_CONFIG.database)) &&
+      (await fs.pathExists(PATH_CONFIG.prevHomedir))
+    ) {
       await fs.ensureDir(PATH_CONFIG.homedir);
 
-      await Promise.all([
-        'redisinsight.db',
-        'plugins',
-        'custom-tutorials',
-      ].map((target) => copySource(
-        join(PATH_CONFIG.prevHomedir, target),
-        join(PATH_CONFIG.homedir, target),
-      )));
+      await Promise.all(
+        ['redisinsight.db', 'plugins', 'custom-tutorials'].map((target) =>
+          copySource(
+            join(PATH_CONFIG.prevHomedir, target),
+            join(PATH_CONFIG.homedir, target),
+          ),
+        ),
+      );
     }
 
-    return true
+    return true;
   } catch (e) {
     // continue initialization even without migration
-    return false
+    return false;
   }
 };
 
@@ -48,7 +51,7 @@ export const migrateHomeFolder = async () => {
 export const removeOldFolders = async () => {
   try {
     // remove old folders
-    await PATH_CONFIG.oldFolders?.map(removeFolder)
+    await PATH_CONFIG.oldFolders?.map(removeFolder);
   } catch (e) {
     // continue initialization even without removing
   }

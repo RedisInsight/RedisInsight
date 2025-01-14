@@ -1,8 +1,9 @@
-import {
-  BadRequestException, Injectable, Logger,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { checkHumanReadableCommands, splitCliCommandLine } from 'src/utils/cli-helper';
+import {
+  checkHumanReadableCommands,
+  splitCliCommandLine,
+} from 'src/utils/cli-helper';
 import {
   CommandNotSupportedError,
   CommandParsingError,
@@ -29,9 +30,7 @@ export class WorkbenchCommandsExecutor {
 
   private formatterManager: FormatterManager;
 
-  constructor(
-    private analyticsService: WorkbenchAnalytics,
-  ) {
+  constructor(private analyticsService: WorkbenchAnalytics) {
     this.formatterManager = new FormatterManager();
     this.formatterManager.addStrategy(
       FormatterTypes.UTF8,
@@ -63,12 +62,18 @@ export class WorkbenchCommandsExecutor {
       [command, ...commandArgs] = splitCliCommandLine(commandLine);
 
       const formatter = this.getFormatter(mode);
-      const replyEncoding = checkHumanReadableCommands(`${command} ${commandArgs[0]}`) ? 'utf8' : undefined;
+      const replyEncoding = checkHumanReadableCommands(
+        `${command} ${commandArgs[0]}`,
+      )
+        ? 'utf8'
+        : undefined;
 
       const response = formatter.format(
         await client.sendCommand([command, ...commandArgs], { replyEncoding }),
       );
-      const result: CommandExecutionResult[] = [{ response, status: CommandExecutionStatus.Success }];
+      const result: CommandExecutionResult[] = [
+        { response, status: CommandExecutionStatus.Success },
+      ];
 
       this.logger.debug('Succeed to execute workbench command.');
       this.analyticsService.sendCommandExecutedEvents(
@@ -90,7 +95,10 @@ export class WorkbenchCommandsExecutor {
     } catch (error) {
       this.logger.error('Failed to execute workbench command.', error);
 
-      const errorResult = { response: error.message, status: CommandExecutionStatus.Fail };
+      const errorResult = {
+        response: error.message,
+        status: CommandExecutionStatus.Fail,
+      };
       this.analyticsService.sendCommandExecutedEvent(
         client.clientMetadata.sessionMetadata,
         client.clientMetadata.databaseId,
@@ -99,14 +107,17 @@ export class WorkbenchCommandsExecutor {
       );
 
       if (
-        error instanceof CommandParsingError
-        || error instanceof CommandNotSupportedError
-        || error.name === 'ReplyError'
+        error instanceof CommandParsingError ||
+        error instanceof CommandNotSupportedError ||
+        error.name === 'ReplyError'
       ) {
         return [errorResult];
       }
 
-      if (error instanceof WrongDatabaseTypeError || error instanceof ClusterNodeNotFoundError) {
+      if (
+        error instanceof WrongDatabaseTypeError ||
+        error instanceof ClusterNodeNotFoundError
+      ) {
         throw new BadRequestException(error.message);
       }
 

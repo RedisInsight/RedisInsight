@@ -24,9 +24,9 @@ import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 import styles from './styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCloud>[];
-  onView: () => void;
-  onBack: () => void;
+  columns: EuiBasicTableColumn<InstanceRedisCloud>[]
+  onView: () => void
+  onBack: () => void
 }
 
 const loadingMsg = 'loading...'
@@ -46,11 +46,11 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
   }
 
   const countSuccessAdded = instances.filter(
-    ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Success
+    ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Success,
   )?.length
 
   const countFailAdded = instances.filter(
-    ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Fail
+    ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Fail,
   )?.length
 
   const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,11 +58,11 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
 
     const itemsTemp = instances.filter(
       (item: InstanceRedisCloud) =>
-        item.name?.toLowerCase().indexOf(value) !== -1
-        || item.publicEndpoint?.toLowerCase().indexOf(value) !== -1
-        || item.subscriptionId?.toString()?.indexOf(value) !== -1
-        || item.subscriptionName?.toLowerCase().indexOf(value) !== -1
-        || item.databaseId?.toString()?.indexOf(value) !== -1
+        item.name?.toLowerCase().indexOf(value) !== -1 ||
+        item.publicEndpoint?.toLowerCase().indexOf(value) !== -1 ||
+        item.subscriptionId?.toString()?.indexOf(value) !== -1 ||
+        item.subscriptionName?.toLowerCase().indexOf(value) !== -1 ||
+        item.databaseId?.toString()?.indexOf(value) !== -1,
     )
 
     if (!itemsTemp.length) {
@@ -76,22 +76,12 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
-          Successfully added
-          {' '}
-          {countSuccessAdded}
-          {' '}
-          database(s)
+          Successfully added {countSuccessAdded} database(s)
           {countFailAdded ? '. ' : '.'}
         </span>
       ) : null}
       {countFailAdded ? (
-        <span>
-          Failed to add
-          {' '}
-          {countFailAdded}
-          {' '}
-          database(s).
-        </span>
+        <span>Failed to add {countFailAdded} database(s).</span>
       ) : null}
     </EuiText>
   )
@@ -100,15 +90,11 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
         <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>
-            Redis Enterprise Databases Added
-          </h1>
+          <h1>Redis Enterprise Databases Added</h1>
         </EuiTitle>
         <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
           <EuiFlexItem>
-            <MessageBar
-              opened={!!countSuccessAdded || !!countFailAdded}
-            >
+            <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>
               <SummaryText />
             </MessageBar>
           </EuiFlexItem>

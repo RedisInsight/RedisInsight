@@ -1,57 +1,53 @@
 export const MOCKED_REDIS_COMMANDS = {
   'FT.SEARCH': {
-    summary: 'Searches the index with a textual query, returning either documents or just ids',
+    summary:
+      'Searches the index with a textual query, returning either documents or just ids',
     complexity: 'O(N)',
-    history: [
-      [
-        '2.0.0',
-        'Deprecated `WITHPAYLOADS` and `PAYLOAD` arguments'
-      ]
-    ],
+    history: [['2.0.0', 'Deprecated `WITHPAYLOADS` and `PAYLOAD` arguments']],
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'query',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'nocontent',
         type: 'pure-token',
         token: 'NOCONTENT',
-        optional: true
+        optional: true,
       },
       {
         name: 'verbatim',
         type: 'pure-token',
         token: 'VERBATIM',
-        optional: true
+        optional: true,
       },
       {
         name: 'nostopwords',
         type: 'pure-token',
         token: 'NOSTOPWORDS',
-        optional: true
+        optional: true,
       },
       {
         name: 'withscores',
         type: 'pure-token',
         token: 'WITHSCORES',
-        optional: true
+        optional: true,
       },
       {
         name: 'withpayloads',
         type: 'pure-token',
         token: 'WITHPAYLOADS',
-        optional: true
+        optional: true,
       },
       {
         name: 'withsortkeys',
         type: 'pure-token',
         token: 'WITHSORTKEYS',
-        optional: true
+        optional: true,
       },
       {
         name: 'filter',
@@ -62,17 +58,17 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'numeric_field',
             type: 'string',
-            token: 'FILTER'
+            token: 'FILTER',
           },
           {
             name: 'min',
-            type: 'double'
+            type: 'double',
           },
           {
             name: 'max',
-            type: 'double'
-          }
-        ]
+            type: 'double',
+          },
+        ],
       },
       {
         name: 'geo_filter',
@@ -83,19 +79,19 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'geo_field',
             type: 'string',
-            token: 'GEOFILTER'
+            token: 'GEOFILTER',
           },
           {
             name: 'lon',
-            type: 'double'
+            type: 'double',
           },
           {
             name: 'lat',
-            type: 'double'
+            type: 'double',
           },
           {
             name: 'radius',
-            type: 'double'
+            type: 'double',
           },
           {
             name: 'radius_type',
@@ -104,26 +100,26 @@ export const MOCKED_REDIS_COMMANDS = {
               {
                 name: 'm',
                 type: 'pure-token',
-                token: 'm'
+                token: 'm',
               },
               {
                 name: 'km',
                 type: 'pure-token',
-                token: 'km'
+                token: 'km',
               },
               {
                 name: 'mi',
                 type: 'pure-token',
-                token: 'mi'
+                token: 'mi',
               },
               {
                 name: 'ft',
                 type: 'pure-token',
-                token: 'ft'
-              }
-            ]
-          }
-        ]
+                token: 'ft',
+              },
+            ],
+          },
+        ],
       },
       {
         name: 'in_keys',
@@ -133,14 +129,14 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'count',
             type: 'string',
-            token: 'INKEYS'
+            token: 'INKEYS',
           },
           {
             name: 'key',
             type: 'string',
-            multiple: true
-          }
-        ]
+            multiple: true,
+          },
+        ],
       },
       {
         name: 'in_fields',
@@ -150,14 +146,14 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'count',
             type: 'string',
-            token: 'INFIELDS'
+            token: 'INFIELDS',
           },
           {
             name: 'field',
             type: 'string',
-            multiple: true
-          }
-        ]
+            multiple: true,
+          },
+        ],
       },
       {
         name: 'return',
@@ -167,7 +163,7 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'count',
             type: 'string',
-            token: 'RETURN'
+            token: 'RETURN',
           },
           {
             name: 'identifiers',
@@ -176,17 +172,17 @@ export const MOCKED_REDIS_COMMANDS = {
             arguments: [
               {
                 name: 'identifier',
-                type: 'string'
+                type: 'string',
               },
               {
                 name: 'property',
                 type: 'string',
                 token: 'AS',
-                optional: true
-              }
-            ]
-          }
-        ]
+                optional: true,
+              },
+            ],
+          },
+        ],
       },
       {
         name: 'summarize',
@@ -196,7 +192,7 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'summarize',
             type: 'pure-token',
-            token: 'SUMMARIZE'
+            token: 'SUMMARIZE',
           },
           {
             name: 'fields',
@@ -206,34 +202,34 @@ export const MOCKED_REDIS_COMMANDS = {
               {
                 name: 'count',
                 type: 'string',
-                token: 'FIELDS'
+                token: 'FIELDS',
               },
               {
                 name: 'field',
                 type: 'string',
-                multiple: true
-              }
-            ]
+                multiple: true,
+              },
+            ],
           },
           {
             name: 'num',
             type: 'integer',
             token: 'FRAGS',
-            optional: true
+            optional: true,
           },
           {
             name: 'fragsize',
             type: 'integer',
             token: 'LEN',
-            optional: true
+            optional: true,
           },
           {
             name: 'separator',
             type: 'string',
             token: 'SEPARATOR',
-            optional: true
-          }
-        ]
+            optional: true,
+          },
+        ],
       },
       {
         name: 'highlight',
@@ -243,7 +239,7 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'highlight',
             type: 'pure-token',
-            token: 'HIGHLIGHT'
+            token: 'HIGHLIGHT',
           },
           {
             name: 'fields',
@@ -253,14 +249,14 @@ export const MOCKED_REDIS_COMMANDS = {
               {
                 name: 'count',
                 type: 'string',
-                token: 'FIELDS'
+                token: 'FIELDS',
               },
               {
                 name: 'field',
                 type: 'string',
-                multiple: true
-              }
-            ]
+                multiple: true,
+              },
+            ],
           },
           {
             name: 'tags',
@@ -270,67 +266,67 @@ export const MOCKED_REDIS_COMMANDS = {
               {
                 name: 'tags',
                 type: 'pure-token',
-                token: 'TAGS'
+                token: 'TAGS',
               },
               {
                 name: 'open',
-                type: 'string'
+                type: 'string',
               },
               {
                 name: 'close',
-                type: 'string'
-              }
-            ]
-          }
-        ]
+                type: 'string',
+              },
+            ],
+          },
+        ],
       },
       {
         name: 'slop',
         type: 'integer',
         optional: true,
-        token: 'SLOP'
+        token: 'SLOP',
       },
       {
         name: 'timeout',
         type: 'integer',
         optional: true,
-        token: 'TIMEOUT'
+        token: 'TIMEOUT',
       },
       {
         name: 'inorder',
         type: 'pure-token',
         token: 'INORDER',
-        optional: true
+        optional: true,
       },
       {
         name: 'language',
         type: 'string',
         optional: true,
-        token: 'LANGUAGE'
+        token: 'LANGUAGE',
       },
       {
         name: 'expander',
         type: 'string',
         optional: true,
-        token: 'EXPANDER'
+        token: 'EXPANDER',
       },
       {
         name: 'scorer',
         type: 'string',
         optional: true,
-        token: 'SCORER'
+        token: 'SCORER',
       },
       {
         name: 'explainscore',
         type: 'pure-token',
         token: 'EXPLAINSCORE',
-        optional: true
+        optional: true,
       },
       {
         name: 'payload',
         type: 'string',
         optional: true,
-        token: 'PAYLOAD'
+        token: 'PAYLOAD',
       },
       {
         name: 'sortby',
@@ -340,7 +336,7 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'sortby',
             type: 'string',
-            token: 'SORTBY'
+            token: 'SORTBY',
           },
           {
             name: 'order',
@@ -350,16 +346,16 @@ export const MOCKED_REDIS_COMMANDS = {
               {
                 name: 'asc',
                 type: 'pure-token',
-                token: 'ASC'
+                token: 'ASC',
               },
               {
                 name: 'desc',
                 type: 'pure-token',
-                token: 'DESC'
-              }
-            ]
-          }
-        ]
+                token: 'DESC',
+              },
+            ],
+          },
+        ],
       },
       {
         name: 'limit',
@@ -369,17 +365,17 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'limit',
             type: 'pure-token',
-            token: 'LIMIT'
+            token: 'LIMIT',
           },
           {
             name: 'offset',
-            type: 'integer'
+            type: 'integer',
           },
           {
             name: 'num',
-            type: 'integer'
-          }
-        ]
+            type: 'integer',
+          },
+        ],
       },
       {
         name: 'params',
@@ -389,11 +385,11 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'params',
             type: 'pure-token',
-            token: 'PARAMS'
+            token: 'PARAMS',
           },
           {
             name: 'nargs',
-            type: 'integer'
+            type: 'integer',
           },
           {
             name: 'values',
@@ -402,44 +398,45 @@ export const MOCKED_REDIS_COMMANDS = {
             arguments: [
               {
                 name: 'name',
-                type: 'string'
+                type: 'string',
               },
               {
                 name: 'value',
-                type: 'string'
-              }
-            ]
-          }
-        ]
+                type: 'string',
+              },
+            ],
+          },
+        ],
       },
       {
         name: 'dialect',
         type: 'integer',
         optional: true,
         token: 'DIALECT',
-        since: '2.4.3'
-      }
+        since: '2.4.3',
+      },
     ],
     since: '1.0.0',
-    group: 'search'
+    group: 'search',
   },
   'FT.AGGREGATE': {
-    summary: 'Run a search query on an index and perform aggregate transformations on the results',
+    summary:
+      'Run a search query on an index and perform aggregate transformations on the results',
     complexity: 'O(1)',
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'query',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'verbatim',
         type: 'pure-token',
         token: 'VERBATIM',
-        optional: true
+        optional: true,
       },
       {
         name: 'load',
@@ -449,26 +446,26 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'count',
             type: 'string',
-            token: 'LOAD'
+            token: 'LOAD',
           },
           {
             name: 'field',
             type: 'string',
-            multiple: true
-          }
-        ]
+            multiple: true,
+          },
+        ],
       },
       {
         name: 'timeout',
         type: 'integer',
         optional: true,
-        token: 'TIMEOUT'
+        token: 'TIMEOUT',
       },
       {
         name: 'loadall',
         type: 'pure-token',
         token: 'LOAD *',
-        optional: true
+        optional: true,
       },
       {
         name: 'groupby',
@@ -479,12 +476,12 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'nargs',
             type: 'integer',
-            token: 'GROUPBY'
+            token: 'GROUPBY',
           },
           {
             name: 'property',
             type: 'string',
-            multiple: true
+            multiple: true,
           },
           {
             name: 'reduce',
@@ -495,26 +492,26 @@ export const MOCKED_REDIS_COMMANDS = {
               {
                 name: 'function',
                 type: 'string',
-                token: 'REDUCE'
+                token: 'REDUCE',
               },
               {
                 name: 'nargs',
-                type: 'integer'
+                type: 'integer',
               },
               {
                 name: 'arg',
                 type: 'string',
-                multiple: true
+                multiple: true,
               },
               {
                 name: 'name',
                 type: 'string',
                 token: 'AS',
-                optional: true
-              }
-            ]
-          }
-        ]
+                optional: true,
+              },
+            ],
+          },
+        ],
       },
       {
         name: 'sortby',
@@ -524,7 +521,7 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'nargs',
             type: 'integer',
-            token: 'SORTBY'
+            token: 'SORTBY',
           },
           {
             name: 'fields',
@@ -534,7 +531,7 @@ export const MOCKED_REDIS_COMMANDS = {
             arguments: [
               {
                 name: 'property',
-                type: 'string'
+                type: 'string',
               },
               {
                 name: 'order',
@@ -543,24 +540,24 @@ export const MOCKED_REDIS_COMMANDS = {
                   {
                     name: 'asc',
                     type: 'pure-token',
-                    token: 'ASC'
+                    token: 'ASC',
                   },
                   {
                     name: 'desc',
                     type: 'pure-token',
-                    token: 'DESC'
-                  }
-                ]
-              }
-            ]
+                    token: 'DESC',
+                  },
+                ],
+              },
+            ],
           },
           {
             name: 'num',
             type: 'integer',
             token: 'MAX',
-            optional: true
-          }
-        ]
+            optional: true,
+          },
+        ],
       },
       {
         name: 'apply',
@@ -571,14 +568,14 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'expression',
             type: 'string',
-            token: 'APPLY'
+            token: 'APPLY',
           },
           {
             name: 'name',
             type: 'string',
-            token: 'AS'
-          }
-        ]
+            token: 'AS',
+          },
+        ],
       },
       {
         name: 'limit',
@@ -588,23 +585,23 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'limit',
             type: 'pure-token',
-            token: 'LIMIT'
+            token: 'LIMIT',
           },
           {
             name: 'offset',
-            type: 'integer'
+            type: 'integer',
           },
           {
             name: 'num',
-            type: 'integer'
-          }
-        ]
+            type: 'integer',
+          },
+        ],
       },
       {
         name: 'filter',
         type: 'string',
         optional: true,
-        token: 'FILTER'
+        token: 'FILTER',
       },
       {
         name: 'cursor',
@@ -614,21 +611,21 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'withcursor',
             type: 'pure-token',
-            token: 'WITHCURSOR'
+            token: 'WITHCURSOR',
           },
           {
             name: 'read_size',
             type: 'integer',
             optional: true,
-            token: 'COUNT'
+            token: 'COUNT',
           },
           {
             name: 'idle_time',
             type: 'integer',
             optional: true,
-            token: 'MAXIDLE'
-          }
-        ]
+            token: 'MAXIDLE',
+          },
+        ],
       },
       {
         name: 'params',
@@ -638,11 +635,11 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'params',
             type: 'pure-token',
-            token: 'PARAMS'
+            token: 'PARAMS',
           },
           {
             name: 'nargs',
-            type: 'integer'
+            type: 'integer',
           },
           {
             name: 'values',
@@ -651,34 +648,35 @@ export const MOCKED_REDIS_COMMANDS = {
             arguments: [
               {
                 name: 'name',
-                type: 'string'
+                type: 'string',
               },
               {
                 name: 'value',
-                type: 'string'
-              }
-            ]
-          }
-        ]
+                type: 'string',
+              },
+            ],
+          },
+        ],
       },
       {
         name: 'dialect',
         type: 'integer',
         optional: true,
         token: 'DIALECT',
-        since: '2.4.3'
-      }
+        since: '2.4.3',
+      },
     ],
     since: '1.1.0',
-    group: 'search'
+    group: 'search',
   },
   'FT.PROFILE': {
-    summary: 'Performs a `FT.SEARCH` or `FT.AGGREGATE` command and collects performance information',
+    summary:
+      'Performs a `FT.SEARCH` or `FT.AGGREGATE` command and collects performance information',
     complexity: 'O(N)',
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'querytype',
@@ -687,34 +685,34 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'search',
             type: 'pure-token',
-            token: 'SEARCH'
+            token: 'SEARCH',
           },
           {
             name: 'aggregate',
             type: 'pure-token',
-            token: 'AGGREGATE'
-          }
-        ]
+            token: 'AGGREGATE',
+          },
+        ],
       },
       {
         name: 'limited',
         type: 'pure-token',
         token: 'LIMITED',
-        optional: true
+        optional: true,
       },
       {
         name: 'queryword',
         type: 'pure-token',
-        token: 'QUERY'
+        token: 'QUERY',
       },
       {
         name: 'query',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '2.2.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.ALIASADD': {
     summary: 'Adds an alias to the index',
@@ -722,16 +720,16 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'alias',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'index',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.ALIASDEL': {
     summary: 'Deletes an alias from the index',
@@ -739,12 +737,12 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'alias',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.ALIASUPDATE': {
     summary: 'Adds or updates an alias to the index',
@@ -752,16 +750,16 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'alias',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'index',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.ALTER': {
     summary: 'Adds a new field to the index',
@@ -769,36 +767,36 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'skipinitialscan',
         type: 'pure-token',
         token: 'SKIPINITIALSCAN',
-        optional: true
+        optional: true,
       },
       {
         name: 'schema',
         type: 'pure-token',
-        token: 'SCHEMA'
+        token: 'SCHEMA',
       },
       {
         name: 'add',
         type: 'pure-token',
-        token: 'ADD'
+        token: 'ADD',
       },
       {
         name: 'field',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'options',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.CONFIG GET': {
     summary: 'Retrieves runtime configuration options',
@@ -806,12 +804,12 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'option',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.CONFIG HELP': {
     summary: 'Help description of runtime configuration options',
@@ -819,12 +817,12 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'option',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.CONFIG SET': {
     summary: 'Sets runtime configuration options',
@@ -832,34 +830,32 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'option',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'value',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.CREATE': {
     summary: 'Creates an index with the given spec',
-    complexity: 'O(K) at creation where K is the number of fields, O(N) if scanning the keyspace is triggered, where N is the number of keys in the keyspace',
+    complexity:
+      'O(K) at creation where K is the number of fields, O(N) if scanning the keyspace is triggered, where N is the number of keys in the keyspace',
     history: [
       [
         '2.0.0',
-        'Added `PAYLOAD_FIELD` argument for backward support of `FT.SEARCH` deprecated `WITHPAYLOADS` argument'
+        'Added `PAYLOAD_FIELD` argument for backward support of `FT.SEARCH` deprecated `WITHPAYLOADS` argument',
       ],
-      [
-        '2.0.0',
-        'Deprecated `PAYLOAD_FIELD` argument'
-      ]
+      ['2.0.0', 'Deprecated `PAYLOAD_FIELD` argument'],
     ],
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'data_type',
@@ -869,15 +865,15 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'hash',
             type: 'pure-token',
-            token: 'HASH'
+            token: 'HASH',
           },
           {
             name: 'json',
             type: 'pure-token',
-            token: 'JSON'
-          }
+            token: 'JSON',
+          },
         ],
-        optional: true
+        optional: true,
       },
       {
         name: 'prefix',
@@ -887,86 +883,86 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'count',
             type: 'integer',
-            token: 'PREFIX'
+            token: 'PREFIX',
           },
           {
             name: 'prefix',
             type: 'string',
-            multiple: true
-          }
-        ]
+            multiple: true,
+          },
+        ],
       },
       {
         name: 'filter',
         type: 'string',
         optional: true,
-        token: 'FILTER'
+        token: 'FILTER',
       },
       {
         name: 'default_lang',
         type: 'string',
         token: 'LANGUAGE',
-        optional: true
+        optional: true,
       },
       {
         name: 'lang_attribute',
         type: 'string',
         token: 'LANGUAGE_FIELD',
-        optional: true
+        optional: true,
       },
       {
         name: 'default_score',
         type: 'double',
         token: 'SCORE',
-        optional: true
+        optional: true,
       },
       {
         name: 'score_attribute',
         type: 'string',
         token: 'SCORE_FIELD',
-        optional: true
+        optional: true,
       },
       {
         name: 'payload_attribute',
         type: 'string',
         token: 'PAYLOAD_FIELD',
-        optional: true
+        optional: true,
       },
       {
         name: 'maxtextfields',
         type: 'pure-token',
         token: 'MAXTEXTFIELDS',
-        optional: true
+        optional: true,
       },
       {
         name: 'seconds',
         type: 'double',
         token: 'TEMPORARY',
-        optional: true
+        optional: true,
       },
       {
         name: 'nooffsets',
         type: 'pure-token',
         token: 'NOOFFSETS',
-        optional: true
+        optional: true,
       },
       {
         name: 'nohl',
         type: 'pure-token',
         token: 'NOHL',
-        optional: true
+        optional: true,
       },
       {
         name: 'nofields',
         type: 'pure-token',
         token: 'NOFIELDS',
-        optional: true
+        optional: true,
       },
       {
         name: 'nofreqs',
         type: 'pure-token',
         token: 'NOFREQS',
-        optional: true
+        optional: true,
       },
       {
         name: 'stopwords',
@@ -976,26 +972,26 @@ export const MOCKED_REDIS_COMMANDS = {
         arguments: [
           {
             name: 'count',
-            type: 'integer'
+            type: 'integer',
           },
           {
             name: 'stopword',
             type: 'string',
             multiple: true,
-            optional: true
-          }
-        ]
+            optional: true,
+          },
+        ],
       },
       {
         name: 'skipinitialscan',
         type: 'pure-token',
         token: 'SKIPINITIALSCAN',
-        optional: true
+        optional: true,
       },
       {
         name: 'schema',
         type: 'pure-token',
-        token: 'SCHEMA'
+        token: 'SCHEMA',
       },
       {
         name: 'field',
@@ -1004,13 +1000,13 @@ export const MOCKED_REDIS_COMMANDS = {
         arguments: [
           {
             name: 'field_name',
-            type: 'string'
+            type: 'string',
           },
           {
             name: 'alias',
             type: 'string',
             token: 'AS',
-            optional: true
+            optional: true,
           },
           {
             name: 'field_type',
@@ -1019,47 +1015,47 @@ export const MOCKED_REDIS_COMMANDS = {
               {
                 name: 'text',
                 type: 'pure-token',
-                token: 'TEXT'
+                token: 'TEXT',
               },
               {
                 name: 'tag',
                 type: 'pure-token',
-                token: 'TAG'
+                token: 'TAG',
               },
               {
                 name: 'numeric',
                 type: 'pure-token',
-                token: 'NUMERIC'
+                token: 'NUMERIC',
               },
               {
                 name: 'geo',
                 type: 'pure-token',
-                token: 'GEO'
+                token: 'GEO',
               },
               {
                 name: 'vector',
                 type: 'pure-token',
-                token: 'VECTOR'
-              }
-            ]
+                token: 'VECTOR',
+              },
+            ],
           },
           {
             name: 'withsuffixtrie',
             type: 'pure-token',
             token: 'WITHSUFFIXTRIE',
-            optional: true
+            optional: true,
           },
           {
             name: 'INDEXEMPTY',
             type: 'pure-token',
             token: 'INDEXEMPTY',
-            optional: true
+            optional: true,
           },
           {
             name: 'indexmissing',
             type: 'pure-token',
             token: 'INDEXMISSING',
-            optional: true
+            optional: true,
           },
           {
             name: 'sortable',
@@ -1069,28 +1065,28 @@ export const MOCKED_REDIS_COMMANDS = {
               {
                 name: 'sortable',
                 type: 'pure-token',
-                token: 'SORTABLE'
+                token: 'SORTABLE',
               },
               {
                 name: 'UNF',
                 type: 'pure-token',
                 token: 'UNF',
-                optional: true
-              }
-            ]
+                optional: true,
+              },
+            ],
           },
           {
             name: 'noindex',
             type: 'pure-token',
             token: 'NOINDEX',
-            optional: true
-          }
-        ]
-      }
+            optional: true,
+          },
+        ],
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.CURSOR DEL': {
     summary: 'Deletes a cursor',
@@ -1098,16 +1094,16 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'cursor_id',
-        type: 'integer'
-      }
+        type: 'integer',
+      },
     ],
     since: '1.1.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.CURSOR READ': {
     summary: 'Reads from a cursor',
@@ -1115,22 +1111,22 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'cursor_id',
-        type: 'integer'
+        type: 'integer',
       },
       {
         name: 'read size',
         type: 'integer',
         optional: true,
-        token: 'COUNT'
-      }
+        token: 'COUNT',
+      },
     ],
     since: '1.1.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.DICTADD': {
     summary: 'Adds terms to a dictionary',
@@ -1138,17 +1134,17 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'dict',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'term',
         type: 'string',
-        multiple: true
-      }
+        multiple: true,
+      },
     ],
     since: '1.4.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.DICTDEL': {
     summary: 'Deletes terms from a dictionary',
@@ -1156,17 +1152,17 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'dict',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'term',
         type: 'string',
-        multiple: true
-      }
+        multiple: true,
+      },
     ],
     since: '1.4.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.DICTDUMP': {
     summary: 'Dumps all terms in the given dictionary',
@@ -1174,20 +1170,21 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'dict',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.4.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.DROPINDEX': {
     summary: 'Deletes the index',
-    complexity: 'O(1) or O(N) if documents are deleted, where N is the number of keys in the keyspace',
+    complexity:
+      'O(1) or O(N) if documents are deleted, where N is the number of keys in the keyspace',
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'delete docs',
@@ -1196,15 +1193,15 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'delete docs',
             type: 'pure-token',
-            token: 'DD'
-          }
+            token: 'DD',
+          },
         ],
-        optional: true
-      }
+        optional: true,
+      },
     ],
     since: '2.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.EXPLAIN': {
     summary: 'Returns the execution plan for a complex query',
@@ -1212,23 +1209,23 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'query',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'dialect',
         type: 'integer',
         optional: true,
         token: 'DIALECT',
-        since: '2.4.3'
-      }
+        since: '2.4.3',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.EXPLAINCLI': {
     summary: 'Returns the execution plan for a complex query',
@@ -1236,23 +1233,23 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'query',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'dialect',
         type: 'integer',
         optional: true,
         token: 'DIALECT',
-        since: '2.4.3'
-      }
+        since: '2.4.3',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.INFO': {
     summary: 'Returns information and statistics on the index',
@@ -1260,30 +1257,31 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'index',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.SPELLCHECK': {
-    summary: 'Performs spelling correction on a query, returning suggestions for misspelled terms',
+    summary:
+      'Performs spelling correction on a query, returning suggestions for misspelled terms',
     complexity: 'O(1)',
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'query',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'distance',
         token: 'DISTANCE',
         type: 'integer',
-        optional: true
+        optional: true,
       },
       {
         name: 'terms',
@@ -1298,60 +1296,56 @@ export const MOCKED_REDIS_COMMANDS = {
               {
                 name: 'include',
                 type: 'pure-token',
-                token: 'INCLUDE'
+                token: 'INCLUDE',
               },
               {
                 name: 'exclude',
                 type: 'pure-token',
-                token: 'EXCLUDE'
-              }
-            ]
+                token: 'EXCLUDE',
+              },
+            ],
           },
           {
             name: 'dictionary',
-            type: 'string'
+            type: 'string',
           },
           {
             name: 'terms',
             type: 'string',
             multiple: true,
-            optional: true
-          }
-        ]
+            optional: true,
+          },
+        ],
       },
       {
         name: 'dialect',
         type: 'integer',
         optional: true,
         token: 'DIALECT',
-        since: '2.4.3'
-      }
+        since: '2.4.3',
+      },
     ],
     since: '1.4.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.SUGADD': {
-    summary: 'Adds a suggestion string to an auto-complete suggestion dictionary',
+    summary:
+      'Adds a suggestion string to an auto-complete suggestion dictionary',
     complexity: 'O(1)',
-    history: [
-      [
-        '2.0.0',
-        'Deprecated `PAYLOAD` argument'
-      ]
-    ],
+    history: [['2.0.0', 'Deprecated `PAYLOAD` argument']],
     arguments: [
       {
         name: 'key',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'string',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'score',
-        type: 'double'
+        type: 'double',
       },
       {
         name: 'increment score',
@@ -1360,21 +1354,21 @@ export const MOCKED_REDIS_COMMANDS = {
           {
             name: 'incr',
             type: 'pure-token',
-            token: 'INCR'
-          }
+            token: 'INCR',
+          },
         ],
-        optional: true
+        optional: true,
       },
       {
         name: 'payload',
         token: 'PAYLOAD',
         type: 'string',
-        optional: true
-      }
+        optional: true,
+      },
     ],
     since: '1.0.0',
     group: 'suggestion',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.SUGDEL': {
     summary: 'Deletes a string from a suggestion index',
@@ -1382,63 +1376,58 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'key',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'string',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'suggestion',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.SUGGET': {
     summary: 'Gets completion suggestions for a prefix',
     complexity: 'O(1)',
-    history: [
-      [
-        '2.0.0',
-        'Deprecated `WITHPAYLOADS` argument'
-      ]
-    ],
+    history: [['2.0.0', 'Deprecated `WITHPAYLOADS` argument']],
     arguments: [
       {
         name: 'key',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'prefix',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'fuzzy',
         type: 'pure-token',
         token: 'FUZZY',
-        optional: true
+        optional: true,
       },
       {
         name: 'withscores',
         type: 'pure-token',
         token: 'WITHSCORES',
-        optional: true
+        optional: true,
       },
       {
         name: 'withpayloads',
         type: 'pure-token',
         token: 'WITHPAYLOADS',
-        optional: true
+        optional: true,
       },
       {
         name: 'max',
         token: 'MAX',
         type: 'integer',
-        optional: true
-      }
+        optional: true,
+      },
     ],
     since: '1.0.0',
     group: 'suggestion',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.SUGLEN': {
     summary: 'Gets the size of an auto-complete suggestion dictionary',
@@ -1446,12 +1435,12 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'key',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'suggestion',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.SYNDUMP': {
     summary: 'Dumps the contents of a synonym group',
@@ -1459,12 +1448,12 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'index',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.2.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.SYNUPDATE': {
     summary: 'Creates or updates a synonym group with additional terms',
@@ -1472,27 +1461,27 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'synonym_group_id',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'skipinitialscan',
         type: 'pure-token',
         token: 'SKIPINITIALSCAN',
-        optional: true
+        optional: true,
       },
       {
         name: 'term',
         type: 'string',
-        multiple: true
-      }
+        multiple: true,
+      },
     ],
     since: '1.2.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT.TAGVALS': {
     summary: 'Returns the distinct tags indexed in a Tag field',
@@ -1500,22 +1489,22 @@ export const MOCKED_REDIS_COMMANDS = {
     arguments: [
       {
         name: 'index',
-        type: 'string'
+        type: 'string',
       },
       {
         name: 'field_name',
-        type: 'string'
-      }
+        type: 'string',
+      },
     ],
     since: '1.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
   'FT._LIST': {
     summary: 'Returns a list of all existing indexes',
     complexity: 'O(1)',
     since: '2.0.0',
     group: 'search',
-    provider: 'redisearch'
+    provider: 'redisearch',
   },
 }

@@ -1,6 +1,12 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
@@ -28,7 +34,7 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
       flag: false,
-    }
+    },
   }),
 }))
 
@@ -40,9 +46,15 @@ jest.mock('uiSrc/telemetry', () => ({
 const childrenMock = (
   onClick: (
     e: React.MouseEvent,
-    { source, action }: { source: OAuthSocialSource, action?: Maybe<OAuthSocialAction> }
+    {
+      source,
+      action,
+    }: { source: OAuthSocialSource; action?: Maybe<OAuthSocialAction> },
   ) => void,
-  { source, action }: { source: OAuthSocialSource, action?: Maybe<OAuthSocialAction> },
+  {
+    source,
+    action,
+  }: { source: OAuthSocialSource; action?: Maybe<OAuthSocialAction> },
 ) => (
   <div
     onClick={(e) => onClick(e, { source, action })}
@@ -57,28 +69,38 @@ const childrenMock = (
 )
 
 afterEach(() => {
-  (sendEventTelemetry as jest.Mock).mockRestore()
+  ;(sendEventTelemetry as jest.Mock).mockRestore()
 })
 
 describe('OAuthSsoHandlerDialog', () => {
   it('should render', () => {
-    expect(render(
-      <OAuthSsoHandlerDialog>
-        {(ssoCloudHandlerClick) =>
-          (childrenMock(ssoCloudHandlerClick, { source: OAuthSocialSource.BrowserContentMenu }))}
-      </OAuthSsoHandlerDialog>
-    )).toBeTruthy()
+    expect(
+      render(
+        <OAuthSsoHandlerDialog>
+          {(ssoCloudHandlerClick) =>
+            childrenMock(ssoCloudHandlerClick, {
+              source: OAuthSocialSource.BrowserContentMenu,
+            })
+          }
+        </OAuthSsoHandlerDialog>,
+      ),
+    ).toBeTruthy()
   })
 
   it(`setSocialDialogState should not called if ${FeatureFlags.cloudSso} is not enabled`, () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(
       <OAuthSsoHandlerDialog>
         {(ssoCloudHandlerClick) =>
-          (childrenMock(ssoCloudHandlerClick, { source: OAuthSocialSource.BrowserContentMenu }))}
-      </OAuthSsoHandlerDialog>
+          childrenMock(ssoCloudHandlerClick, {
+            source: OAuthSocialSource.BrowserContentMenu,
+          })
+        }
+      </OAuthSsoHandlerDialog>,
     )
 
     expect(sendEventTelemetry).not.toBeCalled()
@@ -86,20 +108,23 @@ describe('OAuthSsoHandlerDialog', () => {
   })
 
   it(`setSocialDialogState should called if ${FeatureFlags.cloudSso} is enabled`, () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockImplementation(() => (
-      { [FeatureFlags.cloudSso]: { flag: true } }
-    ))
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockImplementation(() => ({
+      [FeatureFlags.cloudSso]: { flag: true },
+    }))
 
     render(
       <OAuthSsoHandlerDialog>
-        {(ssoCloudHandlerClick) => (childrenMock(
-          ssoCloudHandlerClick,
-          { source: OAuthSocialSource.BrowserContentMenu, action: OAuthSocialAction.Create }
-        ))}
-      </OAuthSsoHandlerDialog>
+        {(ssoCloudHandlerClick) =>
+          childrenMock(ssoCloudHandlerClick, {
+            source: OAuthSocialSource.BrowserContentMenu,
+            action: OAuthSocialAction.Create,
+          })
+        }
+      </OAuthSsoHandlerDialog>,
     )
 
     fireEvent.click(screen.queryByTestId('link')!)
@@ -113,8 +138,8 @@ describe('OAuthSsoHandlerDialog', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_FREE_DATABASE_CLICKED,
       eventData: {
-        source: OAuthSocialSource.BrowserContentMenu
-      }
+        source: OAuthSocialSource.BrowserContentMenu,
+      },
     })
   })
 })

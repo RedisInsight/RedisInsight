@@ -32,7 +32,10 @@ export class LocalAgreementsRepository extends AgreementsRepository {
     return classToClass(Agreements, entity);
   }
 
-  async update(_: SessionMetadata, agreements: Agreements): Promise<Agreements> {
+  async update(
+    _: SessionMetadata,
+    agreements: Agreements,
+  ): Promise<Agreements> {
     const entity = classToClass(AgreementsEntity, agreements);
 
     await this.repository.save(entity);

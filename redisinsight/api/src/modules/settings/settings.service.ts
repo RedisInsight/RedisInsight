@@ -4,12 +4,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import {
-  difference,
-  isEmpty,
-  map,
-  cloneDeep,
-} from 'lodash';
+import { difference, isEmpty, map, cloneDeep } from 'lodash';
 import { readFile } from 'fs-extra';
 import { join } from 'path';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
@@ -25,7 +20,11 @@ import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IAgreementSpecFile } from 'src/modules/settings/models/agreements.interface';
 import { SessionMetadata } from 'src/common/models';
-import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from './dto/settings.dto';
+import {
+  GetAgreementsSpecResponse,
+  GetAppSettingsResponse,
+  UpdateSettingsDto,
+} from './dto/settings.dto';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
@@ -45,21 +44,34 @@ export class SettingsService {
   /**
    * Method to get settings
    */
-  public async getAppSettings(sessionMetadata: SessionMetadata): Promise<GetAppSettingsResponse> {
+  public async getAppSettings(
+    sessionMetadata: SessionMetadata,
+  ): Promise<GetAppSettingsResponse> {
     this.logger.debug('Getting application settings.', sessionMetadata);
     try {
-      const agreements = await this.agreementRepository.getOrCreate(sessionMetadata);
-      const settings = await this.settingsRepository.getOrCreate(sessionMetadata);
-      this.logger.debug('Succeed to get application settings.', sessionMetadata);
+      const agreements =
+        await this.agreementRepository.getOrCreate(sessionMetadata);
+      const settings =
+        await this.settingsRepository.getOrCreate(sessionMetadata);
+      this.logger.debug(
+        'Succeed to get application settings.',
+        sessionMetadata,
+      );
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,
-        agreements: agreements?.version ? {
-          ...agreements?.data,
-          version: agreements?.version,
-        } : null,
+        agreements: agreements?.version
+          ? {
+              ...agreements?.data,
+              version: agreements?.version,
+            }
+          : null,
       });
     } catch (error) {
-      this.logger.error('Failed to get application settings.', error, sessionMetadata);
+      this.logger.error(
+        'Failed to get application settings.',
+        error,
+        sessionMetadata,
+      );
       throw new InternalServerErrorException();
     }
   }
@@ -78,7 +90,8 @@ export class SettingsService {
     try {
       const oldAppSettings = await this.getAppSettings(sessionMetadata);
       if (!isEmpty(settings)) {
-        const model = await this.settingsRepository.getOrCreate(sessionMetadata);
+        const model =
+          await this.settingsRepository.getOrCreate(sessionMetadata);
         const toUpdate = {
           ...model,
           data: {
@@ -92,18 +105,29 @@ export class SettingsService {
       if (agreements) {
         await this.updateAgreements(sessionMetadata, agreements);
       }
-      this.logger.debug('Succeed to update application settings.', sessionMetadata);
+      this.logger.debug(
+        'Succeed to update application settings.',
+        sessionMetadata,
+      );
       const results = await this.getAppSettings(sessionMetadata);
-      this.analytics.sendSettingsUpdatedEvent(sessionMetadata, results, oldAppSettings);
+      this.analytics.sendSettingsUpdatedEvent(
+        sessionMetadata,
+        results,
+        oldAppSettings,
+      );
 
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
 
       return results;
     } catch (error) {
-      this.logger.error('Failed to update application settings.', error, sessionMetadata);
+      this.logger.error(
+        'Failed to update application settings.',
+        error,
+        sessionMetadata,
+      );
       if (
-        error instanceof AgreementIsNotDefinedException
-        || error instanceof BadRequestException
+        error instanceof AgreementIsNotDefinedException ||
+        error instanceof BadRequestException
       ) {
         throw error;
       }
@@ -117,15 +141,22 @@ export class SettingsService {
    * @param defaultOption
    * @private
    */
-  private async getAgreementsOption(checker: string, defaultOption: string): Promise<string> {
+  private async getAgreementsOption(
+    checker: string,
+    defaultOption: string,
+  ): Promise<string> {
     try {
       // Check if any encryption strategy is available (not KEYTAR only)
       // KEY has a precedence on KEYTAR strategy
       if (checker === 'KEYTAR') {
-        const isEncryptionAvailable = await this.keyEncryptionStrategy.isAvailable()
-          || await this.keytarEncryptionStrategy.isAvailable();
+        const isEncryptionAvailable =
+          (await this.keyEncryptionStrategy.isAvailable()) ||
+          (await this.keytarEncryptionStrategy.isAvailable());
 
-        if (!isEncryptionAvailable && SERVER_CONFIG.buildType === 'REDIS_STACK') {
+        if (
+          !isEncryptionAvailable &&
+          SERVER_CONFIG.buildType === 'REDIS_STACK'
+        ) {
           return 'stack_false';
         }
 
@@ -146,10 +177,9 @@ export class SettingsService {
   private async getAgreementsSpecFromFile(): Promise<any> {
     try {
       if (SERVER_CONFIG.agreementsPath) {
-        return JSON.parse(await readFile(join(
-          __dirname,
-          SERVER_CONFIG.agreementsPath,
-        ), 'utf8'));
+        return JSON.parse(
+          await readFile(join(__dirname, SERVER_CONFIG.agreementsPath), 'utf8'),
+        );
       }
     } catch (e) {
       // ignore error
@@ -162,14 +192,21 @@ export class SettingsService {
    * Process conditional agreements where needed and returns proper agreements spec
    */
   public async getAgreementsSpec(): Promise<GetAgreementsSpecResponse> {
-    const agreementsSpec = await this.getAgreementsSpecFromFile() || cloneDeep<IAgreementSpecFile>(AGREEMENTS_SPEC);
+    const agreementsSpec =
+      (await this.getAgreementsSpecFromFile()) ||
+      cloneDeep<IAgreementSpecFile>(AGREEMENTS_SPEC);
 
-    await Promise.all(map(agreementsSpec.agreements, async (agreement: any, name) => {
-      if (agreement.conditional) {
-        const option = await this.getAgreementsOption(agreement.checker, agreement.defaultOption);
-        agreementsSpec.agreements[name] = agreement.options[option];
-      }
-    }));
+    await Promise.all(
+      map(agreementsSpec.agreements, async (agreement: any, name) => {
+        if (agreement.conditional) {
+          const option = await this.getAgreementsOption(
+            agreement.checker,
+            agreement.defaultOption,
+          );
+          agreementsSpec.agreements[name] = agreement.options[option];
+        }
+      }),
+    );
 
     return agreementsSpec;
   }
@@ -179,7 +216,8 @@ export class SettingsService {
     dtoAgreements: Map<string, boolean> = new Map(),
   ): Promise<void> {
     this.logger.debug('Updating application agreements.', sessionMetadata);
-    const oldAgreements = await this.agreementRepository.getOrCreate(sessionMetadata);
+    const oldAgreements =
+      await this.agreementRepository.getOrCreate(sessionMetadata);
 
     const newAgreements = {
       ...oldAgreements,

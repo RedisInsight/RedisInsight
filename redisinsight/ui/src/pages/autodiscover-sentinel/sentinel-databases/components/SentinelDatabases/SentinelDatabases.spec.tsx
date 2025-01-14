@@ -44,8 +44,8 @@ describe('SentinelDatabases', () => {
           {...instance(mockedProps)}
           columns={columnsMock}
           masters={mastersMock}
-        />
-      )
+        />,
+      ),
     ).toBeTruthy()
   })
 
@@ -55,12 +55,12 @@ describe('SentinelDatabases', () => {
         {...instance(mockedProps)}
         columns={columnsMock}
         masters={[]}
-      />
+      />,
     )
     expect(
       screen.getAllByText(
-        'Your Redis Sentinel has no primary groups available.'
-      )
+        'Your Redis Sentinel has no primary groups available.',
+      ),
     ).toBeTruthy()
   })
 
@@ -70,7 +70,7 @@ describe('SentinelDatabases', () => {
         {...instance(mockedProps)}
         columns={columnsMock}
         masters={mastersMock}
-      />
+      />,
     )
     expect(screen.getByTestId(/search/i)).toBeTruthy()
   })
@@ -81,7 +81,7 @@ describe('SentinelDatabases', () => {
         {...instance(mockedProps)}
         columns={columnsMock}
         masters={mastersMock}
-      />
+      />,
     )
     const searchInput = screen.getByTestId(/search/i)
 
@@ -98,7 +98,7 @@ describe('SentinelDatabases', () => {
         {...instance(mockedProps)}
         columns={columnsMock}
         masters={mastersMock}
-      />
+      />,
     )
     const searchQuery = 'mymaster2'
     const searchInput = screen.getByTestId(/search/i)

@@ -1,7 +1,11 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { cleanup, clearStoreActions, mockedStore } from 'uiSrc/utils/test-utils'
-import { cliCommandError, processUnrepeatableNumber, processUnsupportedCommand } from 'uiSrc/utils/cliOutputActions'
+import {
+  cliCommandError,
+  processUnrepeatableNumber,
+  processUnsupportedCommand,
+} from 'uiSrc/utils/cliOutputActions'
 import { concatToOutput } from 'uiSrc/slices/cli/cli-output'
 import { cliParseTextResponseWithOffset } from 'uiSrc/utils'
 import { cliTexts } from 'uiSrc/components/messages/cli-output/cliOutput'
@@ -21,12 +25,14 @@ const unsupportedCommands: string[] = ['sync', 'subscription']
 
 jest.mock('uiSrc/slices/store', () => ({
   ...jest.requireActual('uiSrc/slices/store'),
-  store: mockedStore
+  store: mockedStore,
 }))
 
 jest.mock('uiSrc/slices/cli/cli-settings', () => ({
   ...jest.requireActual('uiSrc/slices/cli/cli-settings'),
-  cliUnsupportedCommandsSelector: jest.fn().mockReturnValue(unsupportedCommands)
+  cliUnsupportedCommandsSelector: jest
+    .fn()
+    .mockReturnValue(unsupportedCommands),
 }))
 
 describe('processUnsupportedCommand', () => {
@@ -36,12 +42,19 @@ describe('processUnsupportedCommand', () => {
 
     const expectedActions = [
       concatToOutput(
-        cliParseTextResponseWithOffset(cliTexts.CLI_UNSUPPORTED_COMMANDS(command, unsupportedCommands.join(', ')),
+        cliParseTextResponseWithOffset(
+          cliTexts.CLI_UNSUPPORTED_COMMANDS(
+            command,
+            unsupportedCommands.join(', '),
+          ),
           command,
-          CommandExecutionStatus.Fail)
-      )
+          CommandExecutionStatus.Fail,
+        ),
+      ),
     ]
-    expect(clearStoreActions(storeActions.getActions())).toEqual(clearStoreActions(expectedActions))
+    expect(clearStoreActions(storeActions.getActions())).toEqual(
+      clearStoreActions(expectedActions),
+    )
   })
 })
 
@@ -52,10 +65,16 @@ describe('processUnrepeatableNumber', () => {
 
     const expectedActions = [
       concatToOutput(
-        cliParseTextResponseWithOffset(cliTexts.REPEAT_COUNT_INVALID, command, CommandExecutionStatus.Fail)
-      )
+        cliParseTextResponseWithOffset(
+          cliTexts.REPEAT_COUNT_INVALID,
+          command,
+          CommandExecutionStatus.Fail,
+        ),
+      ),
     ]
-    expect(clearStoreActions(storeActions.getActions())).toEqual(clearStoreActions(expectedActions))
+    expect(clearStoreActions(storeActions.getActions())).toEqual(
+      clearStoreActions(expectedActions),
+    )
   })
 })
 
@@ -72,9 +91,17 @@ describe('cliCommandError', () => {
     cliCommandError(error as AxiosError, command)
 
     const expectedActions = [
-      concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail))
+      concatToOutput(
+        cliParseTextResponseWithOffset(
+          errorMessage,
+          command,
+          CommandExecutionStatus.Fail,
+        ),
+      ),
     ]
-    expect(clearStoreActions(storeActions.getActions())).toEqual(clearStoreActions(expectedActions))
+    expect(clearStoreActions(storeActions.getActions())).toEqual(
+      clearStoreActions(expectedActions),
+    )
   })
 
   it('should call proper actions with client uid', () => {
@@ -89,17 +116,23 @@ describe('cliCommandError', () => {
 
     store.getState = jest.fn().mockReturnValue({
       ...mockedStore.getState(),
-      cli: { settings: { cliClientUuid: '123' } }
+      cli: { settings: { cliClientUuid: '123' } },
     })
 
     cliCommandError(error as AxiosError, command)
 
     const expectedActions = [
       concatToOutput(
-        cliParseTextResponseWithOffset(cliTexts.CONNECTION_CLOSED, command, CommandExecutionStatus.Fail)
+        cliParseTextResponseWithOffset(
+          cliTexts.CONNECTION_CLOSED,
+          command,
+          CommandExecutionStatus.Fail,
+        ),
       ),
-      processCliClient()
+      processCliClient(),
     ]
-    expect(clearStoreActions(storeActions.getActions())).toEqual(clearStoreActions(expectedActions))
+    expect(clearStoreActions(storeActions.getActions())).toEqual(
+      clearStoreActions(expectedActions),
+    )
   })
 })

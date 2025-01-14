@@ -1,13 +1,17 @@
 import { AxiosError } from 'axios'
 import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import {
   refreshKeyInfo,
   refreshKeyInfoSuccess,
-  updateSelectedKeyRefreshTime
+  updateSelectedKeyRefreshTime,
 } from '../../browser/keys'
 import reducer, {
   initialState,
@@ -91,15 +95,15 @@ describe('string slice', () => {
       // Arrange
       const data = {
         keyName: 'zxc',
-        value: 'val'
+        value: 'val',
       }
       const state = {
         ...initialState,
         loading: false,
         data: {
           key: data.keyName,
-          value: data.value
-        }
+          value: data.value,
+        },
       }
 
       // Act
@@ -119,7 +123,7 @@ describe('string slice', () => {
       // Arrange
       const data = {
         keyName: '',
-        value: ''
+        value: '',
       }
 
       const state = {
@@ -127,8 +131,8 @@ describe('string slice', () => {
         loading: false,
         data: {
           key: data.keyName,
-          value: data.value
-        }
+          value: data.value,
+        },
       }
 
       // Act
@@ -290,7 +294,7 @@ describe('string slice', () => {
         loading: false,
         data: {
           ...initialState.data,
-          value: data
+          value: data,
         },
       }
 
@@ -316,7 +320,7 @@ describe('string slice', () => {
         loading: false,
         data: {
           ...initialState.data,
-          value: data
+          value: data,
         },
       }
 
@@ -362,7 +366,7 @@ describe('string slice', () => {
     it('should properly set the error', () => {
       // Arrange
       const state = {
-        ...initialState
+        ...initialState,
       }
 
       // Act
@@ -440,7 +444,7 @@ describe('string slice', () => {
         const expectedActions = [
           getString(),
           addErrorNotification(responsePayload as AxiosError),
-          getStringFailure(errorMessage)
+          getStringFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -459,10 +463,7 @@ describe('string slice', () => {
         await store.dispatch<any>(fetchDownloadStringValue(''))
 
         // Assert
-        const expectedActions = [
-          downloadString(),
-          downloadStringSuccess(),
-        ]
+        const expectedActions = [downloadString(), downloadStringSuccess()]
 
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -484,7 +485,7 @@ describe('string slice', () => {
         const expectedActions = [
           downloadString(),
           addErrorNotification(responsePayload as AxiosError),
-          downloadStringFailure(errorMessage)
+          downloadStringFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -496,7 +497,7 @@ describe('string slice', () => {
         // Arrange
         const data = {
           keyName: 'stringKey',
-          value: 'string value'
+          value: 'string value',
         }
         const responsePayload = { status: 200 }
 
@@ -532,14 +533,14 @@ describe('string slice', () => {
 
         // Act
         await store.dispatch<any>(
-          updateStringValueAction('', '', jest.fn(), jest.fn())
+          updateStringValueAction('', '', jest.fn(), jest.fn()),
         )
 
         // Assert
         const expectedActions = [
           updateValue(),
           addErrorNotification(responsePayload as AxiosError),
-          updateValueFailure(errorMessage)
+          updateValueFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

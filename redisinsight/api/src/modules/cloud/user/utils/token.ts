@@ -7,7 +7,9 @@ export const isValidToken = (token?: string) => {
     return false;
   }
 
-  const { exp } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+  const { exp } = JSON.parse(
+    Buffer.from(token.split('.')[1], 'base64').toString(),
+  );
 
   const expiresIn = exp * 1_000 - Date.now();
 

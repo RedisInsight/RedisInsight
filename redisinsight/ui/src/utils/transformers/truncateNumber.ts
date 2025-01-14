@@ -24,4 +24,4 @@ export const truncateNumberToRange = (number: number) => {
 }
 
 export const truncatePercentage = (value = 0, afterDotCount = 0) =>
-  (Number.isInteger(value) ? value : value.toFixed(afterDotCount))
+  Number.isInteger(value) ? value : value.toFixed(afterDotCount)

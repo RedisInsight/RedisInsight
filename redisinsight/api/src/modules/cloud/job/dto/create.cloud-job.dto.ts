@@ -1,5 +1,8 @@
 import {
-  ApiExtraModels, ApiProperty, ApiPropertyOptional, getSchemaPath,
+  ApiExtraModels,
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import {
   IsEnum,
@@ -13,13 +16,13 @@ import { cloudJobDataTransformer } from 'src/modules/cloud/job/transformers/clou
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobRunMode } from 'src/modules/cloud/job/models';
 import { CreateDatabaseCloudJobDataDto } from 'src/modules/cloud/job/dto/create-database.cloud-job.data.dto';
-import {
-  CreateSubscriptionAndDatabaseCloudJobDataDto,
-} from 'src/modules/cloud/job/dto/create-subscription-and-database.cloud-job.data.dto';
+import { CreateSubscriptionAndDatabaseCloudJobDataDto } from 'src/modules/cloud/job/dto/create-subscription-and-database.cloud-job.data.dto';
 import { ImportDatabaseCloudJobDataDto } from 'src/modules/cloud/job/dto/import-database.cloud-job.data.dto';
 
 @ApiExtraModels(
-  CreateDatabaseCloudJobDataDto, CreateSubscriptionAndDatabaseCloudJobDataDto, ImportDatabaseCloudJobDataDto,
+  CreateDatabaseCloudJobDataDto,
+  CreateSubscriptionAndDatabaseCloudJobDataDto,
+  ImportDatabaseCloudJobDataDto,
 )
 export class CreateCloudJobDto {
   @ApiProperty({
@@ -53,5 +56,8 @@ export class CreateCloudJobDto {
   @IsNotEmptyObject()
   @Type(cloudJobDataTransformer)
   @ValidateNested()
-  data?: CreateDatabaseCloudJobDataDto | CreateSubscriptionAndDatabaseCloudJobDataDto | ImportDatabaseCloudJobDataDto;
+  data?:
+    | CreateDatabaseCloudJobDataDto
+    | CreateSubscriptionAndDatabaseCloudJobDataDto
+    | ImportDatabaseCloudJobDataDto;
 }

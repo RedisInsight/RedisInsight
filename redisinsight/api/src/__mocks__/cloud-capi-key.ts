@@ -1,5 +1,9 @@
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
-import { CloudCapiKey, ICloudApiCapiAccessKey, ICloudApiCapiKey } from 'src/modules/cloud/capi-key/model';
+import {
+  CloudCapiKey,
+  ICloudApiCapiAccessKey,
+  ICloudApiCapiKey,
+} from 'src/modules/cloud/capi-key/model';
 import { CloudCapiKeyEntity } from 'src/modules/cloud/capi-key/entity/cloud-capi-key.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { mockServer } from 'src/__mocks__/server';

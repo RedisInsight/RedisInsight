@@ -1,19 +1,23 @@
 import { Server } from 'socket.io';
-import {
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import config, { Config } from 'src/utils/config';
 import { OnEvent } from '@nestjs/event-emitter';
-import { FeatureEvents, FeatureServerEvents } from 'src/modules/feature/constants';
+import {
+  FeatureEvents,
+  FeatureServerEvents,
+} from 'src/modules/feature/constants';
 
 const SOCKETS_CONFIG = config.get('sockets') as Config['sockets'];
 
 @WebSocketGateway({
   path: SOCKETS_CONFIG.path,
   cors: SOCKETS_CONFIG.cors.enabled
-    ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
-  serveClient: SOCKETS_CONFIG.serveClient
+    ? {
+        origin: SOCKETS_CONFIG.cors.origin,
+        credentials: SOCKETS_CONFIG.cors.credentials,
+      }
+    : false,
+  serveClient: SOCKETS_CONFIG.serveClient,
 })
 export class FeatureGateway {
   @WebSocketServer() wss: Server;

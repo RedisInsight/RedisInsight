@@ -9,8 +9,8 @@ export interface Props {
   overscanCount?: number
   minRowHeight?: number
   dynamicHeight?: {
-    itemsCount: number,
-    maxHeight: number,
+    itemsCount: number
+    maxHeight: number
   }
 }
 
@@ -26,7 +26,10 @@ const VirtualList = (props: Props) => {
     overscanCount = OVERSCAN_COUNT,
     minRowHeight = MIN_ROW_HEIGHT,
   } = props
-  const { itemsCount: dynamicItemsCount = 0, maxHeight: dynamicMaxHeight = MAX_LIST_HEIGHT } = dynamicHeight || {}
+  const {
+    itemsCount: dynamicItemsCount = 0,
+    maxHeight: dynamicMaxHeight = MAX_LIST_HEIGHT,
+  } = dynamicHeight || {}
 
   const listRef = useRef<List>(null)
   const rowHeights = useRef<{ [key: number]: number }>({})
@@ -35,9 +38,10 @@ const VirtualList = (props: Props) => {
   const [listHeight, setListHeight] = useState(MIN_ROW_HEIGHT)
   const [, forceRender] = useState({})
 
-  const getRowHeight = (index: number) => (
-    rowHeights.current[index] > minRowHeight ? (rowHeights.current[index] + 2) : minRowHeight
-  )
+  const getRowHeight = (index: number) =>
+    rowHeights.current[index] > minRowHeight
+      ? rowHeights.current[index] + 2
+      : minRowHeight
 
   const setRowHeight = (index: number, size: number) => {
     listRef.current?.resetAfterIndex(0)
@@ -50,10 +54,12 @@ const VirtualList = (props: Props) => {
       setListHeight(dynamicMaxHeight)
     }
 
-    setListHeight(Math.min(
-      items.reduce((prev, _item, index) => getRowHeight(index) + prev, 0),
-      dynamicMaxHeight,
-    ))
+    setListHeight(
+      Math.min(
+        items.reduce((prev, _item, index) => getRowHeight(index) + prev, 0),
+        dynamicMaxHeight,
+      ),
+    )
   }
 
   const Row = ({ index, style }: ListChildComponentProps) => {
@@ -70,7 +76,9 @@ const VirtualList = (props: Props) => {
 
     return (
       <div style={style} className={styles.item} data-testid={`row-${index}`}>
-        <div className={styles.message} ref={rowRef}>{rowContent}</div>
+        <div className={styles.message} ref={rowRef}>
+          {rowContent}
+        </div>
       </div>
     )
   }

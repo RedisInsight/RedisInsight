@@ -2,7 +2,10 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { ReplyError } from 'src/models';
-import { CommandExecutionStatus, ICliExecResultFromNode } from 'src/modules/cli/dto/cli.dto';
+import {
+  CommandExecutionStatus,
+  ICliExecResultFromNode,
+} from 'src/modules/cli/dto/cli.dto';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { CommandTelemetryBaseService } from 'src/modules/analytics/command.telemetry.base.service';
 import { SessionMetadata } from 'src/common/models';
@@ -21,14 +24,10 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
     databaseId: string,
     additionalData: object = {},
   ): void {
-    this.sendEvent(
-      sessionMetadata,
-      TelemetryEvents.CliClientCreated,
-      {
-        databaseId,
-        ...additionalData,
-      },
-    );
+    this.sendEvent(sessionMetadata, TelemetryEvents.CliClientCreated, {
+      databaseId,
+      ...additionalData,
+    });
   }
 
   sendClientCreationFailedEvent(
@@ -53,14 +52,10 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
     databaseId: string,
     additionalData: object = {},
   ): void {
-    this.sendEvent(
-      sessionMetadata,
-      TelemetryEvents.CliClientRecreated,
-      {
-        databaseId,
-        ...additionalData,
-      },
-    );
+    this.sendEvent(sessionMetadata, TelemetryEvents.CliClientRecreated, {
+      databaseId,
+      ...additionalData,
+    });
   }
 
   sendClientDeletedEvent(
@@ -71,14 +66,10 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
   ): void {
     try {
       if (affected > 0) {
-        this.sendEvent(
-          sessionMetadata,
-          TelemetryEvents.CliClientDeleted,
-          {
-            databaseId,
-            ...additionalData,
-          },
-        );
+        this.sendEvent(sessionMetadata, TelemetryEvents.CliClientDeleted, {
+          databaseId,
+          ...additionalData,
+        });
       }
     } catch (e) {
       // continue regardless of error
@@ -95,14 +86,10 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
     }
 
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.CliIndexInfoSubmitted,
-        {
-          databaseId,
-          ...additionalData,
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.CliIndexInfoSubmitted, {
+        databaseId,
+        ...additionalData,
+      });
     } catch (e) {
       // ignore error
     }
@@ -114,15 +101,11 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
     additionalData: object = {},
   ): Promise<void> {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.CliCommandExecuted,
-        {
-          databaseId,
-          ...(await this.getCommandAdditionalInfo(additionalData['command'])),
-          ...additionalData,
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.CliCommandExecuted, {
+        databaseId,
+        ...(await this.getCommandAdditionalInfo(additionalData['command'])),
+        ...additionalData,
+      });
     } catch (e) {
       // ignore error
     }
@@ -135,17 +118,13 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
     additionalData: object = {},
   ): Promise<void> {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.CliCommandErrorReceived,
-        {
-          databaseId,
-          error: error?.name,
-          command: error?.command?.name,
-          ...(await this.getCommandAdditionalInfo(additionalData['command'])),
-          ...additionalData,
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.CliCommandErrorReceived, {
+        databaseId,
+        error: error?.name,
+        command: error?.command?.name,
+        ...(await this.getCommandAdditionalInfo(additionalData['command'])),
+        ...additionalData,
+      });
     } catch (e) {
       // continue regardless of error
     }

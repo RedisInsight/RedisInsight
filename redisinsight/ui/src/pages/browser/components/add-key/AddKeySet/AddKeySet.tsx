@@ -1,4 +1,10 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect, useRef } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useState,
+  useEffect,
+  useRef,
+} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiButton,
@@ -11,29 +17,27 @@ import {
   EuiPanel,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
-import {
-  addSetKey, addKeyStateSelector,
-} from 'uiSrc/slices/browser/keys'
+import { addSetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
 
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 
 import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from './interfaces'
-import {
-  AddSetFormConfig as config
-} from '../constants/fields-config'
+import { AddSetFormConfig as config } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 
 export interface Props {
   keyName: string
   keyTTL: Maybe<number>
-  onCancel: (isCancelled?: boolean) => void;
+  onCancel: (isCancelled?: boolean) => void
 }
 
 const AddKeySet = (props: Props) => {
   const { keyName = '', keyTTL, onCancel } = props
   const { loading } = useSelector(addKeyStateSelector)
-  const [members, setMembers] = useState<ISetMemberState[]>([{ ...INITIAL_SET_MEMBER_STATE }])
+  const [members, setMembers] = useState<ISetMemberState[]>([
+    { ...INITIAL_SET_MEMBER_STATE },
+  ])
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
   const lastAddedMemberName = useRef<HTMLInputElement>(null)
   const prevCountMembers = useRef<number>(0)
@@ -45,7 +49,10 @@ const AddKeySet = (props: Props) => {
   }, [keyName])
 
   useEffect(() => {
-    if (prevCountMembers.current !== 0 && prevCountMembers.current < members.length) {
+    if (
+      prevCountMembers.current !== 0 &&
+      prevCountMembers.current < members.length
+    ) {
       lastAddedMemberName.current?.focus()
     }
     prevCountMembers.current = members.length
@@ -57,8 +64,8 @@ const AddKeySet = (props: Props) => {
       ...members,
       {
         ...INITIAL_SET_MEMBER_STATE,
-        id: lastMember.id + 1
-      }
+        id: lastMember.id + 1,
+      },
     ]
     setMembers(newState)
   }
@@ -69,11 +76,14 @@ const AddKeySet = (props: Props) => {
   }
 
   const clearMemberValues = (id: number) => {
-    const newState = members.map((item) => (item.id === id
-      ? {
-        ...item,
-        name: '',
-      } : item))
+    const newState = members.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            name: '',
+          }
+        : item,
+    )
     setMembers(newState)
   }
 
@@ -86,16 +96,12 @@ const AddKeySet = (props: Props) => {
     removeMember(id)
   }
 
-  const handleMemberChange = (
-    formField: string,
-    id: number,
-    value: string
-  ) => {
+  const handleMemberChange = (formField: string, id: number, value: string) => {
     const newState = members.map((item) => {
       if (item.id === id) {
         return {
           ...item,
-          [formField]: value
+          [formField]: value,
         }
       }
       return item
@@ -113,7 +119,7 @@ const AddKeySet = (props: Props) => {
   const submitData = (): void => {
     const data: CreateSetWithExpireDto = {
       keyName: stringToBuffer(keyName),
-      members: members.map((item) => stringToBuffer(item.name))
+      members: members.map((item) => stringToBuffer(item.name)),
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL
@@ -121,7 +127,8 @@ const AddKeySet = (props: Props) => {
     dispatch(addSetKey(data, onCancel))
   }
 
-  const isClearDisabled = (item: ISetMemberState): boolean => members.length === 1 && !item.name.length
+  const isClearDisabled = (item: ISetMemberState): boolean =>
+    members.length === 1 && !item.name.length
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
@@ -142,12 +149,11 @@ const AddKeySet = (props: Props) => {
                   placeholder={config.member.placeholder}
                   value={item.name}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleMemberChange(
-                      'name',
-                      item.id,
-                      e.target.value
-                    )}
-                  inputRef={index === members.length - 1 ? lastAddedMemberName : null}
+                    handleMemberChange('name', item.id, e.target.value)
+                  }
+                  inputRef={
+                    index === members.length - 1 ? lastAddedMemberName : null
+                  }
                   disabled={loading}
                   data-testid="member-name"
                 />

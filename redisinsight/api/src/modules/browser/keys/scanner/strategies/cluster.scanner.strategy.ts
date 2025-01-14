@@ -2,14 +2,25 @@ import { isNull, omit, toNumber } from 'lodash';
 import config from 'src/utils/config';
 import { isRedisGlob, unescapeRedisGlob } from 'src/utils';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { GetKeyInfoResponse, GetKeysWithDetailsResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  GetKeysWithDetailsResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import { parseClusterCursor } from 'src/modules/browser/utils';
 import { Injectable } from '@nestjs/common';
 import { ScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/scanner.strategy';
-import { RedisClient, RedisClientCommand, RedisClientNodeRole } from 'src/modules/redis/client';
+import {
+  RedisClient,
+  RedisClientCommand,
+  RedisClientNodeRole,
+} from 'src/modules/redis/client';
 import { getTotalKeys } from 'src/modules/redis/utils';
 import { RedisString } from 'src/common/constants';
-import { IScannerGetKeysArgs, IScannerNodeKeys } from 'src/modules/browser/keys/scanner/scanner.interface';
+import {
+  IScannerGetKeysArgs,
+  IScannerNodeKeys,
+} from 'src/modules/browser/keys/scanner/scanner.interface';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -27,33 +38,27 @@ export class ClusterScannerStrategy extends ScannerStrategy {
       // add client to each node
       nodes.forEach((node, index) => {
         nodes[index].node = nodesClients.find(
-          ({
-            options: {
-              host,
-              port,
-              natHost,
-              natPort,
-            },
-          }) => (
-            host === node.host && port === node.port
-          ) || (
-            natHost === node.host && natPort === node.port
-          ),
+          ({ options: { host, port, natHost, natPort } }) =>
+            (host === node.host && port === node.port) ||
+            (natHost === node.host && natPort === node.port),
         );
       });
 
       return nodes;
     }
 
-    return nodesClients.map((node) => ({
-      node,
-      host: node.options.natHost || node.options.host,
-      port: node.options.natPort || node.options.port,
-      cursor: 0,
-      keys: [],
-      total: 0,
-      scanned: 0,
-    }) as any);
+    return nodesClients.map(
+      (node) =>
+        ({
+          node,
+          host: node.options.natHost || node.options.host,
+          port: node.options.natPort || node.options.port,
+          cursor: 0,
+          keys: [],
+          total: 0,
+          scanned: 0,
+        }) as any,
+    );
   }
 
   private async calculateNodesTotalKeys(
@@ -105,7 +110,10 @@ export class ClusterScannerStrategy extends ScannerStrategy {
   /**
    * @inheritDoc
    */
-  public async getKeys(client: RedisClient, args: IScannerGetKeysArgs): Promise<GetKeysWithDetailsResponse[]> {
+  public async getKeys(
+    client: RedisClient,
+    args: IScannerGetKeysArgs,
+  ): Promise<GetKeysWithDetailsResponse[]> {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
     const scanThreshold = args.scanThreshold || REDIS_SCAN_CONFIG.scanThreshold;
@@ -136,16 +144,11 @@ export class ClusterScannerStrategy extends ScannerStrategy {
 
     let allNodesScanned = false;
     while (
-      !allNodesScanned
-      && nodes.reduce((prev, cur) => prev + cur.keys.length, 0) < count
-      && (
-        (
-          nodes.reduce((prev, cur) => prev + cur.total, 0) < scanThreshold
-          && nodes.find((node) => !!node.cursor)
-        )
-        || nodes.reduce((prev, cur) => prev + cur.scanned, 0)
-        < scanThreshold
-      )
+      !allNodesScanned &&
+      nodes.reduce((prev, cur) => prev + cur.keys.length, 0) < count &&
+      ((nodes.reduce((prev, cur) => prev + cur.total, 0) < scanThreshold &&
+        nodes.find((node) => !!node.cursor)) ||
+        nodes.reduce((prev, cur) => prev + cur.scanned, 0) < scanThreshold)
     ) {
       await this.scanNodes(nodes, match, count, args.type);
       allNodesScanned = !nodes.some((node) => node.cursor !== 0);
@@ -155,11 +158,7 @@ export class ClusterScannerStrategy extends ScannerStrategy {
       nodes.map(async (node) => {
         if (node.keys.length && args.keysInfo) {
           // eslint-disable-next-line no-param-reassign
-          node.keys = await this.getKeysInfo(
-            node.node,
-            node.keys,
-            args.type,
-          );
+          node.keys = await this.getKeysInfo(node.node, node.keys, args.type);
         } else {
           // eslint-disable-next-line no-param-reassign
           node.keys = node.keys.map((name) => ({
@@ -181,34 +180,34 @@ export class ClusterScannerStrategy extends ScannerStrategy {
     keys: RedisString[],
     filterType?: RedisDataType,
   ): Promise<GetKeyInfoResponse[]> {
-    return Promise.all(keys.map(async (key) => {
-      const commands: RedisClientCommand[] = [
-        [BrowserToolKeysCommands.Ttl, key],
-        ['memory', 'usage', key, 'samples', '0'],
-      ];
+    return Promise.all(
+      keys.map(async (key) => {
+        const commands: RedisClientCommand[] = [
+          [BrowserToolKeysCommands.Ttl, key],
+          ['memory', 'usage', key, 'samples', '0'],
+        ];
 
-      if (!filterType) {
-        commands.push([BrowserToolKeysCommands.Type, key]);
-      }
+        if (!filterType) {
+          commands.push([BrowserToolKeysCommands.Type, key]);
+        }
 
-      const result = await client.sendPipeline(commands, { replyEncoding: 'utf8' }) as any[];
+        const result = (await client.sendPipeline(commands, {
+          replyEncoding: 'utf8',
+        })) as any[];
 
-      if (filterType) {
-        result.push([null, filterType]);
-      }
+        if (filterType) {
+          result.push([null, filterType]);
+        }
 
-      const [
-        [, ttl = null],
-        [, size = null],
-        [, type = null],
-      ] = result;
+        const [[, ttl = null], [, size = null], [, type = null]] = result;
 
-      return {
-        name: key,
-        type,
-        ttl,
-        size,
-      };
-    }));
+        return {
+          name: key,
+          type,
+          ttl,
+          size,
+        };
+      }),
+    );
   }
 }

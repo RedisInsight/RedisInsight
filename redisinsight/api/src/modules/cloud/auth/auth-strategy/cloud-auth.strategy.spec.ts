@@ -13,7 +13,7 @@ import {
   mockCloudAuthGoogleTokenUrl,
   mockCloudRefreshToken,
   mockCloudRevokeRefreshTokenHint,
-  mockOktaAuthClient
+  mockOktaAuthClient,
 } from 'src/__mocks__/cloud-auth';
 import { OktaAuth } from '@okta/okta-auth-js';
 import { GoogleIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/google-idp.cloud.auth-strategy';
@@ -42,15 +42,21 @@ describe('CloudAuthStrategy', () => {
 
   describe('generateAuthRequest', () => {
     it('Check that Google auth request is generated', async () => {
-      expect(await googleStrategy.generateAuthRequest(mockSessionMetadata)).toEqual({
+      expect(
+        await googleStrategy.generateAuthRequest(mockSessionMetadata),
+      ).toEqual({
         ...mockCloudAuthGoogleRequest,
         createdAt: expect.anything(),
       });
     });
 
     it('Check that Github auth request is generated', async () => {
-      mockOktaAuthClient.token.prepareTokenParams.mockResolvedValueOnce(mockCloudAuthGithubTokenParams);
-      expect(await githubStrategy.generateAuthRequest(mockSessionMetadata)).toEqual({
+      mockOktaAuthClient.token.prepareTokenParams.mockResolvedValueOnce(
+        mockCloudAuthGithubTokenParams,
+      );
+      expect(
+        await githubStrategy.generateAuthRequest(mockSessionMetadata),
+      ).toEqual({
         ...mockCloudAuthGithubRequest,
         createdAt: expect.anything(),
       });
@@ -59,29 +65,39 @@ describe('CloudAuthStrategy', () => {
 
   describe('generateAuthUrl', () => {
     it('Should generate proper auth url', () => {
-      expect(CloudAuthStrategy.generateAuthUrl(mockCloudAuthGoogleRequest))
-        .toEqual(new URL(mockCloudAuthGoogleAuthUrl));
+      expect(
+        CloudAuthStrategy.generateAuthUrl(mockCloudAuthGoogleRequest),
+      ).toEqual(new URL(mockCloudAuthGoogleAuthUrl));
     });
   });
 
   describe('generateRenewTokensUrl', () => {
     it('Should generate proper renew url', () => {
-      expect(googleStrategy.generateRenewTokensUrl(mockCloudApiAuthDto.refreshToken))
-        .toEqual(new URL(mockCloudAuthGoogleRenewTokenUrl));
+      expect(
+        googleStrategy.generateRenewTokensUrl(mockCloudApiAuthDto.refreshToken),
+      ).toEqual(new URL(mockCloudAuthGoogleRenewTokenUrl));
     });
   });
 
   describe('generateRevokeTokensUrl', () => {
     it('Should generate proper revoke url', () => {
-      expect(googleStrategy.generateRevokeTokensUrl(mockCloudRefreshToken, mockCloudRevokeRefreshTokenHint))
-        .toEqual(new URL(mockCloudAuthGoogleRevokeTokenUrl));
+      expect(
+        googleStrategy.generateRevokeTokensUrl(
+          mockCloudRefreshToken,
+          mockCloudRevokeRefreshTokenHint,
+        ),
+      ).toEqual(new URL(mockCloudAuthGoogleRevokeTokenUrl));
     });
   });
 
   describe('generateExchangeCodeUrl', () => {
     it('Should generate exchange code url', () => {
-      expect(CloudAuthStrategy.generateExchangeCodeUrl(mockCloudAuthGoogleRequest, mockCloudAuthCode))
-        .toEqual(new URL(mockCloudAuthGoogleTokenUrl));
+      expect(
+        CloudAuthStrategy.generateExchangeCodeUrl(
+          mockCloudAuthGoogleRequest,
+          mockCloudAuthCode,
+        ),
+      ).toEqual(new URL(mockCloudAuthGoogleTokenUrl));
     });
   });
 });

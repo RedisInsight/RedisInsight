@@ -1,5 +1,12 @@
 import {
-  Body, Controller, Delete, Get, Param, Patch, UsePipes, ValidationPipe,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
@@ -8,9 +15,7 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
 import { ClientMetadata } from 'src/common/models';
-import {
-  DatabaseRecommendationsResponse,
-} from 'src/modules/database-recommendation/dto/database-recommendations.response';
+import { DatabaseRecommendationsResponse } from 'src/modules/database-recommendation/dto/database-recommendations.response';
 import {
   ModifyDatabaseRecommendationDto,
   DeleteDatabaseRecommendationDto,
@@ -63,7 +68,7 @@ export class DatabaseRecommendationController {
     responses: [
       {
         status: 200,
-        description: 'Updated database recommendation\' response',
+        description: "Updated database recommendation' response",
         type: DatabaseRecommendation,
       },
     ],
@@ -77,8 +82,8 @@ export class DatabaseRecommendationController {
   )
   async modify(
     @Param('id') id: string,
-      @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: ModifyDatabaseRecommendationDto,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @Body() dto: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
     return await this.service.update(clientMetadata, id, dto);
   }
@@ -104,7 +109,7 @@ export class DatabaseRecommendationController {
   )
   async bulkDeleteDatabaseRecommendation(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DeleteDatabaseRecommendationDto,
+    @Body() dto: DeleteDatabaseRecommendationDto,
   ): Promise<DeleteDatabaseRecommendationResponse> {
     return await this.service.bulkDelete(clientMetadata, dto.ids);
   }

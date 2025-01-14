@@ -37,7 +37,7 @@ export const isEscaped = (str: string, pos: number) => {
 
   const escCount = pos - currPos;
 
-  return escCount && (escCount % 2) > 0;
+  return escCount && escCount % 2 > 0;
 };
 
 /**
@@ -46,7 +46,11 @@ export const isEscaped = (str: string, pos: number) => {
  * @param str
  * @param startPosition
  */
-const findUnescapedCharPosition = (char: string, str: string, startPosition = 0) => {
+const findUnescapedCharPosition = (
+  char: string,
+  str: string,
+  startPosition = 0,
+) => {
   let pos = str.indexOf(char, startPosition);
   while (pos >= 0) {
     if (!isEscaped(str, pos)) {
@@ -81,6 +85,7 @@ const hasUnescapedChar = (char: string, str: string, startPosition = 0) => {
   return false;
 };
 
-export const isRedisGlob = (str: string) => hasUnescapedChar('?', str)
-    || hasUnescapedChar('*', str)
-    || hasUnescapedChar('[]', str);
+export const isRedisGlob = (str: string) =>
+  hasUnescapedChar('?', str) ||
+  hasUnescapedChar('*', str) ||
+  hasUnescapedChar('[]', str);

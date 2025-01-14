@@ -30,13 +30,18 @@ export class ProfilerClientProvider {
       clientObserver.addLogsEmitter(new ClientLogsEmitter(socket));
 
       if (settings?.logFileId) {
-        const profilerLogFile = this.logFileProvider.getOrCreate(instanceId, settings.logFileId);
+        const profilerLogFile = this.logFileProvider.getOrCreate(
+          instanceId,
+          settings.logFileId,
+        );
 
         // set database alias as part of the log file name
-        const alias = (await this.databaseService.get(
-          sessionMetadata,
-          get(socket, 'handshake.query.instanceId') as string,
-        )).name;
+        const alias = (
+          await this.databaseService.get(
+            sessionMetadata,
+            get(socket, 'handshake.query.instanceId') as string,
+          )
+        ).name;
         profilerLogFile.setAlias(alias);
 
         clientObserver.addLogsEmitter(await profilerLogFile.getEmitter());

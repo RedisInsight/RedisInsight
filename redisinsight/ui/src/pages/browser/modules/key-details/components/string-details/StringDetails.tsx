@@ -16,10 +16,17 @@ import {
   TEXT_DISABLED_STRING_EDITING,
 } from 'uiSrc/constants'
 
-import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
+import {
+  KeyDetailsHeader,
+  KeyDetailsHeaderProps,
+} from 'uiSrc/pages/browser/modules'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
-import { resetStringValue, stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
+import {
+  resetStringValue,
+  stringDataSelector,
+  stringSelector,
+} from 'uiSrc/slices/browser/string'
 import { isFormatEditable, isFullStringLoaded } from 'uiSrc/utils'
 import { StringDetailsValue } from './string-details-value'
 import { EditItemAction } from '../key-details-actions'
@@ -31,21 +38,32 @@ const StringDetails = (props: Props) => {
   const { onRemoveKey } = props
   const keyType = KeyTypes.String
 
-  const { loading, viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+  const { loading, viewFormat: viewFormatProp } =
+    useSelector(selectedKeySelector)
   const { length } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
   const { value: keyValue } = useSelector(stringDataSelector)
   const { isCompressed: isStringCompressed } = useSelector(stringSelector)
 
   const isEditable = !isStringCompressed && isFormatEditable(viewFormatProp)
   const isStringEditable = isFullStringLoaded(keyValue?.data?.length, length)
-  const noEditableText = isStringCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
-  const editToolTip = !isEditable ? noEditableText : (!isStringEditable ? TEXT_DISABLED_STRING_EDITING : null)
+  const noEditableText = isStringCompressed
+    ? TEXT_DISABLED_COMPRESSED_VALUE
+    : TEXT_DISABLED_FORMATTER_EDITING
+  const editToolTip = !isEditable
+    ? noEditableText
+    : !isStringEditable
+      ? TEXT_DISABLED_STRING_EDITING
+      : null
 
   const [editItem, setEditItem] = useState<boolean>(false)
 
   const dispatch = useDispatch()
 
-  const handleRefreshKey = (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes, args: IFetchKeyArgs) => {
+  const handleRefreshKey = (
+    key: RedisResponseBuffer,
+    type: KeyTypes | ModulesKeyTypes,
+    args: IFetchKeyArgs,
+  ) => {
     dispatch(refreshKey(key, type, args))
   }
 
@@ -73,10 +91,7 @@ const StringDetails = (props: Props) => {
         key="key-details-header"
         onRemoveKey={handleRemoveKey}
       />
-      <KeyDetailsSubheader
-        keyType={keyType}
-        Actions={Actions}
-      />
+      <KeyDetailsSubheader keyType={keyType} Actions={Actions} />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>

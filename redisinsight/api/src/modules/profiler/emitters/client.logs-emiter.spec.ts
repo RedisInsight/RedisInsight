@@ -24,6 +24,9 @@ describe('ClientLogsEmitter', () => {
 
     emitter = new ClientLogsEmitter(client);
     await emitter.emit(items);
-    expect(emitter['client'].emit).toHaveBeenCalledWith(ProfilerServerEvents.Data, items);
+    expect(emitter['client'].emit).toHaveBeenCalledWith(
+      ProfilerServerEvents.Data,
+      items,
+    );
   });
 });

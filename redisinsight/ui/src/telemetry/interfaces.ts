@@ -32,7 +32,7 @@ export interface ITelemetryEvent {
 
 export enum MatchType {
   EXACT_VALUE_NAME = 'EXACT_VALUE_NAME',
-  PATTERN = 'PATTERN'
+  PATTERN = 'PATTERN',
 }
 
 export enum RedisModules {
@@ -52,6 +52,7 @@ export interface IModuleSummary {
 }
 
 export type RedisModulesKeyType = keyof typeof RedisModules
-export interface IRedisModulesSummary extends Record<keyof typeof RedisModules, IModuleSummary> {
+export interface IRedisModulesSummary
+  extends Record<keyof typeof RedisModules, IModuleSummary> {
   customModules: AdditionalRedisModule[]
 }

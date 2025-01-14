@@ -1,4 +1,9 @@
-import { Criteria, EuiBasicTableColumn, EuiInMemoryTable, PropertySort } from '@elastic/eui'
+import {
+  Criteria,
+  EuiBasicTableColumn,
+  EuiInMemoryTable,
+  PropertySort,
+} from '@elastic/eui'
 import React, { useState } from 'react'
 
 import styles from './styles.module.scss'
@@ -11,7 +16,10 @@ export interface Props<T> {
 }
 
 const Table = <T,>({ id, columns, items, initialSortField }: Props<T>) => {
-  const [sort, setSort] = useState<PropertySort>({ field: initialSortField, direction: 'asc' })
+  const [sort, setSort] = useState<PropertySort>({
+    field: initialSortField,
+    direction: 'asc',
+  })
 
   return (
     <EuiInMemoryTable

@@ -4,12 +4,13 @@ import cx from 'classnames'
 
 import { useParams } from 'react-router-dom'
 import { EuiCheckbox } from '@elastic/eui'
-import {
-  selectedKeySelector,
-} from 'uiSrc/slices/browser/keys'
+import { selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { FeatureFlags, KeyTypes } from 'uiSrc/constants'
 
-import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
+import {
+  KeyDetailsHeader,
+  KeyDetailsHeaderProps,
+} from 'uiSrc/pages/browser/modules'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
@@ -35,15 +36,15 @@ const HashDetails = (props: Props) => {
   const { loading } = useSelector(selectedKeySelector)
   const { version } = useSelector(connectedInstanceOverviewSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
-  const {
-    [FeatureFlags.hashFieldExpiration]: hashFieldExpirationFeature
-  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.hashFieldExpiration]: hashFieldExpirationFeature } =
+    useSelector(appFeatureFlagsFeaturesSelector)
 
   const [isAddItemPanelOpen, setIsAddItemPanelOpen] = useState<boolean>(false)
   const [showTtl, setShowTtl] = useState<boolean>(true)
 
-  const isExpireFieldsAvailable = hashFieldExpirationFeature?.flag
-    && isVersionHigherOrEquals(version, CommandsVersions.HASH_TTL.since)
+  const isExpireFieldsAvailable =
+    hashFieldExpirationFeature?.flag &&
+    isVersionHigherOrEquals(version, CommandsVersions.HASH_TTL.since)
 
   const openAddItemPanel = () => {
     setIsAddItemPanelOpen(true)
@@ -77,7 +78,11 @@ const HashDetails = (props: Props) => {
           />
         </>
       )}
-      <AddItemsAction title="Add Fields" width={width} openAddItemPanel={openAddItemPanel} />
+      <AddItemsAction
+        title="Add Fields"
+        width={width}
+        openAddItemPanel={openAddItemPanel}
+      />
     </>
   )
 
@@ -88,30 +93,30 @@ const HashDetails = (props: Props) => {
       event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
       eventData: {
         databaseId: instanceId,
-        action: show ? 'show' : 'hide'
-      }
+        action: show ? 'show' : 'hide',
+      },
     })
   }
 
   return (
     <div className="fluid flex-column relative">
-      <KeyDetailsHeader
-        {...props}
-        key="key-details-header"
-      />
-      <KeyDetailsSubheader
-        keyType={keyType}
-        Actions={Actions}
-      />
+      <KeyDetailsHeader {...props} key="key-details-header" />
+      <KeyDetailsSubheader keyType={keyType} Actions={Actions} />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <HashDetailsTable isExpireFieldsAvailable={isExpireFieldsAvailable && showTtl} onRemoveKey={onRemoveKey} />
+            <HashDetailsTable
+              isExpireFieldsAvailable={isExpireFieldsAvailable && showTtl}
+              onRemoveKey={onRemoveKey}
+            />
           </div>
         )}
         {isAddItemPanelOpen && (
           <div className={cx('formFooterBar', 'contentActive')}>
-            <AddHashFields isExpireFieldsAvailable={isExpireFieldsAvailable} closePanel={closeAddItemPanel} />
+            <AddHashFields
+              isExpireFieldsAvailable={isExpireFieldsAvailable}
+              closePanel={closeAddItemPanel}
+            />
           </div>
         )}
       </div>

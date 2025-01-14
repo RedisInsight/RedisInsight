@@ -23,13 +23,13 @@ const mockedProps = mock<Props>()
 
 const mockReports: any = [
   { id: 'id_1', createdAt: '2022-09-23T05:30:23.000Z' },
-  { id: 'id_2', createdAt: '2022-09-23T05:15:19.000Z' }
+  { id: 'id_2', createdAt: '2022-09-23T05:15:19.000Z' },
 ]
 
 const mockProgress = {
   total: 10,
   scanned: 10,
-  processed: 10
+  processed: 10,
 }
 
 let store: typeof mockedStore
@@ -51,20 +51,23 @@ jest.mock('react-redux', () => ({
 }))
 
 const connectType = (state: any, connectionType: any) => {
-  (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-    ...state,
-    connections: {
-      ...state.connections,
-      instances: {
-        ...state.connections.instances,
-        connectedInstance: {
-          ...state.connections.instances.connectedInstance,
-          connectionType,
-          provider: 'RE_CLOUD',
-        }
-      }
-    },
-  }))
+  ;(useSelector as jest.Mock).mockImplementation(
+    (callback: (arg0: RootState) => RootState) =>
+      callback({
+        ...state,
+        connections: {
+          ...state.connections,
+          instances: {
+            ...state.connections.instances,
+            connectedInstance: {
+              ...state.connections.instances.connectedInstance,
+              connectionType,
+              provider: 'RE_CLOUD',
+            },
+          },
+        },
+      }),
+  )
 }
 
 describe('DatabaseAnalysisHeader', () => {
@@ -78,13 +81,25 @@ describe('DatabaseAnalysisHeader', () => {
   })
 
   it('should not render progress', () => {
-    const { queryByTestId } = render(<Header {...instance(mockedProps)} items={mockReports} progress={undefined} />)
+    const { queryByTestId } = render(
+      <Header
+        {...instance(mockedProps)}
+        items={mockReports}
+        progress={undefined}
+      />,
+    )
 
     expect(queryByTestId('analysis-progress')).not.toBeInTheDocument()
   })
 
   it('should render progress', () => {
-    render(<Header {...instance(mockedProps)} items={mockReports} progress={mockProgress} />)
+    render(
+      <Header
+        {...instance(mockedProps)}
+        items={mockReports}
+        progress={mockProgress}
+      />,
+    )
 
     expect(screen.getByTestId('analysis-progress')).toBeInTheDocument()
   })
@@ -96,9 +111,11 @@ describe('DatabaseAnalysisHeader', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
   it('should send telemetry event after click "new analysis" btn', async () => {
-    const sendEventTelemetryMock = jest.fn();
+    const sendEventTelemetryMock = jest.fn()
 
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<Header {...instance(mockedProps)} />)
 
@@ -108,11 +125,10 @@ describe('DatabaseAnalysisHeader', () => {
       event: TelemetryEvent.DATABASE_ANALYSIS_STARTED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
-        provider: 'RE_CLOUD'
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        provider: 'RE_CLOUD',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it.skip('should call onChangeSelectedAnalysis after change selector', async () => {
@@ -124,7 +140,7 @@ describe('DatabaseAnalysisHeader', () => {
         onChangeSelectedAnalysis={onChangeSelectedAnalysis}
         items={mockReports}
         progress={mockProgress}
-      />
+      />,
     )
 
     fireEvent.click(screen.getByTestId('select-report'))
@@ -148,7 +164,9 @@ describe('CLUSTER db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys per shard to get an overview of your data and tips on how to save memory and optimize the usage of your database.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent(
+      'Analyze up to 10 000 keys per shard to get an overview of your data and tips on how to save memory and optimize the usage of your database.',
+    )
   })
 })
 
@@ -166,7 +184,9 @@ describe('STANDALONE db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys to get an overview of your data and tips on how to save memory and optimize the usage of your database.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent(
+      'Analyze up to 10 000 keys to get an overview of your data and tips on how to save memory and optimize the usage of your database.',
+    )
   })
 })
 
@@ -184,6 +204,8 @@ describe('SENTINEL db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys to get an overview of your data and tips on how to save memory and optimize the usage of your database.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent(
+      'Analyze up to 10 000 keys to get an overview of your data and tips on how to save memory and optimize the usage of your database.',
+    )
   })
 })

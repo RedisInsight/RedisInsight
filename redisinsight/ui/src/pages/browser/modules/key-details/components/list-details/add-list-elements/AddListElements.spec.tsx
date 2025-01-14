@@ -15,20 +15,14 @@ describe('AddListElements', () => {
   it('should set elements input properly', () => {
     render(<AddListElements {...instance(mockedProps)} />)
     const elementsInput = screen.getByTestId(elementFindingRegex)
-    fireEvent.change(
-      elementsInput,
-      { target: { value: '123' } }
-    )
+    fireEvent.change(elementsInput, { target: { value: '123' } })
     expect(elementsInput).toHaveValue('123')
   })
 
   it('should set destination properly', () => {
     render(<AddListElements {...instance(mockedProps)} />)
     const destinationSelect = screen.getByTestId('destination-select')
-    fireEvent.change(
-      destinationSelect,
-      { target: { value: HEAD_DESTINATION } }
-    )
+    fireEvent.change(destinationSelect, { target: { value: HEAD_DESTINATION } })
     expect(destinationSelect).toHaveValue(HEAD_DESTINATION)
   })
 

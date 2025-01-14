@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { createDecipheriv, createCipheriv, createHash } from 'crypto';
 import {
-  createDecipheriv, createCipheriv, createHash,
-} from 'crypto';
-import { EncryptionResult, EncryptionStrategy } from 'src/modules/encryption/models';
+  EncryptionResult,
+  EncryptionStrategy,
+} from 'src/modules/encryption/models';
 import { IEncryptionStrategy } from 'src/modules/encryption/strategies/encryption-strategy.interface';
 import {
   KeyDecryptionErrorException,
@@ -59,7 +60,11 @@ export class KeyEncryptionStrategy implements IEncryptionStrategy {
   async encrypt(data: string): Promise<EncryptionResult> {
     const cipherKey = await this.getCipherKey();
     try {
-      const cipher = createCipheriv(ENCRYPTION_CONFIG.encryptionAlgorithm, cipherKey, this.getCipherIV());
+      const cipher = createCipheriv(
+        ENCRYPTION_CONFIG.encryptionAlgorithm,
+        cipherKey,
+        this.getCipherIV(),
+      );
       let encrypted = cipher.update(data, 'utf8', 'hex');
       encrypted += cipher.final('hex');
 
@@ -81,7 +86,11 @@ export class KeyEncryptionStrategy implements IEncryptionStrategy {
     const cipherKey = await this.getCipherKey();
 
     try {
-      const decipher = createDecipheriv(ENCRYPTION_CONFIG.encryptionAlgorithm, cipherKey, this.getCipherIV());
+      const decipher = createDecipheriv(
+        ENCRYPTION_CONFIG.encryptionAlgorithm,
+        cipherKey,
+        this.getCipherIV(),
+      );
       let decrypted = decipher.update(data, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
       return decrypted;

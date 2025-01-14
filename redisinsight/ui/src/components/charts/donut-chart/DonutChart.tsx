@@ -61,7 +61,7 @@ const DonutChart = (props: IProps) => {
   } = props
 
   const margin = config?.margin || 98
-  const radius = config?.radius || (width / 2 - margin)
+  const radius = config?.radius || width / 2 - margin
   const arcWidth = config?.arcWidth || 8
   const percentToShowLabel = config?.percentToShowLabel ?? 5
 
@@ -70,17 +70,20 @@ const DonutChart = (props: IProps) => {
   const tooltipRef = useRef<HTMLDivElement>(null)
   const sum = sumBy(data, 'value')
 
-  const arc = d3.arc<d3.PieArcDatum<ChartData>>()
+  const arc = d3
+    .arc<d3.PieArcDatum<ChartData>>()
     .outerRadius(radius)
     .innerRadius(radius - arcWidth)
 
-  const arcHover = d3.arc<d3.PieArcDatum<ChartData>>()
+  const arcHover = d3
+    .arc<d3.PieArcDatum<ChartData>>()
     .outerRadius(radius + 4)
     .innerRadius(radius - arcWidth)
 
   const onMouseEnterSlice = (e: MouseEvent, d: d3.PieArcDatum<ChartData>) => {
-    d3
-      .select<SVGPathElement, d3.PieArcDatum<ChartData>>(e.target as SVGPathElement)
+    d3.select<SVGPathElement, d3.PieArcDatum<ChartData>>(
+      e.target as SVGPathElement,
+    )
       .transition()
       .duration(ANIMATION_DURATION_MS)
       .attr('d', arcHover)
@@ -91,19 +94,23 @@ const DonutChart = (props: IProps) => {
 
     // calculate position after tooltip rendering (do update as synchronous operation)
     if (e.type === 'mouseenter') {
-      flushSync(() => { setHoveredData(d.data) })
+      flushSync(() => {
+        setHoveredData(d.data)
+      })
     }
 
     tooltipRef.current.style.top = `${e.pageY + 15}px`
-    tooltipRef.current.style.left = (window.innerWidth < (tooltipRef.current.scrollWidth + e.pageX + 20))
-      ? `${e.pageX - tooltipRef.current.scrollWidth - 15}px`
-      : `${e.pageX + 15}px`
+    tooltipRef.current.style.left =
+      window.innerWidth < tooltipRef.current.scrollWidth + e.pageX + 20
+        ? `${e.pageX - tooltipRef.current.scrollWidth - 15}px`
+        : `${e.pageX + 15}px`
     tooltipRef.current.style.visibility = 'visible'
   }
 
   const onMouseLeaveSlice = (e: MouseEvent) => {
-    d3
-      .select<SVGPathElement, d3.PieArcDatum<ChartData>>(e.target as SVGPathElement)
+    d3.select<SVGPathElement, d3.PieArcDatum<ChartData>>(
+      e.target as SVGPathElement,
+    )
       .transition()
       .duration(ANIMATION_DURATION_MS)
       .attr('d', arc)
@@ -115,7 +122,9 @@ const DonutChart = (props: IProps) => {
   }
 
   const isShowLabel = (d: d3.PieArcDatum<ChartData>) =>
-    (percentToShowLabel > 0 ? d.endAngle - d.startAngle > (Math.PI * 2) / (100 / percentToShowLabel) : true)
+    percentToShowLabel > 0
+      ? d.endAngle - d.startAngle > (Math.PI * 2) / (100 / percentToShowLabel)
+      : true
 
   const getLabelPosition = (d: d3.PieArcDatum<ChartData>) => {
     const [x, y] = arc.centroid(d)
@@ -124,8 +133,7 @@ const DonutChart = (props: IProps) => {
   }
 
   useEffect(() => {
-    d3
-      .select(svgRef.current)
+    d3.select(svgRef.current)
       .attr('width', width)
       .attr('height', height)
       .select('g')
@@ -133,13 +141,13 @@ const DonutChart = (props: IProps) => {
   }, [height, width])
 
   useEffect(() => {
-    const pie = d3.pie<ChartData>().value((d: ChartData) => d.value).sort(null)
+    const pie = d3
+      .pie<ChartData>()
+      .value((d: ChartData) => d.value)
+      .sort(null)
     const dataReady = pie(data.filter((d) => d.value !== 0))
 
-    d3
-      .select(svgRef.current)
-      .select('g')
-      .remove()
+    d3.select(svgRef.current).select('g').remove()
 
     const svg = d3
       .select(svgRef.current)
@@ -158,7 +166,9 @@ const DonutChart = (props: IProps) => {
       .append('path')
       .attr('data-testid', (d) => `arc-${d.data.name}-${d.data.value}`)
       .attr('d', arc)
-      .attr('fill', (d) => (isString(d.data.color) ? d.data.color : rgb(d.data.color)))
+      .attr('fill', (d) =>
+        isString(d.data.color) ? d.data.color : rgb(d.data.color),
+      )
       .attr('class', cx(styles.arc, classNames?.arc))
       .on('mouseenter mousemove', onMouseEnterSlice)
       .on('mouseleave', onMouseLeaveSlice)
@@ -171,9 +181,13 @@ const DonutChart = (props: IProps) => {
       .append('text')
       .attr('class', cx(styles.chartLabel, classNames?.arcLabel))
       .attr('transform', getLabelPosition)
-      .text((d) => (isShowLabel(d) && !hideLabelTitle ? `${d.data.name}: ` : ''))
+      .text((d) =>
+        isShowLabel(d) && !hideLabelTitle ? `${d.data.name}: ` : '',
+      )
       .attr('data-testid', (d) => `label-${d.data.name}-${d.data.value}`)
-      .style('text-anchor', (d) => ((d.endAngle + d.startAngle) / 2 > Math.PI ? 'end' : 'start'))
+      .style('text-anchor', (d) =>
+        (d.endAngle + d.startAngle) / 2 > Math.PI ? 'end' : 'start',
+      )
       .on('mouseenter mousemove', onMouseEnterSlice)
       .on('mouseleave', onMouseLeaveSlice)
       .append('tspan')
@@ -207,13 +221,11 @@ const DonutChart = (props: IProps) => {
         data-testid="chart-value-tooltip"
         ref={tooltipRef}
       >
-        {(renderTooltip && hoveredData) ? renderTooltip(hoveredData) : (hoveredData?.value || '')}
+        {renderTooltip && hoveredData
+          ? renderTooltip(hoveredData)
+          : hoveredData?.value || ''}
       </div>
-      {title && (
-        <div className={styles.innerTextContainer}>
-          {title}
-        </div>
-      )}
+      {title && <div className={styles.innerTextContainer}>{title}</div>}
     </div>
   )
 }

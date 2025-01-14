@@ -15,7 +15,7 @@ describe('getVisualizationsByCommand', () => {
     { matchCommands: ['ft.search', 'ft.get'] },
     { matchCommands: ['ft._list'] },
     { matchCommands: ['ft.*'] },
-    { matchCommands: ['get'] }
+    { matchCommands: ['get'] },
   ] as IPluginVisualization[]
 
   test.each(getVisualizationsByCommandTests)(
@@ -24,6 +24,6 @@ describe('getVisualizationsByCommand', () => {
       // @ts-ignore
       const result = getVisualizationsByCommand(input, visualizations)
       expect(result).toHaveLength(expected)
-    }
+    },
   )
 })

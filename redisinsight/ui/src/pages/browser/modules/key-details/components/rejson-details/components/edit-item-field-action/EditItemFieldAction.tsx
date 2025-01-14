@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
 import { EuiButtonIcon } from '@elastic/eui'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { bufferToString, createDeleteFieldHeader, createDeleteFieldMessage } from 'uiSrc/utils'
+import {
+  bufferToString,
+  createDeleteFieldHeader,
+  createDeleteFieldMessage,
+} from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import styles from '../../styles.module.scss'
 
@@ -20,7 +24,7 @@ const EditItemFieldAction = ({
   path,
   handleSubmitRemoveKey,
   onClickEditEntireItem,
-  'data-testid': testId = 'edit-json-field'
+  'data-testid': testId = 'edit-json-field',
 }: Props) => {
   const [deleting, setDeleting] = useState<string>('')
 

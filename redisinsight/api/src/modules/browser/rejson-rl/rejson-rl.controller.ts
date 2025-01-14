@@ -46,7 +46,7 @@ export class RejsonRlController extends BrowserBaseController {
   })
   async getJson(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetRejsonRlDto,
+    @Body() dto: GetRejsonRlDto,
   ): Promise<GetRejsonRlResponseDto> {
     return this.service.getJson(clientMetadata, dto);
   }
@@ -58,7 +58,7 @@ export class RejsonRlController extends BrowserBaseController {
   })
   async createJson(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: CreateRejsonRlWithExpireDto,
+    @Body() dto: CreateRejsonRlWithExpireDto,
   ): Promise<void> {
     return this.service.create(clientMetadata, dto);
   }
@@ -70,7 +70,7 @@ export class RejsonRlController extends BrowserBaseController {
   })
   async jsonSet(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: ModifyRejsonRlSetDto,
+    @Body() dto: ModifyRejsonRlSetDto,
   ): Promise<void> {
     return this.service.jsonSet(clientMetadata, dto);
   }
@@ -82,7 +82,7 @@ export class RejsonRlController extends BrowserBaseController {
   })
   async arrAppend(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: ModifyRejsonRlArrAppendDto,
+    @Body() dto: ModifyRejsonRlArrAppendDto,
   ): Promise<void> {
     return this.service.arrAppend(clientMetadata, dto);
   }
@@ -94,7 +94,7 @@ export class RejsonRlController extends BrowserBaseController {
   })
   async remove(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: RemoveRejsonRlDto,
+    @Body() dto: RemoveRejsonRlDto,
   ): Promise<RemoveRejsonRlResponse> {
     return this.service.remove(clientMetadata, dto);
   }

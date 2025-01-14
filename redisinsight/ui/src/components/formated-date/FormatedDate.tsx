@@ -20,13 +20,8 @@ const FormatedDate = ({ date }: Props) => {
   const formatedDate = formatTimestamp(date, dateFormat, timezone)
 
   return (
-    <EuiToolTip
-      anchorClassName={styles.text}
-      content={formatedDate}
-    >
-      <span>
-        {formatedDate}
-      </span>
+    <EuiToolTip anchorClassName={styles.text} content={formatedDate}>
+      <span>{formatedDate}</span>
     </EuiToolTip>
   )
 }

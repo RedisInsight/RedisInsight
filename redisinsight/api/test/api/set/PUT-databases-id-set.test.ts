@@ -44,11 +44,21 @@ describe('PUT /databases/:instanceId/set', () => {
           members: [constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1],
         },
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1)).to.eql(1);
-          const [cursor, members] = await rte.data.sendCommand('sscan', [constants.TEST_SET_KEY_BIN_BUFFER_1, 0, 'count', 100], null);
+          expect(
+            await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1),
+          ).to.eql(1);
+          const [cursor, members] = await rte.data.sendCommand(
+            'sscan',
+            [constants.TEST_SET_KEY_BIN_BUFFER_1, 0, 'count', 100],
+            null,
+          );
           expect(cursor).to.deep.eq(Buffer.from('0'));
-          expect(_.find(members, constants.TEST_LIST_ELEMENT_BIN_BUFFER_1)).to.not.eq(undefined);
-          expect(_.find(members, constants.TEST_SET_MEMBER_BIN_BUFFER_1)).to.not.eq(undefined);
+          expect(
+            _.find(members, constants.TEST_LIST_ELEMENT_BIN_BUFFER_1),
+          ).to.not.eq(undefined);
+          expect(
+            _.find(members, constants.TEST_SET_MEMBER_BIN_BUFFER_1),
+          ).to.not.eq(undefined);
         },
       },
       {
@@ -58,17 +68,27 @@ describe('PUT /databases/:instanceId/set', () => {
           members: [constants.TEST_LIST_ELEMENT_BIN_ASCII_1],
         },
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1)).to.eql(1);
-          const [cursor, members] = await rte.data.sendCommand('sscan', [constants.TEST_SET_KEY_BIN_BUFFER_1, 0, 'count', 100], null);
+          expect(
+            await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1),
+          ).to.eql(1);
+          const [cursor, members] = await rte.data.sendCommand(
+            'sscan',
+            [constants.TEST_SET_KEY_BIN_BUFFER_1, 0, 'count', 100],
+            null,
+          );
           expect(cursor).to.deep.eq(Buffer.from('0'));
-          expect(_.find(members, constants.TEST_LIST_ELEMENT_BIN_BUFFER_1)).to.not.eq(undefined);
-          expect(_.find(members, constants.TEST_SET_MEMBER_BIN_BUFFER_1)).to.not.eq(undefined);
+          expect(
+            _.find(members, constants.TEST_LIST_ELEMENT_BIN_BUFFER_1),
+          ).to.not.eq(undefined);
+          expect(
+            _.find(members, constants.TEST_SET_MEMBER_BIN_BUFFER_1),
+          ).to.not.eq(undefined);
         },
       },
     ].map(mainCheckFn);
   });
 
-  describe('Main', function() {
+  describe('Main', function () {
     before(rte.data.truncate);
 
     describe('Validation', () => {
@@ -88,7 +108,12 @@ describe('PUT /databases/:instanceId/set', () => {
             members: ['member_1'],
           },
           after: async () => {
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_2,
+              0,
+              'count',
+              1000,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1].length).to.eql(100);
           },
@@ -100,7 +125,12 @@ describe('PUT /databases/:instanceId/set', () => {
             members: [constants.getRandomString()],
           },
           after: async () => {
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_2,
+              0,
+              'count',
+              1000,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1].length).to.eql(101);
           },
@@ -117,7 +147,12 @@ describe('PUT /databases/:instanceId/set', () => {
             ],
           },
           after: async () => {
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_2, 0, 'count', 1000);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_2,
+              0,
+              'count',
+              1000,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1].length).to.eql(105);
           },
@@ -150,7 +185,12 @@ describe('PUT /databases/:instanceId/set', () => {
           },
           after: async () => {
             // check that value was not overwritten
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_1,
+              0,
+              'count',
+              100,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
           },
@@ -183,7 +223,7 @@ describe('PUT /databases/:instanceId/set', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
         {
           name: 'Should throw error if no permissions for "sadd" command',
@@ -197,7 +237,7 @@ describe('PUT /databases/:instanceId/set', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -sadd')
+          before: () => rte.data.setAclUserRules('~* +@all -sadd'),
         },
       ].map(mainCheckFn);
     });

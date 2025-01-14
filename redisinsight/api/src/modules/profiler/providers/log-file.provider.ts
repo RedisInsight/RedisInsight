@@ -17,7 +17,10 @@ export class LogFileProvider implements OnModuleDestroy {
    */
   getOrCreate(instanceId: string, id: string): LogFile {
     if (!this.profilerLogFiles.has(id)) {
-      this.profilerLogFiles.set(id, new LogFile(instanceId, id, this.analyticsService.getEventsEmitters()));
+      this.profilerLogFiles.set(
+        id,
+        new LogFile(instanceId, id, this.analyticsService.getEventsEmitters()),
+      );
     }
 
     return this.profilerLogFiles.get(id);
@@ -40,7 +43,7 @@ export class LogFileProvider implements OnModuleDestroy {
    * Delete file after download finished
    * @param id
    */
-  async getDownloadData(id): Promise<{ stream: ReadStream, filename: string }> {
+  async getDownloadData(id): Promise<{ stream: ReadStream; filename: string }> {
     const logFile = await this.get(id);
     const stream = await logFile.getReadStream();
 

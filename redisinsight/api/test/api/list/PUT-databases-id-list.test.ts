@@ -8,8 +8,9 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn,
-  JoiRedisString
+  validateApiCall,
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -20,16 +21,18 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 // input data schema
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
-  elements: Joi.array().items(
-    Joi.custom((value, helpers) => {
-      if (typeof value === 'string' || Buffer.isBuffer(value)) {
-        return value;
-      }
-      return helpers.error('any.invalid');
-    }).messages({
-      'any.invalid': 'elements must be a string or a Buffer',
-    })
-  ).required(),
+  elements: Joi.array()
+    .items(
+      Joi.custom((value, helpers) => {
+        if (typeof value === 'string' || Buffer.isBuffer(value)) {
+          return value;
+        }
+        return helpers.error('any.invalid');
+      }).messages({
+        'any.invalid': 'elements must be a string or a Buffer',
+      }),
+    )
+    .required(),
   destination: Joi.string().valid('HEAD', 'TAIL').default('TAIL'),
 }).strict();
 
@@ -39,10 +42,12 @@ const validInputData = {
   destination: 'TAIL',
 };
 
-const responseSchema = Joi.object().keys({
-  keyName: Joi.string().required(),
-  total: Joi.number().integer().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    keyName: Joi.string().required(),
+    total: Joi.number().integer().required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -66,7 +71,13 @@ describe('PUT /databases/:instanceId/list', () => {
           total: 2,
         },
         after: async () => {
-          expect(await rte.client.lrangeBuffer(constants.TEST_LIST_KEY_BIN_BUFFER_1, 0, 100)).to.deep.eq([
+          expect(
+            await rte.client.lrangeBuffer(
+              constants.TEST_LIST_KEY_BIN_BUFFER_1,
+              0,
+              100,
+            ),
+          ).to.deep.eq([
             constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
             constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
           ]);
@@ -86,7 +97,13 @@ describe('PUT /databases/:instanceId/list', () => {
           total: 3,
         },
         after: async () => {
-          expect(await rte.client.lrangeBuffer(constants.TEST_LIST_KEY_BIN_BUFFER_1, 0, 100)).to.deep.eq([
+          expect(
+            await rte.client.lrangeBuffer(
+              constants.TEST_LIST_KEY_BIN_BUFFER_1,
+              0,
+              100,
+            ),
+          ).to.deep.eq([
             constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
             constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
             constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
@@ -107,7 +124,13 @@ describe('PUT /databases/:instanceId/list', () => {
           total: 4,
         },
         after: async () => {
-          expect(await rte.client.lrangeBuffer(constants.TEST_LIST_KEY_BIN_BUFFER_1, 0, 100)).to.deep.eq([
+          expect(
+            await rte.client.lrangeBuffer(
+              constants.TEST_LIST_KEY_BIN_BUFFER_1,
+              0,
+              100,
+            ),
+          ).to.deep.eq([
             constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
             constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
             constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
@@ -144,7 +167,11 @@ describe('PUT /databases/:instanceId/list', () => {
             total: 3,
           },
           after: async function () {
-            const elements = await rte.client.lrange(constants.TEST_LIST_KEY_1, 0, 1000);
+            const elements = await rte.client.lrange(
+              constants.TEST_LIST_KEY_1,
+              0,
+              1000,
+            );
             expect(elements[2]).to.eql(this.data.elements[0]);
           },
         },
@@ -161,7 +188,11 @@ describe('PUT /databases/:instanceId/list', () => {
             total: 4,
           },
           after: async function () {
-            const elements = await rte.client.lrange(constants.TEST_LIST_KEY_1, 0, 1000);
+            const elements = await rte.client.lrange(
+              constants.TEST_LIST_KEY_1,
+              0,
+              1000,
+            );
             expect(elements[3]).to.eql(this.data.elements[0]);
           },
         },
@@ -178,7 +209,11 @@ describe('PUT /databases/:instanceId/list', () => {
             total: 5,
           },
           after: async function () {
-            const elements = await rte.client.lrange(constants.TEST_LIST_KEY_1, 0, 1000);
+            const elements = await rte.client.lrange(
+              constants.TEST_LIST_KEY_1,
+              0,
+              1000,
+            );
             expect(elements[0]).to.eql(this.data.elements[0]);
           },
         },
@@ -242,7 +277,7 @@ describe('PUT /databases/:instanceId/list', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -lpushx')
+          before: () => rte.data.setAclUserRules('~* +@all -lpushx'),
         },
         {
           name: 'Should throw error if no permissions for "rpushx" command',
@@ -257,7 +292,7 @@ describe('PUT /databases/:instanceId/list', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -rpushx')
+          before: () => rte.data.setAclUserRules('~* +@all -rpushx'),
         },
       ].map(mainCheckFn);
     });

@@ -145,7 +145,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadSubscriptionsRedisCloudSuccess({ data, credentials })
+        loadSubscriptionsRedisCloudSuccess({ data, credentials }),
       )
 
       // Assert
@@ -180,7 +180,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadSubscriptionsRedisCloudSuccess({ data, credentials })
+        loadSubscriptionsRedisCloudSuccess({ data, credentials }),
       )
 
       // Assert
@@ -206,7 +206,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadSubscriptionsRedisCloudFailure(data)
+        loadSubscriptionsRedisCloudFailure(data),
       )
 
       // Assert
@@ -264,7 +264,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadAccountRedisCloudSuccess({ data })
+        loadAccountRedisCloudSuccess({ data }),
       )
 
       // Assert
@@ -296,7 +296,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadAccountRedisCloudSuccess({ data, credentials })
+        loadAccountRedisCloudSuccess({ data, credentials }),
       )
 
       // Assert
@@ -325,7 +325,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadAccountRedisCloudFailure(data)
+        loadAccountRedisCloudFailure(data),
       )
 
       // Assert
@@ -376,7 +376,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadInstancesRedisCloudSuccess({ instances })
+        loadInstancesRedisCloudSuccess({ instances }),
       )
 
       // Assert
@@ -405,7 +405,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadInstancesRedisCloudSuccess({ data })
+        loadInstancesRedisCloudSuccess({ data }),
       )
 
       // Assert
@@ -431,7 +431,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadInstancesRedisCloudFailure(data)
+        loadInstancesRedisCloudFailure(data),
       )
 
       // Assert
@@ -492,7 +492,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        createInstancesRedisCloudSuccess(instances)
+        createInstancesRedisCloudSuccess(instances),
       )
 
       // Assert
@@ -521,7 +521,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        createInstancesRedisCloudSuccess(data)
+        createInstancesRedisCloudSuccess(data),
       )
 
       // Assert
@@ -547,7 +547,7 @@ describe('cloud slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        createInstancesRedisCloudFailure(data)
+        createInstancesRedisCloudFailure(data),
       )
 
       // Assert
@@ -570,10 +570,7 @@ describe('cloud slice', () => {
       }
 
       // Act
-      const nextState = reducer(
-        initialState,
-        setSSOFlow(data)
-      )
+      const nextState = reducer(initialState, setSSOFlow(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -652,7 +649,8 @@ describe('cloud slice', () => {
           secretKey: '123',
         }
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -669,7 +667,7 @@ describe('cloud slice', () => {
         const expectedActions = [
           loadSubscriptionsRedisCloud(),
           loadSubscriptionsRedisCloudFailure(
-            responsePayload.response.data.message
+            responsePayload.response.data.message,
           ),
           addErrorNotification(responsePayload as AxiosError),
         ]
@@ -710,7 +708,8 @@ describe('cloud slice', () => {
           secretKey: '123',
         }
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -738,9 +737,21 @@ describe('cloud slice', () => {
       it('call fetchInstancesRedisCloud and loadInstancesRedisCloudSuccess when fetch is successed', async () => {
         // Arrange
         const subscriptions = [
-          { subscriptionId: 1, subscriptionType: RedisCloudSubscriptionType.Flexible, free: false },
-          { subscriptionId: 2, subscriptionType: RedisCloudSubscriptionType.Flexible, free: false },
-          { subscriptionId: 3, subscriptionType: RedisCloudSubscriptionType.Fixed, free: true },
+          {
+            subscriptionId: 1,
+            subscriptionType: RedisCloudSubscriptionType.Flexible,
+            free: false,
+          },
+          {
+            subscriptionId: 2,
+            subscriptionType: RedisCloudSubscriptionType.Flexible,
+            free: false,
+          },
+          {
+            subscriptionId: 3,
+            subscriptionType: RedisCloudSubscriptionType.Fixed,
+            free: true,
+          },
         ]
         const credentials = {
           accessKey: '123',
@@ -752,7 +763,7 @@ describe('cloud slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchInstancesRedisCloud({ subscriptions, credentials })
+          fetchInstancesRedisCloud({ subscriptions, credentials }),
         )
 
         // Assert
@@ -775,7 +786,8 @@ describe('cloud slice', () => {
           secretKey: '123',
         }
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -787,7 +799,7 @@ describe('cloud slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchInstancesRedisCloud({ ids, credentials })
+          fetchInstancesRedisCloud({ ids, credentials }),
         )
 
         // Assert
@@ -804,7 +816,9 @@ describe('cloud slice', () => {
     describe('addInstancesRedisCloud', () => {
       it('call addInstancesRedisCloud and createInstancesRedisCloudSuccess when fetch is successed', async () => {
         // Arrange
-        const databasesPicked = [{ subscriptionId: '1231', databaseId: '123', free: false }]
+        const databasesPicked = [
+          { subscriptionId: '1231', databaseId: '123', free: false },
+        ]
         const credentials = {
           accessKey: '123',
           secretKey: '123',
@@ -815,7 +829,7 @@ describe('cloud slice', () => {
 
         // Act
         await store.dispatch<any>(
-          addInstancesRedisCloud({ databases: databasesPicked, credentials })
+          addInstancesRedisCloud({ databases: databasesPicked, credentials }),
         )
 
         // Assert
@@ -829,13 +843,16 @@ describe('cloud slice', () => {
 
       it('call addInstancesRedisCloud and createInstancesRedisCloudFailure when fetch is failure', async () => {
         // Arrange
-        const databasesPicked = [{ subscriptionId: '1231', databaseId: '123', free: false }]
+        const databasesPicked = [
+          { subscriptionId: '1231', databaseId: '123', free: false },
+        ]
         const credentials = {
           accessKey: '123',
           secretKey: '123',
         }
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -847,14 +864,14 @@ describe('cloud slice', () => {
 
         // Act
         await store.dispatch<any>(
-          addInstancesRedisCloud({ databases: databasesPicked, credentials })
+          addInstancesRedisCloud({ databases: databasesPicked, credentials }),
         )
 
         // Assert
         const expectedActions = [
           createInstancesRedisCloud(),
           createInstancesRedisCloudFailure(
-            responsePayload.response.data.message
+            responsePayload.response.data.message,
           ),
           addErrorNotification(responsePayload as AxiosError),
         ]

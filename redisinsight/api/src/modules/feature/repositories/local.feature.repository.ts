@@ -28,13 +28,18 @@ export class LocalFeatureRepository extends FeatureRepository {
    * @inheritDoc
    */
   async list(): Promise<Feature[]> {
-    return (await this.repository.find()).map((entity) => classToClass(Feature, entity));
+    return (await this.repository.find()).map((entity) =>
+      classToClass(Feature, entity),
+    );
   }
 
   /**
    * @inheritDoc
    */
-  async upsert(sessionMetadata: SessionMetadata, feature: Feature): Promise<Feature> {
+  async upsert(
+    sessionMetadata: SessionMetadata,
+    feature: Feature,
+  ): Promise<Feature> {
     await this.repository.upsert(classToClass(FeatureEntity, feature), {
       skipUpdateIfNoValuesChanged: true,
       conflictPaths: ['name'],

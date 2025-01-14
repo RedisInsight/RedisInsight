@@ -1,21 +1,27 @@
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
 import { nock } from '../../../helpers/test';
+import { describe, expect, deps, getMainCheckFn } from '../../deps';
 import {
-  describe, expect, deps, getMainCheckFn,
-} from '../../deps';
-import { mockRdiConfigSchema, mockRdiJobsSchema, mockRdiSchema } from 'src/__mocks__';
+  mockRdiConfigSchema,
+  mockRdiJobsSchema,
+  mockRdiSchema,
+} from 'src/__mocks__';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST_pipeline_schema';
 const notExistedRdiId = 'notExisted';
 const testRdiUrl = 'http://rdilocal.test';
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 
-const endpoint = (id: string) => request(server).get(`/${constants.API.RDI}/${id || testRdiId}/pipeline/schema`);
+const endpoint = (id: string) =>
+  request(server).get(
+    `/${constants.API.RDI}/${id || testRdiId}/pipeline/schema`,
+  );
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -32,8 +38,14 @@ describe('GET /rdi/:id/pipeline/schema', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).get(`/${RdiUrl.GetConfigSchema}`).query(true).reply(200, mockRdiConfigSchema);
-        nock(testRdiUrl).get(`/${RdiUrl.GetJobsSchema}`).query(true).reply(200, mockRdiJobsSchema);
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetConfigSchema}`)
+          .query(true)
+          .reply(200, mockRdiConfigSchema);
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetJobsSchema}`)
+          .query(true)
+          .reply(200, mockRdiJobsSchema);
       },
     },
     {
@@ -67,11 +79,17 @@ describe('GET /rdi/:id/pipeline/schema', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).get(`/${RdiUrl.GetConfigSchema}`).query(true).reply(200, mockRdiConfigSchema);
-        nock(testRdiUrl).get(`/${RdiUrl.GetJobsSchema}`).query(true).reply(401, {
-          message: 'Request failed with status code 401',
-          detail: 'Unauthorized',
-        });
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetConfigSchema}`)
+          .query(true)
+          .reply(200, mockRdiConfigSchema);
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetJobsSchema}`)
+          .query(true)
+          .reply(401, {
+            message: 'Request failed with status code 401',
+            detail: 'Unauthorized',
+          });
       },
     },
   ].forEach(mainCheckFn);

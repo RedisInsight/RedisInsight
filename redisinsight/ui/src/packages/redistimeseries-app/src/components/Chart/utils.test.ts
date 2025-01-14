@@ -10,10 +10,11 @@ const hexToRGBATests: [string, string][] = [
 ]
 
 describe('hexToRGBA', () => {
-  it.each(hexToRGBATests)
-  ('for input hex: %s, should be output: %s',
-   (hex, expected) => {
-     const result = hexToRGBA(hex, 0)
-     expect(result).toBe(expected)
-  })
+  it.each(hexToRGBATests)(
+    'for input hex: %s, should be output: %s',
+    (hex, expected) => {
+      const result = hexToRGBA(hex, 0)
+      expect(result).toBe(expected)
+    },
+  )
 })

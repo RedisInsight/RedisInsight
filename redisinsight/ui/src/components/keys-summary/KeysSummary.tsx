@@ -20,7 +20,7 @@ export interface Props {
   totalItemsCount?: number
   nextCursor?: string
   scanMoreStyle?: {
-    [key: string]: string | number;
+    [key: string]: string | number
   }
   loadMoreItems?: (config: any) => void
 }
@@ -39,11 +39,13 @@ const KeysSummary = (props: Props) => {
 
   const resultsLength = items.length
   const scannedDisplay = resultsLength > scanned ? resultsLength : scanned
-  const notAccurateScanned = totalItemsCount
-    && scanned >= totalItemsCount
-    && nextCursor
-    && nextCursor !== '0'
-    ? '~' : ''
+  const notAccurateScanned =
+    totalItemsCount &&
+    scanned >= totalItemsCount &&
+    nextCursor &&
+    nextCursor !== '0'
+      ? '~'
+      : ''
 
   const { viewType } = useSelector(keysSelector)
 
@@ -57,16 +59,26 @@ const KeysSummary = (props: Props) => {
                 <EuiTextColor className="eui-alignMiddle">
                   <b>
                     {'Results: '}
-                    <span data-testid="keys-number-of-results">{numberWithSpaces(resultsLength)}</span>
+                    <span data-testid="keys-number-of-results">
+                      {numberWithSpaces(resultsLength)}
+                    </span>
                     {'. '}
                   </b>
                   <EuiTextColor color="subdued">
                     {'Scanned '}
-                    <span data-testid="keys-number-of-scanned">{notAccurateScanned}{numberWithSpaces(scannedDisplay)}</span>
+                    <span data-testid="keys-number-of-scanned">
+                      {notAccurateScanned}
+                      {numberWithSpaces(scannedDisplay)}
+                    </span>
                     {' / '}
-                    <span data-testid="keys-total">{nullableNumberWithSpaces(totalItemsCount)}</span>
+                    <span data-testid="keys-total">
+                      {nullableNumberWithSpaces(totalItemsCount)}
+                    </span>
                     <span
-                      className={cx([styles.loading, { [styles.loadingShow]: loading }])}
+                      className={cx([
+                        styles.loading,
+                        { [styles.loadingShow]: loading },
+                      ])}
                     />
                   </EuiTextColor>
                 </EuiTextColor>

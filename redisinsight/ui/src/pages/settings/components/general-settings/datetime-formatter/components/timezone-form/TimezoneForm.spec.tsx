@@ -10,6 +10,8 @@ describe('TimezoneForm', () => {
 
   it('should include timezone select', () => {
     const { container } = render(<TimezoneForm />)
-    expect(container.querySelector('[data-test-subj="select-timezone"]')).toBeTruthy()
+    expect(
+      container.querySelector('[data-test-subj="select-timezone"]'),
+    ).toBeTruthy()
   })
 })

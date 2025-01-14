@@ -40,10 +40,15 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     protected readonly encryptionService: EncryptionService,
   ) {
     super();
-    this.modelEncryptor = new ModelEncryptor(encryptionService, ['password', 'sentinelMasterPassword']);
+    this.modelEncryptor = new ModelEncryptor(encryptionService, [
+      'password',
+      'sentinelMasterPassword',
+    ]);
     this.sshModelEncryptor = new ModelEncryptor(encryptionService, [
-      'username', 'password',
-      'privateKey', 'passphrase',
+      'username',
+      'password',
+      'privateKey',
+      'passphrase',
     ]);
   }
 
@@ -51,11 +56,11 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @inheritDoc
    */
   public async exists(_: SessionMetadata, id: string): Promise<boolean> {
-    return !!await this.repository
+    return !!(await this.repository
       .createQueryBuilder('database')
       .where({ id })
       .select(['database.id'])
-      .getOne();
+      .getOne());
   }
 
   /**
@@ -71,14 +76,19 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     if (!entity) {
       return null;
     }
-    const model = classToClass(Database, await this.decryptEntity(entity, ignoreEncryptionErrors));
+    const model = classToClass(
+      Database,
+      await this.decryptEntity(entity, ignoreEncryptionErrors),
+    );
 
     if (entity.caCert) {
       model.caCert = await this.caCertificateRepository.get(entity.caCert.id);
     }
 
     if (entity.clientCert) {
-      model.clientCert = await this.clientCertificateRepository.get(entity.clientCert.id);
+      model.clientCert = await this.clientCertificateRepository.get(
+        entity.clientCert.id,
+      );
     }
     return classToClass(Database, omit(model, omitFields));
   }
@@ -94,8 +104,19 @@ export class LocalDatabaseRepository extends DatabaseRepository {
       .createQueryBuilder('d')
       .leftJoinAndSelect('d.cloudDetails', 'cd')
       .select([
-        'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
-        'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version', 'cd',
+        'd.id',
+        'd.name',
+        'd.host',
+        'd.port',
+        'd.db',
+        'd.new',
+        'd.timeout',
+        'd.connectionType',
+        'd.modules',
+        'd.lastConnection',
+        'd.provider',
+        'd.version',
+        'cd',
         'd.createdAt',
       ])
       .getMany();
@@ -109,17 +130,22 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param database
    * @param uniqueCheck
    */
-  public async create(_: SessionMetadata, database: Database, uniqueCheck: boolean): Promise<Database> {
+  public async create(
+    _: SessionMetadata,
+    database: Database,
+    uniqueCheck: boolean,
+  ): Promise<Database> {
     if (uniqueCheck) {
       await this.checkUniqueness(database);
     }
-    const entity = classToClass(DatabaseEntity, await this.populateCertificates(database));
+    const entity = classToClass(
+      DatabaseEntity,
+      await this.populateCertificates(database),
+    );
     return classToClass(
       Database,
       await this.decryptEntity(
-        await this.repository.save(
-          await this.encryptEntity(entity),
-        ),
+        await this.repository.save(await this.encryptEntity(entity)),
       ),
     );
   }
@@ -133,9 +159,19 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param database
    * @throws TBD
    */
-  public async update(sessionMetadata: SessionMetadata, id: string, database: Partial<Database>): Promise<Database> {
-    const oldEntity = await this.decryptEntity((await this.repository.findOneBy({ id })), true);
-    const newEntity = classToClass(DatabaseEntity, await this.populateCertificates(database as Database));
+  public async update(
+    sessionMetadata: SessionMetadata,
+    id: string,
+    database: Partial<Database>,
+  ): Promise<Database> {
+    const oldEntity = await this.decryptEntity(
+      await this.repository.findOneBy({ id }),
+      true,
+    );
+    const newEntity = classToClass(
+      DatabaseEntity,
+      await this.populateCertificates(database as Database),
+    );
 
     const mergeResult = this.repository.merge(oldEntity, newEntity);
 
@@ -157,7 +193,8 @@ export class LocalDatabaseRepository extends DatabaseRepository {
 
     // workaround for one way cascade deletion
     if (newEntity.sshOptions === null) {
-      await this.sshOptionsRepository.createQueryBuilder()
+      await this.sshOptionsRepository
+        .createQueryBuilder()
         .delete()
         .where('databaseId IS NULL')
         .execute();
@@ -188,8 +225,13 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     }
 
     // fetch client cert if needed to be able to connect
-    if (!model.clientCert?.id && (model.clientCert?.certificate || model.clientCert?.key)) {
-      model.clientCert = await this.clientCertificateRepository.create(model.clientCert);
+    if (
+      !model.clientCert?.id &&
+      (model.clientCert?.certificate || model.clientCert?.key)
+    ) {
+      model.clientCert = await this.clientCertificateRepository.create(
+        model.clientCert,
+      );
     }
 
     return model;
@@ -204,7 +246,9 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     const encryptedEntity = await this.modelEncryptor.encryptEntity(entity);
 
     if (encryptedEntity.sshOptions) {
-      encryptedEntity.sshOptions = await this.sshModelEncryptor.encryptEntity(encryptedEntity.sshOptions);
+      encryptedEntity.sshOptions = await this.sshModelEncryptor.encryptEntity(
+        encryptedEntity.sshOptions,
+      );
     }
 
     return encryptedEntity;
@@ -216,8 +260,14 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param ignoreEncryptionErrors
    * @private
    */
-  private async decryptEntity(entity: DatabaseEntity, ignoreEncryptionErrors = false): Promise<DatabaseEntity> {
-    const decryptedEntity = await this.modelEncryptor.decryptEntity(entity, ignoreEncryptionErrors);
+  private async decryptEntity(
+    entity: DatabaseEntity,
+    ignoreEncryptionErrors = false,
+  ): Promise<DatabaseEntity> {
+    const decryptedEntity = await this.modelEncryptor.decryptEntity(
+      entity,
+      ignoreEncryptionErrors,
+    );
 
     if (decryptedEntity.sshOptions) {
       decryptedEntity.sshOptions = await this.sshModelEncryptor.decryptEntity(
@@ -238,18 +288,21 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   private async checkUniqueness(database: Database): Promise<void> {
     // Do not create a connection if it triggered from cloud and have the same fields
     if (database.cloudDetails?.cloudId) {
-      const entity = await this.encryptEntity(classToClass(DatabaseEntity, { ...database }));
+      const entity = await this.encryptEntity(
+        classToClass(DatabaseEntity, { ...database }),
+      );
 
       if (entity.caCert) {
-        entity.caCert = await (new ModelEncryptor(this.encryptionService, [
+        entity.caCert = await new ModelEncryptor(this.encryptionService, [
           'certificate',
-        ])).encryptEntity(entity.caCert);
+        ]).encryptEntity(entity.caCert);
       }
 
       if (entity.clientCert) {
-        entity.clientCert = await (new ModelEncryptor(this.encryptionService, [
-          'certificate', 'key',
-        ])).encryptEntity(entity.clientCert);
+        entity.clientCert = await new ModelEncryptor(this.encryptionService, [
+          'certificate',
+          'key',
+        ]).encryptEntity(entity.clientCert);
       }
 
       const query: FindOptionsWhere<DatabaseEntity> = {};

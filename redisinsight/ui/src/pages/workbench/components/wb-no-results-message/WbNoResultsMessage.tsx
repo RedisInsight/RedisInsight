@@ -1,10 +1,21 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPanel,
+  EuiSpacer,
+  EuiText,
+  EuiTitle,
+} from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { changeSelectedTab, changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import {
+  changeSelectedTab,
+  changeSidePanel,
+} from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -36,21 +47,30 @@ const WbNoResultsMessage = () => {
 
   return (
     <div className={styles.noResults} data-testid="wb_no-results">
-      <EuiText className={styles.noResultsTitle} data-testid="wb_no-results__title">
+      <EuiText
+        className={styles.noResultsTitle}
+        data-testid="wb_no-results__title"
+      >
         No results to display yet
       </EuiText>
       <EuiTitle>
-        <span style={{ marginTop: 12, fontSize: 28 }}>This is our advanced CLI</span>
+        <span style={{ marginTop: 12, fontSize: 28 }}>
+          This is our advanced CLI
+        </span>
       </EuiTitle>
       <EuiTitle>
-        <span style={{ marginTop: 6, fontSize: 20, lineHeight: 1.2 }}>for Redis commands.</span>
+        <span style={{ marginTop: 6, fontSize: 20, lineHeight: 1.2 }}>
+          for Redis commands.
+        </span>
       </EuiTitle>
       <EuiSpacer />
 
-      <EuiPanel className={styles.noResultsPanel} hasShadow={false} grow={false}>
-        <ArrowToGuidesIcon
-          className={styles.arrowToGuides}
-        />
+      <EuiPanel
+        className={styles.noResultsPanel}
+        hasShadow={false}
+        grow={false}
+      >
+        <ArrowToGuidesIcon className={styles.arrowToGuides} />
         <EuiFlexGroup>
           <EuiFlexItem grow={false}>
             <img
@@ -61,8 +81,12 @@ const WbNoResultsMessage = () => {
             />
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiText className={styles.noResultsText} data-testid="wb_no-results__summary">
-              Try Workbench with our interactive Tutorials to learn how Redis can solve your use cases.
+            <EuiText
+              className={styles.noResultsText}
+              data-testid="wb_no-results__summary"
+            >
+              Try Workbench with our interactive Tutorials to learn how Redis
+              can solve your use cases.
             </EuiText>
             <EuiSpacer size="xl" />
             <div>

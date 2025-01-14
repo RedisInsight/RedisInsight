@@ -27,14 +27,14 @@ export enum PageNames {
   rdiPipelineManagement = 'pipeline-management',
   rdiPipelineConfig = 'config',
   rdiPipelineJobs = 'jobs',
-  rdiStatistics = 'statistics'
+  rdiStatistics = 'statistics',
 }
 
 const redisCloud = '/redis-cloud'
 const sentinel = '/sentinel'
 const rdi = '/integrate'
 
-export type PageValues = typeof Pages[keyof typeof Pages]
+export type PageValues = (typeof Pages)[keyof typeof Pages]
 export const Pages = {
   home: '/',
   homeEditInstance: (instanceId: string) => `/?editInstance=${instanceId}`,
@@ -53,13 +53,17 @@ export const Pages = {
   search: (instanceId: string) => `/${instanceId}/${PageNames.search}`,
   pubSub: (instanceId: string) => `/${instanceId}/${PageNames.pubSub}`,
   analytics: (instanceId: string) => `/${instanceId}/${PageNames.analytics}`,
-  slowLog: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.slowLog}`,
-  clusterDetails: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.clusterDetails}`,
-  databaseAnalysis: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.databaseAnalysis}`,
+  slowLog: (instanceId: string) =>
+    `/${instanceId}/${PageNames.analytics}/${PageNames.slowLog}`,
+  clusterDetails: (instanceId: string) =>
+    `/${instanceId}/${PageNames.analytics}/${PageNames.clusterDetails}`,
+  databaseAnalysis: (instanceId: string) =>
+    `/${instanceId}/${PageNames.analytics}/${PageNames.databaseAnalysis}`,
   // rdi pages
   rdi,
   rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}`,
-  rdiPipelineManagement: (rdiInstance: string) => `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}`,
+  rdiPipelineManagement: (rdiInstance: string) =>
+    `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}`,
   rdiPipelineConfig: (rdiInstance: string) =>
     `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelineConfig}`,
   rdiPipelineJobs: (rdiInstance: string, jobName: string) =>

@@ -52,14 +52,19 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
   {
     text: 'Timestamp to DateTime',
     value: KeyValueFormat.DateTime,
-  }
+  },
 ]
 
 export const KEY_VALUE_JSON_FORMATTER_OPTIONS = []
 
-export const getKeyValueFormatterOptions = (viewFormat?: KeyTypes | ModulesKeyTypes) => (
+export const getKeyValueFormatterOptions = (
+  viewFormat?: KeyTypes | ModulesKeyTypes,
+) =>
   viewFormat !== KeyTypes.ReJSON
     ? [...KEY_VALUE_FORMATTER_OPTIONS]
-    : [...KEY_VALUE_FORMATTER_OPTIONS].filter((option) =>
-      (KEY_VALUE_JSON_FORMATTER_OPTIONS as Array<any>).indexOf(option.value) !== -1)
-)
+    : [...KEY_VALUE_FORMATTER_OPTIONS].filter(
+        (option) =>
+          (KEY_VALUE_JSON_FORMATTER_OPTIONS as Array<any>).indexOf(
+            option.value,
+          ) !== -1,
+      )

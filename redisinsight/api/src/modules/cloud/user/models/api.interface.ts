@@ -14,5 +14,5 @@ export interface ICloudApiAccount {
 }
 
 export interface ICloudApiCsrfToken {
-  csrf_token: string,
+  csrf_token: string;
 }

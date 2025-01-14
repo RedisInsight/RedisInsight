@@ -55,21 +55,24 @@ describe('ListService', () => {
     }).compile();
 
     service = module.get<ListService>(ListService);
-    mockStandaloneRedisClient.sendCommand = jest.fn().mockResolvedValue(undefined);
+    mockStandaloneRedisClient.sendCommand = jest
+      .fn()
+      .mockResolvedValue(undefined);
   });
 
   describe('createList', () => {
     beforeEach(() => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockPushElementDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockPushElementDto.keyName,
+        ])
         .mockResolvedValue(false);
       service.createListWithExpiration = jest.fn();
     });
 
     it('create list with expiration', async () => {
-      service.createListWithExpiration = jest
-        .fn()
-        .mockResolvedValue(undefined);
+      service.createListWithExpiration = jest.fn().mockResolvedValue(undefined);
 
       await expect(
         service.createList(mockBrowserClientMetadata, {
@@ -111,7 +114,10 @@ describe('ListService', () => {
 
     it('key with this name exist', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockPushElementDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockPushElementDto.keyName,
+        ])
         .mockResolvedValue(true);
 
       await expect(
@@ -199,7 +205,12 @@ describe('ListService', () => {
     });
     it('succeed to get elements of the list', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolListCommands.Lrange, mockPushElementDto.keyName, 0, 9])
+        .calledWith([
+          BrowserToolListCommands.Lrange,
+          mockPushElementDto.keyName,
+          0,
+          9,
+        ])
         .mockResolvedValue(mockListElements);
 
       const result = await service.getElements(
@@ -255,7 +266,11 @@ describe('ListService', () => {
         command: 'LINDEX',
       };
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolListCommands.LIndex, mockKeyDto.keyName, expect.anything()])
+        .calledWith([
+          BrowserToolListCommands.LIndex,
+          mockKeyDto.keyName,
+          expect.anything(),
+        ])
         .mockRejectedValue(replyError);
 
       await expect(
@@ -268,10 +283,12 @@ describe('ListService', () => {
         command: 'LINDEX',
       };
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolListCommands.LIndex,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolListCommands.LIndex,
+            expect.anything(),
+          ]),
+        )
         .mockRejectedValue(replyError);
 
       await expect(
@@ -302,22 +319,28 @@ describe('ListService', () => {
     });
     it('index is out of range', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolListCommands.LIndex,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolListCommands.LIndex,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(null);
 
       await expect(
         service.getElement(mockBrowserClientMetadata, mockIndex, mockKeyDto),
-      ).rejects.toThrow(new NotFoundException(ERROR_MESSAGES.INDEX_OUT_OF_RANGE()));
+      ).rejects.toThrow(
+        new NotFoundException(ERROR_MESSAGES.INDEX_OUT_OF_RANGE()),
+      );
     });
     it('succeed to get List element by index', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolListCommands.LIndex,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolListCommands.LIndex,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(mockGetListElementResponse.value);
 
       const result = await service.getElement(
@@ -332,7 +355,10 @@ describe('ListService', () => {
   describe('setElement', () => {
     beforeEach(() => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockSetListElementDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockSetListElementDto.keyName,
+        ])
         .mockResolvedValue(true);
     });
     it('succeed to set the list element at index', async () => {
@@ -347,7 +373,10 @@ describe('ListService', () => {
     });
     it('key with this name does not exist for setElement', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockSetListElementDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockSetListElementDto.keyName,
+        ])
         .mockResolvedValue(false);
 
       await expect(
@@ -393,7 +422,10 @@ describe('ListService', () => {
   describe('deleteElements', () => {
     it('succeed to remove element from the tail', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolListCommands.RPop, mockDeleteElementsDto.keyName])
+        .calledWith([
+          BrowserToolListCommands.RPop,
+          mockDeleteElementsDto.keyName,
+        ])
         .mockResolvedValue(mockListElements[0]);
 
       const result = await service.deleteElements(
@@ -405,7 +437,10 @@ describe('ListService', () => {
     });
     it('succeed to remove element from the head', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolListCommands.LPop, mockDeleteElementsDto.keyName])
+        .calledWith([
+          BrowserToolListCommands.LPop,
+          mockDeleteElementsDto.keyName,
+        ])
         .mockResolvedValue(mockListElements[0]);
 
       const result = await service.deleteElements(mockBrowserClientMetadata, {
@@ -418,7 +453,11 @@ describe('ListService', () => {
     it('succeed to remove multiple elements from the tail', async () => {
       const mockDeletedElements = [mockListElement, mockListElement2];
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolListCommands.RPop, mockDeleteElementsDto.keyName, 2])
+        .calledWith([
+          BrowserToolListCommands.RPop,
+          mockDeleteElementsDto.keyName,
+          2,
+        ])
         .mockResolvedValue(mockDeletedElements);
 
       const result = await service.deleteElements(mockBrowserClientMetadata, {
@@ -437,7 +476,10 @@ describe('ListService', () => {
         .mockRejectedValue(replyError);
 
       await expect(
-        service.deleteElements(mockBrowserClientMetadata, mockDeleteElementsDto),
+        service.deleteElements(
+          mockBrowserClientMetadata,
+          mockDeleteElementsDto,
+        ),
       ).rejects.toThrow(BadRequestException);
     });
     it("redis doesn't support 'RPOP' with 'count' argument", async () => {
@@ -449,7 +491,11 @@ describe('ListService', () => {
         },
       };
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolListCommands.RPop, mockDeleteElementsDto.keyName, 2])
+        .calledWith([
+          BrowserToolListCommands.RPop,
+          mockDeleteElementsDto.keyName,
+          2,
+        ])
         .mockRejectedValue(replyError);
 
       await expect(
@@ -469,16 +515,25 @@ describe('ListService', () => {
         .mockRejectedValue(replyError);
 
       await expect(
-        service.deleteElements(mockBrowserClientMetadata, mockDeleteElementsDto),
+        service.deleteElements(
+          mockBrowserClientMetadata,
+          mockDeleteElementsDto,
+        ),
       ).rejects.toThrow(ForbiddenException);
     });
     it('key with this name does not exists', async () => {
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith([BrowserToolListCommands.RPop, mockDeleteElementsDto.keyName])
+        .calledWith([
+          BrowserToolListCommands.RPop,
+          mockDeleteElementsDto.keyName,
+        ])
         .mockResolvedValue(null);
 
       await expect(
-        service.deleteElements(mockBrowserClientMetadata, mockDeleteElementsDto),
+        service.deleteElements(
+          mockBrowserClientMetadata,
+          mockDeleteElementsDto,
+        ),
       ).rejects.toThrow(NotFoundException);
     });
   });

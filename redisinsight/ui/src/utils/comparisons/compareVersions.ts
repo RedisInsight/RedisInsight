@@ -1,10 +1,14 @@
-export const isVersionHigherOrEquals = (sourceVersion: string = '', comparableVersion: string = '') => {
+export const isVersionHigherOrEquals = (
+  sourceVersion: string = '',
+  comparableVersion: string = '',
+) => {
   const sourceVersionArray = sourceVersion.split('.')
   const comparableVersionArray = comparableVersion.split('.')
 
   for (
     let i = 0;
-    i <= Math.max(sourceVersionArray.length - 1, comparableVersionArray.length - 1);
+    i <=
+    Math.max(sourceVersionArray.length - 1, comparableVersionArray.length - 1);
     i++
   ) {
     const n1 = parseInt(sourceVersionArray[i] || '0')
@@ -17,13 +21,17 @@ export const isVersionHigherOrEquals = (sourceVersion: string = '', comparableVe
   return true
 }
 
-export const isVersionHigher = (sourceVersion: string = '', comparableVersion: string = '') => {
+export const isVersionHigher = (
+  sourceVersion: string = '',
+  comparableVersion: string = '',
+) => {
   const sourceVersionArray = sourceVersion.split('.')
   const comparableVersionArray = comparableVersion.split('.')
 
   for (
     let i = 0;
-    i <= Math.max(sourceVersionArray.length - 1, comparableVersionArray.length - 1);
+    i <=
+    Math.max(sourceVersionArray.length - 1, comparableVersionArray.length - 1);
     i++
   ) {
     const n1 = parseInt(sourceVersionArray[i] || '0')

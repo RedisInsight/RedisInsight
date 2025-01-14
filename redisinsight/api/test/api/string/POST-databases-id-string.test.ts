@@ -8,7 +8,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn,
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -53,9 +54,13 @@ const createCheckFn = async (testCase) => {
     } else {
       if (testCase.statusCode === 201) {
         expect(await rte.client.exists(testCase.data.keyName)).to.eql(1);
-        expect(await rte.client.get(testCase.data.keyName)).to.eql(testCase.data.value);
+        expect(await rte.client.get(testCase.data.keyName)).to.eql(
+          testCase.data.value,
+        );
         if (testCase.data.expire) {
-          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(testCase.data.expire - 5);
+          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(
+            testCase.data.expire - 5,
+          );
         } else {
           expect(await rte.client.ttl(testCase.data.keyName)).to.eql(-1);
         }
@@ -78,8 +83,9 @@ describe('POST /databases/:instanceId/string', () => {
         },
         statusCode: 201,
         after: async () => {
-          expect(await rte.client.getBuffer(constants.TEST_STRING_KEY_BIN_BUFFER_1))
-            .to.eql(constants.TEST_STRING_VALUE_BIN_BUFFER_1);
+          expect(
+            await rte.client.getBuffer(constants.TEST_STRING_KEY_BIN_BUFFER_1),
+          ).to.eql(constants.TEST_STRING_VALUE_BIN_BUFFER_1);
         },
       },
       {
@@ -90,8 +96,9 @@ describe('POST /databases/:instanceId/string', () => {
         },
         statusCode: 201,
         after: async () => {
-          expect(await rte.client.getBuffer(constants.TEST_STRING_KEY_BIN_BUFFER_1))
-            .to.eql(constants.TEST_STRING_VALUE_BIN_BUFFER_1);
+          expect(
+            await rte.client.getBuffer(constants.TEST_STRING_KEY_BIN_BUFFER_1),
+          ).to.eql(constants.TEST_STRING_VALUE_BIN_BUFFER_1);
         },
       },
     ].map(mainCheckFn);
@@ -146,7 +153,9 @@ describe('POST /databases/:instanceId/string', () => {
           },
           after: async () =>
             // check that value was not overwritten
-            expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(constants.TEST_STRING_VALUE_1)
+            expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(
+              constants.TEST_STRING_VALUE_1,
+            ),
         },
         {
           name: 'Should return NotFound error if instance id does not exists',
@@ -163,7 +172,9 @@ describe('POST /databases/:instanceId/string', () => {
           },
           after: async () =>
             // check that value was not overwritten
-            expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(constants.TEST_STRING_VALUE_1)
+            expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(
+              constants.TEST_STRING_VALUE_1,
+            ),
         },
       ].map(createCheckFn);
     });
@@ -210,7 +221,7 @@ describe('POST /databases/:instanceId/string', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -set')
+          before: () => rte.data.setAclUserRules('~* +@all -set'),
         },
       ].map(createCheckFn);
     });

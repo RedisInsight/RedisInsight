@@ -16,11 +16,20 @@ const PatternsInfo = ({ channels }: PatternsInfoProps) => {
 
   return (
     <div className={styles.patternsContainer}>
-      <EuiText color="subdued" size="s" data-testid="patterns-count">Patterns:&nbsp;{getChannelsCount()} </EuiText>
+      <EuiText color="subdued" size="s" data-testid="patterns-count">
+        Patterns:&nbsp;{getChannelsCount()}{' '}
+      </EuiText>
       <EuiToolTip
         anchorClassName={styles.appendIcon}
         position="right"
-        title={<>{channels?.trim().split(' ').map((ch) => <p key={`${ch}`}>{ch}</p>)}</>}
+        title={
+          <>
+            {channels
+              ?.trim()
+              .split(' ')
+              .map((ch) => <p key={`${ch}`}>{ch}</p>)}
+          </>
+        }
       >
         <EuiIcon
           type="iInCircle"

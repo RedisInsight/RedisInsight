@@ -2,7 +2,9 @@ import { AxiosError } from 'axios';
 import { HttpException } from '@nestjs/common';
 import {
   RdiPipelineInternalServerErrorException,
-  RdiPipelineUnauthorizedException, RdiPipelineNotFoundException, RdiPipelineValidationException,
+  RdiPipelineUnauthorizedException,
+  RdiPipelineNotFoundException,
+  RdiPipelineValidationException,
 } from 'src/modules/rdi/exceptions';
 import { RdiPipelineForbiddenException } from './rdi-pipeline.forbidden.exception';
 

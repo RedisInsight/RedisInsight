@@ -4,8 +4,16 @@ import { SwitchableFlagStrategy } from 'src/modules/feature/providers/feature-fl
 import { SessionMetadata } from 'src/common/models';
 
 export class CloudSsoFlagStrategy extends SwitchableFlagStrategy {
-  async calculate(sessionMetadata: SessionMetadata, knownFeature: IFeatureFlag, featureConfig: any): Promise<Feature> {
-    const feature = await super.calculate(sessionMetadata, knownFeature, featureConfig);
+  async calculate(
+    sessionMetadata: SessionMetadata,
+    knownFeature: IFeatureFlag,
+    featureConfig: any,
+  ): Promise<Feature> {
+    const feature = await super.calculate(
+      sessionMetadata,
+      knownFeature,
+      featureConfig,
+    );
 
     if (knownFeature.factory) {
       return {

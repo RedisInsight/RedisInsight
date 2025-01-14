@@ -37,32 +37,32 @@ export const redisearchLightThemeRules = [
 export const darkThemeRules = [
   { token: 'function', foreground: 'BFBC4E' },
   ...redisearchDarKThemeRules.map((rule) => ({
-    ...rule
-  }))
+    ...rule,
+  })),
 ]
 
 export const lightThemeRules = [
   { token: 'function', foreground: '795E26' },
   ...redisearchLightThemeRules.map((rule) => ({
-    ...rule
-  }))
+    ...rule,
+  })),
 ]
 
 export enum MonacoThemes {
   Dark = 'dark',
-  Light = 'light'
+  Light = 'light',
 }
 
 export const darkTheme: monaco.editor.IStandaloneThemeData = {
   base: 'vs-dark',
   inherit: true,
   rules: darkThemeRules,
-  colors: {}
+  colors: {},
 }
 
 export const lightTheme: monaco.editor.IStandaloneThemeData = {
   base: 'vs',
   inherit: true,
   rules: lightThemeRules,
-  colors: {}
+  colors: {},
 }

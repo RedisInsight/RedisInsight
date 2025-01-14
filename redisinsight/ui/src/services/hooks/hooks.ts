@@ -2,7 +2,7 @@ import { RefObject, useCallback, useEffect, useState } from 'react'
 
 export const useResizableFormField = (
   formRef: RefObject<HTMLDivElement>,
-  width: number
+  width: number,
 ) => {
   const flexFormWidth = 700
   const flexGroupResponsiveForm = 'flexGroupResponsiveForm'
@@ -16,10 +16,10 @@ export const useResizableFormField = (
       const { offsetWidth } = formRef.current
 
       setFlexItemClassName(
-        offsetWidth < flexFormWidth ? flexItemResponsiveForm : ''
+        offsetWidth < flexFormWidth ? flexItemResponsiveForm : '',
       )
       setFlexGroupClassName(
-        offsetWidth < flexFormWidth ? flexGroupResponsiveForm : ''
+        offsetWidth < flexFormWidth ? flexGroupResponsiveForm : '',
       )
     }
   }, [width])
@@ -30,7 +30,7 @@ export const useResizableFormField = (
 export const useDebouncedEffect = (
   effect: () => void,
   delay: number,
-  deps: any[]
+  deps: any[],
 ) => {
   const callback = useCallback(effect, deps)
 

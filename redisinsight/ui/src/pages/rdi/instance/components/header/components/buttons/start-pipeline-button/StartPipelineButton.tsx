@@ -7,7 +7,11 @@ import StartIcon from 'uiSrc/assets/img/rdi/playFilled.svg?react'
 import { PipelineButtonProps } from '../reset-pipeline-button/ResetPipelineButton'
 import styles from '../styles.module.scss'
 
-const StartPipelineButton = ({ onClick, disabled, loading }: PipelineButtonProps) => (
+const StartPipelineButton = ({
+  onClick,
+  disabled,
+  loading,
+}: PipelineButtonProps) => (
   <EuiToolTip
     content="Start the pipeline to resume processing new data arrivals."
     anchorClassName={disabled ? styles.disabled : styles.tooltip}

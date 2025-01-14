@@ -15,17 +15,20 @@ const NoIndexesInitialMessage = (props: Props) => {
 
   useEffect(() => {
     sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_BOT_NO_INDEXES_MESSAGE_DISPLAYED
+      event: TelemetryEvent.AI_CHAT_BOT_NO_INDEXES_MESSAGE_DISPLAYED,
     })
   }, [])
 
   return (
     <div data-testid="no-indexes-chat-message">
       <EuiText size="xs">Hi!</EuiText>
-      <EuiText size="xs">I am here to help you get started with data querying. I noticed that you have no indexes created.</EuiText>
+      <EuiText size="xs">
+        I am here to help you get started with data querying. I noticed that you
+        have no indexes created.
+      </EuiText>
       <EuiSpacer />
-      <EuiText size="xs">Would you like to load the sample data and indexes (from this
-        {' '}
+      <EuiText size="xs">
+        Would you like to load the sample data and indexes (from this{' '}
         <EuiLink
           color="subdued"
           external={false}
@@ -38,7 +41,10 @@ const NoIndexesInitialMessage = (props: Props) => {
         ) to see what Redis Copilot can help you do?
       </EuiText>
       <EuiSpacer />
-      <LoadSampleData anchorClassName={styles.anchorClassName} onSuccess={onSuccess} />
+      <LoadSampleData
+        anchorClassName={styles.anchorClassName}
+        onSuccess={onSuccess}
+      />
       <EuiSpacer />
     </div>
   )

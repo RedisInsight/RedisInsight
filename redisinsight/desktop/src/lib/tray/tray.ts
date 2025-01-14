@@ -1,4 +1,11 @@
-import { app, Menu, shell, Tray, nativeImage, MenuItemConstructorOptions } from 'electron'
+import {
+  app,
+  Menu,
+  shell,
+  Tray,
+  nativeImage,
+  MenuItemConstructorOptions,
+} from 'electron'
 import path from 'path'
 import { getWindows } from 'desktopSrc/lib'
 import { showOrCreateWindow } from 'desktopSrc/utils'
@@ -10,7 +17,10 @@ export class TrayBuilder {
 
   constructor() {
     // eslint-disable-next-line operator-linebreak
-    const iconName = process.platform === 'darwin' ? 'icon-tray-white.png' : 'icon-tray-colored.png'
+    const iconName =
+      process.platform === 'darwin'
+        ? 'icon-tray-white.png'
+        : 'icon-tray-colored.png'
     const iconPath = `${!app.isPackaged ? '../' : ''}../../../resources/`
     const iconFullPath = path.join(__dirname, iconPath, iconName)
     const icon = nativeImage.createFromPath(iconFullPath)
@@ -29,18 +39,18 @@ export class TrayBuilder {
             label: 'All',
             click: () => {
               this.openApp()
-            }
+            },
           },
           {
-            type: 'separator'
+            type: 'separator',
           },
           ...[...getWindows().values()].map((window) => ({
             label: window.webContents.getTitle(),
             click: () => {
               window.show()
-            }
-          }))
-        ]
+            },
+          })),
+        ],
       }
     }
 
@@ -48,7 +58,7 @@ export class TrayBuilder {
       label: 'Open Redis Insight',
       click: () => {
         this.openApp()
-      }
+      },
     }
   }
 
@@ -62,13 +72,15 @@ export class TrayBuilder {
           this.openApp()
 
           app.showAboutPanel()
-        }
+        },
       },
       {
         label: 'Learn More',
         click() {
-          shell.openExternal('https://redis.io/docs/ui/insight/?utm_source=redisinsight&utm_medium=main&utm_campaign=learn_more')
-        }
+          shell.openExternal(
+            'https://redis.io/docs/ui/insight/?utm_source=redisinsight&utm_medium=main&utm_campaign=learn_more',
+          )
+        },
       },
       { type: 'separator' },
       {
@@ -76,8 +88,8 @@ export class TrayBuilder {
         click: () => {
           setToQuiting()
           app.quit()
-        }
-      }
+        },
+      },
     ] as MenuItemConstructorOptions[])
 
     this.tray.setContextMenu(contextMenu)

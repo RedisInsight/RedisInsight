@@ -14,7 +14,11 @@ export class CloudDatabaseAnalytics extends TelemetryBaseService {
     sessionMetadata: SessionMetadata,
     eventData: object = {},
   ) {
-    this.sendEvent(sessionMetadata, TelemetryEvents.CloudFreeDatabaseCreated, eventData);
+    this.sendEvent(
+      sessionMetadata,
+      TelemetryEvents.CloudFreeDatabaseCreated,
+      eventData,
+    );
   }
 
   sendCloudFreeDatabaseFailed(

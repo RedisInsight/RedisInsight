@@ -3,7 +3,10 @@ import {
   mockRedisSentinelUtil,
 } from 'src/__mocks__/redis-utils';
 
-jest.doMock('src/modules/redis/utils/sentinel.util', mockRedisSentinelUtilModule);
+jest.doMock(
+  'src/modules/redis/utils/sentinel.util',
+  mockRedisSentinelUtilModule,
+);
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
@@ -65,23 +68,35 @@ describe('RedisSentinelService', () => {
 
   describe('getSentinelMasters', () => {
     it('connect and get sentinel masters', async () => {
-      redisClientFactory.getConnectionStrategy().createStandaloneClient.mockResolvedValue(mockIORedisClient);
+      redisClientFactory
+        .getConnectionStrategy()
+        .createStandaloneClient.mockResolvedValue(mockIORedisClient);
       mockIORedisClient.call.mockResolvedValue(mockRedisSentinelMasterResponse);
-      mockRedisSentinelUtil.discoverSentinelMasterGroups.mockResolvedValue([mockSentinelMasterDto]);
+      mockRedisSentinelUtil.discoverSentinelMasterGroups.mockResolvedValue([
+        mockSentinelMasterDto,
+      ]);
 
-      const result = await service.getSentinelMasters(mockSessionMetadata, mockSentinelDatabaseWithTlsAuth);
+      const result = await service.getSentinelMasters(
+        mockSessionMetadata,
+        mockSentinelDatabaseWithTlsAuth,
+      );
 
       expect(result).toEqual([mockSentinelMasterDto]);
       expect(mockIORedisClient.disconnect).toHaveBeenCalled();
     });
 
     it('failed connection to the redis database', async () => {
-      redisClientFactory.getConnectionStrategy().createStandaloneClient.mockRejectedValue(
-        new Error(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
-      );
+      redisClientFactory
+        .getConnectionStrategy()
+        .createStandaloneClient.mockRejectedValue(
+          new Error(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
+        );
 
       await expect(
-        service.getSentinelMasters(mockSessionMetadata, mockSentinelDatabaseWithTlsAuth),
+        service.getSentinelMasters(
+          mockSessionMetadata,
+          mockSentinelDatabaseWithTlsAuth,
+        ),
       ).rejects.toThrow(BadRequestException);
     });
   });

@@ -1,12 +1,10 @@
-import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
+import {
+  SentinelMaster,
+  SentinelMasterStatus,
+} from 'src/modules/redis-sentinel/models/sentinel-master';
 import { Endpoint } from 'src/common/models';
 
-export const mockOtherSentinelsReply = [[
-  'ip',
-  '127.0.0.2',
-  'port',
-  '26379',
-]];
+export const mockOtherSentinelsReply = [['ip', '127.0.0.2', 'port', '26379']];
 
 export const mockOtherSentinelEndpoint: Endpoint = {
   host: '127.0.0.2',

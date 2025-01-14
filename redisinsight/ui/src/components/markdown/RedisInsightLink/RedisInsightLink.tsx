@@ -47,9 +47,9 @@ const RedisInsightLink = (props: Props) => {
       panelPaddingSize="m"
       closePopover={() => setIsPopoverOpen(false)}
       focusTrapProps={{
-        scrollLock: true
+        scrollLock: true,
       }}
-      button={(
+      button={
         <EuiLink
           color="text"
           external={false}
@@ -60,7 +60,7 @@ const RedisInsightLink = (props: Props) => {
         >
           {text}
         </EuiLink>
-      )}
+      }
     >
       <DatabaseNotOpened />
     </EuiPopover>

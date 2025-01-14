@@ -7,11 +7,11 @@ export const INSTANCE_ID_MOCK = 'instanceId'
 
 const handlers: RestHandler[] = [
   // fetchDBAnalysisReportsHistory
-  rest.get(getMswURL(getUrl(INSTANCE_ID_MOCK, ApiEndpoints.DATABASE_ANALYSIS)),
-    async (_req, res, ctx) => res(
-      ctx.status(200),
-      ctx.json(DB_ANALYSIS_HISTORY_DATA_MOCK),
-    ))
+  rest.get(
+    getMswURL(getUrl(INSTANCE_ID_MOCK, ApiEndpoints.DATABASE_ANALYSIS)),
+    async (_req, res, ctx) =>
+      res(ctx.status(200), ctx.json(DB_ANALYSIS_HISTORY_DATA_MOCK)),
+  ),
 ]
 
 export const DB_ANALYSIS_HISTORY_DATA_MOCK = [

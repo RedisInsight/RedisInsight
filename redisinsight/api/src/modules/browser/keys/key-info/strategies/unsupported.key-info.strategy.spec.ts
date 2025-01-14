@@ -1,14 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import {
-  mockStandaloneRedisClient,
-} from 'src/__mocks__';
+import { mockStandaloneRedisClient } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
-import {
-  UnsupportedKeyInfoStrategy,
-} from 'src/modules/browser/keys/key-info/strategies/unsupported.key-info.strategy';
+import { UnsupportedKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/unsupported.key-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testKey',
@@ -22,9 +18,7 @@ describe('UnsupportedKeyInfoStrategy', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        UnsupportedKeyInfoStrategy,
-      ],
+      providers: [UnsupportedKeyInfoStrategy],
     }).compile();
 
     strategy = module.get(UnsupportedKeyInfoStrategy);

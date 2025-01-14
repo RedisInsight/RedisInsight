@@ -31,18 +31,21 @@ export abstract class AbstractSubscription implements ISubscription {
     this.channel = dto.channel;
     this.type = dto.type;
     this.id = `${this.type}:${this.channel}`;
-    this.debounce = debounce(() => {
-      if (this.messages.length) {
-        this.userClient.getSocket()
-          .emit(this.id, {
+    this.debounce = debounce(
+      () => {
+        if (this.messages.length) {
+          this.userClient.getSocket().emit(this.id, {
             messages: this.messages.slice(0, MESSAGES_MAX),
             count: this.messages.length,
           } as MessagesResponse);
-        this.messages = [];
-      }
-    }, EMIT_WAIT, {
-      maxWait: EMIT_MAX_WAIT,
-    });
+          this.messages = [];
+        }
+      },
+      EMIT_WAIT,
+      {
+        maxWait: EMIT_MAX_WAIT,
+      },
+    );
   }
 
   getId() {

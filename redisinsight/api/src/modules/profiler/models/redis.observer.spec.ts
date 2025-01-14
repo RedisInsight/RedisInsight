@@ -11,7 +11,10 @@ import {
 } from 'src/__mocks__';
 import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
 import { ReplyError } from 'src/models';
-import { ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { IShardObserver } from 'src/modules/profiler/interfaces/shard-observer.interface';
 
 const getRedisClientFn = jest.fn();
@@ -28,8 +31,16 @@ describe('RedisObserver', () => {
 
   const mockClusterNode1 = standaloneClient;
   const mockClusterNode2 = standaloneClient;
-  Object.assign(mockClusterNode1.options, { ...standaloneClient.options, host: 'localhost', port: 5000 });
-  Object.assign(mockClusterNode2.options, { ...standaloneClient.options, host: 'localhost', port: 5001 });
+  Object.assign(mockClusterNode1.options, {
+    ...standaloneClient.options,
+    host: 'localhost',
+    port: 5000,
+  });
+  Object.assign(mockClusterNode2.options, {
+    ...standaloneClient.options,
+    host: 'localhost',
+    port: 5001,
+  });
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -46,7 +57,9 @@ describe('RedisObserver', () => {
       await new Promise((resolve) => {
         redisObserver['connect'] = jest.fn();
         redisObserver.init(getRedisClientFn);
-        expect(redisObserver['status']).toEqual(RedisObserverStatus.Initializing);
+        expect(redisObserver['status']).toEqual(
+          RedisObserverStatus.Initializing,
+        );
         redisObserver.on('connect', () => {
           resolve(true);
         });
@@ -68,7 +81,9 @@ describe('RedisObserver', () => {
   describe('subscribe', () => {
     beforeEach(() => {
       redisObserver['connect'] = jest.fn();
-      redisObserver['shardsObservers'] = [standaloneClient as unknown as IShardObserver];
+      redisObserver['shardsObservers'] = [
+        standaloneClient as unknown as IShardObserver,
+      ];
     });
 
     it('should subscribe to a standalone', async () => {
@@ -81,9 +96,15 @@ describe('RedisObserver', () => {
 
       expect(redisObserver['shardsObservers'].length).toEqual(1);
       expect(redisObserver['profilerClientsListeners'].size).toEqual(1);
-      expect(redisObserver['profilerClientsListeners'].get(mockProfilerClient.id).length).toEqual(2);
+      expect(
+        redisObserver['profilerClientsListeners'].get(mockProfilerClient.id)
+          .length,
+      ).toEqual(2);
 
-      standaloneClient.emit('monitor', ...Object.values(mockMonitorDataItemEmitted));
+      standaloneClient.emit(
+        'monitor',
+        ...Object.values(mockMonitorDataItemEmitted),
+      );
       expect(mockProfilerClient['handleOnData']).toHaveBeenCalledWith({
         ...mockMonitorDataItemEmitted,
         shardOptions: standaloneClient.options,
@@ -107,9 +128,15 @@ describe('RedisObserver', () => {
       expect(redisObserver['connect']).toHaveBeenCalledTimes(2);
       expect(redisObserver['shardsObservers'].length).toEqual(2);
       expect(redisObserver['profilerClientsListeners'].size).toEqual(1);
-      expect(redisObserver['profilerClientsListeners'].get(mockProfilerClient.id).length).toEqual(4);
+      expect(
+        redisObserver['profilerClientsListeners'].get(mockProfilerClient.id)
+          .length,
+      ).toEqual(4);
 
-      standaloneClient.emit('monitor', ...Object.values(mockMonitorDataItemEmitted));
+      standaloneClient.emit(
+        'monitor',
+        ...Object.values(mockMonitorDataItemEmitted),
+      );
       expect(mockProfilerClient['handleOnData']).toHaveBeenCalledWith({
         ...mockMonitorDataItemEmitted,
         shardOptions: { ...mockClusterNode1.options },
@@ -196,7 +223,9 @@ describe('RedisObserver', () => {
       await redisObserver.init(getRedisClientFn);
       const profilerClient = new ProfilerClient('1', mockSocket);
       await redisObserver.subscribe(profilerClient);
-      expect(redisObserver['shardsObservers']).toEqual([mockRedisShardObserver]);
+      expect(redisObserver['shardsObservers']).toEqual([
+        mockRedisShardObserver,
+      ]);
       expect(redisObserver['status']).toEqual(RedisObserverStatus.Ready);
     });
 
@@ -224,11 +253,16 @@ describe('RedisObserver', () => {
 
     it('connect to cluster', async () => {
       getRedisClientFn.mockResolvedValue(clusterClient);
-      clusterClient.nodes = jest.fn().mockReturnValue([mockClusterNode1, mockClusterNode2]);
+      clusterClient.nodes = jest
+        .fn()
+        .mockReturnValue([mockClusterNode1, mockClusterNode2]);
       await redisObserver.init(getRedisClientFn);
 
       redisObserver['redis'] = clusterClient;
-      expect(redisObserver['shardsObservers']).toEqual([mockRedisShardObserver, mockRedisShardObserver]);
+      expect(redisObserver['shardsObservers']).toEqual([
+        mockRedisShardObserver,
+        mockRedisShardObserver,
+      ]);
       expect(redisObserver['status']).toEqual(RedisObserverStatus.Ready);
     });
   });

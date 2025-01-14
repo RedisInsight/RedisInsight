@@ -34,18 +34,22 @@ describe('CompressionForListStrategy', () => {
 
   describe('isRecommendationReached', () => {
     it('should return false when list length < 1 000', async () => {
-      expect(await strategy.isRecommendationReached(mockListInfo)).toEqual({ isReached: false });
+      expect(await strategy.isRecommendationReached(mockListInfo)).toEqual({
+        isReached: false,
+      });
     });
 
-
     it('should return true when list length > 1 000', async () => {
-      expect(await strategy.isRecommendationReached(mockBigListInfo))
-        .toEqual({ isReached: true, params: { keys: [mockBigListInfo.name] } });
+      expect(await strategy.isRecommendationReached(mockBigListInfo)).toEqual({
+        isReached: true,
+        params: { keys: [mockBigListInfo.name] },
+      });
     });
 
     it('should return false when not list key', async () => {
-      expect(await strategy.isRecommendationReached(mockHashInfo)).toEqual({ isReached: false });
+      expect(await strategy.isRecommendationReached(mockHashInfo)).toEqual({
+        isReached: false,
+      });
     });
-
   });
 });

@@ -3,7 +3,12 @@ import React from 'react'
 import { InitOutputText } from 'uiSrc/components/messages/cli-output/cliOutput'
 import { concatToOutput } from 'uiSrc/slices/cli/cli-output'
 import { setCliEnteringCommand } from 'uiSrc/slices/cli/cli-settings'
-import { cleanup, clearStoreActions, mockedStore, render } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  clearStoreActions,
+  mockedStore,
+  render,
+} from 'uiSrc/utils/test-utils'
 import CliWrapper from './CliWrapper'
 
 const redisCommandsPath = 'uiSrc/slices/app/redis-commands'
@@ -19,13 +24,14 @@ beforeEach(() => {
 
 jest.mock(redisCommandsPath, () => {
   const defaultState = jest.requireActual(redisCommandsPath).initialState
-  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } = jest.requireActual('uiSrc/constants')
+  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } =
+    jest.requireActual('uiSrc/constants')
   return {
     ...jest.requireActual(redisCommandsPath),
     appRedisCommandsSelector: jest.fn().mockReturnValue({
       ...defaultState,
       spec: MOCK_COMMANDS_SPEC,
-      commandsArray: Object.keys(MOCK_COMMANDS_ARRAY).sort()
+      commandsArray: Object.keys(MOCK_COMMANDS_ARRAY).sort(),
     }),
   }
 })
@@ -53,6 +59,8 @@ describe('CliWrapper', () => {
       concatToOutput(InitOutputText('', 0, 0, true, handleWorkbenchClick)),
       setCliEnteringCommand(),
     ]
-    expect(clearStoreActions(store.getActions().slice(-2))).toEqual(clearStoreActions(expectedActions))
+    expect(clearStoreActions(store.getActions().slice(-2))).toEqual(
+      clearStoreActions(expectedActions),
+    )
   })
 })

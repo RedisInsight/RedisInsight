@@ -32,7 +32,14 @@ export class RedisEnterpriseAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendGetREClusterDbsFailedEvent(sessionMetadata: SessionMetadata, exception: HttpException) {
-    this.sendFailedEvent(sessionMetadata, TelemetryEvents.REClusterDiscoveryFailed, exception);
+  sendGetREClusterDbsFailedEvent(
+    sessionMetadata: SessionMetadata,
+    exception: HttpException,
+  ) {
+    this.sendFailedEvent(
+      sessionMetadata,
+      TelemetryEvents.REClusterDiscoveryFailed,
+      exception,
+    );
   }
 }

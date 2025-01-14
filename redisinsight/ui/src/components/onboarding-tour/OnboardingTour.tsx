@@ -4,7 +4,8 @@ import {
   EuiText,
   EuiTourStep,
   EuiButtonEmpty,
-  EuiButton, EuiButtonIcon,
+  EuiButton,
+  EuiButtonIcon,
 } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import cx from 'classnames'
@@ -12,7 +13,7 @@ import cx from 'classnames'
 import {
   skipOnboarding,
   setOnboardNextStep,
-  setOnboardPrevStep
+  setOnboardPrevStep,
 } from 'uiSrc/slices/app/features'
 import { Props as OnboardingWrapperProps } from './OnboardingTourWrapper'
 
@@ -35,7 +36,7 @@ const OnboardingTour = (props: Props) => {
     currentStep,
     totalSteps,
     preventPropagation,
-    fullSize
+    fullSize,
   } = props
   const { step, title, Inner } = options
   const {
@@ -96,7 +97,9 @@ const OnboardingTour = (props: Props) => {
           data-testid="close-tour-btn"
         />
       )}
-      <div className={styles.title} data-testid="step-title">{title}</div>
+      <div className={styles.title} data-testid="step-title">
+        {title}
+      </div>
     </div>
   )
 
@@ -108,7 +111,9 @@ const OnboardingTour = (props: Props) => {
         </EuiText>
       </div>
       <div className={styles.footer}>
-        <EuiText color="subdued" className={styles.stepCount}>{currentStep} of {totalSteps}</EuiText>
+        <EuiText color="subdued" className={styles.stepCount}>
+          {currentStep} of {totalSteps}
+        </EuiText>
         <div className={styles.backNext}>
           {currentStep > 1 && (
             <EuiButton
@@ -138,7 +143,9 @@ const OnboardingTour = (props: Props) => {
   return (
     <div
       onClick={handleWrapperClick}
-      className={cx(styles.wrapper, anchorWrapperClassName, { [styles.fullSize]: fullSize })}
+      className={cx(styles.wrapper, anchorWrapperClassName, {
+        [styles.fullSize]: fullSize,
+      })}
       role="presentation"
     >
       <EuiTourStep
@@ -154,7 +161,9 @@ const OnboardingTour = (props: Props) => {
         anchorPosition={anchorPosition}
         className={styles.popover}
         anchorClassName={styles.popoverAnchor}
-        panelClassName={cx(styles.popoverPanel, panelClassName, { [styles.lastStep]: isLastStep })}
+        panelClassName={cx(styles.popoverPanel, panelClassName, {
+          [styles.lastStep]: isLastStep,
+        })}
         zIndex={9999}
         offset={5}
         data-testid="onboarding-tour"

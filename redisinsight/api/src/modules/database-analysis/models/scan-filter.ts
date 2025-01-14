@@ -1,7 +1,5 @@
 import { RedisDataType } from 'src/modules/browser/keys/dto';
-import {
-  IsEnum, IsInt, IsOptional, IsString,
-} from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 

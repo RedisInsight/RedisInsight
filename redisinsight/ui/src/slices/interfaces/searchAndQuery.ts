@@ -1,4 +1,7 @@
-import { CommandExecutionUI, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import {
+  CommandExecutionUI,
+  RunQueryMode,
+} from 'uiSrc/slices/interfaces/workbench'
 
 export interface StateSearchAndQuery {
   isLoaded: boolean

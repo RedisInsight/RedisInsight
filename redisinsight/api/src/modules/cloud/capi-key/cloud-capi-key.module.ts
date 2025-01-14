@@ -9,10 +9,7 @@ import { CloudSessionModule } from 'src/modules/cloud/session/cloud-session.modu
 import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key.analytics';
 
 @Module({
-  imports: [
-    CloudUserModule,
-    CloudSessionModule,
-  ],
+  imports: [CloudUserModule, CloudSessionModule],
   controllers: [CloudCapiKeyController],
   providers: [
     CloudCapiKeyApiProvider,
@@ -23,9 +20,6 @@ import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key
       useClass: LocalCloudCapiKeyRepository,
     },
   ],
-  exports: [
-    CloudCapiKeyService,
-    CloudCapiKeyApiProvider,
-  ],
+  exports: [CloudCapiKeyService, CloudCapiKeyApiProvider],
 })
 export class CloudCapiKeyModule {}

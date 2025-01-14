@@ -8,15 +8,13 @@ jest.mock('uiSrc/slices/pubsub/pubsub', () => ({
   ...jest.requireActual('uiSrc/slices/pubsub/pubsub'),
   pubSubSelector: jest.fn().mockReturnValue({
     isSubscribed: false,
-    messages: []
+    messages: [],
   }),
 }))
 
 describe('MessagesListWrapper', () => {
   it('should render', () => {
-    expect(
-      render(<MessagesListWrapper />)
-    ).toBeTruthy()
+    expect(render(<MessagesListWrapper />)).toBeTruthy()
   })
 
   it('should render EmptyMessagesList by default', () => {
@@ -27,8 +25,8 @@ describe('MessagesListWrapper', () => {
   })
 
   it('should render MessagesList if isSubscribed === true', () => {
-    (pubSubSelector as jest.Mock).mockReturnValue({
-      isSubscribed: true
+    ;(pubSubSelector as jest.Mock).mockReturnValue({
+      isSubscribed: true,
     })
 
     const { queryByTestId } = render(<MessagesListWrapper />)
@@ -38,8 +36,8 @@ describe('MessagesListWrapper', () => {
   })
 
   it('should render MessagesList if messages.length !== 0', () => {
-    (pubSubSelector as jest.Mock).mockReturnValue({
-      messages: [{ time: 123, channel: 'channel', message: 'msg' }]
+    ;(pubSubSelector as jest.Mock).mockReturnValue({
+      messages: [{ time: 123, channel: 'channel', message: 'msg' }],
     })
 
     const { queryByTestId } = render(<MessagesListWrapper />)

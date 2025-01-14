@@ -21,9 +21,7 @@ import {
 @Controller('settings')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class SettingsController {
-  constructor(
-    private settingsService: SettingsService,
-  ) {}
+  constructor(private settingsService: SettingsService) {}
 
   @Get('')
   @ApiEndpoint({
@@ -73,7 +71,7 @@ export class SettingsController {
   })
   async update(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Body() dto: UpdateSettingsDto,
+    @Body() dto: UpdateSettingsDto,
   ): Promise<GetAppSettingsResponse> {
     return this.settingsService.updateAppSettings(sessionMetadata, dto);
   }

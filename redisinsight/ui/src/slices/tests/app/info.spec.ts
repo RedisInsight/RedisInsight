@@ -17,7 +17,8 @@ import reducer, {
   getServerInfo,
   getServerInfoSuccess,
   getServerInfoFailure,
-  appInfoSelector, fetchServerInfo,
+  appInfoSelector,
+  fetchServerInfo,
 } from '../../app/info'
 
 jest.mock('uiSrc/services')
@@ -48,14 +49,14 @@ describe('slices', () => {
       // Arrange
       const data = {
         isUpdateAvailable: true,
-        updateDownloadedVersion: '1.2.0'
+        updateDownloadedVersion: '1.2.0',
       }
       const state = {
         ...initialState,
         electron: {
           ...initialState.electron,
-          ...data
-        }
+          ...data,
+        },
       }
 
       // Act
@@ -78,12 +79,15 @@ describe('slices', () => {
         ...initialState,
         electron: {
           ...initialState.electron,
-          isReleaseNotesViewed
-        }
+          isReleaseNotesViewed,
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, setReleaseNotesViewed(isReleaseNotesViewed))
+      const nextState = reducer(
+        initialState,
+        setReleaseNotesViewed(isReleaseNotesViewed),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -100,7 +104,7 @@ describe('slices', () => {
       const loading = true
       const state = {
         ...initialState,
-        loading
+        loading,
       }
 
       // Act
@@ -120,11 +124,14 @@ describe('slices', () => {
       const state = {
         ...initialState,
         loading: false,
-        server: APP_INFO_DATA_MOCK
+        server: APP_INFO_DATA_MOCK,
       }
 
       // Act
-      const nextState = reducer(initialState, getServerInfoSuccess(APP_INFO_DATA_MOCK))
+      const nextState = reducer(
+        initialState,
+        getServerInfoSuccess(APP_INFO_DATA_MOCK),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -142,7 +149,7 @@ describe('slices', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act

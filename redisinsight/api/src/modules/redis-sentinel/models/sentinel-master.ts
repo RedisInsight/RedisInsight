@@ -1,7 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsInt, IsNotEmpty, IsOptional, IsString,
-} from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
 import { Endpoint } from 'src/common/models';
 
@@ -22,7 +20,8 @@ export class SentinelMaster {
   name: string;
 
   @ApiPropertyOptional({
-    description: 'Sentinel username, if your database is ACL enabled, otherwise leave this field empty.',
+    description:
+      'Sentinel username, if your database is ACL enabled, otherwise leave this field empty.',
     type: String,
   })
   @Expose()
@@ -33,8 +32,8 @@ export class SentinelMaster {
 
   @ApiPropertyOptional({
     description:
-      'The password for your Redis Sentinel master. '
-      + 'If your master doesn’t require a password, leave this field empty.',
+      'The password for your Redis Sentinel master. ' +
+      'If your master doesn’t require a password, leave this field empty.',
     type: String,
   })
   @Expose()

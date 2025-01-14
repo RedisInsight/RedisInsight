@@ -13,14 +13,14 @@ import reducer, {
   getFeatureFlags,
   getFeatureFlagsSuccess,
   getFeatureFlagsFailure,
-  fetchFeatureFlags
+  fetchFeatureFlags,
 } from 'uiSrc/slices/app/features'
 import {
   cleanup,
   initialStateDefault,
   MOCKED_HIGHLIGHTING_FEATURES,
   mockedStore,
-  mockStore
+  mockStore,
 } from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
 
@@ -47,7 +47,7 @@ describe('slices', () => {
     it('should properly set features to highlight', () => {
       const payload = {
         features: mockFeatures,
-        version: '2.0.0'
+        version: '2.0.0',
       }
       const state = {
         ...initialState,
@@ -56,9 +56,9 @@ describe('slices', () => {
           features: payload.features,
           version: payload.version,
           pages: {
-            browser: payload.features
-          }
-        }
+            browser: payload.features,
+          },
+        },
       }
 
       // Act
@@ -82,9 +82,9 @@ describe('slices', () => {
           features: mockFeatures,
           version: '2.0.0',
           pages: {
-            browser: mockFeatures
-          }
-        }
+            browser: mockFeatures,
+          },
+        },
       }
 
       const payload = mockFeatures[0]
@@ -94,13 +94,16 @@ describe('slices', () => {
           ...prevState.highlighting,
           features: [mockFeatures[1]],
           pages: {
-            browser: [mockFeatures[1]]
-          }
-        }
+            browser: [mockFeatures[1]],
+          },
+        },
       }
 
       // Act
-      const nextState = reducer(prevState, removeFeatureFromHighlighting(payload))
+      const nextState = reducer(
+        prevState,
+        removeFeatureFromHighlighting(payload),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -115,7 +118,7 @@ describe('slices', () => {
     it('should properly set onboarding', () => {
       const payload = {
         currentStep: 0,
-        totalSteps: 14
+        totalSteps: 14,
       }
       const state = {
         ...initialState,
@@ -123,8 +126,8 @@ describe('slices', () => {
           ...initialState.onboarding,
           currentStep: 0,
           totalSteps: 14,
-          isActive: true
-        }
+          isActive: true,
+        },
       }
 
       // Act
@@ -141,7 +144,7 @@ describe('slices', () => {
     it('should not set onboarding when currenStep > totalSteps', () => {
       const payload = {
         currentStep: 5,
-        totalSteps: 4
+        totalSteps: 4,
       }
       const state = {
         ...initialState,
@@ -165,16 +168,16 @@ describe('slices', () => {
         ...initialState,
         onboarding: {
           ...initialState.onboarding,
-          isActive: true
-        }
+          isActive: true,
+        },
       }
 
       const state = {
         ...initialState,
         onboarding: {
           ...initialState.onboarding,
-          isActive: false
-        }
+          isActive: false,
+        },
       }
 
       // Act
@@ -197,16 +200,16 @@ describe('slices', () => {
           ...initialState.onboarding,
           isActive: true,
           currentStep: 3,
-          totalSteps: 10
-        }
+          totalSteps: 10,
+        },
       }
 
       const state = {
         ...currenState,
         onboarding: {
           ...currenState.onboarding,
-          currentStep: 2
-        }
+          currentStep: 2,
+        },
       }
 
       // Act
@@ -227,15 +230,15 @@ describe('slices', () => {
           ...initialState.onboarding,
           isActive: false,
           currentStep: 3,
-          totalSteps: 10
-        }
+          totalSteps: 10,
+        },
       }
 
       const state = {
         ...currenState,
         onboarding: {
           ...currenState.onboarding,
-        }
+        },
       }
 
       // Act
@@ -256,15 +259,15 @@ describe('slices', () => {
           ...initialState.onboarding,
           isActive: true,
           currentStep: 0,
-          totalSteps: 10
-        }
+          totalSteps: 10,
+        },
       }
 
       const state = {
         ...currenState,
         onboarding: {
           ...currenState.onboarding,
-        }
+        },
       }
 
       // Act
@@ -287,16 +290,16 @@ describe('slices', () => {
           ...initialState.onboarding,
           isActive: true,
           currentStep: 3,
-          totalSteps: 10
-        }
+          totalSteps: 10,
+        },
       }
 
       const state = {
         ...currenState,
         onboarding: {
           ...currenState.onboarding,
-          currentStep: 4
-        }
+          currentStep: 4,
+        },
       }
 
       // Act
@@ -317,15 +320,15 @@ describe('slices', () => {
           ...initialState.onboarding,
           isActive: false,
           currentStep: 3,
-          totalSteps: 10
-        }
+          totalSteps: 10,
+        },
       }
 
       const state = {
         ...currenState,
         onboarding: {
           ...currenState.onboarding,
-        }
+        },
       }
 
       // Act
@@ -346,8 +349,8 @@ describe('slices', () => {
           ...initialState.onboarding,
           isActive: true,
           currentStep: 10,
-          totalSteps: 10
-        }
+          totalSteps: 10,
+        },
       }
 
       const state = {
@@ -355,8 +358,8 @@ describe('slices', () => {
         onboarding: {
           ...currenState.onboarding,
           currentStep: 11,
-          isActive: false
-        }
+          isActive: false,
+        },
       }
 
       // Act
@@ -377,8 +380,8 @@ describe('slices', () => {
         ...initialState,
         featureFlags: {
           ...initialState.featureFlags,
-          loading: true
-        }
+          loading: true,
+        },
       }
 
       // Act
@@ -398,16 +401,16 @@ describe('slices', () => {
       const payload = {
         features: {
           insightsRecommendations: {
-            flag: true
-          }
-        }
+            flag: true,
+          },
+        },
       }
       const state = {
         ...initialState,
         featureFlags: {
           ...initialState.featureFlags,
           features: payload.features,
-        }
+        },
       }
 
       // Act
@@ -428,16 +431,16 @@ describe('slices', () => {
         ...initialState,
         featureFlags: {
           ...initialState.featureFlags,
-          loading: true
-        }
+          loading: true,
+        },
       }
 
       const state = {
         ...initialState,
         featureFlags: {
           ...initialState.featureFlags,
-          loading: false
-        }
+          loading: false,
+        },
       }
 
       // Act
@@ -463,17 +466,15 @@ describe('slices', () => {
             onboarding: {
               isActive: true,
               currentStep: 3,
-              totalSteps: 10
-            }
-          }
+              totalSteps: 10,
+            },
+          },
         },
       })
       const mockedStore = mockStore(nextState)
       await mockedStore.dispatch<any>(incrementOnboardStepAction(3))
       // Assert
-      const expectedActions = [
-        setOnboardNextStep(0)
-      ]
+      const expectedActions = [setOnboardNextStep(0)]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
     })
@@ -486,9 +487,9 @@ describe('slices', () => {
             onboarding: {
               isActive: false,
               currentStep: 3,
-              totalSteps: 10
-            }
-          }
+              totalSteps: 10,
+            },
+          },
         },
       })
       const mockedStore = mockStore(nextState)
@@ -506,9 +507,9 @@ describe('slices', () => {
             onboarding: {
               isActive: true,
               currentStep: 4,
-              totalSteps: 10
-            }
-          }
+              totalSteps: 10,
+            },
+          },
         },
       })
       const mockedStore = mockStore(nextState)
@@ -530,10 +531,7 @@ describe('slices', () => {
       await store.dispatch<any>(fetchFeatureFlags())
 
       // Assert
-      const expectedActions = [
-        getFeatureFlags(),
-        getFeatureFlagsSuccess(data),
-      ]
+      const expectedActions = [getFeatureFlags(), getFeatureFlagsSuccess(data)]
 
       expect(store.getActions()).toEqual(expectedActions)
     })
@@ -553,10 +551,7 @@ describe('slices', () => {
       await store.dispatch<any>(fetchFeatureFlags())
 
       // Assert
-      const expectedActions = [
-        getFeatureFlags(),
-        getFeatureFlagsFailure(),
-      ]
+      const expectedActions = [getFeatureFlags(), getFeatureFlagsFailure()]
 
       expect(store.getActions()).toEqual(expectedActions)
     })

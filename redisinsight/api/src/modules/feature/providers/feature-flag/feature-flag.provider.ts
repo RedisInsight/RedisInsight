@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/feature.flag.strategy';
-import {
-  CommonFlagStrategy,
-} from 'src/modules/feature/providers/feature-flag/strategies/common.flag.strategy';
+import { CommonFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/common.flag.strategy';
 import { DefaultFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/default.flag.strategy';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { SettingsService } from 'src/modules/settings/settings.service';
@@ -21,50 +19,71 @@ export class FeatureFlagProvider {
     private readonly featuresConfigService: FeaturesConfigService,
     private readonly settingsService: SettingsService,
   ) {
-    this.strategies.set('default', new DefaultFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
-    this.strategies.set(KnownFeatures.InsightsRecommendations, new CommonFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
-    this.strategies.set(KnownFeatures.Rdi, new CommonFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
-    this.strategies.set(KnownFeatures.CloudSso, new CloudSsoFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
-    this.strategies.set(KnownFeatures.CloudSsoRecommendedSettings, new CommonFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
-    this.strategies.set(KnownFeatures.RedisModuleFilter, new WithDataFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
-    this.strategies.set(KnownFeatures.RedisClient, new WithDataFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
-    this.strategies.set(KnownFeatures.DocumentationChat, new SwitchableFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
-    this.strategies.set(KnownFeatures.DatabaseChat, new SwitchableFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
-    this.strategies.set(KnownFeatures.HashFieldExpiration, new WithDataFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
-    this.strategies.set(KnownFeatures.EnhancedCloudUI, new WithDataFlagStrategy(
-      this.featuresConfigService,
-      this.settingsService,
-    ));
+    this.strategies.set(
+      'default',
+      new DefaultFlagStrategy(this.featuresConfigService, this.settingsService),
+    );
+    this.strategies.set(
+      KnownFeatures.InsightsRecommendations,
+      new CommonFlagStrategy(this.featuresConfigService, this.settingsService),
+    );
+    this.strategies.set(
+      KnownFeatures.Rdi,
+      new CommonFlagStrategy(this.featuresConfigService, this.settingsService),
+    );
+    this.strategies.set(
+      KnownFeatures.CloudSso,
+      new CloudSsoFlagStrategy(
+        this.featuresConfigService,
+        this.settingsService,
+      ),
+    );
+    this.strategies.set(
+      KnownFeatures.CloudSsoRecommendedSettings,
+      new CommonFlagStrategy(this.featuresConfigService, this.settingsService),
+    );
+    this.strategies.set(
+      KnownFeatures.RedisModuleFilter,
+      new WithDataFlagStrategy(
+        this.featuresConfigService,
+        this.settingsService,
+      ),
+    );
+    this.strategies.set(
+      KnownFeatures.RedisClient,
+      new WithDataFlagStrategy(
+        this.featuresConfigService,
+        this.settingsService,
+      ),
+    );
+    this.strategies.set(
+      KnownFeatures.DocumentationChat,
+      new SwitchableFlagStrategy(
+        this.featuresConfigService,
+        this.settingsService,
+      ),
+    );
+    this.strategies.set(
+      KnownFeatures.DatabaseChat,
+      new SwitchableFlagStrategy(
+        this.featuresConfigService,
+        this.settingsService,
+      ),
+    );
+    this.strategies.set(
+      KnownFeatures.HashFieldExpiration,
+      new WithDataFlagStrategy(
+        this.featuresConfigService,
+        this.settingsService,
+      ),
+    );
+    this.strategies.set(
+      KnownFeatures.EnhancedCloudUI,
+      new WithDataFlagStrategy(
+        this.featuresConfigService,
+        this.settingsService,
+      ),
+    );
   }
 
   getStrategy(name: string): FeatureFlagStrategy {

@@ -25,7 +25,13 @@ const resultFTSearch: any[] = [
   ],
 ]
 
-const resultFTSearchNoContent: any[] = ['red:2', 'red:3', 'red:4', 'red:5', 'red:6']
+const resultFTSearchNoContent: any[] = [
+  'red:2',
+  'red:3',
+  'red:4',
+  'red:5',
+  'red:6',
+]
 
 describe('parseSearchRawResponse', () => {
   it('command "get" should return result is not modified 1', () => {
@@ -61,7 +67,9 @@ describe('parseSearchRawResponse', () => {
       },
     ]
 
-    expect(parseSearchRawResponse(command, resultFTSearch)).toEqual(parsedResultFTSearch)
+    expect(parseSearchRawResponse(command, resultFTSearch)).toEqual(
+      parsedResultFTSearch,
+    )
   })
 
   it('command "ft.search" with attr NOCONTENT should return array of doc names', () => {
@@ -84,7 +92,9 @@ describe('parseSearchRawResponse', () => {
       },
     ]
 
-    expect(parseSearchRawResponse(command, resultFTSearchNoContent)).toEqual(parsedResultFTSearch)
+    expect(parseSearchRawResponse(command, resultFTSearchNoContent)).toEqual(
+      parsedResultFTSearch,
+    )
   })
 })
 
@@ -92,6 +102,8 @@ describe('parseAggregateRawResponse', () => {
   it('command "ft.aggregate" should return array of array with objects count of docs ', () => {
     const resultFTAggregate = [[], [], [], [], []]
 
-    expect(parseAggregateRawResponse(resultFTAggregate)).toEqual(resultFTAggregate)
+    expect(parseAggregateRawResponse(resultFTAggregate)).toEqual(
+      resultFTAggregate,
+    )
   })
 })

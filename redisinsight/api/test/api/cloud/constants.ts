@@ -1,13 +1,18 @@
 import { nock, serverConfig } from '../../helpers/test';
-import { mockCloudApiAccount, mockCloudApiCapiKey, mockCloudApiCsrfToken, mockCloudApiUser } from 'src/__mocks__';
+import {
+  mockCloudApiAccount,
+  mockCloudApiCapiKey,
+  mockCloudApiCsrfToken,
+  mockCloudApiUser,
+} from 'src/__mocks__';
 
 export const initSMCapiNockScope = () => {
   return nock(serverConfig.get('cloud').capiUrl);
-}
+};
 
 export const initSMApiNockScope = () => {
   return nock(serverConfig.get('cloud').apiUrl);
-}
+};
 
 export const initApiLoginNockScope = (
   apiNockScope = initSMApiNockScope(),
@@ -15,11 +20,12 @@ export const initApiLoginNockScope = (
 ) => {
   return apiNockScope
     .persist(persist)
-    .post('/login').query(true)
+    .post('/login')
+    .query(true)
     .reply(200, {}, { 'set-cookie': 'JSESSIONID=jsessionid' })
     .get('/csrf')
     .reply(200, { csrfToken: mockCloudApiCsrfToken });
-}
+};
 
 export const initApiUserProfileNockScope = (
   apiNockScope = initSMApiNockScope(),
@@ -30,7 +36,7 @@ export const initApiUserProfileNockScope = (
     .reply(200, mockCloudApiUser)
     .get('/accounts')
     .reply(200, { accounts: [mockCloudApiAccount] });
-}
+};
 
 export const initApiCapiKeysEnsureNockScope = (
   apiNockScope = initSMApiNockScope(),
@@ -41,4 +47,4 @@ export const initApiCapiKeysEnsureNockScope = (
     .reply(200, { cloudApiKeys: [] })
     .post('/accounts/cloud-api/cloudApiKeys')
     .reply(200, { cloudApiKey: mockCloudApiCapiKey });
-}
+};

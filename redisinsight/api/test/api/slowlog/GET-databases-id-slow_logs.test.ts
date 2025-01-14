@@ -5,7 +5,9 @@ import {
   Joi,
   deps,
   validateApiCall,
-  after, requirements, before,
+  after,
+  requirements,
+  before,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -13,14 +15,18 @@ const { server, request, constants, rte } = deps;
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
   request(server).get(`/${constants.API.DATABASES}/${instanceId}/slow-logs`);
 
-const responseSchema = Joi.array().items(Joi.object().keys({
-  id: Joi.number().required(),
-  time: Joi.number().required(),
-  durationUs: Joi.number().required(),
-  args: Joi.string().required(),
-  source: Joi.string().allow(''),
-  client: Joi.string().allow(''),
-})).required();
+const responseSchema = Joi.array()
+  .items(
+    Joi.object().keys({
+      id: Joi.number().required(),
+      time: Joi.number().required(),
+      durationUs: Joi.number().required(),
+      args: Joi.string().required(),
+      source: Joi.string().allow(''),
+      client: Joi.string().allow(''),
+    }),
+  )
+  .required();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -44,12 +50,20 @@ const mainCheckFn = async (testCase) => {
 describe('GET /databases/:instanceId/slow-logs', () => {
   describe('Common', () => {
     beforeEach(async () => {
-      await rte.data.executeCommandAll('config', ['set', 'slowlog-log-slower-than', 0]);
+      await rte.data.executeCommandAll('config', [
+        'set',
+        'slowlog-log-slower-than',
+        0,
+      ]);
       await rte.data.executeCommandAll('slowlog', ['reset']);
     });
 
     after(async () => {
-      await rte.data.executeCommandAll('config', ['set', 'slowlog-log-slower-than', 10000]);
+      await rte.data.executeCommandAll('config', [
+        'set',
+        'slowlog-log-slower-than',
+        10000,
+      ]);
     });
 
     [
@@ -57,7 +71,11 @@ describe('GET /databases/:instanceId/slow-logs', () => {
         name: 'Should return 0 array when slowlog-log-slower-than is a huge value',
         responseSchema,
         before: async () => {
-          await rte.data.executeCommandAll('config', ['set', 'slowlog-log-slower-than', 1000000000]);
+          await rte.data.executeCommandAll('config', [
+            'set',
+            'slowlog-log-slower-than',
+            1000000000,
+          ]);
           await rte.data.executeCommandAll('slowlog', ['reset']);
         },
         checkFn: async ({ body }) => {
@@ -71,22 +89,33 @@ describe('GET /databases/:instanceId/slow-logs', () => {
           count: 1,
         },
         before: async () => {
-          await rte.data.executeCommandAll('config', ['set', 'slowlog-log-slower-than', 0]);
+          await rte.data.executeCommandAll('config', [
+            'set',
+            'slowlog-log-slower-than',
+            0,
+          ]);
           await rte.data.executeCommandAll('slowlog', ['reset']);
         },
         checkFn: async ({ body }) => {
-          expect(body.length).to.eql(rte.client.nodes ? rte.client.nodes().length : 1);
+          expect(body.length).to.eql(
+            rte.client.nodes ? rte.client.nodes().length : 1,
+          );
         },
       },
       {
         name: 'Should get slow logs including "set" command inside',
         responseSchema,
         before: async () => {
-          await rte.client.set(constants.TEST_STRING_KEY_1, constants.GENERATE_BIG_TEST_STRING_VALUE(0.1));
+          await rte.client.set(
+            constants.TEST_STRING_KEY_1,
+            constants.GENERATE_BIG_TEST_STRING_VALUE(0.1),
+          );
         },
         checkFn: async ({ body }) => {
           expect(body.length).to.gt(0);
-          const stringSlowLog = body.find((log) => log.args.startsWith(`set ${constants.TEST_STRING_KEY_1}`));
+          const stringSlowLog = body.find((log) =>
+            log.args.startsWith(`set ${constants.TEST_STRING_KEY_1}`),
+          );
           expect(stringSlowLog.durationUs).to.gt(0);
         },
       },
@@ -97,7 +126,7 @@ describe('GET /databases/:instanceId/slow-logs', () => {
         responseBody: {
           statusCode: 404,
           message: 'Invalid database instance id.',
-          error: 'Not Found'
+          error: 'Not Found',
         },
       },
     ].map(mainCheckFn);
@@ -120,7 +149,7 @@ describe('GET /databases/:instanceId/slow-logs', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -slowlog')
+        before: () => rte.data.setAclUserRules('~* +@all -slowlog'),
       },
     ].map(mainCheckFn);
   });

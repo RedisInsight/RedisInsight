@@ -11,19 +11,34 @@ import {
   updateInstanceAction,
   cloneInstanceAction,
 } from 'uiSrc/slices/instances/instances'
-import { Nullable, removeEmpty, getFormUpdates, transformQueryParamsObject, getDiffKeysOfObjectValues } from 'uiSrc/utils'
+import {
+  Nullable,
+  removeEmpty,
+  getFormUpdates,
+  transformQueryParamsObject,
+  getDiffKeysOfObjectValues,
+} from 'uiSrc/utils'
 import { BuildType } from 'uiSrc/constants/env'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { ConnectionType, Instance, InstanceType } from 'uiSrc/slices/interfaces'
 import { DbType, Pages } from 'uiSrc/constants'
-import { fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
+import { fetchClientCerts } from 'uiSrc/slices/instances/clientCerts'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
-import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
+import {
+  appRedirectionSelector,
+  setUrlHandlingInitialState,
+} from 'uiSrc/slices/app/url-handling'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { applyTlSDatabase, applySSHDatabase, autoFillFormDetails, getTlsSettings, getFormValues } from 'uiSrc/pages/home/utils'
+import {
+  applyTlSDatabase,
+  applySSHDatabase,
+  autoFillFormDetails,
+  getTlsSettings,
+  getFormValues,
+} from 'uiSrc/pages/home/utils'
 import {
   DEFAULT_TIMEOUT,
   SubmitBtnText,
@@ -52,15 +67,19 @@ const ManualConnectionWrapper = (props: Props) => {
     onAliasEdited,
     editedInstance,
     urlHandlingAction,
-    initialValues: initialValuesProp
+    initialValues: initialValuesProp,
   } = props
-  const [formFields, setFormFields] = useState(getFormValues(editedInstance || initialValuesProp))
+  const [formFields, setFormFields] = useState(
+    getFormValues(editedInstance || initialValuesProp),
+  )
 
   const [isCloneMode, setIsCloneMode] = useState<boolean>(false)
 
   const { loadingChanging: loadingStandalone } = useSelector(instancesSelector)
   const { server } = useSelector(appInfoSelector)
-  const { properties: urlHandlingProperties } = useSelector(appRedirectionSelector)
+  const { properties: urlHandlingProperties } = useSelector(
+    appRedirectionSelector,
+  )
 
   const connectionType = editedInstance?.connectionType ?? DbType.STANDALONE
 
@@ -85,28 +104,33 @@ const ManualConnectionWrapper = (props: Props) => {
     const { redirect } = urlHandlingProperties
     dispatch(setUrlHandlingInitialState())
 
-    dispatch(checkConnectToInstanceAction(id, (id) => {
-      if (redirect) {
-        const pageToRedirect = getRedirectionPage(redirect, id)
+    dispatch(
+      checkConnectToInstanceAction(id, (id) => {
+        if (redirect) {
+          const pageToRedirect = getRedirectionPage(redirect, id)
 
-        if (pageToRedirect) {
-          history.push(pageToRedirect)
+          if (pageToRedirect) {
+            history.push(pageToRedirect)
+          }
         }
-      }
-    }))
+      }),
+    )
   }
 
   const handleAddDatabase = (payload: any) => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_MANUALLY_SUBMITTED
+      event: TelemetryEvent.CONFIG_DATABASES_MANUALLY_SUBMITTED,
     })
 
     if (urlHandlingAction === UrlHandlingActions.Connect) {
       const cloudDetails = transformQueryParamsObject(
-        pick(
-          urlHandlingProperties,
-          ['cloudId', 'subscriptionType', 'planMemoryLimit', 'memoryLimitMeasurementUnit', 'free']
-        )
+        pick(urlHandlingProperties, [
+          'cloudId',
+          'subscriptionType',
+          'planMemoryLimit',
+          'memoryLimitMeasurementUnit',
+          'free',
+        ]),
       )
 
       const db = { ...payload }
@@ -114,7 +138,13 @@ const ManualConnectionWrapper = (props: Props) => {
         db.cloudDetails = cloudDetails
       }
 
-      dispatch(createInstanceStandaloneAction(db, undefined, handleSuccessConnectWithRedirect))
+      dispatch(
+        createInstanceStandaloneAction(
+          db,
+          undefined,
+          handleSuccessConnectWithRedirect,
+        ),
+      )
       return
     }
 
@@ -130,7 +160,7 @@ const ManualConnectionWrapper = (props: Props) => {
 
   const handleTestConnectionDatabase = (values: DbConnectionInfo) => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_TEST_CONNECTION_CLICKED
+      event: TelemetryEvent.CONFIG_DATABASES_TEST_CONNECTION_CLICKED,
     })
     const payload = preparePayload(values)
 
@@ -143,8 +173,8 @@ const ManualConnectionWrapper = (props: Props) => {
       sendEventTelemetry({
         event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CONFIRMED,
         eventData: {
-          fieldsModified: diffKeys
-        }
+          fieldsModified: diffKeys,
+        },
       })
     }
     const payload = preparePayload(values)
@@ -177,7 +207,7 @@ const ManualConnectionWrapper = (props: Props) => {
       sentinelMasterUsername,
       sentinelMasterPassword,
       ssh,
-      tls
+      tls,
     } = values
 
     const database: any = {
@@ -191,7 +221,7 @@ const ManualConnectionWrapper = (props: Props) => {
       compressor,
       timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
       ssh,
-      tls
+      tls,
     }
 
     // add tls & ssh for database (modifies database object)
@@ -209,18 +239,29 @@ const ManualConnectionWrapper = (props: Props) => {
     if (editMode) {
       database.id = editedInstance?.id
 
-      const updatedValues = getFormUpdates(database, omit(editedInstance, ['id']))
+      const updatedValues = getFormUpdates(
+        database,
+        omit(editedInstance, ['id']),
+      )
 
       // When a new caCert/clientCert is deleted, the editedInstance
       // is not updated with the deletion until 'apply' is
       // clicked. Once the apply is clicked, the editedInstance object
       // that is validated against, still has the older certificates
       // attached. Attaching the new certs to the final object helps.
-      if (values.selectedCaCertName === ADD_NEW_CA_CERT && values.newCaCertName !== '' && values.newCaCertName === editedInstance.caCert?.name) {
+      if (
+        values.selectedCaCertName === ADD_NEW_CA_CERT &&
+        values.newCaCertName !== '' &&
+        values.newCaCertName === editedInstance.caCert?.name
+      ) {
         updatedValues.caCert = database.caCert
       }
 
-      if (values.selectedTlsClientCertId === ADD_NEW && values.newTlsCertPairName !== '' && values.newTlsCertPairName === editedInstance?.clientCert?.name) {
+      if (
+        values.selectedTlsClientCertId === ADD_NEW &&
+        values.newTlsCertPairName !== '' &&
+        values.newTlsCertPairName === editedInstance?.clientCert?.name
+      ) {
         updatedValues.clientCert = database.clientCert
       }
 
@@ -238,7 +279,7 @@ const ManualConnectionWrapper = (props: Props) => {
         event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CANCELLED,
         eventData: {
           databaseId: editedInstance?.id,
-        }
+        },
       })
     }
     onClose?.()
@@ -254,9 +295,13 @@ const ManualConnectionWrapper = (props: Props) => {
     return SubmitBtnText.AddDatabase
   }
 
-  const handlePostHostName = (content: string): boolean => (
-    autoFillFormDetails(content, formFields, setFormFields, InstanceType.Standalone)
-  )
+  const handlePostHostName = (content: string): boolean =>
+    autoFillFormDetails(
+      content,
+      formFields,
+      setFormFields,
+      InstanceType.Standalone,
+    )
 
   return (
     <ManualConnectionForm

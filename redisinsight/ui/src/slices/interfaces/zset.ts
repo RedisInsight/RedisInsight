@@ -19,5 +19,5 @@ export interface StateZset {
   updateScore: {
     loading: boolean
     error: string
-  };
+  }
 }

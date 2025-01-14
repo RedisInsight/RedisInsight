@@ -6,13 +6,15 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn
-} from '../deps'
+  getMainCheckFn,
+} from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/string/download-value`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/string/download-value`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -106,7 +108,7 @@ describe('POST /databases/:instanceId/string/download-value', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -get')
+          before: () => rte.data.setAclUserRules('~* +@all -get'),
         },
       ].map(mainCheckFn);
     });

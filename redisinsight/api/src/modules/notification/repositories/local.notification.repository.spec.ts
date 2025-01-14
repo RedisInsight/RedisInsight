@@ -37,8 +37,12 @@ describe('LocalNotificationRepository', () => {
 
   describe('getNotifications', () => {
     it('should return list of notifications', async () => {
-      repository.createQueryBuilder().getMany
-        .mockResolvedValueOnce([mockNotification1Entity, mockNotification2Entity]);
+      repository
+        .createQueryBuilder()
+        .getMany.mockResolvedValueOnce([
+          mockNotification1Entity,
+          mockNotification2Entity,
+        ]);
 
       expect(await service.getNotifications()).toEqual([
         mockNotification1,
@@ -55,52 +59,63 @@ describe('LocalNotificationRepository', () => {
   });
   describe('readNotifications', () => {
     it('should read all notifications', async () => {
-      repository.createQueryBuilder().execute
-        .mockResolvedValueOnce(undefined);
+      repository.createQueryBuilder().execute.mockResolvedValueOnce(undefined);
 
       expect(await service.readNotifications(mockSessionMetadata)).toEqual([]);
       expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({});
     });
     it('should read particular notification by timestamp', async () => {
-      repository.createQueryBuilder().execute
-        .mockResolvedValueOnce(undefined);
+      repository.createQueryBuilder().execute.mockResolvedValueOnce(undefined);
 
       expect(
-        await service.readNotifications(mockSessionMetadata, undefined, mockNotification1.timestamp),
+        await service.readNotifications(
+          mockSessionMetadata,
+          undefined,
+          mockNotification1.timestamp,
+        ),
       ).toEqual([]);
-      expect(repository.createQueryBuilder().where)
-        .toHaveBeenCalledWith({ timestamp: mockNotification1.timestamp });
+      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({
+        timestamp: mockNotification1.timestamp,
+      });
     });
     it('should read notifications by type', async () => {
-      repository.createQueryBuilder().execute
-        .mockResolvedValueOnce(undefined);
+      repository.createQueryBuilder().execute.mockResolvedValueOnce(undefined);
 
       expect(
-        await service.readNotifications(mockSessionMetadata, mockNotification1.type),
+        await service.readNotifications(
+          mockSessionMetadata,
+          mockNotification1.type,
+        ),
       ).toEqual([]);
-      expect(repository.createQueryBuilder().where)
-        .toHaveBeenCalledWith({ type: mockNotification1.type });
+      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({
+        type: mockNotification1.type,
+      });
     });
   });
   describe('insertNotifications', () => {
     it('should insert multiple notifications', async () => {
-      repository.createQueryBuilder().execute
-        .mockResolvedValueOnce(undefined);
+      repository.createQueryBuilder().execute.mockResolvedValueOnce(undefined);
 
-      expect(await service.insertNotifications(mockSessionMetadata, [mockNotification1, mockNotification2]))
-        .toEqual(undefined);
+      expect(
+        await service.insertNotifications(mockSessionMetadata, [
+          mockNotification1,
+          mockNotification2,
+        ]),
+      ).toEqual(undefined);
       expect(repository.insert).toHaveBeenCalledWith([
-        mockNotification1Entity, mockNotification2Entity,
+        mockNotification1Entity,
+        mockNotification2Entity,
       ]);
     });
   });
   describe('getGlobalNotifications', () => {
     it('should query global notifications particular fields only', async () => {
-      repository.createQueryBuilder().getMany
-        .mockResolvedValueOnce([{
+      repository.createQueryBuilder().getMany.mockResolvedValueOnce([
+        {
           timestamp: mockNotification1Entity.timestamp,
           read: mockNotification1Entity.read,
-        }]);
+        },
+      ]);
 
       expect(await service.getGlobalNotifications()).toEqual([
         {
@@ -108,8 +123,13 @@ describe('LocalNotificationRepository', () => {
           read: mockNotification1.read,
         },
       ]);
-      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({ type: NotificationType.Global });
-      expect(repository.createQueryBuilder().select).toHaveBeenCalledWith(['n.timestamp', 'n.read']);
+      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({
+        type: NotificationType.Global,
+      });
+      expect(repository.createQueryBuilder().select).toHaveBeenCalledWith([
+        'n.timestamp',
+        'n.read',
+      ]);
     });
   });
   describe('deleteGlobalNotifications', () => {
@@ -117,7 +137,9 @@ describe('LocalNotificationRepository', () => {
       repository.createQueryBuilder().execute.mockResolvedValueOnce(undefined);
 
       expect(await service.deleteGlobalNotifications()).toEqual(undefined);
-      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({ type: NotificationType.Global });
+      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({
+        type: NotificationType.Global,
+      });
     });
   });
 });

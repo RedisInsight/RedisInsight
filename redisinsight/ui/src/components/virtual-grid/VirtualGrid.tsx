@@ -43,33 +43,39 @@ const VirtualGrid = (props: IProps) => {
   const scrollTopRef = useRef<number>(0)
   const [width, setWidth] = useState<number>(200)
   const [height, setHeight] = useState<number>(100)
-  const [forceScrollTop, setForceScrollTop] = useState<Maybe<number>>(scrollTopProp)
+  const [forceScrollTop, setForceScrollTop] =
+    useState<Maybe<number>>(scrollTopProp)
   const [expandedRows, setExpandedRows] = useState<number[]>([])
 
   const gridRef = useRef<Nullable<Grid>>()
   const rowHeightsMap = useRef<{ [key: number]: { [key: number]: number } }>({})
-  const setRowHeight = useCallback((rowIndex: number, columnIndex:number, size:number) => {
-    rowHeightsMap.current = {
-      ...rowHeightsMap.current,
-      [rowIndex]: {
-        ...(rowHeightsMap.current[rowIndex] || {}),
-        [columnIndex]: size
+  const setRowHeight = useCallback(
+    (rowIndex: number, columnIndex: number, size: number) => {
+      rowHeightsMap.current = {
+        ...rowHeightsMap.current,
+        [rowIndex]: {
+          ...(rowHeightsMap.current[rowIndex] || {}),
+          [columnIndex]: size,
+        },
       }
-    }
 
-    gridRef.current?.resetAfterRowIndex?.(rowIndex)
-  }, [])
+      gridRef.current?.resetAfterRowIndex?.(rowIndex)
+    },
+    [],
+  )
 
   const getRowHeight = (index: number) =>
-    (expandedRows.indexOf(index) !== -1
+    expandedRows.indexOf(index) !== -1
       ? Math.max(...Object.values(rowHeightsMap.current[index]))
-      : rowHeight)
+      : rowHeight
 
-  useEffect(() =>
-    () => {
+  useEffect(
+    () => () => {
       setScrollTopPosition(scrollTopRef.current)
       setExpandedRows([])
-    }, [])
+    },
+    [],
+  )
 
   useEffect(() => {
     setExpandedRows([])
@@ -86,19 +92,30 @@ const VirtualGrid = (props: IProps) => {
   const onScroll = useCallback(
     ({ scrollTop }) => {
       scrollTopRef.current = scrollTop
-    }, [scrollTopRef]
+    },
+    [scrollTopRef],
   )
 
   const changeSorting = (column: any) => {
-    if (!sortedColumn || !sortedColumn.column || sortedColumn.column !== column) {
+    if (
+      !sortedColumn ||
+      !sortedColumn.column ||
+      sortedColumn.column !== column
+    ) {
       onChangeSorting(column, SortOrder.DESC)
       return
     }
     setExpandedRows([])
-    onChangeSorting(column, sortedColumn.order === SortOrder.DESC ? SortOrder.ASC : SortOrder.DESC)
+    onChangeSorting(
+      column,
+      sortedColumn.order === SortOrder.DESC ? SortOrder.ASC : SortOrder.DESC,
+    )
   }
 
-  const loadMoreRows = async (startIndex:number, stopIndex:number): Promise<any> => {
+  const loadMoreRows = async (
+    startIndex: number,
+    stopIndex: number,
+  ): Promise<any> => {
     // We do not load more results for first load
     if (forceScrollTop !== undefined) return
 
@@ -134,9 +151,13 @@ const VirtualGrid = (props: IProps) => {
     preventSelect = true
   }
 
-  const renderNotEmptyContent = (text: string) => text || (<div>&nbsp;</div>)
+  const renderNotEmptyContent = (text: string) => text || <div>&nbsp;</div>
 
-  const Cell = ({ columnIndex, rowIndex, style }: GridChildComponentProps<null>) => {
+  const Cell = ({
+    columnIndex,
+    rowIndex,
+    style,
+  }: GridChildComponentProps<null>) => {
     const rowData = items[rowIndex]
     const column = columns[columnIndex]
     const content: string | { [key: string]: any } = rowData?.[column?.id] || ''
@@ -147,7 +168,9 @@ const VirtualGrid = (props: IProps) => {
     React.useEffect(() => {
       if (cellRef.current) {
         const paddingSize = 24
-        const cellHeight = cellRef.current?.children?.[0]?.getBoundingClientRect?.().height + paddingSize
+        const cellHeight =
+          cellRef.current?.children?.[0]?.getBoundingClientRect?.().height +
+          paddingSize
 
         if (rowIndex !== 0) {
           setRowHeight(rowIndex, columnIndex, cellHeight)
@@ -159,7 +182,11 @@ const VirtualGrid = (props: IProps) => {
       const isLastColumn = columns.length - 1 === columnIndex
       return (
         <hgroup className={styles.gridHeaderCell} ref={cellRef} style={style}>
-          <div className={cx(styles.gridHeaderItem, 'truncateText', { [styles.lastHeaderItem]: isLastColumn })}>
+          <div
+            className={cx(styles.gridHeaderItem, 'truncateText', {
+              [styles.lastHeaderItem]: isLastColumn,
+            })}
+          >
             {isObject(content) && (
               <>
                 {!!content?.sortable && (
@@ -169,19 +196,25 @@ const VirtualGrid = (props: IProps) => {
                     className={styles.gridHeaderItemSortable}
                     onClick={() => changeSorting(column.id)}
                   >
-                    {(content.render) ? content.render(content) : renderNotEmptyContent(content.label)}
+                    {content.render
+                      ? content.render(content)
+                      : renderNotEmptyContent(content.label)}
                     <span style={{ paddingLeft: 0 }}>
                       <EuiIcon
                         style={{ marginLeft: '4px' }}
-                        type={sortedColumn?.order === SortOrder.DESC ? 'sortDown' : 'sortUp'}
+                        type={
+                          sortedColumn?.order === SortOrder.DESC
+                            ? 'sortDown'
+                            : 'sortUp'
+                        }
                       />
                     </span>
                   </button>
                 )}
-                {!content?.sortable && (content.render
-                  ? content.render(content)
-                  : renderNotEmptyContent(content.label)
-                )}
+                {!content?.sortable &&
+                  (content.render
+                    ? content.render(content)
+                    : renderNotEmptyContent(content.label))}
               </>
             )}
             {!isObject(content) && renderNotEmptyContent(content)}
@@ -192,11 +225,13 @@ const VirtualGrid = (props: IProps) => {
 
     if (columnIndex === 0) {
       const lastColumn = columns[columns.length - 1]
-      const allDynamicRowsHeight: number[] = Object.values(rowHeightsMap.current)
-        .map((row) => Math.max(...Object.values(row)))
+      const allDynamicRowsHeight: number[] = Object.values(
+        rowHeightsMap.current,
+      ).map((row) => Math.max(...Object.values(row)))
 
-      const allRowsHeight = allDynamicRowsHeight.reduce((a, b) => a + b, 0)
-       + (items.length - allDynamicRowsHeight.length) * rowHeight
+      const allRowsHeight =
+        allDynamicRowsHeight.reduce((a, b) => a + b, 0) +
+        (items.length - allDynamicRowsHeight.length) * rowHeight
 
       const hasHorizontalScrollOffset = height < allRowsHeight
 
@@ -204,26 +239,34 @@ const VirtualGrid = (props: IProps) => {
         <div
           style={style}
           ref={cellRef}
-          className={cx(styles.gridItem,
-            rowIndex % 2
-              ? styles.gridItemOdd
-              : styles.gridItemEven)}
+          className={cx(
+            styles.gridItem,
+            rowIndex % 2 ? styles.gridItemOdd : styles.gridItemEven,
+          )}
         >
-          {column?.render && isObject(rowData) && column?.render(rowData, expanded) }
-          {!column?.render && content }
+          {column?.render &&
+            isObject(rowData) &&
+            column?.render(rowData, expanded)}
+          {!column?.render && content}
 
           <div
-            className={cx(styles.gridItem, styles.gridItemLast,
-              rowIndex % 2
-                ? styles.gridItemOdd
-                : styles.gridItemEven)}
+            className={cx(
+              styles.gridItem,
+              styles.gridItemLast,
+              rowIndex % 2 ? styles.gridItemOdd : styles.gridItemEven,
+            )}
             style={{
               width: lastColumn?.minWidth,
               height: getRowHeight(rowIndex),
-              marginLeft: width - lastColumn?.minWidth - (hasHorizontalScrollOffset ? 23 : 13)
+              marginLeft:
+                width -
+                lastColumn?.minWidth -
+                (hasHorizontalScrollOffset ? 23 : 13),
             }}
           >
-            {lastColumn?.render && isObject(rowData) && lastColumn?.render(rowData, expanded) }
+            {lastColumn?.render &&
+              isObject(rowData) &&
+              lastColumn?.render(rowData, expanded)}
           </div>
         </div>
       )
@@ -233,14 +276,16 @@ const VirtualGrid = (props: IProps) => {
       <div
         ref={cellRef}
         style={style}
-        className={cx(styles.gridItem,
-          rowIndex % 2
-            ? styles.gridItemOdd
-            : styles.gridItemEven,
-          columnIndex === columns.length - 2 ? 'penult' : '')}
+        className={cx(
+          styles.gridItem,
+          rowIndex % 2 ? styles.gridItemOdd : styles.gridItemEven,
+          columnIndex === columns.length - 2 ? 'penult' : '',
+        )}
       >
-        {column?.render && isObject(rowData) && column?.render(rowData, expanded) }
-        {!column?.render && content }
+        {column?.render &&
+          isObject(rowData) &&
+          column?.render(rowData, expanded)}
+        {!column?.render && content}
       </div>
     )
   }
@@ -252,7 +297,7 @@ const VirtualGrid = (props: IProps) => {
     columns.length - 1,
     Math.max(maxTableWidth, width),
     columns,
-    { stickLastColumnHeaderCell }
+    { stickLastColumnHeaderCell },
   )
 
   return (
@@ -261,7 +306,7 @@ const VirtualGrid = (props: IProps) => {
       onWheel={onWheel}
       data-testid="virtual-grid-container"
     >
-      {(loading && !hideProgress) && (
+      {loading && !hideProgress && (
         <EuiProgress
           color="primary"
           size="xs"
@@ -292,7 +337,8 @@ const VirtualGrid = (props: IProps) => {
                       visibleStopIndex: props.visibleRowStopIndex || 0,
                       overscanStartIndex: props.overscanRowStartIndex || 0,
                       overscanStopIndex: props.overscanRowStopIndex || 0,
-                    })}
+                    })
+                  }
                   className={styles.grid}
                   columnCount={columns.length}
                   columnWidth={(i) => getColumnWidth(i, width, columns)}
@@ -306,7 +352,10 @@ const VirtualGrid = (props: IProps) => {
                   itemData={items}
                 >
                   {({ data, rowIndex, columnIndex, style }) => (
-                    <div onClick={(e) => onCellClick(e, rowIndex)} role="presentation">
+                    <div
+                      onClick={(e) => onCellClick(e, rowIndex)}
+                      role="presentation"
+                    >
                       <Cell
                         style={style}
                         data={data}
@@ -321,7 +370,11 @@ const VirtualGrid = (props: IProps) => {
           )}
         </AutoSizer>
       )}
-      {items.length === 1 && (<EuiText className={styles.noItems} color="subdued">{loading ? loadingMsg : noItemsMessage}</EuiText>)}
+      {items.length === 1 && (
+        <EuiText className={styles.noItems} color="subdued">
+          {loading ? loadingMsg : noItemsMessage}
+        </EuiText>
+      )}
     </div>
   )
 }

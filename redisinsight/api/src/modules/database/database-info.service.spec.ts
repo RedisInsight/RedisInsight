@@ -66,38 +66,52 @@ describe('DatabaseInfoService', () => {
 
   describe('getInfo', () => {
     it('should create client and get general info', async () => {
-      expect(await service.getInfo(mockCommonClientMetadata)).toEqual(mockRedisGeneralInfo);
+      expect(await service.getInfo(mockCommonClientMetadata)).toEqual(
+        mockRedisGeneralInfo,
+      );
     });
   });
 
   describe('getOverview', () => {
     it('should create client and get overview', async () => {
       expect(
-        await service.getOverview(mockCommonClientMetadata, mockDatabaseOverviewCurrentKeyspace),
+        await service.getOverview(
+          mockCommonClientMetadata,
+          mockDatabaseOverviewCurrentKeyspace,
+        ),
       ).toEqual(mockDatabaseOverview);
     });
   });
 
   describe('getDBSize', () => {
     it('should create client and gets db size', async () => {
-      expect(await service.getDBSize(mockCommonClientMetadata)).toEqual(mockDBSize);
+      expect(await service.getDBSize(mockCommonClientMetadata)).toEqual(
+        mockDBSize,
+      );
     });
   });
 
   describe('getDatabaseIndex', () => {
     it('should not return a new client', async () => {
-      expect(await service.getDatabaseIndex(mockCommonClientMetadata, 0)).toEqual(undefined);
+      expect(
+        await service.getDatabaseIndex(mockCommonClientMetadata, 0),
+      ).toEqual(undefined);
     });
     it('Should throw Error when error during creating a client', async () => {
       databaseClientFactory.createClient.mockRejectedValueOnce(new Error());
-      await expect(service.getDatabaseIndex(mockCommonClientMetadata, 0)).rejects.toThrow(Error);
+      await expect(
+        service.getDatabaseIndex(mockCommonClientMetadata, 0),
+      ).rejects.toThrow(Error);
     });
     it('getDatabaseIndex should call databaseService.get() if previous clientMetadata.db is Undefined', async () => {
       const db = 2;
       databaseClientFactory.createClient.mockResolvedValueOnce(client);
       await service.getDatabaseIndex(mockCommonClientMetadata, db);
 
-      expect(databaseService.get).toBeCalledWith(mockSessionMetadata, mockCommonClientMetadata.databaseId);
+      expect(databaseService.get).toBeCalledWith(
+        mockSessionMetadata,
+        mockCommonClientMetadata.databaseId,
+      );
     });
     describe('recommendationService', () => {
       it('getDatabaseIndex should call recommendationService', async () => {
@@ -113,10 +127,15 @@ describe('DatabaseInfoService', () => {
       });
       it('getDatabaseIndex should not call recommendationService if Error exists', async () => {
         databaseClientFactory.createClient.mockRejectedValueOnce(new Error());
-        await expect(service.getDatabaseIndex(mockCommonClientMetadata, 2)).rejects.toThrow(Error);
+        await expect(
+          service.getDatabaseIndex(mockCommonClientMetadata, 2),
+        ).rejects.toThrow(Error);
         await expect(recommendationService.check).toBeCalledTimes(0);
         await expect(databaseService.get).toBeCalledTimes(1);
-        await expect(databaseService.get).toBeCalledWith(mockSessionMetadata, mockCommonClientMetadata.databaseId);
+        await expect(databaseService.get).toBeCalledWith(
+          mockSessionMetadata,
+          mockCommonClientMetadata.databaseId,
+        );
       });
     });
   });

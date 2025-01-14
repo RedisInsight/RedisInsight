@@ -1,11 +1,18 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { apiService } from 'uiSrc/services'
-import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  initialStateDefault,
+} from 'uiSrc/utils/test-utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
-import { CLUSTER_DETAILS_DATA_MOCK, INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
+import {
+  CLUSTER_DETAILS_DATA_MOCK,
+  INSTANCE_ID_MOCK,
+} from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
 import reducer, {
   initialState,
   getClusterDetails,
@@ -42,7 +49,7 @@ describe('clusterDetails slice', () => {
     it('should properly set the initial state', () => {
       // Arrange
       const state = {
-        ...initialState
+        ...initialState,
       }
 
       // Act
@@ -61,7 +68,7 @@ describe('clusterDetails slice', () => {
       // Arrange
       const state = {
         ...initialState,
-        loading: true
+        loading: true,
       }
 
       // Act
@@ -85,7 +92,10 @@ describe('clusterDetails slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, getClusterDetailsSuccess(CLUSTER_DETAILS_DATA_MOCK))
+      const nextState = reducer(
+        initialState,
+        getClusterDetailsSuccess(CLUSTER_DETAILS_DATA_MOCK),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -102,7 +112,7 @@ describe('clusterDetails slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
@@ -125,7 +135,7 @@ describe('clusterDetails slice', () => {
 
         const responsePayload = {
           status: 200,
-          data: CLUSTER_DETAILS_DATA_MOCK
+          data: CLUSTER_DETAILS_DATA_MOCK,
         }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
@@ -158,7 +168,7 @@ describe('clusterDetails slice', () => {
         const expectedActions = [
           getClusterDetails(),
           addErrorNotification(responsePayload as AxiosError),
-          getClusterDetailsError(DEFAULT_ERROR_MESSAGE)
+          getClusterDetailsError(DEFAULT_ERROR_MESSAGE),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

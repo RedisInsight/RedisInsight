@@ -4,9 +4,18 @@ import { decompress as decompressFzstd } from 'fzstd'
 import { decompress as decompressLz4 } from 'lz4js'
 import { decompress as decompressSnappy } from '@stablelib/snappy'
 import { inflate, ungzip } from 'pako'
-import { COMPRESSOR_MAGIC_SYMBOLS, ICompressorMagicSymbols, KeyValueCompressor } from 'uiSrc/constants'
+import {
+  COMPRESSOR_MAGIC_SYMBOLS,
+  ICompressorMagicSymbols,
+  KeyValueCompressor,
+} from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
-import { anyToBuffer, bufferToUint8Array, isEqualBuffers, Nullable } from 'uiSrc/utils'
+import {
+  anyToBuffer,
+  bufferToUint8Array,
+  isEqualBuffers,
+  Nullable,
+} from 'uiSrc/utils'
 
 // workaround for brotli-wasm
 // https://github.com/httptoolkit/brotli-wasm/issues/8#issuecomment-1746768478
@@ -18,12 +27,17 @@ init(brotliWasmUrl).then(() => brotli)
 const decompressingBuffer = (
   reply: RedisResponseBuffer,
   compressorInit: Nullable<KeyValueCompressor> = null,
-): { value: RedisString, compressor: Nullable<KeyValueCompressor>, isCompressed: boolean } => {
+): {
+  value: RedisString
+  compressor: Nullable<KeyValueCompressor>
+  isCompressed: boolean
+} => {
   const compressorByValue: Nullable<KeyValueCompressor> = getCompressor(reply)
-  const compressor = compressorInit === compressorByValue
-    || (!compressorByValue && compressorInit)
-    ? compressorInit
-    : null
+  const compressor =
+    compressorInit === compressorByValue ||
+    (!compressorByValue && compressorInit)
+      ? compressorInit
+      : null
 
   try {
     switch (compressor) {
@@ -74,7 +88,8 @@ const decompressingBuffer = (
       }
       case KeyValueCompressor.PHPGZCompress: {
         const decompressedValue = inflate(bufferToUint8Array(reply))
-        if (!decompressedValue) return { value: reply, compressor: null, isCompressed: false }
+        if (!decompressedValue)
+          return { value: reply, compressor: null, isCompressed: false }
 
         const value = anyToBuffer(decompressedValue)
         return {
@@ -92,7 +107,9 @@ const decompressingBuffer = (
   }
 }
 
-const getCompressor = (reply: RedisResponseBuffer): Nullable<KeyValueCompressor> => {
+const getCompressor = (
+  reply: RedisResponseBuffer,
+): Nullable<KeyValueCompressor> => {
   const replyStart = reply?.data?.slice?.(0, 10)?.join?.(',') ?? ''
   let compressor: Nullable<KeyValueCompressor> = null
 
@@ -100,25 +117,22 @@ const getCompressor = (reply: RedisResponseBuffer): Nullable<KeyValueCompressor>
     COMPRESSOR_MAGIC_SYMBOLS,
     (magicSymbols: string, compressorName: string) => {
       if (
-        magicSymbols
-        && replyStart.startsWith(magicSymbols)
-        && replyStart.length > magicSymbols.length
+        magicSymbols &&
+        replyStart.startsWith(magicSymbols) &&
+        replyStart.length > magicSymbols.length
       ) {
         compressor = compressorName as KeyValueCompressor
         return false // break loop
       }
 
       return true
-    }
+    },
   )
 
   return compressor
 }
 
-export {
-  getCompressor,
-  decompressingBuffer,
-}
+export { getCompressor, decompressingBuffer }
 
 window.ri = {
   ...window.ri,

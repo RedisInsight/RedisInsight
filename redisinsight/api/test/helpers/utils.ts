@@ -24,7 +24,9 @@ export const parseReplToObject = (data: string): Record<string, any> => {
  * Parses Redis REPL cluster nodes command response
  * @param data
  */
-export const parseClusterNodesResponse = (data: string): Record<string, any>[] => {
+export const parseClusterNodesResponse = (
+  data: string,
+): Record<string, any>[] => {
   try {
     const nodes = [];
 

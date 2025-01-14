@@ -1,4 +1,11 @@
-import { Criteria, EuiButtonIcon, EuiTableFieldDataColumnType, EuiText, EuiToolTip, PropertySort } from '@elastic/eui'
+import {
+  Criteria,
+  EuiButtonIcon,
+  EuiTableFieldDataColumnType,
+  EuiText,
+  EuiToolTip,
+  PropertySort,
+} from '@elastic/eui'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
@@ -30,7 +37,12 @@ export interface Props {
 
 const suffix = '_rdi_instance'
 
-const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteInstances }: Props) => {
+const RdiInstancesListWrapper = ({
+  width,
+  onEditInstance,
+  editedInstance,
+  onDeleteInstances,
+}: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
@@ -53,7 +65,9 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
   useEffect(() => {
     const editInstanceId = new URLSearchParams(search).get('editInstance')
     if (editInstanceId && !instances.loading) {
-      const instance = instances.data.find((item: RdiInstance) => item.id === editInstanceId)
+      const instance = instances.data.find(
+        (item: RdiInstance) => item.id === editInstanceId,
+      )
       if (instance) {
         handleClickEditInstance(instance)
       }
@@ -75,16 +89,18 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
       event: TelemetryEvent.OPEN_RDI_CLICKED,
       eventData: {
         rdiId: id,
-      }
+      },
     })
-    dispatch(checkConnectToRdiInstanceAction(
-      id,
-      (id: string) => history.push(Pages.rdiPipeline(id)),
-      () => {
-        dispatch(resetConnectedRdiInstance())
-        dispatch(setAppContextConnectedRdiInstanceId(''))
-      }
-    ))
+    dispatch(
+      checkConnectToRdiInstanceAction(
+        id,
+        (id: string) => history.push(Pages.rdiPipeline(id)),
+        () => {
+          dispatch(resetConnectedRdiInstance())
+          dispatch(setAppContextConnectedRdiInstanceId(''))
+        },
+      ),
+    )
   }
 
   const handleCopy = (text = '', id: string) => {
@@ -92,8 +108,8 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     sendEventTelemetry({
       event: TelemetryEvent.RDI_INSTANCE_URL_COPIED,
       eventData: {
-        id
-      }
+        id,
+      },
     })
   }
 
@@ -101,8 +117,8 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     sendEventTelemetry({
       event: TelemetryEvent.RDI_INSTANCE_SINGLE_DELETE_CLICKED,
       eventData: {
-        id
-      }
+        id,
+      },
     })
     showPopover(id)
   }
@@ -112,23 +128,27 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
   }
 
   const handleDeleteInstance = (instance: RdiInstance) => {
-    dispatch(deleteInstancesAction([instance], () => onDeleteInstances([instance])))
+    dispatch(
+      deleteInstancesAction([instance], () => onDeleteInstances([instance])),
+    )
   }
 
   const handleDeleteInstances = (instances: RdiInstance[]) => {
     sendEventTelemetry({
       event: TelemetryEvent.RDI_INSTANCE_MULTIPLE_DELETE_CLICKED,
       eventData: {
-        ids: instances.map((instance) => instance.id)
-      }
+        ids: instances.map((instance) => instance.id),
+      },
     })
-    dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
+    dispatch(
+      deleteInstancesAction(instances, () => onDeleteInstances(instances)),
+    )
   }
 
   const getRowProps = (instance: Instance) => ({
     className: cx({
-      'euiTableRow-isSelected': instance?.id === editedInstance?.id
-    })
+      'euiTableRow-isSelected': instance?.id === editedInstance?.id,
+    }),
   })
 
   const columns: EuiTableFieldDataColumnType<RdiInstance>[] = [
@@ -142,8 +162,13 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
       sortable: ({ name }) => name?.toLowerCase(),
       width: '30%',
       render: (_, { name, id }) => (
-        <EuiText data-testid={`rdi-alias-${id}`} onClick={() => handleCheckConnectToInstance(id)}>{name}</EuiText>
-      )
+        <EuiText
+          data-testid={`rdi-alias-${id}`}
+          onClick={() => handleCheckConnectToInstance(id)}
+        >
+          {name}
+        </EuiText>
+      ),
     },
     {
       field: 'url',
@@ -156,7 +181,11 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
       render: (name: string, { id }) => (
         <div className="url" data-testid="url">
           <EuiText className="copyUrlText">{name}</EuiText>
-          <EuiToolTip position="right" content="Copy" anchorClassName="copyUrlTooltip">
+          <EuiToolTip
+            position="right"
+            content="Copy"
+            anchorClassName="copyUrlTooltip"
+          >
             <EuiButtonIcon
               iconType="copy"
               aria-label="Copy URL"
@@ -165,7 +194,7 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
             />
           </EuiToolTip>
         </div>
-      )
+      ),
     },
     {
       field: 'version',
@@ -184,8 +213,9 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
       align: 'right',
       width: '170px',
       'data-test-subj': 'rdi-instance-last-connection-column',
-      sortable: ({ lastConnection }) => (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
-      render: (date: Date) => lastConnectionFormat(date)
+      sortable: ({ lastConnection }) =>
+        lastConnection ? -new Date(`${lastConnection}`) : -Infinity,
+      render: (date: Date) => lastConnectionFormat(date),
     },
     {
       field: 'controls',
@@ -215,8 +245,8 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
             testid={`delete-instance-${instance.id}`}
           />
         </>
-      )
-    }
+      ),
+    },
   ]
 
   const onTableChange = ({ sort, page }: Criteria<RdiInstance>) => {
@@ -225,12 +255,14 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
       localStorageService.set(BrowserStorageItem.rdiInstancesSorting, sort)
       sendEventTelemetry({
         event: TelemetryEvent.RDI_INSTANCE_LIST_SORTED,
-        eventData: sort
+        eventData: sort,
       })
     }
   }
 
-  const sort: PropertySort = localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ?? DEFAULT_SORT
+  const sort: PropertySort =
+    localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ??
+    DEFAULT_SORT
 
   return (
     <div className={styles.container}>

@@ -86,7 +86,7 @@ beforeEach(() => {
   parsedMasters = parseMastersSentinel(masters)
   parsedAddedMasters = parseAddedMastersSentinel(
     parsedMasters,
-    addedMastersStatuses
+    addedMastersStatuses,
   )
 })
 
@@ -168,7 +168,7 @@ describe('sentinel slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadMastersSentinelSuccess(masters)
+        loadMastersSentinelSuccess(masters),
       )
 
       // Assert
@@ -270,7 +270,7 @@ describe('sentinel slice', () => {
       // Act
       const nextState = reducer(
         { ...initialState, data: parsedMasters },
-        createMastersSentinelSuccess(addedMastersStatuses)
+        createMastersSentinelSuccess(addedMastersStatuses),
       )
 
       // Assert
@@ -299,7 +299,7 @@ describe('sentinel slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        createMastersSentinelSuccess(data)
+        createMastersSentinelSuccess(data),
       )
 
       // Assert
@@ -326,7 +326,7 @@ describe('sentinel slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        createMastersSentinelFailure(data)
+        createMastersSentinelFailure(data),
       )
 
       // Assert
@@ -370,7 +370,8 @@ describe('sentinel slice', () => {
         port: 5005,
       }
 
-      const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+      const errorMessage =
+        'Could not connect to aoeu:123, please check the connection details.'
       const responsePayload = {
         response: {
           status: 500,
@@ -438,7 +439,8 @@ describe('sentinel slice', () => {
       },
     ]
 
-    const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+    const errorMessage =
+      'Could not connect to aoeu:123, please check the connection details.'
     const responsePayload = {
       response: {
         status: 500,

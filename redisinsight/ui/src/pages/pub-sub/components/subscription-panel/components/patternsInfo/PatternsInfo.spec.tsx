@@ -4,11 +4,7 @@ import PatternsInfo from './PatternsInfo'
 
 describe('PatternsInfo', () => {
   it('should render', () => {
-    expect(
-      render(
-        <PatternsInfo />
-      )
-    ).toBeTruthy()
+    expect(render(<PatternsInfo />)).toBeTruthy()
   })
 
   it('should show info text on hover', async () => {

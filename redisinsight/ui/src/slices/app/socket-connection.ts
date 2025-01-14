@@ -3,7 +3,7 @@ import { RootState } from '../store'
 import { StateAppSocketConnection } from '../interfaces'
 
 export const initialState: StateAppSocketConnection = {
-  isConnected: false
+  isConnected: false,
 }
 
 // A slice for recipes
@@ -14,18 +14,17 @@ const appSocketConnectionSlice = createSlice({
     setAppSocketConnectionInitialState: () => initialState,
     setIsConnected: (state, { payload }) => {
       state.isConnected = payload
-    }
+    },
   },
 })
 
 // Actions generated from the slice
-export const {
-  setAppSocketConnectionInitialState,
-  setIsConnected,
-} = appSocketConnectionSlice.actions
+export const { setAppSocketConnectionInitialState, setIsConnected } =
+  appSocketConnectionSlice.actions
 
 // Selectors
-export const appSocketConnectionSelector = (state: RootState) => state.app.socketConnection
+export const appSocketConnectionSelector = (state: RootState) =>
+  state.app.socketConnection
 
 // The reducer
 export default appSocketConnectionSlice.reducer

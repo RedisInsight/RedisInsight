@@ -12,7 +12,7 @@ import reducer, {
   setFromUrl,
   setUrlDbConnection,
   setUrlProperties,
-  appRedirectionSelector
+  appRedirectionSelector,
 } from '../../app/url-handling'
 
 let store: typeof mockedStore
@@ -40,7 +40,7 @@ describe('urlHandling slice', () => {
 
       const state = {
         ...initialState,
-        fromUrl: payload
+        fromUrl: payload,
       }
 
       // Act
@@ -62,13 +62,13 @@ describe('urlHandling slice', () => {
         dbConnection: {
           name: 'dbName',
           host: 'localhost',
-          port: 6379
-        }
+          port: 6379,
+        },
       }
 
       const state = {
         ...initialState,
-        ...payload
+        ...payload,
       }
 
       // Act
@@ -87,12 +87,12 @@ describe('urlHandling slice', () => {
       // Arrange
       const payload = {
         property1: '123',
-        property2: 'zx'
+        property2: 'zx',
       }
 
       const state = {
         ...initialState,
-        properties: payload
+        properties: payload,
       }
 
       // Act

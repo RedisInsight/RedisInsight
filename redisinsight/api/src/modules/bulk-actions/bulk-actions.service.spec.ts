@@ -77,20 +77,30 @@ describe('BulkActionsService', () => {
 
   describe('create', () => {
     it('should create and return overview', async () => {
-      expect(await service.create(mockSessionMetadata, mockCreateBulkActionDto, mockSocket1)).toEqual(mockOverview);
+      expect(
+        await service.create(
+          mockSessionMetadata,
+          mockCreateBulkActionDto,
+          mockSocket1,
+        ),
+      ).toEqual(mockOverview);
       expect(bulkActionProvider.create).toHaveBeenCalledTimes(1);
       expect(analyticsService.sendActionStarted).toHaveBeenCalledTimes(1);
     });
   });
   describe('get', () => {
     it('should get and return overview', async () => {
-      expect(await service.get({ id: mockCreateBulkActionDto.id })).toEqual(mockOverview);
+      expect(await service.get({ id: mockCreateBulkActionDto.id })).toEqual(
+        mockOverview,
+      );
       expect(bulkActionProvider.get).toHaveBeenCalledTimes(1);
     });
   });
   describe('abort', () => {
     it('should abort and return overview', async () => {
-      expect(await service.abort({ id: mockCreateBulkActionDto.id })).toEqual(mockOverview);
+      expect(await service.abort({ id: mockCreateBulkActionDto.id })).toEqual(
+        mockOverview,
+      );
       expect(bulkActionProvider.abort).toHaveBeenCalledTimes(1);
     });
   });

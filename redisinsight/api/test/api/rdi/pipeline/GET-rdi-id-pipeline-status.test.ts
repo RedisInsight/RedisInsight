@@ -1,20 +1,22 @@
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../../deps';
+import { describe, expect, deps, getMainCheckFn } from '../../deps';
 import { nock } from '../../../helpers/test';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST_pipeline_status';
 const notExistedRdiId = 'notExisted';
 const testRdiUrl = 'http://rdilocal.test';
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 
-const endpoint = (id: string) => request(server).get(`/${constants.API.RDI}/${id || testRdiId}/pipeline/status`);
+const endpoint = (id: string) =>
+  request(server).get(
+    `/${constants.API.RDI}/${id || testRdiId}/pipeline/status`,
+  );
 
 const mockResponseSuccess = {
   status: 'running',
@@ -35,7 +37,10 @@ describe('GET /rdi/:id/pipeline/status', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).get(`/${RdiUrl.GetPipelineStatus}`).query(true).reply(200, mockResponseSuccess);
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetPipelineStatus}`)
+          .query(true)
+          .reply(200, mockResponseSuccess);
       },
     },
     {
@@ -69,10 +74,13 @@ describe('GET /rdi/:id/pipeline/status', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).get(`/${RdiUrl.GetPipelineStatus}`).query(true).reply(401, {
-          message: 'Request failed with status code 401',
-          detail: 'Unauthorized',
-        });
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetPipelineStatus}`)
+          .query(true)
+          .reply(401, {
+            message: 'Request failed with status code 401',
+            detail: 'Unauthorized',
+          });
       },
     },
   ].forEach(mainCheckFn);

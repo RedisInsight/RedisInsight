@@ -8,9 +8,7 @@ const mockedProps = mock<Props>()
 
 describe('UploadFile', () => {
   it('should render', () => {
-    expect(
-      render(<UploadFile {...instance(mockedProps)} />)
-    ).toBeTruthy()
+    expect(render(<UploadFile {...instance(mockedProps)} />)).toBeTruthy()
   })
 
   it('should call onClick', () => {
@@ -31,27 +29,27 @@ describe('UploadFile', () => {
     const file = new File([blob], 'empty.json', {
       type: 'application/JSON',
     })
-    render(<UploadFile {...instance(mockedProps)} onFileChange={onFileChange} />)
+    render(
+      <UploadFile {...instance(mockedProps)} onFileChange={onFileChange} />,
+    )
 
     const fileInput = screen.getByTestId('upload-input-file')
-    fireEvent.change(
-      fileInput,
-      { target: { files: [file] } }
-    )
+    fireEvent.change(fileInput, { target: { files: [file] } })
     await waitFor(() => expect(onFileChange).toBeCalled())
-    await waitFor(() => expect(screen.getByTestId('upload-input-file')).toHaveValue(''))
+    await waitFor(() =>
+      expect(screen.getByTestId('upload-input-file')).toHaveValue(''),
+    )
   })
 
   it('should not call onFileChange', async () => {
     const onFileChange = jest.fn()
 
-    render(<UploadFile {...instance(mockedProps)} onFileChange={onFileChange} />)
+    render(
+      <UploadFile {...instance(mockedProps)} onFileChange={onFileChange} />,
+    )
 
     const fileInput = screen.getByTestId('upload-input-file')
-    fireEvent.change(
-      fileInput,
-      { target: { files: [] } }
-    )
+    fireEvent.change(fileInput, { target: { files: [] } })
     await waitFor(() => expect(onFileChange).not.toBeCalled())
   })
 })

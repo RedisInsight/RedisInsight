@@ -7,7 +7,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 import * as Joi from 'joi';
@@ -20,22 +21,29 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 // input data schema
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
-  fields: Joi.array().items(Joi.object().keys({
-    field: Joi.string().allow('').label('.field'),
-    value: Joi.string().allow('').label('.value'),
-  })).required().messages({
-    'array.sparse': 'fields must be either object or array',
-    'array.base': 'property {#label} must be either object or array',
-  }),
+  fields: Joi.array()
+    .items(
+      Joi.object().keys({
+        field: Joi.string().allow('').label('.field'),
+        value: Joi.string().allow('').label('.value'),
+      }),
+    )
+    .required()
+    .messages({
+      'array.sparse': 'fields must be either object or array',
+      'array.base': 'property {#label} must be either object or array',
+    }),
   expire: Joi.number().integer().allow(null).min(1).max(2147483647),
 }).strict();
 
 const validInputData = {
   keyName: constants.TEST_HASH_KEY_1,
-  fields: [{
-    field: constants.TEST_HASH_FIELD_1_NAME,
-    value: constants.TEST_HASH_FIELD_1_VALUE,
-  }],
+  fields: [
+    {
+      field: constants.TEST_HASH_FIELD_1_NAME,
+      value: constants.TEST_HASH_FIELD_1_VALUE,
+    },
+  ],
   expire: constants.TEST_HASH_EXPIRE_1,
 };
 
@@ -63,11 +71,17 @@ const createCheckFn = async (testCase) => {
     } else {
       if (testCase.statusCode === 201) {
         expect(await rte.client.exists(testCase.data.keyName)).to.eql(1);
-        expect(convertArrayReplyToObject(await rte.client.hgetall(testCase.data.keyName))).to.eql({
+        expect(
+          convertArrayReplyToObject(
+            await rte.client.hgetall(testCase.data.keyName),
+          ),
+        ).to.eql({
           [testCase.data.fields[0].field]: testCase.data.fields[0].value,
         });
         if (testCase.data.expire) {
-          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(testCase.data.expire - 5);
+          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(
+            testCase.data.expire - 5,
+          );
         } else {
           expect(await rte.client.ttl(testCase.data.keyName)).to.eql(-1);
         }
@@ -86,15 +100,25 @@ describe('POST /databases/:instanceId/hash', () => {
         name: 'Should hash from buff',
         data: {
           keyName: constants.TEST_HASH_KEY_BIN_BUF_OBJ_1,
-          fields: [{
-            field: constants.TEST_HASH_FIELD_BIN_BUF_OBJ_1,
-            value: constants.TEST_HASH_VALUE_BIN_BUF_OBJ_1,
-          }],
+          fields: [
+            {
+              field: constants.TEST_HASH_FIELD_BIN_BUF_OBJ_1,
+              value: constants.TEST_HASH_VALUE_BIN_BUF_OBJ_1,
+            },
+          ],
         },
         statusCode: 201,
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_HASH_KEY_BIN_BUFFER_1)).to.eql(1);
-          expect(await rte.data.sendCommand('hscan', [constants.TEST_HASH_KEY_BIN_BUFFER_1, 0], null)).to.deep.eq([
+          expect(
+            await rte.client.exists(constants.TEST_HASH_KEY_BIN_BUFFER_1),
+          ).to.eql(1);
+          expect(
+            await rte.data.sendCommand(
+              'hscan',
+              [constants.TEST_HASH_KEY_BIN_BUFFER_1, 0],
+              null,
+            ),
+          ).to.deep.eq([
             Buffer.from('0'),
             [
               constants.TEST_HASH_FIELD_BIN_BUFFER_1,
@@ -107,15 +131,25 @@ describe('POST /databases/:instanceId/hash', () => {
         name: 'Should hash from ascii',
         data: {
           keyName: constants.TEST_HASH_KEY_BIN_ASCII_1,
-          fields: [{
-            field: constants.TEST_HASH_FIELD_BIN_ASCII_1,
-            value: constants.TEST_HASH_VALUE_BIN_ASCII_1,
-          }],
+          fields: [
+            {
+              field: constants.TEST_HASH_FIELD_BIN_ASCII_1,
+              value: constants.TEST_HASH_VALUE_BIN_ASCII_1,
+            },
+          ],
         },
         statusCode: 201,
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_HASH_KEY_BIN_BUFFER_1)).to.eql(1);
-          expect(await rte.data.sendCommand('hscan', [constants.TEST_HASH_KEY_BIN_BUFFER_1, 0], null)).to.deep.eq([
+          expect(
+            await rte.client.exists(constants.TEST_HASH_KEY_BIN_BUFFER_1),
+          ).to.eql(1);
+          expect(
+            await rte.data.sendCommand(
+              'hscan',
+              [constants.TEST_HASH_KEY_BIN_BUFFER_1, 0],
+              null,
+            ),
+          ).to.deep.eq([
             Buffer.from('0'),
             [
               constants.TEST_HASH_FIELD_BIN_BUFFER_1,
@@ -142,10 +176,12 @@ describe('POST /databases/:instanceId/hash', () => {
           name: 'Should create item with empty value',
           data: {
             keyName: constants.getRandomString(),
-            fields: [{
-              field: '',
-              value: '',
-            }],
+            fields: [
+              {
+                field: '',
+                value: '',
+              },
+            ],
           },
           statusCode: 201,
         },
@@ -153,10 +189,12 @@ describe('POST /databases/:instanceId/hash', () => {
           name: 'Should create item with key ttl',
           data: {
             keyName: constants.getRandomString(),
-            fields: [{
-              field: constants.getRandomString(),
-              value: constants.getRandomString(),
-            }],
+            fields: [
+              {
+                field: constants.getRandomString(),
+                value: constants.getRandomString(),
+              },
+            ],
             expire: constants.TEST_HASH_EXPIRE_1,
           },
           statusCode: 201,
@@ -165,10 +203,12 @@ describe('POST /databases/:instanceId/hash', () => {
           name: 'Should create regular item',
           data: {
             keyName: constants.TEST_HASH_KEY_1,
-            fields: [{
-              field: constants.TEST_HASH_FIELD_1_NAME,
-              value: constants.TEST_HASH_FIELD_1_VALUE,
-            }],
+            fields: [
+              {
+                field: constants.TEST_HASH_FIELD_1_NAME,
+                value: constants.TEST_HASH_FIELD_1_VALUE,
+              },
+            ],
           },
           statusCode: 201,
         },
@@ -176,10 +216,12 @@ describe('POST /databases/:instanceId/hash', () => {
           name: 'Should return conflict error if key already exists',
           data: {
             keyName: constants.TEST_HASH_KEY_1,
-            fields: [{
-              field: constants.getRandomString(),
-              value: constants.getRandomString(),
-            }],
+            fields: [
+              {
+                field: constants.getRandomString(),
+                value: constants.getRandomString(),
+              },
+            ],
           },
           statusCode: 409,
           responseBody: {
@@ -189,19 +231,26 @@ describe('POST /databases/:instanceId/hash', () => {
           },
           after: async () =>
             // check that value was not overwritten
-            expect(convertArrayReplyToObject(await rte.client.hgetall(constants.TEST_HASH_KEY_1))).to.deep.eql({
-              [constants.TEST_HASH_FIELD_1_NAME]: constants.TEST_HASH_FIELD_1_VALUE,
-            })
+            expect(
+              convertArrayReplyToObject(
+                await rte.client.hgetall(constants.TEST_HASH_KEY_1),
+              ),
+            ).to.deep.eql({
+              [constants.TEST_HASH_FIELD_1_NAME]:
+                constants.TEST_HASH_FIELD_1_VALUE,
+            }),
         },
         {
           name: 'Should return NotFound error if instance id does not exists',
           endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
           data: {
             keyName: constants.TEST_HASH_KEY_1,
-            fields: [{
-              field: constants.getRandomString(),
-              value: constants.getRandomString(),
-            }],
+            fields: [
+              {
+                field: constants.getRandomString(),
+                value: constants.getRandomString(),
+              },
+            ],
           },
           statusCode: 404,
           responseBody: {
@@ -223,10 +272,12 @@ describe('POST /databases/:instanceId/hash', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.getRandomString(),
-            fields: [{
-              field: constants.getRandomString(),
-              value: constants.getRandomString(),
-            }],
+            fields: [
+              {
+                field: constants.getRandomString(),
+                value: constants.getRandomString(),
+              },
+            ],
           },
           statusCode: 201,
         },
@@ -235,34 +286,38 @@ describe('POST /databases/:instanceId/hash', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.getRandomString(),
-            fields: [{
-              field: constants.getRandomString(),
-              value: constants.getRandomString(),
-            }],
+            fields: [
+              {
+                field: constants.getRandomString(),
+                value: constants.getRandomString(),
+              },
+            ],
           },
           statusCode: 403,
           responseBody: {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -hset')
+          before: () => rte.data.setAclUserRules('~* +@all -hset'),
         },
         {
           name: 'Should throw error if no permissions for "exists" command',
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.getRandomString(),
-            fields: [{
-              field: constants.getRandomString(),
-              value: constants.getRandomString(),
-            }],
+            fields: [
+              {
+                field: constants.getRandomString(),
+                value: constants.getRandomString(),
+              },
+            ],
           },
           statusCode: 403,
           responseBody: {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
       ].map(createCheckFn);
     });

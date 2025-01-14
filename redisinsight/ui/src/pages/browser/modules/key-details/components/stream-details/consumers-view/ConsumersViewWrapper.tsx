@@ -8,14 +8,17 @@ import {
   selectedGroupSelector,
   setSelectedConsumer,
   fetchConsumerMessages,
-  deleteConsumersAction
+  deleteConsumersAction,
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
-import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
+import {
+  selectedKeyDataSelector,
+  updateSelectedKeyRefreshTime,
+} from 'uiSrc/slices/browser/keys'
 import { formatLongName } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -27,11 +30,12 @@ import styles from './ConsumersView/styles.module.scss'
 const suffix = '_stream_consumer'
 const actionsWidth = 50
 
-export interface Props {
-}
+export interface Props {}
 
 const ConsumersViewWrapper = (props: Props) => {
-  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? {
+    name: '',
+  }
   const {
     name: selectedGroupName = '',
     nameString: selectedGroupNameString = '',
@@ -62,13 +66,20 @@ const ConsumersViewWrapper = (props: Props) => {
       event: TelemetryEvent.STREAM_CONSUMER_DELETED,
       eventData: {
         databaseId: instanceId,
-      }
+      },
     })
     closePopover()
   }
 
   const handleDeleteConsumer = (consumerName = '') => {
-    dispatch(deleteConsumersAction(key, selectedGroupName, [consumerName], onSuccessDeletedConsumer))
+    dispatch(
+      deleteConsumersAction(
+        key,
+        selectedGroupName,
+        [consumerName],
+        onSuccessDeletedConsumer,
+      ),
+    )
   }
 
   const handleRemoveIconClick = () => {
@@ -87,14 +98,14 @@ const ConsumersViewWrapper = (props: Props) => {
 
   const handleSelectConsumer = ({ rowData }: { rowData: any }) => {
     dispatch(setSelectedConsumer(rowData))
-    dispatch(fetchConsumerMessages(
-      false,
-      () => dispatch(setStreamViewType(StreamViewType.Messages))
-    ))
+    dispatch(
+      fetchConsumerMessages(false, () =>
+        dispatch(setStreamViewType(StreamViewType.Messages)),
+      ),
+    )
   }
 
   const columns: ITableColumn[] = [
-
     {
       id: 'name',
       label: 'Consumer Name',
@@ -110,7 +121,11 @@ const ConsumersViewWrapper = (props: Props) => {
         const tooltipContent = formatLongName(viewName)
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`stream-consumer-${viewName}`}>
+            <div
+              style={{ display: 'flex' }}
+              className="truncateText"
+              data-testid={`stream-consumer-${viewName}`}
+            >
               <EuiToolTip
                 className={styles.tooltipName}
                 anchorClassName="truncateText"
@@ -162,11 +177,12 @@ const ConsumersViewWrapper = (props: Props) => {
           <div>
             <PopoverDelete
               header={viewName}
-              text={(
+              text={
                 <>
-                  will be removed from Consumer Group <b>{selectedGroupNameString}</b>
+                  will be removed from Consumer Group{' '}
+                  <b>{selectedGroupNameString}</b>
                 </>
-              )}
+              }
               item={viewName}
               suffix={suffix}
               deleting={deleting}

@@ -23,16 +23,26 @@ import { generateHumanMessage } from 'uiSrc/utils/transformers/chatbot'
 
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { ASSISTANCE_CHAT_AGREEMENTS } from '../texts'
-import { AssistanceChatInitialMessage, ChatForm, ChatHistory, RestartChat } from '../shared'
+import {
+  AssistanceChatInitialMessage,
+  ChatForm,
+  ChatHistory,
+  RestartChat,
+} from '../shared'
 
 import styles from './styles.module.scss'
 
 const AssistanceChat = () => {
-  const { id, messages, agreements, loading } = useSelector(aiAssistantChatSelector)
+  const { id, messages, agreements, loading } = useSelector(
+    aiAssistantChatSelector,
+  )
   const { modules, provider } = useSelector(connectedInstanceSelector)
-  const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
+  const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(
+    appRedisCommandsSelector,
+  )
 
-  const [inProgressMessage, setinProgressMessage] = useState<Nullable<AiChatMessage>>(null)
+  const [inProgressMessage, setinProgressMessage] =
+    useState<Nullable<AiChatMessage>>(null)
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const dispatch = useDispatch()
@@ -43,51 +53,55 @@ const AssistanceChat = () => {
     dispatch(getAssistantChatHistoryAction(id))
   }, [id])
 
-  const handleSubmit = useCallback((message: string) => {
-    if (!agreements) {
-      dispatch(updateAssistantChatAgreements(true))
-      sendEventTelemetry({
-        event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
-        eventData: {
-          chat: AiChatType.Assistance,
-        }
-      })
-    }
+  const handleSubmit = useCallback(
+    (message: string) => {
+      if (!agreements) {
+        dispatch(updateAssistantChatAgreements(true))
+        sendEventTelemetry({
+          event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
+          eventData: {
+            chat: AiChatType.Assistance,
+          },
+        })
+      }
 
-    if (!id) {
-      dispatch(
-        createAssistantChatAction(
-          (chatId) => sendChatMessage(chatId, message),
-          // if cannot create a chat - just put message with error
-          () => {
-            dispatch(
-              sendQuestion({
-                ...generateHumanMessage(message),
-                error: { statusCode: 500, errorCode: CustomErrorCodes.GeneralAiUnexpectedError },
+      if (!id) {
+        dispatch(
+          createAssistantChatAction(
+            (chatId) => sendChatMessage(chatId, message),
+            // if cannot create a chat - just put message with error
+            () => {
+              dispatch(
+                sendQuestion({
+                  ...generateHumanMessage(message),
+                  error: {
+                    statusCode: 500,
+                    errorCode: CustomErrorCodes.GeneralAiUnexpectedError,
+                  },
+                }),
+              )
+
+              sendEventTelemetry({
+                event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
+                eventData: {
+                  chat: AiChatType.Assistance,
+                  errorCode: 500,
+                },
               })
-            )
-
-            sendEventTelemetry({
-              event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
-              eventData: {
-                chat: AiChatType.Assistance,
-                errorCode: 500
-              }
-            })
-          }
+            },
+          ),
         )
-      )
-      return
-    }
+        return
+      }
 
-    sendChatMessage(id, message)
-  }, [id, agreements])
+      sendChatMessage(id, message)
+    },
+    [id, agreements],
+  )
 
   const sendChatMessage = (chatId: string, message: string) => {
-    dispatch(askAssistantChatbot(
-      chatId,
-      message,
-      {
+    dispatch(
+      askAssistantChatbot(chatId, message, {
         onMessage: (message: AiChatMessage) => {
           setinProgressMessage({ ...message })
         },
@@ -96,19 +110,19 @@ const AssistanceChat = () => {
             event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
             eventData: {
               chat: AiChatType.Assistance,
-              errorCode
-            }
+              errorCode,
+            },
           })
         },
-        onFinish: () => setinProgressMessage(null)
-      }
-    ))
+        onFinish: () => setinProgressMessage(null),
+      }),
+    )
 
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
       eventData: {
-        chat: AiChatType.Assistance
-      }
+        chat: AiChatType.Assistance,
+      },
     })
   }
 
@@ -123,30 +137,33 @@ const AssistanceChat = () => {
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
       eventData: {
-        chat: AiChatType.Assistance
-      }
+        chat: AiChatType.Assistance,
+      },
     })
   }, [id])
 
-  const onRunCommand = useCallback((query: string) => {
-    const command = getCommandsFromQuery(query, REDIS_COMMANDS_ARRAY) || ''
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_BOT_COMMAND_RUN_CLICKED,
-      eventData: {
-        databaseId: instanceId,
-        chat: AiChatType.Assistance,
-        provider,
-        command
-      }
-    })
-  }, [instanceId, provider])
+  const onRunCommand = useCallback(
+    (query: string) => {
+      const command = getCommandsFromQuery(query, REDIS_COMMANDS_ARRAY) || ''
+      sendEventTelemetry({
+        event: TelemetryEvent.AI_CHAT_BOT_COMMAND_RUN_CLICKED,
+        eventData: {
+          databaseId: instanceId,
+          chat: AiChatType.Assistance,
+          provider,
+          command,
+        },
+      })
+    },
+    [instanceId, provider],
+  )
 
   const handleAgreementsDisplay = useCallback(() => {
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_BOT_TERMS_DISPLAYED,
       eventData: {
         chat: AiChatType.Assistance,
-      }
+      },
     })
   }, [])
 
@@ -155,7 +172,7 @@ const AssistanceChat = () => {
       <div className={styles.header}>
         <span />
         <RestartChat
-          button={(
+          button={
             <EuiButtonEmpty
               disabled={!!inProgressMessage || !messages?.length}
               iconType="eraser"
@@ -163,7 +180,7 @@ const AssistanceChat = () => {
               className={styles.headerBtn}
               data-testid="ai-general-restart-session-btn"
             />
-          )}
+          }
           onConfirm={onClearSession}
         />
       </div>

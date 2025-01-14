@@ -2,7 +2,13 @@ import { cloneDeep, last } from 'lodash'
 import React from 'react'
 import { keys } from '@elastic/eui'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import { clearOutput, updateCliHistoryStorage } from 'uiSrc/utils/cliHelper'
 import { MOCK_COMMANDS_ARRAY } from 'uiSrc/constants'
 import CliBody, { Props } from './CliBody'
@@ -36,7 +42,8 @@ jest.mock(cliOutputPath, () => {
 
 jest.mock(redisCommandsPath, () => {
   const defaultState = jest.requireActual(redisCommandsPath).initialState
-  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } = jest.requireActual('uiSrc/constants')
+  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } =
+    jest.requireActual('uiSrc/constants')
   return {
     ...jest.requireActual(redisCommandsPath),
     appRedisCommandsSelector: jest.fn().mockReturnValue({
@@ -86,7 +93,7 @@ describe('CliBody', () => {
           command={command}
           setCommand={setCommandMock}
           onSubmit={onSubmitMock}
-        />
+        />,
       )
 
       fireEvent.keyDown(screen.getByTestId(cliCommand), {
@@ -94,7 +101,10 @@ describe('CliBody', () => {
       })
 
       expect(clearOutput).toBeCalled()
-      expect(updateCliHistoryStorage).toBeCalledWith(command, expect.any(Function))
+      expect(updateCliHistoryStorage).toBeCalledWith(
+        command,
+        expect.any(Function),
+      )
 
       expect(setCommandMock).toBeCalledWith('')
       expect(onSubmitMock).not.toBeCalled()
@@ -106,13 +116,22 @@ describe('CliBody', () => {
       const command = 'info'
       const onSubmitMock = jest.fn()
 
-      render(<CliBody {...instance(mockedProps)} command={command} onSubmit={onSubmitMock} />)
+      render(
+        <CliBody
+          {...instance(mockedProps)}
+          command={command}
+          onSubmit={onSubmitMock}
+        />,
+      )
 
       fireEvent.keyDown(screen.getByTestId(cliCommand), {
         key: 'Enter',
       })
 
-      expect(updateCliHistoryStorage).toBeCalledWith(command, expect.any(Function))
+      expect(updateCliHistoryStorage).toBeCalledWith(
+        command,
+        expect.any(Function),
+      )
       expect(onSubmitMock).toBeCalled()
     })
 
@@ -125,7 +144,7 @@ describe('CliBody', () => {
           command="clear"
           setCommand={setCommandMock}
           onSubmit={onSubmitMock}
-        />
+        />,
       )
 
       fireEvent.keyDown(screen.getByTestId(cliCommand), {
@@ -148,7 +167,7 @@ describe('CliBody', () => {
           command="clear"
           setCommand={setCommandMock}
           onSubmit={onSubmitMock}
-        />
+        />,
       )
 
       fireEvent.keyDown(screen.getByTestId(cliCommand), {
@@ -171,7 +190,7 @@ describe('CliBody', () => {
           command="clear"
           setCommand={setCommandMock}
           onSubmit={onSubmitMock}
-        />
+        />,
       )
 
       fireEvent.keyDown(screen.getByTestId(cliCommand), {
@@ -201,7 +220,7 @@ describe('CliBody', () => {
           command="clear"
           setCommand={setCommandMock}
           onSubmit={onSubmitMock}
-        />
+        />,
       )
 
       for (let index = 0; index < 3; index++) {
@@ -245,7 +264,7 @@ describe('CliBody', () => {
           command=""
           setCommand={setCommandMock}
           onSubmit={onSubmitMock}
-        />
+        />,
       )
 
       fireEvent.keyDown(screen.getByTestId(cliCommand), {
@@ -268,7 +287,7 @@ describe('CliBody', () => {
           command={command}
           setCommand={setCommandMock}
           onSubmit={onSubmitMock}
-        />
+        />,
       )
 
       fireEvent.keyDown(screen.getByTestId(cliCommand), {
@@ -276,7 +295,9 @@ describe('CliBody', () => {
       })
 
       expect(setCommandMock).toBeCalledWith(
-        commandsArr.filter((cmd: string) => cmd.startsWith(command.toUpperCase()))[0]
+        commandsArr.filter((cmd: string) =>
+          cmd.startsWith(command.toUpperCase()),
+        )[0],
       )
 
       expect(onSubmitMock).not.toBeCalled()
@@ -293,7 +314,7 @@ describe('CliBody', () => {
           command={command}
           setCommand={setCommandMock}
           onSubmit={onSubmitMock}
-        />
+        />,
       )
 
       fireEvent.keyDown(screen.getByTestId(cliCommand), {
@@ -311,7 +332,11 @@ describe('CliBody', () => {
       })
 
       expect(setCommandMock).toBeCalledWith(
-        last(commandsArr.filter((cmd: string) => cmd.startsWith(command.toUpperCase())))
+        last(
+          commandsArr.filter((cmd: string) =>
+            cmd.startsWith(command.toUpperCase()),
+          ),
+        ),
       )
 
       expect(onSubmitMock).not.toBeCalled()

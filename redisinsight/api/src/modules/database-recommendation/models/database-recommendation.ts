@@ -1,8 +1,6 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsEnum, IsOptional, IsBoolean,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsBoolean } from 'class-validator';
 import { DatabaseRecommendationParams } from 'src/modules/database-recommendation/models';
 
 export enum Vote {

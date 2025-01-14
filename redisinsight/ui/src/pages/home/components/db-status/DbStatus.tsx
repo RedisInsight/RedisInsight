@@ -10,8 +10,16 @@ import { appContextCapability } from 'uiSrc/slices/app/context'
 
 import AlarmIcon from 'uiSrc/assets/img/alarm.svg'
 import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
-import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { CHECK_CLOUD_DATABASE, WARNING_WITH_CAPABILITY, WARNING_WITHOUT_CAPABILITY } from './texts'
+import {
+  sendEventTelemetry,
+  TELEMETRY_EMPTY_VALUE,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
+import {
+  CHECK_CLOUD_DATABASE,
+  WARNING_WITH_CAPABILITY,
+  WARNING_WITHOUT_CAPABILITY,
+} from './texts'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -29,7 +37,7 @@ export enum WarningTypes {
 
 interface WarningTooltipProps {
   id: string
-  content : React.ReactNode
+  content: React.ReactNode
   capabilityTelemetry?: string
   type?: string
   isCapabilityNotShown?: boolean
@@ -49,14 +57,16 @@ const DbStatus = (props: Props) => {
   try {
     daysDiff = lastConnection
       ? differenceInDays(new Date(), new Date(lastConnection))
-      : createdAt ? differenceInDays(new Date(), new Date(createdAt)) : 0
+      : createdAt
+        ? differenceInDays(new Date(), new Date(createdAt))
+        : 0
   } catch {
     // nothing to do
   }
 
   const renderWarningTooltip = (content: React.ReactNode, type?: string) => (
     <EuiToolTip
-      content={(
+      content={
         <WarningTooltipContent
           id={id}
           capabilityTelemetry={capability?.telemetryName}
@@ -64,12 +74,17 @@ const DbStatus = (props: Props) => {
           type={type}
           isCapabilityNotShown={isCapabilityNotShown}
         />
-      )}
+      }
       position="right"
       className={styles.tooltip}
       anchorClassName={cx(styles.statusAnchor, styles.warning)}
     >
-      <div className={cx(styles.status, styles.warning)} data-testid={`database-status-${type}-${id}`}>!</div>
+      <div
+        className={cx(styles.status, styles.warning)}
+        data-testid={`database-status-${type}-${id}`}
+      >
+        !
+      </div>
     </EuiToolTip>
   )
 
@@ -79,15 +94,24 @@ const DbStatus = (props: Props) => {
 
   if (isFree && daysDiff >= LAST_CONNECTION_SM) {
     return renderWarningTooltip(
-      isCapabilityNotShown && capability.name ? WARNING_WITH_CAPABILITY(capability.name) : WARNING_WITHOUT_CAPABILITY,
-      'tryDatabase'
+      isCapabilityNotShown && capability.name
+        ? WARNING_WITH_CAPABILITY(capability.name)
+        : WARNING_WITHOUT_CAPABILITY,
+      'tryDatabase',
     )
   }
 
   if (isNew) {
     return (
-      <EuiToolTip content="New" position="top" anchorClassName={cx(styles.statusAnchor)}>
-        <div className={cx(styles.status, styles.new)} data-testid={`database-status-new-${id}`} />
+      <EuiToolTip
+        content="New"
+        position="top"
+        anchorClassName={cx(styles.statusAnchor)}
+      >
+        <div
+          className={cx(styles.status, styles.new)}
+          data-testid={`database-status-new-${id}`}
+        />
       </EuiToolTip>
     )
   }
@@ -103,9 +127,11 @@ const WarningTooltipContent = (props: WarningTooltipProps) => {
     event: TelemetryEvent.CLOUD_NOT_USED_DB_NOTIFICATION_VIEWED,
     eventData: {
       databaseId: id,
-      capability: isCapabilityNotShown ? capabilityTelemetry : TELEMETRY_EMPTY_VALUE,
-      type
-    }
+      capability: isCapabilityNotShown
+        ? capabilityTelemetry
+        : TELEMETRY_EMPTY_VALUE,
+      type,
+    },
   })
 
   return (

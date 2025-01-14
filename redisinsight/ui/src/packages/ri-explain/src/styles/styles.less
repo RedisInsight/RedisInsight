@@ -1,6 +1,6 @@
 @charset "UTF-8";
-@import "_dark_theme.less";
-@import "_light_theme.less";
+@import '_dark_theme.less';
+@import '_light_theme.less';
 
 * {
   margin: 0px;
@@ -12,9 +12,9 @@
 }
 
 #mainApp::-webkit-scrollbar-thumb {
-    background-color: rgba(105, 112, 125, 0.5);
-    border: 6px solid transparent;
-    background-clip: content-box;
+  background-color: rgba(105, 112, 125, 0.5);
+  border: 6px solid transparent;
+  background-clip: content-box;
 }
 
 #container-parent::-webkit-scrollbar {
@@ -22,7 +22,8 @@
   height: 16px;
 }
 
-#container-parent::-webkit-scrollbar-corner, #container-parent::-webkit-scrollbar-track {
+#container-parent::-webkit-scrollbar-corner,
+#container-parent::-webkit-scrollbar-track {
   background: transparent;
 }
 
@@ -33,40 +34,39 @@
 }
 
 .theme_DARK {
-  --info-background: #2b2b2b;;
+  --info-background: #2b2b2b;
   --info-color: white;
   --svg-background: #010101;
-  --tooltip-background: #3E4B5E;
+  --tooltip-background: #3e4b5e;
 
-  --node-border-color: #3D3D3D;
+  --node-border-color: #3d3d3d;
   --node-border-shadow: #17336952;
-  --node-metadata-border-color: #3C3C3C;
-  --node-metadata-color: #B5B6C0;
+  --node-metadata-border-color: #3c3c3c;
+  --node-metadata-color: #b5b6c0;
   --node-background: #212021;
-  --edge-background: #6B6B6B;
-  --text-color: #DFE5EF;
+  --edge-background: #6b6b6b;
+  --text-color: #dfe5ef;
 }
 
 .theme_LIGHT {
-  --info-background: #EBEFFA;
+  --info-background: #ebeffa;
   --info-color: black;
-  --svg-background: #FFFFFF;
+  --svg-background: #ffffff;
   --tooltip-background: white;
 
-  --node-border-color: #E4EAF2;
+  --node-border-color: #e4eaf2;
   --node-border-shadow: #17336926;
-  --node-metadata-border-color: #CCD7E7;
+  --node-metadata-border-color: #ccd7e7;
   --node-metadata-color: #415681;
-  --node-background: #FFF;
-  --edge-background: #8992B3;
+  --node-background: #fff;
+  --edge-background: #8992b3;
   --text-color: #173369;
 }
 
 body {
-    background-color: var(--svg-background);
-    overflow: hidden;
+  background-color: var(--svg-background);
+  overflow: hidden;
 }
-
 
 * div,
 * span {
@@ -77,7 +77,6 @@ body {
   list-style: none;
   padding-inline-start: 0px;
 }
-
 
 .responseFail {
   color: #e06c75;
@@ -109,7 +108,6 @@ body {
   background-color: var(--tooltip-background) !important;
 }
 
-
 .euiToolTipAnchor {
   display: unset !important;
 }
@@ -134,7 +132,6 @@ body {
 
   color: var(--node-metadata-color);
   font-size: 12px;
-
 
   // Make text selectable
   -moz-user-select: text;
@@ -164,75 +161,71 @@ body {
   color: var(--text-color);
 
   &:hover {
-      outline: 2px solid #85A2FE !important;
-      box-sizing: border-box;
+    outline: 2px solid #85a2fe !important;
+    box-sizing: border-box;
   }
 
   .Main {
+    display: flex;
+    justify-content: space-between;
+    line-height: 18px;
 
-      display: flex;
-      justify-content: space-between;
-      line-height: 18px;
+    font-size: 13px;
+    color: var(--text-color);
 
-      font-size: 13px;
-      color: var(--text-color);
+    padding-top: 12px;
+    padding-bottom: 12px;
 
-      padding-top: 12px;
-      padding-bottom: 12px;
-
-      .Type {
-          color: #CE915B;
-          text-transform: lowercase;
-      }
+    .Type {
+      color: #ce915b;
+      text-transform: lowercase;
+    }
   }
 
-  .Footer{
+  .Footer {
     padding-top: 4px;
     padding-bottom: 12px;
     height: auto;
   }
 
   .MetaData {
+    display: flex;
+    justify-content: space-between;
+    line-height: 18px;
+    color: var(--node-metadata-color);
+
+    padding-top: 12px;
+    padding-bottom: 12px;
+
+    height: 42px; //FIXME: fixed height?
+    border-top: 0.5px solid var(--node-metadata-border-color);
+
+    .Time {
       display: flex;
-      justify-content: space-between;
-      line-height: 18px;
-      color: var(--node-metadata-color);
+      align-items: center;
+      font-size: 12px;
 
-      padding-top: 12px;
-      padding-bottom: 12px;
-
-      height: 42px;             //FIXME: fixed height?
-      border-top: 0.5px solid var(--node-metadata-border-color);
-
-      .Time {
-          display: flex;
-          align-items: center;
-          font-size: 12px;
-
-          div:first-child {
-              padding-right: 5px;
-          }
-
+      div:first-child {
+        padding-right: 5px;
       }
+    }
 
-      .Size {
-          display: flex;
-          align-items: center;
-          font-size: 13px;
+    .Size {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
 
-          div:first-child {
-              padding-right: 5px;
-          }
-
-
+      div:first-child {
+        padding-right: 5px;
       }
+    }
 
-      .IconContainer {
-          > svg {
-              width: 12px !important;
-              height: 13px !important;
-          }
+    .IconContainer {
+      > svg {
+        width: 12px !important;
+        height: 13px !important;
       }
+    }
   }
 }
 
@@ -254,8 +247,8 @@ body {
   background-color: var(--node-background);
 
   &:hover {
-      outline: 2px solid #85A2FE !important;
-      box-sizing: border-box;
+    outline: 2px solid #85a2fe !important;
+    box-sizing: border-box;
   }
 
   .Main {
@@ -264,22 +257,20 @@ body {
     color: var(--text-color);
 
     .Info {
-        display: flex;
-        justify-content: space-between;
-        .Type {
-            color: #CE915B;
-            text-transform: lowercase;
-        }
+      display: flex;
+      justify-content: space-between;
+      .Type {
+        color: #ce915b;
+        text-transform: lowercase;
+      }
     }
-
   }
 
-  .Footer{
+  .Footer {
     height: 24px;
     padding-top: 6px;
   }
 }
-
 
 .ProfileInfo {
   display: flex;
@@ -297,25 +288,24 @@ body {
 }
 
 .ProfileTimeInfo {
-    background-color: var(--info-background);
+  background-color: var(--info-background);
 
-    padding-top: 3px !important;
+  padding-top: 3px !important;
 
-    .Item {
+  .Item {
+    padding-left: 18px;
+    padding-right: 18px;
 
-        padding-left: 18px;
-        padding-right: 18px;
-
-        .Key {
-            font-size: 13px;
-            line-height: 18px;
-        }
-
-        .Value {
-            font-size: 18px;
-            line-height: 24px;
-        }
+    .Key {
+      font-size: 13px;
+      line-height: 18px;
     }
+
+    .Value {
+      font-size: 18px;
+      line-height: 24px;
+    }
+  }
 }
 
 .ProfileTimeMini {
@@ -323,7 +313,7 @@ body {
 }
 
 .NodeType {
-  color: #CE915B;
+  color: #ce915b;
 }
 
 .NodeMetadata {
@@ -336,9 +326,9 @@ body {
 .NodeInfoDivider {
   width: 284px;
   height: 29px;
-  border-bottom: 1px solid #3D3D3D !important;
+  border-bottom: 1px solid #3d3d3d !important;
   position: absolute;
-  color: #B5B6C0;
+  color: #b5b6c0;
 }
 
 .NodeTime {
@@ -346,12 +336,10 @@ body {
   align-items: center;
 }
 
-
 .NodeContentInfo {
   display: flex;
   align-items: center;
 }
-
 
 .NodeTimeIcon {
   padding-right: 5px !important;
@@ -364,7 +352,7 @@ body {
 .Box {
   width: 5px;
   height: 9px;
-  background-color: #FF6280;
+  background-color: #ff6280;
 
   align-self: center;
 
@@ -372,24 +360,26 @@ body {
 }
 
 .ZoomMenu {
-    position: absolute;
-    bottom: 110px;
-    right: 10px;
-    border-right: 4px;
-    box-shadow: 0 1px 6px rgb(0 0 0 / 16%), 0 1px 6px rgb(0 0 0 / 23%);
-    display: flex;
-    flex-direction: column;
+  position: absolute;
+  bottom: 110px;
+  right: 10px;
+  border-right: 4px;
+  box-shadow:
+    0 1px 6px rgb(0 0 0 / 16%),
+    0 1px 6px rgb(0 0 0 / 23%);
+  display: flex;
+  flex-direction: column;
 }
 
 .CollapseButton {
-    color: var(--text-color);
-    line-height: 18px;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    cursor: pointer;
+  color: var(--text-color);
+  line-height: 18px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
 
-    div:first-child {
-        padding-right: 5px;
-    }
+  div:first-child {
+    padding-right: 5px;
+  }
 }

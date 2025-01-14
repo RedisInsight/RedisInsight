@@ -3,6 +3,4 @@ import KeyTreeSettings from './KeyTreeSettings'
 
 export default KeyTree
 
-export {
-  KeyTreeSettings,
-}
+export { KeyTreeSettings }

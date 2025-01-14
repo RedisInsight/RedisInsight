@@ -19,13 +19,12 @@ export interface Props {
 
 const TestConnectionsPanel = (props: Props) => {
   const { onClose } = props
-  const { loading: testingConnections, results } = useSelector(rdiTestConnectionsSelector)
+  const { loading: testingConnections, results } = useSelector(
+    rdiTestConnectionsSelector,
+  )
 
   return (
-    <div
-      className={styles.panel}
-      data-testid="test-connection-panel"
-    >
+    <div className={styles.panel} data-testid="test-connection-panel">
       <div className={styles.header}>
         <EuiText className={styles.title}>Connection test results</EuiText>
         <EuiButtonIcon
@@ -50,7 +49,12 @@ const TestConnectionsPanel = (props: Props) => {
             <EuiText className={styles.loaderText}>Loading results...</EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiLoadingSpinner data-testid="test-connections-loader" className={styles.loaderIcon} color="secondary" size="xl" />
+            <EuiLoadingSpinner
+              data-testid="test-connections-loader"
+              className={styles.loaderIcon}
+              color="secondary"
+              size="xl"
+            />
           </EuiFlexItem>
         </EuiFlexGroup>
       )}

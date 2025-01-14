@@ -3,5 +3,5 @@ import * as IORedis from 'ioredis';
 
 export interface IShardObserver extends EventEmitter {
   disconnect(): void;
-  options?: IORedis.RedisOptions,
+  options?: IORedis.RedisOptions;
 }

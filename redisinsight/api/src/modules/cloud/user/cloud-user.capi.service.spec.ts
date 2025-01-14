@@ -30,13 +30,17 @@ describe('CloudUserCapiService', () => {
 
   describe('getCurrentAccount', () => {
     it('successfully get current account info', async () => {
-      expect(await service.getCurrentAccount(mockCloudCapiAuthDto)).toEqual(mockCloudAccountInfo);
+      expect(await service.getCurrentAccount(mockCloudCapiAuthDto)).toEqual(
+        mockCloudAccountInfo,
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
-      capiProvider.getCurrentAccount.mockRejectedValueOnce(new CloudApiUnauthorizedException());
-      await expect(service.getCurrentAccount(mockCloudCapiAuthDto)).rejects.toThrow(
-        CloudApiUnauthorizedException,
+      capiProvider.getCurrentAccount.mockRejectedValueOnce(
+        new CloudApiUnauthorizedException(),
       );
+      await expect(
+        service.getCurrentAccount(mockCloudCapiAuthDto),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
     });
   });
 });

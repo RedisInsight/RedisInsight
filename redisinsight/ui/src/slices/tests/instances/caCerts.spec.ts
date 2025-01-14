@@ -13,12 +13,10 @@ import reducer, {
   loadCaCertsFailure,
   caCertsSelector,
   fetchCaCerts,
-
   deleteCaCertificate,
   deleteCaCertificateSuccess,
   deleteCaCertificateFailure,
   deleteCaCertificateAction,
-
 } from '../../instances/caCerts'
 import { addErrorNotification } from '../../app/notifications'
 
@@ -263,7 +261,8 @@ describe('caCerts slice', () => {
 
     it('call both fetchCaCerts and deleteCaCertificateFailure when delete ca certificate action is failed', async () => {
       // Arrange
-      const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+      const errorMessage =
+        'Could not connect to aoeu:123, please check the connection details.'
       const responsePayload = {
         response: {
           status: 500,
@@ -295,7 +294,8 @@ describe('caCerts slice', () => {
 
     it('call both fetchCaCerts and loadCaCertsFailure when fetch is fail', async () => {
       // Arrange
-      const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+      const errorMessage =
+        'Could not connect to aoeu:123, please check the connection details.'
       const responsePayload = {
         response: {
           status: 500,

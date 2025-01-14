@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import {
   ContentCreateRedis as IContentItem,
-  StateContentCreateRedis as IState
+  StateContentCreateRedis as IState,
 } from 'uiSrc/slices/interfaces/content'
 import { resourcesService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -23,7 +23,10 @@ const createRedisButtonsSlice = createSlice({
     getContent: (state) => {
       state.loading = true
     },
-    getContentSuccess: (state, { payload }: { payload: Record<string, any> }) => {
+    getContentSuccess: (
+      state,
+      { payload }: { payload: Record<string, any> },
+    ) => {
       state.loading = false
       state.data = payload
     },
@@ -35,14 +38,12 @@ const createRedisButtonsSlice = createSlice({
 })
 
 // Actions generated from the slice
-export const {
-  getContent,
-  getContentFailure,
-  getContentSuccess
-} = createRedisButtonsSlice.actions
+export const { getContent, getContentFailure, getContentSuccess } =
+  createRedisButtonsSlice.actions
 
 // A selector
-export const contentSelector = (state: RootState) => state.content.createRedisButtons
+export const contentSelector = (state: RootState) =>
+  state.content.createRedisButtons
 
 // The reducer
 export default createRedisButtonsSlice.reducer
@@ -53,8 +54,9 @@ export function fetchContentAction() {
     dispatch(getContent())
 
     try {
-      const { data, status } = await resourcesService
-        .get<Record<string, IContentItem>>(ApiEndpoints.CONTENT_CREATE_DATABASE)
+      const { data, status } = await resourcesService.get<
+        Record<string, IContentItem>
+      >(ApiEndpoints.CONTENT_CREATE_DATABASE)
       if (isStatusSuccessful(status)) {
         dispatch(getContentSuccess(data))
       }

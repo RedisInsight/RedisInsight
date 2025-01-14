@@ -2,11 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
-    "lib": [
-      "dom",
-      "esnext",
-      "WebWorker",
-    ],
+    "lib": ["dom", "esnext", "WebWorker"],
     "declaration": true,
     "declarationMap": true,
     "noEmit": true,
@@ -31,21 +27,11 @@
     "skipLibCheck": true,
     "types": ["node", "vite/client"],
     "paths": {
-      "uiSrc/*": [
-        "redisinsight/ui/src/*"
-      ],
-      "apiSrc/*": [
-        "redisinsight/api/src/*"
-      ],
-      "src/*": [
-        "redisinsight/api/src/*"
-      ],
-      "desktopSrc/*": [
-        "redisinsight/desktop/src/*"
-      ],
-      "tests/*": [
-        "redisinsight/ui/__tests__/*"
-      ]
+      "uiSrc/*": ["redisinsight/ui/src/*"],
+      "apiSrc/*": ["redisinsight/api/src/*"],
+      "src/*": ["redisinsight/api/src/*"],
+      "desktopSrc/*": ["redisinsight/desktop/src/*"],
+      "tests/*": ["redisinsight/ui/__tests__/*"]
     }
   },
   "include": [

@@ -6,7 +6,11 @@ import config, { Config } from 'src/utils/config';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/models';
+import {
+  ClientContext,
+  ClientMetadata,
+  SessionMetadata,
+} from 'src/common/models';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { plainToClass } from 'class-transformer';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
@@ -38,9 +42,8 @@ export class AutodiscoveryService {
 
       // check agreements to understand if it is first launch
       // todo: [USER_CONTEXT] rethink implementation since it is not possible to know user data at this point
-      const settings = await this.settingsService.getAppSettings(
-        sessionMetadata,
-      );
+      const settings =
+        await this.settingsService.getAppSettings(sessionMetadata);
       if (settings.agreements) {
         return;
       }
@@ -68,7 +71,11 @@ export class AutodiscoveryService {
 
     // Add redis databases or resolve after 1s to not block app startup for a long time
     await Promise.race([
-      Promise.all(endpoints.map((endpoint) => this.addRedisDatabase(sessionMetadata, endpoint))),
+      Promise.all(
+        endpoints.map((endpoint) =>
+          this.addRedisDatabase(sessionMetadata, endpoint),
+        ),
+      ),
       new Promise((resolve) => setTimeout(resolve, 1000)),
     ]);
   }
@@ -79,7 +86,10 @@ export class AutodiscoveryService {
    * @param endpoint
    * @private
    */
-  private async addRedisDatabase(sessionMetadata: SessionMetadata, endpoint: { host: string, port: number }) {
+  private async addRedisDatabase(
+    sessionMetadata: SessionMetadata,
+    endpoint: { host: string; port: number },
+  ) {
     try {
       const client = await this.redisClientFactory.createClient(
         {
@@ -92,20 +102,16 @@ export class AutodiscoveryService {
       );
 
       const info = convertRedisInfoReplyToObject(
-        await client.sendCommand(
-          ['info'],
-          { replyEncoding: 'utf8' },
-        ) as string,
+        (await client.sendCommand(['info'], {
+          replyEncoding: 'utf8',
+        })) as string,
       );
 
       if (info?.server?.redis_mode === 'standalone') {
-        await this.databaseService.create(
-          sessionMetadata,
-          {
-            name: `${endpoint.host}:${endpoint.port}`,
-            ...endpoint,
-          } as Database,
-        );
+        await this.databaseService.create(sessionMetadata, {
+          name: `${endpoint.host}:${endpoint.port}`,
+          ...endpoint,
+        } as Database);
       }
     } catch (e) {
       // ignore error

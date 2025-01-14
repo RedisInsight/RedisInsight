@@ -8,9 +8,9 @@ import Recommendations from '../recommendations-view'
 import AnalysisDataView from '../analysis-data-view'
 
 interface DatabaseAnalysisTabs {
-  id: DatabaseAnalysisViewTab,
-  name: (count?: number) => string | ReactNode,
-  content: ReactNode,
+  id: DatabaseAnalysisViewTab
+  name: (count?: number) => string | ReactNode
+  content: ReactNode
   onboard?: OnboardingTourOptions
 }
 
@@ -24,6 +24,6 @@ export const databaseAnalysisTabs: DatabaseAnalysisTabs[] = [
     id: DatabaseAnalysisViewTab.Recommendations,
     name: (count?: number) => (count ? `Tips (${count})` : 'Tips'),
     content: <Recommendations />,
-    onboard: ONBOARDING_FEATURES?.ANALYTICS_RECOMMENDATIONS
+    onboard: ONBOARDING_FEATURES?.ANALYTICS_RECOMMENDATIONS,
   },
 ]

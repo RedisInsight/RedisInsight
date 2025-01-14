@@ -2,12 +2,17 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 
+import { selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import {
-  selectedKeySelector,
-} from 'uiSrc/slices/browser/keys'
-import { KeyTypes, STREAM_ADD_ACTION, STREAM_ADD_GROUP_VIEW_TYPES } from 'uiSrc/constants'
+  KeyTypes,
+  STREAM_ADD_ACTION,
+  STREAM_ADD_GROUP_VIEW_TYPES,
+} from 'uiSrc/constants'
 
-import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
+import {
+  KeyDetailsHeader,
+  KeyDetailsHeaderProps,
+} from 'uiSrc/pages/browser/modules'
 import { streamSelector } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { StreamDetailsBody } from './stream-details-body'
@@ -41,7 +46,11 @@ const StreamDetails = (props: Props) => {
 
   const closeAddItemPanel = (isCancelled?: boolean) => {
     setIsAddItemPanelOpen(false)
-    if (isCancelled && isAddItemPanelOpen && !STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType)) {
+    if (
+      isCancelled &&
+      isAddItemPanelOpen &&
+      !STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType)
+    ) {
       onCloseAddItemPanel()
     }
   }
@@ -56,14 +65,8 @@ const StreamDetails = (props: Props) => {
 
   return (
     <div className="fluid flex-column relative">
-      <KeyDetailsHeader
-        {...props}
-        key="key-details-header"
-      />
-      <KeyDetailsSubheader
-        keyType={keyType}
-        Actions={Actions}
-      />
+      <KeyDetailsHeader {...props} key="key-details-header" />
+      <KeyDetailsSubheader keyType={keyType} Actions={Actions} />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>

@@ -15,10 +15,12 @@ describe('AddItemFieldAction', () => {
 
   it('triggers onClickSetKVPair when the button is clicked', () => {
     const onClickSetKVPair = jest.fn()
-    render(<AddItemFieldAction
-      {...instance(mockedProps)}
-      onClickSetKVPair={onClickSetKVPair}
-    />)
+    render(
+      <AddItemFieldAction
+        {...instance(mockedProps)}
+        onClickSetKVPair={onClickSetKVPair}
+      />,
+    )
 
     fireEvent.click(screen.getByTestId('add-field-btn'))
     expect(onClickSetKVPair).toHaveBeenCalled()

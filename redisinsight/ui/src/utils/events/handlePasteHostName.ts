@@ -2,9 +2,9 @@ const handlePasteHostName = (
   onHostNamePaste: (text: string) => boolean,
   e: React.ClipboardEvent & {
     originalEvent: {
-      clipboardData: DataTransfer | null;
-    };
-  }
+      clipboardData: DataTransfer | null
+    }
+  },
 ) => {
   const clipboardData = e.clipboardData || e.originalEvent.clipboardData
   /*

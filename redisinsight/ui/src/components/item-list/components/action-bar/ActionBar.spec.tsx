@@ -14,7 +14,7 @@ describe('ActionBar', () => {
     const handleClick = jest.fn()
 
     const renderer = render(
-      <ActionBar {...instance(mockedProps)} onCloseActionBar={handleClick} />
+      <ActionBar {...instance(mockedProps)} onCloseActionBar={handleClick} />,
     )
 
     expect(renderer).toBeTruthy()

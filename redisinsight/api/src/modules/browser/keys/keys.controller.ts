@@ -9,9 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ApiBody, ApiOkResponse, ApiOperation, ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { KeysService } from 'src/modules/browser/keys/keys.service';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
@@ -27,7 +25,8 @@ import {
   RenameKeyDto,
   RenameKeyResponse,
   UpdateKeyTtlDto,
-  KeyTtlResponse, GetKeysInfoDto,
+  KeyTtlResponse,
+  GetKeysInfoDto,
 } from 'src/modules/browser/keys/dto';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 
@@ -49,7 +48,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async getKeys(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetKeysDto,
+    @Body() dto: GetKeysDto,
   ): Promise<GetKeysWithDetailsResponse[]> {
     return this.keysService.getKeys(clientMetadata, dto);
   }
@@ -66,7 +65,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async getKeysInfo(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetKeysInfoDto,
+    @Body() dto: GetKeysInfoDto,
   ): Promise<GetKeyInfoResponse[]> {
     return this.keysService.getKeysInfo(clientMetadata, dto);
   }
@@ -84,7 +83,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async getKeyInfo(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetKeyInfoDto,
+    @Body() dto: GetKeyInfoDto,
   ): Promise<GetKeyInfoResponse> {
     return await this.keysService.getKeyInfo(clientMetadata, dto.keyName);
   }
@@ -100,7 +99,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async deleteKey(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DeleteKeysDto,
+    @Body() dto: DeleteKeysDto,
   ): Promise<DeleteKeysResponse> {
     return await this.keysService.deleteKeys(clientMetadata, dto.keyNames);
   }
@@ -116,7 +115,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async renameKey(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: RenameKeyDto,
+    @Body() dto: RenameKeyDto,
   ): Promise<RenameKeyResponse> {
     return await this.keysService.renameKey(clientMetadata, dto);
   }
@@ -132,7 +131,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async updateTtl(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: UpdateKeyTtlDto,
+    @Body() dto: UpdateKeyTtlDto,
   ): Promise<KeyTtlResponse> {
     return await this.keysService.updateTtl(clientMetadata, dto);
   }

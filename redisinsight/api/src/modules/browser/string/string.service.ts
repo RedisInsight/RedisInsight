@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
 import { catchAclError } from 'src/utils';
 import {
@@ -22,7 +18,10 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { Readable } from 'stream';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientCommand } from 'src/modules/redis/client';
-import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
+import {
+  checkIfKeyExists,
+  checkIfKeyNotExists,
+} from 'src/modules/browser/utils';
 
 @Injectable()
 export class StringService {
@@ -40,7 +39,8 @@ export class StringService {
     try {
       this.logger.debug('Setting string key type.', clientMetadata);
       const { keyName, value, expire } = dto;
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyExists(keyName, client);
 
@@ -77,7 +77,8 @@ export class StringService {
     try {
       this.logger.debug('Getting string value.', clientMetadata);
       const { keyName, start, end } = dto;
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
 
@@ -90,7 +91,10 @@ export class StringService {
           `${end}`,
         ]);
       } else {
-        value = await client.sendCommand([BrowserToolStringCommands.Get, keyName]);
+        value = await client.sendCommand([
+          BrowserToolStringCommands.Get,
+          keyName,
+        ]);
       }
 
       this.recommendationService.check(
@@ -114,10 +118,7 @@ export class StringService {
     clientMetadata: ClientMetadata,
     dto: GetKeyInfoDto,
   ): Promise<{ stream: Readable }> {
-    const result = await this.getStringValue(
-      clientMetadata,
-      dto,
-    );
+    const result = await this.getStringValue(clientMetadata, dto);
 
     const stream = Readable.from(result.value);
     return { stream };
@@ -130,20 +131,37 @@ export class StringService {
     try {
       this.logger.debug('Updating string value.', clientMetadata);
       const { keyName, value } = dto;
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
 
-      const ttl = await client.sendCommand([BrowserToolKeysCommands.Ttl, keyName]);
-      const result = await client.sendCommand([BrowserToolStringCommands.Set, keyName, value, 'XX']);
+      const ttl = await client.sendCommand([
+        BrowserToolKeysCommands.Ttl,
+        keyName,
+      ]);
+      const result = await client.sendCommand([
+        BrowserToolStringCommands.Set,
+        keyName,
+        value,
+        'XX',
+      ]);
       if (result && ttl > 0) {
-        await client.sendCommand(<RedisClientCommand>[BrowserToolKeysCommands.Expire, keyName, ttl]);
+        await client.sendCommand(<RedisClientCommand>[
+          BrowserToolKeysCommands.Expire,
+          keyName,
+          ttl,
+        ]);
       }
 
       this.logger.debug('Succeed to update string value.', clientMetadata);
       return null;
     } catch (error) {
-      this.logger.error('Failed to update string value.', error, clientMetadata);
+      this.logger.error(
+        'Failed to update string value.',
+        error,
+        clientMetadata,
+      );
       throw catchAclError(error);
     }
   }

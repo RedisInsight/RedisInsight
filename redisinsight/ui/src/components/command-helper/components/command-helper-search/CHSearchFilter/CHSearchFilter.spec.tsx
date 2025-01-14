@@ -13,7 +13,7 @@ jest.mock(redisCommandsPath, () => {
     ...jest.requireActual(redisCommandsPath),
     appRedisCommandsSelector: jest.fn().mockReturnValue({
       ...defaultState,
-      commandGroups: commandGroupsMock
+      commandGroups: commandGroupsMock,
     }),
   }
 })
@@ -25,10 +25,14 @@ describe('CHSearchFilter', () => {
 
   it('should call submitFilter after choose options', () => {
     const submitFilter = jest.fn()
-    const { queryByText } = render(<CHSearchFilter submitFilter={submitFilter} />)
+    const { queryByText } = render(
+      <CHSearchFilter submitFilter={submitFilter} />,
+    )
     const testGroup = commandGroupsMock[0]
     fireEvent.click(screen.getByTestId('select-filter-group-type'))
-    fireEvent.click(queryByText((GROUP_TYPES_DISPLAY as any)[testGroup]) || document)
+    fireEvent.click(
+      queryByText((GROUP_TYPES_DISPLAY as any)[testGroup]) || document,
+    )
 
     expect(submitFilter).toBeCalledWith(testGroup)
   })

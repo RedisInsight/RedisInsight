@@ -12,9 +12,11 @@ const getOutputForFormatToTextTests: any[] = [
 ]
 
 describe('formatToText', () => {
-  it.each(getOutputForFormatToTextTests)('for input: %s (reply), %s (command), should be output: %s',
+  it.each(getOutputForFormatToTextTests)(
+    'for input: %s (reply), %s (command), should be output: %s',
     (reply, command, expected) => {
       const result = formatToText(reply, command)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })

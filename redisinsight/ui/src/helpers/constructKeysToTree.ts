@@ -9,7 +9,12 @@ interface Props {
 }
 
 export const constructKeysToTree = (props: Props): any[] => {
-  const { items: keys, delimiterPattern = ':', delimiters = [], sorting = 'ASC' } = props
+  const {
+    items: keys,
+    delimiterPattern = ':',
+    delimiters = [],
+    sorting = 'ASC',
+  } = props
   const keysSymbol = `keys${delimiterPattern}keys`
   const tree: any = {}
 
@@ -20,11 +25,13 @@ export const constructKeysToTree = (props: Props): any[] => {
     const nameSplitted = name.split(new RegExp(delimiterPattern, 'g'))
     const lastIndex = nameSplitted.length - 1
 
-    nameSplitted.forEach((value:any, index: number) => {
+    nameSplitted.forEach((value: any, index: number) => {
       // create a key leaf
       if (index === lastIndex) {
         // eslint-disable-next-line prefer-object-spread
-        currentNode[name + keysSymbol] = Object.assign({}, key, { isLeaf: true })
+        currentNode[name + keysSymbol] = Object.assign({}, key, {
+          isLeaf: true,
+        })
       } else if (currentNode[value] === undefined) {
         currentNode[value] = {}
       }
@@ -36,7 +43,7 @@ export const constructKeysToTree = (props: Props): any[] => {
   const ids: any = {}
 
   // common functions
-  const getUniqueId = ():number | string => {
+  const getUniqueId = (): number | string => {
     const candidateId = Math.random().toString(36)
 
     if (ids[candidateId]) {
@@ -71,7 +78,12 @@ export const constructKeysToTree = (props: Props): any[] => {
   }
 
   // FormatTreeData
-  const formatTreeData = (tree: any, previousKey = '', delimiter = ':', prevIndex = '') => {
+  const formatTreeData = (
+    tree: any,
+    previousKey = '',
+    delimiter = ':',
+    prevIndex = '',
+  ) => {
     const treeNodes: string[] = Object.keys(tree)
 
     sortKeysAndFolder(treeNodes)
@@ -90,7 +102,10 @@ export const constructKeysToTree = (props: Props): any[] => {
           delimiter,
           path,
         )
-        node.keyCount = node.children.reduce((a: any, b:any) => a + (b.keyCount || 1), 0)
+        node.keyCount = node.children.reduce(
+          (a: any, b: any) => a + (b.keyCount || 1),
+          0,
+        )
         node.keyApproximate = (node.keyCount / keys.length) * 100
         node.fullName = previousKey + name
       } else {

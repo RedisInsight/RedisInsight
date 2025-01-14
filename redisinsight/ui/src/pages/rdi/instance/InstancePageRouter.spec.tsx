@@ -12,7 +12,9 @@ const mockedRoutes = [
 describe('InstancePageRouter', () => {
   it('should render', () => {
     expect(
-      render(<InstancePageRouter routes={mockedRoutes as IRoute[]} />, { withRouter: true })
+      render(<InstancePageRouter routes={mockedRoutes as IRoute[]} />, {
+        withRouter: true,
+      }),
     ).toBeTruthy()
   })
 })

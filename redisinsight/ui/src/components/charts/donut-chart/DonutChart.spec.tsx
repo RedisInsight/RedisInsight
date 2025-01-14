@@ -73,7 +73,13 @@ describe('DonutChart', () => {
   })
 
   it('should render label value without title', () => {
-    render(<DonutChart data={mockData} config={{ percentToShowLabel: 5 }} hideLabelTitle />)
+    render(
+      <DonutChart
+        data={mockData}
+        config={{ percentToShowLabel: 5 }}
+        hideLabelTitle
+      />,
+    )
     expect(screen.getByTestId('label-E-30').textContent).toBe('30')
   })
 
@@ -86,7 +92,7 @@ describe('DonutChart', () => {
         renderLabel={renderLabel}
         renderTooltip={renderTooltip}
         config={{ percentToShowLabel: 0 }}
-      />
+      />,
     )
     expect(renderLabel).toBeCalledTimes(mockData.length)
 
@@ -95,7 +101,7 @@ describe('DonutChart', () => {
   })
 
   it('should render provided tooltip', () => {
-    const renderTooltip = () => (<span data-testid="label" />)
+    const renderTooltip = () => <span data-testid="label" />
 
     render(<DonutChart data={mockData} renderTooltip={renderTooltip} />)
 
@@ -114,10 +120,18 @@ describe('DonutChart', () => {
   })
 
   it('should display values with percentage', () => {
-    render(<DonutChart data={mockData} labelAs="percentage" config={{ percentToShowLabel: 0 }} />)
+    render(
+      <DonutChart
+        data={mockData}
+        labelAs="percentage"
+        config={{ percentToShowLabel: 0 }}
+      />,
+    )
 
     mockData.forEach(({ value, name }) => {
-      expect(screen.getByTestId(`label-${name}-${value}`)).toHaveTextContent(`: ${getPercentage(value, sum)}%`)
+      expect(screen.getByTestId(`label-${name}-${value}`)).toHaveTextContent(
+        `: ${getPercentage(value, sum)}%`,
+      )
     })
   })
 })

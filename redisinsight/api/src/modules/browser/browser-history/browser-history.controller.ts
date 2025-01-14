@@ -1,6 +1,13 @@
 import {
   Body,
-  Controller, Delete, Get, Param, Query, UseInterceptors, UsePipes, ValidationPipe,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Query,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -42,8 +49,8 @@ export class BrowserHistoryController {
   })
   async list(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Param('dbInstance') databaseId: string,
-      @Query() dto: ListBrowserHistoryDto,
+    @Param('dbInstance') databaseId: string,
+    @Query() dto: ListBrowserHistoryDto,
   ): Promise<BrowserHistory[]> {
     return this.service.list(sessionMetadata, databaseId, dto.mode);
   }
@@ -56,9 +63,9 @@ export class BrowserHistoryController {
   })
   async delete(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Param('dbInstance') databaseId: string,
-      @Query() query: DeleteBrowserHistoryQueryDto,
-      @Param('id') id: string,
+    @Param('dbInstance') databaseId: string,
+    @Query() query: DeleteBrowserHistoryQueryDto,
+    @Param('id') id: string,
   ): Promise<void> {
     await this.service.delete(sessionMetadata, databaseId, query.mode, id);
   }
@@ -77,10 +84,15 @@ export class BrowserHistoryController {
   @Delete('')
   async bulkDelete(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Param('dbInstance') databaseId: string,
-      @Query() query: DeleteBrowserHistoryQueryDto,
-      @Body() dto: DeleteBrowserHistoryItemsDto,
+    @Param('dbInstance') databaseId: string,
+    @Query() query: DeleteBrowserHistoryQueryDto,
+    @Body() dto: DeleteBrowserHistoryItemsDto,
   ): Promise<DeleteBrowserHistoryItemsResponse> {
-    return this.service.bulkDelete(sessionMetadata, databaseId, query.mode, dto.ids);
+    return this.service.bulkDelete(
+      sessionMetadata,
+      databaseId,
+      query.mode,
+      dto.ids,
+    );
   }
 }

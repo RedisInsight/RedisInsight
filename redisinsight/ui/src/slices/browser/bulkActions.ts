@@ -1,11 +1,24 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import axios, { AxiosError } from 'axios'
-import { ApiEndpoints, BulkActionsType, MAX_BULK_ACTION_ERRORS_LENGTH } from 'uiSrc/constants'
+import {
+  ApiEndpoints,
+  BulkActionsType,
+  MAX_BULK_ACTION_ERRORS_LENGTH,
+} from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
+import {
+  getApiErrorMessage,
+  getUrl,
+  isStatusSuccessful,
+  Maybe,
+  Nullable,
+} from 'uiSrc/utils'
 
-import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { AppDispatch, RootState } from '../store'
 import { StateBulkActions, IBulkActionOverview } from '../interfaces'
@@ -25,7 +38,7 @@ export const initialState: StateBulkActions = {
     loading: false,
     error: '',
     overview: null,
-    fileName: ''
+    fileName: '',
   },
   selectedBulkAction: {
     id: '',
@@ -65,16 +78,21 @@ const bulkActionsSlice = createSlice({
     toggleBulkDeleteActionTriggered: (state) => {
       state.bulkDelete.isActionTriggered = !state.bulkDelete.isActionTriggered
     },
-    setDeleteOverview: (state, { payload }: PayloadAction<IBulkActionOverview>) => {
+    setDeleteOverview: (
+      state,
+      { payload }: PayloadAction<IBulkActionOverview>,
+    ) => {
       let errors = state.bulkDelete.overview?.summary?.errors || []
 
-      errors = payload.summary?.errors?.concat(errors).slice(0, MAX_BULK_ACTION_ERRORS_LENGTH)
+      errors = payload.summary?.errors
+        ?.concat(errors)
+        .slice(0, MAX_BULK_ACTION_ERRORS_LENGTH)
       state.bulkDelete.overview = {
         ...payload,
         summary: {
           ...payload.summary,
           errors,
-        }
+        },
       }
     },
     setDeleteOverviewStatus: (state, { payload }) => {
@@ -95,7 +113,12 @@ const bulkActionsSlice = createSlice({
       state.bulkUpload.loading = true
       state.bulkUpload.error = ''
     },
-    bulkUploadSuccess: (state, { payload }: PayloadAction<{ data: IBulkActionOverview, fileName?: string }>) => {
+    bulkUploadSuccess: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{ data: IBulkActionOverview; fileName?: string }>,
+    ) => {
       state.bulkUpload.loading = false
       state.bulkUpload.overview = payload.data
       state.bulkUpload.fileName = payload.fileName
@@ -115,7 +138,7 @@ const bulkActionsSlice = createSlice({
     },
     bulkImportDefaultDataFailed: (state) => {
       state.loading = false
-    }
+    },
   },
 })
 
@@ -143,15 +166,21 @@ export const {
 } = bulkActionsSlice.actions
 
 // Selectors
-export const bulkActionsSelector = (state: RootState) => state.browser.bulkActions
-export const selectedBulkActionsSelector = (state: RootState) => state.browser.bulkActions?.selectedBulkAction
-export const bulkActionsDeleteSelector = (state: RootState) => state.browser.bulkActions.bulkDelete
-export const bulkActionsDeleteOverviewSelector = (state: RootState) => state.browser.bulkActions.bulkDelete.overview
+export const bulkActionsSelector = (state: RootState) =>
+  state.browser.bulkActions
+export const selectedBulkActionsSelector = (state: RootState) =>
+  state.browser.bulkActions?.selectedBulkAction
+export const bulkActionsDeleteSelector = (state: RootState) =>
+  state.browser.bulkActions.bulkDelete
+export const bulkActionsDeleteOverviewSelector = (state: RootState) =>
+  state.browser.bulkActions.bulkDelete.overview
 export const bulkActionsDeleteSummarySelector = (state: RootState) =>
   state.browser.bulkActions.bulkDelete.overview?.summary
 
-export const bulkActionsUploadSelector = (state: RootState) => state.browser.bulkActions.bulkUpload
-export const bulkActionsUploadOverviewSelector = (state: RootState) => state.browser.bulkActions.bulkUpload.overview
+export const bulkActionsUploadSelector = (state: RootState) =>
+  state.browser.bulkActions.bulkUpload
+export const bulkActionsUploadOverviewSelector = (state: RootState) =>
+  state.browser.bulkActions.bulkUpload.overview
 export const bulkActionsUploadSummarySelector = (state: RootState) =>
   state.browser.bulkActions.bulkUpload.overview?.summary
 
@@ -165,9 +194,9 @@ export let uploadController: Nullable<AbortController> = null
 // Asynchronous thunk action
 export function bulkUploadDataAction(
   id: string,
-  uploadFile: { file: FormData, fileName: string },
+  uploadFile: { file: FormData; fileName: string },
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(bulkUpload())
@@ -177,18 +206,15 @@ export function bulkUploadDataAction(
       uploadController = new AbortController()
 
       const { status, data } = await apiService.post(
-        getUrl(
-          id,
-          ApiEndpoints.BULK_ACTIONS_IMPORT
-        ),
+        getUrl(id, ApiEndpoints.BULK_ACTIONS_IMPORT),
         uploadFile.file,
         {
           headers: {
             Accept: 'application/json',
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
           },
-          signal: uploadController.signal
-        }
+          signal: uploadController.signal,
+        },
       )
 
       uploadController = null
@@ -214,25 +240,22 @@ export function bulkUploadDataAction(
 export function bulkImportDefaultDataAction(
   id: string,
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(bulkImportDefaultData())
 
     try {
       const { status, data } = await apiService.post(
-        getUrl(
-          id,
-          ApiEndpoints.BULK_ACTIONS_IMPORT_DEFAULT_DATA
-        )
+        getUrl(id, ApiEndpoints.BULK_ACTIONS_IMPORT_DEFAULT_DATA),
       )
 
       if (isStatusSuccessful(status)) {
         dispatch(bulkImportDefaultDataSuccess())
         dispatch(
           addMessageNotification(
-            successMessages.UPLOAD_DATA_BULK(data as IBulkActionOverview)
-          )
+            successMessages.UPLOAD_DATA_BULK(data as IBulkActionOverview),
+          ),
         )
         onSuccessAction?.()
       }

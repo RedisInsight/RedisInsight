@@ -5,17 +5,17 @@ import {
   before,
   deps,
   generateInvalidDataTestCases,
-  validateInvalidDataTestCase, getMainCheckFn,
+  validateInvalidDataTestCase,
+  getMainCheckFn,
   requirements,
 } from '../deps';
 
 const { request, server, constants, rte } = deps;
 
-
-const endpoint = (
-  instanceId = constants.TEST_INSTANCE_ID,
-) =>
-  request(server).delete(`/${constants.API.DATABASES}/${instanceId}/triggered-functions/library`);
+const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
+  request(server).delete(
+    `/${constants.API.DATABASES}/${instanceId}/triggered-functions/library`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -39,7 +39,7 @@ describe(`DELETE /databases/:id/triggered-functions/library`, () => {
 
   describe('Common', () => {
     before(async () => {
-      await rte.data.generateTriggeredFunctionsLibrary()
+      await rte.data.generateTriggeredFunctionsLibrary();
     });
 
     [
@@ -49,11 +49,19 @@ describe(`DELETE /databases/:id/triggered-functions/library`, () => {
           libraryName: constants.TEST_TRIGGERED_FUNCTIONS_LIBRARY_NAME,
         },
         before: async () => {
-          const libraries = await rte.data.sendCommand('TFUNCTION', ['LIST', 'LIBRARY', constants.TEST_TRIGGERED_FUNCTIONS_LIBRARY_NAME]);
+          const libraries = await rte.data.sendCommand('TFUNCTION', [
+            'LIST',
+            'LIBRARY',
+            constants.TEST_TRIGGERED_FUNCTIONS_LIBRARY_NAME,
+          ]);
           expect(libraries.length).to.eq(1);
         },
         after: async () => {
-          const libraries = await rte.data.sendCommand('TFUNCTION', ['LIST', 'LIBRARY', constants.TEST_TRIGGERED_FUNCTIONS_LIBRARY_NAME]);
+          const libraries = await rte.data.sendCommand('TFUNCTION', [
+            'LIST',
+            'LIBRARY',
+            constants.TEST_TRIGGERED_FUNCTIONS_LIBRARY_NAME,
+          ]);
           expect(libraries.length).to.eq(0);
         },
       },

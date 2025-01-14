@@ -1,22 +1,23 @@
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../deps';
+import { describe, expect, deps, getMainCheckFn } from '../deps';
 import { Joi } from '../../helpers/test';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const endpoint = () => request(server).get(`/${constants.API.RDI}`);
 
-const responseSchema = Joi.array().items(Joi.object().keys({
-  id: Joi.string().required(),
-  url: Joi.string().required(),
-  name: Joi.string().max(500).required(),
-  username: Joi.string().required(),
-  lastConnection: Joi.string().isoDate().required(),
-  version: Joi.string().required(),
-})).required().strict(true);
+const responseSchema = Joi.array()
+  .items(
+    Joi.object().keys({
+      id: Joi.string().required(),
+      url: Joi.string().required(),
+      name: Joi.string().max(500).required(),
+      username: Joi.string().required(),
+      lastConnection: Joi.string().isoDate().required(),
+      version: Joi.string().required(),
+    }),
+  )
+  .required()
+  .strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 

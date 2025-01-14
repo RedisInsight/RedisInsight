@@ -2,8 +2,17 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosResponseHeaders } from 'axios'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getApiErrorMessage,
+  getUrl,
+  isStatusSuccessful,
+  Maybe,
+} from 'uiSrc/utils'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 
 import { refreshKeyInfoAction } from './keys'
@@ -27,7 +36,10 @@ const stringSlice = createSlice({
   initialState,
   reducers: {
     // load String value
-    getString: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
+    getString: (
+      state,
+      { payload: resetData = true }: PayloadAction<Maybe<boolean>>,
+    ) => {
       state.loading = true
       state.error = ''
 
@@ -102,7 +114,10 @@ export const stringDataSelector = (state: RootState) =>
 export default stringSlice.reducer
 
 // Asynchronous thunk action
-export function fetchString(key: RedisResponseBuffer, args: IFetchKeyArgs = {}) {
+export function fetchString(
+  key: RedisResponseBuffer,
+  args: IFetchKeyArgs = {},
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const { resetData, end: endString } = args
     dispatch(getString(resetData))
@@ -113,11 +128,11 @@ export function fetchString(key: RedisResponseBuffer, args: IFetchKeyArgs = {}) 
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.STRING_VALUE
+          ApiEndpoints.STRING_VALUE,
         ),
         {
           keyName: key,
-          end: endString
+          end: endString,
         },
         { params: { encoding } },
       )
@@ -136,7 +151,7 @@ export function fetchString(key: RedisResponseBuffer, args: IFetchKeyArgs = {}) 
 // Asynchronous thunk action
 export function fetchDownloadStringValue(
   key: RedisResponseBuffer,
-  onSuccessAction?: (data: string, headers: AxiosResponseHeaders) => void
+  onSuccessAction?: (data: string, headers: AxiosResponseHeaders) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(downloadString())
@@ -146,7 +161,7 @@ export function fetchDownloadStringValue(
       const { data, status, headers } = await apiService.post(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          `${ApiEndpoints.STRING_VALUE_DOWNLOAD}`
+          `${ApiEndpoints.STRING_VALUE_DOWNLOAD}`,
         ),
         {
           keyName: key,
@@ -171,7 +186,7 @@ export function updateStringValueAction(
   key: RedisResponseBuffer,
   value: RedisResponseBuffer,
   onSuccess?: (value: RedisResponseBuffer) => void,
-  onFailed?: () => void
+  onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(updateValue())
@@ -182,7 +197,7 @@ export function updateStringValueAction(
       const { status } = await apiService.put(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.STRING
+          ApiEndpoints.STRING,
         ),
         {
           keyName: key,
@@ -196,12 +211,12 @@ export function updateStringValueAction(
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED,
           ),
           eventData: {
             databaseId: state.connections.instances?.connectedInstance?.id,
             keyType: KeyTypes.String,
-          }
+          },
         })
         dispatch(updateValueSuccess(value))
         dispatch<any>(refreshKeyInfoAction(key))

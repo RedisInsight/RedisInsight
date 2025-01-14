@@ -53,7 +53,9 @@ describe('DatabaseRecommendationService', () => {
       ],
     }).compile();
 
-    databaseRecommendationRepository = await module.get(DatabaseRecommendationRepository);
+    databaseRecommendationRepository = await module.get(
+      DatabaseRecommendationRepository,
+    );
     scanner = await module.get(RecommendationScanner);
     databaseService = await module.get(DatabaseService);
     analytics = await module.get(DatabaseRecommendationAnalytics);
@@ -67,13 +69,20 @@ describe('DatabaseRecommendationService', () => {
         databaseId: '1',
         name: 'testDb',
       };
-      databaseRecommendationRepository.create.mockResolvedValueOnce(recommendationEntity);
+      databaseRecommendationRepository.create.mockResolvedValueOnce(
+        recommendationEntity,
+      );
 
       await service.create(clientMetadata, recommendationEntity);
 
-      expect(databaseRecommendationRepository.create)
-        .toHaveBeenCalledWith(clientMetadata.sessionMetadata, recommendationEntity);
-      expect(databaseService.get).toHaveBeenCalledWith(clientMetadata.sessionMetadata, clientMetadata.databaseId);
+      expect(databaseRecommendationRepository.create).toHaveBeenCalledWith(
+        clientMetadata.sessionMetadata,
+        recommendationEntity,
+      );
+      expect(databaseService.get).toHaveBeenCalledWith(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+      );
       expect(analytics.sendCreatedRecommendationEvent).toHaveBeenCalledWith(
         clientMetadata.sessionMetadata,
         recommendationEntity,
@@ -86,39 +95,53 @@ describe('DatabaseRecommendationService', () => {
     it('should return a list of recommendations for client metadata db', async () => {
       await service.list(clientMetadata);
 
-      expect(databaseRecommendationRepository.list).toHaveBeenLastCalledWith({ ...clientMetadata });
+      expect(databaseRecommendationRepository.list).toHaveBeenLastCalledWith({
+        ...clientMetadata,
+      });
     });
 
     it('should return a list of recommendations for database fetched by session metadata', async () => {
       databaseService.get.mockResolvedValueOnce({ ...mockDatabase, db: 66 });
       const clientMetadataWithoutDb = { ...clientMetadata, db: undefined };
       await service.list(clientMetadataWithoutDb);
-      expect(databaseRecommendationRepository.list).toHaveBeenCalledWith({ ...clientMetadataWithoutDb, db: 66 });
+      expect(databaseRecommendationRepository.list).toHaveBeenCalledWith({
+        ...clientMetadataWithoutDb,
+        db: 66,
+      });
     });
 
-    it('should return a list of recommendations - default db to 0 if not passed in or retrieved from service',
-      async () => {
-        const clientMetadataWithoutDb = { ...clientMetadata, db: undefined };
-        await service.list(clientMetadataWithoutDb);
-        expect(databaseRecommendationRepository.list).toHaveBeenCalledWith({ ...clientMetadataWithoutDb, db: 0 });
+    it('should return a list of recommendations - default db to 0 if not passed in or retrieved from service', async () => {
+      const clientMetadataWithoutDb = { ...clientMetadata, db: undefined };
+      await service.list(clientMetadataWithoutDb);
+      expect(databaseRecommendationRepository.list).toHaveBeenCalledWith({
+        ...clientMetadataWithoutDb,
+        db: 0,
       });
+    });
   });
 
   describe('read', () => {
     it('should mark recommendations as read', async () => {
       await service.read(clientMetadata);
-      expect(databaseRecommendationRepository.read).toHaveBeenCalledWith(clientMetadata);
+      expect(databaseRecommendationRepository.read).toHaveBeenCalledWith(
+        clientMetadata,
+      );
     });
   });
 
   describe('update', () => {
     it('should update a recommendation', async () => {
       const id = '55';
-      const dto: ModifyDatabaseRecommendationDto = {} as unknown as ModifyDatabaseRecommendationDto;
+      const dto: ModifyDatabaseRecommendationDto =
+        {} as unknown as ModifyDatabaseRecommendationDto;
 
       await service.update(clientMetadata, id, dto);
 
-      expect(databaseRecommendationRepository.update).toHaveBeenCalledWith(clientMetadata, id, dto);
+      expect(databaseRecommendationRepository.update).toHaveBeenCalledWith(
+        clientMetadata,
+        id,
+        dto,
+      );
     });
   });
 
@@ -129,7 +152,10 @@ describe('DatabaseRecommendationService', () => {
 
       await service.sync(clientMetadata, recommendations);
 
-      expect(databaseRecommendationRepository.sync).toHaveBeenCalledWith(clientMetadata, recommendations);
+      expect(databaseRecommendationRepository.sync).toHaveBeenCalledWith(
+        clientMetadata,
+        recommendations,
+      );
     });
   });
 
@@ -139,7 +165,10 @@ describe('DatabaseRecommendationService', () => {
 
       await service.delete(clientMetadata, id);
 
-      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(clientMetadata, id);
+      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(
+        clientMetadata,
+        id,
+      );
     });
   });
 
@@ -149,9 +178,18 @@ describe('DatabaseRecommendationService', () => {
 
       const result = await service.bulkDelete(clientMetadata, ids);
 
-      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(clientMetadata, '1');
-      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(clientMetadata, '2');
-      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(clientMetadata, '3');
+      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(
+        clientMetadata,
+        '1',
+      );
+      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(
+        clientMetadata,
+        '2',
+      );
+      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(
+        clientMetadata,
+        '3',
+      );
 
       expect(result.affected).toBe(3);
     });
@@ -159,13 +197,24 @@ describe('DatabaseRecommendationService', () => {
     it('should delete multiple recommendations, some fail', async () => {
       const ids = ['1', '2', '3'];
 
-      databaseRecommendationRepository.delete.mockRejectedValueOnce(new Error('Failed to delete'));
+      databaseRecommendationRepository.delete.mockRejectedValueOnce(
+        new Error('Failed to delete'),
+      );
 
       const result = await service.bulkDelete(clientMetadata, ids);
 
-      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(clientMetadata, '1');
-      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(clientMetadata, '2');
-      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(clientMetadata, '3');
+      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(
+        clientMetadata,
+        '1',
+      );
+      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(
+        clientMetadata,
+        '2',
+      );
+      expect(databaseRecommendationRepository.delete).toHaveBeenCalledWith(
+        clientMetadata,
+        '3',
+      );
 
       expect(result.affected).toBe(2);
     });

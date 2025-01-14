@@ -12,15 +12,15 @@ import QueryTutorials from './QueryTutorials'
 const mockedTutorials = [
   {
     id: TutorialsIds.IntroToSearch,
-    title: 'Intro to search'
+    title: 'Intro to search',
   },
   {
     id: TutorialsIds.BasicRedisUseCases,
-    title: 'Basic use cases'
+    title: 'Basic use cases',
   },
   {
     id: TutorialsIds.IntroVectorSearch,
-    title: 'Intro to vector search'
+    title: 'Intro to vector search',
   },
 ]
 
@@ -36,27 +36,31 @@ jest.mock('uiSrc/telemetry', () => ({
 
 describe('QueryTutorial', () => {
   it('should render', () => {
-    expect(render(<QueryTutorials tutorials={mockedTutorials} source="source" />)).toBeTruthy()
+    expect(
+      render(<QueryTutorials tutorials={mockedTutorials} source="source" />),
+    ).toBeTruthy()
   })
 
   it('should call proper history push after click on guide with tutorial', () => {
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
-    (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    ;(findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
     render(<QueryTutorials tutorials={mockedTutorials} source="source" />)
 
     fireEvent.click(screen.getByTestId('query-tutorials-link_sq-intro'))
 
     expect(pushMock).toHaveBeenCalledWith({
-      search: 'path=tutorials/path'
+      search: 'path=tutorials/path',
     })
   })
 
   it('should call proper telemetry event after click on guide', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-    (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
     render(<QueryTutorials tutorials={mockedTutorials} source="source" />)
 
@@ -68,7 +72,7 @@ describe('QueryTutorial', () => {
         path: 'path',
         databaseId: 'instanceId',
         source: 'source',
-      }
+      },
     })
   })
 })

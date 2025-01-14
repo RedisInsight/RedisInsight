@@ -84,9 +84,7 @@ describe('wrapConvAiError', () => {
     const error = wrapAiQueryError({
       error: AiQueryServerErrors.RateLimitToken,
       message: 'Rate limit of user for tokens exceeded',
-      data:
-        { limiterType: 'token', limiterKind: 'user', limiterSeconds: 10 }
-      ,
+      data: { limiterType: 'token', limiterKind: 'user', limiterSeconds: 10 },
     });
     expect(error).toBeInstanceOf(AiQueryRateLimitTokenException);
     expect(error.getResponse()).toEqual({
@@ -104,9 +102,7 @@ describe('wrapConvAiError', () => {
   it('Should throw AiQueryRateLimitTokenException with default message', async () => {
     const error = wrapAiQueryError({
       error: AiQueryServerErrors.RateLimitToken,
-      data:
-        { limiterType: 'token', limiterKind: 'user', limiterSeconds: 10 }
-      ,
+      data: { limiterType: 'token', limiterKind: 'user', limiterSeconds: 10 },
     });
     expect(error).toBeInstanceOf(AiQueryRateLimitTokenException);
     expect(error.getResponse()).toEqual({
@@ -125,9 +121,7 @@ describe('wrapConvAiError', () => {
     const error = wrapAiQueryError({
       error: AiQueryServerErrors.RateLimitRequest,
       message: 'Rate limit of user for requests exceeded',
-      data:
-        { limiterType: 'request', limiterKind: 'user', limiterSeconds: 1 }
-      ,
+      data: { limiterType: 'request', limiterKind: 'user', limiterSeconds: 1 },
     });
     expect(error).toBeInstanceOf(AiQueryRateLimitRequestException);
     expect(error.getResponse()).toEqual({
@@ -145,9 +139,7 @@ describe('wrapConvAiError', () => {
   it('Should throw AiQueryRateLimitRequestException with default message', async () => {
     const error = wrapAiQueryError({
       error: AiQueryServerErrors.RateLimitRequest,
-      data:
-        { limiterType: 'request', limiterKind: 'user', limiterSeconds: 1 }
-      ,
+      data: { limiterType: 'request', limiterKind: 'user', limiterSeconds: 1 },
     });
     expect(error).toBeInstanceOf(AiQueryRateLimitRequestException);
     expect(error.getResponse()).toEqual({
@@ -166,9 +158,7 @@ describe('wrapConvAiError', () => {
     const error = wrapAiQueryError({
       error: AiQueryServerErrors.MaxTokens,
       message: 'Token count exceeds the conversation limit',
-      data:
-        { tokenLimit: 20000, tokenCount: 575 }
-      ,
+      data: { tokenLimit: 20000, tokenCount: 575 },
     });
     expect(error).toBeInstanceOf(AiQueryRateLimitMaxTokensException);
     expect(error.getResponse()).toEqual({
@@ -185,9 +175,7 @@ describe('wrapConvAiError', () => {
   it('Should throw AiQueryRateLimitMaxTokensException with default message', async () => {
     const error = wrapAiQueryError({
       error: AiQueryServerErrors.MaxTokens,
-      data:
-        { tokenLimit: 20000, tokenCount: 575 }
-      ,
+      data: { tokenLimit: 20000, tokenCount: 575 },
     });
     expect(error).toBeInstanceOf(AiQueryRateLimitMaxTokensException);
     expect(error.getResponse()).toEqual({
@@ -205,27 +193,25 @@ describe('wrapConvAiError', () => {
     const error = wrapAiQueryError({
       error: 'unsupported',
       message: 'Token count exceeds the conversation limit',
-      data:
-        { tokenLimit: 20000, tokenCount: 575 }
-      ,
+      data: { tokenLimit: 20000, tokenCount: 575 },
     });
     expect(error).toBeInstanceOf(AiQueryInternalServerErrorException);
     expect(error).toEqual(new AiQueryInternalServerErrorException());
   });
   it('additional checks for default values for rate limits errors', async () => {
-    expect((new AiQueryRateLimitTokenException().getResponse())).toEqual({
+    expect(new AiQueryRateLimitTokenException().getResponse()).toEqual({
       message: ERROR_MESSAGES.AI_QUERY_TOKEN_RATE_LIMIT,
       statusCode: HttpStatus.PAYLOAD_TOO_LARGE,
       error: 'AiQueryRateLimitToken',
       errorCode: CustomErrorCodes.QueryAiRateLimitToken,
     });
-    expect((new AiQueryRateLimitRequestException().getResponse())).toEqual({
+    expect(new AiQueryRateLimitRequestException().getResponse()).toEqual({
       message: ERROR_MESSAGES.AI_QUERY_REQUEST_RATE_LIMIT,
       statusCode: HttpStatus.TOO_MANY_REQUESTS,
       error: 'AiQueryRateLimitRequest',
       errorCode: CustomErrorCodes.QueryAiRateLimitRequest,
     });
-    expect((new AiQueryRateLimitMaxTokensException().getResponse())).toEqual({
+    expect(new AiQueryRateLimitMaxTokensException().getResponse()).toEqual({
       message: ERROR_MESSAGES.AI_QUERY_MAX_TOKENS_RATE_LIMIT,
       statusCode: HttpStatus.PAYLOAD_TOO_LARGE,
       error: 'AiQueryRateLimitMaxTokens',

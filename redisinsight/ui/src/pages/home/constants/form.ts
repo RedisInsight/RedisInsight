@@ -10,7 +10,7 @@ export const DEFAULT_ALIAS = `${DEFAULT_HOST}:${DEFAULT_PORT}`
 
 export enum SshPassType {
   Password = 'password',
-  PrivateKey = 'privateKey'
+  PrivateKey = 'privateKey',
 }
 
 export const fieldDisplayNames = {
@@ -36,5 +36,5 @@ export const DEFAULT_TIMEOUT = getConfig().database.defaultConnectionTimeout
 export enum SubmitBtnText {
   AddDatabase = 'Add Redis Database',
   EditDatabase = 'Apply Changes',
-  CloneDatabase = 'Clone Database'
+  CloneDatabase = 'Clone Database',
 }

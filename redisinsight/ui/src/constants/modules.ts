@@ -1,4 +1,7 @@
-import { DATABASE_LIST_MODULES_TEXT, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import {
+  DATABASE_LIST_MODULES_TEXT,
+  RedisDefaultModules,
+} from 'uiSrc/slices/interfaces'
 import RedisAIDark from 'uiSrc/assets/img/modules/RedisAIDark.svg'
 import RedisAILight from 'uiSrc/assets/img/modules/RedisAILight.svg'
 import RedisBloomDark from 'uiSrc/assets/img/modules/RedisBloomDark.svg'

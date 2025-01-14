@@ -7,7 +7,8 @@ import {
   requirements,
   validateApiCall,
   after,
-  generateInvalidDataTestCases, validateInvalidDataTestCase,
+  generateInvalidDataTestCases,
+  validateInvalidDataTestCase,
 } from '../deps';
 const { request, server, localDb, constants } = deps;
 
@@ -22,7 +23,9 @@ const dataSchema = Joi.object({
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
   timeout: Joi.number().integer().allow(null),
-  compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').allow(null),
+  compressor: Joi.string()
+    .valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY')
+    .allow(null),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),
@@ -40,9 +43,11 @@ const dataSchema = Joi.object({
     privateKey: Joi.string().allow(null),
     passphrase: Joi.string().allow(null),
   }).allow(null),
-}).messages({
-  'any.required': '{#label} should not be empty',
-}).strict(true);
+})
+  .messages({
+    'any.required': '{#label} should not be empty',
+  })
+  .strict(true);
 
 const validInputData = {
   name: constants.getRandomString(),
@@ -56,13 +61,13 @@ const baseDatabaseData = {
   port: constants.TEST_REDIS_PORT,
   username: constants.TEST_REDIS_USER || undefined,
   password: constants.TEST_REDIS_PASSWORD || undefined,
-}
+};
 
 const baseSentinelData = {
   name: constants.TEST_SENTINEL_MASTER_GROUP,
   username: constants.TEST_SENTINEL_MASTER_USER || null,
   password: constants.TEST_SENTINEL_MASTER_PASS || null,
-}
+};
 
 let dbName;
 let newCaName;
@@ -76,10 +81,16 @@ describe('POST /databases/test', () => {
 
   afterEach(async () => {
     expect(await localDb.getInstanceByName(dbName)).to.eql(null);
-    expect(await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-      .findOneBy({ name: newCaName })).to.eql(null);
-    expect(await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-      .findOneBy({ name: newCaName })).to.eql(null);
+    expect(
+      await (
+        await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)
+      ).findOneBy({ name: newCaName }),
+    ).to.eql(null);
+    expect(
+      await (
+        await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY)
+      ).findOneBy({ name: newCaName }),
+    ).to.eql(null);
   });
 
   describe('Validation', function () {
@@ -111,7 +122,7 @@ describe('POST /databases/test', () => {
               name: dbName,
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
-              db: constants.TEST_REDIS_DB_INDEX
+              db: constants.TEST_REDIS_DB_INDEX,
             },
           });
         });
@@ -189,7 +200,7 @@ describe('POST /databases/test', () => {
             statusCode: 400,
             // todo: verify error handling because right now messages are different
             // message: 'Could not connect to',
-            error: 'Bad Request'
+            error: 'Bad Request',
           },
         });
       });
@@ -205,14 +216,14 @@ describe('POST /databases/test', () => {
             verifyServerCert: true,
             caCert: {
               name: dbName,
-              certificate: 'invalid'
+              certificate: 'invalid',
             },
           },
           responseBody: {
             statusCode: 400,
             // todo: verify error handling because right now messages are different
             // message: 'Could not connect to',
-            error: 'Bad Request'
+            error: 'Bad Request',
           },
         });
       });
@@ -220,7 +231,10 @@ describe('POST /databases/test', () => {
     describe('TLS AUTH', function () {
       requirements('rte.tls', 'rte.tlsAuth');
 
-      let existingCACertId, existingClientCertId, existingCACertName, existingClientCertName;
+      let existingCACertId,
+        existingClientCertId,
+        existingCACertName,
+        existingClientCertName;
 
       after(localDb.initAgreements);
 
@@ -268,7 +282,10 @@ describe('POST /databases/test', () => {
     describe('TLS AUTH', function () {
       requirements('rte.tls', 'rte.tlsAuth');
 
-      let existingCACertId, existingClientCertId, existingCACertName, existingClientCertName;
+      let existingCACertId,
+        existingClientCertId,
+        existingCACertName,
+        existingClientCertName;
 
       after(localDb.initAgreements);
 
@@ -319,7 +336,7 @@ describe('POST /databases/test', () => {
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
               privateKey: constants.TEST_SSH_PRIVATE_KEY,
-            }
+            },
           },
         });
       });
@@ -346,7 +363,7 @@ describe('POST /databases/test', () => {
               username: constants.TEST_SSH_USER,
               privateKey: constants.TEST_SSH_PRIVATE_KEY_P,
               passphrase: constants.TEST_SSH_PASSPHRASE,
-            }
+            },
           },
         });
       });
@@ -373,7 +390,7 @@ describe('POST /databases/test', () => {
             name: dbName,
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
-            db: constants.TEST_REDIS_DB_INDEX
+            db: constants.TEST_REDIS_DB_INDEX,
           },
         });
       });

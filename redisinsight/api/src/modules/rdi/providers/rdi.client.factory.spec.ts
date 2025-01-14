@@ -20,9 +20,7 @@ describe('RdiClientFactory', () => {
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
-      providers: [
-        RdiClientFactory,
-      ],
+      providers: [RdiClientFactory],
     }).compile();
 
     service = await module.get(RdiClientFactory);
@@ -30,7 +28,10 @@ describe('RdiClientFactory', () => {
 
   describe('createClient', () => {
     it('should create client', async () => {
-      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+      const mockedAccessToken = sign(
+        { exp: Math.trunc(Date.now() / 1000) + 3600 },
+        'test',
+      );
 
       mockedAxios.post.mockResolvedValue({
         status: 200,
@@ -40,20 +41,17 @@ describe('RdiClientFactory', () => {
       });
       await service.createClient(mockRdiClientMetadata, mockRdi);
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(
-        RdiUrl.Login,
-        {
-          password: mockRdi.password,
-          username: mockRdi.username,
-        },
-      );
+      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.Login, {
+        password: mockRdi.password,
+        username: mockRdi.username,
+      });
     });
     it('should not create client if auth request will failed', async () => {
       mockedAxios.post.mockRejectedValue(mockRdiUnauthorizedError);
 
-      await expect(service.createClient(mockRdiClientMetadata, mockRdi)).rejects.toThrow(
-        RdiPipelineUnauthorizedException,
-      );
+      await expect(
+        service.createClient(mockRdiClientMetadata, mockRdi),
+      ).rejects.toThrow(RdiPipelineUnauthorizedException);
     });
   });
 });

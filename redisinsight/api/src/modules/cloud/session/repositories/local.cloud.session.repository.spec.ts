@@ -1,5 +1,9 @@
 import {
-  MockType, mockCloudSessionData, mockCloudSessionEntity, mockEncryptionService, mockRepository,
+  MockType,
+  mockCloudSessionData,
+  mockCloudSessionEntity,
+  mockEncryptionService,
+  mockRepository,
 } from 'src/__mocks__';
 import { Repository } from 'typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -44,7 +48,10 @@ describe('LocalCloudSessionRepository', () => {
     encryptionService.encrypt.mockImplementation((value) => value);
     when(encryptionService.encrypt)
       .calledWith(JSON.stringify(mockCloudSessionData.data))
-      .mockResolvedValue({ data: mockCloudSessionEntity.data, encryption: mockCloudSessionEntity.encryption });
+      .mockResolvedValue({
+        data: mockCloudSessionEntity.data,
+        encryption: mockCloudSessionEntity.encryption,
+      });
   });
 
   describe('get', () => {
@@ -62,13 +69,17 @@ describe('LocalCloudSessionRepository', () => {
     it('should upsert data into repository', async () => {
       repository.upsert.mockResolvedValue(mockCloudSessionEntity);
 
-      await expect(service.save({ data: { idpType: CloudAuthIdpType.Google } })).resolves.toEqual(undefined);
+      await expect(
+        service.save({ data: { idpType: CloudAuthIdpType.Google } }),
+      ).resolves.toEqual(undefined);
     });
 
     it('encrypts the data before upsertion', async () => {
       await service.save({ data: { idpType: CloudAuthIdpType.Google } });
 
-      expect(repository.upsert).toHaveBeenCalledWith(mockCloudSessionEntity, ['id']);
+      expect(repository.upsert).toHaveBeenCalledWith(mockCloudSessionEntity, [
+        'id',
+      ]);
     });
 
     it('not fail when null data is stored', async () => {

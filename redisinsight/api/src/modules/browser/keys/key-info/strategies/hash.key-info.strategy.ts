@@ -1,4 +1,7 @@
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import {
   BrowserToolHashCommands,
   BrowserToolKeysCommands,
@@ -15,15 +18,12 @@ export class HashKeyInfoStrategy extends KeyInfoStrategy {
   ): Promise<GetKeyInfoResponse> {
     this.logger.debug(`Getting ${RedisDataType.Hash} type info.`);
 
-    const [
-      [, ttl = null],
-      [, size = null],
-      [, length = null],
-    ] = await client.sendPipeline([
-      [BrowserToolKeysCommands.Ttl, key],
-      [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-      [BrowserToolHashCommands.HLen, key],
-    ]) as [any, number][];
+    const [[, ttl = null], [, size = null], [, length = null]] =
+      (await client.sendPipeline([
+        [BrowserToolKeysCommands.Ttl, key],
+        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+        [BrowserToolHashCommands.HLen, key],
+      ])) as [any, number][];
 
     return {
       name: key,

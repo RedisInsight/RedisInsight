@@ -34,8 +34,16 @@ import reducer, {
   removeExpertChatHistoryAction,
   aiExpertChatSelector,
 } from 'uiSrc/slices/panels/aiAssistant'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
-import { AiChatMessage, AiChatMessageType, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
+import {
+  AiChatMessage,
+  AiChatMessageType,
+  AiChatType,
+} from 'uiSrc/slices/interfaces/aiAssistant'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
@@ -55,7 +63,7 @@ describe('ai assistant slice', () => {
 
       // Act
       const result = reducer(undefined, {
-        type: undefined
+        type: undefined,
       })
 
       // Assert
@@ -71,7 +79,10 @@ describe('ai assistant slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, setSelectedTab(AiChatType.Query))
+        const nextState = reducer(
+          initialState,
+          setSelectedTab(AiChatType.Query),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -86,7 +97,7 @@ describe('ai assistant slice', () => {
         // Arrange
         const state = {
           ...initialState.assistant,
-          loading: true
+          loading: true,
         }
 
         // Act
@@ -106,7 +117,7 @@ describe('ai assistant slice', () => {
         const state = {
           ...initialState.assistant,
           loading: false,
-          id: '1'
+          id: '1',
         }
 
         // Act
@@ -144,7 +155,7 @@ describe('ai assistant slice', () => {
         // Arrange
         const state = {
           ...initialState.assistant,
-          loading: true
+          loading: true,
         }
 
         // Act
@@ -164,11 +175,14 @@ describe('ai assistant slice', () => {
         const state = {
           ...initialState.assistant,
           loading: false,
-          messages: expect.any(Array)
+          messages: expect.any(Array),
         }
 
         // Act
-        const nextState = reducer(initialState, getAssistantChatHistorySuccess([]))
+        const nextState = reducer(
+          initialState,
+          getAssistantChatHistorySuccess([]),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -240,11 +254,14 @@ describe('ai assistant slice', () => {
         // Arrange
         const state = {
           ...initialState.assistant,
-          loading: false
+          loading: false,
         }
 
         // Act
-        const nextState = reducer(initialState, removeAssistantChatHistorySuccess())
+        const nextState = reducer(
+          initialState,
+          removeAssistantChatHistorySuccess(),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -262,7 +279,10 @@ describe('ai assistant slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, removeAssistantChatHistoryFailed())
+        const nextState = reducer(
+          initialState,
+          removeAssistantChatHistoryFailed(),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -279,11 +299,11 @@ describe('ai assistant slice', () => {
           id: '1',
           type: AiChatMessageType.HumanMessage,
           content: 'message',
-          context: {}
+          context: {},
         }
         const state = {
           ...initialState.assistant,
-          messages: [humanMessage]
+          messages: [humanMessage],
         }
 
         // Act
@@ -304,11 +324,11 @@ describe('ai assistant slice', () => {
           id: '1',
           type: AiChatMessageType.AIMessage,
           content: 'message',
-          context: {}
+          context: {},
         }
         const state = {
           ...initialState.assistant,
-          messages: [data]
+          messages: [data],
         }
 
         // Act
@@ -327,11 +347,14 @@ describe('ai assistant slice', () => {
         // Arrange
         const state = {
           ...initialState.assistant,
-          agreements: true
+          agreements: true,
         }
 
         // Act
-        const nextState = reducer(initialState, updateAssistantChatAgreements(true))
+        const nextState = reducer(
+          initialState,
+          updateAssistantChatAgreements(true),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -346,11 +369,14 @@ describe('ai assistant slice', () => {
         // Arrange
         const state = {
           ...initialState.expert,
-          agreements: ['id']
+          agreements: ['id'],
         }
 
         // Act
-        const nextState = reducer(initialState, updateExpertChatAgreements('id'))
+        const nextState = reducer(
+          initialState,
+          updateExpertChatAgreements('id'),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -367,13 +393,13 @@ describe('ai assistant slice', () => {
           ...initialState,
           assistant: {
             ...initialState.assistant,
-            id: 'chatId'
-          }
+            id: 'chatId',
+          },
         }
 
         const state = {
           ...initialState.assistant,
-          id: ''
+          id: '',
         }
 
         // Act
@@ -394,27 +420,31 @@ describe('ai assistant slice', () => {
           ...initialState,
           assistant: {
             ...initialState.assistant,
-            messages: [{
-              id: '1',
-              content: '2'
-            }]
-          }
+            messages: [
+              {
+                id: '1',
+                content: '2',
+              },
+            ],
+          },
         } as any
 
         const data = {
           id: '1',
           error: {
             statusCode: 500,
-            errorCode: 1
-          }
+            errorCode: 1,
+          },
         }
 
         const state = {
           ...initialState.assistant,
-          messages: [{
-            ...data,
-            content: '2',
-          }]
+          messages: [
+            {
+              ...data,
+              content: '2',
+            },
+          ],
         }
 
         // Act
@@ -433,7 +463,7 @@ describe('ai assistant slice', () => {
         // Arrange
         const state = {
           ...initialState.expert,
-          loading: true
+          loading: true,
         }
 
         // Act
@@ -454,18 +484,21 @@ describe('ai assistant slice', () => {
           ...initialState,
           expert: {
             ...initialState.expert,
-            loading: true
-          }
+            loading: true,
+          },
         }
 
         const state = {
           ...initialState.expert,
           loading: false,
-          messages: [{ id: expect.any(String) }]
+          messages: [{ id: expect.any(String) }],
         }
 
         // Act
-        const nextState = reducer(currentState, getExpertChatHistorySuccess([{}] as any))
+        const nextState = reducer(
+          currentState,
+          getExpertChatHistorySuccess([{}] as any),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -482,13 +515,13 @@ describe('ai assistant slice', () => {
           ...initialState,
           expert: {
             ...initialState.expert,
-            loading: true
-          }
+            loading: true,
+          },
         }
 
         const state = {
           ...initialState.expert,
-          loading: false
+          loading: false,
         }
 
         // Act
@@ -508,7 +541,7 @@ describe('ai assistant slice', () => {
         const data = { id: '1' } as any
         const state = {
           ...initialState.expert,
-          messages: [data]
+          messages: [data],
         }
 
         // Act
@@ -529,27 +562,31 @@ describe('ai assistant slice', () => {
           ...initialState,
           expert: {
             ...initialState.expert,
-            messages: [{
-              id: '1',
-              content: '2'
-            }]
-          }
+            messages: [
+              {
+                id: '1',
+                content: '2',
+              },
+            ],
+          },
         } as any
 
         const data = {
           id: '1',
           error: {
             statusCode: 500,
-            errorCode: 1
-          }
+            errorCode: 1,
+          },
         }
 
         const state = {
           ...initialState.expert,
-          messages: [{
-            ...data,
-            content: '2',
-          }]
+          messages: [
+            {
+              ...data,
+              content: '2',
+            },
+          ],
         }
 
         // Act
@@ -570,11 +607,11 @@ describe('ai assistant slice', () => {
           id: '1',
           type: AiChatMessageType.AIMessage,
           content: 'message',
-          context: {}
+          context: {},
         }
         const state = {
           ...initialState.expert,
-          messages: [data]
+          messages: [data],
         }
 
         // Act
@@ -595,16 +632,18 @@ describe('ai assistant slice', () => {
           ...initialState,
           expert: {
             ...initialState.expert,
-            messages: [{
-              id: '1',
-              content: '2'
-            }]
-          }
+            messages: [
+              {
+                id: '1',
+                content: '2',
+              },
+            ],
+          },
         } as any
 
         const state = {
           ...initialState.expert,
-          messages: []
+          messages: [],
         }
 
         // Act
@@ -654,10 +693,7 @@ describe('ai assistant slice', () => {
         await store.dispatch<any>(createAssistantChatAction())
 
         // Assert
-        const expectedActions = [
-          createAssistantChat(),
-          createAssistantFailed(),
-        ]
+        const expectedActions = [createAssistantChat(), createAssistantFailed()]
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
@@ -796,9 +832,7 @@ describe('ai assistant slice', () => {
         await store.dispatch<any>(removeExpertChatHistoryAction('1'))
 
         // Assert
-        const expectedActions = [
-          clearExpertChatHistory()
-        ]
+        const expectedActions = [clearExpertChatHistory()]
         expect(store.getActions()).toEqual(expectedActions)
       })
     })

@@ -9,12 +9,16 @@ import { isCluster, discoverClusterNodes } from './cluster.util';
 
 describe('isCluster', () => {
   it('cluster connection ok', async () => {
-    mockStandaloneRedisClient.sendCommand.mockResolvedValue(mockRedisClusterOkInfoResponse);
+    mockStandaloneRedisClient.sendCommand.mockResolvedValue(
+      mockRedisClusterOkInfoResponse,
+    );
     expect(await isCluster(mockStandaloneRedisClient)).toEqual(true);
   });
 
   it('cluster connection false', async () => {
-    mockStandaloneRedisClient.sendCommand.mockResolvedValue(mockRedisClusterFailInfoResponse);
+    mockStandaloneRedisClient.sendCommand.mockResolvedValue(
+      mockRedisClusterFailInfoResponse,
+    );
     expect(await isCluster(mockStandaloneRedisClient)).toEqual(false);
   });
   it('cluster not supported', async () => {
@@ -40,8 +44,12 @@ describe('discoverClusterNodes', () => {
   ];
 
   it('should return nodes in a defined format', async () => {
-    mockStandaloneRedisClient.sendCommand.mockResolvedValue(mockRedisClusterNodesResponse);
-    expect(await discoverClusterNodes(mockStandaloneRedisClient)).toEqual(mockClusterNodeAddresses);
+    mockStandaloneRedisClient.sendCommand.mockResolvedValue(
+      mockRedisClusterNodesResponse,
+    );
+    expect(await discoverClusterNodes(mockStandaloneRedisClient)).toEqual(
+      mockClusterNodeAddresses,
+    );
   });
   it('cluster not supported', async () => {
     const replyError: ReplyError = {

@@ -12,13 +12,13 @@ export const constructKeysToTreeMockResult = [
             children: [],
             path: '0.0.0',
             fullName: `empty--empty::testkeys${delimiterMock}keys${delimiterMock}`,
-          }
+          },
         ],
         keyCount: 1,
         keyApproximate: 10,
         path: '0.0',
         fullName: 'empty-',
-      }
+      },
     ],
     keyCount: 1,
     keyApproximate: 10,
@@ -44,7 +44,7 @@ export const constructKeysToTreeMockResult = [
             children: [],
             path: '1.0.1',
             fullName: `keys-1-keys:1:2keys${delimiterMock}keys${delimiterMock}`,
-          }
+          },
         ],
         keyCount: 2,
         keyApproximate: 20,
@@ -78,7 +78,7 @@ export const constructKeysToTreeMockResult = [
         children: [],
         path: '1.4',
         fullName: `keys-keys:3keys${delimiterMock}keys${delimiterMock}`,
-      }
+      },
     ],
     keyCount: 6,
     keyApproximate: 60,
@@ -105,5 +105,5 @@ export const constructKeysToTreeMockResult = [
     children: [],
     path: '4',
     fullName: `test2keys${delimiterMock}keys${delimiterMock}`,
-  }
+  },
 ]

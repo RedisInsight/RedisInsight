@@ -5,9 +5,9 @@ export const MOCKED_CREATE_REDIS_BTN_CONTENT = {
     links: {
       main: {
         altText: 'Try Redis Cloud.',
-        url: 'https://redis.io/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
-      }
-    }
+        url: 'https://redis.io/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=main&utm_campaign=main',
+      },
+    },
   },
   source: {
     title: 'Build from source',
@@ -15,9 +15,9 @@ export const MOCKED_CREATE_REDIS_BTN_CONTENT = {
     links: {
       main: {
         altText: 'Build from source',
-        url: 'https://developer.redis.com/create/from-source/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight'
-      }
-    }
+        url: 'https://developer.redis.com/create/from-source/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight',
+      },
+    },
   },
   docker: {
     title: 'Docker',
@@ -25,9 +25,9 @@ export const MOCKED_CREATE_REDIS_BTN_CONTENT = {
     links: {
       main: {
         altText: 'Docker',
-        url: 'https://developer.redis.com/create/docker/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight'
-      }
-    }
+        url: 'https://developer.redis.com/create/docker/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight',
+      },
+    },
   },
   homebrew: {
     title: 'Homebrew',
@@ -35,8 +35,8 @@ export const MOCKED_CREATE_REDIS_BTN_CONTENT = {
     links: {
       main: {
         altText: 'Homebrew',
-        url: 'https://developer.redis.com/create/homebrew/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight'
-      }
-    }
-  }
+        url: 'https://developer.redis.com/create/homebrew/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight',
+      },
+    },
+  },
 }

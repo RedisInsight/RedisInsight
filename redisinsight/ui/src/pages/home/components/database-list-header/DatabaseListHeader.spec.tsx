@@ -10,8 +10,8 @@ jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     enhancedCloudUI: {
-      flag: false
-    }
+      flag: false,
+    },
   }),
 }))
 
@@ -21,15 +21,16 @@ jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
     data: {
       cloud: {
         title: 'Try Redis Cloud: your ultimate Redis starting point',
-        description: 'Includes native support for JSON, Search and Query, and more',
+        description:
+          'Includes native support for JSON, Search and Query, and more',
         links: {
           main: {
             altText: 'Try Redis Cloud.',
-            url: 'https://redis.io/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
-          }
+            url: 'https://redis.io/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main',
+          },
         },
-      }
-    }
+      },
+    },
   }),
 }))
 
@@ -40,14 +41,16 @@ jest.mock('uiSrc/telemetry', () => ({
 
 describe('DatabaseListHeader', () => {
   it('should render', () => {
-    expect(render(<DatabaseListHeader {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<DatabaseListHeader {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
   it('should not show promo cloud button with disabled feature flag', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
       enhancedCloudUI: {
-        flag: true
-      }
+        flag: true,
+      },
     })
 
     render(<DatabaseListHeader {...instance(mockedProps)} />)
@@ -56,10 +59,10 @@ describe('DatabaseListHeader', () => {
   })
 
   it('should show promo cloud button with enabled feature flag', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
       enhancedCloudUI: {
-        flag: false
-      }
+        flag: false,
+      },
     })
 
     render(<DatabaseListHeader {...instance(mockedProps)} />)

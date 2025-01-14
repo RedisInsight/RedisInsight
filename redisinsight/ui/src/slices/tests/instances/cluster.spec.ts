@@ -199,7 +199,7 @@ describe('cluster slice', () => {
         loadInstancesRedisClusterSuccess({
           data: defaultData,
           credentials: defaultCredentials,
-        })
+        }),
       )
 
       // Assert
@@ -228,7 +228,7 @@ describe('cluster slice', () => {
         loadInstancesRedisClusterSuccess({
           data,
           credentials: defaultCredentials,
-        })
+        }),
       )
 
       // Assert
@@ -254,7 +254,7 @@ describe('cluster slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadInstancesRedisClusterFailure(data)
+        loadInstancesRedisClusterFailure(data),
       )
 
       // Assert
@@ -314,7 +314,7 @@ describe('cluster slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        createInstancesRedisClusterSuccess(defaultData)
+        createInstancesRedisClusterSuccess(defaultData),
       )
 
       // Assert
@@ -339,7 +339,7 @@ describe('cluster slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        createInstancesRedisClusterSuccess(data)
+        createInstancesRedisClusterSuccess(data),
       )
 
       // Assert
@@ -365,7 +365,7 @@ describe('cluster slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        createInstancesRedisClusterFailure(data)
+        createInstancesRedisClusterFailure(data),
       )
 
       // Assert
@@ -388,7 +388,7 @@ describe('cluster slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchInstancesRedisCluster(defaultCredentials)
+          fetchInstancesRedisCluster(defaultCredentials),
         )
 
         // Assert
@@ -404,7 +404,8 @@ describe('cluster slice', () => {
 
       it('call both fetchInstancesRedisCluster and loadInstancesRedisClusterFailure when fetch is fail', async () => {
         // Arrange
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -416,14 +417,14 @@ describe('cluster slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchInstancesRedisCluster(defaultCredentials)
+          fetchInstancesRedisCluster(defaultCredentials),
         )
 
         // Assert
         const expectedActions = [
           loadInstancesRedisCluster(),
           loadInstancesRedisClusterFailure(
-            responsePayload.response.data.message
+            responsePayload.response.data.message,
           ),
           addErrorNotification(responsePayload as AxiosError),
         ]
@@ -442,7 +443,7 @@ describe('cluster slice', () => {
 
         // Act
         await store.dispatch<any>(
-          addInstancesRedisCluster({ uids, credentials: defaultCredentials })
+          addInstancesRedisCluster({ uids, credentials: defaultCredentials }),
         )
 
         // Assert
@@ -457,7 +458,8 @@ describe('cluster slice', () => {
         // Arrange
         const uids = [1, 2]
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -469,14 +471,14 @@ describe('cluster slice', () => {
 
         // Act
         await store.dispatch<any>(
-          addInstancesRedisCluster({ uids, credentials: defaultCredentials })
+          addInstancesRedisCluster({ uids, credentials: defaultCredentials }),
         )
 
         // Assert
         const expectedActions = [
           createInstancesRedisCluster(),
           createInstancesRedisClusterFailure(
-            responsePayload.response.data.message
+            responsePayload.response.data.message,
           ),
           addErrorNotification(responsePayload as AxiosError),
         ]

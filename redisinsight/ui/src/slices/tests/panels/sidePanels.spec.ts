@@ -11,9 +11,14 @@ import reducer, {
   setExplorePanelScrollTop,
   setExplorePanelSearch,
   changeSidePanel,
-  sidePanelsSelector, toggleSidePanel,
+  sidePanelsSelector,
+  toggleSidePanel,
 } from 'uiSrc/slices/panels/sidePanels'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 
 let store: typeof mockedStore
@@ -46,7 +51,10 @@ describe('sidePanels slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, changeSidePanel(SidePanels.Insights))
+        const nextState = reducer(
+          initialState,
+          changeSidePanel(SidePanels.Insights),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -66,7 +74,10 @@ describe('sidePanels slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, toggleSidePanel(SidePanels.Insights))
+        const nextState = reducer(
+          initialState,
+          toggleSidePanel(SidePanels.Insights),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -89,7 +100,10 @@ describe('sidePanels slice', () => {
         }
 
         // Act
-        const nextState = reducer(currentState, toggleSidePanel(SidePanels.Insights))
+        const nextState = reducer(
+          currentState,
+          toggleSidePanel(SidePanels.Insights),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -109,7 +123,10 @@ describe('sidePanels slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, changeSelectedTab(InsightsPanelTabs.Recommendations))
+        const nextState = reducer(
+          initialState,
+          changeSelectedTab(InsightsPanelTabs.Recommendations),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -127,15 +144,15 @@ describe('sidePanels slice', () => {
           ...initialState,
           explore: {
             ...initialState.explore,
-            itemScrollTop: 100
-          }
+            itemScrollTop: 100,
+          },
         }
         const state = {
           ...initialState,
           explore: {
             ...initialState.explore,
             search,
-          }
+          },
         }
 
         // Act
@@ -156,8 +173,8 @@ describe('sidePanels slice', () => {
           ...initialState,
           explore: {
             ...initialState.explore,
-            itemScrollTop: 100
-          }
+            itemScrollTop: 100,
+          },
         }
 
         // Act
@@ -179,15 +196,15 @@ describe('sidePanels slice', () => {
           explore: {
             ...initialState.explore,
             search: 'path/1/1',
-            itemScrollTop: 100
-          }
+            itemScrollTop: 100,
+          },
         }
 
         const state = {
           ...initialState,
           explore: {
             ...initialState.explore,
-          }
+          },
         }
 
         // Act
@@ -206,11 +223,11 @@ describe('sidePanels slice', () => {
         // Arrange
         const data = {
           data: 'any content',
-          url: 'url:123'
+          url: 'url:123',
         }
         const state = {
           ...initialState.explore,
-          ...data
+          ...data,
         }
 
         // Act
@@ -229,7 +246,7 @@ describe('sidePanels slice', () => {
         // Arrange
         const state = {
           ...initialState.explore,
-          isPageOpen: true
+          isPageOpen: true,
         }
 
         // Act
@@ -247,15 +264,18 @@ describe('sidePanels slice', () => {
       it('should properly set state', () => {
         // Arrange
         const manifest = {
-          page1: '1'
+          page1: '1',
         }
         const state = {
           ...initialState.explore,
-          manifest
+          manifest,
         }
 
         // Act
-        const nextState = reducer(initialState, setExplorePanelManifest(manifest))
+        const nextState = reducer(
+          initialState,
+          setExplorePanelManifest(manifest),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {

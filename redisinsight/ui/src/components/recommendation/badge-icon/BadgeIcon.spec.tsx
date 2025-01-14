@@ -9,6 +9,8 @@ const icon = <div />
 
 describe('BadgeIcon', () => {
   it('should render', () => {
-    expect(render(<BadgeIcon {...instance(mockedProps)} icon={icon} />)).toBeTruthy()
+    expect(
+      render(<BadgeIcon {...instance(mockedProps)} icon={icon} />),
+    ).toBeTruthy()
   })
 })

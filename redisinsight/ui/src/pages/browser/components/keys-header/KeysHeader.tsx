@@ -7,14 +7,33 @@ import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import TreeViewIcon from 'uiSrc/assets/img/icons/treeview.svg?react'
 import KeysSummary from 'uiSrc/components/keys-summary'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { resetBrowserTree, setBrowserKeyListDataLoaded, } from 'uiSrc/slices/app/context'
+import {
+  SCAN_COUNT_DEFAULT,
+  SCAN_TREE_COUNT_DEFAULT,
+} from 'uiSrc/constants/api'
+import {
+  resetBrowserTree,
+  setBrowserKeyListDataLoaded,
+} from 'uiSrc/slices/app/context'
 
-import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData, } from 'uiSrc/slices/browser/keys'
+import {
+  changeKeyViewType,
+  fetchKeys,
+  keysSelector,
+  resetKeysData,
+} from 'uiSrc/slices/browser/keys'
 import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  KeysStoreData,
+  KeyViewType,
+  SearchMode,
+} from 'uiSrc/slices/interfaces/keys'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
@@ -70,21 +89,27 @@ const KeysHeader = (props: Props) => {
       tooltipText: 'List View',
       ariaLabel: 'List view button',
       dataTestId: 'view-type-browser-btn',
-      isActiveView() { return viewType === this.type },
+      isActiveView() {
+        return viewType === this.type
+      },
       getClassName() {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
       getIconType() {
         return 'menu'
       },
-      onClick() { handleSwitchView(this.type) }
+      onClick() {
+        handleSwitchView(this.type)
+      },
     },
     {
       type: KeyViewType.Tree,
       tooltipText: 'Tree View',
       ariaLabel: 'Tree view button',
       dataTestId: 'view-type-list-btn',
-      isActiveView() { return viewType === this.type },
+      isActiveView() {
+        return viewType === this.type
+      },
       getClassName() {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
@@ -93,18 +118,21 @@ const KeysHeader = (props: Props) => {
       },
       onClick() {
         handleSwitchView(this.type)
-        dispatch(incrementOnboardStepAction(
-          OnboardingSteps.BrowserTreeView,
-          undefined,
-          () => sendEventTelemetry({
-            event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
-            eventData: {
-              databaseId: instanceId,
-              step: OnboardingStepName.BrowserTreeView,
-            }
-          })
-        ))
-      }
+        dispatch(
+          incrementOnboardStepAction(
+            OnboardingSteps.BrowserTreeView,
+            undefined,
+            () =>
+              sendEventTelemetry({
+                event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
+                eventData: {
+                  databaseId: instanceId,
+                  step: OnboardingStepName.BrowserTreeView,
+                },
+              }),
+          ),
+        )
+      },
     },
   ]
 
@@ -114,18 +142,26 @@ const KeysHeader = (props: Props) => {
   }
 
   const handleRefreshKeys = () => {
-    dispatch(fetchKeys(
-      {
-        searchMode,
-        cursor: '0',
-        count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      },
-      () => dispatch(setBrowserKeyListDataLoaded(searchMode, true)),
-      () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
-    ))
+    dispatch(
+      fetchKeys(
+        {
+          searchMode,
+          cursor: '0',
+          count:
+            viewType === KeyViewType.Browser
+              ? SCAN_COUNT_DEFAULT
+              : SCAN_TREE_COUNT_DEFAULT,
+        },
+        () => dispatch(setBrowserKeyListDataLoaded(searchMode, true)),
+        () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
+      ),
+    )
   }
 
-  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+  const handleEnableAutoRefresh = (
+    enableAutoRefresh: boolean,
+    refreshRate: string,
+  ) => {
     const browserViewEvent = enableAutoRefresh
       ? TelemetryEvent.BROWSER_KEY_LIST_AUTO_REFRESH_ENABLED
       : TelemetryEvent.BROWSER_KEY_LIST_AUTO_REFRESH_DISABLED
@@ -137,11 +173,14 @@ const KeysHeader = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         refreshRate: +refreshRate,
-      }
+      },
     })
   }
 
-  const handleChangeAutoRefreshRate = (enableAutoRefresh: boolean, refreshRate: string) => {
+  const handleChangeAutoRefreshRate = (
+    enableAutoRefresh: boolean,
+    refreshRate: string,
+  ) => {
     if (enableAutoRefresh) {
       handleEnableAutoRefresh(enableAutoRefresh, refreshRate)
     }
@@ -150,16 +189,22 @@ const KeysHeader = (props: Props) => {
   const handleScanMore = (config: any) => {
     handleScanMoreClick?.({
       ...config,
-      stopIndex: (viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT) - 1,
+      stopIndex:
+        (viewType === KeyViewType.Browser
+          ? SCAN_COUNT_DEFAULT
+          : SCAN_TREE_COUNT_DEFAULT) - 1,
     })
   }
 
   const handleSwitchView = (type: KeyViewType) => {
     sendEventTelemetry({
-      event: type === KeyViewType.Tree ? TelemetryEvent.TREE_VIEW_OPENED : TelemetryEvent.LIST_VIEW_OPENED,
+      event:
+        type === KeyViewType.Tree
+          ? TelemetryEvent.TREE_VIEW_OPENED
+          : TelemetryEvent.LIST_VIEW_OPENED,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
 
     dispatch(resetBrowserTree())
@@ -175,14 +220,15 @@ const KeysHeader = (props: Props) => {
   }
 
   const ViewSwitch = () => (
-    <div
-      className={styles.viewTypeSwitch}
-      data-testid="view-type-switcher"
-    >
+    <div className={styles.viewTypeSwitch} data-testid="view-type-switcher">
       <OnboardingTour options={ONBOARDING_FEATURES.BROWSER_TREE_VIEW}>
         <>
           {viewTypes.map((view) => (
-            <EuiToolTip content={view.tooltipText} position="top" key={view.tooltipText}>
+            <EuiToolTip
+              content={view.tooltipText}
+              position="top"
+              key={view.tooltipText}
+            >
               <EuiButtonIcon
                 iconSize="s"
                 className={view.getClassName()}
@@ -209,15 +255,19 @@ const KeysHeader = (props: Props) => {
                   items={keysState.keys}
                   totalItemsCount={keysState.total}
                   scanned={
-                    isSearched
-                      || (isFiltered && searchMode === SearchMode.Pattern)
-                      || viewType === KeyViewType.Tree ? keysState.scanned : 0
+                    isSearched ||
+                    (isFiltered && searchMode === SearchMode.Pattern) ||
+                    viewType === KeyViewType.Tree
+                      ? keysState.scanned
+                      : 0
                   }
                   loading={loading}
                   showScanMore={
-                    !(searchMode === SearchMode.Redisearch
-                      && keysState.maxResults
-                      && keysState.keys.length >= keysState.maxResults)
+                    !(
+                      searchMode === SearchMode.Redisearch &&
+                      keysState.maxResults &&
+                      keysState.keys.length >= keysState.maxResults
+                    )
                   }
                   scanMoreStyle={scanMoreStyle}
                   loadMoreItems={handleScanMore}

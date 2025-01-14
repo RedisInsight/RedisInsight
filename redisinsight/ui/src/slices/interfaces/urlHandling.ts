@@ -2,7 +2,7 @@ import { Nullable } from 'uiSrc/utils'
 
 export enum UrlHandlingActions {
   Connect = 'databases/connect',
-  Open = 'open'
+  Open = 'open',
 }
 export interface StateUrlHandling {
   fromUrl: Nullable<string>

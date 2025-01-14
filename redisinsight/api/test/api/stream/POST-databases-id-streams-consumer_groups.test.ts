@@ -13,11 +13,15 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups`,
+  );
 
 const consumerGroupSchema = Joi.object().keys({
   name: Joi.string().label('consumerGroups.0.name').required(),
-  lastDeliveredId: Joi.string().label('consumerGroups.0.lastDeliveredId').required(),
+  lastDeliveredId: Joi.string()
+    .label('consumerGroups.0.lastDeliveredId')
+    .required(),
 });
 
 const dataSchema = Joi.object({
@@ -35,7 +39,7 @@ const validInputData = {
     {
       name: 'group-1',
       lastDeliveredId: '$',
-    }
+    },
   ],
 };
 
@@ -62,19 +66,27 @@ describe('POST /databases/:instanceId/streams/consumer-groups', () => {
             {
               name: constants.TEST_STREAM_GROUP_BIN_BUF_OBJ_1,
               lastDeliveredId: constants.TEST_STREAM_ID_1,
-            }
+            },
           ],
         },
         statusCode: 201,
         after: async () => {
-          const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+          const groups = await rte.data.sendCommand(
+            'xinfo',
+            ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1],
+            null,
+          );
           expect(groups).to.deep.eq([
             [
-              Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
-              Buffer.from('consumers'), 0,
-              Buffer.from('pending'), 0,
-              Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_1),
-            ]
+              Buffer.from('name'),
+              constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+              Buffer.from('consumers'),
+              0,
+              Buffer.from('pending'),
+              0,
+              Buffer.from('last-delivered-id'),
+              Buffer.from(constants.TEST_STREAM_ID_1),
+            ],
           ]);
         },
       },
@@ -86,19 +98,27 @@ describe('POST /databases/:instanceId/streams/consumer-groups', () => {
             {
               name: constants.TEST_STREAM_GROUP_BIN_ASCII_1,
               lastDeliveredId: constants.TEST_STREAM_ID_1,
-            }
+            },
           ],
         },
         statusCode: 201,
         after: async () => {
-          const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+          const groups = await rte.data.sendCommand(
+            'xinfo',
+            ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1],
+            null,
+          );
           expect(groups).to.deep.eq([
             [
-              Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
-              Buffer.from('consumers'), 0,
-              Buffer.from('pending'), 0,
-              Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_1),
-            ]
+              Buffer.from('name'),
+              constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+              Buffer.from('consumers'),
+              0,
+              Buffer.from('pending'),
+              0,
+              Buffer.from('last-delivered-id'),
+              Buffer.from(constants.TEST_STREAM_ID_1),
+            ],
           ]);
         },
       },
@@ -129,23 +149,33 @@ describe('POST /databases/:instanceId/streams/consumer-groups', () => {
               {
                 name: constants.TEST_STREAM_GROUP_1,
                 lastDeliveredId: constants.TEST_STREAM_ID_1,
-              }
+              },
             ],
           },
           before: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_2]);
+            const groups = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_2,
+            ]);
             expect(groups.length).to.eq(0);
           },
           statusCode: 201,
           after: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_2]);
+            const groups = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_2,
+            ]);
             expect(groups).to.deep.eq([
               [
-                'name', constants.TEST_STREAM_GROUP_1,
-                'consumers', 0,
-                'pending', 0,
-                'last-delivered-id', constants.TEST_STREAM_ID_1,
-              ]
+                'name',
+                constants.TEST_STREAM_GROUP_1,
+                'consumers',
+                0,
+                'pending',
+                0,
+                'last-delivered-id',
+                constants.TEST_STREAM_ID_1,
+              ],
             ]);
           },
         },
@@ -161,29 +191,43 @@ describe('POST /databases/:instanceId/streams/consumer-groups', () => {
               {
                 name: constants.TEST_STREAM_GROUP_2,
                 lastDeliveredId: constants.TEST_STREAM_ID_1,
-              }
+              },
             ],
           },
           before: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_2]);
+            const groups = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_2,
+            ]);
             expect(groups.length).to.eq(0);
           },
           statusCode: 201,
           after: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_2]);
+            const groups = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_2,
+            ]);
             expect(groups).to.deep.eq([
               [
-                'name', constants.TEST_STREAM_GROUP_1,
-                'consumers', 0,
-                'pending', 0,
-                'last-delivered-id', constants.TEST_STREAM_ID_1,
+                'name',
+                constants.TEST_STREAM_GROUP_1,
+                'consumers',
+                0,
+                'pending',
+                0,
+                'last-delivered-id',
+                constants.TEST_STREAM_ID_1,
               ],
               [
-                'name', constants.TEST_STREAM_GROUP_2,
-                'consumers', 0,
-                'pending', 0,
-                'last-delivered-id', constants.TEST_STREAM_ID_1,
-              ]
+                'name',
+                constants.TEST_STREAM_GROUP_2,
+                'consumers',
+                0,
+                'pending',
+                0,
+                'last-delivered-id',
+                constants.TEST_STREAM_ID_1,
+              ],
             ]);
           },
         },
@@ -195,7 +239,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups', () => {
               {
                 name: constants.TEST_STREAM_GROUP_1,
                 lastDeliveredId: constants.TEST_STREAM_ID_1,
-              }
+              },
             ],
           },
           statusCode: 409,
@@ -271,7 +315,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
         {
           name: 'Should throw error if no permissions for "xgroup" command',
@@ -284,7 +328,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xgroup')
+          before: () => rte.data.setAclUserRules('~* +@all -xgroup'),
         },
       ].map(mainCheckFn);
     });

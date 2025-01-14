@@ -3,27 +3,35 @@ import {
   deps,
   requirements,
   Joi,
-  nock, getMainCheckFn,
+  nock,
+  getMainCheckFn,
   serverConfig,
 } from '../../deps';
-import { mockCloudAccountInfo, mockCloudApiCsrfToken, mockCloudApiUser, mockCloudCapiAccount } from 'src/__mocks__';
+import {
+  mockCloudAccountInfo,
+  mockCloudApiCsrfToken,
+  mockCloudApiUser,
+  mockCloudCapiAccount,
+} from 'src/__mocks__';
 import { CustomErrorCodes } from 'src/constants';
 import {
   initApiCapiKeysEnsureNockScope,
   initApiUserProfileNockScope,
   initSMApiNockScope,
-  initSMCapiNockScope
+  initSMCapiNockScope,
 } from '../constants';
 const { request, server, constants } = deps;
 
 const endpoint = () => request(server).get(`/cloud/me/autodiscovery/account`);
 
-const responseSchema = Joi.object().keys({
-  accountId: Joi.number().required(),
-  accountName: Joi.string().required(),
-  ownerName: Joi.string().required(),
-  ownerEmail: Joi.string().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    accountId: Joi.number().required(),
+    accountName: Joi.string().required(),
+    ownerName: Joi.string().required(),
+    ownerEmail: Joi.string().required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 

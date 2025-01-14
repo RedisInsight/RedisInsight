@@ -42,10 +42,9 @@ describe('CloudDatabaseAnalytics', () => {
 
   describe('sendCloudSignInSucceeded', () => {
     it('should emit event with eventData', () => {
-      service.sendCloudFreeDatabaseCreated(
-        mockSessionMetadata,
-        { data: 'custom' },
-      );
+      service.sendCloudFreeDatabaseCreated(mockSessionMetadata, {
+        data: 'custom',
+      });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -69,14 +68,10 @@ describe('CloudDatabaseAnalytics', () => {
 
   describe('sendCloudFreeDatabaseFailed', () => {
     it('should emit error event with selected plan', async () => {
-      service.sendCloudFreeDatabaseFailed(
-        mockSessionMetadata,
-        httpException,
-        {
-          region: mockFreeCloudSubscriptionPlan1.region,
-          provider: mockFreeCloudSubscriptionPlan1.provider,
-        },
-      );
+      service.sendCloudFreeDatabaseFailed(mockSessionMetadata, httpException, {
+        region: mockFreeCloudSubscriptionPlan1.region,
+        provider: mockFreeCloudSubscriptionPlan1.provider,
+      });
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,

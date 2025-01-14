@@ -31,14 +31,11 @@ describe('MultiSearch', () => {
         onChange={onChange}
         onKeyDown={onKeyDown}
         data-testid={searchInputId}
-      />
+      />,
     )
 
     const searchInput = screen.getByTestId(searchInputId)
-    fireEvent.change(
-      searchInput,
-      { target: { value: inputVal } }
-    )
+    fireEvent.change(searchInput, { target: { value: inputVal } })
     expect(searchInput).toHaveValue(inputVal)
     expect(onChange).toBeCalledWith(inputVal)
 
@@ -54,7 +51,13 @@ describe('MultiSearch', () => {
 
   it('should delete option', () => {
     const onChangeOptions = jest.fn()
-    render(<MultiSearch {...instance(mockedProps)} options={['hash']} onChangeOptions={onChangeOptions} />)
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        options={['hash']}
+        onChangeOptions={onChangeOptions}
+      />,
+    )
 
     const deleteHashBtn = screen.getByTestId('hash-delete-btn')
     fireEvent.click(deleteHashBtn)
@@ -63,7 +66,13 @@ describe('MultiSearch', () => {
 
   it('should delete option with more then 1 option', () => {
     const onChangeOptions = jest.fn()
-    render(<MultiSearch {...instance(mockedProps)} options={['hash', 'zset', 'ts']} onChangeOptions={onChangeOptions} />)
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        options={['hash', 'zset', 'ts']}
+        onChangeOptions={onChangeOptions}
+      />,
+    )
 
     const deleteHashBtn = screen.getByTestId('hash-delete-btn')
     fireEvent.click(deleteHashBtn)
@@ -71,12 +80,24 @@ describe('MultiSearch', () => {
   })
 
   it('should not show reset filters btn with empty value', () => {
-    render(<MultiSearch {...instance(mockedProps)} value="" data-testid={searchInputId} />)
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        value=""
+        data-testid={searchInputId}
+      />,
+    )
     expect(screen.queryByTestId('reset-filter-btn')).not.toBeInTheDocument()
   })
 
   it('should show reset filters btn', () => {
-    render(<MultiSearch {...instance(mockedProps)} value="val" data-testid={searchInputId} />)
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        value="val"
+        data-testid={searchInputId}
+      />,
+    )
     expect(screen.getByTestId('reset-filter-btn')).toBeInTheDocument()
   })
 
@@ -89,7 +110,7 @@ describe('MultiSearch', () => {
         value="val"
         options={['hash']}
         data-testid={searchInputId}
-      />
+      />,
     )
     fireEvent.click(screen.getByTestId('reset-filter-btn'))
     expect(onClear).toBeCalled()
@@ -102,7 +123,7 @@ describe('MultiSearch', () => {
         {...instance(mockedProps)}
         onSubmit={onSubmit}
         data-testid={searchInputId}
-      />
+      />,
     )
     fireEvent.click(screen.getByTestId('search-btn'))
     expect(onSubmit).toBeCalled()
@@ -110,10 +131,7 @@ describe('MultiSearch', () => {
 
   it('should not render suggestions by default', () => {
     render(
-      <MultiSearch
-        {...instance(mockedProps)}
-        data-testid={searchInputId}
-      />
+      <MultiSearch {...instance(mockedProps)} data-testid={searchInputId} />,
     )
     expect(screen.queryByTestId('suggestions')).not.toBeInTheDocument()
   })
@@ -126,17 +144,19 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply: jest.fn(),
           onDelete: jest.fn(),
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
     fireEvent.click(screen.getByTestId('show-suggestions-btn'))
 
     expect(screen.getByTestId('suggestions')).toBeInTheDocument()
     suggestionOptions.forEach(({ id, option, value }) => {
       expect(screen.getByTestId(`suggestion-item-${id}`)).toBeInTheDocument()
-      expect(screen.getByTestId(`suggestion-item-${id}`)).toHaveTextContent((option ?? '') + value)
+      expect(screen.getByTestId(`suggestion-item-${id}`)).toHaveTextContent(
+        (option ?? '') + value,
+      )
     })
   })
 
@@ -148,10 +168,10 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply: jest.fn(),
           onDelete: jest.fn(),
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
     await act(() => {
       fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'ArrowDown' })
@@ -169,10 +189,10 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply,
           onDelete: jest.fn(),
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
     await act(() => {
       fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'ArrowDown' })
@@ -197,13 +217,16 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply: jest.fn(),
           onDelete: jest.fn(),
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
     await act(() => {
-      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'A', code: 'KeyA' })
+      fireEvent.keyDown(screen.getByTestId(searchInputId), {
+        key: 'A',
+        code: 'KeyA',
+      })
     })
     expect(onKeyDown).toBeCalledTimes(1)
   })
@@ -217,10 +240,10 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply,
           onDelete: jest.fn(),
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
     fireEvent.click(screen.getByTestId('show-suggestions-btn'))
     fireEvent.click(screen.getByTestId('suggestion-item-2'))
@@ -236,10 +259,10 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply: jest.fn(),
           onDelete,
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
     fireEvent.click(screen.getByTestId('show-suggestions-btn'))
     fireEvent.click(screen.getByTestId('remove-suggestion-item-2'))
@@ -255,10 +278,10 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply: jest.fn(),
           onDelete,
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
     fireEvent.click(screen.getByTestId('show-suggestions-btn'))
     fireEvent.click(screen.getByTestId('clear-history-btn'))
@@ -274,10 +297,10 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply: jest.fn(),
           onDelete,
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
     await act(() => {
       fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'ArrowDown' })
@@ -301,10 +324,10 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply: jest.fn(),
           onDelete,
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
     await act(() => {
       fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'ArrowDown' })
@@ -329,10 +352,10 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply: jest.fn(),
           onDelete,
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
 
     fireEvent.click(screen.getByTestId('show-suggestions-btn'))
@@ -350,10 +373,10 @@ describe('MultiSearch', () => {
           options: suggestionOptions,
           onApply: jest.fn(),
           onDelete: jest.fn(),
-          buttonTooltipTitle: 'text'
+          buttonTooltipTitle: 'text',
         }}
         data-testid={searchInputId}
-      />
+      />,
     )
 
     fireEvent.click(screen.getByTestId('show-suggestions-btn'))

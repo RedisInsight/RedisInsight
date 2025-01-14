@@ -23,6 +23,8 @@ jest.mock('uiSrc/services', () => ({
 
 describe('DefaultErrorContent', () => {
   it('should render', () => {
-    expect(render(<DefaultErrorContent {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<DefaultErrorContent {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 })

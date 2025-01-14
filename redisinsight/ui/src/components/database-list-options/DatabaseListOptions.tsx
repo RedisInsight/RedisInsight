@@ -19,14 +19,14 @@ import RedisOnFlashLight from 'uiSrc/assets/img/options/RedisOnFlashLight.svg'
 import styles from './styles.module.scss'
 
 interface Props {
-  options: Partial<any>;
+  options: Partial<any>
 }
 
 interface ITooltipProps {
-  content: string;
-  index: number;
-  value: any;
-  icon: IconType;
+  content: string
+  index: number
+  value: any
+  icon: IconType
 }
 
 const DatabaseListOptions = ({ options }: Props) => {
@@ -39,34 +39,51 @@ const DatabaseListOptions = ({ options }: Props) => {
   const OPTIONS_CONTENT = {
     [AddRedisClusterDatabaseOptions.ActiveActive]: {
       icon: theme === Theme.Dark ? ActiveActiveDark : ActiveActiveLight,
-      text: DATABASE_LIST_OPTIONS_TEXT[AddRedisClusterDatabaseOptions.ActiveActive]
+      text: DATABASE_LIST_OPTIONS_TEXT[
+        AddRedisClusterDatabaseOptions.ActiveActive
+      ],
     },
     [AddRedisClusterDatabaseOptions.Backup]: {
       text: DATABASE_LIST_OPTIONS_TEXT[AddRedisClusterDatabaseOptions.Backup],
     },
 
     [AddRedisClusterDatabaseOptions.Clustering]: {
-      text: DATABASE_LIST_OPTIONS_TEXT[AddRedisClusterDatabaseOptions.Clustering]
+      text: DATABASE_LIST_OPTIONS_TEXT[
+        AddRedisClusterDatabaseOptions.Clustering
+      ],
     },
     [AddRedisClusterDatabaseOptions.PersistencePolicy]: {
-      text: DATABASE_LIST_OPTIONS_TEXT[AddRedisClusterDatabaseOptions.PersistencePolicy]
+      text: DATABASE_LIST_OPTIONS_TEXT[
+        AddRedisClusterDatabaseOptions.PersistencePolicy
+      ],
     },
     [AddRedisClusterDatabaseOptions.Flash]: {
       icon: theme === Theme.Dark ? RedisOnFlashDark : RedisOnFlashLight,
-      text: DATABASE_LIST_OPTIONS_TEXT[AddRedisClusterDatabaseOptions.Flash]
+      text: DATABASE_LIST_OPTIONS_TEXT[AddRedisClusterDatabaseOptions.Flash],
     },
     [AddRedisClusterDatabaseOptions.Replication]: {
-      text: DATABASE_LIST_OPTIONS_TEXT[AddRedisClusterDatabaseOptions.Replication]
+      text: DATABASE_LIST_OPTIONS_TEXT[
+        AddRedisClusterDatabaseOptions.Replication
+      ],
     },
     [AddRedisClusterDatabaseOptions.ReplicaDestination]: {
-      text: DATABASE_LIST_OPTIONS_TEXT[AddRedisClusterDatabaseOptions.ReplicaDestination]
+      text: DATABASE_LIST_OPTIONS_TEXT[
+        AddRedisClusterDatabaseOptions.ReplicaDestination
+      ],
     },
     [AddRedisClusterDatabaseOptions.ReplicaSource]: {
-      text: DATABASE_LIST_OPTIONS_TEXT[AddRedisClusterDatabaseOptions.ReplicaSource]
+      text: DATABASE_LIST_OPTIONS_TEXT[
+        AddRedisClusterDatabaseOptions.ReplicaSource
+      ],
     },
   }
 
-  const Tooltip = ({ content: contentProp, icon, index, value }: ITooltipProps) => (
+  const Tooltip = ({
+    content: contentProp,
+    icon,
+    index,
+    value,
+  }: ITooltipProps) => (
     <>
       {contentProp ? (
         <EuiToolTip
@@ -107,22 +124,20 @@ const DatabaseListOptions = ({ options }: Props) => {
       }
       return 0
     })
-    ?.map(
-      ([option, value]: any, index: number) => {
-        if (value && value !== PersistencePolicy.none) {
-          return (
-            <Tooltip
-              key={`${option + index}`}
-              icon={OPTIONS_CONTENT[option]?.icon}
-              content={OPTIONS_CONTENT[option]?.text}
-              value={value}
-              index={index}
-            />
-          )
-        }
-        return null
+    ?.map(([option, value]: any, index: number) => {
+      if (value && value !== PersistencePolicy.none) {
+        return (
+          <Tooltip
+            key={`${option + index}`}
+            icon={OPTIONS_CONTENT[option]?.icon}
+            content={OPTIONS_CONTENT[option]?.text}
+            value={value}
+            index={index}
+          />
+        )
       }
-    )
+      return null
+    })
 
   return <div className={styles.options}>{optionsRender}</div>
 }

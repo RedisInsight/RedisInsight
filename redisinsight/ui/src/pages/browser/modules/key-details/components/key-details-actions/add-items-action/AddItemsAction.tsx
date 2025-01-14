@@ -15,7 +15,9 @@ const AddItemsAction = ({ width, title, openAddItemPanel }: Props) => (
   <EuiToolTip
     content={width > MIDDLE_SCREEN_RESOLUTION ? '' : title}
     position="left"
-    anchorClassName={cx(styles.actionBtn, { [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION })}
+    anchorClassName={cx(styles.actionBtn, {
+      [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION,
+    })}
   >
     <>
       {width > MIDDLE_SCREEN_RESOLUTION ? (

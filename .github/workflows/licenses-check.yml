@@ -8,27 +8,27 @@ jobs:
     name: Licenses check
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install all libs and dependencies
-      uses: ./.github/actions/install-all-build-libs
+      - name: Install all libs and dependencies
+        uses: ./.github/actions/install-all-build-libs
 
-    - name: Install plugins dependencies
-      env:
-        pluginsOnlyInstall: 1
-      run: yarn build:statics
+      - name: Install plugins dependencies
+        env:
+          pluginsOnlyInstall: 1
+        run: yarn build:statics
 
-    - name: Generate licenses csv files and send csv data to google sheet
-      env:
-        GOOGLE_ACCOUNT_SERVICE_KEY_BASE64: ${{ secrets.GOOGLE_ACCOUNT_SERVICE_KEY_BASE64 }}
-        GOOGLE_SPREADSHEET_DEPENDENCIES_ID: ${{ secrets.GOOGLE_SPREADSHEET_DEPENDENCIES_ID }}
-      run: |
-        npm i -g license-checker
-        echo "$GOOGLE_ACCOUNT_SERVICE_KEY_BASE64" | base64 -id > gasKey.json
-        SPREADSHEET_ID=$GOOGLE_SPREADSHEET_DEPENDENCIES_ID node .github/deps-licenses-report.js
+      - name: Generate licenses csv files and send csv data to google sheet
+        env:
+          GOOGLE_ACCOUNT_SERVICE_KEY_BASE64: ${{ secrets.GOOGLE_ACCOUNT_SERVICE_KEY_BASE64 }}
+          GOOGLE_SPREADSHEET_DEPENDENCIES_ID: ${{ secrets.GOOGLE_SPREADSHEET_DEPENDENCIES_ID }}
+        run: |
+          npm i -g license-checker
+          echo "$GOOGLE_ACCOUNT_SERVICE_KEY_BASE64" | base64 -id > gasKey.json
+          SPREADSHEET_ID=$GOOGLE_SPREADSHEET_DEPENDENCIES_ID node .github/deps-licenses-report.js
 
-    - uses: actions/upload-artifact@v4
-      with:
-        name: licenses
-        path: licenses
-        if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: licenses
+          path: licenses
+          if-no-files-found: error

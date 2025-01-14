@@ -1,7 +1,9 @@
 import * as fs from 'fs-extra';
 import { LogFile } from 'src/modules/profiler/models/log-file';
 import {
-  mockLogFile, mockProfilerAnalyticsEvents, mockSocket,
+  mockLogFile,
+  mockProfilerAnalyticsEvents,
+  mockSocket,
 } from 'src/__mocks__';
 import config from 'src/utils/config';
 import { join } from 'path';
@@ -15,7 +17,11 @@ describe('LogFile', () => {
   let logFile: LogFile;
 
   beforeEach(() => {
-    logFile = new LogFile(mockLogFile.instanceId, mockLogFile.id, mockProfilerAnalyticsEvents);
+    logFile = new LogFile(
+      mockLogFile.instanceId,
+      mockLogFile.id,
+      mockProfilerAnalyticsEvents,
+    );
   });
 
   it('Initialization', () => {
@@ -26,8 +32,12 @@ describe('LogFile', () => {
     expect(logFile.id).toEqual(mockLogFile.id);
     expect(logFile['alias']).toEqual(mockLogFile.id);
     expect(logFile['filePath']).toEqual(join(DIR_PATH.tmpDir, logFile.id));
-    expect(logFile['startTime'].getTime()).toBeGreaterThanOrEqual(initTime.getTime());
-    expect(logFile['startTime'].getTime()).toBeLessThanOrEqual((new Date()).getTime());
+    expect(logFile['startTime'].getTime()).toBeGreaterThanOrEqual(
+      initTime.getTime(),
+    );
+    expect(logFile['startTime'].getTime()).toBeLessThanOrEqual(
+      new Date().getTime(),
+    );
     expect(logFile['analyticsEvents']).toEqual(new Map());
     expect(logFile['clientObservers']).toEqual(new Map());
     expect(logFile['emitter']).toEqual(undefined);
@@ -62,10 +72,14 @@ describe('LogFile', () => {
   it('getFilename + setAlias', () => {
     const fileName = logFile.getFilename();
     expect(logFile['alias']).toEqual(logFile['id']);
-    expect(fileName).toMatch(`${logFile['id']}-${logFile['startTime'].getTime()}-`);
+    expect(fileName).toMatch(
+      `${logFile['id']}-${logFile['startTime'].getTime()}-`,
+    );
     logFile.setAlias('someAlias');
     expect(logFile['alias']).toEqual('someAlias');
-    expect(logFile.getFilename()).toMatch(`someAlias-${logFile['startTime'].getTime()}-`);
+    expect(logFile.getFilename()).toMatch(
+      `someAlias-${logFile['startTime'].getTime()}-`,
+    );
   });
 
   it('addProfilerClient + removeProfilerClient', async () => {
@@ -112,6 +126,8 @@ describe('LogFile', () => {
     expect(logFile['writeStream']).toEqual(null);
     expect(fs.existsSync(logFile['filePath'])).toEqual(false);
     expect(stream['_writableState'].ended).toEqual(true);
-    expect(mockProfilerAnalyticsEvents.get(TelemetryEvents.ProfilerLogDeleted)).toHaveBeenCalled();
+    expect(
+      mockProfilerAnalyticsEvents.get(TelemetryEvents.ProfilerLogDeleted),
+    ).toHaveBeenCalled();
   });
 });

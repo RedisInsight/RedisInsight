@@ -18,7 +18,13 @@ import { sessionStorageService } from 'uiSrc/services'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { isProcessingBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
-import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, SocketEvent } from 'uiSrc/constants'
+import {
+  BrowserStorageItem,
+  BulkActionsServerEvent,
+  BulkActionsStatus,
+  BulkActionsType,
+  SocketEvent,
+} from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
@@ -29,7 +35,9 @@ const riConfig = getConfig()
 const BulkActionsConfig = () => {
   const { id: instanceId = '', db } = useSelector(connectedInstanceSelector)
   const { isConnected } = useSelector(bulkActionsSelector)
-  const { isActionTriggered: isDeleteTriggered } = useSelector(bulkActionsDeleteSelector)
+  const { isActionTriggered: isDeleteTriggered } = useSelector(
+    bulkActionsDeleteSelector,
+  )
   const { filter, search } = useSelector(keysSelector)
   const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
@@ -77,7 +85,8 @@ const BulkActionsConfig = () => {
     if (!socketRef.current?.connected) {
       return
     }
-    const id = sessionStorageService.get(BrowserStorageItem.bulkActionDeleteId) ?? ''
+    const id =
+      sessionStorageService.get(BrowserStorageItem.bulkActionDeleteId) ?? ''
     if (!id) return
 
     if (!isDeleteTriggered) {
@@ -102,7 +111,7 @@ const BulkActionsConfig = () => {
         filter: {
           type: filter,
           match: search || '*',
-        }
+        },
       },
       onBulkDeleting,
     )
@@ -113,7 +122,7 @@ const BulkActionsConfig = () => {
     socketRef.current?.emit(
       BulkActionsServerEvent.Get,
       { id: `${id}` },
-      fetchBulkAction
+      fetchBulkAction,
     )
   }
 
@@ -122,7 +131,7 @@ const BulkActionsConfig = () => {
     socketRef.current?.emit(
       BulkActionsServerEvent.Abort,
       { id: `${id}` },
-      onBulkDeleteAborted
+      onBulkDeleteAborted,
     )
   }
 

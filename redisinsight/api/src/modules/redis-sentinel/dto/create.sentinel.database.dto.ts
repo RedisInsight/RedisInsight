@@ -1,6 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsDefined, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min,
+  IsDefined,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+  Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -36,8 +42,8 @@ export class CreateSentinelDatabaseDto {
 
   @ApiPropertyOptional({
     description:
-      'The password, if any, for your Redis database. '
-      + 'If your database doesn’t require a password, leave this field empty.',
+      'The password, if any, for your Redis database. ' +
+      'If your database doesn’t require a password, leave this field empty.',
     type: String,
   })
   @IsString({ always: true })

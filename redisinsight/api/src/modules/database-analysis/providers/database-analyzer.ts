@@ -1,13 +1,12 @@
-import {
-  sortBy, isNumber,
-} from 'lodash';
+import { sortBy, isNumber } from 'lodash';
 import {
   DatabaseAnalysis,
   Key,
   NspSummary,
   NspTypeSummary,
   SimpleSummary,
-  SimpleTypeSummary, SumGroup,
+  SimpleTypeSummary,
+  SumGroup,
 } from 'src/modules/database-analysis/models';
 import { RedisString } from 'src/common/constants';
 import { Injectable } from '@nestjs/common';
@@ -18,7 +17,10 @@ const TOP_NSP_LIMIT = 15;
 
 @Injectable()
 export class DatabaseAnalyzer {
-  async analyze(analysis: Partial<DatabaseAnalysis>, keys: Key[]): Promise<Partial<DatabaseAnalysis>> {
+  async analyze(
+    analysis: Partial<DatabaseAnalysis>,
+    keys: Key[],
+  ): Promise<Partial<DatabaseAnalysis>> {
     const namespaces = await this.getNamespacesMap(keys, analysis.delimiter);
 
     return {
@@ -38,7 +40,10 @@ export class DatabaseAnalyzer {
    * @param keys
    * @param field
    */
-  async calculateSimpleSummary(keys: Key[], field: string | number): Promise<SimpleSummary> {
+  async calculateSimpleSummary(
+    keys: Key[],
+    field: string | number,
+  ): Promise<SimpleSummary> {
     const summary = {
       total: 0,
       types: new Map(),
@@ -47,10 +52,7 @@ export class DatabaseAnalyzer {
     if (isNumber(field)) {
       keys.forEach((key) => {
         summary.total += 1;
-        summary.types.set(
-          key.type,
-          (summary.types.get(key.type) || 0) + 1,
-        );
+        summary.types.set(key.type, (summary.types.get(key.type) || 0) + 1);
       });
     } else {
       keys.forEach((key) => {
@@ -74,9 +76,10 @@ export class DatabaseAnalyzer {
    * @param types
    */
   calculateSimpleTypeSummary(types: Map<string, any>): SimpleTypeSummary[] {
-    return sortBy([...types.keys()].map(
-      (type) => ({ type, total: types.get(type) }),
-    ), 'total').reverse();
+    return sortBy(
+      [...types.keys()].map((type) => ({ type, total: types.get(type) })),
+      'total',
+    ).reverse();
   }
 
   /**
@@ -84,7 +87,10 @@ export class DatabaseAnalyzer {
    * @param keys
    * @param delimiter
    */
-  async getNamespacesMap(keys: Key[], delimiter: string): Promise<Map<string, any>> {
+  async getNamespacesMap(
+    keys: Key[],
+    delimiter: string,
+  ): Promise<Map<string, any>> {
     const namespaces = new Map();
 
     keys.forEach((key) => {
@@ -138,10 +144,16 @@ export class DatabaseAnalyzer {
    * @param namespaces
    * @param field
    */
-  async calculateNspSummary(namespaces: Map<RedisString, any>, field: string): Promise<NspSummary[]> {
-    const nspSummaries = sortBy([...namespaces.keys()].map(
-      (nsp) => ({ nsp, ...namespaces.get(nsp) }),
-    ), field).reverse().slice(0, TOP_NSP_LIMIT);
+  async calculateNspSummary(
+    namespaces: Map<RedisString, any>,
+    field: string,
+  ): Promise<NspSummary[]> {
+    const nspSummaries = sortBy(
+      [...namespaces.keys()].map((nsp) => ({ nsp, ...namespaces.get(nsp) })),
+      field,
+    )
+      .reverse()
+      .slice(0, TOP_NSP_LIMIT);
 
     return nspSummaries.map((nspSummary) => ({
       ...nspSummary,
@@ -156,10 +168,14 @@ export class DatabaseAnalyzer {
    * @param nspTypes
    * @param field
    */
-  calculateNspTypeSummary(nspTypes: Map<string, any>, field: string): NspTypeSummary[] {
-    return sortBy([...nspTypes.keys()].map(
-      (type) => ({ type, ...nspTypes.get(type) }),
-    ), field).reverse();
+  calculateNspTypeSummary(
+    nspTypes: Map<string, any>,
+    field: string,
+  ): NspTypeSummary[] {
+    return sortBy(
+      [...nspTypes.keys()].map((type) => ({ type, ...nspTypes.get(type) })),
+      field,
+    ).reverse();
   }
 
   /**
@@ -172,14 +188,17 @@ export class DatabaseAnalyzer {
    */
   async calculateTopKeys(keysBatches: Key[][], field: string): Promise<Key[]> {
     return sortByNumberField(
-      [].concat(...keysBatches.map(
-        (keysBatch) => sortByNumberField(
-          keysBatch,
-          field,
-        ).reverse().slice(0, TOP_KEYS_LIMIT),
-      )),
+      [].concat(
+        ...keysBatches.map((keysBatch) =>
+          sortByNumberField(keysBatch, field)
+            .reverse()
+            .slice(0, TOP_KEYS_LIMIT),
+        ),
+      ),
       field,
-    ).reverse().slice(0, TOP_KEYS_LIMIT);
+    )
+      .reverse()
+      .slice(0, TOP_KEYS_LIMIT);
   }
 
   async calculateExpirationTimeGroups(keys: Key[]): Promise<SumGroup[]> {

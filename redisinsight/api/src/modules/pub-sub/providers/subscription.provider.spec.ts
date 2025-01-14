@@ -1,7 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  mockSocket,
-} from 'src/__mocks__';
+import { mockSocket } from 'src/__mocks__';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription.provider';
 import { SubscriptionType } from 'src/modules/pub-sub/constants';
@@ -33,10 +31,7 @@ describe('SubscriptionProvider', () => {
     jest.resetAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        SubscriptionProvider,
-
-      ],
+      providers: [SubscriptionProvider],
     }).compile();
 
     service = await module.get(SubscriptionProvider);
@@ -44,11 +39,17 @@ describe('SubscriptionProvider', () => {
 
   describe('createSubscription', () => {
     it('should create simple subscription', async () => {
-      const subscription = service.createSubscription(mockUserClient, mockSubscriptionDto);
+      const subscription = service.createSubscription(
+        mockUserClient,
+        mockSubscriptionDto,
+      );
       expect(subscription).toBeInstanceOf(SimpleSubscription);
     });
     it('should create pattern subscription', async () => {
-      const subscription = service.createSubscription(mockUserClient, mockPSubscriptionDto);
+      const subscription = service.createSubscription(
+        mockUserClient,
+        mockPSubscriptionDto,
+      );
       expect(subscription).toBeInstanceOf(PatternSubscription);
     });
     it('should throw error since shard subscription is not supported yet', async () => {

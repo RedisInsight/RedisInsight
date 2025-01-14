@@ -6,20 +6,40 @@ import {
   EuiButtonIcon,
   EuiButtonEmpty,
   EuiToolTip,
-  PropertySort
+  PropertySort,
 } from '@elastic/eui'
 import { useParams, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
-import { extrapolate, formatBytes, formatExtrapolation, formatLongName, Nullable } from 'uiSrc/utils'
+import {
+  extrapolate,
+  formatBytes,
+  formatExtrapolation,
+  formatLongName,
+  Nullable,
+} from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { GroupBadge } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
-import { setFilter, setSearchMatch, resetKeysData, fetchKeys, keysSelector, changeSearchMode } from 'uiSrc/slices/browser/keys'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import {
+  setFilter,
+  setSearchMatch,
+  resetKeysData,
+  fetchKeys,
+  keysSelector,
+  changeSearchMode,
+} from 'uiSrc/slices/browser/keys'
+import {
+  SCAN_COUNT_DEFAULT,
+  SCAN_TREE_COUNT_DEFAULT,
+} from 'uiSrc/constants/api'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { setBrowserTreeDelimiter, setBrowserKeyListDataLoaded, resetBrowserTree } from 'uiSrc/slices/app/context'
+import {
+  setBrowserTreeDelimiter,
+  setBrowserKeyListDataLoaded,
+  resetBrowserTree,
+} from 'uiSrc/slices/app/context'
 import { NspSummary } from 'apiSrc/modules/database-analysis/models/nsp-summary'
 import { NspTypeSummary } from 'apiSrc/modules/database-analysis/models/nsp-type-summary'
 
@@ -35,8 +55,18 @@ export interface Props {
 }
 
 const NameSpacesTable = (props: Props) => {
-  const { data, defaultSortField, delimiter, isExtrapolated, extrapolation, dataTestid = '' } = props
-  const [sort, setSort] = useState<PropertySort>({ field: defaultSortField, direction: 'desc' })
+  const {
+    data,
+    defaultSortField,
+    delimiter,
+    isExtrapolated,
+    extrapolation,
+    dataTestid = '',
+  } = props
+  const [sort, setSort] = useState<PropertySort>({
+    field: defaultSortField,
+    direction: 'desc',
+  })
   const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState<any>({})
 
   const history = useHistory()
@@ -67,15 +97,20 @@ const NameSpacesTable = (props: Props) => {
     dispatch(setFilter(filter))
     dispatch(setSearchMatch(`${nsp}${delimiter}*`, SearchMode.Pattern))
     dispatch(resetKeysData(SearchMode.Pattern))
-    dispatch(fetchKeys(
-      {
-        searchMode: SearchMode.Pattern,
-        cursor: '0',
-        count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      },
-      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, true)),
-      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, false))
-    ))
+    dispatch(
+      fetchKeys(
+        {
+          searchMode: SearchMode.Pattern,
+          cursor: '0',
+          count:
+            viewType === KeyViewType.Browser
+              ? SCAN_COUNT_DEFAULT
+              : SCAN_TREE_COUNT_DEFAULT,
+        },
+        () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, true)),
+        () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, false)),
+      ),
+    )
     dispatch(resetBrowserTree())
     history.push(Pages.browser(instanceId))
   }
@@ -93,18 +128,26 @@ const NameSpacesTable = (props: Props) => {
   }
 
   const setDataTestId = ({ nsp }: { nsp: string }) => ({
-    'data-testid': `row-${nsp}`
+    'data-testid': `row-${nsp}`,
   })
 
   const expandedRow = (item: NspSummary) => (
     <div style={{ width: '100%' }}>
       {item.types.map((type, index) => {
-        const extrapolated = extrapolate(type.memory, { apply: isExtrapolated, extrapolation, showPrefix: false })
+        const extrapolated = extrapolate(type.memory, {
+          apply: isExtrapolated,
+          extrapolation,
+          showPrefix: false,
+        })
         const [number, size] = formatBytes(extrapolated as number, 3, true)
         const formatNumber = formatExtrapolation(number, isExtrapolated)
 
         return (
-          <div className={styles.expanded} key={type.type} data-testid={`expanded-${item.nsp}-${index}`}>
+          <div
+            className={styles.expanded}
+            key={type.type}
+            data-testid={`expanded-${item.nsp}-${index}`}
+          >
             <div className="truncateText">
               <EuiToolTip
                 title="Key Pattern"
@@ -120,7 +163,9 @@ const NameSpacesTable = (props: Props) => {
                 </EuiButtonEmpty>
               </EuiToolTip>
             </div>
-            <div className={styles.badgesContainer}><GroupBadge type={type.type} /></div>
+            <div className={styles.badgesContainer}>
+              <GroupBadge type={type.type} />
+            </div>
             <div className={styles.rightAlign}>
               <span className={styles.count} data-testid="usedMemory-value">
                 {formatNumber}
@@ -131,7 +176,7 @@ const NameSpacesTable = (props: Props) => {
               {extrapolate(
                 type.keys,
                 { extrapolation, apply: isExtrapolated },
-                (val: number) => numberWithSpaces(Math.round(val))
+                (val: number) => numberWithSpaces(Math.round(val)),
               )}
             </div>
           </div>
@@ -173,7 +218,7 @@ const NameSpacesTable = (props: Props) => {
             </EuiToolTip>
           </div>
         )
-      }
+      },
     },
     {
       name: 'Data Type',
@@ -183,9 +228,11 @@ const NameSpacesTable = (props: Props) => {
       className: 'dataType',
       render: (value: NspTypeSummary[]) => (
         <div className={styles.badgesContainer}>
-          {value.map(({ type }) => <GroupBadge key={type} type={type} className={styles.badge} />)}
+          {value.map(({ type }) => (
+            <GroupBadge key={type} type={type} className={styles.badge} />
+          ))}
         </div>
-      )
+      ),
     },
     {
       name: 'Total Memory',
@@ -194,11 +241,18 @@ const NameSpacesTable = (props: Props) => {
       sortable: true,
       align: 'right',
       render: (value: number) => {
-        const extrapolated = extrapolate(value, { apply: isExtrapolated, extrapolation, showPrefix: false }) as number
+        const extrapolated = extrapolate(value, {
+          apply: isExtrapolated,
+          extrapolation,
+          showPrefix: false,
+        }) as number
         const [number, size] = formatBytes(extrapolated, 3, true)
 
         const formatValue = formatExtrapolation(number, isExtrapolated)
-        const formatValueBytes = formatExtrapolation(numberWithSpaces(Math.round(extrapolated)), isExtrapolated)
+        const formatValueBytes = formatExtrapolation(
+          numberWithSpaces(Math.round(extrapolated)),
+          isExtrapolated,
+        )
 
         return (
           <EuiToolTip
@@ -206,14 +260,17 @@ const NameSpacesTable = (props: Props) => {
             data-testid="usedMemory-tooltip"
           >
             <>
-              <span className={styles.count} data-testid={`nsp-usedMemory-value=${value}`}>
+              <span
+                className={styles.count}
+                data-testid={`nsp-usedMemory-value=${value}`}
+              >
                 {formatValue}
               </span>
               <span className={styles.valueUnit}>{size}</span>
             </>
           </EuiToolTip>
         )
-      }
+      },
     },
     {
       name: 'Total Keys',
@@ -226,10 +283,10 @@ const NameSpacesTable = (props: Props) => {
           {extrapolate(
             value,
             { extrapolation, apply: isExtrapolated },
-            (val: number) => numberWithSpaces(Math.round(val))
+            (val: number) => numberWithSpaces(Math.round(val)),
           )}
         </span>
-      )
+      ),
     },
     {
       name: '\u00A0',
@@ -244,8 +301,14 @@ const NameSpacesTable = (props: Props) => {
               <EuiButtonIcon
                 style={{ marginRight: '6px' }}
                 onClick={() => toggleDetails(item)}
-                aria-label={itemIdToExpandedRowMap[nsp as string] ? 'Collapse' : 'Expand'}
-                iconType={itemIdToExpandedRowMap[nsp as string] ? 'arrowUp' : 'arrowDown'}
+                aria-label={
+                  itemIdToExpandedRowMap[nsp as string] ? 'Collapse' : 'Expand'
+                }
+                iconType={
+                  itemIdToExpandedRowMap[nsp as string]
+                    ? 'arrowUp'
+                    : 'arrowDown'
+                }
                 data-testid={`expand-arrow-${nsp}`}
               />
             )}
@@ -261,7 +324,13 @@ const NameSpacesTable = (props: Props) => {
         <EuiInMemoryTable
           items={data ?? []}
           columns={columns}
-          className={cx('inMemoryTableDefault', 'noHeaderBorders', 'stickyHeader', 'fixedLayout', styles.table)}
+          className={cx(
+            'inMemoryTableDefault',
+            'noHeaderBorders',
+            'stickyHeader',
+            'fixedLayout',
+            styles.table,
+          )}
           responsive={false}
           itemId="nsp"
           itemIdToExpandedRowMap={itemIdToExpandedRowMap}

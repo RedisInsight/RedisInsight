@@ -19,8 +19,8 @@ jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
-      flag: true
-    }
+      flag: true,
+    },
   }),
 }))
 
@@ -38,34 +38,40 @@ describe('CreateCloud', () => {
 
   it('should call proper actions on click cloud button', () => {
     const { container } = render(<CreateCloud />)
-    const createCloudLink = container.querySelector('[data-test-subj="create-cloud-nav-link"]')
+    const createCloudLink = container.querySelector(
+      '[data-test-subj="create-cloud-nav-link"]',
+    )
 
     fireEvent.click(createCloudLink as Element)
 
     expect(store.getActions()).toEqual([
       setSSOFlow(OAuthSocialAction.Create),
-      setSocialDialogState(OAuthSocialSource.NavigationMenu)
+      setSocialDialogState(OAuthSocialSource.NavigationMenu),
     ])
   })
 
   it('should call proper telemetry when sso is disabled', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
       cloudSso: {
-        flag: false
-      }
+        flag: false,
+      },
     })
     const { container } = render(<CreateCloud />)
-    const createCloudLink = container.querySelector('[data-test-subj="create-cloud-nav-link"]')
+    const createCloudLink = container.querySelector(
+      '[data-test-subj="create-cloud-nav-link"]',
+    )
 
     fireEvent.click(createCloudLink as Element)
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: HELP_LINKS.cloud.event,
       eventData: {
-        source: OAuthSocialSource.NavigationMenu
-      }
+        source: OAuthSocialSource.NavigationMenu,
+      },
     })
   })
 })

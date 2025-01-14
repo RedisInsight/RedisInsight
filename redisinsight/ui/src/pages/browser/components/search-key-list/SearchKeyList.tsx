@@ -4,7 +4,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
 import MultiSearch from 'uiSrc/components/multi-search/MultiSearch'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import {
+  SCAN_COUNT_DEFAULT,
+  SCAN_TREE_COUNT_DEFAULT,
+} from 'uiSrc/constants/api'
 import { replaceSpaces } from 'uiSrc/utils'
 import {
   deleteSearchHistoryAction,
@@ -13,10 +16,17 @@ import {
   keysSearchHistorySelector,
   keysSelector,
   setFilter,
-  setSearchMatch
+  setSearchMatch,
 } from 'uiSrc/slices/browser/keys'
-import { KeyViewType, SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { redisearchHistorySelector, redisearchSelector } from 'uiSrc/slices/browser/redisearch'
+import {
+  KeyViewType,
+  SearchHistoryItem,
+  SearchMode,
+} from 'uiSrc/slices/interfaces/keys'
+import {
+  redisearchHistorySelector,
+  redisearchSelector,
+} from 'uiSrc/slices/browser/redisearch'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
@@ -39,9 +49,13 @@ const placeholders = {
 const SearchKeyList = () => {
   const { id } = useSelector(connectedInstanceSelector)
   const { search, viewType, searchMode } = useSelector(keysSelector)
-  const { search: redisearchQuery, selectedIndex } = useSelector(redisearchSelector)
-  const { data: rediSearchHistory, loading: rediSearchHistoryLoading } = useSelector(redisearchHistorySelector)
-  const { data: searchHistory, loading: searchHistoryLoading } = useSelector(keysSearchHistorySelector)
+  const { search: redisearchQuery, selectedIndex } =
+    useSelector(redisearchSelector)
+  const { data: rediSearchHistory, loading: rediSearchHistoryLoading } =
+    useSelector(redisearchHistorySelector)
+  const { data: searchHistory, loading: searchHistoryLoading } = useSelector(
+    keysSearchHistorySelector,
+  )
 
   const [value, setValue] = useState(search || '')
   const [disableSubmit, setDisableSubmit] = useState(false)
@@ -62,11 +76,12 @@ const SearchKeyList = () => {
     setDisableSubmit(searchMode === SearchMode.Redisearch && !selectedIndex)
   }, [searchMode, selectedIndex])
 
-  const mapOptions = (data: null | Array<SearchHistoryItem>) => data?.map((item) => ({
-    id: item.id,
-    option: item.filter?.type,
-    value: item.filter?.match
-  })) || []
+  const mapOptions = (data: null | Array<SearchHistoryItem>) =>
+    data?.map((item) => ({
+      id: item.id,
+      option: item.filter?.type,
+      value: item.filter?.match,
+    })) || []
 
   const handleApply = (match = value, telemetryProperties: {} = {}) => {
     if (disableSubmit) return
@@ -77,15 +92,22 @@ const SearchKeyList = () => {
       dispatch(resetBrowserTree())
     }
 
-    dispatch(fetchKeys(
-      {
-        searchMode,
-        cursor: '0',
-        count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-        telemetryProperties
-      },
-      () => { dispatch(fetchSearchHistoryAction(searchMode)) }
-    ))
+    dispatch(
+      fetchKeys(
+        {
+          searchMode,
+          cursor: '0',
+          count:
+            viewType === KeyViewType.Browser
+              ? SCAN_COUNT_DEFAULT
+              : SCAN_TREE_COUNT_DEFAULT,
+          telemetryProperties,
+        },
+        () => {
+          dispatch(fetchSearchHistoryAction(searchMode))
+        },
+      ),
+    )
   }
 
   const handleChangeValue = (initValue: string) => {
@@ -98,7 +120,10 @@ const SearchKeyList = () => {
     handleApply()
   }
 
-  const handleApplySuggestion = (suggestion?: { option: string, value: string }) => {
+  const handleApplySuggestion = (suggestion?: {
+    option: string
+    value: string
+  }) => {
     if (!suggestion) {
       handleApply()
       return
@@ -131,7 +156,11 @@ const SearchKeyList = () => {
   }
 
   return (
-    <div className={cx(styles.container, { [styles.redisearchMode]: searchMode === SearchMode.Redisearch })}>
+    <div
+      className={cx(styles.container, {
+        [styles.redisearchMode]: searchMode === SearchMode.Redisearch,
+      })}
+    >
       <MultiSearch
         value={value}
         onSubmit={handleApply}
@@ -140,24 +169,33 @@ const SearchKeyList = () => {
         onChangeOptions={handleChangeOptions}
         onClear={onClear}
         suggestions={{
-          options: mapOptions(searchMode === SearchMode.Pattern ? searchHistory : rediSearchHistory),
+          options: mapOptions(
+            searchMode === SearchMode.Pattern
+              ? searchHistory
+              : rediSearchHistory,
+          ),
           buttonTooltipTitle: 'Show History',
-          loading: searchMode === SearchMode.Pattern ? searchHistoryLoading : rediSearchHistoryLoading,
+          loading:
+            searchMode === SearchMode.Pattern
+              ? searchHistoryLoading
+              : rediSearchHistoryLoading,
           onApply: handleApplySuggestion,
           onDelete: handleDeleteSuggestions,
         }}
-        appendRight={searchMode === SearchMode.Redisearch ? (
-          <FeatureFlagComponent name={FeatureFlags.databaseChat}>
-            <EuiButtonEmpty
-              className={styles.askCopilotBtn}
-              size="xs"
-              onClick={handleClickAskCopilot}
-              data-testid="ask-redis-copilot-btn"
-            >
-              <EuiIcon className={styles.cloudIcon} type={CloudStars} />
-            </EuiButtonEmpty>
-          </FeatureFlagComponent>
-        ) : undefined}
+        appendRight={
+          searchMode === SearchMode.Redisearch ? (
+            <FeatureFlagComponent name={FeatureFlags.databaseChat}>
+              <EuiButtonEmpty
+                className={styles.askCopilotBtn}
+                size="xs"
+                onClick={handleClickAskCopilot}
+                data-testid="ask-redis-copilot-btn"
+              >
+                <EuiIcon className={styles.cloudIcon} type={CloudStars} />
+              </EuiButtonEmpty>
+            </FeatureFlagComponent>
+          ) : undefined
+        }
         disableSubmit={disableSubmit}
         placeholder={placeholders[searchMode]}
         className={styles.input}

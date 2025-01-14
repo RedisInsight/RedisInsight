@@ -8,7 +8,7 @@ export const NO_OPTIONS: EuiSuperSelectOption<string>[] = [
   {
     value: NO_TEMPLATE_VALUE,
     inputDisplay: NO_TEMPLATE_LABEL,
-  }
+  },
 ]
 
 export const INGEST_OPTION = 'ingest'

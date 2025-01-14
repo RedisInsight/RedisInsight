@@ -15,12 +15,12 @@ import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import {
   fetchConnectedInstanceAction,
   fetchInstancesAction as fetchRdiInstancesAction,
-  instancesSelector as rdiInstancesSelector
+  instancesSelector as rdiInstancesSelector,
 } from 'uiSrc/slices/rdi/instances'
 import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
   fetchInstancesAction,
-  instancesSelector as dbInstancesSelector
+  instancesSelector as dbInstancesSelector,
 } from 'uiSrc/slices/instances/instances'
 import {
   deployPipelineAction,
@@ -31,7 +31,12 @@ import {
   setPipelineInitialState,
 } from 'uiSrc/slices/rdi/pipeline'
 import { IActionPipelineResultProps, IPipeline } from 'uiSrc/slices/interfaces'
-import { createAxiosError, isContainJSONModule, Nullable, pipelineToJson } from 'uiSrc/utils'
+import {
+  createAxiosError,
+  isContainJSONModule,
+  Nullable,
+  pipelineToJson,
+} from 'uiSrc/utils'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
@@ -62,9 +67,12 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   const { data, resetChecked } = useSelector(rdiPipelineSelector)
   const { data: rdiInstances } = useSelector(rdiInstancesSelector)
   const { data: dbInstances } = useSelector(dbInstancesSelector)
-  const { showModal, handleCloseModal, handleConfirmLeave } = useUndeployedChangesPrompt()
+  const { showModal, handleCloseModal, handleConfirmLeave } =
+    useUndeployedChangesPrompt()
 
-  const [initialFormValues, setInitialFormValues] = useState<IPipeline>(getInitialValues(data))
+  const [initialFormValues, setInitialFormValues] = useState<IPipeline>(
+    getInitialValues(data),
+  )
   const formikRef = useRef<FormikProps<IPipeline>>(null)
 
   useEffect(() => {
@@ -91,7 +99,10 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   useEffect(() => {
     // redirect only if there is no exact path
     if (pathname === Pages.rdiPipeline(rdiInstanceId)) {
-      if (lastPage === PageNames.rdiStatistics && contextRdiInstanceId === rdiInstanceId) {
+      if (
+        lastPage === PageNames.rdiStatistics &&
+        contextRdiInstanceId === rdiInstanceId
+      ) {
         history.push(Pages.rdiStatistics(rdiInstanceId))
         return
       }
@@ -105,18 +116,24 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   }, [data])
 
   // set initial values
-  useEffect(() => () => {
-    dispatch(setPipelineInitialState())
-    dispatch(setPipelineDialogState(true))
-  }, [])
+  useEffect(
+    () => () => {
+      dispatch(setPipelineInitialState())
+      dispatch(setPipelineDialogState(true))
+    },
+    [],
+  )
 
-  const actionPipelineCallback = (event: TelemetryEvent, result: IActionPipelineResultProps) => {
+  const actionPipelineCallback = (
+    event: TelemetryEvent,
+    result: IActionPipelineResultProps,
+  ) => {
     sendEventTelemetry({
       event,
       eventData: {
         id: rdiInstanceId,
         ...result,
-      }
+      },
     })
     dispatch(getPipelineStatusAction(rdiInstanceId))
   }
@@ -124,9 +141,15 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   const updatePipelineStatus = () => {
     if (resetChecked) {
       dispatch(resetPipelineChecked(false))
-      dispatch(resetPipelineAction(rdiInstanceId,
-        (result: IActionPipelineResultProps) => actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result),
-        (result: IActionPipelineResultProps) => actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result)))
+      dispatch(
+        resetPipelineAction(
+          rdiInstanceId,
+          (result: IActionPipelineResultProps) =>
+            actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result),
+          (result: IActionPipelineResultProps) =>
+            actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result),
+        ),
+      )
     } else {
       dispatch(getPipelineStatusAction(rdiInstanceId))
     }
@@ -134,15 +157,28 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
 
   const onSubmit = (values: IPipeline) => {
     const JSONValues = pipelineToJson(values, (errors) => {
-      dispatch(addErrorNotification(createAxiosError({
-        message: rdiErrorMessages.invalidStructure(errors[0].filename, errors[0].msg)
-      })))
+      dispatch(
+        addErrorNotification(
+          createAxiosError({
+            message: rdiErrorMessages.invalidStructure(
+              errors[0].filename,
+              errors[0].msg,
+            ),
+          }),
+        ),
+      )
     })
     if (!JSONValues) {
       return
     }
-    dispatch(deployPipelineAction(rdiInstanceId, JSONValues, updatePipelineStatus,
-      () => dispatch(getPipelineStatusAction(rdiInstanceId))),)
+    dispatch(
+      deployPipelineAction(
+        rdiInstanceId,
+        JSONValues,
+        updatePipelineStatus,
+        () => dispatch(getPipelineStatusAction(rdiInstanceId)),
+      ),
+    )
   }
 
   return (
@@ -153,7 +189,12 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
       innerRef={formikRef}
     >
       <>
-        <EuiFlexGroup className={styles.page} direction="column" gutterSize="none" responsive={false}>
+        <EuiFlexGroup
+          className={styles.page}
+          direction="column"
+          gutterSize="none"
+          responsive={false}
+        >
           <EuiFlexItem grow={false}>
             <RdiInstanceHeader />
           </EuiFlexItem>
@@ -162,7 +203,12 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
           </EuiFlexItem>
           <RdiInstancePageTemplate>
             <InstancePageRouter routes={routes} />
-            {showModal && <ConfirmLeavePagePopup onClose={handleCloseModal} onConfirm={handleConfirmLeave} />}
+            {showModal && (
+              <ConfirmLeavePagePopup
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmLeave}
+              />
+            )}
           </RdiInstancePageTemplate>
         </EuiFlexGroup>
       </>

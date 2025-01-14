@@ -1,6 +1,10 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import reducer, {
   initialState,
   setConnectedInstance,
@@ -18,16 +22,25 @@ import reducer, {
   defaultInstanceChangingSuccess,
   defaultInstanceChangingFailure,
   editInstanceAction,
-  updateConnectedInstance } from 'uiSrc/slices/rdi/instances'
+  updateConnectedInstance,
+} from 'uiSrc/slices/rdi/instances'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from 'uiSrc/slices/app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+  IAddInstanceErrorPayload,
+} from 'uiSrc/slices/app/notifications'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { Rdi } from 'apiSrc/modules/rdi/models'
 
 let store: typeof mockedStore
 
-const mockRdiInstance = { name: 'name', version: '1.2', url: 'http://localhost:4000' }
+const mockRdiInstance = {
+  name: 'name',
+  version: '1.2',
+  url: 'http://localhost:4000',
+}
 
 beforeEach(() => {
   cleanup()
@@ -63,12 +76,15 @@ describe('rdi instances slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, setConnectedInstanceSuccess(mockRdiInstance as RdiInstance))
+      const nextState = reducer(
+        initialState,
+        setConnectedInstanceSuccess(mockRdiInstance as RdiInstance),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
-          instances: nextState
+          instances: nextState,
         },
       })
       expect(instancesSelector(rootState)).toEqual(state)
@@ -85,11 +101,14 @@ describe('rdi instances slice', () => {
           ...initialState.connectedInstance,
           loading: false,
           error,
-        }
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, setConnectedInstanceFailure(error))
+      const nextState = reducer(
+        initialState,
+        setConnectedInstanceFailure(error),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -115,7 +134,7 @@ describe('rdi instances slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
-          instances: nextState
+          instances: nextState,
         },
       })
 
@@ -137,7 +156,7 @@ describe('rdi instances slice', () => {
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
-          instances: nextState
+          instances: nextState,
         },
       })
       expect(instancesSelector(rootState)).toEqual(state)
@@ -175,16 +194,19 @@ describe('rdi instances slice', () => {
         connectedInstance: {
           ...initialState.connectedInstance,
           ...mockRdiInstance,
-        }
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, updateConnectedInstance(mockRdiInstance as Rdi))
+      const nextState = reducer(
+        initialState,
+        updateConnectedInstance(mockRdiInstance as Rdi),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
-          instances: nextState
+          instances: nextState,
         },
       })
 
@@ -202,9 +224,7 @@ describe('rdi instances slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchConnectedInstanceAction('123')
-        )
+        await store.dispatch<any>(fetchConnectedInstanceAction('123'))
 
         // Assert
         const expectedActions = [
@@ -227,9 +247,7 @@ describe('rdi instances slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchConnectedInstanceAction('123')
-        )
+        await store.dispatch<any>(fetchConnectedInstanceAction('123'))
 
         // Assert
         const expectedActions = [
@@ -253,17 +271,21 @@ describe('rdi instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          createInstanceAction(mockRdiInstance, onSuccess, onFail)
+          createInstanceAction(mockRdiInstance, onSuccess, onFail),
         )
 
         // Assert
         const expectedActions = [
           defaultInstanceChanging(),
           defaultInstanceChangingSuccess(),
-          addMessageNotification(successMessages.ADDED_NEW_RDI_INSTANCE(mockRdiInstance.name))
+          addMessageNotification(
+            successMessages.ADDED_NEW_RDI_INSTANCE(mockRdiInstance.name),
+          ),
         ]
 
-        expect(store.getActions()).toEqual(expect.arrayContaining(expectedActions))
+        expect(store.getActions()).toEqual(
+          expect.arrayContaining(expectedActions),
+        )
         expect(onSuccess).toBeCalledWith(mockRdiInstance)
       })
 
@@ -281,7 +303,7 @@ describe('rdi instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          createInstanceAction(mockRdiInstance, onSuccess, onFail)
+          createInstanceAction(mockRdiInstance, onSuccess, onFail),
         )
 
         // Assert
@@ -305,7 +327,7 @@ describe('rdi instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          editInstanceAction('123', mockRdiInstance, onSuccess)
+          editInstanceAction('123', mockRdiInstance, onSuccess),
         )
 
         // Assert
@@ -314,7 +336,9 @@ describe('rdi instances slice', () => {
           defaultInstanceChangingSuccess(),
         ]
 
-        expect(store.getActions()).toEqual(expect.arrayContaining(expectedActions))
+        expect(store.getActions()).toEqual(
+          expect.arrayContaining(expectedActions),
+        )
         expect(onSuccess).toBeCalledWith(mockRdiInstance)
       })
 
@@ -330,9 +354,7 @@ describe('rdi instances slice', () => {
         apiService.patch = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          editInstanceAction('123', mockRdiInstance)
-        )
+        await store.dispatch<any>(editInstanceAction('123', mockRdiInstance))
 
         // Assert
         const expectedActions = [
@@ -352,9 +374,7 @@ describe('rdi instances slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          checkConnectToRdiInstanceAction('123')
-        )
+        await store.dispatch<any>(checkConnectToRdiInstanceAction('123'))
 
         // Assert
         const expectedActions = [
@@ -383,7 +403,10 @@ describe('rdi instances slice', () => {
         const expectedActions = [
           setDefaultInstance(),
           setDefaultInstanceFailure(errorMessage),
-          addErrorNotification({ ...responsePayload, instanceId: '123' } as IAddInstanceErrorPayload),
+          addErrorNotification({
+            ...responsePayload,
+            instanceId: '123',
+          } as IAddInstanceErrorPayload),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

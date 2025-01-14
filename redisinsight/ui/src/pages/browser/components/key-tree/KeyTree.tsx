@@ -1,4 +1,9 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
@@ -18,7 +23,10 @@ import { Nullable, bufferToString, comboBoxToArray } from 'uiSrc/utils'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
-import { deleteKeyAction, selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import {
+  deleteKeyAction,
+  selectedKeyDataSelector,
+} from 'uiSrc/slices/browser/keys'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
@@ -33,7 +41,7 @@ export interface Props {
   selectKey: ({ rowData }: { rowData: any }) => void
   loadMoreItems: (
     oldKeys: IKeyPropTypes[],
-    { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
+    { startIndex, stopIndex }: { startIndex: number; stopIndex: number },
   ) => void
   onDelete: (key: RedisResponseBuffer) => void
   onAddKeyPanel: (value: boolean) => void
@@ -43,8 +51,10 @@ export const firstPanelId = 'tree'
 export const secondPanelId = 'keys'
 
 const parseKeyNames = (keys: GetKeyInfoResponse[]) =>
-  keys.map((item) =>
-    ({ ...item, nameString: item.nameString ?? bufferToString(item.name) }))
+  keys.map((item) => ({
+    ...item,
+    nameString: item.nameString ?? bufferToString(item.name),
+  }))
 
 const KeyTree = forwardRef((props: Props, ref) => {
   const {
@@ -60,26 +70,30 @@ const KeyTree = forwardRef((props: Props, ref) => {
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const { openNodes } = useSelector(appContextBrowserTree)
-  const { treeViewDelimiter, treeViewSort: sorting } = useSelector(appContextDbConfig)
-  const { nameString: selectedKeyName = null } = useSelector(selectedKeyDataSelector) ?? {}
+  const { treeViewDelimiter, treeViewSort: sorting } =
+    useSelector(appContextDbConfig)
+  const { nameString: selectedKeyName = null } =
+    useSelector(selectedKeyDataSelector) ?? {}
 
   const [statusOpen, setStatusOpen] = useState(openNodes)
   const [constructingTree, setConstructingTree] = useState(false)
-  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(!!keysState.keys.length)
-  const [items, setItems] = useState<IKeyPropTypes[]>(parseKeyNames(keysState.keys ?? []))
+  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(
+    !!keysState.keys.length,
+  )
+  const [items, setItems] = useState<IKeyPropTypes[]>(
+    parseKeyNames(keysState.keys ?? []),
+  )
 
   // escape regexp symbols and join and transform to regexp
   const delimiters = comboBoxToArray(treeViewDelimiter)
-  const delimiterPattern = delimiters
-    .map(escapeRegExp)
-    .join('|')
+  const delimiterPattern = delimiters.map(escapeRegExp).join('|')
 
   const dispatch = useDispatch()
 
   useImperativeHandle(ref, () => ({
     handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
       onLoadMoreItems(config)
-    }
+    },
   }))
 
   useEffect(() => {
@@ -94,7 +108,10 @@ const KeyTree = forwardRef((props: Props, ref) => {
   const openSelectedKey = (selectedKeyName: Nullable<string> = '') => {
     if (selectedKeyName) {
       const parts = selectedKeyName.split(delimiterPattern)
-      const parents = parts.map((_, index) => parts.slice(0, index + 1).join(delimiterPattern) + delimiterPattern)
+      const parents = parts.map(
+        (_, index) =>
+          parts.slice(0, index + 1).join(delimiterPattern) + delimiterPattern,
+      )
 
       // remove key name from parents
       parents.pop()
@@ -123,7 +140,10 @@ const KeyTree = forwardRef((props: Props, ref) => {
     openSelectedKey(selectedKeyName)
   }, [selectedKeyName])
 
-  const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
+  const onLoadMoreItems = (props: {
+    startIndex: number
+    stopIndex: number
+  }) => {
     const formattedAllKeys = parseKeyNames(keysState.keys)
     loadMoreItems?.(formattedAllKeys, props)
   }
@@ -154,9 +174,11 @@ const KeyTree = forwardRef((props: Props, ref) => {
   }
 
   const handleDeleteLeaf = (key: RedisResponseBuffer) => {
-    dispatch(deleteKeyAction(key, () => {
-      onDelete(key)
-    }))
+    dispatch(
+      deleteKeyAction(key, () => {
+        onDelete(key)
+      }),
+    )
   }
 
   const handleDeleteClicked = (type: KeyTypes | ModulesKeyTypes) => {
@@ -165,8 +187,8 @@ const KeyTree = forwardRef((props: Props, ref) => {
       eventData: {
         databaseId: instanceId,
         keyType: type,
-        source: 'keyList'
-      }
+        source: 'keyList',
+      },
     })
   }
 

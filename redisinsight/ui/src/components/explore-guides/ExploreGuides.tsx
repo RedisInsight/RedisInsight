@@ -28,8 +28,8 @@ const ExploreGuides = () => {
         databaseId: instanceId,
         tutorialId,
         provider,
-        source: 'empty browser'
-      }
+        source: 'empty browser',
+      },
     })
 
     const tutorialPath = findTutorialPath({ id: tutorialId ?? '' })
@@ -41,7 +41,9 @@ const ExploreGuides = () => {
       <EuiTitle size="xs">
         <span>Here&apos;s a good starting point</span>
       </EuiTitle>
-      <EuiText>Explore the amazing world of Redis Stack with our interactive guides</EuiText>
+      <EuiText>
+        Explore the amazing world of Redis Stack with our interactive guides
+      </EuiText>
       <EuiSpacer size="xl" />
       {!!data.length && (
         <div className={styles.guides}>

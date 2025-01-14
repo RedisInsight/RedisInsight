@@ -6,5 +6,5 @@ window.app = {
   ...window.app,
   config: {
     apiPort: `${defaultConfig.api.port}`,
-  }
+  },
 }

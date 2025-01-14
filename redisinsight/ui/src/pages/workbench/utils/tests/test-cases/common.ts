@@ -8,10 +8,10 @@ export const commonfindCurrentArgumentCases = [
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
+      token: expect.any(Object),
     },
     appendIncludes: ['WITHSCORES', 'VERBATIM', 'FILTER', 'SORTBY', 'RETURN'],
-    appendNotIncludes: ['DIALECT']
+    appendNotIncludes: ['DIALECT'],
   },
   {
     input: 'FT.AGGREGATE "idx:schools" "" GROUPBY 1 p REDUCE AVG 1 a1 AS name ',
@@ -21,25 +21,26 @@ export const commonfindCurrentArgumentCases = [
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
+      token: expect.any(Object),
     },
     appendIncludes: ['REDUCE', 'APPLY', 'SORTBY', 'GROUPBY'],
     appendNotIncludes: ['AS'],
   },
   {
-    input: 'FT.AGGREGATE \'idx1:vd\' "*" GROUPBY 1 @location REDUCE COUNT 0 AS item_count REDUCE SUM 1 @students ',
+    input:
+      'FT.AGGREGATE \'idx1:vd\' "*" GROUPBY 1 @location REDUCE COUNT 0 AS item_count REDUCE SUM 1 @students ',
     result: {
       stopArg: {
         name: 'name',
         optional: true,
         token: 'AS',
-        type: 'string'
+        type: 'string',
       },
       append: expect.any(Array),
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
+      token: expect.any(Object),
     },
     appendIncludes: ['AS', 'REDUCE', 'APPLY', 'SORTBY', 'GROUPBY'],
   },
@@ -51,7 +52,7 @@ export const commonfindCurrentArgumentCases = [
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
+      token: expect.any(Object),
     },
     appendIncludes: ['DIALECT', 'EXPANDER', 'INKEYS', 'LIMIT'],
     appendNotIncludes: ['ASC'],
@@ -63,7 +64,7 @@ export const commonfindCurrentArgumentCases = [
     appendNotIncludes: ['DIALECT'],
   },
   {
-    input: 'FT.PROFILE \'idx:schools\' SEARCH ',
+    input: "FT.PROFILE 'idx:schools' SEARCH ",
     result: expect.any(Object),
     appendIncludes: ['LIMITED', 'QUERY'],
     appendNotIncludes: ['AGGREGATE', 'SEARCH'],
@@ -75,7 +76,7 @@ export const commonfindCurrentArgumentCases = [
     appendNotIncludes: ['LIMITED', 'SEARCH'],
   },
   {
-    input: 'FT.PROFILE \'idx:schools\' SEARCH QUERY \'q\' ',
+    input: "FT.PROFILE 'idx:schools' SEARCH QUERY 'q' ",
     result: expect.any(Object),
     appendIncludes: [],
     appendNotIncludes: ['LIMITED'],
@@ -95,13 +96,26 @@ export const commonfindCurrentArgumentCases = [
   {
     input: 'FT.CREATE "idx:schools" ON JSON NOFREQS',
     result: expect.any(Object),
-    appendIncludes: ['TEMPORARY', 'NOFIELDS', 'PAYLOAD_FIELD', 'MAXTEXTFIELDS', 'PREFIX', 'SKIPINITIALSCAN'],
+    appendIncludes: [
+      'TEMPORARY',
+      'NOFIELDS',
+      'PAYLOAD_FIELD',
+      'MAXTEXTFIELDS',
+      'PREFIX',
+      'SKIPINITIALSCAN',
+    ],
     appendNotIncludes: ['ON', 'JSON', 'NOFREQS'],
   },
   {
     input: 'FT.CREATE "idx:schools" ON JSON NOFREQS SKIPINITIALSCAN',
     result: expect.any(Object),
-    appendIncludes: ['TEMPORARY', 'NOFIELDS', 'PAYLOAD_FIELD', 'MAXTEXTFIELDS', 'PREFIX'],
+    appendIncludes: [
+      'TEMPORARY',
+      'NOFIELDS',
+      'PAYLOAD_FIELD',
+      'MAXTEXTFIELDS',
+      'PREFIX',
+    ],
     appendNotIncludes: ['ON', 'JSON', 'NOFREQS', 'SKIPINITIALSCAN'],
   },
   {
@@ -112,20 +126,21 @@ export const commonfindCurrentArgumentCases = [
       isBlocked: false,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
+      token: expect.any(Object),
     },
     appendIncludes: ['AS', 'GEO', 'TEXT', 'VECTOR'],
     appendNotIncludes: ['SCHEMA', 'SCORE', 'NOHL'],
   },
   {
-    input: 'FT.CREATE "idx:schools" ON JSON SCHEMA address TEXT NOINDEX INDEXMISSING ',
+    input:
+      'FT.CREATE "idx:schools" ON JSON SCHEMA address TEXT NOINDEX INDEXMISSING ',
     result: {
       stopArg: expect.any(Object),
       append: expect.any(Array),
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
+      token: expect.any(Object),
     },
     appendIncludes: ['INDEXEMPTY', 'SORTABLE', 'WITHSUFFIXTRIE'],
     appendNotIncludes: ['SCHEMA', 'SCORE', 'NOHL'],
@@ -138,7 +153,7 @@ export const commonfindCurrentArgumentCases = [
       isBlocked: false,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
+      token: expect.any(Object),
     },
     appendIncludes: ['SCHEMA', 'SKIPINITIALSCAN'],
     appendNotIncludes: ['ADD'],
@@ -154,13 +169,13 @@ export const commonfindCurrentArgumentCases = [
     result: {
       stopArg: {
         name: 'option',
-        type: 'string'
+        type: 'string',
       },
       append: [],
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
+      token: expect.any(Object),
     },
     appendIncludes: [],
     appendNotIncludes: [expect.any(String)],
@@ -181,8 +196,8 @@ export const commonfindCurrentArgumentCases = [
       stopArg: {
         multiple: true,
         name: 'term',
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     appendIncludes: [],
   },
@@ -195,9 +210,9 @@ export const commonfindCurrentArgumentCases = [
       parent: expect.any(Object),
       stopArg: {
         name: 'score',
-        type: 'double'
+        type: 'double',
       },
-      token: expect.any(Object)
+      token: expect.any(Object),
     },
     appendIncludes: [],
   },
@@ -233,13 +248,28 @@ export const commonfindCurrentArgumentCases = [
   {
     input: 'FT.SEARCH index "" HIGHLIGHT FIELDS 1 f1 ',
     result: expect.any(Object),
-    appendIncludes: ['TAGS', 'SUMMARIZE', 'DIALECT', 'FILTER', 'WITHSCORES', 'INKEYS'],
+    appendIncludes: [
+      'TAGS',
+      'SUMMARIZE',
+      'DIALECT',
+      'FILTER',
+      'WITHSCORES',
+      'INKEYS',
+    ],
     appendNotIncludes: ['FIELDS'],
   },
   {
     input: 'FT.SEARCH index "*" SORTBY price ',
     result: expect.any(Object),
-    appendIncludes: ['ASC', 'DESC', 'FILTER', 'LIMIT', 'DIALECT', 'WITHSCORES', 'INFIELDS'],
+    appendIncludes: [
+      'ASC',
+      'DESC',
+      'FILTER',
+      'LIMIT',
+      'DIALECT',
+      'WITHSCORES',
+      'INFIELDS',
+    ],
     appendNotIncludes: ['SORTBY'],
   },
   {
@@ -265,7 +295,14 @@ export const commonfindCurrentArgumentCases = [
     input: 'FT.CREATE textVehicles ON ',
     result: expect.any(Object),
     appendIncludes: ['HASH', 'JSON'],
-    appendNotIncludes: ['SORTBY', 'FILTER', 'LIMIT', 'DIALECT', 'WITHSCORES', 'INFIELDS'],
+    appendNotIncludes: [
+      'SORTBY',
+      'FILTER',
+      'LIMIT',
+      'DIALECT',
+      'WITHSCORES',
+      'INFIELDS',
+    ],
   },
   {
     input: 'FT.CREATE textVehicles SCHEMA make ',
@@ -274,35 +311,37 @@ export const commonfindCurrentArgumentCases = [
     appendNotIncludes: ['FILTER', 'LIMIT', 'DIALECT', 'WITHSCORES', 'INFIELDS'],
   },
   {
-    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' APPLY \'test\' ',
+    input: "FT.AGGREGATE 'idx:articles' '@body:(term) ' APPLY 'test' ",
     result: expect.any(Object),
     appendIncludes: ['AS'],
     appendNotIncludes: ['REDUCE', 'APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
   },
   {
-    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' APPLY \'test\' AS test1',
+    input: "FT.AGGREGATE 'idx:articles' '@body:(term) ' APPLY 'test' AS test1",
     result: expect.any(Object),
     appendIncludes: ['APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
   },
   {
-    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' LOAD * ',
+    input: "FT.AGGREGATE 'idx:articles' '@body:(term) ' LOAD * ",
     result: expect.any(Object),
     appendIncludes: ['APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
   },
   {
-    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' SORTBY nargs property ',
+    input: "FT.AGGREGATE 'idx:articles' '@body:(term) ' SORTBY nargs property ",
     result: expect.any(Object),
     appendIncludes: ['ASC', 'DESC'],
     appendNotIncludes: ['REDUCE', 'APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
   },
   {
-    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' SORTBY nargs property ASC ',
+    input:
+      "FT.AGGREGATE 'idx:articles' '@body:(term) ' SORTBY nargs property ASC ",
     result: expect.any(Object),
     appendIncludes: ['MAX', 'APPLY', 'LOAD', 'GROUPBY'],
     appendNotIncludes: ['SORTBY'],
   },
   {
-    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' PARAMS 4 name1 value1 name2 value2 ',
+    input:
+      "FT.AGGREGATE 'idx:articles' '@body:(term) ' PARAMS 4 name1 value1 name2 value2 ",
     result: expect.any(Object),
     appendIncludes: ['APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
     appendNotIncludes: ['PARAMS', 'REDUCE'],
@@ -314,7 +353,7 @@ export const commonfindCurrentArgumentCases = [
     appendNotIncludes: ['SKIPINITIALSCAN', 'ADD', 'SCHEMA'],
   },
   {
-    input: 'FT.DROPINDEX \'vd\' ',
+    input: "FT.DROPINDEX 'vd' ",
     result: expect.any(Object),
     appendIncludes: ['DD'],
   },
@@ -322,13 +361,29 @@ export const commonfindCurrentArgumentCases = [
     input: 'FT.EXPLAIN index query ',
     result: expect.any(Object),
     appendIncludes: ['DIALECT'],
-    appendNotIncludes: ['SKIPINITIALSCAN', 'ADD', 'SCHEMA', 'APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
+    appendNotIncludes: [
+      'SKIPINITIALSCAN',
+      'ADD',
+      'SCHEMA',
+      'APPLY',
+      'LOAD',
+      'SORTBY',
+      'GROUPBY',
+    ],
   },
   {
     input: 'FT.EXPLAINCLI index query ',
     result: expect.any(Object),
     appendIncludes: ['DIALECT'],
-    appendNotIncludes: ['SKIPINITIALSCAN', 'ADD', 'SCHEMA', 'APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
+    appendNotIncludes: [
+      'SKIPINITIALSCAN',
+      'ADD',
+      'SCHEMA',
+      'APPLY',
+      'LOAD',
+      'SORTBY',
+      'GROUPBY',
+    ],
   },
   {
     input: 'FT.INFO index ',
@@ -337,21 +392,32 @@ export const commonfindCurrentArgumentCases = [
     appendNotIncludes: ['ADD', 'SCHEMA', 'APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
   },
   {
-    input: 'FT.PROFILE \'idx:schools\' ',
+    input: "FT.PROFILE 'idx:schools' ",
     result: expect.any(Object),
     appendIncludes: ['AGGREGATE', 'SEARCH'],
     appendNotIncludes: ['LIMITED'],
   },
   {
-    input: 'FT.SPELLCHECK \'idx:articles\' \'test\' DIALECT dialect DISTANCE distance TERMS ',
+    input:
+      "FT.SPELLCHECK 'idx:articles' 'test' DIALECT dialect DISTANCE distance TERMS ",
     result: expect.any(Object),
     appendIncludes: ['EXCLUDE', 'INCLUDE'],
     appendNotIncludes: ['DIALECT', 'DISTANCE', 'TERMS'],
   },
   {
-    input: 'FT.SYNUPDATE \'idx:products\' synonym_group_id ',
+    input: "FT.SYNUPDATE 'idx:products' synonym_group_id ",
     result: expect.any(Object),
     appendIncludes: ['SKIPINITIALSCAN'],
-    appendNotIncludes: ['DIALECT', 'DISTANCE', 'TERMS', 'INCLUDE', 'SCHEMA', 'APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
+    appendNotIncludes: [
+      'DIALECT',
+      'DISTANCE',
+      'TERMS',
+      'INCLUDE',
+      'SCHEMA',
+      'APPLY',
+      'LOAD',
+      'SORTBY',
+      'GROUPBY',
+    ],
   },
 ]

@@ -46,7 +46,7 @@ export class ZSetController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async createSet(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: CreateZSetWithExpireDto,
+    @Body() dto: CreateZSetWithExpireDto,
   ): Promise<void> {
     return await this.zSetService.createZSet(clientMetadata, dto);
   }
@@ -67,7 +67,7 @@ export class ZSetController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async getZSet(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetZSetMembersDto,
+    @Body() dto: GetZSetMembersDto,
   ): Promise<GetZSetResponse> {
     return await this.zSetService.getMembers(clientMetadata, dto);
   }
@@ -80,7 +80,7 @@ export class ZSetController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async addMembers(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: AddMembersToZSetDto,
+    @Body() dto: AddMembersToZSetDto,
   ): Promise<void> {
     return await this.zSetService.addMembers(clientMetadata, dto);
   }
@@ -93,7 +93,7 @@ export class ZSetController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async updateMember(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: UpdateMemberInZSetDto,
+    @Body() dto: UpdateMemberInZSetDto,
   ): Promise<void> {
     return await this.zSetService.updateMember(clientMetadata, dto);
   }
@@ -113,7 +113,7 @@ export class ZSetController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async deleteMembers(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DeleteMembersFromZSetDto,
+    @Body() dto: DeleteMembersFromZSetDto,
   ): Promise<DeleteMembersFromZSetResponse> {
     return await this.zSetService.deleteMembers(clientMetadata, dto);
   }
@@ -134,7 +134,7 @@ export class ZSetController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async searchZSet(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: SearchZSetMembersDto,
+    @Body() dto: SearchZSetMembersDto,
   ): Promise<SearchZSetMembersResponse> {
     return await this.zSetService.searchMembers(clientMetadata, dto);
   }

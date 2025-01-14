@@ -1,9 +1,18 @@
-import React, { MutableRefObject, Ref, useCallback, useEffect, useRef } from 'react'
+import React, {
+  MutableRefObject,
+  Ref,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react'
 import cx from 'classnames'
 
 import { EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
 import { throttle } from 'lodash'
-import { AiChatMessage, AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssistant'
+import {
+  AiChatMessage,
+  AiChatMessageType,
+} from 'uiSrc/slices/interfaces/aiAssistant'
 import { Nullable, scrollIntoView } from 'uiSrc/utils'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
@@ -37,7 +46,7 @@ const ChatHistory = (props: Props) => {
     history = [],
     onMessageRendered,
     onRunCommand,
-    onRestart
+    onRestart,
   } = props
 
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
@@ -59,7 +68,9 @@ const ChatHistory = (props: Props) => {
         // eslint-disable-next-line no-restricted-syntax
         for (const mutation of mutationsList) {
           if (mutation.type === 'childList') {
-            scrollBehavior.current === 'smooth' ? scrollToBottomThrottled() : scrollToBottom()
+            scrollBehavior.current === 'smooth'
+              ? scrollToBottomThrottled()
+              : scrollToBottom()
             break
           }
         }
@@ -87,34 +98,41 @@ const ChatHistory = (props: Props) => {
       })
     })
   }
-  const scrollToBottomThrottled = throttle(() => scrollToBottom('smooth'), SCROLL_THROTTLE_MS)
+  const scrollToBottomThrottled = throttle(
+    () => scrollToBottom('smooth'),
+    SCROLL_THROTTLE_MS,
+  )
 
-  const getMessage = useCallback((message?: Nullable<AiChatMessage>) => {
-    if (!message) return null
+  const getMessage = useCallback(
+    (message?: Nullable<AiChatMessage>) => {
+      if (!message) return null
 
-    const { id, content, error, type: messageType } = message
-    if (!content) return null
+      const { id, content, error, type: messageType } = message
+      if (!content) return null
 
-    return (
-      <React.Fragment key={id}>
-        <div
-          className={cx({
-            [styles.answerWrapper]: messageType === AiChatMessageType.AIMessage,
-            [styles.questionWrapper]: messageType === AiChatMessageType.HumanMessage,
-          })}
-        >
+      return (
+        <React.Fragment key={id}>
           <div
-            className={cx('jsx-markdown', {
-              [styles.answer]: messageType === AiChatMessageType.AIMessage,
-              [styles.question]: messageType === AiChatMessageType.HumanMessage,
-              [styles.error]: !!error
+            className={cx({
+              [styles.answerWrapper]:
+                messageType === AiChatMessageType.AIMessage,
+              [styles.questionWrapper]:
+                messageType === AiChatMessageType.HumanMessage,
             })}
-            data-testid={`ai-message-${messageType}_${id}`}
           >
-            {error && (<EuiIcon type="alert" className={styles.errorIcon} />)}
-            {messageType === AiChatMessageType.HumanMessage
-              ? content
-              : (
+            <div
+              className={cx('jsx-markdown', {
+                [styles.answer]: messageType === AiChatMessageType.AIMessage,
+                [styles.question]:
+                  messageType === AiChatMessageType.HumanMessage,
+                [styles.error]: !!error,
+              })}
+              data-testid={`ai-message-${messageType}_${id}`}
+            >
+              {error && <EuiIcon type="alert" className={styles.errorIcon} />}
+              {messageType === AiChatMessageType.HumanMessage ? (
+                content
+              ) : (
                 <MarkdownMessage
                   onRunCommand={onRunCommand}
                   onMessageRendered={onMessageRendered}
@@ -123,12 +141,14 @@ const ChatHistory = (props: Props) => {
                   {content}
                 </MarkdownMessage>
               )}
+            </div>
           </div>
-        </div>
-        <ErrorMessage error={error} onRestart={onRestart} />
-      </React.Fragment>
-    )
-  }, [modules])
+          <ErrorMessage error={error} onRestart={onRestart} />
+        </React.Fragment>
+      )
+    },
+    [modules],
+  )
 
   if (isLoading) {
     return (
@@ -159,12 +179,18 @@ const ChatHistory = (props: Props) => {
 
   return (
     <div className={styles.wrapper}>
-      <div ref={listRef} className={styles.history} data-testid="ai-chat-history">
+      <div
+        ref={listRef}
+        className={styles.history}
+        data-testid="ai-chat-history"
+      >
         {history.map(getMessage)}
         {getMessage(inProgressMessage)}
         {content === '' && (
           <div className={styles.answerWrapper}>
-            <div className={styles.answer} data-testid="ai-loading-answer"><LoadingMessage /></div>
+            <div className={styles.answer} data-testid="ai-loading-answer">
+              <LoadingMessage />
+            </div>
           </div>
         )}
         <div className={styles.scrollAnchor} ref={scrollDivRef} />

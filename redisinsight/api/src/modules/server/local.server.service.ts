@@ -40,7 +40,9 @@ export class LocalServerService extends ServerService {
   /**
    * @inheritDoc
    */
-  public async getInfo(sessionMetadata: SessionMetadata): Promise<GetServerInfoResponse> {
+  public async getInfo(
+    sessionMetadata: SessionMetadata,
+  ): Promise<GetServerInfoResponse> {
     this.logger.debug('Getting server info.', sessionMetadata);
     try {
       const info = await this.repository.getOrCreate(sessionMetadata);
@@ -56,7 +58,8 @@ export class LocalServerService extends ServerService {
         osPlatform: process.platform,
         buildType: SERVER_CONFIG.buildType,
         appType: ServerService.getAppType(SERVER_CONFIG.buildType),
-        encryptionStrategies: await this.encryptionService.getAvailableEncryptionStrategies(),
+        encryptionStrategies:
+          await this.encryptionService.getAvailableEncryptionStrategies(),
         fixedDatabaseId: REDIS_STACK_CONFIG?.id,
         packageType: ServerService.getPackageType(SERVER_CONFIG.buildType),
       };
@@ -64,7 +67,11 @@ export class LocalServerService extends ServerService {
       this.logger.debug('Succeed to get server info.', sessionMetadata);
       return result;
     } catch (error) {
-      this.logger.error('Failed to get application settings.', error, sessionMetadata);
+      this.logger.error(
+        'Failed to get application settings.',
+        error,
+        sessionMetadata,
+      );
       throw new InternalServerErrorException();
     }
   }

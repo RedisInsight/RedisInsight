@@ -4,7 +4,8 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
-  EuiText, EuiTextColor,
+  EuiText,
+  EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
 import React, { useEffect } from 'react'
@@ -39,7 +40,8 @@ const RedisCloudDatabasesResultPage = () => {
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const { data: instancesForOptions, dataAdded: instances } = useSelector(cloudSelector)
+  const { data: instancesForOptions, dataAdded: instances } =
+    useSelector(cloudSelector)
 
   setTitle('Redis Enterprise Databases Added')
 
@@ -129,7 +131,8 @@ const RedisCloudDatabasesResultPage = () => {
       dataType: 'string',
       sortable: true,
       truncateText: true,
-      render: (type: RedisCloudSubscriptionType) => RedisCloudSubscriptionTypeText[type] ?? '-',
+      render: (type: RedisCloudSubscriptionType) =>
+        RedisCloudSubscriptionTypeText[type] ?? '-',
     },
     {
       field: 'status',
@@ -179,7 +182,11 @@ const RedisCloudDatabasesResultPage = () => {
       width: '200px',
       sortable: true,
       render: function Modules(modules: any[], instance: InstanceRedisCloud) {
-        return <DatabaseListModules modules={instance.modules?.map((name) => ({ name }))} />
+        return (
+          <DatabaseListModules
+            modules={instance.modules?.map((name) => ({ name }))}
+          />
+        )
       },
     },
     {
@@ -193,7 +200,7 @@ const RedisCloudDatabasesResultPage = () => {
       render: function Opitions(opts: any[], instance: InstanceRedisCloud) {
         const options = parseInstanceOptionsCloud(
           instance.databaseId,
-          instancesForOptions
+          instancesForOptions,
         )
         return <DatabaseListOptions options={options} />
       },
@@ -208,7 +215,7 @@ const RedisCloudDatabasesResultPage = () => {
       sortable: true,
       render: function Message(
         messageAdded: string,
-        { statusAdded }: InstanceRedisCloud
+        { statusAdded }: InstanceRedisCloud,
       ) {
         return (
           <>
@@ -216,13 +223,20 @@ const RedisCloudDatabasesResultPage = () => {
               <EuiText>{messageAdded}</EuiText>
             ) : (
               <EuiToolTip position="left" title="Error" content={messageAdded}>
-                <EuiFlexGroup alignItems="center" gutterSize="s" responsive={false}>
+                <EuiFlexGroup
+                  alignItems="center"
+                  gutterSize="s"
+                  responsive={false}
+                >
                   <EuiFlexItem grow={false}>
                     <EuiIcon type="alert" color="danger" />
                   </EuiFlexItem>
 
                   <EuiFlexItem grow={false}>
-                    <EuiTextColor color="danger" className="flex-row euiTextAlign--center">
+                    <EuiTextColor
+                      color="danger"
+                      className="flex-row euiTextAlign--center"
+                    >
                       Error
                     </EuiTextColor>
                   </EuiFlexItem>

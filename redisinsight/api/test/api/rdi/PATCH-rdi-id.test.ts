@@ -1,27 +1,33 @@
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
 import {
-  describe, expect, deps, getMainCheckFn, generateInvalidDataTestCases,
+  describe,
+  expect,
+  deps,
+  getMainCheckFn,
+  generateInvalidDataTestCases,
   validateInvalidDataTestCase,
 } from '../deps';
 import { Joi, nock } from '../../helpers/test';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTestId';
 const testRdiUrl = 'http://rdilocal.test';
 const testRdiName = 'Test Rdi Name';
 const testRdiBase = { id: testRdiId, name: testRdiName, url: testRdiUrl };
 
-const endpoint = (id) => request(server).patch(`/${constants.API.RDI}/${id || testRdiId}`);
+const endpoint = (id) =>
+  request(server).patch(`/${constants.API.RDI}/${id || testRdiId}`);
 
-const dataSchema = Joi.object().keys({
-  name: Joi.string().max(500).allow(null),
-  username: Joi.string().allow(null),
-  password: Joi.string().allow(null),
-}).messages({ 'any.required': '{#label} should not be empty' }).strict(true);
+const dataSchema = Joi.object()
+  .keys({
+    name: Joi.string().max(500).allow(null),
+    username: Joi.string().allow(null),
+    password: Joi.string().allow(null),
+  })
+  .messages({ 'any.required': '{#label} should not be empty' })
+  .strict(true);
 
 const validInputData = {
   name: 'Updated Rdi',
@@ -29,20 +35,26 @@ const validInputData = {
   password: constants.TEST_KEYTAR_PASSWORD,
 };
 
-const responseSchema = Joi.object().keys({
-  id: Joi.string().required(),
-  url: Joi.string().required(),
-  name: Joi.string().max(500).required(),
-  username: Joi.string().required(),
-  password: Joi.string().required(),
-  lastConnection: Joi.string().isoDate().required(),
-  version: Joi.string().required(),
-}).required().strict(true);
+const responseSchema = Joi.object()
+  .keys({
+    id: Joi.string().required(),
+    url: Joi.string().required(),
+    name: Joi.string().max(500).required(),
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+    lastConnection: Joi.string().isoDate().required(),
+    version: Joi.string().required(),
+  })
+  .required()
+  .strict(true);
 
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 
 const mainCheckFn = getMainCheckFn(endpoint);
-const loginNock =   nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true)
+const loginNock = nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true);
 
 describe('PATCH /rdi/:id', () => {
   describe('Validation', () => {
@@ -97,7 +109,7 @@ describe('PATCH /rdi/:id', () => {
         before: () => {
           loginNock.reply(401, {
             message: 'Unauthorized',
-            detail: 'Unauthorized'
+            detail: 'Unauthorized',
           });
         },
       },

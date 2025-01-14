@@ -36,13 +36,16 @@ import { CommandsService } from 'src/modules/commands/commands.service';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
-import { CliOutputFormatterTypes, IOutputFormatterStrategy } from './output-formatter/output-formatter.interface';
+import {
+  CliOutputFormatterTypes,
+  IOutputFormatterStrategy,
+} from './output-formatter/output-formatter.interface';
 import { CliBusinessService } from './cli-business.service';
 
 jest.mock(
   'uuid',
   jest.fn(() => ({
-    ...jest.requireActual('uuid') as object,
+    ...(jest.requireActual('uuid') as object),
     v4: jest.fn().mockReturnValue('68df9760-b7fa-4300-9841-0b726e0d8b67'),
   })),
 );
@@ -91,11 +94,18 @@ describe('CliBusinessService', () => {
     }).compile();
 
     service = module.get<CliBusinessService>(CliBusinessService);
-    databaseClientFactory = module.get<DatabaseClientFactory>(DatabaseClientFactory);
+    databaseClientFactory = module.get<DatabaseClientFactory>(
+      DatabaseClientFactory,
+    );
     analyticsService = module.get(CliAnalyticsService);
-    recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
+    recommendationService = module.get<DatabaseRecommendationService>(
+      DatabaseRecommendationService,
+    );
 
-    clusterClient.nodes.mockReturnValue([mockStandaloneRedisClient, mockStandaloneRedisClient]);
+    clusterClient.nodes.mockReturnValue([
+      mockStandaloneRedisClient,
+      mockStandaloneRedisClient,
+    ]);
 
     const outputFormatterManager: OutputFormatterManager = get(
       service,
@@ -111,7 +121,9 @@ describe('CliBusinessService', () => {
 
   describe('getClient', () => {
     it('should successfully create new redis client', async () => {
-      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(standaloneClient);
+      databaseClientFactory.getOrCreateClient = jest
+        .fn()
+        .mockResolvedValue(standaloneClient);
 
       const result = await service.getClient(mockCliClientMetadata);
 
@@ -123,16 +135,20 @@ describe('CliBusinessService', () => {
     });
 
     it('should throw internal exception on getClient error', async () => {
-      databaseClientFactory.getOrCreateClient = jest.fn().mockRejectedValue(
-        new InternalServerErrorException(mockENotFoundMessage),
-      );
+      databaseClientFactory.getOrCreateClient = jest
+        .fn()
+        .mockRejectedValue(
+          new InternalServerErrorException(mockENotFoundMessage),
+        );
 
       try {
         await service.getClient(mockCliClientMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
-        expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
+        expect(
+          analyticsService.sendClientCreationFailedEvent,
+        ).toHaveBeenCalledWith(
           mockSessionMetadata,
           mockCliClientMetadata.databaseId,
           new InternalServerErrorException(mockENotFoundMessage),
@@ -141,16 +157,18 @@ describe('CliBusinessService', () => {
     });
 
     it('Should proxy EncryptionService errors on getClient', async () => {
-      databaseClientFactory.getOrCreateClient = jest.fn().mockRejectedValue(
-        new KeytarUnavailableException(),
-      );
+      databaseClientFactory.getOrCreateClient = jest
+        .fn()
+        .mockRejectedValue(new KeytarUnavailableException());
 
       try {
         await service.getClient(mockCliClientMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
-        expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
+        expect(
+          analyticsService.sendClientCreationFailedEvent,
+        ).toHaveBeenCalledWith(
           mockSessionMetadata,
           mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
@@ -162,7 +180,9 @@ describe('CliBusinessService', () => {
   describe('reCreateClient', () => {
     it('should successfully create new redis client', async () => {
       databaseClientFactory.deleteClient = jest.fn().mockResolvedValue(1);
-      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(standaloneClient);
+      databaseClientFactory.getOrCreateClient = jest
+        .fn()
+        .mockResolvedValue(standaloneClient);
 
       const result = await service.reCreateClient(mockCliClientMetadata);
 
@@ -175,16 +195,20 @@ describe('CliBusinessService', () => {
 
     it('should throw internal exception on reCreateClient', async () => {
       databaseClientFactory.deleteClient = jest.fn().mockResolvedValue(1);
-      databaseClientFactory.getOrCreateClient = jest.fn().mockRejectedValue(
-        new InternalServerErrorException(mockENotFoundMessage),
-      );
+      databaseClientFactory.getOrCreateClient = jest
+        .fn()
+        .mockRejectedValue(
+          new InternalServerErrorException(mockENotFoundMessage),
+        );
 
       try {
         await service.reCreateClient(mockCliClientMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
-        expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
+        expect(
+          analyticsService.sendClientCreationFailedEvent,
+        ).toHaveBeenCalledWith(
           mockSessionMetadata,
           mockCliClientMetadata.databaseId,
           new InternalServerErrorException(mockENotFoundMessage),
@@ -194,16 +218,18 @@ describe('CliBusinessService', () => {
 
     it('Should proxy EncryptionService errors on reCreateClient', async () => {
       databaseClientFactory.deleteClient = jest.fn().mockResolvedValue(1);
-      databaseClientFactory.getOrCreateClient = jest.fn().mockRejectedValue(
-        new KeytarUnavailableException(),
-      );
+      databaseClientFactory.getOrCreateClient = jest
+        .fn()
+        .mockRejectedValue(new KeytarUnavailableException());
 
       try {
         await service.reCreateClient(mockCliClientMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
-        expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
+        expect(
+          analyticsService.sendClientCreationFailedEvent,
+        ).toHaveBeenCalledWith(
           mockSessionMetadata,
           mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
@@ -227,9 +253,9 @@ describe('CliBusinessService', () => {
     });
 
     it('should throw internal exception on deleteClient', async () => {
-      databaseClientFactory.deleteClient = jest.fn().mockRejectedValue(
-        new Error(mockENotFoundMessage),
-      );
+      databaseClientFactory.deleteClient = jest
+        .fn()
+        .mockRejectedValue(new Error(mockENotFoundMessage));
 
       try {
         await service.deleteClient(mockCliClientMetadata);
@@ -365,9 +391,7 @@ describe('CliBusinessService', () => {
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockCliClientMetadata.databaseId,
-        new CommandParsingError(
-          ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
-        ),
+        new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES()),
         {
           command: unknownCommand,
           outputFormat: CliOutputFormatterTypes.Raw,
@@ -427,7 +451,9 @@ describe('CliBusinessService', () => {
 
     it('Should proxy EncryptionService errors for sendCommand', async () => {
       const dto: SendCommandDto = { command: 'get key' };
-      standaloneClient.sendCommand.mockRejectedValue(new KeytarUnavailableException());
+      standaloneClient.sendCommand.mockRejectedValue(
+        new KeytarUnavailableException(),
+      );
 
       try {
         await service.sendCommand(mockCliClientMetadata, dto);
@@ -486,7 +512,9 @@ describe('CliBusinessService', () => {
 
   describe('sendClusterCommand', () => {
     beforeEach(async () => {
-      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(clusterClient);
+      databaseClientFactory.getOrCreateClient = jest
+        .fn()
+        .mockResolvedValue(clusterClient);
     });
 
     it('should successfully execute command (RAW format)', async () => {
@@ -582,9 +610,7 @@ describe('CliBusinessService', () => {
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockCliClientMetadata.databaseId,
-        new CommandParsingError(
-          ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
-        ),
+        new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES()),
         {
           command: unknownCommand,
           outputFormat: CliOutputFormatterTypes.Raw,
@@ -644,7 +670,9 @@ describe('CliBusinessService', () => {
 
     it('Should proxy EncryptionService errors for sendCommand', async () => {
       const dto: SendCommandDto = { command: 'get key' };
-      clusterClient.sendCommand.mockRejectedValue(new KeytarUnavailableException());
+      clusterClient.sendCommand.mockRejectedValue(
+        new KeytarUnavailableException(),
+      );
 
       try {
         await service.sendCommand(mockCliClientMetadata, dto);

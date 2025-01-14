@@ -61,7 +61,9 @@ describe('ZSetService', () => {
     }).compile();
 
     service = module.get<ZSetService>(ZSetService);
-    recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
+    recommendationService = module.get<DatabaseRecommendationService>(
+      DatabaseRecommendationService,
+    );
     client.sendCommand = jest.fn().mockResolvedValue(undefined);
   });
 
@@ -117,7 +119,12 @@ describe('ZSetService', () => {
         command: 'ZADD',
       };
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([BrowserToolZSetCommands.ZAdd, expect.anything()]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolZSetCommands.ZAdd,
+            expect.anything(),
+          ]),
+        )
         .mockRejectedValue(replyError);
 
       await expect(
@@ -174,11 +181,22 @@ describe('ZSetService', () => {
     });
     it('get members sorted in asc', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolZSetCommands.ZRange,
-          expect.anything(),
-        ]))
-        .mockResolvedValue(['member1', '-inf', 'member2', '0', 'member3', '2', 'member4', 'inf']);
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolZSetCommands.ZRange,
+            expect.anything(),
+          ]),
+        )
+        .mockResolvedValue([
+          'member1',
+          '-inf',
+          'member2',
+          '0',
+          'member3',
+          '2',
+          'member4',
+          'inf',
+        ]);
 
       const result = await service.getMembers(
         mockBrowserClientMetadata,
@@ -188,11 +206,22 @@ describe('ZSetService', () => {
     });
     it('get members sorted in desc', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolZSetCommands.ZRevRange,
-          expect.anything(),
-        ]))
-        .mockResolvedValue(['member4', 'inf', 'member3', '2', 'member2', '0', 'member1', '-inf']);
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolZSetCommands.ZRevRange,
+            expect.anything(),
+          ]),
+        )
+        .mockResolvedValue([
+          'member4',
+          'inf',
+          'member3',
+          '2',
+          'member2',
+          '0',
+          'member1',
+          '-inf',
+        ]);
 
       const result = await service.getMembers(mockBrowserClientMetadata, {
         ...mockGetMembersDto,
@@ -202,11 +231,22 @@ describe('ZSetService', () => {
     });
     it('should call recommendationService', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolZSetCommands.ZRevRange,
-          expect.anything(),
-        ]))
-        .mockResolvedValue(['member4', 'inf', 'member3', '2', 'member2', '0', 'member1', '-inf']);
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolZSetCommands.ZRevRange,
+            expect.anything(),
+          ]),
+        )
+        .mockResolvedValue([
+          'member4',
+          'inf',
+          'member3',
+          '2',
+          'member2',
+          '0',
+          'member1',
+          '-inf',
+        ]);
 
       const result = await service.getMembers(mockBrowserClientMetadata, {
         ...mockGetMembersDto,
@@ -262,7 +302,11 @@ describe('ZSetService', () => {
     it('succeed to add members to the ZSet data type', async () => {
       const { keyName } = mockAddMembersDto;
       when(client.sendCommand)
-        .calledWith([BrowserToolZSetCommands.ZAdd, keyName, ...mockMembersForZAddCommand])
+        .calledWith([
+          BrowserToolZSetCommands.ZAdd,
+          keyName,
+          ...mockMembersForZAddCommand,
+        ])
         .mockResolvedValue(mockAddMembersDto.members.length);
 
       await expect(
@@ -289,10 +333,12 @@ describe('ZSetService', () => {
         command: 'ZADD',
       };
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolZSetCommands.ZAdd,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolZSetCommands.ZAdd,
+            expect.anything(),
+          ]),
+        )
         .mockRejectedValue(replyError);
 
       await expect(
@@ -313,9 +359,11 @@ describe('ZSetService', () => {
   });
 
   describe('updateMember', () => {
-    beforeEach(() => when(client.sendCommand)
-      .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersDto.keyName])
-      .mockResolvedValue(1));
+    beforeEach(() =>
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersDto.keyName])
+        .mockResolvedValue(1),
+    );
 
     it('succeed to update member in key', async () => {
       const { keyName, member } = mockUpdateMemberDto;
@@ -371,10 +419,12 @@ describe('ZSetService', () => {
         command: 'ZADD',
       };
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolZSetCommands.ZAdd,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolZSetCommands.ZAdd,
+            expect.anything(),
+          ]),
+        )
         .mockRejectedValue(replyError);
 
       await expect(
@@ -397,7 +447,10 @@ describe('ZSetService', () => {
   describe('deleteMembers', () => {
     beforeEach(() => {
       when(client.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockDeleteMembersDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockDeleteMembersDto.keyName,
+        ])
         .mockResolvedValue(1);
     });
     it('succeeded to delete members from ZSet data type', async () => {
@@ -434,10 +487,12 @@ describe('ZSetService', () => {
         command: 'ZREM',
       };
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolZSetCommands.ZRem,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolZSetCommands.ZRem,
+            expect.anything(),
+          ]),
+        )
         .mockRejectedValue(replyError);
 
       await expect(
@@ -460,26 +515,36 @@ describe('ZSetService', () => {
   describe('searchMembers', () => {
     beforeEach(() => {
       when(client.sendCommand)
-        .calledWith([BrowserToolZSetCommands.ZCard, mockSearchMembersDto.keyName])
+        .calledWith([
+          BrowserToolZSetCommands.ZCard,
+          mockSearchMembersDto.keyName,
+        ])
         .mockResolvedValue(mockAddMembersDto.members.length);
     });
     it('succeeded to search members in ZSet data type', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolZSetCommands.ZScan,
-          expect.anything(),
-        ]))
-        .mockResolvedValue([0, ['member1', '-inf', 'member2', '0', 'member3', '2', 'member4', 'inf']]);
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolZSetCommands.ZScan,
+            expect.anything(),
+          ]),
+        )
+        .mockResolvedValue([
+          0,
+          ['member1', '-inf', 'member2', '0', 'member3', '2', 'member4', 'inf'],
+        ]);
 
       const result = await service.searchMembers(
         mockBrowserClientMetadata,
         mockSearchMembersDto,
       );
       await expect(result).toEqual(mockSearchZSetMembersResponse);
-      expect(client.sendCommand).toHaveBeenCalledWith(expect.arrayContaining([
-        BrowserToolZSetCommands.ZScan,
-        expect.anything(),
-      ]));
+      expect(client.sendCommand).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          BrowserToolZSetCommands.ZScan,
+          expect.anything(),
+        ]),
+      );
     });
     it('succeed to find exact member in the z-set', async () => {
       const item = { name: Buffer.from('member'), score: 2 };
@@ -491,7 +556,10 @@ describe('ZSetService', () => {
         .calledWith([BrowserToolZSetCommands.ZScore, dto.keyName, dto.match])
         .mockResolvedValue(item.score);
 
-      const result = await service.searchMembers(mockBrowserClientMetadata, dto);
+      const result = await service.searchMembers(
+        mockBrowserClientMetadata,
+        dto,
+      );
 
       expect(result).toEqual({
         ...mockSearchZSetMembersResponse,
@@ -511,7 +579,10 @@ describe('ZSetService', () => {
         .calledWith([BrowserToolZSetCommands.ZScore, dto.keyName, dto.match])
         .mockResolvedValue(null);
 
-      const result = await service.searchMembers(mockBrowserClientMetadata, dto);
+      const result = await service.searchMembers(
+        mockBrowserClientMetadata,
+        dto,
+      );
 
       expect(result).toEqual({ ...mockSearchZSetMembersResponse, members: [] });
     });
@@ -523,10 +594,17 @@ describe('ZSetService', () => {
         match: mockMatch,
       };
       when(client.sendCommand)
-        .calledWith([BrowserToolZSetCommands.ZScore, dto.keyName, mockSpecialMember.toString()])
+        .calledWith([
+          BrowserToolZSetCommands.ZScore,
+          dto.keyName,
+          mockSpecialMember.toString(),
+        ])
         .mockResolvedValue(1);
 
-      const result = await service.searchMembers(mockBrowserClientMetadata, dto);
+      const result = await service.searchMembers(
+        mockBrowserClientMetadata,
+        dto,
+      );
 
       expect(result).toEqual({
         ...mockSearchZSetMembersResponse,
@@ -561,7 +639,10 @@ describe('ZSetService', () => {
     // });
     it('key with this name does not exist for searchMembers', async () => {
       when(client.sendCommand)
-        .calledWith([BrowserToolZSetCommands.ZCard, mockSearchMembersDto.keyName])
+        .calledWith([
+          BrowserToolZSetCommands.ZCard,
+          mockSearchMembersDto.keyName,
+        ])
         .mockResolvedValue(0);
 
       await expect(

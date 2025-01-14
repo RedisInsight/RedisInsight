@@ -25,7 +25,9 @@ export class CloudCapiProvider {
    * @param credentials
    * @private
    */
-  static getHeaders(credentials: ICloudCapiCredentials): { headers: Record<string, string> } {
+  static getHeaders(credentials: ICloudCapiCredentials): {
+    headers: Record<string, string>;
+  } {
     return {
       headers: {
         'x-api-key': credentials?.capiKey,

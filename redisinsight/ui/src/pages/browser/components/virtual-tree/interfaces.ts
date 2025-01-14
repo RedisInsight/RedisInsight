@@ -14,23 +14,23 @@ export interface TreeNode {
 }
 
 export interface NodeMeta {
-  nestingLevel: number;
-  node: TreeNode;
+  nestingLevel: number
+  node: TreeNode
   data: NodeMetaData
 }
 
 export interface NodeMetaData {
-  id: string,
-  isLeaf: boolean,
-  keyCount: number,
-  name: string,
-  fullName: string,
-  updateStatusSelected: (fullName: string, keys: any) => void,
-  updateStatusOpen: (name: string, value: boolean) => void,
-  leafIcon: string,
-  keyApproximate: number,
-  isSelected: boolean,
-  isOpenByDefault: boolean,
+  id: string
+  isLeaf: boolean
+  keyCount: number
+  name: string
+  fullName: string
+  updateStatusSelected: (fullName: string, keys: any) => void
+  updateStatusOpen: (name: string, value: boolean) => void
+  leafIcon: string
+  keyApproximate: number
+  isSelected: boolean
+  isOpenByDefault: boolean
 }
 
 export interface TreeData extends FixedSizeNodeData {

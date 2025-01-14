@@ -25,7 +25,9 @@ export interface Props {
 }
 
 export const getDefaultSizes = () => {
-  const storedSizes = localStorageService.get(BrowserStorageItem.cliResizableContainer)
+  const storedSizes = localStorageService.get(
+    BrowserStorageItem.cliResizableContainer,
+  )
 
   return (
     storedSizes || {
@@ -42,16 +44,19 @@ const InstancePageTemplate = (props: Props) => {
   const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
   const { isShowMonitor } = useSelector(monitorSelector)
 
-  useEffect(() => () => {
-    setSizes((prevSizes: ResizablePanelSize) => {
-      localStorageService.set(BrowserStorageItem.cliResizableContainer, {
-        [firstPanelId]: prevSizes[firstPanelId],
-        // partially fix elastic resizable issue with zooming
-        [secondPanelId]: 100 - prevSizes[firstPanelId],
+  useEffect(
+    () => () => {
+      setSizes((prevSizes: ResizablePanelSize) => {
+        localStorageService.set(BrowserStorageItem.cliResizableContainer, {
+          [firstPanelId]: prevSizes[firstPanelId],
+          // partially fix elastic resizable issue with zooming
+          [secondPanelId]: 100 - prevSizes[firstPanelId],
+        })
+        return prevSizes
       })
-      return prevSizes
-    })
-  }, [])
+    },
+    [],
+  )
 
   const onPanelWidthChange = useCallback((newSizes: any) => {
     setSizes((prevSizes: any) => ({
@@ -67,7 +72,9 @@ const InstancePageTemplate = (props: Props) => {
       <EuiResizableContainer
         direction="vertical"
         onPanelWidthChange={onPanelWidthChange}
-        className={cx(styles.resizableContainer, { 'show-cli': isShowBottomGroup })}
+        className={cx(styles.resizableContainer, {
+          'show-cli': isShowBottomGroup,
+        })}
       >
         {(EuiResizablePanel, EuiResizableButton) => (
           <>
@@ -77,15 +84,20 @@ const InstancePageTemplate = (props: Props) => {
               minSize="55px"
               paddingSize="none"
               size={isShowBottomGroup ? sizes[firstPanelId] : 100}
-              wrapperProps={{ className: cx(styles.panelTop, { [styles.mainComponent]: !isShowBottomGroup }) }}
+              wrapperProps={{
+                className: cx(styles.panelTop, {
+                  [styles.mainComponent]: !isShowBottomGroup,
+                }),
+              }}
               data-testid={firstPanelId}
             >
-              <ExplorePanelTemplate>
-                {children}
-              </ExplorePanelTemplate>
+              <ExplorePanelTemplate>{children}</ExplorePanelTemplate>
             </EuiResizablePanel>
 
-            <EuiResizableButton className={styles.resizableButton} data-test-subj="resize-btn-browser-cli" />
+            <EuiResizableButton
+              className={styles.resizableButton}
+              data-test-subj="resize-btn-browser-cli"
+            />
 
             <EuiResizablePanel
               id={secondPanelId}

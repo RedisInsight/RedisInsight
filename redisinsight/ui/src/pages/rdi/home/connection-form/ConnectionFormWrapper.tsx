@@ -13,13 +13,20 @@ export interface Props extends ConnectionFormProps {
 
 const ConnectionFormWrapper = (props: Props) => {
   const { isOpen, onCancel } = props
-  const [modalHeader, setModalHeader] = useState<Nullable<React.ReactNode>>(null)
+  const [modalHeader, setModalHeader] =
+    useState<Nullable<React.ReactNode>>(null)
 
   return (
     <FormDialog
       isOpen={isOpen}
       onClose={onCancel}
-      header={modalHeader ?? (<EuiTitle size="s"><h4>Add endpoint</h4></EuiTitle>)}
+      header={
+        modalHeader ?? (
+          <EuiTitle size="s">
+            <h4>Add endpoint</h4>
+          </EuiTitle>
+        )
+      }
       footer={<div id="footerDatabaseForm" />}
     >
       <div className={styles.bodyWrapper}>

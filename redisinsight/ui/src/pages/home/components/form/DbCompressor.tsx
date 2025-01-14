@@ -3,7 +3,8 @@ import {
   EuiCheckbox,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow, EuiSpacer,
+  EuiFormRow,
+  EuiSpacer,
   EuiSuperSelect,
   EuiSuperSelectOption,
   htmlIdGenerator,
@@ -44,24 +45,23 @@ const DbCompressor = (props: Props) => {
     },
     {
       value: KeyValueCompressor.Brotli,
-      inputDisplay: 'Brotli'
+      inputDisplay: 'Brotli',
     },
     {
       value: KeyValueCompressor.PHPGZCompress,
-      inputDisplay: 'PHP GZCompress'
+      inputDisplay: 'PHP GZCompress',
     },
   ]
 
-  const handleChangeDbCompressorCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleChangeDbCompressorCheckbox = (
+    e: ChangeEvent<HTMLInputElement>,
+  ): void => {
     const isChecked = e.target.checked
     if (!isChecked) {
       // Reset db field to initial value
       formik.setFieldValue('compressor', NONE)
     }
-    formik.setFieldValue(
-      'showCompressor',
-      isChecked
-    )
+    formik.setFieldValue('showCompressor', isChecked)
   }
 
   return (
@@ -90,15 +90,10 @@ const DbCompressor = (props: Props) => {
                 <EuiSuperSelect
                   name="compressor"
                   placeholder="Decompression format"
-                  valueOfSelected={
-                    formik.values.compressor ?? NONE
-                  }
+                  valueOfSelected={formik.values.compressor ?? NONE}
                   options={optionsCompressor}
                   onChange={(value) => {
-                    formik.setFieldValue(
-                      'compressor',
-                      value || NONE
-                    )
+                    formik.setFieldValue('compressor', value || NONE)
                   }}
                   data-testid="select-compressor"
                 />

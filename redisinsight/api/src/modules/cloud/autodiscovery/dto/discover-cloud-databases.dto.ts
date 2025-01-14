@@ -1,11 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  ArrayNotEmpty, IsArray, ValidateNested,
-} from 'class-validator';
+import { ArrayNotEmpty, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import {
-  GetCloudSubscriptionDatabasesDto,
-} from 'src/modules/cloud/database/dto/get-cloud-subscription-databases.dto';
+import { GetCloudSubscriptionDatabasesDto } from 'src/modules/cloud/database/dto/get-cloud-subscription-databases.dto';
 
 export class DiscoverCloudDatabasesDto {
   @ApiProperty({

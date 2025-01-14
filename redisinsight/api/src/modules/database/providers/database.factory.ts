@@ -1,6 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
+import {
+  ConnectionType,
+  HostingProvider,
+} from 'src/modules/database/entities/database.entity';
 import { catchRedisConnectionError, getHostingProvider } from 'src/utils';
 import { Database } from 'src/modules/database/models/database';
 import { ClientContext, SessionMetadata } from 'src/common/models';
@@ -9,9 +12,15 @@ import { DatabaseInfoProvider } from 'src/modules/database/providers/database-in
 import { RedisErrorCodes } from 'src/constants';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
-import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import {
-  discoverClusterNodes, discoverSentinelMasterGroups, isCluster, isSentinel,
+  IRedisConnectionOptions,
+  RedisClientFactory,
+} from 'src/modules/redis/redis.client.factory';
+import {
+  discoverClusterNodes,
+  discoverSentinelMasterGroups,
+  isCluster,
+  isSentinel,
 } from 'src/modules/redis/utils';
 import { RedisClient } from 'src/modules/redis/client';
 
@@ -39,15 +48,17 @@ export class DatabaseFactory {
   ): Promise<Database> {
     let model = await this.createStandaloneDatabaseModel(database);
 
-    const client = await this.redisClientFactory.getConnectionStrategy().createStandaloneClient(
-      {
-        sessionMetadata,
-        databaseId: database.id || uuidv4(), // we assume that if no database id defined we are in creation process
-        context: ClientContext.Common,
-      },
-      database,
-      { ...options, useRetry: true },
-    );
+    const client = await this.redisClientFactory
+      .getConnectionStrategy()
+      .createStandaloneClient(
+        {
+          sessionMetadata,
+          databaseId: database.id || uuidv4(), // we assume that if no database id defined we are in creation process
+          context: ClientContext.Common,
+        },
+        database,
+        { ...options, useRetry: true },
+      );
 
     if (!HostingProvider[model.provider]) {
       model.provider = await getHostingProvider(client, model.host);
@@ -57,13 +68,23 @@ export class DatabaseFactory {
       if (!database.sentinelMaster) {
         throw new Error(RedisErrorCodes.SentinelParamsRequired);
       }
-      model = await this.createSentinelDatabaseModel(sessionMetadata, database, client);
+      model = await this.createSentinelDatabaseModel(
+        sessionMetadata,
+        database,
+        client,
+      );
     } else if (await isCluster(client)) {
-      model = await this.createClusterDatabaseModel(sessionMetadata, database, client);
+      model = await this.createClusterDatabaseModel(
+        sessionMetadata,
+        database,
+        client,
+      );
     }
 
-    model.modules = await this.databaseInfoProvider.determineDatabaseModules(client);
-    model.version = await this.databaseInfoProvider.determineDatabaseServer(client);
+    model.modules =
+      await this.databaseInfoProvider.determineDatabaseModules(client);
+    model.version =
+      await this.databaseInfoProvider.determineDatabaseServer(client);
     model.lastConnection = new Date();
 
     await client.disconnect();
@@ -90,7 +111,9 @@ export class DatabaseFactory {
 
     // fetch client cert if needed to be able to connect
     if (model.clientCert?.id) {
-      model.clientCert = await this.clientCertificateService.get(model.clientCert?.id);
+      model.clientCert = await this.clientCertificateService.get(
+        model.clientCert?.id,
+      );
     }
 
     return model;
@@ -114,15 +137,17 @@ export class DatabaseFactory {
 
       model.nodes = await discoverClusterNodes(client);
 
-      const clusterClient = await this.redisClientFactory.getConnectionStrategy().createClusterClient(
-        {
-          sessionMetadata,
-          databaseId: model.id || uuidv4(), // we assume that if no database id defined we are in creation process
-          context: ClientContext.Common,
-        },
-        model,
-        { useRetry: true },
-      );
+      const clusterClient = await this.redisClientFactory
+        .getConnectionStrategy()
+        .createClusterClient(
+          {
+            sessionMetadata,
+            databaseId: model.id || uuidv4(), // we assume that if no database id defined we are in creation process
+            context: ClientContext.Common,
+          },
+          model,
+          { useRetry: true },
+        );
 
       model.connectionType = ConnectionType.CLUSTER;
 
@@ -161,15 +186,17 @@ export class DatabaseFactory {
         );
       }
 
-      const sentinelClient = await this.redisClientFactory.getConnectionStrategy().createSentinelClient(
-        {
-          sessionMetadata,
-          databaseId: model.id || uuidv4(), // we assume that if no database id defined we are in creation process
-          context: ClientContext.Common,
-        },
-        model,
-        { useRetry: true },
-      );
+      const sentinelClient = await this.redisClientFactory
+        .getConnectionStrategy()
+        .createSentinelClient(
+          {
+            sessionMetadata,
+            databaseId: model.id || uuidv4(), // we assume that if no database id defined we are in creation process
+            context: ClientContext.Common,
+          },
+          model,
+          { useRetry: true },
+        );
 
       model.connectionType = ConnectionType.SENTINEL;
       model.nodes = selectedMaster.nodes;
@@ -177,7 +204,11 @@ export class DatabaseFactory {
 
       return model;
     } catch (error) {
-      this.logger.error('Failed to create database sentinel model.', error, sessionMetadata);
+      this.logger.error(
+        'Failed to create database sentinel model.',
+        error,
+        sessionMetadata,
+      );
       throw catchRedisConnectionError(error, database);
     }
   }

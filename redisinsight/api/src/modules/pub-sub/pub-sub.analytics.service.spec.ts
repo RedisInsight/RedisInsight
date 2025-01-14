@@ -15,10 +15,7 @@ describe('PubSubAnalyticsService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        PubSubAnalyticsService,
-      ],
+      providers: [EventEmitter2, PubSubAnalyticsService],
     }).compile();
 
     service = module.get<PubSubAnalyticsService>(PubSubAnalyticsService);
@@ -49,11 +46,9 @@ describe('PubSubAnalyticsService', () => {
 
   describe('sendChannelSubscribeEvent', () => {
     it('should emit sendChannelSubscribe event for all channels', () => {
-      service.sendChannelSubscribeEvent(
-        mockSessionMetadata,
-        instanceId,
-        [{ channel: '*', type: SubscriptionType.Subscribe }],
-      );
+      service.sendChannelSubscribeEvent(mockSessionMetadata, instanceId, [
+        { channel: '*', type: SubscriptionType.Subscribe },
+      ]);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -66,11 +61,9 @@ describe('PubSubAnalyticsService', () => {
     });
 
     it('should emit sendChannelSubscribe event not for all channels', () => {
-      service.sendChannelSubscribeEvent(
-        mockSessionMetadata,
-        instanceId,
-        [{ channel: '1', type: SubscriptionType.Subscribe }],
-      );
+      service.sendChannelSubscribeEvent(mockSessionMetadata, instanceId, [
+        { channel: '1', type: SubscriptionType.Subscribe },
+      ]);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -85,10 +78,7 @@ describe('PubSubAnalyticsService', () => {
 
   describe('sendChannelUnsubscribeEvent', () => {
     it('should emit sendChannelUnsubscribe event', () => {
-      service.sendChannelUnsubscribeEvent(
-        mockSessionMetadata,
-        instanceId,
-      );
+      service.sendChannelUnsubscribeEvent(mockSessionMetadata, instanceId);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,

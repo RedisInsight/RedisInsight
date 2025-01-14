@@ -4,8 +4,7 @@ import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-e
 import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.entity';
 import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
 import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/database-analysis.entity';
-import { DatabaseRecommendationEntity }
-  from 'src/modules/database-recommendation/entities/database-recommendation.entity';
+import { DatabaseRecommendationEntity } from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { DataSource } from 'typeorm';
 import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
 import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
@@ -58,5 +57,6 @@ const ormConfig = {
   migrations,
 };
 
-export const ormModuleOptions: TypeOrmModuleOptions = ormConfig as TypeOrmModuleOptions;
+export const ormModuleOptions: TypeOrmModuleOptions =
+  ormConfig as TypeOrmModuleOptions;
 export default new DataSource({ ...ormConfig, type: 'sqlite' });

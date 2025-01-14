@@ -1,8 +1,6 @@
 import { KeyDto } from 'src/modules/browser/keys/dto';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEnum, IsInt, IsNotEmpty, Min,
-} from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { SortOrder } from 'src/constants';
 
@@ -34,8 +32,8 @@ export class GetZSetMembersDto extends KeyDto {
 
   @ApiProperty({
     description:
-      'Get elements sorted by score.'
-      + ' In order to sort the members from the highest to the lowest score, use the DESC value, else ASC value',
+      'Get elements sorted by score.' +
+      ' In order to sort the members from the highest to the lowest score, use the DESC value, else ASC value',
     default: SortOrder.Desc,
     enum: SortOrder,
   })

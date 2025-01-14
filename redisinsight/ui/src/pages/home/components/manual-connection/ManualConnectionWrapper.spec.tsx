@@ -2,15 +2,12 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { act } from '@testing-library/react'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import {
-  SubmitBtnText,
-} from 'uiSrc/pages/home/constants'
-import ManualConnectionFrom, { Props as ManualConnectionFromProps } from
-  'uiSrc/pages/home/components/manual-connection/manual-connection-form/ManualConnectionForm'
+import { SubmitBtnText } from 'uiSrc/pages/home/constants'
+import ManualConnectionFrom, {
+  Props as ManualConnectionFromProps,
+} from 'uiSrc/pages/home/components/manual-connection/manual-connection-form/ManualConnectionForm'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import ManualConnectionWrapper, {
-  Props,
-} from './ManualConnectionWrapper'
+import ManualConnectionWrapper, { Props } from './ManualConnectionWrapper'
 
 const mockedProps = mock<Props>()
 
@@ -64,31 +61,39 @@ describe('ManualConnectionWrapper', () => {
   })
   it('should render', () => {
     expect(
-      render(<ManualConnectionWrapper {...instance(mockedProps)} />)
+      render(<ManualConnectionWrapper {...instance(mockedProps)} />),
     ).toBeTruthy()
   })
 
   it('should call onHostNamePaste', () => {
-    const component = render(<ManualConnectionWrapper {...instance(mockedProps)} />)
+    const component = render(
+      <ManualConnectionWrapper {...instance(mockedProps)} />,
+    )
     fireEvent.click(screen.getByTestId('onHostNamePaste-btn'))
     expect(component).toBeTruthy()
   })
 
   it('should call onClose', () => {
     const onClose = jest.fn()
-    render(<ManualConnectionWrapper {...instance(mockedProps)} onClose={onClose} />)
+    render(
+      <ManualConnectionWrapper {...instance(mockedProps)} onClose={onClose} />,
+    )
     fireEvent.click(screen.getByTestId('onClose-btn'))
     expect(onClose).toBeCalled()
   })
 
   it('should have add database submit button', () => {
     render(<ManualConnectionWrapper {...instance(mockedProps)} />)
-    expect(screen.getByTestId('btn-submit')).toHaveTextContent(SubmitBtnText.AddDatabase)
+    expect(screen.getByTestId('btn-submit')).toHaveTextContent(
+      SubmitBtnText.AddDatabase,
+    )
   })
 
   it('should have edit database submit button', () => {
     render(<ManualConnectionWrapper {...instance(mockedProps)} editMode />)
-    expect(screen.getByTestId('btn-submit')).toHaveTextContent(SubmitBtnText.EditDatabase)
+    expect(screen.getByTestId('btn-submit')).toHaveTextContent(
+      SubmitBtnText.EditDatabase,
+    )
   })
 
   it('should have edit database submit button', () => {
@@ -96,7 +101,9 @@ describe('ManualConnectionWrapper', () => {
     act(() => {
       fireEvent.click(screen.getByTestId('onClone-btn'))
     })
-    expect(screen.getByTestId('btn-submit')).toHaveTextContent(SubmitBtnText.CloneDatabase)
+    expect(screen.getByTestId('btn-submit')).toHaveTextContent(
+      SubmitBtnText.CloneDatabase,
+    )
   })
 
   it('should call proper telemetry event on Add database', () => {
@@ -131,7 +138,7 @@ describe('ManualConnectionWrapper', () => {
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CANCELLED,
-      eventData: { databaseId: undefined }
+      eventData: { databaseId: undefined },
     })
   })
 })

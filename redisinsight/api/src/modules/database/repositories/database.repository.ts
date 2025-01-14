@@ -9,7 +9,10 @@ export abstract class DatabaseRepository {
    * @param id
    * @return boolean
    */
-  abstract exists(sessionMetadata: SessionMetadata, id: string): Promise<boolean>;
+  abstract exists(
+    sessionMetadata: SessionMetadata,
+    id: string,
+  ): Promise<boolean>;
 
   /**
    * Get single database by id with all fields
@@ -40,7 +43,11 @@ export abstract class DatabaseRepository {
    * @param database
    * @param uniqueCheck
    */
-  abstract create(sessionMetadata: SessionMetadata, database: Database, uniqueCheck: boolean): Promise<Database>;
+  abstract create(
+    sessionMetadata: SessionMetadata,
+    database: Database,
+    uniqueCheck: boolean,
+  ): Promise<Database>;
 
   /**
    * Update database with new data
@@ -48,7 +55,11 @@ export abstract class DatabaseRepository {
    * @param id
    * @param database
    */
-  abstract update(sessionMetadata: SessionMetadata, id: string, database: Partial<Database>): Promise<Database>;
+  abstract update(
+    sessionMetadata: SessionMetadata,
+    id: string,
+    database: Partial<Database>,
+  ): Promise<Database>;
 
   /**
    * Delete database by id

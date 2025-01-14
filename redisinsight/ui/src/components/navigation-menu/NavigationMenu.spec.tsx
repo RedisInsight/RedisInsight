@@ -3,7 +3,15 @@ import React from 'react'
 import { BuildType } from 'uiSrc/constants/env'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import { cleanup, mockedStore, render, screen, fireEvent, initialStateDefault, mockStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  screen,
+  fireEvent,
+  initialStateDefault,
+  mockStore,
+} from 'uiSrc/utils/test-utils'
 
 import { FeatureFlags } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -29,14 +37,14 @@ jest.mock('uiSrc/slices/app/context', () => ({
 jest.mock('uiSrc/slices/app/info', () => ({
   ...jest.requireActual('uiSrc/slices/app/info'),
   appInfoSelector: jest.fn().mockReturnValue({
-    server: {}
-  })
+    server: {},
+  }),
 }))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    id: ''
+    id: '',
   }),
 }))
 
@@ -50,21 +58,21 @@ jest.mock('uiSrc/slices/rdi/instances', () => ({
 describe('NavigationMenu', () => {
   describe('without connectedInstance', () => {
     it('should render', () => {
-      (appInfoSelector as jest.Mock).mockImplementation(() => ({
+      ;(appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,
         server: {
-          buildType: BuildType.DockerOnPremise
-        }
+          buildType: BuildType.DockerOnPremise,
+        },
       }))
       expect(render(<NavigationMenu />)).toBeTruthy()
     })
 
-    it('shouldn\'t render private routes', () => {
-      (appInfoSelector as jest.Mock).mockImplementation(() => ({
+    it("shouldn't render private routes", () => {
+      ;(appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,
         server: {
-          buildType: BuildType.DockerOnPremise
-        }
+          buildType: BuildType.DockerOnPremise,
+        },
       }))
       render(<NavigationMenu />)
 
@@ -72,11 +80,11 @@ describe('NavigationMenu', () => {
     })
 
     it('should render help menu', () => {
-      (appInfoSelector as jest.Mock).mockImplementation(() => ({
+      ;(appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,
         server: {
-          buildType: BuildType.RedisStack
-        }
+          buildType: BuildType.RedisStack,
+        },
       }))
       render(<NavigationMenu />)
 
@@ -84,11 +92,11 @@ describe('NavigationMenu', () => {
     })
 
     it('should render help menu items with proper links', () => {
-      (appInfoSelector as jest.Mock).mockImplementation(() => ({
+      ;(appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,
         server: {
-          buildType: BuildType.RedisStack
-        }
+          buildType: BuildType.RedisStack,
+        },
       }))
       render(<NavigationMenu />)
 
@@ -96,19 +104,23 @@ describe('NavigationMenu', () => {
 
       const submitBugBtn = screen.getByTestId('submit-bug-btn')
       expect(submitBugBtn).toBeInTheDocument()
-      expect(submitBugBtn?.getAttribute('href')).toEqual(EXTERNAL_LINKS.githubIssues)
+      expect(submitBugBtn?.getAttribute('href')).toEqual(
+        EXTERNAL_LINKS.githubIssues,
+      )
 
       expect(screen.getByTestId('shortcuts-btn')).toBeInTheDocument()
 
       const releaseNotesBtn = screen.getByTestId('release-notes-btn')
       expect(releaseNotesBtn).toBeInTheDocument()
-      expect(releaseNotesBtn?.getAttribute('href')).toEqual(EXTERNAL_LINKS.releaseNotes)
+      expect(releaseNotesBtn?.getAttribute('href')).toEqual(
+        EXTERNAL_LINKS.releaseNotes,
+      )
     })
   })
 
   describe('with connectedInstance', () => {
     beforeEach(() => {
-      (connectedInstanceSelector as jest.Mock).mockReturnValue({
+      ;(connectedInstanceSelector as jest.Mock).mockReturnValue({
         id: '123',
         connectionType: 'STANDALONE',
         db: 0,
@@ -116,21 +128,21 @@ describe('NavigationMenu', () => {
     })
 
     it('should render', () => {
-      (appInfoSelector as jest.Mock).mockImplementation(() => ({
+      ;(appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,
         server: {
-          buildType: BuildType.DockerOnPremise
-        }
+          buildType: BuildType.DockerOnPremise,
+        },
       }))
       expect(render(<NavigationMenu />)).toBeTruthy()
     })
 
     it('should render private routes with instanceId', () => {
-      (appInfoSelector as jest.Mock).mockImplementation(() => ({
+      ;(appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,
         server: {
-          buildType: BuildType.DockerOnPremise
-        }
+          buildType: BuildType.DockerOnPremise,
+        },
       }))
       render(<NavigationMenu />)
 
@@ -139,11 +151,11 @@ describe('NavigationMenu', () => {
     })
 
     it('should render public routes', () => {
-      (appInfoSelector as jest.Mock).mockImplementation(() => ({
+      ;(appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,
         server: {
-          buildType: BuildType.DockerOnPremise
-        }
+          buildType: BuildType.DockerOnPremise,
+        },
       }))
       render(<NavigationMenu />)
 
@@ -153,29 +165,33 @@ describe('NavigationMenu', () => {
     it('should render cloud link', () => {
       const { container } = render(<NavigationMenu />)
 
-      const createCloudLink = container.querySelector('[data-test-subj="create-cloud-nav-link"]')
+      const createCloudLink = container.querySelector(
+        '[data-test-subj="create-cloud-nav-link"]',
+      )
       expect(createCloudLink).toBeTruthy()
     })
 
     it('should render github btn with proper link', () => {
-      (appInfoSelector as jest.Mock).mockImplementation(() => ({
+      ;(appInfoSelector as jest.Mock).mockImplementation(() => ({
         ...mockAppInfoSelector,
         server: {
-          buildType: BuildType.DockerOnPremise
-        }
+          buildType: BuildType.DockerOnPremise,
+        },
       }))
       const { container } = render(<NavigationMenu />)
 
-      const githubBtn = container.querySelector('[data-test-subj="github-repo-btn"]')
+      const githubBtn = container.querySelector(
+        '[data-test-subj="github-repo-btn"]',
+      )
       expect(githubBtn).toBeTruthy()
       expect(githubBtn?.getAttribute('href')).toEqual(EXTERNAL_LINKS.githubRepo)
     })
   })
 
   it('should render private routes with connectedRdiInstanceId', () => {
-    (appContextSelector as jest.Mock).mockImplementation(() => ({
+    ;(appContextSelector as jest.Mock).mockImplementation(() => ({
       ...appContextSelector,
-      workspace: 'redisDataIntegration'
+      workspace: 'redisDataIntegration',
     }))
 
     render(<NavigationMenu />)
@@ -189,36 +205,44 @@ describe('NavigationMenu', () => {
       const initialStoreState = set(
         cloneDeep(initialStateDefault),
         `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-        { flag: true }
+        { flag: true },
       )
 
       render(<NavigationMenu />, {
-        store: mockStore(initialStoreState)
+        store: mockStore(initialStoreState),
       })
       fireEvent.click(screen.getByTestId('help-menu-button'))
 
       expect(screen.queryByTestId('notification-menu')).toBeInTheDocument()
       expect(screen.queryByTestId('help-center')).toBeInTheDocument()
-      expect(screen.queryByTestId('github-repo-divider-default')).toBeInTheDocument()
+      expect(
+        screen.queryByTestId('github-repo-divider-default'),
+      ).toBeInTheDocument()
       expect(screen.queryByTestId('github-repo-icon')).toBeInTheDocument()
-      expect(screen.queryByTestId('github-repo-divider-otherwise')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('github-repo-divider-otherwise'),
+      ).not.toBeInTheDocument()
     })
 
     it('should hide feature dependent items when feature flag is off', async () => {
       const initialStoreState = set(
         cloneDeep(initialStateDefault),
         `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-        { flag: false }
+        { flag: false },
       )
 
       render(<NavigationMenu />, {
-        store: mockStore(initialStoreState)
+        store: mockStore(initialStoreState),
       })
       expect(screen.queryByTestId('help-center')).not.toBeInTheDocument()
       expect(screen.queryByTestId('github-repo-icon')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('github-repo-divider-default')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('github-repo-divider-default'),
+      ).not.toBeInTheDocument()
       expect(screen.queryByTestId('notification-menu')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('github-repo-divider-otherwise')).toBeInTheDocument()
+      expect(
+        screen.queryByTestId('github-repo-divider-otherwise'),
+      ).toBeInTheDocument()
     })
   })
 })

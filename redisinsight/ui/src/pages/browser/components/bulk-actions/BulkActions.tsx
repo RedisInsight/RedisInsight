@@ -17,7 +17,11 @@ import {
 } from 'uiSrc/slices/browser/bulkActions'
 import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
-import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getMatchType,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { FullScreen } from 'uiSrc/components'
 
@@ -34,7 +38,13 @@ export interface Props {
   onToggleFullScreen: () => void
 }
 const BulkActions = (props: Props) => {
-  const { isFullScreen, arePanelsCollapsed, onClosePanel, onBulkActionsPanel, onToggleFullScreen } = props
+  const {
+    isFullScreen,
+    arePanelsCollapsed,
+    onClosePanel,
+    onBulkActionsPanel,
+    onToggleFullScreen,
+  } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { filter, search } = useSelector(keysSelector)
@@ -49,10 +59,13 @@ const BulkActions = (props: Props) => {
         databaseId: instanceId,
         filter: {
           filter,
-          match: (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH,
+          match:
+            search && search !== DEFAULT_SEARCH_MATCH
+              ? getMatchType(search)
+              : DEFAULT_SEARCH_MATCH,
         },
-        action: type
-      }
+        action: type,
+      },
     })
   }, [])
 
@@ -68,19 +81,22 @@ const BulkActions = (props: Props) => {
 
     const eventData: Record<string, any> = {
       databaseId: instanceId,
-      action: type
+      action: type,
     }
 
     if (type === BulkActionsType.Delete) {
       eventData.filter = {
-        match: (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH,
+        match:
+          search && search !== DEFAULT_SEARCH_MATCH
+            ? getMatchType(search)
+            : DEFAULT_SEARCH_MATCH,
         type: filter,
       }
     }
 
     sendEventTelemetry({
       event: TelemetryEvent.BULK_ACTIONS_CANCELLED,
-      eventData
+      eventData,
     })
   }
 
@@ -101,7 +117,10 @@ const BulkActions = (props: Props) => {
             <FullScreen
               isFullScreen={isFullScreen}
               onToggleFullScreen={onToggleFullScreen}
-              anchorClassName={cx(styles.anchorTooltip, styles.anchorTooltipFullScreen)}
+              anchorClassName={cx(
+                styles.anchorTooltip,
+                styles.anchorTooltipFullScreen,
+              )}
             />
           )}
           {(!arePanelsCollapsed || isFullScreen) && (
@@ -120,13 +139,19 @@ const BulkActions = (props: Props) => {
               />
             </EuiToolTip>
           )}
-
         </EuiFlexItem>
         <div className="eui-yScroll">
-          <div className={styles.contentActions} data-testid="bulk-actions-content">
+          <div
+            className={styles.contentActions}
+            data-testid="bulk-actions-content"
+          >
             <BulkActionsTabs onChangeType={handleChangeType} />
-            {type === BulkActionsType.Upload && (<BulkUpload onCancel={closePanel} />)}
-            {type === BulkActionsType.Delete && (<BulkDelete onCancel={closePanel} />)}
+            {type === BulkActionsType.Upload && (
+              <BulkUpload onCancel={closePanel} />
+            )}
+            {type === BulkActionsType.Delete && (
+              <BulkDelete onCancel={closePanel} />
+            )}
           </div>
         </div>
       </EuiFlexGroup>

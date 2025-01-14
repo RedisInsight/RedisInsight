@@ -32,9 +32,4 @@ export * from './redisearch'
 export * from './capability'
 export * from './rdi'
 
-export {
-  Maybe,
-  Nullable,
-  RouterWithSubRoutes,
-  getLetterByIndex
-}
+export { Maybe, Nullable, RouterWithSubRoutes, getLetterByIndex }

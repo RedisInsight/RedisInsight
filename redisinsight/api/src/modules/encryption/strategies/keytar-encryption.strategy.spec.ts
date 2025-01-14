@@ -43,10 +43,14 @@ describe('KeytarEncryptionStrategy', () => {
 
   describe('encrypt', () => {
     it('Should encrypt data', async () => {
-      expect(await service.encrypt(mockDataToEncrypt)).toEqual(mockEncryptResult);
+      expect(await service.encrypt(mockDataToEncrypt)).toEqual(
+        mockEncryptResult,
+      );
 
       // check that cached password will be used
-      expect(await service.encrypt(mockDataToEncrypt)).toEqual(mockEncryptResult);
+      expect(await service.encrypt(mockDataToEncrypt)).toEqual(
+        mockEncryptResult,
+      );
       expect(mockKeytarModule.getPassword).toHaveBeenCalledTimes(1);
       expect(mockKeytarModule.setPassword).not.toHaveBeenCalled();
     });
@@ -56,17 +60,23 @@ describe('KeytarEncryptionStrategy', () => {
         .mockReturnValueOnce(mockKeytarPassword);
       keytarModule.setPassword.mockReturnValueOnce(undefined);
 
-      expect(await service.encrypt(mockDataToEncrypt)).toEqual(mockEncryptResult);
+      expect(await service.encrypt(mockDataToEncrypt)).toEqual(
+        mockEncryptResult,
+      );
 
       expect(mockKeytarModule.setPassword).toHaveBeenCalled();
     });
     it('Should throw KeytarEncryptionError when unable to decrypt', async () => {
-      await expect(service.encrypt(null)).rejects.toThrowError(KeytarEncryptionErrorException);
+      await expect(service.encrypt(null)).rejects.toThrowError(
+        KeytarEncryptionErrorException,
+      );
     });
     it('Should throw KeytarUnavailable in getPassword error', async () => {
       keytarModule.getPassword.mockRejectedValueOnce(new Error());
 
-      await expect(service.encrypt(mockDataToEncrypt)).rejects.toThrowError(KeytarUnavailableException);
+      await expect(service.encrypt(mockDataToEncrypt)).rejects.toThrowError(
+        KeytarUnavailableException,
+      );
     });
     it('Should should throw KeytarUnavailable on setPassword error', async () => {
       keytarModule.getPassword
@@ -74,30 +84,35 @@ describe('KeytarEncryptionStrategy', () => {
         .mockReturnValueOnce(mockKeytarPassword);
       keytarModule.setPassword.mockRejectedValueOnce(new Error());
 
-      await expect(service.encrypt(mockDataToEncrypt)).rejects.toThrowError(KeytarUnavailableException);
+      await expect(service.encrypt(mockDataToEncrypt)).rejects.toThrowError(
+        KeytarUnavailableException,
+      );
     });
   });
 
   describe('decrypt', () => {
     it('Should decrypt data', async () => {
-      expect(await service.decrypt(
-        mockEncryptResult.data,
-        mockEncryptResult.encryption,
-      )).toEqual(mockDataToEncrypt);
+      expect(
+        await service.decrypt(
+          mockEncryptResult.data,
+          mockEncryptResult.encryption,
+        ),
+      ).toEqual(mockDataToEncrypt);
 
       // check that cached password will be used
-      expect(await service.decrypt(
-        mockEncryptResult.data,
-        mockEncryptResult.encryption,
-      )).toEqual(mockDataToEncrypt);
+      expect(
+        await service.decrypt(
+          mockEncryptResult.data,
+          mockEncryptResult.encryption,
+        ),
+      ).toEqual(mockDataToEncrypt);
       expect(mockKeytarModule.getPassword).toHaveBeenCalledTimes(1);
       expect(mockKeytarModule.setPassword).not.toHaveBeenCalled();
     });
-    it('Should return null when encryption doesn\'t match KEYTAR', async () => {
-      expect(await service.decrypt(
-        mockEncryptResult.data,
-        'PLAIN',
-      )).toEqual(null);
+    it("Should return null when encryption doesn't match KEYTAR", async () => {
+      expect(await service.decrypt(mockEncryptResult.data, 'PLAIN')).toEqual(
+        null,
+      );
     });
     it('Should decrypt + generate and set password when not exists yet', async () => {
       keytarModule.getPassword
@@ -105,26 +120,26 @@ describe('KeytarEncryptionStrategy', () => {
         .mockReturnValueOnce(mockKeytarPassword);
       keytarModule.setPassword.mockReturnValueOnce(undefined);
 
-      expect(await service.decrypt(
-        mockEncryptResult.data,
-        mockEncryptResult.encryption,
-      )).toEqual(mockDataToEncrypt);
+      expect(
+        await service.decrypt(
+          mockEncryptResult.data,
+          mockEncryptResult.encryption,
+        ),
+      ).toEqual(mockDataToEncrypt);
 
       expect(mockKeytarModule.setPassword).toHaveBeenCalled();
     });
     it('Should throw KeytarDecryptionError when unable to decrypt', async () => {
-      await expect(service.decrypt(
-        null,
-        mockEncryptResult.encryption,
-      )).rejects.toThrowError(KeytarDecryptionErrorException);
+      await expect(
+        service.decrypt(null, mockEncryptResult.encryption),
+      ).rejects.toThrowError(KeytarDecryptionErrorException);
     });
     it('Should throw KeytarUnavailable in getPassword error', async () => {
       keytarModule.getPassword.mockRejectedValueOnce(new Error());
 
-      await expect(service.decrypt(
-        mockEncryptResult.data,
-        mockEncryptResult.encryption,
-      )).rejects.toThrowError(KeytarUnavailableException);
+      await expect(
+        service.decrypt(mockEncryptResult.data, mockEncryptResult.encryption),
+      ).rejects.toThrowError(KeytarUnavailableException);
     });
     it('Should should throw KeytarUnavailable on setPassword error', async () => {
       keytarModule.getPassword
@@ -132,10 +147,9 @@ describe('KeytarEncryptionStrategy', () => {
         .mockReturnValueOnce(mockKeytarPassword);
       keytarModule.setPassword.mockRejectedValueOnce(new Error());
 
-      await expect(service.decrypt(
-        mockEncryptResult.data,
-        mockEncryptResult.encryption,
-      )).rejects.toThrowError(KeytarUnavailableException);
+      await expect(
+        service.decrypt(mockEncryptResult.data, mockEncryptResult.encryption),
+      ).rejects.toThrowError(KeytarUnavailableException);
     });
   });
 });

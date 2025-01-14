@@ -1,6 +1,10 @@
 import { isString } from 'lodash'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import { getDBConfigStorageField, localStorageService, setDBConfigStorageField } from './storage'
+import {
+  getDBConfigStorageField,
+  localStorageService,
+  setDBConfigStorageField,
+} from './storage'
 
 export const migrateLocalStorageData = () => {
   migrateDelimiterTreeView()
@@ -15,11 +19,18 @@ const migrateDelimiterTreeView = () => {
     if (key.startsWith(prefix)) {
       const instanceId = key.replace(prefix, '')
 
-      const treeViewDelimiter = getDBConfigStorageField(instanceId, BrowserStorageItem.treeViewDelimiter)
+      const treeViewDelimiter = getDBConfigStorageField(
+        instanceId,
+        BrowserStorageItem.treeViewDelimiter,
+      )
 
       // Check if treeViewDelimiter is a string and needs transform to array
       if (isString(treeViewDelimiter)) {
-        setDBConfigStorageField(instanceId, BrowserStorageItem.treeViewDelimiter, [{ label: treeViewDelimiter }])
+        setDBConfigStorageField(
+          instanceId,
+          BrowserStorageItem.treeViewDelimiter,
+          [{ label: treeViewDelimiter }],
+        )
       }
     }
   })

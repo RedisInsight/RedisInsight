@@ -6,7 +6,8 @@ import {
   before,
   deps,
   generateInvalidDataTestCases,
-  validateInvalidDataTestCase, getMainCheckFn
+  validateInvalidDataTestCase,
+  getMainCheckFn,
 } from '../deps';
 
 const { request, server, localDb, constants } = deps;
@@ -30,10 +31,14 @@ describe(`DELETE /databases/:instanceId/history`, () => {
   before(async () => {
     await localDb.createDatabaseInstances();
 
-    await localDb.generateBrowserHistory({
-      databaseId: constants.TEST_INSTANCE_ID,
-      mode: BrowserHistoryMode.Pattern,
-    }, 10, true)
+    await localDb.generateBrowserHistory(
+      {
+        databaseId: constants.TEST_INSTANCE_ID,
+        mode: BrowserHistoryMode.Pattern,
+      },
+      10,
+      true,
+    );
   });
 
   describe('Validation', () => {
@@ -47,7 +52,10 @@ describe(`DELETE /databases/:instanceId/history`, () => {
       {
         name: 'Should remove multiple browser history items by ids',
         data: {
-          ids: [constants.TEST_BROWSER_HISTORY_ID_1, constants.TEST_BROWSER_HISTORY_ID_2]
+          ids: [
+            constants.TEST_BROWSER_HISTORY_ID_1,
+            constants.TEST_BROWSER_HISTORY_ID_2,
+          ],
         },
         query: {
           mode: BrowserHistoryMode.Pattern,
@@ -56,12 +64,28 @@ describe(`DELETE /databases/:instanceId/history`, () => {
           affected: 2,
         },
         before: async () => {
-          expect(await localDb.getBrowserHistoryById(constants.TEST_BROWSER_HISTORY_ID_1)).to.be.an('object')
-          expect(await localDb.getBrowserHistoryById(constants.TEST_BROWSER_HISTORY_ID_2)).to.be.an('object')
+          expect(
+            await localDb.getBrowserHistoryById(
+              constants.TEST_BROWSER_HISTORY_ID_1,
+            ),
+          ).to.be.an('object');
+          expect(
+            await localDb.getBrowserHistoryById(
+              constants.TEST_BROWSER_HISTORY_ID_2,
+            ),
+          ).to.be.an('object');
         },
         after: async () => {
-          expect(await localDb.getBrowserHistoryById(constants.TEST_BROWSER_HISTORY_ID_1)).to.eql(null)
-          expect(await localDb.getBrowserHistoryById(constants.TEST_BROWSER_HISTORY_ID_2)).to.eql(null)
+          expect(
+            await localDb.getBrowserHistoryById(
+              constants.TEST_BROWSER_HISTORY_ID_1,
+            ),
+          ).to.eql(null);
+          expect(
+            await localDb.getBrowserHistoryById(
+              constants.TEST_BROWSER_HISTORY_ID_2,
+            ),
+          ).to.eql(null);
         },
       },
     ].map(mainCheckFn);

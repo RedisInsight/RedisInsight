@@ -1,20 +1,22 @@
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../../deps';
+import { describe, expect, deps, getMainCheckFn } from '../../deps';
 import { nock } from '../../../helpers/test';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST_pipeline_job_functions';
 const notExistedRdiId = 'notExisted';
 const testRdiUrl = 'http://rdilocal.test';
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 
-const endpoint = (id: string) => request(server).get(`/${constants.API.RDI}/${id || testRdiId}/pipeline/job-functions`);
+const endpoint = (id: string) =>
+  request(server).get(
+    `/${constants.API.RDI}/${id || testRdiId}/pipeline/job-functions`,
+  );
 
 const mockResponseSuccess = {
   jobFunctions: 'some functions',
@@ -35,7 +37,10 @@ describe('GET /rdi/:id/pipeline/job-functions', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).get(`${RdiUrl.JobFunctions}`).query(true).reply(200, mockResponseSuccess);
+        nock(testRdiUrl)
+          .get(`${RdiUrl.JobFunctions}`)
+          .query(true)
+          .reply(200, mockResponseSuccess);
       },
     },
     {
@@ -71,7 +76,7 @@ describe('GET /rdi/:id/pipeline/job-functions', () => {
         });
         nock(testRdiUrl).get(`${RdiUrl.JobFunctions}`).query(true).reply(401, {
           message: 'Request failed with status code 401',
-          detail: 'Unauthorized'
+          detail: 'Unauthorized',
         });
       },
     },

@@ -2,15 +2,14 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
 import {
-  mockNotification1, mockNotification2,
+  mockNotification1,
+  mockNotification2,
   mockNotificationRepository,
   mockNotificationsDto,
   mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
-import {
-  NotificationServerEvents,
-} from 'src/modules/notification/constants';
+import { NotificationServerEvents } from 'src/modules/notification/constants';
 import { NotificationEmitter } from 'src/modules/notification/providers/notification.emitter';
 import { NotificationRepository } from '../repositories/notification.repository';
 
@@ -68,9 +67,7 @@ describe('NotificationEmitter', () => {
       );
     });
     it('should log an error but not fail', async () => {
-      repository.getTotalUnread.mockRejectedValueOnce(
-        new Error('some error'),
-      );
+      repository.getTotalUnread.mockRejectedValueOnce(new Error('some error'));
 
       await service.notification(mockSessionMetadata, [mockNotification1]);
 

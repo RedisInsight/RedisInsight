@@ -7,7 +7,7 @@ import {
   EuiOutsideClickDetector,
   EuiTextArea,
   EuiWindowEvent,
-  keys
+  keys,
 } from '@elastic/eui'
 import cx from 'classnames'
 
@@ -25,11 +25,7 @@ export interface Props {
 }
 
 const EditEntireItemAction = (props: Props) => {
-  const {
-    initialValue,
-    onCancel,
-    onSubmit
-  } = props
+  const { initialValue, onCancel, onSubmit } = props
   const [value, setValue] = useState<string>(initialValue)
   const [error, setError] = useState<Nullable<string>>(null)
 
@@ -71,7 +67,9 @@ const EditEntireItemAction = (props: Props) => {
                     className={styles.fullWidthTextArea}
                     value={value}
                     placeholder="Enter JSON value"
-                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setValue(e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+                      setValue(e.target.value)
+                    }
                     data-testid="json-value"
                   />
                 </EuiFlexItem>
@@ -97,7 +95,12 @@ const EditEntireItemAction = (props: Props) => {
                 </div>
               </EuiForm>
               {error && (
-                <div className={cx(styles.errorMessage, styles.errorMessageForTextArea)}>
+                <div
+                  className={cx(
+                    styles.errorMessage,
+                    styles.errorMessageForTextArea,
+                  )}
+                >
                   <FieldMessage
                     scrollViewOnAppear
                     icon="alert"

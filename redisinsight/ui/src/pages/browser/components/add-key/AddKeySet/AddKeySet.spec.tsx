@@ -13,10 +13,7 @@ describe('AddKeyZset', () => {
   it('should set member value properly', () => {
     render(<AddKeySet {...instance(mockedProps)} />)
     const memberInput = screen.getByTestId('member-name')
-    fireEvent.change(
-      memberInput,
-      { target: { value: 'member name' } }
-    )
+    fireEvent.change(memberInput, { target: { value: 'member name' } })
     expect(memberInput).toHaveValue('member name')
   })
 
@@ -47,10 +44,7 @@ describe('AddKeyZset', () => {
   it('should clear member after click clear button', () => {
     render(<AddKeySet {...instance(mockedProps)} />)
     const memberInput = screen.getByTestId('member-name')
-    fireEvent.change(
-      memberInput,
-      { target: { value: 'member' } }
-    )
+    fireEvent.change(memberInput, { target: { value: 'member' } })
     fireEvent.click(screen.getByTestId('remove-item'))
 
     expect(memberInput).toHaveValue('')

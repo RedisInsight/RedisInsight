@@ -1,14 +1,15 @@
 const fs = require('fs');
-const { exec } = require("child_process");
+const { exec } = require('child_process');
 
 const FILENAME = process.env.FILENAME;
 const DEPS = process.env.DEPS || '';
 const file = `${FILENAME}`;
 const outputFile = `slack.${FILENAME}`;
 
-function generateSlackMessage (summary) {
+function generateSlackMessage(summary) {
   const message = {
-    text: `DEPS AUDIT: *${DEPS}* result (Branch: *${process.env.CIRCLE_BRANCH}*)` +
+    text:
+      `DEPS AUDIT: *${DEPS}* result (Branch: *${process.env.CIRCLE_BRANCH}*)` +
       `\nScanned ${summary.totalDependencies} dependencies` +
       `\n<https://app.circleci.com/pipelines/workflows/${process.env.CIRCLE_WORKFLOW_ID}|View on CircleCI>`,
     attachments: [],
@@ -50,12 +51,10 @@ function generateSlackMessage (summary) {
       });
     }
   } else {
-    message.attachments.push(
-      {
-        title: 'No vulnerabilities found',
-        color: 'good'
-      }
-    );
+    message.attachments.push({
+      title: 'No vulnerabilities found',
+      color: 'good',
+    });
   }
 
   return message;
@@ -68,16 +67,21 @@ async function main() {
         return reject(error);
       }
       resolve(stdout);
-    })
-  })
+    });
+  });
 
   const { data: summary } = JSON.parse(`${lastAuditLine}`);
   const vulnerabilities = summary?.vulnerabilities || {};
-  summary.totalVulnerabilities = Object.values(vulnerabilities).reduce((totalVulnerabilities, val) => totalVulnerabilities + val)
-  fs.writeFileSync(outputFile, JSON.stringify({
-    channel: process.env.SLACK_AUDIT_REPORT_CHANNEL,
-    ...generateSlackMessage(summary),
-  }));
+  summary.totalVulnerabilities = Object.values(vulnerabilities).reduce(
+    (totalVulnerabilities, val) => totalVulnerabilities + val,
+  );
+  fs.writeFileSync(
+    outputFile,
+    JSON.stringify({
+      channel: process.env.SLACK_AUDIT_REPORT_CHANNEL,
+      ...generateSlackMessage(summary),
+    }),
+  );
 }
 
 main();

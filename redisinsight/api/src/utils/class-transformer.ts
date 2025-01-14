@@ -1,4 +1,8 @@
-import { ClassTransformOptions, classToPlain, plainToClass } from 'class-transformer';
+import {
+  ClassTransformOptions,
+  classToPlain,
+  plainToClass,
+} from 'class-transformer';
 import { ClassType } from 'class-transformer/ClassTransformer';
 
 export function classToClass<T, V>(
@@ -16,7 +20,12 @@ export function classToClass<T, V>(
     ...options,
   };
 
-  return plainToClass(targetClass, classToPlain(classInstance, transformOptions), transformOptions);
+  return plainToClass(
+    targetClass,
+    classToPlain(classInstance, transformOptions),
+    transformOptions,
+  );
 }
 
-export const cloneClassInstance = <V>(entity: V): V => classToClass(entity.constructor as ClassType<V>, entity);
+export const cloneClassInstance = <V>(entity: V): V =>
+  classToClass(entity.constructor as ClassType<V>, entity);

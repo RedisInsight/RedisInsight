@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ServiceUnavailableException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
-  mockRedisWrongTypeError, mockDatabase, MockType, mockSessionMetadata,
+  mockRedisWrongTypeError,
+  mockDatabase,
+  MockType,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { CommandType, TelemetryEvents } from 'src/constants';
 import { ReplyError } from 'src/models';
@@ -42,10 +45,7 @@ describe('WorkbenchAnalytics', () => {
     }).compile();
 
     service = module.get<WorkbenchAnalytics>(WorkbenchAnalytics);
-    sendEventMethod = jest.spyOn<WorkbenchAnalytics, any>(
-      service,
-      'sendEvent',
-    );
+    sendEventMethod = jest.spyOn<WorkbenchAnalytics, any>(service, 'sendEvent');
     sendFailedEventMethod = jest.spyOn<WorkbenchAnalytics, any>(
       service,
       'sendFailedEvent',
@@ -59,11 +59,7 @@ describe('WorkbenchAnalytics', () => {
           since: '1.0.0',
           group: 'string',
           complexity: 'O(1)',
-          acl_categories: [
-            '@write',
-            '@string',
-            '@slow',
-          ],
+          acl_categories: ['@write', '@string', '@slow'],
         },
       },
       redisbloom: {
@@ -86,13 +82,9 @@ describe('WorkbenchAnalytics', () => {
 
   describe('sendIndexInfoEvent', () => {
     it('should emit index info event', async () => {
-      service.sendIndexInfoEvent(
-        mockSessionMetadata,
-        instanceId,
-        {
-          any: 'fields',
-        },
-      );
+      service.sendIndexInfoEvent(mockSessionMetadata, instanceId, {
+        any: 'fields',
+      });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -104,11 +96,7 @@ describe('WorkbenchAnalytics', () => {
       );
     });
     it('should not fail and should not emit when no data to send', async () => {
-      service.sendIndexInfoEvent(
-        mockSessionMetadata,
-        instanceId,
-        null,
-      );
+      service.sendIndexInfoEvent(mockSessionMetadata, instanceId, null);
 
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
@@ -161,7 +149,9 @@ describe('WorkbenchAnalytics', () => {
       );
     });
     it('should emit event if failed to fetch commands groups', async () => {
-      commandsService.getCommandsGroups.mockRejectedValue(new Error('some error'));
+      commandsService.getCommandsGroups.mockRejectedValue(
+        new Error('some error'),
+      );
 
       await service.sendCommandExecutedEvent(
         mockSessionMetadata,
@@ -240,11 +230,10 @@ describe('WorkbenchAnalytics', () => {
       );
     });
     it('should emit WorkbenchCommandExecuted event without additional data', async () => {
-      await service.sendCommandExecutedEvent(
-        mockSessionMetadata,
-        instanceId,
-        { response: 'OK', status: CommandExecutionStatus.Success },
-      );
+      await service.sendCommandExecutedEvent(mockSessionMetadata, instanceId, {
+        response: 'OK',
+        status: CommandExecutionStatus.Success,
+      });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -258,7 +247,11 @@ describe('WorkbenchAnalytics', () => {
       await service.sendCommandExecutedEvent(
         mockSessionMetadata,
         instanceId,
-        { response: 'Error', error: redisReplyError, status: CommandExecutionStatus.Fail },
+        {
+          response: 'Error',
+          error: redisReplyError,
+          status: CommandExecutionStatus.Fail,
+        },
         { command: 'set', data: 'Some data' },
       );
 
@@ -277,11 +270,11 @@ describe('WorkbenchAnalytics', () => {
       );
     });
     it('should emit WorkbenchCommandError event without additional data', async () => {
-      await service.sendCommandExecutedEvent(
-        mockSessionMetadata,
-        instanceId,
-        { response: 'Error', error: redisReplyError, status: CommandExecutionStatus.Fail },
-      );
+      await service.sendCommandExecutedEvent(mockSessionMetadata, instanceId, {
+        response: 'Error',
+        error: redisReplyError,
+        status: CommandExecutionStatus.Fail,
+      });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -295,11 +288,11 @@ describe('WorkbenchAnalytics', () => {
     });
     it('should emit WorkbenchCommandError event for custom error', async () => {
       const error: any = CommandParsingError;
-      await service.sendCommandExecutedEvent(
-        mockSessionMetadata,
-        instanceId,
-        { response: 'Error', status: CommandExecutionStatus.Fail, error },
-      );
+      await service.sendCommandExecutedEvent(mockSessionMetadata, instanceId, {
+        response: 'Error',
+        status: CommandExecutionStatus.Fail,
+        error,
+      });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -313,11 +306,11 @@ describe('WorkbenchAnalytics', () => {
     });
     it('should emit WorkbenchCommandError event for HttpException', async () => {
       const error = new ServiceUnavailableException();
-      await service.sendCommandExecutedEvent(
-        mockSessionMetadata,
-        instanceId,
-        { response: 'Error', status: CommandExecutionStatus.Fail, error },
-      );
+      await service.sendCommandExecutedEvent(mockSessionMetadata, instanceId, {
+        response: 'Error',
+        status: CommandExecutionStatus.Fail,
+        error,
+      });
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -329,11 +322,9 @@ describe('WorkbenchAnalytics', () => {
   });
   describe('sendCommandDeletedEvent', () => {
     it('should emit WorkbenchCommandDeleted event', () => {
-      service.sendCommandDeletedEvent(
-        mockSessionMetadata,
-        instanceId,
-        { command: 'info' },
-      );
+      service.sendCommandDeletedEvent(mockSessionMetadata, instanceId, {
+        command: 'info',
+      });
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -345,10 +336,7 @@ describe('WorkbenchAnalytics', () => {
       );
     });
     it('should emit WorkbenchCommandDeleted event without additional data', () => {
-      service.sendCommandDeletedEvent(
-        mockSessionMetadata,
-        instanceId,
-      );
+      service.sendCommandDeletedEvent(mockSessionMetadata, instanceId);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,

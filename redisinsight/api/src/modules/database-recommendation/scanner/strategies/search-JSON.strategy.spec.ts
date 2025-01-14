@@ -37,19 +37,23 @@ describe('SearchJSONStrategy', () => {
           .calledWith(expect.arrayContaining(['FT._LIST']), expect.anything())
           .mockResolvedValue(mockEmptyIndexes);
 
-        expect(await strategy.isRecommendationReached({
-          client,
-          databaseId: mockDatabaseId,
-          keys: [mockJSONInfo, mockHashInfo],
-        })).toEqual({ isReached: true, params: { keys: [mockJSONInfo.name] } });
+        expect(
+          await strategy.isRecommendationReached({
+            client,
+            databaseId: mockDatabaseId,
+            keys: [mockJSONInfo, mockHashInfo],
+          }),
+        ).toEqual({ isReached: true, params: { keys: [mockJSONInfo.name] } });
       });
 
       it('should return false when there is not JSON key', async () => {
-        expect(await strategy.isRecommendationReached({
-          client,
-          databaseId: mockDatabaseId,
-          keys: [mockHashInfo],
-        })).toEqual({ isReached: false });
+        expect(
+          await strategy.isRecommendationReached({
+            client,
+            databaseId: mockDatabaseId,
+            keys: [mockHashInfo],
+          }),
+        ).toEqual({ isReached: false });
       });
 
       it('should return false when FT._LIST return indexes', async () => {
@@ -57,11 +61,13 @@ describe('SearchJSONStrategy', () => {
           .calledWith(expect.arrayContaining(['FT._LIST']), expect.anything())
           .mockResolvedValue(mockIndexes);
 
-        expect(await strategy.isRecommendationReached({
-          client,
-          databaseId: mockDatabaseId,
-          keys: [mockJSONInfo, mockHashInfo],
-        })).toEqual({ isReached: false });
+        expect(
+          await strategy.isRecommendationReached({
+            client,
+            databaseId: mockDatabaseId,
+            keys: [mockJSONInfo, mockHashInfo],
+          }),
+        ).toEqual({ isReached: false });
       });
     });
 
@@ -73,19 +79,23 @@ describe('SearchJSONStrategy', () => {
       });
 
       it('should return true when there is JSON key', async () => {
-        expect(await strategy.isRecommendationReached({
-          client,
-          databaseId: mockDatabaseId,
-          keys: [mockJSONInfo, mockHashInfo],
-        })).toEqual({ isReached: true, params: { keys: [mockJSONInfo.name] } });
+        expect(
+          await strategy.isRecommendationReached({
+            client,
+            databaseId: mockDatabaseId,
+            keys: [mockJSONInfo, mockHashInfo],
+          }),
+        ).toEqual({ isReached: true, params: { keys: [mockJSONInfo.name] } });
       });
 
       it('should return false when there is not JSON key', async () => {
-        expect(await strategy.isRecommendationReached({
-          client,
-          databaseId: mockDatabaseId,
-          keys: [mockHashInfo],
-        })).toEqual({ isReached: false });
+        expect(
+          await strategy.isRecommendationReached({
+            client,
+            databaseId: mockDatabaseId,
+            keys: [mockHashInfo],
+          }),
+        ).toEqual({ isReached: false });
       });
     });
   });

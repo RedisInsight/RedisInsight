@@ -21,9 +21,7 @@ import {
 describe('RecommendationProvider', () => {
   beforeAll(async () => {
     await Test.createTestingModule({
-      providers: [
-        RecommendationProvider,
-      ],
+      providers: [RecommendationProvider],
     }).compile();
   });
   const service = new RecommendationProvider();
@@ -34,14 +32,23 @@ describe('RecommendationProvider', () => {
       [RECOMMENDATION_NAMES.REDIS_VERSION, new RedisVersionStrategy()],
       [RECOMMENDATION_NAMES.BIG_SETS, new BigSetStrategy()],
       [RECOMMENDATION_NAMES.RTS, new RTSStrategy()],
-      [RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES, new AvoidLogicalDatabasesStrategy()],
+      [
+        RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES,
+        new AvoidLogicalDatabasesStrategy(),
+      ],
       [RECOMMENDATION_NAMES.BIG_HASHES, new ShardHashStrategy()],
       [RECOMMENDATION_NAMES.STRING_TO_JSON, new StringToJsonStrategy()],
       [RECOMMENDATION_NAMES.USE_SMALLER_KEYS, new UseSmallerKeysStrategy()],
       [RECOMMENDATION_NAMES.LUA_SCRIPT, new AvoidLuaScriptsStrategy()],
       [RECOMMENDATION_NAMES.BIG_STRINGS, new BigStringStrategy()],
-      [RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST, new CompressionForListStrategy()],
-      [RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS, new BigAmountConnectedClientsStrategy()],
+      [
+        RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
+        new CompressionForListStrategy(),
+      ],
+      [
+        RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+        new BigAmountConnectedClientsStrategy(),
+      ],
       [RECOMMENDATION_NAMES.TRY_RDI, new TryRdiStrategyStrategy()],
       ['default', new DefaultRecommendationStrategy()],
       ['unknown', new DefaultRecommendationStrategy()],

@@ -45,7 +45,7 @@ describe('HashDetails', () => {
         {...instance(mockedProps)}
         onOpenAddItemPanel={() => {}}
         onCloseAddItemPanel={() => {}}
-      />
+      />,
     )
     fireEvent.click(screen.getByTestId('add-key-value-items-btn'))
     expect(screen.getByText('Save')).toBeInTheDocument()
@@ -68,8 +68,10 @@ describe('HashDetails', () => {
     })
 
     it('should call proper telemetry event after click on showTtl', () => {
-      const sendEventTelemetryMock = jest.fn();
-      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+      const sendEventTelemetryMock = jest.fn()
+      ;(sendEventTelemetry as jest.Mock).mockImplementation(
+        () => sendEventTelemetryMock,
+      )
 
       render(<HashDetails {...instance(mockedProps)} />)
 
@@ -79,8 +81,8 @@ describe('HashDetails', () => {
         event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
-          action: 'hide'
-        }
+          action: 'hide',
+        },
       })
 
       fireEvent.click(screen.getByTestId('test-check-ttl'))
@@ -89,8 +91,8 @@ describe('HashDetails', () => {
         event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
-          action: 'show'
-        }
+          action: 'show',
+        },
       })
     })
   })

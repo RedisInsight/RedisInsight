@@ -2,12 +2,16 @@ import { AxiosError } from 'axios';
 import { HttpException } from '@nestjs/common';
 import {
   ConvAiBadRequestException,
-  ConvAiForbiddenException, ConvAiInternalServerErrorException,
+  ConvAiForbiddenException,
+  ConvAiInternalServerErrorException,
   ConvAiUnauthorizedException,
 } from 'src/modules/ai/chat/exceptions';
 import { ConvAiNotFoundException } from 'src/modules/ai/chat/exceptions/conv-ai.not-found.exception';
 
-export const wrapConvAiError = (error: AxiosError, message?: string): HttpException => {
+export const wrapConvAiError = (
+  error: AxiosError,
+  message?: string,
+): HttpException => {
   if (error instanceof HttpException) {
     return error;
   }
@@ -32,7 +36,10 @@ export const wrapConvAiError = (error: AxiosError, message?: string): HttpExcept
       case 404:
         return new ConvAiNotFoundException(errorMessage, errorOptions);
       default:
-        return new ConvAiInternalServerErrorException(errorMessage, errorOptions);
+        return new ConvAiInternalServerErrorException(
+          errorMessage,
+          errorOptions,
+        );
     }
   }
 

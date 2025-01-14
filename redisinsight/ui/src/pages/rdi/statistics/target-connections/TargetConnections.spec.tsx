@@ -12,7 +12,7 @@ const mockedProps = {
       host: 'localhost',
       port: 6379,
       database: 'DB 1',
-      user: 'User 1'
+      user: 'User 1',
     },
     connection2: {
       status: 'bad',
@@ -21,9 +21,9 @@ const mockedProps = {
       host: '127.0.0.1',
       port: 6380,
       database: 'DB 2',
-      user: 'User 2'
-    }
-  }
+      user: 'User 2',
+    },
+  },
 }
 
 describe('TargetConnections', () => {

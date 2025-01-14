@@ -7,6 +7,8 @@ const mockedProps = mock<Props>()
 
 describe('RdiDeployErrorContent', () => {
   it('should render', () => {
-    expect(render(<RdiDeployErrorContent {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<RdiDeployErrorContent {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 })

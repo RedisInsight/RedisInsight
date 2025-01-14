@@ -1,8 +1,5 @@
 import { TestingModule, Test } from '@nestjs/testing';
-import {
-  mockInitSession,
-  mockSessionStorage,
-} from 'src/__mocks__';
+import { mockInitSession, mockSessionStorage } from 'src/__mocks__';
 import { SingleUserSessionProvider } from 'src/modules/session/providers/single-user.session.provider';
 import { SessionStorage } from 'src/modules/session/providers/storage/session.storage';
 import { DEFAULT_SESSION_ID } from 'src/common/constants';
@@ -31,7 +28,9 @@ describe('SingleUserSessionProvider', () => {
       const result = await service.getSession();
 
       expect(result).toEqual(mockInitSession);
-      expect(sessionStorage.getSession).toHaveBeenCalledWith(DEFAULT_SESSION_ID);
+      expect(sessionStorage.getSession).toHaveBeenCalledWith(
+        DEFAULT_SESSION_ID,
+      );
     });
   });
 
@@ -52,17 +51,25 @@ describe('SingleUserSessionProvider', () => {
 
   describe('updateSessionData', () => {
     it('Should not affect existing data  by hardcoded id', async () => {
-      const result = await service.updateSessionData('any id will be overwritten', {});
+      const result = await service.updateSessionData(
+        'any id will be overwritten',
+        {},
+      );
 
       expect(result).toEqual(mockInitSession);
-      expect(sessionStorage.updateSessionData).toHaveBeenCalledWith(DEFAULT_SESSION_ID, {});
+      expect(sessionStorage.updateSessionData).toHaveBeenCalledWith(
+        DEFAULT_SESSION_ID,
+        {},
+      );
     });
   });
 
   describe('deleteSession', () => {
     it('should delete session by hardcoded id', async () => {
       await service.deleteSession();
-      expect(sessionStorage.deleteSession).toHaveBeenCalledWith(DEFAULT_SESSION_ID);
+      expect(sessionStorage.deleteSession).toHaveBeenCalledWith(
+        DEFAULT_SESSION_ID,
+      );
     });
   });
 });

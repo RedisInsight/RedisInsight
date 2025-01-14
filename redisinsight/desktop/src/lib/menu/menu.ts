@@ -1,11 +1,18 @@
-import { app, Menu, shell, BrowserWindow, MenuItemConstructorOptions, MenuItem } from 'electron'
+import {
+  app,
+  Menu,
+  shell,
+  BrowserWindow,
+  MenuItemConstructorOptions,
+  MenuItem,
+} from 'electron'
 // eslint-disable-next-line import/no-cycle
 import {
   getDisplayAppInTrayValue,
   updateDisplayAppInTray,
   WindowType,
   windowFactory,
-  electronStore
+  electronStore,
 } from 'desktopSrc/lib'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
 
@@ -24,9 +31,14 @@ export class MenuBuilder {
   }
 
   buildMenu(): Menu {
-    const template = process.platform === 'darwin' ? this.buildDarwinTemplate() : this.buildDefaultTemplate()
+    const template =
+      process.platform === 'darwin'
+        ? this.buildDarwinTemplate()
+        : this.buildDefaultTemplate()
 
-    const menu = Menu.buildFromTemplate(template as MenuItemConstructorOptions[])
+    const menu = Menu.buildFromTemplate(
+      template as MenuItemConstructorOptions[],
+    )
     Menu.setApplicationMenu(menu)
 
     return menu
@@ -34,7 +46,10 @@ export class MenuBuilder {
 
   getZoomFactor(isZoomIn: boolean = false): number {
     const correctZoomFactor = isZoomIn ? STEP_ZOOM_FACTOR : -STEP_ZOOM_FACTOR
-    const zoomFactor = (this.mainWindow?.webContents.getZoomFactor() * 100 + correctZoomFactor * 100) / 100
+    const zoomFactor =
+      (this.mainWindow?.webContents.getZoomFactor() * 100 +
+        correctZoomFactor * 100) /
+      100
     return zoomFactor
   }
 
@@ -49,18 +64,18 @@ export class MenuBuilder {
       submenu: [
         {
           label: `About ${app.name}`,
-          selector: 'orderFrontStandardAboutPanel:'
+          selector: 'orderFrontStandardAboutPanel:',
         },
         { type: 'separator' },
         {
           label: `Hide ${app.name}`,
           accelerator: 'Command+H',
-          selector: 'hide:'
+          selector: 'hide:',
         },
         {
           label: 'Hide Others',
           accelerator: 'Command+Shift+H',
-          selector: 'hideOtherApplications:'
+          selector: 'hideOtherApplications:',
         },
         { label: 'Show All', selector: 'unhideAllApplications:' },
         { type: 'separator' },
@@ -69,9 +84,9 @@ export class MenuBuilder {
           accelerator: 'Command+Q',
           click: () => {
             app.quit()
-          }
-        }
-      ]
+          },
+        },
+      ],
     }
     const subMenuEdit: DarwinMenuItemConstructorOptions = {
       label: 'Edit',
@@ -85,9 +100,9 @@ export class MenuBuilder {
         {
           label: 'Select All',
           accelerator: 'Command+A',
-          selector: 'selectAll:'
-        }
-      ]
+          selector: 'selectAll:',
+        },
+      ],
     }
     const subMenuView: MenuItemConstructorOptions = {
       label: 'View',
@@ -97,7 +112,7 @@ export class MenuBuilder {
           accelerator: 'Command+R',
           click: () => {
             this.mainWindow.webContents.reload()
-          }
+          },
         },
         { type: 'separator' },
         {
@@ -105,14 +120,14 @@ export class MenuBuilder {
           accelerator: 'Ctrl+Command+F',
           click: () => {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen())
-          }
+          },
         },
         {
           label: 'Toggle Developer Tools',
           accelerator: 'Alt+Command+I',
           click: () => {
             this.mainWindow.webContents.toggleDevTools()
-          }
+          },
         },
         { type: 'separator' },
         {
@@ -121,7 +136,7 @@ export class MenuBuilder {
           click: () => {
             const zoomFactor = 1
             this.setZoomFactor(zoomFactor)
-          }
+          },
         },
         {
           label: 'Zoom In',
@@ -129,7 +144,7 @@ export class MenuBuilder {
           click: () => {
             const zoomFactor = this.getZoomFactor(true)
             this.setZoomFactor(zoomFactor)
-          }
+          },
         },
         {
           label: 'Zoom Out',
@@ -137,9 +152,9 @@ export class MenuBuilder {
           click: () => {
             const zoomFactor = this.getZoomFactor()
             this.setZoomFactor(zoomFactor)
-          }
-        }
-      ]
+          },
+        },
+      ],
     }
     const subMenuWindow: DarwinMenuItemConstructorOptions = {
       label: 'Window',
@@ -149,22 +164,22 @@ export class MenuBuilder {
           accelerator: 'Command+N',
           click: () => {
             windowFactory(WindowType.Main)
-          }
+          },
         },
         {
           label: 'Minimize',
           accelerator: 'Command+M',
-          selector: 'performMiniaturize:'
+          selector: 'performMiniaturize:',
         },
         {
           label: 'Close',
           accelerator: 'Command+W',
           click: () => {
             this.mainWindow.close()
-          }
+          },
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: 'Show in Menu Bar',
@@ -172,11 +187,11 @@ export class MenuBuilder {
           checked: getDisplayAppInTrayValue(),
           click: (menuItem: MenuItem) => {
             updateDisplayAppInTray(menuItem.checked)
-          }
-        }
+          },
+        },
         // { type: 'separator' },
         // { label: 'Bring All to Front', selector: 'arrangeInFront:' },
-      ]
+      ],
     }
     const subMenuHelp: MenuItemConstructorOptions = {
       label: 'Help',
@@ -184,22 +199,28 @@ export class MenuBuilder {
         {
           label: 'License Terms',
           click() {
-            shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE')
-          }
+            shell.openExternal(
+              'https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE',
+            )
+          },
         },
         {
           label: 'Submit a Bug or Idea',
           click() {
-            shell.openExternal('https://github.com/RedisInsight/RedisInsight/issues')
-          }
+            shell.openExternal(
+              'https://github.com/RedisInsight/RedisInsight/issues',
+            )
+          },
         },
         {
           label: 'Learn More',
           click() {
-            shell.openExternal('https://redis.io/docs/ui/insight/?utm_source=redisinsight&utm_medium=main&utm_campaign=learn_more')
-          }
-        }
-      ]
+            shell.openExternal(
+              'https://redis.io/docs/ui/insight/?utm_source=redisinsight&utm_medium=main&utm_campaign=learn_more',
+            )
+          },
+        },
+      ],
     }
 
     return [subMenuApp, subMenuEdit, subMenuWindow, subMenuView, subMenuHelp]
@@ -215,20 +236,20 @@ export class MenuBuilder {
             accelerator: 'Ctrl+N',
             click: () => {
               windowFactory(WindowType.Main)
-            }
+            },
           },
           {
             label: '&Close',
             accelerator: 'Ctrl+W',
             click: () => {
               this.mainWindow.close()
-            }
+            },
           },
           // type separator cannot be invisible
           {
             label: '',
             type: process.platform !== 'linux' ? 'separator' : 'normal',
-            visible: false
+            visible: false,
           },
           {
             label: 'Display On System Tray',
@@ -237,9 +258,9 @@ export class MenuBuilder {
             checked: getDisplayAppInTrayValue(),
             click: (menuItem: MenuItem) => {
               updateDisplayAppInTray(menuItem.checked)
-            }
-          }
-        ]
+            },
+          },
+        ],
       },
       {
         label: '&View',
@@ -249,7 +270,7 @@ export class MenuBuilder {
             accelerator: 'Ctrl+R',
             click: () => {
               this.mainWindow.webContents.reload()
-            }
+            },
           },
           { type: 'separator' },
           {
@@ -259,14 +280,14 @@ export class MenuBuilder {
               this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen())
               // on Linux menubar is hidden on full screen mode
               this.mainWindow.setMenuBarVisibility(true)
-            }
+            },
           },
           {
             label: 'Toggle &Developer Tools',
             accelerator: 'Ctrl+Shift+I',
             click: () => {
               this.mainWindow.webContents.toggleDevTools()
-            }
+            },
           },
           { type: 'separator' },
           {
@@ -275,7 +296,7 @@ export class MenuBuilder {
             click: () => {
               const zoomFactor = 1
               this.setZoomFactor(zoomFactor)
-            }
+            },
           },
           {
             label: 'Zoom &In',
@@ -283,7 +304,7 @@ export class MenuBuilder {
             click: () => {
               const zoomFactor = this.getZoomFactor(true)
               this.setZoomFactor(zoomFactor)
-            }
+            },
           },
           {
             label: 'Zoom &Out',
@@ -291,9 +312,9 @@ export class MenuBuilder {
             click: () => {
               const zoomFactor = this.getZoomFactor()
               this.setZoomFactor(zoomFactor)
-            }
-          }
-        ]
+            },
+          },
+        ],
       },
       {
         label: 'Help',
@@ -301,30 +322,36 @@ export class MenuBuilder {
           {
             label: 'License Terms',
             click() {
-              shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE')
-            }
+              shell.openExternal(
+                'https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE',
+              )
+            },
           },
           {
             label: 'Submit a Bug or Idea',
             click() {
-              shell.openExternal('https://github.com/RedisInsight/RedisInsight/issues')
-            }
+              shell.openExternal(
+                'https://github.com/RedisInsight/RedisInsight/issues',
+              )
+            },
           },
           {
             label: 'Learn More',
             click() {
-              shell.openExternal('https://redis.io/docs/ui/insight/?utm_source=redisinsight&utm_medium=main&utm_campaign=learn_more')
-            }
+              shell.openExternal(
+                'https://redis.io/docs/ui/insight/?utm_source=redisinsight&utm_medium=main&utm_campaign=learn_more',
+              )
+            },
           },
           { type: 'separator' },
           {
             label: `About ${app.name}`,
             click: () => {
               app.showAboutPanel()
-            }
-          }
-        ]
-      }
+            },
+          },
+        ],
+      },
     ]
 
     return templateDefault

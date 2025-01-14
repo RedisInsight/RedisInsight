@@ -1,5 +1,11 @@
 import React from 'react'
-import { EuiButtonIcon, EuiListGroupItem, EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import {
+  EuiButtonIcon,
+  EuiListGroupItem,
+  EuiText,
+  EuiTextColor,
+  EuiToolTip,
+} from '@elastic/eui'
 
 import cx from 'classnames'
 import styles from '../../styles.module.scss'

@@ -56,7 +56,7 @@ export class ListController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async createList(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: CreateListWithExpireDto,
+    @Body() dto: CreateListWithExpireDto,
   ): Promise<void> {
     return await this.listService.createList(clientMetadata, dto);
   }
@@ -76,7 +76,7 @@ export class ListController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async pushElement(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: PushElementToListDto,
+    @Body() dto: PushElementToListDto,
   ): Promise<PushListElementsResponse> {
     return await this.listService.pushElement(clientMetadata, dto);
   }
@@ -95,7 +95,7 @@ export class ListController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async getElements(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetListElementsDto,
+    @Body() dto: GetListElementsDto,
   ): Promise<GetListElementsResponse> {
     return this.listService.getElements(clientMetadata, dto);
   }
@@ -109,7 +109,7 @@ export class ListController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async updateElement(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: SetListElementDto,
+    @Body() dto: SetListElementDto,
   ): Promise<SetListElementResponse> {
     return await this.listService.setElement(clientMetadata, dto);
   }
@@ -118,9 +118,9 @@ export class ListController extends BrowserBaseController {
   @ApiParam({
     name: 'index',
     description:
-      'Zero-based index. 0 - first element, 1 - second element and so on. '
-      + 'Negative indices can be used to designate elements starting at the tail of the list. '
-      + 'Here, -1 means the last element',
+      'Zero-based index. 0 - first element, 1 - second element and so on. ' +
+      'Negative indices can be used to designate elements starting at the tail of the list. ' +
+      'Here, -1 means the last element',
     type: Number,
     required: true,
   })
@@ -138,8 +138,8 @@ export class ListController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async getElement(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Param('index') index: number,
-      @Body() dto: KeyDto,
+    @Param('index') index: number,
+    @Body() dto: KeyDto,
   ): Promise<GetListElementResponse> {
     return this.listService.getElement(clientMetadata, index, dto);
   }
@@ -160,7 +160,7 @@ export class ListController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async deleteElement(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DeleteListElementsDto,
+    @Body() dto: DeleteListElementsDto,
   ): Promise<DeleteListElementsResponse> {
     return this.listService.deleteElements(clientMetadata, dto);
   }

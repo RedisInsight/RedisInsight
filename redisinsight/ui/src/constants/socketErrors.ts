@@ -3,6 +3,6 @@ export enum SocketErrors {
 }
 
 export enum MonitorErrorMessages {
-  NoPerm = 'The Profiler cannot be started. This user has no permissions to run the \'monitor\' command',
-  LostConnection = 'Error: Connection was lost'
+  NoPerm = "The Profiler cannot be started. This user has no permissions to run the 'monitor' command",
+  LostConnection = 'Error: Connection was lost',
 }

@@ -8,6 +8,8 @@ const mockedProps = mock<Props>()
 describe('FieldMessage', () => {
   it('should render', () => {
     const message = 'Error Message'
-    expect(render(<FieldMessage {...instance(mockedProps)}>{message}</FieldMessage>)).toBeTruthy()
+    expect(
+      render(<FieldMessage {...instance(mockedProps)}>{message}</FieldMessage>),
+    ).toBeTruthy()
   })
 })

@@ -19,12 +19,20 @@ const BottomGroupComponents = () => {
       <div className={styles.groupComponents}>
         {isShowCli && <CliWrapper />}
         {isShowHelper && (
-          <div className={cx(styles.helperWrapper, { [styles.fullWidth]: !isShowCli })}>
+          <div
+            className={cx(styles.helperWrapper, {
+              [styles.fullWidth]: !isShowCli,
+            })}
+          >
             <CommandHelperWrapper />
           </div>
         )}
         {isShowMonitor && (
-          <div className={cx(styles.monitorWrapper, { [styles.fullWidth]: !isShowCli })}>
+          <div
+            className={cx(styles.monitorWrapper, {
+              [styles.fullWidth]: !isShowCli,
+            })}
+          >
             <MonitorWrapper />
           </div>
         )}

@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CloudAuthRequest, CloudAuthRequestOptions } from 'src/modules/cloud/auth/models/cloud-auth-request';
+import {
+  CloudAuthRequest,
+  CloudAuthRequestOptions,
+} from 'src/modules/cloud/auth/models/cloud-auth-request';
 import { SessionMetadata } from 'src/common/models';
 import { OktaAuth } from '@okta/okta-auth-js';
 import { plainToClass } from 'class-transformer';
@@ -55,7 +58,10 @@ export abstract class CloudAuthStrategy {
     url.searchParams.append('idp', authRequest.idp);
     url.searchParams.append('state', authRequest.state);
     url.searchParams.append('nonce', authRequest.nonce);
-    url.searchParams.append('code_challenge_method', authRequest.codeChallengeMethod);
+    url.searchParams.append(
+      'code_challenge_method',
+      authRequest.codeChallengeMethod,
+    );
     url.searchParams.append('code_challenge', authRequest.codeChallenge);
     url.searchParams.append('scope', authRequest.scopes.join(' '));
     url.searchParams.append('prompt', 'login');

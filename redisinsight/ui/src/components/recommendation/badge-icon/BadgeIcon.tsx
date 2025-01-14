@@ -8,9 +8,19 @@ export interface Props {
   name: string
 }
 const BadgeIcon = ({ id, icon, name }: Props) => (
-  <EuiFlexItem key={id} className={styles.badge} grow={false} data-testid={`recommendation-badge-${id}`}>
+  <EuiFlexItem
+    key={id}
+    className={styles.badge}
+    grow={false}
+    data-testid={`recommendation-badge-${id}`}
+  >
     <div data-testid={id} className={styles.badgeWrapper}>
-      <EuiToolTip content={name} position="top" display="inlineBlock" anchorClassName="flex-row">
+      <EuiToolTip
+        content={name}
+        position="top"
+        display="inlineBlock"
+        anchorClassName="flex-row"
+      >
         {icon}
       </EuiToolTip>
     </div>

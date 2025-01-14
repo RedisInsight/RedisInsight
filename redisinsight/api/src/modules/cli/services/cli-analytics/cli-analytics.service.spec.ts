@@ -10,7 +10,10 @@ import {
 import { CommandType, TelemetryEvents } from 'src/constants';
 import { ReplyError } from 'src/models';
 import { CommandParsingError } from 'src/modules/cli/constants/errors';
-import { CommandExecutionStatus, ICliExecResultFromNode } from 'src/modules/cli/dto/cli.dto';
+import {
+  CommandExecutionStatus,
+  ICliExecResultFromNode,
+} from 'src/modules/cli/dto/cli.dto';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { CliAnalyticsService } from './cli-analytics.service';
 
@@ -64,11 +67,7 @@ describe('CliAnalyticsService', () => {
           since: '1.0.0',
           group: 'string',
           complexity: 'O(1)',
-          acl_categories: [
-            '@write',
-            '@string',
-            '@slow',
-          ],
+          acl_categories: ['@write', '@string', '@slow'],
         },
       },
       redisbloom: {
@@ -107,11 +106,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should not fail and should not emit when there is no data', () => {
-      service.sendIndexInfoEvent(
-        mockSessionMetadata,
-        databaseId,
-        null,
-      );
+      service.sendIndexInfoEvent(mockSessionMetadata, databaseId, null);
 
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
@@ -135,10 +130,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit CliClientCreated event without additional data', () => {
-      service.sendClientCreatedEvent(
-        mockSessionMetadata,
-        databaseId,
-      );
+      service.sendClientCreatedEvent(mockSessionMetadata, databaseId);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -205,10 +197,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit CliClientRecreated event without additional data', () => {
-      service.sendClientRecreatedEvent(
-        mockSessionMetadata,
-        databaseId,
-      );
+      service.sendClientRecreatedEvent(mockSessionMetadata, databaseId);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -239,11 +228,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit CliClientDeleted event without additional data', () => {
-      service.sendClientDeletedEvent(
-        mockSessionMetadata,
-        1,
-        databaseId,
-      );
+      service.sendClientDeletedEvent(mockSessionMetadata, 1, databaseId);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -254,27 +239,17 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should not emit event', () => {
-      service.sendClientDeletedEvent(
-        mockSessionMetadata,
-        0,
-        databaseId,
-      );
+      service.sendClientDeletedEvent(mockSessionMetadata, 0, databaseId);
 
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
     it('should not emit event on invalid input values', () => {
       const input: any = {};
-      service.sendClientDeletedEvent(
-        mockSessionMetadata,
-        input,
-        databaseId,
-      );
+      service.sendClientDeletedEvent(mockSessionMetadata, input, databaseId);
 
-      expect(() => service.sendClientDeletedEvent(
-        mockSessionMetadata,
-        input,
-        databaseId,
-      )).not.toThrow();
+      expect(() =>
+        service.sendClientDeletedEvent(mockSessionMetadata, input, databaseId),
+      ).not.toThrow();
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
   });
@@ -300,10 +275,7 @@ describe('CliAnalyticsService', () => {
       );
     });
     it('should emit CliCommandExecuted event without additional data', async () => {
-      await service.sendCommandExecutedEvent(
-        mockSessionMetadata,
-        databaseId,
-      );
+      await service.sendCommandExecutedEvent(mockSessionMetadata, databaseId);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,

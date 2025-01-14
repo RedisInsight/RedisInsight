@@ -9,11 +9,11 @@ describe('FormDialog', () => {
       <FormDialog
         isOpen
         onClose={jest.fn()}
-        header={(<div data-testid="header" />)}
-        footer={(<div data-testid="footer" />)}
+        header={<div data-testid="header" />}
+        footer={<div data-testid="footer" />}
       >
         <div data-testid="body" />
-      </FormDialog>
+      </FormDialog>,
     )
 
     expect(screen.getByTestId('header')).toBeInTheDocument()

@@ -5,16 +5,20 @@ import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoad
 import styles from './styles.module.scss'
 
 export type ConnectivityErrorProps = {
-  onRetry?: () => void;
-  isLoading: boolean;
-  error?: string | null;
+  onRetry?: () => void
+  isLoading: boolean
+  error?: string | null
 }
 
-const ConnectivityError = ({ isLoading, error, onRetry }: ConnectivityErrorProps) => (
+const ConnectivityError = ({
+  isLoading,
+  error,
+  onRetry,
+}: ConnectivityErrorProps) => (
   <div className={styles.connectivityError}>
     <EuiPanel>
       <div style={{ display: 'flex', height: '100%' }}>
-        { isLoading && <SuspenseLoader />}
+        {isLoading && <SuspenseLoader />}
         <EuiFlexGroup
           gutterSize="l"
           alignItems="center"
@@ -24,14 +28,9 @@ const ConnectivityError = ({ isLoading, error, onRetry }: ConnectivityErrorProps
           <EuiFlexItem grow={false} data-testid="connectivity-error-message">
             {error}
           </EuiFlexItem>
-          { onRetry && (
+          {onRetry && (
             <EuiFlexItem grow={false}>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
-                onClick={onRetry}
-              >
+              <EuiButton fill size="m" color="secondary" onClick={onRetry}>
                 Retry
               </EuiButton>
             </EuiFlexItem>

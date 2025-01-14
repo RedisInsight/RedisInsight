@@ -42,8 +42,8 @@ const CHSearchWrapper = () => {
         event: TelemetryEvent.COMMAND_HELPER_COMMAND_FILTERED,
         eventData: {
           databaseId: instanceId,
-          group: type
-        }
+          group: type,
+        },
       })
     }
 

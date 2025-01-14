@@ -1,5 +1,11 @@
 import React from 'react'
-import { act, fireEvent, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitForEuiPopoverVisible,
+} from 'uiSrc/utils/test-utils'
 
 import ChatForm from './ChatForm'
 
@@ -15,10 +21,9 @@ describe('ChatForm', () => {
     expect(screen.getByTestId('ai-submit-message-btn')).toBeDisabled()
 
     act(() => {
-      fireEvent.change(
-        screen.getByTestId('ai-message-textarea'),
-        { target: { value: 'test' } }
-      )
+      fireEvent.change(screen.getByTestId('ai-message-textarea'), {
+        target: { value: 'test' },
+      })
     })
 
     fireEvent.click(screen.getByTestId('ai-submit-message-btn'))
@@ -31,10 +36,9 @@ describe('ChatForm', () => {
     render(<ChatForm onSubmit={onSubmit} />)
 
     act(() => {
-      fireEvent.change(
-        screen.getByTestId('ai-message-textarea'),
-        { target: { value: 'test' } }
-      )
+      fireEvent.change(screen.getByTestId('ai-message-textarea'), {
+        target: { value: 'test' },
+      })
     })
 
     fireEvent.keyDown(screen.getByTestId('ai-message-textarea'), {
@@ -46,13 +50,17 @@ describe('ChatForm', () => {
 
   it('should show agreements popover', async () => {
     const onSubmit = jest.fn()
-    render(<ChatForm onSubmit={onSubmit} agreements={(<div data-testid="agreements" />)} />)
+    render(
+      <ChatForm
+        onSubmit={onSubmit}
+        agreements={<div data-testid="agreements" />}
+      />,
+    )
 
     act(() => {
-      fireEvent.change(
-        screen.getByTestId('ai-message-textarea'),
-        { target: { value: 'test' } }
-      )
+      fireEvent.change(screen.getByTestId('ai-message-textarea'), {
+        target: { value: 'test' },
+      })
     })
 
     await act(async () => {

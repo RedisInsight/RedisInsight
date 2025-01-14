@@ -10,7 +10,7 @@ import { RunQueryMode } from 'uiSrc/slices/interfaces'
 import reducer, {
   initialState,
   searchAndQuerySelector,
-  changeSQActiveRunQueryMode
+  changeSQActiveRunQueryMode,
 } from '../../search/searchAndQuery'
 
 jest.mock('uiSrc/services', () => ({
@@ -42,10 +42,13 @@ describe('slices', () => {
     it('should properly set mode', () => {
       const state = {
         ...initialState,
-        activeRunQueryMode: RunQueryMode.Raw
+        activeRunQueryMode: RunQueryMode.Raw,
       }
 
-      const nextState = reducer(initialState, changeSQActiveRunQueryMode(RunQueryMode.Raw))
+      const nextState = reducer(
+        initialState,
+        changeSQActiveRunQueryMode(RunQueryMode.Raw),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

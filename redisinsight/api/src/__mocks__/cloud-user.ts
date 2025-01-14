@@ -8,8 +8,15 @@ import {
 } from 'src/modules/cloud/user/models';
 import config, { Config } from 'src/utils/config';
 import { classToPlain } from 'class-transformer';
-import { mockCloudApiCapiAccessKey, mockCloudCapiAuthDto, mockCloudCapiKey } from 'src/__mocks__/cloud-capi-key';
-import { mockCloudApiAuthDto, mockCloudSession } from 'src/__mocks__/cloud-session';
+import {
+  mockCloudApiCapiAccessKey,
+  mockCloudCapiAuthDto,
+  mockCloudCapiKey,
+} from 'src/__mocks__/cloud-capi-key';
+import {
+  mockCloudApiAuthDto,
+  mockCloudSession,
+} from 'src/__mocks__/cloud-session';
 
 const serverConfig = config.get('server') as Config['server'];
 const cloudConfig = config.get('cloud');

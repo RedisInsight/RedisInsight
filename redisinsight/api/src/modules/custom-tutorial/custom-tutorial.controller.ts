@@ -1,12 +1,17 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Delete, Get, HttpCode, Param, Post,
-  UseInterceptors, UsePipes, ValidationPipe,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import {
-  ApiConsumes, ApiExtraModels, ApiTags,
-} from '@nestjs/swagger';
+import { ApiConsumes, ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { CustomTutorialService } from 'src/modules/custom-tutorial/custom-tutorial.service';
 import { UploadCustomTutorialDto } from 'src/modules/custom-tutorial/dto/upload.custom-tutorial.dto';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
@@ -22,9 +27,12 @@ import { RequestSessionMetadata } from 'src/common/decorators';
 import { SessionMetadata } from 'src/common/models';
 
 @ApiExtraModels(
-  CreateCaCertificateDto, UseCaCertificateDto,
-  CreateClientCertificateDto, UseClientCertificateDto,
-  CreateBasicSshOptionsDto, CreateCertSshOptionsDto,
+  CreateCaCertificateDto,
+  UseCaCertificateDto,
+  CreateClientCertificateDto,
+  UseClientCertificateDto,
+  CreateBasicSshOptionsDto,
+  CreateCertSshOptionsDto,
 )
 @UsePipes(new ValidationPipe({ transform: true }))
 @UseInterceptors(ClassSerializerInterceptor)
@@ -48,7 +56,7 @@ export class CustomTutorialController {
   })
   async create(
     @Body() dto: UploadCustomTutorialDto,
-      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<RootCustomTutorialManifest> {
     return this.service.create(sessionMetadata, dto);
   }
@@ -72,9 +80,7 @@ export class CustomTutorialController {
     statusCode: 200,
     description: 'Delete custom tutorial and its files',
   })
-  async delete(
-    @Param('id') id: string,
-  ): Promise<void> {
+  async delete(@Param('id') id: string): Promise<void> {
     return this.service.delete(id);
   }
 }

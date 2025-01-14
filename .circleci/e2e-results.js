@@ -3,20 +3,21 @@ const fs = require('fs');
 let parallelNodeInfo = '';
 const totalNodes = parseInt(process.env.CIRCLE_NODE_TOTAL, 10);
 if (totalNodes > 1) {
-  parallelNodeInfo = ` (node: ${parseInt(process.env.CIRCLE_NODE_INDEX, 10) + 1}/${totalNodes})`
+  parallelNodeInfo = ` (node: ${parseInt(process.env.CIRCLE_NODE_INDEX, 10) + 1}/${totalNodes})`;
 }
 
-const file = 'tests/e2e/results/e2e.results.json'
-const appBuildType = process.env.APP_BUILD_TYPE || 'Web'
+const file = 'tests/e2e/results/e2e.results.json';
+const appBuildType = process.env.APP_BUILD_TYPE || 'Web';
 const results = {
   message: {
-    text: `*E2ETest - ${appBuildType}${parallelNodeInfo}* (Branch: *${process.env.CIRCLE_BRANCH}*)` +
+    text:
+      `*E2ETest - ${appBuildType}${parallelNodeInfo}* (Branch: *${process.env.CIRCLE_BRANCH}*)` +
       `\n<https://app.circleci.com/pipelines/workflows/${process.env.CIRCLE_WORKFLOW_ID}|View on CircleCI>`,
     attachments: [],
   },
 };
 
-const result = JSON.parse(fs.readFileSync(file, 'utf-8'))
+const result = JSON.parse(fs.readFileSync(file, 'utf-8'));
 const testRunResult = {
   color: '#36a64f',
   title: `Started at: *${result.startTime}`,
@@ -51,7 +52,10 @@ if (results.passed === false) {
   results.message.text = '<!here> ' + results.message.text;
 }
 
-fs.writeFileSync('e2e.report.json', JSON.stringify({
-  channel: process.env.SLACK_TEST_REPORT_CHANNEL,
-  ...results.message,
-}));
+fs.writeFileSync(
+  'e2e.report.json',
+  JSON.stringify({
+    channel: process.env.SLACK_TEST_REPORT_CHANNEL,
+    ...results.message,
+  }),
+);

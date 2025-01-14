@@ -8,6 +8,8 @@ const mockedProps = mock<Props>()
 
 describe('StreamEntryFields', () => {
   it('should render', () => {
-    expect(render(<StreamEntryFields {...mockedProps} fields={[]} />)).toBeTruthy()
+    expect(
+      render(<StreamEntryFields {...mockedProps} fields={[]} />),
+    ).toBeTruthy()
   })
 })

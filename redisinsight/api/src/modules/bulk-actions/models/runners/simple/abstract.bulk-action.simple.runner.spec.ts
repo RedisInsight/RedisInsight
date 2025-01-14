@@ -9,11 +9,12 @@ import {
   mockBulkActionFilter,
   mockStandaloneRedisClient,
 } from 'src/__mocks__';
-import {
-  DeleteBulkActionSimpleRunner,
-} from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
+import { DeleteBulkActionSimpleRunner } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
+import {
+  BulkActionStatus,
+  BulkActionType,
+} from 'src/modules/bulk-actions/constants';
 
 const mockCreateBulkActionDto = {
   id: 'bulk-action-id',
@@ -47,7 +48,10 @@ describe('AbstractBulkActionSimpleRunner', () => {
       mockBulkActionsAnalytics as any,
     );
 
-    deleteRunner = new DeleteBulkActionSimpleRunner(bulkAction, mockStandaloneRedisClient);
+    deleteRunner = new DeleteBulkActionSimpleRunner(
+      bulkAction,
+      mockStandaloneRedisClient,
+    );
   });
 
   describe('prepareToStart', () => {
@@ -73,12 +77,18 @@ describe('AbstractBulkActionSimpleRunner', () => {
     });
 
     it('Should get keys to process and change cursor', async () => {
-      mockStandaloneRedisClient.sendCommand
-        .mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
-      mockStandaloneRedisClient.sendCommand
-        .mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
-      mockStandaloneRedisClient.sendCommand
-        .mockResolvedValueOnce([mockZeroCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([
+        mockCursorBuffer,
+        [mockKeyBuffer, mockKeyBuffer],
+      ]);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([
+        mockCursorBuffer,
+        [mockKeyBuffer, mockKeyBuffer],
+      ]);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([
+        mockZeroCursorBuffer,
+        [mockKeyBuffer, mockKeyBuffer],
+      ]);
 
       expect(deleteRunner['progress']['cursor']).toEqual(0);
       expect(deleteRunner['progress']['total']).toEqual(1_000_000);
@@ -111,10 +121,18 @@ describe('AbstractBulkActionSimpleRunner', () => {
     });
 
     it('Should get keys to process and change cursor', async () => {
-      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
-      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
-      mockStandaloneRedisClient.sendCommand
-        .mockResolvedValueOnce([mockZeroCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([
+        mockCursorBuffer,
+        [mockKeyBuffer, mockKeyBuffer],
+      ]);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([
+        mockCursorBuffer,
+        [mockKeyBuffer, mockKeyBuffer],
+      ]);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([
+        mockZeroCursorBuffer,
+        [mockKeyBuffer, mockKeyBuffer],
+      ]);
       mockStandaloneRedisClient.sendPipeline.mockResolvedValue([
         [null, 1],
         [mockReplyError, null],
@@ -206,7 +224,9 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
     it('should should run if cursor 0 and status is Running and stop on status change', async () => {
       expect(deleteRunner['progress']['cursor']).toEqual(0);
-      expect(deleteRunner['bulkAction']['status']).toEqual(BulkActionStatus.Running);
+      expect(deleteRunner['bulkAction']['status']).toEqual(
+        BulkActionStatus.Running,
+      );
       setTimeout(() => {
         deleteRunner['bulkAction']['status'] = BulkActionStatus.Aborted;
       }, 90);
@@ -217,7 +237,9 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
     it('should should run if cursor 0 and status is Running and stop on wen cursor -1', async () => {
       expect(deleteRunner['progress']['cursor']).toEqual(0);
-      expect(deleteRunner['bulkAction']['status']).toEqual(BulkActionStatus.Running);
+      expect(deleteRunner['bulkAction']['status']).toEqual(
+        BulkActionStatus.Running,
+      );
       setTimeout(() => {
         deleteRunner['progress']['cursor'] = -1;
       }, 90);

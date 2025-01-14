@@ -9,16 +9,28 @@ const resultMock: any[] = []
 
 describe.skip('TableInfoResult', () => {
   it('should render', () => {
-    expect(render(<TableInfoResult query="get" result={resultMock} />)).toBeTruthy()
+    expect(
+      render(<TableInfoResult query="get" result={resultMock} />),
+    ).toBeTruthy()
   })
 
   it('Result element should be "Not found." meanwhile result is [0]', async () => {
     const { queryByTestId, rerender } = render(
-      <TableInfoResult {...instance(mockedProps)} result={null} query="ft.search" />
+      <TableInfoResult
+        {...instance(mockedProps)}
+        result={null}
+        query="ft.search"
+      />,
     )
 
     await act(() => {
-      rerender(<TableInfoResult {...instance(mockedProps)} result={[]} query="ft.search" />)
+      rerender(
+        <TableInfoResult
+          {...instance(mockedProps)}
+          result={[]}
+          query="ft.search"
+        />,
+      )
     })
 
     const resultEl = queryByTestId(/query-table-no-results/)
@@ -39,12 +51,20 @@ describe.skip('TableInfoResult', () => {
     ]
 
     const { queryByTestId, queryAllByTestId, rerender } = render(
-      <TableInfoResult {...instance(mockedProps)} result={[]} query="ft.search" />
+      <TableInfoResult
+        {...instance(mockedProps)}
+        result={[]}
+        query="ft.search"
+      />,
     )
 
     await act(() => {
       rerender(
-        <TableInfoResult {...instance(mockedProps)} result={result} query="ft.search" />
+        <TableInfoResult
+          {...instance(mockedProps)}
+          result={result}
+          query="ft.search"
+        />,
       )
     })
 

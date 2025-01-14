@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
+import {
+  CloudRequestUtm,
+  ICloudApiCredentials,
+} from 'src/modules/cloud/common/models';
 import config, { Config } from 'src/utils/config';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
@@ -14,16 +17,20 @@ export class CloudApiProvider {
     baseURL: cloudConfig.apiUrl,
   });
 
-  constructor(
-    private readonly cloudSessionService: CloudSessionService,
-  ) {}
+  constructor(private readonly cloudSessionService: CloudSessionService) {}
 
-  async callWithAuthRetry(sessionId: string, fn: () => Promise<any>, retries = 1) {
+  async callWithAuthRetry(
+    sessionId: string,
+    fn: () => Promise<any>,
+    retries = 1,
+  ) {
     try {
       return await fn();
     } catch (e) {
       if (retries > 0 && e instanceof CloudApiUnauthorizedException) {
-        await this.cloudSessionService.invalidateApiSession(sessionId).catch(() => {});
+        await this.cloudSessionService
+          .invalidateApiSession(sessionId)
+          .catch(() => {});
         return this.callWithAuthRetry(sessionId, fn, retries - 1);
       }
 

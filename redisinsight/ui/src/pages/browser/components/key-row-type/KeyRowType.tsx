@@ -1,8 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-import {
-  EuiLoadingContent,
-} from '@elastic/eui'
+import { EuiLoadingContent } from '@elastic/eui'
 
 import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
 import { GroupBadge } from 'uiSrc/components'

@@ -11,27 +11,27 @@ const ipcHandler = {
     }
 
     return new Error('channel is not allowed')
-  }
+  },
 }
 
 contextBridge.exposeInMainWorld('app', {
   // Send data from main to render
-  sendWindowId: ((windowId: any) => {
+  sendWindowId: (windowId: any) => {
     ipcRenderer.on(IpcOnEvent.sendWindowId, windowId)
-  }),
-  cloudOauthCallback: ((connected: any) => {
+  },
+  cloudOauthCallback: (connected: any) => {
     ipcRenderer.on(IpcOnEvent.cloudOauthCallback, connected)
-  }),
-  deepLinkAction: ((parsedDeepLink: any) => {
+  },
+  deepLinkAction: (parsedDeepLink: any) => {
     ipcRenderer.on(IpcOnEvent.deepLinkAction, parsedDeepLink)
-  }),
-  updateAvailable: ((updateInfo: any) => {
+  },
+  updateAvailable: (updateInfo: any) => {
     ipcRenderer.on(IpcOnEvent.appUpdateAvailable, updateInfo)
-  }),
+  },
   ipc: ipcHandler,
   config: {
-    apiPort: config.apiPort
-  }
+    apiPort: config.apiPort,
+  },
 } as WindowApp)
 
 export type IPCHandler = typeof ipcHandler

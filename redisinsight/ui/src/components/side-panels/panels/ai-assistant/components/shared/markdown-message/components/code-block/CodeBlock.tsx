@@ -20,13 +20,15 @@ const CodeBlock = (props: Props) => {
 
   const handleApply = (params?: CodeButtonParams, onFinish?: () => void) => {
     onRunCommand?.(children)
-    dispatch(sendWbQueryAction(
-      children,
-      null,
-      params,
-      { afterAll: onFinish },
-      onFinish
-    ))
+    dispatch(
+      sendWbQueryAction(
+        children,
+        null,
+        params,
+        { afterAll: onFinish },
+        onFinish,
+      ),
+    )
   }
 
   return (

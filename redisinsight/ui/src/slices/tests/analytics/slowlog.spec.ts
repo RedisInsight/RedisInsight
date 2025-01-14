@@ -3,7 +3,11 @@ import { AxiosError } from 'axios'
 import { DEFAULT_SLOWLOG_DURATION_UNIT } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { setSlowLogUnits } from 'uiSrc/slices/app/context'
-import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  initialStateDefault,
+} from 'uiSrc/utils/test-utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 
@@ -25,7 +29,7 @@ import reducer, {
   getSlowLogConfigAction,
   patchSlowLogConfigAction,
   setSlowLogInitialState,
-  slowLogSelector
+  slowLogSelector,
 } from '../../analytics/slowlog'
 
 let store: typeof mockedStore
@@ -63,7 +67,7 @@ describe('slowLog slice', () => {
     it('should properly set the initial state', () => {
       // Arrange
       const state = {
-        ...initialState
+        ...initialState,
       }
 
       // Act
@@ -82,7 +86,7 @@ describe('slowLog slice', () => {
       // Arrange
       const state = {
         ...initialState,
-        loading: true
+        loading: true,
       }
 
       // Act
@@ -105,14 +109,14 @@ describe('slowLog slice', () => {
           time: 1652265051,
           durationUs: 199,
           args: 'SET foo bar',
-          source: '127.17.0.1:46922'
-        }
+          source: '127.17.0.1:46922',
+        },
       ]
       const state = {
         ...initialState,
         loading: false,
         data,
-        lastRefreshTime: MOCK_TIMESTAMP
+        lastRefreshTime: MOCK_TIMESTAMP,
       }
 
       // Act
@@ -133,7 +137,7 @@ describe('slowLog slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
@@ -152,7 +156,7 @@ describe('slowLog slice', () => {
       // Arrange
       const state = {
         ...initialState,
-        loading: true
+        loading: true,
       }
 
       // Act
@@ -172,7 +176,7 @@ describe('slowLog slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        data: []
+        data: [],
       }
 
       // Act
@@ -193,7 +197,7 @@ describe('slowLog slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
@@ -212,7 +216,7 @@ describe('slowLog slice', () => {
       // Arrange
       const state = {
         ...initialState,
-        loading: true
+        loading: true,
       }
 
       // Act
@@ -236,7 +240,7 @@ describe('slowLog slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        config
+        config,
       }
 
       // Act
@@ -257,7 +261,7 @@ describe('slowLog slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
@@ -283,8 +287,8 @@ describe('slowLog slice', () => {
             time: 1652265051,
             durationUs: 199,
             args: 'SET foo bar',
-            source: '127.17.0.1:46922'
-          }
+            source: '127.17.0.1:46922',
+          },
         ]
         const responsePayload = { data, status: 200 }
 
@@ -294,10 +298,7 @@ describe('slowLog slice', () => {
         await store.dispatch<any>(fetchSlowLogsAction('123', 100))
 
         // Assert
-        const expectedActions = [
-          getSlowLogs(),
-          getSlowLogsSuccess(data),
-        ]
+        const expectedActions = [getSlowLogs(), getSlowLogsSuccess(data)]
 
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -320,7 +321,7 @@ describe('slowLog slice', () => {
         const expectedActions = [
           getSlowLogs(),
           addErrorNotification(responsePayload as AxiosError),
-          getSlowLogsError(errorMessage)
+          getSlowLogsError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -337,10 +338,7 @@ describe('slowLog slice', () => {
         await store.dispatch<any>(clearSlowLogAction('123'))
 
         // Assert
-        const expectedActions = [
-          deleteSlowLogs(),
-          deleteSlowLogsSuccess(),
-        ]
+        const expectedActions = [deleteSlowLogs(), deleteSlowLogsSuccess()]
 
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -363,7 +361,7 @@ describe('slowLog slice', () => {
         const expectedActions = [
           deleteSlowLogs(),
           addErrorNotification(responsePayload as AxiosError),
-          deleteSlowLogsError(errorMessage)
+          deleteSlowLogsError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -374,7 +372,7 @@ describe('slowLog slice', () => {
       it('succeed to fetch data', async () => {
         const data = {
           slowlogMaxLen: 100,
-          slowlogLogSlowerThan: 1200
+          slowlogLogSlowerThan: 1200,
         }
         const responsePayload = { status: 200, data }
 
@@ -410,7 +408,7 @@ describe('slowLog slice', () => {
         const expectedActions = [
           getSlowLogConfig(),
           addErrorNotification(responsePayload as AxiosError),
-          getSlowLogConfigError(errorMessage)
+          getSlowLogConfigError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -421,10 +419,10 @@ describe('slowLog slice', () => {
       it('succeed to fetch data', async () => {
         const data = {
           slowlogMaxLen: 100,
-          slowlogLogSlowerThan: 1200
+          slowlogLogSlowerThan: 1200,
         }
         const config = {
-          ...data
+          ...data,
         }
         const responsePayload = { status: 200, data }
 
@@ -435,15 +433,15 @@ describe('slowLog slice', () => {
           patchSlowLogConfigAction(
             '123',
             config,
-            DEFAULT_SLOWLOG_DURATION_UNIT
-          )
+            DEFAULT_SLOWLOG_DURATION_UNIT,
+          ),
         )
 
         // Assert
         const expectedActions = [
           getSlowLogConfig(),
           getSlowLogConfigSuccess(data),
-          setSlowLogUnits(DEFAULT_SLOWLOG_DURATION_UNIT)
+          setSlowLogUnits(DEFAULT_SLOWLOG_DURATION_UNIT),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -466,17 +464,17 @@ describe('slowLog slice', () => {
             '123',
             {
               slowlogMaxLen: 100,
-              slowlogLogSlowerThan: 1200
+              slowlogLogSlowerThan: 1200,
             },
-            DEFAULT_SLOWLOG_DURATION_UNIT
-          )
+            DEFAULT_SLOWLOG_DURATION_UNIT,
+          ),
         )
 
         // Assert
         const expectedActions = [
           getSlowLogConfig(),
           addErrorNotification(responsePayload as AxiosError),
-          getSlowLogConfigError(errorMessage)
+          getSlowLogConfigError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

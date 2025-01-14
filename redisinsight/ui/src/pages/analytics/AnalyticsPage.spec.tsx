@@ -26,8 +26,8 @@ describe('AnalyticsPage', () => {
       render(
         <BrowserRouter>
           <AnalyticsPage {...instance(mockedProps)} />
-        </BrowserRouter>
-      )
+        </BrowserRouter>,
+      ),
     ).toBeTruthy()
   })
 })

@@ -4,7 +4,7 @@ import { IRedisCommand, IRedisCommandTree } from 'uiSrc/constants'
 
 export enum ArgName {
   NArgs = 'nargs',
-  Count = 'count'
+  Count = 'count',
 }
 
 export interface FoundCommandArgument {

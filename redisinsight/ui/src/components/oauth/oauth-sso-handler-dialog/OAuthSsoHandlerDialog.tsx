@@ -6,16 +6,25 @@ import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { oauthCloudUserSelector, setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
-import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import {
+  oauthCloudUserSelector,
+  setSocialDialogState,
+} from 'uiSrc/slices/oauth/cloud'
+import {
+  fetchSubscriptionsRedisCloud,
+  setSSOFlow,
+} from 'uiSrc/slices/instances/cloud'
 import { Maybe } from 'uiSrc/utils'
 
 export interface Props {
   children: (
     ssoCloudHandlerClick: (
       e: React.MouseEvent,
-      { source, action }: { source: OAuthSocialSource, action?: Maybe<OAuthSocialAction> },
-      telemetrySource?: string
+      {
+        source,
+        action,
+      }: { source: OAuthSocialSource; action?: Maybe<OAuthSocialAction> },
+      telemetrySource?: string,
     ) => void,
     isSSOEnabled: boolean,
   ) => React.ReactElement
@@ -29,15 +38,20 @@ const telemetryEventByAction = {
 
 const OAuthSsoHandlerDialog = ({ children }: Props) => {
   const { data } = useSelector(oauthCloudUserSelector)
-  const { [FeatureFlags.cloudSso]: feature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.cloudSso]: feature } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
 
   const dispatch = useDispatch()
   const history = useHistory()
 
   const ssoCloudHandlerClick = (
     e: React.MouseEvent,
-    { source, action }: { source: OAuthSocialSource, action?: Maybe<OAuthSocialAction> },
-    telemetrySource?: string
+    {
+      source,
+      action,
+    }: { source: OAuthSocialSource; action?: Maybe<OAuthSocialAction> },
+    telemetrySource?: string,
   ) => {
     const isCloudSsoEnabled = !!feature?.flag
 
@@ -48,13 +62,15 @@ const OAuthSsoHandlerDialog = ({ children }: Props) => {
 
     if (action === OAuthSocialAction.Import && data) {
       // if user logged in - do not show dialog, just redirect to subscriptions page
-      dispatch(fetchSubscriptionsRedisCloud(null, true, () => {
-        history.push(Pages.redisCloudSubscriptions)
-      }))
+      dispatch(
+        fetchSubscriptionsRedisCloud(null, true, () => {
+          history.push(Pages.redisCloudSubscriptions)
+        }),
+      )
 
       sendEventTelemetry({
         event: TelemetryEvent.CLOUD_IMPORT_DATABASES_SUBMITTED,
-        eventData: { source }
+        eventData: { source },
       })
 
       return

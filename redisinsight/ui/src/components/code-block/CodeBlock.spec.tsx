@@ -33,13 +33,21 @@ describe('CodeBlock', () => {
   })
 
   it('should copy proper text', () => {
-    render(<CodeBlock data-testid="code" isCopyable>text</CodeBlock>)
+    render(
+      <CodeBlock data-testid="code" isCopyable>
+        text
+      </CodeBlock>,
+    )
     fireEvent.click(screen.getByTestId('copy-code-btn'))
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('text')
   })
 
   it('should copy proper text when children is ReactNode', () => {
-    render(<CodeBlock data-testid="code" isCopyable><span>text2</span></CodeBlock>)
+    render(
+      <CodeBlock data-testid="code" isCopyable>
+        <span>text2</span>
+      </CodeBlock>,
+    )
     fireEvent.click(screen.getByTestId('copy-code-btn'))
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('text2')
   })

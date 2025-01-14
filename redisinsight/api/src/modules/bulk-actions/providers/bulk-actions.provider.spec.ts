@@ -61,13 +61,21 @@ describe('BulkActionsProvider', () => {
     it('should create only once with the same id', async () => {
       expect(service['bulkActions'].size).toEqual(0);
 
-      const bulkAction = await service.create(mockSessionMetadata, mockCreateBulkActionDto, mockSocket1);
+      const bulkAction = await service.create(
+        mockSessionMetadata,
+        mockCreateBulkActionDto,
+        mockSocket1,
+      );
 
       expect(bulkAction).toBeInstanceOf(BulkAction);
       expect(service['bulkActions'].size).toEqual(1);
 
       try {
-        await service.create(mockSessionMetadata, mockCreateBulkActionDto, mockSocket1);
+        await service.create(
+          mockSessionMetadata,
+          mockCreateBulkActionDto,
+          mockSocket1,
+        );
         fail();
       } catch (e) {
         expect(e.message).toEqual('You already have bulk action with such id');
@@ -75,16 +83,24 @@ describe('BulkActionsProvider', () => {
 
       expect(service['bulkActions'].size).toEqual(1);
 
-      await service.create(mockSessionMetadata, { ...mockCreateBulkActionDto, id: 'new one' }, mockSocket1);
+      await service.create(
+        mockSessionMetadata,
+        { ...mockCreateBulkActionDto, id: 'new one' },
+        mockSocket1,
+      );
 
       expect(service['bulkActions'].size).toEqual(2);
     });
     it('should fail when unsupported runner class', async () => {
       try {
-        await service.create(mockSessionMetadata, {
-          ...mockCreateBulkActionDto,
-          type: undefined,
-        }, mockSocket1);
+        await service.create(
+          mockSessionMetadata,
+          {
+            ...mockCreateBulkActionDto,
+            type: undefined,
+          },
+          mockSocket1,
+        );
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
@@ -93,8 +109,16 @@ describe('BulkActionsProvider', () => {
   });
   describe('get', () => {
     it('should get by id', async () => {
-      const bulkAction = await service.create(mockSessionMetadata, mockCreateBulkActionDto, mockSocket1);
-      await service.create(mockSessionMetadata, { ...mockCreateBulkActionDto, id: 'new one' }, mockSocket1);
+      const bulkAction = await service.create(
+        mockSessionMetadata,
+        mockCreateBulkActionDto,
+        mockSocket1,
+      );
+      await service.create(
+        mockSessionMetadata,
+        { ...mockCreateBulkActionDto, id: 'new one' },
+        mockSocket1,
+      );
 
       expect(service['bulkActions'].size).toEqual(2);
 
@@ -114,8 +138,16 @@ describe('BulkActionsProvider', () => {
   });
   describe('abort', () => {
     it('should abort by id and remove', async () => {
-      const bulkAction = await service.create(mockSessionMetadata, mockCreateBulkActionDto, mockSocket1);
-      await service.create(mockSessionMetadata, { ...mockCreateBulkActionDto, id: 'new one' }, mockSocket1);
+      const bulkAction = await service.create(
+        mockSessionMetadata,
+        mockCreateBulkActionDto,
+        mockSocket1,
+      );
+      await service.create(
+        mockSessionMetadata,
+        { ...mockCreateBulkActionDto, id: 'new one' },
+        mockSocket1,
+      );
 
       expect(service['bulkActions'].size).toEqual(2);
 
@@ -137,9 +169,21 @@ describe('BulkActionsProvider', () => {
   });
   describe('abortUsersBulkActions', () => {
     it('should abort all users bulk actions', async () => {
-      await service.create(mockSessionMetadata, mockCreateBulkActionDto, mockSocket1);
-      await service.create(mockSessionMetadata, { ...mockCreateBulkActionDto, id: 'new one' }, mockSocket1);
-      await service.create(mockSessionMetadata, { ...mockCreateBulkActionDto, id: 'new one 2' }, mockSocket2);
+      await service.create(
+        mockSessionMetadata,
+        mockCreateBulkActionDto,
+        mockSocket1,
+      );
+      await service.create(
+        mockSessionMetadata,
+        { ...mockCreateBulkActionDto, id: 'new one' },
+        mockSocket1,
+      );
+      await service.create(
+        mockSessionMetadata,
+        { ...mockCreateBulkActionDto, id: 'new one 2' },
+        mockSocket2,
+      );
 
       expect(service['bulkActions'].size).toEqual(3);
 

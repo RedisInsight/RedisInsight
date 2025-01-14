@@ -1,6 +1,13 @@
 import { cloneDeep, set } from 'lodash'
 import React from 'react'
-import { cleanup, mockedStore, render, screen, initialStateDefault, mockStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  screen,
+  initialStateDefault,
+  mockStore,
+} from 'uiSrc/utils/test-utils'
 import { FeatureFlags } from 'uiSrc/constants'
 import MonitorWrapper from './MonitorWrapper'
 
@@ -45,26 +52,28 @@ describe('MonitorWrapper', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: true }
+      { flag: true },
     )
 
     render(<MonitorWrapper />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('monitor')).toBeInTheDocument()
     expect(screen.queryByTestId('monitor-header')).toBeInTheDocument()
-    expect(screen.queryByTestId('monitor-not-supported')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('monitor-not-supported'),
+    ).not.toBeInTheDocument()
   })
 
   it('should hide feature dependent items when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
 
     render(<MonitorWrapper />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('monitor')).not.toBeInTheDocument()
     expect(screen.queryByTestId('monitor-header')).not.toBeInTheDocument()

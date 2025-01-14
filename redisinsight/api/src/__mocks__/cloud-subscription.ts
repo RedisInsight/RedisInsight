@@ -1,9 +1,13 @@
-import { CloudSubscriptionPlanResponse, CreateFreeCloudSubscriptionDto } from 'src/modules/cloud/subscription/dto';
+import {
+  CloudSubscriptionPlanResponse,
+  CreateFreeCloudSubscriptionDto,
+} from 'src/modules/cloud/subscription/dto';
 import {
   CloudSubscription,
   CloudSubscriptionPlan,
   CloudSubscriptionRegion,
-  CloudSubscriptionStatus, CloudSubscriptionType,
+  CloudSubscriptionStatus,
+  CloudSubscriptionType,
   ICloudCapiSubscription,
   ICloudApiSubscriptionCloudRegion,
 } from 'src/modules/cloud/subscription/models';
@@ -68,12 +72,15 @@ export const mockCloudSubscription = Object.assign(new CloudSubscription(), {
   free: false,
 });
 
-export const mockCloudSubscriptionFixed = Object.assign(new CloudSubscription(), {
-  ...mockCloudSubscription,
-  type: CloudSubscriptionType.Fixed,
-  price: mockCloudCapiSubscriptionFixed.price,
-  free: true,
-});
+export const mockCloudSubscriptionFixed = Object.assign(
+  new CloudSubscription(),
+  {
+    ...mockCloudSubscription,
+    type: CloudSubscriptionType.Fixed,
+    price: mockCloudCapiSubscriptionFixed.price,
+    free: true,
+  },
+);
 
 export const mockCloudApiCloudRegion1: ICloudApiSubscriptionCloudRegion = {
   id: '1',
@@ -135,27 +142,33 @@ export const mockFreeCloudSubscriptionPlans: CloudSubscriptionPlan[] = [
   mockFreeCloudSubscriptionPlan2,
 ];
 
-export const mockCloudSubscriptionRegion1 = Object.assign(new CloudSubscriptionRegion(), {
-  id: mockFreeCloudSubscriptionPlan1.id,
-  cityName: mockCloudApiCloudRegion1.city_name,
-  cloud: mockCloudApiCloudRegion1.cloud,
-  countryName: mockCloudApiCloudRegion1.country_name,
-  displayOrder: mockCloudApiCloudRegion1.display_order,
-  flag: mockCloudApiCloudRegion1.flag,
-  name: mockCloudApiCloudRegion1.name,
-  regionId: mockCloudApiCloudRegion1.region_id,
-});
+export const mockCloudSubscriptionRegion1 = Object.assign(
+  new CloudSubscriptionRegion(),
+  {
+    id: mockFreeCloudSubscriptionPlan1.id,
+    cityName: mockCloudApiCloudRegion1.city_name,
+    cloud: mockCloudApiCloudRegion1.cloud,
+    countryName: mockCloudApiCloudRegion1.country_name,
+    displayOrder: mockCloudApiCloudRegion1.display_order,
+    flag: mockCloudApiCloudRegion1.flag,
+    name: mockCloudApiCloudRegion1.name,
+    regionId: mockCloudApiCloudRegion1.region_id,
+  },
+);
 
-export const mockCloudSubscriptionRegion2 = Object.assign(new CloudSubscriptionRegion(), {
-  id: mockFreeCloudSubscriptionPlan2.id,
-  cityName: mockCloudApiCloudRegion2.city_name,
-  cloud: mockCloudApiCloudRegion2.cloud,
-  countryName: mockCloudApiCloudRegion2.country_name,
-  displayOrder: mockCloudApiCloudRegion2.display_order,
-  flag: mockCloudApiCloudRegion2.flag,
-  name: mockCloudApiCloudRegion2.name,
-  regionId: mockCloudApiCloudRegion2.region_id,
-});
+export const mockCloudSubscriptionRegion2 = Object.assign(
+  new CloudSubscriptionRegion(),
+  {
+    id: mockFreeCloudSubscriptionPlan2.id,
+    cityName: mockCloudApiCloudRegion2.city_name,
+    cloud: mockCloudApiCloudRegion2.cloud,
+    countryName: mockCloudApiCloudRegion2.country_name,
+    displayOrder: mockCloudApiCloudRegion2.display_order,
+    flag: mockCloudApiCloudRegion2.flag,
+    name: mockCloudApiCloudRegion2.name,
+    regionId: mockCloudApiCloudRegion2.region_id,
+  },
+);
 
 export const mockCloudSubscriptionRegions: CloudSubscriptionRegion[] = [
   mockCloudSubscriptionRegion1,
@@ -179,26 +192,35 @@ export const mockSubscriptionPlanResponse: CloudSubscriptionPlanResponse[] = [
   },
 ];
 
-export const mockCreateFreeCloudSubscriptionDto = Object.assign(new CreateFreeCloudSubscriptionDto(), {
-  name: mockCloudSubscription.name,
-  planId: mockFreeCloudSubscriptionPlan1.id,
-  subscriptionType: CloudSubscriptionType.Fixed,
-});
+export const mockCreateFreeCloudSubscriptionDto = Object.assign(
+  new CreateFreeCloudSubscriptionDto(),
+  {
+    name: mockCloudSubscription.name,
+    planId: mockFreeCloudSubscriptionPlan1.id,
+    subscriptionType: CloudSubscriptionType.Fixed,
+  },
+);
 
 export const mockCloudSubscriptionApiProvider = jest.fn(() => ({
   getCloudRegions: jest.fn().mockResolvedValue(mockCloudApiCloudRegions),
 }));
 
 export const mockCloudSubscriptionCapiProvider = jest.fn(() => ({
-  getSubscriptionsByType: jest.fn().mockResolvedValue([mockCloudCapiSubscription]),
+  getSubscriptionsByType: jest
+    .fn()
+    .mockResolvedValue([mockCloudCapiSubscription]),
   getSubscriptionByType: jest.fn().mockResolvedValue(mockCloudCapiSubscription),
-  getSubscriptionsPlansByType: jest.fn().mockResolvedValue([mockFreeCloudSubscriptionPlan1]),
+  getSubscriptionsPlansByType: jest
+    .fn()
+    .mockResolvedValue([mockFreeCloudSubscriptionPlan1]),
   createFreeSubscription: jest.fn().mockResolvedValue(mockCloudTaskInit),
 }));
 
 export const mockCloudSubscriptionCapiService = jest.fn(() => ({
   getSubscriptions: jest.fn().mockResolvedValue([mockCloudSubscription]),
   getSubscription: jest.fn().mockResolvedValue(mockCloudSubscription),
-  getSubscriptionsPlans: jest.fn().mockResolvedValue(mockFreeCloudSubscriptionPlans),
+  getSubscriptionsPlans: jest
+    .fn()
+    .mockResolvedValue(mockFreeCloudSubscriptionPlans),
   createFreeSubscription: jest.fn().mockResolvedValue(mockCloudTaskInit),
 }));

@@ -14,17 +14,11 @@ describe('CloudAuthAnalytics', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        CloudAuthAnalytics,
-      ],
+      providers: [EventEmitter2, CloudAuthAnalytics],
     }).compile();
 
     service = await module.get(CloudAuthAnalytics);
-    sendEventMethod = jest.spyOn<CloudAuthAnalytics, any>(
-      service,
-      'sendEvent',
-    );
+    sendEventMethod = jest.spyOn<CloudAuthAnalytics, any>(service, 'sendEvent');
     sendFailedEventMethod = jest.spyOn<CloudAuthAnalytics, any>(
       service,
       'sendFailedEvent',
@@ -63,7 +57,10 @@ describe('CloudAuthAnalytics', () => {
       );
     });
     it('should emit event without flow and not fail', () => {
-      service.sendCloudSignInSucceeded(mockSessionMetadata, undefined as CloudSsoFeatureStrategy);
+      service.sendCloudSignInSucceeded(
+        mockSessionMetadata,
+        undefined as CloudSsoFeatureStrategy,
+      );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,

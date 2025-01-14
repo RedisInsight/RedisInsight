@@ -8,7 +8,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn,
+  validateApiCall,
+  getMainCheckFn,
   _,
 } from '../deps';
 const { server, request, constants, rte } = deps;
@@ -32,10 +33,12 @@ const validInputData = {
   index: constants.TEST_SEARCH_HASH_INDEX_1,
   type: constants.TEST_SEARCH_HASH_TYPE,
   prefixes: ['*'],
-  fields: [{
-    name: '*',
-    type: 'text',
-  }],
+  fields: [
+    {
+      name: '*',
+      type: 'text',
+    },
+  ],
 };
 
 const mainCheckFn = getMainCheckFn(endpoint);
@@ -63,7 +66,10 @@ describe('POST /databases/:id/redisearch', () => {
           statusCode: 201,
           before: async () => {
             await validateApiCall({
-              endpoint: () => request(server).get(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/redisearch`),
+              endpoint: () =>
+                request(server).get(
+                  `/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/redisearch`,
+                ),
               checkFn: ({ body }) => {
                 expect(body.indexes.length).to.eq(0);
               },
@@ -71,10 +77,15 @@ describe('POST /databases/:id/redisearch', () => {
           },
           after: async () => {
             await validateApiCall({
-              endpoint: () => request(server).get(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/redisearch`),
+              endpoint: () =>
+                request(server).get(
+                  `/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/redisearch`,
+                ),
               checkFn: ({ body }) => {
                 expect(body.indexes.length).to.eq(1);
-                expect(body.indexes).to.include(constants.TEST_SEARCH_HASH_INDEX_1);
+                expect(body.indexes).to.include(
+                  constants.TEST_SEARCH_HASH_INDEX_1,
+                );
               },
             });
           },
@@ -97,7 +108,7 @@ describe('POST /databases/:id/redisearch', () => {
               responseBody: {
                 statusCode: 409,
                 message: 'This index name is already in use.',
-                error: 'Conflict'
+                error: 'Conflict',
               },
             });
           },
@@ -131,7 +142,7 @@ describe('POST /databases/:id/redisearch', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -ft.info')
+          before: () => rte.data.setAclUserRules('~* +@all -ft.info'),
         },
         {
           name: 'Should throw error if no permissions for "ft.create" command',
@@ -145,7 +156,7 @@ describe('POST /databases/:id/redisearch', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -ft.create')
+          before: () => rte.data.setAclUserRules('~* +@all -ft.create'),
         },
       ].map(mainCheckFn);
     });

@@ -1,4 +1,7 @@
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import {
   BrowserToolGraphCommands,
   BrowserToolKeysCommands,
@@ -14,13 +17,10 @@ export class GraphKeyInfoStrategy extends KeyInfoStrategy {
     type: string,
   ): Promise<GetKeyInfoResponse> {
     this.logger.debug(`Getting ${RedisDataType.Graph} type info.`);
-    const [
-      [, ttl = null],
-      [, size = null],
-    ] = await client.sendPipeline([
+    const [[, ttl = null], [, size = null]] = (await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-    ]) as [any, number][];
+    ])) as [any, number][];
 
     const length = await this.getNodesCount(client, key);
 
@@ -33,7 +33,10 @@ export class GraphKeyInfoStrategy extends KeyInfoStrategy {
     };
   }
 
-  private async getNodesCount(client: RedisClient, key: RedisString): Promise<number> {
+  private async getNodesCount(
+    client: RedisClient,
+    key: RedisString,
+  ): Promise<number> {
     try {
       const queryReply = await client.sendCommand([
         BrowserToolGraphCommands.GraphQuery,

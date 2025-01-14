@@ -37,10 +37,7 @@ describe('AddKeyList', () => {
   it('should set destination properly', () => {
     render(<AddKeyList {...instance(mockedProps)} />)
     const destinationSelect = screen.getByTestId('destination-select')
-    fireEvent.change(
-      destinationSelect,
-      { target: { value: HEAD_DESTINATION } }
-    )
+    fireEvent.change(destinationSelect, { target: { value: HEAD_DESTINATION } })
     expect(destinationSelect).toHaveValue(HEAD_DESTINATION)
   })
 
@@ -50,7 +47,9 @@ describe('AddKeyList', () => {
   })
 
   it('should not be disabled add key with proper values', () => {
-    const { container } = render(<AddKeyList {...instance(mockedProps)} keyName="name" />)
+    const { container } = render(
+      <AddKeyList {...instance(mockedProps)} keyName="name" />,
+    )
     expect(container.querySelector('.btn-add')).not.toBeDisabled()
   })
 

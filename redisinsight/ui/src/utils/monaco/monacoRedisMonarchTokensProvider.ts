@@ -5,9 +5,13 @@ import { IRedisCommand } from 'uiSrc/constants'
 
 const STRING_DOUBLE = 'string.double'
 
-export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monacoEditor.languages.IMonarchLanguage => {
+export const getRedisMonarchTokensProvider = (
+  commands: IRedisCommand[],
+): monacoEditor.languages.IMonarchLanguage => {
   const commandRedisCommands = [...commands]
-  const searchCommands = remove(commandRedisCommands, ({ token }) => token?.startsWith(ModuleCommandPrefix.RediSearch))
+  const searchCommands = remove(commandRedisCommands, ({ token }) =>
+    token?.startsWith(ModuleCommandPrefix.RediSearch),
+  )
   const COMMON_COMMANDS_REGEX = `^\\s*(\\d+\\s+)?(${commandRedisCommands.map(({ token }) => token).join('|')})\\b`
   const SEARCH_COMMANDS_REGEX = `^\\s*(\\d+\\s+)?(${searchCommands.map(({ token }) => token).join('|')})\\b`
 
@@ -45,7 +49,14 @@ export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monaco
       ],
       keyword: [
         [COMMON_COMMANDS_REGEX, { token: 'keyword' }],
-        [SEARCH_COMMANDS_REGEX, { token: '@rematch', nextEmbedded: 'redisearch', next: '@endRedisearch' }],
+        [
+          SEARCH_COMMANDS_REGEX,
+          {
+            token: '@rematch',
+            nextEmbedded: 'redisearch',
+            next: '@endRedisearch',
+          },
+        ],
       ],
       whitespace: [
         [/\s+/, 'white'],
@@ -72,11 +83,17 @@ export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monaco
       ],
       // TODO: can be tokens or functions the same - need to think how to avoid wrong ending
       endRedisearch: [
-        [`^\\s*${COMMON_COMMANDS_REGEX}`, { token: '@rematch', next: '@root', nextEmbedded: '@pop', log: 'end' }],
+        [
+          `^\\s*${COMMON_COMMANDS_REGEX}`,
+          {
+            token: '@rematch',
+            next: '@root',
+            nextEmbedded: '@pop',
+            log: 'end',
+          },
+        ],
       ],
-      startOfLine: [
-        [/\n/, { next: '@root', token: '@pop' }],
-      ]
+      startOfLine: [[/\n/, { next: '@root', token: '@pop' }]],
     },
   }
 }

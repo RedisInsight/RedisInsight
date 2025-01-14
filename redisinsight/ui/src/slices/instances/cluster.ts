@@ -54,7 +54,7 @@ const clusterSlice = createSlice({
       state.loading = false
 
       state.dataAdded = payload?.map((instance: InstanceRedisCluster) => ({
-        ...instance.databaseDetails || {},
+        ...(instance.databaseDetails || {}),
         uidAdded: instance.uid,
         statusAdded: instance.status,
         messageAdded: instance.message,
@@ -95,19 +95,22 @@ export const clusterSelector = (state: RootState) => state.connections.cluster
 export default clusterSlice.reducer
 
 // Asynchronous thunk action
-export function fetchInstancesRedisCluster(payload: ICredentialsRedisCluster, onSuccessAction?: () => void,) {
+export function fetchInstancesRedisCluster(
+  payload: ICredentialsRedisCluster,
+  onSuccessAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(loadInstancesRedisCluster())
 
     try {
       const { data, status } = await apiService.post(
         `${ApiEndpoints.REDIS_CLUSTER_GET_DATABASES}`,
-        { ...payload }
+        { ...payload },
       )
 
       if (isStatusSuccessful(status)) {
         dispatch(
-          loadInstancesRedisClusterSuccess({ data, credentials: payload })
+          loadInstancesRedisClusterSuccess({ data, credentials: payload }),
         )
         onSuccessAction?.()
       }
@@ -121,8 +124,8 @@ export function fetchInstancesRedisCluster(payload: ICredentialsRedisCluster, on
 
 // Asynchronous thunk action
 export function addInstancesRedisCluster(payload: {
-  uids: Maybe<number>[];
-  credentials: Nullable<ICredentialsRedisCluster>;
+  uids: Maybe<number>[]
+  credentials: Nullable<ICredentialsRedisCluster>
 }) {
   return async (dispatch: AppDispatch) => {
     dispatch(createInstancesRedisCluster())
@@ -134,7 +137,10 @@ export function addInstancesRedisCluster(payload: {
       )
 
       if (isStatusSuccessful(status)) {
-        const encryptionErrors = getApiErrorsFromBulkOperation(data, ...ApiEncryptionErrors)
+        const encryptionErrors = getApiErrorsFromBulkOperation(
+          data,
+          ...ApiEncryptionErrors,
+        )
         if (encryptionErrors.length) {
           dispatch(addErrorNotification(encryptionErrors[0]))
         }

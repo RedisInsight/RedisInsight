@@ -1,6 +1,13 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import { getPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import FetchPipelinePopover from './FetchPipelinePopover'
@@ -10,9 +17,9 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
     data: {
-      jobs: [{ name: 'job1', value: 'value' }]
-    }
-  })
+      jobs: [{ name: 'job1', value: 'value' }],
+    },
+  }),
 }))
 
 jest.mock('formik', () => ({
@@ -22,15 +29,15 @@ jest.mock('formik', () => ({
       config: 'value',
       jobs: [
         { name: 'job1', value: 'value' },
-        { name: 'job2', value: 'value' }
-      ]
-    }
-  })
+        { name: 'job2', value: 'value' },
+      ],
+    },
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 let store: typeof mockedStore
@@ -73,8 +80,10 @@ describe('FetchPipelinePopover', () => {
   })
 
   it('should call proper telemetry event', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<FetchPipelinePopover />)
 
@@ -86,14 +95,14 @@ describe('FetchPipelinePopover', () => {
       event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FROM_SERVER_CLICKED,
       eventData: {
         id: 'rdiInstanceId',
-        jobsNumber: 1
-      }
+        jobsNumber: 1,
+      },
     })
   })
 
   it('should render disabled trigger btn', () => {
-    (rdiPipelineSelector as jest.Mock).mockImplementation(() => ({
-      loading: true
+    ;(rdiPipelineSelector as jest.Mock).mockImplementation(() => ({
+      loading: true,
     }))
 
     render(<FetchPipelinePopover />)

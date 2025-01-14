@@ -1,8 +1,6 @@
 import { KeyDto } from 'src/modules/browser/keys/dto';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsDefined, IsInt, IsNotEmpty, Min,
-} from 'class-validator';
+import { IsDefined, IsInt, IsNotEmpty, Min } from 'class-validator';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
 

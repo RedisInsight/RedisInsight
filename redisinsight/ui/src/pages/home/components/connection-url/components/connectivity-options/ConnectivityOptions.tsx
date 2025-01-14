@@ -1,5 +1,11 @@
 import React from 'react'
-import { EuiButton, EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiTitle } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGrid,
+  EuiFlexItem,
+  EuiSpacer,
+  EuiTitle,
+} from '@elastic/eui'
 import cx from 'classnames'
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -27,7 +33,8 @@ const ConnectivityOptions = (props: Props) => {
       <section>
         <EuiTitle size="xs" className={styles.sectionTitle}>
           <span>
-            <CloudIcon className={styles.cloudIcon} />Get started with Redis Cloud account
+            <CloudIcon className={styles.cloudIcon} />
+            Get started with Redis Cloud account
           </span>
         </EuiTitle>
         <EuiSpacer />
@@ -49,13 +56,13 @@ const ConnectivityOptions = (props: Props) => {
                   color="secondary"
                   className={cx(styles.typeBtn, styles.primary)}
                   href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
-                    campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm]
+                    campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm],
                   })}
                   target="_blank"
                   onClick={(e: React.MouseEvent) => {
                     ssoCloudHandlerClick(e, {
                       source: OAuthSocialSource.AddDbForm,
-                      action: OAuthSocialAction.Create
+                      action: OAuthSocialAction.Create,
                     })
                     isSSOEnabled && onClose?.()
                   }}

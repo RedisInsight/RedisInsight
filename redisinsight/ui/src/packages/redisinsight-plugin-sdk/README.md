@@ -4,6 +4,7 @@ The high-level API for communication between Redis Insight
 plugin and Redis Insight application.
 
 ## Usage
+
 ```
 npm install redisinsight-plugin-sdk
 or
@@ -13,17 +14,18 @@ yarn add redisinsight-plugin-sdk
 ## Available methods
 
 ### setHeaderText(text)
+
 Sets any custom text to the header of the command result
 
 **Parameters:**
 
-* `text` **{String}**
+- `text` **{String}**
 
 **Example:**
 
 ```js
 import { setHeaderText } from 'redisinsight-plugin-sdk';
-setHeaderText('Matched: 10')
+setHeaderText('Matched: 10');
 ```
 
 ### executeRedisCommand(command)
@@ -32,10 +34,11 @@ Executes a Redis command _(currently, only read-only commands are supported)_.
 
 **Parameters:**
 
-* `command` **{String}** - command to execute
+- `command` **{String}** - command to execute
 
 **Returns:**
-* `Promise<[{ response, status }]>`
+
+- `Promise<[{ response, status }]>`
 
 ```js
 /**
@@ -57,7 +60,7 @@ try {
     // Do smth
   }
 } catch (e) {
-    console.error(e);
+  console.error(e);
 }
 ```
 
@@ -69,10 +72,11 @@ Throw an error if the state has not been saved.
 
 **Parameters:**
 
-* `state` **{any}** - any data to save
+- `state` **{any}** - any data to save
 
 **Returns:**
-* `Promise<any>`
+
+- `Promise<any>`
 
 ```js
 /**
@@ -89,17 +93,17 @@ import { getState } from 'redisinsight-plugin-sdk';
 try {
   const result = await getState();
 } catch (e) {
-    console.error(e);
+  console.error(e);
 }
 ```
-
 
 ### setState(state)
 
 Save the state for the command visualization.
 
 **Returns:**
-* `Promise<any>`
+
+- `Promise<any>`
 
 ```js
 /**
@@ -117,7 +121,7 @@ import { setState } from 'redisinsight-plugin-sdk';
 try {
   await setState({ a: 1, b: 2 });
 } catch (e) {
-    console.error(e);
+  console.error(e);
 }
 ```
 
@@ -128,7 +132,8 @@ Util function to parse Redis response
 Returns string with parsed cli-like response
 
 **Returns:**
-* `Promise<string>`
+
+- `Promise<string>`
 
 ```js
 /**
@@ -147,7 +152,7 @@ import { formatRedisReply } from 'redisinsight-plugin-sdk';
 
 try {
   const parsedReply = await formatRedisReply(data[0].response, command);
-  
+
   /*
     parsedReply:
     
@@ -157,6 +162,6 @@ try {
        2) "Query internal execution time: 3.134125 milliseconds"
    */
 } catch (e) {
-    console.error(e);
+  console.error(e);
 }
 ```

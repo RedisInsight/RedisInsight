@@ -10,17 +10,21 @@ export enum OAuthProvider {
   Google = 'GCP',
 }
 
-export const OAuthProviders = [{
-  id: OAuthProvider.AWS,
-  icon: AWSIcon,
-  label: 'Amazon Web Services',
-  className: styles.awsIcon
-}, {
-  id: OAuthProvider.Google,
-  icon: GoogleIcon,
-  label: 'Google Cloud',
-}, {
-  id: OAuthProvider.Azure,
-  icon: AzureIcon,
-  label: 'Microsoft Azure',
-}]
+export const OAuthProviders = [
+  {
+    id: OAuthProvider.AWS,
+    icon: AWSIcon,
+    label: 'Amazon Web Services',
+    className: styles.awsIcon,
+  },
+  {
+    id: OAuthProvider.Google,
+    icon: GoogleIcon,
+    label: 'Google Cloud',
+  },
+  {
+    id: OAuthProvider.Azure,
+    icon: AzureIcon,
+    label: 'Microsoft Azure',
+  },
+]

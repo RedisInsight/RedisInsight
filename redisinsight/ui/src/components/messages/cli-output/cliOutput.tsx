@@ -13,7 +13,7 @@ export const InitOutputText = (
   onClick: () => void,
 ) => [
   <Fragment key={Math.random()}>
-    { emptyOutput && (
+    {emptyOutput && (
       <span className="color-green" key={Math.random()}>
         {'Try '}
         <EuiLink
@@ -24,7 +24,8 @@ export const InitOutputText = (
         >
           Workbench
         </EuiLink>
-        , our advanced CLI. Check out our Quick Guides to learn more about Redis capabilities.
+        , our advanced CLI. Check out our Quick Guides to learn more about Redis
+        capabilities.
       </span>
     )}
   </Fragment>,
@@ -45,50 +46,74 @@ export const ConnectionSuccessOutputText = [
   '\n\n',
 ]
 
-const unsupportedCommandTextCli = ' is not supported by the Redis Insight CLI. The list of all unsupported commands: '
-const unsupportedCommandTextWorkbench = ' is not supported by the Workbench. The list of all unsupported commands: '
+const unsupportedCommandTextCli =
+  ' is not supported by the Redis Insight CLI. The list of all unsupported commands: '
+const unsupportedCommandTextWorkbench =
+  ' is not supported by the Workbench. The list of all unsupported commands: '
 export const cliTexts = {
   CLI_UNSUPPORTED_COMMANDS: (commandLine: string, commands: string) =>
     commandLine + unsupportedCommandTextCli + commands,
   WORKBENCH_UNSUPPORTED_COMMANDS: (commandLine: string, commands: string) =>
     commandLine + unsupportedCommandTextWorkbench + commands,
   REPEAT_COUNT_INVALID: 'Invalid repeat command option value',
-  CONNECTION_CLOSED: 'Client connection previously closed. Run the command after the connection is re-created.',
-  UNABLE_TO_DECRYPT: 'Unable to decrypt. Check the system keychain or re-run the command.',
+  CONNECTION_CLOSED:
+    'Client connection previously closed. Run the command after the connection is re-created.',
+  UNABLE_TO_DECRYPT:
+    'Unable to decrypt. Check the system keychain or re-run the command.',
   PUB_SUB_NOT_SUPPORTED_ENV: (
-    <div className="cli-output-response-fail" data-testid="user-pub-sub-link-disabled">
+    <div
+      className="cli-output-response-fail"
+      data-testid="user-pub-sub-link-disabled"
+    >
       PubSub not supported in this environment.
     </div>
   ),
   USE_PSUBSCRIBE_COMMAND: (path: string = '') => (
-    <EuiTextColor color="danger" key={Date.now()} data-testid="user-pub-sub-link">
+    <EuiTextColor
+      color="danger"
+      key={Date.now()}
+      data-testid="user-pub-sub-link"
+    >
       {'Use '}
-      <EuiLink {...getRouterLinkProps(path)} color="text" data-test-subj="pubsub-page-btn">
+      <EuiLink
+        {...getRouterLinkProps(path)}
+        color="text"
+        data-test-subj="pubsub-page-btn"
+      >
         Pub/Sub
       </EuiLink>
       {' to see the messages published to all channels in your database.'}
     </EuiTextColor>
   ),
   PSUBSCRIBE_COMMAND: (path: string = '') => (
-    <FeatureFlagComponent name={FeatureFlags.envDependent} otherwise={cliTexts.PUB_SUB_NOT_SUPPORTED_ENV}>
+    <FeatureFlagComponent
+      name={FeatureFlags.envDependent}
+      otherwise={cliTexts.PUB_SUB_NOT_SUPPORTED_ENV}
+    >
       {cliTexts.USE_PSUBSCRIBE_COMMAND(path)}
     </FeatureFlagComponent>
   ),
-  PSUBSCRIBE_COMMAND_CLI: (path: string = '') => (
-    [
-      cliTexts.PSUBSCRIBE_COMMAND(path),
-      '\n',
-    ]
-  ),
+  PSUBSCRIBE_COMMAND_CLI: (path: string = '') => [
+    cliTexts.PSUBSCRIBE_COMMAND(path),
+    '\n',
+  ],
   MONITOR_NOT_SUPPORTED_ENV: (
-    <div className="cli-output-response-fail" data-testid="user-profiler-link-disabled">
+    <div
+      className="cli-output-response-fail"
+      data-testid="user-profiler-link-disabled"
+    >
       Monitor not supported in this environment.
     </div>
   ),
   USE_PROFILER_TOOL: (onClick: () => void) => (
     <EuiTextColor color="danger" key={Date.now()}>
       {'Use '}
-      <EuiLink onClick={onClick} className="btnLikeLink" color="text" data-testid="monitor-btn">
+      <EuiLink
+        onClick={onClick}
+        className="btnLikeLink"
+        color="text"
+        data-testid="monitor-btn"
+      >
         Profiler
       </EuiLink>
       {' tool to see all the requests processed by the server.'}
@@ -103,16 +128,27 @@ export const cliTexts = {
     </FeatureFlagComponent>
   ),
   USE_PUB_SUB_TOOL: (path: string = '') => (
-    <EuiTextColor color="danger" key={Date.now()} data-testid="user-pub-sub-link">
+    <EuiTextColor
+      color="danger"
+      key={Date.now()}
+      data-testid="user-pub-sub-link"
+    >
       {'Use '}
-      <EuiLink {...getRouterLinkProps(path)} color="text" data-test-subj="pubsub-page-btn">
+      <EuiLink
+        {...getRouterLinkProps(path)}
+        color="text"
+        data-test-subj="pubsub-page-btn"
+      >
         Pub/Sub
       </EuiLink>
       {' tool to subscribe to channels.'}
     </EuiTextColor>
   ),
   SUBSCRIBE_COMMAND_CLI: (path: string = '') => (
-    <FeatureFlagComponent name={FeatureFlags.envDependent} otherwise={cliTexts.PUB_SUB_NOT_SUPPORTED_ENV}>
+    <FeatureFlagComponent
+      name={FeatureFlags.envDependent}
+      otherwise={cliTexts.PUB_SUB_NOT_SUPPORTED_ENV}
+    >
       {cliTexts.USE_PUB_SUB_TOOL(path)}
     </FeatureFlagComponent>
   ),
@@ -132,19 +168,12 @@ export const cliTexts = {
       {' at the moment, but we are working on it.'}
     </EuiTextColor>
   ),
-  HELLO3_COMMAND_CLI: () => (
-    [
-      cliTexts.HELLO3_COMMAND(),
-      '\n',
-    ]
-  ),
-  CLI_ERROR_MESSAGE: (message: string) => (
-    [
-      '\n',
-      <EuiTextColor color="danger" key={Date.now()}>
-        {message}
-      </EuiTextColor>,
-      '\n\n',
-    ]
-  )
+  HELLO3_COMMAND_CLI: () => [cliTexts.HELLO3_COMMAND(), '\n'],
+  CLI_ERROR_MESSAGE: (message: string) => [
+    '\n',
+    <EuiTextColor color="danger" key={Date.now()}>
+      {message}
+    </EuiTextColor>,
+    '\n\n',
+  ],
 }

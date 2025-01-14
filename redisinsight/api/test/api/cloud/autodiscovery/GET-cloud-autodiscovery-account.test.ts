@@ -3,7 +3,8 @@ import {
   deps,
   requirements,
   Joi,
-  nock, getMainCheckFn,
+  nock,
+  getMainCheckFn,
   serverConfig,
 } from '../../deps';
 import { mockCloudAccountInfo, mockCloudCapiAccount } from 'src/__mocks__';
@@ -15,14 +16,16 @@ const endpoint = () => request(server).get(`/cloud/autodiscovery/account`);
 const headers = {
   'x-cloud-api-key': constants.TEST_CLOUD_API_KEY,
   'x-cloud-api-secret': constants.TEST_CLOUD_API_SECRET_KEY,
-}
+};
 
-const responseSchema = Joi.object().keys({
-  accountId: Joi.number().required(),
-  accountName: Joi.string().required(),
-  ownerName: Joi.string().required(),
-  ownerEmail: Joi.string().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    accountId: Joi.number().required(),
+    accountName: Joi.string().required(),
+    ownerName: Joi.string().required(),
+    ownerEmail: Joi.string().required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -35,8 +38,7 @@ describe('GET /cloud/autodiscovery/account', () => {
     [
       {
         before: () => {
-          nockScope.get('/')
-            .reply(200, { account: mockCloudCapiAccount });
+          nockScope.get('/').reply(200, { account: mockCloudCapiAccount });
         },
         name: 'Should get account info',
         headers,
@@ -45,13 +47,12 @@ describe('GET /cloud/autodiscovery/account', () => {
       },
       {
         before: () => {
-          nockScope.get('/')
-            .reply(403, {
-              response: {
-                status: 403,
-                data: { message: 'Unauthorized for this action' },
-              }
-            });
+          nockScope.get('/').reply(403, {
+            response: {
+              status: 403,
+              data: { message: 'Unauthorized for this action' },
+            },
+          });
         },
         name: 'Should throw Forbidden error when api returned 403 error',
         headers,
@@ -64,13 +65,12 @@ describe('GET /cloud/autodiscovery/account', () => {
       },
       {
         before: () => {
-          nockScope.get('/')
-            .reply(401, {
-              response: {
-                status: 401,
-                data: '',
-              }
-            });
+          nockScope.get('/').reply(401, {
+            response: {
+              status: 401,
+              data: '',
+            },
+          });
         },
         name: 'Should throw Unauthorized error when api returns 401 error',
         headers,

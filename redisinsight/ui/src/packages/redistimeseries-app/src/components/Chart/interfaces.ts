@@ -1,7 +1,7 @@
 export type Datapoint = [number, string]
 
 export interface TimeSeries {
-  key: string,
+  key: string
   labels: { [labelName: string]: string }
   datapoints: Datapoint[]
 }

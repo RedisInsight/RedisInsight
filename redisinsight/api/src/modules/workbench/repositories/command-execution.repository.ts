@@ -35,7 +35,11 @@ export abstract class CommandExecutionRepository {
    * @param databaseId
    * @param id
    */
-  abstract getOne(sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<CommandExecution>;
+  abstract getOne(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    id: string,
+  ): Promise<CommandExecution>;
 
   /**
    * Delete single item
@@ -44,7 +48,11 @@ export abstract class CommandExecutionRepository {
    * @param databaseId
    * @param id
    */
-  abstract delete(sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<void>;
+  abstract delete(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    id: string,
+  ): Promise<void>;
 
   /**
    * Delete all items

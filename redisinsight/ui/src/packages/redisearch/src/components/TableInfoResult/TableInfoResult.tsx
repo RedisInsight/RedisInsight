@@ -15,8 +15,8 @@ import GroupBadge from '../GroupBadge'
 import { InfoAttributesBoolean } from '../../constants'
 
 export interface Props {
-  query: string;
-  result: any;
+  query: string
+  result: any
 }
 
 const loadingMessage = 'loading...'
@@ -41,29 +41,36 @@ const TableInfoResult = React.memo((props: Props) => {
     setItems(items)
   }, [resultProp, query])
 
-  const isBooleanColumn = (title = '') => InfoAttributesBoolean.indexOf(title) !== -1
+  const isBooleanColumn = (title = '') =>
+    InfoAttributesBoolean.indexOf(title) !== -1
 
-  const uniqColumns = uniq(flatten(map(items, (item) => Object.keys(item)))) ?? []
+  const uniqColumns =
+    uniq(flatten(map(items, (item) => Object.keys(item)))) ?? []
 
-  const columns: EuiBasicTableColumn<any>[] = uniqColumns.map((title: string = ' ') => ({
-    field: title,
-    name: toUpper(title),
-    truncateText: true,
-    align: isBooleanColumn(title) ? 'center' : 'left',
-    'data-testid': `query-column-${title}`,
-    // sortable: (value) => (value[title] ? value[title].toLowerCase() : Infinity),
-    render: function Cell(initValue?: string): ReactElement | null {
-      if (isBooleanColumn(title)) {
-        return (
-          <div className="icon">
-            <EuiIcon type={initValue ? 'check' : 'cross'} color={initValue ? 'primary' : 'danger'} />
-          </div>
-        )
-      }
+  const columns: EuiBasicTableColumn<any>[] = uniqColumns.map(
+    (title: string = ' ') => ({
+      field: title,
+      name: toUpper(title),
+      truncateText: true,
+      align: isBooleanColumn(title) ? 'center' : 'left',
+      'data-testid': `query-column-${title}`,
+      // sortable: (value) => (value[title] ? value[title].toLowerCase() : Infinity),
+      render: function Cell(initValue?: string): ReactElement | null {
+        if (isBooleanColumn(title)) {
+          return (
+            <div className="icon">
+              <EuiIcon
+                type={initValue ? 'check' : 'cross'}
+                color={initValue ? 'primary' : 'danger'}
+              />
+            </div>
+          )
+        }
 
-      return <EuiText>{initValue}</EuiText>
-    },
-  }))
+        return <EuiText>{initValue}</EuiText>
+      },
+    }),
+  )
 
   const Header = () => (
     <div>
@@ -71,18 +78,24 @@ const TableInfoResult = React.memo((props: Props) => {
         <>
           <EuiText className="row" size="s" color="subdued">
             Indexing
-            <GroupBadge type={result?.index_definition?.key_type?.toLowerCase()} className="badge" />
-            documents prefixed by
-            {' '}
-            {result?.index_definition?.prefixes?.map((prefix: any) => `"${prefix}"`).join(',')}
+            <GroupBadge
+              type={result?.index_definition?.key_type?.toLowerCase()}
+              className="badge"
+            />
+            documents prefixed by{' '}
+            {result?.index_definition?.prefixes
+              ?.map((prefix: any) => `"${prefix}"`)
+              .join(',')}
           </EuiText>
           <EuiText className="row" size="s" color="subdued">
-            Options:
-            {' '}
-            {result?.index_options?.length
-              ? <EuiTextColor style={{ color: 'var(--euiColorFullShade)' }}>{result?.index_options?.join(', ')}</EuiTextColor>
-              : <span className="italic">{noOptionsMessage}</span> }
-
+            Options:{' '}
+            {result?.index_options?.length ? (
+              <EuiTextColor style={{ color: 'var(--euiColorFullShade)' }}>
+                {result?.index_options?.join(', ')}
+              </EuiTextColor>
+            ) : (
+              <span className="italic">{noOptionsMessage}</span>
+            )}
           </EuiText>
         </>
       ) : (
@@ -104,7 +117,8 @@ const TableInfoResult = React.memo((props: Props) => {
     </div>
   )
 
-  const isDataArr = !React.isValidElement(result) && !(isArray(result) && isEmpty(result))
+  const isDataArr =
+    !React.isValidElement(result) && !(isArray(result) && isEmpty(result))
   const isDataEl = React.isValidElement(result)
 
   return (

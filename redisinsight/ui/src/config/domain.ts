@@ -1,7 +1,7 @@
 import { PartialConfig } from 'uiSrc/config/default'
 
 type DomainConfigs = {
-  [key: string]: PartialConfig;
+  [key: string]: PartialConfig
 }
 
 const config: DomainConfigs = {}

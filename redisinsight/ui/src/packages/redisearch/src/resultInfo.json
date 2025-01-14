@@ -5,45 +5,26 @@
       "index_name",
       "idx2",
       "index_options",
-      [
-
-      ],
+      [],
       "index_definition",
       [
-          "key_type",
-          "HASH",
-          "prefixes",
-          [
-            ""
-          ],
-          "language_field",
-          "__language",
-          "default_score",
-          "1",
-          "score_field",
-          "__score",
-          "payload_field",
-          "__payload"
+        "key_type",
+        "HASH",
+        "prefixes",
+        [""],
+        "language_field",
+        "__language",
+        "default_score",
+        "1",
+        "score_field",
+        "__score",
+        "payload_field",
+        "__payload"
       ],
       "fields",
       [
-          [
-            "name",
-            "type",
-            "TEXT",
-            "WEIGHT",
-            "1",
-            "SORTABLE"
-          ],
-          [
-            "docid",
-            "type",
-            "TAG",
-            "SEPARATOR",
-            ",",
-            "SORTABLE",
-            "NOINDEX"
-          ]
+        ["name", "type", "TEXT", "WEIGHT", "1", "SORTABLE"],
+        ["docid", "type", "TAG", "SEPARATOR", ",", "SORTABLE", "NOINDEX"]
       ],
       "num_docs",
       "5136",
@@ -81,31 +62,31 @@
       "1",
       "gc_stats",
       [
-          "bytes_collected",
-          "0",
-          "total_ms_run",
-          "0",
-          "total_cycles",
-          "0",
-          "average_cycle_time_ms",
-          "-nan",
-          "last_run_time_ms",
-          "0",
-          "gc_numeric_trees_missed",
-          "0",
-          "gc_blocks_denied",
-          "0"
+        "bytes_collected",
+        "0",
+        "total_ms_run",
+        "0",
+        "total_cycles",
+        "0",
+        "average_cycle_time_ms",
+        "-nan",
+        "last_run_time_ms",
+        "0",
+        "gc_numeric_trees_missed",
+        "0",
+        "gc_blocks_denied",
+        "0"
       ],
       "cursor_stats",
       [
-          "global_idle",
-          0,
-          "global_total",
-          0,
-          "index_capacity",
-          128,
-          "index_total",
-          0
+        "global_idle",
+        0,
+        "global_total",
+        0,
+        "index_capacity",
+        128,
+        "index_total",
+        0
       ]
     ]
   }

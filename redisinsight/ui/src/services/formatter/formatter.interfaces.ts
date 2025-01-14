@@ -5,5 +5,5 @@ export interface IFormatterConfig {
 }
 
 export interface IFormatter {
-  format(data: any, config?: IFormatterConfig): Promise<string>;
+  format(data: any, config?: IFormatterConfig): Promise<string>
 }

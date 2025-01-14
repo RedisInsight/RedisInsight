@@ -5,18 +5,25 @@ import { RdiInstance } from 'uiSrc/slices/interfaces'
 import { loadInstancesSuccess } from 'uiSrc/slices/rdi/instances'
 import { RootState, store } from 'uiSrc/slices/store'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
 import SearchRdiList from './SearchRdiList'
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
-  useSelector: jest.fn()
+  useSelector: jest.fn(),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 let storeMock: typeof mockedStore
@@ -29,7 +36,7 @@ const instancesMock: RdiInstance[] = [
     version: '1.2',
     visible: true,
     error: '',
-    loading: false
+    loading: false,
   },
   {
     id: '2',
@@ -39,8 +46,8 @@ const instancesMock: RdiInstance[] = [
     version: '1.3',
     visible: true,
     error: '',
-    loading: false
-  }
+    loading: false,
+  },
 ]
 
 describe('SearchRdiList', () => {
@@ -49,18 +56,20 @@ describe('SearchRdiList', () => {
     storeMock = cloneDeep(mockedStore)
     storeMock.clearActions()
 
-    const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
-      callback({
-        ...state,
-        rdi: {
-          ...state.rdi,
-          instances: {
-            ...state.rdi.instances,
-            data: instancesMock
-          }
-        }
-      }))
+    const state: RootState = store.getState()
+    ;(useSelector as jest.Mock).mockImplementation(
+      (callback: (arg0: RootState) => RootState) =>
+        callback({
+          ...state,
+          rdi: {
+            ...state.rdi,
+            instances: {
+              ...state.rdi.instances,
+              data: instancesMock,
+            },
+          },
+        }),
+    )
   })
 
   it('should render', () => {
@@ -68,13 +77,17 @@ describe('SearchRdiList', () => {
   })
 
   it('should call proper telemetry on instance search', async () => {
-    const sendEventTelemetryMock = jest.fn();
+    const sendEventTelemetryMock = jest.fn()
 
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<SearchRdiList />)
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), { target: { value: 'first int' } })
+      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), {
+        target: { value: 'first int' },
+      })
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -82,7 +95,7 @@ describe('SearchRdiList', () => {
       eventData: {
         instancesFullCount: 2,
         instancesSearchedCount: 1,
-      }
+      },
     })
   })
 
@@ -90,7 +103,9 @@ describe('SearchRdiList', () => {
     render(<SearchRdiList />)
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), { target: { value: ' ' } })
+      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), {
+        target: { value: ' ' },
+      })
     })
 
     const expectedActions = [loadInstancesSuccess(instancesMock)]
@@ -102,7 +117,9 @@ describe('SearchRdiList', () => {
     render(<SearchRdiList />)
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), { target: { value: 'second int' } })
+      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), {
+        target: { value: 'second int' },
+      })
     })
 
     newInstancesMock[0].visible = false
@@ -117,7 +134,9 @@ describe('SearchRdiList', () => {
     render(<SearchRdiList />)
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), { target: { value: 'redislabs.com:12345' } })
+      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), {
+        target: { value: 'redislabs.com:12345' },
+      })
     })
 
     newInstancesMock[0].visible = true
@@ -132,7 +151,9 @@ describe('SearchRdiList', () => {
     render(<SearchRdiList />)
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), { target: { value: '1.2' } })
+      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), {
+        target: { value: '1.2' },
+      })
     })
 
     newInstancesMock[0].visible = true
@@ -147,7 +168,9 @@ describe('SearchRdiList', () => {
     render(<SearchRdiList />)
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), { target: { value: 'minute ago' } })
+      fireEvent.change(screen.getByTestId('search-rdi-instance-list'), {
+        target: { value: 'minute ago' },
+      })
     })
 
     newInstancesMock[0].visible = true

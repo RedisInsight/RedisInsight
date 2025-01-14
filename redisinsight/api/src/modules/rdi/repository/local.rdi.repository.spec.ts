@@ -4,9 +4,14 @@ import { Repository } from 'typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { RdiEntity } from 'src/modules/rdi/entities/rdi.entity';
 import {
-  MockType, mockEncryptionService, mockRdi,
-  mockRdiDecrypted, mockRdiEntityEncrypted, mockRdiPasswordEncrypted,
-  mockRdiPasswordPlain, mockRepository,
+  MockType,
+  mockEncryptionService,
+  mockRdi,
+  mockRdiDecrypted,
+  mockRdiEntityEncrypted,
+  mockRdiPasswordEncrypted,
+  mockRdiPasswordPlain,
+  mockRepository,
 } from 'src/__mocks__';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
@@ -60,7 +65,9 @@ describe('LocalRdiRepository', () => {
     });
 
     it('should return decrypted Rdi entity', async () => {
-      rdiEntityRepository.findOneBy.mockResolvedValueOnce(mockRdiEntityEncrypted);
+      rdiEntityRepository.findOneBy.mockResolvedValueOnce(
+        mockRdiEntityEncrypted,
+      );
 
       const result = await repository.get(mockRdiEntityEncrypted.id);
 
@@ -68,7 +75,9 @@ describe('LocalRdiRepository', () => {
     });
 
     it('should return decrypted Rdi entity even if decryption fails and ignoreEncryptionErrors is true', async () => {
-      rdiEntityRepository.findOneBy.mockResolvedValueOnce(mockRdiEntityEncrypted);
+      rdiEntityRepository.findOneBy.mockResolvedValueOnce(
+        mockRdiEntityEncrypted,
+      );
       encryptionService.decrypt.mockRejectedValueOnce(new Error());
 
       const result = await repository.get(mockRdiEntityEncrypted.id, true);
@@ -89,23 +98,24 @@ describe('LocalRdiRepository', () => {
         { ...mockRdi, id: '2' },
       ];
 
-      jest.spyOn(rdiEntityRepository, 'createQueryBuilder').mockReturnValueOnce({
-        select: jest.fn().mockReturnThis(),
-        getMany: jest.fn().mockResolvedValueOnce(encryptedEntities),
-      } as any);
+      jest
+        .spyOn(rdiEntityRepository, 'createQueryBuilder')
+        .mockReturnValueOnce({
+          select: jest.fn().mockReturnThis(),
+          getMany: jest.fn().mockResolvedValueOnce(encryptedEntities),
+        } as any);
 
       const result = await repository.list();
 
-      expect(result).toEqual([
-        rdis[0],
-        rdis[1],
-      ]);
+      expect(result).toEqual([rdis[0], rdis[1]]);
     });
   });
 
   describe('create', () => {
     it('should create and return decrypted Rdi entity', async () => {
-      jest.spyOn(rdiEntityRepository, 'save').mockReturnValueOnce(mockRdiEntityEncrypted);
+      jest
+        .spyOn(rdiEntityRepository, 'save')
+        .mockReturnValueOnce(mockRdiEntityEncrypted);
       const result = await repository.create(mockRdiDecrypted);
 
       expect(result).toEqual(mockRdiDecrypted);

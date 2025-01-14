@@ -13,15 +13,23 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).delete(`/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups`);
+  request(server).delete(
+    `/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups`,
+  );
 
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
-  consumerGroups: Joi.array().items(Joi.string().label('consumerGroups').required().messages({
-    'any.required': '{#label} should not be empty',
-  })).required().min(1).messages({
-    'array.sparse': 'consumerGroups must be a string or a Buffer',
-  }),
+  consumerGroups: Joi.array()
+    .items(
+      Joi.string().label('consumerGroups').required().messages({
+        'any.required': '{#label} should not be empty',
+      }),
+    )
+    .required()
+    .min(1)
+    .messages({
+      'array.sparse': 'consumerGroups must be a string or a Buffer',
+    }),
 }).strict();
 
 const validInputData = {
@@ -44,7 +52,10 @@ describe('DELETE /databases/:instanceId/streams/consumer-groups', () => {
           consumerGroups: [constants.TEST_STREAM_GROUP_BIN_BUF_OBJ_1],
         },
         after: async () => {
-          const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1]);
+          const groups = await rte.data.sendCommand('xinfo', [
+            'groups',
+            constants.TEST_STREAM_KEY_BIN_BUFFER_1,
+          ]);
           expect(groups.length).to.eq(0);
         },
       },
@@ -69,11 +80,17 @@ describe('DELETE /databases/:instanceId/streams/consumer-groups', () => {
             consumerGroups: [constants.TEST_STREAM_GROUP_1],
           },
           before: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
+            const groups = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_1,
+            ]);
             expect(groups.length).to.eq(2);
           },
           after: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
+            const groups = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_1,
+            ]);
             expect(groups.length).to.eq(1);
           },
         },
@@ -81,14 +98,23 @@ describe('DELETE /databases/:instanceId/streams/consumer-groups', () => {
           name: 'Should delete multiple consumer group',
           data: {
             keyName: constants.TEST_STREAM_KEY_1,
-            consumerGroups: [constants.TEST_STREAM_GROUP_1, constants.TEST_STREAM_GROUP_2],
+            consumerGroups: [
+              constants.TEST_STREAM_GROUP_1,
+              constants.TEST_STREAM_GROUP_2,
+            ],
           },
           before: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
+            const groups = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_1,
+            ]);
             expect(groups.length).to.eq(2);
           },
           after: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
+            const groups = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_1,
+            ]);
             expect(groups.length).to.eq(0);
           },
         },
@@ -96,14 +122,24 @@ describe('DELETE /databases/:instanceId/streams/consumer-groups', () => {
           name: 'Should delete single consumer group and ignore not existing',
           data: {
             keyName: constants.TEST_STREAM_KEY_1,
-            consumerGroups: [constants.TEST_STREAM_GROUP_1, constants.getRandomString(), constants.getRandomString()],
+            consumerGroups: [
+              constants.TEST_STREAM_GROUP_1,
+              constants.getRandomString(),
+              constants.getRandomString(),
+            ],
           },
           before: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
+            const groups = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_1,
+            ]);
             expect(groups.length).to.eq(2);
           },
           after: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
+            const groups = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_1,
+            ]);
             expect(groups.length).to.eq(1);
           },
         },
@@ -173,7 +209,7 @@ describe('DELETE /databases/:instanceId/streams/consumer-groups', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
         {
           name: 'Should throw error if no permissions for "xgroup" command',
@@ -186,7 +222,7 @@ describe('DELETE /databases/:instanceId/streams/consumer-groups', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xgroup')
+          before: () => rte.data.setAclUserRules('~* +@all -xgroup'),
         },
       ].map(mainCheckFn);
     });

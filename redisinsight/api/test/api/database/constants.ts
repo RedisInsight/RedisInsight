@@ -29,11 +29,15 @@ export const databaseSchema = Joi.object().keys({
   host: Joi.string().required(),
   port: Joi.number().integer().required(),
   db: Joi.number().integer().allow(null),
-  connectionType: Joi.string().valid('STANDALONE', 'CLUSTER', 'SENTINEL').required(),
+  connectionType: Joi.string()
+    .valid('STANDALONE', 'CLUSTER', 'SENTINEL')
+    .required(),
   username: Joi.string().allow(null),
   password: Joi.boolean().allow(null),
   timeout: Joi.number().integer().allow(null),
-  compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').required(),
+  compressor: Joi.string()
+    .valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY')
+    .required(),
   nameFromProvider: Joi.string().allow(null),
   lastConnection: Joi.string().isoDate().allow(null),
   createdAt: Joi.string().isoDate(),
@@ -49,15 +53,19 @@ export const databaseSchema = Joi.object().keys({
     username: Joi.string().allow(null),
     password: Joi.boolean().allow(null),
   }).allow(null),
-  nodes: Joi.array().items({
-    host: Joi.string().required(),
-    port: Joi.number().integer().required(),
-  }).allow(null),
-  modules: Joi.array().items({
-    name: Joi.string().required(),
-    version: Joi.number().integer(),
-    semanticVersion: Joi.string(),
-  }).allow(null),
+  nodes: Joi.array()
+    .items({
+      host: Joi.string().required(),
+      port: Joi.number().integer().required(),
+    })
+    .allow(null),
+  modules: Joi.array()
+    .items({
+      name: Joi.string().required(),
+      version: Joi.number().integer(),
+      semanticVersion: Joi.string(),
+    })
+    .allow(null),
   ssh: Joi.boolean().allow(null),
   sshOptions: Joi.object({
     id: Joi.string().allow(null),
@@ -69,10 +77,12 @@ export const databaseSchema = Joi.object().keys({
     passphrase: Joi.boolean().allow(null),
   }).allow(null),
   version: Joi.string().allow(null),
-  cloudDetails: Joi.object().keys({
-    cloudId: Joi.number().required(),
-    subscriptionType: Joi.string().valid('fixed', 'flexible').required(),
-    planMemoryLimit: Joi.number(),
-    memoryLimitMeasurementUnit: Joi.string(),
-  }).allow(null),
+  cloudDetails: Joi.object()
+    .keys({
+      cloudId: Joi.number().required(),
+      subscriptionType: Joi.string().valid('fixed', 'flexible').required(),
+      planMemoryLimit: Joi.number(),
+      memoryLimitMeasurementUnit: Joi.string(),
+    })
+    .allow(null),
 });

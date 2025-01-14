@@ -19,33 +19,33 @@ const columns: EuiBasicTableColumn<ClientsData>[] = [
   {
     name: 'ID',
     field: 'id',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'ADDR',
     field: 'addr',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'Age',
     field: 'ageSec',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'Name',
     field: 'name',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'Idle',
     field: 'idleSec',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'User',
     field: 'user',
-    sortable: true
-  }
+    sortable: true,
+  },
 ]
 
 interface Props {
@@ -56,12 +56,18 @@ interface Props {
   onChangeAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
-const Clients = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoRefresh }: Props) => {
+const Clients = ({
+  data,
+  loading,
+  onRefresh,
+  onRefreshClicked,
+  onChangeAutoRefresh,
+}: Props) => {
   const clients = Object.keys(data).map((key) => {
     const client = data[key]
     return {
       id: key,
-      ...client
+      ...client,
     }
   })
 
@@ -76,7 +82,12 @@ const Clients = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoRefre
         onRefreshClicked={onRefreshClicked}
         onChangeAutoRefresh={onChangeAutoRefresh}
       >
-        <Table<ClientsData> id="clients" columns={columns} items={clients} initialSortField="id" />
+        <Table<ClientsData>
+          id="clients"
+          columns={columns}
+          items={clients}
+          initialSortField="id"
+        />
       </Accordion>
     </Panel>
   )

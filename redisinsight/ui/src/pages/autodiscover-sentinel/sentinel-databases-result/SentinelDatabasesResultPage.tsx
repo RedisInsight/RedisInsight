@@ -43,7 +43,7 @@ const SentinelDatabasesResultPage = () => {
   const { data: masters } = useSelector(sentinelSelector)
 
   const countSuccessAdded = masters.filter(
-    ({ status }) => status === AddRedisDatabaseStatus.Success
+    ({ status }) => status === AddRedisDatabaseStatus.Success,
   )?.length
 
   const dispatch = useDispatch()
@@ -87,7 +87,8 @@ const SentinelDatabasesResultPage = () => {
     }
 
     const updatedItems = items.map((item) =>
-      (item.name === masterName ? instance : item))
+      item.name === masterName ? instance : item,
+    )
 
     const pikedInstance = [
       pick(instance, 'alias', 'name', 'username', 'password', 'db'),
@@ -107,7 +108,8 @@ const SentinelDatabasesResultPage = () => {
         }
 
         return { ...item, [field]: value }
-      }))
+      }),
+    )
   }
 
   const columns: EuiBasicTableColumn<ModifiedSentinelMaster>[] = [
@@ -121,7 +123,7 @@ const SentinelDatabasesResultPage = () => {
       sortable: true,
       render: function Message(
         _status: string,
-        { status, message, name, loading = false }
+        { status, message, name, loading = false },
       ) {
         return (
           <div data-testid={`status_${name}_${status}`}>
@@ -148,7 +150,9 @@ const SentinelDatabasesResultPage = () => {
       truncateText: true,
       sortable: true,
       width: '175px',
-      render: (name: string) => <span data-testid={`primary-group_${name}`}>{name}</span>,
+      render: (name: string) => (
+        <span data-testid={`primary-group_${name}`}>{name}</span>
+      ),
     },
     {
       field: 'alias',
@@ -158,9 +162,12 @@ const SentinelDatabasesResultPage = () => {
       sortable: true,
       render: function InstanceAliasCell(
         _alias: string,
-        { id, alias, error, loading = false, status }
+        { id, alias, error, loading = false, status },
       ) {
-        if (error?.statusCode !== ApiStatusCode.Unauthorized || status === AddRedisDatabaseStatus.Success) {
+        if (
+          error?.statusCode !== ApiStatusCode.Unauthorized ||
+          status === AddRedisDatabaseStatus.Success
+        ) {
           return alias
         }
         return (
@@ -189,7 +196,7 @@ const SentinelDatabasesResultPage = () => {
       sortable: ({ host, port }) => `${host}:${port}`,
       render: function Address(
         _host: string,
-        { host, port }: ModifiedSentinelMaster
+        { host, port }: ModifiedSentinelMaster,
       ) {
         const text = `${host}:${port}`
         return (
@@ -230,9 +237,12 @@ const SentinelDatabasesResultPage = () => {
       width: '285px',
       render: function UsernameCell(
         _username: string,
-        { username, id, loading = false, error, status }
+        { username, id, loading = false, error, status },
       ) {
-        if (error?.statusCode !== ApiStatusCode.Unauthorized || status === AddRedisDatabaseStatus.Success) {
+        if (
+          error?.statusCode !== ApiStatusCode.Unauthorized ||
+          status === AddRedisDatabaseStatus.Success
+        ) {
           return username || <i>Default</i>
         }
         return (
@@ -259,9 +269,12 @@ const SentinelDatabasesResultPage = () => {
       width: '285px',
       render: function PasswordCell(
         _password: string,
-        { password, id, error, loading = false, status }
+        { password, id, error, loading = false, status },
       ) {
-        if (error?.statusCode !== ApiStatusCode.Unauthorized || status === AddRedisDatabaseStatus.Success) {
+        if (
+          error?.statusCode !== ApiStatusCode.Unauthorized ||
+          status === AddRedisDatabaseStatus.Success
+        ) {
           return password ? '************' : <i>not assigned</i>
         }
         return (
@@ -288,7 +301,7 @@ const SentinelDatabasesResultPage = () => {
       name: 'Database Index',
       render: function DbCell(
         _password: string,
-        { db, id, loading = false, status, error }
+        { db, id, loading = false, status, error },
       ) {
         if (status === AddRedisDatabaseStatus.Success) {
           return db || <i>not assigned</i>
@@ -323,12 +336,14 @@ const SentinelDatabasesResultPage = () => {
       width: '200px',
       render: function ButtonCell(
         _password: string,
-        { name, error, alias, loading = false }
+        { name, error, alias, loading = false },
       ) {
         const isDisabled = !alias
-        if (error?.statusCode !== ApiStatusCode.Unauthorized
-          && !ApiEncryptionErrors.includes(error?.name)
-          && error?.statusCode !== ApiStatusCode.BadRequest) {
+        if (
+          error?.statusCode !== ApiStatusCode.Unauthorized &&
+          !ApiEncryptionErrors.includes(error?.name) &&
+          error?.statusCode !== ApiStatusCode.BadRequest
+        ) {
           return ''
         }
         return (

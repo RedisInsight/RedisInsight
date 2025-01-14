@@ -10,7 +10,7 @@ import { SessionMetadata } from 'src/common/models';
 export interface IExecResult {
   response: any;
   status: CommandExecutionStatus;
-  error?: RedisError | ReplyError | Error,
+  error?: RedisError | ReplyError | Error;
 }
 
 @Injectable()
@@ -53,8 +53,13 @@ export class WorkbenchAnalytics extends CommandTelemetryBaseService {
   ): Promise<void> {
     try {
       await Promise.all(
-        results.map(
-          (result) => this.sendCommandExecutedEvent(sessionMetadata, databaseId, result, additionalData),
+        results.map((result) =>
+          this.sendCommandExecutedEvent(
+            sessionMetadata,
+            databaseId,
+            result,
+            additionalData,
+          ),
         ),
       );
     } catch (e) {
@@ -92,15 +97,15 @@ export class WorkbenchAnalytics extends CommandTelemetryBaseService {
     }
   }
 
-  sendCommandDeletedEvent(sessionMetadata: SessionMetadata, databaseId: string, additionalData: object = {}): void {
-    this.sendEvent(
-      sessionMetadata,
-      TelemetryEvents.WorkbenchCommandDeleted,
-      {
-        databaseId,
-        ...additionalData,
-      },
-    );
+  sendCommandDeletedEvent(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    additionalData: object = {},
+  ): void {
+    this.sendEvent(sessionMetadata, TelemetryEvents.WorkbenchCommandDeleted, {
+      databaseId,
+      ...additionalData,
+    });
   }
 
   private sendCommandErrorEvent(

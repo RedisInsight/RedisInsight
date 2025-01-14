@@ -1,8 +1,17 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-import { resetCliHelperSettings, resetCliSettings } from 'uiSrc/slices/cli/cli-settings'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
+import {
+  resetCliHelperSettings,
+  resetCliSettings,
+} from 'uiSrc/slices/cli/cli-settings'
 import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 
 import BottomGroupComponents from './BottomGroupComponents'
@@ -11,7 +20,7 @@ jest.mock('uiSrc/slices/cli/cli-settings', () => ({
   ...jest.requireActual('uiSrc/slices/cli/cli-settings'),
   cliSettingsSelector: jest.fn().mockReturnValue({
     isShowCli: true,
-    isShowHelper: true
+    isShowHelper: true,
   }),
 }))
 
@@ -27,9 +36,7 @@ const cliId = 'cli'
 
 describe('BottomGroupComponents', () => {
   it('should render', () => {
-    expect(
-      render(<BottomGroupComponents />)
-    ).toBeTruthy()
+    expect(render(<BottomGroupComponents />)).toBeTruthy()
   })
 
   it('should render Cli when isShowCli truthy', () => {

@@ -27,7 +27,9 @@ describe('CloudJob', () => {
       ],
     }).compile();
 
-    consumerInstance = await module.get<DatabaseClientFactory>(DatabaseClientFactory);
+    consumerInstance = await module.get<DatabaseClientFactory>(
+      DatabaseClientFactory,
+    );
   });
 
   describe('getRedisClient', () => {
@@ -39,13 +41,15 @@ describe('CloudJob', () => {
         mockStandaloneRedisClient,
       );
 
-      const result = await consumerInstance.getOrCreateClient(mockClientMetadata);
+      const result =
+        await consumerInstance.getOrCreateClient(mockClientMetadata);
 
       expect(result).toEqual(mockStandaloneRedisClient);
       expect(consumerInstance.getOrCreateClient).toHaveBeenCalled();
     });
     it('existing client has connection', async () => {
-      const result = await consumerInstance.getOrCreateClient(mockClientMetadata);
+      const result =
+        await consumerInstance.getOrCreateClient(mockClientMetadata);
 
       expect(result).toEqual(mockStandaloneRedisClient);
       expect(consumerInstance.createClient).not.toHaveBeenCalled();
@@ -55,7 +59,8 @@ describe('CloudJob', () => {
         mockStandaloneRedisClient,
       );
 
-      const result = await consumerInstance.getOrCreateClient(mockClientMetadata);
+      const result =
+        await consumerInstance.getOrCreateClient(mockClientMetadata);
 
       expect(result).toEqual(mockStandaloneRedisClient);
       expect(consumerInstance.getOrCreateClient).toHaveBeenCalled();
@@ -108,7 +113,9 @@ describe('CloudJob', () => {
         mockStandaloneRedisClient,
       );
 
-      const result = await consumerInstance.createClient(mockRedisClientInstance.clientMetadata);
+      const result = await consumerInstance.createClient(
+        mockRedisClientInstance.clientMetadata,
+      );
       expect(result).toEqual(mockStandaloneRedisClient);
     });
     it("can't create redis client", async () => {
@@ -132,7 +139,10 @@ describe('CloudJob', () => {
       await expect(
         client.sendPipeline(client, mockPipelineCommands),
       ).resolves.not.toThrow();
-      expect(client.sendPipeline).toHaveBeenCalledWith(client, mockPipelineCommands);
+      expect(client.sendPipeline).toHaveBeenCalledWith(
+        client,
+        mockPipelineCommands,
+      );
     });
   });
 });

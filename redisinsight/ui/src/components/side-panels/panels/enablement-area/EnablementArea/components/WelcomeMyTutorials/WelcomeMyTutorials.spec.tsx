@@ -5,7 +5,9 @@ import WelcomeMyTutorials from './WelcomeMyTutorials'
 
 describe('WelcomeMyTutorials', () => {
   it('should render', () => {
-    expect(render(<WelcomeMyTutorials handleOpenUpload={jest.fn()} />)).toBeTruthy()
+    expect(
+      render(<WelcomeMyTutorials handleOpenUpload={jest.fn()} />),
+    ).toBeTruthy()
   })
 
   it('should call handleOpenUpload', () => {

@@ -8,15 +8,16 @@ export const APP_INFO_DATA_MOCK = {
   createDateTime: '2000-01-01T00:00:00.000Z',
   appVersion: '2.0.0',
   osPlatform: 'win32',
-  buildType: 'ELECTRON'
+  buildType: 'ELECTRON',
 }
 
 const handlers: RestHandler[] = [
   // fetchServerInfo
-  rest.get<DatabaseInstanceResponse[]>(getMswURL(ApiEndpoints.INFO), async (_req, res, ctx) => res(
-    ctx.status(200),
-    ctx.json(APP_INFO_DATA_MOCK),
-  ))
+  rest.get<DatabaseInstanceResponse[]>(
+    getMswURL(ApiEndpoints.INFO),
+    async (_req, res, ctx) =>
+      res(ctx.status(200), ctx.json(APP_INFO_DATA_MOCK)),
+  ),
 ]
 
 export default handlers

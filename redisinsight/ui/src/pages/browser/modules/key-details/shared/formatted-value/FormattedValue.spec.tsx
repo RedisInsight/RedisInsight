@@ -8,22 +8,14 @@ const mockedProps = mock<Props>()
 
 describe('FormattedValue', () => {
   it('should render', () => {
-    expect(render(
-      <FormattedValue
-        {...mockedProps}
-        value="Some string"
-      />
-    )).toBeTruthy()
+    expect(
+      render(<FormattedValue {...mockedProps} value="Some string" />),
+    ).toBeTruthy()
   })
 
   it('should display text provided in a props', () => {
     const value = 'Some string'
-    render(
-      <FormattedValue
-        {...mockedProps}
-        value={value}
-      />
-    )
+    render(<FormattedValue {...mockedProps} value={value} />)
     expect(screen.getAllByText(value).length).toEqual(1)
   })
 })

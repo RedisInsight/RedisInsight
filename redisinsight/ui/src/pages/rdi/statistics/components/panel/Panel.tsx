@@ -9,7 +9,12 @@ interface Props {
 }
 
 const Panel = ({ children, paddingSize = 'm' }: Props) => (
-  <EuiPanel className={styles.panel} hasBorder={false} hasShadow={false} paddingSize={paddingSize}>
+  <EuiPanel
+    className={styles.panel}
+    hasBorder={false}
+    hasShadow={false}
+    paddingSize={paddingSize}
+  >
     {children}
   </EuiPanel>
 )

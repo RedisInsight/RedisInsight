@@ -1,7 +1,13 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
@@ -15,7 +21,7 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
       flag: true,
-    }
+    },
   }),
 }))
 
@@ -32,7 +38,9 @@ describe('OAuthSignInButton', () => {
   })
 
   it('should call proper actions after click on sign in button', () => {
-    render(<OAuthSignInButton {...mockedProps} source={OAuthSocialSource.Browser} />)
+    render(
+      <OAuthSignInButton {...mockedProps} source={OAuthSocialSource.Browser} />,
+    )
 
     fireEvent.click(screen.getByTestId('cloud-sign-in-btn'))
 

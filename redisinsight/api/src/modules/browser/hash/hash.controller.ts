@@ -2,16 +2,15 @@ import {
   Body,
   Controller,
   Delete,
-  HttpCode, Patch,
+  HttpCode,
+  Patch,
   Post,
   Put,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ApiBody, ApiOkResponse, ApiOperation, ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
@@ -23,7 +22,8 @@ import {
   DeleteFieldsFromHashDto,
   DeleteFieldsFromHashResponse,
   GetHashFieldsDto,
-  GetHashFieldsResponse, UpdateHashFieldsTtlDto,
+  GetHashFieldsResponse,
+  UpdateHashFieldsTtlDto,
 } from 'src/modules/browser/hash/dto';
 import { HashService } from 'src/modules/browser/hash/hash.service';
 import { BrowserBaseController } from 'src/modules/browser/browser.base.controller';
@@ -44,7 +44,7 @@ export class HashController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async createHash(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: CreateHashWithExpireDto,
+    @Body() dto: CreateHashWithExpireDto,
   ): Promise<void> {
     return await this.hashService.createHash(clientMetadata, dto);
   }
@@ -64,7 +64,7 @@ export class HashController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async getMembers(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetHashFieldsDto,
+    @Body() dto: GetHashFieldsDto,
   ): Promise<GetHashFieldsResponse> {
     return await this.hashService.getFields(clientMetadata, dto);
   }
@@ -78,7 +78,7 @@ export class HashController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async addMember(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: AddFieldsToHashDto,
+    @Body() dto: AddFieldsToHashDto,
   ): Promise<void> {
     return await this.hashService.addFields(clientMetadata, dto);
   }
@@ -92,7 +92,7 @@ export class HashController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async updateTtl(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: UpdateHashFieldsTtlDto,
+    @Body() dto: UpdateHashFieldsTtlDto,
   ): Promise<void> {
     return await this.hashService.updateTtl(clientMetadata, dto);
   }
@@ -106,7 +106,7 @@ export class HashController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async deleteFields(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DeleteFieldsFromHashDto,
+    @Body() dto: DeleteFieldsFromHashDto,
   ): Promise<DeleteFieldsFromHashResponse> {
     return await this.hashService.deleteFields(clientMetadata, dto);
   }

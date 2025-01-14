@@ -9,7 +9,12 @@ const TOAST_LIFE_TIME = 1000 * 60 * 60 * 12 // 12hr
 
 // TODO: use i18n file for texts
 export default {
-  DEFAULT: (id: string, text: any, onClose = () => {}, title: string = 'Error'): Toast => ({
+  DEFAULT: (
+    id: string,
+    text: any,
+    onClose = () => {},
+    title: string = 'Error',
+  ): Toast => ({
     id,
     'data-test-subj': 'toast-error',
     color: 'danger',
@@ -37,13 +42,17 @@ export default {
     text: <EncryptionErrorContent instanceId={instanceId} onClose={onClose} />,
   }),
   CLOUD_CAPI_KEY_UNAUTHORIZED: (
-    { id, message, title }: {
-      id: string,
-      message: string | JSX.Element,
+    {
+      id,
+      message,
+      title,
+    }: {
+      id: string
+      message: string | JSX.Element
       title?: string
     },
     additionalInfo: Record<string, any>,
-    onClose?: () => void
+    onClose?: () => void,
   ): Toast => ({
     id,
     'data-test-subj': 'toast-error-cloud-capi-key-unauthorized',
@@ -64,8 +73,8 @@ export default {
     ),
   }),
   RDI_DEPLOY_PIPELINE: (
-    { id, title, message }: { id: string, title?: string, message: string },
-    onClose?: () => void
+    { id, title, message }: { id: string; title?: string; message: string },
+    onClose?: () => void,
   ): Toast => ({
     id,
     'data-test-subj': 'toast-error-deploy',

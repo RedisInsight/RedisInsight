@@ -8,8 +8,9 @@ import {
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow, EuiIcon,
-  EuiToolTip
+  EuiFormRow,
+  EuiIcon,
+  EuiToolTip,
 } from '@elastic/eui'
 import { BuildType } from 'uiSrc/constants/env'
 import { SECURITY_FIELD } from 'uiSrc/constants'
@@ -46,14 +47,14 @@ const DatabaseForm = (props: Props) => {
     onHostNamePaste,
     autoFocus = false,
     showFields,
-    readyOnlyFields = []
+    readyOnlyFields = [],
   } = props
 
   const { server } = useSelector(appInfoSelector)
 
   const AppendHostName = () => (
     <EuiToolTip
-      title={(
+      title={
         <div>
           <p>
             <b>Pasting a connection URL auto fills the database details.</b>
@@ -62,11 +63,11 @@ const DatabaseForm = (props: Props) => {
             The following connection URLs are supported:
           </p>
         </div>
-      )}
+      }
       className="homePage_tooltip"
       anchorClassName="inputAppendIcon"
       position="right"
-      content={(
+      content={
         <ul className="homePage_toolTipUl">
           <li>
             <span className="dot" />
@@ -81,13 +82,14 @@ const DatabaseForm = (props: Props) => {
             host:port
           </li>
         </ul>
-      )}
+      }
     >
       <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
     </EuiToolTip>
   )
 
-  const isShowPort = server?.buildType !== BuildType.RedisStack && showFields.port
+  const isShowPort =
+    server?.buildType !== BuildType.RedisStack && showFields.port
   const isFieldDisabled = (name: string) => readyOnlyFields.includes(name)
 
   return (
@@ -130,10 +132,12 @@ const DatabaseForm = (props: Props) => {
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     formik.setFieldValue(
                       'host',
-                      validateField(e.target.value.trim())
+                      validateField(e.target.value.trim()),
                     )
                   }}
-                  onPaste={(event: React.ClipboardEvent<HTMLInputElement>) => handlePasteHostName(onHostNamePaste, event)}
+                  onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
+                    handlePasteHostName(onHostNamePaste, event)
+                  }
                   onFocus={selectOnFocus}
                   append={<AppendHostName />}
                   disabled={isFieldDisabled('host')}
@@ -155,7 +159,7 @@ const DatabaseForm = (props: Props) => {
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     formik.setFieldValue(
                       e.target.name,
-                      validatePortNumber(e.target.value.trim())
+                      validatePortNumber(e.target.value.trim()),
                     )
                   }}
                   onFocus={selectOnFocus}
@@ -198,14 +202,15 @@ const DatabaseForm = (props: Props) => {
               className="passwordField"
               maxLength={10_000}
               placeholder="Enter Password"
-              value={formik.values.password === true ? SECURITY_FIELD : formik.values.password ?? ''}
+              value={
+                formik.values.password === true
+                  ? SECURITY_FIELD
+                  : (formik.values.password ?? '')
+              }
               onChange={formik.handleChange}
               onFocus={() => {
                 if (formik.values.password === true) {
-                  formik.setFieldValue(
-                    'password',
-                    '',
-                  )
+                  formik.setFieldValue('password', '')
                 }
               }}
               dualToggleProps={{ color: 'text' }}
@@ -231,7 +236,7 @@ const DatabaseForm = (props: Props) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     e.target.name,
-                    validateTimeoutNumber(e.target.value.trim())
+                    validateTimeoutNumber(e.target.value.trim()),
                   )
                 }}
                 onFocus={selectOnFocus}

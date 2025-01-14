@@ -1,6 +1,4 @@
-import {
-  flattenDeep, isArray, isInteger, isNull, isObject,
-} from 'lodash';
+import { flattenDeep, isArray, isInteger, isNull, isObject } from 'lodash';
 import { IS_NON_PRINTABLE_ASCII_CHARACTER } from 'src/constants';
 import { decimalToHexString } from 'src/utils/cli-helper';
 import { IOutputFormatterStrategy } from '../output-formatter.interface';
@@ -40,9 +38,10 @@ export class TextFormatterStrategy implements IOutputFormatterStrategy {
           .join('\n');
       }
     } else {
-      result = reply instanceof Buffer
-        ? this.formatRedisBufferReply(reply)
-        : JSON.stringify(reply);
+      result =
+        reply instanceof Buffer
+          ? this.formatRedisBufferReply(reply)
+          : JSON.stringify(reply);
     }
     return result;
   }

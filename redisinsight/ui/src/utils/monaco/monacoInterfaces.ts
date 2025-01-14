@@ -11,12 +11,12 @@ export interface IMonacoQuery {
   name: string
   fullQuery: string
   commandQuery: string
-  args: [string[], string[]],
+  args: [string[], string[]]
   cursor: {
-    isCursorInQuotes: boolean,
-    prevCursorChar: string,
-    nextCursorChar: string,
-    argLeftOffset: number,
+    isCursorInQuotes: boolean
+    prevCursorChar: string
+    nextCursorChar: string
+    argLeftOffset: number
     argRightOffset: number
   }
   allArgs: string[]

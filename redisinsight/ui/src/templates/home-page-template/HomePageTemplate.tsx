@@ -24,21 +24,33 @@ const HomePageTemplate = (props: Props) => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  const isAnyChatAvailable = isAnyFeatureEnabled([
+    databaseChatFeature,
+    documentationChatFeature,
+  ])
 
   return (
     <>
       <div className={styles.pageDefaultHeader}>
         <HomeTabs />
-        <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
+        <EuiFlexGroup
+          style={{ flexGrow: 0 }}
+          gutterSize="none"
+          alignItems="center"
+        >
           {isAnyChatAvailable && (
             <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
               <CopilotTrigger />
             </EuiFlexItem>
           )}
-          <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
+          <EuiFlexItem>
+            <InsightsTrigger source="home page" />
+          </EuiFlexItem>
           <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-            <EuiFlexItem style={{ marginLeft: 16 }} data-testid="home-page-sso-profile">
+            <EuiFlexItem
+              style={{ marginLeft: 16 }}
+              data-testid="home-page-sso-profile"
+            >
               <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
             </EuiFlexItem>
           </FeatureFlagComponent>

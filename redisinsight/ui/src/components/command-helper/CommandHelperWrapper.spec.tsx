@@ -29,29 +29,29 @@ jest.mock('uiSrc/slices/cli/cli-settings', () => ({
 
 jest.mock(redisCommandsPath, () => {
   const defaultState = jest.requireActual(redisCommandsPath).initialState
-  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } = jest.requireActual('uiSrc/constants')
+  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } =
+    jest.requireActual('uiSrc/constants')
   return {
     ...jest.requireActual(redisCommandsPath),
     appRedisCommandsSelector: jest.fn().mockReturnValue({
       ...defaultState,
       spec: MOCK_COMMANDS_SPEC,
-      commandsArray: MOCK_COMMANDS_ARRAY
+      commandsArray: MOCK_COMMANDS_ARRAY,
     }),
   }
 })
 
 interface IMockedCommands {
-  matchedCommand: string;
-  argStr?: string;
-  argListText?: string;
-  complexityShort?: string;
+  matchedCommand: string
+  argStr?: string
+  argListText?: string
+  complexityShort?: string
 }
 
 const mockedCommands: IMockedCommands[] = [
   {
     matchedCommand: 'xgroup',
-    argStr:
-      'XGROUP',
+    argStr: 'XGROUP',
     argListText: '',
   },
   {
@@ -80,13 +80,15 @@ const mockedCommands: IMockedCommands[] = [
   },
   {
     matchedCommand: 'geoadd',
-    argStr: 'GEOADD key [NX | XX] [CH] longitude latitude member [longitude latitude member ...]',
+    argStr:
+      'GEOADD key [NX | XX] [CH] longitude latitude member [longitude latitude member ...]',
     argListText:
       'Arguments:RequiredkeyOptional[NX | XX]Optional[CH]Multiplelongitude latitude member',
   },
   {
     matchedCommand: 'zadd',
-    argStr: 'ZADD key [NX | XX] [GT | LT] [CH] [INCR] score member [score member ...]',
+    argStr:
+      'ZADD key [NX | XX] [GT | LT] [CH] [INCR] score member [score member ...]',
     argListText:
       'Arguments:RequiredkeyOptional[NX | XX]Optional[GT | LT]Optional[CH]Optional[INCR]Multiplescore member',
   },
@@ -159,7 +161,8 @@ describe('CliBodyWrapper', () => {
     const complexityId = 'cli-helper-complexity'
 
     mockedCommands.forEach(({ matchedCommand = '' }) => {
-      const complexity = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.complexity
+      const complexity =
+        ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.complexity
 
       cliSettingsSelector.mockImplementation(() => ({
         matchedCommand,
@@ -188,7 +191,9 @@ describe('CliBodyWrapper', () => {
       }))
       const { unmount } = render(<CommandHelperWrapper />)
       expect(
-        screen.getByTestId(`cli-helper-output-title-${matchedCommand.toUpperCase()}`)
+        screen.getByTestId(
+          `cli-helper-output-title-${matchedCommand.toUpperCase()}`,
+        ),
       ).toBeInTheDocument()
       unmount()
     })

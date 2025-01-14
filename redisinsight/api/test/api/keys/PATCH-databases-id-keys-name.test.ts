@@ -29,9 +29,12 @@ const validInputData = {
   newKeyName: constants.getRandomString(),
 };
 
-const responseSchema = Joi.object().keys({
-  keyName: JoiRedisString.required(),
-}).required().strict(true);
+const responseSchema = Joi.object()
+  .keys({
+    keyName: JoiRedisString.required(),
+  })
+  .required()
+  .strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -87,7 +90,7 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body.keyName).to.eq(constants.TEST_STRING_KEY_1);
-        }
+        },
       },
       {
         name: 'Should rename utf8 to ascii and return buffer',
@@ -100,7 +103,9 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(body.keyName).to.deep.eq(constants.TEST_STRING_KEY_BIN_BUF_OBJ_1);
+          expect(body.keyName).to.deep.eq(
+            constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+          );
         },
       },
       {
@@ -115,7 +120,7 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body.keyName).to.eq(constants.TEST_STRING_KEY_1);
-        }
+        },
       },
       {
         name: 'Should rename utf8 to buf and return ascii',
@@ -157,7 +162,8 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
           name: 'Should rename string',
           data: {
             keyName: constants.TEST_STRING_KEY_1,
-            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+            newKeyName:
+              constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
           },
           responseSchema,
         },
@@ -165,7 +171,8 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
           name: 'Should rename list',
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+            newKeyName:
+              constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
           },
           responseSchema,
         },
@@ -173,7 +180,8 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
           name: 'Should rename set',
           data: {
             keyName: constants.TEST_SET_KEY_1,
-            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+            newKeyName:
+              constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
           },
           responseSchema,
         },
@@ -181,7 +189,8 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
           name: 'Should rename zset',
           data: {
             keyName: constants.TEST_ZSET_KEY_1,
-            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+            newKeyName:
+              constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
           },
           responseSchema,
         },
@@ -189,7 +198,8 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
           name: 'Should rename hash',
           data: {
             keyName: constants.TEST_HASH_KEY_1,
-            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+            newKeyName:
+              constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
           },
           responseSchema,
         },
@@ -212,7 +222,7 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
           after: async function () {
             expect(await rte.client.exists(this.data.keyName)).to.eql(0);
             expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
-          }
+          },
         },
       ].map(renameCheckFn);
 
@@ -241,7 +251,8 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.TEST_STRING_KEY_1,
-            newKeyName: constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
+            newKeyName:
+              constants.getRandomString() + constants.CLUSTER_HASH_SLOT,
           },
           statusCode: 200,
         },
@@ -261,7 +272,7 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
           after: async function () {
             expect(await rte.client.exists(this.data.keyName)).to.eql(1);
             expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
-          }
+          },
         },
         {
           name: 'Should throw error if no permissions for "renamenx" command',
@@ -279,7 +290,7 @@ describe('PATCH /databases/:instanceId/keys/name', () => {
           after: async function () {
             expect(await rte.client.exists(this.data.keyName)).to.eql(1);
             expect(await rte.client.exists(this.data.newKeyName)).to.eql(0);
-          }
+          },
         },
       ].map(renameCheckFn);
     });

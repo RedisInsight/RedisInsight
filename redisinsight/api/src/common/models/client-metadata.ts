@@ -1,7 +1,13 @@
 import { Session, SessionMetadata } from 'src/common/models/session';
 import { Type } from 'class-transformer';
 import {
-  IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
 } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -52,10 +58,7 @@ export class ClientMetadata {
     // validate session metadata
     SessionMetadata.validate(clientMetadata?.sessionMetadata);
 
-    if (
-      !clientMetadata?.databaseId
-      || !clientMetadata?.context
-    ) {
+    if (!clientMetadata?.databaseId || !clientMetadata?.context) {
       throw new BadRequestException(ERROR_MESSAGES.INVALID_CLIENT_METADATA);
     }
   }

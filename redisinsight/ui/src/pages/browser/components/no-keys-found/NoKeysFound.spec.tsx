@@ -8,17 +8,24 @@ import {
   mockedStore,
   cleanup,
   waitForEuiPopoverVisible,
-  waitForStack
+  waitForStack,
 } from 'uiSrc/utils/test-utils'
 
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { apiService } from 'uiSrc/services'
-import { bulkImportDefaultData, bulkImportDefaultDataSuccess } from 'uiSrc/slices/browser/bulkActions'
+import {
+  bulkImportDefaultData,
+  bulkImportDefaultDataSuccess,
+} from 'uiSrc/slices/browser/bulkActions'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { changeKeyViewType, loadKeys } from 'uiSrc/slices/browser/keys'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
-import { changeSelectedTab, changeSidePanel, resetExplorePanelSearch } from 'uiSrc/slices/panels/sidePanels'
+import {
+  changeSelectedTab,
+  changeSidePanel,
+  resetExplorePanelSearch,
+} from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import NoKeysFound, { Props } from './NoKeysFound'
 
@@ -59,9 +66,13 @@ describe('NoKeysFound', () => {
   })
 
   it('should call proper actions after click load sample data', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    apiService.post = jest.fn().mockResolvedValueOnce({ status: 200, data: { data: {} } })
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    apiService.post = jest
+      .fn()
+      .mockResolvedValueOnce({ status: 200, data: { data: {} } })
 
     render(<NoKeysFound {...mockedProps} onAddKeyPanel={jest.fn()} />)
 
@@ -75,9 +86,7 @@ describe('NoKeysFound', () => {
     const expectedActions = [
       bulkImportDefaultData(),
       bulkImportDefaultDataSuccess(),
-      addMessageNotification(
-        successMessages.UPLOAD_DATA_BULK()
-      ),
+      addMessageNotification(successMessages.UPLOAD_DATA_BULK()),
       changeSelectedTab(InsightsPanelTabs.Explore),
       changeSidePanel(SidePanels.Insights),
       resetExplorePanelSearch(),
@@ -85,6 +94,8 @@ describe('NoKeysFound', () => {
       loadKeys(),
     ]
 
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+      expectedActions,
+    )
   })
 })

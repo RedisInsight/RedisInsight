@@ -14,39 +14,43 @@ const mockedProps = mock<JSONObjectProps>()
 
 const mockedSimpleJSONObject = { a: 1, b: null, c: 'string', d: true }
 const mockedDownloadedObjectWithObjects = {
-  a: { b: 1, c: 2, d: null, e: 'string' }
+  a: { b: 1, c: 2, d: null, e: 'string' },
 }
 const mockedDownloadedObjectWithArray = {
-  a: [1, null, 'aaa']
+  a: [1, null, 'aaa'],
 }
 
 jest.mock('uiSrc/slices/browser/rejson', () => ({
   ...jest.requireActual('uiSrc/slices/browser/rejson'),
   setReJSONDataAction: jest.fn,
-  fetchVisualisationResults: jest.fn().mockReturnValue(
-    Promise.resolve({ data: mockedSimpleJSONObject })
-  ),
+  fetchVisualisationResults: jest
+    .fn()
+    .mockReturnValue(Promise.resolve({ data: mockedSimpleJSONObject })),
 }))
 
 describe.skip('JSONObject', () => {
   it('should render', () => {
-    expect(render(
-      <JSONObject
-        {...instance(mockedProps)}
-        value={mockedSimpleJSONObject}
-        keyName="keyName"
-      />
-    )).toBeTruthy()
+    expect(
+      render(
+        <JSONObject
+          {...instance(mockedProps)}
+          value={mockedSimpleJSONObject}
+          keyName="keyName"
+        />,
+      ),
+    ).toBeTruthy()
   })
 
   it('should expand simple downloaded JSON', async () => {
-    const { container } = render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedSimpleJSONObject}
-      isDownloaded
-      onJsonKeyExpandAndCollapse={jest.fn()}
-    />)
+    const { container } = render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedSimpleJSONObject}
+        isDownloaded
+        onJsonKeyExpandAndCollapse={jest.fn()}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
@@ -56,14 +60,16 @@ describe.skip('JSONObject', () => {
   })
 
   it('should render and expand downloaded JSON with objects', async () => {
-    const { container } = render(<JSONObject
-      {...instance(mockedProps)}
-      value={mockedDownloadedObjectWithObjects}
-      isDownloaded
-      keyName=""
-      type={ObjectTypes.Object}
-      onJsonKeyExpandAndCollapse={jest.fn()}
-    />)
+    const { container } = render(
+      <JSONObject
+        {...instance(mockedProps)}
+        value={mockedDownloadedObjectWithObjects}
+        isDownloaded
+        keyName=""
+        type={ObjectTypes.Object}
+        onJsonKeyExpandAndCollapse={jest.fn()}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
@@ -76,13 +82,15 @@ describe.skip('JSONObject', () => {
   })
 
   it('should render and expand downloaded JSON with array', async () => {
-    const { container } = render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedDownloadedObjectWithArray}
-      isDownloaded
-      onJsonKeyExpandAndCollapse={jest.fn()}
-    />)
+    const { container } = render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedDownloadedObjectWithArray}
+        isDownloaded
+        onJsonKeyExpandAndCollapse={jest.fn()}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
@@ -96,17 +104,19 @@ describe.skip('JSONObject', () => {
   })
 
   it('should render simple not downloaded JSON', async () => {
-    const fetchVisualisationResults = jest.fn().mockReturnValue(
-      Promise.resolve({ data: mockedSimpleJSONObject })
+    const fetchVisualisationResults = jest
+      .fn()
+      .mockReturnValue(Promise.resolve({ data: mockedSimpleJSONObject }))
+    const { container } = render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedSimpleJSONObject}
+        isDownloaded={false}
+        onJsonKeyExpandAndCollapse={jest.fn()}
+        handleFetchVisualisationResults={fetchVisualisationResults}
+      />,
     )
-    const { container } = render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedSimpleJSONObject}
-      isDownloaded={false}
-      onJsonKeyExpandAndCollapse={jest.fn()}
-      handleFetchVisualisationResults={fetchVisualisationResults}
-    />)
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
@@ -126,7 +136,7 @@ describe.skip('JSONObject', () => {
             key: 'latitude',
             path: '[3]["latitude"]',
             type: 'number',
-            value: -7.655525
+            value: -7.655525,
           },
           {
             cardinality: 1,
@@ -140,19 +150,21 @@ describe.skip('JSONObject', () => {
             key: 'latitude2',
             path: '[3]["latitude2"]',
             type: 'object',
-            value: { },
-          }
-        ]
-      })
+            value: {},
+          },
+        ],
+      }),
     )
-    const { container } = render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedSimpleJSONObject}
-      isDownloaded={false}
-      onJsonKeyExpandAndCollapse={jest.fn()}
-      handleFetchVisualisationResults={fetchVisualisationResults}
-    />)
+    const { container } = render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedSimpleJSONObject}
+        isDownloaded={false}
+        onJsonKeyExpandAndCollapse={jest.fn()}
+        handleFetchVisualisationResults={fetchVisualisationResults}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
@@ -162,13 +174,15 @@ describe.skip('JSONObject', () => {
   })
 
   it('should render inline editor to add', async () => {
-    render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedSimpleJSONObject}
-      isDownloaded
-      onJsonKeyExpandAndCollapse={jest.fn()}
-    />)
+    render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedSimpleJSONObject}
+        isDownloaded
+        onJsonKeyExpandAndCollapse={jest.fn()}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(/expand-object/i))
@@ -183,13 +197,15 @@ describe.skip('JSONObject', () => {
 
   it('should not be able to add value with wrong json', async () => {
     const onJSONPropertyAdded = jest.fn()
-    render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedSimpleJSONObject}
-      isDownloaded
-      onJsonKeyExpandAndCollapse={jest.fn()}
-    />)
+    render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedSimpleJSONObject}
+        isDownloaded
+        onJsonKeyExpandAndCollapse={jest.fn()}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(/expand-object/i))
@@ -200,11 +216,11 @@ describe.skip('JSONObject', () => {
     })
 
     fireEvent.change(screen.getByTestId('json-key'), {
-      target: { value: '"a"' }
+      target: { value: '"a"' },
     })
 
     fireEvent.change(screen.getByTestId(JSON_VALUE), {
-      target: { value: '{' }
+      target: { value: '{' },
     })
 
     expect(onJSONPropertyAdded).not.toBeCalled()
@@ -213,14 +229,16 @@ describe.skip('JSONObject', () => {
 
   it('should apply proper value to add element in object', async () => {
     const onJSONPropertyAdded = jest.fn()
-    render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedSimpleJSONObject}
-      isDownloaded
-      onJsonKeyExpandAndCollapse={jest.fn()}
-      handleSubmitJsonUpdateValue={jest.fn()}
-    />)
+    render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedSimpleJSONObject}
+        isDownloaded
+        onJsonKeyExpandAndCollapse={jest.fn()}
+        handleSubmitJsonUpdateValue={jest.fn()}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
@@ -231,11 +249,11 @@ describe.skip('JSONObject', () => {
     })
 
     fireEvent.change(screen.getByTestId('json-key'), {
-      target: { value: '"key"' }
+      target: { value: '"key"' },
     })
 
     fireEvent.change(screen.getByTestId(JSON_VALUE), {
-      target: { value: '{}' }
+      target: { value: '{}' },
     })
 
     await act(async () => {
@@ -246,13 +264,15 @@ describe.skip('JSONObject', () => {
   })
 
   it('should render inline editor to edit value', async () => {
-    render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedSimpleJSONObject}
-      isDownloaded
-      onJsonKeyExpandAndCollapse={jest.fn()}
-    />)
+    render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedSimpleJSONObject}
+        isDownloaded
+        onJsonKeyExpandAndCollapse={jest.fn()}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(EDIT_OBJECT_BTN))
@@ -262,20 +282,22 @@ describe.skip('JSONObject', () => {
   })
 
   it('should change value when editing', async () => {
-    render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedSimpleJSONObject}
-      isDownloaded
-      onJsonKeyExpandAndCollapse={jest.fn()}
-    />)
+    render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedSimpleJSONObject}
+        isDownloaded
+        onJsonKeyExpandAndCollapse={jest.fn()}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(EDIT_OBJECT_BTN))
     })
 
     fireEvent.change(screen.getByTestId(JSON_VALUE), {
-      target: { value: '{}' }
+      target: { value: '{}' },
     })
 
     expect(screen.getByTestId(JSON_VALUE)).toHaveValue('{}')
@@ -283,20 +305,22 @@ describe.skip('JSONObject', () => {
 
   it('should not apply wrong value for edit', async () => {
     const onJSONPropertyEdited = jest.fn()
-    render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedSimpleJSONObject}
-      isDownloaded
-      onJsonKeyExpandAndCollapse={jest.fn()}
-    />)
+    render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedSimpleJSONObject}
+        isDownloaded
+        onJsonKeyExpandAndCollapse={jest.fn()}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(EDIT_OBJECT_BTN))
     })
 
     fireEvent.change(screen.getByTestId(JSON_VALUE), {
-      target: { value: '{' }
+      target: { value: '{' },
     })
 
     expect(onJSONPropertyEdited).not.toBeCalled()
@@ -305,20 +329,22 @@ describe.skip('JSONObject', () => {
 
   it('should apply proper value for edit', async () => {
     const onJSONPropertyEdited = jest.fn()
-    render(<JSONObject
-      {...instance(mockedProps)}
-      keyName="keyName"
-      value={mockedSimpleJSONObject}
-      isDownloaded
-      onJsonKeyExpandAndCollapse={jest.fn()}
-    />)
+    render(
+      <JSONObject
+        {...instance(mockedProps)}
+        keyName="keyName"
+        value={mockedSimpleJSONObject}
+        isDownloaded
+        onJsonKeyExpandAndCollapse={jest.fn()}
+      />,
+    )
 
     await act(async () => {
       await fireEvent.click(screen.getByTestId(EDIT_OBJECT_BTN))
     })
 
     fireEvent.change(screen.getByTestId(JSON_VALUE), {
-      target: { value: '{}' }
+      target: { value: '{}' },
     })
 
     await act(async () => {

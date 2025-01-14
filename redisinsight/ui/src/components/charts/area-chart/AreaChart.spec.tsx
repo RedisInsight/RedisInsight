@@ -42,9 +42,12 @@ describe('AreaChart', () => {
   it('should render tooltip and content inside', async () => {
     render(<AreaChart data={mockData} name="test" />)
 
-    await waitFor(() => {
-      fireEvent.mouseMove(screen.getByTestId('circle-15-50000'))
-    }, { timeout: 210 }) // Account for long delay on tooltips
+    await waitFor(
+      () => {
+        fireEvent.mouseMove(screen.getByTestId('circle-15-50000'))
+      },
+      { timeout: 210 },
+    ) // Account for long delay on tooltips
 
     expect(screen.getByTestId('area-tooltip-circle')).toBeInTheDocument()
     expect(screen.getByTestId('area-tooltip-circle')).toHaveTextContent('50000')
@@ -52,7 +55,13 @@ describe('AreaChart', () => {
 
   it('when dataType="Bytes" max value should be rounded by metric', async () => {
     const lastDataValue = last(mockData)
-    const { queryByTestId } = render(<AreaChart data={mockData} name="test" dataType={AreaChartDataType.Bytes} />)
+    const { queryByTestId } = render(
+      <AreaChart
+        data={mockData}
+        name="test"
+        dataType={AreaChartDataType.Bytes}
+      />,
+    )
 
     expect(queryByTestId(`ytick-${lastDataValue?.y}-4`)).not.toBeInTheDocument()
     expect(queryByTestId('ytick-51200-4')).toBeInTheDocument()
@@ -65,6 +74,8 @@ describe('AreaChart', () => {
 
     expect(queryByTestId('ytick-51200-4')).not.toBeInTheDocument()
     expect(queryByTestId(`ytick-${lastDataValue?.y}-4`)).toBeInTheDocument()
-    expect(queryByTestId(`ytick-${lastDataValue?.y}-4`)).toHaveTextContent(`${lastDataValue?.y}`)
+    expect(queryByTestId(`ytick-${lastDataValue?.y}-4`)).toHaveTextContent(
+      `${lastDataValue?.y}`,
+    )
   })
 })

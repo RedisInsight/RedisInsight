@@ -1,5 +1,3 @@
 import KeyDetails from './KeyDetails'
 
-export {
-  KeyDetails,
-}
+export { KeyDetails }

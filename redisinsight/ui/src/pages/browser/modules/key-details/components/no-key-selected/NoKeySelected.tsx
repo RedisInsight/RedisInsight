@@ -17,13 +17,7 @@ export interface Props {
 }
 
 export const NoKeySelected = (props: Props) => {
-  const {
-    keyProp,
-    totalKeys,
-    onClosePanel,
-    error,
-    keysLastRefreshTime,
-  } = props
+  const { keyProp, totalKeys, onClosePanel, error, keysLastRefreshTime } = props
 
   const dispatch = useDispatch()
 
@@ -36,9 +30,12 @@ export const NoKeySelected = (props: Props) => {
     <>
       {totalKeys > 0 ? (
         <span data-testid="select-key-message">
-          Select the key from the list on the left to see the details of the key.
+          Select the key from the list on the left to see the details of the
+          key.
         </span>
-      ) : (<ExploreGuides />)}
+      ) : (
+        <ExploreGuides />
+      )}
     </>
   )
 
@@ -62,10 +59,10 @@ export const NoKeySelected = (props: Props) => {
       <div className={styles.placeholder}>
         <EuiText textAlign="center" grow color="subdued" size="m">
           {error ? (
-            <p data-testid="no-keys-selected-text">
-              {error}
-            </p>
-          ) : (!!keysLastRefreshTime && <NoKeysSelectedMessage />)}
+            <p data-testid="no-keys-selected-text">{error}</p>
+          ) : (
+            !!keysLastRefreshTime && <NoKeysSelectedMessage />
+          )}
         </EuiText>
       </div>
     </>

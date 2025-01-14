@@ -7,12 +7,14 @@ const monacoTestId = 'monaco-yaml'
 
 describe('MonacoYaml', () => {
   it('should render', () => {
-    const { queryByTestId } = render(<MonacoYaml
-      schema={{}}
-      value="val"
-      onChange={jest.fn()}
-      data-testid={monacoTestId}
-    />)
+    const { queryByTestId } = render(
+      <MonacoYaml
+        schema={{}}
+        value="val"
+        onChange={jest.fn()}
+        data-testid={monacoTestId}
+      />,
+    )
     expect(queryByTestId(monacoTestId)).toBeInTheDocument()
   })
 })

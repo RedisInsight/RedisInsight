@@ -1,7 +1,4 @@
-import {
-  registerDecorator,
-  ValidationOptions,
-} from 'class-validator';
+import { registerDecorator, ValidationOptions } from 'class-validator';
 import { RedisStringValidator } from 'src/common/validators';
 
 export function IsRedisString(validationOptions?: ValidationOptions) {

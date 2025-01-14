@@ -37,7 +37,9 @@ const PopoverDelete = (props: Props) => {
     testid = '',
   } = props
 
-  const onButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onButtonClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     e.stopPropagation()
     if (item + suffix !== deleting) {
       showPopover(item)
@@ -56,7 +58,7 @@ const PopoverDelete = (props: Props) => {
       closePopover={() => closePopover()}
       panelPaddingSize="m"
       anchorClassName="deleteFieldPopover"
-      button={(
+      button={
         <EuiButtonIcon
           iconType="trash"
           aria-label="Remove field"
@@ -65,7 +67,7 @@ const PopoverDelete = (props: Props) => {
           onClick={onButtonClick}
           data-testid={testid ? `${testid}-icon` : 'remove-icon'}
         />
-      )}
+      }
       onClick={(e) => e.stopPropagation()}
     >
       <div className={styles.popover}>
@@ -75,9 +77,7 @@ const PopoverDelete = (props: Props) => {
               <b>{header}</b>
             </h4>
           )}
-          <EuiText size="s">
-            {text}
-          </EuiText>
+          <EuiText size="s">{text}</EuiText>
           {appendInfo}
         </EuiText>
         <div className={styles.popoverFooter}>

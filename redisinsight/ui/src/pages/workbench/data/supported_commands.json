@@ -727,12 +727,7 @@
   "FT.SEARCH": {
     "summary": "Searches the index with a textual query, returning either documents or just ids",
     "complexity": "O(N)",
-    "history": [
-      [
-        "2.0.0",
-        "Deprecated `WITHPAYLOADS` and `PAYLOAD` arguments"
-      ]
-    ],
+    "history": [["2.0.0", "Deprecated `WITHPAYLOADS` and `PAYLOAD` arguments"]],
     "arguments": [
       {
         "name": "index",

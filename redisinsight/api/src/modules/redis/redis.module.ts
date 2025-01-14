@@ -21,10 +21,7 @@ export class RedisModule {
         IoredisRedisConnectionStrategy,
         NodeRedisConnectionStrategy,
       ],
-      exports: [
-        RedisClientStorage,
-        RedisClientFactory,
-      ],
+      exports: [RedisClientStorage, RedisClientFactory],
     };
   }
 }

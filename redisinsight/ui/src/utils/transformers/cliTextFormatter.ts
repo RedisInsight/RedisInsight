@@ -1,6 +1,4 @@
-import {
-  flattenDeep, isArray, isInteger, isNull, isObject,
-} from 'lodash'
+import { flattenDeep, isArray, isInteger, isNull, isObject } from 'lodash'
 import { bulkReplyCommands } from 'uiSrc/constants'
 
 const formatToText = (reply: any, command: string = ''): string => {
@@ -22,8 +20,10 @@ const formatToText = (reply: any, command: string = ''): string => {
   return result
 }
 
-const isFormattedCommand = (commandLine: string = '') => !!bulkReplyCommands?.find((command) =>
-  commandLine?.trim().toUpperCase().startsWith(command))
+const isFormattedCommand = (commandLine: string = '') =>
+  !!bulkReplyCommands?.find((command) =>
+    commandLine?.trim().toUpperCase().startsWith(command),
+  )
 
 const formatRedisArrayReply = (reply: any | any[], level = 0): string => {
   let result: string

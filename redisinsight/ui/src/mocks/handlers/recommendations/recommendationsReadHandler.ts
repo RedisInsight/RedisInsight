@@ -12,12 +12,11 @@ const EMPTY_RECOMMENDATIONS_MOCK = {
 
 const handlers: RestHandler[] = [
   // readRecommendationsAction
-  rest.patch<RecommendationResponse>(getMswURL(
-    getUrl(INSTANCE_ID_MOCK, ApiEndpoints.RECOMMENDATIONS_READ)
-  ), async (req, res, ctx) => res(
-    ctx.status(200),
-    ctx.json(EMPTY_RECOMMENDATIONS_MOCK),
-  ))
+  rest.patch<RecommendationResponse>(
+    getMswURL(getUrl(INSTANCE_ID_MOCK, ApiEndpoints.RECOMMENDATIONS_READ)),
+    async (req, res, ctx) =>
+      res(ctx.status(200), ctx.json(EMPTY_RECOMMENDATIONS_MOCK)),
+  ),
 ]
 
 export default handlers

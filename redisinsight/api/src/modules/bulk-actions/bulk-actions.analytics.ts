@@ -12,25 +12,27 @@ export class BulkActionsAnalytics extends TelemetryBaseService {
     overview: IBulkActionOverview,
   ): void {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.BulkActionsStarted,
-        {
-          databaseId: overview.databaseId,
-          action: overview.type,
-          duration: overview.duration,
-          filter: {
-            match: overview.filter?.match === '*' ? '*' : 'PATTERN',
-            type: overview.filter?.type,
-          },
-          progress: {
-            scanned: overview.progress?.scanned,
-            scannedRange: getRangeForNumber(overview.progress?.scanned, BULK_ACTIONS_BREAKPOINTS),
-            total: overview.progress?.total,
-            totalRange: getRangeForNumber(overview.progress?.total, BULK_ACTIONS_BREAKPOINTS),
-          },
+      this.sendEvent(sessionMetadata, TelemetryEvents.BulkActionsStarted, {
+        databaseId: overview.databaseId,
+        action: overview.type,
+        duration: overview.duration,
+        filter: {
+          match: overview.filter?.match === '*' ? '*' : 'PATTERN',
+          type: overview.filter?.type,
         },
-      );
+        progress: {
+          scanned: overview.progress?.scanned,
+          scannedRange: getRangeForNumber(
+            overview.progress?.scanned,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+          total: overview.progress?.total,
+          totalRange: getRangeForNumber(
+            overview.progress?.total,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+        },
+      });
     } catch (e) {
       // continue regardless of error
     }
@@ -41,33 +43,44 @@ export class BulkActionsAnalytics extends TelemetryBaseService {
     overview: IBulkActionOverview,
   ): void {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.BulkActionsStopped,
-        {
-          databaseId: overview.databaseId,
-          action: overview.type,
-          duration: overview.duration,
-          filter: {
-            match: overview.filter?.match === '*' ? '*' : 'PATTERN',
-            type: overview.filter?.type,
-          },
-          progress: {
-            scanned: overview.progress?.scanned,
-            scannedRange: getRangeForNumber(overview.progress?.scanned, BULK_ACTIONS_BREAKPOINTS),
-            total: overview.progress?.total,
-            totalRange: getRangeForNumber(overview.progress?.total, BULK_ACTIONS_BREAKPOINTS),
-          },
-          summary: {
-            processed: overview.summary?.processed,
-            processedRange: getRangeForNumber(overview.summary?.processed, BULK_ACTIONS_BREAKPOINTS),
-            succeed: overview.summary?.succeed,
-            succeedRange: getRangeForNumber(overview.summary?.succeed, BULK_ACTIONS_BREAKPOINTS),
-            failed: overview.summary?.failed,
-            failedRange: getRangeForNumber(overview.summary?.failed, BULK_ACTIONS_BREAKPOINTS),
-          },
+      this.sendEvent(sessionMetadata, TelemetryEvents.BulkActionsStopped, {
+        databaseId: overview.databaseId,
+        action: overview.type,
+        duration: overview.duration,
+        filter: {
+          match: overview.filter?.match === '*' ? '*' : 'PATTERN',
+          type: overview.filter?.type,
         },
-      );
+        progress: {
+          scanned: overview.progress?.scanned,
+          scannedRange: getRangeForNumber(
+            overview.progress?.scanned,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+          total: overview.progress?.total,
+          totalRange: getRangeForNumber(
+            overview.progress?.total,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+        },
+        summary: {
+          processed: overview.summary?.processed,
+          processedRange: getRangeForNumber(
+            overview.summary?.processed,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+          succeed: overview.summary?.succeed,
+          succeedRange: getRangeForNumber(
+            overview.summary?.succeed,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+          failed: overview.summary?.failed,
+          failedRange: getRangeForNumber(
+            overview.summary?.failed,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+        },
+      });
     } catch (e) {
       // continue regardless of error
     }
@@ -78,27 +91,32 @@ export class BulkActionsAnalytics extends TelemetryBaseService {
     overview: IBulkActionOverview,
   ): void {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.BulkActionsSucceed,
-        {
-          databaseId: overview.databaseId,
-          action: overview.type,
-          duration: overview.duration,
-          filter: {
-            match: overview.filter?.match === '*' ? '*' : 'PATTERN',
-            type: overview.filter?.type,
-          },
-          summary: {
-            processed: overview.summary?.processed,
-            processedRange: getRangeForNumber(overview.summary?.processed, BULK_ACTIONS_BREAKPOINTS),
-            succeed: overview.summary?.succeed,
-            succeedRange: getRangeForNumber(overview.summary?.succeed, BULK_ACTIONS_BREAKPOINTS),
-            failed: overview.summary?.failed,
-            failedRange: getRangeForNumber(overview.summary?.failed, BULK_ACTIONS_BREAKPOINTS),
-          },
+      this.sendEvent(sessionMetadata, TelemetryEvents.BulkActionsSucceed, {
+        databaseId: overview.databaseId,
+        action: overview.type,
+        duration: overview.duration,
+        filter: {
+          match: overview.filter?.match === '*' ? '*' : 'PATTERN',
+          type: overview.filter?.type,
         },
-      );
+        summary: {
+          processed: overview.summary?.processed,
+          processedRange: getRangeForNumber(
+            overview.summary?.processed,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+          succeed: overview.summary?.succeed,
+          succeedRange: getRangeForNumber(
+            overview.summary?.succeed,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+          failed: overview.summary?.failed,
+          failedRange: getRangeForNumber(
+            overview.summary?.failed,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+        },
+      });
     } catch (e) {
       // continue regardless of error
     }
@@ -110,15 +128,11 @@ export class BulkActionsAnalytics extends TelemetryBaseService {
     error: HttpException | Error,
   ): void {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.BulkActionsFailed,
-        {
-          databaseId: overview.databaseId,
-          action: overview.type,
-          error,
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.BulkActionsFailed, {
+        databaseId: overview.databaseId,
+        action: overview.type,
+        error,
+      });
     } catch (e) {
       // continue regardless of error
     }
@@ -129,23 +143,28 @@ export class BulkActionsAnalytics extends TelemetryBaseService {
     overview: IBulkActionOverview,
   ): void {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.ImportSamplesUploaded,
-        {
-          databaseId: overview.databaseId,
-          action: overview.type,
-          duration: overview.duration,
-          summary: {
-            processed: overview.summary?.processed,
-            processedRange: getRangeForNumber(overview.summary?.processed, BULK_ACTIONS_BREAKPOINTS),
-            succeed: overview.summary?.succeed,
-            succeedRange: getRangeForNumber(overview.summary?.succeed, BULK_ACTIONS_BREAKPOINTS),
-            failed: overview.summary?.failed,
-            failedRange: getRangeForNumber(overview.summary?.failed, BULK_ACTIONS_BREAKPOINTS),
-          },
+      this.sendEvent(sessionMetadata, TelemetryEvents.ImportSamplesUploaded, {
+        databaseId: overview.databaseId,
+        action: overview.type,
+        duration: overview.duration,
+        summary: {
+          processed: overview.summary?.processed,
+          processedRange: getRangeForNumber(
+            overview.summary?.processed,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+          succeed: overview.summary?.succeed,
+          succeedRange: getRangeForNumber(
+            overview.summary?.succeed,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
+          failed: overview.summary?.failed,
+          failedRange: getRangeForNumber(
+            overview.summary?.failed,
+            BULK_ACTIONS_BREAKPOINTS,
+          ),
         },
-      );
+      });
     } catch (e) {
       // continue regardless of error
     }

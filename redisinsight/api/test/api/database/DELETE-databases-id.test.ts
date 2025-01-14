@@ -1,14 +1,9 @@
-import {
-  expect,
-  describe,
-  before,
-  deps,
-  getMainCheckFn,
-} from '../deps';
+import { expect, describe, before, deps, getMainCheckFn } from '../deps';
 
 const { request, server, localDb, constants } = deps;
 
-const endpoint = id => request(server).delete(`/${constants.API.DATABASES}/${id}`);
+const endpoint = (id) =>
+  request(server).delete(`/${constants.API.DATABASES}/${id}`);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -21,10 +16,14 @@ describe(`DELETE /databases/:id`, () => {
         name: 'Should remove single database',
         endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
         before: async () => {
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.be.an('object')
+          expect(
+            await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2),
+          ).to.be.an('object');
         },
         after: async () => {
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(null)
+          expect(
+            await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2),
+          ).to.eql(null);
         },
       },
       {
@@ -34,10 +33,12 @@ describe(`DELETE /databases/:id`, () => {
         responseBody: {
           statusCode: 404,
           message: 'Invalid database instance id.',
-          error: 'Not Found'
+          error: 'Not Found',
         },
         before: async () => {
-          expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(null)
+          expect(
+            await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2),
+          ).to.eql(null);
         },
       },
     ].map(mainCheckFn);

@@ -11,7 +11,8 @@ export const mockSshOptionsUsernamePlain = 'ssh-username';
 export const mockSshOptionsUsernameEncrypted = 'ssh.username.ENCRYPTED';
 export const mockSshOptionsPasswordPlain = 'ssh-password';
 export const mockSshOptionsPasswordEncrypted = 'ssh.password.ENCRYPTED';
-export const mockSshOptionsPrivateKeyPlain = '-----BEGIN OPENSSH PRIVATE KEY-----\nssh-private-key';
+export const mockSshOptionsPrivateKeyPlain =
+  '-----BEGIN OPENSSH PRIVATE KEY-----\nssh-private-key';
 export const mockSshOptionsPrivateKeyEncrypted = 'ssh.privateKey.ENCRYPTED';
 export const mockSshOptionsPassphrasePlain = 'ssh-passphrase';
 export const mockSshOptionsPassphraseEncrypted = 'ssh.passphrase.ENCRYPTED';
@@ -40,18 +41,24 @@ export const mockSshOptionsPrivateKey = Object.assign(new SshOptions(), {
   passphrase: mockSshOptionsPassphrasePlain,
 });
 
-export const mockSshOptionsPrivateKeyEntity = Object.assign(new SshOptionsEntity(), {
-  ...mockSshOptionsBasicEntity,
-  password: null,
-  privateKey: mockSshOptionsPrivateKeyEncrypted,
-  passphrase: mockSshOptionsPassphraseEncrypted,
-});
+export const mockSshOptionsPrivateKeyEntity = Object.assign(
+  new SshOptionsEntity(),
+  {
+    ...mockSshOptionsBasicEntity,
+    password: null,
+    privateKey: mockSshOptionsPrivateKeyEncrypted,
+    passphrase: mockSshOptionsPassphraseEncrypted,
+  },
+);
 
 export const mockSshTunnelClient = jest.fn(() => ({
   on: jest.fn(),
 }));
 export const mockSshTunnelServer = jest.fn(() => ({
-  address: jest.fn().mockReturnValue({ address: mockSshOptionsBasic.host, port: mockSshOptionsBasic.port }),
+  address: jest.fn().mockReturnValue({
+    address: mockSshOptionsBasic.host,
+    port: mockSshOptionsBasic.port,
+  }),
   on: jest.fn(),
 }));
 export const mockSshTunnel = new SshTunnel(

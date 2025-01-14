@@ -1,10 +1,7 @@
 import axios from 'axios';
 import * as fs from 'fs-extra';
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  mockMainCommands,
-  mockRedijsonCommands,
-} from 'src/__mocks__';
+import { mockMainCommands, mockRedijsonCommands } from 'src/__mocks__';
 import { CommandsJsonProvider } from 'src/modules/commands/commands-json.provider';
 
 jest.mock('axios');
@@ -19,7 +16,9 @@ describe('CommandsJsonProvider', () => {
   beforeEach(async () => {
     jest.mock('fs-extra', () => mockedFs);
 
-    mockedAxios.get.mockResolvedValue({ data: JSON.stringify(mockMainCommands) });
+    mockedAxios.get.mockResolvedValue({
+      data: JSON.stringify(mockMainCommands),
+    });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -45,20 +44,28 @@ describe('CommandsJsonProvider', () => {
   describe('getCommands', () => {
     it('should return default config when file was not found', async () => {
       mockedFs.readFile.mockRejectedValueOnce(new Error('No file'));
-      mockedFs.readFile.mockResolvedValueOnce(Buffer.from(JSON.stringify(mockMainCommands)));
+      mockedFs.readFile.mockResolvedValueOnce(
+        Buffer.from(JSON.stringify(mockMainCommands)),
+      );
 
-      expect(await service.getCommands()).toEqual({ "name": mockMainCommands });
+      expect(await service.getCommands()).toEqual({ name: mockMainCommands });
     });
     it('should return default config when incorrect json received from file', async () => {
       mockedFs.readFile.mockResolvedValueOnce(Buffer.from('incorrect json'));
-      mockedFs.readFile.mockResolvedValueOnce(Buffer.from(JSON.stringify(mockMainCommands)));
+      mockedFs.readFile.mockResolvedValueOnce(
+        Buffer.from(JSON.stringify(mockMainCommands)),
+      );
 
-      expect(await service.getCommands()).toEqual({"name": mockMainCommands });
+      expect(await service.getCommands()).toEqual({ name: mockMainCommands });
     });
     it('should return latest commands', async () => {
-      mockedFs.readFile.mockResolvedValue(Buffer.from(JSON.stringify(mockRedijsonCommands)));
+      mockedFs.readFile.mockResolvedValue(
+        Buffer.from(JSON.stringify(mockRedijsonCommands)),
+      );
 
-      expect(await service.getCommands()).toEqual({ "name": mockRedijsonCommands });
+      expect(await service.getCommands()).toEqual({
+        name: mockRedijsonCommands,
+      });
     });
   });
 
@@ -74,9 +81,13 @@ describe('CommandsJsonProvider', () => {
       expect(await service.getDefaultCommands()).toEqual({});
     });
     it('should return default commands', async () => {
-      mockedFs.readFile.mockResolvedValue(Buffer.from(JSON.stringify(mockRedijsonCommands)));
+      mockedFs.readFile.mockResolvedValue(
+        Buffer.from(JSON.stringify(mockRedijsonCommands)),
+      );
 
-      expect(await service.getDefaultCommands()).toEqual({ "name": mockRedijsonCommands});
+      expect(await service.getDefaultCommands()).toEqual({
+        name: mockRedijsonCommands,
+      });
     });
   });
 });

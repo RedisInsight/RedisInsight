@@ -29,20 +29,22 @@ const formatBytesTests: any[] = [
   [1152921504606847000, 3, '1 EB'],
   [1446916488281592800, 3, '1.255 EB'],
   [1446916488281592800, 1, '1.3 EB'],
-  [1.1805916207174113e+21, 0, '1 ZB'],
-  [1.2089258196146292e+24, 0, '1 YB'],
-  [1.2379400392853803e+27, 0, '1024 YB'],
+  [1.1805916207174113e21, 0, '1 ZB'],
+  [1.2089258196146292e24, 0, '1 YB'],
+  [1.2379400392853803e27, 0, '1024 YB'],
   ['1', 0, '1 B'],
   ['string', 0, '-'],
   [-100, 0, '-'],
 ]
 
 describe('formatBytes', () => {
-  it.each(formatBytesTests)('for input: %s (bytes), %s (decimals), should be output: %s',
+  it.each(formatBytesTests)(
+    'for input: %s (bytes), %s (decimals), should be output: %s',
     (bytes, decimals, expected) => {
       const result = formatBytes(bytes, decimals)
       expect(result).toBe(expected)
-    })
+    },
+  )
   it('should return proper array with splitResults', () => {
     expect(formatBytes(1572864, 0, true)).toEqual([2, 'MB'])
     expect(formatBytes(1347545989, 3, true)).toEqual([1.255, 'GB'])
@@ -71,17 +73,19 @@ const toBytesTests: any[] = [
   [1152921504606847000, '1 EB'],
   [1152921504606847000, '1 EB'],
   [1446916488281592800, '1.255 EB'],
-  [1.1805916207174113e+21, '1 ZB'],
-  [1.2089258196146292e+24, '1 YB'],
-  [1.2379400392853803e+27, '1024 YB'],
+  [1.1805916207174113e21, '1 ZB'],
+  [1.2089258196146292e24, '1 YB'],
+  [1.2379400392853803e27, '1024 YB'],
 ]
 
 describe('toBytes', () => {
-  it.each(toBytesTests)('should be output: %s, for value: $s',
+  it.each(toBytesTests)(
+    'should be output: %s, for value: $s',
     (expected, formatted) => {
       const [bytes, type] = formatted.split(' ')
 
       const result = toBytes(+bytes, type)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })

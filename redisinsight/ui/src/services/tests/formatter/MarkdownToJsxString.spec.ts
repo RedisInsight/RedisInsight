@@ -9,11 +9,11 @@ describe('MarkdownToJsxString', () => {
     function useMock() {
       return { use: useMock, process: useProcessMock }
     }
-    (unified as jest.Mock).mockImplementation(() => ({
-      use: useMock
+    ;(unified as jest.Mock).mockImplementation(() => ({
+      use: useMock,
     }))
 
-    await (new MarkdownToJsxString()).format('')
+    await new MarkdownToJsxString().format('')
     expect(useProcessMock).toBeCalled()
   })
 })

@@ -2,7 +2,12 @@ import React, { ReactNode } from 'react'
 import { EuiLoadingSpinner } from '@elastic/eui'
 import { isArray, isUndefined, toNumber } from 'lodash'
 
-import { formatBytes, Nullable, truncateNumberToRange, truncatePercentage } from 'uiSrc/utils'
+import {
+  formatBytes,
+  Nullable,
+  truncateNumberToRange,
+  truncatePercentage,
+} from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import {
@@ -28,7 +33,7 @@ interface Props {
   theme: string
   db?: number
   items: {
-    version: string,
+    version: string
     usedMemory?: Nullable<number>
     totalKeys?: Nullable<number>
     connectedClients?: Nullable<number>
@@ -58,7 +63,11 @@ export interface IMetric {
   children?: Array<IMetric>
 }
 
-export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetric> => {
+export const getOverviewMetrics = ({
+  theme,
+  items,
+  db = 0,
+}: Props): Array<IMetric> => {
   const {
     usedMemory,
     totalKeys,
@@ -83,9 +92,10 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
       tooltip: {
         title: 'CPU',
         icon: theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon,
-        content: cpuUsagePercentage === null
-          ? 'Calculating in progress'
-          : (
+        content:
+          cpuUsagePercentage === null ? (
+            'Calculating in progress'
+          ) : (
             <>
               <b>{truncatePercentage(cpuUsagePercentage, 4)}</b>
               &nbsp;%
@@ -93,15 +103,23 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
           ),
       },
       className: styles.cpuWrapper,
-      icon: cpuUsagePercentage !== null ? theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon : null,
-      content: cpuUsagePercentage === null ? (
-        <>
-          <div className={styles.calculationWrapper}>
-            <EuiLoadingSpinner className={styles.spinner} size="m" />
-            <span className={styles.calculation}>Calculating...</span>
-          </div>
-        </>
-      ) : `${truncatePercentage(cpuUsagePercentage, 2)} %`,
+      icon:
+        cpuUsagePercentage !== null
+          ? theme === Theme.Dark
+            ? TimeDarkIcon
+            : TimeLightIcon
+          : null,
+      content:
+        cpuUsagePercentage === null ? (
+          <>
+            <div className={styles.calculationWrapper}>
+              <EuiLoadingSpinner className={styles.spinner} size="m" />
+              <span className={styles.calculation}>Calculating...</span>
+            </div>
+          </>
+        ) : (
+          `${truncatePercentage(cpuUsagePercentage, 2)} %`
+        ),
     })
   }
 
@@ -115,13 +133,23 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     title: 'Commands/s',
     tooltip: {
       icon: theme === Theme.Dark ? MeasureDarkIcon : MeasureLightIcon,
-      content: opsPerSecond
+      content: opsPerSecond,
     },
   }
 
-  let [networkIn, networkInUnit] = formatBytes(networkInKbps * 1000, 3, true, 1000)
+  let [networkIn, networkInUnit] = formatBytes(
+    networkInKbps * 1000,
+    3,
+    true,
+    1000,
+  )
   networkInUnit = networkInUnit ? `${networkInUnit.toLowerCase()}/s` : ''
-  let [networkOut, networkOutUnit] = formatBytes(networkOutKbps * 1000, 3, true, 1000)
+  let [networkOut, networkOutUnit] = formatBytes(
+    networkOutKbps * 1000,
+    3,
+    true,
+    1000,
+  )
   networkOutUnit = networkOutUnit ? `${networkOutUnit.toLowerCase()}/s` : ''
 
   const networkInItem = {
@@ -185,7 +213,7 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
         unavailableText: 'Commands/s are not available',
       },
       networkInItem,
-      networkOutItem
+      networkOutItem,
     ]
   }
 
@@ -201,15 +229,15 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     tooltip: {
       title: 'Total Memory',
       icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
-      content: isArray(formattedUsedMemoryTooltip)
-        ? (
-          <>
-            <b>{formattedUsedMemoryTooltip[0]}</b>
-            &nbsp;
-            {formattedUsedMemoryTooltip[1]}
-          </>
-        )
-        : formattedUsedMemoryTooltip
+      content: isArray(formattedUsedMemoryTooltip) ? (
+        <>
+          <b>{formattedUsedMemoryTooltip[0]}</b>
+          &nbsp;
+          {formattedUsedMemoryTooltip[1]}
+        </>
+      ) : (
+        formattedUsedMemoryTooltip
+      ),
     },
     icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
     content: formatBytes(usedMemory || 0, 0),
@@ -223,7 +251,7 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     title: 'Total Keys',
     tooltip: {
       title: 'Total Keys',
-      content: (<b>{numberWithSpaces(totalKeys || 0)}</b>),
+      content: <b>{numberWithSpaces(totalKeys || 0)}</b>,
       icon: theme === Theme.Dark ? KeyDarkIcon : KeyLightIcon,
     },
     icon: theme === Theme.Dark ? KeyDarkIcon : KeyLightIcon,
@@ -241,9 +269,9 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
         title: 'Total Keys',
         tooltip: {
           title: 'Total Keys',
-          content: (<b>{numberWithSpaces(totalKeys || 0)}</b>),
+          content: <b>{numberWithSpaces(totalKeys || 0)}</b>,
         },
-        content: (<b>{numberWithSpaces(totalKeys || 0)}</b>),
+        content: <b>{numberWithSpaces(totalKeys || 0)}</b>,
       },
       {
         id: 'overview-db-total-keys',
@@ -251,7 +279,9 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
         value: dbKeysCount,
         content: (
           <>
-            <span style={{ fontWeight: 200, paddingRight: 1 }}>db{db || 0}:</span>
+            <span style={{ fontWeight: 200, paddingRight: 1 }}>
+              db{db || 0}:
+            </span>
             <b>{numberWithSpaces(dbKeysCount || 0)}</b>
           </>
         ),
@@ -262,7 +292,9 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
   availableItems.push(totalKeysItem)
 
   const getConnectedClient = (connectedClients: number = 0) =>
-    (Number.isInteger(connectedClients) ? connectedClients : `~${Math.round(connectedClients)}`)
+    Number.isInteger(connectedClients)
+      ? connectedClients
+      : `~${Math.round(connectedClients)}`
 
   // Connected clients
   availableItems.push({
@@ -272,7 +304,7 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     title: 'Connected Clients',
     tooltip: {
       title: 'Connected Clients',
-      content: (<b>{getConnectedClient(connectedClients ?? 0)}</b>),
+      content: <b>{getConnectedClient(connectedClients ?? 0)}</b>,
       icon: theme === Theme.Dark ? UserDarkIcon : UserLightIcon,
     },
     icon: theme === Theme.Dark ? UserDarkIcon : UserLightIcon,

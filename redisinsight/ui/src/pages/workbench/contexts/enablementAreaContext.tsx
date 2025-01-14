@@ -6,7 +6,7 @@ interface IContext {
   setScript: (
     script: string,
     params?: CodeButtonParams,
-    onFinish?: () => void
+    onFinish?: () => void,
   ) => void
   openPage: (page: IInternalPage, fromUser?: boolean) => void
   isCodeBtnDisabled?: boolean
@@ -19,7 +19,7 @@ export interface IInternalPage {
 export const defaultValue = {
   setScript: (script: string) => script,
   openPage: (page: IInternalPage) => page,
-  isCodeBtnDisabled: false
+  isCodeBtnDisabled: false,
 }
 const EnablementAreaContext = React.createContext<IContext>(defaultValue)
 export const EnablementAreaProvider = EnablementAreaContext.Provider

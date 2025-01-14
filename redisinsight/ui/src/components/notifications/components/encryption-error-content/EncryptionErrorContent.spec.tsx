@@ -1,6 +1,12 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { cleanup, mockedStore, render, fireEvent, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  fireEvent,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import EncryptionErrorContent from './EncryptionErrorContent'
 
 let store: typeof mockedStore

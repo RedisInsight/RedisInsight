@@ -9,15 +9,8 @@ export interface Props {
   onClickSetKVPair: () => void
 }
 
-const AddItemFieldAction = ({
-  leftPadding,
-  type,
-  onClickSetKVPair,
-}: Props) => (
-  <div
-    className={styles.row}
-    style={{ paddingLeft: `${leftPadding}em` }}
-  >
+const AddItemFieldAction = ({ leftPadding, type, onClickSetKVPair }: Props) => (
+  <div className={styles.row} style={{ paddingLeft: `${leftPadding}em` }}>
     <span className={styles.defaultFont}>{getBrackets(type, 'end')}</span>
     <EuiButtonIcon
       iconType="plus"

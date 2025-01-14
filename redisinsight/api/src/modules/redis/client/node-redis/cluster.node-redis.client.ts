@@ -36,14 +36,13 @@ export class ClusterNodeRedisClient extends NodeRedisClient {
         nodes = this.client.masters.concat(this.client.replicas);
     }
 
-    return nodes.map((node) => new StandaloneNodeRedisClient(
-      this.clientMetadata,
-      node.client,
-      {
-        host: node.host,
-        port: node.port,
-      },
-    ));
+    return nodes.map(
+      (node) =>
+        new StandaloneNodeRedisClient(this.clientMetadata, node.client, {
+          host: node.host,
+          port: node.port,
+        }),
+    );
   }
 
   /**
@@ -54,8 +53,8 @@ export class ClusterNodeRedisClient extends NodeRedisClient {
     options?: IRedisClientCommandOptions,
   ): Promise<Array<[Error | null, RedisClientCommandReply]>> {
     return Promise.all(
-      commands.map(
-        (cmd) => this.sendCommand(cmd, options)
+      commands.map((cmd) =>
+        this.sendCommand(cmd, options)
           .then((res): [null, RedisClientCommandReply] => [null, res])
           .catch((e): [Error, null] => [e, null]),
       ),
@@ -95,7 +94,10 @@ export class ClusterNodeRedisClient extends NodeRedisClient {
   /**
    * @inheritDoc
    */
-  async call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply> {
+  async call(
+    command: RedisClientCommand,
+    options?: IRedisClientCommandOptions,
+  ): Promise<RedisClientCommandReply> {
     return this.sendCommand(command, options);
   }
 }

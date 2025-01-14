@@ -13,7 +13,9 @@ describe('Actions', () => {
 
   it('should call onClear after submit clear btn', () => {
     const onClear = jest.fn()
-    render(<Actions {...mockedProps} onClear={onClear} isEmptySlowLog={false} />)
+    render(
+      <Actions {...mockedProps} onClear={onClear} isEmptySlowLog={false} />,
+    )
 
     fireEvent.click(screen.getByTestId('clear-btn'))
     fireEvent.click(screen.getByTestId('reset-confirm-btn'))
@@ -23,7 +25,9 @@ describe('Actions', () => {
 
   it('should call onRefresh after submit refresh btn', () => {
     const onRefresh = jest.fn()
-    render(<Actions {...mockedProps} onRefresh={onRefresh} isEmptySlowLog={false} />)
+    render(
+      <Actions {...mockedProps} onRefresh={onRefresh} isEmptySlowLog={false} />,
+    )
 
     fireEvent.click(screen.getByTestId('slowlog-refresh-btn'))
 

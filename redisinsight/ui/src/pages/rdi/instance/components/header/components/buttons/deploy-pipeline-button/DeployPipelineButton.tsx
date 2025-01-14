@@ -43,8 +43,8 @@ const DeployPipelineButton = ({ loading, disabled }: Props) => {
       eventData: {
         id: rdiInstanceId,
         reset: resetPipeline,
-        jobsNumber: values?.jobs?.length
-      }
+        jobsNumber: values?.jobs?.length,
+      },
     })
     setIsPopoverOpen(false)
     setResetPipeline(false)
@@ -77,9 +77,9 @@ const DeployPipelineButton = ({ loading, disabled }: Props) => {
         isOpen={isPopoverOpen}
         panelPaddingSize="m"
         focusTrapProps={{
-          scrollLock: true
+          scrollLock: true,
         }}
-        button={(
+        button={
           <EuiButton
             fill
             size="s"
@@ -92,30 +92,36 @@ const DeployPipelineButton = ({ loading, disabled }: Props) => {
           >
             Deploy Pipeline
           </EuiButton>
-        )}
+        }
       >
         <EuiTitle size="xxs">
           <span>Are you sure you want to deploy the pipeline?</span>
         </EuiTitle>
         <EuiSpacer size="s" />
-        <EuiText size="s">When deployed, this local configuration will overwrite any existing pipeline.</EuiText>
+        <EuiText size="s">
+          When deployed, this local configuration will overwrite any existing
+          pipeline.
+        </EuiText>
         <EuiSpacer size="s" />
-        <EuiText size="s">After deployment, consider flushing the target Redis database and resetting the pipeline to ensure that all data is reprocessed.</EuiText>
+        <EuiText size="s">
+          After deployment, consider flushing the target Redis database and
+          resetting the pipeline to ensure that all data is reprocessed.
+        </EuiText>
         <EuiSpacer size="s" />
         <div className={styles.checkbox}>
           <EuiCheckbox
             id="resetPipeline"
             name="resetPipeline"
             label="Reset"
-            className={cx(styles.resetPipelineCheckbox, { [styles.checked]: resetPipeline })}
+            className={cx(styles.resetPipelineCheckbox, {
+              [styles.checked]: resetPipeline,
+            })}
             checked={resetPipeline}
             onChange={(e) => handleSelectReset(e.target.checked)}
             data-testid="reset-pipeline-checkbox"
           />
 
-          <EuiToolTip
-            content="The pipeline will take a new snapshot of the data and process it, then continue tracking changes."
-          >
+          <EuiToolTip content="The pipeline will take a new snapshot of the data and process it, then continue tracking changes.">
             <EuiIcon
               type="iInCircle"
               size="m"

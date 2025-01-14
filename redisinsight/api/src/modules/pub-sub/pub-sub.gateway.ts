@@ -7,7 +7,11 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import {
-  Body, Logger, UseFilters, UsePipes, ValidationPipe,
+  Body,
+  Logger,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import config, { Config } from 'src/utils/config';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
@@ -27,7 +31,11 @@ const SOCKETS_CONFIG = config.get('sockets') as Config['sockets'];
   path: SOCKETS_CONFIG.path,
   namespace: `${SOCKETS_CONFIG.namespacePrefix}pub-sub`,
   cors: SOCKETS_CONFIG.cors.enabled
-    ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
+    ? {
+        origin: SOCKETS_CONFIG.cors.origin,
+        credentials: SOCKETS_CONFIG.cors.credentials,
+      }
+    : false,
   serveClient: SOCKETS_CONFIG.serveClient,
 })
 export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -40,8 +48,8 @@ export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage(PubSubClientEvents.Subscribe)
   async subscribe(
     @Client() client: UserClient,
-      @WSSessionMetadata() sessionMetadata: SessionMetadata,
-      @Body() dto: SubscribeDto,
+    @WSSessionMetadata() sessionMetadata: SessionMetadata,
+    @Body() dto: SubscribeDto,
   ): Promise<any> {
     await this.service.subscribe(sessionMetadata, client, dto);
     return { status: 'ok' };
@@ -50,8 +58,8 @@ export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage(PubSubClientEvents.Unsubscribe)
   async unsubscribe(
     @WSSessionMetadata() sessionMetadata: SessionMetadata,
-      @Client() client: UserClient,
-      @Body() dto: SubscribeDto,
+    @Client() client: UserClient,
+    @Body() dto: SubscribeDto,
   ): Promise<any> {
     await this.service.unsubscribe(sessionMetadata, client, dto);
     return { status: 'ok' };

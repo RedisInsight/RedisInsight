@@ -3,7 +3,9 @@ import config from 'src/utils/config';
 import { CloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/cloud-auth.strategy';
 import { CloudAuthIdpType } from 'src/modules/cloud/auth/models/cloud-auth-request';
 
-const { idp: { github: idpConfig } } = config.get('cloud');
+const {
+  idp: { github: idpConfig },
+} = config.get('cloud');
 
 export class GithubIdpCloudAuthStrategy extends CloudAuthStrategy {
   constructor() {

@@ -10,13 +10,12 @@ const EmptyPrompt = () => (
       data-testid="enablement-area__empty-prompt"
       icon={<EuiIcon type="alert" color="danger" size="l" />}
       title={<h2>No information to display</h2>}
-      body={(
+      body={
         <p className={styles.body}>
           <span>Restart the application.</span>
           <br />
           <span>
-            If the problem persists, please
-            {' '}
+            If the problem persists, please{' '}
             <EuiLink
               color="ghost"
               href={EXTERNAL_LINKS.githubIssues}
@@ -29,7 +28,7 @@ const EmptyPrompt = () => (
             .
           </span>
         </p>
-      )}
+      }
     />
   </div>
 )

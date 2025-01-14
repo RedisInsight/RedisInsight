@@ -1,6 +1,10 @@
 import { cloneDeep, uniqBy } from 'lodash'
 import set from 'lodash/set'
-import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { getConfig } from 'uiSrc/config'
 import { apiService, resourcesService } from 'uiSrc/services'
 import { ICommand, MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
@@ -48,7 +52,7 @@ describe('slices', () => {
       const loading = true
       const state = {
         ...initialState,
-        loading
+        loading,
       }
 
       // Act
@@ -71,8 +75,9 @@ describe('slices', () => {
         ...initialState,
         spec: data,
         commandsArray: Object.keys(data).sort(),
-        commandGroups: uniqBy(Object.values(data), 'group')
-          .map((item: ICommand) => item.group)
+        commandGroups: uniqBy(Object.values(data), 'group').map(
+          (item: ICommand) => item.group,
+        ),
       }
 
       // Act
@@ -94,7 +99,7 @@ describe('slices', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
@@ -163,16 +168,21 @@ describe('slices', () => {
 
       commands.forEach((command) => {
         expectedResult = { ...expectedResult, [command]: {} }
-        resourceGetSpy.mockResolvedValueOnce({ status: 200, data: { [command]: {} } })
+        resourceGetSpy.mockResolvedValueOnce({
+          status: 200,
+          data: { [command]: {} },
+        })
       })
 
       // Act
-      await store.dispatch<any>(fetchRedisCommandsInfo(onSuccessAction, onFailAction))
+      await store.dispatch<any>(
+        fetchRedisCommandsInfo(onSuccessAction, onFailAction),
+      )
 
       // Assert
       const expectedActions = [
         getRedisCommands(),
-        getRedisCommandsSuccess(expectedResult)
+        getRedisCommandsSuccess(expectedResult),
       ]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
@@ -189,12 +199,20 @@ describe('slices', () => {
 
       commands.slice(0, -1).forEach((command) => {
         expectedResult = { ...expectedResult, [command]: {} }
-        resourceGetSpy.mockResolvedValueOnce({ status: 200, data: { [command]: {} } })
+        resourceGetSpy.mockResolvedValueOnce({
+          status: 200,
+          data: { [command]: {} },
+        })
       })
-      resourceGetSpy.mockRejectedValueOnce({ status: 500, data: { message: errorMessage } })
+      resourceGetSpy.mockRejectedValueOnce({
+        status: 500,
+        data: { message: errorMessage },
+      })
 
       // Act
-      await store.dispatch<any>(fetchRedisCommandsInfo(onSuccessAction, onFailAction))
+      await store.dispatch<any>(
+        fetchRedisCommandsInfo(onSuccessAction, onFailAction),
+      )
 
       // Assert
       const expectedActions = [

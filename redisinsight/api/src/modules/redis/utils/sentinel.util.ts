@@ -1,5 +1,8 @@
 import { RedisClient } from 'src/modules/redis/client';
-import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
+import {
+  SentinelMaster,
+  SentinelMasterStatus,
+} from 'src/modules/redis-sentinel/models/sentinel-master';
 import { catchAclError } from 'src/utils';
 import { BadRequestException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -28,23 +31,23 @@ export const isSentinel = async (client: RedisClient): Promise<boolean> => {
  * @param client
  * @param masterGroup
  */
-export const discoverOtherSentinels = async (client: RedisClient, masterGroup: string): Promise<Endpoint[]> => {
+export const discoverOtherSentinels = async (
+  client: RedisClient,
+  masterGroup: string,
+): Promise<Endpoint[]> => {
   let result: Endpoint[];
   try {
-    const reply = await client.sendCommand([
-      'sentinel',
-      'sentinels',
-      masterGroup,
-    ], { replyEncoding: 'utf8' }) as string[][];
+    const reply = (await client.sendCommand(
+      ['sentinel', 'sentinels', masterGroup],
+      { replyEncoding: 'utf8' },
+    )) as string[][];
 
     result = reply.map((item) => {
       const { ip, port } = convertArrayReplyToObject(item);
       return { host: ip, port: parseInt(port, 10) };
     });
 
-    return [
-      ...result,
-    ];
+    return [...result];
   } catch (error) {
     // todo: remove error handling
     if (error.message.includes('unknown command `sentinel`')) {
@@ -59,13 +62,14 @@ export const discoverOtherSentinels = async (client: RedisClient, masterGroup: s
  * Discover master groups for the current connection
  * @param client
  */
-export const discoverSentinelMasterGroups = async (client: RedisClient): Promise<SentinelMaster[]> => {
+export const discoverSentinelMasterGroups = async (
+  client: RedisClient,
+): Promise<SentinelMaster[]> => {
   let result: SentinelMaster[];
   try {
-    const reply = await client.sendCommand(
-      ['sentinel', 'masters'],
-      { replyEncoding: 'utf8' },
-    ) as string[][];
+    const reply = (await client.sendCommand(['sentinel', 'masters'], {
+      replyEncoding: 'utf8',
+    })) as string[][];
 
     result = reply.map((item) => {
       const {
@@ -79,7 +83,9 @@ export const discoverSentinelMasterGroups = async (client: RedisClient): Promise
         host: ip,
         port: parseInt(port, 10),
         name,
-        status: flags.includes('down') ? SentinelMasterStatus.Down : SentinelMasterStatus.Active,
+        status: flags.includes('down')
+          ? SentinelMasterStatus.Down
+          : SentinelMasterStatus.Active,
         numberOfSlaves: parseInt(numberOfSlaves, 10),
       };
     });

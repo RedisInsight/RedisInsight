@@ -4,7 +4,10 @@ import { isNull } from 'lodash'
 import { CommonProps } from 'uiSrc/components/monaco-editor/MonacoEditor'
 import { MonacoEditor } from 'uiSrc/components/monaco-editor'
 import { Nullable } from 'uiSrc/utils'
-import { DEFAULT_MONACO_FILE_MATCH, DEFAULT_MONACO_YAML_URI } from 'uiSrc/constants'
+import {
+  DEFAULT_MONACO_FILE_MATCH,
+  DEFAULT_MONACO_YAML_URI,
+} from 'uiSrc/constants'
 import { monacoYamlModel } from './monacoYamlModel'
 
 export interface Props extends CommonProps {
@@ -26,22 +29,26 @@ const MonacoYaml = (props: Props) => {
   useEffect(() => {
     if (!isNull(schema)) {
       monacoYamlModel?.update({
-        schemas: [{
-          schema,
-          uri,
-          fileMatch: [fileMatch],
-        }],
+        schemas: [
+          {
+            schema,
+            uri,
+            fileMatch: [fileMatch],
+          },
+        ],
       })
     }
   }, [schema, uri, fileMatch])
 
   const editorWillMount = () => {
     monacoYamlModel?.update({
-      schemas: [{
-        schema: schema || {},
-        uri,
-        fileMatch: [fileMatch],
-      }],
+      schemas: [
+        {
+          schema: schema || {},
+          uri,
+          fileMatch: [fileMatch],
+        },
+      ],
     })
   }
 
@@ -58,7 +65,7 @@ const MonacoYaml = (props: Props) => {
         },
         stickyScroll: {
           enabled: true,
-          defaultModel: 'indentationModel'
+          defaultModel: 'indentationModel',
         },
         tabSize: 2,
         insertSpaces: true,

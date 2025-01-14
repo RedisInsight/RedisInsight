@@ -20,10 +20,7 @@ import {
   sentinelSelector,
   updateMastersSentinel,
 } from 'uiSrc/slices/instances/sentinel'
-import {
-  LoadedSentinel,
-  ModifiedSentinelMaster,
-} from 'uiSrc/slices/interfaces'
+import { LoadedSentinel, ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import { InputFieldSentinel } from 'uiSrc/components'
 import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/InputFieldSentinel'
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
@@ -50,7 +47,8 @@ const SentinelDatabasesPage = () => {
 
   const sendCancelEvent = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_CANCELLED,
+      event:
+        TelemetryEvent.CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_CANCELLED,
     })
   }
 
@@ -87,7 +85,8 @@ const SentinelDatabasesPage = () => {
     dispatch(updateMastersSentinel(databases))
     dispatch(
       createMastersSentinelAction(pikedDatabases, () =>
-        history.push(Pages.sentinelDatabasesResult))
+        history.push(Pages.sentinelDatabasesResult),
+      ),
     )
   }
 
@@ -105,7 +104,8 @@ const SentinelDatabasesPage = () => {
         }
 
         return { ...item, [field]: value }
-      }))
+      }),
+    )
   }
 
   const columns: EuiBasicTableColumn<ModifiedSentinelMaster>[] = [
@@ -116,7 +116,9 @@ const SentinelDatabasesPage = () => {
       truncateText: true,
       sortable: true,
       width: '211px',
-      render: (name: string) => <span data-testid={`primary-group_${name}`}>{name}</span>,
+      render: (name: string) => (
+        <span data-testid={`primary-group_${name}`}>{name}</span>
+      ),
     },
     {
       field: 'alias',
@@ -150,7 +152,7 @@ const SentinelDatabasesPage = () => {
       sortable: ({ host, port }) => `${host}:${port}`,
       render: function Address(
         _host: string,
-        { host, port }: ModifiedSentinelMaster
+        { host, port }: ModifiedSentinelMaster,
       ) {
         const text = `${host}:${port}`
         return (
@@ -241,7 +243,7 @@ const SentinelDatabasesPage = () => {
               placeholder="Enter Index"
               inputType={SentinelInputFieldType.Number}
               onChangedInput={handleChangedInput}
-              append={(
+              append={
                 <EuiToolTip
                   anchorClassName="inputAppendIcon"
                   position="left"
@@ -249,12 +251,12 @@ const SentinelDatabasesPage = () => {
                 >
                   <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
                 </EuiToolTip>
-              )}
+              }
             />
           </div>
         )
       },
-    }
+    },
   ]
 
   return (

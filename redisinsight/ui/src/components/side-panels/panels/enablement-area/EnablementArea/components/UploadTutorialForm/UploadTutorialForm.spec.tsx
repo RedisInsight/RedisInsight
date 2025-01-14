@@ -24,12 +24,9 @@ describe('UploadTutorialForm', () => {
     })
 
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('import-tutorial'),
-        {
-          target: { files: [file] },
-        }
-      )
+      fireEvent.change(screen.getByTestId('import-tutorial'), {
+        target: { files: [file] },
+      })
     })
 
     await act(() => {
@@ -44,10 +41,9 @@ describe('UploadTutorialForm', () => {
     render(<UploadTutorialForm onSubmit={mockOnSubmit} />)
 
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('tutorial-link-field'),
-        { target: { value: 'link' } }
-      )
+      fireEvent.change(screen.getByTestId('tutorial-link-field'), {
+        target: { value: 'link' },
+      })
     })
 
     await act(() => {

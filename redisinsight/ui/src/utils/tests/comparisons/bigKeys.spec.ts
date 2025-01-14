@@ -15,9 +15,11 @@ const isBigKeyTests: any[] = [
 ]
 
 describe('isBigKey', () => {
-  it.each(isBigKeyTests)('for input: %s (keyType), %s (type), %s (count) should be output: %s',
+  it.each(isBigKeyTests)(
+    'for input: %s (keyType), %s (type), %s (count) should be output: %s',
     (keyType, type, count, expected) => {
       const result = isBigKey(keyType, type, count)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })

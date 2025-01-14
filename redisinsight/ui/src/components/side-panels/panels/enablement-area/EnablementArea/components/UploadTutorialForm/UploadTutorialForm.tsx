@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiFieldText, EuiFilePicker, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFieldText,
+  EuiFilePicker,
+  EuiSpacer,
+  EuiText,
+  EuiToolTip,
+} from '@elastic/eui'
 import { useFormik } from 'formik'
 import { FormikErrors } from 'formik/dist/types'
 import { isEmpty } from 'lodash'
@@ -26,7 +33,7 @@ const UploadTutorialForm = (props: Props) => {
 
   const initialValues: FormValues = {
     file: null,
-    link: ''
+    link: '',
   }
 
   const isSubmitDisabled = !isEmpty(errors)
@@ -59,7 +66,9 @@ const UploadTutorialForm = (props: Props) => {
     if (errorsArr.length > maxErrorsCount) {
       errorsArr.splice(maxErrorsCount, errorsArr.length, ['...'])
     }
-    return isSubmitDisabled ? (<span className="euiToolTip__content">{errorsArr}</span>) : null
+    return isSubmitDisabled ? (
+      <span className="euiToolTip__content">{errorsArr}</span>
+    ) : null
   }
 
   const handleFileChange = (files: FileList | null) => {
@@ -109,7 +118,9 @@ const UploadTutorialForm = (props: Props) => {
                 anchorClassName="euiToolTip__btn-disabled"
                 title={
                   isSubmitDisabled
-                    ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
+                    ? validationErrors.REQUIRED_TITLE(
+                        Object.keys(errors).length,
+                      )
                     : null
                 }
                 content={getSubmitButtonContent(isSubmitDisabled)}

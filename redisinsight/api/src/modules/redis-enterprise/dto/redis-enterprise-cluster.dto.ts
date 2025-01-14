@@ -1,7 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  ArrayNotEmpty, IsArray, IsDefined, IsNumber,
-} from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsDefined, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 import {
   ClusterConnectionDetailsDto,

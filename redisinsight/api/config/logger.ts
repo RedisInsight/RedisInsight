@@ -17,7 +17,9 @@ if (LOGGER_CONFIG.stdout) {
   transportsConfig.push(
     new transports.Console({
       format: format.combine(
-        sensitiveDataFormatter({ omitSensitiveData: LOGGER_CONFIG.omitSensitiveData }),
+        sensitiveDataFormatter({
+          omitSensitiveData: LOGGER_CONFIG.omitSensitiveData,
+        }),
         format.timestamp(),
         nestWinstonModuleUtilities.format.nestLike('Redis Insight', {
           colors: true,
@@ -40,7 +42,9 @@ if (LOGGER_CONFIG.files) {
       filename: 'redisinsight-errors-%DATE%.log',
       level: 'error',
       format: format.combine(
-        sensitiveDataFormatter({ omitSensitiveData: LOGGER_CONFIG.omitSensitiveData }),
+        sensitiveDataFormatter({
+          omitSensitiveData: LOGGER_CONFIG.omitSensitiveData,
+        }),
         prettyFormat,
       ),
     }),
@@ -53,7 +57,9 @@ if (LOGGER_CONFIG.files) {
       maxFiles: '7d',
       filename: 'redisinsight-%DATE%.log',
       format: format.combine(
-        sensitiveDataFormatter({ omitSensitiveData: LOGGER_CONFIG.omitSensitiveData }),
+        sensitiveDataFormatter({
+          omitSensitiveData: LOGGER_CONFIG.omitSensitiveData,
+        }),
         prettyFormat,
       ),
     }),

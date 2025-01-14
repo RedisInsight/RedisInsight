@@ -29,7 +29,7 @@ const testCases = [
     url: 'https://somesite.test/image.png',
     path: `${TUTORIAL_PATH}/lvl1/lvl2/lvl3/intro.md`,
     result: 'https://somesite.test/image.png',
-  }
+  },
 ]
 describe('getFileUrlFromMd', () => {
   testCases.forEach((tc) => {

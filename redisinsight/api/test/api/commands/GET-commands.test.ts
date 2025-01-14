@@ -1,12 +1,4 @@
-import {
-  expect,
-  describe,
-  it,
-  deps,
-  Joi,
-  fs,
-  validateApiCall,
-} from '../deps';
+import { expect, describe, it, deps, Joi, fs, validateApiCall } from '../deps';
 const { server, request } = deps;
 
 // endpoint to test

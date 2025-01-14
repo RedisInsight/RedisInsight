@@ -1,8 +1,9 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import ClusterConnectionForm, { Props as ClusterConnectionFormProps } from
-  './cluster-connection-form/ClusterConnectionForm'
+import ClusterConnectionForm, {
+  Props as ClusterConnectionFormProps,
+} from './cluster-connection-form/ClusterConnectionForm'
 import ClusterConnectionFormWrapper, {
   Props,
 } from './ClusterConnectionFormWrapper'
@@ -47,25 +48,34 @@ describe('ClusterConnectionFormWrapper', () => {
   })
   it('should render', () => {
     expect(
-      render(<ClusterConnectionFormWrapper {...instance(mockedProps)} />)
+      render(<ClusterConnectionFormWrapper {...instance(mockedProps)} />),
     ).toBeTruthy()
   })
 
   it('should call onHostNamePaste', () => {
-    const component = render(<ClusterConnectionFormWrapper {...instance(mockedProps)} />)
+    const component = render(
+      <ClusterConnectionFormWrapper {...instance(mockedProps)} />,
+    )
     fireEvent.click(screen.getByTestId('onHostNamePaste-btn'))
     expect(component).toBeTruthy()
   })
 
   it('should call onSubmit', () => {
-    const component = render(<ClusterConnectionFormWrapper {...instance(mockedProps)} />)
+    const component = render(
+      <ClusterConnectionFormWrapper {...instance(mockedProps)} />,
+    )
     fireEvent.click(screen.getByTestId('onSubmit-btn'))
     expect(component).toBeTruthy()
   })
 
   it('should call onClose', () => {
     const onClose = jest.fn()
-    render(<ClusterConnectionFormWrapper {...instance(mockedProps)} onClose={onClose} />)
+    render(
+      <ClusterConnectionFormWrapper
+        {...instance(mockedProps)}
+        onClose={onClose}
+      />,
+    )
     fireEvent.click(screen.getByTestId('onClose-btn'))
     expect(onClose).toBeCalled()
   })

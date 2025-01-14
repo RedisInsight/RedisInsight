@@ -6,7 +6,9 @@ import ConnectivityError from 'uiSrc/components/connectivity-error/ConnectivityE
 
 const InstanceConnectionLost = () => {
   const dispatch = useDispatch()
-  const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
+  const { instanceId: connectionInstanceId } = useParams<{
+    instanceId: string
+  }>()
   const { error, loading: isLoading } = useSelector(appConnectivity)
 
   const onRetry = () => {
@@ -14,11 +16,7 @@ const InstanceConnectionLost = () => {
   }
 
   return (
-    <ConnectivityError
-      isLoading={isLoading}
-      error={error}
-      onRetry={onRetry}
-    />
+    <ConnectivityError isLoading={isLoading} error={error} onRetry={onRetry} />
   )
 }
 

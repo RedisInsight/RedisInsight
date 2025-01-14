@@ -7,13 +7,16 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, beforeEach
+  getMainCheckFn,
+  beforeEach,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/streams/entries`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/streams/entries`,
+  );
 
 const entryFieldSchema = Joi.object().keys({
   name: Joi.string().label('entries.0.fields.0.name').required(),
@@ -22,9 +25,13 @@ const entryFieldSchema = Joi.object().keys({
 
 const entrySchema = Joi.object().keys({
   id: Joi.string().label('entries.0.id').required(),
-  fields: Joi.array().label('entries.0.fields').items(entryFieldSchema).required().messages({
-    'array.base': '{#label} must be an array',
-  }),
+  fields: Joi.array()
+    .label('entries.0.fields')
+    .items(entryFieldSchema)
+    .required()
+    .messages({
+      'array.base': '{#label} must be an array',
+    }),
 });
 
 const dataSchema = Joi.object({
@@ -35,10 +42,12 @@ const dataSchema = Joi.object({
   }),
 }).strict();
 
-const responseSchema = Joi.object().keys({
-  keyName: Joi.string().required(),
-  entries: Joi.array().items(Joi.string()).required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    keyName: Joi.string().required(),
+    entries: Joi.array().items(Joi.string()).required(),
+  })
+  .required();
 
 const validInputData = {
   keyName: constants.TEST_STREAM_KEY_1,
@@ -46,10 +55,16 @@ const validInputData = {
     {
       id: '*',
       fields: [
-        { name: constants.TEST_STREAM_FIELD_1, value: constants.TEST_STREAM_VALUE_1 },
-        { name: constants.TEST_STREAM_FIELD_2, value: constants.TEST_STREAM_VALUE_2 },
-      ]
-    }
+        {
+          name: constants.TEST_STREAM_FIELD_1,
+          value: constants.TEST_STREAM_VALUE_1,
+        },
+        {
+          name: constants.TEST_STREAM_FIELD_2,
+          value: constants.TEST_STREAM_VALUE_2,
+        },
+      ],
+    },
   ],
 };
 
@@ -68,17 +83,25 @@ describe('POST /databases/:instanceId/streams/entries', () => {
           entries: [
             {
               id: '*',
-              fields: [{
-                name: constants.TEST_STREAM_FIELD_BIN_BUF_OBJ_1,
-                value: constants.TEST_STREAM_VALUE_BIN_BUF_OBJ_1,
-              }],
-            }
+              fields: [
+                {
+                  name: constants.TEST_STREAM_FIELD_BIN_BUF_OBJ_1,
+                  value: constants.TEST_STREAM_VALUE_BIN_BUF_OBJ_1,
+                },
+              ],
+            },
           ],
         },
         responseSchema,
         after: async () => {
-          expect(await rte.client.xlen(constants.TEST_STREAM_KEY_BIN_BUFFER_1)).to.eq(2);
-          const [entry] = await rte.data.sendCommand('xrevrange', [constants.TEST_STREAM_KEY_BIN_BUFFER_1, '+', '-', 'COUNT', 1], null);
+          expect(
+            await rte.client.xlen(constants.TEST_STREAM_KEY_BIN_BUFFER_1),
+          ).to.eq(2);
+          const [entry] = await rte.data.sendCommand(
+            'xrevrange',
+            [constants.TEST_STREAM_KEY_BIN_BUFFER_1, '+', '-', 'COUNT', 1],
+            null,
+          );
           expect(entry[1]).to.eql([
             constants.TEST_STREAM_FIELD_BIN_BUFFER_1,
             constants.TEST_STREAM_VALUE_BIN_BUFFER_1,
@@ -92,17 +115,25 @@ describe('POST /databases/:instanceId/streams/entries', () => {
           entries: [
             {
               id: '*',
-              fields: [{
-                name: constants.TEST_STREAM_FIELD_BIN_ASCII_1,
-                value: constants.TEST_STREAM_VALUE_BIN_ASCII_1,
-              }],
-            }
+              fields: [
+                {
+                  name: constants.TEST_STREAM_FIELD_BIN_ASCII_1,
+                  value: constants.TEST_STREAM_VALUE_BIN_ASCII_1,
+                },
+              ],
+            },
           ],
         },
         responseSchema,
         after: async () => {
-          expect(await rte.client.xlen(constants.TEST_STREAM_KEY_BIN_BUFFER_1)).to.eq(2);
-          const [entry] = await rte.data.sendCommand('xrevrange', [constants.TEST_STREAM_KEY_BIN_BUFFER_1, '+', '-', 'COUNT', 1], null);
+          expect(
+            await rte.client.xlen(constants.TEST_STREAM_KEY_BIN_BUFFER_1),
+          ).to.eq(2);
+          const [entry] = await rte.data.sendCommand(
+            'xrevrange',
+            [constants.TEST_STREAM_KEY_BIN_BUFFER_1, '+', '-', 'COUNT', 1],
+            null,
+          );
           expect(entry[1]).to.eql([
             constants.TEST_STREAM_FIELD_BIN_BUFFER_1,
             constants.TEST_STREAM_VALUE_BIN_BUFFER_1,
@@ -131,16 +162,28 @@ describe('POST /databases/:instanceId/streams/entries', () => {
               {
                 id: '*',
                 fields: [
-                  { name: constants.TEST_STREAM_FIELD_1, value: constants.TEST_STREAM_FIELD_1 },
-                ]
-              }
-            ]
+                  {
+                    name: constants.TEST_STREAM_FIELD_1,
+                    value: constants.TEST_STREAM_FIELD_1,
+                  },
+                ],
+              },
+            ],
           },
           responseSchema,
           after: async () => {
             expect(await rte.client.xlen(constants.TEST_STREAM_KEY_1)).to.eq(2);
-            const [entry] = await rte.client.xrevrange(constants.TEST_STREAM_KEY_1, '+', '-', 'COUNT', 1);
-            expect(entry[1]).to.eql([constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_FIELD_1]);
+            const [entry] = await rte.client.xrevrange(
+              constants.TEST_STREAM_KEY_1,
+              '+',
+              '-',
+              'COUNT',
+              1,
+            );
+            expect(entry[1]).to.eql([
+              constants.TEST_STREAM_FIELD_1,
+              constants.TEST_STREAM_FIELD_1,
+            ]);
           },
         },
         {
@@ -151,35 +194,53 @@ describe('POST /databases/:instanceId/streams/entries', () => {
               {
                 id: '*',
                 fields: [
-                  { name: constants.TEST_STREAM_FIELD_1, value: constants.TEST_STREAM_FIELD_1 },
-                  { name: constants.TEST_STREAM_FIELD_2, value: constants.TEST_STREAM_FIELD_2 },
+                  {
+                    name: constants.TEST_STREAM_FIELD_1,
+                    value: constants.TEST_STREAM_FIELD_1,
+                  },
+                  {
+                    name: constants.TEST_STREAM_FIELD_2,
+                    value: constants.TEST_STREAM_FIELD_2,
+                  },
                 ],
               },
               {
                 id: '*',
                 fields: [
-                  { name: constants.TEST_STREAM_VALUE_1, value: constants.TEST_STREAM_VALUE_1 },
-                  { name: constants.TEST_STREAM_VALUE_2, value: constants.TEST_STREAM_VALUE_2 },
+                  {
+                    name: constants.TEST_STREAM_VALUE_1,
+                    value: constants.TEST_STREAM_VALUE_1,
+                  },
+                  {
+                    name: constants.TEST_STREAM_VALUE_2,
+                    value: constants.TEST_STREAM_VALUE_2,
+                  },
                 ],
               },
-            ]
+            ],
           },
           responseSchema,
           after: async () => {
             expect(await rte.client.xlen(constants.TEST_STREAM_KEY_1)).to.eq(4);
-            const [entry1, entry2] = await rte.client.xrevrange(constants.TEST_STREAM_KEY_1, '+', '-', 'COUNT', 2);
-            expect(entry1[1]).to.eql(
-              [
-                constants.TEST_STREAM_VALUE_1, constants.TEST_STREAM_VALUE_1,
-                constants.TEST_STREAM_VALUE_2, constants.TEST_STREAM_VALUE_2,
-              ]
+            const [entry1, entry2] = await rte.client.xrevrange(
+              constants.TEST_STREAM_KEY_1,
+              '+',
+              '-',
+              'COUNT',
+              2,
             );
-            expect(entry2[1]).to.eql(
-              [
-                constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_FIELD_1,
-                constants.TEST_STREAM_FIELD_2, constants.TEST_STREAM_FIELD_2,
-              ]
-            );
+            expect(entry1[1]).to.eql([
+              constants.TEST_STREAM_VALUE_1,
+              constants.TEST_STREAM_VALUE_1,
+              constants.TEST_STREAM_VALUE_2,
+              constants.TEST_STREAM_VALUE_2,
+            ]);
+            expect(entry2[1]).to.eql([
+              constants.TEST_STREAM_FIELD_1,
+              constants.TEST_STREAM_FIELD_1,
+              constants.TEST_STREAM_FIELD_2,
+              constants.TEST_STREAM_FIELD_2,
+            ]);
           },
         },
         {
@@ -202,8 +263,8 @@ describe('POST /databases/:instanceId/streams/entries', () => {
               {
                 ...validInputData.entries[0],
                 id: '100',
-              }
-            ]
+              },
+            ],
           },
           statusCode: 400,
           responseBody: {
@@ -252,7 +313,7 @@ describe('POST /databases/:instanceId/streams/entries', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
         {
           name: 'Should throw error if no permissions for "xadd" command',
@@ -265,7 +326,7 @@ describe('POST /databases/:instanceId/streams/entries', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xadd')
+          before: () => rte.data.setAclUserRules('~* +@all -xadd'),
         },
       ].map(mainCheckFn);
     });

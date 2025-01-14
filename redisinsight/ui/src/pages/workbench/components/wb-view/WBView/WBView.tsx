@@ -9,7 +9,7 @@ import {
   Maybe,
   Nullable,
   getParsedParamsInQuery,
-  getCommandsFromQuery
+  getCommandsFromQuery,
 } from 'uiSrc/utils'
 import {
   setWorkbenchVerticalPanelSizes,
@@ -31,7 +31,7 @@ import styles from './styles.module.scss'
 
 const verticalPanelIds = {
   firstPanelId: 'scriptingArea',
-  secondPanelId: 'resultsArea'
+  secondPanelId: 'resultsArea',
 }
 
 export interface Props {
@@ -45,7 +45,11 @@ export interface Props {
   scrollDivRef: Ref<HTMLDivElement>
   activeMode: RunQueryMode
   resultsMode: ResultsMode
-  onSubmit: (query?: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
+  onSubmit: (
+    query?: string,
+    commandId?: Nullable<string>,
+    executeParams?: CodeButtonParams,
+  ) => void
   onQueryOpen: (commandId?: string) => void
   onQueryDelete: (commandId: string) => void
   onAllQueriesDelete: () => void
@@ -60,7 +64,7 @@ interface IState {
 
 let state: IState = {
   activeMode: RunQueryMode.ASCII,
-  resultsMode: ResultsMode.Default
+  resultsMode: ResultsMode.Default,
 }
 
 const WBView = (props: Props) => {
@@ -85,21 +89,29 @@ const WBView = (props: Props) => {
 
   state = {
     activeMode,
-    resultsMode
+    resultsMode,
   }
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { panelSizes: { vertical } } = useSelector(appContextWorkbench)
-  const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
-  const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
+  const {
+    panelSizes: { vertical },
+  } = useSelector(appContextWorkbench)
+  const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(
+    appRedisCommandsSelector,
+  )
+  const { batchSize = PIPELINE_COUNT_DEFAULT } =
+    useSelector(userSettingsConfigSelector) ?? {}
 
   const verticalSizesRef = useRef(vertical)
 
   const dispatch = useDispatch()
 
-  useEffect(() => () => {
-    dispatch(setWorkbenchVerticalPanelSizes(verticalSizesRef.current))
-  }, [])
+  useEffect(
+    () => () => {
+      dispatch(setWorkbenchVerticalPanelSizes(verticalSizesRef.current))
+    },
+    [],
+  )
 
   const onVerticalPanelWidthChange = useCallback((newSizes: any) => {
     verticalSizesRef.current = newSizes
@@ -110,13 +122,29 @@ const WBView = (props: Props) => {
     onSubmit(value)
   }
 
-  const handleReRun = (query?: string, commandId?: Nullable<string>, executeParams: CodeButtonParams = {}) => {
-    sendEventSubmitTelemetry(TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN, query, executeParams)
+  const handleReRun = (
+    query?: string,
+    commandId?: Nullable<string>,
+    executeParams: CodeButtonParams = {},
+  ) => {
+    sendEventSubmitTelemetry(
+      TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN,
+      query,
+      executeParams,
+    )
     onSubmit(query, commandId, executeParams)
   }
 
-  const handleProfile = (query?: string, commandId?: Nullable<string>, executeParams: CodeButtonParams = {}) => {
-    sendEventSubmitTelemetry(TelemetryEvent.WORKBENCH_COMMAND_PROFILE, query, executeParams)
+  const handleProfile = (
+    query?: string,
+    commandId?: Nullable<string>,
+    executeParams: CodeButtonParams = {},
+  ) => {
+    sendEventSubmitTelemetry(
+      TelemetryEvent.WORKBENCH_COMMAND_PROFILE,
+      query,
+      executeParams,
+    )
     onSubmit(query, commandId, executeParams)
   }
 
@@ -130,10 +158,12 @@ const WBView = (props: Props) => {
         ? getParsedParamsInQuery(commandInit)
         : executeParams
 
-      const command = getCommandsFromQuery(commandInit, REDIS_COMMANDS_ARRAY) || ''
-      const pipeline = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
-        ? (parsedParams?.pipeline || batchSize) > 1
-        : undefined
+      const command =
+        getCommandsFromQuery(commandInit, REDIS_COMMANDS_ARRAY) || ''
+      const pipeline =
+        TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
+          ? (parsedParams?.pipeline || batchSize) > 1
+          : undefined
       const isMultiple = command.includes(';')
 
       return {
@@ -141,22 +171,23 @@ const WBView = (props: Props) => {
         pipeline,
         databaseId: instanceId,
         multiple: isMultiple ? 'Multiple' : 'Single',
-        rawMode: (parsedParams?.mode?.toUpperCase() || state.activeMode) === RunQueryMode.Raw,
-        results:
-          ResultsMode.GroupMode.startsWith?.(
-            parsedParams?.results?.toUpperCase()
-            || state.resultsMode
-            || 'GROUP'
-          )
-            ? 'group'
-            : (parsedParams?.results?.toLowerCase() === 'silent' ? 'silent' : 'single'),
+        rawMode:
+          (parsedParams?.mode?.toUpperCase() || state.activeMode) ===
+          RunQueryMode.Raw,
+        results: ResultsMode.GroupMode.startsWith?.(
+          parsedParams?.results?.toUpperCase() || state.resultsMode || 'GROUP',
+        )
+          ? 'group'
+          : parsedParams?.results?.toLowerCase() === 'silent'
+            ? 'silent'
+            : 'single',
       }
     })()
 
     if (eventData.command) {
       sendEventTelemetry({
         event,
-        eventData
+        eventData,
       })
     }
   }
@@ -165,7 +196,11 @@ const WBView = (props: Props) => {
     <div className={cx('workbenchPage', styles.container)}>
       <div className={styles.main}>
         <div className={styles.content}>
-          <EuiResizableContainer onPanelWidthChange={onVerticalPanelWidthChange} direction="vertical" style={{ height: '100%' }}>
+          <EuiResizableContainer
+            onPanelWidthChange={onVerticalPanelWidthChange}
+            direction="vertical"
+            style={{ height: '100%' }}
+          >
             {(EuiResizablePanel, EuiResizableButton) => (
               <>
                 <EuiResizablePanel
@@ -201,7 +236,7 @@ const WBView = (props: Props) => {
                   scrollable={false}
                   initialSize={vertical[verticalPanelIds.secondPanelId] ?? 80}
                   className={cx(styles.queryResults, styles.queryResultsPanel)}
-                    // Fix scroll on low height - 140px (queryPanel)
+                  // Fix scroll on low height - 140px (queryPanel)
                   style={{ maxHeight: 'calc(100% - 240px)' }}
                 >
                   <WBResultsWrapper

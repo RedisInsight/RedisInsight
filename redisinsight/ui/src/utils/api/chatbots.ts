@@ -7,11 +7,15 @@ const TIMEOUT_FOR_MESSAGE_REQUEST = 30_000
 export const getStreamedAnswer = async (
   url: string,
   message: string,
-  { onMessage, onFinish, onError }: {
-    onMessage?: (message: string) => void,
+  {
+    onMessage,
+    onFinish,
+    onError,
+  }: {
+    onMessage?: (message: string) => void
     onFinish?: () => void
     onError?: (error: unknown) => void
-  }
+  },
 ) => {
   try {
     const controller = new AbortController()
@@ -27,19 +31,21 @@ export const getStreamedAnswer = async (
         [CustomHeaders.WindowId]: window.windowId || '',
       },
       body: JSON.stringify({ content: message }),
-      signal: controller.signal
+      signal: controller.signal,
     })
 
     clearTimeout(timeoutId)
 
-    const reader = response.body!.pipeThrough(new TextDecoderStream()).getReader()
+    const reader = response
+      .body!.pipeThrough(new TextDecoderStream())
+      .getReader()
     if (!isStatusSuccessful(response.status)) {
       const { value } = await reader.read()
 
       const errorResponse = value ? JSON.parse(value) : {}
       const extendedResponseError = {
         errorCode: errorResponse.errorCode ?? '',
-        details: errorResponse.details ?? {}
+        details: errorResponse.details ?? {},
       }
       const error = Object.assign(response, extendedResponseError)
       onError?.(error)
@@ -57,6 +63,10 @@ export const getStreamedAnswer = async (
       onMessage?.(value)
     }
   } catch (error: any) {
-    onError?.(error?.name === 'AbortError' ? { status: ApiStatusCode.Timeout, statusText: 'ERRTIMEOUT' } : error)
+    onError?.(
+      error?.name === 'AbortError'
+        ? { status: ApiStatusCode.Timeout, statusText: 'ERRTIMEOUT' }
+        : error,
+    )
   }
 }

@@ -10,10 +10,7 @@ export class CustomTutorialAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendImportSucceeded(
-    sessionMetadata: SessionMetadata,
-    data: any = {},
-  ): void {
+  sendImportSucceeded(sessionMetadata: SessionMetadata, data: any = {}): void {
     this.sendEvent(
       sessionMetadata,
       TelemetryEvents.WorkbenchEnablementAreaImportSucceeded,
@@ -23,10 +20,7 @@ export class CustomTutorialAnalytics extends TelemetryBaseService {
     );
   }
 
-  sendImportFailed(
-    sessionMetadata: SessionMetadata,
-    e: Error,
-  ): void {
+  sendImportFailed(sessionMetadata: SessionMetadata, e: Error): void {
     this.sendEvent(
       sessionMetadata,
       TelemetryEvents.WorkbenchEnablementAreaImportFailed,

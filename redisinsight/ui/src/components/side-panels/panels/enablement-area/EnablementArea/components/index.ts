@@ -11,5 +11,5 @@ export {
   LazyInternalPage,
   Pagination,
   Navigation,
-  Code
+  Code,
 }

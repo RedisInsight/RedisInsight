@@ -1,7 +1,8 @@
 import { get, isNumber } from 'lodash';
 import Redis, { Cluster, Command } from 'ioredis';
 import {
-  IRedisClientCommandOptions, IRedisClientOptions,
+  IRedisClientCommandOptions,
+  IRedisClientOptions,
   RedisClient,
   RedisClientCommand,
   RedisClientCommandReply,
@@ -11,7 +12,10 @@ import { ClientMetadata } from 'src/common/models';
 import { BrowserToolHashCommands } from 'src/modules/browser/constants/browser-tool-commands';
 
 // should return array (same as original reply)
-Redis.Command.setReplyTransformer(BrowserToolHashCommands.HGetAll, (result) => result);
+Redis.Command.setReplyTransformer(
+  BrowserToolHashCommands.HGetAll,
+  (result) => result,
+);
 
 export abstract class IoredisClient extends RedisClient {
   constructor(
@@ -40,7 +44,9 @@ export abstract class IoredisClient extends RedisClient {
   }
 
   static prepareCommandArgs(args: RedisClientCommand): RedisString[] {
-    const strArgs = args.map((arg) => (isNumber(arg) ? arg.toString() : arg)) as string[];
+    const strArgs = args.map((arg) =>
+      isNumber(arg) ? arg.toString() : arg,
+    ) as string[];
     return [...strArgs.shift().split(' '), ...strArgs];
   }
 
@@ -63,24 +69,31 @@ export abstract class IoredisClient extends RedisClient {
     commands: RedisClientCommand[],
     options?: IRedisClientCommandOptions,
   ): Promise<Array<[Error | null, RedisClientCommandReply]>> {
-    let batch = commands.map((command) => IoredisClient.prepareCommandArgs(command));
+    let batch = commands.map((command) =>
+      IoredisClient.prepareCommandArgs(command),
+    );
 
     if (options?.unknownCommands) {
       batch = commands.map((command) => ['call', ...command]) as string[][];
     }
 
     // todo: replyEncoding
-    return await this.client.pipeline(batch).exec() as [Error | null, RedisClientCommandReply][];
+    return (await this.client.pipeline(batch).exec()) as [
+      Error | null,
+      RedisClientCommandReply,
+    ][];
   }
 
   async sendCommand(
     command: RedisClientCommand,
     options?: IRedisClientCommandOptions,
   ): Promise<RedisClientCommandReply> {
-    const [cmd, ...args] = IoredisClient.prepareCommandArgs(command) as string[];
-    return await this.client.sendCommand(
+    const [cmd, ...args] = IoredisClient.prepareCommandArgs(
+      command,
+    ) as string[];
+    return (await this.client.sendCommand(
       new Command(cmd, args, IoredisClient.prepareCommandOptions(options)),
-    ) as RedisClientCommandReply;
+    )) as RedisClientCommandReply;
   }
 
   /** TODO: It's necessary to investigate transactions
@@ -98,12 +111,17 @@ export abstract class IoredisClient extends RedisClient {
   }
    */
 
-  async call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply> {
+  async call(
+    command: RedisClientCommand,
+    options?: IRedisClientCommandOptions,
+  ): Promise<RedisClientCommandReply> {
     if (IoredisClient.prepareCommandOptions(options).replyEncoding === null) {
-      return await this.client.callBuffer(...command) as RedisClientCommandReply;
+      return (await this.client.callBuffer(
+        ...command,
+      )) as RedisClientCommandReply;
     }
 
-    return await this.client.call(...command) as RedisClientCommandReply;
+    return (await this.client.call(...command)) as RedisClientCommandReply;
   }
 
   /**
@@ -132,9 +150,12 @@ export abstract class IoredisClient extends RedisClient {
   async pSubscribe(channel: string): Promise<void> {
     const listenerCount = this.client.listenerCount('pmessage');
     if (listenerCount === 0) {
-      this.client.on('pmessage', (pattern: string, messageChannel: string, message: string) => {
-        this.emit('pmessage', pattern, messageChannel, message);
-      });
+      this.client.on(
+        'pmessage',
+        (pattern: string, messageChannel: string, message: string) => {
+          this.emit('pmessage', pattern, messageChannel, message);
+        },
+      );
     }
     await this.client.psubscribe(channel);
   }

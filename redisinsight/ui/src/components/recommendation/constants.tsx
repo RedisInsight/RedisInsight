@@ -6,7 +6,19 @@ import UpgradeIcon from 'uiSrc/assets/img/upgrade.svg?react'
 import styles from './styles.module.scss'
 
 export const badgesContent = [
-  { id: 'code_changes', icon: <CodeIcon className={styles.badgeIcon} />, name: 'Code Changes' },
-  { id: 'configuration_changes', icon: <ConfigurationIcon className={styles.badgeIcon} />, name: 'Configuration Changes' },
-  { id: 'upgrade', icon: <UpgradeIcon className={styles.badgeIcon} />, name: 'Upgrade' },
+  {
+    id: 'code_changes',
+    icon: <CodeIcon className={styles.badgeIcon} />,
+    name: 'Code Changes',
+  },
+  {
+    id: 'configuration_changes',
+    icon: <ConfigurationIcon className={styles.badgeIcon} />,
+    name: 'Configuration Changes',
+  },
+  {
+    id: 'upgrade',
+    icon: <UpgradeIcon className={styles.badgeIcon} />,
+    name: 'Upgrade',
+  },
 ]

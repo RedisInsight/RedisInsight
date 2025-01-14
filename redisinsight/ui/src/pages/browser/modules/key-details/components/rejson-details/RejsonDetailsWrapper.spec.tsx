@@ -7,6 +7,8 @@ const mockedProps = mock<Props>()
 
 describe('RejsonDetailsWrapper', () => {
   it('should render', () => {
-    expect(render(<RejsonDetailsWrapper {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<RejsonDetailsWrapper {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 })

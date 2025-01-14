@@ -10,45 +10,45 @@ jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     name: {
-      flag: false
-    }
+      flag: false,
+    },
   }),
 }))
 
-const InnerComponent = () => (<span data-testid="inner-component" />)
-const OtherwiseComponent = () => (<span data-testid="otherwise-component" />)
+const InnerComponent = () => <span data-testid="inner-component" />
+const OtherwiseComponent = () => <span data-testid="otherwise-component" />
 describe('FeatureFlagComponent', () => {
   it('should not render component by default', () => {
     render(
       <FeatureFlagComponent name={'name' as FeatureFlags}>
         <InnerComponent />
-      </FeatureFlagComponent>
+      </FeatureFlagComponent>,
     )
 
     expect(screen.queryByTestId('inner-component')).not.toBeInTheDocument()
   })
 
   it('should render component', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
       name: {
-        flag: true
-      }
+        flag: true,
+      },
     })
 
     render(
       <FeatureFlagComponent name={'name' as FeatureFlags}>
         <InnerComponent />
-      </FeatureFlagComponent>
+      </FeatureFlagComponent>,
     )
 
     expect(screen.getByTestId('inner-component')).toBeInTheDocument()
   })
 
   it('should render otherwise component if the feature flag not enabled', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
       name: {
-        flag: false
-      }
+        flag: false,
+      },
     })
 
     const { queryByTestId } = render(
@@ -57,7 +57,7 @@ describe('FeatureFlagComponent', () => {
         otherwise={<OtherwiseComponent />}
       >
         <InnerComponent />
-      </FeatureFlagComponent>
+      </FeatureFlagComponent>,
     )
 
     expect(queryByTestId('inner-component')).not.toBeInTheDocument()

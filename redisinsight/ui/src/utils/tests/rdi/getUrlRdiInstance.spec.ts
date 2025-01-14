@@ -9,9 +9,11 @@ const getRdiUrlTests: [string[], string][] = [
 ]
 
 describe('getRdiUrl', () => {
-  it.each(getRdiUrlTests)('for input: %s (input), should be output: %s',
+  it.each(getRdiUrlTests)(
+    'for input: %s (input), should be output: %s',
     (input, expected) => {
       const result = getRdiUrl(...input)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })

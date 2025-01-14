@@ -3,7 +3,10 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { RdiInstance } from 'uiSrc/slices/interfaces'
-import { instancesSelector, loadInstancesSuccess } from 'uiSrc/slices/rdi/instances'
+import {
+  instancesSelector,
+  loadInstancesSuccess,
+} from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { lastConnectionFormat } from 'uiSrc/utils'
 
@@ -17,22 +20,22 @@ const SearchRdiList = () => {
   const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value?.toLowerCase()
 
-    const visibleItems = instances.map(
-      (item: RdiInstance) => ({
-        ...item,
-        visible: item.name.toLowerCase().indexOf(value) !== -1
-        || item.url?.toString()?.indexOf(value) !== -1
-        || item.version?.toString()?.indexOf(value) !== -1
-        || lastConnectionFormat(item.lastConnection)?.indexOf(value) !== -1
-      })
-    )
+    const visibleItems = instances.map((item: RdiInstance) => ({
+      ...item,
+      visible:
+        item.name.toLowerCase().indexOf(value) !== -1 ||
+        item.url?.toString()?.indexOf(value) !== -1 ||
+        item.version?.toString()?.indexOf(value) !== -1 ||
+        lastConnectionFormat(item.lastConnection)?.indexOf(value) !== -1,
+    }))
 
     sendEventTelemetry({
       event: TelemetryEvent.RDI_INSTANCE_LIST_SEARCHED,
       eventData: {
         instancesFullCount: instances.length,
-        instancesSearchedCount: visibleItems.filter(({ visible }) => (visible))?.length,
-      }
+        instancesSearchedCount: visibleItems.filter(({ visible }) => visible)
+          ?.length,
+      },
     })
 
     dispatch(loadInstancesSuccess(visibleItems))

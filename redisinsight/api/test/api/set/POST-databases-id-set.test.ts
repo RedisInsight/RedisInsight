@@ -8,7 +8,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -55,11 +56,18 @@ const createCheckFn = async (testCase) => {
     } else {
       if (testCase.statusCode === 201) {
         expect(await rte.client.exists(testCase.data.keyName)).to.eql(1);
-        const scanResult = await rte.client.sscan(testCase.data.keyName, 0, 'count', 100);
+        const scanResult = await rte.client.sscan(
+          testCase.data.keyName,
+          0,
+          'count',
+          100,
+        );
         expect(scanResult[0]).to.eql('0'); // full scan completed
         expect(scanResult[1]).to.eql(testCase.data.members);
         if (testCase.data.expire) {
-          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(testCase.data.expire - 5);
+          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(
+            testCase.data.expire - 5,
+          );
         } else {
           expect(await rte.client.ttl(testCase.data.keyName)).to.eql(-1);
         }
@@ -82,8 +90,16 @@ describe('POST /databases/:instanceId/set', () => {
         },
         statusCode: 201,
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1)).to.eql(1);
-          expect(await rte.data.sendCommand('sscan', [constants.TEST_SET_KEY_BIN_BUFFER_1, 0, 'count', 100], null)).to.deep.eq([
+          expect(
+            await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1),
+          ).to.eql(1);
+          expect(
+            await rte.data.sendCommand(
+              'sscan',
+              [constants.TEST_SET_KEY_BIN_BUFFER_1, 0, 'count', 100],
+              null,
+            ),
+          ).to.deep.eq([
             Buffer.from('0'),
             [constants.TEST_SET_MEMBER_BIN_BUFFER_1],
           ]);
@@ -97,8 +113,16 @@ describe('POST /databases/:instanceId/set', () => {
         },
         statusCode: 201,
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1)).to.eql(1);
-          expect(await rte.data.sendCommand('sscan', [constants.TEST_SET_KEY_BIN_BUFFER_1, 0, 'count', 100], null)).to.deep.eq([
+          expect(
+            await rte.client.exists(constants.TEST_SET_KEY_BIN_BUFFER_1),
+          ).to.eql(1);
+          expect(
+            await rte.data.sendCommand(
+              'sscan',
+              [constants.TEST_SET_KEY_BIN_BUFFER_1, 0, 'count', 100],
+              null,
+            ),
+          ).to.deep.eq([
             Buffer.from('0'),
             [constants.TEST_SET_MEMBER_BIN_BUFFER_1],
           ]);
@@ -157,10 +181,15 @@ describe('POST /databases/:instanceId/set', () => {
           },
           after: async () => {
             // check that value was not overwritten
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_1,
+              0,
+              'count',
+              100,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
-          }
+          },
         },
         {
           name: 'Should return NotFound error if instance id does not exists',
@@ -177,7 +206,12 @@ describe('POST /databases/:instanceId/set', () => {
           },
           after: async () => {
             // check that value was not overwritten
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_1,
+              0,
+              'count',
+              100,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
           },
@@ -211,7 +245,7 @@ describe('POST /databases/:instanceId/set', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -sadd')
+          before: () => rte.data.setAclUserRules('~* +@all -sadd'),
         },
         {
           name: 'Should throw error if no permissions for "exists" command',
@@ -225,7 +259,7 @@ describe('POST /databases/:instanceId/set', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
       ].map(createCheckFn);
     });

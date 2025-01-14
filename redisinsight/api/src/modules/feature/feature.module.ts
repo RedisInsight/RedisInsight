@@ -45,13 +45,8 @@ export class FeatureModule {
           useClass: featuresConfigService,
         },
       ],
-      exports: [
-        FeatureService,
-        FeaturesConfigService,
-      ],
-      imports: [
-        NotificationModule,
-      ],
+      exports: [FeatureService, FeaturesConfigService],
+      imports: [NotificationModule],
     };
   }
 }

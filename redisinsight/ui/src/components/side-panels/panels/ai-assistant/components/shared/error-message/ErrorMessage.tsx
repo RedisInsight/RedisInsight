@@ -35,29 +35,37 @@ const ERROR_CODES_WITHOUT_REPORT_ISSUE = [
 const ErrorMessage = (props: Props) => {
   const { error, onRestart } = props
 
-  const getErrorMessage = (
-    error?: {
-      statusCode: number,
-      errorCode?: number,
-      details?: Record<string, any> }
-  ): string => {
+  const getErrorMessage = (error?: {
+    statusCode: number
+    errorCode?: number
+    details?: Record<string, any>
+  }): string => {
     const { statusCode, errorCode, details } = error || {}
 
     if (statusCode === ApiStatusCode.Timeout) return AI_CHAT_ERRORS.timeout()
-    if (errorCode === CustomErrorCodes.GeneralAiUnexpectedError) return AI_CHAT_ERRORS.unexpected()
-    if (errorCode === CustomErrorCodes.AiQueryRateLimitRequest
-      || errorCode === CustomErrorCodes.AiQueryRateLimitToken
-    ) return AI_CHAT_ERRORS.rateLimit(details?.limiterSeconds)
-    if (errorCode === CustomErrorCodes.AiQueryRateLimitMaxTokens) return AI_CHAT_ERRORS.tokenLimit()
+    if (errorCode === CustomErrorCodes.GeneralAiUnexpectedError)
+      return AI_CHAT_ERRORS.unexpected()
+    if (
+      errorCode === CustomErrorCodes.AiQueryRateLimitRequest ||
+      errorCode === CustomErrorCodes.AiQueryRateLimitToken
+    )
+      return AI_CHAT_ERRORS.rateLimit(details?.limiterSeconds)
+    if (errorCode === CustomErrorCodes.AiQueryRateLimitMaxTokens)
+      return AI_CHAT_ERRORS.tokenLimit()
 
     return AI_CHAT_ERRORS.default()
   }
 
   if (!error) return null
 
-  const isShowRestart = !(error.errorCode && ERROR_CODES_WITHOUT_RESTART.includes(error.errorCode))
-    && error.statusCode !== ApiStatusCode.Timeout
-  const isShowReportIssue = !(error.errorCode && ERROR_CODES_WITHOUT_REPORT_ISSUE.includes(error.errorCode))
+  const isShowRestart =
+    !(
+      error.errorCode && ERROR_CODES_WITHOUT_RESTART.includes(error.errorCode)
+    ) && error.statusCode !== ApiStatusCode.Timeout
+  const isShowReportIssue = !(
+    error.errorCode &&
+    ERROR_CODES_WITHOUT_REPORT_ISSUE.includes(error.errorCode)
+  )
 
   return (
     <>
@@ -81,7 +89,7 @@ const ErrorMessage = (props: Props) => {
       {isShowRestart && (
         <RestartChat
           anchorClassName={styles.restartSessionWrapper}
-          button={(
+          button={
             <EuiButton
               size="s"
               color="secondary"
@@ -91,7 +99,7 @@ const ErrorMessage = (props: Props) => {
             >
               Restart session
             </EuiButton>
-          )}
+          }
           onConfirm={onRestart}
         />
       )}

@@ -1,4 +1,10 @@
-import { EuiButton, EuiCheckbox, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiCheckbox,
+  EuiSpacer,
+  EuiText,
+  EuiTitle,
+} from '@elastic/eui'
 import React, { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
@@ -25,13 +31,17 @@ const RunConfirmationPopover = ({ onApply }: Props) => {
       event: TelemetryEvent.EXPLORE_PANEL_DATABASE_CHANGE_CLICKED,
       eventData: {
         databaseId: instanceId,
-      }
+      },
     })
   }
 
   const handleApply = () => {
     if (notShowAgain) {
-      setDBConfigStorageField(instanceId, ConfigDBStorageItem.notShowConfirmationRunTutorial, true)
+      setDBConfigStorageField(
+        instanceId,
+        ConfigDBStorageItem.notShowConfirmationRunTutorial,
+        true,
+      )
     }
     onApply?.()
   }
@@ -43,7 +53,8 @@ const RunConfirmationPopover = ({ onApply }: Props) => {
       </EuiTitle>
       <EuiSpacer size="s" />
       <EuiText size="s">
-        This tutorial will change data in your database, are you sure you want to run commands in this database?
+        This tutorial will change data in your database, are you sure you want
+        to run commands in this database?
       </EuiText>
       <EuiSpacer size="s" />
       <EuiCheckbox

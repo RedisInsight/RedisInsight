@@ -1,9 +1,5 @@
 import React from 'react'
-import {
-  render,
-  screen,
-  fireEvent,
-} from 'uiSrc/utils/test-utils'
+import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import SettingItem from './SettingItem'
 
 jest.mock('uiSrc/slices/user/user-settings', () => ({
@@ -14,7 +10,7 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
       batchSize: 5,
     },
   }),
-  updateUserConfigSettingsAction: () => jest.fn
+  updateUserConfigSettingsAction: () => jest.fn,
 }))
 
 const mockedProps = {
@@ -22,7 +18,8 @@ const mockedProps = {
   onApply: jest.fn(),
   validation: jest.fn((x) => x),
   title: 'Keys to Scan in List view',
-  summary: 'Sets the amount of keys to scan per one iteration. Filtering by pattern per a large number of keys may decrease performance.',
+  summary:
+    'Sets the amount of keys to scan per one iteration. Filtering by pattern per a large number of keys may decrease performance.',
   testid: 'keys-to-scan',
   placeholder: '10 000',
   label: 'Keys to Scan:',
@@ -47,12 +44,9 @@ describe('SettingItem', () => {
   it('should change keys to scan input properly', () => {
     render(<SettingItem {...mockedProps} />)
     fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
-    fireEvent.change(
-      screen.getByTestId(/keys-to-scan-input/),
-      {
-        target: { value: '6900' }
-      }
-    )
+    fireEvent.change(screen.getByTestId(/keys-to-scan-input/), {
+      target: { value: '6900' },
+    })
     expect(screen.getByTestId(/keys-to-scan-input/)).toHaveValue('6900')
   })
 
@@ -60,12 +54,9 @@ describe('SettingItem', () => {
     render(<SettingItem {...mockedProps} />)
 
     fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
-    fireEvent.change(
-      screen.getByTestId(/keys-to-scan-input/),
-      {
-        target: { value: '6900' }
-      }
-    )
+    fireEvent.change(screen.getByTestId(/keys-to-scan-input/), {
+      target: { value: '6900' },
+    })
     fireEvent.click(screen.getByTestId(/apply-btn/))
     expect(screen.getByTestId(/keys-to-scan-value/)).toHaveTextContent('6900')
   })
@@ -74,12 +65,9 @@ describe('SettingItem', () => {
     render(<SettingItem {...mockedProps} />)
     fireEvent.click(screen.getByTestId(/keys-to-scan-value/))
 
-    fireEvent.change(
-      screen.getByTestId(/keys-to-scan-input/),
-      {
-        target: { value: '6900' }
-      }
-    )
+    fireEvent.change(screen.getByTestId(/keys-to-scan-input/), {
+      target: { value: '6900' },
+    })
     fireEvent.click(screen.getByTestId(/cancel-btn/))
     expect(screen.getByTestId(/keys-to-scan-value/)).toHaveTextContent('10000')
   })

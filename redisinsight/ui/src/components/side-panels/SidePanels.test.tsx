@@ -1,8 +1,17 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
-import { getRecommendations, recommendationsSelector, } from 'uiSrc/slices/recommendations/recommendations'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  getRecommendations,
+  recommendationsSelector,
+} from 'uiSrc/slices/recommendations/recommendations'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 import {
   changeSelectedTab,
@@ -10,12 +19,15 @@ import {
   insightsPanelSelector,
   resetExplorePanelSearch,
   setExplorePanelIsPageOpen,
-  sidePanelsSelector
+  sidePanelsSelector,
 } from 'uiSrc/slices/panels/sidePanels'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
 import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
-import { InsightsPanelTabs, SidePanels as ISidePanels } from 'uiSrc/slices/interfaces/insights'
+import {
+  InsightsPanelTabs,
+  SidePanels as ISidePanels,
+} from 'uiSrc/slices/interfaces/insights'
 import { getTutorialCapability } from 'uiSrc/utils'
 import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -33,14 +45,14 @@ jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     insightsRecommendations: {
-      flag: true
+      flag: true,
     },
     documentationChat: {
-      flag: true
+      flag: true,
     },
     databaseChat: {
-      flag: true
-    }
+      flag: true,
+    },
   }),
 }))
 
@@ -49,7 +61,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: 'instanceId',
     connectionType: 'CLUSTER',
-    provider: 'RE_CLOUD'
+    provider: 'RE_CLOUD',
   }),
   connectedInstanceCDSelector: jest.fn().mockReturnValue({
     free: false,
@@ -70,16 +82,16 @@ jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
       recommendations: [],
       totalUnread: 0,
     },
-  })
+  }),
 }))
 
 jest.mock('uiSrc/slices/panels/sidePanels', () => ({
   ...jest.requireActual('uiSrc/slices/panels/sidePanels'),
   insightsPanelSelector: jest.fn().mockReturnValue({
-    tabSelected: 'explore'
+    tabSelected: 'explore',
   }),
   sidePanelsSelector: jest.fn().mockReturnValue({
-    openedPanel: null
+    openedPanel: null,
   }),
 }))
 
@@ -90,7 +102,9 @@ jest.mock('uiSrc/telemetry', () => ({
 
 jest.mock('uiSrc/utils', () => ({
   ...jest.requireActual('uiSrc/utils'),
-  getTutorialCapability: jest.fn().mockReturnValue({ path: 'path', telemetryName: 'searchAndQuery' }),
+  getTutorialCapability: jest
+    .fn()
+    .mockReturnValue({ path: 'path', telemetryName: 'searchAndQuery' }),
 }))
 
 jest.mock('uiSrc/services', () => ({
@@ -112,23 +126,28 @@ beforeEach(() => {
 
 describe('SidePanels', () => {
   beforeEach(() => {
-    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 'instanceId' })
+    reactRouterDom.useParams = jest
+      .fn()
+      .mockReturnValue({ instanceId: 'instanceId' })
   })
   it('should render', () => {
     expect(render(<SidePanels />)).toBeTruthy()
   })
 
   it('should call proper actions when recommendations tab is Open after render', () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
         recommendations: [{ name: 'name' }],
         totalUnread: 1,
       },
-    }));
-
-    (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.Insights });
-    (insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: 'tips' })
+    }))
+    ;(sidePanelsSelector as jest.Mock).mockReturnValue({
+      openedPanel: ISidePanels.Insights,
+    })
+    ;(insightsPanelSelector as jest.Mock).mockReturnValue({
+      tabSelected: 'tips',
+    })
 
     render(<SidePanels />)
 
@@ -137,7 +156,7 @@ describe('SidePanels', () => {
   })
 
   it('should not render recommendations count with totalUnread = 0', () => {
-    (recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
       ...mockRecommendationsSelector,
       data: {
         recommendations: [],
@@ -147,16 +166,22 @@ describe('SidePanels', () => {
 
     render(<SidePanels />)
 
-    expect(screen.queryByTestId('recommendations-unread-count')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('recommendations-unread-count'),
+    ).not.toBeInTheDocument()
   })
 
   it('should not render recommendations count without instanceId', () => {
-    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: undefined });
-
-    (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.Insights });
-    (insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: 'tips' });
-
-    (recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
+    reactRouterDom.useParams = jest
+      .fn()
+      .mockReturnValue({ instanceId: undefined })
+    ;(sidePanelsSelector as jest.Mock).mockReturnValue({
+      openedPanel: ISidePanels.Insights,
+    })
+    ;(insightsPanelSelector as jest.Mock).mockReturnValue({
+      tabSelected: 'tips',
+    })
+    ;(recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
       ...mockRecommendationsSelector,
       data: {
         recommendations: [],
@@ -165,14 +190,19 @@ describe('SidePanels', () => {
     }))
 
     render(<SidePanels />)
-    expect(screen.queryByTestId('recommendations-unread-count')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('recommendations-unread-count'),
+    ).not.toBeInTheDocument()
   })
 
   it('should render recommendations count with totalUnread > 0', () => {
-    (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.Insights });
-    (insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: 'tips' });
-
-    (recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
+    ;(sidePanelsSelector as jest.Mock).mockReturnValue({
+      openedPanel: ISidePanels.Insights,
+    })
+    ;(insightsPanelSelector as jest.Mock).mockReturnValue({
+      tabSelected: 'tips',
+    })
+    ;(recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
       ...mockRecommendationsSelector,
       data: {
         recommendations: [],
@@ -181,17 +211,26 @@ describe('SidePanels', () => {
     }))
 
     render(<SidePanels />)
-    expect(screen.getByTestId('recommendations-unread-count')).toHaveTextContent('7')
+    expect(
+      screen.getByTestId('recommendations-unread-count'),
+    ).toHaveTextContent('7')
   })
 
   it('should call proper telemetry events on close panel', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.pubSub('instanceId') });
-
-    (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.Insights });
-    (insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: 'tips' })
+    reactRouterDom.useLocation = jest
+      .fn()
+      .mockReturnValue({ pathname: Pages.pubSub('instanceId') })
+    ;(sidePanelsSelector as jest.Mock).mockReturnValue({
+      openedPanel: ISidePanels.Insights,
+    })
+    ;(insightsPanelSelector as jest.Mock).mockReturnValue({
+      tabSelected: 'tips',
+    })
 
     render(<SidePanels />)
 
@@ -203,21 +242,27 @@ describe('SidePanels', () => {
         databaseId: 'instanceId',
         provider: 'RE_CLOUD',
         page: '/pub-sub',
-        tab: 'tips'
+        tab: 'tips',
       },
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry events on change tab', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.pubSub('instanceId') });
-
-    (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.Insights });
-    (insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: 'tips' })
+    reactRouterDom.useLocation = jest
+      .fn()
+      .mockReturnValue({ pathname: Pages.pubSub('instanceId') })
+    ;(sidePanelsSelector as jest.Mock).mockReturnValue({
+      openedPanel: ISidePanels.Insights,
+    })
+    ;(insightsPanelSelector as jest.Mock).mockReturnValue({
+      tabSelected: 'tips',
+    })
 
     render(<SidePanels />)
 
@@ -230,17 +275,21 @@ describe('SidePanels', () => {
         prevTab: 'tips',
         currentTab: 'explore',
       },
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry events on fullscreen', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-
-    (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.Insights });
-    (insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: 'recommendations' })
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(sidePanelsSelector as jest.Mock).mockReturnValue({
+      openedPanel: ISidePanels.Insights,
+    })
+    ;(insightsPanelSelector as jest.Mock).mockReturnValue({
+      tabSelected: 'recommendations',
+    })
 
     render(<SidePanels />)
 
@@ -250,22 +299,23 @@ describe('SidePanels', () => {
       event: TelemetryEvent.INSIGHTS_PANEL_FULL_SCREEN_CLICKED,
       eventData: {
         databaseId: 'instanceId',
-        state: 'open'
+        state: 'open',
       },
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should render copilot if any chat is available', () => {
-    (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.AiAssistant });
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(sidePanelsSelector as jest.Mock).mockReturnValue({
+      openedPanel: ISidePanels.AiAssistant,
+    })
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       documentationChat: {
-        flag: true
+        flag: true,
       },
       databaseChat: {
-        flag: false
-      }
+        flag: false,
+      },
     })
 
     render(<SidePanels />)
@@ -273,15 +323,19 @@ describe('SidePanels', () => {
   })
 
   it('should not render copilot tab if not any chats available', () => {
-    (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.Insights });
-    (insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: 'recommendations' });
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(sidePanelsSelector as jest.Mock).mockReturnValue({
+      openedPanel: ISidePanels.Insights,
+    })
+    ;(insightsPanelSelector as jest.Mock).mockReturnValue({
+      tabSelected: 'recommendations',
+    })
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       documentationChat: {
-        flag: false
+        flag: false,
       },
       databaseChat: {
-        flag: false
-      }
+        flag: false,
+      },
     })
 
     render(<SidePanels />)
@@ -289,14 +343,16 @@ describe('SidePanels', () => {
   })
 
   it('should close insights if no any chats available', () => {
-    (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.AiAssistant });
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(sidePanelsSelector as jest.Mock).mockReturnValue({
+      openedPanel: ISidePanels.AiAssistant,
+    })
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       documentationChat: {
-        flag: false
+        flag: false,
       },
       databaseChat: {
-        flag: false
-      }
+        flag: false,
+      },
     })
 
     render(<SidePanels />)
@@ -305,14 +361,20 @@ describe('SidePanels', () => {
 
   describe('capability', () => {
     beforeEach(() => {
-      (connectedInstanceCDSelector as jest.Mock).mockReturnValueOnce({ free: true });
-      (isShowCapabilityTutorialPopover as jest.Mock).mockImplementation(() => true)
+      ;(connectedInstanceCDSelector as jest.Mock).mockReturnValueOnce({
+        free: true,
+      })
+      ;(isShowCapabilityTutorialPopover as jest.Mock).mockImplementation(
+        () => true,
+      )
     })
     it('should call store actions', () => {
-      (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.Insights });
-      (insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: '' });
-      (getTutorialCapability as jest.Mock).mockImplementation(() => ({
-        tutorialPage: { args: { path: 'path' } }
+      ;(sidePanelsSelector as jest.Mock).mockReturnValue({
+        openedPanel: ISidePanels.Insights,
+      })
+      ;(insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: '' })
+      ;(getTutorialCapability as jest.Mock).mockImplementation(() => ({
+        tutorialPage: { args: { path: 'path' } },
       }))
       render(<SidePanels />)
 
@@ -322,9 +384,8 @@ describe('SidePanels', () => {
         changeSelectedTab(InsightsPanelTabs.Explore),
         changeSidePanel(ISidePanels.Insights),
       ]
-      expect(store.getActions()).toEqual(expectedActions);
-
-      (getTutorialCapability as jest.Mock).mockRestore()
+      expect(store.getActions()).toEqual(expectedActions)
+      ;(getTutorialCapability as jest.Mock).mockRestore()
     })
     it('should call resetExplorePanelSearch if capability was not found', () => {
       render(<SidePanels />)

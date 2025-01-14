@@ -10,11 +10,18 @@ import {
   streamSelector,
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-grid/interfaces'
-import { keysSelector, selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import {
+  keysSelector,
+  selectedKeyDataSelector,
+} from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeyTypes, SortOrder } from 'uiSrc/constants'
 import VirtualGrid from 'uiSrc/components/virtual-grid'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
@@ -44,15 +51,13 @@ const StreamDataView = (props: Props) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const { viewType } = useSelector(keysSelector)
   const { loading } = useSelector(streamSelector)
-  const {
-    total,
-    firstEntry,
-    lastEntry,
-  } = useSelector(streamDataSelector)
+  const { total, firstEntry, lastEntry } = useSelector(streamDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
 
   const [sortedColumnName, setSortedColumnName] = useState<string>('id')
-  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.DESC)
+  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(
+    SortOrder.DESC,
+  )
 
   const onChangeSorting = (column: any, order: SortOrder) => {
     setSortedColumnName(column)
@@ -74,8 +79,13 @@ const StreamDataView = (props: Props) => {
       eventData: {
         keyType: KeyTypes.Stream,
         databaseId: instanceId,
-        largestCellLength: Math.max(...flatMap(entries[rowIndex]?.fields).map((a) => a.toString().length)) || 0,
-      }
+        largestCellLength:
+          Math.max(
+            ...flatMap(entries[rowIndex]?.fields).map(
+              (a) => a.toString().length,
+            ),
+          ) || 0,
+      },
     })
   }
 
@@ -107,13 +117,24 @@ const StreamDataView = (props: Props) => {
           totalItemsCount={total}
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
-          noItemsMessage={isNull(firstEntry) && isNull(lastEntry) ? noItemsMessageInEmptyStream : noItemsMessageInRange}
+          noItemsMessage={
+            isNull(firstEntry) && isNull(lastEntry)
+              ? noItemsMessageInEmptyStream
+              : noItemsMessageInRange
+          }
           onRowToggleViewClick={handleRowToggleViewClick}
-          maxTableWidth={columns.reduce((a, { maxWidth = minColumnWidth }) => a + maxWidth, 0)}
-          sortedColumn={entries?.length ? {
-            column: sortedColumnName,
-            order: sortedColumnOrder,
-          } : undefined}
+          maxTableWidth={columns.reduce(
+            (a, { maxWidth = minColumnWidth }) => a + maxWidth,
+            0,
+          )}
+          sortedColumn={
+            entries?.length
+              ? {
+                  column: sortedColumnName,
+                  order: sortedColumnOrder,
+                }
+              : undefined
+          }
         />
       </div>
     </>

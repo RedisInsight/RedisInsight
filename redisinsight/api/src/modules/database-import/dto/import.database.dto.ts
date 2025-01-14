@@ -2,7 +2,13 @@ import { ApiPropertyOptional, getSchemaPath, PickType } from '@nestjs/swagger';
 import { Database } from 'src/modules/database/models/database';
 import { Expose, Type } from 'class-transformer';
 import {
-  IsInt, IsNotEmpty, IsNotEmptyObject, IsOptional, Max, Min, ValidateNested,
+  IsInt,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsOptional,
+  Max,
+  Min,
+  ValidateNested,
 } from 'class-validator';
 import { caCertTransformer } from 'src/modules/certificate/transformers/ca-cert.transformer';
 import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
@@ -12,9 +18,24 @@ import { clientCertTransformer } from 'src/modules/certificate/transformers/clie
 import { UseClientCertificateDto } from 'src/modules/certificate/dto/use.client-certificate.dto';
 
 export class ImportDatabaseDto extends PickType(Database, [
-  'host', 'port', 'name', 'db', 'username', 'password',
-  'connectionType', 'tls', 'verifyServerCert', 'sentinelMaster', 'nodes',
-  'new', 'ssh', 'sshOptions', 'provider', 'compressor', 'modules', 'tlsServername',
+  'host',
+  'port',
+  'name',
+  'db',
+  'username',
+  'password',
+  'connectionType',
+  'tls',
+  'verifyServerCert',
+  'sentinelMaster',
+  'nodes',
+  'new',
+  'ssh',
+  'sshOptions',
+  'provider',
+  'compressor',
+  'modules',
+  'tlsServername',
 ] as const) {
   @Expose()
   @IsNotEmpty()

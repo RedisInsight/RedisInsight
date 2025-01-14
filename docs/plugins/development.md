@@ -4,29 +4,30 @@ This document describes the guides to develop your own plugin for the Redis Insi
 
 ## How it works
 
-Plugin visualization in the Workbench is rendered using Iframe to encapsulate plugin scripts and styles, described in 
-the main plugin script and the stylesheet (if it has been specified in the `package.json`), 
+Plugin visualization in the Workbench is rendered using Iframe to encapsulate plugin scripts and styles, described in
+the main plugin script and the stylesheet (if it has been specified in the `package.json`),
 iframe includes basic styles as well.
 
 ## Plugin structure
 
-Each plugin should have a unique name with all its files [loaded](installation.md) to 
+Each plugin should have a unique name with all its files [loaded](installation.md) to
 a separate folder inside the default `plugins` folder.
 
 > Default plugins are located inside the application.
 
 ### Files
+
 `package.json` should be located in the root folder of your plugins, all other files can be included into a subfolder.
 
-* **pluginName/package.json** *(required)* - Manifest of the plugin
-* **pluginName/{anyName}.js** *(required)* - Core script of the plugin
-* **pluginName/{anyName}.css** *(optional)* - File with styles for the plugin visualizations
-* **pluginName/{anyFileOrFolder}** *(optional)* - Specify any other file or folder inside the plugin folder 
-to use by the core module script. *For example*: pluginName/images/image.png.
+- **pluginName/package.json** _(required)_ - Manifest of the plugin
+- **pluginName/{anyName}.js** _(required)_ - Core script of the plugin
+- **pluginName/{anyName}.css** _(optional)_ - File with styles for the plugin visualizations
+- **pluginName/{anyFileOrFolder}** _(optional)_ - Specify any other file or folder inside the plugin folder
+  to use by the core module script. _For example_: pluginName/images/image.png.
 
 ## `package.json` structure
 
-This is the required manifest to use the plugin. `package.json` file should include 
+This is the required manifest to use the plugin. `package.json` file should include
 the following **required** fields:
 
 <table>
@@ -58,7 +59,7 @@ this visualization is selected in the Workbench</li>
   </tr>
 </table>
 
-You can specify the path to a css file in the `styles` field. If specified, 
+You can specify the path to a css file in the `styles` field. If specified,
 this file will be included inside the iframe plugin.
 
 Simple example of the `package.json` file with required and optional fields:
@@ -81,9 +82,7 @@ Simple example of the `package.json` file with required and optional fields:
       "id": "clients-list",
       "name": "Table",
       "activationMethod": "renderClientsList",
-      "matchCommands": [
-        "CLIENT LIST"
-      ],
+      "matchCommands": ["CLIENT LIST"],
       "description": "Example of client list plugin",
       "default": true
     }
@@ -96,10 +95,11 @@ Simple example of the `package.json` file with required and optional fields:
 ## Core script of the plugin
 
 This is the required script with defined visualization methods.
-The core script contains function and its export (functions - for multiple visualizations), 
+The core script contains function and its export (functions - for multiple visualizations),
 which is run after the relevant visualization is selected in the Workbench.
 
 The following function receives props of the executed commands:
+
 ```typescript
 interface Props {
   command: string; // executed command
@@ -112,30 +112,30 @@ interface Result {
 }
 
 const renderVisualization = (props: Props) => {
-    // Do your magic
-}
+  // Do your magic
+};
 
-export default { renderVisualization }
+export default { renderVisualization };
 ```
 
 Each plugin iframe has basic styles of Redis Insight application, including fonts and color schemes.
 
-It is recommended to use the React & [Elastic UI library](https://elastic.github.io/eui/#/) for 
+It is recommended to use the React & [Elastic UI library](https://elastic.github.io/eui/#/) for
 consistency with plugin visualisations and the entire application.
 
 Find the example of the plugin here.
 
-* [Client List Plugin README](https://github.com/RedisInsight/Packages/blob/main/clients-list-example/README.md)
-* [Client List Plugin dir](https://github.com/RedisInsight/Packages/blob/main/clients-list-example/)
+- [Client List Plugin README](https://github.com/RedisInsight/Packages/blob/main/clients-list-example/README.md)
+- [Client List Plugin dir](https://github.com/RedisInsight/Packages/blob/main/clients-list-example/)
 
 ### Available parameters
 
-Additional information provided to the plugin iframe is included in the `window.state` 
+Additional information provided to the plugin iframe is included in the `window.state`
 inside of the plugin script.
 
 ```javascript
-const { config, modules } = window.state
-const { baseUrl, appVersion } = config
+const { config, modules } = window.state;
+const { baseUrl, appVersion } = config;
 
 // modules - the list of modules of the current database
 // baseUrl - url for your plugin folder - can be used to include your assets
@@ -143,55 +143,55 @@ const { baseUrl, appVersion } = config
 ```
 
 ### Plugin rendering
-To render the plugin visualization, the iframe with basic html is generated which is 
-then populated with relevant scripts and styles. To render the html data, use existing 
+
+To render the plugin visualization, the iframe with basic html is generated which is
+then populated with relevant scripts and styles. To render the html data, use existing
 DOM Element `#app` or create your own DOM Elements.
 Rendered iframe also includes `theme_DARK` or `theme_LIGHT` className on `body` to indicate the application theme used.
 
 _Javascript Example:_
+
 ```javascript
 const renderVisualization = (props) => {
-    const { command, data = [] } = props;
-    const [{ result, status }] = data
-    document.getElementById('app')
-      .innerHTML = `
+  const { command, data = [] } = props;
+  const [{ result, status }] = data;
+  document.getElementById('app').innerHTML = `
         <h3>Executed command:<h3>
         <p>${command}</p>
         <h4>Result of the command</h4>
         <p>${result}</p>
         <h4>Status of the command</h4>
         <p>${status}</p>
-      `
-}
+      `;
+};
 
-export default { renderVisualization }
+export default { renderVisualization };
 ```
 
 _React Example:_
+
 ```javascript
-import { render } from 'react-dom'
-import App from './App'
+import { render } from 'react-dom';
+import App from './App';
 
 const renderVisualization = (props) => {
-  const { command, data = [] } = props
-  const [{ result, status }] = data
+  const { command, data = [] } = props;
+  const [{ result, status }] = data;
   render(
     <App command={command} response={result} status={status} />,
-    document.getElementById('app')
-  )
-}
+    document.getElementById('app'),
+  );
+};
 
 // This is a required action - export the main function for execution of the visualization
-export default { renderVisualization }
+export default { renderVisualization };
 ```
-
 
 ## Plugin communication
 
-Use the [redisinsight-plugin-sdk](https://www.npmjs.com/package/redisinsight-plugin-sdk), which is a third party library, 
+Use the [redisinsight-plugin-sdk](https://www.npmjs.com/package/redisinsight-plugin-sdk), which is a third party library,
 to communicate with the main app.
 
 Find the list and
-description of methods called in the 
+description of methods called in the
 [README.md](../../redisinsight/ui/src/packages/redisinsight-plugin-sdk/README.md).
-

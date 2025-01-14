@@ -15,5 +15,5 @@ export {
   SummaryPerData,
   TableLoader,
   TopKeys,
-  TopNamespace
+  TopNamespace,
 }

@@ -7,8 +7,8 @@ export class UpdateKeyTtlDto extends KeyDto {
   @ApiProperty({
     type: Number,
     description:
-      'Set a timeout on key in seconds. After the timeout has expired, the key will automatically be deleted. '
-      + 'If the property has value of -1, then the key timeout will be removed.',
+      'Set a timeout on key in seconds. After the timeout has expired, the key will automatically be deleted. ' +
+      'If the property has value of -1, then the key timeout will be removed.',
     maximum: MAX_TTL_NUMBER,
   })
   @IsNotEmpty()

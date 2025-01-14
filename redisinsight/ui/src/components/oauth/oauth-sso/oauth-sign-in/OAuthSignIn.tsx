@@ -1,10 +1,7 @@
 import React from 'react'
 import { EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
-import {
-  OAuthAdvantages,
-  OAuthAgreement,
-} from 'uiSrc/components/oauth/shared'
+import { OAuthAdvantages, OAuthAgreement } from 'uiSrc/components/oauth/shared'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
@@ -30,8 +27,8 @@ const OAuthSignIn = (props: Props) => {
       eventData: {
         accountOption,
         action,
-        source
-      }
+        source,
+      },
     })
   }
 
@@ -50,7 +47,9 @@ const OAuthSignIn = (props: Props) => {
             {(form: React.ReactNode) => (
               <>
                 <EuiText className={styles.subTitle}>Get started with</EuiText>
-                <EuiTitle className={styles.title}><h2>Redis Cloud account</h2></EuiTitle>
+                <EuiTitle className={styles.title}>
+                  <h2>Redis Cloud account</h2>
+                </EuiTitle>
                 {form}
                 <OAuthAgreement />
               </>

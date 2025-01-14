@@ -18,9 +18,7 @@ describe('CloudTaskCapiProvider', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CloudTaskCapiProvider,
-      ],
+      providers: [CloudTaskCapiProvider],
     }).compile();
 
     service = module.get(CloudTaskCapiProvider);
@@ -34,7 +32,9 @@ describe('CloudTaskCapiProvider', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getTask(mockCloudCapiAuthDto, 'id')).toEqual(mockCloudTaskInit);
+      expect(await service.getTask(mockCloudCapiAuthDto, 'id')).toEqual(
+        mockCloudTaskInit,
+      );
       expect(mockedAxios.get).toHaveBeenCalledWith(
         '/tasks/id',
         mockCloudCapiHeaders,

@@ -1,14 +1,23 @@
-import { AiChat, AiChatMessage, AiChatMessageType } from 'src/modules/ai/chat/models';
+import {
+  AiChat,
+  AiChatMessage,
+  AiChatMessageType,
+} from 'src/modules/ai/chat/models';
 import { Readable } from 'stream';
 import * as MockSocket from 'socket.io-mock';
 import { AxiosError } from 'axios';
 import { SendAiChatMessageDto } from 'src/modules/ai/chat/dto/send.ai-chat.message.dto';
 import { mockCloudSession } from 'src/__mocks__/cloud-session';
-import { AiQueryIntermediateStep, AiQueryIntermediateStepType, AiQueryMessage } from 'src/modules/ai/query/models';
+import {
+  AiQueryIntermediateStep,
+  AiQueryIntermediateStepType,
+  AiQueryMessage,
+} from 'src/modules/ai/query/models';
 import { AiQueryMessageEntity } from 'src/modules/ai/query/entities/ai-query.message.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 
-export const mockAiChatId = '0539879dc020add5abb33f6f60a07fe8d5a0b9d61c81c9d79d77f9b1b2f2e239';
+export const mockAiChatId =
+  '0539879dc020add5abb33f6f60a07fe8d5a0b9d61c81c9d79d77f9b1b2f2e239';
 
 export const mockAiChatBadRequestError = {
   message: 'Bad request',
@@ -83,91 +92,116 @@ export const mockAiChat = Object.assign(new AiChat(), {
 export const getMockedReadableStream = () => new Readable();
 export const mockAiResponseStream = getMockedReadableStream();
 
-export const mockSendAiChatMessageDto = Object.assign(new SendAiChatMessageDto(), {
-  content: mockHumanMessage1Response.content,
-});
+export const mockSendAiChatMessageDto = Object.assign(
+  new SendAiChatMessageDto(),
+  {
+    content: mockHumanMessage1Response.content,
+  },
+);
 
 export const mockAiQueryConversationId = 'conversation-id-uuid';
 export const mockAiQueryDatabaseId = 'database-id-uuid';
 export const mockAiQueryAccountId = 'account-id';
 
-export const mockAiQueryHumanMessage: AiQueryMessage = Object.assign(new AiQueryMessage(), {
-  id: 'uuid-for-human-message-1',
-  type: AiChatMessageType.HumanMessage,
-  content: 'human message 1',
-  conversationId: mockAiQueryConversationId,
-  databaseId: mockAiQueryDatabaseId,
-  accountId: mockAiQueryAccountId,
-});
+export const mockAiQueryHumanMessage: AiQueryMessage = Object.assign(
+  new AiQueryMessage(),
+  {
+    id: 'uuid-for-human-message-1',
+    type: AiChatMessageType.HumanMessage,
+    content: 'human message 1',
+    conversationId: mockAiQueryConversationId,
+    databaseId: mockAiQueryDatabaseId,
+    accountId: mockAiQueryAccountId,
+  },
+);
 
-export const mockAiQueryHumanMessageEntity: AiQueryMessageEntity = Object.assign(new AiQueryMessageEntity(), {
-  ...mockAiQueryHumanMessage,
-  content: 'human message 1 ENCRYPTED',
-  encryption: EncryptionStrategy.KEYTAR,
-});
+export const mockAiQueryHumanMessageEntity: AiQueryMessageEntity =
+  Object.assign(new AiQueryMessageEntity(), {
+    ...mockAiQueryHumanMessage,
+    content: 'human message 1 ENCRYPTED',
+    encryption: EncryptionStrategy.KEYTAR,
+  });
 
-export const mockAiQueryHumanMessage2: AiQueryMessage = Object.assign(new AiQueryMessage(), {
-  id: 'uuid-for-human-message-2',
-  type: AiChatMessageType.HumanMessage,
-  content: 'human message 2',
-  conversationId: mockAiQueryConversationId,
-  databaseId: mockAiQueryDatabaseId,
-  accountId: mockAiQueryAccountId,
-});
+export const mockAiQueryHumanMessage2: AiQueryMessage = Object.assign(
+  new AiQueryMessage(),
+  {
+    id: 'uuid-for-human-message-2',
+    type: AiChatMessageType.HumanMessage,
+    content: 'human message 2',
+    conversationId: mockAiQueryConversationId,
+    databaseId: mockAiQueryDatabaseId,
+    accountId: mockAiQueryAccountId,
+  },
+);
 
-export const mockAiQueryHumanMessageEntity2: AiQueryMessageEntity = Object.assign(new AiQueryMessageEntity(), {
-  ...mockAiQueryHumanMessage2,
-  content: 'human message 2',
-  encryption: EncryptionStrategy.PLAIN,
-});
+export const mockAiQueryHumanMessageEntity2: AiQueryMessageEntity =
+  Object.assign(new AiQueryMessageEntity(), {
+    ...mockAiQueryHumanMessage2,
+    content: 'human message 2',
+    encryption: EncryptionStrategy.PLAIN,
+  });
 
-export const mockAiQueryAiIntermediateStep: AiQueryIntermediateStep = Object.assign(new AiQueryIntermediateStep(), {
-  type: AiQueryIntermediateStepType.TOOL,
-  data: 'intermediate tool 1',
-});
+export const mockAiQueryAiIntermediateStep: AiQueryIntermediateStep =
+  Object.assign(new AiQueryIntermediateStep(), {
+    type: AiQueryIntermediateStepType.TOOL,
+    data: 'intermediate tool 1',
+  });
 
-export const mockAiQueryAiIntermediateStep2: AiQueryIntermediateStep = Object.assign(new AiQueryIntermediateStep(), {
-  type: AiQueryIntermediateStepType.TOOL_CALL,
-  data: 'intermediate tool call 2',
-});
+export const mockAiQueryAiIntermediateStep2: AiQueryIntermediateStep =
+  Object.assign(new AiQueryIntermediateStep(), {
+    type: AiQueryIntermediateStepType.TOOL_CALL,
+    data: 'intermediate tool call 2',
+  });
 
-export const mockAiQueryAiResponse: AiQueryMessage = Object.assign(new AiQueryMessage(), {
-  id: 'uuid-for-ai-response-1',
-  type: AiChatMessageType.AiMessage,
-  content: 'ai response 1',
-  steps: [
-    mockAiQueryAiIntermediateStep,
-    mockAiQueryAiIntermediateStep2,
-  ],
-  conversationId: mockAiQueryConversationId,
-  databaseId: mockAiQueryDatabaseId,
-  accountId: mockAiQueryAccountId,
-});
+export const mockAiQueryAiResponse: AiQueryMessage = Object.assign(
+  new AiQueryMessage(),
+  {
+    id: 'uuid-for-ai-response-1',
+    type: AiChatMessageType.AiMessage,
+    content: 'ai response 1',
+    steps: [mockAiQueryAiIntermediateStep, mockAiQueryAiIntermediateStep2],
+    conversationId: mockAiQueryConversationId,
+    databaseId: mockAiQueryDatabaseId,
+    accountId: mockAiQueryAccountId,
+  },
+);
 
-export const mockAiQueryAiResponseEntity: AiQueryMessageEntity = Object.assign(new AiQueryMessageEntity(), {
-  ...mockAiQueryAiResponse,
-  content: 'ai response 1 ENCRYPTED',
-  encryption: EncryptionStrategy.KEYTAR,
-});
+export const mockAiQueryAiResponseEntity: AiQueryMessageEntity = Object.assign(
+  new AiQueryMessageEntity(),
+  {
+    ...mockAiQueryAiResponse,
+    content: 'ai response 1 ENCRYPTED',
+    encryption: EncryptionStrategy.KEYTAR,
+  },
+);
 
-export const mockAiQueryAiResponse2: AiQueryMessage = Object.assign(new AiQueryMessage(), {
-  id: 'uuid-for-ai-response-2',
-  type: AiChatMessageType.AiMessage,
-  content: 'ai response 2',
-  steps: [],
-  conversationId: mockAiQueryConversationId,
-  databaseId: mockAiQueryDatabaseId,
-  accountId: mockAiQueryAccountId,
-});
+export const mockAiQueryAiResponse2: AiQueryMessage = Object.assign(
+  new AiQueryMessage(),
+  {
+    id: 'uuid-for-ai-response-2',
+    type: AiChatMessageType.AiMessage,
+    content: 'ai response 2',
+    steps: [],
+    conversationId: mockAiQueryConversationId,
+    databaseId: mockAiQueryDatabaseId,
+    accountId: mockAiQueryAccountId,
+  },
+);
 
-export const mockAiQueryAiResponseEntity2: AiQueryMessageEntity = Object.assign(new AiQueryMessageEntity(), {
-  ...mockAiQueryAiResponse2,
-  content: 'ai response 2',
-  encryption: EncryptionStrategy.PLAIN,
-  steps: '[]',
-});
+export const mockAiQueryAiResponseEntity2: AiQueryMessageEntity = Object.assign(
+  new AiQueryMessageEntity(),
+  {
+    ...mockAiQueryAiResponse2,
+    content: 'ai response 2',
+    encryption: EncryptionStrategy.PLAIN,
+    steps: '[]',
+  },
+);
 
-export const mockAiQueryHistory = [mockAiQueryHumanMessage, mockAiQueryAiResponse];
+export const mockAiQueryHistory = [
+  mockAiQueryHumanMessage,
+  mockAiQueryAiResponse,
+];
 
 export const mockAiQueryIndex = 'idx:bicycle';
 
@@ -177,14 +211,7 @@ export const mockAiQueryIndexInfoReply = [
   'index_options',
   [],
   'index_definition',
-  [
-    'key_type',
-    'JSON',
-    'prefixes',
-    ['bicycle:'],
-    'default_score',
-    '1',
-  ],
+  ['key_type', 'JSON', 'prefixes', ['bicycle:'], 'default_score', '1'],
   'attributes',
   [
     [
@@ -197,14 +224,7 @@ export const mockAiQueryIndexInfoReply = [
       'WEIGHT',
       '1',
     ],
-    [
-      'identifier',
-      '$.price',
-      'attribute',
-      'price',
-      'type',
-      'NUMERIC',
-    ],
+    ['identifier', '$.price', 'attribute', 'price', 'type', 'NUMERIC'],
     [
       'identifier',
       '$.type',
@@ -285,7 +305,11 @@ export const mockAiQueryIndexInfoReply = [
 export const mockAiQueryIndexInfoObject = {
   index_name: mockAiQueryIndex,
   index_options: [],
-  index_definition: { key_type: 'JSON', prefixes: ['bicycle:'], default_score: '1' },
+  index_definition: {
+    key_type: 'JSON',
+    prefixes: ['bicycle:'],
+    default_score: '1',
+  },
   attributes: [
     {
       identifier: '$.description',
@@ -363,11 +387,7 @@ export const mockAiQuerySchema = {
         type: { type: 'string' },
         description: { type: 'string' },
       },
-      required: [
-        'description',
-        'price',
-        'type',
-      ],
+      required: ['description', 'price', 'type'],
       title: 'IdxBicycle',
     },
   },
@@ -385,11 +405,7 @@ export const mockAiQuerySchemaForHash = {
         type: { type: 'string' },
         description: { type: 'string' },
       },
-      required: [
-        'description',
-        'price',
-        'type',
-      ],
+      required: ['description', 'price', 'type'],
       title: 'IdxBicycle',
     },
   },
@@ -397,9 +413,18 @@ export const mockAiQuerySchemaForHash = {
 
 export const mockAiQueryGetDescriptionTopValuesReply = [
   '3',
-  ['1', 'The Freedom offers eco-friendly mobility without compromising on style and performance!'],
-  ['1', 'The Explorer conquers rugged trails and mountain peaks with confidence and agility!'],
-  ['1', 'The Pioneer leads the way through challenging trails and rocky terrain with confidence!'],
+  [
+    '1',
+    'The Freedom offers eco-friendly mobility without compromising on style and performance!',
+  ],
+  [
+    '1',
+    'The Explorer conquers rugged trails and mountain peaks with confidence and agility!',
+  ],
+  [
+    '1',
+    'The Pioneer leads the way through challenging trails and rocky terrain with confidence!',
+  ],
 ];
 
 export const mockAiQueryGetPriceTopValuesReply = [
@@ -430,13 +455,16 @@ export const mockAiQueryIndexContext = {
       distinct_count: 3,
       top_values: [
         {
-          value: 'The Freedom offers eco-friendly mobility without compromising on style and performance!',
+          value:
+            'The Freedom offers eco-friendly mobility without compromising on style and performance!',
         },
         {
-          value: 'The Explorer conquers rugged trails and mountain peaks with confidence and agility!',
+          value:
+            'The Explorer conquers rugged trails and mountain peaks with confidence and agility!',
         },
         {
-          value: 'The Pioneer leads the way through challenging trails and rocky terrain with confidence!',
+          value:
+            'The Pioneer leads the way through challenging trails and rocky terrain with confidence!',
         },
       ],
     },
@@ -445,11 +473,7 @@ export const mockAiQueryIndexContext = {
       attribute: 'price',
       type: 'NUMERIC',
       distinct_count: 3,
-      top_values: [
-        { value: '320' },
-        { value: '329' },
-        { value: '380' },
-      ],
+      top_values: [{ value: '320' }, { value: '329' }, { value: '380' }],
     },
     type: {
       identifier: '$.type',
@@ -457,11 +481,7 @@ export const mockAiQueryIndexContext = {
       type: 'TAG',
       SEPARATOR: '',
       distinct_count: 3,
-      top_values: [
-        { value: 'Mountain' },
-        { value: 'City' },
-        { value: 'Kids' },
-      ],
+      top_values: [{ value: 'Mountain' }, { value: 'City' }, { value: 'Kids' }],
     },
   },
 };
@@ -495,15 +515,19 @@ export const mockAiQueryFullDbContext = {
 export const mockAiQueryJsonReply = JSON.stringify({
   price: 490,
   type: 'Touring',
-  description: 'The Wanderer takes you on epic adventures across varied landscapes with comfort and endurance!',
+  description:
+    'The Wanderer takes you on epic adventures across varied landscapes with comfort and endurance!',
 });
 
 export const mockAiQueryHScanReply = [
   0,
   [
-    'price', '490',
-    'type', 'Touring',
-    'description', 'The Wanderer takes you on epic adventures across varied landscapes with comfort and endurance!',
+    'price',
+    '490',
+    'type',
+    'Touring',
+    'description',
+    'The Wanderer takes you on epic adventures across varied landscapes with comfort and endurance!',
   ],
 ];
 

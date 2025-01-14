@@ -4,15 +4,21 @@ const RedisDatabases = {
 }
 
 export interface BrowserPageOptions {
-  connectedInstanceName: string;
-  postfix?: string;
-  connection: string;
-  version: string;
+  connectedInstanceName: string
+  postfix?: string
+  connection: string
+  version: string
   user: string
 }
 
 export const BreadcrumbsLinks = {
-  BrowserPage: ({ connectedInstanceName, connection, version, user, postfix = '' }: BrowserPageOptions) => ([
+  BrowserPage: ({
+    connectedInstanceName,
+    connection,
+    version,
+    user,
+    postfix = '',
+  }: BrowserPageOptions) => [
     { ...RedisDatabases },
     {
       postfix,
@@ -20,7 +26,7 @@ export const BreadcrumbsLinks = {
       tooltipOptions: [
         {
           label: 'Database Name',
-          value: connectedInstanceName + (postfix ? ` ${postfix}` : '')
+          value: connectedInstanceName + (postfix ? ` ${postfix}` : ''),
         },
         {
           label: 'Connection',
@@ -33,8 +39,8 @@ export const BreadcrumbsLinks = {
         {
           label: 'Username',
           value: user,
-        }
-      ]
-    }
-  ])
+        },
+      ],
+    },
+  ],
 }

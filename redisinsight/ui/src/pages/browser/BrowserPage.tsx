@@ -2,10 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiResizableContainer,
-  EuiButton,
-} from '@elastic/eui'
+import { EuiResizableContainer, EuiButton } from '@elastic/eui'
 
 import { isNumber } from 'lodash'
 import {
@@ -15,10 +12,7 @@ import {
   Nullable,
   setTitle,
 } from 'uiSrc/utils'
-import {
-  sendPageViewTelemetry,
-  TelemetryPageView,
-} from 'uiSrc/telemetry'
+import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import {
   fetchKeys,
   keysSelector,
@@ -39,7 +33,10 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import {
+  SCAN_COUNT_DEFAULT,
+  SCAN_TREE_COUNT_DEFAULT,
+} from 'uiSrc/constants/api'
 import OnboardingStartPopover from 'uiSrc/pages/browser/components/onboarding-start-popover'
 import { sidePanelsSelector } from 'uiSrc/slices/panels/sidePanels'
 import { useStateWithContext } from 'uiSrc/services/hooks'
@@ -56,12 +53,15 @@ export const firstPanelId = 'keys'
 export const secondPanelId = 'keyDetails'
 
 const isOneSideMode = (isInsightsOpen: boolean) =>
-  globalThis.innerWidth < widthResponsiveSize + (isInsightsOpen ? widthExplorePanel : 0)
+  globalThis.innerWidth <
+  widthResponsiveSize + (isInsightsOpen ? widthExplorePanel : 0)
 
 const BrowserPage = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const { name: connectedInstanceName, db = 0 } = useSelector(connectedInstanceSelector)
+  const { name: connectedInstanceName, db = 0 } = useSelector(
+    connectedInstanceSelector,
+  )
   const {
     panelSizes,
     keyList: { selectedKey: selectedKeyContext },
@@ -70,17 +70,26 @@ const BrowserPage = () => {
   const { contextInstanceId } = useSelector(appContextSelector)
 
   const { isBrowserFullScreen } = useSelector(keysSelector)
-  const { type } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
+  const { type } = useSelector(selectedKeyDataSelector) ?? {
+    type: '',
+    length: 0,
+  }
   const { viewType, searchMode } = useSelector(keysSelector)
   const { openedPanel: openedSidePanel } = useSelector(sidePanelsSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
-  const [arePanelsCollapsed, setArePanelsCollapsed] = useState(isOneSideMode(!!openedSidePanel))
+  const [arePanelsCollapsed, setArePanelsCollapsed] = useState(
+    isOneSideMode(!!openedSidePanel),
+  )
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
   const [isCreateIndexPanelOpen, setIsCreateIndexPanelOpen] = useState(false)
-  const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(bulkActionOpenContext)
+  const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(
+    bulkActionOpenContext,
+  )
 
-  const [selectedKey, setSelectedKey] = useStateWithContext<Nullable<RedisResponseBuffer>>(selectedKeyContext, null)
+  const [selectedKey, setSelectedKey] = useStateWithContext<
+    Nullable<RedisResponseBuffer>
+  >(selectedKeyContext, null)
 
   const [sizes, setSizes] = useState(panelSizes)
 
@@ -154,14 +163,19 @@ const BrowserPage = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.BROWSER_PAGE,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
     setIsPageViewSent(true)
   }
 
   const handlePanel = (value: boolean, keyName?: RedisResponseBuffer) => {
-    if (value && !isAddKeyPanelOpen && !isBulkActionsPanelOpen && !isCreateIndexPanelOpen) {
+    if (
+      value &&
+      !isAddKeyPanelOpen &&
+      !isBulkActionsPanelOpen &&
+      !isCreateIndexPanelOpen
+    ) {
       dispatch(resetKeyInfo())
     }
 
@@ -170,10 +184,13 @@ const BrowserPage = () => {
     closeRightPanels()
   }
 
-  const handleAddKeyPanel = useCallback((value: boolean, keyName?: RedisResponseBuffer) => {
-    handlePanel(value, keyName)
-    setIsAddKeyPanelOpen(value)
-  }, [])
+  const handleAddKeyPanel = useCallback(
+    (value: boolean, keyName?: RedisResponseBuffer) => {
+      handlePanel(value, keyName)
+      setIsAddKeyPanelOpen(value)
+    },
+    [],
+  )
 
   const handleBulkActionsPanel = useCallback((value: boolean) => {
     handlePanel(value)
@@ -208,11 +225,16 @@ const BrowserPage = () => {
       setSelectedKey(null)
     }
 
-    dispatch(fetchKeys({
-      searchMode,
-      cursor: '0',
-      count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT
-    }))
+    dispatch(
+      fetchKeys({
+        searchMode,
+        cursor: '0',
+        count:
+          viewType === KeyViewType.Browser
+            ? SCAN_COUNT_DEFAULT
+            : SCAN_TREE_COUNT_DEFAULT,
+      }),
+    )
   }
 
   const selectKey = useCallback(({ rowData }: { rowData: any }) => {
@@ -233,8 +255,14 @@ const BrowserPage = () => {
     closeRightPanels()
   }
 
-  const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen || isBulkActionsPanelOpen || isCreateIndexPanelOpen
-  const isRightPanelFullScreen = (isBrowserFullScreen && isRightPanelOpen) || (arePanelsCollapsed && isRightPanelOpen)
+  const isRightPanelOpen =
+    selectedKey !== null ||
+    isAddKeyPanelOpen ||
+    isBulkActionsPanelOpen ||
+    isCreateIndexPanelOpen
+  const isRightPanelFullScreen =
+    (isBrowserFullScreen && isRightPanelOpen) ||
+    (arePanelsCollapsed && isRightPanelOpen)
 
   return (
     <div className={`browserPage ${styles.container}`}>
@@ -250,8 +278,10 @@ const BrowserPage = () => {
           Back
         </EuiButton>
       )}
-      <div className={cx({
-        [styles.hidden]: isRightPanelFullScreen })}
+      <div
+        className={cx({
+          [styles.hidden]: isRightPanelFullScreen,
+        })}
       >
         <BrowserSearchPanel
           handleAddKeyPanel={handleAddKeyPanel}
@@ -260,10 +290,10 @@ const BrowserPage = () => {
         />
       </div>
       <div
-        className={cx(
-          styles.main,
-          { [styles.mainWithBackBtn]: arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen },
-        )}
+        className={cx(styles.main, {
+          [styles.mainWithBackBtn]:
+            arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen,
+        })}
       >
         <div className={styles.resizableContainer}>
           <EuiResizableContainer
@@ -280,7 +310,9 @@ const BrowserPage = () => {
                   paddingSize="none"
                   wrapperProps={{
                     className: cx(styles.resizePanelLeft, {
-                      [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && !isRightPanelOpen)
+                      [styles.fullWidth]:
+                        arePanelsCollapsed ||
+                        (isBrowserFullScreen && !isRightPanelOpen),
                     }),
                   }}
                 >
@@ -308,9 +340,14 @@ const BrowserPage = () => {
                   data-testid="key-details"
                   wrapperProps={{
                     className: cx(styles.resizePanelRight, {
-                      [styles.noVisible]: isBrowserFullScreen && !isRightPanelOpen,
-                      [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && isRightPanelOpen),
-                      [styles.keyDetails]: arePanelsCollapsed || (isBrowserFullScreen && isRightPanelOpen),
+                      [styles.noVisible]:
+                        isBrowserFullScreen && !isRightPanelOpen,
+                      [styles.fullWidth]:
+                        arePanelsCollapsed ||
+                        (isBrowserFullScreen && isRightPanelOpen),
+                      [styles.keyDetails]:
+                        arePanelsCollapsed ||
+                        (isBrowserFullScreen && isRightPanelOpen),
                       [styles.keyDetailsOpen]: isRightPanelOpen,
                     }),
                   }}

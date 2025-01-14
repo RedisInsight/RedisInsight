@@ -4,20 +4,21 @@ let parallelNodeInfo = '';
 // const totalNodes = parseInt(process.env.NODE_TOTAL, 10);
 const totalNodes = 4;
 if (totalNodes > 1) {
-  parallelNodeInfo = ` (node: ${parseInt(process.env.NODE_INDEX, 10) + 1}/${totalNodes})`
+  parallelNodeInfo = ` (node: ${parseInt(process.env.NODE_INDEX, 10) + 1}/${totalNodes})`;
 }
 
-const file = 'tests/e2e/results/e2e.results.json'
-const appBuildType = process.env.APP_BUILD_TYPE || 'Web'
+const file = 'tests/e2e/results/e2e.results.json';
+const appBuildType = process.env.APP_BUILD_TYPE || 'Web';
 const results = {
   message: {
-    text: `*E2ETest - ${appBuildType}${parallelNodeInfo}* (Branch: *${process.env.GITHUB_REF_NAME}*)` +
+    text:
+      `*E2ETest - ${appBuildType}${parallelNodeInfo}* (Branch: *${process.env.GITHUB_REF_NAME}*)` +
       `\n<https://github.com/RedisInsight/RedisInsight/actions/runs/${process.env.GITHUB_RUN_ID}|View on Github Actions>`,
     attachments: [],
   },
 };
 
-const result = JSON.parse(fs.readFileSync(file, 'utf-8'))
+const result = JSON.parse(fs.readFileSync(file, 'utf-8'));
 const testRunResult = {
   color: '#36a64f',
   title: `Started at: *${result.startTime}`,
@@ -52,7 +53,10 @@ if (results.passed === false) {
   results.message.text = '<!here> ' + results.message.text;
 }
 
-fs.writeFileSync('e2e.report.json', JSON.stringify({
-  channel: process.env.SLACK_TEST_REPORT_CHANNEL,
-  ...results.message,
-}));
+fs.writeFileSync(
+  'e2e.report.json',
+  JSON.stringify({
+    channel: process.env.SLACK_TEST_REPORT_CHANNEL,
+    ...results.message,
+  }),
+);

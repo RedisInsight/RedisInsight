@@ -8,8 +8,8 @@ export class GetKeysWithDetailsResponse {
     type: Number,
     default: 0,
     description:
-      'The new cursor to use in the next call.'
-      + ' If the property has value of 0, then the iteration is completed.',
+      'The new cursor to use in the next call.' +
+      ' If the property has value of 0, then the iteration is completed.',
   })
   cursor: number;
 
@@ -22,8 +22,8 @@ export class GetKeysWithDetailsResponse {
   @ApiProperty({
     type: Number,
     description:
-      'The number of keys we tried to scan. Be aware that '
-      + 'scanned is sum of COUNT parameters from redis commands',
+      'The number of keys we tried to scan. Be aware that ' +
+      'scanned is sum of COUNT parameters from redis commands',
   })
   scanned: number;
 
@@ -51,8 +51,8 @@ export class GetKeysWithDetailsResponse {
   @ApiPropertyOptional({
     type: Number,
     description:
-      'The maximum number of results.'
-      + ' For RediSearch this number is a value from "FT.CONFIG GET maxsearchresults" command.',
+      'The maximum number of results.' +
+      ' For RediSearch this number is a value from "FT.CONFIG GET maxsearchresults" command.',
   })
   maxResults?: number;
 }

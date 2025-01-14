@@ -9,9 +9,7 @@ import {
   mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
-import {
-  ServerInfoNotFoundException,
-} from 'src/constants';
+import { ServerInfoNotFoundException } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { EncryptionStrategy } from 'src/modules/encryption/models';

@@ -5,14 +5,21 @@ import { generateQuery } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokens
 import { ICommandTokenType, IRedisCommand } from 'uiSrc/constants'
 import { DefinedArgumentName } from 'uiSrc/pages/workbench/constants'
 
-export const generateKeywords = (commands: IRedisCommand[]) => commands.map(({ name }) => name)
-export const generateTokens = (command?: IRedisCommand): Nullable<{
+export const generateKeywords = (commands: IRedisCommand[]) =>
+  commands.map(({ name }) => name)
+export const generateTokens = (
+  command?: IRedisCommand,
+): Nullable<{
   pureTokens: Array<Array<IRedisCommand>>
-  tokensWithQueryAfter: Array<Array<{ token: IRedisCommand, arguments: IRedisCommand[] }>>
+  tokensWithQueryAfter: Array<
+    Array<{ token: IRedisCommand; arguments: IRedisCommand[] }>
+  >
 }> => {
   if (!command) return null
   const pureTokens: Array<Array<IRedisCommand>> = []
-  const tokensWithQueryAfter: Array<Array<{ token: IRedisCommand, arguments: IRedisCommand[] }>> = []
+  const tokensWithQueryAfter: Array<
+    Array<{ token: IRedisCommand; arguments: IRedisCommand[] }>
+  > = []
 
   function processArguments(args: IRedisCommand[], level = 0) {
     if (!pureTokens[level]) pureTokens[level] = []
@@ -24,20 +31,24 @@ export const generateTokens = (command?: IRedisCommand): Nullable<{
       if (arg.type === ICommandTokenType.Block && arg.arguments) {
         const blockToken = arg.arguments[0]
         const nextArgs = arg.arguments
-        const isArgHasOwnSyntax = arg.arguments[0].expression && !!arg.arguments[0].arguments?.length
+        const isArgHasOwnSyntax =
+          arg.arguments[0].expression && !!arg.arguments[0].arguments?.length
 
         if (blockToken?.token) {
           if (isArgHasOwnSyntax) {
             tokensWithQueryAfter[level].push({
               token: blockToken,
-              arguments: arg.arguments[0].arguments as IRedisCommand[]
+              arguments: arg.arguments[0].arguments as IRedisCommand[],
             })
           } else {
             pureTokens[level].push(blockToken)
           }
         }
 
-        processArguments(blockToken ? nextArgs.slice(1, nextArgs.length) : nextArgs, level + 1)
+        processArguments(
+          blockToken ? nextArgs.slice(1, nextArgs.length) : nextArgs,
+          level + 1,
+        )
       }
 
       if (arg.type === ICommandTokenType.OneOf && arg.arguments) {
@@ -58,25 +69,34 @@ export const generateTokens = (command?: IRedisCommand): Nullable<{
 export const isIndexAfterKeyword = (command?: IRedisCommand) => {
   if (!command) return false
 
-  const index = command.arguments?.findIndex(({ name }) => name === DefinedArgumentName.index)
+  const index = command.arguments?.findIndex(
+    ({ name }) => name === DefinedArgumentName.index,
+  )
   return isNumber(index) && index === 0
 }
 
 export const isQueryAfterIndex = (command?: IRedisCommand) => {
   if (!command) return false
 
-  const index = command.arguments?.findIndex(({ name }) => name === DefinedArgumentName.index)
-  return isNumber(index) && index > -1 ? command.arguments?.[index + 1]?.name === DefinedArgumentName.query : false
+  const index = command.arguments?.findIndex(
+    ({ name }) => name === DefinedArgumentName.index,
+  )
+  return isNumber(index) && index > -1
+    ? command.arguments?.[index + 1]?.name === DefinedArgumentName.query
+    : false
 }
 
 export const appendTokenWithQuery = (
-  args: Array<{ token: IRedisCommand, arguments: IRedisCommand[] }>,
-  level: number
+  args: Array<{ token: IRedisCommand; arguments: IRedisCommand[] }>,
+  level: number,
 ): languages.IMonarchLanguageRule[] =>
-  args.map(({ token }) => [`(${token.token})\\b`, { token: `argument.block.${level}`, next: `@query.${token.token}` }])
+  args.map(({ token }) => [
+    `(${token.token})\\b`,
+    { token: `argument.block.${level}`, next: `@query.${token.token}` },
+  ])
 
 export const appendQueryWithNextFunctions = (
-  tokens: Array<{ token: IRedisCommand, arguments: IRedisCommand[] }>
+  tokens: Array<{ token: IRedisCommand; arguments: IRedisCommand[] }>,
 ): {
   [name: string]: languages.IMonarchLanguageRule[]
 } => {
@@ -85,7 +105,7 @@ export const appendQueryWithNextFunctions = (
   tokens.forEach(({ token, arguments: args }) => {
     result = {
       ...result,
-      ...generateQuery(token, args)
+      ...generateQuery(token, args),
     }
   })
 
@@ -94,7 +114,7 @@ export const appendQueryWithNextFunctions = (
 
 export const generateTokensWithFunctions = (
   name: string = '',
-  tokens?: Array<Array<{ token: IRedisCommand, arguments: IRedisCommand[] }>>
+  tokens?: Array<Array<{ token: IRedisCommand; arguments: IRedisCommand[] }>>,
 ): {
   [name: string]: languages.IMonarchLanguageRule[]
 } => {
@@ -108,38 +128,44 @@ export const generateTokensWithFunctions = (
     [`argument.block.${name}.withFunctions`]: [
       ...actualTokens
         .map((tokens, lvl) => appendTokenWithQuery(tokens, lvl))
-        .flat()
+        .flat(),
     ],
-    ...appendQueryWithNextFunctions(actualTokens.flat())
+    ...appendQueryWithNextFunctions(actualTokens.flat()),
   }
 }
 
 export const getBlockTokens = (
   name: string = '',
-  pureTokens: Maybe<Array<IRedisCommand>[]>
+  pureTokens: Maybe<Array<IRedisCommand>[]>,
 ): languages.IMonarchLanguageRule[] => {
   if (!pureTokens) return []
 
   const getLeveledToken = (
     tokens: IRedisCommand[],
-    lvl: number
+    lvl: number,
   ): languages.IMonarchLanguageRule[] => {
     const result: languages.IMonarchLanguageRule[] = []
     const restTokens = [...tokens]
-    const tokensWithNextExpression = remove(restTokens, (({ expression }) => expression))
+    const tokensWithNextExpression = remove(
+      restTokens,
+      ({ expression }) => expression,
+    )
 
     if (tokensWithNextExpression.length) {
       result.push([
         `(${tokensWithNextExpression.map(({ token }) => token).join('|')})\\b`,
         {
           token: `argument.block.${lvl}.${name}`,
-          next: '@query'
+          next: '@query',
         },
       ])
     }
 
     if (restTokens.length) {
-      result.push([`(${restTokens.map(({ token }) => token).join('|')})\\b`, { token: `argument.block.${lvl}.${name}`, next: '@root' }])
+      result.push([
+        `(${restTokens.map(({ token }) => token).join('|')})\\b`,
+        { token: `argument.block.${lvl}.${name}`, next: '@root' },
+      ])
     }
 
     return result

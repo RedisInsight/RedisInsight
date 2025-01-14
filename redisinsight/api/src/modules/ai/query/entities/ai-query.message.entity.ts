@@ -1,6 +1,10 @@
 import { Expose } from 'class-transformer';
 import {
-  Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DataAsJsonString } from 'src/common/decorators';
 

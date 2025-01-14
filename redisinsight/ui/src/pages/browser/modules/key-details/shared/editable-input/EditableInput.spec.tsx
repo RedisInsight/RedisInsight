@@ -5,11 +5,17 @@ import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import EditableInput, { Props } from './EditableInput'
 
 const mockedProps = mock<Props>()
-const Text = () => (<span data-testid="text">text</span>)
+const Text = () => <span data-testid="text">text</span>
 
 describe('EditableInput', () => {
   it('should render', () => {
-    expect(render(<EditableInput {...mockedProps}><Text /></EditableInput>)).toBeTruthy()
+    expect(
+      render(
+        <EditableInput {...mockedProps}>
+          <Text />
+        </EditableInput>,
+      ),
+    ).toBeTruthy()
   })
 
   it('should display editor', () => {
@@ -22,7 +28,7 @@ describe('EditableInput', () => {
         onDecline={jest.fn()}
       >
         <Text />
-      </EditableInput>
+      </EditableInput>,
     )
 
     expect(screen.getByTestId('inline-item-editor')).toBeInTheDocument()
@@ -41,10 +47,12 @@ describe('EditableInput', () => {
         onApply={onApply}
       >
         <Text />
-      </EditableInput>
+      </EditableInput>,
     )
 
-    fireEvent.change(screen.getByTestId('inline-item-editor'), { target: { value: 'value' } })
+    fireEvent.change(screen.getByTestId('inline-item-editor'), {
+      target: { value: 'value' },
+    })
     fireEvent.click(screen.getByTestId('apply-btn'))
 
     expect(onApply).toBeCalledWith('value', expect.any(Object))
@@ -62,10 +70,12 @@ describe('EditableInput', () => {
         onDecline={onDecline}
       >
         <Text />
-      </EditableInput>
+      </EditableInput>,
     )
 
-    fireEvent.change(screen.getByTestId('inline-item-editor'), { target: { value: 'value' } })
+    fireEvent.change(screen.getByTestId('inline-item-editor'), {
+      target: { value: 'value' },
+    })
     fireEvent.click(screen.getByTestId('cancel-btn'))
 
     expect(onDecline).toBeCalled()

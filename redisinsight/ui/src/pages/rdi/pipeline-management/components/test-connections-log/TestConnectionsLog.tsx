@@ -10,7 +10,7 @@ import styles from './styles.module.scss'
 
 enum ResultsStatus {
   Success = 'success',
-  Failed = 'failed'
+  Failed = 'failed',
 }
 
 export interface Props {
@@ -20,7 +20,9 @@ export interface Props {
 const TestConnectionsLog = (props: Props) => {
   const { data } = props
   const statusData = data?.fail?.length ? data.fail : data?.success
-  const status = data?.fail?.length ? ResultsStatus.Failed : ResultsStatus.Success
+  const status = data?.fail?.length
+    ? ResultsStatus.Failed
+    : ResultsStatus.Success
   const [openedNav, setOpenedNav] = useState<string>('')
 
   const onToggle = (length: number = 0, isOpen: boolean, name: string) => {
@@ -28,21 +30,38 @@ const TestConnectionsLog = (props: Props) => {
     setOpenedNav(isOpen ? name : '')
   }
 
-  const CollapsibleNavTitle = ({ title, length = 0 }: { title: string, length: number }) => (
+  const CollapsibleNavTitle = ({
+    title,
+    length = 0,
+  }: {
+    title: string
+    length: number
+  }) => (
     <div className={styles.collapsibleNavTitle}>
       <span data-testid="nav-group-title">{title}:</span>
       <span data-testid="number-of-connections">{length}</span>
     </div>
   )
 
-  const navTitle = status === ResultsStatus.Success ? 'Connected successfully' : 'Failed to connect'
+  const navTitle =
+    status === ResultsStatus.Success
+      ? 'Connected successfully'
+      : 'Failed to connect'
 
-  const getNavGroupState = (name: ResultsStatus) => (openedNav === name ? 'open' : 'closed')
+  const getNavGroupState = (name: ResultsStatus) =>
+    openedNav === name ? 'open' : 'closed'
 
   return (
     <EuiCollapsibleNavGroup
-      title={<CollapsibleNavTitle title={navTitle} length={statusData?.length ?? 0} />}
-      className={cx(styles.collapsibleNav, status, { [styles.disabled]: !statusData?.length })}
+      title={
+        <CollapsibleNavTitle
+          title={navTitle}
+          length={statusData?.length ?? 0}
+        />
+      }
+      className={cx(styles.collapsibleNav, status, {
+        [styles.disabled]: !statusData?.length,
+      })}
       isCollapsible
       initialIsOpen={false}
       onToggle={(isOpen) => onToggle(statusData?.length, isOpen, status)}

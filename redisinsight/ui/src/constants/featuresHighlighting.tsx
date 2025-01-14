@@ -1,6 +1,11 @@
 import React from 'react'
 
-export type FeaturesHighlightingType = 'plain' | 'tooltip' | 'popover' | 'dialog' | 'tooltip-badge'
+export type FeaturesHighlightingType =
+  | 'plain'
+  | 'tooltip'
+  | 'popover'
+  | 'dialog'
+  | 'tooltip-badge'
 
 interface BuildHighlightingFeature {
   type: FeaturesHighlightingType
@@ -12,6 +17,6 @@ interface BuildHighlightingFeature {
 
 export const BUILD_FEATURES: Record<string, BuildHighlightingFeature> = {
   aiChatbot: {
-    type: 'dialog'
-  }
+    type: 'dialog',
+  },
 } as const

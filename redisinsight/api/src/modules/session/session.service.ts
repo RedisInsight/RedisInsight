@@ -4,9 +4,7 @@ import { SessionProvider } from 'src/modules/session/providers/session.provider'
 
 @Injectable()
 export class SessionService {
-  constructor(
-    private readonly sessionProvider: SessionProvider,
-  ) {}
+  constructor(private readonly sessionProvider: SessionProvider) {}
 
   async getSession(id: string): Promise<Session> {
     return this.sessionProvider.getSession(id);
@@ -25,10 +23,12 @@ export class SessionService {
 
     return this.sessionProvider.updateSessionData(
       id,
-      data ? {
-        ...session.data,
-        ...data,
-      } : {},
+      data
+        ? {
+            ...session.data,
+            ...data,
+          }
+        : {},
     );
   }
 

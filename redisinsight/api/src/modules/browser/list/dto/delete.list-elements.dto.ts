@@ -1,8 +1,6 @@
 import { KeyDto } from 'src/modules/browser/keys/dto';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsDefined, IsEnum, IsInt, IsNotEmpty, Min,
-} from 'class-validator';
+import { IsDefined, IsEnum, IsInt, IsNotEmpty, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ListElementDestination } from './push.element-to-list.dto';
 

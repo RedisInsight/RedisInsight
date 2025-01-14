@@ -24,7 +24,14 @@ export interface Props {
 }
 
 const ContentElement = (props: Props) => {
-  const { content = {}, params, onLinkClick, telemetryName, insights, idx } = props
+  const {
+    content = {},
+    params,
+    onLinkClick,
+    telemetryName,
+    insights,
+    idx,
+  } = props
   const { type, value, parameter } = content
 
   const replacedValue = replaceVariables(value, parameter, params)
@@ -50,9 +57,7 @@ const ContentElement = (props: Props) => {
           key={`${telemetryName}-${idx}`}
           color="subdued"
         >
-          <code className={cx(styles.span, styles.text)}>
-            {value}
-          </code>
+          <code className={cx(styles.span, styles.text)}>{value}</code>
         </EuiTextColor>
       )
     case 'span':
@@ -61,7 +66,9 @@ const ContentElement = (props: Props) => {
           data-testid={`span-${telemetryName}-${idx}`}
           key={`${telemetryName}-${idx}`}
           color="subdued"
-          className={cx(styles.span, styles.text, { [styles.insights]: insights })}
+          className={cx(styles.span, styles.text, {
+            [styles.insights]: insights,
+          })}
         >
           {value}
         </EuiTextColor>
@@ -73,7 +80,10 @@ const ContentElement = (props: Props) => {
           external={false}
           data-testid={`link-${telemetryName}-${idx}`}
           target="_blank"
-          href={getUtmExternalLink(value.href, { medium: UTM_MEDIUMS.Recommendation, campaign: telemetryName })}
+          href={getUtmExternalLink(value.href, {
+            medium: UTM_MEDIUMS.Recommendation,
+            campaign: telemetryName,
+          })}
           onClick={() => onLinkClick?.()}
         >
           {value.name}
@@ -91,10 +101,13 @@ const ContentElement = (props: Props) => {
               onClick={(e) => {
                 ssoCloudHandlerClick?.(e, {
                   source: telemetryName as OAuthSocialSource,
-                  action: OAuthSocialAction.Create
+                  action: OAuthSocialAction.Create,
                 })
               }}
-              href={getUtmExternalLink(value.href, { medium: UTM_MEDIUMS.Recommendation, campaign: telemetryName })}
+              href={getUtmExternalLink(value.href, {
+                medium: UTM_MEDIUMS.Recommendation,
+                campaign: telemetryName,
+              })}
             >
               {value.name}
             </EuiLink>
@@ -102,9 +115,7 @@ const ContentElement = (props: Props) => {
         </OAuthSsoHandlerDialog>
       )
     case 'connect-btn':
-      return (
-        <OAuthConnectFreeDb source={telemetryName as OAuthSocialSource} />
-      )
+      return <OAuthConnectFreeDb source={telemetryName as OAuthSocialSource} />
     case 'code-link':
       return (
         <EuiLink
@@ -112,15 +123,16 @@ const ContentElement = (props: Props) => {
           external={false}
           data-testid={`code-link-${telemetryName}-${idx}`}
           target="_blank"
-          href={getUtmExternalLink(value.href, { medium: UTM_MEDIUMS.Recommendation, campaign: telemetryName })}
+          href={getUtmExternalLink(value.href, {
+            medium: UTM_MEDIUMS.Recommendation,
+            campaign: telemetryName,
+          })}
         >
           <EuiTextColor
             className={cx(styles.code, { [styles.insights]: insights })}
             color="subdued"
           >
-            <code className={cx(styles.span, styles.text)}>
-              {value.name}
-            </code>
+            <code className={cx(styles.span, styles.text)}>{value.name}</code>
           </EuiTextColor>
         </EuiLink>
       )
@@ -139,21 +151,22 @@ const ContentElement = (props: Props) => {
           data-testid={`list-${telemetryName}-${idx}`}
           key={`${telemetryName}-${idx}`}
         >
-          {isArray(value) && value.map((listElement: IRecommendationContent[], idx: number) => (
-            <li
-              className={cx(styles.listItem, { [styles.insights]: insights })}
-              // eslint-disable-next-line react/no-array-index-key
-              key={`list-item-${idx}`}
-            >
-              <RecommendationBody
-                elements={listElement}
-                params={params}
-                telemetryName={telemetryName}
-                onLinkClick={onLinkClick}
-                insights={insights}
-              />
-            </li>
-          ))}
+          {isArray(value) &&
+            value.map((listElement: IRecommendationContent[], idx: number) => (
+              <li
+                className={cx(styles.listItem, { [styles.insights]: insights })}
+                // eslint-disable-next-line react/no-array-index-key
+                key={`list-item-${idx}`}
+              >
+                <RecommendationBody
+                  elements={listElement}
+                  params={params}
+                  telemetryName={telemetryName}
+                  onLinkClick={onLinkClick}
+                  insights={insights}
+                />
+              </li>
+            ))}
         </ul>
       )
     case 'internal-link':

@@ -8,7 +8,7 @@ import {
   EuiForm,
   EuiOutsideClickDetector,
   EuiWindowEvent,
-  keys
+  keys,
 } from '@elastic/eui'
 
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
@@ -21,17 +21,12 @@ import styles from '../../styles.module.scss'
 export interface Props {
   isPair: boolean
   onCancel: () => void
-  onSubmit: (pair: { key?: string, value: string }) => void
+  onSubmit: (pair: { key?: string; value: string }) => void
   leftPadding?: number
 }
 
 const AddItem = (props: Props) => {
-  const {
-    isPair,
-    leftPadding = 0,
-    onCancel,
-    onSubmit
-  } = props
+  const { isPair, leftPadding = 0, onCancel, onSubmit } = props
 
   const [key, setKey] = useState<string>('')
   const [value, setValue] = useState<string>('')
@@ -65,7 +60,14 @@ const AddItem = (props: Props) => {
   }
 
   return (
-    <div className={styles.row} style={{ display: 'flex', flexDirection: 'row', paddingLeft: `${leftPadding}em` }}>
+    <div
+      className={styles.row}
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        paddingLeft: `${leftPadding}em`,
+      }}
+    >
       <EuiOutsideClickDetector onOutsideClick={onCancel}>
         <div>
           <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
@@ -84,7 +86,9 @@ const AddItem = (props: Props) => {
                     value={key}
                     isInvalid={!!error}
                     placeholder="Enter JSON key"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKey(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setKey(e.target.value)
+                    }
                     data-testid="json-key"
                   />
                 </EuiFlexItem>
@@ -95,7 +99,9 @@ const AddItem = (props: Props) => {
                   value={value}
                   placeholder="Enter JSON value"
                   isInvalid={!!error}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setValue(e.target.value)
+                  }
                   data-testid="json-value"
                 />
               </EuiFlexItem>

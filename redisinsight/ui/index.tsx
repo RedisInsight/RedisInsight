@@ -15,5 +15,5 @@ const root = createRoot(rootEl!)
 root.render(
   <Router>
     <App />
-  </Router>
+  </Router>,
 )

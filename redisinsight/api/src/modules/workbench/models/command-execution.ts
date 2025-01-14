@@ -153,7 +153,8 @@ export class CommandExecution {
   db?: number;
 
   @ApiPropertyOptional({
-    description: 'Command execution type. Used to distinguish between search and workbench',
+    description:
+      'Command execution type. Used to distinguish between search and workbench',
     default: CommandExecutionType.Workbench,
     enum: CommandExecutionType,
   })

@@ -11,7 +11,12 @@ export interface Props {
 
 const WelcomeMyTutorials = ({ handleOpenUpload }: Props) => (
   <div className={styles.wrapper} data-testid="welcome-my-tutorials">
-    <EuiPanel hasBorder={false} hasShadow={false} className={styles.panel} paddingSize="s">
+    <EuiPanel
+      hasBorder={false}
+      hasShadow={false}
+      className={styles.panel}
+      paddingSize="s"
+    >
       <div className={styles.link}>
         <CreateTutorialLink />
       </div>

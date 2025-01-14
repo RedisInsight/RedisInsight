@@ -6,18 +6,24 @@ const { request, server } = deps;
 
 const endpoint = () => request(server).get(`/notifications`);
 
-const responseSchema = Joi.object().keys({
-  totalUnread: Joi.number().integer().min(0).required(),
-  notifications: Joi.array().items(Joi.object().keys({
-    title: Joi.string().required(),
-    category: Joi.string().allow(null),
-    categoryColor: Joi.string().allow(null),
-    body: Joi.string().required(),
-    timestamp: Joi.number().integer().required(),
-    read: Joi.boolean().required(),
-    type: Joi.string().valid('global').required(),
-  })).required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    totalUnread: Joi.number().integer().min(0).required(),
+    notifications: Joi.array()
+      .items(
+        Joi.object().keys({
+          title: Joi.string().required(),
+          category: Joi.string().allow(null),
+          categoryColor: Joi.string().allow(null),
+          body: Joi.string().required(),
+          timestamp: Joi.number().integer().required(),
+          read: Joi.boolean().required(),
+          type: Joi.string().valid('global').required(),
+        }),
+      )
+      .required(),
+  })
+  .required();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -37,16 +43,16 @@ describe('GET /notifications', () => {
     {
       name: 'Should get ordered notifications list',
       responseSchema,
-      checkFn: ({body}) => {
+      checkFn: ({ body }) => {
         expect(body).to.eql({
           totalUnread: 2,
           notifications: [
             constants.TEST_NOTIFICATION_3,
             constants.TEST_NOTIFICATION_2,
             constants.TEST_NOTIFICATION_1,
-          ]
-        })
-      }
+          ],
+        });
+      },
     },
   ].map(mainCheckFn);
 });

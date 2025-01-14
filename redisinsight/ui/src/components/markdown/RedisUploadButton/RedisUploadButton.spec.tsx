@@ -2,8 +2,18 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
 import { AxiosError } from 'axios'
-import { cleanup, fireEvent, mockedStore, render, screen, act } from 'uiSrc/utils/test-utils'
-import { customTutorialsBulkUploadSelector, uploadDataBulk } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+  act,
+} from 'uiSrc/utils/test-utils'
+import {
+  customTutorialsBulkUploadSelector,
+  uploadDataBulk,
+} from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { checkResourse } from 'uiSrc/services/resourcesService'
@@ -36,16 +46,22 @@ beforeEach(() => {
 
 const props: Props = {
   label: 'Label',
-  path: '/text'
+  path: '/text',
 }
 
 const error = {
-  response: { data: { message: 'File not found. Check if this file exists and try again.' } }
+  response: {
+    data: {
+      message: 'File not found. Check if this file exists and try again.',
+    },
+  },
 } as AxiosError<any>
 
 describe('RedisUploadButton', () => {
   beforeEach(() => {
-    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 'instanceId' })
+    reactRouterDom.useParams = jest
+      .fn()
+      .mockReturnValue({ instanceId: 'instanceId' })
   })
 
   it('should render', () => {
@@ -53,7 +69,7 @@ describe('RedisUploadButton', () => {
   })
 
   it('should be disabled with loading state', () => {
-    (customTutorialsBulkUploadSelector as jest.Mock).mockReturnValueOnce({
+    ;(customTutorialsBulkUploadSelector as jest.Mock).mockReturnValueOnce({
       pathsInProgress: [props.path],
     })
 
@@ -76,17 +92,21 @@ describe('RedisUploadButton', () => {
   })
 
   it('should render no database poper', () => {
-    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: undefined })
+    reactRouterDom.useParams = jest
+      .fn()
+      .mockReturnValue({ instanceId: undefined })
     render(<RedisUploadButton {...props} />)
 
     fireEvent.click(screen.getByTestId('upload-data-bulk-btn'))
 
-    expect(screen.getByTestId('database-not-opened-popover')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('database-not-opened-popover'),
+    ).toBeInTheDocument()
   })
 
   it('should show error when file is not exists', async () => {
-    const checkResourseMock = jest.fn().mockRejectedValue('');
-    (checkResourse as jest.Mock).mockImplementation(checkResourseMock)
+    const checkResourseMock = jest.fn().mockRejectedValue('')
+    ;(checkResourse as jest.Mock).mockImplementation(checkResourseMock)
 
     render(<RedisUploadButton {...props} />)
 
@@ -100,8 +120,10 @@ describe('RedisUploadButton', () => {
   })
 
   it('should call proper telemetry events', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<RedisUploadButton {...props} />)
 
     fireEvent.click(screen.getByTestId('upload-data-bulk-btn'))
@@ -109,11 +131,10 @@ describe('RedisUploadButton', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_CLICKED,
       eventData: {
-        databaseId: 'instanceId'
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        databaseId: 'instanceId',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     await act(() => {
       fireEvent.click(screen.getByTestId('download-redis-upload-file'))
@@ -122,21 +143,19 @@ describe('RedisUploadButton', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DOWNLOAD_BULK_FILE_CLICKED,
       eventData: {
-        databaseId: 'instanceId'
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        databaseId: 'instanceId',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('upload-data-bulk-apply-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_SUBMITTED,
       eventData: {
-        databaseId: 'instanceId'
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        databaseId: 'instanceId',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

@@ -6,12 +6,14 @@ const getTruncatedNameTests: any[] = [
   ['Bill', 'B'],
   ['', ''],
   [null, ''],
-  [undefined, '']
+  [undefined, ''],
 ]
 
 describe('getTruncatedName', () => {
-  it.each(getTruncatedNameTests)('should be output: %s, for value: $s',
+  it.each(getTruncatedNameTests)(
+    'should be output: %s, for value: $s',
     (input, output) => {
       expect(getTruncatedName(input)).toBe(output)
-    })
+    },
+  )
 })

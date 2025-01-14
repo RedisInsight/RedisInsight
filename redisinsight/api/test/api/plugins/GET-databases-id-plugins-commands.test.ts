@@ -3,7 +3,9 @@ import { Joi } from '../../helpers/test';
 const { localDb, request, server, constants, rte } = deps;
 
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).get(`/${constants.API.DATABASES}/${instanceId}/plugins/commands`);
+  request(server).get(
+    `/${constants.API.DATABASES}/${instanceId}/plugins/commands`,
+  );
 
 const responseSchema = Joi.array().items(Joi.string()).required();
 
@@ -23,11 +25,11 @@ describe('GET /databases/:instanceId/plugins/commands', () => {
     {
       name: 'Should get plugin commands whitelist',
       responseSchema,
-      checkFn: ({body}) => {
+      checkFn: ({ body }) => {
         expect(body).to.include('get');
         expect(body).to.not.include('role');
         expect(body).to.not.include('xread');
-      }
+      },
     },
     {
       endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
@@ -35,7 +37,7 @@ describe('GET /databases/:instanceId/plugins/commands', () => {
       statusCode: 503,
       responseBody: {
         statusCode: 503,
-        error: 'Service Unavailable'
+        error: 'Service Unavailable',
       },
     },
     {

@@ -11,18 +11,21 @@ describe('remarkLink', () => {
       children: [
         {
           type: 'text',
-          value: 'Redis Stack Server'
-        }
-      ]
-    };
+          value: 'Redis Stack Server',
+        },
+      ],
+    }
     // mock implementation
-    (visit as jest.Mock)
-      .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
+    ;(visit as jest.Mock).mockImplementation(
+      (_tree: any, _name: string, callback: (codeNode: any) => void) => {
+        callback(codeNode)
+      },
+    )
 
     const remark = remarkLink()
     remark({} as Node)
     expect(codeNode).toEqual({
-      ...codeNode
+      ...codeNode,
     })
   })
 
@@ -34,13 +37,16 @@ describe('remarkLink', () => {
       children: [
         {
           type: 'text',
-          value: 'Setup Redis Cloud'
-        }
-      ]
-    };
+          value: 'Setup Redis Cloud',
+        },
+      ],
+    }
     // mock implementation
-    (visit as jest.Mock)
-      .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
+    ;(visit as jest.Mock).mockImplementation(
+      (_tree: any, _name: string, callback: (codeNode: any) => void) => {
+        callback(codeNode)
+      },
+    )
 
     const remark = remarkLink()
     remark({} as Node)
@@ -58,13 +64,16 @@ describe('remarkLink', () => {
       children: [
         {
           type: 'text',
-          value: 'Workbench'
-        }
-      ]
-    };
+          value: 'Workbench',
+        },
+      ],
+    }
     // mock implementation
-    (visit as jest.Mock)
-      .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
+    ;(visit as jest.Mock).mockImplementation(
+      (_tree: any, _name: string, callback: (codeNode: any) => void) => {
+        callback(codeNode)
+      },
+    )
 
     const remark = remarkLink()
     remark({} as Node)

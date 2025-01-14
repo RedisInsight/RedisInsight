@@ -17,7 +17,7 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
   oauthCloudSelector: jest.fn().mockReturnValue({
     isOpenSocialDialog: true,
     source: 'source',
-  })
+  }),
 }))
 
 describe('OAuthSsoDialog', () => {
@@ -26,21 +26,27 @@ describe('OAuthSsoDialog', () => {
   })
 
   it('should render proper modal with ssoFlow = OAuthSocialAction.Create', () => {
-    (cloudSelector as jest.Mock).mockReturnValue({ ssoFlow: OAuthSocialAction.Create })
+    ;(cloudSelector as jest.Mock).mockReturnValue({
+      ssoFlow: OAuthSocialAction.Create,
+    })
     render(<OAuthSsoDialog />)
 
     expect(screen.getByTestId('oauth-container-create-db')).toBeInTheDocument()
   })
 
   it('should render proper modal with ssoFlow = OAuthSocialAction.Import', () => {
-    (cloudSelector as jest.Mock).mockReturnValue({ ssoFlow: OAuthSocialAction.Import })
+    ;(cloudSelector as jest.Mock).mockReturnValue({
+      ssoFlow: OAuthSocialAction.Import,
+    })
     render(<OAuthSsoDialog />)
 
     expect(screen.getByTestId('oauth-container-signIn')).toBeInTheDocument()
   })
 
   it('should render proper modal with ssoFlow = OAuthSocialAction.SignIn', () => {
-    (cloudSelector as jest.Mock).mockReturnValue({ ssoFlow: OAuthSocialAction.SignIn })
+    ;(cloudSelector as jest.Mock).mockReturnValue({
+      ssoFlow: OAuthSocialAction.SignIn,
+    })
     render(<OAuthSsoDialog />)
 
     expect(screen.getByTestId('oauth-container-signIn')).toBeInTheDocument()

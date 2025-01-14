@@ -2,13 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
-  mockCustomTutorial, mockCustomTutorialEntity, mockCustomTutorialId,
+  mockCustomTutorial,
+  mockCustomTutorialEntity,
+  mockCustomTutorialId,
   mockRepository,
   MockType,
 } from 'src/__mocks__';
-import {
-  LocalCustomTutorialRepository,
-} from 'src/modules/custom-tutorial/repositories/local.custom-tutorial.repository';
+import { LocalCustomTutorialRepository } from 'src/modules/custom-tutorial/repositories/local.custom-tutorial.repository';
 import { CustomTutorialEntity } from 'src/modules/custom-tutorial/entities/custom-tutorial.entity';
 
 describe('LocalCustomTutorialRepository', () => {
@@ -32,10 +32,12 @@ describe('LocalCustomTutorialRepository', () => {
     service = await module.get(LocalCustomTutorialRepository);
 
     repository.findOneBy.mockResolvedValue(mockCustomTutorialEntity);
-    repository.createQueryBuilder().getMany.mockResolvedValue([
-      mockCustomTutorialEntity,
-      mockCustomTutorialEntity,
-    ]);
+    repository
+      .createQueryBuilder()
+      .getMany.mockResolvedValue([
+        mockCustomTutorialEntity,
+        mockCustomTutorialEntity,
+      ]);
     repository.save.mockResolvedValue(mockCustomTutorialEntity);
   });
 

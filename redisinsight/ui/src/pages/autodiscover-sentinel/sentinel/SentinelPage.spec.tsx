@@ -21,11 +21,11 @@ describe('SentinelPage', () => {
     expect(
       render(<SentinelPage {...instance(mockedProps)} />, {
         withRouter: true,
-      })
+      }),
     ).toBeTruthy()
 
     expect(
-      render(<SentinelPage routes={mockedRoutes} />, { withRouter: true })
+      render(<SentinelPage routes={mockedRoutes} />, { withRouter: true }),
     ).toBeTruthy()
   })
 })

@@ -13,7 +13,9 @@ describe('parseKeysListResponse', () => {
       shardsMeta: {},
     }
     const scanResponse = []
-    expect(parseKeysListResponse(currentState.shardsMeta, scanResponse)).toEqual(currentState)
+    expect(
+      parseKeysListResponse(currentState.shardsMeta, scanResponse),
+    ).toEqual(currentState)
   })
   it('should summarize data with initial state (standalone)', () => {
     const currentState = {
@@ -27,8 +29,8 @@ describe('parseKeysListResponse', () => {
         cursor: 100,
         total: 200,
         scanned: 150,
-        keys: ['keywithdetails']
-      }
+        keys: ['keywithdetails'],
+      },
     ]
     const result = parseKeysListResponse(currentState.shardsMeta, scanResponse)
     expect(result).toEqual({
@@ -36,7 +38,7 @@ describe('parseKeysListResponse', () => {
       nextCursor: `${scanResponse[0].cursor}`,
       shardsMeta: {
         standalone: omit(scanResponse[0], 'keys'),
-      }
+      },
     })
   })
   it('should summarize data with existing one (standalone)', () => {
@@ -49,7 +51,7 @@ describe('parseKeysListResponse', () => {
           cursor: 100,
           total: 200,
           scanned: 150,
-        }
+        },
       },
     }
     const scanResponse = [
@@ -57,8 +59,8 @@ describe('parseKeysListResponse', () => {
         cursor: 0,
         total: 201,
         scanned: 150,
-        keys: ['keywithdetails']
-      }
+        keys: ['keywithdetails'],
+      },
     ]
     const result = parseKeysListResponse(currentState.shardsMeta, scanResponse)
     expect(result).toEqual({
@@ -70,7 +72,7 @@ describe('parseKeysListResponse', () => {
           ...omit(scanResponse[0], 'keys'),
           scanned: scanResponse[0].total,
         },
-      }
+      },
     })
   })
   it('should summarize data  with initial state (cluster)', () => {
@@ -104,7 +106,7 @@ describe('parseKeysListResponse', () => {
         keys: ['shard3_key'],
         host: '127.0.0.1',
         port: 7002,
-      }
+      },
     ]
     const result = parseKeysListResponse(currentState.shardsMeta, scanResponse)
     expect(result).toEqual({
@@ -134,7 +136,7 @@ describe('parseKeysListResponse', () => {
           host: '127.0.0.1',
           port: 7002,
         },
-      }
+      },
     })
   })
   it('should summarize data  with initial one (cluster)', () => {
@@ -183,7 +185,7 @@ describe('parseKeysListResponse', () => {
         keys: ['new_shard3_key'],
         host: '127.0.0.1',
         port: 7002,
-      }
+      },
     ]
     const result = parseKeysListResponse(currentState.shardsMeta, scanResponse)
     expect(result).toEqual({
@@ -213,7 +215,7 @@ describe('parseKeysListResponse', () => {
           host: '127.0.0.1',
           port: 7002,
         },
-      }
+      },
     })
   })
 })

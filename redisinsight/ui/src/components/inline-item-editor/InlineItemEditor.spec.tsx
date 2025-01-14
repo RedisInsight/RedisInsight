@@ -11,32 +11,41 @@ describe('InlineItemEditor', () => {
   it('should render', () => {
     expect(
       render(
-        <InlineItemEditor
-          {...instance(mockedProps)}
-          onDecline={jest.fn()}
-        />
-      )
+        <InlineItemEditor {...instance(mockedProps)} onDecline={jest.fn()} />,
+      ),
     ).toBeTruthy()
   })
 
   it('should change value properly', () => {
-    render(<InlineItemEditor {...instance(mockedProps)} onDecline={jest.fn()} />)
-    fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val' } })
+    render(
+      <InlineItemEditor {...instance(mockedProps)} onDecline={jest.fn()} />,
+    )
+    fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
+      target: { value: 'val' },
+    })
     expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveValue('val')
   })
 
   it('should change value properly with validation', () => {
-    render(<InlineItemEditor
-      {...instance(mockedProps)}
-      onDecline={jest.fn()}
-      validation={validateScoreNumber}
-    />)
-    fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val123' } })
-    expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveValue(validateScoreNumber('val123'))
+    render(
+      <InlineItemEditor
+        {...instance(mockedProps)}
+        onDecline={jest.fn()}
+        validation={validateScoreNumber}
+      />,
+    )
+    fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
+      target: { value: 'val123' },
+    })
+    expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveValue(
+      validateScoreNumber('val123'),
+    )
   })
 
   it('should be focused properly', () => {
-    render(<InlineItemEditor {...instance(mockedProps)} onDecline={jest.fn()} />)
+    render(
+      <InlineItemEditor {...instance(mockedProps)} onDecline={jest.fn()} />,
+    )
     expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveFocus()
   })
 
@@ -50,10 +59,12 @@ describe('InlineItemEditor', () => {
           onApply={onApplyMock}
           onDecline={jest.fn()}
           approveByValidation={approveByValidationMock}
-        />
+        />,
       )
 
-      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val123' } })
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
+        target: { value: 'val123' },
+      })
 
       fireEvent.click(screen.getByTestId(/apply-btn/))
       expect(queryByTestId('approve-popover')).not.toBeInTheDocument()
@@ -69,10 +80,12 @@ describe('InlineItemEditor', () => {
           onApply={onApplyMock}
           onDecline={jest.fn()}
           approveByValidation={approveByValidationMock}
-        />
+        />,
       )
 
-      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val123' } })
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
+        target: { value: 'val123' },
+      })
 
       fireEvent.click(screen.getByTestId(/apply-btn/))
       expect(queryByTestId('approve-popover')).toBeInTheDocument()
@@ -88,10 +101,12 @@ describe('InlineItemEditor', () => {
           onApply={onApplyMock}
           onDecline={jest.fn()}
           approveByValidation={approveByValidationMock}
-        />
+        />,
       )
 
-      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val123' } })
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
+        target: { value: 'val123' },
+      })
 
       fireEvent.click(screen.getByTestId(/apply-btn/))
       expect(queryByTestId('approve-popover')).toBeInTheDocument()
@@ -109,7 +124,7 @@ describe('InlineItemEditor', () => {
           isLoading
           onApply={onApplyMock}
           onDecline={jest.fn()}
-        />
+        />,
       )
 
       expect(screen.getByTestId('apply-btn')).toBeDisabled()
@@ -126,10 +141,12 @@ describe('InlineItemEditor', () => {
           {...instance(mockedProps)}
           onApply={onApplyMock}
           onDecline={jest.fn()}
-        />
+        />,
       )
 
-      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val123' } })
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
+        target: { value: 'val123' },
+      })
 
       expect(screen.getByTestId('apply-btn')).not.toBeDisabled()
 

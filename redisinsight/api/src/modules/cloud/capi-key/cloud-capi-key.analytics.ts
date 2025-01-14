@@ -12,16 +12,16 @@ export class CloudCapiKeyAnalytics extends TelemetryBaseService {
 
   sendCloudAccountKeyGenerated(sessionMetadata: SessionMetadata) {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.CloudAccountKeyGenerated,
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.CloudAccountKeyGenerated);
     } catch (e) {
       // continue regardless of error
     }
   }
 
-  sendCloudAccountKeyGenerationFailed(sessionMetadata: SessionMetadata, exception: HttpException) {
+  sendCloudAccountKeyGenerationFailed(
+    sessionMetadata: SessionMetadata,
+    exception: HttpException,
+  ) {
     this.sendFailedEvent(
       sessionMetadata,
       TelemetryEvents.CloudAccountKeyGenerationFailed,
@@ -40,7 +40,10 @@ export class CloudCapiKeyAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendCloudAccountSecretGenerationFailed(sessionMetadata: SessionMetadata, exception: HttpException) {
+  sendCloudAccountSecretGenerationFailed(
+    sessionMetadata: SessionMetadata,
+    exception: HttpException,
+  ) {
     this.sendFailedEvent(
       sessionMetadata,
       TelemetryEvents.CloudAccountSecretGenerationFailed,

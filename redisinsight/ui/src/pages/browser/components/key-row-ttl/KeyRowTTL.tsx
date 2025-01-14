@@ -38,11 +38,9 @@ const KeyRowTTL = (props: Props) => {
   if (ttl === -1) {
     return (
       <EuiTextColor
-        className={cx(
-          styles.keyTTL,
-          'moveOnHoverKey',
-          { hide: deletePopoverId === rowId },
-        )}
+        className={cx(styles.keyTTL, 'moveOnHoverKey', {
+          hide: deletePopoverId === rowId,
+        })}
         color="subdued"
         data-testid={`ttl-${nameString}`}
       >
@@ -52,27 +50,29 @@ const KeyRowTTL = (props: Props) => {
   }
   return (
     <EuiText
-      className={cx(
-        styles.keyTTL,
-        'moveOnHoverKey',
-        { hide: deletePopoverId === rowId },
-      )}
+      className={cx(styles.keyTTL, 'moveOnHoverKey', {
+        hide: deletePopoverId === rowId,
+      })}
       color="subdued"
       size="s"
     >
-      <div style={{ display: 'flex' }} className="truncateText" data-testid={`ttl-${nameString}`}>
+      <div
+        style={{ display: 'flex' }}
+        className="truncateText"
+        data-testid={`ttl-${nameString}`}
+      >
         <EuiToolTip
           title="Time to Live"
           className={styles.tooltip}
           anchorClassName="truncateText"
           position="right"
-          content={(
+          content={
             <>
               {`${truncateTTLToSeconds(ttl)} s`}
               <br />
               {`(${truncateNumberToDuration(ttl)})`}
             </>
-          )}
+          }
         >
           <>{truncateNumberToFirstUnit(ttl)}</>
         </EuiToolTip>

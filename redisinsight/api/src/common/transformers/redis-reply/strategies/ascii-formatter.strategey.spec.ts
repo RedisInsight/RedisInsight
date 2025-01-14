@@ -44,7 +44,10 @@ describe('ASCIIFormatterStrategy', () => {
           Buffer.from('"quoted key"'),
         ],
       ];
-      const mockResponse = ['0', ['key', '\\"quoted\\"\\"key\\"', '\\"quoted key\\"']];
+      const mockResponse = [
+        '0',
+        ['key', '\\"quoted\\"\\"key\\"', '\\"quoted key\\"'],
+      ];
       const output = strategy.format(input);
 
       expect(output).toEqual(mockResponse);

@@ -5,13 +5,7 @@ import { RedisSentinelAnalytics } from 'src/modules/redis-sentinel/redis-sentine
 
 @Module({
   controllers: [RedisSentinelController],
-  providers: [
-    RedisSentinelService,
-    RedisSentinelAnalytics,
-  ],
-  exports: [
-    RedisSentinelService,
-    RedisSentinelAnalytics,
-  ],
+  providers: [RedisSentinelService, RedisSentinelAnalytics],
+  exports: [RedisSentinelService, RedisSentinelAnalytics],
 })
 export class RedisSentinelModule {}

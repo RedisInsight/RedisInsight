@@ -13,7 +13,7 @@ export const useDisposableWebworker = (fn: (...args: any) => any) => {
 
   const run = (value: any) => {
     const worker = new Worker(
-      URL.createObjectURL(new Blob([`(${workerHandler})(${fn})`]))
+      URL.createObjectURL(new Blob([`(${workerHandler})(${fn})`])),
     )
     worker.onmessage = (event) => {
       setResult(event.data)

@@ -23,15 +23,15 @@ export interface Props {
 }
 
 const NoKeysMessage = (props: Props) => {
-  const {
-    total,
-    scanned,
-    onAddKeyPanel,
-    isLoading,
-  } = props
+  const { total, scanned, onAddKeyPanel, isLoading } = props
 
-  const { selectedIndex, isSearched: redisearchIsSearched } = useSelector(redisearchSelector)
-  const { isSearched: patternIsSearched, isFiltered, searchMode } = useSelector(keysSelector)
+  const { selectedIndex, isSearched: redisearchIsSearched } =
+    useSelector(redisearchSelector)
+  const {
+    isSearched: patternIsSearched,
+    isFiltered,
+    searchMode,
+  } = useSelector(keysSelector)
 
   if (searchMode === SearchMode.Redisearch) {
     if (!selectedIndex) {
@@ -56,7 +56,7 @@ const NoKeysMessage = (props: Props) => {
   }
 
   if (total === 0) {
-    return (<NoKeysFound onAddKeyPanel={onAddKeyPanel} />)
+    return <NoKeysFound onAddKeyPanel={onAddKeyPanel} />
   }
 
   if (patternIsSearched) {

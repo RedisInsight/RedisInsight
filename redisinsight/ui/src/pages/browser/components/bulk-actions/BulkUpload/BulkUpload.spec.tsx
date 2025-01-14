@@ -1,12 +1,19 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { render, screen, fireEvent, act, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  screen,
+  fireEvent,
+  act,
+  mockedStore,
+  cleanup,
+} from 'uiSrc/utils/test-utils'
 
 import {
   bulkActionsUploadOverviewSelector,
   bulkUpload,
   setBulkUploadStartAgain,
-  uploadController
+  uploadController,
 } from 'uiSrc/slices/browser/bulkActions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BulkActionsType } from 'uiSrc/constants'
@@ -21,13 +28,13 @@ jest.mock('uiSrc/slices/browser/bulkActions', () => ({
   ...jest.requireActual('uiSrc/slices/browser/bulkActions'),
   bulkActionsUploadSelector: jest.fn().mockReturnValue({
     loading: false,
-    fileName: ''
+    fileName: '',
   }),
   bulkActionsUploadOverviewSelector: jest.fn().mockReturnValue(null),
   bulkActionsUploadSummarySelector: jest.fn().mockReturnValue(null),
   uploadController: {
-    abort: jest.fn()
-  }
+    abort: jest.fn(),
+  },
 }))
 
 let store: typeof mockedStore
@@ -53,8 +60,8 @@ describe('BulkUpload', () => {
 
   it('should call abort controller', () => {
     const onCancel = jest.fn()
-    const abortMock = jest.fn();
-    (uploadController as any).abort = abortMock
+    const abortMock = jest.fn()
+    ;(uploadController as any).abort = abortMock
 
     render(<BulkUpload onCancel={onCancel} />)
 
@@ -77,12 +84,9 @@ describe('BulkUpload', () => {
 
     const file = new File([blob], 'text.txt')
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('bulk-upload-file-input'),
-        {
-          target: { files: [file] },
-        }
-      )
+      fireEvent.change(screen.getByTestId('bulk-upload-file-input'), {
+        target: { files: [file] },
+      })
     })
 
     expect(screen.getByTestId('bulk-action-warning-btn')).not.toBeDisabled()
@@ -97,23 +101,29 @@ describe('BulkUpload', () => {
   })
 
   it('should render summary', () => {
-    (bulkActionsUploadOverviewSelector as jest.Mock).mockImplementation(() => ({
-      status: 'completed',
-      progress: 100,
-      duration: 10
-    }))
+    ;(bulkActionsUploadOverviewSelector as jest.Mock).mockImplementation(
+      () => ({
+        status: 'completed',
+        progress: 100,
+        duration: 10,
+      }),
+    )
 
     render(<BulkUpload onCancel={jest.fn()} />)
 
-    expect(screen.getByTestId('bulk-upload-completed-summary')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('bulk-upload-completed-summary'),
+    ).toBeInTheDocument()
   })
 
   it('should call start new button', () => {
-    (bulkActionsUploadOverviewSelector as jest.Mock).mockImplementation(() => ({
-      status: 'completed',
-      progress: 100,
-      duration: 10
-    }))
+    ;(bulkActionsUploadOverviewSelector as jest.Mock).mockImplementation(
+      () => ({
+        status: 'completed',
+        progress: 100,
+        duration: 10,
+      }),
+    )
 
     render(<BulkUpload onCancel={jest.fn()} />)
 
@@ -123,10 +133,12 @@ describe('BulkUpload', () => {
   })
 
   it('should call proper telemetry events', async () => {
-    (bulkActionsUploadOverviewSelector as jest.Mock).mockRestore()
+    ;(bulkActionsUploadOverviewSelector as jest.Mock).mockRestore()
 
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<BulkUpload onCancel={jest.fn()} />)
 
@@ -135,12 +147,9 @@ describe('BulkUpload', () => {
 
     const file = new File([blob], 'text.txt')
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('bulk-upload-file-input'),
-        {
-          target: { files: [file] },
-        }
-      )
+      fireEvent.change(screen.getByTestId('bulk-upload-file-input'), {
+        target: { files: [file] },
+      })
     })
 
     fireEvent.click(screen.getByTestId('bulk-action-warning-btn'))
@@ -148,14 +157,18 @@ describe('BulkUpload', () => {
       event: TelemetryEvent.BULK_ACTIONS_WARNING,
       eventData: {
         action: BulkActionsType.Upload,
-        databaseId: ''
-      }
+        databaseId: '',
+      },
     })
   })
 
   it('should contain the upload warning text', () => {
     render(<BulkUpload onCancel={jest.fn()} />)
 
-    expect(screen.getByText('Use files only from trusted authors to avoid automatic execution of malicious code.')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Use files only from trusted authors to avoid automatic execution of malicious code.',
+      ),
+    ).toBeInTheDocument()
   })
 })

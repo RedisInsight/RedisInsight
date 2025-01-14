@@ -10,7 +10,7 @@ export interface ISubscription {
 
   pushMessage(message: IMessage): void;
 
-  subscribe(client: RedisClient,): Promise<void>;
+  subscribe(client: RedisClient): Promise<void>;
 
   unsubscribe(client: RedisClient): Promise<void>;
 }

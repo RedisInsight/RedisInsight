@@ -1,5 +1,5 @@
 export enum NotificationEvent {
-  Notification = 'notification'
+  Notification = 'notification',
 }
 
 export const NOTIFICATION_DATE_FORMAT = 'dd MMM yyyy'

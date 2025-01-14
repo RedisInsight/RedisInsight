@@ -7,6 +7,8 @@ const mockedProps = mock<Props>()
 
 describe('QueryCardCliDefaultResult', () => {
   it('should render', () => {
-    expect(render(<QueryCardCliDefaultResult {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<QueryCardCliDefaultResult {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 })

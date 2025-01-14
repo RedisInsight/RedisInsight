@@ -7,23 +7,26 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 import * as Joi from 'joi';
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/hash/get-fields`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/hash/get-fields`,
+  );
 
 // input data schema // todo: review BE for transform true -> 1
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
   cursor: Joi.number().integer().min(0).allow(true).required().messages({
-    'any.required': 'cursor should not be empty'
+    'any.required': 'cursor should not be empty',
   }),
   count: Joi.number().integer().min(1).allow(true, null).messages({
-    'any.required': 'count should not be empty'
+    'any.required': 'count should not be empty',
   }),
   match: Joi.string().allow(null),
 }).strict();
@@ -35,15 +38,19 @@ const validInputData = {
   match: constants.getRandomString(),
 };
 
-const responseSchema = Joi.object().keys({
-  keyName: Joi.string().required(),
-  total: Joi.number().integer().required(),
-  fields: Joi.array().items(Joi.object().keys({
-    field: Joi.string().required(),
-    value: Joi.string().required(),
-  })),
-  nextCursor: Joi.number().integer().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    keyName: Joi.string().required(),
+    total: Joi.number().integer().required(),
+    fields: Joi.array().items(
+      Joi.object().keys({
+        field: Joi.string().required(),
+        value: Joi.string().required(),
+      }),
+    ),
+    nextCursor: Joi.number().integer().required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -68,10 +75,12 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
           keyName: constants.TEST_HASH_KEY_BIN_UTF8_1,
           total: 1,
           nextCursor: 0,
-          fields: [{
-            field:  constants.TEST_HASH_FIELD_BIN_UTF8_1,
-            value: constants.TEST_HASH_VALUE_BIN_UTF8_1
-          }],
+          fields: [
+            {
+              field: constants.TEST_HASH_FIELD_BIN_UTF8_1,
+              value: constants.TEST_HASH_VALUE_BIN_UTF8_1,
+            },
+          ],
         },
       },
       {
@@ -89,10 +98,12 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
           keyName: constants.TEST_HASH_KEY_BIN_BUF_OBJ_1,
           total: 1,
           nextCursor: 0,
-          fields: [{
-            field:  constants.TEST_HASH_FIELD_BIN_BUF_OBJ_1,
-            value: constants.TEST_HASH_VALUE_BIN_BUF_OBJ_1
-          }],
+          fields: [
+            {
+              field: constants.TEST_HASH_FIELD_BIN_BUF_OBJ_1,
+              value: constants.TEST_HASH_VALUE_BIN_BUF_OBJ_1,
+            },
+          ],
         },
       },
       {
@@ -110,10 +121,12 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
           keyName: constants.TEST_HASH_KEY_BIN_ASCII_1,
           total: 1,
           nextCursor: 0,
-          fields: [{
-            field:  constants.TEST_HASH_FIELD_BIN_ASCII_1,
-            value: constants.TEST_HASH_VALUE_BIN_ASCII_1
-          }],
+          fields: [
+            {
+              field: constants.TEST_HASH_FIELD_BIN_ASCII_1,
+              value: constants.TEST_HASH_VALUE_BIN_ASCII_1,
+            },
+          ],
         },
       },
     ].map(mainCheckFn);
@@ -136,7 +149,7 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             keyName: constants.TEST_HASH_KEY_2,
             cursor: 0,
             count: 15,
-            match: 'field_9'
+            match: 'field_9',
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -145,7 +158,7 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             expect(body.fields.length).to.eql(1);
             expect(body.fields[0].field).to.eql('field_9');
             expect(body.fields[0].value).to.eql('value_9');
-          }
+          },
         },
         {
           name: 'Should not find any field',
@@ -153,14 +166,14 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             keyName: constants.TEST_HASH_KEY_2,
             cursor: 0,
             count: 15,
-            match: 'field_9asd*'
+            match: 'field_9asd*',
           },
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.keyName).to.eql(constants.TEST_HASH_KEY_2);
             expect(body.total).to.eql(3000);
             expect(body.fields.length).to.eql(0);
-          }
+          },
         },
         {
           name: 'Should query 15 fields',
@@ -174,7 +187,7 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             expect(body.total).to.eql(3000);
             expect(body.fields.length).to.gte(15);
             expect(body.fields.length).to.lt(3000);
-          }
+          },
         },
         {
           name: 'Should query by * in the end',
@@ -182,14 +195,14 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             keyName: constants.TEST_HASH_KEY_2,
             cursor: 0,
             count: 15,
-            match: 'field_219*'
+            match: 'field_219*',
           },
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.keyName).to.eql(constants.TEST_HASH_KEY_2);
             expect(body.total).to.eql(3000);
             expect(body.fields.length).to.eq(11);
-          }
+          },
         },
         {
           name: 'Should query by * in the beginning',
@@ -197,7 +210,7 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             keyName: constants.TEST_HASH_KEY_2,
             cursor: 0,
             count: 15,
-            match: '*eld_9'
+            match: '*eld_9',
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -206,7 +219,7 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             expect(body.fields.length).to.eq(1);
             expect(body.fields[0].field).to.eql('field_9');
             expect(body.fields[0].value).to.eql('value_9');
-          }
+          },
         },
         {
           name: 'Should query by * in the middle',
@@ -214,7 +227,7 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             keyName: constants.TEST_HASH_KEY_2,
             cursor: 0,
             count: 15,
-            match: 'f*eld_9'
+            match: 'f*eld_9',
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -223,7 +236,7 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             expect(body.fields.length).to.eq(1);
             expect(body.fields[0].field).to.eql('field_9');
             expect(body.fields[0].value).to.eql('value_9');
-          }
+          },
         },
         {
           name: 'Should return NotFound error if key does not exists',
@@ -266,16 +279,20 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
               keyName: constants.TEST_HASH_HUGE_KEY,
               cursor: 0,
               count: 15,
-              match: constants.TEST_HASH_HUGE_KEY_FIELD
+              match: constants.TEST_HASH_HUGE_KEY_FIELD,
             },
             responseSchema,
             checkFn: ({ body }) => {
               expect(body.keyName).to.eql(constants.TEST_HASH_HUGE_KEY);
               expect(body.total).to.eql(NUMBER_OF_FIELDS);
               expect(body.fields.length).to.eq(1);
-              expect(body.fields[0].field).to.eql(constants.TEST_HASH_HUGE_KEY_FIELD);
-              expect(body.fields[0].value).to.eql(constants.TEST_HASH_HUGE_KEY_VALUE);
-            }
+              expect(body.fields[0].field).to.eql(
+                constants.TEST_HASH_HUGE_KEY_FIELD,
+              );
+              expect(body.fields[0].value).to.eql(
+                constants.TEST_HASH_HUGE_KEY_VALUE,
+              );
+            },
           },
         ].map(mainCheckFn);
       });
@@ -307,7 +324,7 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -hlen')
+          before: () => rte.data.setAclUserRules('~* +@all -hlen'),
         },
         {
           name: 'Should throw error if no permissions for "hget" command',
@@ -322,7 +339,7 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -hget')
+          before: () => rte.data.setAclUserRules('~* +@all -hget'),
         },
         {
           name: 'Should throw error if no permissions for "hscan" command',
@@ -336,9 +353,9 @@ describe('POST /databases/:instanceId/hash/get-fields', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -hscan')
+          before: () => rte.data.setAclUserRules('~* +@all -hscan'),
         },
       ].map(mainCheckFn);
     });
-  })
+  });
 });

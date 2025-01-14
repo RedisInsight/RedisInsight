@@ -7,9 +7,7 @@ import {
   IsString,
   Min,
 } from 'class-validator';
-import {
-  Exclude, Expose, Transform, Type,
-} from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { pickDefinedAgreements } from 'src/dto/dto-transformer';
 import { Default } from 'src/common/decorators';
 import config from 'src/utils/config';

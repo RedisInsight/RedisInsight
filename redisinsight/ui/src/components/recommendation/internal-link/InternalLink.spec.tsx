@@ -24,7 +24,13 @@ describe('InternalLink', () => {
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
     const onClickMock = jest.fn()
 
-    render(<InternalLink {...instance(mockedProps)} path="path" onClick={onClickMock} />)
+    render(
+      <InternalLink
+        {...instance(mockedProps)}
+        path="path"
+        onClick={onClickMock}
+      />,
+    )
 
     fireEvent.click(screen.getByTestId('internal-link'))
 

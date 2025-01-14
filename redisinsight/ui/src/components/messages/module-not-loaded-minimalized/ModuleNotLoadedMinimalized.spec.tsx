@@ -10,36 +10,46 @@ const source = OAuthSocialSource.Tutorials
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
-  freeInstancesSelector: jest.fn().mockReturnValue([{
-    id: 'instanceId',
-  }]),
+  freeInstancesSelector: jest.fn().mockReturnValue([
+    {
+      id: 'instanceId',
+    },
+  ]),
 }))
 
 describe('ModuleNotLoadedMinimalized', () => {
   it('should render', () => {
-    expect(render(<ModuleNotLoadedMinimalized moduleName={moduleName} source={source} />)).toBeTruthy()
+    expect(
+      render(
+        <ModuleNotLoadedMinimalized moduleName={moduleName} source={source} />,
+      ),
+    ).toBeTruthy()
   })
 
   it('should render connect to instance body when free instance is added', () => {
-    (freeInstancesSelector as jest.Mock).mockReturnValue([
+    ;(freeInstancesSelector as jest.Mock).mockReturnValue([
       {
         id: 'instanceId',
         modules: [
           {
-            name: moduleName
-          }
-        ]
-      }
+            name: moduleName,
+          },
+        ],
+      },
     ])
-    render(<ModuleNotLoadedMinimalized moduleName={moduleName} source={source} />)
+    render(
+      <ModuleNotLoadedMinimalized moduleName={moduleName} source={source} />,
+    )
 
     expect(screen.getByTestId('connect-free-db-btn')).toBeInTheDocument()
   })
 
   it('should render add free db body when free instance is not added', () => {
-    (freeInstancesSelector as jest.Mock).mockReturnValue(null)
+    ;(freeInstancesSelector as jest.Mock).mockReturnValue(null)
 
-    render(<ModuleNotLoadedMinimalized moduleName={moduleName} source={source} />)
+    render(
+      <ModuleNotLoadedMinimalized moduleName={moduleName} source={source} />,
+    )
 
     expect(screen.getByTestId('tutorials-get-started-link')).toBeInTheDocument()
     expect(screen.getByTestId('tutorials-docker-link')).toBeInTheDocument()

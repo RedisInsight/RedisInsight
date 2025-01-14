@@ -1,1 +1,1 @@
-export const visit = jest.fn()
+export const visit = jest.fn();

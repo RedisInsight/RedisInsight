@@ -29,34 +29,46 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
     private readonly encryptionService: EncryptionService,
   ) {
     super();
-    this.modelEncryptor = new ModelEncryptor(encryptionService, ['certificate', 'key']);
+    this.modelEncryptor = new ModelEncryptor(encryptionService, [
+      'certificate',
+      'key',
+    ]);
   }
 
   /**
    * @inheritDoc
    */
   async get(id: string): Promise<ClientCertificate> {
-    return classToClass(ClientCertificate, await this.modelEncryptor.decryptEntity(
-      await this.repository.findOneBy({ id }),
-    ));
+    return classToClass(
+      ClientCertificate,
+      await this.modelEncryptor.decryptEntity(
+        await this.repository.findOneBy({ id }),
+      ),
+    );
   }
 
   /**
    * @inheritDoc
    */
   async list(): Promise<ClientCertificate[]> {
-    return (await this.repository
-      .createQueryBuilder('c')
-      .select(['c.id', 'c.name'])
-      .getMany()).map((model) => classToClass(ClientCertificate, model));
+    return (
+      await this.repository
+        .createQueryBuilder('c')
+        .select(['c.id', 'c.name'])
+        .getMany()
+    ).map((model) => classToClass(ClientCertificate, model));
   }
 
   /**
    * @inheritDoc
    */
-  async create(clientCertificate: ClientCertificate): Promise<ClientCertificate> {
+  async create(
+    clientCertificate: ClientCertificate,
+  ): Promise<ClientCertificate> {
     // todo: use unique constraint and proper error handling to check for duplications
-    const found = await this.repository.findOneBy({ name: clientCertificate.name });
+    const found = await this.repository.findOneBy({
+      name: clientCertificate.name,
+    });
     if (found) {
       this.logger.error(
         `Failed to create certificate: ${clientCertificate.name}. ${ERROR_MESSAGES.CLIENT_CERT_EXIST}`,
@@ -65,7 +77,9 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
     }
 
     const entity = await this.repository.save(
-      await this.modelEncryptor.encryptEntity(this.repository.create(clientCertificate)),
+      await this.modelEncryptor.encryptEntity(
+        this.repository.create(clientCertificate),
+      ),
     );
 
     return this.get(entity.id);
@@ -86,12 +100,14 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
       throw new NotFoundException();
     }
 
-    const affectedDatabases = (await this.databaseRepository
-      .createQueryBuilder('d')
-      .leftJoinAndSelect('d.clientCert', 'c')
-      .where({ clientCert: id })
-      .select(['d.id'])
-      .getMany()).map((e) => e.id);
+    const affectedDatabases = (
+      await this.databaseRepository
+        .createQueryBuilder('d')
+        .leftJoinAndSelect('d.clientCert', 'c')
+        .where({ clientCert: id })
+        .select(['d.id'])
+        .getMany()
+    ).map((e) => e.id);
 
     await this.repository.delete(id);
     this.logger.debug(`Succeed to delete client certificate: ${id}`);

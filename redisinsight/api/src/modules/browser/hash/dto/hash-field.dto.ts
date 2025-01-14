@@ -1,7 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsDefined, IsInt, IsOptional, Max, Min,
-} from 'class-validator';
+import { IsDefined, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
 import { MAX_TTL_NUMBER } from 'src/constants';
@@ -27,8 +25,7 @@ export class HashFieldDto {
 
   @ApiPropertyOptional({
     type: Number,
-    description:
-      'Set timeout on field in seconds',
+    description: 'Set timeout on field in seconds',
     minimum: 1,
     maximum: MAX_TTL_NUMBER,
   })

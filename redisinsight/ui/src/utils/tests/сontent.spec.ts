@@ -8,13 +8,13 @@ const getContentByFeatureTests: any[] = [
     },
     {
       feature: {
-        flag: true
-      }
+        flag: true,
+      },
     },
     {
       title: 'Title1',
       description: 'desc1',
-    }
+    },
   ],
   [
     {
@@ -24,14 +24,14 @@ const getContentByFeatureTests: any[] = [
         cloud: {
           title: 'Title2',
           description: 'desc2',
-          another: 'another'
-        }
-      }
+          another: 'another',
+        },
+      },
     },
     {
       cloud: {
-        flag: false
-      }
+        flag: false,
+      },
     },
     {
       title: 'Title1',
@@ -40,28 +40,27 @@ const getContentByFeatureTests: any[] = [
         cloud: {
           title: 'Title2',
           description: 'desc2',
-          another: 'another'
-        }
-      }
-    }
+          another: 'another',
+        },
+      },
+    },
   ],
   [
     {
-
       title: 'Title1',
       description: 'desc1',
       features: {
         cloud: {
           title: 'Title2',
           description: 'desc2',
-          another: 'another'
-        }
-      }
+          another: 'another',
+        },
+      },
     },
     {
       cloud: {
-        flag: true
-      }
+        flag: true,
+      },
     },
     {
       title: 'Title2',
@@ -71,16 +70,18 @@ const getContentByFeatureTests: any[] = [
         cloud: {
           title: 'Title2',
           description: 'desc2',
-          another: 'another'
-        }
-      }
-    }
+          another: 'another',
+        },
+      },
+    },
   ],
 ]
 
 describe('getContentByFeature', () => {
-  it.each(getContentByFeatureTests)('for input: %s (content), %s (flags), should be output: %s',
+  it.each(getContentByFeatureTests)(
+    'for input: %s (content), %s (flags), should be output: %s',
     (content, flags, expected) => {
       expect(getContentByFeature(content, flags)).toEqual(expected)
-    })
+    },
+  )
 })

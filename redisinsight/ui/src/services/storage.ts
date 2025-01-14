@@ -70,7 +70,11 @@ export const getObjectStorageField = (itemName = '', field = '') => {
   }
 }
 
-export const setObjectStorageField = (itemName = '', field = '', value?: any) => {
+export const setObjectStorageField = (
+  itemName = '',
+  field = '',
+  value?: any,
+) => {
   try {
     const config = localStorageService?.get(itemName) || {}
 
@@ -82,17 +86,23 @@ export const setObjectStorageField = (itemName = '', field = '', value?: any) =>
 
     localStorageService?.set(itemName, {
       ...config,
-      [field]: value
+      [field]: value,
     })
   } catch (e) {
     console.error(e)
   }
 }
 
-export const getDBConfigStorageField = (instanceId: string, field: string = '') =>
-  getObjectStorageField(BrowserStorageItem.dbConfig + instanceId, field)
+export const getDBConfigStorageField = (
+  instanceId: string,
+  field: string = '',
+) => getObjectStorageField(BrowserStorageItem.dbConfig + instanceId, field)
 
-export const setDBConfigStorageField = (instanceId: string, field: string = '', value?: any) => {
+export const setDBConfigStorageField = (
+  instanceId: string,
+  field: string = '',
+  value?: any,
+) => {
   setObjectStorageField(BrowserStorageItem.dbConfig + instanceId, field, value)
 }
 

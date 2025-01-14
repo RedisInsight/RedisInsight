@@ -1,6 +1,10 @@
 import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
-import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import {
+  KeysStoreData,
+  KeyViewType,
+  SearchMode,
+} from 'uiSrc/slices/interfaces/keys'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import KeysHeader from './KeysHeader'
 
@@ -34,7 +38,7 @@ const propsMock = {
     scanned: 5,
     shardsMeta: {},
     previousResultCount: 1,
-    lastRefreshTime: 3
+    lastRefreshTime: 3,
   } as KeysStoreData,
   loading: false,
   sizes: {},
@@ -73,14 +77,16 @@ describe('KeysHeader', () => {
       isFiltered: false,
     }))
 
-    const { queryByTestId } = render(<KeysHeader
-      {...propsMock}
-      keysState={{
-        ...propsMock.keysState,
-        total: 200,
-        nextCursor: '3',
-      }}
-    />)
+    const { queryByTestId } = render(
+      <KeysHeader
+        {...propsMock}
+        keysState={{
+          ...propsMock.keysState,
+          total: 200,
+          nextCursor: '3',
+        }}
+      />,
+    )
 
     expect(queryByTestId('scan-more')).toBeInTheDocument()
   })
@@ -93,15 +99,17 @@ describe('KeysHeader', () => {
       isFiltered: false,
     }))
 
-    const { queryByTestId } = render(<KeysHeader
-      {...propsMock}
-      keysState={{
-        ...propsMock.keysState,
-        maxResults: propsMock.keysState.keys.length - 1,
-        total: 200,
-        nextCursor: '3',
-      }}
-    />)
+    const { queryByTestId } = render(
+      <KeysHeader
+        {...propsMock}
+        keysState={{
+          ...propsMock.keysState,
+          maxResults: propsMock.keysState.keys.length - 1,
+          total: 200,
+          nextCursor: '3',
+        }}
+      />,
+    )
 
     expect(queryByTestId('scan-more')).not.toBeInTheDocument()
   })

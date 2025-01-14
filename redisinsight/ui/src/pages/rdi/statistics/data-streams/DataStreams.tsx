@@ -29,12 +29,18 @@ interface Props {
   onChangeAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
-const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoRefresh }: Props) => {
+const DataStreams = ({
+  data,
+  loading,
+  onRefresh,
+  onRefreshClicked,
+  onChangeAutoRefresh,
+}: Props) => {
   const dataStreams = Object.keys(data?.streams || {}).map((key) => {
     const dataStream = data.streams[key]
     return {
       name: key,
-      ...dataStream
+      ...dataStream,
     }
   })
 
@@ -104,12 +110,10 @@ const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoR
     {
       name: 'Last arrival',
       field: 'lastArrival',
-      render: (dateStr) => (
-        <FormatedDate date={dateStr} />
-      ),
+      render: (dateStr) => <FormatedDate date={dateStr} />,
       sortable: true,
       footer: '',
-    }
+    },
   ]
 
   return (
@@ -123,7 +127,12 @@ const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoR
         onRefreshClicked={onRefreshClicked}
         onChangeAutoRefresh={onChangeAutoRefresh}
       >
-        <Table<DataStreamsData> id="data-streams" columns={columns} items={dataStreams} initialSortField="name" />
+        <Table<DataStreamsData>
+          id="data-streams"
+          columns={columns}
+          items={dataStreams}
+          initialSortField="name"
+        />
       </Accordion>
     </Panel>
   )

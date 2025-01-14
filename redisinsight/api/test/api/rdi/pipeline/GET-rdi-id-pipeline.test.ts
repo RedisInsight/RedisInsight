@@ -2,19 +2,16 @@ import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
 import { RdiPipeline } from 'src/modules/rdi/models';
 import { nock, Joi } from '../../../helpers/test';
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../../deps';
+import { describe, expect, deps, getMainCheckFn } from '../../deps';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST_pipeline';
 const notExistedRdiId = 'notExisted';
 const testRdiUrl = 'http://rdilocal.test';
 
-const endpoint = (id: string) => request(server).get(`/${constants.API.RDI}/${id || testRdiId}/pipeline`);
+const endpoint = (id: string) =>
+  request(server).get(`/${constants.API.RDI}/${id || testRdiId}/pipeline`);
 
 const job1 = {
   name: 'job1',
@@ -37,9 +34,7 @@ const mockResponseSuccess = {
   targets: {
     target: {},
   },
-  jobs: [
-    job1, job2,
-  ],
+  jobs: [job1, job2],
   sources: { psql: {} },
   processors: {},
 };
@@ -52,16 +47,23 @@ const expectedPipeline: RdiPipeline = Object.assign(new RdiPipeline(), {
     sources: { psql: {} },
   },
   jobs: {
-    [job1.name]: (({ name, ...job }) => job)(job1), [job2.name]: (({ name, ...job }) => job)(job2),
+    [job1.name]: (({ name, ...job }) => job)(job1),
+    [job2.name]: (({ name, ...job }) => job)(job2),
   },
 });
 
-const responseSchema = Joi.object().keys({
-  jobs: Joi.object().required(),
-  config: Joi.object().required(),
-}).required().strict(true);
+const responseSchema = Joi.object()
+  .keys({
+    jobs: Joi.object().required(),
+    config: Joi.object().required(),
+  })
+  .required()
+  .strict(true);
 
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -79,7 +81,10 @@ describe('GET /rdi/:id/pipeline/', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).get(`/${RdiUrl.GetPipeline}`).query(true).reply(200, mockResponseSuccess);
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetPipeline}`)
+          .query(true)
+          .reply(200, mockResponseSuccess);
       },
     },
     {

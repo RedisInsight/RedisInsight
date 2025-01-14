@@ -15,22 +15,25 @@ describe('RedisConnectionStrategy', () => {
       },
     };
 
-    const result = RedisConnectionStrategy.generateRedisConnectionName(clientMetadata);
+    const result =
+      RedisConnectionStrategy.generateRedisConnectionName(clientMetadata);
 
-    expect(result).toBe('redisinsight-browser-db123-2-uniquecm-usersm-sessionsm-uniquesm');
+    expect(result).toBe(
+      'redisinsight-browser-db123-2-uniquecm-usersm-sessionsm-uniquesm',
+    );
   });
 
   // type system should prevent this from ever happening,
   // but in case it does, we should have a default client name
-  it.each([
-    {},
-    null,
-    undefined,
-  ])('should generate a default client name if all fields are missing', (input) => {
-    const clientMetadata = input as ClientMetadata;
+  it.each([{}, null, undefined])(
+    'should generate a default client name if all fields are missing',
+    (input) => {
+      const clientMetadata = input as ClientMetadata;
 
-    const result = RedisConnectionStrategy.generateRedisConnectionName(clientMetadata);
+      const result =
+        RedisConnectionStrategy.generateRedisConnectionName(clientMetadata);
 
-    expect(result).toBe('redisinsight-custom------');
-  });
+      expect(result).toBe('redisinsight-custom------');
+    },
+  );
 });

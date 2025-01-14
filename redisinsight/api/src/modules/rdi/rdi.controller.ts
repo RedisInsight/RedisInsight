@@ -1,6 +1,15 @@
 import {
   Body,
-  ClassSerializerInterceptor, Controller, Delete, Get, Param, Patch, Post, UseInterceptors, UsePipes, ValidationPipe,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Rdi, RdiClientMetadata } from 'src/modules/rdi/models';
 import { ApiTags } from '@nestjs/swagger';
@@ -16,9 +25,7 @@ import { SessionMetadata } from 'src/common/models';
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('rdi')
 export class RdiController {
-  constructor(
-    private readonly rdiService: RdiService,
-  ) {}
+  constructor(private readonly rdiService: RdiService) {}
 
   @Get()
   @ApiEndpoint({
@@ -46,7 +53,7 @@ export class RdiController {
   })
   async create(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Body() dto: CreateRdiDto,
+    @Body() dto: CreateRdiDto,
   ): Promise<Rdi> {
     return this.rdiService.create(sessionMetadata, dto);
   }
@@ -58,7 +65,7 @@ export class RdiController {
   })
   async update(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Body() dto: UpdateRdiDto,
+    @Body() dto: UpdateRdiDto,
   ): Promise<Rdi> {
     return this.rdiService.update(rdiClientMetadata, dto);
   }
@@ -70,7 +77,7 @@ export class RdiController {
   })
   async delete(
     @Body() body: { ids: string[] },
-      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<void> {
     return this.rdiService.delete(sessionMetadata, body.ids);
   }

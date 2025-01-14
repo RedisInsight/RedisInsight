@@ -5,13 +5,19 @@ import {
   Joi,
   deps,
   validateApiCall,
-  after, requirements, before, generateInvalidDataTestCases, validateInvalidDataTestCase,
+  after,
+  requirements,
+  before,
+  generateInvalidDataTestCases,
+  validateInvalidDataTestCase,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).patch(`/${constants.API.DATABASES}/${instanceId}/slow-logs/config`);
+  request(server).patch(
+    `/${constants.API.DATABASES}/${instanceId}/slow-logs/config`,
+  );
 
 const dataSchema = Joi.object({
   slowlogMaxLen: Joi.number().min(0).messages({
@@ -26,10 +32,12 @@ const validInputData = {
   slowlogLogSlowerThan: 10000,
 };
 
-const responseSchema = Joi.object().keys({
-  slowlogMaxLen: Joi.number().required(),
-  slowlogLogSlowerThan: Joi.number().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    slowlogMaxLen: Joi.number().required(),
+    slowlogLogSlowerThan: Joi.number().required(),
+  })
+  .required();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -52,12 +60,20 @@ const mainCheckFn = async (testCase) => {
 
 describe('PATCH /databases/:instanceId/slow-logs/config', () => {
   before(async () => {
-    await rte.data.executeCommand('config', ['set', 'slowlog-log-slower-than', 10000]);
+    await rte.data.executeCommand('config', [
+      'set',
+      'slowlog-log-slower-than',
+      10000,
+    ]);
     await rte.data.executeCommand('config', ['set', 'slowlog-max-len', 128]);
   });
 
   after(async () => {
-    await rte.data.executeCommand('config', ['set', 'slowlog-log-slower-than', 10000]);
+    await rte.data.executeCommand('config', [
+      'set',
+      'slowlog-log-slower-than',
+      10000,
+    ]);
     await rte.data.executeCommand('config', ['set', 'slowlog-max-len', 128]);
   });
 
@@ -121,7 +137,7 @@ describe('PATCH /databases/:instanceId/slow-logs/config', () => {
           responseBody: {
             statusCode: 404,
             message: 'Invalid database instance id.',
-            error: 'Not Found'
+            error: 'Not Found',
           },
         },
       ].map(mainCheckFn);
@@ -144,7 +160,7 @@ describe('PATCH /databases/:instanceId/slow-logs/config', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -config')
+          before: () => rte.data.setAclUserRules('~* +@all -config'),
         },
       ].map(mainCheckFn);
     });
@@ -163,7 +179,7 @@ describe('PATCH /databases/:instanceId/slow-logs/config', () => {
         responseBody: {
           statusCode: 400,
           message: 'Configuration slowlog for cluster is deprecated',
-          error: 'Bad Request'
+          error: 'Bad Request',
         },
       },
       {
@@ -173,7 +189,7 @@ describe('PATCH /databases/:instanceId/slow-logs/config', () => {
         responseBody: {
           statusCode: 404,
           message: 'Invalid database instance id.',
-          error: 'Not Found'
+          error: 'Not Found',
         },
       },
     ].map(mainCheckFn);

@@ -1,13 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import {
-  CliOutputFormatterTypes,
-} from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { CliOutputFormatterTypes } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
 
 export enum CommandExecutionStatus {
   Success = 'success',
@@ -20,7 +13,7 @@ export interface ICliExecResultFromNode {
   response: any;
   status: CommandExecutionStatus;
   slot?: number;
-  error?: any,
+  error?: any;
 }
 
 export class SendCommandDto {

@@ -2,8 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
-  mockRepository, mockSessionMetadata, mockSettings, mockSettingsEntity,
-  MockType, mockUserId,
+  mockRepository,
+  mockSessionMetadata,
+  mockSettings,
+  mockSettingsEntity,
+  MockType,
+  mockUserId,
 } from 'src/__mocks__';
 import { LocalSettingsRepository } from 'src/modules/settings/repositories/local.settings.repository';
 import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
@@ -30,7 +34,9 @@ describe('LocalSettingsRepository', () => {
 
     repository.findOneBy.mockResolvedValue(mockSettingsEntity);
     repository.update.mockResolvedValue(true); // no meter of response
-    repository.save.mockResolvedValue(Object.assign(new SettingsEntity(), { id: mockUserId }));
+    repository.save.mockResolvedValue(
+      Object.assign(new SettingsEntity(), { id: mockUserId }),
+    );
     repository.create.mockReturnValue(new SettingsEntity());
   });
 

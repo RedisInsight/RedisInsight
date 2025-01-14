@@ -21,7 +21,7 @@ describe('ResultsLog', () => {
       total: 3,
       fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
       partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
-      success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+      success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }],
     }
     render(<ResultsLog data={mockedData} />)
 
@@ -35,12 +35,12 @@ describe('ResultsLog', () => {
       total: 3,
       fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
       partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
-      success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+      success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }],
     }
     render(<ResultsLog data={mockedData} />)
 
     fireEvent.click(
-      within(screen.getByTestId('success-results-closed')).getByRole('button')
+      within(screen.getByTestId('success-results-closed')).getByRole('button'),
     )
     expect(screen.getByTestId('success-results-open')).toBeInTheDocument()
 
@@ -48,7 +48,7 @@ describe('ResultsLog', () => {
     expect(screen.getByTestId('failed-results-closed')).toBeInTheDocument()
 
     fireEvent.click(
-      within(screen.getByTestId('failed-results-closed')).getByRole('button')
+      within(screen.getByTestId('failed-results-closed')).getByRole('button'),
     )
     expect(screen.getByTestId('failed-results-open')).toBeInTheDocument()
 
@@ -56,7 +56,7 @@ describe('ResultsLog', () => {
     expect(screen.getByTestId('success-results-closed')).toBeInTheDocument()
 
     fireEvent.click(
-      within(screen.getByTestId('partial-results-closed')).getByRole('button')
+      within(screen.getByTestId('partial-results-closed')).getByRole('button'),
     )
     expect(screen.getByTestId('partial-results-open')).toBeInTheDocument()
 
@@ -71,50 +71,57 @@ describe('ResultsLog', () => {
       partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
       success: [
         { index: 1, status: 'success', port: 1233, host: 'localhost' },
-        { index: 3, status: 'success', port: 1233, host: 'localhost' }
-      ]
+        { index: 3, status: 'success', port: 1233, host: 'localhost' },
+      ],
     }
     render(<ResultsLog data={mockedData} />)
 
     expect(
-      within(screen.getByTestId('success-results-closed')).getByTestId('number-of-dbs')
+      within(screen.getByTestId('success-results-closed')).getByTestId(
+        'number-of-dbs',
+      ),
     ).toHaveTextContent('2')
     expect(
-      within(screen.getByTestId('partial-results-closed')).getByTestId('number-of-dbs')
+      within(screen.getByTestId('partial-results-closed')).getByTestId(
+        'number-of-dbs',
+      ),
     ).toHaveTextContent('1')
     expect(
-      within(screen.getByTestId('failed-results-closed')).getByTestId('number-of-dbs')
+      within(screen.getByTestId('failed-results-closed')).getByTestId(
+        'number-of-dbs',
+      ),
     ).toHaveTextContent('1')
   })
 
   it('should call proper telemetry event after click', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     const mockedData: ImportDatabasesData = {
       total: 3,
       fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
       partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
-      success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+      success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }],
     }
     render(<ResultsLog data={mockedData} />)
 
     fireEvent.click(
-      within(screen.getByTestId('success-results-closed')).getByRole('button')
+      within(screen.getByTestId('success-results-closed')).getByRole('button'),
     )
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_LOG_VIEWED,
       eventData: {
         length: 1,
-        name: 'success'
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        name: 'success',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(
-      within(screen.getByTestId('success-results-open')).getByRole('button')
+      within(screen.getByTestId('success-results-open')).getByRole('button'),
     )
 
     expect(sendEventTelemetry).not.toBeCalled()

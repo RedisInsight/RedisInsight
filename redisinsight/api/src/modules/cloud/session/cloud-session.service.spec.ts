@@ -1,10 +1,11 @@
 import { TestingModule, Test } from '@nestjs/testing';
-import {
-  mockInitSession, mockSessionService, MockType,
-} from 'src/__mocks__';
+import { mockInitSession, mockSessionService, MockType } from 'src/__mocks__';
 import { SessionService } from 'src/modules/session/session.service';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
-import { mockCloudSession, mockCloudSessionRepository } from 'src/__mocks__/cloud-session';
+import {
+  mockCloudSession,
+  mockCloudSessionRepository,
+} from 'src/__mocks__/cloud-session';
 import { CloudSessionRepository } from './repositories/cloud.session.repository';
 
 describe('CloudSessionService', () => {
@@ -40,7 +41,10 @@ describe('CloudSessionService', () => {
     });
 
     it('should take some additional data in repository if it is not in session', async () => {
-      cloudSessionRepository.get.mockResolvedValueOnce({ id: 1, data: { idpType: 'test' } });
+      cloudSessionRepository.get.mockResolvedValueOnce({
+        id: 1,
+        data: { idpType: 'test' },
+      });
       const result = await service.getSession(mockInitSession.id);
       expect(result.idpType).toBe('test');
     });
@@ -70,18 +74,26 @@ describe('CloudSessionService', () => {
     it('Should return null when there is nothing to update', async () => {
       await service.updateSessionData(mockInitSession.id, {});
 
-      expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockInitSession.id, { cloud: {} });
+      expect(sessionService.updateSessionData).toHaveBeenCalledWith(
+        mockInitSession.id,
+        { cloud: {} },
+      );
     });
     it('Should update cloud data', async () => {
       await service.updateSessionData(mockInitSession.id, mockCloudSession);
 
-      expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockInitSession.id, {
-        cloud: mockCloudSession,
-      });
+      expect(sessionService.updateSessionData).toHaveBeenCalledWith(
+        mockInitSession.id,
+        {
+          cloud: mockCloudSession,
+        },
+      );
     });
 
     it('Should update data in cloud sesssion repository when necessary fields included', async () => {
-      sessionService.updateSessionData.mockResolvedValue({ data: { cloud: mockCloudSession } });
+      sessionService.updateSessionData.mockResolvedValue({
+        data: { cloud: mockCloudSession },
+      });
       await service.updateSessionData(mockInitSession.id, mockCloudSession);
 
       expect(cloudSessionRepository.save).toHaveBeenCalled();
@@ -101,28 +113,36 @@ describe('CloudSessionService', () => {
         apiSessionId: 'to0update-session-id',
         user: {
           id: 'to-update-user-id',
-          accounts: [{
-            id: 99999,
-            name: 'new account name',
-          }],
+          accounts: [
+            {
+              id: 99999,
+              name: 'new account name',
+            },
+          ],
         },
       };
 
       await service.updateSessionData(mockInitSession.id, toUpdate);
 
-      expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockInitSession.id, {
-        cloud: {
-          ...mockCloudSession,
-          ...toUpdate,
+      expect(sessionService.updateSessionData).toHaveBeenCalledWith(
+        mockInitSession.id,
+        {
+          cloud: {
+            ...mockCloudSession,
+            ...toUpdate,
+          },
         },
-      });
+      );
     });
   });
 
   describe('deleteSession', () => {
     it('should delete cloud session data by id and clear cloud session repository data', async () => {
       await service.deleteSessionData(mockInitSession.id);
-      expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockInitSession.id, { cloud: null });
+      expect(sessionService.updateSessionData).toHaveBeenCalledWith(
+        mockInitSession.id,
+        { cloud: null },
+      );
       expect(cloudSessionRepository.save).toHaveBeenCalledWith({ data: null });
     });
   });

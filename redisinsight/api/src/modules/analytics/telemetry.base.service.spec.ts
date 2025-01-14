@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AppAnalyticsEvents, TelemetryEvents } from 'src/constants';
 import { mockSessionMetadata } from 'src/__mocks__';
@@ -50,7 +53,10 @@ describe('TelemetryBaseService', () => {
       );
     });
     it('should emit event with empty event data', () => {
-      service['sendEvent'](mockSessionMetadata, TelemetryEvents.RedisInstanceAdded);
+      service['sendEvent'](
+        mockSessionMetadata,
+        TelemetryEvents.RedisInstanceAdded,
+      );
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -62,7 +68,11 @@ describe('TelemetryBaseService', () => {
       );
     });
     it('should emit event for undefined event data', () => {
-      service['sendEvent'](mockSessionMetadata, TelemetryEvents.RedisInstanceAdded, undefined);
+      service['sendEvent'](
+        mockSessionMetadata,
+        TelemetryEvents.RedisInstanceAdded,
+        undefined,
+      );
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -78,13 +88,22 @@ describe('TelemetryBaseService', () => {
         throw new Error();
       });
 
-      expect(() => service['sendEvent'](mockSessionMetadata, TelemetryEvents.RedisInstanceAdded)).not.toThrow();
+      expect(() =>
+        service['sendEvent'](
+          mockSessionMetadata,
+          TelemetryEvents.RedisInstanceAdded,
+        ),
+      ).not.toThrow();
     });
   });
 
   describe('sendFailedEvent', () => {
     it('should emit event for custom exception', () => {
-      service['sendFailedEvent'](mockSessionMetadata, TelemetryEvents.RedisInstanceAddFailed, httpException);
+      service['sendFailedEvent'](
+        mockSessionMetadata,
+        TelemetryEvents.RedisInstanceAddFailed,
+        httpException,
+      );
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -141,12 +160,13 @@ describe('TelemetryBaseService', () => {
         throw new Error();
       });
 
-      expect(() => service['sendFailedEvent'](
-        mockSessionMetadata,
-        TelemetryEvents.RedisInstanceAdded,
-        httpException,
-      ))
-        .not.toThrow();
+      expect(() =>
+        service['sendFailedEvent'](
+          mockSessionMetadata,
+          TelemetryEvents.RedisInstanceAdded,
+          httpException,
+        ),
+      ).not.toThrow();
     });
   });
 });

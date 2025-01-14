@@ -26,11 +26,14 @@ describe('analytics settings slice', () => {
       // Arrange
       const state = {
         ...initialState,
-        viewTab: AnalyticsViewTab.SlowLog
+        viewTab: AnalyticsViewTab.SlowLog,
       }
 
       // Act
-      const nextState = reducer(initialState, setAnalyticsViewTab(AnalyticsViewTab.SlowLog))
+      const nextState = reducer(
+        initialState,
+        setAnalyticsViewTab(AnalyticsViewTab.SlowLog),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

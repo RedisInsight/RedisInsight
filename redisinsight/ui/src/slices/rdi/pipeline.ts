@@ -1,7 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { apiService, } from 'uiSrc/services'
-import { addErrorNotification, addInfiniteNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import { apiService } from 'uiSrc/services'
+import {
+  addErrorNotification,
+  addInfiniteNotification,
+  addMessageNotification,
+} from 'uiSrc/slices/app/notifications'
 import {
   IStateRdiPipeline,
   IPipeline,
@@ -50,7 +54,7 @@ export const initialState: IStateRdiPipeline = {
     loading: false,
     action: null,
     error: '',
-  }
+  },
 }
 
 const rdiPipelineSlice = createSlice({
@@ -84,7 +88,10 @@ const rdiPipelineSlice = createSlice({
     deployPipelineFailure: (state) => {
       state.loading = false
     },
-    triggerPipelineAction: (state, { payload }: PayloadAction<PipelineAction>) => {
+    triggerPipelineAction: (
+      state,
+      { payload }: PayloadAction<PipelineAction>,
+    ) => {
       state.pipelineAction.loading = true
       state.pipelineAction.action = payload
       state.pipelineAction.error = ''
@@ -93,17 +100,26 @@ const rdiPipelineSlice = createSlice({
       state.pipelineAction.loading = false
       state.pipelineAction.action = null
     },
-    triggerPipelineActionFailure: (state, { payload }: PayloadAction<string>) => {
+    triggerPipelineActionFailure: (
+      state,
+      { payload }: PayloadAction<string>,
+    ) => {
       state.pipelineAction.loading = false
       state.pipelineAction.error = payload
     },
-    setPipelineSchema: (state, { payload }: PayloadAction<Nullable<object>>) => {
+    setPipelineSchema: (
+      state,
+      { payload }: PayloadAction<Nullable<object>>,
+    ) => {
       state.schema = payload
     },
     getPipelineStrategies: (state) => {
       state.strategies.loading = true
     },
-    getPipelineStrategiesSuccess: (state, { payload }: PayloadAction<IRdiPipelineStrategy[]>) => {
+    getPipelineStrategiesSuccess: (
+      state,
+      { payload }: PayloadAction<IRdiPipelineStrategy[]>,
+    ) => {
       state.strategies = {
         loading: false,
         error: '',
@@ -114,13 +130,19 @@ const rdiPipelineSlice = createSlice({
       state.strategies = {
         loading: false,
         error: payload,
-        data: []
+        data: [],
       }
     },
-    setChangedFile: (state, { payload }: PayloadAction<{ name: string, status: FileChangeType }>) => {
+    setChangedFile: (
+      state,
+      { payload }: PayloadAction<{ name: string; status: FileChangeType }>,
+    ) => {
       state.changes[payload.name] = payload.status
     },
-    setChangedFiles: (state, { payload }: PayloadAction<Record<string, FileChangeType>>) => {
+    setChangedFiles: (
+      state,
+      { payload }: PayloadAction<Record<string, FileChangeType>>,
+    ) => {
       state.changes = payload
     },
     deleteChangedFile: (state, { payload }: PayloadAction<string>) => {
@@ -129,7 +151,10 @@ const rdiPipelineSlice = createSlice({
     getPipelineStatus: (state) => {
       state.status.loading = true
     },
-    getPipelineStatusSuccess: (state, { payload }: PayloadAction<IPipelineStatus>) => {
+    getPipelineStatusSuccess: (
+      state,
+      { payload }: PayloadAction<IPipelineStatus>,
+    ) => {
       state.status = {
         loading: false,
         error: '',
@@ -140,19 +165,25 @@ const rdiPipelineSlice = createSlice({
       state.status = {
         loading: false,
         error: payload,
-        data: null
+        data: null,
       }
     },
-    setJobFunctions: (state, { payload }: PayloadAction<TJMESPathFunctions>) => {
+    setJobFunctions: (
+      state,
+      { payload }: PayloadAction<TJMESPathFunctions>,
+    ) => {
       state.jobFunctions = parseJMESPathFunctions(payload)
     },
   },
 })
 
 export const rdiPipelineSelector = (state: RootState) => state.rdi.pipeline
-export const rdiPipelineActionSelector = (state: RootState) => state.rdi.pipeline.pipelineAction
-export const rdiPipelineStrategiesSelector = (state: RootState) => state.rdi.pipeline.strategies
-export const rdiPipelineStatusSelector = (state: RootState) => state.rdi.pipeline.status
+export const rdiPipelineActionSelector = (state: RootState) =>
+  state.rdi.pipeline.pipelineAction
+export const rdiPipelineStrategiesSelector = (state: RootState) =>
+  state.rdi.pipeline.strategies
+export const rdiPipelineStatusSelector = (state: RootState) =>
+  state.rdi.pipeline.status
 
 export const {
   resetPipelineChecked,
@@ -228,7 +259,9 @@ export function deployPipelineAction(
       if (isStatusSuccessful(status)) {
         dispatch(deployPipelineSuccess())
         dispatch(setChangedFiles({}))
-        dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_DEPLOY_PIPELINE()))
+        dispatch(
+          addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_DEPLOY_PIPELINE()),
+        )
         onSuccessAction?.()
       }
     } catch (_err) {
@@ -250,9 +283,9 @@ export function fetchPipelineStrategies(
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(getPipelineStrategies())
-      const { status, data } = await apiService.get<{ strategies: IRdiPipelineStrategy[] }>(
-        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_STRATEGIES),
-      )
+      const { status, data } = await apiService.get<{
+        strategies: IRdiPipelineStrategy[]
+      }>(getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_STRATEGIES))
 
       if (isStatusSuccessful(status)) {
         dispatch(getPipelineStrategiesSuccess(data.strategies))
@@ -303,7 +336,12 @@ export function fetchConfigTemplate(
   return async (dispatch: AppDispatch) => {
     try {
       const { status, data } = await apiService.get(
-        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_CONFIG_TEMPLATE, pipelineType, dbType),
+        getRdiUrl(
+          rdiInstanceId,
+          ApiEndpoints.RDI_CONFIG_TEMPLATE,
+          pipelineType,
+          dbType,
+        ),
       )
 
       if (isStatusSuccessful(status)) {
@@ -362,9 +400,7 @@ export function fetchRdiPipelineJobFunctions(
   }
 }
 
-export function deletePipelineJob(
-  name: string
-) {
+export function deletePipelineJob(name: string) {
   return (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { data } = state.rdi.pipeline
@@ -471,7 +507,9 @@ export function resetPipelineAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(triggerPipelineActionSuccess())
-        dispatch(addMessageNotification(successMessages.SUCCESS_RESET_PIPELINE()))
+        dispatch(
+          addMessageNotification(successMessages.SUCCESS_RESET_PIPELINE()),
+        )
         onSuccessAction?.({ success: true, error: null })
       }
     } catch (_err) {

@@ -10,13 +10,18 @@ import {
   setReturnUrl,
   setUrlDbConnection,
   setUrlHandlingInitialState,
-  setUrlProperties
+  setUrlProperties,
 } from 'uiSrc/slices/app/url-handling'
 import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { autoCreateAndConnectToInstanceAction } from 'uiSrc/slices/instances/instances'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
-import { Nullable, transformQueryParamsObject, parseRedisUrl, Maybe } from 'uiSrc/utils'
+import {
+  Nullable,
+  transformQueryParamsObject,
+  parseRedisUrl,
+  Maybe,
+} from 'uiSrc/utils'
 import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { setOnboarding } from 'uiSrc/slices/app/features'
@@ -26,7 +31,8 @@ import { AppStorageItem } from 'uiSrc/constants/storage'
 
 const GlobalUrlHandler = () => {
   const { fromUrl } = useSelector(appRedirectionSelector)
-  const { isShowConceptsPopup: isShowConsents, config } = useSelector(userSettingsSelector)
+  const { isShowConceptsPopup: isShowConsents, config } =
+    useSelector(userSettingsSelector)
   const { search } = useLocation()
 
   const history = useHistory()
@@ -59,7 +65,8 @@ const GlobalUrlHandler = () => {
       const transformedProperties = transformQueryParamsObject(urlProperties)
       handleCommonProperties(transformedProperties)
 
-      if (action === UrlHandlingActions.Connect) connectToDatabase(urlProperties)
+      if (action === UrlHandlingActions.Connect)
+        connectToDatabase(urlProperties)
       if (action === UrlHandlingActions.Open) openPage(transformedProperties)
     } catch (_e) {
       //
@@ -75,7 +82,7 @@ const GlobalUrlHandler = () => {
       if (from) {
         dispatch(setFromUrl(from))
         history.replace({
-          search: ''
+          search: '',
         })
       }
       if (returnUrl) {
@@ -91,10 +98,14 @@ const GlobalUrlHandler = () => {
   const redirectToPage = (
     id: Maybe<string>,
     redirectPage: Nullable<string>,
-    currentPathname?: string
+    currentPathname?: string,
   ) => {
     if (redirectPage) {
-      const pageToRedirect = getRedirectionPage(redirectPage, id || undefined, currentPathname)
+      const pageToRedirect = getRedirectionPage(
+        redirectPage,
+        id || undefined,
+        currentPathname,
+      )
 
       if (pageToRedirect) {
         history.push(pageToRedirect)
@@ -117,10 +128,13 @@ const GlobalUrlHandler = () => {
       } = properties
 
       const cloudDetails = transformQueryParamsObject(
-        pick(
-          properties,
-          ['cloudId', 'subscriptionType', 'planMemoryLimit', 'memoryLimitMeasurementUnit', 'free']
-        )
+        pick(properties, [
+          'cloudId',
+          'subscriptionType',
+          'planMemoryLimit',
+          'memoryLimitMeasurementUnit',
+          'free',
+        ]),
       )
 
       const url = parseRedisUrl(redisUrl)
@@ -140,7 +154,10 @@ const GlobalUrlHandler = () => {
         requiredClientCert,
       }
 
-      const isAllObligatoryProvided = every(values(obligatoryForAutoConnectFields), (value) => value || isNumber(value))
+      const isAllObligatoryProvided = every(
+        values(obligatoryForAutoConnectFields),
+        (value) => value || isNumber(value),
+      )
       const isTlsProvided = some(values(tlsFields), (value) => value === 'true')
 
       const db = {
@@ -153,21 +170,29 @@ const GlobalUrlHandler = () => {
           db.cloudDetails = cloudDetails
         }
         dispatch(setUrlHandlingInitialState())
-        dispatch(autoCreateAndConnectToInstanceAction(db, (id) => redirectToPage(id, redirect)))
+        dispatch(
+          autoCreateAndConnectToInstanceAction(db, (id) =>
+            redirectToPage(id, redirect),
+          ),
+        )
 
         return
       }
 
-      dispatch(setUrlDbConnection({
-        action: UrlHandlingActions.Connect,
-        dbConnection: {
-          ...db,
-          // set tls with new cert option
-          tls: isTlsProvided,
-          caCert: requiredCaCert === 'true' ? { id: ADD_NEW_CA_CERT } : undefined,
-          clientCert: requiredClientCert === 'true' ? { id: ADD_NEW } : undefined,
-        }
-      }))
+      dispatch(
+        setUrlDbConnection({
+          action: UrlHandlingActions.Connect,
+          dbConnection: {
+            ...db,
+            // set tls with new cert option
+            tls: isTlsProvided,
+            caCert:
+              requiredCaCert === 'true' ? { id: ADD_NEW_CA_CERT } : undefined,
+            clientCert:
+              requiredClientCert === 'true' ? { id: ADD_NEW } : undefined,
+          },
+        }),
+      )
 
       history.push(Pages.home)
     } catch (e) {

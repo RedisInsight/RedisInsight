@@ -7,20 +7,25 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, JoiRedisString,
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups/consumers/pending-messages/get`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups/consumers/pending-messages/get`,
+  );
 
-const pendingMessageSchema = Joi.object().keys({
-  id: Joi.string().required(),
-  consumerName: JoiRedisString.required(),
-  idle: Joi.number().required(),
-  delivered: Joi.number().required(),
-}).strict();
+const pendingMessageSchema = Joi.object()
+  .keys({
+    id: Joi.string().required(),
+    consumerName: JoiRedisString.required(),
+    idle: Joi.number().required(),
+    delivered: Joi.number().required(),
+  })
+  .strict();
 
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
@@ -79,10 +84,12 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           const [message] = body;
           expect(body.length).to.eql(1);
           expect(message.id).to.be.a('string');
-          expect(message.consumerName).to.eq(constants.TEST_STREAM_CONSUMER_BIN_UTF8_1);
+          expect(message.consumerName).to.eq(
+            constants.TEST_STREAM_CONSUMER_BIN_UTF8_1,
+          );
           expect(message.idle).to.gte(0);
           expect(message.delivered).to.eq(1);
-        }
+        },
       },
       {
         name: 'Should get pending messages from buff (return buff)',
@@ -100,10 +107,12 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           const [message] = body;
           expect(body.length).to.eql(1);
           expect(message.id).to.be.a('string');
-          expect(message.consumerName).to.deep.eq(constants.TEST_STREAM_CONSUMER_BIN_BUF_OBJ_1);
+          expect(message.consumerName).to.deep.eq(
+            constants.TEST_STREAM_CONSUMER_BIN_BUF_OBJ_1,
+          );
           expect(message.idle).to.gte(0);
           expect(message.delivered).to.eq(1);
-        }
+        },
       },
       {
         name: 'Should get pending messages from ascii (return ascii)',
@@ -121,10 +130,12 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           const [message] = body;
           expect(body.length).to.eql(1);
           expect(message.id).to.be.a('string');
-          expect(message.consumerName).to.deep.eq(constants.TEST_STREAM_CONSUMER_BIN_ASCII_1);
+          expect(message.consumerName).to.deep.eq(
+            constants.TEST_STREAM_CONSUMER_BIN_ASCII_1,
+          );
           expect(message.idle).to.gte(0);
           expect(message.delivered).to.eq(1);
-        }
+        },
       },
     ].map(mainCheckFn);
   });
@@ -148,13 +159,13 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           constants.TEST_STREAM_ID_3,
           constants.TEST_STREAM_FIELD_1,
           constants.TEST_STREAM_VALUE_1,
-        ])
+        ]);
         await rte.data.sendCommand('xadd', [
           constants.TEST_STREAM_KEY_1,
           constants.TEST_STREAM_ID_4,
           constants.TEST_STREAM_FIELD_1,
           constants.TEST_STREAM_VALUE_1,
-        ])
+        ]);
         await rte.data.sendCommand('xreadgroup', [
           'GROUP',
           constants.TEST_STREAM_GROUP_1,
@@ -190,17 +201,19 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
             keyName: constants.TEST_STREAM_KEY_1,
             groupName: constants.TEST_STREAM_GROUP_1,
             consumerName: constants.TEST_STREAM_CONSUMER_1,
-            count: 1
+            count: 1,
           },
           responseSchema,
           checkFn: ({ body }) => {
             const [message] = body;
             expect(body.length).to.eql(1);
             expect(message.id).to.eq(constants.TEST_STREAM_ID_3);
-            expect(message.consumerName).to.eq(constants.TEST_STREAM_CONSUMER_1);
+            expect(message.consumerName).to.eq(
+              constants.TEST_STREAM_CONSUMER_1,
+            );
             expect(message.idle).to.gte(0);
             expect(message.delivered).to.eq(1);
-          }
+          },
         },
         {
           name: 'Should return pending messages list (2 messages)',
@@ -212,7 +225,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.length).to.eql(2);
-          }
+          },
         },
         {
           name: 'Should return pending messages list (0 messages) filtered by end',
@@ -226,7 +239,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.length).to.eql(0);
-          }
+          },
         },
         {
           name: 'Should return pending messages list (1 messages) filtered by end',
@@ -240,7 +253,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.length).to.eql(1);
-          }
+          },
         },
         {
           name: 'Should return pending messages list (0 messages) filtered by start',
@@ -254,7 +267,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.length).to.eql(0);
-          }
+          },
         },
         {
           name: 'Should return pending messages list (1 messages) filtered by start',
@@ -268,7 +281,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.length).to.eql(1);
-          }
+          },
         },
         {
           name: 'Should return BadRequest error if key has another type',
@@ -349,7 +362,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
         {
           name: 'Should throw error if no permissions for "xpending" command',
@@ -362,7 +375,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xpending')
+          before: () => rte.data.setAclUserRules('~* +@all -xpending'),
         },
       ].map(mainCheckFn);
     });

@@ -5,7 +5,12 @@ import { badgesContent } from '../constants'
 import styles from '../styles.module.scss'
 
 const RecommendationBadgesLegend = () => (
-  <EuiFlexGroup data-testid="badges-legend" className={styles.badgesLegend} responsive={false} justifyContent="flexEnd">
+  <EuiFlexGroup
+    data-testid="badges-legend"
+    className={styles.badgesLegend}
+    responsive={false}
+    justifyContent="flexEnd"
+  >
     {badgesContent.map(({ id, icon, name }) => (
       <EuiFlexItem key={id} className={styles.badge} grow={false}>
         <div className={styles.badgeWrapper}>

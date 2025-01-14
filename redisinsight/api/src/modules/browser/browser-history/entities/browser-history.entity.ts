@@ -1,5 +1,11 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  Index,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DataAsJsonString } from 'src/common/decorators';
@@ -17,13 +23,10 @@ export class BrowserHistoryEntity {
   @Expose()
   databaseId: string;
 
-  @ManyToOne(
-    () => DatabaseEntity,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => DatabaseEntity, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'databaseId' })
   database: DatabaseEntity;
 

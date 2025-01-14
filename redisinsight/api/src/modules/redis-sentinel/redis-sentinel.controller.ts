@@ -1,7 +1,8 @@
 import {
   Body,
   Controller,
-  Post, Res,
+  Post,
+  Res,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -31,9 +32,7 @@ import { RequestSessionMetadata } from 'src/common/decorators';
   }),
 )
 export class RedisSentinelController {
-  constructor(
-    private redisSentinelService: RedisSentinelService,
-  ) {}
+  constructor(private redisSentinelService: RedisSentinelService) {}
 
   @Post('get-databases')
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
@@ -50,9 +49,12 @@ export class RedisSentinelController {
   })
   async getMasters(
     @Body() dto: DiscoverSentinelMastersDto,
-      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<SentinelMaster[]> {
-    return await this.redisSentinelService.getSentinelMasters(sessionMetadata, dto as Database);
+    return await this.redisSentinelService.getSentinelMasters(
+      sessionMetadata,
+      dto as Database,
+    );
   }
 
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
@@ -73,12 +75,16 @@ export class RedisSentinelController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async addSentinelMasters(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Body() dto: CreateSentinelDatabasesDto,
-      @Res() res: Response,
+    @Body() dto: CreateSentinelDatabasesDto,
+    @Res() res: Response,
   ): Promise<Response> {
-    const result = await this.redisSentinelService.createSentinelDatabases(sessionMetadata, dto);
+    const result = await this.redisSentinelService.createSentinelDatabases(
+      sessionMetadata,
+      dto,
+    );
     const hasSuccessResult = result.some(
-      (addResponse: CreateSentinelDatabaseResponse) => addResponse.status === ActionStatus.Success,
+      (addResponse: CreateSentinelDatabaseResponse) =>
+        addResponse.status === ActionStatus.Success,
     );
     if (!hasSuccessResult) {
       return res.status(200).json(result);

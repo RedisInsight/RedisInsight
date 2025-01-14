@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsDefined, IsInt, IsNotEmpty, IsString,
-} from 'class-validator';
+import { IsDefined, IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { Exclude, Type } from 'class-transformer';
 import { RedisEnterpriseDatabaseStatus } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
 

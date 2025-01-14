@@ -10,10 +10,14 @@ export interface IJSONObject {
 
 export enum ObjectTypes {
   Object = 'object',
-  Array = 'array'
+  Array = 'array',
 }
 export type JSONArrayValue = IJSONObject | JSONObjectValue
-export type IJSONValue = JSONScalarValue | IJSONObject | JSONObjectValue | JSONArrayValue[]
+export type IJSONValue =
+  | JSONScalarValue
+  | IJSONObject
+  | JSONObjectValue
+  | JSONArrayValue[]
 
 export interface IJSONDocument {
   key: string
@@ -57,9 +61,20 @@ export interface DynamicTypesProps {
   onClickFunc?: (path: string) => void
   onJsonKeyExpandAndCollapse: (isExpanded: boolean, path: string) => void
   handleSubmitUpdateValue?: (body: UpdateValueBody) => void
-  handleFetchVisualisationResults: (path: string, forceRetrieve?: boolean) => Promise<any>
-  handleAppendRejsonObjectItemAction: (keyName: RedisResponseBuffer, path: string, data: string) => void
-  handleSetRejsonDataAction: (keyName: RedisResponseBuffer, path: string, data: string) => void
+  handleFetchVisualisationResults: (
+    path: string,
+    forceRetrieve?: boolean,
+  ) => Promise<any>
+  handleAppendRejsonObjectItemAction: (
+    keyName: RedisResponseBuffer,
+    path: string,
+    data: string,
+  ) => void
+  handleSetRejsonDataAction: (
+    keyName: RedisResponseBuffer,
+    path: string,
+    data: string,
+  ) => void
 }
 
 interface JSONCommonProps {
@@ -84,7 +99,18 @@ export interface JSONObjectProps extends JSONCommonProps {
   onJsonKeyExpandAndCollapse: (isExpanded: boolean, path: string) => void
   onClickRemoveKey: (path: string, keyName: string) => void
   handleSubmitUpdateValue?: (body: UpdateValueBody) => void
-  handleSetRejsonDataAction: (keyName: RedisResponseBuffer, path: string, data: string) => void
-  handleAppendRejsonObjectItemAction: (keyName: RedisResponseBuffer, path: string, data: string) => void
-  handleFetchVisualisationResults: (path: string, forceRetrieve?: boolean) => Promise<any>
+  handleSetRejsonDataAction: (
+    keyName: RedisResponseBuffer,
+    path: string,
+    data: string,
+  ) => void
+  handleAppendRejsonObjectItemAction: (
+    keyName: RedisResponseBuffer,
+    path: string,
+    data: string,
+  ) => void
+  handleFetchVisualisationResults: (
+    path: string,
+    forceRetrieve?: boolean,
+  ) => Promise<any>
 }

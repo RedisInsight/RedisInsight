@@ -27,7 +27,7 @@ const DeleteTutorialButton = (props: Props) => {
       isOpen={isPopoverDeleteOpen}
       closePopover={() => setIsPopoverDeleteOpen(false)}
       panelPaddingSize="l"
-      button={(
+      button={
         <div
           className="group-header__btn group-header__delete-btn"
           role="presentation"
@@ -36,7 +36,7 @@ const DeleteTutorialButton = (props: Props) => {
         >
           <EuiIcon size="m" type="trash" />
         </div>
-        )}
+      }
       onClick={(e) => e.stopPropagation()}
       data-testid={`delete-tutorial-popover-${id}`}
     >
@@ -45,9 +45,7 @@ const DeleteTutorialButton = (props: Props) => {
           <h4 style={{ wordBreak: 'break-all' }}>
             <b>{formatLongName(label)}</b>
           </h4>
-          <EuiText size="s">
-            will be deleted.
-          </EuiText>
+          <EuiText size="s">will be deleted.</EuiText>
         </EuiText>
         <div className={styles.popoverFooter}>
           <EuiButton

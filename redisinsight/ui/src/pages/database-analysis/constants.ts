@@ -8,7 +8,7 @@ export enum TableView {
 export enum EmptyMessage {
   Reports = 'reports',
   Keys = 'keys',
-  Encrypt = 'encrypt'
+  Encrypt = 'encrypt',
 }
 
 export type Content = {

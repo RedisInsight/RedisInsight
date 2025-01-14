@@ -45,14 +45,20 @@ export const mockRedisShardObserver: IShardObserver = {
 };
 
 export const mockProfilerAnalyticsEvents = new Map();
-mockProfilerAnalyticsEvents.set(TelemetryEvents.ProfilerLogDownloaded, jest.fn());
+mockProfilerAnalyticsEvents.set(
+  TelemetryEvents.ProfilerLogDownloaded,
+  jest.fn(),
+);
 mockProfilerAnalyticsEvents.set(TelemetryEvents.ProfilerLogDeleted, jest.fn());
 
-export const mockProfilerAnalyticsService: MockType<ProfilerAnalyticsService> = {
-  sendLogDeleted: jest.fn(),
-  sendLogDownloaded: jest.fn(),
-  getEventsEmitters: jest.fn().mockImplementation(() => mockProfilerAnalyticsEvents),
-};
+export const mockProfilerAnalyticsService: MockType<ProfilerAnalyticsService> =
+  {
+    sendLogDeleted: jest.fn(),
+    sendLogDownloaded: jest.fn(),
+    getEventsEmitters: jest
+      .fn()
+      .mockImplementation(() => mockProfilerAnalyticsEvents),
+  };
 
 export const mockLogEmitter: ILogsEmitter = {
   id: 'test',
@@ -66,14 +72,21 @@ export const mockWriteStream = {
   write: jest.fn(),
 };
 export const testLogFileId = 'test-log-file-id';
-export const mockLogFile: LogFile = new LogFile('instanceid', testLogFileId, mockProfilerAnalyticsEvents);
+export const mockLogFile: LogFile = new LogFile(
+  'instanceid',
+  testLogFileId,
+  mockProfilerAnalyticsEvents,
+);
 mockLogFile['getWriteStream'] = jest.fn();
 mockLogFile['addProfilerClient'] = jest.fn();
 mockLogFile['removeProfilerClient'] = jest.fn();
 mockLogFile['setAlias'] = jest.fn();
 mockLogFile['destroy'] = jest.fn();
 
-export const mockProfilerClient: ProfilerClient = new ProfilerClient(mockSocket.id, mockSocket);
+export const mockProfilerClient: ProfilerClient = new ProfilerClient(
+  mockSocket.id,
+  mockSocket,
+);
 mockProfilerClient['handleOnData'] = jest.fn();
 mockProfilerClient['handleOnDisconnect'] = jest.fn();
 

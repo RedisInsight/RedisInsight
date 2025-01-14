@@ -1,7 +1,10 @@
 import { take, isEmpty } from 'lodash';
 import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { CommandParsingError, RedirectionParsingError } from 'src/modules/cli/constants/errors';
+import {
+  CommandParsingError,
+  RedirectionParsingError,
+} from 'src/modules/cli/constants/errors';
 import { ReplyError } from 'src/models';
 import { IRedirectionInfo } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
 import { IS_NON_PRINTABLE_ASCII_CHARACTER } from 'src/constants';
@@ -94,11 +97,13 @@ export const splitCliCommandLine = (line: string): string[] => {
         // Handle double quotes
         if (i >= line.length) {
           // unterminated quotes
-          throw new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES());
+          throw new CommandParsingError(
+            ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
+          );
         } else if (
-          line[i] === '\\'
-          && line[i + 1] === 'x'
-          && isHex(`${line[i + 2]}${line[i + 3]}`)
+          line[i] === '\\' &&
+          line[i + 1] === 'x' &&
+          isHex(`${line[i + 2]}${line[i + 3]}`)
         ) {
           const charCode = parseInt(`0x${line[i + 2]}${line[i + 3]}`, 16);
           currentArg = Buffer.concat([
@@ -132,7 +137,9 @@ export const splitCliCommandLine = (line: string): string[] => {
         // Handle single quotes
         if (i >= line.length) {
           // unterminated quotes
-          throw new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES());
+          throw new CommandParsingError(
+            ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
+          );
         } else if (line[i] === '\\' && line[i + 1] === "'") {
           i += 1;
           currentArg += "'";
@@ -168,7 +175,8 @@ export const splitCliCommandLine = (line: string): string[] => {
   return args;
 };
 
-export const getBlockingCommands = (): string[] => Object.values(CliToolBlockingCommands);
+export const getBlockingCommands = (): string[] =>
+  Object.values(CliToolBlockingCommands);
 
 export function decimalToHexString(d: number, padding: number = 2): string {
   const hex = Number(d).toString(16);
@@ -177,8 +185,9 @@ export function decimalToHexString(d: number, padding: number = 2): string {
 
 export function checkHumanReadableCommands(commandLine: string): boolean {
   // The list of command got from cliSendCommand() function in redis-cli.c from Redis source code.
-  return !!Object.values(CliToolHumanReadableCommands)
-    .find((command) => commandLine.toLowerCase().startsWith(command));
+  return !!Object.values(CliToolHumanReadableCommands).find((command) =>
+    commandLine.toLowerCase().startsWith(command),
+  );
 }
 
 export function checkRedirectionError(error: ReplyError): boolean {
@@ -203,8 +212,8 @@ export function parseRedirectionError(error: ReplyError): IRedirectionInfo {
 }
 
 interface IPipelineSummary {
-  summary: string,
-  length: number,
+  summary: string;
+  length: number;
 }
 
 export function getRedisPipelineSummary(
@@ -218,19 +227,21 @@ export function getRedisPipelineSummary(
   try {
     const commands = pipeline.reduce((prev, cur) => [...prev, cur[0]], []);
     result.length = commands.length;
-    result.summary = commands.length > limit
-      ? JSON.stringify([...take(commands, limit), '...'])
-      : JSON.stringify(commands);
+    result.summary =
+      commands.length > limit
+        ? JSON.stringify([...take(commands, limit), '...'])
+        : JSON.stringify(commands);
   } catch (e) {
     // continue regardless of error
   }
   return result;
 }
 
-export const multilineCommandToOneLine = (text: string = '') => text
-  .split(/(\r\n|\n|\r)+\s+/gm)
-  .filter((line: string) => !(BLANK_LINE_REGEX.test(line) || isEmpty(line)))
-  .join(' ');
+export const multilineCommandToOneLine = (text: string = '') =>
+  text
+    .split(/(\r\n|\n|\r)+\s+/gm)
+    .filter((line: string) => !(BLANK_LINE_REGEX.test(line) || isEmpty(line)))
+    .join(' ');
 
 /**
  * Produces an escaped string representation of a byte string.
@@ -275,7 +286,8 @@ export const getASCIISafeStringFromBuffer = (reply: Buffer): string => {
   return result;
 };
 
-export const getUTF8FromBuffer = (reply: Buffer): string => reply.toString('utf8');
+export const getUTF8FromBuffer = (reply: Buffer): string =>
+  reply.toString('utf8');
 
 export const getUTF8FromRedisString = (value: any) => {
   if (value instanceof Buffer) {

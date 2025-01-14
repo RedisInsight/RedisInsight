@@ -1,13 +1,20 @@
 import React from 'react'
-import { fireEvent, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
+import {
+  fireEvent,
+  render,
+  screen,
+  waitForEuiPopoverVisible,
+} from 'uiSrc/utils/test-utils'
 
 import RestartChat from './RestartChat'
 
-const button = (<button data-testid="anchor-btn" />)
+const button = <button data-testid="anchor-btn" />
 
 describe('RestartChat', () => {
   it('should render', () => {
-    expect(render(<RestartChat button={button} onConfirm={jest.fn()} />)).toBeTruthy()
+    expect(
+      render(<RestartChat button={button} onConfirm={jest.fn()} />),
+    ).toBeTruthy()
   })
 
   it('should call onConfirm', async () => {

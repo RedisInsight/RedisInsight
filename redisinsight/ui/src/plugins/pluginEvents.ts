@@ -6,8 +6,8 @@ const dispatchBodyEvent = (mouseEventType: string) => {
       view: window,
       bubbles: true,
       cancelable: true,
-      buttons: 1
-    })
+      buttons: 1,
+    }),
   )
 }
 
@@ -34,43 +34,51 @@ export const listenPluginsEvents = () => {
         break
       }
       case PluginEvents.heightChanged: {
-        pluginApi.sendEvent(e.data.iframeId, PluginEvents.heightChanged, e.data.height)
+        pluginApi.sendEvent(
+          e.data.iframeId,
+          PluginEvents.heightChanged,
+          e.data.height,
+        )
         break
       }
       case PluginEvents.executeRedisCommand: {
         pluginApi.sendEvent(e.data.iframeId, PluginEvents.executeRedisCommand, {
           command: e.data.command,
-          requestId: e.data.requestId
+          requestId: e.data.requestId,
         })
         break
       }
       case PluginEvents.setHeaderText: {
-        pluginApi.sendEvent(e.data.iframeId, PluginEvents.setHeaderText, e.data.text)
+        pluginApi.sendEvent(
+          e.data.iframeId,
+          PluginEvents.setHeaderText,
+          e.data.text,
+        )
         break
       }
       case PluginEvents.getState: {
         pluginApi.sendEvent(e.data.iframeId, PluginEvents.getState, {
-          requestId: e.data.requestId
+          requestId: e.data.requestId,
         })
         break
       }
       case PluginEvents.setState: {
         pluginApi.sendEvent(e.data.iframeId, PluginEvents.setState, {
           requestId: e.data.requestId,
-          state: e.data.state
+          state: e.data.state,
         })
         break
       }
       case PluginEvents.formatRedisReply: {
         pluginApi.sendEvent(e.data.iframeId, PluginEvents.formatRedisReply, {
           requestId: e.data.requestId,
-          data: e.data.data
+          data: e.data.data,
         })
         break
       }
       case 'click': {
         // Simulate bubbling from iframe
-        ['mousedown', 'click', 'mouseup'].forEach(dispatchBodyEvent)
+        ;['mousedown', 'click', 'mouseup'].forEach(dispatchBodyEvent)
         break
       }
       default:

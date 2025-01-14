@@ -1,6 +1,12 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { render, screen, fireEvent, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  screen,
+  fireEvent,
+  cleanup,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
 
 import { sendWBCommand } from 'uiSrc/slices/workbench/wb-results'
@@ -30,7 +36,7 @@ describe('CodeBlock', () => {
         commandId: expect.any(String),
         commands: ['info'],
       }),
-      setDbIndexState(true)
+      setDbIndexState(true),
     ])
   })
 })

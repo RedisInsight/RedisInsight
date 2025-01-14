@@ -18,7 +18,10 @@ import {
 } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
-import { deepLinkHandler, deepLinkWindowHandler } from 'desktopSrc/lib/app/deep-link.handlers'
+import {
+  deepLinkHandler,
+  deepLinkWindowHandler,
+} from 'desktopSrc/lib/app/deep-link.handlers'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
 
 if (!config.isProduction) {
@@ -36,7 +39,8 @@ const init = async () => {
   initTray()
   initCloudHandlers()
 
-  nativeTheme.themeSource = electronStore?.get(ElectronStorageItem.themeSource) || config.themeSource
+  nativeTheme.themeSource =
+    electronStore?.get(ElectronStorageItem.themeSource) || config.themeSource
 
   app.setName(config.name)
   app.setAppUserModelId(config.name)
@@ -55,7 +59,9 @@ const init = async () => {
     // register our application to handle custom protocol
     if (process.defaultApp) {
       if (deepLink) {
-        app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(deepLink)])
+        app.setAsDefaultProtocolClient(config.schema, process.execPath, [
+          path.resolve(deepLink),
+        ])
       }
     } else {
       app.setAsDefaultProtocolClient(config.schema)

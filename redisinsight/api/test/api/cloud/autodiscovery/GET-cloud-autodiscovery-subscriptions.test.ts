@@ -2,36 +2,44 @@ import {
   describe,
   deps,
   requirements,
-  Joi, getMainCheckFn, serverConfig
+  Joi,
+  getMainCheckFn,
+  serverConfig,
 } from '../../deps';
 import { nock } from '../../../helpers/test';
 import {
-  mockCloudCapiSubscription, mockCloudCapiSubscriptionFixed,
+  mockCloudCapiSubscription,
+  mockCloudCapiSubscriptionFixed,
   mockCloudSubscription,
-  mockCloudSubscriptionFixed
+  mockCloudSubscriptionFixed,
 } from 'src/__mocks__';
 import { CustomErrorCodes } from 'src/constants';
 
 const { request, server, constants } = deps;
 
-const endpoint = () => request(server).get(`/cloud/autodiscovery/subscriptions`);
+const endpoint = () =>
+  request(server).get(`/cloud/autodiscovery/subscriptions`);
 
 const headers = {
   'x-cloud-api-key': constants.TEST_CLOUD_API_KEY,
   'x-cloud-api-secret': constants.TEST_CLOUD_API_SECRET_KEY,
-}
+};
 
-const responseSchema = Joi.array().items(Joi.object().keys({
-  id: Joi.number().required(),
-  name: Joi.string().required(),
-  numberOfDatabases: Joi.number().required(),
-  status: Joi.string().required(),
-  provider: Joi.string(),
-  region: Joi.string(),
-  type: Joi.string(),
-  price: Joi.number().integer(),
-  free: Joi.boolean(),
-})).required();
+const responseSchema = Joi.array()
+  .items(
+    Joi.object().keys({
+      id: Joi.number().required(),
+      name: Joi.string().required(),
+      numberOfDatabases: Joi.number().required(),
+      status: Joi.string().required(),
+      provider: Joi.string(),
+      region: Joi.string(),
+      type: Joi.string(),
+      price: Joi.number().integer(),
+      free: Joi.boolean(),
+    }),
+  )
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -65,7 +73,7 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
               response: {
                 status: 403,
                 data: { message: 'Unauthorized for this action' },
-              }
+              },
             });
         },
         headers,
@@ -85,7 +93,7 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
               response: {
                 status: 401,
                 data: '',
-              }
+              },
             })
             .get('/subscriptions')
             .reply(200, { subscriptions: [mockCloudCapiSubscription] });

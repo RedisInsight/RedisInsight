@@ -1,4 +1,7 @@
-import { generateHumanMessage, generateAiMessage } from 'uiSrc/utils/transformers/chatbot'
+import {
+  generateHumanMessage,
+  generateAiMessage,
+} from 'uiSrc/utils/transformers/chatbot'
 import { AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssistant'
 
 describe('generateHumanMessage', () => {
@@ -7,7 +10,7 @@ describe('generateHumanMessage', () => {
       id: expect.any(String),
       type: AiChatMessageType.HumanMessage,
       content: 'hello',
-      context: {}
+      context: {},
     })
   })
 })

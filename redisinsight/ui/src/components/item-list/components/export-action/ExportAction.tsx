@@ -19,7 +19,9 @@ export interface Props<T> {
   subTitle: string
 }
 
-const ExportAction = <T extends { id: string; name?: string }>(props: Props<T>) => {
+const ExportAction = <T extends { id: string; name?: string }>(
+  props: Props<T>,
+) => {
   const { selection, onExport, subTitle } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [withSecrets, setWithSecrets] = useState(true)
@@ -53,7 +55,12 @@ const ExportAction = <T extends { id: string; name?: string }>(props: Props<T>) 
       </EuiText>
       <div className={styles.boxSection}>
         {selection.map((select) => (
-          <EuiFlexGroup key={select.id} gutterSize="s" responsive={false} className={styles.nameList}>
+          <EuiFlexGroup
+            key={select.id}
+            gutterSize="s"
+            responsive={false}
+            className={styles.nameList}
+          >
             <EuiFlexItem grow={false}>
               <EuiIcon type="check" />
             </EuiFlexItem>

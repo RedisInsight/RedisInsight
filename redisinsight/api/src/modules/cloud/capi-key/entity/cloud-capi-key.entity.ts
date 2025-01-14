@@ -1,6 +1,4 @@
-import {
-  Column, Entity, PrimaryGeneratedColumn, Unique,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Expose } from 'class-transformer';
 
 @Entity('cloud_capi_key')

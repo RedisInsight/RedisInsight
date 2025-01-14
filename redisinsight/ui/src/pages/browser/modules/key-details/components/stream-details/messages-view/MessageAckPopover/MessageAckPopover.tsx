@@ -12,7 +12,13 @@ export interface Props {
 }
 
 const AckPopover = (props: Props) => {
-  const { id, isOpen, closePopover = () => {}, showPopover = () => {}, acknowledge = () => {} } = props
+  const {
+    id,
+    isOpen,
+    closePopover = () => {},
+    showPopover = () => {},
+    acknowledge = () => {},
+  } = props
   return (
     <EuiPopover
       key={id}
@@ -23,7 +29,7 @@ const AckPopover = (props: Props) => {
       panelPaddingSize="m"
       anchorClassName="ackMessagePopover"
       panelClassName={styles.popoverWrapper}
-      button={(
+      button={
         <EuiButton
           size="s"
           color="secondary"
@@ -34,7 +40,7 @@ const AckPopover = (props: Props) => {
         >
           ACK
         </EuiButton>
-      )}
+      }
     >
       <div className={styles.popover}>
         <EuiText size="m">

@@ -1,15 +1,9 @@
-import {
-  FormatterTypes,
-  IFormatterStrategy,
-} from './formatter.interface';
+import { FormatterTypes, IFormatterStrategy } from './formatter.interface';
 
 export class FormatterManager {
   private strategies = {};
 
-  addStrategy(
-    name: FormatterTypes,
-    strategy: IFormatterStrategy,
-  ): void {
+  addStrategy(name: FormatterTypes, strategy: IFormatterStrategy): void {
     this.strategies[name] = strategy;
   }
 

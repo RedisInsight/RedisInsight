@@ -17,7 +17,9 @@ describe('ZSetInfoStrategy', () => {
 
   describe('getLength', () => {
     it('should get length', async () => {
-      expect(await strategy.getLength(client, mockKey)).toEqual(mockRedisResponse);
+      expect(await strategy.getLength(client, mockKey)).toEqual(
+        mockRedisResponse,
+      );
     });
   });
 });

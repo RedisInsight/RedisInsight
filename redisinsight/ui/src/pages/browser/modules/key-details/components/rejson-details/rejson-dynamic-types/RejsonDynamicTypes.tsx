@@ -36,7 +36,9 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
       keyName={data.key}
       key={generatePath(data.parentPath, data.key)}
       value={data.value}
-      handleSubmitRemoveKey={(path: string, keyName: string) => onClickRemoveKey(path, keyName)}
+      handleSubmitRemoveKey={(path: string, keyName: string) =>
+        onClickRemoveKey(path, keyName)
+      }
     />
   )
 
@@ -54,7 +56,9 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
       onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
       value={data.value || {}}
       cardinality={data.cardinality}
-      handleSubmitRemoveKey={(path: string, keyName: string) => onClickRemoveKey(path, keyName)}
+      handleSubmitRemoveKey={(path: string, keyName: string) =>
+        onClickRemoveKey(path, keyName)
+      }
       onClickRemoveKey={onClickRemoveKey}
       handleSubmitUpdateValue={handleSubmitUpdateValue}
       handleSetRejsonDataAction={handleSetRejsonDataAction}
@@ -64,10 +68,12 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
   )
 
   const renderRejsonDataBeDownloaded = (item: any, i: number) => {
-    if (isScalar(item)) return renderScalar({ key: i || null, value: item, parentPath })
+    if (isScalar(item))
+      return renderScalar({ key: i || null, value: item, parentPath })
 
     const data = { ...item, parentPath }
-    if (['array', 'object'].includes(item.type)) return renderJSONObject(data, item.type)
+    if (['array', 'object'].includes(item.type))
+      return renderJSONObject(data, item.type)
 
     return renderScalar(data)
   }
@@ -75,12 +81,15 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
   const renderArrayItem = (key: string | number, value: any) => {
     // it is the same to render object or array
     if (isObject(value)) {
-      return renderJSONObject({
-        key,
-        value,
-        cardinality: Object.keys(value).length,
-        parentPath,
-      }, Array.isArray(value) ? ObjectTypes.Array : ObjectTypes.Object)
+      return renderJSONObject(
+        {
+          key,
+          value,
+          cardinality: Object.keys(value).length,
+          parentPath,
+        },
+        Array.isArray(value) ? ObjectTypes.Array : ObjectTypes.Object,
+      )
     }
 
     return renderScalar({ key, value, parentPath })
@@ -99,7 +108,9 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
       return data?.map((item, i) => renderArrayItem(i, item))
     }
 
-    return Object.entries(data).map(([key, value]) => renderArrayItem(key, value))
+    return Object.entries(data).map(([key, value]) =>
+      renderArrayItem(key, value),
+    )
   }
 
   return renderResult(data)

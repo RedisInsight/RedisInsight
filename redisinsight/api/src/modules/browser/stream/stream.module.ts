@@ -1,7 +1,4 @@
-import {
-  DynamicModule,
-  Module,
-} from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { StreamController } from 'src/modules/browser/stream/controllers/stream.controller';
 import { ConsumerController } from 'src/modules/browser/stream/controllers/consumer.controller';
@@ -16,21 +13,19 @@ export class StreamModule {
     return {
       module: StreamModule,
       imports: [
-        RouterModule.register([{
-          path: route,
-          module: StreamModule,
-        }]),
+        RouterModule.register([
+          {
+            path: route,
+            module: StreamModule,
+          },
+        ]),
       ],
       controllers: [
         StreamController,
         ConsumerController,
         ConsumerGroupController,
       ],
-      providers: [
-        StreamService,
-        ConsumerService,
-        ConsumerGroupService,
-      ],
+      providers: [StreamService, ConsumerService, ConsumerGroupService],
     };
   }
 }

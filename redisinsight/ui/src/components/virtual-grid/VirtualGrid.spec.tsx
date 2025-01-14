@@ -14,7 +14,7 @@ const columns: ITableColumn[] = [
     staySearchAlwaysOpen: true,
     initialSearchValue: '',
     truncateText: true,
-    minWidth: 50
+    minWidth: 50,
   },
 ]
 
@@ -22,9 +22,7 @@ const items = ['member1', 'member2']
 
 describe('VirtualGrid', () => {
   it('should render', () => {
-    expect(
-      render(<VirtualGrid {...instance(mockedProps)} />)
-    ).toBeTruthy()
+    expect(render(<VirtualGrid {...instance(mockedProps)} />)).toBeTruthy()
   })
 
   it('should render rows', () => {
@@ -37,8 +35,8 @@ describe('VirtualGrid', () => {
           loading={false}
           loadMoreItems={jest.fn()}
           totalItemsCount={items.length}
-        />
-      )
+        />,
+      ),
     ).toBeTruthy()
   })
 })

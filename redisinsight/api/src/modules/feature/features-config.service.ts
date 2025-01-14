@@ -15,7 +15,9 @@ export abstract class FeaturesConfigService {
   /**
    * Get control group and number fields
    */
-  abstract getControlInfo(sessionMetadata: SessionMetadata): Promise<{ controlNumber: number, controlGroup: string }>;
+  abstract getControlInfo(
+    sessionMetadata: SessionMetadata,
+  ): Promise<{ controlNumber: number; controlGroup: string }>;
 
   /**
    * Get latest config from remote and save it in the local database

@@ -13,9 +13,7 @@ export class CommandsService implements OnModuleInit {
 
   private timer;
 
-  constructor(
-    commandsProviders: CommandsJsonProvider[] = [],
-  ) {
+  constructor(commandsProviders: CommandsJsonProvider[] = []) {
     this.commandsProviders = commandsProviders;
   }
 
@@ -24,7 +22,9 @@ export class CommandsService implements OnModuleInit {
    */
   async onModuleInit() {
     // async operation to not wait for it and not block user in case when no internet connection
-    Promise.all(this.commandsProviders.map((provider) => provider.updateLatestJson()));
+    Promise.all(
+      this.commandsProviders.map((provider) => provider.updateLatestJson()),
+    );
   }
 
   /**
@@ -33,11 +33,13 @@ export class CommandsService implements OnModuleInit {
   async getAll(): Promise<any> {
     const commands = {};
 
-    Object.entries(await this.getCommandsGroups()).forEach(([provider, groupCommands]) => {
-      return forEach(groupCommands as {}, (value: {}, command) => {
-        commands[command] = { ...value, provider };
-      });
-    });
+    Object.entries(await this.getCommandsGroups()).forEach(
+      ([provider, groupCommands]) => {
+        return forEach(groupCommands as {}, (value: {}, command) => {
+          commands[command] = { ...value, provider };
+        });
+      },
+    );
 
     return commands;
   }
@@ -48,7 +50,9 @@ export class CommandsService implements OnModuleInit {
     }
     this.commandsGroups = assign(
       {},
-      ...(await Promise.all(this.commandsProviders.map((provider) => provider.getCommands()))),
+      ...(await Promise.all(
+        this.commandsProviders.map((provider) => provider.getCommands()),
+      )),
     );
     this.timer = new Date().getTime();
     return this.commandsGroups;

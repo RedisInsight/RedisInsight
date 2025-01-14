@@ -69,7 +69,10 @@ export class LocalNotificationRepository extends NotificationRepository {
   /**
    * @inheritDoc
    */
-  async insertNotifications(_: SessionMetadata, notifications: Notification[]): Promise<void> {
+  async insertNotifications(
+    _: SessionMetadata,
+    notifications: Notification[],
+  ): Promise<void> {
     await this.repository.insert(
       notifications.map((n) => classToClass(NotificationEntity, n)),
     );

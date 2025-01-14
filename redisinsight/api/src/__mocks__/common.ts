@@ -1,4 +1,8 @@
-import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/models';
+import {
+  ClientContext,
+  ClientMetadata,
+  SessionMetadata,
+} from 'src/common/models';
 import { mockDatabase } from 'src/__mocks__/databases';
 import { v4 as uuidv4 } from 'uuid';
 import { mockUserId } from 'src/__mocks__/user';

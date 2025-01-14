@@ -15,9 +15,11 @@ const getOutputForFormatTime: any[] = [
 ]
 
 describe('formatToText', () => {
-  it.each(getOutputForFormatTime)('for input: %s (reply), should be output: %s',
+  it.each(getOutputForFormatTime)(
+    'for input: %s (reply), should be output: %s',
     (reply, expected) => {
       const result = getFormatTime(reply)
       expect(result).toContain(expected)
-    })
+    },
+  )
 })

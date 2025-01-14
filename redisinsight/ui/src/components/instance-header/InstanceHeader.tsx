@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import { EuiButtonEmpty, EuiFieldNumber, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip, } from '@elastic/eui'
+import {
+  EuiButtonEmpty,
+  EuiFieldNumber,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiText,
+  EuiToolTip,
+} from '@elastic/eui'
 
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { selectOnFocus, validateNumber } from 'uiSrc/utils'
@@ -16,7 +24,11 @@ import {
   connectedInstanceSelector,
 } from 'uiSrc/slices/instances/instances'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
+import {
+  appContextDbIndex,
+  clearBrowserKeyListData,
+  setBrowserSelectedKey,
+} from 'uiSrc/slices/app/context'
 
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
@@ -50,7 +62,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
     db = 0,
     id,
     loading: instanceLoading,
-    modules = []
+    modules = [],
   } = useSelector(connectedInstanceSelector)
   const { version } = useSelector(connectedInstanceOverviewSelector)
   const { server } = useSelector(appInfoSelector)
@@ -61,7 +73,10 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  const isAnyChatAvailable = isAnyFeatureEnabled([
+    databaseChatFeature,
+    documentationChatFeature,
+  ])
 
   const history = useHistory()
   const [dbIndex, setDbIndex] = useState<string>(String(db || 0))
@@ -69,7 +84,9 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
   const dispatch = useDispatch()
 
-  useEffect(() => { setDbIndex(String(db || 0)) }, [db])
+  useEffect(() => {
+    setDbIndex(String(db || 0))
+  }, [db])
 
   const isRedisStack = server?.buildType === BuildType.RedisStack
 
@@ -87,42 +104,55 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
     if (db === +dbIndex) return
 
-    dispatch(checkDatabaseIndexAction(
-      id,
-      +dbIndex,
-      () => {
-        dispatch(clearBrowserKeyListData())
-        onChangeDbIndex?.(+dbIndex)
-        dispatch(resetKeyInfo())
-        dispatch(setBrowserSelectedKey(null))
+    dispatch(
+      checkDatabaseIndexAction(
+        id,
+        +dbIndex,
+        () => {
+          dispatch(clearBrowserKeyListData())
+          onChangeDbIndex?.(+dbIndex)
+          dispatch(resetKeyInfo())
+          dispatch(setBrowserSelectedKey(null))
 
-        sendEventTelemetry({
-          event: TelemetryEvent.BROWSER_DATABASE_INDEX_CHANGED,
-          eventData: {
-            databaseId: id,
-            prevIndex: db,
-            nextIndex: +dbIndex
-          }
-        })
-      },
-      () => setDbIndex(String(db))
-    ))
+          sendEventTelemetry({
+            event: TelemetryEvent.BROWSER_DATABASE_INDEX_CHANGED,
+            eventData: {
+              databaseId: id,
+              prevIndex: db,
+              nextIndex: +dbIndex,
+            },
+          })
+        },
+        () => setDbIndex(String(db)),
+      ),
+    )
   }
 
   return (
     <div className={cx(styles.container)}>
       <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center">
         <EuiFlexItem style={{ overflow: 'hidden' }}>
-          <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
+          <div
+            className={styles.breadcrumbsContainer}
+            data-testid="breadcrumbs-container"
+          >
             <div>
               <FeatureFlagComponent name={FeatureFlags.envDependent}>
                 <EuiToolTip
                   position="bottom"
-                  content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
+                  content={
+                    server?.buildType === BuildType.RedisStack
+                      ? 'Edit database'
+                      : 'Redis Databases'
+                  }
                 >
                   <EuiText
                     className={styles.breadCrumbLink}
-                    aria-label={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
+                    aria-label={
+                      server?.buildType === BuildType.RedisStack
+                        ? 'Edit database'
+                        : 'Redis Databases'
+                    }
                     data-testid="my-redis-db-btn"
                     onClick={goHome}
                     onKeyDown={goHome}
@@ -134,33 +164,43 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
             </div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ maxWidth: '100%' }}>
-                <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+                <EuiFlexGroup
+                  gutterSize="none"
+                  alignItems="center"
+                  responsive={false}
+                >
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>
-                    <EuiFlexItem grow={false} data-testid="instance-header-divider-env-dependent">
+                    <EuiFlexItem
+                      grow={false}
+                      data-testid="instance-header-divider-env-dependent"
+                    >
                       <EuiText className={styles.divider}>&#62;</EuiText>
                     </EuiFlexItem>
                   </FeatureFlagComponent>
                   {returnUrlBase && returnUrl && (
-                  <FeatureFlagComponent
-                    name={FeatureFlags.envDependent}
-                    otherwise={(
-                      <EuiFlexItem style={{ padding: '4px 24px 4px 0' }} grow={false}>
-                        <EuiToolTip
-                          position="bottom"
-                          content={returnUrlTooltip || returnUrlLabel}
+                    <FeatureFlagComponent
+                      name={FeatureFlags.envDependent}
+                      otherwise={
+                        <EuiFlexItem
+                          style={{ padding: '4px 24px 4px 0' }}
+                          grow={false}
                         >
-                          <EuiText
-                            className={styles.breadCrumbLink}
-                            aria-label={returnUrlTooltip || returnUrlLabel}
-                            onClick={goToReturnUrl}
-                            onKeyDown={goToReturnUrl}
+                          <EuiToolTip
+                            position="bottom"
+                            content={returnUrlTooltip || returnUrlLabel}
                           >
-                            &#60; {returnUrlLabel}
-                          </EuiText>
-                        </EuiToolTip>
-                      </EuiFlexItem>
-                    )}
-                  />
+                            <EuiText
+                              className={styles.breadCrumbLink}
+                              aria-label={returnUrlTooltip || returnUrlLabel}
+                              onClick={goToReturnUrl}
+                              onKeyDown={goToReturnUrl}
+                            >
+                              &#60; {returnUrlLabel}
+                            </EuiText>
+                          </EuiToolTip>
+                        </EuiFlexItem>
+                      }
+                    />
                   )}
                   <EuiFlexItem style={{ overflow: 'hidden' }}>
                     {isRedisStack ? (
@@ -170,7 +210,10 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                     )}
                   </EuiFlexItem>
                   {databases > 1 && (
-                    <EuiFlexItem style={{ padding: '4px 0 4px 12px' }} grow={false}>
+                    <EuiFlexItem
+                      style={{ padding: '4px 0 4px 12px' }}
+                      grow={false}
+                    >
                       <div style={{ display: 'flex', alignItems: 'center' }}>
                         {isDbIndexEditing ? (
                           <div style={{ marginRight: 48 }}>
@@ -183,7 +226,11 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                             >
                               <EuiFieldNumber
                                 onFocus={selectOnFocus}
-                                onChange={(e) => setDbIndex(validateNumber(e.target.value.trim()))}
+                                onChange={(e) =>
+                                  setDbIndex(
+                                    validateNumber(e.target.value.trim()),
+                                  )
+                                }
                                 value={dbIndex}
                                 placeholder="Database Index"
                                 className={styles.input}
@@ -204,7 +251,11 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                             disabled={isDbIndexDisabled || instanceLoading}
                             data-testid="change-index-btn"
                           >
-                            <span style={{ fontSize: 14, marginBottom: '-2px' }}>db{db || 0}</span>
+                            <span
+                              style={{ fontSize: 14, marginBottom: '-2px' }}
+                            >
+                              db{db || 0}
+                            </span>
                           </EuiButtonEmpty>
                         )}
                       </div>
@@ -215,15 +266,21 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                       position="right"
                       anchorClassName={styles.tooltipAnchor}
                       className={styles.tooltip}
-                      content={(
+                      content={
                         <ShortInstanceInfo
                           info={{
-                            name, host, port, user: username, connectionType, version, dbIndex: db
+                            name,
+                            host,
+                            port,
+                            user: username,
+                            connectionType,
+                            version,
+                            dbIndex: db,
                           }}
                           modules={modules}
                           databases={databases}
                         />
-                      )}
+                      }
                     >
                       <EuiIcon
                         className={styles.infoIcon}

@@ -34,33 +34,41 @@ describe('CloudJobService', () => {
 
   describe('create', () => {
     it('successfully create cloud job', async () => {
-      expect(await service.create(
-        mockSessionMetadata,
-        mockCreateDatabaseCloudJobDataDto,
-        mockUtm,
-      )).toEqual(mockCloudJobInfo);
+      expect(
+        await service.create(
+          mockSessionMetadata,
+          mockCreateDatabaseCloudJobDataDto,
+          mockUtm,
+        ),
+      ).toEqual(mockCloudJobInfo);
     });
     it('should throw CloudApiUnauthorizedException exception', async () => {
-      cloudJobProvider.addJob.mockRejectedValueOnce(new CloudApiUnauthorizedException());
-      await expect(service.create(
-        mockSessionMetadata,
-        mockCreateDatabaseCloudJobDataDto,
-        mockUtm,
-      )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+      cloudJobProvider.addJob.mockRejectedValueOnce(
+        new CloudApiUnauthorizedException(),
       );
+      await expect(
+        service.create(
+          mockSessionMetadata,
+          mockCreateDatabaseCloudJobDataDto,
+          mockUtm,
+        ),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
     });
   });
 
   describe('getUserJobsInfo', () => {
     it('successfully create cloud job', async () => {
-      expect(await service.getUserJobsInfo(mockSessionMetadata)).toEqual([mockCloudJobInfo]);
+      expect(await service.getUserJobsInfo(mockSessionMetadata)).toEqual([
+        mockCloudJobInfo,
+      ]);
     });
     it('should throw CloudApiUnauthorizedException exception', async () => {
-      cloudJobProvider.findUserJobs.mockRejectedValueOnce(new CloudApiUnauthorizedException());
-      await expect(service.getUserJobsInfo(mockSessionMetadata)).rejects.toThrow(
-        CloudApiUnauthorizedException,
+      cloudJobProvider.findUserJobs.mockRejectedValueOnce(
+        new CloudApiUnauthorizedException(),
       );
+      await expect(
+        service.getUserJobsInfo(mockSessionMetadata),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
     });
   });
   describe('get', () => {
@@ -71,7 +79,9 @@ describe('CloudJobService', () => {
       );
     });
     it('should throw CloudApiUnauthorizedException exception', async () => {
-      cloudJobProvider.get.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+      cloudJobProvider.get.mockRejectedValueOnce(
+        new CloudApiUnauthorizedException(),
+      );
       await expect(service.get(mockSessionMetadata, 'id')).rejects.toThrow(
         CloudApiUnauthorizedException,
       );

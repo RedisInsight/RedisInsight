@@ -27,13 +27,17 @@ describe('JsonPretty', () => {
   })
 
   it('should render json primitive component with big number', () => {
-    const json = JSONBigInt({ useNativeBigInt: true }).parse('1234567890123456789012345678901234567890')
+    const json = JSONBigInt({ useNativeBigInt: true }).parse(
+      '1234567890123456789012345678901234567890',
+    )
     render(<JsonPretty data={json} />)
     expect(screen.getByTestId('json-primitive-component')).toBeInTheDocument()
   })
 
   it('should render json primitive component with big float', () => {
-    const json = JSONBigInt({ useNativeBigInt: false }).parse('1234567890123456789012345678901234567890.1234567890123456789012345678901234567890')
+    const json = JSONBigInt({ useNativeBigInt: false }).parse(
+      '1234567890123456789012345678901234567890.1234567890123456789012345678901234567890',
+    )
     render(<JsonPretty data={json} />)
     expect(screen.getByTestId('json-primitive-component')).toBeInTheDocument()
   })

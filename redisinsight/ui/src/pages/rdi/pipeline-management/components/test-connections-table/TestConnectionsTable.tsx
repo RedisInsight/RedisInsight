@@ -20,7 +20,9 @@ const TestConnectionsTable = (props: Props) => {
       field: 'target',
       width: '50%',
       truncateText: true,
-      render: (target: string) => <div data-testid={`table-target-${target}`}>{target}</div>
+      render: (target: string) => (
+        <div data-testid={`table-target-${target}`}>{target}</div>
+      ),
     },
     {
       name: 'Result',
@@ -31,8 +33,8 @@ const TestConnectionsTable = (props: Props) => {
         <div data-testid={`table-result-${target}`}>
           {error || 'Successful'}
         </div>
-      )
-    }
+      ),
+    },
   ]
 
   if (data?.length === 0) return null
@@ -42,7 +44,12 @@ const TestConnectionsTable = (props: Props) => {
       <EuiInMemoryTable
         items={data ?? []}
         columns={columns}
-        className={cx('inMemoryTableDefault', 'noBorders', 'stickyHeader', styles.table)}
+        className={cx(
+          'inMemoryTableDefault',
+          'noBorders',
+          'stickyHeader',
+          styles.table,
+        )}
         responsive={false}
         itemId="index"
         data-testid="connections-log-table"

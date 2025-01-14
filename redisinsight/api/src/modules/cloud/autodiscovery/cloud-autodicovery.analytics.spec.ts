@@ -4,10 +4,16 @@ import { TelemetryEvents } from 'src/constants';
 import { InternalServerErrorException } from '@nestjs/common';
 import { CloudAutodiscoveryAnalytics } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.analytics';
 import {
-  mockCloudDatabase, mockCloudDatabaseFixed, mockCloudSubscription, mockSessionMetadata,
+  mockCloudDatabase,
+  mockCloudDatabaseFixed,
+  mockCloudSubscription,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { CloudAutodiscoveryAuthType } from 'src/modules/cloud/autodiscovery/models';
-import { CloudSubscriptionStatus, CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
+import {
+  CloudSubscriptionStatus,
+  CloudSubscriptionType,
+} from 'src/modules/cloud/subscription/models';
 import { CloudDatabaseStatus } from 'src/modules/cloud/database/models';
 
 describe('CloudAutodiscoveryAnalytics', () => {
@@ -18,10 +24,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        CloudAutodiscoveryAnalytics,
-      ],
+      providers: [EventEmitter2, CloudAutodiscoveryAnalytics],
     }).compile();
 
     service = await module.get(CloudAutodiscoveryAnalytics);
@@ -39,10 +42,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
     it('should emit event with active subscriptions', () => {
       service.sendGetRECloudSubsSucceedEvent(
         mockSessionMetadata,
-        [
-          mockCloudSubscription,
-          mockCloudSubscription,
-        ],
+        [mockCloudSubscription, mockCloudSubscription],
         CloudSubscriptionType.Flexible,
         CloudAutodiscoveryAuthType.Credentials,
       );
@@ -151,12 +151,14 @@ describe('CloudAutodiscoveryAnalytics', () => {
     it('should not throw on error when sending GetRECloudSubsSucceedEvent event', () => {
       const input: any = {};
 
-      expect(() => service.sendGetRECloudSubsSucceedEvent(
-        mockSessionMetadata,
-        input,
-        CloudSubscriptionType.Flexible,
-        CloudAutodiscoveryAuthType.Credentials,
-      )).not.toThrow();
+      expect(() =>
+        service.sendGetRECloudSubsSucceedEvent(
+          mockSessionMetadata,
+          input,
+          CloudSubscriptionType.Flexible,
+          CloudAutodiscoveryAuthType.Credentials,
+        ),
+      ).not.toThrow();
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
   });
@@ -186,10 +188,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
     it('should emit event with active databases', () => {
       service.sendGetRECloudDbsSucceedEvent(
         mockSessionMetadata,
-        [
-          mockCloudDatabase,
-          mockCloudDatabaseFixed,
-        ],
+        [mockCloudDatabase, mockCloudDatabaseFixed],
         CloudAutodiscoveryAuthType.Credentials,
       );
 
@@ -300,11 +299,13 @@ describe('CloudAutodiscoveryAnalytics', () => {
     it('should not throw on error', () => {
       const input: any = {};
 
-      expect(() => service.sendGetRECloudDbsSucceedEvent(
-        mockSessionMetadata,
-        input,
-        CloudAutodiscoveryAuthType.Credentials,
-      )).not.toThrow();
+      expect(() =>
+        service.sendGetRECloudDbsSucceedEvent(
+          mockSessionMetadata,
+          input,
+          CloudAutodiscoveryAuthType.Credentials,
+        ),
+      ).not.toThrow();
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
   });

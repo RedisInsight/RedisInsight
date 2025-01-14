@@ -15,21 +15,25 @@ describe('KeyRowSize', () => {
   })
 
   it('should render Loading if no size', () => {
-    const { queryByTestId } = render(<KeyRowSize
-      {...instance(mockedProps)}
-      size={undefined}
-      nameString={nameString}
-    />)
+    const { queryByTestId } = render(
+      <KeyRowSize
+        {...instance(mockedProps)}
+        size={undefined}
+        nameString={nameString}
+      />,
+    )
 
     expect(queryByTestId(loadingTestId + nameString)).toBeInTheDocument()
   })
 
   it('should render "-" if size is empty', () => {
-    const { queryByTestId } = render(<KeyRowSize
-      {...instance(mockedProps)}
-      size={0}
-      nameString={nameString}
-    />)
+    const { queryByTestId } = render(
+      <KeyRowSize
+        {...instance(mockedProps)}
+        size={0}
+        nameString={nameString}
+      />,
+    )
 
     expect(queryByTestId(loadingTestId + nameString)).not.toBeInTheDocument()
     expect(queryByTestId(`size-${nameString}`)).toHaveTextContent('-')
@@ -37,13 +41,17 @@ describe('KeyRowSize', () => {
 
   it('should render formatted size', () => {
     const size = 123123123
-    const { queryByTestId } = render(<KeyRowSize
-      {...instance(mockedProps)}
-      size={123123123}
-      nameString={nameString}
-    />)
+    const { queryByTestId } = render(
+      <KeyRowSize
+        {...instance(mockedProps)}
+        size={123123123}
+        nameString={nameString}
+      />,
+    )
 
     expect(queryByTestId(loadingTestId + nameString)).not.toBeInTheDocument()
-    expect(queryByTestId(`size-${nameString}`)).toHaveTextContent(formatBytes(size, 0) as string)
+    expect(queryByTestId(`size-${nameString}`)).toHaveTextContent(
+      formatBytes(size, 0) as string,
+    )
   })
 })

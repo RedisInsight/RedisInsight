@@ -1,5 +1,7 @@
 import {
-  mockLinuxNetstat, mockMacNetstat, mockWinNetstat,
+  mockLinuxNetstat,
+  mockMacNetstat,
+  mockWinNetstat,
 } from 'src/__mocks__';
 import * as os from 'os';
 import * as ch from 'child_process';
@@ -10,25 +12,25 @@ import { ChildProcess } from 'child_process';
 import * as autodiscoveryUtility from './autodiscovery.util';
 
 jest.mock('os', () => ({
-  ...jest.requireActual('os') as object,
+  ...(jest.requireActual('os') as object),
   __esModule: true,
   type: jest.fn(),
 }));
 
 jest.mock('child_process', () => ({
-  ...jest.requireActual('child_process') as object,
+  ...(jest.requireActual('child_process') as object),
   __esModule: true,
   spawn: jest.fn(),
 }));
 
 jest.mock('net', () => ({
-  ...jest.requireActual('net') as object,
+  ...(jest.requireActual('net') as object),
   __esModule: true,
   createConnection: jest.fn(),
 }));
 
 const mockStdout = new events.EventEmitter() as stream.Readable;
-const mockChildProcess = (new events.EventEmitter()) as ChildProcess;
+const mockChildProcess = new events.EventEmitter() as ChildProcess;
 mockChildProcess['stdout'] = mockStdout;
 
 const mockSocket = new events.EventEmitter() as net.Socket;
@@ -82,11 +84,10 @@ describe('getRunningProcesses', () => {
 
   getRunningProcessesTests.forEach((test) => {
     it(`Should return ${test.name}`, (done) => {
-      autodiscoveryUtility.getRunningProcesses()
-        .then((result) => {
-          expect(result).toEqual(test.output);
-          done();
-        });
+      autodiscoveryUtility.getRunningProcesses().then((result) => {
+        expect(result).toEqual(test.output);
+        done();
+      });
 
       test.emit();
     });
@@ -104,7 +105,8 @@ describe('getRunningProcesses', () => {
   });
 
   it('Should throw an error if child process fail', (done) => {
-    autodiscoveryUtility.getRunningProcesses()
+    autodiscoveryUtility
+      .getRunningProcesses()
       .then(() => {
         fail();
       })
@@ -208,11 +210,10 @@ describe('testEndpoint', () => {
 
   testEndpointTests.forEach((test) => {
     it(`Should return ${test.name}`, (done) => {
-      autodiscoveryUtility.testEndpoint(test.input)
-        .then((result) => {
-          expect(result).toEqual(test.output);
-          done();
-        });
+      autodiscoveryUtility.testEndpoint(test.input).then((result) => {
+        expect(result).toEqual(test.output);
+        done();
+      });
 
       test.emit();
     });
@@ -221,7 +222,10 @@ describe('testEndpoint', () => {
 
 describe('getAvailableEndpoints', () => {
   beforeEach(() => {
-    const getRunningProcessesSpy = jest.spyOn(autodiscoveryUtility, 'getRunningProcesses');
+    const getRunningProcessesSpy = jest.spyOn(
+      autodiscoveryUtility,
+      'getRunningProcesses',
+    );
     getRunningProcessesSpy.mockResolvedValue(['']);
     (net.createConnection as jest.Mock).mockReturnValue(mockSocket);
   });
@@ -230,7 +234,10 @@ describe('getAvailableEndpoints', () => {
       name: 'only available endpoints',
       mock: () => {
         const spy = jest.spyOn(autodiscoveryUtility, 'testEndpoint');
-        const getTCPEndpointsSpy = jest.spyOn(autodiscoveryUtility, 'getTCPEndpoints');
+        const getTCPEndpointsSpy = jest.spyOn(
+          autodiscoveryUtility,
+          'getTCPEndpoints',
+        );
         getTCPEndpointsSpy.mockReturnValueOnce([
           { host: 'localhost', port: 5000 },
           { host: 'localhost', port: 5001 },

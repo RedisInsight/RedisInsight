@@ -44,9 +44,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<RedisOptions> {
-    const {
-      host, port, password, username, tls, db, timeout,
-    } = database;
+    const { host, port, password, username, tls, db, timeout } = database;
     const redisOptions: RedisOptions = {
       host,
       port,
@@ -54,11 +52,14 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
       password,
       connectTimeout: timeout,
       db: isNumber(clientMetadata.db) ? clientMetadata.db : db,
-      connectionName: options?.connectionName
-        || RedisConnectionStrategy.generateRedisConnectionName(clientMetadata),
+      connectionName:
+        options?.connectionName ||
+        RedisConnectionStrategy.generateRedisConnectionName(clientMetadata),
       showFriendlyErrorStack: true,
       maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
-      retryStrategy: options?.useRetry ? this.retryStrategy.bind(this) : this.dummyFn.bind(this),
+      retryStrategy: options?.useRetry
+        ? this.retryStrategy.bind(this)
+        : this.dummyFn.bind(this),
       autoResendUnfulfilledCommands: false,
       enableReadyCheck: options.enableReadyCheck ?? true,
     };
@@ -83,9 +84,15 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     options: IRedisConnectionOptions,
   ): Promise<ClusterOptions> {
     return {
-      clusterRetryStrategy: options.useRetry ? this.retryStrategy.bind(this) : this.dummyFn.bind(this),
+      clusterRetryStrategy: options.useRetry
+        ? this.retryStrategy.bind(this)
+        : this.dummyFn.bind(this),
       slotsRefreshTimeout: REDIS_CLIENTS_CONFIG.slotsRefreshTimeout,
-      redisOptions: await this.getRedisOptions(clientMetadata, database, options),
+      redisOptions: await this.getRedisOptions(
+        clientMetadata,
+        database,
+        options,
+      ),
       maxRedirections: REDIS_CLIENTS_CONFIG.maxRedirections,
     };
   }
@@ -104,12 +111,18 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
   ): Promise<RedisOptions> {
     const { sentinelMaster } = database;
 
-    const baseOptions = await this.getRedisOptions(clientMetadata, database, options);
+    const baseOptions = await this.getRedisOptions(
+      clientMetadata,
+      database,
+      options,
+    );
     return {
       ...baseOptions,
       host: undefined,
       port: undefined,
-      sentinels: [{ host: database.host, port: database.port, ...(database.nodes || []) }],
+      sentinels: [
+        { host: database.host, port: database.port, ...(database.nodes || []) },
+      ],
       name: sentinelMaster?.name,
       sentinelUsername: database.username,
       sentinelPassword: database.password,
@@ -117,7 +130,9 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
       password: sentinelMaster?.password,
       sentinelTLS: baseOptions.tls,
       enableTLSForSentinelMode: !!baseOptions.tls, // previously was always `true` for tls connections
-      sentinelRetryStrategy: options?.useRetry ? this.retryStrategy : this.dummyFn,
+      sentinelRetryStrategy: options?.useRetry
+        ? this.retryStrategy
+        : this.dummyFn,
     };
   }
 
@@ -166,10 +181,17 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     let tnl: SshTunnel;
 
     try {
-      const config = await this.getRedisOptions(clientMetadata, database, options);
+      const config = await this.getRedisOptions(
+        clientMetadata,
+        database,
+        options,
+      );
 
       if (database.ssh) {
-        tnl = await this.sshTunnelProvider.createTunnel(database, database.sshOptions);
+        tnl = await this.sshTunnelProvider.createTunnel(
+          database,
+          database.sshOptions,
+        );
         config.host = tnl.serverAddress.host;
         config.port = tnl.serverAddress.port;
       }
@@ -182,26 +204,41 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             db: config.db > 0 && !database.sentinelMaster ? config.db : 0,
           });
           connection.on('error', (e): void => {
-            this.logger.error('Failed connection to the redis database.', e, clientMetadata);
+            this.logger.error(
+              'Failed connection to the redis database.',
+              e,
+              clientMetadata,
+            );
             reject(e);
           });
           connection.on('end', (): void => {
-            this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION, clientMetadata);
-            reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+            this.logger.warn(
+              ERROR_MESSAGES.SERVER_CLOSED_CONNECTION,
+              clientMetadata,
+            );
+            reject(
+              new InternalServerErrorException(
+                ERROR_MESSAGES.SERVER_CLOSED_CONNECTION,
+              ),
+            );
           });
           connection.on('ready', (): void => {
-            this.logger.debug('Successfully connected to the redis database', clientMetadata);
-            resolve(new StandaloneIoredisClient(
+            this.logger.debug(
+              'Successfully connected to the redis database',
               clientMetadata,
-              connection,
-              {
+            );
+            resolve(
+              new StandaloneIoredisClient(clientMetadata, connection, {
                 host: database.host,
                 port: database.port,
-              },
-            ));
+              }),
+            );
           });
           connection.on('reconnecting', (): void => {
-            this.logger.debug('Reconnecting to the redis database', clientMetadata);
+            this.logger.debug(
+              'Reconnecting to the redis database',
+              clientMetadata,
+            );
           });
         } catch (e) {
           reject(e);
@@ -226,15 +263,25 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
 
     let tnls: SshTunnel[] = [];
     let standaloneClient: RedisClient;
-    let rootNodes = [{
-      host: database.host,
-      port: database.port,
-    }];
+    let rootNodes = [
+      {
+        host: database.host,
+        port: database.port,
+      },
+    ];
 
     try {
-      const config = await this.getRedisClusterOptions(clientMetadata, database, options);
+      const config = await this.getRedisClusterOptions(
+        clientMetadata,
+        database,
+        options,
+      );
 
-      standaloneClient = await this.createStandaloneClient(clientMetadata, database, options);
+      standaloneClient = await this.createStandaloneClient(
+        clientMetadata,
+        database,
+        options,
+      );
 
       rootNodes = await discoverClusterNodes(standaloneClient);
 
@@ -242,16 +289,19 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
 
       if (database.ssh) {
         tnls = await Promise.all(
-          rootNodes.map((node) => this.sshTunnelProvider.createTunnel(node, database.sshOptions)),
+          rootNodes.map((node) =>
+            this.sshTunnelProvider.createTunnel(node, database.sshOptions),
+          ),
         );
 
         // create NAT map
         config.natMap = {};
         tnls.forEach((tnl) => {
-          config.natMap[`${tnl.options.targetHost}:${tnl.options.targetPort}`] = {
-            host: tnl.serverAddress.host,
-            port: tnl.serverAddress.port,
-          };
+          config.natMap[`${tnl.options.targetHost}:${tnl.options.targetPort}`] =
+            {
+              host: tnl.serverAddress.host,
+              port: tnl.serverAddress.port,
+            };
         });
 
         // change root nodes
@@ -262,23 +312,35 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
         try {
           const cluster = new Cluster(rootNodes, config);
           cluster.on('error', (e): void => {
-            this.logger.error('Failed connection to the redis oss cluster', e, clientMetadata);
+            this.logger.error(
+              'Failed connection to the redis oss cluster',
+              e,
+              clientMetadata,
+            );
             reject(!isEmpty(e.lastNodeError) ? e.lastNodeError : e);
           });
           cluster.on('end', (): void => {
-            this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION, clientMetadata);
-            reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+            this.logger.warn(
+              ERROR_MESSAGES.SERVER_CLOSED_CONNECTION,
+              clientMetadata,
+            );
+            reject(
+              new InternalServerErrorException(
+                ERROR_MESSAGES.SERVER_CLOSED_CONNECTION,
+              ),
+            );
           });
           cluster.on('ready', (): void => {
-            this.logger.debug('Successfully connected to the redis oss cluster.', clientMetadata);
-            resolve(new ClusterIoredisClient(
+            this.logger.debug(
+              'Successfully connected to the redis oss cluster.',
               clientMetadata,
-              cluster,
-              {
+            );
+            resolve(
+              new ClusterIoredisClient(clientMetadata, cluster, {
                 host: database.host,
                 port: database.port,
-              },
-            ));
+              }),
+            );
           });
         } catch (e) {
           reject(e);
@@ -302,29 +364,45 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     // Additional validation
     ClientMetadata.validate(clientMetadata);
 
-    const config = await this.getRedisSentinelOptions(clientMetadata, database, options);
+    const config = await this.getRedisSentinelOptions(
+      clientMetadata,
+      database,
+      options,
+    );
 
     return new Promise((resolve, reject) => {
       try {
         const client = new Redis(config);
         client.on('error', (e): void => {
-          this.logger.error('Failed connection to the redis oss sentinel', e, clientMetadata);
+          this.logger.error(
+            'Failed connection to the redis oss sentinel',
+            e,
+            clientMetadata,
+          );
           reject(e);
         });
         client.on('end', (): void => {
-          this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION, clientMetadata);
-          reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+          this.logger.error(
+            ERROR_MESSAGES.SERVER_CLOSED_CONNECTION,
+            clientMetadata,
+          );
+          reject(
+            new InternalServerErrorException(
+              ERROR_MESSAGES.SERVER_CLOSED_CONNECTION,
+            ),
+          );
         });
         client.on('ready', (): void => {
-          this.logger.debug('Successfully connected to the redis oss sentinel.', clientMetadata);
-          resolve(new SentinelIoredisClient(
+          this.logger.debug(
+            'Successfully connected to the redis oss sentinel.',
             clientMetadata,
-            client,
-            {
+          );
+          resolve(
+            new SentinelIoredisClient(clientMetadata, client, {
               host: database.host,
               port: database.port,
-            },
-          ));
+            }),
+          );
         });
       } catch (e) {
         reject(e);

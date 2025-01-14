@@ -1,7 +1,5 @@
-import { AbstractRecommendationStrategy }
-  from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
-import { IDatabaseRecommendationStrategyData }
-  from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
+import { AbstractRecommendationStrategy } from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
+import { IDatabaseRecommendationStrategyData } from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { BIG_HASHES_RECOMMENDATION_LENGTH } from 'src/common/constants';
 
 export class ShardHashStrategy extends AbstractRecommendationStrategy {

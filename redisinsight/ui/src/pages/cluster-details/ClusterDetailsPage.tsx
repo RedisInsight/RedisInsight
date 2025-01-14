@@ -6,16 +6,32 @@ import { ClusterNodeDetails } from 'src/modules/cluster-monitor/models'
 
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { clusterDetailsSelector, fetchClusterDetailsAction } from 'uiSrc/slices/analytics/clusterDetails'
-import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
+import {
+  clusterDetailsSelector,
+  fetchClusterDetailsAction,
+} from 'uiSrc/slices/analytics/clusterDetails'
+import {
+  analyticsSettingsSelector,
+  setAnalyticsViewTab,
+} from 'uiSrc/slices/analytics/settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
-import { formatLongName, getDbIndex, getLetterByIndex, Nullable, setTitle, } from 'uiSrc/utils'
+import {
+  formatLongName,
+  getDbIndex,
+  getLetterByIndex,
+  Nullable,
+  setTitle,
+} from 'uiSrc/utils'
 import { ColorScheme, getRGBColorByScheme, RGBColor } from 'uiSrc/utils/colors'
 
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { ClusterDetailsHeader, ClusterDetailsGraphics, ClusterNodesTable } from './components'
+import {
+  ClusterDetailsHeader,
+  ClusterDetailsGraphics,
+  ClusterNodesTable,
+} from './components'
 
 import styles from './styles.module.scss'
 
@@ -33,7 +49,7 @@ const ClusterDetailsPage = () => {
   const {
     db,
     name: connectedInstanceName,
-    connectionType
+    connectionType,
   } = useSelector(connectedInstanceSelector)
   const { viewTab } = useSelector(analyticsSettingsSelector)
   const { loading, data } = useSelector(clusterDetailsSelector)
@@ -51,17 +67,19 @@ const ClusterDetailsPage = () => {
     cHueStart: 180,
     cHueRange: 140,
     cSaturation: 55,
-    cLightness: theme === Theme.Dark ? 45 : 55
+    cLightness: theme === Theme.Dark ? 45 : 55,
   }
 
   useEffect(() => {
     if (connectionType !== ConnectionType.Cluster) return
 
-    dispatch(fetchClusterDetailsAction(
-      instanceId,
-      () => {},
-      () => clearInterval(interval)
-    ))
+    dispatch(
+      fetchClusterDetailsAction(
+        instanceId,
+        () => {},
+        () => clearInterval(interval),
+      ),
+    )
 
     if (viewTab !== AnalyticsViewTab.ClusterDetails) {
       dispatch(setAnalyticsViewTab(AnalyticsViewTab.ClusterDetails))
@@ -73,11 +91,13 @@ const ClusterDetailsPage = () => {
       interval = setInterval(() => {
         if (document.hidden) return
 
-        dispatch(fetchClusterDetailsAction(
-          instanceId,
-          () => {},
-          () => clearInterval(interval)
-        ))
+        dispatch(
+          fetchClusterDetailsAction(
+            instanceId,
+            () => {},
+            () => clearInterval(interval),
+          ),
+        )
       }, POLLING_INTERVAL)
     }
     return () => clearInterval(interval)
@@ -91,7 +111,7 @@ const ClusterDetailsPage = () => {
         ...d,
         letter: getLetterByIndex(index),
         index,
-        color: getRGBColorByScheme(index, shift, colorScheme)
+        color: getRGBColorByScheme(index, shift, colorScheme),
       }))
       setNodes(modifiedNodes)
     }
@@ -107,8 +127,8 @@ const ClusterDetailsPage = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.CLUSTER_DETAILS_PAGE,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
     setIsPageViewSent(true)
   }

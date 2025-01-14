@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockDatabaseClientFactory,
   mockLogFile,
-  mockRedisShardObserver, mockSessionMetadata,
+  mockRedisShardObserver,
+  mockSessionMetadata,
   mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
@@ -33,12 +34,17 @@ describe('RedisObserverProvider', () => {
   });
 
   it('getOrCreateObserver new observer', async () => {
-    const redisObserver = await service.getOrCreateObserver(mockSessionMetadata, mockLogFile.instanceId);
+    const redisObserver = await service.getOrCreateObserver(
+      mockSessionMetadata,
+      mockLogFile.instanceId,
+    );
 
     expect(redisObserver['redis']).toEqual(client);
     expect(service['redisObservers'].size).toEqual(1);
 
-    expect(await service.getObserver(mockLogFile.instanceId)).toEqual(redisObserver);
+    expect(await service.getObserver(mockLogFile.instanceId)).toEqual(
+      redisObserver,
+    );
     await service.removeObserver(mockLogFile.instanceId);
     expect(service['redisObservers'].size).toEqual(0);
   });
@@ -53,24 +59,36 @@ describe('RedisObserverProvider', () => {
     expect(redisObserver['redis']).toEqual(client);
     expect(redisObserver['status']).toEqual(RedisObserverStatus.Ready);
 
-    const promise = service.getOrCreateObserver(mockSessionMetadata, mockLogFile.instanceId);
+    const promise = service.getOrCreateObserver(
+      mockSessionMetadata,
+      mockLogFile.instanceId,
+    );
     redisObserver.emit('connect');
     const redisObserver2 = await promise;
     expect(redisObserver).toEqual(redisObserver2);
 
     redisObserver['status'] = RedisObserverStatus.Ready;
-    const redisObserver3 = await service.getOrCreateObserver(mockSessionMetadata, mockLogFile.instanceId);
+    const redisObserver3 = await service.getOrCreateObserver(
+      mockSessionMetadata,
+      mockLogFile.instanceId,
+    );
     expect(redisObserver).toEqual(redisObserver3);
 
     redisObserver['status'] = RedisObserverStatus.Error;
-    const promise2 = service.getOrCreateObserver(mockSessionMetadata, mockLogFile.instanceId);
+    const promise2 = service.getOrCreateObserver(
+      mockSessionMetadata,
+      mockLogFile.instanceId,
+    );
     redisObserver.emit('connect');
     const redisObserver4 = await promise2;
     expect(redisObserver).toEqual(redisObserver4);
 
     try {
       redisObserver['status'] = RedisObserverStatus.Empty;
-      const promise3 = service.getOrCreateObserver(mockSessionMetadata, mockLogFile.instanceId);
+      const promise3 = service.getOrCreateObserver(
+        mockSessionMetadata,
+        mockLogFile.instanceId,
+      );
       redisObserver.emit('connect_error', new Error('error'));
       await promise3;
       fail();

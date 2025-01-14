@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiText,
-  EuiToolTip
-} from '@elastic/eui'
+import { EuiFlexGroup, EuiFlexItem, EuiText, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
@@ -24,7 +19,10 @@ const RdiInstanceHeader = () => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  const isAnyChatAvailable = isAnyFeatureEnabled([
+    databaseChatFeature,
+    documentationChatFeature,
+  ])
   const history = useHistory()
 
   const goHome = () => {
@@ -32,14 +30,19 @@ const RdiInstanceHeader = () => {
   }
 
   return (
-    <EuiFlexGroup className={styles.container} gutterSize="none" alignItems="center" responsive={false}>
+    <EuiFlexGroup
+      className={styles.container}
+      gutterSize="none"
+      alignItems="center"
+      responsive={false}
+    >
       <EuiFlexItem style={{ overflow: 'hidden' }}>
-        <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
+        <div
+          className={styles.breadcrumbsContainer}
+          data-testid="breadcrumbs-container"
+        >
           <div>
-            <EuiToolTip
-              position="bottom"
-              content="My RDI instances"
-            >
+            <EuiToolTip position="bottom" content="My RDI instances">
               <EuiText
                 className={styles.breadCrumbLink}
                 aria-label="My RDI instances"
@@ -53,7 +56,11 @@ const RdiInstanceHeader = () => {
           </div>
           <div style={{ flex: 1, overflow: 'hidden' }}>
             <div style={{ maxWidth: '100%' }}>
-              <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+              <EuiFlexGroup
+                gutterSize="none"
+                alignItems="center"
+                responsive={false}
+              >
                 <EuiFlexItem grow={false}>
                   <EuiText className={styles.divider}>&#62;</EuiText>
                 </EuiFlexItem>
@@ -76,7 +83,11 @@ const RdiInstanceHeader = () => {
       </EuiFlexItem>
 
       <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-        <EuiFlexItem grow={false} style={{ marginLeft: 16 }} data-testid="o-auth-user-profile-rdi">
+        <EuiFlexItem
+          grow={false}
+          style={{ marginLeft: 16 }}
+          data-testid="o-auth-user-profile-rdi"
+        >
           <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
         </EuiFlexItem>
       </FeatureFlagComponent>

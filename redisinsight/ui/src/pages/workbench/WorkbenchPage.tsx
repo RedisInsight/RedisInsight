@@ -10,11 +10,15 @@ import WBViewWrapper from './components/wb-view'
 const WorkbenchPage = () => {
   const [isPageViewSent, setIsPageViewSent] = useState(false)
 
-  const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
+  const { name: connectedInstanceName, db } = useSelector(
+    connectedInstanceSelector,
+  )
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  setTitle(`${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)} - Workbench`)
+  setTitle(
+    `${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)} - Workbench`,
+  )
 
   useEffect(() => {
     if (connectedInstanceName && !isPageViewSent) {
@@ -26,13 +30,13 @@ const WorkbenchPage = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.WORKBENCH_PAGE,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
     setIsPageViewSent(true)
   }
 
-  return (<WBViewWrapper />)
+  return <WBViewWrapper />
 }
 
 export default WorkbenchPage

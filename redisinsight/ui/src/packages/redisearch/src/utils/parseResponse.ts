@@ -3,7 +3,7 @@ import {
   CommandArgument,
   ResultFieldNameView,
   ResultInfoField,
-  InfoAttributesBoolean
+  InfoAttributesBoolean,
 } from '../constants'
 
 const parseSearchRawResponse = (command: string, initResult: any[]) => {
@@ -19,7 +19,12 @@ const parseSearchRawResponse = (command: string, initResult: any[]) => {
 
     if (command.includes(CommandArgument.WithScores)) {
       const [score, scoreValues, others] = initValues
-      values = [ResultFieldNameView.Score, score, ...(scoreValues || []), ...(others || [])]
+      values = [
+        ResultFieldNameView.Score,
+        score,
+        ...(scoreValues || []),
+        ...(others || []),
+      ]
 
       if (command.includes(CommandArgument.WithPayloads)) {
         const [payload] = scoreValues || []
@@ -27,7 +32,12 @@ const parseSearchRawResponse = (command: string, initResult: any[]) => {
       }
     } else if (command.includes(CommandArgument.WithPayloads)) {
       const [payload, payloadValues = [], ...other] = initValues
-      values = [ResultFieldNameView.Payloads, payload, ...(payloadValues || []), ...other]
+      values = [
+        ResultFieldNameView.Payloads,
+        payload,
+        ...(payloadValues || []),
+        ...other,
+      ]
     }
 
     values = chunk(values, 2)
@@ -54,17 +64,31 @@ const parseAggregateRawResponse = (initResult: any[]) => {
 
 const parseInfoRawResponse = (initResult: any[]) => {
   const result: any[] = chunk(initResult, 2).map(([field, value]: any) => {
-    if (isArray(value) && (field === ResultInfoField.Fields || field === ResultInfoField.Attributes)) {
-      const values = field === ResultInfoField.Fields ? value.map((field) =>
-        [ResultFieldNameView.Name.toLowerCase(), ...field]) : value
-      return [field, values.map((attrs: any[]) => {
-        const newAttrs = attrs.reduce((prev, current) =>
-          (InfoAttributesBoolean.indexOf(current) !== -1
-            ? [...prev, current, true]
-            : [...prev, current]), [])
+    if (
+      isArray(value) &&
+      (field === ResultInfoField.Fields || field === ResultInfoField.Attributes)
+    ) {
+      const values =
+        field === ResultInfoField.Fields
+          ? value.map((field) => [
+              ResultFieldNameView.Name.toLowerCase(),
+              ...field,
+            ])
+          : value
+      return [
+        field,
+        values.map((attrs: any[]) => {
+          const newAttrs = attrs.reduce(
+            (prev, current) =>
+              InfoAttributesBoolean.indexOf(current) !== -1
+                ? [...prev, current, true]
+                : [...prev, current],
+            [],
+          )
 
-        return fromPairsChunk(newAttrs, 2)
-      })]
+          return fromPairsChunk(newAttrs, 2)
+        }),
+      ]
     }
     if (isArray(value) && field !== ResultInfoField.Options) {
       return [field, fromPairsChunk(value, 2)]
@@ -76,12 +100,17 @@ const parseInfoRawResponse = (initResult: any[]) => {
   return fromPairs(result)
 }
 
-const fromPairsChunk = (arr: any[] = [], count: number = 2) => fromPairs(chunk(arr, count))
+const fromPairsChunk = (arr: any[] = [], count: number = 2) =>
+  fromPairs(chunk(arr, count))
 
 const getChunkCountSearch = (command: string = '') => {
   let count = 2
   const onlyKeysChunkCount = 1
-  const specialArgs = [CommandArgument.WithSortKeys, CommandArgument.WithScores, CommandArgument.WithPayloads]
+  const specialArgs = [
+    CommandArgument.WithSortKeys,
+    CommandArgument.WithScores,
+    CommandArgument.WithPayloads,
+  ]
 
   if (getIsKeysOnly(command)) count = onlyKeysChunkCount
 
@@ -90,10 +119,9 @@ const getChunkCountSearch = (command: string = '') => {
   return count
 }
 
-const getIsKeysOnly = (command: string = '') => (
-  command.toUpperCase().includes(CommandArgument.NoContent)
-  || command.toUpperCase().includes(`${CommandArgument.Return} 0`)
-)
+const getIsKeysOnly = (command: string = '') =>
+  command.toUpperCase().includes(CommandArgument.NoContent) ||
+  command.toUpperCase().includes(`${CommandArgument.Return} 0`)
 
 export {
   parseInfoRawResponse,

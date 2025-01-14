@@ -24,7 +24,10 @@ export class LocalAiQueryMessageRepository extends AiQueryMessageRepository {
     private readonly encryptionService: EncryptionService,
   ) {
     super();
-    this.modelEncryptor = new ModelEncryptor(encryptionService, ['content', 'steps']);
+    this.modelEncryptor = new ModelEncryptor(encryptionService, [
+      'content',
+      'steps',
+    ]);
   }
 
   /**
@@ -32,15 +35,20 @@ export class LocalAiQueryMessageRepository extends AiQueryMessageRepository {
    * @param databaseId
    * @param accountId
    */
-  private async cleanupDatabaseHistory(databaseId: string, accountId: string): Promise<void> {
+  private async cleanupDatabaseHistory(
+    databaseId: string,
+    accountId: string,
+  ): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works
-    const idsToDelete = (await this.repository
-      .createQueryBuilder()
-      .where({ databaseId, accountId })
-      .select('id')
-      .orderBy('createdAt', 'DESC')
-      .offset(aiConfig.queryHistoryLimit)
-      .getRawMany()).map((item) => item.id);
+    const idsToDelete = (
+      await this.repository
+        .createQueryBuilder()
+        .where({ databaseId, accountId })
+        .select('id')
+        .orderBy('createdAt', 'DESC')
+        .offset(aiConfig.queryHistoryLimit)
+        .getRawMany()
+    ).map((item) => item.id);
 
     await this.repository
       .createQueryBuilder()
@@ -49,7 +57,11 @@ export class LocalAiQueryMessageRepository extends AiQueryMessageRepository {
       .execute();
   }
 
-  async list(_sessionMetadata: SessionMetadata, databaseId: string, accountId: string): Promise<AiQueryMessage[]> {
+  async list(
+    _sessionMetadata: SessionMetadata,
+    databaseId: string,
+    accountId: string,
+  ): Promise<AiQueryMessage[]> {
     const entities = await this.repository
       .createQueryBuilder('e')
       .where({ databaseId, accountId })
@@ -67,28 +79,45 @@ export class LocalAiQueryMessageRepository extends AiQueryMessageRepository {
       }),
     );
 
-    return filter(decryptedEntities, (entity) => !isNull(entity))
-      .map((entity) => classToClass(AiQueryMessage, entity));
+    return filter(decryptedEntities, (entity) => !isNull(entity)).map(
+      (entity) => classToClass(AiQueryMessage, entity),
+    );
   }
 
-  async createMany(sessionMetadata: SessionMetadata, messages: AiQueryMessage[]): Promise<void> {
-    const entities = await Promise.all(messages.map(async (message) => {
-      const entity = classToClass(AiQueryMessageEntity, message);
+  async createMany(
+    sessionMetadata: SessionMetadata,
+    messages: AiQueryMessage[],
+  ): Promise<void> {
+    const entities = await Promise.all(
+      messages.map(async (message) => {
+        const entity = classToClass(AiQueryMessageEntity, message);
 
-      return this.modelEncryptor.encryptEntity(entity);
-    }));
+        return this.modelEncryptor.encryptEntity(entity);
+      }),
+    );
 
     await this.repository.save(entities);
 
     // cleanup history and ignore error if any
     try {
-      await this.cleanupDatabaseHistory(entities[0].databaseId, entities[0].accountId);
+      await this.cleanupDatabaseHistory(
+        entities[0].databaseId,
+        entities[0].accountId,
+      );
     } catch (e) {
-      this.logger.error('Error when trying to cleanup history after insert', e, sessionMetadata);
+      this.logger.error(
+        'Error when trying to cleanup history after insert',
+        e,
+        sessionMetadata,
+      );
     }
   }
 
-  async clearHistory(_sessionMetadata: SessionMetadata, databaseId: string, accountId: string): Promise<void> {
+  async clearHistory(
+    _sessionMetadata: SessionMetadata,
+    databaseId: string,
+    accountId: string,
+  ): Promise<void> {
     await this.repository
       .createQueryBuilder()
       .delete()

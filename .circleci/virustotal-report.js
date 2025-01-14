@@ -6,7 +6,8 @@ const failed = process.env.VIRUS_CHECK_FAILED === 'true';
 
 const results = {
   message: {
-    text: `*Virustotal checks* (Branch: *${process.env.CIRCLE_BRANCH}*)` +
+    text:
+      `*Virustotal checks* (Branch: *${process.env.CIRCLE_BRANCH}*)` +
       `\n<https://app.circleci.com/pipelines/workflows/${process.env.CIRCLE_WORKFLOW_ID}|View on CircleCI>`,
     attachments: [],
   },
@@ -36,7 +37,10 @@ if (failed === true) {
   results.message.text = '<!here> ' + results.message.text;
 }
 
-fs.writeFileSync(fileName, JSON.stringify({
-  channel: process.env.SLACK_VIRUSTOTAL_REPORT_CHANNEL,
-  ...results.message,
-}));
+fs.writeFileSync(
+  fileName,
+  JSON.stringify({
+    channel: process.env.SLACK_VIRUSTOTAL_REPORT_CHANNEL,
+    ...results.message,
+  }),
+);

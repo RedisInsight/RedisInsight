@@ -1,15 +1,34 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiIcon, EuiLink, EuiText, EuiTextColor, EuiTitle } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiIcon,
+  EuiLink,
+  EuiText,
+  EuiTextColor,
+  EuiTitle,
+} from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import MobileIcon from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg?react'
 import DesktopIcon from 'uiSrc/assets/img/icons/module_not_loaded.svg?react'
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
 import CheerIcon from 'uiSrc/assets/img/icons/cheer.svg?react'
-import { FeatureFlags, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
-import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import {
+  FeatureFlags,
+  MODULE_NOT_LOADED_CONTENT as CONTENT,
+  MODULE_TEXT_VIEW,
+} from 'uiSrc/constants'
+import {
+  OAuthSocialAction,
+  OAuthSocialSource,
+  RedisDefaultModules,
+} from 'uiSrc/slices/interfaces'
+import {
+  FeatureFlagComponent,
+  OAuthConnectFreeDb,
+  OAuthSsoHandlerDialog,
+} from 'uiSrc/components'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 
@@ -18,7 +37,9 @@ import { getDbWithModuleLoaded } from 'uiSrc/utils'
 import { useCapability } from 'uiSrc/services'
 import styles from './styles.module.scss'
 
-export const MODULE_OAUTH_SOURCE_MAP: { [key in RedisDefaultModules]?: String } = {
+export const MODULE_OAUTH_SOURCE_MAP: {
+  [key in RedisDefaultModules]?: String
+} = {
   [RedisDefaultModules.Bloom]: 'RedisBloom',
   [RedisDefaultModules.ReJSON]: 'RedisJSON',
   [RedisDefaultModules.Search]: 'RediSearch',
@@ -54,14 +75,22 @@ const ListItem = ({ item }: { item: string }) => (
   </li>
 )
 
-const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps) => {
+const ModuleNotLoaded = ({
+  moduleName,
+  id,
+  type = 'workbench',
+  onClose,
+}: IProps) => {
   const [width, setWidth] = useState(0)
   const freeInstances = useSelector(freeInstancesSelector) || []
 
   const module = MODULE_OAUTH_SOURCE_MAP[moduleName]
 
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
-  const source = type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
+  const source =
+    type === 'browser'
+      ? OAuthSocialSource.BrowserSearch
+      : OAuthSocialSource[module]
 
   useCapability(source)
 
@@ -72,37 +101,47 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     }
   })
 
-  const renderText = useCallback((moduleName?: string) => (!freeDbWithModule ? (
-    <EuiText className={cx(styles.text, styles.marginBottom)}>
-      {`Create a free Redis Stack database with ${moduleName} which extends the core capabilities of your Redis`}
-    </EuiText>
-  ) : (
-    <EuiText className={cx(styles.text, styles.marginBottom, styles.textFooter)}>
-      Use your free all-in-one Redis Cloud database to start exploring these capabilities.
-    </EuiText>
-  )), [freeDbWithModule])
+  const renderText = useCallback(
+    (moduleName?: string) =>
+      !freeDbWithModule ? (
+        <EuiText className={cx(styles.text, styles.marginBottom)}>
+          {`Create a free Redis Stack database with ${moduleName} which extends the core capabilities of your Redis`}
+        </EuiText>
+      ) : (
+        <EuiText
+          className={cx(styles.text, styles.marginBottom, styles.textFooter)}
+        >
+          Use your free all-in-one Redis Cloud database to start exploring these
+          capabilities.
+        </EuiText>
+      ),
+    [freeDbWithModule],
+  )
 
   const onFreeDatabaseClick = () => {
     onClose?.()
   }
 
-  const utmCampaign = type === 'browser'
-    ? UTM_CAMPAINGS[OAuthSocialSource.BrowserSearch]
-    : UTM_CAMPAINGS[OAuthSocialSource.Workbench]
+  const utmCampaign =
+    type === 'browser'
+      ? UTM_CAMPAINGS[OAuthSocialSource.BrowserSearch]
+      : UTM_CAMPAINGS[OAuthSocialSource.Workbench]
 
   return (
-    <div className={cx(styles.container, {
-      [styles.fullScreen]: width > MAX_ELEMENT_WIDTH || type === 'browser',
-      [styles.modal]: type === 'browser',
-    })}
+    <div
+      className={cx(styles.container, {
+        [styles.fullScreen]: width > MAX_ELEMENT_WIDTH || type === 'browser',
+        [styles.modal]: type === 'browser',
+      })}
     >
       <div className={styles.flex}>
         <div>
-          {type !== 'browser' && (
-            width > MAX_ELEMENT_WIDTH
-              ? <DesktopIcon className={styles.bigIcon} />
-              : <MobileIcon className={styles.icon} />
-          )}
+          {type !== 'browser' &&
+            (width > MAX_ELEMENT_WIDTH ? (
+              <DesktopIcon className={styles.bigIcon} />
+            ) : (
+              <MobileIcon className={styles.icon} />
+            ))}
           {type === 'browser' && (
             <EuiIcon
               className={styles.iconTelescope}
@@ -114,20 +153,44 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
         <div className={styles.contentWrapper}>
           {renderTitle(width, MODULE_TEXT_VIEW[moduleName])}
           <EuiText className={styles.bigText}>
-            {CONTENT[moduleName]?.text.map((item: string) => (
-              width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
-            ))}
+            {CONTENT[moduleName]?.text.map((item: string) =>
+              width > MIN_ELEMENT_WIDTH ? (
+                <>
+                  {item}
+                  <br />
+                </>
+              ) : (
+                item
+              ),
+            )}
           </EuiText>
-          <ul className={cx(styles.list, { [styles.bloomList]: moduleName === RedisDefaultModules.Bloom })}>
+          <ul
+            className={cx(styles.list, {
+              [styles.bloomList]: moduleName === RedisDefaultModules.Bloom,
+            })}
+          >
             {CONTENT[moduleName]?.improvements.map((item: string) => (
               <ListItem key={item} item={item} />
             ))}
           </ul>
           {!!CONTENT[moduleName]?.additionalText && (
-            <EuiText className={cx(styles.text, styles.additionalText, styles.marginBottom)}>
-              {CONTENT[moduleName]?.additionalText.map((item: string) => (
-                width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
-              ))}
+            <EuiText
+              className={cx(
+                styles.text,
+                styles.additionalText,
+                styles.marginBottom,
+              )}
+            >
+              {CONTENT[moduleName]?.additionalText.map((item: string) =>
+                width > MIN_ELEMENT_WIDTH ? (
+                  <>
+                    {item}
+                    <br />
+                  </>
+                ) : (
+                  item
+                ),
+              )}
             </EuiText>
           )}
           {renderText(MODULE_TEXT_VIEW[moduleName])}
@@ -135,10 +198,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
       </div>
       <div className={styles.linksWrapper}>
         {!!freeDbWithModule && (
-          <OAuthConnectFreeDb
-            source={source}
-            id={freeDbWithModule.id}
-          />
+          <OAuthConnectFreeDb source={source} id={freeDbWithModule.id} />
         )}
         {!freeDbWithModule && (
           <FeatureFlagComponent name={FeatureFlags.envDependent}>
@@ -147,7 +207,9 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
                 className={cx(styles.text, styles.link)}
                 external={false}
                 target="_blank"
-                href={getUtmExternalLink(CONTENT[moduleName]?.link, { campaign: utmCampaign })}
+                href={getUtmExternalLink(CONTENT[moduleName]?.link, {
+                  campaign: utmCampaign,
+                })}
                 data-testid="learn-more-link"
               >
                 Learn More
@@ -158,15 +220,17 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
                     className={styles.link}
                     external={false}
                     target="_blank"
-                    href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
+                    href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
+                      campaign: utmCampaign,
+                    })}
                     onClick={(e) => {
-                      ssoCloudHandlerClick(
-                        e,
-                        {
-                          source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
-                          action: OAuthSocialAction.Create
-                        }
-                      )
+                      ssoCloudHandlerClick(e, {
+                        source:
+                          type === 'browser'
+                            ? OAuthSocialSource.BrowserSearch
+                            : OAuthSocialSource[module],
+                        action: OAuthSocialAction.Create,
+                      })
                       onFreeDatabaseClick()
                     }}
                     data-testid="get-started-link"

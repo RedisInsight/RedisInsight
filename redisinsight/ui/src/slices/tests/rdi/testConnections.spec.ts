@@ -1,6 +1,10 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import reducer, {
   initialState,
   testConnections,
@@ -16,8 +20,8 @@ const mockData = {
   targets: {
     target: {
       status: 'success',
-    }
-  }
+    },
+  },
 }
 
 let store: typeof mockedStore
@@ -35,7 +39,7 @@ describe('rdi test connections slice', () => {
       const state = {
         ...initialState,
         loading: true,
-        results: null
+        results: null,
       }
 
       // Act
@@ -106,9 +110,7 @@ describe('rdi test connections slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          testConnectionsAction('123', 'config')
-        )
+        await store.dispatch<any>(testConnectionsAction('123', 'config'))
 
         // Assert
         const expectedActions = [
@@ -131,15 +133,13 @@ describe('rdi test connections slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          testConnectionsAction('123', 'config')
-        )
+        await store.dispatch<any>(testConnectionsAction('123', 'config'))
 
         // Assert
         const expectedActions = [
           testConnections(),
           addErrorNotification(responsePayload as AxiosError),
-          testConnectionsFailure(errorMessage)
+          testConnectionsFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

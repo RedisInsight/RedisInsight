@@ -9,28 +9,34 @@ describe('BigAmountConnectedClientsStrategy', () => {
 
   describe('isRecommendationReached', () => {
     it('should return false when connectedClients less then 100', async () => {
-      expect(await strategy.isRecommendationReached({
-        version: '1',
-        connectedClients: 1,
-      })).toEqual({ isReached: false });
+      expect(
+        await strategy.isRecommendationReached({
+          version: '1',
+          connectedClients: 1,
+        }),
+      ).toEqual({ isReached: false });
     });
 
     it('should return true when connectedClients more then 100', async () => {
-      expect(await strategy.isRecommendationReached({
-        version: '1',
-        connectedClients: 101,
-      })).toEqual({ isReached: true });
+      expect(
+        await strategy.isRecommendationReached({
+          version: '1',
+          connectedClients: 101,
+        }),
+      ).toEqual({ isReached: true });
     });
 
     describe('cluster', () => {
       it('should return true when connectedClients more then 100 in one of the nodes', async () => {
-        expect(await strategy.isRecommendationReached({
-          version: '1',
-          nodes: [
-            { version: '1', connectedClients: 1 },
-            { version: '2', connectedClients: 101 },
-          ],
-        })).toEqual({ isReached: true });
+        expect(
+          await strategy.isRecommendationReached({
+            version: '1',
+            nodes: [
+              { version: '1', connectedClients: 1 },
+              { version: '2', connectedClients: 101 },
+            ],
+          }),
+        ).toEqual({ isReached: true });
       });
     });
   });

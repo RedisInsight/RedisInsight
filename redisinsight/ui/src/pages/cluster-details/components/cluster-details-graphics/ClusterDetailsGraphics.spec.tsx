@@ -25,7 +25,7 @@ const mockNodes = [
     uptimeSec: 5614,
     version: '6.2.6',
     mode: 'cluster',
-    replicas: []
+    replicas: [],
   },
   {
     id: '2',
@@ -47,16 +47,14 @@ const mockNodes = [
     uptimeSec: 5609,
     version: '6.2.6',
     mode: 'cluster',
-    replicas: []
+    replicas: [],
   },
   {
     id: '3',
     host: '0.0.0.3',
     port: 6379,
     role: 'primary',
-    slots: [
-      '5461-10922'
-    ],
+    slots: ['5461-10922'],
     health: 'online',
     totalKeys: 10,
     usedMemory: 2886960,
@@ -71,25 +69,40 @@ const mockNodes = [
     uptimeSec: 5609,
     version: '6.2.6',
     mode: 'cluster',
-    replicas: []
-  }
-].map((d, index) => ({ ...d, letter: 'A', index, color: [0, 0, 0] })) as ModifiedClusterNodes[]
+    replicas: [],
+  },
+].map((d, index) => ({
+  ...d,
+  letter: 'A',
+  index,
+  color: [0, 0, 0],
+})) as ModifiedClusterNodes[]
 
 describe('ClusterDetailsGraphics', () => {
   it('should render', () => {
-    expect(render(<ClusterDetailsGraphics nodes={mockNodes} loading={false} />)).toBeTruthy()
+    expect(
+      render(<ClusterDetailsGraphics nodes={mockNodes} loading={false} />),
+    ).toBeTruthy()
   })
 
   it('should render nothing without nodes', () => {
     render(<ClusterDetailsGraphics nodes={[]} loading={false} />)
-    expect(screen.queryByTestId('cluster-details-graphics-loading')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('cluster-details-charts')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('cluster-details-graphics-loading'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('cluster-details-charts'),
+    ).not.toBeInTheDocument()
   })
 
   it('should render loading content', () => {
     render(<ClusterDetailsGraphics nodes={null} loading />)
-    expect(screen.getByTestId('cluster-details-graphics-loading')).toBeInTheDocument()
-    expect(screen.queryByTestId('cluster-details-charts')).not.toBeInTheDocument()
+    expect(
+      screen.getByTestId('cluster-details-graphics-loading'),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('cluster-details-charts'),
+    ).not.toBeInTheDocument()
   })
 
   it('should render donuts', () => {

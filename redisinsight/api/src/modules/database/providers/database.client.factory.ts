@@ -6,15 +6,21 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClientMetadata } from 'src/common/models';
 import { RedisClient } from 'src/modules/redis/client';
-import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import {
+  IRedisConnectionOptions,
+  RedisClientFactory,
+} from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 type IsClientConnectingMap = {
-  [key: string]: boolean
+  [key: string]: boolean;
 };
 
 type PendingGetByClientIdMap = {
-  [key: string]: { resolve: (value: RedisClient) => void, reject: (reason?: any) => void }[]
+  [key: string]: {
+    resolve: (value: RedisClient) => void;
+    reject: (reason?: any) => void;
+  }[];
 };
 
 @Injectable()
@@ -33,9 +39,15 @@ export class DatabaseClientFactory {
     private readonly redisClientFactory: RedisClientFactory,
   ) {}
 
-  private async processGetClient(clientId: string, clientMetadata: ClientMetadata) {
+  private async processGetClient(
+    clientId: string,
+    clientMetadata: ClientMetadata,
+  ) {
     if (this.isConnecting[clientId]) {
-      this.logger.debug('Client already connecting. Queueing get client request', { clientId });
+      this.logger.debug(
+        'Client already connecting. Queueing get client request',
+        { clientId },
+      );
       return;
     }
     if (!this.pendingGetClient[clientId].length) {
@@ -77,7 +89,9 @@ export class DatabaseClientFactory {
    * Client from the pool of clients will be automatically deleted by idle time
    * @param clientMetadata
    */
-  async getOrCreateClient(clientMetadata: ClientMetadata): Promise<RedisClient> {
+  async getOrCreateClient(
+    clientMetadata: ClientMetadata,
+  ): Promise<RedisClient> {
     this.logger.debug('Trying to get existing redis client.', clientMetadata);
 
     const client = await this.redisClientStorage.getByMetadata(clientMetadata);
@@ -86,7 +100,9 @@ export class DatabaseClientFactory {
       return client;
     }
 
-    const clientId = RedisClient.generateId(RedisClient.prepareClientMetadata(clientMetadata));
+    const clientId = RedisClient.generateId(
+      RedisClient.prepareClientMetadata(clientMetadata),
+    );
 
     // add promise to queue and then process queue immediately
     // in case another fetch is not already running
@@ -94,7 +110,7 @@ export class DatabaseClientFactory {
       if (!this.pendingGetClient[clientId]) {
         this.pendingGetClient[clientId] = [];
       }
-      this.pendingGetClient[clientId].push(({ resolve, reject }));
+      this.pendingGetClient[clientId].push({ resolve, reject });
       this.processGetClient(clientId, clientMetadata);
     });
   }
@@ -108,19 +124,30 @@ export class DatabaseClientFactory {
    * @param clientMetadata
    * @param options
    */
-  async createClient(clientMetadata: ClientMetadata, options?: IRedisConnectionOptions): Promise<RedisClient> {
+  async createClient(
+    clientMetadata: ClientMetadata,
+    options?: IRedisConnectionOptions,
+  ): Promise<RedisClient> {
     this.logger.debug('Creating new redis client.', clientMetadata);
-    const database = await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);
+    const database = await this.databaseService.get(
+      clientMetadata.sessionMetadata,
+      clientMetadata.databaseId,
+    );
 
     try {
-      const client = await this.redisClientFactory.createClient(clientMetadata, database, options);
+      const client = await this.redisClientFactory.createClient(
+        clientMetadata,
+        database,
+        options,
+      );
 
       if (database.connectionType === ConnectionType.NOT_CONNECTED) {
         await this.repository.update(
           clientMetadata.sessionMetadata,
           database.id,
           {
-            connectionType: client.getConnectionType() as unknown as ConnectionType,
+            connectionType:
+              client.getConnectionType() as unknown as ConnectionType,
           },
         );
       }
@@ -133,7 +160,11 @@ export class DatabaseClientFactory {
         database,
         database.name,
       );
-      this.analytics.sendConnectionFailedEvent(clientMetadata.sessionMetadata, database, exception);
+      this.analytics.sendConnectionFailedEvent(
+        clientMetadata.sessionMetadata,
+        database,
+        exception,
+      );
       throw exception;
     }
   }

@@ -13,7 +13,9 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).delete(`/${constants.API.DATABASES}/${instanceId}/zSet/members`);
+  request(server).delete(
+    `/${constants.API.DATABASES}/${instanceId}/zSet/members`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -26,9 +28,11 @@ const validInputData = {
   members: [constants.getRandomString()],
 };
 
-const responseSchema = Joi.object().keys({
-  affected: Joi.number().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    affected: Joi.number().required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -48,7 +52,9 @@ describe('DELETE /databases/:instanceId/zSet/members', () => {
           affected: 1,
         },
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_ZSET_KEY_BIN_BUFFER_1)).to.eql(0);
+          expect(
+            await rte.client.exists(constants.TEST_ZSET_KEY_BIN_BUFFER_1),
+          ).to.eql(0);
         },
       },
       {
@@ -61,7 +67,9 @@ describe('DELETE /databases/:instanceId/zSet/members', () => {
           affected: 1,
         },
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_ZSET_KEY_BIN_BUFFER_1)).to.eql(0);
+          expect(
+            await rte.client.exists(constants.TEST_ZSET_KEY_BIN_BUFFER_1),
+          ).to.eql(0);
         },
       },
     ].map(mainCheckFn);
@@ -93,11 +101,12 @@ describe('DELETE /databases/:instanceId/zSet/members', () => {
           },
           after: async () =>
             // check that value was not overwritten
-            expect(await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10))
-              .to.eql([
+            expect(
+              await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10),
+            ).to.eql([
               constants.TEST_ZSET_MEMBER_1,
               constants.TEST_ZSET_MEMBER_2,
-            ])
+            ]),
         },
         {
           name: 'Should return NotFound error if key does not exists',
@@ -135,9 +144,13 @@ describe('DELETE /databases/:instanceId/zSet/members', () => {
             affected: 1,
           },
           after: async () => {
-            const members = await rte.client.zrange(constants.TEST_ZSET_KEY_2, 0, 1000);
+            const members = await rte.client.zrange(
+              constants.TEST_ZSET_KEY_2,
+              0,
+              1000,
+            );
             expect(members.length).to.eql(99);
-          }
+          },
         },
         {
           name: 'Should remove multiple member',
@@ -150,9 +163,13 @@ describe('DELETE /databases/:instanceId/zSet/members', () => {
             affected: 4,
           },
           after: async () => {
-            const members = await rte.client.zrange(constants.TEST_ZSET_KEY_2, 0, 1000);
+            const members = await rte.client.zrange(
+              constants.TEST_ZSET_KEY_2,
+              0,
+              1000,
+            );
             expect(members.length).to.eql(95);
-          }
+          },
         },
       ].map(mainCheckFn);
     });
@@ -167,13 +184,18 @@ describe('DELETE /databases/:instanceId/zSet/members', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.TEST_ZSET_KEY_1,
-            members: [constants.TEST_ZSET_MEMBER_1, constants.TEST_ZSET_MEMBER_2],
+            members: [
+              constants.TEST_ZSET_MEMBER_1,
+              constants.TEST_ZSET_MEMBER_2,
+            ],
           },
           responseBody: {
             affected: 2,
           },
           after: async () => {
-            expect(await rte.client.exists(constants.TEST_ZSET_KEY_1)).to.eql(0);
+            expect(await rte.client.exists(constants.TEST_ZSET_KEY_1)).to.eql(
+              0,
+            );
           },
         },
         {
@@ -188,7 +210,7 @@ describe('DELETE /databases/:instanceId/zSet/members', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -zrem')
+          before: () => rte.data.setAclUserRules('~* +@all -zrem'),
         },
         {
           name: 'Should throw error if no permissions for "exists" command',
@@ -202,7 +224,7 @@ describe('DELETE /databases/:instanceId/zSet/members', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
       ].map(mainCheckFn);
     });

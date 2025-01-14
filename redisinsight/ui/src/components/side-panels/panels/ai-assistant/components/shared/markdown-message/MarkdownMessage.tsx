@@ -3,10 +3,7 @@ import JsxParser from 'react-jsx-parser'
 import MarkdownToJsxString from 'uiSrc/services/formatter/MarkdownToJsxString'
 import { CloudLink } from 'uiSrc/components/markdown'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
-import {
-  ChatExternalLink,
-  CodeBlock
-} from './components'
+import { ChatExternalLink, CodeBlock } from './components'
 
 export interface CodeProps {
   children: string
@@ -21,26 +18,29 @@ export interface Props {
 }
 
 const MarkdownMessage = (props: Props) => {
-  const {
-    modules,
-    children,
-    onMessageRendered,
-    onRunCommand,
-  } = props
+  const { modules, children, onMessageRendered, onRunCommand } = props
 
   const [content, setContent] = useState('')
   const [parseAsIs, setParseAsIs] = useState(false)
 
-  const ChatCodeBlock = useCallback((codeProps: CodeProps) =>
-    (<CodeBlock {...codeProps} modules={modules} onRunCommand={onRunCommand} />), [modules])
-  const components: any = { Code: ChatCodeBlock, CloudLink, ExternalLink: ChatExternalLink }
+  const ChatCodeBlock = useCallback(
+    (codeProps: CodeProps) => (
+      <CodeBlock {...codeProps} modules={modules} onRunCommand={onRunCommand} />
+    ),
+    [modules],
+  )
+  const components: any = {
+    Code: ChatCodeBlock,
+    CloudLink,
+    ExternalLink: ChatExternalLink,
+  }
 
   useEffect(() => {
     const formatContent = async () => {
       try {
-        const formated = await (new MarkdownToJsxString()).format({
+        const formated = await new MarkdownToJsxString().format({
           data: children,
-          codeOptions: { allLangs: true }
+          codeOptions: { allLangs: true },
         })
         setContent(formated)
       } catch {

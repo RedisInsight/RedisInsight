@@ -9,13 +9,18 @@ import {
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiTextArea,
-  htmlIdGenerator
+  htmlIdGenerator,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { FormikProps } from 'formik'
 
 import { useDispatch } from 'react-redux'
-import { validateCertName, validateField, Nullable, truncateText } from 'uiSrc/utils'
+import {
+  validateCertName,
+  validateField,
+  Nullable,
+  truncateText,
+} from 'uiSrc/utils'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 
 import {
@@ -43,27 +48,25 @@ const TlsDetails = (props: Props) => {
   const [activeCertId, setActiveCertId] = useState<Nullable<string>>(null)
 
   const handleDeleteCaCert = (id: string) => {
-    dispatch(deleteCaCertificateAction(id, () => {
-      if (formik.values.selectedCaCertName === id) {
-        formik.setFieldValue(
-          'selectedCaCertName',
-          NO_CA_CERT,
-        )
-      }
-      handleClickDeleteCert('CA')
-    }))
+    dispatch(
+      deleteCaCertificateAction(id, () => {
+        if (formik.values.selectedCaCertName === id) {
+          formik.setFieldValue('selectedCaCertName', NO_CA_CERT)
+        }
+        handleClickDeleteCert('CA')
+      }),
+    )
   }
 
   const handleDeleteClientCert = (id: string) => {
-    dispatch(deleteClientCertAction(id, () => {
-      if (formik.values.selectedTlsClientCertId === id) {
-        formik.setFieldValue(
-          'selectedTlsClientCertId',
-          ADD_NEW,
-        )
-      }
-      handleClickDeleteCert('Client')
-    }))
+    dispatch(
+      deleteClientCertAction(id, () => {
+        if (formik.values.selectedTlsClientCertId === id) {
+          formik.setFieldValue('selectedTlsClientCertId', ADD_NEW)
+        }
+        handleClickDeleteCert('Client')
+      }),
+    )
   }
 
   const handleClickDeleteCert = (certificateType: 'Client' | 'CA') => {
@@ -97,9 +100,19 @@ const TlsDetails = (props: Props) => {
   caCertificates?.forEach((cert) => {
     optionsCertsCA.push({
       value: cert.id,
-      inputDisplay: <span className={styles.selectedOptionWithLongTextSupport}>{cert.name}</span>,
+      inputDisplay: (
+        <span className={styles.selectedOptionWithLongTextSupport}>
+          {cert.name}
+        </span>
+      ),
       dropdownDisplay: (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <div>{truncateText(cert.name, 25)}</div>
           <PopoverDelete
             header={cert.name}
@@ -128,9 +141,19 @@ const TlsDetails = (props: Props) => {
   certificates?.forEach((cert) => {
     optionsCertsClient.push({
       value: `${cert.id}`,
-      inputDisplay: <span className={styles.selectedOptionWithLongTextSupport}>{cert.name}</span>,
+      inputDisplay: (
+        <span className={styles.selectedOptionWithLongTextSupport}>
+          {cert.name}
+        </span>
+      ),
       dropdownDisplay: (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <div>{truncateText(cert.name, 25)}</div>
           <PopoverDelete
             header={cert.name}
@@ -177,7 +200,7 @@ const TlsDetails = (props: Props) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     'servername',
-                    formik.values.servername ?? formik.values.host ?? ''
+                    formik.values.servername ?? formik.values.host ?? '',
                   )
                   return formik.handleChange(e)
                 }}
@@ -201,8 +224,9 @@ const TlsDetails = (props: Props) => {
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         formik.setFieldValue(
                           e.target.name,
-                          validateField(e.target.value.trim())
-                        )}
+                          validateField(e.target.value.trim()),
+                        )
+                      }
                       data-testid="sni-servername"
                     />
                   </EuiFormRow>
@@ -212,7 +236,9 @@ const TlsDetails = (props: Props) => {
           )}
           <EuiSpacer />
           <EuiFlexGroup>
-            <EuiFlexItem className={cx({ [styles.fullWidth]: formik.values.sni })}>
+            <EuiFlexItem
+              className={cx({ [styles.fullWidth]: formik.values.sni })}
+            >
               <EuiCheckbox
                 id={`${htmlIdGenerator()()} verifyServerTlsCert`}
                 name="verifyServerTlsCert"
@@ -245,7 +271,7 @@ const TlsDetails = (props: Props) => {
                   onChange={(value) => {
                     formik.setFieldValue(
                       'selectedCaCertName',
-                      value || NO_CA_CERT
+                      value || NO_CA_CERT,
                     )
                   }}
                   data-testid="select-ca-cert"
@@ -253,8 +279,8 @@ const TlsDetails = (props: Props) => {
               </EuiFormRow>
             </EuiFlexItem>
 
-            {formik.values.tls
-              && formik.values.selectedCaCertName === ADD_NEW_CA_CERT && (
+            {formik.values.tls &&
+              formik.values.selectedCaCertName === ADD_NEW_CA_CERT && (
                 <EuiFlexItem>
                   <EuiFormRow label="Name*">
                     <EuiFieldText
@@ -267,17 +293,18 @@ const TlsDetails = (props: Props) => {
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         formik.setFieldValue(
                           e.target.name,
-                          validateCertName(e.target.value)
-                        )}
+                          validateCertName(e.target.value),
+                        )
+                      }
                       data-testid="qa-ca-cert"
                     />
                   </EuiFormRow>
                 </EuiFlexItem>
-            )}
+              )}
           </EuiFlexGroup>
 
-          {formik.values.tls
-            && formik.values.selectedCaCertName === ADD_NEW_CA_CERT && (
+          {formik.values.tls &&
+            formik.values.selectedCaCertName === ADD_NEW_CA_CERT && (
               <EuiFlexGroup>
                 <EuiFlexItem>
                   <EuiFormRow label="Certificate*">
@@ -294,7 +321,7 @@ const TlsDetails = (props: Props) => {
                   </EuiFormRow>
                 </EuiFlexItem>
               </EuiFlexGroup>
-          )}
+            )}
         </div>
       )}
       {formik.values.tls && (
@@ -306,17 +333,18 @@ const TlsDetails = (props: Props) => {
               label="Requires TLS Client Authentication"
               checked={!!formik.values.tlsClientAuthRequired}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                formik.setFieldValue(
-                  'tlsClientAuthRequired',
-                  e.target.checked
-                )}
+                formik.setFieldValue('tlsClientAuthRequired', e.target.checked)
+              }
               data-testid="tls-required-checkbox"
             />
           </EuiFlexItem>
         </EuiFlexGroup>
       )}
       {formik.values.tls && formik.values.tlsClientAuthRequired && (
-        <div className={cx('boxSection', styles.tslBoxSection)} style={{ marginTop: 15 }}>
+        <div
+          className={cx('boxSection', styles.tslBoxSection)}
+          style={{ marginTop: 15 }}
+        >
           <EuiFlexGroup>
             <EuiFlexItem>
               <EuiFormRow label="Client Certificate*">
@@ -332,9 +360,9 @@ const TlsDetails = (props: Props) => {
               </EuiFormRow>
             </EuiFlexItem>
 
-            {formik.values.tls
-              && formik.values.tlsClientAuthRequired
-              && formik.values.selectedTlsClientCertId === 'ADD_NEW' && (
+            {formik.values.tls &&
+              formik.values.tlsClientAuthRequired &&
+              formik.values.selectedTlsClientCertId === 'ADD_NEW' && (
                 <EuiFlexItem>
                   <EuiFormRow label="Name*">
                     <EuiFieldText
@@ -347,18 +375,19 @@ const TlsDetails = (props: Props) => {
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         formik.setFieldValue(
                           e.target.name,
-                          validateCertName(e.target.value)
-                        )}
+                          validateCertName(e.target.value),
+                        )
+                      }
                       data-testid="new-tsl-cert-pair-name"
                     />
                   </EuiFormRow>
                 </EuiFlexItem>
-            )}
+              )}
           </EuiFlexGroup>
 
-          {formik.values.tls
-            && formik.values.tlsClientAuthRequired
-            && formik.values.selectedTlsClientCertId === 'ADD_NEW' && (
+          {formik.values.tls &&
+            formik.values.tlsClientAuthRequired &&
+            formik.values.selectedTlsClientCertId === 'ADD_NEW' && (
               <>
                 <EuiFlexGroup>
                   <EuiFlexItem>
@@ -395,7 +424,7 @@ const TlsDetails = (props: Props) => {
                   </EuiFlexItem>
                 </EuiFlexGroup>
               </>
-          )}
+            )}
         </div>
       )}
     </>

@@ -1,11 +1,11 @@
-version: "3.4"
+version: '3.4'
 
 services:
   test:
     env_file:
       - ./oss-clu/.env
     environment:
-      TEST_REDIS_HOST: "r1"
+      TEST_REDIS_HOST: 'r1'
 
   redis:
     build: &build ./oss-clu

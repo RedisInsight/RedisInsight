@@ -8,7 +8,8 @@ import {
   EuiForm,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiPanel, EuiTextArea,
+  EuiPanel,
+  EuiTextArea,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
@@ -16,9 +17,7 @@ import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
 
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
-import {
-  AddStringFormConfig as config
-} from '../constants/fields-config'
+import { AddStringFormConfig as config } from '../constants/fields-config'
 
 export interface Props {
   keyName: string
@@ -48,7 +47,7 @@ const AddKeyString = (props: Props) => {
   const submitData = (): void => {
     const data: SetStringWithExpireDto = {
       keyName: stringToBuffer(keyName),
-      value: stringToBuffer(value)
+      value: stringToBuffer(value),
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL
@@ -67,7 +66,8 @@ const AddKeyString = (props: Props) => {
           placeholder={config.value.placeholder}
           value={value}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            setValue(e.target.value)}
+            setValue(e.target.value)
+          }
           disabled={loading}
           data-testid="string-value"
         />
@@ -76,7 +76,12 @@ const AddKeyString = (props: Props) => {
         Submit
       </EuiButton>
       <AddKeyFooter>
-        <EuiPanel style={{ border: 'none' }} color="transparent" hasShadow={false} borderRadius="none">
+        <EuiPanel
+          style={{ border: 'none' }}
+          color="transparent"
+          hasShadow={false}
+          borderRadius="none"
+        >
           <EuiFlexGroup justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
               <div>

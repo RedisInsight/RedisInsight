@@ -19,7 +19,7 @@ import ExpertChat from '../expert-chat'
 import styles from './styles.module.scss'
 
 interface ChatWithTabs {
-  feature: Maybe<FeatureFlagComponent>,
+  feature: Maybe<FeatureFlagComponent>
   tab: AiChatType
 }
 
@@ -30,24 +30,29 @@ const ChatsWrapper = () => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
 
-  const chats = filter<ChatWithTabs>([
-    {
-      feature: documentationChatFeature,
-      tab: AiChatType.Assistance
-    },
-    {
-      feature: databaseChatFeature,
-      tab: AiChatType.Query
-    },
-  ], ({ feature }) => !!feature?.flag)
+  const chats = filter<ChatWithTabs>(
+    [
+      {
+        feature: documentationChatFeature,
+        tab: AiChatType.Assistance,
+      },
+      {
+        feature: databaseChatFeature,
+        tab: AiChatType.Query,
+      },
+    ],
+    ({ feature }) => !!feature?.flag,
+  )
 
   const dispatch = useDispatch()
 
   useEffect(() => {
     if (!chats.length) return
 
-    if ((activeTab === AiChatType.Assistance && !documentationChatFeature?.flag)
-      || (activeTab === AiChatType.Query && !databaseChatFeature?.flag)
+    if (
+      (activeTab === AiChatType.Assistance &&
+        !documentationChatFeature?.flag) ||
+      (activeTab === AiChatType.Query && !databaseChatFeature?.flag)
     ) {
       dispatch(setSelectedTab(chats[0].tab))
     }
@@ -55,8 +60,8 @@ const ChatsWrapper = () => {
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_OPENED,
       eventData: {
-        chat: activeTab
-      }
+        chat: activeTab,
+      },
     })
   }, [databaseChatFeature, databaseChatFeature, activeTab])
 
@@ -92,8 +97,11 @@ const ChatsWrapper = () => {
       )}
       {chats.length > 0 && (
         <div className={styles.chat}>
-          {activeTab === AiChatType.Assistance && documentationChatFeature?.flag && (<AssistanceChat />)}
-          {activeTab === AiChatType.Query && databaseChatFeature?.flag && (<ExpertChat />)}
+          {activeTab === AiChatType.Assistance &&
+            documentationChatFeature?.flag && <AssistanceChat />}
+          {activeTab === AiChatType.Query && databaseChatFeature?.flag && (
+            <ExpertChat />
+          )}
         </div>
       )}
     </div>

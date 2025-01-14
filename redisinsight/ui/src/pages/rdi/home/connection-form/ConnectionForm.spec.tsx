@@ -8,7 +8,7 @@ const mockedProps: Props = {
   onSubmit: jest.fn(),
   onCancel: jest.fn(),
   isLoading: false,
-  editInstance: null
+  editInstance: null,
 }
 
 const mockedEditInstance: RdiInstance = {
@@ -18,7 +18,7 @@ const mockedEditInstance: RdiInstance = {
   username: 'username',
   password: 'password',
   error: '',
-  loading: false
+  loading: false,
 }
 
 describe('ConnectionForm', () => {
@@ -27,7 +27,12 @@ describe('ConnectionForm', () => {
   })
 
   it('should disable submit button when form is invalid', async () => {
-    render(<><ConnectionForm {...mockedProps} /><div id="footerDatabaseForm" /></>)
+    render(
+      <>
+        <ConnectionForm {...mockedProps} />
+        <div id="footerDatabaseForm" />
+      </>,
+    )
 
     await waitFor(() => {
       expect(screen.getByTestId('connection-form-add-button')).toBeDisabled()
@@ -36,7 +41,12 @@ describe('ConnectionForm', () => {
 
   // TODO update when add test connection endpoint
   it.skip('should disable test connection button when form is invalid', async () => {
-    render(<><ConnectionForm {...mockedProps} /><div id="footerDatabaseForm" /></>)
+    render(
+      <>
+        <ConnectionForm {...mockedProps} />
+        <div id="footerDatabaseForm" />
+      </>,
+    )
 
     await waitFor(() => {
       expect(screen.getByTestId('connection-form-test-button')).toBeDisabled()
@@ -44,62 +54,109 @@ describe('ConnectionForm', () => {
   })
 
   it('should not disable submit button when form is valid', async () => {
-    render(<><ConnectionForm {...mockedProps} /><div id="footerDatabaseForm" /></>)
+    render(
+      <>
+        <ConnectionForm {...mockedProps} />
+        <div id="footerDatabaseForm" />
+      </>,
+    )
 
     await waitFor(() => {
       expect(screen.getByTestId('connection-form-add-button')).toBeDisabled()
     })
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('connection-form-name-input'), { target: { value: 'alias' } })
-      fireEvent.change(screen.getByTestId('connection-form-url-input'), { target: { value: 'url' } })
-      fireEvent.change(screen.getByTestId('connection-form-username-input'), { target: { value: 'username' } })
-      fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password' } })
+      fireEvent.change(screen.getByTestId('connection-form-name-input'), {
+        target: { value: 'alias' },
+      })
+      fireEvent.change(screen.getByTestId('connection-form-url-input'), {
+        target: { value: 'url' },
+      })
+      fireEvent.change(screen.getByTestId('connection-form-username-input'), {
+        target: { value: 'username' },
+      })
+      fireEvent.change(screen.getByTestId('connection-form-password-input'), {
+        target: { value: 'password' },
+      })
     })
 
     expect(screen.getByTestId('connection-form-add-button')).not.toBeDisabled()
   })
 
   it('should not disable submit button when form is provided editInstance', async () => {
-    render(<><ConnectionForm {...mockedProps} editInstance={mockedEditInstance} /><div id="footerDatabaseForm" /></>)
+    render(
+      <>
+        <ConnectionForm {...mockedProps} editInstance={mockedEditInstance} />
+        <div id="footerDatabaseForm" />
+      </>,
+    )
 
     expect(screen.getByTestId('connection-form-add-button')).not.toBeDisabled()
   })
 
   it('should disable URL input when form is provided editInstance', () => {
-    render(<><ConnectionForm {...mockedProps} editInstance={mockedEditInstance} /><div id="footerDatabaseForm" /></>)
+    render(
+      <>
+        <ConnectionForm {...mockedProps} editInstance={mockedEditInstance} />
+        <div id="footerDatabaseForm" />
+      </>,
+    )
 
     expect(screen.getByTestId('connection-form-url-input')).toBeDisabled()
   })
 
   it('should show validation tooltip when submit button is disabled', async () => {
-    render(<><ConnectionForm {...mockedProps} /><div id="footerDatabaseForm" /></>)
+    render(
+      <>
+        <ConnectionForm {...mockedProps} />
+        <div id="footerDatabaseForm" />
+      </>,
+    )
 
     fireEvent.mouseOver(screen.getByTestId('connection-form-add-button'))
 
-    const tooltip = await screen.findByTestId('connection-form-validation-tooltip')
+    const tooltip = await screen.findByTestId(
+      'connection-form-validation-tooltip',
+    )
 
     expect(tooltip).toBeInTheDocument()
   })
 
   it.skip('should show validation tooltip when test connection button is disabled', async () => {
-    render(<><ConnectionForm {...mockedProps} /><div id="footerDatabaseForm" /></>)
+    render(
+      <>
+        <ConnectionForm {...mockedProps} />
+        <div id="footerDatabaseForm" />
+      </>,
+    )
 
     fireEvent.mouseOver(screen.getByTestId('connection-form-test-button'))
 
-    const tooltip = await screen.findByTestId('connection-form-validation-tooltip')
+    const tooltip = await screen.findByTestId(
+      'connection-form-validation-tooltip',
+    )
 
     expect(tooltip).toBeInTheDocument()
   })
 
   it('should disable submit button when isLoading = true', async () => {
-    render(<><ConnectionForm {...mockedProps} isLoading /><div id="footerDatabaseForm" /></>)
+    render(
+      <>
+        <ConnectionForm {...mockedProps} isLoading />
+        <div id="footerDatabaseForm" />
+      </>,
+    )
 
     expect(screen.getByTestId('connection-form-add-button')).toBeDisabled()
   })
 
   it.skip('should disable test connection button when isLoading = true', async () => {
-    render(<><ConnectionForm {...mockedProps} isLoading /><div id="footerDatabaseForm" /></>)
+    render(
+      <>
+        <ConnectionForm {...mockedProps} isLoading />
+        <div id="footerDatabaseForm" />
+      </>,
+    )
 
     expect(screen.getByTestId('connection-form-test-button')).toBeDisabled()
   })

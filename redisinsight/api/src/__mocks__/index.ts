@@ -27,6 +27,7 @@ export * from './redis-utils';
 export * from './ssh';
 export * from './browser-history';
 export * from './database-recommendation';
+export * from './database-settings';
 export * from './feature';
 export * from './notification';
 export * from './cloud-autodiscovery';

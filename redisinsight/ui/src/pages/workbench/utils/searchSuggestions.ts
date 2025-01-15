@@ -2,7 +2,6 @@ import { monaco as monacoEditor } from 'react-monaco-editor'
 import { isNumber } from 'lodash'
 import { IMonacoQuery, Nullable, splitQueryByArgs } from 'uiSrc/utils'
 import { CursorContext, FoundCommandArgument } from 'uiSrc/pages/workbench/types'
-import { findCurrentArgument } from 'uiSrc/pages/workbench/utils/query'
 import { IRedisCommand } from 'uiSrc/constants'
 import {
   asSuggestionsRef,
@@ -11,7 +10,6 @@ import {
   getGeneralSuggestions,
   getIndexesSuggestions,
   getNoIndexesSuggestion,
-  getParentWithOwnToken,
 } from 'uiSrc/pages/workbench/utils/suggestions'
 import {
   COMMANDS_WITHOUT_INDEX_PROPOSE,
@@ -19,7 +17,7 @@ import {
   FIELD_START_SYMBOL,
   ModuleCommandPrefix
 } from 'uiSrc/pages/workbench/constants'
-import { findSuggestionsByQueryArgs } from 'uiSrc/pages/workbench/utils/query_refactor'
+import { findSuggestionsByQueryArgs } from 'uiSrc/pages/workbench/utils/query'
 
 export const findSuggestionsByArg = (
   listOfCommands: IRedisCommand[],
@@ -47,7 +45,6 @@ export const findSuggestionsByArg = (
   }
 
   const foundArg = findSuggestionsByQueryArgs(listOfCommands, beforeOffsetArgs)
-  console.log('foundArg', foundArg)
 
   if (!command.name.startsWith(ModuleCommandPrefix.RediSearch)) {
     return {

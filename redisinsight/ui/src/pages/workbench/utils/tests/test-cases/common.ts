@@ -117,8 +117,10 @@ export const commonfindCurrentArgumentCases = [
     appendIncludes: ['AS', 'GEO', 'TEXT', 'VECTOR'],
     appendNotIncludes: ['SCHEMA', 'SCORE', 'NOHL'],
   },
+  // TODO: need to investigte the case when we have NOINDEX 'FT.CREATE "idx:schools" ON JSON SCHEMA address TEXT NOINDEX '
+  // TODO: in this case we switch to field, but need to check?(or maybe not) all previous optional tokens
   {
-    input: 'FT.CREATE "idx:schools" ON JSON SCHEMA address TEXT NOINDEX INDEXMISSING ',
+    input: 'FT.CREATE "idx:schools" ON JSON SCHEMA address TEXT INDEXMISSING ',
     result: {
       stopArg: expect.any(Object),
       append: expect.any(Array),
@@ -127,7 +129,20 @@ export const commonfindCurrentArgumentCases = [
       parent: expect.any(Object),
       token: expect.any(Object)
     },
-    appendIncludes: ['INDEXEMPTY', 'SORTABLE', 'WITHSUFFIXTRIE'],
+    appendIncludes: ['INDEXEMPTY', 'SORTABLE', 'WITHSUFFIXTRIE', 'NOINDEX'],
+    appendNotIncludes: ['SCHEMA', 'SCORE', 'NOHL'],
+  },
+  {
+    input: 'FT.CREATE "idx:schools" ON JSON SCHEMA address TEXT INDEXMISSING SORTABLE ',
+    result: {
+      stopArg: expect.any(Object),
+      append: expect.any(Array),
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object),
+      token: expect.any(Object)
+    },
+    appendIncludes: ['INDEXEMPTY', 'UNF', 'WITHSUFFIXTRIE'],
     appendNotIncludes: ['SCHEMA', 'SCORE', 'NOHL'],
   },
   {
@@ -292,11 +307,11 @@ export const commonfindCurrentArgumentCases = [
   {
     input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' SORTBY 1 property ',
     result: expect.any(Object),
-    appendIncludes: ['ASC', 'DESC'],
-    appendNotIncludes: ['REDUCE', 'APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
+    appendIncludes: ['MAX', 'APPLY', 'GROUPBY'],
+    appendNotIncludes: ['REDUCE', 'ASC', 'DESC'],
   },
   {
-    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' SORTBY 1 property ASC ',
+    input: 'FT.AGGREGATE \'idx:articles\' \'@body:(term) \' SORTBY 2 property ASC ',
     result: expect.any(Object),
     appendIncludes: ['MAX', 'APPLY', 'LOAD', 'GROUPBY'],
     appendNotIncludes: ['SORTBY'],

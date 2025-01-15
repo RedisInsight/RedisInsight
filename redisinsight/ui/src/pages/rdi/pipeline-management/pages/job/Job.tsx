@@ -180,7 +180,7 @@ const Job = (props: Props) => {
           </div>
         </div>
         <EuiText className="rdi__text" color="subdued">
-          {'Describe the '}
+          {'Create a job per source table to filter, transform, and '}
           <EuiLink
             external={false}
             data-testid="rdi-pipeline-transformation-link"
@@ -193,9 +193,9 @@ const Job = (props: Props) => {
               }
             )}
           >
-            transformation logic
+            map data
           </EuiLink>
-          {' to perform on data from a single source'}
+          {' to Redis.'}
         </EuiText>
         {loading ? (
           <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-job-loading">

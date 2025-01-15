@@ -8,6 +8,7 @@ import { Expose, Transform, Type } from 'class-transformer';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
+import { DatabaseSettingsEntity } from 'src/modules/database-settings/entities/database-setting.entity';
 
 export enum HostingProvider {
   RE_CLUSTER = 'RE_CLUSTER',
@@ -226,6 +227,19 @@ export class DatabaseEntity {
   )
   @Type(() => CloudDatabaseDetailsEntity)
   cloudDetails: CloudDatabaseDetailsEntity;
+
+  @Expose()
+  @OneToOne(
+    () => DatabaseSettingsEntity,
+    (dbSettings) => dbSettings.database,
+    {
+      eager: true,
+      onDelete: 'CASCADE',
+      cascade: true,
+    },
+  )
+  @Type(() => DatabaseSettingsEntity)
+  dbSettings: DatabaseSettingsEntity;
 
   @Expose()
   @Column({

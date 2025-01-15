@@ -7,7 +7,7 @@ export enum KeyTypesTexts {
     ReJSON = 'JSON',
     Stream = 'Stream',
     Graph = 'Graph',
-    TimeSeries = 'TS',
+    TimeSeries = 'Time Series',
 }
 export const keyLength = 50;
 

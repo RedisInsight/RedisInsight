@@ -6,7 +6,6 @@ import { classToClass } from 'src/utils';
 import { InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { plainToClass } from 'class-transformer';
-import { DatabaseSetting } from '../dto/database-setting.dto';
 import { DatabaseSettingsRepository } from './database-settings.repository';
 import { DatabaseSettings } from '../models/database-settings';
 
@@ -21,7 +20,7 @@ export class LocalDatabaseSettingsRepository extends DatabaseSettingsRepository 
   }
 
   async createOrUpdate(
-    _sessionMetadata: SessionMetadata, setting: Partial<DatabaseSetting>,
+    _sessionMetadata: SessionMetadata, setting: Partial<DatabaseSettings>,
   ): Promise<DatabaseSettings> {
     const settingsEntity = plainToClass(DatabaseSettingsEntity, setting);
     const existing = await this.repository.findOneBy({ databaseId: setting.databaseId });

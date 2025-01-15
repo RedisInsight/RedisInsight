@@ -229,24 +229,26 @@ const ManualConnectionForm = (props: Props) => {
   )
 
   return (
-    <div className="relative" data-testid="add-db_manual">
+    <div className="relative" data-testid="add-db_manual" style={{ height: '100%' }}>
       {isEditMode && !isCloneMode && server?.buildType !== BuildType.RedisStack && (
         <CloneConnection id={id} setIsCloneMode={setIsCloneMode} />
       )}
-      <div className="getStartedForm" ref={formRef}>
+      <div className={cx('getStartedForm', styles.content)} ref={formRef}>
         {!isEditMode && !isFromCloud && (
           <>
             <Tabs />
             <EuiSpacer />
-            <AddConnection
-              activeTab={activeTab}
-              formik={formik}
-              onKeyDown={onKeyDown}
-              onHostNamePaste={onHostNamePaste}
-              certificates={certificates}
-              caCertificates={caCertificates}
-              buildType={buildType}
-            />
+            <div className="eui-yScroll">
+              <AddConnection
+                activeTab={activeTab}
+                formik={formik}
+                onKeyDown={onKeyDown}
+                onHostNamePaste={onHostNamePaste}
+                certificates={certificates}
+                caCertificates={caCertificates}
+                buildType={buildType}
+              />
+            </div>
           </>
         )}
         {(isEditMode || isCloneMode || isFromCloud) && connectionType !== ConnectionType.Sentinel && (
@@ -268,18 +270,20 @@ const ManualConnectionForm = (props: Props) => {
             )}
             <Tabs />
             <EuiSpacer />
-            <EditConnection
-              activeTab={activeTab}
-              isCloneMode={isCloneMode}
-              isEditMode={isEditMode}
-              isFromCloud={isFromCloud}
-              formik={formik}
-              onKeyDown={onKeyDown}
-              onHostNamePaste={onHostNamePaste}
-              certificates={certificates}
-              caCertificates={caCertificates}
-              buildType={buildType}
-            />
+            <div className="eui-yScroll">
+              <EditConnection
+                activeTab={activeTab}
+                isCloneMode={isCloneMode}
+                isEditMode={isEditMode}
+                isFromCloud={isFromCloud}
+                formik={formik}
+                onKeyDown={onKeyDown}
+                onHostNamePaste={onHostNamePaste}
+                certificates={certificates}
+                caCertificates={caCertificates}
+                buildType={buildType}
+              />
+            </div>
           </>
         )}
         {(isEditMode || isCloneMode) && connectionType === ConnectionType.Sentinel && (
@@ -298,16 +302,18 @@ const ManualConnectionForm = (props: Props) => {
             )}
             <Tabs />
             <EuiSpacer />
-            <EditSentinelConnection
-              activeTab={activeTab}
-              isCloneMode={isCloneMode}
-              formik={formik}
-              onKeyDown={onKeyDown}
-              onHostNamePaste={onHostNamePaste}
-              certificates={certificates}
-              caCertificates={caCertificates}
-              db={db}
-            />
+            <div className="eui-yScroll">
+              <EditSentinelConnection
+                activeTab={activeTab}
+                isCloneMode={isCloneMode}
+                formik={formik}
+                onKeyDown={onKeyDown}
+                onHostNamePaste={onHostNamePaste}
+                certificates={certificates}
+                caCertificates={caCertificates}
+                db={db}
+              />
+            </div>
           </>
         )}
       </div>

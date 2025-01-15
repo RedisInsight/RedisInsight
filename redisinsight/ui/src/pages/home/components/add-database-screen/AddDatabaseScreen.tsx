@@ -98,7 +98,7 @@ const AddDatabaseScreen = (props: Props) => {
   })
 
   return (
-    <div>
+    <div className="eui-yScroll">
       <EuiForm
         component="form"
         onSubmit={formik.handleSubmit}

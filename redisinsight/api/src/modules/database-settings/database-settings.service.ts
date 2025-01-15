@@ -3,7 +3,7 @@ import { catchAclError } from 'src/utils';
 import { plainToClass } from 'class-transformer';
 import { SessionMetadata } from 'src/common/models';
 import { DatabaseSettingsRepository } from './repositories/database-settings.repository';
-import { CreateOrUpdateDatabaseSettingDto, DatabaseSetting } from './dto/database-setting.dto';
+import { CreateOrUpdateDatabaseSettingDto } from './dto/database-setting.dto';
 import { DatabaseSettings } from './models/database-settings';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class DatabaseSettingsService {
     dto: CreateOrUpdateDatabaseSettingDto,
   ): Promise<DatabaseSettings> {
     try {
-      const setting = plainToClass(DatabaseSetting, { ...dto, databaseId });
+      const setting = plainToClass(DatabaseSettings, { ...dto, databaseId });
       return this.databaseSettingsRepository.createOrUpdate(sessionMetadata, setting);
     } catch (e) {
       this.logger.error('Unable to create database setting', e, sessionMetadata);

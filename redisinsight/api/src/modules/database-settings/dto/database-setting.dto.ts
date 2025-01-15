@@ -9,19 +9,3 @@ export class CreateOrUpdateDatabaseSettingDto {
   @Expose()
   data: Record<string, number | string | boolean>;
 }
-
-export class DatabaseSetting {
-  @ApiProperty({
-    description: 'Database id',
-    type: String,
-    default: '123',
-  })
-  @Expose()
-  databaseId: string;
-
-  @ApiProperty({
-    description: 'Applied settings by user, by database',
-  })
-  @Expose()
-  data: Record<string, number | string | boolean>;
-}

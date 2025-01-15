@@ -5,9 +5,9 @@ import { classToClass } from 'src/utils';
 
 export const mockDatabaseSettings = Object.assign(new DatabaseSettings(), {
   databaseId: mockDatabaseId,
-  data: {
+  data: JSON.stringify({
     test: 'value',
-  },
+  }),
 });
 export const mockDatabaseSettingsEntity = new DatabaseSettingsEntity(
   {

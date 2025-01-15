@@ -50,11 +50,10 @@ export class LocalDatabaseSettingsRepository extends DatabaseSettingsRepository 
    * @param databaseId
    */
   async delete(sessionMetadata: SessionMetadata, databaseId: string): Promise<void> {
-    this.logger.debug(`Deleting database settings item: ${databaseId}`, sessionMetadata);
     try {
       await this.repository.delete({ databaseId });
     } catch (error) {
-      this.logger.error(`Failed to database settings item: ${databaseId}`, error, sessionMetadata);
+      this.logger.error(`Failed to delete database settings item: ${databaseId}`, error, sessionMetadata);
       throw new InternalServerErrorException();
     }
   }

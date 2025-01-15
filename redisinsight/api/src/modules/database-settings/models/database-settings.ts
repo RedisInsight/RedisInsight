@@ -5,5 +5,10 @@ export class DatabaseSettings {
   databaseId: string;
 
   @Expose()
-  data: Record<string, number | string | boolean>;
+  data: DatabaseSettingsData;
+}
+
+class DatabaseSettingsData {
+  @Expose()
+  key: string;
 }

@@ -24,8 +24,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: 'instanceId',
     connectionType: 'CLUSTER',
-    provider: 'RE_CLOUD',
-    isFreeDb: true,
+    provider: 'RE_CLOUD'
   }),
 }))
 
@@ -88,8 +87,7 @@ describe('InsightsTrigger', () => {
         provider: 'RE_CLOUD',
         source: 'overview',
         page: '/browser',
-        tab: 'tips',
-        isFree: true,
+        tab: 'tips'
       },
     });
 

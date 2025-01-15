@@ -34,7 +34,7 @@ const SidePanelsWrapper = (props: Props) => {
   const { panelClassName } = props
   const { openedPanel } = useSelector(sidePanelsSelector)
   const { tabSelected } = useSelector(insightsPanelSelector)
-  const { provider, isFreeDb } = useSelector(connectedInstanceSelector)
+  const { provider } = useSelector(connectedInstanceSelector)
   const { source: capabilitySource } = useSelector(appContextCapability)
   const { free = false } = useSelector(connectedInstanceCDSelector) ?? {}
   const {
@@ -113,8 +113,7 @@ const SidePanelsWrapper = (props: Props) => {
         databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         provider,
         page,
-        tab: tabSelected,
-        isFree: isFreeDb,
+        tab: tabSelected
       },
     })
   }

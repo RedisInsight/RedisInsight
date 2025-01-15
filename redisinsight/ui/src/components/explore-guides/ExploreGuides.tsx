@@ -14,7 +14,7 @@ import styles from './styles.module.scss'
 
 const ExploreGuides = () => {
   const { data } = useSelector(guideLinksSelector)
-  const { provider, isFreeDb } = useSelector(connectedInstanceSelector)
+  const { provider } = useSelector(connectedInstanceSelector)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
@@ -28,8 +28,7 @@ const ExploreGuides = () => {
         databaseId: instanceId,
         tutorialId,
         provider,
-        source: 'empty browser',
-        isFree: isFreeDb
+        source: 'empty browser'
       }
     })
 

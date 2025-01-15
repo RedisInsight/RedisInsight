@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { EuiButton, EuiButtonEmpty, EuiPopover, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import BulbIcon from 'uiSrc/assets/img/bulb.svg?react'
 
@@ -15,7 +15,6 @@ import {
   setExplorePanelIsPageOpen
 } from 'uiSrc/slices/panels/sidePanels'
 import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/components/shared'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import styles from './styles.module.scss'
 
@@ -29,7 +28,6 @@ export interface Props {
 const ExpertChatHeader = (props: Props) => {
   const { databaseId, connectedInstanceName, isClearDisabled, onRestart } = props
   const [isTutorialsPopoverOpen, setIsTutorialsPopoverOpen] = useState(false)
-  const { isFreeDb } = useSelector(connectedInstanceSelector)
 
   const dispatch = useDispatch()
   const history = useHistory()
@@ -49,7 +47,6 @@ const ExpertChatHeader = (props: Props) => {
       eventData: {
         databaseId: databaseId || TELEMETRY_EMPTY_VALUE,
         source: 'chatbot_tutorials_button',
-        isFree: isFreeDb,
       }
     })
   }

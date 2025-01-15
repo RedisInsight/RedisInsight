@@ -7,7 +7,6 @@ import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-cust
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { CodeButtonParams } from 'uiSrc/constants'
 import { sendWbQueryAction } from 'uiSrc/slices/workbench/wb-results'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { getTutorialSection } from './EnablementArea/utils'
 import EnablementArea from './EnablementArea'
 
@@ -18,7 +17,6 @@ export interface Props {
 const EnablementAreaWrapper = () => {
   const { loading: loadingTutorials, items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { loading: loadingCustomTutorials, items: customTutorials } = useSelector(workbenchCustomTutorialsSelector)
-  const { isFreeDb } = useSelector(connectedInstanceSelector)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -45,7 +43,6 @@ const EnablementAreaWrapper = () => {
         section: getTutorialSection(manifestPath),
         databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         source: 'Workbench',
-        isFree: isFreeDb,
       }
     })
   }

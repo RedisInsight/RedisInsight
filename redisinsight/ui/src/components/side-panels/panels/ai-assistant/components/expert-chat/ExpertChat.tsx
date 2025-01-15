@@ -30,7 +30,7 @@ import styles from './styles.module.scss'
 
 const ExpertChat = () => {
   const { messages, agreements, loading } = useSelector(aiExpertChatSelector)
-  const { name: connectedInstanceName, modules, provider, isFreeDb } = useSelector(connectedInstanceSelector)
+  const { name: connectedInstanceName, modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
   const freeInstances = useSelector(freeInstancesSelector) || []
@@ -165,7 +165,6 @@ const ExpertChat = () => {
       eventData: {
         databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         source: 'sample_data',
-        isFree: isFreeDb,
       }
     })
   }

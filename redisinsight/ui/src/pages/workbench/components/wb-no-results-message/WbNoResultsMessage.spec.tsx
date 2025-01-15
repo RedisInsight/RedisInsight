@@ -15,8 +15,7 @@ jest.mock('uiSrc/telemetry', () => ({
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    provider: 'RE_CLOUD',
-    isFreeDb: true,
+    provider: 'RE_CLOUD'
   }),
 }))
 
@@ -57,7 +56,6 @@ describe('WbNoResultsMessage', () => {
         databaseId: 'instanceId',
         provider: 'RE_CLOUD',
         source: 'workbench',
-        isFree: true,
       }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()

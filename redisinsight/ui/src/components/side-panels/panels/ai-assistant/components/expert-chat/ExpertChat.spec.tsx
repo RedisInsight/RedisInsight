@@ -46,8 +46,7 @@ jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    modules: [],
-    isFreeDb: true,
+    modules: []
   }),
 }))
 
@@ -265,8 +264,7 @@ describe('ExpertChat', () => {
       event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_OPENED,
       eventData: {
         databaseId: 'instanceId',
-        source: 'sample_data',
-        isFree: true,
+        source: 'sample_data'
       }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()

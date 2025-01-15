@@ -56,7 +56,6 @@ const Code = (props: Props) => {
         databaseId: instanceId,
         path,
         provider,
-        isFree: isFreeDb,
         ...file
       }
     })
@@ -71,7 +70,6 @@ const Code = (props: Props) => {
         buttonName: label,
         path,
         provider,
-        isFree: isFreeDb,
         ...file
       }
     })

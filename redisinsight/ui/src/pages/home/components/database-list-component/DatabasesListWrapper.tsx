@@ -36,7 +36,6 @@ import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import {
   checkConnectToInstanceAction,
-  connectedInstanceSelector,
   deleteInstancesAction,
   exportInstancesAction,
   setConnectedInstanceId,
@@ -90,7 +89,6 @@ const DatabasesListWrapper = (props: Props) => {
 
   const { contextInstanceId } = useSelector(appContextSelector)
   const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
-  const { isFreeDb } = useSelector(connectedInstanceSelector)
 
   const [width, setWidth] = useState(0)
   const [, forceRerender] = useState({})
@@ -152,7 +150,6 @@ const DatabasesListWrapper = (props: Props) => {
         databaseId: id,
         provider,
         source: 'db_list',
-        isFree: isFreeDb,
         ...modulesSummary,
       }
     })

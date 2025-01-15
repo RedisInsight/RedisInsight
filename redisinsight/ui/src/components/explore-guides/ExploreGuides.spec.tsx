@@ -19,8 +19,7 @@ jest.mock('uiSrc/slices/content/guide-links', () => ({
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    provider: 'RE_CLOUD',
-    isFreeDb: true,
+    provider: 'RE_CLOUD'
   }),
 }))
 
@@ -91,8 +90,7 @@ describe('ExploreGuides', () => {
         databaseId: INSTANCE_ID_MOCK,
         tutorialId: 'sq-intro',
         provider: 'RE_CLOUD',
-        source: 'empty browser',
-        isFree: true,
+        source: 'empty browser'
       }
     })
   })

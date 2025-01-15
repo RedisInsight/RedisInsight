@@ -21,7 +21,7 @@ import { getTutorialCapability, Nullable } from 'uiSrc/utils'
 import RocketIcon from 'uiSrc/assets/img/icons/rocket.svg?react'
 import { appContextCapability } from 'uiSrc/slices/app/context'
 import { isShowCapabilityTutorialPopover, setCapabilityPopoverShown } from 'uiSrc/services'
-import { connectedInstanceCDSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
 import { Image, RedisUploadButton, CloudLink, RedisInsightLink } from 'uiSrc/components/markdown'
 import { getTutorialSection } from '../../utils'
 import { EmptyPrompt, Pagination, Code } from '..'
@@ -67,7 +67,6 @@ const InternalPage = (props: Props) => {
   const { free = false } = useSelector(connectedInstanceCDSelector) ?? {}
   const [showCapabilityPopover, setShowCapabilityPopover] = useState(false)
   const tutorialCapability = getTutorialCapability(source!)
-  const { isFreeDb } = useSelector(connectedInstanceSelector)
 
   const handleScroll = debounce(() => {
     if (containerRef.current && onScroll) {
@@ -83,7 +82,6 @@ const InternalPage = (props: Props) => {
         link,
         section: getTutorialSection(manifestPath),
         databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
-        isFree: isFreeDb,
       }
     })
   }

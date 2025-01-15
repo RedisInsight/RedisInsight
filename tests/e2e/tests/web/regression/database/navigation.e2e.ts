@@ -50,13 +50,13 @@ test('Verify that user can navigate to instances using navigation widget', async
     await myRedisDatabasePage.clickOnDBByName(
         ossStandaloneConfig.databaseName
     );
-    await t.click(browserPage.OverviewPanel.dbName)
-    let dbWidgetNames = await browserPage.OverviewPanel.getAllDatabases();
+    await t.click(browserPage.NavigationHeader.dbName)
+    let dbWidgetNames = await browserPage.NavigationHeader.getAllDatabases();
     await t.expect(dbListPageNames).eql(dbWidgetNames, 'DB Lists have the same names');
-    await t.click(browserPage.OverviewPanel.dbListInstance.withText(ossStandaloneV7Config.databaseName));
-    await t.expect(browserPage.OverviewPanel.dbName.textContent).eql(ossStandaloneV7Config.databaseName, 'user can not be navigated');
-    await t.click(browserPage.OverviewPanel.dbName)
-    await t.click(browserPage.OverviewPanel.homeLinkNavigation);
+    await t.click(browserPage.NavigationHeader.dbListInstance.withText(ossStandaloneV7Config.databaseName));
+    await t.expect(browserPage.NavigationHeader.dbName.textContent).eql(ossStandaloneV7Config.databaseName, 'user can not be navigated');
+    await t.click(browserPage.NavigationHeader.dbName)
+    await t.click(browserPage.NavigationHeader.homeLinkNavigation);
     await t.expect(myRedisDatabasePage.hostPort.exists).ok('Db list page is not opened');
 
 
@@ -64,12 +64,12 @@ test('Verify that user can navigate to instances using navigation widget', async
         ossStandaloneConfig.databaseName
     )
     await t.debug();
-    await t.click(browserPage.OverviewPanel.dbName)
-    await t.typeText(browserPage.OverviewPanel.dbListInput, ossStandaloneV7Config.databaseName);
+    await t.click(browserPage.NavigationHeader.dbName)
+    await t.typeText(browserPage.NavigationHeader.dbListInput, ossStandaloneV7Config.databaseName);
     await t.debug();
-    dbWidgetNames = await browserPage.OverviewPanel.getAllDatabases();
+    dbWidgetNames = await browserPage.NavigationHeader.getAllDatabases();
     await t.expect(dbWidgetNames.length).eql(1, 'DB List is not searched');
-    await t.click(browserPage.OverviewPanel.rdiNavigationTab);
+    await t.click(browserPage.NavigationHeader.rdiNavigationTab);
 
     //TODO uncomment when RDI e2e starts running
     //await t.expect(dbListPageNames.length).eql(1, 'RDI List is not searched');

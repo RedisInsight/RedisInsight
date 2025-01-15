@@ -35,7 +35,7 @@ export class DatabaseSettingsEntity {
   @Column({ nullable: true })
   @DataAsJsonString()
   @Expose()
-  data: Record<string, number | string | boolean>;
+  data: string;
 
   constructor(entity: Partial<DatabaseSettingsEntity>) {
     Object.assign(this, entity);

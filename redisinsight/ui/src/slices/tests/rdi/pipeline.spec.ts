@@ -40,6 +40,8 @@ import reducer, {
   triggerPipelineActionSuccess,
   triggerPipelineActionFailure,
   rdiPipelineActionSelector,
+  setPipelineConfig,
+  setPipelineJobs,
 } from 'uiSrc/slices/rdi/pipeline'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
@@ -119,9 +121,51 @@ describe('rdi pipe slice', () => {
         ...initialState,
         loading: false,
         data: MOCK_RDI_PIPELINE_DATA,
+        config: MOCK_RDI_PIPELINE_DATA.config,
+        jobs: MOCK_RDI_PIPELINE_DATA.jobs,
       }
       // Act
       const nextState = reducer(initialState, getPipelineSuccess(MOCK_RDI_PIPELINE_DATA))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setPipelineConfig', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        config: MOCK_RDI_PIPELINE_DATA.config,
+      }
+      // Act
+      const nextState = reducer(initialState, setPipelineConfig(MOCK_RDI_PIPELINE_DATA.config))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setPipelineJobs', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        jobs: MOCK_RDI_PIPELINE_DATA.jobs,
+      }
+      // Act
+      const nextState = reducer(initialState, setPipelineJobs(MOCK_RDI_PIPELINE_DATA.jobs))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

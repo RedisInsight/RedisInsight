@@ -15,12 +15,14 @@ export interface InstancesListProps {
   selectedTab: InstancesTabs
   filteredDbInstances: Instance[]
   filteredRdiInstances: RdiInstance[]
+  onItemClick: () => void
 }
 
 const InstancesList = ({
   selectedTab,
   filteredDbInstances,
   filteredRdiInstances,
+  onItemClick,
 } :InstancesListProps) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [selected, setSelected] = useState<string>('')
@@ -33,6 +35,7 @@ const InstancesList = ({
   const connectToInstance = (id = '') => {
     dispatch(setConnectedInstanceId(id))
     setLoading(false)
+    onItemClick?.()
     history.push(Pages.browser(id))
   }
 
@@ -65,7 +68,7 @@ const InstancesList = ({
       instance.id,
       (id: string) => {
         setLoading(false)
-
+        onItemClick?.()
         history.push(Pages.rdiPipelineConfig(id))
       },
       () => setLoading(false)

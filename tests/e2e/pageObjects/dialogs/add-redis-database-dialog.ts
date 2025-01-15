@@ -273,14 +273,13 @@ export class AddRedisDatabaseDialog {
         const removeButton = this.trashIconMsk(certificate);
         const removeButtonFooter = Selector('[class^=_popoverFooter]');
 
-        // Открываем поле с сертификатами в зависимости от типа
+
         if (certificate === TlsCertificates.CA) {
             await t.click(this.caCertField);
         } else {
             await t.click(this.clientCertField);
         }
 
-        // Клик по кнопке удаления в строке
         await t.click(row.find(removeButton));
 
         // Клик по кнопке в нижнем колонтитуле

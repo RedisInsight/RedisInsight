@@ -10,7 +10,6 @@ import { SessionMetadata } from 'src/common/models';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import {
   CreateOrUpdateDatabaseSettingDto,
-  DatabaseSetting,
 } from 'src/modules/database-settings/dto/database-setting.dto';
 import { DatabaseSettingsService } from 'src/modules/database-settings/database-settings.service';
 import { DatabaseSettings } from 'src/modules/database-settings/models/database-settings';
@@ -28,7 +27,7 @@ export class DatabaseSettingsController {
     responses: [
       {
         status: 200,
-        type: DatabaseSetting,
+        type: DatabaseSettings,
       },
     ],
   })
@@ -46,7 +45,7 @@ export class DatabaseSettingsController {
     responses: [
       {
         status: 200,
-        type: DatabaseSetting,
+        type: DatabaseSettings,
       },
     ],
   })

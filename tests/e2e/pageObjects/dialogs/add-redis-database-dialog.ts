@@ -72,7 +72,9 @@ export class AddRedisDatabaseDialog {
     aiChatMessage = Selector('[data-testid=ai-chat-message-btn]');
     aiCloseMessage = Selector('[aria-label="Closes this modal window"]');
 
-    getDeleteCertificate = (certificate: TlsCertificates) => Selector(`[data-testid^=delete-${certificate}-cert]`);
+    trashIconMsk = (certificate: TlsCertificates) => `[data-testid^=delete-${certificate}-cert]`
+
+    getDeleteCertificate = (certificate: TlsCertificates) => Selector(this.trashIconMsk(certificate));
 
     /**
      * Adding a new redis database
@@ -268,16 +270,20 @@ export class AddRedisDatabaseDialog {
         const row =  Selector('button')
             .find('div')
             .withText(name);
-        const removeButton = String(this.getDeleteCertificate(certificate));
+        const removeButton = this.trashIconMsk(certificate);
         const removeButtonFooter = Selector('[class^=_popoverFooter]');
 
-        if(certificate === TlsCertificates.CA){
+        // Открываем поле с сертификатами в зависимости от типа
+        if (certificate === TlsCertificates.CA) {
             await t.click(this.caCertField);
-        }
-        else {
+        } else {
             await t.click(this.clientCertField);
         }
+
+        // Клик по кнопке удаления в строке
         await t.click(row.find(removeButton));
+
+        // Клик по кнопке в нижнем колонтитуле
         await t.click(removeButtonFooter.find(removeButton));
     }
 }

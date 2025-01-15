@@ -60,7 +60,7 @@ export class DatabaseSettingsController {
     return this.service.createOrUpdate(sessionMetadata, databaseId, dto);
   }
 
-  @Delete('/:id')
+  @Delete('')
   @ApiRedisParams()
   @ApiEndpoint({
     statusCode: 200,

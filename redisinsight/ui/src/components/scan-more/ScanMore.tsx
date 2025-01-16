@@ -31,7 +31,6 @@ const ScanMore = ({
   nextCursor,
 }: Props) => (
   <>
-    {console.log('ScanMore test', scanned, totalItemsCount, nextCursor)}
     {((scanned || isNull(totalItemsCount)))
       && nextCursor !== '0'
       && (

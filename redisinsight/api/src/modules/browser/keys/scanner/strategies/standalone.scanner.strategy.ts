@@ -177,7 +177,7 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
           name: key,
           type: typeResults[index],
         }
-        console.log('data bgetTtl', getTtl);
+
         if (getTtl) {
           data.ttl = ttlResults[index];
         }

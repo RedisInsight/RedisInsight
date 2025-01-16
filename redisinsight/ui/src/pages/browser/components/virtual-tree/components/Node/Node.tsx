@@ -56,6 +56,9 @@ const Node = ({
     updateStatusOpen,
     updateStatusSelected,
   } = data
+
+  const delimiterView = delimiters.length === 1 ? delimiters[0] : '-'
+
   const { shownColumns } = useSelector(keysSelector)
   const getSize = shownColumns.includes(BrowserColumns.Size)
   const getTtl = shownColumns.includes(BrowserColumns.TTL)

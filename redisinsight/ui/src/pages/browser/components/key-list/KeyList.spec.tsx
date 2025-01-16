@@ -72,10 +72,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-// afterEach(() => {
-//   setLastBatchKeys.mockRestore()
-// })
-
 describe('KeyList', () => {
   it('should render', () => {
     expect(render(<KeyList {...propsMock} />)).toBeTruthy()

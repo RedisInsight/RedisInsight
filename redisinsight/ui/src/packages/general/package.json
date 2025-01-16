@@ -1,0 +1,168 @@
+{
+  "author": {
+    "name": "Redis Ltd.",
+    "email": "support@redis.com",
+    "url": "https://redis.com/redis-enterprise/redis-insight"
+  },
+  "bugs": {
+    "url": "https://github.com/RedisInsight/RedisInsight/issues"
+  },
+  "description": "Redis Insight plugins",
+  "source": "./src/index.tsx",
+  "styles": "./dist/index.css",
+  "main": "./dist/index.js",
+  "name": "redis-insight-plugins",
+  "version": "0.0.2",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build"
+  },
+  "visualizations": [
+    {
+      "id": "redisearch",
+      "name": "Table",
+      "activationMethod": "renderRediSearch",
+      "matchCommands": [
+        "FT.INFO",
+        "FT.SEARCH",
+        "FT.AGGREGATE"
+      ],
+      "iconDark": "./dist/table_view_icon_dark.svg",
+      "iconLight": "./dist/table_view_icon_light.svg",
+      "description": "RediSearch default plugin",
+      "default": true
+    },
+    {
+      "id": "redisearch-profile",
+      "name": "Table",
+      "activationMethod": "renderRediSearch",
+      "matchCommands": [
+        "FT.PROFILE"
+      ],
+      "iconDark": "./dist/table_view_icon_dark.svg",
+      "iconLight": "./dist/table_view_icon_light.svg",
+      "description": "RediSearch default plugin",
+      "default": false
+    },
+    {
+      "id": "clients-list",
+      "name": "Table",
+      "activationMethod": "renderClientsList",
+      "matchCommands": [
+        "CLIENT LIST"
+      ],
+      "iconDark": "./dist/table_view_icon_dark.svg",
+      "iconLight": "./dist/table_view_icon_light.svg",
+      "description": "Example of client list plugin",
+      "default": true
+    },
+    {
+      "id": "json-view",
+      "name": "JSON",
+      "activationMethod": "renderJSON",
+      "matchCommands": [
+        "JSON.GET",
+        "JSON.MGET"
+      ],
+      "iconDark": "./dist/json_view_icon_dark.svg",
+      "iconLight": "./dist/json_view_icon_light.svg",
+      "description": "Show value as JSON",
+      "default": true
+    },
+    {
+      "id": "json-string-view",
+      "name": "JSON",
+      "activationMethod": "renderJSON",
+      "matchCommands": [
+        "GET"
+      ],
+      "iconDark": "./dist/json_view_icon_dark.svg",
+      "iconLight": "./dist/json_view_icon_light.svg",
+      "description": "Show value as JSON"
+    },
+    {
+      "id": "graph-viz",
+      "name": "Graph",
+      "activationMethod": "renderGraph",
+      "matchCommands": [
+        "GRAPH.RO_QUERY",
+        "GRAPH.QUERY"
+      ],
+      "description": "Example of graph plugin",
+      "default": true
+    },
+    {
+      "id": "redistimeseries-chart",
+      "name": "Chart",
+      "activationMethod": "renderChart",
+      "matchCommands": [
+        "TS.MRANGE",
+        "TS.MREVRANGE",
+        "TS.RANGE",
+        "TS.REVRANGE"
+      ],
+      "description": "RedisTimeseries chart view",
+      "default": true
+    },
+    {
+      "id": "profile-explain-viz",
+      "name": "Visualization",
+      "activationMethod": "renderRiExplain",
+      "matchCommands": [
+        "FT.EXPLAIN",
+        "FT.EXPLAINCLI",
+        "FT.PROFILE",
+        "GRAPH.EXPLAIN",
+        "GRAPH.PROFILE"
+      ],
+      "iconDark": "./dist/profile_icon_dark.svg",
+      "iconLight": "./dist/profile_icon_light.svg",
+      "description": "Profile/Explain plugin Visualization",
+      "default": true
+    }
+  ],
+  "devDependencies": {
+    "@antv/hierarchy": "0.6.11",
+    "@antv/x6": "2.9.7",
+    "@antv/x6-react-shape": "2.1.2",
+    "@types/d3": "^7.1.0",
+    "@types/file-saver": "^2.0.5",
+    "@types/jest": "^27.4.1",
+    "@types/plotly.js-dist-min": "^2.3.0",
+    "@types/react-json-tree": "^0.13.0",
+    "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
+    "esbuild": "^0.17.12",
+    "jest": "^29.7.0",
+    "less": "^4.1.2",
+    "process": "^0.11.10",
+    "rimraf": "^3.0.2",
+    "terser": "^5.37.0",
+    "vite": "^6.0.7",
+    "vite-plugin-ejs": "^1.7.0"
+  },
+  "dependencies": {
+    "@elastic/datemath": "^5.0.3",
+    "@elastic/eui": "34.6.0",
+    "@emotion/react": "^11.7.1",
+    "buffer": "^6.0.3",
+    "classnames": "^2.3.1",
+    "d3": "^7.3.0",
+    "date-fns": "^2.28.0",
+    "file-saver": "^2.0.5",
+    "fscreen": "^1.2.0",
+    "json-bigint": "^1.0.0",
+    "lodash": "^4.17.21",
+    "plotly.js-dist-min": "^2.9.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-json-tree": "^0.16.1",
+    "redisinsight-plugin-sdk": "^1.0.0",
+    "uuid": "^9.0.0"
+  },
+  "resolutions": {
+    "trim": "0.0.3",
+    "**/semver": "^7.5.2"
+  }
+}

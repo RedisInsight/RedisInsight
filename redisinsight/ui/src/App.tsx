@@ -1,11 +1,10 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useEffect } from 'react'
 import { Provider, useSelector } from 'react-redux'
 import { EuiPage, EuiPageBody } from '@elastic/eui'
 
 import { Route, Switch } from 'react-router-dom'
 import { store } from 'uiSrc/slices/store'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import { PagePlaceholder } from 'uiSrc/components'
 import MonacoLanguages from 'uiSrc/components/monaco-laguages'
 import AppInit from 'uiSrc/components/init/AppInit'
 import { Pages, Theme } from './constants'
@@ -40,6 +39,12 @@ const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
 )
 const App = ({ children }: { children?: ReactElement[] }) => {
   const { loading: serverLoading } = useSelector(appInfoSelector)
+  useEffect(() => {
+    if (!serverLoading) {
+      const placeholderEl = document.getElementById('placeholder')
+      placeholderEl?.remove()
+    }
+  }, [serverLoading])
   return (
     <div className="main-container">
       <ThemeComponent />
@@ -54,18 +59,14 @@ const App = ({ children }: { children?: ReactElement[] }) => {
           path="*"
           render={() => (
             <>
-              { serverLoading
-                ? <PagePlaceholder />
-                : (
-                  <EuiPage className="main">
-                    <GlobalDialogs />
-                    <GlobalSubscriptions />
-                    <NavigationMenu />
-                    <EuiPageBody component="main">
-                      <MainComponent />
-                    </EuiPageBody>
-                  </EuiPage>
-                )}
+              <EuiPage className="main">
+                <GlobalDialogs />
+                <GlobalSubscriptions />
+                <NavigationMenu />
+                <EuiPageBody component="main">
+                  <MainComponent />
+                </EuiPageBody>
+              </EuiPage>
               <Notifications />
               <Config />
               <ShortcutsFlyout />

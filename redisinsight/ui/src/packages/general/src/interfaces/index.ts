@@ -1,0 +1,1 @@
+export { ResponseProps } from './response'

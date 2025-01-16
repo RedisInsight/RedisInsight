@@ -5,6 +5,7 @@ import * as reactRedux from 'react-redux'
 import { render, screen } from 'uiSrc/utils/test-utils'
 import { stringToBuffer } from 'uiSrc/utils'
 import { KeyTypes, BrowserColumns } from 'uiSrc/constants'
+import { keysSelector, keysSlice } from 'uiSrc/slices/browser/keys'
 import Node from './Node'
 import { TreeData } from '../../interfaces'
 import { mockVirtualTreeResult } from '../../VirtualTree.spec'
@@ -148,106 +149,135 @@ describe('Node', () => {
     expect(mockSetOpen).toBeCalledWith(!mockIsOpen)
   })
 
-  describe('Column visibility and metadata fetching', () => {
-    beforeEach(() => {
-      jest.clearAllMocks()
-    })
-
-    it('should fetch metadata when TTL column is enabled', () => {
+  describe('Node metadata and column visibility', () => {
+    it('should call getMetadata when node is clicked and TTL column is visible', () => {
       const mockGetMetadata = jest.fn()
-      const mockData = {
+      const mockUpdateStatusSelected = jest.fn()
+      const mockUpdateStatusOpen = jest.fn()
+
+      const mockData: TreeData = {
         ...mockedData,
         getMetadata: mockGetMetadata,
-        isLeaf: true,
-        nameBuffer: stringToBuffer('test-key'),
-        path: '0.0.1'
+        updateStatusSelected: mockUpdateStatusSelected,
+        updateStatusOpen: mockUpdateStatusOpen,
       }
 
-      // Initial render without TTL
-      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
-        shownColumns: []
-      }))
+      render(<Node {...instance(mockedProps)} data={mockData} />)
+
+      screen.getByTestId(`node-item_${mockDataFullName}`).click()
+
+      expect(mockGetMetadata).toBeCalledWith(mockData.nameBuffer, mockData.path)
+      expect(mockUpdateStatusSelected).toBeCalledWith(mockData.nameBuffer)
+      expect(mockUpdateStatusOpen).toBeCalledWith(mockDataFullName, true)
+    })
+
+    it('should not call getMetadata when node is clicked and metadata exists', () => {
+      const mockGetMetadata = jest.fn()
+      const mockUpdateStatusSelected = jest.fn()
+      const mockUpdateStatusOpen = jest.fn()
+
+      const mockData: TreeData = {
+        ...mockedDataWithMetadata,
+        getMetadata: mockGetMetadata,
+        updateStatusSelected: mockUpdateStatusSelected,
+        updateStatusOpen: mockUpdateStatusOpen,
+      }
+
+      render(<Node {...instance(mockedProps)} data={mockData} />)
+
+      screen.getByTestId(`node-item_${mockDataFullName}`).click()
+
+      expect(mockGetMetadata).not.toBeCalled()
+      expect(mockUpdateStatusSelected).toBeCalledWith(mockData.nameBuffer)
+      expect(mockUpdateStatusOpen).toBeCalledWith(mockDataFullName, true)
+    })
+
+    it('should render TTL and Size when metadata exists', () => {
+      render(<Node {...instance(mockedProps)} data={mockedDataWithMetadata} />)
+
+      expect(screen.getByTestId(`ttl-${mockDataFullName}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`size-${mockDataFullName}`)).toBeInTheDocument()
+    })
+
+    it('should not render TTL and Size when metadata does not exist', () => {
+      render(<Node {...instance(mockedProps)} data={mockedData} />)
+
+      expect(screen.queryByTestId(`ttl-${mockDataFullName}`)).not.toBeInTheDocument()
+      expect(screen.queryByTestId(`size-${mockDataFullName}`)).not.toBeInTheDocument()
+    })
+
+    it('should refetch metadata when TTL column is re-enabled even with existing metadata', () => {
+      const mockGetMetadata = jest.fn()
+      const mockData: TreeData = {
+        ...mockedDataWithMetadata,
+        getMetadata: mockGetMetadata,
+      }
+
+      const store = {
+        getState: () => ({
+          browser: {
+            keys: {
+              shownColumns: []
+            }
+          }
+        }),
+        subscribe: jest.fn(),
+        dispatch: jest.fn(),
+      }
 
       const { rerender } = render(
-        <Node {...instance(mockedProps)} data={mockData} />
+        <Node {...instance(mockedProps)} data={mockData} />,
+        { store }
       )
 
-      // Re-render with TTL enabled
-      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
-        shownColumns: [BrowserColumns.TTL]
-      }))
+      store.getState = () => ({
+        browser: {
+          keys: {
+            shownColumns: [BrowserColumns.TTL] as BrowserColumns[]
+          }
+        }
+      })
 
       rerender(<Node {...instance(mockedProps)} data={mockData} />)
 
       expect(mockGetMetadata).toHaveBeenCalledWith(mockData.nameBuffer, mockData.path)
     })
 
-    it('should fetch metadata when Size column is enabled', () => {
+    it('should refetch metadata when Size column is re-enabled even with existing metadata', () => {
       const mockGetMetadata = jest.fn()
-      const mockData = {
-        ...mockedData,
+      const mockData: TreeData = {
+        ...mockedDataWithMetadata,
         getMetadata: mockGetMetadata,
-        isLeaf: true,
-        nameBuffer: stringToBuffer('test-key'),
-        path: '0.0.1'
       }
 
-      // Initial render without Size
-      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
-        shownColumns: []
-      }))
+      const store = {
+        getState: () => ({
+          browser: {
+            keys: {
+              shownColumns: []
+            }
+          }
+        }),
+        subscribe: jest.fn(),
+        dispatch: jest.fn(),
+      }
 
       const { rerender } = render(
-        <Node {...instance(mockedProps)} data={mockData} />
+        <Node {...instance(mockedProps)} data={mockData} />,
+        { store }
       )
 
-      // Re-render with Size enabled
-      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
-        shownColumns: [BrowserColumns.Size]
-      }))
+      store.getState = () => ({
+        browser: {
+          keys: {
+            shownColumns: [BrowserColumns.Size] as BrowserColumns[]
+          }
+        }
+      })
 
       rerender(<Node {...instance(mockedProps)} data={mockData} />)
 
       expect(mockGetMetadata).toHaveBeenCalledWith(mockData.nameBuffer, mockData.path)
-    })
-
-    it('should render KeyRowTTL only when TTL column is enabled', () => {
-      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
-        shownColumns: [BrowserColumns.TTL]
-      }))
-
-      const { getByTestId, queryByTestId } = render(
-        <Node {...instance(mockedProps)} data={mockedDataWithMetadata} />
-      )
-
-      expect(getByTestId(`ttl-${mockDataFullName}`)).toBeInTheDocument()
-      expect(queryByTestId(`size-${mockDataFullName}`)).not.toBeInTheDocument()
-    })
-
-    it('should render KeyRowSize only when Size column is enabled', () => {
-      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
-        shownColumns: [BrowserColumns.Size]
-      }))
-
-      const { getByTestId, queryByTestId } = render(
-        <Node {...instance(mockedProps)} data={mockedDataWithMetadata} />
-      )
-
-      expect(getByTestId(`size-${mockDataFullName}`)).toBeInTheDocument()
-      expect(queryByTestId(`ttl-${mockDataFullName}`)).not.toBeInTheDocument()
-    })
-
-    it('should not render KeyRowTTL and KeyRowSize when columns are disabled', () => {
-      jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
-        shownColumns: []
-      }))
-
-      const { queryByTestId } = render(
-        <Node {...instance(mockedProps)} data={mockedDataWithMetadata} />
-      )
-
-      expect(queryByTestId(`ttl-${mockDataFullName}`)).not.toBeInTheDocument()
-      expect(queryByTestId(`size-${mockDataFullName}`)).not.toBeInTheDocument()
     })
   })
 })

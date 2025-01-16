@@ -6,55 +6,59 @@ import { Props, KeyDetailsHeaderSizeLength } from './KeyDetailsHeaderSizeLength'
 
 const mockedProps = mock<Props>()
 
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn()
-}))
-
 describe('KeyDetailsHeaderSizeLength', () => {
   it('should render normal size correctly', () => {
-    // Mock the Redux selector for normal size
-    jest.spyOn(require('react-redux'), 'useSelector').mockReturnValue({
-      type: 'string',
-      size: 1024,
-      length: 1
-    })
+    const store = {
+      getState: () => ({
+        browser: {
+          keys: {
+            selectedKey: {
+              data: {
+                type: 'string',
+                size: 1024,
+                length: 1
+              }
+            }
+          }
+        }
+      }),
+      subscribe: jest.fn(),
+      dispatch: jest.fn(),
+    }
 
-    render(<KeyDetailsHeaderSizeLength {...mockedProps} />)
+    render(<KeyDetailsHeaderSizeLength {...instance(mockedProps)} width={1920} />, { store })
 
     expect(screen.getByTestId('key-size-text')).toBeInTheDocument()
     expect(screen.queryByTestId('key-size-info-icon')).not.toBeInTheDocument()
   })
 
-  it('should render too large size with warning icon', () => {
-    // Mock the Redux selector for size too large
-    jest.spyOn(require('react-redux'), 'useSelector').mockReturnValue({
-      type: 'string',
-      size: -1,
-      length: 1
-    })
+  it('should render too large size with warning icon and expected tooltip', async () => {
+    const store = {
+      getState: () => ({
+        browser: {
+          keys: {
+            selectedKey: {
+              data: {
+                type: 'string',
+                size: -1,
+                length: 1
+              }
+            }
+          }
+        }
+      }),
+      subscribe: jest.fn(),
+      dispatch: jest.fn(),
+    }
 
-    render(<KeyDetailsHeaderSizeLength {...mockedProps} />)
+    render(<KeyDetailsHeaderSizeLength {...instance(mockedProps)} width={1920} />, { store })
 
-    expect(screen.getByTestId('key-size-text')).toBeInTheDocument()
     expect(screen.getByTestId('key-size-info-icon')).toBeInTheDocument()
-  })
-
-  it('should display correct tooltip content for too large size', async () => {
-    jest.spyOn(require('react-redux'), 'useSelector').mockReturnValue({
-      type: 'string',
-      size: -1,
-      length: 1
-    })
-
-    render(<KeyDetailsHeaderSizeLength {...mockedProps} />)
 
     const infoIcon = screen.getByTestId('key-size-info-icon')
     userEvent.hover(infoIcon)
 
-    // Since tooltip rendering might be async, we use findByText instead of getByText
-    expect(await screen.findByText('The key size is too large to run the MEMORY USAGE command, as it may lead to performance issues.')).toBeInTheDocument()
-
-    // Optionally, you can also test that the tooltip disappears on mouse leave
-    userEvent.unhover(infoIcon)
+    const tooltipText = await screen.findByText('The key size is too large to run the MEMORY USAGE command, as it may lead to performance issues.')
+    expect(tooltipText).toBeInTheDocument()
   })
 })

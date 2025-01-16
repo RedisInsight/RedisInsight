@@ -14,4 +14,4 @@ export function formatLongName(
   const startPart = currentName.substring(0, maxNameLength - endPartLength - separator.length)
   const endPart = currentName.substring(currentName.length - endPartLength)
   return `${startPart}${separator}${endPart}`
-}q
+}

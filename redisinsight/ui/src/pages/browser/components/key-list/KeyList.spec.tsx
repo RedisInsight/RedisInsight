@@ -1,7 +1,6 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import { fireEvent } from '@testing-library/react'
-import * as reactRedux from 'react-redux'
 import { cleanup, mockedStore, render, waitFor, screen, clearStoreActions } from 'uiSrc/utils/test-utils'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { deleteKey, keysSelector, setLastBatchKeys } from 'uiSrc/slices/browser/keys'
@@ -51,6 +50,21 @@ const propsMock = {
   onAddKeyPanel: jest.fn(),
 }
 
+const mockedKeySlice = {
+  viewType: KeyViewType.Browser,
+  searchMode: SearchMode.Pattern,
+  isSearch: false,
+  isFiltered: false,
+  shownColumns: ['ttl', 'size'],
+}
+
+jest.mock('uiSrc/slices/browser/keys', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/keys'),
+  // TODO: find solution for mock "setLastBatchKeys" action
+  // setLastBatchKeys: jest.fn(),
+  keysSelector: jest.fn().mockImplementation(() => mockedKeySlice),
+}))
+
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -64,8 +78,6 @@ beforeEach(() => {
 
 describe('KeyList', () => {
   it('should render', () => {
-    const state = store.getState()
-    console.log('Keys state:', state.browser.keys)
     expect(render(<KeyList {...propsMock} />)).toBeTruthy()
   })
 
@@ -79,12 +91,7 @@ describe('KeyList', () => {
 
   // TODO: find solution for mock "setLastBatchKeys" action
   it.skip('should call "setLastBatchKeys" after unmount for Browser view', () => {
-    keysSelector.mockImplementation(() => ({
-      searchMode: SearchMode.Pattern,
-      viewType: KeyViewType.Browser,
-      isSearch: false,
-      isFiltered: false,
-    }))
+    (keysSelector as jest.Mock).mockImplementation(() => (mockedKeySlice))
 
     const { unmount } = render(<KeyList {...propsMock} />)
     expect(setLastBatchKeys).not.toBeCalled()
@@ -96,10 +103,9 @@ describe('KeyList', () => {
 
   // TODO: find solution for mock "setLastBatchKeys" action
   it.skip('should not call "setLastBatchKeys" after unmount for Tree view', () => {
-    keysSelector.mockImplementation(() => ({
+    (keysSelector as jest.Mock).mockImplementation(() => ({
+      ...mockedKeySlice,
       viewType: KeyViewType.Tree,
-      isSearch: false,
-      isFiltered: false,
     }))
 
     const { unmount } = render(<KeyList {...propsMock} />)
@@ -151,13 +157,21 @@ describe('KeyList', () => {
     await waitFor(async () => {
       expect(apiServiceMock.mock.calls[0]).toEqual([
         '/databases//keys/get-metadata',
-        { keys: ['key1'], shownColumns: [BrowserColumns.Size, BrowserColumns.TTL] },
-        params
+        {
+          keys: ['key1'],
+          shownColumns: ['size', 'ttl'],
+          type: undefined
+        },
+        params,
       ])
 
       expect(apiServiceMock.mock.calls[1]).toEqual([
         '/databases//keys/get-metadata',
-        { keys: ['key1', 'key2', 'key3'], shownColumns: [BrowserColumns.Size, BrowserColumns.TTL] },
+        {
+          keys: ['key1', 'key2', 'key3'],
+          shownColumns: ['size', 'ttl'],
+          type: undefined
+        },
         params,
       ])
     }, { timeout: 150 })
@@ -201,32 +215,27 @@ describe('KeyList', () => {
 })
 
 describe('KeyList shownColumns functionality', () => {
-  const mockDispatch = jest.fn()
-  const baseState = {
-    isSearched: false,
-    isFiltered: false,
-    searchMode: 'Pattern',
-    deleting: false,
-    shownColumns: [BrowserColumns.Size, BrowserColumns.TTL],
-    data: null,
-    keyList: { isNotRendered: false }
-  }
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(reactRedux, 'useDispatch').mockReturnValue(mockDispatch)
-    jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => baseState)
+    cleanup()
+    store = cloneDeep(mockedStore)
+    store.clearActions()
   })
 
   it('should render all columns when size and ttl are in shownColumns', () => {
+    (keysSelector as jest.Mock).mockImplementation(() => ({
+      ...mockedKeySlice,
+      shownColumns: [BrowserColumns.Size, BrowserColumns.TTL],
+    }))
+
     const { container } = render(<KeyList {...propsMock} />)
     const columns = container.querySelectorAll('[role="columnheader"]')
     expect(columns.length).toBe(4) // Type, Key, Size, TTL
   })
 
   it('should not render optional columns when shownColumns is empty', () => {
-    jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
-      ...baseState,
-      shownColumns: []
+    (keysSelector as jest.Mock).mockImplementation(() => ({
+      ...mockedKeySlice,
+      shownColumns: [],
     }))
 
     const { container } = render(<KeyList {...propsMock} />)
@@ -234,57 +243,43 @@ describe('KeyList shownColumns functionality', () => {
     expect(columns.length).toBe(2) // Only Type and Key
   })
 
-  it('should refetch metadata when size column is enabled', () => {
-    // Initial render without size
-    jest.spyOn(reactRedux, 'useSelector').mockImplementation((selector) => ({
-      ...baseState,
-      shownColumns: [BrowserColumns.TTL],
-    }))
+  it('should refetch metadata when columns change', async () => {
+    const spy = jest.spyOn(apiService, 'post')
 
-    const { rerender } = render(<KeyList {...{
-      ...propsMock,
-      keysState: {
-        ...propsMock.keysState,
-        keys: [{ name: 'test-key' }], // Add some keys to trigger fetch
-        lastRefreshTime: Date.now()
-      }
-    }}
-    />)
+    const keySelectorMocked = keysSelector as jest.Mock
 
-    jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
-      ...baseState,
-      shownColumns: [BrowserColumns.TTL, BrowserColumns.Size],
-    }))
-
-    rerender(<KeyList {...propsMock} />)
-
-    expect(mockDispatch).toHaveBeenCalled()
-  })
-
-  it('should refetch metadata when ttl column is enabled', () => {
-    jest.spyOn(reactRedux, 'useSelector').mockImplementation((selector) => ({
-      ...baseState,
+    keySelectorMocked.mockImplementation(() => ({
+      ...mockedKeySlice,
       shownColumns: [],
     }))
 
-    const { rerender } = render(<KeyList {...{
-      ...propsMock,
-      keysState: {
-        ...propsMock.keysState,
-        keys: [{ name: 'test-key' }],
-        lastRefreshTime: Date.now()
-      }
-    }}
-    />)
+    const { rerender } = render(
+      <KeyList
+        {...propsMock}
+        keysState={{
+          ...propsMock.keysState,
+          keys: [{ name: 'test-key' }],
+        }}
+      />
+    )
 
-    // Re-render with size enabled
-    jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => ({
-      ...baseState,
-      shownColumns: [BrowserColumns.Size],
+    keySelectorMocked.mockImplementation(() => ({
+      ...mockedKeySlice,
+      shownColumns: [BrowserColumns.TTL],
     }))
 
-    rerender(<KeyList {...propsMock} />)
+    rerender(
+      <KeyList
+        {...propsMock}
+        keysState={{
+          ...propsMock.keysState,
+          keys: [{ name: 'test-key' }],
+        }}
+      />
+    )
 
-    expect(mockDispatch).toHaveBeenCalled()
+    await waitFor(() => {
+      expect(spy).toHaveBeenCalled()
+    }, { timeout: 1000 })
   })
 })

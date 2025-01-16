@@ -1,9 +1,17 @@
 import React from 'react'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import * as keysSlice from 'uiSrc/slices/browser/keys'
 import { BrowserColumns } from 'uiSrc/constants'
 import KeysHeader from './KeysHeader'
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 jest.mock('uiSrc/slices/browser/keys', () => ({
   ...jest.requireActual('uiSrc/slices/browser/keys'),
@@ -52,9 +60,21 @@ const propsMock = {
   handleScanMoreClick: jest.fn(),
 }
 
+const mockSelectorData = {
+  searchMode: SearchMode.Pattern,
+  viewType: KeyViewType.Browser,
+  isSearch: false,
+  isFiltered: false,
+  shownColumns: [BrowserColumns.TTL, BrowserColumns.Size],
+}
+
 describe('KeysHeader', () => {
   beforeEach(() => {
-    (keysSlice.keysSelector as jest.Mock).mockReturnValue(keysSlice.initialState)
+    (keysSlice.keysSelector as jest.Mock).mockReturnValue(mockSelectorData)
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   it('should render', () => {
@@ -70,11 +90,9 @@ describe('KeysHeader', () => {
 
   it('should render Scan more button if total => keys.length', () => {
     (keysSlice.keysSelector as jest.Mock).mockReturnValue({
+      ...mockSelectorData,
       searchMode: SearchMode.Redisearch,
-      viewType: KeyViewType.Tree,
-      isSearch: false,
-      isFiltered: false,
-      shownColumns: [BrowserColumns.TTL, BrowserColumns.Size],
+      viewType: KeyViewType.Tree
     })
 
     const { queryByTestId } = render(<KeysHeader
@@ -91,6 +109,12 @@ describe('KeysHeader', () => {
   })
 
   it('should not render Scan more button for if searchMode = "Redisearch" and keys.length > maxResults', () => {
+    (keysSlice.keysSelector as jest.Mock).mockReturnValue({
+      ...mockSelectorData,
+      searchMode: SearchMode.Redisearch,
+      viewType: KeyViewType.Tree,
+    })
+
     const { queryByTestId } = render(<KeysHeader
       {...propsMock}
       keysState={{

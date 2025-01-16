@@ -159,7 +159,7 @@ class Lexer {
 
   ReadNumber(): string {
     let str = ''
-    while (this.C !== undefined && (isDigit(this.C) || this.C === '.') && parseFloat(str + this.C) != NaN) {
+    while (this.C !== undefined && (isDigit(this.C) || this.C === '.') && !Number.isNaN(parseFloat(str + this.C))) {
       str += this.C
       this.ReadChar()
     }

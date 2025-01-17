@@ -74,7 +74,6 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   },
   bigHashes: {
     id: 'bigHashes',
-    telemetryEvent: 'shardHashes',
     title: 'Shard big hashes to small hashes',
     redisStack: true,
     tutorialId: 'ds-hashes',
@@ -393,7 +392,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.io/docs/interact/search-and-query/',
-          name: 'query and search capabilities'
+          name: 'Redis Query Engine'
         }
       },
       {
@@ -516,7 +515,6 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   },
   bigSets: {
     id: 'bigSets',
-    telemetryEvent: 'optimizeExistenceChecks',
     title: 'Consider using probabilistic data structures such as Bloom Filter or HyperLogLog',
     tutorialId: 'ds-prob-intro',
     redisStack: true,
@@ -661,7 +659,6 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   },
   RTS: {
     id: 'RTS',
-    telemetryEvent: 'optimizeTimeSeries',
     title: 'Try using the Redis native time series data structure and querying capabilities',
     redisStack: true,
     tutorialId: 'ds-ts-intro',
@@ -751,7 +748,6 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   },
   redisVersion: {
     id: 'redisVersion',
-    telemetryEvent: 'updateDatabase',
     title: 'Upgrade your Redis database to version 6 or above',
     redisStack: true,
     content: [
@@ -821,7 +817,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.io/docs/interact/search-and-query/',
-          name: 'query and search'
+          name: 'the Redis Query Engine'
         }
       },
       {
@@ -968,7 +964,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.io/docs/interact/search-and-query/',
-          name: 'query and search capabilities'
+          name: 'Redis Query Engine'
         }
       },
       {
@@ -1052,7 +1048,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.io/docs/interact/search-and-query/',
-          name: 'query and search capabilities'
+          name: 'Redis Query Engine'
         }
       },
       {
@@ -1194,7 +1190,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
               type: 'link',
               value: {
                 href: 'https://redis.io/docs/interact/search-and-query/',
-                name: 'query and search capabilities'
+                name: 'Redis Query Engine'
               }
             }
           ]
@@ -1290,7 +1286,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.io/docs/interact/search-and-query/',
-          name: 'query and search'
+          name: 'the Redis Query Engine'
         }
       },
       {
@@ -1362,7 +1358,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.io/docs/interact/search-and-query/',
-          name: 'query and search'
+          name: 'the Redis Query Engine'
         }
       },
       {

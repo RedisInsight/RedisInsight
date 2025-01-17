@@ -38,7 +38,7 @@ CLIENTS_LIST_DIR="./redisinsight/ui/src/packages/clients-list"
 yarn --cwd "${CLIENTS_LIST_DIR}"
 
 # Build all plugins and common libraries
-yarn --cwd "${PACKAGES_DIR}" build
+NODE_OPTIONS=--max_old_space_size=4096 yarn --cwd "${PACKAGES_DIR}" build
 
 # Copy common libraries to plugins
 COMMON_DIR="./redisinsight/ui/src/packages/common"

@@ -12,30 +12,42 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
-import { useFormikContext } from 'formik'
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { RdiPipeline } from 'src/modules/rdi/models'
 import RocketIcon from 'uiSrc/assets/img/rdi/rocket.svg?react'
-import { resetPipelineChecked } from 'uiSrc/slices/rdi/pipeline'
+import { deployPipelineAction, getPipelineStatusAction, rdiPipelineSelector, resetPipelineChecked } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { createAxiosError, pipelineToJson } from 'uiSrc/utils'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import styles from './styles.module.scss'
 
 export interface Props {
   loading: boolean
   disabled: boolean
+  onReset: () => void
 }
 
-const DeployPipelineButton = ({ loading, disabled }: Props) => {
+const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [resetPipeline, setResetPipeline] = useState(false)
 
-  const { values, handleSubmit } = useFormikContext<RdiPipeline>()
+  const { config, jobs, resetChecked } = useSelector(rdiPipelineSelector)
+
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const dispatch = useDispatch()
+
+  const updatePipelineStatus = () => {
+    if (resetChecked) {
+      dispatch(resetPipelineChecked(false))
+      onReset?.()
+    } else {
+      dispatch(getPipelineStatusAction(rdiInstanceId))
+    }
+  }
 
   const handleDeployPipeline = () => {
     sendEventTelemetry({
@@ -43,12 +55,21 @@ const DeployPipelineButton = ({ loading, disabled }: Props) => {
       eventData: {
         id: rdiInstanceId,
         reset: resetPipeline,
-        jobsNumber: values?.jobs?.length
+        jobsNumber: jobs?.length
       }
     })
     setIsPopoverOpen(false)
     setResetPipeline(false)
-    handleSubmit()
+    const JSONValues = pipelineToJson({ config, jobs }, (errors) => {
+      dispatch(addErrorNotification(createAxiosError({
+        message: rdiErrorMessages.invalidStructure(errors[0].filename, errors[0].msg)
+      })))
+    })
+    if (!JSONValues) {
+      return
+    }
+    dispatch(deployPipelineAction(rdiInstanceId, JSONValues, updatePipelineStatus,
+      () => dispatch(getPipelineStatusAction(rdiInstanceId))),)
   }
 
   const handleClosePopover = () => {

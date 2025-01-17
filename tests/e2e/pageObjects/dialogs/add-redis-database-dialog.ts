@@ -273,7 +273,6 @@ export class AddRedisDatabaseDialog {
         const removeButton = this.trashIconMsk(certificate);
         const removeButtonFooter = Selector('[class^=_popoverFooter]');
 
-
         if (certificate === TlsCertificates.CA) {
             await t.click(this.caCertField);
         } else {
@@ -282,7 +281,6 @@ export class AddRedisDatabaseDialog {
 
         await t.click(row.find(removeButton));
 
-        // Клик по кнопке в нижнем колонтитуле
         await t.click(removeButtonFooter.find(removeButton));
     }
 }

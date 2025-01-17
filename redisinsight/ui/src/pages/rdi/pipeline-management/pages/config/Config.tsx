@@ -116,7 +116,7 @@ const Config = () => {
           />
         </div>
         <EuiText className="rdi__text" color="subdued">
-          {'Configure target instance '}
+          {'Provide '}
           <EuiLink
             external={false}
             data-testid="rdi-pipeline-config-link"
@@ -131,7 +131,7 @@ const Config = () => {
           >
             connection details
           </EuiLink>
-          {' and applier settings.'}
+          {' for source and target databases and other collector configurations, such as tables and columns to track.'}
         </EuiText>
         {pipelineLoading ? (
           <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-config-loading">

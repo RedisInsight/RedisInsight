@@ -10,12 +10,16 @@ let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
-  store.clearActions()
+  store.clearActions();
+
+  (keysSlice.keysSelector as jest.Mock).mockReturnValue({
+    ...mockSelectorData,
+  })
 })
 
 jest.mock('uiSrc/slices/browser/keys', () => ({
   ...jest.requireActual('uiSrc/slices/browser/keys'),
-  keysSelector: jest.fn()
+  keysSelector: jest.fn().mockReturnValue(mockSelectorData)
 }))
 
 const propsMock = {

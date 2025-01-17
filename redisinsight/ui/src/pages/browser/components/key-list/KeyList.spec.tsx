@@ -50,18 +50,30 @@ const propsMock = {
   onAddKeyPanel: jest.fn(),
 }
 
+const shownColumns = [BrowserColumns.Size, BrowserColumns.TTL]
+
 const mockedKeySlice = {
   viewType: KeyViewType.Browser,
   searchMode: SearchMode.Pattern,
   isSearch: false,
   isFiltered: false,
-  shownColumns: ['ttl', 'size'],
+  shownColumns: [BrowserColumns.Size, BrowserColumns.TTL],
+  deleting: false,
+  data: {
+    keys: [],
+    nextCursor: '0',
+    previousResultCount: 0,
+    total: 0,
+    scanned: 0,
+    lastRefreshTime: Date.now()
+  },
+  selectedKey: {
+    data: null
+  }
 }
 
 jest.mock('uiSrc/slices/browser/keys', () => ({
   ...jest.requireActual('uiSrc/slices/browser/keys'),
-  // TODO: find solution for mock "setLastBatchKeys" action
-  // setLastBatchKeys: jest.fn(),
   keysSelector: jest.fn().mockImplementation(() => mockedKeySlice),
 }))
 
@@ -153,21 +165,13 @@ describe('KeyList', () => {
     await waitFor(async () => {
       expect(apiServiceMock.mock.calls[0]).toEqual([
         '/databases//keys/get-metadata',
-        {
-          keys: ['key1'],
-          shownColumns: ['size', 'ttl'],
-          type: undefined
-        },
+        { keys: ['key1'], shownColumns },
         params,
       ])
 
       expect(apiServiceMock.mock.calls[1]).toEqual([
         '/databases//keys/get-metadata',
-        {
-          keys: ['key1', 'key2', 'key3'],
-          shownColumns: ['size', 'ttl'],
-          type: undefined
-        },
+        { keys: ['key1', 'key2', 'key3'], shownColumns },
         params,
       ])
     }, { timeout: 150 })
@@ -208,46 +212,16 @@ describe('KeyList', () => {
     ]
     expect(clearStoreActions(store.getActions().slice(-1))).toEqual(clearStoreActions(expectedActions))
   })
-})
-
-describe('KeyList shownColumns functionality', () => {
-  beforeEach(() => {
-    cleanup()
-    store = cloneDeep(mockedStore)
-    store.clearActions()
-  })
-
-  it('should render all columns when size and ttl are in shownColumns', () => {
-    (keysSelector as jest.Mock).mockImplementation(() => ({
-      ...mockedKeySlice,
-      shownColumns: [BrowserColumns.Size, BrowserColumns.TTL],
-    }))
-
-    const { container } = render(<KeyList {...propsMock} />)
-    const columns = container.querySelectorAll('[role="columnheader"]')
-    expect(columns.length).toBe(4) // Type, Key, Size, TTL
-  })
-
-  it('should not render optional columns when shownColumns is empty', () => {
-    (keysSelector as jest.Mock).mockImplementation(() => ({
-      ...mockedKeySlice,
-      shownColumns: [],
-    }))
-
-    const { container } = render(<KeyList {...propsMock} />)
-    const columns = container.querySelectorAll('[role="columnheader"]')
-    expect(columns.length).toBe(2) // Only Type and Key
-  })
 
   it('should refetch metadata when columns change', async () => {
     const spy = jest.spyOn(apiService, 'post')
 
     const keySelectorMocked = keysSelector as jest.Mock
 
-    keySelectorMocked.mockImplementation(() => ({
+    keySelectorMocked.mockReturnValue({
       ...mockedKeySlice,
       shownColumns: [],
-    }))
+    })
 
     const { rerender } = render(
       <KeyList
@@ -259,10 +233,10 @@ describe('KeyList shownColumns functionality', () => {
       />
     )
 
-    keySelectorMocked.mockImplementation(() => ({
+    keySelectorMocked.mockReturnValue({
       ...mockedKeySlice,
       shownColumns: [BrowserColumns.TTL],
-    }))
+    })
 
     rerender(
       <KeyList

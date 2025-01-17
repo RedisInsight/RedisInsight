@@ -1,11 +1,10 @@
 import React from 'react'
 import { NodePublicState } from 'react-vtree/dist/es/Tree'
 import { instance, mock } from 'ts-mockito'
-import * as reactRedux from 'react-redux'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { stringToBuffer } from 'uiSrc/utils'
 import { KeyTypes, BrowserColumns } from 'uiSrc/constants'
-import { keysSelector, keysSlice } from 'uiSrc/slices/browser/keys'
 import Node from './Node'
 import { TreeData } from '../../interfaces'
 import { mockVirtualTreeResult } from '../../VirtualTree.spec'
@@ -13,6 +12,7 @@ import { mockVirtualTreeResult } from '../../VirtualTree.spec'
 const mockDataFullName = 'test'
 const mockedProps = mock<NodePublicState<TreeData>>()
 const mockedPropsData = mock<TreeData>()
+
 const mockedData: TreeData = {
   ...instance(mockedPropsData),
   nestingLevel: 3,
@@ -34,6 +34,13 @@ jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
   useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() }),
 }))
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('Node', () => {
   it('should render', () => {
@@ -166,8 +173,8 @@ describe('Node', () => {
 
       screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
-      expect(mockGetMetadata).toBeCalledWith(mockData.nameBuffer, mockData.path)
-      expect(mockUpdateStatusSelected).toBeCalledWith(mockData.nameBuffer)
+      expect(mockGetMetadata).toBeCalledWith(mockedData.nameBuffer, mockedData.path)
+      expect(mockUpdateStatusSelected).toBeCalledWith(mockedData.nameBuffer)
       expect(mockUpdateStatusOpen).toBeCalledWith(mockDataFullName, true)
     })
 
@@ -187,9 +194,9 @@ describe('Node', () => {
 
       screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
-      expect(mockGetMetadata).not.toBeCalled()
-      expect(mockUpdateStatusSelected).toBeCalledWith(mockData.nameBuffer)
+      expect(mockUpdateStatusSelected).toBeCalledWith(mockedDataWithMetadata.nameBuffer)
       expect(mockUpdateStatusOpen).toBeCalledWith(mockDataFullName, true)
+      expect(mockGetMetadata).not.toBeCalled()
     })
 
     it('should render TTL and Size when metadata exists', () => {
@@ -233,9 +240,9 @@ describe('Node', () => {
       store.getState = () => ({
         browser: {
           keys: {
-            shownColumns: [BrowserColumns.TTL] as BrowserColumns[]
+            shownColumns: [BrowserColumns.TTL]
           }
-        }
+        } as any
       })
 
       rerender(<Node {...instance(mockedProps)} data={mockData} />)
@@ -270,9 +277,9 @@ describe('Node', () => {
       store.getState = () => ({
         browser: {
           keys: {
-            shownColumns: [BrowserColumns.Size] as BrowserColumns[]
+            shownColumns: [BrowserColumns.Size]
           }
-        }
+        } as any
       })
 
       rerender(<Node {...instance(mockedProps)} data={mockData} />)

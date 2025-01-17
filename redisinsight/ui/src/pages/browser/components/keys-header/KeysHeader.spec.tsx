@@ -69,14 +69,6 @@ const mockSelectorData = {
 }
 
 describe('KeysHeader', () => {
-  beforeEach(() => {
-    (keysSlice.keysSelector as jest.Mock).mockReturnValue(mockSelectorData)
-  })
-
-  afterEach(() => {
-    jest.clearAllMocks()
-  })
-
   it('should render', () => {
     expect(render(<KeysHeader {...propsMock} />)).toBeTruthy()
   })

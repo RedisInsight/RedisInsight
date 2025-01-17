@@ -1,57 +1,48 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { cloneDeep } from 'lodash'
 import userEvent from '@testing-library/user-event'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import * as keysSlice from 'uiSrc/slices/browser/keys'
 import { Props, KeyDetailsHeaderSizeLength } from './KeyDetailsHeaderSizeLength'
+
+let store: typeof mockedStore
 
 const mockedProps = mock<Props>()
 
-describe('KeyDetailsHeaderSizeLength', () => {
-  it('should render normal size correctly', () => {
-    const store = {
-      getState: () => ({
-        browser: {
-          keys: {
-            selectedKey: {
-              data: {
-                type: 'string',
-                size: 1024,
-                length: 1
-              }
-            }
-          }
-        }
-      }),
-      subscribe: jest.fn(),
-      dispatch: jest.fn(),
-    }
+jest.mock('uiSrc/slices/browser/keys', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/keys'),
+  selectedKeyDataSelector: jest.fn()
+}))
 
-    render(<KeyDetailsHeaderSizeLength {...instance(mockedProps)} width={1920} />, { store })
+describe('KeyDetailsHeaderSizeLength', () => {
+  beforeEach(() => {
+    cleanup()
+    store = cloneDeep(mockedStore)
+    store.clearActions()
+  })
+
+  it('should render normal size correctly', () => {
+    (keysSlice.selectedKeyDataSelector as jest.Mock).mockReturnValueOnce({
+      type: 'string',
+      size: 1024,
+      length: 1
+    })
+
+    render(<KeyDetailsHeaderSizeLength {...instance(mockedProps)} width={1920} />)
 
     expect(screen.getByTestId('key-size-text')).toBeInTheDocument()
     expect(screen.queryByTestId('key-size-info-icon')).not.toBeInTheDocument()
   })
 
   it('should render too large size with warning icon and expected tooltip', async () => {
-    const store = {
-      getState: () => ({
-        browser: {
-          keys: {
-            selectedKey: {
-              data: {
-                type: 'string',
-                size: -1,
-                length: 1
-              }
-            }
-          }
-        }
-      }),
-      subscribe: jest.fn(),
-      dispatch: jest.fn(),
-    }
+    (keysSlice.selectedKeyDataSelector as jest.Mock).mockReturnValueOnce({
+      type: 'string',
+      size: -1,
+      length: 1
+    })
 
-    render(<KeyDetailsHeaderSizeLength {...instance(mockedProps)} width={1920} />, { store })
+    render(<KeyDetailsHeaderSizeLength {...instance(mockedProps)} width={1920} />)
 
     expect(screen.getByTestId('key-size-info-icon')).toBeInTheDocument()
 

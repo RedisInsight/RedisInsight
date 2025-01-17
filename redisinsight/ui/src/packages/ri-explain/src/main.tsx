@@ -12,7 +12,7 @@ import { icon as EuiIconReportingApp } from '@elastic/eui/es/components/icon/ass
 import { icon as EuiIconArrowUp } from '@elastic/eui/es/components/icon/assets/arrow_up'
 import { icon as EuiIconArrowDown } from '@elastic/eui/es/components/icon/assets/arrow_down'
 import { App } from './App'
-import './styles/styles.less'
+import './styles/styles.scss'
 import result from '../mockData/resultExplain.json'
 
 interface Props {

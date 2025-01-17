@@ -4,7 +4,7 @@ import { render } from 'react-dom'
 import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon'
 import { icon as EuiIconArrowRight } from '@elastic/eui/es/components/icon/assets/arrow_right'
 import App from './App'
-import './styles/styles.less'
+import './styles/styles.scss'
 import result from '../mockData/resultTimeSeries.json'
 
 appendIconComponentCache({

@@ -1,6 +1,4 @@
 @charset "UTF-8";
-@import "_dark_theme.less";
-@import "_light_theme.less";
 
 // disable plotly notifier
 div.plotly-notifier {
@@ -127,6 +125,7 @@ div.plotly-notifier {
     outline: unset;
   }
   .euiButtonGroupButton.euiButtonGroupButton--text:not([class*=isDisabled]) {
+    color: var(--wbTextColor);
     background: black;
     border-radius: 1px;
     text-decoration: none;
@@ -144,6 +143,16 @@ div.plotly-notifier {
         background-color: #171717;
       }
     }
+  }
+
+  .button-point {
+    background-color: black;
+    border: 1px solid #465282;
+  }
+
+  .button-selected {
+    color: #8BA2FF;
+    background-color: #292F47;
   }
 }
 
@@ -295,16 +304,24 @@ div.plotly-notifier {
       }
     }
   }
+
+  .new-button {
+    color: #343741;
+  }
+
+  .button-point {
+    border: 1px solid #243DAC;
+  }
+
+  .button-selected {
+    color: #3163D8;
+    background-color: #D7E3FA;
+  }
 }
 
 body {
   color: var(--body-color);
   overflow: hidden;
-}
-
-* {
-  margin: 0px;
-  padding: 0px;
 }
 
 * div,
@@ -440,7 +457,6 @@ body {
     border-radius: 2px;
     cursor: pointer;
     height: 32px;
-    border: 1px solid hsla(0, 0%, 100%, 0.1);
     overflow: visible;
     display: flex;
 

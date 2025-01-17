@@ -2,6 +2,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import { GraphApp, TableApp } from './App'
+import './styles/styles.scss'
 
 interface Props {
   command?: string

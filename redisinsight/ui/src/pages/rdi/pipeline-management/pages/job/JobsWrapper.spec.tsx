@@ -4,10 +4,10 @@ import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 
-import { deleteChangedFile, getPipelineStrategies, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import { deleteChangedFile, getPipelineStrategies, rdiPipelineSelector, setChangedFile, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { MOCK_RDI_PIPELINE_CONFIG, MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JOB2 } from 'uiSrc/mocks/data/rdi'
+import { MOCK_RDI_PIPELINE_CONFIG, MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JOB1, MOCK_RDI_PIPELINE_JOB2 } from 'uiSrc/mocks/data/rdi'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import JobWrapper from './JobWrapper'
@@ -23,10 +23,25 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
     schema: { jobs: { test: {} } },
+    config: `connections:
+        target:
+          type: redis
+      `,
+    jobs: [{
+      name: 'jobName',
+      value: `job:
+    transform:
+    type: sql
+    `
+    }, {
+      name: 'job2',
+      value: `job2:
+    transform:
+    type: redis
+    `
+    }],
   }),
 }))
-
-jest.mock('formik')
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -36,14 +51,6 @@ beforeEach(() => {
 })
 
 describe('JobWrapper', () => {
-  beforeEach(() => {
-    const mockUseFormikContext = {
-      setFieldValue: jest.fn,
-      values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
-  })
-
   it('should render', () => {
     expect(render(<JobWrapper />)).toBeTruthy()
   })
@@ -62,30 +69,15 @@ describe('JobWrapper', () => {
     })
   })
 
-  it('should render loading spinner', () => {
-    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
-      loading: true,
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
-
-    render(<JobWrapper />)
-
-    expect(screen.getByTestId('rdi-job-loading')).toBeInTheDocument()
-  })
-
   it('should push to config page', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
+      config: MOCK_RDI_PIPELINE_CONFIG,
+      jobs: [MOCK_RDI_PIPELINE_JOB2],
     });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(rdiPipelineSelectorMock)
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
-
-    const mockUseFormikContext = {
-      setFieldValue: jest.fn,
-      values: { config: MOCK_RDI_PIPELINE_CONFIG, jobs: [MOCK_RDI_PIPELINE_JOB2] },
-    };
-    (useFormikContext as jest.Mock).mockReturnValueOnce(mockUseFormikContext)
 
     render(<JobWrapper />)
 
@@ -97,7 +89,7 @@ describe('JobWrapper', () => {
       loading: false,
       error: '',
     });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(rdiPipelineSelectorMock)
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
 
@@ -141,9 +133,10 @@ describe('JobWrapper', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
       schema: { jobs: { test: {} } },
-      data: { jobs: [{ name: 'jobName', value: 'value' }] }
+      data: { jobs: [{ name: 'jobName', value: 'value' }] },
+      jobs: [{ name: 'jobName', value: 'value' }]
     });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(rdiPipelineSelectorMock)
 
     render(<JobWrapper />)
 
@@ -155,6 +148,7 @@ describe('JobWrapper', () => {
 
     const expectedActions = [
       getPipelineStrategies(),
+      setPipelineJobs(expect.any(Array)),
       setChangedFile({ name: 'jobName', status: FileChangeType.Modified })
     ]
 
@@ -165,7 +159,8 @@ describe('JobWrapper', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
       schema: { jobs: { test: {} } },
-      data: { jobs: [{ name: 'jobName', value: '123' }] }
+      data: { jobs: [{ name: 'jobName', value: '123' }] },
+      jobs: [{ name: 'jobName' }],
     });
     (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
 
@@ -179,6 +174,7 @@ describe('JobWrapper', () => {
 
     const expectedActions = [
       getPipelineStrategies(),
+      setPipelineJobs([{ name: 'jobName', value: '123' }]),
       deleteChangedFile('jobName')
     ]
 
@@ -189,15 +185,11 @@ describe('JobWrapper', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
       schema: { jobs: { test: {} } },
-      data: { jobs: [{ name: 'jobName', value: 'sources:incorrect\n target:' }] }
+      data: { jobs: [{ name: 'jobName', value: 'sources:incorrect\n target:' }] },
+      config: MOCK_RDI_PIPELINE_CONFIG,
+      jobs: [{ name: 'jobName', value: 'sources:incorrect\n target:' }]
     });
     (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
-
-    const mockUseFormikContext = {
-      setFieldValue: jest.fn,
-      values: { config: MOCK_RDI_PIPELINE_CONFIG, jobs: [{ name: 'jobName', value: 'sources:incorrect\n target:' }] },
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
 
     const { queryByTestId } = render(<JobWrapper />)
 

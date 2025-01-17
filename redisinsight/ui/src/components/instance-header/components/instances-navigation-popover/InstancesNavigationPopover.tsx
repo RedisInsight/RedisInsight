@@ -137,6 +137,7 @@ const InstancesNavigationPopover = ({ name }: Props) => {
             selectedTab={selectedTab}
             filteredDbInstances={filteredDbInstances}
             filteredRdiInstances={filteredRdiInstances}
+            onItemClick={showPopover}
           />
           <div>
             <EuiSpacer size="m" />

@@ -7,6 +7,7 @@ import {
   rdiPipelineSelector,
   setChangedFile,
   deleteChangedFile,
+  setPipelineJobs,
 } from 'uiSrc/slices/rdi/pipeline'
 import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
@@ -63,6 +64,23 @@ describe('Job', () => {
       loading: false,
       schema: { jobs: { test: {} } },
       error: '',
+      config: `connections:
+      target:
+        type: redis
+    `,
+      jobs: [{
+        name: 'jobName',
+        value: `job:
+                    transform:
+                      type: sql
+                `
+      }, {
+        name: 'job2',
+        value: `job2:
+                    transform:
+                      type: redis
+                    `
+      }],
     });
     (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
     const pushMock = jest.fn()
@@ -96,6 +114,7 @@ describe('Job', () => {
 
     const expectedActions = [
       getPipelineStrategies(),
+      setPipelineJobs(expect.any(Array)),
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
@@ -112,6 +131,7 @@ describe('Job', () => {
 
     const expectedActions = [
       getPipelineStrategies(),
+      setPipelineJobs(expect.any(Array)),
       setChangedFile({ name: 'jobName', status: FileChangeType.Modified }),
     ]
 
@@ -129,6 +149,7 @@ describe('Job', () => {
 
     const expectedActions = [
       getPipelineStrategies(),
+      setPipelineJobs(expect.any(Array)),
       deleteChangedFile('jobName')
     ]
 

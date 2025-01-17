@@ -50,30 +50,41 @@ describe('DatabaseSettingsService', () => {
   });
 
   describe('get', () => {
-    it('should return database settings entity', async () => {
+    it('should return database settings entity when it exists', async () => {
       const actual = await service.get(mockSessionMetadata, mockDatabaseId);
       const expected = mockDatabaseSettingsDto();
       expect(actual).toEqual(expected);
+      expect(repository.findOneBy).toHaveBeenCalledWith({ databaseId: mockDatabaseId });
     });
 
-    it('should throw when database setting is not found', async () => {
+    it('should throw NotFoundException when database setting is not found', async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
-      await expect(service.get(mockSessionMetadata, mockDatabaseId)).rejects.toThrow(NotFoundException);
+      await expect(service.get(mockSessionMetadata, mockDatabaseId))
+        .rejects.toThrow(NotFoundException);
     });
   });
   describe('createOrUpdate', () => {
-    it('should be able to create database settings entity', async () => {
+    it('should create new database settings entity when it does not exist', async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
       const actual = await service.createOrUpdate(mockSessionMetadata, mockDatabaseId, mockDatabaseSettingsCreateDto);
       const expected = mockDatabaseSettingsDto();
       expect(actual).toEqual(expected);
+      expect(repository.save).toHaveBeenCalled();
     });
 
-    it('should be able to update database setting', async () => {
-      const update = mockDatabaseSettingsDto();
-      update.data = { key: '1' };
-      expect(await service.createOrUpdate(mockSessionMetadata, mockDatabaseId, mockDatabaseSettingsCreateDto))
-        .toEqual(mockDatabaseSettingsDto());
+    it('should update existing database settings entity', async () => {
+      repository.save.mockResolvedValue({
+        ...mockDatabaseSettingsEntity,
+        data: { key: '1' },
+      });
+      const updateDto = {
+        ...mockDatabaseSettingsCreateDto,
+        data: { key: '1' },
+      };
+      const result = await service.createOrUpdate(mockSessionMetadata, mockDatabaseId, updateDto);
+      expect(result.data)
+        .toEqual({ key: '1' });
+      expect(repository.save).toHaveBeenCalled();
     });
   });
 

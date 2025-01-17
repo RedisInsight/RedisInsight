@@ -3,13 +3,11 @@ import {
   EuiButtonEmpty,
   EuiText
 } from '@elastic/eui'
-import { useFormikContext } from 'formik'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover/ConfirmationPopover'
-import { IPipeline } from 'uiSrc/slices/interfaces'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import Download from 'uiSrc/pages/rdi/instance/components/download/Download'
@@ -24,8 +22,6 @@ export interface Props {
 const FetchPipelinePopover = ({ onClose }: Props) => {
   const { loading, data } = useSelector(rdiPipelineSelector)
 
-  const { resetForm } = useFormikContext<IPipeline>()
-
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
   const dispatch = useDispatch()
@@ -33,7 +29,6 @@ const FetchPipelinePopover = ({ onClose }: Props) => {
   const handleRefreshClick = () => {
     dispatch(
       fetchRdiPipeline(rdiInstanceId, () => {
-        resetForm()
         onClose?.()
       })
     )

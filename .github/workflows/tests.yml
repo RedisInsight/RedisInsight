@@ -5,6 +5,7 @@ on:
     branches:
       - 'fe/**'
       - 'be/**'
+      - 'fe-be/**'
       - 'e2e/**'
 
   workflow_dispatch:

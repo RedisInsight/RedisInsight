@@ -7,6 +7,7 @@ import { store } from 'uiSrc/slices/store'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import MonacoLanguages from 'uiSrc/components/monaco-laguages'
 import AppInit from 'uiSrc/components/init/AppInit'
+import { removePagePlaceholder } from 'uiSrc/utils'
 import { Pages, Theme } from './constants'
 import { themeService } from './services'
 import { Config, GlobalSubscriptions, NavigationMenu, Notifications, ShortcutsFlyout } from './components'
@@ -41,8 +42,7 @@ const App = ({ children }: { children?: ReactElement[] }) => {
   const { loading: serverLoading } = useSelector(appInfoSelector)
   useEffect(() => {
     if (!serverLoading) {
-      const placeholderEl = document.getElementById('placeholder')
-      placeholderEl?.remove()
+      removePagePlaceholder()
     }
   }, [serverLoading])
   return (

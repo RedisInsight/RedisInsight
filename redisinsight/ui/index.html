@@ -21,7 +21,7 @@
   </script>
 
   <style>
-    #placeholder {
+    #page-placeholder {
       display: flex;
       background-color: black;
       width: 100vw;
@@ -33,7 +33,7 @@
       z-index: 100;
     }
 
-    #placeholder__icon {
+    #page-placeholder__icon {
       width: 28px;
       height: 28px;
       animation: nonstop-jump 1s ease-in-out infinite;
@@ -56,7 +56,7 @@
 
   <% if(isDev){ %>
     <style>
-      body #placeholder {
+      body #page-placeholder {
         display: none;
       }
     </style>
@@ -64,8 +64,8 @@
 </head>
 <body style="margin: 0">
   <div id="root"></div>
-  <div id="placeholder">
-    <div id="placeholder__icon"></div>
+  <div id="page-placeholder">
+    <div id="page-placeholder__icon"></div>
   </div>
   <script type="module" src="/%RI_INDEX_NAME%"></script>
 </body>

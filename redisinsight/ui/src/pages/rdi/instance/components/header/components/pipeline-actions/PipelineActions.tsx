@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import {
   EuiFlexGroup,
   EuiFlexItem,
@@ -36,7 +36,7 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
 
   const dispatch = useDispatch()
 
-  const actionPipelineCallback = (event: TelemetryEvent, result: IActionPipelineResultProps) => {
+  const actionPipelineCallback = useCallback((event: TelemetryEvent, result: IActionPipelineResultProps) => {
     sendEventTelemetry({
       event,
       eventData: {
@@ -45,7 +45,17 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
       }
     })
     dispatch(getPipelineStatusAction(rdiInstanceId))
-  }
+  }, [rdiInstanceId])
+
+  const resetPipeline = useCallback(() => {
+    dispatch(resetPipelineAction(
+      rdiInstanceId,
+      (result: IActionPipelineResultProps) =>
+        actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result),
+      (result: IActionPipelineResultProps) =>
+        actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result)
+    ))
+  }, [rdiInstanceId])
 
   const onReset = () => {
     sendEventTelemetry({
@@ -55,13 +65,7 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
         pipelineStatus,
       }
     })
-    dispatch(resetPipelineAction(
-      rdiInstanceId,
-      (result: IActionPipelineResultProps) =>
-        actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result),
-      (result: IActionPipelineResultProps) =>
-        actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result)
-    ))
+    resetPipeline()
   }
 
   const onStartPipeline = () => {
@@ -125,6 +129,7 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
         <DeployPipelineButton
           loading={deployLoading}
           disabled={disabled}
+          onReset={resetPipeline}
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false} style={{ margin: 0 }}>

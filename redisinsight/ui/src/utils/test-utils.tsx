@@ -61,6 +61,7 @@ import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 import { initialState as initialStateAppConnectivity } from 'uiSrc/slices/app/connectivity'
 import { initialState as initialStateAppInit } from 'uiSrc/slices/app/init'
+import { BrowserColumns } from 'uiSrc/constants'
 
 interface Options {
   initialState?: RootState
@@ -220,7 +221,7 @@ const waitForEuiPopoverVisible = async () => {
 }
 
 export const waitForStack = async (timeout = 0) => {
-  await waitFor(() => {}, { timeout })
+  await waitFor(() => { }, { timeout })
 }
 
 // mock useHistory

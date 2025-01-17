@@ -12,7 +12,8 @@ import {
   SearchHistoryMode,
   SortOrder,
   STRING_MAX_LENGTH,
-  ModulesKeyTypes
+  ModulesKeyTypes,
+  BrowserColumns
 } from 'uiSrc/constants'
 import {
   getApiErrorMessage,
@@ -79,6 +80,8 @@ export const initialState: KeysStore = {
   isBrowserFullScreen: false,
   searchMode: localStorageService?.get(BrowserStorageItem.browserSearchMode) ?? SearchMode.Pattern,
   viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
+  shownColumns: localStorageService?.get(BrowserStorageItem.browserShownColumns)
+    ?? [BrowserColumns.Size, BrowserColumns.TTL],
   data: {
     total: 0,
     scanned: 0,
@@ -421,7 +424,11 @@ const keysSlice = createSlice({
     },
     setSelectedKeyRefreshDisabled: (state, { payload }: PayloadAction<boolean>) => {
       state.selectedKey.isRefreshDisabled = payload
-    }
+    },
+    setShownColumns: (state, { payload }: PayloadAction<BrowserColumns[]>) => {
+      state.shownColumns = payload
+      localStorageService?.set(BrowserStorageItem.browserShownColumns, payload)
+    },
   },
 })
 
@@ -472,6 +479,7 @@ export const {
   deleteSearchHistorySuccess,
   deleteSearchHistoryFailure,
   setSelectedKeyRefreshDisabled,
+  setShownColumns
 } = keysSlice.actions
 
 // A selector
@@ -537,7 +545,7 @@ export function fetchPatternKeysAction(
           type,
           match: match || DEFAULT_SEARCH_MATCH,
           keysInfo: false,
-          scanThreshold
+          scanThreshold,
         },
         {
           params: { encoding },
@@ -1036,12 +1044,17 @@ export function fetchKeysMetadata(
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
+      const { shownColumns } = state.browser.keys
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id,
           ApiEndpoints.KEYS_METADATA
         ),
-        { keys, type: filter || undefined },
+        {
+          keys,
+          type: filter || undefined,
+          shownColumns
+        },
         { params: { encoding: state.app.info.encoding }, signal }
       )
 
@@ -1067,12 +1080,17 @@ export function fetchKeysMetadataTree(
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
+      const { shownColumns } = state.browser.keys
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id,
           ApiEndpoints.KEYS_METADATA
         ),
-        { keys: keys.map(([, nameBuffer]) => nameBuffer), type: filter || undefined },
+        {
+          keys: keys.map(([, nameBuffer]) => nameBuffer),
+          type: filter || undefined,
+          shownColumns
+        },
         { params: { encoding: state.app.info.encoding }, signal }
       )
 

@@ -38,13 +38,19 @@ describe('ListKeyInfoStrategy', () => {
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.Ttl, key],
-          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           [BrowserToolListCommands.LLen, key],
         ])
-        .mockResolvedValue([
+        .mockResolvedValueOnce([
           [null, -1],
-          [null, 50],
           [null, 10],
+        ]);
+
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
+          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+        ])
+        .mockResolvedValueOnce([
+          [null, 50],
         ]);
 
       const result = await strategy.getInfo(
@@ -55,22 +61,30 @@ describe('ListKeyInfoStrategy', () => {
 
       expect(result).toEqual(getKeyInfoResponse);
     });
-    it('should return size with null value', async () => {
+
+    it('should return size with null when memory usage fails', async () => {
       const replyError: ReplyError = {
         name: 'ReplyError',
         command: BrowserToolKeysCommands.MemoryUsage,
         message: "ERR unknown command 'memory'",
       };
+
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolKeysCommands.Ttl, key],
-          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           [BrowserToolListCommands.LLen, key],
         ])
-        .mockResolvedValue([
+        .mockResolvedValueOnce([
           [null, -1],
-          [replyError, null],
           [null, 10],
+        ]);
+
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
+          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+        ])
+        .mockResolvedValueOnce([
+          [replyError, null],
         ]);
 
       const result = await strategy.getInfo(
@@ -80,6 +94,30 @@ describe('ListKeyInfoStrategy', () => {
       );
 
       expect(result).toEqual({ ...getKeyInfoResponse, size: null });
+    });
+
+    it('should not check size when length >= 50,000', async () => {
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
+          [BrowserToolKeysCommands.Ttl, key],
+          [BrowserToolListCommands.LLen, key],
+        ])
+        .mockResolvedValueOnce([
+          [null, -1],
+          [null, 50000],
+        ]);
+
+      const result = await strategy.getInfo(
+        mockStandaloneRedisClient,
+        key,
+        RedisDataType.List,
+      );
+
+      expect(result).toEqual({
+        ...getKeyInfoResponse,
+        length: 50000,
+        size: -1
+      });
     });
   });
 });

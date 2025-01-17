@@ -37,8 +37,8 @@ export class ClusterScannerStrategy extends ScannerStrategy {
           }) => (
             host === node.host && port === node.port
           ) || (
-            natHost === node.host && natPort === node.port
-          ),
+              natHost === node.host && natPort === node.port
+            ),
         );
       });
 

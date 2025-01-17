@@ -29,7 +29,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { KeyTypes, ModulesKeyTypes, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { BrowserColumns, KeyTypes, ModulesKeyTypes, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
@@ -81,7 +81,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const selectedKey = useSelector(selectedKeySelector)
   const { nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered, searchMode, deleting } = useSelector(keysSelector)
+  const { isSearched, isFiltered, searchMode, deleting, shownColumns } = useSelector(keysSelector)
   const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
@@ -95,6 +95,9 @@ const KeyList = forwardRef((props: Props, ref) => {
   const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
 
   const dispatch = useDispatch()
+
+  const prevGetSize = useRef(shownColumns?.includes(BrowserColumns.Size))
+  const prevGetTtl = useRef(shownColumns?.includes(BrowserColumns.TTL))
 
   useImperativeHandle(ref, () => ({
     handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
@@ -130,6 +133,29 @@ const KeyList = forwardRef((props: Props, ref) => {
     onRowsRendered(startIndex, lastIndex)
     rerender({})
   }, [keysState.keys])
+
+  useEffect(() => {
+    const isSizeReenabled = !prevGetSize.current && shownColumns.includes(BrowserColumns.Size)
+    const isTtlReenabled = !prevGetTtl.current && shownColumns.includes(BrowserColumns.TTL)
+
+    if ((isSizeReenabled || isTtlReenabled) && firstDataLoaded && itemsRef.current.length > 0) {
+      cancelAllMetadataRequests()
+      controller.current = new AbortController()
+
+      const { startIndex, lastIndex } = renderedRowsIndexesRef.current
+      const visibleItems = bufferFormatRangeItems(
+        itemsRef.current,
+        startIndex,
+        lastIndex,
+        formatItem
+      )
+
+      getMetadata(startIndex, visibleItems, true)
+    }
+
+    prevGetSize.current = shownColumns.includes(BrowserColumns.Size)
+    prevGetTtl.current = shownColumns.includes(BrowserColumns.TTL)
+  }, [shownColumns])
 
   const cancelAllMetadataRequests = () => {
     controller.current?.abort()
@@ -232,23 +258,31 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const getMetadata = useCallback((
-    startIndex: number,
-    itemsInit: IKeyPropTypes[] = []
+    initialStartIndex: number,
+    itemsInit: IKeyPropTypes[] = [],
+    forceRefresh?: boolean
   ): void => {
     const isSomeNotUndefined = ({ type, size, length }: IKeyPropTypes) =>
       (!commonFilterType && !isUndefined(type)) || !isUndefined(size) || !isUndefined(length)
 
-    const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
-    if (firstEmptyItemIndex === -1) return
+    let startIndex = initialStartIndex
+    let itemsToProcess = itemsInit
 
-    const emptyItems = reject(itemsInit, isSomeNotUndefined)
+    if (!forceRefresh) {
+      const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
+      if (firstEmptyItemIndex === -1) return
+
+      startIndex = initialStartIndex + firstEmptyItemIndex
+      itemsToProcess = itemsInit.slice(firstEmptyItemIndex)
+    }
+
+    const itemsToFetch = forceRefresh ? itemsToProcess : reject(itemsToProcess, isSomeNotUndefined)
 
     dispatch(fetchKeysMetadata(
-      emptyItems.map(({ name }) => name),
+      itemsToFetch.map(({ name }) => name),
       commonFilterType,
       controller.current?.signal,
-      (loadedItems) =>
-        onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
+      (loadedItems) => onSuccessFetchedMetadata(startIndex, loadedItems),
       () => { rerender({}) }
     ))
   }, [commonFilterType])
@@ -282,7 +316,7 @@ const KeyList = forwardRef((props: Props, ref) => {
         <KeyRowName nameString={cellData} shortName={cellData} />
       )
     },
-    {
+    shownColumns.includes(BrowserColumns.TTL) ? {
       id: 'ttl',
       label: 'TTL',
       absoluteWidth: 86,
@@ -292,8 +326,8 @@ const KeyList = forwardRef((props: Props, ref) => {
       render: (cellData: number, { nameString }: IKeyPropTypes, _expanded, rowIndex) => (
         <KeyRowTTL ttl={cellData} nameString={nameString} deletePopoverId={deletePopoverIndex} rowId={rowIndex || 0} />
       )
-    },
-    {
+    } : null,
+    shownColumns.includes(BrowserColumns.Size) ? {
       id: 'size',
       label: 'Size',
       absoluteWidth: 90,
@@ -319,8 +353,8 @@ const KeyList = forwardRef((props: Props, ref) => {
           handleDelete={handleRemoveKey}
         />
       )
-    },
-  ]
+    } : null,
+  ].filter((el) => !!el)
 
   const noItemsMessage = NoItemsMessage()
 

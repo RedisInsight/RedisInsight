@@ -14,8 +14,8 @@ if not exist %PLUGINS_VENDOR_DIR% mkdir %PLUGINS_VENDOR_DIR%
 xcopy ".\vendor\." "%PLUGINS_VENDOR_DIR%" /s /e /y
 
 :: Install developing tools for plugins
-set REDISEARCH_DIR=".\redisinsight\ui\src\packages"
-call yarn --cwd "%REDISEARCH_DIR%"
+set PACKAGES_DIR=".\redisinsight\ui\src\packages"
+call yarn --cwd "%PACKAGES_DIR%"
 
 :: Install plugins dependencies
 set REDISEARCH_DIR=".\redisinsight\ui\src\packages\redisearch"
@@ -34,7 +34,7 @@ set CLIENTS_LIST_DIR=".\redisinsight\ui\src\packages\clients-list"
 call yarn --cwd "%CLIENTS_LIST_DIR%"
 
 ::  Build all plugins and common libraries
-call yarn --cwd "%REDISEARCH_DIR%" build
+call yarn --cwd "%PACKAGES_DIR%" build
 
 :: Copy common libraries to plugins
 set COMMON_DIR=".\redisinsight\ui\src\packages\common"

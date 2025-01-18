@@ -74,6 +74,8 @@ const rules = {
     'object-curly-newline': 'off',
     'import/prefer-default-export': 'off',
     'comma-dangle': 'off',
+    'no-unused-vars': 'error',
+    'no-undef': 'error',
     'import/order': [
       1,
       {

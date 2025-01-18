@@ -1,5 +1,7 @@
 import globals from 'globals';
 import pluginJs from '@eslint/js';
+// TODO: check if others has this problem
+// eslint-disable-next-line import/no-unresolved
 import tseslint from 'typescript-eslint';
 import pluginReact from 'eslint-plugin-react';
 import stylistic from '@stylistic/eslint-plugin';

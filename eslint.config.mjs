@@ -8,13 +8,8 @@ import importPlugin from 'eslint-plugin-import';
 
 const ignored = {
   ignores: [
-    'redisinsight/ui',
-    'redisinsight/api',
-    'redisinsight/api',
-    'tests/e2e',
     '**/logs',
     '**/*.log',
-    'redisinsight/api/test/test-runs/coverage',
     '**/pids',
     '**/*.pid',
     '**/*.seed',
@@ -42,10 +37,14 @@ const ignored = {
     '**/*.css.d.ts',
     '**/*.sass.d.ts',
     '**/*.scss.d.ts',
-    'redisinsight/ui/src/packages/redisgraph',
-    'redisinsight/ui/src/packages/redistimeseries-app',
+
     'report',
     '**/__mocks__',
+    'tests/e2e',
+
+    'redisinsight/ui/src/packages/redisgraph',
+    'redisinsight/ui/src/packages/redistimeseries-app',
+    'redisinsight/api/test/test-runs/coverage',
   ],
 };
 

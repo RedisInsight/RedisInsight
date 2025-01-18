@@ -1,12 +1,13 @@
 import globals from 'globals';
 import pluginJs from '@eslint/js';
-// TODO: check if others has this problem
-// eslint-disable-next-line import/no-unresolved
-import tseslint from 'typescript-eslint';
+import { configs } from 'typescript-eslint';
 import pluginReact from 'eslint-plugin-react';
 import stylistic from '@stylistic/eslint-plugin';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
+import eslintPluginImportX from 'eslint-plugin-import-x';
+import tsParser from '@typescript-eslint/parser';
+import path from 'path';
 
 const ignored = {
   ignores: [
@@ -54,13 +55,7 @@ const rules = {
   rules: {
     '@stylistic/indent': ['error', 2],
     '@stylistic/no-multiple-empty-lines': ['error'],
-    quotes: [
-      2,
-      'single',
-      {
-        avoidEscape: true,
-      },
-    ],
+    quotes: ['error', 'single', { avoidEscape: true }],
     'max-len': [
       'error',
       {
@@ -79,32 +74,20 @@ const rules = {
     'no-unused-vars': 'error',
     'no-undef': 'error',
     'import/order': [
-      1,
+      'warn',
       {
         groups: [
           'external',
           'builtin',
           'internal',
-          'sibling',
           'parent',
+          'sibling',
           'index',
         ],
         pathGroups: [
-          {
-            pattern: 'desktopSrc/**',
-            group: 'internal',
-            position: 'after',
-          },
-          {
-            pattern: 'uiSrc/**',
-            group: 'internal',
-            position: 'after',
-          },
-          {
-            pattern: 'apiSrc/**',
-            group: 'internal',
-            position: 'after',
-          },
+          { pattern: 'desktopSrc/**', group: 'internal', position: 'after' },
+          { pattern: 'uiSrc/**', group: 'internal', position: 'after' },
+          { pattern: 'apiSrc/**', group: 'internal', position: 'after' },
         ],
         warnOnUnassignedImports: true,
         pathGroupsExcludedImportTypes: ['builtin'],
@@ -113,42 +96,54 @@ const rules = {
   },
 };
 
+const resolverSettings = {
+  settings: {
+    'import/resolver': {
+      typescript: {
+        project: path.resolve('./tsconfig.json'),
+      },
+    },
+  },
+};
+
 /** @type {import('eslint').Linter.Config[]} */
 export default [
+  ignored,
   eslintConfigPrettier,
   importPlugin.flatConfigs.recommended,
-  ignored,
+  eslintPluginImportX.flatConfigs.recommended,
+  eslintPluginImportX.flatConfigs.typescript,
   {
-    plugins: {
-      '@stylistic': stylistic,
-    },
+    plugins: { '@stylistic': stylistic },
+    ...resolverSettings,
   },
   rules,
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
-  { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
   {
-    ...pluginReact.configs.flat.recommended,
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parser: tsParser,
+      globals: { ...globals.browser, ...globals.node },
+    },
+  },
+  pluginJs.configs.recommended,
+  {
     settings: {
       react: {
         version: 'detect',
       },
     },
   },
-  pluginReact.configs.flat['jsx-runtime'],
   {
     files: ['**/*.ts', '**/*.tsx'],
-
-    rules: {
-      semi: 'off',
-    },
+    rules: { semi: 'off' },
   },
   {
     files: ['**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'],
-
-    rules: {
-      semi: ['error', 'always'],
-    },
+    rules: { semi: ['error', 'always'] },
   },
+  ...configs.recommended,
+  pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat['jsx-runtime'],
 ];

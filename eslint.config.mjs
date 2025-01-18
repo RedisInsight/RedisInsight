@@ -66,7 +66,18 @@ const rules = {
   'object-curly-newline': 'off',
   'import/prefer-default-export': 'off',
   'comma-dangle': 'off',
-  'no-unused-vars': 'error',
+  '@typescript-eslint/no-unused-vars': [
+    'error',
+    {
+      args: 'all',
+      argsIgnorePattern: '^_',
+      caughtErrors: 'all',
+      caughtErrorsIgnorePattern: '^_',
+      destructuredArrayIgnorePattern: '^_',
+      varsIgnorePattern: '^_',
+      ignoreRestSiblings: true,
+    },
+  ],
   'no-undef': 'error',
   'import/order': [
     'warn',

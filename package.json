@@ -210,6 +210,7 @@
     "vite": "^5.4.9",
     "vite-bundle-visualizer": "1.0.1",
     "vite-plugin-compression2": "^1.1.0",
+    "vite-plugin-ejs": "^1.7.0",
     "vite-plugin-electron": "^0.28.6",
     "vite-plugin-electron-renderer": "^0.14.5",
     "vite-plugin-react-click-to-component": "^3.0.0",

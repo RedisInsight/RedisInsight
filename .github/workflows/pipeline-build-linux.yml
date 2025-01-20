@@ -78,6 +78,13 @@ jobs:
         fi
 
     - uses: actions/upload-artifact@v4
+      name: Upload vendor for plugins
+      with:
+        name: vendor-plugins
+        path: |
+          ./vendor
+
+    - uses: actions/upload-artifact@v4
       name: Upload linux builds
       with:
         name: linux-builds

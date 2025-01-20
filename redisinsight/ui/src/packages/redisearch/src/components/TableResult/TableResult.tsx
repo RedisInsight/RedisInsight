@@ -14,10 +14,10 @@ import { CommandArgument, Command } from '../../constants'
 import { formatLongName, replaceSpaces } from '../../utils'
 
 export interface Props {
-  query: string;
-  result: any;
-  matched?: number;
-  cursorId?: null | number;
+  query: string
+  result: any
+  matched?: number
+  cursorId?: null | number
 }
 
 const loadingMessage = 'loading...'

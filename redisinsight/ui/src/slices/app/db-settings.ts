@@ -67,13 +67,13 @@ export function fetchDBSettings(onSuccessAction?: (payload: {
     try {
       const { data, status } = await getDbSettings(id)
       if (isStatusSuccessful(status)) {
-        getDBSettingsSuccess({ id, data })
+        dispatch(getDBSettingsSuccess({ id, data }))
         onSuccessAction?.({
           id,
           data
         })
       } else {
-        getDBSettingsFailure(data)
+        dispatch(getDBSettingsFailure(data))
         onFailAction?.()
       }
     } catch (error) {

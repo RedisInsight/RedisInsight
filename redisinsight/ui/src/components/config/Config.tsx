@@ -83,7 +83,7 @@ const Config = () => {
   useEffect(() => {
     if (id) {
       // fetch db settings and store them in local storage
-      dispatch(fetchDBSettings((payload: {
+      dispatch(fetchDBSettings(id, (payload: {
         id: string,
         data: DatabaseSettingsData
       }) => {

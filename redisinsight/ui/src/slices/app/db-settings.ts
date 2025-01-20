@@ -50,18 +50,15 @@ export const appDBSettingsSelector = (state: RootState) => state.app.dbSettings
 export default appDbSettingsSlice.reducer
 
 // Asynchronous thunk action
-export function fetchDBSettings(onSuccessAction?: (payload: {
+export function fetchDBSettings(id: string, onSuccessAction?: (payload: {
   id: string,
   data: DatabaseSettingsData
 }) => void, onFailAction?: () => void) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+  return async (dispatch: AppDispatch) => {
     dispatch(getDBSettings())
-
-    const state = stateInit()
-    const { id } = state.connections.instances.connectedInstance
-
     if (!id) {
-      getDBSettingsFailure('DB not connected')
+      dispatch(getDBSettingsFailure('DB not connected'))
+      onFailAction?.()
       return
     }
     try {

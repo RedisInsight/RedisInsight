@@ -12,8 +12,29 @@ export class HashKeyInfoStrategy extends KeyInfoStrategy {
     client: RedisClient,
     key: RedisString,
     type: string,
+    getSize: boolean,
   ): Promise<GetKeyInfoResponse> {
     this.logger.debug(`Getting ${RedisDataType.Hash} type info.`);
+
+    if (getSize !== false) {
+      const [
+        [, ttl = null],
+        [, length = null],
+        [, size = null],
+      ] = await client.sendPipeline([
+        [BrowserToolKeysCommands.Ttl, key],
+        [BrowserToolHashCommands.HLen, key],
+        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+      ]) as [any, number][];
+
+      return {
+        name: key,
+        type,
+        ttl,
+        size,
+        length,
+      };
+    }
 
     const [
       [, ttl = null],
@@ -38,5 +59,6 @@ export class HashKeyInfoStrategy extends KeyInfoStrategy {
       size,
       length,
     };
+
   }
 }

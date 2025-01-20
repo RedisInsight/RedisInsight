@@ -12,8 +12,29 @@ export class ZSetKeyInfoStrategy extends KeyInfoStrategy {
     client: RedisClient,
     key: RedisString,
     type: string,
+    getSize: boolean,
   ): Promise<GetKeyInfoResponse> {
     this.logger.debug(`Getting ${RedisDataType.ZSet} type info.`);
+
+    if (getSize !== false) {
+      const [
+        [, ttl = null],
+        [, length = null],
+        [, size = null],
+      ] = await client.sendPipeline([
+        [BrowserToolKeysCommands.Ttl, key],
+        [BrowserToolZSetCommands.ZCard, key],
+        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+      ]) as [any, number][];
+
+      return {
+        name: key,
+        type,
+        ttl,
+        size,
+        length,
+      };
+    }
 
     const [
       [, ttl = null],

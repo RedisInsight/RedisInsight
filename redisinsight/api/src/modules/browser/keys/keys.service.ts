@@ -121,6 +121,7 @@ export class KeysService {
   public async getKeyInfo(
     clientMetadata: ClientMetadata,
     key: RedisString,
+    getSize: boolean = false,
   ): Promise<GetKeyInfoResponse> {
     try {
       this.logger.debug('Getting key info.', clientMetadata);
@@ -143,7 +144,7 @@ export class KeysService {
         );
       }
 
-      const result = await this.keyInfoProvider.getStrategy(type).getInfo(client, key, type);
+      const result = await this.keyInfoProvider.getStrategy(type).getInfo(client, key, type, getSize);
       this.logger.debug('Succeed to get key info', clientMetadata);
 
       this.recommendationService.checkMulti(

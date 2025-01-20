@@ -672,12 +672,16 @@ export function fetchKeyInfo(
     try {
       const state = stateInit()
       const { encoding } = state.app.info
+      const { shownColumns } = state.browser.keys
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEY_INFO
         ),
-        { keyName: key },
+        {
+          keyName: key,
+          getSize: shownColumns.includes(BrowserColumns.Size)
+        },
         { params: { encoding } }
       )
 
@@ -738,12 +742,16 @@ export function refreshKeyInfoAction(key: RedisResponseBuffer) {
     try {
       const state = stateInit()
       const { encoding } = state.app.info
+      const { shownColumns } = state.browser.keys
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEY_INFO
         ),
-        { keyName: key },
+        {
+          keyName: key,
+          getSize: shownColumns.includes(BrowserColumns.Size)
+        },
         { params: { encoding } }
       )
       if (isStatusSuccessful(status)) {

@@ -11,5 +11,6 @@ export abstract class KeyInfoStrategy {
     client: RedisClient,
     key: RedisString,
     type: string,
+    getSize: boolean,
   ): Promise<GetKeyInfoResponse>;
 }

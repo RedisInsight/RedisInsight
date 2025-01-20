@@ -1,6 +1,6 @@
 import globals from 'globals';
 import pluginJs from '@eslint/js';
-import { configs } from 'typescript-eslint';
+import { configs as tsConfigs } from 'typescript-eslint';
 import pluginReact from 'eslint-plugin-react';
 import stylistic from '@stylistic/eslint-plugin';
 import eslintConfigPrettier from 'eslint-config-prettier';
@@ -83,6 +83,7 @@ const rules = {
   'import/order': [
     'warn',
     {
+      // TODO: swap "external" and "builtin"
       groups: ['external', 'builtin', 'internal', 'parent', 'sibling', 'index'],
       pathGroups: [
         { pattern: 'desktopSrc/**', group: 'internal', position: 'after' },
@@ -94,7 +95,7 @@ const rules = {
     },
   ],
   'react/no-array-index-key': 'error',
-  'react/display-name': 0,
+  'react/display-name': 'off',
 };
 
 const resolverSettings = {
@@ -125,6 +126,14 @@ const fileSpecificConfigs = [
   },
 ];
 
+const tsConfigOverrides = {
+  files: ['**/*.ts', '**/*.tsx'],
+  rules: {
+    // TODO: Remove these
+    '@typescript-eslint/no-explicit-any': 'off',
+  },
+};
+
 export default [
   { ignores: ignored },
   eslintConfigPrettier,
@@ -145,5 +154,6 @@ export default [
     },
   },
   ...fileSpecificConfigs,
-  ...configs.recommended,
+  ...tsConfigs.recommended,
+  tsConfigOverrides,
 ];

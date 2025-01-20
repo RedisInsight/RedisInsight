@@ -74,8 +74,9 @@ const rules = {
       caughtErrors: 'all',
       caughtErrorsIgnorePattern: '^_',
       destructuredArrayIgnorePattern: '^_',
-      varsIgnorePattern: '^_',
       ignoreRestSiblings: true,
+      // TODO: React v. >17 should not require explicit import, so check if we really need it
+      varsIgnorePattern: '^(_|React)$', // Ignore variables starting with "_" or named "React"
     },
   ],
   'no-undef': 'error',
@@ -92,6 +93,8 @@ const rules = {
       pathGroupsExcludedImportTypes: ['builtin'],
     },
   ],
+  'react/no-array-index-key': 'error',
+  'react/display-name': 0,
 };
 
 const resolverSettings = {
@@ -129,6 +132,8 @@ export default [
   eslintPluginImportX.flatConfigs.recommended,
   eslintPluginImportX.flatConfigs.typescript,
   { plugins: { '@stylistic': stylistic }, ...resolverSettings },
+  pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat['jsx-runtime'],
   { rules },
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'], languageOptions },
   pluginJs.configs.recommended,
@@ -141,6 +146,4 @@ export default [
   },
   ...fileSpecificConfigs,
   ...configs.recommended,
-  pluginReact.configs.flat.recommended,
-  pluginReact.configs.flat['jsx-runtime'],
 ];

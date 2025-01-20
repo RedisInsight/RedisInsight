@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-this-in-sfc */
-import { EuiButton, EuiButtonIcon, EuiCheckbox, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiButtonIcon, EuiCheckbox, EuiFlexItem, EuiFlexGroup, EuiFormRow, EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { FC, Ref, SVGProps, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -289,21 +289,35 @@ const KeysHeader = (props: Props) => {
                       </EuiButton>
                     )}
                   >
-                    <EuiToolTip
-                      content="Hide the key size to optimize space and avoid performance issues when working with large keys."
-                      position="top"
-                      display="inlineBlock"
-                      anchorClassName="flex-row"
-                    >
-                      <EuiCheckbox
-                        id="show-key-size"
-                        name="show-key-size"
-                        label="Key size"
-                        checked={shownColumns.includes(BrowserColumns.Size)}
-                        onChange={(e) => changeColumnsShown(e.target.checked, BrowserColumns.Size)}
-                        data-testid="show-key-size"
-                      />
-                    </EuiToolTip>
+                    <EuiFlexGroup alignItems="center" gutterSize="m">
+                      <EuiFlexItem>
+                        <EuiCheckbox
+                          id="show-key-size"
+                          name="show-key-size"
+                          label="Key size"
+                          checked={shownColumns.includes(BrowserColumns.Size)}
+                          onChange={(e) => changeColumnsShown(e.target.checked, BrowserColumns.Size)}
+                          data-testid="show-key-size"
+                          className={styles.checkbox}
+                        />
+                      </EuiFlexItem>
+                      <EuiFlexItem>
+                        <EuiToolTip
+                          content="Hide the key size to optimize space and avoid performance issues when working with large keys."
+                          position="top"
+                          display="inlineBlock"
+                          anchorClassName="flex-row"
+                        >
+                          <EuiIcon
+                            className={styles.infoIcon}
+                            type="iInCircle"
+                            size="m"
+                            style={{ cursor: 'pointer' }}
+                            data-testid="key-size-info-icon"
+                          />
+                        </EuiToolTip>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
                     <EuiCheckbox
                       id="show-ttl"
                       name="show-ttl"

@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-this-in-sfc */
-import { EuiButton, EuiButtonIcon, EuiCheckbox, EuiFlexItem, EuiFlexGroup, EuiFormRow, EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiButtonIcon, EuiCheckbox, EuiFlexItem, EuiFlexGroup, EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { FC, Ref, SVGProps, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'

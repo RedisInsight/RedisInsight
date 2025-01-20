@@ -7,7 +7,7 @@ import {
 import { DataAsJsonString } from 'src/common/decorators';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
-@Entity('database-settings')
+@Entity('database_settings')
 export class DatabaseSettingsEntity {
   @PrimaryGeneratedColumn()
   @Expose()

@@ -1694,13 +1694,17 @@ describe('keys slice', () => {
             )
           )
 
+          const expectedData = {
+            keys: data.map(({ name }) => ({ name })),
+            type: undefined,
+          }
+
+          expectedData.getTtl = shownColumns.includes(BrowserColumns.TTL)
+          expectedData.getSize = shownColumns.includes(BrowserColumns.Size)
+
           expect(apiServiceMock).toBeCalledWith(
             '/databases//keys/get-metadata',
-            {
-              keys: data.map(({ name }) => ({ name })),
-              type: undefined,
-              shownColumns,
-            },
+            expectedData,
             { params: { encoding: 'buffer' }, signal: controller.signal },
           )
 
@@ -1771,14 +1775,18 @@ describe('keys slice', () => {
             )
           )
 
+          const expectedData = {
+            keys: data.map(({ name }) => (name)),
+            type: undefined
+          }
+
+          expectedData.getTtl = shownColumns.includes(BrowserColumns.TTL)
+          expectedData.getSize = shownColumns.includes(BrowserColumns.Size)
+
           // Assert
           expect(apiServiceMock).toBeCalledWith(
             '/databases//keys/get-metadata',
-            {
-              keys: data.map(({ name }) => (name)),
-              type: undefined,
-              shownColumns,
-            },
+            expectedData,
             { params: { encoding: 'buffer' }, signal: controller.signal },
           )
 

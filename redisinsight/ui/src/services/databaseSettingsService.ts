@@ -15,7 +15,7 @@ export const updateDbSettings = async (instanceId: String, updateData: DatabaseS
   const url = getDbSettingsUrl(instanceId)
   const { data: { data }, status } = await apiService.post<{
     data: DatabaseSettingsData
-  }>(url, updateData)
+  }>(url, { data: updateData })
 
   return { data, status }
 }

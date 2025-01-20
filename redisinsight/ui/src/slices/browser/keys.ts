@@ -1053,7 +1053,8 @@ export function fetchKeysMetadata(
         {
           keys,
           type: filter || undefined,
-          shownColumns
+          getSize: shownColumns.includes(BrowserColumns.Size),
+          getTtl: shownColumns.includes(BrowserColumns.TTL),
         },
         { params: { encoding: state.app.info.encoding }, signal }
       )
@@ -1089,7 +1090,8 @@ export function fetchKeysMetadataTree(
         {
           keys: keys.map(([, nameBuffer]) => nameBuffer),
           type: filter || undefined,
-          shownColumns
+          getSize: shownColumns.includes(BrowserColumns.Size),
+          getTtl: shownColumns.includes(BrowserColumns.TTL),
         },
         { params: { encoding: state.app.info.encoding }, signal }
       )

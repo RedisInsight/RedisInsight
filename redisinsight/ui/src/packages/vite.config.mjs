@@ -6,12 +6,12 @@ import { ViteEjsPlugin } from 'vite-plugin-ejs'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { resolve } from 'path'
 
-const pluginsDir = [
-  'redisearch',
-  'clients-list',
-  'redisgraph',
-  'redistimeseries-app',
-  'ri-explain',
+const riPlugins = [
+  { name: 'redisearch', entry: 'src/main.tsx' },
+  { name: 'clients-list', entry: 'src/main.tsx' },
+  { name: 'redisgraph', entry: 'src/main.tsx' },
+  { name: 'redistimeseries-app', entry: 'src/main.tsx' },
+  { name: 'ri-explain', entry: 'src/main.tsx' },
 ]
 
 /**
@@ -26,7 +26,7 @@ export default defineConfig({
     // Copy public static for all plugins
     viteStaticCopy({
       silent: true,
-      targets: pluginsDir.map((pluginDir) => ({
+      targets: riPlugins.map(({ name: pluginDir }) => ({
         src: `./${pluginDir}/public/*`,
         dest: `./${pluginDir}/dist/`,
       }))
@@ -53,7 +53,7 @@ export default defineConfig({
     lib: {
       // Multi entries
       entry: Object.fromEntries(
-        pluginsDir.map((pluginDir) => [pluginDir, resolve(__dirname, `./${pluginDir}/src/main.tsx`)])
+        riPlugins.map(({ name: pluginDir, entry }) => [pluginDir, resolve(__dirname, `./${pluginDir}/${entry}`)])
       ),
     },
 

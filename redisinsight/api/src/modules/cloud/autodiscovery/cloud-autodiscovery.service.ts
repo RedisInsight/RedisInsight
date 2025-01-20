@@ -18,9 +18,9 @@ import { CloudAutodiscoveryAnalytics } from 'src/modules/cloud/autodiscovery/clo
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
 import { wrapHttpError } from 'src/common/utils';
-import { CloudUserCapiService } from 'src/modules/cloud/user/cloud-user.capi.service';
+import { CloudOauthCapiService } from 'src/modules/cloud/oauth/cloud-oauth.capi.service';
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
-import { CloudAccountInfo } from 'src/modules/cloud/user/models';
+import { CloudAccountInfo } from 'src/modules/cloud/oauth/models';
 import { CloudSubscription, CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { CloudDatabase, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
 import config from 'src/utils/config';
@@ -34,7 +34,7 @@ export class CloudAutodiscoveryService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly cloudSubscriptionCapiService: CloudSubscriptionCapiService,
-    private readonly cloudUserCapiService: CloudUserCapiService,
+    private readonly cloudUserCapiService: CloudOauthCapiService,
     private readonly cloudDatabaseCapiService: CloudDatabaseCapiService,
     private readonly analytics: CloudAutodiscoveryAnalytics,
   ) {}

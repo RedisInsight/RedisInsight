@@ -41,6 +41,7 @@ export const defaultConfig = {
     type: process.env.RI_APP_TYPE,
     resourcesBaseUrl: process.env.RI_RESOURCES_BASE_URL ?? apiUrl, // todo: no usage found
     unauthenticatedRedirect: process.env.RI_401_REDIRECT_URL ?? '',
+    smConsoleRedirect: process.env.RI_SM_REDIRECT_URL ?? '',
     defaultTheme: process.env.RI_DEFAULT_THEME ?? 'DARK',
     lazyLoad: booleanEnv('RI_ROUTES_LAZY_LOAD', false),
     routesExcludedByEnv: booleanEnv('RI_ROUTES_EXCLUDED_BY_ENV', false),

@@ -3,7 +3,7 @@ import { wrapCloudCapiError } from 'src/modules/cloud/common/exceptions';
 import { CloudCapiProvider } from 'src/modules/cloud/common/providers/cloud.capi.provider';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { AxiosResponse } from 'axios';
-import { ICloudCapiAccount } from 'src/modules/cloud/user/models';
+import { ICloudCapiAccount } from 'src/modules/cloud/oauth/models';
 
 @Injectable()
 export class CloudUserCapiProvider extends CloudCapiProvider {

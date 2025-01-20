@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import {
   ICloudApiAccount, ICloudApiUser,
-} from 'src/modules/cloud/user/models';
+} from 'src/modules/cloud/oauth/models';
 import { wrapCloudApiError } from 'src/modules/cloud/common/exceptions';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudApiProvider } from 'src/modules/cloud/common/providers/cloud.api.provider';

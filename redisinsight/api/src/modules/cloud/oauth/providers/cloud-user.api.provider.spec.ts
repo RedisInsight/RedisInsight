@@ -11,7 +11,7 @@ import {
   mockCloudSessionService,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
-import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
+import { CloudUserApiProvider } from 'src/modules/cloud/oauth/providers/cloud-user.api.provider';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;

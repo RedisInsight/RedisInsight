@@ -18,7 +18,7 @@ import {
   mockServer, mockCapiUnauthorizedError, mockCloudApiCapiAccessKey, mockCloudSession,
 } from 'src/__mocks__';
 import { when, resetAllWhenMocks } from 'jest-when';
-import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudOauthApiService } from 'src/modules/cloud/oauth/cloud-oauth.api.service';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 import { ServerService } from 'src/modules/server/server.service';
 import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key.analytics';
@@ -33,7 +33,7 @@ mockedAxios.create = jest.fn(() => mockedAxios);
 describe('CloudCapiKeyService', () => {
   let service: CloudCapiKeyService;
   let repository: MockType<CloudCapiKeyRepository>;
-  let cloudUserApiService: MockType<CloudUserApiService>;
+  let cloudUserApiService: MockType<CloudOauthApiService>;
   let cloudSessionService: MockType<CloudSessionService>;
   let serverService: MockType<ServerService>;
 
@@ -50,7 +50,7 @@ describe('CloudCapiKeyService', () => {
           useFactory: mockCloudCapiKeyRepository,
         },
         {
-          provide: CloudUserApiService,
+          provide: CloudOauthApiService,
           useFactory: mockCloudUserApiService,
         },
         {
@@ -70,7 +70,7 @@ describe('CloudCapiKeyService', () => {
 
     service = await module.get(CloudCapiKeyService);
     repository = await module.get(CloudCapiKeyRepository);
-    cloudUserApiService = await module.get(CloudUserApiService);
+    cloudUserApiService = await module.get(CloudOauthApiService);
     cloudSessionService = await module.get(CloudSessionService);
     serverService = await module.get(ServerService);
 
@@ -150,7 +150,7 @@ describe('CloudCapiKeyService', () => {
     });
     it('Should throw CloudApiBadRequestException', async () => {
       cloudUserApiService.getCloudUser.mockResolvedValue(null);
-      CloudUserApiService.getCurrentAccount(null);
+      CloudOauthApiService.getCurrentAccount(null);
       await expect(service['ensureCapiKeys'](mockSessionMetadata, mockUtm))
         .rejects.toThrowError(CloudApiBadRequestException);
     });

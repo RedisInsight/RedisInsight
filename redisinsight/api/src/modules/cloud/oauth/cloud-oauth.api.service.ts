@@ -1,12 +1,12 @@
 import { find } from 'lodash';
 import { Injectable, Logger } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
-import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
-import { CloudUser, CloudUserAccount } from 'src/modules/cloud/user/models';
+import { OauthUserRepository } from 'src/modules/cloud/oauth/repositories/oauth-user.repository';
+import { CloudOauthUser, CloudUserAccount } from 'src/modules/cloud/oauth/models';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 import { wrapHttpError } from 'src/common/utils';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
-import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
+import { CloudUserApiProvider } from 'src/modules/cloud/oauth/providers/cloud-user.api.provider';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 import { CloudSession } from 'src/modules/cloud/session/models/cloud-session';
@@ -14,12 +14,12 @@ import { ServerService } from 'src/modules/server/server.service';
 import { isValidToken } from './utils';
 
 @Injectable()
-export class CloudUserApiService {
+export class CloudOauthApiService {
   private logger = new Logger('CloudUserApiService');
 
   constructor(
     private readonly cloudAuthService: CloudAuthService,
-    private readonly repository: CloudUserRepository,
+    private readonly repository: OauthUserRepository,
     private readonly sessionService: CloudSessionService,
     private readonly api: CloudUserApiProvider,
     private readonly serverService: ServerService,
@@ -29,7 +29,7 @@ export class CloudUserApiService {
    * Find current account in accounts list by currentAccountId
    * @param user
    */
-  static getCurrentAccount(user: CloudUser): CloudUserAccount {
+  static getCurrentAccount(user: CloudOauthUser): CloudUserAccount {
     return find(user?.accounts, { id: user?.currentAccountId });
   }
 
@@ -149,7 +149,7 @@ export class CloudUserApiService {
 
       const userData = await this.api.getCurrentUser(session);
 
-      const user: CloudUser = {
+      const user: CloudOauthUser = {
         id: +userData.id,
         name: userData.name,
         currentAccountId: +userData.current_account_id,
@@ -178,7 +178,7 @@ export class CloudUserApiService {
    * @param forceSync
    * @param utm
    */
-  async getCloudUser(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudUser> {
+  async getCloudUser(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudOauthUser> {
     try {
       await this.ensureCloudUser(sessionMetadata, forceSync, utm);
 
@@ -194,7 +194,7 @@ export class CloudUserApiService {
    * @param forceSync
    * @param utm
    */
-  async me(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudUser> {
+  async me(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudOauthUser> {
     return this.api.callWithAuthRetry(
       sessionMetadata.sessionId,
       async () => this.getCloudUser(sessionMetadata, forceSync, utm),
@@ -238,7 +238,7 @@ export class CloudUserApiService {
    * @param sessionMetadata
    * @param accountId
    */
-  async setCurrentAccount(sessionMetadata: SessionMetadata, accountId: string | number): Promise<CloudUser> {
+  async setCurrentAccount(sessionMetadata: SessionMetadata, accountId: string | number): Promise<CloudOauthUser> {
     return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
       try {
         await this.ensureCloudUser(sessionMetadata);
@@ -262,7 +262,7 @@ export class CloudUserApiService {
    * @param sessionMetadata
    * @param data
    */
-  async updateUser(sessionMetadata: SessionMetadata, data: Partial<CloudUser>): Promise<CloudUser> {
+  async updateUser(sessionMetadata: SessionMetadata, data: Partial<CloudOauthUser>): Promise<CloudOauthUser> {
     return this.repository.update(sessionMetadata.sessionId, data);
   }
 }

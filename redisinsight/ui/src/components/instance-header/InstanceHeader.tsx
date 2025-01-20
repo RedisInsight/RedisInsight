@@ -30,6 +30,8 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { getConfig } from 'uiSrc/config'
 import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
+import { SmConsoleLink } from 'uiSrc/components/instance-header/components/SmConsoleLink'
+import { CloudUserProfile } from 'uiSrc/components/instance-header/components/CloudUserProfile'
 import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -115,7 +117,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         <EuiFlexItem style={{ overflow: 'hidden' }}>
           <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
-              <FeatureFlagComponent name={FeatureFlags.envDependent}>
+              <FeatureFlagComponent name={FeatureFlags.envDependent} otherwise={<SmConsoleLink />}>
                 <EuiToolTip
                   position="bottom"
                   content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
@@ -135,11 +137,9 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-                  <FeatureFlagComponent name={FeatureFlags.envDependent}>
-                    <EuiFlexItem grow={false} data-testid="instance-header-divider-env-dependent">
-                      <EuiText className={styles.divider}>&#62;</EuiText>
-                    </EuiFlexItem>
-                  </FeatureFlagComponent>
+                  <EuiFlexItem grow={false} data-testid="instance-header-divider-env-dependent">
+                    <EuiText className={styles.divider}>/</EuiText>
+                  </EuiFlexItem>
                   {returnUrlBase && returnUrl && (
                   <FeatureFlagComponent
                     name={FeatureFlags.envDependent}
@@ -253,6 +253,15 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
           <InsightsTrigger />
         </EuiFlexItem>
+
+        <FeatureFlagComponent
+          name={FeatureFlags.envDependent}
+          otherwise={(
+            <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
+              <CloudUserProfile />
+            </EuiFlexItem>
+        )}
+        />
 
         <FeatureFlagComponent name={FeatureFlags.cloudSso}>
           <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>

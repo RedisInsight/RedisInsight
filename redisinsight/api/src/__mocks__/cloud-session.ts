@@ -1,6 +1,6 @@
 import { ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudAuthIdpType } from 'src/modules/cloud/auth/models';
-import { ICloudApiCsrfToken } from 'src/modules/cloud/user/models';
+import { ICloudApiCsrfToken } from 'src/modules/cloud/oauth/models';
 import { CloudSessionData } from 'src/modules/cloud/session/models/cloud-session';
 import { CloudSessionEntity } from 'src/modules/cloud/session/entities/cloud.session.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';

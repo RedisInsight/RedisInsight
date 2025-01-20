@@ -23,13 +23,13 @@ import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { CloudAutodiscoveryAuthType } from 'src/modules/cloud/autodiscovery/models';
 import { CloudDatabaseStatus } from 'src/modules/cloud/database/models';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
-import { CloudUserCapiService } from 'src/modules/cloud/user/cloud-user.capi.service';
+import { CloudOauthCapiService } from 'src/modules/cloud/oauth/cloud-oauth.capi.service';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
 
 describe('CloudAutodiscoveryService', () => {
   let service: CloudAutodiscoveryService;
-  let cloudUserCapiService: MockType<CloudUserCapiService>;
+  let cloudUserCapiService: MockType<CloudOauthCapiService>;
   let cloudSubscriptionCapiService: MockType<CloudSubscriptionCapiService>;
   let cloudDatabaseCapiService: MockType<CloudDatabaseCapiService>;
   let analytics: MockType<CloudAutodiscoveryAnalytics>;
@@ -45,7 +45,7 @@ describe('CloudAutodiscoveryService', () => {
           useFactory: mockDatabaseService,
         },
         {
-          provide: CloudUserCapiService,
+          provide: CloudOauthCapiService,
           useFactory: mockCloudUserCapiService,
         },
         {
@@ -66,7 +66,7 @@ describe('CloudAutodiscoveryService', () => {
     service = module.get(CloudAutodiscoveryService);
     analytics = module.get(CloudAutodiscoveryAnalytics);
     databaseService = module.get(DatabaseService);
-    cloudUserCapiService = module.get(CloudUserCapiService);
+    cloudUserCapiService = module.get(CloudOauthCapiService);
     cloudSubscriptionCapiService = module.get(CloudSubscriptionCapiService);
     cloudDatabaseCapiService = module.get(CloudDatabaseCapiService);
   });

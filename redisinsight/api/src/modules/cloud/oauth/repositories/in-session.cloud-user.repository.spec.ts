@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockCloudSession, mockCloudSessionService, mockInitSession, MockType,
 } from 'src/__mocks__';
-import { InSessionCloudUserRepository } from 'src/modules/cloud/user/repositories/in-session.cloud-user.repository';
+import { InSessionCloudUserRepository } from 'src/modules/cloud/oauth/repositories/in-session.cloud-user.repository';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 
 describe('InSessionCloudUserRepository', () => {

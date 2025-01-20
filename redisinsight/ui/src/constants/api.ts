@@ -122,11 +122,15 @@ enum ApiEndpoints {
 
   FEATURES = 'features',
 
-  CLOUD_ME = 'cloud/me',
-  CLOUD_ME_JOBS = 'cloud/me/jobs',
-  CLOUD_ME_ACCOUNTS = 'cloud/me/accounts',
-  CLOUD_ME_LOGOUT = 'cloud/me/logout',
+  // oauth user flow
+  CLOUD_OAUTH_ME = 'cloud-oauth/me',
+  CLOUD_OAUTH_ME_JOBS = 'cloud-oauth/me/jobs',
+  CLOUD_OAUTH_ME_ACCOUNTS = 'cloud-oauth/me/accounts',
+  CLOUD_OAUTH_ME_LOGOUT = 'cloud-oauth/me/logout',
   CLOUD_CURRENT = 'current',
+
+  // standard user auth flow
+  CLOUD_USER_PROFILE = 'cloud/me',
 
   CLOUD_SUBSCRIPTION_PLANS = 'cloud/me/subscription/plans',
 
@@ -173,9 +177,9 @@ export const SCAN_STREAM_START_DEFAULT = '-'
 export const SCAN_STREAM_END_DEFAULT = '+'
 
 export const CLOUD_AUTH_API_ENDPOINTS = [
-  ApiEndpoints.CLOUD_ME,
-  ApiEndpoints.CLOUD_ME_JOBS,
-  ApiEndpoints.CLOUD_ME_ACCOUNTS,
+  ApiEndpoints.CLOUD_OAUTH_ME,
+  ApiEndpoints.CLOUD_OAUTH_ME_JOBS,
+  ApiEndpoints.CLOUD_OAUTH_ME_ACCOUNTS,
   ApiEndpoints.CLOUD_SUBSCRIPTION_PLANS,
   ApiEndpoints.CLOUD_ME_AUTODISCOVERY_ACCOUNT,
   ApiEndpoints.CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS,

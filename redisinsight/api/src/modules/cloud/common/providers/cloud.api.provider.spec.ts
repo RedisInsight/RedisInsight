@@ -4,7 +4,7 @@ import {
 } from 'src/__mocks__';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
-import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
+import { CloudUserApiProvider } from 'src/modules/cloud/oauth/providers/cloud-user.api.provider';
 import { CloudApiForbiddenException, CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudApiProvider } from './cloud.api.provider';
 

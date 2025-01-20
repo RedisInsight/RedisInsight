@@ -15,9 +15,9 @@ import {
 } from 'src/__mocks__';
 import { when, resetAllWhenMocks } from 'jest-when';
 import { CloudApiInternalServerErrorException, CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
-import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
-import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
-import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
+import { CloudOauthApiService } from 'src/modules/cloud/oauth/cloud-oauth.api.service';
+import { CloudUserApiProvider } from 'src/modules/cloud/oauth/providers/cloud-user.api.provider';
+import { OauthUserRepository } from 'src/modules/cloud/oauth/repositories/oauth-user.repository';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 import { mockCloudAuthService } from 'src/__mocks__/cloud-auth';
@@ -30,8 +30,8 @@ jest.mock('axios');
 mockedAxios.create = jest.fn(() => mockedAxios);
 
 describe('CloudUserApiService', () => {
-  let service: CloudUserApiService;
-  let repository: MockType<CloudUserRepository>;
+  let service: CloudOauthApiService;
+  let repository: MockType<OauthUserRepository>;
   let sessionService: MockType<CloudSessionService>;
   let authService: MockType<CloudAuthService>;
   let serverService: MockType<ServerService>;
@@ -41,10 +41,10 @@ describe('CloudUserApiService', () => {
     resetAllWhenMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CloudUserApiService,
+        CloudOauthApiService,
         CloudUserApiProvider,
         {
-          provide: CloudUserRepository,
+          provide: OauthUserRepository,
           useFactory: mockCloudUserRepository,
         },
         {
@@ -62,8 +62,8 @@ describe('CloudUserApiService', () => {
       ],
     }).compile();
 
-    service = module.get(CloudUserApiService);
-    repository = module.get(CloudUserRepository);
+    service = module.get(CloudOauthApiService);
+    repository = module.get(OauthUserRepository);
     sessionService = module.get(CloudSessionService);
     authService = module.get(CloudAuthService);
     serverService = module.get(ServerService);

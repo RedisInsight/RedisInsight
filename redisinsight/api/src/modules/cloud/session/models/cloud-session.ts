@@ -1,4 +1,4 @@
-import { CloudUser } from 'src/modules/cloud/user/models';
+import { CloudOauthUser } from 'src/modules/cloud/oauth/models';
 import { CloudAuthIdpType } from 'src/modules/cloud/auth/models';
 import { Expose, Type } from 'class-transformer';
 
@@ -19,7 +19,7 @@ export class CloudSession {
   apiSessionId?: string;
 
   @Expose()
-  user?: CloudUser;
+  user?: CloudOauthUser;
 }
 
 export class CloudSessionData {

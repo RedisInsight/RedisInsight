@@ -5,7 +5,7 @@ import {
   mockCloudCapiAccount,
   mockCloudCapiAuthDto,
 } from 'src/__mocks__';
-import { CloudUserCapiProvider } from 'src/modules/cloud/user/providers/cloud-user.capi.provider';
+import { CloudUserCapiProvider } from 'src/modules/cloud/oauth/providers/cloud-user.capi.provider';
 import { CloudCapiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;

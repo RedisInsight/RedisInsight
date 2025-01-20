@@ -11,3 +11,13 @@ export interface StateUserSettings {
     cleanup: boolean
   }
 }
+
+export interface StateUserProfile {
+  loading: boolean;
+  error: string;
+  data?: {
+    name: string;
+    currentAccountId?: string;
+    currentAccountName?: string;
+  }
+}

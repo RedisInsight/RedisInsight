@@ -19,7 +19,7 @@ import { CloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/cloud
 import { CloudAuthHeaders } from 'src/modules/cloud/common/decorators/cloud-auth.decorator';
 import config from 'src/utils/config';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
-import { CloudAccountInfo } from 'src/modules/cloud/user/models';
+import { CloudAccountInfo } from 'src/modules/cloud/oauth/models';
 import { CloudSubscription } from 'src/modules/cloud/subscription/models';
 import { CloudAutodiscoveryAuthType } from 'src/modules/cloud/autodiscovery/models';
 import { CloudDatabase } from 'src/modules/cloud/database/models';

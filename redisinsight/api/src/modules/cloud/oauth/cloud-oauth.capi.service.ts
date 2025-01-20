@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { wrapHttpError } from 'src/common/utils';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
-import { CloudAccountInfo } from 'src/modules/cloud/user/models';
-import { parseCloudAccountCapiResponse } from 'src/modules/cloud/user/utils';
-import { CloudUserCapiProvider } from 'src/modules/cloud/user/providers/cloud-user.capi.provider';
+import { CloudAccountInfo } from 'src/modules/cloud/oauth/models';
+import { parseCloudAccountCapiResponse } from 'src/modules/cloud/oauth/utils';
+import { CloudUserCapiProvider } from 'src/modules/cloud/oauth/providers/cloud-user.capi.provider';
 
 @Injectable()
-export class CloudUserCapiService {
+export class CloudOauthCapiService {
   private logger = new Logger('CloudUserCapiService');
 
   constructor(

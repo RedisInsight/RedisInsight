@@ -18,7 +18,7 @@ import {
   MockType,
 } from 'src/__mocks__';
 import { LocalAiQueryAuthProvider } from 'src/modules/ai/query/providers/auth/local.ai-query-auth.provider';
-import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudOauthApiService } from 'src/modules/cloud/oauth/cloud-oauth.api.service';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { AiQueryService } from 'src/modules/ai/query/ai-query.service';
 import { AiQueryProvider } from 'src/modules/ai/query/providers/ai-query.provider';
@@ -42,7 +42,7 @@ describe('AiQueryService', () => {
   let httpServer;
   let service: AiQueryService;
   let aiQueryProvider: MockType<AiQueryProvider>;
-  let cloudUserApiService: MockType<CloudUserApiService>;
+  let cloudUserApiService: MockType<CloudOauthApiService>;
   let aiQueryContextRepository: MockType<AiQueryContextRepository>;
 
   beforeAll((done) => {
@@ -91,7 +91,7 @@ describe('AiQueryService', () => {
           useFactory: mockAiQueryMessageRepository,
         },
         {
-          provide: CloudUserApiService,
+          provide: CloudOauthApiService,
           useFactory: mockCloudUserApiService,
         },
       ],
@@ -99,7 +99,7 @@ describe('AiQueryService', () => {
 
     service = module.get(AiQueryService);
     aiQueryProvider = module.get(AiQueryProvider);
-    cloudUserApiService = module.get(CloudUserApiService);
+    cloudUserApiService = module.get(CloudOauthApiService);
     aiQueryContextRepository = module.get(AiQueryContextRepository);
   });
 

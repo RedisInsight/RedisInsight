@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { remove } from 'lodash'
+import { CloudOauthUser } from 'src/modules/cloud/oauth/models'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
 import { getApiErrorCode, getApiErrorMessage, getAxiosError, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
@@ -13,7 +14,6 @@ import {
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getCloudSsoUtmParams } from 'uiSrc/utils/oauth/cloudSsoUtm'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 
@@ -95,7 +95,7 @@ const oauthCloudSlice = createSlice({
     getUserInfo: (state) => {
       state.user.loading = true
     },
-    getUserInfoSuccess: (state, { payload }: PayloadAction<CloudUser>) => {
+    getUserInfoSuccess: (state, { payload }: PayloadAction<CloudOauthUser>) => {
       state.user.loading = false
       state.user.data = payload
     },
@@ -286,8 +286,8 @@ export function fetchProfile(onSuccessAction?: (isMultiAccount?: boolean) => voi
     dispatch(getUserInfo())
 
     try {
-      const { data, status } = await apiService.get<CloudUser>(
-        ApiEndpoints.CLOUD_ME,
+      const { data, status } = await apiService.get<CloudOauthUser>(
+        ApiEndpoints.CLOUD_OAUTH_ME,
         {
           // params: getCloudSsoUtmParams(getState().oauth?.cloud?.source),
         },
@@ -313,8 +313,8 @@ export function fetchUserInfo(onSuccessAction?: (isSelectAccout: boolean) => voi
     dispatch(getUserInfo())
 
     try {
-      const { data, status } = await apiService.get<CloudUser>(
-        ApiEndpoints.CLOUD_ME,
+      const { data, status } = await apiService.get<CloudOauthUser>(
+        ApiEndpoints.CLOUD_OAUTH_ME,
         {
           params: getCloudSsoUtmParams(getState().oauth?.cloud?.source),
         },
@@ -370,7 +370,7 @@ export function createFreeDbJob({
 
     try {
       const { data, status } = await apiService.post<CloudJobInfo>(
-        ApiEndpoints.CLOUD_ME_JOBS,
+        ApiEndpoints.CLOUD_OAUTH_ME_JOBS,
         {
           name,
           runMode: 'async',
@@ -407,9 +407,9 @@ export function activateAccount(
     dispatch(getUserInfo())
 
     try {
-      const { data, status } = await apiService.put<CloudUser>(
+      const { data, status } = await apiService.put<CloudOauthUser>(
         [
-          ApiEndpoints.CLOUD_ME_ACCOUNTS,
+          ApiEndpoints.CLOUD_OAUTH_ME_ACCOUNTS,
           id,
           ApiEndpoints.CLOUD_CURRENT,
         ].join('/'),
@@ -553,7 +553,7 @@ export function logoutUserAction(
 
     try {
       const { status } = await apiService.get(
-        ApiEndpoints.CLOUD_ME_LOGOUT
+        ApiEndpoints.CLOUD_OAUTH_ME_LOGOUT
       )
 
       if (isStatusSuccessful(status)) {

@@ -4,13 +4,13 @@ import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.s
 import { LocalCloudCapiKeyRepository } from 'src/modules/cloud/capi-key/repository/local.cloud-capi-key.repository';
 import { CloudCapiKeyRepository } from 'src/modules/cloud/capi-key/repository/cloud-capi-key.repository';
 import { CloudCapiKeyApiProvider } from 'src/modules/cloud/capi-key/cloud-capi-key.api.provider';
-import { CloudUserModule } from 'src/modules/cloud/user/cloud-user.module';
+import { CloudOauthModule } from 'src/modules/cloud/oauth/cloud-oauth.module';
 import { CloudSessionModule } from 'src/modules/cloud/session/cloud-session.module';
 import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key.analytics';
 
 @Module({
   imports: [
-    CloudUserModule,
+    CloudOauthModule,
     CloudSessionModule,
   ],
   controllers: [CloudCapiKeyController],

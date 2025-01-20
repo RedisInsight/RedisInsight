@@ -4,7 +4,7 @@ import { CloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/cloud
 import { CloudAutodiscoveryAnalytics } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.analytics';
 import { CloudDatabaseModule } from 'src/modules/cloud/database/cloud-database.module';
 import { CloudSubscriptionModule } from 'src/modules/cloud/subscription/cloud-subscription.module';
-import { CloudUserModule } from 'src/modules/cloud/user/cloud-user.module';
+import { CloudOauthModule } from 'src/modules/cloud/oauth/cloud-oauth.module';
 import { MeCloudAutodiscoveryController } from 'src/modules/cloud/autodiscovery/me.cloud.autodiscovery.controller';
 import { MeCloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/me.cloud-autodiscovery.service';
 import { CloudCapiKeyModule } from 'src/modules/cloud/capi-key/cloud-capi-key.module';
@@ -13,7 +13,7 @@ import { CloudCapiKeyModule } from 'src/modules/cloud/capi-key/cloud-capi-key.mo
   imports: [
     CloudDatabaseModule,
     CloudSubscriptionModule,
-    CloudUserModule,
+    CloudOauthModule,
     CloudCapiKeyModule,
   ],
   controllers: [

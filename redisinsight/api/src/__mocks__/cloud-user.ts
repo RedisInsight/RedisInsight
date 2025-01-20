@@ -1,11 +1,11 @@
 import {
   CloudAccountInfo,
-  CloudUser,
+  CloudOauthUser,
   CloudUserAccount,
   ICloudApiAccount,
   ICloudApiUser,
   ICloudCapiAccount,
-} from 'src/modules/cloud/user/models';
+} from 'src/modules/cloud/oauth/models';
 import config, { Config } from 'src/utils/config';
 import { classToPlain } from 'class-transformer';
 import { mockCloudApiCapiAccessKey, mockCloudCapiAuthDto, mockCloudCapiKey } from 'src/__mocks__/cloud-capi-key';
@@ -94,7 +94,7 @@ export const mockCloudApiUser: ICloudApiUser = {
   role: 'owner',
 };
 
-export const mockCloudUser = Object.assign(new CloudUser(), {
+export const mockCloudUser = Object.assign(new CloudOauthUser(), {
   id: +mockCloudApiUser.id,
   name: mockCloudApiUser.name,
   currentAccountId: +mockCloudApiUser.current_account_id,

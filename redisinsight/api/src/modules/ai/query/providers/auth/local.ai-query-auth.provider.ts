@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { AiQueryAuthData } from 'src/modules/ai/query/models/ai-query.auth-data';
 import { AiQueryAuthProvider } from 'src/modules/ai/query/providers/auth/ai-query-auth.provider';
-import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudOauthApiService } from 'src/modules/cloud/oauth/cloud-oauth.api.service';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { AiQueryUnauthorizedException } from 'src/modules/ai/query/exceptions';
 
 @Injectable()
 export class LocalAiQueryAuthProvider extends AiQueryAuthProvider {
   constructor(
-    private readonly cloudUserApiService: CloudUserApiService,
+    private readonly cloudUserApiService: CloudOauthApiService,
   ) {
     super();
   }

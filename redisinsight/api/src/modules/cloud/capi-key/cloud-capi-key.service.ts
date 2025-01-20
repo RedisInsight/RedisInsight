@@ -3,7 +3,7 @@ import { CloudCapiKey } from 'src/modules/cloud/capi-key/model';
 import { wrapHttpError } from 'src/common/utils';
 import { SessionMetadata } from 'src/common/models';
 import { Injectable, Logger } from '@nestjs/common';
-import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudOauthApiService } from 'src/modules/cloud/oauth/cloud-oauth.api.service';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { CloudApiBadRequestException, CloudCapiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
@@ -23,7 +23,7 @@ export class CloudCapiKeyService {
   constructor(
     private readonly api: CloudCapiKeyApiProvider,
     private readonly repository: CloudCapiKeyRepository,
-    private readonly cloudUserApiService: CloudUserApiService,
+    private readonly cloudUserApiService: CloudOauthApiService,
     private readonly cloudSessionService: CloudSessionService,
     private readonly serverService: ServerService,
     private readonly analytics: CloudCapiKeyAnalytics,
@@ -44,7 +44,7 @@ export class CloudCapiKeyService {
     try {
       let user = await this.cloudUserApiService.getCloudUser(sessionMetadata, false, utm);
 
-      let currentAccount = CloudUserApiService.getCurrentAccount(user);
+      let currentAccount = CloudOauthApiService.getCurrentAccount(user);
 
       if (!currentAccount) {
         this.logger.error('Cannot get current account', sessionMetadata);
@@ -70,7 +70,7 @@ export class CloudCapiKeyService {
             this.logger.debug('Successfully enabled capi', sessionMetadata);
 
             user = await this.cloudUserApiService.getCloudUser(sessionMetadata, true, utm);
-            currentAccount = CloudUserApiService.getCurrentAccount(user);
+            currentAccount = CloudOauthApiService.getCurrentAccount(user);
           }
 
           this.logger.debug('Creating new capi key', sessionMetadata);

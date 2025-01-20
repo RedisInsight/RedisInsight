@@ -5,7 +5,7 @@ import {
   mockSessionMetadata, MockType,
 } from 'src/__mocks__';
 import { LocalAiQueryAuthProvider } from 'src/modules/ai/query/providers/auth/local.ai-query-auth.provider';
-import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudOauthApiService } from 'src/modules/cloud/oauth/cloud-oauth.api.service';
 import { CloudApiForbiddenException, CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 
 const mockedResult = 'mockedResult';
@@ -13,7 +13,7 @@ const mockedFn = jest.fn().mockResolvedValue(mockedResult);
 
 describe('LocalAiQueryAuthProvider', () => {
   let service: LocalAiQueryAuthProvider;
-  let cloudUserApiService: MockType<CloudUserApiService>;
+  let cloudUserApiService: MockType<CloudOauthApiService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -22,14 +22,14 @@ describe('LocalAiQueryAuthProvider', () => {
       providers: [
         LocalAiQueryAuthProvider,
         {
-          provide: CloudUserApiService,
+          provide: CloudOauthApiService,
           useFactory: mockCloudUserApiService,
         },
       ],
     }).compile();
 
     service = module.get(LocalAiQueryAuthProvider);
-    cloudUserApiService = module.get(CloudUserApiService);
+    cloudUserApiService = module.get(CloudOauthApiService);
   });
 
   describe('getAuthData', () => {

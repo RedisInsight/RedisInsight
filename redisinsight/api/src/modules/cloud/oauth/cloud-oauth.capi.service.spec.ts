@@ -5,18 +5,18 @@ import {
   mockCloudUserCapiProvider,
   MockType,
 } from 'src/__mocks__';
-import { CloudUserCapiService } from 'src/modules/cloud/user/cloud-user.capi.service';
-import { CloudUserCapiProvider } from 'src/modules/cloud/user/providers/cloud-user.capi.provider';
+import { CloudOauthCapiService } from 'src/modules/cloud/oauth/cloud-oauth.capi.service';
+import { CloudUserCapiProvider } from 'src/modules/cloud/oauth/providers/cloud-user.capi.provider';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 
 describe('CloudUserCapiService', () => {
-  let service: CloudUserCapiService;
+  let service: CloudOauthCapiService;
   let capiProvider: MockType<CloudUserCapiProvider>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CloudUserCapiService,
+        CloudOauthCapiService,
         {
           provide: CloudUserCapiProvider,
           useFactory: mockCloudUserCapiProvider,
@@ -24,7 +24,7 @@ describe('CloudUserCapiService', () => {
       ],
     }).compile();
 
-    service = module.get(CloudUserCapiService);
+    service = module.get(CloudOauthCapiService);
     capiProvider = module.get(CloudUserCapiProvider);
   });
 

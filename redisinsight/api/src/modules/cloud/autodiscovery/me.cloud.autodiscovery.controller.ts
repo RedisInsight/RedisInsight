@@ -17,7 +17,7 @@ import { Response } from 'express';
 import { ActionStatus, SessionMetadata } from 'src/common/models';
 import { BuildType } from 'src/modules/server/models/server';
 import config from 'src/utils/config';
-import { CloudAccountInfo } from 'src/modules/cloud/user/models';
+import { CloudAccountInfo } from 'src/modules/cloud/oauth/models';
 import { CloudSubscription } from 'src/modules/cloud/subscription/models';
 import { CloudDatabase } from 'src/modules/cloud/database/models';
 import {

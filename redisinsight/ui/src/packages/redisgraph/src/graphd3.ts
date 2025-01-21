@@ -1281,7 +1281,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function tick() {
-    
+
     simulation.tick(1)
     tickNodes()
     tickRelationships()

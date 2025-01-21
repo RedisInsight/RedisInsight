@@ -85,6 +85,10 @@ html {
   display: inline-block !important;
 }
 
+.text-multiline-ellipsis>div:last-child{
+  @include eui.multiline-ellipsis($line-count: 7, $line-height: 1.5rem);
+}
+
 .cell {
   position: relative;
 }

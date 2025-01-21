@@ -302,8 +302,6 @@ describe('POST /databases/:id/keys', () => {
           data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_key_10?`,
-            getTtl: true,
-            getSize: true,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -337,8 +335,6 @@ describe('POST /databases/:id/keys', () => {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_key_10?`,
             keysInfo: 'false',
-            getTtl: true,
-            getSize: true,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -592,8 +588,6 @@ describe('POST /databases/:id/keys', () => {
               cursor: '0',
               type: 'string',
               count: 200,
-              getTtl: true,
-              getSize: true,
             },
             responseSchema,
             checkFn: ({ body }) => {
@@ -892,8 +886,6 @@ describe('POST /databases/:id/keys', () => {
               cursor: '0',
               type: 'string',
               count: 200,
-              getTtl: true,
-              getSize: true,
             },
             responseSchema,
             checkFn: ({ body }) => {
@@ -976,8 +968,6 @@ describe('POST /databases/:id/keys', () => {
           data: {
             cursor: '0',
             count: 200,
-            getTtl: true,
-            getSize: true,
           },
           responseSchema,
           checkFn: async ({ body }) => {

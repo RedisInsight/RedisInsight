@@ -9,7 +9,7 @@ export class GetRejsonRlDto extends KeyDto {
   })
   @IsString()
   @IsNotEmpty()
-  path?: string = '.';
+  path?: string = '$';
 
   @ApiPropertyOptional({
     type: Boolean,

@@ -41,6 +41,7 @@ import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import NoKeysMessage from '../no-keys-message'
+import { DeleteKeyPopover } from '../delete-key-popover/DeleteKeyPopover'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -297,6 +298,9 @@ const KeyList = forwardRef((props: Props, ref) => {
     rerender({})
   }
 
+  const isTtlTheLastColumn = !shownColumns.includes(BrowserColumns.Size)
+  const ttlColumnSize = isTtlTheLastColumn ? 146 : 86
+
   const columns: ITableColumn[] = [
     {
       id: 'type',
@@ -312,19 +316,50 @@ const KeyList = forwardRef((props: Props, ref) => {
       label: 'Key',
       minWidth: 94,
       truncateText: true,
-      render: (cellData: string) => (
-        <KeyRowName nameString={cellData} shortName={cellData} />
+      render: (cellData: string, { name, type }: IKeyPropTypes, _expanded, rowIndex) => (
+        <>
+          <KeyRowName nameString={cellData} shortName={cellData} />
+          {columns[columns.length - 1].id === 'nameString' && (
+            <DeleteKeyPopover
+              deletePopoverId={deletePopoverIndex}
+              nameString={cellData}
+              name={name}
+              type={type}
+              rowId={rowIndex || 0}
+              onDelete={handleRemoveKey}
+              onOpenPopover={handleDeletePopoverOpen}
+            />
+          )}
+        </>
       )
     },
     shownColumns.includes(BrowserColumns.TTL) ? {
       id: 'ttl',
       label: 'TTL',
-      absoluteWidth: 86,
-      minWidth: 86,
+      absoluteWidth: ttlColumnSize,
+      minWidth: ttlColumnSize,
       truncateText: true,
       alignment: TableCellAlignment.Right,
-      render: (cellData: number, { nameString }: IKeyPropTypes, _expanded, rowIndex) => (
-        <KeyRowTTL ttl={cellData} nameString={nameString} deletePopoverId={deletePopoverIndex} rowId={rowIndex || 0} />
+      render: (cellData: number, { nameString, name, type }: IKeyPropTypes, _expanded, rowIndex) => (
+        <>
+          <KeyRowTTL
+            ttl={cellData}
+            nameString={nameString}
+            deletePopoverId={deletePopoverIndex}
+            rowId={rowIndex || 0}
+          />
+          {isTtlTheLastColumn && (
+            <DeleteKeyPopover
+              deletePopoverId={deletePopoverIndex}
+              nameString={nameString}
+              name={name}
+              type={type}
+              rowId={rowIndex || 0}
+              onDelete={handleRemoveKey}
+              onOpenPopover={handleDeletePopoverOpen}
+            />
+          )}
+        </>
       )
     } : null,
     shownColumns.includes(BrowserColumns.Size) ? {
@@ -334,26 +369,28 @@ const KeyList = forwardRef((props: Props, ref) => {
       minWidth: 90,
       alignment: TableCellAlignment.Right,
       textAlignment: TableCellTextAlignment.Right,
-      render: (
-        cellData: number,
-        { nameString, type, name: bufferName }: IKeyPropTypes,
-        _expanded,
-        rowIndex
-      ) => (
-        <KeyRowSize
-          size={cellData}
-          nameString={nameString}
-          nameBuffer={bufferName}
-          deletePopoverId={deletePopoverIndex}
-          rowId={rowIndex || 0}
-          type={type}
-          deleting={deleting}
-          setDeletePopoverId={setDeletePopoverIndex}
-          handleDeletePopoverOpen={handleDeletePopoverOpen}
-          handleDelete={handleRemoveKey}
-        />
+      render: (cellData: number, { nameString, name, type }: IKeyPropTypes, _expanded, rowIndex) => (
+        <>
+          <KeyRowSize
+            size={cellData}
+            nameString={nameString}
+            deletePopoverId={deletePopoverIndex}
+            rowId={rowIndex || 0}
+          />
+          {columns[columns.length - 1].id === 'size' && (
+            <DeleteKeyPopover
+              deletePopoverId={deletePopoverIndex}
+              nameString={nameString}
+              name={name}
+              type={type}
+              rowId={rowIndex || 0}
+              onDelete={handleRemoveKey}
+              onOpenPopover={handleDeletePopoverOpen}
+            />
+          )}
+        </>
       )
-    } : null,
+    } : null
   ].filter((el) => !!el)
 
   const noItemsMessage = NoItemsMessage()

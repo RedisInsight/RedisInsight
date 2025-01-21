@@ -18,6 +18,7 @@ import KeyRowName from 'uiSrc/pages/browser/components/key-row-name'
 import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
+import { DeleteKeyPopover } from '../../../delete-key-popover/DeleteKeyPopover'
 import { TreeData } from '../../interfaces'
 import styles from './styles.module.scss'
 
@@ -147,16 +148,20 @@ const Node = ({
         <KeyRowSize
           size={size}
           nameString={nameString}
-          nameBuffer={nameBuffer}
           deletePopoverId={deletePopoverId}
           rowId={nodeId}
-          type={type}
-          deleting={deleting}
-          setDeletePopoverId={setDeletePopoverId}
-          handleDeletePopoverOpen={handleDeletePopoverOpen}
-          handleDelete={handleDelete}
         />
       )}
+      <DeleteKeyPopover
+        deletePopoverId={deletePopoverId === nodeId ? nodeId : undefined}
+        nameString={nameString}
+        name={nameBuffer}
+        type={type}
+        rowId={nodeId}
+        deleting={deleting}
+        onDelete={handleDelete}
+        onOpenPopover={handleDeletePopoverOpen}
+      />
     </>
   )
 
@@ -200,10 +205,11 @@ const Node = ({
         paddingLeft: (nestingLevel > MAX_NESTING_LEVEL ? MAX_NESTING_LEVEL : nestingLevel) * 8,
       }}
       className={cx(
-        styles.nodeContainer, {
-        [styles.nodeSelected]: isSelected && isLeaf,
-        [styles.nodeRowEven]: index % 2 === 0,
-      }
+        styles.nodeContainer,
+        {
+          [styles.nodeSelected]: isSelected && isLeaf,
+          [styles.nodeRowEven]: index % 2 === 0,
+        }
       )}
     >
       {Node}

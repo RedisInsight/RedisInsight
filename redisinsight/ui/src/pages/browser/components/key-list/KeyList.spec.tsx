@@ -252,4 +252,22 @@ describe('KeyList', () => {
       expect(spy).toHaveBeenCalled()
     }, { timeout: 1000 })
   })
+
+  it.each`
+      columns                                      | description
+      ${[]}                                        | ${'no columns are shown'}
+      ${[BrowserColumns.TTL]}                      | ${'only TTL column is shown'}
+      ${[BrowserColumns.Size]}                     | ${'only Size column is shown'}
+      ${[BrowserColumns.TTL, BrowserColumns.Size]} | ${'both TTL and Size columns are shown'}
+  `('should render DeleteKeyPopover when $description', ({ columns }) => {
+    (keysSelector as jest.Mock).mockImplementation(() => ({
+      ...mockedKeySlice,
+      shownColumns: columns,
+    }))
+
+    const { container } = render(<KeyList {...propsMock} />)
+
+    expect(container.querySelector(`[data-testid="delete-key-btn-${propsMock.keysState.keys[0].nameString}"]`))
+      .toBeInTheDocument()
+  })
 })

@@ -303,7 +303,7 @@ const KeysHeader = (props: Props) => {
                       </EuiFlexItem>
                       <EuiFlexItem>
                         <EuiToolTip
-                          content="Hide the key size to optimize space and avoid performance issues when working with large keys."
+                          content="Hide the key size to avoid performance issues when working with large keys."
                           position="top"
                           display="inlineBlock"
                           anchorClassName="flex-row"

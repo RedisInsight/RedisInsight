@@ -286,5 +286,39 @@ describe('Node', () => {
 
       expect(mockGetMetadata).toHaveBeenCalledWith(mockData.nameBuffer, mockData.path)
     })
+
+    it.each`
+      columns                                      | description
+      ${[]}                                        | ${'no columns are shown'}
+      ${[BrowserColumns.TTL]}                      | ${'only TTL column is shown'}
+      ${[BrowserColumns.Size]}                     | ${'only Size column is shown'}
+      ${[BrowserColumns.TTL, BrowserColumns.Size]} | ${'both TTL and Size columns are shown'}
+    `('should render DeleteKeyPopover when $description', ({ columns }) => {
+      const mockData: TreeData = {
+        ...mockedDataWithMetadata,
+        onDelete: jest.fn(),
+        onDeleteClicked: jest.fn(),
+      }
+
+      const store = {
+        getState: () => ({
+          browser: {
+            keys: {
+              shownColumns: columns
+            }
+          }
+        }),
+        subscribe: jest.fn(),
+        dispatch: jest.fn(),
+      }
+
+      const { container } = render(
+        <Node {...instance(mockedProps)} data={mockData} />,
+        { store }
+      )
+
+      expect(container.querySelector(`[data-testid="delete-key-btn-${mockData.nameString}"]`))
+        .toBeInTheDocument()
+    })
   })
 })

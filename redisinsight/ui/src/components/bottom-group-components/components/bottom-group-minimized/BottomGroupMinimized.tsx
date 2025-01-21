@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import cx from 'classnames'
-import { EuiBadge, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiHideFor, EuiShowFor } from '@elastic/eui'
+import { EuiBadge, EuiFlexGroup, EuiFlexItem, EuiHideFor, EuiIcon, EuiShowFor } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -111,7 +111,7 @@ const BottomGroupMinimized = () => {
             <span>Command Helper</span>
           </EuiBadge>
         </EuiFlexItem>
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <EuiFlexItem
             className={styles.componentBadgeItem}
             grow={false}
@@ -129,15 +129,15 @@ const BottomGroupMinimized = () => {
           </EuiFlexItem>
         </FeatureFlagComponent>
       </EuiFlexGroup>
-      <a
-        className={styles.surveyLink}
-        target="_blank"
-        rel="noreferrer"
-        href={EXTERNAL_LINKS.userSurvey}
-        onClick={onClickSurvey}
-        data-testid="user-survey-link"
-      >
-        <>
+      <FeatureFlagComponent name={FeatureFlags.envDependent}>
+        <a
+          className={styles.surveyLink}
+          target="_blank"
+          rel="noreferrer"
+          href={EXTERNAL_LINKS.userSurvey}
+          onClick={onClickSurvey}
+          data-testid="user-survey-link"
+        >
           <EuiIcon type={SurveyIcon} className={styles.surveyIcon} />
           <EuiHideFor sizes={['xs', 's']}>
             <span>Let us know what you think</span>
@@ -145,8 +145,8 @@ const BottomGroupMinimized = () => {
           <EuiShowFor sizes={['xs', 's']}>
             <span>Survey</span>
           </EuiShowFor>
-        </>
-      </a>
+        </a>
+      </FeatureFlagComponent>
     </div>
   )
 }

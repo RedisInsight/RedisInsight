@@ -21,7 +21,7 @@ import {
 import { RedisClient } from 'src/modules/redis/client';
 import { getAnalyticsDataFromIndexInfo } from 'src/utils';
 import { RunQueryMode } from 'src/modules/workbench/models/command-execution';
-import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
+import { WorkbenchAnalytics } from 'src/modules/workbench/workbench.analytics';
 
 @Injectable()
 export class WorkbenchCommandsExecutor {
@@ -30,7 +30,7 @@ export class WorkbenchCommandsExecutor {
   private formatterManager: FormatterManager;
 
   constructor(
-    private analyticsService: WorkbenchAnalyticsService,
+    private analyticsService: WorkbenchAnalytics,
   ) {
     this.formatterManager = new FormatterManager();
     this.formatterManager.addStrategy(
@@ -54,7 +54,7 @@ export class WorkbenchCommandsExecutor {
     client: RedisClient,
     dto: CreateCommandExecutionDto,
   ): Promise<CommandExecutionResult[]> {
-    this.logger.log('Executing workbench command.');
+    this.logger.debug('Executing workbench command.');
     let command = unknownCommand;
     let commandArgs: string[] = [];
 
@@ -70,8 +70,9 @@ export class WorkbenchCommandsExecutor {
       );
       const result: CommandExecutionResult[] = [{ response, status: CommandExecutionStatus.Success }];
 
-      this.logger.log('Succeed to execute workbench command.');
+      this.logger.debug('Succeed to execute workbench command.');
       this.analyticsService.sendCommandExecutedEvents(
+        client.clientMetadata.sessionMetadata,
         client.clientMetadata.databaseId,
         result,
         { command, rawMode: mode === RunQueryMode.Raw },
@@ -79,6 +80,7 @@ export class WorkbenchCommandsExecutor {
 
       if (command.toLowerCase() === 'ft.info') {
         this.analyticsService.sendIndexInfoEvent(
+          client.clientMetadata.sessionMetadata,
           client.clientMetadata.databaseId,
           getAnalyticsDataFromIndexInfo(response as string[]),
         );
@@ -90,6 +92,7 @@ export class WorkbenchCommandsExecutor {
 
       const errorResult = { response: error.message, status: CommandExecutionStatus.Fail };
       this.analyticsService.sendCommandExecutedEvent(
+        client.clientMetadata.sessionMetadata,
         client.clientMetadata.databaseId,
         { ...errorResult, error },
         { command, rawMode: dto.mode === RunQueryMode.Raw },

@@ -3,6 +3,7 @@ import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.servi
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class CloudAuthAnalytics extends TelemetryBaseService {
@@ -10,15 +11,32 @@ export class CloudAuthAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendCloudSignInSucceeded(flow: CloudSsoFeatureStrategy, action?: string) {
-    this.sendEvent(TelemetryEvents.CloudSignInSucceeded, { flow, action });
+  sendCloudSignInSucceeded(
+    sessionMetadata: SessionMetadata,
+    flow: CloudSsoFeatureStrategy, action?: string,
+  ) {
+    this.sendEvent(
+      sessionMetadata,
+      TelemetryEvents.CloudSignInSucceeded,
+      { flow, action },
+    );
   }
 
-  sendCloudSignInFailed(exception: HttpException, flow?: CloudSsoFeatureStrategy, action?: string) {
-    this.sendFailedEvent(TelemetryEvents.CloudSignInFailed, exception, {
-      flow,
-      action,
-      errorDescription: exception?.['options']?.['description'],
-    });
+  sendCloudSignInFailed(
+    sessionMetadata: SessionMetadata,
+    exception: HttpException,
+    flow?: CloudSsoFeatureStrategy,
+    action?: string,
+  ) {
+    this.sendFailedEvent(
+      sessionMetadata,
+      TelemetryEvents.CloudSignInFailed,
+      exception,
+      {
+        flow,
+        action,
+        errorDescription: exception?.['options']?.['description'],
+      },
+    );
   }
 }

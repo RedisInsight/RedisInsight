@@ -3,7 +3,7 @@ import { ArgumentsHost, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 export class GlobalExceptionFilter extends BaseExceptionFilter {
-  private staticServerLogger = new Logger('StaticServerLogger');
+  private staticServerLogger = new Logger('GlobalExceptionFilter');
 
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

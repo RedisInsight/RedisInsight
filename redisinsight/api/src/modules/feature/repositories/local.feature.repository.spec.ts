@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import {
   mockFeature,
   mockFeatureEntity,
-  mockRepository,
+  mockRepository, mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
 import { LocalFeatureRepository } from 'src/modules/feature/repositories/local.feature.repository';
@@ -38,14 +38,14 @@ describe('LocalFeatureRepository', () => {
 
   describe('get', () => {
     it('should return feature by name', async () => {
-      const result = await service.get(mockFeature.name);
+      const result = await service.get(mockSessionMetadata, mockFeature.name);
 
       expect(result).toEqual(mockFeature);
     });
     it('should return null when entity not found', async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
 
-      const result = await service.get(mockFeature.name);
+      const result = await service.get(mockSessionMetadata, mockFeature.name);
 
       expect(result).toEqual(null);
     });
@@ -68,7 +68,7 @@ describe('LocalFeatureRepository', () => {
 
   describe('upsert', () => {
     it('should update or insert and return model', async () => {
-      const result = await service.upsert(mockFeature);
+      const result = await service.upsert(mockSessionMetadata, mockFeature);
 
       expect(result).toEqual(mockFeature);
     });
@@ -76,7 +76,7 @@ describe('LocalFeatureRepository', () => {
 
   describe('delete', () => {
     it('should delete and do not return anything', async () => {
-      const result = await service.delete(mockFeature.name);
+      const result = await service.delete(mockSessionMetadata, mockFeature.name);
 
       expect(result).toEqual(undefined);
     });

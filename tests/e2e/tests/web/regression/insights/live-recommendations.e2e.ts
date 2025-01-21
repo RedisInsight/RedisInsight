@@ -2,7 +2,7 @@ import * as path from 'path';
 import { BrowserPage, MemoryEfficiencyPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { ExploreTabs, RecommendationIds, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config, ossStandaloneV7Config } from '../../../../helpers/conf';
+import { commonUrl, ossStandaloneV6Config, ossStandaloneV5Config, ossStandaloneV7Config } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { Telemetry } from '../../../../helpers/telemetry';
@@ -49,14 +49,14 @@ fixture `Live Recommendations`
         await refreshFeaturesTestData();
         await modifyFeaturesConfigJson(featuresConfig);
         await updateControlNumber(47.2);
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV6Config);
         await myRedisDatabasePage.reloadPage();
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneV6Config.databaseName);
     })
     .afterEach(async() => {
         await refreshFeaturesTestData();
         // Delete database
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV6Config);
     });
 test
     .before(async() => {

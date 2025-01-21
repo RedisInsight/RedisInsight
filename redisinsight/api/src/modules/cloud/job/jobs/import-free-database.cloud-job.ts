@@ -13,6 +13,7 @@ import { Database } from 'src/modules/database/models/database';
 import config from 'src/utils/config';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
+import { SessionMetadata } from 'src/common/models';
 
 const cloudConfig = config.get('cloud');
 
@@ -39,8 +40,8 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
     super(options);
   }
 
-  async iteration(): Promise<Database> {
-    this.logger.log('Importing free database');
+  async iteration(sessionMetadata: SessionMetadata): Promise<Database> {
+    this.logger.debug('Importing free database');
 
     this.checkSignal();
 
@@ -49,6 +50,7 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
     this.logger.debug('Getting database metadata');
 
     const cloudDatabase: CloudDatabase = await this.runChildJob(
+      sessionMetadata,
       WaitForActiveDatabaseCloudJob,
       {
         databaseId: this.data.databaseId,

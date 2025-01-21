@@ -1,5 +1,4 @@
 import { CloudJob, CloudJobOptions } from 'src/modules/cloud/job/jobs/cloud-job';
-import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
 import { CloudDatabase, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
@@ -9,6 +8,7 @@ import {
   CloudDatabaseInUnexpectedStateException,
 } from 'src/modules/cloud/job/exceptions';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
+import { SessionMetadata } from 'src/common/models';
 
 export class WaitForActiveDatabaseCloudJob extends CloudJob {
   protected name = CloudJobName.WaitForActiveDatabase;
@@ -27,8 +27,8 @@ export class WaitForActiveDatabaseCloudJob extends CloudJob {
     super(options);
   }
 
-  async iteration(): Promise<CloudDatabase> {
-    this.logger.log('Waiting for cloud database active state');
+  async iteration(sessionMetadata: SessionMetadata): Promise<CloudDatabase> {
+    this.logger.debug('Waiting for cloud database active state');
 
     this.checkSignal();
 
@@ -56,7 +56,7 @@ export class WaitForActiveDatabaseCloudJob extends CloudJob {
       case CloudDatabaseStatus.Draft:
         this.logger.debug('Cloud database is not in the active state. Scheduling new iteration');
 
-        return await this.runNextIteration();
+        return await this.runNextIteration(sessionMetadata);
       case CloudDatabaseStatus.CreationFailed:
         throw new CloudDatabaseInFailedStateException();
       case CloudDatabaseStatus.DeletePending:

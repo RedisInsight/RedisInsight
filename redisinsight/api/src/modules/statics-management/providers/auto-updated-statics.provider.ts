@@ -23,11 +23,14 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    * Updates latest json on startup
    */
   async onModuleInit() {
-    if (this.options.shouldAutoUpdate) {
+    if (this.options.initDefaults) {
       // wait for populating default data (should take milliseconds)
       await this.initDefaults().catch((e) => this.logger.warn('Unable to populate default data', e));
+    }
+
+    if (this.options.autoUpdate) {
       // async operation to not wait for it and not block user in case when no internet connection
-      this.autoUpdate();
+      this.autoUpdate().catch();
     }
   }
 
@@ -53,9 +56,9 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    * Update static files if needed
    */
   async autoUpdate() {
-    this.logger.log('Checking for updates...');
+    this.logger.debug('Checking for updates...');
     if (!this.options.devMode && await this.isUpdatesAvailable()) {
-      this.logger.log('Updates available! Updating...');
+      this.logger.debug('Updates available! Updating...');
 
       try {
         await this.updateStaticFiles();

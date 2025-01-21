@@ -449,7 +449,7 @@ describe('slices', () => {
       // Arrange
       const data = {
         slowLogDurationUnit: 'msec',
-        treeViewDelimiter: ':-',
+        treeViewDelimiter: [{ label: ':-' }],
         treeViewSort: SortOrder.DESC,
         showHiddenRecommendations: true,
       }
@@ -496,7 +496,7 @@ describe('slices', () => {
   describe('setBrowserTreeDelimiter', () => {
     it('should properly set browser tree delimiter', () => {
       // Arrange
-      const delimiter = '_'
+      const delimiter = [{ label: '_' }]
 
       const state = {
         ...initialState.dbConfig,

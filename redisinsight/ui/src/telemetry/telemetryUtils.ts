@@ -20,25 +20,36 @@ import {
 import { TelemetryEvent } from './events'
 import { checkIsAnalyticsGranted } from './checkAnalytics'
 
-export const getProvider = (dbId: string): Maybe<string> => {
+export const getProviderData = (dbId: string): {
+  provider: Maybe<string>,
+  serverName: Maybe<string>
+} => {
+  let provider
+  let serverName
   const instance = get(store.getState(), 'connections.instances.connectedInstance')
-  return (instance.id === dbId) ? instance.provider : undefined
+  if (instance.id === dbId) {
+    provider = instance?.provider
+    const instanceOverview = get(store.getState(), 'connections.instances.instanceOverview')
+    serverName = instanceOverview?.serverName || undefined
+  }
+  return { provider, serverName }
 }
 
 const TELEMETRY_EMPTY_VALUE = 'none'
 
 const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelemetrySendEvent) => {
+  let providerData
   try {
     const isAnalyticsGranted = checkIsAnalyticsGranted()
     if (!isAnalyticsGranted) {
       return
     }
 
-    if (!eventData.provider && eventData.databaseId) {
-      eventData.provider = getProvider(eventData.databaseId)
+    if (eventData.databaseId) {
+      providerData = getProviderData(eventData.databaseId)
     }
     await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`,
-      { event, eventData, traits })
+      { event, eventData: { ...providerData, ...eventData }, traits })
   } catch (e) {
     // continue regardless of error
   }
@@ -46,15 +57,16 @@ const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelem
 
 const sendPageViewTelemetry = async ({ name, eventData = {} }: ITelemetrySendPageView) => {
   try {
+    let providerData
     const isAnalyticsGranted = checkIsAnalyticsGranted()
     if (!isAnalyticsGranted) {
       return
     }
-    if (!eventData.provider && eventData.databaseId) {
-      eventData.provider = getProvider(eventData.databaseId)
+    if (eventData.databaseId) {
+      providerData = getProviderData(eventData.databaseId)
     }
     await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`,
-      { event: name, eventData })
+      { event: name, eventData: { ...providerData, ...eventData } })
   } catch (e) {
     // continue regardless of error
   }

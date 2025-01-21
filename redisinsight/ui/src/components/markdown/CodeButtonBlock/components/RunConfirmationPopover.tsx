@@ -1,11 +1,12 @@
 import { EuiButton, EuiCheckbox, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { Pages } from 'uiSrc/constants'
+import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { setDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
+import { FeatureFlagComponent } from 'uiSrc/components'
 import styles from '../styles.module.scss'
 
 interface Props {
@@ -57,15 +58,17 @@ const RunConfirmationPopover = ({ onApply }: Props) => {
       />
       <div className={styles.popoverFooter}>
         <div>
-          <EuiButton
-            color="secondary"
-            size="s"
-            className={styles.popoverBtn}
-            onClick={handleChangeDatabase}
-            data-testid="tutorial-popover-change-db"
-          >
-            Change Database
-          </EuiButton>
+          <FeatureFlagComponent name={FeatureFlags.envDependent}>
+            <EuiButton
+              color="secondary"
+              size="s"
+              className={styles.popoverBtn}
+              onClick={handleChangeDatabase}
+              data-testid="tutorial-popover-change-db"
+            >
+              Change Database
+            </EuiButton>
+          </FeatureFlagComponent>
           <EuiButton
             color="secondary"
             fill

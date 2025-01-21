@@ -12,6 +12,7 @@ import {
   IPipelineStatus,
   IActionPipelineResultProps,
   PipelineAction,
+  IRdiPipelineJob,
 } from 'uiSrc/slices/interfaces/rdi'
 import {
   getApiErrorMessage,
@@ -32,6 +33,8 @@ export const initialState: IStateRdiPipeline = {
   loading: false,
   error: '',
   data: null,
+  config: '',
+  jobs: [],
   resetChecked: false,
   schema: null,
   strategies: {
@@ -70,10 +73,18 @@ const rdiPipelineSlice = createSlice({
     getPipelineSuccess: (state, { payload }: PayloadAction<IPipeline>) => {
       state.loading = false
       state.data = payload
+      state.config = payload?.config || ''
+      state.jobs = payload?.jobs || ''
     },
     getPipelineFailure: (state, { payload }: PayloadAction<string>) => {
       state.loading = false
       state.error = payload
+    },
+    setPipelineConfig: (state, { payload }: PayloadAction<string>) => {
+      state.config = payload
+    },
+    setPipelineJobs: (state, { payload }: PayloadAction<IRdiPipelineJob[]>) => {
+      state.jobs = payload
     },
     deployPipeline: (state) => {
       state.loading = true
@@ -167,6 +178,8 @@ export const {
   getPipelineStrategiesSuccess,
   getPipelineStrategiesFailure,
   setPipeline,
+  setPipelineConfig,
+  setPipelineJobs,
   setPipelineInitialState,
   setChangedFile,
   setChangedFiles,

@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
@@ -9,10 +10,12 @@ const validator = new Validator();
 export const sessionMetadataFromRequest = (request: Request): SessionMetadata => {
   const userId = request.res?.locals?.session?.data?.userId.toString();
   const sessionId = request.res?.locals?.session?.data?.sessionId.toString();
+  const correlationId = request.res?.locals?.session?.correlationId || uuidv4();
 
   const requestSession = {
     userId,
     sessionId,
+    correlationId,
   };
 
   // todo: do not forget to deal with session vs sessionMetadata property

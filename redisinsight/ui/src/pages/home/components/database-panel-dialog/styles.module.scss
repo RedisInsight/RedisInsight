@@ -1,0 +1,24 @@
+.bodyWrapper {
+  height: 100%;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.formWrapper {
+  @include eui.scrollBar;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+
+  .softwareTypes {
+    display: flex;
+    align-items: center;
+
+    :global(.euiRadioGroup__item) {
+      margin-top: 0;
+      margin-right: 12px;
+    }
+  }
+}

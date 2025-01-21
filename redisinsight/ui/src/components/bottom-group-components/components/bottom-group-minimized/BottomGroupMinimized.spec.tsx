@@ -1,8 +1,9 @@
 import React from 'react'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 
 import { toggleCli, toggleCliHelper } from 'uiSrc/slices/cli/cli-settings'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { cleanup, fireEvent, mockedStore, render, screen, initialStateDefault, mockStore } from 'uiSrc/utils/test-utils'
+import { FeatureFlags } from 'uiSrc/constants'
 import BottomGroupMinimized from './BottomGroupMinimized'
 
 let store: typeof mockedStore
@@ -33,5 +34,32 @@ describe('BottomGroupMinimized', () => {
 
     const expectedActions = [toggleCliHelper()]
     expect(store.getActions()).toEqual(expectedActions)
+  })
+  it('should show "Profiler" and "user-survey-link" when feature flag is on', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: true }
+    )
+
+    render(<BottomGroupMinimized />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('expand-monitor')).toBeInTheDocument()
+    expect(screen.queryByTestId('user-survey-link')).toBeInTheDocument()
+  })
+
+  it('should hide "Profiler" and "user-survey-link" when feature flag is off', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+
+    render(<BottomGroupMinimized />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('expand-monitor')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('user-survey-link')).not.toBeInTheDocument()
   })
 })

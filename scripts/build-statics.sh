@@ -17,48 +17,63 @@ mkdir -p "${PLUGINS_VENDOR_DIR}"
 cp -R "./vendor/." "${PLUGINS_VENDOR_DIR}"
 
 
-# Build redisearch plugin
+# Install developing tools for plugins
+PACKAGES_DIR="./redisinsight/ui/src/packages"
+yarn --cwd "${PACKAGES_DIR}"
+
+# Install plugins dependencies
 REDISEARCH_DIR="./redisinsight/ui/src/packages/redisearch"
 yarn --cwd "${REDISEARCH_DIR}"
+
+REDISGRAPH_DIR="./redisinsight/ui/src/packages/redisgraph"
+yarn --cwd "${REDISGRAPH_DIR}"
+
+REDISTIMESERIES_DIR="./redisinsight/ui/src/packages/redistimeseries-app"
+yarn --cwd "${REDISTIMESERIES_DIR}"
+
+RI_EXPLIAIN_DIR="./redisinsight/ui/src/packages/ri-explain"
+yarn --cwd "${RI_EXPLIAIN_DIR}"
+
+CLIENTS_LIST_DIR="./redisinsight/ui/src/packages/clients-list"
+yarn --cwd "${CLIENTS_LIST_DIR}"
+
+# Build all plugins and common libraries
+NODE_OPTIONS=--max_old_space_size=4096 yarn --cwd "${PACKAGES_DIR}" build
+
+# Copy common libraries to plugins
+COMMON_DIR="./redisinsight/ui/src/packages/common"
 if [ $pluginsOnlyInstall != 1 ]; then
-  yarn --cwd "${REDISEARCH_DIR}" build
+  mkdir -p "${PLUGINS_DIR}/common"
+  cp -R "${COMMON_DIR}/index"*.js "${COMMON_DIR}/package.json" "${PLUGINS_DIR}/common"
+fi
+
+# Copy redisearch plugin
+if [ $pluginsOnlyInstall != 1 ]; then
   mkdir -p "${PLUGINS_DIR}/redisearch"
   cp -R "${REDISEARCH_DIR}/dist" "${REDISEARCH_DIR}/package.json" "${PLUGINS_DIR}/redisearch"
 fi
 
 
-# Build redisgraph plugin
-REDISGRAPH_DIR="./redisinsight/ui/src/packages/redisgraph"
-yarn --cwd "${REDISGRAPH_DIR}"
+# Copy redisgraph plugin
 if [ $pluginsOnlyInstall != 1 ]; then
-  yarn --cwd "${REDISGRAPH_DIR}" build
   mkdir -p "${PLUGINS_DIR}/redisgraph"
   cp -R "${REDISGRAPH_DIR}/dist" "${REDISGRAPH_DIR}/package.json" "${PLUGINS_DIR}/redisgraph"
 fi
 
-# Build timeseries plugin
-REDISTIMESERIES_DIR="./redisinsight/ui/src/packages/redistimeseries-app"
-yarn --cwd "${REDISTIMESERIES_DIR}"
+# Copy timeseries plugin
 if [ $pluginsOnlyInstall != 1 ]; then
-  yarn --cwd "${REDISTIMESERIES_DIR}" build
   mkdir -p "${PLUGINS_DIR}/redistimeseries-app"
   cp -R "${REDISTIMESERIES_DIR}/dist" "${REDISTIMESERIES_DIR}/package.json" "${PLUGINS_DIR}/redistimeseries-app"
 fi
 
-# Build ri-explain plugin
-RI_EXPLIAIN_DIR="./redisinsight/ui/src/packages/ri-explain"
-yarn --cwd "${RI_EXPLIAIN_DIR}"
+# Copy ri-explain plugin
 if [ $pluginsOnlyInstall != 1 ]; then
-  yarn --cwd "${RI_EXPLIAIN_DIR}" build
   mkdir -p "${PLUGINS_DIR}/ri-explain"
   cp -R "${RI_EXPLIAIN_DIR}/dist" "${RI_EXPLIAIN_DIR}/package.json" "${PLUGINS_DIR}/ri-explain"
 fi
 
-# Build clients-list and json plugin
-CLIENTS_LIST_DIR="./redisinsight/ui/src/packages/clients-list"
-yarn --cwd "${CLIENTS_LIST_DIR}"
+# Copy clients-list and json plugins
 if [ $pluginsOnlyInstall != 1 ]; then
-  yarn --cwd "${CLIENTS_LIST_DIR}" build
   mkdir -p "${PLUGINS_DIR}/clients-list"
   cp -R "${CLIENTS_LIST_DIR}/dist" "${CLIENTS_LIST_DIR}/package.json" "${PLUGINS_DIR}/clients-list"
 fi

@@ -1,14 +1,16 @@
 import axios from 'axios'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
+import { getConfig } from 'uiSrc/config'
 
-const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
-const baseApiUrl = process.env.RI_BASE_API_URL
-const isDevelopment = process.env.NODE_ENV === 'development'
-const isWebApp = process.env.RI_APP_TYPE === 'web'
-const hostedApiBaseUrl = process.env.RI_HOSTED_API_BASE_URL
+const riConfig = getConfig()
 
-let BASE_URL = !isDevelopment && isWebApp ? '/' : `${baseApiUrl}:${apiPort}/`
+const { apiPort } = window.app?.config || { apiPort: riConfig.api.port }
+const isDevelopment = riConfig.app.env === 'development'
+const isWebApp = riConfig.app.type === 'web'
+const hostedApiBaseUrl = riConfig.api.hostedBaseUrl
+
+let BASE_URL = !isDevelopment && isWebApp ? '/' : `${riConfig.api.baseUrl}:${apiPort}/`
 
 if (window.__RI_PROXY_PATH__) {
   BASE_URL = `${BASE_URL}${window.__RI_PROXY_PATH__}/`
@@ -42,4 +44,9 @@ export const getPathToResource = (url: string = ''): string => {
 
 export const checkResourse = async (url: string = '') => resourcesService.head(url)
 
-export default resourcesService
+const localResourcesService = axios.create({
+  baseURL: riConfig.app.localResourcesBaseUrl,
+  withCredentials: false,
+})
+
+export default (riConfig.app.useLocalResources) ? localResourcesService : resourcesService

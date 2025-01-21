@@ -4,7 +4,8 @@ export enum FeatureFlags {
   cloudSsoRecommendedSettings = 'cloudSsoRecommendedSettings',
   databaseChat = 'databaseChat',
   documentationChat = 'documentationChat',
-  disabledByEnv = 'disabledByEnv',
+  envDependent = 'envDependent',
   rdi = 'redisDataIntegration',
   hashFieldExpiration = 'hashFieldExpiration',
+  enhancedCloudUI = 'enhancedCloudUI',
 }

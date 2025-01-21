@@ -24,7 +24,7 @@ import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDet
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
-import { setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
+import { setPipelineConfig, setPipelineInitialState, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { SearchMode } from '../interfaces/keys'
 import { AppWorkspace, RedisResponseBuffer, StateAppContext } from '../interfaces'
@@ -344,6 +344,8 @@ export function resetRdiContext() {
   return async (dispatch: AppDispatch) => {
     dispatch(setAppContextConnectedRdiInstanceId(''))
     dispatch(setPipelineInitialState())
+    dispatch(setPipelineConfig(''))
+    dispatch(setPipelineJobs([]))
     dispatch(resetPipelineManagement())
   }
 }

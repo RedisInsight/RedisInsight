@@ -1,5 +1,5 @@
 import { BrowserPage } from '../../../../pageObjects';
-import { commonUrl, ossStandaloneBigConfig, ossStandaloneV8Config } from '../../../../helpers/conf';
+import { commonUrl, ossStandaloneBigConfig, ossStandaloneV6Config } from '../../../../helpers/conf';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
@@ -48,7 +48,7 @@ test('Verify that user can see that input is not saved when the Cancel button is
 });
 test
     .before(async () => {
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV8Config);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV6Config);
         keyNames = [
             `device:common-dev`,
             `device-common:dev`,
@@ -71,16 +71,16 @@ test
             }
             await apiKeyRequests.addHashKeyApi(
                 hashKeyParameters,
-                ossStandaloneV8Config,
+                ossStandaloneV6Config,
             )
         }
         await browserPage.reloadPage();
     })
     .after(async () => {
         for (const keyName of keyNames) {
-            await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneV8Config.databaseName);
+            await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneV6Config.databaseName);
         }
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV8Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV6Config);
     })('Verify that user can set multiple delimiters in the tree view', async t => {
         // Switch to tree view
         await t.click(browserPage.treeViewButton);

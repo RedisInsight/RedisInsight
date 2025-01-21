@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiText } from '@elastic/eui'
+import { EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { find } from 'lodash'
@@ -14,15 +14,22 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { Pages } from 'uiSrc/constants'
 import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
+
+import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
+
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import styles from './styles.module.scss'
 
 export interface Props {
   inline?: boolean
   source?: OAuthSocialSource
+  onClose?: () => void
 }
 
 const OAuthAutodiscovery = (props: Props) => {
-  const { inline, source = OAuthSocialSource.Autodiscovery } = props
+  const { inline, source = OAuthSocialSource.Autodiscovery, onClose } = props
   const { data } = useSelector(oauthCloudUserSelector)
 
   const [isDiscoverDisabled, setIsDiscoverDisabled] = useState(false)
@@ -94,6 +101,32 @@ const OAuthAutodiscovery = (props: Props) => {
     })
   }
 
+  const CreateFreeDb = () => (
+    <div className={styles.createDbSection}>
+      <div className={styles.createDbTitle}><CloudIcon /><span>Start FREE with Redis Cloud</span></div>
+      <OAuthSsoHandlerDialog>
+        {(ssoCloudHandlerClick) => (
+          <EuiButton
+            fill
+            color="secondary"
+            size="s"
+            href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: '' })}
+            target="_blank"
+            onClick={(e: React.MouseEvent) => {
+              ssoCloudHandlerClick(e, {
+                source: OAuthSocialSource.DiscoveryForm,
+                action: OAuthSocialAction.Create
+              })
+              onClose?.()
+            }}
+          >
+            Quick start
+          </EuiButton>
+        )}
+      </OAuthSsoHandlerDialog>
+    </div>
+  )
+
   return (
     <div
       className={styles.container}
@@ -108,11 +141,17 @@ const OAuthAutodiscovery = (props: Props) => {
         {(form: React.ReactNode) => (
           <>
             <EuiText className={styles.text} color="subdued">
-              Auto-discover subscriptions and add your databases.
-              <br />
+              Discover subscriptions and add your databases.
               A new Redis Cloud account will be created for you if you don’t have one.
             </EuiText>
+            <EuiSpacer size="m" />
+            <CreateFreeDb />
+            <EuiSpacer size="xl" />
+            <EuiText>Get started with</EuiText>
+            <EuiTitle className={styles.title} size="l"><h3>Redis Cloud account</h3></EuiTitle>
+            <EuiSpacer size="xl" />
             {form}
+            <EuiSpacer size="xxl" />
             <div className={styles.containerAgreement}>
               <OAuthAgreement size="s" />
             </div>

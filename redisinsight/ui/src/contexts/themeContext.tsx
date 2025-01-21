@@ -1,6 +1,6 @@
 import React from 'react'
 import { ipcThemeChange } from 'uiSrc/electron/utils'
-import { BrowserStorageItem, Theme, THEMES, THEME_MATCH_MEDIA_DARK } from '../constants'
+import { BrowserStorageItem, Theme, THEMES, THEME_MATCH_MEDIA_DARK, DEFAULT_THEME } from '../constants'
 import { localStorageService, themeService } from '../services'
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 const THEME_NAMES = THEMES.map(({ value }) => value)
 
 export const defaultState = {
-  theme: THEME_NAMES[1], // dark theme by default
+  theme: DEFAULT_THEME || THEME_NAMES[1], // env configured theme or dark theme by default
   usingSystemTheme: localStorageService.get(BrowserStorageItem.theme) === Theme.System,
   changeTheme: (themeValue: any) => {
     themeService.applyTheme(themeValue)
@@ -39,13 +39,15 @@ export class ThemeProvider extends React.Component<Props> {
 
   getSystemTheme = () => (window.matchMedia?.(THEME_MATCH_MEDIA_DARK)?.matches ? Theme.Dark : Theme.Light)
 
-  changeTheme = (themeValue: any) => {
+  changeTheme = async (themeValue: any) => {
     let actualTheme = themeValue
+
+    // since change theme is async need to wait to have a proper prefers-color-scheme
+    await ipcThemeChange(themeValue)
+
     if (themeValue === Theme.System) {
       actualTheme = this.getSystemTheme()
     }
-
-    ipcThemeChange(themeValue)
 
     this.setState({ theme: actualTheme, usingSystemTheme: themeValue === Theme.System }, () => {
       themeService.applyTheme(themeValue)

@@ -4,6 +4,7 @@ import { TelemetryEvents } from 'src/constants';
 import { RedisEnterpriseDatabase } from 'src/modules/redis-enterprise/dto/cluster.dto';
 import { RedisEnterpriseDatabaseStatus } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class RedisEnterpriseAnalytics extends TelemetryBaseService {
@@ -11,9 +12,13 @@ export class RedisEnterpriseAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendGetREClusterDbsSucceedEvent(databases: RedisEnterpriseDatabase[] = []): void {
+  sendGetREClusterDbsSucceedEvent(
+    sessionMetadata: SessionMetadata,
+    databases: RedisEnterpriseDatabase[] = [],
+  ): void {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.REClusterDiscoverySucceed,
         {
           numberOfActiveDatabases: databases.filter(
@@ -27,7 +32,7 @@ export class RedisEnterpriseAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendGetREClusterDbsFailedEvent(exception: HttpException) {
-    this.sendFailedEvent(TelemetryEvents.REClusterDiscoveryFailed, exception);
+  sendGetREClusterDbsFailedEvent(sessionMetadata: SessionMetadata, exception: HttpException) {
+    this.sendFailedEvent(sessionMetadata, TelemetryEvents.REClusterDiscoveryFailed, exception);
   }
 }

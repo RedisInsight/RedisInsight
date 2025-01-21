@@ -96,7 +96,7 @@ export class DatabaseAnalysisService {
       return this.databaseAnalysisProvider.create(analysis);
     } catch (e) {
       client?.disconnect();
-      this.logger.error('Unable to analyze database', e);
+      this.logger.error('Unable to analyze database', e, clientMetadata);
 
       if (e instanceof HttpException) {
         throw e;

@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
-import { useFormikContext } from 'formik'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
-import { deleteChangedFile, fetchPipelineStrategies, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
-import { FileChangeType, IPipeline } from 'uiSrc/slices/interfaces'
+import { deleteChangedFile, fetchPipelineStrategies, rdiPipelineSelector, setChangedFile, setPipeline, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
+import { FileChangeType } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
@@ -42,9 +41,7 @@ const Job = (props: Props) => {
   const deployedJobValueRef = useRef<Maybe<string>>(deployedJobValue)
   const jobNameRef = useRef<string>(name)
 
-  const { loading, schema, jobFunctions } = useSelector(rdiPipelineSelector)
-
-  const { setFieldValue } = useFormikContext<IPipeline>()
+  const { loading, schema, jobFunctions, jobs } = useSelector(rdiPipelineSelector)
 
   useEffect(() => {
     dispatch(fetchPipelineStrategies(rdiInstanceId))
@@ -97,7 +94,13 @@ const Job = (props: Props) => {
   }, 2000), [deployedJobValue, jobNameRef.current])
 
   const handleChange = (value: string) => {
-    setFieldValue(`jobs.${jobIndexRef.current}.value`, value)
+    const newJobs = jobs.map((job, index) => {
+      if (index === jobIndexRef.current) {
+        return { ...job, value }
+      }
+      return job
+    })
+    dispatch(setPipelineJobs(newJobs))
     checkIsFileUpdated(value)
   }
 
@@ -175,12 +178,20 @@ const Job = (props: Props) => {
             </EuiToolTip>
             <TemplateButton
               value={value}
-              setFieldValue={(template) => setFieldValue(`jobs.${jobIndexRef.current ?? -1}.value`, template)}
+              setFieldValue={(template) => {
+                const newJobs = jobs.map((job, index) => {
+                  if (index === jobIndexRef.current) {
+                    return { ...job, value: template }
+                  }
+                  return job
+                })
+                dispatch(setPipelineJobs(newJobs))
+              }}
             />
           </div>
         </div>
         <EuiText className="rdi__text" color="subdued">
-          {'Describe the '}
+          {'Create a job per source table to filter, transform, and '}
           <EuiLink
             external={false}
             data-testid="rdi-pipeline-transformation-link"
@@ -193,9 +204,9 @@ const Job = (props: Props) => {
               }
             )}
           >
-            transformation logic
+            map data
           </EuiLink>
-          {' to perform on data from a single source'}
+          {' to Redis.'}
         </EuiText>
         {loading ? (
           <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-job-loading">

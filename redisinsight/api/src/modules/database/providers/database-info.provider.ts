@@ -13,6 +13,7 @@ import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
 import { convertArrayReplyToObject, convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class DatabaseInfoProvider {
@@ -20,11 +21,11 @@ export class DatabaseInfoProvider {
     private readonly featureService: FeatureService,
   ) {}
 
-  public async filterRawModules(modules: any[]): Promise<any[]> {
+  public async filterRawModules(sessionMetadata: SessionMetadata, modules: any[]): Promise<any[]> {
     let filteredModules = modules;
 
     try {
-      const filterModules = await this.featureService.getByName(KnownFeatures.RedisModuleFilter);
+      const filterModules = await this.featureService.getByName(sessionMetadata, KnownFeatures.RedisModuleFilter);
 
       if (filterModules?.flag && filterModules.data?.hideByName?.length) {
         filteredModules = modules.filter(({ name }) => {
@@ -53,6 +54,7 @@ export class DatabaseInfoProvider {
         { replyEncoding: 'utf8' },
       ) as string[][];
       const modules = await this.filterRawModules(
+        client.clientMetadata.sessionMetadata,
         reply.map((module: any[]) => convertArrayReplyToObject(module)),
       );
 
@@ -107,7 +109,7 @@ export class DatabaseInfoProvider {
       }
     }));
 
-    return await this.filterRawModules(modules);
+    return await this.filterRawModules(client.clientMetadata.sessionMetadata, modules);
   }
 
   public async getRedisDBSize(client: RedisClient): Promise<number> {

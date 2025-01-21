@@ -44,7 +44,7 @@ export class CloudAuthService {
     private readonly ssoIdpCloudAuthStrategy: SsoIdpCloudAuthStrategy,
     private readonly analytics: CloudAuthAnalytics,
     private readonly eventEmitter: EventEmitter2,
-  ) {}
+  ) { }
 
   static getOAuthHttpRequestHeaders() {
     return {
@@ -69,7 +69,7 @@ export class CloudAuthService {
     ) {
       return (
         authRequest?.idpType === CloudAuthIdpType.GitHub
-          && query?.error_description?.indexOf('email') > -1
+        && query?.error_description?.indexOf('email') > -1
       )
         ? new CloudOauthGithubEmailPermissionException(query.error_description)
         : new CloudOauthMissedRequiredDataException(query.error_description, {
@@ -156,6 +156,9 @@ export class CloudAuthService {
    */
   private async getAuthRequestInfo(query): Promise<CloudAuthRequestInfo> {
     if (!this.authRequests.has(query?.state)) {
+      this.logger.log(
+        `${query?.state ? 'Auth Request matching query state not found' : 'Query state field is empty'}`,
+      );
       throw new CloudOauthUnknownAuthorizationRequestException();
     }
 
@@ -164,6 +167,7 @@ export class CloudAuthService {
     return {
       idpType: authRequest.idpType,
       action: authRequest.action,
+      sessionMetadata: authRequest.sessionMetadata,
     };
   }
 
@@ -175,12 +179,17 @@ export class CloudAuthService {
    */
   private async callback(query): Promise<Function | void> {
     if (!this.authRequests.has(query?.state)) {
+      this.logger.log(
+        `${query?.state ? 'Auth Request matching query state not found' : 'Query state field is empty'}`,
+      );
       throw new CloudOauthUnknownAuthorizationRequestException();
     }
 
     const authRequest = this.authRequests.get(query.state);
 
     if (query?.error) {
+      this.logger.error(`Query has error field: query.error: ${query.error},
+        query.error_description: ${query.error_description}`);
       throw CloudAuthService.getAuthorizationServerRedirectError(query, authRequest);
     }
 
@@ -218,7 +227,7 @@ export class CloudAuthService {
       });
     } catch (e) {
       // ignore error
-      this.logger.error('Unable to revoke tokens', e);
+      this.logger.error('Unable to revoke tokens', e, sessionMetadata);
     }
   }
 
@@ -228,6 +237,7 @@ export class CloudAuthService {
    * @param from
    */
   async handleCallback(query, from = CloudSsoFeatureStrategy.DeepLink): Promise<CloudAuthResponse> {
+    this.logger.log(`Handling a callback with a query having ${Object.keys(query || {}).toString()} keys`);
     let result: CloudAuthResponse = {
       status: CloudAuthStatus.Succeed,
       message: 'Successfully authenticated',
@@ -238,11 +248,20 @@ export class CloudAuthService {
     try {
       reqInfo = await this.getAuthRequestInfo(query);
       callback = await this.callback(query);
-      this.analytics.sendCloudSignInSucceeded(from, reqInfo?.action);
+      this.analytics.sendCloudSignInSucceeded(
+        reqInfo.sessionMetadata,
+        from,
+        reqInfo?.action,
+      );
     } catch (e) {
-      this.logger.error(`Error on ${from} cloud oauth callback`, e);
+      this.logger.error(`Error on ${from} cloud oauth callback: ${e.message}`, e);
 
-      this.analytics.sendCloudSignInFailed(e, from, reqInfo?.action);
+      this.analytics.sendCloudSignInFailed(
+        reqInfo?.sessionMetadata,
+        e,
+        from,
+        reqInfo?.action,
+      );
 
       result = {
         status: CloudAuthStatus.Failed,
@@ -251,6 +270,9 @@ export class CloudAuthService {
     }
 
     try {
+      if (!callback) {
+        this.logger.log('Callback is undefined');
+      }
       callback?.(result)?.catch((e: Error) => this.logger.error('Async callback failed', e));
     } catch (e) {
       this.logger.error('Callback failed', e);
@@ -278,7 +300,8 @@ export class CloudAuthService {
         apiSessionId: null,
       });
     } catch (e) {
-      throw new CloudApiUnauthorizedException();
+      this.logger.error('Unable to renew tokens', e);
+      throw new CloudApiUnauthorizedException(e.message);
     }
   }
 
@@ -289,7 +312,7 @@ export class CloudAuthService {
    */
   async logout(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      this.logger.log('Logout cloud user');
+      this.logger.debug('Logout cloud user', sessionMetadata);
 
       await this.revokeRefreshToken(sessionMetadata);
 
@@ -297,7 +320,7 @@ export class CloudAuthService {
 
       this.eventEmitter.emit(CloudAuthServerEvent.Logout, sessionMetadata);
     } catch (e) {
-      this.logger.error('Unable to logout', e);
+      this.logger.error('Unable to logout', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }

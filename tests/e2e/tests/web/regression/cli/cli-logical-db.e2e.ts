@@ -33,7 +33,7 @@ test
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that working with logical DBs, user can not see 0 DB index in CLI', async t => {
-        await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneConfig, index);
+        await myRedisDatabasePage.AddRedisDatabaseDialog.addLogicalRedisDatabase(ossStandaloneConfig, index);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         // Open CLI
         await t.click(browserPage.Cli.cliExpandButton);
@@ -46,7 +46,7 @@ test
 test('Verify that working with logical DBs, user can see N DB index in CLI', async t => {
     index = '1';
 
-    await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneConfig, index);
+    await myRedisDatabasePage.AddRedisDatabaseDialog.addLogicalRedisDatabase(ossStandaloneConfig, index);
     await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName  } [db${index}]`);
     // Open CLI
     await t.click(browserPage.Cli.cliExpandButton);
@@ -61,7 +61,7 @@ test('Verify that user can see DB index in the endpoint in CLI header is automat
     index = '2';
     const indexAfter = '3';
 
-    await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneConfig, index);
+    await myRedisDatabasePage.AddRedisDatabaseDialog.addLogicalRedisDatabase(ossStandaloneConfig, index);
     await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName  } [db${index}]`);
 
     // Open CLI and verify that user can see DB index in CLI

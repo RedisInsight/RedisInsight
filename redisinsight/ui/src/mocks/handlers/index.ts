@@ -8,6 +8,7 @@ import recommendations from './recommendations'
 import cloud from './oauth'
 import tutorials from './tutorials'
 import rdi from './rdi'
+import user from './user'
 
 // @ts-ignore
 export const handlers: RestHandler<MockedRequest>[] = [].concat(
@@ -20,4 +21,5 @@ export const handlers: RestHandler<MockedRequest>[] = [].concat(
   cloud,
   tutorials,
   rdi,
+  user,
 )

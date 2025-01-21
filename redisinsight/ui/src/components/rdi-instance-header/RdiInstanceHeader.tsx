@@ -15,6 +15,7 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
+import InstancesNavigationPopover from '../instance-header/components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
 const RdiInstanceHeader = () => {
@@ -57,7 +58,7 @@ const RdiInstanceHeader = () => {
                   <EuiText className={styles.divider}>&#62;</EuiText>
                 </EuiFlexItem>
                 <EuiFlexItem style={{ overflow: 'hidden' }}>
-                  <b className={styles.rdiName} data-testid="rdi-instance-name">{name}</b>
+                  <InstancesNavigationPopover name={name} />
                 </EuiFlexItem>
               </EuiFlexGroup>
             </div>
@@ -75,7 +76,7 @@ const RdiInstanceHeader = () => {
       </EuiFlexItem>
 
       <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-        <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
+        <EuiFlexItem grow={false} style={{ marginLeft: 16 }} data-testid="o-auth-user-profile-rdi">
           <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
         </EuiFlexItem>
       </FeatureFlagComponent>

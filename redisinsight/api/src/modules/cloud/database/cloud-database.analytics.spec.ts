@@ -2,22 +2,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import {
-  mockCloudCapiAuthDto,
   mockFreeCloudSubscriptionPlan1,
   mockCloudSubscriptionCapiService,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { InternalServerErrorException } from '@nestjs/common';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
 
-const mockData = {
-  planId: mockFreeCloudSubscriptionPlan1.id,
-  capiCredentials: mockCloudCapiAuthDto,
-};
-
 describe('CloudDatabaseAnalytics', () => {
   let service: CloudDatabaseAnalytics;
-  let cloudSubscriptionCapiService: CloudSubscriptionCapiService;
   let sendEventMethod;
   let sendFailedEventMethod;
   const httpException = new InternalServerErrorException();
@@ -36,7 +30,6 @@ describe('CloudDatabaseAnalytics', () => {
     }).compile();
 
     service = await module.get(CloudDatabaseAnalytics);
-    cloudSubscriptionCapiService = await module.get(CloudSubscriptionCapiService);
     sendEventMethod = jest.spyOn<CloudDatabaseAnalytics, any>(
       service,
       'sendEvent',
@@ -49,9 +42,13 @@ describe('CloudDatabaseAnalytics', () => {
 
   describe('sendCloudSignInSucceeded', () => {
     it('should emit event with eventData', () => {
-      service.sendCloudFreeDatabaseCreated({ data: 'custom' });
+      service.sendCloudFreeDatabaseCreated(
+        mockSessionMetadata,
+        { data: 'custom' },
+      );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.CloudFreeDatabaseCreated,
         {
           data: 'custom',
@@ -60,9 +57,10 @@ describe('CloudDatabaseAnalytics', () => {
     });
 
     it('should emit event with eventData = {}', () => {
-      service.sendCloudFreeDatabaseCreated();
+      service.sendCloudFreeDatabaseCreated(mockSessionMetadata);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.CloudFreeDatabaseCreated,
         {},
       );
@@ -71,7 +69,8 @@ describe('CloudDatabaseAnalytics', () => {
 
   describe('sendCloudFreeDatabaseFailed', () => {
     it('should emit error event with selected plan', async () => {
-      await service.sendCloudFreeDatabaseFailed(
+      service.sendCloudFreeDatabaseFailed(
+        mockSessionMetadata,
         httpException,
         {
           region: mockFreeCloudSubscriptionPlan1.region,
@@ -80,6 +79,7 @@ describe('CloudDatabaseAnalytics', () => {
       );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
+        mockSessionMetadata,
         TelemetryEvents.CloudFreeDatabaseFailed,
         httpException,
         {
@@ -91,12 +91,14 @@ describe('CloudDatabaseAnalytics', () => {
   });
 
   it('should emit error event with selected plan', async () => {
-    await service.sendCloudFreeDatabaseFailed(
+    service.sendCloudFreeDatabaseFailed(
+      mockSessionMetadata,
       httpException,
       undefined,
     );
 
     expect(sendFailedEventMethod).toHaveBeenCalledWith(
+      mockSessionMetadata,
       TelemetryEvents.CloudFreeDatabaseFailed,
       httpException,
       {},
@@ -104,12 +106,14 @@ describe('CloudDatabaseAnalytics', () => {
   });
 
   it('should emit error event when free subscription is not exist', async () => {
-    await service.sendCloudFreeDatabaseFailed(
+    service.sendCloudFreeDatabaseFailed(
+      mockSessionMetadata,
       httpException,
       undefined,
     );
 
     expect(sendFailedEventMethod).toHaveBeenCalledWith(
+      mockSessionMetadata,
       TelemetryEvents.CloudFreeDatabaseFailed,
       httpException,
       {

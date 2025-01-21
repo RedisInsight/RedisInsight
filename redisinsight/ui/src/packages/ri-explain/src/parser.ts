@@ -95,7 +95,7 @@ class Lexer {
     }
     this.Position = this.ReadPosition++
   }
-  
+
   PeekChar() {
     if (this.ReadPosition >= this.Input.length) {
       return null
@@ -158,7 +158,7 @@ class Lexer {
 
   ReadNumber(): string {
     let str = ''
-    while (this.C !== undefined && (isDigit(this.C) || this.C === '.') && parseFloat(str + this.C) != NaN) {
+    while (this.C !== undefined && (isDigit(this.C) || this.C === '.') && !Number.isNaN(parseFloat(str + this.C))) {
       str = str + this.C
       this.ReadChar()
     }
@@ -477,7 +477,7 @@ class Parser {
 
   constructor(l: Lexer) {
     this.L = l
-    
+
     this.Errors = []
     this.CurrentToken = new Token(TokenType.INIT, '')
     this.PeekToken = new Token(TokenType.INIT, '')
@@ -821,7 +821,7 @@ class Parser {
     this.nextToken()// read off RBRACE
 
     // assertToken(TokenType.NEW_LINE, this.CurrentToken?.T)
-    // 
+    //
     // this.nextToken() // read off new line
 
     return new NumericExpr(left !== 'inf' ? parseFloat(left) : Infinity, lsign, identifier, rsign, right !== 'inf' ? parseFloat(right) : Infinity)
@@ -833,7 +833,7 @@ function Parse(data: string): SearchExpr {
   const l = new Lexer(data)
 
   let p = new Parser(l)
-  
+
   const t = p.CurrentToken.T;
 
   if (p.CurrentToken?.T === TokenType.NUMERIC) {
@@ -1114,7 +1114,7 @@ export function ParseGraphV2(output: string[]) {
   let children: EntityInfo[] = []
 
   let pairs: [number, number][] = []
-    
+
   let s: number | null = null, e: number | null = null
   let i = 1
 

@@ -6,23 +6,22 @@ export class OverviewPanel {
     // TEXT ELEMENTS
     overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
-    databaseModules = Selector('[data-testid$=module]');
-    overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
     overviewCpu = Selector('[data-test-subj=overview-cpu]');
     overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
     overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
     overviewSpinner = Selector('[class*=euiLoadingSpinner--medium]');
     // BUTTONS
     myRedisDBLink = Selector('[data-testid=my-redis-db-btn]', { timeout: 1000 });
-    overviewRedisStackLogo = Selector('[data-testid=redis-stack-logo]');
-    overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
     changeIndexBtn = Selector('[data-testid=change-index-btn]');
     databaseInfoIcon = Selector('[data-testid=db-info-icon]');
+    autoRefreshArrow = Selector('[data-testid=auto-refresh-overview-auto-refresh-config-btn]');
+    autoRefreshCheckbox = Selector('[data-testid=auto-refresh-overview-auto-refresh-switch]');
     // PANEL
-    overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
     databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]', { timeout: 2000 });
     // INPUTS
     changeIndexInput = Selector('[data-testid=change-index-input]');
+    autoRefreshRateInput = Selector('[data-testid=auto-refresh-overview-refresh-rate]');
+    inlineItemEditor = Selector('[data-testid=inline-item-editor]');
 
     /**
      * Change database index
@@ -48,5 +47,18 @@ export class OverviewPanel {
      */
     async waitForCpuIsCalculated(): Promise<void> {
         await t.expect(this.overviewSpinner.visible).notOk('cpu is not calculated, spinner is still displayed');
+    }
+
+     /**
+     * set auto refresh rate
+     * @param rate rate value
+     */
+    async setAutoRefreshValue(rate: string): Promise<void> {
+        if(!(await this.autoRefreshRateInput.exists)){
+            await t.click(this.autoRefreshArrow)
+        }
+        await t.click(this.autoRefreshRateInput);
+        await t.typeText(this.inlineItemEditor, rate);
+        await t.click(this.EditorButton.applyBtn);
     }
 }

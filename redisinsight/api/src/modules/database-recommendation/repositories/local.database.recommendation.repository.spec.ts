@@ -78,6 +78,22 @@ describe('LocalDatabaseRecommendationRepository', () => {
     });
   });
 
+  describe('isExistMulti', () => {
+    it('should return results for multiple recommendation names', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
+      repository.findOneBy.mockResolvedValueOnce({});
+      expect(await service.isExistMulti(mockClientMetadata, ['test1', 'test2'])).toEqual({
+        test1: false,
+        test2: true,
+      });
+    });
+
+    it('should return empty Map when received error', async () => {
+      repository.findOneBy.mockRejectedValueOnce(new Error());
+      expect(await service.isExistMulti(mockClientMetadata, ['test1', 'test2'])).toEqual({});
+    });
+  });
+
   describe('create', () => {
     it('should create recommendation', async () => {
       const result = await service.create(mockClientMetadata.sessionMetadata, mockDatabaseRecommendation);

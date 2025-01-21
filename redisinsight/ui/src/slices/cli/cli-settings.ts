@@ -3,9 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { apiService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { outputSelector, concatToOutput, setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
-import { cliTexts, ConnectionSuccessOutputText, InitOutputText } from 'uiSrc/constants/cliOutput'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
 import { CreateCliClientResponse, DeleteClientResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -187,16 +185,12 @@ export default cliSettingsSlice.reducer
 // Asynchronous thunk action
 export function createCliClientAction(
   instanceId: string,
-  onWorkbenchClick: () => void,
   onSuccessAction?: () => void,
   onFailAction?: (message: string) => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
-    const { host, port, db } = connectedInstanceSelector(state)
-    const { data = [] } = outputSelector?.(state) ?? {}
     dispatch(processCliClient())
-    dispatch(concatToOutput(InitOutputText(host, port, db, !data.length, onWorkbenchClick)))
 
     try {
       const { data, status } = await apiService.post<CreateCliClientResponse>(
@@ -206,7 +200,6 @@ export function createCliClientAction(
       if (isStatusSuccessful(status)) {
         sessionStorageService.set(BrowserStorageItem.cliClientUuid, data?.uuid)
         dispatch(processCliClientSuccess(data?.uuid))
-        dispatch(concatToOutput(ConnectionSuccessOutputText))
         dispatch(setCliDbIndex(state.connections?.instances?.connectedInstance?.db || 0))
 
         onSuccessAction?.()
@@ -214,7 +207,6 @@ export function createCliClientAction(
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
       dispatch(processCliClientFailure(errorMessage))
-      dispatch(concatToOutput(cliTexts.CLI_ERROR_MESSAGE(errorMessage)))
       onFailAction?.(errorMessage)
     }
   }

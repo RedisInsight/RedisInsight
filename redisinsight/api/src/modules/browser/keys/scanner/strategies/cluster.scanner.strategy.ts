@@ -218,8 +218,8 @@ export class ClusterScannerStrategy extends ScannerStrategy {
       return {
         name: key,
         type: result[responseMap.type]?.[1],
-        ttl: responseMap.ttl !== null ? result[responseMap.ttl][1] : null,
-        size: responseMap.size !== null ? result[responseMap.size][1] : null,
+        ttl: responseMap.ttl !== null ? result[responseMap.ttl][1] : undefined,
+        size: responseMap.size !== null ? result[responseMap.size][1] : undefined,
       };
     }));
   }

@@ -35,6 +35,27 @@ export const getProviderData = (dbId: string): {
   return { provider, serverName }
 }
 
+const FREE_DB_IDENTIFIER_TELEMETRY_EVENTS = [
+  TelemetryEvent.INSIGHTS_PANEL_OPENED,
+  TelemetryEvent.INSIGHTS_PANEL_CLOSED,
+  TelemetryEvent.EXPLORE_PANEL_TUTORIAL_OPENED,
+  TelemetryEvent.EXPLORE_PANEL_COMMAND_COPIED,
+  TelemetryEvent.EXPLORE_PANEL_COMMAND_RUN_CLICKED,
+  TelemetryEvent.EXPLORE_PANEL_LINK_CLICKED,
+]
+
+const getFreeDbFlag = (
+  event: TelemetryEvent,
+  freeDbEvents: TelemetryEvent[] = FREE_DB_IDENTIFIER_TELEMETRY_EVENTS
+): { isFree?: boolean } => {
+  if (freeDbEvents.includes(event)) {
+    const state = get(store.getState(), 'connections.instances.connectedInstance')
+    return state ? { isFree: state.isFreeDb } : {}
+  }
+
+  return {}
+}
+
 const TELEMETRY_EMPTY_VALUE = 'none'
 
 const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelemetrySendEvent) => {
@@ -48,8 +69,11 @@ const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelem
     if (eventData.databaseId) {
       providerData = getProviderData(eventData.databaseId)
     }
+
+    const freeDbIdentifier = getFreeDbFlag(event)
+
     await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`,
-      { event, eventData: { ...providerData, ...eventData }, traits })
+      { event, eventData: { ...providerData, ...eventData, ...freeDbIdentifier }, traits })
   } catch (e) {
     // continue regardless of error
   }
@@ -224,4 +248,5 @@ export {
   getAdditionalAddedEventData,
   getMatchType,
   getRedisModulesSummary,
+  getFreeDbFlag,
 }

@@ -20,8 +20,10 @@ const DatabaseOverviewWrapper = () => {
   const dispatch = useDispatch()
 
   const loadData = () => {
-    dispatch(getDatabaseConfigInfoAction(connectedInstanceId))
-    setLastRefreshTime(Date.now())
+    if (connectedInstanceId) {
+      dispatch(getDatabaseConfigInfoAction(connectedInstanceId))
+      setLastRefreshTime(Date.now())
+    }
   }
 
   const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {

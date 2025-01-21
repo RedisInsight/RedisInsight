@@ -9,7 +9,6 @@ export class LocalCloudUserRepository extends CloudUserRepository {
    * Get user model from current session
    */
   async get(sessionMetadata: SessionMetadata): Promise<CloudUser> {
-    console.log('session meta', sessionMetadata);
     return {
       id: sessionMetadata.userId,
       name: null,

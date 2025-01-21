@@ -125,6 +125,7 @@ export class DatabaseInfoProvider {
   public async getRedisGeneralInfo(
     client: RedisClient,
   ): Promise<RedisDatabaseInfoResponse> {
+    console.log('GET GENERAL INFO');
     if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
       return this.getRedisMasterNodesGeneralInfo(client);
     }
@@ -146,6 +147,7 @@ export class DatabaseInfoProvider {
       const statsInfo = info['stats'];
       const replicationInfo = info['replication'];
       const databases = await this.getDatabasesCount(client, keyspaceInfo);
+
       return {
         version: serverInfo?.redis_version,
         databases,
@@ -171,6 +173,7 @@ export class DatabaseInfoProvider {
     const nodesResult: RedisDatabaseInfoResponse[] = await Promise.all(
       (await client.nodes()).map(async (node) => this.getRedisNodeGeneralInfo(node)),
     );
+    console.log('nodes result', nodesResult);
     return nodesResult.reduce((prev, cur) => ({
       version: cur.version,
       usedMemory: prev.usedMemory + cur.usedMemory,

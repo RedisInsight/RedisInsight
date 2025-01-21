@@ -78,7 +78,6 @@ export function initializeAppAction(
       }))
 
       if (!envDependant?.flag) {
-        // TODO: what happens on failure
         await dispatch(fetchCloudUserProfile(undefined, () => {
           throw new Error(FAILED_TO_FETCH_USER_PROFILE_ERROR)
         }))

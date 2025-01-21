@@ -4,7 +4,6 @@ import { SessionProvider } from 'src/modules/session/providers/session.provider'
 import { SingleUserSessionProvider } from 'src/modules/session/providers/single-user.session.provider';
 import { SessionStorage } from 'src/modules/session/providers/storage/session.storage';
 import { InMemorySessionStorage } from 'src/modules/session/providers/storage/in-memory.session.storage';
-import { SessionController } from 'src/modules/session/session.controller';
 
 @Module({})
 export class SessionModule {
@@ -14,7 +13,6 @@ export class SessionModule {
   ) {
     return {
       module: SessionModule,
-      controllers: [SessionController],
       providers: [
         SessionService,
         {

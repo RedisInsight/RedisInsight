@@ -1,8 +1,13 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { useSelector } from 'react-redux'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { getConfig } from 'uiSrc/config'
 
 import { DATABASE_OVERVIEW_REFRESH_INTERVAL, DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL } from 'uiSrc/constants/browser'
+import { appContextSelector } from 'uiSrc/slices/app/context'
+import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
+import { formatBytes, toBytes, truncatePercentage } from 'uiSrc/utils'
 import { IMetric } from './components/OverviewMetrics'
 
 import AutoRefresh from '../auto-refresh'
@@ -15,8 +20,18 @@ interface Props {
   handleEnableAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
+const riConfig = getConfig()
+
 const DatabaseOverview = (props: Props) => {
+  const overview = useSelector(connectedInstanceOverviewSelector)
   const { metrics, loadData, lastRefreshTime, handleEnableAutoRefresh } = props
+
+  const {
+    usedMemory,
+    cloudDetails: { subscriptionType, subscriptionId, planMemoryLimit, memoryLimitMeasurementUnit } = {},
+  } = overview
+
+  const memoryUsagePercent = planMemoryLimit ? truncatePercentage(((usedMemory || 0) / toBytes(planMemoryLimit, memoryLimitMeasurementUnit || 'MB')) * 100, 1) : 0
 
   const getTooltipContent = (metric: IMetric) => {
     if (!metric.children?.length) {
@@ -70,6 +85,27 @@ const DatabaseOverview = (props: Props) => {
             gutterSize="none"
             responsive={false}
           >
+            {subscriptionType === 'fixed' && (
+              <EuiFlexItem
+                className={cx(styles.overviewItem, styles.upgradeBtnItem)}
+                grow={false}
+                data-testid="overview-auto-refresh"
+                style={{ borderRight: 'none' }}
+              >
+                <EuiButton
+                  color="secondary"
+                  fill={memoryUsagePercent > 75}
+                  className={cx(styles.upgradeBtn)}
+                  onClick={() => {
+                    const upgradeUrl = `${riConfig.app.returnUrlBase}/database/upgrade/${overview.subscriptionId}`
+                    window.open(upgradeUrl, '_blank')
+                  }}
+                  data-testid="upgrade-ri-db-button"
+                >
+                  Upgrade
+                </EuiButton>
+              </EuiFlexItem>
+            )}
             {
               metrics?.map((overviewItem) => (
                 <EuiFlexItem

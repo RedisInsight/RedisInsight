@@ -213,7 +213,11 @@ describe('Node', () => {
       expect(screen.queryByTestId(`size-${mockDataFullName}`)).not.toBeInTheDocument()
     })
 
-    it('should refetch metadata when TTL column is re-enabled even with existing metadata', () => {
+    it.each`
+      description               | initialState                                                | updatedState
+      ${'TTL column'}           | ${{ app: { context: { dbConfig: { shownColumns: [] } } } }} | ${{ app: { context: { dbConfig: { shownColumns: [BrowserColumns.TTL] } } } }}
+      ${'Size column'}          | ${{ app: { context: { dbConfig: { shownColumns: [] } } } }} | ${{ app: { context: { dbConfig: { shownColumns: [BrowserColumns.Size] } } } }}
+    `('should refetch metadata when $description is re-enabled even with existing metadata', ({ initialState, updatedState }) => {
       const mockGetMetadata = jest.fn()
       const mockData: TreeData = {
         ...mockedDataWithMetadata,
@@ -221,13 +225,7 @@ describe('Node', () => {
       }
 
       const store = {
-        getState: () => ({
-          browser: {
-            keys: {
-              shownColumns: []
-            }
-          }
-        }),
+        getState: () => initialState,
         subscribe: jest.fn(),
         dispatch: jest.fn(),
       }
@@ -237,50 +235,7 @@ describe('Node', () => {
         { store }
       )
 
-      store.getState = () => ({
-        browser: {
-          keys: {
-            shownColumns: [BrowserColumns.TTL]
-          }
-        } as any
-      })
-
-      rerender(<Node {...instance(mockedProps)} data={mockData} />)
-
-      expect(mockGetMetadata).toHaveBeenCalledWith(mockData.nameBuffer, mockData.path)
-    })
-
-    it('should refetch metadata when Size column is re-enabled even with existing metadata', () => {
-      const mockGetMetadata = jest.fn()
-      const mockData: TreeData = {
-        ...mockedDataWithMetadata,
-        getMetadata: mockGetMetadata,
-      }
-
-      const store = {
-        getState: () => ({
-          browser: {
-            keys: {
-              shownColumns: []
-            }
-          }
-        }),
-        subscribe: jest.fn(),
-        dispatch: jest.fn(),
-      }
-
-      const { rerender } = render(
-        <Node {...instance(mockedProps)} data={mockData} />,
-        { store }
-      )
-
-      store.getState = () => ({
-        browser: {
-          keys: {
-            shownColumns: [BrowserColumns.Size]
-          }
-        } as any
-      })
+      store.getState = () => updatedState
 
       rerender(<Node {...instance(mockedProps)} data={mockData} />)
 
@@ -302,9 +257,11 @@ describe('Node', () => {
 
       const store = {
         getState: () => ({
-          browser: {
-            keys: {
-              shownColumns: columns
+          app: {
+            context: {
+              dbConfig: {
+                shownColumns: columns
+              }
             }
           }
         }),

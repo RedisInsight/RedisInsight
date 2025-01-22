@@ -1,10 +1,10 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { configureStore } from '@reduxjs/toolkit'
-import { BrowserColumns, KeyTypes, KeyValueFormat, ModulesKeyTypes } from 'uiSrc/constants'
+import { BrowserColumns, DEFAULT_SHOWN_COLUMNS, KeyTypes, KeyValueFormat, ModulesKeyTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { parseKeysListResponse, stringToBuffer, UTF8ToBuffer } from 'uiSrc/utils'
-import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import { cleanup, clearStoreActions, initialStateDefault, mockedStore, mockStore } from 'uiSrc/utils/test-utils'
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -1639,13 +1639,13 @@ describe('keys slice', () => {
         it(`success to fetch keys metadata with ${name}`, async () => {
           const initialStateWithColumns = {
             ...initialStateDefault,
-            browser: {
-              ...initialStateDefault.browser,
-              keys: {
-                ...initialStateDefault.browser.keys,
-                shownColumns,
-              }
-            }
+            app: {
+              context: {
+                dbConfig: {
+                  shownColumns,
+                },
+              },
+            },
           }
 
           const testStore = configureStore({
@@ -1717,13 +1717,13 @@ describe('keys slice', () => {
         it(`success to fetch keys metadata with ${name}`, async () => {
           const initialStateWithColumns = {
             ...initialStateDefault,
-            browser: {
-              ...initialStateDefault.browser,
-              keys: {
-                ...initialStateDefault.browser.keys,
-                shownColumns,
-              }
-            }
+            app: {
+              context: {
+                dbConfig: {
+                  shownColumns,
+                },
+              },
+            },
           }
 
           const testStore = configureStore({

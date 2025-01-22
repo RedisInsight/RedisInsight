@@ -12,6 +12,7 @@ import {
   KeyTypes, Pages,
   SortOrder,
   BrowserColumns,
+  DEFAULT_SHOWN_COLUMNS,
 } from 'uiSrc/constants'
 import { localStorageService, setCapabilityStorageField, setDBConfigStorageField } from 'uiSrc/services'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
@@ -30,8 +31,6 @@ import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { SearchMode } from '../interfaces/keys'
 import { AppWorkspace, RedisResponseBuffer, StateAppContext } from '../interfaces'
 import { AppDispatch, RootState } from '../store'
-
-const DEFAULT_SHOWN_COLUMNS = [BrowserColumns.Size, BrowserColumns.TTL]
 
 export const initialState: StateAppContext = {
   workspace: localStorageService.get(BrowserStorageItem.homePage) === Pages.rdi

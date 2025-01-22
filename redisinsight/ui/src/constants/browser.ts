@@ -29,3 +29,5 @@ export enum BrowserColumns {
   Size = 'size',
   TTL = 'ttl',
 }
+
+export const DEFAULT_SHOWN_COLUMNS = [BrowserColumns.Size, BrowserColumns.TTL]

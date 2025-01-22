@@ -661,6 +661,7 @@ export function fetchKeyInfo(
   onSuccess?: (data: Nullable<IKeyPropTypes>) => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(defaultSelectedKeyAction())
     const { shownColumns } = stateInit()?.app?.context?.dbConfig
     try {
       const state = stateInit()

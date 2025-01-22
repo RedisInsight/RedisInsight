@@ -44,7 +44,6 @@ const KeyDetails = (props: Props) => {
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const { viewType } = useSelector(keysSelector)
-  const { shownColumns } = useSelector(appContextDbConfig)
   const { loading, error = '', data } = useSelector(selectedKeySelector)
   const isKeySelected = !isNull(useSelector(selectedKeyDataSelector))
   const { type: keyType } = useSelector(selectedKeyDataSelector) ?? { type: KeyTypes.String }
@@ -56,7 +55,6 @@ const KeyDetails = (props: Props) => {
 
     dispatch(fetchKeyInfo(
       keyProp,
-      shownColumns,
       undefined,
       (data) => {
         if (!data) return

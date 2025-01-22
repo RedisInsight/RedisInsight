@@ -73,7 +73,6 @@ const VirtualTree = (props: Props) => {
 
   const { theme } = useContext(ThemeContext)
   const [rerenderState, rerender] = useState({})
-  const { shownColumns } = useSelector(appContextDbConfig)
   const controller = useRef<Nullable<AbortController>>(null)
   const elements = useRef<any>({})
   const nodes = useRef<TreeNode[]>([])
@@ -146,7 +145,6 @@ const VirtualTree = (props: Props) => {
     dispatch(fetchKeysMetadataTree(
       itemsInit,
       filter,
-      shownColumns,
       controller.current?.signal,
       (loadedItems) =>
         onSuccessFetchedMetadata(loadedItems),

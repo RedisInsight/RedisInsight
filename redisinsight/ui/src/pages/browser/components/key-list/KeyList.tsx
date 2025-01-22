@@ -284,7 +284,6 @@ const KeyList = forwardRef((props: Props, ref) => {
     dispatch(fetchKeysMetadata(
       itemsToFetch.map(({ name }) => name),
       commonFilterType,
-      shownColumns,
       controller.current?.signal,
       (loadedItems) => onSuccessFetchedMetadata(startIndex, loadedItems),
       () => { rerender({}) }

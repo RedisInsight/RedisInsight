@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
+import { useSelector } from 'react-redux'
 import { apiService, localStorageService } from 'uiSrc/services'
 import {
   ApiEndpoints,
@@ -31,7 +32,7 @@ import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { IFetchKeyArgs, IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import { appContextDbConfig, resetBrowserTree } from 'uiSrc/slices/app/context'
 
 import { CreateListWithExpireDto, } from 'apiSrc/modules/browser/list/dto'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
@@ -656,13 +657,11 @@ export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor
 // Asynchronous thunk action
 export function fetchKeyInfo(
   key: RedisResponseBuffer,
-  shownColumns: BrowserColumns[] = [BrowserColumns.Size, BrowserColumns.TTL],
   resetData?: boolean,
   onSuccess?: (data: Nullable<IKeyPropTypes>) => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(defaultSelectedKeyAction())
-
+    const { shownColumns } = stateInit()?.app?.context?.dbConfig
     try {
       const state = stateInit()
       const { encoding } = state.app.info
@@ -729,11 +728,9 @@ export function fetchKeyInfo(
 }
 
 // Asynchronous thunk action
-export function refreshKeyInfoAction(
-  key: RedisResponseBuffer,
-  shownColumns: BrowserColumns[] = [BrowserColumns.Size, BrowserColumns.TTL]
-) {
+export function refreshKeyInfoAction(key: RedisResponseBuffer) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const { shownColumns } = stateInit()?.app?.context?.dbConfig
     dispatch(refreshKeyInfo())
     try {
       const state = stateInit()
@@ -1040,12 +1037,12 @@ export function editKeyTTL(key: RedisResponseBuffer, ttl: number) {
 export function fetchKeysMetadata(
   keys: RedisString[],
   filter: Nullable<KeyTypes>,
-  shownColumns: BrowserColumns[] = [BrowserColumns.Size, BrowserColumns.TTL],
   signal?: AbortSignal,
   onSuccessAction?: (data: GetKeyInfoResponse[]) => void,
   onFailAction?: () => void
 ) {
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
+    const { shownColumns } = stateInit()?.app?.context?.dbConfig
     try {
       const state = stateInit()
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
@@ -1077,12 +1074,12 @@ export function fetchKeysMetadata(
 export function fetchKeysMetadataTree(
   keys: RedisString[],
   filter: Nullable<KeyTypes>,
-  shownColumns: BrowserColumns[] = [BrowserColumns.Size, BrowserColumns.TTL],
   signal?: AbortSignal,
   onSuccessAction?: (data: GetKeyInfoResponse[]) => void,
   onFailAction?: () => void
 ) {
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
+    const { shownColumns } = stateInit()?.app?.context?.dbConfig
     try {
       const state = stateInit()
       const { data } = await apiService.post<GetKeyInfoResponse[]>(

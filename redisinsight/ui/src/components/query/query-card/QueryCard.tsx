@@ -155,7 +155,7 @@ const QueryCard = (props: Props) => {
   const isSizeLimitExceededResponse = (result: Maybe<CommandExecutionResult[]>) => {
     const resultObj = result?.[0]
     // response.includes - to be backward compatible with responses which don't include sizeLimitExceeded flag
-    return resultObj?.sizeLimitExceeded === true || resultObj?.response?.includes('Results have been deleted')
+    return resultObj?.sizeLimitExceeded === true || resultObj?.response?.includes?.('Results have been deleted')
   }
 
   return (

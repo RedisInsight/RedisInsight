@@ -12,11 +12,10 @@ export class ListKeyInfoStrategy extends KeyInfoStrategy {
     client: RedisClient,
     key: RedisString,
     type: string,
-    getSize: boolean,
+    includeSize: boolean,
   ): Promise<GetKeyInfoResponse> {
     this.logger.debug(`Getting ${RedisDataType.List} type info.`);
-    console.log('getSize getSize getSize')
-    if (getSize !== false) {
+    if (includeSize !== false) {
       const [
         [, ttl = null],
         [, length = null],

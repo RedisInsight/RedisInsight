@@ -37,7 +37,7 @@ describe('RejsonRlKeyInfoStrategy', () => {
     const key = getKeyInfoResponse.name;
     const path = '.';
 
-    describe('when getSize is true', () => {
+    describe('when includeSize is true', () => {
       it('should return all info in single pipeline for object type', async () => {
         when(mockStandaloneRedisClient.sendPipeline)
           .calledWith([
@@ -74,7 +74,7 @@ describe('RejsonRlKeyInfoStrategy', () => {
       });
     });
 
-    describe('when getSize is false', () => {
+    describe('when includeSize is false', () => {
       it('should return appropriate value for key that store object', async () => {
         when(mockStandaloneRedisClient.sendPipeline)
           .calledWith([

@@ -511,8 +511,8 @@ describe('StandaloneScannerStrategy', () => {
         mockStandaloneRedisClient,
         keys,
         undefined,
-        true,   // getSize
-        true    // getTtl
+        true,   // includeSize
+        true    // includeTTL
       );
 
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
@@ -524,7 +524,7 @@ describe('StandaloneScannerStrategy', () => {
       expect(result).toEqual(mockResult);
     });
 
-    it('should not get TTL when getTtl is false', async () => {
+    it('should not get TTL when includeTTL is false', async () => {
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith(
           keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
@@ -536,8 +536,8 @@ describe('StandaloneScannerStrategy', () => {
         mockStandaloneRedisClient,
         keys,
         undefined,
-        false,  // getSize
-        false    // getTtl
+        false,  // includeSize
+        false    // includeTTL
       );
 
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
@@ -547,7 +547,7 @@ describe('StandaloneScannerStrategy', () => {
       expect(result).toEqual(mockResult);
     });
 
-    it('should not get size when getSize is false', async () => {
+    it('should not get size when includeSize is false', async () => {
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith(
           keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
@@ -565,8 +565,8 @@ describe('StandaloneScannerStrategy', () => {
         mockStandaloneRedisClient,
         keys,
         undefined,
-        false,  // getSize
-        true    // getTtl
+        false,  // includeSize
+        true    // includeTTL
       );
 
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
@@ -612,8 +612,8 @@ describe('StandaloneScannerStrategy', () => {
         mockStandaloneRedisClient,
         keys,
         undefined,
-        true,   // getSize
-        true    // getTtl
+        true,   // includeSize
+        true    // includeTTL
       );
 
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({

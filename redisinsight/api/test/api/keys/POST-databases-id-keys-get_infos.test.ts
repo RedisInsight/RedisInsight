@@ -46,10 +46,10 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
 
     [
       {
-        name: 'Should not return size if getSize is false',
+        name: 'Should not return size if includeSize is false',
         data: {
           keys: [constants.TEST_STRING_KEY_BIN_BUFFER_1],
-          getSize: false,
+          includeSize: false,
         },
         responseSchema,
         checkFn: ({ body }) => {
@@ -57,10 +57,10 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         }
       },
       {
-        name: 'Should return size if getSize is true',
+        name: 'Should return size if includeSize is true',
         data: {
           keys: [constants.TEST_STRING_KEY_BIN_BUFFER_1],
-          getSize: true,
+          includeSize: true,
         },
         responseSchema,
         checkFn: ({ body }) => {
@@ -68,10 +68,10 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         }
       },
       {
-        name: 'Should not return ttl if getTtl is false',
+        name: 'Should not return ttl if includeTTL is false',
         data: {
           keys: [constants.TEST_STRING_KEY_BIN_BUFFER_1],
-          getTtl: false,
+          includeTTL: false,
         },
         responseSchema,
         checkFn: ({ body }) => {
@@ -79,10 +79,10 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         }
       },
       {
-        name: 'Should return ttl if getTtl is true',
+        name: 'Should return ttl if includeTTL is true',
         data: {
           keys: [constants.TEST_STRING_KEY_BIN_BUFFER_1],
-          getTtl: true,
+          includeTTL: true,
         },
         responseSchema,
         checkFn: ({ body }) => {

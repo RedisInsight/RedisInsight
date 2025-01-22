@@ -673,7 +673,7 @@ export function fetchKeyInfo(
         ),
         {
           keyName: key,
-          getSize: shownColumns.includes(BrowserColumns.Size)
+          includeSize: shownColumns.includes(BrowserColumns.Size)
         },
         { params: { encoding } }
       )
@@ -743,7 +743,7 @@ export function refreshKeyInfoAction(key: RedisResponseBuffer) {
         ),
         {
           keyName: key,
-          getSize: shownColumns.includes(BrowserColumns.Size)
+          includeSize: shownColumns.includes(BrowserColumns.Size)
         },
         { params: { encoding } }
       )
@@ -1054,8 +1054,8 @@ export function fetchKeysMetadata(
         {
           keys,
           type: filter || undefined,
-          getSize: shownColumns.includes(BrowserColumns.Size),
-          getTtl: shownColumns.includes(BrowserColumns.TTL),
+          includeSize: shownColumns.includes(BrowserColumns.Size),
+          includeTTL: shownColumns.includes(BrowserColumns.TTL),
         },
         { params: { encoding: state.app.info.encoding }, signal }
       )
@@ -1091,8 +1091,8 @@ export function fetchKeysMetadataTree(
         {
           keys: keys.map(([, nameBuffer]) => nameBuffer),
           type: filter || undefined,
-          getSize: shownColumns.includes(BrowserColumns.Size),
-          getTtl: shownColumns.includes(BrowserColumns.TTL),
+          includeSize: shownColumns.includes(BrowserColumns.Size),
+          includeTTL: shownColumns.includes(BrowserColumns.TTL),
         },
         { params: { encoding: state.app.info.encoding }, signal }
       )

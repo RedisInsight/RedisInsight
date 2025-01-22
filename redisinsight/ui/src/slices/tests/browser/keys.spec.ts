@@ -1698,8 +1698,8 @@ describe('keys slice', () => {
             type: undefined,
           }
 
-          expectedData.getTtl = shownColumns.includes(BrowserColumns.TTL)
-          expectedData.getSize = shownColumns.includes(BrowserColumns.Size)
+          expectedData.includeTTL = shownColumns.includes(BrowserColumns.TTL)
+          expectedData.includeSize = shownColumns.includes(BrowserColumns.Size)
 
           expect(apiServiceMock).toBeCalledWith(
             '/databases//keys/get-metadata',
@@ -1779,8 +1779,8 @@ describe('keys slice', () => {
             type: undefined
           }
 
-          expectedData.getTtl = shownColumns.includes(BrowserColumns.TTL)
-          expectedData.getSize = shownColumns.includes(BrowserColumns.Size)
+          expectedData.includeTTL = shownColumns.includes(BrowserColumns.TTL)
+          expectedData.includeSize = shownColumns.includes(BrowserColumns.Size)
 
           // Assert
           expect(apiServiceMock).toBeCalledWith(

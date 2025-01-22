@@ -61,24 +61,24 @@ const Node = ({
   const delimiterView = delimiters.length === 1 ? delimiters[0] : '-'
 
   const { shownColumns } = useSelector(appContextDbConfig)
-  const getSize = shownColumns.includes(BrowserColumns.Size)
-  const getTtl = shownColumns.includes(BrowserColumns.TTL)
+  const includeSize = shownColumns.includes(BrowserColumns.Size)
+  const includeTTL = shownColumns.includes(BrowserColumns.TTL)
 
   const [deletePopoverId, setDeletePopoverId] = useState<Maybe<string>>(undefined)
-  const prevGetSize = useRef(getSize)
-  const prevGetTtl = useRef(getTtl)
+  const prevIncludeSize = useRef(includeSize)
+  const prevIncludeTTL = useRef(includeTTL)
 
   useEffect(() => {
-    const isSizeReenabled = !prevGetSize.current && getSize
-    const isTtlReenabled = !prevGetTtl.current && getTtl
+    const isSizeReenabled = !prevIncludeSize.current && includeSize
+    const isTtlReenabled = !prevIncludeTTL.current && includeTTL
 
     if (isLeaf && nameBuffer && ((isSizeReenabled || isTtlReenabled) || (!size && !ttl))) {
       getMetadata?.(nameBuffer, path)
     }
 
-    prevGetSize.current = getSize
-    prevGetTtl.current = getTtl
-  }, [getSize, getTtl, isLeaf, nameBuffer, size, ttl])
+    prevIncludeSize.current = includeSize
+    prevIncludeTTL.current = includeTTL
+  }, [includeSize, includeTTL, isLeaf, nameBuffer, size, ttl])
 
   const handleClick = () => {
     if (isLeaf) {
@@ -143,8 +143,8 @@ const Node = ({
     <>
       <KeyRowType type={type} nameString={nameString} />
       <KeyRowName shortName={shortName} nameString={nameString} />
-      {getTtl && <KeyRowTTL ttl={ttl} nameString={nameString} deletePopoverId={deletePopoverId} rowId={nodeId} />}
-      {getSize && (
+      {includeTTL && <KeyRowTTL ttl={ttl} nameString={nameString} deletePopoverId={deletePopoverId} rowId={nodeId} />}
+      {includeSize && (
         <KeyRowSize
           size={size}
           nameString={nameString}

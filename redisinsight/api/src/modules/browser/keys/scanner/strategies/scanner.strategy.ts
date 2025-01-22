@@ -16,7 +16,7 @@ export abstract class ScannerStrategy implements IScannerStrategy {
     client: RedisClient,
     keys: RedisString[],
     filterType?: RedisDataType,
-    getSize?: boolean,
-    getTtl?: boolean
+    includeSize?: boolean,
+    includeTTL?: boolean
   ): Promise<GetKeyInfoResponse[]>;
 }

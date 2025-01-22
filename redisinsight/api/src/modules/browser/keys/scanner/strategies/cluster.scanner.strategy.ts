@@ -182,8 +182,8 @@ export class ClusterScannerStrategy extends ScannerStrategy {
     client: RedisClient,
     keys: RedisString[],
     filterType?: RedisDataType,
-    getSize?: boolean,
-    getTtl?: boolean
+    includeSize?: boolean,
+    includeTTL?: boolean
   ): Promise<GetKeyInfoResponse[]> {
     return Promise.all(keys.map(async (key) => {
       const commands: RedisClientCommand[] = [];
@@ -193,12 +193,12 @@ export class ClusterScannerStrategy extends ScannerStrategy {
         type: null
       }
 
-      if (getTtl) {
+      if (includeTTL) {
         responseMap.ttl = commands.length
         commands.push([BrowserToolKeysCommands.Ttl, key]);
       }
 
-      if (getSize) {
+      if (includeSize) {
         responseMap.size = commands.length
         commands.push(['memory', 'usage', key, 'samples', '0']);
       }

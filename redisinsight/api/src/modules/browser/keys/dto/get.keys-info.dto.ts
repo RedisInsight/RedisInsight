@@ -11,7 +11,7 @@ export class GetKeyInfoDto extends KeyDto {
     default: false,
   })
   @IsOptional()
-  getSize?: boolean;
+  includeSize?: boolean;
 }
 
 export class GetKeysInfoDto {
@@ -46,7 +46,7 @@ export class GetKeysInfoDto {
     default: true,
   })
   @IsOptional()
-  getSize?: boolean;
+  includeSize?: boolean;
 
   @ApiPropertyOptional({
     description: 'Flag to determine if TTL should be requested and shown in the response',
@@ -54,5 +54,5 @@ export class GetKeysInfoDto {
     default: true,
   })
   @IsOptional()
-  getTtl?: boolean;
+  includeTTL?: boolean;
 }

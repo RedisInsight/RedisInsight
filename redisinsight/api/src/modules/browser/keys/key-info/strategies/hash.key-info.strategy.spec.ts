@@ -35,7 +35,7 @@ describe('HashKeyInfoStrategy', () => {
   describe('getInfo', () => {
     const key = getKeyInfoResponse.name;
 
-    describe('when getSize is true', () => {
+    describe('when includeSize is true', () => {
       it('should return all info in single pipeline', async () => {
         when(mockStandaloneRedisClient.sendPipeline)
           .calledWith([
@@ -60,7 +60,7 @@ describe('HashKeyInfoStrategy', () => {
       });
     });
 
-    describe('when getSize is false', () => {
+    describe('when includeSize is false', () => {
       it('should return appropriate value', async () => {
         when(mockStandaloneRedisClient.sendPipeline)
           .calledWith([

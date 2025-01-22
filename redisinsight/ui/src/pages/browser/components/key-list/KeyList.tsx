@@ -99,8 +99,8 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const dispatch = useDispatch()
 
-  const prevGetSize = useRef(shownColumns?.includes(BrowserColumns.Size))
-  const prevGetTtl = useRef(shownColumns?.includes(BrowserColumns.TTL))
+  const prevIncludeSize = useRef(shownColumns?.includes(BrowserColumns.Size))
+  const prevIncludeTTL = useRef(shownColumns?.includes(BrowserColumns.TTL))
 
   useImperativeHandle(ref, () => ({
     handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
@@ -138,8 +138,8 @@ const KeyList = forwardRef((props: Props, ref) => {
   }, [keysState.keys])
 
   useEffect(() => {
-    const isSizeReenabled = !prevGetSize.current && shownColumns.includes(BrowserColumns.Size)
-    const isTtlReenabled = !prevGetTtl.current && shownColumns.includes(BrowserColumns.TTL)
+    const isSizeReenabled = !prevIncludeSize.current && shownColumns.includes(BrowserColumns.Size)
+    const isTtlReenabled = !prevIncludeTTL.current && shownColumns.includes(BrowserColumns.TTL)
 
     if ((isSizeReenabled || isTtlReenabled) && firstDataLoaded && itemsRef.current.length > 0) {
       cancelAllMetadataRequests()
@@ -156,8 +156,8 @@ const KeyList = forwardRef((props: Props, ref) => {
       getMetadata(startIndex, visibleItems, true)
     }
 
-    prevGetSize.current = shownColumns.includes(BrowserColumns.Size)
-    prevGetTtl.current = shownColumns.includes(BrowserColumns.TTL)
+    prevIncludeSize.current = shownColumns.includes(BrowserColumns.Size)
+    prevIncludeTTL.current = shownColumns.includes(BrowserColumns.TTL)
   }, [shownColumns])
 
   const cancelAllMetadataRequests = () => {

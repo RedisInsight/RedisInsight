@@ -162,14 +162,14 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
     client: RedisClient,
     keys: RedisString[],
     filterType?: RedisDataType,
-    getSize?: boolean,
-    getTtl?: boolean,
+    includeSize?: boolean,
+    includeTTL?: boolean,
   ): Promise<GetKeyInfoResponse[]> {
-    const sizeResults = getSize ? await this.getKeysSize(client, keys) : [];
+    const sizeResults = includeSize ? await this.getKeysSize(client, keys) : [];
     const typeResults = filterType
       ? Array(keys.length).fill(filterType)
       : await this.getKeysType(client, keys);
-    const ttlResults = getTtl ? await this.getKeysTtl(client, keys) : [];
+    const ttlResults = includeTTL ? await this.getKeysTtl(client, keys) : [];
 
     return keys.map(
       (key: string, index: number): GetKeyInfoResponse => {
@@ -178,10 +178,10 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
           type: typeResults[index],
         }
 
-        if (getTtl) {
+        if (includeTTL) {
           data.ttl = ttlResults[index];
         }
-        if (getSize) {
+        if (includeSize) {
           data.size = sizeResults[index];
         }
         return data;

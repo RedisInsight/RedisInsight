@@ -86,7 +86,7 @@ export class KeysController {
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
     @Body() dto: GetKeyInfoDto,
   ): Promise<GetKeyInfoResponse> {
-    return await this.keysService.getKeyInfo(clientMetadata, dto.keyName, dto.getSize);
+    return await this.keysService.getKeyInfo(clientMetadata, dto.keyName, dto.includeSize);
   }
 
   @Delete('')

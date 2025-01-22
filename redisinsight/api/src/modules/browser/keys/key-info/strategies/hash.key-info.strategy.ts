@@ -12,11 +12,11 @@ export class HashKeyInfoStrategy extends KeyInfoStrategy {
     client: RedisClient,
     key: RedisString,
     type: string,
-    getSize: boolean,
+    includeSize: boolean,
   ): Promise<GetKeyInfoResponse> {
     this.logger.debug(`Getting ${RedisDataType.Hash} type info.`);
 
-    if (getSize !== false) {
+    if (includeSize !== false) {
       const [
         [, ttl = null],
         [, length = null],

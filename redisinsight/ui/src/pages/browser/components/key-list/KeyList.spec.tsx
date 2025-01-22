@@ -55,7 +55,6 @@ const mockedKeySlice = {
   searchMode: SearchMode.Pattern,
   isSearch: false,
   isFiltered: false,
-  shownColumns: [BrowserColumns.Size, BrowserColumns.TTL],
   deleting: false,
   data: {
     keys: [],

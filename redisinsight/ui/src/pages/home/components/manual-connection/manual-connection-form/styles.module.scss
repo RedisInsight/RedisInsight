@@ -1,3 +1,9 @@
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
 .tabs {
   border-bottom: 1px solid var(--separatorColor);
 
@@ -13,6 +19,6 @@
 .content {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex-grow: 1;
   overflow: hidden;
 }

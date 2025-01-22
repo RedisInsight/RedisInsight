@@ -250,7 +250,7 @@ const DatabaseAlias = (props: Props) => {
         </EuiFlexItem>
       </EuiFlexGroup>
       {!isCloneMode && (
-        <EuiFlexGroup responsive={false} gutterSize="m" style={{ marginTop: 6 }}>
+        <EuiFlexGroup responsive={false} gutterSize="m" style={{ marginTop: 6, flexGrow: 0 }}>
           <EuiFlexItem grow={false}>
             <EuiButton
               size="s"

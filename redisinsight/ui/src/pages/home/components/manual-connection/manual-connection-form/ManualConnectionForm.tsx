@@ -229,7 +229,7 @@ const ManualConnectionForm = (props: Props) => {
   )
 
   return (
-    <div className="relative" data-testid="add-db_manual" style={{ height: '100%' }}>
+    <div className={styles.container} data-testid="add-db_manual" style={{ height: '100%' }}>
       {isEditMode && !isCloneMode && server?.buildType !== BuildType.RedisStack && (
         <CloneConnection id={id} setIsCloneMode={setIsCloneMode} />
       )}

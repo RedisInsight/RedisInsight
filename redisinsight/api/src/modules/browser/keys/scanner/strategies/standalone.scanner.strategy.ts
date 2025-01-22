@@ -171,21 +171,11 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
       : await this.getKeysType(client, keys);
     const ttlResults = includeTTL ? await this.getKeysTtl(client, keys) : [];
 
-    return keys.map(
-      (key: string, index: number): GetKeyInfoResponse => {
-        const data: GetKeyInfoResponse = {
-          name: key,
-          type: typeResults[index],
-        }
-
-        if (includeTTL) {
-          data.ttl = ttlResults[index];
-        }
-        if (includeSize) {
-          data.size = sizeResults[index];
-        }
-        return data;
-      },
-    );
+    return keys.map((key, index) => ({
+      name: key,
+      type: typeResults[index],
+      ...(includeTTL && { ttl: ttlResults[index] }),
+      ...(includeSize && { size: sizeResults[index] }),
+    }));
   }
 }

@@ -724,6 +724,11 @@ export function fetchKeyInfo(
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(defaultSelectedKeyActionFailure(errorMessage))
+      const status = get(error, ['response', 'status'])
+      if (status && isStatusNotFoundError(status)) {
+        dispatch(resetKeyInfo())
+        dispatch(deleteKeyFromList(key))
+      }
     }
   }
 }
@@ -1060,8 +1065,10 @@ export function fetchKeysMetadata(
         { params: { encoding: state.app.info.encoding }, signal }
       )
 
+      console.log(`here are we:`)
       onSuccessAction?.(data)
     } catch (_err) {
+      console.log(`here's the error:`+_err)
       if (!axios.isCancel(_err)) {
         const error = _err as AxiosError
         onFailAction?.()

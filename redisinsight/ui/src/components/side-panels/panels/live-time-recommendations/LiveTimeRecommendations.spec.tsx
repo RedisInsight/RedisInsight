@@ -1,12 +1,19 @@
 import React from 'react'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import reactRouterDom from 'react-router-dom'
+import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import {
-  recommendationsSelector,
-} from 'uiSrc/slices/recommendations/recommendations'
-import { fireEvent, screen, cleanup, mockedStore, render, act, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
+  cleanup,
+  fireEvent,
+  initialStateDefault,
+  mockedStore,
+  mockStore,
+  render,
+  screen,
+  waitForEuiPopoverVisible,
+} from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { Pages } from 'uiSrc/constants'
+import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { RECOMMENDATIONS_DATA_MOCK } from 'uiSrc/mocks/handlers/recommendations/recommendationsHandler'
 import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -227,5 +234,39 @@ describe('LiveTimeRecommendations', () => {
     expect(queryByTestId('redisSearch-recommendation')).not.toBeInTheDocument()
     expect(queryByTestId('bigHashes-recommendation')).not.toBeInTheDocument()
     expect(queryByTestId('no-recommendations-screen')).toBeInTheDocument()
+  })
+
+  it('should show feature dependent items when feature flag is on', async () => {
+    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockRecommendationsSelector,
+      data: { recommendations: [{ name: 'RTS' }] }
+    }))
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: true }
+    )
+
+    render(<LiveTimeRecommendations />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('github-repo-btn')).toBeInTheDocument()
+  })
+
+  it('should hide feature dependent items when feature flag is off', async () => {
+    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockRecommendationsSelector,
+      data: { recommendations: [{ name: 'RTS' }] }
+    }))
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+
+    render(<LiveTimeRecommendations />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('github-repo-btn')).not.toBeInTheDocument()
   })
 })

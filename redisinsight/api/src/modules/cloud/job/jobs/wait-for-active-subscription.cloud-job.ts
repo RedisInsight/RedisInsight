@@ -1,5 +1,4 @@
 import { CloudJob, CloudJobOptions } from 'src/modules/cloud/job/jobs/cloud-job';
-import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
 import {
   CloudSubscription,
@@ -12,6 +11,7 @@ import {
   CloudSubscriptionInUnexpectedStateException,
 } from 'src/modules/cloud/job/exceptions';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
+import { SessionMetadata } from 'src/common/models';
 
 export class WaitForActiveSubscriptionCloudJob extends CloudJob {
   protected name = CloudJobName.WaitForActiveSubscription;
@@ -29,8 +29,8 @@ export class WaitForActiveSubscriptionCloudJob extends CloudJob {
     super(options);
   }
 
-  async iteration(): Promise<CloudSubscription> {
-    this.logger.log('Waiting for cloud subscription active state');
+  async iteration(sessionMetadata: SessionMetadata): Promise<CloudSubscription> {
+    this.logger.debug('Waiting for cloud subscription active state');
 
     this.checkSignal();
 
@@ -53,7 +53,7 @@ export class WaitForActiveSubscriptionCloudJob extends CloudJob {
       case CloudSubscriptionStatus.NotActivated:
         this.logger.debug('Cloud subscription is not in the active state. Scheduling new iteration');
 
-        return await this.runNextIteration();
+        return await this.runNextIteration(sessionMetadata);
       case CloudSubscriptionStatus.Error:
         this.logger.debug('Cloud subscription is in the failed state');
 

@@ -85,7 +85,7 @@ export class LocalAiMessageRepository extends AiMessageRepository {
     try {
       await this.cleanupHistory(entities[0].databaseId, entities[0].accountId);
     } catch (e) {
-      this.logger.error('Error when trying to cleanup history after insert', e);
+      this.logger.error('Error when trying to cleanup history after insert', e, _sessionMetadata);
     }
   }
 

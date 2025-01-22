@@ -75,7 +75,7 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
    * @inheritDoc
    */
   async delete(id: string): Promise<{ affectedDatabases: string[] }> {
-    this.logger.log(`Deleting certificate. id: ${id}`);
+    this.logger.debug(`Deleting certificate. id: ${id}`);
 
     // todo: 1. why we need to check if entity exists?
     //  2. why we fetch it instead of check delete response?
@@ -95,7 +95,7 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
       .getMany()).map((e) => e.id);
 
     await this.repository.delete(id);
-    this.logger.log(`Succeed to delete ca certificate: ${id}`);
+    this.logger.debug(`Succeed to delete ca certificate: ${id}`);
 
     return { affectedDatabases };
   }

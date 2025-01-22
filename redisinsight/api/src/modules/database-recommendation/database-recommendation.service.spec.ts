@@ -74,7 +74,11 @@ describe('DatabaseRecommendationService', () => {
       expect(databaseRecommendationRepository.create)
         .toHaveBeenCalledWith(clientMetadata.sessionMetadata, recommendationEntity);
       expect(databaseService.get).toHaveBeenCalledWith(clientMetadata.sessionMetadata, clientMetadata.databaseId);
-      expect(analytics.sendCreatedRecommendationEvent).toHaveBeenCalledWith(recommendationEntity, mockDatabase);
+      expect(analytics.sendCreatedRecommendationEvent).toHaveBeenCalledWith(
+        clientMetadata.sessionMetadata,
+        recommendationEntity,
+        mockDatabase,
+      );
     });
   });
 

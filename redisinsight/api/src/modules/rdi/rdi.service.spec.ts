@@ -6,7 +6,13 @@ import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { CreateRdiDto, UpdateRdiDto } from 'src/modules/rdi/dto';
 import { Rdi, RdiClientMetadata } from 'src/modules/rdi/models';
 import {
-  MockType, mockRdi, mockRdiAnalytics, mockRdiClientFactory, mockRdiClientProvider, mockRdiRepository,
+  MockType,
+  mockRdi,
+  mockRdiAnalytics,
+  mockRdiClientFactory,
+  mockRdiClientProvider,
+  mockRdiRepository,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { AxiosError } from 'axios';
 import { wrapRdiPipelineError } from './exceptions';
@@ -139,6 +145,13 @@ describe('RdiService', () => {
   });
 
   describe('create', () => {
+    const validGetPipelineStatus = () => Promise.resolve({
+      components: {
+        processor:{
+          version: "test-version"
+        }
+      }});
+
     it('should create an Rdi instance', async () => {
       const dto: CreateRdiDto = {
         name: 'name',
@@ -148,7 +161,9 @@ describe('RdiService', () => {
       };
       const sessionMetadata = { userId: '123', sessionId: '789' };
       repository.create.mockResolvedValue(mockRdi);
-      rdiClientFactory.createClient.mockResolvedValue(undefined);
+      rdiClientFactory.createClient.mockReturnValue({
+        getPipelineStatus: validGetPipelineStatus
+      });
 
       const result = await service.create(sessionMetadata, dto);
 
@@ -171,6 +186,52 @@ describe('RdiService', () => {
 
       await expect(service.create(sessionMetadata, dto)).rejects.toThrowError(wrapRdiPipelineError(error));
     });
+
+    it('should get the RDI version', async () => {
+      const dto: CreateRdiDto = {
+        name: 'name',
+        url: 'http://localhost:4000',
+        password: 'pass',
+        username: 'user',
+      };
+      const sessionMetadata = { userId: '123', sessionId: '789' };
+
+      repository.create.mockResolvedValue(mockRdi);
+      rdiClientFactory.createClient.mockReturnValue({
+        getPipelineStatus: validGetPipelineStatus
+      });
+
+      await service.create(sessionMetadata, dto);
+
+      expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({
+        version: 'test-version'
+      }))
+    });
+
+    it('should get the default RDI version when other information is missing', async () => {
+      const dto: CreateRdiDto = {
+        name: 'name',
+        url: 'http://localhost:4000',
+        password: 'pass',
+        username: 'user',
+      };
+      const sessionMetadata = { userId: '123', sessionId: '789' };
+
+      repository.create.mockResolvedValue(mockRdi);
+      rdiClientFactory.createClient.mockResolvedValue({
+        getPipelineStatus: () => Promise.resolve(({
+          components: {
+            // missing processor.version
+          }
+        }))
+      });
+
+      await service.create(sessionMetadata, dto);
+
+      expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({
+        version: '-'
+      }))
+    });
   });
 
   describe('delete', () => {
@@ -180,12 +241,12 @@ describe('RdiService', () => {
       rdiClientProvider.deleteManyByRdiId.mockResolvedValue(undefined);
       jest.spyOn(analytics, 'sendRdiInstanceDeleted').mockResolvedValue(undefined as never);
 
-      await service.delete(ids);
+      await service.delete(mockSessionMetadata, ids);
 
       expect(repository.delete).toHaveBeenCalledWith(ids);
       expect(rdiClientProvider.deleteManyByRdiId).toHaveBeenCalledWith(ids[0]);
       expect(rdiClientProvider.deleteManyByRdiId).toHaveBeenCalledWith(ids[1]);
-      expect(analytics.sendRdiInstanceDeleted).toHaveBeenCalledWith(ids.length);
+      expect(analytics.sendRdiInstanceDeleted).toHaveBeenCalledWith(mockSessionMetadata, ids.length);
     });
 
     it('should throw an error if delete fails', async () => {
@@ -194,8 +255,9 @@ describe('RdiService', () => {
       rdiClientProvider.deleteManyByRdiId.mockRejectedValue(new Error('Delete client failed'));
       jest.spyOn(analytics, 'sendRdiInstanceDeleted').mockResolvedValue(undefined as never);
 
-      await expect(service.delete(ids)).rejects.toThrowError('Internal Server Error');
-      expect(analytics.sendRdiInstanceDeleted).toHaveBeenCalledWith(ids.length, expect.any(String));
+      await expect(service.delete(mockSessionMetadata, ids)).rejects.toThrowError('Internal Server Error');
+      expect(analytics.sendRdiInstanceDeleted)
+        .toHaveBeenCalledWith(mockSessionMetadata, ids.length, expect.any(String));
     });
   });
 

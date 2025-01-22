@@ -7,6 +7,7 @@ import { IBulkAction, IBulkActionRunner } from 'src/modules/bulk-actions/interfa
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { RedisClient, RedisClientNodeRole } from 'src/modules/redis/client';
+import { SessionMetadata } from 'src/common/models';
 
 export class BulkAction implements IBulkAction {
   private logger: Logger = new Logger('BulkAction');
@@ -176,22 +177,23 @@ export class BulkAction implements IBulkAction {
 
   /**
    * Send overview to a client
+   * @param sessionMetadata
    */
-  sendOverview() {
+  sendOverview(sessionMetadata: SessionMetadata) {
     const overview = this.getOverview();
     if (overview.status === BulkActionStatus.Completed) {
-      this.analytics.sendActionSucceed(overview);
+      this.analytics.sendActionSucceed(sessionMetadata, overview);
     }
     if (overview.status === BulkActionStatus.Failed) {
-      this.analytics.sendActionFailed(overview, this.error);
+      this.analytics.sendActionFailed(sessionMetadata, overview, this.error);
     }
     if (overview.status === BulkActionStatus.Aborted) {
-      this.analytics.sendActionStopped(overview);
+      this.analytics.sendActionStopped(sessionMetadata, overview);
     }
     try {
       this.socket.emit('overview', overview);
     } catch (e) {
-      this.logger.error('Unable to send overview', e);
+      this.logger.error('Unable to send overview', e, sessionMetadata);
     }
   }
 }

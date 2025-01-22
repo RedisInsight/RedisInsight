@@ -46,7 +46,7 @@ export class CloudSubscriptionApiService {
           ),
         ]);
 
-        const cloudSsoFeature = await this.featureService.getByName(KnownFeatures.CloudSso);
+        const cloudSsoFeature = await this.featureService.getByName(sessionMetadata, KnownFeatures.CloudSso);
 
         const freePlans = filter(
           fixedPlans,
@@ -69,6 +69,7 @@ export class CloudSubscriptionApiService {
           details: find(regions, { regionId: plan.regionId }),
         }));
       } catch (e) {
+        this.logger.error('Error getting subscription plans', e);
         throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
       }
     });
@@ -81,14 +82,15 @@ export class CloudSubscriptionApiService {
   private async getCloudRegions(
     credentials: ICloudApiCredentials,
   ): Promise<CloudSubscriptionRegion[]> {
-    this.logger.log('Getting cloud regions.');
+    this.logger.debug('Getting cloud regions.');
     try {
       const regions = await this.api.getCloudRegions(credentials);
 
-      this.logger.log('Succeed to get cloud regions');
+      this.logger.debug('Succeed to get cloud regions');
 
       return parseCloudSubscriptionsCloudRegionsApiResponse(regions);
     } catch (error) {
+      this.logger.error('Error getting cloud regions', error);
       throw wrapHttpError(error);
     }
   }

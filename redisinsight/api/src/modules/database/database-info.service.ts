@@ -28,7 +28,7 @@ export class DatabaseInfoService {
    * @param clientMetadata
    */
   public async getInfo(clientMetadata: ClientMetadata): Promise<RedisDatabaseInfoResponse> {
-    this.logger.log(`Getting database info for: ${clientMetadata.databaseId}`);
+    this.logger.debug(`Getting database info for: ${clientMetadata.databaseId}`, clientMetadata);
 
     const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -45,7 +45,7 @@ export class DatabaseInfoService {
     clientMetadata: ClientMetadata,
     keyspace: DatabaseOverviewKeyspace,
   ): Promise<DatabaseOverview> {
-    this.logger.log(`Getting database overview for: ${clientMetadata.databaseId}`);
+    this.logger.debug(`Getting database overview for: ${clientMetadata.databaseId}`, clientMetadata);
 
     const client: RedisClient = await this.databaseClientFactory.getOrCreateClient({
       ...clientMetadata,
@@ -73,7 +73,7 @@ export class DatabaseInfoService {
    * @param db
    */
   public async getDatabaseIndex(clientMetadata: ClientMetadata, db: number): Promise<void> {
-    this.logger.log(`Connection to database index: ${db}`);
+    this.logger.debug(`Connection to database index: ${db}`, clientMetadata);
 
     let client;
     const prevDb = clientMetadata.db
@@ -94,7 +94,7 @@ export class DatabaseInfoService {
       );
       return undefined;
     } catch (e) {
-      this.logger.error(`Unable to connect to logical database: ${db}`, e);
+      this.logger.error(`Unable to connect to logical database: ${db}`, e, clientMetadata);
       client?.disconnect?.();
       throw e;
     }

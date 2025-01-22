@@ -12,15 +12,9 @@
   "styles": "./dist/styles.css",
   "main": "./dist/index.js",
   "name": "explain-plugin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
-    "start": "cross-env NODE_ENV=development parcel serve src/index.html",
-    "build": "rimraf dist && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\" \"yarn build:css\" \"yarn build:assets\"",
-    "build-lite": "rm dist/*.js && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\"",
-    "build:js": "parcel build src/main.tsx --no-source-maps --no-cache --dist-dir dist",
-    "build:css": "parcel build src/styles/styles.less --no-source-maps --no-cache --dist-dir dist",
-    "build:assets": "parcel build src/assets/**/* --dist-dir dist",
-    "minify:js": "terser -- dist/main.js > dist/index.js && rimraf dist/main.js"
+    "dev": "vite -c ../vite.config.mjs"
   },
   "targets": {
     "main": false,
@@ -47,14 +41,7 @@
     }
   ],
   "devDependencies": {
-    "@parcel/compressor-brotli": "^2.8.3",
-    "@parcel/compressor-gzip": "^2.8.3",
-    "@parcel/transformer-less": "^2.8.3",
-    "concurrently": "^7.6.0",
-    "cross-env": "^7.0.3",
-    "parcel": "^2.8.3",
-    "rimraf": "^3.0.2",
-    "terser": "^5.16.6"
+    "vite": "file:../node_modules/vite"
   },
   "dependencies": {
     "@antv/hierarchy": "^0.6.8",
@@ -70,8 +57,6 @@
     "uuid": "^9.0.0"
   },
   "resolutions": {
-    "@parcel/**/micromatch": "^4.0.8",
-    "@parcel/**/braces": "^3.0.3",
     "trim": "0.0.3",
     "**/semver": "^7.5.2"
   }

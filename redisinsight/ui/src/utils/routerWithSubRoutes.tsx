@@ -3,7 +3,7 @@ import { Redirect, Route } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { IRoute, FeatureFlags } from 'uiSrc/constants'
+import { IRoute, FeatureFlags, Pages } from 'uiSrc/constants'
 
 const PrivateRoute = (route: IRoute) => {
   const { path, exact, routes, featureFlag, redirect } = route
@@ -28,8 +28,12 @@ const PrivateRoute = (route: IRoute) => {
           )
         }
 
-        return haveToAcceptAgreements || feature?.flag === false
-          ? <Redirect to="/" />
+        if (haveToAcceptAgreements) {
+          return <Redirect to="/" />
+        }
+
+        return feature?.flag === false
+          ? <Redirect to={Pages.notFound} />
           : (
             // pass the sub-routes down to keep nesting
             // @ts-ignore

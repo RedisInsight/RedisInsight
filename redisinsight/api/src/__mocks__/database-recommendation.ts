@@ -34,6 +34,7 @@ export const mockDatabaseRecommendationService = () => ({
   create: jest.fn(),
   list: jest.fn(),
   check: jest.fn(),
+  checkMulti: jest.fn(),
   read: jest.fn(),
 });
 

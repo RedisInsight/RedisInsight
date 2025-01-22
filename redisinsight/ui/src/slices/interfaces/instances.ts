@@ -9,7 +9,6 @@ import {
   GetListElementsResponse,
 } from 'apiSrc/modules/browser/list/dto'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { SearchZSetMembersResponse } from 'apiSrc/modules/browser/z-set/dto'
 import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-master'
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
@@ -53,6 +52,12 @@ export interface Instance extends Partial<DatabaseInstanceResponse> {
   visible?: boolean
   loading?: boolean
   isFreeDb?: boolean
+}
+
+export interface AdditionalRedisModule {
+  name: string
+  version: number
+  semanticVersion: string
 }
 
 interface CaCertificate {
@@ -307,6 +312,7 @@ export interface DatabaseConfigInfo {
   networkInKbps?: Nullable<number>
   networkOutKbps?: Nullable<number>
   cpuUsagePercentage?: Nullable<number>
+  serverName?: Nullable<string>
 }
 
 export interface InitialStateInstances {
@@ -492,7 +498,7 @@ export interface ICredentialsRedisCloud {
 export enum InstanceType {
   Standalone = 'Redis Database',
   RedisCloudPro = 'Redis Cloud',
-  RedisEnterpriseCluster = 'Redis Enterprise Cluster',
+  RedisEnterpriseCluster = 'Enterprise Software',
   AWSElasticache = 'AWS Elasticache',
-  Sentinel = 'Redis Sentinel',
+  Sentinel = 'Sentinel',
 }

@@ -3,11 +3,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 
+import cx from 'classnames'
 import ItemList from 'uiSrc/components/item-list'
-import { BrowserStorageItem, Pages } from 'uiSrc/constants'
+import { BrowserStorageItem, DEFAULT_SORT, Pages } from 'uiSrc/constants'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { localStorageService } from 'uiSrc/services'
-import { RdiInstance } from 'uiSrc/slices/interfaces'
+import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import {
   deleteInstancesAction,
   checkConnectToRdiInstanceAction,
@@ -120,6 +121,12 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
 
+  const getRowProps = (instance: Instance) => ({
+    className: cx({
+      'euiTableRow-isSelected': instance?.id === editedInstance?.id
+    })
+  })
+
   const columns: EuiTableFieldDataColumnType<RdiInstance>[] = [
     {
       field: 'name',
@@ -219,22 +226,19 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     }
   }
 
-  const sort: PropertySort = localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ?? {
-    field: 'lastConnection',
-    direction: 'asc'
-  }
+  const sort: PropertySort = localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ?? DEFAULT_SORT
 
   return (
     <div className={styles.container}>
       <ItemList<RdiInstance>
         width={width}
-        editedInstance={editedInstance}
         columns={columns}
         onDelete={handleDeleteInstances}
         onWheel={closePopover}
         loading={instances.loading}
         data={instances.data}
         onTableChange={onTableChange}
+        rowProps={getRowProps}
         sort={sort}
         hideExport
       />

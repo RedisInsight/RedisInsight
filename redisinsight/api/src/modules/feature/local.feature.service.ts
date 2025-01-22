@@ -1,19 +1,25 @@
 import { find, forEach, isBoolean } from 'lodash';
 import { Injectable, Logger } from '@nestjs/common';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
-import { FeatureServerEvents, FeatureStorage } from 'src/modules/feature/constants';
+import {
+  FeatureServerEvents,
+  FeatureStorage,
+} from 'src/modules/feature/constants';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/feature-flag.provider';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { knownFeatures } from 'src/modules/feature/constants/known-features';
-import { Feature } from 'src/modules/feature/model/feature';
+import { Feature, FeaturesFlags } from 'src/modules/feature/model/feature';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/feature.flag.strategy';
+import { SessionMetadata } from 'src/common/models';
+import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 @Injectable()
 export class LocalFeatureService extends FeatureService {
-  private logger = new Logger('FeaturesConfigService');
+  private logger = new Logger('LocalFeatureService');
 
   constructor(
     private readonly repository: FeatureRepository,
@@ -21,26 +27,30 @@ export class LocalFeatureService extends FeatureService {
     private readonly featureFlagProvider: FeatureFlagProvider,
     private readonly eventEmitter: EventEmitter2,
     private readonly analytics: FeatureAnalytics,
+    private readonly featuresConfigService: FeaturesConfigService,
+    private readonly constantsProvider: ConstantsProvider,
   ) {
     super();
   }
 
-  async getByName(name: string): Promise<Feature> {
+  /**
+   * @inheritDoc
+   */
+  async getByName(sessionMetadata: SessionMetadata, name: string): Promise<Feature> {
     try {
-      return await this.repository.get(name);
+      return await this.repository.get(sessionMetadata, name);
     } catch (e) {
       return null;
     }
   }
 
   /**
-   * Check if feature enabled
-   * @param name
+   * @inheritDoc
    */
-  async isFeatureEnabled(name: string): Promise<boolean> {
+  async isFeatureEnabled(sessionMetadata: SessionMetadata, name: string): Promise<boolean> {
     try {
       // todo: add non-database features if needed
-      const model = await this.repository.get(name);
+      const model = await this.repository.get(sessionMetadata, name);
 
       return model?.flag === true;
     } catch (e) {
@@ -49,14 +59,14 @@ export class LocalFeatureService extends FeatureService {
   }
 
   /**
-   * Returns list of features flags
+   * @inheritDoc
    */
-  async list(): Promise<{ features: Record<string, Feature> }> {
-    this.logger.log('Getting features list');
+  async list(sessionMetadata: SessionMetadata): Promise<FeaturesFlags> {
+    this.logger.debug('Getting features list', sessionMetadata);
 
     const features = {};
 
-    const featuresFromDatabase = await this.repository.list();
+    const featuresFromDatabase = await this.repository.list(sessionMetadata);
 
     forEach(knownFeatures, (feature) => {
       // todo: implement various storage strategies support with next features
@@ -81,16 +91,23 @@ export class LocalFeatureService extends FeatureService {
       }
     });
 
-    return { features };
+    return {
+      features,
+      ...(await this.featuresConfigService.getControlInfo(sessionMetadata)),
+    };
   }
 
-  // todo: add api doc + models
   /**
    * Recalculate flags for database features based on controlGroup and new conditions
+   * Fires by EventEmitter from FeaturesConfigService when feature config was updated
+   * Note: This method is needed when feature config auto update is enabled
    */
   @OnEvent(FeatureServerEvents.FeaturesRecalculate)
-  async recalculateFeatureFlags() {
-    this.logger.log('Recalculating features flags');
+  async recalculateFeatureFlags(
+    // todo: [USER_CONTEXT] revise
+    sessionMetadata = this.constantsProvider.getSystemSessionMetadata(),
+  ) {
+    this.logger.debug('Recalculating features flags', sessionMetadata);
 
     try {
       const actions = {
@@ -98,55 +115,79 @@ export class LocalFeatureService extends FeatureService {
         toDelete: [],
       };
 
-      const featuresFromDatabase = await this.repository.list();
-      const featuresConfig = await this.featuresConfigRepository.getOrCreate();
+      const featuresFromDatabase = await this.repository.list(sessionMetadata);
+      const featuresConfig = await this.featuresConfigRepository.getOrCreate(sessionMetadata);
 
-      this.logger.debug('Recalculating features flags for new config', featuresConfig);
-
-      await Promise.all(Array.from(featuresConfig?.data?.features || new Map(), async ([name, feature]) => {
-        if (knownFeatures[name]) {
-          actions.toUpsert.push({
-            ...(await this.featureFlagProvider.calculate(knownFeatures[name], feature)),
-          });
-        }
-      }));
-
-      // calculate to delete features
-      actions.toDelete = featuresFromDatabase.filter((feature) => !featuresConfig?.data?.features?.has?.(feature.name));
-
-      // delete features
-      await Promise.all(actions.toDelete.map((feature) => this.repository.delete(feature.name)));
-      // upsert modified features
-      await Promise.all(actions.toUpsert.map((feature) => this.repository.upsert(feature)));
-
-      this.logger.log(
-        `Features flags recalculated. Updated: ${actions.toUpsert.length} deleted: ${actions.toDelete.length}`,
+      this.logger.debug(
+        'Recalculating features flags for new config',
+        featuresConfig,
       );
 
-      const list = await this.list();
+      await Promise.all(
+        Array.from(
+          featuresConfig?.data?.features || new Map(),
+          async ([name, feature]) => {
+            if (knownFeatures[name]) {
+              actions.toUpsert.push({
+                ...(await this.featureFlagProvider.calculate(
+                  sessionMetadata,
+                  knownFeatures[name],
+                  feature,
+                )),
+              });
+            }
+          },
+        ),
+      );
+
+      // calculate to delete features
+      actions.toDelete = featuresFromDatabase.filter(
+        (feature) => !featuresConfig?.data?.features?.has?.(feature.name),
+      );
+
+      // delete features
+      await Promise.all(
+        actions.toDelete.map((feature) => this.repository.delete(sessionMetadata, feature.name)),
+      );
+      // upsert modified features
+      await Promise.all(
+        actions.toUpsert.map((feature) => this.repository.upsert(sessionMetadata, feature)),
+      );
+
+      this.logger.debug(
+        `Features flags recalculated. Updated: ${actions.toUpsert.length} deleted: ${actions.toDelete.length}`,
+        sessionMetadata,
+      );
+
+      const list = await this.list(sessionMetadata);
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculated, list);
 
       try {
-        this.analytics.sendFeatureFlagRecalculated({
-          configVersion: (await this.featuresConfigRepository.getOrCreate())?.data?.version,
-          features: list.features,
-          force: await this.listOfForceFlags(),
-        });
+        this.analytics.sendFeatureFlagRecalculated(
+          sessionMetadata,
+          {
+            configVersion: (await this.featuresConfigRepository.getOrCreate(sessionMetadata))
+              ?.data?.version,
+            features: list.features,
+            force: await this.listOfForceFlags(),
+          },
+        );
       } catch (e) {
         // ignore telemetry error
       }
     } catch (e) {
-      this.logger.error('Unable to recalculate features flags', e);
+      this.logger.error('Unable to recalculate features flags', e, sessionMetadata);
     }
   }
 
   /**
    * Find forced flags values from custom config using only known features list
+   * This method is needed during feature flags recalculation only
    */
-  async listOfForceFlags(): Promise<Record<string, boolean>> {
+  private async listOfForceFlags(): Promise<Record<string, boolean>> {
     try {
       const features = {};
-      const forceFeatures = (await FeatureFlagStrategy.getCustomConfig());
+      const forceFeatures = await FeatureFlagStrategy.getCustomConfig();
 
       forEach(knownFeatures, (known) => {
         if (isBoolean(forceFeatures[known.name])) {

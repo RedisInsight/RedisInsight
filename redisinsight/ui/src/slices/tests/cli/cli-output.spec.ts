@@ -6,17 +6,15 @@ import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { cleanup, clearStoreActions, initialStateDefault, mockedStore, mockStore, } from 'uiSrc/utils/test-utils'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { apiService } from 'uiSrc/services'
-import { cliTexts } from 'uiSrc/constants/cliOutput'
+import { cliTexts } from 'uiSrc/components/messages/cli-output/cliOutput'
 import { cliParseTextResponseWithOffset } from 'uiSrc/utils/cliHelper'
 import ApiErrors from 'uiSrc/constants/apiErrors'
-import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import reducer, {
   concatToOutput,
   fetchMonitorLog,
   initialState,
   outputSelector,
-  processUnsupportedCommand,
   sendCliClusterCommandAction,
   sendCliCommand,
   sendCliCommandAction,
@@ -153,48 +151,6 @@ describe('cliOutput slice', () => {
     })
   })
 
-  describe('processUnsupportedCommand', () => {
-    it('should properly concat to output "unsupported text"', async () => {
-      // Arrange
-      const onSuccessActionMock = jest.fn()
-      const unsupportedCommands: string[] = ['sync', 'subscription']
-      const command = first(unsupportedCommands) ?? ''
-
-      const nextState = {
-        ...initialStateDefault.cli.settings,
-        unsupportedCommands,
-      }
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        cli: {
-          settings: nextState,
-        },
-      })
-
-      const tempStore = mockStore(rootState)
-
-      // Act
-      await tempStore.dispatch<any>(
-        processUnsupportedCommand(command, first(unsupportedCommands), onSuccessActionMock)
-      )
-
-      // Assert
-      const expectedActions = [
-        concatToOutput(
-          cliParseTextResponseWithOffset(
-            cliTexts.CLI_UNSUPPORTED_COMMANDS(command, unsupportedCommands.join(', ')),
-            command,
-            CommandExecutionStatus.Fail
-          )
-        ),
-      ]
-
-      expect(onSuccessActionMock).toBeCalled()
-      expect(clearStoreActions(tempStore.getActions())).toEqual(clearStoreActions(expectedActions))
-    })
-  })
-
   describe('setCliDbIndex', () => {
     it('should set correct value', () => {
       // Arrange
@@ -326,7 +282,6 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
-          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -356,8 +311,6 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
-          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
-          processCliClient(),
         ]
         expect(clearStoreActions(tempStore.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -430,7 +383,6 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
-          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -460,8 +412,6 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
-          concatToOutput(cliParseTextResponseWithOffset(errorMessage, command, CommandExecutionStatus.Fail)),
-          processCliClient(),
         ]
         expect(clearStoreActions(tempStore.getActions())).toEqual(clearStoreActions(expectedActions))
       })

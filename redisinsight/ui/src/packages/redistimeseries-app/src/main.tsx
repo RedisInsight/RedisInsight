@@ -4,9 +4,11 @@ import { render } from 'react-dom'
 import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon'
 import { icon as EuiIconArrowRight } from '@elastic/eui/es/components/icon/assets/arrow_right'
 import App from './App'
+import './styles/styles.scss'
+import result from '../mockData/resultTimeSeries.json'
 
 appendIconComponentCache({
-    arrowRight: EuiIconArrowRight,
+  arrowRight: EuiIconArrowRight,
 })
 
 interface Props {
@@ -23,7 +25,8 @@ const renderChart = (props:Props) => {
 }
 
 if (process.env.NODE_ENV === 'development') {
-  renderChart({ command: '', data: [] })
+  const command = 'TS.RANGE bike_sales_3_per_day - + FILTER_BY_VALUE 3000 5000'
+  renderChart({ command, data: result, mode: 'ASCII'})
 }
 
 // This is a required action - export the main function for execution of the visualization

@@ -80,12 +80,6 @@ export const mockDatabaseModules = [
     semanticVersion: '1.2.5',
   },
 ];
-
-export const mockDatabaseWithModules = Object.assign(new Database(), {
-  ...mockDatabase,
-  modules: mockDatabaseModules,
-});
-
 export const mockDatabaseWithCloudDetails = Object.assign(new Database(), {
   ...mockDatabase,
   cloudDetails: mockCloudDatabaseDetails,
@@ -232,6 +226,7 @@ export const mockDatabaseOverviewCurrentKeyspace = DatabaseOverviewKeyspace.Curr
 export const mockRedisServerInfoDto = {
   redis_version: '7.0.5',
   redis_mode: 'standalone',
+  server_name: 'valkey',
   os: 'Linux 4.15.0-1087-gcp x86_64',
   arch_bits: '64',
   tcp_port: '11113',

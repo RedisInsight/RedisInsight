@@ -324,7 +324,13 @@ export let sourceInstance: Nullable<CancelTokenSource> = null
 
 // Asynchronous thunk action
 export function fetchInstancesAction(onSuccess?: (data: Instance[]) => void) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const envDependentFeature = get(stateInit(), ['app', 'features', 'featureFlags', 'features', 'envDependent'])
+
+    if (!envDependentFeature?.flag) {
+      return
+    }
+
     dispatch(loadInstances())
 
     try {
@@ -500,13 +506,13 @@ export function cloneInstanceAction({ id, ...payload }: Partial<Instance>, onSuc
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status } = await apiService.post(`${ApiEndpoints.DATABASES}/clone/${id}`, payload)
+      const { status, data } = await apiService.post(`${ApiEndpoints.DATABASES}/clone/${id}`, payload)
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch<any>(fetchInstancesAction())
 
-        dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(payload.name ?? '')))
+        dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(data.name ?? '')))
         onSuccess?.(id)
       }
     } catch (_err) {
@@ -595,7 +601,7 @@ export function exportInstancesAction(
 }
 
 // Asynchronous thunk action
-export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void) {
+export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void, onFail?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
     dispatch(setConnectedInstance())
@@ -613,6 +619,7 @@ export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void)
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
+      onFail?.()
     }
   }
 }
@@ -798,7 +805,7 @@ export function resetInstanceUpdateAction() {
 // Asynchronous thunk action
 export function uploadInstancesFile(
   file: FormData,
-  onSuccessAction?: () => void,
+  onSuccessAction?: (data: any) => void,
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
@@ -818,7 +825,7 @@ export function uploadInstancesFile(
 
       if (isStatusSuccessful(status)) {
         dispatch(importInstancesFromFileSuccess(data))
-        onSuccessAction?.()
+        onSuccessAction?.(data)
       }
     } catch (_err) {
       const error = _err as AxiosError

@@ -21,12 +21,10 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
+    config: 'value',
+    jobs: [{ name: 'job1', value: '1' }, { name: 'job2', value: '2' }]
   }),
 }))
-
-jest.mock('formik')
-
-const mockHandleSubmit = jest.fn()
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -36,14 +34,6 @@ beforeEach(() => {
 })
 
 describe('DeployPipelineButton', () => {
-  beforeEach(() => {
-    const mockUseFormikContext = {
-      handleSubmit: mockHandleSubmit,
-      values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
-  })
-
   it('should render', () => {
     expect(render(<DeployPipelineButton {...mockedProps} />)).toBeTruthy()
   })
@@ -98,14 +88,5 @@ describe('DeployPipelineButton', () => {
     fireEvent.click(screen.getByTestId('deploy-rdi-pipeline'))
 
     expect(screen.queryByTestId('deploy-confirm-btn')).toBeInTheDocument()
-  })
-
-  it('should call onSubmit and close popover', () => {
-    render(<DeployPipelineButton {...mockedProps} />)
-
-    fireEvent.click(screen.getByTestId('deploy-rdi-pipeline'))
-    fireEvent.click(screen.getByTestId('deploy-confirm-btn'))
-
-    expect(mockHandleSubmit).toBeCalled()
   })
 })

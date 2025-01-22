@@ -19,7 +19,7 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
+import { WorkbenchAnalytics } from 'src/modules/workbench/workbench.analytics';
 
 const mockCommands = ['set 1 1', 'get 1'];
 
@@ -91,7 +91,7 @@ describe('WorkbenchService', () => {
       providers: [
         WorkbenchService,
         {
-          provide: WorkbenchAnalyticsService,
+          provide: WorkbenchAnalytics,
           useFactory: mockWorkbenchAnalyticsService,
         },
         {

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { PackageType } from 'src/modules/server/models/server';
+import { AppType, PackageType } from 'src/modules/server/models/server';
 
 export class GetServerInfoResponse {
   @ApiProperty({
@@ -44,6 +44,13 @@ export class GetServerInfoResponse {
   })
   packageType: PackageType;
 
+  @ApiProperty({
+    description: 'Application type.',
+    enum: AppType,
+    example: 'DOCKER',
+  })
+  appType: AppType;
+
   @ApiPropertyOptional({
     description: 'Fixed Redis database id.',
     type: String,
@@ -62,16 +69,4 @@ export class GetServerInfoResponse {
     type: Number,
   })
   sessionId: number;
-
-  @ApiProperty({
-    description: 'Control number for A/B testing',
-    type: Number,
-  })
-  controlNumber: number;
-
-  @ApiProperty({
-    description: 'Control group (bucket)',
-    type: String,
-  })
-  controlGroup: string;
 }

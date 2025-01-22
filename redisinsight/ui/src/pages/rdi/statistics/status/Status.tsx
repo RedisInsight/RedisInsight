@@ -25,8 +25,6 @@ interface Props {
 const Status = ({ data }: Props) => (
   <Panel paddingSize="l">
     <EuiFlexGroup>
-      <StatusItem label="RDI Version" value={data.rdiVersion} />
-      <VerticalDivider />
       <StatusItem label="Address" value={data.address} />
       <VerticalDivider />
       <StatusItem label="Run status" value={data.runStatus} />

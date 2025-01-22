@@ -15,13 +15,13 @@ type Props = {
 }
 
 export const RedisLogo = ({ isRdiWorkspace }: Props) => {
-  const { disabledByEnv } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
   const { server } = useSelector(appInfoSelector)
 
-  if (disabledByEnv) {
+  if (!envDependent?.flag) {
     return (
       <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-        <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />
+        <EuiIcon aria-label="Redis Insight Homepage" type={LogoSVG} />
       </span>
     )
   }
@@ -32,8 +32,8 @@ export const RedisLogo = ({ isRdiWorkspace }: Props) => {
       position="right"
     >
       <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-        <EuiLink {...getRouterLinkProps(isRdiWorkspace ? Pages.rdi : Pages.home)} className={styles.logo} data-test-subj="home-page-btn">
-          <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />
+        <EuiLink {...getRouterLinkProps(isRdiWorkspace ? Pages.rdi : Pages.home)} className={styles.logo} data-test-subj="home-page-btn" data-testid="redis-logo-link">
+          <EuiIcon aria-label="Redis Insight Homepage" type={LogoSVG} />
         </EuiLink>
       </span>
     </EuiToolTip>

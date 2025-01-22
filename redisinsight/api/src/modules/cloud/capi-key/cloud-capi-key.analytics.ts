@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class CloudCapiKeyAnalytics extends TelemetryBaseService {
@@ -9,9 +10,10 @@ export class CloudCapiKeyAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendCloudAccountKeyGenerated() {
+  sendCloudAccountKeyGenerated(sessionMetadata: SessionMetadata) {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.CloudAccountKeyGenerated,
       );
     } catch (e) {
@@ -19,16 +21,18 @@ export class CloudCapiKeyAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendCloudAccountKeyGenerationFailed(exception: HttpException) {
+  sendCloudAccountKeyGenerationFailed(sessionMetadata: SessionMetadata, exception: HttpException) {
     this.sendFailedEvent(
+      sessionMetadata,
       TelemetryEvents.CloudAccountKeyGenerationFailed,
       exception,
     );
   }
 
-  sendCloudAccountSecretGenerated() {
+  sendCloudAccountSecretGenerated(sessionMetadata: SessionMetadata) {
     try {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.CloudAccountSecretGenerated,
       );
     } catch (e) {
@@ -36,8 +40,9 @@ export class CloudCapiKeyAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendCloudAccountSecretGenerationFailed(exception: HttpException) {
+  sendCloudAccountSecretGenerationFailed(sessionMetadata: SessionMetadata, exception: HttpException) {
     this.sendFailedEvent(
+      sessionMetadata,
       TelemetryEvents.CloudAccountSecretGenerationFailed,
       exception,
     );

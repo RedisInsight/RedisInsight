@@ -1,12 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { isString, uniqBy } from 'lodash'
-import { apiService } from 'uiSrc/services'
+import { apiService, resourcesService } from 'uiSrc/services'
 import { ApiEndpoints, ICommand, ICommands } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, checkDeprecatedCommandGroup } from 'uiSrc/utils'
+import { getConfig } from 'uiSrc/config'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 
 import { AppDispatch, RootState } from '../store'
 import { StateAppRedisCommands } from '../interfaces'
+
+export const commands = [
+  'main',
+  'redisearch',
+  'redisjson',
+  'redistimeseries',
+  'redisai',
+  'redisgraph',
+  'redisgears',
+  'redisbloom'
+]
 
 export const initialState: StateAppRedisCommands = {
   loading: false,
@@ -59,11 +71,29 @@ export function fetchRedisCommandsInfo(onSuccessAction?: () => void, onFailActio
     dispatch(getRedisCommands())
 
     try {
-      const { data, status } = await apiService.get<GetServerInfoResponse>(ApiEndpoints.REDIS_COMMANDS)
+      const riConfig = getConfig()
 
-      if (isStatusSuccessful(status)) {
-        dispatch(getRedisCommandsSuccess(data))
-        onSuccessAction?.()
+      if (riConfig.app.useLocalResources) {
+        const results = await Promise.all(
+          commands.map((command) => resourcesService.get<ICommand>(
+            `/static/commands/${command}.json`
+          ))
+        )
+        if (results.every(({ status }) => isStatusSuccessful(status))) {
+          const data: ICommands = results.reduce((obj, result) => ({
+            ...obj,
+            ...result.data
+          }), {})
+
+          dispatch(getRedisCommandsSuccess(data))
+          onSuccessAction?.()
+        }
+      } else {
+        const { data, status } = await apiService.get<GetServerInfoResponse>(ApiEndpoints.REDIS_COMMANDS)
+        if (isStatusSuccessful(status)) {
+          dispatch(getRedisCommandsSuccess(data))
+          onSuccessAction?.()
+        }
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)

@@ -6,6 +6,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { SendEventDto } from 'src/modules/analytics/dto/analytics.dto';
 import { AnalyticsService } from 'src/modules/analytics/analytics.service';
+import { RequestSessionMetadata } from 'src/common/decorators';
+import { SessionMetadata } from 'src/common/models';
 
 @ApiTags('Analytics')
 @Controller('analytics')
@@ -25,8 +27,9 @@ export class AnalyticsController {
   })
   async sendEvent(
     @Body() dto: SendEventDto,
+      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<void> {
-    return this.service.sendEvent(dto);
+    return this.service.sendEvent(sessionMetadata, dto);
   }
 
   @Post('send-page')
@@ -41,7 +44,8 @@ export class AnalyticsController {
   })
   async sendPage(
     @Body() dto: SendEventDto,
+      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<void> {
-    return this.service.sendPage(dto);
+    return this.service.sendPage(sessionMetadata, dto);
   }
 }

@@ -88,7 +88,10 @@ describe('DatabaseImportService', () => {
       const response = await service.import(mockSessionMetadata, mockDatabaseImportFile);
 
       expect(response).toEqual(mockDatabaseImportResponse);
-      expect(analytics.sendImportResults).toHaveBeenCalledWith(mockDatabaseImportResponse);
+      expect(analytics.sendImportResults).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockDatabaseImportResponse,
+      );
     });
 
     it('should import databases from base64', async () => {
@@ -104,7 +107,10 @@ describe('DatabaseImportService', () => {
       expect(response).toEqual({
         ...mockDatabaseImportResponse,
       });
-      expect(analytics.sendImportResults).toHaveBeenCalledWith(mockDatabaseImportResponse);
+      expect(analytics.sendImportResults).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockDatabaseImportResponse,
+      );
     });
 
     it('should fail due to file was not provided', async () => {
@@ -114,8 +120,10 @@ describe('DatabaseImportService', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(NoDatabaseImportFileProvidedException);
         expect(e.message).toEqual('No import file provided');
-        expect(analytics.sendImportFailed)
-          .toHaveBeenCalledWith(new NoDatabaseImportFileProvidedException('No import file provided'));
+        expect(analytics.sendImportFailed).toHaveBeenCalledWith(
+          mockSessionMetadata,
+          new NoDatabaseImportFileProvidedException('No import file provided'),
+        );
       }
     });
 

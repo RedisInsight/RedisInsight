@@ -48,7 +48,7 @@ const ConnectivityOptions = (props: Props) => {
               {(ssoCloudHandlerClick, isSSOEnabled) => (
                 <EuiButton
                   color="secondary"
-                  className={cx(styles.typeBtn, styles.primary)}
+                  className={styles.typeBtn}
                   href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
                     campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm]
                   })}

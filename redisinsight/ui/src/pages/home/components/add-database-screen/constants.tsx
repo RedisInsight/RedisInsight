@@ -6,7 +6,7 @@ import ShieldIcon from 'uiSrc/assets/img/shield.svg?react'
 import RedisSoftwareIcon from 'uiSrc/assets/img/redis-software.svg?react'
 
 export interface Values {
-  connectionURL?: string
+  connectionURL: string
 }
 
 export const CONNECTIVITY_OPTIONS = [

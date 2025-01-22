@@ -16,6 +16,7 @@ import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
+import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { NoKeySelected } from './components/no-key-selected'
 import { DynamicTypeDetails } from './components/dynamic-type-details'
 
@@ -43,6 +44,7 @@ const KeyDetails = (props: Props) => {
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const { viewType } = useSelector(keysSelector)
+  const { shownColumns } = useSelector(appContextDbConfig)
   const { loading, error = '', data } = useSelector(selectedKeySelector)
   const isKeySelected = !isNull(useSelector(selectedKeyDataSelector))
   const { type: keyType } = useSelector(selectedKeyDataSelector) ?? { type: KeyTypes.String }
@@ -54,6 +56,7 @@ const KeyDetails = (props: Props) => {
 
     dispatch(fetchKeyInfo(
       keyProp,
+      shownColumns,
       undefined,
       (data) => {
         if (!data) return

@@ -9,9 +9,9 @@ import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import TreeViewIcon from 'uiSrc/assets/img/icons/treeview.svg?react'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { resetBrowserTree, setBrowserKeyListDataLoaded, } from 'uiSrc/slices/app/context'
+import { appContextDbConfig, resetBrowserTree, setBrowserKeyListDataLoaded, setBrowserShownColumns, } from 'uiSrc/slices/app/context'
 
-import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData, setShownColumns } from 'uiSrc/slices/browser/keys'
+import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData } from 'uiSrc/slices/browser/keys'
 import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -59,7 +59,8 @@ const KeysHeader = (props: Props) => {
   } = props
 
   const { id: instanceId } = useSelector(connectedInstanceSelector)
-  const { viewType, searchMode, isFiltered, shownColumns } = useSelector(keysSelector)
+  const { viewType, searchMode, isFiltered } = useSelector(keysSelector)
+  const { shownColumns } = useSelector(appContextDbConfig)
   const { selectedIndex } = useSelector(redisearchSelector)
 
   const [columnsConfigShown, setColumnsConfigShown] = useState(false)
@@ -193,7 +194,7 @@ const KeysHeader = (props: Props) => {
       status ? shown.push(BrowserColumns.Size) : hidden.push(BrowserColumns.Size)
     }
 
-    dispatch(setShownColumns(newColumns))
+    dispatch(setBrowserShownColumns(newColumns))
     sendEventTelemetry({
       event: TelemetryEvent.SHOW_BROWSER_COLUMN_CLICKED,
       eventData: {

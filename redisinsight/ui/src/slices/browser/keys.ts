@@ -80,8 +80,6 @@ export const initialState: KeysStore = {
   isBrowserFullScreen: false,
   searchMode: localStorageService?.get(BrowserStorageItem.browserSearchMode) ?? SearchMode.Pattern,
   viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
-  shownColumns: localStorageService?.get(BrowserStorageItem.browserShownColumns)
-    ?? [BrowserColumns.Size, BrowserColumns.TTL],
   data: {
     total: 0,
     scanned: 0,
@@ -425,10 +423,6 @@ const keysSlice = createSlice({
     setSelectedKeyRefreshDisabled: (state, { payload }: PayloadAction<boolean>) => {
       state.selectedKey.isRefreshDisabled = payload
     },
-    setShownColumns: (state, { payload }: PayloadAction<BrowserColumns[]>) => {
-      state.shownColumns = payload
-      localStorageService?.set(BrowserStorageItem.browserShownColumns, payload)
-    },
   },
 })
 
@@ -479,7 +473,6 @@ export const {
   deleteSearchHistorySuccess,
   deleteSearchHistoryFailure,
   setSelectedKeyRefreshDisabled,
-  setShownColumns
 } = keysSlice.actions
 
 // A selector
@@ -663,6 +656,7 @@ export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor
 // Asynchronous thunk action
 export function fetchKeyInfo(
   key: RedisResponseBuffer,
+  shownColumns: BrowserColumns[] = [BrowserColumns.Size, BrowserColumns.TTL],
   resetData?: boolean,
   onSuccess?: (data: Nullable<IKeyPropTypes>) => void
 ) {
@@ -672,7 +666,6 @@ export function fetchKeyInfo(
     try {
       const state = stateInit()
       const { encoding } = state.app.info
-      const { shownColumns } = state.browser.keys
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
@@ -736,13 +729,15 @@ export function fetchKeyInfo(
 }
 
 // Asynchronous thunk action
-export function refreshKeyInfoAction(key: RedisResponseBuffer) {
+export function refreshKeyInfoAction(
+  key: RedisResponseBuffer,
+  shownColumns: BrowserColumns[] = [BrowserColumns.Size, BrowserColumns.TTL]
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(refreshKeyInfo())
     try {
       const state = stateInit()
       const { encoding } = state.app.info
-      const { shownColumns } = state.browser.keys
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
@@ -1045,6 +1040,7 @@ export function editKeyTTL(key: RedisResponseBuffer, ttl: number) {
 export function fetchKeysMetadata(
   keys: RedisString[],
   filter: Nullable<KeyTypes>,
+  shownColumns: BrowserColumns[] = [BrowserColumns.Size, BrowserColumns.TTL],
   signal?: AbortSignal,
   onSuccessAction?: (data: GetKeyInfoResponse[]) => void,
   onFailAction?: () => void
@@ -1052,7 +1048,6 @@ export function fetchKeysMetadata(
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
-      const { shownColumns } = state.browser.keys
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id,
@@ -1082,6 +1077,7 @@ export function fetchKeysMetadata(
 export function fetchKeysMetadataTree(
   keys: RedisString[],
   filter: Nullable<KeyTypes>,
+  shownColumns: BrowserColumns[] = [BrowserColumns.Size, BrowserColumns.TTL],
   signal?: AbortSignal,
   onSuccessAction?: (data: GetKeyInfoResponse[]) => void,
   onFailAction?: () => void
@@ -1089,7 +1085,6 @@ export function fetchKeysMetadataTree(
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
-      const { shownColumns } = state.browser.keys
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id,

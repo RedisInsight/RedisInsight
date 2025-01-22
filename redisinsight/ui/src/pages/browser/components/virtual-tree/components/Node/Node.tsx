@@ -17,7 +17,7 @@ import KeyRowSize from 'uiSrc/pages/browser/components/key-row-size'
 import KeyRowName from 'uiSrc/pages/browser/components/key-row-name'
 import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { keysSelector } from 'uiSrc/slices/browser/keys'
+import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { DeleteKeyPopover } from '../../../delete-key-popover/DeleteKeyPopover'
 import { TreeData } from '../../interfaces'
 import styles from './styles.module.scss'
@@ -60,7 +60,7 @@ const Node = ({
 
   const delimiterView = delimiters.length === 1 ? delimiters[0] : '-'
 
-  const { shownColumns } = useSelector(keysSelector)
+  const { shownColumns } = useSelector(appContextDbConfig)
   const getSize = shownColumns.includes(BrowserColumns.Size)
   const getTtl = shownColumns.includes(BrowserColumns.TTL)
 

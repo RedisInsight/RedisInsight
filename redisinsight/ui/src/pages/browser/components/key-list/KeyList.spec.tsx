@@ -50,8 +50,6 @@ const propsMock = {
   onAddKeyPanel: jest.fn(),
 }
 
-const shownColumns = [BrowserColumns.Size, BrowserColumns.TTL]
-
 const mockedKeySlice = {
   viewType: KeyViewType.Browser,
   searchMode: SearchMode.Pattern,

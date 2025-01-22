@@ -24,6 +24,7 @@ import {
   setBrowserPatternScrollPosition,
   setBrowserIsNotRendered,
   setBrowserRedisearchScrollPosition,
+  appContextDbConfig,
 } from 'uiSrc/slices/app/context'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -82,7 +83,8 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const selectedKey = useSelector(selectedKeySelector)
   const { nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered, searchMode, deleting, shownColumns } = useSelector(keysSelector)
+  const { isSearched, isFiltered, searchMode } = useSelector(keysSelector)
+  const { shownColumns } = useSelector(appContextDbConfig)
   const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
@@ -282,6 +284,7 @@ const KeyList = forwardRef((props: Props, ref) => {
     dispatch(fetchKeysMetadata(
       itemsToFetch.map(({ name }) => name),
       commonFilterType,
+      shownColumns,
       controller.current?.signal,
       (loadedItems) => onSuccessFetchedMetadata(startIndex, loadedItems),
       () => { rerender({}) }

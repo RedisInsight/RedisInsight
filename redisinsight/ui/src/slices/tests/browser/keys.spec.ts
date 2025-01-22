@@ -80,7 +80,6 @@ import reducer, {
   setLastBatchPatternKeys,
   updateSelectedKeyRefreshTime,
   refreshKey,
-  setShownColumns,
 } from '../../browser/keys'
 
 jest.mock('uiSrc/services', () => ({

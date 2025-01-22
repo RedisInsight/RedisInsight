@@ -37,8 +37,8 @@ export class ClusterScannerStrategy extends ScannerStrategy {
           }) => (
             host === node.host && port === node.port
           ) || (
-            natHost === node.host && natPort === node.port
-          ),
+              natHost === node.host && natPort === node.port
+            ),
         );
       });
 
@@ -121,7 +121,7 @@ export class ClusterScannerStrategy extends ScannerStrategy {
         // eslint-disable-next-line no-param-reassign
         node.scanned = isNull(node.total) ? 1 : node.total;
       });
-      nodes[0].keys = await this.getKeysInfo(client, [keyName]);
+      nodes[0].keys = await this.getKeysInfo(client, [keyName], undefined, true, true);
       nodes[0].keys = nodes[0].keys.filter((key: GetKeyInfoResponse) => {
         if (key.ttl === -2) {
           return false;
@@ -159,6 +159,8 @@ export class ClusterScannerStrategy extends ScannerStrategy {
             node.node,
             node.keys,
             args.type,
+            true,
+            true
           );
         } else {
           // eslint-disable-next-line no-param-reassign
@@ -180,34 +182,44 @@ export class ClusterScannerStrategy extends ScannerStrategy {
     client: RedisClient,
     keys: RedisString[],
     filterType?: RedisDataType,
+    includeSize?: boolean,
+    includeTTL?: boolean
   ): Promise<GetKeyInfoResponse[]> {
     return Promise.all(keys.map(async (key) => {
-      const commands: RedisClientCommand[] = [
-        [BrowserToolKeysCommands.Ttl, key],
-        ['memory', 'usage', key, 'samples', '0'],
-      ];
+      const commands: RedisClientCommand[] = [];
+      const responseMap = {
+        ttl: null,
+        size: null,
+        type: null
+      }
+
+      if (includeTTL) {
+        responseMap.ttl = commands.length
+        commands.push([BrowserToolKeysCommands.Ttl, key]);
+      }
+
+      if (includeSize) {
+        responseMap.size = commands.length
+        commands.push(['memory', 'usage', key, 'samples', '0']);
+      }
 
       if (!filterType) {
+        responseMap.type = commands.length
         commands.push([BrowserToolKeysCommands.Type, key]);
       }
 
       const result = await client.sendPipeline(commands, { replyEncoding: 'utf8' }) as any[];
 
       if (filterType) {
+        responseMap.type = commands.length
         result.push([null, filterType]);
       }
 
-      const [
-        [, ttl = null],
-        [, size = null],
-        [, type = null],
-      ] = result;
-
       return {
         name: key,
-        type,
-        ttl,
-        size,
+        type: result[responseMap.type]?.[1],
+        ttl: responseMap.ttl !== null ? result[responseMap.ttl][1] : undefined,
+        size: responseMap.size !== null ? result[responseMap.size][1] : undefined,
       };
     }));
   }

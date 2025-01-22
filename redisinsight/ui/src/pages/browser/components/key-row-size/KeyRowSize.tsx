@@ -1,19 +1,13 @@
 import React from 'react'
 import cx from 'classnames'
 import {
-  EuiButton,
-  EuiButtonIcon,
   EuiLoadingContent,
-  EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiToolTip,
 } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
-import { Maybe, formatBytes, formatLongName } from 'uiSrc/utils'
-import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { Maybe, formatBytes } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -21,26 +15,14 @@ export interface Props {
   deletePopoverId: Maybe<number | string>
   rowId: number | string
   nameString: string
-  type: KeyTypes | ModulesKeyTypes
-  deleting: boolean
-  nameBuffer: RedisResponseBuffer
-  setDeletePopoverId: (id: any) => void
-  handleDeletePopoverOpen: (id: any, type: KeyTypes | ModulesKeyTypes) => void
-  handleDelete: (key: RedisResponseBuffer) => void
 }
 
 const KeyRowSize = (props: Props) => {
   const {
     size,
     nameString,
-    nameBuffer,
     deletePopoverId,
-    deleting,
     rowId,
-    type,
-    setDeletePopoverId,
-    handleDeletePopoverOpen,
-    handleDelete,
   } = props
 
   if (isUndefined(size)) {
@@ -88,46 +70,6 @@ const KeyRowSize = (props: Props) => {
           </EuiToolTip>
         </div>
       </EuiText>
-      <EuiPopover
-        anchorClassName={cx(
-          styles.deleteAnchor,
-          'showOnHoverKey',
-          { show: deletePopoverId === rowId },
-        )}
-        anchorPosition="rightUp"
-        isOpen={deletePopoverId === rowId}
-        closePopover={() => setDeletePopoverId(undefined)}
-        panelPaddingSize="l"
-        panelClassName={styles.deletePopover}
-        button={(
-          <EuiButtonIcon
-            iconType="trash"
-            onClick={() => handleDeletePopoverOpen(rowId, type)}
-            aria-label="Delete Key"
-            data-testid={`delete-key-btn-${nameString}`}
-          />
-        )}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <>
-          <EuiText size="m">
-            <h4 style={{ wordBreak: 'break-all' }}><b>{formatLongName(nameString)}</b></h4>
-            <EuiText size="s">will be deleted.</EuiText>
-          </EuiText>
-          <EuiSpacer size="m" />
-          <EuiButton
-            fill
-            size="s"
-            color="warning"
-            iconType="trash"
-            isDisabled={deleting}
-            onClick={() => handleDelete(nameBuffer)}
-            data-testid="submit-delete-key"
-          >
-            Delete
-          </EuiButton>
-        </>
-      </EuiPopover>
     </>
   )
 }

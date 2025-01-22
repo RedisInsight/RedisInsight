@@ -1,5 +1,6 @@
 import {
   EuiFlexItem,
+  EuiIcon,
   EuiText,
   EuiToolTip,
 } from '@elastic/eui'
@@ -25,6 +26,8 @@ const KeyDetailsHeaderSizeLength = ({
     length,
   } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
 
+  const isSizeTooLarge = size === -1
+
   return (
     <>
       {size && (
@@ -41,13 +44,25 @@ const KeyDetailsHeaderSizeLength = ({
               position="left"
               content={(
                 <>
-                  {formatBytes(size, 3)}
+                  {isSizeTooLarge ? 'The key size is too large to run the MEMORY USAGE command, as it may lead to performance issues.' : formatBytes(size, 3)}
                 </>
-            )}
+              )}
             >
               <>
                 {width > MIDDLE_SCREEN_RESOLUTION && 'Key Size: '}
                 {formatBytes(size, 0)}
+                {isSizeTooLarge && (
+                  <>
+                    {' '}
+                    <EuiIcon
+                      className={styles.infoIcon}
+                      type="iInCircle"
+                      size="m"
+                      style={{ cursor: 'pointer' }}
+                      data-testid="key-size-info-icon"
+                    />
+                  </>
+                )}
               </>
             </EuiToolTip>
           </EuiText>

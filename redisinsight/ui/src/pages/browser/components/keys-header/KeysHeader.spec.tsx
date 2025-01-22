@@ -1,8 +1,26 @@
 import React from 'react'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { keysSelector } from 'uiSrc/slices/browser/keys'
+import * as keysSlice from 'uiSrc/slices/browser/keys'
+import { BrowserColumns } from 'uiSrc/constants'
 import KeysHeader from './KeysHeader'
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions();
+
+  (keysSlice.keysSelector as jest.Mock).mockReturnValue({
+    ...mockSelectorData,
+  })
+})
+
+jest.mock('uiSrc/slices/browser/keys', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/keys'),
+  keysSelector: jest.fn().mockReturnValue(mockSelectorData)
+}))
 
 const propsMock = {
   keysState: {
@@ -41,17 +59,18 @@ const propsMock = {
   loadKeys: jest.fn(),
   loadMoreItems: jest.fn(),
   handleAddKeyPanel: jest.fn(),
+  nextCursor: '0',
+  isSearched: false,
+  handleScanMoreClick: jest.fn(),
 }
 
-jest.mock('uiSrc/slices/browser/keys', () => ({
-  ...jest.requireActual('uiSrc/slices/browser/keys'),
-  keysSelector: jest.fn().mockResolvedValue({
-    viewType: 'Browser',
-    searchMode: 'Pattern',
-    isSearch: false,
-    isFiltered: false,
-  }),
-}))
+const mockSelectorData = {
+  searchMode: SearchMode.Pattern,
+  viewType: KeyViewType.Browser,
+  isSearch: false,
+  isFiltered: false,
+  shownColumns: [BrowserColumns.TTL, BrowserColumns.Size],
+}
 
 describe('KeysHeader', () => {
   it('should render', () => {
@@ -66,32 +85,31 @@ describe('KeysHeader', () => {
   })
 
   it('should render Scan more button if total => keys.length', () => {
-    keysSelector.mockImplementation(() => ({
+    (keysSlice.keysSelector as jest.Mock).mockReturnValue({
+      ...mockSelectorData,
       searchMode: SearchMode.Redisearch,
-      viewType: KeyViewType.Tree,
-      isSearch: false,
-      isFiltered: false,
-    }))
+      viewType: KeyViewType.Tree
+    })
 
     const { queryByTestId } = render(<KeysHeader
       {...propsMock}
       keysState={{
         ...propsMock.keysState,
+        maxResults: 200,
         total: 200,
-        nextCursor: '3',
       }}
+      nextCursor="3"
     />)
 
     expect(queryByTestId('scan-more')).toBeInTheDocument()
   })
 
   it('should not render Scan more button for if searchMode = "Redisearch" and keys.length > maxResults', () => {
-    keysSelector.mockImplementation(() => ({
+    (keysSlice.keysSelector as jest.Mock).mockReturnValue({
+      ...mockSelectorData,
       searchMode: SearchMode.Redisearch,
       viewType: KeyViewType.Tree,
-      isSearch: false,
-      isFiltered: false,
-    }))
+    })
 
     const { queryByTestId } = render(<KeysHeader
       {...propsMock}

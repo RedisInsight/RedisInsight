@@ -171,9 +171,10 @@ describe('stream slice', () => {
   describe('setStreamInitialState', () => {
     it('should properly set initial state', () => {
       const nextState = reducer(initialState, setStreamInitialState())
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(initialState)
     })
   })
@@ -190,9 +191,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadEntries(true))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -216,9 +218,10 @@ describe('stream slice', () => {
       const nextState = omit({ ...tempState }, 'data.lastRefreshTime')
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -237,9 +240,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadEntriesFailure(error))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -256,9 +260,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadMoreEntries())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -281,9 +286,10 @@ describe('stream slice', () => {
       const nextState = omit({ ...tempState }, 'data.lastRefreshTime')
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -302,9 +308,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadMoreEntriesFailure(error))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -321,9 +328,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, addNewEntries())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -341,9 +349,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, addNewEntriesSuccess())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -362,9 +371,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, addNewEntriesFailure(error))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -381,9 +391,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, removeStreamEntries())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -401,9 +412,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, removeStreamEntriesSuccess())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -422,9 +434,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, removeStreamEntriesFailure(error))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -444,9 +457,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, updateStart('10'))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -466,9 +480,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, updateEnd('100'))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -492,9 +507,10 @@ describe('stream slice', () => {
       const nextState = reducer(startState, cleanRangeFilter())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamRangeSelector(rootState)).toEqual(stateRange)
     })
   })
@@ -511,9 +527,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, setStreamViewType(StreamViewType.Messages))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -534,9 +551,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadConsumerGroups())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -567,9 +585,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadConsumerGroupsSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -600,9 +619,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadConsumersSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -633,9 +653,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadConsumerMessagesSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -658,9 +679,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadConsumerMessagesFailure(error))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -683,9 +705,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadConsumersFailure(error))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -707,9 +730,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadConsumerGroupsFailure(error))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -734,9 +758,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, setSelectedGroup(group))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -759,9 +784,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, setSelectedConsumer(consumer))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -795,9 +821,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, loadMoreConsumerMessagesSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -817,9 +844,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, ackPendingEntries())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -840,9 +868,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, ackPendingEntriesSuccess())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -864,9 +893,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, ackPendingEntriesFailure(error))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -886,9 +916,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, claimConsumerMessages())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -909,9 +940,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, claimConsumerMessagesSuccess())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -934,9 +966,10 @@ describe('stream slice', () => {
       const nextState = reducer(initialState, claimConsumerMessagesFailure(error))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { stream: nextState },
-      })
+      }
       expect(streamSelector(rootState)).toEqual(state)
     })
   })

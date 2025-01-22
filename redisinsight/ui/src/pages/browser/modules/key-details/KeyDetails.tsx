@@ -16,6 +16,7 @@ import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
+import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { NoKeySelected } from './components/no-key-selected'
 import { DynamicTypeDetails } from './components/dynamic-type-details'
 

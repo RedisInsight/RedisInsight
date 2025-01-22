@@ -1,5 +1,5 @@
 import React, { Ref, useRef, useState } from 'react'
-import { EuiButton, EuiForm, EuiText, EuiTextArea, EuiToolTip, keys } from '@elastic/eui'
+import { EuiButton, EuiForm, EuiSuperSelect, EuiText, EuiTextArea, EuiToolTip, keys } from '@elastic/eui'
 
 import cx from 'classnames'
 import { isModifiedEvent } from 'uiSrc/services'
@@ -23,6 +23,13 @@ export interface Props {
 
 const INDENT_TEXTAREA_SPACE = 2
 
+enum BotType {
+  Query = '/query',
+  General = '/general'
+}
+
+const botTypeOptions = [{ value: BotType.Query, inputDisplay: 'query' }, { value: BotType.General, inputDisplay: 'general' }]
+
 const ChatForm = (props: Props) => {
   const {
     isDisabled,
@@ -31,6 +38,7 @@ const ChatForm = (props: Props) => {
     isGeneralAgreementAccepted,
   } = props
   const [value, setValue] = useState('')
+  const [botType, setBotType] = useState(BotType.Query)
   const [validation, setValidation] = useState<Nullable<string>>(null)
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
 
@@ -74,7 +82,7 @@ const ChatForm = (props: Props) => {
   }
 
   const submitMessage = () => {
-    onSubmit?.(value)
+    onSubmit?.((databaseId ? `${botType} ` : '') + value)
     setValue('')
     updateTextAreaHeight(true)
   }
@@ -96,15 +104,31 @@ const ChatForm = (props: Props) => {
           onSubmit={handleSubmitForm}
           onKeyDown={handleKeyDown}
         >
-          <EuiTextArea
-            inputRef={textAreaRef}
-            placeholder="Ask me about Redis or let me generate a query"
-            className={styles.textarea}
-            value={value}
-            onChange={handleChange}
-            disabled={!isGeneralAgreementAccepted}
-            data-testid="ai-message-textarea"
-          />
+          <div style={{ display: 'flex' }}>
+            <div>
+              {databaseId && (
+              <EuiSuperSelect
+                className={styles.textarea}
+                options={botTypeOptions}
+                valueOfSelected={botType}
+                onChange={setBotType}
+                data-test-subj="select-chatbot"
+                data-testid="select-chatbot-testid"
+              />
+              )}
+            </div>
+            <div style={{ flex: 1 }}>
+              <EuiTextArea
+                inputRef={textAreaRef}
+                placeholder="Ask me about Redis or let me generate a query"
+                className={styles.textarea}
+                value={value}
+                onChange={handleChange}
+                disabled={!isGeneralAgreementAccepted}
+                data-testid="ai-message-textarea"
+              />
+            </div>
+          </div>
           <div className={styles.submitBtnWrapper}>
             <EuiButton
               fill

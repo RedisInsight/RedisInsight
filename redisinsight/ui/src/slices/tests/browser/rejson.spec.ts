@@ -47,14 +47,15 @@ beforeEach(() => {
 
   defaultData = {
     downloaded: false,
-    path: '$',
+    path: '.',
     data: [
       { key: 'glossary', path: "['glossary']", cardinality: 2, type: 'object' },
     ],
     type: 'object',
   }
 
-  const rootStateWithSelectedKey = Object.assign(initialStateDefault, {
+  const rootStateWithSelectedKey = {
+    ...initialStateDefault,
     browser: {
       keys: {
         selectedKey: {
@@ -64,7 +65,7 @@ beforeEach(() => {
         },
       },
     },
-  })
+  }
 
   storeWithSelectedKey = mockStore(rootStateWithSelectedKey)
 })
@@ -95,11 +96,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, loadRejsonBranch())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -121,11 +123,12 @@ describe('rejson slice', () => {
       )
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
 
@@ -143,11 +146,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, loadRejsonBranchSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -166,11 +170,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, loadRejsonBranchFailure(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -187,11 +192,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, appendReJSONArrayItem())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -207,11 +213,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, appendReJSONArrayItemSuccess())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -230,11 +237,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, appendReJSONArrayItemFailure(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -251,11 +259,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, setReJSONData())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -271,11 +280,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, setReJSONDataSuccess())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -294,11 +304,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, setReJSONDataFailure(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -315,11 +326,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, removeRejsonKey())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -335,11 +347,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, removeRejsonKeySuccess())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -358,11 +371,12 @@ describe('rejson slice', () => {
       const nextState = reducer(initialState, removeRejsonKeyFailure(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: {
           rejson: nextState,
         },
-      })
+      }
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -372,7 +386,7 @@ describe('rejson slice', () => {
       it('call both fetchReJSON and loadRejsonBranchSuccess when fetch is successed', async () => {
         // Arrange
         const key = 'key'
-        const path = '$'
+        const path = '.'
 
         const responsePayload = { data: defaultData, status: 200 }
 
@@ -392,7 +406,7 @@ describe('rejson slice', () => {
       it('call both fetchReJSON and loadRejsonBranchFailure when fetch is fail', async () => {
         // Arrange
         const key = 'key'
-        const path = '$'
+        const path = '.'
         const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
@@ -420,7 +434,7 @@ describe('rejson slice', () => {
       it('succeed to fetch set json data', async () => {
         // Arrange
         const key = 'key'
-        const path = '$'
+        const path = '.'
         const data = '{}'
 
         const responsePayload = { status: 200 }
@@ -447,7 +461,7 @@ describe('rejson slice', () => {
       it('failed to fetch set json data', async () => {
         // Arrange
         const key = 'key'
-        const path = '$'
+        const path = '.'
         const errorMessage = 'some error'
         const responsePayload = {
           response: {
@@ -475,7 +489,7 @@ describe('rejson slice', () => {
       it('succeed to fetch append array data', async () => {
         // Arrange
         const key = 'key'
-        const path = '$'
+        const path = '.'
         const data = '123'
 
         const responsePayload = { status: 200 }
@@ -502,7 +516,7 @@ describe('rejson slice', () => {
       it('failed to fetch append array data', async () => {
         // Arrange
         const key = 'key'
-        const path = '$'
+        const path = '.'
         const errorMessage = 'some error'
         const responsePayload = {
           response: {
@@ -530,7 +544,7 @@ describe('rejson slice', () => {
       it('succeed to fetch remove json key', async () => {
         // Arrange
         const key = 'key'
-        const path = '$'
+        const path = '.'
         const jsonKeyName = 'jsonKeyName'
 
         const responsePayload = { status: 200 }
@@ -564,7 +578,7 @@ describe('rejson slice', () => {
       it('failed to fetch remove json key', async () => {
         // Arrange
         const key = 'key'
-        const path = '$'
+        const path = '.'
         const errorMessage = 'some error'
         const responsePayload = {
           response: {
@@ -591,7 +605,7 @@ describe('rejson slice', () => {
     describe('fetchVisualisationResults', () => {
       it('call both fetchVisualisationResults and loadRejsonBranchSuccess when fetch is successed', async () => {
         // Arrange
-        const path = '$'
+        const path = '.'
 
         const responsePayload = { data: defaultData, status: 200 }
 

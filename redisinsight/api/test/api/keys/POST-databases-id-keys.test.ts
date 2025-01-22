@@ -27,7 +27,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     name: JoiRedisString.required(),
     type: Joi.string(),
     ttl: Joi.number().integer(),
-    size: Joi.number(), // todo: fix size pipeline for cluster
+    size: Joi.number().allow(null), // todo: fix size pipeline for cluster
   })).required(),
 }).required()).required();
 
@@ -58,7 +58,7 @@ const isKeyInResponse = (body, keyName) => _.find(
 
 describe('POST /databases/:id/keys', () => {
   // todo: add query validation
-  xdescribe('Validation', () => {});
+  xdescribe('Validation', () => { });
 
   describe('Modes', () => {
     requirements('!rte.bigData');
@@ -301,7 +301,7 @@ describe('POST /databases/:id/keys', () => {
           name: 'Should search by with ? in the end',
           data: {
             cursor: '0',
-            match: `${constants.TEST_RUN_ID}_str_key_10?`
+            match: `${constants.TEST_RUN_ID}_str_key_10?`,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -398,7 +398,7 @@ describe('POST /databases/:id/keys', () => {
             match: `${constants.TEST_RUN_ID}_str_key_10[0,1,2]`
           },
           responseSchema,
-          checkFn: ({body}) => {
+          checkFn: ({ body }) => {
             const result = {
               total: 0,
               scanned: 0,
@@ -415,7 +415,7 @@ describe('POST /databases/:id/keys', () => {
             expect(result.total).to.eql(KEYS_NUMBER);
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(1).lte(3);
-            result.keys.map(({name}) => {
+            result.keys.map(({ name }) => {
               expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
             })
           }

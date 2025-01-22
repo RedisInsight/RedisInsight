@@ -12,17 +12,45 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
     client: RedisClient,
     key: RedisString,
     type: string,
+    includeSize: boolean,
   ): Promise<GetKeyInfoResponse> {
     this.logger.debug(`Getting ${RedisDataType.JSON} type info.`);
+
+    if (includeSize !== false) {
+      const [
+        [, ttl = null],
+        [, size = null],
+      ] = await client.sendPipeline([
+        [BrowserToolKeysCommands.Ttl, key],
+        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+      ]) as [any, number][];
+
+      const length = await this.getLength(client, key);
+
+      return {
+        name: key,
+        type,
+        ttl,
+        size,
+        length,
+      };
+    }
+
     const [
       [, ttl = null],
-      [, size = null],
     ] = await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
-      [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
     ]) as [any, number][];
 
     const length = await this.getLength(client, key);
+
+    let size = -1;
+    if (length < 100) {
+      const sizeData = await client.sendPipeline([
+        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+      ]) as [any, number][];
+      size = sizeData && sizeData[0] && sizeData[0][1];
+    }
 
     return {
       name: key,
@@ -36,24 +64,24 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
   private async getLength(client: RedisClient, key: RedisString): Promise<number> {
     try {
       const objectKeyType = await client.sendCommand(
-        [BrowserToolRejsonRlCommands.JsonType, key],
+        [BrowserToolRejsonRlCommands.JsonType, key, '.'],
         { replyEncoding: 'utf8' },
       );
 
       switch (objectKeyType) {
         case 'object':
           return await client.sendCommand(
-            [BrowserToolRejsonRlCommands.JsonObjLen, key],
+            [BrowserToolRejsonRlCommands.JsonObjLen, key, '.'],
             { replyEncoding: 'utf8' },
           ) as number;
         case 'array':
           return await client.sendCommand(
-            [BrowserToolRejsonRlCommands.JsonArrLen, key],
+            [BrowserToolRejsonRlCommands.JsonArrLen, key, '.'],
             { replyEncoding: 'utf8' },
           ) as number;
         case 'string':
           return await client.sendCommand(
-            [BrowserToolRejsonRlCommands.JsonStrLen, key],
+            [BrowserToolRejsonRlCommands.JsonStrLen, key, '.'],
             { replyEncoding: 'utf8' },
           ) as number;
         default:

@@ -11,6 +11,8 @@ import {
   DEFAULT_TREE_SORTING,
   KeyTypes, Pages,
   SortOrder,
+  BrowserColumns,
+  DEFAULT_SHOWN_COLUMNS,
 } from 'uiSrc/constants'
 import { localStorageService, setCapabilityStorageField, setDBConfigStorageField } from 'uiSrc/services'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
@@ -24,7 +26,7 @@ import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDet
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
-import { setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
+import { setPipelineConfig, setPipelineInitialState, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { SearchMode } from '../interfaces/keys'
 import { AppWorkspace, RedisResponseBuffer, StateAppContext } from '../interfaces'
@@ -42,6 +44,7 @@ export const initialState: StateAppContext = {
     treeViewSort: DEFAULT_TREE_SORTING,
     slowLogDurationUnit: DEFAULT_SLOWLOG_DURATION_UNIT,
     showHiddenRecommendations: DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS,
+    shownColumns: DEFAULT_SHOWN_COLUMNS,
   },
   dbIndex: {
     disabled: false
@@ -131,6 +134,7 @@ const appContextSlice = createSlice({
       state.dbConfig.treeViewSort = payload?.treeViewSort ?? DEFAULT_TREE_SORTING
       state.dbConfig.slowLogDurationUnit = payload?.slowLogDurationUnit ?? DEFAULT_SLOWLOG_DURATION_UNIT
       state.dbConfig.showHiddenRecommendations = payload?.showHiddenRecommendations
+      state.dbConfig.shownColumns = payload?.shownColumns ?? DEFAULT_SHOWN_COLUMNS
     },
     setSlowLogUnits: (state, { payload }) => {
       state.dbConfig.slowLogDurationUnit = payload
@@ -143,6 +147,10 @@ const appContextSlice = createSlice({
     setBrowserTreeSort: (state, { payload }: PayloadAction<SortOrder>) => {
       state.dbConfig.treeViewSort = payload
       setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.treeViewSort, payload)
+    },
+    setBrowserShownColumns: (state, { payload }: PayloadAction<BrowserColumns[]>) => {
+      state.dbConfig.shownColumns = payload
+      setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.browserShownColumns, payload)
     },
     setRecommendationsShowHidden: (state, { payload }: { payload: boolean }) => {
       state.dbConfig.showHiddenRecommendations = payload
@@ -275,6 +283,7 @@ export const {
   setLastPipelineManagementPage,
   setPipelineDialogState,
   resetPipelineManagement,
+  setBrowserShownColumns,
 } = appContextSlice.actions
 
 // Selectors
@@ -344,6 +353,8 @@ export function resetRdiContext() {
   return async (dispatch: AppDispatch) => {
     dispatch(setAppContextConnectedRdiInstanceId(''))
     dispatch(setPipelineInitialState())
+    dispatch(setPipelineConfig(''))
+    dispatch(setPipelineJobs([]))
     dispatch(resetPipelineManagement())
   }
 }

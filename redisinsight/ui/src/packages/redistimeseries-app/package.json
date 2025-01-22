@@ -12,20 +12,10 @@
   "styles": "./dist/styles.css",
   "main": "./dist/index.js",
   "name": "redistimeseries",
-  "version": "0.0.1",
+  "version": "0.0.2",
+
   "scripts": {
-    "start": "cross-env NODE_ENV=development parcel serve src/index.html",
-    "build": "rimraf dist .parcel-cache && cross-env NODE_ENV=production yarn build:js && yarn build:css && yarn build:assets",
-    "build:js": "esbuild src/main.tsx --bundle --minify --format=esm --outfile=dist/index.js",
-    "build:css": "lessc src/styles/styles.less dist/styles.css",
-    "build:assets": "parcel build src/assets/**/* --dist-dir dist",
-    "test": "jest"
-  },
-  "targets": {
-    "main": false,
-    "module": {
-      "includeNodeModules": true
-    }
+    "dev": "vite -c ../vite.config.mjs"
   },
   "visualizations": [
     {
@@ -43,21 +33,7 @@
     }
   ],
   "devDependencies": {
-    "@parcel/compressor-brotli": "^2.8.3",
-    "@parcel/compressor-gzip": "^2.8.3",
-    "@parcel/transformer-less": "^2.8.3",
-    "@parcel/transformer-sass": "2.8.3",
-    "@types/file-saver": "^2.0.5",
-    "@types/jest": "^27.4.1",
-    "@types/plotly.js-dist-min": "^2.3.0",
-    "concurrently": "^7.6.0",
-    "cross-env": "^7.0.3",
-    "esbuild": "^0.17.12",
-    "jest": "^29.7.0",
-    "less": "^4.1.2",
-    "parcel": "^2.8.3",
-    "rimraf": "^3.0.2",
-    "ts-jest": "^29.2.5"
+    "vite": "file:../node_modules/vite"
   },
   "dependencies": {
     "@elastic/eui": "34.6.0",

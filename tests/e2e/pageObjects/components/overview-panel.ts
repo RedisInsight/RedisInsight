@@ -49,7 +49,7 @@ export class OverviewPanel {
         await t.expect(this.overviewSpinner.visible).notOk('cpu is not calculated, spinner is still displayed');
     }
 
-    /**
+     /**
      * set auto refresh rate
      * @param rate rate value
      */

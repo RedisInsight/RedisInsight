@@ -7,7 +7,7 @@ import {
   FixedSizeTree as Tree,
 } from 'react-vtree'
 import { EuiIcon, EuiImage, EuiLoadingSpinner, EuiProgress } from '@elastic/eui'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { bufferToString, Maybe, Nullable } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
@@ -18,6 +18,7 @@ import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { fetchKeysMetadataTree } from 'uiSrc/slices/browser/keys'
+import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import { Node } from './components/Node'
@@ -251,7 +252,7 @@ const VirtualTree = (props: Props) => {
     <AutoSizer>
       {({ height, width }) => (
         <div data-testid="virtual-tree" style={{ position: 'relative' }}>
-          { nodes.current.length > 0 && (
+          {nodes.current.length > 0 && (
             <>
               {loading && (
                 <EuiProgress
@@ -275,7 +276,7 @@ const VirtualTree = (props: Props) => {
               </Tree>
             </>
           )}
-          { nodes.current.length === 0 && loading && (
+          {nodes.current.length === 0 && loading && (
             <div className={styles.loadingContainer} style={{ width, height }} data-testid="virtual-tree-spinner">
               <div className={styles.loadingBody}>
                 <EuiLoadingSpinner size="xl" className={styles.loadingSpinner} />

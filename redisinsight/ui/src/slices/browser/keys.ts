@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
+import { useSelector } from 'react-redux'
 import { apiService, localStorageService } from 'uiSrc/services'
 import {
   ApiEndpoints,
@@ -12,7 +13,8 @@ import {
   SearchHistoryMode,
   SortOrder,
   STRING_MAX_LENGTH,
-  ModulesKeyTypes
+  ModulesKeyTypes,
+  BrowserColumns
 } from 'uiSrc/constants'
 import {
   getApiErrorMessage,
@@ -30,7 +32,7 @@ import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { IFetchKeyArgs, IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import { appContextDbConfig, resetBrowserTree } from 'uiSrc/slices/app/context'
 
 import { CreateListWithExpireDto, } from 'apiSrc/modules/browser/list/dto'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
@@ -421,7 +423,7 @@ const keysSlice = createSlice({
     },
     setSelectedKeyRefreshDisabled: (state, { payload }: PayloadAction<boolean>) => {
       state.selectedKey.isRefreshDisabled = payload
-    }
+    },
   },
 })
 
@@ -537,7 +539,7 @@ export function fetchPatternKeysAction(
           type,
           match: match || DEFAULT_SEARCH_MATCH,
           keysInfo: false,
-          scanThreshold
+          scanThreshold,
         },
         {
           params: { encoding },
@@ -660,7 +662,7 @@ export function fetchKeyInfo(
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(defaultSelectedKeyAction())
-
+    const { shownColumns } = stateInit()?.app?.context?.dbConfig
     try {
       const state = stateInit()
       const { encoding } = state.app.info
@@ -669,7 +671,10 @@ export function fetchKeyInfo(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEY_INFO
         ),
-        { keyName: key },
+        {
+          keyName: key,
+          includeSize: shownColumns.includes(BrowserColumns.Size)
+        },
         { params: { encoding } }
       )
 
@@ -700,7 +705,7 @@ export function fetchKeyInfo(
         dispatch<any>(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, '*', resetData))
       }
       if (data.type === KeyTypes.ReJSON) {
-        dispatch<any>(fetchReJSON(key, '$', data.length, resetData))
+        dispatch<any>(fetchReJSON(key, '.', data.length, resetData))
       }
       if (data.type === KeyTypes.Stream) {
         const { viewType } = state.browser.stream
@@ -726,6 +731,7 @@ export function fetchKeyInfo(
 // Asynchronous thunk action
 export function refreshKeyInfoAction(key: RedisResponseBuffer) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const { shownColumns } = stateInit()?.app?.context?.dbConfig
     dispatch(refreshKeyInfo())
     try {
       const state = stateInit()
@@ -735,7 +741,10 @@ export function refreshKeyInfoAction(key: RedisResponseBuffer) {
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEY_INFO
         ),
-        { keyName: key },
+        {
+          keyName: key,
+          includeSize: shownColumns.includes(BrowserColumns.Size)
+        },
         { params: { encoding } }
       )
       if (isStatusSuccessful(status)) {
@@ -1034,6 +1043,7 @@ export function fetchKeysMetadata(
   onFailAction?: () => void
 ) {
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
+    const { shownColumns } = stateInit()?.app?.context?.dbConfig
     try {
       const state = stateInit()
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
@@ -1041,7 +1051,12 @@ export function fetchKeysMetadata(
           state.connections.instances?.connectedInstance?.id,
           ApiEndpoints.KEYS_METADATA
         ),
-        { keys, type: filter || undefined },
+        {
+          keys,
+          type: filter || undefined,
+          includeSize: shownColumns.includes(BrowserColumns.Size),
+          includeTTL: shownColumns.includes(BrowserColumns.TTL),
+        },
         { params: { encoding: state.app.info.encoding }, signal }
       )
 
@@ -1065,6 +1080,7 @@ export function fetchKeysMetadataTree(
   onFailAction?: () => void
 ) {
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
+    const { shownColumns } = stateInit()?.app?.context?.dbConfig
     try {
       const state = stateInit()
       const { data } = await apiService.post<GetKeyInfoResponse[]>(
@@ -1072,7 +1088,12 @@ export function fetchKeysMetadataTree(
           state.connections.instances?.connectedInstance?.id,
           ApiEndpoints.KEYS_METADATA
         ),
-        { keys: keys.map(([, nameBuffer]) => nameBuffer), type: filter || undefined },
+        {
+          keys: keys.map(([, nameBuffer]) => nameBuffer),
+          type: filter || undefined,
+          includeSize: shownColumns.includes(BrowserColumns.Size),
+          includeTTL: shownColumns.includes(BrowserColumns.TTL),
+        },
         { params: { encoding: state.app.info.encoding }, signal }
       )
 
@@ -1310,7 +1331,7 @@ export function refreshKey(
         break
       }
       case KeyTypes.ReJSON: {
-        dispatch(fetchReJSON(key, '$', length, true))
+        dispatch(fetchReJSON(key, '.', length, true))
         break
       }
       case KeyTypes.Stream: {

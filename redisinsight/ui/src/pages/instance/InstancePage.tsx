@@ -7,8 +7,13 @@ import {
   fetchConnectedInstanceInfoAction,
   fetchInstancesAction,
   getDatabaseConfigInfoAction,
-  instancesSelector,
+  instancesSelector as dbInstancesSelector
 } from 'uiSrc/slices/instances/instances'
+import {
+  fetchInstancesAction as fetchRdiInstancesAction,
+  resetConnectedInstance as resetRdiConnectedInstance,
+  instancesSelector as rdiInstancesSelector
+} from 'uiSrc/slices/rdi/instances'
 import {
   fetchRecommendationsAction,
 } from 'uiSrc/slices/recommendations/recommendations'
@@ -22,7 +27,6 @@ import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { InstancePageTemplate } from 'uiSrc/templates'
 import { getPageName } from 'uiSrc/utils/routing'
-import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { loadPluginsAction } from 'uiSrc/slices/app/plugins'
 import { appConnectivityError } from 'uiSrc/slices/app/connectivity'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -45,8 +49,10 @@ const InstancePage = ({ routes = [] }: Props) => {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
 
+  const { data: rdiInstances } = useSelector(rdiInstancesSelector)
+  const { data: dbInstances } = useSelector(dbInstancesSelector)
+
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
-  const { data: modulesData } = useSelector(instancesSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
   const connectivityError = useSelector(appConnectivityError)
   const { [FeatureFlags.envDependent]: envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
@@ -54,13 +60,20 @@ const InstancePage = ({ routes = [] }: Props) => {
   const lastPageRef = useRef<string>()
 
   useEffect(() => {
+    if (!dbInstances?.length) {
+      dispatch(fetchInstancesAction())
+    }
+    if (!rdiInstances?.length) {
+      dispatch(fetchRdiInstancesAction())
+    }
+  }, [])
+
+  useEffect(() => {
     dispatch(loadPluginsAction())
   }, [])
 
   useEffect(() => {
-    dispatch(fetchConnectedInstanceAction(connectionInstanceId, () => {
-      !modulesData.length && dispatch(fetchInstancesAction())
-    }))
+    dispatch(fetchConnectedInstanceAction(connectionInstanceId))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
     dispatch(fetchConnectedInstanceInfoAction(connectionInstanceId))
     dispatch(fetchRecommendationsAction(connectionInstanceId))
@@ -83,9 +96,6 @@ const InstancePage = ({ routes = [] }: Props) => {
 
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
     dispatch(setDbConfig(localStorageService.get(BrowserStorageItem.dbConfig + connectionInstanceId)))
-
-    // clear rdi connection
-    dispatch(resetRdiConnectedInstance())
 
     return () => {
       intervalId && clearInterval(intervalId)

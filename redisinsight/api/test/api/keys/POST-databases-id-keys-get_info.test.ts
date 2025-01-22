@@ -29,8 +29,8 @@ const validInputData = {
 const responseSchema = Joi.object().keys({
   name: JoiRedisString.required(),
   type: Joi.string().required(),
-  ttl: Joi.number().integer().required(),
-  size: Joi.number().integer().required(),
+  ttl: Joi.number().integer().allow(null).optional(),
+  size: Joi.number().integer().allow(null).optional(),
   length: Joi.number().integer().required(),
 }).required();
 
@@ -238,9 +238,9 @@ describe('POST /databases/:instanceId/keys/get-info', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           ...testCase,
           checkFn: ({ body }) => {
-            expect(body.ttl).to.eql(null);
-            expect(body.length).to.eql(null);
-            expect(body.size).to.eql(null);
+            expect(body.ttl).to.be.oneOf([null, undefined]);
+            expect(body.length).to.be.oneOf([null, undefined]);
+            expect(body.size).to.be.oneOf([null, undefined]);
           }
         });
       });

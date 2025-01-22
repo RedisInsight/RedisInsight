@@ -24,11 +24,12 @@ import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { getRecommendations, setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
 import {
   getDatabaseConfigInfo,
+  loadInstances,
   setConnectedInfoInstance,
   setConnectedInstance,
   setDefaultInstance
 } from 'uiSrc/slices/instances/instances'
-import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slices/rdi/instances'
+import { loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { getAllPlugins } from 'uiSrc/slices/app/plugins'
 import { FeatureFlags } from 'uiSrc/constants'
@@ -125,6 +126,8 @@ describe('InstancePage', () => {
     ]
 
     const expectedActions = [
+      loadInstances(),
+      loadRdiInstances(),
       getAllPlugins(),
       setDefaultInstance(),
       setConnectedInstance(),
@@ -135,7 +138,6 @@ describe('InstancePage', () => {
       clearExpertChatHistory(),
       setAppContextConnectedInstanceId(INSTANCE_ID_MOCK),
       setDbConfig(undefined),
-      resetRdiConnectedInstance(),
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)

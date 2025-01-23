@@ -7,6 +7,8 @@ on:
       - 'be/**'
       - 'fe-be/**'
       - 'e2e/**'
+      - 'feature/**'
+      - 'bugfix/**'
 
   workflow_dispatch:
     inputs:
@@ -42,7 +44,7 @@ on:
       group_tests:
         description: Run group of tests
         type: string
-        default: 'all'
+        default: 'without_e2e'
       short_rte_list:
         description: Use short rte list
         type: boolean

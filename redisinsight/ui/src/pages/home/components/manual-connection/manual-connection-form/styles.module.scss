@@ -1,0 +1,24 @@
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  border-bottom: 1px solid var(--separatorColor);
+
+  :global(.euiTab) {
+    margin-right: 12px;
+  }
+
+  :global(.euiTab:not(.euiTab-isSelected)) {
+    border-bottom-color: transparent !important;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}

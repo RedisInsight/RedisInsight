@@ -145,8 +145,8 @@ const SentinelConnectionForm = (props: Props) => {
   }
 
   return (
-    <div className="relative" data-testid="add-db_sentinel">
-      <div className="getStartedForm" ref={formRef}>
+    <div className="relative" data-testid="add-db_sentinel" style={{ height: '100%' }}>
+      <div className="getStartedForm eui-yScroll" ref={formRef}>
         <MessageSentinel />
         <br />
         <EuiForm

@@ -50,6 +50,7 @@ test
         const compressor = 'Brotli';
 
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.decompressionTab);
         await myRedisDatabasePage.AddRedisDatabaseDialog.setCompressorValue(compressor);
         await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);
 
@@ -89,11 +90,13 @@ test
         await t.expect(modulesDbRedisStackIcon.exists).ok('module icon is displayed');
 
         await databaseHelper.clickOnEditDatabaseByName(databaseNames[1]);
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.securityTab);
         await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
         await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
         await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.cancelButton);
 
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.decompressionTab);
         await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.selectCompressor.textContent).eql(compressor, 'Compressor import incorrect');
         await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.cancelButton);
     });

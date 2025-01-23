@@ -69,18 +69,22 @@ jobs:
       - name: Validate analyze
         id: validate
         run: |
-          analyzeStats=$(curl -sq -XGET https://www.virustotal.com/api/v3/analyses/${ANALYZED_ID} \
-            -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data.attributes.stats')
+          analysis=$(curl -sq -XGET "https://www.virustotal.com/api/v3/analyses/${ANALYZED_ID}" \
+             -H "x-apikey: $VIRUSTOTAL_API_KEY")
 
-          analazedMalicious=$(echo ${analyzeStats} | jq '.malicious')
-          analazedSuspicious=$(echo ${analyzeStats} | jq '.suspicious')
-          analazedHarmless=$(echo ${analyzeStats} | jq '.harmless')
+          analyzeStats=$(echo "$analysis" | jq -r '.data.attributes.stats')
 
-          echo "Results: Malicious: ${analazedMalicious}, Suspicious: ${analazedSuspicious}, Harmless: ${analazedHarmless}"
+          analyzedMalicious=$(echo "$analyzeStats" | jq '.malicious')
+          analyzedSuspicious=$(echo "$analyzeStats" | jq '.suspicious')
+          analyzedHarmless=$(echo "$analyzeStats" | jq '.harmless')
 
-          if [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
+          echo "Results: Malicious: $analyzedMalicious, Suspicious: $analyzedSuspicious, Harmless: $analyzedHarmless"
+
+          if [ "$analyzedMalicious" != "0" ] || [ "$analyzedSuspicious" != "0" ]; then
             echo "FAILED=true" >> $GITHUB_ENV
-            echo 'Found dangers'
-          else
-            echo "FAILED=false" >> $GITHUB_ENV
+
+            echo "$analysis" | jq -r '.data.attributes.results[] | select(.result == "malicious" or .result == "suspicious")'
+
+            # Exit with an error
+            exit 1
           fi

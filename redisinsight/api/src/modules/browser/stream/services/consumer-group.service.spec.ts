@@ -19,9 +19,15 @@ import {
   mockConsumerGroup,
   mockConsumerGroupsReply,
   mockCreateConsumerGroupDto,
+  mockEntryId2,
   mockKeyDto,
 } from 'src/modules/browser/__mocks__';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import * as bigStringUtil from 'src/utils/big-string';
+import config, { Config } from 'src/utils/config';
+
+const REDIS_CLIENTS_CONFIG = config.get('redis_clients') as Config['redis_clients'];
+const BIG_STRING_PREFIX = REDIS_CLIENTS_CONFIG.truncatedStringPrefix;
 
 describe('ConsumerGroupService', () => {
   const client = mockStandaloneRedisClient;
@@ -61,6 +67,29 @@ describe('ConsumerGroupService', () => {
     it('should get consumer groups with info', async () => {
       const groups = await service.getGroups(mockBrowserClientMetadata, mockKeyDto);
       expect(groups).toEqual([mockConsumerGroup, mockConsumerGroup]);
+    });
+    it('should get consumer groups (one with n/a info)', async () => {
+      const spy = jest.spyOn(bigStringUtil, 'isTruncatingEnabled');
+      spy.mockReturnValue(true);
+
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XInfoGroups]))
+        .mockResolvedValueOnce([mockConsumerGroupsReply, [
+          'name', `${BIG_STRING_PREFIX} group1`,
+          'consumers', mockConsumerGroup.consumers,
+          'pending', mockConsumerGroup.pending,
+          'last-delivered-id', mockConsumerGroup.lastDeliveredId,
+        ]]);
+
+      const groups = await service.getGroups(mockBrowserClientMetadata, mockKeyDto);
+      expect(groups).toEqual([mockConsumerGroup, {
+        name: Buffer.from(`${BIG_STRING_PREFIX} group1`),
+        consumers: 0,
+        pending: 0,
+        lastDeliveredId: mockEntryId2,
+        smallestPendingId: 'n/a',
+        greatestPendingId: 'n/a',
+      }]);
     });
     it('should throw error when key does not exists', async () => {
       when(client.sendCommand)

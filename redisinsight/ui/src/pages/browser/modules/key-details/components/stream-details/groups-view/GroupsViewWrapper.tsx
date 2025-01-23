@@ -20,7 +20,14 @@ import {
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { bufferToString, consumerGroupIdRegex, formatLongName, isEqualBuffers, validateConsumerGroupId } from 'uiSrc/utils'
+import {
+  bufferToString,
+  consumerGroupIdRegex,
+  formatLongName,
+  isTruncatedString,
+  isEqualBuffers,
+  validateConsumerGroupId,
+} from 'uiSrc/utils'
 import { TableCellTextAlignment } from 'uiSrc/constants'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -156,10 +163,15 @@ const GroupsViewWrapper = (props: Props) => {
 
   const handleSelectGroup = ({ rowData }: { rowData: any }) => {
     dispatch(setSelectedGroup(rowData))
-    dispatch(fetchConsumers(
-      false,
-      onSuccessSelectedGroup,
-    ))
+
+    if (!isTruncatedString(rowData?.name)) {
+      dispatch(fetchConsumers(
+        false,
+        onSuccessSelectedGroup,
+      ))
+    } else {
+      onSuccessSelectedGroup([])
+    }
   }
 
   const handleApplyEditId = (groupName: RedisResponseBuffer) => {
@@ -280,6 +292,7 @@ const GroupsViewWrapper = (props: Props) => {
       render: function Id(_name: string, { lastDeliveredId: id, name, editing }: IConsumerGroup) {
         const timestamp = id?.split('-')?.[0]
         const showIdError = !isIdFocused && idError
+        const isTruncatedGroupName = isTruncatedString(name)
 
         return (
           <EditablePopover
@@ -312,6 +325,7 @@ const GroupsViewWrapper = (props: Props) => {
             }}
             className={styles.editLastId}
             isDisabled={!editValue.length || !!idError}
+            isDisabledEditButton={isTruncatedGroupName}
             isLoading={loading}
             delay={500}
             editBtnClassName={styles.editBtn}

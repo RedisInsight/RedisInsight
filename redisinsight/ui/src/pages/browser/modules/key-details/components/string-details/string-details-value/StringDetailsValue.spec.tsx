@@ -17,6 +17,7 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
 import { selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { MOCK_TRUNCATED_BUFFER_VALUE } from 'uiSrc/mocks/data/bigString'
 import { StringDetailsValue, Props } from './StringDetailsValue'
 
 const STRING_VALUE = 'string-value'
@@ -313,6 +314,23 @@ describe('StringDetailsValue', () => {
       const textArea = screen.getByTestId(STRING_VALUE)
 
       expect(textArea).toHaveValue(DECOMPRESSED_VALUE_STR_2)
+    })
+  })
+
+  describe('truncated data', () => {
+    it('should hide download button when value is truncated', async () => {
+      const stringDataSelectorMock = jest.fn().mockReturnValue({
+        value: MOCK_TRUNCATED_BUFFER_VALUE,
+      })
+      stringDataSelector.mockImplementation(stringDataSelectorMock)
+
+      render(
+        <StringDetailsValue
+          {...instance(mockedProps)}
+        />
+      )
+
+      expect(screen.queryByTestId(DOWNLOAD_BTN)).not.toBeInTheDocument()
     })
   })
 })

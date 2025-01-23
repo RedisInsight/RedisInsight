@@ -2,6 +2,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render } from 'uiSrc/utils/test-utils'
 import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
+import { MOCK_TRUNCATED_BUFFER_VALUE } from 'uiSrc/mocks/data/bigString'
 import { Props, DynamicTypeDetails } from './DynamicTypeDetails'
 
 const mockedProps = mock<Props>()
@@ -31,4 +32,12 @@ describe('DynamicTypeDetails', () => {
       />)
       expect(queryByTestId(testId)).toBeInTheDocument()
     })
+
+  it('should show TooLongKeyNameDetails component when key name is truncated', () => {
+    const { queryByTestId } = render(<DynamicTypeDetails
+      {...instance(mockedProps)}
+      keyProp={MOCK_TRUNCATED_BUFFER_VALUE}
+    />)
+    expect(queryByTestId('too-long-key-name-details')).toBeInTheDocument()
+  })
 })

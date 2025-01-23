@@ -2,6 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { EuiLoadingSpinner, } from '@elastic/eui'
 import cx from 'classnames'
 
+import { useDispatch } from 'react-redux'
+import { AxiosError } from 'axios'
+import { isTruncatedString } from 'uiSrc/utils'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { AXIOS_ERROR_DISABLED_ACTION_WITH_TRUNCATED_DATA } from 'uiSrc/constants'
 import RejsonDynamicTypes from '../rejson-dynamic-types'
 import { JSONObjectProps, ObjectTypes, REJSONResponse } from '../interfaces'
 import { generatePath, getBrackets, wrapPath } from '../utils'
@@ -42,6 +47,8 @@ const RejsonObject = (props: JSONObjectProps) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
+  const dispatch = useDispatch()
+
   useEffect(() => {
     if (!expandedRows?.has(path)) {
       setValue(defaultValue)
@@ -78,6 +85,10 @@ const RejsonObject = (props: JSONObjectProps) => {
 
   const onClickEditEntireObject = () => {
     handleFetchVisualisationResults(path, true).then((data: REJSONResponse) => {
+      if (isTruncatedString(data?.data)) {
+        return dispatch(addErrorNotification(AXIOS_ERROR_DISABLED_ACTION_WITH_TRUNCATED_DATA as AxiosError))
+      }
+
       setEditEntireObject(true)
       setValueOfEntireObject(typeof data.data === 'object' ? JSON.stringify(data.data, (_key, value) => (
         typeof value === 'bigint'

@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import {
   JSONScalarProps
 } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
+import { MOCK_TRUNCATED_STRING_VALUE } from 'uiSrc/mocks/data/bigString'
 import RejsonScalar from './RejsonScalar'
 
 const INLINE_ITEM_EDITOR = 'inline-item-editor'
@@ -140,5 +141,17 @@ describe('JSONScalar', () => {
     />)
 
     expect(screen.getByText('"test"')).toBeInTheDocument()
+  })
+
+  describe('truncated data', () => {
+    it('should not render inline edit after click', () => {
+      render(<RejsonScalar
+        {...instance(mockedProps)}
+        value={MOCK_TRUNCATED_STRING_VALUE}
+        keyName="keyName"
+      />)
+      fireEvent.click(screen.getByTestId(/json-scalar-value/i))
+      expect(screen.queryByTestId(INLINE_ITEM_EDITOR)).not.toBeInTheDocument()
+    })
   })
 })

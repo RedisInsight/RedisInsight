@@ -43,6 +43,22 @@ describe('EditableInput', () => {
     expect(screen.getByTestId('popover-item-editor')).toBeInTheDocument()
   })
 
+  it('should hide edit button when no editable', () => {
+    render(
+      <EditablePopover
+        {...mockedProps}
+        isDisabledEditButton
+      >
+        <Text />
+      </EditablePopover>
+    )
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('_content-value-'))
+    })
+    expect(screen.queryByTestId('_edit-btn-')).not.toBeInTheDocument()
+  })
+
   it('should call on apply', () => {
     const onApply = jest.fn()
     render(

@@ -1,13 +1,18 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { KeyValueCompressor, TEXT_DISABLED_COMPRESSED_VALUE } from 'uiSrc/constants'
+import {
+  KeyValueCompressor,
+  TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
+  TEXT_DISABLED_COMPRESSED_VALUE,
+} from 'uiSrc/constants'
 import { listDataSelector } from 'uiSrc/slices/browser/list'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { anyToBuffer } from 'uiSrc/utils'
 import { act, cleanup, fireEvent, mockedStore, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
 import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
+import { MOCK_TRUNCATED_BUFFER_VALUE } from 'uiSrc/mocks/data/bigString'
 import { ListDetailsTable, Props } from './ListDetailsTable'
 
 const mockedProps = mock<Props>()
@@ -159,7 +164,41 @@ describe('ListDetailsTable', () => {
 
       expect(editBtn).toBeDisabled()
       expect(screen.getByTestId('list_edit-tooltip-0')).toHaveTextContent(TEXT_DISABLED_COMPRESSED_VALUE)
-      expect(queryByTestId('hash_value-editor-0')).not.toBeInTheDocument()
+      expect(queryByTestId('list_value-editor-0')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('truncated values', () => {
+    beforeEach(() => {
+      const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
+      const listDataSelectorMock = jest.fn().mockReturnValue({
+        ...defaultState,
+        key: '123zxczxczxc',
+        elements: [
+          { element: MOCK_TRUNCATED_BUFFER_VALUE, index: 0 },
+        ]
+      });
+      (listDataSelector as jest.Mock).mockImplementation(listDataSelectorMock)
+    })
+
+    it('edit button should be disabled if data was truncated', async () => {
+      const { queryByTestId } = render(<ListDetailsTable {...(mockedProps)} />)
+      act(() => {
+        fireEvent.mouseEnter(screen.getByTestId('list_content-value-0'))
+      })
+
+      const editBtn = screen.getByTestId('list_edit-btn-0')
+
+      await act(async () => {
+        fireEvent.mouseOver(editBtn)
+      })
+      await waitForEuiToolTipVisible()
+
+      expect(editBtn).toBeDisabled()
+      expect(screen.getByTestId('list_edit-tooltip-0')).toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
+
+      fireEvent.click(editBtn)
+      expect(queryByTestId('list_value-editor-0')).not.toBeInTheDocument()
     })
   })
 })

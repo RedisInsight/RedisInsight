@@ -33,6 +33,7 @@ export interface Props {
   prefix?: string
   btnIconType?: string
   delay?: number
+  isDisabledEditButton?: boolean
 }
 
 const EditablePopover = (props: Props) => {
@@ -51,6 +52,7 @@ const EditablePopover = (props: Props) => {
     btnIconType,
     className,
     editBtnClassName = '',
+    isDisabledEditButton,
     delay
   } = props
   const [isHovering, setIsHovering] = useState(false)
@@ -108,9 +110,10 @@ const EditablePopover = (props: Props) => {
       iconType={btnIconType || 'pencil'}
       aria-label="Edit field"
       color="primary"
-      onClick={handleButtonClick}
+      onClick={isDisabledEditButton ? () => {} : handleButtonClick}
       className={editBtnClassName}
       data-testid={`${prefix}_edit-btn-${field}`}
+      isDisabled={isDisabledEditButton}
     />
   )
 
@@ -125,7 +128,7 @@ const EditablePopover = (props: Props) => {
       button={(
         <div
           className={styles.contentWrapper}
-          onMouseEnter={() => setIsHovering(true)}
+          onMouseEnter={() => setIsHovering(!isDisabledEditButton)}
           onMouseLeave={() => setIsHovering(false)}
           data-testid={`${prefix}_content-value-${field}`}
         >

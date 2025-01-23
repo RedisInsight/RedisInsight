@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
-import { catchAclError, catchMultiTransactionError } from 'src/utils';
+import { catchAclError, catchMultiTransactionError, isTruncatedString } from 'src/utils';
 import {
   BrowserToolCommands,
   BrowserToolStreamCommands,
@@ -86,11 +86,15 @@ export class ConsumerGroupService {
     dto: KeyDto,
     group: ConsumerGroupDto,
   ): Promise<ConsumerGroupDto> {
-    const info = await client.sendCommand([
-      BrowserToolStreamCommands.XPending,
-      dto.keyName,
-      group.name,
-    ]);
+    let info = ['n/a', 'n/a', 'n/a'];
+
+    if (!isTruncatedString(group.name)) {
+      info = await client.sendCommand([
+        BrowserToolStreamCommands.XPending,
+        dto.keyName,
+        group.name,
+      ]) as string[];
+    }
 
     return plainToClass(ConsumerGroupDto, {
       ...group,

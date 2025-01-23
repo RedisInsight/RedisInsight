@@ -31,6 +31,7 @@ export * from './errors'
 export * from './redisearch'
 export * from './capability'
 export * from './rdi'
+export * from './bigString'
 
 export {
   Maybe,

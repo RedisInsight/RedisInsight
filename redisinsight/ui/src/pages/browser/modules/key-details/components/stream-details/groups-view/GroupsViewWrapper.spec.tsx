@@ -5,14 +5,30 @@ import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/util
 import {
   deleteConsumerGroups,
   loadConsumerGroups,
-  setSelectedGroup
+  setSelectedGroup,
+  fetchConsumers,
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { stringToBuffer } from 'uiSrc/utils'
 import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
+import { MOCK_TRUNCATED_BUFFER_VALUE } from 'uiSrc/mocks/data/bigString'
 import { ConsumerGroupDto } from 'apiSrc/modules/browser/stream/dto'
 import GroupsView, { Props as GroupsViewProps } from './GroupsView'
 import GroupsViewWrapper, { Props } from './GroupsViewWrapper'
+
+jest.mock('uiSrc/slices/browser/stream', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/stream'),
+  streamGroupsSelector: jest.fn().mockReturnValue({
+    loading: false,
+    error: '',
+    data: [],
+    selectedGroup: null,
+    lastRefreshTime: 0,
+  }),
+  fetchConsumers: jest.fn().mockImplementation(
+    jest.requireActual('uiSrc/slices/browser/stream').fetchConsumers
+  ),
+}))
 
 const mockedProps = mock<Props>()
 
@@ -29,7 +45,6 @@ jest.mock('./GroupsView', () => ({
   default: jest.fn(),
 }))
 
-const mockGroupName = 'group'
 const mockGroups: ConsumerGroupDto[] = [{
   name: {
     ...stringToBuffer('test'),
@@ -50,18 +65,17 @@ const mockGroups: ConsumerGroupDto[] = [{
   smallestPendingId: '3',
   greatestPendingId: '23',
   lastDeliveredId: '12'
+}, {
+  name: MOCK_TRUNCATED_BUFFER_VALUE,
+  consumers: 1,
+  pending: 1,
+  smallestPendingId: 'n/a',
+  greatestPendingId: 'n/a',
+  lastDeliveredId: 'n/a'
 }]
 
-const mockGroupsView = (props: GroupsViewProps) => (
+const mockGroupsView = jest.fn((props: GroupsViewProps) => (
   <div data-testid="stream-groups-container">
-    <button
-      type="button"
-      data-testid="select-group-btn"
-      onClick={() => props?.onSelectGroup?.({ name: mockGroupName })}
-    >
-      some group name
-    </button>
-
     <VirtualTable
       items={mockGroups}
       loading={false}
@@ -69,7 +83,7 @@ const mockGroupsView = (props: GroupsViewProps) => (
       columns={props.columns}
     />
   </div>
-)
+))
 
 describe('GroupsViewWrapper', () => {
   beforeAll(() => {
@@ -91,11 +105,11 @@ describe('GroupsViewWrapper', () => {
 
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId('select-group-btn'))
+    fireEvent.click(screen.getAllByRole('row')[1])
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      setSelectedGroup(),
+      setSelectedGroup(mockGroups[0]),
       loadConsumerGroups(false)
     ])
   })
@@ -122,5 +136,17 @@ describe('GroupsViewWrapper', () => {
     fireEvent.click(screen.getByTestId('stream-group_edit-btn-123'))
 
     expect(store.getActions()).toEqual([...afterRenderActions, setSelectedKeyRefreshDisabled(true)])
+  })
+
+  describe('truncated values', () => {
+    it('should not try to fetch consumers for truncated groups', async () => {
+      jest.clearAllMocks()
+
+      render(<GroupsViewWrapper {...instance(mockedProps)} />)
+
+      fireEvent.click(screen.getAllByRole('row')[3])
+
+      expect((fetchConsumers as jest.Mock)).not.toHaveBeenCalled()
+    })
   })
 })

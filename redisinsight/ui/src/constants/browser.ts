@@ -9,6 +9,16 @@ export const TEXT_UNPRINTABLE_CHARACTERS = {
   title: 'Non-printable characters have been detected',
   content: 'Use Workbench or CLI to edit without data loss.',
 }
+export const TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA = 'This action is disabled because the key or value is too large to process within Redis Insight.'
+export const AXIOS_ERROR_DISABLED_ACTION_WITH_TRUNCATED_DATA = {
+  response: {
+    data: {
+      message: TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
+    }
+  }
+}
+export const TEXT_CONSUMER_GROUP_NAME_TOO_LONG = 'The consumer group name is too long, details cannot be displayed.'
+export const TEXT_CONSUMER_NAME_TOO_LONG = 'The consumer name is too long, details cannot be displayed.'
 export const TEXT_DISABLED_FORMATTER_EDITING = 'Cannot edit the value in this format'
 export const TEXT_DISABLED_STRING_EDITING = 'Load the entire value to edit it'
 export const TEXT_DISABLED_STRING_FORMATTING = 'Load the entire value to select a format'

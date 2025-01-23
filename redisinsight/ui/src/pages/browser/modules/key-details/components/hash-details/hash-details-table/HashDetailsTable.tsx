@@ -17,6 +17,7 @@ import {
   KeyTypes,
   OVER_RENDER_BUFFER_COUNT,
   TableCellAlignment,
+  TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
   TEXT_DISABLED_COMPRESSED_VALUE,
   TEXT_DISABLED_FORMATTER_EDITING,
   TEXT_FAILED_CONVENT_FORMATTER,
@@ -54,6 +55,7 @@ import {
   createTooltipContent,
   formatLongName,
   formattingBuffer,
+  isTruncatedString,
   isEqualBuffers,
   isFormatEditable,
   isNonUnicodeFormatter,
@@ -342,14 +344,19 @@ const HashDetailsTable = (props: Props) => {
       ) {
         const { value: decompressedFieldItem } = decompressingBuffer(fieldItem, compressor)
         const { value: decompressedValueItem, isCompressed } = decompressingBuffer(valueItem, compressor)
+        const isTruncatedFieldOrValue = isTruncatedString(valueItem) || isTruncatedString(fieldItem)
         const value = bufferToString(valueItem)
         const field = bufferToString(decompressedFieldItem)
         const { value: formattedValue, isValid } = formattingBuffer(decompressedValueItem, viewFormatProp, { expanded })
         const tooltipContent = createTooltipContent(formattedValue, decompressedValueItem, viewFormatProp)
         const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
           && !isEqualBuffers(valueItem, stringToBuffer(value))
-        const isEditable = !isCompressed && isFormatEditable(viewFormat)
-        const editTooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
+        const isEditable = !isCompressed && isFormatEditable(viewFormat) && !isTruncatedFieldOrValue
+        const editTooltipContent = isCompressed
+          ? TEXT_DISABLED_COMPRESSED_VALUE
+          : isTruncatedFieldOrValue
+            ? TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA
+            : TEXT_DISABLED_FORMATTER_EDITING
         const isEditing = editingIndex?.field === 'value' && editingIndex?.index === rowIndex
 
         const serializedValue = isEditing ? bufferToSerializedFormat(viewFormat, valueItem, 4) : ''
@@ -436,6 +443,8 @@ const HashDetailsTable = (props: Props) => {
       ) {
         const field = bufferToString(fieldItem, viewFormat)
         const isEditing = editingIndex?.field === 'ttl' && editingIndex?.index === rowIndex
+        const isTruncatedFieldName = isTruncatedString(fieldItem)
+        const editTooltipContent = isTruncatedFieldName ? TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA : null
 
         return (
           <EditableInput
@@ -448,6 +457,8 @@ const HashDetailsTable = (props: Props) => {
             onApply={(value) => handleApplyEditExpire(fieldItem, value, 'ttl')}
             testIdPrefix="hash-ttl"
             validation={validateTTLNumber}
+            isEditDisabled={isTruncatedFieldName}
+            editToolTipContent={editTooltipContent}
           >
             <div className="innerCellAsCell">
               {expire === -1 ? 'No Limit' : (

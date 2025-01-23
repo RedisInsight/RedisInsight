@@ -15,9 +15,10 @@ import {
 import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { getFormatTime, getNextId } from 'uiSrc/utils/streamUtils'
-import { SortOrder } from 'uiSrc/constants'
+import { SortOrder, TEXT_CONSUMER_NAME_TOO_LONG } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { isTruncatedString } from 'uiSrc/utils'
 import {
   AckPendingEntriesResponse,
   PendingEntryDto,
@@ -43,8 +44,10 @@ const MessagesViewWrapper = (props: Props) => {
   const {
     lastRefreshTime,
     data: loadedMessages = [],
+    name: consumerName,
     pending = 0
   } = useSelector(selectedConsumerSelector) ?? {}
+  const isTruncatedConsumerName = isTruncatedString(consumerName)
   const { name: group } = useSelector(selectedGroupSelector) ?? { name: '' }
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -205,6 +208,7 @@ const MessagesViewWrapper = (props: Props) => {
         onClosePopover={closePopover}
         loadMoreItems={loadMoreItems}
         {...props}
+        noItemsMessageString={isTruncatedConsumerName ? TEXT_CONSUMER_NAME_TOO_LONG : undefined}
       />
     </>
   )

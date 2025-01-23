@@ -15,18 +15,24 @@ import styles from './styles.module.scss'
 const headerHeight = 60
 const rowHeight = 54
 
-const noItemsMessageString = 'Your Consumer has no pending messages.'
-
 export interface Props {
   data: PendingEntryDto[]
   columns: ITableColumn[]
   total: number
   onClosePopover: () => void
   loadMoreItems: () => void
+  noItemsMessageString?: string
 }
 
 const MessagesView = (props: Props) => {
-  const { data = [], columns = [], total, onClosePopover, loadMoreItems } = props
+  const {
+    data = [],
+    columns = [],
+    total,
+    onClosePopover,
+    loadMoreItems,
+    noItemsMessageString = 'Your Consumer has no pending messages.',
+  } = props
 
   const { loading, } = useSelector(streamGroupsSelector)
   const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }

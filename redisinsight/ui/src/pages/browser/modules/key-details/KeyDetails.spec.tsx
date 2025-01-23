@@ -8,6 +8,7 @@ import { stringToBuffer } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { apiService } from 'uiSrc/services'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
+import { MOCK_TRUNCATED_BUFFER_VALUE } from 'uiSrc/mocks/data/bigString'
 import KeyDetails, { Props as KeyDetailsProps } from './KeyDetails'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -35,6 +36,14 @@ describe('KeyDetails', () => {
     expect(store.getActions()).toEqual([
       defaultSelectedKeyAction(),
       setSelectedKeyRefreshDisabled(false)
+    ])
+  })
+
+  it('should call proper actions after render when key name is truncated', () => {
+    render(<KeyDetails {...instance(mockedProps)} keyProp={MOCK_TRUNCATED_BUFFER_VALUE} />)
+
+    expect(store.getActions()).toEqual([
+      defaultSelectedKeyAction(),
     ])
   })
 

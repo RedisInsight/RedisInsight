@@ -17,7 +17,14 @@ import {
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
 } from 'uiSrc/slices/browser/zset'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, SortOrder, TEXT_FAILED_CONVENT_FORMATTER, TableCellAlignment } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  OVER_RENDER_BUFFER_COUNT,
+  SortOrder,
+  TEXT_FAILED_CONVENT_FORMATTER,
+  TableCellAlignment,
+  TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
+} from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
@@ -36,6 +43,7 @@ import {
   createTooltipContent,
   formatLongName,
   formattingBuffer,
+  isTruncatedString,
   isEqualBuffers,
   validateScoreNumber
 } from 'uiSrc/utils'
@@ -309,16 +317,20 @@ const ZSetDetailsTable = (props: Props) => {
       ) {
         const cellContent = score.toString().substring(0, 200)
         const tooltipContent = formatLongName(score.toString())
-        const editToolTipContent = !isNumber(score) ? 'Use CLI or Workbench to edit the score' : null
+        const isTruncatedValue = isTruncatedString(nameItem)
+        const isEditable = isNumber(score) && !isTruncatedValue
+        const editToolTipContent = !isNumber(score)
+          ? 'Use CLI or Workbench to edit the score'
+          : TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA
 
         return (
           <EditableInput
             initialValue={score.toString()}
             placeholder="Enter Score"
             field={rowIndex?.toString()}
-            editToolTipContent={editToolTipContent}
+            editToolTipContent={!isEditable ? editToolTipContent : null}
             isEditing={editing}
-            isEditDisabled={updateLoading || !isNumber(score)}
+            isEditDisabled={updateLoading || !isEditable}
             onEdit={(value: boolean) => handleEditMember(nameItem, value, rowIndex)}
             onDecline={() => handleEditMember(nameItem, false, rowIndex)}
             onApply={(value) => handleApplyEditScore(nameItem, value)}

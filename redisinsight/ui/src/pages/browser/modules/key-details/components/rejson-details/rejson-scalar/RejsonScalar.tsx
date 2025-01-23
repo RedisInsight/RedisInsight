@@ -5,7 +5,13 @@ import cx from 'classnames'
 import { setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { bufferToString, createDeleteFieldHeader, createDeleteFieldMessage, Nullable } from 'uiSrc/utils'
+import {
+  bufferToString,
+  createDeleteFieldHeader,
+  createDeleteFieldMessage,
+  isTruncatedString,
+  Nullable,
+} from 'uiSrc/utils'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 
 import { JSONScalarProps } from '../interfaces'
@@ -94,7 +100,7 @@ const RejsonScalar = (props: JSONScalarProps) => {
               ) : (
                 <span
                   className={cx(styles.jsonValue, getClassNameByValue(value))}
-                  onClick={() => setEditing(true)}
+                  onClick={() => setEditing(!isTruncatedString(changedValue))}
                   style={{ flexGrow: 1 }}
                   data-testid="json-scalar-value"
                   role="presentation"

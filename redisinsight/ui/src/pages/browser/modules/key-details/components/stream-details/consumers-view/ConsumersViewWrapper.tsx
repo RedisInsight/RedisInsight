@@ -12,11 +12,15 @@ import {
 } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import {
+  TableCellAlignment,
+  TableCellTextAlignment,
+  TEXT_CONSUMER_GROUP_NAME_TOO_LONG,
+} from 'uiSrc/constants'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
-import { formatLongName } from 'uiSrc/utils'
+import { formatLongName, isTruncatedString } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
@@ -38,6 +42,8 @@ const ConsumersViewWrapper = (props: Props) => {
     lastRefreshTime,
     data: loadedConsumers = [],
   } = useSelector(selectedGroupSelector) ?? {}
+
+  const isTruncatedGroupName = isTruncatedString(selectedGroupName)
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -191,6 +197,7 @@ const ConsumersViewWrapper = (props: Props) => {
         onClosePopover={closePopover}
         onSelectConsumer={handleSelectConsumer}
         {...props}
+        noItemsMessageString={isTruncatedGroupName ? TEXT_CONSUMER_GROUP_NAME_TOO_LONG : undefined}
       />
     </>
   )

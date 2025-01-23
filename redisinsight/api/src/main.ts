@@ -98,7 +98,9 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   process.on('SIGTERM', gracefulShutdown);
   process.on('SIGINT', gracefulShutdown);
 
-  return { app, gracefulShutdown };
+  const cloudAuthService = app.select(CloudAuthModule).get(CloudAuthService);
+
+  return { app, gracefulShutdown, cloudAuthService };
 }
 
 if (serverConfig.autoBootstrap) {

@@ -1,12 +1,13 @@
 import { Nullable } from 'src/common/constants';
 import { SessionMetadata } from 'src/common/models';
-import { AiMessage } from 'src/modules/ai/messages/models';
+import { AiMessage, AiTool } from 'src/modules/ai/messages/models';
 
 export abstract class AiMessageRepository {
   abstract list(
     sessionMetadata: SessionMetadata,
     databaseId: Nullable<string>,
-    accountId: string
+    accountId: string,
+    tool?: AiTool,
   ): Promise<AiMessage[]>;
 
   abstract createMany(

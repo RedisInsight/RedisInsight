@@ -4,6 +4,7 @@ import { Nullable, isStatusSuccessful } from 'uiSrc/utils'
 import { ApiEndpoints } from 'uiSrc/constants'
 
 import { apiService } from 'uiSrc/services'
+import { AiTool } from 'uiSrc/slices/interfaces/aiAssistant'
 import ApiStatusCode from '../../constants/apiStatusCode'
 
 const TIMEOUT_FOR_MESSAGE_REQUEST = 30_000
@@ -11,6 +12,7 @@ const TIMEOUT_FOR_MESSAGE_REQUEST = 30_000
 export const getStreamedAnswer = async (
   url: string,
   message: string,
+  tool: AiTool,
   { onMessage, onFinish, onError }: {
     onMessage?: (message: string) => void,
     onFinish?: () => void
@@ -30,7 +32,7 @@ export const getStreamedAnswer = async (
         Accept: 'text/event-stream',
         [CustomHeaders.WindowId]: window.windowId || '',
       },
-      body: JSON.stringify({ content: message }),
+      body: JSON.stringify({ content: message, tool }),
       signal: controller.signal
     })
 

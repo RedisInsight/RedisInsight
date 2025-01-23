@@ -35,7 +35,7 @@ export class AiMessagesController {
     @Res() res: Response,
     @Body() dto: AiMessageDto,
   ) {
-    await this.service.streamGeneralMessage(sessionMetadata, dto, res);
+    await this.service.streamGeneralMessage(sessionMetadata, null, dto, res);
   }
 
   @Get()

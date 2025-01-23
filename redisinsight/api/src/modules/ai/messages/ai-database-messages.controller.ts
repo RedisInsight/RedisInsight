@@ -38,7 +38,7 @@ export class AiDatabaseMessagesController {
     @Body() dto: AiMessageDto,
     @Res() res: Response,
   ) {
-    await this.service.streamMessage(sessionMetadata, databaseId, dto, res);
+    await this.service.streamDatabaseMessage(sessionMetadata, databaseId, dto, res);
   }
 
   @Get()

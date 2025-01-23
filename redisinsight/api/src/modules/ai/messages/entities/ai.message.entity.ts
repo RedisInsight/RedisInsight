@@ -3,6 +3,7 @@ import {
   Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DataAsJsonString } from 'src/common/decorators';
+import { AiTool } from '../models';
 
 @Entity('ai_message')
 export class AiMessageEntity {
@@ -31,6 +32,13 @@ export class AiMessageEntity {
   @Column({ nullable: false, type: 'blob' })
   @Expose()
   content: string;
+
+  @Column({
+    nullable: false,
+    default: AiTool.General,
+  })
+  @Expose()
+  tool: string;
 
   @Column({ nullable: true, type: 'blob' })
   @DataAsJsonString()

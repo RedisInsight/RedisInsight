@@ -15,6 +15,7 @@ import {
   AiWsEvents,
   AiIntermediateStepType,
   AiIntermediateStep,
+  AiTool,
 } from 'src/modules/ai/messages/models';
 import { AiMessageRepository } from 'src/modules/ai/messages/repositories/ai.message.repository';
 import { AiAuthProvider } from 'src/modules/ai/auth/ai-auth.provider';
@@ -188,7 +189,7 @@ export class AiMessageService {
           throw new AiForbiddenException(NO_GENERAL_AGREEEMENT_ERROR);
         }
 
-        const history = await this.aiMessageRepository.list(sessionMetadata, databaseId, auth.accountId);
+        const history = await this.aiMessageRepository.list(sessionMetadata, databaseId, auth.accountId, dto.tool);
         const conversationId = AiMessageService.getConversationId(history);
         const databaseAgreement = await this.aiDatabaseAgreementRepository.get(
           sessionMetadata,
@@ -215,6 +216,7 @@ export class AiMessageService {
         const question = classToClass(AiMessage, {
           type: AiMessageType.HumanMessage,
           content: dto.content,
+          tool: dto.tool,
           databaseId,
           conversationId,
           accountId: auth.accountId,
@@ -224,6 +226,7 @@ export class AiMessageService {
         const answer = classToClass(AiMessage, {
           type: AiMessageType.AiMessage,
           content: '',
+          tool: dto.tool,
           databaseId,
           conversationId,
           accountId: auth.accountId,
@@ -316,6 +319,7 @@ export class AiMessageService {
 
   async streamGeneralMessage(
     sessionMetadata: SessionMetadata,
+    databaseId: Nullable<string>,
     dto: AiMessageDto,
     res: Response,
   ) {
@@ -330,13 +334,14 @@ export class AiMessageService {
           throw new AiForbiddenException(NO_GENERAL_AGREEEMENT_ERROR);
         }
 
-        const history = await this.aiMessageRepository.list(sessionMetadata, null, auth.accountId);
+        const history = await this.aiMessageRepository.list(sessionMetadata, databaseId, auth.accountId, dto.tool);
         const conversationId = AiMessageService.getConversationId(history);
 
         const question = classToClass(AiMessage, {
           type: AiMessageType.HumanMessage,
           content: dto.content,
-          databaseId: null,
+          tool: dto.tool,
+          databaseId,
           conversationId,
           accountId: auth.accountId,
           createdAt: new Date(),
@@ -345,7 +350,8 @@ export class AiMessageService {
         const answer = classToClass(AiMessage, {
           type: AiMessageType.AiMessage,
           content: '',
-          databaseId: null,
+          tool: dto.tool,
+          databaseId,
           conversationId,
           accountId: auth.accountId,
         });
@@ -404,6 +410,19 @@ export class AiMessageService {
         throw wrapAiError(e, 'Unable to send the question');
       }
     });
+  }
+
+  async streamDatabaseMessage(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    dto: AiMessageDto,
+    res: Response,
+  ) {
+    if (dto.tool === AiTool.General) {
+      this.streamGeneralMessage(sessionMetadata, databaseId, dto, res);
+    } else {
+      this.streamMessage(sessionMetadata, databaseId, dto, res);
+    }
   }
 
   async getHistory(sessionMetadata: SessionMetadata, databaseId: Nullable<string>): Promise<AiMessage[]> {

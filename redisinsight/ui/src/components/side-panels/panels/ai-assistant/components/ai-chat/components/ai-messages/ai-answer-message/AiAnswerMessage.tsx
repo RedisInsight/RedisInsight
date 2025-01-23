@@ -2,7 +2,7 @@ import React from 'react'
 import cx from 'classnames'
 
 import { EuiIcon, EuiText } from '@elastic/eui'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiChatType, AiTool } from 'uiSrc/slices/interfaces/aiAssistant'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import MarkdownMessage from '../../markdown-message'
@@ -25,24 +25,30 @@ const AiAnswerMessage = ({
   modules,
   onRestart
 }: AiAnswerMessageProps) => {
-  const { id, content, error, type } = message
+  const { id, content, error, type, tool } = message
+  const botType = tool === AiTool.Query ? 'Query Builder' : 'General Redis'
 
   return (
     <React.Fragment key={id}>
       <div className={styles.answerWrapper}>
-        <ChatbotAvatar type={AiChatType.General} />
-        <div
-          className={cx('jsx-markdown', styles.answer, { [styles.error]: !!error })}
-          data-testid={`ai-message-${type}_${id}`}
-        >
-          {error && (<EuiIcon type="alert" className={styles.errorIcon} />)}
-          <MarkdownMessage
-            onRunCommand={onRunCommand}
-            onMessageRendered={onMessageRendered}
-            modules={modules}
+        <div className={styles.avatarWrapper}>
+          <ChatbotAvatar type={tool} />
+        </div>
+        <div>
+          <EuiText className={styles.aiBotNameText}>{botType}</EuiText>
+          <div
+            className={cx('jsx-markdown', styles.answer, { [styles.error]: !!error })}
+            data-testid={`ai-message-${type}_${id}`}
           >
-            {content}
-          </MarkdownMessage>
+            {error && (<EuiIcon type="alert" className={styles.errorIcon} />)}
+            <MarkdownMessage
+              onRunCommand={onRunCommand}
+              onMessageRendered={onMessageRendered}
+              modules={modules}
+            >
+              {content}
+            </MarkdownMessage>
+          </div>
         </div>
       </div>
       <ErrorMessage error={error} onRestart={onRestart} />

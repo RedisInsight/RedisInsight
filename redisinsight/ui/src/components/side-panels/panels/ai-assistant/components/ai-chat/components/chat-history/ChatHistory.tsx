@@ -3,7 +3,7 @@ import cx from 'classnames'
 
 import { EuiLoadingSpinner, EuiText } from '@elastic/eui'
 import { throttle } from 'lodash'
-import { AiChatMessage, AiChatMessageType, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiChatMessage, AiChatMessageType, AiTool } from 'uiSrc/slices/interfaces/aiAssistant'
 import { Nullable, scrollIntoView } from 'uiSrc/utils'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
@@ -13,7 +13,7 @@ import LoadingMessage from '../loading-message'
 import ChatbotAvatar from '../chatbot-avatar/ChatbotAvatar'
 import AiQuestionMessage from '../ai-messages/ai-question-message'
 import AiAnswerMessage from '../ai-messages/ai-answer-message'
-import styles from './styles.module.scss'
+import styles from '../ai-messages/styles.module.scss'
 
 export interface Props {
   autoScroll?: boolean
@@ -124,12 +124,17 @@ const ChatHistory = (props: Props) => {
       <div className={styles.wrapper}>
         <div className={styles.history} data-testid="ai-chat-empty-history">
           <div className={styles.answerWrapper}>
-            <ChatbotAvatar type={AiChatType.General} />
-            <div
-              className={styles.answer}
-              data-testid="ai-message-initial-message"
-            >
-              {AiChatInitialMessage}
+            <div className={styles.avatarWrapper}>
+              <ChatbotAvatar type={AiTool.General} />
+            </div>
+            <div>
+              <EuiText className={styles.aiBotNameText}>General Redis</EuiText>
+              <div
+                className={styles.answer}
+                data-testid="ai-message-initial-message"
+              >
+                {AiChatInitialMessage}
+              </div>
             </div>
           </div>
         </div>

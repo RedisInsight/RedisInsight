@@ -5,6 +5,11 @@ export enum AiChatType {
   Database = 'database'
 }
 
+export enum AiTool {
+  Query = 'Query',
+  General = 'General',
+}
+
 export enum AiChatMessageType {
   AIMessage = 'AIMessage',
   HumanMessage = 'HumanMessage'
@@ -14,6 +19,7 @@ export interface AiChatMessage {
   id: string
   type: AiChatMessageType
   content: string
+  tool: AiTool
   error?: {
     statusCode: number
     errorCode?: number

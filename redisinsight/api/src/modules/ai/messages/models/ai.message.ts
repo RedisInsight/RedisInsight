@@ -11,6 +11,11 @@ export enum AiMessageType {
   AiMessage = 'AIMessage',
 }
 
+export enum AiTool {
+  Query = 'Query',
+  General = 'General',
+}
+
 export class AiMessage {
   @ApiProperty({
     type: String,
@@ -57,6 +62,14 @@ export class AiMessage {
   @Expose()
   @IsString()
   content: string = '';
+
+  @ApiProperty({
+    enum: AiTool,
+  })
+  @Expose()
+  @IsEnum(AiTool)
+  @Default(AiTool.General)
+  tool: AiTool;
 
   @ApiProperty({
     type: String,

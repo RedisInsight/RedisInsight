@@ -12,7 +12,7 @@ import {
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiChatMessage, AiChatType, AiTool } from 'uiSrc/slices/interfaces/aiAssistant'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
@@ -54,14 +54,15 @@ const AiChat = () => {
     return () => setSettingsOpenedByDefault(false)
   }, [userOAuthProfile?.id])
 
-  const handleSubmit = useCallback((message: string) => {
-    sendChatMessage(message)
+  const handleSubmit = useCallback((message: string, tool: AiTool) => {
+    sendChatMessage(message, tool)
   }, [instanceId])
 
-  const sendChatMessage = (message: string) => {
+  const sendChatMessage = (message: string, tool: AiTool) => {
     dispatch(askAiChatbotAction(
       instanceId,
       message,
+      tool,
       {
         onMessage: (message: AiChatMessage) => {
           setinProgressMessage({ ...message })

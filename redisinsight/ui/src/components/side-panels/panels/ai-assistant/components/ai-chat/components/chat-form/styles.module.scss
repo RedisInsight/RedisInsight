@@ -6,15 +6,21 @@
     pointer-events: none;
   }
 
+  .textAreaContainer {
+    background-color: var(--browserTableRowEven) !important;
+    padding: 2px;
+    border: 1px solid var(--separatorColor) !important;
+    border-radius: 8px;
+  }
+
   .textarea {
     height: 0;
     resize: none !important;
+    border-color: transparent !important;
     background-color: var(--browserTableRowEven) !important;
-    border: 1px solid var(--separatorColor) !important;
 
     padding: 8px 40px 8px 10px;
     scroll-padding-bottom: 8px;
-    border-radius: 8px;
 
     min-height: 42px;
     max-height: 200px;
@@ -36,7 +42,29 @@
     }
 
     &:focus {
-      border-color: var(--euiColorPrimary) !important;
+      border-color: transparent !important
+    }
+  }
+
+  .botTypeSelectorWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 10px;
+
+    .selectLabel {
+      color: var(--controlsLabelColor) !important;
+      font-size: 10px !important;
+    }
+
+    .select {
+      border-color: transparent !important;
+      background-color: var(--browserTableRowEven) !important;
+
+
+      color: var(--inputPlaceholderColor) !important;
+      font-size: 10px !important;
+      line-height: 12px !important;
     }
   }
 
@@ -92,3 +120,9 @@
   line-height: 1.15 !important;
   color: var(--euiColorMediumShade) !important;
 }
+
+.inputWithBtnContainer {
+  position: relative;
+}
+
+

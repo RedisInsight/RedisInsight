@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { AxiosError } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import { AiAgreement, AiChatMessage, AiDatabaseAgreement, IUpdateAiAgreementPayload, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiAgreement, AiChatMessage, AiDatabaseAgreement, AiTool, IUpdateAiAgreementPayload, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import {
   getApiErrorCode,
   getAxiosError,
@@ -295,6 +295,7 @@ export function getAiChatHistoryAction(databaseId: Nullable<string>, onSuccess?:
 export function askAiChatbotAction(
   databaseId: Nullable<string>,
   message: string,
+  tool: AiTool,
   { onMessage, onError, onFinish }: {
     onMessage?: (message: AiChatMessage) => void,
     onError?: (errorCode: number) => void,
@@ -302,8 +303,8 @@ export function askAiChatbotAction(
   }
 ) {
   return async (dispatch: AppDispatch) => {
-    const humanMessage = generateHumanMessage(message)
-    const aiMessageProgressed: AiChatMessage = generateAiMessage()
+    const humanMessage = generateHumanMessage(message, tool)
+    const aiMessageProgressed: AiChatMessage = generateAiMessage(tool)
 
     dispatch(sendAiQuestion(humanMessage))
 
@@ -316,6 +317,7 @@ export function askAiChatbotAction(
     await getStreamedAnswer(
       url,
       message,
+      tool,
       {
         onMessage: (value: string) => {
           aiMessageProgressed.content += value

@@ -6,6 +6,9 @@ import { isModifiedEvent } from 'uiSrc/services'
 
 import SendIcon from 'uiSrc/assets/img/icons/send.svg?react'
 import { Maybe, Nullable } from 'uiSrc/utils'
+import { AiTool } from 'uiSrc/slices/interfaces/aiAssistant'
+import { botTypeOptions } from 'uiSrc/constants'
+import BotTypePopover from '../bot-type-popover'
 import styles from './styles.module.scss'
 
 export interface IValidation {
@@ -16,19 +19,12 @@ export interface IValidation {
 
 export interface Props {
   isDisabled?: boolean
-  onSubmit: (value: string) => void
+  onSubmit: (value: string, tool: AiTool) => void
   databaseId: Nullable<string>
   isGeneralAgreementAccepted: Maybe<boolean>
 }
 
 const INDENT_TEXTAREA_SPACE = 2
-
-enum BotType {
-  Query = '/query',
-  General = '/general'
-}
-
-const botTypeOptions = [{ value: BotType.Query, inputDisplay: 'query' }, { value: BotType.General, inputDisplay: 'general' }]
 
 const ChatForm = (props: Props) => {
   const {
@@ -38,7 +34,7 @@ const ChatForm = (props: Props) => {
     isGeneralAgreementAccepted,
   } = props
   const [value, setValue] = useState('')
-  const [botType, setBotType] = useState(BotType.Query)
+  const [botType, setBotType] = useState(databaseId ? AiTool.Query : AiTool.General)
   const [validation, setValidation] = useState<Nullable<string>>(null)
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
 
@@ -82,7 +78,7 @@ const ChatForm = (props: Props) => {
   }
 
   const submitMessage = () => {
-    onSubmit?.((databaseId ? `${botType} ` : '') + value)
+    onSubmit?.(value, botType)
     setValue('')
     updateTextAreaHeight(true)
   }
@@ -104,45 +100,56 @@ const ChatForm = (props: Props) => {
           onSubmit={handleSubmitForm}
           onKeyDown={handleKeyDown}
         >
-          <div style={{ display: 'flex' }}>
-            <div>
-              {databaseId && (
-              <EuiSuperSelect
-                className={styles.textarea}
-                options={botTypeOptions}
-                valueOfSelected={botType}
-                onChange={setBotType}
-                data-test-subj="select-chatbot"
-                data-testid="select-chatbot-testid"
-              />
-              )}
+          <div className={styles.textAreaContainer}>
+            <div className={styles.inputWithBtnContainer}>
+              <div>
+                <EuiTextArea
+                  inputRef={textAreaRef}
+                  placeholder="Message Redis AI Assistant..."
+                  className={styles.textarea}
+                  value={value}
+                  onChange={handleChange}
+                  disabled={!isGeneralAgreementAccepted}
+                  data-testid="ai-message-textarea"
+                />
+              </div>
+              <div className={styles.submitBtnWrapper}>
+                <EuiButton
+                  fill
+                  size="s"
+                  iconType={SendIcon}
+                  color="secondary"
+                  className={styles.submitBtn}
+                  aria-label="submit"
+                  type="submit"
+                  disabled={!value.length || isDisabled || !!validation}
+                  isDisabled={!value.length || isDisabled || !!validation}
+                  data-testid="ai-submit-message-btn"
+                />
+              </div>
             </div>
-            <div style={{ flex: 1 }}>
-              <EuiTextArea
-                inputRef={textAreaRef}
-                placeholder="Ask me about Redis or let me generate a query"
-                className={styles.textarea}
-                value={value}
-                onChange={handleChange}
-                disabled={!isGeneralAgreementAccepted}
-                data-testid="ai-message-textarea"
-              />
+            {databaseId && (
+            <div className={styles.botTypeSelectorWrapper}>
+              <EuiText className={styles.selectLabel}>
+                Select chat agent
+              </EuiText>
+              <div>
+                <BotTypePopover selectedBotType={botType} setSelected={setBotType} />
+                {/* <EuiSuperSelect
+                  compressed
+                  className={styles.select}
+                  itemClassName={styles.selectItemsStyle}
+                  options={botTypeOptions}
+                  valueOfSelected={botType}
+                  onChange={setBotType}
+                  data-test-subj="select-chatbot"
+                  data-testid="select-chatbot-testid"
+                /> */}
+              </div>
             </div>
+            )}
           </div>
-          <div className={styles.submitBtnWrapper}>
-            <EuiButton
-              fill
-              size="s"
-              iconType={SendIcon}
-              color="secondary"
-              className={styles.submitBtn}
-              aria-label="submit"
-              type="submit"
-              disabled={!value.length || isDisabled || !!validation}
-              isDisabled={!value.length || isDisabled || !!validation}
-              data-testid="ai-submit-message-btn"
-            />
-          </div>
+
         </EuiForm>
       </EuiToolTip>
       <EuiText textAlign="center" size="xs" className={styles.agreementText}>

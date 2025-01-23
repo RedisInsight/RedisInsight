@@ -86,7 +86,7 @@
   }
 }
 
-.listContainer :global(.euiListGroupItem-isActive), :global(.euiListGroupItem:hover) {
+.listContainer :global(.euiListGroupItem-isActive), .listContainer :global(.euiListGroupItem:hover) {
   background-color: var(--hoverInListColorDarken) !important;
   color: var(--euiTextSubduedColorHover) !important;
   border-left-color: var(--externalLinkColor) !important;

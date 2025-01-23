@@ -1,5 +1,5 @@
 import { SessionMetadata } from 'src/common/models';
-import { AiMessage } from 'src/modules/ai/messages/models';
+import { AiMessage, AiTool } from 'src/modules/ai/messages/models';
 import { AiMessageRepository } from 'src/modules/ai/messages/repositories/ai.message.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
@@ -50,10 +50,21 @@ export class LocalAiMessageRepository extends AiMessageRepository {
       .execute();
   }
 
-  async list(_sessionMetadata: SessionMetadata, databaseId: Nullable<string>, accountId: string): Promise<AiMessage[]> {
+  async list(
+    _sessionMetadata: SessionMetadata,
+    databaseId: Nullable<string>,
+    accountId: string,
+    tool?: AiTool,
+  ): Promise<AiMessage[]> {
+    let query;
+    if (tool) {
+      query = { databaseId: databaseId ?? IsNull(), accountId, tool };
+    } else {
+      query = { databaseId: databaseId ?? IsNull(), accountId };
+    }
     const entities = await this.repository
       .createQueryBuilder('e')
-      .where({ databaseId: databaseId ?? IsNull(), accountId })
+      .where(query)
       .orderBy('e.createdAt', 'ASC')
       .limit(aiConfig.historyLimit)
       .getMany();

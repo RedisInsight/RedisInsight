@@ -36,7 +36,7 @@ const BulkActionsConfig = () => {
   const { filter, search } = useSelector(keysSelector)
   const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
-  const connectIo = useIoConnection(getSocketApiUrl('bulk-actions'), { token })
+  const connectIo = useIoConnection(getSocketApiUrl('bulk-actions'), { token, query: { instanceId } })
 
   const dispatch = useDispatch()
 

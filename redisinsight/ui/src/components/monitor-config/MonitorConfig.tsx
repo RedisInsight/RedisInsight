@@ -36,7 +36,7 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
   const { token } = useSelector(appCsrfSelector)
 
   const socketRef = useRef<Nullable<Socket>>(null)
-  const connectIo = useIoConnection(getSocketApiUrl('monitor'), { token })
+  const connectIo = useIoConnection(getSocketApiUrl('monitor'), { token, query: { instanceId } })
   const logFileIdRef = useRef<string>()
   const timestampRef = useRef<number>()
   const retryTimerRef = useRef<NodeJS.Timer>()

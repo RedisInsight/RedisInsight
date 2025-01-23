@@ -1,4 +1,6 @@
 .container {
+  margin: 5px 0;
+
   @media only screen and (max-width: 1124px) {
     .modules {
       margin-left: 0;
@@ -27,9 +29,10 @@
 }
 
 .overviewItem {
-  min-width: 78px;
-  height: 17px;
+  min-width: 58px;
+
   margin: 10px 0;
+  padding: 0 10px;
   color: var(--euiTextSubduedColor);
 
   &:not(:last-child) {
@@ -128,5 +131,18 @@
 
   :global(.popover-without-top-tail) {
     margin-top: 0;
+  }
+}
+
+.upgradeBtnItem {
+  margin: 5px 0;
+  border-right: none;
+}
+
+.upgradeBtn {
+  padding: 0;
+
+  :global(.euiButton__text) {
+    font: normal normal 400 14px/18px Graphik, sans-serif !important;
   }
 }

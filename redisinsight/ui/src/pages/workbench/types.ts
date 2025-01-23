@@ -8,12 +8,12 @@ export enum ArgName {
 }
 
 export interface FoundCommandArgument {
-  isComplete: boolean
+  isComplete?: boolean
   stopArg: Maybe<IRedisCommand>
   isBlocked: boolean
   append: Maybe<Array<IRedisCommandTree[]>>
   parent: Maybe<IRedisCommand>
-  token: Maybe<IRedisCommand>
+  token?: Maybe<IRedisCommand>
 }
 
 export interface CursorContext {
@@ -25,4 +25,10 @@ export interface CursorContext {
   argLeftOffset: number
   argRightOffset: number
   range: monacoEditor.IRange
+}
+
+export interface BlockTokensTree {
+  queryArgs: string[]
+  command?: IRedisCommand
+  parent?: BlockTokensTree
 }

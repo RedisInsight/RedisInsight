@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { fetchCsrfTokenAction } from 'uiSrc/slices/app/csrf'
-import { fetchFeatureFlags } from 'uiSrc/slices/app/features'
+import { appFeatureFlagsFeaturesSelector, fetchFeatureFlags } from 'uiSrc/slices/app/features'
+import { FeatureFlags } from 'uiSrc/constants'
+import { fetchCloudUserProfile } from 'uiSrc/slices/user/cloud-user-profile'
 import { AppDispatch, RootState } from '../store'
 
 export const STATUS_INITIAL = 'initial'
@@ -11,6 +13,7 @@ const appStatus = [STATUS_INITIAL, STATUS_LOADING, STATUS_SUCCESS, STATUS_FAIL] 
 
 export const FAILED_TO_FETCH_CSRF_TOKEN_ERROR = 'Failed to fetch CSRF token'
 export const FAILED_TO_FETCH_FEATURE_FLAGS_ERROR = 'Failed to fetch feature flags'
+export const FAILED_TO_FETCH_USER_PROFILE_ERROR = 'Failed to fetch user profile'
 
 export const initialState: {
   status: typeof appStatus[number],
@@ -61,7 +64,10 @@ export function initializeAppAction(
   onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState()
+    const { [FeatureFlags.envDependent]: envDependant } = appFeatureFlagsFeaturesSelector(state)
+
     try {
       dispatch(initializeAppState())
       await dispatch(fetchCsrfTokenAction(undefined, () => {
@@ -70,6 +76,13 @@ export function initializeAppAction(
       await dispatch(fetchFeatureFlags(undefined, () => {
         throw new Error(FAILED_TO_FETCH_FEATURE_FLAGS_ERROR)
       }))
+
+      if (!envDependant?.flag) {
+        await dispatch(fetchCloudUserProfile(undefined, () => {
+          throw new Error(FAILED_TO_FETCH_USER_PROFILE_ERROR)
+        }))
+      }
+
       dispatch(initializeAppStateSuccess())
       onSuccessAction?.()
     } catch (error: any) {

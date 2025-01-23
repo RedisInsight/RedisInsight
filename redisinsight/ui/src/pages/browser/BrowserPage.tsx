@@ -61,7 +61,7 @@ const isOneSideMode = (isInsightsOpen: boolean) =>
 const BrowserPage = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const { name: connectedInstanceName, db = 0 } = useSelector(connectedInstanceSelector)
+  const { name: connectedInstanceName, db = 0, isFreeDb } = useSelector(connectedInstanceSelector)
   const {
     panelSizes,
     keyList: { selectedKey: selectedKeyContext },
@@ -154,7 +154,8 @@ const BrowserPage = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.BROWSER_PAGE,
       eventData: {
-        databaseId: instanceId
+        databaseId: instanceId,
+        isFree: isFreeDb,
       }
     })
     setIsPageViewSent(true)

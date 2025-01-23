@@ -1,4 +1,6 @@
-import { getRedisModulesSummary } from '../telemetryUtils'
+import { RootState, store } from 'uiSrc/slices/store'
+import { TelemetryEvent } from '../events'
+import { getRedisModulesSummary, getFreeDbFlag } from '../telemetryUtils'
 
 const DEFAULT_SUMMARY = Object.freeze(
   {
@@ -70,5 +72,59 @@ describe('getRedisModulesSummary', () => {
     // @ts-ignore
     const result = getRedisModulesSummary(input)
     expect(result).toEqual(expected)
+  })
+})
+
+describe('determineFreeDbFlag', () => {
+  describe.each`
+  isFreeDb
+  ${true}
+  ${false}
+`('when isFreeDb=$isFreeDb', ({ isFreeDb }) => {
+    beforeEach(() => {
+      jest.spyOn(store, 'getState').mockImplementation(() => ({
+        connections: {
+          instances: {
+            connectedInstance: {
+              isFreeDb,
+            },
+          },
+        },
+      } as RootState))
+    })
+
+    it(`returns { isFree: ${isFreeDb} } for an event in the freeDbEvents list`, () => {
+      const freeDbEvents = [TelemetryEvent.INSIGHTS_PANEL_OPENED, TelemetryEvent.INSIGHTS_PANEL_CLOSED]
+      const event = TelemetryEvent.INSIGHTS_PANEL_OPENED
+
+      const result = getFreeDbFlag(event, freeDbEvents)
+
+      expect(result).toEqual({ isFree: isFreeDb })
+    })
+
+    it('returns {} for an event NOT in the freeDbEvents list', () => {
+      const freeDbEvents = [TelemetryEvent.INSIGHTS_PANEL_OPENED, TelemetryEvent.INSIGHTS_PANEL_CLOSED]
+      const event = TelemetryEvent.AI_CHAT_BOT_COMMAND_RUN_CLICKED
+
+      const result = getFreeDbFlag(event, freeDbEvents)
+
+      expect(result).toEqual({})
+    })
+  })
+
+  it('returns {} if there is no connected instance', () => {
+    jest.spyOn(store, 'getState').mockImplementation(() =>
+      ({
+        connections: {
+          instances: {},
+        },
+      } as RootState))
+
+    const freeDbEvents = [TelemetryEvent.INSIGHTS_PANEL_OPENED, TelemetryEvent.INSIGHTS_PANEL_CLOSED]
+    const event = TelemetryEvent.INSIGHTS_PANEL_OPENED
+
+    const result = getFreeDbFlag(event, freeDbEvents)
+
+    expect(result).toEqual({})
   })
 })

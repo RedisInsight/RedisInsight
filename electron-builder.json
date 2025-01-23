@@ -155,7 +155,7 @@
     }
   },
   "deb": {
-    "afterInstall": "scripts/linux-after-install.sh"
+    "afterInstall": "scripts/deb-after-install.sh"
   },
   "snap": {
     "plugs": [

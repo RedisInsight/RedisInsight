@@ -13,6 +13,8 @@ on:
         required: false
         default: 'https://s3.amazonaws.com/redisinsight.download/public/latest/Redis-Insight-mac-arm64.dmg'
         type: string
+  schedule:
+    - cron: '0 0 * * *'
 
 env:
   VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}

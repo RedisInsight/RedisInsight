@@ -64,27 +64,26 @@ export function initializeAppAction(
   onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {
-  return async (dispatch: AppDispatch, getState: () => RootState) => {
-    const state = getState()
-    const { [FeatureFlags.envDependent]: envDependant } = appFeatureFlagsFeaturesSelector(state)
-
+  return async (dispatch: AppDispatch) => {
     try {
       dispatch(initializeAppState())
       await dispatch(fetchCsrfTokenAction(undefined, () => {
         throw new Error(FAILED_TO_FETCH_CSRF_TOKEN_ERROR)
       }))
-      await dispatch(fetchFeatureFlags(undefined, () => {
+
+      await dispatch(fetchFeatureFlags(async (flagsData) => {
+        const { [FeatureFlags.envDependent]: envDependant } = flagsData.features
+        if (!envDependant?.flag) {
+          await dispatch(fetchCloudUserProfile(undefined, () => {
+            throw new Error(FAILED_TO_FETCH_USER_PROFILE_ERROR)
+          }))
+        }
+
+        dispatch(initializeAppStateSuccess())
+        onSuccessAction?.()
+      }, () => {
         throw new Error(FAILED_TO_FETCH_FEATURE_FLAGS_ERROR)
       }))
-
-      if (!envDependant?.flag) {
-        await dispatch(fetchCloudUserProfile(undefined, () => {
-          throw new Error(FAILED_TO_FETCH_USER_PROFILE_ERROR)
-        }))
-      }
-
-      dispatch(initializeAppStateSuccess())
-      onSuccessAction?.()
     } catch (error: any) {
       dispatch(initializeAppStateFail({ error: error?.message || '' }))
       onFailAction?.()

@@ -93,7 +93,7 @@ const UserProfile = (props: Props) => {
   const { accounts, currentAccountId, name } = data
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid="user-profile-badge">
       <EuiPopover
         ownFocus
         initialFocus={false}
@@ -112,7 +112,7 @@ const UserProfile = (props: Props) => {
           </div>
         )}
       >
-        <div className={styles.popoverOptions}>
+        <div className={styles.popoverOptions} data-testid="user-profile-popover-content">
           <div className={styles.option}>
             <FeatureFlagComponent
               name={FeatureFlags.envDependent}
@@ -153,7 +153,7 @@ const UserProfile = (props: Props) => {
                 target="_blank"
                 className={cx(styles.option, styles.clickableOption)}
                 href={riConfig.app.smConsoleRedirect}
-                data-testid="cloud-console-link"
+                data-testid="cloud-admin-console-link"
               >
                 <EuiText>Back to admin console</EuiText>
                 <EuiIcon type={CloudIcon} style={{ fill: 'none' }} viewBox="-1 0 30 20" strokeWidth={1.8} />

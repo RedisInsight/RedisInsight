@@ -30,6 +30,7 @@ interface Props {
   items: {
     version: string,
     usedMemory?: Nullable<number>
+    usedMemoryPercent?: Nullable<number>
     totalKeys?: Nullable<number>
     connectedClients?: Nullable<number>
     opsPerSecond?: Nullable<number>
@@ -68,6 +69,7 @@ export interface IMetric {
 export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetric> => {
   const {
     usedMemory,
+    usedMemoryPercent,
     totalKeys,
     connectedClients,
     cpuUsagePercentage,
@@ -203,12 +205,12 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
   const planMemoryLimit = cloudDetails?.planMemoryLimit
   const memoryUsed = formatBytes(usedMemory || 0, 0)
   const planMemory = planMemoryLimit ? formatBytes(toBytes(planMemoryLimit, cloudDetails?.memoryLimitMeasurementUnit || 'MB') || 0, 1) : ''
-  const usagePercent = cloudDetails?.planMemoryLimit ? truncatePercentage(((usedMemory || 0) / toBytes(cloudDetails?.planMemoryLimit, cloudDetails?.memoryLimitMeasurementUnit || 'MB')) * 100, 1) : ''
+
   const memoryContent = planMemoryLimit
     ? (
-      <span>{memoryUsed} / <strong>{planMemory}</strong> ({usagePercent}%)</span>
+      <span>{memoryUsed} / <strong>{planMemory}</strong> ({usedMemoryPercent}%)</span>
     ) : memoryUsed
-  const memoryUsedTooltip = planMemory ? ` / ${planMemory} (${usagePercent}%)` : ''
+  const memoryUsedTooltip = planMemory ? ` / ${planMemory} (${usedMemoryPercent}%)` : ''
 
   const formattedUsedMemoryTooltip = formatBytes(usedMemory || 0, 3, true)
   availableItems.push({

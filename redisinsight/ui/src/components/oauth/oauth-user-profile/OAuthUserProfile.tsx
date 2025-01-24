@@ -15,6 +15,8 @@ import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { PackageType } from 'uiSrc/constants/env'
 import UserProfile from 'uiSrc/components/instance-header/components/user-profile/UserProfile'
 
+import styles from './styles.module.scss'
+
 export interface Props {
   source: OAuthSocialSource
 }

@@ -8,7 +8,14 @@ import { ApiEndpoints, BrowserStorageItem, CustomErrorCodes } from 'uiSrc/consta
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import {
+  checkRediStack,
+  getApiErrorMessage,
+  isStatusSuccessful,
+  Nullable,
+  toBytes,
+  truncatePercentage
+} from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
@@ -311,8 +318,23 @@ export const connectedInstanceInfoSelector = (state: RootState) =>
   state.connections.instances.instanceInfo
 export const editedInstanceSelector = (state: RootState) =>
   state.connections.instances.editedInstance
-export const connectedInstanceOverviewSelector = (state: RootState) =>
-  state.connections.instances.instanceOverview
+export const connectedInstanceOverviewSelector = (state: RootState) => {
+  const overview = state.connections.instances.instanceOverview
+  const {
+    usedMemory,
+    cloudDetails: { planMemoryLimit, memoryLimitMeasurementUnit } = {},
+  } = overview
+
+  const usedMemoryPercent = planMemoryLimit
+    ? truncatePercentage(((usedMemory || 0) / toBytes(planMemoryLimit, memoryLimitMeasurementUnit || 'MB')) * 100, 1)
+    : 0
+
+  return {
+    ...overview,
+    usedMemoryPercent,
+  }
+}
+
 export const importInstancesSelector = (state: RootState) =>
   state.connections.instances.importInstances
 

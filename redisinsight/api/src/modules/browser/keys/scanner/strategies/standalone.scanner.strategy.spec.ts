@@ -382,6 +382,9 @@ describe('StandaloneScannerStrategy', () => {
         expect(strategy.getKeysInfo).toHaveBeenCalledWith(
           mockStandaloneRedisClient,
           [Buffer.from(key)],
+          undefined,
+          true,
+          true
         );
         expect(strategy['scan']).not.toHaveBeenCalled();
       });
@@ -405,6 +408,9 @@ describe('StandaloneScannerStrategy', () => {
         expect(strategy.getKeysInfo).toHaveBeenCalledWith(
           mockStandaloneRedisClient,
           [Buffer.from(mockSearchPattern)],
+          undefined,
+          true,
+          true
         );
         expect(strategy['scan']).not.toHaveBeenCalled();
       });
@@ -477,7 +483,8 @@ describe('StandaloneScannerStrategy', () => {
 
   describe('getKeysInfo', () => {
     const keys = ['key1', 'key2'];
-    beforeEach(() => {
+
+    it('should return correct keys info with all info', async () => {
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith(
           keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
@@ -499,34 +506,123 @@ describe('StandaloneScannerStrategy', () => {
           { replyEncoding: 'utf8' },
         )
         .mockResolvedValue(Array(keys.length).fill([null, 'string']));
-    });
-
-    it('should return correct keys info', async () => {
-      const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
-        ...mockKeyInfo,
-        name: key,
-      }));
-
-      const result = await strategy.getKeysInfo(mockStandaloneRedisClient, keys);
-
-      expect(result).toEqual(mockResult);
-    });
-    it('should not call TYPE pipeline for keys with known type', async () => {
-      const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
-        ...mockKeyInfo,
-        name: key,
-      }));
 
       const result = await strategy.getKeysInfo(
         mockStandaloneRedisClient,
         keys,
-        RedisDataType.String,
+        undefined,
+        true,   // includeSize
+        true    // includeTTL
       );
 
+      const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
+        name: key,
+        type: 'string',
+        ttl: -1,
+        size: 50,
+      }));
       expect(result).toEqual(mockResult);
-      expect(mockStandaloneRedisClient.sendPipeline).not.toHaveBeenCalledWith(
-        keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
+    });
+
+    it('should not get TTL when includeTTL is false', async () => {
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith(
+          keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue(Array(keys.length).fill([null, 'string']));
+
+      const result = await strategy.getKeysInfo(
+        mockStandaloneRedisClient,
+        keys,
+        undefined,
+        false,  // includeSize
+        false    // includeTTL
       );
+
+      const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
+        name: key,
+        type: 'string',
+      }));
+      expect(result).toEqual(mockResult);
+    });
+
+    it('should not get size when includeSize is false', async () => {
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith(
+          keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
+        )
+        .mockResolvedValue(Array(keys.length).fill([null, -1]));
+
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith(
+          keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue(Array(keys.length).fill([null, 'string']));
+
+      const result = await strategy.getKeysInfo(
+        mockStandaloneRedisClient,
+        keys,
+        undefined,
+        false,  // includeSize
+        true    // includeTTL
+      );
+
+      const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
+        name: key,
+        type: 'string',
+        ttl: -1,
+      }));
+      expect(result).toEqual(mockResult);
+    });
+
+    it('should return null for size when memory usage fails', async () => {
+      const replyError: ReplyError = {
+        name: 'ReplyError',
+        command: BrowserToolKeysCommands.MemoryUsage,
+        message: "ERR unknown command 'memory'",
+      };
+
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith(
+          keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
+        )
+        .mockResolvedValue(Array(keys.length).fill([null, -1]));
+
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith(
+          keys.map((key: string) => [
+            BrowserToolKeysCommands.MemoryUsage,
+            key,
+            'samples',
+            '0',
+          ]),
+        )
+        .mockResolvedValue(Array(keys.length).fill([replyError, null]));
+
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith(
+          keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue(Array(keys.length).fill([null, 'string']));
+
+      const result = await strategy.getKeysInfo(
+        mockStandaloneRedisClient,
+        keys,
+        undefined,
+        true,   // includeSize
+        true    // includeTTL
+      );
+
+      const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
+        name: key,
+        type: 'string',
+        ttl: -1,
+        size: null,
+      }));
+      expect(result).toEqual(mockResult);
     });
   });
 });

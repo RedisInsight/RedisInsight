@@ -36,7 +36,7 @@ const REDIS_SCAN_CONFIG = config.get('redis_scan');
 export class SetService {
   private logger = new Logger('SetService');
 
-  constructor(private databaseClientFactory: DatabaseClientFactory) {}
+  constructor(private databaseClientFactory: DatabaseClientFactory) { }
 
   public async createSet(
     clientMetadata: ClientMetadata,

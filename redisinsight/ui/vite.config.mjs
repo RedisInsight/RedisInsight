@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
 import fixReactVirtualized from 'esbuild-plugin-react-virtualized'
 import { reactClickToComponent } from 'vite-plugin-react-click-to-component'
+import { ViteEjsPlugin } from 'vite-plugin-ejs'
 // import { compression } from 'vite-plugin-compression2'
 import { fileURLToPath, URL } from 'url'
 import path from 'path'
@@ -30,6 +31,7 @@ export default defineConfig({
     react(),
     svgr({ include: ['**/*.svg?react'] }),
     reactClickToComponent(),
+    ViteEjsPlugin(),
     // !isElectron && compression({
     //   include: [/\.(js)$/, /\.(css)$/],
     //   deleteOriginalAssets: true
@@ -82,10 +84,13 @@ export default defineConfig({
     minify: 'esbuild',
     rollupOptions: {
       output: {
-        // TODO chunks
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            return 'vendor'
+            return id.toString().split('node_modules/')[1].split('/')[0].toString()
+          }
+
+          if (id.includes('ui/src/assets')) {
+            return 'assets'
           }
           return 'index'
         },

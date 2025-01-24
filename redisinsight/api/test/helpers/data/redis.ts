@@ -91,11 +91,11 @@ export const initDataHelper = (rte) => {
 
   const truncate = async () => {
     return client.nodes ? Promise.all(client.nodes('master').map(async (node) => {
-        try {
-          return flushTestRunData(node);
-        } catch (e) {
-          return null;
-        }
+      try {
+        return flushTestRunData(node);
+      } catch (e) {
+        return null;
+      }
     })) : flushTestRunData(client);
   };
 
@@ -223,7 +223,7 @@ export const initDataHelper = (rte) => {
     );
     await client.rpush(
       constants.TEST_LIST_KEY_2,
-      ...(new Array(100).fill(0)).map((item, i) => `element_${i+1}`)
+      ...(new Array(100).fill(0)).map((item, i) => `element_${i + 1}`)
     );
   };
 
@@ -255,7 +255,7 @@ export const initDataHelper = (rte) => {
     await client.sadd(constants.TEST_SET_KEY_1, constants.TEST_SET_MEMBER_1);
     await client.sadd(
       constants.TEST_SET_KEY_2,
-      ...(new Array(100).fill(0)).map((item, i) => `member_${i+1}`)
+      ...(new Array(100).fill(0)).map((item, i) => `member_${i + 1}`)
     );
   };
 
@@ -471,11 +471,11 @@ export const initDataHelper = (rte) => {
 
   const generateNKeys = async (number: number = 15000, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['set', `${constants.TEST_RUN_ID}_str_key_${i}`, `str_val_${i}`]) }, // string
-      { create: n => _.map(new Array(n), (v,i) => ['lpush', `${constants.TEST_RUN_ID}_list_key_${i}`, `list_val_${i}`]) }, // list
-      { create: n => _.map(new Array(n), (v,i) => ['sadd', `${constants.TEST_RUN_ID}_set_key_${i}`, `set_val_${i}`]) }, // set
-      { create: n => _.map(new Array(n), (v,i) => ['zadd', `${constants.TEST_RUN_ID}_zset_key_${i}`, 0, `zset_val_${i}`]) }, // zset
-      { create: n => _.map(new Array(n), (v,i) => ['hset', `${constants.TEST_RUN_ID}_hash_key_${i}`, `field`, `hash_val_${i}`]) }, // hash
+      { create: n => _.map(new Array(n), (v, i) => ['set', `${constants.TEST_RUN_ID}_str_key_${i}`, `str_val_${i}`]) }, // string
+      { create: n => _.map(new Array(n), (v, i) => ['lpush', `${constants.TEST_RUN_ID}_list_key_${i}`, `list_val_${i}`]) }, // list
+      { create: n => _.map(new Array(n), (v, i) => ['sadd', `${constants.TEST_RUN_ID}_set_key_${i}`, `set_val_${i}`]) }, // set
+      { create: n => _.map(new Array(n), (v, i) => ['zadd', `${constants.TEST_RUN_ID}_zset_key_${i}`, 0, `zset_val_${i}`]) }, // zset
+      { create: n => _.map(new Array(n), (v, i) => ['hset', `${constants.TEST_RUN_ID}_hash_key_${i}`, `field`, `hash_val_${i}`]) }, // hash
     ], number, clean);
 
     await waitForInfoSync();
@@ -491,25 +491,25 @@ export const initDataHelper = (rte) => {
   const generateNReJSONs = async (number: number = 300, clean: boolean) => {
     const jsonValue = JSON.stringify(constants.TEST_REJSON_VALUE_1);
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['json.set', `${constants.TEST_RUN_ID}_rejson_key_${i}`, '.', jsonValue]) },
+      { create: n => _.map(new Array(n), (v, i) => ['json.set', `${constants.TEST_RUN_ID}_rejson_key_${i}`, '.', jsonValue]) },
     ], number, clean);
   };
 
   const generateNTimeSeries = async (number: number = 300, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['ts.create', `${constants.TEST_RUN_ID}_ts_key_${i}`, `ts_val_${i}`]) },
+      { create: n => _.map(new Array(n), (v, i) => ['ts.create', `${constants.TEST_RUN_ID}_ts_key_${i}`, `ts_val_${i}`]) },
     ], number, clean);
   };
 
   const generateNStreams = async (number: number = 300, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['xadd', `${constants.TEST_RUN_ID}_st_key_${i}`, `*`, `st_field_${i}`, `st_val_${i}`]) },
+      { create: n => _.map(new Array(n), (v, i) => ['xadd', `${constants.TEST_RUN_ID}_st_key_${i}`, `*`, `st_field_${i}`, `st_val_${i}`]) },
     ], number, clean);
   };
 
   const generateNGraphs = async (number: number = 300, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['graph.query', `${constants.TEST_RUN_ID}_graph_key_${i}`, `CREATE (n_${i})`]) },
+      { create: n => _.map(new Array(n), (v, i) => ['graph.query', `${constants.TEST_RUN_ID}_graph_key_${i}`, `CREATE (n_${i})`]) },
     ], number, clean);
   };
 

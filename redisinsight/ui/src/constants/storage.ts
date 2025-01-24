@@ -5,6 +5,7 @@ enum BrowserStorageItem {
   rdiInstancesSorting = 'rdiInstancesSorting',
   theme = 'theme',
   browserViewType = 'browserViewType',
+  browserShownColumns = 'browserShownColumns',
   browserSearchMode = 'browserSearchMode',
   cliClientUuid = 'cliClientUuid',
   cliResizableContainer = 'cliResizableContainer',

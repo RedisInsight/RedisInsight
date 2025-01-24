@@ -12,20 +12,9 @@
   "styles": "./dist/styles.css",
   "main": "./dist/index.js",
   "name": "graph-plugin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
-    "start": "cross-env NODE_ENV=development parcel serve src/index.html",
-    "build": "rimraf dist && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\" \"yarn build:css\"",
-    "build-lite": "rm dist/*.js && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\"",
-    "build:js": "parcel build src/main.tsx --no-source-maps --no-cache --dist-dir dist",
-    "build:css": "parcel build src/styles/styles.less --no-source-maps --no-cache --dist-dir dist",
-    "minify:js": "terser -- dist/main.js > dist/index.js && rimraf dist/main.js"
-  },
-  "targets": {
-    "main": false,
-    "module": {
-      "includeNodeModules": true
-    }
+    "dev": "vite -c ../vite.config.mjs"
   },
   "visualizations": [
     {
@@ -41,16 +30,7 @@
     }
   ],
   "devDependencies": {
-    "@parcel/compressor-brotli": "2.3.2",
-    "@parcel/compressor-gzip": "2.3.2",
-    "@parcel/transformer-less": "2.3.2",
-    "@types/d3": "^7.1.0",
-    "@types/react-json-tree": "^0.13.0",
-    "concurrently": "^6.3.0",
-    "cross-env": "^7.0.3",
-    "parcel": "2.3.2",
-    "rimraf": "^3.0.2",
-    "terser": "^5.9.0"
+    "vite": "file:../node_modules/vite"
   },
   "dependencies": {
     "@elastic/eui": "34.6.0",
@@ -64,8 +44,6 @@
     "redisinsight-plugin-sdk": "^1.1.0"
   },
   "resolutions": {
-    "@parcel/**/micromatch": "^4.0.8",
-    "@parcel/**/braces": "^3.0.3",
     "trim": "0.0.3",
     "**/semver": "^7.5.2"
   }

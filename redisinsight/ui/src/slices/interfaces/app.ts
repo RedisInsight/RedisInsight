@@ -2,7 +2,7 @@ import { AxiosError } from 'axios'
 import { EuiComboBoxOptionOption } from '@elastic/eui'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { Nullable } from 'uiSrc/utils'
-import { DurationUnits, FeatureFlags, ICommands, SortOrder } from 'uiSrc/constants'
+import { BrowserColumns, DurationUnits, FeatureFlags, ICommands, SortOrder } from 'uiSrc/constants'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 
@@ -74,6 +74,7 @@ export interface StateAppContext {
     treeViewSort: SortOrder
     slowLogDurationUnit: DurationUnits
     showHiddenRecommendations: boolean
+    shownColumns: BrowserColumns[]
   }
   dbIndex: {
     disabled: boolean

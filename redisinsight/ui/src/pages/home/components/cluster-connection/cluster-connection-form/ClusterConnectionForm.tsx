@@ -225,7 +225,7 @@ const ClusterConnectionForm = (props: Props) => {
   }
 
   return (
-    <div className="getStartedForm" data-testid="add-db_cluster">
+    <div className="getStartedForm eui-yScroll" data-testid="add-db_cluster">
       <MessageEnterpriceSoftware />
       <br />
 

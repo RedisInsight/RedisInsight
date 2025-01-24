@@ -355,9 +355,8 @@ export const getCommandsFromQuery = (query: string, commandsArray: string[] = []
 }
 
 export const parseJMESPathFunctions = (functions: TJMESPathFunctions) => Object.entries(functions)
-  .map(([labelInit, func]) => {
+  .map(([label, func]) => {
     const { arguments: args } = func
-    const label = labelInit.toUpperCase()
     const range = { startLineNumber: 0, endLineNumber: 0, startColumn: 0, endColumn: 0 }
     const detail = `${label}(${generateArgsNames('', args).join(', ')})`
     const argsNames = generateArgsNames('', args, false, true)

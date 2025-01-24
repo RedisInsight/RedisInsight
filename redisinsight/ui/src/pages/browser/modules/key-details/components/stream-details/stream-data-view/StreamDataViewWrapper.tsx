@@ -247,7 +247,7 @@ const StreamDataViewWrapper = (props: Props) => {
       const timestamp = idStr.split('-')?.[0]
 
       return (
-        <div>
+        <div style={{ minHeight: '38px' }}>
           {id.length < MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP && (
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
               <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
@@ -257,7 +257,7 @@ const StreamDataViewWrapper = (props: Props) => {
               </div>
             </EuiText>
           )}
-          <EuiText size="s" style={{ maxWidth: '100%', height: '38px' }} className="truncateText">
+          <EuiText size="s" style={{ maxWidth: '100%' }} className="truncateText">
             <div className="streamItemId truncateText" data-testid={`stream-entry-${id}`} title={idStr}>
               {id}
             </div>

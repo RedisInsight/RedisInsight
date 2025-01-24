@@ -68,7 +68,7 @@ const WorkbenchSettings = () => {
             <EuiLink
               color="text"
               external={false}
-              href="https://redis.io/docs/manual/pipelining/"
+              href="https://redis.io/docs/latest/develop/use/pipelining/"
               target="_blank"
               data-testid="pipelining-link"
             >

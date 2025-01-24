@@ -64,24 +64,24 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
   private async getLength(client: RedisClient, key: RedisString): Promise<number> {
     try {
       const objectKeyType = await client.sendCommand(
-        [BrowserToolRejsonRlCommands.JsonType, key, '.'],
+        [BrowserToolRejsonRlCommands.JsonType, key],
         { replyEncoding: 'utf8' },
       );
 
       switch (objectKeyType) {
         case 'object':
           return await client.sendCommand(
-            [BrowserToolRejsonRlCommands.JsonObjLen, key, '.'],
+            [BrowserToolRejsonRlCommands.JsonObjLen, key],
             { replyEncoding: 'utf8' },
           ) as number;
         case 'array':
           return await client.sendCommand(
-            [BrowserToolRejsonRlCommands.JsonArrLen, key, '.'],
+            [BrowserToolRejsonRlCommands.JsonArrLen, key],
             { replyEncoding: 'utf8' },
           ) as number;
         case 'string':
           return await client.sendCommand(
-            [BrowserToolRejsonRlCommands.JsonStrLen, key, '.'],
+            [BrowserToolRejsonRlCommands.JsonStrLen, key],
             { replyEncoding: 'utf8' },
           ) as number;
         default:

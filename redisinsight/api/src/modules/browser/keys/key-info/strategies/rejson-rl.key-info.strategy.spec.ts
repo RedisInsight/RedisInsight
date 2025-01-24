@@ -35,7 +35,6 @@ describe('RejsonRlKeyInfoStrategy', () => {
 
   describe('getInfo', () => {
     const key = getKeyInfoResponse.name;
-    const path = '.';
 
     describe('when includeSize is true', () => {
       it('should return all info in single pipeline for object type', async () => {
@@ -51,14 +50,14 @@ describe('RejsonRlKeyInfoStrategy', () => {
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
+            [BrowserToolRejsonRlCommands.JsonType, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue('object');
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonObjLen, key, path],
+            [BrowserToolRejsonRlCommands.JsonObjLen, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue(10);
@@ -86,14 +85,14 @@ describe('RejsonRlKeyInfoStrategy', () => {
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
+            [BrowserToolRejsonRlCommands.JsonType, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue('object');
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonObjLen, key, path],
+            [BrowserToolRejsonRlCommands.JsonObjLen, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue(10);
@@ -127,14 +126,14 @@ describe('RejsonRlKeyInfoStrategy', () => {
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
+            [BrowserToolRejsonRlCommands.JsonType, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue('array');
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonArrLen, key, path],
+            [BrowserToolRejsonRlCommands.JsonArrLen, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue(10);
@@ -168,14 +167,14 @@ describe('RejsonRlKeyInfoStrategy', () => {
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
+            [BrowserToolRejsonRlCommands.JsonType, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue('string');
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonStrLen, key, path],
+            [BrowserToolRejsonRlCommands.JsonStrLen, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue(10);
@@ -209,7 +208,7 @@ describe('RejsonRlKeyInfoStrategy', () => {
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
+            [BrowserToolRejsonRlCommands.JsonType, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue('boolean');
@@ -249,14 +248,14 @@ describe('RejsonRlKeyInfoStrategy', () => {
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
+            [BrowserToolRejsonRlCommands.JsonType, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue('object');
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonObjLen, key, path],
+            [BrowserToolRejsonRlCommands.JsonObjLen, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue(10);
@@ -290,14 +289,14 @@ describe('RejsonRlKeyInfoStrategy', () => {
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
+            [BrowserToolRejsonRlCommands.JsonType, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue('object');
 
         when(mockStandaloneRedisClient.sendCommand)
           .calledWith(
-            [BrowserToolRejsonRlCommands.JsonObjLen, key, path],
+            [BrowserToolRejsonRlCommands.JsonObjLen, key],
             { replyEncoding: 'utf8' },
           )
           .mockResolvedValue(100);
@@ -312,7 +311,7 @@ describe('RejsonRlKeyInfoStrategy', () => {
         expect(result).toEqual({
           ...getKeyInfoResponse,
           length: 100,
-          size: -1
+          size: -1,
         });
       });
     });

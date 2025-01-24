@@ -491,10 +491,13 @@ export const initDataHelper = (rte) => {
   };
 
   const waitIndexingToComplete = async (hashIndexes: string[]) => {
-    const retryLimit = 3;
+    // indexes creation needs some additional time to complete, which is around 500ms
+    // setting the limit a little bit higher just in case, having RETRY_LIMIT * RETRY_INTERVAL = 900ms
+    const RETRY_LIMIT = 3;
+    const RETRY_INTERVAL = 300;
     let indexesCompleted = new Array(hashIndexes.length).fill(false);
-    for(let retryCounter = 0; retryCounter < retryLimit; retryCounter++) {
-      await new Promise((resolve) => setTimeout(resolve, 300));
+    for(let retryCounter = 0; retryCounter < RETRY_LIMIT; retryCounter++) {
+      await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL));
 
       for (let i = 0; i < hashIndexes.length; i++) {
         // ft.info command returns an array which contains data that shows wether the indexing is in progress
@@ -513,7 +516,7 @@ export const initDataHelper = (rte) => {
     }
 
     if (indexesCompleted.includes(false)) {
-      console.log('Indexing has not yet completed');
+      console.error('Indexing has not yet completed');
     }
   }
 

@@ -318,22 +318,7 @@ export const connectedInstanceInfoSelector = (state: RootState) =>
   state.connections.instances.instanceInfo
 export const editedInstanceSelector = (state: RootState) =>
   state.connections.instances.editedInstance
-export const connectedInstanceOverviewSelector = (state: RootState) => {
-  const overview = state.connections.instances.instanceOverview
-  const {
-    usedMemory,
-    cloudDetails: { planMemoryLimit, memoryLimitMeasurementUnit } = {},
-  } = overview
-
-  const usedMemoryPercent = planMemoryLimit
-    ? truncatePercentage(((usedMemory || 0) / toBytes(planMemoryLimit, memoryLimitMeasurementUnit || 'MB')) * 100, 1)
-    : 0
-
-  return {
-    ...overview,
-    usedMemoryPercent,
-  }
-}
+export const connectedInstanceOverviewSelector = (state: RootState) => state.connections.instances.instanceOverview
 
 export const importInstancesSelector = (state: RootState) =>
   state.connections.instances.importInstances

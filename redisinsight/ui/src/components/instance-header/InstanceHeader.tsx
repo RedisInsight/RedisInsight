@@ -18,11 +18,10 @@ import {
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 
-import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
+import { DatabaseOverview, FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
-import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/DatabaseOverviewWrapper'
 
 import { resetKeyInfo } from 'uiSrc/slices/browser/keys'
 
@@ -63,7 +62,6 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
     [FeatureFlags.envDependent]: envDependentFeature,
-    [FeatureFlags.cloudSso]: cloudSsoFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
   const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
 
@@ -258,7 +256,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         </EuiFlexItem>
 
         <EuiFlexItem grow={false} style={{ textAlign: 'center' }}>
-          <DatabaseOverviewWrapper />
+          <DatabaseOverview />
         </EuiFlexItem>
 
         <EuiFlexItem grow={false}>

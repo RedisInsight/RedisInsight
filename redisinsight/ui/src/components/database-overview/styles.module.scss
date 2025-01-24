@@ -141,8 +141,6 @@
   margin-top: 0;
 
   :global(.euiButton__text) {
-    font-size: 14px;
-    line-height: 18px;
-    font-weight: 400;
+    font: normal normal 400 14px/18px Graphik, sans-serif !important;
   }
 }

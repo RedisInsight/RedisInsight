@@ -137,14 +137,14 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-                  <EuiFlexItem grow={false} data-testid="instance-header-divider-env-dependent">
+                  <EuiFlexItem grow={false}>
                     <EuiText className={styles.divider}>/</EuiText>
                   </EuiFlexItem>
                   {returnUrlBase && returnUrl && (
                   <FeatureFlagComponent
                     name={FeatureFlags.envDependent}
                     otherwise={(
-                      <EuiFlexItem style={{ padding: '4px 24px 4px 0' }} grow={false}>
+                      <EuiFlexItem style={{ padding: '4px 24px 4px 0' }} grow={false} data-testid="return-to-sm-item">
                         <EuiToolTip
                           position="bottom"
                           content={returnUrlTooltip || returnUrlLabel}

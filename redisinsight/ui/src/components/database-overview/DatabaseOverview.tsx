@@ -5,9 +5,7 @@ import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elas
 import { getConfig } from 'uiSrc/config'
 
 import { DATABASE_OVERVIEW_REFRESH_INTERVAL, DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL } from 'uiSrc/constants/browser'
-import { appContextSelector } from 'uiSrc/slices/app/context'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
-import { formatBytes, toBytes, truncatePercentage } from 'uiSrc/utils'
 import { IMetric } from './components/OverviewMetrics'
 
 import AutoRefresh from '../auto-refresh'
@@ -27,11 +25,9 @@ const DatabaseOverview = (props: Props) => {
   const { metrics, loadData, lastRefreshTime, handleEnableAutoRefresh } = props
 
   const {
-    usedMemory,
-    cloudDetails: { subscriptionType, subscriptionId, planMemoryLimit, memoryLimitMeasurementUnit } = {},
+    usedMemoryPercent,
+    cloudDetails: { subscriptionType, subscriptionId } = {},
   } = overview
-
-  const memoryUsagePercent = planMemoryLimit ? truncatePercentage(((usedMemory || 0) / toBytes(planMemoryLimit, memoryLimitMeasurementUnit || 'MB')) * 100, 1) : 0
 
   const getTooltipContent = (metric: IMetric) => {
     if (!metric.children?.length) {
@@ -84,8 +80,9 @@ const DatabaseOverview = (props: Props) => {
             )}
             gutterSize="none"
             responsive={false}
+            alignItems="center"
           >
-            {subscriptionType === 'fixed' && (
+            {subscriptionId && subscriptionType === 'fixed' && (
               <EuiFlexItem
                 className={cx(styles.overviewItem, styles.upgradeBtnItem)}
                 grow={false}
@@ -94,10 +91,10 @@ const DatabaseOverview = (props: Props) => {
               >
                 <EuiButton
                   color="secondary"
-                  fill={memoryUsagePercent > 75}
+                  fill={usedMemoryPercent >= 75}
                   className={cx(styles.upgradeBtn)}
                   onClick={() => {
-                    const upgradeUrl = `${riConfig.app.returnUrlBase}/database/upgrade/${overview.subscriptionId}`
+                    const upgradeUrl = `${riConfig.app.returnUrlBase}/database/upgrade/${subscriptionId}`
                     window.open(upgradeUrl, '_blank')
                   }}
                   data-testid="upgrade-ri-db-button"

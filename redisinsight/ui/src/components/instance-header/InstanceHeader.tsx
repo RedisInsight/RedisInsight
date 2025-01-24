@@ -63,6 +63,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
     [FeatureFlags.envDependent]: envDependentFeature,
+    [FeatureFlags.cloudSso]: cloudSsoFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
   const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
 
@@ -114,7 +115,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
   return (
     <div className={cx(styles.container)}>
-      <EuiFlexGroup gutterSize="none" alignItems="center" justifyContent="spaceBetween">
+      <EuiFlexGroup gutterSize="none" alignItems="center" justifyContent="spaceBetween" style={{ height: '100%' }}>
         <EuiFlexItem style={{ overflow: 'hidden' }} grow={false}>
           <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
@@ -261,7 +262,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         </EuiFlexItem>
 
         <EuiFlexItem grow={false}>
-          <EuiFlexGroup gutterSize="none" alignItems="flexEnd" justifyContent="flexEnd">
+          <EuiFlexGroup gutterSize="none" alignItems="center" justifyContent="flexEnd">
             {isAnyChatAvailable && (
               <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
                 <CopilotTrigger />

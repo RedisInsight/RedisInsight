@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiButton, EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiTitle } from '@elastic/eui'
+import { EuiBadge, EuiButton, EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -8,7 +8,7 @@ import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
-import StarIcon from 'uiSrc/assets/img/icons/star.svg?react'
+import RocketIcon from 'uiSrc/assets/img/oauth/rocket.svg?react'
 
 import { CONNECTIVITY_OPTIONS } from '../../constants'
 
@@ -24,30 +24,31 @@ const ConnectivityOptions = (props: Props) => {
 
   return (
     <>
-      <section>
+      <section className={styles.cloudSection}>
         <EuiTitle size="xs" className={styles.sectionTitle}>
           <span>
-            <CloudIcon className={styles.cloudIcon} />Get started with Redis Cloud account
+            Get started with Redis Cloud account
           </span>
         </EuiTitle>
         <EuiSpacer />
-        <EuiFlexGrid columns={3}>
-          <EuiFlexItem grow={1}>
+        <EuiFlexGrid>
+          <EuiFlexItem grow={false}>
             <EuiButton
               color="secondary"
               className={styles.typeBtn}
               onClick={() => onClickOption(AddDbType.cloud)}
               data-testid="discover-cloud-btn"
             >
-              Add Cloud databases
+              <CloudIcon className={styles.btnIcon} />
+              Add databases
             </EuiButton>
           </EuiFlexItem>
-          <EuiFlexItem grow={1}>
+          <EuiFlexItem grow={false}>
             <OAuthSsoHandlerDialog>
               {(ssoCloudHandlerClick, isSSOEnabled) => (
                 <EuiButton
                   color="secondary"
-                  className={cx(styles.typeBtn, styles.primary)}
+                  className={styles.typeBtn}
                   href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
                     campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm]
                   })}
@@ -61,8 +62,9 @@ const ConnectivityOptions = (props: Props) => {
                   }}
                   data-testid="create-free-db-btn"
                 >
-                  <StarIcon className={styles.star} />
-                  Create free database
+                  <EuiBadge color="subdued" className={styles.freeBadge}>Free</EuiBadge>
+                  <RocketIcon className={cx(styles.btnIcon, styles.rocket)} />
+                  New database
                 </EuiButton>
               )}
             </OAuthSsoHandlerDialog>
@@ -76,15 +78,16 @@ const ConnectivityOptions = (props: Props) => {
           <span>More connectivity options</span>
         </EuiTitle>
         <EuiSpacer />
-        <EuiFlexGrid columns={3}>
-          {CONNECTIVITY_OPTIONS.map(({ id, type, title }) => (
-            <EuiFlexItem grow={1} key={id}>
+        <EuiFlexGrid>
+          {CONNECTIVITY_OPTIONS.map(({ id, type, title, icon }) => (
+            <EuiFlexItem grow={false} key={id}>
               <EuiButton
                 color="secondary"
-                className={styles.typeBtn}
+                className={cx(styles.typeBtn, styles.small)}
                 onClick={() => onClickOption(type)}
                 data-testid={`option-btn-${id}`}
               >
+                {icon?.({ className: styles.btnIcon })}
                 {title}
               </EuiButton>
             </EuiFlexItem>

@@ -3,109 +3,135 @@ name: Nightly Virustotal Analyze
 on:
   workflow_dispatch:
     inputs:
+      mode:
+        description: "Choose 'single' or 'all'"
+        required: true
+        default: 'all'
+        type: string
       file_url:
-        description: Provide a file URL for manual scanning (optional)
+        description: "Provide a file URL for single file scanning (required for 'single' mode)"
         required: false
         default: 'https://s3.amazonaws.com/redisinsight.download/public/latest/Redis-Insight-mac-arm64.dmg'
         type: string
 
 env:
   VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+  DEFAULT_FILES: |
+    https://s3.amazonaws.com/redisinsight.download/public/latest/Redis-Insight-mac-x64.dmg
+    https://s3.amazonaws.com/redisinsight.download/public/latest/Redis-Insight-mac-arm64.dmg
+    https://s3.amazonaws.com/redisinsight.download/public/latest/Redis-Insight-win-installer.exe
+    https://s3.amazonaws.com/redisinsight.download/public/latest/Redis-Insight-linux-x86_64.AppImage
+    https://s3.amazonaws.com/redisinsight.download/public/latest/Redis-Insight-linux-amd64.deb
 
 jobs:
   analyze:
-    name: Analyze file
+    name: VirusTotal Analyze
     runs-on: ubuntu-latest
+    outputs:
+      files: ${{ steps.setup_matrix.outputs.files }}
+    steps:
+      - name: Determine mode and files
+        id: setup_matrix
+        run: |
+          mode="${{ github.event.inputs.mode }}"
+          file_url="${{ github.event.inputs.file_url }}"
+
+          if [ "$mode" == "single" ] && [ -z "$file_url" ]; then
+            echo "Error: For 'single' mode, a file URL must be provided."
+            exit 1
+          fi
+
+          if [ "$mode" == "single" ]; then
+            echo "files=[$file_url]" >> $GITHUB_OUTPUT
+          else
+            files_json=$(echo "${{ env.DEFAULT_FILES }}" | jq -R -s -c 'split("\n")[:-1]')
+            echo "files=$files_json" >> $GITHUB_OUTPUT
+          fi
+
+  analyze_files:
+    name: Analyze each file
+    needs: analyze
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        file: ${{ fromJson(needs.analyze.outputs.files) }}
 
     steps:
       - name: Download file
-        id: download_file
         run: |
-          echo "Using File URL: ${{ github.event.inputs.file_url }}"
-          curl -sLo downloaded_file "${{ github.event.inputs.file_url }}"
-          echo "FILE_PATH=downloaded_file" >> $GITHUB_ENV
+          echo "Downloading: ${{ matrix.file }}"
+          curl -sLo file_to_analyze "${{ matrix.file }}"
 
       - name: Get upload URL
         id: get_upload_url
         run: |
-          # Request an upload URL for large files
-          # Reference: https://docs.virustotal.com/reference/files-scan
-
-          uploadUrl=$(curl -sq -XGET https://www.virustotal.com/api/v3/files/upload_url \
+          upload_url=$(curl -sq -XGET https://www.virustotal.com/api/v3/files/upload_url \
             -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data')
 
-          if [ -z "$uploadUrl" ] || [ "$uploadUrl" == "null" ]; then
-            echo 'Failed to retrieve upload URL from VirusTotal'
+          if [ -z "$upload_url" ] || [ "$upload_url" == "null" ]; then
+            echo "Failed to retrieve upload URL for ${{ matrix.file }}"
             exit 1
           fi
 
-          echo "UPLOAD_URL=$uploadUrl" >> $GITHUB_ENV
+          echo "UPLOAD_URL=$upload_url" >> $GITHUB_ENV
 
-      - name: Upload large file to VirusTotal
-        id: upload_large_file
+      - name: Upload file to VirusTotal
+        id: upload_file
         run: |
-          file_path="${{ env.FILE_PATH }}"
           upload_url="${{ env.UPLOAD_URL }}"
-          echo "Uploading file: $file_path to VirusTotal using upload URL"
-
-          # Upload the file to the provided upload URL
-          # Reference: https://docs.virustotal.com/reference/files-upload-url
-
-          analyzedId=$(curl -sq -XPOST "$upload_url" \
+          analyzed_id=$(curl -sq -XPOST "$upload_url" \
             -H "x-apikey: $VIRUSTOTAL_API_KEY" \
-            --form "file=@${file_path}" | jq -r '.data.id')
+            --form "file=@file_to_analyze" | jq -r '.data.id')
 
-          if [ "$analyzedId" == "null" ]; then
-            echo 'File upload failed, something went wrong'
+          if [ -z "$analyzed_id" ] || [ "$analyzed_id" == "null" ]; then
+            echo "Failed to upload file: ${{ matrix.file }}"
             exit 1
           fi
 
-          echo "ANALYZED_ID=$analyzedId" >> $GITHUB_ENV
+          echo "ANALYZED_ID=$analyzed_id" >> $GITHUB_ENV
 
       - name: Check analyze status
         run: |
-          echo "Virustotal Analyzed ID: ${ANALYZED_ID}"
-          retryAttempts="50"
-          intervalTime=30
+          analyzed_id="${{ env.ANALYZED_ID }}"
+          retry_attempts=50
+          interval_time=30
 
-          until [ "$retryAttempts" == "0" ]; do
-            analyzeStatus=$(curl -sq -XGET https://www.virustotal.com/api/v3/analyses/${ANALYZED_ID} \
+          until [ "$retry_attempts" == "0" ]; do
+            analyze_status=$(curl -sq -XGET https://www.virustotal.com/api/v3/analyses/${analyzed_id} \
               -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data.attributes.status')
 
-            if [ "$analyzeStatus" == "completed" ]; then
-              echo "Current status: ${analyzeStatus}"
+            if [ "$analyze_status" == "completed" ]; then
               break
-            else
-              echo "Current status: ${analyzeStatus}, retries left: ${retryAttempts}"
-              sleep $intervalTime
-              retryAttempts=$((retryAttempts - 1))
             fi
+
+            echo "Current status: $analyze_status, retries left: $retry_attempts"
+            sleep $interval_time
+            retry_attempts=$((retry_attempts - 1))
           done
 
-          if [ "$analyzeStatus" != "completed" ]; then
-            echo 'Analyze is not completed'
+          if [ "$analyze_status" != "completed" ]; then
+            echo "Analysis not completed for ${{ matrix.file }}"
             exit 1
           fi
 
       - name: Validate analyze
-        id: validate
         run: |
-          analysis=$(curl -sq -XGET "https://www.virustotal.com/api/v3/analyses/${ANALYZED_ID}" \
-             -H "x-apikey: $VIRUSTOTAL_API_KEY")
+          analyzed_id="${{ env.ANALYZED_ID }}"
+          analysis=$(curl -sq -XGET "https://www.virustotal.com/api/v3/analyses/${analyzed_id}" \
+            -H "x-apikey: $VIRUSTOTAL_API_KEY")
 
-          analyzeStats=$(echo "$analysis" | jq -r '.data.attributes.stats')
+          analyze_stats=$(echo "$analysis" | jq -r '.data.attributes.stats')
 
-          analyzedMalicious=$(echo "$analyzeStats" | jq '.malicious')
-          analyzedSuspicious=$(echo "$analyzeStats" | jq '.suspicious')
-          analyzedHarmless=$(echo "$analyzeStats" | jq '.harmless')
+          malicious=$(echo "$analyze_stats" | jq '.malicious')
+          suspicious=$(echo "$analyze_stats" | jq '.suspicious')
+          suspicious=$(echo "$analyze_stats" | jq '.suspicious')
+          harmless=$(echo "$analyze_stats" | jq '.harmless')
 
-          echo "Results: Malicious: $analyzedMalicious, Suspicious: $analyzedSuspicious, Harmless: $analyzedHarmless"
+          echo "Results for ${{ matrix.file }}: Malicious: $malicious, Suspicious: $suspicious, Harmless: $harmless"
 
-          if [ "$analyzedMalicious" != "0" ] || [ "$analyzedSuspicious" != "0" ]; then
-            echo "FAILED=true" >> $GITHUB_ENV
-
+          if [ "$malicious" != "0" ] || [ "$suspicious" != "0" ]; then
+            echo "File ${{ matrix.file }} is flagged as potentially harmful."
             echo "$analysis" | jq -r '.data.attributes.results[] | select(.result == "malicious" or .result == "suspicious")'
-
-            # Exit with an error
             exit 1
           fi

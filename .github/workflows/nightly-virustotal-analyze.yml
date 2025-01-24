@@ -44,7 +44,7 @@ jobs:
           if [ "$mode" == "single" ]; then
             echo "files=[$file_url]" >> $GITHUB_OUTPUT
           else
-            files_json=$(echo "${{ env.DEFAULT_FILES }}" | jq -R -s -c 'split("\n")[:-1]')
+            files_json=$(echo "${{ env.DEFAULT_FILES }}" | sed '/^$/d' | jq -R -s -c 'split("\n")[:-1]')
             echo "files=$files_json" >> $GITHUB_OUTPUT
           fi
 

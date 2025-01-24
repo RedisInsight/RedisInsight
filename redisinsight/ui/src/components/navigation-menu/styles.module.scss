@@ -54,6 +54,15 @@ $sideBarWidth: 60px;
     }
   }
 
+  .navigationButtonAlt {
+    min-width: 40px;
+    min-height: 40px;
+    height: 40px;
+    width: 40px;
+    margin: 2px 10px;
+    border-radius: 0.4rem;
+  }
+
   .navigationButtonWrapper {
     position: relative;
 

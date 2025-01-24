@@ -36,7 +36,7 @@ export class CloudSubscription {
     description: 'Number of databases in subscription',
     type: Number,
   })
-  numberOfDatabases: number;
+  numberOfDatabases?: number;
 
   @ApiProperty({
     description: 'Subscription status',

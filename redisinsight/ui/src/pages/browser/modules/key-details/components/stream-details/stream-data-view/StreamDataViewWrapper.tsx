@@ -258,8 +258,8 @@ const StreamDataViewWrapper = (props: Props) => {
               </div>
             </EuiText>
           )}
-          <EuiText size="s" style={{ maxWidth: '100%' }}>
-            <div className="streamItemId" data-testid={`stream-entry-${id}`}>
+          <EuiText size="s" style={{ maxWidth: '100%' }} className="truncateText">
+            <div className="streamItemId truncateText" data-testid={`stream-entry-${id}`} title={idStr}>
               {id}
             </div>
           </EuiText>

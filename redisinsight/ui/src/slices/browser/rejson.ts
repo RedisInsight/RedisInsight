@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
 import { isNumber } from 'lodash'
+import { JSONbig } from 'json-bigint'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getJsonPathLevel } from 'uiSrc/telemetry'
@@ -128,7 +129,7 @@ export let sourceRejson: Nullable<CancelTokenSource> = null
 // Asynchronous thunk action
 export function fetchReJSON(
   key: RedisResponseBuffer,
-  path = '.',
+  path = '$',
   length?: number,
   resetData?: boolean,
 ) {
@@ -216,7 +217,7 @@ export function setReJSONDataAction(
         }
 
         dispatch(setReJSONDataSuccess())
-        dispatch<any>(fetchReJSON(key, '.', length))
+        dispatch<any>(fetchReJSON(key, '$', length))
         dispatch<any>(refreshKeyInfoAction(key))
         onSuccessAction?.()
       }
@@ -254,7 +255,7 @@ export function appendReJSONArrayItemAction(
       )
 
       if (isStatusSuccessful(status)) {
-        const keyLevel = path === '.' ? '0' : getJsonPathLevel(`${path}[0]`)
+        const keyLevel = path === '$' ? '0' : getJsonPathLevel(`${path}[0]`)
         sendEventTelemetry({
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
@@ -267,7 +268,7 @@ export function appendReJSONArrayItemAction(
           }
         })
         dispatch(appendReJSONArrayItemSuccess())
-        dispatch<any>(fetchReJSON(key, '.', length))
+        dispatch<any>(fetchReJSON(key, '$', length))
         dispatch<any>(refreshKeyInfoAction(key))
       }
     } catch (error) {
@@ -281,7 +282,7 @@ export function appendReJSONArrayItemAction(
 // Asynchronous thunk action
 export function removeReJSONKeyAction(
   key: RedisResponseBuffer,
-  path = '.',
+  path = '$',
   jsonKeyName = '',
   length?: number
 ) {
@@ -316,7 +317,7 @@ export function removeReJSONKeyAction(
           }
         })
         dispatch(removeRejsonKeySuccess())
-        dispatch<any>(fetchReJSON(key, '.', length))
+        dispatch<any>(fetchReJSON(key, '$', length))
         dispatch<any>(refreshKeyInfoAction(key))
         dispatch(
           addMessageNotification(
@@ -333,7 +334,7 @@ export function removeReJSONKeyAction(
 }
 
 // Asynchronous thunk action
-export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
+export function fetchVisualisationResults(path = '$', forceRetrieve = false) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()

@@ -487,17 +487,21 @@ export const initDataHelper = (rte) => {
     await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_1, 'on', 'hash', 'schema', 'field', 'text']);
     await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_2, 'on', 'hash', 'schema', '*', 'text']);
 
+    // Indexes creation needs some additional time to complete, which usually is around 500ms
     await waitIndexingToComplete([constants.TEST_SEARCH_HASH_INDEX_1, constants.TEST_SEARCH_HASH_INDEX_2])
   };
 
-  const waitIndexingToComplete = async (hashIndexes: string[]) => {
-    // indexes creation needs some additional time to complete, which is around 500ms
-    // setting the limit a little bit higher just in case, having RETRY_LIMIT * RETRY_INTERVAL = 900ms
-    const RETRY_LIMIT = 3;
-    const RETRY_INTERVAL = 300;
+  /**
+   * Checks periodically (`retryLimit` times, every `retryInterval` milliseconds) if the creation of the `hashIndexes` has completed.
+   * 
+   * @param {string[]} indexes - string array containing the hashes of the indexes.
+   * @param {number} [retryLimit=3] - the maximum number of iterations. Defaults to 3.
+   * @param {number} [retryInterval=300] - the time wait between iterations, in milliseconds. Defaults to 300.
+   */
+  const waitIndexingToComplete = async (hashIndexes: string[], retryLimit = 3, retryInterval = 300) => {
     let indexesCompleted = new Array(hashIndexes.length).fill(false);
-    for(let retryCounter = 0; retryCounter < RETRY_LIMIT; retryCounter++) {
-      await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL));
+    for(let retryCounter = 0; retryCounter < retryLimit; retryCounter++) {
+      await new Promise((resolve) => setTimeout(resolve, retryInterval));
 
       for (let i = 0; i < hashIndexes.length; i++) {
         // ft.info command returns an array which contains data that shows wether the indexing is in progress

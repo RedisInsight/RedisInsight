@@ -15,6 +15,9 @@ export class SessionMetadata implements ISessionMetadata {
   @IsString()
   userId: string;
 
+  @IsObject()
+  data?: Record<string, any> = {};
+
   @IsNotEmpty()
   @IsString()
   sessionId: string;

@@ -86,6 +86,7 @@ export const mockCloudDatabase = Object.assign(new CloudDatabase(), {
   databaseId: mockCloudCapiDatabase.databaseId,
   name: mockCloudCapiDatabase.name,
   publicEndpoint: mockCloudCapiDatabase.publicEndpoint,
+  password: undefined,
   status: mockCloudCapiDatabase.status,
   sslClientAuthentication: false,
   modules: ['ReJSON'],
@@ -101,6 +102,9 @@ export const mockCloudDatabase = Object.assign(new CloudDatabase(), {
   cloudDetails: {
     cloudId: mockCloudCapiDatabase.databaseId,
     subscriptionType: CloudSubscriptionType.Flexible,
+    memoryLimitMeasurementUnit: undefined,
+    planMemoryLimit: undefined,
+    subscriptionId: mockCloudSubscription.id,
     free: false,
   },
 });
@@ -112,6 +116,7 @@ export const mockCloudDatabaseFixed = Object.assign(new CloudDatabase(), {
   cloudDetails: {
     cloudId: mockCloudCapiDatabaseFixed.databaseId,
     subscriptionType: CloudSubscriptionType.Fixed,
+    subscriptionId: mockCloudSubscription.id,
     planMemoryLimit: mockCloudCapiDatabaseFixed.planMemoryLimit,
     memoryLimitMeasurementUnit: mockCloudCapiDatabaseFixed.memoryLimitMeasurementUnit,
     free: true,

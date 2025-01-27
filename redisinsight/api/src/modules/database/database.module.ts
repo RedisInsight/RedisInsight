@@ -24,6 +24,7 @@ export class DatabaseModule {
   static register(
     databaseRepository: Type<DatabaseRepository> =
     SERVER_CONFIG.buildType === 'REDIS_STACK' ? StackDatabasesRepository : LocalDatabaseRepository,
+    databaseOverviewProvider: Type<DatabaseOverviewProvider> = DatabaseOverviewProvider,
   ) {
     return {
       module: DatabaseModule,
@@ -39,7 +40,10 @@ export class DatabaseModule {
         DatabaseAnalytics,
         DatabaseFactory,
         DatabaseInfoService,
-        DatabaseOverviewProvider,
+        {
+          provide: DatabaseOverviewProvider,
+          useClass: databaseOverviewProvider,
+        },
         {
           provide: DatabaseRepository,
           useClass: databaseRepository,

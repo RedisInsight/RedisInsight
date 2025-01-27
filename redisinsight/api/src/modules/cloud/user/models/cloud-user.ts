@@ -20,4 +20,7 @@ export class CloudUser {
   @Type(() => CloudUserAccount)
   @Expose()
   accounts?: CloudUserAccount[] = [];
+
+  @Expose()
+  data?: Record<string, any>;
 }

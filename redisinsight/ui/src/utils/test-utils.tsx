@@ -36,6 +36,7 @@ import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-se
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
 import { initialState as initialStateUserSettings } from 'uiSrc/slices/user/user-settings'
+import { initialState as initialStateUserProfile } from 'uiSrc/slices/user/cloud-user-profile'
 import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb-results'
 import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { initialState as initialStateWBECustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
@@ -111,6 +112,7 @@ const initialStateDefault: RootState = {
   },
   user: {
     settings: cloneDeep(initialStateUserSettings),
+    cloudProfile: cloneDeep(initialStateUserProfile),
   },
   workbench: {
     results: cloneDeep(initialStateWBResults),

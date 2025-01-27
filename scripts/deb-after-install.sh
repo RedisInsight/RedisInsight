@@ -24,4 +24,8 @@ sudo ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight"
 # Set basic executable permissions
 sudo chmod +x "$NEW_INSTALL_PATH/redisinsight"
 
+# Set correct ownership and permissions for chrome-sandbox
+sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox"
+sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox"
+
 echo "RedisInsight post-installation setup completed successfully"

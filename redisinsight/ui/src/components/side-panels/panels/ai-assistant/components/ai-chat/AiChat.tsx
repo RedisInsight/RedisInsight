@@ -56,7 +56,7 @@ const AiChat = () => {
 
   const handleSubmit = useCallback((message: string, tool: AiTool) => {
     sendChatMessage(message, tool)
-  }, [instanceId])
+  }, [instanceId, databaseAgreement])
 
   const sendChatMessage = (message: string, tool: AiTool) => {
     dispatch(askAiChatbotAction(
@@ -76,7 +76,12 @@ const AiChat = () => {
             }
           })
         },
-        onFinish: () => setinProgressMessage(null)
+        onFinish: () => {
+          setinProgressMessage(null)
+          if (tool === AiTool.Query && instanceId && !databaseAgreement?.dataConsent) {
+            setSettingsOpenedByDefault(true)
+          }
+        }
       }
     ))
 
@@ -119,6 +124,7 @@ const AiChat = () => {
         generalAgreement={generalAgreement}
         databaseAgreement={databaseAgreement}
         settingsOpenedByDefault={settingsOpenedByDefault}
+        setSettingsOpenedByDefault={setSettingsOpenedByDefault}
       />
       <div className={styles.chatHistory}>
         <ChatHistory

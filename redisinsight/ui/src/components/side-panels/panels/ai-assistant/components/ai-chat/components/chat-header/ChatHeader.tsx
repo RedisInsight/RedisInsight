@@ -16,6 +16,7 @@ export interface Props {
   generalAgreement: Nullable<AiAgreement>
   databaseAgreement: Nullable<AiDatabaseAgreement>
   settingsOpenedByDefault: boolean
+  setSettingsOpenedByDefault: (opened: boolean) => void
 }
 
 const ChatHeader = ({
@@ -23,7 +24,8 @@ const ChatHeader = ({
   generalAgreement,
   databaseAgreement,
   onRestart,
-  settingsOpenedByDefault
+  settingsOpenedByDefault,
+  setSettingsOpenedByDefault,
 }: Props) => (
   <div className={styles.header}>
     <div className={styles.headerActions}>
@@ -33,6 +35,7 @@ const ChatHeader = ({
         databaseAgreement={databaseAgreement}
         onRestart={onRestart}
         settingsOpenedByDefault={settingsOpenedByDefault}
+        setSettingsOpenedByDefault={setSettingsOpenedByDefault}
       />
 
       <RestartChat

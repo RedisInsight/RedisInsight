@@ -25,6 +25,7 @@ export interface Props {
   databaseAgreement: Nullable<AiDatabaseAgreement>
   onRestart: () => void
   settingsOpenedByDefault: boolean
+  setSettingsOpenedByDefault: (opened: boolean) => void
 }
 
 const CopilotSettingsPopover = ({
@@ -33,6 +34,7 @@ const CopilotSettingsPopover = ({
   databaseAgreement,
   onRestart,
   settingsOpenedByDefault,
+  setSettingsOpenedByDefault,
 }: Props) => {
   const [agreementsPopoverOpen, setAgreementsPopoverOpen] = useState(false)
   const dispatch = useDispatch()
@@ -109,6 +111,7 @@ const CopilotSettingsPopover = ({
 
   const onCancel = () => {
     formik.resetForm()
+    setSettingsOpenedByDefault(false)
     setAgreementsPopoverOpen(false)
   }
 
@@ -120,7 +123,10 @@ const CopilotSettingsPopover = ({
       anchorPosition="downRight"
       isOpen={agreementsPopoverOpen}
       panelPaddingSize="m"
-      closePopover={() => setAgreementsPopoverOpen(false)}
+      closePopover={() => {
+        setSettingsOpenedByDefault(false)
+        setAgreementsPopoverOpen(false)
+      }}
       panelClassName={styles.agreementsPopover}
       button={(
         <EuiButtonIcon

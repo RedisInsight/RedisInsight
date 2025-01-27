@@ -1,5 +1,6 @@
 import {
   AiMessage, AiMessageType, AiIntermediateStep, AiIntermediateStepType,
+  AiTool,
 } from 'src/modules/ai/messages/models';
 import { Readable } from 'stream';
 import * as MockSocket from 'socket.io-mock';
@@ -101,6 +102,7 @@ export const mockAiHumanMessage: AiMessage = Object.assign(new AiMessage(), {
   id: 'uuid-for-human-message-1',
   type: AiMessageType.HumanMessage,
   content: 'human message 1',
+  tool: AiTool.Query,
   conversationId: mockAiConversationId,
   databaseId: mockAiDatabaseId,
   accountId: mockAiAccountId,
@@ -116,6 +118,7 @@ export const mockAiHumanMessage2: AiMessage = Object.assign(new AiMessage(), {
   id: 'uuid-for-human-message-2',
   type: AiMessageType.HumanMessage,
   content: 'human message 2',
+  tool: AiTool.Query,
   conversationId: mockAiConversationId,
   databaseId: mockAiDatabaseId,
   accountId: mockAiAccountId,
@@ -141,6 +144,7 @@ export const mockAiAiResponse: AiMessage = Object.assign(new AiMessage(), {
   id: 'uuid-for-ai-response-1',
   type: AiMessageType.AiMessage,
   content: 'ai response 1',
+  tool: AiTool.Query,
   steps: [
     mockAiAiIntermediateStep,
     mockAiAiIntermediateStep2,
@@ -160,6 +164,7 @@ export const mockAiAiResponse2: AiMessage = Object.assign(new AiMessage(), {
   id: 'uuid-for-ai-response-2',
   type: AiMessageType.AiMessage,
   content: 'ai response 2',
+  tool: AiTool.Query,
   steps: [],
   conversationId: mockAiConversationId,
   databaseId: mockAiDatabaseId,

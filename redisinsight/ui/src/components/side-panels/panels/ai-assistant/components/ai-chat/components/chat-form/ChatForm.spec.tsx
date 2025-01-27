@@ -2,6 +2,7 @@ import React from 'react'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, render, screen, mockedStore, waitFor } from 'uiSrc/utils/test-utils'
+import { AiTool } from 'uiSrc/slices/interfaces/aiAssistant'
 import ChatForm, { Props } from './ChatForm'
 
 const mockedProps = mock<Props>()
@@ -47,6 +48,6 @@ describe('ChatForm', () => {
 
     fireEvent.click(screen.getByTestId('ai-submit-message-btn'))
 
-    expect(onSubmit).toBeCalledWith('test')
+    expect(onSubmit).toBeCalledWith('test', AiTool.General)
   })
 })

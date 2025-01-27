@@ -1,3 +1,3 @@
 import { AiTool } from 'uiSrc/slices/interfaces/aiAssistant'
 
-export const botTypeOptions = [{ value: AiTool.Query, inputDisplay: 'Query builder', dropdownDisplay: 'Query builder  /Query' }, { value: AiTool.General, inputDisplay: 'General Redis', dropdownDisplay: 'General Redis  /General' }]
+export const botTypeOptions = [{ value: AiTool.Query, inputDisplay: 'Query builder' }, { value: AiTool.General, inputDisplay: 'General Redis' }]

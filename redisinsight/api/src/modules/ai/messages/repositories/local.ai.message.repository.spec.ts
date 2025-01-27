@@ -21,6 +21,7 @@ import { AiMessageEntity } from 'src/modules/ai/messages/entities/ai.message.ent
 import { Repository } from 'typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
+import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { LocalAiMessageRepository } from './local.ai.message.repository';
 
 describe('LocalAiAuthProvider', () => {
@@ -51,20 +52,20 @@ describe('LocalAiAuthProvider', () => {
 
     encryptionService.decrypt.mockImplementation((value) => value);
     when(encryptionService.decrypt)
-      .calledWith(mockAiHumanMessageEntity.content, jasmine.anything())
+      .calledWith(mockAiHumanMessageEntity.content, EncryptionStrategy.KEYTAR)
       .mockResolvedValue(mockAiHumanMessage.content)
-      .calledWith(mockAiAiResponseEntity.content, jasmine.anything())
+      .calledWith(mockAiAiResponseEntity.content, EncryptionStrategy.KEYTAR)
       .mockResolvedValue(mockAiAiResponse.content)
-      .calledWith(mockAiAiResponseEntity.steps, jasmine.anything())
+      .calledWith(mockAiAiResponseEntity.steps, EncryptionStrategy.KEYTAR)
       .mockResolvedValue(JSON.stringify(mockAiAiResponse.steps));
 
     encryptionService.encrypt.mockImplementation((value) => value);
     when(encryptionService.encrypt)
-      .calledWith(mockAiHumanMessage.content, jasmine.anything())
+      .calledWith(mockAiHumanMessage.content, EncryptionStrategy.KEYTAR)
       .mockResolvedValue(mockAiHumanMessageEntity.content)
-      .calledWith(mockAiAiResponse.content, jasmine.anything())
+      .calledWith(mockAiAiResponse.content, EncryptionStrategy.KEYTAR)
       .mockResolvedValue(mockAiAiResponseEntity.content)
-      .calledWith(JSON.stringify(mockAiAiResponse.steps), jasmine.anything())
+      .calledWith(JSON.stringify(mockAiAiResponse.steps), EncryptionStrategy.KEYTAR)
       .mockResolvedValue(mockAiAiResponseEntity.steps);
   });
 

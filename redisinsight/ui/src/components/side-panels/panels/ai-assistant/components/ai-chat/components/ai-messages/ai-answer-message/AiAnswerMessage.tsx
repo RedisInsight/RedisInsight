@@ -34,7 +34,7 @@ const AiAnswerMessage = ({
         <div className={styles.avatarWrapper}>
           <ChatbotAvatar type={tool} />
         </div>
-        <div>
+        <div style={{ maxWidth: '100%' }}>
           <EuiText className={styles.aiBotNameText}>{botType}</EuiText>
           <div
             className={cx('jsx-markdown', styles.answer, { [styles.error]: !!error })}

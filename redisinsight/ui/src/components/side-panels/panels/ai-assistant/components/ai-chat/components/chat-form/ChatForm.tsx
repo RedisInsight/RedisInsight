@@ -1,5 +1,5 @@
 import React, { Ref, useRef, useState } from 'react'
-import { EuiButton, EuiForm, EuiSuperSelect, EuiText, EuiTextArea, EuiToolTip, keys } from '@elastic/eui'
+import { EuiButton, EuiForm, EuiText, EuiTextArea, EuiToolTip, keys } from '@elastic/eui'
 
 import cx from 'classnames'
 import { isModifiedEvent } from 'uiSrc/services'
@@ -7,7 +7,6 @@ import { isModifiedEvent } from 'uiSrc/services'
 import SendIcon from 'uiSrc/assets/img/icons/send.svg?react'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { AiTool } from 'uiSrc/slices/interfaces/aiAssistant'
-import { botTypeOptions } from 'uiSrc/constants'
 import BotTypePopover from '../bot-type-popover'
 import styles from './styles.module.scss'
 
@@ -58,12 +57,24 @@ const ChatForm = (props: Props) => {
   }
 
   const handleChange = ({ target }: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(target.value)
+    const updatedValue = target.value
     updateTextAreaHeight()
 
-    if (!databaseId && value.trim().startsWith('/query')) {
+    if (!databaseId && updatedValue.trim().startsWith('/query')) {
       setValidation('Open your Redis database with Redis Query Engine , or create a new database to get started.')
     } else if (validation) setValidation(null)
+
+    if (databaseId && updatedValue.trim().toLowerCase().startsWith('/query')) {
+      setBotType(AiTool.Query)
+      const newValue = updatedValue.trim().slice(6)
+      setValue(newValue)
+    } else if (updatedValue.trim().toLowerCase().startsWith('/general')) {
+      setBotType(AiTool.General)
+      const newValue = updatedValue.trim().slice(8)
+      setValue(newValue)
+    } else {
+      setValue(updatedValue)
+    }
   }
 
   const handleSubmitForm = (e: React.MouseEvent<HTMLFormElement>) => {
@@ -135,16 +146,6 @@ const ChatForm = (props: Props) => {
               </EuiText>
               <div>
                 <BotTypePopover selectedBotType={botType} setSelected={setBotType} />
-                {/* <EuiSuperSelect
-                  compressed
-                  className={styles.select}
-                  itemClassName={styles.selectItemsStyle}
-                  options={botTypeOptions}
-                  valueOfSelected={botType}
-                  onChange={setBotType}
-                  data-test-subj="select-chatbot"
-                  data-testid="select-chatbot-testid"
-                /> */}
               </div>
             </div>
             )}

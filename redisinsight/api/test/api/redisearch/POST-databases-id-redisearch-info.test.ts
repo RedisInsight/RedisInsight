@@ -48,13 +48,33 @@ const responseSchema = Joi.object({
     NOSTEM: Joi.string(),
     SEPARATOR: Joi.string(),
   }),
-  num_docs: Joi.number(),
-  max_doc_id: Joi.number(),
-  num_terms: Joi.number(),
-  num_records: Joi.number(),
+  num_docs: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
+  max_doc_id: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
+  num_terms: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
+  num_records: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
   inverted_sz_mb: Joi.string(),
   vector_index_sz_mb: Joi.string(),
-  total_inverted_index_blocks: Joi.number(),
+  total_inverted_index_blocks: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
   offset_vectors_sz_mb: Joi.string(),
   doc_table_size_mb: Joi.string(),
   sortable_values_size_mb: Joi.string(),
@@ -67,9 +87,17 @@ const responseSchema = Joi.object({
   bytes_per_record_avg: Joi.string(),
   offsets_per_term_avg: Joi.string(),
   offset_bits_per_record_avg: Joi.string(),
-  hash_indexing_failures: Joi.number(),
+  hash_indexing_failures: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
   total_indexing_time: Joi.string(),
-  indexing: Joi.number(),
+  indexing: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
   percent_indexed: Joi.string(),
   number_of_uses: Joi.number(),
   cleaning: Joi.number(),

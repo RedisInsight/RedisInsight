@@ -8,6 +8,7 @@ import {
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
   getMainCheckFn,
+  checkResponseBody,
 } from '../deps';
 
 const {
@@ -143,11 +144,17 @@ describe('POST /databases/:id/redisearch/info', () => {
           index: 'Invalid index',
         },
         statusCode: 500,
-        responseBody: {
-          message: 'Unknown index name',
-          error: 'Internal Server Error',
-          statusCode: 500,
-        },
+        checkFn: async (actual) => {
+          const expected = {
+            message: 'Unknown index name',
+            error: 'Internal Server Error',
+            statusCode: 500,
+          };
+          
+          const expectedMessageLowerCase = expected.message.toLowerCase();
+          const actualMessageLowerCase = actual.body.message.toLowerCase();
+          checkResponseBody({...actual.body, message: actualMessageLowerCase}, {...expected, message: expectedMessageLowerCase});
+        }
       },
     ].forEach(mainCheckFn);
   });

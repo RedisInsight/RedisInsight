@@ -52,7 +52,6 @@ export interface KeysStore {
     data: null | Array<SearchHistoryItem>
     loading: boolean
   }
-  shownColumns: BrowserColumns[]
 }
 
 export interface SearchHistoryItem {

@@ -136,8 +136,11 @@ const DatabasesListWrapper = (props: Props) => {
 
     dispatch(setConnectedInstanceId(id))
 
+    dispatch(resetKeys())
+
     history.push(Pages.browser(id))
   }
+
   const handleCheckConnectToInstance = (
     event: React.MouseEvent | React.KeyboardEvent,
     { id, provider, modules }: Instance

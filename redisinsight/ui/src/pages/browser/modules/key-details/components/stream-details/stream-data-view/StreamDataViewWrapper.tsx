@@ -207,7 +207,6 @@ const StreamDataViewWrapper = (props: Props) => {
     render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
       const index = toNumber(last(label.split('-')))
       const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name)
-      const value = values[index] ? bufferToString(values[index]?.value) : ''
 
       const { value: decompressedBufferValue } = decompressingBuffer(values[index]?.value || stringToBuffer(''), compressor)
       // const bufferValue = values[index]?.value || stringToBuffer('')
@@ -248,7 +247,7 @@ const StreamDataViewWrapper = (props: Props) => {
       const timestamp = idStr.split('-')?.[0]
 
       return (
-        <div>
+        <div style={{ minHeight: '38px' }}>
           {id.length < MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP && (
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
               <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
@@ -258,8 +257,8 @@ const StreamDataViewWrapper = (props: Props) => {
               </div>
             </EuiText>
           )}
-          <EuiText size="s" style={{ maxWidth: '100%' }}>
-            <div className="streamItemId" data-testid={`stream-entry-${id}`}>
+          <EuiText size="s" style={{ maxWidth: '100%' }} className="truncateText">
+            <div className="streamItemId truncateText" data-testid={`stream-entry-${id}`} title={idStr}>
               {id}
             </div>
           </EuiText>

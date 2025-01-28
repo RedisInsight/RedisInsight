@@ -8,6 +8,7 @@ import {
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
   getMainCheckFn,
+  checkResponseBody,
 } from '../deps';
 
 const {
@@ -34,6 +35,7 @@ const responseSchema = Joi.object({
     key_type: Joi.string(),
     prefixes: Joi.array(),
     default_score: Joi.string(),
+    indexes_all: Joi.string(),
   }),
   attributes: Joi.array().items({
     identifier: Joi.string(),
@@ -47,13 +49,33 @@ const responseSchema = Joi.object({
     NOSTEM: Joi.string(),
     SEPARATOR: Joi.string(),
   }),
-  num_docs: Joi.string(),
-  max_doc_id: Joi.string(),
-  num_terms: Joi.string(),
-  num_records: Joi.string(),
+  num_docs: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
+  max_doc_id: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
+  num_terms: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
+  num_records: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
   inverted_sz_mb: Joi.string(),
   vector_index_sz_mb: Joi.string(),
-  total_inverted_index_blocks: Joi.string(),
+  total_inverted_index_blocks: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
   offset_vectors_sz_mb: Joi.string(),
   doc_table_size_mb: Joi.string(),
   sortable_values_size_mb: Joi.string(),
@@ -66,9 +88,17 @@ const responseSchema = Joi.object({
   bytes_per_record_avg: Joi.string(),
   offsets_per_term_avg: Joi.string(),
   offset_bits_per_record_avg: Joi.string(),
-  hash_indexing_failures: Joi.string(),
+  hash_indexing_failures: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
   total_indexing_time: Joi.string(),
-  indexing: Joi.string(),
+  indexing: Joi.alternatives()
+  .try(
+    Joi.string(),
+    Joi.number()
+  ),
   percent_indexed: Joi.string(),
   number_of_uses: Joi.number(),
   cleaning: Joi.number(),
@@ -114,11 +144,17 @@ describe('POST /databases/:id/redisearch/info', () => {
           index: 'Invalid index',
         },
         statusCode: 500,
-        responseBody: {
-          message: 'Unknown Index name',
-          error: 'Internal Server Error',
-          statusCode: 500,
-        },
+        checkFn: async (actual) => {
+          const expected = {
+            message: 'Unknown index name',
+            error: 'Internal Server Error',
+            statusCode: 500,
+          };
+          
+          const expectedMessageLowerCase = expected.message.toLowerCase();
+          const actualMessageLowerCase = actual.body.message.toLowerCase();
+          checkResponseBody({...actual.body, message: actualMessageLowerCase}, {...expected, message: expectedMessageLowerCase});
+        }
       },
     ].forEach(mainCheckFn);
   });

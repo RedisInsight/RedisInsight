@@ -33,7 +33,6 @@ import { localStorageService } from 'uiSrc/services'
 import { appContextSelector, resetRdiContext, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
-import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import {
   checkConnectToInstanceAction,
   deleteInstancesAction,
@@ -133,9 +132,6 @@ const DatabasesListWrapper = (props: Props) => {
 
   const connectToInstance = (id = '') => {
     dispatch(resetRdiContext())
-
-    dispatch(resetCliHelperSettings())
-    dispatch(resetCliSettingsAction())
     dispatch(setConnectedInstanceId(id))
 
     history.push(Pages.browser(id))

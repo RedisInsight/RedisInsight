@@ -20,7 +20,7 @@ import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { resetBulkActions } from 'uiSrc/slices/browser/bulkActions'
-import { resetCliHelperSettings } from 'uiSrc/slices/cli/cli-settings'
+import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -336,6 +336,7 @@ export function resetDatabaseContext() {
     dispatch(setAppContextInitialState())
     dispatch(resetPatternKeysData())
     dispatch(resetCliHelperSettings())
+    dispatch(resetCliSettingsAction())
     dispatch(resetRedisearchKeysData())
     dispatch(setClusterDetailsInitialState())
     dispatch(setDatabaseAnalysisInitialState())

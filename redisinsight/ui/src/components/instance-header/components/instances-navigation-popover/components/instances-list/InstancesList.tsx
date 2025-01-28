@@ -8,6 +8,7 @@ import { Pages } from 'uiSrc/constants'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
 import { getDbIndex } from 'uiSrc/utils'
+import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import { InstancesTabs } from '../../InstancesNavigationPopover'
 import styles from '../../styles.module.scss'
 
@@ -33,6 +34,8 @@ const InstancesList = ({
   const instances = selectedTab === InstancesTabs.Databases ? filteredDbInstances : filteredRdiInstances
 
   const connectToInstance = (id = '') => {
+    dispatch(resetCliHelperSettings())
+    dispatch(resetCliSettingsAction())
     dispatch(setConnectedInstanceId(id))
     setLoading(false)
     onItemClick?.()

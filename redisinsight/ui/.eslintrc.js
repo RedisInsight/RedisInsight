@@ -1,11 +1,16 @@
-const path = require('path')
+const path = require('path');
 
 module.exports = {
   root: true,
   env: {
     browser: true,
   },
-  extends: ['airbnb-typescript', 'airbnb/hooks', 'plugin:sonarjs/recommended'],
+  extends: [
+    'airbnb-typescript',
+    'airbnb/hooks',
+    'plugin:sonarjs/recommended',
+    'prettier',
+  ],
   // extends: ['airbnb', 'airbnb/hooks'],
   plugins: ['@typescript-eslint'],
   parser: '@typescript-eslint/parser',
@@ -18,23 +23,44 @@ module.exports = {
 
   overrides: [
     {
-      files: [
-        '**/*.spec.ts',
-        '**/*.spec.tsx',
-        '**/*.spec.ts',
-      ],
+      files: ['**/*.spec.ts', '**/*.spec.tsx', '**/*.spec.ts'],
       env: {
         jest: true,
       },
     },
+    {
+      files: ['*.ts', '*.tsx'],
+      rules: {
+        '@typescript-eslint/semi': ['error', 'never'],
+        semi: 'off',
+      },
+    },
+    {
+      files: ['*.js', '*.jsx'],
+      rules: {
+        semi: ['error', 'always'],
+        '@typescript-eslint/semi': 'off',
+      },
+    },
   ],
-  ignorePatterns: ['dist', 'src/packages/redisearch/src/icons/*.js', 'src/packages/common/src/icons/*.js'],
-
+  ignorePatterns: [
+    'dist',
+    'src/packages/redisearch/src/icons/*.js',
+    'src/packages/common/src/icons/*.js',
+  ],
   rules: {
     radix: 'off',
-    semi: ['error', 'never'],
+    semi: ['error', 'always'],
     'no-bitwise': ['error', { allow: ['|'] }],
-    'max-len': ['error', { ignoreComments: true, ignoreStrings: true, ignoreRegExpLiterals: true, code: 120 }],
+    'max-len': [
+      'error',
+      {
+        ignoreComments: true,
+        ignoreStrings: true,
+        ignoreRegExpLiterals: true,
+        code: 120,
+      },
+    ],
     'class-methods-use-this': 'off',
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
@@ -82,23 +108,23 @@ module.exports = {
           {
             pattern: 'uiSrc/**',
             group: 'internal',
-            position: 'after'
+            position: 'after',
           },
           {
             pattern: 'apiSrc/**',
             group: 'internal',
-            position: 'after'
+            position: 'after',
           },
           {
             pattern: '{.,..}/*.scss', // same directory only
             // pattern: '{.,..}/**/*\.scss' // same & outside directories (e.g. import '../foo/foo.scss')
             group: 'object',
-            position: 'after'
-          }
+            position: 'after',
+          },
         ],
         warnOnUnassignedImports: true,
-        pathGroupsExcludedImportTypes: ['builtin']
+        pathGroupsExcludedImportTypes: ['builtin'],
       },
     ],
   },
-}
+};

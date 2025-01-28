@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { compact, first, isFinite } from 'lodash'
+import { compact, first } from 'lodash'
 import cx from 'classnames'
 import MonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { useParams } from 'react-router-dom'
 
-import { DSLNaming, ICommandTokenType, IRedisCommand, MonacoLanguage, Theme, } from 'uiSrc/constants'
+import { DSLNaming, IRedisCommand, MonacoLanguage, Theme, } from 'uiSrc/constants'
 import {
   actionTriggerParameterHints,
   createSyntaxWidget,
@@ -28,7 +28,6 @@ import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench
 import DedicatedEditor from 'uiSrc/components/monaco-editor/components/dedicated-editor'
 import { QueryActions, QueryTutorials } from 'uiSrc/components/query'
 
-import { addOwnTokenToArgs, findCurrentArgument, } from 'uiSrc/pages/workbench/utils/query'
 import { getRange, getRediSearchSignutureProvider, } from 'uiSrc/pages/workbench/utils/monaco'
 import { CursorContext } from 'uiSrc/pages/workbench/types'
 import { asSuggestionsRef, getCommandsSuggestions, isIndexComplete } from 'uiSrc/pages/workbench/utils/suggestions'
@@ -36,6 +35,7 @@ import { COMMANDS_TO_GET_INDEX_INFO, COMPOSITE_ARGS, EmptySuggestionsIds, } from
 import { useDebouncedEffect } from 'uiSrc/services'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { findSuggestionsByArg } from 'uiSrc/pages/workbench/utils/searchSuggestions'
+import { findSuggestionsByQueryArgs } from 'uiSrc/pages/workbench/utils/query'
 import {
   argInQuotesRegExp,
   aroundQuotesRegExp,
@@ -103,12 +103,6 @@ const Query = (props: Props) => {
   const { items: execHistoryItems, loading, processing } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
-
-  // TODO: need refactor to avoid this
-  const REDIS_COMMANDS = useMemo(
-    () => commands.map((command) => ({ ...addOwnTokenToArgs(command.name!, command) })),
-    [commands]
-  )
 
   const compositeTokens = useMemo(() =>
     commands
@@ -435,12 +429,7 @@ const Query = (props: Props) => {
     }
 
     const [beforeOffsetArgs, [currentOffsetArg]] = command.args
-    const foundArg = findCurrentArgument([{
-      ...command.info,
-      type: ICommandTokenType.Block,
-      token: command.name,
-      arguments: command.info?.arguments
-    }], beforeOffsetArgs)
+    const foundArg = findSuggestionsByQueryArgs([{ ...command.info, token: command.name }], beforeOffsetArgs)
 
     const DSL = foundArg?.stopArg?.dsl
     if (DSL && argInQuotesRegExp.test(currentOffsetArg)) {
@@ -575,7 +564,7 @@ const Query = (props: Props) => {
 
     const cursorContext: CursorContext = { ...cursor, currentOffsetArg, offset: command.commandCursorPosition, range }
     const { suggestions, helpWidget } = findSuggestionsByArg(
-      REDIS_COMMANDS,
+      commands,
       command,
       cursorContext,
       { fields: attributesRef.current, indexes: indexesRef.current },

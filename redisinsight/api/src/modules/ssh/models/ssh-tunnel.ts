@@ -1,13 +1,13 @@
-import { AddressInfo } from 'net';
-import { createTunnel } from 'tunnel-ssh';
+import { Server, AddressInfo } from 'net';
+import { Client } from 'ssh2';
 import { Endpoint } from 'src/common/models';
 
-export type SshTunnelServer = Awaited<ReturnType<typeof createTunnel>>[0];
-export type SshTunnelClient = Awaited<ReturnType<typeof createTunnel>>[1];
+export type SshTunnelServer = Server;
+export type SshTunnelClient = Client;
 
 export interface ISshTunnelOptions {
-  targetHost: string,
-  targetPort: number,
+  targetHost: string;
+  targetPort: number;
 }
 
 export class SshTunnel {
@@ -26,8 +26,17 @@ export class SshTunnel {
   }
 
   public close() {
-    this.server?.close?.(() => {
-      // ignore any error
+    return new Promise<void>((resolve) => {
+      const cleanup = () => {
+        this.client?.end();
+        resolve();
+      };
+
+      if (this.server?.listening) {
+        this.server.close(() => cleanup());
+      } else {
+        cleanup();
+      }
     });
   }
 }

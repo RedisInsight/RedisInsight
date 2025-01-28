@@ -1,5 +1,5 @@
 /* eslint-disable no-continue */
-import { findLastIndex, isNumber, isUndefined, toNumber } from 'lodash'
+import { findLastIndex, isNumber, toNumber } from 'lodash'
 import { CommandProvider, ICommandTokenType, IRedisCommand, IRedisCommandTree } from 'uiSrc/constants'
 import { generateArgsNames, Maybe, Nullable } from 'uiSrc/utils'
 import { ArgName, FoundCommandArgument } from 'uiSrc/pages/workbench/types'
@@ -107,7 +107,8 @@ export const findStopArgument = (
       return {
         queryArgsIterated: i,
         stopArgument: currentArgument,
-        skippedArguments: optionalArguments
+        skippedArguments: optionalArguments,
+        isCompleteByNArgs: argsCount === 0
       }
     }
 
@@ -140,32 +141,34 @@ export const findStopArgument = (
     if (isBlockType(currentArgument)) {
       const { optionalArguments } = skipOptionalArguments('', prevMandatoryIndex, command.arguments)
       const filteredArguments = removeSuggestedArgs(queryArgs, optionalArguments)
+      const parentArgs = [filteredArguments, ...parentSkippedArguments]
+      const restQeuryArgs = queryArgs.slice(i)
+      const blockResult: any = findStopArgument(restQeuryArgs, currentArgument, argsCount, true, parentArgs) || {}
+      const { stopArgument, isCompleteByNArgs, queryArgsIterated } = blockResult
 
-      const blockArgument: any = findStopArgument(
-        queryArgs.slice(i),
-        currentArgument,
-        argsCount,
-        true,
-        [filteredArguments, ...parentSkippedArguments]
-      )
+      const isCountCompleted = isCountPositive(argsCount) && isCompleteByNArgs
+      i += (queryArgsIterated || 1) - 1
 
-      const isNArgsAndCompleted = isNumber(argsCount) && argsCount > 0 && blockArgument.finishedArgsCount === 0
-      if (isNArgsAndCompleted) {
+      // entered all multiple counted arguments, move to next command arg
+      if (isCountCompleted) {
+        argsCount = undefined
         isBlocked = false
         commandIndex++
         continue
       }
 
-      if (blockArgument?.stopArgument) return { ...blockArgument, blockParent: currentArgument }
-
-      i += (blockArgument?.queryArgsIterated || 1) - 1
-      isBlocked = false
-
-      if (currentArgument && (!currentArgument.multiple)) {
-        commandIndex++
+      // we found an argument which is needed to be inserted
+      if (stopArgument) {
+        return {
+          ...blockResult,
+          blockParent: currentArgument
+        }
       }
 
-      argsCount = 0
+      if (currentArgument && (!currentArgument.multiple)) commandIndex++
+
+      isBlocked = false
+      argsCount = undefined
       continue
     }
 
@@ -195,7 +198,8 @@ export const findStopArgument = (
     }
 
     // handle count argument with next multiple
-    if (isCountArg(currentArgument) && command?.arguments[commandIndex + 1]?.multiple) {
+    const nextArgument = command?.arguments?.[commandIndex + 1]
+    if (isCountArg(currentArgument) && nextArgument?.multiple) {
       argsCount = toNumber(queryArg) || 0
 
       if (argsCount === 0) {
@@ -212,14 +216,14 @@ export const findStopArgument = (
     commandIndex++
     isNumber(argsCount) && argsCount--
 
-    if (isNumber(argsCount) && argsCount > 0) {
+    if (isCountPositive(argsCount)) {
       continue
     }
 
     isBlocked = false
   }
 
-  const lastArgument: Maybe<IRedisCommand> = command?.arguments?.[commandIndex]
+  const stopArgument: Maybe<IRedisCommand> = command?.arguments?.[commandIndex]
   const prevMandatoryIndex = findLastIndex(
     command.arguments.slice(0, commandIndex),
     (arg) => !arg.optional
@@ -229,15 +233,14 @@ export const findStopArgument = (
   const currentLvlArgs = removeSuggestedArgs(queryArgs, data.optionalArguments)
 
   return {
-    skippedArguments: lastArgument && !lastArgument.optional
+    skippedArguments: stopArgument && !stopArgument.optional
       ? [currentLvlArgs]
       : [currentLvlArgs, ...parentSkippedArguments],
-    stopArgument: forceReturn
-      ? (isCountPositive(argsCount) || isUndefined(argsCount) || argsCount <= 0) ? lastArgument : undefined
-      : lastArgument,
+    lastArgument: command?.arguments?.[commandIndex - 1],
+    stopArgument,
     isBlocked,
     queryArgsIterated: queryArgs.length,
-    finishedArgsCount: argsCount
+    isCompleteByNArgs: argsCount === 0
   }
 }
 

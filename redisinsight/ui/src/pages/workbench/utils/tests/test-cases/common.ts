@@ -369,4 +369,22 @@ export const commonfindCurrentArgumentCases = [
     appendIncludes: ['SKIPINITIALSCAN'],
     appendNotIncludes: ['DIALECT', 'DISTANCE', 'TERMS', 'INCLUDE', 'SCHEMA', 'APPLY', 'LOAD', 'SORTBY', 'GROUPBY'],
   },
+  {
+    input: 'FT.SEARCH \'idx\' \'query to search\' PARAMS 2 p1 p2 RETURN 3 p1 p2 p3 DIALECT ',
+    result: {
+      append: [],
+      isBlocked: true,
+      isComplete: false,
+      parent: expect.any(Object),
+      token: expect.any(Object),
+      stopArg: {
+        name: 'dialect',
+        type: 'integer',
+        optional: true,
+        token: 'DIALECT',
+        since: '2.4.3'
+      }
+    },
+    appendIncludes: [],
+  },
 ]

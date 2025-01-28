@@ -144,16 +144,16 @@ describe('POST /databases/:id/redisearch/info', () => {
           index: 'Invalid index',
         },
         statusCode: 500,
-        checkFn: async (actual) => {
-          const expected = {
+        checkFn: ({ body }) => {
+          const expectedBody = {
             message: 'Unknown index name',
             error: 'Internal Server Error',
             statusCode: 500,
           };
           
-          const expectedMessageLowerCase = expected.message.toLowerCase();
-          const actualMessageLowerCase = actual.body.message.toLowerCase();
-          checkResponseBody({...actual.body, message: actualMessageLowerCase}, {...expected, message: expectedMessageLowerCase});
+          const expectedMessageLowerCase = expectedBody.message.toLowerCase();
+          const actualMessageLowerCase = body.message.toLowerCase();
+          checkResponseBody({...body, message: actualMessageLowerCase}, {...expectedBody, message: expectedMessageLowerCase});
         }
       },
     ].forEach(mainCheckFn);

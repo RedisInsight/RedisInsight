@@ -32,7 +32,7 @@ import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { IFetchKeyArgs, IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { appContextDbConfig, resetBrowserTree } from 'uiSrc/slices/app/context'
+import { appContextDbConfig, resetBrowserTree, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 
 import { CreateListWithExpireDto, } from 'apiSrc/modules/browser/list/dto'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
@@ -728,6 +728,7 @@ export function fetchKeyInfo(
       if (status && isStatusNotFoundError(status)) {
         dispatch(resetKeyInfo())
         dispatch(deleteKeyFromList(key))
+        dispatch(setBrowserSelectedKey(null));
       }
     }
   }
@@ -1065,10 +1066,8 @@ export function fetchKeysMetadata(
         { params: { encoding: state.app.info.encoding }, signal }
       )
 
-      console.log(`here are we:`)
       onSuccessAction?.(data)
     } catch (_err) {
-      console.log(`here's the error:`+_err)
       if (!axios.isCancel(_err)) {
         const error = _err as AxiosError
         onFailAction?.()

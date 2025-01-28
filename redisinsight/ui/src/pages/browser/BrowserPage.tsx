@@ -182,6 +182,7 @@ const BrowserPage = () => {
   }, [])
 
   const handleRemoveSelectedKey = useCallback(() => {
+    setBrowserSelectedKey(null);
     handlePanel(true)
   }, [])
 

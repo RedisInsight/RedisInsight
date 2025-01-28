@@ -116,3 +116,26 @@ test('Verify that user can edit a multiple fields', async t => {
         count = await browserPage.listElementsList.count;
         await t.expect(browserPage.listElementsList.nth(count - 1).textContent).eql(elementsValue[1], 'the last element is not corrected for add in head');
     });
+test('Verify that user can hide fields', async t => {
+    await t.expect(browserPage.getKeySize(keyName).exists).ok('size is not displayed')
+    await t.expect(browserPage.getKeyTTl(keyName).exists).ok('ttl is not displayed')
+
+    await t.click(browserPage.columnsBtn);
+    await t.click(browserPage.showTtlColumnCheckbox);
+    await t.click(browserPage.columnsBtn);
+    await t.expect(browserPage.getKeySize(keyName).exists).ok('size is not displayed')
+    await t.expect(browserPage.getKeyTTl(keyName).exists).notOk('ttl is displayed')
+
+    await t.click(browserPage.columnsBtn);
+    await t.click(browserPage.showSizeColumnCheckbox);
+    await t.click(browserPage.columnsBtn);
+    await t.expect(browserPage.getKeySize(keyName).exists).notOk('size is not displayed')
+    await t.expect(browserPage.getKeyTTl(keyName).exists).notOk('ttl is displayed')
+
+    await t.click(browserPage.columnsBtn);
+    await t.click(browserPage.showSizeColumnCheckbox);
+    await t.click(browserPage.showTtlColumnCheckbox);
+    await t.click(browserPage.columnsBtn);
+    await t.expect(browserPage.getKeySize(keyName).exists).ok('size is not displayed')
+    await t.expect(browserPage.getKeyTTl(keyName).exists).ok('ttl is displayed')
+});

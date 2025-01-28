@@ -11,6 +11,8 @@ import {
   DEFAULT_TREE_SORTING,
   KeyTypes, Pages,
   SortOrder,
+  BrowserColumns,
+  DEFAULT_SHOWN_COLUMNS,
 } from 'uiSrc/constants'
 import { localStorageService, setCapabilityStorageField, setDBConfigStorageField } from 'uiSrc/services'
 import {
@@ -44,6 +46,7 @@ export const initialState: StateAppContext = {
     treeViewSort: DEFAULT_TREE_SORTING,
     slowLogDurationUnit: DEFAULT_SLOWLOG_DURATION_UNIT,
     showHiddenRecommendations: DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS,
+    shownColumns: DEFAULT_SHOWN_COLUMNS,
   },
   dbIndex: {
     disabled: false
@@ -133,6 +136,7 @@ const appContextSlice = createSlice({
       state.dbConfig.treeViewSort = payload?.treeViewSort ?? DEFAULT_TREE_SORTING
       state.dbConfig.slowLogDurationUnit = payload?.slowLogDurationUnit ?? DEFAULT_SLOWLOG_DURATION_UNIT
       state.dbConfig.showHiddenRecommendations = payload?.showHiddenRecommendations
+      state.dbConfig.shownColumns = payload?.shownColumns ?? DEFAULT_SHOWN_COLUMNS
     },
     setSlowLogUnits: (state, { payload }) => {
       state.dbConfig.slowLogDurationUnit = payload
@@ -145,6 +149,10 @@ const appContextSlice = createSlice({
     setBrowserTreeSort: (state, { payload }: PayloadAction<SortOrder>) => {
       state.dbConfig.treeViewSort = payload
       setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.treeViewSort, payload)
+    },
+    setBrowserShownColumns: (state, { payload }: PayloadAction<BrowserColumns[]>) => {
+      state.dbConfig.shownColumns = payload
+      setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.browserShownColumns, payload)
     },
     setRecommendationsShowHidden: (state, { payload }: { payload: boolean }) => {
       state.dbConfig.showHiddenRecommendations = payload
@@ -277,6 +285,7 @@ export const {
   setLastPipelineManagementPage,
   setPipelineDialogState,
   resetPipelineManagement,
+  setBrowserShownColumns,
 } = appContextSlice.actions
 
 // Selectors

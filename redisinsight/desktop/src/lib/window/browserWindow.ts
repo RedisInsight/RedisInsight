@@ -46,7 +46,7 @@ export const createWindow = async ({
 
   if (isNewMainWindow) {
     const [currentWindowX, currentWindowY] = currentWindow.getPosition()
-    const [currentWindowWidth, currentWindowHeight] = currentWindow?.getSize()
+    const [currentWindowWidth, currentWindowHeight] = currentWindow?.includeSize()
     x = currentWindowX + NEW_WINDOW_OFFSET
     y = currentWindowY + NEW_WINDOW_OFFSET
     width = currentWindowWidth

@@ -22,7 +22,7 @@ const CloneConnection = (props: Props) => {
 
   return (
     <>
-      <EuiFlexGroup responsive={false} justifyContent="flexEnd">
+      <EuiFlexGroup responsive={false} justifyContent="flexEnd" style={{ flexGrow: 0 }}>
         <EuiFlexItem grow={false}>
           <EuiButton
             size="s"

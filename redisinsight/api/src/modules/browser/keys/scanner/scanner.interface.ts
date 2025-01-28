@@ -31,5 +31,5 @@ export interface IScannerStrategy {
    */
   getKeys(client: RedisClient, args: IScannerGetKeysArgs): Promise<IScannerNodeKeys[]>;
 
-  getKeysInfo(client: RedisClient, keys: RedisString[], type?: RedisDataType): Promise<GetKeyInfoResponse[]>;
+  getKeysInfo(client: RedisClient, keys: RedisString[], type?: RedisDataType, includeSize?: boolean, includeTTL?: boolean): Promise<GetKeyInfoResponse[]>;
 }

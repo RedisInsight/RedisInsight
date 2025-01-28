@@ -77,6 +77,7 @@ const TableResult = React.memo((props: Props) => {
             <EuiToolTip
               position="bottom"
               title={title}
+              className="text-multiline-ellipsis"
               anchorClassName={cx('tooltip')}
               content={formatLongName(value.toString())}
             >

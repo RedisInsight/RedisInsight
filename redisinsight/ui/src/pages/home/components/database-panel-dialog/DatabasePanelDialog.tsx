@@ -17,7 +17,7 @@ import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices
 
 import ManualConnectionWrapper from 'uiSrc/pages/home/components/manual-connection'
 import SentinelConnectionWrapper from 'uiSrc/pages/home/components/sentinel-connection'
-import ConnectionUrlForm from 'uiSrc/pages/home/components/connection-url'
+import AddDatabaseScreen from 'uiSrc/pages/home/components/add-database-screen'
 
 import CloudConnectionFormWrapper from 'uiSrc/pages/home/components/cloud-connection'
 import ImportDatabase from 'uiSrc/pages/home/components/import-database'
@@ -119,7 +119,7 @@ const DatabasePanelDialog = (props: Props) => {
   const Form = () => (
     <>
       {connectionType === null && (
-        <ConnectionUrlForm
+        <AddDatabaseScreen
           onSelectOption={changeConnectionType}
           onClose={onClose}
         />

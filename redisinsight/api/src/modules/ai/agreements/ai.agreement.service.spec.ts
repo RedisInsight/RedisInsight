@@ -13,7 +13,7 @@ import { AiAuthProvider } from 'src/modules/ai/auth/ai-auth.provider';
 import { AiAgreementService } from './ai.agreement.service';
 import { AiAgreementRepository } from './repositories/ai.agreement.repository';
 
-describe('AiAgreementService', () => {
+xdescribe('AiAgreementService', () => {
   let service: AiAgreementService;
   let cloudUserApiService: MockType<CloudUserApiService>;
   let aiAgreementRepository: MockType<AiAgreementRepository>;

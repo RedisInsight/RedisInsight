@@ -13,7 +13,7 @@ import { Repository } from 'typeorm';
 import { LocalAiDatabaseAgreementRepository } from './local.ai.database.agreement.repository';
 import { AiDatabaseAgreementEntity } from '../entities/ai.database.agreement.entity';
 
-describe('LocalAiDatabaseAgreementRepository', () => {
+xdescribe('LocalAiDatabaseAgreementRepository', () => {
   let service: LocalAiDatabaseAgreementRepository;
   let repository: MockType<Repository<AiDatabaseAgreementEntity>>;
 

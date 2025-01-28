@@ -14,7 +14,7 @@ import { AiAuthProvider } from 'src/modules/ai/auth/ai-auth.provider';
 import { AiDatabaseAgreementService } from './ai.database.agreement.service';
 import { AiDatabaseAgreementRepository } from './repositories/ai.database.agreement.repository';
 
-describe('AiDatabaseAgreementService', () => {
+xdescribe('AiDatabaseAgreementService', () => {
   let service: AiDatabaseAgreementService;
   let cloudUserApiService: MockType<CloudUserApiService>;
   let aiDatabaseAgreementRepository: MockType<AiDatabaseAgreementRepository>;

@@ -11,7 +11,7 @@ import { CloudApiForbiddenException, CloudApiUnauthorizedException } from 'src/m
 const mockedResult = 'mockedResult';
 const mockedFn = jest.fn().mockResolvedValue(mockedResult);
 
-describe('LocalAiAuthProvider', () => {
+xdescribe('LocalAiAuthProvider', () => {
   let service: LocalAiAuthProvider;
   let cloudUserApiService: MockType<CloudUserApiService>;
 

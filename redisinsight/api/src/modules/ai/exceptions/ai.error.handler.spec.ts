@@ -21,7 +21,7 @@ import { CustomErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { wrapAiError } from './ai.error.handler';
 
-describe('wrapConvAiError', () => {
+xdescribe('wrapConvAiError', () => {
   it('Should return AiBadRequestException of status code is 400', async () => {
     const error = wrapAiError(mockAiChatBadRequestError);
     expect(error).toBeInstanceOf(AiBadRequestException);

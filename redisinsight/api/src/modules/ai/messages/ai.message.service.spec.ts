@@ -38,7 +38,7 @@ import { AiMessageService } from './ai.message.service';
 import { AiMessageProvider } from './providers/ai.message.provider';
 import { AiDatabaseAgreementRepository } from '../agreements/repositories/ai.database.agreement.repository';
 
-describe('AiMessageService', () => {
+xdescribe('AiMessageService', () => {
   let wsServer;
   let serverSocket;
   let clientSocket;

@@ -63,8 +63,8 @@ describe('AiMessageService', () => {
     serverSocket.disconnect();
     wsServer.close();
 
-    // httpServer.stop();
-    httpServer.close();
+    httpServer.stop();
+    // httpServer.close();
   });
 
   beforeEach(async () => {

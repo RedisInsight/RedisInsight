@@ -72,7 +72,7 @@ test
         await t.expect(myRedisDatabasePage.Toast.toastError.textContent).contains('Error', 'Error message not displayed', { timeout: 10000 });
         await t.expect(myRedisDatabasePage.Toast.toastError.textContent).contains(errorMessage, 'Error message not displayed', { timeout: 10000 });
     });
-test.only
+test
     .meta({ rte: rte.none })('Fields to add database prepopulation', async t => {
         const defaultHost = '127.0.0.1';
         const defaultPort = '6379';

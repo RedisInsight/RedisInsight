@@ -8,7 +8,6 @@ import {
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
   getMainCheckFn,
-  checkResponseBody,
 } from '../deps';
 
 const {
@@ -28,15 +27,14 @@ const validInputData = {
   index: constants.TEST_SEARCH_HASH_INDEX_1,
 };
 
-const responseSchema = Joi.object({
+const BASE_RESPONSE_SCHEMA = {
   index_name: Joi.string().required(),
   index_options: Joi.object({}),
-  index_definition: Joi.object({
+  index_definition: {
     key_type: Joi.string(),
     prefixes: Joi.array(),
     default_score: Joi.string(),
-    indexes_all: Joi.string(),
-  }),
+  },
   attributes: Joi.array().items({
     identifier: Joi.string(),
     attribute: Joi.string(),
@@ -49,33 +47,8 @@ const responseSchema = Joi.object({
     NOSTEM: Joi.string(),
     SEPARATOR: Joi.string(),
   }),
-  num_docs: Joi.alternatives()
-  .try(
-    Joi.string(),
-    Joi.number()
-  ),
-  max_doc_id: Joi.alternatives()
-  .try(
-    Joi.string(),
-    Joi.number()
-  ),
-  num_terms: Joi.alternatives()
-  .try(
-    Joi.string(),
-    Joi.number()
-  ),
-  num_records: Joi.alternatives()
-  .try(
-    Joi.string(),
-    Joi.number()
-  ),
   inverted_sz_mb: Joi.string(),
   vector_index_sz_mb: Joi.string(),
-  total_inverted_index_blocks: Joi.alternatives()
-  .try(
-    Joi.string(),
-    Joi.number()
-  ),
   offset_vectors_sz_mb: Joi.string(),
   doc_table_size_mb: Joi.string(),
   sortable_values_size_mb: Joi.string(),
@@ -88,17 +61,7 @@ const responseSchema = Joi.object({
   bytes_per_record_avg: Joi.string(),
   offsets_per_term_avg: Joi.string(),
   offset_bits_per_record_avg: Joi.string(),
-  hash_indexing_failures: Joi.alternatives()
-  .try(
-    Joi.string(),
-    Joi.number()
-  ),
   total_indexing_time: Joi.string(),
-  indexing: Joi.alternatives()
-  .try(
-    Joi.string(),
-    Joi.number()
-  ),
   percent_indexed: Joi.string(),
   number_of_uses: Joi.number(),
   cleaning: Joi.number(),
@@ -111,7 +74,48 @@ const responseSchema = Joi.object({
     attribute: Joi.string(),
     'Index Errors': Joi.object(),
   }),
+};
+
+const SCHEMA_REDIS_V6 = Joi.object({
+  ...BASE_RESPONSE_SCHEMA,
+  num_docs: Joi.string(),
+  max_doc_id: Joi.string(),
+  num_terms: Joi.string(),
+  num_records: Joi.string(),
+  total_inverted_index_blocks: Joi.string(),
+  hash_indexing_failures: Joi.string(),
+  indexing: Joi.string(),
+  index_definition: Joi.object(BASE_RESPONSE_SCHEMA.index_definition)
 }).required().strict();
+
+const SCHEMA_REDIS_V7 = Joi.object({
+  ...BASE_RESPONSE_SCHEMA,
+  num_docs: Joi.number(),
+  max_doc_id: Joi.number(),
+  num_terms: Joi.number(),
+  num_records: Joi.number(),
+  total_inverted_index_blocks: Joi.number(),
+  hash_indexing_failures: Joi.number(),
+  indexing: Joi.number(),
+  index_definition: Joi.object({
+    ...BASE_RESPONSE_SCHEMA.index_definition,
+    indexes_all: Joi.string(),
+  })
+}).required().strict();
+
+const expectedResults = {
+  v6: {
+    schema: SCHEMA_REDIS_V6,
+    invalidIndexErrorMessage: "Unknown Index name",
+  },
+  v7: {
+    schema: SCHEMA_REDIS_V7,
+    invalidIndexErrorMessage: "Unknown index name",
+  },
+}
+
+let redisMajorVersion: number;
+
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /databases/:id/redisearch/info', () => {
@@ -119,6 +123,8 @@ describe('POST /databases/:id/redisearch/info', () => {
   before(async () => {
     await rte.data.generateRedisearchIndexes(true);
     await localDb.createTestDbInstance(rte, {}, { id: constants.TEST_INSTANCE_ID_2 });
+    const redisVersion = rte.env.version; // ex. "7.2.4"
+    redisMajorVersion = redisVersion.split('.')[0] // returns only 7
   });
 
   describe('Validation', () => {
@@ -127,12 +133,13 @@ describe('POST /databases/:id/redisearch/info', () => {
     );
   });
 
-  describe('Common', () => {
+  describe('Common, redis version <= 6', () => {
+    requirements(() => redisMajorVersion <= 6 );
     [
       {
         name: 'Should get info index',
         data: validInputData,
-        responseSchema,
+        responseSchema: expectedResults.v6.schema,
         checkFn: async ({ body }) => {
           expect(body.index_name).to.eq(constants.TEST_SEARCH_HASH_INDEX_1);
           expect(body.index_definition?.key_type).to.eq('HASH');
@@ -144,17 +151,38 @@ describe('POST /databases/:id/redisearch/info', () => {
           index: 'Invalid index',
         },
         statusCode: 500,
-        checkFn: ({ body }) => {
-          const expectedBody = {
-            message: 'Unknown index name',
+        responseBody: {
+            message: expectedResults.v6.invalidIndexErrorMessage,
             error: 'Internal Server Error',
             statusCode: 500,
-          };
-          
-          const expectedMessageLowerCase = expectedBody.message.toLowerCase();
-          const actualMessageLowerCase = body.message.toLowerCase();
-          checkResponseBody({...body, message: actualMessageLowerCase}, {...expectedBody, message: expectedMessageLowerCase});
-        }
+        },
+      },
+    ].forEach(mainCheckFn);
+  });
+
+  describe('Common redis version >= 7', () => {
+    requirements(() => redisMajorVersion >= 7);
+    [
+      {
+        name: 'Should get info index',
+        data: validInputData,
+        responseSchema: expectedResults.v7.schema,
+        checkFn: async ({ body }) => {
+          expect(body.index_name).to.eq(constants.TEST_SEARCH_HASH_INDEX_1);
+          expect(body.index_definition?.key_type).to.eq('HASH');
+        },
+      },
+      {
+        name: 'Should throw error if non-existent index provided',
+        data: {
+          index: 'Invalid index',
+        },
+        statusCode: 500,
+        responseBody: {
+            message: expectedResults.v7.invalidIndexErrorMessage,
+            error: 'Internal Server Error',
+            statusCode: 500,
+        },
       },
     ].forEach(mainCheckFn);
   });

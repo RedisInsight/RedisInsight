@@ -48,6 +48,7 @@ export class LocalInitService extends InitService {
       appVersion,
       ...(await this.featuresConfigService.getControlInfo(sessionMetadata)),
       firstStart,
+      sessionMetadata,
     });
   }
 }

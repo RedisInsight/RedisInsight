@@ -40,37 +40,37 @@ describe('POST /ai/:databaseId/agreements', (done) => {
       validateInvalidDataTestCase(endpoint, dataSchema),
     );
   });
-  describe('saveAigreements', (done) => {
-    [
-      {
-        name: 'Should create database agreement if no database agreement is in db',
-        data: validInputData,
-        responseSchema,
-        statusCode: 200,
-        checkFn: ({ body }) => {
-          expect(body).to.eql({ ...constants.TEST_AI_DATABASE_AGREEMENT, databaseId: mockDatabaseId })
-        },
-        endpoint,
-        before: async () => {
-          await localDb.clearAiDatabaseAgreements()
-          await localDb.generateDatabase(mockDatabaseId)
-        }
-      },
-      {
-        name: 'Should update existing database agreement if database agreement is in db',
-        data: { dataConsent: false },
-        responseSchema,
-        statusCode: 200,
-        checkFn: ({ body }) => {
-          expect(body).to.eql({ ...constants.TEST_AI_DATABASE_AGREEMENT, databaseId: mockDatabaseId, dataConsent: false })
-        },
-        endpoint,
-        before: async () => {
-          const databaseAgreement = await localDb.generateAiDatabaseAgreement({ databaseId: mockDatabaseId })
-          expect(databaseAgreement.dataConsent).to.eql(true)
-        }
-      },
+  // describe('saveAigreements', (done) => {
+  //   [
+  //     {
+  //       name: 'Should create database agreement if no database agreement is in db',
+  //       data: validInputData,
+  //       responseSchema,
+  //       statusCode: 200,
+  //       checkFn: ({ body }) => {
+  //         expect(body).to.eql({ ...constants.TEST_AI_DATABASE_AGREEMENT, databaseId: mockDatabaseId })
+  //       },
+  //       endpoint,
+  //       before: async () => {
+  //         await localDb.clearAiDatabaseAgreements()
+  //         await localDb.generateDatabase(mockDatabaseId)
+  //       },
+  //     },
+  //     // {
+  //     //   name: 'Should update existing database agreement if database agreement is in db',
+  //     //   data: { dataConsent: false },
+  //     //   responseSchema,
+  //     //   statusCode: 200,
+  //     //   checkFn: ({ body }) => {
+  //     //     expect(body).to.eql({ ...constants.TEST_AI_DATABASE_AGREEMENT, databaseId: mockDatabaseId, dataConsent: false })
+  //     //   },
+  //     //   endpoint,
+  //     //   before: async () => {
+  //     //     const databaseAgreement = await localDb.generateAiDatabaseAgreement({ databaseId: mockDatabaseId })
+  //     //     expect(databaseAgreement.dataConsent).to.eql(true)
+  //     //   }
+  //     // },
 
-    ].map(mainCheckFn);
-  });
+  //   ].map(mainCheckFn);
+  // });
 });

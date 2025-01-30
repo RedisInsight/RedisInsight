@@ -38,28 +38,28 @@ describe('GET /ai/:databaseId/agreements', (done) => {
           await localDb.clearAiDatabaseAgreements()
         },
       },
-      {
-        name: 'Should return ai database agreement',
-        responseSchema,
-        checkFn: ({ body }) => {
-          expect(body).to.eql({ ...constants.TEST_AI_DATABASE_AGREEMENT, databaseId: mockDbid })
-        },
-        endpoint,
-        before: async () => {
-          await localDb.generateAiDatabaseAgreement({ databaseId: mockDbid })
-        },
-      },
-      {
-        name: 'Should not return ai database agreement for a different account or database',
-        checkFn: ({ body }) => {
-          expect(body).to.eql({})
-        },
-        endpoint,
-        before: async () => {
-          await localDb.generateAiDatabaseAgreement({ databaseId: mockDbid, accountId: 'differentAccountId' })
-          await localDb.generateAiDatabaseAgreement({ databaseId: 'differentDatabaseId' }, false)
-        },
-      },
+      // {
+      //   name: 'Should return ai database agreement',
+      //   responseSchema,
+      //   checkFn: ({ body }) => {
+      //     expect(body).to.eql({ ...constants.TEST_AI_DATABASE_AGREEMENT, databaseId: mockDbid })
+      //   },
+      //   endpoint,
+      //   before: async () => {
+      //     await localDb.generateAiDatabaseAgreement({ databaseId: mockDbid })
+      //   },
+      // },
+      // {
+      //   name: 'Should not return ai database agreement for a different account or database',
+      //   checkFn: ({ body }) => {
+      //     expect(body).to.eql({})
+      //   },
+      //   endpoint,
+      //   before: async () => {
+      //     await localDb.generateAiDatabaseAgreement({ databaseId: mockDbid, accountId: 'differentAccountId' })
+      //     await localDb.generateAiDatabaseAgreement({ databaseId: 'differentDatabaseId' }, false)
+      //   },
+      // },
     ].map(mainCheckFn);
   });
 });

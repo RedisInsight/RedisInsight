@@ -76,7 +76,7 @@ const BASE_RESPONSE_SCHEMA = {
   }),
 };
 
-const SCHEMA_REDIS_V6 = Joi.object({
+const EXPECTED_SCHEMA_V1 = Joi.object({
   ...BASE_RESPONSE_SCHEMA,
   num_docs: Joi.string(),
   max_doc_id: Joi.string(),
@@ -88,7 +88,7 @@ const SCHEMA_REDIS_V6 = Joi.object({
   index_definition: Joi.object(BASE_RESPONSE_SCHEMA.index_definition)
 }).required().strict();
 
-const SCHEMA_REDIS_V7 = Joi.object({
+const EXPECTED_SCHEMA_V2 = Joi.object({
   ...BASE_RESPONSE_SCHEMA,
   num_docs: Joi.number(),
   max_doc_id: Joi.number(),
@@ -103,18 +103,8 @@ const SCHEMA_REDIS_V7 = Joi.object({
   })
 }).required().strict();
 
-const expectedResults = {
-  v6: {
-    schema: SCHEMA_REDIS_V6,
-    invalidIndexErrorMessage: "Unknown Index name",
-  },
-  v7: {
-    schema: SCHEMA_REDIS_V7,
-    invalidIndexErrorMessage: "Unknown index name",
-  },
-}
-
-let redisMajorVersion: number;
+const INVALID_INDEX_ERROR_MESSAGE_V1: string = "Unknown Index name";
+const INVALID_INDEX_ERROR_MESSAGE_V2: string = "Unknown index name";
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -131,13 +121,13 @@ describe('POST /databases/:id/redisearch/info', () => {
     );
   });
 
-  describe('Common, redis version <= 6', () => {
+  describe('Common, redisearch version < 2.8.X', () => {
     requirements('rte.modules.search.version<20800');
     [
       {
         name: 'Should get info index',
         data: validInputData,
-        responseSchema: expectedResults.v6.schema,
+        responseSchema: EXPECTED_SCHEMA_V1,
         checkFn: async ({ body }) => {
           expect(body.index_name).to.eq(constants.TEST_SEARCH_HASH_INDEX_1);
           expect(body.index_definition?.key_type).to.eq('HASH');
@@ -150,7 +140,7 @@ describe('POST /databases/:id/redisearch/info', () => {
         },
         statusCode: 500,
         responseBody: {
-            message: expectedResults.v6.invalidIndexErrorMessage,
+            message: INVALID_INDEX_ERROR_MESSAGE_V1,
             error: 'Internal Server Error',
             statusCode: 500,
         },
@@ -158,13 +148,13 @@ describe('POST /databases/:id/redisearch/info', () => {
     ].forEach(mainCheckFn);
   });
 
-  describe('Common redis version >= 7', () => {
-    requirements('rte.modules.search.version>=20800');
+  describe('Common, 2.8.X <= redisearch version  < 2.10.X', () => {
+    requirements(() => 20800 <= rte.env.modules.search.version && rte.env.modules.search.version < 21000);
     [
       {
         name: 'Should get info index',
         data: validInputData,
-        responseSchema: expectedResults.v7.schema,
+        responseSchema: EXPECTED_SCHEMA_V1,
         checkFn: async ({ body }) => {
           expect(body.index_name).to.eq(constants.TEST_SEARCH_HASH_INDEX_1);
           expect(body.index_definition?.key_type).to.eq('HASH');
@@ -177,9 +167,36 @@ describe('POST /databases/:id/redisearch/info', () => {
         },
         statusCode: 500,
         responseBody: {
-            message: expectedResults.v7.invalidIndexErrorMessage,
+            message: INVALID_INDEX_ERROR_MESSAGE_V2,
             error: 'Internal Server Error',
             statusCode: 500,
+        },
+      },
+    ].forEach(mainCheckFn);
+  });
+
+  describe('Common, redisearch version >= 2.10.X', () => {
+    requirements('rte.modules.search.version>=21000');
+    [
+      {
+        name: 'Should get info index',
+        data: validInputData,
+        responseSchema: EXPECTED_SCHEMA_V2,
+        checkFn: async ({ body }) => {
+          expect(body.index_name).to.eq(constants.TEST_SEARCH_HASH_INDEX_1);
+          expect(body.index_definition?.key_type).to.eq('HASH');
+        },
+      },
+      {
+        name: 'Should throw error if non-existent index provided',
+        data: {
+          index: 'Invalid index',
+        },
+        statusCode: 500,
+        responseBody: {
+          message: INVALID_INDEX_ERROR_MESSAGE_V2,
+          error: 'Internal Server Error',
+          statusCode: 500,
         },
       },
     ].forEach(mainCheckFn);

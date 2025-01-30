@@ -53,7 +53,7 @@ export const findSuggestionsByArg = (
     }
   }
 
-  if (prevCursorChar === FIELD_START_SYMBOL) {
+  if (prevCursorChar === FIELD_START_SYMBOL || currentOffsetArg?.startsWith(FIELD_START_SYMBOL)) {
     return handleFieldSuggestions(additionData.fields || [], foundArg, cursorContext.range)
   }
 

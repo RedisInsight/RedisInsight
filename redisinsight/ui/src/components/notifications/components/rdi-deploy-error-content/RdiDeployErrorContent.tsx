@@ -1,5 +1,11 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiTextColor } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiSpacer,
+  EuiTextColor,
+} from '@elastic/eui'
 import useTextFileDownload from './helpers/useTextFileGenerator'
 
 export interface Props {
@@ -16,16 +22,25 @@ const RdiDeployErrorContent = (props: Props) => {
   return (
     <>
       <EuiTextColor color="ghost">
-        Review the error log for details.
-        <EuiButton
-          fill
-          size="s"
-          color="warning"
-          onClick={downloadFile}
-          data-testid="donwload-log-file-btn"
+        <EuiFlexGroup
+          direction="column"
         >
-          Download log file
-        </EuiButton>
+          <EuiFlexItem grow={false}>
+            Review the error log for details.
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              fill
+              size="s"
+              color="warning"
+              onClick={downloadFile}
+              className="toast-danger-btn"
+              data-testid="donwload-log-file-btn"
+            >
+              Download Error Log File
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
       </EuiTextColor>
 
       <EuiSpacer />

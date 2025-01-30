@@ -23,6 +23,10 @@ export class SessionMetadata implements ISessionMetadata {
   @IsString()
   uniqueId?: string;
 
+  @IsOptional()
+  @IsString()
+  correlationId?: string;
+
   /**
    * Validates session metadata required properties to be defined
    * Must be used in all the places that works with clients

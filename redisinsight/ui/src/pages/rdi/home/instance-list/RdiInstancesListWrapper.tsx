@@ -5,7 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 
 import cx from 'classnames'
 import ItemList from 'uiSrc/components/item-list'
-import { BrowserStorageItem, Pages } from 'uiSrc/constants'
+import { BrowserStorageItem, DEFAULT_SORT, Pages } from 'uiSrc/constants'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { localStorageService } from 'uiSrc/services'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
@@ -226,10 +226,7 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     }
   }
 
-  const sort: PropertySort = localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ?? {
-    field: 'lastConnection',
-    direction: 'asc'
-  }
+  const sort: PropertySort = localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ?? DEFAULT_SORT
 
   return (
     <div className={styles.container}>

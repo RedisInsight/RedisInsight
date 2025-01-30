@@ -36,14 +36,14 @@ const REDIS_SCAN_CONFIG = config.get('redis_scan');
 export class SetService {
   private logger = new Logger('SetService');
 
-  constructor(private databaseClientFactory: DatabaseClientFactory) {}
+  constructor(private databaseClientFactory: DatabaseClientFactory) { }
 
   public async createSet(
     clientMetadata: ClientMetadata,
     dto: CreateSetWithExpireDto,
   ): Promise<void> {
     try {
-      this.logger.log('Creating Set data type.');
+      this.logger.debug('Creating Set data type.', clientMetadata);
       const { keyName, expire } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -55,13 +55,13 @@ export class SetService {
         await this.createSimpleSet(client, dto);
       }
 
-      this.logger.log('Succeed to create Set data type.');
+      this.logger.debug('Succeed to create Set data type.', clientMetadata);
       return null;
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-      this.logger.error('Failed to create Set data type.', error);
+      this.logger.error('Failed to create Set data type.', error, clientMetadata);
       throw catchAclError(error);
     }
   }
@@ -71,7 +71,7 @@ export class SetService {
     dto: GetSetMembersDto,
   ): Promise<GetSetMembersResponse> {
     try {
-      this.logger.log('Getting members of the Set data type stored at key.');
+      this.logger.debug('Getting members of the Set data type stored at key.', clientMetadata);
       const { keyName, cursor, match } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       let result: GetSetMembersResponse = {
@@ -102,10 +102,10 @@ export class SetService {
         result = { ...result, ...scanResult };
       }
 
-      this.logger.log('Succeed to get members of the Set data type.');
+      this.logger.debug('Succeed to get members of the Set data type.', clientMetadata);
       return plainToClass(GetSetMembersResponse, result);
     } catch (error) {
-      this.logger.error('Failed to get members of the Set data type.', error);
+      this.logger.error('Failed to get members of the Set data type.', error, clientMetadata);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -118,7 +118,7 @@ export class SetService {
     dto: AddMembersToSetDto,
   ): Promise<void> {
     try {
-      this.logger.log('Adding members to the Set data type.');
+      this.logger.debug('Adding members to the Set data type.', clientMetadata);
       const { keyName, members } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -126,10 +126,10 @@ export class SetService {
 
       await client.sendCommand([BrowserToolSetCommands.SAdd, keyName, ...members]);
 
-      this.logger.log('Succeed to add members to Set data type.');
+      this.logger.debug('Succeed to add members to Set data type.', clientMetadata);
       return null;
     } catch (error) {
-      this.logger.error('Failed to add members to Set data type.', error);
+      this.logger.error('Failed to add members to Set data type.', error, clientMetadata);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -142,7 +142,7 @@ export class SetService {
     dto: DeleteMembersFromSetDto,
   ): Promise<DeleteMembersFromSetResponse> {
     try {
-      this.logger.log('Deleting members from the Set data type.');
+      this.logger.debug('Deleting members from the Set data type.', clientMetadata);
       const { keyName, members } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
@@ -154,10 +154,10 @@ export class SetService {
         ...members,
       ]) as number;
 
-      this.logger.log('Succeed to delete members from the Set data type.');
+      this.logger.debug('Succeed to delete members from the Set data type.', clientMetadata);
       return { affected: result };
     } catch (error) {
-      this.logger.error('Failed to delete members from the Set data type.', error);
+      this.logger.error('Failed to delete members from the Set data type.', error, clientMetadata);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }

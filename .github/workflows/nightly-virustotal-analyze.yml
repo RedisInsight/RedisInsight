@@ -1,0 +1,86 @@
+name: Nightly Virustotal Analyze
+
+on:
+  workflow_dispatch:
+    inputs:
+      file_url:
+        description: Provide a file URL for manual scanning (optional)
+        required: false
+        default: 'https://s3.amazonaws.com/redisinsight.download/public/latest/Redis-Insight-mac-arm64.dmg'
+        type: string
+
+env:
+  VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+
+jobs:
+  analyze:
+    name: Analyze file
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Use File URL
+        id: file_url_check
+        run: |
+          echo "Using File URL: ${{ github.event.inputs.file_url }}"
+          echo "FILE_URL=${{ github.event.inputs.file_url }}" >> $GITHUB_ENV
+
+      - name: Send URL to scan
+        run: |
+          url="${{ env.FILE_URL }}"
+          echo "URL to check: $url"
+
+          # Upload the URL to VirusTotal
+          analysedId=$(curl -sq -XPOST https://www.virustotal.com/api/v3/urls \
+            -H "x-apikey: $VIRUSTOTAL_API_KEY" \
+            --form url=${url} | jq -r '.data.id')
+
+          if [ "$analysedId" == "null" ]; then
+            echo 'Status is null, something went wrong';
+            exit 1;
+          fi
+
+          echo "ANALYZED_ID=$analysedId" >> $GITHUB_ENV
+
+      - name: Check analyze status
+        run: |
+          echo "Virustotal Analyzed ID: ${ANALYZED_ID}"
+          retryAttempts="50"
+          intervalTime=30
+
+          until [ "$retryAttempts" == "0" ]; do
+            analyzeStatus=$(curl -sq -XGET https://www.virustotal.com/api/v3/analyses/${ANALYZED_ID} \
+              -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data.attributes.status')
+
+            if [ "$analyzeStatus" == "completed" ]; then
+              echo "Current status: ${analyzeStatus}"
+              break
+            else
+              echo "Current status: ${analyzeStatus}, retries left: ${retryAttempts}"
+              sleep $intervalTime
+              retryAttempts=$((retryAttempts - 1))
+            fi
+          done
+
+          if [ "$analyzeStatus" != "completed" ]; then
+            echo 'Analyze is not completed'
+            exit 1
+          fi
+
+      - name: Validate analyze
+        id: validate
+        run: |
+          analyzeStats=$(curl -sq -XGET https://www.virustotal.com/api/v3/analyses/${ANALYZED_ID} \
+            -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data.attributes.stats')
+
+          analazedMalicious=$(echo ${analyzeStats} | jq '.malicious')
+          analazedSuspicious=$(echo ${analyzeStats} | jq '.suspicious')
+          analazedHarmless=$(echo ${analyzeStats} | jq '.harmless')
+
+          echo "Results: Malicious: ${analazedMalicious}, Suspicious: ${analazedSuspicious}, Harmless: ${analazedHarmless}"
+
+          if [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
+            echo "FAILED=true" >> $GITHUB_ENV
+            echo 'Found dangers'
+          else
+            echo "FAILED=false" >> $GITHUB_ENV
+          fi

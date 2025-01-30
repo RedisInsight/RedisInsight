@@ -14,16 +14,17 @@ import { CommandArgument, Command } from '../../constants'
 import { formatLongName, replaceSpaces } from '../../utils'
 
 export interface Props {
-  query: string;
-  result: any;
-  matched?: number;
+  query: string
+  result: any
+  matched?: number
+  cursorId?: null | number
 }
 
 const loadingMessage = 'loading...'
 const noResultsMessage = 'No results found.'
 
 const TableResult = React.memo((props: Props) => {
-  const { result, query, matched } = props
+  const { result, query, matched, cursorId } = props
 
   const [columns, setColumns] = useState<EuiBasicTableColumn<any>[]>([])
 
@@ -76,6 +77,7 @@ const TableResult = React.memo((props: Props) => {
             <EuiToolTip
               position="bottom"
               title={title}
+              className="text-multiline-ellipsis"
               anchorClassName={cx('tooltip')}
               content={formatLongName(value.toString())}
             >
@@ -102,7 +104,10 @@ const TableResult = React.memo((props: Props) => {
 
   return (
     <div className={cx('queryResultsContainer', 'container')}>
-      {!!matched && <div className={cx('matched')}>{`Matched: ${matched}`}</div>}
+      <div className="queryHeader">
+        {!!matched && <div className={cx('matched')}>{`Matched: ${matched}`}</div>}
+        {!!cursorId && <div className={cx('matched')}>{`Cursor ID: ${cursorId}`}</div>}
+      </div>
       {isDataArr && (
         <EuiInMemoryTable
           pagination

@@ -12,18 +12,44 @@ export class ListKeyInfoStrategy extends KeyInfoStrategy {
     client: RedisClient,
     key: RedisString,
     type: string,
+    includeSize: boolean,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${RedisDataType.List} type info.`);
+    this.logger.debug(`Getting ${RedisDataType.List} type info.`);
+    if (includeSize !== false) {
+      const [
+        [, ttl = null],
+        [, length = null],
+        [, size = null],
+      ] = await client.sendPipeline([
+        [BrowserToolKeysCommands.Ttl, key],
+        [BrowserToolListCommands.LLen, key],
+        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+      ]) as [any, number][];
+
+      return {
+        name: key,
+        type,
+        ttl,
+        size,
+        length,
+      };
+    }
 
     const [
       [, ttl = null],
-      [, size = null],
       [, length = null],
     ] = await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
-      [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
       [BrowserToolListCommands.LLen, key],
     ]) as [any, number][];
+
+    let size = -1;
+    if (length < 50_000) {
+      const sizeData = await client.sendPipeline([
+        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+      ]) as [any, number][];
+      size = sizeData && sizeData[0] && sizeData[0][1];
+    }
 
     return {
       name: key,

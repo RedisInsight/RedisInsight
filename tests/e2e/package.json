@@ -58,6 +58,7 @@
     "chromedriver": "^130.0.0",
     "cli-argument-parser": "0.7.4",
     "cross-env": "^7.0.3",
+    "date-fns": "^4.1.0",
     "dotenv-cli": "^7.4.2",
     "edit-json-file": "1.8.0",
     "eslint": "9.12.0",

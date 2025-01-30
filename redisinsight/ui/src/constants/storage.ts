@@ -5,6 +5,7 @@ enum BrowserStorageItem {
   rdiInstancesSorting = 'rdiInstancesSorting',
   theme = 'theme',
   browserViewType = 'browserViewType',
+  browserShownColumns = 'browserShownColumns',
   browserSearchMode = 'browserSearchMode',
   cliClientUuid = 'cliClientUuid',
   cliResizableContainer = 'cliResizableContainer',
@@ -13,6 +14,7 @@ enum BrowserStorageItem {
   segmentAnonymousId = 'ajs_anonymous_id',
   wbClientUuid = 'wbClientUuid',
   wbInputHistory = 'wbInputHistory',
+  wbCommandsHistory = 'command_execution',
   treeViewDelimiter = 'treeViewDelimiter',
   treeViewSort = 'treeViewSort',
   autoRefreshRate = 'autoRefreshRate',
@@ -49,4 +51,8 @@ export enum ConfigDBStorageItem {
 export enum CapabilityStorageItem {
   source = 'source',
   tutorialPopoverShown = 'tutorialPopoverShown'
+}
+
+export enum AppStorageItem {
+  returnUrl = 'returnUrl'
 }

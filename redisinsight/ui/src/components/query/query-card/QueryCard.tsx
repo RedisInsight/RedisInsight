@@ -152,6 +152,12 @@ const QueryCard = (props: Props) => {
 
   const commonError = CommonErrorResponse(id, command, result)
 
+  const isSizeLimitExceededResponse = (result: Maybe<CommandExecutionResult[]>) => {
+    const resultObj = result?.[0]
+    // response.includes - to be backward compatible with responses which don't include sizeLimitExceeded flag
+    return resultObj?.sizeLimitExceeded === true || resultObj?.response?.includes?.('Results have been deleted')
+  }
+
   return (
     <div
       className={cx(styles.containerWrapper, {
@@ -196,50 +202,65 @@ const QueryCard = (props: Props) => {
               ? <QueryCardCommonResult loading={loading} result={commonError} />
               : (
                 <>
-                  {isGroupResults(resultsMode) && (
-                    <QueryCardCliResultWrapper
-                      loading={loading}
-                      query={command}
-                      db={db}
-                      resultsMode={resultsMode}
-                      result={result}
-                      isNotStored={isNotStored}
-                      isFullScreen={isFullScreen}
-                      data-testid="group-mode-card"
-                    />
-                  )}
-                  {(resultsMode === ResultsMode.Default || !resultsMode) && (
-                    <>
-                      {viewTypeSelected === WBQueryType.Plugin && (
-                        <>
-                          {!loading && result !== undefined ? (
-                            <QueryCardCliPlugin
-                              id={selectedViewValue}
-                              result={result}
-                              query={command}
-                              mode={mode}
-                              setMessage={setMessage}
-                              commandId={id}
-                            />
-                          ) : (
-                            <div className={styles.loading}>
-                              <EuiLoadingContent lines={5} data-testid="loading-content" />
-                            </div>
-                          )}
-                        </>
-                      )}
-                      {(viewTypeSelected === WBQueryType.Text) && (
-                        <QueryCardCliResultWrapper
-                          loading={loading}
-                          query={command}
-                          resultsMode={resultsMode}
-                          result={result}
-                          isNotStored={isNotStored}
-                          isFullScreen={isFullScreen}
-                        />
-                      )}
-                    </>
-                  )}
+                  {isSizeLimitExceededResponse(result)
+                    ? (
+                      <QueryCardCliResultWrapper
+                        loading={loading}
+                        query={command}
+                        resultsMode={resultsMode}
+                        result={result}
+                        isNotStored={isNotStored}
+                        isFullScreen={isFullScreen}
+                      />
+                    )
+                    : (
+                      <>
+                        {isGroupResults(resultsMode) && (
+                          <QueryCardCliResultWrapper
+                            loading={loading}
+                            query={command}
+                            db={db}
+                            resultsMode={resultsMode}
+                            result={result}
+                            isNotStored={isNotStored}
+                            isFullScreen={isFullScreen}
+                            data-testid="group-mode-card"
+                          />
+                        )}
+                        {(resultsMode === ResultsMode.Default || !resultsMode) && (
+                          <>
+                            {viewTypeSelected === WBQueryType.Plugin && (
+                              <>
+                                {!loading && result !== undefined ? (
+                                  <QueryCardCliPlugin
+                                    id={selectedViewValue}
+                                    result={result}
+                                    query={command}
+                                    mode={mode}
+                                    setMessage={setMessage}
+                                    commandId={id}
+                                  />
+                                ) : (
+                                  <div className={styles.loading}>
+                                    <EuiLoadingContent lines={5} data-testid="loading-content" />
+                                  </div>
+                                )}
+                              </>
+                            )}
+                            {(viewTypeSelected === WBQueryType.Text) && (
+                              <QueryCardCliResultWrapper
+                                loading={loading}
+                                query={command}
+                                resultsMode={resultsMode}
+                                result={result}
+                                isNotStored={isNotStored}
+                                isFullScreen={isFullScreen}
+                              />
+                            )}
+                          </>
+                        )}
+                      </>
+                    )}
                 </>
               )}
           </>

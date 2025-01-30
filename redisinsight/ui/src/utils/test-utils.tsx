@@ -31,6 +31,7 @@ import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/
 import { initialState as initialStateAppSocketConnectionReducer } from 'uiSrc/slices/app/socket-connection'
 import { initialState as initialStateAppFeaturesReducer } from 'uiSrc/slices/app/features'
 import { initialState as initialStateAppUrlHandlingReducer } from 'uiSrc/slices/app/url-handling'
+import { initialState as initialStateAppCsrfReducer } from 'uiSrc/slices/app/csrf'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
@@ -58,6 +59,8 @@ import { initialState as initialStateRdiTestConnections } from 'uiSrc/slices/rdi
 import { initialState as initialStateAiAssistant } from 'uiSrc/slices/panels/aiAssistant'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
+import { initialState as initialStateAppConnectivity } from 'uiSrc/slices/app/connectivity'
+import { initialState as initialStateAppInit } from 'uiSrc/slices/app/init'
 
 interface Options {
   initialState?: RootState
@@ -77,6 +80,9 @@ const initialStateDefault: RootState = {
     socketConnection: cloneDeep(initialStateAppSocketConnectionReducer),
     features: cloneDeep(initialStateAppFeaturesReducer),
     urlHandling: cloneDeep(initialStateAppUrlHandlingReducer),
+    csrf: cloneDeep(initialStateAppCsrfReducer),
+    init: cloneDeep(initialStateAppInit),
+    connectivity: cloneDeep(initialStateAppConnectivity)
   },
   connections: {
     instances: cloneDeep(initialStateInstances),
@@ -214,7 +220,7 @@ const waitForEuiPopoverVisible = async () => {
 }
 
 export const waitForStack = async (timeout = 0) => {
-  await waitFor(() => {}, { timeout })
+  await waitFor(() => { }, { timeout })
 }
 
 // mock useHistory
@@ -311,6 +317,25 @@ Object.defineProperty(window, 'matchMedia', {
 export const getMswResourceURL = (path: string = '') => RESOURCES_BASE_URL.concat(path)
 export const getMswURL = (path: string = '') =>
   apiService.defaults.baseURL?.concat(path.startsWith('/') ? path.slice(1) : path) ?? ''
+
+export const mockWindowLocation = (initialHref = '') => {
+  const setHrefMock = jest.fn()
+  let href = initialHref
+  Object.defineProperty(window, 'location', {
+    value: {
+      set href(url) {
+        setHrefMock(url)
+        href = url
+      },
+      get href() {
+        return href
+      },
+    },
+    writable: true,
+  })
+
+  return setHrefMock
+}
 
 // re-export everything
 export * from '@testing-library/react'

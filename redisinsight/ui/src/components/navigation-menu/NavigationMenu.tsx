@@ -153,7 +153,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? SlowLogActiveSVG : SlowLogSVG
       },
-      featureFlag: FeatureFlags.disabledByEnv,
+      featureFlag: FeatureFlags.envDependent,
     },
     {
       tooltipText: 'Pub/Sub',
@@ -169,7 +169,8 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? PubSubActiveSVG : PubSubSVG
       },
-      onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE
+      onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE,
+      featureFlag: FeatureFlags.envDependent,
     },
   ]
 
@@ -218,7 +219,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? SettingsActiveSVG : SettingsSVG
       },
-      featureFlag: FeatureFlags.disabledByEnv,
+      featureFlag: FeatureFlags.envDependent,
     },
   ]
 
@@ -309,39 +310,56 @@ const NavigationMenu = () => {
         {connectedRdiInstanceId && isRdiWorkspace && (privateRdiRoutes.map(renderNavItem))}
       </div>
       <div className={styles.bottomContainer}>
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <CreateCloud />
           <NotificationMenu />
         </FeatureFlagComponent>
-        <HelpMenu />
+        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
+          <HelpMenu />
+        </FeatureFlagComponent>
         {publicRoutes.map(renderPublicNavItem)}
-        <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
-        <Divider
-          colorVariable="separatorNavigationColor"
-          className="eui-showFor--xs--flex eui-showFor--s--flex"
-          variant="middle"
-          orientation="vertical"
-        />
-        <EuiToolTip
-          content="Redis Insight Repository"
-          position="right"
+        <FeatureFlagComponent
+          name={FeatureFlags.envDependent}
+          otherwise={(
+            <Divider
+              color="transparent"
+              className="eui-hideFor--xs eui-hideFor--s"
+              variant="middle"
+              data-testid="github-repo-divider-otherwise"
+            />
+          )}
+          enabledByDefault
         >
-          <span className={cx(styles.iconNavItem, styles.githubLink)}>
-            <EuiLink
-              external={false}
-              href={EXTERNAL_LINKS.githubRepo}
-              target="_blank"
-              data-test-subj="github-repo-btn"
-            >
-              <EuiIcon
-                className={styles.githubIcon}
-                aria-label="redis insight github repository"
-                type={GithubSVG}
-                data-testid="github-repo-icon"
-              />
-            </EuiLink>
-          </span>
-        </EuiToolTip>
+          <Divider data-testid="github-repo-divider-default" colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
+        </FeatureFlagComponent>
+        <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
+          <Divider
+            colorVariable="separatorNavigationColor"
+            className="eui-showFor--xs--flex eui-showFor--s--flex"
+            variant="middle"
+            orientation="vertical"
+          />
+          <EuiToolTip
+            content="Star us on GitHub"
+            position="right"
+          >
+            <span className={cx(styles.iconNavItem, styles.githubLink)}>
+              <EuiLink
+                external={false}
+                href={EXTERNAL_LINKS.githubRepo}
+                target="_blank"
+                data-test-subj="github-repo-btn"
+              >
+                <EuiIcon
+                  className={styles.githubIcon}
+                  aria-label="redis insight github repository"
+                  type={GithubSVG}
+                  data-testid="github-repo-icon"
+                />
+              </EuiLink>
+            </span>
+          </EuiToolTip>
+        </FeatureFlagComponent>
       </div>
     </EuiPageSideBar>
   )

@@ -43,7 +43,7 @@ export class CloudUserApiService {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       if (!session?.csrf) {
-        this.logger.log('Trying to get csrf token');
+        this.logger.debug('Trying to get csrf token', sessionMetadata);
         const csrf = await this.api.getCsrfToken(session);
 
         if (!csrf) {
@@ -53,7 +53,7 @@ export class CloudUserApiService {
         await this.sessionService.updateSessionData(sessionMetadata.sessionId, { csrf });
       }
     } catch (e) {
-      this.logger.error('Unable to get csrf token', e);
+      this.logger.error('Unable to get csrf token', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -94,18 +94,18 @@ export class CloudUserApiService {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       if (!session?.apiSessionId) {
-        this.logger.log('Trying to login user');
+        this.logger.debug('Trying to login user', sessionMetadata);
 
-        const preparedUtm = utm;
+        const preparedUtm = utm && { ...utm };
 
         if (preparedUtm && (!preparedUtm.amp || !preparedUtm.package)) {
-          await this.serverService.getInfo()
+          await this.serverService.getInfo(sessionMetadata)
             .then(({ id, packageType }) => {
               preparedUtm.amp = preparedUtm.amp || id;
               preparedUtm.package = preparedUtm.package || packageType;
             })
             .catch(() => {
-              this.logger.warn('Unable to get server id for utm parameters');
+              this.logger.warn('Unable to get server id for utm parameters', sessionMetadata);
             });
         }
 
@@ -120,7 +120,7 @@ export class CloudUserApiService {
 
       await this.ensureCsrf(sessionMetadata);
     } catch (e) {
-      this.logger.error('Unable to login user', e);
+      this.logger.error('Unable to login user', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -145,7 +145,7 @@ export class CloudUserApiService {
         return;
       }
 
-      this.logger.log('Trying to sync user profile');
+      this.logger.debug('Trying to sync user profile', sessionMetadata);
 
       const userData = await this.api.getCurrentUser(session);
 
@@ -165,9 +165,9 @@ export class CloudUserApiService {
       }));
 
       await this.repository.update(sessionMetadata.sessionId, user);
-      this.logger.log('Successfully synchronized user profile');
+      this.logger.debug('Successfully synchronized user profile', sessionMetadata);
     } catch (e) {
-      this.logger.error('Unable to sync user profile', e);
+      this.logger.error('Unable to sync user profile', e, sessionMetadata);
       throw wrapHttpError(e);
     }
   }
@@ -243,7 +243,7 @@ export class CloudUserApiService {
       try {
         await this.ensureCloudUser(sessionMetadata);
 
-        this.logger.log('Switching user account');
+        this.logger.debug('Switching user account', sessionMetadata);
 
         const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
@@ -251,7 +251,7 @@ export class CloudUserApiService {
 
         return this.getCloudUser(sessionMetadata, true);
       } catch (e) {
-        this.logger.error('Unable to switch current account', e);
+        this.logger.error('Unable to switch current account', e, sessionMetadata);
         throw wrapHttpError(e);
       }
     });

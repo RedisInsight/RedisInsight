@@ -101,15 +101,6 @@ const DatabaseAlias = (props: Props) => {
   const handleOpen = (event: any) => {
     event.stopPropagation()
     event.preventDefault()
-    const modulesSummary = getRedisModulesSummary(modules)
-    sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE_BUTTON_CLICKED,
-      eventData: {
-        databaseId: id,
-        provider,
-        ...modulesSummary,
-      }
-    })
     dispatch(checkConnectToInstanceAction(id, connectToInstance))
     // onOpen()
   }
@@ -259,7 +250,7 @@ const DatabaseAlias = (props: Props) => {
         </EuiFlexItem>
       </EuiFlexGroup>
       {!isCloneMode && (
-        <EuiFlexGroup responsive={false} gutterSize="m" style={{ marginTop: 6 }}>
+        <EuiFlexGroup responsive={false} gutterSize="m" style={{ marginTop: 6, flexGrow: 0 }}>
           <EuiFlexItem grow={false}>
             <EuiButton
               size="s"

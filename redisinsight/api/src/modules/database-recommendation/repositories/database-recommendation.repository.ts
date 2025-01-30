@@ -42,12 +42,19 @@ export abstract class DatabaseRecommendationRepository {
   ): Promise<DatabaseRecommendation>;
 
   /**
-   * Check is recommendation already exist in repository
+   * Check if recommendation already exist in repository
    * @param clientMetadata
    * @param name
    * @return Boolean
    */
   abstract isExist(clientMetadata: ClientMetadata, name: string): Promise<boolean>;
+
+  /**
+   * Check if one or more recommendations exist in repository
+   * @param clientMetadata
+   * @param names
+   */
+  abstract isExistMulti(clientMetadata: ClientMetadata, names: string[]): Promise<Map<string, boolean>>;
 
   /**
    * Get database recommendation by id

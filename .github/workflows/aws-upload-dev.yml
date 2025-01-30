@@ -53,6 +53,19 @@ jobs:
         aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/upgrades --recursive
         aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/pre-release/${APP_VERSION} --recursive
 
+    - name: Download vendor plugins
+      uses: actions/download-artifact@v4
+      id: download-vendor
+      continue-on-error: true
+      with:
+        name: 'vendor-plugins'
+        path: vendor
+
+    - name: Upload vendor plugins to s3 bucket
+      if: steps.download-vendor.outcome == 'success'
+      run: |
+        aws s3 cp vendor/ s3://${AWS_BUCKET_NAME_TEST}/public/plugins/static/ --recursive
+
     - name: Generate job summary
       run: |
         node ./.github/generate-build-summary.js

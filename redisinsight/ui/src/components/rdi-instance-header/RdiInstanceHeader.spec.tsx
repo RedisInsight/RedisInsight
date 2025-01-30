@@ -1,8 +1,17 @@
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  initialStateDefault,
+  mockedStore,
+  mockStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
+import { FeatureFlags } from 'uiSrc/constants'
 import RdiInstanceHeader from './RdiInstanceHeader'
 
 jest.mock('uiSrc/slices/rdi/instances', () => ({
@@ -46,6 +55,32 @@ describe('RdiInstanceHeader', () => {
   it('should render proper instance name', () => {
     expect(render(<RdiInstanceHeader />)).toBeTruthy()
 
-    expect(screen.getByTestId('rdi-instance-name')).toHaveTextContent('name')
+    expect(screen.getByText('name')).toBeInTheDocument()
+  })
+
+  it('should show feature dependent items when feature flag is on', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
+      { flag: true }
+    )
+
+    render(<RdiInstanceHeader />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('o-auth-user-profile-rdi')).toBeInTheDocument()
+  })
+
+  it('should hide feature dependent items when feature flag is off', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
+      { flag: false }
+    )
+
+    render(<RdiInstanceHeader />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('o-auth-user-profile-rdi')).not.toBeInTheDocument()
   })
 })

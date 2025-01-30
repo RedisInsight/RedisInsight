@@ -12,22 +12,9 @@
   "styles": "./dist/styles.css",
   "main": "./dist/index.js",
   "name": "redisearch",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
-    "start": "cross-env NODE_ENV=development parcel serve src/index.html",
-    "build": "rimraf dist && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\" \"yarn build:css\" \"yarn build:assets\"",
-    "build:js": "parcel build src/main.tsx --no-source-maps --no-cache --dist-dir dist",
-    "build:css": "parcel build src/styles/styles.scss --no-source-maps --no-cache --dist-dir dist",
-    "build:css:dark": "parcel build src/styles/dark_theme.scss --no-source-maps --no-cache --dist-dir dist",
-    "build:css:light": "parcel build src/styles/light_theme.scss --no-source-maps --no-cache --dist-dir dist",
-    "build:assets": "parcel build src/assets/**/* --dist-dir dist",
-    "minify:js": "terser --compress -- dist/main.js > dist/index.js && rimraf dist/main.js"
-  },
-  "targets": {
-    "main": false,
-    "module": {
-      "includeNodeModules": true
-    }
+    "dev": "vite -c ../vite.config.mjs"
   },
   "visualizations": [
     {
@@ -57,16 +44,6 @@
       "default": false
     }
   ],
-  "devDependencies": {
-    "@parcel/compressor-brotli": "^2.8.3",
-    "@parcel/compressor-gzip": "^2.8.3",
-    "@parcel/transformer-sass": "^2.8.3",
-    "concurrently": "^7.6.0",
-    "cross-env": "^7.0.3",
-    "parcel": "^2.8.3",
-    "rimraf": "^3.0.2",
-    "terser": "^5.16.6"
-  },
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "34.6.0",
@@ -76,9 +53,10 @@
     "react-dom": "^17.0.2",
     "redisinsight-plugin-sdk": "^1.0.0"
   },
+  "devDependencies": {
+    "vite": "file:../node_modules/vite"
+  },
   "resolutions": {
-    "@parcel/**/micromatch": "^4.0.8",
-    "@parcel/**/braces": "^3.0.3",
     "trim": "0.0.3",
     "**/semver": "^7.5.2"
   }

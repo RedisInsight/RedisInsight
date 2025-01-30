@@ -1,15 +1,18 @@
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen, fireEvent, initialStateDefault, mockStore } from 'uiSrc/utils/test-utils'
 import {
   checkDatabaseIndex,
   connectedInstanceInfoSelector,
-  connectedInstanceSelector
+  connectedInstanceSelector,
+  loadInstances,
 } from 'uiSrc/slices/instances/instances'
+import { loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
 import { appContextDbIndex } from 'uiSrc/slices/app/context'
 
+import { FeatureFlags } from 'uiSrc/constants'
 import InstanceHeader, { Props } from './InstanceHeader'
 
 const mockedProps = mock<Props>()
@@ -133,5 +136,33 @@ describe('InstanceHeader', () => {
 
     expect(pushMock).toHaveBeenCalledTimes(1)
     expect(pushMock).toHaveBeenCalledWith('/')
+  })
+
+  it('should show env dependent items when feature flag is on', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: true }
+    )
+
+    render(<InstanceHeader {...instance(mockedProps)} />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('my-redis-db-btn')).toBeInTheDocument()
+    expect(screen.queryByTestId('instance-header-divider-env-dependent')).toBeInTheDocument()
+  })
+
+  it('should not show env dependent items button when feature flag is off', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+
+    render(<InstanceHeader {...instance(mockedProps)} />, {
+      store: mockStore(initialStoreState)
+    })
+    expect(screen.queryByTestId('my-redis-db-btn')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('instance-header-divider-env-dependent')).not.toBeInTheDocument()
   })
 })

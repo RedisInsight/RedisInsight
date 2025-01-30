@@ -6,6 +6,8 @@ import { render, screen, fireEvent, mockedStore, cleanup, act, waitForEuiToolTip
 import { KeyTypes } from 'uiSrc/constants'
 import { RootState } from 'uiSrc/slices/store'
 import { setSelectedKeyRefreshDisabled, toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
+import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import BrowserPage from './BrowserPage'
 import KeyList, { Props as KeyListProps } from './components/key-list/KeyList'
 
@@ -77,11 +79,54 @@ const selectKey = (state: any, selectedKey: any, data?: any = {}) => {
   }))
 }
 
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendPageViewTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn(),
+}))
 /**
  * BrowserPage tests
  *
  * @group component
  */
+
+const originalUseSelector = jest.requireActual('react-redux').useSelector
+
+describe('BrowserPage', () => {
+  const commonOptions = {
+    id: 'instanceId',
+    name: 'test',
+    connectionType: 'CLUSTER',
+    provider: 'RE_CLOUD',
+  }
+
+  beforeAll(() => {
+    (useSelector as jest.Mock).mockImplementation(originalUseSelector)
+  })
+
+  it.each([true, false])('should call proper sendPageViewTelemetry when isFreeDb is %s', (isFreeDb) => {
+    const sendPageViewTelemetryMock = jest.fn();
+    (sendPageViewTelemetry as jest.Mock).mockImplementation(() => sendPageViewTelemetryMock);
+    (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
+      ...commonOptions,
+      isFreeDb,
+    }))
+
+    render(<BrowserPage />)
+
+    expect(sendPageViewTelemetry).toBeCalledWith({
+      name: TelemetryPageView.BROWSER_PAGE,
+      eventData: {
+        databaseId: 'instanceId',
+        isFree: isFreeDb,
+      },
+    })
+  })
+})
 
 describe('KeyDetailsHeader', () => {
   beforeAll(() => {

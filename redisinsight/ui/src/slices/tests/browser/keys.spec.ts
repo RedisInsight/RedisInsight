@@ -1,14 +1,16 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { KeyTypes, KeyValueFormat, ModulesKeyTypes } from 'uiSrc/constants'
+import { configureStore } from '@reduxjs/toolkit'
+import { BrowserColumns, DEFAULT_SHOWN_COLUMNS, KeyTypes, KeyValueFormat, ModulesKeyTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { parseKeysListResponse, stringToBuffer, UTF8ToBuffer } from 'uiSrc/utils'
-import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import { cleanup, clearStoreActions, initialStateDefault, mockedStore, mockStore } from 'uiSrc/utils/test-utils'
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
+import { rootReducer } from 'uiSrc/slices/store'
 import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
 import { CreateListWithExpireDto, ListElementDestination } from 'apiSrc/modules/browser/list/dto'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
@@ -401,7 +403,7 @@ describe('keys slice', () => {
   describe('setLastBatchKeys', () => {
     it('should properly set the state', () => {
       // Arrange
-      const strToKey = (name:string) => ({ name, nameString: name, ttl: 1, size: 1, type: 'hash' })
+      const strToKey = (name: string) => ({ name, nameString: name, ttl: 1, size: 1, type: 'hash' })
       const data = ['44', '55', '66'].map(strToKey)
 
       const state = {
@@ -1614,114 +1616,181 @@ describe('keys slice', () => {
       })
     })
 
+    const shownColumnsTestCases = [
+      {
+        name: 'size and ttl',
+        shownColumns: [BrowserColumns.Size, BrowserColumns.TTL],
+      },
+      {
+        name: 'size only',
+        shownColumns: [BrowserColumns.Size],
+      },
+      {
+        name: 'ttl only',
+        shownColumns: [BrowserColumns.TTL],
+      },
+      {
+        name: 'no columns',
+        shownColumns: [],
+      }
+    ]
     describe('fetchKeysMetadata', () => {
-      it('success to fetch keys metadata', async () => {
-      // Arrange
-        const data = [
-          {
-            name: stringToBuffer('key1'),
-            type: 'hash',
-            ttl: -1,
-            size: 100,
-            length: 100,
-          },
-          {
-            name: stringToBuffer('key2'),
-            type: 'hash',
-            ttl: -1,
-            size: 150,
-            length: 100,
-          },
-          {
-            name: stringToBuffer('key3'),
-            type: 'hash',
-            ttl: -1,
-            size: 110,
-            length: 100,
-          },
-        ]
-        const responsePayload = { data, status: 200 }
+      shownColumnsTestCases.forEach(({ name, shownColumns }) => {
+        it(`success to fetch keys metadata with ${name}`, async () => {
+          const initialStateWithColumns = {
+            ...initialStateDefault,
+            app: {
+              context: {
+                dbConfig: {
+                  shownColumns,
+                },
+              },
+            },
+          }
 
-        const apiServiceMock = jest.fn().mockResolvedValue(responsePayload)
-        const onSuccessMock = jest.fn()
-        apiService.post = apiServiceMock
-        const controller = new AbortController()
+          const testStore = configureStore({
+            reducer: rootReducer,
+            preloadedState: initialStateWithColumns
+          })
 
-        // Act
-        await store.dispatch<any>(
-          fetchKeysMetadata(
-            data.map(({ name }) => ({ name })),
-            null,
-            controller.signal,
-            onSuccessMock
+          const data = [
+            {
+              name: stringToBuffer('key1'),
+              type: 'hash',
+              ttl: -1,
+              size: 100,
+              length: 100
+            },
+            {
+              name: stringToBuffer('key2'),
+              type: 'hash',
+              ttl: -1,
+              size: 150,
+              length: 100
+            },
+            {
+              name: stringToBuffer('key3'),
+              type: 'hash',
+              ttl: -1,
+              size: 110,
+              length: 100
+            },
+          ]
+          const responsePayload = { data, status: 200 }
+
+          const apiServiceMock = jest.fn().mockResolvedValue(responsePayload)
+          const onSuccessMock = jest.fn()
+          apiService.post = apiServiceMock
+          const controller = new AbortController()
+
+          // Act
+          await testStore.dispatch<any>(
+            fetchKeysMetadata(
+              data.map(({ name }) => ({ name })),
+              null,
+              controller.signal,
+              onSuccessMock
+            )
           )
-        )
 
-        // Assert
-        expect(apiServiceMock).toBeCalledWith(
-          '/databases//keys/get-metadata',
-          { keys: data.map(({ name }) => ({ name })) },
-          { params: { encoding: 'buffer' }, signal: controller.signal },
-        )
+          const expectedData = {
+            keys: data.map(({ name }) => ({ name })),
+            type: undefined,
+          }
 
-        expect(onSuccessMock).toBeCalledWith(data)
+          expectedData.includeTTL = shownColumns.includes(BrowserColumns.TTL)
+          expectedData.includeSize = shownColumns.includes(BrowserColumns.Size)
+
+          expect(apiServiceMock).toBeCalledWith(
+            '/databases//keys/get-metadata',
+            expectedData,
+            { params: { encoding: 'buffer' }, signal: controller.signal },
+          )
+
+          expect(onSuccessMock).toBeCalledWith(data)
+        })
       })
     })
 
     describe('fetchKeysMetadataTree', () => {
-      it('success to fetch keys metadata', async () => {
-      // Arrange
-        const data = [
-          {
-            name: stringToBuffer('key1'),
-            type: 'hash',
-            ttl: -1,
-            size: 100,
-            path: 0,
-            length: 100,
-          },
-          {
-            name: stringToBuffer('key2'),
-            type: 'hash',
-            ttl: -1,
-            size: 150,
-            path: 1,
-            length: 100,
-          },
-          {
-            name: stringToBuffer('key3'),
-            type: 'hash',
-            ttl: -1,
-            size: 110,
-            path: 2,
-            length: 100,
-          },
-        ]
-        const responsePayload = { data, status: 200 }
+      shownColumnsTestCases.forEach(({ name, shownColumns }) => {
+        it(`success to fetch keys metadata with ${name}`, async () => {
+          const initialStateWithColumns = {
+            ...initialStateDefault,
+            app: {
+              context: {
+                dbConfig: {
+                  shownColumns,
+                },
+              },
+            },
+          }
 
-        const apiServiceMock = jest.fn().mockResolvedValue(responsePayload)
-        const onSuccessMock = jest.fn()
-        apiService.post = apiServiceMock
-        const controller = new AbortController()
+          const testStore = configureStore({
+            reducer: rootReducer,
+            preloadedState: initialStateWithColumns
+          })
 
-        // Act
-        await store.dispatch<any>(
-          fetchKeysMetadataTree(
-            data.map(({ name }, i) => ([i, name])),
-            null,
-            controller.signal,
-            onSuccessMock,
+          const data = [
+            {
+              name: stringToBuffer('key1'),
+              type: 'hash',
+              ttl: -1,
+              size: 100,
+              path: 0,
+              length: 100,
+            },
+            {
+              name: stringToBuffer('key2'),
+              type: 'hash',
+              ttl: -1,
+              size: 150,
+              path: 1,
+              length: 100,
+            },
+            {
+              name: stringToBuffer('key3'),
+              type: 'hash',
+              ttl: -1,
+              size: 110,
+              path: 2,
+              length: 100,
+            },
+          ]
+
+          const responsePayload = { data, status: 200 }
+          const apiServiceMock = jest.fn().mockResolvedValue(responsePayload)
+          const onSuccessMock = jest.fn()
+          apiService.post = apiServiceMock
+          const controller = new AbortController()
+
+          // Act
+          await testStore.dispatch<any>(
+            fetchKeysMetadataTree(
+              data.map(({ name }, i) => ([i, name])),
+              null,
+              controller.signal,
+              onSuccessMock,
+            )
           )
-        )
 
-        // Assert
-        expect(apiServiceMock).toBeCalledWith(
-          '/databases//keys/get-metadata',
-          { keys: data.map(({ name }, i) => (name)), type: undefined },
-          { params: { encoding: 'buffer' }, signal: controller.signal },
-        )
+          const expectedData = {
+            keys: data.map(({ name }) => (name)),
+            type: undefined
+          }
 
-        expect(onSuccessMock).toBeCalledWith(data)
+          expectedData.includeTTL = shownColumns.includes(BrowserColumns.TTL)
+          expectedData.includeSize = shownColumns.includes(BrowserColumns.Size)
+
+          // Assert
+          expect(apiServiceMock).toBeCalledWith(
+            '/databases//keys/get-metadata',
+            expectedData,
+            { params: { encoding: 'buffer' }, signal: controller.signal },
+          )
+
+          expect(onSuccessMock).toBeCalledWith(data)
+        })
       })
     })
 

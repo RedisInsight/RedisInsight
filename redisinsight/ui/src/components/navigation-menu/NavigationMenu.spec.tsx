@@ -1,10 +1,11 @@
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import { BuildType } from 'uiSrc/constants/env'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen, fireEvent, initialStateDefault, mockStore } from 'uiSrc/utils/test-utils'
 
+import { FeatureFlags } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appContextSelector } from 'uiSrc/slices/app/context'
 import NavigationMenu from './NavigationMenu'
@@ -43,15 +44,6 @@ jest.mock('uiSrc/slices/rdi/instances', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: 'mockRdiId',
-  }),
-}))
-
-jest.mock('uiSrc/slices/app/features', () => ({
-  ...jest.requireActual('uiSrc/slices/app/features'),
-  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    appSettings: {
-      flag: true,
-    },
   }),
 }))
 
@@ -190,5 +182,43 @@ describe('NavigationMenu', () => {
 
     expect(screen.getByTestId('pipeline-status-page-btn')).toBeTruthy()
     expect(screen.getByTestId('pipeline-management-page-btn')).toBeTruthy()
+  })
+
+  describe('feature flags tests', () => {
+    it('should show feature dependent items when feature flag is on', async () => {
+      const initialStoreState = set(
+        cloneDeep(initialStateDefault),
+        `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+        { flag: true }
+      )
+
+      render(<NavigationMenu />, {
+        store: mockStore(initialStoreState)
+      })
+      fireEvent.click(screen.getByTestId('help-menu-button'))
+
+      expect(screen.queryByTestId('notification-menu')).toBeInTheDocument()
+      expect(screen.queryByTestId('help-center')).toBeInTheDocument()
+      expect(screen.queryByTestId('github-repo-divider-default')).toBeInTheDocument()
+      expect(screen.queryByTestId('github-repo-icon')).toBeInTheDocument()
+      expect(screen.queryByTestId('github-repo-divider-otherwise')).not.toBeInTheDocument()
+    })
+
+    it('should hide feature dependent items when feature flag is off', async () => {
+      const initialStoreState = set(
+        cloneDeep(initialStateDefault),
+        `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+        { flag: false }
+      )
+
+      render(<NavigationMenu />, {
+        store: mockStore(initialStoreState)
+      })
+      expect(screen.queryByTestId('help-center')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('github-repo-icon')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('github-repo-divider-default')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('notification-menu')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('github-repo-divider-otherwise')).toBeInTheDocument()
+    })
   })
 })

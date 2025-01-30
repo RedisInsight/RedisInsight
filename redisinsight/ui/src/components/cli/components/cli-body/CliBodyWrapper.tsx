@@ -16,8 +16,6 @@ import {
   outputSelector,
   sendCliCommandAction,
   sendCliClusterCommandAction,
-  processUnsupportedCommand,
-  processUnrepeatableNumber,
 } from 'uiSrc/slices/cli/cli-output'
 import { CommandMonitor, CommandPSubscribe, CommandSubscribe, CommandHello3, Pages } from 'uiSrc/constants'
 import { getCommandRepeat, isRepeatCountCorrect } from 'uiSrc/utils'
@@ -25,9 +23,9 @@ import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { checkUnsupportedCommand, clearOutput, cliCommandOutput } from 'uiSrc/utils/cliHelper'
-import { cliTexts } from 'uiSrc/constants/cliOutput'
+import { cliTexts, ConnectionSuccessOutputText, InitOutputText } from 'uiSrc/components/messages/cli-output/cliOutput'
 import { showMonitor } from 'uiSrc/slices/cli/monitor'
-
+import { cliCommandError, processUnrepeatableNumber, processUnsupportedCommand } from 'uiSrc/utils/cliOutputActions'
 import CliBody from './CliBody'
 
 import styles from './CliBody/styles.module.scss'
@@ -47,11 +45,22 @@ const CliBodyWrapper = () => {
     matchedCommand,
     cliClientUuid,
   } = useSelector(cliSettingsSelector)
-  const { connectionType } = useSelector(connectedInstanceSelector)
+  const { connectionType, host, port, db } = useSelector(connectedInstanceSelector)
   const { db: currentDbIndex } = useSelector(outputSelector)
 
   useEffect(() => {
-    !cliClientUuid && dispatch(createCliClientAction(instanceId, handleWorkbenchClick))
+    if (!cliClientUuid) {
+      dispatch(createCliClientAction(
+        instanceId,
+        () => {
+          dispatch(concatToOutput(ConnectionSuccessOutputText))
+        },
+        (errorMessage: string) => {
+          dispatch(concatToOutput(cliTexts.CLI_ERROR_MESSAGE(errorMessage)))
+        }
+      ))
+      dispatch(concatToOutput(InitOutputText(host, port, db, !data.length, handleWorkbenchClick)))
+    }
   }, [])
 
   useEffect(() => {
@@ -87,13 +96,15 @@ const CliBodyWrapper = () => {
     dispatch(concatToOutput(cliCommandOutput(decode(command), currentDbIndex)))
 
     if (!isRepeatCountCorrect(countRepeat)) {
-      dispatch(processUnrepeatableNumber(commandLine, resetCommand))
+      processUnrepeatableNumber(commandLine, resetCommand)
       return
     }
 
     // Flow if MONITOR command was executed
     if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
-      dispatch(concatToOutput(cliTexts.MONITOR_COMMAND_CLI(() => { dispatch(showMonitor()) })))
+      dispatch(
+        concatToOutput([cliTexts.MONITOR_COMMAND(() => { dispatch(showMonitor()) }), '\n'])
+      )
       resetCommand()
       return
     }
@@ -107,7 +118,9 @@ const CliBodyWrapper = () => {
 
     // Flow if SUBSCRIBE command was executed
     if (checkUnsupportedCommand([CommandSubscribe.toLowerCase()], commandLine)) {
-      dispatch(concatToOutput(cliTexts.SUBSCRIBE_COMMAND_CLI(Pages.pubSub(instanceId))))
+      dispatch(
+        concatToOutput([cliTexts.SUBSCRIBE_COMMAND_CLI(Pages.pubSub(instanceId)), '\n'])
+      )
       resetCommand()
       return
     }
@@ -120,7 +133,7 @@ const CliBodyWrapper = () => {
     }
 
     if (unsupportedCommand) {
-      dispatch(processUnsupportedCommand(commandLine, unsupportedCommand, resetCommand))
+      processUnsupportedCommand(commandLine, unsupportedCommand, resetCommand)
       return
     }
 
@@ -137,11 +150,11 @@ const CliBodyWrapper = () => {
       }
     })
     if (connectionType !== ConnectionType.Cluster) {
-      dispatch(sendCliCommandAction(command, resetCommand))
+      dispatch(sendCliCommandAction(command, resetCommand, (error) => cliCommandError(error, command)))
       return
     }
 
-    dispatch(sendCliClusterCommandAction(command, resetCommand))
+    dispatch(sendCliClusterCommandAction(command, resetCommand, (error) => cliCommandError(error, command)))
   }
 
   const resetCommand = () => {

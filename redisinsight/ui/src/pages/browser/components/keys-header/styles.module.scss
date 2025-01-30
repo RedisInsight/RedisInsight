@@ -36,12 +36,13 @@
     color: var(--euiTextSubduedColor) !important;
   }
 
-  svg > g > path {
+  svg>g>path {
     fill: var(--euiTextSubduedColor) !important;
   }
 
   &:hover {
-    background-color: var(--euiColorLightestShade) !important;;
+    background-color: var(--euiColorLightestShade) !important;
+    ;
   }
 
   &.active {
@@ -51,7 +52,7 @@
       color: var(--euiColorPrimary) !important;
     }
 
-    svg > g > path {
+    svg>g>path {
       fill: var(--euiColorPrimary) !important;
     }
   }
@@ -65,4 +66,18 @@
   display: flex;
   align-items: center;
   margin: 4px 4px 4px auto;
+}
+
+.columnsButton {
+  padding: 4px 6px 4px 4px;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.columnsButtonPopup {
+  margin-left: 20px;
+}
+
+.checkbox {
+  white-space: nowrap;
 }

@@ -70,6 +70,7 @@ vendor
 redisinsight/main.js.LICENSE.txt
 redisinsight/main.prod.js.LICENSE.txt
 licenses
+redisinsight/ui/src/packages/common/index*
 
 
 # E2E tests report
@@ -85,3 +86,5 @@ licenses
 
 # caches
 .temp_cache
+
+static/

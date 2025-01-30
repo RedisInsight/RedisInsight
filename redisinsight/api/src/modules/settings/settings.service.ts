@@ -46,11 +46,11 @@ export class SettingsService {
    * Method to get settings
    */
   public async getAppSettings(sessionMetadata: SessionMetadata): Promise<GetAppSettingsResponse> {
-    this.logger.log('Getting application settings.');
+    this.logger.debug('Getting application settings.', sessionMetadata);
     try {
       const agreements = await this.agreementRepository.getOrCreate(sessionMetadata);
       const settings = await this.settingsRepository.getOrCreate(sessionMetadata);
-      this.logger.log('Succeed to get application settings.');
+      this.logger.debug('Succeed to get application settings.', sessionMetadata);
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,
         agreements: agreements?.version ? {
@@ -59,7 +59,7 @@ export class SettingsService {
         } : null,
       });
     } catch (error) {
-      this.logger.error('Failed to get application settings.', error);
+      this.logger.error('Failed to get application settings.', error, sessionMetadata);
       throw new InternalServerErrorException();
     }
   }
@@ -73,7 +73,7 @@ export class SettingsService {
     sessionMetadata: SessionMetadata,
     dto: UpdateSettingsDto,
   ): Promise<GetAppSettingsResponse> {
-    this.logger.log('Updating application settings.');
+    this.logger.debug('Updating application settings.', sessionMetadata);
     const { agreements, ...settings } = dto;
     try {
       const oldAppSettings = await this.getAppSettings(sessionMetadata);
@@ -92,15 +92,15 @@ export class SettingsService {
       if (agreements) {
         await this.updateAgreements(sessionMetadata, agreements);
       }
-      this.logger.log('Succeed to update application settings.');
+      this.logger.debug('Succeed to update application settings.', sessionMetadata);
       const results = await this.getAppSettings(sessionMetadata);
-      this.analytics.sendSettingsUpdatedEvent(results, oldAppSettings);
+      this.analytics.sendSettingsUpdatedEvent(sessionMetadata, results, oldAppSettings);
 
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
 
       return results;
     } catch (error) {
-      this.logger.error('Failed to update application settings.', error);
+      this.logger.error('Failed to update application settings.', error, sessionMetadata);
       if (
         error instanceof AgreementIsNotDefinedException
         || error instanceof BadRequestException
@@ -178,7 +178,7 @@ export class SettingsService {
     sessionMetadata: SessionMetadata,
     dtoAgreements: Map<string, boolean> = new Map(),
   ): Promise<void> {
-    this.logger.log('Updating application agreements.');
+    this.logger.debug('Updating application agreements.', sessionMetadata);
     const oldAgreements = await this.agreementRepository.getOrCreate(sessionMetadata);
 
     const newAgreements = {
@@ -206,6 +206,7 @@ export class SettingsService {
 
     if (dtoAgreements.has('analytics')) {
       this.analytics.sendAnalyticsAgreementChange(
+        sessionMetadata,
         dtoAgreements,
         new Map(Object.entries(oldAgreements.data || {})),
       );

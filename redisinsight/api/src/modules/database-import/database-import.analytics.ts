@@ -4,6 +4,7 @@ import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.servi
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { DatabaseImportResponse, DatabaseImportResult } from 'src/modules/database-import/dto/database-import.response';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class DatabaseImportAnalytics extends TelemetryBaseService {
@@ -11,9 +12,13 @@ export class DatabaseImportAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendImportResults(importResult: DatabaseImportResponse): void {
+  sendImportResults(
+    sessionMetadata: SessionMetadata,
+    importResult: DatabaseImportResponse,
+  ): void {
     if (importResult.success?.length) {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.DatabaseImportSucceeded,
         {
           succeed: importResult.success.length,
@@ -23,6 +28,7 @@ export class DatabaseImportAnalytics extends TelemetryBaseService {
 
     if (importResult.fail?.length) {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.DatabaseImportFailed,
         {
           failed: importResult.fail.length,
@@ -33,6 +39,7 @@ export class DatabaseImportAnalytics extends TelemetryBaseService {
 
     if (importResult.partial?.length) {
       this.sendEvent(
+        sessionMetadata,
         TelemetryEvents.DatabaseImportPartiallySucceeded,
         {
           partially: importResult.partial.length,
@@ -42,8 +49,12 @@ export class DatabaseImportAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendImportFailed(e: Error): void {
+  sendImportFailed(
+    sessionMetadata: SessionMetadata,
+    e: Error,
+  ): void {
     this.sendEvent(
+      sessionMetadata,
       TelemetryEvents.DatabaseImportParseFailed,
       {
         error: e?.constructor?.name || 'UncaughtError',

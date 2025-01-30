@@ -10,6 +10,8 @@ import {
 import config, { Config } from 'src/utils/config';
 import { Feature } from 'src/modules/feature/model/feature';
 import { IFeatureFlag } from 'src/modules/feature/constants';
+import { SessionMetadata } from 'src/common/models';
+import { filterVersion } from 'src/utils/feature-version-filter.helper';
 
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
 
@@ -19,7 +21,7 @@ export abstract class FeatureFlagStrategy {
     protected readonly settingsService: SettingsService,
   ) {}
 
-  abstract calculate(knownFeature: IFeatureFlag, data: any): Promise<Feature>;
+  abstract calculate(sessionMetadata: SessionMetadata, knownFeature: IFeatureFlag, data: any): Promise<Feature>;
 
   static async getCustomConfig(): Promise<object> {
     try {
@@ -33,12 +35,13 @@ export abstract class FeatureFlagStrategy {
   /**
    * Check if controlNumber is in defined range
    * Should return false in case of any error
+   * @param sessionMetadata
    * @param perc
    * @protected
    */
-  protected async isInTargetRange(perc: number[][] = [[-1]]): Promise<boolean> {
+  protected async isInTargetRange(sessionMetadata: SessionMetadata, perc: number[][] = [[-1]]): Promise<boolean> {
     try {
-      const { controlNumber } = await this.featuresConfigService.getControlInfo();
+      const { controlNumber } = await this.featuresConfigService.getControlInfo(sessionMetadata);
 
       return !!perc.find((range) => controlNumber >= range[0] && controlNumber < range[1]);
     } catch (e) {
@@ -102,6 +105,10 @@ export abstract class FeatureFlagStrategy {
 
       if (filter instanceof FeatureConfigFilter) {
         const value = get(serverState, filter?.name);
+
+        if (filter?.name.match(/version/i)) {
+          return filterVersion(filter.cond, value, filter?.value);
+        }
 
         switch (filter?.cond) {
           case FeatureConfigFilterCondition.Eq:

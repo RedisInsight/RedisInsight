@@ -1,27 +1,25 @@
+import 'dotenv/config'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
 import fixReactVirtualized from 'esbuild-plugin-react-virtualized'
 import { reactClickToComponent } from 'vite-plugin-react-click-to-component'
+import { ViteEjsPlugin } from 'vite-plugin-ejs'
 // import { compression } from 'vite-plugin-compression2'
 import { fileURLToPath, URL } from 'url'
 import path from 'path'
+import { defaultConfig } from './src/config/default'
 
-const hostedApiBaseUrl = process.env.RI_HOSTED_API_BASE_URL
-const isElectron = process.env.RI_APP_TYPE === 'electron'
+const isElectron = defaultConfig.app.type === 'electron'
 // set path to index.tsx in the index.html
 process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx'
 const outDir = isElectron ? '../dist/renderer' : './dist'
 
-const apiUrl = process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
-  ? 'https://localhost'
-  : 'http://localhost'
-
 let base
-if (hostedApiBaseUrl) {
-  base = '/'
+if (defaultConfig.api.hostedBase) {
+  base = defaultConfig.api.hostedBase
 } else {
-  base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
+  base = defaultConfig.app.env === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
 }
 
 /**
@@ -33,6 +31,7 @@ export default defineConfig({
     react(),
     svgr({ include: ['**/*.svg?react'] }),
     reactClickToComponent(),
+    ViteEjsPlugin(),
     // !isElectron && compression({
     //   include: [/\.(js)$/, /\.(css)$/],
     //   deleteOriginalAssets: true
@@ -52,6 +51,8 @@ export default defineConfig({
       allow: [
         '..',
         '../../node_modules/monaco-editor',
+        'static',
+        'defaults'
       ],
     },
   },
@@ -83,10 +84,13 @@ export default defineConfig({
     minify: 'esbuild',
     rollupOptions: {
       output: {
-        // TODO chunks
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            return 'vendor'
+            return id.toString().split('node_modules/')[1].split('/')[0].toString()
+          }
+
+          if (id.includes('ui/src/assets')) {
+            return 'assets'
           }
           return 'index'
         },
@@ -119,19 +123,8 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
-    'process.env': {
-      RI_API_PREFIX: 'api',
-      RI_APP_PORT: '5540',
-      RI_BASE_API_URL: apiUrl,
-      RI_RESOURCES_BASE_URL: apiUrl,
-      RI_PIPELINE_COUNT_DEFAULT: '5',
-      RI_SCAN_COUNT_DEFAULT: '500',
-      RI_SCAN_TREE_COUNT_DEFAULT: '10000',
-      RI_APP_TYPE: process.env.RI_APP_TYPE,
-      RI_CONNECTIONS_TIMEOUT_DEFAULT: 30 * 1000,
-      RI_HOSTED_API_BASE_URL: hostedApiBaseUrl,
-      RI_CSRF_ENDPOINT: process.env.RI_CSRF_ENDPOINT,
-    },
+    'process.env': {},
+    riConfig: defaultConfig,
   },
   // hack: apply proxy path to monaco webworker
   experimental: {

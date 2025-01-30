@@ -39,7 +39,7 @@ export class RedisSentinelService {
     sessionMetadata: SessionMetadata,
     dto: CreateSentinelDatabasesDto,
   ): Promise<CreateSentinelDatabaseResponse[]> {
-    this.logger.log('Adding Sentinel masters.');
+    this.logger.debug('Adding Sentinel masters.', sessionMetadata);
     const result: CreateSentinelDatabaseResponse[] = [];
     const { masters, ...connectionOptions } = dto;
     try {
@@ -106,19 +106,21 @@ export class RedisSentinelService {
 
       return result;
     } catch (error) {
-      this.logger.error('Failed to add Sentinel masters.', error);
+      this.logger.error('Failed to add Sentinel masters.', error, sessionMetadata);
       throw getRedisConnectionException(error, connectionOptions);
     }
   }
 
   /**
    * Check connection and get sentinel masters
+   * @param sessionMetadata
    * @param dto
    */
   public async getSentinelMasters(
+    sessionMetadata: SessionMetadata,
     dto: Database,
   ): Promise<SentinelMaster[]> {
-    this.logger.log('Connection and getting sentinel masters.');
+    this.logger.debug('Connection and getting sentinel masters.', sessionMetadata);
     let result: SentinelMaster[];
     try {
       const database = await this.databaseFactory.createStandaloneDatabaseModel(dto);
@@ -128,12 +130,12 @@ export class RedisSentinelService {
         context: ClientContext.Common,
       }, database, { useRetry: false, enableReadyCheck: false });
       result = await discoverSentinelMasterGroups(client);
-      this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(result);
+      this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(sessionMetadata, result);
 
       await client.disconnect();
     } catch (error) {
       const exception: HttpException = getRedisConnectionException(error, dto);
-      this.redisSentinelAnalytics.sendGetSentinelMastersFailedEvent(exception);
+      this.redisSentinelAnalytics.sendGetSentinelMastersFailedEvent(sessionMetadata, exception);
       throw exception;
     }
     return result;

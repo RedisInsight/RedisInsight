@@ -28,7 +28,13 @@ import { resetKeyInfo } from 'uiSrc/slices/browser/keys'
 
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
+import { getConfig } from 'uiSrc/config'
+import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
+import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
+
+const riConfig = getConfig()
+const { returnUrlBase, returnUrlLabel, returnUrlTooltip } = riConfig.app
 
 export interface Props {
   onChangeDbIndex?: (index: number) => void
@@ -50,6 +56,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const { server } = useSelector(appInfoSelector)
   const { disabled: isDbIndexDisabled } = useSelector(appContextDbIndex)
   const { databases = 0 } = useSelector(connectedInstanceInfoSelector)
+  const returnUrl = useSelector(appReturnUrlSelector)
   const {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
@@ -64,8 +71,15 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
   useEffect(() => { setDbIndex(String(db || 0)) }, [db])
 
+  const isRedisStack = server?.buildType === BuildType.RedisStack
+
   const goHome = () => {
     history.push(Pages.home)
+  }
+
+  const goToReturnUrl = () => {
+    const fullUrl = `${returnUrlBase}${returnUrl}`
+    document.location = fullUrl
   }
 
   const handleChangeDbIndex = () => {
@@ -101,7 +115,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         <EuiFlexItem style={{ overflow: 'hidden' }}>
           <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
-              <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+              <FeatureFlagComponent name={FeatureFlags.envDependent}>
                 <EuiToolTip
                   position="bottom"
                   content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
@@ -121,13 +135,39 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-                  <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
-                    <EuiFlexItem grow={false}>
+                  <FeatureFlagComponent name={FeatureFlags.envDependent}>
+                    <EuiFlexItem grow={false} data-testid="instance-header-divider-env-dependent">
                       <EuiText className={styles.divider}>&#62;</EuiText>
                     </EuiFlexItem>
                   </FeatureFlagComponent>
+                  {returnUrlBase && returnUrl && (
+                  <FeatureFlagComponent
+                    name={FeatureFlags.envDependent}
+                    otherwise={(
+                      <EuiFlexItem style={{ padding: '4px 24px 4px 0' }} grow={false}>
+                        <EuiToolTip
+                          position="bottom"
+                          content={returnUrlTooltip || returnUrlLabel}
+                        >
+                          <EuiText
+                            className={styles.breadCrumbLink}
+                            aria-label={returnUrlTooltip || returnUrlLabel}
+                            onClick={goToReturnUrl}
+                            onKeyDown={goToReturnUrl}
+                          >
+                            &#60; {returnUrlLabel}
+                          </EuiText>
+                        </EuiToolTip>
+                      </EuiFlexItem>
+                    )}
+                  />
+                  )}
                   <EuiFlexItem style={{ overflow: 'hidden' }}>
-                    <b className={styles.dbName}>{name}</b>
+                    {isRedisStack ? (
+                      <b className={styles.dbName}>{name}</b>
+                    ) : (
+                      <InstancesNavigationPopover name={name} />
+                    )}
                   </EuiFlexItem>
                   {databases > 1 && (
                     <EuiFlexItem style={{ padding: '4px 0 4px 12px' }} grow={false}>

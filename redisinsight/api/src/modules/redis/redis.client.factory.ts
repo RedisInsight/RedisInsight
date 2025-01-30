@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Database } from 'src/modules/database/models/database';
 import { cloneClassInstance } from 'src/utils';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
@@ -6,9 +6,7 @@ import { ClientMetadata } from 'src/common/models';
 import { RedisConnectionStrategy } from 'src/modules/redis/connection/redis.connection.strategy';
 import { IoredisRedisConnectionStrategy } from 'src/modules/redis/connection/ioredis.redis.connection.strategy';
 import { RedisClient } from 'src/modules/redis/client';
-import { FeatureService } from 'src/modules/feature/feature.service';
 import { NodeRedisConnectionStrategy } from 'src/modules/redis/connection/node.redis.connection.strategy';
-import { KnownFeatures } from 'src/modules/feature/constants';
 import serverConfig from 'src/utils/config';
 
 const REDIS_CLIENTS_CONFIG = serverConfig.get('redis_clients');
@@ -26,31 +24,23 @@ export interface IRedisConnectionOptions {
 }
 
 @Injectable()
-export class RedisClientFactory implements OnModuleInit {
-  private logger = new Logger('RedisClientFactory');
+export abstract class RedisClientFactory {
+  protected logger = new Logger('RedisClientFactory');
 
-  private defaultConnectionStrategy: RedisConnectionStrategy;
+  protected defaultConnectionStrategy: RedisConnectionStrategy;
 
-  constructor(
-    private readonly ioredisConnectionStrategy: IoredisRedisConnectionStrategy,
-    private readonly nodeRedisConnectionStrategy: NodeRedisConnectionStrategy,
-    private readonly featureService: FeatureService,
+  protected constructor(
+    protected readonly ioredisConnectionStrategy: IoredisRedisConnectionStrategy,
+    protected readonly nodeRedisConnectionStrategy: NodeRedisConnectionStrategy,
   ) {
     this.defaultConnectionStrategy = ioredisConnectionStrategy;
   }
 
   /**
-   * Set default connection strategy from feature config
-   * In case of an error or unsupported strategy default config will stay the same (ioredis for now)
+   * Initialize provider with default value(s).
+   * Currently, set default client strategy based on feature flag
    */
-  async onModuleInit() {
-    try {
-      const feature = await this.featureService.getByName(KnownFeatures.RedisClient);
-      this.defaultConnectionStrategy = this.getConnectionStrategy(feature?.data?.strategy);
-    } catch (e) {
-      this.logger.warn('Unable to setup default strategy from the feature config');
-    }
-  }
+  abstract init(): Promise<void>;
 
   /**
    * Get strategy to create connection with

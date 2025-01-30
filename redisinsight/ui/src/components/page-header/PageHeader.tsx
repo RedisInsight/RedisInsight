@@ -70,7 +70,7 @@ const PageHeader = (props: Props) => {
             )}
             <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
             <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-              <EuiFlexItem style={{ marginLeft: 16 }}>
+              <EuiFlexItem style={{ marginLeft: 16 }} data-testid="o-auth-user-profile">
                 <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
               </EuiFlexItem>
             </FeatureFlagComponent>

@@ -37,6 +37,15 @@ html {
   word-break: break-word;
 }
 
+.queryHeader {
+  display: flex;
+  align-items: center;
+
+  .matched {
+    margin-right: 12px;
+  }
+}
+
 .matched {
   color: var(--euiColorFullShade);
   padding-bottom: 12px;
@@ -74,6 +83,12 @@ html {
   max-width: 100%;
 
   display: inline-block !important;
+}
+
+// The style applies to the last div element in the tooltip, 
+// which is the one containing the text
+.euiToolTipPopover.text-multiline-ellipsis > div:last-child {
+  @include eui.multiline-ellipsis($line-count: 7, $line-height: 1.5rem);
 }
 
 .cell {

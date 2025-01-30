@@ -126,7 +126,7 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
       const keyName = Buffer.from(unescapeRedisGlob(match));
       node.cursor = 0;
       node.scanned = isNull(node.total) ? 1 : node.total;
-      node.keys = await this.getKeysInfo(client, [keyName]);
+      node.keys = await this.getKeysInfo(client, [keyName], undefined, true, true);
       node.keys = node.keys.filter((key: GetKeyInfoResponse) => {
         if (key.ttl === -2) {
           return false;
@@ -142,7 +142,7 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
     await this.scan(client, node, match, count, scanThreshold, args.type);
 
     if (node.keys.length && args.keysInfo) {
-      node.keys = await this.getKeysInfo(client, node.keys, args.type);
+      node.keys = await this.getKeysInfo(client, node.keys, args.type, true, true);
     } else {
       node.keys = node.keys.map((name) => ({ name, type: args.type || undefined }));
     }
@@ -162,19 +162,20 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
     client: RedisClient,
     keys: RedisString[],
     filterType?: RedisDataType,
+    includeSize?: boolean,
+    includeTTL?: boolean,
   ): Promise<GetKeyInfoResponse[]> {
-    const sizeResults = await this.getKeysSize(client, keys);
+    const sizeResults = includeSize ? await this.getKeysSize(client, keys) : [];
     const typeResults = filterType
       ? Array(keys.length).fill(filterType)
       : await this.getKeysType(client, keys);
-    const ttlResults = await this.getKeysTtl(client, keys);
-    return keys.map(
-      (key: string, index: number): GetKeyInfoResponse => ({
-        name: key,
-        type: typeResults[index],
-        ttl: ttlResults[index],
-        size: sizeResults[index],
-      }),
-    );
+    const ttlResults = includeTTL ? await this.getKeysTtl(client, keys) : [];
+
+    return keys.map((key, index) => ({
+      name: key,
+      type: typeResults[index],
+      ...(includeTTL && { ttl: ttlResults[index] }),
+      ...(includeSize && { size: sizeResults[index] }),
+    }));
   }
 }

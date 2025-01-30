@@ -15,7 +15,7 @@ import { PluginsController } from 'src/modules/workbench/plugins.controller';
 import { LocalPluginStateRepository } from 'src/modules/workbench/repositories/local-plugin-state.repository';
 import { LocalCommandExecutionRepository } from 'src/modules/workbench/repositories/local-command-execution.repository';
 import config from 'src/utils/config';
-import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
+import { WorkbenchAnalytics } from 'src/modules/workbench/workbench.analytics';
 
 const COMMANDS_CONFIGS = config.get('commands');
 
@@ -53,7 +53,7 @@ export class WorkbenchModule {
         },
         PluginsService,
         PluginCommandsWhitelistProvider,
-        WorkbenchAnalyticsService,
+        WorkbenchAnalytics,
       ],
     };
   }

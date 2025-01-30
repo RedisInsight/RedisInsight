@@ -35,7 +35,7 @@ export class DatabaseRecommendationService {
 
     const database = await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata?.databaseId);
 
-    this.analytics.sendCreatedRecommendationEvent(recommendation, database);
+    this.analytics.sendCreatedRecommendationEvent(clientMetadata.sessionMetadata, recommendation, database);
 
     return recommendation;
   }
@@ -45,11 +45,74 @@ export class DatabaseRecommendationService {
    * @param clientMetadata
    */
   async list(clientMetadata: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
-    this.logger.log('Getting database recommendations');
+    this.logger.debug('Getting database recommendations', clientMetadata);
     const db = clientMetadata.db
       ?? (await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId))?.db
       ?? 0;
     return this.databaseRecommendationRepository.list({ ...clientMetadata, db });
+  }
+
+  private async checkRecommendation(
+    recommendationName: string,
+    exists: boolean,
+    clientMetadata: ClientMetadata, data: any,
+  ): Promise<DatabaseRecommendation> {
+    if (!exists) {
+      const recommendation = await this.scanner.determineRecommendation(
+        clientMetadata.sessionMetadata,
+        recommendationName,
+        data,
+      );
+
+      if (recommendation) {
+        const entity = plainToClass(
+          DatabaseRecommendation,
+          { databaseId: clientMetadata?.databaseId, ...recommendation },
+        );
+
+        return await this.create(clientMetadata, entity);
+      }
+    }
+
+    return null;
+  }
+
+  public async checkMulti(
+    clientMetadata: ClientMetadata,
+    recommendationNames: string[],
+    data: any,
+  ): Promise<Record<string, DatabaseRecommendation>> {
+    try {
+      const newClientMetadata = {
+        ...clientMetadata,
+        db: clientMetadata.db
+          ?? (await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId))?.db
+          ?? 0,
+      };
+      const isRecommendationExist = await this.databaseRecommendationRepository.isExistMulti(
+        newClientMetadata,
+        recommendationNames,
+      );
+
+      const results = await Promise.all(
+        recommendationNames.map(
+          (name) => this.checkRecommendation(
+            name,
+            isRecommendationExist[name],
+            newClientMetadata,
+            data,
+          ),
+        ),
+      );
+
+      return results.reduce((acc, result, idx) => ({
+        ...acc,
+        [recommendationNames[idx]]: result,
+      }), {});
+    } catch (e) {
+      this.logger.warn('Unable to check recommendation', e, clientMetadata);
+      return {};
+    }
   }
 
   /**
@@ -64,32 +127,9 @@ export class DatabaseRecommendationService {
     data: any,
   ): Promise<DatabaseRecommendation> {
     try {
-      const newClientMetadata = {
-        ...clientMetadata,
-        db: clientMetadata.db
-          ?? (await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId))?.db
-          ?? 0,
-      };
-      const isRecommendationExist = await this.databaseRecommendationRepository.isExist(
-        newClientMetadata,
-        recommendationName,
-      );
-      if (!isRecommendationExist) {
-        const recommendation = await this.scanner.determineRecommendation(recommendationName, data);
-
-        if (recommendation) {
-          const entity = plainToClass(
-            DatabaseRecommendation,
-            { databaseId: newClientMetadata?.databaseId, ...recommendation },
-          );
-
-          return await this.create(newClientMetadata, entity);
-        }
-      }
-
-      return null;
+      const result = await this.checkMulti(clientMetadata, [recommendationName], data);
+      return result[recommendationName];
     } catch (e) {
-      this.logger.warn('Unable to check recommendation', e);
       return null;
     }
   }
@@ -99,7 +139,7 @@ export class DatabaseRecommendationService {
    * @param clientMetadata
    */
   public async read(clientMetadata: ClientMetadata): Promise<void> {
-    this.logger.log('Reading database recommendations');
+    this.logger.debug('Reading database recommendations');
     return this.databaseRecommendationRepository.read(clientMetadata);
   }
 
@@ -114,7 +154,7 @@ export class DatabaseRecommendationService {
     id: string,
     dto: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
-    this.logger.log(`Update database extended recommendations id:${id}`);
+    this.logger.debug(`Update database extended recommendations id:${id}`, clientMetadata);
     return this.databaseRecommendationRepository.update(clientMetadata, id, dto);
   }
 
@@ -133,7 +173,7 @@ export class DatabaseRecommendationService {
    * @param id
    */
   async delete(clientMetadata: ClientMetadata, id: string): Promise<void> {
-    this.logger.log(`Deleting recommendation: ${id}`);
+    this.logger.debug(`Deleting recommendation: ${id}`, clientMetadata);
     await this.databaseRecommendationRepository.delete(clientMetadata, id);
   }
 
@@ -144,7 +184,7 @@ export class DatabaseRecommendationService {
    * @param ids
    */
   async bulkDelete(clientMetadata: ClientMetadata, ids: string[]): Promise<DeleteDatabaseRecommendationResponse> {
-    this.logger.log(`Deleting many recommendations: ${ids}`);
+    this.logger.debug(`Deleting many recommendations: ${ids}`, clientMetadata);
 
     return {
       affected: sum(await Promise.all(ids.map(async (id) => {

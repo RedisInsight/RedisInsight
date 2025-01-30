@@ -13,20 +13,21 @@ import {
   resetPipelineManagement,
   setAppContextConnectedRdiInstanceId,
   setAppContextInitialState,
-  setPipelineDialogState,
 } from 'uiSrc/slices/app/context'
-import { resetCliHelperSettings } from 'uiSrc/slices/cli/cli-settings'
+import { resetCliHelperSettings, resetCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
 import {
+  loadInstances,
+  loadInstancesSuccess,
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
-import { setConnectedInstance } from 'uiSrc/slices/rdi/instances'
+import { setConnectedInstance, loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
-import { getPipelineStatus, setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
+import { getPipelineStatus, setPipelineConfig, setPipelineInitialState, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 
 import InstancePage, { Props } from './InstancePage'
@@ -89,6 +90,7 @@ describe('InstancePage', () => {
       setAppContextInitialState(),
       resetPatternKeysData(),
       resetCliHelperSettings(),
+      resetCliSettings(),
       resetRedisearchKeysData(),
       setClusterDetailsInitialState(),
       setDatabaseAnalysisInitialState(),
@@ -100,13 +102,18 @@ describe('InstancePage', () => {
 
     const expectedActions = [
       getPipelineStatus(),
+      loadInstances(),
+      loadRdiInstances(),
       setAppContextConnectedRdiInstanceId(''),
       setPipelineInitialState(),
+      setPipelineConfig(''),
+      setPipelineJobs([]),
       resetPipelineManagement(),
       setConnectedInstance(),
       setAppContextConnectedRdiInstanceId('rdiInstanceId'),
       resetConnectedDatabaseInstance(),
       ...resetContextActions,
+      loadInstancesSuccess(expect.any(Array)),
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
@@ -127,8 +134,12 @@ describe('InstancePage', () => {
 
     const expectedActions = [
       getPipelineStatus(),
+      loadInstances(),
+      loadRdiInstances(),
       setAppContextConnectedRdiInstanceId(''),
       setPipelineInitialState(),
+      setPipelineConfig(''),
+      setPipelineJobs([]),
       resetPipelineManagement(),
       setConnectedInstance()
     ]
@@ -179,21 +190,5 @@ describe('InstancePage', () => {
     })
 
     expect(pushMock).toBeCalledWith(Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK))
-  })
-
-  it('should save proper page on unmount', () => {
-    const { unmount } = render(
-      <BrowserRouter>
-        <InstancePage {...instance(mockedProps)} />
-      </BrowserRouter>
-    )
-
-    unmount()
-    const expectedActions = [
-      setPipelineInitialState(),
-      setPipelineDialogState(true)
-    ]
-
-    expect(store.getActions().slice(0 - expectedActions.length)).toEqual(expectedActions)
   })
 })

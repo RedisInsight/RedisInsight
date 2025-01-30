@@ -19,13 +19,19 @@ import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { FilterNotAvailable } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { AdditionalRedisModule } from 'uiSrc/slices/interfaces'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
 
 const ALL_KEY_TYPES_VALUE = 'all'
 
-const FilterKeyType = () => {
+export interface Props {
+  modules?: AdditionalRedisModule[]
+}
+
+const FilterKeyType = ({ modules }: Props) => {
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
   const [typeSelected, setTypeSelected] = useState<string>('all')
   const [isVersionSupported, setIsVersionSupported] = useState<boolean>(true)
@@ -33,6 +39,7 @@ const FilterKeyType = () => {
 
   const { version } = useSelector(connectedInstanceOverviewSelector)
   const { filter, viewType, searchMode } = useSelector(keysSelector)
+  const features = useSelector(appFeatureFlagsFeaturesSelector)
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -50,19 +57,26 @@ const FilterKeyType = () => {
     setTypeSelected(filter ?? ALL_KEY_TYPES_VALUE)
   }, [filter])
 
-  const options: EuiSuperSelectOption<string>[] = FILTER_KEY_TYPE_OPTIONS.map(
-    (item) => {
-      const { value, color, text } = item
-      return {
-        value,
-        inputDisplay: (
-          <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>
-        ),
-        dropdownDisplay: <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>,
-        'data-test-subj': `filter-option-type-${value}`,
+  const options: EuiSuperSelectOption<string>[] = FILTER_KEY_TYPE_OPTIONS
+    .filter(({ featureFlag, skipIfNoModule }) => {
+      if (skipIfNoModule && !modules?.some(({ name }) => name === skipIfNoModule)) {
+        return false
       }
-    }
-  )
+      return !featureFlag || features[featureFlag]?.flag
+    })
+    .map(
+      (item) => {
+        const { value, color, text } = item
+        return {
+          value,
+          inputDisplay: (
+            <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>
+          ),
+          dropdownDisplay: <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>,
+          'data-test-subj': `filter-option-type-${value}`,
+        }
+      }
+    )
 
   options.unshift({
     value: ALL_KEY_TYPES_VALUE,

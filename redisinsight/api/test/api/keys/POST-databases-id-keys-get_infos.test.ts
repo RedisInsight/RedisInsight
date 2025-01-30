@@ -20,8 +20,8 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 const responseSchema = Joi.array().items(Joi.object().keys({
   name: JoiRedisString.required(),
   type: Joi.string().required(),
-  ttl: Joi.number().integer().required(),
-  size: Joi.number().integer().allow(null).required(),
+  ttl: Joi.number().integer().allow(null).optional(),
+  size: Joi.number().integer().allow(null).optional(),
 })).required();
 
 const mainCheckFn = async (testCase) => {
@@ -45,6 +45,50 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
     before(rte.data.generateBinKeys);
 
     [
+      {
+        name: 'Should not return size if includeSize is false',
+        data: {
+          keys: [constants.TEST_STRING_KEY_BIN_BUFFER_1],
+          includeSize: false,
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body[0].size).to.eql(undefined);
+        }
+      },
+      {
+        name: 'Should return size if includeSize is true',
+        data: {
+          keys: [constants.TEST_STRING_KEY_BIN_BUFFER_1],
+          includeSize: true,
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body[0].size).to.be.a('number')
+        }
+      },
+      {
+        name: 'Should not return ttl if includeTTL is false',
+        data: {
+          keys: [constants.TEST_STRING_KEY_BIN_BUFFER_1],
+          includeTTL: false,
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body[0].ttl).to.eql(undefined);
+        }
+      },
+      {
+        name: 'Should return ttl if includeTTL is true',
+        data: {
+          keys: [constants.TEST_STRING_KEY_BIN_BUFFER_1],
+          includeTTL: true,
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body[0].ttl).to.be.a('number')
+        }
+      },
       {
         name: 'Should return string info in utf8 (default)',
         data: {
@@ -105,8 +149,8 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body[0].name).to.deep.eq(constants.TEST_STRING_KEY_BIN_UTF8_1);
-          expect(body[0].ttl).to.deep.eq(-2);
-          expect(body[0].size).to.deep.eq(null);
+          expect(body[0].ttl).to.be.oneOf([-2, undefined]);
+          expect(body[0].size).to.be.oneOf([null, undefined]);
           expect(body[0].type).to.deep.eq('none');
         }
       },

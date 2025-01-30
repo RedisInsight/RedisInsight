@@ -26,6 +26,13 @@ const rdiInstance: AddNewRdiParameters = {
     password: '111'
 };
 
+const rdiInstance2: AddNewRdiParameters = {
+    name: 'testInstance2',
+    url: 'https://11.111.111.214',
+    username: 'username',
+    password: '111'
+};
+
 //skip the tests until rdi integration is added
 fixture.skip `Rdi Navigation`
     .meta({ type: 'critical_path', feature: 'rdi' })
@@ -106,4 +113,32 @@ test('Verify that confirmation message is displayed, if there are unsaved change
     await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
     await t.click(rdiInstancePage.proceedNavigateDialog);
     await t.expect(rdiInstancesListPage.addRdiInstanceButton.exists).ok('the user is not navigated to the panel');
+});
+test.before(async() => {
+    await rdiApiRequests.addNewRdiApi(rdiInstance);
+    await rdiApiRequests.addNewRdiApi(rdiInstance2);
+    await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig)})
+('Verify that context is saved when user switches to db', async() => {
+    const jobName = 'jobName';
+    const textForMonaco = 'here should be a job';
+
+    await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
+    await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
+
+    await t.click(rdiInstancePage.templateCancelButton);
+    await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.jobsInput, textForMonaco, false);
+    await t.click(rdiInstancePage.NavigationHeader.dbName);
+    await t.click(rdiInstancePage.NavigationHeader.dbListInstance.withText(ossStandaloneConfig.databaseName));
+
+    await t.click(rdiInstancePage.NavigationHeader.dbName);
+    await t.click(rdiInstancePage.NavigationHeader.dbListInstance.withText(rdiInstance.name));
+
+    const text = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
+    await t.expect(text).eql(textForMonaco, 'rdi context is not saved between rdi and db');
+
+    await t.click(rdiInstancePage.NavigationHeader.dbName);
+    await t.click(rdiInstancePage.NavigationHeader.dbListInstance.withText(rdiInstance2.name));
+
+    await t.expect(rdiInstancePage.selectOptionDialog.exists).ok('rdi context is saved between rdi')
 });

@@ -38,7 +38,7 @@ const HomePageTemplate = (props: Props) => {
           )}
           <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
           <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-            <EuiFlexItem style={{ marginLeft: 16 }}>
+            <EuiFlexItem style={{ marginLeft: 16 }} data-testid="home-page-sso-profile">
               <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
             </EuiFlexItem>
           </FeatureFlagComponent>

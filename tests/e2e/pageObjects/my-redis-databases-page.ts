@@ -40,7 +40,6 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     sortByConnectionType = Selector('span').withAttribute('title', 'Connection Type');
     importDatabasesBtn = Selector('[data-testid=option-btn-import]');
     retryImportBtn = Selector('[data-testid=btn-retry]');
-    submitImportBtn = Selector('[data-testid=submit-btn]');
     removeImportedFileBtn = Selector('[aria-label="Clear selected files"]');
     exportBtn = Selector('[data-testid=export-btn]');
     exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
@@ -61,8 +60,9 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     moduleGearsIcon = Selector('[data-testid^=Gears]');
     redisStackIcon = Selector('[data-testid=redis-stack-icon]');
     tooltipRedisStackLogo = Selector('[data-testid=tooltip-redis-stack-icon]');
+    iconNotUsedDatabase = Selector('[data-testid^=database-status-tryDatabase-]');
+    iconDeletedDatabase = Selector('[data-testid^=database-status-checkIfDeleted-]');
     //TEXT INPUTS (also referred to as 'Text fields')
-    aliasInput = Selector('[data-testid=alias-input]');
     searchInput = Selector('[data-testid=search-database-list]');
     importDatabaseInput = Selector('[data-testid=import-file-modal-filepicker]');
     //TEXT ELEMENTS
@@ -71,8 +71,6 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     dbNameList = Selector('[data-testid^=instance-name]', { timeout: 3000 });
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
     hostPort = Selector('[data-testid=host-port]');
-    noResultsFoundMessage = Selector('div').withExactText('No results found');
-    noResultsFoundText = Selector('div').withExactText('No results matched your search. Try reducing the criteria.');
     failedImportMessage = Selector('[data-testid=result-failed]');
     importResult = Selector('[data-testid^=table-result-]');
     userProfileAccountInfo = Selector('[data-testid^=profile-account-]');
@@ -81,10 +79,10 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     successResultsAccordion = Selector('[data-testid^=success-results-]');
     partialResultsAccordion = Selector('[data-testid^=partial-results-]');
     failedResultsAccordion = Selector('[data-testid^=failed-results-]');
+    notificationUnusedDbMessage = Selector('[class^=_warningTooltipContent]');
     // CONTAINERS
     databaseContainer = Selector('.databaseContainer');
     connectionTypeTitle  = Selector('[data-test-subj=tableHeaderCell_connectionType_2]');
-    signInAgreement = Selector('[class="euiCheckbox__square"]');
     addDatabaseImport = Selector('[data-testid=add-db_import]');
 
     /**
@@ -177,9 +175,10 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
      * Get all databases from List of DBs page
      */
     async getAllDatabases(): Promise<string[]> {
-        const databases: string[] = [];
-        const n = await this.dbNameList.count;
 
+        const databases: string[] = [];
+        await t.expect(this.dbNameList.exists).ok()
+        const n = await this.dbNameList.count;
         for(let k = 0; k < n; k++) {
             const name = await this.dbNameList.nth(k).textContent;
             databases.push(name);

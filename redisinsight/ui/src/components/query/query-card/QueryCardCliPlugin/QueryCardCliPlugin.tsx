@@ -276,21 +276,21 @@ const QueryCardCliPlugin = (props: Props) => {
           data-testid="pluginIframe"
         />
         {!!error && (
-          <div className={styles.container}>
-            <EuiFlexItem className="query-card-output-response-fail">
-              <span data-testid="query-card-no-module-output">
-                <span className={styles.alertIconWrapper}>
+        <div className={styles.container}>
+          <EuiFlexItem className="query-card-output-response-fail">
+            <span data-testid="query-card-no-module-output">
+              <span className={styles.alertIconWrapper}>
                   <EuiIcon type="alert" color="danger" style={{ display: 'inline', marginRight: 10 }} />
-                </span>
-                <EuiTextColor color="danger">{error}</EuiTextColor>
               </span>
-            </EuiFlexItem>
-          </div>
+              <EuiTextColor color="danger">{error}</EuiTextColor>
+            </span>
+          </EuiFlexItem>
+        </div>
         )}
         {!isPluginLoaded && (
-          <div>
-            <EuiLoadingContent lines={5} />
-          </div>
+        <div>
+          <EuiLoadingContent lines={5} />
+        </div>
         )}
       </div>
     </div>

@@ -119,6 +119,7 @@ export const catchAclError = (error: ReplyError): HttpException => {
     error instanceof EncryptionServiceErrorException
     || error instanceof NotFoundException
     || error instanceof ConflictException
+    || error instanceof ServiceUnavailableException
   ) {
     throw error;
   }

@@ -26,6 +26,7 @@ export interface Props {
   postfix: string
   loading: boolean
   displayText?: boolean
+  displayLastRefresh?: boolean
   lastRefreshTime: Nullable<number>
   testid?: string
   containerClassName?: string
@@ -34,6 +35,8 @@ export interface Props {
   onRefreshClicked?: () => void
   onEnableAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
   onChangeAutoRefreshRate?: (enableAutoRefresh: boolean, refreshRate: string) => void
+  minimumRefreshRate?: number
+  defaultRefreshRate?: string
   iconSize?: EuiButtonIconSizes
   disabled?: boolean
   enableAutoRefreshDefault?: boolean
@@ -45,6 +48,7 @@ const AutoRefresh = ({
   postfix,
   loading,
   displayText = true,
+  displayLastRefresh = true,
   lastRefreshTime,
   containerClassName = '',
   testid = '',
@@ -55,6 +59,8 @@ const AutoRefresh = ({
   onChangeAutoRefreshRate,
   iconSize = 'm',
   disabled,
+  minimumRefreshRate,
+  defaultRefreshRate,
   enableAutoRefreshDefault = false
 }: Props) => {
   let intervalText: NodeJS.Timeout
@@ -62,7 +68,7 @@ const AutoRefresh = ({
 
   const [refreshMessage, setRefreshMessage] = useState(NOW)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
-  const [refreshRate, setRefreshRate] = useState<string>('')
+  const [refreshRate, setRefreshRate] = useState<string>(defaultRefreshRate || '')
   const [refreshRateMessage, setRefreshRateMessage] = useState<string>('')
   const [enableAutoRefresh, setEnableAutoRefresh] = useState(enableAutoRefreshDefault)
   const [editingRate, setEditingRate] = useState(false)
@@ -75,7 +81,7 @@ const AutoRefresh = ({
 
   useEffect(() => {
     const refreshRateStorage = localStorageService.get(BrowserStorageItem.autoRefreshRate + postfix)
-      || DEFAULT_REFRESH_RATE
+      || defaultRefreshRate || DEFAULT_REFRESH_RATE
 
     setRefreshRate(refreshRateStorage)
   }, [postfix])
@@ -121,14 +127,13 @@ const AutoRefresh = ({
     return () => clearInterval(intervalRefresh)
   }, [enableAutoRefresh, refreshRate, loading, disabled, lastRefreshTime])
 
-  const getLastRefreshDelta = (time:Nullable<number>) => (Date.now() - (time || 0)) / 1_000
+  const getLastRefreshDelta = (time: Nullable<number>) => (Date.now() - (time || 0)) / 1_000
 
   const getDataTestid = (suffix: string) => (testid ? `${testid}-${suffix}` : suffix)
 
   const updateLastRefresh = () => {
     const delta = getLastRefreshDelta(lastRefreshTime)
     const text = getTextByRefreshTime(delta, lastRefreshTime ?? 0)
-
     lastRefreshTime && setRefreshMessage(text)
   }
 
@@ -140,7 +145,8 @@ const AutoRefresh = ({
   }
 
   const handleApplyAutoRefreshRate = (initValue: string) => {
-    const value = +initValue >= MIN_REFRESH_RATE ? initValue : `${MIN_REFRESH_RATE}`
+    const minRefreshRate = minimumRefreshRate || MIN_REFRESH_RATE
+    const value = +initValue >= minRefreshRate ? initValue : `${minRefreshRate}`
     setRefreshRate(value)
     setEditingRate(false)
     localStorageService.set(BrowserStorageItem.autoRefreshRate + postfix, value)
@@ -167,14 +173,16 @@ const AutoRefresh = ({
   }
 
   return (
-    <div className={cx(styles.container, containerClassName, { [styles.enable]: !disabled && enableAutoRefresh })}>
+    <div className={cx(styles.container, containerClassName, { [styles.enable]: !disabled && enableAutoRefresh })} data-testid={getDataTestid('auto-refresh-container')}>
       <EuiTextColor className={styles.summary}>
         {displayText && (
           <span data-testid={getDataTestid('refresh-message-label')}>{enableAutoRefresh ? 'Auto refresh:' : 'Last refresh:'}</span>
         )}
-        <span className={cx('refresh-message-time', styles.time, { [styles.disabled]: disabled })} data-testid={getDataTestid('refresh-message')}>
-          {` ${enableAutoRefresh ? refreshRateMessage : refreshMessage}`}
-        </span>
+        {displayLastRefresh && (
+          <span className={cx('refresh-message-time', styles.time, { [styles.disabled]: disabled })} data-testid={getDataTestid('refresh-message')}>
+            {` ${enableAutoRefresh ? refreshRateMessage : refreshMessage}`}
+          </span>
+        )}
       </EuiTextColor>
 
       <EuiToolTip

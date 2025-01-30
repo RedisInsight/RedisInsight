@@ -387,4 +387,23 @@ export const commonfindCurrentArgumentCases = [
     },
     appendIncludes: [],
   },
+  // TODO: fix this case
+  {
+    input: 'FT.SEARCH \'idx\' \'query to search\' SORTBY a ASC PARAMS 3 a a2 a3 DIALECT ',
+    result: {
+      append: [],
+      isBlocked: true,
+      isComplete: false,
+      parent: expect.any(Object),
+      token: expect.any(Object),
+      stopArg: {
+        name: 'dialect',
+        type: 'integer',
+        optional: true,
+        token: 'DIALECT',
+        since: '2.4.3'
+      }
+    },
+    appendIncludes: [],
+  },
 ]

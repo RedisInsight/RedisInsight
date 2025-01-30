@@ -36,7 +36,6 @@ describe('useTextFileGenerator', () => {
 
   afterEach(() => {
     jest.restoreAllMocks()
-    jest.clearAllTimers()
   })
 
   it('should return a function that triggers a file download', () => {
@@ -61,7 +60,6 @@ describe('useTextFileGenerator', () => {
   })
 
   it('should clean up object URL after download', () => {
-    jest.useFakeTimers()
     const { result } = renderHook(() => useTextFileGenerator())
 
     const downloadFn = result.current.textToDownloadableFile(
@@ -73,12 +71,6 @@ describe('useTextFileGenerator', () => {
       downloadFn()
     })
 
-    act(() => {
-      jest.advanceTimersByTime(100)
-    })
-
     expect(revokeObjectURLSpy).toHaveBeenCalledWith('mock-file-url')
-
-    jest.useRealTimers()
   })
 })

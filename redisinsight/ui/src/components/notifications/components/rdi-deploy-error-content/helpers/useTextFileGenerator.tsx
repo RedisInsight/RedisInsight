@@ -15,7 +15,7 @@ const useTextFileDownload = () => {
         document.body.removeChild(a)
 
         // Cleanup after download to avoid memory leaks
-        setTimeout(() => URL.revokeObjectURL(fileUrl), 100)
+        URL.revokeObjectURL(fileUrl)
       }
     },
     [],

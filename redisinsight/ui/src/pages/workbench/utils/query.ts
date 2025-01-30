@@ -86,9 +86,11 @@ export const findStopArgument = (
     // handle optional arguments, iterate until we get token or non optional arguments
     // we check if we not blocked on optional token argument
     if (!isBlocked && (currentArgument?.optional || !forceReturn)) {
-      const data = skipOptionalArguments(queryArg, prevMandatoryIndex, command.arguments)
-      currentArgument = data.currentArgument
-      commandIndex = data.index
+      const arg = skipOptionalArguments(queryArg, prevMandatoryIndex, command.arguments)
+      const { index, currentArgument: nextCurrentArgument } = arg
+
+      currentArgument = nextCurrentArgument
+      commandIndex = index
     }
 
     // handle case when we proceed all arguments from command but it is multiple and should return to 0 index
@@ -97,18 +99,26 @@ export const findStopArgument = (
       currentArgument = command?.arguments[commandIndex]
     }
 
-    // we completed all arguments and return from current block
     if (!currentArgument && forceReturn) {
-      const {
-        optionalArguments,
-        currentArgument
-      } = skipOptionalArguments(queryArg, prevMandatoryIndex, command.arguments)
+      const arg = skipOptionalArguments(queryArg, prevMandatoryIndex, command.arguments)
+      const { optionalArguments: allRestArguments } = skipOptionalArguments('', prevMandatoryIndex, command.arguments)
+      const { index, currentArgument: nextCurrentArgument } = arg
+      const restOptional = removeSuggestedArgs(queryArgs, allRestArguments)
 
-      return {
-        queryArgsIterated: i,
-        stopArgument: currentArgument,
-        skippedArguments: optionalArguments,
-        isCompleteByNArgs: argsCount === 0
+      if (!nextCurrentArgument) {
+        return {
+          queryArgsIterated: i,
+          stopArgument: currentArgument,
+          skippedArguments: allRestArguments,
+          isCompleteByNArgs: argsCount === 0
+        }
+      }
+
+      // Continue iterating through optional arguments
+      currentArgument = nextCurrentArgument
+
+      if (restOptional?.length) {
+        commandIndex = index
       }
     }
 
@@ -144,7 +154,7 @@ export const findStopArgument = (
       const parentArgs = [filteredArguments, ...parentSkippedArguments]
       const restQeuryArgs = queryArgs.slice(i)
       const blockResult: any = findStopArgument(restQeuryArgs, currentArgument, argsCount, true, parentArgs) || {}
-      const { stopArgument, isCompleteByNArgs, queryArgsIterated } = blockResult
+      const { stopArgument, isCompleteByNArgs, queryArgsIterated, lastArgument, skippedArguments } = blockResult
 
       const isCountCompleted = isCountPositive(argsCount) && isCompleteByNArgs
       i += (queryArgsIterated || 1) - 1
@@ -162,6 +172,12 @@ export const findStopArgument = (
         return {
           ...blockResult,
           blockParent: currentArgument
+        }
+      }
+
+      if (lastArgument?.optional && skippedArguments?.[0]?.length) {
+        return {
+          ...blockResult
         }
       }
 

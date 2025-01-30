@@ -202,7 +202,7 @@ test.requestHooks(logger)
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Index creation', async t => {
-        const createIndexLink = 'https://redis.io/docs/latest/commands/ft.create/?utm_source=redisinsight&utm_medium=app&utm_campaign=browser_search';
+        const createIndexLink = 'https://redis.io/docs/latest/commands/ft.create/';
 
         // Verify that telemetry event 'SEARCH_MODE_CHANGED' sent
         await t.click(browserPage.redisearchModeBtn);

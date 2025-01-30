@@ -81,7 +81,7 @@ export class DatabaseRecommendationService {
     clientMetadata: ClientMetadata,
     recommendationNames: string[],
     data: any,
-  ): Promise<Map<string, DatabaseRecommendation[]>> {
+  ): Promise<Record<string, DatabaseRecommendation>> {
     try {
       const newClientMetadata = {
         ...clientMetadata,
@@ -108,10 +108,10 @@ export class DatabaseRecommendationService {
       return results.reduce((acc, result, idx) => ({
         ...acc,
         [recommendationNames[idx]]: result,
-      }), {} as Map<string, DatabaseRecommendation[]>);
+      }), {});
     } catch (e) {
       this.logger.warn('Unable to check recommendation', e, clientMetadata);
-      return null;
+      return {};
     }
   }
 
@@ -126,8 +126,12 @@ export class DatabaseRecommendationService {
     recommendationName: string,
     data: any,
   ): Promise<DatabaseRecommendation> {
-    const result = await this.checkMulti(clientMetadata, [recommendationName], data);
-    return result[recommendationName];
+    try {
+      const result = await this.checkMulti(clientMetadata, [recommendationName], data);
+      return result[recommendationName];
+    } catch (e) {
+      return null;
+    }
   }
 
   /**

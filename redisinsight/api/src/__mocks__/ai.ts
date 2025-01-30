@@ -9,7 +9,6 @@ import { AiMessageDto } from 'src/modules/ai/messages/dto/send.ai.message.dto';
 import { mockCloudSession } from 'src/__mocks__/cloud-session';
 import { AiMessageEntity } from 'src/modules/ai/messages/entities/ai.message.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
-import { AiModule } from 'src/modules/ai/ai.module';
 import { AiAgreementEntity } from 'src/modules/ai/agreements/entities/ai.agreement.entity';
 import { AiAgreement } from 'src/modules/ai/agreements/models/ai.agreement';
 import { AiDatabaseAgreementEntity } from 'src/modules/ai/agreements/entities/ai.database.agreement.entity';
@@ -78,15 +77,6 @@ export const mockAiHistoryApiResponse = [
   mockAiMessage2Response,
 ];
 
-export const mockAiChat = Object.assign(new AiModule(), {
-  id: mockAiChatId,
-  messages: [
-    Object.assign(new AiMessage(), mockHumanMessage1Response),
-    Object.assign(new AiMessage(), mockAiMessage1Response),
-    Object.assign(new AiMessage(), mockHumanMessage2Response),
-    Object.assign(new AiMessage(), mockAiMessage2Response),
-  ],
-});
 export const getMockedReadableStream = () => new Readable();
 export const mockAiResponseStream = getMockedReadableStream();
 
@@ -526,19 +516,8 @@ export const mockAiAuth = {
 
 export const mockAiSocket = new MockSocket();
 
-export const mockConvAiProvider = jest.fn(() => ({
-  auth: jest.fn().mockResolvedValue(mockAiChatId),
-  postMessage: jest.fn().mockResolvedValue(mockAiResponseStream),
-  getHistory: jest.fn().mockResolvedValue(mockAiHistoryApiResponse),
-  reset: jest.fn(),
-}));
-
 export const mockAiMessageProvider = jest.fn(() => ({
   getSocket: jest.fn().mockResolvedValue(mockAiSocket.socketClient),
-}));
-
-export const mockAiAuthProvider = jest.fn(() => ({
-  getAuthData: jest.fn().mockResolvedValue(mockAiAuth),
 }));
 
 export const mockAiMessageRepository = jest.fn(() => ({

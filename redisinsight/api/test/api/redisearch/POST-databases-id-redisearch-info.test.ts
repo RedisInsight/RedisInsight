@@ -123,8 +123,6 @@ describe('POST /databases/:id/redisearch/info', () => {
   before(async () => {
     await rte.data.generateRedisearchIndexes(true);
     await localDb.createTestDbInstance(rte, {}, { id: constants.TEST_INSTANCE_ID_2 });
-    const redisVersion = rte.env.version; // ex. "7.2.4"
-    redisMajorVersion = redisVersion.split('.')[0] // returns only 7
   });
 
   describe('Validation', () => {
@@ -134,7 +132,7 @@ describe('POST /databases/:id/redisearch/info', () => {
   });
 
   describe('Common, redis version <= 6', () => {
-    requirements(() => redisMajorVersion <= 6 );
+    requirements('rte.modules.search.version<20800');
     [
       {
         name: 'Should get info index',
@@ -161,7 +159,7 @@ describe('POST /databases/:id/redisearch/info', () => {
   });
 
   describe('Common redis version >= 7', () => {
-    requirements(() => redisMajorVersion >= 7);
+    requirements('rte.modules.search.version>=20800');
     [
       {
         name: 'Should get info index',

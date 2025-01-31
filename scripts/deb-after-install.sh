@@ -27,9 +27,15 @@ sudo chmod +x "$NEW_INSTALL_PATH/redisinsight"
 
 # Set correct ownership and permissions for chrome-sandbox
 if [ -f "$NEW_INSTALL_PATH/chrome-sandbox" ]; then
-sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox"
-sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox"
+    sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox"
+    sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox"
 fi
+
+# Set permissions for auto-updates
+# Get the current user
+CURRENT_USER=$(logname || whoami)
+sudo chown -R $CURRENT_USER:$CURRENT_USER "$NEW_INSTALL_PATH"
+sudo chmod -R u+w "$NEW_INSTALL_PATH"
 
 echo "RedisInsight post-installation setup completed successfully"
 exit 0

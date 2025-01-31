@@ -122,6 +122,17 @@ export const findStopArgument = (
       }
     }
 
+    // check count to understand that we in block nargs scope, if completed all arguments then return
+    if (isCountPositive(count) && argsCount === 0) {
+      return {
+        queryArgsIterated: i,
+        stopArgument: currentArgument,
+        skippedArguments: parentSkippedArguments,
+        isBlocked: false,
+        isCompleteByNArgs: true
+      }
+    }
+
     // handle pure token, if arg equals, then move to next command
     if (isPureToken(currentArgument, queryArg)) {
       isBlocked = false

@@ -7,11 +7,11 @@ const errorWhiteListFields = [
   'command.name',
 ];
 
-const sanitizeStack = (stack: any[]) => {
+const sanitizeStack = (stack: string | any[]) => {
   try {
     let sanitizedStack = stack;
 
-    if (stack && stack.length) {
+    if (Array.isArray(stack) && stack.length) {
       sanitizedStack = stack.map((error) => {
         if (error?.name === 'AxiosError') {
           return {
@@ -33,13 +33,13 @@ const sanitizeStack = (stack: any[]) => {
 /**
  * Get only whitelisted fields from logs when omitSensitiveData option enabled
  */
-export const sensitiveDataFormatter = format((info, opts = {}) => {
+export const sensitiveDataFormatter = format((info, opts: { omitSensitiveData?: boolean } = {}) => {
   let stack;
   if (opts?.omitSensitiveData) {
-    stack = map(get(info, 'stack', []), (stackItem) => pick(stackItem, errorWhiteListFields));
+    stack = map(get(info, 'stack', []) as (Error | string)[], (stackItem) => pick(stackItem, errorWhiteListFields));
   } else {
-    stack = map(get(info, 'stack', []), (stackItem) => {
-      if (stackItem?.stack) {
+    stack = map(get(info, 'stack', []) as (Error | string)[], (stackItem) => {
+      if (typeof stackItem === 'object' && stackItem?.stack) {
         return {
           ...stackItem,
           stack: stackItem.stack,
@@ -62,7 +62,7 @@ export const jsonFormat = format.printf((info) => {
     timestamp: new Date().toLocaleString(),
     context: info.context,
     message: info.message,
-    stack: sanitizeStack(info.stack),
+    stack: sanitizeStack((info as unknown as Error).stack),
   };
   return JSON.stringify(logData);
 });
@@ -74,6 +74,6 @@ export const prettyFormat = format.printf((info) => {
     level, context, message, stack,
   } = info;
 
-  const logData = [timestamp, `${level}`.toUpperCase(), context, message, { stack: sanitizeStack(stack) }];
+  const logData = [timestamp, `${level}`.toUpperCase(), context, message, { stack: sanitizeStack(stack as string) }];
   return logData.join(separator);
 });

@@ -3,7 +3,7 @@ import { isArray, isObject, isString } from 'lodash';
 import { getBufferFromSafeASCIIString } from 'src/utils/cli-helper';
 import { Transform } from 'class-transformer';
 
-const SingleToRedisStringTransformer = (value): RedisString => {
+const SingleToRedisStringTransformer = ({ value }): RedisString => {
   if (value?.type === 'Buffer') {
     if (isArray(value.data)) {
       return Buffer.from(value);
@@ -21,9 +21,9 @@ const SingleToRedisStringTransformer = (value): RedisString => {
   return value;
 };
 
-const ArrayToRedisStringTransformer = (value) => {
+const ArrayToRedisStringTransformer = ({ value }) => {
   if (isArray(value)) {
-    return value.map(SingleToRedisStringTransformer);
+    return value.map((item) => SingleToRedisStringTransformer({ value: item }));
   }
 
   return value;

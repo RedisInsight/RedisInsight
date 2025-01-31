@@ -13,6 +13,7 @@ export class SshTunnelProvider {
     try {
       const [server, client] = await createTunnel({
         autoClose: true,
+        reconnectOnError: false,
       }, {
         host: '127.0.0.1',
       },

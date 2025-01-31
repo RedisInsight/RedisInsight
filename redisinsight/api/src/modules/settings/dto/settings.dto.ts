@@ -122,6 +122,7 @@ export class GetAppSettingsResponse {
       notifications: true,
     },
   })
+  @Type(() => GetUserAgreementsResponse)
   @Expose()
   agreements: GetUserAgreementsResponse;
 }

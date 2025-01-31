@@ -1,5 +1,6 @@
 #!/bin/bash
-set -ex
+
+# set -ex
 
 # Define paths
 OLD_INSTALL_PATH="/opt/Redis Insight"  # Path with space
@@ -24,8 +25,17 @@ sudo ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight"
 # Set basic executable permissions
 sudo chmod +x "$NEW_INSTALL_PATH/redisinsight"
 
-# Set correct ownership and permissions for chrome-sandbox
-sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox"
-sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox"
+# Ensure proper permissions for the installation directory and its contents
+sudo chown -R root:root "$NEW_INSTALL_PATH"  # Root ownership for main files
+sudo find "$NEW_INSTALL_PATH" -type d -exec chmod 755 {} \;  # Directories need execute permission
+sudo find "$NEW_INSTALL_PATH" -type f -exec chmod 644 {} \;  # Regular files
+sudo chmod 755 "$NEW_INSTALL_PATH/redisinsight"  # Ensure main binary is executable
+
+# Special handling for chrome-sandbox if it exists
+if [ -f "$NEW_INSTALL_PATH/chrome-sandbox" ]; then
+    sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox"
+    sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox"
+fi
 
 echo "RedisInsight post-installation setup completed successfully"
+exit 0

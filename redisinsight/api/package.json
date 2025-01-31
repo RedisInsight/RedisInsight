@@ -44,7 +44,6 @@
     "word-wrap": "1.2.4",
     "jest/**/micromatch": "^4.0.8",
     "mocha/minimatch": "^3.0.5",
-    "@nestjs/serve-static/path-to-regexp": "^1.9.0",
     "@nestjs/platform-socket.io/socket.io": "^4.8.0",
     "@nestjs/cli/**/braces": "^3.0.3",
     "**/semver": "^7.5.2",
@@ -58,7 +57,7 @@
     "@nestjs/event-emitter": "^2.0.4",
     "@nestjs/platform-express": "^10.4.15",
     "@nestjs/platform-socket.io": "^10.4.5",
-    "@nestjs/serve-static": "^4.0.2",
+    "@nestjs/serve-static": "^5.0.1",
     "@nestjs/swagger": "^7.4.2",
     "@nestjs/typeorm": "^10.0.2",
     "@nestjs/websockets": "^10.4.5",
@@ -174,10 +173,13 @@
     },
     "reporters": [
       "default",
-      ["jest-html-reporters", {
-        "publicPath": "./report",
-        "filename": "index.html"
-      }]
+      [
+        "jest-html-reporters",
+        {
+          "publicPath": "./report",
+          "filename": "index.html"
+        }
+      ]
     ]
   }
 }

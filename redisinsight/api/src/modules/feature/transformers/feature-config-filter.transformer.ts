@@ -6,7 +6,7 @@ import {
   FeatureConfigFilterOr,
 } from 'src/modules/feature/model/features-config';
 
-export const featureConfigFilterTransformer = (value) => map(value || [], (filter) => {
+export const featureConfigFilterTransformer = ({ value }) => map(value || [], (filter) => {
   let cls: any = FeatureConfigFilter;
 
   if (get(filter, 'and')) {

@@ -54,7 +54,7 @@
     "redisinsight-plugin-sdk": "^1.0.0"
   },
   "devDependencies": {
-    "vite": "file:../node_modules/vite"
+    "vite": "^5.4.12"
   },
   "resolutions": {
     "trim": "0.0.3",

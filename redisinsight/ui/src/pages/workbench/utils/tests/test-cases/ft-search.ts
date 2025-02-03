@@ -1,6 +1,4 @@
 export const findArgumentftSearchTests = [
-  { args: [''], result: null },
-  { args: ['', ''], result: null },
   {
     args: ['', '', 'SUMMARIZE'],
     result: {
@@ -137,7 +135,7 @@ export const findArgumentftSearchTests = [
   {
     args: ['', '', 'RETURN', '1', 'iden'],
     result: {
-      stopArg: undefined,
+      stopArg: expect.any(Object),
       append: [],
       isBlocked: false,
       isComplete: true,

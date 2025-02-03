@@ -17,6 +17,7 @@ import { getTruncatedName, Nullable } from 'uiSrc/utils'
 import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
+import { getConfig } from 'uiSrc/config'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import styles from './styles.module.scss'
 
@@ -27,6 +28,8 @@ export interface Props {
   handleClickCloudAccount?: () => void;
   selectingAccountId?: number;
 }
+
+const riConfig = getConfig()
 
 const UserProfile = (props: Props) => {
   const {

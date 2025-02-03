@@ -5,7 +5,10 @@ on:
     branches:
       - 'fe/**'
       - 'be/**'
+      - 'fe-be/**'
       - 'e2e/**'
+      - 'feature/**'
+      - 'bugfix/**'
 
   workflow_dispatch:
     inputs:
@@ -41,7 +44,7 @@ on:
       group_tests:
         description: Run group of tests
         type: string
-        default: 'all'
+        default: 'without_e2e'
       short_rte_list:
         description: Use short rte list
         type: boolean
@@ -86,19 +89,19 @@ jobs:
 
   frontend-tests:
     needs: changes
-    if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'fe/')
+    if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'fe/') || startsWith(github.ref_name, 'fe-be/') || startsWith(github.ref_name, 'feature/') || startsWith(github.ref_name, 'bugfix/')
     uses: ./.github/workflows/tests-frontend.yml
     secrets: inherit
 
   backend-tests:
     needs: changes
-    if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'be/')
+    if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'be/') || startsWith(github.ref_name, 'fe-be/') || startsWith(github.ref_name, 'feature/') || startsWith(github.ref_name, 'bugfix/')
     uses: ./.github/workflows/tests-backend.yml
     secrets: inherit
 
   integration-tests:
     needs: changes
-    if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'be/')
+    if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'be/') || startsWith(github.ref_name, 'fe-be/') || startsWith(github.ref_name, 'feature/') || startsWith(github.ref_name, 'bugfix/')
     uses: ./.github/workflows/tests-integration.yml
     secrets: inherit
     with:

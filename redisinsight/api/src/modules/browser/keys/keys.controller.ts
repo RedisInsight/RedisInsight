@@ -36,7 +36,7 @@ import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 @Controller('keys')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class KeysController {
-  constructor(private keysService: KeysService) {}
+  constructor(private keysService: KeysService) { }
 
   @Post('')
   @HttpCode(200)
@@ -49,7 +49,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async getKeys(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetKeysDto,
+    @Body() dto: GetKeysDto,
   ): Promise<GetKeysWithDetailsResponse[]> {
     return this.keysService.getKeys(clientMetadata, dto);
   }
@@ -66,7 +66,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async getKeysInfo(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetKeysInfoDto,
+    @Body() dto: GetKeysInfoDto,
   ): Promise<GetKeyInfoResponse[]> {
     return this.keysService.getKeysInfo(clientMetadata, dto);
   }
@@ -84,9 +84,9 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async getKeyInfo(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetKeyInfoDto,
+    @Body() dto: GetKeyInfoDto,
   ): Promise<GetKeyInfoResponse> {
-    return await this.keysService.getKeyInfo(clientMetadata, dto.keyName);
+    return await this.keysService.getKeyInfo(clientMetadata, dto.keyName, dto.includeSize);
   }
 
   @Delete('')
@@ -100,7 +100,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async deleteKey(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DeleteKeysDto,
+    @Body() dto: DeleteKeysDto,
   ): Promise<DeleteKeysResponse> {
     return await this.keysService.deleteKeys(clientMetadata, dto.keyNames);
   }
@@ -116,7 +116,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async renameKey(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: RenameKeyDto,
+    @Body() dto: RenameKeyDto,
   ): Promise<RenameKeyResponse> {
     return await this.keysService.renameKey(clientMetadata, dto);
   }
@@ -132,7 +132,7 @@ export class KeysController {
   @ApiQueryRedisStringEncoding()
   async updateTtl(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: UpdateKeyTtlDto,
+    @Body() dto: UpdateKeyTtlDto,
   ): Promise<KeyTtlResponse> {
     return await this.keysService.updateTtl(clientMetadata, dto);
   }

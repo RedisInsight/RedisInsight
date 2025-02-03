@@ -352,7 +352,7 @@ const NavigationMenu = () => {
             orientation="vertical"
           />
           <EuiToolTip
-            content="Redis Insight Repository"
+            content="Star us on GitHub"
             position="right"
           >
             <span className={cx(styles.iconNavItem, styles.githubLink)}>

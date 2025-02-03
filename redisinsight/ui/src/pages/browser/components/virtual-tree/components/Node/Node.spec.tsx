@@ -1,9 +1,10 @@
 import React from 'react'
 import { NodePublicState } from 'react-vtree/dist/es/Tree'
 import { instance, mock } from 'ts-mockito'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { stringToBuffer } from 'uiSrc/utils'
-import { KeyTypes } from 'uiSrc/constants'
+import { KeyTypes, BrowserColumns } from 'uiSrc/constants'
 import Node from './Node'
 import { TreeData } from '../../interfaces'
 import { mockVirtualTreeResult } from '../../VirtualTree.spec'
@@ -11,6 +12,7 @@ import { mockVirtualTreeResult } from '../../VirtualTree.spec'
 const mockDataFullName = 'test'
 const mockedProps = mock<NodePublicState<TreeData>>()
 const mockedPropsData = mock<TreeData>()
+
 const mockedData: TreeData = {
   ...instance(mockedPropsData),
   nestingLevel: 3,
@@ -32,6 +34,13 @@ jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
   useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() }),
 }))
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('Node', () => {
   it('should render', () => {
@@ -145,5 +154,128 @@ describe('Node', () => {
     expect(mockUpdateStatusSelected).not.toBeCalled()
     expect(mockUpdateStatusOpen).toHaveBeenCalledWith(mockDataFullName, !mockIsOpen)
     expect(mockSetOpen).toBeCalledWith(!mockIsOpen)
+  })
+
+  describe('Node metadata and column visibility', () => {
+    it('should call getMetadata when node is clicked and TTL column is visible', () => {
+      const mockGetMetadata = jest.fn()
+      const mockUpdateStatusSelected = jest.fn()
+      const mockUpdateStatusOpen = jest.fn()
+
+      const mockData: TreeData = {
+        ...mockedData,
+        getMetadata: mockGetMetadata,
+        updateStatusSelected: mockUpdateStatusSelected,
+        updateStatusOpen: mockUpdateStatusOpen,
+      }
+
+      render(<Node {...instance(mockedProps)} data={mockData} />)
+
+      screen.getByTestId(`node-item_${mockDataFullName}`).click()
+
+      expect(mockGetMetadata).toBeCalledWith(mockedData.nameBuffer, mockedData.path)
+      expect(mockUpdateStatusSelected).toBeCalledWith(mockedData.nameBuffer)
+      expect(mockUpdateStatusOpen).toBeCalledWith(mockDataFullName, true)
+    })
+
+    it('should not call getMetadata when node is clicked and metadata exists', () => {
+      const mockGetMetadata = jest.fn()
+      const mockUpdateStatusSelected = jest.fn()
+      const mockUpdateStatusOpen = jest.fn()
+
+      const mockData: TreeData = {
+        ...mockedDataWithMetadata,
+        getMetadata: mockGetMetadata,
+        updateStatusSelected: mockUpdateStatusSelected,
+        updateStatusOpen: mockUpdateStatusOpen,
+      }
+
+      render(<Node {...instance(mockedProps)} data={mockData} />)
+
+      screen.getByTestId(`node-item_${mockDataFullName}`).click()
+
+      expect(mockUpdateStatusSelected).toBeCalledWith(mockedDataWithMetadata.nameBuffer)
+      expect(mockUpdateStatusOpen).toBeCalledWith(mockDataFullName, true)
+      expect(mockGetMetadata).not.toBeCalled()
+    })
+
+    it('should render TTL and Size when metadata exists', () => {
+      render(<Node {...instance(mockedProps)} data={mockedDataWithMetadata} />)
+
+      expect(screen.getByTestId(`ttl-${mockDataFullName}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`size-${mockDataFullName}`)).toBeInTheDocument()
+    })
+
+    it('should not render TTL and Size when metadata does not exist', () => {
+      render(<Node {...instance(mockedProps)} data={mockedData} />)
+
+      expect(screen.queryByTestId(`ttl-${mockDataFullName}`)).not.toBeInTheDocument()
+      expect(screen.queryByTestId(`size-${mockDataFullName}`)).not.toBeInTheDocument()
+    })
+
+    it.each`
+      description               | initialState                                                | updatedState
+      ${'TTL column'}           | ${{ app: { context: { dbConfig: { shownColumns: [] } } } }} | ${{ app: { context: { dbConfig: { shownColumns: [BrowserColumns.TTL] } } } }}
+      ${'Size column'}          | ${{ app: { context: { dbConfig: { shownColumns: [] } } } }} | ${{ app: { context: { dbConfig: { shownColumns: [BrowserColumns.Size] } } } }}
+    `('should refetch metadata when $description is re-enabled even with existing metadata', ({ initialState, updatedState }) => {
+      const mockGetMetadata = jest.fn()
+      const mockData: TreeData = {
+        ...mockedDataWithMetadata,
+        getMetadata: mockGetMetadata,
+      }
+
+      const store = {
+        getState: () => initialState,
+        subscribe: jest.fn(),
+        dispatch: jest.fn(),
+      }
+
+      const { rerender } = render(
+        <Node {...instance(mockedProps)} data={mockData} />,
+        { store }
+      )
+
+      store.getState = () => updatedState
+
+      rerender(<Node {...instance(mockedProps)} data={mockData} />)
+
+      expect(mockGetMetadata).toHaveBeenCalledWith(mockData.nameBuffer, mockData.path)
+    })
+
+    it.each`
+      columns                                      | description
+      ${[]}                                        | ${'no columns are shown'}
+      ${[BrowserColumns.TTL]}                      | ${'only TTL column is shown'}
+      ${[BrowserColumns.Size]}                     | ${'only Size column is shown'}
+      ${[BrowserColumns.TTL, BrowserColumns.Size]} | ${'both TTL and Size columns are shown'}
+    `('should render DeleteKeyPopover when $description', ({ columns }) => {
+      const mockData: TreeData = {
+        ...mockedDataWithMetadata,
+        onDelete: jest.fn(),
+        onDeleteClicked: jest.fn(),
+      }
+
+      const store = {
+        getState: () => ({
+          app: {
+            context: {
+              dbConfig: {
+                shownColumns: columns
+              }
+            }
+          }
+        }),
+        subscribe: jest.fn(),
+        dispatch: jest.fn(),
+      }
+
+      const { container } = render(
+        <Node {...instance(mockedProps)} data={mockData} />,
+        { store }
+      )
+
+      expect(container.querySelector(`[data-testid="delete-key-btn-${mockData.nameString}"]`))
+        .toBeInTheDocument()
+    })
   })
 })

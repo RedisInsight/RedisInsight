@@ -3,8 +3,8 @@ import { EuiBadge, EuiText } from '@elastic/eui'
 import { GROUP_TYPES_COLORS, GROUP_TYPES_DISPLAY } from '../../constants'
 
 export interface Props {
-  type: any;
-  name?: string,
+  type: any
+  name?: string
   className?: string
 }
 

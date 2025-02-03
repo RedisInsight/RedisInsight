@@ -34,3 +34,10 @@ export const TEXT_FAILED_CONVENT_FORMATTER = (format: KeyValueFormat) => `Failed
 
 export const DATABASE_OVERVIEW_REFRESH_INTERVAL = riConfig.browser.databaseOverviewRefreshInterval
 export const DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL = riConfig.browser.databaseOverviewMinimumRefreshInterval
+
+export enum BrowserColumns {
+  Size = 'size',
+  TTL = 'ttl',
+}
+
+export const DEFAULT_SHOWN_COLUMNS = [BrowserColumns.Size, BrowserColumns.TTL]

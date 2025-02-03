@@ -15,8 +15,8 @@ import GroupBadge from '../GroupBadge'
 import { InfoAttributesBoolean } from '../../constants'
 
 export interface Props {
-  query: string;
-  result: any;
+  query: string
+  result: any
 }
 
 const loadingMessage = 'loading...'

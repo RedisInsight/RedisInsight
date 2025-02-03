@@ -94,9 +94,10 @@ describe('zset slice', () => {
   describe('setZsetInitialState', () => {
     it('should properly set initial state', () => {
       const nextState = reducer(initialState, setZsetInitialState())
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(initialState)
     })
   })
@@ -113,9 +114,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, loadZSetMembers([initialState.data.sortOrder, undefined]))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -147,9 +149,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, loadZSetMembersSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
 
@@ -174,9 +177,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, loadZSetMembersSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -199,9 +203,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, loadZSetMembersFailure(errorMessage))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -221,9 +226,10 @@ describe('zset slice', () => {
 
       // Act
       const nextState = reducer(initialState, searchZSetMembers('*'))
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -253,9 +259,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, searchZSetMembersSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
 
@@ -283,9 +290,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, searchZSetMembersSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -302,9 +310,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, searchZSetMembersFailure(errorMessage))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -326,9 +335,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, searchMoreZSetMembers(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -353,9 +363,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, searchMoreZSetMembersSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
 
@@ -371,9 +382,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, searchMoreZSetMembersSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(initialState)
     })
   })
@@ -390,9 +402,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, searchMoreZSetMembersFailure(errorMessage))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -409,9 +422,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, loadMoreZSetMembers())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -446,9 +460,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, loadMoreZSetMembersSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
 
@@ -466,9 +481,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, loadMoreZSetMembersSuccess(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(initialState)
     })
   })
@@ -486,9 +502,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, loadMoreZSetMembersFailure(errorMessage))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -505,9 +522,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, removeZsetMembers())
 
       // Assert
-      const rootSate = Object.assign(initialStateDefault, {
+      const rootSate = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootSate)).toEqual(state)
     })
   })
@@ -526,9 +544,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialStateRemove, removeZsetMembersSuccess())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(initialStateRemove)
     })
   })
@@ -545,9 +564,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, removeZsetMembersFailure(errorMessage))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState }
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -582,9 +602,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialStateRemove, removeMembersFromList(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -605,9 +626,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, updateScore())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -627,9 +649,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, updateScoreSuccess())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -650,9 +673,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, updateScoreFailure(errorMessage))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -673,9 +697,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialState, resetUpdateScore())
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -723,9 +748,10 @@ describe('zset slice', () => {
       const nextState = reducer(initialStateToUpdate, updateMembersInList(data))
 
       // Assert
-      const rootState = Object.assign(initialStateDefault, {
+      const rootState = {
+        ...initialStateDefault,
         browser: { zset: nextState },
-      })
+      }
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -902,8 +928,10 @@ describe('zset slice', () => {
         const responsePayload = { status: 200, data: { affected: 2 } }
 
         apiService.delete = jest.fn().mockResolvedValue(responsePayload)
-        const nextState = Object.assign(initialStateDefault, {
+        const nextState = {
+          ...initialStateDefault,
           browser: {
+            ...initialStateDefault.browser,
             zset: {
               ...initialState,
               data: {
@@ -912,7 +940,7 @@ describe('zset slice', () => {
               }
             }
           },
-        })
+        }
 
         const mockedStore = mockStore(nextState)
 
@@ -944,7 +972,8 @@ describe('zset slice', () => {
         const responsePayload = { status: 200, data: { affected: 2 } }
 
         apiService.delete = jest.fn().mockResolvedValue(responsePayload)
-        const nextState = Object.assign(initialStateDefault, {
+        const nextState = {
+          ...initialStateDefault,
           browser: {
             zset: {
               ...initialState,
@@ -954,7 +983,7 @@ describe('zset slice', () => {
               }
             }
           },
-        })
+        }
 
         const mockedStore = mockStore(nextState)
 
@@ -1207,14 +1236,15 @@ describe('zset slice', () => {
         const data = { members: [] }
         const responsePayload = { status: 200, data }
         // Act
-        const nextState = Object.assign(initialStateDefault, {
+        const nextState = {
+          ...initialStateDefault,
           browser: {
             zset: {
               ...initialState,
               searching: true
             }
           },
-        })
+        }
         const mockedStore = mockStore(nextState)
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)

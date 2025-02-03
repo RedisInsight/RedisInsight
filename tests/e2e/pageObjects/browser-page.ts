@@ -99,6 +99,7 @@ export class BrowserPage extends InstancePage {
     downloadAllValueBtn = Selector('[data-testid=download-all-value-btn]');
     openTutorialsBtn = Selector('[data-testid=explore-msg-btn]')
     keyItem = Selector('[data-testid*="node-item"][data-testid*="keys:"]');
+    columnsBtn = Selector('[data-testid=btn-columns-actions]')
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -246,11 +247,15 @@ export class BrowserPage extends InstancePage {
     noReadySearchDialogTitle = Selector('[data-testid=welcome-page-title]');
     //checkbox
     showTtlCheckbox =  Selector('[data-testid=test-check-ttl]~label');
+    showTtlColumnCheckbox =  Selector('[data-testid=show-ttl]~label');
+    showSizeColumnCheckbox =  Selector('[data-testid=show-key-size]~label');
 
     //Get Hash key field ttl value
     //for Redis databases 7.4 and higher
     getHashTtlFieldInput = (fieldName: string): Selector => (Selector(`[data-testid=hash-ttl_content-value-${fieldName}]`));
     getListElementInput = (count: number): Selector => (Selector(`[data-testid*=element-${count}]`));
+    getKeySize = (keyName: string): Selector => (Selector(`[data-testid=size-${keyName}]`));
+    getKeyTTl = (keyName: string): Selector => (Selector(`[data-testid=ttl-${keyName}]`));
 
 
     /**

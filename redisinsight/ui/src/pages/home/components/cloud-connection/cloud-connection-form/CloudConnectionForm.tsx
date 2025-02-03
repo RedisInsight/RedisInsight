@@ -220,7 +220,7 @@ const CloudConnectionForm = (props: Props) => {
   )
 
   return (
-    <div className="getStartedForm">
+    <div className="getStartedForm eui-yScroll">
       <FeatureFlagComponent name={FeatureFlags.cloudSso}>
         <EuiFlexGroup direction="column" gutterSize="s">
           <EuiFlexItem><EuiText color="subdued" size="s">Connect with:</EuiText></EuiFlexItem>

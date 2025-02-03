@@ -14,6 +14,7 @@ import { loadKeys, setFilter } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags, KeyTypes } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import FilterKeyType from './FilterKeyType'
 
 let store: typeof mockedStore
@@ -120,9 +121,18 @@ describe('FilterKeyType', () => {
     })
   })
 
+  it('should filter out graph if redis db does not have graph module', () => {
+    const { queryByText } = render(<FilterKeyType modules={[]} />)
+
+    fireEvent.click(screen.getByTestId(filterSelectId))
+
+    const graphElement = queryByText('Graph')
+    expect(graphElement).not.toBeInTheDocument()
+  })
+
   it('should not filter out items if required feature flags are set to true', () => {
     const { queryByText } = render(
-      <FilterKeyType />
+      <FilterKeyType modules={[{ name: RedisDefaultModules.Graph, version: 1, semanticVersion: '1.3' }]} />
     )
 
     fireEvent.click(screen.getByTestId(filterSelectId))

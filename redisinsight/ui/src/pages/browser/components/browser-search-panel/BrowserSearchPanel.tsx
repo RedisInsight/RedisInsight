@@ -224,7 +224,7 @@ const BrowserSearchPanel = (props: Props) => {
           {SearchModeSwitch()}
         </OnboardingTour>
         {searchMode === SearchMode.Pattern ? (
-          <FilterKeyType />
+          <FilterKeyType modules={modules} />
         ) : (
           <RediSearchIndexesList onCreateIndex={handleCreateIndexPanel} />
         )}

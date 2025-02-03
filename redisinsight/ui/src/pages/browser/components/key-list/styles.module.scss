@@ -29,17 +29,30 @@
       .ReactVirtualized__Table__rowColumn {
         .moveOnHoverKey {
           transition: transform ease 0.3s;
-          &.hide { transform: translateX(-8px) }
+
+          &.hide {
+            transform: translateX(-8px)
+          }
         }
+
         .showOnHoverKey {
           display: none;
-          &.show { display: block !important; }}
+
+          &.show {
+            display: block !important;
+          }
+        }
       }
 
       &:hover {
         .ReactVirtualized__Table__rowColumn {
-          .moveOnHoverKey { transform: translateX(-8px) }
-          .showOnHoverKey { display: block !important; }
+          .moveOnHoverKey {
+            transform: translateX(-8px)
+          }
+
+          .showOnHoverKey {
+            display: block !important;
+          }
         }
       }
     }

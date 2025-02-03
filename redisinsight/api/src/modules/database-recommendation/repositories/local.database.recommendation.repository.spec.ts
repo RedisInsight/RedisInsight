@@ -11,6 +11,7 @@ import {
   mockRecommendationName,
   mockClientMetadata,
   mockDatabaseRecommendation,
+  mockEventEmitter,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -39,7 +40,10 @@ describe('LocalDatabaseRecommendationRepository', () => {
           provide: EncryptionService,
           useFactory: mockEncryptionService,
         },
-        EventEmitter2,
+        {
+          provide: EventEmitter2,
+          useValue: mockEventEmitter,
+        },
       ],
     }).compile();
 
@@ -99,6 +103,23 @@ describe('LocalDatabaseRecommendationRepository', () => {
       const result = await service.create(mockClientMetadata.sessionMetadata, mockDatabaseRecommendation);
 
       expect(result).toEqual(mockDatabaseRecommendation);
+      expect(mockEventEmitter.emit).toHaveBeenCalledTimes(1);
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        'new-recommendation',
+        {
+          sessionMetadata: mockClientMetadata.sessionMetadata,
+          recommendations: [{
+            databaseId: 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id',
+            disabled: false,
+            hide: false,
+            id: 'databaseRecommendationID',
+            name: 'string',
+            params: {},
+            read: false,
+            vote: null,
+          }],
+        },
+      );
     });
 
     it('should not create recommendation', async () => {
@@ -107,6 +128,7 @@ describe('LocalDatabaseRecommendationRepository', () => {
       const result = await service.create(mockClientMetadata.sessionMetadata, mockDatabaseRecommendation);
 
       expect(result).toEqual(null);
+      expect(mockEventEmitter.emit).not.toHaveBeenCalled();
     });
   });
 

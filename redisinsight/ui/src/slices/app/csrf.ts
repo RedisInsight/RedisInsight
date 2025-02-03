@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from '../store'
 const riConfig = getConfig()
 export const getCsrfEndpoint = () => riConfig.api.csrfEndpoint
 
-interface CSRFTokenResponse {
+export interface CSRFTokenResponse {
   token: string
 }
 

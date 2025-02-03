@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 
 import {
+  defaultSelectedKeyAction,
   fetchKeyInfo,
   keysSelector,
   selectedKeyDataSelector,
@@ -15,8 +16,7 @@ import { KeyTypes } from 'uiSrc/constants'
 
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { Nullable } from 'uiSrc/utils'
-import { appContextDbConfig } from 'uiSrc/slices/app/context'
+import { isTruncatedString, Nullable } from 'uiSrc/utils'
 import { NoKeySelected } from './components/no-key-selected'
 import { DynamicTypeDetails } from './components/dynamic-type-details'
 
@@ -52,6 +52,11 @@ const KeyDetails = (props: Props) => {
 
   useEffect(() => {
     if (keyProp === null) return
+
+    if (isTruncatedString(keyProp)) {
+      dispatch(defaultSelectedKeyAction())
+      return
+    }
 
     dispatch(fetchKeyInfo(
       keyProp,

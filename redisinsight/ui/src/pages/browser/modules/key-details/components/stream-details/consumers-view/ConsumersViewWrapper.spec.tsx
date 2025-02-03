@@ -5,13 +5,21 @@ import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/tes
 import {
   deleteConsumers,
   loadConsumerGroups,
+  selectedGroupSelector,
   setSelectedConsumer
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { bufferToString } from 'uiSrc/utils'
+import { TEXT_CONSUMER_GROUP_NAME_TOO_LONG } from 'uiSrc/constants'
+import { MOCK_TRUNCATED_BUFFER_VALUE, MOCK_TRUNCATED_STRING_VALUE } from 'uiSrc/mocks/data/bigString'
 import { ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
-import ConsumersView, { Props as ConsumersViewProps } from './ConsumersView'
 import ConsumersViewWrapper, { Props } from './ConsumersViewWrapper'
+import ConsumersView, { Props as ConsumersViewProps } from './ConsumersView'
+
+jest.mock('uiSrc/slices/browser/stream', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/stream'),
+  selectedGroupSelector: jest.fn(() => jest.requireActual('uiSrc/slices/browser/stream').selectedGroupSelector),
+}))
 
 const mockedProps = mock<Props>()
 
@@ -45,7 +53,7 @@ const mockConsumers: ConsumerDto[] = [{
   pending: 31,
 }]
 
-const mockConsumersView = (props: ConsumersViewProps) => (
+const mockConsumersView = jest.fn((props: ConsumersViewProps) => (
   <div data-testid="stream-consumers-container">
     <button
       type="button"
@@ -62,7 +70,7 @@ const mockConsumersView = (props: ConsumersViewProps) => (
       columns={props.columns}
     />
   </div>
-)
+))
 
 describe('ConsumersViewWrapper', () => {
   beforeAll(() => {
@@ -98,5 +106,24 @@ describe('ConsumersViewWrapper', () => {
     fireEvent.click(screen.getByTestId('remove-consumer-button-test'))
 
     expect(store.getActions()).toEqual([...afterRenderActions, deleteConsumers()])
+  })
+
+  describe('truncated data', () => {
+    it('should pass special noItemsMessageString message for truncated group name', () => {
+      (selectedGroupSelector as jest.Mock).mockImplementationOnce(() => ({
+        name: MOCK_TRUNCATED_BUFFER_VALUE,
+        nameString: MOCK_TRUNCATED_STRING_VALUE,
+        data: [],
+        selectedConsumer: null,
+        lastRefreshTime: null,
+      }))
+
+      render(<ConsumersViewWrapper {...instance(mockedProps)} />)
+
+      expect(mockConsumersView).toHaveBeenCalledWith(
+        expect.objectContaining({ noItemsMessageString: TEXT_CONSUMER_GROUP_NAME_TOO_LONG, data: [] }),
+        expect.anything(),
+      )
+    })
   })
 })

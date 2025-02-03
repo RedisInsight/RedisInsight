@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "keytar": "^7.9.0",
+    "redis-parser": "3.0.0",
     "sqlite3": "5.1.7",
     "tunnel-ssh": "^5.1.2"
   }

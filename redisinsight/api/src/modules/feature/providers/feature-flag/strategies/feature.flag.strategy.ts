@@ -11,7 +11,6 @@ import config, { Config } from 'src/utils/config';
 import { Feature } from 'src/modules/feature/model/feature';
 import { IFeatureFlag } from 'src/modules/feature/constants';
 import { SessionMetadata } from 'src/common/models';
-import { filterVersion } from 'src/utils/feature-version-filter.helper';
 
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
 
@@ -105,10 +104,6 @@ export abstract class FeatureFlagStrategy {
 
       if (filter instanceof FeatureConfigFilter) {
         const value = get(serverState, filter?.name);
-
-        if (filter?.name.match(/version/i)) {
-          return filterVersion(filter.cond, value, filter?.value);
-        }
 
         switch (filter?.cond) {
           case FeatureConfigFilterCondition.Eq:

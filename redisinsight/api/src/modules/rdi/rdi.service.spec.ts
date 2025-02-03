@@ -145,13 +145,6 @@ describe('RdiService', () => {
   });
 
   describe('create', () => {
-    const validGetPipelineStatus = () => Promise.resolve({
-      components: {
-        processor:{
-          version: "test-version"
-        }
-      }});
-
     it('should create an Rdi instance', async () => {
       const dto: CreateRdiDto = {
         name: 'name',
@@ -161,9 +154,7 @@ describe('RdiService', () => {
       };
       const sessionMetadata = { userId: '123', sessionId: '789' };
       repository.create.mockResolvedValue(mockRdi);
-      rdiClientFactory.createClient.mockReturnValue({
-        getPipelineStatus: validGetPipelineStatus
-      });
+      rdiClientFactory.createClient.mockResolvedValue(undefined);
 
       const result = await service.create(sessionMetadata, dto);
 
@@ -185,52 +176,6 @@ describe('RdiService', () => {
       rdiClientFactory.createClient.mockRejectedValue(error);
 
       await expect(service.create(sessionMetadata, dto)).rejects.toThrowError(wrapRdiPipelineError(error));
-    });
-
-    it('should get the RDI version', async () => {
-      const dto: CreateRdiDto = {
-        name: 'name',
-        url: 'http://localhost:4000',
-        password: 'pass',
-        username: 'user',
-      };
-      const sessionMetadata = { userId: '123', sessionId: '789' };
-
-      repository.create.mockResolvedValue(mockRdi);
-      rdiClientFactory.createClient.mockReturnValue({
-        getPipelineStatus: validGetPipelineStatus
-      });
-
-      await service.create(sessionMetadata, dto);
-
-      expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({
-        version: 'test-version'
-      }))
-    });
-
-    it('should get the default RDI version when other information is missing', async () => {
-      const dto: CreateRdiDto = {
-        name: 'name',
-        url: 'http://localhost:4000',
-        password: 'pass',
-        username: 'user',
-      };
-      const sessionMetadata = { userId: '123', sessionId: '789' };
-
-      repository.create.mockResolvedValue(mockRdi);
-      rdiClientFactory.createClient.mockResolvedValue({
-        getPipelineStatus: () => Promise.resolve(({
-          components: {
-            // missing processor.version
-          }
-        }))
-      });
-
-      await service.create(sessionMetadata, dto);
-
-      expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({
-        version: '-'
-      }))
     });
   });
 

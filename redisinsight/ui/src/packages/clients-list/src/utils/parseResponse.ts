@@ -1,4 +1,4 @@
-import { Buffer } from 'buffer'
+import { Buffer } from '../../node_modules/buffer/index'
 
 export const parseClientListResponse = (response: string) => response.split(/\r?\n/).filter((r: string) => r).map((row: string) => {
   const value = row.split(' ')

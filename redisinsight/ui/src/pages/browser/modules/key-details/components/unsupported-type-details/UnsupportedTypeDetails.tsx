@@ -9,19 +9,21 @@ const UnsupportedTypeDetails = () => (
     <EuiFlexGroup alignItems="center" justifyContent="center">
       <EuiFlexItem className={styles.textWrapper}>
         <EuiTitle>
-          <h4>This key type is not currently supported.</h4>
+          <h4>This data type is coming soon!</h4>
         </EuiTitle>
         <EuiText size="s">
-          See{' '}
+          We are constantly working to launch support for more data types.
+          If you have any ideas or suggestions, please
+          {' '}
           <a
-            href={EXTERNAL_LINKS.githubRepo}
+            href={EXTERNAL_LINKS.githubIssues}
             className={styles.link}
             target="_blank"
             rel="noreferrer"
           >
-            our repository
+            contact us
           </a>
-          {' '}for the list of supported key types.
+          .
         </EuiText>
       </EuiFlexItem>
     </EuiFlexGroup>

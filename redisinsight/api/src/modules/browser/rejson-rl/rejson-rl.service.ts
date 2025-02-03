@@ -161,7 +161,7 @@ export class RejsonRlService {
     path: string,
     type: string,
   ): Promise<SafeRejsonRlDataDto[]> {
-    const promises = [];
+    const result = [];
     let objectKeys: string[];
     let arrayLength: number;
 
@@ -174,8 +174,8 @@ export class RejsonRlService {
             ? `['${objectKey}']`
             : `["${objectKey}"]`;
           const fullObjectKeyPath = `${rootPath}${childPath}`;
-          promises.push(
-            this.getDetails(
+          result.push(
+            await this.getDetails(
               client,
               keyName,
               fullObjectKeyPath,
@@ -184,22 +184,26 @@ export class RejsonRlService {
           );
         }
 
-        return Promise.all(promises);
+        break;
       case 'array':
         arrayLength = await client.sendCommand([
           BrowserToolRejsonRlCommands.JsonArrLen,
           keyName,
           path,
         ], { replyEncoding: 'utf8' }) as number;
+
         for (let i = 0; i < arrayLength; i += 1) {
           const fullObjectKeyPath = `${path === '.' ? '' : path}[${i}]`;
-          promises.push(this.getDetails(client, keyName, fullObjectKeyPath, i));
+          result.push(
+            await this.getDetails(client, keyName, fullObjectKeyPath, i),
+          );
         }
-
-        return Promise.all(promises);
+        break;
       default:
         return this.forceGetJson(client, keyName, path);
     }
+
+    return result;
   }
 
   /**

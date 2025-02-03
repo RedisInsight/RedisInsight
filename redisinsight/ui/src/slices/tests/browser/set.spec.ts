@@ -86,10 +86,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, loadSetMembers(['', undefined]))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -118,10 +117,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, loadSetMembersSuccess(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
 
@@ -145,10 +143,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, loadSetMembersSuccess(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -174,10 +171,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, loadSetMembersFailure(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -202,10 +198,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, loadMoreSetMembers())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -233,10 +228,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, loadMoreSetMembersSuccess(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
 
@@ -263,10 +257,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, loadMoreSetMembersSuccess(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -292,10 +285,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, loadMoreSetMembersFailure(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -312,10 +304,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, addSetMembers())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -332,10 +323,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, addSetMembersSuccess())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -354,10 +344,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, addSetMembersFailure(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -374,10 +363,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, removeSetMembers())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -398,10 +386,9 @@ describe('set slice', () => {
       const nextState = reducer(initailStateRemove, removeSetMembersSuccess())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(initailStateRemove)
     })
   })
@@ -427,10 +414,9 @@ describe('set slice', () => {
       const nextState = reducer(initialState, removeSetMembersFailure(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -464,10 +450,9 @@ describe('set slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { set: nextState },
-      }
+      })
       expect(setSelector(rootState)).toEqual(state)
     })
   })
@@ -628,10 +613,8 @@ describe('set slice', () => {
       const responsePayload = { status: 200, data: { affected: 3 } }
 
       apiService.delete = jest.fn().mockResolvedValue(responsePayload)
-      const nextState = {
-        ...initialStateDefault,
+      const nextState = Object.assign(initialStateDefault, {
         browser: {
-          ...initialStateDefault.browser,
           set: {
             ...initialState,
             data: {
@@ -640,7 +623,7 @@ describe('set slice', () => {
             }
           }
         },
-      }
+      })
 
       const mockedStore = mockStore(nextState)
 
@@ -670,8 +653,7 @@ describe('set slice', () => {
       const responsePayload = { status: 200, data: { affected: 3 } }
 
       apiService.delete = jest.fn().mockResolvedValue(responsePayload)
-      const nextState = {
-        ...initialStateDefault,
+      const nextState = Object.assign(initialStateDefault, {
         browser: {
           set: {
             ...initialState,
@@ -681,7 +663,7 @@ describe('set slice', () => {
             }
           }
         },
-      }
+      })
 
       const mockedStore = mockStore(nextState)
 

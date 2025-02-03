@@ -13,10 +13,19 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
-    error: '',
-    jobs: [
-      { name: 'job1', value: 'value' }
-    ]
+    error: ''
+  })
+}))
+
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  useFormikContext: jest.fn().mockReturnValue({
+    values: {
+      jobs: [
+        { name: 'job1', value: 'value' }
+      ]
+    },
+    setFieldValue: jest.fn()
   })
 }))
 
@@ -49,9 +58,10 @@ describe('JobsTree', () => {
   })
 
   it('should not render count of job if it is "0"', () => {
-    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
+    const useFormikContextMock = jest.fn().mockReturnValue({
       values: { jobs: [] }
-    }))
+    });
+    (useFormikContext as jest.Mock).mockImplementationOnce(useFormikContextMock)
 
     render(<JobsTree {...instance(mockedProps)} />)
 

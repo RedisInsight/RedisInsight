@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
 import { EuiListGroup, EuiListGroupItem, EuiLoadingSpinner, EuiText } from '@elastic/eui'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { checkConnectToRdiInstanceAction } from 'uiSrc/slices/rdi/instances'
-import { checkConnectToInstanceAction, setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
+import { checkConnectToRdiInstanceAction, instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/instances'
+import { checkConnectToInstanceAction, instancesSelector as dbInstancesSelector, setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
+import { resetRdiContext, setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
+import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
+import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
 import { getDbIndex } from 'uiSrc/utils'
@@ -15,14 +19,12 @@ export interface InstancesListProps {
   selectedTab: InstancesTabs
   filteredDbInstances: Instance[]
   filteredRdiInstances: RdiInstance[]
-  onItemClick: () => void
 }
 
 const InstancesList = ({
   selectedTab,
   filteredDbInstances,
   filteredRdiInstances,
-  onItemClick,
 } :InstancesListProps) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [selected, setSelected] = useState<string>('')
@@ -30,17 +32,18 @@ const InstancesList = ({
   const { instanceId, rdiInstanceId } = useParams<{ instanceId: string, rdiInstanceId: string }>()
   const history = useHistory()
   const dispatch = useDispatch()
+  const { connectedInstance: connectedRdiInstance } = useSelector(rdiInstancesSelector)
+  const { connectedInstance: connectedDbInstance } = useSelector(dbInstancesSelector)
   const instances = selectedTab === InstancesTabs.Databases ? filteredDbInstances : filteredRdiInstances
 
   const connectToInstance = (id = '') => {
     dispatch(setConnectedInstanceId(id))
     setLoading(false)
-    onItemClick?.()
     history.push(Pages.browser(id))
   }
 
   const goToInstance = (instance: Instance) => {
-    if (instanceId === instance.id) {
+    if (connectedDbInstance?.id === instance.id) {
       // already connected so do nothing
       return
     }
@@ -59,7 +62,7 @@ const InstancesList = ({
   }
 
   const goToRdiInstance = (instance: RdiInstance) => {
-    if (rdiInstanceId === instance.id) {
+    if (connectedRdiInstance?.id === instance.id) {
       // already connected so do nothing
       return
     }
@@ -68,7 +71,7 @@ const InstancesList = ({
       instance.id,
       (id: string) => {
         setLoading(false)
-        onItemClick?.()
+
         history.push(Pages.rdiPipelineConfig(id))
       },
       () => setLoading(false)

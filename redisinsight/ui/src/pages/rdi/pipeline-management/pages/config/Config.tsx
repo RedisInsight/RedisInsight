@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
+import { useFormikContext } from 'formik'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { get, throttle } from 'lodash'
@@ -8,8 +9,8 @@ import { get, throttle } from 'lodash'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
-import { rdiPipelineSelector, setChangedFile, deleteChangedFile, setPipelineConfig } from 'uiSrc/slices/rdi/pipeline'
-import { FileChangeType, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
+import { rdiPipelineSelector, setChangedFile, deleteChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-panel'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
@@ -25,9 +26,11 @@ const Config = () => {
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
 
-  const { loading: pipelineLoading, schema, data, config } = useSelector(rdiPipelineSelector)
+  const { loading: pipelineLoading, schema, data } = useSelector(rdiPipelineSelector)
   const { loading: testingConnections } = useSelector(rdiTestConnectionsSelector)
   const { isOpenDialog } = useSelector(appContextPipelineManagement)
+
+  const { values: { config = '' }, setFieldValue } = useFormikContext<IPipeline>()
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const dispatch = useDispatch()
@@ -91,8 +94,7 @@ const Config = () => {
   }, 2000), [data])
 
   const handleChange = useCallback((value: string) => {
-    dispatch(setPipelineConfig(value))
-
+    setFieldValue('config', value)
     checkIsFileUpdated(value)
   }, [data])
 
@@ -110,13 +112,13 @@ const Config = () => {
             isPopoverOpen={isPopoverOpen && !isOpenDialog}
             setIsPopoverOpen={setIsPopoverOpen}
             value={config}
-            setFieldValue={(template) => dispatch(setPipelineConfig(template))}
+            setFieldValue={(template) => setFieldValue('config', template)}
             loading={pipelineLoading}
             source={RdiPipelineTabs.Config}
           />
         </div>
         <EuiText className="rdi__text" color="subdued">
-          {'Provide '}
+          {'Configure target instance '}
           <EuiLink
             external={false}
             data-testid="rdi-pipeline-config-link"
@@ -131,7 +133,7 @@ const Config = () => {
           >
             connection details
           </EuiLink>
-          {' for source and target databases and other collector configurations, such as tables and columns to track.'}
+          {' and applier settings.'}
         </EuiText>
         {pipelineLoading ? (
           <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-config-loading">

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { useFormikContext } from 'formik'
 import { findIndex } from 'lodash'
 
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
-import { rdiPipelineSelector, setPipeline } from 'uiSrc/slices/rdi/pipeline'
+import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { Pages } from 'uiSrc/constants'
-import { convertTimestampToMilliseconds, Maybe } from 'uiSrc/utils'
+import { Maybe } from 'uiSrc/utils'
 import Job from './Job'
 
 const JobWrapper = () => {
@@ -20,16 +20,18 @@ const JobWrapper = () => {
 
   const history = useHistory()
 
-  const { data, jobs } = useSelector(rdiPipelineSelector)
+  const { data } = useSelector(rdiPipelineSelector)
+
+  const { values } = useFormikContext<IPipeline>()
 
   useEffect(() => {
-    const jobIndex = findIndex(jobs, (({ name }) => name === decodedJobName))
+    const jobIndex = findIndex(values?.jobs, (({ name }) => name === decodedJobName))
     setJobIndex(jobIndex)
 
     if (jobIndex === -1) {
       history.push(Pages.rdiPipelineConfig(rdiInstanceId))
     }
-  }, [decodedJobName, rdiInstanceId, jobs?.length])
+  }, [decodedJobName, rdiInstanceId, values?.jobs?.length])
 
   useEffect(() => {
     setDecodedJobName(decodeURIComponent(jobName))
@@ -53,7 +55,7 @@ const JobWrapper = () => {
   return (
     <Job
       name={decodedJobName}
-      value={jobs[jobIndex]?.value ?? ''}
+      value={values.jobs[jobIndex]?.value ?? ''}
       deployedJobValue={deployedJobValue}
       jobIndex={jobIndex}
       rdiInstanceId={rdiInstanceId}

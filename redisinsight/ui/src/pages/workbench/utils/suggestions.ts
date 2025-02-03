@@ -160,7 +160,9 @@ export const getCommandSuggestions = (
 
   for (let i = 0; i < appendCommands.length; i++) {
     const isLastLevel = i === appendCommands.length - 1
-    const filteredFileldArgs = appendCommands[i]
+    const filteredFileldArgs = isLastLevel
+      ? removeNotSuggestedArgs(allArgs, appendCommands[i])
+      : appendCommands[i]
 
     const leveledSuggestions = filteredFileldArgs
       .map((arg) => buildSuggestion(arg, range, {
@@ -187,13 +189,9 @@ export const getGeneralSuggestions = (
   forceHide?: boolean
   helpWidgetData?: any
 } => {
-  if (foundArg) {
-    // TODO: check result
+  if (foundArg && !foundArg.isComplete) {
     return {
-      // TODO: hope I need to recive proper append
-      suggestions: foundArg?.stopArg && !foundArg?.stopArg.optional
-        ? getMandatoryArgumentSuggestions(foundArg, fields, range)
-        : getCommandSuggestions(foundArg, allArgs, range),
+      suggestions: getMandatoryArgumentSuggestions(foundArg, fields, range),
       helpWidgetData: {
         isOpen: !!foundArg?.stopArg,
         data: {
@@ -227,15 +225,4 @@ export const isIndexComplete = (index: string) => {
   }
 
   return !escape
-}
-
-export const getParentWithOwnToken = (command?: IRedisCommand) => {
-  if (command?.token) {
-    return {
-      ...command,
-      arguments: command?.arguments ? [{ name: command.token }, ...command.arguments] : undefined
-    }
-  }
-
-  return command
 }

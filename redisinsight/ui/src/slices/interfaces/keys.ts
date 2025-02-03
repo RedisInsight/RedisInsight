@@ -1,4 +1,4 @@
-import { BrowserColumns, KeyTypes, KeyValueCompressor, KeyValueFormat } from 'uiSrc/constants'
+import { KeyTypes, KeyValueCompressor, KeyValueFormat } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
@@ -52,7 +52,6 @@ export interface KeysStore {
     data: null | Array<SearchHistoryItem>
     loading: boolean
   }
-  shownColumns: BrowserColumns[]
 }
 
 export interface SearchHistoryItem {

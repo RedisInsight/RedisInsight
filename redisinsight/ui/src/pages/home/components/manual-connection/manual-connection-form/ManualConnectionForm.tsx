@@ -1,34 +1,53 @@
-import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiTab, EuiTabs, EuiTitle, keys } from '@elastic/eui'
+import {
+  EuiForm,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiSpacer,
+  keys,
+  EuiTitle,
+  EuiButtonIcon, EuiFormRow, EuiFieldText,
+} from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
-import cx from 'classnames'
 import { resetInstanceUpdateAction } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { BuildType } from 'uiSrc/constants/env'
 import { appRedirectionSelector } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 
-import { fieldDisplayNames, SubmitBtnText, } from 'uiSrc/pages/home/constants'
+import {
+  fieldDisplayNames,
+  SubmitBtnText,
+} from 'uiSrc/pages/home/constants'
 import { getFormErrors } from 'uiSrc/pages/home/utils'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { DbInfo, } from 'uiSrc/pages/home/components/form'
-import { DbInfoSentinel, } from 'uiSrc/pages/home/components/form/sentinel'
+import {
+  DbIndex,
+  DbInfo,
+  TlsDetails,
+  DatabaseForm,
+  DbCompressor,
+  SSHDetails,
+} from 'uiSrc/pages/home/components/form'
+import {
+  DbInfoSentinel,
+  PrimaryGroupSentinel,
+  SentinelMasterDatabase,
+} from 'uiSrc/pages/home/components/form/sentinel'
 import { caCertsSelector } from 'uiSrc/slices/instances/caCerts'
 import { clientCertsSelector } from 'uiSrc/slices/instances/clientCerts'
+import Divider from 'uiSrc/components/divider/Divider'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { selectOnFocus } from 'uiSrc/utils'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
-import { MANUAL_FORM_TABS, ManualFormTab } from './constants'
 import CloneConnection from './components/CloneConnection'
 import FooterActions from './components/FooterActions'
-import { AddConnection, EditConnection, EditSentinelConnection } from './forms'
-
-import styles from './styles.module.scss'
 
 export interface Props {
   formFields: DbConnectionInfo
@@ -42,6 +61,7 @@ export interface Props {
   onTestConnection: (values: DbConnectionInfo) => void
   onHostNamePaste: (content: string) => boolean
   onClose?: () => void
+  onClickBack?: () => void
 }
 
 const getInitFieldsDisplayNames = ({ host, port, name }: any) => {
@@ -55,6 +75,7 @@ const ManualConnectionForm = (props: Props) => {
   const {
     formFields,
     onClose,
+    onClickBack,
     onSubmit,
     onTestConnection,
     onHostNamePaste,
@@ -87,7 +108,6 @@ const ManualConnectionForm = (props: Props) => {
   const [errors, setErrors] = useState<FormikErrors<DbConnectionInfo>>(
     getInitFieldsDisplayNames({ host, port, name })
   )
-  const [activeTab, setActiveTab] = useState<ManualFormTab>(ManualFormTab.General)
 
   const { setModalHeader } = useModalHeader()
 
@@ -190,10 +210,6 @@ const ManualConnectionForm = (props: Props) => {
     })
   }
 
-  const handleTabClick = (tab: ManualFormTab) => {
-    setActiveTab(tab)
-  }
-
   const Footer = () => {
     const footerEl = document.getElementById('footerDatabaseForm')
 
@@ -213,43 +229,47 @@ const ManualConnectionForm = (props: Props) => {
     )
   }
 
-  const Tabs = () => (
-    <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>
-      {MANUAL_FORM_TABS.map(({ id, title }) => (
-        <EuiTab
-          key={id}
-          isSelected={activeTab === id}
-          onClick={() => handleTabClick(id)}
-          data-testid={`manual-form-tab-${id}`}
-        >
-          {title}
-        </EuiTab>
-      ))}
-    </EuiTabs>
-  )
-
   return (
-    <div className={styles.container} data-testid="add-db_manual" style={{ height: '100%' }}>
+    <div className="relative" data-testid="add-db_manual">
       {isEditMode && !isCloneMode && server?.buildType !== BuildType.RedisStack && (
         <CloneConnection id={id} setIsCloneMode={setIsCloneMode} />
       )}
-      <div className={cx('getStartedForm', styles.content)} ref={formRef}>
+      <div className="getStartedForm" ref={formRef}>
         {!isEditMode && !isFromCloud && (
-          <>
-            <Tabs />
-            <EuiSpacer />
-            <div className="eui-yScroll">
-              <AddConnection
-                activeTab={activeTab}
-                formik={formik}
-                onKeyDown={onKeyDown}
-                onHostNamePaste={onHostNamePaste}
-                certificates={certificates}
-                caCertificates={caCertificates}
-                buildType={buildType}
-              />
-            </div>
-          </>
+          <EuiForm
+            component="form"
+            onSubmit={formik.handleSubmit}
+            data-testid="form"
+            onKeyDown={onKeyDown}
+          >
+            <DatabaseForm
+              formik={formik}
+              onHostNamePaste={onHostNamePaste}
+              showFields={{ host: true, alias: true, port: true, timeout: true }}
+            />
+            <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+            <DbIndex
+              formik={formik}
+            />
+            <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+            <DbCompressor
+              formik={formik}
+            />
+            <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+            <TlsDetails
+              formik={formik}
+              certificates={certificates}
+              caCertificates={caCertificates}
+            />
+            {buildType !== BuildType.RedisStack && (
+              <>
+                <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                <SSHDetails
+                  formik={formik}
+                />
+              </>
+            )}
+          </EuiForm>
         )}
         {(isEditMode || isCloneMode || isFromCloud) && connectionType !== ConnectionType.Sentinel && (
           <>
@@ -268,52 +288,151 @@ const ManualConnectionForm = (props: Props) => {
                 <EuiSpacer />
               </>
             )}
-            <Tabs />
-            <EuiSpacer />
-            <div className="eui-yScroll">
-              <EditConnection
-                activeTab={activeTab}
-                isCloneMode={isCloneMode}
-                isEditMode={isEditMode}
-                isFromCloud={isFromCloud}
+            <EuiForm
+              component="form"
+              onSubmit={formik.handleSubmit}
+              data-testid="form"
+              onKeyDown={onKeyDown}
+            >
+              <DatabaseForm
                 formik={formik}
-                onKeyDown={onKeyDown}
+                showFields={{
+                  alias: true,
+                  host: (!isEditMode || isCloneMode) && !isFromCloud,
+                  port: !isFromCloud,
+                  timeout: true,
+                }}
+                autoFocus={!isCloneMode && isEditMode}
                 onHostNamePaste={onHostNamePaste}
+              />
+              {isCloneMode && (
+                <>
+                  <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                  <DbIndex
+                    formik={formik}
+                  />
+                </>
+              )}
+              <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+              <DbCompressor
+                formik={formik}
+              />
+              <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+              <TlsDetails
+                formik={formik}
                 certificates={certificates}
                 caCertificates={caCertificates}
-                buildType={buildType}
               />
-            </div>
+              {buildType !== BuildType.RedisStack && (
+                <>
+                  <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                  <SSHDetails
+                    formik={formik}
+                  />
+                </>
+              )}
+            </EuiForm>
           </>
         )}
         {(isEditMode || isCloneMode) && connectionType === ConnectionType.Sentinel && (
           <>
-            {!isCloneMode && (
-              <>
-                <DbInfoSentinel
-                  nameFromProvider={nameFromProvider}
-                  connectionType={connectionType}
-                  sentinelMaster={sentinelMaster}
-                  host={host}
-                  port={port}
-                />
-                <EuiSpacer />
-              </>
-            )}
-            <Tabs />
-            <EuiSpacer />
-            <div className="eui-yScroll">
-              <EditSentinelConnection
-                activeTab={activeTab}
-                isCloneMode={isCloneMode}
-                formik={formik}
-                onKeyDown={onKeyDown}
-                onHostNamePaste={onHostNamePaste}
-                certificates={certificates}
-                caCertificates={caCertificates}
-                db={db}
-              />
-            </div>
+            <EuiForm
+              component="form"
+              onSubmit={formik.handleSubmit}
+              data-testid="form"
+              onKeyDown={onKeyDown}
+            >
+              {!isCloneMode && (
+                <>
+                  <DbInfoSentinel
+                    nameFromProvider={nameFromProvider}
+                    connectionType={connectionType}
+                    sentinelMaster={sentinelMaster}
+                    host={host}
+                    port={port}
+                  />
+                  <EuiSpacer />
+                  <EuiFlexGroup responsive={false}>
+                    <EuiFlexItem>
+                      <EuiFormRow label="Database Alias*">
+                        <EuiFieldText
+                          fullWidth
+                          name="name"
+                          id="name"
+                          data-testid="name"
+                          placeholder="Enter Database Alias"
+                          onFocus={selectOnFocus}
+                          value={formik.values.name ?? ''}
+                          maxLength={500}
+                          onChange={formik.handleChange}
+                        />
+                      </EuiFormRow>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                  <EuiSpacer size="s" />
+                  <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                  <EuiTitle size="xs"><span>Datababase</span></EuiTitle>
+                  <EuiSpacer size="s" />
+                  <SentinelMasterDatabase
+                    formik={formik}
+                    db={db}
+                    isCloneMode={isCloneMode}
+                  />
+
+                  <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                  <EuiTitle size="xs"><span>Sentinel</span></EuiTitle>
+                  <EuiSpacer size="s" />
+                  <DatabaseForm
+                    formik={formik}
+                    showFields={{ host: false, port: true, alias: false, timeout: false }}
+                    onHostNamePaste={onHostNamePaste}
+                  />
+                  <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                  <TlsDetails
+                    formik={formik}
+                    certificates={certificates}
+                    caCertificates={caCertificates}
+                  />
+                </>
+              )}
+              {isCloneMode && (
+                <>
+                  <PrimaryGroupSentinel
+                    formik={formik}
+                  />
+                  <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                  <EuiTitle size="xs"><span>Datababase</span></EuiTitle>
+                  <EuiSpacer size="s" />
+                  <SentinelMasterDatabase
+                    formik={formik}
+                    db={db}
+                    isCloneMode={isCloneMode}
+                  />
+                  <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                  <EuiTitle size="xs"><span>Sentinel</span></EuiTitle>
+                  <EuiSpacer size="s" />
+                  <DatabaseForm
+                    formik={formik}
+                    showFields={{ host: true, port: true, alias: false, timeout: false }}
+                    onHostNamePaste={onHostNamePaste}
+                  />
+                  <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                  <DbIndex
+                    formik={formik}
+                  />
+                  <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                  <DbCompressor
+                    formik={formik}
+                  />
+                  <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+                  <TlsDetails
+                    formik={formik}
+                    certificates={certificates}
+                    caCertificates={caCertificates}
+                  />
+                </>
+              )}
+            </EuiForm>
           </>
         )}
       </div>

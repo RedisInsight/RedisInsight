@@ -97,6 +97,9 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
     dispatch(setDbConfig(localStorageService.get(BrowserStorageItem.dbConfig + connectionInstanceId)))
 
+    // clear rdi connection
+    dispatch(resetRdiConnectedInstance())
+
     return () => {
       intervalId && clearInterval(intervalId)
     }

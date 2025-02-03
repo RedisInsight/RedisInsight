@@ -29,7 +29,7 @@ import {
   setConnectedInstance,
   setDefaultInstance
 } from 'uiSrc/slices/instances/instances'
-import { loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
+import { resetConnectedInstance as resetRdiConnectedInstance, loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { getAllPlugins } from 'uiSrc/slices/app/plugins'
 import { FeatureFlags } from 'uiSrc/constants'
@@ -138,6 +138,7 @@ describe('InstancePage', () => {
       clearExpertChatHistory(),
       setAppContextConnectedInstanceId(INSTANCE_ID_MOCK),
       setDbConfig(undefined),
+      resetRdiConnectedInstance(),
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)

@@ -1,17 +1,16 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-this-in-sfc */
-import { EuiButton, EuiButtonIcon, EuiCheckbox, EuiFlexItem, EuiFlexGroup, EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
-import React, { FC, Ref, SVGProps, useRef, useState } from 'react'
+import React, { FC, Ref, SVGProps, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import TreeViewIcon from 'uiSrc/assets/img/icons/treeview.svg?react'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { appContextDbConfig, resetBrowserTree, setBrowserKeyListDataLoaded, setBrowserShownColumns, } from 'uiSrc/slices/app/context'
+import { resetBrowserTree, setBrowserKeyListDataLoaded, } from 'uiSrc/slices/app/context'
 
-import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData } from 'uiSrc/slices/browser/keys'
+import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData, } from 'uiSrc/slices/browser/keys'
 import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -22,7 +21,6 @@ import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 import { AutoRefresh, OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
-import { BrowserColumns } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 640
@@ -60,10 +58,7 @@ const KeysHeader = (props: Props) => {
 
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType, searchMode, isFiltered } = useSelector(keysSelector)
-  const { shownColumns } = useSelector(appContextDbConfig)
   const { selectedIndex } = useSelector(redisearchSelector)
-
-  const [columnsConfigShown, setColumnsConfigShown] = useState(false)
 
   const rootDivRef: Ref<HTMLDivElement> = useRef(null)
 
@@ -117,8 +112,6 @@ const KeysHeader = (props: Props) => {
     marginLeft: 10,
     height: '36px !important',
   }
-
-  const toggleColumnsConfigVisibility = () => setColumnsConfigShown(!columnsConfigShown)
 
   const handleRefreshKeys = () => {
     dispatch(fetchKeys(
@@ -179,30 +172,6 @@ const KeysHeader = (props: Props) => {
     setTimeout(() => {
       dispatch(changeKeyViewType(type))
     }, 0)
-  }
-
-  const changeColumnsShown = (status: boolean, columnType: BrowserColumns) => {
-    const shown = []
-    const hidden = []
-    const newColumns = status
-      ? [...shownColumns, columnType]
-      : shownColumns.filter((col) => col !== columnType)
-
-    if (columnType === BrowserColumns.TTL) {
-      status ? shown.push(BrowserColumns.TTL) : hidden.push(BrowserColumns.TTL)
-    } else if (columnType === BrowserColumns.Size) {
-      status ? shown.push(BrowserColumns.Size) : hidden.push(BrowserColumns.Size)
-    }
-
-    dispatch(setBrowserShownColumns(newColumns))
-    sendEventTelemetry({
-      event: TelemetryEvent.SHOW_BROWSER_COLUMN_CLICKED,
-      eventData: {
-        databaseId: instanceId,
-        shown,
-        hidden
-      }
-    })
   }
 
   const ViewSwitch = () => (
@@ -268,67 +237,6 @@ const KeysHeader = (props: Props) => {
                   onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
                   testid="keys"
                 />
-                <div className={styles.columnsButtonPopup}>
-                  <EuiPopover
-                    ownFocus={false}
-                    anchorPosition="downLeft"
-                    isOpen={columnsConfigShown}
-                    anchorClassName={styles.anchorWrapper}
-                    panelClassName={styles.popoverWrapper}
-                    closePopover={() => setColumnsConfigShown(false)}
-                    button={(
-                      <EuiButton
-                        size="s"
-                        color="secondary"
-                        iconType={ColumnsIcon}
-                        onClick={toggleColumnsConfigVisibility}
-                        className={styles.columnsButton}
-                        data-testid="btn-columns-actions"
-                        aria-label="columns"
-                      >
-                        <span className={styles.columnsButtonText}>Columns</span>
-                      </EuiButton>
-                    )}
-                  >
-                    <EuiFlexGroup alignItems="center" gutterSize="m">
-                      <EuiFlexItem>
-                        <EuiCheckbox
-                          id="show-key-size"
-                          name="show-key-size"
-                          label="Key size"
-                          checked={shownColumns.includes(BrowserColumns.Size)}
-                          onChange={(e) => changeColumnsShown(e.target.checked, BrowserColumns.Size)}
-                          data-testid="show-key-size"
-                          className={styles.checkbox}
-                        />
-                      </EuiFlexItem>
-                      <EuiFlexItem>
-                        <EuiToolTip
-                          content="Hide the key size to avoid performance issues when working with large keys."
-                          position="top"
-                          display="inlineBlock"
-                          anchorClassName="flex-row"
-                        >
-                          <EuiIcon
-                            className={styles.infoIcon}
-                            type="iInCircle"
-                            size="m"
-                            style={{ cursor: 'pointer' }}
-                            data-testid="key-size-info-icon"
-                          />
-                        </EuiToolTip>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                    <EuiCheckbox
-                      id="show-ttl"
-                      name="show-ttl"
-                      label="TTL"
-                      checked={shownColumns.includes(BrowserColumns.TTL)}
-                      onChange={(e) => changeColumnsShown(e.target.checked, BrowserColumns.TTL)}
-                      data-testid="show-ttl"
-                    />
-                  </EuiPopover>
-                </div>
                 {ViewSwitch()}
               </div>
             </div>

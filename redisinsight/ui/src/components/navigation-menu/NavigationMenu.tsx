@@ -17,7 +17,11 @@ import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-rou
 
 import { FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { appFeaturePagesHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
+import {
+  appFeatureFlagsFeaturesSelector,
+  appFeaturePagesHighlightingSelector,
+  removeFeatureFromHighlighting
+} from 'uiSrc/slices/app/features'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { connectedInstanceSelector as connectedRdiInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
@@ -78,6 +82,9 @@ const NavigationMenu = () => {
   const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
   const { id: connectedRdiInstanceId = '' } = useSelector(connectedRdiInstanceSelector)
   const highlightedPages = useSelector(appFeaturePagesHighlightingSelector)
+  const {
+    [FeatureFlags.envDependent]: envDependentFeature
+  } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const isRdiWorkspace = workspace === AppWorkspace.RDI
 
@@ -106,6 +113,11 @@ const NavigationMenu = () => {
     return {}
   }
 
+  const navigationButtonStyle = {
+    [styles.navigationButton]: true,
+    [styles.navigationButtonAlt]: !envDependentFeature?.flag
+  }
+
   const privateRoutes: INavigations[] = [
     {
       tooltipText: 'Browser',
@@ -116,7 +128,7 @@ const NavigationMenu = () => {
       dataTestId: 'browser-page-btn',
       connectedInstanceId,
       getClassName() {
-        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
         return this.isActivePage ? BrowserSVG : BrowserActiveSVG
@@ -132,7 +144,7 @@ const NavigationMenu = () => {
       connectedInstanceId,
       isActivePage: activePage === `/${PageNames.workbench}`,
       getClassName() {
-        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
         return this.isActivePage ? WorkbenchSVG : WorkbenchActiveSVG
@@ -148,7 +160,7 @@ const NavigationMenu = () => {
       connectedInstanceId,
       isActivePage: isAnalyticsPath(activePage),
       getClassName() {
-        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
         return this.isActivePage ? SlowLogActiveSVG : SlowLogSVG
@@ -164,7 +176,7 @@ const NavigationMenu = () => {
       connectedInstanceId,
       isActivePage: activePage === pubSubPath,
       getClassName() {
-        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
         return this.isActivePage ? PubSubActiveSVG : PubSubSVG
@@ -183,7 +195,7 @@ const NavigationMenu = () => {
       dataTestId: 'pipeline-status-page-btn',
       isActivePage: activePage === `/${PageNames.rdiStatistics}`,
       getClassName() {
-        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
         return this.isActivePage ? PipelineStatisticsActiveSvg : PipelineStatisticsSvg
@@ -197,7 +209,7 @@ const NavigationMenu = () => {
       dataTestId: 'pipeline-management-page-btn',
       isActivePage: isPipelineManagementPath(),
       getClassName() {
-        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
         return this.isActivePage ? PipelineManagementActiveSVG : PipelineManagementSVG
@@ -214,7 +226,7 @@ const NavigationMenu = () => {
       dataTestId: 'settings-page-btn',
       isActivePage: activePage === Pages.settings,
       getClassName() {
-        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
         return this.isActivePage ? SettingsActiveSVG : SettingsSVG

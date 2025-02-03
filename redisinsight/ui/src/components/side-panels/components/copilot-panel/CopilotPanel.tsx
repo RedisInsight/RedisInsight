@@ -1,10 +1,14 @@
-import React, { useCallback } from 'react'
-import { EuiBadge } from '@elastic/eui'
+import React, { useCallback, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { Header } from 'uiSrc/components/side-panels/components'
 import styles from 'uiSrc/components/side-panels/styles.module.scss'
 import AiAssistant from 'uiSrc/components/side-panels/panels/ai-assistant'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { OnboardingTour } from 'uiSrc/components'
+import { aiAssistantSelector } from 'uiSrc/slices/panels/aiAssistant'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
+import CopilotSplashScreen from './components/copilot-splash-screen'
 
 export interface Props {
   isFullScreen: boolean
@@ -14,6 +18,20 @@ export interface Props {
 
 const CopilotPanel = (props: Props) => {
   const { isFullScreen, onToggleFullScreen, onClose } = props
+  const { hideCopilotSplashScreen } = useSelector(aiAssistantSelector)
+  const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
+
+  const handleClose = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_OPENED,
+      eventData: {
+        action: 'close',
+        authenticated: !!userOAuthProfile?.id,
+        firstUse: !hideCopilotSplashScreen
+      }
+    })
+    onClose?.()
+  }
 
   const CopilotHeader = useCallback(() => (
     <div className={styles.assistantHeader}>
@@ -32,12 +50,18 @@ const CopilotPanel = (props: Props) => {
     </div>
   ), [isFullScreen])
 
+  if (!hideCopilotSplashScreen) {
+    return (
+      <CopilotSplashScreen onClose={handleClose} />
+    )
+  }
+
   return (
     <>
       <Header
         isFullScreen={isFullScreen}
         onToggleFullScreen={onToggleFullScreen}
-        onClose={onClose}
+        onClose={handleClose}
         panelName="copilot"
       >
         <CopilotHeader />

@@ -36,9 +36,8 @@ enum BrowserStorageItem {
   insightsPanel = 'insightsPanel',
   sidePanel = 'sidePanel',
   capability = 'capability',
-  aiChatSession = 'aiChatSession',
-  selectedAiChat = 'selectedAiChat',
-  generalChatAgreements = 'generalChatAgreements'
+  hideCopilotSplashScreen = 'hideCopilotSplashScreen',
+  generalAiAgreementsAccepted = 'generalAiAgreementsAccepted',
 }
 
 export default BrowserStorageItem

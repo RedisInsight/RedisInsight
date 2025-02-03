@@ -1,5 +1,10 @@
-import { CustomHeaders } from 'uiSrc/constants/api'
-import { isStatusSuccessful } from 'uiSrc/utils'
+import { compact } from 'lodash'
+import { AiChatPath, CustomHeaders } from 'uiSrc/constants/api'
+import { Nullable, isStatusSuccessful } from 'uiSrc/utils'
+import { ApiEndpoints } from 'uiSrc/constants'
+
+import { apiService } from 'uiSrc/services'
+import { AiTool } from 'uiSrc/slices/interfaces/aiAssistant'
 import ApiStatusCode from '../../constants/apiStatusCode'
 
 const TIMEOUT_FOR_MESSAGE_REQUEST = 30_000
@@ -7,6 +12,7 @@ const TIMEOUT_FOR_MESSAGE_REQUEST = 30_000
 export const getStreamedAnswer = async (
   url: string,
   message: string,
+  tool: AiTool,
   { onMessage, onFinish, onError }: {
     onMessage?: (message: string) => void,
     onFinish?: () => void
@@ -26,7 +32,7 @@ export const getStreamedAnswer = async (
         Accept: 'text/event-stream',
         [CustomHeaders.WindowId]: window.windowId || '',
       },
-      body: JSON.stringify({ content: message }),
+      body: JSON.stringify({ content: message, tool }),
       signal: controller.signal
     })
 
@@ -59,4 +65,16 @@ export const getStreamedAnswer = async (
   } catch (error: any) {
     onError?.(error?.name === 'AbortError' ? { status: ApiStatusCode.Timeout, statusText: 'ERRTIMEOUT' } : error)
   }
+}
+
+export const getAiUrl = (...path: Nullable<string>[]) => `${ApiEndpoints.AI_CHAT}/${compact(path).join('/')}`
+
+export const createGeneralAgreementFunc = (body: { [key: string]: any }) => async () => {
+  const { status, data } = await apiService.post<any>(getAiUrl(AiChatPath.Agreements), body)
+  return isStatusSuccessful(status) ? { generalAgreement: data } : null
+}
+
+export const createDatabaseAgreementFunc = (databaseId: string, body: { [key: string]: any }) => async () => {
+  const { status, data } = await apiService.post<any>(getAiUrl(databaseId, AiChatPath.Agreements), body)
+  return isStatusSuccessful(status) ? { databaseAgreement: data } : null
 }

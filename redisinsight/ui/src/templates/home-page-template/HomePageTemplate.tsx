@@ -5,7 +5,6 @@ import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 import HomeTabs from 'uiSrc/components/home-tabs'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
@@ -22,16 +21,14 @@ const HomePageTemplate = (props: Props) => {
 
   const {
     [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
 
   return (
     <>
       <div className={styles.pageDefaultHeader}>
         <HomeTabs />
         <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
-          {isAnyChatAvailable && (
+          {databaseChatFeature?.flag && (
             <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
               <CopilotTrigger />
             </EuiFlexItem>

@@ -29,8 +29,8 @@ import {
   setConnectedInstance,
   setDefaultInstance
 } from 'uiSrc/slices/instances/instances'
+import { clearAiChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
-import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { getAllPlugins } from 'uiSrc/slices/app/plugins'
 import { FeatureFlags } from 'uiSrc/constants'
 import { getDatabasesApiSpy } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
@@ -135,7 +135,7 @@ describe('InstancePage', () => {
       setConnectedInfoInstance(),
       getRecommendations(),
       ...resetContextActions,
-      clearExpertChatHistory(),
+      clearAiChatHistory(),
       setAppContextConnectedInstanceId(INSTANCE_ID_MOCK),
       setDbConfig(undefined),
     ]

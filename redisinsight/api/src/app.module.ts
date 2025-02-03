@@ -21,8 +21,7 @@ import { SingleUserAuthMiddleware } from 'src/common/middlewares/single-user-aut
 import { CustomTutorialModule } from 'src/modules/custom-tutorial/custom-tutorial.module';
 import { CloudModule } from 'src/modules/cloud/cloud.module';
 import { RdiModule } from 'src/modules/rdi/rdi.module';
-import { AiChatModule } from 'src/modules/ai/chat/ai-chat.module';
-import { AiQueryModule } from 'src/modules/ai/query/ai-query.module';
+import { AiModule } from 'src/modules/ai/ai.module';
 import { InitModule } from 'src/modules/init/init.module';
 import { AnalyticsModule } from 'src/modules/analytics/analytics.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -65,8 +64,7 @@ const STATICS_CONFIG = config.get('statics') as Config['statics'];
     DatabaseAnalysisModule,
     DatabaseImportModule,
     CloudModule.register(),
-    AiChatModule,
-    AiQueryModule.register(),
+    AiModule.register(),
     RdiModule.register(),
     StaticsManagementModule.register({
       initDefaults: STATICS_CONFIG.initDefaults,

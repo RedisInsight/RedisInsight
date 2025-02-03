@@ -1,0 +1,24 @@
+.showPopoverBtn {
+  padding-left: 10px;
+  color: var(--controlsLabelColor) !important;
+  font-size: 10px !important;
+  cursor: pointer;
+
+  span {
+    margin-left: 10px;
+  }
+}
+
+.listContainer {
+  border: 1px solid var(--separatorColor) !important;
+  background-color: var(--euiColorEmptyShade);
+  border-radius: 8px;
+
+  .dropdownItem {
+    font-size: 10px !important;
+
+    span {
+      color: var(--controlsLabelColor) !important;
+    }
+  }
+}

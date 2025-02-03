@@ -36,285 +36,121 @@ describe('RejsonRlKeyInfoStrategy', () => {
   describe('getInfo', () => {
     const key = getKeyInfoResponse.name;
     const path = '.';
-
-    describe('when includeSize is true', () => {
-      it('should return all info in single pipeline for object type', async () => {
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.Ttl, key],
-            [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          ])
-          .mockResolvedValueOnce([
-            [null, -1],
-            [null, 50],
-          ]);
-
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue('object');
-
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonObjLen, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue(10);
-
-        const result = await strategy.getInfo(
-          mockStandaloneRedisClient,
-          key,
-          RedisDataType.JSON,
-          true,
-        );
-
-        expect(result).toEqual(getKeyInfoResponse);
-      });
+    beforeEach(() => {
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
+          [BrowserToolKeysCommands.Ttl, key],
+          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+        ])
+        .mockResolvedValue([
+          [null, -1],
+          [null, 50],
+        ]);
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith(
+          [BrowserToolRejsonRlCommands.JsonType, key, path],
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue('object');
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith(
+          [BrowserToolRejsonRlCommands.JsonObjLen, key, path],
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue(10);
     });
+    it('should return appropriate value for key that store object', async () => {
+      const result = await strategy.getInfo(
+        mockStandaloneRedisClient,
+        key,
+        RedisDataType.JSON,
+      );
 
-    describe('when includeSize is false', () => {
-      it('should return appropriate value for key that store object', async () => {
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.Ttl, key],
-          ])
-          .mockResolvedValueOnce([
-            [null, -1],
-          ]);
+      expect(result).toEqual(getKeyInfoResponse);
+    });
+    it('should return appropriate value for key that store string', async () => {
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith(
+          [BrowserToolRejsonRlCommands.JsonType, key, path],
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue('string');
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith(
+          [BrowserToolRejsonRlCommands.JsonStrLen, key, path],
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue(10);
 
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue('object');
+      const result = await strategy.getInfo(
+        mockStandaloneRedisClient,
+        key,
+        RedisDataType.JSON,
+      );
 
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonObjLen, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue(10);
+      expect(result).toEqual(getKeyInfoResponse);
+    });
+    it('should return appropriate value for key that store array', async () => {
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith(
+          [BrowserToolRejsonRlCommands.JsonType, key, path],
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue('array');
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith(
+          [BrowserToolRejsonRlCommands.JsonArrLen, key, path],
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue(10);
 
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          ])
-          .mockResolvedValueOnce([
-            [null, 50],
-          ]);
+      const result = await strategy.getInfo(
+        mockStandaloneRedisClient,
+        key,
+        RedisDataType.JSON,
+      );
 
-        const result = await strategy.getInfo(
-          mockStandaloneRedisClient,
-          key,
-          RedisDataType.JSON,
-          false,
-        );
+      expect(result).toEqual(getKeyInfoResponse);
+    });
+    it('should return appropriate value for key that store not iterable type', async () => {
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith(
+          [BrowserToolRejsonRlCommands.JsonType, key, path],
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue('boolean');
 
-        expect(result).toEqual(getKeyInfoResponse);
-      });
+      const result = await strategy.getInfo(
+        mockStandaloneRedisClient,
+        key,
+        RedisDataType.JSON,
+      );
 
-      it('should return appropriate value for key that store array', async () => {
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.Ttl, key],
-          ])
-          .mockResolvedValueOnce([
-            [null, -1],
-          ]);
+      expect(result).toEqual({ ...getKeyInfoResponse, length: null });
+    });
+    it('should return size with null value', async () => {
+      const replyError: ReplyError = {
+        name: 'ReplyError',
+        command: BrowserToolKeysCommands.MemoryUsage,
+        message: "ERR unknown command 'memory'",
+      };
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
+          [BrowserToolKeysCommands.Ttl, key],
+          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+        ])
+        .mockResolvedValue([
+          [null, -1],
+          [replyError, null],
+        ]);
 
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue('array');
+      const result = await strategy.getInfo(
+        mockStandaloneRedisClient,
+        key,
+        RedisDataType.JSON,
+      );
 
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonArrLen, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue(10);
-
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          ])
-          .mockResolvedValueOnce([
-            [null, 50],
-          ]);
-
-        const result = await strategy.getInfo(
-          mockStandaloneRedisClient,
-          key,
-          RedisDataType.JSON,
-          false,
-        );
-
-        expect(result).toEqual(getKeyInfoResponse);
-      });
-
-      it('should return appropriate value for key that store string', async () => {
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.Ttl, key],
-          ])
-          .mockResolvedValueOnce([
-            [null, -1],
-          ]);
-
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue('string');
-
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonStrLen, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue(10);
-
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          ])
-          .mockResolvedValueOnce([
-            [null, 50],
-          ]);
-
-        const result = await strategy.getInfo(
-          mockStandaloneRedisClient,
-          key,
-          RedisDataType.JSON,
-          false,
-        );
-
-        expect(result).toEqual(getKeyInfoResponse);
-      });
-
-      it('should return appropriate value for key that store not iterable type', async () => {
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.Ttl, key],
-          ])
-          .mockResolvedValueOnce([
-            [null, -1],
-          ]);
-
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue('boolean');
-
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          ])
-          .mockResolvedValueOnce([
-            [null, 50],
-          ]);
-
-        const result = await strategy.getInfo(
-          mockStandaloneRedisClient,
-          key,
-          RedisDataType.JSON,
-          false,
-        );
-
-        expect(result).toEqual({ ...getKeyInfoResponse, length: null });
-      });
-
-      it('should return size with null when memory usage fails', async () => {
-        const replyError: ReplyError = {
-          name: 'ReplyError',
-          command: BrowserToolKeysCommands.MemoryUsage,
-          message: "ERR unknown command 'memory'",
-        };
-
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.Ttl, key],
-          ])
-          .mockResolvedValueOnce([
-            [null, -1],
-          ]);
-
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue('object');
-
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonObjLen, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue(10);
-
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          ])
-          .mockResolvedValueOnce([
-            [replyError, null],
-          ]);
-
-        const result = await strategy.getInfo(
-          mockStandaloneRedisClient,
-          key,
-          RedisDataType.JSON,
-          false,
-        );
-
-        expect(result).toEqual({ ...getKeyInfoResponse, size: null });
-      });
-
-      it('should not check size when length >= 100', async () => {
-        when(mockStandaloneRedisClient.sendPipeline)
-          .calledWith([
-            [BrowserToolKeysCommands.Ttl, key],
-          ])
-          .mockResolvedValueOnce([
-            [null, -1],
-          ]);
-
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonType, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue('object');
-
-        when(mockStandaloneRedisClient.sendCommand)
-          .calledWith(
-            [BrowserToolRejsonRlCommands.JsonObjLen, key, path],
-            { replyEncoding: 'utf8' },
-          )
-          .mockResolvedValue(100);
-
-        const result = await strategy.getInfo(
-          mockStandaloneRedisClient,
-          key,
-          RedisDataType.JSON,
-          false,
-        );
-
-        expect(result).toEqual({
-          ...getKeyInfoResponse,
-          length: 100,
-          size: -1
-        });
-      });
+      expect(result).toEqual({ ...getKeyInfoResponse, size: null });
     });
   });
 });

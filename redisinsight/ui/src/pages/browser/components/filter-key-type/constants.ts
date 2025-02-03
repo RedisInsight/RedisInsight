@@ -4,7 +4,6 @@ import {
   ModulesKeyTypes,
   FeatureFlags
 } from 'uiSrc/constants'
-import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 export const FILTER_KEY_TYPE_OPTIONS = [
   {
@@ -46,11 +45,10 @@ export const FILTER_KEY_TYPE_OPTIONS = [
     text: 'Graph',
     value: ModulesKeyTypes.Graph,
     color: GROUP_TYPES_COLORS[ModulesKeyTypes.Graph],
-    skipIfNoModule: RedisDefaultModules.Graph,
     featureFlag: FeatureFlags.envDependent
   },
   {
-    text: 'Time Series',
+    text: 'TS',
     value: ModulesKeyTypes.TimeSeries,
     color: GROUP_TYPES_COLORS[ModulesKeyTypes.TimeSeries],
   },

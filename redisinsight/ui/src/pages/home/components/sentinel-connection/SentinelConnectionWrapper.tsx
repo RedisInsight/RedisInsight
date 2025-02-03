@@ -106,15 +106,17 @@ const SentinelConnectionWrapper = (props: Props) => {
   )
 
   return (
-    <SentinelConnectionForm
-      initialValues={initialValues}
-      loading={loading}
-      onSubmit={handleConnectionFormSubmit}
-      onClose={onClose}
-      onHostNamePaste={handlePostHostName}
-      certificates={certificates}
-      caCertificates={caCertificates}
-    />
+    <div>
+      <SentinelConnectionForm
+        initialValues={initialValues}
+        loading={loading}
+        onSubmit={handleConnectionFormSubmit}
+        onClose={onClose}
+        onHostNamePaste={handlePostHostName}
+        certificates={certificates}
+        caCertificates={caCertificates}
+      />
+    </div>
   )
 }
 

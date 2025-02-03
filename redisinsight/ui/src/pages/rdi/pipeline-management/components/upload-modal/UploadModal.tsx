@@ -1,10 +1,11 @@
+import { useFormikContext } from 'formik'
 import JSZip from 'jszip'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { FileChangeType } from 'uiSrc/slices/interfaces'
-import { rdiPipelineSelector, setChangedFiles, setPipelineConfig, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
+import { FileChangeType, IPipeline } from 'uiSrc/slices/interfaces'
+import { rdiPipelineSelector, setChangedFiles } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import UploadDialog from './components/upload-dialog/UploadDialog'
 
@@ -28,11 +29,13 @@ const UploadModal = (props: Props) => {
   const [isUploaded, setIsUploaded] = useState(false)
   const [error, setError] = useState<string>()
 
-  const { loading, config: pipelineConfig, jobs: pipelineJobs } = useSelector(rdiPipelineSelector)
+  const { loading } = useSelector(rdiPipelineSelector)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
   const dispatch = useDispatch()
+
+  const { values, setFieldValue, resetForm } = useFormikContext<IPipeline>()
 
   const validateZip = (zip: JSZip) => {
     // check if config.yaml exists
@@ -88,8 +91,9 @@ const UploadModal = (props: Props) => {
 
       dispatch(setChangedFiles(uploadFiles))
 
-      dispatch(setPipelineConfig(config || ''))
-      dispatch(setPipelineJobs(jobs))
+      resetForm()
+      setFieldValue('config', config)
+      setFieldValue('jobs', jobs)
 
       sendEventTelemetry({
         event: TelemetryEvent.RDI_PIPELINE_UPLOAD_SUCCEEDED,
@@ -141,7 +145,7 @@ const UploadModal = (props: Props) => {
           onConfirm={handleConfirmModal}
           onFileChange={handleFileChangeModal}
           isUploaded={isUploaded}
-          showWarning={(!!pipelineConfig || !!pipelineJobs?.length) && !isUploaded && !error}
+          showWarning={(!!values?.config || !!values?.jobs?.length) && !isUploaded && !error}
           error={error}
           loading={loading}
         />

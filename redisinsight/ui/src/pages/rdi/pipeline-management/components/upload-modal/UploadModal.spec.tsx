@@ -2,7 +2,7 @@ import React from 'react'
 import { loadAsync } from 'jszip'
 import { cloneDeep } from 'lodash'
 
-import { rdiPipelineSelector, setChangedFiles, setPipelineConfig, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
+import { rdiPipelineSelector, setChangedFiles } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { act, cleanup, fireEvent, mockedStore, render, screen, waitFor } from 'uiSrc/utils/test-utils'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
@@ -11,12 +11,22 @@ import UploadModal from './UploadModal'
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineSelector: jest.fn().mockReturnValue({
-    loading: false,
-    config: 'value',
-    jobs: [
-      { name: 'job1', value: 'value' },
-      { name: 'job2', value: 'value' }
-    ]
+    loading: false
+  })
+}))
+
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  useFormikContext: jest.fn().mockReturnValue({
+    values: {
+      config: 'value',
+      jobs: [
+        { name: 'job1', value: 'value' },
+        { name: 'job2', value: 'value' }
+      ]
+    },
+    resetForm: jest.fn(),
+    setFieldValue: jest.fn()
   })
 }))
 
@@ -96,12 +106,7 @@ describe('UploadModal', () => {
     })
 
     const expectedActions = [
-      setChangedFiles({ config: FileChangeType.Added, job1: FileChangeType.Added, job2: FileChangeType.Added }),
-      setPipelineConfig('config'),
-      setPipelineJobs([
-        { name: 'job1', value: 'value1' },
-        { name: 'job2', value: 'value2' }
-      ]),
+      setChangedFiles({ config: FileChangeType.Added, job1: FileChangeType.Added, job2: FileChangeType.Added })
     ]
 
     expect(store.getActions()).toEqual(expectedActions)

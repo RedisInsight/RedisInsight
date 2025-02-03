@@ -2,7 +2,6 @@
 import React from 'react'
 import { render } from 'react-dom'
 import App, { CommonPlugin, RawMode } from './App'
-import './styles/styles.scss'
 
 interface Props {
   command?: string

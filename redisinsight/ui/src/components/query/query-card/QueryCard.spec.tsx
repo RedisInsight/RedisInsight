@@ -158,24 +158,6 @@ describe('QueryCard', () => {
     expect(queryCliResultEl).toBeInTheDocument()
   })
 
-  it('should render properly result when it has pure number', () => {
-    const { getByTestId } = render(
-      <QueryCard
-        {...instance(mockedProps)}
-        resultsMode={ResultsMode.GroupMode}
-        result={[{
-          status: CommandExecutionStatus.Success,
-          response: 1,
-        }]}
-        isOpen
-        command="del key"
-      />
-    )
-    const queryCliResultEl = getByTestId('query-cli-result')
-
-    expect(queryCliResultEl.textContent).toBe('(integer) 1')
-  })
-
   it('should render QueryCardCliResult when result reached response size threshold even w/o flag', () => {
     const { queryByTestId } = render(
       <QueryCard

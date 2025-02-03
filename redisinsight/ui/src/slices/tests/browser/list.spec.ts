@@ -83,10 +83,9 @@ describe('list slice', () => {
       const nextState = reducer(initialState, setListInitialState())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -103,10 +102,9 @@ describe('list slice', () => {
       const nextState = reducer(initialState, loadListElements())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -138,10 +136,9 @@ describe('list slice', () => {
       const nextState = reducer(initialState, loadListElementsSuccess(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -160,10 +157,9 @@ describe('list slice', () => {
       const nextState = reducer(initialState, loadListElementsFailure(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -181,10 +177,9 @@ describe('list slice', () => {
       const nextState = reducer(initialState, loadMoreListElements())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -225,10 +220,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
 
@@ -247,10 +241,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(initialState)
     })
   })
@@ -272,10 +265,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -296,10 +288,9 @@ describe('list slice', () => {
       const nextState = reducer(initialState, updateValue())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -320,10 +311,9 @@ describe('list slice', () => {
       const nextState = reducer(initialState, updateValueSuccess())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -345,10 +335,9 @@ describe('list slice', () => {
       const nextState = reducer(initialState, updateValueFailure(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -369,10 +358,9 @@ describe('list slice', () => {
       const nextState = reducer(initialState, resetUpdateValue())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -398,10 +386,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -431,10 +418,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
 
@@ -461,10 +447,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -486,10 +471,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -508,10 +492,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -530,10 +513,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -555,10 +537,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -577,10 +558,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -599,10 +579,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -624,10 +603,9 @@ describe('list slice', () => {
       )
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { list: nextState },
-      }
+      })
       expect(listSelector(rootState)).toEqual(state)
     })
   })
@@ -834,10 +812,8 @@ describe('list slice', () => {
       it('succeed to delete elements from list', async () => {
         // Arrange
         const responsePayload = { status: 200, data: { elements: ['zx', 'zz'] } }
-        const nextState = {
-          ...initialStateDefault,
+        const nextState = Object.assign(initialStateDefault, {
           browser: {
-            ...initialStateDefault.browser,
             list: {
               ...initialState,
               data: {
@@ -846,7 +822,7 @@ describe('list slice', () => {
               }
             }
           },
-        }
+        })
 
         const mockedStore = mockStore(nextState)
 
@@ -875,8 +851,7 @@ describe('list slice', () => {
       it('succeed to delete all elements from list', async () => {
         // Arrange
         const responsePayload = { status: 200 }
-        const nextState = {
-          ...initialStateDefault,
+        const nextState = Object.assign(initialStateDefault, {
           browser: {
             list: {
               ...initialState,
@@ -886,7 +861,7 @@ describe('list slice', () => {
               }
             }
           },
-        }
+        })
 
         const mockedStore = mockStore(nextState)
 

@@ -28,9 +28,6 @@ export class AddRedisDatabaseDialog {
     cancelButton = Selector('[data-testid=btn-cancel]');
     testConnectionBtn = Selector('[data-testid=btn-test-connection]');
     backButton = Selector('[data-testid=back-btn]');
-    generalTab = Selector('[data-testid=manual-form-tab-general]');
-    securityTab = Selector('[data-testid=manual-form-tab-security]');
-    decompressionTab = Selector('[data-testid=manual-form-tab-decompression]');
 
     // TEXT INPUTS (also referred to as 'Text fields')
     disabledDatabaseInfo = Selector('[class=euiListGroupItem__label]');
@@ -75,9 +72,7 @@ export class AddRedisDatabaseDialog {
     aiChatMessage = Selector('[data-testid=ai-chat-message-btn]');
     aiCloseMessage = Selector('[aria-label="Closes this modal window"]');
 
-    trashIconMsk = (certificate: TlsCertificates) => `[data-testid^=delete-${certificate}-cert]`
-
-    getDeleteCertificate = (certificate: TlsCertificates) => Selector(this.trashIconMsk(certificate));
+    getDeleteCertificate = (certificate: TlsCertificates) => Selector(`[data-testid^=delete-${certificate}-cert]`);
 
     /**
      * Adding a new redis database
@@ -108,6 +103,7 @@ export class AddRedisDatabaseDialog {
      * @param index the logical index of database
      */
     async addLogicalRedisDatabase(parameters: AddNewDatabaseParameters, index: string): Promise<void> {
+
         await t
             .click(this.addDatabaseButton)
             .click(this.customSettingsButton);
@@ -151,7 +147,6 @@ export class AddRedisDatabaseDialog {
             await t.typeText(this.passwordInput, databaseParameters.databasePassword, { replace: true, paste: true });
         }
         // Select SSH Tunnel checkbox
-        await t.click(this.securityTab);
         await t.click(this.useSSHCheckbox);
         // Enter SSH fields
         await t
@@ -255,10 +250,10 @@ export class AddRedisDatabaseDialog {
      * @param compressor - compressor value
      */
     async setCompressorValue(compressor: string): Promise<void> {
+
         if(!await this.selectCompressor.exists) {
             await t.click(this.dataCompressorLabel);
         }
-
         await t.click(this.selectCompressor);
         await t.click(Selector(`[id="${compressor}"]`));
     }
@@ -269,21 +264,20 @@ export class AddRedisDatabaseDialog {
      * @param name - name of the certificate
      */
     async removeCertificateButton(certificate: TlsCertificates, name: string): Promise<void> {
-        await t.click(this.securityTab);
+
         const row =  Selector('button')
             .find('div')
             .withText(name);
-        const removeButton = this.trashIconMsk(certificate);
+        const removeButton = String(this.getDeleteCertificate(certificate));
         const removeButtonFooter = Selector('[class^=_popoverFooter]');
 
-        if (certificate === TlsCertificates.CA) {
+        if(certificate === TlsCertificates.CA){
             await t.click(this.caCertField);
-        } else {
+        }
+        else {
             await t.click(this.clientCertField);
         }
-
         await t.click(row.find(removeButton));
-
         await t.click(removeButtonFooter.find(removeButton));
     }
 }

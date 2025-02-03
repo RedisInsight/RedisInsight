@@ -178,8 +178,6 @@ export interface IStateRdiPipeline {
   loading: boolean
   error: string
   data: Nullable<IPipeline>
-  config: string
-  jobs: IRdiPipelineJob[]
   resetChecked: boolean
   schema: Nullable<object>
   strategies: IRdiPipelineStrategies

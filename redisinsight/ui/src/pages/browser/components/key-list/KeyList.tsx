@@ -24,13 +24,12 @@ import {
   setBrowserPatternScrollPosition,
   setBrowserIsNotRendered,
   setBrowserRedisearchScrollPosition,
-  appContextDbConfig,
 } from 'uiSrc/slices/app/context'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { BrowserColumns, KeyTypes, ModulesKeyTypes, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { KeyTypes, ModulesKeyTypes, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
@@ -42,7 +41,6 @@ import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import NoKeysMessage from '../no-keys-message'
-import { DeleteKeyPopover } from '../delete-key-popover/DeleteKeyPopover'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -83,8 +81,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const selectedKey = useSelector(selectedKeySelector)
   const { nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered, searchMode } = useSelector(keysSelector)
-  const { shownColumns } = useSelector(appContextDbConfig)
+  const { isSearched, isFiltered, searchMode, deleting } = useSelector(keysSelector)
   const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
@@ -98,9 +95,6 @@ const KeyList = forwardRef((props: Props, ref) => {
   const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
 
   const dispatch = useDispatch()
-
-  const prevIncludeSize = useRef(shownColumns?.includes(BrowserColumns.Size))
-  const prevIncludeTTL = useRef(shownColumns?.includes(BrowserColumns.TTL))
 
   useImperativeHandle(ref, () => ({
     handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
@@ -136,29 +130,6 @@ const KeyList = forwardRef((props: Props, ref) => {
     onRowsRendered(startIndex, lastIndex)
     rerender({})
   }, [keysState.keys])
-
-  useEffect(() => {
-    const isSizeReenabled = !prevIncludeSize.current && shownColumns.includes(BrowserColumns.Size)
-    const isTtlReenabled = !prevIncludeTTL.current && shownColumns.includes(BrowserColumns.TTL)
-
-    if ((isSizeReenabled || isTtlReenabled) && firstDataLoaded && itemsRef.current.length > 0) {
-      cancelAllMetadataRequests()
-      controller.current = new AbortController()
-
-      const { startIndex, lastIndex } = renderedRowsIndexesRef.current
-      const visibleItems = bufferFormatRangeItems(
-        itemsRef.current,
-        startIndex,
-        lastIndex,
-        formatItem
-      )
-
-      getMetadata(startIndex, visibleItems, true)
-    }
-
-    prevIncludeSize.current = shownColumns.includes(BrowserColumns.Size)
-    prevIncludeTTL.current = shownColumns.includes(BrowserColumns.TTL)
-  }, [shownColumns])
 
   const cancelAllMetadataRequests = () => {
     controller.current?.abort()
@@ -261,31 +232,23 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const getMetadata = useCallback((
-    initialStartIndex: number,
-    itemsInit: IKeyPropTypes[] = [],
-    forceRefresh?: boolean
+    startIndex: number,
+    itemsInit: IKeyPropTypes[] = []
   ): void => {
     const isSomeNotUndefined = ({ type, size, length }: IKeyPropTypes) =>
       (!commonFilterType && !isUndefined(type)) || !isUndefined(size) || !isUndefined(length)
 
-    let startIndex = initialStartIndex
-    let itemsToProcess = itemsInit
+    const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
+    if (firstEmptyItemIndex === -1) return
 
-    if (!forceRefresh) {
-      const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
-      if (firstEmptyItemIndex === -1) return
-
-      startIndex = initialStartIndex + firstEmptyItemIndex
-      itemsToProcess = itemsInit.slice(firstEmptyItemIndex)
-    }
-
-    const itemsToFetch = forceRefresh ? itemsToProcess : reject(itemsToProcess, isSomeNotUndefined)
+    const emptyItems = reject(itemsInit, isSomeNotUndefined)
 
     dispatch(fetchKeysMetadata(
-      itemsToFetch.map(({ name }) => name),
+      emptyItems.map(({ name }) => name),
       commonFilterType,
       controller.current?.signal,
-      (loadedItems) => onSuccessFetchedMetadata(startIndex, loadedItems),
+      (loadedItems) =>
+        onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
       () => { rerender({}) }
     ))
   }, [commonFilterType])
@@ -299,9 +262,6 @@ const KeyList = forwardRef((props: Props, ref) => {
 
     rerender({})
   }
-
-  const isTtlTheLastColumn = !shownColumns.includes(BrowserColumns.Size)
-  const ttlColumnSize = isTtlTheLastColumn ? 146 : 86
 
   const columns: ITableColumn[] = [
     {
@@ -318,82 +278,49 @@ const KeyList = forwardRef((props: Props, ref) => {
       label: 'Key',
       minWidth: 94,
       truncateText: true,
-      render: (cellData: string, { name, type }: IKeyPropTypes, _expanded, rowIndex) => (
-        <>
-          <KeyRowName nameString={cellData} shortName={cellData} />
-          {columns[columns.length - 1].id === 'nameString' && (
-            <DeleteKeyPopover
-              deletePopoverId={deletePopoverIndex}
-              nameString={cellData}
-              name={name}
-              type={type}
-              rowId={rowIndex || 0}
-              onDelete={handleRemoveKey}
-              onOpenPopover={handleDeletePopoverOpen}
-            />
-          )}
-        </>
+      render: (cellData: string) => (
+        <KeyRowName nameString={cellData} shortName={cellData} />
       )
     },
-    shownColumns.includes(BrowserColumns.TTL) ? {
+    {
       id: 'ttl',
       label: 'TTL',
-      absoluteWidth: ttlColumnSize,
-      minWidth: ttlColumnSize,
+      absoluteWidth: 86,
+      minWidth: 86,
       truncateText: true,
       alignment: TableCellAlignment.Right,
-      render: (cellData: number, { nameString, name, type }: IKeyPropTypes, _expanded, rowIndex) => (
-        <>
-          <KeyRowTTL
-            ttl={cellData}
-            nameString={nameString}
-            deletePopoverId={deletePopoverIndex}
-            rowId={rowIndex || 0}
-          />
-          {isTtlTheLastColumn && (
-            <DeleteKeyPopover
-              deletePopoverId={deletePopoverIndex}
-              nameString={nameString}
-              name={name}
-              type={type}
-              rowId={rowIndex || 0}
-              onDelete={handleRemoveKey}
-              onOpenPopover={handleDeletePopoverOpen}
-            />
-          )}
-        </>
+      render: (cellData: number, { nameString }: IKeyPropTypes, _expanded, rowIndex) => (
+        <KeyRowTTL ttl={cellData} nameString={nameString} deletePopoverId={deletePopoverIndex} rowId={rowIndex || 0} />
       )
-    } : null,
-    shownColumns.includes(BrowserColumns.Size) ? {
+    },
+    {
       id: 'size',
       label: 'Size',
       absoluteWidth: 90,
       minWidth: 90,
       alignment: TableCellAlignment.Right,
       textAlignment: TableCellTextAlignment.Right,
-      render: (cellData: number, { nameString, name, type }: IKeyPropTypes, _expanded, rowIndex) => (
-        <>
-          <KeyRowSize
-            size={cellData}
-            nameString={nameString}
-            deletePopoverId={deletePopoverIndex}
-            rowId={rowIndex || 0}
-          />
-          {columns[columns.length - 1].id === 'size' && (
-            <DeleteKeyPopover
-              deletePopoverId={deletePopoverIndex}
-              nameString={nameString}
-              name={name}
-              type={type}
-              rowId={rowIndex || 0}
-              onDelete={handleRemoveKey}
-              onOpenPopover={handleDeletePopoverOpen}
-            />
-          )}
-        </>
+      render: (
+        cellData: number,
+        { nameString, type, name: bufferName }: IKeyPropTypes,
+        _expanded,
+        rowIndex
+      ) => (
+        <KeyRowSize
+          size={cellData}
+          nameString={nameString}
+          nameBuffer={bufferName}
+          deletePopoverId={deletePopoverIndex}
+          rowId={rowIndex || 0}
+          type={type}
+          deleting={deleting}
+          setDeletePopoverId={setDeletePopoverIndex}
+          handleDeletePopoverOpen={handleDeletePopoverOpen}
+          handleDelete={handleRemoveKey}
+        />
       )
-    } : null
-  ].filter((el) => !!el)
+    },
+  ]
 
   const noItemsMessage = NoItemsMessage()
 

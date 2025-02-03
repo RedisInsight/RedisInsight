@@ -1,4 +1,6 @@
 export const findArgumentftAggreageTests = [
+  { args: [''], result: null },
+  { args: ['', ''], result: null },
   {
     args: ['index', '"query"', 'APPLY'],
     result: {

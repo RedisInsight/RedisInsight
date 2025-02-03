@@ -134,7 +134,9 @@ const KeyTreeSettings = ({ loading }: Props) => {
         button={button}
       >
         <EuiFlexGroup gutterSize="s" direction="column">
-          <EuiFlexItem className={styles.row} />
+          <EuiFlexItem className={styles.row}>
+            <EuiText className={styles.title}>Filters</EuiText>
+          </EuiFlexItem>
           <EuiFlexItem className={styles.row}>
             <div className={styles.label}>Delimiter</div>
             <EuiComboBox

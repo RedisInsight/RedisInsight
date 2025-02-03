@@ -4,15 +4,7 @@ import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
 import { KeyDto, RedisDataType } from './key.dto';
 
-export class GetKeyInfoDto extends KeyDto {
-  @ApiPropertyOptional({
-    description: 'Flag to determine if size should be requested and shown in the response',
-    type: Boolean,
-    default: false,
-  })
-  @IsOptional()
-  includeSize?: boolean;
-}
+export class GetKeyInfoDto extends KeyDto {}
 
 export class GetKeysInfoDto {
   @ApiProperty({
@@ -39,20 +31,4 @@ export class GetKeysInfoDto {
   })
   @IsOptional()
   type?: RedisDataType;
-
-  @ApiPropertyOptional({
-    description: 'Flag to determine if keys should be requested and shown in the response',
-    type: Boolean,
-    default: true,
-  })
-  @IsOptional()
-  includeSize?: boolean;
-
-  @ApiPropertyOptional({
-    description: 'Flag to determine if TTL should be requested and shown in the response',
-    type: Boolean,
-    default: true,
-  })
-  @IsOptional()
-  includeTTL?: boolean;
 }

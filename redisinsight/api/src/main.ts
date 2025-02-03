@@ -11,8 +11,6 @@ import { migrateHomeFolder, removeOldFolders } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
 import { AppLogger } from 'src/common/logger/app-logger';
-import { CloudAuthModule } from 'src/modules/cloud/auth/cloud-auth.module';
-import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
@@ -24,7 +22,6 @@ const serverConfig = get('server') as Config['server'];
 interface IApp {
   app: INestApplication;
   gracefulShutdown: Function;
-  cloudAuthService: CloudAuthService;
 }
 
 export default async function bootstrap(apiPort?: number): Promise<IApp> {
@@ -101,9 +98,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   process.on('SIGTERM', gracefulShutdown);
   process.on('SIGINT', gracefulShutdown);
 
-  const cloudAuthService = app.select(CloudAuthModule).get(CloudAuthService);
-
-  return { app, gracefulShutdown, cloudAuthService };
+  return { app, gracefulShutdown };
 }
 
 if (serverConfig.autoBootstrap) {

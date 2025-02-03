@@ -93,10 +93,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, loadHashFields(['*', undefined]))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -127,10 +126,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, loadHashFieldsSuccess(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
 
@@ -158,10 +156,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, loadHashFieldsSuccess(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -180,10 +177,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, loadHashFieldsFailure(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -201,10 +197,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, loadMoreHashFields())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -233,10 +228,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, loadMoreHashFieldsSuccess(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
 
@@ -262,10 +256,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, loadMoreHashFieldsSuccess(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -284,10 +277,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, loadMoreHashFieldsFailure(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -304,10 +296,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, removeHashFields())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -328,10 +319,9 @@ describe('hash slice', () => {
       const nextState = reducer(initailStateRemove, removeHashFieldsSuccess())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(initailStateRemove)
     })
   })
@@ -350,10 +340,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, removeHashFieldsFailure(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -388,10 +377,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialStateRemove, removeFieldsFromList(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -412,10 +400,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, updateValue())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -436,10 +423,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, updateValueSuccess())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -461,10 +447,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, updateValueFailure(data))
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -485,10 +470,9 @@ describe('hash slice', () => {
       const nextState = reducer(initialState, resetUpdateValue())
 
       // Assert
-      const rootState = {
-        ...initialStateDefault,
+      const rootState = Object.assign(initialStateDefault, {
         browser: { hash: nextState },
-      }
+      })
       expect(hashSelector(rootState)).toEqual(state)
     })
   })
@@ -524,7 +508,7 @@ describe('hash slice', () => {
     describe('fetchMoreHashFields', () => {
       it(
         'call fetchMoreHashFields, loadMoreHashFieldsSuccess,'
-        + ' when fetch is successed',
+          + ' when fetch is successed',
         async () => {
           // Arrange
           const data = {
@@ -582,19 +566,15 @@ describe('hash slice', () => {
     describe('deleteHashFields', () => {
       it(
         'call removeHashFields, removeHashFieldsSuccess,'
-        + ' and removeFieldsFromList when fetch is successed',
+          + ' and removeFieldsFromList when fetch is successed',
         async () => {
           // Arrange
 
           const key = stringToBuffer('key')
           const fields = ['hash field', 'hash field 2'].map((field) => stringToBuffer(field))
           const responsePayload = { status: 200, data: { affected: 2 } }
-          const nextState = {
-            ...initialStateDefault,
+          const nextState = Object.assign(initialStateDefault, {
             browser: {
-              keys: {
-                ...initialStateDefault.browser.keys,
-              },
               hash: {
                 ...initialState,
                 data: {
@@ -603,7 +583,7 @@ describe('hash slice', () => {
                 }
               }
             },
-          }
+          })
 
           const mockedStore = mockStore(nextState)
 
@@ -642,8 +622,7 @@ describe('hash slice', () => {
           const key = 'key'
           const fields = ['hash field', 'hash field 2']
           const responsePayload = { status: 200, data: { affected: 2 } }
-          const nextState = {
-            ...initialStateDefault,
+          const nextState = Object.assign(initialStateDefault, {
             browser: {
               hash: {
                 ...initialState,
@@ -653,7 +632,7 @@ describe('hash slice', () => {
                 }
               }
             },
-          }
+          })
 
           const mockedStore = mockStore(nextState)
 
@@ -689,7 +668,7 @@ describe('hash slice', () => {
         apiService.put = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await mockedStore.dispatch<any>(addHashFieldsAction({ keyName, fields }))
+        await store.dispatch<any>(addHashFieldsAction({ keyName, fields }))
 
         // Assert
         const expectedActions = [
@@ -765,7 +744,7 @@ describe('hash slice', () => {
         apiService.put = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await mockedStore.dispatch<any>(updateHashFieldsAction({ keyName, fields }))
+        await store.dispatch<any>(updateHashFieldsAction({ keyName, fields }))
 
         // Assert
         const expectedActions = [

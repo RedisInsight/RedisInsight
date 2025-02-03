@@ -9,11 +9,19 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
-    config: 'value',
-    jobs: [
-      { name: 'job1', value: 'value' },
-      { name: 'job2', value: 'value' }
-    ]
+  })
+}))
+
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  useFormikContext: jest.fn().mockReturnValue({
+    values: {
+      config: 'value',
+      jobs: [
+        { name: 'job1', value: 'value' },
+        { name: 'job2', value: 'value' }
+      ]
+    }
   })
 }))
 

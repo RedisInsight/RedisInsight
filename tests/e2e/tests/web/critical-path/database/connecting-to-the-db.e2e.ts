@@ -125,8 +125,8 @@ test
 
         await t
             .click(myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton)
-            .click(myRedisDatabasePage.AddRedisDatabaseDialog.customSettingsButton)
-            .click(myRedisDatabasePage.AddRedisDatabaseDialog.securityTab);
+            .click(myRedisDatabasePage.AddRedisDatabaseDialog.customSettingsButton);
+
         await t
             .click(myRedisDatabasePage.AddRedisDatabaseDialog.useSSHCheckbox)
             .click(myRedisDatabasePage.AddRedisDatabaseDialog.sshPrivateKeyRadioBtn)
@@ -155,14 +155,12 @@ test
         // Verify that user can edit SSH parameters for existing database connections
         await t.click(browserPage.OverviewPanel.myRedisDBLink);
         await myRedisDatabasePage.clickOnEditDBByName(sshDbPrivateKey.databaseName);
-        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.securityTab);
         await t
             .typeText(myRedisDatabasePage.AddRedisDatabaseDialog.sshPrivateKeyInput, sshWithPassphrase.sshPrivateKey, { replace: true, paste: true })
             .typeText(myRedisDatabasePage.AddRedisDatabaseDialog.sshPassphraseInput, sshWithPassphrase.sshPassphrase, { replace: true, paste: true });
         await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton.exists).notOk('Edit database panel still displayed');
         await databaseHelper.clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);
-        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.securityTab);
         // Verify that password, passphrase and private key are hidden for SSH option
         await t
             .expect(myRedisDatabasePage.AddRedisDatabaseDialog.sshPrivateKeyInput.textContent).eql(hiddenPass, 'Edited Private key not saved')

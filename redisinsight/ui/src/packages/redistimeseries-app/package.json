@@ -33,7 +33,7 @@
     }
   ],
   "devDependencies": {
-    "vite": "file:../node_modules/vite"
+    "vite": "^5.4.12"
   },
   "dependencies": {
     "@elastic/eui": "34.6.0",

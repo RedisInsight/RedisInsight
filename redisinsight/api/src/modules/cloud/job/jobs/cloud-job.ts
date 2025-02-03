@@ -8,7 +8,6 @@ import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { debounce } from 'lodash';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
-import { ClassType } from 'class-transformer/ClassTransformer';
 
 const cloudConfig = config.get('cloud');
 
@@ -129,7 +128,7 @@ export abstract class CloudJob {
     };
   }
 
-  public createChildJob<T>(TargetJob: ClassType<T>, data: {}, options = {}): T {
+  public createChildJob<T>(TargetJob: new (options: CloudJobOptions, data?: {}, deps?: {}) => T, data: {}, options = {}): T {
     return new TargetJob(
       {
         ...this.options,
@@ -144,7 +143,7 @@ export abstract class CloudJob {
 
   public async runChildJob(
     sessionMetadata: SessionMetadata,
-    TargetJob: ClassType<CloudJob>,
+    TargetJob: new (options: CloudJobOptions, data?: {}, deps?: {}) => CloudJob,
     data: {},
     options: CloudJobOptions,
   ): Promise<any> {

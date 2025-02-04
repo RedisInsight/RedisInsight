@@ -6,25 +6,38 @@ import {
   EuiSpacer,
   EuiTextColor,
 } from '@elastic/eui'
-import useTextFileDownload from './helpers/useTextFileGenerator'
 
 export interface Props {
   message: string
   onClose?: () => void
 }
 
+export const textToDownloadableFile = (text: string, fileName: string = 'log.txt') => {
+  const blob = new Blob([text], { type: 'text/plain' })
+  const fileUrl = URL.createObjectURL(blob)
+
+  return () => {
+    const a = document.createElement('a')
+    a.href = fileUrl
+    a.download = fileName
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+
+    // Cleanup after download to avoid memory leaks
+    URL.revokeObjectURL(fileUrl)
+  }
+}
+
 const RdiDeployErrorContent = (props: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { message, onClose } = props
-  const { textToDownloadableFile } = useTextFileDownload()
-  const downloadFile = textToDownloadableFile(message, 'log.txt')
+  const downloadFile = textToDownloadableFile(message)
 
   return (
     <>
       <EuiTextColor color="ghost">
-        <EuiFlexGroup
-          direction="column"
-        >
+        <EuiFlexGroup direction="column">
           <EuiFlexItem grow={false}>
             Review the error log for details.
           </EuiFlexItem>

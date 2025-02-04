@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import * as chai from 'chai';
+import chaiDeepEqualIgnoreUndefined from "chai-deep-equal-ignore-undefined";
 import * as nock from 'nock';
 import * as Joi from 'joi';
 import * as AdmZip from 'adm-zip';
@@ -13,6 +14,8 @@ import axios from 'axios';
 import { cloneDeep, isMatch, isObject, set, isArray } from 'lodash';
 import { generateInvalidDataArray } from './test/dataGenerator';
 import serverConfig from 'src/utils/config';
+
+chai.use(chaiDeepEqualIgnoreUndefined);
 
 export { _, path, fs, fsExtra, AdmZip, serverConfig, axios, nock }
 export const expect = chai.expect;

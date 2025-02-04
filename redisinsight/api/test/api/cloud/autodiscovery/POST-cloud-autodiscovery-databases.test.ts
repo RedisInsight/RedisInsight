@@ -98,7 +98,7 @@ describe('POST /cloud/autodiscovery/databases', () => {
         responseSchema,
         statusCode: 201,
         checkFn: ({ body }) => {
-          expect(body).to.deep.eq([{
+          expect(body).to.deepEqualIgnoreUndefined([{
             ...mockImportCloudDatabaseDto,
             message: 'Added',
             status: 'success',

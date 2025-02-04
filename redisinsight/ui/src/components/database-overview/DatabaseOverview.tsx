@@ -128,7 +128,7 @@ const DatabaseOverview = () => {
                   className={cx(styles.upgradeBtn)}
                   style={{ fontWeight: '400' }}
                   onClick={() => {
-                    const upgradeUrl = `${riConfig.app.returnUrlBase}/database/upgrade/${subscriptionId}`
+                    const upgradeUrl = `${riConfig.app.returnUrlBase}/databases/upgrade/${subscriptionId}`
                     window.open(upgradeUrl, '_blank')
                   }}
                   data-testid="upgrade-ri-db-button"

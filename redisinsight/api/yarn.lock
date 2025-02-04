@@ -2716,6 +2716,11 @@ caniuse-lite@^1.0.30001663:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001669.tgz#fda8f1d29a8bfdc42de0c170d7f34a9cf19ed7a3"
   integrity sha512-DlWzFDJqstqtIVx1zeSpIMLjunf5SmwOw0N2Ck/QSQdS8PLS4+9HrLaYei4w8BIAL7IB/UEDu889d8vhCTPA0w==
 
+chai-deep-equal-ignore-undefined@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/chai-deep-equal-ignore-undefined/-/chai-deep-equal-ignore-undefined-1.1.1.tgz#c9e3736fed06c83572f03c592c025cf2703fd1a1"
+  integrity sha512-BE4nUR2Jbqmmv8A0EuAydFRB/lXgXWAfa9TvO3YzHeGHAU7ZRwPZyu074oDl/CZtNXM7jXINpQxKBOe7N0P4bg==
+
 chai@^4.3.4:
   version "4.3.10"
   resolved "https://registry.yarnpkg.com/chai/-/chai-4.3.10.tgz#d784cec635e3b7e2ffb66446a63b4e33bd390384"

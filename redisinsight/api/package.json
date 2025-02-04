@@ -9,6 +9,7 @@
     "url": "https://redis.com/redis-enterprise/redis-insight"
   },
   "scripts": {
+    "postinstall": "npx patch-package",
     "build:defaults:commands": "ts-node ./scripts/default-commands.ts",
     "build:defaults:tutorials": "ts-node ./scripts/default-tutorials.ts",
     "build:defaults:content": "ts-node ./scripts/default-content.ts",
@@ -115,6 +116,7 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "chai": "^4.3.4",
+    "chai-deep-equal-ignore-undefined": "^1.1.1",
     "concurrently": "^5.3.0",
     "cross-env": "^7.0.3",
     "esbuild": "^0.23.0",
@@ -174,10 +176,13 @@
     },
     "reporters": [
       "default",
-      ["jest-html-reporters", {
-        "publicPath": "./report",
-        "filename": "index.html"
-      }]
+      [
+        "jest-html-reporters",
+        {
+          "publicPath": "./report",
+          "filename": "index.html"
+        }
+      ]
     ]
   }
 }

@@ -4,16 +4,19 @@ import { plainToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
 import { Request } from 'express';
 import { SessionMetadata } from 'src/common/models';
+import { omit } from 'lodash';
 
 const validator = new Validator();
 
 export const sessionMetadataFromRequest = (request: Request): SessionMetadata => {
   const userId = request.res?.locals?.session?.data?.userId.toString();
   const sessionId = request.res?.locals?.session?.data?.sessionId.toString();
+  const data = omit(request.res?.locals?.session?.data, ['userId', 'accountId', 'sessionId', 'correlationId']);
   const correlationId = request.res?.locals?.session?.correlationId || uuidv4();
 
   const requestSession = {
     userId,
+    data,
     sessionId,
     correlationId,
   };

@@ -22,6 +22,7 @@ import cliSettingsReducer from './cli/cli-settings'
 import outputReducer from './cli/cli-output'
 import monitorReducer from './cli/monitor'
 import userSettingsReducer from './user/user-settings'
+import cloudUserProfile from './user/cloud-user-profile'
 import appInfoReducer from './app/info'
 import appInitReducer from './app/init'
 import appConnectivityReducer from './app/connectivity'
@@ -99,6 +100,7 @@ export const rootReducer = combineReducers({
   }),
   user: combineReducers({
     settings: userSettingsReducer,
+    cloudProfile: cloudUserProfile,
   }),
   workbench: combineReducers({
     results: workbenchResultsReducer,

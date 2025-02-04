@@ -1596,6 +1596,14 @@
   dependencies:
     "@types/node" "*"
 
+"@types/ioredis-mock@^8":
+  version "8.2.5"
+  resolved "https://registry.yarnpkg.com/@types/ioredis-mock/-/ioredis-mock-8.2.5.tgz#ffbb398967d325b1ddfccc0695d14792ca188d76"
+  integrity sha512-cZyuwC9LGtg7s5G9/w6rpy3IOZ6F/hFR0pQlWYZESMo1xQUYbDpa6haqB4grTePjsGzcB/YLBFCjqRunK5wieg==
+  dependencies:
+    "@types/node" "*"
+    ioredis ">=5"
+
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.4.tgz#8467d4b3c087805d63580480890791277ce35c44"
@@ -5033,6 +5041,21 @@ ioredis-mock@^8.2.2:
     fengari-interop "^0.1.3"
     semver "^7.3.8"
 
+ioredis@>=5:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.4.2.tgz#ebb6f1a10b825b2c0fb114763d7e82114a0bee6c"
+  integrity sha512-0SZXGNGZ+WzISQ67QDyZ2x0+wVxjjUndtD8oSeik/4ajifeiRufed8fCb8QW8VMyi4MXcS+UO1k/0NGhvq1PAg==
+  dependencies:
+    "@ioredis/commands" "^1.1.1"
+    cluster-key-slot "^1.1.0"
+    debug "^4.3.4"
+    denque "^2.1.0"
+    lodash.defaults "^4.2.0"
+    lodash.isarguments "^3.1.0"
+    redis-errors "^1.2.0"
+    redis-parser "^3.0.0"
+    standard-as-callback "^2.1.0"
+
 ioredis@^5.2.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.3.2.tgz#9139f596f62fc9c72d873353ac5395bcf05709f7"
@@ -6569,20 +6592,19 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nest-winston@^1.9.7:
-  version "1.9.7"
-  resolved "https://registry.yarnpkg.com/nest-winston/-/nest-winston-1.9.7.tgz#1ef6eb2459ce595655de37d5beb900d2e75b61d3"
-  integrity sha512-pTTgImRgv7urojsDvaTlenAjyJNLj7ywamfjzrhWKhLhp80AKLYNwf103dVHeqZWe+nzp/vd9DGRs/UN/YadOQ==
+nest-winston@^1.10.2:
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/nest-winston/-/nest-winston-1.10.2.tgz#3a3de151677cbf393d2e2c2efd1f9222a5776708"
+  integrity sha512-Z9IzL/nekBOF/TEwBHUJDiDPMaXUcFquUQOFavIRet6xF0EbuWnOzslyN/ksgzG+fITNgXhMdrL/POp9SdaFxA==
   dependencies:
     fast-safe-stringify "^2.1.1"
 
-nestjs-form-data@~1.8.7:
-  version "1.8.7"
-  resolved "https://registry.yarnpkg.com/nestjs-form-data/-/nestjs-form-data-1.8.7.tgz#ccdbc2060849e34018841bfba557de37ae64abdb"
-  integrity sha512-mk17APNXELILClea2nwffRrD/NK5Q6zulTJCzNPxwMWfWucHO2HD7Ftjwg2BVnwO27QgqILDLuaO6LEpP6Ng4w==
+nestjs-form-data@^1.9.93:
+  version "1.9.93"
+  resolved "https://registry.yarnpkg.com/nestjs-form-data/-/nestjs-form-data-1.9.93.tgz#4d105cd59560ef2e8b16ddb5e187cabe8685cbbc"
+  integrity sha512-j1af2Ck+ix1A7M91wWemUU3hcF8UmHP19/eatEjfjD2Q/3289rckUvqK+rCSbsl3+w/W8PbHRllnGZxjOF8bOw==
   dependencies:
     uid "^2.0.0"
-    append-field "^1.0.0"
     busboy "^1.6.0"
     concat-stream "^2.0.0"
     file-type "^16.5.4"

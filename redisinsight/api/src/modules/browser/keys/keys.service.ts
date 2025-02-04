@@ -41,7 +41,7 @@ export class KeysService {
     private readonly keyInfoProvider: KeyInfoProvider,
     private readonly browserHistory: BrowserHistoryService,
     private readonly recommendationService: DatabaseRecommendationService,
-  ) {}
+  ) { }
 
   public async getKeys(
     clientMetadata: ClientMetadata,
@@ -103,7 +103,7 @@ export class KeysService {
     try {
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.getConnectionType());
-      const result = await scanner.getKeysInfo(client, dto.keys, dto.type);
+      const result = await scanner.getKeysInfo(client, dto.keys, dto.type, dto.includeSize, dto.includeTTL);
 
       this.recommendationService.check(
         clientMetadata,
@@ -121,6 +121,7 @@ export class KeysService {
   public async getKeyInfo(
     clientMetadata: ClientMetadata,
     key: RedisString,
+    includeSize: boolean = false,
   ): Promise<GetKeyInfoResponse> {
     try {
       this.logger.debug('Getting key info.', clientMetadata);
@@ -143,7 +144,7 @@ export class KeysService {
         );
       }
 
-      const result = await this.keyInfoProvider.getStrategy(type).getInfo(client, key, type);
+      const result = await this.keyInfoProvider.getStrategy(type).getInfo(client, key, type, includeSize);
       this.logger.debug('Succeed to get key info', clientMetadata);
 
       this.recommendationService.checkMulti(

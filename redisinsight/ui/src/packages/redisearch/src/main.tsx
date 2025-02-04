@@ -5,6 +5,7 @@ import result from './result2.json'
 // import result from './resultInfo.json'
 // import result from './result3.json'
 import App from './App'
+import './styles/styles.scss'
 
 interface Props {
   command?: string

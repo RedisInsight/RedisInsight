@@ -27,7 +27,7 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [KeyTypes.ReJSON]: 'JSON',
   [KeyTypes.JSON]: 'JSON',
   [KeyTypes.Stream]: 'Stream',
-  [ModulesKeyTypes.TimeSeries]: 'TS',
+  [ModulesKeyTypes.TimeSeries]: 'Time Series',
   [CommandGroup.Bitmap]: 'Bitmap',
   [CommandGroup.Cluster]: 'Cluster',
   [CommandGroup.Connection]: 'Connection',

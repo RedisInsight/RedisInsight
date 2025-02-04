@@ -19,7 +19,7 @@ import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { PageNames } from 'uiSrc/constants'
 import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover/ConfirmationPopover'
 import { FileChangeType, IPipeline, IRdiPipelineJob } from 'uiSrc/slices/interfaces'
-import { deleteChangedFile, deletePipelineJob, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import { deleteChangedFile, deletePipelineJob, rdiPipelineSelector, setChangedFile, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
 
@@ -66,16 +66,15 @@ const JobsTree = (props: IProps) => {
   const [isNewJob, setIsNewJob] = useState(false)
   const [hideTooltip, setHideTooltip] = useState(false)
 
-  const { loading, data } = useSelector(rdiPipelineSelector)
+  const { loading, data, jobs } = useSelector(rdiPipelineSelector)
 
-  const { values, setFieldValue } = useFormikContext<IPipeline>()
   const dispatch = useDispatch()
 
   const handleDeleteClick = (name: string) => {
     dispatch(deletePipelineJob(name))
 
-    const newJobs = values.jobs.filter((el) => el.name !== name)
-    setFieldValue('jobs', newJobs)
+    const newJobs = jobs.filter((el) => el.name !== name)
+    dispatch(setPipelineJobs(newJobs))
 
     sendEventTelemetry({
       event: TelemetryEvent.RDI_PIPELINE_JOB_DELETED,
@@ -101,9 +100,15 @@ const JobsTree = (props: IProps) => {
 
   const handleApplyJobName = (value: string, idx?: number) => {
     const isJobExists = isNumber(idx)
-    const editJobIndex = isJobExists ? idx : values.jobs.length
+    const updatedJobs = isJobExists
+      ? [
+        ...jobs.slice(0, idx),
+        { ...jobs[idx], name: value },
+        ...jobs.slice(idx + 1),
+      ]
+      : [...jobs, { name: value, value: '' }]
 
-    setFieldValue(`jobs.${editJobIndex}.name`, value)
+    dispatch(setPipelineJobs(updatedJobs))
 
     const deployedJob = data?.jobs.find((el) => el.name === value)
 
@@ -114,7 +119,7 @@ const JobsTree = (props: IProps) => {
     if (
       deployedJob
       && isJobExists
-      && isEqualPipelineFile(values.jobs[idx].value, deployedJob.value)
+      && isEqualPipelineFile(jobs[idx].value, deployedJob.value)
     ) {
       dispatch(deleteChangedFile(deployedJob.value))
     }
@@ -192,8 +197,8 @@ const JobsTree = (props: IProps) => {
         controlsPosition="right"
         onApply={(value: string) => handleApplyJobName(value, idx)}
         onDecline={handleDeclineJobName}
-        disableByValidation={(value) => !!validateJobName(value, currentJobName, values.jobs)}
-        getError={(value) => validateJobName(value, currentJobName, values.jobs)}
+        disableByValidation={(value) => !!validateJobName(value, currentJobName, jobs)}
+        getError={(value) => validateJobName(value, currentJobName, jobs)}
         isLoading={loading}
         declineOnUnmount={false}
         controlsClassName={styles.inputControls}
@@ -265,7 +270,7 @@ const JobsTree = (props: IProps) => {
           {'Jobs '}
           {!loading && (
             <EuiTextColor className={styles.jobsCount} component="span" data-testid="rdi-jobs-count">
-              {values?.jobs?.length ? `(${values?.jobs?.length})` : ''}
+              {jobs?.length ? `(${jobs?.length})` : ''}
             </EuiTextColor>
           )}
           {loading && <EuiLoadingSpinner data-testid="rdi-nav-jobs-loader" className={styles.loader} />}
@@ -328,7 +333,7 @@ const JobsTree = (props: IProps) => {
           </EuiFlexGroup>
         </EuiFlexGroup>
       )}
-      {renderJobsList(values?.jobs ?? [])}
+      {renderJobsList(jobs ?? [])}
     </EuiAccordion>
   )
 }

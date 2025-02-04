@@ -222,7 +222,7 @@ const waitForEuiPopoverVisible = async () => {
 }
 
 export const waitForStack = async (timeout = 0) => {
-  await waitFor(() => {}, { timeout })
+  await waitFor(() => { }, { timeout })
 }
 
 // mock useHistory

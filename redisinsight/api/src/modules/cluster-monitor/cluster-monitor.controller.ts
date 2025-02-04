@@ -13,7 +13,7 @@ export class ClusterMonitorController {
 
   @ApiEndpoint({
     statusCode: 200,
-    description: 'Get list of available plugins',
+    description: 'Get cluster details',
     responses: [
       {
         status: 200,

@@ -50,6 +50,7 @@ test
         ];
 
         await t.navigateTo(generateLink(connectUrlParams));
+        await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.securityTab);
         await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.caCertField.textContent).contains('Add new CA certificate', 'add CA certificate is not shown');
         await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.clientCertField.textContent).contains('Add new certificate', 'add client certificate is not shown');
         await t.hover(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton);

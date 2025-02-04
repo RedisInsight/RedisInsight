@@ -91,11 +91,11 @@ export const initDataHelper = (rte) => {
 
   const truncate = async () => {
     return client.nodes ? Promise.all(client.nodes('master').map(async (node) => {
-        try {
-          return flushTestRunData(node);
-        } catch (e) {
-          return null;
-        }
+      try {
+        return flushTestRunData(node);
+      } catch (e) {
+        return null;
+      }
     })) : flushTestRunData(client);
   };
 
@@ -223,7 +223,7 @@ export const initDataHelper = (rte) => {
     );
     await client.rpush(
       constants.TEST_LIST_KEY_2,
-      ...(new Array(100).fill(0)).map((item, i) => `element_${i+1}`)
+      ...(new Array(100).fill(0)).map((item, i) => `element_${i + 1}`)
     );
   };
 
@@ -255,7 +255,7 @@ export const initDataHelper = (rte) => {
     await client.sadd(constants.TEST_SET_KEY_1, constants.TEST_SET_MEMBER_1);
     await client.sadd(
       constants.TEST_SET_KEY_2,
-      ...(new Array(100).fill(0)).map((item, i) => `member_${i+1}`)
+      ...(new Array(100).fill(0)).map((item, i) => `member_${i + 1}`)
     );
   };
 
@@ -471,11 +471,11 @@ export const initDataHelper = (rte) => {
 
   const generateNKeys = async (number: number = 15000, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['set', `${constants.TEST_RUN_ID}_str_key_${i}`, `str_val_${i}`]) }, // string
-      { create: n => _.map(new Array(n), (v,i) => ['lpush', `${constants.TEST_RUN_ID}_list_key_${i}`, `list_val_${i}`]) }, // list
-      { create: n => _.map(new Array(n), (v,i) => ['sadd', `${constants.TEST_RUN_ID}_set_key_${i}`, `set_val_${i}`]) }, // set
-      { create: n => _.map(new Array(n), (v,i) => ['zadd', `${constants.TEST_RUN_ID}_zset_key_${i}`, 0, `zset_val_${i}`]) }, // zset
-      { create: n => _.map(new Array(n), (v,i) => ['hset', `${constants.TEST_RUN_ID}_hash_key_${i}`, `field`, `hash_val_${i}`]) }, // hash
+      { create: n => _.map(new Array(n), (v, i) => ['set', `${constants.TEST_RUN_ID}_str_key_${i}`, `str_val_${i}`]) }, // string
+      { create: n => _.map(new Array(n), (v, i) => ['lpush', `${constants.TEST_RUN_ID}_list_key_${i}`, `list_val_${i}`]) }, // list
+      { create: n => _.map(new Array(n), (v, i) => ['sadd', `${constants.TEST_RUN_ID}_set_key_${i}`, `set_val_${i}`]) }, // set
+      { create: n => _.map(new Array(n), (v, i) => ['zadd', `${constants.TEST_RUN_ID}_zset_key_${i}`, 0, `zset_val_${i}`]) }, // zset
+      { create: n => _.map(new Array(n), (v, i) => ['hset', `${constants.TEST_RUN_ID}_hash_key_${i}`, `field`, `hash_val_${i}`]) }, // hash
     ], number, clean);
 
     await waitForInfoSync();
@@ -486,30 +486,66 @@ export const initDataHelper = (rte) => {
 
     await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_1, 'on', 'hash', 'schema', 'field', 'text']);
     await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_2, 'on', 'hash', 'schema', '*', 'text']);
+
+    // Indexes creation needs some additional time to complete, which usually is around 500ms
+    await waitIndexingToComplete([constants.TEST_SEARCH_HASH_INDEX_1, constants.TEST_SEARCH_HASH_INDEX_2])
   };
+
+  /**
+   * Checks periodically (`retryLimit` times, every `retryInterval` milliseconds) if the creation of the `hashIndexes` has completed.
+   * 
+   * @param {string[]} indexes - string array containing the hashes of the indexes.
+   * @param {number} [retryLimit=3] - the maximum number of iterations. Defaults to 3.
+   * @param {number} [retryInterval=300] - the time wait between iterations, in milliseconds. Defaults to 300.
+   */
+  const waitIndexingToComplete = async (hashIndexes: string[], retryLimit = 3, retryInterval = 300) => {
+    let indexesCompleted = new Array(hashIndexes.length).fill(false);
+    for(let retryCounter = 0; retryCounter < retryLimit; retryCounter++) {
+      await new Promise((resolve) => setTimeout(resolve, retryInterval));
+
+      for (let i = 0; i < hashIndexes.length; i++) {
+        // ft.info command returns an array which contains data that shows wether the indexing is in progress
+        // it looks something like this: ["index_name", "the_index_name", ... "indexing", 0, ...]
+        const indexInfo = await sendCommand('ft.info', [hashIndexes[i]]);
+
+        // searching for the "indexing" property index, so we can reach it's value using index + 1 in the info array
+        const indexingPropertyIndex = indexInfo.indexOf("indexing");
+        const indexingValue = indexInfo[indexingPropertyIndex + 1]; // 1 - in progress, 0 - completed
+        indexesCompleted[i] = !indexingValue;
+      }
+
+      if (!indexesCompleted.includes(false)) {
+        break;
+      }
+    }
+
+    if (indexesCompleted.includes(false)) {
+      console.error('Indexing has not yet completed');
+    }
+  }
 
   const generateNReJSONs = async (number: number = 300, clean: boolean) => {
     const jsonValue = JSON.stringify(constants.TEST_REJSON_VALUE_1);
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['json.set', `${constants.TEST_RUN_ID}_rejson_key_${i}`, '.', jsonValue]) },
+      { create: n => _.map(new Array(n), (v, i) => ['json.set', `${constants.TEST_RUN_ID}_rejson_key_${i}`, '.', jsonValue]) },
     ], number, clean);
   };
 
   const generateNTimeSeries = async (number: number = 300, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['ts.create', `${constants.TEST_RUN_ID}_ts_key_${i}`, `ts_val_${i}`]) },
+      { create: n => _.map(new Array(n), (v, i) => ['ts.create', `${constants.TEST_RUN_ID}_ts_key_${i}`, `ts_val_${i}`]) },
     ], number, clean);
   };
 
   const generateNStreams = async (number: number = 300, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['xadd', `${constants.TEST_RUN_ID}_st_key_${i}`, `*`, `st_field_${i}`, `st_val_${i}`]) },
+      { create: n => _.map(new Array(n), (v, i) => ['xadd', `${constants.TEST_RUN_ID}_st_key_${i}`, `*`, `st_field_${i}`, `st_val_${i}`]) },
     ], number, clean);
   };
 
   const generateNGraphs = async (number: number = 300, clean: boolean) => {
     await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v,i) => ['graph.query', `${constants.TEST_RUN_ID}_graph_key_${i}`, `CREATE (n_${i})`]) },
+      { create: n => _.map(new Array(n), (v, i) => ['graph.query', `${constants.TEST_RUN_ID}_graph_key_${i}`, `CREATE (n_${i})`]) },
     ], number, clean);
   };
 

@@ -1,13 +1,11 @@
 import React from 'react'
-import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { rdiPipelineSelector, setChangedFile, deleteChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import { rdiPipelineSelector, setChangedFile, deleteChangedFile, setPipelineConfig } from 'uiSrc/slices/rdi/pipeline'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
-import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import Config from './Config'
@@ -23,6 +21,23 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
     loading: false,
     schema: { config: { test: {} } },
     data: null,
+    config: `connections:
+            target:
+              type: redis
+          `,
+    jobs: [{
+      name: 'jobName',
+      value: `job:
+      transform:
+        type: sql
+    `
+    }, {
+      name: 'job2',
+      value: `job2:
+      transform:
+        type: redis
+    `
+    }],
   }),
 }))
 
@@ -33,8 +48,6 @@ jest.mock('uiSrc/slices/rdi/testConnections', () => ({
   }),
 }))
 
-jest.mock('formik')
-
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -43,15 +56,6 @@ beforeEach(() => {
 })
 
 describe('Config', () => {
-  const mockSetFieldValue = jest.fn()
-  beforeEach(() => {
-    const mockUseFormikContext = {
-      setFieldValue: mockSetFieldValue,
-      values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
-  })
-
   it('should render', () => {
     expect(render(<Config />)).toBeTruthy()
   })
@@ -70,17 +74,6 @@ describe('Config', () => {
     })
   })
 
-  it('should call setFieldValue with proper values', () => {
-    render(<Config />)
-    const fieldName = screen.getByTestId('rdi-monaco-config')
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
-
-    expect(mockSetFieldValue).toBeCalledWith('config', '123')
-  })
-
   it('should call proper actions', () => {
     render(<Config />)
     const fieldName = screen.getByTestId('rdi-monaco-config')
@@ -90,6 +83,7 @@ describe('Config', () => {
     )
 
     const expectedActions = [
+      setPipelineConfig('123'),
       setChangedFile({ name: 'config', status: FileChangeType.Added })
     ]
 
@@ -113,6 +107,7 @@ describe('Config', () => {
     )
 
     const expectedActions = [
+      setPipelineConfig('123'),
       deleteChangedFile('config')
     ]
 
@@ -136,7 +131,8 @@ describe('Config', () => {
     )
 
     const expectedActions = [
-      setChangedFile({ name: 'config', status: FileChangeType.Modified })
+      setPipelineConfig('123'),
+      setChangedFile({ name: 'config', status: FileChangeType.Modified }),
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
@@ -173,11 +169,9 @@ describe('Config', () => {
   })
 
   it('should render error notification', async () => {
-    const mockUseFormikContext = {
-      setFieldValue: mockSetFieldValue,
-      values: { config: 'sources:incorrect\n target:' },
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
+      config: 'sources:incorrect\n target:'
+    }))
 
     const { queryByTestId } = render(<Config />)
 

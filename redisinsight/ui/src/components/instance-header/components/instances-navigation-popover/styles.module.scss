@@ -9,6 +9,10 @@
 .breadCrumbLink {
   cursor: pointer;
   text-decoration: underline;
+  max-width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
   &:hover {
     text-decoration: none;
@@ -86,13 +90,15 @@
   }
 }
 
-.listContainer :global(.euiListGroupItem-isActive), :global(.euiListGroupItem:hover) {
-  background-color: var(--hoverInListColorDarken) !important;
-  color: var(--euiTextSubduedColorHover) !important;
-  border-left-color: var(--externalLinkColor) !important;
-  border-left-width: 3px !important;
-  border-left-style: solid !important;
-  text-decoration: none !important;
+.listContainer {
+  :global(.euiListGroupItem-isActive), :global(.euiListGroupItem:hover) {
+    background-color: var(--hoverInListColorDarken) !important;
+    color: var(--euiTextSubduedColorHover) !important;
+    border-left-color: var(--externalLinkColor) !important;
+    border-left-width: 3px !important;
+    border-left-style: solid !important;
+    text-decoration: none !important;
+  }
 }
 
 .footerContainer {

@@ -9,6 +9,8 @@ import { RecommendationServerEvents } from 'src/modules/database-recommendation/
 import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
+import { SessionMetadata } from 'src/common/models';
+import { getUserRoom } from 'src/constants/websocket-rooms';
 
 const SOCKETS_CONFIG = config.get('sockets') as Config['sockets'];
 
@@ -22,9 +24,9 @@ export class DatabaseRecommendationGateway {
   @WebSocketServer() wss: Server;
 
   @OnEvent(RecommendationServerEvents.Recommendation)
-  notify(databaseId: string, data: DatabaseRecommendationsResponse) {
-    this.wss.of('/').emit(
-      `${RecommendationServerEvents.Recommendation}:${databaseId}`,
+  notify({ userId }: SessionMetadata, data: DatabaseRecommendationsResponse) {
+    this.wss.to(getUserRoom(userId)).emit(
+      RecommendationServerEvents.Recommendation,
       data,
     );
   }

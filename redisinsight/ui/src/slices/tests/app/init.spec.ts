@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash'
+import { rest } from 'msw'
 import reducer, {
   appInitSelector,
   FAILED_TO_FETCH_CSRF_TOKEN_ERROR,
@@ -12,11 +13,15 @@ import reducer, {
   STATUS_LOADING,
   STATUS_SUCCESS,
 } from 'uiSrc/slices/app/init'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
-import { apiService } from 'uiSrc/services'
+import { cleanup, getMswURL, initialStateDefault, mockedStore, waitFor } from 'uiSrc/utils/test-utils'
 import { getFeatureFlags, getFeatureFlagsFailure, getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
 import { getConfig } from 'uiSrc/config'
-import { fetchCsrfToken, fetchCsrfTokenFail } from 'uiSrc/slices/app/csrf'
+import { CSRFTokenResponse, fetchCsrfToken, fetchCsrfTokenFail } from 'uiSrc/slices/app/csrf'
+import { FEATURES_DATA_MOCK } from 'uiSrc/mocks/handlers/app/featureHandlers'
+import { ApiEndpoints } from 'uiSrc/constants'
+import { mswServer } from 'uiSrc/mocks/server'
+import { getUserProfile, getUserProfileSuccess } from 'uiSrc/slices/user/cloud-user-profile'
+import { CLOUD_ME_DATA_MOCK } from 'uiSrc/mocks/handlers/oauth/cloud'
 
 const riConfig = getConfig()
 
@@ -90,12 +95,6 @@ describe('init slice', () => {
 
   describe('initApp', () => {
     it('succeed to init data', async () => {
-      // Arrange
-      const data = { features: { insightsRecommendations: true } }
-      const responsePayload = { data, status: 200 }
-
-      apiService.get = jest.fn().mockResolvedValue(responsePayload)
-
       // Act
       await store.dispatch<any>(initializeAppAction())
 
@@ -103,7 +102,7 @@ describe('init slice', () => {
       const expectedActions = [
         initializeAppState(),
         getFeatureFlags(),
-        getFeatureFlagsSuccess(data),
+        getFeatureFlagsSuccess(FEATURES_DATA_MOCK),
         initializeAppStateSuccess(),
       ]
 
@@ -111,14 +110,13 @@ describe('init slice', () => {
     })
 
     it('failed to init data', async () => {
-      const responsePayload = {
-        response: {
-          status: 500,
-          data: { message: 'Whatever error' },
-        },
-      }
-
-      apiService.get = jest.fn().mockRejectedValue(responsePayload)
+      mswServer.use(
+        rest.get<typeof FEATURES_DATA_MOCK[]>(
+          getMswURL(ApiEndpoints.FEATURES),
+          async (_req, res, ctx) =>
+            res(ctx.status(500))
+        )
+      )
 
       // Act
       await store.dispatch<any>(initializeAppAction())
@@ -135,9 +133,14 @@ describe('init slice', () => {
     })
 
     it('failed to init csrf', async () => {
-      riConfig.api.csrfEndpoint = 'http://localhost'
-
-      apiService.get = jest.fn().mockRejectedValueOnce(new Error('something went wrong'))
+      riConfig.api.csrfEndpoint = 'http://localhost/csrf'
+      mswServer.use(
+        rest.get<CSRFTokenResponse>(
+          getMswURL(riConfig.api.csrfEndpoint),
+          async (_req, res, ctx) =>
+            res(ctx.status(500))
+        )
+      )
 
       // Act
       await store.dispatch<any>(initializeAppAction())
@@ -146,11 +149,51 @@ describe('init slice', () => {
       const expectedActions = [
         initializeAppState(),
         fetchCsrfToken(),
-        fetchCsrfTokenFail({ error: 'something went wrong' }),
+        fetchCsrfTokenFail({ error: 'Network Error' }),
         initializeAppStateFail({ error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR }),
       ]
 
       expect(store.getActions()).toEqual(expectedActions)
+    })
+
+    it('fetches user profile if !envDependant', async () => {
+      riConfig.api.csrfEndpoint = ''
+
+      const newFeatureFlags = {
+        features: {
+          ...FEATURES_DATA_MOCK.features,
+          envDependent: {
+            name: 'envDependent',
+            flag: false
+          },
+        }
+      }
+
+      // Arrange
+      mswServer.use(
+        rest.get<typeof FEATURES_DATA_MOCK[]>(
+          getMswURL(ApiEndpoints.FEATURES),
+          async (_req, res, ctx) =>
+            res(ctx.status(200), ctx.json(newFeatureFlags)),
+        )
+      )
+
+      // Act
+      await store.dispatch<any>(initializeAppAction())
+
+      // Assert
+      const expectedActions = [
+        initializeAppState(),
+        getFeatureFlags(),
+        getFeatureFlagsSuccess(newFeatureFlags),
+        getUserProfile(),
+        getUserProfileSuccess(CLOUD_ME_DATA_MOCK),
+        initializeAppStateSuccess(),
+      ]
+
+      await waitFor(() => {
+        expect(store.getActions()).toEqual(expectedActions)
+      })
     })
   })
 })

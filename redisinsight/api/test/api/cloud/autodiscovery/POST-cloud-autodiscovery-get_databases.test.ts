@@ -59,6 +59,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     subscriptionType: Joi.string().valid('fixed', 'flexible').required(),
     planMemoryLimit: Joi.number(),
     memoryLimitMeasurementUnit: Joi.string(),
+    subscriptionId: Joi.number().integer(),
     free: Joi.boolean().required(),
   }).required(),
 })).required();
@@ -90,7 +91,7 @@ describe('POST /cloud/autodiscovery/get-databases', () => {
         headers,
         responseSchema,
         checkFn: ({ body }) => {
-          expect(body).to.deep.eq([mockCloudDatabaseFromList]);
+          expect(body).to.deepEqualIgnoreUndefined([mockCloudDatabaseFromList]);
         },
       },
       {
@@ -105,7 +106,7 @@ describe('POST /cloud/autodiscovery/get-databases', () => {
         headers,
         responseSchema,
         checkFn: ({ body }) => {
-          expect(body).to.deep.eq([mockCloudDatabaseFromListFixed]);
+          expect(body).to.deepEqualIgnoreUndefined([mockCloudDatabaseFromListFixed]);
         },
       },
       {

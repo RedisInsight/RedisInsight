@@ -29,11 +29,14 @@ import {
   setConnectedInstance,
   setDefaultInstance
 } from 'uiSrc/slices/instances/instances'
-import { loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
+import * as rdiInstanceSlice from 'uiSrc/slices/rdi/instances'
+import { loadInstances as loadRdiInstances, } from 'uiSrc/slices/rdi/instances'
+
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { getAllPlugins } from 'uiSrc/slices/app/plugins'
 import { FeatureFlags } from 'uiSrc/constants'
 import { getDatabasesApiSpy } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
+import { RdiInstance } from 'uiSrc/slices/interfaces'
 import InstancePage, { Props } from './InstancePage'
 
 const INSTANCE_ID_MOCK = 'instanceId'
@@ -245,5 +248,71 @@ describe('InstancePage', () => {
 
     const { getByText } = within(getByTestId('connectivity-error-message'))
     expect(getByText('Test error')).toBeInTheDocument()
+  })
+
+  it('should dispatch fetchRdiInstancesAction when rdiInstances is empty and envDependent flag is true', async () => {
+    // Mock the rdiInstancesSelector to return an empty array
+    jest.spyOn(rdiInstanceSlice, 'instancesSelector').mockReturnValue({
+      data: [],
+      loading: false,
+      error: '',
+      connectedInstance: {} as unknown as RdiInstance,
+      loadingChanging: false,
+      errorChanging: '',
+      changedSuccessfully: false,
+      isPipelineLoaded: false,
+    })
+    const mockFetchInstancesAction = jest.fn()
+    jest.spyOn(rdiInstanceSlice, 'fetchInstancesAction').mockImplementation(() => mockFetchInstancesAction)
+
+    // Mock the appFeatureFlagsFeaturesSelector to enable the envDependent flag
+    jest.spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector').mockReturnValue({
+      [FeatureFlags.envDependent]: { flag: true },
+    })
+
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <InstancePage {...instance(mockedProps)} />
+        </BrowserRouter>,
+        { store: mockStore(initialStateDefault) }
+      )
+    })
+
+    // Check if fetchRdiInstancesAction was called
+    expect(mockFetchInstancesAction).toHaveBeenCalled()
+  })
+
+  it('should not dispatch fetchRdiInstancesAction when envDependent flag is false', async () => {
+    // Mock the rdiInstancesSelector to return an empty array
+    jest.spyOn(rdiInstanceSlice, 'instancesSelector').mockReturnValue({
+      data: [],
+      loading: false,
+      error: '',
+      connectedInstance: {} as unknown as RdiInstance,
+      loadingChanging: false,
+      errorChanging: '',
+      changedSuccessfully: false,
+      isPipelineLoaded: false,
+    })
+    const mockFetchInstancesAction = jest.fn()
+    jest.spyOn(rdiInstanceSlice, 'fetchInstancesAction').mockImplementation(() => mockFetchInstancesAction)
+
+    // Mock the appFeatureFlagsFeaturesSelector to disable the envDependent flag
+    jest.spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector').mockReturnValue({
+      [FeatureFlags.envDependent]: { flag: false },
+    })
+
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <InstancePage {...instance(mockedProps)} />
+        </BrowserRouter>,
+        { store: mockStore(initialStateDefault) }
+      )
+    })
+
+    // Check that fetchRdiInstancesAction was not called
+    expect(mockFetchInstancesAction).not.toHaveBeenCalled()
   })
 })

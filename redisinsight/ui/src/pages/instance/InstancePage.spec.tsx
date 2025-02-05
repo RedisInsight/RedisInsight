@@ -251,7 +251,6 @@ describe('InstancePage', () => {
   })
 
   it('should dispatch fetchRdiInstancesAction when rdiInstances is empty and envDependent flag is true', async () => {
-    // Mock the rdiInstancesSelector to return an empty array
     jest.spyOn(rdiInstanceSlice, 'instancesSelector').mockReturnValue({
       data: [],
       loading: false,
@@ -265,7 +264,6 @@ describe('InstancePage', () => {
     const mockFetchInstancesAction = jest.fn()
     jest.spyOn(rdiInstanceSlice, 'fetchInstancesAction').mockImplementation(() => mockFetchInstancesAction)
 
-    // Mock the appFeatureFlagsFeaturesSelector to enable the envDependent flag
     jest.spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector').mockReturnValue({
       [FeatureFlags.envDependent]: { flag: true },
     })
@@ -279,12 +277,10 @@ describe('InstancePage', () => {
       )
     })
 
-    // Check if fetchRdiInstancesAction was called
     expect(mockFetchInstancesAction).toHaveBeenCalled()
   })
 
   it('should not dispatch fetchRdiInstancesAction when envDependent flag is false', async () => {
-    // Mock the rdiInstancesSelector to return an empty array
     jest.spyOn(rdiInstanceSlice, 'instancesSelector').mockReturnValue({
       data: [],
       loading: false,
@@ -298,7 +294,6 @@ describe('InstancePage', () => {
     const mockFetchInstancesAction = jest.fn()
     jest.spyOn(rdiInstanceSlice, 'fetchInstancesAction').mockImplementation(() => mockFetchInstancesAction)
 
-    // Mock the appFeatureFlagsFeaturesSelector to disable the envDependent flag
     jest.spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector').mockReturnValue({
       [FeatureFlags.envDependent]: { flag: false },
     })
@@ -312,7 +307,6 @@ describe('InstancePage', () => {
       )
     })
 
-    // Check that fetchRdiInstancesAction was not called
     expect(mockFetchInstancesAction).not.toHaveBeenCalled()
   })
 })

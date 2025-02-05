@@ -1,9 +1,25 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+
+type TreeViewDelimiterType = {
+  label: string
+};
 
 export class DatabaseSettingsData {
   @Expose()
-  key: any;
+  showHiddenRecommendations?: boolean;
+
+  @Expose()
+  notShowConfirmationRunTutorial?: boolean;
+
+  @Expose()
+  slowLogDurationUnit?: number;
+
+  @Expose()
+  treeViewDelimiter?: TreeViewDelimiterType | TreeViewDelimiterType[];
+
+  @Expose()
+  treeViewSort?: string;
 }
 
 export class DatabaseSettings {
@@ -19,5 +35,6 @@ export class DatabaseSettings {
     description: 'Applied settings by user, by database',
   })
   @Expose()
+  @Type(() => DatabaseSettingsData)
   data: DatabaseSettingsData;
 }

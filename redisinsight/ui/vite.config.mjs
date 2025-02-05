@@ -68,7 +68,10 @@ export default defineConfig({
       'plotly.js-dist-min',
       '@antv/x6',
       '@antv/x6-react-shape',
-      '@antv/hierarchy'
+      '@antv/hierarchy',
+      'class-transformer/storage',
+      'typeorm',
+      'keytar'
     ],
     esbuildOptions: {
       // fix for https://github.com/bvaughn/react-virtualized/issues/1722

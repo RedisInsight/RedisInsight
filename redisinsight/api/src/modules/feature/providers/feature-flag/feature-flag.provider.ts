@@ -57,6 +57,10 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
+    this.strategies.set(KnownFeatures.ForceDisableAutomaticUpdates, new SwitchableFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
     this.strategies.set(KnownFeatures.HashFieldExpiration, new WithDataFlagStrategy(
       this.featuresConfigService,
       this.settingsService,

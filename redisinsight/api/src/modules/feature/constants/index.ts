@@ -27,6 +27,7 @@ export enum KnownFeatures {
   RedisClient = 'redisClient',
   DocumentationChat = 'documentationChat',
   DatabaseChat = 'databaseChat',
+  ForceDisableAutomaticUpdates = 'forceDisableAutomaticUpdates',
   Rdi = 'redisDataIntegration',
   HashFieldExpiration = 'hashFieldExpiration',
   EnhancedCloudUI = 'enhancedCloudUI',

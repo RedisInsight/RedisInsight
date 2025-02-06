@@ -5,7 +5,6 @@ import {
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { get } from 'lodash'
 
 import {
   getPipelineStatusAction,
@@ -19,7 +18,7 @@ import {
   stopPipelineAction
 } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { validateYamlSchema } from 'uiSrc/components/yaml-validator'
+import { validatePipeline } from 'uiSrc/components/yaml-validator'
 import { CollectorStatus, IActionPipelineResultProps, PipelineAction, PipelineStatus } from 'uiSrc/slices/interfaces'
 
 import DeployPipelineButton from '../buttons/deploy-pipeline-button'
@@ -42,43 +41,18 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const { valid: isConfigValid, errors: configErrors } = validateYamlSchema(
-      config,
-      get(schema, 'config', null),
-    )
-
-    if (!config && !jobs) {
+    if (!jobs && !config) {
+      dispatch(setIsPipelineValid(false))
       return
     }
 
-    const { areJobsValid, jobErrors } = jobs.reduce<{
-      areJobsValid: boolean
-      jobErrors: string[]
-    }>(
-      (acc, j) => {
-        const validation = validateYamlSchema(
-          j.value,
-          get(schema, 'jobs', null),
-        )
-
-        if (!validation.valid) {
-          acc.jobErrors.push(...validation.errors)
-        }
-
-        acc.areJobsValid = acc.areJobsValid && validation.valid
-        return acc
-      },
-      { areJobsValid: true, jobErrors: [] },
+    const { result, configValidationErrors, jobsValidationErrors } = validatePipeline(
+      { schema, config, jobs }
     )
 
-    dispatch(setConfigValidationErrors([...new Set([...configErrors])]))
-    dispatch(setJobsValidationErrors([...new Set([...jobErrors])]))
-
-    const result = isConfigValid && areJobsValid
-
-    if (isPipelineValid !== result) {
-      dispatch(setIsPipelineValid(result))
-    }
+    dispatch(setConfigValidationErrors(configValidationErrors))
+    dispatch(setJobsValidationErrors(jobsValidationErrors))
+    dispatch(setIsPipelineValid(result))
   }, [schema, config, jobs])
 
   const actionPipelineCallback = useCallback((event: TelemetryEvent, result: IActionPipelineResultProps) => {

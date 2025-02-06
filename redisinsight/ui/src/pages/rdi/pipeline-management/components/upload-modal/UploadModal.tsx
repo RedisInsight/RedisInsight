@@ -1,10 +1,9 @@
 import JSZip from 'jszip'
 import React, { useState } from 'react'
-import { get } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { validateYamlSchema } from 'uiSrc/components/yaml-validator'
+import { validatePipeline } from 'uiSrc/components/yaml-validator'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import {
   rdiPipelineSelector,
@@ -107,32 +106,12 @@ const UploadModal = (props: Props) => {
       dispatch(setPipelineJobs(jobs))
 
       if (config && jobs && schema) {
-        const { valid: isConfigValid, errors: configErrors } = validateYamlSchema(config, get(schema, 'config', null))
-
-        const { areJobsValid, jobErrors } = jobs.reduce<{
-          areJobsValid: boolean;
-          jobErrors: string[];
-        }>(
-          (acc, j) => {
-            const validation = validateYamlSchema(
-              j.value,
-              get(schema, 'jobs', null),
-            )
-
-            if (!validation.valid) {
-              acc.jobErrors.push(...validation.errors)
-            }
-
-            acc.areJobsValid = acc.areJobsValid && validation.valid
-            return acc
-          },
-          { areJobsValid: true, jobErrors: [] },
+        const { result, configValidationErrors, jobsValidationErrors } = validatePipeline(
+          { config, schema, jobs }
         )
 
-        dispatch(setConfigValidationErrors([...new Set([...configErrors])]))
-        dispatch(setJobsValidationErrors([...new Set([...jobErrors])]))
-
-        const result = isConfigValid && areJobsValid
+        dispatch(setConfigValidationErrors(configValidationErrors))
+        dispatch(setJobsValidationErrors(jobsValidationErrors))
         dispatch(setIsPipelineValid(result))
       }
 

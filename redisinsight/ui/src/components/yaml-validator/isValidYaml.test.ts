@@ -1,5 +1,5 @@
 import yaml from 'js-yaml'
-import { validateYamlSchema } from '.'
+import { validateYamlSchema } from './validateYamlSchema'
 
 const schema = {
   type: 'object',

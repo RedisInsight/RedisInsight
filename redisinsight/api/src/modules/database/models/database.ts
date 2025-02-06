@@ -300,4 +300,13 @@ export class Database {
   @IsNotEmpty()
   @IsOptional()
   version?: string;
+
+  @ApiPropertyOptional({
+    description: 'Force client connection as standalone',
+    type: Boolean,
+  })
+  @Expose()
+  @IsBoolean()
+  @IsOptional()
+  forceStandalone?: boolean;
 }

@@ -1,7 +1,14 @@
 import React from 'react'
 import { EuiForm } from '@elastic/eui'
 import { FormikProps } from 'formik'
-import { DatabaseForm, DbCompressor, DbIndex, SSHDetails, TlsDetails } from 'uiSrc/pages/home/components/form'
+import {
+  DatabaseForm,
+  DbCompressor,
+  DbIndex,
+  ForceStandalone,
+  SSHDetails,
+  TlsDetails
+} from 'uiSrc/pages/home/components/form'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BuildType } from 'uiSrc/constants/env'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
@@ -55,6 +62,8 @@ const EditConnection = (props: Props) => {
             autoFocus={!isCloneMode && isEditMode}
             onHostNamePaste={onHostNamePaste}
           />
+          <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+          <ForceStandalone formik={formik} />
           {isCloneMode && (
             <>
               <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />

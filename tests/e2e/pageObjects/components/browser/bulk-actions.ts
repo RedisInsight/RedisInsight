@@ -18,6 +18,7 @@ export class BulkActions {
     bulkUpdateTab = Selector('[data-testid=bulk-action-tab-upload]');
     bulkActionStartNewButton = Selector('[data-testid=bulk-action-start-new-btn]');
     removeFileBtn = Selector('[aria-label="Clear selected files"]');
+    bulkActionsOpenButton = Selector('[data-testid=btn-bulk-actions]');
     //TEXT
     infoFilter = Selector('[data-testid=bulk-actions-info-filter]');
     infoSearch = Selector('[data-testid=bulk-actions-info-search]');

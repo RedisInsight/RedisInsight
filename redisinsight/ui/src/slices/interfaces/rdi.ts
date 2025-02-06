@@ -181,6 +181,8 @@ export interface IStateRdiPipeline {
   config: string
   jobs: IRdiPipelineJob[]
   isPipelineValid: boolean
+  configValidationErrors: string[]
+  jobsValidationErrors: string[]
   resetChecked: boolean
   schema: Nullable<object>
   strategies: IRdiPipelineStrategies

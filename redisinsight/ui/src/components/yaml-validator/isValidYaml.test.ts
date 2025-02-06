@@ -1,4 +1,5 @@
-import { isValidYaml } from '.'
+import yaml from 'js-yaml'
+import { validateYamlSchema } from '.'
 
 const schema = {
   type: 'object',
@@ -9,44 +10,90 @@ const schema = {
   required: ['name', 'version'],
 }
 
-describe('isValidYaml', () => {
-  it('valid YAML with correct schema', () => {
+describe('validateYamlSchema', () => {
+  it('should return valid for correctly formatted YAML', () => {
     const yamlContent = `
       name: my-app
       version: 1.0.0
     `
-    expect(isValidYaml(yamlContent, schema)).toBe(true)
+    expect(validateYamlSchema(yamlContent, schema)).toEqual({
+      valid: true,
+      errors: [],
+    })
   })
 
-  it('invalid YAML format', () => {
-    const invalidYaml = `
+  it('should return error for missing required fields', () => {
+    const yamlContent = `
+      name: my-app
+    `
+    expect(validateYamlSchema(yamlContent, schema)).toEqual({
+      valid: false,
+      errors: expect.arrayContaining([
+        expect.stringContaining("must have required property 'version'"),
+      ]),
+    })
+  })
+
+  it('should return error for invalid version format', () => {
+    const yamlContent = `
       name: my-app
       version: abc
     `
-    expect(isValidYaml(invalidYaml, schema)).toBe(false)
+    expect(validateYamlSchema(yamlContent, schema)).toEqual({
+      valid: false,
+      errors: expect.arrayContaining([
+        expect.stringContaining('must match pattern'),
+      ]),
+    })
   })
 
-  it('missing required fields', () => {
-    const missingFieldsYaml = `
-      name: my-app
+  it('should return empty errors when schema is empty (accept all YAML)', () => {
+    const yamlContent = `
+      anyKey: anyValue
     `
-    expect(isValidYaml(missingFieldsYaml, schema)).toBe(false)
+    const emptySchema = {}
+    expect(validateYamlSchema(yamlContent, emptySchema)).toEqual({
+      valid: true,
+      errors: [],
+    })
   })
 
-  it('invalid YAML syntax', () => {
-    const invalidSyntax = `
+  it('should return YAML syntax error for invalid YAML format', () => {
+    const yamlContent = `
       name: my-app
-      version:
-    `
-    expect(isValidYaml(invalidSyntax, schema)).toBe(false)
+      version
+    ` // Missing colon (:) for "version"
+    const result = validateYamlSchema(yamlContent, schema)
+
+    expect(result.valid).toBe(false)
+    expect(result.errors.length).toBeGreaterThan(0)
+    expect(result.errors[0]).toContain('Error:')
   })
 
-  it('extra fields should not cause failure', () => {
-    const extraFields = `
-      name: my-app
-      version: 1.0.0
-      extraField: shouldWork
-    `
-    expect(isValidYaml(extraFields, schema)).toBe(true)
+  it('should handle YAML parsing errors gracefully', () => {
+    jest.spyOn(yaml, 'load').mockImplementation(() => {
+      throw new yaml.YAMLException('Simulated parsing error')
+    })
+
+    const result = validateYamlSchema('invalid yaml content', schema)
+
+    expect(result.valid).toBe(false)
+    expect(result.errors.length).toBeGreaterThan(0)
+    expect(result.errors[0]).toContain('Error:')
+
+    jest.restoreAllMocks()
+  })
+
+  it('should handle unknown errors gracefully', () => {
+    jest.spyOn(yaml, 'load').mockImplementation(() => {
+      throw new Error('Unexpected failure')
+    })
+
+    expect(validateYamlSchema('name: test', schema)).toEqual({
+      valid: false,
+      errors: ['Error: unknown error'],
+    })
+
+    jest.restoreAllMocks()
   })
 })

@@ -12,12 +12,14 @@ import {
   rdiPipelineActionSelector,
   rdiPipelineSelector,
   resetPipelineAction,
+  setConfigValidationErrors,
   setIsPipelineValid,
+  setJobsValidationErrors,
   startPipelineAction,
   stopPipelineAction
 } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { isValidYaml } from 'uiSrc/components/yaml-validator'
+import { validateYamlSchema } from 'uiSrc/components/yaml-validator'
 import { CollectorStatus, IActionPipelineResultProps, PipelineAction, PipelineStatus } from 'uiSrc/slices/interfaces'
 
 import DeployPipelineButton from '../buttons/deploy-pipeline-button'
@@ -40,8 +42,37 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const isConfigValid = isValidYaml(config, get(schema, 'config', null))
-    const areJobsValid = jobs.every((j) => isValidYaml(j.value, get(schema, 'jobs', null)))
+    const { valid: isConfigValid, errors: configErrors } = validateYamlSchema(
+      config,
+      get(schema, 'config', null),
+    )
+
+    if (!config && !jobs) {
+      return
+    }
+
+    const { areJobsValid, jobErrors } = jobs.reduce<{
+      areJobsValid: boolean
+      jobErrors: string[]
+    }>(
+      (acc, j) => {
+        const validation = validateYamlSchema(
+          j.value,
+          get(schema, 'jobs', null),
+        )
+
+        if (!validation.valid) {
+          acc.jobErrors.push(...validation.errors)
+        }
+
+        acc.areJobsValid = acc.areJobsValid && validation.valid
+        return acc
+      },
+      { areJobsValid: true, jobErrors: [] },
+    )
+
+    dispatch(setConfigValidationErrors([...new Set([...configErrors])]))
+    dispatch(setJobsValidationErrors([...new Set([...jobErrors])]))
 
     const result = isConfigValid && areJobsValid
 

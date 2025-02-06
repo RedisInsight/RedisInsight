@@ -27,10 +27,6 @@ export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
     name: KnownFeatures.DocumentationChat,
     storage: FeatureStorage.Database,
   },
-  [KnownFeatures.ForceDisableAutomaticUpdates]: {
-    name: KnownFeatures.ForceDisableAutomaticUpdates,
-    storage: FeatureStorage.Database,
-  },
   [KnownFeatures.DatabaseChat]: {
     name: KnownFeatures.DatabaseChat,
     storage: FeatureStorage.Database,

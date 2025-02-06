@@ -19,6 +19,7 @@ import LOGGER_CONFIG from '../config/logger';
 import { createHttpOptions } from './utils/createHttpOptions';
 import { SessionMetadataAdapter } from './modules/auth/session-metadata/adapters/session-metadata.adapter';
 
+export const config = get() as Config;
 const serverConfig = get('server') as Config['server'];
 
 interface IApp {

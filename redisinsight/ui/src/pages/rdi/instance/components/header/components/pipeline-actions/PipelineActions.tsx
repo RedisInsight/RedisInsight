@@ -1,7 +1,9 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
   EuiFlexGroup,
   EuiFlexItem,
+  EuiToolTip,
+  EuiIcon,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -11,12 +13,16 @@ import {
   rdiPipelineActionSelector,
   rdiPipelineSelector,
   resetPipelineAction,
+  setConfigValidationErrors,
+  setIsPipelineValid,
+  setJobsValidationErrors,
   startPipelineAction,
   stopPipelineAction
 } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-
+import { validatePipeline } from 'uiSrc/components/yaml-validator'
 import { CollectorStatus, IActionPipelineResultProps, PipelineAction, PipelineStatus } from 'uiSrc/slices/interfaces'
+
 import DeployPipelineButton from '../buttons/deploy-pipeline-button'
 import ResetPipelineButton from '../buttons/reset-pipeline-button'
 import RdiConfigFileActionMenu from '../rdi-config-file-action-menu'
@@ -28,13 +34,44 @@ export interface Props {
   pipelineStatus?: PipelineStatus
 }
 
+const Errors = ({ errors }: { errors: string[] }) => (
+  <ul>
+    {errors.map((error) => (
+      <li key={error.substring(-20)}>{error}</li>
+    ))}
+  </ul>
+)
+
 const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
-  const { loading: deployLoading } = useSelector(rdiPipelineSelector)
+  const {
+    loading: deployLoading,
+    isPipelineValid,
+    schema,
+    config,
+    jobs,
+    configValidationErrors,
+    jobsValidationErrors,
+  } = useSelector(rdiPipelineSelector)
   const { loading: actionLoading, action } = useSelector(rdiPipelineActionSelector)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (!jobs && !config) {
+      dispatch(setIsPipelineValid(false))
+      return
+    }
+
+    const { result, configValidationErrors, jobsValidationErrors } = validatePipeline(
+      { schema, config, jobs }
+    )
+
+    dispatch(setConfigValidationErrors(configValidationErrors))
+    dispatch(setJobsValidationErrors(jobsValidationErrors))
+    dispatch(setIsPipelineValid(result))
+  }, [schema, config, jobs])
 
   const actionPipelineCallback = useCallback((event: TelemetryEvent, result: IActionPipelineResultProps) => {
     sendEventTelemetry({
@@ -100,9 +137,15 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
 
   const isLoadingBtn = (actionBtn: PipelineAction) => action === actionBtn && actionLoading
   const disabled = deployLoading || actionLoading
+  const isDeployButtonDisabled = disabled || !isPipelineValid
 
   return (
-    <EuiFlexGroup gutterSize="m" justifyContent="flexEnd" alignItems="center" responsive={false}>
+    <EuiFlexGroup
+      gutterSize="m"
+      justifyContent="flexEnd"
+      alignItems="center"
+      responsive={false}
+    >
       <EuiFlexItem grow={false}>
         <ResetPipelineButton
           onClick={onReset}
@@ -128,9 +171,25 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
       <EuiFlexItem grow={false}>
         <DeployPipelineButton
           loading={deployLoading}
-          disabled={disabled}
+          disabled={isDeployButtonDisabled}
           onReset={resetPipeline}
         />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiToolTip
+          content={<Errors errors={[...configValidationErrors, ...jobsValidationErrors]} />}
+          position="left"
+          display="inlineBlock"
+          anchorClassName="flex-row"
+        >
+          <EuiIcon
+            type="help"
+            color={isPipelineValid ? 'primary' : 'danger'}
+            id="pipeline-errors"
+            aria-label="Pipeline errors"
+            data-testid="pipeline-errors"
+          />
+        </EuiToolTip>
       </EuiFlexItem>
       <EuiFlexItem grow={false} style={{ margin: 0 }}>
         <RdiConfigFileActionMenu />

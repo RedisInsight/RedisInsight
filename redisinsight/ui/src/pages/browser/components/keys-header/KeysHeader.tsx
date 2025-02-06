@@ -9,9 +9,9 @@ import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import TreeViewIcon from 'uiSrc/assets/img/icons/treeview.svg?react'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { appContextDbConfig, resetBrowserTree, setBrowserKeyListDataLoaded, setBrowserShownColumns, } from 'uiSrc/slices/app/context'
+import { appContextDbConfig, resetBrowserTree, setBrowserKeyListDataLoaded, setBrowserSelectedKey, setBrowserShownColumns, } from 'uiSrc/slices/app/context'
 
-import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData } from 'uiSrc/slices/browser/keys'
+import { changeKeyViewType, fetchKeys, keysSelector, resetKeyInfo, resetKeysData } from 'uiSrc/slices/browser/keys'
 import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -127,7 +127,21 @@ const KeysHeader = (props: Props) => {
         cursor: '0',
         count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       },
-      () => dispatch(setBrowserKeyListDataLoaded(searchMode, true)),
+      (data) => {
+        if (Array.isArray(data)) {
+          if (data[0].keys.length === 0) {
+            dispatch(resetKeyInfo());
+            dispatch(setBrowserSelectedKey(null));
+          }
+        } else {
+          if (data.keys.length === 0) {
+            dispatch(resetKeyInfo());
+            dispatch(setBrowserSelectedKey(null));
+          }
+        }
+
+        dispatch(setBrowserKeyListDataLoaded(searchMode, true));
+      },
       () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
     ))
   }

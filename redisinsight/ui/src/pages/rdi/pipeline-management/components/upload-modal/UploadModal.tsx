@@ -1,10 +1,18 @@
 import JSZip from 'jszip'
 import React, { useState } from 'react'
+import { get } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
+import { isValidYaml } from 'uiSrc/components/yaml-validator'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
-import { rdiPipelineSelector, setChangedFiles, setPipelineConfig, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
+import {
+  rdiPipelineSelector,
+  setChangedFiles,
+  setIsPipelineValid,
+  setPipelineConfig,
+  setPipelineJobs,
+} from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import UploadDialog from './components/upload-dialog/UploadDialog'
 
@@ -28,7 +36,12 @@ const UploadModal = (props: Props) => {
   const [isUploaded, setIsUploaded] = useState(false)
   const [error, setError] = useState<string>()
 
-  const { loading, config: pipelineConfig, jobs: pipelineJobs } = useSelector(rdiPipelineSelector)
+  const {
+    loading,
+    config: pipelineConfig,
+    jobs: pipelineJobs,
+    schema,
+  } = useSelector(rdiPipelineSelector)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
@@ -90,6 +103,13 @@ const UploadModal = (props: Props) => {
 
       dispatch(setPipelineConfig(config || ''))
       dispatch(setPipelineJobs(jobs))
+
+      if (config && schema) {
+        const isPipelineValid = isValidYaml(config, get(schema, 'config', null))
+        && jobs.every((j) => isValidYaml(j.value, get(schema, 'jobs', null)))
+
+        dispatch(setIsPipelineValid(isPipelineValid))
+      }
 
       sendEventTelemetry({
         event: TelemetryEvent.RDI_PIPELINE_UPLOAD_SUCCEEDED,

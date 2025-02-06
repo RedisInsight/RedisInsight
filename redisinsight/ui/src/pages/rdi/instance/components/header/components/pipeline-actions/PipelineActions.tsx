@@ -1,22 +1,25 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
   EuiFlexGroup,
   EuiFlexItem,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { get } from 'lodash'
 
 import {
   getPipelineStatusAction,
   rdiPipelineActionSelector,
   rdiPipelineSelector,
   resetPipelineAction,
+  setIsPipelineValid,
   startPipelineAction,
   stopPipelineAction
 } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-
+import { isValidYaml } from 'uiSrc/components/yaml-validator'
 import { CollectorStatus, IActionPipelineResultProps, PipelineAction, PipelineStatus } from 'uiSrc/slices/interfaces'
+
 import DeployPipelineButton from '../buttons/deploy-pipeline-button'
 import ResetPipelineButton from '../buttons/reset-pipeline-button'
 import RdiConfigFileActionMenu from '../rdi-config-file-action-menu'
@@ -29,12 +32,23 @@ export interface Props {
 }
 
 const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
-  const { loading: deployLoading } = useSelector(rdiPipelineSelector)
+  const { loading: deployLoading, isPipelineValid, schema, config, jobs } = useSelector(rdiPipelineSelector)
   const { loading: actionLoading, action } = useSelector(rdiPipelineActionSelector)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    const isConfigValid = isValidYaml(config, get(schema, 'config', null))
+    const areJobsValid = jobs.every((j) => isValidYaml(j.value, get(schema, 'jobs', null)))
+
+    const result = isConfigValid && areJobsValid
+
+    if (isPipelineValid !== result) {
+      dispatch(setIsPipelineValid(result))
+    }
+  }, [schema, config, jobs])
 
   const actionPipelineCallback = useCallback((event: TelemetryEvent, result: IActionPipelineResultProps) => {
     sendEventTelemetry({
@@ -100,6 +114,7 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
 
   const isLoadingBtn = (actionBtn: PipelineAction) => action === actionBtn && actionLoading
   const disabled = deployLoading || actionLoading
+  const isDeployButtonDisabled = disabled || !isPipelineValid
 
   return (
     <EuiFlexGroup gutterSize="m" justifyContent="flexEnd" alignItems="center" responsive={false}>
@@ -128,7 +143,7 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
       <EuiFlexItem grow={false}>
         <DeployPipelineButton
           loading={deployLoading}
-          disabled={disabled}
+          disabled={isDeployButtonDisabled}
           onReset={resetPipeline}
         />
       </EuiFlexItem>

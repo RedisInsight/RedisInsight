@@ -180,6 +180,7 @@ export interface IStateRdiPipeline {
   data: Nullable<IPipeline>
   config: string
   jobs: IRdiPipelineJob[]
+  isPipelineValid: boolean
   resetChecked: boolean
   schema: Nullable<object>
   strategies: IRdiPipelineStrategies

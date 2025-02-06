@@ -1,75 +1,41 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { WebviewTag } from 'electron'
-import { render } from 'uiSrc/utils/test-utils'
-import RdiDeployErrorContent, {
-  Props,
-  textToDownloadableFile,
-} from './RdiDeployErrorContent'
+import { render, screen } from 'uiSrc/utils/test-utils'
+import RdiDeployErrorContent, { Props } from './RdiDeployErrorContent'
 
 const mockedProps = mock<Props>()
 
 describe('RdiDeployErrorContent', () => {
-  it('should render', () => {
-    expect(
-      render(<RdiDeployErrorContent {...instance(mockedProps)} />),
-    ).toBeTruthy()
-  })
-})
-
-describe('useTextFileGenerator', () => {
-  let createObjectURLSpy: jest.SpyInstance
-  let revokeObjectURLSpy: jest.SpyInstance
-  let createElementSpy: jest.SpyInstance
-  let appendChildSpy: jest.SpyInstance
-  let removeChildSpy: jest.SpyInstance
-  let clickSpy: jest.SpyInstance
+  const mockMessage = 'Test error log content'
 
   beforeEach(() => {
-    createObjectURLSpy = jest
-      .spyOn(URL, 'createObjectURL')
-      .mockReturnValue('mock-file-url')
-    revokeObjectURLSpy = jest
-      .spyOn(URL, 'revokeObjectURL')
-      .mockImplementation()
-
-    const mockAnchor = document.createElement('a') as unknown as WebviewTag
-    mockAnchor.click = jest.fn()
-
-    createElementSpy = jest
-      .spyOn(document, 'createElement')
-      .mockImplementation(() => mockAnchor)
-
-    appendChildSpy = jest
-      .spyOn(document.body, 'appendChild')
-      .mockImplementation()
-    removeChildSpy = jest
-      .spyOn(document.body, 'removeChild')
-      .mockImplementation()
-    clickSpy = jest.spyOn(mockAnchor, 'click')
+    jest.spyOn(URL, 'createObjectURL').mockImplementation(() => 'mock-url')
+    jest.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
   })
 
   afterEach(() => {
     jest.restoreAllMocks()
   })
 
-  it('should return a function that triggers a file download', () => {
-    const downloadFn = textToDownloadableFile('Test Content', 'test.txt')
+  it('renders the error message and download button', () => {
+    render(<RdiDeployErrorContent message={mockMessage} />)
 
-    downloadFn()
-
-    expect(createObjectURLSpy).toHaveBeenCalled()
-    expect(createElementSpy).toHaveBeenCalledWith('a')
-    expect(appendChildSpy).toHaveBeenCalled()
-    expect(clickSpy).toHaveBeenCalled()
-    expect(removeChildSpy).toHaveBeenCalled()
+    expect(
+      screen.getByText('Review the error log for details.'),
+    ).toBeInTheDocument()
+    const downloadButton = screen.getByTestId('donwload-log-file-btn')
+    expect(downloadButton).toBeInTheDocument()
+    expect(downloadButton).toHaveAttribute('href', 'mock-url')
+    expect(downloadButton).toHaveAttribute('download', 'error-log.txt')
   })
 
-  it('should clean up object URL after download', () => {
-    const downloadFn = textToDownloadableFile('Test Content', 'test.txt')
+  it('creates and revokes the object URL properly', () => {
+    const { unmount } = render(
+      <RdiDeployErrorContent message={mockMessage} />,
+    )
 
-    downloadFn()
-
-    expect(revokeObjectURLSpy).toHaveBeenCalledWith('mock-file-url')
+    expect(URL.createObjectURL).toHaveBeenCalled()
+    unmount()
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('mock-url')
   })
 })

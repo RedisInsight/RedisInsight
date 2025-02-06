@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useMemo } from 'react'
 import {
   EuiButton,
   EuiFlexGroup,
@@ -9,30 +9,24 @@ import {
 
 export interface Props {
   message: string
+  // eslint-disable-next-line react/no-unused-prop-types
   onClose?: () => void
 }
 
-export const textToDownloadableFile = (text: string, fileName: string = 'log.txt') => {
-  const blob = new Blob([text], { type: 'text/plain' })
-  const fileUrl = URL.createObjectURL(blob)
-
-  return () => {
-    const a = document.createElement('a')
-    a.href = fileUrl
-    a.download = fileName
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-
-    // Cleanup after download to avoid memory leaks
-    URL.revokeObjectURL(fileUrl)
-  }
-}
-
 const RdiDeployErrorContent = (props: Props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { message, onClose } = props
-  const downloadFile = textToDownloadableFile(message)
+  const { message } = props
+
+  const fileUrl = useMemo(() => {
+    const blob = new Blob([message], { type: 'text/plain' })
+    return URL.createObjectURL(blob)
+  }, [message])
+
+  useEffect(
+    () => () => {
+      URL.revokeObjectURL(fileUrl)
+    },
+    [fileUrl],
+  )
 
   return (
     <>
@@ -46,7 +40,8 @@ const RdiDeployErrorContent = (props: Props) => {
               fill
               size="s"
               color="warning"
-              onClick={downloadFile}
+              download="error-log.txt"
+              href={fileUrl}
               className="toast-danger-btn"
               data-testid="donwload-log-file-btn"
             >

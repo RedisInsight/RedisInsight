@@ -2,6 +2,8 @@ import React, { useCallback, useEffect } from 'react'
 import {
   EuiFlexGroup,
   EuiFlexItem,
+  EuiToolTip,
+  EuiIcon,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -32,8 +34,24 @@ export interface Props {
   pipelineStatus?: PipelineStatus
 }
 
+const Errors = ({ errors }: { errors: string[] }) => (
+  <ul>
+    {errors.map((error) => (
+      <li key={error.substring(-20)}>{error}</li>
+    ))}
+  </ul>
+)
+
 const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
-  const { loading: deployLoading, isPipelineValid, schema, config, jobs } = useSelector(rdiPipelineSelector)
+  const {
+    loading: deployLoading,
+    isPipelineValid,
+    schema,
+    config,
+    jobs,
+    configValidationErrors,
+    jobsValidationErrors,
+  } = useSelector(rdiPipelineSelector)
   const { loading: actionLoading, action } = useSelector(rdiPipelineActionSelector)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
@@ -122,7 +140,12 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
   const isDeployButtonDisabled = disabled || !isPipelineValid
 
   return (
-    <EuiFlexGroup gutterSize="m" justifyContent="flexEnd" alignItems="center" responsive={false}>
+    <EuiFlexGroup
+      gutterSize="m"
+      justifyContent="flexEnd"
+      alignItems="center"
+      responsive={false}
+    >
       <EuiFlexItem grow={false}>
         <ResetPipelineButton
           onClick={onReset}
@@ -151,6 +174,22 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
           disabled={isDeployButtonDisabled}
           onReset={resetPipeline}
         />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiToolTip
+          content={<Errors errors={[...configValidationErrors, ...jobsValidationErrors]} />}
+          position="left"
+          display="inlineBlock"
+          anchorClassName="flex-row"
+        >
+          <EuiIcon
+            type="help"
+            color={isPipelineValid ? 'primary' : 'danger'}
+            id="pipeline-errors"
+            aria-label="Pipeline errors"
+            data-testid="pipeline-errors"
+          />
+        </EuiToolTip>
       </EuiFlexItem>
       <EuiFlexItem grow={false} style={{ margin: 0 }}>
         <RdiConfigFileActionMenu />

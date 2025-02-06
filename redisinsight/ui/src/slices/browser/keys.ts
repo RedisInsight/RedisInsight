@@ -727,7 +727,6 @@ export function fetchKeyInfo(
       const status = get(error, ['response', 'status'])
       if (status && isStatusNotFoundError(status)) {
         dispatch(resetKeyInfo())
-        dispatch(deleteKeyFromList(key))
         dispatch(setBrowserSelectedKey(null));
       }
     }

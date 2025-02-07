@@ -3,13 +3,13 @@ module.exports = {
   env: {
     node: true,
   },
-  extends: ['airbnb-typescript/base', 'plugin:sonarjs/recommended'],
+  extends: ['airbnb-typescript/base', 'plugin:sonarjs/recommended', 'prettier'],
   plugins: ['@typescript-eslint', 'sonarjs'],
   parser: '@typescript-eslint/parser',
   rules: {
     'max-len': ['warn', 120],
     '@typescript-eslint/return-await': 'off',
-    "@typescript-eslint/dot-notation": "off",
+    '@typescript-eslint/dot-notation': 'off',
     'import/prefer-default-export': 'off', // ignore "export default" requirement
     'max-classes-per-file': 'off',
     'class-methods-use-this': 'off', // should be ignored since NestJS allow inheritance without using "this" inside class methods
@@ -21,12 +21,12 @@ module.exports = {
   },
   overrides: [
     {
-      files: [ '**/*.spec.ts', '**/__mocks__/**/*' ],
+      files: ['**/*.spec.ts', '**/__mocks__/**/*'],
       rules: {
         'sonarjs/no-duplicate-string': 0,
         'sonarjs/no-identical-functions': 0,
         'import/first': 0,
-      }
-    }
-  ]
+      },
+    },
+  ],
 };

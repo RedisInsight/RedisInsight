@@ -7,7 +7,11 @@ import { CreateOrUpdateDatabaseSettingDto } from 'src/modules/database-settings/
 export const mockDatabaseSettings = Object.assign(new DatabaseSettings(), {
   databaseId: mockDatabaseId,
   data: JSON.stringify({
-    test: 'value',
+    notShowConfirmationRunTutorial: false,
+    showHiddenRecommendations: true,
+    slowLogDurationUnit: 1,
+    treeViewDelimiter: { label: 'test' },
+    treeViewSort: ':',
   }),
 });
 export const mockDatabaseSettingsEntity = new DatabaseSettingsEntity(
@@ -27,20 +31,8 @@ export const mockDatabaseSettingsCreateDto = Object.assign(
 );
 export const mockDatabaseSettingsDto = () => classToClass(DatabaseSettings, mockDatabaseSettingsEntity);
 
-export const mockDatabaseSettingsService = () => ({
+export const mockDatabaseSettingsRepository = jest.fn(() => ({
   createOrUpdate: jest.fn(),
   get: jest.fn(),
   delete: jest.fn(),
-});
-
-export const mockDatabaseSettingsRepository = jest.fn(() => ({
-  create: jest.fn(),
-  list: jest.fn(),
-  read: jest.fn(),
-  update: jest.fn(),
-  isExist: jest.fn(),
-  get: jest.fn(),
-  sync: jest.fn(),
-  delete: jest.fn(),
-  getTotalUnread: jest.fn(),
 }));

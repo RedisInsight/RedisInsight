@@ -64,7 +64,7 @@ describe('LocalDatabaseSettingsRepository', () => {
 
     it('should be able to update database setting', async () => {
       const update = mockDatabaseSettingsDto();
-      update.data = { key: '1' };
+      update.data = { treeViewSort: '1' };
       expect(await localDbRepository.createOrUpdate(mockSessionMetadata, update)).toEqual(mockDatabaseSettingsDto());
     });
   });

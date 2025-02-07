@@ -1,48 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import {
-  mockDatabaseId, mockDatabaseSettingsCreateDto,
+  mockDatabaseId,
+  mockDatabaseSettingsCreateDto,
   mockDatabaseSettingsDto,
   mockDatabaseSettingsEntity,
-  mockRepository,
-  mockSessionMetadata,
-  MockType,
+  mockDatabaseSettingsRepository,
+  mockSessionMetadata, MockType,
 } from 'src/__mocks__';
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import {
-  LocalDatabaseSettingsRepository,
-} from './repositories/local-database-settings.repository';
-import { DatabaseSettingsEntity } from './entities/database-setting.entity';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseSettingsService } from './database-settings.service';
 import { DatabaseSettingsRepository } from './repositories/database-settings.repository';
 
 describe('DatabaseSettingsService', () => {
   let service: DatabaseSettingsService;
-  let repository: MockType<Repository<DatabaseSettingsEntity>>;
+  let repository: MockType<DatabaseSettingsRepository>;
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        LocalDatabaseSettingsRepository,
-        {
-          provide: getRepositoryToken(DatabaseSettingsEntity),
-          useFactory: mockRepository,
-        },
         DatabaseSettingsService,
         {
           provide: DatabaseSettingsRepository,
-          useClass: LocalDatabaseSettingsRepository,
+          useFactory: mockDatabaseSettingsRepository,
         },
       ],
     }).compile();
     service = await module.get(DatabaseSettingsService);
-    repository = await module.get(getRepositoryToken(DatabaseSettingsEntity));
-
-    repository.findOneBy.mockResolvedValue(mockDatabaseSettingsEntity);
-    repository.save.mockResolvedValue(mockDatabaseSettingsEntity);
-    repository.delete.mockImplementation(() => {
-    });
+    repository = await module.get(DatabaseSettingsRepository);
   });
 
   it('should be defined', () => {
@@ -51,51 +36,54 @@ describe('DatabaseSettingsService', () => {
 
   describe('get', () => {
     it('should return database settings entity when it exists', async () => {
-      const actual = await service.get(mockSessionMetadata, mockDatabaseId);
       const expected = mockDatabaseSettingsDto();
+      repository.get.mockResolvedValue(expected);
+      const actual = await service.get(mockSessionMetadata, mockDatabaseId);
       expect(actual).toEqual(expected);
-      expect(repository.findOneBy).toHaveBeenCalledWith({ databaseId: mockDatabaseId });
+      expect(repository.get).toHaveBeenCalledWith(mockSessionMetadata, mockDatabaseId);
     });
 
     it('should throw NotFoundException when database setting is not found', async () => {
-      repository.findOneBy.mockResolvedValueOnce(null);
+      repository.get.mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.DATABASE_SETTINGS_NOT_FOUND));
       await expect(service.get(mockSessionMetadata, mockDatabaseId))
         .rejects.toThrow(NotFoundException);
     });
   });
+
   describe('createOrUpdate', () => {
     it('should create new database settings entity when it does not exist', async () => {
-      repository.findOneBy.mockResolvedValueOnce(null);
-      const actual = await service.createOrUpdate(mockSessionMetadata, mockDatabaseId, mockDatabaseSettingsCreateDto);
       const expected = mockDatabaseSettingsDto();
+      repository.createOrUpdate.mockResolvedValueOnce(expected);
+      const actual = await service.createOrUpdate(mockSessionMetadata, mockDatabaseId, mockDatabaseSettingsCreateDto);
       expect(actual).toEqual(expected);
-      expect(repository.save).toHaveBeenCalled();
+      expect(repository.createOrUpdate).toHaveBeenCalled();
     });
 
     it('should update existing database settings entity', async () => {
-      repository.save.mockResolvedValue({
+      repository.createOrUpdate.mockResolvedValue({
         ...mockDatabaseSettingsEntity,
-        data: { key: '1' },
+        data: { treeViewSort: '1' },
       });
       const updateDto = {
         ...mockDatabaseSettingsCreateDto,
-        data: { key: '1' },
+        data: { treeViewSort: '1' },
       };
       const result = await service.createOrUpdate(mockSessionMetadata, mockDatabaseId, updateDto);
       expect(result.data)
-        .toEqual({ key: '1' });
-      expect(repository.save).toHaveBeenCalled();
+        .toEqual({ treeViewSort: '1' });
+      expect(repository.createOrUpdate).toHaveBeenCalled();
     });
   });
 
   describe('delete', () => {
     it('should delete database settings entity', async () => {
       await expect(service.delete(mockSessionMetadata, mockDatabaseId)).resolves.not.toThrow();
+      expect(repository.delete).toHaveBeenCalledWith(mockSessionMetadata, mockDatabaseId);
     });
 
     it('should throw when database setting is not found', async () => {
       repository.delete.mockImplementationOnce(() => {
-        throw new Error('Error');
+        throw new InternalServerErrorException('Error');
       });
       await expect(service.delete(mockSessionMetadata, mockDatabaseId))
         .rejects.toThrow(InternalServerErrorException);

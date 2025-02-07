@@ -102,7 +102,8 @@ export interface StateAppContext {
     },
     keyDetailsSizes: {
       [key: string]: Nullable<RelativeWidthSizes>
-    }
+    },
+    instanceIdSelectedKey: any,
   }
   workbench: {
     script: string
@@ -133,7 +134,7 @@ export interface StateAppContext {
   pipelineManagement: {
     lastViewedPage: string
     isOpenDialog: boolean
-  }
+  },
 }
 
 export interface StateAppRedisCommands {

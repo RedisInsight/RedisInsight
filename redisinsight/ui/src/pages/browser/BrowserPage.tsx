@@ -33,6 +33,7 @@ import {
   setBrowserPanelSizes,
   setBrowserBulkActionOpen,
   appContextSelector,
+  setInstanceIdSelectedKey,
 } from 'uiSrc/slices/app/context'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
@@ -64,8 +65,9 @@ const BrowserPage = () => {
   const { name: connectedInstanceName, db = 0, isFreeDb } = useSelector(connectedInstanceSelector)
   const {
     panelSizes,
-    keyList: { selectedKey: selectedKeyContext },
+    keyList: { selectedKey },
     bulkActions: { opened: bulkActionOpenContext },
+    instanceIdSelectedKey,
   } = useSelector(appContextBrowser)
   const { contextInstanceId } = useSelector(appContextSelector)
 
@@ -80,7 +82,15 @@ const BrowserPage = () => {
   const [isCreateIndexPanelOpen, setIsCreateIndexPanelOpen] = useState(false)
   const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(bulkActionOpenContext)
 
-  const [selectedKey, setSelectedKey] = useStateWithContext<Nullable<RedisResponseBuffer>>(selectedKeyContext, null)
+  console.log(instanceIdSelectedKey)
+  // const [selectedKey, setSelectedKeyDidi] = useStateWithContext<Nullable<RedisResponseBuffer>>(selectedKeyContext, null)
+
+  const setSelectedKey = (value: any) => {
+    dispatch(setBrowserSelectedKey(value));
+  }
+
+  useEffect(() => {
+  }, [selectedKey])
 
   const [sizes, setSizes] = useState(panelSizes)
 
@@ -96,19 +106,22 @@ const BrowserPage = () => {
   setTitle(`${dbName} - Browser`)
 
   useEffect(() => {
+    // retrieve from instance -> selected key map
+    // console.log('component mount')
     dispatch(resetErrors())
     updateWindowDimensions()
     globalThis.addEventListener('resize', updateWindowDimensions)
 
     // componentWillUnmount
     return () => {
+      // console.log('component unmount')
       globalThis.removeEventListener('resize', updateWindowDimensions)
       setSizes((prevSizes: any) => {
         dispatch(setBrowserPanelSizes(prevSizes))
         return {}
       })
       dispatch(setBrowserBulkActionOpen(isBulkActionsPanelOpenRef.current))
-      dispatch(setBrowserSelectedKey(selectedKeyRef.current))
+      dispatch(setBrowserSelectedKey(null))
 
       if (!selectedKeyRef.current) {
         dispatch(toggleBrowserFullScreen(false))
@@ -117,12 +130,26 @@ const BrowserPage = () => {
   }, [])
 
   useEffect(() => {
+    console.log('dispatched set instance sel key');
+    dispatch(setInstanceIdSelectedKey({ instanceId, selectedKey }));
+  },[instanceId, selectedKey])
+
+  // console.log('selected key value: ', selectedKey);
+  // console.log('selected key context value: ', selectedKeyContext);
+
+  useEffect(() => {
     isBulkActionsPanelOpenRef.current = isBulkActionsPanelOpen
   }, [isBulkActionsPanelOpen])
 
   useEffect(() => {
-    if (contextInstanceId === instanceId) setSelectedKey(selectedKeyContext)
-  }, [selectedKeyContext, contextInstanceId])
+  //   if (contextInstanceId === instanceId) setSelectedKey(selectedKeyContext)
+  // }, [selectedKeyContext, contextInstanceId])
+    console.log('called instance')
+    if (contextInstanceId !== instanceId) {
+      console.log('dispatch triggered')
+      dispatch(setBrowserSelectedKey(null));
+    }
+  }, [contextInstanceId])
 
   useEffect(() => {
     selectedKeyRef.current = selectedKey

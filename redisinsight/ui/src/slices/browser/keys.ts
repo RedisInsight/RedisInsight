@@ -108,7 +108,7 @@ export const initialState: KeysStore = {
   searchHistory: {
     data: null,
     loading: false
-  }
+  },
 }
 
 export const initialKeyInfo = {
@@ -473,7 +473,7 @@ export const {
   deleteSearchHistory,
   deleteSearchHistorySuccess,
   deleteSearchHistoryFailure,
-  setSelectedKeyRefreshDisabled,
+  setSelectedKeyRefreshDisabled
 } = keysSlice.actions
 
 // A selector

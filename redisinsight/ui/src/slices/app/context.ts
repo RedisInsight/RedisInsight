@@ -70,7 +70,8 @@ export const initialState: StateAppContext = {
       [KeyTypes.Hash]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.hash ?? null,
       [KeyTypes.List]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.list ?? null,
       [KeyTypes.ZSet]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.zset ?? null,
-    }
+    },
+    instanceIdSelectedKey: {},
   },
   workbench: {
     script: '',
@@ -244,7 +245,15 @@ const appContextSlice = createSlice({
     resetPipelineManagement: (state) => {
       state.pipelineManagement.lastViewedPage = ''
       state.pipelineManagement.isOpenDialog = true
-    }
+    },
+    setInstanceIdSelectedKey: (state, { payload }) => {
+      console.log(payload)
+      // state.instanceIdSelectedKey[payload.instanceId] = payload.selectedKey;
+      state.browser.instanceIdSelectedKey = {
+        ...state.browser.instanceIdSelectedKey,
+        [payload.instanceId]: payload.selectedKey
+      };
+    },
   },
 })
 
@@ -284,6 +293,7 @@ export const {
   setPipelineDialogState,
   resetPipelineManagement,
   setBrowserShownColumns,
+  setInstanceIdSelectedKey,
 } = appContextSlice.actions
 
 // Selectors

@@ -51,6 +51,7 @@ const KeyDetails = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    console.log('get key details:', keyProp)
     if (keyProp === null) return
 
     if (isTruncatedString(keyProp)) {

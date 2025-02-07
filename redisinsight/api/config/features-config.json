@@ -1,5 +1,5 @@
 {
-  "version": 2.57,
+  "version": 2.66,
   "features": {
     "redisDataIntegration": {
       "flag": true,
@@ -114,7 +114,7 @@
     },
     "enhancedCloudUI": {
       "flag": true,
-      "perc": [[0, 50]]
+      "perc": [[0, 100]]
     }
   }
 }

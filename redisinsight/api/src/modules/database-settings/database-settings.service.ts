@@ -15,7 +15,7 @@ export class DatabaseSettingsService {
   ) {}
 
   /**
-   * Create a new browser history item
+   * Create or update a setting
    *
    * @param sessionMetadata
    * @param databaseId

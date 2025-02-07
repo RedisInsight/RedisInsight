@@ -7,6 +7,5 @@ export class NavigationPanel extends BaseNavigationPanel{
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
     analysisPageButton = Selector('[data-testid=analytics-page-btn]');
     pubSubButton = Selector('[data-testid=pub-sub-page-btn]');
-    triggersAndFnsButton = Selector('[data-testid=triggered-functions-page-btn]')
     settingsButton = Selector('[data-testid=settings-page-btn]');
 }

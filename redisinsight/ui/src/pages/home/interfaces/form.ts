@@ -20,6 +20,7 @@ export interface DbConnectionInfo extends Instance {
   password?: string | true
   timeout?: string
   showDb?: boolean
+  forceStandalone?: boolean
   showCompressor?: boolean
   sni?: boolean
   sentinelMasterUsername?: string

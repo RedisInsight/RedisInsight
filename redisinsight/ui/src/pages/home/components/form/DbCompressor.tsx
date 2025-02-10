@@ -72,7 +72,7 @@ const DbCompressor = (props: Props) => {
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db compressor`}
               name="showCompressor"
-              label="Enable automatic data decompression"
+              label="Enable Automatic Data Decompression"
               checked={!!formik.values.showCompressor}
               onChange={handleChangeDbCompressorCheckbox}
               data-testid="showCompressor"

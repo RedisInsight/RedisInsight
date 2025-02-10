@@ -31,6 +31,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     password: Joi.string(),
   }).allow(null),
   ssh: Joi.boolean().allow(null),
+  forceStandalone: Joi.boolean().allow(null),
   sshOptions: Joi.object({
     id: Joi.string(),
     host: Joi.string().required(),

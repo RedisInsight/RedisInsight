@@ -1,7 +1,14 @@
 import React from 'react'
 import { EuiForm } from '@elastic/eui'
 import { FormikProps } from 'formik'
-import { DatabaseForm, DbCompressor, DbIndex, SSHDetails, TlsDetails } from 'uiSrc/pages/home/components/form'
+import {
+  DatabaseForm,
+  DbCompressor,
+  DbIndex,
+  ForceStandalone,
+  SSHDetails,
+  TlsDetails
+} from 'uiSrc/pages/home/components/form'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BuildType } from 'uiSrc/constants/env'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
@@ -46,6 +53,8 @@ const AddConnection = (props: Props) => {
           <DbIndex
             formik={formik}
           />
+          <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
+          <ForceStandalone formik={formik} />
         </>
       )}
       {activeTab === ManualFormTab.Security && (

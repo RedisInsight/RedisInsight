@@ -143,7 +143,7 @@ export class SettingsService {
    * Shouldn't throw an error on fail
    * @private
    */
-  private async getAgreementsSpecFromFile(): Promise<any> {
+  private async getAgreementsSpecFromFile(): Promise<IAgreementSpecFile> {
     try {
       if (SERVER_CONFIG.agreementsPath) {
         return JSON.parse(await readFile(join(

@@ -287,7 +287,8 @@ export class DatabaseImportService {
         return error;
       });
 
-      this.logger.warn(`Unable to import database: ${errors[0]?.constructor?.name || 'UncaughtError'}`, errors[0], sessionMetadata);
+      this.logger.warn(`Unable to import database: ${errors[0]?.constructor?.name || 'UncaughtError'}`,
+        errors[0], sessionMetadata);
 
       return {
         index,

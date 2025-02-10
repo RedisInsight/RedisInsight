@@ -118,7 +118,7 @@ describe('BrowserPage', () => {
 
     fireEvent.click(screen.getByTestId('handleAddKeyPanel-btn'))
 
-    const expectedActions = [resetKeyInfo(), toggleBrowserFullScreen(false)]
+    const expectedActions = [resetKeyInfo(), toggleBrowserFullScreen(false), setBrowserSelectedKey(null)]
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 

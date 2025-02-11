@@ -224,6 +224,7 @@ const BrowserPage = () => {
 
       dispatch(setInitialStateByType(prevSelectedType.current))
       setSelectedKey(rowData.name)
+      dispatch(setBrowserSelectedKey(rowData.name));
       closeRightPanels()
       prevSelectedType.current = rowData.type
     }

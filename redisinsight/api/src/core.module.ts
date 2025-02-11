@@ -14,12 +14,14 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { SessionModule } from 'src/modules/session/session.module';
 import { ServerModule } from 'src/modules/server/server.module';
 import { ConstantsModule } from 'src/modules/constants/constants.module';
+import { DatabaseDiscoveryModule } from 'src/modules/database-discovery/database-discovery.module';
 
 @Global()
 @Module({
   imports: [
     ConstantsModule.register(),
     EventEmitterModule.forRoot(),
+    DatabaseDiscoveryModule,
     AnalyticsModule,
     EncryptionModule.register(),
     SettingsModule.register(),
@@ -37,6 +39,7 @@ import { ConstantsModule } from 'src/modules/constants/constants.module';
   exports: [
     ConstantsModule,
     EncryptionModule,
+    DatabaseDiscoveryModule,
     SettingsModule,
     CertificateModule,
     DatabaseModule,

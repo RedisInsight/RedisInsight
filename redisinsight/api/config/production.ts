@@ -12,6 +12,7 @@ export default {
     prevHomedir,
     logs: join(homedir, 'logs'),
     customConfig: join(homedir, 'config.json'),
+    preSetupDatabases: process.env.RI_PRE_SETUP_DATABASES_PATH || join(homedir, 'databases.json'),
     customPlugins: join(homedir, 'plugins'),
     customTutorials: join(homedir, 'custom-tutorials'),
     commands: join(homedir, 'commands'),

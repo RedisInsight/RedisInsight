@@ -128,20 +128,16 @@ const KeysHeader = (props: Props) => {
         count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       },
       (data) => {
-        if (Array.isArray(data)) {
-          if (data[0].keys.length === 0) {
-            dispatch(resetKeyInfo());
-            dispatch(setBrowserSelectedKey(null));
-          }
-        } else {
-          if (data.keys.length === 0) {
-            dispatch(resetKeyInfo());
-            dispatch(setBrowserSelectedKey(null));
-          }
+        const keys = Array.isArray(data) ? data[0].keys : data.keys;
+      
+        if (!keys?.length) {
+          dispatch(resetKeyInfo());
+          dispatch(setBrowserSelectedKey(null));
         }
-
+      
         dispatch(setBrowserKeyListDataLoaded(searchMode, true));
-      },
+      }
+
       () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
     ))
   }

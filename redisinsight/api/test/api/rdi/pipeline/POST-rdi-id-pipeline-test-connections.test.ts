@@ -75,7 +75,7 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
           nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
             access_token: mockedAccessToken,
           });
-          nock(testRdiUrl).post(`/${RdiUrl.TestConnections}`).query(true).reply(200, mockResponse);
+          nock(testRdiUrl).post(`/${RdiUrl.TestTargetsConnections}`).query(true).reply(200, mockResponse);
         },
       },
       {
@@ -91,7 +91,7 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
           nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
             access_token: mockedAccessToken,
           });
-          nock(testRdiUrl).post(`/${RdiUrl.TestConnections}`).query(true).reply(200, mockResponseFailed);
+          nock(testRdiUrl).post(`/${RdiUrl.TestTargetsConnections}`).query(true).reply(200, mockResponseFailed);
         },
       },
       {
@@ -127,7 +127,7 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
           nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
             access_token: mockedAccessToken,
           });
-          nock(testRdiUrl).post(`/${RdiUrl.TestConnections}`).query(true).reply(401, {
+          nock(testRdiUrl).post(`/${RdiUrl.TestTargetsConnections}`).query(true).reply(401, {
             message: 'Request failed with status code 401',
             detail: 'Unauthorized',
           });

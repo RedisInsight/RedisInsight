@@ -282,7 +282,7 @@ describe('ApiRdiClient', () => {
 
       const response = await client.testConnections(config);
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.TestConnections, config);
+      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.TestTargetsConnections, config);
       expect(response).toEqual(expectedResponse);
     });
 
@@ -291,7 +291,7 @@ describe('ApiRdiClient', () => {
       mockedAxios.post.mockRejectedValueOnce(mockRdiUnauthorizedError);
 
       await expect(client.testConnections(config)).rejects.toThrow(mockRdiUnauthorizedError.message);
-      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.TestConnections, config);
+      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.TestTargetsConnections, config);
     });
   });
 

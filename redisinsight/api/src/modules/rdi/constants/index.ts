@@ -12,6 +12,7 @@ export enum RdiUrl {
   StartPipeline = 'api/v1/pipelines/start',
   ResetPipeline = 'api/v1/pipelines/reset',
   TestTargetsConnections = 'api/v1/pipelines/targets/dry-run',
+  TestSourcesConnections = 'api/v1/pipelines/sources/dry-run',
   GetStatistics = 'api/v1/monitoring/statistics',
   GetPipelineStatus = 'api/v1/status',
   Login = 'api/v1/login',

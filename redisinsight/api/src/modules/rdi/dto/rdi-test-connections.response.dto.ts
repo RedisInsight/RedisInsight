@@ -41,9 +41,10 @@ export class RdiTestConnectionResult {
 
 export class RdiTestConnectionsResponseDto {
   @ApiProperty({
-    description: 'Sources connection results',
+    description: 'Sources/Targets connection results',
   })
   @Expose()
   @Type(() => RdiTestConnectionResult)
   sources: Record<string, RdiTestConnectionResult>;
+  targets: Record<string, RdiTestConnectionResult>;
 }

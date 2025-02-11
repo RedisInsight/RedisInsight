@@ -37,6 +37,27 @@ import { RdiResetPipelineFailedException } from '../exceptions/rdi-reset-pipelin
 import { RdiStartPipelineFailedException } from '../exceptions/rdi-start-pipeline-failed.exception';
 import { RdiStopPipelineFailedException } from '../exceptions/rdi-stop-pipeline-failed.exception';
 
+const prepareTestSourcesConnectionsOptions = (config: object) => {
+  // expected structure example:
+  // {
+  //   "type": "cdc",
+  //   "connection": {
+  //     "type": "mysql",
+  //     "host": "localhost",
+  //     "port": 3306,
+  //     "database": "demo_db",
+  //     "user": "user",
+  //     "password": "password",
+  //   }
+  // }
+
+  // TODO: fix any
+  const sourcesOptions = (config as any).sources || {};
+  const rootKey = Object.keys(sourcesOptions)[0];
+  const extractedBody = sourcesOptions[rootKey];
+  return { ...extractedBody };
+};
+
 export class ApiRdiClient extends RdiClient {
   protected readonly client: AxiosInstance;
 
@@ -173,12 +194,13 @@ export class ApiRdiClient extends RdiClient {
 
   async testConnections(config: object): Promise<RdiTestConnectionsResponseDto> {
     try {
-      const response = await this.client.post(
-        RdiUrl.TestConnections,
-        config,
-      );
+      const sourcesOptions = prepareTestSourcesConnectionsOptions(config);
+      const [targets, sources] = await Promise.all([
+        this.client.post(RdiUrl.TestTargetsConnections, config),
+        this.client.post(RdiUrl.TestSourcesConnections, { ...sourcesOptions }),
+      ]);
 
-      return response.data;
+      return { ...targets.data, sources: sources.data };
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }

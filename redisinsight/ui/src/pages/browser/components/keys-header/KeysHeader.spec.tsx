@@ -139,5 +139,5 @@ describe('KeysHeader', () => {
 
     const expectedActions = [keysSlice.resetKeyInfo(), setBrowserSelectedKey(null), setBrowserPatternKeyListDataLoaded(true)]
     expect(store.getActions()).toEqual(expectedActions)
-   });
+  });
 })

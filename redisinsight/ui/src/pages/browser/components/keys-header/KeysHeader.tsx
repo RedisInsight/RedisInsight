@@ -129,15 +129,14 @@ const KeysHeader = (props: Props) => {
       },
       (data) => {
         const keys = Array.isArray(data) ? data[0].keys : data.keys;
-      
+
         if (!keys?.length) {
           dispatch(resetKeyInfo());
           dispatch(setBrowserSelectedKey(null));
         }
-      
-        dispatch(setBrowserKeyListDataLoaded(searchMode, true));
-      }
 
+        dispatch(setBrowserKeyListDataLoaded(searchMode, true));
+      },
       () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
     ))
   }

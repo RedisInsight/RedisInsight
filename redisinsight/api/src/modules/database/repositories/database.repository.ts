@@ -56,4 +56,10 @@ export abstract class DatabaseRepository {
    * @param id
    */
   abstract delete(sessionMetadata: SessionMetadata, id: string): Promise<void>;
+
+  /**
+   * Cleanup databases which were created on startup from a file or env variables
+   * @param excludeIds
+   */
+  abstract cleanupPreSetup(excludeIds?: string[]): Promise<{ affected: number }>;
 }

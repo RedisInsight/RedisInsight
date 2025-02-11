@@ -1,17 +1,15 @@
 import * as utils from 'src/utils';
 import { when } from 'jest-when';
-import { getAvailableEndpoints } from 'src/modules/autodiscovery/utils/autodiscovery.util';
+import { getAvailableEndpoints } from 'src/modules/database-discovery/utils/autodiscovery.util';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockAutodiscoveryEndpoint,
   mockDatabaseService,
   mockRedisClientFactory,
   mockSessionMetadata,
-  mockSettingsService,
   MockType,
 } from 'src/__mocks__';
-import { SettingsService } from 'src/modules/settings/settings.service';
-import { AutodiscoveryService } from 'src/modules/autodiscovery/autodiscovery.service';
+import { AutoDatabaseDiscoveryService } from 'src/modules/database-discovery/auto.database-discovery.service';
 import { DatabaseService } from 'src/modules/database/database.service';
 import config, { Config } from 'src/utils/config';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
@@ -19,9 +17,9 @@ import { ConstantsProvider } from 'src/modules/constants/providers/constants.pro
 import { mockConstantsProvider } from 'src/__mocks__/constants';
 
 jest.mock(
-  'src/modules/autodiscovery/utils/autodiscovery.util',
+  'src/modules/database-discovery/utils/autodiscovery.util',
   jest.fn(() => ({
-    ...jest.requireActual('src/modules/autodiscovery/utils/autodiscovery.util') as object,
+    ...jest.requireActual('src/modules/database-discovery/utils/autodiscovery.util') as object,
     __esModule: true,
     getAvailableEndpoints: jest.fn(),
   })),
@@ -42,9 +40,8 @@ jest.mock('src/utils/config', jest.fn(
 
 const mockServerConfig = config.get('server') as Config['server'];
 
-describe('AutodiscoveryService', () => {
-  let service: AutodiscoveryService;
-  let settingsService: MockType<SettingsService>;
+describe('AutoDatabaseDiscoveryService', () => {
+  let service: AutoDatabaseDiscoveryService;
   let databaseService: MockType<DatabaseService>;
   let redisClientFactory: MockType<RedisClientFactory>;
   let configGetSpy;
@@ -58,11 +55,7 @@ describe('AutodiscoveryService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AutodiscoveryService,
-        {
-          provide: SettingsService,
-          useFactory: mockSettingsService,
-        },
+        AutoDatabaseDiscoveryService,
         {
           provide: DatabaseService,
           useFactory: mockDatabaseService,
@@ -78,8 +71,7 @@ describe('AutodiscoveryService', () => {
       ],
     }).compile();
 
-    service = module.get(AutodiscoveryService);
-    settingsService = module.get(SettingsService);
+    service = module.get(AutoDatabaseDiscoveryService);
     databaseService = module.get(DatabaseService);
     redisClientFactory = module.get(RedisClientFactory);
 
@@ -90,67 +82,7 @@ describe('AutodiscoveryService', () => {
     });
   });
 
-  describe('onModuleInit', () => {
-    let discoverDatabasesSpy;
-
-    beforeEach(async () => {
-      mockServerConfig.buildType = 'ELECTRON';
-      settingsService.getAppSettings.mockResolvedValue({});
-      databaseService.list.mockResolvedValue([]);
-      discoverDatabasesSpy = jest.spyOn(service as any, 'discoverDatabases');
-      discoverDatabasesSpy.mockResolvedValue(undefined);
-    });
-
-    it('should not discover databases REDIS_STACK builds', async () => {
-      mockServerConfig.buildType = 'REDIS_STACK';
-
-      await service.init();
-
-      expect(settingsService.getAppSettings).toHaveBeenCalledTimes(0);
-      expect(databaseService.list).toHaveBeenCalledTimes(0);
-      expect(discoverDatabasesSpy).toHaveBeenCalledTimes(0);
-    });
-
-    it('should not discover databases if not a first start', async () => {
-      settingsService.getAppSettings.mockResolvedValue({ agreements: {} });
-
-      await service.init();
-
-      expect(settingsService.getAppSettings).toHaveBeenCalledTimes(1);
-      expect(databaseService.list).toHaveBeenCalledTimes(0);
-      expect(discoverDatabasesSpy).toHaveBeenCalledTimes(0);
-    });
-
-    it('should not discover databases if already have databases', async () => {
-      databaseService.list.mockResolvedValue([{}]);
-
-      await service.init();
-
-      expect(settingsService.getAppSettings).toHaveBeenCalledTimes(1);
-      expect(databaseService.list).toHaveBeenCalledTimes(1);
-      expect(discoverDatabasesSpy).toHaveBeenCalledTimes(0);
-    });
-
-    it('should discover databases', async () => {
-      await service.init();
-
-      expect(settingsService.getAppSettings).toHaveBeenCalledTimes(1);
-      expect(databaseService.list).toHaveBeenCalledTimes(1);
-      expect(discoverDatabasesSpy).toHaveBeenCalledTimes(1);
-    });
-
-    it('should not fail in case of an error', async () => {
-      discoverDatabasesSpy.mockRejectedValueOnce(new Error());
-
-      await service.init();
-
-      expect(settingsService.getAppSettings).toHaveBeenCalledTimes(1);
-      expect(databaseService.list).toHaveBeenCalledTimes(1);
-      expect(discoverDatabasesSpy).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('discoverDatabases', () => {
+  describe('discover', () => {
     let addRedisDatabaseSpy;
 
     beforeEach(async () => {
@@ -159,16 +91,18 @@ describe('AutodiscoveryService', () => {
       addRedisDatabaseSpy.mockResolvedValue(null);
     });
 
-    it('should should not call addRedisDatabase when no endpoints found', async () => {
-      await service['discoverDatabases'](mockSessionMetadata);
+    it('should not call addRedisDatabase when no endpoints found', async () => {
+      await service.discover(mockSessionMetadata);
 
       expect(addRedisDatabaseSpy).toHaveBeenCalledTimes(0);
     });
 
-    it('should should call addRedisDatabase 2 times', async () => {
+    it('should call addRedisDatabase 2 times', async () => {
       (getAvailableEndpoints as jest.Mock)
         .mockResolvedValueOnce([mockAutodiscoveryEndpoint, mockAutodiscoveryEndpoint]);
-      await service['discoverDatabases'](mockSessionMetadata);
+      databaseService.list.mockResolvedValue([]);
+
+      await service.discover(mockSessionMetadata);
 
       expect(addRedisDatabaseSpy).toHaveBeenCalledTimes(2);
       expect(addRedisDatabaseSpy).toHaveBeenCalledWith(

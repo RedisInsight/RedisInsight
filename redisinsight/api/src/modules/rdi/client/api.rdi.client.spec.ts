@@ -308,12 +308,32 @@ describe('ApiRdiClient', () => {
       });
     });
 
-    it('should throw an error if the request fails', async () => {
+    it('should throw an error if the requests fails', async () => {
       const config = {};
       mockedAxios.post.mockRejectedValueOnce(mockRdiUnauthorizedError);
 
       await expect(client.testConnections(config)).rejects.toThrow(mockRdiUnauthorizedError.message);
       expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.TestTargetsConnections, config);
+    });
+
+    it('should return targets data even if TestSourcesConnections fails', async () => {
+      const config = {};
+      const expectedTargetsResponse = {
+        targets: { target1: { status: 'success' } },
+      };
+
+      mockedAxios.post
+        .mockResolvedValueOnce({ data: expectedTargetsResponse })
+        .mockRejectedValueOnce(new Error('Sources request failed'));
+
+      const response = await client.testConnections(config);
+
+      expect(response).toEqual({
+        targets: expectedTargetsResponse.targets,
+        sources: { connected: false, error: 'Failed to fetch sources' },
+      });
+
+      expect(mockedAxios.post).toHaveBeenCalledTimes(2);
     });
   });
 

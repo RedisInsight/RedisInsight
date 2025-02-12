@@ -39,12 +39,28 @@ export class RdiTestConnectionResult {
   error?: ErrorDetails;
 }
 
+export class RdiSourcesConnectionResult {
+  @ApiProperty({ description: 'Indicates if the source is connected' })
+  @Expose()
+  connected: boolean;
+
+  @ApiProperty({ description: 'Error message if connection fails', required: false })
+  @Expose()
+  error?: string;
+}
+
 export class RdiTestConnectionsResponseDto {
   @ApiProperty({
-    description: 'Sources/Targets connection results',
+    description: 'Sources connection results',
+  })
+  @Expose()
+  @Type(() => RdiSourcesConnectionResult)
+  sources: RdiSourcesConnectionResult;
+
+  @ApiProperty({
+    description: 'Targets connection results',
   })
   @Expose()
   @Type(() => RdiTestConnectionResult)
-  sources: Record<string, RdiTestConnectionResult>;
   targets: Record<string, RdiTestConnectionResult>;
 }

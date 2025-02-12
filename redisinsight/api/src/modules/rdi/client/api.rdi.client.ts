@@ -14,7 +14,9 @@ import {
 import {
   RdiDryRunJobDto,
   RdiDryRunJobResponseDto,
+  RdiSourcesConnectionResult,
   RdiTemplateResponseDto,
+  RdiTestConnectionResult,
   RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
 import {
@@ -192,18 +194,37 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  async testConnections(config: object): Promise<RdiTestConnectionsResponseDto> {
+  async testConnections(
+    config: object,
+  ): Promise<RdiTestConnectionsResponseDto> {
+    let targets: Record<string, RdiTestConnectionResult> = {};
+    let sources: RdiSourcesConnectionResult = {
+      connected: false,
+      error: 'Failed to fetch sources',
+    };
+
+    try {
+      const targetsResponse = await this.client.post(
+        RdiUrl.TestTargetsConnections,
+        config,
+      );
+      targets = targetsResponse.data.targets;
+    } catch (error) {
+      throw wrapRdiPipelineError(error);
+    }
+
     try {
       const sourcesOptions = prepareTestSourcesConnectionsOptions(config);
-      const [targets, sources] = await Promise.all([
-        this.client.post(RdiUrl.TestTargetsConnections, config),
-        this.client.post(RdiUrl.TestSourcesConnections, { ...sourcesOptions }),
-      ]);
-
-      return { ...targets.data, sources: sources.data };
-    } catch (e) {
-      throw wrapRdiPipelineError(e);
+      const sourcesResponse = await this.client.post(
+        RdiUrl.TestSourcesConnections,
+        { ...sourcesOptions },
+      );
+      sources = sourcesResponse.data;
+    } catch (error) {
+      // do nothing - failing is expected on RDI version below 1.6.0 (1.4.3 for example)
     }
+
+    return { targets, sources };
   }
 
   async getPipelineStatus(): Promise<any> {

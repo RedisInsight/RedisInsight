@@ -9,7 +9,7 @@ import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 export const initDataHelper = (rte) => {
   const client = rte.client;
 
-  const sendCommand = async (command: string, args?: (Buffer | string)[], replyEncoding = 'utf8'): Promise<any> => {
+  const sendCommand = async (command: string, args?: (Buffer | string)[], replyEncoding: BufferEncoding = 'utf8'): Promise<any> => {
     return client.sendCommand(new IORedis.Command(command, args, {
       replyEncoding,
     }));
@@ -493,7 +493,7 @@ export const initDataHelper = (rte) => {
 
   /**
    * Checks periodically (`retryLimit` times, every `retryInterval` milliseconds) if the creation of the `hashIndexes` has completed.
-   * 
+   *
    * @param {string[]} indexes - string array containing the hashes of the indexes.
    * @param {number} [retryLimit=3] - the maximum number of iterations. Defaults to 3.
    * @param {number} [retryInterval=300] - the time wait between iterations, in milliseconds. Defaults to 300.

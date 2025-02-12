@@ -1,5 +1,4 @@
-import * as Redis from 'ioredis';
-import * as IORedis from 'ioredis';
+import Redis, * as IORedis from 'ioredis';
 import * as semverCompare from 'node-version-compare';
 import * as fs from 'fs';
 import { Server, createServer } from 'net';

@@ -21,6 +21,7 @@ export * from './redis';
 export * from './server';
 export * from './redis-enterprise';
 export * from './redis-sentinel';
+export * from './database-discovery';
 export * from './database-import';
 export * from './redis-client';
 export * from './redis-utils';

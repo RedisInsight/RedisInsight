@@ -276,14 +276,36 @@ describe('ApiRdiClient', () => {
   describe('testConnections', () => {
     it('should return a successful response', async () => {
       const config = {};
-      const expectedResponse = { connected: true };
+      const expectedTargetsResponse = {
+        targets: {
+          target: {
+            status: 'success',
+          },
+        },
+      };
+      const expectedSourcesResponse = {
+        connected: true,
+        error: '',
+      };
 
-      mockedAxios.post.mockResolvedValueOnce({ data: expectedResponse });
+      mockedAxios.post
+        .mockResolvedValueOnce({ data: expectedTargetsResponse })
+        .mockResolvedValueOnce({ data: expectedSourcesResponse });
 
       const response = await client.testConnections(config);
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.TestTargetsConnections, config);
-      expect(response).toEqual(expectedResponse);
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        RdiUrl.TestTargetsConnections,
+        config,
+      );
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        RdiUrl.TestSourcesConnections,
+        config,
+      );
+      expect(response).toEqual({
+        sources: expectedSourcesResponse,
+        ...expectedTargetsResponse,
+      });
     });
 
     it('should throw an error if the request fails', async () => {

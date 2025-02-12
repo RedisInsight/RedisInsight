@@ -7,6 +7,8 @@ import {
 import { Logger } from '@nestjs/common';
 import { Validator } from 'class-validator';
 import { plainToClass } from 'class-transformer';
+import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
+import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 
 const logger = new Logger('LocalPreSetupDatabaseDiscoveryService');
 
@@ -16,7 +18,7 @@ export const scanProcessEnv = (): string[] => {
   const hostEnvs = [];
 
   Object.entries(process.env).forEach(([env]) => {
-    if (env.startsWith('RI_REDIS_HOST')) {
+    if (env.startsWith('RI_REDIS_HOST') && process.env[env]) {
       hostEnvs.push(env);
     }
   });
@@ -28,17 +30,21 @@ export const scanProcessEnv = (): string[] => {
  * Explicitly set not defined data to default to be overwritten in database
  * @param database
  */
-export const populateDefaultValues = (database: Database): Database => {
+export const populateDefaultValues = (
+  database: Partial<Database>,
+): Database => {
   const {
+    id,
     host,
     port = 6379,
-    name = null,
+    name = `${host}:${port}`,
     db = null,
     provider = null,
     modules = [],
     verifyServerCert = null,
     ssh = null,
     sshOptions = null,
+    tls = false,
     tlsServername = null,
     caCert = null,
     clientCert = null,
@@ -46,11 +52,12 @@ export const populateDefaultValues = (database: Database): Database => {
     username = null,
     password = null,
     compressor = Compressor.NONE,
-    connectionType = ConnectionType.NOT_CONNECTED,
   } = database;
 
   return {
     ...database,
+    id,
+    host,
     port,
     db,
     provider,
@@ -58,15 +65,26 @@ export const populateDefaultValues = (database: Database): Database => {
     verifyServerCert,
     ssh,
     sshOptions,
+    tls,
     tlsServername,
-    caCert,
-    clientCert,
+    caCert: caCert && {
+      ...caCert,
+      id: database.id,
+      name: `${database.id}_${name}`,
+      isPreSetup: true,
+    },
+    clientCert: clientCert && {
+      ...clientCert,
+      id: database.id,
+      name: `${database.id}_${name}`,
+      isPreSetup: true,
+    },
     nameFromProvider,
     username,
     password,
     compressor,
-    name: name || `${host}:${port}`,
-    connectionType,
+    name,
+    connectionType: ConnectionType.NOT_CONNECTED,
     isPreSetup: true,
   };
 };
@@ -104,28 +122,24 @@ export const prepareDatabaseFromEnvs = async (
   try {
     const id = hostEnv.replace(/^RI_REDIS_HOST/, '');
 
-    const databaseToAdd: Database = populateDefaultValues({
+    const databaseToAdd: Partial<Database> = {
       id: id || '0',
       host: process.env[hostEnv],
       port: parseInt(process.env[`RI_REDIS_PORT${id}`], 10) || 6379,
       name: process.env[`RI_REDIS_NAME${id}`],
       username: process.env[`RI_REDIS_USERNAME${id}`],
       password: process.env[`RI_REDIS_PASSWORD${id}`],
-      connectionType: ConnectionType.NOT_CONNECTED,
       tls: process.env[`RI_REDIS_TLS${id}`] === 'true',
       compressor: process.env[`RI_REDIS_COMPRESSOR${id}`] as Compressor,
-    });
+    };
 
     // CA certificate
     const tlsCA = await getCertificateData('RI_REDIS_TLS_CA', id);
 
     if (tlsCA) {
       databaseToAdd.caCert = {
-        id,
-        name: `${id}_${databaseToAdd.name}`,
         certificate: tlsCA,
-        isPreSetup: true,
-      };
+      } as CaCertificate;
     }
 
     // User certificate
@@ -134,20 +148,19 @@ export const prepareDatabaseFromEnvs = async (
 
     if (tlsCertificate && tlsKey) {
       databaseToAdd.clientCert = {
-        id,
-        name: `${id}_${databaseToAdd.name}`,
         certificate: tlsCertificate,
         key: tlsKey,
-        isPreSetup: true,
-      };
+      } as ClientCertificate;
       databaseToAdd.verifyServerCert = true;
     }
 
+    const preparedDatabase = populateDefaultValues(databaseToAdd);
+
     await validator.validateOrReject(
-      plainToClass(Database, databaseToAdd, { groups: ['security'] }),
+      plainToClass(Database, preparedDatabase, { groups: ['security'] }),
     );
 
-    return databaseToAdd;
+    return preparedDatabase;
   } catch (error) {
     // ignore error
     logger.warn('Unable to prepare pre setup database from env', error, {

@@ -121,6 +121,12 @@ describe('LocalClientCertificateRepository', () => {
         expect(repository.save).not.toHaveBeenCalled();
       }
     });
+
+    it('should ignore unique check when explicitly disabled via flag', async () => {
+      const result = await service.create(mockClientCertificate, false);
+
+      expect(result).toEqual(mockClientCertificate);
+    });
   });
 
   describe('delete', () => {

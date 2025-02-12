@@ -274,8 +274,8 @@ describe('ApiRdiClient', () => {
   });
 
   describe('testConnections', () => {
-    const config = { sources: {}};
-    
+    const config = { sources: {} };
+
     it('should return a successful response', async () => {
       const expectedTargetsResponse = {
         targets: {
@@ -301,7 +301,7 @@ describe('ApiRdiClient', () => {
       );
       expect(mockedAxios.post).toHaveBeenCalledWith(
         RdiUrl.TestSourcesConnections,
-        config,
+        {},
       );
       expect(response).toEqual({
         sources: expectedSourcesResponse,

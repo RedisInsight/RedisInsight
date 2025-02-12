@@ -52,20 +52,16 @@ export const pipelineToJson = ({ config, jobs }: IPipeline, onError: (errors: IY
   return result
 }
 
-export const transformConnectionResults = (results: IConnectionResult): TransformResult => {
+export const transformConnectionResults = (
+  results: IConnectionResult,
+): TransformResult => {
   const result: TransformResult = {
     target: { success: [], fail: [] },
     source: { success: [], fail: [] },
   }
 
-  if (!results.targets) {
+  if (!results?.targets) {
     return result
-  }
-
-  if (results.sources.connected) {
-    result.source.success.push({ target: 'source' })
-  } else {
-    result.source.fail.push({ target: 'source', error: results.sources.error })
   }
 
   try {
@@ -79,6 +75,16 @@ export const transformConnectionResults = (results: IConnectionResult): Transfor
     })
   } catch (error) {
     // ignore
+  }
+
+  if (!results?.sources) {
+    return result
+  }
+
+  if (results.sources.connected) {
+    result.source.success.push({ target: 'source' })
+  } else {
+    result.source.fail.push({ target: 'source', error: results.sources.error })
   }
 
   return result

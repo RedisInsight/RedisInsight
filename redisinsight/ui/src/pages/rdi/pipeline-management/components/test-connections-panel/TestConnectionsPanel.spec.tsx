@@ -38,4 +38,54 @@ describe('TestConnectionsPanel', () => {
 
     expect(screen.getByTestId('test-connections-loader')).toBeInTheDocument()
   })
+
+  it('should show "No results found" when results are null', () => {
+    (rdiTestConnectionsSelector as jest.Mock).mockReturnValue({
+      loading: false,
+      results: null,
+    })
+
+    render(<TestConnectionsPanel {...instance(mockedProps)} />)
+
+    expect(
+      screen.getByText('No results found. Please try again.'),
+    ).toBeInTheDocument()
+  })
+
+  it('should render TestConnectionsLog for source and target connections', () => {
+    const mockResults = {
+      source: {
+        success: [],
+        fail: [
+          {
+            target: 'source',
+            error: 'Something bad happened',
+          },
+        ],
+      },
+      target: {
+        success: [
+          {
+            target: 'Test-target-connection',
+          },
+        ],
+        fail: [],
+      },
+    };
+
+    (rdiTestConnectionsSelector as jest.Mock).mockReturnValue({
+      loading: false,
+      results: mockResults,
+    })
+
+    render(<TestConnectionsPanel {...instance(mockedProps)} />)
+
+    expect(screen.getByText('Source connections')).toBeInTheDocument()
+    expect(screen.getByText('source')).toBeInTheDocument()
+    expect(screen.getByText('Something bad happened')).toBeInTheDocument()
+
+    expect(screen.getByText('Target connections')).toBeInTheDocument()
+    expect(screen.getByText('Test-target-connection')).toBeInTheDocument()
+    expect(screen.getByText('Successful')).toBeInTheDocument()
+  })
 })

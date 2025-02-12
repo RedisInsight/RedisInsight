@@ -39,28 +39,24 @@ import { RdiResetPipelineFailedException } from '../exceptions/rdi-reset-pipelin
 import { RdiStartPipelineFailedException } from '../exceptions/rdi-start-pipeline-failed.exception';
 import { RdiStopPipelineFailedException } from '../exceptions/rdi-stop-pipeline-failed.exception';
 
-// Config can come in different shapes,
-// depending on the RDI schema definition.
-// But one thing is common - it always has a `sources` key.
-interface ConfigWithSources {
-  sources: Record<string, unknown>;
+// The structure of `config` varies based on the RDI schema definition,
+// but it always includes a `sources` key.
+// Example:
+// {
+//   sources: {
+//     some_database_source: {
+//       host: 'localhost',
+//       port: 6379,
+//       ...other connection options
+//     }
+//   }
+// }
+interface ConnectionsConfig {
+  sources: Record<string, Record<string, unknown>>;
 }
 
-const prepareTestSourcesConnectionsOptions = (config: ConfigWithSources) => {
-  // expected structure example:
-  // {
-  //   "type": "cdc",
-  //   "connection": {
-  //     "type": "mysql",
-  //     "host": "localhost",
-  //     "port": 3306,
-  //     "database": "demo_db",
-  //     "user": "user",
-  //     "password": "password",
-  //   }
-  // }
-
-  const sourcesOptions = (config as any).sources || {};
+const prepareTestSourcesConnectionsOptions = (config: ConnectionsConfig) => {
+  const sourcesOptions = config.sources || {};
   const rootKey = Object.keys(sourcesOptions)[0];
   const extractedBody = sourcesOptions[rootKey];
   return { ...extractedBody };
@@ -201,7 +197,7 @@ export class ApiRdiClient extends RdiClient {
   }
 
   async testConnections(
-    config: ConfigWithSources,
+    config: ConnectionsConfig,
   ): Promise<RdiTestConnectionsResponseDto> {
     let targets: Record<string, RdiTestConnectionResult> = {};
     let sources: RdiSourcesConnectionResult = {

@@ -274,8 +274,9 @@ describe('ApiRdiClient', () => {
   });
 
   describe('testConnections', () => {
+    const config = { sources: {}};
+    
     it('should return a successful response', async () => {
-      const config = {};
       const expectedTargetsResponse = {
         targets: {
           target: {
@@ -309,7 +310,6 @@ describe('ApiRdiClient', () => {
     });
 
     it('should throw an error if the requests fails', async () => {
-      const config = {};
       mockedAxios.post.mockRejectedValueOnce(mockRdiUnauthorizedError);
 
       await expect(client.testConnections(config)).rejects.toThrow(mockRdiUnauthorizedError.message);
@@ -317,7 +317,6 @@ describe('ApiRdiClient', () => {
     });
 
     it('should return targets data even if TestSourcesConnections fails', async () => {
-      const config = {};
       const expectedTargetsResponse = {
         targets: { target1: { status: 'success' } },
       };

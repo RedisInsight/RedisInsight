@@ -39,7 +39,14 @@ import { RdiResetPipelineFailedException } from '../exceptions/rdi-reset-pipelin
 import { RdiStartPipelineFailedException } from '../exceptions/rdi-start-pipeline-failed.exception';
 import { RdiStopPipelineFailedException } from '../exceptions/rdi-stop-pipeline-failed.exception';
 
-const prepareTestSourcesConnectionsOptions = (config: object) => {
+// Config can come in different shapes,
+// depending on the RDI schema definition.
+// But one thing is common - it always has a `sources` key.
+interface ConfigWithSources {
+  sources: Record<string, unknown>;
+}
+
+const prepareTestSourcesConnectionsOptions = (config: ConfigWithSources) => {
   // expected structure example:
   // {
   //   "type": "cdc",
@@ -53,7 +60,6 @@ const prepareTestSourcesConnectionsOptions = (config: object) => {
   //   }
   // }
 
-  // TODO: fix any
   const sourcesOptions = (config as any).sources || {};
   const rootKey = Object.keys(sourcesOptions)[0];
   const extractedBody = sourcesOptions[rootKey];
@@ -195,7 +201,7 @@ export class ApiRdiClient extends RdiClient {
   }
 
   async testConnections(
-    config: object,
+    config: ConfigWithSources,
   ): Promise<RdiTestConnectionsResponseDto> {
     let targets: Record<string, RdiTestConnectionResult> = {};
     let sources: RdiSourcesConnectionResult = {

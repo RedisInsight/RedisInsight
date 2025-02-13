@@ -172,6 +172,7 @@ const JobsTree = (props: IProps) => {
           <EuiIcon
             type={statusErrorIcon}
             className="rdi-pipeline-nav__error"
+            data-testid="rdi-pipeline-nav__error"
           />
         )}
       </EuiFlexItem>
@@ -258,7 +259,10 @@ const JobsTree = (props: IProps) => {
     </EuiFlexItem>
   )
 
-  const isJobValid = (jobName: string) => jobsValidationErrors[jobName].length === 0
+  const isJobValid = (jobName: string) =>
+    (jobsValidationErrors[jobName]
+      ? jobsValidationErrors[jobName].length === 0
+      : true)
 
   const renderJobsList = (jobs: IRdiPipelineJob[]) =>
     jobs.map(({ name }, idx) => (

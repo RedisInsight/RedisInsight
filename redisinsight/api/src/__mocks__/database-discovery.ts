@@ -158,6 +158,28 @@ export const mockDatabaseToImportWithCertsFromFilePrepared = {
   tlsServername: null,
 } as Database;
 
+export const cleanupTestEnvs = () => {
+  delete process.env.RI_REDIS_HOST;
+  delete process.env.RI_REDIS_PORT;
+  delete process.env.RI_REDIS_NAME;
+  delete process.env.RI_REDIS_USENAME;
+  delete process.env.RI_REDIS_PASSWORD;
+
+  delete process.env.RI_REDIS_HOST_1;
+  delete process.env.RI_REDIS_PORT_1;
+  delete process.env.RI_REDIS_NAME_1;
+  delete process.env.RI_REDIS_TLS_1;
+  delete process.env.RI_REDIS_TLS_CA_PATH_1;
+  delete process.env.RI_REDIS_TLS_CA_BASE64_1;
+  delete process.env.RI_REDIS_TLS_CERT_PATH_1;
+  delete process.env.RI_REDIS_TLS_CERT_BASE64_1;
+  delete process.env.RI_REDIS_TLS_KEY_PATH_1;
+  delete process.env.RI_REDIS_TLS_KEY_BASE64_1;
+
+  delete process.env.RI_REDIS_HOST_2;
+  delete process.env.RI_REDIS_HHOST;
+};
+
 export const mockPreSetupDatabaseDiscoveryService = () => ({
   discover: jest.fn().mockResolvedValue({ discovered: 0 }),
 });

@@ -53,6 +53,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     key: Joi.string(),
   }).allow(null),
   compressor: Joi.string().valid('NONE', 'GZIP', 'ZSTD', 'LZ4', 'SNAPPY', 'Brotli', 'PHPGZCompress').required(),
+  isPreSetup: Joi.boolean().allow(null),
 })).required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);

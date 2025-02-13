@@ -122,6 +122,20 @@ describe('RedisClient', () => {
 
   describe('destroy', () => {
     it('should remove all listeners, disconnect, set client to null and emit end event', async () => {
+      nodeClient.quit = jest.fn().mockResolvedValue(undefined);
+      const removeAllListenersSpy = jest.spyOn(nodeClient, 'removeAllListeners');
+
+      await redisClientSubscriber['connect']();
+      redisClientSubscriber.destroy();
+
+      expect(redisClientSubscriber['client']).toEqual(null);
+      expect(redisClientSubscriber['status']).toEqual(RedisClientSubscriberStatus.End);
+      expect(removeAllListenersSpy).toHaveBeenCalled();
+      expect(nodeClient.quit).toHaveBeenCalled();
+    });
+    it('should not crash if quick promise was rejected', async () => {
+      nodeClient.quit = jest.fn().mockRejectedValueOnce(new Error('Connection is closed'));
+
       const removeAllListenersSpy = jest.spyOn(nodeClient, 'removeAllListeners');
 
       await redisClientSubscriber['connect']();

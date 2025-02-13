@@ -25,6 +25,13 @@ const OAuthSocialButtons = (props: Props) => {
 
   const socialLinks = [
     {
+      text: 'Microsoft',
+      className: styles.microsoftButton,
+      icon: SsoIcon,
+      label: 'microsoft-oauth',
+      strategy: OAuthStrategy.Microsoft,
+    },
+    {
       text: 'Google',
       className: styles.googleButton,
       icon: GoogleIcon,

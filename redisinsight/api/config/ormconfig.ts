@@ -24,6 +24,7 @@ import { AiQueryMessageEntity } from 'src/modules/ai/query/entities/ai-query.mes
 import { CloudSessionEntity } from 'src/modules/cloud/session/entities/cloud.session.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
+import { MicrosoftAuthSessionEntity } from 'src/modules/auth/microsoft-auth/entities/microsoft-auth.session.entity';
 
 const dbConfig = config.get('db');
 
@@ -54,6 +55,7 @@ const ormConfig = {
     RdiEntity,
     AiQueryMessageEntity,
     CloudSessionEntity,
+    MicrosoftAuthSessionEntity,
   ],
   migrations,
 };

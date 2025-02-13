@@ -106,7 +106,8 @@ export enum OAuthSocialAction {
 export enum OAuthStrategy {
   Google = 'google',
   GitHub = 'github',
-  SSO = 'sso'
+  SSO = 'sso',
+  Microsoft = 'microsoft',
 }
 
 export enum CloudSsoUtmCampaign {

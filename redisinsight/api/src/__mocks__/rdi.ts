@@ -16,6 +16,7 @@ export const mockRdiPasswordEncrypted = 'password_ENCRYPTED';
 export const mockRdiPasswordPlain = 'some pass';
 
 export const mockedRdiAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+export const mockedAccessToken = mockedRdiAccessToken;
 
 export class MockRdiClient extends ApiRdiClient {
   constructor(metadata: RdiClientMetadata, client: any = jest.fn()) {

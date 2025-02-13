@@ -21,6 +21,14 @@ export class CloudDatabaseDetails {
   cloudId: number;
 
   @ApiProperty({
+    description: 'Subscription id from the cloud',
+    type: Number,
+  })
+  @Expose()
+  @IsOptional()
+  subscriptionId: number;
+
+  @ApiProperty({
     description: 'Subscription type',
     enum: () => CloudSubscriptionType,
     example: CloudSubscriptionType.Flexible,

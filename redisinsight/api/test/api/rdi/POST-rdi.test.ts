@@ -60,6 +60,9 @@ describe('POST /rdi', () => {
           nock(validInputData.url).post(`/${RdiUrl.Login}`).query(true).reply(200, {
             access_token: mockedAccessToken,
           });
+          nock(validInputData.url).get(`/${RdiUrl.GetPipelineStatus}`).query(true).reply(200, {
+            version: '2.17',
+          });
         }
       },
       {

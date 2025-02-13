@@ -9,3 +9,4 @@ export * from './class-transformer';
 export * from './file-helper';
 export * from './recommendation-helper';
 export * from './path';
+export * from './big-string';

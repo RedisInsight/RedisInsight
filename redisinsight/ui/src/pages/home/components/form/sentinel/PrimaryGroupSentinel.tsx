@@ -42,6 +42,7 @@ const PrimaryGroupSentinel = (props: Props) => {
               value={formik.values.sentinelMasterName ?? ''}
               maxLength={500}
               onChange={formik.handleChange}
+              disabled
             />
           </EuiFormRow>
         </EuiFlexItem>

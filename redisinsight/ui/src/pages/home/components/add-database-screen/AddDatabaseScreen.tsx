@@ -23,6 +23,7 @@ import {
 import { Pages } from 'uiSrc/constants'
 import ConnectivityOptions from './components/connectivity-options'
 import ConnectionUrl from './components/connection-url'
+import { Values } from './constants'
 
 import styles from './styles.module.scss'
 
@@ -63,9 +64,9 @@ const AddDatabaseScreen = (props: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const validate = (values: any) => {
+  const validate = (values: Values) => {
     const payload = getPayload(values.connectionURL, true)
-    setIsInvalid(!payload && values.connectionURL)
+    setIsInvalid(!payload && !!values.connectionURL)
   }
 
   const handleTestConnection = () => {
@@ -87,7 +88,7 @@ const AddDatabaseScreen = (props: Props) => {
     }))
   }
 
-  const formik = useFormik({
+  const formik = useFormik<Values>({
     initialValues: {
       connectionURL: 'redis://default@127.0.0.1:6379'
     },

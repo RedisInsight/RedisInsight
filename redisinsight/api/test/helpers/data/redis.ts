@@ -9,7 +9,7 @@ import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 export const initDataHelper = (rte) => {
   const client = rte.client;
 
-  const sendCommand = async (command: string, args?: (Buffer | string)[], replyEncoding = 'utf8'): Promise<any> => {
+  const sendCommand = async (command: string, args?: (Buffer | string)[], replyEncoding: BufferEncoding = 'utf8'): Promise<any> => {
     return client.sendCommand(new IORedis.Command(command, args, {
       replyEncoding,
     }));
@@ -486,7 +486,43 @@ export const initDataHelper = (rte) => {
 
     await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_1, 'on', 'hash', 'schema', 'field', 'text']);
     await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_2, 'on', 'hash', 'schema', '*', 'text']);
+
+    // Indexes creation needs some additional time to complete, which usually is around 500ms
+    await waitIndexingToComplete([constants.TEST_SEARCH_HASH_INDEX_1, constants.TEST_SEARCH_HASH_INDEX_2])
   };
+
+  /**
+   * Checks periodically (`retryLimit` times, every `retryInterval` milliseconds) if the creation of the `hashIndexes` has completed.
+   *
+   * @param {string[]} indexes - string array containing the hashes of the indexes.
+   * @param {number} [retryLimit=3] - the maximum number of iterations. Defaults to 3.
+   * @param {number} [retryInterval=300] - the time wait between iterations, in milliseconds. Defaults to 300.
+   */
+  const waitIndexingToComplete = async (hashIndexes: string[], retryLimit = 3, retryInterval = 300) => {
+    let indexesCompleted = new Array(hashIndexes.length).fill(false);
+    for(let retryCounter = 0; retryCounter < retryLimit; retryCounter++) {
+      await new Promise((resolve) => setTimeout(resolve, retryInterval));
+
+      for (let i = 0; i < hashIndexes.length; i++) {
+        // ft.info command returns an array which contains data that shows wether the indexing is in progress
+        // it looks something like this: ["index_name", "the_index_name", ... "indexing", 0, ...]
+        const indexInfo = await sendCommand('ft.info', [hashIndexes[i]]);
+
+        // searching for the "indexing" property index, so we can reach it's value using index + 1 in the info array
+        const indexingPropertyIndex = indexInfo.indexOf("indexing");
+        const indexingValue = indexInfo[indexingPropertyIndex + 1]; // 1 - in progress, 0 - completed
+        indexesCompleted[i] = !indexingValue;
+      }
+
+      if (!indexesCompleted.includes(false)) {
+        break;
+      }
+    }
+
+    if (indexesCompleted.includes(false)) {
+      console.error('Indexing has not yet completed');
+    }
+  }
 
   const generateNReJSONs = async (number: number = 300, clean: boolean) => {
     const jsonValue = JSON.stringify(constants.TEST_REJSON_VALUE_1);

@@ -13,11 +13,16 @@ import { icon as EuiIconArrowUp } from '@elastic/eui/es/components/icon/assets/a
 import { icon as EuiIconArrowDown } from '@elastic/eui/es/components/icon/assets/arrow_down'
 import { App } from './App'
 import './styles/styles.scss'
-import result from '../mockData/resultExplain.json'
+
+// import data from '../test-data/result-explain.json'
+// import data from '../test-data/result-profile_r7.json'
+import data from '../test-data/result-profile_r7--aggregate.json'
+// import data from '../test-data/result-profile_r8.json'
 
 interface Props {
   command?: string
   data?: { response: any, status: string }[]
+  mode?: string
 }
 
 appendIconComponentCache({
@@ -41,8 +46,9 @@ const renderCore = (props: Props) => renderApp(
 )
 
 if (process.env.NODE_ENV === 'development') {
-  const command = 'GRAPH.EXPLAIN us_government "MATCH (p:President)-[:BORN]->(h:State {name:\'Hawaii\'}) RETURN p"'
-  renderCore({ command, data: result, mode: 'ASCII' })
+  const command = 'FT.PROFILE \'idx:bicycle\' SEARCH QUERY \'*\' NOCONTENT'
+
+  renderCore({ command, data, mode: 'ASCII' })
 }
 
 // This is a required action - export the main function for execution of the visualization

@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
-import { useSelector } from 'react-redux'
 import { apiService, localStorageService } from 'uiSrc/services'
 import {
   ApiEndpoints,
@@ -32,7 +31,7 @@ import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { IFetchKeyArgs, IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { appContextDbConfig, resetBrowserTree } from 'uiSrc/slices/app/context'
+import { resetBrowserTree, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 
 import { CreateListWithExpireDto, } from 'apiSrc/modules/browser/list/dto'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
@@ -724,6 +723,11 @@ export function fetchKeyInfo(
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(defaultSelectedKeyActionFailure(errorMessage))
+      const status = get(error, ['response', 'status'])
+      if (status && isStatusNotFoundError(status)) {
+        dispatch(resetKeyInfo())
+        dispatch(setBrowserSelectedKey(null));
+      }
     }
   }
 }

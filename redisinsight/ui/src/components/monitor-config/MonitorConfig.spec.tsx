@@ -13,14 +13,19 @@ import {
 } from 'uiSrc/slices/cli/monitor'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { MonitorEvent, SocketEvent } from 'uiSrc/constants'
+import * as ioHooks from 'uiSrc/services/hooks/useIoConnection'
+import { getSocketApiUrl } from 'uiSrc/utils'
 import MonitorConfig from './MonitorConfig'
 
 let store: typeof mockedStore
 let socket: typeof MockedSocket
+let useIoConnectionSpy: jest.SpyInstance
+
 beforeEach(() => {
   cleanup()
   socket = new MockedSocket()
   socketIO.mockReturnValue(socket)
+  useIoConnectionSpy = jest.spyOn(ioHooks, 'useIoConnection')
   store = cloneDeep(mockedStore)
   store.clearActions()
 })
@@ -62,6 +67,8 @@ describe('MonitorConfig', () => {
       setMonitorLoadingPause(true)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
+    expect(useIoConnectionSpy)
+      .toHaveBeenCalledWith(getSocketApiUrl('monitor'), { query: { instanceId: '1' }, token: '' })
 
     unmount()
   })

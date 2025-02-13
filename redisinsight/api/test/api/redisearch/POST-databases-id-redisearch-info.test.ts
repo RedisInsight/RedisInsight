@@ -27,14 +27,14 @@ const validInputData = {
   index: constants.TEST_SEARCH_HASH_INDEX_1,
 };
 
-const responseSchema = Joi.object({
+const BASE_RESPONSE_SCHEMA = {
   index_name: Joi.string().required(),
   index_options: Joi.object({}),
-  index_definition: Joi.object({
+  index_definition: {
     key_type: Joi.string(),
     prefixes: Joi.array(),
     default_score: Joi.string(),
-  }),
+  },
   attributes: Joi.array().items({
     identifier: Joi.string(),
     attribute: Joi.string(),
@@ -47,13 +47,8 @@ const responseSchema = Joi.object({
     NOSTEM: Joi.string(),
     SEPARATOR: Joi.string(),
   }),
-  num_docs: Joi.string(),
-  max_doc_id: Joi.string(),
-  num_terms: Joi.string(),
-  num_records: Joi.string(),
   inverted_sz_mb: Joi.string(),
   vector_index_sz_mb: Joi.string(),
-  total_inverted_index_blocks: Joi.string(),
   offset_vectors_sz_mb: Joi.string(),
   doc_table_size_mb: Joi.string(),
   sortable_values_size_mb: Joi.string(),
@@ -66,9 +61,7 @@ const responseSchema = Joi.object({
   bytes_per_record_avg: Joi.string(),
   offsets_per_term_avg: Joi.string(),
   offset_bits_per_record_avg: Joi.string(),
-  hash_indexing_failures: Joi.string(),
   total_indexing_time: Joi.string(),
-  indexing: Joi.string(),
   percent_indexed: Joi.string(),
   number_of_uses: Joi.number(),
   cleaning: Joi.number(),
@@ -81,7 +74,38 @@ const responseSchema = Joi.object({
     attribute: Joi.string(),
     'Index Errors': Joi.object(),
   }),
+};
+
+const EXPECTED_SCHEMA_V1 = Joi.object({
+  ...BASE_RESPONSE_SCHEMA,
+  num_docs: Joi.string(),
+  max_doc_id: Joi.string(),
+  num_terms: Joi.string(),
+  num_records: Joi.string(),
+  total_inverted_index_blocks: Joi.string(),
+  hash_indexing_failures: Joi.string(),
+  indexing: Joi.string(),
+  index_definition: Joi.object(BASE_RESPONSE_SCHEMA.index_definition)
 }).required().strict();
+
+const EXPECTED_SCHEMA_V2 = Joi.object({
+  ...BASE_RESPONSE_SCHEMA,
+  num_docs: Joi.number(),
+  max_doc_id: Joi.number(),
+  num_terms: Joi.number(),
+  num_records: Joi.number(),
+  total_inverted_index_blocks: Joi.number(),
+  hash_indexing_failures: Joi.number(),
+  indexing: Joi.number(),
+  index_definition: Joi.object({
+    ...BASE_RESPONSE_SCHEMA.index_definition,
+    indexes_all: Joi.string(),
+  })
+}).required().strict();
+
+const INVALID_INDEX_ERROR_MESSAGE_V1: string = "Unknown Index name";
+const INVALID_INDEX_ERROR_MESSAGE_V2: string = "Unknown index name";
+
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /databases/:id/redisearch/info', () => {
@@ -97,12 +121,13 @@ describe('POST /databases/:id/redisearch/info', () => {
     );
   });
 
-  describe('Common', () => {
+  describe('Common, redisearch version < 2.8.X', () => {
+    requirements('rte.modules.search.version<20800');
     [
       {
         name: 'Should get info index',
         data: validInputData,
-        responseSchema,
+        responseSchema: EXPECTED_SCHEMA_V1,
         checkFn: async ({ body }) => {
           expect(body.index_name).to.eq(constants.TEST_SEARCH_HASH_INDEX_1);
           expect(body.index_definition?.key_type).to.eq('HASH');
@@ -115,7 +140,61 @@ describe('POST /databases/:id/redisearch/info', () => {
         },
         statusCode: 500,
         responseBody: {
-          message: 'Unknown Index name',
+            message: INVALID_INDEX_ERROR_MESSAGE_V1,
+            error: 'Internal Server Error',
+            statusCode: 500,
+        },
+      },
+    ].forEach(mainCheckFn);
+  });
+
+  describe('Common, 2.8.X <= redisearch version  < 2.10.X', () => {
+    requirements(() => 20800 <= rte.env.modules.search.version && rte.env.modules.search.version < 21000);
+    [
+      {
+        name: 'Should get info index',
+        data: validInputData,
+        responseSchema: EXPECTED_SCHEMA_V1,
+        checkFn: async ({ body }) => {
+          expect(body.index_name).to.eq(constants.TEST_SEARCH_HASH_INDEX_1);
+          expect(body.index_definition?.key_type).to.eq('HASH');
+        },
+      },
+      {
+        name: 'Should throw error if non-existent index provided',
+        data: {
+          index: 'Invalid index',
+        },
+        statusCode: 500,
+        responseBody: {
+            message: INVALID_INDEX_ERROR_MESSAGE_V2,
+            error: 'Internal Server Error',
+            statusCode: 500,
+        },
+      },
+    ].forEach(mainCheckFn);
+  });
+
+  describe('Common, redisearch version >= 2.10.X', () => {
+    requirements('rte.modules.search.version>=21000');
+    [
+      {
+        name: 'Should get info index',
+        data: validInputData,
+        responseSchema: EXPECTED_SCHEMA_V2,
+        checkFn: async ({ body }) => {
+          expect(body.index_name).to.eq(constants.TEST_SEARCH_HASH_INDEX_1);
+          expect(body.index_definition?.key_type).to.eq('HASH');
+        },
+      },
+      {
+        name: 'Should throw error if non-existent index provided',
+        data: {
+          index: 'Invalid index',
+        },
+        statusCode: 500,
+        responseBody: {
+          message: INVALID_INDEX_ERROR_MESSAGE_V2,
           error: 'Internal Server Error',
           statusCode: 500,
         },

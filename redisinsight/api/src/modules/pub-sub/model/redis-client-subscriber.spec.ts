@@ -10,7 +10,6 @@ nodeClient.pSubscribe = jest.fn();
 nodeClient.unsubscribe = jest.fn();
 nodeClient.pUnsubscribe = jest.fn();
 nodeClient.disconnect = jest.fn();
-nodeClient.quit = jest.fn();
 
 describe('RedisClient', () => {
   let redisClientSubscriber: RedisClientSubscriber;
@@ -21,6 +20,7 @@ describe('RedisClient', () => {
     getRedisClientFn.mockResolvedValue(nodeClient);
     nodeClient.subscribe.mockResolvedValue('OK');
     nodeClient.pSubscribe.mockResolvedValue('OK');
+    nodeClient.quit = jest.fn().mockResolvedValue(undefined);
   });
 
   describe('getClient', () => {
@@ -122,7 +122,6 @@ describe('RedisClient', () => {
 
   describe('destroy', () => {
     it('should remove all listeners, disconnect, set client to null and emit end event', async () => {
-      nodeClient.quit = jest.fn().mockResolvedValue(undefined);
       const removeAllListenersSpy = jest.spyOn(nodeClient, 'removeAllListeners');
 
       await redisClientSubscriber['connect']();

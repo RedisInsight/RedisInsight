@@ -49,6 +49,7 @@ describe('UserSession', () => {
     getRedisClientFn.mockResolvedValue(nodeClient);
     nodeClient.subscribe.mockResolvedValue('OK');
     nodeClient.pSubscribe.mockResolvedValue('OK');
+    nodeClient.quit = jest.fn().mockResolvedValue(undefined);
   });
 
   describe('subscribe', () => {

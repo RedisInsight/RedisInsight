@@ -35,13 +35,19 @@ describe('validatePipeline', () => {
     const result = validatePipeline({
       config: 'name: valid-config',
       schema: mockSchema,
-      jobs: [{ value: 'task: job1' }, { value: 'task: job2' }],
+      jobs: [
+        { name: 'Job1', value: 'task: job1' },
+        { name: 'Job2', value: 'task: job2' },
+      ],
     })
 
     expect(result).toEqual({
       result: true,
       configValidationErrors: [],
-      jobsValidationErrors: [],
+      jobsValidationErrors: {
+        Job1: [],
+        Job2: [],
+      },
     })
   })
 
@@ -54,13 +60,15 @@ describe('validatePipeline', () => {
     const result = validatePipeline({
       config: 'invalid-config-content',
       schema: mockSchema,
-      jobs: [{ value: 'task: job1' }],
+      jobs: [{ name: 'Job1', value: 'task: job1' }],
     })
 
     expect(result).toEqual({
       result: false,
       configValidationErrors: ["Missing required property 'name'"],
-      jobsValidationErrors: [],
+      jobsValidationErrors: {
+        Job1: [],
+      },
     })
   })
 
@@ -73,13 +81,15 @@ describe('validatePipeline', () => {
     const result = validatePipeline({
       config: 'name: valid-config',
       schema: mockSchema,
-      jobs: [{ value: 'invalid-job-content' }],
+      jobs: [{ name: 'Job1', value: 'invalid-job-content' }],
     })
 
     expect(result).toEqual({
       result: false,
       configValidationErrors: [],
-      jobsValidationErrors: ["Missing required property 'task'"],
+      jobsValidationErrors: {
+        Job1: ["Missing required property 'task'"],
+      },
     })
   })
 
@@ -97,35 +107,40 @@ describe('validatePipeline', () => {
     const result = validatePipeline({
       config: 'invalid-config-content',
       schema: mockSchema,
-      jobs: [{ value: 'invalid-job-content' }],
+      jobs: [{ name: 'Job1', value: 'invalid-job-content' }],
     })
 
     expect(result).toEqual({
       result: false,
       configValidationErrors: ["Missing required property 'name'"],
-      jobsValidationErrors: ["Missing required property 'task'"],
+      jobsValidationErrors: {
+        Job1: ["Missing required property 'task'"],
+      },
     })
   })
 
-  it('should filter duplicate errors', () => {
+  it('should filter duplicate errors per job', () => {
     (validateYamlSchema as jest.Mock).mockImplementation(() => ({
       valid: false,
-      errors: ['Duplicate error', 'Duplicate error'],
+      errors: ['Duplicate error', 'Duplicate error'], // all the jobs get these errors
     }))
 
     const result = validatePipeline({
       config: 'invalid-config-content',
       schema: mockSchema,
       jobs: [
-        { value: 'invalid-job-content' },
-        { value: 'invalid-job-content' },
+        { name: 'Job1', value: 'invalid-job-content' },
+        { name: 'Job2', value: 'invalid-job-content' },
       ],
     })
 
     expect(result).toEqual({
       result: false,
       configValidationErrors: ['Duplicate error'],
-      jobsValidationErrors: ['Duplicate error'],
+      jobsValidationErrors: {
+        Job1: ['Duplicate error'],
+        Job2: ['Duplicate error'],
+      },
     })
   })
 })

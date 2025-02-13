@@ -38,7 +38,7 @@ export const initialState: IStateRdiPipeline = {
   // pipeline validation is based on combination of config + job/s definitions
   isPipelineValid: false,
   configValidationErrors: [],
-  jobsValidationErrors: [],
+  jobsValidationErrors: {},
   resetChecked: false,
   schema: null,
   strategies: {
@@ -167,7 +167,7 @@ const rdiPipelineSlice = createSlice({
     setConfigValidationErrors: (state, { payload }: PayloadAction<string[]>) => {
       state.configValidationErrors = payload
     },
-    setJobsValidationErrors: (state, { payload }: PayloadAction<string[]>) => {
+    setJobsValidationErrors: (state, { payload }: PayloadAction<Record<string, string[]>>) => {
       state.jobsValidationErrors = payload
     },
   },

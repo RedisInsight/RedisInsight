@@ -79,7 +79,7 @@ const JobsTree = (props: IProps) => {
   const [isNewJob, setIsNewJob] = useState(false)
   const [hideTooltip, setHideTooltip] = useState(false)
 
-  const { loading, data, jobs } = useSelector(rdiPipelineSelector)
+  const { loading, data, jobs, jobsValidationErrors } = useSelector(rdiPipelineSelector)
 
   const dispatch = useDispatch()
 
@@ -258,6 +258,8 @@ const JobsTree = (props: IProps) => {
     </EuiFlexItem>
   )
 
+  const isJobValid = (jobName: string) => jobsValidationErrors[jobName].length === 0
+
   const renderJobsList = (jobs: IRdiPipelineJob[]) =>
     jobs.map(({ name }, idx) => (
       <EuiFlexGroup
@@ -298,7 +300,7 @@ const JobsTree = (props: IProps) => {
               data-test-subj="jobs-folder-icon-close"
             />
           </EuiFlexItem>
-          {currentJobName === name ? jobNameEditor(name, idx) : jobName(name)}
+          {currentJobName === name ? jobNameEditor(name, idx) : jobName(name, isJobValid(name))}
         </EuiFlexGroup>
       </EuiFlexGroup>
     ))

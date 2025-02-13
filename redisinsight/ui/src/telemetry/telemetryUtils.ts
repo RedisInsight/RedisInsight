@@ -113,11 +113,11 @@ const getBasedOnViewTypeEvent = (
 
 const getJsonPathLevel = (path: string): string => {
   try {
-    if (path === '.') {
+    if (path === '$') {
       return 'root'
     }
     const levelsLength = jsonpath.parse(
-      `$${path.startsWith('.') ? '.' : '..'}${path}`,
+      `$${path.startsWith('$') ? '.' : '..'}${path}`,
     ).length
 
     return levelsLength === 2 ? 'root' : `${levelsLength - 2}`

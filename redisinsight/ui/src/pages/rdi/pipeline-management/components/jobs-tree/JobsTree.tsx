@@ -28,6 +28,7 @@ import {
 } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
+import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 
 import styles from './styles.module.scss'
 
@@ -157,15 +158,22 @@ const JobsTree = (props: IProps) => {
   const handleToggleAccordion = (isOpen: boolean) =>
     setAccordionState(isOpen ? 'open' : 'closed')
 
-  const jobName = (name: string) => (
+  const jobName = (name: string, isValid: boolean = true) => (
     <>
       <EuiFlexItem
         grow
         onClick={() => onSelectedTab(name)}
-        className={cx(styles.navItem, 'truncateText')}
+        className={cx(styles.navItem, 'truncateText', { invalid: !isValid })}
         data-testid={`rdi-nav-job-${name}`}
       >
         {name}
+
+        {!isValid && (
+          <EuiIcon
+            type={statusErrorIcon}
+            className="rdi-pipeline-nav__error"
+          />
+        )}
       </EuiFlexItem>
       <EuiFlexItem
         grow={false}

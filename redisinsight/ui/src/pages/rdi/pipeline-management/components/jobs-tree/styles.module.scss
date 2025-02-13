@@ -114,6 +114,10 @@
       font: normal normal normal 14px/17px Graphik, sans-serif;
       color: var(--euiTextSubduedColor) !important;
     }
+
+    .invalid {
+      color: var(--euiColorDangerText) !important;
+    }
   }
 }
 

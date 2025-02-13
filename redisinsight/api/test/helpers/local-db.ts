@@ -333,6 +333,29 @@ const createClientCertificate = async (certificate) => {
   return rep.save(certificate);
 }
 
+/**
+ * Remove all pre setup databases and certificates
+ */
+export const cleanupPreSetupDatabases = async () => {
+  const databaseRepository = await getRepository(repositories.DATABASE);
+  await databaseRepository.createQueryBuilder()
+    .delete()
+    .where({ isPreSetup: true })
+    .execute();
+
+  const caCertificateRepository = await getRepository(repositories.CA_CERT_REPOSITORY);
+  await caCertificateRepository.createQueryBuilder()
+    .delete()
+    .where({ isPreSetup: true })
+    .execute();
+
+  const clientCertificateRepository = await getRepository(repositories.CLIENT_CERT_REPOSITORY);
+  await clientCertificateRepository.createQueryBuilder()
+    .delete()
+    .where({ isPreSetup: true })
+    .execute();
+}
+
 export const createTestDbInstance = async (rte, server, data: any = {}): Promise<void> => {
   const rep = await getRepository(repositories.DATABASE);
 

@@ -37,9 +37,6 @@ my.inputs
 *.scss.d.ts
 **/*.scss.d.ts
 
-# IDE - VSCode
-.vscode
-
 # App packaged
 release
 main.prod.js

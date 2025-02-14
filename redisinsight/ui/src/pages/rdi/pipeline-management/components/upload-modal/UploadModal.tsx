@@ -105,7 +105,7 @@ const UploadModal = (props: Props) => {
       dispatch(setPipelineConfig(config || ''))
       dispatch(setPipelineJobs(jobs))
 
-      if (config && jobs && schema) {
+      if (config && schema && jobs?.length) {
         const { result, configValidationErrors, jobsValidationErrors } = validatePipeline(
           { config, schema, jobs }
         )

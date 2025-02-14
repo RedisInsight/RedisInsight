@@ -82,6 +82,7 @@ describe('AddDatabaseScreen', () => {
         name: 'localhost:6322',
         password: undefined,
         port: 6322,
+        timeout: 30000,
         tls: false,
         username: 'default'
       }

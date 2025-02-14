@@ -49,6 +49,7 @@ const Tab = (props: IProps) => {
             <EuiIcon
               type={statusErrorIcon}
               className="rdi-pipeline-nav__error"
+              data-testid="rdi-nav-config-error"
             />
           )}
 

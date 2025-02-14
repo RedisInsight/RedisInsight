@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import {
+  Expose, Transform, Type, plainToClass,
+} from 'class-transformer';
 
 export enum RdiTestConnectionStatus {
   Success = 'success',
@@ -61,6 +63,8 @@ export class RdiTestConnectionsResponseDto {
     description: 'Targets connection results',
   })
   @Expose()
-  @Type(() => RdiTestConnectionResult)
+  @Transform(({ value }) => Object.fromEntries(
+    Object.entries(value || {}).map(([key, val]) => [key, plainToClass(RdiTestConnectionResult, val)]),
+  ))
   targets: Record<string, RdiTestConnectionResult>;
 }

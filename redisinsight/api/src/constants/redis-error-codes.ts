@@ -6,6 +6,7 @@ export enum RedisErrorCodes {
   AuthRequired = 'NOAUTH',
   ConnectionNotFound = 'ENOTFOUND',
   DNSTimeoutError = 'EAI_AGAIN',
+  ClusterAllFailedError = 'ClusterAllFailedError',
   SentinelParamsRequired = 'SENTINEL_PARAMS_REQUIRED',
   ConnectionReset = 'ECONNRESET',
   Timeout = 'ETIMEDOUT',

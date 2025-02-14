@@ -35,7 +35,7 @@ describe('WS new recommendations', () => {
     const client = await getClient();
 
     const recommendationsResponse: any = await new Promise((res) => {
-      client.on(`recommendation:${constants.TEST_INSTANCE_ID}`, res);
+      client.on(`recommendation`, res);
 
       validateApiCall({
         endpoint: () => request(server).post(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/keys/get-info`),

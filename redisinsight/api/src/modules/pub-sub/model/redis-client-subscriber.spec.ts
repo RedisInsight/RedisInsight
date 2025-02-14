@@ -10,7 +10,6 @@ nodeClient.pSubscribe = jest.fn();
 nodeClient.unsubscribe = jest.fn();
 nodeClient.pUnsubscribe = jest.fn();
 nodeClient.disconnect = jest.fn();
-nodeClient.quit = jest.fn();
 
 describe('RedisClient', () => {
   let redisClientSubscriber: RedisClientSubscriber;
@@ -21,6 +20,7 @@ describe('RedisClient', () => {
     getRedisClientFn.mockResolvedValue(nodeClient);
     nodeClient.subscribe.mockResolvedValue('OK');
     nodeClient.pSubscribe.mockResolvedValue('OK');
+    nodeClient.quit = jest.fn().mockResolvedValue(undefined);
   });
 
   describe('getClient', () => {
@@ -122,6 +122,19 @@ describe('RedisClient', () => {
 
   describe('destroy', () => {
     it('should remove all listeners, disconnect, set client to null and emit end event', async () => {
+      const removeAllListenersSpy = jest.spyOn(nodeClient, 'removeAllListeners');
+
+      await redisClientSubscriber['connect']();
+      redisClientSubscriber.destroy();
+
+      expect(redisClientSubscriber['client']).toEqual(null);
+      expect(redisClientSubscriber['status']).toEqual(RedisClientSubscriberStatus.End);
+      expect(removeAllListenersSpy).toHaveBeenCalled();
+      expect(nodeClient.quit).toHaveBeenCalled();
+    });
+    it('should not crash if quick promise was rejected', async () => {
+      nodeClient.quit = jest.fn().mockRejectedValueOnce(new Error('Connection is closed'));
+
       const removeAllListenersSpy = jest.spyOn(nodeClient, 'removeAllListeners');
 
       await redisClientSubscriber['connect']();

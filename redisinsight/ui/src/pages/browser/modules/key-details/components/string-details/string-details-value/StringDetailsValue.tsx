@@ -21,6 +21,7 @@ import {
   stringToBuffer,
   stringToSerializedBufferFormat,
   isFullStringLoaded,
+  isTruncatedString,
 } from 'uiSrc/utils'
 import {
   fetchDownloadStringValue,
@@ -41,6 +42,7 @@ import {
   TEXT_UNPRINTABLE_CHARACTERS,
   STRING_MAX_LENGTH,
   KeyValueFormat,
+  TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
 } from 'uiSrc/constants'
 import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
@@ -71,6 +73,7 @@ const StringDetailsValue = (props: Props) => {
   const { value: initialValue } = useSelector(stringDataSelector)
   const { name: key, type: keyType, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+  const isTruncatedValue = isTruncatedString(initialValue)
 
   const [rows, setRows] = useState<number>(MIN_ROWS)
   const [value, setValue] = useState<JSX.Element | string>('')
@@ -114,10 +117,17 @@ const StringDetailsValue = (props: Props) => {
     )
     setIsEditable(
       !isCompressed
+      && !isTruncatedValue
       && isFormatEditable(viewFormatProp)
       && fullStringLoaded
     )
-    setNoEditableText(isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp))
+    setNoEditableText(
+      isCompressed
+        ? TEXT_DISABLED_COMPRESSED_VALUE
+        : isTruncatedValue
+          ? TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA
+          : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)
+    )
 
     dispatch(setIsStringCompressed(isCompressed))
 
@@ -288,6 +298,7 @@ const StringDetailsValue = (props: Props) => {
                 </EuiButton>
               )}
             </EuiFlexItem>
+            {!isTruncatedValue && (
             <EuiFlexItem grow={false}>
               <EuiButton
                 className={styles.stringFooterBtn}
@@ -297,10 +308,12 @@ const StringDetailsValue = (props: Props) => {
                 iconSide="right"
                 data-testid="download-all-value-btn"
                 onClick={handleDownloadString}
+                isDisabled={isTruncatedValue}
               >
                 Download
               </EuiButton>
             </EuiFlexItem>
+            )}
           </EuiFlexGroup>
         </div>
       )}

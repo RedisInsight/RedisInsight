@@ -16,17 +16,23 @@ import styles from './styles.module.scss'
 
 const headerHeight = 60
 const rowHeight = 54
-const noItemsMessageString = 'Your Consumer Group has no Consumers available.'
 
 export interface Props {
   data: ConsumerDto[]
   columns: ITableColumn[]
   onClosePopover: () => void
   onSelectConsumer: ({ rowData }: { rowData: any }) => void
+  noItemsMessageString?: string
 }
 
 const ConsumersView = (props: Props) => {
-  const { data = [], columns = [], onClosePopover, onSelectConsumer } = props
+  const {
+    data = [],
+    columns = [],
+    onClosePopover,
+    onSelectConsumer,
+    noItemsMessageString = 'Your Consumer Group has no Consumers available.',
+  } = props
 
   const { loading } = useSelector(streamGroupsSelector)
   const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }

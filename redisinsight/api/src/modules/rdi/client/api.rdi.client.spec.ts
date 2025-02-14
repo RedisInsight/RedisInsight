@@ -321,6 +321,8 @@ describe('ApiRdiClient', () => {
         targets: { target1: { status: 'success' } },
       };
 
+      const loggerErrorSpy = jest.spyOn(client['logger'], 'error').mockImplementation();
+
       mockedAxios.post
         .mockResolvedValueOnce({ data: expectedTargetsResponse })
         .mockRejectedValueOnce(new Error('Sources request failed'));
@@ -333,6 +335,9 @@ describe('ApiRdiClient', () => {
       });
 
       expect(mockedAxios.post).toHaveBeenCalledTimes(2);
+
+      expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to fetch sources', expect.any(Error));
+      loggerErrorSpy.mockRestore();
     });
   });
 

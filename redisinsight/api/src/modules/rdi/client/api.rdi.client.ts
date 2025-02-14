@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { plainToClass } from 'class-transformer';
+import { Logger } from '@nestjs/common';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
@@ -64,6 +65,8 @@ const prepareTestSourcesConnectionsOptions = (config: ConnectionsConfig) => {
 
 export class ApiRdiClient extends RdiClient {
   protected readonly client: AxiosInstance;
+
+  private readonly logger = new Logger('ApiRdiClient');
 
   private auth: { jwt: string, exp: number };
 
@@ -223,7 +226,8 @@ export class ApiRdiClient extends RdiClient {
       );
       sources = sourcesResponse.data;
     } catch (error) {
-      // do nothing - failing is expected on RDI version below 1.6.0 (1.4.3 for example)
+      // failing is expected on RDI version below 1.6.0 (1.4.3 for example)
+      this.logger.error('Failed to fetch sources', error);
     }
 
     return { targets, sources };

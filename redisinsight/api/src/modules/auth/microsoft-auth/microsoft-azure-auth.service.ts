@@ -7,6 +7,21 @@ import { MicrosoftAuthSession } from './models/microsoft-auth-session.model';
 
 const { idp: { microsoft: idpConfig } } = config.get('cloud');
 
+interface MicrosoftAuthOptions {
+    state: string;
+    client_info?: string;
+}
+
+interface MicrosoftAuthQuery {
+    state: string;
+    code: string;
+}
+
+interface MicrosoftCredentials {
+    username: string;
+    password: string;
+}
+
 @Injectable()
 export class MicrosoftAuthService {
     private readonly logger = new Logger('MicrosoftAuthService');
@@ -41,7 +56,7 @@ export class MicrosoftAuthService {
 
     async getAuthorizationUrl(
         sessionMetadata: SessionMetadata,
-        options?: any
+        options?: MicrosoftAuthOptions
     ): Promise<string> {
         const pkceCodes = await this.getPKCECodes();
         const authUrl = await this.getAuthCodeUrl({
@@ -61,7 +76,7 @@ export class MicrosoftAuthService {
         return authUrl;
     }
 
-    async handleCallback(query: any): Promise<any> {
+    async handleCallback(query: MicrosoftAuthQuery): Promise<MicrosoftCredentials> {
         try {
             if (!this.authRequests.has(query?.state)) {
                 this.logger.log(

@@ -28,9 +28,10 @@ import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptio
 import {
   CloudOauthSsoUnsupportedEmailException,
 } from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
+import { IAuthService } from 'src/modules/auth/interfaces/auth-service.interface';
 
 @Injectable()
-export class CloudAuthService {
+export class CloudAuthService implements IAuthService {
   private readonly logger = new Logger('CloudAuthService');
 
   private authRequests: Map<string, CloudAuthRequest> = new Map();

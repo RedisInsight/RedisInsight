@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards, Req, Res, Query } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { MicrosoftAuthService } from './microsoft-azure-auth.service';
 import { RequestSessionMetadata } from 'src/common/decorators';
@@ -15,12 +15,9 @@ export class MicrosoftAzureAuthController {
     @Post('logout')
     async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
         try {
-            // Clear session and redirect to home
-            res.clearCookie('session');
-            res.redirect('/');
+            // TODO: Implement logout
         } catch (error) {
             console.error('Logout failed:', error);
-            res.redirect('/auth/error');
         }
     }
 

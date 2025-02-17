@@ -59,6 +59,7 @@ export default {
     'Key with this name does not exist or does not have an associated timeout.',
   SERVER_NOT_AVAILABLE: 'Server is not available. Please try again later.',
   REDIS_CLOUD_FORBIDDEN: 'Error fetching account details.',
+  NO_INFO_COMMAND_PERMISSION: 'has no permissions to run the \'info\' command',
 
   DATABASE_IS_INACTIVE: 'The database is inactive.',
   DATABASE_ALREADY_EXISTS: 'The database already exists.',

@@ -2,18 +2,21 @@ import { Injectable } from '@nestjs/common';
 import {
   calculateRedisHitRatio,
   catchAclError,
+  convertArrayOfKeyValuePairsToObject,
   convertIntToSemanticVersion,
   convertRedisInfoReplyToObject,
 } from 'src/utils';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { REDIS_MODULES_COMMANDS, SUPPORTED_REDIS_MODULES } from 'src/constants';
 import { get, isNil } from 'lodash';
-import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
+import { RedisDatabaseHelloResponse, RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
 import { convertArrayReplyToObject, convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 import { SessionMetadata } from 'src/common/models';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class DatabaseInfoProvider {
@@ -161,6 +164,16 @@ export class DatabaseInfoProvider {
         server: serverInfo,
       };
     } catch (error) {
+      if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
+        // Fallback to hello command
+        const { version, server } = await this.getRedisHelloInfo(client);
+
+        return {
+          version,
+          server,
+        };
+      }
+
       throw catchAclError(error);
     }
   }
@@ -257,6 +270,19 @@ export class DatabaseInfoProvider {
         replyEncoding: 'utf8',
       }) as string;
       return parseInt(total, 10);
+    } catch (e) {
+      throw catchAclError(e);
+    }
+  }
+
+  private async getRedisHelloInfo(client: RedisClient): Promise<RedisDatabaseHelloResponse> {
+    try {
+      const helloResponse = convertArrayOfKeyValuePairsToObject(await client.sendCommand(
+        ['hello'],
+        { replyEncoding: 'utf8' },
+      ) as any[]);
+
+      return plainToClass(RedisDatabaseHelloResponse, helloResponse)
     } catch (e) {
       throw catchAclError(e);
     }

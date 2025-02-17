@@ -379,11 +379,38 @@ describe('DatabaseInfoProvider', () => {
         nodes: [mockRedisGeneralInfo, mockRedisGeneralInfo],
       });
     });
-    it('should throw an error if no permission to run \'info\' command', async () => {
+    it('should get info from hello command when info command is not available', async () => {
       when(standaloneClient.sendCommand)
         .calledWith(['info'], { replyEncoding: 'utf8' })
         .mockRejectedValue({
           message: 'NOPERM this user has no permissions to run the \'info\' command',
+        });
+
+      when(standaloneClient.sendCommand)
+        .calledWith(['hello'], { replyEncoding: 'utf8' })
+        .mockResolvedValue([
+          'version', mockRedisGeneralInfo.version,
+          'server', mockRedisServerInfoDto,
+        ]);
+
+      const result = await service.getRedisGeneralInfo(standaloneClient);
+
+      expect(result).toEqual({
+        version: mockRedisGeneralInfo.version,
+        server: mockRedisServerInfoDto,
+      });
+    });
+    it('should throw an error if no permission to run \'info\' and \'hello\' commands', async () => {
+      when(standaloneClient.sendCommand)
+        .calledWith(['info'], { replyEncoding: 'utf8' })
+        .mockRejectedValue({
+          message: 'NOPERM this user has no permissions to run the \'info\' command',
+        });
+
+      when(standaloneClient.sendCommand)
+        .calledWith(['hello'], { replyEncoding: 'utf8' })
+        .mockRejectedValue({
+          message: 'NOPERM this user has no permissions to run the \'hello\' command',
         });
 
       try {

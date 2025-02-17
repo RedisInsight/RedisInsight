@@ -14,17 +14,12 @@ import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import InstancesNavigationPopover from '../instance-header/components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
 const RdiInstanceHeader = () => {
   const { name = '' } = useSelector(connectedInstanceSelector)
-  const {
-    [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  const { [FeatureFlags.databaseChat]: databaseChatFeature } = useSelector(appFeatureFlagsFeaturesSelector)
   const history = useHistory()
 
   const goHome = () => {
@@ -66,7 +61,7 @@ const RdiInstanceHeader = () => {
         </div>
       </EuiFlexItem>
 
-      {isAnyChatAvailable && (
+      {databaseChatFeature?.flag && (
         <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
           <CopilotTrigger />
         </EuiFlexItem>

@@ -1,0 +1,57 @@
+.container {
+  padding: 20px 0;
+  height: 100%;
+
+  .closeBtnWrapper {
+    padding: 0 20px;
+    display: flex;
+    margin-bottom: 20px;
+
+    .titleWrapper {
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+
+      .title {
+        font-size: 16px;
+      }
+    }
+  }
+
+  .contentWrapper {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    .copilotPreviewWrapper {
+      flex-grow: 1;
+      overflow: hidden;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+
+      img {
+        max-width: 100%;
+        display: block;
+        margin: auto;
+      }
+    }
+
+    .actionBtnWrapper {
+      flex-shrink: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+
+      .getStartedBtn {
+        width: 110px;
+      }
+    }
+  }
+}
+

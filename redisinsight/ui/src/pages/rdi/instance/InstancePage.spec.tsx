@@ -27,8 +27,8 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { setConnectedInstance, loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
+import { clearAiChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { getPipelineStatus, setPipelineConfig, setPipelineInitialState, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
-import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 
 import InstancePage, { Props } from './InstancePage'
 
@@ -96,7 +96,7 @@ describe('InstancePage', () => {
       setInitialAnalyticsSettings(),
       setRedisearchInitialState(),
       setInitialRecommendationsState(),
-      clearExpertChatHistory(),
+      clearAiChatHistory(),
     ]
 
     const expectedActions = [

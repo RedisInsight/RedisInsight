@@ -1,7 +1,6 @@
 .git
 .idea
 .vscode
-.circleci
 
 .nyc_output
 coverage

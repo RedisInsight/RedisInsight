@@ -1,7 +1,6 @@
 .git
 .idea
 .vscode
-.circleci
 .docker
 
 **/node_modules

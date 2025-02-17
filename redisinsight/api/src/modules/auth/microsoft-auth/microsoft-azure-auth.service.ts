@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
-import { DEFAULT_TOKEN_MANAGER_CONFIG, EntraIdCredentialsProviderFactory } from '@redis/entraid/dist/lib/entra-id-credentials-provider-factory';
+import { DEFAULT_TOKEN_MANAGER_CONFIG, EntraIdCredentialsProviderFactory, PKCEParams } from '@redis/entraid/dist/lib/entra-id-credentials-provider-factory';
 import config from 'src/utils/config';
-import { MicrosoftAuthSessionRepository } from './repositories/microsoft-auth.session.repository';
 import { MicrosoftAuthSession } from './models/microsoft-auth-session.model';
+import { EntraidCredentialsProvider } from '@redis/entraid/dist/lib/entraid-credentials-provider';
 
 const { idp: { microsoft: idpConfig } } = config.get('cloud');
 
@@ -22,6 +22,19 @@ interface MicrosoftCredentials {
     password: string;
 }
 
+interface EntraIdAuthProvider {
+    getPKCECodes: () => Promise<{
+        verifier: string;
+        challenge: string;
+        challengeMethod: string;
+    }>;
+    getAuthCodeUrl: (pkceCodes: {
+        challenge: string;
+        challengeMethod: string;
+    }) => Promise<string>;
+    createCredentialsProvider: (params: PKCEParams) => EntraidCredentialsProvider;
+}
+
 @Injectable()
 export class MicrosoftAuthService {
     private readonly logger = new Logger('MicrosoftAuthService');
@@ -29,37 +42,24 @@ export class MicrosoftAuthService {
     private authRequests: Map<string, any> = new Map();
     private inProgressRequests: Map<string, any> = new Map();
 
-    private getPKCECodes: any;
-    private createCredentialsProvider: any;
-    private getAuthCodeUrl: any;
+    private entraIdProvider: EntraIdAuthProvider;
 
-    constructor(
-        private readonly microsoftAuthSessionRepository: MicrosoftAuthSessionRepository,
-    ) {
-
-        const {
-            getPKCECodes,
-            createCredentialsProvider,
-            getAuthCodeUrl
-        } = EntraIdCredentialsProviderFactory.createForAuthorizationCodeWithPKCE({
+    constructor() {
+        this.entraIdProvider = EntraIdCredentialsProviderFactory.createForAuthorizationCodeWithPKCE({
             clientId: idpConfig.clientId,
             redirectUri: idpConfig.redirectUri,
             tokenManagerConfig: DEFAULT_TOKEN_MANAGER_CONFIG,
             authorityConfig: { type: 'custom', authorityUrl: idpConfig.authority },
             scopes: ['offline_access', 'openid', 'email', 'profile'],
         });
-
-        this.getPKCECodes = getPKCECodes;
-        this.createCredentialsProvider = createCredentialsProvider;
-        this.getAuthCodeUrl = getAuthCodeUrl;
     }
 
     async getAuthorizationUrl(
         sessionMetadata: SessionMetadata,
         options?: MicrosoftAuthOptions
     ): Promise<string> {
-        const pkceCodes = await this.getPKCECodes();
-        const authUrl = await this.getAuthCodeUrl({
+        const pkceCodes = await this.entraIdProvider.getPKCECodes();
+        const authUrl = await this.entraIdProvider.getAuthCodeUrl({
             challenge: pkceCodes.challenge,
             challengeMethod: pkceCodes.challengeMethod
         });
@@ -90,7 +90,7 @@ export class MicrosoftAuthService {
             this.authRequests.delete(query.state);
             this.inProgressRequests.set(query.state, authRequest);
 
-            const entraidCredentialsProvider = this.createCredentialsProvider(
+            const entraidCredentialsProvider = this.entraIdProvider.createCredentialsProvider(
                 {
                     code: query.code as string,
                     verifier: authRequest.pkceCodes.verifier,
@@ -109,23 +109,18 @@ export class MicrosoftAuthService {
 
             const [credentials] = await initialCredentials;
 
-            console.log('Credentials acquired:', credentials)
-
-
-            await this.microsoftAuthSessionRepository.save({
-                id: authRequest.sessionMetadata.sessionId,
-                data: {
-                    username: credentials.username,
-                    password: credentials.password,
-                    currentTokenData: entraidCredentialsProvider.getTokenManager().getCurrentToken(),
-                }
-            });
+            if (!credentials?.username || !credentials?.password) {
+                throw new Error('Invalid credentials received');
+            }
 
             delete authRequest.pkceCodes;
 
             this.finishInProgressRequest(query);
 
-            return credentials;
+            return {
+                username: credentials.username,
+                password: credentials.password,
+            };
         } catch (e) {
             this.logger.error('Microsoft auth callback failed', e);
             throw e;
@@ -142,8 +137,8 @@ export class MicrosoftAuthService {
 
     async getSession(id: string): Promise<MicrosoftAuthSession> {
         try {
-            const sessionData = await this.microsoftAuthSessionRepository.get(id);
-            return sessionData?.data || null;
+            // TODO: Implement this
+            return null;
         } catch (e) {
             this.logger.error('Failed to get Microsoft session', e);
             return null;

@@ -6,9 +6,6 @@ export class MicrosoftAuthSession {
 
     @Expose()
     password: string;
-
-    @Expose()
-    currentTokenData: string;
 }
 
 export class MicrosoftAuthSessionData {

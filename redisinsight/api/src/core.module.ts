@@ -14,7 +14,7 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { SessionModule } from 'src/modules/session/session.module';
 import { ServerModule } from 'src/modules/server/server.module';
 import { ConstantsModule } from 'src/modules/constants/constants.module';
-
+import { MicrosoftAuthModule } from 'src/modules/auth/microsoft-auth/microsoft-azure-auth.module';
 @Global()
 @Module({
   imports: [
@@ -30,7 +30,7 @@ import { ConstantsModule } from 'src/modules/constants/constants.module';
     SshModule,
     NestjsFormDataModule,
     FeatureModule.register(),
-    AuthModule.register(),
+    AuthModule.register([MicrosoftAuthModule]),
     SessionModule.register(),
     ServerModule.register(),
   ],
@@ -49,4 +49,4 @@ import { ConstantsModule } from 'src/modules/constants/constants.module';
     ServerModule,
   ],
 })
-export class CoreModule {}
+export class CoreModule { }

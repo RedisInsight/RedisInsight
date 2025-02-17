@@ -41,7 +41,6 @@ if (fs.existsSync(workingDirectory)) {
             await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
         });
     test.skip('Verify that user can see updated info in Enablement Area', async t => {
-
         // Create new file due to cache-ability
         const tutorialsTimestampFileNew = editJsonFile(tutorialsTimestampPath);
 

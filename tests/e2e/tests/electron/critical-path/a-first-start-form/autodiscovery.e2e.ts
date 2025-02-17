@@ -9,11 +9,10 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
-
 const standalonePorts = [8100, 8101, 8102, 8103, 12000];
 const otherPorts = [28100, 8200];
-//TODO Other tests are messing up the state of this test canbe
 
+//TODO Other tests are messing up the state of this test for now seams like deleting the folder  will do as workaround
 const cleanBeforeClientStarts = async () => {await Common.deleteFolderIfExists(workingDirectory)}
 cleanBeforeClientStarts().then(() => {})
 
@@ -21,7 +20,6 @@ fixture `Autodiscovery`
     .meta({ type: 'critical_path', rte: rte.none })
     .page(commonUrl)
     .beforeEach(async(t) => {
-
          await databaseHelper.acceptLicenseTerms();
     });
 

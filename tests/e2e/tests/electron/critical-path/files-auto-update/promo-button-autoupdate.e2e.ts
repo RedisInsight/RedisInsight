@@ -38,8 +38,7 @@ if (fs.existsSync(workingDirectory)) {
         const timestampPathNew = editJsonFile(timestampPromoButtonPath);
         const contentPathNew = editJsonFile(contentPromoButtonPath);
         // Check the promo button after the opening of app
-
-        await t.expect(myRedisDatabasePage.promoButton.textContent).notContains(newPromoButtonText, 'Promo button text is not updated'); //TODO - check what is this promo button
+        await t.expect(myRedisDatabasePage.promoButton.textContent).notContains(newPromoButtonText, 'Promo button text is not updated'); //TODO - check what is with this promo button
         // Get the values from build.json and create-redis.json files
         const actualTimestamp = await timestampPathNew.get('timestamp');
         const actualPromoButtonTitle = await contentPathNew.get('cloud.title');

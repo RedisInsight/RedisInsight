@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
@@ -54,14 +54,17 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
   /**
    * @inheritDoc
    */
-  async create(caCertificate: CaCertificate): Promise<CaCertificate> {
-    // todo: use unique constraint and proper error handling to check for duplications
-    const found = await this.repository.findOneBy({ name: caCertificate.name });
-    if (found) {
-      this.logger.error(
-        `Failed to create certificate: ${caCertificate.name}. ${ERROR_MESSAGES.CA_CERT_EXIST}`,
-      );
-      throw new BadRequestException(ERROR_MESSAGES.CA_CERT_EXIST);
+  async create(caCertificate: CaCertificate, uniqueCheck = true): Promise<CaCertificate> {
+    if (uniqueCheck) {
+      // todo: use unique constraint and proper error handling to check for duplications
+      const found = await this.repository.findOneBy({ name: caCertificate.name });
+
+      if (found) {
+        this.logger.error(
+          `Failed to create certificate: ${caCertificate.name}. ${ERROR_MESSAGES.CA_CERT_EXIST}`,
+        );
+        throw new BadRequestException(ERROR_MESSAGES.CA_CERT_EXIST);
+      }
     }
 
     const entity = await this.repository.save(
@@ -98,5 +101,21 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
     this.logger.debug(`Succeed to delete ca certificate: ${id}`);
 
     return { affectedDatabases };
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async cleanupPreSetup(excludeIds?: string[]): Promise<{ affected: number }> {
+    const { affected } = await this.repository
+      .createQueryBuilder()
+      .delete()
+      .where({
+        isPreSetup: true,
+        id: Not(In(excludeIds)),
+      })
+      .execute();
+
+    return { affected };
   }
 }

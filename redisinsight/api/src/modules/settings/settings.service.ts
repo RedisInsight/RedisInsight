@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -25,6 +27,8 @@ import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IAgreementSpecFile } from 'src/modules/settings/models/agreements.interface';
 import { SessionMetadata } from 'src/common/models';
+
+import { DatabaseDiscoveryService } from 'src/modules/database-discovery/database-discovery.service';
 import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from './dto/settings.dto';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
@@ -34,6 +38,8 @@ export class SettingsService {
   private logger = new Logger('SettingsService');
 
   constructor(
+    @Inject(forwardRef(() => DatabaseDiscoveryService))
+    private readonly databaseDiscoveryService: DatabaseDiscoveryService,
     private readonly settingsRepository: SettingsRepository,
     private readonly agreementRepository: AgreementsRepository,
     private readonly analytics: SettingsAnalytics,
@@ -97,6 +103,16 @@ export class SettingsService {
       this.analytics.sendSettingsUpdatedEvent(sessionMetadata, results, oldAppSettings);
 
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
+
+      // Discover databases from envs or autodiscovery flow when eula accept
+      if (!oldAppSettings?.agreements?.eula && results?.agreements?.eula) {
+        try {
+          await this.databaseDiscoveryService.discover(sessionMetadata, true);
+        } catch (e) {
+          // ignore error
+          this.logger.error('Failed discover databases after eula accepted.', e, sessionMetadata);
+        }
+      }
 
       return results;
     } catch (error) {

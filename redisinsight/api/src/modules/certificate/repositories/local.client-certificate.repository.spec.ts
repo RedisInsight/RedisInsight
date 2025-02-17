@@ -2,7 +2,7 @@ import { when } from 'jest-when';
 import { pick } from 'lodash';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import {
   mockClientCertificate,
   mockClientCertificateCertificateEncrypted,
@@ -121,6 +121,12 @@ describe('LocalClientCertificateRepository', () => {
         expect(repository.save).not.toHaveBeenCalled();
       }
     });
+
+    it('should ignore unique check when explicitly disabled via flag', async () => {
+      const result = await service.create(mockClientCertificate, false);
+
+      expect(result).toEqual(mockClientCertificate);
+    });
   });
 
   describe('delete', () => {
@@ -155,6 +161,22 @@ describe('LocalClientCertificateRepository', () => {
       await expect(service.delete(mockId)).rejects.toThrow(NotFoundException);
       expect(repository.findOneBy).toHaveBeenCalledWith({ id: mockId });
       expect(repository.delete).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('cleanupPreSetup', () => {
+    it('should delete certificates with isPreSetup flag enabled', async () => {
+      const excludeIds = ['_1', '_2'];
+
+      repository.createQueryBuilder().delete().execute.mockResolvedValue({ raw: [], affected: 1 });
+
+      const result = await service.cleanupPreSetup(excludeIds);
+
+      expect(result).toEqual({ affected: 1 });
+      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({
+        isPreSetup: true,
+        id: Not(In(excludeIds)),
+      });
     });
   });
 });

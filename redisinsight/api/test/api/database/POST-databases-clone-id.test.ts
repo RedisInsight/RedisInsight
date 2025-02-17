@@ -44,7 +44,9 @@ const validInputData = {
   port: 111,
 };
 
-const responseSchema = databaseSchema.required().strict(true);
+const responseSchema = databaseSchema.keys({
+  isPreSetup: Joi.boolean().allow(null),
+}).required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -164,6 +166,7 @@ describe(`POST /databases/clone/:id`, () => {
               ..._.omit(oldDatabase, ['id', 'modules', 'name', 'provider', 'lastConnection', 'new', 'timeout', 'compressor', 'version', 'createdAt']),
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
+              isPreSetup: false,
             });
             expect(newDatabase.name).to.not.eq(oldDatabase.name);
             expect(newDatabase.name).to.eq('some name');

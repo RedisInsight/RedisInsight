@@ -3,6 +3,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import {
   mockAgreements,
   mockAgreementsRepository, mockAppSettings,
+  mockDatabaseDiscoveryService,
   mockEncryptionStrategyInstance, mockKeyEncryptionStrategyInstance, mockSessionMetadata, mockSettings,
   mockSettingsAnalyticsService, mockSettingsRepository,
   MockType,
@@ -21,6 +22,7 @@ import { Settings } from 'src/modules/settings/models/settings';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { KeyEncryptionStrategy } from 'src/modules/encryption/strategies/key-encryption.strategy';
+import { DatabaseDiscoveryService } from 'src/modules/database-discovery/database-discovery.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');
@@ -35,6 +37,7 @@ const mockAgreementsMap = new Map(
 describe('SettingsService', () => {
   let service: SettingsService;
   let agreementsRepository: MockType<AgreementsRepository>;
+  let databaseDiscoveryService: MockType<DatabaseDiscoveryService>;
   let settingsRepository: MockType<SettingsRepository>;
   let analyticsService: SettingsAnalytics;
   let keytarStrategy: MockType<KeytarEncryptionStrategy>;
@@ -45,6 +48,10 @@ describe('SettingsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SettingsService,
+        {
+          provide: DatabaseDiscoveryService,
+          useFactory: mockDatabaseDiscoveryService,
+        },
         {
           provide: SettingsAnalytics,
           useFactory: mockSettingsAnalyticsService,
@@ -75,6 +82,7 @@ describe('SettingsService', () => {
     }).compile();
 
     agreementsRepository = module.get(AgreementsRepository);
+    databaseDiscoveryService = module.get(DatabaseDiscoveryService);
     settingsRepository = module.get(SettingsRepository);
     keytarStrategy = module.get(KeytarEncryptionStrategy);
     analyticsService = module.get(SettingsAnalytics);
@@ -135,6 +143,37 @@ describe('SettingsService', () => {
       agreementsRepository.getOrCreate.mockResolvedValue(mockAgreements);
       agreementsRepository.update.mockResolvedValue(mockAgreements);
     });
+    it('should run database discovery when accept eula for the very first time', async () => {
+      agreementsRepository.getOrCreate.mockResolvedValueOnce(null);
+
+      const dto: UpdateSettingsDto = {
+        ...mockSettings.data,
+        agreements: new Map(Object.entries({
+          ...mockAgreements.data,
+        })),
+      };
+
+      await service.updateAppSettings(mockSessionMetadata, dto);
+
+      // first run (user accepted eula) so should run database discovery
+      expect(databaseDiscoveryService.discover).toHaveBeenCalled();
+    });
+    it('should not fail when database discovery throw an error', async () => {
+      agreementsRepository.getOrCreate.mockResolvedValueOnce(null);
+      databaseDiscoveryService.discover.mockRejectedValueOnce(new Error('some error'));
+
+      const dto: UpdateSettingsDto = {
+        ...mockSettings.data,
+        agreements: new Map(Object.entries({
+          ...mockAgreements.data,
+        })),
+      };
+
+      await service.updateAppSettings(mockSessionMetadata, dto);
+
+      // first run (user accepted eula) so should run database discovery
+      expect(databaseDiscoveryService.discover).toHaveBeenCalled();
+    });
     it('should update settings only', async () => {
       const dto: UpdateSettingsDto = {
         scanThreshold: 1001,
@@ -151,6 +190,9 @@ describe('SettingsService', () => {
       });
       expect(response).toEqual(mockAppSettings);
       expect(eventEmitter.emit).toHaveBeenCalledWith(FeatureServerEvents.FeaturesRecalculate);
+
+      // not first run so shouldn't run database discovery
+      expect(databaseDiscoveryService.discover).not.toHaveBeenCalled();
     });
     it('should update agreements only', async () => {
       const dto: UpdateSettingsDto = {

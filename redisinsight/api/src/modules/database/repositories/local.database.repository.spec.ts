@@ -2,7 +2,7 @@ import { when } from 'jest-when';
 import { pick, omit } from 'lodash';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import {
   mockCaCertificateRepository,
   mockClientCertificateRepository,
@@ -407,6 +407,22 @@ describe('LocalDatabaseRepository', () => {
   describe('delete', () => {
     it('should delete database by id', async () => {
       expect(await service.delete(mockSessionMetadata, mockDatabaseId)).toEqual(undefined);
+    });
+  });
+
+  describe('cleanupPreSetup', () => {
+    it('should delete databases with isPreSetup flag enabled', async () => {
+      const excludeIds = ['_1', '_2'];
+
+      repository.createQueryBuilder().delete().execute.mockResolvedValue({ raw: [], affected: 1 });
+
+      const result = await service.cleanupPreSetup(excludeIds);
+
+      expect(result).toEqual({ affected: 1 });
+      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({
+        isPreSetup: true,
+        id: Not(In(excludeIds)),
+      });
     });
   });
 });

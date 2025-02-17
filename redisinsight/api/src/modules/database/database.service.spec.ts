@@ -549,6 +549,34 @@ describe('DatabaseService', () => {
         .toHaveBeenCalledWith(mockSessionMetadata, mockDatabase.id, false, ['id', 'sshOptions.id', 'createdAt']);
     });
 
+    it('should create new database that was created by discovery process without pre setup flag', async () => {
+      databaseRepository.get.mockResolvedValueOnce({
+        ...mockDatabase,
+        isPreSetup: true,
+      });
+
+      const spy = jest.spyOn(service as any, 'create');
+      await service.clone(
+        mockSessionMetadata,
+        mockDatabase.id,
+        classToClass(UpdateDatabaseDto, {
+          username: 'new-name',
+          timeout: 40_000,
+        }),
+      );
+      expect(spy).toBeCalledWith(
+        mockSessionMetadata,
+        omit({
+          ...mockDatabase,
+          username: 'new-name',
+          timeout: 40_000,
+          isPreSetup: false,
+        }, ['sshOptions.id']),
+      );
+      expect(databaseRepository.get)
+        .toHaveBeenCalledWith(mockSessionMetadata, mockDatabase.id, false, ['id', 'sshOptions.id', 'createdAt']);
+    });
+
     it('should create new database with merged ssh options', async () => {
       databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
 

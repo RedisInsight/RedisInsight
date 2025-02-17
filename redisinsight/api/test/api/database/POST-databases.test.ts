@@ -70,7 +70,9 @@ const baseSentinelData = {
   password: constants.TEST_SENTINEL_MASTER_PASS || null,
 }
 
-const responseSchema = databaseSchema.required().strict(true);
+const responseSchema = databaseSchema.keys({
+  isPreSetup: Joi.boolean().allow(null),
+}).required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 

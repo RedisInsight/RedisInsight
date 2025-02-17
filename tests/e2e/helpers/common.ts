@@ -264,6 +264,26 @@ export class Common {
     }
 
     /**
+     * Delete folder
+     * @param filePath Path to file
+     */
+    static async deleteFolderIfExists(filePath: string): Promise<void> {
+      if (fs.existsSync(filePath)) {
+            fs.rm(filePath, {
+                recursive: true,
+                force: true
+            }, (error) => {
+                if (error) {
+                    console.log(error);
+                }
+                else {
+                    console.log(`Directory Deleted: ${filePath}`);
+
+                }
+            });
+        }
+    }
+    /**
       * Read file from folder
       * @param filePath Path to file
      */

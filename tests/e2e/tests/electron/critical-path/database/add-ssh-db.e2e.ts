@@ -127,8 +127,8 @@ test
     await myRedisDatabasePage.clickOnDBByName(sshDbPasscode.databaseName);
     await Common.checkURLContainsText('browser');
 });
-test
-    .meta({ rte: rte.ossCluster })('Verify that  OSS Cluster database with SSH can be added and work correctly', async t => {
+test.skip
+    .meta({ rte: rte.ossCluster, skipComment: "Unstable and will be affected by RI-5995" })('Verify that  OSS Cluster database with SSH can be added and work correctly', async t => {
     const sshWithPass = {
         ...sshParams,
         sshPassword: 'pass'

@@ -58,15 +58,11 @@ test('Verify that user can navigate to instances using navigation widget', async
     await t.click(browserPage.NavigationHeader.dbName)
     await t.click(browserPage.NavigationHeader.homeLinkNavigation);
     await t.expect(myRedisDatabasePage.hostPort.exists).ok('Db list page is not opened');
-
-
     await myRedisDatabasePage.clickOnDBByName(
         ossStandaloneConfig.databaseName
     )
-    await t.debug();
     await t.click(browserPage.NavigationHeader.dbName)
     await t.typeText(browserPage.NavigationHeader.dbListInput, ossStandaloneV7Config.databaseName);
-    await t.debug();
     dbWidgetNames = await browserPage.NavigationHeader.getAllDatabases();
     await t.expect(dbWidgetNames.length).eql(1, 'DB List is not searched');
     await t.click(browserPage.NavigationHeader.rdiNavigationTab);

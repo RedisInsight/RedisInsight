@@ -5,7 +5,7 @@ import { FormikProps } from 'formik'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
 export interface Props {
-  formik: FormikProps<DbConnectionInfo>
+  formik: FormikProps<DbConnectionInfo>;
 }
 
 const ForceStandaloneLabel = () => (
@@ -20,7 +20,13 @@ const ForceStandaloneLabel = () => (
         </p>
       )}
     >
-      <EuiIcon type="iInCircle" style={{ cursor: 'pointer', marginLeft: '5px' }} />
+      <EuiIcon
+        type="iInCircle"
+        style={{
+          cursor: 'pointer',
+          marginLeft: '5px',
+        }}
+      />
     </EuiToolTip>
   </p>
 )
@@ -32,27 +38,26 @@ const ForceStandalone = (props: Props) => {
   }
 
   return (
-    <>
-      <EuiFlexGroup
-        responsive={false}
-        gutterSize="xs"
+
+    <EuiFlexGroup
+      responsive={false}
+      gutterSize="xs"
+    >
+      <EuiFlexItem
+        grow={false}
       >
-        <EuiFlexItem
-          grow={false}
-        >
-          <EuiFormRow>
-            <EuiCheckbox
-              id={`${htmlIdGenerator()()} over forceStandalone`}
-              name="forceStandalone"
-              label={<ForceStandaloneLabel />}
-              checked={!!formik.values.forceStandalone}
-              onChange={handleChangeForceStandaloneCheckbox}
-              data-testid="forceStandalone"
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </>
+        <EuiFormRow>
+          <EuiCheckbox
+            id={`${htmlIdGenerator()()} over forceStandalone`}
+            name="forceStandalone"
+            label={<ForceStandaloneLabel />}
+            checked={!!formik.values.forceStandalone}
+            onChange={handleChangeForceStandaloneCheckbox}
+            data-testid="forceStandalone"
+          />
+        </EuiFormRow>
+      </EuiFlexItem>
+    </EuiFlexGroup>
   )
 }
 

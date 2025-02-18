@@ -54,6 +54,7 @@ import rdiDryRunJobReducer from './rdi/dryRun'
 import rdiTestConnectionsReducer from './rdi/testConnections'
 import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
+import appDbSettingsReducer from './app/db-settings'
 
 const riConfig = getConfig()
 
@@ -71,7 +72,8 @@ export const rootReducer = combineReducers({
     urlHandling: appUrlHandlingReducer,
     csrf: appCsrfReducer,
     init: appInitReducer,
-    connectivity: appConnectivityReducer
+    connectivity: appConnectivityReducer,
+    dbSettings: appDbSettingsReducer,
   }),
   connections: combineReducers({
     instances: instancesReducer,

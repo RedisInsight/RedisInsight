@@ -12,6 +12,9 @@ import {
   mockRedisNoPermError,
   mockRedisWrongTypeError,
   mockBrowserClientMetadata, mockDatabaseClientFactory, mockStandaloneRedisClient,
+  mockDatabaseService,
+  MockType,
+  mockDatabaseWithModules,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -21,16 +24,18 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { mockAddFieldsDto } from 'src/modules/browser/__mocks__';
+import { DatabaseService } from 'src/modules/database/database.service';
 import { RejsonRlService } from './rejson-rl.service';
 
 const testKey = Buffer.from('somejson');
 const testSerializedObject = JSON.stringify({ some: 'object' });
-const testPath = '.';
+const testPath = '$';
 const testExpire = 30;
 
 describe('JsonService', () => {
   const client = mockStandaloneRedisClient;
   let service: RejsonRlService;
+  let databaseService: MockType<DatabaseService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,11 +45,16 @@ describe('JsonService', () => {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,
         },
+        {
+          provide: DatabaseService,
+          useFactory: mockDatabaseService,
+        },
       ],
     }).compile();
 
     service = module.get<RejsonRlService>(RejsonRlService);
     client.sendCommand = jest.fn().mockResolvedValue(undefined);
+    databaseService = module.get(DatabaseService);
   });
 
   describe('getJson', () => {
@@ -61,7 +71,7 @@ describe('JsonService', () => {
           testKey,
           path,
         ], { replyEncoding: 'utf8' })
-        .mockReturnValue(type);
+        .mockReturnValue([type]);
 
       if (value !== undefined) {
         when(client.sendCommand)
@@ -70,7 +80,7 @@ describe('JsonService', () => {
             testKey,
             path,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(value));
+          .mockReturnValue(JSON.stringify([value]));
       }
 
       switch (type) {
@@ -81,7 +91,7 @@ describe('JsonService', () => {
               testKey,
               path,
             ], { replyEncoding: 'utf8' })
-            .mockReturnValue(cardinality);
+            .mockReturnValue([cardinality]);
           break;
         case 'object':
           when(client.sendCommand)
@@ -90,7 +100,7 @@ describe('JsonService', () => {
               testKey,
               path,
             ], { replyEncoding: 'utf8' })
-            .mockReturnValue(cardinality);
+            .mockReturnValue([cardinality]);
           break;
         default:
       }
@@ -98,12 +108,13 @@ describe('JsonService', () => {
 
     describe('full json download', () => {
       beforeEach(() => {
+        databaseService.get.mockResolvedValue(mockDatabaseWithModules);
         when(client.sendCommand)
           .calledWith([
             BrowserToolRejsonRlCommands.JsonDebug,
             'MEMORY',
             testKey,
-            testPath,
+            '.',
           ])
           .mockReturnValue(10);
       });
@@ -114,7 +125,7 @@ describe('JsonService', () => {
             BrowserToolRejsonRlCommands.JsonDebug,
             'MEMORY',
             testKey,
-            testPath,
+            '.',
           ])
           .mockResolvedValue(null);
 
@@ -205,7 +216,7 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -226,7 +237,7 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -247,7 +258,7 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -268,7 +279,7 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -289,7 +300,7 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -318,7 +329,7 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -345,7 +356,7 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -372,7 +383,7 @@ describe('JsonService', () => {
             BrowserToolRejsonRlCommands.JsonDebug,
             'MEMORY',
             testKey,
-            testPath,
+            '.',
           ])
           .mockReturnValue(1025);
 
@@ -382,7 +393,7 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -399,6 +410,7 @@ describe('JsonService', () => {
     });
     describe('user has no PERM for JSON.DEBUG', () => {
       beforeEach(() => {
+        databaseService.get.mockResolvedValue(mockDatabaseWithModules);
         const replyError: ReplyError = {
           ...mockRedisNoPermError,
           command: 'JSON.DEBUG',
@@ -409,7 +421,7 @@ describe('JsonService', () => {
             BrowserToolRejsonRlCommands.JsonDebug,
             'MEMORY',
             testKey,
-            testPath,
+            '.',
           ])
           .mockRejectedValue(replyError);
       });
@@ -422,7 +434,7 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -444,7 +456,7 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
 
         when(client.sendCommand)
           .calledWith([
@@ -468,12 +480,13 @@ describe('JsonService', () => {
     });
     describe('partial json download', () => {
       beforeEach(() => {
+        databaseService.get.mockResolvedValue(mockDatabaseWithModules);
         when(client.sendCommand)
           .calledWith([
             BrowserToolRejsonRlCommands.JsonDebug,
             'MEMORY',
             testKey,
-            testPath,
+            '.',
           ])
           .mockReturnValue(1025);
       });
@@ -486,14 +499,14 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(JSON.stringify(testData));
+          .mockReturnValue(JSON.stringify([testData]));
         when(client.sendCommand)
           .calledWith([
             BrowserToolRejsonRlCommands.JsonType,
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue('string');
+          .mockReturnValue(['string']);
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -523,22 +536,22 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue('array');
+          .mockReturnValue(['array']);
         when(client.sendCommand)
           .calledWith([
             BrowserToolRejsonRlCommands.JsonArrLen,
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(7);
+          .mockReturnValue([7]);
 
-        mockRedisCallsForSafeResponse('[0]', 0, 'integer', testData[0]);
-        mockRedisCallsForSafeResponse('[1]', 1, 'number', testData[1]);
-        mockRedisCallsForSafeResponse('[2]', 2, 'string', testData[2]);
-        mockRedisCallsForSafeResponse('[3]', 3, 'boolean', testData[3]);
-        mockRedisCallsForSafeResponse('[4]', 4, 'null', testData[4]);
-        mockRedisCallsForSafeResponse('[5]', 5, 'array', undefined, 3);
-        mockRedisCallsForSafeResponse('[6]', 6, 'object', undefined, 2);
+        mockRedisCallsForSafeResponse('$[0]', 0, 'integer', testData[0]);
+        mockRedisCallsForSafeResponse('$[1]', 1, 'number', testData[1]);
+        mockRedisCallsForSafeResponse('$[2]', 2, 'string', testData[2]);
+        mockRedisCallsForSafeResponse('$[3]', 3, 'boolean', testData[3]);
+        mockRedisCallsForSafeResponse('$[4]', 4, 'null', testData[4]);
+        mockRedisCallsForSafeResponse('$[5]', 5, 'array', undefined, 3);
+        mockRedisCallsForSafeResponse('$[6]', 6, 'object', undefined, 2);
 
         const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
@@ -552,48 +565,48 @@ describe('JsonService', () => {
           data: [
             {
               key: 0,
-              path: '[0]',
+              path: '$[0]',
               cardinality: 1,
               type: 'integer',
               value: String(testData[0]),
             },
             {
               key: 1,
-              path: '[1]',
+              path: '$[1]',
               cardinality: 1,
               type: 'number',
               value: String(testData[1]),
             },
             {
               key: 2,
-              path: '[2]',
+              path: '$[2]',
               cardinality: 1,
               type: 'string',
               value: `"${testData[2]}"`,
             },
             {
               key: 3,
-              path: '[3]',
+              path: '$[3]',
               cardinality: 1,
               type: 'boolean',
               value: String(testData[3]),
             },
             {
               key: 4,
-              path: '[4]',
+              path: '$[4]',
               cardinality: 1,
               type: 'null',
               value: String(testData[4]),
             },
             {
               key: 5,
-              path: '[5]',
+              path: '$[5]',
               cardinality: 3,
               type: 'array',
             },
             {
               key: 6,
-              path: '[6]',
+              path: '$[6]',
               cardinality: 2,
               type: 'object',
             },
@@ -601,7 +614,7 @@ describe('JsonService', () => {
         });
       });
       it('should return array with scalar values in a custom path', async () => {
-        const path = '["customPath"]';
+        const path = '$["customPath"]';
         const testData = [12, 'str'];
         when(client.sendCommand)
           .calledWith([
@@ -617,14 +630,14 @@ describe('JsonService', () => {
             testKey,
             path,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue('array');
+          .mockReturnValue(['array']);
         when(client.sendCommand)
           .calledWith([
             BrowserToolRejsonRlCommands.JsonArrLen,
             testKey,
             path,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(2);
+          .mockReturnValue([2]);
 
         mockRedisCallsForSafeResponse(
           `${path}[0]`,
@@ -683,54 +696,54 @@ describe('JsonService', () => {
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue('object');
+          .mockReturnValue(['object']);
         when(client.sendCommand)
           .calledWith([
             BrowserToolRejsonRlCommands.JsonObjKeys,
             testKey,
             testPath,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(Object.keys(testData));
+          .mockReturnValue([Object.keys(testData)]);
 
         mockRedisCallsForSafeResponse(
-          '["fInt"]',
+          '$["fInt"]',
           'fInt',
           'integer',
           testData.fInt,
         );
         mockRedisCallsForSafeResponse(
-          '["fNum"]',
+          '$["fNum"]',
           'fNum',
           'number',
           testData.fNum,
         );
         mockRedisCallsForSafeResponse(
-          '["fStr"]',
+          '$["fStr"]',
           'fStr',
           'string',
           testData.fStr,
         );
         mockRedisCallsForSafeResponse(
-          '["fBool"]',
+          '$["fBool"]',
           'fBool',
           'boolean',
           testData.fBool,
         );
         mockRedisCallsForSafeResponse(
-          '["fNull"]',
+          '$["fNull"]',
           'fNull',
           'null',
           testData.fNull,
         );
         mockRedisCallsForSafeResponse(
-          '["fArr"]',
+          '$["fArr"]',
           'fArr',
           'array',
           undefined,
           3,
         );
         mockRedisCallsForSafeResponse(
-          '["fObj"]',
+          '$["fObj"]',
           'fObj',
           'object',
           undefined,
@@ -749,48 +762,48 @@ describe('JsonService', () => {
           data: [
             {
               key: 'fInt',
-              path: '["fInt"]',
+              path: '$["fInt"]',
               cardinality: 1,
               type: 'integer',
               value: String(testData.fInt),
             },
             {
               key: 'fNum',
-              path: '["fNum"]',
+              path: '$["fNum"]',
               cardinality: 1,
               type: 'number',
               value: String(testData.fNum),
             },
             {
               key: 'fStr',
-              path: '["fStr"]',
+              path: '$["fStr"]',
               cardinality: 1,
               type: 'string',
               value: `"${testData.fStr}"`,
             },
             {
               key: 'fBool',
-              path: '["fBool"]',
+              path: '$["fBool"]',
               cardinality: 1,
               type: 'boolean',
               value: String(testData.fBool),
             },
             {
               key: 'fNull',
-              path: '["fNull"]',
+              path: '$["fNull"]',
               cardinality: 1,
               type: 'null',
               value: String(testData.fNull),
             },
             {
               key: 'fArr',
-              path: '["fArr"]',
+              path: '$["fArr"]',
               cardinality: 3,
               type: 'array',
             },
             {
               key: 'fObj',
-              path: '["fObj"]',
+              path: '$["fObj"]',
               cardinality: 2,
               type: 'object',
             },
@@ -798,7 +811,7 @@ describe('JsonService', () => {
         });
       });
       it('should return object with scalar values as strings in a custom path', async () => {
-        const path = '["customPath"]';
+        const path = '$["customPath"]';
         const testData = {
           fInt: 12,
           fStr: 'str',
@@ -818,14 +831,14 @@ describe('JsonService', () => {
             testKey,
             path,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue('object');
+          .mockReturnValue(['object']);
         when(client.sendCommand)
           .calledWith([
             BrowserToolRejsonRlCommands.JsonObjKeys,
             testKey,
             path,
           ], { replyEncoding: 'utf8' })
-          .mockReturnValue(Object.keys(testData));
+          .mockReturnValue([Object.keys(testData)]);
 
         mockRedisCallsForSafeResponse(
           `${path}["fInt"]`,
@@ -871,6 +884,7 @@ describe('JsonService', () => {
   });
   describe('create', () => {
     beforeEach(() => {
+      databaseService.get.mockResolvedValue(mockDatabaseWithModules);
       when(client.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, mockAddFieldsDto.keyName])
         .mockResolvedValue(false);
@@ -971,6 +985,7 @@ describe('JsonService', () => {
   });
   describe('jsonSet', () => {
     beforeEach(() => {
+      databaseService.get.mockResolvedValue(mockDatabaseWithModules);
       client.sendCommand.mockReturnValue('OK');
     });
     it('should throw NotFound error when key does not exists for jsonSet', async () => {
@@ -1118,6 +1133,10 @@ describe('JsonService', () => {
       }
     });
     it('should successful modify data', async () => {
+      client.sendCommand.mockReturnValueOnce('OK');
+      // JSON.ARRAPEND returns an array of integer replies for each path, the array's new size,
+      // or nil, if the matching JSON value is not an array
+      client.sendCommand.mockReturnValueOnce([10]);
       await service.arrAppend(mockBrowserClientMetadata, {
         keyName: testKey,
         path: testPath,
@@ -1139,6 +1158,7 @@ describe('JsonService', () => {
   });
   describe('remove', () => {
     beforeEach(() => {
+      databaseService.get.mockResolvedValue(mockDatabaseWithModules);
       client.sendCommand.mockReturnValue('OK');
     });
     it('should throw NotFound error when key does not exists', async () => {

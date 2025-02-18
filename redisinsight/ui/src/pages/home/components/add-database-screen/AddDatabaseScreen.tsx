@@ -11,9 +11,10 @@ import {
 import { useFormik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
+import { toNumber } from 'lodash'
 import { Nullable, parseRedisUrl } from 'uiSrc/utils'
 
-import { AddDbType } from 'uiSrc/pages/home/constants'
+import { AddDbType, DEFAULT_TIMEOUT } from 'uiSrc/pages/home/constants'
 import { Instance } from 'uiSrc/slices/interfaces'
 import {
   createInstanceStandaloneAction,
@@ -43,6 +44,7 @@ const getPayload = (connectionUrl: string, returnOnError = false) => {
     port: details?.port || 6379,
     username: details?.username || 'default',
     password: details?.password || undefined,
+    timeout: toNumber(DEFAULT_TIMEOUT),
     tls: details?.protocol === 'rediss',
     db: details?.dbNumber,
   }

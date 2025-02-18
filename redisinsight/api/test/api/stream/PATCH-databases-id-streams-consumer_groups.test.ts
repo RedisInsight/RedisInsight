@@ -39,46 +39,96 @@ describe('PATCH /databases/:instanceId/streams/consumer-groups', () => {
     requirements('!rte.bigData');
     beforeEach(() => rte.data.generateBinKeys(true));
 
-    [
-      {
-        name: 'Should update consumer group lastDeliveredId from buff',
-        data: {
-          keyName: constants.TEST_STREAM_KEY_BIN_BUF_OBJ_1,
-          name: constants.TEST_STREAM_GROUP_BIN_BUF_OBJ_1,
-          lastDeliveredId: constants.TEST_STREAM_ID_2,
+    describe('Redis version < 7', () => {
+      requirements('rte.version<7.0');
+      [
+        {
+          name: 'Should update consumer group lastDeliveredId from buff',
+          data: {
+            keyName: constants.TEST_STREAM_KEY_BIN_BUF_OBJ_1,
+            name: constants.TEST_STREAM_GROUP_BIN_BUF_OBJ_1,
+            lastDeliveredId: constants.TEST_STREAM_ID_2,
+          },
+          after: async () => {
+            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+            expect(groups).to.deep.eq([
+              [
+                Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+                Buffer.from('consumers'), 0,
+                Buffer.from('pending'), 0,
+                Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
+              ]
+            ]);
+          },
         },
-        after: async () => {
-          const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
-          expect(groups).to.deep.eq([
-            [
-              Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
-              Buffer.from('consumers'), 0,
-              Buffer.from('pending'), 0,
-              Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
-            ]
-          ]);
+        {
+          name: 'Should update consumer group lastDeliveredId from ascii',
+          data: {
+            keyName: constants.TEST_STREAM_KEY_BIN_ASCII_1,
+            name: constants.TEST_STREAM_GROUP_BIN_ASCII_1,
+            lastDeliveredId: constants.TEST_STREAM_ID_2,
+          },
+          after: async () => {
+            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+            expect(groups).to.deep.eq([
+              [
+                Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+                Buffer.from('consumers'), 0,
+                Buffer.from('pending'), 0,
+                Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
+              ]
+            ]);
+          },
         },
-      },
-      {
-        name: 'Should update consumer group lastDeliveredId from ascii',
-        data: {
-          keyName: constants.TEST_STREAM_KEY_BIN_ASCII_1,
-          name: constants.TEST_STREAM_GROUP_BIN_ASCII_1,
-          lastDeliveredId: constants.TEST_STREAM_ID_2,
+      ].forEach(mainCheckFn);
+    });
+    describe('Redis version >= 7', () => {
+      requirements('rte.version>=7.0');
+      [
+        {
+          name: 'Should update consumer group lastDeliveredId from buff',
+          data: {
+            keyName: constants.TEST_STREAM_KEY_BIN_BUF_OBJ_1,
+            name: constants.TEST_STREAM_GROUP_BIN_BUF_OBJ_1,
+            lastDeliveredId: constants.TEST_STREAM_ID_2,
+          },
+          after: async () => {
+            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+            expect(groups).to.deep.eq([
+              [
+                Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+                Buffer.from('consumers'), 0,
+                Buffer.from('pending'), 0,
+                Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
+                Buffer.from('entries-read'), null,
+                Buffer.from('lag'), 1,
+              ]
+            ]);
+          },
         },
-        after: async () => {
-          const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
-          expect(groups).to.deep.eq([
-            [
-              Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
-              Buffer.from('consumers'), 0,
-              Buffer.from('pending'), 0,
-              Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
-            ]
-          ]);
+        {
+          name: 'Should update consumer group lastDeliveredId from ascii',
+          data: {
+            keyName: constants.TEST_STREAM_KEY_BIN_ASCII_1,
+            name: constants.TEST_STREAM_GROUP_BIN_ASCII_1,
+            lastDeliveredId: constants.TEST_STREAM_ID_2,
+          },
+          after: async () => {
+            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+            expect(groups).to.deep.eq([
+              [
+                Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+                Buffer.from('consumers'), 0,
+                Buffer.from('pending'), 0,
+                Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
+                Buffer.from('entries-read'), null,
+                Buffer.from('lag'), 1,
+              ]
+            ]);
+          },
         },
-      },
-    ].map(mainCheckFn);
+      ].forEach(mainCheckFn);
+    });
   });
 
   describe('Main', () => {

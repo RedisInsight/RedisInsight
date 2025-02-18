@@ -45,6 +45,7 @@ import { AiHistory1718260230164 } from './1718260230164-ai-history';
 import { CloudSession1729085495444 } from './1729085495444-cloud-session';
 import { CommandExecution1726058563737 } from './1726058563737-command-execution';
 import { DatabaseCreatedAt1733740794737 } from './1733740794737-database-createdAt';
+import { MicrosoftAzureAuth1739636593872 } from './1739636593872-MicrosoftAzureAuth';
 
 export default [
   initialMigration1614164490968,
@@ -94,4 +95,5 @@ export default [
   CloudSession1729085495444,
   CommandExecution1726058563737,
   DatabaseCreatedAt1733740794737,
+  MicrosoftAzureAuth1739636593872,
 ];

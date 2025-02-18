@@ -13,7 +13,6 @@ const ForceStandaloneLabel = () => (
     <span>Force Standalone Connection</span>
     <EuiToolTip
       className="homePage_tooltip"
-      anchorClassName="inputAppendIcon"
       position="right"
       content={(
         <p>Override the default connection logic and connect to the specified endpoint as a standalone
@@ -21,7 +20,7 @@ const ForceStandaloneLabel = () => (
         </p>
       )}
     >
-      <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+      <EuiIcon type="iInCircle" style={{ cursor: 'pointer', marginLeft: '5px' }} />
     </EuiToolTip>
   </p>
 )

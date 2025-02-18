@@ -321,6 +321,7 @@ describe('DatabaseAnalytics', () => {
       };
       const cur = {
         ...mockDatabase,
+        forceStandalone: undefined,
       };
       service.sendInstanceEditedEvent(mockSessionMetadata, prev, cur);
 

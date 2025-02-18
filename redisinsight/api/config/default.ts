@@ -215,11 +215,6 @@ export default {
         || 'https://raw.githubusercontent.com/RedisTimeSeries/RedisTimeSeries/master/commands.json',
     },
     {
-      name: 'redisai',
-      url: process.env.RI_COMMANDS_REDISAI_URL
-        || 'https://raw.githubusercontent.com/RedisAI/RedisAI/master/commands.json',
-    },
-    {
       name: 'redisgraph',
       url: process.env.RI_COMMANDS_REDISGRAPH_URL
         || 'https://raw.githubusercontent.com/RedisGraph/RedisGraph/master/commands.json',

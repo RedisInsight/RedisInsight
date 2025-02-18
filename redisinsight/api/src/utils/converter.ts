@@ -37,20 +37,14 @@ export const convertStringToNumber = (value: any, defaultValue?: number): number
   return num;
 };
 
-export const convertArrayOfKeyValuePairsToObject = (
-  array: any[],
-): Record<string, any> =>
-  array.reduce(
-    (memo, current, index, array) =>
-      index % 2 === 1
-        ? memo
-        : {
-            ...memo,
-            [current]: Array.isArray(array[index + 1]?.[0])
-              ? array[index + 1].map((element) =>
-                  convertArrayOfKeyValuePairsToObject(element),
-                )
-              : array[index + 1],
-          },
-    {},
-  );
+export const convertArrayOfKeyValuePairsToObject = (array: any[]) => {
+  const result: Record<string, any> = {};
+
+  for (let i = 0; i + 1 < array.length; i += 2) {
+    const key = array[i];
+    const value = array[i + 1];
+    result[key] = value;
+  }
+
+  return result;
+};

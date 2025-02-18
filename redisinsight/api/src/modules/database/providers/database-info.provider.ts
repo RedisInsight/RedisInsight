@@ -277,12 +277,17 @@ export class DatabaseInfoProvider {
 
   private async getRedisHelloInfo(client: RedisClient): Promise<RedisDatabaseHelloResponse> {
     try {
-      const helloResponse = convertArrayOfKeyValuePairsToObject(await client.sendCommand(
-        ['hello'],
-        { replyEncoding: 'utf8' },
-      ) as any[]);
+      const helloResponse = (await client.sendCommand(['hello'], {
+        replyEncoding: 'utf8',
+      })) as any[];
 
-      return plainToClass(RedisDatabaseHelloResponse, helloResponse)
+      const helloInfoResponse = convertArrayOfKeyValuePairsToObject(helloResponse);
+
+      if (helloInfoResponse.modules?.length) {
+        helloInfoResponse.modules = helloInfoResponse.modules.map(convertArrayOfKeyValuePairsToObject);
+      }
+
+      return plainToClass(RedisDatabaseHelloResponse, helloInfoResponse)
     } catch (e) {
       throw catchAclError(e);
     }

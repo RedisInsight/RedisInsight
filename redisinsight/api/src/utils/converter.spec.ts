@@ -1,4 +1,5 @@
 import {
+  convertArrayOfKeyValuePairsToObject,
   convertIntToSemanticVersion,
   convertStringToNumber,
 } from './converter';
@@ -47,5 +48,34 @@ describe('convertStringToNumber', () => {
 
       expect(result).toEqual(test.output);
     });
+  });
+});
+
+describe('convertArrayOfKeyValuePairsToObject', () => {
+  it('should convert array of key value pairs to object', () => {
+    const input = ['key1', 'value1', 'key2', 'value2'];
+    const output = { key1: 'value1', key2: 'value2' };
+
+    const result = convertArrayOfKeyValuePairsToObject(input);
+
+    expect(result).toEqual(output);
+  });
+
+  it('should convert array of key value pairs to object with odd number of elements', () => {
+    const input = ['key1', 'value1', 'key2'];
+    const output = { key1: 'value1' };
+
+    const result = convertArrayOfKeyValuePairsToObject(input);
+
+    expect(result).toEqual(output);
+  });
+
+  it('should convert empty array to empty object', () => {
+    const input: any[] = [];
+    const output = {};
+
+    const result = convertArrayOfKeyValuePairsToObject(input);
+
+    expect(result).toEqual(output);
   });
 });

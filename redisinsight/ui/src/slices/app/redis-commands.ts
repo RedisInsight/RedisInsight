@@ -14,7 +14,6 @@ export const commands = [
   'redisearch',
   'redisjson',
   'redistimeseries',
-  'redisai',
   'redisgraph',
   'redisgears',
   'redisbloom'

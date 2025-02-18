@@ -19,7 +19,7 @@ cleanBeforeClientStarts().then(() => {})
 fixture `Autodiscovery`
     .meta({ type: 'critical_path', rte: rte.none })
     .page(commonUrl)
-    .beforeEach(async(t) => {
+    .beforeEach(async() => {
          await databaseHelper.acceptLicenseTerms();
     });
 

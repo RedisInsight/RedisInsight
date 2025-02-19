@@ -38,7 +38,7 @@ const OAuthForm = ({
     dispatch(enableUserAnalyticsAction())
     setAuthStrategy(authStrategy)
     onClick?.(authStrategy)
-
+    debugger
     switch (authStrategy) {
       case OAuthStrategy.Google:
       case OAuthStrategy.GitHub:

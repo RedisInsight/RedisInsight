@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { plainToClass } from 'class-transformer';
+import { Logger } from '@nestjs/common';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
@@ -14,7 +15,9 @@ import {
 import {
   RdiDryRunJobDto,
   RdiDryRunJobResponseDto,
+  RdiSourcesConnectionResult,
   RdiTemplateResponseDto,
+  RdiTestConnectionResult,
   RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
 import {
@@ -37,8 +40,33 @@ import { RdiResetPipelineFailedException } from '../exceptions/rdi-reset-pipelin
 import { RdiStartPipelineFailedException } from '../exceptions/rdi-start-pipeline-failed.exception';
 import { RdiStopPipelineFailedException } from '../exceptions/rdi-stop-pipeline-failed.exception';
 
+// The structure of `config` varies based on the RDI schema definition,
+// but it always includes a `sources` key.
+// Example:
+// {
+//   sources: {
+//     some_database_source: {
+//       host: 'localhost',
+//       port: 6379,
+//       ...other connection options
+//     }
+//   }
+// }
+interface ConnectionsConfig {
+  sources: Record<string, Record<string, unknown>>;
+}
+
+const prepareTestSourcesConnectionsOptions = (config: ConnectionsConfig) => {
+  const sourcesOptions = config.sources || {};
+  const rootKey = Object.keys(sourcesOptions)[0];
+  const extractedBody = sourcesOptions[rootKey];
+  return { ...extractedBody };
+};
+
 export class ApiRdiClient extends RdiClient {
   protected readonly client: AxiosInstance;
+
+  private readonly logger = new Logger('ApiRdiClient');
 
   private auth: { jwt: string, exp: number };
 
@@ -171,17 +199,38 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  async testConnections(config: object): Promise<RdiTestConnectionsResponseDto> {
+  async testConnections(
+    config: ConnectionsConfig,
+  ): Promise<RdiTestConnectionsResponseDto> {
+    let targets: Record<string, RdiTestConnectionResult> = {};
+    let sources: RdiSourcesConnectionResult = {
+      connected: false,
+      error: 'Failed to fetch sources',
+    };
+
     try {
-      const response = await this.client.post(
-        RdiUrl.TestConnections,
+      const targetsResponse = await this.client.post(
+        RdiUrl.TestTargetsConnections,
         config,
       );
-
-      return response.data;
-    } catch (e) {
-      throw wrapRdiPipelineError(e);
+      targets = targetsResponse.data.targets;
+    } catch (error) {
+      throw wrapRdiPipelineError(error);
     }
+
+    try {
+      const sourcesOptions = prepareTestSourcesConnectionsOptions(config);
+      const sourcesResponse = await this.client.post(
+        RdiUrl.TestSourcesConnections,
+        { ...sourcesOptions },
+      );
+      sources = sourcesResponse.data;
+    } catch (error) {
+      // failing is expected on RDI version below 1.6.0 (1.4.3 for example)
+      this.logger.error('Failed to fetch sources', error);
+    }
+
+    return { targets, sources };
   }
 
   async getPipelineStatus(): Promise<any> {

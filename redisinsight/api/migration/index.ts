@@ -46,6 +46,7 @@ import { CloudSession1729085495444 } from './1729085495444-cloud-session';
 import { CommandExecution1726058563737 } from './1726058563737-command-execution';
 import { DatabaseCreatedAt1733740794737 } from './1733740794737-database-createdAt';
 import { DbSettings1737362130798 } from './1737362130798-db-settings';
+import { DatabaseForceStandalone1738829743482 } from './1738829743482-database-forceStandalone';
 
 export default [
   initialMigration1614164490968,
@@ -95,5 +96,6 @@ export default [
   CloudSession1729085495444,
   CommandExecution1726058563737,
   DatabaseCreatedAt1733740794737,
-  DbSettings1737362130798
+  DbSettings1737362130798,
+  DatabaseForceStandalone1738829743482,
 ];

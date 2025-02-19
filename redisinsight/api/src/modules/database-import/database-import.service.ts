@@ -26,6 +26,13 @@ import { CertificateImportService } from 'src/modules/database-import/certificat
 import { SshImportService } from 'src/modules/database-import/ssh-import.service';
 import { SessionMetadata } from 'src/common/models';
 
+type ImportFileType = {
+  originalname?: string;
+  mimetype?: string;
+  size?: number;
+  buffer?: Buffer;
+};
+
 @Injectable()
 export class DatabaseImportService {
   private logger = new Logger('DatabaseImportService');
@@ -64,6 +71,7 @@ export class DatabaseImportService {
     ['sshAgentPath', ['ssh_agent_path']],
     ['compressor', ['compressor']],
     ['modules', ['modules']],
+    ['forceStandalone', ['forceStandalone']],
   ];
 
   constructor(
@@ -78,7 +86,7 @@ export class DatabaseImportService {
    * @param sessionMetadata
    * @param file
    */
-  public async import(sessionMetadata: SessionMetadata, file): Promise<DatabaseImportResponse> {
+  public async import(sessionMetadata: SessionMetadata, file: ImportFileType): Promise<DatabaseImportResponse> {
     try {
       // todo: create FileValidation class
       if (!file) {
@@ -160,7 +168,7 @@ export class DatabaseImportService {
       data.new = true;
 
       this.fieldsMapSchema.forEach(([field, paths]) => {
-        let value;
+        let value: any;
         paths.every((path) => {
           value = get(item, path);
           return value === undefined;
@@ -279,7 +287,8 @@ export class DatabaseImportService {
         return error;
       });
 
-      this.logger.warn(`Unable to import database: ${errors[0]?.constructor?.name || 'UncaughtError'}`, errors[0], sessionMetadata);
+      this.logger.warn(`Unable to import database: ${errors[0]?.constructor?.name || 'UncaughtError'}`,
+        errors[0], sessionMetadata);
 
       return {
         index,
@@ -331,7 +340,7 @@ export class DatabaseImportService {
    * Try to parse file based on mimetype and known\supported formats
    * @param file
    */
-  static parseFile(file): any {
+  static parseFile(file: ImportFileType): any {
     const data = file?.buffer?.toString();
 
     let databases = DatabaseImportService.parseJson(data);

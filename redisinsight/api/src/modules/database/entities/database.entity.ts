@@ -251,4 +251,8 @@ export class DatabaseEntity {
   @Expose()
   @Column({ nullable: true })
   version: string;
+
+  @Expose()
+  @Column({ nullable: true })
+  forceStandalone: boolean;
 }

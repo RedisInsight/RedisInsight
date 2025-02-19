@@ -2,7 +2,6 @@ import { IP_ADDRESS_REGEX, PRIVATE_IP_ADDRESS_REGEX } from 'src/constants';
 import { HostingProvider } from 'src/modules/database/entities/database.entity';
 import { RedisClient } from 'src/modules/redis/client';
 import { convertRedisInfoReplyToObject } from 'src/utils/redis-reply-converter';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 
 const PROVIDER_HOST_REGEX = {
   RLCP: /\.rlrcp\.com$/,
@@ -108,9 +107,7 @@ export const getHostingProvider = async (client: RedisClient, databaseHost: stri
         return HostingProvider.REDIS_COMMUNITY_EDITION;
       }
     } catch (e) {
-      if (e.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
-        return HostingProvider.INFO_COMMAND_IS_DISABLED;
-      }
+      // ignore error
     }
 
     if (host === '0.0.0.0' || host === 'localhost' || host === '127.0.0.1') {

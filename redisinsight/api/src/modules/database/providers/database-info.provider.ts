@@ -79,10 +79,7 @@ export class DatabaseInfoProvider {
    */
   public async determineDatabaseServer(client: RedisClient): Promise<string> {
     try {
-      const reply = convertRedisInfoReplyToObject(await client.call(
-        ['info', 'server'],
-        { replyEncoding: 'utf8' },
-      ) as string);
+      const reply = await this.getRedisInfo(client);
       return reply['server']?.redis_version;
     } catch (e) {
       // continue regardless of error
@@ -138,10 +135,7 @@ export class DatabaseInfoProvider {
     client: RedisClient,
   ): Promise<RedisDatabaseInfoResponse> {
     try {
-      const info = convertRedisInfoReplyToObject(await client.sendCommand(
-        ['info'],
-        { replyEncoding: 'utf8' },
-      ) as string);
+      const info = await this.getRedisInfo(client);
       const serverInfo = info['server'];
       const memoryInfo = info['memory'];
       const keyspaceInfo = info['keyspace'];
@@ -164,16 +158,6 @@ export class DatabaseInfoProvider {
         server: serverInfo,
       };
     } catch (error) {
-      if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
-        // Fallback to hello command
-        const { version, server } = await this.getRedisHelloInfo(client);
-
-        return {
-          version,
-          server,
-        };
-      }
-
       throw catchAclError(error);
     }
   }
@@ -275,7 +259,39 @@ export class DatabaseInfoProvider {
     }
   }
 
-  private async getRedisHelloInfo(client: RedisClient): Promise<RedisDatabaseHelloResponse> {
+  public async getRedisInfo(client: RedisClient) {
+    try {
+      return convertRedisInfoReplyToObject(
+        (await client.sendCommand(['info'], {
+          replyEncoding: 'utf8',
+        })) as string,
+      );
+    } catch (error) {
+      if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
+        // Fallback to getting basic information from `hello` command
+        return this.getRedisHelloInfo(client);
+      }
+
+      throw error;
+    }
+  }
+
+  private async getRedisHelloInfo(client: RedisClient) {
+    const helloResponse = await this.getRedisHelloResponse(client);
+
+    return {
+      replication: {
+        role: helloResponse.role,
+      },
+      server: {
+        server_name: helloResponse.server,
+        redis_version: helloResponse.version,
+        redis_mode: helloResponse.mode,
+      },
+    };
+  }
+
+  private async getRedisHelloResponse(client: RedisClient): Promise<RedisDatabaseHelloResponse> {
     try {
       const helloResponse = (await client.sendCommand(['hello'], {
         replyEncoding: 'utf8',

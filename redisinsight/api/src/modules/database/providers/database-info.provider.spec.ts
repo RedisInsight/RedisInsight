@@ -298,8 +298,8 @@ describe('DatabaseInfoProvider', () => {
 
   describe('determineDatabaseServer', () => {
     it('get modules by using MODULE LIST command', async () => {
-      when(standaloneClient.call)
-        .calledWith(['info', 'server'], expect.anything())
+      when(standaloneClient.sendCommand)
+        .calledWith(['info'], expect.anything())
         .mockResolvedValue(mockRedisServerInfoResponse);
 
       const result = await service.determineDatabaseServer(standaloneClient);
@@ -390,14 +390,26 @@ describe('DatabaseInfoProvider', () => {
         .calledWith(['hello'], { replyEncoding: 'utf8' })
         .mockResolvedValue([
           'version', mockRedisGeneralInfo.version,
-          'server', mockRedisServerInfoDto,
+          'mode', mockRedisServerInfoDto.redis_mode,
+          'role', mockRedisGeneralInfo.role,
+          'server', 'redis',
         ]);
 
       const result = await service.getRedisGeneralInfo(standaloneClient);
 
       expect(result).toEqual({
-        version: mockRedisGeneralInfo.version,
-        server: mockRedisServerInfoDto,
+        ...mockRedisGeneralInfo,
+        server: {
+          redis_mode: mockRedisServerInfoDto.redis_mode,
+          redis_version: mockRedisGeneralInfo.version,
+          server_name: 'redis',
+        },
+        uptimeInSeconds: undefined,
+        totalKeys: undefined,
+        usedMemory: undefined,
+        hitRatio: undefined,
+        connectedClients: undefined,
+        cashedScripts: undefined,
       });
     });
     it('should throw an error if no permission to run \'info\' and \'hello\' commands', async () => {

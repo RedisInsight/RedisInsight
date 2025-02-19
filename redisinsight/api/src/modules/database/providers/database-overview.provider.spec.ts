@@ -5,11 +5,14 @@ import {
   mockStandaloneRedisClient,
   mockClusterRedisClient,
   mockStandaloneRedisInfoReply,
+  mockFeatureService,
 } from 'src/__mocks__';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
+import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import * as Utils from 'src/modules/redis/utils/keys.util';
 import { DatabaseOverviewKeyspace } from 'src/modules/database/constants/overview';
+import { FeatureService } from 'src/modules/feature/feature.service';
 
 const mockServerInfo = {
   redis_version: '6.2.4',
@@ -78,7 +81,14 @@ describe('OverviewService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DatabaseOverviewProvider],
+      providers: [
+        DatabaseInfoProvider,
+        DatabaseOverviewProvider,
+        {
+          provide: FeatureService,
+          useFactory: mockFeatureService,
+        },
+      ],
     }).compile();
 
     service = await module.get(DatabaseOverviewProvider);

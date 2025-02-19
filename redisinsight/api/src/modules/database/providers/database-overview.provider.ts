@@ -8,18 +8,20 @@ import {
   sumBy,
   isNumber,
 } from 'lodash';
-import {
-  convertRedisInfoReplyToObject,
-} from 'src/utils';
 import { getTotalKeys, convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { ClientMetadata } from 'src/common/models';
 import { RedisClient, RedisClientConnectionType, RedisClientNodeRole } from 'src/modules/redis/client';
 import { DatabaseOverviewKeyspace } from '../constants/overview';
+import { DatabaseInfoProvider } from './database-info.provider';
 
 @Injectable()
 export class DatabaseOverviewProvider {
   private previousCpuStats = new Map();
+
+  constructor(
+    private readonly databaseInfoProvider: DatabaseInfoProvider,
+  ) {}
 
   /**
    * Calculates redis database metrics based on connection type (eg Cluster or Standalone)
@@ -74,13 +76,14 @@ export class DatabaseOverviewProvider {
    */
   private async getNodeInfo(client: RedisClient) {
     const { host, port } = client.options;
+    let infoData;
+
+    try {
+      infoData = await this.databaseInfoProvider.getRedisInfo(client);
+    } catch (e) {}
+
     return {
-      ...convertRedisInfoReplyToObject(
-        await client.sendCommand(
-          ['info'],
-          { replyEncoding: 'utf8' },
-        ) as string,
-      ),
+      ...infoData,
       host,
       port,
     };

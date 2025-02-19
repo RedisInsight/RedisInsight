@@ -29,6 +29,7 @@ export enum HostingProvider {
   UPSTASH = 'UPSTASH',
   UNKNOWN_LOCALHOST = 'UNKNOWN_LOCALHOST',
   UNKNOWN = 'UNKNOWN',
+  INFO_COMMAND_IS_DISABLED = 'INFO_COMMAND_IS_DISABLED',
 }
 
 export enum ConnectionType {

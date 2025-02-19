@@ -199,7 +199,7 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     ]
   }
 
-  availableItems.push(opsPerSecItem)
+  opsPerSecond !== undefined && availableItems.push(opsPerSecItem)
 
   // Used memory
   const planMemoryLimit = cloudDetails?.planMemoryLimit
@@ -213,7 +213,7 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
   const memoryUsedTooltip = planMemory ? ` / ${planMemory} (${usedMemoryPercent}%)` : ''
 
   const formattedUsedMemoryTooltip = formatBytes(usedMemory || 0, 3, true)
-  availableItems.push({
+  usedMemory !== undefined && availableItems.push({
     id: 'overview-total-memory',
     value: usedMemory,
     unavailableText: 'Total Memory is not available',
@@ -280,13 +280,13 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     ]
   }
 
-  availableItems.push(totalKeysItem)
+  totalKeys !== undefined && availableItems.push(totalKeysItem)
 
   const getConnectedClient = (connectedClients: number = 0) =>
     (Number.isInteger(connectedClients) ? connectedClients : `~${Math.round(connectedClients)}`)
 
   // Connected clients
-  availableItems.push({
+  connectedClients !== undefined && availableItems.push({
     id: 'overview-connected-clients',
     value: connectedClients,
     unavailableText: 'Connected Clients are not available',

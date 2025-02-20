@@ -3,8 +3,11 @@ import { isNumber } from 'lodash';
 import { RedisString } from 'src/common/constants';
 import apiConfig from 'src/utils/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { convertRedisInfoReplyToObject } from 'src/utils';
+import { convertArrayOfKeyValuePairsToObject, convertRedisInfoReplyToObject } from 'src/utils';
 import * as semverCompare from 'node-version-compare';
+import { RedisDatabaseHelloResponse } from 'src/modules/database/dto/redis-info.dto';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { plainToClass } from 'class-transformer';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -47,7 +50,7 @@ export enum RedisFeature {
 export abstract class RedisClient extends EventEmitter2 {
   public readonly id: string;
 
-  protected info: object;
+  protected info: any;
 
   protected lastTimeUsed: number;
 
@@ -143,7 +146,7 @@ export abstract class RedisClient extends EventEmitter2 {
     switch (feature) {
       case RedisFeature.HashFieldsExpiration:
         try {
-          const info = await this.getInfo();
+          const info = await this.getInfo(false);
           return info?.['server']?.['redis_version'] && semverCompare('7.3', info['server']['redis_version']) < 1;
         } catch (e) {
           return false;
@@ -157,16 +160,65 @@ export abstract class RedisClient extends EventEmitter2 {
    * Get redis database info
    * Uses cache by default
    * @param force
+   * @param infoSection - e.g. server, clients, memory, etc.
    */
-  public async getInfo(force = false): Promise<object> {
+  public async getInfo(force = true, infoSection?: string) {
     if (force || !this.info) {
-      this.info = convertRedisInfoReplyToObject(await this.call(
-        ['info'],
-        { replyEncoding: 'utf8' },
-      ) as string);
+      try {
+        const infoData = convertRedisInfoReplyToObject(await this.call(
+          infoSection ? ['info', infoSection] : ['info'],
+          { replyEncoding: 'utf8' },
+        ) as string);
+
+        this.info = {
+          ...this.info,
+          ...infoData,
+        }
+      } catch (error) {
+        if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
+          try {
+            // Fallback to getting basic information from `hello` command
+            this.info = await this.getRedisHelloInfo();
+          } catch (_error) {
+            this.info = {};
+          }
+        } else {
+          this.info = {};
+        }
+      }
     }
 
     return this.info;
+  }
+
+  private async getRedisHelloInfo() {
+    const helloResponse = await this.getRedisHelloResponse();
+
+    return {
+      replication: {
+        role: helloResponse.role,
+      },
+      server: {
+        server_name: helloResponse.server,
+        redis_version: helloResponse.version,
+        redis_mode: helloResponse.mode,
+      },
+      modules: helloResponse.modules,
+    };
+  }
+
+  private async getRedisHelloResponse(): Promise<RedisDatabaseHelloResponse> {
+    const helloResponse = (await this.sendCommand(['hello'], {
+      replyEncoding: 'utf8',
+    })) as any[];
+
+    const helloInfoResponse = convertArrayOfKeyValuePairsToObject(helloResponse);
+
+    if (helloInfoResponse.modules?.length) {
+      helloInfoResponse.modules = helloInfoResponse.modules.map(convertArrayOfKeyValuePairsToObject);
+    }
+
+    return plainToClass(RedisDatabaseHelloResponse, helloInfoResponse);
   }
 
   /**

@@ -2,21 +2,17 @@ import { Injectable } from '@nestjs/common';
 import {
   calculateRedisHitRatio,
   catchAclError,
-  convertArrayOfKeyValuePairsToObject,
   convertIntToSemanticVersion,
-  convertRedisInfoReplyToObject,
 } from 'src/utils';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { REDIS_MODULES_COMMANDS, SUPPORTED_REDIS_MODULES } from 'src/constants';
 import { get, isNil } from 'lodash';
-import { RedisDatabaseHelloResponse, RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
+import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
 import { convertArrayReplyToObject, convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { SessionMetadata } from 'src/common/models';
-import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class DatabaseInfoProvider {
@@ -79,7 +75,7 @@ export class DatabaseInfoProvider {
    */
   public async determineDatabaseServer(client: RedisClient): Promise<string> {
     try {
-      const reply = await this.getRedisInfo(client);
+      const reply = await client.getInfo();
       return reply['server']?.redis_version;
     } catch (e) {
       // continue regardless of error
@@ -135,7 +131,7 @@ export class DatabaseInfoProvider {
     client: RedisClient,
   ): Promise<RedisDatabaseInfoResponse> {
     try {
-      const info = await this.getRedisInfo(client);
+      const info = await client.getInfo();
       const serverInfo = info['server'];
       const memoryInfo = info['memory'];
       const keyspaceInfo = info['keyspace'];
@@ -254,56 +250,6 @@ export class DatabaseInfoProvider {
         replyEncoding: 'utf8',
       }) as string;
       return parseInt(total, 10);
-    } catch (e) {
-      throw catchAclError(e);
-    }
-  }
-
-  public async getRedisInfo(client: RedisClient) {
-    try {
-      return convertRedisInfoReplyToObject(
-        (await client.sendCommand(['info'], {
-          replyEncoding: 'utf8',
-        })) as string,
-      );
-    } catch (error) {
-      if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
-        // Fallback to getting basic information from `hello` command
-        return this.getRedisHelloInfo(client);
-      }
-
-      throw error;
-    }
-  }
-
-  private async getRedisHelloInfo(client: RedisClient) {
-    const helloResponse = await this.getRedisHelloResponse(client);
-
-    return {
-      replication: {
-        role: helloResponse.role,
-      },
-      server: {
-        server_name: helloResponse.server,
-        redis_version: helloResponse.version,
-        redis_mode: helloResponse.mode,
-      },
-    };
-  }
-
-  private async getRedisHelloResponse(client: RedisClient): Promise<RedisDatabaseHelloResponse> {
-    try {
-      const helloResponse = (await client.sendCommand(['hello'], {
-        replyEncoding: 'utf8',
-      })) as any[];
-
-      const helloInfoResponse = convertArrayOfKeyValuePairsToObject(helloResponse);
-
-      if (helloInfoResponse.modules?.length) {
-        helloInfoResponse.modules = helloInfoResponse.modules.map(convertArrayOfKeyValuePairsToObject);
-      }
-
-      return plainToClass(RedisDatabaseHelloResponse, helloInfoResponse)
     } catch (e) {
       throw catchAclError(e);
     }

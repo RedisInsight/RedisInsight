@@ -42,7 +42,7 @@ test('Verify that user can see result in Table and Text view for JSON data types
     // Check that result is displayed in Table view
     await t.switchToIframe(workbenchPage.iframe);
     const resultTableExists = await workbenchPage.queryTableResult.exists
-    //TODO - Result is displayed but the table with values is not,  however seams that manually this is working, commenting this check but requires more investigation
+    // TODO:  - Result is displayed but the table with values is not,  however seams that manually this is working, commenting this check but requires more investigation
     //await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
     // Select Text view type
     await t.switchToMainWindow();

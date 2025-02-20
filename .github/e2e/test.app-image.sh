@@ -14,9 +14,9 @@ mkdir -p tests/e2e/rdi
 rm -rf tests/e2e/results
 
 # run rte
-docker compose -f tests/e2e/rte.docker-compose.yml build
-docker compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V
-./tests/e2e/wait-for-redis.sh localhost 12000 && \
+#docker compose -f tests/e2e/rte.docker-compose.yml build
+#docker compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V
+#./tests/e2e/wait-for-redis.sh localhost 12000 && \
 
 # run tests
 COMMON_URL=$(tail -n 1 apppath)/resources/app.asar/dist/renderer/index.html \

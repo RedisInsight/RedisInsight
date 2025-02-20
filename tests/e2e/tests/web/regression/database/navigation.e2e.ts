@@ -36,7 +36,7 @@ fixture `Database Navigation`
             ossStandaloneV7Config
         );
         await myRedisDatabasePage.reloadPage();
-        // TODO uncomment when RDI e2e starts running
+        // TODO: uncomment when RDI e2e starts running
         //await rdiApiRequests.addNewRdiApi(rdiInstance);
 
     })
@@ -67,6 +67,6 @@ test('Verify that user can navigate to instances using navigation widget', async
     await t.expect(dbWidgetNames.length).eql(1, 'DB List is not searched');
     await t.click(browserPage.NavigationHeader.rdiNavigationTab);
 
-    //TODO uncomment when RDI e2e starts running
+    // TODO: uncomment when RDI e2e starts running
     //await t.expect(dbListPageNames.length).eql(1, 'RDI List is not searched');
 });

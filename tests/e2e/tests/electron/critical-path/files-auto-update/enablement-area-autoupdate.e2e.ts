@@ -50,7 +50,7 @@ if (fs.existsSync(workingDirectory)) {
         // Check Enablement area and validate that removed file is existed in Guides
         await workbenchPage.NavigationHeader.togglePanel(true);
         const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
-        await t.click(tab.guidesGraphAccordion); //TODO - FAILS to find selector
+        await t.click(tab.guidesGraphAccordion); // TODO: - FAILS to find selector
         await t.click(tab.guidesIntroductionGraphLink.nth(1));
         await t.expect(tab.enablementAreaEmptyContent.visible).notOk('Guides folder is not updated');
         await t.click(tab.closeEnablementPage);

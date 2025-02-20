@@ -1,5 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as fsp from 'fs/promises';
+
 import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
 import { apiUrl } from './conf';
@@ -268,19 +270,14 @@ export class Common {
      * @param filePath Path to file
      */
     static async deleteFolderIfExists(filePath: string): Promise<void> {
-            fs.rm(filePath, {
-                recursive: true,
-                force: true
-            }, (error) => {
-                if (error) {
-                    console.log(error);
-                }
-                else {
-                    console.log(`Directory Deleted: ${filePath}`);
-
-                }
-            });
+        try {
+            await fsp.rm(filePath, { recursive: true, force: true });
+            console.log(`Directory Deleted: ${filePath}`);
+        } catch (error) {
+            console.error(`Failed to delete directory: ${filePath}`, error);
+        }
     }
+
     /**
       * Read file from folder
       * @param filePath Path to file

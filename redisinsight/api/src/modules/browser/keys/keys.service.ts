@@ -182,7 +182,7 @@ export class KeysService {
 
       if (!result) {
         this.logger.error('Failed to delete keys. Not Found keys', clientMetadata);
-        return Promise.reject(new NotFoundException());
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
       }
 
       this.logger.debug('Succeed to delete keys', clientMetadata);

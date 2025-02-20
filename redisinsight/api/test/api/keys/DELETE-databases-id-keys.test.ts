@@ -189,7 +189,8 @@ describe('DELETE /databases/:instanceId/keys', () => {
           // todo: investigate error payload. Seems that missed fields and wrong message
           responseBody: {
             statusCode: 404,
-            message: 'Not Found',
+            error: 'Not Found',
+            message: 'Key with this name does not exist.'
           },
         },
       ].map(deleteCheckFn);

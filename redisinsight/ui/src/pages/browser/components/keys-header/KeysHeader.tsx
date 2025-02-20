@@ -267,7 +267,7 @@ const KeysHeader = (props: Props) => {
               <div className={styles.keysControlsWrapper}>
                 <AutoRefresh
                   disabled={searchMode === SearchMode.Redisearch && !selectedIndex}
-                  disabledMessage="Select an index to refresh keys."
+                  disabledRefreshButtonMessage="Select an index to refresh keys."
                   iconSize="xs"
                   postfix="keys"
                   loading={loading}

@@ -155,7 +155,7 @@ const MessageClaimPopover = (props: Props) => {
       onClick={showPopover}
       data-testid="claim-pending-message"
       className={styles.claimBtn}
-      disabled={consumerOptions.length < 2}
+      disabled={consumerOptions.length < 1}
     >
       CLAIM
     </EuiButton>
@@ -185,7 +185,7 @@ const MessageClaimPopover = (props: Props) => {
       anchorClassName="claimPendingMessage"
       panelClassName={styles.popoverWrapper}
       closePopover={() => {}}
-      button={consumerOptions.length < 2 ? buttonTooltip : button}
+      button={consumerOptions.length < 1 ? buttonTooltip : button}
     >
       <EuiForm>
         <EuiFlexGroup>

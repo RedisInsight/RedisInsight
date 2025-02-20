@@ -1,6 +1,6 @@
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { isNumber } from 'lodash';
-import { RedisString } from 'src/common/constants';
+import { RedisString, UNKNOWN_REDIS_INFO } from 'src/common/constants';
 import apiConfig from 'src/utils/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { convertRedisInfoReplyToObject } from 'src/utils';
@@ -181,10 +181,10 @@ export abstract class RedisClient extends EventEmitter2 {
             // Fallback to getting basic information from `hello` command
             this.info = await this.getRedisHelloInfo();
           } catch (_error) {
-            this.info = {};
+            this.info = UNKNOWN_REDIS_INFO;
           }
         } else {
-          this.info = {};
+          this.info = UNKNOWN_REDIS_INFO;
         }
       }
     }

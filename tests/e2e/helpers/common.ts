@@ -1,5 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as fsp from 'fs/promises';
+
 import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
 import { apiUrl } from './conf';
@@ -260,6 +262,19 @@ export class Common {
     static async deleteFileFromFolderIfExists(filePath: string): Promise<void> {
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
+        }
+    }
+
+    /**
+     * Delete folder
+     * @param filePath Path to file
+     */
+    static async deleteFolderIfExists(filePath: string): Promise<void> {
+        try {
+            await fsp.rm(filePath, { recursive: true, force: true });
+            console.log(`Directory Deleted: ${filePath}`);
+        } catch (error) {
+            console.error(`Failed to delete directory: ${filePath}`, error);
         }
     }
 

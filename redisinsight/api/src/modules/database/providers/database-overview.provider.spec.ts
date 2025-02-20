@@ -10,6 +10,7 @@ import { DatabaseOverview } from 'src/modules/database/models/database-overview'
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import * as Utils from 'src/modules/redis/utils/keys.util';
 import { DatabaseOverviewKeyspace } from 'src/modules/database/constants/overview';
+import { convertRedisInfoReplyToObject } from 'src/utils';
 
 const mockServerInfo = {
   redis_version: '6.2.4',
@@ -92,10 +93,8 @@ describe('OverviewService', () => {
   describe('getOverview', () => {
     describe('Standalone', () => {
       it('should return proper overview', async () => {
-        when(standaloneClient.sendCommand)
-          .calledWith(['info'], { replyEncoding: 'utf8' })
-          .mockResolvedValue(mockStandaloneRedisInfoReply);
-
+        when(standaloneClient.getInfo)
+          .mockResolvedValue(convertRedisInfoReplyToObject(mockStandaloneRedisInfoReply));
         const result = await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace);
 
         expect(result).toEqual({
@@ -113,10 +112,8 @@ describe('OverviewService', () => {
       });
       it('should return overview with serverName if server_name is present in redis info', async () => {
         const redisInfoReplyWithServerName = `${mockStandaloneRedisInfoReply.slice(0, 11)}server_name:valkey\r\n${mockStandaloneRedisInfoReply.slice(11)}`;
-        when(standaloneClient.sendCommand)
-          .calledWith(['info'], { replyEncoding: 'utf8' })
-          .mockResolvedValue(redisInfoReplyWithServerName);
-
+        when(standaloneClient.getInfo)
+          .mockResolvedValue(convertRedisInfoReplyToObject(redisInfoReplyWithServerName));
         const result = await service.getOverview(mockClientMetadata, standaloneClient, mockCurrentKeyspace);
 
         expect(result).toEqual({

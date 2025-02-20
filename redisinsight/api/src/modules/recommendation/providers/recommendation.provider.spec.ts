@@ -3,6 +3,7 @@ import { RECOMMENDATION_NAMES } from 'src/constants';
 import { mockRedisNoAuthError, mockRedisNoPasswordError, mockStandaloneRedisClient } from 'src/__mocks__';
 import { RecommendationProvider } from 'src/modules/recommendation/providers/recommendation.provider';
 import { RedisClientConnectionType } from 'src/modules/redis/client';
+import { convertRedisInfoReplyToObject } from 'src/utils';
 
 const mockRedisMemoryInfoResponse1: string = '# Memory\r\nnumber_of_cached_scripts:10\r\n';
 const mockRedisMemoryInfoResponse2: string = '# Memory\r\nnumber_of_cached_scripts:11\r\n';
@@ -150,26 +151,22 @@ describe('RecommendationProvider', () => {
 
   describe('determineLuaScriptRecommendation', () => {
     it('should not return luaScript recommendation', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
-        .mockResolvedValue(mockRedisMemoryInfoResponse1);
+      when(client.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisMemoryInfoResponse1));
 
       const luaScriptRecommendation = await service.determineLuaScriptRecommendation(client);
       expect(luaScriptRecommendation).toEqual(null);
     });
 
     it('should return luaScript recommendation', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
-        .mockResolvedValue(mockRedisMemoryInfoResponse2);
-
+      when(client.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisMemoryInfoResponse2));
       const luaScriptRecommendation = await service.determineLuaScriptRecommendation(client);
       expect(luaScriptRecommendation).toEqual({ name: RECOMMENDATION_NAMES.LUA_SCRIPT });
     });
 
     it('should not return luaScript recommendation when info command executed with error', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
+      when(client.getInfo)
         .mockRejectedValue('some error');
 
       const luaScriptRecommendation = await service.determineLuaScriptRecommendation(client);
@@ -204,35 +201,31 @@ describe('RecommendationProvider', () => {
 
   describe('determineLogicalDatabasesRecommendation', () => {
     it('should not return avoidLogicalDatabases recommendation when only one logical db', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
-        .mockResolvedValue(mockRedisKeyspaceInfoResponse1);
+      when(client.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisKeyspaceInfoResponse1));
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(client);
       expect(avoidLogicalDatabasesRecommendation).toEqual(null);
     });
 
     it('should not return avoidLogicalDatabases recommendation when only on logical db with keys', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
-        .mockResolvedValue(mockRedisKeyspaceInfoResponse2);
+      when(client.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisKeyspaceInfoResponse2));
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(client);
       expect(avoidLogicalDatabasesRecommendation).toEqual(null);
     });
 
     it('should return avoidLogicalDatabases recommendation', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
-        .mockResolvedValue(mockRedisKeyspaceInfoResponse3);
+      when(client.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisKeyspaceInfoResponse3));
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(client);
       expect(avoidLogicalDatabasesRecommendation).toEqual({ name: 'avoidLogicalDatabases' });
     });
 
     it('should not return avoidLogicalDatabases recommendation when info command executed with error', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
+      when(client.getInfo)
         .mockRejectedValue('some error');
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(client);
@@ -241,9 +234,8 @@ describe('RecommendationProvider', () => {
 
     it('should not return avoidLogicalDatabases recommendation when isCluster', async () => {
       client.getConnectionType = jest.fn().mockReturnValueOnce(RedisClientConnectionType.CLUSTER);
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
-        .mockResolvedValue(mockRedisKeyspaceInfoResponse3);
+      when(client.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisKeyspaceInfoResponse3));
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(client);
       expect(avoidLogicalDatabasesRecommendation).toEqual(null);
@@ -441,9 +433,8 @@ describe('RecommendationProvider', () => {
 
   describe('determineConnectionClientsRecommendation', () => {
     it('should not return connectionClients recommendation', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
-        .mockResolvedValue(mockRedisClientsResponse1);
+      when(client.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisClientsResponse1));
 
       const connectionClientsRecommendation = await service
         .determineConnectionClientsRecommendation(client);
@@ -451,9 +442,8 @@ describe('RecommendationProvider', () => {
     });
 
     it('should return connectionClients recommendation', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
-        .mockResolvedValue(mockRedisClientsResponse2);
+      when(client.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisClientsResponse2));
 
       const connectionClientsRecommendation = await service
         .determineConnectionClientsRecommendation(client);
@@ -463,8 +453,7 @@ describe('RecommendationProvider', () => {
 
     it('should not return connectionClients recommendation when info command executed with error',
       async () => {
-        when(client.sendCommand)
-          .calledWith(expect.arrayContaining(['info']), expect.anything())
+        when(client.getInfo)
           .mockRejectedValue('some error');
 
         const connectionClientsRecommendation = await service
@@ -519,9 +508,8 @@ describe('RecommendationProvider', () => {
 
   describe('determineRedisVersionRecommendation', () => {
     it('should not return redis version recommendation', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
-        .mockResolvedValue(mockRedisServerResponse1);
+      when(client.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisServerResponse1));
 
       const redisVersionRecommendation = await service
         .determineRedisVersionRecommendation(client);
@@ -529,9 +517,8 @@ describe('RecommendationProvider', () => {
     });
 
     it('should return redis version recommendation', async () => {
-      when(client.sendCommand)
-        .calledWith(expect.arrayContaining(['info']), expect.anything())
-        .mockResolvedValueOnce(mockRedisServerResponse2);
+      when(client.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisServerResponse2));
 
       const redisVersionRecommendation = await service
         .determineRedisVersionRecommendation(client);
@@ -541,8 +528,7 @@ describe('RecommendationProvider', () => {
     it('should not return redis version recommendation when info command executed with error',
       async () => {
         resetAllWhenMocks();
-        when(client.sendCommand)
-          .calledWith(expect.arrayContaining(['info']), expect.anything())
+        when(client.getInfo)
           .mockRejectedValue('some error');
 
         const redisVersionRecommendation = await service

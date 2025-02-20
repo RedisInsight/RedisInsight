@@ -16,6 +16,7 @@ import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.d
 import { ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { convertRedisInfoReplyToObject } from 'src/utils';
 
 const mockRedisServerInfoDto = {
   redis_version: '6.0.5',
@@ -298,9 +299,8 @@ describe('DatabaseInfoProvider', () => {
 
   describe('determineDatabaseServer', () => {
     it('get modules by using MODULE LIST command', async () => {
-      when(standaloneClient.call)
-        .calledWith(['info', 'server'], expect.anything())
-        .mockResolvedValue(mockRedisServerInfoResponse);
+      when(standaloneClient.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockRedisServerInfoResponse));
 
       const result = await service.determineDatabaseServer(standaloneClient);
 
@@ -336,9 +336,8 @@ describe('DatabaseInfoProvider', () => {
       service.getDatabasesCount = jest.fn().mockResolvedValue(16);
     });
     it('get general info for redis standalone', async () => {
-      when(standaloneClient.sendCommand)
-        .calledWith(['info'], { replyEncoding: 'utf8' })
-        .mockResolvedValue(mockStandaloneRedisInfoReply);
+      when(standaloneClient.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockStandaloneRedisInfoReply));
 
       const result = await service.getRedisGeneralInfo(standaloneClient);
 
@@ -349,9 +348,8 @@ describe('DatabaseInfoProvider', () => {
       }\r\n${
         mockRedisClientsInfoResponse
       }\r\n`;
-      when(standaloneClient.sendCommand)
-        .calledWith(['info'], { replyEncoding: 'utf8' })
-        .mockResolvedValue(reply);
+      when(standaloneClient.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(reply));
 
       const result = await service.getRedisGeneralInfo(standaloneClient);
 
@@ -365,10 +363,8 @@ describe('DatabaseInfoProvider', () => {
     });
     it('get general info for redis cluster', async () => {
       clusterClient.nodes.mockResolvedValueOnce([standaloneClient, standaloneClient]);
-      when(standaloneClient.sendCommand)
-        .calledWith(['info'], { replyEncoding: 'utf8' })
-        .mockResolvedValueOnce(mockStandaloneRedisInfoReply)
-        .mockResolvedValueOnce(mockStandaloneRedisInfoReply);
+      when(standaloneClient.getInfo)
+        .mockResolvedValue(convertRedisInfoReplyToObject(mockStandaloneRedisInfoReply))
 
       const result = await service.getRedisGeneralInfo(clusterClient);
 
@@ -379,11 +375,40 @@ describe('DatabaseInfoProvider', () => {
         nodes: [mockRedisGeneralInfo, mockRedisGeneralInfo],
       });
     });
-    it('should throw an error if no permission to run \'info\' command', async () => {
-      when(standaloneClient.sendCommand)
-        .calledWith(['info'], { replyEncoding: 'utf8' })
+    it('should get info from hello command when info command is not available', async () => {
+      when(standaloneClient.getInfo)
+        .mockResolvedValue({
+          replication: {
+            role: mockRedisGeneralInfo.role,
+          },
+          server: {
+            redis_mode: mockRedisServerInfoDto.redis_mode,
+            redis_version: mockRedisGeneralInfo.version,
+            server_name: 'redis',
+          },
+        });
+
+      const result = await service.getRedisGeneralInfo(standaloneClient);
+
+      expect(result).toEqual({
+        ...mockRedisGeneralInfo,
+        server: {
+          redis_mode: mockRedisServerInfoDto.redis_mode,
+          redis_version: mockRedisGeneralInfo.version,
+          server_name: 'redis',
+        },
+        uptimeInSeconds: undefined,
+        totalKeys: undefined,
+        usedMemory: undefined,
+        hitRatio: undefined,
+        connectedClients: undefined,
+        cashedScripts: undefined,
+      });
+    });
+    it('should throw an error if no permission to run \'info\' and \'hello\' commands', async () => {
+      when(standaloneClient.getInfo)
         .mockRejectedValue({
-          message: 'NOPERM this user has no permissions to run the \'info\' command',
+          message: 'NOPERM this user has no permissions to run the \'hello\' command',
         });
 
       try {

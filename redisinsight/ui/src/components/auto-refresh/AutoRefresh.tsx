@@ -39,7 +39,7 @@ export interface Props {
   defaultRefreshRate?: string
   iconSize?: EuiButtonIconSizes
   disabled?: boolean
-  disabledMessage: string
+  disabledRefreshButtonMessage: string
   enableAutoRefreshDefault?: boolean
 }
 
@@ -60,7 +60,7 @@ const AutoRefresh = ({
   onChangeAutoRefreshRate,
   iconSize = 'm',
   disabled,
-  disabledMessage,
+  disabledRefreshButtonMessage,
   minimumRefreshRate,
   defaultRefreshRate,
   enableAutoRefreshDefault = false
@@ -188,10 +188,10 @@ const AutoRefresh = ({
       </EuiTextColor>
 
       <EuiToolTip
-        title={disabled ? "" : "Last Refresh"}
+        title={!disabled && "Last Refresh"}
         className={styles.tooltip}
         position="top"
-        content={disabled ? disabledMessage : refreshMessage}
+        content={disabled ? disabledRefreshButtonMessage : refreshMessage}
       >
         <EuiButtonIcon
           size={iconSize}

@@ -1,14 +1,14 @@
 diff --git a/node_modules/redis-parser/lib/parser.js b/node_modules/redis-parser/lib/parser.js
-index 5d2532a..352b521 100644
+index 5d2532a..9f1bfe0 100644
 --- a/node_modules/redis-parser/lib/parser.js
 +++ b/node_modules/redis-parser/lib/parser.js
 @@ -12,6 +12,10 @@ var interval = null
  var counter = 0
  var notDecreased = 0
- 
+
 +const MAX_STRING_SIZE = parseInt(process.env.RI_CLIENTS_MAX_STRING_SIZE, 10) || Number.MAX_SAFE_INTEGER;
 +const TRUNCATED_STRING_SIZE = parseInt(process.env.RI_CLIENTS_TRUNCATED_STRING_SIZE, 10) || 30;
-+const TRUNCATED_PREFIX = process.env.RI_CLIENTS_TRUNCATED_STRING_PREFIX || Buffer.from('[Truncated due to length]')
++const TRUNCATED_PREFIX = Buffer.from(process.env.RI_CLIENTS_TRUNCATED_STRING_PREFIX || '[Truncated due to length]')
 +
  /**
   * Used for integer numbers only
@@ -35,7 +35,7 @@ index 5d2532a..352b521 100644
 +    parser.buffer = parser.buffer.slice(0, MAX_STRING_SIZE + parser.offset + 1)
 +  }
  }
- 
+
  /**
 @@ -159,10 +172,30 @@ function parseBulkString (parser) {
    }
@@ -68,7 +68,7 @@ index 5d2532a..352b521 100644
 +
 +  return buffer;
  }
- 
+
  /**
 @@ -418,7 +451,7 @@ function concatBulkBuffer (parser) {
    }
@@ -77,7 +77,7 @@ index 5d2532a..352b521 100644
 -  return bufferPool.slice(start, bufferOffset)
 +  return truncateBufferIfNeeded(bufferPool.slice(start, bufferOffset))
  }
- 
+
  class JavascriptRedisParser {
 @@ -522,8 +555,14 @@ class JavascriptRedisParser {
        }
@@ -95,4 +95,4 @@ index 5d2532a..352b521 100644
 +      }
        return
      }
- 
+

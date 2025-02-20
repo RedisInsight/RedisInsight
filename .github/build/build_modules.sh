@@ -65,9 +65,10 @@ BINARY_PACKAGES=$(jq -r '.dependencies | keys[]' "$APP_PACKAGE_JSON_PATH" | jq -
 
 echo "Binary packages to exclude during minify: $BINARY_PACKAGES"
 
-# Modify the package.json
+# Modify the package.json to keep only binary prod dependencies
+# Additionally remove custom "postinstall" script to avoid patch-package error(s)
 jq --argjson keep "$BINARY_PACKAGES" \
-  'del(.devDependencies) | .dependencies |= with_entries(select(.key as $k | $keep | index($k)))' \
+  'del(.devDependencies) | .dependencies |= with_entries(select(.key as $k | $keep | index($k))) | del(.scripts.postinstall)' \
   "$PACKAGE_JSON_PATH" > temp.json && mv temp.json "$PACKAGE_JSON_PATH"
 
 npm_config_arch="$ARCH" \

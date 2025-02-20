@@ -4,8 +4,21 @@ import React from 'react'
 
 import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import { CollectorStatus, PipelineStatus } from 'uiSrc/slices/interfaces'
+import { validatePipeline } from 'uiSrc/components/yaml-validator'
+import {
+  rdiPipelineSelector,
+  setConfigValidationErrors,
+  setIsPipelineValid,
+  setJobsValidationErrors,
+} from 'uiSrc/slices/rdi/pipeline'
 import PipelineActions, { Props } from './PipelineActions'
 
 const mockedProps: Props = {
@@ -26,6 +39,10 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
 }))
 
 jest.mock('formik')
+
+jest.mock('uiSrc/components/yaml-validator', () => ({
+  validatePipeline: jest.fn(),
+}))
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -60,6 +77,117 @@ describe('PipelineActions', () => {
   it('should display startBtn if collectorStatus is not ready', () => {
     render(<PipelineActions {...mockedProps} collectorStatus={CollectorStatus.NotReady} />)
     expect(screen.getByText('Start Pipeline')).toBeInTheDocument()
+  })
+
+  it('should validate pipeline when schema, config, or jobs change', () => {
+    (validatePipeline as jest.Mock).mockReturnValue({
+      result: true,
+      configValidationErrors: [],
+      jobsValidationErrors: {},
+    });
+
+    (rdiPipelineSelector as jest.Mock).mockReturnValueOnce({
+      loading: false,
+      schema: 'test-schema',
+      config: 'test-config',
+      jobs: 'test-jobs',
+    })
+
+    render(<PipelineActions {...mockedProps} />)
+
+    expect(validatePipeline).toHaveBeenCalledWith({
+      schema: 'test-schema',
+      config: 'test-config',
+      jobs: 'test-jobs',
+    })
+
+    expect(store.getActions()).toEqual([
+      setConfigValidationErrors([]),
+      setJobsValidationErrors({}),
+      setIsPipelineValid(true),
+    ])
+  })
+
+  it('should set pipeline as invalid if config and jobs are empty (no configuration is entered)', () => {
+    (validatePipeline as jest.Mock).mockReturnValue({
+      result: false,
+      configValidationErrors: ['Error'],
+      jobsValidationErrors: [],
+    });
+
+    (rdiPipelineSelector as jest.Mock).mockReturnValueOnce({
+      config: '',
+      jobs: '',
+    })
+
+    render(<PipelineActions {...mockedProps} />)
+
+    expect(store.getActions()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: setIsPipelineValid.type,
+          payload: false,
+        }),
+      ]),
+    )
+  })
+
+  it('should set pipeline as invalid if config and jobs are missing or empty (no configuration is entered)', () => {
+    (validatePipeline as jest.Mock).mockReturnValue({
+      result: false,
+      configValidationErrors: ['Error'],
+      jobsValidationErrors: [],
+    });
+
+    (rdiPipelineSelector as jest.Mock).mockReturnValueOnce({
+      config: undefined,
+      jobs: undefined,
+    })
+
+    render(<PipelineActions {...mockedProps} />)
+
+    expect(store.getActions()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: setIsPipelineValid.type,
+          payload: false,
+        }),
+      ]),
+    )
+  })
+
+  it('should dispatch validation errors if validation fails', () => {
+    (validatePipeline as jest.Mock).mockReturnValue({
+      result: false,
+      configValidationErrors: ['Missing field'],
+      jobsValidationErrors: ['Invalid job config'],
+    });
+
+    (rdiPipelineSelector as jest.Mock).mockReturnValueOnce({
+      loading: false,
+      schema: 'test-schema',
+      config: 'test-config',
+      jobs: 'test-jobs',
+    })
+
+    render(<PipelineActions {...mockedProps} />)
+
+    expect(store.getActions()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: setConfigValidationErrors.type,
+          payload: ['Missing field'],
+        }),
+        expect.objectContaining({
+          type: setJobsValidationErrors.type,
+          payload: ['Invalid job config'],
+        }),
+        expect.objectContaining({
+          type: setIsPipelineValid.type,
+          payload: false,
+        }),
+      ]),
+    )
   })
 
   describe('TelemetryEvent', () => {

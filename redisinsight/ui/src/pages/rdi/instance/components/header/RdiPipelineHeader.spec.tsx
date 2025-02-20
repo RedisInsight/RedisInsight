@@ -4,7 +4,7 @@ import React from 'react'
 
 import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { getPipelineStatus } from 'uiSrc/slices/rdi/pipeline'
+import { setConfigValidationErrors } from 'uiSrc/slices/rdi/pipeline'
 import RdiPipelineHeader from './RdiPipelineHeader'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -49,7 +49,7 @@ describe('RdiPipelineHeader', () => {
     render(<RdiPipelineHeader />)
 
     const expectedActions = [
-      getPipelineStatus(),
+      setConfigValidationErrors(['Error: unknown error']),
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)

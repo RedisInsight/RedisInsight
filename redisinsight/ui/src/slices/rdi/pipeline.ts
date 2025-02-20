@@ -35,6 +35,10 @@ export const initialState: IStateRdiPipeline = {
   data: null,
   config: '',
   jobs: [],
+  // pipeline validation is based on combination of config + job/s definitions
+  isPipelineValid: false,
+  configValidationErrors: [],
+  jobsValidationErrors: {},
   resetChecked: false,
   schema: null,
   strategies: {
@@ -157,6 +161,15 @@ const rdiPipelineSlice = createSlice({
     setJobFunctions: (state, { payload }: PayloadAction<TJMESPathFunctions>) => {
       state.jobFunctions = parseJMESPathFunctions(payload)
     },
+    setIsPipelineValid: (state, { payload }: PayloadAction<boolean>) => {
+      state.isPipelineValid = payload
+    },
+    setConfigValidationErrors: (state, { payload }: PayloadAction<string[]>) => {
+      state.configValidationErrors = payload
+    },
+    setJobsValidationErrors: (state, { payload }: PayloadAction<Record<string, string[]>>) => {
+      state.jobsValidationErrors = payload
+    },
   },
 })
 
@@ -191,6 +204,9 @@ export const {
   triggerPipelineAction,
   triggerPipelineActionSuccess,
   triggerPipelineActionFailure,
+  setIsPipelineValid,
+  setConfigValidationErrors,
+  setJobsValidationErrors,
 } = rdiPipelineSlice.actions
 
 // The reducer

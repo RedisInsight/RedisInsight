@@ -17,6 +17,10 @@
         &:hover {
           text-decoration: underline;
         }
+
+        &.invalid {
+          color: var(--euiColorDangerText) !important;
+        }
       }
 
       &__title {
@@ -40,6 +44,11 @@
           fill: var(--euiTextSubduedColor);
         }
       }
+
+      &__error{
+        margin-left: 2px;
+        color: var(--euiColorDangerText);
+      }
     }
   }
 
@@ -59,6 +68,10 @@
 
           &:hover {
             text-decoration: none;
+          }
+
+          &.invalid {
+            color: var(--euiColorDangerText) !important;
           }
         }
 

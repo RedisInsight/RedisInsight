@@ -15,7 +15,10 @@ import {
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings } from 'uiSrc/slices/cli/cli-settings'
-import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
+import {
+  resetRedisearchKeysData,
+  setRedisearchInitialState,
+} from 'uiSrc/slices/browser/redisearch'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
@@ -25,9 +28,20 @@ import {
   loadInstancesSuccess,
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
-import { setConnectedInstance, loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
+import {
+  setConnectedInstance,
+  loadInstances as loadRdiInstances,
+} from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
-import { getPipelineStatus, setPipelineConfig, setPipelineInitialState, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
+import {
+  getPipelineStatus,
+  setConfigValidationErrors,
+  setIsPipelineValid,
+  setJobsValidationErrors,
+  setPipelineConfig,
+  setPipelineInitialState,
+  setPipelineJobs,
+} from 'uiSrc/slices/rdi/pipeline'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 
 import InstancePage, { Props } from './InstancePage'
@@ -100,6 +114,9 @@ describe('InstancePage', () => {
     ]
 
     const expectedActions = [
+      setConfigValidationErrors(['Error: unknown error']),
+      setJobsValidationErrors({}),
+      setIsPipelineValid(false),
       getPipelineStatus(),
       loadInstances(),
       loadRdiInstances(),
@@ -132,6 +149,9 @@ describe('InstancePage', () => {
     })
 
     const expectedActions = [
+      setConfigValidationErrors(['Error: unknown error']),
+      setJobsValidationErrors({}),
+      setIsPipelineValid(false),
       getPipelineStatus(),
       loadInstances(),
       loadRdiInstances(),

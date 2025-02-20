@@ -25,7 +25,7 @@ const getSelectedTab = (path: string, rdiInstanceId: string) => {
 const Navigation = () => {
   const [selectedTab, setSelectedTab] = useState<Nullable<RdiPipelineTabs>>(null)
 
-  const { loading, changes } = useSelector(rdiPipelineSelector)
+  const { loading, changes, configValidationErrors } = useSelector(rdiPipelineSelector)
   const history = useHistory()
   const { pathname } = useLocation()
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
@@ -62,6 +62,7 @@ const Navigation = () => {
           isSelected={selectedTab === RdiPipelineTabs.Config}
           data-testid={`rdi-pipeline-tab-${RdiPipelineTabs.Config}`}
           isLoading={loading}
+          isValid={configValidationErrors.length === 0}
         >
           <div className={styles.dotWrapper}>
             {!!changes.config && (

@@ -268,7 +268,6 @@ export class Common {
      * @param filePath Path to file
      */
     static async deleteFolderIfExists(filePath: string): Promise<void> {
-      if (fs.existsSync(filePath)) {
             fs.rm(filePath, {
                 recursive: true,
                 force: true
@@ -281,7 +280,6 @@ export class Common {
 
                 }
             });
-        }
     }
     /**
       * Read file from folder

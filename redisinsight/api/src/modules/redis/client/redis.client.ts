@@ -3,7 +3,8 @@ import { isNumber } from 'lodash';
 import { RedisString } from 'src/common/constants';
 import apiConfig from 'src/utils/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { convertArrayOfKeyValuePairsToObject, convertRedisInfoReplyToObject } from 'src/utils';
+import { convertRedisInfoReplyToObject } from 'src/utils';
+import { convertArrayReplyToObject } from '../utils';
 import * as semverCompare from 'node-version-compare';
 import { RedisDatabaseHelloResponse } from 'src/modules/database/dto/redis-info.dto';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -212,10 +213,10 @@ export abstract class RedisClient extends EventEmitter2 {
       replyEncoding: 'utf8',
     })) as any[];
 
-    const helloInfoResponse = convertArrayOfKeyValuePairsToObject(helloResponse);
+    const helloInfoResponse = convertArrayReplyToObject(helloResponse);
 
     if (helloInfoResponse.modules?.length) {
-      helloInfoResponse.modules = helloInfoResponse.modules.map(convertArrayOfKeyValuePairsToObject);
+      helloInfoResponse.modules = helloInfoResponse.modules.map(convertArrayReplyToObject);
     }
 
     return plainToClass(RedisDatabaseHelloResponse, helloInfoResponse);

@@ -56,8 +56,9 @@ export class RdiTestConnectionsResponseDto {
     description: 'Sources connection results',
   })
   @Expose()
-  @Type(() => RdiSourcesConnectionResult)
-  sources: RdiSourcesConnectionResult;
+  // TODO: fix this
+  // @Type(() => RdiSourcesConnectionResult)
+  sources: Record<string, RdiSourcesConnectionResult>
 
   @ApiProperty({
     description: 'Targets connection results',

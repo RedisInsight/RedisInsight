@@ -4,6 +4,6 @@ export enum TransformGroup {
 
 export const UNKNOWN_REDIS_INFO = {
   server: {
-    version: 'unknown',
+    redis_version: 'unknown',
   },
 };

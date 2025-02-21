@@ -9,17 +9,36 @@ import styles from './styles.module.scss'
 
 enum ResultsStatus {
   Success = 'success',
-  Failed = 'failed'
+  Failed = 'failed',
+  Mixed = 'mixed'
 }
 
 export interface Props {
   data: TransformGroupResult
 }
 
+const getStatus = (data: TransformGroupResult) => {
+  if (data.fail.length && data.success.length) {
+    return ResultsStatus.Mixed
+  }
+
+  if (data.fail.length) {
+    return ResultsStatus.Failed
+  }
+
+  return ResultsStatus.Success
+}
+
+const statusToLabel = {
+  [ResultsStatus.Success]: 'Connected successfully',
+  [ResultsStatus.Failed]: 'Failed to connect',
+  [ResultsStatus.Mixed]: 'Partially connected',
+}
+
 const TestConnectionsLog = (props: Props) => {
   const { data } = props
   const statusData = [...data.success, ...data.fail]
-  const status = data?.fail?.length ? ResultsStatus.Failed : ResultsStatus.Success
+  const status = getStatus(data)
   const [openedNav, setOpenedNav] = useState<string>('')
 
   const onToggle = (length: number = 0, isOpen: boolean, name: string) => {
@@ -40,7 +59,7 @@ const TestConnectionsLog = (props: Props) => {
     </div>
   )
 
-  const navTitle = status === ResultsStatus.Success ? 'Connected successfully' : 'Failed to connect'
+  const navTitle = statusToLabel[status]
 
   const getNavGroupState = (name: ResultsStatus) => (openedNav === name ? 'open' : 'closed')
 

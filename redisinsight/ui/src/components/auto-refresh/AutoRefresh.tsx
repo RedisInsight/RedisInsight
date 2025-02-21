@@ -192,6 +192,7 @@ const AutoRefresh = ({
         className={styles.tooltip}
         position="top"
         content={disabled ? disabledRefreshButtonMessage : refreshMessage}
+        data-testid={getDataTestid('refresh-tooltip')}
       >
         <EuiButtonIcon
           size={iconSize}

@@ -248,5 +248,14 @@ describe('AutoRefresh', () => {
       await new Promise((r) => setTimeout(r, 1300))
     })
     expect(onRefresh).toBeCalledTimes(1)
+  });
+
+  it('refresh tooltip text should contain disabled refresh button reason message when button disabled', async () => {
+    const tooltipText = 'some-disabled-message';
+    render(<AutoRefresh {...instance(mockedProps)} disabled={true} disabledRefreshButtonMessage={tooltipText} />);
+
+    fireEvent.mouseOver(screen.getByTestId('refresh-btn'));
+    await screen.findByTestId('refresh-tooltip');
+    expect(screen.getByTestId('refresh-tooltip')).toHaveTextContent(new RegExp(`^${tooltipText}$`));
   })
 })

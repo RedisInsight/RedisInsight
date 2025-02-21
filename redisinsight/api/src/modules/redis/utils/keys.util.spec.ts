@@ -25,7 +25,7 @@ describe('getTotalKeys', () => {
     expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledTimes(1);
     expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(1, ['dbsize'], { replyEncoding: 'utf8' });
     expect(mockStandaloneRedisClient.getInfo)
-      .toHaveBeenNthCalledWith(1, true, 'keyspace');
+      .toHaveBeenNthCalledWith(1, 'keyspace');
   });
   it('Should return 0 since info keyspace hasn\'t keys values', async () => {
     mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));

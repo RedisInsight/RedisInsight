@@ -203,6 +203,7 @@ export abstract class RedisClient extends EventEmitter2 {
         server_name: helloResponse.server,
         redis_version: helloResponse.version,
         redis_mode: helloResponse.mode,
+        info_command_is_disabled: true,
       },
       modules: helloResponse.modules,
     };

@@ -10,6 +10,7 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
+import { RedisDatabaseInfoResponse } from './dto/redis-info.dto';
 
 @Injectable()
 export class DatabaseConnectionService {
@@ -75,20 +76,23 @@ export class DatabaseConnectionService {
       );
     }
 
-    this.collectClientInfo(clientMetadata, client, generalInfo?.version);
+    this.collectClientInfo(clientMetadata, client, generalInfo);
 
     this.logger.debug(`Succeed to connect to database ${clientMetadata.databaseId}`, clientMetadata);
   }
 
-  private async collectClientInfo(clientMetadata: ClientMetadata, client: RedisClient, version?: string) {
+  private async collectClientInfo(clientMetadata: ClientMetadata, client: RedisClient, generalInfo: RedisDatabaseInfoResponse) {
     try {
+      const version = generalInfo?.server?.redis_version;
+      const infoCommandIsDisabled = generalInfo?.server?.info_command_is_disabled;
       const intVersion = parseInt(version, 10) || 0;
       const clients = await this.databaseInfoProvider.getClientListInfo(client) || [];
 
       this.analytics.sendDatabaseConnectedClientListEvent(
         clientMetadata.sessionMetadata,
-        clientMetadata.databaseId,
         {
+          databaseId: clientMetadata.databaseId,
+          ...(infoCommandIsDisabled ? { info_command_is_disabled: true } : {}),
           clients: clients.map((c) => ({
             version: version || 'n/a',
             resp: intVersion < 7 ? undefined : c?.['resp'] || 'n/a',

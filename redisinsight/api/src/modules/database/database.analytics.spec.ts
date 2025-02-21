@@ -326,8 +326,8 @@ describe('DatabaseAnalytics', () => {
     it('should emit event', () => {
       service.sendDatabaseConnectedClientListEvent(
         mockSessionMetadata,
-        mockDatabase.id,
         {
+          databaseId: mockDatabase.id,
           version: mockDatabase.version,
           resp: '2',
         },

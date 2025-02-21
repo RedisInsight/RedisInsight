@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  Logger,
   Post,
   UsePipes,
   ValidationPipe,
@@ -17,6 +18,8 @@ import { SessionMetadata } from 'src/common/models';
 @Controller('features')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class FeatureController {
+  private readonly logger = new Logger('FeatureController');
+
   constructor(
     private featureService: FeatureService,
     private featuresConfigService: FeaturesConfigService,
@@ -36,7 +39,12 @@ export class FeatureController {
   async list(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<any> {
-    return this.featureService.list(sessionMetadata);
+    try {
+      return this.featureService.list(sessionMetadata);
+    } catch (e) {
+      this.logger.error('FeatureController', e);
+      throw e;
+    }
   }
 
   @Post('/sync')

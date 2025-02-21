@@ -84,7 +84,6 @@ export class DatabaseConnectionService {
   private async collectClientInfo(clientMetadata: ClientMetadata, client: RedisClient, generalInfo: RedisDatabaseInfoResponse) {
     try {
       const version = generalInfo?.server?.redis_version;
-      const infoCommandIsDisabled = generalInfo?.server?.info_command_is_disabled;
       const intVersion = parseInt(version, 10) || 0;
       const clients = await this.databaseInfoProvider.getClientListInfo(client) || [];
 
@@ -92,7 +91,7 @@ export class DatabaseConnectionService {
         clientMetadata.sessionMetadata,
         {
           databaseId: clientMetadata.databaseId,
-          ...(infoCommandIsDisabled ? { info_command_is_disabled: true } : {}),
+          ...(client.isInfoCommandDisabled ? { info_command_is_disabled: true } : {}),
           clients: clients.map((c) => ({
             version: version || 'n/a',
             resp: intVersion < 7 ? undefined : c?.['resp'] || 'n/a',

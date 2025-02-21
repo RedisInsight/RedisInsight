@@ -50,6 +50,7 @@ export enum RedisFeature {
 
 export abstract class RedisClient extends EventEmitter2 {
   public readonly id: string;
+  public isInfoCommandDisabled: boolean | undefined;
 
   protected _redisVersion: string | undefined;
 
@@ -182,6 +183,7 @@ export abstract class RedisClient extends EventEmitter2 {
       if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
         try {
           // Fallback to getting basic information from `hello` command
+          this.isInfoCommandDisabled = true;
           return await this.getRedisHelloInfo();
         } catch (_error) {
           // Ignore: hello is not available pre redis version 6
@@ -203,7 +205,6 @@ export abstract class RedisClient extends EventEmitter2 {
         server_name: helloResponse.server,
         redis_version: helloResponse.version,
         redis_mode: helloResponse.mode,
-        info_command_is_disabled: true,
       },
       modules: helloResponse.modules,
     };

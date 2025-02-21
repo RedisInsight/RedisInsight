@@ -41,7 +41,7 @@ export class ClusterMonitorService {
         return Promise.reject(new BadRequestException('Current database is not in a cluster mode'));
       }
 
-      const info = await client.getInfo(true, 'server');
+      const info = await client.getInfo('server');
 
       const strategy = this.getClusterInfoStrategy(get(info, 'server.redis_version'));
 

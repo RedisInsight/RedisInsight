@@ -51,7 +51,7 @@ export enum RedisFeature {
 export abstract class RedisClient extends EventEmitter2 {
   public readonly id: string;
 
-  protected info: any;
+  protected _redisVersion: string | undefined;
 
   protected lastTimeUsed: number;
 
@@ -147,8 +147,8 @@ export abstract class RedisClient extends EventEmitter2 {
     switch (feature) {
       case RedisFeature.HashFieldsExpiration:
         try {
-          const info = await this.getInfo(false);
-          return info?.['server']?.['redis_version'] && semverCompare('7.3', info['server']['redis_version']) < 1;
+          const redisVersion = await this.getRedisVersion();
+          return redisVersion && semverCompare('7.3', redisVersion) < 1;
         } catch (e) {
           return false;
         }
@@ -157,39 +157,39 @@ export abstract class RedisClient extends EventEmitter2 {
     }
   }
 
+  private async getRedisVersion(): Promise<string> {
+    if (!this._redisVersion) {
+      const infoData = await this.getInfo('server');
+      this._redisVersion = infoData?.server?.redis_version;
+    }
+
+    return this._redisVersion;
+  }
+
   /**
    * Get redis database info
    * Uses cache by default
    * @param force
    * @param infoSection - e.g. server, clients, memory, etc.
    */
-  public async getInfo(force = true, infoSection?: string) {
-    if (force || !this.info) {
-      try {
-        const infoData = convertRedisInfoReplyToObject(await this.call(
-          infoSection ? ['info', infoSection] : ['info'],
-          { replyEncoding: 'utf8' },
-        ) as string);
-
-        this.info = {
-          ...this.info,
-          ...infoData,
-        }
-      } catch (error) {
-        if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
-          try {
-            // Fallback to getting basic information from `hello` command
-            this.info = await this.getRedisHelloInfo();
-          } catch (_error) {
-            this.info = UNKNOWN_REDIS_INFO;
-          }
-        } else {
-          this.info = UNKNOWN_REDIS_INFO;
+  public async getInfo(infoSection?: string) {
+    try {
+      return convertRedisInfoReplyToObject(await this.call(
+        infoSection ? ['info', infoSection] : ['info'],
+        { replyEncoding: 'utf8' },
+      ) as string);
+    } catch (error) {
+      if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
+        try {
+          // Fallback to getting basic information from `hello` command
+          return await this.getRedisHelloInfo();
+        } catch (_error) {
+          // Ignore: hello is not available pre redis version 6
         }
       }
     }
 
-    return this.info;
+    return UNKNOWN_REDIS_INFO;
   }
 
   private async getRedisHelloInfo() {

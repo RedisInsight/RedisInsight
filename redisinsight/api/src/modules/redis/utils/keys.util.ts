@@ -5,7 +5,7 @@ import { convertMultilineReplyToObject } from 'src/modules/redis/utils/reply.uti
 export const getTotalKeysFromInfo = async (client: RedisClient) => {
   try {
     const currentDbIndex = await client.getCurrentDbIndex();
-    const info = await client.getInfo(true, 'keyspace');
+    const info = await client.getInfo('keyspace');
 
     const dbInfo = get(info, 'keyspace', {});
     if (!dbInfo[`db${currentDbIndex}`]) {

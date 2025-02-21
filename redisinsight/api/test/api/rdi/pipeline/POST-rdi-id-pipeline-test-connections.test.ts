@@ -2,33 +2,42 @@ import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
 import { RdiTestConnectionStatus } from 'src/modules/rdi/dto';
 import {
-  describe, expect, deps, getMainCheckFn, generateInvalidDataTestCases,
+  describe,
+  expect,
+  deps,
+  getMainCheckFn,
+  generateInvalidDataTestCases,
   validateInvalidDataTestCase,
 } from '../../deps';
 import { Joi, nock } from '../../../helpers/test';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST_pipeline_test_connections';
 const notExistedRdiId = 'notExisted';
 const testRdiUrl = 'http://rdilocal.test';
 
-const endpoint = (id) => request(server).post(`/${constants.API.RDI}/${id || testRdiId}/pipeline/test-connections`);
+const endpoint = (id) =>
+  request(server).post(
+    `/${constants.API.RDI}/${id || testRdiId}/pipeline/test-connections`,
+  );
 
 const dataSchema = Joi.object().optional().strict(true);
 
 const validInputData = {
+  sources: {},
 };
 
 const responseSchema = Joi.object()
   .keys({
     sources: Joi.object()
-      .keys({
-        connected: Joi.boolean().required(),
-        error: Joi.string().allow(null).optional(),
-      })
+      .pattern(
+        Joi.string(),
+        Joi.object({
+          connected: Joi.boolean().required(),
+          error: Joi.string().allow(null).optional(),
+        }),
+      )
       .required(),
 
     targets: Joi.object()
@@ -55,21 +64,16 @@ const responseSchema = Joi.object()
   .strict(true);
 
 const validMockResponses = {
-  sources: {
-    connected: true,
-  },
+  sources: {},
   targets: {
     target: {
       status: RdiTestConnectionStatus.Success,
     },
   },
-}
+};
 
 const failedMockResponses = {
-  sources: {
-    connected: false,
-    error: 'Failed to fetch sources',
-  },
+  sources: {},
   targets: {
     target: {
       status: RdiTestConnectionStatus.Fail,
@@ -81,8 +85,10 @@ const failedMockResponses = {
   },
 };
 
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
-
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -112,10 +118,6 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
             .post(`/${RdiUrl.TestTargetsConnections}`)
             .query(true)
             .reply(200, { targets: validMockResponses.targets });
-          nock(testRdiUrl)
-            .post(`/${RdiUrl.TestSourcesConnections}`)
-            .query(true)
-            .reply(200, validMockResponses.sources);
         },
       },
       {
@@ -136,10 +138,6 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
             .post(`/${RdiUrl.TestTargetsConnections}`)
             .query(true)
             .reply(200, { targets: failedMockResponses.targets });
-          nock(testRdiUrl)
-            .post(`/${RdiUrl.TestSourcesConnections}`)
-            .query(true)
-            .reply(200, failedMockResponses.sources);
         },
       },
       {
@@ -163,10 +161,6 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
             .post(`/${RdiUrl.TestTargetsConnections}`)
             .query(true)
             .reply(200, { targets: failedMockResponses.targets });
-          nock(testRdiUrl)
-            .post(`/${RdiUrl.TestSourcesConnections}`)
-            .query(true)
-            .reply(200, validMockResponses.sources);
         },
       },
       {

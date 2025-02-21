@@ -1,49 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiLoadingContent, keys } from '@elastic/eui'
+import { keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
-import { isNull } from 'lodash'
 
-import { DEFAULT_TEXT_VIEW_TYPE, ProfileQueryType, WBQueryType } from 'uiSrc/pages/workbench/constants'
-import { ResultsMode, ResultsSummary, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
-import { getVisualizationsByCommand, getWBQueryType, isGroupResults, isSilentModeWithoutError, Maybe, } from 'uiSrc/utils'
+import { DEFAULT_TEXT_VIEW_TYPE, WBQueryType } from 'uiSrc/pages/workbench/constants'
+import { ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
+import { getVisualizationsByCommand, getWBQueryType, isSilentModeWithoutError } from 'uiSrc/utils'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
-import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
+import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
 
 import QueryCardHeader from './QueryCardHeader'
-import QueryCardCliResultWrapper from './QueryCardCliResultWrapper'
-import QueryCardCliPlugin from './QueryCardCliPlugin'
-import QueryCardCommonResult, { CommonErrorResponse } from './QueryCardCommonResult'
+import { Props } from './query-card.types'
 
+import { QueryCardBody } from './QueryCardBody'
 import styles from './styles.module.scss'
 
-export interface Props {
-  id: string
-  command: string
-  isOpen: boolean
-  result: Maybe<CommandExecutionResult[]>
-  activeMode: RunQueryMode
-  mode?: RunQueryMode
-  activeResultsMode?: ResultsMode
-  resultsMode?: ResultsMode
-  emptyCommand?: boolean
-  summary?: ResultsSummary
-  createdAt?: Date
-  loading?: boolean
-  clearing?: boolean
-  isNotStored?: boolean
-  executionTime?: number
-  db?: number
-  onQueryDelete: () => void
-  onQueryReRun: () => void
-  onQueryOpen: () => void
-  onQueryProfile: (type: ProfileQueryType) => void
-}
-
-const getDefaultPlugin = (views: IPluginVisualization[], query: string) =>
+const getDefaultPlugin = (views: IPluginVisualization[], query: string | null) =>
   getVisualizationsByCommand(query, views).find((view) => view.default)?.uniqId || DEFAULT_TEXT_VIEW_TYPE.id
 
 export const getSummaryText = (summary?: ResultsSummary, mode?: ResultsMode) => {
@@ -77,7 +52,6 @@ const QueryCard = (props: Props) => {
     loading,
     clearing,
     emptyCommand,
-    isNotStored,
     executionTime,
     db,
   } = props
@@ -150,14 +124,6 @@ const QueryCard = (props: Props) => {
     setSelectedViewValue(value)
   }
 
-  const commonError = CommonErrorResponse(id, command, result)
-
-  const isSizeLimitExceededResponse = (result: Maybe<CommandExecutionResult[]>) => {
-    const resultObj = result?.[0]
-    // response.includes - to be backward compatible with responses which don't include sizeLimitExceeded flag
-    return resultObj?.sizeLimitExceeded === true || resultObj?.response?.includes?.('Results have been deleted')
-  }
-
   return (
     <div
       className={cx(styles.containerWrapper, {
@@ -178,7 +144,6 @@ const QueryCard = (props: Props) => {
           clearing={clearing}
           createdAt={createdAt}
           message={message}
-          queryType={queryType}
           selectedValue={selectedViewValue}
           activeMode={activeMode}
           mode={mode}
@@ -196,75 +161,13 @@ const QueryCard = (props: Props) => {
           onQueryReRun={onQueryReRun}
           onQueryProfile={onQueryProfile}
         />
-        {isOpen && (
-          <>
-            {React.isValidElement(commonError) && (!isGroupResults(resultsMode) || isNull(command))
-              ? <QueryCardCommonResult loading={loading} result={commonError} />
-              : (
-                <>
-                  {isSizeLimitExceededResponse(result)
-                    ? (
-                      <QueryCardCliResultWrapper
-                        loading={loading}
-                        query={command}
-                        resultsMode={resultsMode}
-                        result={result}
-                        isNotStored={isNotStored}
-                        isFullScreen={isFullScreen}
-                      />
-                    )
-                    : (
-                      <>
-                        {isGroupResults(resultsMode) && (
-                          <QueryCardCliResultWrapper
-                            loading={loading}
-                            query={command}
-                            db={db}
-                            resultsMode={resultsMode}
-                            result={result}
-                            isNotStored={isNotStored}
-                            isFullScreen={isFullScreen}
-                            data-testid="group-mode-card"
-                          />
-                        )}
-                        {(resultsMode === ResultsMode.Default || !resultsMode) && (
-                          <>
-                            {viewTypeSelected === WBQueryType.Plugin && (
-                              <>
-                                {!loading && result !== undefined ? (
-                                  <QueryCardCliPlugin
-                                    id={selectedViewValue}
-                                    result={result}
-                                    query={command}
-                                    mode={mode}
-                                    setMessage={setMessage}
-                                    commandId={id}
-                                  />
-                                ) : (
-                                  <div className={styles.loading}>
-                                    <EuiLoadingContent lines={5} data-testid="loading-content" />
-                                  </div>
-                                )}
-                              </>
-                            )}
-                            {(viewTypeSelected === WBQueryType.Text) && (
-                              <QueryCardCliResultWrapper
-                                loading={loading}
-                                query={command}
-                                resultsMode={resultsMode}
-                                result={result}
-                                isNotStored={isNotStored}
-                                isFullScreen={isFullScreen}
-                              />
-                            )}
-                          </>
-                        )}
-                      </>
-                    )}
-                </>
-              )}
-          </>
-        )}
+        <QueryCardBody
+          {...props}
+          isFullScreen={isFullScreen}
+          setMessage={setMessage}
+          selectedViewValue={selectedViewValue}
+          viewTypeSelected={viewTypeSelected}
+        />
       </div>
     </div>
   )

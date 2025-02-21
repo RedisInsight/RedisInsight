@@ -184,7 +184,7 @@ export class ApiRdiClient extends RdiClient {
     config: ConnectionsConfig,
   ): Promise<RdiTestConnectionsResponseDto> {
     let targets: Record<string, RdiTestConnectionResult> = {};
-    let sources: Record<string, RdiSourcesConnectionResult> = {};
+    const sources: Record<string, RdiSourcesConnectionResult> = {};
 
     try {
       const targetsResponse = await this.client.post(

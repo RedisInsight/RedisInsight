@@ -5,5 +5,6 @@ export enum TransformGroup {
 export const UNKNOWN_REDIS_INFO = {
   server: {
     redis_version: 'unknown',
+    redis_mode: 'standalone',
   },
 };

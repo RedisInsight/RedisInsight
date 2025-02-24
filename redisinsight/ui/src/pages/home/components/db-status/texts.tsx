@@ -30,13 +30,13 @@ export const WARNING_WITH_CAPABILITY = (capability: string) => (
 )
 export const WARNING_WITHOUT_CAPABILITY = (
   <>
-    <EuiTitle size="xxs"><span>Your free Redis Cloud DB is waiting.</span></EuiTitle>
+    <EuiTitle size="xxs"><span>Your free trial Redis Cloud DB is waiting.</span></EuiTitle>
     <EuiSpacer size="s" />
     <div>Test ideas and build prototypes.
       <br />
       Includes native support for JSON, Query Engine and more.
     </div>
     <EuiSpacer size="s" />
-    <div><b>Note</b>: Free Cloud DBs auto-delete after 15 days of inactivity.</div>
+    <div><b>Note</b>: Free trial Cloud DBs auto-delete after 15 days of inactivity.</div>
   </>
 )

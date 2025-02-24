@@ -230,7 +230,7 @@ export const INFINITE_MESSAGES = {
       >
         <EuiTitle className="infiniteMessage__title"><span>Your subscription does not have a free Redis Cloud database.</span></EuiTitle>
         <EuiText size="xs">
-          Do you want to create a free database in your existing subscription?
+          Do you want to create a free trial database in your existing subscription?
         </EuiText>
         <EuiSpacer size="m" />
         <EuiFlexGroup justifyContent="spaceBetween" gutterSize="none">

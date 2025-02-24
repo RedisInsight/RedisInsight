@@ -101,7 +101,7 @@ export const INFINITE_MESSAGES = {
     const vendor = find(OAuthProviders, ({ id }) => id === details.provider)
     const withFeed = jobName
       && [CloudJobName.CreateFreeDatabase, CloudJobName.CreateFreeSubscriptionAndDatabase].includes(jobName)
-    const text = `You can now use your Redis Stack database in Redis Cloud${withFeed ? ' with pre-loaded sample data' : ''}.`
+    const text = `You can now use your Redis Cloud database${withFeed ? ' with pre-loaded sample data' : ''}.`
     return ({
       id: InfiniteMessagesIds.oAuthSuccess,
       className: 'wide',

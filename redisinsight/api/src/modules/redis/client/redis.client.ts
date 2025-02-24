@@ -50,7 +50,7 @@ export enum RedisFeature {
 
 export abstract class RedisClient extends EventEmitter2 {
   public readonly id: string;
-  public isInfoCommandDisabled: boolean | undefined;
+  public isInfoCommandDisabled: boolean = false;
 
   protected _redisVersion: string | undefined;
 

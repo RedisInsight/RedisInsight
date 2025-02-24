@@ -1,5 +1,6 @@
 import * as sqlite3 from 'sqlite3';
 import { workingDirectory } from '../helpers/conf';
+import {promisify} from "util";
 
 const dbPath = `${workingDirectory}/redisinsight.db`;
 
@@ -10,19 +11,22 @@ export class DatabaseScripts {
      */
     static async updateColumnValueInDBTable(dbTableParameters: DbTableParameters): Promise<void> {
         const db = new sqlite3.Database(dbPath);
-        const query = `UPDATE ${dbTableParameters.tableName} SET ${dbTableParameters.columnName} = ? WHERE ${dbTableParameters.conditionWhereColumnName} = ?`;
+        try {
+            const runAsync = (query: string, p: (string | number | undefined)[]) => promisify(db.run.bind(db)); // convert db.run to a Promise-based function
+            const query =`UPDATE ${dbTableParameters.tableName}
+                          SET ${dbTableParameters.columnName} = ?
+                          WHERE ${dbTableParameters.conditionWhereColumnName} = ?`;
+            await runAsync(query,[dbTableParameters.rowValue, dbTableParameters.conditionWhereColumnValue ]);
+        } catch (err) {
+            console.log(`Error during changing ${dbTableParameters.columnName} column value: ${err}`)
+            // throw new Error(
+            //     `Error during changing ${dbTableParameters.columnName} column value: ${err}`,
+            // );
+        } finally {
+            console.log("Close DB")
+            db.close();
+        }
 
-        return new Promise<void>((resolve, reject) => {
-            db.run(query, [dbTableParameters.rowValue, dbTableParameters.conditionWhereColumnValue], (err: { message: string }) => {
-                if (err) {
-                    reject(new Error(`Error during changing ${dbTableParameters.columnName} column value: ${err.message}`));
-                }
-                else {
-                    db.close();
-                    resolve();
-                }
-            });
-        });
     }
 
     /**

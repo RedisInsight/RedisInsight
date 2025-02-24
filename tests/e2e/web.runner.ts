@@ -34,12 +34,14 @@ import testcafe from 'testcafe';
                 ])
                 .run({
                     skipJsErrors: true,
-                    browserInitTimeout: 60000,
+                    browserInitTimeout: 25000,
                     selectorTimeout: 5000,
                     assertionTimeout: 5000,
                     speed: 1,
-                    pageRequestTimeout: 8000,
+                    pageRequestTimeout: 5000,
+                    quarantineMode: { successThreshold: 1, attemptLimit: 2 },
                     disableMultipleWindows: true
+
                 });
         })
         .then((failedCount) => {

@@ -23,7 +23,7 @@ class ErrorDetails {
   message: string;
 }
 
-export class RdiTestConnectionResult {
+export class RdiTestTargetConnectionResult {
   @ApiProperty({
     description: 'Connection status',
     enum: RdiTestConnectionStatus,
@@ -40,7 +40,7 @@ export class RdiTestConnectionResult {
   error?: ErrorDetails;
 }
 
-export class RdiSourcesConnectionResult {
+export class RdiTestSourceConnectionResult {
   @ApiProperty({ description: 'Indicates if the source is connected' })
   @Expose()
   connected: boolean;
@@ -58,13 +58,13 @@ export class RdiTestConnectionsResponseDto {
     description: 'Sources connection results',
   })
   @Expose()
-  @TransformToMap(RdiSourcesConnectionResult)
-  sources: Record<string, RdiSourcesConnectionResult>;
+  @TransformToMap(RdiTestSourceConnectionResult)
+  sources: Record<string, RdiTestSourceConnectionResult>;
 
   @ApiProperty({
     description: 'Targets connection results',
   })
   @Expose()
-  @TransformToMap(RdiTestConnectionResult)
-  targets: Record<string, RdiTestConnectionResult>;
+  @TransformToMap(RdiTestTargetConnectionResult)
+  targets: Record<string, RdiTestTargetConnectionResult>;
 }

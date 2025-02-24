@@ -15,9 +15,9 @@ import {
 import {
   RdiDryRunJobDto,
   RdiDryRunJobResponseDto,
-  RdiSourcesConnectionResult,
+  RdiTestSourceConnectionResult,
   RdiTemplateResponseDto,
-  RdiTestConnectionResult,
+  RdiTestTargetConnectionResult,
   RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
 import {
@@ -183,8 +183,8 @@ export class ApiRdiClient extends RdiClient {
   async testConnections(
     config: ConnectionsConfig,
   ): Promise<RdiTestConnectionsResponseDto> {
-    let targets: Record<string, RdiTestConnectionResult> = {};
-    const sources: Record<string, RdiSourcesConnectionResult> = {};
+    let targets: Record<string, RdiTestTargetConnectionResult> = {};
+    const sources: Record<string, RdiTestSourceConnectionResult> = {};
 
     try {
       const targetsResponse = await this.client.post(

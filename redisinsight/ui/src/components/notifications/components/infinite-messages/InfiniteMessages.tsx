@@ -81,8 +81,8 @@ export const INFINITE_MESSAGES = {
               <span>
                 { (step === CloudJobStep.Credentials || !step) && 'Processing Cloud API keys…'}
                 { step === CloudJobStep.Subscription && 'Processing Cloud subscriptions…'}
-                { step === CloudJobStep.Database && 'Creating a free Cloud database…'}
-                { step === CloudJobStep.Import && 'Importing a free Cloud database…'}
+                { step === CloudJobStep.Database && 'Creating a free trial Cloud database…'}
+                { step === CloudJobStep.Import && 'Importing a free trial Cloud database…'}
               </span>
             </EuiTitle>
             <EuiText size="xs">
@@ -187,7 +187,7 @@ export const INFINITE_MESSAGES = {
         onMouseUp={(e) => { e.preventDefault() }}
         data-testid="database-exists-notification"
       >
-        <EuiTitle className="infiniteMessage__title"><span>You already have a free Redis Cloud subscription.</span></EuiTitle>
+        <EuiTitle className="infiniteMessage__title"><span>You already have a free trial Redis Cloud subscription.</span></EuiTitle>
         <EuiText size="xs">
           Do you want to import your existing database into Redis Insight?
         </EuiText>
@@ -228,7 +228,7 @@ export const INFINITE_MESSAGES = {
         onMouseUp={(e) => { e.preventDefault() }}
         data-testid="subscription-exists-notification"
       >
-        <EuiTitle className="infiniteMessage__title"><span>Your subscription does not have a free Redis Cloud database.</span></EuiTitle>
+        <EuiTitle className="infiniteMessage__title"><span>Your subscription does not have a free trial Redis Cloud database.</span></EuiTitle>
         <EuiText size="xs">
           Do you want to create a free trial database in your existing subscription?
         </EuiText>

@@ -3,7 +3,6 @@ import {
   calculateRedisHitRatio,
   catchAclError,
   convertIntToSemanticVersion,
-  convertRedisInfoReplyToObject,
 } from 'src/utils';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { REDIS_MODULES_COMMANDS, SUPPORTED_REDIS_MODULES } from 'src/constants';
@@ -76,10 +75,7 @@ export class DatabaseInfoProvider {
    */
   public async determineDatabaseServer(client: RedisClient): Promise<string> {
     try {
-      const reply = convertRedisInfoReplyToObject(await client.call(
-        ['info', 'server'],
-        { replyEncoding: 'utf8' },
-      ) as string);
+      const reply = await client.getInfo();
       return reply['server']?.redis_version;
     } catch (e) {
       // continue regardless of error
@@ -135,10 +131,7 @@ export class DatabaseInfoProvider {
     client: RedisClient,
   ): Promise<RedisDatabaseInfoResponse> {
     try {
-      const info = convertRedisInfoReplyToObject(await client.sendCommand(
-        ['info'],
-        { replyEncoding: 'utf8' },
-      ) as string);
+      const info = await client.getInfo();
       const serverInfo = info['server'];
       const memoryInfo = info['memory'];
       const keyspaceInfo = info['keyspace'];

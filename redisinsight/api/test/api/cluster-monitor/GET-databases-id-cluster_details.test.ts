@@ -130,12 +130,11 @@ describe('GET /databases/:id/cluster-details', () => {
         },
         {
           before: () => rte.data.setAclUserRules('~* +@all -info'),
-          name: 'Should throw error if no permissions for "info" command',
+          name: 'Should not throw error if no permissions for "info" command',
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-          statusCode: 403,
-          responseBody: {
-            statusCode: 403,
-            error: 'Forbidden',
+          responseSchema,
+          checkFn: ({body}) => {
+            expect(body.state).to.eql('ok');
           },
         },
       ].map(mainCheckFn);

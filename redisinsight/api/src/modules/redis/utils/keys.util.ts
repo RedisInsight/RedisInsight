@@ -1,16 +1,11 @@
 import { get } from 'lodash';
-import { convertRedisInfoReplyToObject } from 'src/utils';
 import { RedisClient } from 'src/modules/redis/client';
 import { convertMultilineReplyToObject } from 'src/modules/redis/utils/reply.util';
 
 export const getTotalKeysFromInfo = async (client: RedisClient) => {
   try {
     const currentDbIndex = await client.getCurrentDbIndex();
-    const info = convertRedisInfoReplyToObject(
-      await client.sendCommand(['info', 'keyspace'], {
-        replyEncoding: 'utf8',
-      }) as string,
-    );
+    const info = await client.getInfo('keyspace');
 
     const dbInfo = get(info, 'keyspace', {});
     if (!dbInfo[`db${currentDbIndex}`]) {

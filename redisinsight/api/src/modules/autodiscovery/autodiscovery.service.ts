@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Injectable, Logger } from '@nestjs/common';
 import { getAvailableEndpoints } from 'src/modules/autodiscovery/utils/autodiscovery.util';
-import { convertRedisInfoReplyToObject } from 'src/utils';
 import config, { Config } from 'src/utils/config';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { Database } from 'src/modules/database/models/database';
@@ -91,12 +90,7 @@ export class AutodiscoveryService {
         { useRetry: false, connectionName: 'redisinsight-auto-discovery' },
       );
 
-      const info = convertRedisInfoReplyToObject(
-        await client.sendCommand(
-          ['info'],
-          { replyEncoding: 'utf8' },
-        ) as string,
-      );
+      const info = await client.getInfo();
 
       if (info?.server?.redis_mode === 'standalone') {
         await this.databaseService.create(

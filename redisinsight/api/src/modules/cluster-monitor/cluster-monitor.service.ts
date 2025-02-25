@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import {
   BadRequestException, HttpException, Injectable, Logger,
 } from '@nestjs/common';
-import { catchAclError, convertRedisInfoReplyToObject } from 'src/utils';
+import { catchAclError } from 'src/utils';
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
 import { ClusterNodesInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-nodes.info.strategy';
 import { ClusterShardsInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-shards.info.strategy';
@@ -41,10 +41,7 @@ export class ClusterMonitorService {
         return Promise.reject(new BadRequestException('Current database is not in a cluster mode'));
       }
 
-      const info = convertRedisInfoReplyToObject(await client.sendCommand(
-        ['info', 'server'],
-        { replyEncoding: 'utf8' },
-      ) as string);
+      const info = await client.getInfo('server');
 
       const strategy = this.getClusterInfoStrategy(get(info, 'server.redis_version'));
 

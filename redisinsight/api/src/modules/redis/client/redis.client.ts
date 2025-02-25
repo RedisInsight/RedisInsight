@@ -1,10 +1,13 @@
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { isNumber } from 'lodash';
-import { RedisString } from 'src/common/constants';
+import { RedisString, UNKNOWN_REDIS_INFO } from 'src/common/constants';
 import apiConfig from 'src/utils/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { convertRedisInfoReplyToObject } from 'src/utils';
+import { convertArrayReplyToObject } from '../utils';
 import * as semverCompare from 'node-version-compare';
+import { RedisDatabaseHelloResponse } from 'src/modules/database/dto/redis-info.dto';
+import { plainToClass } from 'class-transformer';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -47,7 +50,8 @@ export enum RedisFeature {
 export abstract class RedisClient extends EventEmitter2 {
   public readonly id: string;
 
-  protected info: object;
+  protected _redisVersion: string | undefined;
+  protected _isInfoCommandDisabled: boolean | undefined;
 
   protected lastTimeUsed: number;
 
@@ -77,6 +81,10 @@ export abstract class RedisClient extends EventEmitter2 {
 
   public isIdle(): boolean {
     return Date.now() - this.lastTimeUsed > REDIS_CLIENTS_CONFIG.idleThreshold;
+  }
+
+  public get isInfoCommandDisabled() {
+    return this._isInfoCommandDisabled;
   }
 
   /**
@@ -143,8 +151,8 @@ export abstract class RedisClient extends EventEmitter2 {
     switch (feature) {
       case RedisFeature.HashFieldsExpiration:
         try {
-          const info = await this.getInfo();
-          return info?.['server']?.['redis_version'] && semverCompare('7.3', info['server']['redis_version']) < 1;
+          const redisVersion = await this.getRedisVersion();
+          return redisVersion && semverCompare('7.3', redisVersion) < 1;
         } catch (e) {
           return false;
         }
@@ -153,20 +161,72 @@ export abstract class RedisClient extends EventEmitter2 {
     }
   }
 
-  /**
-   * Get redis database info
-   * Uses cache by default
-   * @param force
-   */
-  public async getInfo(force = false): Promise<object> {
-    if (force || !this.info) {
-      this.info = convertRedisInfoReplyToObject(await this.call(
-        ['info'],
-        { replyEncoding: 'utf8' },
-      ) as string);
+  private async getRedisVersion(): Promise<string> {
+    if (!this._redisVersion) {
+      const infoData = await this.getInfo('server');
+      this._redisVersion = infoData?.server?.redis_version;
     }
 
-    return this.info;
+    return this._redisVersion;
+  }
+
+  /**
+   * Get redis database info
+   * If INFO fails, it will try to get info from HELLO command, which provides limited data
+   * If HELLO fails, it will return a static object
+   * @param force
+   * @param infoSection - e.g. server, clients, memory, etc.
+   */
+  public async getInfo(infoSection?: string) {
+    let infoData: any; // TODO: we should ideally type this
+
+    try {
+      infoData = convertRedisInfoReplyToObject(await this.call(
+        infoSection ? ['info', infoSection] : ['info'],
+        { replyEncoding: 'utf8' },
+      ) as string);
+      this._isInfoCommandDisabled = false;
+    } catch (error) {
+      this._isInfoCommandDisabled = true;
+      try {
+        // Fallback to getting basic information from `hello` command
+        infoData = await this.getRedisHelloInfo();
+      } catch (_error) {
+        // Ignore: hello is not available pre redis version 6
+      }
+    }
+
+    return infoData ?? UNKNOWN_REDIS_INFO;
+  }
+
+  private async getRedisHelloInfo() {
+    const helloResponse = await this.getRedisHelloResponse();
+
+    return {
+      replication: {
+        role: helloResponse.role,
+      },
+      server: {
+        server_name: helloResponse.server,
+        redis_version: helloResponse.version,
+        redis_mode: helloResponse.mode,
+      },
+      modules: helloResponse.modules,
+    };
+  }
+
+  private async getRedisHelloResponse(): Promise<RedisDatabaseHelloResponse> {
+    const helloResponse = (await this.sendCommand(['hello'], {
+      replyEncoding: 'utf8',
+    })) as any[];
+
+    const helloInfoResponse = convertArrayReplyToObject(helloResponse);
+
+    if (helloInfoResponse.modules?.length) {
+      helloInfoResponse.modules = helloInfoResponse.modules.map(convertArrayReplyToObject);
+    }
+
+    return plainToClass(RedisDatabaseHelloResponse, helloInfoResponse);
   }
 
   /**

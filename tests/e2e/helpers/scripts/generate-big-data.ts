@@ -1,42 +1,26 @@
-import { createClient } from 'redis';
-import { isNull, isNumber } from "lodash";
+import { isNull, isNumber } from 'lodash';
 import RedisClient from '@redis/client/dist/lib/client';
 
-const baseKeys = [
-  'device', 'mobile', 'user'
-];
-
-const keyTypes = [
-  'string', 'json', 'hash', 'list', 'set', 'zset'
-];
-
-const secondaryKeys = [
-  'eu-east-1', 'eu-west-1', 'us-east-1', 'us-west-1'
-];
 
 const iterationsPrimary = 500_000;
 const iterationsSecondary = 125_000;
 const batchSizeDefault = 10_000;
 
-const separatorPrimary = ':';
-const separatorSecondary = '_';
-const host = '127.0.0.1';
+// const host = '127.0.0.1';
 // const port = '6666';
-const port = '8103';
-const url = `redis://default@${host}:${port}`;
+// const port = '8103';
+// const url = `redis://default@${host}:${port}`;
 
-const client: RedisClient<any, any, any> = createClient({url});
-
-const remoteClient = createClient({
-  username: 'default',
-  password: 'Lg7qA8JPsOcBE8Em7e9fSRcHHHvsNpP7',
-  socket: {
-    host: 'redis-13690.crce8.us-east-1-mz.ec2.qa-cloud.redislabs.com',
-    port: 13690
-  }
-});
-
-client.on('error', err => console.log('Redis Client Error', err));
+// const client: RedisClient<any, any, any> = createClient({url});
+//
+// const remoteClient = createClient({
+//   username: 'default',
+//   password: 'Lg7qA8JPsOcBE8Em7e9fSRcHHHvsNpP7',
+//   socket: {
+//     host: 'redis-13690.crce8.us-east-1-mz.ec2.qa-cloud.redislabs.com',
+//     port: 13690
+//   }
+// });
 
 type CommandType = [cmd: string, ...args: (string | number)[]];
 type CommandsType = CommandType[];
@@ -64,9 +48,9 @@ function prepareCommandOptions(options: {
   };
 }
 
-async function sendCommand(client: RedisClient<any, any, any>, command: CommandType, options ?: any,) {
+async function sendCommand(client: RedisClient<any, any, any>, command: CommandType, options ?: any) {
   let commandArgs = prepareCommandArgs(command);
-  return client.sendCommand(commandArgs, prepareCommandOptions(options),);
+  return client.sendCommand(commandArgs, prepareCommandOptions(options));
 }
 
 async function sendPipeline(
@@ -84,9 +68,12 @@ async function sendPipeline(
 }
 
 function* generateBigData(baseKey: string, separator: string, limit: number, batchSize = batchSizeDefault) {
+  const keyTypes = [
+    'string', 'json', 'hash', 'list', 'set', 'zset',
+  ];
   let sent = 0;
   while (sent < limit) {
-    const commands: CommandsType = []
+    const commands: CommandsType = [];
     for (let i = 0; i < batchSize && sent < limit; i++) {
       sent += 1;
       for (const keyType of keyTypes) {
@@ -94,7 +81,7 @@ function* generateBigData(baseKey: string, separator: string, limit: number, bat
         let command: CommandType;
         switch (keyType) {
           case 'json':
-            command = ['json.set', keyName, '$', JSON.stringify({id: sent})];
+            command = ['json.set', keyName, '$', JSON.stringify({ id: sent })];
             break;
           case 'hash':
             command = ['hset', keyName, 'k0', sent];
@@ -120,12 +107,12 @@ function* generateBigData(baseKey: string, separator: string, limit: number, bat
   }
 }
 
-const SIZES = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+const SIZES = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 const toBytes = (size: number, type: string): number => {
-  const key = SIZES.indexOf(type.toUpperCase())
+  const key = SIZES.indexOf(type.toUpperCase());
 
-  return Math.floor(size * 1024 ** key)
-}
+  return Math.floor(size * 1024 ** key);
+};
 
 function generateRepeatedString(char: string = 'a', size: number | string = '10KB'): string {
   let bytes: number = 0;
@@ -150,13 +137,14 @@ async function seedBigKeys(
   keyName: string,
   command = 'set',
   generateCommand: (i: number) => (string | number) | (string | number)[],
-  limit = 1_000_001, batchSize = 100) {
+  limit = 1_000_001, batchSize = 100,
+) {
   const bigCommands: CommandsType = [];
   let batchCommands: (string | number)[] = [];
   for (let i = 1; i < limit; i++) {
     const items = generateCommand(i);
     if (Array.isArray(items)) {
-      batchCommands.push(...items)
+      batchCommands.push(...items);
     } else {
       batchCommands.push(items);
     }
@@ -168,36 +156,46 @@ async function seedBigKeys(
   await sendPipeline(client, bigCommands);
 }
 
-const populateBigKeys = async (client: RedisClient<any, any, any>, withBigStrings = false) => {
+/**
+ * Populate big keys in Redis Database
+ *
+ * Generates a range of keys and values to demonstrate large data sets.
+ *
+ * @param client - The Redis client to use.
+ * @param withBigStrings - If `true`, generates big string keys as well.
+ * @returns A promise that resolves when the keys are populated.
+ */
+export const populateBigKeys = async (client: RedisClient<any, any, any>, withBigStrings = false) => {
   const bigStrings = [
     {
       char: 'a',
       size: '1MB',
-      content: '1MB key'
+      content: '1MB key',
     },
     {
       char: 'b',
       size: '2MB',
-      content: '2MB key'
+      content: '2MB key',
     },
     {
       char: 'c',
       size: '3MB',
-      content: '3MB key'
+      content: '3MB key',
     },
     {
       char: 'd',
       size: '4MB',
-      content: '4MB key'
+      content: '4MB key',
     },
     {
       char: 'e',
       size: '5MB',
-      content: '5MB key'
+      content: '5MB key',
     },
-  ]
+  ];
   try {
-    console.log('Starting big keys...')
+    console.log('Starting big keys...');
+    client.on('error', err => console.log('Redis Client Error', err));
     await client.connect();
     if (withBigStrings) {
       console.log('Generating big string keys...');
@@ -235,16 +233,50 @@ const populateBigKeys = async (client: RedisClient<any, any, any>, withBigString
   } finally {
     await client.disconnect();
   }
+};
+
+type PopulateDbOptionsType = {
+  mainKeysLimit?: number;
+  secondaryKeysLimit?: number;
+  separatorPrimary?: string;
+  separatorSecondary?: string;
+  baseKeys?: string[];
+  secondaryKeys?: string[];
 }
 
+/**
+ * Populate Redis database with data.
+ *
+ * Populates Redis database with data in format of:
+ * - Primary key: `device:eu-east-1:1`, `device:eu-east-1:2`, ... `device:eu-east-1:1000`
+ * - Secondary key: `device_eu-east-1_1`, `device_eu-east-1_2`, ... `device_eu-east-1_1000`
+ *
+ * @param client - Redis client object
+ * @param {PopulateDbOptionsType} options - Options object
+ */
+export const populateDb = async (
+  client: RedisClient<any, any, any>,
+  {
+    mainKeysLimit = iterationsPrimary,
+    secondaryKeysLimit = iterationsSecondary,
+    baseKeys = [
+      'device', 'mobile', 'user',
+    ],
+    secondaryKeys = [
+      'eu-east-1', 'eu-west-1', 'us-east-1', 'us-west-1',
+    ],
+    separatorPrimary = ':',
+    separatorSecondary = '_',
+  }: PopulateDbOptionsType,
+): Promise<void> => {
 
-const populateDb = async (client: RedisClient<any, any, any>, iterationsPrimary: number, iterationsSecondary: number) => {
   try {
-    console.log('Starting...')
+    console.log('Starting...');
+    client.on('error', err => console.log('Redis Client Error', err));
     let executions = 0;
     await client.connect();
     for (let bk of baseKeys) {
-      const generator = generateBigData(bk, separatorPrimary, iterationsPrimary);
+      const generator = generateBigData(bk, separatorPrimary, mainKeysLimit);
       for (const commands of generator) {
         // process the commands
         await sendPipeline(client, commands);
@@ -252,7 +284,7 @@ const populateDb = async (client: RedisClient<any, any, any>, iterationsPrimary:
       }
 
       for (let sk of secondaryKeys) {
-        const generator = generateBigData(`${bk}${separatorSecondary}${sk}`, separatorSecondary, iterationsSecondary);
+        const generator = generateBigData(`${bk}${separatorSecondary}${sk}`, separatorSecondary, secondaryKeysLimit);
         for (const commands of generator) {
           // process the commands
           await sendPipeline(client, commands);
@@ -267,9 +299,9 @@ const populateDb = async (client: RedisClient<any, any, any>, iterationsPrimary:
   } finally {
     await client.disconnect();
   }
-}
+};
 
-populateBigKeys(client, true).then(() =>{
-  console.log('Populating DB...')
-  return populateDb(client, iterationsPrimary, iterationsSecondary);
-})
+// populateBigKeys(client, true).then(() => {
+//   console.log('Populating DB...');
+//   return populateDb(client, iterationsPrimary, iterationsSecondary);
+// });

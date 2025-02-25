@@ -7,7 +7,6 @@ import { convertRedisInfoReplyToObject } from 'src/utils';
 import { convertArrayReplyToObject } from '../utils';
 import * as semverCompare from 'node-version-compare';
 import { RedisDatabaseHelloResponse } from 'src/modules/database/dto/redis-info.dto';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { plainToClass } from 'class-transformer';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
@@ -52,6 +51,7 @@ export abstract class RedisClient extends EventEmitter2 {
   public readonly id: string;
 
   protected _redisVersion: string | undefined;
+  protected _isInfoCommandDisabled: boolean | undefined;
 
   protected lastTimeUsed: number;
 
@@ -81,6 +81,10 @@ export abstract class RedisClient extends EventEmitter2 {
 
   public isIdle(): boolean {
     return Date.now() - this.lastTimeUsed > REDIS_CLIENTS_CONFIG.idleThreshold;
+  }
+
+  public get isInfoCommandDisabled() {
+    return this._isInfoCommandDisabled;
   }
 
   /**
@@ -168,28 +172,31 @@ export abstract class RedisClient extends EventEmitter2 {
 
   /**
    * Get redis database info
-   * Uses cache by default
+   * If INFO fails, it will try to get info from HELLO command, which provides limited data
+   * If HELLO fails, it will return a static object
    * @param force
    * @param infoSection - e.g. server, clients, memory, etc.
    */
   public async getInfo(infoSection?: string) {
+    let infoData: any; // TODO: we should ideally type this
+
     try {
-      return convertRedisInfoReplyToObject(await this.call(
+      infoData = convertRedisInfoReplyToObject(await this.call(
         infoSection ? ['info', infoSection] : ['info'],
         { replyEncoding: 'utf8' },
       ) as string);
+      this._isInfoCommandDisabled = false;
     } catch (error) {
-      if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
-        try {
-          // Fallback to getting basic information from `hello` command
-          return await this.getRedisHelloInfo();
-        } catch (_error) {
-          // Ignore: hello is not available pre redis version 6
-        }
+      this._isInfoCommandDisabled = true;
+      try {
+        // Fallback to getting basic information from `hello` command
+        infoData = await this.getRedisHelloInfo();
+      } catch (_error) {
+        // Ignore: hello is not available pre redis version 6
       }
     }
 
-    return UNKNOWN_REDIS_INFO;
+    return infoData ?? UNKNOWN_REDIS_INFO;
   }
 
   private async getRedisHelloInfo() {

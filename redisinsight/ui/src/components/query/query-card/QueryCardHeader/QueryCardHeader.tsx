@@ -59,7 +59,6 @@ export interface Props {
   activeResultsMode?: ResultsMode
   summary?: ResultsSummary
   summaryText?: string
-  queryType: WBQueryType
   selectedValue: string
   loading?: boolean
   clearing?: boolean

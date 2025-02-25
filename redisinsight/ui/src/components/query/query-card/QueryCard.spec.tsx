@@ -5,7 +5,8 @@ import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { cleanup, clearStoreActions, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
-import QueryCard, { Props, getSummaryText } from './QueryCard'
+import QueryCard, { getSummaryText } from './QueryCard'
+import { Props } from './query-card.types'
 
 const mockedProps = mock<Props>()
 
@@ -93,17 +94,17 @@ describe('QueryCard', () => {
     expect(cliResultEl).not.toBeInTheDocument()
   })
 
-  it('Click on the header should call toggleOpenWBResult', () => {
+  it('Click on the header should call toggleOpenWBResult', async () => {
     const cardHeaderTestId = 'query-card-open'
     const mockId = '123'
 
-    const { queryByTestId } = render(<QueryCard
+    const { findByTestId } = render(<QueryCard
       {...instance(mockedProps)}
       id={mockId}
       result={mockResult}
     />)
 
-    const cardHeaderTestEl = queryByTestId(cardHeaderTestId)
+    const cardHeaderTestEl = await findByTestId(cardHeaderTestId)
 
     fireEvent.click(cardHeaderTestEl)
 

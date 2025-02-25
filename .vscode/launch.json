@@ -4,7 +4,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Nest Framework",
+      "name": "Debug API (Nest Framework)",
       "runtimeExecutable": "yarn",
       "runtimeArgs": [
         "dev:api",

@@ -1,5 +1,5 @@
 import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { Validator } from 'class-validator';
 import { API_HEADER_DATABASE_INDEX, API_PARAM_DATABASE_ID } from 'src/common/constants';
@@ -31,7 +31,7 @@ export const clientMetadataParamFactory = (
     uniqueId = req.params?.[options.uniqueIdParam];
   }
 
-  const clientMetadata = plainToClass(ClientMetadata, {
+  const clientMetadata = plainToInstance(ClientMetadata, {
     sessionMetadata: sessionMetadataFromRequestExecutionContext(undefined, ctx),
     databaseId,
     uniqueId,

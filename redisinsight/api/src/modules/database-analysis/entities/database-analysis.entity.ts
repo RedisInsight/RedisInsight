@@ -51,7 +51,7 @@ export class DatabaseAnalysisEntity {
   @Column({ nullable: true, type: 'blob' })
   @Transform((value) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
-    (str) => {
+    ({ value: str }) => {
       try {
         return JSON.parse(str).map((value) => ({
           ...value,
@@ -69,7 +69,7 @@ export class DatabaseAnalysisEntity {
   @Column({ nullable: true, type: 'blob' })
   @Transform((value) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
-    (str) => {
+    ({ value: str }) => {
       try {
         return JSON.parse(str).map((value) => ({
           ...value,
@@ -87,7 +87,7 @@ export class DatabaseAnalysisEntity {
   @Column({ nullable: true, type: 'blob' })
   @Transform((value) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
-    (str) => {
+    ({ value: str }) => {
       try {
         return JSON.parse(str).map((value) => ({
           ...value,
@@ -105,7 +105,7 @@ export class DatabaseAnalysisEntity {
   @Column({ nullable: true, type: 'blob' })
   @Transform((value) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
-    (str) => {
+    ({ value: str }) => {
       try {
         return JSON.parse(str).map((value) => ({
           ...value,

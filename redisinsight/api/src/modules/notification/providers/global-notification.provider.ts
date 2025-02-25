@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { Validator } from 'class-validator';
 import {
   forEach, keyBy, orderBy, values,
@@ -55,7 +55,7 @@ export class GlobalNotificationProvider {
       await this.validatedNotifications(remoteNotificationsDto);
 
       const toInsert = keyBy(
-        remoteNotificationsDto.notifications.map((notification) => plainToClass(Notification, {
+        remoteNotificationsDto.notifications.map((notification) => plainToInstance(Notification, {
           ...notification,
           type: NotificationType.Global,
           read: false,
@@ -108,7 +108,7 @@ export class GlobalNotificationProvider {
     this.logger.debug('Validating notifications from remote');
 
     try {
-      const notificationsDto: CreateNotificationsDto = plainToClass(
+      const notificationsDto: CreateNotificationsDto = plainToInstance(
         CreateNotificationsDto,
         dto,
       );
@@ -128,7 +128,7 @@ export class GlobalNotificationProvider {
       const buffer = await getFile(NOTIFICATIONS_CONFIG.updateUrl);
       const serializedString = buffer.toString();
       const json = JSON.parse(serializedString);
-      return plainToClass(CreateNotificationsDto, json);
+      return plainToInstance(CreateNotificationsDto, json);
     } catch (e) {
       this.logger.error(
         `Unable to download or parse notifications json. ${e.message}`,

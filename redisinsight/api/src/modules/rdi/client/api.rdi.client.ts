@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { Logger } from '@nestjs/common';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
@@ -234,7 +234,7 @@ export class ApiRdiClient extends RdiClient {
 
       return {
         status: RdiStatisticsStatus.Success,
-        data: plainToClass(RdiStatisticsData, convertKeysToCamelCase(data)),
+        data: plainToInstance(RdiStatisticsData, convertKeysToCamelCase(data)),
       };
     } catch (e) {
       const message: string = parseErrorMessage(e);

@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { classToClass } from 'src/utils';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
@@ -47,7 +47,7 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
       try {
         this.logger.debug('Creating features config entity');
 
-        entity = await this.repository.save(plainToClass(FeaturesConfigEntity, {
+        entity = await this.repository.save(plainToInstance(FeaturesConfigEntity, {
           id: this.id,
           data: defaultConfig,
           controlNumber: this.generateControlNumber(),
@@ -70,7 +70,7 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
   async update(_sessionMetadata: SessionMetadata, data: Record<string, any>): Promise<FeaturesConfig> {
     await this.repository.update(
       { id: this.id },
-      plainToClass(FeaturesConfigEntity, { data, id: this.id }),
+      plainToInstance(FeaturesConfigEntity, { data, id: this.id }),
     );
 
     return this.getOrCreate();

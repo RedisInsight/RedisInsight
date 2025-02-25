@@ -18,7 +18,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { ClientMetadata } from 'src/common/models';
 import {
   AddMembersToZSetDto,
@@ -108,7 +108,7 @@ export class ZSetService {
       );
 
       this.logger.debug('Succeed to get members of the ZSet data type.', clientMetadata);
-      return plainToClass(GetZSetResponse, {
+      return plainToInstance(GetZSetResponse, {
         keyName,
         total,
         members,
@@ -236,7 +236,7 @@ export class ZSetService {
         const formattedScore = isNaN(parseFloat(score)) ? String(score) : parseFloat(score);
 
         if (!isNull(score)) {
-          result.members.push(plainToClass(ZSetMemberDto, { name: member, score: formattedScore }));
+          result.members.push(plainToInstance(ZSetMemberDto, { name: member, score: formattedScore }));
         }
       } else {
         const scanResult = await this.scanZSet(client, dto);
@@ -244,7 +244,7 @@ export class ZSetService {
       }
 
       this.logger.debug('Succeed to search members of the ZSet data type.', clientMetadata);
-      return plainToClass(SearchZSetMembersResponse, result);
+      return plainToInstance(SearchZSetMembersResponse, result);
     } catch (error) {
       this.logger.error('Failed to search members of the ZSet data type.', error, clientMetadata);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -359,7 +359,7 @@ export class ZSetService {
     while (reply.length) {
       const member = reply.splice(0, 2);
       const score = isNaN(parseFloat(member[1])) ? String(member[1]) : parseFloat(member[1]);
-      result.push(plainToClass(ZSetMemberDto, {
+      result.push(plainToInstance(ZSetMemberDto, {
         name: member[0],
         score,
       }));

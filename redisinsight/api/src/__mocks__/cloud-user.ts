@@ -7,7 +7,7 @@ import {
   ICloudCapiAccount,
 } from 'src/modules/cloud/user/models';
 import config, { Config } from 'src/utils/config';
-import { classToPlain } from 'class-transformer';
+import { instanceToPlain } from 'class-transformer';
 import { mockCloudApiCapiAccessKey, mockCloudCapiAuthDto, mockCloudCapiKey } from 'src/__mocks__/cloud-capi-key';
 import { mockCloudApiAuthDto, mockCloudSession } from 'src/__mocks__/cloud-session';
 
@@ -102,7 +102,7 @@ export const mockCloudUser = Object.assign(new CloudUser(), {
   capiKey: mockCloudCapiKey,
 });
 
-export const mockCloudUserSafe = classToPlain(mockCloudUser); // omits all data in the "security" group
+export const mockCloudUserSafe = instanceToPlain(mockCloudUser); // omits all data in the "security" group
 
 export const mockCloudApiAccount: ICloudApiAccount = {
   id: mockCloudCapiAccount.id,

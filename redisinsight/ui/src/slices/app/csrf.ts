@@ -59,6 +59,7 @@ export function fetchCsrfTokenAction(
 
         const { data } = await apiService.get<CSRFTokenResponse>(getCsrfEndpoint())
 
+        console.warn({ csrf: data })
         setApiCsrfHeader(data.token)
         setResourceCsrfHeader(data.token)
         dispatch(fetchCsrfTokenSuccess({ token: data.token }))

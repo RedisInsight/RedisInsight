@@ -71,4 +71,14 @@ export class CloudDatabaseDetails {
   @IsOptional()
   @IsBoolean()
   free?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Is subscription using bdb packages',
+    type: Boolean,
+    example: false,
+  })
+  @Expose()
+  @IsOptional()
+  @IsBoolean()
+  isBdbPackage?: boolean;
 }

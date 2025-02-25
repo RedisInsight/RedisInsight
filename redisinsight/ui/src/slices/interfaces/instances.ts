@@ -319,6 +319,7 @@ export interface DatabaseConfigInfo {
     subscriptionType: 'fixed' | 'flexible'
     planMemoryLimit: number
     memoryLimitMeasurementUnit: string
+    isBdbPackages: boolean
   }
 }
 

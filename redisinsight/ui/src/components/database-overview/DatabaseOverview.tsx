@@ -68,7 +68,13 @@ const DatabaseOverview = () => {
   const overview = useSelector(connectedInstanceOverviewSelector)
   const {
     usedMemory,
-    cloudDetails: { subscriptionType, subscriptionId, planMemoryLimit, memoryLimitMeasurementUnit } = {},
+    cloudDetails: {
+      subscriptionType,
+      subscriptionId,
+      planMemoryLimit,
+      memoryLimitMeasurementUnit,
+      isBdbPackages,
+    } = {},
   } = overview
 
   const loadData = () => {
@@ -128,7 +134,9 @@ const DatabaseOverview = () => {
                   className={cx(styles.upgradeBtn)}
                   style={{ fontWeight: '400' }}
                   onClick={() => {
-                    const upgradeUrl = `${riConfig.app.returnUrlBase}/database/upgrade/${subscriptionId}`
+                    const upgradeUrl = isBdbPackages
+                      ? `${riConfig.app.returnUrlBase}/databases/upgrade/${subscriptionId}`
+                      : `${riConfig.app.returnUrlBase}/subscription/${subscriptionId}/change-plan`
                     window.open(upgradeUrl, '_blank')
                   }}
                   data-testid="upgrade-ri-db-button"

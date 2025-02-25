@@ -18,6 +18,20 @@ const overviewData: DatabaseConfigInfo & { usedMemoryPercent: number | null } = 
 }
 const initialState = set(initialStateDefault, 'connections.instances.instanceOverview', overviewData)
 
+jest.mock('uiSrc/config', () => ({
+  getConfig: jest.fn(() => {
+    const { getConfig: actualGetConfig } = jest.requireActual('uiSrc/config')
+    const actualConfig = actualGetConfig()
+    return {
+      ...actualConfig,
+      app: {
+        ...actualConfig.app,
+        returnUrlBase: 'https://redis.cloud.io/#'
+      }
+    }
+  }),
+}))
+
 describe('DatabaseOverview', () => {
   let mockedStore: ReturnType<typeof mockStore>
 
@@ -79,5 +93,35 @@ describe('DatabaseOverview', () => {
 
     expect(container.querySelector('[data-test-subj="overview-total-memory"]')).toHaveTextContent('45 MB / 75 MB (60.3%)')
     expect(queryByRole('button', { name: 'Upgrade' })).not.toBeInTheDocument()
+  })
+
+  test.each([
+    ['https://redis.cloud.io/#/subscription/123/change-plan', false],
+    ['https://redis.cloud.io/#/databases/upgrade/123', true]
+  ])('should redirect to %s when isBdbPackages = %s', (url, isBdbPackages) => {
+    const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null)
+
+    const state = set(cloneDeep(initialState), 'connections.instances.instanceOverview', {
+      ...overviewData,
+      cloudDetails: {
+        cloudId: 123,
+        subscriptionId: 123,
+        subscriptionType: 'fixed',
+        planMemoryLimit: 75,
+        memoryLimitMeasurementUnit: 'MB',
+        isBdbPackages,
+      }
+    })
+    mockedStore = mockStore(state)
+
+    const { container, queryByRole } = render(<DatabaseOverview />, { store: mockedStore })
+
+    expect(container.querySelector('[data-test-subj="overview-total-memory"]')).toHaveTextContent('45 MB / 75 MB (60.3%)')
+    const upgradeBtn = queryByRole('button', { name: 'Upgrade' })
+    expect(upgradeBtn).toBeInTheDocument()
+
+    upgradeBtn?.click()
+    expect(openSpy).toHaveBeenCalledTimes(1)
+    expect(openSpy).toHaveBeenCalledWith(url, '_blank')
   })
 })

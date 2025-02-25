@@ -11,7 +11,6 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import {
   fetchInstancesAction as fetchRdiInstancesAction,
-  resetConnectedInstance as resetRdiConnectedInstance,
   instancesSelector as rdiInstancesSelector
 } from 'uiSrc/slices/rdi/instances'
 import {
@@ -63,7 +62,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     if (!dbInstances?.length) {
       dispatch(fetchInstancesAction())
     }
-    if (!rdiInstances?.length) {
+    if (!rdiInstances?.length && envDependent?.flag) {
       dispatch(fetchRdiInstancesAction())
     }
   }, [])

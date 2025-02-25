@@ -51,6 +51,7 @@
     "**/semver": "^7.5.2",
     "**/cpu-features": "file:./stubs/cpu-features",
     "**/cross-spawn": "^7.0.5",
+    "**/redis-parser": "3.0.0",
     "winston-daily-rotate-file/**/file-stream-rotator": "^1.0.0"
   },
   "dependencies": {
@@ -90,6 +91,7 @@
     "node-version-compare": "^1.0.3",
     "quicktype-core": "^23.0.116",
     "redis": "^4.6.10",
+    "redis-parser": "3.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.6",
     "socket.io": "^4.8.0",

@@ -50,9 +50,9 @@ export enum RedisFeature {
 
 export abstract class RedisClient extends EventEmitter2 {
   public readonly id: string;
-  public isInfoCommandDisabled: boolean = false;
 
   protected _redisVersion: string | undefined;
+  protected _isInfoCommandDisabled: boolean | undefined;
 
   protected lastTimeUsed: number;
 
@@ -82,6 +82,10 @@ export abstract class RedisClient extends EventEmitter2 {
 
   public isIdle(): boolean {
     return Date.now() - this.lastTimeUsed > REDIS_CLIENTS_CONFIG.idleThreshold;
+  }
+
+  public get isInfoCommandDisabled() {
+    return this._isInfoCommandDisabled;
   }
 
   /**
@@ -174,24 +178,27 @@ export abstract class RedisClient extends EventEmitter2 {
    * @param infoSection - e.g. server, clients, memory, etc.
    */
   public async getInfo(infoSection?: string) {
+    let infoData: any; // TODO: we should ideally type this
+
     try {
-      return convertRedisInfoReplyToObject(await this.call(
+      infoData = convertRedisInfoReplyToObject(await this.call(
         infoSection ? ['info', infoSection] : ['info'],
         { replyEncoding: 'utf8' },
       ) as string);
+      this._isInfoCommandDisabled = false;
     } catch (error) {
+      this._isInfoCommandDisabled = true;
       if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
         try {
           // Fallback to getting basic information from `hello` command
-          this.isInfoCommandDisabled = true;
-          return await this.getRedisHelloInfo();
+          infoData = await this.getRedisHelloInfo();
         } catch (_error) {
           // Ignore: hello is not available pre redis version 6
         }
       }
     }
 
-    return UNKNOWN_REDIS_INFO;
+    return infoData ?? UNKNOWN_REDIS_INFO;
   }
 
   private async getRedisHelloInfo() {

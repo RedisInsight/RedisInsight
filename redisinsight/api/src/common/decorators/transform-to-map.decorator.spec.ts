@@ -1,5 +1,7 @@
-import { Expose, classToPlain, plainToClass } from 'class-transformer';
+import * as classTransformer from 'class-transformer';
 import { TransformToMap } from './transform-to-map.decorator';
+
+const { Expose, classToPlain, plainToClass } = classTransformer;
 
 class DummyClass {
   @Expose()
@@ -83,5 +85,55 @@ describe('TransformToMap decorator', () => {
     const plain = classToPlain(instance);
 
     expect(plain.data).toEqual(undefined);
+  });
+
+  it('should trigger plainToClass without triggering classToPlain', () => {
+    const spyClassToPlain = jest.spyOn(classTransformer, 'classToPlain');
+
+    const input = {
+      data: {
+        key1: { value: 'test1' },
+        key2: { value: 'test2' },
+      },
+    };
+
+    const instance = plainToClass(TestDto, input, {
+      excludeExtraneousValues: true,
+    });
+
+    expect(instance.data).toBeDefined();
+    expect(instance.data.key1).toBeInstanceOf(DummyClass);
+    expect(instance.data.key1.value).toEqual('test1');
+
+    expect(spyClassToPlain).not.toHaveBeenCalled();
+
+    spyClassToPlain.mockRestore();
+  });
+
+  it('should trigger classToPlain without triggering plainToClass', () => {
+    const spyPlainToClass = jest.spyOn(classTransformer, 'plainToClass');
+
+    const dummy1 = new DummyClass();
+    dummy1.value = 'test1';
+    const dummy2 = new DummyClass();
+    dummy2.value = 'test2';
+
+    const instance = new TestDto();
+    instance.data = {
+      key1: dummy1,
+      key2: dummy2,
+    };
+
+    const plain = classToPlain(instance);
+
+    expect(plain).toHaveProperty('data');
+    expect(plain.data).toEqual({
+      key1: { value: 'test1' },
+      key2: { value: 'test2' },
+    });
+
+    expect(spyPlainToClass).not.toHaveBeenCalled();
+
+    spyPlainToClass.mockRestore();
   });
 });

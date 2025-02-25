@@ -7,7 +7,6 @@ import { convertRedisInfoReplyToObject } from 'src/utils';
 import { convertArrayReplyToObject } from '../utils';
 import * as semverCompare from 'node-version-compare';
 import { RedisDatabaseHelloResponse } from 'src/modules/database/dto/redis-info.dto';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { plainToClass } from 'class-transformer';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
@@ -173,7 +172,8 @@ export abstract class RedisClient extends EventEmitter2 {
 
   /**
    * Get redis database info
-   * Uses cache by default
+   * If INFO fails, it will try to get info from HELLO command, which provides limited data
+   * If HELLO fails, it will return a static object
    * @param force
    * @param infoSection - e.g. server, clients, memory, etc.
    */
@@ -188,13 +188,11 @@ export abstract class RedisClient extends EventEmitter2 {
       this._isInfoCommandDisabled = false;
     } catch (error) {
       this._isInfoCommandDisabled = true;
-      if (error.message.includes(ERROR_MESSAGES.NO_INFO_COMMAND_PERMISSION)) {
-        try {
-          // Fallback to getting basic information from `hello` command
-          infoData = await this.getRedisHelloInfo();
-        } catch (_error) {
-          // Ignore: hello is not available pre redis version 6
-        }
+      try {
+        // Fallback to getting basic information from `hello` command
+        infoData = await this.getRedisHelloInfo();
+      } catch (_error) {
+        // Ignore: hello is not available pre redis version 6
       }
     }
 

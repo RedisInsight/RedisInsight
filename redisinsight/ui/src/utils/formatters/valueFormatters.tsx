@@ -51,6 +51,8 @@ const isFormatEditable = (format: KeyValueFormat) => ![
   KeyValueFormat.Pickle,
   KeyValueFormat.Vector32Bit,
   KeyValueFormat.Vector64Bit,
+  KeyValueFormat.HEX,
+  KeyValueFormat.Binary,
 ].includes(format)
 
 const isFullStringLoaded = (currentLength: Maybe<number>, fullLength: Maybe<number>) => currentLength === fullLength

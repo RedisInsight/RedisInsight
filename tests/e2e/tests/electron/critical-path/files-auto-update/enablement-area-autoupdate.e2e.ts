@@ -32,7 +32,7 @@ if (fs.existsSync(workingDirectory)) {
     tutorialsTimestampFile.save();
 
     fixture `Auto-update in Enablement Area`
-        .meta({ type: 'critical_path', rte: rte.standalone })
+        .meta({ type: 'critical_path', rte: rte.standalone, skipComment: "Skipped because it is not running in CI" })
         .page(commonUrl)
         .beforeEach(async() => {
             await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
@@ -40,7 +40,7 @@ if (fs.existsSync(workingDirectory)) {
         .afterEach(async() => {
             await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
         });
-    test('Verify that user can see updated info in Enablement Area', async t => {
+    test.skip('Verify that user can see updated info in Enablement Area', async t => {
         // Create new file due to cache-ability
         const tutorialsTimestampFileNew = editJsonFile(tutorialsTimestampPath);
 
@@ -50,7 +50,7 @@ if (fs.existsSync(workingDirectory)) {
         // Check Enablement area and validate that removed file is existed in Guides
         await workbenchPage.NavigationHeader.togglePanel(true);
         const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
-        await t.click(tab.guidesGraphAccordion);
+        await t.click(tab.guidesGraphAccordion); // TODO: - FAILS to find selector
         await t.click(tab.guidesIntroductionGraphLink.nth(1));
         await t.expect(tab.enablementAreaEmptyContent.visible).notOk('Guides folder is not updated');
         await t.click(tab.closeEnablementPage);

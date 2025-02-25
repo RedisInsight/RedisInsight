@@ -1,5 +1,4 @@
 [![Release](https://img.shields.io/github/v/release/RedisInsight/RedisInsight.svg?sort=semver)](https://github.com/RedisInsight/RedisInsight/releases)
-[![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main)
 
 # <img src="https://github.com/RedisInsight/RedisInsight/blob/main/resources/icon.png" alt="logo" width="25"/>  Redis Insight - Developer GUI for Redis, by Redis.
 [![Forum](https://img.shields.io/badge/Forum-RedisInsight-red)](https://forum.redis.com/c/redisinsight/65)
@@ -83,4 +82,3 @@ Redis Insight includes an opt-in telemetry system, that is leveraged to help imp
 ## License 
 
 Redis Insight is licensed under [SSPL](/LICENSE) license.
-

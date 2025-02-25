@@ -30,6 +30,12 @@
     }
   }
 
+  &:global(.mixed) {
+    &:before {
+      background-color: var(--warningBorderColor);
+    }
+  }
+
   &:global(.failed) {
     &:before {
       background-color: var(--errorBorderColor);

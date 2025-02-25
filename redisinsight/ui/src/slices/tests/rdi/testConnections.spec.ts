@@ -104,8 +104,10 @@ describe('rdi test connections slice', () => {
           },
 
           sources: {
-            connected: true,
-            error: '',
+            source: {
+              connected: true,
+              error: '',
+            }
           },
         }
 

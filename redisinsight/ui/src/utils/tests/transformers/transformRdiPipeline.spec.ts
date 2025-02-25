@@ -245,8 +245,10 @@ const transformConnectionResultsTests: any[] = [
         target1: { status: 'success' },
       },
       sources: {
-        connected: true,
-        error: 'Success',
+        source1: {
+          connected: true,
+          error: 'Success',
+        }
       },
     },
     {
@@ -255,7 +257,7 @@ const transformConnectionResultsTests: any[] = [
         fail: [],
       },
       source: {
-        success: [{ target: 'source' }],
+        success: [{ target: 'source1' }],
         fail: [],
       },
     },
@@ -266,8 +268,10 @@ const transformConnectionResultsTests: any[] = [
         target1: { status: 'success' },
       },
       sources: {
-        connected: false,
-        error: 'Database unreachable',
+        source1: {
+          connected: false,
+          error: 'Database unreachable',
+        }
       },
     },
     {
@@ -277,7 +281,34 @@ const transformConnectionResultsTests: any[] = [
       },
       source: {
         success: [],
-        fail: [{ target: 'source', error: 'Database unreachable' }],
+        fail: [{ target: 'source1', error: 'Database unreachable' }],
+      },
+    },
+  ],
+  [
+    {
+      targets: {
+        target1: { status: 'success' },
+      },
+      sources: {
+        source1: {
+          connected: false,
+          error: 'Database unreachable',
+        },
+        source2: {
+          connected: true,
+          error: '',
+        }
+      },
+    },
+    {
+      target: {
+        success: [{ target: 'target1' }],
+        fail: [],
+      },
+      source: {
+        success: [{ target: 'source2' }],
+        fail: [{ target: 'source1', error: 'Database unreachable' }],
       },
     },
   ],

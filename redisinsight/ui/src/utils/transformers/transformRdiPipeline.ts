@@ -81,11 +81,14 @@ export const transformConnectionResults = (
     return result
   }
 
-  if (results.sources.connected) {
-    result.source.success.push({ target: 'source' })
-  } else {
-    result.source.fail.push({ target: 'source', error: results.sources.error })
-  }
+  Object.entries(results.sources).forEach(([source, details]) => {
+    if (details.connected) {
+      result.source.success.push({ target: source })
+    } else {
+      const errorMessage = details.error || 'Error'
+      result.source.fail.push({ target: source, error: errorMessage })
+    }
+  })
 
   return result
 }

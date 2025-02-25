@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { Validator } from 'class-validator';
 import { Request } from 'express';
 import { SessionMetadata } from 'src/common/models';
@@ -22,7 +22,7 @@ export const sessionMetadataFromRequest = (request: Request): SessionMetadata =>
   };
 
   // todo: do not forget to deal with session vs sessionMetadata property
-  const session = plainToClass(SessionMetadata, requestSession);
+  const session = plainToInstance(SessionMetadata, requestSession);
 
   const errors = validator.validateSync(session, {
     whitelist: false, // we need this to allow additional fields if needed for flexibility

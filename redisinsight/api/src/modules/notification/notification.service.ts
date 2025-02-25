@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { SessionMetadata } from 'src/common/models';
 import { NotificationsDto, ReadNotificationsDto } from 'src/modules/notification/dto';
 import { NotificationRepository } from './repositories/notification.repository';
@@ -21,7 +21,7 @@ export class NotificationService {
         this.notificationRepository.getTotalUnread(sessionMetadata),
       ]);
 
-      return plainToClass(NotificationsDto, {
+      return plainToInstance(NotificationsDto, {
         notifications,
         totalUnread,
       });
@@ -46,7 +46,7 @@ export class NotificationService {
 
       const notifications = await this.notificationRepository.readNotifications(sessionMetadata, type, timestamp);
 
-      return plainToClass(NotificationsDto, {
+      return plainToInstance(NotificationsDto, {
         notifications,
         totalUnread: await this.notificationRepository.getTotalUnread(sessionMetadata),
       });

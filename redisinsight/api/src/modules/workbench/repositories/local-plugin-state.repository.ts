@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { classToClass } from 'src/utils';
@@ -33,7 +33,7 @@ export class LocalPluginStateRepository extends PluginStateRepository {
    * @param pluginState
    */
   async upsert(_: SessionMetadata, pluginState: Partial<PluginState>): Promise<void> {
-    const entity = plainToClass(PluginStateEntity, pluginState);
+    const entity = plainToInstance(PluginStateEntity, pluginState);
     try {
       await this.repository.save(await this.modelEncryptor.encryptEntity(entity));
     } catch (e) {

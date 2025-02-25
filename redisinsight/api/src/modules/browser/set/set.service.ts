@@ -16,7 +16,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import {
   AddMembersToSetDto,
   CreateSetWithExpireDto,
@@ -103,7 +103,7 @@ export class SetService {
       }
 
       this.logger.debug('Succeed to get members of the Set data type.', clientMetadata);
-      return plainToClass(GetSetMembersResponse, result);
+      return plainToInstance(GetSetMembersResponse, result);
     } catch (error) {
       this.logger.error('Failed to get members of the Set data type.', error, clientMetadata);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {

@@ -45,7 +45,7 @@ export class DatabaseImportResult {
   })
   @Expose()
   @Transform(
-    (e) => {
+    ({ value: e }) => {
       if (!e) {
         return undefined;
       }

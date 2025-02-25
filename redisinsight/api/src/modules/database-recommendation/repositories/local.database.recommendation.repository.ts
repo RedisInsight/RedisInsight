@@ -7,7 +7,7 @@ import { DatabaseRecommendationRepository }
   from 'src/modules/database-recommendation/repositories/database-recommendation.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
 import { ModifyDatabaseRecommendationDto } from 'src/modules/database-recommendation/dto';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -49,7 +49,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
 
     try {
       const model = await this.repository.save(
-        await this.modelEncryptor.encryptEntity(plainToClass(DatabaseRecommendationEntity, entity)),
+        await this.modelEncryptor.encryptEntity(plainToInstance(DatabaseRecommendationEntity, entity)),
       );
 
       const recommendation = classToClass(
@@ -132,7 +132,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
   ): Promise<DatabaseRecommendation> {
     this.logger.debug(`Updating database recommendation with id:${id}`, clientMetadata);
     const oldEntity = await this.modelEncryptor.decryptEntity(await this.repository.findOneBy({ id }));
-    const newEntity = plainToClass(DatabaseRecommendationEntity, recommendation);
+    const newEntity = plainToInstance(DatabaseRecommendationEntity, recommendation);
 
     if (!oldEntity) {
       this.logger.error(`Database recommendation with id:${id} was not Found`, clientMetadata);
@@ -228,7 +228,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
       const sortedRecommendations = sortRecommendations(dbAnalysisRecommendations);
       for (let i = 0; i < sortedRecommendations.length; i += 1) {
         if (!await this.isExist(clientMetadata, sortedRecommendations[i].name)) {
-          const entity = plainToClass(
+          const entity = plainToInstance(
             DatabaseRecommendation,
             {
               databaseId: clientMetadata?.databaseId,

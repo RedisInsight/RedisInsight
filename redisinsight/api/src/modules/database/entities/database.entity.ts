@@ -98,27 +98,27 @@ export class DatabaseEntity {
 
   @Expose()
   @Column({ nullable: true })
-  @Transform((_, obj) => (
+  @Transform(({ obj }) => (
     obj?.sentinelMaster?.name
   ), { toClassOnly: true })
   sentinelMasterName: string;
 
   @Expose()
   @Column({ nullable: true })
-  @Transform((_, obj) => (
+  @Transform(({ obj }) => (
     obj?.sentinelMaster?.username
   ), { toClassOnly: true })
   sentinelMasterUsername: string;
 
   @Expose()
   @Column({ nullable: true })
-  @Transform((_, obj) => (
+  @Transform(({ obj }) => (
     obj?.sentinelMaster?.password
   ), { toClassOnly: true })
   sentinelMasterPassword: string;
 
   @Expose()
-  @Transform((_, obj) => {
+  @Transform(({ obj }) => {
     if (obj?.sentinelMasterName) {
       return {
         name: obj?.sentinelMasterName,

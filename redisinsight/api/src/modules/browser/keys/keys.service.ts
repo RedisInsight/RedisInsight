@@ -22,7 +22,7 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import { ClientMetadata } from 'src/common/models';
 import { Scanner } from 'src/modules/browser/keys/scanner/scanner';
 import { BrowserHistoryMode, RedisString } from 'src/common/constants';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { pick } from 'lodash';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
@@ -58,7 +58,7 @@ export class KeysService {
       if (dto.match !== DEFAULT_MATCH) {
         await this.browserHistory.create(
           clientMetadata,
-          plainToClass(
+          plainToInstance(
             CreateBrowserHistoryDto,
             { filter: pick(dto, 'type', 'match'), mode: BrowserHistoryMode.Pattern },
           ),
@@ -71,7 +71,7 @@ export class KeysService {
         result[0]?.total,
       );
 
-      return result.map((nodeResult) => plainToClass(GetKeysWithDetailsResponse, nodeResult));
+      return result.map((nodeResult) => plainToInstance(GetKeysWithDetailsResponse, nodeResult));
     } catch (error) {
       this.logger.error(
         `Failed to get keys with details info. ${error.message}.`,
@@ -111,7 +111,7 @@ export class KeysService {
         { keys: result, client, databaseId: clientMetadata.databaseId },
       );
 
-      return plainToClass(GetKeyInfoResponse, result);
+      return plainToInstance(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error(`Failed to get keys info: ${error.message}.`, clientMetadata);
       throw catchAclError(error);
@@ -157,7 +157,7 @@ export class KeysService {
         result,
       );
 
-      return plainToClass(GetKeyInfoResponse, result);
+      return plainToInstance(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error('Failed to get key info.', error, clientMetadata);
       throw catchAclError(error);
@@ -220,7 +220,7 @@ export class KeysService {
         return Promise.reject(new BadRequestException(ERROR_MESSAGES.NEW_KEY_NAME_EXIST));
       }
       this.logger.debug('Succeed to rename key', clientMetadata);
-      return plainToClass(RenameKeyResponse, { keyName: newKeyName });
+      return plainToInstance(RenameKeyResponse, { keyName: newKeyName });
     } catch (error) {
       this.logger.error('Failed to rename key.', error, clientMetadata);
       throw catchAclError(error);

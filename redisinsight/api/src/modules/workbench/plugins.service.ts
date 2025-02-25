@@ -4,7 +4,7 @@ import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-comm
 import { CommandNotSupportedError } from 'src/modules/cli/constants/errors';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { PluginCommandExecution } from 'src/modules/workbench/models/plugin-command-execution';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
@@ -42,14 +42,14 @@ export class PluginsService {
 
       const result = await this.commandsExecutor.sendCommand(client, dto);
 
-      return plainToClass(PluginCommandExecution, {
+      return plainToInstance(PluginCommandExecution, {
         ...dto,
         databaseId: clientMetadata.databaseId,
         result,
       });
     } catch (error) {
       if (error instanceof CommandNotSupportedError) {
-        return plainToClass(PluginCommandExecution, {
+        return plainToInstance(PluginCommandExecution, {
           ...dto,
           databaseId: clientMetadata.databaseId,
           result: [{

@@ -70,7 +70,7 @@ export class CloudDatabaseCapiService {
   }
 
   /**
-   * Creating free database along with subscription if needed
+   * Creating free trial database along with subscription if needed
    * @param authDto
    * @param dto
    */

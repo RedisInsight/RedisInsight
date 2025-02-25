@@ -79,7 +79,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
         {!!freeDbWithModule && (
           <>
             <EuiText color="subdued" size="s">
-              Use your free all-in-one Redis Cloud database to start exploring these capabilities.
+              Use your free trial all-in-one Redis Cloud database to start exploring these capabilities.
             </EuiText>
             <EuiSpacer size="s" />
             <OAuthConnectFreeDb

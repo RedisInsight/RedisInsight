@@ -9,6 +9,6 @@ export const OAUTH_ADVANTAGES_ITEMS = [
     title: 'Scalable and fully managed',
   },
   {
-    title: 'Free database to get started immediately',
+    title: 'Free trial database to get started immediately',
   },
 ]

@@ -13,7 +13,7 @@ export default {
       {' '}
       You can also create a
       {' '}
-      <a href="https://redis.io/try-free/" target="_blank" rel="noreferrer">free Redis Cloud database</a>
+      <a href="https://redis.io/try-free/" target="_blank" rel="noreferrer">free trial Redis Cloud database</a>
       {' '}
       with built-in JSON support.
     </>
@@ -39,7 +39,7 @@ export default {
         className="link-underline"
         rel="noreferrer"
       >
-        free up-to-date
+        free up-to-date trial
       </a>
       &nbsp;Redis database.
     </>

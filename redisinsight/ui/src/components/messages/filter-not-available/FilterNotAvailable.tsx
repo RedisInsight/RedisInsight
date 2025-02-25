@@ -33,7 +33,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
       {!!freeInstances.length && (
         <>
           <EuiText color="subdued">
-            Use your free all-in-one Redis Cloud database to start exploring these capabilities.
+            Use your free trial all-in-one Redis Cloud database to start exploring these capabilities.
           </EuiText>
           <EuiSpacer size="l" />
           <OAuthConnectFreeDb
@@ -46,7 +46,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
       {!freeInstances.length && (
         <>
           <EuiText color="subdued">
-            Create a free Redis Stack database that supports filtering and extends
+            Create a free trial Redis Stack database that supports filtering and extends
             the core capabilities of your Redis.
           </EuiText>
           <EuiSpacer size="l" />

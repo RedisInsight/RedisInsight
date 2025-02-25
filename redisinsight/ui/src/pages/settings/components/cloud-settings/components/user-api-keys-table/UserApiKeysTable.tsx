@@ -208,7 +208,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
           <EuiSpacer size="s" />
           <EuiText size="s" className={styles.smallText} color="subdued">
             Cloud API keys will be created and stored when you connect to Redis Cloud to create
-            a free Cloud database or autodiscover your Cloud database.
+            a free trial Cloud database or autodiscover your Cloud database.
           </EuiText>
           <EuiSpacer />
           <div className={styles.actions}>

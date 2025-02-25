@@ -6,22 +6,6 @@ const iterationsPrimary = 500_000;
 const iterationsSecondary = 125_000;
 const batchSizeDefault = 10_000;
 
-// const host = '127.0.0.1';
-// const port = '6666';
-// const port = '8103';
-// const url = `redis://default@${host}:${port}`;
-
-// const client: RedisClient<any, any, any> = createClient({url});
-//
-// const remoteClient = createClient({
-//   username: 'default',
-//   password: 'Lg7qA8JPsOcBE8Em7e9fSRcHHHvsNpP7',
-//   socket: {
-//     host: 'redis-13690.crce8.us-east-1-mz.ec2.qa-cloud.redislabs.com',
-//     port: 13690
-//   }
-// });
-
 type CommandType = [cmd: string, ...args: (string | number)[]];
 type CommandsType = CommandType[];
 
@@ -195,7 +179,6 @@ export const populateBigKeys = async (client: RedisClient<any, any, any>, withBi
   ];
   try {
     console.log('Starting big keys...');
-    client.on('error', err => console.log('Redis Client Error', err));
     await client.connect();
     if (withBigStrings) {
       console.log('Generating big string keys...');
@@ -300,7 +283,21 @@ export const populateDb = async (
     await client.disconnect();
   }
 };
+// const host = '127.0.0.1';
+// const port = '6666';
+// const port = '8103';
+// const url = `redis://default@${host}:${port}`;
 
+// const client: RedisClient<any, any, any> = createClient({url});
+//
+// const remoteClient = createClient({
+//   username: 'default',
+//   password: 'Lg7qA8JPsOcBE8Em7e9fSRcHHHvsNpP7',
+//   socket: {
+//     host: 'redis-13690.crce8.us-east-1-mz.ec2.qa-cloud.redislabs.com',
+//     port: 13690
+//   }
+// });
 // populateBigKeys(client, true).then(() => {
 //   console.log('Populating DB...');
 //   return populateDb(client, iterationsPrimary, iterationsSecondary);

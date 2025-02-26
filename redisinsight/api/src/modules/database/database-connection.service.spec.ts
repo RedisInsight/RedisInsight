@@ -143,8 +143,8 @@ describe('DatabaseConnectionService', () => {
       expect(databaseInfoProvider.getClientListInfo).toHaveBeenCalled();
       expect(analytics.sendDatabaseConnectedClientListEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
-        mockDatabase.id,
         {
+          databaseId: mockDatabase.id,
           clients: mockRedisClientListResult.map((c) => ({
             version: mockRedisGeneralInfo.version,
             resp: get(c, 'resp', 'n/a'),

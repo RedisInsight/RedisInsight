@@ -1,5 +1,5 @@
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
-import { convertRedisInfoReplyToObject, convertStringToNumber } from 'src/utils';
+import { convertStringToNumber } from 'src/utils';
 import { get, map, sum } from 'lodash';
 import { ClusterDetails, ClusterNodeDetails } from 'src/modules/cluster-monitor/models';
 import { plainToClass } from 'class-transformer';
@@ -63,10 +63,7 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * @private
    */
   private async getClusterNodeInfo(nodeClient: RedisClient, node): Promise<ClusterNodeDetails> {
-    const info = convertRedisInfoReplyToObject(await nodeClient.sendCommand(
-      ['info'],
-      { replyEncoding: 'utf8' },
-    ) as string);
+    const info = await nodeClient.getInfo();
 
     return {
       ...node,

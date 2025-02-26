@@ -129,17 +129,13 @@ export class DatabaseAnalytics extends TelemetryBaseService {
 
   sendDatabaseConnectedClientListEvent(
     sessionMetadata: SessionMetadata,
-    databaseId: string,
     additionalData: object = {},
   ): void {
     try {
       this.sendEvent(
         sessionMetadata,
         TelemetryEvents.DatabaseConnectedClientList,
-        {
-          databaseId,
-          ...additionalData,
-        },
+        additionalData,
       );
     } catch (e) {
       // continue regardless of error

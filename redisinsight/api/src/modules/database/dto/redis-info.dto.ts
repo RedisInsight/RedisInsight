@@ -96,3 +96,48 @@ export class RedisDatabaseModuleDto {
   })
   ver?: number;
 }
+
+export class RedisDatabaseHelloResponse {
+  @ApiProperty({
+    description: 'Redis database id',
+    type: Number,
+  })
+  id: number;
+
+  @ApiProperty({
+    description: 'Redis database server name',
+    type: String,
+  })
+  server: string;
+
+  @ApiProperty({
+    description: 'Redis database version',
+    type: String,
+  })
+  version: string;
+
+  @ApiProperty({
+    description: 'Redis database proto',
+    type: Number,
+  })
+  proto: number;
+
+  @ApiProperty({
+    description: 'Redis database mode',
+    type: String,
+  })
+  mode: "standalone" | "sentinel" | "cluster";
+
+  @ApiProperty({
+    description: 'Redis database role',
+    type: String,
+  })
+  role: 'master' | 'slave';
+
+  @ApiProperty({
+    description: 'Redis database modules',
+    type: RedisDatabaseModuleDto,
+    isArray: true,
+  })
+  modules: RedisDatabaseModuleDto[]
+}

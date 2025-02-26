@@ -1,10 +1,9 @@
 import React from 'react'
 import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle, EuiToolTip } from '@elastic/eui'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
-const TooLongKeyNameDetails = ({ onClose }: { onClose: (key: RedisResponseBuffer) => void}) => (
+const TooLongKeyNameDetails = ({ onClose }: { onClose: () => void}) => (
   <div className={styles.container} data-testid="too-long-key-name-details">
     <EuiToolTip
       content="Close"
@@ -16,7 +15,7 @@ const TooLongKeyNameDetails = ({ onClose }: { onClose: (key: RedisResponseBuffer
         color="primary"
         aria-label="Close key"
         className={styles.closeBtn}
-        onClick={() => onClose(undefined)}
+        onClick={() => onClose()}
         data-testid="too-long-key-name-close-key-btn"
       />
     </EuiToolTip>

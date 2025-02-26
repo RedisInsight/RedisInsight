@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux'
 
 import { Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
@@ -14,7 +13,7 @@ const ModulesTypeDetails = (
     onClose 
   }: 
     { moduleName: string, 
-      onClose: (key: RedisResponseBuffer) => void,
+      onClose: () => void,
     }
   ) => {
   const history = useHistory()
@@ -37,7 +36,7 @@ const ModulesTypeDetails = (
           color="primary"
           aria-label="Close key"
           className={styles.closeBtn}
-          onClick={() => onClose(undefined)}
+          onClick={() => onClose()}
           data-testid="module-type-close-key-btn"
         />
       </EuiToolTip>

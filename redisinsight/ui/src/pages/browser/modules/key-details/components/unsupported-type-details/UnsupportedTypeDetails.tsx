@@ -2,12 +2,11 @@ import React from 'react'
 import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle, EuiToolTip } from '@elastic/eui'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
 const UnsupportedTypeDetails = ({ onClose }: 
-      { onClose: (key: RedisResponseBuffer) => void }) => (
+      { onClose: () => void }) => (
   <div className={styles.container} data-testid="unsupported-type-details">
     <EuiToolTip
         content="Close"
@@ -19,7 +18,7 @@ const UnsupportedTypeDetails = ({ onClose }:
           color="primary"
           aria-label="Close key"
           className={styles.closeBtn}
-          onClick={() => onClose(undefined)}
+          onClick={() => onClose()}
           data-testid="unsuported-type-close-key-btn"
       />
     </EuiToolTip>

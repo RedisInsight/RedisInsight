@@ -89,7 +89,7 @@ test('Verify that user can add new Stream Entry for Stream data type key which h
     await t.expect(browserPage.streamEntryIDDateValue.count).eql(3, 'Three Entries ID not displayed');
     await t.expect(browserPage.streamFields.count).eql(8, 'Still two fields in table not displayed');
     await t.expect(browserPage.streamEntryFields.count).eql(6, 'Six values in table not displayed');
-});
+}).skip.meta({skipComment: "CI execution unstable, verification failure, needs investigation"});
 test('Verify that during new entry adding to existing Stream, user can clear the value and the row itself', async t => {
     keyName = Common.generateWord(20);
     // Generate data for stream

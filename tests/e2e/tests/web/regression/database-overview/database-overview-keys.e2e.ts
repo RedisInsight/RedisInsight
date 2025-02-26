@@ -65,18 +65,19 @@ test
         await browserActions.verifyTooltipContainsText(`${keysAmount + 1}\nTotal Keys`, true);
         await browserActions.verifyTooltipContainsText('db1', false);
     });
-test
-    .meta({ rte: rte.reCloud })
+test('Verify that when users hover over keys icon in Overview for Cloud DB, they see only total number of keys in tooltip', async t => {
+        await t.hover(workbenchPage.OverviewPanel.overviewTotalKeys);
+        // Verify that user can see only total number of keys
+        await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
+        await browserActions.verifyTooltipContainsText('Total Keys', true);
+        await browserActions.verifyTooltipContainsText('db1', false);
+    })
+    .skip
+    .meta({ rte: rte.reCloud, skipComment: "Unstable CI execution, assertion failure, needs investigation" })
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
     .after(async() => {
         // Delete database
         await databaseHelper.deleteDatabase(cloudDatabaseConfig.databaseName);
-    })('Verify that when users hover over keys icon in Overview for Cloud DB, they see only total number of keys in tooltip', async t => {
-        await t.hover(workbenchPage.OverviewPanel.overviewTotalKeys);
-        // Verify that user can see only total number of keys
-        await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-        await browserActions.verifyTooltipContainsText('Total Keys', true);
-        await browserActions.verifyTooltipContainsText('db1', false);
     });

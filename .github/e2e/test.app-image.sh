@@ -22,5 +22,4 @@ rm -rf tests/e2e/results
 COMMON_URL=$(tail -n 1 apppath)/resources/app.asar/dist/renderer/index.html \
 ELECTRON_PATH=$(tail -n 1 apppath)/redisinsight \
 RI_SOCKETS_CORS=true \
-DEBUG=testcafe:* \
 yarn --cwd tests/e2e dotenv -e .desktop.env yarn --cwd tests/e2e test:desktop:ci

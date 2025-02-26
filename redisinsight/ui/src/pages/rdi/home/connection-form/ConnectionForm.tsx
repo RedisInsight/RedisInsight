@@ -83,13 +83,6 @@ const ConnectionForm = (props: Props) => {
     if (!values.url) {
       errors.url = 'URL'
     }
-    if (!values.username) {
-      errors.username = 'Username'
-    }
-    // password is security field we did not received it from BE
-    if (!values.password && !isNull(values.password)) {
-      errors.password = 'Password'
-    }
 
     return errors
   }
@@ -191,7 +184,7 @@ const ConnectionForm = (props: Props) => {
               <EuiFormRow>
                 <EuiFlexGroup responsive={false}>
                   <EuiFlexItem grow={1}>
-                    <EuiFormRow label="Username*">
+                    <EuiFormRow label="Username">
                       <Field name="username">
                         {({ field }: { field: FieldInputProps<string> }) => (
                           <EuiFieldText
@@ -207,7 +200,7 @@ const ConnectionForm = (props: Props) => {
                     </EuiFormRow>
                   </EuiFlexItem>
                   <EuiFlexItem grow={1}>
-                    <EuiFormRow label="Password*">
+                    <EuiFormRow label="Password">
                       <Field name="password">
                         {({ field, form, meta }: {
                           field: FieldInputProps<string>

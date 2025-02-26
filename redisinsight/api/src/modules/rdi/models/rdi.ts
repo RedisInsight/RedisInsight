@@ -36,6 +36,7 @@ export class Rdi {
     description: 'RDI or API username',
     type: String,
   })
+  @IsOptional()
   @Expose()
   @IsString()
   username: string;
@@ -44,6 +45,7 @@ export class Rdi {
     description: 'RDI or API password',
     type: String,
   })
+  @IsOptional()
   @Expose()
   @IsString()
   @IsNotEmpty()

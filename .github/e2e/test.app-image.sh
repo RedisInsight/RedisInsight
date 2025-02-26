@@ -1,11 +1,21 @@
 #!/bin/bash
 set -e
 
+pkill -f Redis*  || true
+rm -f apppath
+
 yarn --cwd tests/e2e install
 
 # mount app resources
 chmod +x ./release/*.AppImage
 ./release/*.AppImage --appimage-mount >> apppath &
+
+# wait briefly to allow the appimage mount command to output to the file
+sleep 2
+
+# log the content of apppath
+echo "Content of apppath file:"
+cat apppath
 
 # create folder before tests run to prevent permissions issue
 mkdir -p tests/e2e/remote

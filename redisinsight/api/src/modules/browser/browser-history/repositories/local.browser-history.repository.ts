@@ -35,6 +35,7 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
   /**
    * Encrypt browser history and save entire entity
    * Should always throw and error in case when unable to encrypt for some reason
+   * @param sessionMetadata
    * @param history
    */
   async create(sessionMetadata: SessionMetadata, history: Partial<BrowserHistory>): Promise<BrowserHistory> {
@@ -53,6 +54,7 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
 
   /**
    * Fetches entity, decrypt and return full BrowserHistory model
+   * @param sessionMetadata
    * @param id
    */
   async get(sessionMetadata: SessionMetadata, id: string): Promise<BrowserHistory> {
@@ -68,6 +70,7 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
 
   /**
    * Return list of browser history with several fields only
+   * @param sessionMetadata
    * @param databaseId
    * @param mode
    */
@@ -107,7 +110,7 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
 
   /**
    * Delete history item by id
-   * @param _
+   * @param sessionMetadata
    * @param databaseId
    * @param mode
    * @param id

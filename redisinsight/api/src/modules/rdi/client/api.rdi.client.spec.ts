@@ -274,24 +274,70 @@ describe('ApiRdiClient', () => {
   });
 
   describe('testConnections', () => {
-    it('should return a successful response', async () => {
-      const config = {};
-      const expectedResponse = { connected: true };
+    const config = { sources: {} };
 
-      mockedAxios.post.mockResolvedValueOnce({ data: expectedResponse });
+    it('should return a successful response', async () => {
+      const expectedTargetsResponse = {
+        targets: {
+          target: {
+            status: 'success',
+          },
+        },
+      };
+      const expectedSourcesResponse = {
+        connected: true,
+        error: '',
+      };
+
+      mockedAxios.post
+        .mockResolvedValueOnce({ data: expectedTargetsResponse })
+        .mockResolvedValueOnce({ data: expectedSourcesResponse });
 
       const response = await client.testConnections(config);
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.TestConnections, config);
-      expect(response).toEqual(expectedResponse);
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        RdiUrl.TestTargetsConnections,
+        config,
+      );
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        RdiUrl.TestSourcesConnections,
+        {},
+      );
+      expect(response).toEqual({
+        sources: expectedSourcesResponse,
+        ...expectedTargetsResponse,
+      });
     });
 
-    it('should throw an error if the request fails', async () => {
-      const config = {};
+    it('should throw an error if the requests fails', async () => {
       mockedAxios.post.mockRejectedValueOnce(mockRdiUnauthorizedError);
 
       await expect(client.testConnections(config)).rejects.toThrow(mockRdiUnauthorizedError.message);
-      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.TestConnections, config);
+      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.TestTargetsConnections, config);
+    });
+
+    it('should return targets data even if TestSourcesConnections fails', async () => {
+      const expectedTargetsResponse = {
+        targets: { target1: { status: 'success' } },
+      };
+
+      const loggerErrorSpy = jest.spyOn(client['logger'], 'error').mockImplementation();
+
+      mockedAxios.post
+        .mockResolvedValueOnce({ data: expectedTargetsResponse })
+        .mockRejectedValueOnce(new Error('Sources request failed'));
+
+      const response = await client.testConnections(config);
+
+      expect(response).toEqual({
+        targets: expectedTargetsResponse.targets,
+        sources: { connected: false, error: 'Failed to fetch sources' },
+      });
+
+      expect(mockedAxios.post).toHaveBeenCalledTimes(2);
+
+      expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to fetch sources', expect.any(Error));
+      loggerErrorSpy.mockRestore();
     });
   });
 

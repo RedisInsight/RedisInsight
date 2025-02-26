@@ -180,13 +180,11 @@ const getDocUrlForCommandTests: any[] = [
   ['TS.CREATE', 'https://redis.io/docs/latest/commands/ts.create'],
   ['GRAPH.EXPLAIN', 'https://redis.io/docs/latest/commands/graph.explain'],
   ['GRAPH.QUERY', 'https://redis.io/docs/latest/commands/graph.query'],
-  ['AI.MODELRUN', 'https://redis.io/docs/latest/commands/ai.modelrun'],
   ['BF.INFO', 'https://redis.io/docs/latest/commands/bf.info'],
   ['CMS.INITBYDIM', 'https://redis.io/docs/latest/commands/cms.initbydim'],
   ['CF.INSERT', 'https://redis.io/docs/latest/commands/cf.insert'],
   ['RG.CONFIGSET', 'https://redis.io/docs/latest/commands/rg.configset'],
   ['TOPK.INFO', 'https://redis.io/docs/latest/commands/topk.info'],
-  ['AI.SCRIPTDEL', 'https://redis.io/docs/latest/commands/ai.scriptdel'],
   ['NON.EXIST COMMAND', 'https://redis.io/docs/latest/commands/non.exist-command'],
 ]
 

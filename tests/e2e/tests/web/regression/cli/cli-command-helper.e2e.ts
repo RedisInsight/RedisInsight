@@ -19,13 +19,13 @@ let commandsArgumentsToCheck: string[] = [];
 let externalPageLink = '';
 let externalPageLinks: string[] = [];
 
-fixture `CLI Command helper`
+fixture`CLI Command helper`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async() => {
+    .beforeEach(async () => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
-    .afterEach(async() => {
+    .afterEach(async () => {
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
@@ -133,48 +133,6 @@ test('Verify that user can see HyperLogLog title in Command Helper for this comm
     await t.click(browserPage.CommandHelper.readMoreButton);
     // Check new opened window page with the correct URL
     await Common.checkURL(externalPageLink);
-});
-test('Verify that user can see all separated groups for AI json file (model, tensor, inference, script)', async t => {
-    filteringGroups = ['Model', 'Script', 'Inference', 'Tensor'];
-    commandsToCheck = [
-        'AI.MODELDEL',
-        'AI.SCRIPTSTORE',
-        'AI.SCRIPTEXECUTE',
-        'AI.TENSORSET'
-    ];
-    commandsArgumentsToCheck = [
-        'AI.MODELDEL key',
-        'AI.SCRIPTSTORE key CPU|GPU [TAG tag] ENTRY_POINTS entry_point_count entry_point [entry_point ...]',
-        'AI.SCRIPTEXECUTE key function [KEYS key_count key [key ...]] [INPUTS input_count input [input ...]] [ARGS arg_count arg [arg ...]] [OUTPUTS output_count output [output ...]] [TIMEOUT timeout]',
-        'AI.TENSORSET key FLOAT|DOUBLE|INT8|INT16|INT32|INT64|UINT8|UINT16|STRING|BOOL shape [shape ...] [BLOB blob] [VALUES value [VALUES value ...]]'
-    ];
-    // externalPageLinks = [
-    //     'https://redis.io/commands/ai.modeldel',
-    //     'https://redis.io/commands/ai.scriptstore',
-    //     'https://redis.io/commands/ai.scriptexecute',
-    //     'https://redis.io/commands/ai.tensorset'
-    // ];
-
-    // Open Command Helper
-    await t.click(browserPage.CommandHelper.expandCommandHelperButton);
-    let i = 0;
-    while (i < filteringGroups.length) {
-        // Select one group from the list
-        await browserPage.CommandHelper.selectFilterGroupType(filteringGroups[i]);
-        // Click on the group
-        await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandsToCheck[i]));
-        // Verify results of opened command
-        await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandsArgumentsToCheck[i], 'Selected command title not correct');
-        // Currently these links are deleted from redis.io
-        // Click on Read More link for selected command
-        // await t.click(browserPage.CommandHelper.readMoreButton);
-        // Check new opened window page with the correct URL
-        // await Common.checkURL(externalPageLinks[i]);
-        // Close the window with external link to switch to the application window
-        // await goBackHistory();
-        // await t.click(browserPage.CommandHelper.expandCommandHelperButton);
-        i++;
-    }
 });
 test('Verify that user can work with Gears group in Command Helper (RedisGears module)', async t => {
     filteringGroup = 'Gears';

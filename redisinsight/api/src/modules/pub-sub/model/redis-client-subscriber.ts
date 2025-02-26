@@ -95,7 +95,9 @@ export class RedisClientSubscriber extends EventEmitter2 {
    */
   destroy() {
     this.client?.removeAllListeners();
-    this.client?.quit();
+    this.client?.quit().catch((e) => {
+      this.logger.warn('Error when closing Redis client', e);
+    });
     this.client = null;
     this.status = RedisClientSubscriberStatus.End;
   }

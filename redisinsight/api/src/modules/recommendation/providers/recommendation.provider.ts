@@ -1,9 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
-import {
-  convertRedisInfoReplyToObject, checkTimestamp, checkKeyspaceNotification,
-} from 'src/utils';
+import { checkTimestamp } from 'src/utils';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/keys/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
@@ -41,13 +39,7 @@ export class RecommendationProvider {
     redisClient: RedisClient,
   ): Promise<Recommendation> {
     try {
-      const info = convertRedisInfoReplyToObject(
-        await redisClient.sendCommand(
-          ['info', 'memory'],
-          { replyEncoding: 'utf8' },
-        ) as string,
-      );
-
+      const info = await redisClient.getInfo('memory');
       const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
 
       return parseInt(nodesNumbersOfCachedScripts, 10) > LUA_SCRIPT_RECOMMENDATION_COUNT
@@ -98,12 +90,7 @@ export class RecommendationProvider {
       return null;
     }
     try {
-      const info = convertRedisInfoReplyToObject(
-        await redisClient.sendCommand(
-          ['info', 'keyspace'],
-          { replyEncoding: 'utf8' },
-        ) as string,
-      );
+      const info = await redisClient.getInfo('keyspace');
       const keyspace = get(info, 'keyspace', {});
       const databasesWithKeys = Object.values(keyspace).filter((db) => {
         const { keys } = convertMultilineReplyToObject(db as string, ',', '=');
@@ -296,12 +283,7 @@ export class RecommendationProvider {
     redisClient: RedisClient,
   ): Promise<Recommendation> {
     try {
-      const info = convertRedisInfoReplyToObject(
-        await redisClient.sendCommand(
-          ['info', 'clients'],
-          { replyEncoding: 'utf8' },
-        ) as string,
-      );
+      const info = await redisClient.getInfo('clients');
       const connectedClients = parseInt(get(info, 'clients.connected_clients'), 10);
 
       return connectedClients > BIG_AMOUNT_OF_CONNECTED_CLIENTS_RECOMMENDATION_CLIENTS
@@ -343,12 +325,7 @@ export class RecommendationProvider {
     redisClient: RedisClient,
   ): Promise<Recommendation> {
     try {
-      const info = convertRedisInfoReplyToObject(
-        await redisClient.sendCommand(
-          ['info', 'server'],
-          { replyEncoding: 'utf8' },
-        ) as string,
-      );
+      const info = await redisClient.getInfo('server');
       const version = get(info, 'server.redis_version');
       return semverCompare(version, REDIS_VERSION_RECOMMENDATION_VERSION) >= 0
         ? null

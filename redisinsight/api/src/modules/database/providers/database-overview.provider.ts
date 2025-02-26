@@ -8,9 +8,6 @@ import {
   sumBy,
   isNumber,
 } from 'lodash';
-import {
-  convertRedisInfoReplyToObject,
-} from 'src/utils';
 import { getTotalKeys, convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { ClientMetadata } from 'src/common/models';
@@ -74,13 +71,10 @@ export class DatabaseOverviewProvider {
    */
   private async getNodeInfo(client: RedisClient) {
     const { host, port } = client.options;
+    const infoData = await client.getInfo();
+
     return {
-      ...convertRedisInfoReplyToObject(
-        await client.sendCommand(
-          ['info'],
-          { replyEncoding: 'utf8' },
-        ) as string,
-      ),
+      ...infoData,
       host,
       port,
     };

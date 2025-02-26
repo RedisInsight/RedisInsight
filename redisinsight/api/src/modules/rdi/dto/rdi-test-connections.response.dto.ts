@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import {
+  Expose, Transform, Type, plainToClass,
+} from 'class-transformer';
 
 export enum RdiTestConnectionStatus {
   Success = 'success',
@@ -39,11 +41,30 @@ export class RdiTestConnectionResult {
   error?: ErrorDetails;
 }
 
+export class RdiSourcesConnectionResult {
+  @ApiProperty({ description: 'Indicates if the source is connected' })
+  @Expose()
+  connected: boolean;
+
+  @ApiProperty({ description: 'Error message if connection fails', required: false })
+  @Expose()
+  error?: string;
+}
+
 export class RdiTestConnectionsResponseDto {
   @ApiProperty({
     description: 'Sources connection results',
   })
   @Expose()
-  @Type(() => RdiTestConnectionResult)
-  sources: Record<string, RdiTestConnectionResult>;
+  @Type(() => RdiSourcesConnectionResult)
+  sources: RdiSourcesConnectionResult;
+
+  @ApiProperty({
+    description: 'Targets connection results',
+  })
+  @Expose()
+  @Transform(({ value }) => Object.fromEntries(
+    Object.entries(value || {}).map(([key, val]) => [key, plainToClass(RdiTestConnectionResult, val)]),
+  ))
+  targets: Record<string, RdiTestConnectionResult>;
 }

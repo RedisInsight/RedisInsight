@@ -2,8 +2,7 @@ import { EuiCollapsibleNavGroup } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 
-import { Nullable } from 'uiSrc/utils'
-import { TransformResult } from 'uiSrc/slices/interfaces'
+import { TransformGroupResult } from 'uiSrc/slices/interfaces'
 import TestConnectionsTable from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-table'
 
 import styles from './styles.module.scss'
@@ -14,12 +13,12 @@ enum ResultsStatus {
 }
 
 export interface Props {
-  data: Nullable<TransformResult>
+  data: TransformGroupResult
 }
 
 const TestConnectionsLog = (props: Props) => {
   const { data } = props
-  const statusData = data?.fail?.length ? data.fail : data?.success
+  const statusData = [...data.success, ...data.fail]
   const status = data?.fail?.length ? ResultsStatus.Failed : ResultsStatus.Success
   const [openedNav, setOpenedNav] = useState<string>('')
 
@@ -28,8 +27,14 @@ const TestConnectionsLog = (props: Props) => {
     setOpenedNav(isOpen ? name : '')
   }
 
-  const CollapsibleNavTitle = ({ title, length = 0 }: { title: string, length: number }) => (
-    <div className={styles.collapsibleNavTitle}>
+  const CollapsibleNavTitle = ({
+    title,
+    length = 0,
+  }: {
+    title: string;
+    length: number;
+  }) => (
+    <div className={styles.collapsibleNavTitle} style={{ margin: 0 }}>
       <span data-testid="nav-group-title">{title}:</span>
       <span data-testid="number-of-connections">{length}</span>
     </div>

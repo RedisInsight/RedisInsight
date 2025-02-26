@@ -9,9 +9,9 @@ import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import TreeViewIcon from 'uiSrc/assets/img/icons/treeview.svg?react'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { appContextDbConfig, resetBrowserTree, setBrowserKeyListDataLoaded, setBrowserShownColumns, } from 'uiSrc/slices/app/context'
+import { appContextDbConfig, resetBrowserTree, setBrowserKeyListDataLoaded, setBrowserSelectedKey, setBrowserShownColumns, } from 'uiSrc/slices/app/context'
 
-import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData } from 'uiSrc/slices/browser/keys'
+import { changeKeyViewType, fetchKeys, keysSelector, resetKeyInfo, resetKeysData } from 'uiSrc/slices/browser/keys'
 import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -127,7 +127,16 @@ const KeysHeader = (props: Props) => {
         cursor: '0',
         count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       },
-      () => dispatch(setBrowserKeyListDataLoaded(searchMode, true)),
+      (data) => {
+        const keys = Array.isArray(data) ? data[0].keys : data.keys;
+
+        if (!keys.length) {
+          dispatch(resetKeyInfo());
+          dispatch(setBrowserSelectedKey(null));
+        }
+
+        dispatch(setBrowserKeyListDataLoaded(searchMode, true));
+      },
       () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
     ))
   }
@@ -257,6 +266,8 @@ const KeysHeader = (props: Props) => {
               </div>
               <div className={styles.keysControlsWrapper}>
                 <AutoRefresh
+                  disabled={searchMode === SearchMode.Redisearch && !selectedIndex}
+                  disabledRefreshButtonMessage="Select an index to refresh keys."
                   iconSize="xs"
                   postfix="keys"
                   loading={loading}

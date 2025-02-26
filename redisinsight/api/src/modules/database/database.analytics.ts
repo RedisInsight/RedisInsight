@@ -56,6 +56,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
           databaseIndex: instance.db || 0,
           useDecompression: instance.compressor || null,
           serverName: additionalInfo?.server?.server_name || null,
+          forceStandalone: instance?.forceStandalone ? 'true' : 'false',
           ...modulesSummary,
         },
       );
@@ -92,6 +93,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
             useSSH: cur?.ssh ? 'enabled' : 'disabled',
             timeout: cur?.timeout / 1_000, // milliseconds to seconds
             useDecompression: cur?.compressor || null,
+            forceStandalone: cur?.forceStandalone ? 'true' : 'false',
             previousValues: {
               connectionType: prev.connectionType,
               provider: prev.provider,
@@ -104,6 +106,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
               useTLSAuthClients: prev?.clientCert
                 ? 'enabled'
                 : 'disabled',
+              forceStandalone: prev?.forceStandalone ? 'true' : 'false',
             },
           },
         );
@@ -126,17 +129,13 @@ export class DatabaseAnalytics extends TelemetryBaseService {
 
   sendDatabaseConnectedClientListEvent(
     sessionMetadata: SessionMetadata,
-    databaseId: string,
     additionalData: object = {},
   ): void {
     try {
       this.sendEvent(
         sessionMetadata,
         TelemetryEvents.DatabaseConnectedClientList,
-        {
-          databaseId,
-          ...additionalData,
-        },
+        additionalData,
       );
     } catch (e) {
       // continue regardless of error

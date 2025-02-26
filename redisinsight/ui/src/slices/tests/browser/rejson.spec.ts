@@ -47,7 +47,7 @@ beforeEach(() => {
 
   defaultData = {
     downloaded: false,
-    path: '.',
+    path: '$',
     data: [
       { key: 'glossary', path: "['glossary']", cardinality: 2, type: 'object' },
     ],
@@ -386,7 +386,7 @@ describe('rejson slice', () => {
       it('call both fetchReJSON and loadRejsonBranchSuccess when fetch is successed', async () => {
         // Arrange
         const key = 'key'
-        const path = '.'
+        const path = '$'
 
         const responsePayload = { data: defaultData, status: 200 }
 
@@ -406,7 +406,7 @@ describe('rejson slice', () => {
       it('call both fetchReJSON and loadRejsonBranchFailure when fetch is fail', async () => {
         // Arrange
         const key = 'key'
-        const path = '.'
+        const path = '$'
         const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
@@ -434,7 +434,7 @@ describe('rejson slice', () => {
       it('succeed to fetch set json data', async () => {
         // Arrange
         const key = 'key'
-        const path = '.'
+        const path = '$'
         const data = '{}'
 
         const responsePayload = { status: 200 }
@@ -461,7 +461,7 @@ describe('rejson slice', () => {
       it('failed to fetch set json data', async () => {
         // Arrange
         const key = 'key'
-        const path = '.'
+        const path = '$'
         const errorMessage = 'some error'
         const responsePayload = {
           response: {
@@ -489,7 +489,7 @@ describe('rejson slice', () => {
       it('succeed to fetch append array data', async () => {
         // Arrange
         const key = 'key'
-        const path = '.'
+        const path = '$'
         const data = '123'
 
         const responsePayload = { status: 200 }
@@ -516,7 +516,7 @@ describe('rejson slice', () => {
       it('failed to fetch append array data', async () => {
         // Arrange
         const key = 'key'
-        const path = '.'
+        const path = '$'
         const errorMessage = 'some error'
         const responsePayload = {
           response: {
@@ -544,7 +544,7 @@ describe('rejson slice', () => {
       it('succeed to fetch remove json key', async () => {
         // Arrange
         const key = 'key'
-        const path = '.'
+        const path = '$'
         const jsonKeyName = 'jsonKeyName'
 
         const responsePayload = { status: 200 }
@@ -578,7 +578,7 @@ describe('rejson slice', () => {
       it('failed to fetch remove json key', async () => {
         // Arrange
         const key = 'key'
-        const path = '.'
+        const path = '$'
         const errorMessage = 'some error'
         const responsePayload = {
           response: {
@@ -605,7 +605,7 @@ describe('rejson slice', () => {
     describe('fetchVisualisationResults', () => {
       it('call both fetchVisualisationResults and loadRejsonBranchSuccess when fetch is successed', async () => {
         // Arrange
-        const path = '.'
+        const path = '$'
 
         const responsePayload = { data: defaultData, status: 200 }
 

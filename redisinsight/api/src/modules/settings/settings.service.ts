@@ -143,7 +143,7 @@ export class SettingsService {
    * Shouldn't throw an error on fail
    * @private
    */
-  private async getAgreementsSpecFromFile(): Promise<any> {
+  private async getAgreementsSpecFromFile(): Promise<IAgreementSpecFile> {
     try {
       if (SERVER_CONFIG.agreementsPath) {
         return JSON.parse(await readFile(join(
@@ -155,14 +155,14 @@ export class SettingsService {
       // ignore error
     }
 
-    return null;
+    return cloneDeep<IAgreementSpecFile>(AGREEMENTS_SPEC);
   }
 
   /**
    * Process conditional agreements where needed and returns proper agreements spec
    */
   public async getAgreementsSpec(): Promise<GetAgreementsSpecResponse> {
-    const agreementsSpec = await this.getAgreementsSpecFromFile() || cloneDeep<IAgreementSpecFile>(AGREEMENTS_SPEC);
+    const agreementsSpec = await this.getAgreementsSpecFromFile();
 
     await Promise.all(map(agreementsSpec.agreements, async (agreement: any, name) => {
       if (agreement.conditional) {
@@ -180,10 +180,11 @@ export class SettingsService {
   ): Promise<void> {
     this.logger.debug('Updating application agreements.', sessionMetadata);
     const oldAgreements = await this.agreementRepository.getOrCreate(sessionMetadata);
+    const agreementsSpec = await this.getAgreementsSpecFromFile();
 
     const newAgreements = {
       ...oldAgreements,
-      version: AGREEMENTS_SPEC.version,
+      version: agreementsSpec.version,
       data: {
         ...oldAgreements.data,
         ...Object.fromEntries(dtoAgreements),
@@ -192,7 +193,7 @@ export class SettingsService {
 
     // Detect which agreements should be defined according to the settings specification
     const diff = difference(
-      Object.keys(AGREEMENTS_SPEC.agreements),
+      Object.keys(agreementsSpec.agreements),
       Object.keys(newAgreements.data),
     );
     if (diff.length) {

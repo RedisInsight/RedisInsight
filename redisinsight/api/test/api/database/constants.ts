@@ -59,6 +59,7 @@ export const databaseSchema = Joi.object().keys({
     semanticVersion: Joi.string(),
   }).allow(null),
   ssh: Joi.boolean().allow(null),
+  forceStandalone: Joi.boolean().allow(null),
   sshOptions: Joi.object({
     id: Joi.string().allow(null),
     host: Joi.string().required(),

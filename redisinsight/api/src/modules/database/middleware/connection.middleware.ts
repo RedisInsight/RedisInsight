@@ -38,7 +38,7 @@ export class ConnectionMiddleware implements NestMiddleware {
       if (err?.code === RedisErrorCodes.Timeout
         || err?.message?.includes('timeout')) {
         next(
-          this.returnError(req, new BadGatewayException(ERROR_MESSAGES.CONNECTION_TIMEOUT)),
+          this.returnError(req, new BadGatewayException(ERROR_MESSAGES.DB_CONNECTION_TIMEOUT)),
         );
       } else {
         next();

@@ -69,7 +69,7 @@ const Config = () => {
     setIsPanelOpen(true)
     dispatch(testConnectionsAction(rdiInstanceId, JSONValue))
     sendEventTelemetry({
-      event: TelemetryEvent.RDI_TEST_TARGET_CONNECTIONS_CLICKED,
+      event: TelemetryEvent.RDI_TEST_CONNECTIONS_CLICKED,
       eventData: {
         id: rdiInstanceId,
       }

@@ -17,6 +17,12 @@ type QueryCardBodyProps = {
   selectedViewValue: string;
 }
 
+const isSizeLimitExceededResponse = (result: Maybe<CommandExecutionResult[]>) => {
+  const resultObj = result?.[0]
+  // response.includes - to be backward compatible with responses which don't include sizeLimitExceeded flag
+  return resultObj?.sizeLimitExceeded === true || resultObj?.response?.includes?.('Results have been deleted')
+}
+
 export const QueryCardBody = (props: Props & QueryCardBodyProps) => {
   const {
     id,
@@ -35,12 +41,6 @@ export const QueryCardBody = (props: Props & QueryCardBodyProps) => {
   } = props
 
   const commonError = CommonErrorResponse(id, command, result)
-
-  const isSizeLimitExceededResponse = (result: Maybe<CommandExecutionResult[]>) => {
-    const resultObj = result?.[0]
-    // response.includes - to be backward compatible with responses which don't include sizeLimitExceeded flag
-    return resultObj?.sizeLimitExceeded === true || resultObj?.response?.includes?.('Results have been deleted')
-  }
 
   if (!isOpen) {
     return null

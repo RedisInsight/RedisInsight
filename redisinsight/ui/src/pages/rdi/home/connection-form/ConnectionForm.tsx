@@ -47,7 +47,7 @@ export interface Props {
 const getInitialValues = (values: RdiInstance | null): ConnectionFormValues => ({
   name: values?.name || '',
   url: values?.url || '',
-  username: values?.username || 'default',
+  username: values ? (values.username ?? '') : 'default',
   password: values ? null : ''
 })
 

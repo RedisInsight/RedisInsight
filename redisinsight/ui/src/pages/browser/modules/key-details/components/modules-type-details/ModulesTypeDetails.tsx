@@ -1,14 +1,22 @@
 import React from 'react'
-import { EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle, EuiToolTip } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
-import styles from '../unsupported-type-details/styles.module.scss'
+import styles from './styles.module.scss'
 
-const ModulesTypeDetails = ({ moduleName = 'unsupported' }: { moduleName: string }) => {
+const ModulesTypeDetails = (
+  { moduleName = 'unsupported', 
+    onClose 
+  }: 
+    { moduleName: string, 
+      onClose: (key: RedisResponseBuffer) => void,
+    }
+  ) => {
   const history = useHistory()
   const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
 
@@ -19,7 +27,21 @@ const ModulesTypeDetails = ({ moduleName = 'unsupported' }: { moduleName: string
 
   return (
     <div className={styles.container} data-testid="modules-type-details">
-      <EuiFlexGroup alignItems="center" justifyContent="center">
+      <EuiToolTip
+        content="Close"
+        position="left"
+        anchorClassName={styles.closeRightPanel}
+      >
+        <EuiButtonIcon
+          iconType="cross"
+          color="primary"
+          aria-label="Close key"
+          className={styles.closeBtn}
+          onClick={() => onClose(undefined)}
+          data-testid="module-type-close-key-btn"
+        />
+      </EuiToolTip>
+      <EuiFlexGroup alignItems="center" justifyContent="center" >
         <EuiFlexItem className={styles.textWrapper}>
           <EuiTitle>
             <h4>{`This is a ${moduleName} key.`}</h4>

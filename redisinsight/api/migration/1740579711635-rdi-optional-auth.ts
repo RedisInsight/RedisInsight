@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migration1740579711635 implements MigrationInterface {
-    name = 'Migration1740579711635'
+export class RdiOptionalAuth1740579711635 implements MigrationInterface {
+    name = 'RdiOptionalAuth1740579711635'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "temporary_rdi" ("id" varchar PRIMARY KEY NOT NULL, "url" varchar, "name" varchar NOT NULL, "username" varchar, "password" varchar, "lastConnection" datetime, "version" varchar NOT NULL, "encryption" varchar)`);

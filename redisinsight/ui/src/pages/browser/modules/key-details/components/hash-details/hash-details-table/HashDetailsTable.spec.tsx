@@ -3,15 +3,17 @@ import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import {
   KeyValueCompressor,
+  KeyValueFormat,
   TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
   TEXT_DISABLED_COMPRESSED_VALUE,
+  TEXT_DISABLED_FORMATTER_EDITING,
 } from 'uiSrc/constants'
 import { hashDataSelector } from 'uiSrc/slices/browser/hash'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { anyToBuffer, bufferToString } from 'uiSrc/utils'
 import { act, cleanup, fireEvent, mockedStore, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
-import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
+import { setSelectedKeyRefreshDisabled, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { MOCK_TRUNCATED_BUFFER_VALUE, MOCK_TRUNCATED_STRING_VALUE } from 'uiSrc/mocks/data/bigString'
 import { HashDetailsTable, Props } from './HashDetailsTable'
 
@@ -45,11 +47,20 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   }),
 }))
 
+jest.mock('uiSrc/slices/browser/keys', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/keys'),
+  selectedKeySelector: jest.fn().mockReturnValue({
+    viewFormat: 'Unicode',
+    lastRefreshTime: Date.now(),
+  }),
+}))
+
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
   store.clearActions()
+  jest.clearAllMocks()
 })
 
 describe('HashDetailsTable', () => {
@@ -142,6 +153,39 @@ describe('HashDetailsTable', () => {
       setSelectedKeyRefreshDisabled(true)
     ])
   })
+
+  const nonEditableFormats = [
+    KeyValueFormat.HEX,
+    KeyValueFormat.Binary,
+  ]
+
+  test.each(nonEditableFormats)(
+    'should disable edit button when viewFormat is not editable for format: %s',
+    async (format) => {
+      (selectedKeySelector as jest.Mock).mockReturnValueOnce({
+        viewFormat: format,
+        lastRefreshTime: Date.now(),
+      })
+
+      render(<HashDetailsTable {...instance(mockedProps)} />)
+
+      act(() => {
+        fireEvent.mouseEnter(screen.getByTestId('hash_content-value-1'))
+      })
+
+      const editBtn = screen.getByTestId('hash_edit-btn-1')
+      expect(editBtn).toBeDisabled()
+
+      act(() => {
+        fireEvent.mouseOver(editBtn)
+      })
+
+      await waitForEuiToolTipVisible()
+      expect(screen.getByTestId('hash_edit-tooltip-1')).toHaveTextContent(
+        TEXT_DISABLED_FORMATTER_EDITING,
+      )
+    },
+  )
 
   describe('decompressed  data', () => {
     it('should render decompressed GZIP data', () => {

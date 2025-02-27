@@ -15,9 +15,9 @@ import {
 import {
   RdiDryRunJobDto,
   RdiDryRunJobResponseDto,
-  RdiSourcesConnectionResult,
+  RdiTestSourceConnectionResult,
   RdiTemplateResponseDto,
-  RdiTestConnectionResult,
+  RdiTestTargetConnectionResult,
   RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
 import {
@@ -40,28 +40,9 @@ import { RdiResetPipelineFailedException } from '../exceptions/rdi-reset-pipelin
 import { RdiStartPipelineFailedException } from '../exceptions/rdi-start-pipeline-failed.exception';
 import { RdiStopPipelineFailedException } from '../exceptions/rdi-stop-pipeline-failed.exception';
 
-// The structure of `config` varies based on the RDI schema definition,
-// but it always includes a `sources` key.
-// Example:
-// {
-//   sources: {
-//     some_database_source: {
-//       host: 'localhost',
-//       port: 6379,
-//       ...other connection options
-//     }
-//   }
-// }
 interface ConnectionsConfig {
   sources: Record<string, Record<string, unknown>>;
 }
-
-const prepareTestSourcesConnectionsOptions = (config: ConnectionsConfig) => {
-  const sourcesOptions = config.sources || {};
-  const rootKey = Object.keys(sourcesOptions)[0];
-  const extractedBody = sourcesOptions[rootKey];
-  return { ...extractedBody };
-};
 
 export class ApiRdiClient extends RdiClient {
   protected readonly client: AxiosInstance;
@@ -202,11 +183,8 @@ export class ApiRdiClient extends RdiClient {
   async testConnections(
     config: ConnectionsConfig,
   ): Promise<RdiTestConnectionsResponseDto> {
-    let targets: Record<string, RdiTestConnectionResult> = {};
-    let sources: RdiSourcesConnectionResult = {
-      connected: false,
-      error: 'Failed to fetch sources',
-    };
+    let targets: Record<string, RdiTestTargetConnectionResult> = {};
+    const sources: Record<string, RdiTestSourceConnectionResult> = {};
 
     try {
       const targetsResponse = await this.client.post(
@@ -219,12 +197,19 @@ export class ApiRdiClient extends RdiClient {
     }
 
     try {
-      const sourcesOptions = prepareTestSourcesConnectionsOptions(config);
-      const sourcesResponse = await this.client.post(
-        RdiUrl.TestSourcesConnections,
-        { ...sourcesOptions },
-      );
-      sources = sourcesResponse.data;
+      const sourceConfigs = Object.keys(config.sources || {});
+
+      if (sourceConfigs.length) {
+        await Promise.all(
+          sourceConfigs.map(async (source) => {
+            const response = await this.client.post(
+              RdiUrl.TestSourcesConnections,
+              { ...config.sources[source] },
+            );
+            sources[source] = response.data;
+          }),
+        );
+      }
     } catch (error) {
       // failing is expected on RDI version below 1.6.0 (1.4.3 for example)
       this.logger.error('Failed to fetch sources', error);

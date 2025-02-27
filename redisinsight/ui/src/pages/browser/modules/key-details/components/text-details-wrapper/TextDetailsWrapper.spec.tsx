@@ -13,7 +13,7 @@ describe('TextDetailsWrapper', () => {
     expect(queryByTestId('children-wrapper')).toBeInTheDocument();
   });
 
-  it('should render children correctly', () => {
+  it('should call onClose when close button is clicked', () => {
     const mockOnClose = jest.fn();
 
     render(

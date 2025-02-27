@@ -4,7 +4,9 @@ import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiToolTip } from "@elastic/e
 
 import styles from './styles.module.scss';
 
-const CustomDetailsWrapper = ({ onClose, children }: { onClose: () => void, children: ReactNode }) => (
+const TextDetailsWrapper = (
+  { onClose, children }: { onClose: () => void, children: ReactNode }
+) => (
   <div className={styles.container} data-testid="too-long-key-name-details">
   <EuiToolTip
     content="Close"
@@ -22,10 +24,10 @@ const CustomDetailsWrapper = ({ onClose, children }: { onClose: () => void, chil
   </EuiToolTip>
   <EuiFlexGroup alignItems="center" justifyContent="center">
     <EuiFlexItem className={styles.textWrapper}>
-      {children}
+      <div>{children}</div>
     </EuiFlexItem>
   </EuiFlexGroup>
 </div>
 );
 
-export default CustomDetailsWrapper;
+export default TextDetailsWrapper;

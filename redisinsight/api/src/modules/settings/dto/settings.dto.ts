@@ -187,4 +187,13 @@ export class UpdateSettingsDto {
   @Transform(pickDefinedAgreements)
   @IsBoolean({ each: true })
   agreements?: Map<string, boolean>;
+
+  @ApiPropertyOptional({
+    description: 'Reason describing why analytics are enabled',
+    type: String,
+    example: 'install',
+  })
+  @IsOptional()
+  @IsString()
+  analyticsReason?: string;
 }

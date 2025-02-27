@@ -157,6 +157,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         recommended = false
         return false
       }
+      return true
     })
 
     forEach(notificationConsents, (consent) => {
@@ -164,6 +165,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         recommended = false
         return false
       }
+      return true
     })
 
     return recommended
@@ -185,7 +187,11 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           : TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_DISABLED,
       })
     }
-    dispatch(updateUserConfigSettingsAction({ agreements: values }, onSubmitted))
+    const settings: Record<string, any> = { agreements: values }
+    if (values.analytics) {
+      settings.analyticsReason = 'install'
+    }
+    dispatch(updateUserConfigSettingsAction(settings, onSubmitted))
   }
 
   return (

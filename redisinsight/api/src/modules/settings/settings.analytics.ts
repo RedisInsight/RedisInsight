@@ -42,6 +42,7 @@ export class SettingsAnalytics extends TelemetryBaseService {
     sessionMetadata: SessionMetadata,
     newAgreements: Map<string, boolean>,
     oldAgreements: Map<string, boolean> = new Map(),
+    reason?: string,
   ) {
     try {
       const newPermission = newAgreements.get('analytics');
@@ -54,6 +55,7 @@ export class SettingsAnalytics extends TelemetryBaseService {
             event: TelemetryEvents.AnalyticsPermission,
             eventData: {
               state: newPermission ? 'enabled' : 'disabled',
+              reason,
             },
             nonTracking: true,
           },

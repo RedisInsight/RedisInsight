@@ -26,7 +26,7 @@ const ModulesTypeDetails = (
   }
 
   return (
-    <TextDetailsWrapper onClose={onClose}>
+    <TextDetailsWrapper onClose={onClose} testid="modules-type">
       <EuiTitle>
         <h4>{`This is a ${moduleName} key.`}</h4>
       </EuiTitle>

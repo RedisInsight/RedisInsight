@@ -36,18 +36,19 @@ export class Rdi {
     description: 'RDI or API username',
     type: String,
   })
+  @IsOptional()
   @Expose()
   @IsString()
-  username: string;
+  username?: string;
 
   @ApiPropertyOptional({
     description: 'RDI or API password',
     type: String,
   })
+  @IsOptional()
   @Expose()
   @IsString()
-  @IsNotEmpty()
-  password: string;
+  password?: string;
 
   @ApiProperty({
     description: 'Time of the last connection to RDI.',

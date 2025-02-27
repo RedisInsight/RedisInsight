@@ -58,7 +58,6 @@ const KeyDetailsHeader = ({
   const {
     type,
     length,
-    nameString: keyProp,
     name: keyBuffer,
   } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
   const { id: instanceId } = useSelector(connectedInstanceSelector)

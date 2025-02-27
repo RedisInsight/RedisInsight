@@ -19,7 +19,7 @@ const TextDetailsWrapper = (
       aria-label="Close key"
       className={styles.closeBtn}
       onClick={() => onClose()}
-      data-testid="too-long-key-name-close-key-btn"
+      data-testid="close-key-btn"
     />
   </EuiToolTip>
   <EuiFlexGroup alignItems="center" justifyContent="center">

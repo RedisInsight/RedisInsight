@@ -9,14 +9,11 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import styles from './styles.module.scss'
 import TextDetailsWrapper from '../text-details-wrapper/TextDetailsWrapper'
 
-const ModulesTypeDetails = (
-  { moduleName = 'unsupported', 
-    onClose 
-  }: 
-    { moduleName: string, 
-      onClose: () => void,
-    }
-  ) => {
+type ModulesTypeDetailsProps = {
+  moduleName: string, 
+  onClose: () => void,
+}
+const ModulesTypeDetails = ({ moduleName = 'unsupported', onClose }: ModulesTypeDetailsProps) => {
   const history = useHistory()
   const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
 

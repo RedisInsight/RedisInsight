@@ -39,7 +39,7 @@ export interface Props {
   defaultRefreshRate?: string
   iconSize?: EuiButtonIconSizes
   disabled?: boolean
-  disabledRefreshButtonMessage: string
+  disabledRefreshButtonMessage?: string
   enableAutoRefreshDefault?: boolean
 }
 

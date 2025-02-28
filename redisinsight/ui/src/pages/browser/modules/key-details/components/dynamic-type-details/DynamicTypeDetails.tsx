@@ -36,7 +36,7 @@ const DynamicTypeDetails = (props: Props) => {
   }
 
   if (isTruncatedString(keyProp)) {
-    return <TooLongKeyNameDetails />
+    return <TooLongKeyNameDetails onClose={ props.onCloseKey }/>
   }
 
   // Supported key type
@@ -46,11 +46,11 @@ const DynamicTypeDetails = (props: Props) => {
 
   // Unsupported redis modules key type
   if (Object.values(ModulesKeyTypes).includes(selectedKeyType as ModulesKeyTypes)) {
-    return <ModulesTypeDetails moduleName={MODULES_KEY_TYPES_NAMES[selectedKeyType]} />
+    return <ModulesTypeDetails moduleName={MODULES_KEY_TYPES_NAMES[selectedKeyType]} onClose={ props.onCloseKey }/>
   }
 
   // Unsupported key type
-  return <UnsupportedTypeDetails />
+  return <UnsupportedTypeDetails onClose={ props.onCloseKey }/>
 }
 
 export { DynamicTypeDetails }

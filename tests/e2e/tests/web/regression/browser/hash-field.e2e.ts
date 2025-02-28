@@ -17,7 +17,7 @@ const keyName = `TestHashKey-${Common.generateWord(10)}`;
 const fieldForSearch = `SearchField-${Common.generateWord(5)}`;
 const keyToAddParameters = { fieldsCount: 500000, keyName, fieldStartWith: 'hashField', fieldValueStartWith: 'hashValue' };
 
-fixture `Hash Key fields verification`
+fixture(`Hash Key fields verification`)
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
@@ -41,4 +41,4 @@ test('Verify that user can search per exact field name in Hash in DB with 1 mill
     // Check the search result
     const result = await browserPage.hashFieldsList.nth(0).textContent;
     await t.expect(result).eql(fieldForSearch, 'Hash field not found');
-});
+});//.skip.meta({skipComment: " "});

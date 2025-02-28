@@ -34,21 +34,40 @@ export class DatabaseScripts {
      * @param dbTableParameters The sqlite database table parameters
      */
     static async getColumnValueFromTableInDB(dbTableParameters: DbTableParameters): Promise<any> {
-        const db = new sqlite3.Database(dbPath);
-        const query = `SELECT ${dbTableParameters.columnName} FROM ${dbTableParameters.tableName} WHERE ${dbTableParameters.conditionWhereColumnName} = ?`;
-
-        return new Promise<void>((resolve, reject) => {
-            db.get(query, [dbTableParameters.conditionWhereColumnValue], (err: { message: string }, row: any) => {
-                if (err) {
-                    reject(new Error(`Error during getting ${dbTableParameters.columnName} column value: ${err.message}`));
+        // Open the database in read/write mode and fail early if it cannot be opened.
+        const db = await new Promise<sqlite3.Database>((resolve, reject) => {
+            const database = new sqlite3.Database(
+                dbPath,
+                sqlite3.OPEN_READWRITE,
+                (err: Error | null) => {
+                    if (err) {
+                        reject(new Error(`Error opening DB at path ${dbPath}: ${err.message}`));
+                    } else {
+                        resolve(database);
+                    }
                 }
-                else {
-                    const columnValue = row[dbTableParameters.columnName!];
-                    db.close();
-                    resolve(columnValue);
-                }
-            });
+            );
         });
+
+        const query = `SELECT ${dbTableParameters.columnName} FROM ${dbTableParameters.tableName}
+                       WHERE ${dbTableParameters.conditionWhereColumnName} = ?`;
+        try {
+            const getAsync = (query: string, p: (string | number | undefined)[]) => promisify(db.get.bind(db));
+            const row = await Promise.race([
+                getAsync(query, [dbTableParameters.conditionWhereColumnValue]),
+                new Promise<any>((_, reject) =>
+                    setTimeout(() => reject(new Error('Query timed out after 10 seconds')), 10000)
+                )
+            ]);
+            if (!row) {
+                throw new Error(`No row found for column ${dbTableParameters.columnName}`);
+            }
+            return row[dbTableParameters.columnName!];
+        } catch (err: any) {
+            throw new Error(`Error during getting ${dbTableParameters.columnName} column value: ${err.message}`);
+        } finally {
+            db.close();
+        }
     }
 
     /**
@@ -56,22 +75,39 @@ export class DatabaseScripts {
      * @param dbTableParameters The sqlite database table parameters
      */
     static async deleteRowsFromTableInDB(dbTableParameters: DbTableParameters): Promise<void> {
-        const db = new sqlite3.Database(dbPath);
+        const db = await new Promise<sqlite3.Database>((resolve, reject) => {
+            const database = new sqlite3.Database(
+                dbPath,
+                sqlite3.OPEN_READWRITE,
+                (err: Error | null) => {
+                    if (err) {
+                        console.log(`Error during deleteRowsFromTableInDB: ${err}`);
+                        reject(new Error(`Error opening DB at path ${dbPath}: ${err.message}`));
+                    } else {
+                        resolve(database);
+                    }
+                }
+            );
+        });
+
         const query = `DELETE FROM ${dbTableParameters.tableName}`;
 
-        return new Promise<void>((resolve, reject) => {
-
-            db.run(query, (err: { message: string }) => {
-                if (err) {
-                    reject(new Error(`Error during ${dbTableParameters.tableName} table rows deletion: ${err.message}`));
-                }
-                else {
-                    db.close();
-                    resolve();
-                }
-            });
-        });
+        try {
+            const runAsync = promisify(db.run.bind(db));
+            await Promise.race([
+                runAsync(query),
+                new Promise<void>((_, reject) => setTimeout(() => {
+                    reject(new Error('DELETE operation timed out after 10 seconds'));
+                }, 10000))
+            ]);
+        } catch (err: any) {
+            throw new Error(`Error during ${dbTableParameters.tableName} table rows deletion: ${err.message}`);
+        } finally {
+            db.close();
+        }
     }
+
+
 }
 /**
  * Add new database parameters

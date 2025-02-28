@@ -92,7 +92,8 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
     const client = createClient({ url });
 
     client.on('error', (error: Error) => {
-        console.error('Redis Client Error', error);
+        console.error('Redis Client Error, check DB connection', error);
+        throw error;
     });
 
     try {
@@ -120,11 +121,12 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
  */
 export async function populateHashWithFields(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
     const url = `redis://default@${host}:${port}`;
-    const client = createClient({ url });
+    const client = createClient({url});
     const fields: Record<string, string> = {};
 
     client.on('error', (error: Error) => {
-        console.error('Redis Client Error', error);
+        console.error('Redis Client Error, check DB connection', error);
+        throw error;
     });
 
     try {
@@ -164,6 +166,7 @@ export async function populateListWithElements(host: string, port: string, keyAr
 
     client.on('error', (error: Error) => {
         console.error('Redis Client Error', error);
+        throw error;
     });
 
     try {
@@ -202,6 +205,7 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
 
     client.on('error', (error: Error) => {
         console.error('Redis Client Error', error);
+        throw error;
     });
 
     try {
@@ -284,6 +288,7 @@ export async function deleteAllKeysFromDB(host: string, port: string): Promise<v
 
     client.on('error', (error: Error) => {
         console.error('Redis Client Error', error);
+        throw error;
     });
 
     try {

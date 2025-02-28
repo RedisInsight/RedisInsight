@@ -49,7 +49,7 @@ export class DatabaseAnalysisEntity {
   totalMemory: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(({ value }) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
     ({ value: str }) => {
       try {
@@ -67,7 +67,7 @@ export class DatabaseAnalysisEntity {
   topKeysNsp: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(({ value }) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
     ({ value: str }) => {
       try {
@@ -85,7 +85,7 @@ export class DatabaseAnalysisEntity {
   topMemoryNsp: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(({ value }) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
     ({ value: str }) => {
       try {
@@ -103,7 +103,7 @@ export class DatabaseAnalysisEntity {
   topKeysLength: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(({ value }) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
     ({ value: str }) => {
       try {

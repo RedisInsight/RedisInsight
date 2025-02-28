@@ -10,7 +10,7 @@ const SingleToRedisStringTransformer = ({ value }): RedisString => {
     }
 
     if (isObject(value.data)) {
-      return Buffer.from(Object.values(value.data));
+      return Buffer.from(Object.values(value.data as object));
     }
   }
 

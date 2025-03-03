@@ -1,3 +1,4 @@
+import * as qs from 'qs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import * as bodyParser from 'body-parser';
@@ -44,6 +45,8 @@ export const getServer = async () => {
     }).compile();
 
     const app = moduleFixture.createNestApplication();
+    // set qs as parser to support nested objects in the query string
+    app.set('query parser', qs.parse);
     app.use(bodyParser.json({ limit: '512mb' }));
     app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
     app.use('/static', express.static(serverConfig.get('dir_path').staticDir))

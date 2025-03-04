@@ -804,7 +804,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       },
       {
         type: 'span',
-        value: 'For a quick trial of the features, spin up a free developer database with '
+        value: 'For a quick trial of the features, spin up a free trial developer database with '
       },
       {
         type: 'link',
@@ -905,7 +905,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.io/try-free/',
-          name: 'free Redis Stack database'
+          name: 'free trial Redis Stack database'
         }
       },
       {

@@ -57,7 +57,7 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => (
             })
           }}
         >
-          Create a free Cloud database
+          Create a free trial Cloud database
         </EuiLink>
       )}
     </OAuthSsoHandlerDialog>

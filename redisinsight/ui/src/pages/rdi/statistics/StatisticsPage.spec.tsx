@@ -45,7 +45,7 @@ jest.mock('uiSrc/slices/rdi/statistics', () => ({
           Connection1: {
             status: 'good',
             type: 'type1',
-            host: 'Redis-Stack-in-Redis-Enterprise-Cloud',
+            host: 'Redis-Cloud',
             port: 12000,
             database: 'admin',
             user: 'admin'

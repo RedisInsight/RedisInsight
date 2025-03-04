@@ -157,6 +157,7 @@ describe('SettingsService', () => {
         agreements: new Map(Object.entries({
           analytics: false,
         })),
+        analyticsReason: 'some reason',
       };
 
       const response = await service.updateAppSettings(mockSessionMetadata, dto);
@@ -178,6 +179,7 @@ describe('SettingsService', () => {
         new Map(Object.entries({
           ...mockAgreements.data,
         })),
+        'some reason',
       );
     });
     it('should update agreements and settings', async () => {

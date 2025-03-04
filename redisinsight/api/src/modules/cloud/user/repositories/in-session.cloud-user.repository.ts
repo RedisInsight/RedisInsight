@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { classToPlain, plainToClass } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
 import { CloudUser } from 'src/modules/cloud/user/models';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
@@ -20,7 +20,7 @@ export class InSessionCloudUserRepository extends CloudUserRepository {
   async get(sessionId: string): Promise<CloudUser> {
     const session = await this.sessionService.getSession(sessionId);
 
-    return plainToClass(CloudUser, session?.user, { groups: [TransformGroup.Secure] }) || null;
+    return plainToInstance(CloudUser, session?.user, { groups: [TransformGroup.Secure] }) || null;
   }
 
   /**
@@ -31,9 +31,9 @@ export class InSessionCloudUserRepository extends CloudUserRepository {
   async update(sessionId: string, data: Partial<CloudUser>): Promise<CloudUser> {
     const user = await this.get(sessionId);
     await this.sessionService.updateSessionData(sessionId, {
-      user: plainToClass(CloudUser, {
-        ...classToPlain(user, { groups: [TransformGroup.Secure] }),
-        ...classToPlain(data, { groups: [TransformGroup.Secure] }),
+      user: plainToInstance(CloudUser, {
+        ...instanceToPlain(user, { groups: [TransformGroup.Secure] }),
+        ...instanceToPlain(data, { groups: [TransformGroup.Secure] }),
       }, { groups: [TransformGroup.Secure] }),
     });
 

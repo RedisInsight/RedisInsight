@@ -1,7 +1,7 @@
 import {
   isArray, unset, set, forEach, isObjectLike, isEmpty,
 } from 'lodash';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { RdiPipeline } from 'src/modules/rdi/models';
 
 export const convertApiDataToRdiJobs = (jobs?: [Record<string, any>]): Record<string, any> => {
@@ -41,7 +41,7 @@ export const convertApiDataToRdiPipeline = (data: Record<string, any> = {}): Rdi
   // do not show jobs in the config area
   unset(pipeline, 'config.jobs');
 
-  return plainToClass(RdiPipeline, pipeline, { excludeExtraneousValues: true });
+  return plainToInstance(RdiPipeline, pipeline, { excludeExtraneousValues: true });
 };
 
 export const convertRdiJobsToApiPayload = (jobs: Record<string, any>): Record<string, any>[] => {

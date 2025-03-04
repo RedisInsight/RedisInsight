@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { classToClass } from 'src/utils';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { CloudSessionRepository } from './cloud.session.repository';
 import { CloudSessionEntity } from '../entities/cloud.session.entity';
 import { CloudSessionData } from '../models/cloud-session';
@@ -36,7 +36,7 @@ export class LocalCloudSessionRepository extends CloudSessionRepository {
 
   async save(cloudAuth: Partial<CloudSessionData>): Promise<void> {
     const entity = await this.modelEncryptor.encryptEntity(
-      plainToClass(CloudSessionEntity, { ...cloudAuth, id: SESSION_ID }),
+      plainToInstance(CloudSessionEntity, { ...cloudAuth, id: SESSION_ID }),
     );
 
     await this.repository.upsert(entity, ['id']);

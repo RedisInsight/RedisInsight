@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { Validator } from 'class-validator';
 import { readdirSync, existsSync, readFileSync } from 'fs';
 import config, { Config } from 'src/utils/config';
@@ -41,8 +41,8 @@ export class PluginService {
           readFileSync(path.join(pluginsFolder, pluginFolder, 'package.json'), 'utf8'),
         );
 
-        // const plugin = plainToClass(Plugin, manifest, { excludeExtraneousValues: true, strategy: 'exposeAll' });
-        const plugin = plainToClass(Plugin, manifest);
+        // const plugin = plainToInstance(Plugin, manifest, { excludeExtraneousValues: true, strategy: 'exposeAll' });
+        const plugin = plainToInstance(Plugin, manifest);
         await this.validator.validateOrReject(plugin, {
           whitelist: true,
         });

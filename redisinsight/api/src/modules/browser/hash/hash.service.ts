@@ -10,7 +10,7 @@ import { RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
 import config, { Config } from 'src/utils/config';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserToolHashCommands, BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import {
   AddFieldsToHashDto,
@@ -111,7 +111,7 @@ export class HashService {
         result.nextCursor = 0;
         const value = await client.sendCommand([BrowserToolHashCommands.HGet, keyName, field]);
         if (!isNull(value)) {
-          result.fields.push(plainToClass(HashFieldDto, { field, value }));
+          result.fields.push(plainToInstance(HashFieldDto, { field, value }));
         }
       } else {
         const scanResult = await this.scanHash(client, dto);
@@ -144,7 +144,7 @@ export class HashService {
       );
 
       this.logger.debug('Succeed to get fields of the Hash data type.', clientMetadata);
-      return plainToClass(GetHashFieldsResponse, result);
+      return plainToInstance(GetHashFieldsResponse, result);
     } catch (error) {
       this.logger.error('Failed to get fields of the Hash data type.', error, clientMetadata);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
@@ -278,7 +278,7 @@ export class HashService {
       const fields: HashFieldDto[] = chunk(
         fieldsArray,
         2,
-      ).map(([field, value]: string[]) => plainToClass(HashFieldDto, { field, value }));
+      ).map(([field, value]: string[]) => plainToInstance(HashFieldDto, { field, value }));
       result = {
         ...result,
         nextCursor: parseInt(nextCursor, 10),

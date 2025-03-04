@@ -22,7 +22,7 @@ import {
   GetPendingEntriesDto,
   PendingEntryDto,
 } from 'src/modules/browser/stream/dto';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { ClientMetadata } from 'src/common/models';
 import { RedisClient } from 'src/modules/redis/client';
 import { checkIfKeyNotExists } from 'src/modules/browser/utils';
@@ -304,7 +304,7 @@ export class ConsumerService {
 
     const [,name,,pending,,idle] = entry;
 
-    return plainToClass(ConsumerDto, {
+    return plainToInstance(ConsumerDto, {
       name,
       pending,
       idle,
@@ -344,7 +344,7 @@ export class ConsumerService {
       return null;
     }
 
-    return plainToClass(PendingEntryDto, {
+    return plainToInstance(PendingEntryDto, {
       id: `${entry[0]}`,
       consumerName: entry[1],
       idle: +entry[2],

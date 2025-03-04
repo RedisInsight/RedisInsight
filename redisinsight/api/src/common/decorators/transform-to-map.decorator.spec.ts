@@ -1,11 +1,12 @@
-import * as classTransformer from 'class-transformer';
+import { Expose, instanceToPlain, plainToInstance } from 'class-transformer';
 import { TransformToMap } from './transform-to-map.decorator';
-
-const { Expose, classToPlain, plainToClass } = classTransformer;
 
 class DummyClass {
   @Expose()
   value: string;
+
+  @Expose({ groups: ['security'] })
+  secret?: string;
 }
 
 class TestDto {
@@ -15,125 +16,133 @@ class TestDto {
 }
 
 describe('TransformToMap decorator', () => {
-  it('should transform each map value into an instance of DummyClass', () => {
+  it('should transform each map value into an instance of DummyClass (without security group fields)', () => {
     const input = {
       data: {
-        key1: { value: 'test1' },
-        key2: { value: 'test2' },
+        key1: { value: 'test1', secret: 'secret1' },
+        key2: { value: 'test2', secret: 'secret2' },
       },
     };
 
-    const instance = plainToClass(TestDto, input);
+    const instance = plainToInstance(TestDto, input);
 
-    expect(instance.data).toBeDefined();
+    expect(instance).toBeInstanceOf(TestDto);
     expect(instance.data.key1).toBeInstanceOf(DummyClass);
     expect(instance.data.key2).toBeInstanceOf(DummyClass);
     expect(instance.data.key1.value).toEqual('test1');
+    expect(instance.data.key1.secret).toEqual(undefined);
     expect(instance.data.key2.value).toEqual('test2');
+    expect(instance.data.key2.secret).toEqual(undefined);
+  });
+
+  it('should transform each map value into an instance of DummyClass (with security group fields)', () => {
+    const input = {
+      data: {
+        key1: { value: 'test1', secret: 'secret1' },
+        key2: { value: 'test2', secret: 'secret2' },
+      },
+    };
+
+    const instance = plainToInstance(TestDto, input, { groups: ['security'] });
+
+    expect(instance).toBeInstanceOf(TestDto);
+    expect(instance.data.key1).toBeInstanceOf(DummyClass);
+    expect(instance.data.key2).toBeInstanceOf(DummyClass);
+    expect(instance.data.key1.value).toEqual('test1');
+    expect(instance.data.key1.secret).toEqual('secret1');
+    expect(instance.data.key2.value).toEqual('test2');
+    expect(instance.data.key2.secret).toEqual('secret2');
   });
 
   it('should handle empty objects gracefully', () => {
     const input = { data: {} };
-    const instance = plainToClass(TestDto, input);
+    const instance = plainToInstance(TestDto, input);
 
+    expect(instance).toBeInstanceOf(TestDto);
     expect(instance.data).toEqual({});
   });
 
   it('should handle undefined values gracefully', () => {
     const input = { data: undefined };
-    const instance = plainToClass(TestDto, input);
+    const instance = plainToInstance(TestDto, input);
 
+    expect(instance).toBeInstanceOf(TestDto);
     expect(instance.data).toEqual(undefined);
   });
 
-  it('should convert a class instance to a plain object', () => {
-    const dummy1 = new DummyClass();
-    dummy1.value = 'test1';
-    const dummy2 = new DummyClass();
-    dummy2.value = 'test2';
-
-    const dataMap = {
-      key1: { value: 'test1' },
-      key2: { value: 'test2' },
-    };
-
-    const instance = new TestDto();
-    instance.data = dataMap;
-
-    const plain = classToPlain(instance);
-
-    expect(plain).toHaveProperty('data');
-    expect(plain.data).toEqual({
-      key1: { value: 'test1' },
-      key2: { value: 'test2' },
+  it('should convert a class instance to a plain object (without security group fields)', () => {
+    const instance = Object.assign(new TestDto(), {
+      data: {
+        key1: Object.assign(new DummyClass(), {
+          value: 'test1',
+          secret: 'secret1',
+        }),
+        key2: Object.assign(new DummyClass(), {
+          value: 'test2',
+          secret: 'secret2',
+        }),
+      },
     });
-  });
 
-  it('should handle an empty Map gracefully on reverse conversion', () => {
-    const instance = new TestDto();
-    instance.data = {};
+    const plain = instanceToPlain(instance);
 
-    const plain = classToPlain(instance);
-
-    expect(plain.data).toEqual({});
-  });
-
-  it('should handle undefined values gracefully on reverse conversion', () => {
-    const instance = new TestDto();
-    instance.data = undefined;
-
-    const plain = classToPlain(instance);
-
-    expect(plain.data).toEqual(undefined);
-  });
-
-  it('should trigger plainToClass without triggering classToPlain', () => {
-    const spyClassToPlain = jest.spyOn(classTransformer, 'classToPlain');
-
-    const input = {
+    expect(Object.getPrototypeOf(plain)).toBe(Object.prototype);
+    expect(Object.getPrototypeOf(plain.data.key1)).toBe(Object.prototype);
+    expect(Object.getPrototypeOf(plain.data.key2)).toBe(Object.prototype);
+    expect(plain).toEqual({
       data: {
         key1: { value: 'test1' },
         key2: { value: 'test2' },
       },
-    };
-
-    const instance = plainToClass(TestDto, input, {
-      excludeExtraneousValues: true,
     });
-
-    expect(instance.data).toBeDefined();
-    expect(instance.data.key1).toBeInstanceOf(DummyClass);
-    expect(instance.data.key1.value).toEqual('test1');
-
-    expect(spyClassToPlain).not.toHaveBeenCalled();
-
-    spyClassToPlain.mockRestore();
   });
 
-  it('should trigger classToPlain without triggering plainToClass', () => {
-    const spyPlainToClass = jest.spyOn(classTransformer, 'plainToClass');
-
-    const dummy1 = new DummyClass();
-    dummy1.value = 'test1';
-    const dummy2 = new DummyClass();
-    dummy2.value = 'test2';
-
-    const instance = new TestDto();
-    instance.data = {
-      key1: dummy1,
-      key2: dummy2,
-    };
-
-    const plain = classToPlain(instance);
-
-    expect(plain).toHaveProperty('data');
-    expect(plain.data).toEqual({
-      key1: { value: 'test1' },
-      key2: { value: 'test2' },
+  it('should convert a class instance to a plain object (with security group fields)', () => {
+    const instance = Object.assign(new TestDto(), {
+      data: {
+        key1: Object.assign(new DummyClass(), {
+          value: 'test1',
+          secret: 'secret1',
+        }),
+        key2: Object.assign(new DummyClass(), {
+          value: 'test2',
+          secret: 'secret2',
+        }),
+      },
     });
 
-    expect(spyPlainToClass).not.toHaveBeenCalled();
+    const plain = instanceToPlain(instance, { groups: ['security'] });
 
-    spyPlainToClass.mockRestore();
+    expect(Object.getPrototypeOf(plain)).toBe(Object.prototype);
+    expect(Object.getPrototypeOf(plain.data.key1)).toBe(Object.prototype);
+    expect(Object.getPrototypeOf(plain.data.key2)).toBe(Object.prototype);
+    expect(plain).toEqual({
+      data: {
+        key1: { value: 'test1', secret: 'secret1' },
+        key2: { value: 'test2', secret: 'secret2' },
+      },
+    });
+  });
+
+  it('should handle an empty Map gracefully on reverse conversion', () => {
+    const instance = Object.assign(new TestDto(), {
+      data: {},
+    });
+
+    const plain = instanceToPlain(instance);
+
+    expect(Object.getPrototypeOf(plain)).toBe(Object.prototype);
+    expect(plain.data).toEqual({});
+  });
+
+  it('should handle undefined values gracefully on reverse conversion', () => {
+    const instance = Object.assign(new TestDto(), {
+      data: undefined,
+    });
+
+    const plain = instanceToPlain(instance);
+
+    expect(Object.getPrototypeOf(plain)).toBe(Object.prototype);
+    expect(plain.data).toEqual(undefined);
   });
 });

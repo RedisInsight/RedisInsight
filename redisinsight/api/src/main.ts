@@ -1,5 +1,6 @@
 import { posix } from 'path';
 import 'dotenv/config';
+import * as qs from 'qs';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -48,6 +49,8 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
   app.useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()));
+  // set qs as parser to support nested objects in the query string
+  app.set('query parser', qs.parse);
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();

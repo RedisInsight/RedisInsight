@@ -7,7 +7,7 @@ describe('pickDefinedAgreements', () => {
       ['undefined', true],
     ]);
 
-    const output = pickDefinedAgreements(value);
+    const output = pickDefinedAgreements({ value });
 
     expect(output).toEqual(new Map([['eula', true]]));
   });

@@ -61,3 +61,6 @@ package.json
 # temp folders - remove in future after fix all issues
 redisinsight/ui/src/packages/redisgraph
 redisinsight/ui/src/packages/redistimeseries-app
+
+/report
+__mocks__

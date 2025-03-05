@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { TagRepository } from './repository/tag.repository';
 import { CreateTagDto, UpdateTagDto } from './dto';
 import { Tag } from './models/tag';
@@ -12,12 +17,19 @@ export class TagService {
 
   async create(createTagDto: CreateTagDto): Promise<Tag> {
     const model = classToClass(Tag, createTagDto);
-
-    const tag = await this.tagRepository.create(model);
-
-    this.logger.debug('Successfully created tag', tag);
-
-    return tag;
+    try {
+      const tag = await this.tagRepository.create(model);
+      this.logger.debug('Successfully created tag', tag);
+      return tag;
+    } catch (error) {
+      if (error.code === '2067') {
+        // Unique violation error code for SQLite (SQLITE_CONSTRAINT_UNIQUE)
+        throw new ConflictException(
+          `Tag with key ${createTagDto.key} and value ${createTagDto.value} already exists`,
+        );
+      }
+      throw error;
+    }
   }
 
   async list(): Promise<Tag[]> {

@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
 import { Expose } from 'class-transformer';
 
 @Entity('tag')
+@Unique(['key', 'value'])
 export class TagEntity {
   @Expose()
   @PrimaryGeneratedColumn('uuid')

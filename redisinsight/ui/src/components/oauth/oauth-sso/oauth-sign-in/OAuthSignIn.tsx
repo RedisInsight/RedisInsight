@@ -25,7 +25,6 @@ const OAuthSignIn = (props: Props) => {
 
   const handleSocialButtonClick = (accountOption: string) => {
     dispatch(setSSOFlow(action))
-    debugger
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {

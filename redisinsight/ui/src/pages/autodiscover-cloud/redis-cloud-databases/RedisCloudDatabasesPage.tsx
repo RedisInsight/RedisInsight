@@ -43,6 +43,7 @@ const RedisCloudDatabasesPage = () => {
   const {
     ssoFlow,
     credentials,
+    loading,
     data: instances,
     dataAdded: instancesAdded,
   } = useSelector(cloudSelector)
@@ -251,6 +252,8 @@ const RedisCloudDatabasesPage = () => {
 
   return (
     <RedisCloudDatabases
+      databases={instances || []}
+      loading={loading}
       onClose={handleClose}
       onBack={handleBackAdditing}
       onSubmit={handleAddInstances}

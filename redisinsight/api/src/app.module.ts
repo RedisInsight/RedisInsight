@@ -36,6 +36,7 @@ import SubpathProxyMiddleware from './middleware/subpath-proxy.middleware';
 import XFrameOptionsMiddleware from './middleware/x-frame-options.middleware';
 import { routes } from './app.routes';
 import { RedisConnectionMiddleware, redisConnectionControllers } from './middleware/redis-connection';
+import { AzureModule } from './modules/azure/azure.module'
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -73,6 +74,7 @@ const STATICS_CONFIG = config.get('statics') as Config['statics'];
       autoUpdate: STATICS_CONFIG.autoUpdate,
     }),
     InitModule.register([AutodiscoveryModule, AnalyticsModule]),
+    AzureModule,
   ],
   controllers: [],
   providers: [],

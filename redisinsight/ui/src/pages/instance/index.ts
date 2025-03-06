@@ -1,6 +1,5 @@
 import InstancePage from './InstancePage'
-import InstancePageRouter from './InstancePageRouter'
 
-export { InstancePage, InstancePageRouter }
+export { InstancePage }
 
 export default InstancePage

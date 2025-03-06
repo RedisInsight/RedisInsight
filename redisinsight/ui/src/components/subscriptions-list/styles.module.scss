@@ -1,0 +1,199 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 24px;
+}
+
+.loadingContent {
+  margin-top: 24px;
+}
+
+.tableContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-bottom: 24px;
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tableTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.table {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  max-height: calc(100vh - 370px) !important;
+}
+
+.tableEmpty tbody {
+  display: none;
+}
+
+.tableFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 14px 10px 30px !important;
+}
+
+.tableFooterButtons {
+  display: flex;
+  gap: 16px;
+}
+
+.summaryText {
+  font-size: 14px;
+}
+
+.summaryCount {
+  font-weight: 600;
+}
+
+.popoverContent {
+  max-width: 350px;
+}
+
+.popoverTitle {
+  margin-bottom: 8px;
+}
+
+.popoverText {
+  margin-bottom: 16px;
+}
+
+.popoverButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.panelCancelBtn {
+  max-width: 350px !important;
+  margin-left: -10px;
+}
+
+.searchForm {
+  width: 266px !important;
+}
+
+.search {
+  background-color: var(--euiColorLightestShade) !important;
+  height: 40px !important;
+}
+
+.title {
+  padding-bottom: 5px !important;
+}
+
+.subTitle {
+  font-size: 14px;
+}
+
+.noSubscriptions {
+  color: var(--euiTextSubduedColor) !important;
+  margin: 50px auto 0;
+  text-align: center;
+}
+
+.errorContainer {
+  padding: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.summary {
+  position: relative;
+}
+
+.account {
+  width: 100%;
+  min-height: 44px;
+  padding-left: 14px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  margin-top: 16px;
+  border: 1px solid var(--euiColorLightShade);
+  background-color: var(--euiColorLightestShade) !important;
+}
+
+
+.tooltipColumnName {
+  max-width: 370px !important;
+
+  * {
+    line-height: 1.19;
+    font-size: 14px !important;
+
+    &:not(:global(.euiToolTip__title)) {
+      font-weight: 300 !important;
+    }
+  }
+}
+
+.tooltipColumnNameText {
+  text-decoration: underline;
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  vertical-align: top;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tooltipStatus {
+  max-width: 350px !important;
+}
+
+.tooltipStatusList {
+  margin-top: 10px;
+  padding-left: 0;
+  list-style: none;
+
+  li {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--euiColorDanger);
+  margin-right: 8px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 15px 14px 10px 30px !important;
+}
+
+.subscriptionsList {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+}

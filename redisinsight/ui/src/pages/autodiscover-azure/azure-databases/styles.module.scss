@@ -1,0 +1,14 @@
+.nameCell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.copyButton {
+  visibility: hidden;
+  margin-left: 8px;
+}
+
+.nameCell:hover .copyButton {
+  visibility: visible;
+}

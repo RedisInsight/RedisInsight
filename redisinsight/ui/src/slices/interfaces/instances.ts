@@ -509,3 +509,55 @@ export enum InstanceType {
   AWSElasticache = 'AWS Elasticache',
   Sentinel = 'Sentinel',
 }
+
+export enum LoadedAzure {
+  Subscriptions = 'subscriptions',
+  Instances = 'instances',
+  InstancesAdded = 'instancesAdded',
+}
+
+export interface ILoadedAzure {
+  [LoadedAzure.Subscriptions]?: boolean
+  [LoadedAzure.Instances]?: boolean
+  [LoadedAzure.InstancesAdded]?: boolean
+}
+
+export interface AzureSubscription {
+  id: string
+  name?: string
+  isActive?: boolean
+}
+
+interface AzureDatabaseProperties {
+  host: string
+  port: number
+  password?: string
+  useSsl?: boolean
+}
+
+export interface AzureDatabase {
+  subscriptionId: string
+  subscriptionName?: string
+  id: string
+  name: string
+  status: string
+  properties?: AzureDatabaseProperties
+}
+
+export interface InstanceAzure {
+  name: string
+  host: string
+  port: number
+  tls: boolean
+  password?: string
+  properties?: AzureDatabaseProperties
+}
+
+export interface InitialStateAzure {
+  loading: boolean
+  error: string
+  data: Nullable<AzureDatabase[]>
+  dataAdded: AzureDatabase[]
+  subscriptions: Nullable<AzureSubscription[]>
+  loaded: ILoadedAzure
+}

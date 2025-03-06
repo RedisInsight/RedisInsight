@@ -23,6 +23,9 @@ enum ApiEndpoints {
   REDIS_CLOUD_GET_DATABASES = 'cloud/autodiscovery/get-databases',
   REDIS_CLOUD_DATABASES = 'cloud/autodiscovery/databases',
 
+  MICROSOFT_AZURE_CLOUD_SUBSCRIPTIONS = 'azure/autodiscovery/subscriptions',
+  MICROSOFT_AZURE_CLOUD_DATABASES = 'azure/autodiscovery/databases',
+
   SENTINEL_GET_DATABASES = 'redis-sentinel/get-databases',
   SENTINEL_DATABASES = 'redis-sentinel/databases',
 

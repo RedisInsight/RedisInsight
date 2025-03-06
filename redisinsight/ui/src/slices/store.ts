@@ -54,6 +54,7 @@ import rdiDryRunJobReducer from './rdi/dryRun'
 import rdiTestConnectionsReducer from './rdi/testConnections'
 import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
+import azureReducer from './instances/microsoftAzure'
 
 const riConfig = getConfig()
 
@@ -80,6 +81,7 @@ export const rootReducer = combineReducers({
     cluster: clusterReducer,
     cloud: cloudReducer,
     sentinel: sentinelReducer,
+    azure: azureReducer,
   }),
   browser: combineReducers({
     keys: keysReducer,

@@ -1,13 +1,14 @@
 import { lazy } from 'react'
 import { IRoute, Pages } from 'uiSrc/constants'
 import SettingsPage from 'uiSrc/pages/settings'
-import { SentinelDatabasesPage, SentinelDatabasesResultPage, SentinelPage } from 'uiSrc/pages/autodiscover-sentinel'
+import { SentinelDatabasesPage, SentinelDatabasesResultPage } from 'uiSrc/pages/autodiscover-sentinel'
+import PageRouter from 'uiSrc/components/page-router/PageRouter'
 import { LAZY_LOAD } from '../config'
 
 const LazySettingsPage = lazy(() => import('uiSrc/pages/settings'))
 const LazySentinelDatabasesPage = lazy(() => import('uiSrc/pages/autodiscover-sentinel/sentinel-databases'))
 const LazySentinelDatabasesResultPage = lazy(() => import('uiSrc/pages/autodiscover-sentinel/sentinel-databases-result'))
-const LazySentinelPage = lazy(() => import('uiSrc/pages/autodiscover-sentinel/sentinel'))
+const LazyPageRouter = lazy(() => import('uiSrc/components/page-router/PageRouter'))
 
 const ROUTES: IRoute[] = [
   {
@@ -16,7 +17,7 @@ const ROUTES: IRoute[] = [
   },
   {
     path: Pages.sentinel,
-    component: LAZY_LOAD ? LazySentinelPage : SentinelPage,
+    component: LAZY_LOAD ? LazyPageRouter : PageRouter,
     routes: [
       {
         path: Pages.sentinelDatabases,

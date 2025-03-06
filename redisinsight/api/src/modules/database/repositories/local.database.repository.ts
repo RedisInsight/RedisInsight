@@ -69,7 +69,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   ): Promise<Database> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['tags'],
+      relations: ['tags', 'readOnlyTags'],
     });
     if (!entity) {
       return null;

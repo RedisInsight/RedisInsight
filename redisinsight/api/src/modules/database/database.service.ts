@@ -398,7 +398,7 @@ export class DatabaseService {
     ));
   }
 
-  async linkTag(sessionMetadata: SessionMetadata, id: string, key: string, value: string): Promise<void> {
+  async linkTag(sessionMetadata: SessionMetadata, id: string, key: string, value: string, readOnly = false): Promise<void> {
     const database = await this.get(sessionMetadata, id);
 
     let tag: Tag;
@@ -414,18 +414,30 @@ export class DatabaseService {
     }
 
     const existingTag = database.tags.find((t) => t.key === key);
+    const existingReadOnlyTag = database.readOnlyTags.find((t) => t.key === key);
 
-    if (existingTag) {
-      if (existingTag.value === value) {
-        // Tag with the same key-value pair already exists, do nothing
-        return;
-      } else {
-        // Unlink the existing tag with the same key but different value
-        await this.unlinkTag(sessionMetadata, id, key);
-      }
+    if (existingReadOnlyTag) {
+      // The tag is linked and is read-only, do nothing
+      this.logger.debug(`Tag with key ${key} is read-only, cannot be changed for database ${id}`);
+      return;
     }
 
-    database.tags.push(tag);
+    if (existingTag && existingTag.value === value) {
+      // Tag with the same key-value pair is already linked, do nothing
+      return;
+    }
+
+    if (existingTag) {
+      // Unlink the existing tag that has the same key but different value
+      await this.unlinkTag(sessionMetadata, id, key);
+    }
+
+    if (readOnly) {
+      database.readOnlyTags.push(tag);
+    } else {
+      database.tags.push(tag);
+    }
+
     await this.repository.update(sessionMetadata, id, database);
 
     this.logger.debug(`Linked tag with key ${key} and value ${value} to database ${id}`);
@@ -443,7 +455,7 @@ export class DatabaseService {
     await this.repository.update(sessionMetadata, id, database);
 
     const otherDatabases = await this.repository.list(sessionMetadata);
-    const isTagUsed = otherDatabases.some((db) => db.tags.some((t) => t.id === tag.id));
+    const isTagUsed = otherDatabases.some((db) => db.tags.some((t) => t.id === tag.id) || db.readOnlyTags.some((t) => t.id === tag.id));
 
     if (!isTagUsed) {
       await this.tagService.delete(tag.id);

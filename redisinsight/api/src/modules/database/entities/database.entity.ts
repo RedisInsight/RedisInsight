@@ -1,5 +1,5 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable
+  Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -271,4 +271,19 @@ export class DatabaseEntity {
     },
   })
   tags: TagEntity[];
+
+  @Expose()
+  @ManyToMany(() => TagEntity, (tag) => tag.readOnlyDatabases)
+  @JoinTable({
+    name: 'database_readonly_tag',
+    joinColumn: {
+      name: 'databaseId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'tagId',
+      referencedColumnName: 'id',
+    },
+  })
+  readOnlyTags: TagEntity[];
 }

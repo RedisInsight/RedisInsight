@@ -11,4 +11,11 @@ export class LocalConstantsProvider extends ConstantsProvider {
       sessionId: '1',
     };
   }
+
+  /**
+   * @inheritDoc
+   */
+  getAnonymousId(sessionMetadata?: SessionMetadata): string {
+    return sessionMetadata?.userId ?? 'unknown';
+  }
 }

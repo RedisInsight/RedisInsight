@@ -3,7 +3,6 @@ import {
   mockAppSettings,
   mockAppSettingsWithoutPermissions,
   mockAppVersion,
-  mockConstantsProvider,
   mockControlGroup,
   mockControlNumber,
   mockSessionMetadata,
@@ -14,6 +13,7 @@ import { TelemetryEvents } from 'src/constants';
 import { AppType } from 'src/modules/server/models/server';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { LocalConstantsProvider } from 'src/modules/constants/providers/local.constants.provider';
 import {
   AnalyticsService,
   Telemetry,
@@ -49,7 +49,7 @@ describe('AnalyticsService', () => {
         },
         {
           provide: ConstantsProvider,
-          useFactory: mockConstantsProvider,
+          useClass: LocalConstantsProvider,
         },
       ],
     }).compile();

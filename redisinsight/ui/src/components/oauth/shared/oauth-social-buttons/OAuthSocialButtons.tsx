@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { EuiButtonEmpty, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -24,13 +24,6 @@ const OAuthSocialButtons = (props: Props) => {
   const agreement = useSelector(oauthCloudPAgreementSelector)
 
   const socialLinks = [
-    {
-      text: 'Microsoft',
-      className: styles.microsoftButton,
-      icon: SsoIcon,
-      label: 'microsoft-oauth',
-      strategy: OAuthStrategy.Microsoft,
-    },
     {
       text: 'Google',
       className: styles.googleButton,

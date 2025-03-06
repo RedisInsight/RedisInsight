@@ -5,8 +5,7 @@ import { Pages } from 'uiSrc/constants'
 import { appContextAnalytics, setLastAnalyticsPage } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-
-import AnalyticsPageRouter from './AnalyticsPageRouter'
+import PageRouter from 'uiSrc/components/page-router/PageRouter'
 
 import styles from './styles.module.scss'
 
@@ -58,7 +57,7 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
 
   return (
     <div className={styles.main}>
-      <AnalyticsPageRouter routes={routes} />
+      <PageRouter routes={routes} />
     </div>
   )
 }

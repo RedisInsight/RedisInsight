@@ -4,6 +4,7 @@ import { AddDbType } from 'uiSrc/pages/home/constants'
 
 import ShieldIcon from 'uiSrc/assets/img/shield.svg?react'
 import RedisSoftwareIcon from 'uiSrc/assets/img/redis-software.svg?react'
+import AzureIcon from 'uiSrc/assets/img/azure.svg?react'
 
 export interface Values {
   connectionURL: string
@@ -21,6 +22,12 @@ export const CONNECTIVITY_OPTIONS = [
     title: 'Redis Software',
     type: AddDbType.software,
     icon: (props: Record<string, any> = {}) => <RedisSoftwareIcon {...props} />
+  },
+  {
+    id: 'azure',
+    title: 'Azure Managed Redis',
+    type: AddDbType.azure,
+    icon: (props: Record<string, any> = {}) => <AzureIcon {...props} />
   },
   {
     id: 'import',

@@ -2,12 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { DEFAULT_TOKEN_MANAGER_CONFIG, EntraIdCredentialsProviderFactory, PKCEParams } from '@redis/entraid/dist/lib/entra-id-credentials-provider-factory';
 import config from 'src/utils/config';
-import { MicrosoftAuthSession } from './models/microsoft-auth-session.model';
 import { EntraidCredentialsProvider } from '@redis/entraid/dist/lib/entraid-credentials-provider';
+import { CloudAuthStatus } from 'src/modules/cloud/auth/models/cloud-auth-response';
 
 const { idp: { microsoft: idpConfig } } = config.get('cloud');
 
 interface MicrosoftAuthOptions {
+    action: any;
+    callback: any;
     state: string;
     client_info?: string;
 }
@@ -18,6 +20,7 @@ interface MicrosoftAuthQuery {
 }
 
 interface MicrosoftCredentials {
+    status: CloudAuthStatus;
     username: string;
     password: string;
 }
@@ -41,7 +44,7 @@ export class MicrosoftAuthService {
 
     private authRequests: Map<string, any> = new Map();
     private inProgressRequests: Map<string, any> = new Map();
-
+    private activeCredentialsProvider: EntraidCredentialsProvider | null = null;
     private entraIdProvider: EntraIdAuthProvider;
 
     constructor() {
@@ -50,7 +53,13 @@ export class MicrosoftAuthService {
             redirectUri: idpConfig.redirectUri,
             tokenManagerConfig: DEFAULT_TOKEN_MANAGER_CONFIG,
             authorityConfig: { type: 'custom', authorityUrl: idpConfig.authority },
-            scopes: ['offline_access', 'openid', 'email', 'profile'],
+            scopes: [
+                'offline_access',
+                'openid',
+                'email',
+                'profile',
+                'https://management.azure.com/user_impersonation'
+            ],
         });
     }
 
@@ -68,6 +77,8 @@ export class MicrosoftAuthService {
             sessionMetadata,
             options,
             pkceCodes,
+            callback: options?.callback,
+            action: options?.action
         };
 
         this.authRequests.clear();
@@ -77,6 +88,8 @@ export class MicrosoftAuthService {
     }
 
     async handleCallback(query: MicrosoftAuthQuery): Promise<MicrosoftCredentials> {
+        let result: MicrosoftCredentials;
+        let authRequest: any;
         try {
             if (!this.authRequests.has(query?.state)) {
                 this.logger.log(
@@ -85,12 +98,11 @@ export class MicrosoftAuthService {
                 throw new Error('Unknown authorization request');
             }
 
-            const authRequest = this.authRequests.get(query.state);
-
+            authRequest = this.authRequests.get(query.state);
             this.authRequests.delete(query.state);
             this.inProgressRequests.set(query.state, authRequest);
 
-            const entraidCredentialsProvider = this.entraIdProvider.createCredentialsProvider(
+            this.activeCredentialsProvider = this.entraIdProvider.createCredentialsProvider(
                 {
                     code: query.code as string,
                     verifier: authRequest.pkceCodes.verifier,
@@ -98,7 +110,7 @@ export class MicrosoftAuthService {
                 },
             );
 
-            const initialCredentials = entraidCredentialsProvider.subscribe({
+            const [credentials] = await this.activeCredentialsProvider.subscribe({
                 onNext: (token) => {
                     console.log('Token acquired:', token);
                 },
@@ -107,24 +119,37 @@ export class MicrosoftAuthService {
                 }
             });
 
-            const [credentials] = await initialCredentials;
-
             if (!credentials?.username || !credentials?.password) {
                 throw new Error('Invalid credentials received');
             }
 
             delete authRequest.pkceCodes;
-
-            this.finishInProgressRequest(query);
-
-            return {
+            result = {
+                status: CloudAuthStatus.Succeed,
                 username: credentials.username,
                 password: credentials.password,
             };
         } catch (e) {
             this.logger.error('Microsoft auth callback failed', e);
-            throw e;
+            result = {
+                status: CloudAuthStatus.Failed,
+                username: '',
+                password: '',
+            };
         }
+
+        try {
+            if (authRequest?.callback) {
+                authRequest.callback(result)?.catch?.((e: Error) =>
+                    this.logger.error('Async callback failed', e)
+                );
+            }
+        } catch (e) {
+            this.logger.error('Callback failed', e);
+        }
+
+        this.finishInProgressRequest(query);
+        return result;
     }
 
     isRequestInProgress(query): boolean {
@@ -135,12 +160,33 @@ export class MicrosoftAuthService {
         this.inProgressRequests.delete(query?.state);
     }
 
-    async getSession(id: string): Promise<MicrosoftAuthSession> {
+    async getSession(): Promise<any> {
         try {
-            // TODO: Implement this
-            return null;
+            if (!this.activeCredentialsProvider) {
+                this.logger.warn('No active credentials provider available');
+                return null;
+            }
+
+            // Get the latest credentials from the provider
+            const credentials = await this.activeCredentialsProvider.tokenManager.getCurrentToken();
+
+            if (!credentials) {
+                this.logger.warn('No credentials available from provider');
+                return null;
+            }
+            return credentials?.value;
         } catch (e) {
             this.logger.error('Failed to get Microsoft session', e);
+            return null;
+        }
+    }
+
+    async getAccessToken(): Promise<string | null> {
+        try {
+            const session = await this.getSession();
+            return session?.accessToken || null;
+        } catch (e) {
+            this.logger.error('Failed to get access token', e);
             return null;
         }
     }

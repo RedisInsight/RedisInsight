@@ -33,6 +33,7 @@ export enum PageNames {
 const redisCloud = '/redis-cloud'
 const sentinel = '/sentinel'
 const rdi = '/integrate'
+const azure = '/azure'
 
 export type PageValues = typeof Pages[keyof typeof Pages]
 export const Pages = {
@@ -45,6 +46,10 @@ export const Pages = {
   redisCloudSubscriptions: `${redisCloud}/subscriptions`,
   redisCloudDatabases: `${redisCloud}/databases`,
   redisCloudDatabasesResult: `${redisCloud}/databases-result`,
+  azure,
+  azureSubscriptions: `${azure}/subscriptions`,
+  azureDatabases: `${azure}/databases`,
+  azureDatabasesResult: `${azure}/databases-result`,
   sentinel,
   sentinelDatabases: `${sentinel}/databases`,
   sentinelDatabasesResult: `${sentinel}/databases-result`,

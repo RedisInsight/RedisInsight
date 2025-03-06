@@ -29,7 +29,7 @@ import { ExportDatabasesDto } from 'src/modules/database/dto/export.databases.dt
 import { ExportDatabase } from 'src/modules/database/models/export-database';
 import { DatabaseResponse } from 'src/modules/database/dto/database.response';
 import { classToClass } from 'src/utils';
-import { CreateTagDto } from 'src/modules/tag/dto/create-tag.dto';
+import { BulkUpdateDatabaseTagsDto } from 'src/modules/database/dto/bulk-update-database-tags.dto';
 
 @ApiTags('Database')
 @Controller('databases')
@@ -292,41 +292,21 @@ export class DatabaseController {
 
   @Post(':id/tags')
   @ApiEndpoint({
-    description: 'Link a tag to a database',
+    description: 'Bulk update tags for a database',
     statusCode: 200,
     responses: [
       {
         status: 200,
-        description: 'Successfully linked tag to database',
+        description: 'Successfully updated tags for database',
       },
     ],
   })
   @UsePipes(new ValidationPipe({ transform: true }))
-  async linkTag(
+  async bulkUpdateTags(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') id: string,
-    @Body() createTagDto: CreateTagDto,
+    @Body() bulkUpdateDatabaseTagsDto: BulkUpdateDatabaseTagsDto,
   ): Promise<void> {
-    await this.service.linkTag(sessionMetadata, id, createTagDto.key, createTagDto.value);
-  }
-
-  @Delete(':id/tags')
-  @ApiEndpoint({
-    description: 'Unlink a tag from a database',
-    statusCode: 200,
-    responses: [
-      {
-        status: 200,
-        description: 'Successfully unlinked tag from database',
-      },
-    ],
-  })
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async unlinkTag(
-    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-    @Param('id') id: string,
-    @Body() { key }: { key: string },
-  ): Promise<void> {
-    await this.service.unlinkTag(sessionMetadata, id, key);
+    await this.service.bulkUpdateTags(sessionMetadata, id, bulkUpdateDatabaseTagsDto.tags);
   }
 }

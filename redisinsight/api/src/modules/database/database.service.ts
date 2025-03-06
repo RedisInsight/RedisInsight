@@ -461,4 +461,34 @@ export class DatabaseService {
       await this.tagService.delete(tag.id);
     }
   }
+
+  async bulkUpdateTags(
+    sessionMetadata: SessionMetadata,
+    id: string,
+    tags: { key: string; value: string; readOnly?: boolean }[],
+  ): Promise<void> {
+    const database = await this.get(sessionMetadata, id);
+
+    const existingTags = database.tags;
+    const existingReadOnlyTags = database.readOnlyTags;
+
+    const newTags = tags.filter(tag => !existingTags.some(t => t.key === tag.key) && !existingReadOnlyTags.some(t => t.key === tag.key));
+    const updatedTags = tags.filter(tag => existingTags.some(t => t.key === tag.key && t.value !== tag.value));
+    const removedTags = existingTags.filter(t => !tags.some(tag => tag.key === t.key));
+
+    for (const tag of newTags) {
+      await this.linkTag(sessionMetadata, id, tag.key, tag.value, tag.readOnly);
+    }
+
+    for (const tag of updatedTags) {
+      await this.unlinkTag(sessionMetadata, id, tag.key);
+      await this.linkTag(sessionMetadata, id, tag.key, tag.value, tag.readOnly);
+    }
+
+    for (const tag of removedTags) {
+      await this.unlinkTag(sessionMetadata, id, tag.key);
+    }
+
+    this.logger.debug(`Bulk updated tags for database ${id}`);
+  }
 }

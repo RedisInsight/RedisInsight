@@ -413,14 +413,22 @@ export class DatabaseService {
       }
     }
 
-    if (database.tags.some((t) => t.key === key)) {
-      throw new ConflictException(`Database is already linked to a tag with key ${key}`);
+    const existingTag = database.tags.find((t) => t.key === key);
+
+    if (existingTag) {
+      if (existingTag.value === value) {
+        // Tag with the same key-value pair already exists, do nothing
+        return;
+      } else {
+        // Unlink the existing tag with the same key but different value
+        await this.unlinkTag(sessionMetadata, id, key);
+      }
     }
 
     database.tags.push(tag);
     await this.repository.update(sessionMetadata, id, database);
 
-    this.logger.debug(`Linked tag with key ${key} to database ${id}`);
+    this.logger.debug(`Linked tag with key ${key} and value ${value} to database ${id}`);
   }
 
   async unlinkTag(sessionMetadata: SessionMetadata, id: string, key: string): Promise<void> {

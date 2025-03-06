@@ -18,11 +18,14 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
   const history = useHistory()
   const { instanceId } = useParams<{ instanceId: string }>()
   const { pathname } = useLocation()
-  const { connectionType } = useSelector(connectedInstanceSelector)
+  const instanceDetails = useSelector(connectedInstanceSelector)
+  let { connectionType, forceStandalone } = instanceDetails
   const { lastViewedPage } = useSelector(appContextAnalytics)
-
   const pathnameRef = useRef<string>('')
-
+  if (forceStandalone) {
+    connectionType = ConnectionType.Standalone
+  }
+  // console.log({instanceDetails, connectionType});
   const dispatch = useDispatch()
 
   useEffect(() => () => {

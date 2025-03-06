@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import { Database } from 'src/modules/database/models/database';
 
 export class Tag {
   @ApiProperty({
@@ -39,4 +40,13 @@ export class Tag {
   })
   @Expose()
   updatedAt: Date;
+
+  @ApiProperty({
+    description: 'Databases associated with the tag.',
+    type: Database,
+    isArray: true,
+  })
+  @Expose()
+  @Type(() => Database)
+  databases: Database[];
 }

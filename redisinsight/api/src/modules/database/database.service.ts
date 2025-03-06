@@ -1,5 +1,5 @@
 import {
-  Injectable, InternalServerErrorException, Logger, NotFoundException,
+  Injectable, InternalServerErrorException, Logger, NotFoundException, ConflictException,
 } from '@nestjs/common';
 import {
   isEmpty, omit, reject, sum, omitBy, isUndefined,
@@ -25,6 +25,8 @@ import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
+import { TagService } from 'src/modules/tag/tag.service';
+import { Tag } from '../tag/models/tag';
 
 @Injectable()
 export class DatabaseService {
@@ -68,6 +70,7 @@ export class DatabaseService {
     private databaseFactory: DatabaseFactory,
     private analytics: DatabaseAnalytics,
     private eventEmitter: EventEmitter2,
+    private tagService: TagService,
   ) {}
 
   static isConnectionAffected(dto: object) {
@@ -393,5 +396,49 @@ export class DatabaseService {
       omit(database, paths),
       { groups: ['security'] },
     ));
+  }
+
+  async linkTag(sessionMetadata: SessionMetadata, id: string, key: string, value: string): Promise<void> {
+    const database = await this.get(sessionMetadata, id);
+
+    let tag: Tag;
+
+    try {
+      tag = await this.tagService.getByKeyValuePair(key, value);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        tag = await this.tagService.create({ key, value });
+      } else {
+        throw error;
+      }
+    }
+
+    if (database.tags.some((t) => t.key === key)) {
+      throw new ConflictException(`Database is already linked to a tag with key ${key}`);
+    }
+
+    database.tags.push(tag);
+    await this.repository.update(sessionMetadata, id, database);
+
+    this.logger.debug(`Linked tag with key ${key} to database ${id}`);
+  }
+
+  async unlinkTag(sessionMetadata: SessionMetadata, id: string, key: string): Promise<void> {
+    const database = await this.get(sessionMetadata, id);
+    const tag = database.tags.find((t) => t.key === key);
+
+    if (!tag) {
+      throw new NotFoundException(`Tag with key ${key} not found`);
+    }
+
+    database.tags = database.tags.filter((t) => t.key !== key);
+    await this.repository.update(sessionMetadata, id, database);
+
+    const otherDatabases = await this.repository.list(sessionMetadata);
+    const isTagUsed = otherDatabases.some((db) => db.tags.some((t) => t.id === tag.id));
+
+    if (!isTagUsed) {
+      await this.tagService.delete(tag.id);
+    }
   }
 }

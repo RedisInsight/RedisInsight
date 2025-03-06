@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, ManyToMany } from 'typeorm';
 import { Expose } from 'class-transformer';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Entity('tag')
 @Unique(['key', 'value'])
@@ -23,4 +24,8 @@ export class TagEntity {
   @Expose()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Expose()
+  @ManyToMany(() => DatabaseEntity, (database) => database.tags)
+  databases: DatabaseEntity[];
 }

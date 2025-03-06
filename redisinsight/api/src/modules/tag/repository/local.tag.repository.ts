@@ -25,14 +25,24 @@ export class LocalTagRepository implements TagRepository {
     return classToClass(Tag, entity);
   }
 
+  async getByKeyValuePair(key: string, value: string): Promise<Tag> {
+    const entity = await this.repository.findOneBy({ key, value });
+
+    return classToClass(Tag, entity);
+  }
+
   async create(tag: Tag): Promise<Tag> {
     const entity = classToClass(TagEntity, tag);
 
-    return this.repository.save(entity);
+    const createdEntity = await this.repository.save(entity);
+
+    return classToClass(Tag, createdEntity);
   }
 
   async update(id: string, tag: Partial<Tag>): Promise<void> {
-    await this.repository.update(id, tag);
+    const entity = classToClass(TagEntity, tag);
+
+    await this.repository.update(id, entity);
   }
 
   async delete(id: string): Promise<void> {

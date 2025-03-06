@@ -67,7 +67,10 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     ignoreEncryptionErrors: boolean = false,
     omitFields: string[] = [],
   ): Promise<Database> {
-    const entity = await this.repository.findOneBy({ id });
+    const entity = await this.repository.findOne({
+      where: { id },
+      relations: ['tags'],
+    });
     if (!entity) {
       return null;
     }

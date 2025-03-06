@@ -15,6 +15,14 @@ export abstract class TagRepository {
   abstract get(id: string): Promise<Tag>;
 
   /**
+   * Get a tag by its key and value.
+   * @param {string} key - The key of the tag.
+   * @param {string} value - The value of the tag.
+   * @returns {Promise<Tag>} A promise that resolves to the tag.
+   */
+  abstract getByKeyValuePair(key: string, value: string): Promise<Tag>;
+
+  /**
    * Create a new tag.
    * @param {Tag} tag - The tag to create.
    * @returns {Promise<Tag>} A promise that resolves to the created tag.

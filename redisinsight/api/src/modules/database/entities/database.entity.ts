@@ -1,5 +1,5 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn,
+  Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -9,6 +9,7 @@ import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-maste
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 import { DatabaseSettingsEntity } from 'src/modules/database-settings/entities/database-setting.entity';
+import { TagEntity } from 'src/modules/tag/entities/tag.entity';
 
 export enum HostingProvider {
   RE_CLUSTER = 'RE_CLUSTER',
@@ -255,4 +256,19 @@ export class DatabaseEntity {
   @Expose()
   @Column({ nullable: true })
   forceStandalone: boolean;
+
+  @Expose()
+  @ManyToMany(() => TagEntity, (tag) => tag.databases)
+  @JoinTable({
+    name: 'database_tag',
+    joinColumn: {
+      name: 'databaseId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'tagId',
+      referencedColumnName: 'id',
+    },
+  })
+  tags: TagEntity[];
 }

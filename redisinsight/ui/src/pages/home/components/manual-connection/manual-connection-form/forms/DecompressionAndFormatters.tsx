@@ -1,7 +1,12 @@
-import { FormikProps } from 'formik'
 import React from 'react'
+import { FormikProps } from 'formik'
+
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { DbCompressor } from 'uiSrc/pages/home/components/form'
+import Divider from 'uiSrc/components/divider/Divider'
+import {
+  DbCompressor,
+  KeyFormatSelector,
+} from 'uiSrc/pages/home/components/form'
 
 const DecompressionAndFormatters = ({
   formik,
@@ -10,6 +15,14 @@ const DecompressionAndFormatters = ({
 }) => (
   <>
     <DbCompressor formik={formik} />
+
+    <Divider
+      colorVariable="separatorColor"
+      variant="fullWidth"
+      className="form__divider"
+    />
+
+    <KeyFormatSelector formik={formik} />
   </>
 )
 

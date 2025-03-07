@@ -134,7 +134,7 @@ const OAuthSelectPlan = () => {
           </EuiTitle>
           <EuiText className={styles.subTitle}>
             Select a cloud vendor and region to complete the final step towards
-            your free Redis database. No credit card is required.
+            your free trial Redis database. No credit card is required.
           </EuiText>
           <section className={styles.providers}>
             { OAuthProviders.map(({ icon, id, label }) => (

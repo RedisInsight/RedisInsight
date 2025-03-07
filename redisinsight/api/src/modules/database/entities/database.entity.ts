@@ -55,7 +55,7 @@ export enum Compressor {
 }
 
 export enum Encoding {
-  UNICODE = 'UNICODE',
+  UNICODE = 'Unicode',
   HEX = 'HEX',
 }
 

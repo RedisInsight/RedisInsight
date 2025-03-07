@@ -27,7 +27,7 @@ beforeEach(() => {
       name: 'localhost',
       connectionType: ConnectionType.Standalone,
       modules: [],
-      version: '6.2.6'
+      version: '6.2.6',
     },
     cluster: {
       id: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
@@ -59,29 +59,35 @@ describe('useConnectionType', () => {
       const { result } = renderHook(useConnectionType)
       const connectionType = result.current
       expect(connectionType).toEqual(expected)
-    }
+    },
   )
 
   it.each([[ConnectionType.Cluster, 'cluster' as ConnType], [ConnectionType.Standalone, 'standalone' as ConnType], [ConnectionType.Sentinel, 'sentinel' as ConnType]])(
     'should return %i when forceStandalone is false',
     async (expected, type) => {
-      const instance = { ...instances[type], forceStandalone: false };
+      const instance = {
+        ...instances[type],
+        forceStandalone: false,
+      };
       (connectedInstanceSelector as jest.Mock).mockReturnValue(instance)
 
       const { result } = renderHook(useConnectionType)
       const connectionType = result.current
       expect(connectionType).toEqual(expected)
-    }
+    },
   )
-  it.each([['cluster' as ConnType], ['standalone' as ConnType], ['sentinel' as ConnType]])(
+  it.each([[ConnectionType.Standalone, 'cluster' as ConnType], [ConnectionType.Standalone, 'standalone' as ConnType], [ConnectionType.Sentinel, 'sentinel' as ConnType]])(
     'should return STANDALONE ',
-    async (type) => {
-      const instance = { ...instances[type], forceStandalone: true };
+    async (expected, type) => {
+      const instance = {
+        ...instances[type],
+        forceStandalone: true,
+      };
       (connectedInstanceSelector as jest.Mock).mockReturnValue(instance)
 
       const { result } = renderHook(useConnectionType)
       const connectionType = result.current
-      expect(connectionType).toEqual(ConnectionType.Standalone)
-    }
+      expect(connectionType).toEqual(expected)
+    },
   )
 })

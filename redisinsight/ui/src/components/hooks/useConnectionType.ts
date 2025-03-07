@@ -5,5 +5,8 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 export const useConnectionType = () => {
   const { connectionType, forceStandalone } = useSelector(connectedInstanceSelector)
 
-  return forceStandalone ? ConnectionType.Standalone : connectionType
+  if (forceStandalone && connectionType !== ConnectionType.Sentinel) {
+    return ConnectionType.Standalone
+  }
+  return connectionType
 }

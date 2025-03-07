@@ -1,5 +1,5 @@
 import * as sqlite3 from 'sqlite3';
-import { workingDirectory } from '../helpers/conf';
+import {workingDirectory} from '../helpers/conf';
 import {promisify} from "util";
 
 const dbPath = `${workingDirectory}/redisinsight.db`;
@@ -13,15 +13,15 @@ export class DatabaseScripts {
         const db = new sqlite3.Database(dbPath);
         try {
             const runAsync = (query: string, p: (string | number | undefined)[]) => promisify(db.run.bind(db)); // convert db.run to a Promise-based function
-            const query =`UPDATE ${dbTableParameters.tableName}
-                          SET ${dbTableParameters.columnName} = ?
-                          WHERE ${dbTableParameters.conditionWhereColumnName} = ?`;
-            await runAsync(query,[dbTableParameters.rowValue, dbTableParameters.conditionWhereColumnValue ]);
+            const query = `UPDATE ${dbTableParameters.tableName}
+                           SET ${dbTableParameters.columnName} = ?
+                           WHERE ${dbTableParameters.conditionWhereColumnName} = ?`;
+            await runAsync(query, [dbTableParameters.rowValue, dbTableParameters.conditionWhereColumnValue]);
         } catch (err) {
             console.log(`Error during changing ${dbTableParameters.columnName} column value: ${err}`)
-            // throw new Error(
-            //     `Error during changing ${dbTableParameters.columnName} column value: ${err}`,
-            // );
+            throw new Error(
+                `Error during changing ${dbTableParameters.columnName} column value: ${err}`,
+            );
         } finally {
             console.log("Close DB")
             db.close();
@@ -49,7 +49,8 @@ export class DatabaseScripts {
             );
         });
 
-        const query = `SELECT ${dbTableParameters.columnName} FROM ${dbTableParameters.tableName}
+        const query = `SELECT ${dbTableParameters.columnName}
+                       FROM ${dbTableParameters.tableName}
                        WHERE ${dbTableParameters.conditionWhereColumnName} = ?`;
         try {
             const getAsync = (query: string, p: (string | number | undefined)[]) => promisify(db.get.bind(db));
@@ -90,7 +91,8 @@ export class DatabaseScripts {
             );
         });
 
-        const query = `DELETE FROM ${dbTableParameters.tableName}`;
+        const query = `DELETE
+                       FROM ${dbTableParameters.tableName}`;
 
         try {
             const runAsync = promisify(db.run.bind(db));
@@ -109,13 +111,14 @@ export class DatabaseScripts {
 
 
 }
+
 /**
  * Add new database parameters
  * @param tableName The name of table in DB
-     * @param columnName The name of column in table
-     * @param rowValue Value to update in table
-     * @param conditionWhereColumnName The name of the column to search
-     * @param conditionWhereColumnValue The value to match in the column
+ * @param columnName The name of column in table
+ * @param rowValue Value to update in table
+ * @param conditionWhereColumnName The name of the column to search
+ * @param conditionWhereColumnValue The value to match in the column
  */
 export type DbTableParameters = {
     tableName: string,
@@ -123,4 +126,4 @@ export type DbTableParameters = {
     rowValue?: string | number,
     conditionWhereColumnName?: string,
     conditionWhereColumnValue?: string
-    };
+};

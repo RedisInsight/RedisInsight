@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import config from 'src/utils/config';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
@@ -309,6 +309,8 @@ export class Database {
     )}.`,
   })
   @IsOptional()
+  // TODO: change signature when classTransformer update will be merged
+  @Transform((value) => value ?? Encoding.UNICODE, { toPlainOnly: true })
   keyNameFormat?: Encoding = Encoding.UNICODE;
 
   @ApiPropertyOptional({

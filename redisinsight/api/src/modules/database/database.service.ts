@@ -418,7 +418,7 @@ export class DatabaseService {
 
     if (existingReadOnlyTag) {
       // The tag is linked and is read-only, do nothing
-      this.logger.debug(`Tag with key ${key} is read-only, cannot be changed for database ${id}`);
+      this.logger.debug(`Tag with key ${key} is read-only, cannot be changed for database ${id}.`);
       return;
     }
 
@@ -440,7 +440,7 @@ export class DatabaseService {
 
     await this.repository.update(sessionMetadata, id, database);
 
-    this.logger.debug(`Linked tag with key ${key} and value ${value} to database ${id}`);
+    this.logger.debug(`Linked tag with key ${key} and value ${value} to database ${id}.`);
   }
 
   async unlinkTag(sessionMetadata: SessionMetadata, id: string, key: string): Promise<void> {
@@ -489,6 +489,6 @@ export class DatabaseService {
       await this.unlinkTag(sessionMetadata, id, tag.key);
     }
 
-    this.logger.debug(`Bulk updated tags for database ${id}`);
+    this.logger.debug(`Bulk updated tags for database ${id}.`);
   }
 }

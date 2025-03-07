@@ -309,8 +309,6 @@ export class Database {
     )}.`,
   })
   @IsOptional()
-  // TODO: change signature when classTransformer update will be merged
-  @Transform((value) => value ?? Encoding.UNICODE, { toPlainOnly: true })
   keyNameFormat?: Encoding = Encoding.UNICODE;
 
   @ApiPropertyOptional({

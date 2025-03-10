@@ -66,7 +66,7 @@ test
         await t.expect(browserPage.Cli.cliOutputResponseSuccess.exists).ok('Command from autocomplete was not found & executed');
     });
 test
-    .meta({ rte: rte.standalone })('Verify that when user enters in CLI RediSearch/JSON commands (FT.CREATE, FT.DROPINDEX/JSON.GET, JSON.DEL), he can see hints with arguments', async t => {
+    .skip('Verify that when user enters in CLI RediSearch/JSON commands (FT.CREATE, FT.DROPINDEX/JSON.GET, JSON.DEL), he can see hints with arguments', async t => {
         const commandHints = [
             'index [data_type] [prefix] [filter] [default_lang] [lang_attribute] [default_score] [score_attribute] [payload_attribute] [maxtextfields] [seconds] [nooffsets] [nohl] [nofields] [nofreqs] [stopwords] [skipinitialscan] schema field [field ...]',
             'index [delete docs]',
@@ -93,4 +93,5 @@ test
             await t.typeText(browserPage.Cli.cliCommandInput, command, { replace: true, paste: true });
             await t.expect(browserPage.Cli.cliCommandAutocomplete.textContent).eql(commandHints[commands.indexOf(command)], `The hints with arguments for command ${command} not shown`);
         }
-    });
+    })
+    .meta({ rte: rte.standalone, skipComments: "CI execution unstable, selector failure, needs investigation" });

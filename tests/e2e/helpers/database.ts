@@ -349,7 +349,11 @@ export class DatabaseHelper {
     async acceptLicenseTerms(): Promise<void> {
         await t.maximizeWindow();
         await userAgreementDialog.acceptLicenseTerms();
-        await updateControlNumber(48.2);
+        // Required since that file is used both in electron and web tests
+        if(process.env.RI_SOCKETS_CORS){
+            await updateControlNumber(48.2);
+        }
+
         // Open default databases list tab if RDI opened
         if (await rdiInstancesListPage.addRdiInstanceButton.exists) {
             await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase);

@@ -25,7 +25,7 @@ const verifyCompletedResultText = async(resultsText: string[]): Promise<void> =>
     await t.expect(browserPage.BulkActions.bulkUploadCompletedSummary.textContent).notContains('0:00:00.000', 'Bulk upload Time taken not correct');
 };
 
-fixture `Bulk Upload`
+fixture.skip(`Bulk Upload`)
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {

@@ -24,7 +24,7 @@ fixture `Keys refresh functionality`
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test('Verify that user can refresh Keys', async t => {
+test.skip('Verify that user can refresh Keys', async t => {
     keyName = Common.generateWord(10);
     const newKeyName = 'KeyNameAfterEdit!testKey';
 

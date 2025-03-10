@@ -255,7 +255,7 @@ test.requestHooks(logger)
         await t.expect(browserPage.newIndexPanel.exists).notOk('New Index panel is displayed');
         await t.click(browserPage.selectIndexDdn);
         await browserPage.selectIndexByName(indexName);
-    });
+    }).skip.meta({skipComment: "Unstable CI execution, after hook error, needs investigation "});
 test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);

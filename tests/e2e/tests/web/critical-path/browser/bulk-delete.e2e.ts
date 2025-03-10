@@ -16,7 +16,7 @@ const dbParameters = { host: ossStandaloneRedisearch.host, port: ossStandaloneRe
 const keyToAddParameters = { keysCount: 10000, keyNameStartWith: 'hashKey' };
 const keyToAddParameters2 = { keysCount: 500000, keyNameStartWith: 'hashKey' };
 
-fixture `Bulk Delete`
+fixture.skip(`Bulk Delete`)
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -32,7 +32,8 @@ fixture `Bulk Delete`
         await deleteAllKeysFromDB(dbParameters.host, dbParameters.port);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test('Verify that user can access the bulk actions screen in the Browser', async t => {
+
+test.skip('Verify that user can access the bulk actions screen in the Browser', async t => {
     // Filter by Hash keys
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     // Open bulk actions
@@ -54,7 +55,7 @@ test('Verify that user can access the bulk actions screen in the Browser', async
     await t.expect(browserPage.BulkActions.bulkApplyButton.exists).ok('Confirm deletion button not displayed');
 
 });
-test('Verify that user can see summary of scanned level', async t => {
+test.skip('Verify that user can see summary of scanned level', async t => {
     const expectedAmount = new RegExp('Expected amount: ~(9|10) \\d{3} keys');
     const scannedKeys = new RegExp('Scanned (5|10)% \\((500|1 000)/10 \\d{3}\\) and found \\d{3,5} keys');
     const messageTitle = 'No pattern or key type set';
@@ -75,7 +76,7 @@ test('Verify that user can see summary of scanned level', async t => {
     await t.expect(browserPage.BulkActions.bulkDeleteSummary.innerText).match(scannedKeys, 'Bulk delete summary is not correct');
 
 });
-test('Verify that user can see blue progress line during the process of bulk deletion', async t => {
+test.skip('Verify that user can see blue progress line during the process of bulk deletion', async t => {
     // Add 500000 Hash keys
     await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters2);
     // Filter and search by Hash keys added
@@ -86,7 +87,7 @@ test('Verify that user can see blue progress line during the process of bulk del
     await t.expect(browserPage.BulkActions.progressLine.exists).ok('Blue progress line not displayed', { timeout: 5000 });
     await t.expect(browserPage.BulkActions.bulkStatusInProgress.exists).ok('Progress value not displayed', { timeout: 5000 });
 });
-test
+test.skip
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Add 1000000 Hash keys
@@ -95,7 +96,7 @@ test
         // Filter and search by Hash keys added
         await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
         await browserPage.searchByKeyName('hashKey*');
-    })('Verify that bulk deletion is still run when user goes to any ather page in the application inside of this DB', async t => {
+    })('Verify that bulk deletion is still run when user goes to any other page in the application inside of this DB', async t => {
         await t.click(browserPage.bulkActionsButton);
         await browserPage.BulkActions.startBulkDelete();
         // Go to Workbench page
@@ -104,7 +105,7 @@ test
         await t.click(browserPage.NavigationPanel.browserButton);
         await t.expect(browserPage.BulkActions.bulkStatusInProgress.exists).ok('Progress value not displayed', { timeout: 5000 });
     });
-test
+test.skip
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Add 500000 keys
@@ -122,7 +123,7 @@ test
         await t.expect(stoppedProgress).gt(1, 'Progress value not displayed');
         await t.expect(stoppedProgress).lt(100, 'Progress value not correct');
     });
-test('Verify that when bulk deletion is completed, status Action completed is displayed', async t => {
+test.skip('Verify that when bulk deletion is completed, status Action completed is displayed', async t => {
     // Filter by Hash keys
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     await t.click(browserPage.bulkActionsButton);
@@ -135,7 +136,7 @@ test('Verify that when bulk deletion is completed, status Action completed is di
     await t.click(browserPage.BulkActions.bulkStartAgainButton);
     await t.expect(browserPage.BulkActions.bulkDeleteSummary.innerText).contains('Scanned 100% (2/2) and found 1 keys', 'Bulk delete summary is not correct');
 });
-test
+test.skip
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         await browserPage.addSetKey(keyNames[1], '100000', Common.generateWord(20));

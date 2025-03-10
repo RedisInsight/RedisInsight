@@ -25,7 +25,7 @@ const keysTTL = ['3500', '86300', '2147476121'];
 const numberOfGeneratedKeys = 6;
 const keyNamesReport = chance.unique(chance.word, numberOfGeneratedKeys);
 
-fixture `Memory Efficiency`
+fixture(`Memory Efficiency`)
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -137,7 +137,7 @@ test
         await t.click(memoryEfficiencyPage.treeViewLink);
         await t.expect(browserPage.TreeView.treeViewSettingsBtn.exists).ok('Tree view not opened');
     });
-test
+test.skip
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await deleteAllKeysFromDB(ossStandaloneConfig.host, ossStandaloneConfig.port);

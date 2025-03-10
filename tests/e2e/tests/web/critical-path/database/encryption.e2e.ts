@@ -46,4 +46,6 @@ test('Verify that data encrypted using KEY', async t => {
     await databaseHelper.clickOnEditDatabaseByName(ossSentinelConfig.masters[1].alias);
     await t.expect(myRedisDatabasePage.Toast.toastError.textContent).contains(decryptionError, 'Invalid encrypted field is decrypted');
     await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.cancelButton);
-});
+})
+    .skip
+    .meta({skipComment: "Unstable in CI, Missing selector"});

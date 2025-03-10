@@ -46,6 +46,14 @@ const dataSchema = Joi.object({
     certificate: Joi.string(),
     key: Joi.string(),
   }).allow(null),
+  tags: Joi.array().items(Joi.object().keys({
+    key: Joi.string().required(),
+    value: Joi.string().required(),
+  })),
+  readOnlyTags: Joi.array().items(Joi.object().keys({
+    key: Joi.string().required(),
+    value: Joi.string().required(),
+  })),
 }).messages({
   'any.required': '{#label} should not be empty',
 }).strict(true);

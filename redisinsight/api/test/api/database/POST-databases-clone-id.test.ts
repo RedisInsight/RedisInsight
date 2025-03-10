@@ -36,6 +36,14 @@ const dataSchema = Joi.object({
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),
+  tags: Joi.array().items(Joi.object().keys({
+    key: Joi.string().required(),
+    value: Joi.string().required(),
+  })),
+  readOnlyTags: Joi.array().items(Joi.object().keys({
+    key: Joi.string().required(),
+    value: Joi.string().required(),
+  })),
 }).strict();
 
 const validInputData = {

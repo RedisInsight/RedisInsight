@@ -1,4 +1,4 @@
-import { InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import { InternalServerErrorException, NotFoundException, ServiceUnavailableException, ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { omit, get, update } from 'lodash';
@@ -32,6 +32,9 @@ import { Compressor } from 'src/modules/database/entities/database.entity';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { ExportDatabase } from './models/export-database';
+import { TagService } from '../tag/tag.service';
+import { CreateTagDto } from '../tag/dto';
+import { Database } from './models/database';
 
 const updateDatabaseTests = [
   { input: {}, expected: 0 },
@@ -56,6 +59,7 @@ describe('DatabaseService', () => {
   let databaseFactory: MockType<DatabaseFactory>;
   let redisClientFactory: MockType<RedisClientFactory>;
   let analytics: MockType<DatabaseAnalytics>;
+  let tagService: TagService;
   const exportSecurityFields: string[] = [
     'password',
     'clientCert.key',
@@ -96,6 +100,14 @@ describe('DatabaseService', () => {
           provide: DatabaseAnalytics,
           useFactory: mockDatabaseAnalytics,
         },
+        {
+          provide: TagService,
+          useValue: {
+            getOrCreateByKeyValuePairs: jest.fn(),
+            delete: jest.fn(),
+            isTagUsed: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -104,6 +116,7 @@ describe('DatabaseService', () => {
     databaseFactory = await module.get(DatabaseFactory);
     redisClientFactory = await module.get(RedisClientFactory);
     analytics = await module.get(DatabaseAnalytics);
+    tagService = await module.get<TagService>(TagService);
   });
 
   describe('exists', () => {
@@ -690,6 +703,67 @@ describe('DatabaseService', () => {
           expect(analytics.sendInstanceAddedEvent).toBeCalled();
         },
       );
+    });
+  });
+
+  describe('bulkUpdateTags', () => {
+    it('should update tags successfully', async () => {
+      const databaseId = 'db1';
+      const tags: CreateTagDto[] = [
+        { key: 'env', value: 'prod', readOnly: false },
+        { key: 'region', value: 'us-east', readOnly: true },
+      ];
+
+      const database = new Database();
+      database.tags = [];
+      database.readOnlyTags = [];
+
+      jest.spyOn(service, 'get').mockResolvedValue(database);
+      jest.spyOn(databaseRepository, 'update').mockResolvedValue(database);
+      jest.spyOn(tagService, 'getOrCreateByKeyValuePairs').mockResolvedValue(tags as any);
+      jest.spyOn(tagService, 'isTagUsed').mockResolvedValue(false);
+
+      await service.bulkUpdateTags(mockSessionMetadata, databaseId, tags);
+
+      expect(service.get).toHaveBeenCalledWith(mockSessionMetadata, databaseId);
+      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledTimes(2);
+      expect(databaseRepository.update).toHaveBeenCalledWith(mockSessionMetadata, databaseId, expect.any(Database));
+      expect(tagService.delete).toHaveBeenCalledTimes(0);
+    });
+
+    it('should throw ConflictException when trying to update read-only tags without force', async () => {
+      const databaseId = 'db1';
+      const tags: CreateTagDto[] = [
+        { key: 'env', value: 'prod', readOnly: false },
+      ];
+
+      const database = new Database();
+      database.readOnlyTags = [{ key: 'env', value: 'prod' }] as any;
+
+      jest.spyOn(databaseRepository, 'get').mockResolvedValue(database);
+
+      await expect(service.bulkUpdateTags(mockSessionMetadata, databaseId, tags)).rejects.toThrow(ConflictException);
+    });
+
+    it('should delete unused tags', async () => {
+      const databaseId = 'db1';
+      const tags: CreateTagDto[] = [
+        { key: 'env', value: 'prod', readOnly: false },
+      ];
+
+      const database = new Database();
+      database.tags = [{ key: 'region', value: 'us-east' }] as any;
+      database.readOnlyTags = [];
+
+      jest.spyOn(databaseRepository, 'get').mockResolvedValue(database);
+      jest.spyOn(databaseRepository, 'update').mockResolvedValue(database);
+      jest.spyOn(tagService, 'getOrCreateByKeyValuePairs').mockResolvedValue(tags as any);
+      jest.spyOn(tagService, 'isTagUsed').mockResolvedValue(false);
+      jest.spyOn(tagService, 'delete').mockResolvedValue(undefined);
+
+      await service.bulkUpdateTags(mockSessionMetadata, databaseId, tags);
+
+      expect(tagService.delete).toHaveBeenCalledWith(database.tags[0].id);
     });
   });
 });

@@ -26,7 +26,7 @@ import { ClientCertificate } from 'src/modules/certificate/models/client-certifi
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { TagService } from 'src/modules/tag/tag.service';
-import { Tag } from '../tag/models/tag';
+import { CreateTagDto } from '../tag/dto';
 
 @Injectable()
 export class DatabaseService {
@@ -401,7 +401,7 @@ export class DatabaseService {
   async bulkUpdateTags(
     sessionMetadata: SessionMetadata,
     id: string,
-    tags: { key: string; value: string; readOnly?: boolean }[],
+    tags: CreateTagDto[],
     force = false,
   ): Promise<void> {
     const database = await this.get(sessionMetadata, id);

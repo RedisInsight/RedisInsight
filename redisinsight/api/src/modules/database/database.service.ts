@@ -413,7 +413,7 @@ export class DatabaseService {
       }
     }
 
-    const existingTag = database.tags.find((t) => t.key === key);
+    const existingTag = database.tags?.find((t) => t.key === key);
     const existingReadOnlyTag = database.readOnlyTags.find((t) => t.key === key);
 
     if (existingReadOnlyTag) {
@@ -435,7 +435,7 @@ export class DatabaseService {
     if (readOnly) {
       database.readOnlyTags.push(tag);
     } else {
-      database.tags.push(tag);
+      database.tags?.push(tag);
     }
 
     await this.repository.update(sessionMetadata, id, database);
@@ -445,17 +445,17 @@ export class DatabaseService {
 
   async unlinkTag(sessionMetadata: SessionMetadata, id: string, key: string): Promise<void> {
     const database = await this.get(sessionMetadata, id);
-    const tag = database.tags.find((t) => t.key === key);
+    const tag = database.tags?.find((t) => t.key === key);
 
     if (!tag) {
       throw new NotFoundException(`Tag with key ${key} not found`);
     }
 
-    database.tags = database.tags.filter((t) => t.key !== key);
+    database.tags = database.tags?.filter((t) => t.key !== key);
     await this.repository.update(sessionMetadata, id, database);
 
     const otherDatabases = await this.repository.list(sessionMetadata);
-    const isTagUsed = otherDatabases.some((db) => db.tags.some((t) => t.id === tag.id) || db.readOnlyTags.some((t) => t.id === tag.id));
+    const isTagUsed = otherDatabases.some((db) => db.tags?.some((t) => t.id === tag.id) || db.readOnlyTags.some((t) => t.id === tag.id));
 
     if (!isTagUsed) {
       await this.tagService.delete(tag.id);

@@ -96,10 +96,12 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     const entities = await this.repository
       .createQueryBuilder('d')
       .leftJoinAndSelect('d.cloudDetails', 'cd')
+      .leftJoinAndSelect('d.tags', 'tags')
+      .leftJoinAndSelect('d.readOnlyTags', 'readOnlyTags')
       .select([
         'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
         'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version', 'cd',
-        'd.createdAt',
+        'd.createdAt', 'tags', 'readOnlyTags',
       ])
       .getMany();
 

@@ -47,7 +47,7 @@ export class TagService {
   }
 
   async getByKeyValuePair(key: string, value: string): Promise<Tag> {
-    const tag = this.tagRepository.getByKeyValuePair(key, value);
+    const tag = await this.tagRepository.getByKeyValuePair(key, value);
 
     if (!tag) {
       throw new NotFoundException(`Tag with key ${key} and value ${value} not found`);

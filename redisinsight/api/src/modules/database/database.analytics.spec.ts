@@ -64,6 +64,7 @@ describe('DatabaseAnalytics', () => {
           forceStandalone: 'false',
           useDecompression: mockDatabaseWithTlsAuth.compressor,
           serverName: 'valkey',
+          keyNameFormat: Encoding.UNICODE,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
@@ -98,6 +99,7 @@ describe('DatabaseAnalytics', () => {
           forceStandalone: 'false',
           useDecompression: mockDatabaseWithTlsAuth.compressor,
           serverName: 'valkey',
+          keyNameFormat: Encoding.UNICODE,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
@@ -137,6 +139,7 @@ describe('DatabaseAnalytics', () => {
           databaseIndex: 0,
           forceStandalone: 'false',
           useDecompression: mockDatabaseWithTlsAuth.compressor,
+          keyNameFormat: Encoding.UNICODE,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
           RediSearch: {
             loaded: true,
@@ -183,6 +186,7 @@ describe('DatabaseAnalytics', () => {
           databaseIndex: 2,
           forceStandalone: 'false',
           useDecompression: mockDatabaseWithTlsAuth.compressor,
+          keyNameFormat: Encoding.UNICODE,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
           RediSearch: {
             loaded: true,
@@ -191,6 +195,25 @@ describe('DatabaseAnalytics', () => {
           customModules: [{ name: 'rediSQL', version: 1 }],
           serverName: null,
         },
+      );
+    });
+
+    it('should emit event with keyNameFormat', () => {
+      service.sendInstanceAddedEvent(
+        mockSessionMetadata,
+        {
+          ...mockDatabaseWithTlsAuth,
+          keyNameFormat: Encoding.HEX,
+        },
+        mockRedisGeneralInfo,
+      );
+
+      expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        TelemetryEvents.RedisInstanceAdded,
+        expect.objectContaining({
+          keyNameFormat: Encoding.HEX,
+        }),
       );
     });
   });

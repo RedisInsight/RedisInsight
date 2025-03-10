@@ -57,6 +57,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
           useDecompression: instance.compressor || null,
           serverName: additionalInfo?.server?.server_name || null,
           forceStandalone: instance?.forceStandalone ? 'true' : 'false',
+          keyNameFormat: instance?.keyNameFormat || null,
           ...modulesSummary,
         },
       );

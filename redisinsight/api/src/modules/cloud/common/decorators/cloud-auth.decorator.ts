@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Validator } from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 
 const validator = new Validator();
@@ -8,7 +8,7 @@ const validator = new Validator();
 export const cloudAuthDtoFromRequestHeadersFactory = (data: unknown, ctx: ExecutionContext): CloudCapiAuthDto => {
   const request = ctx.switchToHttp().getRequest();
 
-  const dto = plainToClass(CloudCapiAuthDto, {
+  const dto = plainToInstance(CloudCapiAuthDto, {
     capiKey: request.headers['x-cloud-api-key'],
     capiSecret: request.headers['x-cloud-api-secret'],
   });

@@ -179,8 +179,11 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
         tnl = await this.sshTunnelProvider.createTunnel(database, database.sshOptions);
         config.socket = {
           ...config.socket,
-          host: tnl.serverAddress.host,
-          port: tnl.serverAddress.port,
+          // fix typings issue. todo: investigate/fix properly
+          ...{
+            host: tnl.serverAddress.host,
+            port: tnl.serverAddress.port,
+          },
         };
       }
 

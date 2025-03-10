@@ -9,7 +9,7 @@ import { CloudApiBadRequestException, CloudCapiUnauthorizedException } from 'src
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 import { CloudCapiKeyApiProvider } from 'src/modules/cloud/capi-key/cloud-capi-key.api.provider';
 import { ServerService } from 'src/modules/server/server.service';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import {
   CloudCapiKeyNotFoundException,
   CloudCapiKeyUnauthorizedException,
@@ -84,7 +84,7 @@ export class CloudCapiKeyService {
           } as CloudCapiKey;
           capiKey.name = await this.generateName(sessionMetadata, capiKey);
 
-          capiKey = await this.repository.create(plainToClass(CloudCapiKey, capiKey));
+          capiKey = await this.repository.create(plainToInstance(CloudCapiKey, capiKey));
 
           this.analytics.sendCloudAccountKeyGenerated(sessionMetadata);
         } catch (e) {

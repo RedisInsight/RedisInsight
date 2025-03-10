@@ -8,7 +8,7 @@ import {
   FeatureServerEvents,
 } from 'src/modules/feature/constants';
 import { Validator } from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { UnableToFetchRemoteConfigException } from 'src/modules/feature/exceptions';
@@ -103,7 +103,7 @@ export class LocalFeaturesConfigService
 
       // we should use default config in case when remote is invalid
       await this.validator.validateOrReject(
-        plainToClass(FeaturesConfigData, remoteConfig),
+        plainToInstance(FeaturesConfigData, remoteConfig),
       );
 
       if (remoteConfig?.version > defaultConfig?.version) {

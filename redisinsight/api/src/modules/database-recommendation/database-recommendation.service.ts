@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { sum } from 'lodash';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { DatabaseRecommendationRepository }
   from 'src/modules/database-recommendation/repositories/database-recommendation.repository';
 import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
@@ -65,7 +65,7 @@ export class DatabaseRecommendationService {
       );
 
       if (recommendation) {
-        const entity = plainToClass(
+        const entity = plainToInstance(
           DatabaseRecommendation,
           { databaseId: clientMetadata?.databaseId, ...recommendation },
         );

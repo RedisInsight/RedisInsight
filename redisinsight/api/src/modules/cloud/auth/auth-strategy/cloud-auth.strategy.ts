@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CloudAuthRequest, CloudAuthRequestOptions } from 'src/modules/cloud/auth/models/cloud-auth-request';
 import { SessionMetadata } from 'src/common/models';
 import { OktaAuth } from '@okta/okta-auth-js';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export abstract class CloudAuthStrategy {
@@ -18,7 +18,7 @@ export abstract class CloudAuthStrategy {
     const authClient = new OktaAuth(this.config);
     const tokenParams = await authClient.token.prepareTokenParams(this.config);
 
-    return plainToClass(CloudAuthRequest, {
+    return plainToInstance(CloudAuthRequest, {
       ...this.config,
       ...tokenParams,
       sessionMetadata,

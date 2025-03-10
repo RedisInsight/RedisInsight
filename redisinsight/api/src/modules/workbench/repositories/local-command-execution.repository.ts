@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { filter, isNull } from 'lodash';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
@@ -42,7 +42,7 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
   async createMany(sessionMetadata: SessionMetadata, commandExecutions: Partial<CommandExecution>[]): Promise<CommandExecution[]> {
     // todo: limit by 30 max to insert
     const response = await Promise.all(commandExecutions.map(async (commandExecution, idx) => {
-      const entity = plainToClass(CommandExecutionEntity, commandExecution);
+      const entity = plainToInstance(CommandExecutionEntity, commandExecution);
       let isNotStored: undefined | boolean;
 
       // Do not store command execution result that exceeded limitation

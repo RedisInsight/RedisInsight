@@ -6,32 +6,46 @@ import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/
 import { deleteKey, keysSelector, setLastBatchKeys } from 'uiSrc/slices/browser/keys'
 import { apiService } from 'uiSrc/services'
 import { BrowserColumns } from 'uiSrc/constants'
+import { bufferToHex, bufferToString } from 'uiSrc/utils'
+import { RedisResponseBufferType } from 'uiSrc/slices/interfaces'
+
 import KeyList from './KeyList'
 
 const propsMock = {
   keysState: {
     keys: [
       {
-        name: 'key1',
+        name: {
+          data: Buffer.from('key1'),
+          type: RedisResponseBufferType.Buffer,
+        },
         type: 'hash',
         ttl: -1,
         size: 100,
         length: 100,
-        nameString: 'key1'
+        nameString: 'key1',
       },
       {
-        name: 'key2',
+        name: {
+          data: Buffer.from('key2'),
+          type: RedisResponseBufferType.Buffer,
+        },
         type: 'hash',
         ttl: -1,
         size: 150,
         length: 100,
+        nameString: 'key2',
       },
       {
-        name: 'key3',
+        name: {
+          data: Buffer.from('key3'),
+          type: RedisResponseBufferType.Buffer,
+        },
         type: 'hash',
         ttl: -1,
         size: 110,
         length: 100,
+        nameString: 'key3',
       },
     ],
     nextCursor: '0',
@@ -74,6 +88,14 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
   keysSelector: jest.fn().mockImplementation(() => mockedKeySlice),
 }))
 
+const mockedUseKeyFormatHandler = jest.fn().mockImplementation(bufferToString)
+
+jest.mock('../use-key-format', () => ({
+  useKeyFormat: () => ({
+    handler: mockedUseKeyFormatHandler,
+  }),
+}))
+
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -82,8 +104,20 @@ beforeEach(() => {
 })
 
 describe('KeyList', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should render', () => {
     expect(render(<KeyList {...propsMock} />)).toBeTruthy()
+  })
+
+  it('should render keys encoded in hex', () => {
+    mockedUseKeyFormatHandler.mockImplementation(bufferToHex)
+
+    render(<KeyList {...propsMock} />)
+
+    expect(screen.getByTestId('key-6b657931')).toBeInTheDocument()
   })
 
   it('should render rows properly', () => {
@@ -225,7 +259,7 @@ describe('KeyList', () => {
         {...propsMock}
         keysState={{
           ...propsMock.keysState,
-          keys: [{ name: 'test-key' }],
+          keys: [{ name: { data: Buffer.from('test-key'), type: RedisResponseBufferType.Buffer }}],
         }}
       />
     )
@@ -240,7 +274,7 @@ describe('KeyList', () => {
         {...propsMock}
         keysState={{
           ...propsMock.keysState,
-          keys: [{ name: 'test-key' }],
+          keys: [{ name: { data: Buffer.from('test-key'), type: RedisResponseBufferType.Buffer }}],
         }}
       />
     )

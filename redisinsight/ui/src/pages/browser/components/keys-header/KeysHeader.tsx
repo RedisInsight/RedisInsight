@@ -21,8 +21,8 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 import { AutoRefresh, OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { BrowserColumns, KeyValueFormat } from 'uiSrc/constants'
 
-import { BrowserColumns } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 640
@@ -69,7 +69,10 @@ const KeysHeader = (props: Props) => {
 
   const dispatch = useDispatch()
 
-  const isTreeViewDisabled = keyNameFormat === 'HEX'
+  // TODO: Check if encoding can be reused from BE and FE
+  const format = keyNameFormat as unknown as KeyValueFormat
+  const isTreeViewDisabled =
+    (format || KeyValueFormat.Unicode) === KeyValueFormat.HEX
   const viewTypes: ISwitchType<KeyViewType>[] = [
     {
       type: KeyViewType.Browser,

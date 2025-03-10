@@ -6,17 +6,17 @@ import {
   EuiFlexItem,
   EuiForm,
   EuiFormRow,
-  EuiIcon
+  EuiIcon,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { appContextPubSub, setPubSubFieldsContext } from 'uiSrc/slices/app/context'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { publishMessageAction } from 'uiSrc/slices/pubsub/pubsub'
 import UserIcon from 'uiSrc/assets/img/icons/user.svg?react'
+import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 
 import styles from './styles.module.scss'
 
@@ -24,7 +24,7 @@ const HIDE_BADGE_TIMER = 3000
 
 const PublishMessage = () => {
   const { channel: channelContext, message: messageContext } = useSelector(appContextPubSub)
-  const { connectionType } = useSelector(connectedInstanceSelector)
+  const connectionType = useConnectionType()
 
   const [channel, setChannel] = useState<string>(channelContext)
   const [message, setMessage] = useState<string>(messageContext)

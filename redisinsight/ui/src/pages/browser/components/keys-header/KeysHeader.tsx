@@ -58,7 +58,7 @@ const KeysHeader = (props: Props) => {
     nextCursor,
   } = props
 
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, keyNameFormat } = useSelector(connectedInstanceSelector)
   const { viewType, searchMode, isFiltered } = useSelector(keysSelector)
   const { shownColumns } = useSelector(appContextDbConfig)
   const { selectedIndex } = useSelector(redisearchSelector)
@@ -69,27 +69,37 @@ const KeysHeader = (props: Props) => {
 
   const dispatch = useDispatch()
 
+  const isTreeViewDisabled = keyNameFormat === 'HEX'
   const viewTypes: ISwitchType<KeyViewType>[] = [
     {
       type: KeyViewType.Browser,
       tooltipText: 'List View',
       ariaLabel: 'List view button',
       dataTestId: 'view-type-browser-btn',
-      isActiveView() { return viewType === this.type },
+      isActiveView() {
+        return viewType === this.type
+      },
       getClassName() {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
       getIconType() {
         return 'menu'
       },
-      onClick() { handleSwitchView(this.type) }
+      onClick() {
+        handleSwitchView(this.type)
+      },
     },
     {
       type: KeyViewType.Tree,
-      tooltipText: 'Tree View',
+      tooltipText: isTreeViewDisabled
+        ? 'Tree View is unavailable when the HEX key name format is selected.'
+        : 'Tree View',
       ariaLabel: 'Tree view button',
       dataTestId: 'view-type-list-btn',
-      isActiveView() { return viewType === this.type },
+      disabled: isTreeViewDisabled,
+      isActiveView() {
+        return viewType === this.type
+      },
       getClassName() {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
@@ -98,18 +108,21 @@ const KeysHeader = (props: Props) => {
       },
       onClick() {
         handleSwitchView(this.type)
-        dispatch(incrementOnboardStepAction(
-          OnboardingSteps.BrowserTreeView,
-          undefined,
-          () => sendEventTelemetry({
-            event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
-            eventData: {
-              databaseId: instanceId,
-              step: OnboardingStepName.BrowserTreeView,
-            }
-          })
-        ))
-      }
+        dispatch(
+          incrementOnboardStepAction(
+            OnboardingSteps.BrowserTreeView,
+            undefined,
+            () =>
+              sendEventTelemetry({
+                event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
+                eventData: {
+                  databaseId: instanceId,
+                  step: OnboardingStepName.BrowserTreeView,
+                },
+              }),
+          ),
+        )
+      },
     },
   ]
 
@@ -230,6 +243,7 @@ const KeysHeader = (props: Props) => {
                 aria-label={view.ariaLabel}
                 onClick={() => view.onClick()}
                 data-testid={view.dataTestId}
+                disabled={view.disabled || false}
               />
             </EuiToolTip>
           ))}

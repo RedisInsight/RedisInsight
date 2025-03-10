@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { AxiosError } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
@@ -106,7 +107,7 @@ export function fetchAppInfo(onSuccessAction?: () => void, onFailAction?: () => 
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as unknown as AxiosError)
       dispatch(getUserConfigSettingsFailure(errorMessage))
       onFailAction?.()
     }
@@ -126,7 +127,7 @@ export function fetchUserConfigSettings(onSuccessAction?: () => void, onFailActi
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as unknown as AxiosError)
       dispatch(getUserConfigSettingsFailure(errorMessage))
       onFailAction?.()
     }
@@ -148,7 +149,7 @@ export function fetchUserSettingsSpec(onSuccessAction?: () => void, onFailAction
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as unknown as AxiosError)
       dispatch(getUserSettingsSpecFailure(errorMessage))
       onFailAction?.()
     }
@@ -175,21 +176,24 @@ export function updateUserConfigSettingsAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as unknown as AxiosError)
       dispatch(updateUserConfigSettingsFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as unknown as AxiosError))
       onFailAction?.()
     }
   }
 }
 
-export function enableUserAnalyticsAction() {
+export function enableUserAnalyticsAction(reason = '') {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const agreements = state?.user?.settings?.config?.agreements
 
     if (agreements && !agreements.analytics) {
-      dispatch(updateUserConfigSettingsAction({ agreements: { ...agreements, analytics: true } }))
+      dispatch(updateUserConfigSettingsAction({
+        agreements: { ...agreements, analytics: true },
+        analyticsReason: reason
+      }))
     }
   }
 }

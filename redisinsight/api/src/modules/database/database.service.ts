@@ -398,95 +398,40 @@ export class DatabaseService {
     ));
   }
 
-  async linkTag(sessionMetadata: SessionMetadata, id: string, key: string, value: string, readOnly = false): Promise<void> {
-    const database = await this.get(sessionMetadata, id);
-
-    let tag: Tag;
-
-    try {
-      tag = await this.tagService.getByKeyValuePair(key, value);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        tag = await this.tagService.create({ key, value });
-      } else {
-        throw error;
-      }
-    }
-
-    const existingTag = database.tags?.find((t) => t.key === key);
-    const existingReadOnlyTag = database.readOnlyTags.find((t) => t.key === key);
-
-    if (existingReadOnlyTag) {
-      // The tag is linked and is read-only, do nothing
-      this.logger.debug(`Tag with key ${key} is read-only, cannot be changed for database ${id}.`);
-      return;
-    }
-
-    if (existingTag && existingTag.value === value) {
-      // Tag with the same key-value pair is already linked, do nothing
-      return;
-    }
-
-    if (existingTag) {
-      // Unlink the existing tag that has the same key but different value
-      await this.unlinkTag(sessionMetadata, id, key);
-    }
-
-    if (readOnly) {
-      database.readOnlyTags.push(tag);
-    } else {
-      database.tags?.push(tag);
-    }
-
-    await this.repository.update(sessionMetadata, id, database);
-
-    this.logger.debug(`Linked tag with key ${key} and value ${value} to database ${id}.`);
-  }
-
-  async unlinkTag(sessionMetadata: SessionMetadata, id: string, key: string): Promise<void> {
-    const database = await this.get(sessionMetadata, id);
-    const tag = database.tags?.find((t) => t.key === key);
-
-    if (!tag) {
-      throw new NotFoundException(`Tag with key ${key} not found`);
-    }
-
-    database.tags = database.tags?.filter((t) => t.key !== key);
-    await this.repository.update(sessionMetadata, id, database);
-
-    const otherDatabases = await this.repository.list(sessionMetadata);
-    const isTagUsed = otherDatabases.some((db) => db.tags?.some((t) => t.id === tag.id) || db.readOnlyTags.some((t) => t.id === tag.id));
-
-    if (!isTagUsed) {
-      await this.tagService.delete(tag.id);
-    }
-  }
-
   async bulkUpdateTags(
     sessionMetadata: SessionMetadata,
     id: string,
     tags: { key: string; value: string; readOnly?: boolean }[],
+    force = false,
   ): Promise<void> {
     const database = await this.get(sessionMetadata, id);
 
-    const existingTags = database.tags;
-    const existingReadOnlyTags = database.readOnlyTags;
+    if (!force) {
+      const isTryingToUpdateReadOnlyTags = !database.readOnlyTags?.every((tag1) =>
+        tags.some((tag2) => tag2.readOnly && tag2.key === tag1.key && tag2.value === tag1.value),
+      );
 
-    const newTags = tags.filter(tag => !existingTags.some(t => t.key === tag.key) && !existingReadOnlyTags.some(t => t.key === tag.key));
-    const updatedTags = tags.filter(tag => existingTags.some(t => t.key === tag.key && t.value !== tag.value));
-    const removedTags = existingTags.filter(t => !tags.some(tag => tag.key === t.key));
-
-    for (const tag of newTags) {
-      await this.linkTag(sessionMetadata, id, tag.key, tag.value, tag.readOnly);
+      if (isTryingToUpdateReadOnlyTags) {
+        throw new ConflictException('Cannot update read-only tags.');
+      }
     }
 
-    for (const tag of updatedTags) {
-      await this.unlinkTag(sessionMetadata, id, tag.key);
-      await this.linkTag(sessionMetadata, id, tag.key, tag.value, tag.readOnly);
-    }
+    const previousTags = database.tags || [];
+    const nextTags = await this.tagService.getOrCreateByKeyValuePairs(tags.filter((tag) => !tag.readOnly));
+    const nextReadOnlyTags = await this.tagService.getOrCreateByKeyValuePairs(tags.filter((tag) => tag.readOnly));
+    database.tags = [...nextTags, ...nextReadOnlyTags];
+    database.readOnlyTags = nextReadOnlyTags;
 
+    await this.repository.update(sessionMetadata, id, database);
+
+    const removedTags = previousTags.filter((tag) => !tags.some((t) => t.key === tag.key && t.value === tag.value));
+
+    // Clean up unused tags
     for (const tag of removedTags) {
-      await this.unlinkTag(sessionMetadata, id, tag.key);
+      const isTagUsed = await this.tagService.isTagUsed(tag.id);
+      if (!isTagUsed) {
+        await this.tagService.delete(tag.id);
+      }
     }
 
     this.logger.debug(`Bulk updated tags for database ${id}.`);

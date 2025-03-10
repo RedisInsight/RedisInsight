@@ -56,6 +56,23 @@ export class TagService {
     return tag;
   }
 
+  async getOrCreateByKeyValuePairs(keyValuePairs: CreateTagDto[]): Promise<Tag[]> {
+    const tags = await Promise.all(
+      keyValuePairs.map(async ({ key, value }) => {
+        try {
+          return await this.getByKeyValuePair(key, value);
+        } catch (error) {
+          if (error instanceof NotFoundException) {
+            return await this.create({ key, value });
+          }
+          throw error;
+        }
+      }),
+    );
+
+    return tags;
+  }
+
   async update(id: string, updateTagDto: UpdateTagDto): Promise<Tag> {
     await this.tagRepository.update(id, updateTagDto);
 
@@ -68,5 +85,9 @@ export class TagService {
     await this.tagRepository.delete(id);
 
     this.logger.debug('Successfully deleted tag', { id });
+  }
+
+  async isTagUsed(id: string): Promise<boolean> {
+    return this.tagRepository.isTagUsed(id);
   }
 }

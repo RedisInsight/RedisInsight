@@ -43,4 +43,11 @@ export abstract class TagRepository {
    * @returns {Promise<void>} A promise that resolves when the tag is deleted.
    */
   abstract delete(id: string): Promise<void>;
+
+  /**
+   * Check if a tag is used by any databases.
+   * @param {string} id - The ID of the tag.
+   * @returns {Promise<boolean>} A promise that resolves to a boolean indicating if the tag is used.
+   */
+  abstract isTagUsed(id: string): Promise<boolean>;
 }

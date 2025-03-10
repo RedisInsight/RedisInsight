@@ -10,7 +10,7 @@ import {
 import { TelemetryEvents } from 'src/constants';
 import { DEFAULT_SUMMARY as DEFAULT_REDIS_MODULES_SUMMARY } from 'src/utils/redis-modules-summary';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
-import { HostingProvider } from 'src/modules/database/entities/database.entity';
+import { Encoding, HostingProvider } from 'src/modules/database/entities/database.entity';
 
 describe('DatabaseAnalytics', () => {
   let service: DatabaseAnalytics;
@@ -223,6 +223,7 @@ describe('DatabaseAnalytics', () => {
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           useDecompression: mockDatabaseWithTlsAuth.compressor,
           forceStandalone: 'false',
+          keyNameFormat: Encoding.UNICODE,
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
@@ -232,6 +233,7 @@ describe('DatabaseAnalytics', () => {
             useSNI: 'enabled',
             useSSH: 'disabled',
             forceStandalone: 'false',
+            keyNameFormat: Encoding.UNICODE,
           },
         },
       );
@@ -262,6 +264,7 @@ describe('DatabaseAnalytics', () => {
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           useDecompression: mockDatabaseWithTlsAuth.compressor,
           forceStandalone: 'false',
+          keyNameFormat: Encoding.UNICODE,
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
@@ -271,6 +274,7 @@ describe('DatabaseAnalytics', () => {
             verifyTLSCertificate: 'disabled',
             useTLSAuthClients: 'disabled',
             forceStandalone: 'false',
+            keyNameFormat: Encoding.UNICODE,
           },
         },
       );
@@ -301,6 +305,7 @@ describe('DatabaseAnalytics', () => {
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           useDecompression: mockDatabaseWithTlsAuth.compressor,
           forceStandalone: 'true',
+          keyNameFormat: Encoding.UNICODE,
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
@@ -310,6 +315,7 @@ describe('DatabaseAnalytics', () => {
             verifyTLSCertificate: 'disabled',
             useTLSAuthClients: 'disabled',
             forceStandalone: 'false',
+            keyNameFormat: Encoding.UNICODE,
           },
         },
       );
@@ -340,6 +346,7 @@ describe('DatabaseAnalytics', () => {
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           useDecompression: mockDatabaseWithTlsAuth.compressor,
           forceStandalone: 'false',
+          keyNameFormat: Encoding.UNICODE,
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
@@ -349,6 +356,7 @@ describe('DatabaseAnalytics', () => {
             verifyTLSCertificate: 'disabled',
             useTLSAuthClients: 'disabled',
             forceStandalone: 'false',
+            keyNameFormat: Encoding.UNICODE,
           },
         },
       );
@@ -380,6 +388,7 @@ describe('DatabaseAnalytics', () => {
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           useDecompression: mockDatabaseWithTlsAuth.compressor,
           forceStandalone: 'true',
+          keyNameFormat: Encoding.UNICODE,
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
@@ -389,6 +398,51 @@ describe('DatabaseAnalytics', () => {
             verifyTLSCertificate: 'disabled',
             useTLSAuthClients: 'disabled',
             forceStandalone: 'true',
+            keyNameFormat: Encoding.UNICODE,
+          },
+        },
+      );
+    });
+
+    it('should emit event when keyNameFormat is changed', () => {
+      const prev = mockDatabaseWithTlsAuth;
+      const cur = {
+        ...mockDatabaseWithTlsAuth,
+        provider: HostingProvider.RE_CLUSTER,
+        tls: undefined,
+        verifyServerCert: false,
+        caCert: null,
+        clientCert: null,
+        keyNameFormat: Encoding.HEX,
+      };
+      service.sendInstanceEditedEvent(mockSessionMetadata, prev, cur);
+
+      expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        TelemetryEvents.RedisInstanceEditedByUser,
+        {
+          databaseId: cur.id,
+          connectionType: cur.connectionType,
+          provider: HostingProvider.RE_CLUSTER,
+          useTLS: 'disabled',
+          verifyTLSCertificate: 'disabled',
+          useTLSAuthClients: 'disabled',
+          useSNI: 'enabled',
+          useSSH: 'disabled',
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
+          useDecompression: mockDatabaseWithTlsAuth.compressor,
+          forceStandalone: 'false',
+          keyNameFormat: Encoding.HEX,
+          previousValues: {
+            connectionType: prev.connectionType,
+            provider: prev.provider,
+            useTLS: 'enabled',
+            verifyTLSCertificate: 'enabled',
+            useTLSAuthClients: 'enabled',
+            useSNI: 'enabled',
+            useSSH: 'disabled',
+            forceStandalone: 'false',
+            keyNameFormat: Encoding.UNICODE,
           },
         },
       );

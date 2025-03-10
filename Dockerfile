@@ -12,14 +12,15 @@ FROM node:20.14-alpine as build
 RUN apk update && apk add --no-cache --virtual .gyp \
         python3 \
         make \
-        g++
+        g++ \
+        git
 
 # set workdir
 WORKDIR /usr/src/app
 
 # restore node_modules for front-end
 COPY package.json yarn.lock tsconfig.json ./
-RUN SKIP_POSTINSTALL=1 yarn install
+RUN yarn install --ignore-scripts
 
 # prepare backend by copying scripts/configs and installing node modules
 # this is required to build the static assets

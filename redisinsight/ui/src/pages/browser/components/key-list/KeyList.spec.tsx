@@ -83,6 +83,11 @@ const mockedKeySlice = {
   }
 }
 
+const getKeyFormat = (keyName: string) => ({
+  data: Buffer.from(keyName),
+  type: RedisResponseBufferType.Buffer,
+})
+
 jest.mock('uiSrc/slices/browser/keys', () => ({
   ...jest.requireActual('uiSrc/slices/browser/keys'),
   keysSelector: jest.fn().mockImplementation(() => mockedKeySlice),
@@ -182,30 +187,45 @@ describe('KeyList', () => {
 
     const { rerender } = render(<KeyList {...propsMock} keysState={{ ...propsMock.keysState, keys: [] }} />)
 
-    rerender(<KeyList
-      {...propsMock}
-      keysState={{
-        ...propsMock.keysState,
-        keys: [
-          ...cloneDeep(propsMock.keysState.keys).map(({ name }) => ({ name })),
-          { name: 'key5', size: 100, length: 100 }, // key with info
-        ]
-      }}
-    />)
+    rerender(
+      <KeyList
+        {...propsMock}
+        keysState={{
+          ...propsMock.keysState,
+          keys: [
+            ...cloneDeep(propsMock.keysState.keys).map(({ name }) => ({
+              name,
+            })),
+            { name: getKeyFormat('key5'), size: 100, length: 100 }, // key with info
+          ],
+        }}
+      />,
+    )
 
-    await waitFor(async () => {
-      expect(apiServiceMock.mock.calls[0]).toEqual([
-        '/databases//keys/get-metadata',
-        { keys: ['key1'], includeSize: true, includeTTL: true },
-        params,
-      ])
+    await waitFor(
+      async () => {
+        expect(apiServiceMock.mock.calls[0]).toEqual([
+          '/databases//keys/get-metadata',
+          { keys: [getKeyFormat('key1')], includeSize: true, includeTTL: true },
+          params,
+        ])
 
-      expect(apiServiceMock.mock.calls[1]).toEqual([
-        '/databases//keys/get-metadata',
-        { keys: ['key1', 'key2', 'key3'], includeSize: true, includeTTL: true },
-        params,
-      ])
-    }, { timeout: 150 })
+        expect(apiServiceMock.mock.calls[1]).toEqual([
+          '/databases//keys/get-metadata',
+          {
+            keys: [
+              getKeyFormat('key1'),
+              getKeyFormat('key2'),
+              getKeyFormat('key3'),
+            ],
+            includeSize: true,
+            includeTTL: true,
+          },
+          params,
+        ])
+      },
+      { timeout: 150 },
+    )
   })
 
   it('key info loadings (type, ttl, size) should be in the DOM if keys do not have info', async () => {

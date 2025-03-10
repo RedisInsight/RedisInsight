@@ -57,6 +57,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
           useDecompression: instance.compressor || null,
           serverName: additionalInfo?.server?.server_name || null,
           forceStandalone: instance?.forceStandalone ? 'true' : 'false',
+          keyNameFormat: instance?.keyNameFormat || null,
           ...modulesSummary,
         },
       );
@@ -94,6 +95,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
             timeout: cur?.timeout / 1_000, // milliseconds to seconds
             useDecompression: cur?.compressor || null,
             forceStandalone: cur?.forceStandalone ? 'true' : 'false',
+            keyNameFormat: cur?.keyNameFormat || null,
             previousValues: {
               connectionType: prev.connectionType,
               provider: prev.provider,
@@ -107,6 +109,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
                 ? 'enabled'
                 : 'disabled',
               forceStandalone: prev?.forceStandalone ? 'true' : 'false',
+              keyNameFormat: prev?.keyNameFormat || null,
             },
           },
         );

@@ -1,11 +1,28 @@
 import React from 'react'
-import { EuiFieldText, EuiFlexGroup, EuiFlexItem, EuiForm, EuiFormRow, EuiSpacer, EuiTitle } from '@elastic/eui'
+import {
+  EuiFieldText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiForm,
+  EuiFormRow,
+  EuiSpacer,
+  EuiTitle,
+} from '@elastic/eui'
 import { FormikProps } from 'formik'
-import { PrimaryGroupSentinel, SentinelMasterDatabase } from 'uiSrc/pages/home/components/form/sentinel'
+import {
+  PrimaryGroupSentinel,
+  SentinelMasterDatabase,
+} from 'uiSrc/pages/home/components/form/sentinel'
 import { Nullable, selectOnFocus } from 'uiSrc/utils'
 import Divider from 'uiSrc/components/divider/Divider'
-import { DatabaseForm, DbCompressor, DbIndex, TlsDetails } from 'uiSrc/pages/home/components/form'
+import {
+  DatabaseForm,
+  DbIndex,
+  TlsDetails,
+} from 'uiSrc/pages/home/components/form'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import DecompressionAndFormatters from './DecompressionAndFormatters'
+
 import { ManualFormTab } from '../constants'
 
 export interface Props {
@@ -28,34 +45,46 @@ const EditSentinelConnection = (props: Props) => {
     onHostNamePaste,
     certificates,
     caCertificates,
-    db
+    db,
   } = props
 
   const GeneralFormClodeMode = (
     <>
-      <PrimaryGroupSentinel
-        formik={formik}
+      <PrimaryGroupSentinel formik={formik} />
+      <Divider
+        colorVariable="separatorColor"
+        variant="fullWidth"
+        className="form__divider"
       />
-      <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
-      <EuiTitle size="xs"><span>Datababase</span></EuiTitle>
+      <EuiTitle size="xs">
+        <span>Datababase</span>
+      </EuiTitle>
       <EuiSpacer size="s" />
       <SentinelMasterDatabase
         formik={formik}
         db={db}
         isCloneMode={isCloneMode}
       />
-      <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
-      <EuiTitle size="xs"><span>Sentinel</span></EuiTitle>
+      <Divider
+        colorVariable="separatorColor"
+        variant="fullWidth"
+        className="form__divider"
+      />
+      <EuiTitle size="xs">
+        <span>Sentinel</span>
+      </EuiTitle>
       <EuiSpacer size="s" />
       <DatabaseForm
         formik={formik}
         showFields={{ host: true, port: true, alias: false, timeout: false }}
         onHostNamePaste={onHostNamePaste}
       />
-      <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
-      <DbIndex
-        formik={formik}
+      <Divider
+        colorVariable="separatorColor"
+        variant="fullWidth"
+        className="form__divider"
       />
+      <DbIndex formik={formik} />
     </>
   )
 
@@ -79,16 +108,28 @@ const EditSentinelConnection = (props: Props) => {
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiSpacer size="s" />
-      <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
-      <EuiTitle size="xs"><span>Datababase</span></EuiTitle>
+      <Divider
+        colorVariable="separatorColor"
+        variant="fullWidth"
+        className="form__divider"
+      />
+      <EuiTitle size="xs">
+        <span>Datababase</span>
+      </EuiTitle>
       <EuiSpacer size="s" />
       <SentinelMasterDatabase
         formik={formik}
         db={db}
         isCloneMode={isCloneMode}
       />
-      <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
-      <EuiTitle size="xs"><span>Sentinel</span></EuiTitle>
+      <Divider
+        colorVariable="separatorColor"
+        variant="fullWidth"
+        className="form__divider"
+      />
+      <EuiTitle size="xs">
+        <span>Sentinel</span>
+      </EuiTitle>
       <EuiSpacer size="s" />
       <DatabaseForm
         formik={formik}
@@ -106,7 +147,7 @@ const EditSentinelConnection = (props: Props) => {
       onKeyDown={onKeyDown}
     >
       {activeTab === ManualFormTab.General && (
-        <>{isCloneMode ? GeneralFormClodeMode : GeneralFormEditMode }</>
+        <>{isCloneMode ? GeneralFormClodeMode : GeneralFormEditMode}</>
       )}
       {activeTab === ManualFormTab.Security && (
         <TlsDetails
@@ -117,9 +158,7 @@ const EditSentinelConnection = (props: Props) => {
       )}
 
       {activeTab === ManualFormTab.Decompression && (
-        <DbCompressor
-          formik={formik}
-        />
+        <DecompressionAndFormatters formik={formik} />
       )}
     </EuiForm>
   )

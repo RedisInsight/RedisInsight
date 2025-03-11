@@ -164,6 +164,16 @@ export const mockDatabaseWithTlsAuthEntity = Object.assign(new DatabaseEntity(),
   clientCert: mockClientCertificate, // !not client cert entity since it managed on own repository
 });
 
+export const mockDatabaseWithTags = Object.assign(new Database(), {
+  ...mockDatabase,
+  tags: [{ key: 'tag1', value: 'value1' }, { key: 'tag2', value: 'value2' }],
+});
+
+export const mockDatabaseWithTagsEntity = Object.assign(new DatabaseEntity(), {
+  ...mockDatabaseWithTags,
+  encryption: null,
+});
+
 export const mockSentinelMaster = Object.assign(new SentinelMaster(), {
   name: 'mymaster',
   username: 'master_group_username',

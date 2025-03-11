@@ -23,6 +23,8 @@ import {
   mockDatabaseWithTlsAuth,
   mockDatabaseWithTlsAuthEntity,
   mockDatabaseWithTlsEntity,
+  mockDatabaseWithTags,
+  mockDatabaseWithTagsEntity,
   mockEncryptionService,
   mockRepository,
   mockSentinelDatabaseWithTlsAuth,
@@ -249,6 +251,15 @@ describe('LocalDatabaseRepository', () => {
       expect(caCertRepository.get).not.toHaveBeenCalled();
       expect(clientCertRepository.get).not.toHaveBeenCalled();
     });
+
+    it('should return standalone database model with tags', async () => {
+      repository.findOne.mockResolvedValue(mockDatabaseWithTagsEntity);
+      const result = await service.get(mockSessionMetadata, mockDatabaseWithTags.id);
+
+      expect(result).toEqual(mockDatabaseWithTags);
+      expect(caCertRepository.get).not.toHaveBeenCalled();
+      expect(clientCertRepository.get).not.toHaveBeenCalled();
+    });
   });
 
   describe('list', () => {
@@ -267,6 +278,18 @@ describe('LocalDatabaseRepository', () => {
       expect(await service.list(mockSessionMetadata)).toEqual([
         pick(mockDatabaseWithCloudDetails, ...listFields),
         pick(mockDatabaseWithCloudDetails, ...listFields),
+      ]);
+    });
+
+    it('should return list of databases with tags', async () => {
+      repository.createQueryBuilder().getMany.mockResolvedValue([
+        pick(mockDatabaseWithTagsEntity, ...listFields),
+        pick(mockDatabaseWithTagsEntity, ...listFields),
+      ]);
+
+      expect(await service.list(mockSessionMetadata)).toEqual([
+        pick(mockDatabaseWithTags, ...listFields),
+        pick(mockDatabaseWithTags, ...listFields),
       ]);
     });
   });
@@ -325,6 +348,16 @@ describe('LocalDatabaseRepository', () => {
         expect(e.response?.resource?.databaseId).toEqual(mockDatabaseEntity.id);
         expect(repository.save).not.toHaveBeenCalled();
       }
+    });
+
+    it('should create standalone database with tags', async () => {
+      repository.save.mockResolvedValue(mockDatabaseWithTagsEntity);
+
+      const result = await service.create(mockSessionMetadata, mockDatabaseWithTags, false);
+
+      expect(result).toEqual(mockDatabaseWithTags);
+      expect(caCertRepository.create).not.toHaveBeenCalled();
+      expect(clientCertRepository.create).not.toHaveBeenCalled();
     });
   });
 
@@ -402,6 +435,17 @@ describe('LocalDatabaseRepository', () => {
       expect(result).toEqual(mockDatabaseWithTlsAuth);
       expect(caCertRepository.create).toHaveBeenCalled();
       expect(clientCertRepository.create).toHaveBeenCalled();
+    });
+
+    it('should update standalone database with tags', async () => {
+      repository.findOne.mockResolvedValue(mockDatabaseWithTagsEntity);
+      repository.merge.mockReturnValue(mockDatabaseWithTags);
+
+      const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabaseWithTags);
+
+      expect(result).toEqual(mockDatabaseWithTags);
+      expect(caCertRepository.create).not.toHaveBeenCalled();
+      expect(clientCertRepository.create).not.toHaveBeenCalled();
     });
   });
 

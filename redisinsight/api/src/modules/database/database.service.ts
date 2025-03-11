@@ -215,14 +215,18 @@ export class DatabaseService {
   public async update(
     sessionMetadata: SessionMetadata,
     id: string,
-    dto: UpdateDatabaseDto,
+    { tags, ...dto }: UpdateDatabaseDto,
     manualUpdate: boolean = true, // todo: remove manualUpdate flag logic
   ): Promise<Database> {
     this.logger.debug(`Updating database: ${id}`, sessionMetadata);
-    const oldDatabase = await this.get(sessionMetadata, id, true);
 
     let database: Database;
     try {
+      if (tags) {
+        await this.bulkUpdateTags(sessionMetadata, id, tags, false);
+      }
+
+      const oldDatabase = await this.get(sessionMetadata, id, true);
       database = await this.merge(oldDatabase, dto);
 
       if (DatabaseService.isConnectionAffected(dto)) {

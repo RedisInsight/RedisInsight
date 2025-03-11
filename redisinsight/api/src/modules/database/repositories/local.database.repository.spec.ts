@@ -52,6 +52,7 @@ import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
 const listFields = [
   'id', 'name', 'host', 'port', 'db', 'timeout',
   'connectionType', 'modules', 'lastConnection', 'version', 'cloudDetails',
+  'tags', 'readOnlyTags',
 ];
 
 describe('LocalDatabaseRepository', () => {
@@ -99,6 +100,7 @@ describe('LocalDatabaseRepository', () => {
     service = await module.get(LocalDatabaseRepository);
 
     repository.findOneBy.mockResolvedValue(mockDatabaseEntity);
+    repository.findOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getMany.mockResolvedValue([
       pick(mockDatabaseWithTlsAuthEntity, ...listFields),
@@ -174,7 +176,7 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should return standalone database model with ssh enabled (basic)', async () => {
-      repository.findOneBy.mockResolvedValue(mockDatabaseWithSshBasicEntity);
+      repository.findOne.mockResolvedValue(mockDatabaseWithSshBasicEntity);
       const result = await service.get(mockSessionMetadata, mockDatabaseWithSshBasic.id);
 
       expect(result).toEqual(mockDatabaseWithSshBasic);
@@ -183,7 +185,7 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should return standalone database model with ssh enabled (privateKey + passphrase)', async () => {
-      repository.findOneBy.mockResolvedValue(mockDatabaseWithSshPrivateKeyEntity);
+      repository.findOne.mockResolvedValue(mockDatabaseWithSshPrivateKeyEntity);
       const result = await service.get(mockSessionMetadata, mockDatabaseWithSshPrivateKey.id);
 
       expect(result).toEqual(mockDatabaseWithSshPrivateKey);
@@ -192,7 +194,7 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should return standalone model with ca tls', async () => {
-      repository.findOneBy.mockResolvedValue(mockDatabaseWithTlsEntity);
+      repository.findOne.mockResolvedValue(mockDatabaseWithTlsEntity);
 
       const result = await service.get(mockSessionMetadata, mockDatabaseId);
 
@@ -202,7 +204,7 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should return sentinel tls database model (with fields decryption)', async () => {
-      repository.findOneBy.mockResolvedValue(mockSentinelDatabaseWithTlsAuthEntity);
+      repository.findOne.mockResolvedValue(mockSentinelDatabaseWithTlsAuthEntity);
 
       const result = await service.get(mockSessionMetadata, mockDatabaseId);
 
@@ -212,7 +214,7 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should return cluster database model (with fields decryption)', async () => {
-      repository.findOneBy.mockResolvedValue(mockClusterDatabaseWithTlsAuthEntity);
+      repository.findOne.mockResolvedValue(mockClusterDatabaseWithTlsAuthEntity);
 
       const result = await service.get(mockSessionMetadata, mockDatabaseId);
 
@@ -222,7 +224,7 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should return null when database was not found', async () => {
-      repository.findOneBy.mockResolvedValue(undefined);
+      repository.findOne.mockResolvedValue(undefined);
 
       const result = await service.get(mockSessionMetadata, mockDatabaseId);
 
@@ -241,7 +243,7 @@ describe('LocalDatabaseRepository', () => {
     it('should return standalone database model without nested fields', async () => {
       const omitFields = ['compressor', 'sshOptions.passphrase', 'sshOptions.privateKey'];
 
-      repository.findOneBy.mockResolvedValueOnce(mockDatabaseWithSshPrivateKeyEntity);
+      repository.findOne.mockResolvedValueOnce(mockDatabaseWithSshPrivateKeyEntity);
       const result = await service.get(mockSessionMetadata, mockDatabaseWithSshPrivateKey.id, false, omitFields);
 
       expect(result).toEqual(omit(cloneClassInstance(mockDatabaseWithSshPrivateKey), omitFields));

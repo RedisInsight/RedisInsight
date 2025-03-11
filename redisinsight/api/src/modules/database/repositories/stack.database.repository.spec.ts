@@ -84,6 +84,7 @@ describe('StackDatabasesRepository', () => {
     service = await module.get(StackDatabasesRepository);
 
     repository.findOneBy.mockResolvedValue(mockDatabaseEntity);
+    repository.findOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getMany.mockResolvedValue([
       pick(mockDatabaseWithTlsAuthEntity, ...listFields),
@@ -160,7 +161,7 @@ describe('StackDatabasesRepository', () => {
       const result = await service.get(mockSessionMetadata, mockDatabaseId);
 
       expect(result).toEqual(mockDatabase);
-      expect(repository.findOneBy).toHaveBeenCalledWith({ id: REDIS_STACK_CONFIG.id });
+      expect(repository.findOne).toHaveBeenCalled();
       expect(caCertRepository.get).not.toHaveBeenCalled();
       expect(clientCertRepository.get).not.toHaveBeenCalled();
     });

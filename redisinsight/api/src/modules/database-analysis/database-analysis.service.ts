@@ -4,7 +4,7 @@ import { RecommendationService } from 'src/modules/recommendation/recommendation
 import { catchAclError } from 'src/utils';
 import { ONE_NODE_RECOMMENDATIONS } from 'src/constants';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
@@ -80,7 +80,7 @@ export class DatabaseAnalysisService {
         jobsArray.push(foundedRecommendations);
         return flatten(jobsArray);
       }, Promise.resolve([]));
-      const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
+      const analysis = plainToInstance(DatabaseAnalysis, await this.analyzer.analyze({
         databaseId: clientMetadata.databaseId,
         db: await client?.getCurrentDbIndex(),
         ...dto,

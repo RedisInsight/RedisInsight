@@ -10,7 +10,7 @@ import {
 } from 'src/__mocks__'
 import { LocalFeaturesConfigRepository } from 'src/modules/feature/repositories/local.features-config.repository';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import * as defaultConfig from '../../../../config/features-config.json';
 
 describe('LocalFeaturesConfigRepository', () => {
@@ -110,7 +110,7 @@ describe('LocalFeaturesConfigRepository', () => {
       expect(result).toEqual(mockFeaturesConfig);
       expect(repository.update).toHaveBeenCalledWith(
         { id: service['id'] },
-        plainToClass(FeaturesConfigEntity, { id: service['id'], data: defaultConfig }),
+        plainToInstance(FeaturesConfigEntity, { id: service['id'], data: defaultConfig }),
       );
     });
   });

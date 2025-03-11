@@ -1,6 +1,6 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { catchAclError } from 'src/utils';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { SessionMetadata } from 'src/common/models';
 import { DatabaseSettingsRepository } from './repositories/database-settings.repository';
 import { CreateOrUpdateDatabaseSettingDto } from './dto/database-setting.dto';
@@ -27,7 +27,7 @@ export class DatabaseSettingsService {
     dto: CreateOrUpdateDatabaseSettingDto,
   ): Promise<DatabaseSettings> {
     try {
-      const setting = plainToClass(DatabaseSettings, { ...dto, databaseId });
+      const setting = plainToInstance(DatabaseSettings, { ...dto, databaseId });
       return this.databaseSettingsRepository.createOrUpdate(sessionMetadata, setting);
     } catch (e) {
       this.logger.error('Unable to create database setting', e, sessionMetadata);

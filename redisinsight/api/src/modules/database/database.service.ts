@@ -220,13 +220,12 @@ export class DatabaseService {
   ): Promise<Database> {
     this.logger.debug(`Updating database: ${id}`, sessionMetadata);
 
+    tags && await this.bulkUpdateTags(sessionMetadata, id, tags, false);
+
+    const oldDatabase = await this.get(sessionMetadata, id, true);
+
     let database: Database;
     try {
-      if (tags) {
-        await this.bulkUpdateTags(sessionMetadata, id, tags, false);
-      }
-
-      const oldDatabase = await this.get(sessionMetadata, id, true);
       database = await this.merge(oldDatabase, dto);
 
       if (DatabaseService.isConnectionAffected(dto)) {

@@ -83,7 +83,6 @@ describe('StackDatabasesRepository', () => {
     encryptionService = await module.get(EncryptionService);
     service = await module.get(StackDatabasesRepository);
 
-    repository.findOneBy.mockResolvedValue(mockDatabaseEntity);
     repository.findOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getMany.mockResolvedValue([

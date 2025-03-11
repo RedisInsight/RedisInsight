@@ -99,7 +99,6 @@ describe('LocalDatabaseRepository', () => {
     encryptionService = await module.get(EncryptionService);
     service = await module.get(LocalDatabaseRepository);
 
-    repository.findOneBy.mockResolvedValue(mockDatabaseEntity);
     repository.findOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getMany.mockResolvedValue([
@@ -316,7 +315,7 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should throw an error if create called with cloud details and have the same entity', async () => {
-      repository.findOneBy.mockResolvedValueOnce(mockDatabaseEntity);
+      repository.findOne.mockResolvedValueOnce(mockDatabaseEntity);
       try {
         await service.create(mockSessionMetadata, mockDatabaseEntityWithCloudDetails, true);
         fail();
@@ -356,7 +355,7 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should update standalone database with ssh enabled (basic)', async () => {
-      repository.findOneBy.mockResolvedValue(mockDatabaseWithSshBasicEntity);
+      repository.findOne.mockResolvedValue(mockDatabaseWithSshBasicEntity);
       repository.merge.mockReturnValue(mockDatabaseWithSshBasic);
 
       const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabaseWithSshBasic);
@@ -367,7 +366,7 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should update standalone database with ssh enabled (privateKey)', async () => {
-      repository.findOneBy.mockResolvedValue(mockDatabaseWithSshPrivateKeyEntity);
+      repository.findOne.mockResolvedValue(mockDatabaseWithSshPrivateKeyEntity);
       repository.merge.mockReturnValue(mockDatabaseWithSshPrivateKey);
 
       const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabaseWithSshPrivateKey);
@@ -379,8 +378,8 @@ describe('LocalDatabaseRepository', () => {
 
     it('should update standalone database (with existing certificates)', async () => {
       repository.merge.mockReturnValue(mockDatabaseWithTlsAuth);
-      repository.findOneBy.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
-      repository.findOneBy.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
+      repository.findOne.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
+      repository.findOne.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
 
       const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabaseWithTlsAuth);
 
@@ -391,8 +390,8 @@ describe('LocalDatabaseRepository', () => {
 
     it('should update standalone database (and certificates)', async () => {
       repository.merge.mockReturnValue(mockDatabaseWithTlsAuth);
-      repository.findOneBy.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
-      repository.findOneBy.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
+      repository.findOne.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
+      repository.findOne.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
 
       const result = await service.update(
         mockSessionMetadata,

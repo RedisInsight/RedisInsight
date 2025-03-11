@@ -139,7 +139,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @throws TBD
    */
   public async update(sessionMetadata: SessionMetadata, id: string, database: Partial<Database>): Promise<Database> {
-    const oldEntity = await this.decryptEntity((await this.repository.findOneBy({ id })), true);
+    const oldEntity = await this.decryptEntity((await this.repository.findOne({ where: { id } })), true);
     const newEntity = classToClass(DatabaseEntity, await this.populateCertificates(database as Database));
 
     const mergeResult = this.repository.merge(oldEntity, newEntity);
@@ -262,7 +262,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
         set(query, field, get(entity, field));
       });
 
-      const existingDatabase = await this.repository.findOneBy(query);
+      const existingDatabase = await this.repository.findOne({ where: query });
       if (existingDatabase) {
         throw new DatabaseAlreadyExistsException(existingDatabase.id);
       }

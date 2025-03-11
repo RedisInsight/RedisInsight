@@ -41,4 +41,4 @@ test('Verify that user can search per exact field name in Hash in DB with 1 mill
     // Check the search result
     const result = await browserPage.hashFieldsList.nth(0).textContent;
     await t.expect(result).eql(fieldForSearch, 'Hash field not found');
-});//.skip.meta({skipComment: " "});
+});

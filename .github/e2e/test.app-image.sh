@@ -26,8 +26,17 @@ docker compose -f tests/e2e/rte.docker-compose.yml build
 docker compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V
 ./tests/e2e/wait-for-redis.sh localhost 12000 && \
 
-# run tests add DEBUG=testcafe:* to debug framework execution
-COMMON_URL=$(tail -n 1 apppath)/resources/app.asar/dist/renderer/index.html \
-ELECTRON_PATH=$(tail -n 1 apppath)/redisinsight \
-RI_SOCKETS_CORS=true \
-yarn --cwd tests/e2e dotenv -e .desktop.env yarn --cwd tests/e2e test:desktop:ci
+# run tests add TETS_DEBUG=1 to debug framework execution
+TEST_DEBUG=0
+if [ "$TEST_DEBUG" = "1" ]; then
+  COMMON_URL=$(tail -n 1 apppath)/resources/app.asar/dist/renderer/index.html \
+  ELECTRON_PATH=$(tail -n 1 apppath)/redisinsight \
+  RI_SOCKETS_CORS=true \
+  DEBUG=testcafe:* \
+  yarn --cwd tests/e2e dotenv -e .desktop.env yarn --cwd tests/e2e test:desktop:ci
+else
+  COMMON_URL=$(tail -n 1 apppath)/resources/app.asar/dist/renderer/index.html \
+  ELECTRON_PATH=$(tail -n 1 apppath)/redisinsight \
+  RI_SOCKETS_CORS=true \
+  yarn --cwd tests/e2e dotenv -e .desktop.env yarn --cwd tests/e2e test:desktop:ci
+fi

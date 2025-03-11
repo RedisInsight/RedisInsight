@@ -17,7 +17,7 @@
 
     "clean:results": "rm -rf allure-results",
     "prep:history": "if [ -d allure-report/history ]; then cp -R allure-report/history allure-results; fi",
-    "test:allure": "yarn run prep:history && yarn allTests && yarn allure generate --clean -o allure-report allure-results"
-
+    "test:allureHistoryReport": "yarn run prep:history && yarn allTests && yarn allure generate --clean -o allure-report allure-results",
+    "test:autogen": "playwright codegen"
   }
 }

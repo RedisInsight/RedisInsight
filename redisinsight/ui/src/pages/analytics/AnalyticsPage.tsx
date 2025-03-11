@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams, useLocation } from 'react-router-dom'
 import { Pages } from 'uiSrc/constants'
 import { appContextAnalytics, setLastAnalyticsPage } from 'uiSrc/slices/app/context'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
+import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 
 import AnalyticsPageRouter from './AnalyticsPageRouter'
 
@@ -18,9 +18,8 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
   const history = useHistory()
   const { instanceId } = useParams<{ instanceId: string }>()
   const { pathname } = useLocation()
-  const { connectionType } = useSelector(connectedInstanceSelector)
+  const connectionType = useConnectionType()
   const { lastViewedPage } = useSelector(appContextAnalytics)
-
   const pathnameRef = useRef<string>('')
 
   const dispatch = useDispatch()

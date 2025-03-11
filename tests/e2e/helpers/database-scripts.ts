@@ -1,6 +1,7 @@
 import * as sqlite3 from 'sqlite3';
 import {workingDirectory} from '../helpers/conf';
 import {promisify} from "util";
+import {createTimeout} from "./utils";
 
 const dbPath = `${workingDirectory}/redisinsight.db`;
 
@@ -56,9 +57,7 @@ export class DatabaseScripts {
             const getAsync = (query: string, p: (string | number | undefined)[]) => promisify(db.get.bind(db));
             const row = await Promise.race([
                 getAsync(query, [dbTableParameters.conditionWhereColumnValue]),
-                new Promise<any>((_, reject) =>
-                    setTimeout(() => reject(new Error('Query timed out after 10 seconds')), 10000)
-                )
+                createTimeout('Query timed out after 10 seconds',10000)
             ]);
             if (!row) {
                 throw new Error(`No row found for column ${dbTableParameters.columnName}`);
@@ -98,9 +97,7 @@ export class DatabaseScripts {
             const runAsync = promisify(db.run.bind(db));
             await Promise.race([
                 runAsync(query),
-                new Promise<void>((_, reject) => setTimeout(() => {
-                    reject(new Error('DELETE operation timed out after 10 seconds'));
-                }, 10000))
+                createTimeout('DELETE operation timed out after 10 seconds', 10000)
             ]);
         } catch (err: any) {
             throw new Error(`Error during ${dbTableParameters.tableName} table rows deletion: ${err.message}`);
@@ -108,7 +105,6 @@ export class DatabaseScripts {
             db.close();
         }
     }
-
 
 }
 

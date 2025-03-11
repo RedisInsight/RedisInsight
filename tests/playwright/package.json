@@ -1,0 +1,23 @@
+{
+  "name": "playwright",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@types/node": "^22.13.10",
+    "allure-commandline": "^2.33.0",
+    "allure-js-commons": "^3.2.0",
+    "allure-playwright": "^3.2.0"
+  },
+  "scripts": {
+    "allTests": "playwright test",
+    "generateAndShowReports": "allure serve allure-results",
+    "generateReports": "allure generate --clean",
+
+    "clean:results": "rm -rf allure-results",
+    "prep:history": "if [ -d allure-report/history ]; then cp -R allure-report/history allure-results; fi",
+    "test:allure": "yarn run prep:history && yarn allTests && yarn allure generate --clean -o allure-report allure-results"
+
+  }
+}

@@ -1,0 +1,44 @@
+
+## Install
+
+Install Playwright browsers -  'yarn playwright install'
+
+Install Playwright operating system dependencies requires sudo / root - 'sudo yarn playwright install-deps'
+
+
+
+## Extra tooling
+Inside that directory, you can run several commands:
+
+Runs the end-to-end tests.
+
+```yarn playwright test```
+
+Starts the interactive UI mode.
+```yarn playwright test --ui```
+
+
+yarn playwright test --project=chromium
+Runs the tests only on Desktop Chrome.
+
+yarn playwright test example
+Runs the tests in a specific file.
+
+yarn playwright test --debug
+Runs the tests in debug mode.
+
+yarn playwright codegen
+Auto generate tests with Codegen.
+
+
+
+Allure report needs JAVA_HOME set 
+and to run the server JDK version 8 to 11 otherwise you get 
+Starting web server...
+Exception in thread "main" java.lang.UnsatisfiedLinkError: Can't load library: /usr/lib/jvm/java-17-openjdk-amd64/lib/libawt_xawt.so
+at java.base/java.lang.ClassLoader.loadLibrary(ClassLoader.java:2398)
+at java.base/java.lang.Runtime.load0(Runtime.java:755)
+at java.base/java.lang.System.load(System.java:1970)
+at java.base/jdk.internal.loader.NativeLibraries.load(Native Method)
+
+

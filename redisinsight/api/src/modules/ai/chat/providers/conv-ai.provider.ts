@@ -47,14 +47,19 @@ export class ConvAiProvider {
     }
   }
 
-  async postMessage(sessionMetadata: SessionMetadata, chatId: string, message: string): Promise<Stream> {
+  async postMessage(
+    _sessionMetadata: SessionMetadata,
+    chatId: string,
+    message: string,
+  ): Promise<Stream> {
+    const messageTransformed = message.replace(/(\r\n|\n|\r)/gm, ' ').trim();
     try {
       const { data } = await this.api.post(
         '/chat',
         {},
         {
           params: {
-            q: message,
+            q: messageTransformed,
           },
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

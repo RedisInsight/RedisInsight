@@ -11,7 +11,7 @@ export class ConvAiProvider {
     baseURL: aiConfig.convAiApiUrl,
   });
 
-  async auth(sessionMetadata: SessionMetadata): Promise<string> {
+  async auth(_sessionMetadata: SessionMetadata): Promise<string> {
     try {
       const { data } = await this.api.post(
         '/auth',
@@ -30,16 +30,16 @@ export class ConvAiProvider {
     }
   }
 
-  async getHistory(sessionMetadata: SessionMetadata, chatId: string): Promise<object[]> {
+  async getHistory(
+    _sessionMetadata: SessionMetadata,
+    chatId: string,
+  ): Promise<object[]> {
     try {
-      const { data } = await this.api.get(
-        '/history',
-        {
-          headers: {
-            'session-id': chatId,
-          },
+      const { data } = await this.api.get('/history', {
+        headers: {
+          'session-id': chatId,
         },
-      );
+      });
 
       return data;
     } catch (e) {
@@ -75,7 +75,10 @@ export class ConvAiProvider {
     }
   }
 
-  async reset(sessionMetadata: SessionMetadata, chatId: string): Promise<void> {
+  async reset(
+    _sessionMetadata: SessionMetadata,
+    chatId: string,
+  ): Promise<void> {
     try {
       await this.api.post(
         '/reset',

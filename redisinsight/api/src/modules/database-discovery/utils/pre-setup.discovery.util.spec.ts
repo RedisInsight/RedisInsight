@@ -130,7 +130,7 @@ describe('preSetupDiscoveryUtil', () => {
     it('should discover database without specific id provided', async () => {
       process.env.RI_REDIS_HOST = mockDatabaseToImportFromEnvsInput.host;
       process.env.RI_REDIS_POST = `${mockDatabaseToImportFromEnvsInput.port}`;
-      process.env.RI_REDIS_NAME = mockDatabaseToImportFromEnvsInput.name;
+      process.env.RI_REDIS_ALIAS = mockDatabaseToImportFromEnvsInput.name;
 
       await expect(prepareDatabaseFromEnvs('RI_REDIS_HOST'))
         .resolves.toEqual(mockDatabaseToImportFromEnvsPrepared);
@@ -138,7 +138,7 @@ describe('preSetupDiscoveryUtil', () => {
     it('should return null because of validation error', async () => {
       // no host field
       process.env.RI_REDIS_POST = `${mockDatabaseToImportFromEnvsInput.port}`;
-      process.env.RI_REDIS_NAME = mockDatabaseToImportFromEnvsInput.name;
+      process.env.RI_REDIS_ALIAS = mockDatabaseToImportFromEnvsInput.name;
 
       await expect(prepareDatabaseFromEnvs('RI_REDIS_HOST'))
         .resolves.toEqual(null);
@@ -156,7 +156,7 @@ describe('preSetupDiscoveryUtil', () => {
     it('should discover database with certs in base64 format', async () => {
       process.env.RI_REDIS_HOST_1 = mockDatabaseToImportWithCertsFromEnvsInput.host;
       process.env.RI_REDIS_PORT_1 = `${mockDatabaseToImportWithCertsFromEnvsInput.port}`;
-      process.env.RI_REDIS_NAME_1 = mockDatabaseToImportWithCertsFromEnvsInput.name;
+      process.env.RI_REDIS_ALIAS_1 = mockDatabaseToImportWithCertsFromEnvsInput.name;
       process.env.RI_REDIS_TLS_1 = 'true';
       process.env.RI_REDIS_TLS_CA_BASE64_1 = Buffer.from(
         mockDatabaseToImportWithCertsFromEnvsInput.caCert.certificate, 'utf8',
@@ -174,7 +174,7 @@ describe('preSetupDiscoveryUtil', () => {
     it('should discover database with certs from file', async () => {
       process.env.RI_REDIS_HOST_1 = mockDatabaseToImportWithCertsFromEnvsInput.host;
       process.env.RI_REDIS_PORT_1 = `${mockDatabaseToImportWithCertsFromEnvsInput.port}`;
-      process.env.RI_REDIS_NAME_1 = mockDatabaseToImportWithCertsFromEnvsInput.name;
+      process.env.RI_REDIS_ALIAS_1 = mockDatabaseToImportWithCertsFromEnvsInput.name;
       process.env.RI_REDIS_TLS_1 = 'true';
       process.env.RI_REDIS_TLS_CA_PATH_1 = '/ca.crt';
       process.env.RI_REDIS_TLS_CERT_PATH_1 = '/user.crt';

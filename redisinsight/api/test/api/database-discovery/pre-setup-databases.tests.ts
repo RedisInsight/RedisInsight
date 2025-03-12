@@ -106,12 +106,12 @@ describe('Databases discovery', () => {
           // simple db
           process.env.RI_REDIS_HOST = mockDatabaseToImportFromEnvsInput.host;
           process.env.RI_REDIS_PORT = `${mockDatabaseToImportFromEnvsInput.port}`;
-          process.env.RI_REDIS_NAME = mockDatabaseToImportFromEnvsInput.name;
+          process.env.RI_REDIS_ALIAS = mockDatabaseToImportFromEnvsInput.name;
 
           // with base64 certs
           process.env.RI_REDIS_HOST_1 = mockDatabaseToImportWithCertsFromEnvsInput.host;
           process.env.RI_REDIS_PORT_1 = `${mockDatabaseToImportWithCertsFromEnvsInput.port}`;
-          process.env.RI_REDIS_NAME_1 = mockDatabaseToImportWithCertsFromEnvsInput.name;
+          process.env.RI_REDIS_ALIAS_1 = mockDatabaseToImportWithCertsFromEnvsInput.name;
           process.env.RI_REDIS_TLS_1 = 'true';
           process.env.RI_REDIS_TLS_CA_BASE64_1 = Buffer.from(
             mockDatabaseToImportWithCertsFromEnvsInput.caCert.certificate, 'utf8',
@@ -170,7 +170,7 @@ describe('Databases discovery', () => {
           // simple db with password
           process.env.RI_REDIS_HOST = mockDatabaseToImportFromEnvsInput.host;
           process.env.RI_REDIS_PORT = `${mockDatabaseToImportFromEnvsInput.port}`;
-          process.env.RI_REDIS_NAME = mockDatabaseToImportFromEnvsInput.name;
+          process.env.RI_REDIS_ALIAS = mockDatabaseToImportFromEnvsInput.name;
           process.env.RI_REDIS_USERNAME = 'admin';
           process.env.RI_REDIS_PASSWORD = 'pass';
 
@@ -202,7 +202,7 @@ describe('Databases discovery', () => {
           // with path certs
           process.env.RI_REDIS_HOST_1 = mockDatabaseToImportWithCertsFromEnvsInput.host;
           process.env.RI_REDIS_PORT_1 = `${mockDatabaseToImportWithCertsFromEnvsInput.port}`;
-          process.env.RI_REDIS_NAME_1 = mockDatabaseToImportWithCertsFromEnvsInput.name;
+          process.env.RI_REDIS_ALIAS_1 = mockDatabaseToImportWithCertsFromEnvsInput.name;
           process.env.RI_REDIS_TLS_1 = 'true';
           process.env.RI_REDIS_TLS_CA_PATH_1 = caPath;
           process.env.RI_REDIS_TLS_CERT_PATH_1 = certificatePath;

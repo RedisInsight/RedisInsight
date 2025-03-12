@@ -1,33 +1,50 @@
 
 ## Install
 
-Install Playwright browsers -  'yarn playwright install'
+Install Playwright browsers   
+```
+yarn playwright install
+```
 
-Install Playwright operating system dependencies requires sudo / root - 'sudo yarn playwright install-deps'
+Install Playwright operating system dependencies requires sudo / root 
+```
+sudo yarn playwright install-deps
+```
 
 
 
 
 ## Runs
 Runs the end-to-end tests.
-
-```yarn playwright test```
+```
+yarn playwright test
+```
 
 Runs the tests only on Desktop Chrome.
 
-```yarn playwright test --project=chromium```
+```
+yarn playwright test --project=localChromium
+```
 
 Runs the tests in debug mode.
 
-```yarn playwright test --debug```
+```
+yarn playwright test --debug
+```
 
 Runs the tests in a specific file.
 
-```yarn playwright test example```
+```
+yarn playwright test example
+```
 
 Starts the interactive UI mode. This also can be set in the config
 
-```yarn playwright test --ui```
+```
+yarn playwright test --ui
+```
+
+[More info on running tests](https://playwright.dev/docs/running-tests)
 
 
 ## Extra tooling

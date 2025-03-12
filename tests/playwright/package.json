@@ -11,10 +11,11 @@
     "allure-playwright": "^3.2.0"
   },
   "scripts": {
+    "removeReportDirs":"rm -rf allure-results playwright-report test-results",
     "allTests": "playwright test",
     "generateAndShowReports": "allure serve allure-results",
     "generateReports": "allure generate --clean",
-
+    "test:chromium": "playwright test --project=localChromium",
     "clean:results": "rm -rf allure-results",
     "prep:history": "if [ -d allure-report/history ]; then cp -R allure-report/history allure-results; fi",
     "test:allureHistoryReport": "yarn run prep:history && yarn allTests && yarn allure generate --clean -o allure-report allure-results",

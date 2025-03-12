@@ -54,7 +54,7 @@ import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
 const listFields = [
   'id', 'name', 'host', 'port', 'db', 'timeout',
   'connectionType', 'modules', 'lastConnection', 'version', 'cloudDetails',
-  'tags', 'readOnlyTags',
+  'tags',
 ];
 
 describe('LocalDatabaseRepository', () => {

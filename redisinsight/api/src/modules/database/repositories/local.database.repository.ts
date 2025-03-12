@@ -69,7 +69,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   ): Promise<Database> {
     const entity = await this.repository.findOne({
       where: { id },
-      relations: ['tags', 'readOnlyTags'],
+      relations: ['tags'],
     });
     if (!entity) {
       return null;
@@ -97,11 +97,10 @@ export class LocalDatabaseRepository extends DatabaseRepository {
       .createQueryBuilder('d')
       .leftJoinAndSelect('d.cloudDetails', 'cd')
       .leftJoinAndSelect('d.tags', 'tags')
-      .leftJoinAndSelect('d.readOnlyTags', 'readOnlyTags')
       .select([
         'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
         'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version', 'cd',
-        'd.createdAt', 'tags', 'readOnlyTags',
+        'd.createdAt', 'tags',
       ])
       .getMany();
 

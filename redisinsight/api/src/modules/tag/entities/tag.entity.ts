@@ -28,8 +28,4 @@ export class TagEntity {
   @Expose()
   @ManyToMany(() => DatabaseEntity, (database) => database.tags)
   databases: DatabaseEntity[];
-
-  @Expose()
-  @ManyToMany(() => DatabaseEntity, (database) => database.readOnlyTags)
-  readOnlyDatabases: DatabaseEntity[];
 }

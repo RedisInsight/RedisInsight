@@ -271,19 +271,4 @@ export class DatabaseEntity {
     },
   })
   tags: TagEntity[];
-
-  @Expose()
-  @ManyToMany(() => TagEntity, (tag) => tag.readOnlyDatabases)
-  @JoinTable({
-    name: 'database_readonly_tag',
-    joinColumn: {
-      name: 'databaseId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'tagId',
-      referencedColumnName: 'id',
-    },
-  })
-  readOnlyTags: TagEntity[];
 }

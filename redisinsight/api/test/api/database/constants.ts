@@ -80,8 +80,4 @@ export const databaseSchema = Joi.object().keys({
     key: Joi.string().required(),
     value: Joi.string().required(),
   })).allow(null),
-  readOnlyTags: Joi.array().items(Joi.object().keys({
-    key: Joi.string().required(),
-    value: Joi.string().required(),
-  })).allow(null),
 });

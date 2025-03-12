@@ -408,26 +408,10 @@ export class DatabaseService {
     force = false,
   ): Promise<void> {
     const database = await this.get(sessionMetadata, id);
+    const removedTags = (database.tags || []).filter((tag) => !tags.some((t) => t.key === tag.key && t.value === tag.value));
 
-    if (!force) {
-      const isTryingToUpdateReadOnlyTags = !database.readOnlyTags?.every((tag1) =>
-        tags.some((tag2) => tag2.readOnly && tag2.key === tag1.key && tag2.value === tag1.value),
-      );
-
-      if (isTryingToUpdateReadOnlyTags) {
-        throw new ConflictException('Cannot update read-only tags.');
-      }
-    }
-
-    const previousTags = database.tags || [];
-    const nextTags = await this.tagService.getOrCreateByKeyValuePairs(tags.filter((tag) => !tag.readOnly));
-    const nextReadOnlyTags = await this.tagService.getOrCreateByKeyValuePairs(tags.filter((tag) => tag.readOnly));
-    database.tags = [...nextTags, ...nextReadOnlyTags];
-    database.readOnlyTags = nextReadOnlyTags;
-
+    database.tags = await this.tagService.getOrCreateByKeyValuePairs(tags);
     await this.repository.update(sessionMetadata, id, database);
-
-    const removedTags = previousTags.filter((tag) => !tags.some((t) => t.key === tag.key && t.value === tag.value));
 
     // Clean up unused tags
     for (const tag of removedTags) {

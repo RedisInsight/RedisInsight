@@ -21,10 +21,4 @@ export class CreateTagDto {
   @Length(1, 128)
   @Matches(/^[a-zA-Z0-9\-_\.@:+ ]+$/)
   value: string;
-
-  @ApiPropertyOptional({
-    description: 'Is read-only.',
-    type: Boolean,
-  })
-  readOnly?: boolean;
 }

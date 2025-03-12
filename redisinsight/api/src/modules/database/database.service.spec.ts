@@ -710,13 +710,12 @@ describe('DatabaseService', () => {
     it('should update tags successfully', async () => {
       const databaseId = 'db1';
       const tags: CreateTagDto[] = [
-        { key: 'env', value: 'prod', readOnly: false },
-        { key: 'region', value: 'us-east', readOnly: true },
+        { key: 'env', value: 'prod' },
+        { key: 'region', value: 'us-east' },
       ];
 
       const database = new Database();
       database.tags = [];
-      database.readOnlyTags = [];
 
       jest.spyOn(service, 'get').mockResolvedValue(database);
       jest.spyOn(databaseRepository, 'update').mockResolvedValue(database);
@@ -734,11 +733,10 @@ describe('DatabaseService', () => {
     it('should throw ConflictException when trying to update read-only tags without force', async () => {
       const databaseId = 'db1';
       const tags: CreateTagDto[] = [
-        { key: 'env', value: 'prod', readOnly: false },
+        { key: 'env', value: 'prod' },
       ];
 
       const database = new Database();
-      database.readOnlyTags = [{ key: 'env', value: 'prod' }] as any;
 
       jest.spyOn(databaseRepository, 'get').mockResolvedValue(database);
 
@@ -748,12 +746,11 @@ describe('DatabaseService', () => {
     it('should delete unused tags', async () => {
       const databaseId = 'db1';
       const tags: CreateTagDto[] = [
-        { key: 'env', value: 'prod', readOnly: false },
+        { key: 'env', value: 'prod' },
       ];
 
       const database = new Database();
       database.tags = [{ key: 'region', value: 'us-east' }] as any;
-      database.readOnlyTags = [];
 
       jest.spyOn(databaseRepository, 'get').mockResolvedValue(database);
       jest.spyOn(databaseRepository, 'update').mockResolvedValue(database);

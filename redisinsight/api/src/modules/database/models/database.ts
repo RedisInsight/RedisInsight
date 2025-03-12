@@ -321,15 +321,4 @@ export class Database {
   @IsArray()
   @Type(() => Tag)
   tags?: Tag[];
-
-  @ApiPropertyOptional({
-    description: 'Readonly tags associated with the database.',
-    type: Tag,
-    isArray: true,
-  })
-  @Expose()
-  @IsOptional()
-  @IsArray()
-  @Type(() => Tag)
-  readOnlyTags?: Tag[];
 }

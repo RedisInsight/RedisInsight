@@ -6,7 +6,7 @@ import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
-import { ExternalLink, FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { ExternalLink, FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog, CloudAd } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { getDbWithModuleLoaded, getSourceTutorialByCapability } from 'uiSrc/utils'
@@ -44,24 +44,26 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
               {moduleText?.text}
             </EuiText>
             <EuiSpacer size="s" />
-            <OAuthSsoHandlerDialog>
-              {(ssoCloudHandlerClick) => (
-                <ExternalLink
-                  iconSize="s"
-                  href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
-                  onClick={(e: React.MouseEvent) => {
-                    ssoCloudHandlerClick(e, {
-                      source,
-                      action: OAuthSocialAction.Create
-                    }, `${moduleName}_${source}`)
-                    onClose?.()
-                  }}
-                  data-testid="tutorials-get-started-link"
-                >
-                  Start with Cloud for free
-                </ExternalLink>
-              )}
-            </OAuthSsoHandlerDialog>
+            <CloudAd>
+              <OAuthSsoHandlerDialog>
+                {(ssoCloudHandlerClick) => (
+                  <ExternalLink
+                    iconSize="s"
+                    href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
+                    onClick={(e: React.MouseEvent) => {
+                      ssoCloudHandlerClick(e, {
+                        source,
+                        action: OAuthSocialAction.Create
+                      }, `${moduleName}_${source}`)
+                      onClose?.()
+                    }}
+                    data-testid="tutorials-get-started-link"
+                  >
+                    Start with Cloud for free
+                  </ExternalLink>
+                )}
+              </OAuthSsoHandlerDialog>
+            </CloudAd>
             <FeatureFlagComponent name={FeatureFlags.envDependent}>
               <>
                 <EuiSpacer size="xs" />

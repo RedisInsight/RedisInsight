@@ -1,5 +1,6 @@
 import React from 'react'
 import { EuiIcon, EuiText } from '@elastic/eui'
+import CloudAd from 'uiSrc/components/cloud-ad/CloudAd'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import styles from 'uiSrc/pages/browser/components/popover-delete/styles.module.scss'
@@ -11,11 +12,14 @@ export default {
       {' '}
       <a href="https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/json/" target="_blank" rel="noreferrer">here</a>.
       {' '}
-      You can also create a
-      {' '}
-      <a href="https://redis.io/try-free/" target="_blank" rel="noreferrer">free trial Redis Cloud database</a>
-      {' '}
-      with built-in JSON support.
+      <CloudAd>
+        <>You can also create a
+          {' '}
+          <a href="https://redis.io/try-free/" target="_blank" rel="noreferrer">free trial Redis Cloud database</a>
+          {' '}
+          with built-in JSON support.
+        </>
+      </CloudAd>
     </>
   ),
   REMOVE_LAST_ELEMENT: (fieldType: string) => (

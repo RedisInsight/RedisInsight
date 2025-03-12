@@ -56,6 +56,7 @@ export const defaultConfig = {
     useLocalResources: booleanEnv('RI_USE_LOCAL_RESOURCES', false),
     indexedDbName: process.env.RI_INDEXED_DB_NAME || 'RI_LOCAL_STORAGE',
     truncatedStringPrefix: process.env.RI_CLIENTS_TRUNCATED_STRING_PREFIX || '[Truncated due to length]',
+    hideAds: booleanEnv('RI_HIDE_CLOUD_ADS', false),
   },
   workbench: {
     pipelineCountDefault: intEnv('PIPELINE_COUNT_DEFAULT', 5),

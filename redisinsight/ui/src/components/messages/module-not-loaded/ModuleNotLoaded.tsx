@@ -9,7 +9,7 @@ import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
 import CheerIcon from 'uiSrc/assets/img/icons/cheer.svg?react'
 import { FeatureFlags, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog, CloudAd } from 'uiSrc/components'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 
@@ -73,9 +73,11 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
   })
 
   const renderText = useCallback((moduleName?: string) => (!freeDbWithModule ? (
-    <EuiText className={cx(styles.text, styles.marginBottom)}>
-      {`Create a free trial Redis Stack database with ${moduleName} which extends the core capabilities of your Redis`}
-    </EuiText>
+    <CloudAd>
+      <EuiText className={cx(styles.text, styles.marginBottom)}>
+        {`Create a free trial Redis Stack database with ${moduleName} which extends the core capabilities of your Redis`}
+      </EuiText>
+    </CloudAd>
   ) : (
     <EuiText className={cx(styles.text, styles.marginBottom, styles.textFooter)}>
       Use your free trial all-in-one Redis Cloud database to start exploring these capabilities.
@@ -152,36 +154,38 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
               >
                 Learn More
               </EuiLink>
-              <OAuthSsoHandlerDialog>
-                {(ssoCloudHandlerClick) => (
-                  <EuiLink
-                    className={styles.link}
-                    external={false}
-                    target="_blank"
-                    href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
-                    onClick={(e) => {
-                      ssoCloudHandlerClick(
-                        e,
-                        {
-                          source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
-                          action: OAuthSocialAction.Create
-                        }
-                      )
-                      onFreeDatabaseClick()
-                    }}
-                    data-testid="get-started-link"
-                  >
-                    <EuiButton
-                      fill
-                      size="s"
-                      color="secondary"
-                      className={styles.btnLink}
+              <CloudAd>
+                <OAuthSsoHandlerDialog>
+                  {(ssoCloudHandlerClick) => (
+                    <EuiLink
+                      className={styles.link}
+                      external={false}
+                      target="_blank"
+                      href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
+                      onClick={(e) => {
+                        ssoCloudHandlerClick(
+                          e,
+                          {
+                            source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
+                            action: OAuthSocialAction.Create
+                          }
+                        )
+                        onFreeDatabaseClick()
+                      }}
+                      data-testid="get-started-link"
                     >
-                      Get Started For Free
-                    </EuiButton>
-                  </EuiLink>
-                )}
-              </OAuthSsoHandlerDialog>
+                      <EuiButton
+                        fill
+                        size="s"
+                        color="secondary"
+                        className={styles.btnLink}
+                      >
+                        Get Started For Free
+                      </EuiButton>
+                    </EuiLink>
+                  )}
+                </OAuthSsoHandlerDialog>
+              </CloudAd>
             </>
           </FeatureFlagComponent>
         )}

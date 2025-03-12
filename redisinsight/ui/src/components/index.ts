@@ -36,7 +36,6 @@ import {
 import { FormatedDate } from './formated-date'
 import { UploadWarning } from './upload-warning'
 import FormDialog from './form-dialog'
-import CloudAd from './cloud-ad/CloudAd'
 
 export { FullScreen } from './full-screen'
 
@@ -83,6 +82,5 @@ export {
   RecommendationBadgesLegend,
   FormatedDate,
   UploadWarning,
-  FormDialog,
-  CloudAd,
+  FormDialog
 }

@@ -2,9 +2,10 @@ import React from 'react'
 import { EuiBadge, EuiButton, EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import { OAuthSsoHandlerDialog, CloudAd } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
+import { FeatureFlags } from 'uiSrc/constants'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
@@ -43,7 +44,7 @@ const ConnectivityOptions = (props: Props) => {
               Add databases
             </EuiButton>
           </EuiFlexItem>
-          <CloudAd>
+          <FeatureFlagComponent name={FeatureFlags.cloudAds}>
             <EuiFlexItem grow={false}>
               <OAuthSsoHandlerDialog>
                 {(ssoCloudHandlerClick, isSSOEnabled) => (
@@ -70,7 +71,7 @@ const ConnectivityOptions = (props: Props) => {
                 )}
               </OAuthSsoHandlerDialog>
             </EuiFlexItem>
-          </CloudAd>
+          </FeatureFlagComponent>
           <EuiFlexItem />
         </EuiFlexGrid>
       </section>

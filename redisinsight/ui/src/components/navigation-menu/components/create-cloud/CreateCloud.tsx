@@ -2,7 +2,7 @@ import React from 'react'
 import cx from 'classnames'
 import { EuiIcon, EuiLink, EuiToolTip } from '@elastic/eui'
 
-import { OAuthSsoHandlerDialog, CloudAd } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
@@ -10,6 +10,7 @@ import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { HELP_LINKS } from 'uiSrc/pages/home/constants'
+import { FeatureFlags } from 'uiSrc/constants'
 import styles from '../../styles.module.scss'
 
 const CreateCloud = () => {
@@ -25,7 +26,7 @@ const CreateCloud = () => {
   }
 
   return (
-    <CloudAd>
+    <FeatureFlagComponent name={FeatureFlags.cloudAds}>
       <EuiToolTip
         content="Create FREE trial Redis Cloud database"
         position="right"
@@ -55,7 +56,7 @@ const CreateCloud = () => {
           </OAuthSsoHandlerDialog>
         </span>
       </EuiToolTip>
-    </CloudAd>
+    </FeatureFlagComponent>
   )
 }
 

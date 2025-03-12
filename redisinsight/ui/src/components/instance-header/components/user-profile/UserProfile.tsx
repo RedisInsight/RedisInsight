@@ -3,14 +3,15 @@ import { useSelector } from 'react-redux'
 import { EuiFlexItem } from '@elastic/eui'
 import { FeatureFlags } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
+import { OAuthUserProfile } from 'uiSrc/components'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { CloudUserProfile } from './CloudUserProfile'
-import CloudAd from 'uiSrc/components/cloud-ad/CloudAd'
 
 const UserProfile = () => {
   const {
     [FeatureFlags.envDependent]: envDependentFeature,
+    [FeatureFlags.cloudAds]: cloudAds,
+    [FeatureFlags.cloudSso]: cloudSso,
   } = useSelector(appFeatureFlagsFeaturesSelector)
 
   if (!envDependentFeature?.flag) {
@@ -21,15 +22,15 @@ const UserProfile = () => {
     )
   }
 
-  return (
-    <CloudAd>
-      <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-        <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
-          <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
-        </EuiFlexItem>
-      </FeatureFlagComponent>
-    </CloudAd>
-  )
+  if (cloudAds?.flag && cloudSso?.flag) {
+    return (
+      <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
+        <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
+      </EuiFlexItem>
+    )
+  }
+
+  return null
 }
 
 export default UserProfile

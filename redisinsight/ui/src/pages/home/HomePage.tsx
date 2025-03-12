@@ -33,7 +33,6 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
-import { HIDE_ADS } from 'uiSrc/constants/cloud'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 import DatabasesList from './components/database-list-component'
@@ -59,7 +58,10 @@ const HomePage = () => {
   const { instance: sentinelInstance } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
   const { data: createDbContent } = useSelector(contentSelector)
-  const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const {
+    [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature,
+    [FeatureFlags.cloudAds]: cloudAdsFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const {
     loading,
@@ -75,7 +77,7 @@ const HomePage = () => {
 
   const { contextInstanceId } = useSelector(appContextSelector)
 
-  const predefinedInstances = enhancedCloudUIFeature?.flag && createDbContent?.cloud_list_of_databases && !HIDE_ADS ? [
+  const predefinedInstances = enhancedCloudUIFeature?.flag && cloudAdsFeature?.flag && createDbContent?.cloud_list_of_databases ? [
     { id: CREATE_CLOUD_DB_ID, ...createDbContent.cloud_list_of_databases } as Instance
   ] : []
   const isInstanceExists = instances.length > 0 || predefinedInstances.length > 0

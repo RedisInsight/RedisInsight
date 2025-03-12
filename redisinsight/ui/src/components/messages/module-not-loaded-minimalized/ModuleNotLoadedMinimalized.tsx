@@ -6,7 +6,7 @@ import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
-import { ExternalLink, FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog, CloudAd } from 'uiSrc/components'
+import { ExternalLink, FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { getDbWithModuleLoaded, getSourceTutorialByCapability } from 'uiSrc/utils'
@@ -44,7 +44,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
               {moduleText?.text}
             </EuiText>
             <EuiSpacer size="s" />
-            <CloudAd>
+            <FeatureFlagComponent name={FeatureFlags.cloudAds}>
               <OAuthSsoHandlerDialog>
                 {(ssoCloudHandlerClick) => (
                   <ExternalLink
@@ -63,7 +63,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
                   </ExternalLink>
                 )}
               </OAuthSsoHandlerDialog>
-            </CloudAd>
+            </FeatureFlagComponent>
             <FeatureFlagComponent name={FeatureFlags.envDependent}>
               <>
                 <EuiSpacer size="xs" />

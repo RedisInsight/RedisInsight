@@ -9,7 +9,7 @@ import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
 import CheerIcon from 'uiSrc/assets/img/icons/cheer.svg?react'
 import { FeatureFlags, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog, CloudAd } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 
@@ -73,11 +73,11 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
   })
 
   const renderText = useCallback((moduleName?: string) => (!freeDbWithModule ? (
-    <CloudAd>
+    <FeatureFlagComponent name={FeatureFlags.cloudAds}>
       <EuiText className={cx(styles.text, styles.marginBottom)}>
         {`Create a free trial Redis Stack database with ${moduleName} which extends the core capabilities of your Redis`}
       </EuiText>
-    </CloudAd>
+    </FeatureFlagComponent>
   ) : (
     <EuiText className={cx(styles.text, styles.marginBottom, styles.textFooter)}>
       Use your free trial all-in-one Redis Cloud database to start exploring these capabilities.
@@ -154,7 +154,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
               >
                 Learn More
               </EuiLink>
-              <CloudAd>
+              <FeatureFlagComponent name={FeatureFlags.cloudAds}>
                 <OAuthSsoHandlerDialog>
                   {(ssoCloudHandlerClick) => (
                     <EuiLink
@@ -185,7 +185,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
                     </EuiLink>
                   )}
                 </OAuthSsoHandlerDialog>
-              </CloudAd>
+              </FeatureFlagComponent>
             </>
           </FeatureFlagComponent>
         )}

@@ -26,7 +26,7 @@ docker compose -f tests/e2e/rte.docker-compose.yml build
 docker compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V
 ./tests/e2e/wait-for-redis.sh localhost 12000 && \
 
-# run tests add TETS_DEBUG=1 to debug framework execution
+# run tests add TEST_DEBUG=1 to debug framework execution
 TEST_DEBUG=0
 [ "$TEST_DEBUG" = "1" ] && export DEBUG=testcafe:*
 export COMMON_URL=$(tail -n 1 apppath)/resources/app.asar/dist/renderer/index.html

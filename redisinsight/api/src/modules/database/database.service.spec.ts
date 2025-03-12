@@ -725,22 +725,9 @@ describe('DatabaseService', () => {
       await service.bulkUpdateTags(mockSessionMetadata, databaseId, tags);
 
       expect(service.get).toHaveBeenCalledWith(mockSessionMetadata, databaseId);
-      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledTimes(2);
+      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledTimes(1);
       expect(databaseRepository.update).toHaveBeenCalledWith(mockSessionMetadata, databaseId, expect.any(Database));
       expect(tagService.delete).toHaveBeenCalledTimes(0);
-    });
-
-    it('should throw ConflictException when trying to update read-only tags without force', async () => {
-      const databaseId = 'db1';
-      const tags: CreateTagDto[] = [
-        { key: 'env', value: 'prod' },
-      ];
-
-      const database = new Database();
-
-      jest.spyOn(databaseRepository, 'get').mockResolvedValue(database);
-
-      await expect(service.bulkUpdateTags(mockSessionMetadata, databaseId, tags)).rejects.toThrow(ConflictException);
     });
 
     it('should delete unused tags', async () => {

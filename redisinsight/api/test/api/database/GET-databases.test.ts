@@ -31,6 +31,10 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     memoryLimitMeasurementUnit: Joi.string().allow(null),
     free: Joi.boolean().allow(null),
   }).allow(null),
+  tags: Joi.array().items(Joi.object().keys({
+    key: Joi.string().required(),
+    value: Joi.string().required(),
+  })).allow(null),
 })).required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);

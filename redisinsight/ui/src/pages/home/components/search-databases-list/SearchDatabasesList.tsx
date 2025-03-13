@@ -31,6 +31,7 @@ const SearchDatabasesList = () => {
         || (item.connectionType && CONNECTION_TYPE_DISPLAY[item.connectionType]?.toLowerCase()?.indexOf(value) !== -1)
         || item.modules?.map((m) => m.name?.toLowerCase()).join(',').indexOf(value) !== -1
         || lastConnectionFormat(item.lastConnection)?.indexOf(value) !== -1
+        || item.tags?.some((tag) => `${tag.key.toLowerCase()}:${tag.value.toLowerCase()}`.indexOf(value) !== -1)
       })
     )
 

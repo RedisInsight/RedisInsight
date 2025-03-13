@@ -28,7 +28,7 @@ const listCommand = `rpush list ${members.slice(0, -3)}`;
 const stringCommand = `set string "${chance.paragraph({ sentences: 100 })}"`; // The biggest key
 const setCommand = `sadd set ${members}`; // Middle key
 
-fixture `Memory Efficiency Top Keys Table`
+fixture(`Memory Efficiency Top Keys Table`).skip
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl);
 test

@@ -25,7 +25,7 @@ import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-da
 export class CreateDatabaseDto extends PickType(Database, [
   'host', 'port', 'name', 'db', 'username', 'password', 'timeout', 'nameFromProvider', 'provider',
   'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster', 'ssh', 'compressor', 'cloudDetails',
-  'forceStandalone',
+  'forceStandalone', 'keyNameFormat',
 ] as const) {
   @ApiPropertyOptional({
     description: 'CA Certificate',

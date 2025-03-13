@@ -1,5 +1,6 @@
 import { Instance } from 'uiSrc/slices/interfaces'
 import { ADD_NEW_CA_CERT, NO_CA_CERT } from 'uiSrc/pages/home/constants'
+import { KeyValueFormat } from 'uiSrc/constants'
 
 export interface DbConnectionInfo extends Instance {
   id?: string
@@ -22,6 +23,7 @@ export interface DbConnectionInfo extends Instance {
   showDb?: boolean
   forceStandalone?: boolean
   showCompressor?: boolean
+  keyNameFormat: typeof KeyValueFormat
   sni?: boolean
   sentinelMasterUsername?: string
   sentinelMasterPassword?: string | true

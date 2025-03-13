@@ -7,5 +7,5 @@ export enum ManualFormTab {
 export const MANUAL_FORM_TABS = [
   { id: ManualFormTab.General, title: 'General' },
   { id: ManualFormTab.Security, title: 'Security' },
-  { id: ManualFormTab.Decompression, title: 'Decompression' },
+  { id: ManualFormTab.Decompression, title: 'Decompression & Formatters' },
 ]

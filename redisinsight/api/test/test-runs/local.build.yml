@@ -20,6 +20,7 @@ services:
     environment:
       RI_REDIS_CLIENTS_FORCE_STRATEGY: ${RI_REDIS_CLIENTS_FORCE_STRATEGY}
       CERTS_FOLDER: "/root/.redisinsight-v2.0"
+      RI_PRE_SETUP_DATABASES_PATH: "/root/.redisinsight-v2.0/databases.json"
       TEST_REDIS_HOST: "redis"
       NODE_ENV: "test"
       RI_REQUEST_TIMEOUT: "25000"

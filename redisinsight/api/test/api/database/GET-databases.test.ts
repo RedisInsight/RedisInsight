@@ -11,7 +11,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   port: Joi.number().integer().required(),
   db: Joi.number().integer().allow(null).required(),
   name: Joi.string().required(),
-  provider: Joi.string().required(),
+  provider: Joi.string().allow(null).required(),
   new: Joi.boolean().allow(null).required(),
   timeout: Joi.number().integer().allow(null),
   compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').allow(null),
@@ -31,6 +31,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     memoryLimitMeasurementUnit: Joi.string().allow(null),
     free: Joi.boolean().allow(null),
   }).allow(null),
+  isPreSetup: Joi.boolean().allow(null),
 })).required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);

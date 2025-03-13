@@ -1,0 +1,21 @@
+.tagsCell {
+  width: 100%;
+  display: flex;
+}
+
+.tagBadge {
+  color: #8BA2FF !important;
+  background-color: #292F47 !important;
+  padding: 4px !important;
+  margin-left: 4px;
+  font-size: 14px;
+}
+
+.tagBadgeOverflow {
+  overflow: hidden;
+}
+
+.tooltipContent {
+  max-width: 200px;
+  word-wrap: break-word;
+}

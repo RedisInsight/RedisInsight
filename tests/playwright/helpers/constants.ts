@@ -9,7 +9,7 @@ export enum KeyTypesTexts {
     Graph = 'Graph',
     TimeSeries = 'Time Series',
 }
-export const keyLength = 50;
+export const keyLength = 50
 
 export const COMMANDS_TO_CREATE_KEY = Object.freeze({
     [KeyTypesTexts.Hash]: (key: string, value: string | number = 'value', field: string | number = 'field') => `HSET ${key} '${field}' '${value}'`,
@@ -21,7 +21,7 @@ export const COMMANDS_TO_CREATE_KEY = Object.freeze({
     [KeyTypesTexts.Stream]: (key: string, value: string | number = 'value', field: string | number = 'field') => `XADD ${key} * '${field}' '${value}'`,
     [KeyTypesTexts.Graph]: (key: string) => `GRAPH.QUERY ${key} "CREATE ()"`,
     [KeyTypesTexts.TimeSeries]: (key: string) => `TS.CREATE ${key}`
-});
+})
 
 export enum rte {
     none = 'none',
@@ -62,7 +62,7 @@ export enum FunctionsSections {
 }
 
 export enum MonacoEditorInputs {
-    //add library fields
+    // add library fields
     Code = 'code-value',
     Configuration = 'configuration-value',
     // added library fields

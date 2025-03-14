@@ -3,7 +3,7 @@ import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoad
 import { PrimaryButton } from 'uiSrc/components/ui/buttons'
 import Text from 'uiSrc/components/ui/typography/text'
 import Panel from 'uiSrc/components/ui/layout/panel'
-import { ColumnGroup, FixedItem } from 'uiSrc/components/ui/layout/flex'
+import { Column, FixedItem, Row } from 'uiSrc/components/ui/layout/flex'
 
 import styles from './styles.module.scss'
 
@@ -20,13 +20,9 @@ const ConnectivityError = ({
 }: ConnectivityErrorProps) => (
   <div className={styles.connectivityError}>
     <Panel height="100%">
-      <div style={{ display: 'flex', height: '100%' }}>
+      <Row full>
         {isLoading && <SuspenseLoader />}
-        <ColumnGroup
-          gutterSize="xl"
-          alignItems="center"
-          justifyContent="center"
-        >
+        <Column gutterSize="xl" contentCentered>
           <FixedItem data-testid="connectivity-error-message">
             <Text size="XL">{error}</Text>
           </FixedItem>
@@ -37,8 +33,8 @@ const ConnectivityError = ({
               </PrimaryButton>
             </FixedItem>
           )}
-        </ColumnGroup>
-      </div>
+        </Column>
+      </Row>
     </Panel>
   </div>
 )

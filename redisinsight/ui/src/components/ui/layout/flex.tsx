@@ -125,6 +125,7 @@ export type FlexGroupProps = PropsWithChildren &
     gutterSize?: EuiFlexGroupGutterSize
     justifyContent?: FlexGroupJustifyContent
     wrap?: boolean
+    full?: boolean
   }
 
 const VALID_GROW_VALUES = [
@@ -151,6 +152,7 @@ export type FlexItemProps = PropsWithChildren &
   }
 const StyledFlexGroup = styled.div<FlexGroupProps>`
   ${() => flexGroupStyles.flexGroup}
+  ${(props) => (props.full ? 'height: 100%;' : '')}
   ${(props) => (props.wrap ? flexGroupStyles.wrap : '')}
   ${(props) =>
     props.gutterSize ? flexGroupStyles.gutterSizes[props.gutterSize] : ''}
@@ -205,6 +207,25 @@ export const flexItemStyles = {
   },
 }
 
+/**
+ * Flex Group Component
+ *
+ * A flexbox container that can be used to lay out other flex items.
+ * All properties are passed directly to the underlying `div`.
+ *
+ * @remarks
+ * This is more or less direct reimplementation of `EuiFlexGroup`
+ *
+ * @example
+ * <FlexGroup>
+ *   <FlexItem grow={2}>
+ *     Left
+ *   </FlexItem>
+ *   <FlexItem grow={3}>
+ *     Right
+ *   </FlexItem>
+ * </FlexGroup>
+ */
 export const FlexGroup = ({ children, className, ...rest }: FlexGroupProps) => {
   const classes = classNames('RI-flex-group', className)
   return (
@@ -213,9 +234,62 @@ export const FlexGroup = ({ children, className, ...rest }: FlexGroupProps) => {
     </StyledFlexGroup>
   )
 }
-export const ColumnGroup = ({ className, ...rest }: FlexGroupProps) => {
+
+/**
+ * Column Component
+ *
+ * A Column component is a special type of FlexGroup that is meant to be used when you
+ * want to layout out a group of items in a vertical column. It is functionally equivalent to
+ * using a FlexGroup with a direction of 'column', but includes some additional conveniences.
+ *
+ * This is the preferred API of a component, that is not meant to be distributed, but widely used in our project
+ *
+ * @example
+ * <Column>
+ *   <FlexItem grow={2}>
+ *     Top
+ *   </FlexItem>
+ *   <FlexItem grow={3}>
+ *     Bottom
+ *   </FlexItem>
+ * </Column>
+ */
+export const Column = ({
+  className,
+  reverse,
+  contentCentered,
+  alignItems,
+  justifyContent,
+  ...rest
+}: FlexGroupProps & {
+  reverse?: boolean
+  contentCentered?: boolean
+}) => {
   const classes = classNames('RI-column-group', className)
-  return <FlexGroup {...rest} className={classes} direction="column" />
+  return (
+    <FlexGroup
+      {...rest}
+      alignItems={contentCentered ? 'center' : alignItems}
+      justifyContent={contentCentered ? 'center' : justifyContent}
+      className={classes}
+      direction={reverse ? 'columnReverse' : 'column'}
+    />
+  )
+}
+
+export const Row = ({
+  className,
+  reverse,
+  ...rest
+}: FlexGroupProps & { reverse?: boolean }) => {
+  const classes = classNames('RI-row-group', className)
+  return (
+    <FlexGroup
+      {...rest}
+      className={classes}
+      direction={reverse ? 'rowReverse' : 'row'}
+    />
+  )
 }
 
 const StyledFlexItem = styled.div<FlexItemProps>`
@@ -236,6 +310,20 @@ const StyledFlexItem = styled.div<FlexItemProps>`
   flex-direction: column;
 `
 
+/**
+ * Flex item component
+ *
+ * This represents more or less direct implementation of `EuiFlexItem`
+ *
+ * @remarks
+ * This component is useful when you want to create a flex item that can
+ * grow or shrink based on the available space.
+ *
+ * @example
+ * <FlexItem grow={2}>
+ *   <div>Content</div>
+ * </FlexItem>
+ */
 export const FlexItem = ({ children, className, ...rest }: FlexItemProps) => {
   const classes = classNames('RI-flex-item', className)
   return (
@@ -245,6 +333,22 @@ export const FlexItem = ({ children, className, ...rest }: FlexItemProps) => {
   )
 }
 
-export const FixedItem = (props: FlexItemProps) => {
-  return <FlexItem {...props} grow={false} />
-}
+/**
+ * A wrapper around `FlexItem` that sets `grow` to `false`.
+ * Use this when you want a `FlexItem` that doesn't grow.
+ *
+ * @example
+ * <FixedItem>My fixed item</FixedItem>
+ */
+export const FixedItem = (props: FlexItemProps) => (
+  <FlexItem {...props} grow={false} />
+)
+
+/**
+ * A wrapper around `FlexItem` that sets `grow` to `true`.
+ * Use this when you want a `FlexItem` that grows to fill the available space.
+ *
+ * @example
+ * <GrowItem>My growing item</GrowItem>
+ */
+export const GrowItem = (props: FlexItemProps) => <FlexItem {...props} grow />

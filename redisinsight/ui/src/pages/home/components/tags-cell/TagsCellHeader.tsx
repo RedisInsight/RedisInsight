@@ -16,6 +16,7 @@ export const TagsCellHeader = memo(() => {
   const {
     isPopoverOpen,
     tagSearch,
+    tagsData,
     selectedTags,
     setTagSearch,
     onPopoverToggle,
@@ -23,6 +24,10 @@ export const TagsCellHeader = memo(() => {
     onKeyChange,
     groupedTags,
   } = useFilterTags()
+
+  if (!tagsData.length) {
+    return <div>Tags</div>
+  }
 
   return (
     <div>

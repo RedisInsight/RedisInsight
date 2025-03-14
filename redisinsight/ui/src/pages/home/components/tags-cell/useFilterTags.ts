@@ -59,6 +59,7 @@ export const useFilterTags = () => {
   return {
     isPopoverOpen,
     tagSearch,
+    tagsData,
     selectedTags,
     setTagSearch,
     onPopoverToggle,

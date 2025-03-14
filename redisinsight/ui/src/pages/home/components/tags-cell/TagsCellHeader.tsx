@@ -64,7 +64,7 @@ export const TagsCellHeader = memo(() => {
                 id={key}
                 label={key}
                 checked={groupedTags[key].every((value) =>
-                  selectedTags.includes(`${key}:${value}`),
+                  selectedTags.has(`${key}:${value}`),
                 )}
                 onChange={(event) => {
                   onKeyChange(key, event.target.checked)
@@ -75,7 +75,7 @@ export const TagsCellHeader = memo(() => {
                   <EuiCheckbox
                     id={`${key}:${value}`}
                     label={value}
-                    checked={selectedTags.includes(`${key}:${value}`)}
+                    checked={selectedTags.has(`${key}:${value}`)}
                     onChange={(event) => {
                       onTagChange(`${key}:${value}`, event.target.checked)
                     }}

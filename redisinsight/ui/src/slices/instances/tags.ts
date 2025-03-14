@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { RootState } from '../store'
@@ -6,7 +6,7 @@ import { InitialTagsState } from '../interfaces/tag'
 
 export const initialState: InitialTagsState = {
   data: [],
-  selectedTags: [],
+  selectedTags: new Set<string>(),
   loading: false,
   error: null,
 }
@@ -20,7 +20,7 @@ const tagsSlice = createSlice({
   name: 'tags',
   initialState,
   reducers: {
-    setSelectedTags: (state, action) => {
+    setSelectedTags: (state, action: PayloadAction<InitialTagsState['selectedTags']>) => {
       state.selectedTags = action.payload
     },
   },

@@ -8,7 +8,7 @@ export interface Tag {
 
 export interface InitialTagsState {
   data: Tag[]
-  selectedTags: string[]
+  selectedTags: Set<string>
   loading: boolean
   error: string | null
 }

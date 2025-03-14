@@ -14,13 +14,10 @@ export const useFilterTags = () => {
 
   const onTagChange = useCallback(
     (tag: string, checked: boolean) => {
-      dispatch(
-        setSelectedTags(
-          selectedTags.includes(tag)
-            ? selectedTags.filter((t) => t !== tag)
-            : [...selectedTags, tag],
-        ),
-      )
+      const newSelectedTags = new Set(selectedTags)
+      const setMethod = checked ? 'add' : 'delete'
+      newSelectedTags[setMethod](tag)
+      dispatch(setSelectedTags(newSelectedTags))
     },
     [dispatch, selectedTags],
   )
@@ -30,17 +27,10 @@ export const useFilterTags = () => {
       const tagsWithKey = tagsData
         .filter((tag) => tag.key === key)
         .map((tag) => `${tag.key}:${tag.value}`)
-      const allSelected = tagsWithKey.every((tag) => selectedTags.includes(tag))
-      dispatch(
-        setSelectedTags(
-          allSelected
-            ? selectedTags.filter((tag) => !tagsWithKey.includes(tag))
-            : [
-                ...selectedTags,
-                ...tagsWithKey.filter((tag) => !selectedTags.includes(tag)),
-              ],
-        ),
-      )
+      const newSelectedTags = new Set(selectedTags)
+      const setMethod = checked ? 'add' : 'delete'
+      tagsWithKey.forEach((tag) => newSelectedTags[setMethod](tag))
+      dispatch(setSelectedTags(newSelectedTags))
     },
     [dispatch, tagsData, selectedTags],
   )

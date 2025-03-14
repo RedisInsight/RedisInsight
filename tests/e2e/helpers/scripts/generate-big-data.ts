@@ -21,7 +21,7 @@ function prepareCommandArgs(args: CommandType) {
 function prepareCommandOptions(options: {
   replyEncoding?: string;
 }): any {
-  let replyEncoding = null;
+  let replyEncoding: string | null = null;
 
   if (options?.replyEncoding === 'utf8') {
     replyEncoding = 'utf8';

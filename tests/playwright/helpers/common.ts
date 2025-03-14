@@ -1,10 +1,10 @@
-import { ClientFunction, RequestMock, t } from 'testcafe'
+// import { ClientFunction, RequestMock, t } from 'testcafe'
 
-import * as path from 'path'
-import * as fs from 'fs'
-import * as fsp from 'fs/promises'
+// import * as path from 'path'
+// import * as fs from 'fs'
+// import * as fsp from 'fs/promises'
 import { faker } from '@faker-js/faker'
-import { apiUrl } from './conf'
+// import { apiUrl } from './conf'
 
 // const archiver = require('archiver')
 //

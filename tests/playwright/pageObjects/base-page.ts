@@ -1,10 +1,14 @@
-import { Page } from '@playwright/test'
+import {Locator, Page} from '@playwright/test'
 
 export default class BasePage {
     protected page: Page
 
     constructor(page: Page) {
         this.page = page
+    }
+
+    async reload(): Promise<void> {
+        await this.page.reload()
     }
 
     async navigateTo(url: string): Promise<void> {
@@ -15,8 +19,8 @@ export default class BasePage {
         await this.page.goto('/')
     }
 
-    async click(selector: string): Promise<void> {
-        await this.page.click(selector)
+    async click(locator: Locator): Promise<void> {
+        await locator.click()
     }
 
     async fill(selector: string, value: string): Promise<void> {
@@ -27,11 +31,11 @@ export default class BasePage {
         return await this.page.textContent(selector) || ''
     }
 
-    async isVisible(selector: string): Promise<boolean> {
-        return this.page.isVisible(selector)
+    async isVisible(locator: Locator): Promise<boolean> {
+        return locator.isVisible()
     }
 
-    protected getByTestId(testId: string, options?: { timeout?: number }): Locator {
-        return this.page.getByTestId(testId, options)
+    async getByTestId(testId: string): Promise<Locator> {
+        return this.page.getByTestId(testId)
     }
 }

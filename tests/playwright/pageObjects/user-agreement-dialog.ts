@@ -31,6 +31,6 @@ export class UserAgreementDialog extends BasePage {
     }
 
     async getRecommendedSwitcherValue(): Promise<string | null> {
-        return await this.recommendedSwitcher.getAttribute('aria-checked')
+        return this.recommendedSwitcher.getAttribute('aria-checked')
     }
 }

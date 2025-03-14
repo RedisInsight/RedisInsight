@@ -44,6 +44,7 @@ export default defineConfig({
       uiSrc: fileURLToPath(new URL('./src', import.meta.url)),
       apiSrc: fileURLToPath(new URL('../api/src', import.meta.url)),
     },
+    preserveSymlinks: true,
   },
   server: {
     port: 8080,

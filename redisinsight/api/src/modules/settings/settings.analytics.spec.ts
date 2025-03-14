@@ -45,6 +45,43 @@ describe('SettingsAnalytics', () => {
         },
       );
     });
+    it('should emit ANALYTICS_PERMISSION with state enabled and reason undefined', async () => {
+      service.sendAnalyticsAgreementChange(
+        mockSessionMetadata,
+        new Map([['analytics', true]]),
+        undefined,
+        undefined,
+      );
+
+      expect(eventEmitter.emit).toHaveBeenCalledWith(
+        AppAnalyticsEvents.Track,
+        mockSessionMetadata,
+        {
+          event: TelemetryEvents.AnalyticsPermission,
+          eventData: { reason: undefined, state: 'enabled' },
+          nonTracking: true,
+        },
+      );
+    });
+    it('should emit ANALYTICS_PERMISSION with state enabled and reason "test-reason"', async () => {
+      service.sendAnalyticsAgreementChange(
+        mockSessionMetadata,
+        new Map([['analytics', true]]),
+        undefined,
+        'test-reason',
+      );
+
+      expect(eventEmitter.emit).toHaveBeenCalledWith(
+        AppAnalyticsEvents.Track,
+        mockSessionMetadata,
+        {
+          event: TelemetryEvents.AnalyticsPermission,
+          eventData: { reason: 'test-reason', state: 'enabled' },
+          nonTracking: true,
+
+        },
+      );
+    });
     it('should emit ANALYTICS_PERMISSION with state disabled on first app launch', async () => {
       service.sendAnalyticsAgreementChange(
         mockSessionMetadata,
@@ -67,6 +104,7 @@ describe('SettingsAnalytics', () => {
         mockSessionMetadata,
         new Map([['analytics', false]]),
         new Map([['analytics', false]]),
+        'test-reason',
       );
 
       expect(eventEmitter.emit).not.toHaveBeenCalledWith(
@@ -83,6 +121,7 @@ describe('SettingsAnalytics', () => {
         mockSessionMetadata,
         new Map([['analytics', false]]),
         new Map([['analytics', true]]),
+        'test-reason',
       );
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
@@ -90,7 +129,7 @@ describe('SettingsAnalytics', () => {
         mockSessionMetadata,
         {
           event: TelemetryEvents.AnalyticsPermission,
-          eventData: { state: 'disabled' },
+          eventData: { state: 'disabled', reason: 'test-reason' },
           nonTracking: true,
         },
       );

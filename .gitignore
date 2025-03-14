@@ -85,3 +85,6 @@ redisinsight/ui/src/packages/common/index*
 .temp_cache
 
 static/
+
+.env*
+.npmrc

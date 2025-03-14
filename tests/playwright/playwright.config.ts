@@ -1,6 +1,13 @@
-import {defineConfig, devices} from '@playwright/test'
+import {defineConfig, devices } from '@playwright/test'
 import {Status} from 'allure-js-commons'
 import * as os from 'node:os'
+
+
+declare module '@playwright/test' {
+    interface PlaywrightTestOptions {
+        apiUrl?: string; // add your custom variables here
+    }
+}
 
 /**
  * Read environment variables from file.
@@ -15,6 +22,15 @@ import * as os from 'node:os'
  */
 export default defineConfig({
     testDir: './tests',
+    /* Maximum time one test can run for. */
+    timeout: 300 * 1000,
+    expect: {
+        /**
+         * Maximum time expect() should wait for the condition to be met.
+         * For example in `await expect(locator).toHaveText();`
+         */
+        timeout: 5000
+    },
     /* Run tests in files in parallel */
     fullyParallel: true,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -80,7 +96,8 @@ export default defineConfig({
             name: 'localChromium',
             use: {
                 ...devices['Desktop Chrome'],
-                baseURL: 'https://chrome.desktop/',
+                baseURL: process.env.COMMON_URL || 'https://localhost:5540',
+                apiUrl: process.env.API_URL || 'https://localhost:5540/api',
                 headless: false,
                 deviceScaleFactor: undefined,
                 viewport: null,
@@ -88,7 +105,8 @@ export default defineConfig({
                     args: ['--start-maximized',
                         '--disable-component-extensions-with-background-pages',
                         '--disable-dev-shm-usage',
-                        '--disable-blink-features=AutomationControlled'
+                        '--disable-blink-features=AutomationControlled',
+                        '--ignore-certificate-errors'
                     ]}
             },
         },

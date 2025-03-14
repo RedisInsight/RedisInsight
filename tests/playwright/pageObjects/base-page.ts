@@ -11,6 +11,10 @@ export default class BasePage {
         await this.page.goto(url)
     }
 
+    async navigateToHomeUrl(): Promise<void> {
+        await this.page.goto('/')
+    }
+
     async click(selector: string): Promise<void> {
         await this.page.click(selector)
     }
@@ -25,5 +29,9 @@ export default class BasePage {
 
     async isVisible(selector: string): Promise<boolean> {
         return this.page.isVisible(selector)
+    }
+
+    protected getByTestId(testId: string, options?: { timeout?: number }): Locator {
+        return this.page.getByTestId(testId, options)
     }
 }

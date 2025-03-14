@@ -1,5 +1,5 @@
 #!/bin/bash
-docker compose -p test-docker -f rte.docker-compose.yml -f local.web.docker-compose.yml down
-
+docker compose -p test-docker -f rte.docker-compose.yml -f local.web.docker-compose.yml down &&
+sleep 1
 rm -rf plugins remote report results rte test-data rihomedir
 

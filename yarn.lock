@@ -2372,6 +2372,11 @@
     type-fest "^3.13.1"
     virtua "^0.36.3"
 
+"@redislabsdev/redis-ui-icons@^4.13.1":
+  version "4.13.1"
+  resolved "https://npm.pkg.github.com/download/@redislabsdev/redis-ui-icons/4.13.1/1fdb764d2588591a98265e6e49b1f64cd795e5ee#1fdb764d2588591a98265e6e49b1f64cd795e5ee"
+  integrity sha512-EKje5APs2G2k8Lo9Cpi6EB/FCjMp6VY/IczCJdRfzA/0WNlfr+OSN/zzKW2doYWunccDaTOaeT7uoktLc/qvzQ==
+
 "@redislabsdev/redis-ui-styles@^7.0.0":
   version "7.0.0"
   resolved "https://npm.pkg.github.com/download/@redislabsdev/redis-ui-styles/7.0.0/b38f6c31a4f5f0e69b51ea112b0198c569c71391#b38f6c31a4f5f0e69b51ea112b0198c569c71391"
@@ -3575,7 +3580,7 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.3.tgz#6209321eb2c1712a7e7466422b8cb1fc0d9dd5d8"
   integrity sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==
 
-"@types/styled-components@^5.1.26":
+"@types/styled-components@^5.1.34":
   version "5.1.34"
   resolved "https://registry.yarnpkg.com/@types/styled-components/-/styled-components-5.1.34.tgz#4107df8ef8a7eaba4fa6b05f78f93fba4daf0300"
   integrity sha512-mmiVvwpYklFIv9E8qfxuPyIt/OuyIrn6gMOAMOFUO3WJfSrSE+sGUoa4PiZj77Ut7bKZpaa6o1fBKS/4TOEvnA==

@@ -1,44 +1,45 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
+import { PrimaryButton } from 'uiSrc/components/ui/buttons'
+import Text from 'uiSrc/components/ui/typography/text'
+import Panel from 'uiSrc/components/ui/layout/panel'
+import { ColumnGroup, FixedItem } from 'uiSrc/components/ui/layout/flex'
 
 import styles from './styles.module.scss'
 
 export type ConnectivityErrorProps = {
-  onRetry?: () => void;
-  isLoading: boolean;
-  error?: string | null;
+  onRetry?: () => void
+  isLoading: boolean
+  error?: string | null
 }
 
-const ConnectivityError = ({ isLoading, error, onRetry }: ConnectivityErrorProps) => (
+const ConnectivityError = ({
+  isLoading,
+  error,
+  onRetry,
+}: ConnectivityErrorProps) => (
   <div className={styles.connectivityError}>
-    <EuiPanel>
+    <Panel height="100%">
       <div style={{ display: 'flex', height: '100%' }}>
-        { isLoading && <SuspenseLoader />}
-        <EuiFlexGroup
-          gutterSize="l"
+        {isLoading && <SuspenseLoader />}
+        <ColumnGroup
+          gutterSize="xl"
           alignItems="center"
-          direction="column"
           justifyContent="center"
         >
-          <EuiFlexItem grow={false} data-testid="connectivity-error-message">
-            {error}
-          </EuiFlexItem>
-          { onRetry && (
-            <EuiFlexItem grow={false}>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
-                onClick={onRetry}
-              >
+          <FixedItem data-testid="connectivity-error-message">
+            <Text size="XL">{error}</Text>
+          </FixedItem>
+          {onRetry && (
+            <FixedItem>
+              <PrimaryButton size="medium" color="secondary" onClick={onRetry}>
                 Retry
-              </EuiButton>
-            </EuiFlexItem>
+              </PrimaryButton>
+            </FixedItem>
           )}
-        </EuiFlexGroup>
+        </ColumnGroup>
       </div>
-    </EuiPanel>
+    </Panel>
   </div>
 )
 

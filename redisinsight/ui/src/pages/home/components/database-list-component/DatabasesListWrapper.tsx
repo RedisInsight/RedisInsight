@@ -57,9 +57,11 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
 import { Tag } from 'uiSrc/slices/interfaces/tag'
+import { fetchTags } from 'uiSrc/slices/instances/tags'
 import DbStatus from '../db-status'
 
 import { TagsCell } from '../tags-cell/TagsCell'
+import { TagsCellHeader } from '../tags-cell/TagsCellHeader'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -99,6 +101,10 @@ const DatabasesListWrapper = (props: Props) => {
   )
 
   const deletingIdRef = useRef('')
+
+  useEffect(() => {
+    dispatch(fetchTags())
+  }, [])
 
   const closePopover = () => {
     if (deletingIdRef.current) {
@@ -429,8 +435,8 @@ const DatabasesListWrapper = (props: Props) => {
     },
     {
       field: 'tags',
-      className: 'column_tags',
-      name: 'Tags',
+      dataType: 'auto',
+      name: <TagsCellHeader />,
       width: '150%',
       sortable: ({ tags, id }) => {
         if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false

@@ -19,3 +19,11 @@
   max-width: 200px;
   word-wrap: break-word;
 }
+
+.filterByTagIcon {
+  pointer-events: all;
+  cursor: pointer;
+  & {
+    margin: 8px;
+  }
+}

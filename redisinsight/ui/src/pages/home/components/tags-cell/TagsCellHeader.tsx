@@ -1,0 +1,91 @@
+import {
+  EuiFieldText,
+  EuiFormRow,
+  EuiIcon,
+  EuiPopover,
+  EuiCheckbox,
+  EuiSpacer,
+} from '@elastic/eui'
+import React, { memo } from 'react'
+
+import FilterSvg from 'uiSrc/assets/img/icons/filter.svg'
+import { useFilterTags } from './useFilterTags'
+import styles from './styles.module.scss'
+
+export const TagsCellHeader = memo(() => {
+  const {
+    isPopoverOpen,
+    tagSearch,
+    selectedTags,
+    setTagSearch,
+    onPopoverToggle,
+    onTagChange,
+    onKeyChange,
+    groupedTags,
+  } = useFilterTags()
+
+  return (
+    <div>
+      Tags{' '}
+      <EuiPopover
+        button={
+          <EuiIcon
+            type={FilterSvg}
+            size="m"
+            className={styles.filterByTagIcon}
+            onClick={(e) => {
+              e.stopPropagation()
+              onPopoverToggle()
+            }}
+          />
+        }
+        isOpen={isPopoverOpen}
+        closePopover={onPopoverToggle}
+        anchorPosition="downCenter"
+      >
+        {/* stop propagation to prevent sorting by column header */}
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <div style={{ width: 300 }} onClick={(e) => e.stopPropagation()}>
+          <EuiFormRow>
+            <EuiFieldText
+              icon="search"
+              placeholder="Enter tag key or value"
+              style={{ borderRadius: 4 }}
+              value={tagSearch}
+              onChange={(e) => {
+                setTagSearch(e.target.value)
+              }}
+            />
+          </EuiFormRow>
+          <EuiSpacer size="m" />
+          {Object.keys(groupedTags).map((key) => (
+            <div key={key}>
+              <EuiCheckbox
+                id={key}
+                label={key}
+                checked={groupedTags[key].every((value) =>
+                  selectedTags.includes(`${key}:${value}`),
+                )}
+                onChange={(event) => {
+                  onKeyChange(key, event.target.checked)
+                }}
+              />
+              {groupedTags[key].map((value) => (
+                <div key={value} style={{ paddingLeft: '20px' }}>
+                  <EuiCheckbox
+                    id={`${key}:${value}`}
+                    label={value}
+                    checked={selectedTags.includes(`${key}:${value}`)}
+                    onChange={(event) => {
+                      onTagChange(`${key}:${value}`, event.target.checked)
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </EuiPopover>
+    </div>
+  )
+})

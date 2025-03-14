@@ -5,3 +5,10 @@ export interface Tag {
   createdAt: string
   updatedAt: string
 }
+
+export interface InitialTagsState {
+  data: Tag[]
+  selectedTags: string[]
+  loading: boolean
+  error: string | null
+}

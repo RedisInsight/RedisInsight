@@ -22,6 +22,7 @@ import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import styles from './styles.module.scss'
 
 export interface Props {
+  "data-testid"?: string;
   error: Nullable<string>;
   data: Nullable<CloudUser>;
   handleClickSelectAccount?: (id: number) => void;
@@ -37,7 +38,8 @@ const UserProfileBadge = (props: Props) => {
     data,
     handleClickSelectAccount,
     handleClickCloudAccount,
-    selectingAccountId
+    selectingAccountId,
+    'data-testid': dataTestId,
   } = props
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
@@ -96,7 +98,7 @@ const UserProfileBadge = (props: Props) => {
   const { accounts, currentAccountId, name } = data
 
   return (
-    <div className={styles.wrapper} data-testid="user-profile-badge">
+    <div className={styles.wrapper} data-testid={dataTestId || 'user-profile-badge'}>
       <EuiPopover
         ownFocus
         initialFocus={false}

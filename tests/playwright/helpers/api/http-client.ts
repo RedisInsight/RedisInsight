@@ -19,6 +19,9 @@ export class HttpClient {
     private instance: AxiosInstance
 
     constructor(baseURL: string) {
+        if (!baseURL) {
+            throw new Error('No URL must be passed in')
+        }
         this.instance = axios.create({
             baseURL,
             httpsAgent: new https.Agent({

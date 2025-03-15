@@ -2,7 +2,7 @@ import { test as base } from '@playwright/test'
 import BasePage from '../pageObjects/base-page'
 import {UserAgreementDialog} from '../pageObjects/user-agreement-dialog'
 import {DatabaseAPIRequests} from'../helpers/api/api-databases'
-import {apiUrl, ossStandaloneConfig} from '../helpers/conf'
+import { ossStandaloneConfig} from '../helpers/conf'
 import {MyRedisDatabasePage} from '../pageObjects/my-redis-databases-page'
 
 type OpenRedisInsight = {
@@ -10,13 +10,14 @@ type OpenRedisInsight = {
     dialogUserAgreement: UserAgreementDialog
     // dbAPI: DatabaseAPIRequests
     apiUrl: string
-    dbConfig: object
+    dbConfig: typeof ossStandaloneConfig
 
 }
 
 export const test = base.extend<OpenRedisInsight>({
-    dbConfig: async ({page}, use) => {
-        use(ossStandaloneConfig)
+    dbConfig: async ({}, use) => {
+        console.log('Fixture setup: Assigning database config')
+        await use(ossStandaloneConfig)  // Use the imported object directly
     },
     apiUrl: ['default', { option: true }],
     // dbAPI: async () => {
@@ -33,11 +34,11 @@ export const test = base.extend<OpenRedisInsight>({
     //     await context.close()
     // },
     // basePage: async ({ context  }, use) => {
-    basePage: async ({ page  }, use) => {
+    basePage: async ({ page , dbConfig, apiUrl }, use, testInfo) => {
         // Set up the fixture.
         // Add new database
         const dbApi = new DatabaseAPIRequests(apiUrl)
-        await dbApi.addNewStandaloneDatabaseApi(dbCon)
+        await dbApi.addNewStandaloneDatabaseApi(dbConfig)
 
         // const page = await context.newPage()
         // Navigate to page
@@ -45,7 +46,7 @@ export const test = base.extend<OpenRedisInsight>({
         await basePage.navigateToHomeUrl()
 
         const myDbPage = new MyRedisDatabasePage(page)
-        await myDbPage.clickOnDBByName(ossStandaloneConfig.databaseName)
+        await myDbPage.clickOnDBByName(dbConfig.databaseName)
 
         await use(basePage)
 

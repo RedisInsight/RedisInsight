@@ -189,7 +189,7 @@ describe('InstanceHeader', () => {
       expect(screen.queryByTestId('user-profile-popover-content')).toBeInTheDocument()
     })
 
-    expect(screen.queryByTestId('user-profile-badge')).toBeInTheDocument()
+    expect(screen.queryByTestId('cloud-user-profile-badge')).toBeInTheDocument()
     expect(screen.queryByTestId('profile-import-cloud-databases')).not.toBeInTheDocument()
     expect(screen.queryByTestId('profile-logout')).not.toBeInTheDocument()
     expect(screen.queryByTestId('cloud-admin-console-link')).toBeInTheDocument()
@@ -218,7 +218,7 @@ describe('InstanceHeader', () => {
       expect(screen.queryByTestId('user-profile-popover-content')).toBeInTheDocument()
     })
 
-    expect(screen.queryByTestId('user-profile-badge')).toBeInTheDocument()
+    expect(screen.queryByTestId('oauth-user-profile-badge')).toBeInTheDocument()
     expect(screen.queryByTestId('profile-import-cloud-databases')).toBeInTheDocument()
     expect(screen.queryByTestId('profile-logout')).toBeInTheDocument()
     expect(screen.queryByTestId('cloud-admin-console-link')).not.toBeInTheDocument()
@@ -236,6 +236,7 @@ describe('InstanceHeader', () => {
       store: mockStore(initialStoreState)
     })
 
-    expect(screen.queryByTestId('user-profile-badge')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('oauth-user-profile-badge')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('cloud-user-profile-badge')).not.toBeInTheDocument()
   })
 })

@@ -3,26 +3,8 @@ import { Toast } from './components/common/toast'
 import BasePage from './base-page'
 import { RedisOverviewPage } from '../helpers/constants'
 import { DatabaseAPIRequests } from '../helpers/api/api-databases'
+import { DatabasesForImport } from '../types'
 
-export type DatabasesForImport = {
-    host?: string,
-    port?: number | string,
-    name?: string,
-    result?: string,
-    username?: string,
-    auth?: string,
-    cluster?: boolean | string,
-    indName?: string,
-    db?: number,
-    ssh_port?: number,
-    timeout_connect?: number,
-    timeout_execute?: number,
-    other_field?: string,
-    ssl?: boolean,
-    ssl_ca_cert_path?: string,
-    ssl_local_cert_path?: string,
-    ssl_private_key_path?: string
-}[]
 
 export class BaseOverviewPage extends BasePage {
     // Component instance used in methods

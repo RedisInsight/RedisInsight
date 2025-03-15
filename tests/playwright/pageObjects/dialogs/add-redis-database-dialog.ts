@@ -1,55 +1,8 @@
 import { expect, Locator, Page } from '@playwright/test'
 import { TlsCertificates } from '../../helpers/constants'
 import { RedisCloudSigninPanel } from '../components/redis-cloud-sign-in-panel'
+import {SentinelParameters, AddNewDatabaseParameters, SSHParameters } from '../../types'
 
-export type AddNewDatabaseParameters = {
-    host: string
-    port: string
-    databaseName?: string
-    databaseUsername?: string
-    databasePassword?: string
-    // For OSS Cluster parameters, you might use these fields:
-    ossClusterHost?: string
-    ossClusterPort?: string
-    ossClusterDatabaseName?: string
-    caCert?: {
-        name?: string
-        certificate?: string
-    }
-    clientCert?: {
-        name?: string
-        certificate?: string
-        key?: string
-    }
-}
-
-export type SentinelParameters = {
-    sentinelHost: string
-    sentinelPort: string
-    masters?: {
-        alias?: string
-        db?: string
-        name?: string
-        password?: string
-    }[]
-    sentinelPassword?: string
-    name?: string[]
-}
-
-export type OSSClusterParameters = {
-    ossClusterHost: string
-    ossClusterPort: string
-    ossClusterDatabaseName: string
-}
-
-export type SSHParameters = {
-    sshHost: string
-    sshPort: string
-    sshUsername: string
-    sshPassword?: string
-    sshPrivateKey?: string
-    sshPassphrase?: string
-}
 
 export class AddRedisDatabaseDialog {
     private readonly page: Page

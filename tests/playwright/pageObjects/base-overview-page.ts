@@ -2,7 +2,7 @@ import { expect, Locator, Page } from '@playwright/test'
 import { Toast } from './components/common/toast'
 import BasePage from './base-page'
 import { RedisOverviewPage } from '../helpers/constants'
-import { DatabaseAPIRequests } from '../helpers/api/api-database'
+import { DatabaseAPIRequests } from '../helpers/api/api-databases'
 
 export type DatabasesForImport = {
     host?: string,

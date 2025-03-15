@@ -2,7 +2,8 @@ import { test as base } from '@playwright/test'
 import BasePage from '../pageObjects/base-page'
 import {UserAgreementDialog} from '../pageObjects/user-agreement-dialog'
 import {DatabaseAPIRequests} from'../helpers/api/api-databases'
-import {apiUrl, ossStandaloneConfig} from "../helpers/conf";
+import {apiUrl, ossStandaloneConfig} from '../helpers/conf'
+import {MyRedisDatabasePage} from '../pageObjects/my-redis-databases-page'
 
 type OpenRedisInsight = {
     basePage: BasePage
@@ -36,9 +37,12 @@ export const test = base.extend<OpenRedisInsight>({
         await dbApi.addNewStandaloneDatabaseApi(ossStandaloneConfig)
 
         // const page = await context.newPage()
-        //Navigate to page
+        // Navigate to page
         const basePage = new BasePage(page)
         await basePage.navigateToHomeUrl()
+
+        const myDbPage = new MyRedisDatabasePage(page)
+        await myDbPage.clickOnDBByName(ossStandaloneConfig.databaseName)
 
         await use(basePage)
 

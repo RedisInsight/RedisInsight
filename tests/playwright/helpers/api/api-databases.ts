@@ -147,7 +147,7 @@ export class DatabaseAPIRequests {
         const databaseId = await this.getDatabaseIdByName(databaseParameters.databaseName)
         if (!databaseId) throw new Error('Error: Missing databaseId')
 
-        await this.httpClient.delete(ResourcePath.Databases, { ids: [databaseId] })
+        await this.httpClient.delete(ResourcePath.Databases, { ids: [`${databaseId}`] })
     }
 
     async deleteAllDatabasesApi(): Promise<void> {

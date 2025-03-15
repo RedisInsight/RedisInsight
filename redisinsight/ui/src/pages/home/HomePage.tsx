@@ -77,9 +77,14 @@ const HomePage = () => {
 
   const { contextInstanceId } = useSelector(appContextSelector)
 
-  const predefinedInstances = enhancedCloudUIFeature?.flag && cloudAdsFeature?.flag && createDbContent?.cloud_list_of_databases ? [
-    { id: CREATE_CLOUD_DB_ID, ...createDbContent.cloud_list_of_databases } as Instance
-  ] : []
+  const predefinedInstances =
+    enhancedCloudUIFeature?.flag &&
+    cloudAdsFeature?.flag &&
+    createDbContent?.cloud_list_of_databases
+      ? [
+        { id: CREATE_CLOUD_DB_ID, ...createDbContent.cloud_list_of_databases } as Instance
+      ]
+      : []
   const isInstanceExists = instances.length > 0 || predefinedInstances.length > 0
 
   useEffect(() => {

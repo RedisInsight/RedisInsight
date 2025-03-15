@@ -10,11 +10,14 @@ type OpenRedisInsight = {
     dialogUserAgreement: UserAgreementDialog
     // dbAPI: DatabaseAPIRequests
     apiUrl: string
+    dbConfig: object
 
 }
 
 export const test = base.extend<OpenRedisInsight>({
-
+    dbConfig: async ({page}, use) => {
+        use(ossStandaloneConfig)
+    },
     apiUrl: ['default', { option: true }],
     // dbAPI: async () => {
     //     const dbApi = new DatabaseAPIRequests(this.apiUrl)
@@ -34,7 +37,7 @@ export const test = base.extend<OpenRedisInsight>({
         // Set up the fixture.
         // Add new database
         const dbApi = new DatabaseAPIRequests(apiUrl)
-        await dbApi.addNewStandaloneDatabaseApi(ossStandaloneConfig)
+        await dbApi.addNewStandaloneDatabaseApi(dbCon)
 
         // const page = await context.newPage()
         // Navigate to page

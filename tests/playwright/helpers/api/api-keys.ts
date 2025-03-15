@@ -1,27 +1,28 @@
 import { HttpClient } from './http-client'
 import { DatabaseAPIRequests } from './api-databases'
-import { AddNewDatabaseParameters } from '../../pageObjects/dialogs/add-redis-database-dialog'
 import {
+    AddNewDatabaseParameters,
     HashKeyParameters,
     StringKeyParameters,
     ListKeyParameters,
     SetKeyParameters,
     SortedSetKeyParameters,
-    StreamKeyParameters
-} from '../../pageObjects/browser-page'
+    StreamKeyParameters} from '../../types'
 
-const databaseAPIRequests = new DatabaseAPIRequests()
+
 const bufferPathMask = '/databases/databaseId/keys?encoding=buffer'
 
 export class APIKeyRequests {
     private httpClient: HttpClient
+    private databaseAPIRequests : DatabaseAPIRequests
 
     constructor(baseURL: string) {
         this.httpClient = new HttpClient(baseURL)
+        this.databaseAPIRequests = new DatabaseAPIRequests(baseURL)
     }
 
     private async getDatabaseId(databaseName: string): Promise<string> {
-        const databaseId = await databaseAPIRequests.getDatabaseIdByName(databaseName)
+        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(databaseName)
         if (!databaseId) throw new Error(`Database with name ${databaseName} not found`)
         return databaseId
     }

@@ -25,3 +25,13 @@ export type SSHParameters = {
     sshPrivateKey?: string
     sshPassphrase?: string
 }
+
+/**
+ * Nodes in OSS Cluster parameters
+ * @param host The host of the node
+ * @param port The port of the node
+ */
+export type ClusterNodes = {
+    host: string,
+    port: string
+};

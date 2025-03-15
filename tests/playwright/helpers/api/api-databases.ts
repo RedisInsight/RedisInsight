@@ -72,7 +72,7 @@
 // }
 import { faker } from '@faker-js/faker'
 import { HttpClient } from './http-client'
-import { AddNewDatabaseParameters, OSSClusterParameters, SentinelParameters, ClusterNodes, databaseParameters } from '../../pageObjects/dialogs/add-redis-database-dialog'
+import { AddNewDatabaseParameters, OSSClusterParameters,  ClusterNodes, databaseParameters } from '../../types'
 import { ResourcePath } from '../constants'
 
 export class DatabaseAPIRequests {

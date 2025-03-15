@@ -11,10 +11,10 @@ type OpenRedisInsight = {
     // dbAPI: DatabaseAPIRequests
     apiUrl: string
     dbConfig: typeof ossStandaloneConfig
-
+    forEachWorker: void
 }
 
-export const test = base.extend<OpenRedisInsight>({
+export const test = base.extend<OpenRedisInsight,  { forEachWorker: void }>({
     dbConfig: async ({}, use) => {
         console.log('Fixture setup: Assigning database config')
         await use(ossStandaloneConfig)  // Use the imported object directly
@@ -34,7 +34,7 @@ export const test = base.extend<OpenRedisInsight>({
     //     await context.close()
     // },
     // basePage: async ({ context  }, use) => {
-    basePage: async ({ page , dbConfig, apiUrl }, use, testInfo) => {
+    basePage: async ({ page , dbConfig, apiUrl }, use) => {
         // Set up the fixture.
         // Add new database
         const dbApi = new DatabaseAPIRequests(apiUrl)
@@ -56,7 +56,13 @@ export const test = base.extend<OpenRedisInsight>({
         await userAgreementDialog.acceptLicenseTerms()
         await use(new UserAgreementDialog(page))
     },
-
+    forEachWorker: [async ({}, use) => {
+        // This code runs before all the tests in the worker process.
+        console.log(`BEFORE Starting test worker ${test.info().workerIndex}`)
+        await use()
+        // This code runs after all the tests in the worker process.
+        console.log(`Stopping test worker ${test.info().workerIndex}`)
+    }, { scope: 'worker', auto: true }],  // automatically starts for every worker.
 })
 
 export { expect } from '@playwright/test'

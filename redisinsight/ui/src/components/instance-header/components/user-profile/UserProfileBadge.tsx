@@ -21,7 +21,7 @@ import { getConfig } from 'uiSrc/config'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import styles from './styles.module.scss'
 
-export interface Props {
+export interface UserProfileBadgeProps {
   "data-testid"?: string;
   error: Nullable<string>;
   data: Nullable<CloudUser>;
@@ -32,7 +32,7 @@ export interface Props {
 
 const riConfig = getConfig()
 
-const UserProfileBadge = (props: Props) => {
+const UserProfileBadge = (props: UserProfileBadgeProps) => {
   const {
     error,
     data,
@@ -98,7 +98,7 @@ const UserProfileBadge = (props: Props) => {
   const { accounts, currentAccountId, name } = data
 
   return (
-    <div className={styles.wrapper} data-testid={dataTestId || 'user-profile-badge'}>
+    <div className={styles.wrapper} data-testid={dataTestId}>
       <EuiPopover
         ownFocus
         initialFocus={false}
@@ -121,11 +121,11 @@ const UserProfileBadge = (props: Props) => {
           <div className={styles.option}>
             <FeatureFlagComponent
               name={FeatureFlags.envDependent}
-              otherwise={<EuiText className={styles.optionTitle}>Account</EuiText>}
+              otherwise={<EuiText className={styles.optionTitle} data-testid="profile-title">Account</EuiText>}
             >
-              <EuiText className={styles.optionTitle}>Redis Cloud account</EuiText>
+              <EuiText className={styles.optionTitle} data-testid="profile-title">Redis Cloud account</EuiText>
             </FeatureFlagComponent>
-            <div className={styles.accounts}>
+            <div className={styles.accounts} data-testid="user-profile-popover-accounts">
               {accounts?.map(({ name, id }) => (
                 <div
                   role="presentation"
@@ -144,8 +144,8 @@ const UserProfileBadge = (props: Props) => {
                   <EuiText className={styles.accountNameId}>
                     <span className={styles.accountName}>{name}</span> #{id}
                   </EuiText>
-                  {id === currentAccountId && (<EuiIcon type="check" />)}
-                  {id === selectingAccountId && (<EuiLoadingSpinner className={styles.loadingSpinner} size="m" />)}
+                  {id === currentAccountId && (<EuiIcon type="check" data-testid={`user-profile-selected-account-${id}`} />)}
+                  {id === selectingAccountId && (<EuiLoadingSpinner className={styles.loadingSpinner} size="m" data-testid={`user-profile-selecting-account-${id}`} />)}
                 </div>
               ))}
             </div>

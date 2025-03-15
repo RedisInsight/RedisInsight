@@ -137,7 +137,7 @@ export const test = base.extend<
         console.log(`Stopping test worker ${ti}`)
 
         // Cleanup after all tests in this worker
-        const apiKeyClient = new APIKeyRequests(workerState.apiUrl)
+        // const apiKeyClient = new APIKeyRequests(workerState.apiUrl)
         // await apiKeyClient.deleteKeyByNameApi();
         await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
     }, { scope: 'worker', auto: true }],

@@ -1,4 +1,4 @@
-import {Locator, Page} from '@playwright/test'
+import {Locator, Page, expect} from '@playwright/test'
 
 export default class BasePage {
     protected page: Page
@@ -37,5 +37,11 @@ export default class BasePage {
 
     async getByTestId(testId: string): Promise<Locator> {
         return this.page.getByTestId(testId)
+    }
+    async waitForLocatorVisible(locator: Locator, timeout = 6000) {
+        await expect(locator).toBeVisible({ timeout })
+    }
+    async waitForLocatorNotVisible(locator: Locator, timeout = 6000) {
+        await expect(locator).not.toBeVisible({ timeout })
     }
 }

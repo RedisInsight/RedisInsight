@@ -1,14 +1,25 @@
 import { test as base } from '@playwright/test'
 import BasePage from '../pageObjects/base-page'
-import {UserAgreementDialog} from "../pageObjects/user-agreement-dialog";
+import {UserAgreementDialog} from '../pageObjects/user-agreement-dialog'
+import {DatabaseAPIRequests} from'../helpers/api/api-databases'
+import {apiUrl, ossStandaloneConfig} from "../helpers/conf";
 
 type OpenRedisInsight = {
-    basePage: BasePage;
-    dialogUserAgreement: UserAgreementDialog;
+    basePage: BasePage
+    dialogUserAgreement: UserAgreementDialog
+    // dbAPI: DatabaseAPIRequests
+    apiUrl: string
+
 }
 
 export const test = base.extend<OpenRedisInsight>({
 
+    apiUrl: ['default', { option: true }],
+    // dbAPI: async () => {
+    //     const dbApi = new DatabaseAPIRequests(this.apiUrl)
+    //
+    //     await dbApi.addNewStandaloneDatabaseApi(ossStandaloneConfig)
+    // },
     // context: async ({ browser }, use) => {
     //     const context = await browser.newContext()
     //     await context.clearCookies()
@@ -19,9 +30,13 @@ export const test = base.extend<OpenRedisInsight>({
     // },
     // basePage: async ({ context  }, use) => {
     basePage: async ({ page  }, use) => {
+        // Set up the fixture.
+        // Add new database
+        const dbApi = new DatabaseAPIRequests(apiUrl)
+        await dbApi.addNewStandaloneDatabaseApi(ossStandaloneConfig)
 
         // const page = await context.newPage()
-        // Set up the fixture.
+        //Navigate to page
         const basePage = new BasePage(page)
         await basePage.navigateToHomeUrl()
 

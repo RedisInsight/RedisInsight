@@ -2,11 +2,8 @@ import {defineConfig, devices } from '@playwright/test'
 import {Status} from 'allure-js-commons'
 import * as os from 'node:os'
 
-
-declare module '@playwright/test' {
-    interface PlaywrightTestOptions {
-        apiUrl?: string; // add your custom variables here
-    }
+export type TestOptions = {
+    apiUrl: string;
 }
 
 /**
@@ -20,7 +17,7 @@ declare module '@playwright/test' {
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+export default defineConfig<TestOptions>({
     testDir: './tests',
     /* Maximum time one test can run for. */
     timeout: 300 * 1000,

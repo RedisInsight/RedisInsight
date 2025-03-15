@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test'
+import {Locator, Page} from '@playwright/test'
 import BasePage from '../../base-page'
 
 export class Toast extends BasePage{
@@ -30,4 +30,7 @@ export class Toast extends BasePage{
         await this.toastCloseButton.click()
     }
 
+    async getNotificationMessage(): Promise<string> {
+        return this.toastHeader.textContent()
+    }
 }

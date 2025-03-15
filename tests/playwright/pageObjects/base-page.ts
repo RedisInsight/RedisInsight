@@ -27,8 +27,8 @@ export default class BasePage {
         await this.page.fill(selector, value)
     }
 
-    async getText(selector: string): Promise<string> {
-        return await this.page.textContent(selector) || ''
+    async getText(locator: Locator): Promise<string> {
+        return  locator.textContent()
     }
 
     async isVisible(locator: Locator): Promise<boolean> {

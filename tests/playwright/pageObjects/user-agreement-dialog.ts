@@ -33,4 +33,8 @@ export class UserAgreementDialog extends BasePage {
     async getRecommendedSwitcherValue(): Promise<string | null> {
         return this.recommendedSwitcher.getAttribute('aria-checked')
     }
+
+    async isUserAgreementDialogVisible(): Promise<boolean> {
+        return this.isVisible(this.userAgreementsPopup)
+    }
 }

@@ -78,13 +78,13 @@
 //
 // export { expect } from '@playwright/test'
 
-import { test as base } from '@playwright/test'
+import { test as base, Page } from '@playwright/test'
 import BasePage from '../pageObjects/base-page'
 import { UserAgreementDialog } from '../pageObjects/user-agreement-dialog'
 import { DatabaseAPIRequests } from '../helpers/api/api-databases'
 import { ossStandaloneConfig } from '../helpers/conf'
 import { MyRedisDatabasePage } from '../pageObjects/my-redis-databases-page'
-import { APIKeyRequests } from '../helpers/api/api-keys'
+// import { APIKeyRequests } from '../helpers/api/api-keys'
 
 // Define shared worker object
 type WorkerSharedState = {
@@ -95,7 +95,7 @@ type WorkerSharedState = {
 
 // Define test fixture types
 type OpenRedisInsight = {
-    basePage: BasePage;
+    basePage: Page;
     dialogUserAgreement: UserAgreementDialog;
     workerState: WorkerSharedState; // Worker-scoped object passed to tests
 }
@@ -154,16 +154,16 @@ export const test = base.extend<
         const myDbPage = new MyRedisDatabasePage(page)
         await myDbPage.clickOnDBByName(workerState.dbConfig.databaseName)
 
-        await use(basePage)
+        const userAgreementDialog = new UserAgreementDialog(page)
+        if(await userAgreementDialog.isUserAgreementDialogVisible()){
+            await userAgreementDialog.acceptLicenseTerms()
+            await use(userAgreementDialog)
+        }
+
+        await use(page)
     },
 
-    // ✅ Test-scoped `dialogUserAgreement`
-    dialogUserAgreement: async ({ page }, use) => {
-        console.log('Fixture setup: Accepting User Agreement')
-        const userAgreementDialog = new UserAgreementDialog(page)
-        await userAgreementDialog.acceptLicenseTerms()
-        await use(userAgreementDialog)
-    },
+
 })
 
 export { expect } from '@playwright/test'

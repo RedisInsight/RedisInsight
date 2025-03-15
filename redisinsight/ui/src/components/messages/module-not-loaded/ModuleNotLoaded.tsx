@@ -73,9 +73,11 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
   })
 
   const renderText = useCallback((moduleName?: string) => (!freeDbWithModule ? (
-    <EuiText className={cx(styles.text, styles.marginBottom)}>
-      {`Create a free trial Redis Stack database with ${moduleName} which extends the core capabilities of your Redis`}
-    </EuiText>
+    <FeatureFlagComponent name={FeatureFlags.cloudAds}>
+      <EuiText className={cx(styles.text, styles.marginBottom)}>
+        {`Create a free trial Redis Stack database with ${moduleName} which extends the core capabilities of your Redis`}
+      </EuiText>
+    </FeatureFlagComponent>
   ) : (
     <EuiText className={cx(styles.text, styles.marginBottom, styles.textFooter)}>
       Use your free trial all-in-one Redis Cloud database to start exploring these capabilities.
@@ -152,36 +154,38 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
               >
                 Learn More
               </EuiLink>
-              <OAuthSsoHandlerDialog>
-                {(ssoCloudHandlerClick) => (
-                  <EuiLink
-                    className={styles.link}
-                    external={false}
-                    target="_blank"
-                    href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
-                    onClick={(e) => {
-                      ssoCloudHandlerClick(
-                        e,
-                        {
-                          source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
-                          action: OAuthSocialAction.Create
-                        }
-                      )
-                      onFreeDatabaseClick()
-                    }}
-                    data-testid="get-started-link"
-                  >
-                    <EuiButton
-                      fill
-                      size="s"
-                      color="secondary"
-                      className={styles.btnLink}
+              <FeatureFlagComponent name={FeatureFlags.cloudAds}>
+                <OAuthSsoHandlerDialog>
+                  {(ssoCloudHandlerClick) => (
+                    <EuiLink
+                      className={styles.link}
+                      external={false}
+                      target="_blank"
+                      href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
+                      onClick={(e) => {
+                        ssoCloudHandlerClick(
+                          e,
+                          {
+                            source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
+                            action: OAuthSocialAction.Create
+                          }
+                        )
+                        onFreeDatabaseClick()
+                      }}
+                      data-testid="get-started-link"
                     >
-                      Get Started For Free
-                    </EuiButton>
-                  </EuiLink>
-                )}
-              </OAuthSsoHandlerDialog>
+                      <EuiButton
+                        fill
+                        size="s"
+                        color="secondary"
+                        className={styles.btnLink}
+                      >
+                        Get Started For Free
+                      </EuiButton>
+                    </EuiLink>
+                  )}
+                </OAuthSsoHandlerDialog>
+              </FeatureFlagComponent>
             </>
           </FeatureFlagComponent>
         )}

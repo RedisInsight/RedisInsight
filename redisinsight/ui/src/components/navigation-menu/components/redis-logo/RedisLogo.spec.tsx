@@ -16,7 +16,7 @@ beforeEach(() => {
 })
 
 describe('RedisLogo', () => {
-  it('should have link if envDependant feature is on', () => {
+  it('should have link if envDependent feature is on', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
@@ -32,7 +32,7 @@ describe('RedisLogo', () => {
     expect(screen.getByTestId('redis-logo-link')).toBeInTheDocument()
   })
 
-  it('should not have link if envDependant feature is off', () => {
+  it('should not have link if envDependent feature is off', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,

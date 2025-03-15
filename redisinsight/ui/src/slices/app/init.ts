@@ -72,8 +72,8 @@ export function initializeAppAction(
       }))
 
       await dispatch(fetchFeatureFlags(async (flagsData) => {
-        const { [FeatureFlags.envDependent]: envDependant } = flagsData.features
-        if (!envDependant?.flag) {
+        const { [FeatureFlags.envDependent]: envDependent } = flagsData.features
+        if (!envDependent?.flag) {
           await dispatch(fetchCloudUserProfile(undefined, () => {
             throw new Error(FAILED_TO_FETCH_USER_PROFILE_ERROR)
           }))

@@ -1,6 +1,7 @@
 import {test, expect} from '../fixtures/open-ri'
 import {Common} from '../helpers/common'
 import {BrowserPage} from '../pageObjects/browser-page'
+import {APIKeyRequests} from "../helpers/api/api-keys";
 
 let keyName: string
 let browserPage: BrowserPage
@@ -13,8 +14,10 @@ test.beforeEach(async ({basePage}) => {
 
 })
 
-test.afterEach(async ({basePage}) => {
+test.afterEach(async ({basePage, workerState }) => {
     console.log('WE ARE IN THE AFTER STEP')
+    const apiKeyClient = new APIKeyRequests(workerState.apiUrl)
+    await apiKeyClient.deleteKeyByNameApi(keyName, workerState.dbConfig.databaseName)
 
 })
 

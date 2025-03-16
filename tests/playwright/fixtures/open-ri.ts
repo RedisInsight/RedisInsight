@@ -84,6 +84,7 @@ import { UserAgreementDialog } from '../pageObjects/dialogs/user-agreement-dialo
 import { DatabaseAPIRequests } from '../helpers/api/api-databases'
 import { ossStandaloneConfig } from '../helpers/conf'
 import { MyRedisDatabasePage } from '../pageObjects/my-redis-databases-page'
+import {APIKeyRequests} from "../helpers/api/api-keys";
 // import { APIKeyRequests } from '../helpers/api/api-keys'
 
 // Define shared worker object
@@ -137,10 +138,10 @@ export const test = base.extend<
         console.log(`Stopping test worker ${ti}`)
 
         // Cleanup after all tests in this worker
-        // const apiKeyClient = new APIKeyRequests(workerState.apiUrl)
-        // await apiKeyClient.deleteKeyByNameApi();
+
         // throw new Error("test worker error")
-        // await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
+        await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
+        await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
     }, { scope: 'worker', auto: true }],
 
     // ✅ Test-scoped `basePage` using worker state

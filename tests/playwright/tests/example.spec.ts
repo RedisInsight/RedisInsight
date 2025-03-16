@@ -27,5 +27,8 @@ test('basic test', async ({ basePage}) => {
 
     console.log('WE ARE IN TEST')
     await browserPage.addHashKey(keyName)
-    await expect(toast.getNotificationMessage()).toContain('Key has been added')
+    // checks that the notification is displayed
+    await expect(await basePage.getByText('Key has been added')).toBeVisible()
+
+
 })

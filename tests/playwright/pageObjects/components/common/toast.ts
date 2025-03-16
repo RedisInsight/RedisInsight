@@ -1,7 +1,9 @@
 import {Locator, Page} from '@playwright/test'
 import BasePage from '../../base-page'
+import {ToastSelectors} from '../../../selectors'
 
 export class Toast extends BasePage{
+
     private readonly toastHeader: Locator
     private readonly toastBody: Locator
     private readonly toastSuccess: Locator
@@ -12,18 +14,18 @@ export class Toast extends BasePage{
 
     constructor(page: Page) {
         super(page)
-        this.toastHeader = page.getByTestId('euiToastHeader')
-        this.toastBody = page.locator('[class*=euiToastBody]')
-        this.toastSuccess = page.locator('[class*=euiToast--success]')
-        this.toastError = page.locator('[class*=euiToast--danger]')
-        this.toastCloseButton = page.getByTestId('toastCloseButton')
-        this.toastSubmitBtn = page.getByTestId('submit-tooltip-btn')
-        this.toastCancelBtn = page.getByTestId('toast-cancel-btn')
+        this.toastHeader = page.locator(ToastSelectors.toastHeader)
+        this.toastBody = page.locator(ToastSelectors.toastBody)
+        this.toastSuccess = page.locator(ToastSelectors.toastSuccess)
+        this.toastError = page.locator(ToastSelectors.toastError)
+        this.toastCloseButton = page.locator(ToastSelectors.toastCloseButton)
+        this.toastSubmitBtn = page.getByTestId(ToastSelectors.toastSubmitBtn)
+        this.toastCancelBtn = page.getByTestId(ToastSelectors.toastCancelBtn)
     }
 
 
     async isCloseButtonVisible(): Promise<boolean> {
-        return this.isVisible(this.toastCloseButton)
+        return this.isVisible(ToastSelectors.toastCloseButton)
     }
 
     async closeToast(): Promise<void> {

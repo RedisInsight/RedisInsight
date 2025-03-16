@@ -31,8 +31,8 @@ export default class BasePage {
         return  locator.textContent()
     }
 
-    async isVisible(locator: Locator): Promise<boolean> {
-        return locator.isVisible()
+    async isVisible(selctor: string): Promise<boolean> {
+        return this.page.locator(selctor).isVisible()
     }
 
     async getByTestId(testId: string): Promise<Locator> {

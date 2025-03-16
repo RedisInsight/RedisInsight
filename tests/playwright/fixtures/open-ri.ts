@@ -141,7 +141,7 @@ export const test = base.extend<
 
         // throw new Error("test worker error")
         await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
-        await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
+
     }, { scope: 'worker', auto: true }],
 
     // ✅ Test-scoped `basePage` using worker state
@@ -152,7 +152,7 @@ export const test = base.extend<
         const basePage = new BasePage(page)
         await basePage.navigateToHomeUrl(workerState.baseUrl)
 
-        // Interact with the database UI
+       // Enter DB
         const myDbPage = new MyRedisDatabasePage(page)
         await myDbPage.clickOnDBByName(workerState.dbConfig.databaseName)
 

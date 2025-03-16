@@ -91,6 +91,7 @@ export default defineConfig<TestOptions>({
     projects: [
         {
             name: 'localChromium',
+            testMatch: ['**.web.spec.ts'],
             use: {
                 ...devices['Desktop Chrome'],
                 baseURL: process.env.COMMON_URL || 'https://localhost:5540',
@@ -109,6 +110,7 @@ export default defineConfig<TestOptions>({
         },
         {
             name: 'localElectron',
+            testMatch: ['**.electron.spec.ts'],
             use: {
                 ...devices['Desktop Chrome'],
                 baseURL: 'https://chrome.desktop/',

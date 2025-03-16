@@ -112,9 +112,8 @@ export default defineConfig<TestOptions>({
             name: 'localElectron',
             testMatch: ['**.electron.spec.ts'],
             use: {
-                ...devices['Desktop Chrome'],
                 baseURL: 'https://chrome.desktop/',
-
+                headless: false
             },
         },
 

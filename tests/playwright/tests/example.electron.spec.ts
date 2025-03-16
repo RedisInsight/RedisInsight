@@ -1,12 +1,12 @@
-import {test, expect} from '../fixtures/open-ri'
-import {Common} from '../helpers/common'
+import {test, expect} from '../fixtures/electron'
+// import {Common} from '../helpers/common'
 import {BrowserPage} from '../pageObjects/browser-page'
-import {APIKeyRequests} from "../helpers/api/api-keys";
+// import {APIKeyRequests} from "../helpers/api/api-keys";
 
 let keyName: string
 let browserPage: BrowserPage
 
-test.beforeEach(async ({basePage}) => {
+test.beforeEach(async ({electronApp}) => {
 
     console.log('WE ARE IN THE BEFORE STEP')
     // keyName = Common.generateAlpanumeric(10)
@@ -14,14 +14,14 @@ test.beforeEach(async ({basePage}) => {
 
 })
 
-test.afterEach(async ({basePage, workerState }) => {
+test.afterEach(async ({electronApp}) => {
     console.log('WE ARE IN THE AFTER STEP')
     // const apiKeyClient = new APIKeyRequests(workerState.apiUrl)
     // await apiKeyClient.deleteKeyByNameApi(keyName, workerState.dbConfig.databaseName)
 
 })
 
-test('basic test', async ({ basePage}) => {
+test('basic test', async ({}) => {
 
     console.log('WE ARE IN TEST')
     // await browserPage.addHashKey(keyName)

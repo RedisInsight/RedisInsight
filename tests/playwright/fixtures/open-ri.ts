@@ -133,13 +133,14 @@ export const test = base.extend<
         await dbApi.addNewStandaloneDatabaseApi(workerState.dbConfig)
 
         await use() // Run the tests
-
+        // Something failing here doesn't affect test execution result
         console.log(`Stopping test worker ${ti}`)
 
         // Cleanup after all tests in this worker
         // const apiKeyClient = new APIKeyRequests(workerState.apiUrl)
         // await apiKeyClient.deleteKeyByNameApi();
-        await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
+        // throw new Error("test worker error")
+        // await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
     }, { scope: 'worker', auto: true }],
 
     // ✅ Test-scoped `basePage` using worker state

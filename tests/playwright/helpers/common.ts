@@ -148,21 +148,30 @@ export class Common {
 //         return element.getStyleProperty('background-color')
 //     }
 //
-//     /**
-//     * Generate word by number of symbols
-//     * @param number The number of symbols
-//     */
+    /**
+    * Generate word by number of symbols
+    * @param number The number of symbols
+    */
     static generateWord(number: number): string {
         return faker.word.sample({ length: number })
     }
 
-    // /**
-    // * Generate sentence by number of words
-    // * @param number The number of words
-    // */
-    // static generateSentence(number: number): string {
-    //     return chance.sentence({ words: number })
-    // }
+    /**
+    * Generate sentence by number of words
+    * @param number The number of words
+    */
+    static generateSentence(number: number): string {
+        return faker.lorem.sentence( number)
+    }
+
+    /**
+     * Generate sentence by number of characters
+     * @param number The number of characters
+     */
+    static generateAlpanumeric(number: number): string {
+        return faker.string.alphanumeric(number)
+    }
+
     //
     // /**
     // * Return api endpoint with disabled certificate validation

@@ -1,5 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test'
-import BasePage from './base-page'
+import BasePage from '../base-page'
+import { UserAgreementSelectors } from '../../selectors'
 
 export class UserAgreementDialog extends BasePage {
 
@@ -13,12 +14,12 @@ export class UserAgreementDialog extends BasePage {
 
     constructor(page: Page) {
         super(page)
-        this.userAgreementsPopup = this.getByTestId('consents-settings-popup')
-        this.submitButton = this.getByTestId('btn-submit')
-        this.switchOptionEula = this.getByTestId('switch-option-eula')
-        this.switchOptionEncryption = this.getByTestId('switch-option-encryption')
-        this.pluginSectionWithText = this.getByTestId('plugin-section')
-        this.recommendedSwitcher = this.getByTestId('switch-option-recommended')
+        this.userAgreementsPopup = page.getByTestId(UserAgreementSelectors.userAgreementsPopup)
+        this.submitButton = page.getByTestId(UserAgreementSelectors.submitButton)
+        this.switchOptionEula = page.getByTestId(UserAgreementSelectors.switchOptionEula)
+        this.switchOptionEncryption = page.getByTestId(UserAgreementSelectors.switchOptionEncryption)
+        this.pluginSectionWithText = page.getByTestId(UserAgreementSelectors.pluginSectionWithText)
+        this.recommendedSwitcher = page.getByTestId(UserAgreementSelectors.recommendedSwitcher)
     }
 
     async acceptLicenseTerms(): Promise<void> {
@@ -35,6 +36,6 @@ export class UserAgreementDialog extends BasePage {
     }
 
     async isUserAgreementDialogVisible(): Promise<boolean> {
-        return this.isVisible(this.userAgreementsPopup)
+        return this.isVisible(UserAgreementSelectors.userAgreementsPopup)
     }
 }

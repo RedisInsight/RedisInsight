@@ -1,4 +1,4 @@
-export const ToastSelectors: Record<string, string> = {
+export const ToastSelectors = {
   toastHeader: '[data-test-subj=euiToastHeader]',
   toastBody: '[class*=euiToastBody]',
   toastSuccess: '[class*=euiToast--success]',

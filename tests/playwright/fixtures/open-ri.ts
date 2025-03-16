@@ -80,7 +80,7 @@
 
 import { test as base, Page } from '@playwright/test'
 import BasePage from '../pageObjects/base-page'
-import { UserAgreementDialog } from '../pageObjects/user-agreement-dialog'
+import { UserAgreementDialog } from '../pageObjects/dialogs/user-agreement-dialog'
 import { DatabaseAPIRequests } from '../helpers/api/api-databases'
 import { ossStandaloneConfig } from '../helpers/conf'
 import { MyRedisDatabasePage } from '../pageObjects/my-redis-databases-page'

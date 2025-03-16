@@ -133,6 +133,6 @@ export class APIKeyRequests {
     async deleteKeyByNameApi(keyName: string, databaseName: string): Promise<void> {
         const databaseId = await this.getDatabaseId(databaseName)
         const requestBody = { keyNames: [Buffer.from(keyName, 'utf-8')] }
-        await this.httpClient.delete(`/databases/${databaseId}/keys`, requestBody)
+        await this.httpClient.delete(`/databases/${databaseId}/keys?encoding=buffer`, requestBody)
     }
 }

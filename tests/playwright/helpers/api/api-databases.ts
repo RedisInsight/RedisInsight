@@ -1,12 +1,9 @@
 import { faker } from '@faker-js/faker'
 import {AxiosInstance} from 'axios'
-
 import { HttpClient } from './http-client'
 import { AddNewDatabaseParameters,  databaseParameters } from '../../types'
 import { ResourcePath } from '../constants'
-
 import { asyncFilter, doAsyncStuff } from '../async-helper'
-
 
 export class DatabaseAPIRequests {
 
@@ -14,7 +11,6 @@ export class DatabaseAPIRequests {
 
     constructor(apiUrl: string) {
         this.apiClient = new HttpClient(apiUrl).getClient()
-
     }
 
     async addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters, isCloud = false): Promise<void> {

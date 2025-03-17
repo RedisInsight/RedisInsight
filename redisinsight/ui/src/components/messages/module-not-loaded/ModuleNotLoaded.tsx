@@ -1,21 +1,25 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiIcon, EuiLink, EuiText, EuiTextColor, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiText, EuiTextColor, EuiTitle } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import MobileIcon from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg?react'
 import DesktopIcon from 'uiSrc/assets/img/icons/module_not_loaded.svg?react'
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
 import CheerIcon from 'uiSrc/assets/img/icons/cheer.svg?react'
-import { FeatureFlags, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
-import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import {
+  FeatureFlags,
+  MODULE_NOT_LOADED_CONTENT as CONTENT,
+  MODULE_TEXT_VIEW,
+} from 'uiSrc/constants'
+import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { OAuthConnectFreeDb } from 'uiSrc/components'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
-import { getUtmExternalLink } from 'uiSrc/utils/links'
 
-import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { getDbWithModuleLoaded } from 'uiSrc/utils'
 import { useCapability } from 'uiSrc/services'
+import {appFeatureFlagsFeaturesSelector} from 'uiSrc/slices/app/features'
+import ModuleNotLoadedButton from 'uiSrc/components/messages/module-not-loaded/ModuleNotLoadedButton'
 import styles from './styles.module.scss'
 
 export const MODULE_OAUTH_SOURCE_MAP: { [key in RedisDefaultModules]?: String } = {
@@ -57,11 +61,16 @@ const ListItem = ({ item }: { item: string }) => (
 const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps) => {
   const [width, setWidth] = useState(0)
   const freeInstances = useSelector(freeInstancesSelector) || []
+  const {
+    [FeatureFlags.cloudAds]: cloudAdsFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const module = MODULE_OAUTH_SOURCE_MAP[moduleName]
 
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
-  const source = type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
+  const source = type === 'browser'
+    ? OAuthSocialSource.BrowserSearch
+    : OAuthSocialSource[module as keyof typeof OAuthSocialSource]
 
   useCapability(source)
 
@@ -72,25 +81,25 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     }
   })
 
-  const renderText = useCallback((moduleName?: string) => (!freeDbWithModule ? (
-    <FeatureFlagComponent name={FeatureFlags.cloudAds}>
+  const renderText = useCallback((moduleName?: string) => {
+    if (!cloudAdsFeature?.flag) {
+      return (
+        <EuiText className={cx(styles.text, styles.marginBottom)}>
+          Open a database with {moduleName}.
+        </EuiText>
+      )
+    }
+
+    return (!freeDbWithModule ? (
       <EuiText className={cx(styles.text, styles.marginBottom)}>
-        {`Create a free trial Redis Stack database with ${moduleName} which extends the core capabilities of your Redis`}
+        Create a free trial Redis Stack database with {moduleName} which extends the core capabilities of your Redis.
       </EuiText>
-    </FeatureFlagComponent>
-  ) : (
-    <EuiText className={cx(styles.text, styles.marginBottom, styles.textFooter)}>
-      Use your free trial all-in-one Redis Cloud database to start exploring these capabilities.
-    </EuiText>
-  )), [freeDbWithModule])
-
-  const onFreeDatabaseClick = () => {
-    onClose?.()
-  }
-
-  const utmCampaign = type === 'browser'
-    ? UTM_CAMPAINGS[OAuthSocialSource.BrowserSearch]
-    : UTM_CAMPAINGS[OAuthSocialSource.Workbench]
+    ) : (
+      <EuiText className={cx(styles.text, styles.marginBottom, styles.textFooter)}>
+        Use your free trial all-in-one Redis Cloud database to start exploring these capabilities.
+      </EuiText>
+    ))
+  }, [freeDbWithModule])
 
   return (
     <div className={cx(styles.container, {
@@ -136,58 +145,18 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
         </div>
       </div>
       <div className={styles.linksWrapper}>
-        {!!freeDbWithModule && (
+        {freeDbWithModule ? (
           <OAuthConnectFreeDb
             source={source}
             id={freeDbWithModule.id}
           />
-        )}
-        {!freeDbWithModule && (
-          <FeatureFlagComponent name={FeatureFlags.envDependent}>
-            <>
-              <EuiLink
-                className={cx(styles.text, styles.link)}
-                external={false}
-                target="_blank"
-                href={getUtmExternalLink(CONTENT[moduleName]?.link, { campaign: utmCampaign })}
-                data-testid="learn-more-link"
-              >
-                Learn More
-              </EuiLink>
-              <FeatureFlagComponent name={FeatureFlags.cloudAds}>
-                <OAuthSsoHandlerDialog>
-                  {(ssoCloudHandlerClick) => (
-                    <EuiLink
-                      className={styles.link}
-                      external={false}
-                      target="_blank"
-                      href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
-                      onClick={(e) => {
-                        ssoCloudHandlerClick(
-                          e,
-                          {
-                            source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
-                            action: OAuthSocialAction.Create
-                          }
-                        )
-                        onFreeDatabaseClick()
-                      }}
-                      data-testid="get-started-link"
-                    >
-                      <EuiButton
-                        fill
-                        size="s"
-                        color="secondary"
-                        className={styles.btnLink}
-                      >
-                        Get Started For Free
-                      </EuiButton>
-                    </EuiLink>
-                  )}
-                </OAuthSsoHandlerDialog>
-              </FeatureFlagComponent>
-            </>
-          </FeatureFlagComponent>
+        ) : (
+          <ModuleNotLoadedButton
+            moduleName={moduleName}
+            module={module}
+            type={type}
+            onClose={onClose}
+          />
         )}
       </div>
     </div>

@@ -6,7 +6,7 @@ import {Toast } from './components/common/toast'
 // import { BulkActions, TreeView } from './components/browser'
 // import { AddNewKeyParameters , HashKeyParameters ,StreamKeyParameters,
 //     SetKeyParameters , SortedSetKeyParameters ,ListKeyParameters, StringKeyParameters, AddKeyArguments, KeyData} from '../types'
-import BasePage from './base-page'
+import { BasePage } from './base-page'
 
 export class BrowserPage extends BasePage {
     // private readonly bulkActions: BulkActions

@@ -1,5 +1,5 @@
 import {Locator, Page} from '@playwright/test'
-import BasePage from '../../base-page'
+import {BasePage} from '../../base-page'
 import {ToastSelectors} from '../../../selectors'
 
 export class Toast extends BasePage{

@@ -1,6 +1,6 @@
 import {Locator, Page, expect} from '@playwright/test'
 
-export default class BasePage {
+export  class BasePage {
     protected page: Page
 
     constructor(page: Page) {
@@ -55,5 +55,12 @@ export default class BasePage {
     async elementExistsLocator( locator: Locator): Promise<boolean> {
         const count = await locator.count()
         return count > 0
+    }
+
+    async waitForLocatorVisible(locator: Locator, timeout = 6000) {
+        await expect(locator).toBeVisible({ timeout })
+    }
+    async waitForLocatorNotVisible(locator: Locator, timeout = 6000) {
+        await expect(locator).not.toBeVisible({ timeout })
     }
 }

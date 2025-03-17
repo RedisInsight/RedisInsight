@@ -1,6 +1,7 @@
 import { Page, Locator } from '@playwright/test'
+import {BasePage} from "../base-page";
 
-export class AddRdiInstanceDialog {
+export class AddRdiInstanceDialog extends BasePage{
     readonly page: Page
 
     // INPUTS
@@ -27,6 +28,7 @@ export class AddRdiInstanceDialog {
     readonly passwordInputInfoIcon: Locator
 
     constructor(page: Page) {
+        super(page)
         this.page = page
         this.rdiAliasInput = page.getByTestId('connection-form-name-input')
         this.urlInput = page.getByTestId('connection-form-url-input')

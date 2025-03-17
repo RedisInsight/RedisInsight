@@ -1,6 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test'
 import { Toast } from './components/common/toast'
-import BasePage from './base-page'
+import { BasePage } from './base-page'
 import { RedisOverviewPage } from '../helpers/constants'
 import { DatabaseAPIRequests } from '../helpers/api/api-databases'
 import { DatabasesForImport } from '../types'

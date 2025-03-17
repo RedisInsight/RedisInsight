@@ -2,9 +2,10 @@ import { expect, Locator, Page } from '@playwright/test'
 import { TlsCertificates } from '../../helpers/constants'
 import { RedisCloudSigninPanel } from '../components/redis-cloud-sign-in-panel'
 import {SentinelParameters, AddNewDatabaseParameters, SSHParameters } from '../../types'
+import {BasePage} from "../base-page";
 
 
-export class AddRedisDatabaseDialog {
+export class AddRedisDatabaseDialog extends BasePage{
     private readonly page: Page
     private readonly redisCloudSigninPanel: RedisCloudSigninPanel
 
@@ -68,6 +69,8 @@ export class AddRedisDatabaseDialog {
     }
 
     constructor(page: Page) {
+
+        super(page)
         this.page = page
         this.redisCloudSigninPanel = new RedisCloudSigninPanel(page)
 

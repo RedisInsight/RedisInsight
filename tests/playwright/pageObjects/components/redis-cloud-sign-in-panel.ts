@@ -1,6 +1,7 @@
 import { Locator, Page } from '@playwright/test'
+import {BasePage} from "../base-page";
 
-export class RedisCloudSigninPanel {
+export class RedisCloudSigninPanel extends BasePage {
     private readonly ssoOauthButton: Locator
     private readonly ssoEmailInput: Locator
     private readonly submitBtn: Locator
@@ -10,6 +11,7 @@ export class RedisCloudSigninPanel {
     private readonly ssoOauth: Locator
 
     constructor(page: Page) {
+        super(page)
         this.ssoOauthButton = page.getByTestId('sso-oauth')
         this.ssoEmailInput = page.getByTestId('sso-email')
         this.submitBtn = page.getByTestId('btn-submit')

@@ -132,6 +132,11 @@ const BulkActionsConfig = () => {
     }
 
     socketRef.current?.on(BulkActionsServerEvent.Overview, (payload: any) => {
+      const { keys } = payload.summary
+      const printableKeys = keys.map((item: any) =>
+        Buffer.from(item).toString(),
+      )
+      console.log('printableKeys :>> ', printableKeys)
       dispatch(setBulkDeleteLoading(isProcessingBulkAction(payload.status)))
       dispatch(setDeleteOverview(payload))
 

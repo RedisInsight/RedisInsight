@@ -9,6 +9,9 @@ export class BulkActionSummary {
 
   private errors: Array<Record<string, string>> = [];
 
+  // TODO: any - probably some buffer/string
+  private keys: Array<any> = [];
+
   addProcessed(count: number) {
     this.processed += count;
   }
@@ -29,12 +32,17 @@ export class BulkActionSummary {
     }
   }
 
+  addKeys(keys: Array<any>) {
+    this.keys.push(...keys);
+  }
+
   getOverview(): IBulkActionSummaryOverview {
     const overview = {
       processed: this.processed,
       succeed: this.succeed,
       failed: this.failed,
       errors: this.errors,
+      keys: this.keys,
     };
 
     this.errors = [];

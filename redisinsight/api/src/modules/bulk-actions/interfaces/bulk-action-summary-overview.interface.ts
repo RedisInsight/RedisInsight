@@ -3,4 +3,5 @@ export interface IBulkActionSummaryOverview {
   succeed: number,
   failed: number,
   errors: Array<Record<string, string>>
+  keys: Array<any>
 }

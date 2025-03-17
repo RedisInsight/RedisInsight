@@ -36,6 +36,6 @@ export class UserAgreementDialog extends BasePage {
     }
 
     async isUserAgreementDialogVisible(): Promise<boolean> {
-        return this.isVisible(UserAgreementSelectors.userAgreementsPopup)
+         return await this.userAgreementsPopup.isVisible()
     }
 }

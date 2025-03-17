@@ -71,15 +71,14 @@ export const test = base.extend<
         const basePage = new BasePage(page)
         await basePage.navigateToHomeUrl(workerState.baseUrl)
 
-       // Enter DB
-        const myDbPage = new MyRedisDatabasePage(page)
-        await myDbPage.clickOnDBByName(workerState.dbConfig.databaseName)
-
         const userAgreementDialog = new UserAgreementDialog(page)
         if(await userAgreementDialog.isUserAgreementDialogVisible()){
             await userAgreementDialog.acceptLicenseTerms()
-            await use(userAgreementDialog)
         }
+
+       // Enter DB
+        const myDbPage = new MyRedisDatabasePage(page)
+        await myDbPage.clickOnDBByName(workerState.dbConfig.databaseName)
 
         await use(page)
     },

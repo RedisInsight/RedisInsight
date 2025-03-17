@@ -47,4 +47,13 @@ export default class BasePage {
     async goBackHistor(): Promise<void>{
         await this.page.goBack()
     };
+    async elementExistsSelector( selector: string): Promise<boolean> {
+        const count = await this.page.locator(selector).count()
+        return count > 0
+    }
+
+    async elementExistsLocator( locator: Locator): Promise<boolean> {
+        const count = await locator.count()
+        return count > 0
+    }
 }

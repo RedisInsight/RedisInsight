@@ -78,10 +78,10 @@ export const test = base.extend<ElectronFixture,
 
     electronPage: async ({ electronApp }, use) => {
         // Get the first window of the Electron app
-        const window = await electronApp.firstWindow()
+        const page = await electronApp.firstWindow()
         console.log('IN MAIN WINDOW')
 
-        await use(window)
+        await use(page)
     },
 })
 

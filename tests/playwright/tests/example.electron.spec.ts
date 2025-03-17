@@ -1,15 +1,28 @@
 import {test, expect} from '../fixtures/electron'
 // import {Common} from '../helpers/common'
 import {BrowserPage} from '../pageObjects/browser-page'
-import {UserAgreementDialog} from "../pageObjects/dialogs/user-agreement-dialog";
+import {UserAgreementDialog} from '../pageObjects/dialogs/user-agreement-dialog'
+import {updateControlNumber} from '../helpers/electron/insights'
+import {RedisOverviewPage} from '../helpers/constants'
+import {RdiInstancesListPage} from '../pageObjects/rdi-instances-list-page'
 // import {APIKeyRequests} from "../helpers/api/api-keys";
 
 let keyName: string
 let browserPage: BrowserPage
-let userAgent: UserAgreementDialog
-test.beforeEach(async ({electronApp}) => {
+let userAgreementDialog: UserAgreementDialog
+let rdiInstancesListPage : RdiInstancesListPage
+test.beforeEach(async ({electronPage, workerState}) => {
 
-    userAgent
+    rdiInstancesListPage = new RdiInstancesListPage(electronPage)
+    userAgreementDialog = new UserAgreementDialog(electronPage)
+
+    await userAgreementDialog.acceptLicenseTerms()
+    await updateControlNumber(48.2, electronPage, workerState.apiUrl)
+// Open default databases list tab if RDI opened
+    if (await rdiInstancesListPage.elementExistsLocator(rdiInstancesListPage.addRdiInstanceButton)) {
+        await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase)
+    }
+
     // keyName = Common.generateAlpanumeric(10)
     // browserPage = new BrowserPage(basePage)
 

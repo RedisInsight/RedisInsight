@@ -72,9 +72,8 @@ export const test = base.extend<
         await basePage.navigateToHomeUrl(workerState.baseUrl)
 
         const userAgreementDialog = new UserAgreementDialog(page)
-        if(await userAgreementDialog.isUserAgreementDialogVisible()){
-            await userAgreementDialog.acceptLicenseTerms()
-        }
+        await userAgreementDialog.acceptLicenseTerms()
+
 
        // Enter DB
         const myDbPage = new MyRedisDatabasePage(page)

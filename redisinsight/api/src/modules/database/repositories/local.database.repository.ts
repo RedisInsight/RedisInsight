@@ -69,7 +69,10 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     ignoreEncryptionErrors: boolean = false,
     omitFields: string[] = [],
   ): Promise<Database> {
-    const entity = await this.repository.findOneBy({ id });
+    const entity = await this.repository.findOne({
+      where: { id },
+      relations: ['tags'],
+    });
     if (!entity) {
       return null;
     }
@@ -95,10 +98,11 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     const entities = await this.repository
       .createQueryBuilder('d')
       .leftJoinAndSelect('d.cloudDetails', 'cd')
+      .leftJoinAndSelect('d.tags', 'tags')
       .select([
         'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
         'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version', 'cd',
-        'd.createdAt',
+        'd.createdAt', 'tags',
       ])
       .getMany();
 
@@ -136,7 +140,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @throws TBD
    */
   public async update(sessionMetadata: SessionMetadata, id: string, database: Partial<Database>): Promise<Database> {
-    const oldEntity = await this.decryptEntity((await this.repository.findOneBy({ id })), true);
+    const oldEntity = await this.decryptEntity((await this.repository.findOne({ where: { id } })), true);
     const newEntity = classToClass(DatabaseEntity, await this.populateCertificates(database as Database));
 
     const mergeResult = this.repository.merge(oldEntity, newEntity);
@@ -259,7 +263,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
         set(query, field, get(entity, field));
       });
 
-      const existingDatabase = await this.repository.findOneBy(query);
+      const existingDatabase = await this.repository.findOne({ where: query });
       if (existingDatabase) {
         throw new DatabaseAlreadyExistsException(existingDatabase.id);
       }

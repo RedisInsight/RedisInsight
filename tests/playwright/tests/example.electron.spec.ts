@@ -14,7 +14,7 @@ let databaseHelper: DatabaseHelper
 let rdiInstancesListPage : RdiInstancesListPage
 test.beforeEach(async ({electronPage, workerState}) => {
 
-
+    databaseHelper = new DatabaseHelper(electronPage, workerState.apiUrl)
     await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(workerState.dbConfig, electronPage, workerState.apiUrl)
 
     // keyName = Common.generateAlpanumeric(10)
@@ -23,16 +23,16 @@ test.beforeEach(async ({electronPage, workerState}) => {
 
 })
 
-test.afterEach(async ({electronApp}) => {
-    console.log('WE ARE IN THE AFTER STEP')
+test.afterEach(async ({electronApp, workerState}) => {
+    await workerState.electronApp.close()
     // const apiKeyClient = new APIKeyRequests(workerState.apiUrl)
     // await apiKeyClient.deleteKeyByNameApi(keyName, workerState.dbConfig.databaseName)
 
 })
 
-test('basic test', async ({}) => {
+test('basic test', async ({workerState}) => {
 
-    console.log('WE ARE IN TEST')
+
     // await browserPage.addHashKey(keyName)
     //
     // // checks that the notification is displayed (should be in a different test)

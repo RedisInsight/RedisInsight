@@ -35,23 +35,23 @@ export const test = base.extend<ElectronFixture,
         await use(workerState)
 
     }, { scope: 'worker' }],
-    forEachWorker: [async ({ workerState }, use) => {
-
-
-        // Set up the database before tests
-        // const dbApi = new DatabaseAPIRequests(workerState.apiUrl)
-        // await dbApi.addNewStandaloneDatabaseApi(workerState.dbConfig)
-
-        await use() // Run the tests
-
-
-        // Cleanup after all tests in this worker
-
-        // throw new Error("test worker error")
-        // await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
-        // close the app
-        await workerState.electronApp.close()
-    }, { scope: 'worker', auto: true }],
+    // forEachWorker: [async ({ workerState }, use) => {
+    //
+    //     workerState.electronApp.firstWindow()
+    //     // Set up the database before tests
+    //     // const dbApi = new DatabaseAPIRequests(workerState.apiUrl)
+    //     // await dbApi.addNewStandaloneDatabaseApi(workerState.dbConfig)
+    //
+    //     await use() // Run the tests
+    //
+    //
+    //     // Cleanup after all tests in this worker
+    //
+    //     // throw new Error("test worker error")
+    //     // await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
+    //     // close the app
+    //     await workerState.electronApp.close()
+    // }, { scope: 'worker', auto: true }],
     electronApp: async ({baseURL, workerState}, use) => {
         // Launch Electron App
         const electronApp = await electron.launch({
@@ -64,10 +64,18 @@ export const test = base.extend<ElectronFixture,
         const appPath = await electronApp.evaluate(async ({ app }) =>
             // This runs in the main Electron process, parameter here is always
             // the result of the require('electron') in the main app script.
-             app.getAppPath()
+              app.getAppPath()
         )
-        console.log(appPath)
 
+        console.log(appPath)
+        // Get the first window that the app opens, wait if necessary.
+        const window = await electronApp.firstWindow();
+        // Print the title.
+        console.log(await window.title())
+        // Capture a screenshot.
+        await window.screenshot({ path: 'intro.png' });
+        // Direct Electron console to Node terminal.
+        window.on('console', console.log);
 
         try {
             await use(electronApp)

@@ -112,7 +112,8 @@ export default defineConfig<TestOptions>({
             name: 'localElectron',
             testMatch: ['**.electron.spec.ts'],
             use: {
-                baseURL: 'https://chrome.desktop/',
+                baseURL: '/home/tsvetan-tsvetkov/code/RedisInsight/tests/e2e/electronBuild/redisinsight',
+                apiUrl: process.env.API_URL || 'https://localhost:5540/api',
                 headless: false
             },
         },

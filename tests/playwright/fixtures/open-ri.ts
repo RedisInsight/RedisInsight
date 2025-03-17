@@ -1,91 +1,10 @@
-// import { test as base } from '@playwright/test'
-// import BasePage from '../pageObjects/base-page'
-// import {UserAgreementDialog} from '../pageObjects/user-agreement-dialog'
-// import {DatabaseAPIRequests} from'../helpers/api/api-databases'
-// import { ossStandaloneConfig} from '../helpers/conf'
-// import {MyRedisDatabasePage} from '../pageObjects/my-redis-databases-page'
-// import { APIKeyRequests } from '../helpers/api/api-keys'
-//
-// type OpenRedisInsight = {
-//     basePage: BasePage
-//     dialogUserAgreement: UserAgreementDialog
-//     // dbAPI: DatabaseAPIRequests
-//     apiUrl: string
-//     dbConfig: typeof ossStandaloneConfig
-//     forEachWorker: void
-// }
-//
-// export const test = base.extend< OpenRedisInsight,
-//     {
-//         forEachWorker: void,
-//         apiUrl:string
-//         dbConfig: typeof ossStandaloneConfig}>
-//     ({
-//         dbConfig: async ({}, use) => {
-//             console.log('Fixture setup: Assigning database config')
-//             await use(ossStandaloneConfig)  // Use the imported object directly
-//         },
-//         apiUrl: ['default', { option: true }],
-//         // dbAPI: async () => {
-//         //     const dbApi = new DatabaseAPIRequests(this.apiUrl)
-//         //
-//         //     await dbApi.addNewStandaloneDatabaseApi(ossStandaloneConfig)
-//         // },
-//         // context: async ({ browser }, use) => {
-//         //     const context = await browser.newContext()
-//         //     await context.clearCookies()
-//         //     await context.clearPermissions()
-//         //     // await context.storageState({ path: 'emptyState.json' })
-//         //     await use(context)
-//         //     await context.close()
-//         // },
-//         // basePage: async ({ context  }, use) => {
-//         basePage: async ({ page , dbConfig }, use) => {
-//
-//
-//             // const page = await context.newPage()
-//             // Navigate to page
-//             const basePage = new BasePage(page)
-//             await basePage.navigateToHomeUrl()
-//
-//             const myDbPage = new MyRedisDatabasePage(page)
-//             await myDbPage.clickOnDBByName(dbConfig.databaseName)
-//
-//             await use(basePage)
-//
-//     },
-//     dialogUserAgreement: async ({ page }, use) => {
-//         const  userAgreementDialog = new UserAgreementDialog(page)
-//         // await userAgreementDialog.acceptLicenseTerms()
-//         await use(new UserAgreementDialog(page))
-//     },
-//     forEachWorker: [async ({ apiUrl, dbConfig }, use) => {
-//         // This code runs before all the tests in the worker process.
-//         const ti = test.info().workerIndex
-//         console.log(`BEFORE Starting test worker ${ti}`)
-//         // Set up the fixture.
-//         // Add new database
-//         const dbApi = new DatabaseAPIRequests(apiUrl)
-//         await dbApi.addNewStandaloneDatabaseApi(dbConfig)
-//         await use()
-//         // This code runs after all the tests in the worker process.
-//         console.log(`Stopping test worker ${ti}`)
-//         const apiKeyClient = new APIKeyRequests(apiUrl)
-//         // apiKeyClient.deleteKeyByNameApi()
-//         await dbApi.deleteStandaloneDatabaseApi(dbConfig)
-//     }, { auto: true }],  // automatically starts for every worker.
-// })
-//
-// export { expect } from '@playwright/test'
-
 import { test as base, Page } from '@playwright/test'
 import BasePage from '../pageObjects/base-page'
 import { UserAgreementDialog } from '../pageObjects/dialogs/user-agreement-dialog'
 import { DatabaseAPIRequests } from '../helpers/api/api-databases'
 import { ossStandaloneConfig } from '../helpers/conf'
 import { MyRedisDatabasePage } from '../pageObjects/my-redis-databases-page'
-import {APIKeyRequests} from "../helpers/api/api-keys";
-// import { APIKeyRequests } from '../helpers/api/api-keys'
+
 
 // Define shared worker object
 type WorkerSharedState = {
@@ -95,7 +14,7 @@ type WorkerSharedState = {
 }
 
 // Define test fixture types
-type OpenRedisInsight = {
+type RedisInsight = {
     basePage: Page;
     dialogUserAgreement: UserAgreementDialog;
     workerState: WorkerSharedState; // Worker-scoped object passed to tests
@@ -103,9 +22,9 @@ type OpenRedisInsight = {
 
 // Extend Playwright test
 export const test = base.extend<
-    OpenRedisInsight,
-    { forEachWorker: void; workerState: WorkerSharedState } // Worker-scoped fixtures
->({
+    RedisInsight,
+    { forEachWorker: void; workerState: WorkerSharedState } >({
+
     // ✅ Worker-scoped shared object
     workerState: [async ({}, use, testInfo) => {
         console.log(`🚀 Setting up worker state for worker ${testInfo.workerIndex}`)
@@ -116,13 +35,13 @@ export const test = base.extend<
             dbConfig: ossStandaloneConfig,
             baseUrl: testInfo.project.use.baseURL
         }
-
+        console.log(`🏠 Base URL: ${workerState.baseUrl}`)
         console.log(`🌐 API URL: ${workerState.apiUrl}`)
         console.log(`🗄️ Database Config: ${JSON.stringify(workerState.dbConfig)}`)
-        console.log(`🏠 Base URL: ${workerState.baseUrl}`)
 
         await use(workerState)
-    }, { scope: 'worker' }], // Runs once per worker
+
+    }, { scope: 'worker' }], // Worker-scoped fixtures, runs once per worker
 
     // ✅ Worker-scoped setup/teardown
     forEachWorker: [async ({ workerState }, use) => {

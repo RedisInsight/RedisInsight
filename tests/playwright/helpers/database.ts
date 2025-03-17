@@ -642,7 +642,7 @@ export class DatabaseHelper {
         apiUrl: string
     ): Promise<void> {
         await this.acceptLicenseTerms(page,apiUrl)
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(databaseParameters)
+        await this.databaseAPIRequests.addNewStandaloneDatabaseApi(databaseParameters)
         // Reload Page to see the new added database through api
         await this.myRedisDatabasePage.reloadPage()
         // Connect to DB
@@ -745,10 +745,10 @@ export class DatabaseHelper {
     // Accept License terms
     async acceptLicenseTerms(page: Page, apiUrl: string ): Promise<void> {
         // await this.myRedisDatabasePage.page.viewportSize(); // (if needed to maximize window)
-        await userAgreementDialog.acceptLicenseTerms()
+        await this.userAgreementDialog.acceptLicenseTerms()
         await updateControlNumber(48.2, page, apiUrl)
         // Open default databases list tab if RDI opened
-        if (await rdiInstancesListPage.elementExistsLocator(rdiInstancesListPage.addRdiInstanceButton)) {
+        if (await this.rdiInstancesListPage.elementExistsLocator(this.rdiInstancesListPage.addRdiInstanceButton)) {
             await this.myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase)
         }
         // TODO delete after releasing chatbot
@@ -758,62 +758,62 @@ export class DatabaseHelper {
     }
 
     // Accept License terms and connect to the RedisStack database
-    async acceptLicenseAndConnectToRedisStack(): Promise<void> {
-        await this.acceptLicenseTerms()
-        // Connect to DB
-        await this.myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
-        await this.myRedisDatabasePage.addRedisDatabaseDialog.connectToRedisStackButton.click()
-    }
+    // async acceptLicenseAndConnectToRedisStack(): Promise<void> {
+    //     await this.acceptLicenseTerms()
+    //     // Connect to DB
+    //     await this.myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
+    //     await this.myRedisDatabasePage.addRedisDatabaseDialog.connectToRedisStackButton.click()
+    // }
 
     /**
      * Delete database
      * @param databaseName The database name
      */
-    async deleteDatabase(databaseName: string): Promise<void> {
-        await this.myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
-        if (
-            await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.isVisible()
-        ) {
-            await this.deleteDatabaseByNameApi(databaseName)
-        }
-    }
+    // async deleteDatabase(databaseName: string): Promise<void> {
+    //     await this.myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
+    //     if (
+    //         await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.isVisible()
+    //     ) {
+    //         await this.deleteDatabaseByNameApi(databaseName)
+    //     }
+    // }
 
     /**
      * Delete database with custom name
      * @param databaseName The database name
-     */
-    async deleteCustomDatabase(databaseName: string): Promise<void> {
-        await this.myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
-        if (
-            await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.isVisible()
-        ) {
-            await this.myRedisDatabasePage.deleteDatabaseByName(databaseName)
-        }
-    }
+    //  */
+    // async deleteCustomDatabase(databaseName: string): Promise<void> {
+    //     await this.myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
+    //     if (
+    //         await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.isVisible()
+    //     ) {
+    //         await this.myRedisDatabasePage.deleteDatabaseByName(databaseName)
+    //     }
+    // }
 
-    /**
-     * Accept License terms and add database or connect to the Redis stask database
-     * @param databaseParameters The database parameters
-     * @param databaseName The database name
-     */
-    async acceptTermsAddDatabaseOrConnectToRedisStack(
-        databaseParameters: AddNewDatabaseParameters
-    ): Promise<void> {
-        if (
-            await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.isVisible()
-        ) {
-            await this.acceptLicenseTermsAndAddDatabase(databaseParameters)
-        } else {
-            await this.acceptLicenseAndConnectToRedisStack()
-        }
-    }
+    // /**
+    //  * Accept License terms and add database or connect to the Redis stask database
+    //  * @param databaseParameters The database parameters
+    //  * @param databaseName The database name
+    //  */
+    // async acceptTermsAddDatabaseOrConnectToRedisStack(
+    //     databaseParameters: AddNewDatabaseParameters
+    // ): Promise<void> {
+    //     if (
+    //         await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.isVisible()
+    //     ) {
+    //         await this.acceptLicenseTermsAndAddDatabase(databaseParameters)
+    //     } else {
+    //         await this.acceptLicenseAndConnectToRedisStack()
+    //     }
+    // }
 
     /**
      * Click on the edit database button by name
      * @param databaseName The name of the database
      */
     async clickOnEditDatabaseByName(databaseName: string): Promise<void> {
-        const databaseId = await databaseAPIRequests.getDatabaseIdByName(databaseName)
+        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(databaseName)
         const databaseEditBtn = this.myRedisDatabasePage.page.locator(
             `[data-testid=edit-instance-${databaseId}]`
         )
@@ -827,7 +827,7 @@ export class DatabaseHelper {
      * @param databaseName The name of the database
      */
     async deleteDatabaseByNameApi(databaseName: string): Promise<void> {
-        const databaseId = await databaseAPIRequests.getDatabaseIdByName(databaseName)
+        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(databaseName)
         const databaseDeleteBtn = this.myRedisDatabasePage.page.locator(
             `[data-testid=delete-instance-${databaseId}-icon]`
         )

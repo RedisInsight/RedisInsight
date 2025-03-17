@@ -86,11 +86,14 @@ export class AddRedisDatabaseDialog extends BasePage{
     private readonly timeoutInput: Locator
 
     // For certificate removal
-    private trashIconMsk(certificate: TlsCertificates): string {
+    aiChatMessage: Locator
+    aiCloseMessage: Locator
+
+    trashIconMsk(certificate: TlsCertificates): string {
         return `[data-testid^="delete-${certificate}-cert"]`
     }
 
-    private getDeleteCertificate(certificate: TlsCertificates): Locator {
+    getDeleteCertificate(certificate: TlsCertificates): Locator {
         return this.page.locator(this.trashIconMsk(certificate))
     }
 
@@ -138,7 +141,10 @@ export class AddRedisDatabaseDialog extends BasePage{
         this.sshPrivateKeyRadioBtn = page.locator('#privateKey ~ div')
 
         // LABELS
-        this.dataCompressorLabel = page.locator('[data-testid="showCompressor"] ~ label')
+        this.dataCompressorLabel = page.getByTestId('[data-testid="showCompressor"] ~ label')
+        this.aiChatMessage = page.getByTestId('ai-chat-message-btn')
+        this.aiCloseMessage = page.locator('[aria-label="Closes this modal window"]')
+
 
         // SSH TEXT INPUTS
         this.sshHostInput = page.getByTestId('sshHost')

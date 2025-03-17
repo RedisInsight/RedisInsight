@@ -48,7 +48,7 @@ describe('DatabaseOverview', () => {
     expect(container.querySelector('[data-test-subj="overview-total-memory"]')).toHaveTextContent('45 MB')
     expect(container.querySelector('[data-test-subj="overview-total-keys"]')).toBeInTheDocument()
     expect(container.querySelector('[data-test-subj="overview-connected-clients"]')).toBeInTheDocument()
-    expect(queryByRole('button', { name: ' plan' })).not.toBeInTheDocument()
+    expect(queryByRole('button', { name: 'Upgrade plan' })).not.toBeInTheDocument()
   })
 
   it('should render auto-refresh component', () => {

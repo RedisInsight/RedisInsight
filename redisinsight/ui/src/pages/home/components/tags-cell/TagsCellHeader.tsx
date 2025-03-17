@@ -35,6 +35,7 @@ export const TagsCellHeader = memo(() => {
       <EuiPopover
         button={
           <EuiIcon
+            role="button"
             type={FilterSvg}
             size="m"
             className={styles.filterByTagIcon}
@@ -54,6 +55,8 @@ export const TagsCellHeader = memo(() => {
           <EuiFormRow>
             <EuiFieldText
               icon="search"
+              role="search"
+              data-testid="tag-search"
               placeholder="Enter tag key or value"
               style={{ borderRadius: 4 }}
               value={tagSearch}
@@ -79,6 +82,7 @@ export const TagsCellHeader = memo(() => {
                 <div key={value} style={{ paddingLeft: '20px' }}>
                   <EuiCheckbox
                     id={`${key}:${value}`}
+                    data-testid={`${key}:${value}`}
                     label={value}
                     checked={selectedTags.has(`${key}:${value}`)}
                     onChange={(event) => {

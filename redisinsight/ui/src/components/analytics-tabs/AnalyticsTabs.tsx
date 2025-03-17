@@ -6,17 +6,17 @@ import { useParams, useHistory } from 'react-router-dom'
 import { Pages } from 'uiSrc/constants'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 
 import { appFeatureOnboardingSelector, setOnboardNextStep } from 'uiSrc/slices/app/features'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { OnboardingSteps } from 'uiSrc/constants/onboarding'
+import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 import { analyticsViewTabs } from './constants'
 
 const AnalyticsTabs = () => {
   const { viewTab } = useSelector(analyticsSettingsSelector)
-  const { connectionType } = useSelector(connectedInstanceSelector)
+  const connectionType = useConnectionType()
   const { currentStep } = useSelector(appFeatureOnboardingSelector)
   const history = useHistory()
 

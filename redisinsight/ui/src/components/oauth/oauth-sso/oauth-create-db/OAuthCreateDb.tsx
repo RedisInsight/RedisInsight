@@ -98,7 +98,7 @@ const OAuthCreateDb = (props: Props) => {
               {(form: React.ReactNode) => (
                 <>
                   <EuiText className={styles.subTitle}>Get started with</EuiText>
-                  <EuiTitle className={styles.title}><h2>Free Cloud database</h2></EuiTitle>
+                  <EuiTitle className={styles.title}><h2>Free trial Cloud database</h2></EuiTitle>
                   {form}
                   <div>
                     <OAuthRecommendedSettings value={isRecommended} onChange={handleChangeRecommendedSettings} />
@@ -110,7 +110,7 @@ const OAuthCreateDb = (props: Props) => {
           ) : (
             <>
               <EuiText className={styles.subTitle}>Get your</EuiText>
-              <EuiTitle className={styles.title}><h2>Free Cloud database</h2></EuiTitle>
+              <EuiTitle className={styles.title}><h2>Free trial Cloud database</h2></EuiTitle>
               <EuiSpacer size="xl" />
               <EuiText textAlign="center" color="subdued">
                 The database will be created automatically and can be changed from Redis Cloud.

@@ -145,7 +145,7 @@ export class Database {
     example: '2021-01-06T12:44:39.000Z',
   })
   @Expose()
-  lastConnection: Date;
+  lastConnection?: Date;
 
   @ApiProperty({
     description: 'Date of creation',
@@ -303,15 +303,6 @@ export class Database {
   version?: string;
 
   @ApiPropertyOptional({
-    description: 'Force client connection as standalone',
-    type: Boolean,
-  })
-  @Expose()
-  @IsBoolean()
-  @IsOptional()
-  forceStandalone?: boolean;
-
-  @ApiPropertyOptional({
     description: 'Tags associated with the database.',
     type: Tag,
     isArray: true,
@@ -321,4 +312,13 @@ export class Database {
   @IsArray()
   @Type(() => Tag)
   tags?: Tag[];
+
+  @ApiPropertyOptional({
+    description: 'Force client connection as standalone',
+    type: Boolean,
+  })
+  @Expose()
+  @IsBoolean()
+  @IsOptional()
+  forceStandalone?: boolean;
 }

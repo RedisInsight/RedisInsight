@@ -11,14 +11,14 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const autoDiscoverREDatabases = new AutoDiscoverREDatabases();
 const databaseHelper = new DatabaseHelper();
 
-fixture `Add database`
+fixture(`Add database`)
     .meta({ type: 'smoke' })
     .page(commonUrl)
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
     });
-test
-    .meta({ rte: rte.reCloud })
+test.skip
+    .meta({ rte: rte.reCloud, skipComment: "Skipped since environment has changed needs rework" })
     .after(async() => {
         await databaseHelper.deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add database from RE Cloud', async() => {

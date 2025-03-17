@@ -9,6 +9,7 @@ import { SettingsService } from 'src/modules/settings/settings.service';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 import { ServerService } from 'src/modules/server/server.service';
 import { SessionMetadata } from 'src/common/models';
+import { convertAnyStringToPositiveInteger } from 'src/utils';
 
 export const NON_TRACKING_ANONYMOUS_ID = '00000000-0000-0000-0000-000000000001';
 
@@ -70,7 +71,7 @@ export class AnalyticsService {
    * @param sessionMetadata
    */
   public getAnonymousId(sessionMetadata?: SessionMetadata): string {
-    return this.anonymousId ?? sessionMetadata?.userId ?? 'unknown';
+    return this.anonymousId ?? this.constantsProvider.getAnonymousId(sessionMetadata);
   }
 
   /**
@@ -87,8 +88,7 @@ export class AnalyticsService {
     }
 
     if (sessionMetadata?.sessionId) {
-      // convert string to number
-      return Number(BigInt(`0x${Buffer.from(sessionMetadata?.sessionId).toString('hex')}`));
+      return convertAnyStringToPositiveInteger(sessionMetadata?.sessionId);
     }
 
     return -1;
@@ -96,7 +96,7 @@ export class AnalyticsService {
 
   public async init(initConfig: ITelemetryInitEvent) {
     const {
-      anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion, firstStart, sessionMetadata
+      anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion, firstStart, sessionMetadata,
     } = initConfig;
     this.sessionId = sessionId;
     this.anonymousId = anonymousId;

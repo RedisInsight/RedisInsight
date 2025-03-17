@@ -49,7 +49,7 @@ export const test = base.extend<ElectronFixture,
 
         // throw new Error("test worker error")
         // await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
-        //close the app
+        // close the app
         await workerState.electronApp.close()
     }, { scope: 'worker', auto: true }],
     electronApp: async ({baseURL, workerState}, use) => {

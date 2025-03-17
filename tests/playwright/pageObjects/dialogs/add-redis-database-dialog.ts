@@ -2,48 +2,68 @@ import { expect, Locator, Page } from '@playwright/test'
 import { TlsCertificates } from '../../helpers/constants'
 import { RedisCloudSigninPanel } from '../components/redis-cloud-sign-in-panel'
 import {SentinelParameters, AddNewDatabaseParameters, SSHParameters } from '../../types'
-import {BasePage} from "../base-page";
+import {BasePage} from '../base-page'
 
 
 export class AddRedisDatabaseDialog extends BasePage{
     private readonly page: Page
+
     private readonly redisCloudSigninPanel: RedisCloudSigninPanel
 
     // BUTTONS
     private readonly addDatabaseButton: Locator
-    private readonly addRedisDatabaseButton: Locator
+
+    readonly addRedisDatabaseButton: Locator
+
     private readonly customSettingsButton: Locator
+
     private readonly addAutoDiscoverDatabase: Locator
+
     private readonly addCloudDatabaseButton: Locator
+
     private readonly redisSoftwareButton: Locator
+
     private readonly redisSentinelButton: Locator
 
     // TEXT INPUTS
     private readonly hostInput: Locator
+
     private readonly portInput: Locator
+
     private readonly databaseAliasInput: Locator
+
     private readonly passwordInput: Locator
+
     private readonly usernameInput: Locator
+
     private readonly accessKeyInput: Locator
+
     private readonly secretKeyInput: Locator
+
     private readonly databaseIndexInput: Locator
 
     // TABS
     private readonly generalTab: Locator
+
     private readonly securityTab: Locator
+
     private readonly decompressionTab: Locator
 
     // DROPDOWNS
     private readonly caCertField: Locator
+
     private readonly clientCertField: Locator
+
     private readonly selectCompressor: Locator
 
     // CHECKBOXES
     private readonly databaseIndexCheckbox: Locator
+
     private readonly useSSHCheckbox: Locator
 
     // RADIO BUTTONS
     private readonly sshPasswordRadioBtn: Locator
+
     private readonly sshPrivateKeyRadioBtn: Locator
 
     // LABELS
@@ -51,10 +71,15 @@ export class AddRedisDatabaseDialog extends BasePage{
 
     // SSH TEXT INPUTS
     private readonly sshHostInput: Locator
+
     private readonly sshPortInput: Locator
+
     private readonly sshUsernameInput: Locator
+
     private readonly sshPasswordInput: Locator
+
     private readonly sshPrivateKeyInput: Locator
+
     private readonly sshPassphraseInput: Locator
 
     // OTHER
@@ -64,6 +89,7 @@ export class AddRedisDatabaseDialog extends BasePage{
     private trashIconMsk(certificate: TlsCertificates): string {
         return `[data-testid^="delete-${certificate}-cert"]`
     }
+
     private getDeleteCertificate(certificate: TlsCertificates): Locator {
         return this.page.locator(this.trashIconMsk(certificate))
     }

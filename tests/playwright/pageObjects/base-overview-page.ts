@@ -8,7 +8,7 @@ import { DatabasesForImport } from '../types'
 
 export class BaseOverviewPage extends BasePage {
     // Component instance used in methods
-    private readonly toast: Toast
+    toast: Toast
 
     // BUTTONS & ACTION SELECTORS
     private readonly deleteRowButton: Locator
@@ -24,7 +24,7 @@ export class BaseOverviewPage extends BasePage {
 
     private readonly deleteButtonInPopover: Locator
 
-    private readonly dbNameList: Locator
+    public dbNameList: Locator
 
     private readonly tableRowContent: Locator
 

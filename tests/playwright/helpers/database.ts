@@ -9,14 +9,14 @@
 // } from '../pageObjects/dialogs/add-redis-database-dialog'
 // import { DiscoverMasterGroupsPage } from '../pageObjects/sentinel/discovered-sentinel-master-groups-page'
 // import {
-//     MyRedisDatabasePage,
+//     this.myRedisDatabasePage,
 //     BrowserPage,
 //     AutoDiscoverREDatabases
 // } from '../pageObjects'
 // import { UserAgreementDialog } from '../pageObjects/dialogs'
 // import { RdiInstancesListPage } from '../pageObjects/rdi-instances-list-page'
 //
-// const myRedisDatabasePage = new MyRedisDatabasePage()
+// const this.myRedisDatabasePage = new this.myRedisDatabasePage()
 // const discoverMasterGroupsPage = new DiscoverMasterGroupsPage()
 // const autoDiscoverREDatabases = new AutoDiscoverREDatabases()
 // const browserPage = new BrowserPage()
@@ -33,21 +33,21 @@
 //         databaseParameters: AddNewDatabaseParameters
 //     ): Promise<void> {
 //         // Fill the add database form
-//         await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDataBase(
+//         await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDataBase(
 //             databaseParameters
 //         )
 //         // Click for saving
 //         await t
-//             .click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton)
+//             .click(this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton)
 //             // Wait for database to be exist
 //             .expect(
-//                 myRedisDatabasePage.dbNameList.withExactText(
+//                 this.myRedisDatabasePage.dbNameList.withExactText(
 //                     databaseParameters.databaseName ?? ''
 //                 ).exists
 //             )
 //             .ok('The database not displayed', { timeout: 10000 })
 //             // Close message
-//             .click(myRedisDatabasePage.Toast.toastCloseButton)
+//             .click(this.myRedisDatabasePage.Toast.toastCloseButton)
 //     }
 //
 //     /**
@@ -58,13 +58,13 @@
 //         databaseParameters: SentinelParameters
 //     ): Promise<void> {
 //         // Fill sentinel parameters to auto-discover Master Groups
-//         await myRedisDatabasePage.AddRedisDatabaseDialog.discoverSentinelDatabases(
+//         await this.myRedisDatabasePage.addRedisDatabaseDialog.discoverSentinelDatabases(
 //             databaseParameters
 //         )
 //         // Click for autodiscover
 //         await t
 //             .click(
-//                 myRedisDatabasePage.AddRedisDatabaseDialog
+//                 this.myRedisDatabasePage.AddRedisDatabaseDialog
 //                     .addRedisDatabaseButton
 //             )
 //             .expect(discoverMasterGroupsPage.addPrimaryGroupButton.exists)
@@ -84,12 +84,12 @@
 //         databaseParameters: AddNewDatabaseParameters
 //     ): Promise<void> {
 //         // Fill the add database form
-//         await myRedisDatabasePage.AddRedisDatabaseDialog.addAutodiscoverREClusterDatabase(
+//         await this.myRedisDatabasePage.addRedisDatabaseDialog.addAutodiscoverREClusterDatabase(
 //             databaseParameters
 //         )
 //         // Click on submit button
 //         await t
-//             .click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton)
+//             .click(this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton)
 //             // Wait for database to be exist in the list of Autodiscover databases and select it
 //             .expect(
 //                 autoDiscoverREDatabases.databaseName.withExactText(
@@ -115,18 +115,18 @@
 //         databaseParameters: OSSClusterParameters
 //     ): Promise<void> {
 //         // Enter required parameters for OSS Cluster
-//         await myRedisDatabasePage.AddRedisDatabaseDialog.addOssClusterDatabase(
+//         await this.myRedisDatabasePage.addRedisDatabaseDialog.addOssClusterDatabase(
 //             databaseParameters
 //         )
 //         // Click for saving
 //         await t
-//             .click(myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton)
+//             .click(this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton)
 //             // Check for info message that DB was added
-//             .expect(myRedisDatabasePage.Toast.toastHeader.exists)
+//             .expect(this.myRedisDatabasePage.Toast.toastHeader.exists)
 //             .ok('Info message not exists', { timeout: 10000 })
 //             // Wait for database to be exist
 //             .expect(
-//                 myRedisDatabasePage.dbNameList.withExactText(
+//                 this.myRedisDatabasePage.dbNameList.withExactText(
 //                     databaseParameters.ossClusterDatabaseName
 //                 ).exists
 //             )
@@ -143,12 +143,12 @@
 //         cloudAPISecretKey: string
 //     ): Promise<string> {
 //         // Fill the add database form and Submit
-//         await myRedisDatabasePage.AddRedisDatabaseDialog.addAutodiscoverRECloudDatabase(
+//         await this.myRedisDatabasePage.addRedisDatabaseDialog.addAutodiscoverRECloudDatabase(
 //             cloudAPIAccessKey,
 //             cloudAPISecretKey
 //         )
 //         await t.click(
-//             myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton
+//             this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton
 //         )
 //         await t
 //             .expect(
@@ -158,8 +158,8 @@
 //             )
 //             .ok('Subscriptions list not displayed', { timeout: 120000 })
 //         // Select subscriptions
-//         await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.selectAllCheckbox)
-//         await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.showDatabasesButton)
+//         await t.click(this.myRedisDatabasePage.addRedisDatabaseDialog.selectAllCheckbox)
+//         await t.click(this.myRedisDatabasePage.addRedisDatabaseDialog.showDatabasesButton)
 //         // Select databases for adding
 //         const databaseName = await autoDiscoverREDatabases.getDatabaseName()
 //         await t.click(autoDiscoverREDatabases.databaseCheckbox)
@@ -174,7 +174,7 @@
 //             .ok('Added databases list not displayed', { timeout: 20000 })
 //         await t.click(autoDiscoverREDatabases.viewDatabasesButton)
 //         // uncomment when fixed db will be added to cloud subscription
-//         // await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The database not displayed', { timeout: 10000 });
+//         // await t.expect(this.myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The database not displayed', { timeout: 10000 });
 //         return databaseName
 //     }
 //
@@ -189,7 +189,7 @@
 //         await this.acceptLicenseTerms()
 //         await this.addNewStandaloneDatabase(databaseParameters)
 //         // Connect to DB
-//         await myRedisDatabasePage.clickOnDBByName(
+//         await this.myRedisDatabasePage.clickOnDBByName(
 //             databaseParameters.databaseName!
 //         )
 //     }
@@ -207,9 +207,9 @@
 //             databaseParameters
 //         )
 //         // Reload Page to see the new added database through api
-//         await myRedisDatabasePage.reloadPage()
+//         await this.myRedisDatabasePage.reloadPage()
 //         // Connect to DB
-//         await myRedisDatabasePage.clickOnDBByName(
+//         await this.myRedisDatabasePage.clickOnDBByName(
 //             databaseParameters.databaseName!
 //         )
 //     }
@@ -225,7 +225,7 @@
 //         await this.acceptLicenseTerms()
 //         await this.addOSSClusterDatabase(databaseParameters)
 //         // Connect to DB
-//         await myRedisDatabasePage.clickOnDBByName(
+//         await this.myRedisDatabasePage.clickOnDBByName(
 //             databaseParameters.ossClusterDatabaseName!
 //         )
 //     }
@@ -242,9 +242,9 @@
 //             databaseParameters
 //         )
 //         // Reload Page to see the database added through api
-//         await myRedisDatabasePage.reloadPage()
+//         await this.myRedisDatabasePage.reloadPage()
 //         // Connect to DB
-//         await myRedisDatabasePage.clickOnDBByName(
+//         await this.myRedisDatabasePage.clickOnDBByName(
 //             databaseParameters.masters![1].alias ?? ''
 //         )
 //     }
@@ -259,7 +259,7 @@
 //         await this.acceptLicenseTerms()
 //         await this.addNewREClusterDatabase(databaseParameters)
 //         // Connect to DB
-//         await myRedisDatabasePage.clickOnDBByName(
+//         await this.myRedisDatabasePage.clickOnDBByName(
 //             databaseParameters.databaseName ?? ''
 //         )
 //     }
@@ -272,35 +272,35 @@
 //         databaseParameters: AddNewDatabaseParameters
 //     ): Promise<void> {
 //         const searchTimeout = 60 * 1000 // 60 sec to wait database appearing
-//         const dbSelector = myRedisDatabasePage.dbNameList.withExactText(
+//         const dbSelector = this.myRedisDatabasePage.dbNameList.withExactText(
 //             databaseParameters.databaseName ?? ''
 //         )
 //         const startTime = Date.now()
 //
 //         await this.acceptLicenseTerms()
-//         await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDataBase(
+//         await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDataBase(
 //             databaseParameters
 //         )
 //         // Click for saving
 //         await t.click(
-//             myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton
+//             this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton
 //         )
 //         await t.wait(3000)
 //         // Reload page until db appears
 //         do {
-//             await myRedisDatabasePage.reloadPage()
+//             await this.myRedisDatabasePage.reloadPage()
 //         } while (
 //             !(await dbSelector.exists) &&
 //             Date.now() - startTime < searchTimeout
 //         )
 //         await t
 //             .expect(
-//                 myRedisDatabasePage.dbNameList.withExactText(
+//                 this.myRedisDatabasePage.dbNameList.withExactText(
 //                     databaseParameters.databaseName ?? ''
 //                 ).exists
 //             )
 //             .ok('The database not displayed', { timeout: 5000 })
-//         await myRedisDatabasePage.clickOnDBByName(
+//         await this.myRedisDatabasePage.clickOnDBByName(
 //             databaseParameters.databaseName ?? ''
 //         )
 //         await t
@@ -316,29 +316,29 @@
 //         databaseParameters: AddNewDatabaseParameters
 //     ): Promise<void> {
 //         const searchTimeout = 60 * 1000 // 60 sec to wait database appearing
-//         const dbSelector = myRedisDatabasePage.dbNameList.withExactText(
+//         const dbSelector = this.myRedisDatabasePage.dbNameList.withExactText(
 //             databaseParameters.databaseName ?? ''
 //         )
 //         const startTime = Date.now()
 //
-//         await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDataBase(
+//         await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDataBase(
 //             databaseParameters
 //         )
 //         // Click for saving
 //         await t.click(
-//             myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton
+//             this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton
 //         )
 //         await t.wait(3000)
 //         // Reload page until db appears
 //         do {
-//             await myRedisDatabasePage.reloadPage()
+//             await this.myRedisDatabasePage.reloadPage()
 //         } while (
 //             !(await dbSelector.exists) &&
 //             Date.now() - startTime < searchTimeout
 //         )
 //         await t
 //             .expect(
-//                 myRedisDatabasePage.dbNameList.withExactText(
+//                 this.myRedisDatabasePage.dbNameList.withExactText(
 //                     databaseParameters.databaseName ?? ''
 //                 ).exists
 //             )
@@ -352,11 +352,11 @@
 //         await updateControlNumber(48.2)
 //         // Open default databases list tab if RDI opened
 //         if (await rdiInstancesListPage.elementExistsLocator(rdiInstancesListPage.addRdiInstanceButton)) {
-//             await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase)
+//             await this.myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase)
 //         }
 //         // TODO delete after releasing chatbot
-//         if (await myRedisDatabasePage.AddRedisDatabaseDialog.aiChatMessage.exists) {
-//             await t.click(myRedisDatabasePage.AddRedisDatabaseDialog.aiCloseMessage)
+//         if (await this.myRedisDatabasePage.addRedisDatabaseDialog.aiChatMessage.exists) {
+//             await t.click(this.myRedisDatabasePage.addRedisDatabaseDialog.aiCloseMessage)
 //         }
 //     }
 //
@@ -365,9 +365,9 @@
 //         await this.acceptLicenseTerms()
 //         // Connect to DB
 //         await t
-//             .click(myRedisDatabasePage.NavigationPanel.myRedisDBButton)
+//             .click(this.myRedisDatabasePage.NavigationPanel.myRedisDBButton)
 //             .click(
-//                 myRedisDatabasePage.AddRedisDatabaseDialog.connectToRedisStackButton
+//                 this.myRedisDatabasePage.addRedisDatabaseDialog.connectToRedisStackButton
 //             )
 //     }
 //
@@ -376,9 +376,9 @@
 //      * @param databaseName The database name
 //      */
 //     async deleteDatabase(databaseName: string): Promise<void> {
-//         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton)
+//         await t.click(this.myRedisDatabasePage.NavigationPanel.myRedisDBButton)
 //         if (
-//             await myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton.exists
+//             await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.exists
 //         ) {
 //             await this.deleteDatabaseByNameApi(databaseName)
 //         }
@@ -389,11 +389,11 @@
 //      * @param databaseName The database name
 //      */
 //     async deleteCustomDatabase(databaseName: string): Promise<void> {
-//         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton)
+//         await t.click(this.myRedisDatabasePage.NavigationPanel.myRedisDBButton)
 //         if (
-//             await myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton.exists
+//             await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.exists
 //         ) {
-//             await myRedisDatabasePage.deleteDatabaseByName(databaseName)
+//             await this.myRedisDatabasePage.deleteDatabaseByName(databaseName)
 //         }
 //     }
 //
@@ -406,7 +406,7 @@
 //         databaseParameters: AddNewDatabaseParameters
 //     ): Promise<void> {
 //         if (
-//             await myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton.exists
+//             await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.exists
 //         ) {
 //             await this.acceptLicenseTermsAndAddDatabase(databaseParameters)
 //         }
@@ -449,10 +449,10 @@
 //             .expect(databaseDeleteBtn.exists)
 //             .ok(`"${databaseName}" database not displayed`)
 //         await t.click(databaseDeleteBtn)
-//         await t.click(myRedisDatabasePage.confirmDeleteButton)
+//         await t.click(this.myRedisDatabasePage.confirmDeleteButton)
 //     }
 // }
-import { expect } from '@playwright/test'
+import {expect, Page} from '@playwright/test'
 import { DatabaseAPIRequests } from './api/api-databases'
 import { RedisOverviewPage } from './constants'
 import { updateControlNumber } from './electron/insights'
@@ -463,23 +463,37 @@ import {
 } from '../types'
 import { UserAgreementDialog } from '../pageObjects/dialogs/user-agreement-dialog'
 import { RdiInstancesListPage } from '../pageObjects/rdi-instances-list-page'
-import { DiscoverMasterGroupsPage } from '../pageObjects/sentinel/discovered-sentinel-master-groups-page'
+// import { DiscoverMasterGroupsPage } from '../pageObjects/sentinel/discovered-sentinel-master-groups-page'
 import {
     MyRedisDatabasePage,
     BrowserPage,
-    AutoDiscoverREDatabases
+    AutoDiscoverREDatabases,
+    AddRedisDatabaseDialog
 } from '../pageObjects'
 
 
-const myRedisDatabasePage = new MyRedisDatabasePage()
-const discoverMasterGroupsPage = new DiscoverMasterGroupsPage()
-const autoDiscoverREDatabases = new AutoDiscoverREDatabases()
-const browserPage = new BrowserPage()
-const userAgreementDialog = new UserAgreementDialog()
-const databaseAPIRequests = new DatabaseAPIRequests()
-const rdiInstancesListPage = new RdiInstancesListPage()
-
 export class DatabaseHelper {
+    private myRedisDatabasePage: MyRedisDatabasePage
+    private addRedisDataBaseDialog: AddRedisDatabaseDialog
+
+// const discoverMasterGroupsPage = new DiscoverMasterGroupsPage()
+    private autoDiscoverREDatabases: AutoDiscoverREDatabases
+    private browserPage: BrowserPage
+    private userAgreementDialog: UserAgreementDialog
+    private databaseAPIRequests: DatabaseAPIRequests
+    private rdiInstancesListPage: RdiInstancesListPage
+
+   constructor(page: Page, apiUrl: string) {
+        this.addRedisDataBaseDialog = new AddRedisDatabaseDialog(page)
+        this.autoDiscoverREDatabases = new AutoDiscoverREDatabases(page)
+        this.browserPage = new BrowserPage(page)
+        this.userAgreementDialog = new UserAgreementDialog(page)
+        this.rdiInstancesListPage = new RdiInstancesListPage(page)
+        this.myRedisDatabasePage = new MyRedisDatabasePage(page, apiUrl)
+        this.databaseAPIRequests = new DatabaseAPIRequests(apiUrl)
+
+
+   }
     /**
      * Add a new database manually using host and port
      * @param databaseParameters The database parameters
@@ -488,39 +502,40 @@ export class DatabaseHelper {
         databaseParameters: AddNewDatabaseParameters
     ): Promise<void> {
         // Fill the add database form
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDataBase(
+
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDataBase(
             databaseParameters
         )
         // Click for saving
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton.click()
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton.click()
         // Wait for database to exist
         await expect(
-            myRedisDatabasePage.dbNameList.getByText(databaseParameters.databaseName ?? '', { exact: true })
+            this.myRedisDatabasePage.dbNameList.getByText(databaseParameters.databaseName ?? '', { exact: true })
         ).toBeVisible({ timeout: 10000 })
         // Close message
-        await myRedisDatabasePage.Toast.toastCloseButton.click()
+        await this.myRedisDatabasePage.toast.toastCloseButton.click()
     }
 
-    /**
-     * Add a new database via autodiscover using Sentinel option
-     * @param databaseParameters The Sentinel parameters: host, port and sentinel password
-     */
-    async discoverSentinelDatabase(
-        databaseParameters: SentinelParameters
-    ): Promise<void> {
-        // Fill sentinel parameters to auto-discover Master Groups
-        await myRedisDatabasePage.AddRedisDatabaseDialog.discoverSentinelDatabases(
-            databaseParameters
-        )
-        // Click for autodiscover
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton.click()
-        await expect(discoverMasterGroupsPage.addPrimaryGroupButton).toBeVisible({
-            timeout: 10000
-        })
-        // Select Master Groups and Add to Redis Insight
-        await discoverMasterGroupsPage.addMasterGroups()
-        await autoDiscoverREDatabases.viewDatabasesButton.click()
-    }
+    // /**
+    //  * Add a new database via autodiscover using Sentinel option
+    //  * @param databaseParameters The Sentinel parameters: host, port and sentinel password
+    //  */
+    // async discoverSentinelDatabase(
+    //     databaseParameters: SentinelParameters
+    // ): Promise<void> {
+    //     // Fill sentinel parameters to auto-discover Master Groups
+    //     await this.myRedisDatabasePage.addRedisDatabaseDialog.discoverSentinelDatabases(
+    //         databaseParameters
+    //     )
+    //     // Click for autodiscover
+    //     await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton.click()
+    //     await expect(discoverMasterGroupsPage.addPrimaryGroupButton).toBeVisible({
+    //         timeout: 10000
+    //     })
+    //     // Select Master Groups and Add to Redis Insight
+    //     await discoverMasterGroupsPage.addMasterGroups()
+    //     await autoDiscoverREDatabases.viewDatabasesButton.click()
+    // }
 
     /**
      * Add a new database from RE Cluster via auto-discover flow
@@ -530,20 +545,20 @@ export class DatabaseHelper {
         databaseParameters: AddNewDatabaseParameters
     ): Promise<void> {
         // Fill the add database form
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addAutodiscoverREClusterDatabase(
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addAutodiscoverREClusterDatabase(
             databaseParameters
         )
         // Click on submit button
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton.click()
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton.click()
         // Wait for database to exist in the list of Autodiscover databases and select it
         await expect(
-            autoDiscoverREDatabases.databaseName.getByText(databaseParameters.databaseName ?? '', { exact: true })
+            this.autoDiscoverREDatabases.databaseName.getByText(databaseParameters.databaseName ?? '', { exact: true })
         ).toBeVisible({ timeout: 10000 })
-        await autoDiscoverREDatabases.search.fill(databaseParameters.databaseName ?? '')
-        await autoDiscoverREDatabases.databaseCheckbox.click()
+        await this.autoDiscoverREDatabases.search.fill(databaseParameters.databaseName ?? '')
+        await this.autoDiscoverREDatabases.databaseCheckbox.click()
         // Click Add selected databases button
-        await autoDiscoverREDatabases.addSelectedDatabases.click()
-        await autoDiscoverREDatabases.viewDatabasesButton.click()
+        await this.autoDiscoverREDatabases.addSelectedDatabases.click()
+        await this.autoDiscoverREDatabases.viewDatabasesButton.click()
     }
 
     /**
@@ -554,16 +569,16 @@ export class DatabaseHelper {
         databaseParameters: OSSClusterParameters
     ): Promise<void> {
         // Enter required parameters for OSS Cluster
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addOssClusterDatabase(
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addOssClusterDatabase(
             databaseParameters
         )
         // Click for saving
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton.click()
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton.click()
         // Check for info message that DB was added
-        await expect(myRedisDatabasePage.Toast.toastHeader).toBeVisible({ timeout: 10000 })
+        await expect(this.myRedisDatabasePage.toast.toastHeader).toBeVisible({ timeout: 10000 })
         // Wait for database to exist
         await expect(
-            myRedisDatabasePage.dbNameList.getByText(databaseParameters.ossClusterDatabaseName, { exact: true })
+            this.myRedisDatabasePage.dbNameList.getByText(databaseParameters.ossClusterDatabaseName, { exact: true })
         ).toBeVisible({ timeout: 10000 })
     }
 
@@ -577,17 +592,17 @@ export class DatabaseHelper {
         cloudAPISecretKey: string
     ): Promise<string> {
         // Fill the add database form and Submit
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addAutodiscoverRECloudDatabase(
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addAutodiscoverRECloudDatabase(
             cloudAPIAccessKey,
             cloudAPISecretKey
         )
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton.click()
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton.click()
         await expect(
             autoDiscoverREDatabases.title.getByText('Redis Cloud Subscriptions', { exact: true })
         ).toBeVisible({ timeout: 120000 })
         // Select subscriptions
-        await myRedisDatabasePage.AddRedisDatabaseDialog.selectAllCheckbox.click()
-        await myRedisDatabasePage.AddRedisDatabaseDialog.showDatabasesButton.click()
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.selectAllCheckbox.click()
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.showDatabasesButton.click()
         // Select databases for adding
         const databaseName = await autoDiscoverREDatabases.getDatabaseName()
         await autoDiscoverREDatabases.databaseCheckbox.click()
@@ -598,7 +613,7 @@ export class DatabaseHelper {
         ).toBeVisible({ timeout: 20000 })
         await autoDiscoverREDatabases.viewDatabasesButton.click()
         // uncomment when fixed db will be added to cloud subscription
-        // await expect(myRedisDatabasePage.dbNameList.getByText(databaseName, { exact: true })).toBeVisible({ timeout: 10000 });
+        // await expect(this.myRedisDatabasePage.dbNameList.getByText(databaseName, { exact: true })).toBeVisible({ timeout: 10000 });
         return databaseName
     }
 
@@ -613,7 +628,7 @@ export class DatabaseHelper {
         await this.acceptLicenseTerms()
         await this.addNewStandaloneDatabase(databaseParameters)
         // Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName!)
+        await this.myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName!)
     }
 
     /**
@@ -622,14 +637,16 @@ export class DatabaseHelper {
      * @param databaseName The database name
      */
     async acceptLicenseTermsAndAddDatabaseApi(
-        databaseParameters: AddNewDatabaseParameters
+        databaseParameters: AddNewDatabaseParameters,
+        page: Page,
+        apiUrl: string
     ): Promise<void> {
-        await this.acceptLicenseTerms()
+        await this.acceptLicenseTerms(page,apiUrl)
         await databaseAPIRequests.addNewStandaloneDatabaseApi(databaseParameters)
         // Reload Page to see the new added database through api
-        await myRedisDatabasePage.reloadPage()
+        await this.myRedisDatabasePage.reloadPage()
         // Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName!)
+        await this.myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName!)
     }
 
     /**
@@ -643,7 +660,7 @@ export class DatabaseHelper {
         await this.acceptLicenseTerms()
         await this.addOSSClusterDatabase(databaseParameters)
         // Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(databaseParameters.ossClusterDatabaseName!)
+        await this.myRedisDatabasePage.clickOnDBByName(databaseParameters.ossClusterDatabaseName!)
     }
 
     /**
@@ -656,9 +673,9 @@ export class DatabaseHelper {
         await this.acceptLicenseTerms()
         await databaseAPIRequests.discoverSentinelDatabaseApi(databaseParameters)
         // Reload Page to see the database added through api
-        await myRedisDatabasePage.reloadPage()
+        await this.myRedisDatabasePage.reloadPage()
         // Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(databaseParameters.masters![1].alias ?? '')
+        await this.myRedisDatabasePage.clickOnDBByName(databaseParameters.masters![1].alias ?? '')
     }
 
     /**
@@ -671,7 +688,7 @@ export class DatabaseHelper {
         await this.acceptLicenseTerms()
         await this.addNewREClusterDatabase(databaseParameters)
         // Connect to DB
-        await myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName ?? '')
+        await this.myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName ?? '')
     }
 
     /**
@@ -682,22 +699,22 @@ export class DatabaseHelper {
         databaseParameters: AddNewDatabaseParameters
     ): Promise<void> {
         const searchTimeout = 60 * 1000 // 60 sec to wait database appearing
-        const dbSelector = myRedisDatabasePage.dbNameList.getByText(databaseParameters.databaseName ?? '', { exact: true })
+        const dbSelector = this.myRedisDatabasePage.dbNameList.getByText(databaseParameters.databaseName ?? '', { exact: true })
         const startTime = Date.now()
 
         await this.acceptLicenseTerms()
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDataBase(databaseParameters)
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDataBase(databaseParameters)
         // Click for saving
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton.click()
-        await myRedisDatabasePage.page.waitForTimeout(3000)
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton.click()
+        await this.myRedisDatabasePage.page.waitForTimeout(3000)
         // Reload page until db appears
         while (!(await dbSelector.isVisible()) && Date.now() - startTime < searchTimeout) {
-            await myRedisDatabasePage.reloadPage()
+            await this.myRedisDatabasePage.reloadPage()
         }
         await expect(
-            myRedisDatabasePage.dbNameList.getByText(databaseParameters.databaseName ?? '', { exact: true })
+            this.myRedisDatabasePage.dbNameList.getByText(databaseParameters.databaseName ?? '', { exact: true })
         ).toBeVisible({ timeout: 5000 })
-        await myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName ?? '')
+        await this.myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName ?? '')
         await expect(browserPage.keysSummary).toBeVisible({ timeout: 15000 })
     }
 
@@ -709,34 +726,34 @@ export class DatabaseHelper {
         databaseParameters: AddNewDatabaseParameters
     ): Promise<void> {
         const searchTimeout = 60 * 1000 // 60 sec to wait database appearing
-        const dbSelector = myRedisDatabasePage.dbNameList.getByText(databaseParameters.databaseName ?? '', { exact: true })
+        const dbSelector = this.myRedisDatabasePage.dbNameList.getByText(databaseParameters.databaseName ?? '', { exact: true })
         const startTime = Date.now()
 
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDataBase(databaseParameters)
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDataBase(databaseParameters)
         // Click for saving
-        await myRedisDatabasePage.AddRedisDatabaseDialog.addRedisDatabaseButton.click()
-        await myRedisDatabasePage.page.waitForTimeout(3000)
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.addRedisDatabaseButton.click()
+        await this.myRedisDatabasePage.page.waitForTimeout(3000)
         // Reload page until db appears
         while (!(await dbSelector.isVisible()) && Date.now() - startTime < searchTimeout) {
-            await myRedisDatabasePage.reloadPage()
+            await this.myRedisDatabasePage.reloadPage()
         }
         await expect(
-            myRedisDatabasePage.dbNameList.getByText(databaseParameters.databaseName ?? '', { exact: true })
+            this.myRedisDatabasePage.dbNameList.getByText(databaseParameters.databaseName ?? '', { exact: true })
         ).toBeVisible({ timeout: 5000 })
     }
 
     // Accept License terms
-    async acceptLicenseTerms(): Promise<void> {
-        // await myRedisDatabasePage.page.viewportSize(); // (if needed to maximize window)
+    async acceptLicenseTerms(page: Page, apiUrl: string ): Promise<void> {
+        // await this.myRedisDatabasePage.page.viewportSize(); // (if needed to maximize window)
         await userAgreementDialog.acceptLicenseTerms()
-        await updateControlNumber(48.2)
+        await updateControlNumber(48.2, page, apiUrl)
         // Open default databases list tab if RDI opened
         if (await rdiInstancesListPage.elementExistsLocator(rdiInstancesListPage.addRdiInstanceButton)) {
-            await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase)
+            await this.myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase)
         }
         // TODO delete after releasing chatbot
-        if (await myRedisDatabasePage.AddRedisDatabaseDialog.aiChatMessage.isVisible()) {
-            await myRedisDatabasePage.AddRedisDatabaseDialog.aiCloseMessage.click()
+        if (await this.myRedisDatabasePage.addRedisDatabaseDialog.aiChatMessage.isVisible()) {
+            await this.myRedisDatabasePage.addRedisDatabaseDialog.aiCloseMessage.click()
         }
     }
 
@@ -744,8 +761,8 @@ export class DatabaseHelper {
     async acceptLicenseAndConnectToRedisStack(): Promise<void> {
         await this.acceptLicenseTerms()
         // Connect to DB
-        await myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
-        await myRedisDatabasePage.AddRedisDatabaseDialog.connectToRedisStackButton.click()
+        await this.myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
+        await this.myRedisDatabasePage.addRedisDatabaseDialog.connectToRedisStackButton.click()
     }
 
     /**
@@ -753,9 +770,9 @@ export class DatabaseHelper {
      * @param databaseName The database name
      */
     async deleteDatabase(databaseName: string): Promise<void> {
-        await myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
+        await this.myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
         if (
-            await myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton.isVisible()
+            await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.isVisible()
         ) {
             await this.deleteDatabaseByNameApi(databaseName)
         }
@@ -766,11 +783,11 @@ export class DatabaseHelper {
      * @param databaseName The database name
      */
     async deleteCustomDatabase(databaseName: string): Promise<void> {
-        await myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
+        await this.myRedisDatabasePage.NavigationPanel.myRedisDBButton.click()
         if (
-            await myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton.isVisible()
+            await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.isVisible()
         ) {
-            await myRedisDatabasePage.deleteDatabaseByName(databaseName)
+            await this.myRedisDatabasePage.deleteDatabaseByName(databaseName)
         }
     }
 
@@ -783,7 +800,7 @@ export class DatabaseHelper {
         databaseParameters: AddNewDatabaseParameters
     ): Promise<void> {
         if (
-            await myRedisDatabasePage.AddRedisDatabaseDialog.addDatabaseButton.isVisible()
+            await this.myRedisDatabasePage.addRedisDatabaseDialog.addDatabaseButton.isVisible()
         ) {
             await this.acceptLicenseTermsAndAddDatabase(databaseParameters)
         } else {
@@ -797,7 +814,7 @@ export class DatabaseHelper {
      */
     async clickOnEditDatabaseByName(databaseName: string): Promise<void> {
         const databaseId = await databaseAPIRequests.getDatabaseIdByName(databaseName)
-        const databaseEditBtn = myRedisDatabasePage.page.locator(
+        const databaseEditBtn = this.myRedisDatabasePage.page.locator(
             `[data-testid=edit-instance-${databaseId}]`
         )
 
@@ -811,12 +828,12 @@ export class DatabaseHelper {
      */
     async deleteDatabaseByNameApi(databaseName: string): Promise<void> {
         const databaseId = await databaseAPIRequests.getDatabaseIdByName(databaseName)
-        const databaseDeleteBtn = myRedisDatabasePage.page.locator(
+        const databaseDeleteBtn = this.myRedisDatabasePage.page.locator(
             `[data-testid=delete-instance-${databaseId}-icon]`
         )
 
         await expect(databaseDeleteBtn).toBeVisible()
         await databaseDeleteBtn.click()
-        await myRedisDatabasePage.confirmDeleteButton.click()
+        await this.myRedisDatabasePage.confirmDeleteButton.click()
     }
 }

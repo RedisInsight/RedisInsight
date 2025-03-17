@@ -5,23 +5,17 @@ import {UserAgreementDialog} from '../pageObjects/dialogs/user-agreement-dialog'
 import {updateControlNumber} from '../helpers/electron/insights'
 import {RedisOverviewPage} from '../helpers/constants'
 import {RdiInstancesListPage} from '../pageObjects/rdi-instances-list-page'
-// import {APIKeyRequests} from "../helpers/api/api-keys";
+import {DatabaseHelper} from "../helpers/database";
+
 
 let keyName: string
 let browserPage: BrowserPage
-let userAgreementDialog: UserAgreementDialog
+let databaseHelper: DatabaseHelper
 let rdiInstancesListPage : RdiInstancesListPage
 test.beforeEach(async ({electronPage, workerState}) => {
 
-    rdiInstancesListPage = new RdiInstancesListPage(electronPage)
-    userAgreementDialog = new UserAgreementDialog(electronPage)
 
-    await userAgreementDialog.acceptLicenseTerms()
-    await updateControlNumber(48.2, electronPage, workerState.apiUrl)
-// Open default databases list tab if RDI opened
-    if (await rdiInstancesListPage.elementExistsLocator(rdiInstancesListPage.addRdiInstanceButton)) {
-        await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase)
-    }
+    await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(workerState.dbConfig, electronPage, workerState.apiUrl)
 
     // keyName = Common.generateAlpanumeric(10)
     // browserPage = new BrowserPage(basePage)

@@ -22,7 +22,6 @@ describe('TagService', () => {
             getByKeyValuePair: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
-            isTagUsed: jest.fn(),
           },
         },
       ],
@@ -128,22 +127,6 @@ describe('TagService', () => {
 
       await service.delete('1');
       expect(repository.delete).toHaveBeenCalledWith('1');
-    });
-  });
-
-  describe('isTagUsed', () => {
-    it('should return true if tag is used', async () => {
-      jest.spyOn(repository, 'isTagUsed').mockResolvedValue(true);
-
-      const result = await service.isTagUsed('1');
-      expect(result).toBe(true);
-    });
-
-    it('should return false if tag is not used', async () => {
-      jest.spyOn(repository, 'isTagUsed').mockResolvedValue(false);
-
-      const result = await service.isTagUsed('1');
-      expect(result).toBe(false);
     });
   });
 });

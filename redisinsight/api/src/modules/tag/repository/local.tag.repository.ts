@@ -49,13 +49,14 @@ export class LocalTagRepository implements TagRepository {
     await this.repository.delete(id);
   }
 
-  async isTagUsed(id: string): Promise<boolean> {
-    const count = await this.repository.createQueryBuilder('tag')
+  async cleanupUnusedTags(ids: string[]): Promise<void> {
+    await this.repository
+      .createQueryBuilder('tag')
       .leftJoin('tag.databases', 'database')
-      .leftJoin('tag.readOnlyDatabases', 'readOnlyDatabase')
-      .where('database.id = :id OR readOnlyDatabase.id = :id', { id })
-      .getCount();
-
-    return count > 0;
+      .where('tag.id IN (:...ids)', { ids })
+      .groupBy('tag.id')
+      .having('COUNT(database.id) > 0')
+      .delete()
+      .execute();
   }
 }

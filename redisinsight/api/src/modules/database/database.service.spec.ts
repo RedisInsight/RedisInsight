@@ -105,7 +105,7 @@ describe('DatabaseService', () => {
           useValue: {
             getOrCreateByKeyValuePairs: jest.fn(),
             delete: jest.fn(),
-            isTagUsed: jest.fn(),
+            cleanupUnusedTags: jest.fn(),
           },
         },
       ],
@@ -748,7 +748,6 @@ describe('DatabaseService', () => {
       jest.spyOn(service, 'get').mockResolvedValue(database);
       jest.spyOn(databaseRepository, 'update').mockResolvedValue(database);
       jest.spyOn(tagService, 'getOrCreateByKeyValuePairs').mockResolvedValue(tags as any);
-      jest.spyOn(tagService, 'isTagUsed').mockResolvedValue(false);
 
       await service.bulkUpdateTags(mockSessionMetadata, databaseId, tags);
 
@@ -770,12 +769,10 @@ describe('DatabaseService', () => {
       jest.spyOn(databaseRepository, 'get').mockResolvedValue(database);
       jest.spyOn(databaseRepository, 'update').mockResolvedValue(database);
       jest.spyOn(tagService, 'getOrCreateByKeyValuePairs').mockResolvedValue(tags as any);
-      jest.spyOn(tagService, 'isTagUsed').mockResolvedValue(false);
-      jest.spyOn(tagService, 'delete').mockResolvedValue(undefined);
 
       await service.bulkUpdateTags(mockSessionMetadata, databaseId, tags);
 
-      expect(tagService.delete).toHaveBeenCalledWith(database.tags[0].id);
+      expect(tagService.cleanupUnusedTags).toHaveBeenCalledWith([database.tags[0].id]);
     });
   });
 });

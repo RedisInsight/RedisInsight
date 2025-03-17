@@ -1,16 +1,18 @@
 import {test, expect} from '../fixtures/electron'
 // import {Common} from '../helpers/common'
 import {BrowserPage} from '../pageObjects/browser-page'
+import {UserAgreementDialog} from "../pageObjects/dialogs/user-agreement-dialog";
 // import {APIKeyRequests} from "../helpers/api/api-keys";
 
 let keyName: string
 let browserPage: BrowserPage
-
+let userAgent: UserAgreementDialog
 test.beforeEach(async ({electronApp}) => {
 
-    console.log('WE ARE IN THE BEFORE STEP')
+    userAgent
     // keyName = Common.generateAlpanumeric(10)
     // browserPage = new BrowserPage(basePage)
+
 
 })
 

@@ -7,11 +7,12 @@ type WorkerSharedState = {
     apiUrl: string;
     dbConfig: typeof ossStandaloneConfig;
     baseUrl: string;
+    electronApp: ElectronApplication;
 }
 
 type ElectronFixture = {
     electronApp: ElectronApplication;
-    mainWindow: Page;
+    electronPage: Page;
 }
 // /home/tsvetan-tsvetkov/Downloads/Redis-Insight-linux-x86_64.AppImage
 // /home/tsvetan-tsvetkov/code/RedisInsight/tests/e2e/electronBuild/redisinsight
@@ -35,31 +36,30 @@ export const test = base.extend<ElectronFixture,
 
     }, { scope: 'worker' }],
     forEachWorker: [async ({ workerState }, use) => {
-        const ti = base.info().workerIndex
-        console.log(`BEFORE Starting test worker ${ti}`)
+
 
         // Set up the database before tests
-        const dbApi = new DatabaseAPIRequests(workerState.apiUrl)
-        await dbApi.addNewStandaloneDatabaseApi(workerState.dbConfig)
+        // const dbApi = new DatabaseAPIRequests(workerState.apiUrl)
+        // await dbApi.addNewStandaloneDatabaseApi(workerState.dbConfig)
 
         await use() // Run the tests
-        // Something failing here doesn't affect test execution result
-        console.log(`Stopping test worker ${ti}`)
+
 
         // Cleanup after all tests in this worker
 
         // throw new Error("test worker error")
-        await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
-
+        // await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
+        //close the app
+        await workerState.electronApp.close()
     }, { scope: 'worker', auto: true }],
-    electronApp: async ({baseURL}, use) => {
+    electronApp: async ({baseURL, workerState}, use) => {
         // Launch Electron App
         const electronApp = await electron.launch({
             executablePath: baseURL,
             args: ['index.html'] // Adjust the path to your Electron main entry file
 
         })
-
+        workerState.electronApp = electronApp
         // Evaluation expression in the Electron context.
         const appPath = await electronApp.evaluate(async ({ app }) =>
             // This runs in the main Electron process, parameter here is always
@@ -68,26 +68,15 @@ export const test = base.extend<ElectronFixture,
         )
         console.log(appPath)
 
-        // Get the first window that the app opens, wait if necessary.
-        const window = await electronApp.firstWindow()
-
-        // Print the title.
-        console.log(await window.title())
-        // Capture a screenshot.
-        await window.screenshot({ path: 'intro.png' })
-        // Direct Electron console to Node terminal.
-        window.on('console', console.log)
-
-
 
         try {
             await use(electronApp)
-        } finally {
+        } catch (e) {
             await electronApp.close()
         }
     },
 
-    mainWindow: async ({ electronApp }, use) => {
+    electronPage: async ({ electronApp }, use) => {
         // Get the first window of the Electron app
         const window = await electronApp.firstWindow()
         console.log('IN MAIN WINDOW')

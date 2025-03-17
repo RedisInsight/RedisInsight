@@ -33,20 +33,20 @@ export async function modifyFeaturesConfigJson(filePath: string): Promise<void> 
  * @param controlNumber Control number to update
  * @param page Playwright page instance
  */
-export async function updateControlNumber(controlNumber: number, page: Page): Promise<void> {
-    await syncFeaturesApi()
+export async function updateControlNumber(controlNumber: number, page: Page, apiUrl: string): Promise<void> {
+    await syncFeaturesApi(apiUrl)
     await DatabaseScripts.updateColumnValueInDBTable({ ...dbTableParams, rowValue: controlNumber })
-    await syncFeaturesApi()
+    await syncFeaturesApi(apiUrl)
     await page.reload()
 }
 
 /**
  * Refresh test data for features sync
  */
-export async function refreshFeaturesTestData(): Promise<void> {
+export async function refreshFeaturesTestData(apiUrl: string): Promise<void> {
     const defaultConfigPath = path.join('.', 'test-data', 'features-configs', 'insights-default-remote.json')
 
     await modifyFeaturesConfigJson(defaultConfigPath)
     await DatabaseScripts.deleteRowsFromTableInDB(dbTableParams)
-    await syncFeaturesApi()
+    await syncFeaturesApi(apiUrl)
 }

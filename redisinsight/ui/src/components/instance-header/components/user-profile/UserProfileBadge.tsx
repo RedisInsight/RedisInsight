@@ -160,7 +160,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                 href={riConfig.app.smConsoleRedirect}
                 data-testid="cloud-admin-console-link"
               >
-                <EuiText>Back to admin console</EuiText>
+                <EuiText>Back to Redis Cloud Admin console</EuiText>
                 <EuiIcon type={CloudIcon} style={{ fill: 'none' }} viewBox="-1 0 30 20" strokeWidth={1.8} />
               </EuiLink>
             )}

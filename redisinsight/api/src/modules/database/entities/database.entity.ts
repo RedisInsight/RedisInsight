@@ -255,4 +255,8 @@ export class DatabaseEntity {
   @Expose()
   @Column({ nullable: true })
   forceStandalone: boolean;
+
+  @Expose()
+  @Column({ nullable: true })
+  isPreSetup: boolean;
 }

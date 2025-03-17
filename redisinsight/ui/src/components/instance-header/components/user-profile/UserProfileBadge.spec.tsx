@@ -207,7 +207,7 @@ describe('UserProfileBadge', () => {
 
     const link = getByTestId(TEST_IDS.cloudAdminConsoleLink)
     expect(link).toHaveAttribute('href', 'https://foo.bar')
-    expect(link).toHaveTextContent('Back to admin console')
+    expect(link).toHaveTextContent('Back to Redis Cloud Admin console')
 
     expect(queryByTestId(TEST_IDS.importCloudDatabases)).not.toBeInTheDocument()
     expect(queryByTestId(TEST_IDS.logoutButton)).not.toBeInTheDocument()

@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import {
+  FindOptionsWhere, In, Not, Repository,
+} from 'typeorm';
 import { get, set, omit } from 'lodash';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
@@ -262,5 +264,21 @@ export class LocalDatabaseRepository extends DatabaseRepository {
         throw new DatabaseAlreadyExistsException(existingDatabase.id);
       }
     }
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async cleanupPreSetup(excludeIds?: string[]): Promise<{ affected: number }> {
+    const { affected } = await this.repository
+      .createQueryBuilder()
+      .delete()
+      .where({
+        isPreSetup: true,
+        id: Not(In(excludeIds)),
+      })
+      .execute();
+
+    return { affected };
   }
 }

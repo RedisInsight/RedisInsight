@@ -29,10 +29,9 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { getConfig } from 'uiSrc/config'
 import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
-import { SmConsoleLink } from 'uiSrc/components/instance-header/components/SmConsoleLink'
+import UserProfile from 'uiSrc/components/instance-header/components/user-profile/UserProfile'
 import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
-import UserProfile from 'uiSrc/components/instance-header/components/user-profile/UserProfile'
 
 const riConfig = getConfig()
 const { returnUrlBase, returnUrlLabel, returnUrlTooltip } = riConfig.app
@@ -117,7 +116,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         <EuiFlexItem style={{ overflow: 'hidden' }} grow={false}>
           <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
-              <FeatureFlagComponent name={FeatureFlags.envDependent} otherwise={<SmConsoleLink />}>
+              <FeatureFlagComponent name={FeatureFlags.envDependent}>
                 <EuiToolTip
                   position="bottom"
                   content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
@@ -137,9 +136,11 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-                  <EuiFlexItem grow={false}>
-                    <EuiText className={styles.divider}>/</EuiText>
-                  </EuiFlexItem>
+                  <FeatureFlagComponent name={FeatureFlags.envDependent}>
+                    <EuiFlexItem grow={false}>
+                      <EuiText className={styles.divider}>/</EuiText>
+                    </EuiFlexItem>
+                  </FeatureFlagComponent>
                   {returnUrlBase && returnUrl && (
                   <FeatureFlagComponent
                     name={FeatureFlags.envDependent}

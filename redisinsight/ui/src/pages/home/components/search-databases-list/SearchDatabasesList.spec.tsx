@@ -21,6 +21,7 @@ const instancesMock: Instance[] = [{
   visible: true,
   modules: [],
   lastConnection: new Date(),
+  tags: [],
   version: ''
 }, {
   id: '2',
@@ -30,6 +31,7 @@ const instancesMock: Instance[] = [{
   visible: true,
   modules: [],
   lastConnection: new Date(),
+  tags: [],
   version: ''
 }]
 

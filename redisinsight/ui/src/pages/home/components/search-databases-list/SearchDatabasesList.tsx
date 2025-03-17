@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { EuiFieldSearch } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -14,13 +14,13 @@ export const instanceHasTags = (instance: Instance, selectedTags: Set<string>) =
     selectedTags.has(`${tag.key}:${tag.value}`))
 
 const SearchDatabasesList = () => {
-  const [ value, setValue ] = useState('')
   const { data: instances } = useSelector(instancesSelector)
   const { selectedTags } = useSelector(tagsSelector)
 
   const dispatch = useDispatch()
 
-  useEffect(() => {
+  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e?.target?.value?.toLowerCase()
     const itemsTemp = instances.map(
       (item: Instance) => ({
         ...item,
@@ -43,15 +43,14 @@ const SearchDatabasesList = () => {
     })
 
     dispatch(loadInstancesSuccess(itemsTemp))
-  }, [value, selectedTags])
+  }
 
   return (
     <EuiFieldSearch
       isClearable
       placeholder="Database List Search"
       className={styles.search}
-      onChange={(e) => setValue(e.target.value.toLowerCase())}
-      value={value}
+      onChange={onQueryChange}
       aria-label="Search database list"
       data-testid="search-database-list"
     />

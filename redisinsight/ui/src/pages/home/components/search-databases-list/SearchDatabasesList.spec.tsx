@@ -21,7 +21,13 @@ const instancesMock: Instance[] = [{
   visible: true,
   modules: [],
   lastConnection: new Date(),
-  tags: [],
+  tags: [{
+    id: '1',
+    key: 'env',
+    value: 'prod',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }],
   version: ''
 }, {
   id: '2',
@@ -85,6 +91,34 @@ describe('SearchDatabasesList', () => {
 
     newInstancesMock[0].visible = false
     newInstancesMock[1].visible = false
+
+    const expectedActions = [loadInstancesSuccess(newInstancesMock)]
+    expect(storeMock.getActions()).toEqual(expectedActions)
+  })
+
+  it('should call loadInstancesSuccess after selected tags state changes', async () => {
+    const state: RootState = store.getState();
+    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
+      ...state,
+      connections: {
+        ...state.connections,
+        instances: {
+          ...state.connections.instances,
+          data: instancesMock
+        },
+        tags: {
+          ...state.connections.tags,
+          selectedTags: new Set(['env:prod'])
+        }
+      }
+    }))
+
+    const newInstancesMock = [
+      { ...instancesMock[0], visible: true },
+      { ...instancesMock[1], visible: false }
+    ]
+
+    render(<SearchDatabasesList />)
 
     const expectedActions = [loadInstancesSuccess(newInstancesMock)]
     expect(storeMock.getActions()).toEqual(expectedActions)

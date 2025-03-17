@@ -25,6 +25,10 @@ export class ClientCertificateEntity {
   @Column({ nullable: true })
   key: string;
 
+  @Expose()
+  @Column({ nullable: true })
+  isPreSetup: boolean;
+
   @OneToMany(() => DatabaseEntity, (database) => database.clientCert)
   public databases: DatabaseEntity[];
 }

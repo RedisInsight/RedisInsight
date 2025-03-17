@@ -103,7 +103,7 @@ describe('DatabasesListWrapper', () => {
     render(<DatabasesListWrapper
       {...instance(mockedProps)}
       instances={mockInstances}
-      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free db' }] as Instance[]}
+      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free trial db' }] as Instance[]}
     />)
 
     expect(screen.getByTestId(`db-row_${CREATE_CLOUD_DB_ID}`)).toBeInTheDocument()
@@ -113,7 +113,7 @@ describe('DatabasesListWrapper', () => {
     render(<DatabasesListWrapper
       {...instance(mockedProps)}
       instances={mockInstances}
-      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free db' }] as Instance[]}
+      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free trial db' }] as Instance[]}
     />)
 
     fireEvent.click(screen.getByTestId(`db-row_${CREATE_CLOUD_DB_ID}`))

@@ -215,12 +215,13 @@ export class DatabaseService {
   public async update(
     sessionMetadata: SessionMetadata,
     id: string,
-    { tags, ...dto }: UpdateDatabaseDto,
+    dto: UpdateDatabaseDto,
     manualUpdate: boolean = true, // todo: remove manualUpdate flag logic
   ): Promise<Database> {
     this.logger.debug(`Updating database: ${id}`, sessionMetadata);
 
-    tags && await this.bulkUpdateTags(sessionMetadata, id, tags, false);
+    dto.tags && await this.bulkUpdateTags(sessionMetadata, id, dto.tags);
+    delete dto.tags;
 
     const oldDatabase = await this.get(sessionMetadata, id, true);
 
@@ -304,6 +305,10 @@ export class DatabaseService {
       await this.get(sessionMetadata, id, false, ['id', 'sshOptions.id', 'createdAt']),
       dto,
     );
+
+    // disable pre setup flag so database won't be automatically removed
+    database.isPreSetup = false;
+
     if (DatabaseService.isConnectionAffected(dto)) {
       return await this.create(sessionMetadata, database);
     }
@@ -405,7 +410,6 @@ export class DatabaseService {
     sessionMetadata: SessionMetadata,
     id: string,
     tags: CreateTagDto[],
-    force = false,
   ): Promise<void> {
     const database = await this.get(sessionMetadata, id);
     const removedTags = (database.tags || []).filter((tag) => !tags.some((t) => t.key === tag.key && t.value === tag.value));
@@ -413,12 +417,8 @@ export class DatabaseService {
     database.tags = await this.tagService.getOrCreateByKeyValuePairs(tags);
     await this.repository.update(sessionMetadata, id, database);
 
-    // Clean up unused tags
-    for (const tag of removedTags) {
-      const isTagUsed = await this.tagService.isTagUsed(tag.id);
-      if (!isTagUsed) {
-        await this.tagService.delete(tag.id);
-      }
+    if (removedTags.length > 0) {
+      await this.tagService.cleanupUnusedTags(removedTags.map((tag) => tag.id));
     }
 
     this.logger.debug(`Bulk updated tags for database ${id}.`);

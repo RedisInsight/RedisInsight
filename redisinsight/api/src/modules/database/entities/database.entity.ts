@@ -1,5 +1,5 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable
+  Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -271,4 +271,8 @@ export class DatabaseEntity {
     },
   })
   tags: TagEntity[];
+
+  @Expose()
+  @Column({ nullable: true })
+  isPreSetup: boolean;
 }

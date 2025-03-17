@@ -271,6 +271,7 @@ export const mockDatabaseRepository = jest.fn(() => ({
     pick(mockDatabase, 'id', 'name'),
     pick(mockDatabase, 'id', 'name'),
   ]),
+  cleanupPreSetup: jest.fn().mockResolvedValue({ affected: 0 }),
 }));
 
 export const mockDatabaseService = jest.fn(() => ({

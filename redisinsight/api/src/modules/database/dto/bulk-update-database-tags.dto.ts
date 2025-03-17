@@ -7,6 +7,7 @@ export class BulkUpdateDatabaseTagsDto {
   @ApiProperty({
     description: 'List of tags to be updated',
     type: [CreateTagDto],
+    isArray: true,
   })
   @IsArray()
   @ValidateNested({ each: true })

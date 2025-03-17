@@ -6,6 +6,7 @@ import { BrowserPage } from '../pageObjects';
 import { KeyData, AddKeyArguments } from '../pageObjects/browser-page';
 import { COMMANDS_TO_CREATE_KEY, KeyTypesTexts } from './constants';
 import { Common } from './common';
+import { populateBigKeys, populateDb } from './scripts/generate-big-data';
 
 const browserPage = new BrowserPage();
 
@@ -92,7 +93,8 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
     const client = createClient({ url });
 
     client.on('error', (error: Error) => {
-        console.error('Redis Client Error', error);
+        console.error('Redis Client Error, check DB connection', error);
+        throw error;
     });
 
     try {
@@ -120,11 +122,12 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
  */
 export async function populateHashWithFields(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
     const url = `redis://default@${host}:${port}`;
-    const client = createClient({ url });
+    const client = createClient({url});
     const fields: Record<string, string> = {};
 
     client.on('error', (error: Error) => {
-        console.error('Redis Client Error', error);
+        console.error('Redis Client Error, check DB connection', error);
+        throw error;
     });
 
     try {
@@ -164,6 +167,7 @@ export async function populateListWithElements(host: string, port: string, keyAr
 
     client.on('error', (error: Error) => {
         console.error('Redis Client Error', error);
+        throw error;
     });
 
     try {
@@ -202,6 +206,7 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
 
     client.on('error', (error: Error) => {
         console.error('Redis Client Error', error);
+        throw error;
     });
 
     try {
@@ -284,6 +289,7 @@ export async function deleteAllKeysFromDB(host: string, port: string): Promise<v
 
     client.on('error', (error: Error) => {
         console.error('Redis Client Error', error);
+        throw error;
     });
 
     try {
@@ -293,6 +299,32 @@ export async function deleteAllKeysFromDB(host: string, port: string): Promise<v
 
     } catch (error) {
         console.error('Error flushing database:', error);
+    } finally {
+        await client.disconnect();
+    }
+}
+
+export async function populateBigData(host: string, port: string): Promise<void> {
+    const url = `redis://default@${host}:${port}`;
+    const client = createClient({
+        url,
+        socket: {
+            connectTimeout: 10000
+        }
+    });
+
+    client.on('error', (error: Error) => {
+        console.error('Redis Client Error', error);
+    });
+
+    try {
+        await populateDb(client, {
+            mainKeysLimit: 50_000, // 50_000 main keys, default 500_000
+            secondaryKeysLimit: 12_500, // 12_500 secondary keys, default 125_000
+        });
+        await populateBigKeys(client);
+    } catch (error) {
+        console.error('Error populating database:', error);
     } finally {
         await client.disconnect();
     }

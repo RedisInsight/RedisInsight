@@ -30,7 +30,7 @@ const rdiInstance: AddNewRdiParameters = {
     password: '111'
 };
 
-const cloudName = 'Redis-Stack-in-Redis-Enterprise-Cloud';
+const cloudName = 'Redis-Cloud';
 
 const filePath = path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDI_pipelineConfigurations.zip');
 

@@ -44,4 +44,7 @@ export default class BasePage {
     async waitForLocatorNotVisible(locator: Locator, timeout = 6000) {
         await expect(locator).not.toBeVisible({ timeout })
     }
+    async goBackHistor(): Promise<void>{
+        await this.page.goBack()
+    };
 }

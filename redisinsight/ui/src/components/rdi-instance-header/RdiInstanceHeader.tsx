@@ -75,12 +75,10 @@ const RdiInstanceHeader = () => {
         <InsightsTrigger />
       </EuiFlexItem>
 
-      <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-        <FeatureFlagComponent name={FeatureFlags.cloudAds}>
-          <EuiFlexItem grow={false} style={{ marginLeft: 16 }} data-testid="o-auth-user-profile-rdi">
-            <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
-          </EuiFlexItem>
-        </FeatureFlagComponent>
+      <FeatureFlagComponent name={[FeatureFlags.cloudSso, FeatureFlags.cloudAds]}>
+        <EuiFlexItem grow={false} style={{ marginLeft: 16 }} data-testid="o-auth-user-profile-rdi">
+          <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
+        </EuiFlexItem>
       </FeatureFlagComponent>
     </EuiFlexGroup>
   )

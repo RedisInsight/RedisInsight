@@ -64,7 +64,7 @@ export class AzureAutodiscoveryService {
         response.data.value.map(async (cache: any) => {
           console.log('cache', cache)
           const keysResponse = await this.client.post(
-            `${cache.id}/listKeys?api-version=2020-06-01`,
+            `${cache.id.startsWith('/') ? cache.id : `/${cache.id}`}/listKeys?api-version=2020-06-01`,
             {}
           )
 

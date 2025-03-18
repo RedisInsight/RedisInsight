@@ -27,10 +27,11 @@ const BulkDeleteSummaryButton = ({
   )
 
   return (
-    <EuiFlexItem grow={false}>
+    <EuiFlexItem grow={false} style={{ marginTop: 16 }}>
       <EuiButton
         fill
         download={getFileName()}
+        color="secondary"
         href={fileUrl}
         data-testid="donwload-bulk-delete-report"
       >

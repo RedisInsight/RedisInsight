@@ -1,6 +1,8 @@
 import { test as base, ElectronApplication, Page } from '@playwright/test';
 import { _electron as electron } from 'playwright';
 import { ossStandaloneConfig } from '../helpers/conf';
+import {updateControlNumber}   from "../helpers/electron/insights";
+import {DatabaseHelper} from "../helpers/database";
 
 
 // Define shared state for worker scope
@@ -53,6 +55,8 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
                 baseUrl: testInfo.project.use.baseURL,
                 electronApp: null as any,
             };
+
+
             await use(workerState);
         },
         { scope: 'worker' },
@@ -60,6 +64,10 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
 
     electronApp: async ({ workerState }, use) => {
         console.log('🚀 Starting RedisInsight...');
+
+        // update control nmb
+        await updateControlNumber(48.2, workerState.apiUrl);
+
         let electronApp = await launchElectronApp(workerState.baseUrl);
         workerState.electronApp = electronApp;
         console.log('⏳ Waiting for window...');

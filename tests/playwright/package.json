@@ -18,6 +18,7 @@
     "test:chromium": "playwright test --project=localChromium",
     "test:chromium-debug": "playwright test --project=localChromium --debug",
     "test:electron": "playwright test --project=localElectron",
+    "test:electron-debug": "playwright test --project=localElectron",
     "clean:results": "rm -rf allure-results",
     "prep:history": "if [ -d allure-report/history ]; then cp -R allure-report/history allure-results; fi",
     "test:allureHistoryReport": "yarn run prep:history && yarn allTests && yarn allure generate --clean -o allure-report allure-results",
@@ -28,6 +29,7 @@
     "dotenv": "^16.4.7",
     "dotenv-cli": "^8.0.0",
     "fs-extra": "^11.3.0",
+    "node-color-log": "^12.0.1",
     "sqlite3": "^5.1.7"
   }
 }

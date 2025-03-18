@@ -14,7 +14,7 @@ let databaseHelper: DatabaseHelper
 let rdiInstancesListPage : RdiInstancesListPage
 test.beforeEach(async ({electronPage, workerState}) => {
 
-    await electronPage.reload()    ;
+
 
 
     databaseHelper = new DatabaseHelper(electronPage, workerState.apiUrl)

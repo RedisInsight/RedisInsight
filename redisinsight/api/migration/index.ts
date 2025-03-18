@@ -49,7 +49,7 @@ import { DbSettings1737362130798 } from './1737362130798-db-settings';
 import { DatabaseForceStandalone1738829743482 } from './1738829743482-database-forceStandalone';
 import { RdiOptionalAuth1740579711635 } from './1740579711635-rdi-optional-auth';
 import { PreSetupDatabases1741786803681 } from './1741786803681-pre-setup-databases';
-import { KeyNameFormatAdded1741621786907 } from './1741621786907-key-name-format';
+import { KeyNameFormatAdded1742303245547 } from './1742303245547-key-name-format';
 
 export default [
   initialMigration1614164490968,
@@ -103,5 +103,5 @@ export default [
   DatabaseForceStandalone1738829743482,
   RdiOptionalAuth1740579711635,
   PreSetupDatabases1741786803681,
-  KeyNameFormatAdded1741621786907,
+  KeyNameFormatAdded1742303245547,
 ];

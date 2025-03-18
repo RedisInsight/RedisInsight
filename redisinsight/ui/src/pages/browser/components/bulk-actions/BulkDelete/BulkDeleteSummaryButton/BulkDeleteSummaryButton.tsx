@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react'
-import { EuiButton, EuiFlexItem } from '@elastic/eui'
+import { EuiButton } from '@elastic/eui'
 import { Maybe } from 'uiSrc/utils'
 
 export interface BulkDeleteSummaryButtonProps {
@@ -27,17 +27,15 @@ const BulkDeleteSummaryButton = ({
   )
 
   return (
-    <EuiFlexItem grow={false} style={{ marginTop: 16 }}>
-      <EuiButton
-        fill
-        download={getFileName()}
-        color="secondary"
-        href={fileUrl}
-        data-testid="donwload-bulk-delete-report"
-      >
-        Download Bulk Delete Report
-      </EuiButton>
-    </EuiFlexItem>
+    <EuiButton
+      fill
+      download={getFileName()}
+      color="secondary"
+      href={fileUrl}
+      data-testid="donwload-bulk-delete-report"
+    >
+      Download Bulk Delete Report
+    </EuiButton>
   )
 }
 

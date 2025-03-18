@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { EuiText } from '@elastic/eui'
+import { EuiFlexItem, EuiText } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { isUndefined } from 'lodash'
@@ -59,10 +59,12 @@ const BulkDelete = (props: Props) => {
               <BulkDeleteSummary />
 
               {isCompleted && (
-                <BulkDeleteSummaryButton
-                  deletedKeys={deletedKeys}
-                  pattern={searchPattern}
-                />
+                <EuiFlexItem grow={false} style={{ marginTop: 16 }}>
+                  <BulkDeleteSummaryButton
+                    deletedKeys={deletedKeys}
+                    pattern={searchPattern}
+                  />
+                </EuiFlexItem>
               )}
             </>
           </BulkActionsInfo>

@@ -1,14 +1,22 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common'
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 import { MicrosoftAuthService } from '../../auth/microsoft-auth/microsoft-azure-auth.service'
 
 @Injectable()
 export class AzureAutodiscoveryService {
   public readonly logger = new Logger(AzureAutodiscoveryService.name)
+  private readonly client: AxiosInstance;
+  private readonly baseUrl = 'https://management.azure.com';
+  private readonly timeout = 30000;
 
   constructor(
     private readonly microsoftAuthService: MicrosoftAuthService,
-  ) {}
+  ) {
+    this.client = axios.create({
+      baseURL: this.baseUrl,
+      timeout: this.timeout,
+    });
+  }
 
   async getSubscriptions() {
     try {
@@ -17,13 +25,11 @@ export class AzureAutodiscoveryService {
         throw new UnauthorizedException('No Azure access token available')
       }
 
-      const response = await axios.get(
-        'https://management.azure.com/subscriptions?api-version=2024-08-01',
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+      // Set the authorization header for this request
+      this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+      const response = await this.client.get(
+        '/subscriptions?api-version=2024-08-01'
       )
 
       return response.data.value.map((sub: any) => ({
@@ -47,25 +53,18 @@ export class AzureAutodiscoveryService {
         throw new UnauthorizedException('No Azure access token available')
       }
 
-      const response = await axios.get(
-        `https://management.azure.com/subscriptions/${subscriptionId}/providers/Microsoft.Cache/Redis?api-version=2020-06-01`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
+      // Set the authorization header for this request
+      this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
+      const response = await this.client.get(
+        `/subscriptions/${subscriptionId}/providers/Microsoft.Cache/Redis?api-version=2024-08-01`
+      )
+      console.log('response.data', response.data)
       const databases = await Promise.all(
         response.data.value.map(async (cache: any) => {
-          const keysResponse = await axios.post(
-            `https://management.azure.com${cache.id}/listKeys?api-version=2020-06-01`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
+          const keysResponse = await this.client.post(
+            `${cache.id}/listKeys?api-version=2024-08-01`,
+            {}
           )
 
           return {

@@ -20,7 +20,7 @@ export type TestOptions = {
 export default defineConfig<TestOptions>({
     testDir: './tests',
     /* Maximum time one test can run for. */
-    timeout: 300 * 1000,
+    timeout: 600 * 1000,
     expect: {
         /**
          * Maximum time expect() should wait for the condition to be met.
@@ -112,7 +112,8 @@ export default defineConfig<TestOptions>({
             name: 'localElectron',
             testMatch: ['**.electron.spec.ts'],
             use: {
-                baseURL: '/home/tsvetan-tsvetkov/code/RedisInsight/tests/e2e/electronBuild/redisinsight',
+                baseURL: '/home/tsvetan-tsvetkov/Downloads/Redis-Insight-linux-x86_64.AppImage',
+                // baseURL: '/usr/bin/redisinsight',
                 apiUrl: process.env.API_URL || 'https://localhost:5540/api',
                 headless: false
             },

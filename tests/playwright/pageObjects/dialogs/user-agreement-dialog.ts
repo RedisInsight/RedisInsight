@@ -23,7 +23,7 @@ export class UserAgreementDialog extends BasePage {
     }
 
     async acceptLicenseTerms(): Promise<void> {
-        let bl = await this.switchOptionEula.isVisible()
+
 
         if (await this.switchOptionEula.isVisible()) {
             await this.recommendedSwitcher.click()

@@ -1,4 +1,4 @@
-import {test, expect} from '../fixtures/electron'
+import {test, expect} from '../fixtures/simple-slectron'
 // import {Common} from '../helpers/common'
 import {BrowserPage} from '../pageObjects/browser-page'
 import {UserAgreementDialog} from '../pageObjects/dialogs/user-agreement-dialog'
@@ -16,7 +16,7 @@ test.beforeEach(async ({electronPage, workerState}) => {
 
     databaseHelper = new DatabaseHelper(electronPage, workerState.apiUrl)
     await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(workerState.dbConfig, electronPage, workerState.apiUrl)
-
+    await electronPage.getByText('Add Redis').click()
     // keyName = Common.generateAlpanumeric(10)
     // browserPage = new BrowserPage(basePage)
 
@@ -47,3 +47,4 @@ test('basic test', async ({workerState}) => {
 
 
 })
+

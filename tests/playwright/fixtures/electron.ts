@@ -85,7 +85,22 @@ export const test = base.extend<ElectronFixture,
     },
 
     electronPage: async ({ electronApp }, use) => {
-        // Get the first window of the Electron app
+        let windows = [];
+        let elapsedTime = 0;
+        const maxWaitTime = 60000; // 60 seconds
+        const interval = 2000; // Check every 2 seconds
+
+        while (windows.length === 0 && elapsedTime < maxWaitTime) {
+            await new Promise((resolve) => setTimeout(resolve, interval)); // Wait 2s
+            windows = await electronApp.windows(); // Check for open windows
+            elapsedTime += interval;
+            console.log(`🔍 Checking for windows... (${elapsedTime / 1000}s elapsed)`);
+
+            if (windows.length > 0) {
+                console.log(`✅ Found ${windows.length} window(s)!`);
+                break;
+            }
+        }
         const page = await electronApp.firstWindow()
         console.log('IN MAIN WINDOW')
 

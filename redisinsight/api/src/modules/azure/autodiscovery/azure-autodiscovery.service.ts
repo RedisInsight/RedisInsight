@@ -91,4 +91,34 @@ export class AzureAutodiscoveryService {
       throw error
     }
   }
+
+  async getDatabasesFromMultipleSubscriptions(subscriptions: { id: string }[]) {
+    if (!subscriptions || !Array.isArray(subscriptions)) {
+      return [];
+    }
+
+    try {
+      const databasePromises = subscriptions.map(subscription =>
+        this.getDatabases(subscription.id)
+          .then(databases => databases.map(db => ({
+            ...db,
+            subscriptionId: subscription.id
+          })))
+          .catch(error => {
+            // Log the error but continue with other subscriptions
+            this.logger.error(
+              `Failed to fetch databases for subscription ${subscription.id}`,
+              error
+            );
+            return [];
+          })
+      );
+
+      const databasesArrays = await Promise.all(databasePromises);
+      return databasesArrays.flat();
+    } catch (error) {
+      this.logger.error('Failed to fetch databases from multiple subscriptions', error);
+      throw error;
+    }
+  }
 }

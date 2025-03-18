@@ -14,19 +14,19 @@ export const instanceHasTags = (instance: Instance, selectedTags: Set<string>) =
     selectedTags.has(`${tag.key}:${tag.value}`))
 
 const SearchDatabasesList = () => {
-  const [ searchValue, setSearchValue ] = useState<string>()
+  const [ value, setValue ] = useState('')
   const { data: instances } = useSelector(instancesSelector)
   const { selectedTags } = useSelector(tagsSelector)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (searchValue === undefined && selectedTags.size === 0) {
-      // no search or tags selected, this is the initial render
+    const isInitialRender = value === '' && selectedTags.size === 0 && !instances.some(({ visible }) => visible === false )
+
+    if (isInitialRender) {
       return
     }
 
-    const value = searchValue || ''
     const itemsTemp = instances.map(
       (item: Instance) => ({
         ...item,
@@ -50,15 +50,15 @@ const SearchDatabasesList = () => {
     })
 
     dispatch(loadInstancesSuccess(itemsTemp))
-  }, [searchValue, selectedTags])
+  }, [value, selectedTags])
 
   return (
     <EuiFieldSearch
       isClearable
       placeholder="Database List Search"
       className={styles.search}
-      onChange={(e) => setSearchValue(e.target.value.toLowerCase())}
-      value={searchValue}
+      onChange={(e) => setValue(e.target.value.toLowerCase())}
+      value={value}
       aria-label="Search database list"
       data-testid="search-database-list"
     />

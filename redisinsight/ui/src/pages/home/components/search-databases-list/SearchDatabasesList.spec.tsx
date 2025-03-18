@@ -54,6 +54,11 @@ beforeEach(() => {
       ...state.connections,
       instances: {
         ...state.connections.instances,
+        data: instancesMock
+      },
+      tags: {
+        ...state.connections.tags,
+        selectedTags: new Set(['env:prod'])
       }
     }
   }))
@@ -97,22 +102,6 @@ describe('SearchDatabasesList', () => {
   })
 
   it('should call loadInstancesSuccess after selected tags state changes', async () => {
-    const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-      ...state,
-      connections: {
-        ...state.connections,
-        instances: {
-          ...state.connections.instances,
-          data: instancesMock
-        },
-        tags: {
-          ...state.connections.tags,
-          selectedTags: new Set(['env:prod'])
-        }
-      }
-    }))
-
     const newInstancesMock = [
       { ...instancesMock[0], visible: true },
       { ...instancesMock[1], visible: false }

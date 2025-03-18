@@ -46,12 +46,12 @@ export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
     name: KnownFeatures.EnhancedCloudUI,
     storage: FeatureStorage.Database,
   },
-  [KnownFeatures.ReadonlyConnections]: {
-    name: KnownFeatures.ReadonlyConnections,
+  [KnownFeatures.DatabaseManagement]: {
+    name: KnownFeatures.DatabaseManagement,
     storage: FeatureStorage.Custom,
     factory: () => ({
-      name: KnownFeatures.ReadonlyConnections,
-      flag: SERVER_CONFIG.readonlyConnections,
+      name: KnownFeatures.DatabaseManagement,
+      flag: SERVER_CONFIG.databaseManagement,
     }),
   },
 };

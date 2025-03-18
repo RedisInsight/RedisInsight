@@ -70,12 +70,12 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
 
     this.checkSignal();
 
-    const isReadonlyConnectionsEnabled = await this.dependencies.featureService.isFeatureEnabled(
+    const isDatabaseManagementEnabled = await this.dependencies.featureService.isFeatureEnabled(
       sessionMetadata,
-      KnownFeatures.ReadonlyConnections,
+      KnownFeatures.DatabaseManagement,
     );
 
-    if (isReadonlyConnectionsEnabled) {
+    if (isDatabaseManagementEnabled) {
       throw new CloudDatabaseImportForbiddenException();
     }
 

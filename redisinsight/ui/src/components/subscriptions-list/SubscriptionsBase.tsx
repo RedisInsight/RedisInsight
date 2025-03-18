@@ -124,92 +124,6 @@ function SubscriptionsBase<T extends SubscriptionItem>({
     setItems(itemsTemp)
   }
 
-  const CancelButton = ({ isPopoverOpen: popoverIsOpen }: IPopoverProps) => (
-    <EuiPopover
-      button={(
-        <EuiButton
-          data-testid="btn-cancel"
-          color="secondary"
-          onClick={showPopover}
-        >
-          Cancel
-        </EuiButton>
-      )}
-      isOpen={popoverIsOpen}
-      closePopover={closePopover}
-      panelPaddingSize="m"
-      anchorPosition="upCenter"
-    >
-      <div className={styles.popoverContent}>
-        <EuiTitle size="xs" className={styles.popoverTitle}>
-          <h4>Cancel adding databases?</h4>
-        </EuiTitle>
-        <EuiText size="s" className={styles.popoverText}>
-          <p>
-            You will lose all your progress.
-          </p>
-        </EuiText>
-        <div className={styles.popoverButtons}>
-          <EuiButton
-            data-testid="btn-cancel-no"
-            color="text"
-            onClick={closePopover}
-          >
-            No
-          </EuiButton>
-          <EuiButton
-            data-testid="btn-cancel-yes"
-            color="primary"
-            fill
-            onClick={handleCancel}
-          >
-            Yes
-          </EuiButton>
-        </div>
-      </div>
-    </EuiPopover>
-  )
-
-  const SubmitButton = ({ isDisabled }: { isDisabled: boolean }) => (
-    <EuiButton
-      data-testid="btn-submit"
-      color="secondary"
-      fill
-      onClick={handleSubmit}
-      disabled={isDisabled}
-    >
-      {submitButtonText}
-    </EuiButton>
-  )
-
-  const BackButton = () => (
-    <EuiButton
-      onClick={onBack}
-      color="secondary"
-      className="btn-back"
-      data-testid="btn-back"
-    >
-      Back
-    </EuiButton>
-  )
-
-  const DefaultSummary = () => (
-    <EuiText className={styles.subTitle}>
-      <span>
-        {selection.length ? (
-          <>
-            <b>Summary: </b>
-            <span className={styles.summaryCount}>{selection.length}</span>
-            {' '}
-            {selection.length === 1 ? 'subscription' : 'subscriptions'}
-            {' '}
-            selected
-          </>
-        ) : 'No subscriptions selected'}
-      </span>
-    </EuiText>
-  )
-
   return (
     <AutodiscoveryPageTemplate>
       <div className={styles.container}>
@@ -287,15 +201,87 @@ function SubscriptionsBase<T extends SubscriptionItem>({
             {renderSummary ? (
               <>{renderSummary(items, selection)}</>
             ) : (
-              <DefaultSummary />
+              <EuiText className={styles.subTitle}>
+                <span>
+                  {selection.length ? (
+                    <>
+                      <b>Summary: </b>
+                      <span className={styles.summaryCount}>{selection.length}</span>
+                      {' '}
+                      {selection.length === 1 ? 'subscription' : 'subscriptions'}
+                      {' '}
+                      selected
+                    </>
+                  ) : 'No subscriptions selected'}
+                </span>
+              </EuiText>
             )}
           </MessageBar>
         </div>
         <div className={cx(styles.footer, 'footerAddDatabase')}>
-          {showBackButton && onBack && <BackButton />}
+          {showBackButton && onBack && (
+            <EuiButton
+              onClick={onBack}
+              color="secondary"
+              className="btn-back"
+              data-testid="btn-back"
+            >
+              Back
+            </EuiButton>
+          )}
           <div className={styles.tableFooterButtons}>
-            <CancelButton isPopoverOpen={isPopoverOpen} />
-            <SubmitButton isDisabled={selection.length < 1} />
+            <EuiPopover
+              button={(
+                <EuiButton
+                  data-testid="btn-cancel"
+                  color="secondary"
+                  onClick={showPopover}
+                >
+                  Cancel
+                </EuiButton>
+              )}
+              isOpen={isPopoverOpen}
+              closePopover={closePopover}
+              panelPaddingSize="m"
+              anchorPosition="upCenter"
+            >
+              <div className={styles.popoverContent}>
+                <EuiTitle size="xs" className={styles.popoverTitle}>
+                  <h4>Cancel adding databases?</h4>
+                </EuiTitle>
+                <EuiText size="s" className={styles.popoverText}>
+                  <p>
+                    You will lose all your progress.
+                  </p>
+                </EuiText>
+                <div className={styles.popoverButtons}>
+                  <EuiButton
+                    data-testid="btn-cancel-no"
+                    color="text"
+                    onClick={closePopover}
+                  >
+                    No
+                  </EuiButton>
+                  <EuiButton
+                    data-testid="btn-cancel-yes"
+                    color="primary"
+                    fill
+                    onClick={handleCancel}
+                  >
+                    Yes
+                  </EuiButton>
+                </div>
+              </div>
+            </EuiPopover>
+            <EuiButton
+              data-testid="btn-submit"
+              color="secondary"
+              fill
+              onClick={handleSubmit}
+              disabled={selection.length < 1}
+            >
+              {submitButtonText}
+            </EuiButton>
           </div>
         </div>
       </div>

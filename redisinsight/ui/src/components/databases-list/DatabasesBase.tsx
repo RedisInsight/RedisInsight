@@ -130,107 +130,6 @@ function DatabasesBase<T extends DatabaseItem>({
     setItems(itemsTemp)
   }
 
-  const CancelButton = ({ isPopoverOpen: popoverIsOpen }: IPopoverProps) => (
-    <EuiPopover
-      button={(
-        <EuiButton
-          data-testid="btn-cancel"
-          color="secondary"
-          onClick={showPopover}
-        >
-          Cancel
-        </EuiButton>
-      )}
-      isOpen={popoverIsOpen}
-      closePopover={closePopover}
-      panelPaddingSize="m"
-      anchorPosition="upCenter"
-    >
-      <div className={styles.popoverContent}>
-        <EuiTitle size="xs" className={styles.popoverTitle}>
-          <h4>{cancelConfirmationTitle}</h4>
-        </EuiTitle>
-        <EuiText size="s" className={styles.popoverText}>
-          <p>
-            {cancelConfirmationText}
-          </p>
-        </EuiText>
-        <div className={styles.popoverButtons}>
-          <EuiButton
-            data-testid="btn-cancel-no"
-            color="text"
-            onClick={closePopover}
-          >
-            No
-          </EuiButton>
-          <EuiButton
-            data-testid="btn-cancel-yes"
-            color="primary"
-            fill
-            onClick={handleCancel}
-          >
-            Yes
-          </EuiButton>
-        </div>
-      </div>
-    </EuiPopover>
-  )
-
-  const SubmitButton = ({ isDisabled }: { isDisabled: boolean }) => (
-    <EuiToolTip
-      position="top"
-      anchorClassName="euiToolTip__btn-disabled"
-      title={
-        isDisabled ? 'Please select at least one database' : null
-      }
-      content={
-        isDisabled ? (
-          <span className="euiToolTip__content">
-            No databases selected
-          </span>
-        ) : null
-      }
-    >
-      <EuiButton
-        fill
-        data-testid="btn-submit"
-        color="secondary"
-        onClick={handleSubmit}
-        disabled={isDisabled}
-      >
-        {submitButtonText}
-      </EuiButton>
-    </EuiToolTip>
-  )
-
-  const BackButton = () => (
-    <EuiButton
-      onClick={onBack}
-      color="secondary"
-      className="btn-back"
-      data-testid="btn-back"
-    >
-      {backButtonText}
-    </EuiButton>
-  )
-
-  const DefaultSummary = () => (
-    <EuiText className={styles.subTitle}>
-      <span>
-        {selection.length ? (
-          <>
-            <b>Summary: </b>
-            <span className={styles.summaryCount}>{selection.length}</span>
-            {' '}
-            {selection.length === 1 ? 'database' : 'databases'}
-            {' '}
-            selected
-          </>
-        ) : 'No databases selected'}
-      </span>
-    </EuiText>
-  )
-
   return (
     <AutodiscoveryPageTemplate>
       <div className={styles.container}>
@@ -270,7 +169,22 @@ function DatabasesBase<T extends DatabaseItem>({
               <EuiFlexItem grow={false}>
                 <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
                   <EuiFlexItem grow={false}>
-                    {renderSummary ? renderSummary(items, selection) : <DefaultSummary />}
+                    {renderSummary ? renderSummary(items, selection) : (
+                      <EuiText className={styles.subTitle}>
+                        <span>
+                          {selection.length ? (
+                            <>
+                              <b>Summary: </b>
+                              <span className={styles.summaryCount}>{selection.length}</span>
+                              {' '}
+                              {selection.length === 1 ? 'database' : 'databases'}
+                              {' '}
+                              selected
+                            </>
+                          ) : 'No databases selected'}
+                        </span>
+                      </EuiText>
+                    )}
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
                     <EuiFormRow className={styles.searchForm}>
@@ -310,10 +224,84 @@ function DatabasesBase<T extends DatabaseItem>({
           )}
         </div>
         <div className={cx(styles.footer, 'footerAddDatabase')}>
-          {showBackButton && onBack && <BackButton />}
+          {showBackButton && onBack && (
+            <EuiButton
+              onClick={onBack}
+              color="secondary"
+              className="btn-back"
+              data-testid="btn-back"
+            >
+              {backButtonText}
+            </EuiButton>
+          )}
           <div className={styles.tableFooterButtons}>
-            <CancelButton isPopoverOpen={isPopoverOpen} />
-            <SubmitButton isDisabled={selection.length < 1} />
+            <EuiPopover
+              button={(
+                <EuiButton
+                  data-testid="btn-cancel"
+                  color="secondary"
+                  onClick={showPopover}
+                >
+                  Cancel
+                </EuiButton>
+              )}
+              isOpen={isPopoverOpen}
+              closePopover={closePopover}
+              panelPaddingSize="m"
+              anchorPosition="upCenter"
+            >
+              <div className={styles.popoverContent}>
+                <EuiTitle size="xs" className={styles.popoverTitle}>
+                  <h4>{cancelConfirmationTitle}</h4>
+                </EuiTitle>
+                <EuiText size="s" className={styles.popoverText}>
+                  <p>
+                    {cancelConfirmationText}
+                  </p>
+                </EuiText>
+                <div className={styles.popoverButtons}>
+                  <EuiButton
+                    data-testid="btn-cancel-no"
+                    color="text"
+                    onClick={closePopover}
+                  >
+                    No
+                  </EuiButton>
+                  <EuiButton
+                    data-testid="btn-cancel-yes"
+                    color="primary"
+                    fill
+                    onClick={handleCancel}
+                  >
+                    Yes
+                  </EuiButton>
+                </div>
+              </div>
+            </EuiPopover>
+            <EuiToolTip
+              position="top"
+              anchorClassName="euiToolTip__btn-disabled"
+              title={
+                selection.length < 1 ? 'Please select at least one database' : null
+              }
+              content={
+                selection.length < 1 ? (
+                  <span className="euiToolTip__content">
+                    No databases selected
+                  </span>
+                ) : null
+              }
+            >
+              <EuiButton
+                fill
+                data-testid="btn-submit"
+                color="secondary"
+                onClick={handleSubmit}
+                disabled={selection.length < 1}
+              >
+                {submitButtonText}
+              </EuiButton>
+            </EuiToolTip>
           </div>
         </div>
       </div>

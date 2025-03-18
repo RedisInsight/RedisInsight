@@ -57,7 +57,7 @@ export class AzureAutodiscoveryService {
       this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
       const response = await this.client.get(
-        `/subscriptions/${subscriptionId}/providers/Microsoft.Cache/Redis?api-version=2024-08-01`
+        `/subscriptions/${subscriptionId}/providers/Microsoft.Cache/Redis?api-version=2020-06-01`
       )
       console.log('response.data', response.data)
       const databases = await Promise.all(

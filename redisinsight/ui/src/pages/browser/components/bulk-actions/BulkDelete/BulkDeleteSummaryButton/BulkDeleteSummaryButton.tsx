@@ -28,13 +28,15 @@ const BulkDeleteSummaryButton = ({
 
   return (
     <EuiButton
-      fill
+      size="s"
       download={getFileName()}
       color="secondary"
+      iconType="download"
+      iconSide="left"
       href={fileUrl}
       data-testid="donwload-bulk-delete-report"
     >
-      Download Bulk Delete Report
+      Keys deleted
     </EuiButton>
   )
 }

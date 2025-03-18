@@ -4,6 +4,8 @@ import { DEFAULT_TOKEN_MANAGER_CONFIG, EntraIdCredentialsProviderFactory, PKCEPa
 import config from 'src/utils/config';
 import { EntraidCredentialsProvider } from '@redis/entraid/dist/lib/entraid-credentials-provider';
 import { CloudAuthStatus } from 'src/modules/cloud/auth/models/cloud-auth-response';
+import { AuthenticationResult } from '@azure/msal-common/node';
+import { Token } from '@redis/client/dist/lib/authx/token';
 
 const { idp: { microsoft: idpConfig } } = config.get('cloud');
 
@@ -140,12 +142,13 @@ export class MicrosoftAuthService {
 
         try {
             if (authRequest?.callback) {
-                authRequest.callback(result)?.catch?.((e: Error) =>
-                    this.logger.error('Async callback failed', e)
-                );
+                const callbackResult = authRequest.callback(result);
+                if (callbackResult instanceof Promise) {
+                    await callbackResult;
+                }
             }
         } catch (e) {
-            this.logger.error('Callback failed', e);
+            this.logger.error('Unexpected error in callback handling', e);
         }
 
         this.finishInProgressRequest(query);
@@ -160,7 +163,7 @@ export class MicrosoftAuthService {
         this.inProgressRequests.delete(query?.state);
     }
 
-    async getSession(): Promise<any> {
+    async getSession(): Promise<AuthenticationResult | null> {
         try {
             if (!this.activeCredentialsProvider) {
                 this.logger.warn('No active credentials provider available');
@@ -168,13 +171,14 @@ export class MicrosoftAuthService {
             }
 
             // Get the latest credentials from the provider
-            const credentials = await this.activeCredentialsProvider.tokenManager.getCurrentToken();
+            const credentials: Token<AuthenticationResult> | null = await this.activeCredentialsProvider.tokenManager.getCurrentToken();
 
             if (!credentials) {
                 this.logger.warn('No credentials available from provider');
                 return null;
             }
-            return credentials?.value;
+
+            return credentials.value;
         } catch (e) {
             this.logger.error('Failed to get Microsoft session', e);
             return null;

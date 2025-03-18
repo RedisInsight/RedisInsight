@@ -62,8 +62,9 @@ export class AzureAutodiscoveryService {
       console.log('response.data', response.data)
       const databases = await Promise.all(
         response.data.value.map(async (cache: any) => {
+          console.log('cache', cache)
           const keysResponse = await this.client.post(
-            `${cache.id}/listKeys?api-version=2024-08-01`,
+            `${cache.id}/listKeys?api-version=2020-06-01`,
             {}
           )
 

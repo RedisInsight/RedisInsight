@@ -8,8 +8,8 @@ import { CloudAuthStatus } from 'src/modules/cloud/auth/models/cloud-auth-respon
 const { idp: { microsoft: idpConfig } } = config.get('cloud');
 
 interface MicrosoftAuthOptions {
-    action: any;
-    callback: any;
+    action: string;
+    callback: (result: MicrosoftCredentials) => Promise<void> | void;
     state: string;
     client_info?: string;
 }

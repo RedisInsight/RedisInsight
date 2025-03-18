@@ -88,6 +88,7 @@ export default {
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
+    readonlyConnections: process.env.RI_READONLY_CONNECTIONS === 'true',
   },
   statics: {
     initDefaults: process.env.RI_STATICS_INIT_DEFAULTS ? process.env.RI_STATICS_INIT_DEFAULTS === 'true' : true,

@@ -30,6 +30,7 @@ export enum KnownFeatures {
   Rdi = 'redisDataIntegration',
   HashFieldExpiration = 'hashFieldExpiration',
   EnhancedCloudUI = 'enhancedCloudUI',
+  ReadonlyConnections = 'readonlyConnections',
 }
 
 export interface IFeatureFlag {

@@ -18,6 +18,10 @@ on:
         description: Enable SSH Debug
         type: boolean
 
+      enterprise:
+        description: Enterprise build
+        type: boolean
+
 jobs:
   build-linux:
     if: contains(inputs.target, 'linux') || inputs.target == 'all'
@@ -36,6 +40,7 @@ jobs:
       environment: ${{ inputs.environment }}
       target: ${{ inputs.target }}
       debug: ${{ inputs.debug }}
+      enterprise: ${{ inputs.enterprise }}
 
   build-windows:
     if: contains(inputs.target, 'windows') || inputs.target == 'all'

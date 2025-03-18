@@ -31,6 +31,7 @@ jobs:
       environment: ${{ inputs.environment }}
       target: ${{ inputs.target }}
       debug: ${{ inputs.debug }}
+      enterprise: ${{ inputs.enterprise }}
 
   build-macos:
     if: contains(inputs.target, 'macos') || inputs.target == 'all'
@@ -49,6 +50,7 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       debug: ${{ inputs.debug }}
+      enterprise: ${{ inputs.enterprise }}
 
   build-docker:
     if: contains(inputs.target, 'docker') || inputs.target == 'all'
@@ -57,3 +59,4 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       debug: ${{ inputs.debug }}
+      enterprise: ${{ inputs.enterprise }}

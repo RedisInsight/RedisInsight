@@ -16,6 +16,7 @@
     "allTests": "playwright test",
     "generateReports": "allure generate --clean",
     "test:chromium": "playwright test --project=localChromium",
+    "test:chromium-debug": "playwright test --project=localChromium --debug",
     "test:electron": "playwright test --project=localElectron",
     "clean:results": "rm -rf allure-results",
     "prep:history": "if [ -d allure-report/history ]; then cp -R allure-report/history allure-results; fi",

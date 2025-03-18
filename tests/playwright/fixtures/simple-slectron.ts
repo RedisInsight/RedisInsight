@@ -2,6 +2,7 @@ import { test as base, ElectronApplication, Page } from '@playwright/test';
 import { _electron as electron } from 'playwright';
 import { ossStandaloneConfig } from '../helpers/conf';
 
+
 // Define shared state for worker scope
 type WorkerSharedState = {
     apiUrl: string;
@@ -105,13 +106,13 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
             windows = await waitForWindows(electronApp);
             console.log(`🔍 Rechecking for windows... Found ${windows.length} window(s).`);
         }
-        if (windows.length === 2) {
-            console.log('⚠️ Detected two windows, closing all and stopping test.');
-            await Promise.all(windows.map(win => win.close()));
-            await electronApp.close();
-
-            return;
-        }
+        // if (windows.length === 2) {
+        //     console.log('⚠️ Detected two windows, closing all and stopping test.');
+        //     await Promise.all(windows.map(win => win.close()));
+        //     await electronApp.close()
+        //
+        //     return;
+        // }
         const window = windows[0];
         await window.waitForLoadState('domcontentloaded');
         console.log(`🖥️ Window Title: ${await window.title()}`);

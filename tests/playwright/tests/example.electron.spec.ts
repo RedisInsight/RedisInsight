@@ -14,6 +14,9 @@ let databaseHelper: DatabaseHelper
 let rdiInstancesListPage : RdiInstancesListPage
 test.beforeEach(async ({electronPage, workerState}) => {
 
+    await electronPage.reload()    ;
+
+
     databaseHelper = new DatabaseHelper(electronPage, workerState.apiUrl)
     await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(workerState.dbConfig, electronPage, workerState.apiUrl)
     await electronPage.getByText('Add Redis').click()

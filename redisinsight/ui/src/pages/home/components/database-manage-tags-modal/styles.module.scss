@@ -1,0 +1,61 @@
+.manageTagsModal {
+  position: fixed !important;
+  right: 0;
+  top: 0;
+  width: 50% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto;
+  z-index: 1000 !important;
+}
+
+.tagForm {
+  width: 90%;
+  border-collapse: collapse;
+  margin: 0px 32px;
+  border: 1px solid #3D3D3D;
+  border-radius: 8px;
+}
+
+.tagFormHeader {
+  font-weight: bold;
+  text-align: left;
+  border-bottom: 1px solid #3D3D3D;
+
+  th {
+    padding: 12px;
+  }
+}
+
+.tagFormRow {
+  border-bottom: 1px solid #3D3D3D;
+
+  td {
+    padding: 8px;
+  }
+
+  .euiFieldText {
+    width: 100%;
+  }
+
+  .deleteIcon {
+    cursor: pointer;
+  }
+
+  .tagValue {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.header {
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}

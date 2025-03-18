@@ -70,6 +70,7 @@ export interface Props {
   editedInstance: Nullable<Instance>
   onEditInstance: (instance: Instance) => void
   onDeleteInstances: (instances: Instance[]) => void
+  onManageInstanceTags: (instance: Instance) => void
 }
 
 const suffix = '_db_instance'
@@ -83,6 +84,7 @@ const DatabasesListWrapper = (props: Props) => {
     onEditInstance,
     editedInstance,
     onDeleteInstances,
+    onManageInstanceTags,
     loading
   } = props
   const dispatch = useDispatch()
@@ -168,6 +170,17 @@ const DatabasesListWrapper = (props: Props) => {
       }
     })
     showPopover(id)
+  }
+
+  const handleManageInstanceTags = (instance: Instance) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_MANAGE_TAGS_CLICKED,
+      eventData: {
+        databaseId: instance.id,
+        provider: instance.provider,
+      }
+    })
+    onManageInstanceTags(instance)
   }
 
   const handleClickEditInstance = (instance: Instance) => {
@@ -432,7 +445,7 @@ const DatabasesListWrapper = (props: Props) => {
       field: 'tags',
       dataType: 'auto',
       name: <TagsCellHeader />,
-      width: '150%',
+      width: '130%',
       sortable: ({ tags, id }) => {
         if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
         return tags?.[0] ? `${tags[0].key}:${tags[0].value}` : undefined
@@ -445,12 +458,19 @@ const DatabasesListWrapper = (props: Props) => {
     {
       field: 'controls',
       className: 'column_controls',
-      width: '60%',
+      width: '80%',
       name: '',
       render: function Actions(_act: any, instance: Instance) {
         if (isCreateCloudDb(instance?.id)) return null
         return (
           <>
+            <EuiButtonIcon
+              iconType="tag"
+              className={styles.tagsButton}
+              aria-label="Manage Instance Tags"
+              data-testid={`manage-instance-tags-${instance.id}`}
+              onClick={() => handleManageInstanceTags(instance)}
+            />
             {instance.cloudDetails && (
               <EuiToolTip content="Go to Redis Cloud">
                 <EuiLink

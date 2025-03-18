@@ -10,16 +10,17 @@ export interface Props {
   header: Nullable<React.ReactNode>
   footer?: Nullable<React.ReactNode>
   children: Nullable<React.ReactNode>
+  className?: string
 }
 
 const FormDialog = (props: Props) => {
-  const { isOpen, onClose, header, footer, children } = props
+  const { isOpen, onClose, header, footer, children, className = '' } = props
 
   if (!isOpen) return null
 
   return (
     <EuiModal
-      className={styles.modal}
+      className={`${styles.modal} ${className}`}
       onClose={onClose}
     >
       <EuiModalHeader>

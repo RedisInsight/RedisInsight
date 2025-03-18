@@ -8,7 +8,6 @@ const SERVER_CONFIG = config.get('server') as Config['server'];
 @Injectable()
 export class DatabaseManagementGuard implements CanActivate {
   canActivate(): boolean {
-    console.log('___ config', SERVER_CONFIG)
     if (!SERVER_CONFIG.databaseManagement) {
       throw new ForbiddenException(ERROR_MESSAGES.DATABASE_MANAGEMENT_IS_DISABLED);
     }

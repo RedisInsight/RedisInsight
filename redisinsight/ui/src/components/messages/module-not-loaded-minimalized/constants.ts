@@ -28,7 +28,7 @@ export const MODULE_CAPABILITY_TEXT_NOT_AVAILABLE_ENTERPRISE: { [key in RedisDef
 } } = {
   [RedisDefaultModules.Bloom]: {
     title: 'Probabilistic data structures are not available',
-    text: 'Open a database with Probabilistic data structures.'
+    text: 'Open a database with probabilistic data structures.'
   },
   [RedisDefaultModules.ReJSON]: {
     title: 'JSON data structure is not available',
@@ -40,6 +40,6 @@ export const MODULE_CAPABILITY_TEXT_NOT_AVAILABLE_ENTERPRISE: { [key in RedisDef
   },
   [RedisDefaultModules.TimeSeries]: {
     title: 'Time series data structure is not available',
-    text: 'Open a database with Time series data structure.'
+    text: 'Open a database with time series data structure.'
   },
 }

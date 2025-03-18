@@ -18,8 +18,8 @@ import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
 import { getDbWithModuleLoaded } from 'uiSrc/utils'
 import { useCapability } from 'uiSrc/services'
-import {appFeatureFlagsFeaturesSelector} from 'uiSrc/slices/app/features'
-import ModuleNotLoadedButton from 'uiSrc/components/messages/module-not-loaded/ModuleNotLoadedButton'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import ModuleNotLoadedButton from './ModuleNotLoadedButton'
 import styles from './styles.module.scss'
 
 export const MODULE_OAUTH_SOURCE_MAP: { [key in RedisDefaultModules]?: String } = {
@@ -122,7 +122,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
             />
           )}
         </div>
-        <div className={styles.contentWrapper}>
+        <div className={styles.contentWrapper} data-testid="module-not-loaded-content">
           {renderTitle(width, MODULE_TEXT_VIEW[moduleName])}
           <EuiText className={styles.bigText}>
             {CONTENT[moduleName]?.text.map((item: string) => (
@@ -144,7 +144,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
           {renderText(MODULE_TEXT_VIEW[moduleName])}
         </div>
       </div>
-      <div className={styles.linksWrapper}>
+      <div className={styles.linksWrapper} data-testid="module-not-loaded-cta-wrapper">
         {freeDbWithModule ? (
           <OAuthConnectFreeDb
             source={source}

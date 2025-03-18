@@ -56,8 +56,11 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
+import { Tag } from 'uiSrc/slices/interfaces/tag'
 import DbStatus from '../db-status'
 
+import { TagsCell } from '../tags-cell/TagsCell'
+import { TagsCellHeader } from '../tags-cell/TagsCellHeader'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -280,7 +283,7 @@ const DatabasesListWrapper = (props: Props) => {
         if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
         return name?.toLowerCase()
       },
-      width: '30%',
+      width: '200%',
       render: function InstanceCell(name: string = '', instance: Instance) {
         if (isCreateCloudDb(instance.id)) {
           return (
@@ -326,7 +329,7 @@ const DatabasesListWrapper = (props: Props) => {
       field: 'host',
       className: 'column_host',
       name: 'Host:Port',
-      width: '35%',
+      width: '200%',
       dataType: 'string',
       truncateText: true,
       sortable: ({ host, port, id }) => {
@@ -361,7 +364,7 @@ const DatabasesListWrapper = (props: Props) => {
         if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
         return connectionType
       },
-      width: '180px',
+      width: '150%',
       truncateText: true,
       hideForMobile: true,
       render: (cellData: ConnectionType) => CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData)
@@ -370,7 +373,7 @@ const DatabasesListWrapper = (props: Props) => {
       field: 'modules',
       className: styles.columnModules,
       name: 'Capabilities',
-      width: '30%',
+      width: '100%',
       dataType: 'string',
       render: (_cellData, { modules = [], isRediStack }: Instance) => (
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -415,7 +418,7 @@ const DatabasesListWrapper = (props: Props) => {
       name: 'Last connection',
       dataType: 'date',
       align: 'right',
-      width: '170px',
+      width: '140%',
       sortable: ({ lastConnection, id }) => {
         if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? -Infinity : +Infinity
         return (lastConnection ? -new Date(`${lastConnection}`) : -Infinity)
@@ -426,9 +429,23 @@ const DatabasesListWrapper = (props: Props) => {
       },
     },
     {
+      field: 'tags',
+      dataType: 'auto',
+      name: <TagsCellHeader />,
+      width: '150%',
+      sortable: ({ tags, id }) => {
+        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
+        return tags?.[0] ? `${tags[0].key}:${tags[0].value}` : undefined
+      },
+      render: (tags: Tag[], { id }) => {
+        if (isCreateCloudDb(id) || !tags) return null
+        return <TagsCell tags={tags} />
+      },
+    },
+    {
       field: 'controls',
       className: 'column_controls',
-      width: '120px',
+      width: '60%',
       name: '',
       render: function Actions(_act: any, instance: Instance) {
         if (isCreateCloudDb(instance?.id)) return null

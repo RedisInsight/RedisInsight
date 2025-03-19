@@ -270,6 +270,7 @@ export class DatabaseEntity {
   @Column({ nullable: true })
   isPreSetup: boolean;
 
+  @Expose()
   @Column({ nullable: true, default: Encoding.UNICODE })
   keyNameFormat: string;
 }

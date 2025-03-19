@@ -1,9 +1,14 @@
 import React from 'react'
 import { Typography } from '@redislabsdev/redis-ui-components'
 
-type Props = React.ComponentProps<typeof Typography.Body>
-const Text = ({ children, ...props }: Props) => (
+type TextProps = React.ComponentProps<typeof Typography.Body>
+type HeadingProps = React.ComponentProps<typeof Typography.Heading>
+const Text = ({ children, ...props }: TextProps) => (
   <Typography.Body {...props}>{children}</Typography.Body>
 )
 
-export default Text
+const Heading = ({ children, ...props }: HeadingProps) => (
+  <Typography.Heading {...props}>{children}</Typography.Heading>
+)
+
+export { Text, Heading }

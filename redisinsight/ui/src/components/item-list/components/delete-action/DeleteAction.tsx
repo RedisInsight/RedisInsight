@@ -1,6 +1,15 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
+import {
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiPopover,
+  EuiText,
+} from '@elastic/eui'
+import { DeleteIcon } from '@redislabsdev/redis-ui-icons'
 import { formatLongName } from 'uiSrc/utils'
+
+import { DestructiveButton } from 'uiSrc/components/ui/buttons'
 
 import styles from '../styles.module.scss'
 
@@ -10,7 +19,9 @@ export interface Props<T> {
   subTitle: string
 }
 
-const DeleteAction = <T extends { id: string; name?: string }>(props: Props<T>) => {
+const DeleteAction = <T extends { id: string; name?: string }>(
+  props: Props<T>,
+) => {
   const { selection, onDelete, subTitle } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
@@ -23,17 +34,15 @@ const DeleteAction = <T extends { id: string; name?: string }>(props: Props<T>) 
   }
 
   const deleteBtn = (
-    <EuiButton
+    <DestructiveButton
       onClick={onButtonClick}
-      fill
-      color="secondary"
-      size="s"
-      iconType="trash"
+      size="small"
+      icon={DeleteIcon}
       className={styles.actionBtn}
       data-testid="delete-btn"
     >
       Delete
-    </EuiButton>
+    </DestructiveButton>
   )
 
   return (
@@ -51,7 +60,12 @@ const DeleteAction = <T extends { id: string; name?: string }>(props: Props<T>) 
       </EuiText>
       <div className={styles.boxSection}>
         {selection.map((select) => (
-          <EuiFlexGroup key={select.id} gutterSize="s" responsive={false} className={styles.nameList}>
+          <EuiFlexGroup
+            key={select.id}
+            gutterSize="s"
+            responsive={false}
+            className={styles.nameList}
+          >
             <EuiFlexItem grow={false}>
               <EuiIcon type="check" />
             </EuiFlexItem>
@@ -62,11 +76,9 @@ const DeleteAction = <T extends { id: string; name?: string }>(props: Props<T>) 
         ))}
       </div>
       <div className={styles.popoverFooter}>
-        <EuiButton
-          fill
-          size="s"
-          color="warning"
-          iconType="trash"
+        <DestructiveButton
+          size="small"
+          icon={DeleteIcon}
           onClick={() => {
             closePopover()
             onDelete()
@@ -75,7 +87,7 @@ const DeleteAction = <T extends { id: string; name?: string }>(props: Props<T>) 
           data-testid="delete-selected-dbs"
         >
           Delete
-        </EuiButton>
+        </DestructiveButton>
       </div>
     </EuiPopover>
   )

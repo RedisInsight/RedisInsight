@@ -1,5 +1,10 @@
-.redisIcon {
+.logo {
   width: 128px;
+  height: 50px;
+}
+
+.redisIcon {
+  width: 100%;
   height: 100%;
 }
 
@@ -55,7 +60,7 @@
 }
 
 .consentsPopupTitle {
-  color: var(--euiTextSubduedColorHover);
+  color: var(--euiTextSubduedColorHover) !important;
   font-weight: 500 !important;
   font-size: 18px !important;
 }

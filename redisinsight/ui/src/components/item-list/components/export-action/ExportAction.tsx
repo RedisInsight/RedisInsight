@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {
-  EuiButton,
   EuiCheckbox,
   EuiFlexGroup,
   EuiFlexItem,
@@ -9,8 +8,10 @@ import {
   EuiPopover,
   EuiText,
 } from '@elastic/eui'
+import { ExportIcon } from '@redislabsdev/redis-ui-icons'
 import { formatLongName } from 'uiSrc/utils'
 
+import { PrimaryButton } from 'uiSrc/components/ui/buttons'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {
@@ -19,23 +20,23 @@ export interface Props<T> {
   subTitle: string
 }
 
-const ExportAction = <T extends { id: string; name?: string }>(props: Props<T>) => {
+const ExportAction = <T extends { id: string; name?: string }>(
+  props: Props<T>,
+) => {
   const { selection, onExport, subTitle } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [withSecrets, setWithSecrets] = useState(true)
 
   const exportBtn = (
-    <EuiButton
+    <PrimaryButton
       onClick={() => setIsPopoverOpen((prevState) => !prevState)}
-      fill
-      color="secondary"
-      size="s"
-      iconType="exportAction"
+      size="small"
+      icon={ExportIcon}
       className={styles.actionBtn}
       data-testid="export-btn"
     >
       Export
-    </EuiButton>
+    </PrimaryButton>
   )
 
   return (
@@ -53,7 +54,12 @@ const ExportAction = <T extends { id: string; name?: string }>(props: Props<T>) 
       </EuiText>
       <div className={styles.boxSection}>
         {selection.map((select) => (
-          <EuiFlexGroup key={select.id} gutterSize="s" responsive={false} className={styles.nameList}>
+          <EuiFlexGroup
+            key={select.id}
+            gutterSize="s"
+            responsive={false}
+            className={styles.nameList}
+          >
             <EuiFlexItem grow={false}>
               <EuiIcon type="check" />
             </EuiFlexItem>
@@ -74,11 +80,9 @@ const ExportAction = <T extends { id: string; name?: string }>(props: Props<T>) 
         />
       </EuiFormRow>
       <div className={styles.popoverFooter}>
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
-          iconType="exportAction"
+        <PrimaryButton
+          size="small"
+          icon={ExportIcon}
           onClick={() => {
             setIsPopoverOpen(false)
             onExport(selection, withSecrets)
@@ -86,7 +90,7 @@ const ExportAction = <T extends { id: string; name?: string }>(props: Props<T>) 
           data-testid="export-selected-dbs"
         >
           Export
-        </EuiButton>
+        </PrimaryButton>
       </div>
     </EuiPopover>
   )

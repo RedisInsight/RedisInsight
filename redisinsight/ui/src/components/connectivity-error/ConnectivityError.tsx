@@ -1,7 +1,7 @@
 import React from 'react'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 import { PrimaryButton } from 'uiSrc/components/ui/buttons'
-import Text from 'uiSrc/components/ui/typography/text'
+import { Text } from 'uiSrc/components/ui/typography/text'
 import Panel from 'uiSrc/components/ui/layout/panel'
 import { Column, FixedItem, Row } from 'uiSrc/components/ui/layout/flex'
 
@@ -28,7 +28,7 @@ const ConnectivityError = ({
           </FixedItem>
           {onRetry && (
             <FixedItem>
-              <PrimaryButton size="medium" color="secondary" onClick={onRetry}>
+              <PrimaryButton size="medium" onClick={onRetry}>
                 Retry
               </PrimaryButton>
             </FixedItem>

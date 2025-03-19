@@ -1,28 +1,29 @@
 import React, { useEffect } from 'react'
-import { EuiIcon, EuiTitle } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
+import { RedisLogoDarkFullIcon } from '@redislabsdev/redis-ui-icons/multicolor'
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { Pages } from 'uiSrc/constants'
 import { ConsentsSettings } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import Logo from 'uiSrc/assets/img/logo.svg'
 import { RIModal } from 'uiSrc/components/ui/modal'
 import { FixedItem, Row } from 'uiSrc/components/ui/layout/flex'
+import { Heading } from 'uiSrc/components/ui/typography/text'
 
 import styles from '../styles.module.scss'
 
 const Title = () => (
-  <Row justifyContent="spaceBetween">
+  <Row justifyContent="spaceBetween" alignItems="center">
     <FixedItem>
-      <EuiTitle size="s">
-        <h3 className={styles.consentsPopupTitle}>EULA and Privacy Settings</h3>
-      </EuiTitle>
+      <Heading size="L" className={styles.consentsPopupTitle} ellipsis>
+        EULA and Privacy Settings
+      </Heading>
     </FixedItem>
-    <FixedItem>
-      <EuiIcon className={styles.redisIcon} size="original" type={Logo} />
+
+    <FixedItem className={styles.logo}>
+      <RedisLogoDarkFullIcon size="XL" className={styles.redisIcon} />
     </FixedItem>
   </Row>
 )

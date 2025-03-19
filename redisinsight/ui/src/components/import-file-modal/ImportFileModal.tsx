@@ -1,5 +1,4 @@
 import {
-  EuiButton,
   EuiFilePicker,
   EuiFlexGroup,
   EuiFlexItem,
@@ -12,7 +11,7 @@ import {
   EuiModalHeaderTitle,
   EuiText,
   EuiTextColor,
-  EuiTitle
+  EuiTitle,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React from 'react'
@@ -20,6 +19,8 @@ import React from 'react'
 import { Nullable } from 'uiSrc/utils'
 
 import { UploadWarning } from 'uiSrc/components'
+import { PrimaryButton, SecondaryButton } from 'uiSrc/components/ui/buttons'
+
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -59,7 +60,7 @@ const ImportFileModal = <T,>({
   isInvalid,
   isSubmitDisabled,
   submitBtnText,
-  acceptedFileExtension
+  acceptedFileExtension,
 }: Props<T>) => {
   const isShowForm = !loading && !data && !error
   return (
@@ -71,18 +72,21 @@ const ImportFileModal = <T,>({
       <EuiModalHeader>
         <EuiModalHeaderTitle>
           <EuiTitle size="xs" data-testid="import-file-modal-title">
-            <span>{!data && !error ? title : resultsTitle || 'Import Results'}</span>
+            <span>
+              {!data && !error ? title : resultsTitle || 'Import Results'}
+            </span>
           </EuiTitle>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
 
       <EuiModalBody>
-        <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false} direction="column">
-          {warning && (
-            <EuiFlexItem grow={false}>
-              {warning}
-            </EuiFlexItem>
-          )}
+        <EuiFlexGroup
+          alignItems="center"
+          gutterSize="none"
+          responsive={false}
+          direction="column"
+        >
+          {warning && <EuiFlexItem grow={false}>{warning}</EuiFlexItem>}
           <EuiFlexItem grow={false}>
             {isShowForm && (
               <>
@@ -98,14 +102,21 @@ const ImportFileModal = <T,>({
                   aria-label="Select or drag and drop file"
                 />
                 {isInvalid && (
-                  <EuiTextColor color="danger" className={styles.errorFileMsg} data-testid="input-file-error-msg">
+                  <EuiTextColor
+                    color="danger"
+                    className={styles.errorFileMsg}
+                    data-testid="input-file-error-msg"
+                  >
                     {invalidMessage}
                   </EuiTextColor>
                 )}
               </>
             )}
             {loading && (
-              <div className={styles.loading} data-testid="file-loading-indicator">
+              <div
+                className={styles.loading}
+                data-testid="file-loading-indicator"
+              >
                 <EuiLoadingSpinner size="xl" />
                 <EuiText color="subdued" style={{ marginTop: 12 }}>
                   Uploading...
@@ -114,7 +125,11 @@ const ImportFileModal = <T,>({
             )}
             {error && (
               <div className={styles.result} data-testid="result-failed">
-                <EuiIcon type="crossInACircleFilled" size="xxl" color="danger" />
+                <EuiIcon
+                  type="crossInACircleFilled"
+                  size="xxl"
+                  color="danger"
+                />
                 <EuiText color="subdued" style={{ marginTop: 16 }}>
                   {errorMessage}
                 </EuiText>
@@ -129,29 +144,43 @@ const ImportFileModal = <T,>({
           )}
         </EuiFlexGroup>
         {data && (
-          <EuiFlexGroup justifyContent="center" gutterSize="none" responsive={false}>
-            <EuiFlexItem style={{ maxWidth: '100%' }}>{submitResults}</EuiFlexItem>
+          <EuiFlexGroup
+            justifyContent="center"
+            gutterSize="none"
+            responsive={false}
+          >
+            <EuiFlexItem style={{ maxWidth: '100%' }}>
+              {submitResults}
+            </EuiFlexItem>
           </EuiFlexGroup>
         )}
       </EuiModalBody>
 
       {data && (
         <EuiModalFooter>
-          <EuiButton color="secondary" onClick={onClose} fill data-testid="ok-btn">
+          <PrimaryButton onClick={onClose} data-testid="ok-btn">
             Ok
-          </EuiButton>
+          </PrimaryButton>
         </EuiModalFooter>
       )}
 
       {isShowForm && (
         <EuiModalFooter>
-          <EuiButton color="secondary" onClick={onClose} data-testid="cancel-btn">
+          <SecondaryButton
+            filled={false}
+            onClick={onClose}
+            data-testid="cancel-btn"
+          >
             Cancel
-          </EuiButton>
+          </SecondaryButton>
 
-          <EuiButton color="secondary" onClick={onSubmit} fill isDisabled={isSubmitDisabled} data-testid="submit-btn">
+          <PrimaryButton
+            onClick={onSubmit}
+            disabled={isSubmitDisabled}
+            data-testid="submit-btn"
+          >
             {submitBtnText || 'Import'}
-          </EuiButton>
+          </PrimaryButton>
         </EuiModalFooter>
       )}
     </EuiModal>

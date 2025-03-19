@@ -8,9 +8,16 @@ import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { removePagePlaceholder } from 'uiSrc/utils'
 import MonacoLanguages from 'uiSrc/components/monaco-laguages'
 import AppInit from 'uiSrc/components/init/AppInit'
+import { Demo } from 'uiSrc/demo'
 import { Pages, Theme } from './constants'
 import { themeService } from './services'
-import { Config, GlobalSubscriptions, NavigationMenu, Notifications, ShortcutsFlyout } from './components'
+import {
+  Config,
+  GlobalSubscriptions,
+  NavigationMenu,
+  Notifications,
+  ShortcutsFlyout,
+} from './components'
 import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
 import ThemeComponent from './components/theme/ThemeComponent'
@@ -31,9 +38,7 @@ const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
   <Provider store={store}>
     <ThemeProvider>
       <AppInit>
-        <App>
-          {children}
-        </App>
+        <App>{children}</App>
       </AppInit>
     </ThemeProvider>
   </Provider>
@@ -50,11 +55,8 @@ const App = ({ children }: { children?: ReactElement[] }) => {
       <ThemeComponent />
       <MonacoEnvironmentInitializer />
       <Switch>
-        <Route
-          exact
-          path={Pages.notFound}
-          component={NotFoundErrorPage}
-        />
+        <Route exact path="/demo" component={Demo} />
+        <Route exact path={Pages.notFound} component={NotFoundErrorPage} />
         <Route
           path="*"
           render={() => (

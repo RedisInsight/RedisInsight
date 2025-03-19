@@ -1,0 +1,507 @@
+.popoverApproveBtn {
+  float: right;
+  padding: 4px 12px !important;
+  height: 24px !important;
+
+  :global(.euiButtonContent) {
+    padding: 0 !important;
+  }
+}
+
+.prevPage, .nextPage {
+  & > span {
+    justify-content: flex-start;
+  }
+}
+
+.prevPageRedisUi, .nextPageRedisUi {
+  justify-content: flex-start;
+}
+
+.pipelineBtn {
+  border: 1px solid var(--euiColorSecondary) !important;
+
+  svg {
+    color: var(--buttonSecondaryTextColor) !important;
+  }
+}
+
+.btnDisabled {
+  border: 1px solid var(--controlsBorderColor) !important;
+  color: var(--controlsBorderColor) !important;
+  cursor: not-allowed;
+
+  svg {
+    color: var(--controlsBorderColor) !important;
+  }
+}
+
+.disabled {
+  cursor: not-allowed;
+}
+
+.customBtn {
+  margin-left: 8px;
+}
+
+.btnSubmit {
+  margin-left: 6px;
+
+  svg {
+    width: 16px !important;
+    height: 16px !important;
+    margin-top: 0;
+  }
+}
+
+.btn {
+  background-color: var(--euiColorEmptyShade);
+  border-color: var(--separatorColorLight) !important;
+  border-radius: 16px !important;
+
+  :global(.euiButton__text) {
+    display: flex;
+    align-items: center;
+
+    color: var(--euiTextSubduedColor);
+  }
+
+  &:hover, &:focus {
+    background-color: var(--euiColorEmptyShade) !important;
+  }
+
+  .logo {
+    width: 14px;
+    margin-right: 6px;
+  }
+}
+
+.button {
+  margin-left: 8px;
+}
+
+.feedbackBtn {
+  padding: 4px 8px 4px 4px;
+  margin-top: 10px;
+  height: 22px !important;
+
+  :global(.euiButtonContent.euiButton__content) {
+    padding: 0;
+  }
+
+  :global(.euiLink).link {
+    display: flex;
+    align-items: center;
+    color: var(--euiColorPrimaryText) !important;
+    text-decoration: none !important;
+    font: normal normal normal 12px/14px Graphik, sans-serif;
+  }
+
+  .link .githubIcon {
+    width: 12px;
+    height: 12px;
+    margin-right: 2px;
+  }
+}
+
+.stringFooterBtn {
+  &:global(.euiButton) {
+    color: var(--euiTextSubduedColor) !important;
+    font-size: 13px;
+    height: auto !important;
+    padding: 4px 8px;
+
+    :global(.euiButton__text) {
+      font-weight: 400 !important;
+    }
+  }
+}
+
+.typeBtn {
+  position: relative;
+  width: 100%;
+  height: 84px !important;
+  padding: 0 12px;
+
+  border-color: var(--separatorColorLight) !important;
+  color: var(--buttonSecondaryTextColor) !important;
+  box-shadow: none !important;
+
+  &.small {
+    padding: 0 8px;
+    height: 52px !important;
+
+    :global(.euiButton__text) {
+      flex-direction: row;
+    }
+
+    .btnIcon {
+      margin-right: 8px;
+    }
+  }
+
+  &:hover {
+    background-color: transparent !important;
+  }
+
+  :global(.euiButton__text) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 400 !important;
+  }
+
+  &:not(.small) {
+    .btnIcon {
+      margin-bottom: 8px;
+
+      &.rocket {
+        fill: currentColor;
+        height: 24px;
+        width: 24px;
+      }
+    }
+  }
+
+
+  .freeBadge {
+    position: relative;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+
+    text-transform: uppercase;
+    background-color: var(--euiColorLightestShade);
+    border: 1px solid var(--euiColorPrimary);
+    border-radius: 2px !important;
+  }
+}
+
+.cancelBtn {
+  margin-right: 18px;
+}
+
+.footerBtn {
+  height: 36px !important;
+
+  &:last-child {
+    margin-left: 18px
+  }
+}
+
+.popoverBtn {
+  margin-left: 8px;
+  min-width: auto !important;
+
+  :global(.euiButton__text) {
+    font-size: 12px !important;
+  }
+}
+
+.backBtn {
+  flex-grow: 0;
+  align-self: self-start;
+  margin: 0 0 8px 16px;
+
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  &:hover {
+    color: var(--buttonSecondaryTextColor) !important
+  }
+}
+
+.addInstanceBtn {
+  padding-left: 0;
+  padding-right: 0;
+  height: 43px;
+  margin: 0 auto;
+  text-decoration: none !important;
+
+  &:global(.euiButton) {
+    min-width: 54px !important;
+  }
+
+  :global(.euiButton__text) {
+    font-weight: 500 !important;
+  }
+}
+
+.clusterBtn {
+  margin-top: 8px;
+  position: relative;
+  right: 24px;
+  bottom: 18px;
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  bottom: 16px;
+  right: 16px;
+
+  width: 30px !important;
+  min-width: 0 !important;
+  height: 30px !important;
+  border-radius: 100%;
+
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  :global {
+    .euiButton__content {
+      padding: 0 !important;
+    }
+
+    .euiButton__text {
+      line-height: 12px !important;
+    }
+  }
+}
+
+.loadDataBtn {
+  height: 36px !important;
+
+  :global(.euiButton__text) {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+  }
+}
+
+.agreementsAccept {
+  display: block;
+  margin-left: auto;
+}
+
+.toastSuccessBtn {
+  background-color: var(--euiToastSuccessBtnColor) !important;
+  border: none !important;
+}
+
+.textBtn {
+  border: none;
+  min-width: auto !important;
+  min-height: auto;
+  border-radius: 4px;
+  background: transparent !important;
+  margin-left: 18px;
+  box-shadow: none !important;
+
+  &:global(.euiButton.euiButton--secondary) {
+    color: var(--wbHoverIconColor) !important;
+
+    &:hover,
+    &:focus {
+      color: var(--wbHoverIconColor) !important;
+    }
+  }
+
+  :global(.euiButton__content) {
+    padding: 6px;
+  }
+
+  :global(.euiButton__text) {
+    font: normal normal normal 13px/17px Graphik,
+    sans-serif !important;
+  }
+
+  &.activeBtn:global(.euiButton.euiButton-isDisabled.euiButton--fill.euiButton--secondary),
+  :global(.euiButton.euiButton-isDisabled.euiButton--fill.euiButton--secondary) {
+    background: var(--browserComponentActive) !important;
+    color: var(--wbActiveIconColor) !important;
+    opacity: 1 !important;
+  }
+}
+
+.addKey {
+  height: 36px !important;
+  width: auto !important;
+  margin-left: 12px;
+
+  .addKeyText {
+    display: none;
+  }
+  transition: color ease 0.3s, background-color ease 0.3s, transform ease 0.3s;
+
+  &:hover {
+    transform: translateY(-1px) !important;
+  }
+
+  :global(.euiButton__text) {
+    font-size: 14px !important;
+  }
+}
+
+.buttonSubscribe {
+  :global(.euiButton__text) {
+    font-weight: normal !important;
+    font-size: 12px !important;
+  }
+}
+
+.confirmBtn, .openTutorialsBtn {
+  display: block !important;
+  margin-left: auto;
+}
+
+.submitBtn {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+
+  :global {
+    .euiButton__content {
+      padding: 0;
+    }
+
+    .euiButton__text {
+      display: none;
+    }
+  }
+}
+
+.uploadApproveBtn {
+  position: relative;
+  right: 18px;
+  bottom: 18px;
+}
+
+.anchorBtn {
+  display: inline-flex !important;
+}
+
+.actionBtn {
+  &:global(.euiButton) {
+    height: 20px !important;
+    min-width: auto !important;
+    margin-left: 4px;
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+
+    :global {
+      .euiButton__content {
+        padding: 0 4px !important;
+      }
+
+      .euiButton__text {
+        font-size: 11px !important;
+        line-height: 12px !important;
+        font-weight: 400 !important;
+      }
+
+      .euiButtonContent__icon {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+}
+
+.copyBtn {
+  &:global(.euiButton) {
+    color: var(--euiTextSubduedColor) !important;
+
+    :global(.euiButton__text) {
+      margin-inline-start: 4px !important;
+      color: var(--euiTextSubduedColor) !important;
+    }
+  }
+}
+
+.runBtn {
+  &:global(.euiButton) {
+    color: var(--buttonSuccessColor) !important;
+
+    :global(.euiButton__text) {
+      color: var(--buttonSuccessColor) !important;
+      margin-inline-end: 4px !important;
+    }
+  }
+
+  :global {
+    .euiLoadingSpinner {
+      width: 12px;
+      height: 12px;
+      border-width: 2px;
+      border-top-color: transparent !important;
+    }
+  }
+}
+
+.submitButton {
+  color: var(--rsSubmitBtn) !important;
+  width: 44px !important;
+  height: 44px !important;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.ackBtn:global(.euiButton.euiButton--secondary) {
+  min-width: initial !important;
+  color: var(--textColorShade) !important;
+}
+
+.ackBtn :global(.euiButtonContent .euiButton__text) {
+  font: normal normal normal 12px/18px Graphik, sans-serif !important;
+}
+
+.claimBtn:global(.euiButton.euiButton--secondary) {
+  margin-left: 12px;
+  min-width: initial !important;
+  color: var(--textColorShade) !important;
+}
+
+.claimBtn :global(.euiButtonContent .euiButton__text) {
+  font: normal normal normal 12px/18px Graphik, sans-serif !important;
+}
+
+.restartSessionBtn {
+  :global(.euiButton__text) {
+    font-size: 12px !important;
+    font-weight: 400 !important;
+  }
+
+  :global(.euiIcon) {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.btnOpen {
+  float: right;
+
+  svg {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.bulkActions {
+  height: 36px !important;
+  width: 128px !important;
+  min-width: 36px !important;
+  margin-left: 12px;
+  font-size: 14px !important;
+
+  :global(.euiButtonContent) {
+    padding: 0 !important;
+  }
+}
+
+.columnsButton {
+  padding: 4px 6px 4px 4px;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}

@@ -1,5 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useState, useMemo, useCallback } from 'react'
+import { useDispatch } from 'react-redux'
 import {
   EuiButton,
   EuiFieldText,
@@ -13,6 +14,7 @@ import { Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
 import { Tag } from 'uiSrc/slices/interfaces/tag'
 
+import { updateInstanceAction } from 'uiSrc/slices/instances/instances'
 import styles from './styles.module.scss'
 
 type PartialTag = Pick<Tag, 'key' | 'value'>
@@ -28,7 +30,10 @@ export const ManageTagsModal = ({
   onClose,
   onSave,
 }: ManageTagsModalProps) => {
-  const [tags, setTags] = useState<PartialTag[]>(instance.tags || [])
+  const dispatch = useDispatch()
+  const [tags, setTags] = useState<PartialTag[]>(
+    (instance.tags || []).map(({ key, value }) => ({ key, value })),
+  )
 
   const isModified = useMemo(
     () =>
@@ -63,6 +68,12 @@ export const ManageTagsModal = ({
 
   const handleSave = useCallback(() => {
     onSave(instance.id, tags)
+
+    dispatch(
+      updateInstanceAction({ id: instance.id, tags }, () => {
+        // TODO: show success toast
+      }),
+    )
   }, [onSave, instance.id, tags])
 
   return (

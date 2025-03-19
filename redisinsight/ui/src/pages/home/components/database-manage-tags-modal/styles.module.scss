@@ -10,42 +10,46 @@
 }
 
 .tagForm {
-  width: 90%;
-  border-collapse: collapse;
   margin: 0px 32px;
   border: 1px solid #3D3D3D;
   border-radius: 8px;
 }
 
 .tagFormHeader {
-  font-weight: bold;
+  display: flex;
   text-align: left;
   border-bottom: 1px solid #3D3D3D;
 
-  th {
-    padding: 12px;
+  > div {
+    flex: 1;
+    padding: 6px;
+    margin: 6px;
+  }
+
+  :first-child {
+    border-right: 1px solid #3D3D3D;
   }
 }
 
+.tagFormBody {
+  display: flex;
+  flex-direction: column;
+}
+
 .tagFormRow {
-  border-bottom: 1px solid #3D3D3D;
+  display: flex;
+  align-items: center;
 
-  td {
+  > div {
+    flex: 1;
     padding: 8px;
-  }
-
-  .euiFieldText {
-    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
 
   .deleteIcon {
     cursor: pointer;
-  }
-
-  .tagValue {
-    display: flex;
-    align-items: center;
-    gap: 8px;
   }
 }
 
@@ -58,4 +62,11 @@
   display: flex;
   justify-content: flex-end;
   gap: 16px;
+  padding: 12px !important;
+  border-top: 1px solid #3D3D3D;
+}
+
+.addTagButton {
+  margin-left: 32px;
+  color: #8BA2FF !important;
 }

@@ -6,6 +6,7 @@ import {
   EuiSpacer,
   EuiTitle,
   EuiText,
+  EuiButtonEmpty,
 } from '@elastic/eui'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
@@ -71,60 +72,57 @@ export const ManageTagsModal = ({
           <EuiButton onClick={onClose} size="s">
             Close
           </EuiButton>
-          <EuiButton onClick={handleSave} fill size="s">
+          <EuiButton onClick={handleSave} fill size="s" color="secondary">
             Save tags
           </EuiButton>
         </div>
       }
       className={styles.manageTagsModal}
     >
-      <table className={styles.tagForm}>
-        <thead className={styles.tagFormHeader}>
-          <tr>
-            <th>Key</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
+      <div className={styles.tagForm}>
+        <div className={styles.tagFormHeader}>
+          <div>Key</div>
+          <div>Value</div>
+        </div>
+        <div className={styles.tagFormBody}>
           {tags.map((tag, index) => (
-            <tr key={`${tag.key}:${tag.value}`} className={styles.tagFormRow}>
-              <td>
+            <div key={`${tag.key}:${tag.value}`} className={styles.tagFormRow}>
+              <div>
                 <EuiFieldText
                   value={tag.key}
                   onChange={(e) =>
                     handleTagChange(index, 'key', e.target.value)
                   }
                 />
-              </td>
-              <td>
-                <div className={styles.tagValue}>
-                  :
-                  <EuiFieldText
-                    value={tag.value}
-                    onChange={(e) =>
-                      handleTagChange(index, 'value', e.target.value)
-                    }
-                  />
-                  <EuiIcon
-                    type="trash"
-                    onClick={() => handleRemoveTag(index)}
-                    className={styles.deleteIcon}
-                  />
-                </div>
-              </td>
-            </tr>
+                :
+              </div>
+              <div>
+                <EuiFieldText
+                  value={tag.value}
+                  onChange={(e) =>
+                    handleTagChange(index, 'value', e.target.value)
+                  }
+                />
+                <EuiIcon
+                  type="trash"
+                  onClick={() => handleRemoveTag(index)}
+                  className={styles.deleteIcon}
+                />
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
-      <EuiSpacer />
-      <EuiButton
+        </div>
+      </div>
+      <EuiSpacer size="s" />
+      <EuiButtonEmpty
         iconType="plus"
         onClick={handleAddTag}
         size="s"
-        color="primary"
+        color="text"
+        className={styles.addTagButton}
       >
         Add additional tag
-      </EuiButton>
+      </EuiButtonEmpty>
     </FormDialog>
   )
 }

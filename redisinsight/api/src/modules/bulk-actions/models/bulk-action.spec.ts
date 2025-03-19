@@ -114,6 +114,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
         succeed: 0,
         failed: 0,
         errors: [],
+        keys: [],
       });
 
       await new Promise((res) => setTimeout(res, 100));
@@ -141,6 +142,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
         succeed: 0,
         failed: 0,
         errors: [],
+        keys: [],
       });
 
       await new Promise((res) => setTimeout(res, 100));
@@ -168,6 +170,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
         succeed: 0,
         failed: 0,
         errors: [],
+        keys: [],
       });
 
       await new Promise((res) => setTimeout(res, 100));
@@ -207,6 +210,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
         succeed: 900_000,
         failed: 100_000,
         errors: generateMockBulkActionErrors(500, false),
+        keys: [],
       });
     });
     it('should return overview for cluster', async () => {
@@ -227,6 +231,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
         succeed: 2_700_000,
         failed: 300_000,
         errors: generateMockBulkActionErrors(500, false),
+        keys: [],
       });
     });
   });

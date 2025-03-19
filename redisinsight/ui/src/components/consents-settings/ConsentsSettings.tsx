@@ -22,6 +22,7 @@ import cx from 'classnames'
 import { compareConsents } from 'uiSrc/utils'
 import { updateUserConfigSettingsAction, userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { ToggleAnalyticsReason } from 'apiSrc/constants/telemetry-events'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -189,7 +190,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
     }
     const settings: Record<string, any> = { agreements: values }
     if (values.analytics) {
-      settings.analyticsReason = 'install'
+      settings.analyticsReason = ToggleAnalyticsReason.User
     }
     dispatch(updateUserConfigSettingsAction(settings, onSubmitted))
   }

@@ -9,7 +9,7 @@ import {
 } from 'src/__mocks__';
 import { UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
-import { AgreementIsNotDefinedException } from 'src/constants';
+import { AgreementIsNotDefinedException, ToggleAnalyticsReason } from 'src/constants';
 import config from 'src/utils/config';
 import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
 import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
@@ -157,7 +157,7 @@ describe('SettingsService', () => {
         agreements: new Map(Object.entries({
           analytics: false,
         })),
-        analyticsReason: 'some reason',
+        analyticsReason: ToggleAnalyticsReason.GitHub,
       };
 
       const response = await service.updateAppSettings(mockSessionMetadata, dto);

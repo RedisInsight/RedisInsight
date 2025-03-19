@@ -14,7 +14,7 @@ import { readFile } from 'fs-extra';
 import { join } from 'path';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
 import config, { Config } from 'src/utils/config';
-import { AgreementIsNotDefinedException } from 'src/constants';
+import { AgreementIsNotDefinedException, ToggleAnalyticsReasonType } from 'src/constants';
 import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
 import { KeyEncryptionStrategy } from 'src/modules/encryption/strategies/key-encryption.strategy';
 import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
@@ -177,7 +177,7 @@ export class SettingsService {
   private async updateAgreements(
     sessionMetadata: SessionMetadata,
     dtoAgreements: Map<string, boolean> = new Map(),
-    analyticsReason?: string,
+    analyticsReason?: ToggleAnalyticsReasonType,
   ): Promise<void> {
     this.logger.debug('Updating application agreements.', sessionMetadata);
     const oldAgreements = await this.agreementRepository.getOrCreate(sessionMetadata);

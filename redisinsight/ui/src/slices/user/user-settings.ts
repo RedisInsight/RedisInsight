@@ -4,6 +4,7 @@ import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { ToggleAnalyticsReason, ToggleAnalyticsReasonType } from 'apiSrc/constants/telemetry-events'
 import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from 'apiSrc/modules/settings/dto/settings.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -184,7 +185,7 @@ export function updateUserConfigSettingsAction(
   }
 }
 
-export function enableUserAnalyticsAction(reason = '') {
+export function enableUserAnalyticsAction(reason: ToggleAnalyticsReasonType = ToggleAnalyticsReason.None) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const agreements = state?.user?.settings?.config?.agreements

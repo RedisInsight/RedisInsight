@@ -26,7 +26,8 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   fetchUserConfigSettings,
   fetchUserSettingsSpec,
-  userSettingsSelector,
+  updateUserConfigSettingsAction,
+  userSettingsSelector
 } from 'uiSrc/slices/user/user-settings'
 
 import Divider from 'uiSrc/components/divider/Divider'
@@ -68,6 +69,7 @@ const SettingsPage = () => {
   const onChange = (value: string) => {
     const previousValue = theme
     changeTheme(value)
+    dispatch(updateUserConfigSettingsAction({theme: value}));
     sendEventTelemetry({
       event: TelemetryEvent.SETTINGS_COLOR_THEME_CHANGED,
       eventData: {

@@ -1,5 +1,11 @@
 import {Locator, Page, expect} from '@playwright/test'
 
+declare global {
+    interface Window {
+        windowId?: string
+    }
+}
+
 export  class BasePage {
     protected page: Page
 
@@ -62,5 +68,10 @@ export  class BasePage {
     }
     async waitForLocatorNotVisible(locator: Locator, timeout = 6000) {
         await expect(locator).not.toBeVisible({ timeout })
+    }
+
+    async getWindowId():Promise<string> {
+        return this.page.evaluate(() => window.windowId)
+
     }
 }

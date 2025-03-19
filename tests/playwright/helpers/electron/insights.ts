@@ -33,10 +33,10 @@ export async function modifyFeaturesConfigJson(filePath: string): Promise<void> 
  * @param controlNumber Control number to update
  * @param page Playwright page instance
  */
-export async function updateControlNumber(controlNumber: number,  apiUrl: string): Promise<void> {
-    await syncFeaturesApi(apiUrl)
+export async function updateControlNumber(controlNumber: number,  apiUrl: string, xWindowId:string): Promise<void> {
+    await syncFeaturesApi(apiUrl, xWindowId)
     await DatabaseScripts.updateColumnValueInDBTable({ ...dbTableParams, rowValue: controlNumber })
-    await syncFeaturesApi(apiUrl)
+    await syncFeaturesApi(apiUrl, xWindowId)
 
 }
 

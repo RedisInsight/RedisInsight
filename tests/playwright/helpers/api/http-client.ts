@@ -1,39 +1,49 @@
-import axios, { AxiosInstance } from 'axios'
+import axios, { AxiosInstance } from 'axios';
+
+
+interface CustomAxiosInstance extends AxiosInstance {
+    setHeaders: (headers: Record<string, string>) => void;
+}
 
 export class HttpClient {
+    private apiUrl: string;
+    private apiClient: CustomAxiosInstance;
 
-    private apiUrl: string
-    private apiClient: AxiosInstance
-    private static instance: HttpClient
-
-    constructor(apiUrl: string) {
-        this.apiUrl = apiUrl
+    constructor(apiUrl: string, ) {
+        this.apiUrl = apiUrl;
         this.apiClient = axios.create({
-            baseURL: this.apiUrl, // Change to your API base URL
+            baseURL: this.apiUrl,
+            headers: {},
             httpsAgent: new (require('https').Agent)({
-                rejectUnauthorized: false // Allows self-signed/invalid SSL certs
-            })
-        })
+                rejectUnauthorized: false, // Allows self-signed/invalid SSL certs
+            }),
+        }) as CustomAxiosInstance;
 
-        // Enable logging if DEBUG=1 is set
-        if (process.env.DEBUG === '1') {
+        // Attach setHeaders method to allow setting headers dynamically
+        this.apiClient.setHeaders = (headers: Record<string, string>) => {
+            Object.assign(this.apiClient.defaults.headers.common, headers);
+        };
+
+        // Enable logging if DEBUG is set
+        if (process.env.DEBUG) {
             this.apiClient.interceptors.request.use(request => {
-                console.log('Starting Request', request)
-                return request
-            })
-            this.apiClient.interceptors.response.use(response => {
-                console.log('Response:', response)
-                return response
-            }, error => {
-                console.error('Error Response:', error.response)
-                return Promise.reject(error)
-            })
+                console.log('Starting Request', request);
+                return request;
+            });
+            this.apiClient.interceptors.response.use(
+                response => {
+                    console.log('Response:', response);
+                    return response;
+                },
+                error => {
+                    console.error('Error Response:', error.response);
+                    return Promise.reject(error);
+                }
+            );
         }
     }
 
-    getClient(): AxiosInstance {
-        return this.apiClient
+    getClient(): CustomAxiosInstance {
+        return this.apiClient;
     }
-
-
 }

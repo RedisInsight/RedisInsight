@@ -7,6 +7,10 @@ import {RedisOverviewPage} from '../helpers/constants'
 import {RdiInstancesListPage} from '../pageObjects/rdi-instances-list-page'
 import {DatabaseHelper} from "../helpers/database";
 
+import * as path from "node:path";
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: path.resolve(__dirname, "..",'.desktop.env') })
 
 let keyName: string
 let browserPage: BrowserPage

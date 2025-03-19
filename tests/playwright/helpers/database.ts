@@ -292,9 +292,10 @@ export class DatabaseHelper extends BasePage{
 
     // Accept License terms
     async acceptLicenseTerms(page: Page, apiUrl: string ): Promise<void> {
-        // await this.myRedisDatabasePage.page.viewportSize(); // (if needed to maximize window)
+        // await this.myRedisDatabasePage.page.viewportSize();
+        const winId = await this.getWindowId()
         await this.userAgreementDialog.acceptLicenseTerms()
-        await updateControlNumber(48.2, apiUrl)
+        await updateControlNumber(48.2, apiUrl, winId)
         // Open default databases list tab if RDI opened
         if (await this.rdiInstancesListPage.elementExistsLocator(this.rdiInstancesListPage.addRdiInstanceButton)) {
             await this.myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase)

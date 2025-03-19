@@ -4,17 +4,17 @@
 // import * as fs from 'fs'
 // import * as fsp from 'fs/promises'
 import { faker } from '@faker-js/faker'
-// import { apiUrl } from './conf'
+
 
 // const archiver = require('archiver')
 //
 //
 //
-// declare global {
-//     interface Window {
-//         windowId?: string
-//     }
-// }
+declare global {
+    interface Window {
+        windowId?: string
+    }
+}
 //
 // const settingsApiUrl = `${apiUrl}/settings`
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' // lgtm[js/disabling-certificate-validation]
@@ -27,7 +27,7 @@ import { faker } from '@faker-js/faker'
 //     'agreements': null
 // }
 //
-export class Common {
+// export class Common {
 //     static mockSettingsResponse(): RequestMock {
 //         return RequestMock()
 //             .onRequestTo(settingsApiUrl)
@@ -152,7 +152,7 @@ export class Common {
     * Generate word by number of symbols
     * @param number The number of symbols
     */
-    static generateWord(number: number): string {
+    function generateWord(number: number): string {
         return faker.word.sample({ length: number })
     }
 
@@ -160,7 +160,7 @@ export class Common {
     * Generate sentence by number of words
     * @param number The number of words
     */
-    static generateSentence(number: number): string {
+     function generateSentence(number: number): string {
         return faker.lorem.sentence( number)
     }
 
@@ -168,25 +168,25 @@ export class Common {
      * Generate sentence by number of characters
      * @param number The number of characters
      */
-    static generateAlpanumeric(number: number): string {
+     function generateAlpanumeric(number: number): string {
         return faker.string.alphanumeric(number)
     }
 
-    //
+
     // /**
     // * Return api endpoint with disabled certificate validation
     // */
-    // static getEndpoint(): string {
+    // static function getEndpoint(): string {
     //     return apiUrl
     // }
     //
     // /**
     // * Return windowId
     // */
-    // static getWindowId(): Promise<string> {
+    // static function getWindowId(): Promise<string> {
     //     return t.eval(() => window.windowId)
     // }
-    //
+
     // /**
     //  * Check opened URL
     //  * @param expectedUrl Expected link that is compared with actual
@@ -195,7 +195,7 @@ export class Common {
     //     const getPageUrl = await this.getPageUrl()
     //     await t.expect(getPageUrl).eql(expectedUrl, 'Opened URL is not correct')
     // }
-    //
+
     // /**
     //  * Check opened URL contains text
     //  * @param expectedText Expected link that is compared with actual
@@ -305,4 +305,5 @@ export class Common {
     //         isLinux: process.platform === 'linux'
     //     }
     // }
-}
+
+

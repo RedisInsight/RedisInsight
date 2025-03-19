@@ -66,7 +66,7 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
         console.log('🚀 Starting RedisInsight...');
 
         // update control nmb
-        await updateControlNumber(48.2, workerState.apiUrl);
+        // await updateControlNumber(48.2, workerState.apiUrl);
 
         let electronApp = await launchElectronApp(workerState.baseUrl);
         workerState.electronApp = electronApp;
@@ -83,15 +83,15 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
 
         if (windows.length === 2) {
             console.log('⚠️ Detected two windows, closing all and restarting...');
-            await Promise.all(windows.map(win => win.close()));
-            await electronApp.close();
-
-            console.log('🔄 Restarting RedisInsight...');
-            electronApp = await launchElectronApp(workerState.baseUrl);
-            workerState.electronApp = electronApp;
-
-            windows = await waitForWindows(electronApp);
-            console.log(`🔍 Rechecking for windows... Found ${windows.length} window(s).`);
+            // await Promise.all(windows.map(win => win.close()));
+            // await electronApp.close();
+            //
+            // console.log('🔄 Restarting RedisInsight...');
+            // electronApp = await launchElectronApp(workerState.baseUrl);
+            // workerState.electronApp = electronApp;
+            //
+            // windows = await waitForWindows(electronApp);
+            // console.log(`🔍 Rechecking for windows... Found ${windows.length} window(s).`);
         }
 
         await use(electronApp);
@@ -99,6 +99,7 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
 
     electronPage: async ({ electronApp,workerState }, use) => {
         let windows = await waitForWindows(electronApp);
+
         if (windows.length === 0) {
             console.error('❌ No windows detected! Stopping test.');
             await electronApp.close();
@@ -106,13 +107,18 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
         }
         if (windows.length === 2) {
             console.log('⚠️ Detected two windows, closing all and restarting...');
-            await Promise.all(windows.map(win => win.close()));
-            await electronApp.close();
-            console.log('🔄 Restarting RedisInsight...');
-            electronApp = await launchElectronApp(workerState.baseUrl);
-            workerState.electronApp = electronApp;
-            windows = await waitForWindows(electronApp);
-            console.log(`🔍 Rechecking for windows... Found ${windows.length} window(s).`);
+            // await Promise.all(windows.map(win => win.close()));
+            // await electronApp.close();
+            // console.log('🔄 Restarting RedisInsight...');
+            // electronApp = await launchElectronApp(workerState.baseUrl);
+            // workerState.electronApp = electronApp;
+            // windows = await waitForWindows(electronApp);
+            // console.log(`🔍 Rechecking for windows... Found ${windows.length} window(s).`);
+
+            let titles = (await Promise.all(windows.map(async page => ({
+                page,
+                title: await page.title()  })))).find(entry => entry.title)?.page || null;
+
         }
         // if (windows.length === 2) {
         //     console.log('⚠️ Detected two windows, closing all and stopping test.');
@@ -122,6 +128,7 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
         //     return;
         // }
         const window = windows[0];
+
         await window.waitForLoadState('domcontentloaded');
         console.log(`🖥️ Window Title: ${await window.title()}`);
         await use(window);

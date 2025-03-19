@@ -30,6 +30,6 @@ export class AzureAutodiscoveryController {
   async getDatabasesFromMultipleSubscriptions(
     @Body() subscriptionsDto: SubscriptionsDto
   ): Promise<EnhancedAzureRedisDatabase[]> {
-    return this.azureAutodiscoveryService.getDatabasesFromMultipleSubscriptions(subscriptionsDto.subscriptions);
+    return this.azureAutodiscoveryService.getDatabasesFromMultipleSubscriptions(subscriptionsDto.subscriptions)
   }
 }

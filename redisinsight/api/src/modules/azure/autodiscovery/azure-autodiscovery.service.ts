@@ -68,7 +68,6 @@ export class AzureAutodiscoveryService {
 
       const databasesArrays = await this.azureClient.getDatabasesFromMultipleSubscriptions(subscriptions)
 
-      // Process each database to get its keys and enhance with connection information
       const enhancedDatabasesPromises = databasesArrays.map(async (databases, subscriptionIndex) => {
         const enhancedDatabases = await Promise.all(
           databases.map(async (db) => {

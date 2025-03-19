@@ -1,19 +1,19 @@
-import { IsArray, ValidateNested, IsString, IsBoolean } from 'class-validator';
-import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, ValidateNested, IsString, IsBoolean } from 'class-validator'
+import { Type } from 'class-transformer'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class SubscriptionDto {
   @IsString()
   @ApiProperty({ description: 'Azure subscription name' })
-  name: string;
+  name: string
 
   @IsString()
   @ApiProperty({ description: 'Azure subscription id' })
-  id: string;
+  id: string
 
   @IsBoolean()
   @ApiProperty({ description: 'Whether the subscription is active' })
-  isActive: boolean;
+  isActive: boolean
 }
 
 export class SubscriptionsDto {
@@ -24,5 +24,5 @@ export class SubscriptionsDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SubscriptionDto)
-  subscriptions: SubscriptionDto[];
+  subscriptions: SubscriptionDto[]
 }

@@ -79,7 +79,7 @@ export class ApiAzureClient extends AzureClient {
 
   private wrapAzureError(error: any): Error {
     if (error.response) {
-      const { status, data } = error.response as { status: number data: AzureErrorResponse }
+      const { status, data } = error.response as { status: number, data: AzureErrorResponse }
       return new Error(`Azure API error (${status}): ${JSON.stringify(data)}`)
     }
 

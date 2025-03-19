@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 24px;
+}
+
+.loadingContent {
+  margin-top: 24px;
+}
+
+.tableContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-bottom: 24px;
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tableTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.table {
+  flex: 1;
+}
+
+.tableFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tableFooterButtons {
+  display: flex;
+  gap: 16px;
+}
+
+.summaryText {
+  font-size: 14px;
+}
+
+.summaryCount {
+  font-weight: 600;
+}
+
+.popoverButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}

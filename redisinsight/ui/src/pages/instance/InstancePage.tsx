@@ -11,7 +11,6 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import {
   fetchInstancesAction as fetchRdiInstancesAction,
-  resetConnectedInstance as resetRdiConnectedInstance,
   instancesSelector as rdiInstancesSelector
 } from 'uiSrc/slices/rdi/instances'
 import {
@@ -23,7 +22,7 @@ import {
   setAppContextConnectedInstanceId,
   setDbConfig,
 } from 'uiSrc/slices/app/context'
-import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
+import { BrowserStorageItem, FeatureFlags, Pages } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { InstancePageTemplate } from 'uiSrc/templates'
 import { getPageName } from 'uiSrc/utils/routing'
@@ -31,8 +30,8 @@ import { loadPluginsAction } from 'uiSrc/slices/app/plugins'
 import { appConnectivityError } from 'uiSrc/slices/app/connectivity'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getConfig } from 'uiSrc/config'
-import InstancePageRouter from './InstancePageRouter'
 import InstanceConnectionLost from './instanceConnectionLost'
+import PageRouter from 'uiSrc/components/page-router/PageRouter'
 
 const riConfig = getConfig()
 
@@ -122,7 +121,7 @@ const InstancePage = ({ routes = [] }: Props) => {
       {
         !envDependent?.flag && connectivityError
           ? <InstanceConnectionLost />
-          : <InstancePageRouter routes={routes} />
+          : <PageRouter routes={routes} fallbackPath={Pages.notFound} />
       }
     </InstancePageTemplate>
   )

@@ -31,6 +31,6 @@ export class MicrosoftAzureAuthController {
         @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     ) {
         console.log('Microsoft Auth - me endpoint called');
-        return this.microsoftAuthService.getSession(sessionMetadata.sessionId);
+        return this.microsoftAuthService.getSession();
     }
-} 
+}

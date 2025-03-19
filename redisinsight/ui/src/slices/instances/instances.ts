@@ -22,7 +22,7 @@ import {
   addMessageNotification,
   removeInfiniteNotification
 } from '../app/notifications'
-import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
+import { Instance, InitialStateInstances, ConnectionType, InstanceAzure } from '../interfaces'
 
 const HIDE_CREATING_DB_DELAY_MS = 500
 
@@ -354,9 +354,10 @@ export function fetchInstancesAction(onSuccess?: (data: Instance[]) => void) {
 
 // Asynchronous thunk action
 export function createInstanceStandaloneAction(
-  payload: Instance,
+  payload: Instance | InstanceAzure,
   onRedirectToSentinel?: () => void,
-  onSuccess?: (id: string) => void
+  onSuccess?: (id: string) => void,
+  options?: { isAzureInstance?: boolean }
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
@@ -393,8 +394,11 @@ export function createInstanceStandaloneAction(
 
       dispatch(defaultInstanceChangingFailure(errorMessage))
 
-      if (error?.response?.data?.error === ApiErrors.SentinelParamsRequired) {
-        checkoutToSentinelFlow(payload, dispatch, onRedirectToSentinel)
+      if (
+        error?.response?.data?.error === ApiErrors.SentinelParamsRequired
+        && !options?.isAzureInstance
+      ) {
+        checkoutToSentinelFlow(payload as Instance, dispatch, onRedirectToSentinel)
         return
       }
 

@@ -42,7 +42,6 @@ const OAuthForm = ({
     switch (authStrategy) {
       case OAuthStrategy.Google:
       case OAuthStrategy.GitHub:
-      case OAuthStrategy.Microsoft:
         initOAuthProcess(authStrategy, action)
         break
       case OAuthStrategy.SSO:

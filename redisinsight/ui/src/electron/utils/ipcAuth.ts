@@ -7,3 +7,10 @@ export const ipcAuth = async (strategy: OAuthStrategy, action: string, data?: {}
     { strategy, action, data }
   )
 }
+
+export const ipcAuthMicrosoft = async (strategy: OAuthStrategy, action: string, data?: {}) => {
+  await window.app?.ipc?.invoke?.(
+    IpcInvokeEvent.microsoftAuth,
+    { strategy, action, data }
+  )
+}

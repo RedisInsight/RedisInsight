@@ -14,13 +14,17 @@ import { useHistory } from 'react-router'
 import { Nullable, parseRedisUrl } from 'uiSrc/utils'
 
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import { Instance } from 'uiSrc/slices/interfaces'
+import { Instance, OAuthSocialAction, OAuthStrategy } from 'uiSrc/slices/interfaces'
 import {
   createInstanceStandaloneAction,
   instancesSelector,
   testInstanceStandaloneAction
 } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { ipcAuthMicrosoft } from 'uiSrc/electron/utils'
+import { signIn } from 'uiSrc/slices/oauth/cloud'
+
 import ConnectivityOptions from './components/connectivity-options'
 import ConnectionUrl from './components/connection-url'
 import { Values } from './constants'
@@ -75,8 +79,14 @@ const AddDatabaseScreen = (props: Props) => {
   }
 
   const handleProceedForm = (type: AddDbType) => {
-    const details = getPayload(formik.values.connectionURL)
-    onSelectOption(type, details)
+    if (type === AddDbType.azure) {
+      dispatch(setSSOFlow(OAuthSocialAction.SignIn))
+      dispatch(signIn())
+      ipcAuthMicrosoft(OAuthStrategy.Microsoft, OAuthSocialAction.SignIn)
+    } else {
+      const details = getPayload(formik.values.connectionURL)
+      onSelectOption(type, details)
+    }
   }
 
   const onSubmit = () => {

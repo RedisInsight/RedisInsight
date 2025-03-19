@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   EuiButton,
   EuiFieldText,
@@ -28,6 +28,17 @@ export const ManageTagsModal = ({
   onSave,
 }: ManageTagsModalProps) => {
   const [tags, setTags] = useState<PartialTag[]>(instance.tags || [])
+
+  const isModified = useMemo(
+    () =>
+      tags.length !== instance.tags?.length ||
+      tags.some(
+        (tag, index) =>
+          tag.key !== instance.tags?.[index].key ||
+          tag.value !== instance.tags?.[index].value,
+      ),
+    [tags, instance.tags],
+  )
 
   const handleTagChange = (index: number, key: string, value: string) => {
     setTags((tags) => {
@@ -72,7 +83,13 @@ export const ManageTagsModal = ({
           <EuiButton onClick={onClose} size="s">
             Close
           </EuiButton>
-          <EuiButton onClick={handleSave} fill size="s" color="secondary">
+          <EuiButton
+            onClick={handleSave}
+            fill
+            size="s"
+            color="secondary"
+            isDisabled={!isModified}
+          >
             Save tags
           </EuiButton>
         </div>

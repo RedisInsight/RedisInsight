@@ -122,7 +122,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
         KnownFeatures.DatabaseManagement,
       );
 
-      if (isDatabaseManagementEnabled) {
+      if (!isDatabaseManagementEnabled) {
         throw new CloudDatabaseImportForbiddenException();
       }
 

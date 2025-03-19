@@ -4,7 +4,6 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
-
 @Injectable()
 export class DatabaseManagementGuard implements CanActivate {
   canActivate(): boolean {

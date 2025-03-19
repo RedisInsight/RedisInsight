@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react'
+/* eslint-disable react/no-array-index-key */
+import React, { useState, useMemo, useCallback } from 'react'
 import {
   EuiButton,
   EuiFieldText,
@@ -40,26 +41,29 @@ export const ManageTagsModal = ({
     [tags, instance.tags],
   )
 
-  const handleTagChange = (index: number, key: string, value: string) => {
-    setTags((tags) => {
-      const newTags = [...tags]
-      newTags[index] = { ...newTags[index], [key]: value }
+  const handleTagChange = useCallback(
+    (index: number, key: 'key' | 'value', value: string) => {
+      setTags((tags) => {
+        const newTags = [...tags]
+        newTags[index] = { ...newTags[index], [key]: value }
 
-      return newTags
-    })
-  }
+        return newTags
+      })
+    },
+    [],
+  )
 
-  const handleAddTag = () => {
+  const handleAddTag = useCallback(() => {
     setTags((tags) => [...tags, { key: '', value: '' }])
-  }
+  }, [])
 
-  const handleRemoveTag = (index: number) => {
+  const handleRemoveTag = useCallback((index: number) => {
     setTags((tags) => tags.filter((_, i) => i !== index))
-  }
+  }, [])
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     onSave(instance.id, tags)
-  }
+  }, [onSave, instance.id, tags])
 
   return (
     <FormDialog
@@ -103,7 +107,7 @@ export const ManageTagsModal = ({
         </div>
         <div className={styles.tagFormBody}>
           {tags.map((tag, index) => (
-            <div key={`${tag.key}:${tag.value}`} className={styles.tagFormRow}>
+            <div key={`tag-row-${index}`} className={styles.tagFormRow}>
               <div>
                 <EuiFieldText
                   value={tag.key}

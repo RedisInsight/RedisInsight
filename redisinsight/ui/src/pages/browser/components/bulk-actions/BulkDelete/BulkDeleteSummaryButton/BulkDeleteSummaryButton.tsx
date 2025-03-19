@@ -5,6 +5,7 @@ import { Maybe } from 'uiSrc/utils'
 export interface BulkDeleteSummaryButtonProps {
   pattern: string
   deletedKeys: Maybe<any[]>
+  children: React.ReactNode
 }
 
 const getFileName = () => `bulk-delete-report-${Date.now()}.txt`
@@ -12,6 +13,7 @@ const getFileName = () => `bulk-delete-report-${Date.now()}.txt`
 const BulkDeleteSummaryButton = ({
   pattern,
   deletedKeys,
+  ...rest
 }: BulkDeleteSummaryButtonProps) => {
   const fileUrl = useMemo(() => {
     const content = `Pattern: ${pattern}\n\nKeys:\n\n${deletedKeys?.map((key) => Buffer.from(key).toString()).join('\n')}`
@@ -35,9 +37,8 @@ const BulkDeleteSummaryButton = ({
       iconSide="left"
       href={fileUrl}
       data-testid="donwload-bulk-delete-report"
-    >
-      Keys deleted
-    </EuiButton>
+      {...rest}
+    />
   )
 }
 

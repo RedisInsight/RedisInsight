@@ -63,7 +63,9 @@ const BulkDelete = (props: Props) => {
                   <BulkDeleteSummaryButton
                     deletedKeys={deletedKeys}
                     pattern={searchPattern}
-                  />
+                  >
+                    Keys deleted
+                  </BulkDeleteSummaryButton>
                 </div>
               )}
             </>

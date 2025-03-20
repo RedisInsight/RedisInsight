@@ -1,6 +1,11 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
-import { render, mockFeatureFlags, act, fireEvent} from 'uiSrc/utils/test-utils'
+import {
+  act,
+  fireEvent,
+  mockFeatureFlags,
+  render,
+} from 'uiSrc/utils/test-utils'
 import * as utils from 'uiSrc/utils/modules'
 import { Instance, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import ModuleNotLoaded, { IProps } from './ModuleNotLoaded'
@@ -9,7 +14,7 @@ const props: IProps = {
   moduleName: RedisDefaultModules.Search,
   type: 'browser',
   id: 'id',
-  onClose: jest.fn()
+  onClose: jest.fn(),
 }
 
 const mockUseHistory = { push: jest.fn() }
@@ -19,18 +24,22 @@ jest.mock('react-router-dom', () => ({
     push: jest.fn,
   }),
 }))
-jest.mock('uiSrc/assets/img/icons/mobile_module_not_loaded.svg?react', () => 'div')
+jest.mock(
+  'uiSrc/assets/img/icons/mobile_module_not_loaded.svg?react',
+  () => 'div',
+)
 jest.mock('uiSrc/assets/img/icons/module_not_loaded.svg?react', () => 'div')
 jest.mock('uiSrc/assets/img/telescope-dark.svg?react', () => 'div')
 jest.mock('uiSrc/assets/img/icons/cheer.svg?react', () => 'div')
 
-
 const mockGetDbWithModuleLoaded = (value?: boolean) => {
-  jest.spyOn(utils, 'getDbWithModuleLoaded').mockImplementation(() => value as unknown as Instance)
+  jest
+    .spyOn(utils, 'getDbWithModuleLoaded')
+    .mockImplementation(() => value as unknown as Instance)
 }
 
 const TEST_IDS = {
-  ctaWrapper: 'module-not-loaded-cta-wrapper'
+  ctaWrapper: 'module-not-loaded-cta-wrapper',
 }
 
 describe('ModuleNotLoaded', () => {
@@ -46,31 +55,37 @@ describe('ModuleNotLoaded', () => {
 
   it('should render free trial text when cloudAds feature is enabled and no free db exists', () => {
     const { queryByText } = render(<ModuleNotLoaded {...props} />)
-    expect(queryByText(/Create a free trial Redis Stack database/)).toBeInTheDocument()
+    expect(
+      queryByText(/Create a free trial Redis Stack database/),
+    ).toBeInTheDocument()
   })
 
   it('should render free db text when cloudAds feature is enabled and free db exists', () => {
     mockGetDbWithModuleLoaded(true)
     const { queryByText } = render(<ModuleNotLoaded {...props} />)
-    expect(queryByText(/Use your free trial all-in-one Redis Cloud database/)).toBeInTheDocument()
+    expect(
+      queryByText(/Use your free trial all-in-one Redis Cloud database/),
+    ).toBeInTheDocument()
   })
 
   it('should render expected text when cloudAds feature is disabled', () => {
     mockFeatureFlags({
       cloudAds: {
         flag: false,
-      }
+      },
     })
     mockGetDbWithModuleLoaded(true) // should not affect output
     const { queryByText } = render(<ModuleNotLoaded {...props} />)
-    expect(queryByText(/Open a database with Redis Query Engine/)).toBeInTheDocument()
+    expect(
+      queryByText(/Open a database with Redis Query Engine/),
+    ).toBeInTheDocument()
   })
 
   it('should not show CTA button when envDependant feature is disabled', () => {
     mockFeatureFlags({
       envDependent: {
         flag: false,
-      }
+      },
     })
     const { queryByTestId } = render(<ModuleNotLoaded {...props} />)
     expect(queryByTestId(TEST_IDS.ctaWrapper)).toBeEmptyDOMElement()
@@ -86,9 +101,11 @@ describe('ModuleNotLoaded', () => {
     mockFeatureFlags({
       cloudAds: {
         flag: false,
-      }
+      },
     })
-    jest.spyOn(reactRouterDom, 'useHistory').mockImplementation(() => mockUseHistory as unknown as any)
+    jest
+      .spyOn(reactRouterDom, 'useHistory')
+      .mockImplementation(() => mockUseHistory as unknown as any)
 
     const { queryByText, getByText } = render(<ModuleNotLoaded {...props} />)
     const databasesButton = getByText(/Redis Databases page/)
@@ -109,20 +126,56 @@ describe('ModuleNotLoaded', () => {
     mockFeatureFlags({
       cloudAds: {
         flag: false,
-      }
+      },
     })
     const { getByText } = render(<ModuleNotLoaded {...props} />)
-    expect(getByText(/Open a database with Redis Query Engine/)).toBeInTheDocument()
+    expect(
+      getByText(/Open a database with Redis Query Engine/),
+    ).toBeInTheDocument()
   })
 
   it('should show expected text when free db exists', () => {
     mockGetDbWithModuleLoaded(true)
     const { getByText } = render(<ModuleNotLoaded {...props} />)
-    expect(getByText(/Use your free trial all-in-one Redis Cloud database/)).toBeInTheDocument()
+    expect(
+      getByText(/Use your free trial all-in-one Redis Cloud database/),
+    ).toBeInTheDocument()
   })
 
   it('should show expected text when free db does not exist', () => {
     const { getByText } = render(<ModuleNotLoaded {...props} />)
-    expect(getByText(/Create a free trial Redis Stack database with Redis Query Engine/)).toBeInTheDocument()
+    expect(
+      getByText(
+        /Create a free trial Redis Stack database with Redis Query Engine/,
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should uppercase first letter of module name in title - time series', () => {
+    const { getByText } = render(
+      <ModuleNotLoaded
+        {...props}
+        moduleName={RedisDefaultModules.TimeSeries}
+      />,
+    )
+    expect(
+      getByText(
+        /Time series data structure is not available for this database/,
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('should uppercase first letter of module name in title - bloom', () => {
+    const { getByText } = render(
+      <ModuleNotLoaded
+        {...props}
+        moduleName={RedisDefaultModules.Bloom}
+      />,
+    )
+    expect(
+      getByText(
+        /Probabilistic data structures are not available for this database/,
+      ),
+    ).toBeInTheDocument()
   })
 })

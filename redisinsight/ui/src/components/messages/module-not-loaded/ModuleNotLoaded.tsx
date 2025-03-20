@@ -42,7 +42,7 @@ const MAX_ELEMENT_WIDTH = 1440
 const renderTitle = (width: number, moduleName?: string) => (
   <EuiTitle size="m" className={styles.title} data-testid="welcome-page-title">
     <h4>
-      {`${moduleName} ${[MODULE_TEXT_VIEW.redisgears, MODULE_TEXT_VIEW.bf].includes(moduleName) ? 'are' : 'is'} not available `}
+      {`${moduleName?.substring(0, 1).toUpperCase()}${moduleName?.substring(1)} ${[MODULE_TEXT_VIEW.redisgears, MODULE_TEXT_VIEW.bf].includes(moduleName) ? 'are' : 'is'} not available `}
       {width > MAX_ELEMENT_WIDTH && <br />}
       for this database
     </h4>
@@ -85,7 +85,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     if (!cloudAdsFeature?.flag) {
       return (
         <EuiText className={cx(styles.text, styles.marginBottom)}>
-          Open a database with {moduleName}.
+          Open a database with {moduleName?.toLowerCase()}.
         </EuiText>
       )
     }

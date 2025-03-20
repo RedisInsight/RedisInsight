@@ -44,26 +44,3 @@ const RIModal = ({
 }
 
 export { RIModal }
-/*
-<EuiModal className={styles.consentsPopup} onClose={() => {}} data-testid="consents-settings-popup">
-        <EuiModalHeader className={styles.modalHeader}>
-          <EuiFlexGroup justifyContent="spaceBetween">
-            <EuiFlexItem grow={false}>
-              <EuiTitle size="s">
-                <h3 className={styles.consentsPopupTitle}>EULA and Privacy Settings</h3>
-              </EuiTitle>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiIcon
-                className={styles.redisIcon}
-                size="original"
-                type={Logo}
-              />
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiModalHeader>
-        <EuiModalBody className={styles.modalBody}>
-          <ConsentsSettings onSubmitted={handleSubmitted} />
-        </EuiModalBody>
-      </EuiModal>
- */

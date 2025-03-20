@@ -1,14 +1,13 @@
 import {test, expect} from '../fixtures/simple-slectron'
 import {Common} from '../helpers/common'
 import {BrowserPage} from '../pageObjects/browser-page'
-import {RdiInstancesListPage} from '../pageObjects/rdi-instances-list-page'
 import {DatabaseHelper} from "../helpers/database";
 import {APIKeyRequests} from "../helpers/api/api-keys";
 
 let keyName: string
 let browserPage: BrowserPage
 let databaseHelper: DatabaseHelper
-let rdiInstancesListPage : RdiInstancesListPage
+
 test.beforeEach(async ({electronPage, workerState}) => {
 
     // await electronPage.getByText('Add Redis').click()

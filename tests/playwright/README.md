@@ -83,8 +83,31 @@ sequenceDiagram
         Test ->>Report: Report the result, attach logs, artefacts
         
 ```
-
-https://playwright.dev/docs/locators#quick-guide
-
-
+Some more usefull links for playwright
+https://playwright.dev/docs/locators#quick-guide 
 https://playwright.dev/docs/api/class-electronapplication#electron-application-evaluate
+
+## Running test
+### Preconditions
+For RedisApp for electron Appimage (path in  playwright.config,js) is required or change the path to the appropriate build folder on your machine
+For docker testing you need to load the docker image for your system  (or run the app form your code base)
+```shell
+  docker load -i docker-linux-alpine.amd64.tar
+  or
+  docker load -i docker-linux-alpine.arm64.tar
+```
+and change the config in playwright.config,js.
+
+For loading Redis databases and data similar to the other project you have [local-docker-environment](./local-docker-environment) folder. 
+Fil the .env file similar to [the setup in conflunce ](https://redislabs.atlassian.net/wiki/spaces/DX/pages/4906319969/Mac+setup+e2e+tests) 
+and execute
+```shell
+ ./local-docker-environment/create_local_environment.sh
+```
+to destroy the environment use 
+```shell
+ ./local-docker-environment/destroy_local_environment.sh
+```
+
+
+

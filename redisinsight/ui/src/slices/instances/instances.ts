@@ -478,8 +478,15 @@ function autoCreateAndConnectToInstanceActionSuccess(
   }
 }
 
+type PartialInstance = Partial<Omit<Instance, 'tags'>> & {
+  tags?: {
+    key: string
+    value: string
+  }[]
+}
+
 // Asynchronous thunk action
-export function updateInstanceAction({ id, ...payload }: Partial<Instance>, onSuccess?: () => void) {
+export function updateInstanceAction({ id, ...payload }: PartialInstance, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
 

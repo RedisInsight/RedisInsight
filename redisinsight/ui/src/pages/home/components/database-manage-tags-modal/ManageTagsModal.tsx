@@ -12,38 +12,37 @@ import {
 } from '@elastic/eui'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
-import { Tag } from 'uiSrc/slices/interfaces/tag'
 
 import { updateInstanceAction } from 'uiSrc/slices/instances/instances'
+import { addMessageNotification } from 'uiSrc/slices/app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import styles from './styles.module.scss'
-
-type PartialTag = Pick<Tag, 'key' | 'value'>
 
 type ManageTagsModalProps = {
   instance: Instance
   onClose: () => void
-  onSave: (id: string, tags: PartialTag[]) => void
 }
 
 export const ManageTagsModal = ({
   instance,
   onClose,
-  onSave,
 }: ManageTagsModalProps) => {
   const dispatch = useDispatch()
-  const [tags, setTags] = useState<PartialTag[]>(
-    (instance.tags || []).map(({ key, value }) => ({ key, value })),
+  const editedInstanceTags = useMemo(
+    () => (instance?.tags || []).map(({ key, value }) => ({ key, value })),
+    [instance?.tags],
   )
+  const [tags, setTags] = useState(editedInstanceTags)
 
   const isModified = useMemo(
     () =>
-      tags.length !== instance.tags?.length ||
+      tags.length !== editedInstanceTags.length ||
       tags.some(
         (tag, index) =>
-          tag.key !== instance.tags?.[index].key ||
-          tag.value !== instance.tags?.[index].value,
+          tag.key !== editedInstanceTags[index].key ||
+          tag.value !== editedInstanceTags[index].value,
       ),
-    [tags, instance.tags],
+    [tags, editedInstanceTags],
   )
 
   const handleTagChange = useCallback(
@@ -67,14 +66,12 @@ export const ManageTagsModal = ({
   }, [])
 
   const handleSave = useCallback(() => {
-    onSave(instance.id, tags)
-
     dispatch(
       updateInstanceAction({ id: instance.id, tags }, () => {
-        // TODO: show success toast
+        dispatch(addMessageNotification(successMessages.SUCCESS_TAGS_UPDATED()))
       }),
     )
-  }, [onSave, instance.id, tags])
+  }, [instance.id, tags])
 
   return (
     <FormDialog

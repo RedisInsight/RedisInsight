@@ -3,7 +3,7 @@ import {
   EuiPageBody,
   EuiPanel,
 } from '@elastic/eui'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
@@ -238,7 +238,6 @@ const HomePage = () => {
               <ManageTagsModal
                 instance={editedInstance}
                 onClose={handleClose}
-                onSave={() => {}}
               />
             )}
             <div key="homePage" className="homePage">

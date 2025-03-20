@@ -64,14 +64,18 @@ export class APIKeyRequests {
             match: keyName
         }
         const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(databaseName, xWindowsId)
-        const response = await this.apiClient.post(bufferPathMask.replace('databaseId', databaseId), requestBody)
+        const response = await this.apiClient.post(bufferPathMask.replace('databaseId', databaseId), requestBody, {
+            headers:{
+                'X-Window-Id': xWindowsId
+            }
+        })
         if (response.status !== 200) throw new Error('Getting key request failed')
         return response.data[0].keys
     }
 
     async deleteKeyByNameApi(keyName: string, databaseName: string, xWindowsId: string): Promise<void> {
         const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(databaseName, xWindowsId)
-        const doesKeyExist = await this.searchKeyByNameApi(keyName, databaseName)
+        const doesKeyExist = await this.searchKeyByNameApi(keyName, databaseName, xWindowsId)
         if (doesKeyExist.length > 0) {
             const requestBody = { keyNames: [Buffer.from(keyName, 'utf-8')] }
             const response = await this.apiClient.delete(bufferPathMask.replace('databaseId', databaseId), { data: requestBody,

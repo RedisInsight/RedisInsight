@@ -20,7 +20,7 @@ const BulkDeleteSummaryButton = ({
     const content = `Pattern: ${pattern}\n\nKeys:\n\n${deletedKeys?.map((key) => Buffer.from(key).toString()).join('\n')}`
     const blob = new Blob([content], { type: 'text/plain' })
     return URL.createObjectURL(blob)
-  }, [deletedKeys])
+  }, [deletedKeys, pattern])
 
   useEffect(
     () => () => {
@@ -37,7 +37,7 @@ const BulkDeleteSummaryButton = ({
       iconType="download"
       iconSide="left"
       href={fileUrl}
-      data-testid="donwload-bulk-delete-report"
+      data-testid="download-bulk-delete-report"
       {...rest}
     />
   )

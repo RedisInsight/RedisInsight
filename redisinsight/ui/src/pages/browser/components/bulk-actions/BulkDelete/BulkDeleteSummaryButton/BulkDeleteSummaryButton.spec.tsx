@@ -9,6 +9,15 @@ const readBlobContent = (blob: Blob) =>
     reader.readAsText(blob)
   })
 
+const defaultRenderProps = {
+  pattern: 'test-pattern',
+  deletedKeys: ['key1', 'key2'],
+  children: 'Download report',
+}
+
+const renderComponent = (props: any = {}) =>
+  render(<BulkDeleteSummaryButton {...defaultRenderProps} {...props} />)
+
 describe('BulkDeleteSummaryButton', () => {
   beforeEach(() => {
     URL.createObjectURL = jest.fn(() => 'mockFileUrl')
@@ -16,27 +25,15 @@ describe('BulkDeleteSummaryButton', () => {
   })
 
   it('should render', () => {
-    expect(
-      render(
-        <BulkDeleteSummaryButton
-          pattern="test-pattern"
-          deletedKeys={['key1', 'key2']}
-        />,
-      ),
-    ).toBeTruthy()
+    expect(renderComponent()).toBeTruthy()
 
     expect(
-      screen.getByTestId('donwload-bulk-delete-report'),
+      screen.getByTestId('download-bulk-delete-report'),
     ).toBeInTheDocument()
   })
 
   it('should generate correct file content', async () => {
-    render(
-      <BulkDeleteSummaryButton
-        pattern="test-pattern"
-        deletedKeys={['key1', 'key2']}
-      />,
-    )
+    renderComponent()
 
     const blob = (URL.createObjectURL as jest.Mock).mock.calls[0][0]
     expect(blob).toBeInstanceOf(Blob)
@@ -46,7 +43,9 @@ describe('BulkDeleteSummaryButton', () => {
   })
 
   it('should handle empty deletedKeys array correctly', async () => {
-    render(<BulkDeleteSummaryButton pattern="test-pattern" deletedKeys={[]} />)
+    renderComponent({
+      deletedKeys: [],
+    })
 
     const blob = (URL.createObjectURL as jest.Mock).mock.calls[0][0]
     expect(blob).toBeInstanceOf(Blob)
@@ -56,9 +55,9 @@ describe('BulkDeleteSummaryButton', () => {
   })
 
   it('should clean up the file URL on unmount', () => {
-    const { unmount } = render(
-      <BulkDeleteSummaryButton pattern="test-pattern" deletedKeys={['key1']} />,
-    )
+    const { unmount } = renderComponent({
+      deletedKeys: ['key1'],
+    })
 
     unmount()
     expect(URL.revokeObjectURL).toHaveBeenCalledWith('mockFileUrl')

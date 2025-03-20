@@ -10,6 +10,7 @@ import {DatabaseHelper} from "../helpers/database";
 import * as path from "node:path";
 import * as dotenv from 'dotenv';
 
+
 dotenv.config({ path: path.resolve(__dirname, "..",'.desktop.env') })
 
 let keyName: string
@@ -17,9 +18,9 @@ let browserPage: BrowserPage
 let databaseHelper: DatabaseHelper
 let rdiInstancesListPage : RdiInstancesListPage
 test.beforeEach(async ({electronPage, workerState}) => {
-
+    browserPage = new BrowserPage(electronPage)
     databaseHelper = new DatabaseHelper(electronPage, workerState.apiUrl)
-    const xWindowId = await electronPage.evaluate(()=>{()=>{window.windowId}})
+    const xWindowId = await browserPage.getWindowId()
     await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(workerState.dbConfig, electronPage, workerState.apiUrl,xWindowId)
     await electronPage.getByText('Add Redis').click()
     // keyName = Common.generateAlpanumeric(10)

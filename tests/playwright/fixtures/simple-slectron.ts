@@ -3,6 +3,7 @@ import { _electron as electron } from 'playwright';
 import { ossStandaloneConfig } from '../helpers/conf';
 import {updateControlNumber}   from "../helpers/electron/insights";
 import {DatabaseHelper} from "../helpers/database";
+import log from "node-color-log";
 
 
 // Define shared state for worker scope
@@ -33,6 +34,40 @@ async function launchElectronApp(baseUrl: string): Promise<ElectronApplication> 
     return electronApp;
 }
 
+async function waitForWindowWithTitle(
+    electronApp: ElectronApplication,
+
+    maxWaitTime = 5000,
+    interval = 200
+): Promise<Page | null> {
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < maxWaitTime) {
+        const windows = await electronApp.windows();
+        let title: string;
+        for (const window of windows) {
+            let title: string;
+            try{
+                title = await window.title();
+            }catch(e){
+                log.info("❌ Window title not found")
+            }
+
+            if (title) {
+                log.info(`✅ Found window with title: "${title}"`);
+                return window;
+            }
+        }
+        log.info(`🔍 Checking for window with title "${title}"...`);
+        await new Promise((resolve) => setTimeout(resolve, interval));
+    }
+
+    log.error(`❌ Window not found within ${maxWaitTime / 1000}s!`);
+    throw Error("❌ Window not found ")
+    return;
+}
+
+
 async function waitForWindows(electronApp: ElectronApplication, maxWaitTime = 60000, interval = 2000) {
     let windows = [];
     let elapsedTime = 0;
@@ -44,6 +79,7 @@ async function waitForWindows(electronApp: ElectronApplication, maxWaitTime = 60
     }
     return windows;
 }
+
 
 export const test = base.extend<ElectronFixture, { workerState: WorkerSharedState }>({
     workerState: [
@@ -84,27 +120,16 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
     },
 
     electronPage: async ({ electronApp,workerState }, use) => {
-        let windows = await waitForWindows(electronApp);
+        let window = await waitForWindowWithTitle(electronApp);
 
-        if (windows.length === 0) {
-            console.error('❌ No windows detected! Stopping test.');
+        if (!window) {
+            console.error('❌ No matching window detected! Stopping test.');
             await electronApp.close();
             return;
         }
-        if (windows.length === 2) {
-            console.log('⚠️ Detected two windows, closing all and restarting...');
-
-
-            let titles = (await Promise.all(windows.map(async page => ({
-                page,
-                title: await page.title()  })))).find(entry => entry.title)?.page || null;
-
-        }
-
-        const window = windows[0];
 
         await window.waitForLoadState('domcontentloaded');
-        console.log(`🖥️ Window Title: ${await window.title()}`);
+        log.info(`🖥️ Window Title: ${await window.title()}`);
         await use(window);
     },
 });

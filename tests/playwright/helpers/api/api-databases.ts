@@ -4,7 +4,7 @@ import { HttpClient } from './http-client'
 import { AddNewDatabaseParameters,  databaseParameters } from '../../types'
 import { ResourcePath } from '../constants'
 import { asyncFilter, doAsyncStuff } from '../async-helper'
-import {Page} from "@playwright/test";
+
 
 export class DatabaseAPIRequests {
 

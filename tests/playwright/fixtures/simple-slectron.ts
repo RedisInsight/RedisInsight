@@ -19,7 +19,6 @@ type ElectronFixture = {
 
 async function launchElectronApp(baseUrl: string): Promise<ElectronApplication> {
     const electronApp = await electron.launch({
-        userDataDir: './ELECTRON-UDATA',
         executablePath: baseUrl,
         args: ['index.html'],
         timeout: 60000,

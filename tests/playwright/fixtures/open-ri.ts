@@ -4,7 +4,7 @@ import { UserAgreementDialog } from '../pageObjects/dialogs/user-agreement-dialo
 import { DatabaseAPIRequests } from '../helpers/api/api-databases'
 import { ossStandaloneConfig } from '../helpers/conf'
 import { MyRedisDatabasePage } from '../pageObjects/my-redis-databases-page'
-
+import log from 'node-color-log'
 
 // Define shared worker object
 type WorkerSharedState = {
@@ -27,7 +27,7 @@ export const test = base.extend<
 
     // ✅ Worker-scoped shared object
     workerState: [async ({}, use, testInfo) => {
-        console.log(`🚀 Setting up worker state for worker ${testInfo.workerIndex}`)
+        log.info(`🚀 Setting up worker state for worker ${testInfo.workerIndex}`)
 
         // Initialize worker-scoped data
         const workerState: WorkerSharedState = {
@@ -35,9 +35,9 @@ export const test = base.extend<
             dbConfig: ossStandaloneConfig,
             baseUrl: testInfo.project.use.baseURL
         }
-        console.log(`🏠 Base URL: ${workerState.baseUrl}`)
-        console.log(`🌐 API URL: ${workerState.apiUrl}`)
-        console.log(`🗄️ Database Config: ${JSON.stringify(workerState.dbConfig)}`)
+        log.info(`🏠 Base URL: ${workerState.baseUrl}`)
+        log.info(`🌐 API URL: ${workerState.apiUrl}`)
+        log.info(`🗄️ Database Config: ${JSON.stringify(workerState.dbConfig)}`)
 
         await use(workerState)
 
@@ -46,7 +46,7 @@ export const test = base.extend<
     // ✅ Worker-scoped setup/teardown
     forEachWorker: [async ({ workerState }, use) => {
         const ti = base.info().workerIndex
-        console.log(`BEFORE Starting test worker ${ti}`)
+        log.info(`BEFORE Starting test worker ${ti}`)
 
         // Set up the database before tests
         const dbApi = new DatabaseAPIRequests(workerState.apiUrl)
@@ -54,7 +54,7 @@ export const test = base.extend<
 
         await use() // Run the tests
         // Something failing here doesn't affect test execution result
-        console.log(`Stopping test worker ${ti}`)
+        log.info(`Stopping test worker ${ti}`)
 
         // Cleanup after all tests in this worker
 
@@ -65,7 +65,7 @@ export const test = base.extend<
 
     // ✅ Test-scoped `basePage` using worker state
     basePage: async ({ page, workerState }, use) => {
-        console.log('Fixture setup: Initializing Base Page')
+        log.info('Fixture setup: Initializing Base Page')
 
         // Navigate to home page
         const basePage = new BasePage(page)

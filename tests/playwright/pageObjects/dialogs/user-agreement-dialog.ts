@@ -2,6 +2,7 @@ import { expect, Locator, Page } from '@playwright/test'
 import {BasePage} from '../base-page'
 import { UserAgreementSelectors } from '../../selectors'
 
+
 export class UserAgreementDialog extends BasePage {
 
     // Private selectors
@@ -24,6 +25,11 @@ export class UserAgreementDialog extends BasePage {
 
     async acceptLicenseTerms(): Promise<void> {
 
+        try {
+            await this.switchOptionEula.waitFor({timeout: 4000}) //
+        }catch (error) {
+
+        }
 
         if (await this.switchOptionEula.isVisible()) {
             await this.recommendedSwitcher.click()

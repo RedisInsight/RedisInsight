@@ -7,7 +7,7 @@ declare global {
 }
 
 export  class BasePage {
-    protected page: Page
+    page: Page
 
     constructor(page: Page) {
         this.page = page

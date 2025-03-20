@@ -161,7 +161,8 @@ run
 ```
 or change it depending on your needs to enable the history for the report that can show you around 20 executions 
 
-Some rough  execution time comparison
+Some rough execution time comparison for the same test
+
 | Test Name              | Framework  | Browser  | Duration| 
 |------------------------|------------|----------|---------|
 |Verify that user can add Hash Key| TestCafe   | Chromium |27s|

@@ -11,8 +11,8 @@ import styles from './styles.module.scss'
 
 export interface Props {
   items: IMessage[]
-  width: number
-  height: number
+  width?: number
+  height?: number
 }
 
 const PROTRUDING_OFFSET = 2

@@ -1,11 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import config from 'src/utils/config';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
-import { Compressor, ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
 import {
-  IsBoolean, IsEnum,
+  Compressor,
+  ConnectionType,
+  Encoding,
+  HostingProvider,
+} from 'src/modules/database/entities/database.entity';
+import {
+  IsBoolean,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
@@ -144,7 +150,7 @@ export class Database {
     example: '2021-01-06T12:44:39.000Z',
   })
   @Expose()
-  lastConnection: Date;
+  lastConnection?: Date;
 
   @ApiProperty({
     description: 'Date of creation',
@@ -292,6 +298,20 @@ export class Database {
   compressor?: Compressor = Compressor.NONE;
 
   @ApiPropertyOptional({
+    description: 'Key name format',
+    default: Encoding.UNICODE,
+    enum: Encoding,
+  })
+  @Expose()
+  @IsEnum(Encoding, {
+    message: `Key name format must be a valid enum value. Valid values: ${Object.values(
+      Encoding,
+    )}.`,
+  })
+  @IsOptional()
+  keyNameFormat?: Encoding = Encoding.UNICODE;
+
+  @ApiPropertyOptional({
     description: 'The version your Redis server',
     type: String,
   })
@@ -309,4 +329,13 @@ export class Database {
   @IsBoolean()
   @IsOptional()
   forceStandalone?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Whether the database was created from a file or environment variables at startup',
+    type: Boolean,
+  })
+  @Expose()
+  @IsBoolean()
+  @IsOptional()
+  isPreSetup?: boolean;
 }

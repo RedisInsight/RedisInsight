@@ -17,7 +17,7 @@ const keyName = `TestHashKey-${Common.generateWord(10)}`;
 const fieldForSearch = `SearchField-${Common.generateWord(5)}`;
 const keyToAddParameters = { fieldsCount: 500000, keyName, fieldStartWith: 'hashField', fieldValueStartWith: 'hashValue' };
 
-fixture `Hash Key fields verification`
+fixture(`Hash Key fields verification`)
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {

@@ -12,7 +12,7 @@ import { databaseDbIndex1634219846022 } from './1634219846022-database-db-index'
 import { encryption1634557312500 } from './1634557312500-encryption';
 import { commandExecution1641795882696 } from './1641795882696-command-execution';
 import { pluginState1641805606399 } from './1641805606399-plugin-state';
-import { sni1650278664000 } from "./1650278664000-sni";
+import { sni1650278664000 } from './1650278664000-sni';
 import { notification1655821010349 } from './1655821010349-notification';
 import { notificationCategory1659687030433 } from './1659687030433-notification-category';
 import { workbenchMode1660664717573 } from './1660664717573-workbench-mode';
@@ -48,6 +48,8 @@ import { DatabaseCreatedAt1733740794737 } from './1733740794737-database-created
 import { DbSettings1737362130798 } from './1737362130798-db-settings';
 import { DatabaseForceStandalone1738829743482 } from './1738829743482-database-forceStandalone';
 import { RdiOptionalAuth1740579711635 } from './1740579711635-rdi-optional-auth';
+import { PreSetupDatabases1741786803681 } from './1741786803681-pre-setup-databases';
+import { KeyNameFormatAdded1742303245547 } from './1742303245547-key-name-format';
 
 export default [
   initialMigration1614164490968,
@@ -100,4 +102,6 @@ export default [
   DbSettings1737362130798,
   DatabaseForceStandalone1738829743482,
   RdiOptionalAuth1740579711635,
+  PreSetupDatabases1741786803681,
+  KeyNameFormatAdded1742303245547,
 ];

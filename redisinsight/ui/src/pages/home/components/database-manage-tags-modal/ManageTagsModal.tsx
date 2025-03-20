@@ -21,7 +21,7 @@ import styles from './styles.module.scss'
 
 const VALID_TAG_REGEX = /^[a-zA-Z0-9\-_.@:+ ]+$/
 const INVALID_FIELD_MESSAGE =
-  'Tag can only have letters, numbers, spaces, and these special characters: “- _ . + @ :”'
+  'Tag should have unique keys and can only have letters, numbers, spaces, and these special characters: “- _ . + @ :”'
 
 type ManageTagsModalProps = {
   instance: Instance
@@ -86,8 +86,9 @@ export const ManageTagsModal = ({
   }, [])
 
   const handleSave = useCallback(() => {
+    const tagsToSave = tags.filter((tag) => tag.key && tag.value)
     dispatch(
-      updateInstanceAction({ id: instance.id, tags }, () => {
+      updateInstanceAction({ id: instance.id, tags: tagsToSave }, () => {
         dispatch(addMessageNotification(successMessages.SUCCESS_TAGS_UPDATED()))
       }),
     )
@@ -136,7 +137,9 @@ export const ManageTagsModal = ({
         <div className={styles.tagFormBody}>
           {tags.map((tag, index) => {
             const isKeyInvalid =
-              Boolean(tag.key) && !VALID_TAG_REGEX.test(tag.key)
+              Boolean(tag.key) &&
+              (!VALID_TAG_REGEX.test(tag.key) ||
+                tags.some((t, i) => i !== index && t.key === tag.key))
             const isValueInvalid =
               Boolean(tag.value) && !VALID_TAG_REGEX.test(tag.value)
 

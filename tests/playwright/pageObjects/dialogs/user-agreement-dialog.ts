@@ -1,7 +1,7 @@
 import { expect, Locator, Page } from '@playwright/test'
 import {BasePage} from '../base-page'
 import { UserAgreementSelectors } from '../../selectors'
-
+import log from 'node-color-log'
 
 export class UserAgreementDialog extends BasePage {
 
@@ -26,9 +26,9 @@ export class UserAgreementDialog extends BasePage {
     async acceptLicenseTerms(): Promise<void> {
 
         try {
-            await this.switchOptionEula.waitFor({timeout: 4000}) //
+            await this.switchOptionEula.waitFor({timeout: 3000}) // because the state isn't clear
         }catch (error) {
-
+            log.info("💩 Failed on waiting user agreement dialog ")
         }
 
         if (await this.switchOptionEula.isVisible()) {

@@ -1,3 +1,4 @@
+import { RedisString } from 'src/common/constants';
 import { IBulkActionSummaryOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-summary-overview.interface';
 
 export class BulkActionSummary {
@@ -9,8 +10,7 @@ export class BulkActionSummary {
 
   private errors: Array<Record<string, string>> = [];
 
-  // TODO: any - probably some buffer/string
-  private keys: Array<any> = [];
+  private keys: Array<RedisString> = [];
 
   addProcessed(count: number) {
     this.processed += count;
@@ -32,7 +32,7 @@ export class BulkActionSummary {
     }
   }
 
-  addKeys(keys: Array<any>) {
+  addKeys(keys: Array<RedisString>) {
     this.keys.push(...keys);
   }
 

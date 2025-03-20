@@ -87,7 +87,11 @@ export class DatabaseAPIRequests {
         if (!databaseId) throw new Error('Error: Missing databaseId')
 
         const requestBody = { ids: [databaseId] }
-        const response = await this.apiClient.delete(ResourcePath.Databases, { data: requestBody })
+        const response = await this.apiClient.delete(ResourcePath.Databases, {
+            data: requestBody,
+            headers:{
+                'X-Window-Id': xWindowsId
+            }})
         if (response.status !== 200) throw new Error(`Failed to delete database ${databaseParameters.databaseName}`)
     }
 }

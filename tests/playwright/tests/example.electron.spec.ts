@@ -3,6 +3,7 @@ import {Common} from '../helpers/common'
 import {BrowserPage} from '../pageObjects/browser-page'
 import {DatabaseHelper} from "../helpers/database";
 import {APIKeyRequests} from "../helpers/api/api-keys";
+import {DatabaseAPIRequests} from "../helpers/api/api-databases";
 
 let keyName: string
 let browserPage: BrowserPage
@@ -20,8 +21,10 @@ test.beforeEach(async ({electronPage, workerState}) => {
 test.afterEach(async ({electronApp, workerState}) => {
 
     const apiKeyClient = new APIKeyRequests(workerState.apiUrl)
+    const dbApi = new DatabaseAPIRequests(workerState.apiUrl)
 
     await apiKeyClient.deleteKeyByNameApi(keyName, workerState.dbConfig.databaseName, await browserPage.getWindowId())
+    await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig, await browserPage.getWindowId())
     await workerState.electronApp.close()
 
 })

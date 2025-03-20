@@ -113,8 +113,6 @@ export default defineConfig<TestOptions>({
             testMatch: ['**.electron.spec.ts'],
             use: {
                 baseURL: '/home/tsvetan-tsvetkov/Downloads/Redis-Insight-linux-x86_64.AppImage',
-                // baseURL: '/usr/bin/redisinsight',
-                // apiUrl: process.env.API_URL || 'https://localhost:5540/api',
                 apiUrl: 'https://localhost:5530/api',
                 headless: false,
 

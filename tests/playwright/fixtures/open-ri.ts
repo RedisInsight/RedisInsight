@@ -57,8 +57,7 @@ export const test = base.extend<
         log.info(`Stopping test worker ${ti}`)
 
         // Cleanup after all tests in this worker
-
-        // throw new Error("test worker error")
+        // Delete db
         await dbApi.deleteStandaloneDatabaseApi(workerState.dbConfig)
 
     }, { scope: 'worker', auto: true }],

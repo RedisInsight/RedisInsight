@@ -13,7 +13,7 @@ export class DatabaseAPIRequests {
         this.apiClient = new HttpClient(apiUrl).getClient()
     }
 
-    async addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters, isCloud = false): Promise<void> {
+    async addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters, isCloud = false, xWindowsId: string): Promise<void> {
         const uniqueId = faker.string.alphanumeric({ length: 10 })
         const uniqueIdNumber = faker.number.int({ min: 1, max: 1000 })
         const requestBody: any = {
@@ -48,7 +48,11 @@ export class DatabaseAPIRequests {
             }
         }
 
-        const response = await this.apiClient.post(ResourcePath.Databases, requestBody)
+        const response = await this.apiClient.post(ResourcePath.Databases, requestBody,
+            {headers:{
+                'X-Window-Id': xWindowsId
+            }
+        })
         if (response.status !== 201) throw new Error(`Database creation failed for ${databaseParameters.databaseName}`)
     }
 

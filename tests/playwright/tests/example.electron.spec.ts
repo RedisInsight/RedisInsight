@@ -18,11 +18,9 @@ let databaseHelper: DatabaseHelper
 let rdiInstancesListPage : RdiInstancesListPage
 test.beforeEach(async ({electronPage, workerState}) => {
 
-
-
-
     databaseHelper = new DatabaseHelper(electronPage, workerState.apiUrl)
-    await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(workerState.dbConfig, electronPage, workerState.apiUrl)
+    const xWindowId = await electronPage.evaluate(()=>{()=>{window.windowId}})
+    await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(workerState.dbConfig, electronPage, workerState.apiUrl,xWindowId)
     await electronPage.getByText('Add Redis').click()
     // keyName = Common.generateAlpanumeric(10)
     // browserPage = new BrowserPage(basePage)

@@ -1,5 +1,4 @@
 import * as fs from 'fs-extra'
-import { Page } from '@playwright/test'
 import * as path from 'path'
 import { syncFeaturesApi } from '../api/api-info'
 import { DatabaseScripts, DbTableParameters } from './database-scripts'
@@ -43,10 +42,10 @@ export async function updateControlNumber(controlNumber: number,  apiUrl: string
 /**
  * Refresh test data for features sync
  */
-export async function refreshFeaturesTestData(apiUrl: string): Promise<void> {
+export async function refreshFeaturesTestData(apiUrl: string, xWindowId:string): Promise<void> {
     const defaultConfigPath = path.join('.', 'test-data', 'features-configs', 'insights-default-remote.json')
 
     await modifyFeaturesConfigJson(defaultConfigPath)
     await DatabaseScripts.deleteRowsFromTableInDB(dbTableParams)
-    await syncFeaturesApi(apiUrl)
+    await syncFeaturesApi(apiUrl, xWindowId)
 }

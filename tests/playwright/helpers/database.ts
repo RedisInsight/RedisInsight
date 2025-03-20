@@ -14,9 +14,10 @@ import {
     MyRedisDatabasePage,
     BrowserPage,
     AutoDiscoverREDatabases,
-    AddRedisDatabaseDialog
+    AddRedisDatabaseDialog,
+    BasePage
 } from '../pageObjects'
-import {BasePage} from "../pageObjects/base-page";
+
 
 
 export class DatabaseHelper extends BasePage{
@@ -187,10 +188,11 @@ export class DatabaseHelper extends BasePage{
     async acceptLicenseTermsAndAddDatabaseApi(
         databaseParameters: AddNewDatabaseParameters,
         page: Page,
-        apiUrl: string
+        apiUrl: string,
+        xWindowId: string
     ): Promise<void> {
         await this.acceptLicenseTerms(page,apiUrl)
-        await this.databaseAPIRequests.addNewStandaloneDatabaseApi(databaseParameters)
+        await this.databaseAPIRequests.addNewStandaloneDatabaseApi(databaseParameters, xWindowId)
         // Reload Page to see the new added database through api
         await this.myRedisDatabasePage.reloadPage()
         // Connect to DB

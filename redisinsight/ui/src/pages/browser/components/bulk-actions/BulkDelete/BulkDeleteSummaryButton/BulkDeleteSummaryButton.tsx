@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo } from 'react'
 import { EuiButton } from '@elastic/eui'
 import { Maybe } from 'uiSrc/utils'
+import { RedisString } from 'apiSrc/common/constants'
 
 export interface BulkDeleteSummaryButtonProps {
   pattern: string
-  deletedKeys: Maybe<any[]>
+  deletedKeys: Maybe<RedisString[]>
   children: React.ReactNode
 }
 

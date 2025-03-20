@@ -75,6 +75,26 @@ describe('INFINITE_MESSAGES', () => {
       expect(onCancel).toBeCalled()
     })
   })
+
+  describe('DATABASE_IMPORT_FORBIDDEN', () => {
+    it('should render message', () => {
+      const { Inner } = INFINITE_MESSAGES.DATABASE_IMPORT_FORBIDDEN(jest.fn())
+      expect(render(<>{Inner}</>)).toBeTruthy()
+    })
+
+    it('should call onClose', () => {
+      const onClose = jest.fn()
+      const { Inner } = INFINITE_MESSAGES.DATABASE_IMPORT_FORBIDDEN(onClose)
+      render(<>{Inner}</>)
+
+      fireEvent.click(screen.getByTestId('database-import-forbidden-notification-ok-btn'))
+      fireEvent.mouseUp(screen.getByTestId('database-import-forbidden-notification'))
+      fireEvent.mouseDown(screen.getByTestId('database-import-forbidden-notification'))
+
+      expect(onClose).toBeCalled()
+    })
+  })
+
   describe('SUBSCRIPTION_EXISTS', () => {
     it('should render message', () => {
       const { Inner } = INFINITE_MESSAGES.SUBSCRIPTION_EXISTS(jest.fn())

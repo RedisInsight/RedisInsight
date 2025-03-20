@@ -141,4 +141,11 @@ describe('ItemList', () => {
 
     expect(screen.queryByText('Export')).not.toBeInTheDocument()
   })
+
+  it('should add hideSelectableCheckboxes class when isSelectable = false', async () => {
+    const { container } = render(<ItemList {...mockedProps} hideSelectableCheckboxes />)
+    const div = container.querySelector('.itemList')
+
+    expect(div).toHaveClass('hideSelectableCheckboxes')
+  })
 })

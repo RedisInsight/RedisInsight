@@ -15,6 +15,7 @@ import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/util
 import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
+import {appFeatureFlagsFeaturesSelector} from 'uiSrc/slices/app/features'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
 
 const mockedProps = mock<Props>()
@@ -33,7 +34,10 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
       flag: true
-    }
+    },
+    databaseManagement: {
+      flag: true,
+    },
   }),
 }))
 
@@ -228,5 +232,18 @@ describe('DatabasesListWrapper', () => {
     });
 
     (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should hide management buttons when databaseManagement feature flag is disabled', async () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      databaseManagement: {
+        flag: false
+      }
+    })
+
+    const { queryByTestId } = render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
+
+    expect(queryByTestId(/^edit-instance-/i)).not.toBeInTheDocument()
+    expect(queryByTestId(/^delete-instance-/i)).not.toBeInTheDocument()
   })
 })

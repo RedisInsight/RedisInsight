@@ -27,7 +27,7 @@ async function launchElectronApp(baseUrl: string): Promise<ElectronApplication> 
     });
     // Capture Electron logs
     electronApp.on('console', (msg) => {
-        console.log(`Electron Log: ${msg.type()} - ${msg.text()}`);
+        log.info(`Electron Log: ${msg.type()} - ${msg.text()}`);
     });
 
     return electronApp;
@@ -74,7 +74,7 @@ async function waitForWindows(electronApp: ElectronApplication, maxWaitTime = 60
         await new Promise((resolve) => setTimeout(resolve, interval));
         windows = await electronApp.windows();
         elapsedTime += interval;
-        console.log(`🔍 Checking for windows... (${elapsedTime / 1000}s elapsed)`);
+        log.info(`🔍 Checking for windows... (${elapsedTime / 1000}s elapsed)`);
     }
     return windows;
 }
@@ -83,7 +83,7 @@ async function waitForWindows(electronApp: ElectronApplication, maxWaitTime = 60
 export const test = base.extend<ElectronFixture, { workerState: WorkerSharedState }>({
     workerState: [
         async ({}, use, testInfo) => {
-            console.log(`🚀 Setting up worker state for worker ${testInfo.workerIndex}`);
+            log.info(`🚀 Setting up worker state for worker ${testInfo.workerIndex}`);
             const workerState: WorkerSharedState = {
                 apiUrl: testInfo.project.use.apiUrl,
                 dbConfig: ossStandaloneConfig,
@@ -98,23 +98,23 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
     ],
 
     electronApp: async ({ workerState }, use) => {
-        console.log('🚀 Starting RedisInsight...');
+        log.info('🚀 Starting RedisInsight...');
 
         // update control nmb
         // await updateControlNumber(48.2, workerState.apiUrl);
 
         let electronApp = await launchElectronApp(workerState.baseUrl);
         workerState.electronApp = electronApp;
-        console.log('⏳ Waiting for window...');
+        log.info('⏳ Waiting for window...');
         let windows = await waitForWindows(electronApp);
 
         if (windows.length === 0) {
-            console.error('❌ No windows detected after 60s! Exiting.');
+            log.error('❌ No windows detected after 60s! Exiting.');
             await electronApp.close();
             return;
         }
 
-        console.log(`✅ Found ${windows.length} window(s)!`);
+        log.info(`✅ Found ${windows.length} window(s)!`);
         await use(electronApp);
     },
 
@@ -122,7 +122,7 @@ export const test = base.extend<ElectronFixture, { workerState: WorkerSharedStat
         let window = await waitForWindowWithTitle(electronApp);
 
         if (!window) {
-            console.error('❌ No matching window detected! Stopping test.');
+            log.error('❌ No matching window detected! Stopping test.');
             await electronApp.close();
             return;
         }

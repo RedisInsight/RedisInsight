@@ -24,6 +24,7 @@ export class DatabaseHelper extends BasePage{
     private myRedisDatabasePage: MyRedisDatabasePage
     private addRedisDataBaseDialog: AddRedisDatabaseDialog
 
+
 // const discoverMasterGroupsPage = new DiscoverMasterGroupsPage()
     private autoDiscoverREDatabases: AutoDiscoverREDatabases
     private browserPage: BrowserPage
@@ -189,10 +190,16 @@ export class DatabaseHelper extends BasePage{
         databaseParameters: AddNewDatabaseParameters,
         page: Page,
         apiUrl: string,
-        xWindowId: string
     ): Promise<void> {
+
         await this.acceptLicenseTerms(page,apiUrl)
-        await this.databaseAPIRequests.addNewStandaloneDatabaseApi(databaseParameters, xWindowId)
+        const winID = await this.getWindowId()
+        const updatedDatabaseParams = {
+            ...databaseParameters,
+            xWindowsId: winID
+        };
+        await this.databaseAPIRequests.addNewStandaloneDatabaseApi(updatedDatabaseParams)
+        // await this.databaseAPIRequests.addNewStandaloneDatabaseApi(databaseParameters)
         // Reload Page to see the new added database through api
         await this.myRedisDatabasePage.reloadPage()
         // Connect to DB

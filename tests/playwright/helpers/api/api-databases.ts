@@ -4,6 +4,7 @@ import { HttpClient } from './http-client'
 import { AddNewDatabaseParameters,  databaseParameters } from '../../types'
 import { ResourcePath } from '../constants'
 import { asyncFilter, doAsyncStuff } from '../async-helper'
+import {Page} from "@playwright/test";
 
 export class DatabaseAPIRequests {
 
@@ -13,7 +14,8 @@ export class DatabaseAPIRequests {
         this.apiClient = new HttpClient(apiUrl).getClient()
     }
 
-    async addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters, isCloud = false, xWindowsId: string): Promise<void> {
+    async addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters, isCloud = false) : Promise<void> {
+
         const uniqueId = faker.string.alphanumeric({ length: 10 })
         const uniqueIdNumber = faker.number.int({ min: 1, max: 1000 })
         const requestBody: any = {
@@ -50,7 +52,7 @@ export class DatabaseAPIRequests {
 
         const response = await this.apiClient.post(ResourcePath.Databases, requestBody,
             {headers:{
-                'X-Window-Id': xWindowsId
+                'X-Window-Id': databaseParameters.xWindowsId
             }
         })
         if (response.status !== 201) throw new Error(`Database creation failed for ${databaseParameters.databaseName}`)

@@ -9,6 +9,7 @@ import {
   EuiTitle,
   EuiText,
   EuiButtonEmpty,
+  EuiToolTip,
 } from '@elastic/eui'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
@@ -17,6 +18,10 @@ import { updateInstanceAction } from 'uiSrc/slices/instances/instances'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import styles from './styles.module.scss'
+
+const VALID_TAG_REGEX = /^[a-zA-Z0-9\-_.@:+ ]+$/
+const INVALID_FIELD_MESSAGE =
+  'Tag can only have letters, numbers, spaces, and these special characters: “- _ . + @ :”'
 
 type ManageTagsModalProps = {
   instance: Instance
@@ -45,11 +50,26 @@ export const ManageTagsModal = ({
     [tags, editedInstanceTags],
   )
 
+  const hasErrors = useMemo(
+    () =>
+      tags.some(
+        (tag) =>
+          !VALID_TAG_REGEX.test(tag.key) || !VALID_TAG_REGEX.test(tag.value),
+      ),
+    [tags],
+  )
+
+  const isSaveButtonDisabled = !isModified || hasErrors
+
   const handleTagChange = useCallback(
     (index: number, key: 'key' | 'value', value: string) => {
+      if (value[0] === ' ') {
+        return
+      }
+
       setTags((tags) => {
         const newTags = [...tags]
-        newTags[index] = { ...newTags[index], [key]: value }
+        newTags[index] = { ...newTags[index], [key]: value.toLowerCase() }
 
         return newTags
       })
@@ -100,7 +120,7 @@ export const ManageTagsModal = ({
             fill
             size="s"
             color="secondary"
-            isDisabled={!isModified}
+            isDisabled={isSaveButtonDisabled}
           >
             Save tags
           </EuiButton>
@@ -114,32 +134,52 @@ export const ManageTagsModal = ({
           <div>Value</div>
         </div>
         <div className={styles.tagFormBody}>
-          {tags.map((tag, index) => (
-            <div key={`tag-row-${index}`} className={styles.tagFormRow}>
-              <div>
-                <EuiFieldText
-                  value={tag.key}
-                  onChange={(e) =>
-                    handleTagChange(index, 'key', e.target.value)
-                  }
-                />
-                :
+          {tags.map((tag, index) => {
+            const isKeyInvalid =
+              Boolean(tag.key) && !VALID_TAG_REGEX.test(tag.key)
+            const isValueInvalid =
+              Boolean(tag.value) && !VALID_TAG_REGEX.test(tag.value)
+
+            return (
+              <div key={`tag-row-${index}`} className={styles.tagFormRow}>
+                <div>
+                  <EuiToolTip
+                    content={isKeyInvalid && INVALID_FIELD_MESSAGE}
+                    position="top"
+                  >
+                    <EuiFieldText
+                      value={tag.key}
+                      isInvalid={isKeyInvalid}
+                      onChange={(e) =>
+                        handleTagChange(index, 'key', e.target.value)
+                      }
+                    />
+                  </EuiToolTip>
+                  :
+                </div>
+                <div>
+                  <EuiToolTip
+                    content={tag.key && isValueInvalid && INVALID_FIELD_MESSAGE}
+                    position="top"
+                  >
+                    <EuiFieldText
+                      value={tag.value}
+                      isInvalid={isValueInvalid}
+                      disabled={!tag.key || isKeyInvalid}
+                      onChange={(e) =>
+                        handleTagChange(index, 'value', e.target.value)
+                      }
+                    />
+                  </EuiToolTip>
+                  <EuiIcon
+                    type="trash"
+                    onClick={() => handleRemoveTag(index)}
+                    className={styles.deleteIcon}
+                  />
+                </div>
               </div>
-              <div>
-                <EuiFieldText
-                  value={tag.value}
-                  onChange={(e) =>
-                    handleTagChange(index, 'value', e.target.value)
-                  }
-                />
-                <EuiIcon
-                  type="trash"
-                  onClick={() => handleRemoveTag(index)}
-                  className={styles.deleteIcon}
-                />
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
       <EuiSpacer size="s" />

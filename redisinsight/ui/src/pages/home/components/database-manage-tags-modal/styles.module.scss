@@ -46,6 +46,10 @@
     display: flex;
     align-items: center;
     gap: 16px;
+
+    > span {
+      width: 100%;
+    }
   }
 
   .deleteIcon {

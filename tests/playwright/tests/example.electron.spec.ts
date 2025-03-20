@@ -1,18 +1,9 @@
 import {test, expect} from '../fixtures/simple-slectron'
 import {Common} from '../helpers/common'
 import {BrowserPage} from '../pageObjects/browser-page'
-import {UserAgreementDialog} from '../pageObjects/dialogs/user-agreement-dialog'
-import {updateControlNumber} from '../helpers/electron/insights'
-import {RedisOverviewPage} from '../helpers/constants'
 import {RdiInstancesListPage} from '../pageObjects/rdi-instances-list-page'
 import {DatabaseHelper} from "../helpers/database";
-
-import * as path from "node:path";
-import * as dotenv from 'dotenv';
 import {APIKeyRequests} from "../helpers/api/api-keys";
-
-
-dotenv.config({ path: path.resolve(__dirname, "..",'.desktop.env') })
 
 let keyName: string
 let browserPage: BrowserPage

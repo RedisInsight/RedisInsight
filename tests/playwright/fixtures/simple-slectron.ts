@@ -2,8 +2,10 @@ import { test as base, ElectronApplication, Page } from '@playwright/test';
 import { _electron as electron } from 'playwright';
 import { ossStandaloneConfig } from '../helpers/conf';
 import log from "node-color-log";
+import * as dotenv from "dotenv";
+import path from "node:path";
 
-
+dotenv.config({ path: path.resolve(__dirname, "..",'.desktop.env') })
 // Define shared state for worker scope
 type WorkerSharedState = {
     apiUrl: string;

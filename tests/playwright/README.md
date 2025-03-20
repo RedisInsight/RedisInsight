@@ -161,15 +161,19 @@ run
 ```
 or change it depending on your needs to enable the history for the report that can show you around 20 executions 
 
-
-| Test Name              | Framework  | Browser   | Duration | 
-|------------------------|------------|-----------|----------|
-|Verify that user can add Hash Key|TestCafe|Chromium| 27s      |
+Some rough  execution time comparison
+| Test Name              | Framework  | Browser  | Duration| 
+|------------------------|------------|----------|---------|
+|Verify that user can add Hash Key| TestCafe   | Chromium |27s|
+|Verify that user can add Hash Key| PlayWright | Chromium |10s|
+|Verify that user can add Hash Key| TestCafe   | Eelctron |30s|
+|Verify that user can add Hash Key| PlayWright | Eelctron |18s|
 
 
 ## Improvements
-Since this was a POC a small portion of the code was moved to make it work however the test code is very much a spaghetti code
-plus the configuration is all over the place, and the namings are quite confusing. It needs to be 
+Since this was a proof of concept, a small portion of the code was moved to make it work. 
+However, the test code is quite messy, the configuration is scattered, and the naming conventions are confusing.
+It needs to be 
 - decoupled 
 - and simplified 
 

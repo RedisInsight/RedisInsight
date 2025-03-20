@@ -198,6 +198,11 @@ export class DatabaseHelper extends BasePage{
         await this.myRedisDatabasePage.reloadPage()
         // Connect to DB
         await this.myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName!)
+
+        if(await this.isVisible("Skip tour")){
+            await this.page.locator("Skip tour").click()
+        }
+
     }
 
     /**

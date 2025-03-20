@@ -10,7 +10,7 @@ import {
     BrowserPage,
     AutoDiscoverREDatabases
 } from '../pageObjects';
-import { UserAgreementDialog } from '../pageObjects/dialogs';
+import {OnboardingCardsDialog, UserAgreementDialog} from '../pageObjects/dialogs';
 import { DatabaseAPIRequests } from './api/api-database';
 import { RedisOverviewPage } from './constants';
 import { RdiInstancesListPage } from '../pageObjects/rdi-instances-list-page';
@@ -23,6 +23,7 @@ const browserPage = new BrowserPage();
 const userAgreementDialog = new UserAgreementDialog();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const rdiInstancesListPage = new RdiInstancesListPage();
+const onboardingCardsDialog = new OnboardingCardsDialog();
 
 export class DatabaseHelper {
     /**
@@ -208,10 +209,19 @@ export class DatabaseHelper {
         );
         // Reload Page to see the new added database through api
         await myRedisDatabasePage.reloadPage();
+
         // Connect to DB
         await myRedisDatabasePage.clickOnDBByName(
             databaseParameters.databaseName!
         );
+
+
+        if (await Selector('span').withText('Skip tour').exists){
+            await t.click(Selector('span').withText('Skip tour'))
+        }
+
+
+
     }
 
     /**

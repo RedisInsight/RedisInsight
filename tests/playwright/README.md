@@ -90,9 +90,6 @@ to destroy the environment use
  ./local-docker-environment/destroy_local_environment.sh
 ```
 
-
-
-
 ## Runs
 Runs the end-to-end tests. (All projects)
 ``` shell
@@ -163,6 +160,12 @@ run
   yarn test:allureHistoryReport
 ```
 or change it depending on your needs to enable the history for the report that can show you around 20 executions 
+
+
+| Test Name              | Framework  | Browser   | Duration | 
+|------------------------|------------|-----------|----------|
+|Verify that user can add Hash Key|TestCafe|Chromium| 27s      |
+
 
 ## Improvements
 Since this was a POC a small portion of the code was moved to make it work however the test code is very much a spaghetti code

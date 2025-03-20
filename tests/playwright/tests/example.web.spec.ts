@@ -9,7 +9,7 @@ let browserPage: BrowserPage
 test.beforeEach(async ({basePage}) => {
 
     console.log('WE ARE IN THE BEFORE STEP')
-    keyName = Common.generateAlpanumeric(10)
+    keyName = Common.generateAlphanumeric(10)
     browserPage = new BrowserPage(basePage)
 
 })

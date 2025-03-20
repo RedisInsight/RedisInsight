@@ -27,7 +27,7 @@ declare global {
 //     'agreements': null
 // }
 //
-// export class Common {
+export class Common {
 //     static mockSettingsResponse(): RequestMock {
 //         return RequestMock()
 //             .onRequestTo(settingsApiUrl)
@@ -152,7 +152,7 @@ declare global {
     * Generate word by number of symbols
     * @param number The number of symbols
     */
-    function generateWord(number: number): string {
+    static  generateWord(number: number): string {
         return faker.word.sample({ length: number })
     }
 
@@ -160,7 +160,7 @@ declare global {
     * Generate sentence by number of words
     * @param number The number of words
     */
-     function generateSentence(number: number): string {
+    static generateSentence(number: number): string {
         return faker.lorem.sentence( number)
     }
 
@@ -168,7 +168,7 @@ declare global {
      * Generate sentence by number of characters
      * @param number The number of characters
      */
-     function generateAlpanumeric(number: number): string {
+     static generateAlphanumeric(number: number): string {
         return faker.string.alphanumeric(number)
     }
 
@@ -304,6 +304,7 @@ declare global {
     //         isMac: process.platform === 'darwin',
     //         isLinux: process.platform === 'linux'
     //     }
-    // }
+    }
+
 
 

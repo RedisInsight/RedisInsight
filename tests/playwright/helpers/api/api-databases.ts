@@ -14,7 +14,7 @@ export class DatabaseAPIRequests {
         this.apiClient = new HttpClient(apiUrl).getClient()
     }
 
-    async addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters, isCloud = false) : Promise<void> {
+    async addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters, xWindowsId:string ,isCloud = false) : Promise<void> {
 
         const uniqueId = faker.string.alphanumeric({ length: 10 })
         const uniqueIdNumber = faker.number.int({ min: 1, max: 1000 })
@@ -50,24 +50,29 @@ export class DatabaseAPIRequests {
             }
         }
 
-        const response = await this.apiClient.post(ResourcePath.Databases, requestBody,
-            {headers:{
-                'X-Window-Id': databaseParameters.xWindowsId
+        const response = await this.apiClient.post(ResourcePath.Databases, requestBody,{
+            headers:{
+                'X-Window-Id': xWindowsId
             }
         })
         if (response.status !== 201) throw new Error(`Database creation failed for ${databaseParameters.databaseName}`)
     }
 
-    async getAllDatabases(): Promise<string[]> {
-        const response = await this.apiClient.get(ResourcePath.Databases)
+    async getAllDatabases(xWindowsId:string): Promise<string[]> {
+
+        const response = await this.apiClient.get(ResourcePath.Databases,{
+            headers:{
+                'X-Window-Id': xWindowsId
+            }
+        })
         if (response.status !== 200) throw new Error('Failed to retrieve databases')
         return response.data
     }
 
-    async getDatabaseIdByName(databaseName?: string): Promise<string> {
+    async getDatabaseIdByName(databaseName?: string, xWindowsId: string): Promise<string> {
         if (!databaseName) throw new Error('Error: Missing databaseName')
 
-        const allDatabases = await this.getAllDatabases()
+        const allDatabases = await this.getAllDatabases(xWindowsId)
         const filteredDb = await asyncFilter(allDatabases, async (item: databaseParameters) => {
             await doAsyncStuff()
             return item.name === databaseName
@@ -77,8 +82,8 @@ export class DatabaseAPIRequests {
         return filteredDb[0].id
     }
 
-    async deleteStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
-        const databaseId = await this.getDatabaseIdByName(databaseParameters.databaseName)
+    async deleteStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters, xWindowsId: string): Promise<void> {
+        const databaseId = await this.getDatabaseIdByName(databaseParameters.databaseName, xWindowsId)
         if (!databaseId) throw new Error('Error: Missing databaseId')
 
         const requestBody = { ids: [databaseId] }

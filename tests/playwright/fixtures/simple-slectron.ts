@@ -1,8 +1,6 @@
 import { test as base, ElectronApplication, Page } from '@playwright/test';
 import { _electron as electron } from 'playwright';
 import { ossStandaloneConfig } from '../helpers/conf';
-import {updateControlNumber}   from "../helpers/electron/insights";
-import {DatabaseHelper} from "../helpers/database";
 import log from "node-color-log";
 
 

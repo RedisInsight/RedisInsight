@@ -193,13 +193,7 @@ export class DatabaseHelper extends BasePage{
     ): Promise<void> {
 
         await this.acceptLicenseTerms(page,apiUrl)
-        const winID = await this.getWindowId()
-        const updatedDatabaseParams = {
-            ...databaseParameters,
-            xWindowsId: winID
-        };
-        await this.databaseAPIRequests.addNewStandaloneDatabaseApi(updatedDatabaseParams)
-        // await this.databaseAPIRequests.addNewStandaloneDatabaseApi(databaseParameters)
+        await this.databaseAPIRequests.addNewStandaloneDatabaseApi(databaseParameters, await this.getWindowId())
         // Reload Page to see the new added database through api
         await this.myRedisDatabasePage.reloadPage()
         // Connect to DB

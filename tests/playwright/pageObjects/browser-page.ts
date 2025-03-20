@@ -11,7 +11,7 @@ import { BasePage } from './base-page'
 export class BrowserPage extends BasePage {
     // private readonly bulkActions: BulkActions
     // private readonly treeView: TreeView
-    private page: Page
+    page: Page
     private toast: Toast
     // CSS Selectors
     private readonly cssSelectorGrid: Locator

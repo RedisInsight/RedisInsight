@@ -7,11 +7,6 @@ import {
     SetKeyParameters,
     StreamKeyParameters} from '../../types'
 
-
-
-
-
-
 const bufferPathMask = '/databases/databaseId/keys?encoding=buffer'
 export class APIKeyRequests {
 
@@ -63,23 +58,26 @@ export class APIKeyRequests {
         if (response.status !== 201) throw new Error('The creation of new Set key request failed')
     }
 
-    async searchKeyByNameApi(keyName: string, databaseName: string): Promise<string[]> {
+    async searchKeyByNameApi(keyName: string, databaseName: string, xWindowsId: string): Promise<string[]> {
         const requestBody = {
             cursor: '0',
             match: keyName
         }
-        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(databaseName)
+        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(databaseName, xWindowsId)
         const response = await this.apiClient.post(bufferPathMask.replace('databaseId', databaseId), requestBody)
         if (response.status !== 200) throw new Error('Getting key request failed')
         return response.data[0].keys
     }
 
-    async deleteKeyByNameApi(keyName: string, databaseName: string): Promise<void> {
-        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(databaseName)
+    async deleteKeyByNameApi(keyName: string, databaseName: string, xWindowsId: string): Promise<void> {
+        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(databaseName, xWindowsId)
         const doesKeyExist = await this.searchKeyByNameApi(keyName, databaseName)
         if (doesKeyExist.length > 0) {
             const requestBody = { keyNames: [Buffer.from(keyName, 'utf-8')] }
-            const response = await this.apiClient.delete(bufferPathMask.replace('databaseId', databaseId), { data: requestBody })
+            const response = await this.apiClient.delete(bufferPathMask.replace('databaseId', databaseId), { data: requestBody,
+            headers:{
+                'X-Window-Id': xWindowsId
+            }})
             if (response.status !== 200) throw new Error('The deletion of the key request failed')
         }
     }

@@ -15,6 +15,7 @@ import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dt
 import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
 
 import { fetchMastersSentinelAction } from './sentinel'
+import { fetchTags } from './tags'
 import { AppDispatch, RootState } from '../store'
 import {
   addErrorNotification,
@@ -496,6 +497,9 @@ export function updateInstanceAction({ id, ...payload }: PartialInstance, onSucc
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch<any>(fetchInstancesAction())
+        if (payload.tags) {
+          dispatch(fetchTags())
+        }
         onSuccess?.()
       }
     } catch (_err) {

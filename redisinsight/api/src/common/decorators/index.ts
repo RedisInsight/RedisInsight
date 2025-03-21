@@ -8,3 +8,4 @@ export * from './object-as-map.decorator';
 export * from './is-multi-number.decorator';
 export * from './is-bigger-than.decorator';
 export * from './is-github-link.decorator';
+export * from './database-management.decorator';

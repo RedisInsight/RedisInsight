@@ -38,7 +38,14 @@ export class LocalFeatureService extends FeatureService {
    */
   async getByName(sessionMetadata: SessionMetadata, name: string): Promise<Feature> {
     try {
-      return await this.repository.get(sessionMetadata, name);
+      switch (knownFeatures[name]?.storage) {
+        case FeatureStorage.Database:
+          return await this.repository.get(sessionMetadata, name);
+        case FeatureStorage.Custom:
+          return knownFeatures[name].factory?.();
+        default:
+          return null;
+      }
     } catch (e) {
       return null;
     }
@@ -49,10 +56,14 @@ export class LocalFeatureService extends FeatureService {
    */
   async isFeatureEnabled(sessionMetadata: SessionMetadata, name: string): Promise<boolean> {
     try {
-      // todo: add non-database features if needed
-      const model = await this.repository.get(sessionMetadata, name);
-
-      return model?.flag === true;
+      switch (knownFeatures[name]?.storage) {
+        case FeatureStorage.Database:
+          return (await this.repository.get(sessionMetadata, name))?.flag === true;
+        case FeatureStorage.Custom:
+          return (knownFeatures[name].factory?.())?.flag === true;
+        default:
+          return false;
+      }
     } catch (e) {
       return false;
     }

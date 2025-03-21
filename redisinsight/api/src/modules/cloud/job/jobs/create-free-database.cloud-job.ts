@@ -10,6 +10,7 @@ import { WaitForActiveDatabaseCloudJob } from 'src/modules/cloud/job/jobs/wait-f
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobStatus, CloudJobStep } from 'src/modules/cloud/job/models';
 import {
+  CloudDatabaseImportForbiddenException,
   CloudJobUnexpectedErrorException,
   CloudTaskNoResourceIdException,
 } from 'src/modules/cloud/job/exceptions';
@@ -22,6 +23,8 @@ import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.s
 import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
+import { FeatureService } from 'src/modules/feature/feature.service';
+import { KnownFeatures } from 'src/modules/feature/constants';
 
 const cloudConfig = config.get('cloud');
 
@@ -42,6 +45,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
       databaseInfoService: DatabaseInfoService,
       bulkImportService: BulkImportService,
       cloudCapiKeyService: CloudCapiKeyService,
+      featureService: FeatureService,
     },
   ) {
     super(options);
@@ -112,6 +116,15 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
       );
 
       this.checkSignal();
+
+      const isDatabaseManagementEnabled = await this.dependencies.featureService.isFeatureEnabled(
+        sessionMetadata,
+        KnownFeatures.DatabaseManagement,
+      );
+
+      if (!isDatabaseManagementEnabled) {
+        throw new CloudDatabaseImportForbiddenException();
+      }
 
       const {
         publicEndpoint,

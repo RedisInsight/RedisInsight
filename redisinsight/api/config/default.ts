@@ -88,6 +88,7 @@ export default {
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
+    databaseManagement: process.env.RI_DATABASE_MANAGEMENT !== 'false',
   },
   statics: {
     initDefaults: process.env.RI_STATICS_INIT_DEFAULTS ? process.env.RI_STATICS_INIT_DEFAULTS === 'true' : true,

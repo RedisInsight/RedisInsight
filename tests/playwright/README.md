@@ -1,14 +1,19 @@
 
 ## Install
 
-Install Playwright browsers   
+
+```shell
+  yarn install
 ```
-yarn playwright install
+
+Install Playwright browsers   
+```shell
+  yarn playwright install
 ```
 
 Install Playwright operating system dependencies requires sudo / root 
-```
-sudo yarn playwright install-deps
+```shell
+  sudo yarn playwright install-deps
 ```
 
 

@@ -153,6 +153,8 @@ the code base [is here](https://github.com/kubeshop/monokle/blob/main/tests/elec
 They are using this helper for when a new build is created, start the test automatically by finding the latest build, 
 setting the correct paths and running the tests. So might be useful to have something similar implemented
 
+## Debug 
+Add DEBUG=pw:api as env variable. This will enable the framework debug mode plus will enable log interceptors for Axios client    
 
 ## Reports
 Running

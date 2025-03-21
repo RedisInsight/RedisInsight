@@ -164,7 +164,8 @@ run
 ```shell
   yarn test:allureHistoryReport
 ```
-or change it depending on your needs to enable the history for the report that can show you around 20 executions 
+or change it depending on your needs to enable the history for the report that can show you around 20 executions. Additional info can be 
+added to this report for more information see https://allurereport.org/docs/playwright-reference/  
 
 Some rough execution time comparison for the same test
 

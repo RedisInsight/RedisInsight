@@ -1,6 +1,5 @@
 import React from 'react'
-import { render, screen } from 'uiSrc/utils/test-utils'
-
+import { mockFeatureFlags, render, screen } from 'uiSrc/utils/test-utils'
 import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import ModuleNotLoadedMinimalized from './ModuleNotLoadedMinimalized'
@@ -42,6 +41,26 @@ describe('ModuleNotLoadedMinimalized', () => {
     render(<ModuleNotLoadedMinimalized moduleName={moduleName} source={source} />)
 
     expect(screen.getByTestId('tutorials-get-started-link')).toBeInTheDocument()
-    expect(screen.getByTestId('tutorials-docker-link')).toBeInTheDocument()
+  })
+
+  it('should render expected text and "Redis databases page" button when cloudAds feature flag is disabled', () => {
+    mockFeatureFlags({
+      cloudAds: {
+        flag: false,
+      }
+    })
+
+    render(<ModuleNotLoadedMinimalized moduleName={moduleName} source={source} />)
+
+    expect(screen.queryByTestId('tutorials-get-started-link')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('connect-free-db-btn')).not.toBeInTheDocument()
+    expect(screen.getByText(/Redis Databases page/)).toBeInTheDocument()
+    expect(screen.getByText(/Open a database with Redis Query Engine/)).toBeInTheDocument()
+  })
+
+  it('should render expected text when cloudAds feature flag is enabled', () => {
+    render(<ModuleNotLoadedMinimalized moduleName={moduleName} source={source} />)
+
+    expect(screen.getByText(/Create a free trial Redis Stack database with search and query/)).toBeInTheDocument()
   })
 })

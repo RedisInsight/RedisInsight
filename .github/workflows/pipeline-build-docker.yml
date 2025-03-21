@@ -17,6 +17,10 @@ on:
         default: false
         type: boolean
 
+      enterprise:
+        description: Enterprise build
+        type: boolean
+
 jobs:
   build:
     name: Build docker
@@ -130,5 +134,6 @@ jobs:
       RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
       RI_FEATURES_CONFIG_URL: ${{ secrets.RI_FEATURES_CONFIG_URL }}
       RI_UPGRADES_LINK: ${{ secrets.RI_UPGRADES_LINK }}
+      RI_FEATURES_CLOUD_ADS_DEFAULT_FLAG: ${{ inputs.enterprise == 'false' }}
 
 

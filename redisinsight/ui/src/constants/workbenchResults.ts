@@ -49,8 +49,8 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
 }
 
 export const MODULE_TEXT_VIEW: { [key in RedisDefaultModules]?: string } = {
-  [RedisDefaultModules.Bloom]: 'Probabilistic data structures',
+  [RedisDefaultModules.Bloom]: 'probabilistic data structures',
   [RedisDefaultModules.ReJSON]: 'JSON data structure',
   [RedisDefaultModules.Search]: 'Redis Query Engine',
-  [RedisDefaultModules.TimeSeries]: 'Time series data structure',
+  [RedisDefaultModules.TimeSeries]: 'time series data structure',
 }

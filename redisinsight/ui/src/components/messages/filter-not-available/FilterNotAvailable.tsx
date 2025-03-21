@@ -5,10 +5,11 @@ import { useSelector } from 'react-redux'
 import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 
 import { CloudSsoUtmCampaign, OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
+import { FeatureFlags } from 'uiSrc/constants'
 
 import styles from './styles.module.scss'
 
@@ -44,7 +45,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
         </>
       )}
       {!freeInstances.length && (
-        <>
+        <FeatureFlagComponent name={FeatureFlags.cloudAds}>
           <EuiText color="subdued">
             Create a free trial Redis Stack database that supports filtering and extends
             the core capabilities of your Redis.
@@ -84,7 +85,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
               Learn More
             </EuiLink>
           </div>
-        </>
+        </FeatureFlagComponent>
       )}
     </div>
   )

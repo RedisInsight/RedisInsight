@@ -33,7 +33,7 @@ beforeEach(() => {
 })
 
 describe('NotFoundErrorPage', () => {
-  it('should render the correct button when envDependant feature is on', async () => {
+  it('should render the correct button when envDependent feature is on', async () => {
     const pushMock = jest.fn()
     jest.spyOn(reactRouterDom, 'useHistory').mockReturnValue({ push: pushMock } as any)
 
@@ -54,7 +54,7 @@ describe('NotFoundErrorPage', () => {
     expect(pushMock).toHaveBeenCalledWith('/')
   })
 
-  it('should render the correct button when envDependant feature is off', () => {
+  it('should render the correct button when envDependent feature is off', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,

@@ -1,8 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { AxiosError } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { ToggleAnalyticsReason, ToggleAnalyticsReasonType } from 'apiSrc/constants/telemetry-events'
 import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from 'apiSrc/modules/settings/dto/settings.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -106,7 +108,7 @@ export function fetchAppInfo(onSuccessAction?: () => void, onFailAction?: () => 
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as unknown as AxiosError)
       dispatch(getUserConfigSettingsFailure(errorMessage))
       onFailAction?.()
     }
@@ -126,7 +128,7 @@ export function fetchUserConfigSettings(onSuccessAction?: () => void, onFailActi
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as unknown as AxiosError)
       dispatch(getUserConfigSettingsFailure(errorMessage))
       onFailAction?.()
     }
@@ -148,7 +150,7 @@ export function fetchUserSettingsSpec(onSuccessAction?: () => void, onFailAction
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as unknown as AxiosError)
       dispatch(getUserSettingsSpecFailure(errorMessage))
       onFailAction?.()
     }
@@ -175,21 +177,24 @@ export function updateUserConfigSettingsAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as unknown as AxiosError)
       dispatch(updateUserConfigSettingsFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as unknown as AxiosError))
       onFailAction?.()
     }
   }
 }
 
-export function enableUserAnalyticsAction() {
+export function enableUserAnalyticsAction(reason: ToggleAnalyticsReasonType = ToggleAnalyticsReason.None) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const agreements = state?.user?.settings?.config?.agreements
 
     if (agreements && !agreements.analytics) {
-      dispatch(updateUserConfigSettingsAction({ agreements: { ...agreements, analytics: true } }))
+      dispatch(updateUserConfigSettingsAction({
+        agreements: { ...agreements, analytics: true },
+        analyticsReason: reason
+      }))
     }
   }
 }

@@ -22,6 +22,7 @@ import cx from 'classnames'
 import { compareConsents } from 'uiSrc/utils'
 import { updateUserConfigSettingsAction, userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { ToggleAnalyticsReason } from 'apiSrc/constants/telemetry-events'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -157,6 +158,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         recommended = false
         return false
       }
+      return true
     })
 
     forEach(notificationConsents, (consent) => {
@@ -164,6 +166,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         recommended = false
         return false
       }
+      return true
     })
 
     return recommended
@@ -185,7 +188,11 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           : TelemetryEvent.SETTINGS_NOTIFICATION_MESSAGES_DISABLED,
       })
     }
-    dispatch(updateUserConfigSettingsAction({ agreements: values }, onSubmitted))
+    const settings: Record<string, any> = { agreements: values }
+    if (values.analytics) {
+      settings.analyticsReason = ToggleAnalyticsReason.User
+    }
+    dispatch(updateUserConfigSettingsAction(settings, onSubmitted))
   }
 
   return (

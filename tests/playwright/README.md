@@ -204,3 +204,6 @@ This applies to all Page Objects, Actions, and Helpers. For all tests:
 - test should start in a known state
 - test state should be cleared
 - test should be able to run in parallel  
+
+(Part of what can help partly with the state management bring up specific environment in the fixture and tear it down after 
+the test is done, group tests that use different states. this will increase execution time but might be with it in terms of stability)

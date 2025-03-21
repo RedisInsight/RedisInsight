@@ -100,6 +100,7 @@ describe('BulkActionSummary', () => {
         succeed: 500,
         failed: 1000,
         errors: generateErrors(500),
+        keys: [],
       });
 
       expect(summary['processed']).toEqual(1500);

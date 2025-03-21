@@ -226,4 +226,45 @@ describe('AbstractBulkActionSimpleRunner', () => {
       expect(runIterationSpy).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe('processIterationResults', () => {
+    let addProcessedSpy;
+    let addKeysSpy;
+    let addSuccessSpy;
+    let addErrorsSpy;
+
+    beforeEach(() => {
+      addProcessedSpy = jest.spyOn(deleteRunner['summary'], 'addProcessed');
+      addKeysSpy = jest.spyOn(deleteRunner['summary'], 'addKeys');
+      addSuccessSpy = jest.spyOn(deleteRunner['summary'], 'addSuccess');
+      addErrorsSpy = jest.spyOn(deleteRunner['summary'], 'addErrors');
+    });
+
+    it('should add keys to the summary and correctly process results', () => {
+      const keys = [
+        Buffer.from('key1'),
+        Buffer.from('key2'),
+        Buffer.from('key3'),
+      ];
+      const results: [Error | null, number | null][] = [
+        [null, 1], // Success
+        [mockReplyError, null], // Error
+        [null, 1], // Success
+      ];
+
+      deleteRunner.processIterationResults(keys, results);
+
+      expect(addProcessedSpy).toHaveBeenCalledWith(3);
+      expect(addKeysSpy).toHaveBeenCalledWith(keys);
+
+      expect(addSuccessSpy).toHaveBeenNthCalledWith(1, 1); // first call
+      expect(addSuccessSpy).toHaveBeenNthCalledWith(2, 1); // second call
+      expect(addErrorsSpy).toHaveBeenCalledWith([
+        {
+          key: Buffer.from('key2'),
+          error: mockRESPError,
+        },
+      ]);
+    });
+  });
 });

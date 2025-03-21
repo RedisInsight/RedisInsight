@@ -21,7 +21,7 @@ export interface Props {
     total: Maybe<number>
     scanned: Maybe<number>
   }
-  children?: React.ReactElement
+  children?: React.ReactNode
 }
 
 const BulkActionsInfo = (props: Props) => {

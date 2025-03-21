@@ -23,6 +23,7 @@ export const mockBulkActionOverview = {
     processed: 0,
     succeed: 0,
     errors: [],
+    keys: [],
   },
 };
 

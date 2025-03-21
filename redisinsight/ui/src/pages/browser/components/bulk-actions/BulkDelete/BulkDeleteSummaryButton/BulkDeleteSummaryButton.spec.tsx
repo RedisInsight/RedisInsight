@@ -13,6 +13,7 @@ const defaultRenderProps = {
   pattern: 'test-pattern',
   deletedKeys: ['key1', 'key2'],
   children: 'Download report',
+  keysType: 'Any',
 }
 
 const renderComponent = (props: any = {}) =>
@@ -39,7 +40,16 @@ describe('BulkDeleteSummaryButton', () => {
     expect(blob).toBeInstanceOf(Blob)
 
     const textContent = await readBlobContent(blob)
-    expect(textContent).toBe('Pattern: test-pattern\n\nKeys:\n\nkey1\nkey2')
+
+    // prettier-ignore
+    const expectedContent =
+     'Pattern: test-pattern\n' +
+     'Keys type: Any\n\n' +
+     'Keys:\n\n' +
+     'key1\n' +
+     'key2'
+
+    expect(textContent).toBe(expectedContent)
   })
 
   it('should handle empty deletedKeys array correctly', async () => {
@@ -51,7 +61,14 @@ describe('BulkDeleteSummaryButton', () => {
     expect(blob).toBeInstanceOf(Blob)
 
     const textContent = await readBlobContent(blob)
-    expect(textContent).toBe('Pattern: test-pattern\n\nKeys:\n\n')
+
+    // prettier-ignore
+    const expectedContent =
+      'Pattern: test-pattern\n' +
+      'Keys type: Any\n\n' +
+      'Keys:\n\n'
+
+    expect(textContent).toBe(expectedContent)
   })
 
   it('should clean up the file URL on unmount', () => {

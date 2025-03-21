@@ -6,6 +6,7 @@ import { RedisString } from 'apiSrc/common/constants'
 export interface BulkDeleteSummaryButtonProps {
   pattern: string
   deletedKeys: Maybe<RedisString[]>
+  keysType: string
   children: React.ReactNode
 }
 
@@ -14,13 +15,19 @@ const getFileName = () => `bulk-delete-report-${Date.now()}.txt`
 const BulkDeleteSummaryButton = ({
   pattern,
   deletedKeys,
+  keysType,
   ...rest
 }: BulkDeleteSummaryButtonProps) => {
   const fileUrl = useMemo(() => {
-    const content = `Pattern: ${pattern}\n\nKeys:\n\n${deletedKeys?.map((key) => Buffer.from(key).toString()).join('\n')}`
+    const content =
+      `Pattern: ${pattern}\n` +
+      `Keys type: ${keysType}\n\n` +
+      `Keys:\n\n` +
+      `${deletedKeys?.map((key) => Buffer.from(key).toString()).join('\n')}`
+
     const blob = new Blob([content], { type: 'text/plain' })
     return URL.createObjectURL(blob)
-  }, [deletedKeys, pattern])
+  }, [deletedKeys, pattern, keysType])
 
   useEffect(
     () => () => {

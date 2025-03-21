@@ -9,6 +9,7 @@ import {
   bulkActionsDeleteSummarySelector,
 } from 'uiSrc/slices/browser/bulkActions'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
+import { getGroupTypeDisplay, NO_TYPE_NAME } from 'uiSrc/utils'
 
 import BulkDeleteFooter from './BulkDeleteFooter'
 import BulkDeleteSummary from './BulkDeleteSummary'
@@ -20,6 +21,8 @@ import styles from './styles.module.scss'
 export interface Props {
   onCancel: () => void
 }
+
+const REPORTED_NO_TYPE_NAME = 'Any'
 
 const BulkDelete = (props: Props) => {
   const { onCancel } = props
@@ -55,20 +58,23 @@ const BulkDelete = (props: Props) => {
             status={status}
             progress={progress}
           >
-            <>
-              <BulkDeleteSummary />
+            <BulkDeleteSummary />
 
-              {isCompleted && (
-                <div className={styles.bulkDeleteSummaryButtonWrapper}>
-                  <BulkDeleteSummaryButton
-                    deletedKeys={deletedKeys}
-                    pattern={searchPattern}
-                  >
-                    Keys deleted
-                  </BulkDeleteSummaryButton>
-                </div>
-              )}
-            </>
+            {isCompleted && (
+              <div className={styles.bulkDeleteSummaryButtonWrapper}>
+                <BulkDeleteSummaryButton
+                  deletedKeys={deletedKeys}
+                  pattern={searchPattern}
+                  keysType={
+                    getGroupTypeDisplay(filter) === NO_TYPE_NAME
+                      ? REPORTED_NO_TYPE_NAME
+                      : getGroupTypeDisplay(filter)
+                  }
+                >
+                  Keys deleted
+                </BulkDeleteSummaryButton>
+              </div>
+            )}
           </BulkActionsInfo>
           <BulkDeleteFooter onCancel={onCancel} />
         </>

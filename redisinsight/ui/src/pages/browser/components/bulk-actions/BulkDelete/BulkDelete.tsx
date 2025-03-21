@@ -46,6 +46,7 @@ const BulkDelete = (props: Props) => {
 
   const isCompleted = !isUndefined(status)
   const searchPattern = match || search || '*'
+  const keysType = getGroupTypeDisplay(filter)
 
   return (
     <>
@@ -66,9 +67,7 @@ const BulkDelete = (props: Props) => {
                   deletedKeys={deletedKeys}
                   pattern={searchPattern}
                   keysType={
-                    getGroupTypeDisplay(filter) === NO_TYPE_NAME
-                      ? REPORTED_NO_TYPE_NAME
-                      : getGroupTypeDisplay(filter)
+                    keysType === NO_TYPE_NAME ? REPORTED_NO_TYPE_NAME : keysType
                   }
                 >
                   Keys deleted

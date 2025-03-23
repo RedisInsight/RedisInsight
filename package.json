@@ -1,6 +1,7 @@
 {
   "name": "redisinsight",
   "productName": "Redis Insight",
+  "desktopName": "redisinsight",
   "description": "Redis Insight",
   "license": "SSPL",
   "private": true,

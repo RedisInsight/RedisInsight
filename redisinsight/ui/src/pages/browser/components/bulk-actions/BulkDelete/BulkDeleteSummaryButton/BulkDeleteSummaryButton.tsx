@@ -21,7 +21,7 @@ const BulkDeleteSummaryButton = ({
   const fileUrl = useMemo(() => {
     const content =
       `Pattern: ${pattern}\n` +
-      `Keys type: ${keysType}\n\n` +
+      `Key type: ${keysType}\n\n` +
       `Keys:\n\n` +
       `${deletedKeys?.map((key) => Buffer.from(key).toString()).join('\n')}`
 

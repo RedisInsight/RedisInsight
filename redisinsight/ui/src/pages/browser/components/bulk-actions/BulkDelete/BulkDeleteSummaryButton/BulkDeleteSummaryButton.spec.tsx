@@ -44,7 +44,7 @@ describe('BulkDeleteSummaryButton', () => {
     // prettier-ignore
     const expectedContent =
      'Pattern: test-pattern\n' +
-     'Keys type: Any\n\n' +
+     'Key type: Any\n\n' +
      'Keys:\n\n' +
      'key1\n' +
      'key2'
@@ -65,7 +65,7 @@ describe('BulkDeleteSummaryButton', () => {
     // prettier-ignore
     const expectedContent =
       'Pattern: test-pattern\n' +
-      'Keys type: Any\n\n' +
+      'Key type: Any\n\n' +
       'Keys:\n\n'
 
     expect(textContent).toBe(expectedContent)

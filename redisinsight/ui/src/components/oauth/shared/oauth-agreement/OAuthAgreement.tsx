@@ -8,7 +8,6 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { setAgreement, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
 
 import { enableUserAnalyticsAction } from 'uiSrc/slices/user/user-settings'
-import { ToggleAnalyticsReason } from 'apiSrc/constants/telemetry-events'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -23,7 +22,7 @@ const OAuthAgreement = (props: Props) => {
 
   const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      dispatch(enableUserAnalyticsAction(ToggleAnalyticsReason.OauthAgreement))
+      dispatch(enableUserAnalyticsAction('oauth-agreement'))
     }
     dispatch(setAgreement(e.target.checked))
     localStorageService.set(BrowserStorageItem.OAuthAgreement, e.target.checked)

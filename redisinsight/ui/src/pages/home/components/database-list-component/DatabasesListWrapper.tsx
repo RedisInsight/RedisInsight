@@ -281,7 +281,7 @@ const DatabasesListWrapper = (props: Props) => {
     <EuiButtonIcon
       iconType={ThreeDots}
       aria-label="Controls icon"
-      data-testid={`controls-${instanceId}`}
+      data-testid={`controls-button-${instanceId}`}
       onClick={() => toggleControlsPopover(instanceId)}
     />
   );

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsBoolean,
+  IsBoolean, IsEnum,
   IsIn,
   IsInstance,
   IsInt,
@@ -17,7 +17,6 @@ import config from 'src/utils/config';
 import { IAgreementSpec } from 'src/modules/settings/models/agreements.interface';
 import { ToggleAnalyticsReason, ToggleAnalyticsReasonType } from 'src/modules/settings/constants/settings';
 
-export { ToggleAnalyticsReason, ToggleAnalyticsReasonType };
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');
 
@@ -198,6 +197,6 @@ export class UpdateSettingsDto {
   })
   @IsOptional()
   @IsString()
-  @IsIn(Object.values(ToggleAnalyticsReason))
+  @IsEnum(ToggleAnalyticsReason)
   analyticsReason?: ToggleAnalyticsReasonType;
 }

@@ -4,7 +4,11 @@ import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from 'apiSrc/modules/settings/dto/settings.dto'
+import {
+  GetAgreementsSpecResponse,
+  GetAppSettingsResponse,
+  UpdateSettingsDto
+} from 'apiSrc/modules/settings/dto/settings.dto'
 
 import { AppDispatch, RootState } from '../store'
 import { StateUserSettings } from '../interfaces/user'
@@ -184,7 +188,9 @@ export function updateUserConfigSettingsAction(
   }
 }
 
-export function enableUserAnalyticsAction(reason: string = 'none') {
+type ToggleAnalyticsReasonType = 'none' | 'oauth-agreement' | 'google' | 'github' | 'sso' | 'user'
+
+export function enableUserAnalyticsAction(reason: ToggleAnalyticsReasonType = 'none') {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const agreements = state?.user?.settings?.config?.agreements

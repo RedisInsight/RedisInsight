@@ -475,31 +475,33 @@ const DatabasesListWrapper = (props: Props) => {
                 button={controlsButton(instance.id)}
                 data-testid={`controls-popover-${instance.id}`}
               >
-                <div>
-                  <EuiButtonIcon
-                    iconType="pencil"
-                    className="editInstanceBtn"
-                    aria-label="Edit instance"
-                    data-testid={`edit-instance-${instance.id}`}
-                    onClick={() => handleClickEditInstance(instance)}
-                  />
-                  <span>Edit database</span>
-                </div>
-                <div>
-                  <PopoverDelete
-                    header={formatLongName(instance.name, 50, 10, '...')}
-                    text="will be removed from Redis Insight."
-                    item={instance.id}
-                    suffix={suffix}
-                    deleting={deletingIdRef.current}
-                    closePopover={closePopover}
-                    updateLoading={false}
-                    showPopover={showPopover}
-                    handleDeleteItem={() => handleDeleteInstance(instance)}
-                    handleButtonClick={() => handleClickDeleteInstance(instance)}
-                    testid={`delete-instance-${instance.id}`}
-                  />
-                  <span>Remove database</span>
+                <div className="controlsPopoverContent">
+                  <div>
+                    <EuiButtonIcon
+                      iconType="pencil"
+                      className="editInstanceBtn"
+                      aria-label="Edit instance"
+                      data-testid={`edit-instance-${instance.id}`}
+                      onClick={() => handleClickEditInstance(instance)}
+                    />
+                    <span>Edit database</span>
+                  </div>
+                  <div className="mt-10px">
+                    <PopoverDelete
+                      header={formatLongName(instance.name, 50, 10, '...')}
+                      text="will be removed from Redis Insight."
+                      item={instance.id}
+                      suffix={suffix}
+                      deleting={deletingIdRef.current}
+                      closePopover={closePopover}
+                      updateLoading={false}
+                      showPopover={showPopover}
+                      handleDeleteItem={() => handleDeleteInstance(instance)}
+                      handleButtonClick={() => handleClickDeleteInstance(instance)}
+                      testid={`delete-instance-${instance.id}`}
+                    />
+                    <span>Remove database</span>
+                  </div>
                 </div>
               </EuiPopover>
             </FeatureFlagComponent>

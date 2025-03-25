@@ -217,6 +217,7 @@ describe('DatabaseService', () => {
           new: false,
           version: '7.0',
           ssh: true,
+          keyNameFormat: 'Unicode',
           sshOptions: {
             id: 'a77b23c1-7816-4ea4-b61f-d37795a0f805-ssh-id',
             host: 'ssh.host.test',
@@ -263,6 +264,7 @@ describe('DatabaseService', () => {
           new: false,
           version: '7.0',
           ssh: true,
+          keyNameFormat: 'Unicode',
           sshOptions: {
             host: 'ssh.host.test',
             port: 22,
@@ -544,6 +546,34 @@ describe('DatabaseService', () => {
       expect(spy).toBeCalledWith(
         mockSessionMetadata,
         omit({ ...mockDatabase, username: 'new-name', timeout: 40_000 }, ['sshOptions.id']),
+      );
+      expect(databaseRepository.get)
+        .toHaveBeenCalledWith(mockSessionMetadata, mockDatabase.id, false, ['id', 'sshOptions.id', 'createdAt']);
+    });
+
+    it('should create new database that was created by discovery process without pre setup flag', async () => {
+      databaseRepository.get.mockResolvedValueOnce({
+        ...mockDatabase,
+        isPreSetup: true,
+      });
+
+      const spy = jest.spyOn(service as any, 'create');
+      await service.clone(
+        mockSessionMetadata,
+        mockDatabase.id,
+        classToClass(UpdateDatabaseDto, {
+          username: 'new-name',
+          timeout: 40_000,
+        }),
+      );
+      expect(spy).toBeCalledWith(
+        mockSessionMetadata,
+        omit({
+          ...mockDatabase,
+          username: 'new-name',
+          timeout: 40_000,
+          isPreSetup: false,
+        }, ['sshOptions.id']),
       );
       expect(databaseRepository.get)
         .toHaveBeenCalledWith(mockSessionMetadata, mockDatabase.id, false, ['id', 'sshOptions.id', 'createdAt']);

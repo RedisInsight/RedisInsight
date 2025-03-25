@@ -18,6 +18,7 @@ import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/
 import { mockCloudDatabaseDetails, mockCloudDatabaseDetailsEntity } from 'src/__mocks__/cloud-database';
 import { mockRedisClientListResult } from 'src/__mocks__/database-info';
 import { DatabaseOverviewKeyspace } from 'src/modules/database/constants/overview';
+import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';
 
@@ -41,6 +42,12 @@ export const mockDatabase = Object.assign(new Database(), {
   new: false,
   compressor: Compressor.NONE,
   version: '7.0',
+});
+
+export const mockCreateDatabaseDto = Object.assign(new CreateDatabaseDto(), {
+  name: mockDatabase.name,
+  host: mockDatabase.host,
+  port: mockDatabase.port,
 });
 
 export const mockDatabaseModules = [
@@ -261,11 +268,17 @@ export const mockDatabaseRepository = jest.fn(() => ({
     pick(mockDatabase, 'id', 'name'),
     pick(mockDatabase, 'id', 'name'),
   ]),
+  cleanupPreSetup: jest.fn().mockResolvedValue({ affected: 0 }),
 }));
 
 export const mockDatabaseService = jest.fn(() => ({
   get: jest.fn().mockResolvedValue(mockDatabase),
   create: jest.fn().mockResolvedValue(mockDatabase),
+  update: jest.fn().mockResolvedValue(mockDatabase),
+  clone: jest.fn().mockResolvedValue(mockDatabase),
+  testConnection: jest.fn().mockResolvedValue(undefined),
+  delete: jest.fn().mockResolvedValue(undefined),
+  bulkDelete: jest.fn().mockResolvedValue({ affected: 0 }),
   list: jest.fn(),
 }));
 

@@ -184,6 +184,11 @@ export const mockFeatureSso = Object.assign(new Feature(), {
   },
 });
 
+export const mockFeatureDatabaseManagement = Object.assign(new Feature(), {
+  name: KnownFeatures.DatabaseManagement,
+  flag: true,
+});
+
 export const mockFeatureRedisClient = Object.assign(new Feature(), {
   name: KnownFeatures.RedisClient,
   flag: true,

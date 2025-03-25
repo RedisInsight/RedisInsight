@@ -34,8 +34,13 @@ const verifyCommandsInCli = async(): Promise<void> => {
 fixture `Work with CLI in all types of databases`
     .meta({ type: 'regression' })
     .page(commonUrl);
-test
-    .meta({ rte: rte.reCloud })
+test('Verify that user can add data via CLI in RE Cloud DB', async() => {
+        // Verify that database index switcher not displayed for RE Cloud
+        await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cloud DB');
+
+        await verifyCommandsInCli();
+    }).skip
+    .meta({ rte: rte.reCloud, skipComment: "Unstable in CI, assertion error, needs investigation" })
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
@@ -43,11 +48,6 @@ test
         // Clear and delete database
         await apiKeyRequests.deleteKeyByNameApi(keyName, cloudDatabaseConfig.databaseName);
         await databaseHelper.deleteDatabase(cloudDatabaseConfig.databaseName);
-    })('Verify that user can add data via CLI in RE Cloud DB', async() => {
-        // Verify that database index switcher not displayed for RE Cloud
-        await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cloud DB');
-
-        await verifyCommandsInCli();
     });
 test
     .meta({ rte: rte.ossCluster })

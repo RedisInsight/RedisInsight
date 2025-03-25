@@ -26,7 +26,7 @@ const CreateCloud = () => {
 
   return (
     <EuiToolTip
-      content="Create FREE Redis Cloud database"
+      content="Create FREE trial Redis Cloud database"
       position="right"
     >
       <span className={cx(styles.iconNavItem)}>

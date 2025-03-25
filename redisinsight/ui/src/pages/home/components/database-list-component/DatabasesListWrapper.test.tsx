@@ -15,6 +15,7 @@ import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/util
 import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
+import {appFeatureFlagsFeaturesSelector} from 'uiSrc/slices/app/features'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
 
 const mockedProps = mock<Props>()
@@ -33,7 +34,10 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
       flag: true
-    }
+    },
+    databaseManagement: {
+      flag: true,
+    },
   }),
 }))
 
@@ -103,7 +107,7 @@ describe('DatabasesListWrapper', () => {
     render(<DatabasesListWrapper
       {...instance(mockedProps)}
       instances={mockInstances}
-      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free db' }] as Instance[]}
+      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free trial db' }] as Instance[]}
     />)
 
     expect(screen.getByTestId(`db-row_${CREATE_CLOUD_DB_ID}`)).toBeInTheDocument()
@@ -113,7 +117,7 @@ describe('DatabasesListWrapper', () => {
     render(<DatabasesListWrapper
       {...instance(mockedProps)}
       instances={mockInstances}
-      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free db' }] as Instance[]}
+      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free trial db' }] as Instance[]}
     />)
 
     fireEvent.click(screen.getByTestId(`db-row_${CREATE_CLOUD_DB_ID}`))
@@ -228,5 +232,18 @@ describe('DatabasesListWrapper', () => {
     });
 
     (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should hide management buttons when databaseManagement feature flag is disabled', async () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      databaseManagement: {
+        flag: false
+      }
+    })
+
+    const { queryByTestId } = render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
+
+    expect(queryByTestId(/^edit-instance-/i)).not.toBeInTheDocument()
+    expect(queryByTestId(/^delete-instance-/i)).not.toBeInTheDocument()
   })
 })

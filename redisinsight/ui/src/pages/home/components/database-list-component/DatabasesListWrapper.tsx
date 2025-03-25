@@ -55,6 +55,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
+import { FeatureFlagComponent } from 'uiSrc/components'
 import DbStatus from '../db-status'
 
 import styles from './styles.module.scss'
@@ -87,7 +88,10 @@ const DatabasesListWrapper = (props: Props) => {
   const { theme } = useContext(ThemeContext)
 
   const { contextInstanceId } = useSelector(appContextSelector)
-  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const {
+    [FeatureFlags.cloudSso]: cloudSsoFeature,
+    [FeatureFlags.databaseManagement]: databaseManagementFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const [width, setWidth] = useState(0)
   const [, forceRerender] = useState({})
@@ -445,26 +449,28 @@ const DatabasesListWrapper = (props: Props) => {
                 </EuiLink>
               </EuiToolTip>
             )}
-            <EuiButtonIcon
-              iconType="pencil"
-              className="editInstanceBtn"
-              aria-label="Edit instance"
-              data-testid={`edit-instance-${instance.id}`}
-              onClick={() => handleClickEditInstance(instance)}
-            />
-            <PopoverDelete
-              header={formatLongName(instance.name, 50, 10, '...')}
-              text="will be removed from Redis Insight."
-              item={instance.id}
-              suffix={suffix}
-              deleting={deletingIdRef.current}
-              closePopover={closePopover}
-              updateLoading={false}
-              showPopover={showPopover}
-              handleDeleteItem={() => handleDeleteInstance(instance)}
-              handleButtonClick={() => handleClickDeleteInstance(instance)}
-              testid={`delete-instance-${instance.id}`}
-            />
+            <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
+              <EuiButtonIcon
+                iconType="pencil"
+                className="editInstanceBtn"
+                aria-label="Edit instance"
+                data-testid={`edit-instance-${instance.id}`}
+                onClick={() => handleClickEditInstance(instance)}
+              />
+              <PopoverDelete
+                header={formatLongName(instance.name, 50, 10, '...')}
+                text="will be removed from Redis Insight."
+                item={instance.id}
+                suffix={suffix}
+                deleting={deletingIdRef.current}
+                closePopover={closePopover}
+                updateLoading={false}
+                showPopover={showPopover}
+                handleDeleteItem={() => handleDeleteInstance(instance)}
+                handleButtonClick={() => handleClickDeleteInstance(instance)}
+                testid={`delete-instance-${instance.id}`}
+              />
+            </FeatureFlagComponent>
           </>
         )
       },
@@ -505,6 +511,7 @@ const DatabasesListWrapper = (props: Props) => {
             getSelectableItems={(item) => item.id !== 'create-free-cloud-db'}
             onTableChange={onTableChange}
             sort={sortingRef.current}
+            hideSelectableCheckboxes={!databaseManagementFeature?.flag}
           />
         </div>
       )}

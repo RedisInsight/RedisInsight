@@ -298,6 +298,10 @@ export class DatabaseService {
       await this.get(sessionMetadata, id, false, ['id', 'sshOptions.id', 'createdAt']),
       dto,
     );
+
+    // disable pre setup flag so database won't be automatically removed
+    database.isPreSetup = false;
+
     if (DatabaseService.isConnectionAffected(dto)) {
       return await this.create(sessionMetadata, database);
     }

@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -14,7 +16,7 @@ import { readFile } from 'fs-extra';
 import { join } from 'path';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
 import config, { Config } from 'src/utils/config';
-import { AgreementIsNotDefinedException } from 'src/constants';
+import { AgreementIsNotDefinedException, ToggleAnalyticsReasonType } from 'src/constants';
 import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
 import { KeyEncryptionStrategy } from 'src/modules/encryption/strategies/key-encryption.strategy';
 import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
@@ -25,6 +27,8 @@ import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IAgreementSpecFile } from 'src/modules/settings/models/agreements.interface';
 import { SessionMetadata } from 'src/common/models';
+
+import { DatabaseDiscoveryService } from 'src/modules/database-discovery/database-discovery.service';
 import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from './dto/settings.dto';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
@@ -34,6 +38,8 @@ export class SettingsService {
   private logger = new Logger('SettingsService');
 
   constructor(
+    @Inject(forwardRef(() => DatabaseDiscoveryService))
+    private readonly databaseDiscoveryService: DatabaseDiscoveryService,
     private readonly settingsRepository: SettingsRepository,
     private readonly agreementRepository: AgreementsRepository,
     private readonly analytics: SettingsAnalytics,
@@ -74,7 +80,7 @@ export class SettingsService {
     dto: UpdateSettingsDto,
   ): Promise<GetAppSettingsResponse> {
     this.logger.debug('Updating application settings.', sessionMetadata);
-    const { agreements, ...settings } = dto;
+    const { agreements, analyticsReason, ...settings } = dto;
     try {
       const oldAppSettings = await this.getAppSettings(sessionMetadata);
       if (!isEmpty(settings)) {
@@ -90,13 +96,23 @@ export class SettingsService {
         await this.settingsRepository.update(sessionMetadata, toUpdate);
       }
       if (agreements) {
-        await this.updateAgreements(sessionMetadata, agreements);
+        await this.updateAgreements(sessionMetadata, agreements, analyticsReason);
       }
       this.logger.debug('Succeed to update application settings.', sessionMetadata);
       const results = await this.getAppSettings(sessionMetadata);
       this.analytics.sendSettingsUpdatedEvent(sessionMetadata, results, oldAppSettings);
 
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
+
+      // Discover databases from envs or autodiscovery flow when eula accept
+      if (!oldAppSettings?.agreements?.eula && results?.agreements?.eula) {
+        try {
+          await this.databaseDiscoveryService.discover(sessionMetadata, true);
+        } catch (e) {
+          // ignore error
+          this.logger.error('Failed discover databases after eula accepted.', e, sessionMetadata);
+        }
+      }
 
       return results;
     } catch (error) {
@@ -177,6 +193,7 @@ export class SettingsService {
   private async updateAgreements(
     sessionMetadata: SessionMetadata,
     dtoAgreements: Map<string, boolean> = new Map(),
+    analyticsReason?: ToggleAnalyticsReasonType,
   ): Promise<void> {
     this.logger.debug('Updating application agreements.', sessionMetadata);
     const oldAgreements = await this.agreementRepository.getOrCreate(sessionMetadata);
@@ -190,7 +207,6 @@ export class SettingsService {
         ...Object.fromEntries(dtoAgreements),
       },
     };
-
     // Detect which agreements should be defined according to the settings specification
     const diff = difference(
       Object.keys(agreementsSpec.agreements),
@@ -210,6 +226,7 @@ export class SettingsService {
         sessionMetadata,
         dtoAgreements,
         new Map(Object.entries(oldAgreements.data || {})),
+        analyticsReason,
       );
     }
   }

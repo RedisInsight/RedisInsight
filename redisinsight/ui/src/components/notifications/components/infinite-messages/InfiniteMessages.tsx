@@ -4,6 +4,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
+  EuiLink,
   EuiLoadingSpinner,
   EuiSpacer,
   EuiText,
@@ -29,6 +30,7 @@ export enum InfiniteMessagesIds {
   oAuthSuccess = 'oAuthSuccess',
   autoCreateDb = 'autoCreateDb',
   databaseExists = 'databaseExists',
+  databaseImportForbidden = 'databaseImportForbidden',
   subscriptionExists = 'subscriptionExists',
   appUpdateAvailable = 'appUpdateAvailable',
   pipelineDeploySuccess = 'pipelineDeploySuccess'
@@ -81,8 +83,8 @@ export const INFINITE_MESSAGES = {
               <span>
                 { (step === CloudJobStep.Credentials || !step) && 'Processing Cloud API keys…'}
                 { step === CloudJobStep.Subscription && 'Processing Cloud subscriptions…'}
-                { step === CloudJobStep.Database && 'Creating a free Cloud database…'}
-                { step === CloudJobStep.Import && 'Importing a free Cloud database…'}
+                { step === CloudJobStep.Database && 'Creating a free trial Cloud database…'}
+                { step === CloudJobStep.Import && 'Importing a free trial Cloud database…'}
               </span>
             </EuiTitle>
             <EuiText size="xs">
@@ -101,7 +103,7 @@ export const INFINITE_MESSAGES = {
     const vendor = find(OAuthProviders, ({ id }) => id === details.provider)
     const withFeed = jobName
       && [CloudJobName.CreateFreeDatabase, CloudJobName.CreateFreeSubscriptionAndDatabase].includes(jobName)
-    const text = `You can now use your Redis Stack database in Redis Cloud${withFeed ? ' with pre-loaded sample data' : ''}.`
+    const text = `You can now use your Redis Cloud database${withFeed ? ' with pre-loaded sample data' : ''}.`
     return ({
       id: InfiniteMessagesIds.oAuthSuccess,
       className: 'wide',
@@ -187,7 +189,7 @@ export const INFINITE_MESSAGES = {
         onMouseUp={(e) => { e.preventDefault() }}
         data-testid="database-exists-notification"
       >
-        <EuiTitle className="infiniteMessage__title"><span>You already have a free Redis Cloud subscription.</span></EuiTitle>
+        <EuiTitle className="infiniteMessage__title"><span>You already have a free trial Redis Cloud subscription.</span></EuiTitle>
         <EuiText size="xs">
           Do you want to import your existing database into Redis Insight?
         </EuiText>
@@ -219,6 +221,57 @@ export const INFINITE_MESSAGES = {
       </div>
     )
   }),
+  DATABASE_IMPORT_FORBIDDEN: (onClose?: () => void) => ({
+    id: InfiniteMessagesIds.databaseImportForbidden,
+    Inner: (
+      <div
+        role="presentation"
+        onMouseDown={(e) => { e.preventDefault() }}
+        onMouseUp={(e) => { e.preventDefault() }}
+        data-testid="database-import-forbidden-notification"
+      >
+        <EuiTitle className="infiniteMessage__title">
+          <span>
+            Unable to import Cloud database.
+          </span>
+        </EuiTitle>
+        <EuiText size="xs">
+          Adding your Redis Cloud database to Redis Insight is disabled due to
+          a setting restricting database connection management.
+
+          <EuiSpacer size="m" />
+
+          Log in to
+          {' '}
+          <EuiLink
+            target="_blank"
+            color="text"
+            external={false}
+            tabIndex={-1}
+            href="https://cloud.redis.io/#/databases?utm_source=redisinsight&utm_medium=main&utm_campaign=disabled_db_management"
+          >
+            Redis Cloud
+          </EuiLink>
+          {' '}
+          to check your database.
+        </EuiText>
+        <EuiSpacer size="m" />
+        <EuiFlexGroup justifyContent="flexEnd" gutterSize="none">
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              fill
+              size="s"
+              color="secondary"
+              onClick={() => onClose?.()}
+              data-testid="database-import-forbidden-notification-ok-btn"
+            >
+              Ok
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
+    )
+  }),
   SUBSCRIPTION_EXISTS: (onSuccess?: () => void, onClose?: () => void) => ({
     id: InfiniteMessagesIds.subscriptionExists,
     Inner: (
@@ -228,9 +281,9 @@ export const INFINITE_MESSAGES = {
         onMouseUp={(e) => { e.preventDefault() }}
         data-testid="subscription-exists-notification"
       >
-        <EuiTitle className="infiniteMessage__title"><span>Your subscription does not have a free Redis Cloud database.</span></EuiTitle>
+        <EuiTitle className="infiniteMessage__title"><span>Your subscription does not have a free trial Redis Cloud database.</span></EuiTitle>
         <EuiText size="xs">
-          Do you want to create a free database in your existing subscription?
+          Do you want to create a free trial database in your existing subscription?
         </EuiText>
         <EuiSpacer size="m" />
         <EuiFlexGroup justifyContent="spaceBetween" gutterSize="none">

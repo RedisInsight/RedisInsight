@@ -35,7 +35,7 @@ const OAuthForm = ({
   const onSocialButtonClick = (authStrategy: OAuthStrategy) => {
     setDisabled(true)
     setTimeout(() => { setDisabled(false) }, 1000)
-    dispatch(enableUserAnalyticsAction())
+    dispatch(enableUserAnalyticsAction(authStrategy))
     setAuthStrategy(authStrategy)
     onClick?.(authStrategy)
 

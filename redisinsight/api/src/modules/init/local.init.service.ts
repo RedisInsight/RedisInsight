@@ -5,8 +5,8 @@ import { FeaturesConfigService } from 'src/modules/feature/features-config.servi
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
-import { AutodiscoveryService } from 'src/modules/autodiscovery/autodiscovery.service';
 import { AnalyticsService } from 'src/modules/analytics/analytics.service';
+import { DatabaseDiscoveryService } from 'src/modules/database-discovery/database-discovery.service';
 
 @Injectable()
 export class LocalInitService extends InitService {
@@ -16,7 +16,7 @@ export class LocalInitService extends InitService {
     private readonly featuresConfigService: FeaturesConfigService,
     private readonly featureService: FeatureService,
     private readonly redisClientFactory: RedisClientFactory,
-    private readonly autodiscoveryService: AutodiscoveryService,
+    private readonly databaseDiscoveryService: DatabaseDiscoveryService,
     private readonly analyticsService: AnalyticsService,
   ) {
     super();
@@ -32,7 +32,7 @@ export class LocalInitService extends InitService {
     await this.initAnalytics(firstStart);
     await this.featureService.recalculateFeatureFlags(sessionMetadata);
     await this.redisClientFactory.init();
-    await this.autodiscoveryService.init(); // todo: move it out here with new db import implementation
+    await this.databaseDiscoveryService.discover(sessionMetadata);
   }
 
   async initAnalytics(firstStart: boolean) {

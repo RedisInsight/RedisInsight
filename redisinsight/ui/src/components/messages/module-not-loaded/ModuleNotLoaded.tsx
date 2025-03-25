@@ -74,11 +74,11 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
 
   const renderText = useCallback((moduleName?: string) => (!freeDbWithModule ? (
     <EuiText className={cx(styles.text, styles.marginBottom)}>
-      {`Create a free Redis Stack database with ${moduleName} which extends the core capabilities of your Redis`}
+      {`Create a free trial Redis Stack database with ${moduleName} which extends the core capabilities of your Redis`}
     </EuiText>
   ) : (
     <EuiText className={cx(styles.text, styles.marginBottom, styles.textFooter)}>
-      Use your free all-in-one Redis Cloud database to start exploring these capabilities.
+      Use your free trial all-in-one Redis Cloud database to start exploring these capabilities.
     </EuiText>
   )), [freeDbWithModule])
 

@@ -164,7 +164,6 @@ describe('InstanceHeader', () => {
     })
 
     expect(screen.queryByTestId('my-redis-db-btn')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('admin-console-breadcrumb-btn')).toBeInTheDocument()
   })
 
   it('should show cloud user profile if env dependant flag is off and cloud profile is present', async () => {

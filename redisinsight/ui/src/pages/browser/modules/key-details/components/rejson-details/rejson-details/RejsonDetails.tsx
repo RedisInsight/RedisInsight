@@ -1,114 +1,61 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { EuiButtonIcon } from '@elastic/eui'
-import {
-  appendReJSONArrayItemAction,
-  fetchVisualisationResults,
-  removeReJSONKeyAction,
-  setReJSONDataAction
-} from 'uiSrc/slices/browser/rejson'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { EuiButton, EuiFlexItem } from '@elastic/eui'
+import { MonacoEditor } from 'uiSrc/components/monaco-editor'
 
-import { getBrackets, isRealArray, isRealObject, wrapPath } from '../utils'
-import { BaseProps, ObjectTypes } from '../interfaces'
-import RejsonDynamicTypes from '../rejson-dynamic-types'
-import { AddItem } from '../components'
+import { BaseProps } from '../interfaces'
 
 import styles from '../styles.module.scss'
 
+// TODO: potentially remove getBrackets, isRealObject, isRealArray, AddItem
+// TODO: potentially remove setAddRootKVPair, removeReJSONKeyAction, appendReJSONArrayItemAction
+// TODO: check what constraints are - size, is it possible to optimise this?
+const jsonToReadableString = (data: any) => JSON.stringify(data, null, 2)
+
+// TODO: potentially use the validation of MonacoEditor
+const isValidJSON = (input: string) => {
+  try {
+    JSON.parse(input)
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
+// setReJSONDataAction
+
 const RejsonDetails = (props: BaseProps) => {
-  const {
-    data,
-    selectedKey,
-    length,
-    dataType,
-    parentPath,
-    isDownloaded,
-    onJsonKeyExpandAndCollapse,
-    expandedRows
-  } = props
-
-  const [addRootKVPair, setAddRootKVPair] = useState<boolean>(false)
-
+  const { data } = props
   const dispatch = useDispatch()
 
-  const handleFetchVisualisationResults = (path: string, forceRetrieve = false) =>
-    dispatch<any>(fetchVisualisationResults(path, forceRetrieve))
+  const originalData = jsonToReadableString(data)
+  const [value, setValue] = useState(originalData)
+  const hasContentChanged = value !== originalData
 
-  const handleAppendRejsonArrayItemAction = (keyName: RedisResponseBuffer, path: string, data: string) => {
-    dispatch(appendReJSONArrayItemAction(keyName, path, data, length))
-  }
-
-  const handleSetRejsonDataAction = (keyName: RedisResponseBuffer, path: string, data: string) => {
-    dispatch(setReJSONDataAction(keyName, path, data, false, length))
-  }
-
-  const handleFormSubmit = ({ key, value }: { key?: string, value: string }) => {
-    setAddRootKVPair(false)
-    if (isRealArray(data, dataType)) {
-      handleAppendRejsonArrayItemAction(selectedKey, '$', value)
-      return
-    }
-
-    const updatedPath = wrapPath(key as string)
-    if (updatedPath) {
-      handleSetRejsonDataAction(selectedKey, updatedPath, value)
-    }
-  }
-
-  const onClickRemoveKey = (path: string, keyName: string) => {
-    dispatch(removeReJSONKeyAction(selectedKey, path || '$', keyName, length))
-  }
-
-  const onClickSetRootKVPair = () => {
-    setAddRootKVPair(!addRootKVPair)
-  }
-
-  const isObject = isRealObject(data, dataType)
-  const isArray = isRealArray(data, dataType)
+  const isValidJson = isValidJSON(value)
+  const isUpdateActive = !hasContentChanged || !isValidJson
 
   return (
     <div className={styles.jsonData} id="jsonData" data-testid="json-data">
-      <>
-        {(isObject || isArray) && (
-          <div className={styles.row}>
-            <span>{getBrackets(isObject ? ObjectTypes.Object : ObjectTypes.Array, 'start')}</span>
-          </div>
-        )}
-        <RejsonDynamicTypes
-          data={data}
-          parentPath={parentPath}
-          selectedKey={selectedKey}
-          isDownloaded={isDownloaded}
-          expandedRows={expandedRows}
-          onClickRemoveKey={onClickRemoveKey}
-          onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
-          handleAppendRejsonObjectItemAction={handleAppendRejsonArrayItemAction}
-          handleSetRejsonDataAction={handleSetRejsonDataAction}
-          handleFetchVisualisationResults={handleFetchVisualisationResults}
-        />
-        {addRootKVPair && (
-          <AddItem
-            isPair={isObject}
-            onCancel={() => setAddRootKVPair(false)}
-            onSubmit={handleFormSubmit}
-          />
-        )}
-        {(isObject || isArray) && (
-          <div className={styles.row}>
-            <span>{getBrackets(isObject ? ObjectTypes.Object : ObjectTypes.Array, 'end')}</span>
-            {!addRootKVPair && (
-              <EuiButtonIcon
-                iconType="plus"
-                className={styles.buttonStyle}
-                onClick={onClickSetRootKVPair}
-                aria-label="Add field"
-                data-testid={isObject ? 'add-object-btn' : 'add-array-btn'}
-              />
-            )}
-          </div>
-        )}
-      </>
+      <MonacoEditor
+        language="json"
+        value={value}
+        isEditable
+        onChange={setValue}
+        data-testid="json-data-editor"
+      />
+
+      <EuiFlexItem grow={false} className={styles.actions}>
+        <EuiButton
+          onClick={() => {}}
+          fill
+          color="secondary"
+          disabled={isUpdateActive}
+          data-testid="json-data-update-btn"
+        >
+          Update
+        </EuiButton>
+      </EuiFlexItem>
     </div>
   )
 }

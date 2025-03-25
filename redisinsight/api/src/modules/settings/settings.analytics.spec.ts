@@ -12,19 +12,13 @@ describe('SettingsAnalytics', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        SettingsAnalytics,
-      ],
+      providers: [EventEmitter2, SettingsAnalytics],
     }).compile();
 
     service = module.get<SettingsAnalytics>(SettingsAnalytics);
     eventEmitter = module.get<EventEmitter2>(EventEmitter2);
     eventEmitter.emit = jest.fn();
-    sendEventMethod = jest.spyOn<SettingsAnalytics, any>(
-      service,
-      'sendEvent',
-    );
+    sendEventMethod = jest.spyOn<SettingsAnalytics, any>(service, 'sendEvent');
   });
 
   describe('sendAnalyticsAgreementChange', () => {
@@ -63,12 +57,12 @@ describe('SettingsAnalytics', () => {
         },
       );
     });
-    it('should emit ANALYTICS_PERMISSION with state enabled and reason "test-reason"', async () => {
+    it('should emit ANALYTICS_PERMISSION with state enabled and reason "sso"', async () => {
       service.sendAnalyticsAgreementChange(
         mockSessionMetadata,
         new Map([['analytics', true]]),
         undefined,
-        'test-reason',
+        'sso',
       );
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
@@ -76,9 +70,8 @@ describe('SettingsAnalytics', () => {
         mockSessionMetadata,
         {
           event: TelemetryEvents.AnalyticsPermission,
-          eventData: { reason: 'test-reason', state: 'enabled' },
+          eventData: { reason: 'sso', state: 'enabled' },
           nonTracking: true,
-
         },
       );
     });
@@ -104,7 +97,7 @@ describe('SettingsAnalytics', () => {
         mockSessionMetadata,
         new Map([['analytics', false]]),
         new Map([['analytics', false]]),
-        'test-reason',
+        'none',
       );
 
       expect(eventEmitter.emit).not.toHaveBeenCalledWith(
@@ -121,7 +114,7 @@ describe('SettingsAnalytics', () => {
         mockSessionMetadata,
         new Map([['analytics', false]]),
         new Map([['analytics', true]]),
-        'test-reason',
+        'none',
       );
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(

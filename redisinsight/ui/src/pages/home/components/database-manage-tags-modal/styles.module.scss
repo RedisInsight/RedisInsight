@@ -45,10 +45,12 @@
     padding: 8px;
     display: flex;
     align-items: center;
+    position: relative;
     gap: 16px;
 
     > span {
       width: 100%;
+      position: relative;
     }
   }
 
@@ -73,4 +75,36 @@
 .addTagButton {
   margin-left: 32px;
   color: #8BA2FF !important;
+}
+
+.suggestions {
+  position: absolute;
+  background: #171717;
+  border: 1px solid #3D3D3D;
+  border-radius: 4px;
+  overflow: hidden;
+  width: 100%;
+  z-index: 10;
+  padding: 12px;
+
+  .suggestionsTitle {
+    font-weight: bold !important;
+    border-bottom: 1px solid #3D3D3D;
+    padding-bottom: 8px;
+  }
+
+  ul {
+    li {
+      border-bottom: none !important;
+      color: #B5B6C0 !important;
+
+      span {
+        padding: 0 !important;
+      }
+    }
+
+    li:hover {
+      background: #2A2A2A !important;
+    }
+  }
 }

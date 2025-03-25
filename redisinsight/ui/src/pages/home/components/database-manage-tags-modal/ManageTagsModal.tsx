@@ -17,11 +17,12 @@ import { FormDialog } from 'uiSrc/components'
 import { updateInstanceAction } from 'uiSrc/slices/instances/instances'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import {
+  INVALID_FIELD_MESSAGE,
+  VALID_TAG_REGEX,
+} from './constants'
+import { TagSuggestions } from './TagSuggestions'
 import styles from './styles.module.scss'
-
-const VALID_TAG_REGEX = /^[a-zA-Z0-9\-_.@:+ ]+$/
-const INVALID_FIELD_MESSAGE =
-  'Tag should have unique keys and can only have letters, numbers, spaces, and these special characters: “- _ . + @ :”'
 
 type ManageTagsModalProps = {
   instance: Instance
@@ -38,6 +39,16 @@ export const ManageTagsModal = ({
     [instance?.tags],
   )
   const [tags, setTags] = useState(editedInstanceTags)
+  const currentTagKeys = useMemo(
+    () => new Set(tags.map((tag) => tag.key)),
+    [tags],
+  )
+  const [focusedTagKeyIndex, setFocusedTagKeyIndex] = useState<number | null>(
+    null,
+  )
+  const [focusedTagValueIndex, setFocusedTagValueIndex] = useState<
+    number | null
+  >(null)
 
   const isModified = useMemo(
     () =>
@@ -150,13 +161,31 @@ export const ManageTagsModal = ({
                     content={isKeyInvalid && INVALID_FIELD_MESSAGE}
                     position="top"
                   >
-                    <EuiFieldText
-                      value={tag.key}
-                      isInvalid={isKeyInvalid}
-                      onChange={(e) =>
-                        handleTagChange(index, 'key', e.target.value)
-                      }
-                    />
+                    <div>
+                      <EuiFieldText
+                        value={tag.key}
+                        isInvalid={isKeyInvalid}
+                        onChange={(e) =>
+                          handleTagChange(index, 'key', e.target.value)
+                        }
+                        onFocusCapture={() => {
+                          setFocusedTagKeyIndex(index)
+                          setFocusedTagValueIndex(null)
+                        }}
+                        // onBlur={() => setFocusedTagKeyIndex(null)}
+                      />
+                      {focusedTagKeyIndex === index && (
+                        <TagSuggestions
+                          targetKey={undefined}
+                          searchTerm={tag.key}
+                          currentTagKeys={currentTagKeys}
+                          onChange={(value) => {
+                            handleTagChange(index, 'key', value)
+                            setFocusedTagKeyIndex(null)
+                          }}
+                        />
+                      )}
+                    </div>
                   </EuiToolTip>
                   :
                 </div>
@@ -165,14 +194,31 @@ export const ManageTagsModal = ({
                     content={tag.key && isValueInvalid && INVALID_FIELD_MESSAGE}
                     position="top"
                   >
-                    <EuiFieldText
-                      value={tag.value}
-                      isInvalid={isValueInvalid}
-                      disabled={!tag.key || isKeyInvalid}
-                      onChange={(e) =>
-                        handleTagChange(index, 'value', e.target.value)
-                      }
-                    />
+                    <div>
+                      <EuiFieldText
+                        value={tag.value}
+                        isInvalid={isValueInvalid}
+                        disabled={!tag.key || isKeyInvalid}
+                        onChange={(e) =>
+                          handleTagChange(index, 'value', e.target.value)
+                        }
+                        onFocusCapture={() => {
+                          setFocusedTagValueIndex(index)
+                          setFocusedTagKeyIndex(null)
+                        }}
+                      />
+                      {focusedTagValueIndex === index && (
+                        <TagSuggestions
+                          targetKey={tag.key}
+                          searchTerm={tag.value}
+                          currentTagKeys={currentTagKeys}
+                          onChange={(value) => {
+                            handleTagChange(index, 'value', value)
+                            setFocusedTagValueIndex(null)
+                          }}
+                        />
+                      )}
+                    </div>
                   </EuiToolTip>
                   <EuiIcon
                     type="trash"

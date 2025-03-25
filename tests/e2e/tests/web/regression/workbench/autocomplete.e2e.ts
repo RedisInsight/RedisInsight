@@ -9,7 +9,7 @@ const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const browserPage = new BrowserPage();
 
-fixture `Autocomplete for entered commands`
+fixture`Autocomplete for entered commands`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -17,7 +17,7 @@ fixture `Autocomplete for entered commands`
         // Go to Workbench page
         await t.click(browserPage.NavigationPanel.workbenchButton);
     })
-    .afterEach(async() => {
+    .afterEach(async () => {
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
@@ -37,7 +37,7 @@ test('Verify that user can open the "read more" about the command by clicking on
     // Open the read more by clicking on the "ctrl+space" and check
     await t.pressKey('ctrl+space');
     await t.expect(workbenchPage.MonacoEditor.monacoCommandDetails.exists).ok('The "read more" about the command is not opened');
-    for(const detail of commandDetails) {
+    for (const detail of commandDetails) {
         await t.expect(workbenchPage.MonacoEditor.monacoCommandDetails.textContent).contains(detail, `The ${detail} command detail is not displayed`);
     }
     // Close the command details
@@ -45,17 +45,7 @@ test('Verify that user can open the "read more" about the command by clicking on
     await t.expect(workbenchPage.MonacoEditor.monacoCommandDetails.exists).notOk('The "read more" about the command is not closed');
 });
 test('Verify that user can see static list of arguments is displayed when he enters the command in Editor in Workbench', async t => {
-    const command = 'AI.SCRIPTEXECUTE';
     const command2 = 'TS.DELETERULE ';
-
-    // Type the command in Editing area
-    await t.typeText(workbenchPage.queryInput, command, { replace: true });
-    // Check that no hints are displayed
-    await t.expect(workbenchPage.MonacoEditor.monacoHintWithArguments.visible).notOk('Hints with arguments are still displayed');
-    // Add space after the printed command
-    await t.typeText(workbenchPage.queryInput, `${command} `, { replace: true });
-    // Check that hint with arguments are displayed
-    await t.expect(workbenchPage.MonacoEditor.monacoHintWithArguments.visible).ok('Hints with arguments are not displayed');
 
     await t.typeText(workbenchPage.queryInput, command2, { replace: true });
     // Check that hint with arguments are displayed

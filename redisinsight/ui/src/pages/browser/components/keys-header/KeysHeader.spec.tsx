@@ -1,8 +1,9 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { setBrowserPatternKeyListDataLoaded, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 import * as keysSlice from 'uiSrc/slices/browser/keys'
+import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { BrowserColumns } from 'uiSrc/constants'
 import KeysHeader from './KeysHeader'
 
@@ -19,8 +20,9 @@ beforeEach(() => {
 
 jest.mock('uiSrc/slices/browser/keys', () => ({
   ...jest.requireActual('uiSrc/slices/browser/keys'),
-  keysSelector: jest.fn().mockReturnValue(mockSelectorData)
-}))
+  keysSelector: jest.fn().mockReturnValue(mockSelectorData),
+  fetchKeys: jest.fn(),
+}));
 
 const propsMock = {
   keysState: {
@@ -123,4 +125,19 @@ describe('KeysHeader', () => {
 
     expect(queryByTestId('scan-more')).not.toBeInTheDocument()
   })
+
+  it('should reset selected key data when no keys data is returned', async () => {
+    (keysSlice.fetchKeys as jest.Mock).mockImplementation((_options: any, onSuccess: (data: any) => void, __onFailed: () => void) => {
+      return () => {
+        onSuccess({ keys: [] }); // Simulate empty data response
+      };
+    });
+
+    render(<KeysHeader {...propsMock} />)
+
+    fireEvent.click(screen.getByTestId("keys-refresh-btn"));
+
+    const expectedActions = [keysSlice.resetKeyInfo(), setBrowserSelectedKey(null), setBrowserPatternKeyListDataLoaded(true)]
+    expect(store.getActions()).toEqual(expectedActions)
+  });
 })

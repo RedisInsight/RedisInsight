@@ -180,6 +180,9 @@ export interface IStateRdiPipeline {
   data: Nullable<IPipeline>
   config: string
   jobs: IRdiPipelineJob[]
+  isPipelineValid: boolean
+  configValidationErrors: string[]
+  jobsValidationErrors: Record<string, string[]>
   resetChecked: boolean
   schema: Nullable<object>
   strategies: IRdiPipelineStrategies
@@ -250,12 +253,23 @@ interface ITargetDetail {
   error?: IErrorDetail
 }
 
+interface ISourcesDetail {
+  connected: boolean
+  error?: string
+}
+
+export interface IConnectionResult {
+  targets: ITargets
+  sources: ISourcesDetail
+}
+
 export interface ITargets {
   [key: string]: ITargetDetail
 }
 
 export interface TestConnectionsResponse {
   targets: ITargets
+  sources: ISourcesDetail
 }
 
 export interface IRdiConnectionResult {
@@ -263,9 +277,14 @@ export interface IRdiConnectionResult {
   error?: string
 }
 
-export interface TransformResult {
+export interface TransformGroupResult {
   success: IRdiConnectionResult[]
   fail: IRdiConnectionResult[]
+}
+
+export interface TransformResult {
+  target: TransformGroupResult
+  source: TransformGroupResult
 }
 
 export interface IStateRdiTestConnections {

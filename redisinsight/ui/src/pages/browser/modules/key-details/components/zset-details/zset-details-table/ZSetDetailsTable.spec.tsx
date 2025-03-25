@@ -3,9 +3,20 @@ import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { zsetDataSelector } from 'uiSrc/slices/browser/zset'
 import { anyToBuffer } from 'uiSrc/utils'
-import { render, screen, fireEvent, act, mockedStore, cleanup, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  screen,
+  fireEvent,
+  act,
+  mockedStore,
+  cleanup,
+  waitForEuiPopoverVisible,
+  waitForEuiToolTipVisible,
+} from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
 import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
+import { MOCK_TRUNCATED_BUFFER_VALUE } from 'uiSrc/mocks/data/bigString'
+import { TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA } from 'uiSrc/constants'
 import { ZSetDetailsTable, Props } from './ZSetDetailsTable'
 
 const mockedProps = mock<Props>()
@@ -138,6 +149,54 @@ describe('ZSetDetailsTable', () => {
       const memberEl = queryByTestId(/zset-member-value-/)
 
       expect(memberEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
+    })
+  })
+
+  describe('truncated data', () => {
+    beforeEach(() => {
+      const defaultState = jest.requireActual('uiSrc/slices/browser/zset').initialState
+      const zsetDataSelectorMock = jest.fn().mockReturnValue({
+        ...defaultState,
+        key: '123zxczxczxc',
+        members: [
+          { name: MOCK_TRUNCATED_BUFFER_VALUE, score: 1 },
+        ]
+      });
+      (zsetDataSelector as jest.Mock).mockImplementation(zsetDataSelectorMock)
+    })
+
+    it('should not be able to edit when member name is truncated', async () => {
+      render(<ZSetDetailsTable {...instance(mockedProps)} />)
+      const score = screen.getByTestId(/zset_content-value-/)
+
+      await act(async () => {
+        fireEvent.mouseOver(score)
+      })
+
+      const scoreEditButton = screen.getByTestId(/zset_edit-btn-/)
+
+      await act(async () => {
+        fireEvent.mouseOver(scoreEditButton)
+      })
+      await waitForEuiToolTipVisible()
+
+      expect(screen.getByTestId(/zset_edit-tooltip-/))
+        .toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
+    })
+
+    it('should not be able to delete when member name is truncated', async () => {
+      render(<ZSetDetailsTable {...instance(mockedProps)} />)
+      const removeButton = screen.getByTestId(/zset-remove-button-/)
+
+      expect(removeButton).toBeDisabled()
+
+      await act(async () => {
+        fireEvent.mouseOver(removeButton)
+      })
+      await waitForEuiToolTipVisible()
+
+      expect(screen.getByTestId(/zset-remove-button-.+-tooltip$/))
+        .toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
     })
   })
 })

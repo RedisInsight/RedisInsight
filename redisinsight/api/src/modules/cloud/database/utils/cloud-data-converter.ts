@@ -45,6 +45,7 @@ export const parseCloudDatabaseCapiResponse = (
     },
     cloudDetails: {
       cloudId: databaseId,
+      subscriptionId,
       subscriptionType,
       planMemoryLimit,
       memoryLimitMeasurementUnit,

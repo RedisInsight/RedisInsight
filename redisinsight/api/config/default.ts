@@ -27,7 +27,10 @@ const contentUri = posix.join('/', proxyPath, 'static', 'content');
 const defaultPluginsUri = posix.join('/', proxyPath, 'static', 'plugins');
 const pluginsAssetsUri = posix.join('/', proxyPath, 'static', 'resources', 'plugins');
 
-const socketPath = posix.join('/', proxyPath, 'socket.io');
+const socketProxyPath = trim(process.env.RI_SOCKET_PROXY_PATH, '/');
+
+const socketPath = posix.join('/', socketProxyPath, 'socket.io');
+
 const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'data')
   : join(__dirname, '..', 'data');
@@ -122,6 +125,8 @@ export default {
     maxRetriesPerRequest: parseInt(process.env.RI_CLIENTS_MAX_RETRIES_PER_REQUEST, 10) || 1,
     maxRedirections: parseInt(process.env.RI_CLIENTS_MAX_REDIRECTIONS, 10) || 3,
     slotsRefreshTimeout: parseInt(process.env.RI_CLIENTS_SLOTS_REQUEST_TIMEOUT, 10) || 5000,
+    maxStringSize: parseInt(process.env.RI_CLIENTS_MAX_STRING_SIZE, 10),
+    truncatedStringPrefix: process.env.RI_CLIENTS_TRUNCATED_STRING_PREFIX || '[Truncated due to length]',
   },
   redis_scan: {
     countDefault: parseInt(process.env.RI_SCAN_COUNT_DEFAULT, 10) || 200,
@@ -208,11 +213,6 @@ export default {
       name: 'redistimeseries',
       url: process.env.RI_COMMANDS_REDISTIMESERIES_URL
         || 'https://raw.githubusercontent.com/RedisTimeSeries/RedisTimeSeries/master/commands.json',
-    },
-    {
-      name: 'redisai',
-      url: process.env.RI_COMMANDS_REDISAI_URL
-        || 'https://raw.githubusercontent.com/RedisAI/RedisAI/master/commands.json',
     },
     {
       name: 'redisgraph',

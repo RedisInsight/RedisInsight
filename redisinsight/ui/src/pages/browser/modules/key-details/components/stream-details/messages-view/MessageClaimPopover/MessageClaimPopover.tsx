@@ -20,7 +20,7 @@ import {
 import { useFormik } from 'formik'
 import { orderBy, filter } from 'lodash'
 
-import { isEqualBuffers, validateNumber } from 'uiSrc/utils'
+import { isTruncatedString, isEqualBuffers, validateNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { selectedGroupSelector, selectedConsumerSelector } from 'uiSrc/slices/browser/stream'
 import { prepareDataForClaimRequest, getDefaultConsumer, ClaimTimeOptions } from 'uiSrc/utils/streamUtils'
@@ -134,7 +134,8 @@ const MessageClaimPopover = (props: Props) => {
   }
 
   useEffect(() => {
-    const consumersWithoutCurrent = filter(consumers, (consumer) =>
+    const consumersWithoutTruncatedNames = filter(consumers, ({ name }) => !isTruncatedString(name))
+    const consumersWithoutCurrent = filter(consumersWithoutTruncatedNames, (consumer) =>
       !isEqualBuffers(consumer.name, currentConsumerName))
     const sortedConsumers = orderBy(getConsumersOptions(consumersWithoutCurrent), ['name.viewValue'], ['asc'])
     if (sortedConsumers.length) {
@@ -154,7 +155,7 @@ const MessageClaimPopover = (props: Props) => {
       onClick={showPopover}
       data-testid="claim-pending-message"
       className={styles.claimBtn}
-      disabled={consumers.length < 2}
+      disabled={consumerOptions.length < 1}
     >
       CLAIM
     </EuiButton>
@@ -166,6 +167,7 @@ const MessageClaimPopover = (props: Props) => {
       position="top"
       display="inlineBlock"
       anchorClassName="flex-row"
+      data-testid="claim-pending-message-tooltip"
     >
       {button}
     </EuiToolTip>
@@ -183,7 +185,7 @@ const MessageClaimPopover = (props: Props) => {
       anchorClassName="claimPendingMessage"
       panelClassName={styles.popoverWrapper}
       closePopover={() => {}}
-      button={consumers.length < 2 ? buttonTooltip : button}
+      button={consumerOptions.length < 1 ? buttonTooltip : button}
     >
       <EuiForm>
         <EuiFlexGroup>

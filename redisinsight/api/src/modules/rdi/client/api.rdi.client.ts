@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { plainToClass } from 'class-transformer';
+import { Logger } from '@nestjs/common';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
@@ -14,7 +15,9 @@ import {
 import {
   RdiDryRunJobDto,
   RdiDryRunJobResponseDto,
+  RdiTestSourceConnectionResult,
   RdiTemplateResponseDto,
+  RdiTestTargetConnectionResult,
   RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
 import {
@@ -37,8 +40,14 @@ import { RdiResetPipelineFailedException } from '../exceptions/rdi-reset-pipelin
 import { RdiStartPipelineFailedException } from '../exceptions/rdi-start-pipeline-failed.exception';
 import { RdiStopPipelineFailedException } from '../exceptions/rdi-stop-pipeline-failed.exception';
 
+interface ConnectionsConfig {
+  sources: Record<string, Record<string, unknown>>;
+}
+
 export class ApiRdiClient extends RdiClient {
   protected readonly client: AxiosInstance;
+
+  private readonly logger = new Logger('ApiRdiClient');
 
   private auth: { jwt: string, exp: number };
 
@@ -171,17 +180,42 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  async testConnections(config: object): Promise<RdiTestConnectionsResponseDto> {
+  async testConnections(
+    config: ConnectionsConfig,
+  ): Promise<RdiTestConnectionsResponseDto> {
+    let targets: Record<string, RdiTestTargetConnectionResult> = {};
+    const sources: Record<string, RdiTestSourceConnectionResult> = {};
+
     try {
-      const response = await this.client.post(
-        RdiUrl.TestConnections,
+      const targetsResponse = await this.client.post(
+        RdiUrl.TestTargetsConnections,
         config,
       );
-
-      return response.data;
-    } catch (e) {
-      throw wrapRdiPipelineError(e);
+      targets = targetsResponse.data.targets;
+    } catch (error) {
+      throw wrapRdiPipelineError(error);
     }
+
+    try {
+      const sourceConfigs = Object.keys(config.sources || {});
+
+      if (sourceConfigs.length) {
+        await Promise.all(
+          sourceConfigs.map(async (source) => {
+            const response = await this.client.post(
+              RdiUrl.TestSourcesConnections,
+              { ...config.sources[source] },
+            );
+            sources[source] = response.data;
+          }),
+        );
+      }
+    } catch (error) {
+      // failing is expected on RDI version below 1.6.0 (1.4.3 for example)
+      this.logger.error('Failed to fetch sources', error);
+    }
+
+    return { targets, sources };
   }
 
   async getPipelineStatus(): Promise<any> {

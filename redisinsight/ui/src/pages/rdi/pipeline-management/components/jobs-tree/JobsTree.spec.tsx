@@ -1,4 +1,3 @@
-import { useFormikContext } from 'formik'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 
@@ -16,7 +15,8 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
     error: '',
     jobs: [
       { name: 'job1', value: 'value' }
-    ]
+    ],
+    jobsValidationErrors: {},
   })
 }))
 
@@ -206,5 +206,57 @@ describe('JobsTree', () => {
     })
 
     expect(mockOnSelectedTab).toBeCalledWith('config')
+  })
+
+  it('should display an error icon when job has validation errors', () => {
+    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
+      loading: false,
+      error: '',
+      jobs: [{ name: 'job1', value: 'value' }],
+      jobsValidationErrors: {
+        job1: ['Some validation error'],
+      },
+    }))
+
+    render(<JobsTree {...instance(mockedProps)} />)
+
+    expect(screen.getByTestId('rdi-nav-job-job1')).toBeInTheDocument()
+    expect(screen.getByTestId('rdi-nav-job-job1')).toContainElement(
+      screen.getByTestId('rdi-pipeline-nav__error')
+    )
+  })
+
+  it('should not display an error icon when job has no validation errors', () => {
+    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
+      loading: false,
+      error: '',
+      jobs: [{ name: 'job1', value: 'value' }],
+      jobsValidationErrors: {},
+    }))
+
+    render(<JobsTree {...instance(mockedProps)} />)
+
+    expect(screen.getByTestId('rdi-nav-job-job1')).toBeInTheDocument()
+    expect(screen.queryByTestId('rdi-pipeline-nav__error')).not.toBeInTheDocument()
+  })
+
+  it('should disable apply button when job name is invalid', async () => {
+    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
+      loading: false,
+      error: '',
+      jobs: [{ name: 'job1', value: 'value' }],
+      jobsValidationErrors: { job1: ['Invalid name'] },
+    }))
+
+    render(<JobsTree {...instance(mockedProps)} />)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('edit-job-name-job1'))
+    })
+
+    const input = screen.getByTestId('inline-item-editor')
+    fireEvent.change(input, { target: { value: '' } }) // Invalid name
+
+    expect(screen.getByTestId('apply-btn')).toBeDisabled()
   })
 })

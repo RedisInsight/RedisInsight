@@ -180,6 +180,14 @@ describe('AutodiscoveryService', () => {
 
   describe('addRedisDatabase', () => {
     it('should create database if redis_mode is standalone', async () => {
+      redisClientFactory.createClient.mockResolvedValue({
+        getInfo: async () => ({
+          server: {
+            redis_mode: 'standalone',
+          },
+        })
+      });
+
       await service['addRedisDatabase'](mockSessionMetadata, mockAutodiscoveryEndpoint);
 
       expect(databaseService.create).toHaveBeenCalledTimes(1);
@@ -193,10 +201,12 @@ describe('AutodiscoveryService', () => {
     });
 
     it('should not create database if redis_mode is not standalone', async () => {
-      (utils.convertRedisInfoReplyToObject as jest.Mock).mockReturnValueOnce({
-        server: {
-          redis_mode: 'cluster',
-        },
+      redisClientFactory.createClient.mockResolvedValue({
+        getInfo: async () => ({
+          server: {
+            redis_mode: 'cluster',
+          },
+        })
       });
 
       await service['addRedisDatabase'](mockSessionMetadata, mockAutodiscoveryEndpoint);

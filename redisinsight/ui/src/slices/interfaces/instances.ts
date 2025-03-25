@@ -313,6 +313,14 @@ export interface DatabaseConfigInfo {
   networkOutKbps?: Nullable<number>
   cpuUsagePercentage?: Nullable<number>
   serverName?: Nullable<string>
+  cloudDetails?: {
+    cloudId: number
+    subscriptionId: number
+    subscriptionType: 'fixed' | 'flexible'
+    planMemoryLimit: number
+    memoryLimitMeasurementUnit: string
+    isBdbPackages: boolean
+  }
 }
 
 export interface InitialStateInstances {

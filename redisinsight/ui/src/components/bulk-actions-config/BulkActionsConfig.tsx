@@ -1,30 +1,33 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { io, Socket } from 'socket.io-client'
+import { Socket } from 'socket.io-client'
 
 import {
-  setLoading,
-  setBulkDeleteLoading,
+  bulkActionsDeleteSelector,
   bulkActionsSelector,
   disconnectBulkDeleteAction,
   setBulkActionConnected,
-  setDeleteOverview,
   setBulkActionsInitialState,
-  bulkActionsDeleteSelector,
+  setBulkDeleteLoading,
+  setDeleteOverview,
   setDeleteOverviewStatus,
+  setLoading,
 } from 'uiSrc/slices/browser/bulkActions'
-import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
+import { getSocketApiUrl, Nullable } from 'uiSrc/utils'
 import { sessionStorageService } from 'uiSrc/services'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { isProcessingBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
-import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, SocketEvent } from 'uiSrc/constants'
+import {
+  BrowserStorageItem,
+  BulkActionsServerEvent,
+  BulkActionsStatus,
+  BulkActionsType,
+  SocketEvent,
+} from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { CustomHeaders } from 'uiSrc/constants/api'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
-import { getConfig } from 'uiSrc/config'
-
-const riConfig = getConfig()
+import { useIoConnection } from 'uiSrc/services/hooks/useIoConnection'
 
 const BulkActionsConfig = () => {
   const { id: instanceId = '', db } = useSelector(connectedInstanceSelector)
@@ -33,6 +36,7 @@ const BulkActionsConfig = () => {
   const { filter, search } = useSelector(keysSelector)
   const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
+  const connectIo = useIoConnection(getSocketApiUrl('bulk-actions'), { token, query: { instanceId } })
 
   const dispatch = useDispatch()
 
@@ -42,19 +46,7 @@ const BulkActionsConfig = () => {
     }
 
     let retryTimer: NodeJS.Timer
-
-    socketRef.current = io(`${getBaseApiUrl()}/bulk-actions`, {
-      path: getProxyPath(),
-      forceNew: true,
-      query: { instanceId },
-      extraHeaders: {
-        [CustomHeaders.WindowId]: window.windowId || '',
-        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
-      },
-      rejectUnauthorized: false,
-      transports: riConfig.api.socketTransports?.split(','),
-      withCredentials: riConfig.api.socketCredentials,
-    })
+    socketRef.current = connectIo()
 
     socketRef.current.on(SocketEvent.Connect, () => {
       clearTimeout(retryTimer)

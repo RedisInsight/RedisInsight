@@ -127,15 +127,15 @@ test
     await myRedisDatabasePage.clickOnDBByName(sshDbPasscode.databaseName);
     await Common.checkURLContainsText('browser');
 });
-test
-    .meta({ rte: rte.ossCluster })('Verify that  OSS Cluster database with SSH can be added and work correctly', async t => {
+test.skip
+    .meta({ rte: rte.ossCluster, skipComment: "Unstable and will be affected by RI-5995" })('Verify that  OSS Cluster database with SSH can be added and work correctly', async t => {
     const sshWithPass = {
         ...sshParams,
         sshPassword: 'pass'
     };
     // Verify that user can add SSH tunnel with Password for OSS Cluster database
     await myRedisDatabasePage.AddRedisDatabaseDialog.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
-    //TODO should be deleted after https://redislabs.atlassian.net/browse/RI-5995
+    // TODO: should be deleted after https://redislabs.atlassian.net/browse/RI-5995
     await t.wait(6000);
     await myRedisDatabasePage.clickOnDBByName(sshDbClusterPass.databaseName);
     if(! await browserPage.plusAddKeyButton.exists){

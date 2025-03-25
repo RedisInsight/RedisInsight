@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug API (Nest Framework)",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": [
+        "dev:api",
+        "--debug",
+        "--inspect-brk"
+      ],
+      "autoAttachChildProcesses": true,
+      "restart": true,
+      "sourceMaps": true,
+      "stopOnEntry": false,
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug API Integration Tests",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/redisinsight/api/node_modules/ts-mocha/bin/ts-mocha",
+      "args": [
+        "--paths",
+        "--config",
+        "./test/api/.mocharc.yml"
+      ],
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "cwd": "${workspaceFolder}/redisinsight/api",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}

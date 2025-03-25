@@ -8,7 +8,7 @@ import { cleanup, clearStoreActions, initialStateDefault, mockedStore, mockStore
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import { resetBrowserTree, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import { rootReducer } from 'uiSrc/slices/store'
 import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
@@ -1285,6 +1285,32 @@ describe('keys slice', () => {
           defaultSelectedKeyAction(),
           addErrorNotification(responsePayload as AxiosError),
           defaultSelectedKeyActionFailure(errorMessage),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('key info is reset when key not found', async () => {
+        // Arrange
+        const errorMessage = 'resource not found error'
+        const responsePayload = {
+          response: {
+            status: 404,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchKeyInfo("keyName"))
+
+        // Assert
+        const expectedActions = [
+          defaultSelectedKeyAction(),
+          addErrorNotification(responsePayload as AxiosError),
+          defaultSelectedKeyActionFailure(errorMessage),
+          resetKeyInfo(),
+          setBrowserSelectedKey(null),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

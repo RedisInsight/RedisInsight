@@ -178,52 +178,140 @@ describe('pipelineToYaml', () => {
 const transformConnectionResultsTests: any[] = [
   [
     null,
-    { success: [], fail: [] }
+    { target: { success: [], fail: [] }, source: { success: [], fail: [] } },
   ],
   [
     {
-      target1: {
-        status: 'success',
-        error: {
-          code: 'INVALID_CREDENTIALS',
-          message: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided'
-        }
-      },
-      target2: {
-        status: 'failed',
-        error: {
-          code: 'INVALID_CREDENTIALS',
-          message: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided'
-        }
-      },
-      target3: {
-        status: 'wrong status',
-      },
-      target4: {
-        status: 'wrong status',
-        error: {
-          code: 'INVALID_CREDENTIALS',
-          message: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided'
-        }
-      },
-      target5: {
-        status: 'success',
-      },
-      target6: {
-        unknownProperty: 'foo bar'
-      },
-      target7: {
-        status: 'failed',
+      targets: {
+        target1: {
+          status: 'success',
+          error: {
+            code: 'INVALID_CREDENTIALS',
+            message:
+              'Failed to establish connection to the PostgreSQL database. Invalid credentials provided',
+          },
+        },
+        target2: {
+          status: 'failed',
+          error: {
+            code: 'INVALID_CREDENTIALS',
+            message:
+              'Failed to establish connection to the PostgreSQL database. Invalid credentials provided',
+          },
+        },
+        target3: {
+          status: 'wrong status',
+        },
+        target4: {
+          status: 'wrong status',
+          error: {
+            code: 'INVALID_CREDENTIALS',
+            message:
+              'Failed to establish connection to the PostgreSQL database. Invalid credentials provided',
+          },
+        },
+        target5: {
+          status: 'success',
+        },
+        target6: {
+          unknownProperty: 'foo bar',
+        },
+        target7: {
+          status: 'failed',
+        },
       },
     },
     {
-      success: [{ target: 'target1' }, { target: 'target5' }],
-      fail: [
-        { target: 'target2', error: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided' },
-        { target: 'target7', error: 'Error' }
-      ],
-    }
-  ]
+      target: {
+        success: [{ target: 'target1' }, { target: 'target5' }],
+        fail: [
+          {
+            target: 'target2',
+            error:
+              'Failed to establish connection to the PostgreSQL database. Invalid credentials provided',
+          },
+          { target: 'target7', error: 'Error' },
+        ],
+      },
+      source: {
+        success: [],
+        fail: [],
+      },
+    },
+  ],
+  [
+    {
+      targets: {
+        target1: { status: 'success' },
+      },
+      sources: {
+        source1: {
+          connected: true,
+          error: 'Success',
+        }
+      },
+    },
+    {
+      target: {
+        success: [{ target: 'target1' }],
+        fail: [],
+      },
+      source: {
+        success: [{ target: 'source1' }],
+        fail: [],
+      },
+    },
+  ],
+  [
+    {
+      targets: {
+        target1: { status: 'success' },
+      },
+      sources: {
+        source1: {
+          connected: false,
+          error: 'Database unreachable',
+        }
+      },
+    },
+    {
+      target: {
+        success: [{ target: 'target1' }],
+        fail: [],
+      },
+      source: {
+        success: [],
+        fail: [{ target: 'source1', error: 'Database unreachable' }],
+      },
+    },
+  ],
+  [
+    {
+      targets: {
+        target1: { status: 'success' },
+      },
+      sources: {
+        source1: {
+          connected: false,
+          error: 'Database unreachable',
+        },
+        source2: {
+          connected: true,
+          error: '',
+        }
+      },
+    },
+    {
+      target: {
+        success: [{ target: 'target1' }],
+        fail: [],
+      },
+      source: {
+        success: [{ target: 'source2' }],
+        fail: [{ target: 'source1', error: 'Database unreachable' }],
+      },
+    },
+  ],
 ]
 
 describe('transformConnectionResults', () => {

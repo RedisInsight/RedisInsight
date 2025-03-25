@@ -5,6 +5,7 @@ import DbCompressor from './DbCompressor'
 import TlsDetails from './TlsDetails'
 import DatabaseForm from './DatabaseForm'
 import SSHDetails from './SSHDetails'
+import ForceStandalone from './ForceStandalone'
 
 export {
   DbInfo,
@@ -15,4 +16,5 @@ export {
   DatabaseForm,
   SSHDetails,
   DbCompressor,
+  ForceStandalone
 }

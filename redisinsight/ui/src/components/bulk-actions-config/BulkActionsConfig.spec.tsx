@@ -13,14 +13,19 @@ import {
   setBulkDeleteLoading, setDeleteOverviewStatus
 } from 'uiSrc/slices/browser/bulkActions'
 import { GlobalSubscriptions } from 'uiSrc/components'
+import * as ioHooks from 'uiSrc/services/hooks/useIoConnection'
+import { getSocketApiUrl } from 'uiSrc/utils'
 import BulkActionsConfig from './BulkActionsConfig'
 
 let store: typeof mockedStore
 let socket: typeof MockedSocket
+let useIoConnectionSpy: jest.SpyInstance
+
 beforeEach(() => {
   cleanup()
   socket = new MockedSocket()
   socketIO.mockReturnValue(socket)
+  useIoConnectionSpy = jest.spyOn(ioHooks, 'useIoConnection')
   store = cloneDeep(mockedStore)
   store.clearActions()
 })
@@ -75,6 +80,8 @@ describe('BulkActionsConfig', () => {
       setBulkDeleteLoading(true)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
+    expect(useIoConnectionSpy)
+      .toHaveBeenCalledWith(getSocketApiUrl('bulk-actions'), { query: { instanceId: '1' }, token: '' })
   })
 
   it('should not connect socket', () => {

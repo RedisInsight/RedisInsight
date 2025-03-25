@@ -129,7 +129,16 @@ export abstract class RedisClientFactory {
         client = await connectionStrategy.createStandaloneClient(clientMetadata, database, opts);
         break;
       case ConnectionType.CLUSTER:
-        client = await connectionStrategy.createClusterClient(clientMetadata, database, opts);
+        if (database.forceStandalone) {
+          this.logger.debug('Force standalone connection', {
+            clientMetadata,
+            database,
+          });
+          // if force standalone, ignore connectionType
+          client = await connectionStrategy.createStandaloneClient(clientMetadata, database, opts);
+        } else {
+          client = await connectionStrategy.createClusterClient(clientMetadata, database, opts);
+        }
         break;
       case ConnectionType.SENTINEL:
         client = await connectionStrategy.createSentinelClient(clientMetadata, database, opts);

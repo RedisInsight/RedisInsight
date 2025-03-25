@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { EuiLoadingSpinner } from '@elastic/eui'
 import { isArray, isUndefined, toNumber } from 'lodash'
 
-import { formatBytes, Nullable, truncateNumberToRange, truncatePercentage } from 'uiSrc/utils'
+import { formatBytes, Nullable, toBytes, truncateNumberToRange, truncatePercentage } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import {
@@ -30,6 +30,7 @@ interface Props {
   items: {
     version: string,
     usedMemory?: Nullable<number>
+    usedMemoryPercent?: Nullable<number>
     totalKeys?: Nullable<number>
     connectedClients?: Nullable<number>
     opsPerSecond?: Nullable<number>
@@ -37,6 +38,13 @@ interface Props {
     networkOutKbps?: Nullable<number>
     cpuUsagePercentage?: Nullable<number>
     totalKeysPerDb?: Nullable<{ [key: string]: number }>
+    cloudDetails?: {
+      cloudId: number
+      subscriptionId: number;
+      subscriptionType: 'fixed' | 'flexible'
+      planMemoryLimit: number
+      memoryLimitMeasurementUnit: string
+    }
   }
 }
 
@@ -61,6 +69,7 @@ export interface IMetric {
 export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetric> => {
   const {
     usedMemory,
+    usedMemoryPercent,
     totalKeys,
     connectedClients,
     cpuUsagePercentage,
@@ -68,6 +77,7 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     networkInKbps,
     networkOutKbps,
     totalKeysPerDb = {},
+    cloudDetails
   } = items
 
   const availableItems: Array<IMetric> = []
@@ -189,11 +199,21 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     ]
   }
 
-  availableItems.push(opsPerSecItem)
+  opsPerSecond !== undefined && availableItems.push(opsPerSecItem)
 
   // Used memory
+  const planMemoryLimit = cloudDetails?.planMemoryLimit
+  const memoryUsed = formatBytes(usedMemory || 0, 0)
+  const planMemory = planMemoryLimit ? formatBytes(toBytes(planMemoryLimit, cloudDetails?.memoryLimitMeasurementUnit || 'MB') || 0, 1) : ''
+
+  const memoryContent = planMemoryLimit
+    ? (
+      <span>{memoryUsed} / <strong>{planMemory}</strong> ({usedMemoryPercent}%)</span>
+    ) : memoryUsed
+  const memoryUsedTooltip = planMemory ? ` / ${planMemory} (${usedMemoryPercent}%)` : ''
+
   const formattedUsedMemoryTooltip = formatBytes(usedMemory || 0, 3, true)
-  availableItems.push({
+  usedMemory !== undefined && availableItems.push({
     id: 'overview-total-memory',
     value: usedMemory,
     unavailableText: 'Total Memory is not available',
@@ -207,12 +227,13 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
             <b>{formattedUsedMemoryTooltip[0]}</b>
             &nbsp;
             {formattedUsedMemoryTooltip[1]}
+            {memoryUsedTooltip}
           </>
         )
-        : formattedUsedMemoryTooltip
+        : `${formattedUsedMemoryTooltip}${memoryUsedTooltip}`,
     },
     icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
-    content: formatBytes(usedMemory || 0, 0),
+    content: memoryContent,
   })
 
   // Total keys
@@ -259,13 +280,13 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     ]
   }
 
-  availableItems.push(totalKeysItem)
+  totalKeys !== undefined && availableItems.push(totalKeysItem)
 
   const getConnectedClient = (connectedClients: number = 0) =>
     (Number.isInteger(connectedClients) ? connectedClients : `~${Math.round(connectedClients)}`)
 
   // Connected clients
-  availableItems.push({
+  connectedClients !== undefined && availableItems.push({
     id: 'overview-connected-clients',
     value: connectedClients,
     unavailableText: 'Connected Clients are not available',

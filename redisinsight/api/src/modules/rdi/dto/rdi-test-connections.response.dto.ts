@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
+import { TransformToMap } from 'src/common/decorators/transform-to-map.decorator';
 
 export enum RdiTestConnectionStatus {
   Success = 'success',
@@ -22,7 +23,7 @@ class ErrorDetails {
   message: string;
 }
 
-export class RdiTestConnectionResult {
+export class RdiTestTargetConnectionResult {
   @ApiProperty({
     description: 'Connection status',
     enum: RdiTestConnectionStatus,
@@ -39,11 +40,31 @@ export class RdiTestConnectionResult {
   error?: ErrorDetails;
 }
 
+export class RdiTestSourceConnectionResult {
+  @ApiProperty({ description: 'Indicates if the source is connected' })
+  @Expose()
+  connected: boolean;
+
+  @ApiProperty({
+    description: 'Error message if connection fails',
+    required: false,
+  })
+  @Expose()
+  error?: string;
+}
+
 export class RdiTestConnectionsResponseDto {
   @ApiProperty({
     description: 'Sources connection results',
   })
   @Expose()
-  @Type(() => RdiTestConnectionResult)
-  sources: Record<string, RdiTestConnectionResult>;
+  @TransformToMap(RdiTestSourceConnectionResult)
+  sources: Record<string, RdiTestSourceConnectionResult>;
+
+  @ApiProperty({
+    description: 'Targets connection results',
+  })
+  @Expose()
+  @TransformToMap(RdiTestTargetConnectionResult)
+  targets: Record<string, RdiTestTargetConnectionResult>;
 }

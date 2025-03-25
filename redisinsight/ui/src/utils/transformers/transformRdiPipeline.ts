@@ -1,9 +1,9 @@
 import yaml, { YAMLException } from 'js-yaml'
 import { isEmpty } from 'lodash'
 import {
+  IConnectionResult,
   IPipeline,
   IPipelineJSON,
-  ITargets,
   IYamlFormatError,
   TestConnectionStatus,
   TransformResult
@@ -52,24 +52,43 @@ export const pipelineToJson = ({ config, jobs }: IPipeline, onError: (errors: IY
   return result
 }
 
-export const transformConnectionResults = (sources: ITargets): TransformResult => {
-  const result: TransformResult = { success: [], fail: [] }
-  if (!sources) {
+export const transformConnectionResults = (
+  results: IConnectionResult,
+): TransformResult => {
+  const result: TransformResult = {
+    target: { success: [], fail: [] },
+    source: { success: [], fail: [] },
+  }
+
+  if (!results?.targets) {
     return result
   }
 
   try {
-    Object.entries(sources).forEach(([source, details]) => {
+    Object.entries(results.targets).forEach(([target, details]) => {
       if (details.status === TestConnectionStatus.Success) {
-        result.success.push({ target: source })
+        result.target.success.push({ target })
       } else if (details.status === TestConnectionStatus.Fail) {
         const errorMessage = details.error?.message || 'Error'
-        result.fail.push({ target: source, error: errorMessage })
+        result.target.fail.push({ target, error: errorMessage })
       }
     })
   } catch (error) {
     // ignore
   }
+
+  if (!results?.sources) {
+    return result
+  }
+
+  Object.entries(results.sources).forEach(([source, details]) => {
+    if (details.connected) {
+      result.source.success.push({ target: source })
+    } else {
+      const errorMessage = details.error || 'Error'
+      result.source.fail.push({ target: source, error: errorMessage })
+    }
+  })
 
   return result
 }

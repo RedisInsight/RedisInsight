@@ -16,11 +16,11 @@ export class RdiEntity {
   name: string;
 
   @Expose()
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   username: string;
 
   @Expose()
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   password: string;
 
   @Expose()

@@ -87,8 +87,9 @@ export class DatabaseConnectionService {
 
       this.analytics.sendDatabaseConnectedClientListEvent(
         clientMetadata.sessionMetadata,
-        clientMetadata.databaseId,
         {
+          databaseId: clientMetadata.databaseId,
+          ...(client.isInfoCommandDisabled ? { info_command_is_disabled: true } : {}),
           clients: clients.map((c) => ({
             version: version || 'n/a',
             resp: intVersion < 7 ? undefined : c?.['resp'] || 'n/a',

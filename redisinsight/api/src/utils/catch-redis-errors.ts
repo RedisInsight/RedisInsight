@@ -75,11 +75,16 @@ export const getRedisConnectionException = (
       );
     }
 
+    if (error.message.includes(RedisErrorCodes.ClusterAllFailedError)) {
+      return new ServiceUnavailableException(
+        ERROR_MESSAGES.DB_CLUSTER_CONNECT_FAILED,
+      );
+    }
+
     if (
       error.message.includes(RedisErrorCodes.ConnectionRefused)
       || error.message.includes(RedisErrorCodes.ConnectionNotFound)
       || error.message.includes(RedisErrorCodes.DNSTimeoutError)
-      || error.message.includes('Failed to refresh slots cache')
       || error?.code === RedisErrorCodes.ConnectionReset
     ) {
       return new ServiceUnavailableException(

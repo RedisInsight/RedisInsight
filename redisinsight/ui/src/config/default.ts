@@ -41,6 +41,8 @@ export const defaultConfig = {
     type: process.env.RI_APP_TYPE,
     resourcesBaseUrl: process.env.RI_RESOURCES_BASE_URL ?? apiUrl, // todo: no usage found
     unauthenticatedRedirect: process.env.RI_401_REDIRECT_URL ?? '',
+    smConsoleRedirect: process.env.RI_SM_REDIRECT_URL ?? '',
+    dbUpgradeRedirectBase: process.env.RI_DB_UPGRADE_REDIRECT_URL ?? '',
     defaultTheme: process.env.RI_DEFAULT_THEME ?? 'DARK',
     lazyLoad: booleanEnv('RI_ROUTES_LAZY_LOAD', false),
     routesExcludedByEnv: booleanEnv('RI_ROUTES_EXCLUDED_BY_ENV', false),
@@ -53,6 +55,7 @@ export const defaultConfig = {
     localResourcesBaseUrl: process.env.RI_LOCAL_RESOURCES_BASE_URL,
     useLocalResources: booleanEnv('RI_USE_LOCAL_RESOURCES', false),
     indexedDbName: process.env.RI_INDEXED_DB_NAME || 'RI_LOCAL_STORAGE',
+    truncatedStringPrefix: process.env.RI_CLIENTS_TRUNCATED_STRING_PREFIX || '[Truncated due to length]',
   },
   workbench: {
     pipelineCountDefault: intEnv('PIPELINE_COUNT_DEFAULT', 5),

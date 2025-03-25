@@ -74,7 +74,7 @@ filesToUpdate.forEach(file => {
     content = content.replace(file.regex, file.replacement);
 
     if (content === originalContent) {
-      console.warn(`⚠️ No version pattern found in: ${file.path}`);
+      console.warn(`No version pattern found in: ${file.path}`);
       skippedFiles++;
       return;
     }

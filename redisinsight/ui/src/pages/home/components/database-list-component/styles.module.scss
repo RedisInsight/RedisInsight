@@ -96,6 +96,10 @@ $breakpoint-l: 1400px;
       visibility: hidden;
     }
   }
+
+  :global(.hideSelectableCheckboxes .euiCheckbox) {
+    visibility: hidden;
+  }
 }
 
 .cloudIcon {

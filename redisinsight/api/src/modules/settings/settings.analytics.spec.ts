@@ -122,7 +122,7 @@ describe('SettingsAnalytics', () => {
         mockSessionMetadata,
         {
           event: TelemetryEvents.AnalyticsPermission,
-          eventData: { state: 'disabled', reason: 'test-reason' },
+          eventData: { state: 'disabled', reason: 'none' },
           nonTracking: true,
         },
       );

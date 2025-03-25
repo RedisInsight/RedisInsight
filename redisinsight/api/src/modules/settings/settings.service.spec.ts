@@ -254,7 +254,7 @@ describe('SettingsService', () => {
             ...mockAgreements.data,
           }),
         ),
-        'some reason',
+        'github',
       );
     });
     it('should update agreements and settings', async () => {

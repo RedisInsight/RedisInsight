@@ -16,7 +16,7 @@ import { readFile } from 'fs-extra';
 import { join } from 'path';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
 import config, { Config } from 'src/utils/config';
-import { AgreementIsNotDefinedException } from 'src/constants';
+import { AgreementIsNotDefinedException, ToggleAnalyticsReasonType } from 'src/constants';
 import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
 import { KeyEncryptionStrategy } from 'src/modules/encryption/strategies/key-encryption.strategy';
 import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
@@ -80,7 +80,7 @@ export class SettingsService {
     dto: UpdateSettingsDto,
   ): Promise<GetAppSettingsResponse> {
     this.logger.debug('Updating application settings.', sessionMetadata);
-    const { agreements, ...settings } = dto;
+    const { agreements, analyticsReason, ...settings } = dto;
     try {
       const oldAppSettings = await this.getAppSettings(sessionMetadata);
       if (!isEmpty(settings)) {
@@ -96,7 +96,7 @@ export class SettingsService {
         await this.settingsRepository.update(sessionMetadata, toUpdate);
       }
       if (agreements) {
-        await this.updateAgreements(sessionMetadata, agreements);
+        await this.updateAgreements(sessionMetadata, agreements, analyticsReason);
       }
       this.logger.debug('Succeed to update application settings.', sessionMetadata);
       const results = await this.getAppSettings(sessionMetadata);
@@ -193,6 +193,7 @@ export class SettingsService {
   private async updateAgreements(
     sessionMetadata: SessionMetadata,
     dtoAgreements: Map<string, boolean> = new Map(),
+    analyticsReason?: ToggleAnalyticsReasonType,
   ): Promise<void> {
     this.logger.debug('Updating application agreements.', sessionMetadata);
     const oldAgreements = await this.agreementRepository.getOrCreate(sessionMetadata);
@@ -206,7 +207,6 @@ export class SettingsService {
         ...Object.fromEntries(dtoAgreements),
       },
     };
-
     // Detect which agreements should be defined according to the settings specification
     const diff = difference(
       Object.keys(agreementsSpec.agreements),
@@ -226,6 +226,7 @@ export class SettingsService {
         sessionMetadata,
         dtoAgreements,
         new Map(Object.entries(oldAgreements.data || {})),
+        analyticsReason,
       );
     }
   }

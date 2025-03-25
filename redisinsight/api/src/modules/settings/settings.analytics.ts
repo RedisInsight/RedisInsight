@@ -1,12 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import {
-  differenceWith,
-  isEqual,
-  has,
-} from 'lodash';
-import { AppAnalyticsEvents, TelemetryEvents } from 'src/constants';
-import { getRangeForNumber, getIsPipelineEnable, SCAN_THRESHOLD_BREAKPOINTS } from 'src/utils';
+import { differenceWith, has, isEqual } from 'lodash';
+import { AppAnalyticsEvents, TelemetryEvents, ToggleAnalyticsReasonType } from 'src/constants';
+import { getIsPipelineEnable, getRangeForNumber, SCAN_THRESHOLD_BREAKPOINTS } from 'src/utils';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { GetAppSettingsResponse } from 'src/modules/settings/dto/settings.dto';
 import { SessionMetadata } from 'src/common/models';
@@ -42,6 +38,7 @@ export class SettingsAnalytics extends TelemetryBaseService {
     sessionMetadata: SessionMetadata,
     newAgreements: Map<string, boolean>,
     oldAgreements: Map<string, boolean> = new Map(),
+    reason?: ToggleAnalyticsReasonType,
   ) {
     try {
       const newPermission = newAgreements.get('analytics');
@@ -54,6 +51,7 @@ export class SettingsAnalytics extends TelemetryBaseService {
             event: TelemetryEvents.AnalyticsPermission,
             eventData: {
               state: newPermission ? 'enabled' : 'disabled',
+              reason,
             },
             nonTracking: true,
           },

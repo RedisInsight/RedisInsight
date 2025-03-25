@@ -1,5 +1,6 @@
 import {
   Criteria,
+  EuiButtonEmpty,
   EuiButtonIcon,
   EuiIcon,
   EuiLink,
@@ -467,26 +468,28 @@ const DatabasesListWrapper = (props: Props) => {
             )}
             <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
               <EuiPopover
-                anchorPosition='leftUp'
                 ownFocus
+                initialFocus={false}
+                anchorPosition='leftUp'
                 isOpen={controlsOpenIdRef.current === instance.id}
                 closePopover={() => toggleControlsPopover('')}
-                panelPaddingSize="m"
+                panelPaddingSize="s"
                 button={controlsButton(instance.id)}
                 data-testid={`controls-popover-${instance.id}`}
               >
                 <div className="controlsPopoverContent">
                   <div>
-                    <EuiButtonIcon
+                    <EuiButtonEmpty
                       iconType="pencil"
                       className="editInstanceBtn"
                       aria-label="Edit instance"
                       data-testid={`edit-instance-${instance.id}`}
                       onClick={() => handleClickEditInstance(instance)}
-                    />
-                    <span>Edit database</span>
+                    >
+                      Edit database
+                    </EuiButtonEmpty>
                   </div>
-                  <div className="mt-10px">
+                  <div>
                     <PopoverDelete
                       header={formatLongName(instance.name, 50, 10, '...')}
                       text="will be removed from Redis Insight."
@@ -499,8 +502,8 @@ const DatabasesListWrapper = (props: Props) => {
                       handleDeleteItem={() => handleDeleteInstance(instance)}
                       handleButtonClick={() => handleClickDeleteInstance(instance)}
                       testid={`delete-instance-${instance.id}`}
+                      buttonLabel="Remove database"
                     />
-                    <span>Remove database</span>
                   </div>
                 </div>
               </EuiPopover>

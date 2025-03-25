@@ -28,7 +28,8 @@ export interface Props<T> {
   loading: boolean
   data: T[]
   onTableChange: ({ sort, page }: Criteria<T>) => void
-  sort: PropertySort
+  sort: PropertySort,
+  hideSelectableCheckboxes?: boolean,
 }
 
 function ItemList<T extends { id: string; visible?: boolean }>({
@@ -44,7 +45,8 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   loading,
   data: instances,
   onTableChange,
-  sort
+  sort,
+  hideSelectableCheckboxes,
 }: Props<T>) {
   const [columns, setColumns] = useState<EuiTableFieldDataColumnType<T>[]>(columnsProp)
   const [selection, setSelection] = useState<T[]>([])
@@ -175,7 +177,7 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   `
 
   return (
-    <div className="itemList" ref={containerTableRef}>
+    <div className={`itemList ${hideSelectableCheckboxes ? 'hideSelectableCheckboxes' : ''}`} ref={containerTableRef}>
       <EuiInMemoryTable
         ref={tableRef}
         items={instances.filter(({ visible = true }) => visible)}

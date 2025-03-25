@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { differenceWith, has, isEqual } from 'lodash';
-import { AppAnalyticsEvents, TelemetryEvents, ToggleAnalyticsReasonType } from 'src/constants';
-import { getIsPipelineEnable, getRangeForNumber, SCAN_THRESHOLD_BREAKPOINTS } from 'src/utils';
+import { AppAnalyticsEvents, TelemetryEvents } from 'src/constants';
+import {
+  getIsPipelineEnable,
+  getRangeForNumber,
+  SCAN_THRESHOLD_BREAKPOINTS,
+} from 'src/utils';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { GetAppSettingsResponse } from 'src/modules/settings/dto/settings.dto';
 import { SessionMetadata } from 'src/common/models';
+import { ToggleAnalyticsReasonType } from 'src/modules/settings/constants/settings';
 
 @Injectable()
 export class SettingsAnalytics extends TelemetryBaseService {
@@ -20,13 +25,25 @@ export class SettingsAnalytics extends TelemetryBaseService {
   ): void {
     try {
       const dif = Object.fromEntries(
-        differenceWith(Object.entries(newSettings), Object.entries(oldSettings), isEqual),
+        differenceWith(
+          Object.entries(newSettings),
+          Object.entries(oldSettings),
+          isEqual,
+        ),
       );
       if (has(dif, 'scanThreshold')) {
-        this.sendScanThresholdChanged(sessionMetadata, dif.scanThreshold, oldSettings.scanThreshold);
+        this.sendScanThresholdChanged(
+          sessionMetadata,
+          dif.scanThreshold,
+          oldSettings.scanThreshold,
+        );
       }
       if (has(dif, 'batchSize')) {
-        this.sendWorkbenchPipelineChanged(sessionMetadata, dif.batchSize, oldSettings.batchSize);
+        this.sendWorkbenchPipelineChanged(
+          sessionMetadata,
+          dif.batchSize,
+          oldSettings.batchSize,
+        );
       }
     } catch (e) {
       // continue regardless of error
@@ -44,18 +61,14 @@ export class SettingsAnalytics extends TelemetryBaseService {
       const newPermission = newAgreements.get('analytics');
       const oldPermission = oldAgreements.get('analytics');
       if (oldPermission !== newPermission) {
-        this.eventEmitter.emit(
-          AppAnalyticsEvents.Track,
-          sessionMetadata,
-          {
-            event: TelemetryEvents.AnalyticsPermission,
-            eventData: {
-              state: newPermission ? 'enabled' : 'disabled',
-              reason,
-            },
-            nonTracking: true,
+        this.eventEmitter.emit(AppAnalyticsEvents.Track, sessionMetadata, {
+          event: TelemetryEvents.AnalyticsPermission,
+          eventData: {
+            state: newPermission ? 'enabled' : 'disabled',
+            reason,
           },
-        );
+          nonTracking: true,
+        });
       }
     } catch (e) {
       // continue regardless of error
@@ -72,14 +85,24 @@ export class SettingsAnalytics extends TelemetryBaseService {
       TelemetryEvents.SettingsScanThresholdChanged,
       {
         currentValue,
-        currentValueRange: getRangeForNumber(currentValue, SCAN_THRESHOLD_BREAKPOINTS),
+        currentValueRange: getRangeForNumber(
+          currentValue,
+          SCAN_THRESHOLD_BREAKPOINTS,
+        ),
         previousValue,
-        previousValueRange: getRangeForNumber(previousValue, SCAN_THRESHOLD_BREAKPOINTS),
+        previousValueRange: getRangeForNumber(
+          previousValue,
+          SCAN_THRESHOLD_BREAKPOINTS,
+        ),
       },
     );
   }
 
-  private sendWorkbenchPipelineChanged(sessionMetadata: SessionMetadata, newValue: number, currentValue: number): void {
+  private sendWorkbenchPipelineChanged(
+    sessionMetadata: SessionMetadata,
+    newValue: number,
+    currentValue: number,
+  ): void {
     this.sendEvent(
       sessionMetadata,
       TelemetryEvents.SettingsWorkbenchPipelineChanged,

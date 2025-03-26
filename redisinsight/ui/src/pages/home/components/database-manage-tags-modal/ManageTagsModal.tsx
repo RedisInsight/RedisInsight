@@ -3,13 +3,11 @@ import React, { useState, useMemo, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import {
   EuiButton,
-  EuiFieldText,
   EuiIcon,
   EuiSpacer,
   EuiTitle,
   EuiText,
   EuiButtonEmpty,
-  EuiToolTip,
 } from '@elastic/eui'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
@@ -17,11 +15,8 @@ import { FormDialog } from 'uiSrc/components'
 import { updateInstanceAction } from 'uiSrc/slices/instances/instances'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import {
-  INVALID_FIELD_MESSAGE,
-  VALID_TAG_REGEX,
-} from './constants'
-import { TagSuggestions } from './TagSuggestions'
+import { VALID_TAG_REGEX } from './constants'
+import { TagInputField } from './TagInputField'
 import styles from './styles.module.scss'
 
 type ManageTagsModalProps = {
@@ -71,6 +66,7 @@ export const ManageTagsModal = ({
   )
 
   const isSaveButtonDisabled = !isModified || hasErrors
+  const isCloudDb = instance.provider === 'RE_CLOUD'
 
   const handleTagChange = useCallback(
     (index: number, key: 'key' | 'value', value: string) => {
@@ -123,20 +119,28 @@ export const ManageTagsModal = ({
         </div>
       }
       footer={
-        <div className={styles.footer}>
-          <EuiButton onClick={onClose} size="s">
-            Close
-          </EuiButton>
-          <EuiButton
-            onClick={handleSave}
-            fill
-            size="s"
-            color="secondary"
-            isDisabled={isSaveButtonDisabled}
-          >
-            Save tags
-          </EuiButton>
-        </div>
+        <>
+          {isCloudDb && (
+            <div>
+              Tag changes in Redis Insight apply locally and are not synced with
+              Redis Cloud.
+            </div>
+          )}
+          <div className={styles.footer}>
+            <EuiButton onClick={onClose} size="s">
+              Close
+            </EuiButton>
+            <EuiButton
+              onClick={handleSave}
+              fill
+              size="s"
+              color="secondary"
+              isDisabled={isSaveButtonDisabled}
+            >
+              Save tags
+            </EuiButton>
+          </div>
+        </>
       }
       className={styles.manageTagsModal}
     >
@@ -156,76 +160,50 @@ export const ManageTagsModal = ({
 
             return (
               <div key={`tag-row-${index}`} className={styles.tagFormRow}>
-                <div>
-                  <EuiToolTip
-                    content={isKeyInvalid && INVALID_FIELD_MESSAGE}
-                    position="top"
-                  >
-                    <div>
-                      <EuiFieldText
-                        value={tag.key}
-                        isInvalid={isKeyInvalid}
-                        onChange={(e) =>
-                          handleTagChange(index, 'key', e.target.value)
-                        }
-                        onFocusCapture={() => {
-                          setFocusedTagKeyIndex(index)
-                          setFocusedTagValueIndex(null)
-                        }}
-                        // onBlur={() => setFocusedTagKeyIndex(null)}
-                      />
-                      {focusedTagKeyIndex === index && (
-                        <TagSuggestions
-                          targetKey={undefined}
-                          searchTerm={tag.key}
-                          currentTagKeys={currentTagKeys}
-                          onChange={(value) => {
-                            handleTagChange(index, 'key', value)
-                            setFocusedTagKeyIndex(null)
-                          }}
-                        />
-                      )}
-                    </div>
-                  </EuiToolTip>
-                  :
-                </div>
-                <div>
-                  <EuiToolTip
-                    content={tag.key && isValueInvalid && INVALID_FIELD_MESSAGE}
-                    position="top"
-                  >
-                    <div>
-                      <EuiFieldText
-                        value={tag.value}
-                        isInvalid={isValueInvalid}
-                        disabled={!tag.key || isKeyInvalid}
-                        onChange={(e) =>
-                          handleTagChange(index, 'value', e.target.value)
-                        }
-                        onFocusCapture={() => {
-                          setFocusedTagValueIndex(index)
-                          setFocusedTagKeyIndex(null)
-                        }}
-                      />
-                      {focusedTagValueIndex === index && (
-                        <TagSuggestions
-                          targetKey={tag.key}
-                          searchTerm={tag.value}
-                          currentTagKeys={currentTagKeys}
-                          onChange={(value) => {
-                            handleTagChange(index, 'value', value)
-                            setFocusedTagValueIndex(null)
-                          }}
-                        />
-                      )}
-                    </div>
-                  </EuiToolTip>
-                  <EuiIcon
-                    type="trash"
-                    onClick={() => handleRemoveTag(index)}
-                    className={styles.deleteIcon}
-                  />
-                </div>
+                <TagInputField
+                  isFieldInvalid={isKeyInvalid}
+                  value={tag.key}
+                  currentTagKeys={currentTagKeys}
+                  showSuggestions={focusedTagKeyIndex === index}
+                  suggestedTagKey={undefined}
+                  onChange={(e) =>
+                    handleTagChange(index, 'key', e.target.value)
+                  }
+                  onFocusCapture={() => {
+                    setFocusedTagKeyIndex(index)
+                    setFocusedTagValueIndex(null)
+                  }}
+                  onTagSuggestionSelect={(value) => {
+                    handleTagChange(index, 'key', value)
+                    setFocusedTagKeyIndex(null)
+                  }}
+                  rightContent={<>:</>}
+                />
+                <TagInputField
+                  isFieldInvalid={isValueInvalid}
+                  value={tag.value}
+                  currentTagKeys={currentTagKeys}
+                  showSuggestions={focusedTagValueIndex === index}
+                  suggestedTagKey={tag.key}
+                  onChange={(e) =>
+                    handleTagChange(index, 'value', e.target.value)
+                  }
+                  onFocusCapture={() => {
+                    setFocusedTagValueIndex(index)
+                    setFocusedTagKeyIndex(null)
+                  }}
+                  onTagSuggestionSelect={(value) => {
+                    handleTagChange(index, 'value', value)
+                    setFocusedTagValueIndex(null)
+                  }}
+                  rightContent={
+                    <EuiIcon
+                      type="trash"
+                      onClick={() => handleRemoveTag(index)}
+                      className={styles.deleteIcon}
+                    />
+                  }
+                />
               </div>
             )
           })}

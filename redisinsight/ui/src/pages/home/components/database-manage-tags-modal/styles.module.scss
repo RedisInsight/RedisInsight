@@ -7,6 +7,12 @@
   max-height: 100% !important;
   overflow-y: auto;
   z-index: 1000 !important;
+
+  :global {
+    .euiModalFooter {
+      padding: 0 !important;
+    }
+  }
 }
 
 .tagForm {
@@ -24,6 +30,7 @@
     flex: 1;
     padding: 6px;
     margin: 6px;
+    margin-right: 10px;
   }
 
   :first-child {

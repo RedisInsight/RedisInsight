@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import * as jsonpatch from 'fast-json-patch'
 import { EuiButton, EuiFlexItem } from '@elastic/eui'
 import { MonacoEditor } from 'uiSrc/components/monaco-editor'
 
@@ -35,6 +36,11 @@ const RejsonDetails = (props: BaseProps) => {
   const isValidJson = isValidJSON(value)
   const isUpdateActive = !hasContentChanged || !isValidJson
 
+  const submitUpdate = () => {
+    const patch = jsonpatch.compare(data || {}, JSON.parse(value))
+    console.log('patch :>> ', patch);
+  }
+
   return (
     <div className={styles.jsonData} id="jsonData" data-testid="json-data">
       <MonacoEditor
@@ -49,7 +55,7 @@ const RejsonDetails = (props: BaseProps) => {
 
       <EuiFlexItem className={styles.actions}>
         <EuiButton
-          onClick={() => {}}
+          onClick={submitUpdate}
           fill
           color="secondary"
           disabled={isUpdateActive}

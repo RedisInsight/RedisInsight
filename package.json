@@ -245,6 +245,7 @@
     "electron-log": "^4.2.4",
     "electron-store": "^8.0.0",
     "electron-updater": "^6.3.9",
+    "fast-json-patch": "^3.1.1",
     "file-saver": "^2.0.5",
     "formik": "^2.2.9",
     "fzstd": "^0.1.0",

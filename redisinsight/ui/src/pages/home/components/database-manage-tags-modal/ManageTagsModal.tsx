@@ -11,6 +11,7 @@ import {
 } from '@elastic/eui'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
+import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
 
 import { updateInstanceAction } from 'uiSrc/slices/instances/instances'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
@@ -121,9 +122,12 @@ export const ManageTagsModal = ({
       footer={
         <>
           {isCloudDb && (
-            <div>
-              Tag changes in Redis Insight apply locally and are not synced with
-              Redis Cloud.
+            <div className={styles.warning}>
+              <EuiIcon type={WarningIcon} color="warning" size="m" />
+              <EuiText size="m">
+                Tag changes in Redis Insight apply locally and are not synced
+                with Redis Cloud.
+              </EuiText>
             </div>
           )}
           <div className={styles.footer}>

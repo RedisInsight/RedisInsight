@@ -18,14 +18,14 @@
 
 .tagForm {
   margin: 0px 32px;
-  border: 1px solid #3D3D3D;
+  border: 1px solid var(--separatorColor);
   border-radius: 8px;
 }
 
 .tagFormHeader {
   display: flex;
   text-align: left;
-  border-bottom: 1px solid #3D3D3D;
+  border-bottom: 1px solid var(--separatorColor);
 
   > div {
     flex: 1;
@@ -35,7 +35,7 @@
   }
 
   :first-child {
-    border-right: 1px solid #3D3D3D;
+    border-right: 1px solid var(--separatorColor);
   }
 }
 
@@ -77,7 +77,7 @@
   justify-content: flex-end;
   gap: 16px;
   padding: 12px !important;
-  border-top: 1px solid #3D3D3D;
+  border-top: 1px solid var(--separatorColor);
 }
 
 .addTagButton {
@@ -87,8 +87,8 @@
 
 .suggestions {
   position: absolute;
-  background: #171717;
-  border: 1px solid #3D3D3D;
+  background: var(--browserViewTypePassive);
+  border: 1px solid var(--separatorColor);
   border-radius: 4px;
   overflow: hidden;
   width: 100%;
@@ -97,14 +97,14 @@
 
   .suggestionsTitle {
     font-weight: bold !important;
-    border-bottom: 1px solid #3D3D3D;
+    border-bottom: 1px solid var(--separatorColor);
     padding-bottom: 8px;
   }
 
   ul {
     li {
       border-bottom: none !important;
-      color: #B5B6C0 !important;
+      color: var(--euiTextSubduedColor) !important;
 
       span {
         padding: 0 !important;
@@ -112,7 +112,7 @@
     }
 
     li:hover {
-      background: #2A2A2A !important;
+      background: var(--tableRowHoverColor) !important;
     }
   }
 }
@@ -123,6 +123,6 @@
   gap: 8px;
   display: inline-flex;
   align-items: center;
-  border: 1px solid #A06C18;
+  border: 1px solid var(--euiColorWarningLight);
   border-radius: 8px;
 }

@@ -39,7 +39,12 @@ import {
   addMessageNotification,
   removeInfiniteNotification,
 } from '../app/notifications'
-import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
+import {
+  Instance,
+  InitialStateInstances,
+  ConnectionType,
+  DatabaseListColumn,
+} from '../interfaces'
 
 const HIDE_CREATING_DB_DELAY_MS = 500
 
@@ -82,6 +87,14 @@ export const initialState: InitialStateInstances = {
     error: '',
     data: null,
   },
+  shownColumns: [
+    DatabaseListColumn.Name,
+    DatabaseListColumn.Host,
+    DatabaseListColumn.ConnectionType,
+    DatabaseListColumn.Modules,
+    DatabaseListColumn.LastConnection,
+    DatabaseListColumn.Controls,
+  ],
 }
 
 // A slice for recipes
@@ -301,6 +314,12 @@ const instancesSlice = createSlice({
     checkDatabaseIndexFailure: (state) => {
       state.connectedInstance.loading = false
     },
+    setShownColumns: (
+      state,
+      { payload }: { payload: DatabaseListColumn[] },
+    ) => {
+      state.shownColumns = [...payload]
+    },
   },
 })
 
@@ -341,6 +360,7 @@ export const {
   checkDatabaseIndexFailure,
   setConnectedInfoInstance,
   setConnectedInfoInstanceSuccess,
+  setShownColumns,
 } = instancesSlice.actions
 
 // selectors

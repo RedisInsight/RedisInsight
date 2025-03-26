@@ -39,6 +39,7 @@ import {
   checkConnectToInstanceAction,
   deleteInstancesAction,
   exportInstancesAction,
+  instancesSelector,
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
 import {
@@ -99,6 +100,7 @@ const DatabasesListWrapper = (props: Props) => {
     [FeatureFlags.cloudSso]: cloudSsoFeature,
     [FeatureFlags.databaseManagement]: databaseManagementFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { shownColumns } = useSelector(instancesSelector)
 
   const [width, setWidth] = useState(0)
   const [, forceRerender] = useState({})
@@ -303,7 +305,7 @@ const DatabasesListWrapper = (props: Props) => {
     />
   )
 
-  const columns: EuiTableFieldDataColumnType<Instance>[] = [
+  const initialColumns: EuiTableFieldDataColumnType<Instance>[] = [
     {
       field: 'name',
       className: 'column_name',
@@ -554,6 +556,15 @@ const DatabasesListWrapper = (props: Props) => {
       },
     },
   ]
+
+  const [columns, setColumns] = useState<
+    EuiTableFieldDataColumnType<Instance>[]
+  >(initialColumns.filter((c) => shownColumns.includes(c.field)))
+
+  useEffect(() => {
+    const filteredColumns = initialColumns.filter((column) => shownColumns.includes(column.field))
+    setColumns([...filteredColumns])
+  }, [shownColumns])
 
   const onTableChange = ({ sort, page }: Criteria<Instance>) => {
     // calls also with page changing

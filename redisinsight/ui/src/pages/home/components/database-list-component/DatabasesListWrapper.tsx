@@ -1,8 +1,10 @@
 import {
   Criteria,
+  EuiButtonEmpty,
   EuiButtonIcon,
   EuiIcon,
   EuiLink,
+  EuiPopover,
   EuiResizeObserver,
   EuiTableFieldDataColumnType,
   EuiText,
@@ -23,6 +25,7 @@ import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
 import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
+import ThreeDots from 'uiSrc/assets/img/icons/three_dots.svg?react'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import ItemList from 'uiSrc/components/item-list'
 import { BrowserStorageItem, DEFAULT_SORT, FeatureFlags, Pages, Theme } from 'uiSrc/constants'
@@ -30,9 +33,8 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { localStorageService } from 'uiSrc/services'
-import { appContextSelector, resetRdiContext, setAppContextInitialState } from 'uiSrc/slices/app/context'
-import { resetKeys } from 'uiSrc/slices/browser/keys'
-import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
+import { appContextSelector, resetRdiContext } from 'uiSrc/slices/app/context'
+
 import {
   checkConnectToInstanceAction,
   deleteInstancesAction,
@@ -100,6 +102,12 @@ const DatabasesListWrapper = (props: Props) => {
   )
 
   const deletingIdRef = useRef('')
+  const controlsOpenIdRef = useRef('')
+
+  const toggleControlsPopover = (instanceId: string) => {
+    controlsOpenIdRef.current = controlsOpenIdRef.current === instanceId ? '' : instanceId
+    forceRerender({})
+  }
 
   const closePopover = () => {
     if (deletingIdRef.current) {
@@ -269,6 +277,15 @@ const DatabasesListWrapper = (props: Props) => {
     isSelectable: !isCreateCloudDb(instance?.id),
     'data-testid': `db-row_${instance?.id}`
   })
+
+  const controlsButton = (instanceId: string) => (
+    <EuiButtonIcon
+      iconType={ThreeDots}
+      aria-label="Controls icon"
+      data-testid={`controls-button-${instanceId}`}
+      onClick={() => toggleControlsPopover(instanceId)}
+    />
+  )
 
   const columns: EuiTableFieldDataColumnType<Instance>[] = [
     {
@@ -450,26 +467,46 @@ const DatabasesListWrapper = (props: Props) => {
               </EuiToolTip>
             )}
             <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
-              <EuiButtonIcon
-                iconType="pencil"
-                className="editInstanceBtn"
-                aria-label="Edit instance"
-                data-testid={`edit-instance-${instance.id}`}
-                onClick={() => handleClickEditInstance(instance)}
-              />
-              <PopoverDelete
-                header={formatLongName(instance.name, 50, 10, '...')}
-                text="will be removed from Redis Insight."
-                item={instance.id}
-                suffix={suffix}
-                deleting={deletingIdRef.current}
-                closePopover={closePopover}
-                updateLoading={false}
-                showPopover={showPopover}
-                handleDeleteItem={() => handleDeleteInstance(instance)}
-                handleButtonClick={() => handleClickDeleteInstance(instance)}
-                testid={`delete-instance-${instance.id}`}
-              />
+              <EuiPopover
+                ownFocus
+                initialFocus={false}
+                anchorPosition='leftUp'
+                isOpen={controlsOpenIdRef.current === instance.id}
+                closePopover={() => toggleControlsPopover('')}
+                panelPaddingSize="s"
+                button={controlsButton(instance.id)}
+                data-testid={`controls-popover-${instance.id}`}
+              >
+                <div className="controlsPopoverContent">
+                  <div>
+                    <EuiButtonEmpty
+                      iconType="pencil"
+                      className="editInstanceBtn"
+                      aria-label="Edit instance"
+                      data-testid={`edit-instance-${instance.id}`}
+                      onClick={() => handleClickEditInstance(instance)}
+                    >
+                      Edit database
+                    </EuiButtonEmpty>
+                  </div>
+                  <div>
+                    <PopoverDelete
+                      header={formatLongName(instance.name, 50, 10, '...')}
+                      text="will be removed from Redis Insight."
+                      item={instance.id}
+                      suffix={suffix}
+                      deleting={deletingIdRef.current}
+                      closePopover={closePopover}
+                      updateLoading={false}
+                      showPopover={showPopover}
+                      handleDeleteItem={() => handleDeleteInstance(instance)}
+                      handleButtonClick={() => handleClickDeleteInstance(instance)}
+                      testid={`delete-instance-${instance.id}`}
+                      buttonLabel="Remove database"
+                    />
+                  </div>
+                </div>
+              </EuiPopover>
             </FeatureFlagComponent>
           </>
         )

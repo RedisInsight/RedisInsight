@@ -96,6 +96,10 @@ function ItemList<T extends { id: string; visible?: boolean }>({
     }
   }, [instances, loading])
 
+  useEffect(() => {
+    setColumns(columnsProp)
+  }, [columnsProp])
+
   const adjustColumns = (
     cols: EuiTableFieldDataColumnType<T>[],
     offsetWidth: number,

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { EuiText, EuiSelectable, EuiSelectableOption } from '@elastic/eui'
-import { uniqBy } from 'lodash'
+import { chain } from 'lodash'
 import { tagsSelector } from 'uiSrc/slices/instances/tags'
 import { presetTagSuggestions } from './constants'
 import styles from './styles.module.scss'
@@ -22,42 +22,35 @@ export const TagSuggestions = ({
   const { data: allTags } = useSelector(tagsSelector)
   const tagsSuggestions: EuiSelectableOption<{ value: string }>[] =
     useMemo(() => {
-      const filtered = presetTagSuggestions
+      const options = chain(presetTagSuggestions)
         .concat(allTags)
+        .uniqBy('key')
         .filter(({ key, value }) => {
           if (targetKey !== undefined) {
-            return (
-              key === targetKey &&
-              value.includes(searchTerm) &&
-              value !== searchTerm
-            )
+            return key === targetKey && value.includes(searchTerm)
           }
 
           return (
-            !currentTagKeys.has(key) &&
             key.includes(searchTerm) &&
-            key !== searchTerm
+            (!currentTagKeys.has(key) || key === searchTerm)
           )
         })
-        .map(({ key, value }) => ({ key, value, label: `${key}: ${value}` }))
         .map(({ key, value }) => ({
           label: targetKey ? value : key,
           value: targetKey ? value : key,
         }))
+        .value()
 
-      const selectOptions: EuiSelectableOption<{ value: string }>[] = uniqBy(
-        filtered,
-        'label',
-      )
+      const isNewTag = options.length === 0 && searchTerm
 
-      if (selectOptions.length === 0 && searchTerm) {
-        selectOptions.push({
+      if (isNewTag) {
+        options.push({
           label: `${searchTerm} (new ${targetKey ? 'value' : 'tag'})`,
           value: searchTerm,
         })
       }
 
-      return selectOptions
+      return options
     }, [allTags, targetKey, searchTerm, currentTagKeys])
 
   if (tagsSuggestions.length === 0) {

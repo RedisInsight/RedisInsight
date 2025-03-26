@@ -14,75 +14,85 @@
       background-color: inherit;
     }
   }
-}
 
-.tagForm {
-  margin: 0px 32px;
-  border: 1px solid var(--separatorColor);
-  border-radius: 8px;
-}
-
-.tagFormHeader {
-  display: flex;
-  text-align: left;
-  border-bottom: 1px solid var(--separatorColor);
-
-  > div {
-    flex: 1;
-    padding: 6px;
-    margin: 6px;
-    margin-right: 10px;
+  .header {
+    padding-left: 14px;
+    padding-right: 14px;
   }
 
-  :first-child {
-    border-right: 1px solid var(--separatorColor);
-  }
-}
-
-.tagFormBody {
-  display: flex;
-  flex-direction: column;
-}
-
-.tagFormRow {
-  display: flex;
-  align-items: center;
-
-  > div {
-    flex: 1;
-    padding: 8px;
+  .footer {
     display: flex;
-    align-items: center;
-    position: relative;
+    justify-content: flex-end;
     gap: 16px;
+    padding: 12px !important;
+    border-top: 1px solid var(--separatorColor);
+  }
 
-    > span {
-      width: 100%;
-      position: relative;
+  .addTagButton {
+    margin-left: 32px;
+    color: #8BA2FF !important;
+  }
+
+  .warning {
+    padding: 6px 12px;
+    margin: 16px;
+    gap: 8px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--euiColorWarningLight);
+    border-radius: 8px;
+  }
+
+  .tagForm {
+    margin: 0px 32px;
+    border: 1px solid var(--separatorColor);
+    border-radius: 8px;
+
+    .tagFormHeader {
+      display: flex;
+      text-align: left;
+      border-bottom: 1px solid var(--separatorColor);
+
+      > div {
+        flex: 1;
+        padding: 6px;
+        margin: 6px;
+        margin-right: 10px;
+      }
+
+      :first-child {
+        border-right: 1px solid var(--separatorColor);
+      }
+    }
+
+    .tagFormBody {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tagFormRow {
+      display: flex;
+      align-items: center;
+
+      > div {
+        flex: 1;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        gap: 16px;
+
+        > span {
+          width: 100%;
+          position: relative;
+        }
+      }
+
+      .deleteIcon {
+        cursor: pointer;
+      }
     }
   }
-
-  .deleteIcon {
-    cursor: pointer;
-  }
-}
-
-.header {
-  padding-left: 14px;
-  padding-right: 14px;
-}
-
-.footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  padding: 12px !important;
-  border-top: 1px solid var(--separatorColor);
-}
-
-.addTagButton {
-  margin-left: 32px;
-  color: #8BA2FF !important;
 }
 
 .suggestions {
@@ -125,14 +135,4 @@
       background: var(--tableRowHoverColor) !important;
     }
   }
-}
-
-.warning {
-  padding: 6px 12px;
-  margin: 16px;
-  gap: 8px;
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--euiColorWarningLight);
-  border-radius: 8px;
 }

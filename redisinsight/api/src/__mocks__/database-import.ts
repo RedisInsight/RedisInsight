@@ -95,3 +95,7 @@ export const mockSshImportService = jest.fn(() => ({
     id: undefined,
   }),
 }));
+
+export const mockDatabaseImportService = jest.fn(() => ({
+  import: jest.fn(),
+}));

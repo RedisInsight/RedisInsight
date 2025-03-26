@@ -9,4 +9,5 @@ export enum FeatureFlags {
   hashFieldExpiration = 'hashFieldExpiration',
   enhancedCloudUI = 'enhancedCloudUI',
   cloudAds = 'cloudAds',
+  databaseManagement = 'databaseManagement',
 }

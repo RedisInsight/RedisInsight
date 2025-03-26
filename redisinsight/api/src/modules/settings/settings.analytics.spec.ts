@@ -12,19 +12,13 @@ describe('SettingsAnalytics', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        SettingsAnalytics,
-      ],
+      providers: [EventEmitter2, SettingsAnalytics],
     }).compile();
 
     service = module.get<SettingsAnalytics>(SettingsAnalytics);
     eventEmitter = module.get<EventEmitter2>(EventEmitter2);
     eventEmitter.emit = jest.fn();
-    sendEventMethod = jest.spyOn<SettingsAnalytics, any>(
-      service,
-      'sendEvent',
-    );
+    sendEventMethod = jest.spyOn<SettingsAnalytics, any>(service, 'sendEvent');
   });
 
   describe('sendAnalyticsAgreementChange', () => {
@@ -41,6 +35,42 @@ describe('SettingsAnalytics', () => {
         {
           event: TelemetryEvents.AnalyticsPermission,
           eventData: { state: 'enabled' },
+          nonTracking: true,
+        },
+      );
+    });
+    it('should emit ANALYTICS_PERMISSION with state enabled and reason undefined', async () => {
+      service.sendAnalyticsAgreementChange(
+        mockSessionMetadata,
+        new Map([['analytics', true]]),
+        undefined,
+        undefined,
+      );
+
+      expect(eventEmitter.emit).toHaveBeenCalledWith(
+        AppAnalyticsEvents.Track,
+        mockSessionMetadata,
+        {
+          event: TelemetryEvents.AnalyticsPermission,
+          eventData: { reason: undefined, state: 'enabled' },
+          nonTracking: true,
+        },
+      );
+    });
+    it('should emit ANALYTICS_PERMISSION with state enabled and reason "sso"', async () => {
+      service.sendAnalyticsAgreementChange(
+        mockSessionMetadata,
+        new Map([['analytics', true]]),
+        undefined,
+        'sso',
+      );
+
+      expect(eventEmitter.emit).toHaveBeenCalledWith(
+        AppAnalyticsEvents.Track,
+        mockSessionMetadata,
+        {
+          event: TelemetryEvents.AnalyticsPermission,
+          eventData: { reason: 'sso', state: 'enabled' },
           nonTracking: true,
         },
       );
@@ -67,6 +97,7 @@ describe('SettingsAnalytics', () => {
         mockSessionMetadata,
         new Map([['analytics', false]]),
         new Map([['analytics', false]]),
+        'none',
       );
 
       expect(eventEmitter.emit).not.toHaveBeenCalledWith(
@@ -83,6 +114,7 @@ describe('SettingsAnalytics', () => {
         mockSessionMetadata,
         new Map([['analytics', false]]),
         new Map([['analytics', true]]),
+        'none',
       );
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
@@ -90,7 +122,7 @@ describe('SettingsAnalytics', () => {
         mockSessionMetadata,
         {
           event: TelemetryEvents.AnalyticsPermission,
-          eventData: { state: 'disabled' },
+          eventData: { state: 'disabled', reason: 'none' },
           nonTracking: true,
         },
       );

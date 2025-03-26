@@ -4,6 +4,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
+  EuiLink,
   EuiLoadingSpinner,
   EuiSpacer,
   EuiText,
@@ -29,6 +30,7 @@ export enum InfiniteMessagesIds {
   oAuthSuccess = 'oAuthSuccess',
   autoCreateDb = 'autoCreateDb',
   databaseExists = 'databaseExists',
+  databaseImportForbidden = 'databaseImportForbidden',
   subscriptionExists = 'subscriptionExists',
   appUpdateAvailable = 'appUpdateAvailable',
   pipelineDeploySuccess = 'pipelineDeploySuccess'
@@ -213,6 +215,57 @@ export const INFINITE_MESSAGES = {
               data-testid="cancel-import-db-sso-btn"
             >
               Cancel
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
+    )
+  }),
+  DATABASE_IMPORT_FORBIDDEN: (onClose?: () => void) => ({
+    id: InfiniteMessagesIds.databaseImportForbidden,
+    Inner: (
+      <div
+        role="presentation"
+        onMouseDown={(e) => { e.preventDefault() }}
+        onMouseUp={(e) => { e.preventDefault() }}
+        data-testid="database-import-forbidden-notification"
+      >
+        <EuiTitle className="infiniteMessage__title">
+          <span>
+            Unable to import Cloud database.
+          </span>
+        </EuiTitle>
+        <EuiText size="xs">
+          Adding your Redis Cloud database to Redis Insight is disabled due to
+          a setting restricting database connection management.
+
+          <EuiSpacer size="m" />
+
+          Log in to
+          {' '}
+          <EuiLink
+            target="_blank"
+            color="text"
+            external={false}
+            tabIndex={-1}
+            href="https://cloud.redis.io/#/databases?utm_source=redisinsight&utm_medium=main&utm_campaign=disabled_db_management"
+          >
+            Redis Cloud
+          </EuiLink>
+          {' '}
+          to check your database.
+        </EuiText>
+        <EuiSpacer size="m" />
+        <EuiFlexGroup justifyContent="flexEnd" gutterSize="none">
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              fill
+              size="s"
+              color="secondary"
+              onClick={() => onClose?.()}
+              data-testid="database-import-forbidden-notification-ok-btn"
+            >
+              Ok
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>

@@ -20,33 +20,45 @@ export const TagSuggestions = ({
   onChange,
 }: TagSuggestionsProps) => {
   const { data: allTags } = useSelector(tagsSelector)
-  const tagsSuggestions: EuiSelectableOption[] = useMemo(() => {
-    const filtered = presetTagSuggestions
-      .concat(allTags)
-      .filter(({ key, value }) => {
-        if (targetKey !== undefined) {
+  const tagsSuggestions: EuiSelectableOption<{ value: string }>[] =
+    useMemo(() => {
+      const filtered = presetTagSuggestions
+        .concat(allTags)
+        .filter(({ key, value }) => {
+          if (targetKey !== undefined) {
+            return (
+              key === targetKey &&
+              value.includes(searchTerm) &&
+              value !== searchTerm
+            )
+          }
+
           return (
-            key === targetKey &&
-            value.includes(searchTerm) &&
-            value !== searchTerm
+            !currentTagKeys.has(key) &&
+            key.includes(searchTerm) &&
+            key !== searchTerm
           )
-        }
+        })
+        .map(({ key, value }) => ({ key, value, label: `${key}: ${value}` }))
+        .map(({ key, value }) => ({
+          label: targetKey ? value : key,
+          value: targetKey ? value : key,
+        }))
 
-        return (
-          !currentTagKeys.has(key) &&
-          key.includes(searchTerm) &&
-          key !== searchTerm
-        )
-      })
-      .map(({ key, value }) => ({ key, value, label: `${key}: ${value}` }))
+      const selectOptions: EuiSelectableOption<{ value: string }>[] = uniqBy(
+        filtered,
+        'label',
+      )
 
-    const selectOptions: EuiSelectableOption[] = uniqBy(
-      filtered.map(({ key, value }) => ({ label: targetKey ? value : key })),
-      'label',
-    )
+      if (selectOptions.length === 0 && searchTerm) {
+        selectOptions.push({
+          label: `${searchTerm} (new ${targetKey ? 'value' : 'tag'})`,
+          value: searchTerm,
+        })
+      }
 
-    return selectOptions
-  }, [allTags, targetKey, searchTerm, currentTagKeys])
+      return selectOptions
+    }, [allTags, targetKey, searchTerm, currentTagKeys])
 
   if (tagsSuggestions.length === 0) {
     return null
@@ -56,11 +68,10 @@ export const TagSuggestions = ({
     <EuiSelectable
       options={tagsSuggestions}
       singleSelection
-      height={150}
       listProps={{ showIcons: false }}
       className={styles.suggestions}
       onChange={(options) => {
-        const value = options.find((o) => o.checked)?.label
+        const value = options.find((o) => o.checked)?.value
 
         if (value) {
           onChange(value)

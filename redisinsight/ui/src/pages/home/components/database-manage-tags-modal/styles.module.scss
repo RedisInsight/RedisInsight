@@ -101,6 +101,16 @@
     padding-bottom: 8px;
   }
 
+  :global {
+    .euiSelectableList {
+      max-height: 150px;
+
+      div div {
+        max-height: 150px;
+      }
+    }
+  }
+
   ul {
     li {
       border-bottom: none !important;

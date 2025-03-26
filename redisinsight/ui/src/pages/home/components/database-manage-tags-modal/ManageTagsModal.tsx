@@ -165,7 +165,7 @@ export const ManageTagsModal = ({
             return (
               <div key={`tag-row-${index}`} className={styles.tagFormRow}>
                 <TagInputField
-                  isFieldInvalid={isKeyInvalid}
+                  isInvalid={isKeyInvalid}
                   value={tag.key}
                   currentTagKeys={currentTagKeys}
                   showSuggestions={focusedTagKeyIndex === index}
@@ -184,7 +184,8 @@ export const ManageTagsModal = ({
                   rightContent={<>:</>}
                 />
                 <TagInputField
-                  isFieldInvalid={isValueInvalid}
+                  isInvalid={isValueInvalid}
+                  disabled={!tag.key || isKeyInvalid}
                   value={tag.value}
                   currentTagKeys={currentTagKeys}
                   showSuggestions={focusedTagValueIndex === index}

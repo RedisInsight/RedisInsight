@@ -1,24 +1,22 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react'
-import { EuiFieldText, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiToolTip, EuiFieldTextProps } from '@elastic/eui'
 
 import { INVALID_FIELD_MESSAGE } from './constants'
 import { TagSuggestions } from './TagSuggestions'
 
-type TagInputFieldProps = {
-  isFieldInvalid: boolean
+type TagInputFieldProps = EuiFieldTextProps & {
   value: string
   currentTagKeys: Set<string>
   showSuggestions: boolean
   suggestedTagKey?: string
   rightContent?: React.ReactNode
-  onChange: React.ChangeEventHandler<HTMLInputElement>
-  onFocusCapture: React.FocusEventHandler<HTMLInputElement>
   onTagSuggestionSelect: (value: string) => void
 }
 
 export const TagInputField = ({
-  isFieldInvalid,
+  isInvalid,
+  disabled,
   value,
   currentTagKeys,
   showSuggestions,
@@ -32,14 +30,12 @@ export const TagInputField = ({
 
   return (
     <div>
-      <EuiToolTip
-        content={isFieldInvalid && INVALID_FIELD_MESSAGE}
-        position="top"
-      >
+      <EuiToolTip content={isInvalid && INVALID_FIELD_MESSAGE} position="top">
         <div>
           <EuiFieldText
             value={value}
-            isInvalid={isFieldInvalid}
+            isInvalid={isInvalid}
+            disabled={disabled}
             onChange={onChange}
             onFocusCapture={onFocusCapture}
           />

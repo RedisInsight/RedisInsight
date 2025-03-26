@@ -3,6 +3,11 @@ import { useDispatch } from 'react-redux'
 import * as jsonpatch from 'fast-json-patch'
 import { EuiButton, EuiFlexItem } from '@elastic/eui'
 import { MonacoEditor } from 'uiSrc/components/monaco-editor'
+import {
+  appendReJSONArrayItemAction,
+  removeReJSONKeyAction,
+  setReJSONDataAction,
+} from 'uiSrc/slices/browser/rejson'
 
 import { BaseProps } from '../interfaces'
 
@@ -23,10 +28,39 @@ const isValidJSON = (input: string) => {
   }
 }
 
+const mapJsonPatchOp = ({ path, value }: { path: string; value: any }) => {
+  // Example: { path: '/something/this_is_nested', value: true }
+  const segments = path.split('/').slice(1) // => something/this_is_nested
+
+  const reJSONPath = segments.reduce(
+    (acc, segment) => `${acc}['${segment}']`,
+    '$',
+  ) // => $['something']['this_is_nested']
+
+  return {
+    path: reJSONPath,
+    data: String(value),
+  }
+}
+
+const mapJsonPatchOpsToHandler = (op: any) => {
+  const { data, path } = mapJsonPatchOp(op)
+  switch (op.op) {
+    case 'replace':
+      return (key: any) => setReJSONDataAction(key, path, data, true)
+    case 'add':
+      return (key: any) => appendReJSONArrayItemAction(key, path, data)
+    case 'remove':
+      return (key: any) => removeReJSONKeyAction(key, path, path)
+    default:
+      return new Error('This is not supposed to happen')
+  }
+}
+
 // setReJSONDataAction
 
 const RejsonDetails = (props: BaseProps) => {
-  const { data } = props
+  const { data, selectedKey } = props
   const dispatch = useDispatch()
 
   const originalData = jsonToReadableString(data)
@@ -37,8 +71,9 @@ const RejsonDetails = (props: BaseProps) => {
   const isUpdateActive = !hasContentChanged || !isValidJson
 
   const submitUpdate = () => {
-    const patch = jsonpatch.compare(data || {}, JSON.parse(value))
-    console.log('patch :>> ', patch);
+    const operations = jsonpatch.compare(data || {}, JSON.parse(value))
+    const handlers = operations.map(mapJsonPatchOpsToHandler)
+    handlers.forEach((handler) => dispatch(handler(selectedKey)))
   }
 
   return (

@@ -10,7 +10,7 @@ import { resetKeys } from 'uiSrc/slices/browser/keys'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
-import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
+import { Database, Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
 import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
 
@@ -22,7 +22,7 @@ import {
   addMessageNotification,
   removeInfiniteNotification
 } from '../app/notifications'
-import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
+import { Instance, InitialStateInstances, ConnectionType, DatabaseListColumn } from '../interfaces'
 
 const HIDE_CREATING_DB_DELAY_MS = 500
 
@@ -65,6 +65,14 @@ export const initialState: InitialStateInstances = {
     error: '',
     data: null
   },
+  shownColumns: [
+    DatabaseListColumn.Name,
+    DatabaseListColumn.Host,
+    DatabaseListColumn.ConnectionType,
+    DatabaseListColumn.Modules,
+    DatabaseListColumn.LastConnection,
+    DatabaseListColumn.Controls,
+  ],
 }
 
 // A slice for recipes
@@ -257,6 +265,9 @@ const instancesSlice = createSlice({
     },
     checkDatabaseIndexFailure: (state) => {
       state.connectedInstance.loading = false
+    },
+    setShownColumns: (state, { payload }: {payload: DatabaseListColumn[]}) => {
+      state.shownColumns = [...payload]
     }
   },
 })
@@ -298,6 +309,7 @@ export const {
   checkDatabaseIndexFailure,
   setConnectedInfoInstance,
   setConnectedInfoInstanceSuccess,
+  setShownColumns,
 } = instancesSlice.actions
 
 // selectors

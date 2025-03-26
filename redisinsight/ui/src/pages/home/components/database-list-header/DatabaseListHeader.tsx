@@ -137,9 +137,11 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
           <EuiFlexItem grow={false} className={cx(styles.promo)}>
             <EuiFlexGroup alignItems="center" gutterSize="s">
               {promoData && (
-                <EuiFlexItem grow={false}>
-                  <CreateBtn content={promoData} />
-                </EuiFlexItem>
+                <FeatureFlagComponent name={FeatureFlags.cloudAds}>
+                  <EuiFlexItem grow={false}>
+                    <CreateBtn content={promoData} />
+                  </EuiFlexItem>
+                </FeatureFlagComponent>
               )}
             </EuiFlexGroup>
           </EuiFlexItem>

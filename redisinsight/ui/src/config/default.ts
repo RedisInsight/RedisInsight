@@ -70,6 +70,9 @@ export const defaultConfig = {
   features: {
     envDependent: {
       defaultFlag: booleanEnv('RI_FEATURES_ENV_DEPENDENT_DEFAULT_FLAG', true)
+    },
+    cloudAds: {
+      defaultFlag: booleanEnv('RI_FEATURES_CLOUD_ADS_DEFAULT_FLAG', true)
     }
   }
 }

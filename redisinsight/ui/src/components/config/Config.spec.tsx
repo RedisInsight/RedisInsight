@@ -118,7 +118,7 @@ describe('Config', () => {
     await waitFor(() => expect(store.getActions()).not.toContainEqual(getUserSettingsSpec()))
   })
 
-  it('should render expected actions when envDependant feature is off', () => {
+  it('should render expected actions when envDependent feature is off', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,

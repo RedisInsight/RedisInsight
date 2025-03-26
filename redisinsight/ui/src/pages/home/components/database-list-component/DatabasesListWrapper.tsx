@@ -102,11 +102,11 @@ const DatabasesListWrapper = (props: Props) => {
   )
 
   const deletingIdRef = useRef('')
-  const controlsOpenIdRef = useRef('');
+  const controlsOpenIdRef = useRef('')
 
   const toggleControlsPopover = (instanceId: string) => {
-    controlsOpenIdRef.current = controlsOpenIdRef.current === instanceId ? '' : instanceId;
-    forceRerender({});
+    controlsOpenIdRef.current = controlsOpenIdRef.current === instanceId ? '' : instanceId
+    forceRerender({})
   }
 
   const closePopover = () => {
@@ -285,7 +285,7 @@ const DatabasesListWrapper = (props: Props) => {
       data-testid={`controls-button-${instanceId}`}
       onClick={() => toggleControlsPopover(instanceId)}
     />
-  );
+  )
 
   const columns: EuiTableFieldDataColumnType<Instance>[] = [
     {

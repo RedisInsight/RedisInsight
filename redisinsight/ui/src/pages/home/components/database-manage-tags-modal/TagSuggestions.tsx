@@ -27,7 +27,9 @@ export const TagSuggestions = ({
         .uniqBy('key')
         .filter(({ key, value }) => {
           if (targetKey !== undefined) {
-            return key === targetKey && value.includes(searchTerm)
+            return (
+              key === targetKey && value !== '' && value.includes(searchTerm)
+            )
           }
 
           return (

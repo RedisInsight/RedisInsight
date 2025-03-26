@@ -39,12 +39,6 @@ export const ManageTagsModal = ({
     () => new Set(tags.map((tag) => tag.key)),
     [tags],
   )
-  const [focusedTagKeyIndex, setFocusedTagKeyIndex] = useState<number | null>(
-    null,
-  )
-  const [focusedTagValueIndex, setFocusedTagValueIndex] = useState<
-    number | null
-  >(null)
 
   const isModified = useMemo(
     () =>
@@ -169,18 +163,8 @@ export const ManageTagsModal = ({
                   isInvalid={isKeyInvalid}
                   value={tag.key}
                   currentTagKeys={currentTagKeys}
-                  showSuggestions={focusedTagKeyIndex === index}
-                  suggestedTagKey={undefined}
-                  onChange={(e) =>
-                    handleTagChange(index, 'key', e.target.value)
-                  }
-                  onFocusCapture={() => {
-                    setFocusedTagKeyIndex(index)
-                    setFocusedTagValueIndex(null)
-                  }}
-                  onTagSuggestionSelect={(value) => {
+                  onChange={(value) => {
                     handleTagChange(index, 'key', value)
-                    setFocusedTagKeyIndex(null)
                   }}
                   rightContent={<>:</>}
                 />
@@ -189,18 +173,9 @@ export const ManageTagsModal = ({
                   disabled={!tag.key || isKeyInvalid}
                   value={tag.value}
                   currentTagKeys={currentTagKeys}
-                  showSuggestions={focusedTagValueIndex === index}
                   suggestedTagKey={tag.key}
-                  onChange={(e) =>
-                    handleTagChange(index, 'value', e.target.value)
-                  }
-                  onFocusCapture={() => {
-                    setFocusedTagValueIndex(index)
-                    setFocusedTagKeyIndex(null)
-                  }}
-                  onTagSuggestionSelect={(value) => {
+                  onChange={(value) => {
                     handleTagChange(index, 'value', value)
-                    setFocusedTagValueIndex(null)
                   }}
                   rightContent={
                     <EuiIcon

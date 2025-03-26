@@ -1,42 +1,62 @@
-import React from 'react'
-import { EuiFieldText, EuiToolTip, EuiFieldTextProps } from '@elastic/eui'
+import React, { useState } from 'react'
+import { EuiFieldText, EuiToolTip } from '@elastic/eui'
 
 import { INVALID_FIELD_MESSAGE } from './constants'
 import { TagSuggestions } from './TagSuggestions'
 
-type TagInputFieldProps = EuiFieldTextProps & {
+type TagInputFieldProps = {
   value: string
+  isInvalid: boolean
+  disabled?: boolean
   currentTagKeys: Set<string>
-  showSuggestions: boolean
   suggestedTagKey?: string
   rightContent?: React.ReactNode
-  onTagSuggestionSelect: (value: string) => void
+  onChange: (value: string) => void
 }
 
 export const TagInputField = ({
   value,
   isInvalid,
+  disabled,
   currentTagKeys,
-  showSuggestions,
   suggestedTagKey,
   rightContent,
-  onTagSuggestionSelect,
-  ...fieldTextProps
-}: TagInputFieldProps) => (
-  <div>
-    <EuiToolTip content={isInvalid && INVALID_FIELD_MESSAGE} position="top">
-      <div>
-        <EuiFieldText value={value} {...fieldTextProps} />
-        {showSuggestions && (
-          <TagSuggestions
-            targetKey={suggestedTagKey}
-            searchTerm={value}
-            currentTagKeys={currentTagKeys}
-            onChange={onTagSuggestionSelect}
+  onChange,
+}: TagInputFieldProps) => {
+  const [isFocused, setIsFocused] = useState(false)
+
+  return (
+    <div>
+      <EuiToolTip content={isInvalid && INVALID_FIELD_MESSAGE} position="top">
+        <div>
+          <EuiFieldText
+            value={value}
+            disabled={disabled}
+            isInvalid={isInvalid}
+            onChange={(e) => onChange(e.target.value)}
+            onFocusCapture={() => {
+              setIsFocused(true)
+            }}
+            onBlurCapture={() => {
+              setTimeout(() => {
+                isFocused && setIsFocused(false)
+              }, 150)
+            }}
           />
-        )}
-      </div>
-    </EuiToolTip>
-    {rightContent}
-  </div>
-)
+          {isFocused && !isInvalid && (
+            <TagSuggestions
+              targetKey={suggestedTagKey}
+              searchTerm={value}
+              currentTagKeys={currentTagKeys}
+              onChange={(value) => {
+                setIsFocused(false)
+                onChange(value)
+              }}
+            />
+          )}
+        </div>
+      </EuiToolTip>
+      {rightContent}
+    </div>
+  )
+}

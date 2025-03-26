@@ -6,7 +6,7 @@ import { tagsSelector } from 'uiSrc/slices/instances/tags'
 import { presetTagSuggestions } from './constants'
 import styles from './styles.module.scss'
 
-type TagSuggestionsProps = {
+export type TagSuggestionsProps = {
   targetKey?: string
   searchTerm: string
   currentTagKeys: Set<string>
@@ -59,6 +59,7 @@ export const TagSuggestions = ({
 
   return (
     <EuiSelectable
+      data-testid="tag-suggestions"
       options={tagsSuggestions}
       singleSelection
       listProps={{ showIcons: false }}

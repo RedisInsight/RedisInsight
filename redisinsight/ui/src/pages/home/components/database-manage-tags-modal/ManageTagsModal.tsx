@@ -20,7 +20,7 @@ import { VALID_TAG_REGEX } from './constants'
 import { TagInputField } from './TagInputField'
 import styles from './styles.module.scss'
 
-type ManageTagsModalProps = {
+export type ManageTagsModalProps = {
   instance: Instance
   onClose: () => void
 }
@@ -131,7 +131,7 @@ export const ManageTagsModal = ({
             </div>
           )}
           <div className={styles.footer}>
-            <EuiButton onClick={onClose} size="s">
+            <EuiButton onClick={onClose} size="s" data-testid="close-button">
               Close
             </EuiButton>
             <EuiButton
@@ -140,6 +140,7 @@ export const ManageTagsModal = ({
               size="s"
               color="secondary"
               isDisabled={isSaveButtonDisabled}
+              data-testid="save-tags-button"
             >
               Save tags
             </EuiButton>
@@ -206,6 +207,7 @@ export const ManageTagsModal = ({
                       type="trash"
                       onClick={() => handleRemoveTag(index)}
                       className={styles.deleteIcon}
+                      data-testid="remove-tag-button"
                     />
                   }
                 />
@@ -221,6 +223,7 @@ export const ManageTagsModal = ({
         size="s"
         color="text"
         className={styles.addTagButton}
+        data-testid="add-tag-button"
       >
         Add additional tag
       </EuiButtonEmpty>

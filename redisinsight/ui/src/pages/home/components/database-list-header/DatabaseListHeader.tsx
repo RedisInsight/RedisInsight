@@ -1,11 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiCheckbox,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPopover,
+  EuiSpacer,
+} from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { isEmpty } from 'lodash'
 import cx from 'classnames'
+
+import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
-import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import {
+  DatabaseListColumn,
+  OAuthSocialAction,
+  OAuthSocialSource,
+} from 'uiSrc/slices/interfaces'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -30,7 +43,29 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
   const { loading, data } = useSelector(contentSelector)
 
+  // TODO [DA]: to be replaced with ones gotten from state
+  const [shownColumns, setShownColumns] = useState<DatabaseListColumn[]>([
+    DatabaseListColumn.Name,
+    DatabaseListColumn.Host,
+    DatabaseListColumn.ConnectionType,
+    DatabaseListColumn.Modules,
+    DatabaseListColumn.LastConnection,
+    DatabaseListColumn.Controls,
+  ])
+
+  // TODO [DA]: Rethink the data strucutre and move the data.
+  // Reuse for the  columns in DatabaseListWrapper
+  const columnFieldNameMap = new Map<DatabaseListColumn, string>([
+    [DatabaseListColumn.Name, 'Database Alias'],
+    [DatabaseListColumn.Host, 'Host:Port'],
+    [DatabaseListColumn.ConnectionType, 'Connection Type'],
+    [DatabaseListColumn.Modules, 'Capabilities'],
+    [DatabaseListColumn.LastConnection, 'Last connection'],
+    [DatabaseListColumn.Controls, 'Controls'],
+  ])
+
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
+  const [columnsConfigShown, setColumnsConfigShown] = useState(false)
 
   const { theme } = useContext(ThemeContext)
   const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } =
@@ -73,6 +108,20 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
     eventData: any = {},
   ) => {
     handleClickLink(event, eventData)
+  }
+
+  const toggleColumnsConfigVisibility = () =>
+    setColumnsConfigShown(!columnsConfigShown)
+
+  const changeColumnsShown = (status: boolean, column: DatabaseListColumn) => {
+    const newColumns = status
+      ? [...shownColumns, column]
+      : shownColumns.filter((col) => col !== column)
+
+    // TODO [DA]: dispatch event to change the state instead of the following
+    setShownColumns([...newColumns])
+
+    // TODO [DA]: determine the shown and hidden columns and log telemetry event
   }
 
   const AddInstanceBtn = () => (
@@ -124,6 +173,20 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
     )
   }
 
+  const columnCheckboxes = Array.from(columnFieldNameMap.entries()).map(
+    ([field, name]) => (
+      <EuiCheckbox
+        id={`show-${field}`}
+        name={`show-${field}`}
+        label={name}
+        checked={shownColumns.includes(field)}
+        disabled={shownColumns.includes(field) && shownColumns.length === 1}
+        onChange={(e) => changeColumnsShown(e.target.checked, field)}
+        data-testid={`show-${field}`}
+      />
+    ),
+  )
+
   return (
     <div className={styles.containerDl}>
       <EuiFlexGroup
@@ -151,9 +214,42 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
           </EuiFlexItem>
         )}
         {instances.length > 0 && (
-          <EuiFlexItem grow={false} className={styles.searchContainer}>
-            <SearchDatabasesList />
-          </EuiFlexItem>
+          <>
+            <EuiFlexItem>
+              <EuiFlexGroup
+                justifyContent="flexEnd"
+                alignItems="center"
+                gutterSize="s"
+              >
+                <EuiFlexItem grow={false} className={styles.columnsButtonItem}>
+                  <EuiPopover
+                    ownFocus={false}
+                    anchorPosition="downLeft"
+                    isOpen={columnsConfigShown}
+                    closePopover={() => setColumnsConfigShown(false)}
+                    button={
+                      <EuiButton
+                        size="m"
+                        color="secondary"
+                        iconType={ColumnsIcon}
+                        onClick={toggleColumnsConfigVisibility}
+                        className={styles.columnsButton}
+                        data-testid="btn-columns-actions"
+                        aria-label="columns"
+                      >
+                        <span>Columns</span>
+                      </EuiButton>
+                    }
+                  >
+                    {columnCheckboxes}
+                  </EuiPopover>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <SearchDatabasesList />
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </EuiFlexItem>
+          </>
         )}
       </EuiFlexGroup>
       <EuiSpacer className={styles.spacerDl} />

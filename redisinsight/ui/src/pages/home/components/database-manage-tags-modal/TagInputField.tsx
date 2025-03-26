@@ -14,27 +14,19 @@ type TagInputFieldProps = EuiFieldTextProps & {
 }
 
 export const TagInputField = ({
-  isInvalid,
-  disabled,
   value,
+  isInvalid,
   currentTagKeys,
   showSuggestions,
   suggestedTagKey,
   rightContent,
-  onChange,
-  onFocusCapture,
   onTagSuggestionSelect,
+  ...fieldTextProps
 }: TagInputFieldProps) => (
   <div>
     <EuiToolTip content={isInvalid && INVALID_FIELD_MESSAGE} position="top">
       <div>
-        <EuiFieldText
-          value={value}
-          isInvalid={isInvalid}
-          disabled={disabled}
-          onChange={onChange}
-          onFocusCapture={onFocusCapture}
-        />
+        <EuiFieldText value={value} {...fieldTextProps} />
         {showSuggestions && (
           <TagSuggestions
             targetKey={suggestedTagKey}

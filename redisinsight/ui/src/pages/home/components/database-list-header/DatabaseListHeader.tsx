@@ -7,13 +7,13 @@ import {
   EuiPopover,
   EuiSpacer,
 } from '@elastic/eui'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { isEmpty } from 'lodash'
 import cx from 'classnames'
 
 import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { instancesSelector } from 'uiSrc/slices/instances/instances'
+import { instancesSelector, setShownColumns } from 'uiSrc/slices/instances/instances'
 import {
   DatabaseListColumn,
   OAuthSocialAction,
@@ -39,19 +39,9 @@ export interface Props {
 }
 
 const DatabaseListHeader = ({ onAddInstance }: Props) => {
-  const { data: instances } = useSelector(instancesSelector)
+  const { data: instances, shownColumns } = useSelector(instancesSelector)
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
   const { loading, data } = useSelector(contentSelector)
-
-  // TODO [DA]: to be replaced with ones gotten from state
-  const [shownColumns, setShownColumns] = useState<DatabaseListColumn[]>([
-    DatabaseListColumn.Name,
-    DatabaseListColumn.Host,
-    DatabaseListColumn.ConnectionType,
-    DatabaseListColumn.Modules,
-    DatabaseListColumn.LastConnection,
-    DatabaseListColumn.Controls,
-  ])
 
   // TODO [DA]: Rethink the data strucutre and move the data.
   // Reuse for the  columns in DatabaseListWrapper
@@ -71,6 +61,8 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } =
     featureFlags
   const isShowPromoBtn = !enhancedCloudUIFeature?.flag
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (loading || !data || isEmpty(data)) {
@@ -118,8 +110,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
       ? [...shownColumns, column]
       : shownColumns.filter((col) => col !== column)
 
-    // TODO [DA]: dispatch event to change the state instead of the following
-    setShownColumns([...newColumns])
+    dispatch(setShownColumns(newColumns))
 
     // TODO [DA]: determine the shown and hidden columns and log telemetry event
   }

@@ -141,7 +141,7 @@ test
 
         // Verify that the INSIGHTS_RECOMMENDATIONS_VOTED event sent with Database ID, Recommendation_name, Vote type parameters when user voted for recommendation
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
-        await telemetry.verifyEventPropertyValue(telemetryEvent, 'name', 'updateDatabase', logger);
+        await telemetry.verifyEventPropertyValue(telemetryEvent, 'name', 'redisVersion', logger);
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'vote', notUsefulVoteOption, logger);
 
         // Verify that user can see previous votes when reload the page

@@ -14,7 +14,7 @@ import {
   setAppContextConnectedRdiInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
-import { resetCliHelperSettings } from 'uiSrc/slices/cli/cli-settings'
+import { resetCliHelperSettings, resetCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import {
   resetRedisearchKeysData,
   setRedisearchInitialState,
@@ -104,6 +104,7 @@ describe('InstancePage', () => {
       setAppContextInitialState(),
       resetPatternKeysData(),
       resetCliHelperSettings(),
+      resetCliSettings(),
       resetRedisearchKeysData(),
       setClusterDetailsInitialState(),
       setDatabaseAnalysisInitialState(),

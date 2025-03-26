@@ -43,9 +43,11 @@ const RejsonDetails = (props: BaseProps) => {
         isEditable
         onChange={setValue}
         data-testid="json-data-editor"
+        wrapperClassName={styles.editor}
+        editorWrapperClassName={styles.editorWrapper}
       />
 
-      <EuiFlexItem grow={false} className={styles.actions}>
+      <EuiFlexItem className={styles.actions}>
         <EuiButton
           onClick={() => {}}
           fill

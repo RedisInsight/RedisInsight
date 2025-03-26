@@ -32,8 +32,6 @@ export const presetTagSuggestions: {
   },
 ]
 
-presetTagSuggestions
-
 export const VALID_TAG_REGEX = /^[a-zA-Z0-9\-_.@:+ ]+$/
 export const INVALID_FIELD_MESSAGE =
   'Tag should have unique keys and can only have letters, numbers, spaces, and these special characters: “- _ . + @ :”'

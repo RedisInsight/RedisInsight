@@ -109,3 +109,20 @@ $breakpoint-l: 1400px;
     }
   }
 }
+
+:global(.controlsPopoverContent) {
+  display: flex;
+  flex-direction: column;
+
+  & > div {
+    display: flex;
+
+    button {
+      flex: 1;
+      
+      :global(.euiButtonContent) {
+        justify-content: start;
+      }
+    }
+  }
+}

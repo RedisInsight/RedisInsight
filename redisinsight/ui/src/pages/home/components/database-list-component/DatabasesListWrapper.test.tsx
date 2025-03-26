@@ -194,6 +194,22 @@ describe('DatabasesListWrapper', () => {
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
+  it('should open controls popover when three dots clicked', async () => {
+    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} onEditInstance={() => {}} />);
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('controls-button-a0db1bc8-a353-4c43-a856-b72f4811d2d4'));
+    })
+
+    const controlsPopoverId = screen.getByTestId('controls-popover-a0db1bc8-a353-4c43-a856-b72f4811d2d4');
+    const editBtn = screen.getByTestId('edit-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4');
+    const deleteBtn = screen.getByTestId('delete-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4-icon');
+
+    expect(controlsPopoverId).toBeInTheDocument();
+    expect(editBtn).toBeInTheDocument();
+    expect(deleteBtn).toBeInTheDocument();
+  });
+
   it('should call proper telemetry on delete database', async () => {
     const sendEventTelemetryMock = jest.fn();
 
@@ -201,8 +217,12 @@ describe('DatabasesListWrapper', () => {
     render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
 
     await act(() => {
+      fireEvent.click(screen.getByTestId('controls-button-a0db1bc8-a353-4c43-a856-b72f4811d2d4'));
+    });
+
+    await act(() => {
       fireEvent.click(screen.getByTestId('delete-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4-icon'))
-    })
+    });
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_SINGLE_DATABASE_DELETE_CLICKED,
@@ -219,6 +239,10 @@ describe('DatabasesListWrapper', () => {
 
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
     render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} onEditInstance={() => {}} />)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('controls-button-a0db1bc8-a353-4c43-a856-b72f4811d2d4'));
+    });
 
     await act(() => {
       fireEvent.click(screen.getByTestId('edit-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4'))

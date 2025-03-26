@@ -14,6 +14,7 @@ import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-ma
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
+import { Tag } from './tag'
 
 export interface Instance extends Partial<DatabaseInstanceResponse> {
   host: string
@@ -52,6 +53,7 @@ export interface Instance extends Partial<DatabaseInstanceResponse> {
   visible?: boolean
   loading?: boolean
   isFreeDb?: boolean
+  tags?: Tag[]
 }
 
 export interface AdditionalRedisModule {

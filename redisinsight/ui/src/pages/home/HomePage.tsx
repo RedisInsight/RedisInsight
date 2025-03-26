@@ -23,6 +23,7 @@ import {
   resetImportInstances,
   setEditedInstance
 } from 'uiSrc/slices/instances/instances'
+import { fetchTags } from 'uiSrc/slices/instances/tags'
 import { localStorageService } from 'uiSrc/services'
 import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import {
@@ -86,6 +87,7 @@ const HomePage = () => {
     dispatch(resetInstancesRedisCluster())
     dispatch(resetSubscriptionsRedisCloud())
     dispatch(fetchCreateRedisButtonsAction())
+    dispatch(fetchTags())
 
     return (() => {
       dispatch(setEditedInstance(null))

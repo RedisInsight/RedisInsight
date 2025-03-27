@@ -3,6 +3,7 @@ import axios from 'axios';
 import {
   mockConstantsProvider, mockControlGroup, mockControlNumber,
   mockFeature, mockFeatureAnalytics, mockFeatureFlagProvider, mockFeatureRepository,
+  mockFeatureDatabaseManagement,
   mockFeaturesConfig,
   mockFeaturesConfigJson,
   mockFeaturesConfigRepository, mockFeaturesConfigService, mockFeatureSso, mockSessionMetadata,
@@ -91,6 +92,15 @@ describe('FeatureService', () => {
       expect(await service.getByName(mockSessionMetadata, KnownFeatures.InsightsRecommendations)).toEqual(mockFeature);
       expect(featureRepository.get).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.InsightsRecommendations);
     });
+    it('should return feature with "custom" storage', async () => {
+      expect(await service.getByName(mockSessionMetadata, KnownFeatures.DatabaseManagement))
+        .toEqual(mockFeatureDatabaseManagement);
+      expect(featureRepository.get).not.toHaveBeenCalledWith();
+    });
+    it('should return null for unsupported storage type (undefined in current test)', async () => {
+      expect(await service.getByName(mockSessionMetadata, 'unknown feature')).toEqual(null);
+      expect(featureRepository.get).not.toHaveBeenCalledWith();
+    });
     it('should return null when feature doesn\'t exists', async () => {
       featureRepository.get.mockResolvedValueOnce(null);
       expect(await service.getByName(mockSessionMetadata, KnownFeatures.InsightsRecommendations)).toEqual(null);
@@ -110,6 +120,14 @@ describe('FeatureService', () => {
       repository.get.mockResolvedValue({ flag: false });
       expect(await service.isFeatureEnabled(mockSessionMetadata, KnownFeatures.InsightsRecommendations)).toEqual(false);
     });
+    it('should return true for custom storage', async () => {
+      expect(await service.isFeatureEnabled(mockSessionMetadata, KnownFeatures.DatabaseManagement)).toEqual(true);
+      expect(featureRepository.get).not.toHaveBeenCalledWith();
+    });
+    it('should return false for unsupported storage type (undefined in current test)', async () => {
+      expect(await service.isFeatureEnabled(mockSessionMetadata, 'unknown feature')).toEqual(false);
+      expect(featureRepository.get).not.toHaveBeenCalledWith();
+    });
     it('should return false in case of an error', async () => {
       repository.get.mockRejectedValueOnce(new Error('Unable to fetch flag from db'));
       expect(await service.isFeatureEnabled(mockSessionMetadata, KnownFeatures.InsightsRecommendations)).toEqual(false);
@@ -125,6 +143,7 @@ describe('FeatureService', () => {
           features: {
             [KnownFeatures.InsightsRecommendations]: mockFeature,
             [KnownFeatures.CloudSso]: mockFeatureSso,
+            [KnownFeatures.DatabaseManagement]: mockFeatureDatabaseManagement,
           },
         });
     });
@@ -152,6 +171,7 @@ describe('FeatureService', () => {
           features: {
             [KnownFeatures.InsightsRecommendations]: mockFeature,
             [KnownFeatures.CloudSso]: mockFeatureSso,
+            [KnownFeatures.DatabaseManagement]: mockFeatureDatabaseManagement,
           },
           force: {
             [KnownFeatures.CloudSso]: false,

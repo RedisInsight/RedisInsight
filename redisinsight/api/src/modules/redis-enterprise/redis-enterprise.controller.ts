@@ -18,7 +18,7 @@ import {
 import { Response } from 'express';
 import { ActionStatus, SessionMetadata } from 'src/common/models';
 import { BuildType } from 'src/modules/server/models/server';
-import { RequestSessionMetadata } from 'src/common/decorators';
+import { DatabaseManagement, RequestSessionMetadata } from 'src/common/decorators';
 import { ClusterConnectionDetailsDto, RedisEnterpriseDatabase } from 'src/modules/redis-enterprise/dto/cluster.dto';
 
 @ApiTags('Redis Enterprise Cluster')
@@ -65,6 +65,7 @@ export class RedisEnterpriseController {
     ],
   })
   @UsePipes(new ValidationPipe({ transform: true }))
+  @DatabaseManagement()
   async addRedisEnterpriseDatabases(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Body() dto: AddRedisEnterpriseDatabasesDto,

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsBoolean,
+  IsBoolean, IsEnum,
   IsInstance,
   IsInt,
   IsOptional,
@@ -14,6 +14,7 @@ import { pickDefinedAgreements } from 'src/dto/dto-transformer';
 import { Default } from 'src/common/decorators';
 import config from 'src/utils/config';
 import { IAgreementSpec } from 'src/modules/settings/models/agreements.interface';
+import { ToggleAnalyticsReason, ToggleAnalyticsReasonType } from 'src/modules/settings/constants/settings';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');
@@ -187,4 +188,14 @@ export class UpdateSettingsDto {
   @Transform(pickDefinedAgreements)
   @IsBoolean({ each: true })
   agreements?: Map<string, boolean>;
+
+  @ApiPropertyOptional({
+    description: 'Reason describing why analytics are enabled',
+    type: String,
+    example: 'install',
+  })
+  @IsOptional()
+  @IsString()
+  @IsEnum(ToggleAnalyticsReason)
+  analyticsReason?: ToggleAnalyticsReasonType;
 }

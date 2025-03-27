@@ -2,9 +2,10 @@ import React from 'react'
 import { EuiBadge, EuiButton, EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
+import { FeatureFlags } from 'uiSrc/constants'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
@@ -43,32 +44,34 @@ const ConnectivityOptions = (props: Props) => {
               Add databases
             </EuiButton>
           </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <OAuthSsoHandlerDialog>
-              {(ssoCloudHandlerClick, isSSOEnabled) => (
-                <EuiButton
-                  color="secondary"
-                  className={styles.typeBtn}
-                  href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
-                    campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm]
-                  })}
-                  target="_blank"
-                  onClick={(e: React.MouseEvent) => {
-                    ssoCloudHandlerClick(e, {
-                      source: OAuthSocialSource.AddDbForm,
-                      action: OAuthSocialAction.Create
-                    })
-                    isSSOEnabled && onClose?.()
-                  }}
-                  data-testid="create-free-db-btn"
-                >
-                  <EuiBadge color="subdued" className={styles.freeBadge}>Free</EuiBadge>
-                  <RocketIcon className={cx(styles.btnIcon, styles.rocket)} />
-                  New database
-                </EuiButton>
-              )}
-            </OAuthSsoHandlerDialog>
-          </EuiFlexItem>
+          <FeatureFlagComponent name={FeatureFlags.cloudAds}>
+            <EuiFlexItem grow={false}>
+              <OAuthSsoHandlerDialog>
+                {(ssoCloudHandlerClick, isSSOEnabled) => (
+                  <EuiButton
+                    color="secondary"
+                    className={styles.typeBtn}
+                    href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
+                      campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm]
+                    })}
+                    target="_blank"
+                    onClick={(e: React.MouseEvent) => {
+                      ssoCloudHandlerClick(e, {
+                        source: OAuthSocialSource.AddDbForm,
+                        action: OAuthSocialAction.Create
+                      })
+                      isSSOEnabled && onClose?.()
+                    }}
+                    data-testid="create-free-db-btn"
+                  >
+                    <EuiBadge color="subdued" className={styles.freeBadge}>Free</EuiBadge>
+                    <RocketIcon className={cx(styles.btnIcon, styles.rocket)} />
+                    New database
+                  </EuiButton>
+                )}
+              </OAuthSsoHandlerDialog>
+            </EuiFlexItem>
+          </FeatureFlagComponent>
           <EuiFlexItem />
         </EuiFlexGrid>
       </section>

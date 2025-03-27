@@ -13,7 +13,7 @@ import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 
-import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import { HELP_LINKS } from 'uiSrc/pages/home/constants'
@@ -129,15 +129,19 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
     <div className={styles.containerDl}>
       <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false} gutterSize="s">
         <EuiFlexItem grow={false}>
-          <AddInstanceBtn />
+          <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
+            <AddInstanceBtn />
+          </FeatureFlagComponent>
         </EuiFlexItem>
         {!loading && !isEmpty(data) && (
           <EuiFlexItem grow={false} className={cx(styles.promo)}>
             <EuiFlexGroup alignItems="center" gutterSize="s">
               {promoData && (
-                <EuiFlexItem grow={false}>
-                  <CreateBtn content={promoData} />
-                </EuiFlexItem>
+                <FeatureFlagComponent name={FeatureFlags.cloudAds}>
+                  <EuiFlexItem grow={false}>
+                    <CreateBtn content={promoData} />
+                  </EuiFlexItem>
+                </FeatureFlagComponent>
               )}
             </EuiFlexGroup>
           </EuiFlexItem>

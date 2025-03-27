@@ -76,4 +76,20 @@ describe('ConnectivityOptions', () => {
     ])
     expect(onClose).toBeCalled()
   })
+
+  it('should not should create free db button if cloud ads feature flag is disabled', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      cloudSso: {
+        flag: true
+      },
+      cloudAds: {
+        flag: false,
+      }
+    })
+
+    const onClose = jest.fn()
+    render(<ConnectivityOptions {...mockedProps} onClose={onClose} />)
+
+    expect(screen.queryByTestId('create-free-db-btn')).not.toBeInTheDocument()
+  })
 })

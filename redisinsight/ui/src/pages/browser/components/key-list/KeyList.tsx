@@ -43,6 +43,7 @@ import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import NoKeysMessage from '../no-keys-message'
 import { DeleteKeyPopover } from '../delete-key-popover/DeleteKeyPopover'
+import { useKeyFormat } from '../use-key-format'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -80,6 +81,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   } = props
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
+  const { handler: keyFormatConvertor } = useKeyFormat()
 
   const selectedKey = useSelector(selectedKeySelector)
   const { nextCursor, previousResultCount } = useSelector(keysDataSelector)
@@ -318,22 +320,30 @@ const KeyList = forwardRef((props: Props, ref) => {
       label: 'Key',
       minWidth: 94,
       truncateText: true,
-      render: (cellData: string, { name, type }: IKeyPropTypes, _expanded, rowIndex) => (
-        <>
-          <KeyRowName nameString={cellData} shortName={cellData} />
-          {columns[columns.length - 1].id === 'nameString' && (
-            <DeleteKeyPopover
-              deletePopoverId={deletePopoverIndex}
-              nameString={cellData}
-              name={name}
-              type={type}
-              rowId={rowIndex || 0}
-              onDelete={handleRemoveKey}
-              onOpenPopover={handleDeletePopoverOpen}
-            />
-          )}
-        </>
-      )
+      render: (
+        _cellData: string,
+        { name, type }: IKeyPropTypes,
+        _expanded,
+        rowIndex,
+      ) => {
+        const nameString = keyFormatConvertor(name)
+        return (
+          <>
+            <KeyRowName nameString={nameString} shortName={nameString} />
+            {columns[columns.length - 1].id === 'nameString' && (
+              <DeleteKeyPopover
+                deletePopoverId={deletePopoverIndex}
+                nameString={nameString}
+                name={name}
+                type={type}
+                rowId={rowIndex || 0}
+                onDelete={handleRemoveKey}
+                onOpenPopover={handleDeletePopoverOpen}
+              />
+            )}
+          </>
+        )
+      },
     },
     shownColumns.includes(BrowserColumns.TTL) ? {
       id: 'ttl',

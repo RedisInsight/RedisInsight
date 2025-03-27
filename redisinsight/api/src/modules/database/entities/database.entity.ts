@@ -1,5 +1,10 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -47,6 +52,11 @@ export enum Compressor {
   SNAPPY = 'SNAPPY',
   Brotli = 'Brotli',
   PHPGZCompress = 'PHPGZCompress',
+}
+
+export enum Encoding {
+  UNICODE = 'Unicode',
+  HEX = 'HEX',
 }
 
 @Entity('database_instance')
@@ -259,4 +269,8 @@ export class DatabaseEntity {
   @Expose()
   @Column({ nullable: true })
   isPreSetup: boolean;
+
+  @Expose()
+  @Column({ nullable: true, default: Encoding.UNICODE })
+  keyNameFormat: string;
 }

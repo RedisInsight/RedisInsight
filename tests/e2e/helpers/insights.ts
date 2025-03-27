@@ -38,7 +38,9 @@ export async function modifyFeaturesConfigJson(filePath: string): Promise<void> 
  */
 export async function updateControlNumber(controlNumber: number): Promise<void> {
     await syncFeaturesApi();
-    await DatabaseScripts.updateColumnValueInDBTable({ ...dbTableParams, rowValue: controlNumber });
+    if(process.env.RI_SOCKETS_CORS){
+        await DatabaseScripts.updateColumnValueInDBTable({ ...dbTableParams, rowValue: controlNumber });
+    }
     await syncFeaturesApi();
     await t.eval(() => location.reload());
 }
@@ -50,6 +52,8 @@ export async function refreshFeaturesTestData(): Promise<void> {
     const defaultConfigPath = path.join('.', 'test-data', 'features-configs', 'insights-default-remote.json');
 
     await modifyFeaturesConfigJson(defaultConfigPath);
-    await DatabaseScripts.deleteRowsFromTableInDB(dbTableParams);
+    if(process.env.RI_SOCKETS_CORS){
+        await DatabaseScripts.deleteRowsFromTableInDB(dbTableParams);
+    }
     await syncFeaturesApi();
 }

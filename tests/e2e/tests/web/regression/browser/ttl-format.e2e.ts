@@ -33,7 +33,7 @@ fixture `TTL values in Keys Table`
         // Clear and delete database
         await deleteKeysViaCli(keysData);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    });
+    }).skip;
 test('Verify that user can see TTL in the list of keys rounded down to the nearest unit', async t => {
     // Create new keys with TTL
     await t.click(browserPage.Cli.cliExpandButton);

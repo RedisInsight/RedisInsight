@@ -175,7 +175,7 @@ Running:
 will generate HTML and Allure reports. However, those reports are for a single run. In order to have history, which is more useful, run:
 
 ```shell
-  yarn test:allureHistoryReport
+yarn test:allureHistoryReport
 ```
 
 Or change it depending on your needs to enable history for the report that can show you around 20 executions. Additional info can be  

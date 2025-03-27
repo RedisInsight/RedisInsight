@@ -447,8 +447,8 @@ const DatabasesListWrapper = (props: Props) => {
       name: <TagsCellHeader />,
       width: '130%',
       sortable: ({ tags, id }) => {
-        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
-        return tags?.[0] ? `${tags[0].key}:${tags[0].value}` : undefined
+        if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : '\uffff'
+        return tags?.[0] ? `${tags[0].key}:${tags[0].value}` : null
       },
       render: (tags: Tag[], { id }) => {
         if (isCreateCloudDb(id) || !tags) return null

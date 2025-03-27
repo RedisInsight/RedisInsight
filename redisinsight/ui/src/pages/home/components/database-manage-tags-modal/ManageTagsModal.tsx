@@ -9,7 +9,7 @@ import {
   EuiText,
   EuiButtonEmpty,
 } from '@elastic/eui'
-import { Instance } from 'uiSrc/slices/interfaces'
+import { ConnectionProvider, Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
 import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
 
@@ -61,7 +61,7 @@ export const ManageTagsModal = ({
   )
 
   const isSaveButtonDisabled = !isModified || hasErrors
-  const isCloudDb = instance.provider === 'RE_CLOUD'
+  const isCloudDb = instance.provider === ConnectionProvider.RE_CLOUD
 
   const handleTagChange = useCallback(
     (index: number, key: 'key' | 'value', value: string) => {

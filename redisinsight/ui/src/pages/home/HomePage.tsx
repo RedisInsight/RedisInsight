@@ -47,7 +47,7 @@ import styles from './styles.module.scss'
 
 enum OpenDialogName {
   AddDatabase = 'add',
-  ManageTags = 'tags',
+  ManageTags = 'manage-tags',
   EditDatabase = 'edit'
 }
 

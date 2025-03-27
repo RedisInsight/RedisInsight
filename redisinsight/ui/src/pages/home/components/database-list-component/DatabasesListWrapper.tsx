@@ -597,7 +597,7 @@ const DatabasesListWrapper = (props: Props) => {
             loading={loading}
             data={listOfInstances}
             rowProps={getRowProps}
-            getSelectableItems={(item) => item.id !== 'create-free-cloud-db'}
+            getSelectableItems={(item) => item.id !== CREATE_CLOUD_DB_ID}
             onTableChange={onTableChange}
             sort={sortingRef.current}
             hideSelectableCheckboxes={!databaseManagementFeature?.flag}

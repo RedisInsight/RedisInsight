@@ -26,7 +26,8 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   fetchUserConfigSettings,
   fetchUserSettingsSpec,
-  userSettingsSelector,
+  updateUserConfigSettingsAction,
+  userSettingsSelector
 } from 'uiSrc/slices/user/user-settings'
 
 import Divider from 'uiSrc/components/divider/Divider'
@@ -36,7 +37,9 @@ import styles from './styles.module.scss'
 
 const SettingsPage = () => {
   const [loading, setLoading] = useState(false)
+  const [themeValue, setThemeValue] = useState('')
   const { loading: settingsLoading } = useSelector(userSettingsSelector)
+  const { config } = useSelector(userSettingsSelector)
 
   const initialOpenSection = globalThis.location.hash || ''
 
@@ -44,11 +47,7 @@ const SettingsPage = () => {
 
   const options = THEMES
   const themeContext = useContext(ThemeContext)
-  let { theme, changeTheme, usingSystemTheme } = themeContext
-
-  if (usingSystemTheme) {
-    theme = Theme.System
-  }
+  let { theme, changeTheme } = themeContext
 
   useEffect(() => {
     // componentDidMount
@@ -62,12 +61,20 @@ const SettingsPage = () => {
     })
   }, [])
 
+  useEffect(() => {
+    if (config) {
+      setThemeValue(config.theme);
+      theme = config.theme;
+    }
+  }, [config])
+
   useDebouncedEffect(() => setLoading(settingsLoading), 100, [settingsLoading])
   setTitle('Settings')
 
   const onChange = (value: string) => {
     const previousValue = theme
     changeTheme(value)
+    dispatch(updateUserConfigSettingsAction({theme: value}));
     sendEventTelemetry({
       event: TelemetryEvent.SETTINGS_COLOR_THEME_CHANGED,
       eventData: {
@@ -87,7 +94,7 @@ const SettingsPage = () => {
         <EuiFormRow label="Specifies the color theme to be used in Redis Insight:">
           <EuiSuperSelect
             options={options}
-            valueOfSelected={theme}
+            valueOfSelected={themeValue}
             onChange={onChange}
             style={{ marginTop: '12px' }}
             data-test-subj="select-theme"

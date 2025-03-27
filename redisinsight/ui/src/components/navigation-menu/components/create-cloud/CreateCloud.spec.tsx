@@ -8,6 +8,7 @@ import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { HELP_LINKS } from 'uiSrc/pages/home/constants'
+import * as appFeaturesSlice from 'uiSrc/slices/app/features'
 import CreateCloud from './CreateCloud'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -15,17 +16,20 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn(),
 }))
 
-jest.mock('uiSrc/slices/app/features', () => ({
-  ...jest.requireActual('uiSrc/slices/app/features'),
-  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+const mockFeatureFlags = (cloudAds = true) => {
+  jest.spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector').mockReturnValue({
     cloudSso: {
       flag: true
+    },
+    cloudAds: {
+      flag: cloudAds
     }
-  }),
-}))
+  })
+}
 
 let store: typeof mockedStore
 beforeEach(() => {
+  mockFeatureFlags()
   cleanup()
   store = cloneDeep(mockedStore)
   store.clearActions()
@@ -67,5 +71,11 @@ describe('CreateCloud', () => {
         source: OAuthSocialSource.NavigationMenu
       }
     })
+  })
+
+  it('should not render if cloud ads feature flag is disabled', () => {
+    mockFeatureFlags(false)
+    const { container } = render(<CreateCloud />)
+    expect(container).toBeEmptyDOMElement()
   })
 })

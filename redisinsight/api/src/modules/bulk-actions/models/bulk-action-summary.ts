@@ -1,3 +1,4 @@
+import { RedisString } from 'src/common/constants';
 import { IBulkActionSummaryOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-summary-overview.interface';
 
 export class BulkActionSummary {
@@ -8,6 +9,8 @@ export class BulkActionSummary {
   private failed: number = 0;
 
   private errors: Array<Record<string, string>> = [];
+
+  private keys: Array<RedisString> = [];
 
   addProcessed(count: number) {
     this.processed += count;
@@ -29,12 +32,17 @@ export class BulkActionSummary {
     }
   }
 
+  addKeys(keys: Array<RedisString>) {
+    this.keys.push(...keys);
+  }
+
   getOverview(): IBulkActionSummaryOverview {
     const overview = {
       processed: this.processed,
       succeed: this.succeed,
       failed: this.failed,
       errors: this.errors,
+      keys: this.keys,
     };
 
     this.errors = [];

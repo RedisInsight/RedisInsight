@@ -102,18 +102,24 @@ export class BulkAction implements IBulkAction {
         scanned: 0,
       });
 
-    const summary = this.runners.map((runner) => runner.getSummary().getOverview())
-      .reduce((cur, prev) => ({
-        processed: prev.processed + cur.processed,
-        succeed: prev.succeed + cur.succeed,
-        failed: prev.failed + cur.failed,
-        errors: prev.errors.concat(cur.errors),
-      }), {
-        processed: 0,
-        succeed: 0,
-        failed: 0,
-        errors: [],
-      });
+    const summary = this.runners
+      .map((runner) => runner.getSummary().getOverview())
+      .reduce(
+        (cur, prev) => ({
+          processed: prev.processed + cur.processed,
+          succeed: prev.succeed + cur.succeed,
+          failed: prev.failed + cur.failed,
+          errors: prev.errors.concat(cur.errors),
+          keys: [...prev.keys, ...cur.keys],
+        }),
+        {
+          processed: 0,
+          succeed: 0,
+          failed: 0,
+          errors: [],
+          keys: [],
+        },
+      );
 
     summary.errors = summary.errors.slice(0, 500).map((error) => ({
       key: error.key.toString(),

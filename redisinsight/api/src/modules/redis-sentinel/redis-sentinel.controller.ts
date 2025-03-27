@@ -19,7 +19,7 @@ import { RedisSentinelService } from 'src/modules/redis-sentinel/redis-sentinel.
 import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
 import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/create.sentinel.database.response';
 import { BuildType } from 'src/modules/server/models/server';
-import { RequestSessionMetadata } from 'src/common/decorators';
+import { DatabaseManagement, RequestSessionMetadata } from 'src/common/decorators';
 
 @ApiTags('Redis OSS Sentinel')
 @Controller('redis-sentinel')
@@ -71,6 +71,7 @@ export class RedisSentinelController {
     ],
   })
   @UsePipes(new ValidationPipe({ transform: true }))
+  @DatabaseManagement()
   async addSentinelMasters(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Body() dto: CreateSentinelDatabasesDto,

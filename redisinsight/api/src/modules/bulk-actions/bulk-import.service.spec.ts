@@ -188,6 +188,7 @@ describe('BulkImportService', () => {
             succeed: 100_000,
             failed: 0,
             errors: [],
+            keys: [],
           },
           duration: expect.anything(),
         });
@@ -207,6 +208,7 @@ describe('BulkImportService', () => {
             succeed: 10_000,
             failed: 0,
             errors: [],
+            keys: [],
           },
           duration: expect.anything(),
         });
@@ -228,6 +230,7 @@ describe('BulkImportService', () => {
           succeed: 0,
           failed: 2,
           errors: [],
+          keys: [],
         },
         duration: expect.anything(),
       });

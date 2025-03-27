@@ -4,8 +4,8 @@
 }
 
 .tagBadge {
-  color: #8BA2FF !important;
-  background-color: #292F47 !important;
+  color: var(--euiColorPrimary) !important;
+  background-color: var(--browserComponentActive) !important;
   padding: 4px !important;
   margin-left: 4px;
   font-size: 14px;

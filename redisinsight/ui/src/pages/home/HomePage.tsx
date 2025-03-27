@@ -3,7 +3,7 @@ import {
   EuiPageBody,
   EuiPanel,
 } from '@elastic/eui'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
@@ -40,12 +40,14 @@ import DatabasesList from './components/database-list-component'
 import DatabaseListHeader from './components/database-list-header'
 import EmptyMessage from './components/empty-message/EmptyMessage'
 import DatabasePanelDialog from './components/database-panel-dialog'
+import { ManageTagsModal } from './components/database-manage-tags-modal/ManageTagsModal'
 
 import './styles.scss'
 import styles from './styles.module.scss'
 
 enum OpenDialogName {
   AddDatabase = 'add',
+  ManageTags = 'manage-tags',
   EditDatabase = 'edit'
 }
 
@@ -181,6 +183,11 @@ const HomePage = () => {
     dispatch(setEditedInstance(null))
   }
 
+  const handleManageInstanceTags = (instance: Instance) => {
+    dispatch(setEditedInstance(instance))
+    setOpenDialog(OpenDialogName.ManageTags)
+  }
+
   const handleEditInstance = (editedInstance: Instance) => {
     if (editedInstance) {
       dispatch(fetchEditedInstanceAction(editedInstance))
@@ -210,7 +217,7 @@ const HomePage = () => {
               key="instance-controls"
               onAddInstance={handleAddInstance}
             />
-            {!!openDialog && (
+            {openDialog && openDialog !== OpenDialogName.ManageTags && (
               <DatabasePanelDialog
                 editMode={openDialog === OpenDialogName.EditDatabase}
                 urlHandlingAction={action}
@@ -227,6 +234,12 @@ const HomePage = () => {
                 onDbEdited={onDbEdited}
               />
             )}
+            {openDialog === OpenDialogName.ManageTags && editedInstance && (
+              <ManageTagsModal
+                instance={editedInstance}
+                onClose={handleClose}
+              />
+            )}
             <div key="homePage" className="homePage">
               {(!isInstanceExists && !loading && !loadingChanging ? (
                 <EuiPanel className={styles.emptyPanel} borderRadius="none">
@@ -240,6 +253,7 @@ const HomePage = () => {
                   editedInstance={editedInstance}
                   onEditInstance={handleEditInstance}
                   onDeleteInstances={handleDeleteInstances}
+                  onManageInstanceTags={handleManageInstanceTags}
                 />
               ))}
             </div>

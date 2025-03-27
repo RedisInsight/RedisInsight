@@ -15,6 +15,7 @@ import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dt
 import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
 
 import { fetchMastersSentinelAction } from './sentinel'
+import { fetchTags } from './tags'
 import { AppDispatch, RootState } from '../store'
 import {
   addErrorNotification,
@@ -478,8 +479,15 @@ function autoCreateAndConnectToInstanceActionSuccess(
   }
 }
 
+type PartialInstance = Partial<Omit<Instance, 'tags'>> & {
+  tags?: {
+    key: string
+    value: string
+  }[]
+}
+
 // Asynchronous thunk action
-export function updateInstanceAction({ id, ...payload }: Partial<Instance>, onSuccess?: () => void) {
+export function updateInstanceAction({ id, ...payload }: PartialInstance, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
 
@@ -489,6 +497,9 @@ export function updateInstanceAction({ id, ...payload }: Partial<Instance>, onSu
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch<any>(fetchInstancesAction())
+        if (payload.tags) {
+          dispatch(fetchTags())
+        }
         onSuccess?.()
       }
     } catch (_err) {

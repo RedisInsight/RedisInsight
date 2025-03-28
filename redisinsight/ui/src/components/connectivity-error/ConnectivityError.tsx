@@ -1,7 +1,8 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui'
+import { EuiButton, EuiPanel } from '@elastic/eui'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 
+import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export type ConnectivityErrorProps = {
@@ -15,30 +16,23 @@ const ConnectivityError = ({
   error,
   onRetry,
 }: ConnectivityErrorProps) => (
-  <div className={styles.connectivityError}>
+  <Col className={styles.connectivityError}>
     <EuiPanel>
-      <div style={{ display: 'flex', height: '100%' }}>
+      <Col style={{ minHeight: '100vh' }} centered>
         {isLoading && <SuspenseLoader />}
-        <EuiFlexGroup
-          gutterSize="l"
-          alignItems="center"
-          direction="column"
-          justifyContent="center"
-        >
-          <EuiFlexItem grow={false} data-testid="connectivity-error-message">
-            {error}
-          </EuiFlexItem>
+        <Col centered gap="xl">
+          <FlexItem data-testid="connectivity-error-message">{error}</FlexItem>
           {onRetry && (
-            <EuiFlexItem grow={false}>
+            <FlexItem>
               <EuiButton fill size="m" color="secondary" onClick={onRetry}>
                 Retry
               </EuiButton>
-            </EuiFlexItem>
+            </FlexItem>
           )}
-        </EuiFlexGroup>
-      </div>
+        </Col>
+      </Col>
     </EuiPanel>
-  </div>
+  </Col>
 )
 
 export default ConnectivityError

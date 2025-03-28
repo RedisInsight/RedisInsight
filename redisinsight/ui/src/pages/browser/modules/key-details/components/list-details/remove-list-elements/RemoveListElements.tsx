@@ -5,8 +5,6 @@ import { toNumber } from 'lodash'
 import {
   EuiButton,
   EuiTextColor,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiFieldText,
   EuiPanel,
@@ -44,6 +42,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
@@ -262,9 +261,9 @@ const RemoveListElements = (props: Props) => {
           'inlineFieldsNoSpace',
         )}
       >
-        <EuiFlexItem grow>
-          <EuiFlexGroup gutterSize="none" alignItems="center">
-            <EuiFlexItem grow={false} style={{ minWidth: '220px' }}>
+        <FlexItem grow>
+          <Row align="center">
+            <FlexItem style={{ minWidth: '220px' }}>
               <EuiFormRow fullWidth>
                 <EuiSuperSelect
                   className={styles.select}
@@ -276,8 +275,8 @@ const RemoveListElements = (props: Props) => {
                   data-testid="destination-select"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem grow>
+            </FlexItem>
+            <FlexItem grow style={{ width: '100%' }}>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -296,9 +295,9 @@ const RemoveListElements = (props: Props) => {
                   append={!canRemoveMultiple ? InfoBoxPopover() : <></>}
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
+            </FlexItem>
+          </Row>
+        </FlexItem>
       </EuiPanel>
       <EuiPanel
         style={{ border: 'none' }}
@@ -306,8 +305,8 @@ const RemoveListElements = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="xl">
+          <FlexItem>
             <div>
               <EuiButton
                 color="secondary"
@@ -317,11 +316,11 @@ const RemoveListElements = (props: Props) => {
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <div>{RemoveButton()}</div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

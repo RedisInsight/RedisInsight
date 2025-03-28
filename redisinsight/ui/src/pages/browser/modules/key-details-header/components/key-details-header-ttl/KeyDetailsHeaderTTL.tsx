@@ -1,32 +1,25 @@
-import {
-  EuiFieldText,
-  EuiFlexGrid,
-  EuiFlexItem,
-  EuiIcon,
-  EuiText,
-} from '@elastic/eui'
+import { EuiFieldText, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
-import { initialKeyInfo, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import {
+  initialKeyInfo,
+  selectedKeyDataSelector,
+  selectedKeySelector,
+} from 'uiSrc/slices/browser/keys'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { MAX_TTL_NUMBER, validateTTLNumber } from 'uiSrc/utils'
 
-  MAX_TTL_NUMBER,
-  validateTTLNumber
-} from 'uiSrc/utils'
-
+import { Grid } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
   onEditTTL: (key: RedisResponseBuffer, ttl: number) => void
 }
 
-const KeyDetailsHeaderTTL = ({
-  onEditTTL,
-}: Props) => {
+const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
   const { loading } = useSelector(selectedKeySelector)
   const {
     ttl: ttlProp,
@@ -54,7 +47,9 @@ const KeyDetailsHeaderTTL = ({
     setTTLIsEditing(true)
   }
 
-  const onChangeTtl = ({ currentTarget: { value } }: ChangeEvent<HTMLInputElement>) => {
+  const onChangeTtl = ({
+    currentTarget: { value },
+  }: ChangeEvent<HTMLInputElement>) => {
     ttlIsEditing && setTTL(validateTTLNumber(value) || '-1')
   }
 
@@ -78,10 +73,13 @@ const KeyDetailsHeaderTTL = ({
   }
 
   const appendTTLEditing = () =>
-    (!ttlIsEditing ? <EuiIcon className={styles.iconPencil} type="pencil" color="subdued" /> : '')
+    !ttlIsEditing ? (
+      <EuiIcon className={styles.iconPencil} type="pencil" color="subdued" />
+    ) : (
+      ''
+    )
 
   return (
-
     <EuiFlexItem
       onMouseEnter={onMouseEnterTTL}
       onMouseLeave={onMouseLeaveTTL}
@@ -92,59 +90,62 @@ const KeyDetailsHeaderTTL = ({
     >
       <>
         {(ttlIsEditing || ttlIsHovering) && (
-        <EuiFlexGrid
-          columns={2}
-          responsive={false}
-          gutterSize="none"
-          className={styles.ttlGridComponent}
-        >
-          <EuiFlexItem grow={false}>
-            <EuiText
-              grow
-              color="subdued"
-              size="s"
-              className={styles.subtitleText}
-            >
-              TTL:
-            </EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow component="span">
-            <InlineItemEditor
-              onApply={() => applyEditTTL()}
-              onDecline={(event) => cancelEditTTl(event)}
-              viewChildrenMode={!ttlIsEditing}
-              isLoading={loading}
-              declineOnUnmount={false}
-            >
-              <EuiFieldText
-                name="ttl"
-                id="ttl"
-                className={cx(
-                  styles.ttlInput,
-                  ttlIsEditing && styles.editing,
-                )}
-                maxLength={200}
-                placeholder="No limit"
-                value={ttl === '-1' ? '' : ttl}
-                fullWidth={false}
-                compressed
-                min={0}
-                max={MAX_TTL_NUMBER}
+          <Grid
+            columns={2}
+            responsive={false}
+            gap="none"
+            className={styles.ttlGridComponent}
+            data-testid="edit-ttl-grid"
+          >
+            <EuiFlexItem grow={false}>
+              <EuiText
+                grow
+                color="subdued"
+                size="s"
+                className={styles.subtitleText}
+              >
+                TTL:
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow component="span">
+              <InlineItemEditor
+                onApply={() => applyEditTTL()}
+                onDecline={(event) => cancelEditTTl(event)}
+                viewChildrenMode={!ttlIsEditing}
                 isLoading={loading}
-                onChange={onChangeTtl}
-                append={appendTTLEditing()}
-                autoComplete="off"
-                data-testid="edit-ttl-input"
-              />
-            </InlineItemEditor>
-          </EuiFlexItem>
-        </EuiFlexGrid>
+                declineOnUnmount={false}
+              >
+                <EuiFieldText
+                  name="ttl"
+                  id="ttl"
+                  className={cx(
+                    styles.ttlInput,
+                    ttlIsEditing && styles.editing,
+                  )}
+                  maxLength={200}
+                  placeholder="No limit"
+                  value={ttl === '-1' ? '' : ttl}
+                  fullWidth={false}
+                  compressed
+                  min={0}
+                  max={MAX_TTL_NUMBER}
+                  isLoading={loading}
+                  onChange={onChangeTtl}
+                  append={appendTTLEditing()}
+                  autoComplete="off"
+                  data-testid="edit-ttl-input"
+                />
+              </InlineItemEditor>
+            </EuiFlexItem>
+          </Grid>
         )}
         <EuiText
           grow
           color="subdued"
           size="s"
-          className={cx(styles.subtitleText, { [styles.hidden]: ttlIsEditing || ttlIsHovering })}
+          className={cx(styles.subtitleText, {
+            [styles.hidden]: ttlIsEditing || ttlIsHovering,
+          })}
           data-testid="key-ttl-text"
         >
           TTL:

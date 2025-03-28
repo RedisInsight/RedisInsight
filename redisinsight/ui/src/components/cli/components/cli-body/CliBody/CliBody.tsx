@@ -1,5 +1,5 @@
 import React, { Ref, useEffect, useRef, useState } from 'react'
-import { EuiFlexGroup, EuiFlexItem, keys } from '@elastic/eui'
+import { keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Nullable, scrollIntoView } from 'uiSrc/utils'
@@ -11,6 +11,7 @@ import CliInputWrapper from 'uiSrc/components/cli/components/cli-input'
 import { clearOutput, updateCliHistoryStorage } from 'uiSrc/utils/cliHelper'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -247,17 +248,16 @@ const CliBody = (props: Props) => {
       role="textbox"
       tabIndex={0}
     >
-      <EuiFlexGroup
-        justifyContent="spaceBetween"
-        gutterSize="none"
-        responsive={false}
-        direction="row"
-        style={{ height: '100%' }}
-      >
-        <EuiFlexItem grow>
+      <Row justify="between" style={{ height: '100%' }}>
+        <FlexItem grow>
           <div className={styles.output}>{data}</div>
           {!error && !(loading || settingsLoading) ? (
-            <span style={{ paddingBottom: 5, paddingTop: 17 }}>
+            <span
+              style={{
+                paddingBottom: 5,
+                paddingTop: 17,
+              }}
+            >
               <CliInputWrapper
                 command={command}
                 setCommand={setCommand}
@@ -270,8 +270,8 @@ const CliBody = (props: Props) => {
             !error && <span>Executing command...</span>
           )}
           <div ref={scrollDivRef} />
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

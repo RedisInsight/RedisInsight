@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import {
   EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiPopover,
   EuiSpacer,
@@ -18,6 +16,7 @@ import {
 } from 'uiSrc/slices/browser/bulkActions'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -71,11 +70,11 @@ const LoadSampleData = (props: Props) => {
         </EuiButton>
       }
     >
-      <EuiFlexGroup gutterSize="s" responsive={false}>
-        <EuiFlexItem grow={false}>
+      <Row gap="m" responsive={false}>
+        <FlexItem>
           <EuiIcon type="alert" className={styles.popoverIcon} />
-        </EuiFlexItem>
-        <EuiFlexItem>
+        </FlexItem>
+        <FlexItem>
           <EuiText>Execute commands in bulk</EuiText>
           <EuiSpacer size="s" />
           <EuiText color="subdued" size="s">
@@ -83,8 +82,8 @@ const LoadSampleData = (props: Props) => {
             your database. Avoid executing them in production databases.
           </EuiText>
           <EuiSpacer size="s" />
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <EuiButton
                 fill
                 size="s"
@@ -96,10 +95,10 @@ const LoadSampleData = (props: Props) => {
               >
                 Execute
               </EuiButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+            </FlexItem>
+          </Row>
+        </FlexItem>
+      </Row>
     </EuiPopover>
   )
 }

@@ -204,13 +204,9 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
         )}
         {instances.length > 0 && (
           <>
-            <EuiFlexItem>
-              <EuiFlexGroup
-                justifyContent="flexEnd"
-                alignItems="center"
-                gutterSize="s"
-              >
-                <EuiFlexItem grow={false} className={styles.columnsButtonItem}>
+            <FlexItem>
+              <Row justify="end" align="center" gap="s">
+                <FlexItem className={styles.columnsButtonItem}>
                   <EuiPopover
                     ownFocus={false}
                     anchorPosition="downLeft"
@@ -233,12 +229,12 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                   >
                     {columnCheckboxes}
                   </EuiPopover>
-                </EuiFlexItem>
+                </FlexItem>
                 <FlexItem>
                   <SearchDatabasesList />
                 </FlexItem>
-              </EuiFlexGroup>
-            </EuiFlexItem>
+              </Row>
+            </FlexItem>
           </>
         )}
       </Row>

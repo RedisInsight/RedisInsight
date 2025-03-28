@@ -98,6 +98,7 @@ const oauthCloudSlice = createSlice({
     getUserInfoSuccess: (state, { payload }: PayloadAction<CloudUser>) => {
       state.user.loading = false
       state.user.data = payload
+      state.user.error = ''
     },
     getUserInfoFailure: (state, { payload }: PayloadAction<string>) => {
       state.user.loading = false

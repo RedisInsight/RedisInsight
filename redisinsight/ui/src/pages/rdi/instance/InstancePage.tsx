@@ -14,9 +14,9 @@ import {
   instancesSelector as rdiInstancesSelector,
 } from 'uiSrc/slices/rdi/instances'
 import {
-  resetConnectedInstance as resetConnectedDatabaseInstance,
   fetchInstancesAction,
   instancesSelector as dbInstancesSelector,
+  resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
 
 import { RdiInstancePageTemplate } from 'uiSrc/templates'

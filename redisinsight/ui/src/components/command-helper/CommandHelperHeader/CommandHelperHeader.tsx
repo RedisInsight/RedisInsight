@@ -2,14 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButtonIcon,
-  EuiText,
-  EuiToolTip,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   resetCliHelperSettings,
@@ -19,6 +12,7 @@ import {
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 const CommandHelperHeader = () => {
@@ -48,14 +42,8 @@ const CommandHelperHeader = () => {
 
   return (
     <div className={styles.container} id="command-helper-header">
-      <EuiFlexGroup
-        justifyContent="spaceBetween"
-        gutterSize="none"
-        alignItems="center"
-        responsive={false}
-        style={{ height: '100%' }}
-      >
-        <EuiFlexItem grow={false} className={styles.title}>
+      <Row justify="between" align="center" style={{ height: '100%' }}>
+        <FlexItem className={styles.title}>
           <EuiIcon type="documents" size="m" />
           <OnboardingTour
             options={ONBOARDING_FEATURES.BROWSER_COMMAND_HELPER}
@@ -64,9 +52,9 @@ const CommandHelperHeader = () => {
           >
             <EuiText>Command Helper</EuiText>
           </OnboardingTour>
-        </EuiFlexItem>
-        <EuiFlexItem grow />
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem grow />
+        <FlexItem>
           <EuiToolTip
             content="Minimize"
             position="top"
@@ -83,8 +71,8 @@ const CommandHelperHeader = () => {
               onClick={handleHideHelper}
             />
           </EuiToolTip>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <EuiToolTip
             content="Close"
             position="top"
@@ -101,8 +89,8 @@ const CommandHelperHeader = () => {
               onClick={handleCloseHelper}
             />
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

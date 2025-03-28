@@ -4,8 +4,6 @@ import cx from 'classnames'
 import {
   EuiButton,
   EuiTextColor,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiFieldText,
   EuiPanel,
@@ -32,6 +30,7 @@ import {
 } from 'uiSrc/pages/browser/components/add-key/AddKeySet/interfaces'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -151,8 +150,8 @@ const AddSetMembers = (props: Props) => {
           onClickAdd={addMember}
         >
           {(item, index) => (
-            <EuiFlexGroup gutterSize="none" alignItems="center">
-              <EuiFlexItem grow>
+            <Row align="center">
+              <FlexItem grow>
                 <EuiFormRow fullWidth>
                   <EuiFieldText
                     fullWidth
@@ -170,8 +169,8 @@ const AddSetMembers = (props: Props) => {
                     data-testid="member-name"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-            </EuiFlexGroup>
+              </FlexItem>
+            </Row>
           )}
         </AddMultipleFields>
       </EuiPanel>
@@ -181,8 +180,8 @@ const AddSetMembers = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="xl">
+          <FlexItem>
             <EuiButton
               color="secondary"
               onClick={() => closePanel(true)}
@@ -190,8 +189,8 @@ const AddSetMembers = (props: Props) => {
             >
               <EuiTextColor color="default">Cancel</EuiTextColor>
             </EuiButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiButton
               fill
               size="m"
@@ -203,8 +202,8 @@ const AddSetMembers = (props: Props) => {
             >
               Save
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, forEach } from 'lodash'
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiSwitch,
   EuiSpacer,
   EuiText,
@@ -25,6 +23,7 @@ import {
   userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -234,9 +233,9 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               </EuiText>
             </EuiCallOut>
             <EuiSpacer size="l" />
-            <EuiFlexItem>
-              <EuiFlexGroup gutterSize="s">
-                <EuiFlexItem grow={false}>
+            <FlexItem>
+              <Row gap="m">
+                <FlexItem>
                   <EuiSwitch
                     showLabel={false}
                     label=""
@@ -245,8 +244,8 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                     className={styles.switchOption}
                     data-testid="switch-option-recommended"
                   />
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
+                </FlexItem>
+                <FlexItem>
                   <EuiText className={styles.label}>
                     Use recommended settings
                   </EuiText>
@@ -258,9 +257,9 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                   >
                     Select to activate all listed options.
                   </EuiText>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFlexItem>
+                </FlexItem>
+              </Row>
+            </FlexItem>
             <EuiHorizontalRule
               margin="l"
               className={cx({
@@ -328,12 +327,8 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         <EuiSpacer size="l" />
       )}
 
-      <EuiFlexGroup
-        alignItems="center"
-        justifyContent="spaceBetween"
-        responsive={false}
-      >
-        <EuiFlexItem grow={false}>
+      <Row align="center" justify="between" responsive={false}>
+        <FlexItem>
           {requiredConsents.map((consent: IConsent) => (
             <ConsentOption
               consent={consent}
@@ -343,8 +338,8 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               key={consent.agreementName}
             />
           ))}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <EuiToolTip
             position="top"
             anchorClassName="euiToolTip__btn-disabled"
@@ -372,8 +367,8 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               Submit
             </EuiButton>
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </EuiForm>
   )
 }

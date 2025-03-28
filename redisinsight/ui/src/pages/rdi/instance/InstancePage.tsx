@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
-
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 import {
   appContextSelector,
   resetDatabaseContext,
@@ -23,6 +21,7 @@ import {
 
 import { RdiInstancePageTemplate } from 'uiSrc/templates'
 import { RdiInstanceHeader } from 'uiSrc/components'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
 import InstancePageRouter from './InstancePageRouter'
 import { RdiPipelineHeader } from './components'
 import styles from './styles.module.scss'
@@ -77,22 +76,17 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   }, [])
 
   return (
-    <EuiFlexGroup
-      className={styles.page}
-      direction="column"
-      gutterSize="none"
-      responsive={false}
-    >
-      <EuiFlexItem grow={false}>
+    <Col className={styles.page} gap="none" responsive={false}>
+      <FlexItem>
         <RdiInstanceHeader />
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
+      </FlexItem>
+      <FlexItem grow={false}>
         <RdiPipelineHeader />
-      </EuiFlexItem>
+      </FlexItem>
       <RdiInstancePageTemplate>
         <InstancePageRouter routes={routes} />
       </RdiInstancePageTemplate>
-    </EuiFlexGroup>
+    </Col>
   )
 }
 

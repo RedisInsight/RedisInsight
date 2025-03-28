@@ -58,6 +58,9 @@
   font-family: "Inconsolata", monospace !important;
   letter-spacing: 0.15px;
   flex-grow: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 
   input {
     width: 100%;
@@ -228,6 +231,10 @@
   }
 }
 
+.actions {
+  margin-top: 1em;
+}
+
 .actionButtons, .deleteBtn {
   margin-left: 1em;
   display: flex;
@@ -254,4 +261,11 @@
   height: 150px;
   width: 100%;
   max-width: none;
+}
+
+.editor, .editorWrapper {
+  // Using 99% instead of 100% to avoid a weird Monaco animation that kicks in at full height,
+  // which causes the editor to overflow its container.
+  // TODO: Find a cleaner fix for this.
+  height: 99% !important;
 }

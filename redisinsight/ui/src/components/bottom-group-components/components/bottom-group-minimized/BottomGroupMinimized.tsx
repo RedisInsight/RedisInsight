@@ -1,13 +1,6 @@
 import React, { useEffect } from 'react'
 import cx from 'classnames'
-import {
-  EuiBadge,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiHideFor,
-  EuiIcon,
-  EuiShowFor,
-} from '@elastic/eui'
+import { EuiBadge, EuiHideFor, EuiIcon, EuiShowFor, } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -30,6 +23,7 @@ import SurveyIcon from 'uiSrc/assets/img/survey_icon.svg'
 import FeatureFlagComponent from 'uiSrc/components/feature-flag-component'
 import { FeatureFlags } from 'uiSrc/constants'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from '../../styles.module.scss'
 
 const BottomGroupMinimized = () => {
@@ -91,15 +85,9 @@ const BottomGroupMinimized = () => {
 
   return (
     <div className={styles.containerMinimized}>
-      <EuiFlexGroup
-        gutterSize="none"
-        alignItems="center"
-        responsive={false}
-        style={{ height: '100%' }}
-      >
-        <EuiFlexItem
+      <Row align="center" responsive={false} style={{ height: '100%' }}>
+        <FlexItem
           className={styles.componentBadgeItem}
-          grow={false}
           onClick={handleExpandCli}
           data-testid="expand-cli"
         >
@@ -111,10 +99,9 @@ const BottomGroupMinimized = () => {
             <EuiIcon type="console" size="m" />
             <span>CLI</span>
           </EuiBadge>
-        </EuiFlexItem>
-        <EuiFlexItem
+        </FlexItem>
+        <FlexItem
           className={styles.componentBadgeItem}
-          grow={false}
           onClick={handleExpandHelper}
           data-testid="expand-command-helper"
         >
@@ -126,11 +113,10 @@ const BottomGroupMinimized = () => {
             <EuiIcon type="documents" size="m" />
             <span>Command Helper</span>
           </EuiBadge>
-        </EuiFlexItem>
+        </FlexItem>
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
-          <EuiFlexItem
+          <FlexItem
             className={styles.componentBadgeItem}
-            grow={false}
             onClick={handleExpandMonitor}
             data-testid="expand-monitor"
           >
@@ -142,9 +128,9 @@ const BottomGroupMinimized = () => {
               <EuiIcon type="inspect" size="m" />
               <span>Profiler</span>
             </EuiBadge>
-          </EuiFlexItem>
+          </FlexItem>
         </FeatureFlagComponent>
-      </EuiFlexGroup>
+      </Row>
       <FeatureFlagComponent name={FeatureFlags.envDependent}>
         <a
           className={styles.surveyLink}

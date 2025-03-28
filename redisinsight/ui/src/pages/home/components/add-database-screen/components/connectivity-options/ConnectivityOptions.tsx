@@ -1,12 +1,5 @@
 import React from 'react'
-import {
-  EuiBadge,
-  EuiButton,
-  EuiFlexGrid,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiBadge, EuiButton, EuiSpacer, EuiTitle, } from '@elastic/eui'
 import cx from 'classnames'
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -18,6 +11,7 @@ import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import RocketIcon from 'uiSrc/assets/img/oauth/rocket.svg?react'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { CONNECTIVITY_OPTIONS } from '../../constants'
 
 import styles from './styles.module.scss'
@@ -37,8 +31,8 @@ const ConnectivityOptions = (props: Props) => {
           <span>Get started with Redis Cloud account</span>
         </EuiTitle>
         <EuiSpacer />
-        <EuiFlexGrid>
-          <EuiFlexItem grow={false}>
+        <Row gap="xl">
+          <FlexItem>
             <EuiButton
               color="secondary"
               className={styles.typeBtn}
@@ -48,9 +42,9 @@ const ConnectivityOptions = (props: Props) => {
               <CloudIcon className={styles.btnIcon} />
               Add databases
             </EuiButton>
-          </EuiFlexItem>
+          </FlexItem>
           <FeatureFlagComponent name={FeatureFlags.cloudAds}>
-            <EuiFlexItem grow={false}>
+            <FlexItem>
               <OAuthSsoHandlerDialog>
                 {(ssoCloudHandlerClick, isSSOEnabled) => (
                   <EuiButton
@@ -77,10 +71,10 @@ const ConnectivityOptions = (props: Props) => {
                   </EuiButton>
                 )}
               </OAuthSsoHandlerDialog>
-            </EuiFlexItem>
+            </FlexItem>
           </FeatureFlagComponent>
-          <EuiFlexItem />
-        </EuiFlexGrid>
+          <FlexItem grow />
+        </Row>
       </section>
       <EuiSpacer size="xxl" />
       <section>
@@ -88,9 +82,9 @@ const ConnectivityOptions = (props: Props) => {
           <span>More connectivity options</span>
         </EuiTitle>
         <EuiSpacer />
-        <EuiFlexGrid>
+        <Row gap="xl">
           {CONNECTIVITY_OPTIONS.map(({ id, type, title, icon }) => (
-            <EuiFlexItem grow={false} key={id}>
+            <FlexItem key={id}>
               <EuiButton
                 color="secondary"
                 className={cx(styles.typeBtn, styles.small)}
@@ -100,9 +94,9 @@ const ConnectivityOptions = (props: Props) => {
                 {icon?.({ className: styles.btnIcon })}
                 {title}
               </EuiButton>
-            </EuiFlexItem>
+            </FlexItem>
           ))}
-        </EuiFlexGrid>
+        </Row>
       </section>
     </>
   )

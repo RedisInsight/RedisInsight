@@ -1,10 +1,4 @@
-import {
-  EuiFieldText,
-  EuiFlexGrid,
-  EuiFlexItem,
-  EuiIcon,
-  EuiText,
-} from '@elastic/eui'
+import { EuiFieldText, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -18,6 +12,7 @@ import {
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { MAX_TTL_NUMBER, validateTTLNumber } from 'uiSrc/utils'
 
+import { Grid } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -95,11 +90,12 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
     >
       <>
         {(ttlIsEditing || ttlIsHovering) && (
-          <EuiFlexGrid
+          <Grid
             columns={2}
             responsive={false}
-            gutterSize="none"
+            gap="none"
             className={styles.ttlGridComponent}
+            data-testid="edit-ttl-grid"
           >
             <EuiFlexItem grow={false}>
               <EuiText
@@ -141,7 +137,7 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
                 />
               </InlineItemEditor>
             </EuiFlexItem>
-          </EuiFlexGrid>
+          </Grid>
         )}
         <EuiText
           grow

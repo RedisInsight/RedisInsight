@@ -1,7 +1,6 @@
 import {
   EuiButtonIcon,
   EuiFieldText,
-  EuiFlexGrid,
   EuiFlexItem,
   EuiIcon,
   EuiText,
@@ -35,6 +34,7 @@ import {
   stringToBuffer,
 } from 'uiSrc/utils'
 
+import { Grid } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -160,11 +160,9 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
       data-testid="edit-key-btn"
     >
       {(keyIsEditing || keyIsHovering) && (
-        <EuiFlexGrid
-          columns={1}
-          responsive={false}
-          gutterSize="none"
+        <Grid
           className={styles.classNameGridComponent}
+          data-testid="edit-key-grid"
         >
           <EuiFlexItem
             grow
@@ -231,7 +229,7 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
               </EuiToolTip>
             )}
           </EuiFlexItem>
-        </EuiFlexGrid>
+        </Grid>
       )}
       <EuiText
         className={cx(styles.key, {

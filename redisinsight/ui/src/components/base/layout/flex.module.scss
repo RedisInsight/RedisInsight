@@ -35,6 +35,10 @@
   &-wrap {
     flex-wrap: wrap;
   }
+  &-centered {
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .flexItem {
@@ -154,11 +158,6 @@
 
 .grid-centered {
   place-content: center;
-}
-
-.flex-centered {
-  align-items: center;
-  justify-content: center;
 }
 
 .col-centered {

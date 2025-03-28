@@ -92,11 +92,11 @@ export const Flex = ({
   const cn = cx(
     flex.flex,
     flex[`flex-${dir}`],
-    flex[`align-${align}`],
-    flex[`justify-${justify}`],
     {
+      [flex[`align-${align}`]]: !centered,
+      [flex[`justify-${justify}`]]: !centered,
       [flex[`gap-${gap}`]]: gap !== 'none',
-      [flex.flexCentered]: centered,
+      [flex['flex-centered']]: centered,
       [flex.flexResponsive]: responsive,
       [flex.flexWrap]: wrap ? flex.flexWrap : undefined,
     },

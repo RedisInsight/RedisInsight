@@ -4,8 +4,6 @@ import cx from 'classnames'
 import {
   EuiButton,
   EuiTextColor,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFieldText,
   EuiPanel,
   EuiSuperSelect,
@@ -27,6 +25,7 @@ import {
 import { KeyTypes } from 'uiSrc/constants'
 import { stringToBuffer } from 'uiSrc/utils'
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { PushElementToListDto } from 'apiSrc/modules/browser/list/dto'
 
 import styles from '../styles.module.scss'
@@ -170,8 +169,8 @@ const AddListElements = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="xl">
+          <FlexItem>
             <div>
               <EuiButton
                 color="secondary"
@@ -181,8 +180,8 @@ const AddListElements = (props: Props) => {
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <div>
               <EuiButton
                 fill
@@ -194,8 +193,8 @@ const AddListElements = (props: Props) => {
                 Save
               </EuiButton>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

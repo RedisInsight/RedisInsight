@@ -30,6 +30,8 @@ import DatabaseListModules from 'uiSrc/components/database-list-modules/Database
 import ItemList from 'uiSrc/components/item-list'
 import {
   BrowserStorageItem,
+  COLUMN_FIELD_NAME_MAP,
+  DatabaseListColumn,
   DEFAULT_SORT,
   FeatureFlags,
   Pages,
@@ -350,9 +352,9 @@ const DatabasesListWrapper = (props: Props) => {
 
   const initialColumns: EuiTableFieldDataColumnType<Instance>[] = [
     {
-      field: 'name',
+      field: DatabaseListColumn.Name,
       className: 'column_name',
-      name: 'Database Alias',
+      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Name),
       dataType: 'string',
       truncateText: true,
       'data-test-subj': 'database-alias-column',
@@ -421,9 +423,9 @@ const DatabasesListWrapper = (props: Props) => {
       },
     },
     {
-      field: 'host',
+      field: DatabaseListColumn.Host,
       className: 'column_host',
-      name: 'Host:Port',
+      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Host),
       width: '200%',
       dataType: 'string',
       truncateText: true,
@@ -456,9 +458,9 @@ const DatabasesListWrapper = (props: Props) => {
       },
     },
     {
-      field: 'connectionType',
+      field: DatabaseListColumn.ConnectionType,
       className: 'column_type',
-      name: 'Connection Type',
+      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.ConnectionType),
       dataType: 'string',
       sortable: ({ id, connectionType }) => {
         if (isCreateCloudDb(id))
@@ -472,9 +474,9 @@ const DatabasesListWrapper = (props: Props) => {
         CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
     },
     {
-      field: 'modules',
+      field: DatabaseListColumn.Modules,
       className: styles.columnModules,
-      name: 'Capabilities',
+      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Modules), // Capabilities
       width: '100%',
       dataType: 'string',
       render: (_cellData, { modules = [], isRediStack }: Instance) => (
@@ -530,9 +532,9 @@ const DatabasesListWrapper = (props: Props) => {
       ),
     },
     {
-      field: 'lastConnection',
+      field: DatabaseListColumn.LastConnection,
       className: 'column_lastConnection',
-      name: 'Last connection',
+      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.LastConnection),
       dataType: 'date',
       align: 'right',
       width: '140%',
@@ -562,7 +564,7 @@ const DatabasesListWrapper = (props: Props) => {
       },
     },
     {
-      field: 'controls',
+      field: DatabaseListColumn.Controls,
       className: 'column_controls',
       width: '80%',
       name: '',
@@ -649,7 +651,9 @@ const DatabasesListWrapper = (props: Props) => {
   >(initialColumns.filter((c) => shownColumns.includes(c.field)))
 
   useEffect(() => {
-    const filteredColumns = initialColumns.filter((column) => shownColumns.includes(column.field))
+    const filteredColumns = initialColumns.filter((column) =>
+      shownColumns.includes(column.field),
+    )
     setColumns([...filteredColumns])
   }, [shownColumns])
 

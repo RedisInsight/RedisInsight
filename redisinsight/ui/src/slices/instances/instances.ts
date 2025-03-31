@@ -11,7 +11,9 @@ import {
 import {
   ApiEndpoints,
   BrowserStorageItem,
+  COLUMN_FIELD_NAME_MAP,
   CustomErrorCodes,
+  DatabaseListColumn,
 } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
@@ -43,7 +45,6 @@ import {
   Instance,
   InitialStateInstances,
   ConnectionType,
-  DatabaseListColumn,
 } from '../interfaces'
 
 const HIDE_CREATING_DB_DELAY_MS = 500
@@ -87,14 +88,7 @@ export const initialState: InitialStateInstances = {
     error: '',
     data: null,
   },
-  shownColumns: [
-    DatabaseListColumn.Name,
-    DatabaseListColumn.Host,
-    DatabaseListColumn.ConnectionType,
-    DatabaseListColumn.Modules,
-    DatabaseListColumn.LastConnection,
-    DatabaseListColumn.Controls,
-  ],
+  shownColumns: [...COLUMN_FIELD_NAME_MAP.keys()],
 }
 
 // A slice for recipes

@@ -15,7 +15,6 @@ import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { instancesSelector, setShownColumns } from 'uiSrc/slices/instances/instances'
 import {
-  DatabaseListColumn,
   OAuthSocialAction,
   OAuthSocialSource,
 } from 'uiSrc/slices/interfaces'
@@ -29,7 +28,7 @@ import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { FeatureFlags } from 'uiSrc/constants'
+import { COLUMN_FIELD_NAME_MAP, DatabaseListColumn, FeatureFlags } from 'uiSrc/constants'
 import SearchDatabasesList from '../search-databases-list'
 
 import styles from './styles.module.scss'
@@ -42,17 +41,6 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const { data: instances, shownColumns } = useSelector(instancesSelector)
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
   const { loading, data } = useSelector(contentSelector)
-
-  // TODO [DA]: Rethink the data strucutre and move the data.
-  // Reuse for the  columns in DatabaseListWrapper
-  const columnFieldNameMap = new Map<DatabaseListColumn, string>([
-    [DatabaseListColumn.Name, 'Database Alias'],
-    [DatabaseListColumn.Host, 'Host:Port'],
-    [DatabaseListColumn.ConnectionType, 'Connection Type'],
-    [DatabaseListColumn.Modules, 'Capabilities'],
-    [DatabaseListColumn.LastConnection, 'Last connection'],
-    [DatabaseListColumn.Controls, 'Controls'],
-  ])
 
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
   const [columnsConfigShown, setColumnsConfigShown] = useState(false)
@@ -179,7 +167,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
     )
   }
 
-  const columnCheckboxes = Array.from(columnFieldNameMap.entries()).map(
+  const columnCheckboxes = Array.from(COLUMN_FIELD_NAME_MAP.entries()).map(
     ([field, name]) => (
       <EuiCheckbox
         id={`show-${field}`}

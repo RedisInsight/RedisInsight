@@ -54,11 +54,7 @@ const ExportAction = <T extends { id: string; name?: string }>(
       </EuiText>
       <div className={styles.boxSection}>
         {selection.map((select) => (
-          <Row
-            key={select.id}
-            gap="s"
-            className={styles.nameList}
-          >
+          <Row key={select.id} gap="s" className={styles.nameList}>
             <FlexItem>
               <EuiIcon type="check" />
             </FlexItem>

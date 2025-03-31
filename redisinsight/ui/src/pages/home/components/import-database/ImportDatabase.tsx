@@ -243,8 +243,7 @@ const ImportDatabase = (props: Props) => {
           )}
         </Col>
         {data && (
-          <Row justify="center"
-          >
+          <Row justify="center">
             <FlexItem grow style={{ maxWidth: '100%' }}>
               <ResultsLog data={data} />
             </FlexItem>

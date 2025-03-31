@@ -106,8 +106,7 @@ const AddStreamGroup = (props: Props) => {
         >
           <Row>
             <FlexItem grow>
-              <Row align="start"
-              >
+              <Row align="start">
                 <FlexItem className={styles.groupNameWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText

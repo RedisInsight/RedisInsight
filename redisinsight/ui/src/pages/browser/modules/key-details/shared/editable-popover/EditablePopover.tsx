@@ -150,10 +150,7 @@ const EditablePopover = (props: Props) => {
       <EuiForm component="form" onSubmit={onFormSubmit}>
         <div className={styles.content}>{children}</div>
         <EuiSpacer size="s" />
-        <Row
-          className={styles.footer}
-          justify="end"
-        >
+        <Row className={styles.footer} justify="end">
           <FlexItem>
             <EuiButton
               size="s"

@@ -129,11 +129,7 @@ const Actions = (props: Props) => {
   )
 
   return (
-    <Row
-      className={styles.actions}
-      gap="s"
-      align="center"
-    >
+    <Row className={styles.actions} gap="s" align="center">
       <FlexItem grow={5} style={{ alignItems: 'flex-end' }}>
         <AutoRefresh
           postfix="slowlog"

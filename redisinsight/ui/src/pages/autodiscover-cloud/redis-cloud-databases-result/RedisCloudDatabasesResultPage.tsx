@@ -222,9 +222,7 @@ const RedisCloudDatabasesResultPage = () => {
               <EuiText>{messageAdded}</EuiText>
             ) : (
               <EuiToolTip position="left" title="Error" content={messageAdded}>
-                <Row align="center"
-                  gap="s"
-                >
+                <Row align="center" gap="s">
                   <FlexItem>
                     <EuiIcon type="alert" color="danger" />
                   </FlexItem>

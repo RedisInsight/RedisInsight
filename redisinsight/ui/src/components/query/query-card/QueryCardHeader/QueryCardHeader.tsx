@@ -345,7 +345,6 @@ const QueryCardHeader = (props: Props) => {
             <FlexItem
               className={styles.time}
               data-testid="command-execution-date-time"
-
             >
               {!!createdAt && (
                 <EuiTextColor className={styles.timeText} component="div">
@@ -458,9 +457,7 @@ const QueryCardHeader = (props: Props) => {
               />
             </FlexItem>
             {!isFullScreen && (
-              <FlexItem
-                className={cx(styles.buttonIcon, styles.playIcon)}
-              >
+              <FlexItem className={cx(styles.buttonIcon, styles.playIcon)}>
                 <EuiToolTip content="Run again" position="left">
                   <EuiButtonIcon
                     disabled={emptyCommand}

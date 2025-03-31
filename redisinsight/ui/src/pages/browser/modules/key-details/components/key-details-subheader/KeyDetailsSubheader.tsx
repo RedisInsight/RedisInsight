@@ -18,8 +18,7 @@ export const KeyDetailsSubheader = ({ keyType, Actions }: Props) => (
     <AutoSizer disableHeight>
       {({ width = 0 }) => (
         <div style={{ width }}>
-          <Row justify="end" align="center"
-          >
+          <Row justify="end" align="center">
             {Object.values(KeyTypes).includes(keyType as KeyTypes) && (
               <>
                 <FlexItem className={styles.keyFormatterItem}>

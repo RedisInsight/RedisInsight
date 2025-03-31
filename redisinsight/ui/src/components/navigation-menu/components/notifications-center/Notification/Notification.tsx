@@ -39,11 +39,7 @@ const Notification = (props: Props) => {
         {parse(notification.body)}
       </EuiText>
 
-      <Row
-        className={styles.notificationFooter}
-        align="center"
-        justify="start"
-      >
+      <Row className={styles.notificationFooter} align="center" justify="start">
         <FlexItem>
           <EuiText size="xs" color="subdued" data-testid="notification-date">
             {format(notification.timestamp * 1000, NOTIFICATION_DATE_FORMAT)}

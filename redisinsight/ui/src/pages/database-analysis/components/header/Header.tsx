@@ -148,8 +148,7 @@ const Header = (props: Props) => {
           </FlexItem>
         )}
         <FlexItem>
-          <Row align="center"
-          >
+          <Row align="center">
             <FlexItem grow>
               <EuiButton
                 aria-label="New reports"

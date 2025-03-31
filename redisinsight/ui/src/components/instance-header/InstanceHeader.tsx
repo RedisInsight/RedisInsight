@@ -182,7 +182,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                         <FlexItem
                           style={{ padding: '4px 24px 4px 0' }}
                           data-testid="return-to-sm-item"
-                          >
+                        >
                           <EuiToolTip
                             position="bottom"
                             content={returnUrlTooltip || returnUrlLabel}
@@ -305,9 +305,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         </FlexItem>
 
         <FlexItem>
-          <Row align="center"
-            justify="end"
-          >
+          <Row align="center" justify="end">
             {isAnyChatAvailable && (
               <FlexItem style={{ marginLeft: 12 }}>
                 <CopilotTrigger />

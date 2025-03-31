@@ -252,10 +252,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                 </EuiFormFieldset>
               </FlexItem>
             </Row>
-            <Row
-              className={styles.row}
-              style={{ maxWidth: '100%' }}
-            >
+            <Row className={styles.row} style={{ maxWidth: '100%' }}>
               <FlexItem grow style={{ minWidth: '100%', maxWidth: '100%' }}>
                 <EuiFormRow label="Key Prefixes" fullWidth>
                   <EuiComboBox

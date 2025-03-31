@@ -74,8 +74,8 @@ const ProcessingPerformance = ({
                 label="Batch size average"
                 value={batchSizeAvg}
                 suffix="MB"
-
-              /><InfoPanel
+              />
+              <InfoPanel
                 label="Process time average"
                 value={processTimeAvg}
                 suffix="ms"
@@ -104,8 +104,7 @@ const ProcessingPerformance = ({
           </FlexItem>
           <VerticalDivider />
           <FlexItem grow>
-            <Row gap="s"
-              align="start">
+            <Row gap="s" align="start">
               <InfoPanel
                 label="Total time average"
                 value={totalTimeAvg}

@@ -157,10 +157,7 @@ export const INFINITE_MESSAGES = {
                       <EuiText size="xs">Free</EuiText>
                     </FlexItem>
                   </Row>
-                  <Row
-                    className={styles.detailsRow}
-                    justify="between"
-                  >
+                  <Row className={styles.detailsRow} justify="between">
                     <FlexItem>
                       <EuiText size="xs">Cloud Vendor</EuiText>
                     </FlexItem>
@@ -183,8 +180,7 @@ export const INFINITE_MESSAGES = {
                 </>
               )}
               <EuiSpacer size="m" />
-              <Row justify="between" align="center"
-              >
+              <Row justify="between" align="center">
                 <FlexItem>
                   <ExternalLink href={MANAGE_DB_LINK}>Manage DB</ExternalLink>
                 </FlexItem>
@@ -426,8 +422,7 @@ export const INFINITE_MESSAGES = {
         }}
         data-testid="success-deploy-pipeline-notification"
       >
-        <Row justify="end"
-        >
+        <Row justify="end">
           <FlexItem className="infiniteMessage__icon">
             <EuiIcon type={ChampagneIcon} size="original" />
           </FlexItem>
@@ -442,10 +437,7 @@ export const INFINITE_MESSAGES = {
             </EuiText>
             <EuiSpacer size="m" />
             {/* // TODO remove display none when statistics page will be available */}
-            <Row
-              style={{ display: 'none' }}
-              justify="end" align="center"
-            >
+            <Row style={{ display: 'none' }} justify="end" align="center">
               <FlexItem>
                 <EuiButton
                   fill

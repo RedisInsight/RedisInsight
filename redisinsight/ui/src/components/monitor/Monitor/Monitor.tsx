@@ -58,8 +58,7 @@ const Monitor = (props: Props) => {
           />
         </EuiToolTip>
         <div className={styles.startTitle}>Start Profiler</div>
-        <Row style={{ flexGrow: 0 }}
-        >
+        <Row style={{ flexGrow: 0 }}>
           <FlexItem>
             <EuiIcon
               className={cx(styles.iconWarning, 'warning--light')}

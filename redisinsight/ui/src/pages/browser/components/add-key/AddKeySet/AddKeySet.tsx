@@ -15,7 +15,7 @@ import {
   EuiTextColor,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
-import { addSetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
+import { addKeyStateSelector, addSetKey } from 'uiSrc/slices/browser/keys'
 
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'

@@ -23,9 +23,7 @@ const CloneConnection = (props: Props) => {
 
   return (
     <>
-      <Row gap="m" justify="end"
-        style={{ flexGrow: 0 }}
-      >
+      <Row gap="m" justify="end" style={{ flexGrow: 0 }}>
         <FlexItem>
           <EuiButton
             size="s"

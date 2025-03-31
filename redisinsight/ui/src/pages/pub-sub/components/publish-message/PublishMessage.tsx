@@ -152,9 +152,7 @@ const PublishMessage = () => {
           </FlexItem>
         </Row>
       </FlexItem>
-      <Row justify="end"
-        style={{ marginTop: 6 }}
-      >
+      <Row justify="end" style={{ marginTop: 6 }}>
         <FlexItem>
           <EuiButton
             fill

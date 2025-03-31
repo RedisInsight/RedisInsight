@@ -77,9 +77,7 @@ const SettingItem = (props: Props) => {
         {summary}
       </EuiText>
       <EuiSpacer size="m" />
-      <Row align="center"
-        className={styles.container}
-      >
+      <Row align="center" className={styles.container}>
         <FlexItem style={{ marginRight: '4px' }}>
           <EuiText size="xs" color="subdued" className={styles.inputLabel}>
             {label}

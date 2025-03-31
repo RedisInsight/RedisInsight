@@ -5,8 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { entryIdRegex, stringToBuffer } from 'uiSrc/utils'
 import {
-  selectedKeyDataSelector,
   keysSelector,
+  selectedKeyDataSelector,
 } from 'uiSrc/slices/browser/keys'
 import {
   addNewEntriesAction,

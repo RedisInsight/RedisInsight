@@ -19,8 +19,6 @@ import {
 } from 'apiSrc/modules/browser/list/dto'
 
 import { AddListFormConfig as config } from '../constants/fields-config'
-
-import { AddListFormConfig as config } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import AddMultipleFields from '../../add-multiple-fields'
 import {

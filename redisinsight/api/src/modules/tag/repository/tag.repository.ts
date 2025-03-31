@@ -48,5 +48,5 @@ export abstract class TagRepository {
    * Cleanup unused tags.
    * @returns {Promise<void>} A promise that resolves when the cleanup is complete.
    */
-  abstract cleanupUnusedTags(ids: string[]): Promise<void>;
+  abstract cleanupUnusedTags(): Promise<void>;
 }

@@ -26,7 +26,6 @@ import { ClientCertificate } from 'src/modules/certificate/models/client-certifi
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { TagService } from 'src/modules/tag/tag.service';
-import { CreateTagDto } from '../tag/dto';
 
 @Injectable()
 export class DatabaseService {
@@ -220,13 +219,14 @@ export class DatabaseService {
   ): Promise<Database> {
     this.logger.debug(`Updating database: ${id}`, sessionMetadata);
 
-    dto.tags && await this.bulkUpdateTags(sessionMetadata, id, dto.tags);
-    delete dto.tags;
-
     const oldDatabase = await this.get(sessionMetadata, id, true);
 
     let database: Database;
     try {
+      if (dto.tags) {
+        dto.tags = await this.tagService.getOrCreateByKeyValuePairs(dto.tags);
+      }
+
       database = await this.merge(oldDatabase, dto);
 
       if (DatabaseService.isConnectionAffected(dto)) {
@@ -240,6 +240,10 @@ export class DatabaseService {
       }
 
       database = await this.repository.update(sessionMetadata, id, database);
+
+      if (dto.tags) {
+        await this.tagService.cleanupUnusedTags();
+      }
 
       // todo: rethink
       this.analytics.sendInstanceEditedEvent(
@@ -338,6 +342,9 @@ export class DatabaseService {
     const database = await this.get(sessionMetadata, id, true);
     try {
       await this.repository.delete(sessionMetadata, id);
+      if (database.tags) {
+        await this.tagService.cleanupUnusedTags();
+      }
       // todo: rethink
       await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
       this.logger.debug('Succeed to delete database instance.', sessionMetadata);
@@ -404,23 +411,5 @@ export class DatabaseService {
       omit(database, paths),
       { groups: ['security'] },
     ));
-  }
-
-  async bulkUpdateTags(
-    sessionMetadata: SessionMetadata,
-    id: string,
-    tags: CreateTagDto[],
-  ): Promise<void> {
-    const database = await this.get(sessionMetadata, id);
-    const removedTags = (database.tags || []).filter((tag) => !tags.some((t) => t.key === tag.key && t.value === tag.value));
-
-    database.tags = await this.tagService.getOrCreateByKeyValuePairs(tags);
-    await this.repository.update(sessionMetadata, id, database);
-
-    if (removedTags.length > 0) {
-      await this.tagService.cleanupUnusedTags(removedTags.map((tag) => tag.id));
-    }
-
-    this.logger.debug(`Bulk updated tags for database ${id}.`);
   }
 }

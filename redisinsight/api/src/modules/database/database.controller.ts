@@ -29,7 +29,6 @@ import { ExportDatabasesDto } from 'src/modules/database/dto/export.databases.dt
 import { ExportDatabase } from 'src/modules/database/models/export-database';
 import { DatabaseResponse } from 'src/modules/database/dto/database.response';
 import { classToClass } from 'src/utils';
-import { BulkUpdateDatabaseTagsDto } from 'src/modules/database/dto/bulk-update-database-tags.dto';
 
 @ApiTags('Database')
 @Controller('databases')
@@ -295,25 +294,5 @@ export class DatabaseController {
       @Body() dto: ExportDatabasesDto,
   ): Promise<ExportDatabase[]> {
     return await this.service.export(sessionMetadata, dto.ids, dto.withSecrets);
-  }
-
-  @Post(':id/tags')
-  @ApiEndpoint({
-    description: 'Bulk update tags for a database',
-    statusCode: 200,
-    responses: [
-      {
-        status: 200,
-        description: 'Successfully updated tags for database',
-      },
-    ],
-  })
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async bulkUpdateTags(
-    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-    @Param('id') id: string,
-    @Body() bulkUpdateDatabaseTagsDto: BulkUpdateDatabaseTagsDto,
-  ): Promise<void> {
-    await this.service.bulkUpdateTags(sessionMetadata, id, bulkUpdateDatabaseTagsDto.tags);
   }
 }

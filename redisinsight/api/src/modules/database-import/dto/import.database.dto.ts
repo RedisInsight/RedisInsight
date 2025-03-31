@@ -15,6 +15,7 @@ export class ImportDatabaseDto extends PickType(Database, [
   'host', 'port', 'name', 'db', 'username', 'password',
   'connectionType', 'tls', 'verifyServerCert', 'sentinelMaster', 'nodes',
   'new', 'ssh', 'sshOptions', 'provider', 'compressor', 'modules', 'tlsServername', 'forceStandalone',
+  'tags',
 ] as const) {
   @Expose()
   @IsNotEmpty()

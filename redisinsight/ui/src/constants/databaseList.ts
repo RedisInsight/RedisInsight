@@ -7,7 +7,6 @@ export enum DatabaseListColumn {
   Controls = 'controls',
 }
 
-
 export const COLUMN_FIELD_NAME_MAP = new Map<DatabaseListColumn, string>([
   [DatabaseListColumn.Name, 'Database Alias'],
   [DatabaseListColumn.Host, 'Host:Port'],

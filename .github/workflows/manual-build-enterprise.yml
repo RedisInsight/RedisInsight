@@ -82,6 +82,8 @@ jobs:
     secrets: inherit
     needs: [manual-build]
     if: always()
+    with:
+      enterprise: true
 
   clean:
     uses: ./.github/workflows/clean-deployments.yml

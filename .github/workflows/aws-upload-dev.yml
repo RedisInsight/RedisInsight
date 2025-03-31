@@ -7,8 +7,13 @@ on:
         type: boolean
         default: false
 
+      enterprise:
+        description: Enterprise build
+        type: boolean
+
 env:
   AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_TEST }}
+  AWS_BUCKET_NAME_ENTERPRISE_TEST: ${{ vars.AWS_BUCKET_NAME_ENTERPRISE_TEST }}
   AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
   AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -34,13 +39,24 @@ jobs:
 
     - run: ls -R ./release
 
+    - name: Set ENV_VAR based on input
+      run: |
+        if [ "${{ inputs.enterprise }}" == "true" ]; then
+          echo "AWS_BUCKET_NAME=$AWS_BUCKET_NAME_ENTERPRISE_TEST" >> $GITHUB_ENV
+        else
+          echo "AWS_BUCKET_NAME=$AWS_BUCKET_NAME_TEST" >> $GITHUB_ENV
+        fi
+
+    - name: Print ENV_VAR
+      run: echo "The environment variable is $AWS_BUCKET_NAME, enterprise is ${{ inputs.enterprise }}"
+
     - name: Upload builds to s3 bucket dev sub folder
       if: ${{ !inputs.pre-release }}
       run: |
         SUB_PATH="dev-builds/${{ steps.date.outputs.date }}/${{ github.run_id }}"
         echo "SUB_PATH=${SUB_PATH}" >> $GITHUB_ENV
 
-        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME}/public/${SUB_PATH} --recursive
 
     - name: Upload builds to s3 bucket pre-releasea sub folder
       if: inputs.pre-release
@@ -50,8 +66,8 @@ jobs:
 
         echo "SUB_PATH=${SUB_PATH}" >> $GITHUB_ENV
 
-        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/upgrades --recursive
-        aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/pre-release/${APP_VERSION} --recursive
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME}/public/upgrades --recursive
+        aws s3 cp release/ s3://${AWS_BUCKET_NAME}/public/pre-release/${APP_VERSION} --recursive
 
     - name: Download vendor plugins
       uses: actions/download-artifact@v4
@@ -64,7 +80,7 @@ jobs:
     - name: Upload vendor plugins to s3 bucket
       if: steps.download-vendor.outcome == 'success'
       run: |
-        aws s3 cp vendor/ s3://${AWS_BUCKET_NAME_TEST}/public/plugins/static/ --recursive
+        aws s3 cp vendor/ s3://${AWS_BUCKET_NAME}/public/plugins/static/ --recursive
 
     - name: Generate job summary
       run: |

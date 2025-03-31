@@ -112,7 +112,22 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
 
     dispatch(setShownColumns(newColumns))
 
-    // TODO [DA]: determine the shown and hidden columns and log telemetry event
+    const shown: DatabaseListColumn[] = []
+    const hidden: DatabaseListColumn[] = []
+
+    if (status) {
+      shown.push(column)
+    } else {
+      hidden.push(column)
+    }
+
+    sendEventTelemetry({
+      event: TelemetryEvent.DATABASE_LIST_COLUMNS_CLICKED,
+      eventData: {
+        shown,
+        hidden
+      }
+    })
   }
 
   const AddInstanceBtn = () => (

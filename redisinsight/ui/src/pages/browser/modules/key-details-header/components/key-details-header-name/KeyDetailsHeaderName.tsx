@@ -1,7 +1,6 @@
 import {
   EuiButtonIcon,
   EuiFieldText,
-  EuiFlexItem,
   EuiIcon,
   EuiText,
   EuiToolTip,
@@ -34,7 +33,7 @@ import {
   stringToBuffer,
 } from 'uiSrc/utils'
 
-import { Grid } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Grid } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -148,11 +147,10 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
     !keyIsEditing ? <EuiIcon type="pencil" color="subdued" /> : ''
 
   return (
-    <EuiFlexItem
+    <FlexItem
       onMouseEnter={onMouseEnterKey}
       onMouseLeave={onMouseLeaveKey}
       onClick={onClickKey}
-      grow={false}
       className={cx(
         styles.keyFlexItem, // TODO with styles.keyFlexItemEditing
         keyIsEditing || keyIsHovering ? styles.keyFlexItemEditing : null,
@@ -164,11 +162,7 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
           className={styles.classNameGridComponent}
           data-testid="edit-key-grid"
         >
-          <EuiFlexItem
-            grow
-            component="span"
-            className={styles.flexItemKeyInput}
-          >
+          <FlexItem grow inline className={styles.flexItemKeyInput}>
             <EuiToolTip
               title="Key Name"
               position="left"
@@ -228,7 +222,7 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
                 />
               </EuiToolTip>
             )}
-          </EuiFlexItem>
+          </FlexItem>
         </Grid>
       )}
       <EuiText
@@ -241,7 +235,7 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
           {replaceSpaces(keyProp?.substring(0, 200))}
         </b>
       </EuiText>
-    </EuiFlexItem>
+    </FlexItem>
   )
 }
 

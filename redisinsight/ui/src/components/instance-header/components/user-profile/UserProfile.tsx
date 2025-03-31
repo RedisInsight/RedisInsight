@@ -1,10 +1,10 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { EuiFlexItem } from '@elastic/eui'
 import { FeatureFlags } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthUserProfile } from 'uiSrc/components'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { FlexItem } from 'uiSrc/components/base/layout/Flex'
 import { CloudUserProfile } from './CloudUserProfile'
 
 const UserProfile = () => {
@@ -16,17 +16,17 @@ const UserProfile = () => {
 
   if (!envDependentFeature?.flag) {
     return (
-      <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
+      <FlexItem style={{ marginLeft: 16 }}>
         <CloudUserProfile />
-      </EuiFlexItem>
+      </FlexItem>
     )
   }
 
   if (cloudAds?.flag && cloudSso?.flag) {
     return (
-      <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
+      <FlexItem style={{ marginLeft: 16 }}>
         <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
-      </EuiFlexItem>
+      </FlexItem>
     )
   }
 

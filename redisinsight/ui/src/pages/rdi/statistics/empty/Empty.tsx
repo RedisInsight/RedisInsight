@@ -1,4 +1,4 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiImage, EuiSpacer, EuiText } from '@elastic/eui'
+import { EuiButton, EuiImage, EuiSpacer, EuiText } from '@elastic/eui'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 
@@ -21,7 +21,9 @@ const Empty = ({ rdiInstanceId }: Props) => {
         <EuiImage src={EmptyPipelineIcon} alt="empty" size="s" />
         <EuiSpacer size="xl" />
         <EuiText>No pipeline deployed yet</EuiText>
-        <EuiText className={styles.subTitle}>Create your first pipeline to get started!</EuiText>
+        <EuiText className={styles.subTitle}>
+          Create your first pipeline to get started!
+        </EuiText>
         <EuiSpacer size="l" />
         <EuiButton
           data-testid="add-pipeline-btn"

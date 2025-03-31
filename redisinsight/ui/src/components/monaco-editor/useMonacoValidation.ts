@@ -1,9 +1,14 @@
-import { useState, useEffect } from 'react'
-import * as monaco from 'monaco-editor'
+import * as monacoLib from 'monaco-editor'
+import { useEffect, useState } from 'react'
+
+const errorSeverity = 8
 
 const useMonacoValidation = (
-  editorRef: React.MutableRefObject<monaco.editor.IStandaloneCodeEditor | null>,
+  editorRef: React.MutableRefObject<monacoLib.editor.IStandaloneCodeEditor | null>,
+  monacoInstance?: typeof monacoLib,
 ) => {
+  const monaco = monacoInstance || monacoLib
+
   const [isValid, setIsValid] = useState(false)
   const [isValidating, setIsValidating] = useState(false)
 
@@ -26,9 +31,8 @@ const useMonacoValidation = (
       if (!uris.some((u) => u.toString() === model.uri.toString())) return
 
       const markers = monaco.editor.getModelMarkers({ resource: model.uri })
-      const hasErrors = markers.some(
-        (m) => m.severity === monaco.MarkerSeverity.Error,
-      )
+      const hasErrors = markers.some((m) => m.severity === errorSeverity)
+
       setIsValid(!hasErrors)
       setIsValidating(false)
     })
@@ -38,7 +42,7 @@ const useMonacoValidation = (
       contentChangeDisposable.dispose()
       markerChangeDisposable.dispose()
     }
-  }, [editorRef])
+  }, [editorRef, monaco])
 
   return { isValid, isValidating }
 }

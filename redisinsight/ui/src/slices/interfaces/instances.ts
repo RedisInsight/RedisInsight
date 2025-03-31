@@ -519,12 +519,3 @@ export enum InstanceType {
   AWSElasticache = 'AWS Elasticache',
   Sentinel = 'Sentinel',
 }
-
-export enum DatabaseListColumn {
-  Name = 'name',
-  Host = 'host',
-  ConnectionType = 'connectionType',
-  Modules = 'modules',
-  LastConnection = 'lastConnection',
-  Controls = 'controls',
-}

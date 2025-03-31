@@ -34,4 +34,5 @@ export * from './browser/keyDetailsHeader'
 export * from './tutorials'
 export * from './datetime'
 export * from './sorting'
+export * from './databaseList'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

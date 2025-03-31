@@ -28,7 +28,7 @@ import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
 import ThreeDots from 'uiSrc/assets/img/icons/three_dots.svg?react'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import ItemList from 'uiSrc/components/item-list'
-import { BrowserStorageItem, DEFAULT_SORT, FeatureFlags, Pages, Theme } from 'uiSrc/constants'
+import { BrowserStorageItem, COLUMN_FIELD_NAME_MAP, DatabaseListColumn, DEFAULT_SORT, FeatureFlags, Pages, Theme } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
@@ -291,9 +291,9 @@ const DatabasesListWrapper = (props: Props) => {
 
   const initialColumns: EuiTableFieldDataColumnType<Instance>[] = [
     {
-      field: 'name',
+      field: DatabaseListColumn.Name,
       className: 'column_name',
-      name: 'Database Alias',
+      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Name),
       dataType: 'string',
       truncateText: true,
       'data-test-subj': 'database-alias-column',
@@ -344,9 +344,9 @@ const DatabasesListWrapper = (props: Props) => {
       },
     },
     {
-      field: 'host',
+      field: DatabaseListColumn.Host,
       className: 'column_host',
-      name: 'Host:Port',
+      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Host),
       width: '35%',
       dataType: 'string',
       truncateText: true,
@@ -374,9 +374,9 @@ const DatabasesListWrapper = (props: Props) => {
       },
     },
     {
-      field: 'connectionType',
+      field: DatabaseListColumn.ConnectionType,
       className: 'column_type',
-      name: 'Connection Type',
+      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.ConnectionType),
       dataType: 'string',
       sortable: ({ id, connectionType }) => {
         if (isCreateCloudDb(id)) return sortingRef.current.direction === 'asc' ? '' : false
@@ -388,9 +388,9 @@ const DatabasesListWrapper = (props: Props) => {
       render: (cellData: ConnectionType) => CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData)
     },
     {
-      field: 'modules',
+      field: DatabaseListColumn.Modules,
       className: styles.columnModules,
-      name: 'Capabilities',
+      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Modules), // Capabilities
       width: '30%',
       dataType: 'string',
       render: (_cellData, { modules = [], isRediStack }: Instance) => (
@@ -431,9 +431,9 @@ const DatabasesListWrapper = (props: Props) => {
       ),
     },
     {
-      field: 'lastConnection',
+      field: DatabaseListColumn.LastConnection,
       className: 'column_lastConnection',
-      name: 'Last connection',
+      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.LastConnection),
       dataType: 'date',
       align: 'right',
       width: '170px',
@@ -447,7 +447,7 @@ const DatabasesListWrapper = (props: Props) => {
       },
     },
     {
-      field: 'controls',
+      field: DatabaseListColumn.Controls,
       className: 'column_controls',
       width: '120px',
       name: '',

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { EuiProgress } from '@elastic/eui'
-
 import { isUndefined } from 'lodash'
+
 import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/browser/rejson'
 import {
   selectedKeyDataSelector,
   keysSelector,
 } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { EditorType } from 'uiSrc/slices/interfaces'
 import {
   sendEventTelemetry,
   TelemetryEvent,
@@ -18,18 +19,18 @@ import {
   KeyDetailsHeader,
   KeyDetailsHeaderProps,
 } from 'uiSrc/pages/browser/modules'
-
 import { stringToBuffer } from 'uiSrc/utils'
 import { IJSONData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
-import RejsonDetails from './rejson-details'
-import { parseJsonData } from './utils'
 
+import RejsonDetails from './rejson-details'
+import MonacoEditor from './monaco-editor'
+import { parseJsonData } from './utils'
 import styles from './styles.module.scss'
 
 export interface Props extends KeyDetailsHeaderProps {}
 
 const RejsonDetailsWrapper = (props: Props) => {
-  const { loading } = useSelector(rejsonSelector)
+  const { loading, editorType } = useSelector(rejsonSelector)
   const { data, downloaded, type, path } = useSelector(rejsonDataSelector)
   const {
     name: selectedKey,
@@ -96,9 +97,16 @@ const RejsonDetailsWrapper = (props: Props) => {
     })
   }
 
+  const shouldShowDefaultEditor =
+    !isUndefined(updatedData) && editorType === EditorType.Default
+
+  const shouldShowTextEditor =
+    !isUndefined(updatedData) && editorType === EditorType.Text
+
   return (
     <div className="fluid flex-column relative">
       <KeyDetailsHeader {...props} key="key-details-header" />
+
       <div className="key-details-body" key="key-details-body">
         <div className="flex-column" style={{ flex: '1', height: '100%' }}>
           <div data-testid="json-details" className={styles.container}>
@@ -110,8 +118,22 @@ const RejsonDetailsWrapper = (props: Props) => {
                 data-testid="progress-key-json"
               />
             )}
-            {!isUndefined(updatedData) && (
+
+            {shouldShowDefaultEditor && (
               <RejsonDetails
+                selectedKey={selectedKey || stringToBuffer('')}
+                dataType={type || ''}
+                data={updatedData as IJSONData}
+                length={length}
+                parentPath={path}
+                expandedRows={expandedRows}
+                onJsonKeyExpandAndCollapse={handleJsonKeyExpandAndCollapse}
+                isDownloaded={downloaded}
+              />
+            )}
+
+            {shouldShowTextEditor && (
+              <MonacoEditor
                 selectedKey={selectedKey || stringToBuffer('')}
                 dataType={type || ''}
                 data={updatedData as IJSONData}

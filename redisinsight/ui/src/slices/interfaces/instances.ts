@@ -480,10 +480,16 @@ export interface GetRejsonRlResponse extends GetRejsonRlResponseDto {
   data: Maybe<SafeRejsonRlDataDto[] | string | number | boolean | null>
 }
 
+export enum EditorType {
+  Default = 'default',
+  Text = 'text',
+}
+
 export interface InitialStateRejson {
   loading: boolean
   error: Nullable<string>
   data: GetRejsonRlResponse
+  editorType: EditorType
 }
 
 export interface ICredentialsRedisCluster {

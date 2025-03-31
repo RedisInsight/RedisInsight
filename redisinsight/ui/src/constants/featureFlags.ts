@@ -8,4 +8,6 @@ export enum FeatureFlags {
   rdi = 'redisDataIntegration',
   hashFieldExpiration = 'hashFieldExpiration',
   enhancedCloudUI = 'enhancedCloudUI',
+  cloudAds = 'cloudAds',
+  databaseManagement = 'databaseManagement',
 }

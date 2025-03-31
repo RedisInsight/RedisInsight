@@ -230,6 +230,7 @@ describe('DatabaseService', () => {
           new: false,
           version: '7.0',
           ssh: true,
+          keyNameFormat: 'Unicode',
           sshOptions: {
             id: 'a77b23c1-7816-4ea4-b61f-d37795a0f805-ssh-id',
             host: 'ssh.host.test',
@@ -276,6 +277,7 @@ describe('DatabaseService', () => {
           new: false,
           version: '7.0',
           ssh: true,
+          keyNameFormat: 'Unicode',
           sshOptions: {
             host: 'ssh.host.test',
             port: 22,

@@ -48,7 +48,7 @@ describe('DatabaseOverview', () => {
     expect(container.querySelector('[data-test-subj="overview-total-memory"]')).toHaveTextContent('45 MB')
     expect(container.querySelector('[data-test-subj="overview-total-keys"]')).toBeInTheDocument()
     expect(container.querySelector('[data-test-subj="overview-connected-clients"]')).toBeInTheDocument()
-    expect(queryByRole('button', { name: 'Upgrade' })).not.toBeInTheDocument()
+    expect(queryByRole('button', { name: 'Upgrade plan' })).not.toBeInTheDocument()
   })
 
   it('should render auto-refresh component', () => {
@@ -73,7 +73,7 @@ describe('DatabaseOverview', () => {
     const { container, queryByRole } = render(<DatabaseOverview />, { store: mockedStore })
 
     expect(container.querySelector('[data-test-subj="overview-total-memory"]')).toHaveTextContent('45 MB / 75 MB (60.3%)')
-    expect(queryByRole('button', { name: 'Upgrade' })).toBeInTheDocument()
+    expect(queryByRole('button', { name: 'Upgrade plan' })).toBeInTheDocument()
   })
 
   it('should show not show upgrade button for flexible subscriptions', () => {
@@ -92,7 +92,7 @@ describe('DatabaseOverview', () => {
     const { container, queryByRole } = render(<DatabaseOverview />, { store: mockedStore })
 
     expect(container.querySelector('[data-test-subj="overview-total-memory"]')).toHaveTextContent('45 MB / 75 MB (60.3%)')
-    expect(queryByRole('button', { name: 'Upgrade' })).not.toBeInTheDocument()
+    expect(queryByRole('button', { name: 'Upgrade plan' })).not.toBeInTheDocument()
   })
 
   test.each([
@@ -117,7 +117,7 @@ describe('DatabaseOverview', () => {
     const { container, queryByRole } = render(<DatabaseOverview />, { store: mockedStore })
 
     expect(container.querySelector('[data-test-subj="overview-total-memory"]')).toHaveTextContent('45 MB / 75 MB (60.3%)')
-    const upgradeBtn = queryByRole('button', { name: 'Upgrade' })
+    const upgradeBtn = queryByRole('button', { name: 'Upgrade plan' })
     expect(upgradeBtn).toBeInTheDocument()
 
     upgradeBtn?.click()

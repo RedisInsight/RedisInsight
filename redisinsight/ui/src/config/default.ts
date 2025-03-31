@@ -43,7 +43,7 @@ export const defaultConfig = {
     unauthenticatedRedirect: process.env.RI_401_REDIRECT_URL ?? '',
     smConsoleRedirect: process.env.RI_SM_REDIRECT_URL ?? '',
     dbUpgradeRedirectBase: process.env.RI_DB_UPGRADE_REDIRECT_URL ?? '',
-    defaultTheme: process.env.RI_DEFAULT_THEME ?? 'DARK',
+    defaultTheme: process.env.RI_DEFAULT_THEME ?? 'SYSTEM',
     lazyLoad: booleanEnv('RI_ROUTES_LAZY_LOAD', false),
     routesExcludedByEnv: booleanEnv('RI_ROUTES_EXCLUDED_BY_ENV', false),
     returnUrlBase: process.env.RI_RETURN_URL_BASE,
@@ -70,6 +70,9 @@ export const defaultConfig = {
   features: {
     envDependent: {
       defaultFlag: booleanEnv('RI_FEATURES_ENV_DEPENDENT_DEFAULT_FLAG', true)
+    },
+    cloudAds: {
+      defaultFlag: booleanEnv('RI_FEATURES_CLOUD_ADS_DEFAULT_FLAG', true)
     }
   }
 }

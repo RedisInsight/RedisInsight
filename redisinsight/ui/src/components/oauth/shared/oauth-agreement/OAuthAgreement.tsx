@@ -22,7 +22,7 @@ const OAuthAgreement = (props: Props) => {
 
   const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      dispatch(enableUserAnalyticsAction())
+      dispatch(enableUserAnalyticsAction('oauth-agreement'))
     }
     dispatch(setAgreement(e.target.checked))
     localStorageService.set(BrowserStorageItem.OAuthAgreement, e.target.checked)

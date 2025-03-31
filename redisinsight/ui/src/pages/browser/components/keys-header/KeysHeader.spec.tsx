@@ -2,9 +2,11 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { setBrowserPatternKeyListDataLoaded, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import * as keysSlice from 'uiSrc/slices/browser/keys'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { BrowserColumns } from 'uiSrc/constants'
+
 import KeysHeader from './KeysHeader'
 
 let store: typeof mockedStore
@@ -23,6 +25,14 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
   keysSelector: jest.fn().mockReturnValue(mockSelectorData),
   fetchKeys: jest.fn(),
 }));
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest
+    .fn()
+    .mockReturnValue({ keyNameFormat: 'Unicode' }),
+}))
+const connectedInstanceSelectorMock = connectedInstanceSelector as jest.Mock
 
 const propsMock = {
   keysState: {
@@ -75,6 +85,10 @@ const mockSelectorData = {
 }
 
 describe('KeysHeader', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should render', () => {
     expect(render(<KeysHeader {...propsMock} />)).toBeTruthy()
   })
@@ -84,6 +98,25 @@ describe('KeysHeader', () => {
 
     const keyViewTypeSwitcherInput = screen.queryByTestId('view-type-switcher')
     expect(keyViewTypeSwitcherInput).toBeInTheDocument()
+  })
+
+  it('should render Tree view enabled when format is Unicode', () => {
+    render(<KeysHeader {...propsMock} />)
+
+    const keyViewTypeSwitcherInput = screen.queryByTestId('view-type-list-btn')
+    expect(keyViewTypeSwitcherInput).toBeInTheDocument()
+    expect(keyViewTypeSwitcherInput).not.toBeDisabled()
+  })
+
+  it('should disable Tree view when key format is HEX', () => {
+    connectedInstanceSelectorMock.mockReturnValue({
+      keyNameFormat: 'HEX',
+    })
+    render(<KeysHeader {...propsMock} />)
+
+    const keyViewTypeSwitcherInput = screen.queryByTestId('view-type-list-btn')
+    expect(keyViewTypeSwitcherInput).toBeInTheDocument()
+    expect(keyViewTypeSwitcherInput).toBeDisabled()
   })
 
   it('should render Scan more button if total => keys.length', () => {

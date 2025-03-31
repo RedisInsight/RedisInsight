@@ -8,7 +8,7 @@ import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { selectOnFocus, validateNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BuildType } from 'uiSrc/constants/env'
-import { ConnectionType, OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
 import {
   checkDatabaseIndexAction,
   connectedInstanceInfoSelector,
@@ -18,7 +18,7 @@ import {
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 
-import { DatabaseOverview, FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
+import { DatabaseOverview, FeatureFlagComponent } from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
@@ -29,8 +29,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { getConfig } from 'uiSrc/config'
 import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
-import { SmConsoleLink } from 'uiSrc/components/instance-header/components/SmConsoleLink'
-import { CloudUserProfile } from 'uiSrc/components/instance-header/components/CloudUserProfile'
+import UserProfile from 'uiSrc/components/instance-header/components/user-profile/UserProfile'
 import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -117,7 +116,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         <EuiFlexItem style={{ overflow: 'hidden' }} grow={false}>
           <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
-              <FeatureFlagComponent name={FeatureFlags.envDependent} otherwise={<SmConsoleLink />}>
+              <FeatureFlagComponent name={FeatureFlags.envDependent}>
                 <EuiToolTip
                   position="bottom"
                   content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
@@ -137,9 +136,11 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-                  <EuiFlexItem grow={false}>
-                    <EuiText className={styles.divider}>/</EuiText>
-                  </EuiFlexItem>
+                  <FeatureFlagComponent name={FeatureFlags.envDependent}>
+                    <EuiFlexItem grow={false}>
+                      <EuiText className={styles.divider}>/</EuiText>
+                    </EuiFlexItem>
+                  </FeatureFlagComponent>
                   {returnUrlBase && returnUrl && (
                   <FeatureFlagComponent
                     name={FeatureFlags.envDependent}
@@ -271,20 +272,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
               <InsightsTrigger />
             </EuiFlexItem>
 
-            <FeatureFlagComponent
-              name={FeatureFlags.envDependent}
-              otherwise={(
-                <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
-                  <CloudUserProfile />
-                </EuiFlexItem>
-              )}
-            >
-              <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-                <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
-                  <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
-                </EuiFlexItem>
-              </FeatureFlagComponent>
-            </FeatureFlagComponent>
+            <UserProfile />
           </EuiFlexGroup>
         </EuiFlexItem>
       </EuiFlexGroup>

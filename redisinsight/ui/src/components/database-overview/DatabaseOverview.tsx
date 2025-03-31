@@ -141,7 +141,7 @@ const DatabaseOverview = () => {
                   }}
                   data-testid="upgrade-ri-db-button"
                 >
-                  Upgrade
+                  Upgrade plan
                 </EuiButton>
               </EuiFlexItem>
             )}

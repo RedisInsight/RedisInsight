@@ -78,6 +78,10 @@ describe('GET /features', () => {
               flag: true,
               name: 'cloudSso',
             },
+            databaseManagement: {
+              flag: true,
+              name: 'databaseManagement',
+            },
           },
         }, syncEndpoint);
       },
@@ -93,6 +97,10 @@ describe('GET /features', () => {
           cloudSso: {
             flag: true,
             name: 'cloudSso',
+          },
+          databaseManagement: {
+            flag: true,
+            name: 'databaseManagement',
           },
         });
         expect(body.controlNumber).to.eq(config.controlNumber);
@@ -131,6 +139,10 @@ describe('GET /features', () => {
               flag: true,
               name: 'cloudSso',
             },
+            databaseManagement: {
+              flag: true,
+              name: 'databaseManagement',
+            },
           },
         }, syncEndpoint);
       },
@@ -144,6 +156,10 @@ describe('GET /features', () => {
           cloudSso: {
             flag: true,
             name: 'cloudSso',
+          },
+          databaseManagement: {
+            flag: true,
+            name: 'databaseManagement',
           },
         }
       }
@@ -183,6 +199,10 @@ describe('GET /features', () => {
               flag: true,
               name: 'cloudSso',
             },
+            databaseManagement: {
+              flag: true,
+              name: 'databaseManagement',
+            },
           },
         }, syncEndpoint);
       },
@@ -196,6 +216,10 @@ describe('GET /features', () => {
           cloudSso: {
             flag: true,
             name: 'cloudSso',
+          },
+          databaseManagement: {
+            flag: true,
+            name: 'databaseManagement',
           },
         }
       }
@@ -213,6 +237,10 @@ describe('GET /features', () => {
               cloudSso: {
                 flag: true,
                 name: 'cloudSso',
+              },
+              databaseManagement: {
+                flag: true,
+                name: 'databaseManagement',
               },
             },
           }).then(res).catch(rej);
@@ -234,6 +262,10 @@ describe('GET /features', () => {
           cloudSso: {
             flag: true,
             name: 'cloudSso',
+          },
+          databaseManagement: {
+            flag: true,
+            name: 'databaseManagement',
           },
         }
       }

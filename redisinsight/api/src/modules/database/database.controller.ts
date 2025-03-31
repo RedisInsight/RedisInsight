@@ -23,7 +23,7 @@ import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto'
 import { BuildType } from 'src/modules/server/models/server';
 import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dto';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
-import { ClientMetadataParam, RequestSessionMetadata } from 'src/common/decorators';
+import { ClientMetadataParam, RequestSessionMetadata, DatabaseManagement } from 'src/common/decorators';
 import { ClientMetadata, SessionMetadata } from 'src/common/models';
 import { ExportDatabasesDto } from 'src/modules/database/dto/export.databases.dto';
 import { ExportDatabase } from 'src/modules/database/models/export-database';
@@ -99,6 +99,7 @@ export class DatabaseController {
       forbidNonWhitelisted: true,
     }),
   )
+  @DatabaseManagement()
   async create(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Body() dto: CreateDatabaseDto,
@@ -127,6 +128,7 @@ export class DatabaseController {
       forbidNonWhitelisted: true,
     }),
   )
+  @DatabaseManagement()
   async update(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Param('id') id: string,
@@ -156,6 +158,7 @@ export class DatabaseController {
       forbidNonWhitelisted: true,
     }),
   )
+  @DatabaseManagement()
   async clone(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Param('id') id: string,
@@ -181,6 +184,7 @@ export class DatabaseController {
       whitelist: true,
     }),
   )
+  @DatabaseManagement()
   async testConnection(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Body() dto: CreateDatabaseDto,
@@ -220,6 +224,7 @@ export class DatabaseController {
     description: 'Delete database instance by id',
     excludeFor: [BuildType.RedisStack],
   })
+  @DatabaseManagement()
   async deleteDatabaseInstance(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Param('id') id: string,
@@ -241,6 +246,7 @@ export class DatabaseController {
     ],
   })
   @UsePipes(new ValidationPipe({ transform: true }))
+  @DatabaseManagement()
   async bulkDeleteDatabaseInstance(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Body() dto: DeleteDatabasesDto,
@@ -283,6 +289,7 @@ export class DatabaseController {
     ],
   })
   @UsePipes(new ValidationPipe({ transform: true }))
+  @DatabaseManagement()
   async exportConnections(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Body() dto: ExportDatabasesDto,

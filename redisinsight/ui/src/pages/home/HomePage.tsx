@@ -1,37 +1,57 @@
-import {
-  EuiPage,
-  EuiPageBody,
-  EuiPanel,
-} from '@elastic/eui'
-import React, { useEffect, useState, useMemo } from 'react'
+import { EuiPage, EuiPageBody, EuiPanel } from '@elastic/eui'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
+import {
+  clusterSelector,
+  resetDataRedisCluster,
+  resetInstancesRedisCluster,
+} from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
 import { HomePageTemplate } from 'uiSrc/templates'
 import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
-import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
+import {
+  resetCliHelperSettings,
+  resetCliSettingsAction,
+} from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
-import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
+import {
+  appContextSelector,
+  setAppContextInitialState,
+} from 'uiSrc/slices/app/context'
 import { Instance } from 'uiSrc/slices/interfaces'
-import { cloudSelector, resetSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
+import {
+  cloudSelector,
+  resetSubscriptionsRedisCloud,
+} from 'uiSrc/slices/instances/cloud'
 import {
   editedInstanceSelector,
   fetchEditedInstanceAction,
   fetchInstancesAction,
   instancesSelector,
   resetImportInstances,
-  setEditedInstance
+  setEditedInstance,
 } from 'uiSrc/slices/instances/instances'
 import { fetchTags } from 'uiSrc/slices/instances/tags'
 import { localStorageService } from 'uiSrc/services'
-import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
+import {
+  resetDataSentinel,
+  sentinelSelector,
+} from 'uiSrc/slices/instances/sentinel'
 import {
   contentSelector,
-  fetchContentAction as fetchCreateRedisButtonsAction
+  fetchContentAction as fetchCreateRedisButtonsAction,
 } from 'uiSrc/slices/content/create-redis-buttons'
-import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
-import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
+import {
+  sendEventTelemetry,
+  sendPageViewTelemetry,
+  TelemetryEvent,
+  TelemetryPageView,
+} from 'uiSrc/telemetry'
+import {
+  appRedirectionSelector,
+  setUrlHandlingInitialState,
+} from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -48,7 +68,7 @@ import styles from './styles.module.scss'
 enum OpenDialogName {
   AddDatabase = 'add',
   ManageTags = 'manage-tags',
-  EditDatabase = 'edit'
+  EditDatabase = 'edit',
 }
 
 const HomePage = () => {
@@ -61,7 +81,10 @@ const HomePage = () => {
   const { instance: sentinelInstance } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
   const { data: createDbContent } = useSelector(contentSelector)
-  const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const {
+    [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature,
+    [FeatureFlags.cloudAds]: cloudAdsFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const {
     loading,
@@ -71,16 +94,23 @@ const HomePage = () => {
     deletedSuccessfully: isDeletedInstance,
   } = useSelector(instancesSelector)
 
-  const {
-    data: editedInstance,
-  } = useSelector(editedInstanceSelector)
+  const { data: editedInstance } = useSelector(editedInstanceSelector)
 
   const { contextInstanceId } = useSelector(appContextSelector)
 
-  const predefinedInstances = enhancedCloudUIFeature?.flag && createDbContent?.cloud_list_of_databases ? [
-    { id: CREATE_CLOUD_DB_ID, ...createDbContent.cloud_list_of_databases } as Instance
-  ] : []
-  const isInstanceExists = instances.length > 0 || predefinedInstances.length > 0
+  const predefinedInstances =
+    enhancedCloudUIFeature?.flag &&
+    cloudAdsFeature?.flag &&
+    createDbContent?.cloud_list_of_databases
+      ? [
+          {
+            id: CREATE_CLOUD_DB_ID,
+            ...createDbContent.cloud_list_of_databases,
+          } as Instance,
+        ]
+      : []
+  const isInstanceExists =
+    instances.length > 0 || predefinedInstances.length > 0
 
   useEffect(() => {
     setTitle('Redis databases')
@@ -91,9 +121,9 @@ const HomePage = () => {
     dispatch(fetchCreateRedisButtonsAction())
     dispatch(fetchTags())
 
-    return (() => {
+    return () => {
       dispatch(setEditedInstance(null))
-    })
+    }
   }, [])
 
   useEffect(() => {
@@ -123,7 +153,9 @@ const HomePage = () => {
 
   useEffect(() => {
     if (editedInstance) {
-      const found = instances.find((item: Instance) => item.id === editedInstance.id)
+      const found = instances.find(
+        (item: Instance) => item.id === editedInstance.id,
+      )
       if (found) {
         dispatch(fetchEditedInstanceAction(found))
       }
@@ -134,8 +166,8 @@ const HomePage = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.DATABASES_LIST_PAGE,
       eventData: {
-        instancesCount: instances.length
-      }
+        instancesCount: instances.length,
+      },
     })
   }
 
@@ -156,8 +188,8 @@ const HomePage = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_EDIT_CANCELLED_CLICKED,
       eventData: {
-        databaseId: editedInstance?.id
-      }
+        databaseId: editedInstance?.id,
+      },
     })
   }
 
@@ -174,7 +206,7 @@ const HomePage = () => {
     }
 
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_ADD_FORM_DISMISSED
+      event: TelemetryEvent.CONFIG_DATABASES_ADD_FORM_DISMISSED,
     })
   }
 
@@ -196,8 +228,8 @@ const HomePage = () => {
   }
   const handleDeleteInstances = (instances: Instance[]) => {
     if (
-      instances.find((instance) => instance.id === editedInstance?.id)
-      && openDialog === OpenDialogName.EditDatabase
+      instances.find((instance) => instance.id === editedInstance?.id) &&
+      openDialog === OpenDialogName.EditDatabase
     ) {
       dispatch(setEditedInstance(null))
       setOpenDialog(null)
@@ -224,7 +256,7 @@ const HomePage = () => {
                 editedInstance={
                   openDialog === OpenDialogName.EditDatabase
                     ? editedInstance
-                    : sentinelInstance ?? null
+                    : (sentinelInstance ?? null)
                 }
                 onClose={
                   openDialog === OpenDialogName.EditDatabase
@@ -241,7 +273,7 @@ const HomePage = () => {
               />
             )}
             <div key="homePage" className="homePage">
-              {(!isInstanceExists && !loading && !loadingChanging ? (
+              {!isInstanceExists && !loading && !loadingChanging ? (
                 <EuiPanel className={styles.emptyPanel} borderRadius="none">
                   <EmptyMessage onAddInstanceClick={handleAddInstance} />
                 </EuiPanel>
@@ -255,7 +287,7 @@ const HomePage = () => {
                   onDeleteInstances={handleDeleteInstances}
                   onManageInstanceTags={handleManageInstanceTags}
                 />
-              ))}
+              )}
             </div>
           </EuiPageBody>
         </EuiPage>

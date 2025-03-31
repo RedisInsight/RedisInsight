@@ -156,7 +156,7 @@ describe('init slice', () => {
       expect(store.getActions()).toEqual(expectedActions)
     })
 
-    it('fetches user profile if !envDependant', async () => {
+    it('fetches user profile if !envDependent', async () => {
       riConfig.api.csrfEndpoint = ''
 
       const newFeatureFlags = {

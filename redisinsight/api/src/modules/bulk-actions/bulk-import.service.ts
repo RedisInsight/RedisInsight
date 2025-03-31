@@ -80,6 +80,7 @@ export class BulkImportService {
         succeed: 0,
         failed: 0,
         errors: [],
+        keys: [],
       },
       progress: null,
       filter: null,

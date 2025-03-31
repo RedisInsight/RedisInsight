@@ -105,7 +105,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const toggleColumnsConfigVisibility = () =>
     setColumnsConfigShown(!columnsConfigShown)
 
-  const changeColumnsShown = (status: boolean, column: DatabaseListColumn) => {
+  const changeShownColumns = (status: boolean, column: DatabaseListColumn) => {
     const newColumns = status
       ? [...shownColumns, column]
       : shownColumns.filter((col) => col !== column)
@@ -172,7 +172,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
         label={name}
         checked={shownColumns.includes(field)}
         disabled={shownColumns.includes(field) && shownColumns.length === 1}
-        onChange={(e) => changeColumnsShown(e.target.checked, field)}
+        onChange={(e) => changeShownColumns(e.target.checked, field)}
         data-testid={`show-${field}`}
       />
     ),

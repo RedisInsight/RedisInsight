@@ -1,10 +1,4 @@
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiText,
-} from '@elastic/eui'
+import { EuiSuperSelect, EuiSuperSelectOption, EuiText } from '@elastic/eui'
 import { minBy, toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,8 +18,8 @@ import {
   slowLogSelector,
 } from 'uiSrc/slices/analytics/slowlog'
 import {
-  sendPageViewTelemetry,
   sendEventTelemetry,
+  sendPageViewTelemetry,
   TelemetryEvent,
   TelemetryPageView,
 } from 'uiSrc/telemetry'
@@ -39,9 +33,10 @@ import {
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 
 import { FormatedDate } from 'uiSrc/components'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { SlowLog } from 'apiSrc/modules/slow-log/models'
 
-import { EmptySlowLog, SlowLogTable, Actions } from './components'
+import { Actions, EmptySlowLog, SlowLogTable } from './components'
 
 import styles from './styles.module.scss'
 
@@ -146,17 +141,16 @@ const SlowLogPage = () => {
 
   return (
     <div className={styles.main} data-testid="slow-log-page">
-      <EuiFlexGroup
+      <Row
         className={styles.header}
-        responsive={false}
-        alignItems="center"
-        justifyContent="spaceBetween"
+        align="center"
+        justify="between"
       >
-        <EuiFlexItem grow={false}>
+        <FlexItem>
           <AnalyticsTabs />
-        </EuiFlexItem>
+        </FlexItem>
 
-        <EuiFlexItem grow={false}>
+        <FlexItem>
           {connectionType !== ConnectionType.Cluster && config && (
             <EuiText size="xs" color="subdued" data-testid="config-info">
               Execution time:{' '}
@@ -170,32 +164,27 @@ const SlowLogPage = () => {
               , Max length: {numberWithSpaces(slowlogMaxLen)}
             </EuiText>
           )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
 
       <AutoSizer disableHeight>
         {({ width }) => (
           <div style={{ width }}>
-            <EuiFlexGroup
+            <Row
               className={styles.actionsLine}
-              responsive={false}
-              alignItems="center"
-              justifyContent="spaceBetween"
+              align="center"
+              justify="between"
             >
-              <EuiFlexItem grow={false}>
-                <EuiFlexGroup
-                  responsive={false}
-                  alignItems="center"
-                  gutterSize="xs"
-                >
-                  <EuiFlexItem grow={false}>
+              <FlexItem>
+                <Row align="center" gap="s">
+                  <FlexItem>
                     <EuiText color="subdued">
                       {connectionType === ConnectionType.Cluster
                         ? 'Display per node:'
                         : 'Display up to:'}
                     </EuiText>
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={false}>
+                  </FlexItem>
+                  <FlexItem>
                     <EuiSuperSelect
                       options={countOptions}
                       valueOfSelected={count}
@@ -204,9 +193,9 @@ const SlowLogPage = () => {
                       popoverClassName={styles.countSelectWrapper}
                       data-testid="count-select"
                     />
-                  </EuiFlexItem>
+                  </FlexItem>
                   {width > HIDE_TIMESTAMP_FROM_WIDTH && (
-                    <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+                    <FlexItem style={{ marginLeft: 12 }}>
                       <EuiText
                         size="xs"
                         color="subdued"
@@ -221,11 +210,11 @@ const SlowLogPage = () => {
                         )}
                         )
                       </EuiText>
-                    </EuiFlexItem>
+                    </FlexItem>
                   )}
-                </EuiFlexGroup>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
+                </Row>
+              </FlexItem>
+              <FlexItem>
                 <Actions
                   width={width}
                   isEmptySlowLog={isEmptySlowLog}
@@ -233,8 +222,8 @@ const SlowLogPage = () => {
                   onClear={onClearSlowLogs}
                   onRefresh={getSlowLogs}
                 />
-              </EuiFlexItem>
-            </EuiFlexGroup>
+              </FlexItem>
+            </Row>
           </div>
         )}
       </AutoSizer>

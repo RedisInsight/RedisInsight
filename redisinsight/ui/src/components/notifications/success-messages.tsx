@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiFlexGroup, EuiFlexItem, EuiText } from '@elastic/eui'
+import { EuiText } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import {
   IBulkActionOverview,
@@ -13,6 +13,7 @@ import {
   millisecondsFormat,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 // TODO: use i18n file for texts
@@ -214,46 +215,40 @@ export default {
         </>
       ),
       message: (
-        <EuiFlexGroup
-          alignItems="flexStart"
-          direction="row"
-          gutterSize="none"
-          responsive={false}
-          className={styles.summary}
-        >
-          <EuiFlexItem grow={false}>
+        <Row align="start" className={styles.summary}>
+          <FlexItem>
             <EuiText color="ghost" className={styles.summaryValue}>
               {numberWithSpaces(processed)}
             </EuiText>
             <EuiText size="xs" className={styles.summaryLabel}>
               Commands Processed
             </EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiText color="ghost" className={styles.summaryValue}>
               {numberWithSpaces(succeed)}
             </EuiText>
             <EuiText size="xs" className={styles.summaryLabel}>
               Success
             </EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiText color="ghost" className={styles.summaryValue}>
               {numberWithSpaces(failed)}
             </EuiText>
             <EuiText size="xs" className={styles.summaryLabel}>
               Errors
             </EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiText color="ghost" className={styles.summaryValue}>
               {millisecondsFormat(data?.duration || 0, 'H:mm:ss.SSS')}
             </EuiText>
             <EuiText size="xs" className={styles.summaryLabel}>
               Time Taken
             </EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       ),
       className: 'dynamic',
     }

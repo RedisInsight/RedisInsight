@@ -3,23 +3,21 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
   EuiButton,
-  EuiTextColor,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFormRow,
   EuiFieldText,
+  EuiFormRow,
   EuiPanel,
+  EuiTextColor,
 } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import {
-  selectedKeyDataSelector,
   keysSelector,
+  selectedKeyDataSelector,
 } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import {
-  updateHashValueStateSelector,
-  resetUpdateValue,
   addHashFieldsAction,
+  resetUpdateValue,
+  updateHashValueStateSelector,
 } from 'uiSrc/slices/browser/hash'
 import { KeyTypes } from 'uiSrc/constants'
 import {
@@ -34,6 +32,7 @@ import {
   IHashFieldState,
   INITIAL_HASH_FIELD_STATE,
 } from 'uiSrc/pages/browser/components/add-key/AddKeyHash/interfaces'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import {
   AddFieldsToHashDto,
   HashFieldDto,
@@ -187,8 +186,8 @@ const AddHashFields = (props: Props) => {
           onClickAdd={addField}
         >
           {(item, index) => (
-            <EuiFlexGroup gutterSize="none" alignItems="center">
-              <EuiFlexItem grow={2}>
+            <Row align="center">
+              <FlexItem grow={2}>
                 <EuiFormRow fullWidth>
                   <EuiFieldText
                     fullWidth
@@ -206,8 +205,8 @@ const AddHashFields = (props: Props) => {
                     data-testid="hash-field"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-              <EuiFlexItem grow={2}>
+              </FlexItem>
+              <FlexItem grow={2}>
                 <EuiFormRow fullWidth>
                   <EuiFieldText
                     fullWidth
@@ -222,9 +221,9 @@ const AddHashFields = (props: Props) => {
                     data-testid="hash-value"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
+              </FlexItem>
               {isExpireFieldsAvailable && (
-                <EuiFlexItem grow={1}>
+                <FlexItem grow={1}>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -243,9 +242,9 @@ const AddHashFields = (props: Props) => {
                       data-testid="hash-ttl"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
+                </FlexItem>
               )}
-            </EuiFlexGroup>
+            </Row>
           )}
         </AddMultipleFields>
       </EuiPanel>
@@ -255,8 +254,8 @@ const AddHashFields = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="l">
+          <FlexItem>
             <div>
               <EuiButton
                 color="secondary"
@@ -266,8 +265,8 @@ const AddHashFields = (props: Props) => {
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <div>
               <EuiButton
                 fill
@@ -281,8 +280,8 @@ const AddHashFields = (props: Props) => {
                 Save
               </EuiButton>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

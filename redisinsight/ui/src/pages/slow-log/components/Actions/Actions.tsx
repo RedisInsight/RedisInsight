@@ -1,8 +1,6 @@
 import {
   EuiButton,
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiPopover,
   EuiSpacer,
@@ -19,6 +17,7 @@ import { slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
 import { AutoRefresh } from 'uiSrc/components'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import SlowLogConfig from '../SlowLogConfig'
 import styles from './styles.module.scss'
 
@@ -130,13 +129,12 @@ const Actions = (props: Props) => {
   )
 
   return (
-    <EuiFlexGroup
+    <Row
       className={styles.actions}
-      gutterSize="s"
-      alignItems="center"
-      responsive={false}
+      gap="s"
+      align="center"
     >
-      <EuiFlexItem grow={5} style={{ alignItems: 'flex-end' }}>
+      <FlexItem grow={5} style={{ alignItems: 'flex-end' }}>
         <AutoRefresh
           postfix="slowlog"
           loading={loading}
@@ -148,8 +146,8 @@ const Actions = (props: Props) => {
           onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
           testid="slowlog"
         />
-      </EuiFlexItem>
-      <EuiFlexItem>
+      </FlexItem>
+      <FlexItem grow>
         <EuiPopover
           ownFocus
           anchorPosition="downRight"
@@ -175,9 +173,9 @@ const Actions = (props: Props) => {
             onRefresh={onRefresh}
           />
         </EuiPopover>
-      </EuiFlexItem>
+      </FlexItem>
       {!isEmptySlowLog && (
-        <EuiFlexItem>
+        <FlexItem grow>
           <EuiPopover
             anchorPosition="leftCenter"
             ownFocus
@@ -202,9 +200,9 @@ const Actions = (props: Props) => {
           >
             {ToolTipContent}
           </EuiPopover>
-        </EuiFlexItem>
+        </FlexItem>
       )}
-      <EuiFlexItem>
+      <FlexItem grow>
         <EuiToolTip
           title="Slow Log"
           position="bottom"
@@ -229,8 +227,8 @@ const Actions = (props: Props) => {
             data-testid="slow-log-tooltip-icon"
           />
         </EuiToolTip>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      </FlexItem>
+    </Row>
   )
 }
 

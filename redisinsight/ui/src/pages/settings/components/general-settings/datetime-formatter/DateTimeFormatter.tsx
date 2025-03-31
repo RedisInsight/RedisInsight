@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 import { formatTimestamp } from 'uiSrc/utils'
 import { DATETIME_FORMATTER_DEFAULT, TimezoneOption } from 'uiSrc/constants'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import TimezoneForm from './components/timezone-form/TimezoneForm'
 import DatetimeForm from './components/datetime-form/DatetimeForm'
 import styles from './styles.module.scss'
@@ -45,11 +40,11 @@ const DateTimeFormatter = () => {
       </EuiText>
       <EuiSpacer size="s" />
       <div>
-        <EuiFlexGroup alignItems="center">
-          <EuiFlexItem grow={1}>
+        <Row align="center" gap="m" responsive>
+          <FlexItem grow={1}>
             <TimezoneForm />
-          </EuiFlexItem>
-          <EuiFlexItem grow={2}>
+          </FlexItem>
+          <FlexItem grow={2}>
             <div className={styles.previewContainer}>
               <EuiText className={styles.dateTimeSubtitle} color="subdued">
                 Preview:
@@ -58,8 +53,8 @@ const DateTimeFormatter = () => {
                 {preview}
               </EuiText>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
       <EuiSpacer size="l" />
     </>

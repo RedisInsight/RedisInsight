@@ -2,8 +2,6 @@ import {
   EuiBadge,
   EuiButton,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiIcon,
@@ -27,6 +25,7 @@ import { publishMessageAction } from 'uiSrc/slices/pubsub/pubsub'
 import UserIcon from 'uiSrc/assets/img/icons/user.svg?react'
 import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 const HIDE_BADGE_TIMER = 3000
@@ -89,9 +88,12 @@ const PublishMessage = () => {
       component="form"
       onSubmit={onFormSubmit}
     >
-      <EuiFlexItem className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}>
-        <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-          <EuiFlexItem className={styles.channelWrapper} grow>
+      <FlexItem
+        grow
+        className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+      >
+        <Row align="center">
+          <FlexItem className={styles.channelWrapper} grow>
             <EuiFormRow fullWidth>
               <EuiFieldText
                 fullWidth
@@ -106,8 +108,8 @@ const PublishMessage = () => {
                 data-testid="field-channel-name"
               />
             </EuiFormRow>
-          </EuiFlexItem>
-          <EuiFlexItem className={styles.messageWrapper} grow>
+          </FlexItem>
+          <FlexItem className={styles.messageWrapper} grow>
             <EuiFormRow fullWidth>
               <>
                 <EuiFieldText
@@ -147,15 +149,13 @@ const PublishMessage = () => {
                 </EuiBadge>
               </>
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiFlexItem>
-      <EuiFlexGroup
-        responsive={false}
-        justifyContent="flexEnd"
+          </FlexItem>
+        </Row>
+      </FlexItem>
+      <Row justify="end"
         style={{ marginTop: 6 }}
       >
-        <EuiFlexItem grow={false}>
+        <FlexItem>
           <EuiButton
             fill
             color="secondary"
@@ -164,8 +164,8 @@ const PublishMessage = () => {
           >
             Publish
           </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </EuiForm>
   )
 }

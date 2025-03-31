@@ -3,8 +3,6 @@ import React, { ChangeEvent, useState } from 'react'
 import {
   EuiButton,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiSpacer,
@@ -14,6 +12,7 @@ import {
 import { FormikErrors, useFormik } from 'formik'
 import { validateEmail, validateField } from 'uiSrc/utils'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -92,8 +91,8 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
         <h4>Single Sign-On</h4>
       </EuiTitle>
       <EuiForm component="form" onSubmit={formik.handleSubmit}>
-        <EuiFlexGroup>
-          <EuiFlexItem>
+        <Row>
+          <FlexItem>
             <EuiFormRow className={styles.formRaw} label="Email">
               <EuiFieldText
                 name="email"
@@ -110,11 +109,11 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
                 }}
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         <EuiSpacer />
-        <EuiFlexGroup justifyContent="flexEnd" responsive={false}>
-          <EuiFlexItem grow={false}>
+        <Row justify="end">
+          <FlexItem>
             <EuiButton
               color="secondary"
               type="button"
@@ -124,11 +123,11 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
             >
               Back
             </EuiButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <SubmitButton text="Login" disabled={submitIsDisabled()} />
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiForm>
     </div>
   )

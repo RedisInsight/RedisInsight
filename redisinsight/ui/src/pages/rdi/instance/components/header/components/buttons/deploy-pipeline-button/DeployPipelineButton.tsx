@@ -1,8 +1,6 @@
 import {
   EuiButton,
   EuiCheckbox,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiOutsideClickDetector,
   EuiPopover,
@@ -28,6 +26,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { createAxiosError, pipelineToJson } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -169,8 +168,8 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
             />
           </EuiToolTip>
         </div>
-        <EuiFlexGroup justifyContent="flexEnd">
-          <EuiFlexItem grow={false}>
+        <Row gap="m" responsive justify="end">
+          <FlexItem>
             <EuiButton
               fill
               size="s"
@@ -181,8 +180,8 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
             >
               Deploy
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPopover>
     </EuiOutsideClickDetector>
   )

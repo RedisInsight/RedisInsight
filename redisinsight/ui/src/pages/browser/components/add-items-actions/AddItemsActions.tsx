@@ -1,10 +1,6 @@
 import React from 'react'
-import {
-  EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 
 export interface Props {
   id: number
@@ -44,13 +40,8 @@ const AddItemsActions = (props: Props) => {
   }
 
   return (
-    <EuiFlexItem grow={false} style={{ width: 80 }}>
-      <EuiFlexGroup
-        responsive
-        gutterSize="m"
-        alignItems="center"
-        justifyContent="center"
-      >
+    <FlexItem style={{ width: 80 }}>
+      <Row responsive gap="m" centered>
         <div
           style={{ width: 60 }}
           className="flex-row space-between action-buttons"
@@ -92,8 +83,8 @@ const AddItemsActions = (props: Props) => {
             </div>
           )}
         </div>
-      </EuiFlexGroup>
-    </EuiFlexItem>
+      </Row>
+    </FlexItem>
   )
 }
 

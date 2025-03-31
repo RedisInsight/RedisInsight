@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { EuiFlexItem, EuiPage, EuiPageBody } from '@elastic/eui'
+import { EuiPage, EuiPageBody } from '@elastic/eui'
 
 import {
   getApiErrorMessage,
@@ -27,6 +27,7 @@ import DatabasePanelDialog from 'uiSrc/pages/home/components/database-panel-dial
 
 import './styles.scss'
 import styles from './styles.module.scss'
+import { FlexItem } from 'uiSrc/components/base/layout/Flex'
 
 interface IState {
   loading: boolean
@@ -61,7 +62,7 @@ const EditConnection = () => {
       setState(DEFAULT_STATE)
       isApiSubscribed = true
       const { data, status } = await apiService.get<Instance>(
-        `${ApiEndpoints.DATABASES}/${server.fixedDatabaseId}`,
+        `${ApiEndpoints.DATABASES}/${server?.fixedDatabaseId}`,
       )
       if (isStatusSuccessful(status) && isApiSubscribed) {
         setState({ ...state, loading: false, data })
@@ -118,9 +119,9 @@ const EditConnection = () => {
       <EuiPage className="homePage redisStackConnection">
         <EuiPageBody component="div" className={styles.container}>
           {createDbContent?.cloud && (
-            <EuiFlexItem grow={false} style={{ margin: '20px 0' }}>
+            <FlexItem style={{ margin: '20px 0' }}>
               <CreateCloudBtn content={createDbContent.cloud} />
-            </EuiFlexItem>
+            </FlexItem>
           )}
           <div className={styles.formContainer}>
             <div className={styles.form}>

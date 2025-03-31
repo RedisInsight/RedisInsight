@@ -2,8 +2,6 @@ import {
   EuiButton,
   EuiFieldPassword,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiIcon,
@@ -30,6 +28,7 @@ import { SECURITY_FIELD } from 'uiSrc/constants'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import { getFormUpdates, Nullable } from 'uiSrc/utils'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -123,15 +122,11 @@ const ConnectionForm = (props: Props) => {
     if (!footerEl) return null
 
     return ReactDOM.createPortal(
-      <EuiFlexGroup
-        className="footerAddDatabase"
-        gutterSize="none"
-        justifyContent="spaceBetween"
-      >
-        <EuiFlexItem grow={false} />
-        <EuiFlexItem grow={false}>
-          <EuiFlexGroup gutterSize="m">
-            <EuiFlexItem grow={false}>
+      <Row className="footerAddDatabase" justify="between">
+        <FlexItem />
+        <FlexItem>
+          <Row gap="m">
+            <FlexItem>
               <EuiButton
                 size="s"
                 color="secondary"
@@ -140,8 +135,8 @@ const ConnectionForm = (props: Props) => {
               >
                 Cancel
               </EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <ValidationTooltip isValid={isValid} errors={errors}>
                 <EuiButton
                   data-testid="connection-form-add-button"
@@ -157,10 +152,10 @@ const ConnectionForm = (props: Props) => {
                   {editInstance ? 'Apply Changes' : 'Add Endpoint'}
                 </EuiButton>
               </ValidationTooltip>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-      </EuiFlexGroup>,
+            </FlexItem>
+          </Row>
+        </FlexItem>
+      </Row>,
       footerEl,
     )
   }
@@ -215,8 +210,8 @@ const ConnectionForm = (props: Props) => {
                 </Field>
               </EuiFormRow>
               <EuiFormRow>
-                <EuiFlexGroup responsive={false}>
-                  <EuiFlexItem grow={1}>
+                <Row gap="m">
+                  <FlexItem grow={1}>
                     <EuiFormRow label="Username">
                       <Field name="username">
                         {({ field }: { field: FieldInputProps<string> }) => (
@@ -233,8 +228,8 @@ const ConnectionForm = (props: Props) => {
                         )}
                       </Field>
                     </EuiFormRow>
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={1}>
+                  </FlexItem>
+                  <FlexItem grow={1}>
                     <EuiFormRow label="Password">
                       <Field name="password">
                         {({
@@ -268,8 +263,8 @@ const ConnectionForm = (props: Props) => {
                         )}
                       </Field>
                     </EuiFormRow>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
+                  </FlexItem>
+                </Row>
               </EuiFormRow>
             </div>
             <Footer

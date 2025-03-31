@@ -4,7 +4,6 @@ import cx from 'classnames'
 import {
   EuiButtonIcon,
   EuiFieldText,
-  EuiFlexItem,
   EuiForm,
   EuiOutsideClickDetector,
   EuiFocusTrap,
@@ -16,6 +15,7 @@ import {
   keys,
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
+import { FlexItem } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 type Positions = 'top' | 'bottom' | 'left' | 'right' | 'inside'
@@ -206,9 +206,9 @@ const InlineItemEditor = (props: Props) => {
                 className="relative"
                 onSubmit={(e: unknown) =>
                   handleFormSubmit(e as React.MouseEvent<HTMLElement>)
-                }
+              }
               >
-                <EuiFlexItem grow component="span">
+                <FlexItem grow inline>
                   {children || (
                     <>
                       <EuiFieldText
@@ -232,7 +232,7 @@ const InlineItemEditor = (props: Props) => {
                       )}
                     </>
                   )}
-                </EuiFlexItem>
+                </FlexItem>
                 <div
                   className={cx(
                     'inlineItemEditor__controls',

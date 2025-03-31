@@ -11,8 +11,6 @@ import {
   EuiFieldSearch,
   EuiFormRow,
   EuiToolTip,
-  EuiFlexGroup,
-  EuiFlexItem,
 } from '@elastic/eui'
 import { map, pick } from 'lodash'
 import { useSelector } from 'react-redux'
@@ -25,6 +23,7 @@ import { InstanceRedisCloud } from 'uiSrc/slices/interfaces'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -203,8 +202,8 @@ const RedisCloudDatabasesPage = ({
           <h1>Redis Cloud Databases</h1>
         </EuiTitle>
 
-        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
-          <EuiFlexItem>
+        <Row align="end" gap="s">
+          <FlexItem grow>
             <EuiText color="subdued" className={styles.subTitle}>
               <span>
                 These are {items.length > 1 ? 'databases ' : 'database '}
@@ -213,9 +212,9 @@ const RedisCloudDatabasesPage = ({
                 to add.
               </span>
             </EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiFlexItem grow={false}>
+          </FlexItem>
+        </Row>
+        <FlexItem>
           <EuiFormRow className={styles.searchForm}>
             <EuiFieldSearch
               placeholder="Search..."
@@ -226,7 +225,7 @@ const RedisCloudDatabasesPage = ({
               data-testid="search"
             />
           </EuiFormRow>
-        </EuiFlexItem>
+        </FlexItem>
         <br />
 
         <div className="itemList databaseList cloudDatabaseList">

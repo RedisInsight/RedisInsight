@@ -3,8 +3,6 @@ import React, { FormEvent, useEffect, useState } from 'react'
 import {
   EuiButton,
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiLoadingSpinner,
   EuiPopover,
@@ -12,6 +10,7 @@ import {
 } from '@elastic/eui'
 
 import cx from 'classnames'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -151,12 +150,11 @@ const EditablePopover = (props: Props) => {
       <EuiForm component="form" onSubmit={onFormSubmit}>
         <div className={styles.content}>{children}</div>
         <EuiSpacer size="s" />
-        <EuiFlexGroup
+        <Row
           className={styles.footer}
-          responsive={false}
-          justifyContent="flexEnd"
+          justify="end"
         >
-          <EuiFlexItem grow={false}>
+          <FlexItem>
             <EuiButton
               size="s"
               color="secondary"
@@ -165,9 +163,9 @@ const EditablePopover = (props: Props) => {
             >
               Cancel
             </EuiButton>
-          </EuiFlexItem>
+          </FlexItem>
 
-          <EuiFlexItem grow={false}>
+          <FlexItem>
             <EuiButton
               fill
               size="s"
@@ -178,8 +176,8 @@ const EditablePopover = (props: Props) => {
             >
               Save
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiForm>
     </EuiPopover>
   )

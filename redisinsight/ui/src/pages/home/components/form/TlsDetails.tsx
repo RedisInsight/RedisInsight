@@ -2,8 +2,6 @@ import React, { ChangeEvent, useState } from 'react'
 import {
   EuiCheckbox,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiSpacer,
   EuiSuperSelect,
@@ -16,22 +14,23 @@ import { FormikProps } from 'formik'
 
 import { useDispatch } from 'react-redux'
 import {
-  validateCertName,
-  validateField,
   Nullable,
   truncateText,
+  validateCertName,
+  validateField,
 } from 'uiSrc/utils'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 
 import {
+  ADD_NEW,
   ADD_NEW_CA_CERT,
   NO_CA_CERT,
-  ADD_NEW,
 } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { deleteCaCertificateAction } from 'uiSrc/slices/instances/caCerts'
 import { deleteClientCertAction } from 'uiSrc/slices/instances/clientCerts'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from '../styles.module.scss'
 
 const suffix = '_tls_details'
@@ -174,8 +173,8 @@ const TlsDetails = (props: Props) => {
 
   return (
     <>
-      <EuiFlexGroup responsive={false}>
-        <EuiFlexItem grow={1}>
+      <Row gap="m">
+        <FlexItem grow={1}>
           <EuiCheckbox
             id={`${htmlIdGenerator()()} over ssl`}
             name="tls"
@@ -184,14 +183,14 @@ const TlsDetails = (props: Props) => {
             onChange={formik.handleChange}
             data-testid="tls"
           />
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
 
       {formik.values.tls && (
         <>
           <EuiSpacer />
-          <EuiFlexGroup responsive={false}>
-            <EuiFlexItem grow={1}>
+          <Row gap="m">
+            <FlexItem grow={1}>
               <EuiCheckbox
                 id={`${htmlIdGenerator()()} sni`}
                 name="sni"
@@ -206,13 +205,13 @@ const TlsDetails = (props: Props) => {
                 }}
                 data-testid="sni"
               />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
           {formik.values.sni && (
             <>
               <EuiSpacer />
-              <EuiFlexGroup responsive={false}>
-                <EuiFlexItem>
+              <Row gap="m">
+                <FlexItem grow>
                   <EuiFormRow label="Server Name*">
                     <EuiFieldText
                       name="servername"
@@ -230,13 +229,14 @@ const TlsDetails = (props: Props) => {
                       data-testid="sni-servername"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+                </FlexItem>
+              </Row>
             </>
           )}
           <EuiSpacer />
-          <EuiFlexGroup>
-            <EuiFlexItem
+          <Row gap="m" responsive>
+            <FlexItem
+              grow
               className={cx({ [styles.fullWidth]: formik.values.sni })}
             >
               <EuiCheckbox
@@ -247,15 +247,15 @@ const TlsDetails = (props: Props) => {
                 onChange={formik.handleChange}
                 data-testid="verify-tls-cert"
               />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </>
       )}
       {formik.values.tls && (
         <div className="boxSection">
           <EuiSpacer />
-          <EuiFlexGroup>
-            <EuiFlexItem>
+          <Row gap="m" responsive>
+            <FlexItem grow>
               <EuiFormRow
                 label={`CA Certificate${
                   formik.values.verifyServerTlsCert ? '*' : ''
@@ -277,11 +277,11 @@ const TlsDetails = (props: Props) => {
                   data-testid="select-ca-cert"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
+            </FlexItem>
 
             {formik.values.tls &&
               formik.values.selectedCaCertName === ADD_NEW_CA_CERT && (
-                <EuiFlexItem>
+                <FlexItem grow>
                   <EuiFormRow label="Name*">
                     <EuiFieldText
                       name="newCaCertName"
@@ -299,14 +299,14 @@ const TlsDetails = (props: Props) => {
                       data-testid="qa-ca-cert"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
+                </FlexItem>
               )}
-          </EuiFlexGroup>
+          </Row>
 
           {formik.values.tls &&
             formik.values.selectedCaCertName === ADD_NEW_CA_CERT && (
-              <EuiFlexGroup>
-                <EuiFlexItem>
+              <Row gap="m" responsive>
+                <FlexItem grow>
                   <EuiFormRow label="Certificate*">
                     <EuiTextArea
                       name="newCaCert"
@@ -319,14 +319,14 @@ const TlsDetails = (props: Props) => {
                       data-testid="new-ca-cert"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+                </FlexItem>
+              </Row>
             )}
         </div>
       )}
       {formik.values.tls && (
-        <EuiFlexGroup gutterSize="none" style={{ margin: '20px 0 20px' }}>
-          <EuiFlexItem>
+        <Row responsive style={{ margin: '20px 0 20px' }}>
+          <FlexItem grow>
             <EuiCheckbox
               id={`${htmlIdGenerator()()} is_tls_client_auth_required`}
               name="tlsClientAuthRequired"
@@ -337,16 +337,16 @@ const TlsDetails = (props: Props) => {
               }
               data-testid="tls-required-checkbox"
             />
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       )}
       {formik.values.tls && formik.values.tlsClientAuthRequired && (
         <div
           className={cx('boxSection', styles.tslBoxSection)}
           style={{ marginTop: 15 }}
         >
-          <EuiFlexGroup>
-            <EuiFlexItem>
+          <Row gap="m" responsive>
+            <FlexItem grow>
               <EuiFormRow label="Client Certificate*">
                 <EuiSuperSelect
                   placeholder="Select certificate"
@@ -358,12 +358,12 @@ const TlsDetails = (props: Props) => {
                   data-testid="select-cert"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
+            </FlexItem>
 
             {formik.values.tls &&
               formik.values.tlsClientAuthRequired &&
               formik.values.selectedTlsClientCertId === 'ADD_NEW' && (
-                <EuiFlexItem>
+                <FlexItem grow>
                   <EuiFormRow label="Name*">
                     <EuiFieldText
                       name="newTlsCertPairName"
@@ -381,16 +381,16 @@ const TlsDetails = (props: Props) => {
                       data-testid="new-tsl-cert-pair-name"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
+                </FlexItem>
               )}
-          </EuiFlexGroup>
+          </Row>
 
           {formik.values.tls &&
             formik.values.tlsClientAuthRequired &&
             formik.values.selectedTlsClientCertId === 'ADD_NEW' && (
               <>
-                <EuiFlexGroup>
-                  <EuiFlexItem>
+                <Row gap="m" responsive>
+                  <FlexItem grow>
                     <EuiFormRow label="Certificate*">
                       <EuiTextArea
                         name="newTlsClientCert"
@@ -404,11 +404,11 @@ const TlsDetails = (props: Props) => {
                         data-testid="new-tls-client-cert"
                       />
                     </EuiFormRow>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
+                  </FlexItem>
+                </Row>
 
-                <EuiFlexGroup>
-                  <EuiFlexItem>
+                <Row gap="m" responsive>
+                  <FlexItem grow>
                     <EuiFormRow label="Private Key*">
                       <EuiTextArea
                         placeholder="Enter Private Key"
@@ -421,8 +421,8 @@ const TlsDetails = (props: Props) => {
                         data-testid="new-tls-client-cert-key"
                       />
                     </EuiFormRow>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
+                  </FlexItem>
+                </Row>
               </>
             )}
         </div>

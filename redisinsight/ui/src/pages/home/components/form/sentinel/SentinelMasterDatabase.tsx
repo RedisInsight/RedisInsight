@@ -2,8 +2,6 @@ import React from 'react'
 import {
   EuiFieldPassword,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiText,
   EuiTextColor,
@@ -14,6 +12,7 @@ import { Nullable } from 'uiSrc/utils'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from '../../styles.module.scss'
 
 export interface Props {
@@ -42,8 +41,8 @@ const SentinelMasterDatabase = (props: Props) => {
           </span>
         </EuiText>
       )}
-      <EuiFlexGroup className={flexGroupClassName}>
-        <EuiFlexItem className={flexItemClassName}>
+      <Row gap="m" responsive className={flexGroupClassName}>
+        <FlexItem grow className={flexItemClassName}>
           <EuiFormRow label="Username">
             <EuiFieldText
               name="sentinelMasterUsername"
@@ -56,9 +55,9 @@ const SentinelMasterDatabase = (props: Props) => {
               data-testid="sentinel-mater-username"
             />
           </EuiFormRow>
-        </EuiFlexItem>
+        </FlexItem>
 
-        <EuiFlexItem className={flexItemClassName}>
+        <FlexItem grow className={flexItemClassName}>
           <EuiFormRow label="Password">
             <EuiFieldPassword
               type="password"
@@ -84,8 +83,8 @@ const SentinelMasterDatabase = (props: Props) => {
               autoComplete="new-password"
             />
           </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </>
   )
 }

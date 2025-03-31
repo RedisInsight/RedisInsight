@@ -1,8 +1,6 @@
 import React from 'react'
 import {
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiLink,
   EuiText,
   EuiTitle,
@@ -10,6 +8,7 @@ import {
 } from '@elastic/eui'
 import cx from 'classnames'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
 import CreateRedisearchIndex from './CreateRedisearchIndex'
 
 import styles from './styles.module.scss'
@@ -26,15 +25,9 @@ const CreateRedisearchIndexWrapper = ({
   onCreateIndex,
 }: Props) => (
   <div className={styles.page} data-testid="create-index-panel">
-    <EuiFlexGroup
-      justifyContent="center"
-      direction="column"
-      className={cx(styles.container, 'relative')}
-      gutterSize="none"
-      responsive={false}
-    >
+    <Col justify="center" className={cx(styles.container, 'relative')}>
       <div className={styles.headerWrapper}>
-        <EuiFlexItem grow style={{ marginBottom: '16px' }}>
+        <FlexItem grow style={{ marginBottom: '16px' }}>
           <EuiTitle size="xs" className={styles.header}>
             <h4>New Index</h4>
           </EuiTitle>
@@ -54,8 +47,8 @@ const CreateRedisearchIndexWrapper = ({
               />
             </EuiToolTip>
           )}
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.header}>
+        </FlexItem>
+        <FlexItem grow className={styles.header}>
           <EuiText size="s">
             Use CLI or Workbench to create more advanced indexes. See more
             details in the{' '}
@@ -71,13 +64,13 @@ const CreateRedisearchIndexWrapper = ({
               documentation.
             </EuiLink>
           </EuiText>
-        </EuiFlexItem>
+        </FlexItem>
       </div>
       <CreateRedisearchIndex
         onCreateIndex={onCreateIndex}
         onClosePanel={onClosePanel}
       />
-    </EuiFlexGroup>
+    </Col>
   </div>
 )
 

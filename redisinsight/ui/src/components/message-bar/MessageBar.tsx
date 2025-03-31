@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
+import { EuiButtonIcon } from '@elastic/eui'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -17,17 +18,11 @@ const MessageBar = ({ children, opened }: Props) => {
   return isOpen ? (
     <div className={styles.inner}>
       <div className={styles.containerWrapper}>
-        <EuiFlexGroup
-          justifyContent="center"
-          alignItems="center"
-          className={styles.container}
-          gutterSize="m"
-          responsive={false}
-        >
-          <EuiFlexItem grow className={styles.text}>
+        <Row centered className={styles.container} gap="l">
+          <FlexItem grow className={styles.text}>
             {children}
-          </EuiFlexItem>
-          <EuiFlexItem grow={false} className={styles.cross}>
+          </FlexItem>
+          <FlexItem className={styles.cross}>
             <EuiButtonIcon
               iconType="cross"
               color="primary"
@@ -35,8 +30,8 @@ const MessageBar = ({ children, opened }: Props) => {
               onClick={() => setIsOpen(false)}
               data-testid="close-button"
             />
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
     </div>
   ) : null

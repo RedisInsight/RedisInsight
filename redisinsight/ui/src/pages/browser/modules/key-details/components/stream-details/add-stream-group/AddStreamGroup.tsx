@@ -1,8 +1,6 @@
 import {
   EuiButton,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiIcon,
   EuiPanel,
@@ -23,6 +21,7 @@ import {
   validateConsumerGroupId,
 } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
@@ -101,18 +100,15 @@ const AddStreamGroup = (props: Props) => {
           'inlineFieldsNoSpace',
         )}
       >
-        <EuiFlexItem
+        <FlexItem
           className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}
           grow
         >
-          <EuiFlexGroup gutterSize="none" responsive={false}>
-            <EuiFlexItem grow>
-              <EuiFlexGroup
-                gutterSize="none"
-                alignItems="flexStart"
-                responsive={false}
+          <Row>
+            <FlexItem grow>
+              <Row align="start"
               >
-                <EuiFlexItem className={styles.groupNameWrapper} grow>
+                <FlexItem className={styles.groupNameWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -127,8 +123,8 @@ const AddStreamGroup = (props: Props) => {
                       data-testid="group-name-field"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-                <EuiFlexItem className={styles.timestampWrapper} grow>
+                </FlexItem>
+                <FlexItem className={styles.timestampWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -170,11 +166,11 @@ const AddStreamGroup = (props: Props) => {
                       {idError}
                     </span>
                   )}
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
+                </FlexItem>
+              </Row>
+            </FlexItem>
+          </Row>
+        </FlexItem>
       </EuiPanel>
       <EuiPanel
         style={{ border: 'none' }}
@@ -182,8 +178,8 @@ const AddStreamGroup = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="l">
+          <FlexItem>
             <div>
               <EuiButton
                 color="secondary"
@@ -193,8 +189,8 @@ const AddStreamGroup = (props: Props) => {
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <div>
               <EuiButton
                 fill
@@ -207,8 +203,8 @@ const AddStreamGroup = (props: Props) => {
                 Save
               </EuiButton>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

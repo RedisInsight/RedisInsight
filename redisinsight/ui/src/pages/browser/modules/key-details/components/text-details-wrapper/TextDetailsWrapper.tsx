@@ -1,12 +1,8 @@
 import React, { ReactNode } from 'react'
 
-import {
-  EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 const TextDetailsWrapper = ({
@@ -37,11 +33,11 @@ const TextDetailsWrapper = ({
           data-testid={getDataTestid('close-key-btn')}
         />
       </EuiToolTip>
-      <EuiFlexGroup alignItems="center" justifyContent="center">
-        <EuiFlexItem className={styles.textWrapper}>
+      <Row centered>
+        <FlexItem className={styles.textWrapper}>
           <div>{children}</div>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

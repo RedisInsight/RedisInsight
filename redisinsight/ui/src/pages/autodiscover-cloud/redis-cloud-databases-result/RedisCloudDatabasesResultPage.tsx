@@ -1,8 +1,6 @@
 import {
   EuiBasicTableColumn,
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiText,
   EuiTextColor,
@@ -32,6 +30,7 @@ import {
   setTitle,
 } from 'uiSrc/utils'
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import RedisCloudDatabasesResult from './RedisCloudDatabasesResult'
 
 import styles from './styles.module.scss'
@@ -223,24 +222,22 @@ const RedisCloudDatabasesResultPage = () => {
               <EuiText>{messageAdded}</EuiText>
             ) : (
               <EuiToolTip position="left" title="Error" content={messageAdded}>
-                <EuiFlexGroup
-                  alignItems="center"
-                  gutterSize="s"
-                  responsive={false}
+                <Row align="center"
+                  gap="s"
                 >
-                  <EuiFlexItem grow={false}>
+                  <FlexItem>
                     <EuiIcon type="alert" color="danger" />
-                  </EuiFlexItem>
+                  </FlexItem>
 
-                  <EuiFlexItem grow={false}>
+                  <FlexItem>
                     <EuiTextColor
                       color="danger"
                       className="flex-row euiTextAlign--center"
                     >
                       Error
                     </EuiTextColor>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
+                  </FlexItem>
+                </Row>
               </EuiToolTip>
             )}
           </>

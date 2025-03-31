@@ -1,13 +1,5 @@
 import React from 'react'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiPanel,
-  EuiSpacer,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiButton, EuiPanel, EuiSpacer, EuiText, EuiTitle, } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -23,6 +15,7 @@ import BulbImg from 'uiSrc/assets/img/workbench/bulb.svg'
 import ArrowToGuidesIcon from 'uiSrc/assets/img/workbench/arrow-to-guides.svg?react'
 import TriggerIcon from 'uiSrc/assets/img/bulb.svg?react'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 const WbNoResultsMessage = () => {
@@ -71,16 +64,16 @@ const WbNoResultsMessage = () => {
         grow={false}
       >
         <ArrowToGuidesIcon className={styles.arrowToGuides} />
-        <EuiFlexGroup>
-          <EuiFlexItem grow={false}>
+        <Row gap="m" responsive>
+          <FlexItem>
             <img
               className={styles.noResultsIcon}
               src={BulbImg}
               alt="no results"
               data-testid="wb_no-results__icon"
             />
-          </EuiFlexItem>
-          <EuiFlexItem>
+          </FlexItem>
+          <FlexItem grow>
             <EuiText
               className={styles.noResultsText}
               data-testid="wb_no-results__summary"
@@ -105,8 +98,8 @@ const WbNoResultsMessage = () => {
             <EuiText color="subdued" textAlign="left" size="xs">
               Or click the icon in the top right corner.
             </EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </div>
   )

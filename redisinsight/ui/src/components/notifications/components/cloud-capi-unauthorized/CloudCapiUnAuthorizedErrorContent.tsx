@@ -1,10 +1,4 @@
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiButton, EuiSpacer, EuiTextColor } from '@elastic/eui'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -12,6 +6,7 @@ import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 import { Pages } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 
 export interface Props {
   resourceId: string
@@ -50,8 +45,8 @@ const CloudCapiUnAuthorizedErrorContent = ({
     <>
       <EuiTextColor color="ghost">{text}</EuiTextColor>
       <EuiSpacer />
-      <EuiFlexGroup justifyContent="flexEnd">
-        <EuiFlexItem grow={false}>
+      <Row justify="end">
+        <FlexItem>
           <EuiButton
             size="s"
             color="warning"
@@ -61,8 +56,8 @@ const CloudCapiUnAuthorizedErrorContent = ({
           >
             Go to Settings
           </EuiButton>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <EuiButton
             fill
             size="s"
@@ -73,8 +68,8 @@ const CloudCapiUnAuthorizedErrorContent = ({
           >
             Remove API key
           </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </>
   )
 }

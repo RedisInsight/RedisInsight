@@ -1,7 +1,5 @@
 import {
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiLink,
   EuiPopover,
@@ -31,6 +29,7 @@ import BulbSVG from 'uiSrc/assets/img/bulb.svg?react'
 
 import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
@@ -113,15 +112,14 @@ const HelpMenu = () => {
           <span>Help Center</span>
         </EuiTitle>
         <EuiSpacer size="l" />
-        <EuiFlexGroup
+        <Row
           className={styles.helpMenuItems}
-          alignItems="center"
-          justifyContent="spaceBetween"
-          gutterSize="m"
-          responsive={false}
+          align="center"
+          justify="between"
+          gap="l"
         >
           <FeatureFlagComponent name={FeatureFlags.envDependent}>
-            <EuiFlexItem grow={2} className={styles.helpMenuItem}>
+            <FlexItem grow={2} className={styles.helpMenuItem}>
               <EuiLink
                 external={false}
                 className={styles.helpMenuItemLink}
@@ -139,9 +137,9 @@ const HelpMenu = () => {
                   Provide <br /> Feedback
                 </EuiText>
               </EuiLink>
-            </EuiFlexItem>
+            </FlexItem>
           </FeatureFlagComponent>
-          <EuiFlexItem className={styles.helpMenuItemRow} grow={4}>
+          <FlexItem className={styles.helpMenuItemRow} grow={4}>
             <div className={styles.helpMenuItemLink}>
               <EuiIcon type="keyboardShortcut" size="l" />
               <EuiText
@@ -189,8 +187,8 @@ const HelpMenu = () => {
                 </EuiText>
               </div>
             </FeatureFlagComponent>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
     </EuiPopover>
   )

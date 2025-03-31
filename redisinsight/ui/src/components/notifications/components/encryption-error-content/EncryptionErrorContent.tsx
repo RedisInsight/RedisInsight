@@ -1,15 +1,10 @@
 import React from 'react'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiSpacer,
-  EuiTextColor,
-  EuiFlexItem,
-} from '@elastic/eui'
+import { EuiButton, EuiSpacer, EuiTextColor } from '@elastic/eui'
 import { matchPath, useHistory, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
 import { updateUserConfigSettingsAction } from 'uiSrc/slices/user/user-settings'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 
 export interface Props {
   onClose?: () => void
@@ -54,8 +49,8 @@ const EncryptionErrorContent = (props: Props) => {
         with databases.
       </EuiTextColor>
       <EuiSpacer />
-      <EuiFlexGroup justifyContent="flexEnd">
-        <EuiFlexItem grow={false}>
+      <Row justify="end">
+        <FlexItem>
           <div>
             <EuiButton
               size="s"
@@ -67,8 +62,8 @@ const EncryptionErrorContent = (props: Props) => {
               Disable Encryption
             </EuiButton>
           </div>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <div>
             <EuiButton
               fill
@@ -81,8 +76,8 @@ const EncryptionErrorContent = (props: Props) => {
               Cancel
             </EuiButton>
           </div>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </>
   )
 }

@@ -3,7 +3,6 @@ import {
   EuiButton,
   EuiButtonIcon,
   EuiFieldText,
-  EuiFlexGroup,
   EuiIcon,
   EuiText,
   EuiToolTip,
@@ -171,11 +170,7 @@ const DatabaseAlias = (props: Props) => {
           </FlexItem>
         )}
         <FlexItem style={{ overflow: isEditing ? 'inherit' : 'hidden' }}>
-          <EuiFlexGroup
-            responsive={false}
-            justifyContent="spaceBetween"
-            gutterSize="xs"
-          >
+          <Row justify="between" gap="s">
             {isRediStack && (
               <FlexItem>
                 <EuiToolTip
@@ -275,15 +270,11 @@ const DatabaseAlias = (props: Props) => {
                 </EuiText>
               )}
             </FlexItem>
-          </EuiFlexGroup>
+          </Row>
         </FlexItem>
       </Row>
       {!isCloneMode && (
-        <EuiFlexGroup
-          responsive={false}
-          gutterSize="m"
-          style={{ marginTop: 6, flexGrow: 0 }}
-        >
+        <Row gap="m" style={{ marginTop: 6, flexGrow: 0 }}>
           <FlexItem>
             <EuiButton
               size="s"
@@ -312,7 +303,7 @@ const DatabaseAlias = (props: Props) => {
               </EuiButton>
             </FlexItem>
           )}
-        </EuiFlexGroup>
+        </Row>
       )}
     </>
   )

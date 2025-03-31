@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import {
   EuiButton,
   EuiButtonEmpty,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiSpacer,
   EuiToolTip,
@@ -22,6 +20,7 @@ import {
   testInstanceStandaloneAction,
 } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import ConnectivityOptions from './components/connectivity-options'
 import ConnectionUrl from './components/connection-url'
 import { Values } from './constants'
@@ -109,17 +108,17 @@ const AddDatabaseScreen = (props: Props) => {
         onSubmit={formik.handleSubmit}
         data-testid="form"
       >
-        <EuiFlexGroup>
-          <EuiFlexItem>
+        <Row responsive>
+          <FlexItem grow>
             <ConnectionUrl
               value={formik.values.connectionURL}
               onChange={formik.handleChange}
             />
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
 
-        <EuiFlexGroup justifyContent="spaceBetween">
-          <EuiFlexItem grow={false}>
+        <Row responsive justify="between">
+          <FlexItem>
             <EuiToolTip
               position="top"
               anchorClassName="euiToolTip__btn-disabled"
@@ -143,10 +142,10 @@ const AddDatabaseScreen = (props: Props) => {
                 Test Connection
               </EuiButtonEmpty>
             </EuiToolTip>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiFlexGroup>
-              <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
+            <Row responsive>
+              <FlexItem>
                 <EuiButton
                   size="s"
                   color="secondary"
@@ -155,8 +154,8 @@ const AddDatabaseScreen = (props: Props) => {
                 >
                   Connection Settings
                 </EuiButton>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
+              </FlexItem>
+              <FlexItem>
                 <EuiToolTip
                   position="top"
                   anchorClassName="euiToolTip__btn-disabled"
@@ -180,10 +179,10 @@ const AddDatabaseScreen = (props: Props) => {
                     Add Database
                   </EuiButton>
                 </EuiToolTip>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+              </FlexItem>
+            </Row>
+          </FlexItem>
+        </Row>
       </EuiForm>
       <EuiSpacer />
       <div className={styles.hr}>Or</div>

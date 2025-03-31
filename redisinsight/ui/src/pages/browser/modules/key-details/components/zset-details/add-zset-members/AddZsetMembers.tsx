@@ -4,12 +4,10 @@ import { toNumber } from 'lodash'
 import cx from 'classnames'
 import {
   EuiButton,
-  EuiTextColor,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFormRow,
   EuiFieldText,
+  EuiFormRow,
   EuiPanel,
+  EuiTextColor,
 } from '@elastic/eui'
 
 import { stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
@@ -29,6 +27,7 @@ import {
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { ISetMemberState } from 'uiSrc/pages/browser/components/add-key/AddKeySet/interfaces'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -198,8 +197,8 @@ const AddZsetMembers = (props: Props) => {
           onClickAdd={addMember}
         >
           {(item, index) => (
-            <EuiFlexGroup gutterSize="none" alignItems="center">
-              <EuiFlexItem grow>
+            <Row align="center">
+              <FlexItem grow>
                 <EuiFormRow fullWidth>
                   <EuiFieldText
                     fullWidth
@@ -217,8 +216,8 @@ const AddZsetMembers = (props: Props) => {
                     data-testid="member-name"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-              <EuiFlexItem grow>
+              </FlexItem>
+              <FlexItem grow>
                 <EuiFormRow fullWidth>
                   <EuiFieldText
                     fullWidth
@@ -237,8 +236,8 @@ const AddZsetMembers = (props: Props) => {
                     data-testid="member-score"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-            </EuiFlexGroup>
+              </FlexItem>
+            </Row>
           )}
         </AddMultipleFields>
       </EuiPanel>
@@ -248,8 +247,8 @@ const AddZsetMembers = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="l">
+          <FlexItem>
             <div>
               <EuiButton
                 color="secondary"
@@ -259,8 +258,8 @@ const AddZsetMembers = (props: Props) => {
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <div>
               <EuiButton
                 fill
@@ -274,8 +273,8 @@ const AddZsetMembers = (props: Props) => {
                 Save
               </EuiButton>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

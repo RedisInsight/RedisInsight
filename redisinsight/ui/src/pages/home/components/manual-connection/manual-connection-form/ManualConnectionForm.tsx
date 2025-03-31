@@ -1,7 +1,5 @@
 import {
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiSpacer,
   EuiTab,
   EuiTabs,
@@ -32,6 +30,7 @@ import { appInfoSelector } from 'uiSrc/slices/app/info'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { MANUAL_FORM_TABS, ManualFormTab } from './constants'
 import CloneConnection from './components/CloneConnection'
 import FooterActions from './components/FooterActions'
@@ -160,8 +159,8 @@ const ManualConnectionForm = (props: Props) => {
   useEffect(() => {
     if (isCloneMode) {
       setModalHeader(
-        <EuiFlexGroup responsive={false} alignItems="center" gutterSize="s">
-          <EuiFlexItem grow={false}>
+        <Row align="center" gap="s">
+          <FlexItem>
             <EuiButtonIcon
               onClick={handleClickBackClone}
               iconSize="m"
@@ -169,13 +168,13 @@ const ManualConnectionForm = (props: Props) => {
               aria-label="back"
               data-testid="back-btn"
             />
-          </EuiFlexItem>
-          <EuiFlexItem>
+          </FlexItem>
+          <FlexItem grow>
             <EuiTitle size="s">
               <h4>Clone Database</h4>
             </EuiTitle>
-          </EuiFlexItem>
-        </EuiFlexGroup>,
+          </FlexItem>
+        </Row>,
       )
       return
     }

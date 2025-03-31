@@ -1,12 +1,5 @@
 import React, { useCallback } from 'react'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -14,6 +7,7 @@ import { FeatureFlags } from 'uiSrc/constants/featureFlags'
 import { getConfig } from 'uiSrc/config'
 import Logo from 'uiSrc/assets/img/logo.svg?react'
 import Robot from 'uiSrc/assets/img/robot.svg?react'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 const NotFoundErrorPage = () => {
@@ -33,26 +27,17 @@ const NotFoundErrorPage = () => {
 
   return (
     <div className={styles.notfoundpage}>
-      <EuiFlexGroup
-        direction="column"
-        alignItems="flexStart"
-        gutterSize="none"
-        className={styles.notfoundgroup}
-      >
-        <EuiFlexItem>
-          <EuiFlexGroup
-            direction="column"
-            alignItems="flexStart"
-            gutterSize="xl"
-          >
-            <EuiFlexItem>
+      <Col align="start" className={styles.notfoundgroup}>
+        <FlexItem grow>
+          <Col align="start" gap="xl">
+            <FlexItem grow>
               <EuiIcon
                 className={styles.logoIcon}
                 size="original"
                 type={Logo}
               />
-            </EuiFlexItem>
-            <EuiFlexItem>
+            </FlexItem>
+            <FlexItem grow>
               <EuiTitle>
                 <h1>
                   Whoops!
@@ -78,10 +63,10 @@ const NotFoundErrorPage = () => {
                   Databases page
                 </EuiButton>
               </EuiText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+            </FlexItem>
+          </Col>
+        </FlexItem>
+      </Col>
       <div className={styles.robotHolder}>
         <Robot className={styles.robot} />
       </div>

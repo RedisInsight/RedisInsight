@@ -5,8 +5,6 @@ import cx from 'classnames'
 import {
   EuiButtonEmpty,
   EuiFieldNumber,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiText,
   EuiToolTip,
@@ -42,6 +40,7 @@ import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { getConfig } from 'uiSrc/config'
 import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
 import UserProfile from 'uiSrc/components/instance-header/components/user-profile/UserProfile'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -131,13 +130,13 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
   return (
     <div className={cx(styles.container)}>
-      <EuiFlexGroup
-        gutterSize="none"
-        alignItems="center"
-        justifyContent="spaceBetween"
+      <Row
+        responsive
+        align="center"
+        justify="between"
         style={{ height: '100%' }}
       >
-        <EuiFlexItem style={{ overflow: 'hidden' }} grow={false}>
+        <FlexItem style={{ overflow: 'hidden' }} grow={false}>
           <div
             className={styles.breadcrumbsContainer}
             data-testid="breadcrumbs-container"
@@ -170,25 +169,20 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
             </div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ maxWidth: '100%' }}>
-                <EuiFlexGroup
-                  gutterSize="none"
-                  alignItems="center"
-                  responsive={false}
-                >
+                <Row align="center">
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>
-                    <EuiFlexItem grow={false}>
+                    <FlexItem>
                       <EuiText className={styles.divider}>/</EuiText>
-                    </EuiFlexItem>
+                    </FlexItem>
                   </FeatureFlagComponent>
                   {returnUrlBase && returnUrl && (
                     <FeatureFlagComponent
                       name={FeatureFlags.envDependent}
                       otherwise={
-                        <EuiFlexItem
+                        <FlexItem
                           style={{ padding: '4px 24px 4px 0' }}
-                          grow={false}
                           data-testid="return-to-sm-item"
-                        >
+                          >
                           <EuiToolTip
                             position="bottom"
                             content={returnUrlTooltip || returnUrlLabel}
@@ -202,22 +196,19 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                               &#60; {returnUrlLabel}
                             </EuiText>
                           </EuiToolTip>
-                        </EuiFlexItem>
+                        </FlexItem>
                       }
                     />
                   )}
-                  <EuiFlexItem style={{ overflow: 'hidden' }}>
+                  <FlexItem grow style={{ overflow: 'hidden' }}>
                     {isRedisStack || !envDependentFeature?.flag ? (
                       <b className={styles.dbName}>{name}</b>
                     ) : (
                       <InstancesNavigationPopover name={name} />
                     )}
-                  </EuiFlexItem>
+                  </FlexItem>
                   {databases > 1 && (
-                    <EuiFlexItem
-                      style={{ padding: '4px 0 4px 12px' }}
-                      grow={false}
-                    >
+                    <FlexItem style={{ padding: '4px 0 4px 12px' }}>
                       <div
                         style={{
                           display: 'flex',
@@ -271,9 +262,9 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                           </EuiButtonEmpty>
                         )}
                       </div>
-                    </EuiFlexItem>
+                    </FlexItem>
                   )}
-                  <EuiFlexItem style={{ paddingLeft: 6 }} grow={false}>
+                  <FlexItem style={{ paddingLeft: 6 }}>
                     <EuiToolTip
                       position="right"
                       anchorClassName={styles.tooltipAnchor}
@@ -302,37 +293,35 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                         data-testid="db-info-icon"
                       />
                     </EuiToolTip>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
+                  </FlexItem>
+                </Row>
               </div>
             </div>
           </div>
-        </EuiFlexItem>
+        </FlexItem>
 
-        <EuiFlexItem grow={false} style={{ textAlign: 'center' }}>
+        <FlexItem style={{ textAlign: 'center' }}>
           <DatabaseOverview />
-        </EuiFlexItem>
+        </FlexItem>
 
-        <EuiFlexItem grow={false}>
-          <EuiFlexGroup
-            gutterSize="none"
-            alignItems="center"
-            justifyContent="flexEnd"
+        <FlexItem>
+          <Row align="center"
+            justify="end"
           >
             {isAnyChatAvailable && (
-              <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+              <FlexItem style={{ marginLeft: 12 }}>
                 <CopilotTrigger />
-              </EuiFlexItem>
+              </FlexItem>
             )}
 
-            <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+            <FlexItem style={{ marginLeft: 12 }}>
               <InsightsTrigger />
-            </EuiFlexItem>
+            </FlexItem>
 
             <UserProfile />
-          </EuiFlexGroup>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+          </Row>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

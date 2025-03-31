@@ -2,8 +2,6 @@ import React, { ChangeEvent } from 'react'
 import {
   EuiCheckbox,
   EuiFieldNumber,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiSpacer,
   htmlIdGenerator,
@@ -13,6 +11,7 @@ import { FormikProps } from 'formik'
 import { validateNumber } from 'uiSrc/utils'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -35,8 +34,8 @@ const DbIndex = (props: Props) => {
 
   return (
     <>
-      <EuiFlexGroup responsive={false} gutterSize="xs">
-        <EuiFlexItem grow={false}>
+      <Row gap="s">
+        <FlexItem>
           <EuiFormRow>
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
@@ -47,14 +46,14 @@ const DbIndex = (props: Props) => {
               data-testid="showDb"
             />
           </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
 
       {formik.values.showDb && (
         <>
           <EuiSpacer />
-          <EuiFlexGroup>
-            <EuiFlexItem className={styles.dbInput}>
+          <Row gap="m" responsive>
+            <FlexItem grow className={styles.dbInput}>
               <EuiFormRow label="Database Index">
                 <EuiFieldNumber
                   name="db"
@@ -73,9 +72,9 @@ const DbIndex = (props: Props) => {
                   min={0}
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem />
-          </EuiFlexGroup>
+            </FlexItem>
+            <FlexItem grow />
+          </Row>
         </>
       )}
     </>

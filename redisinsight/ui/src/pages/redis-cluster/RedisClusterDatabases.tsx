@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-  EuiInMemoryTable,
   EuiBasicTableColumn,
-  EuiTableSelectionType,
-  PropertySort,
   EuiButton,
-  EuiPopover,
-  EuiText,
-  EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
+  EuiInMemoryTable,
+  EuiPopover,
+  EuiTableSelectionType,
+  EuiText,
+  EuiTitle,
   EuiToolTip,
-  EuiFlexGroup,
-  EuiFlexItem,
+  PropertySort,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { map } from 'lodash'
@@ -23,6 +21,7 @@ import { clusterSelector } from 'uiSrc/slices/instances/cluster'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -152,8 +151,8 @@ const RedisClusterDatabases = ({
         <EuiTitle size="s" className={styles.title} data-testid="title">
           <h1>Auto-Discover Redis Enterprise Databases</h1>
         </EuiTitle>
-        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
-          <EuiFlexItem>
+        <Row align="end" responsive gap="s">
+          <FlexItem grow>
             {!!items.length && (
               <EuiText color="subdued" className={styles.subTitle}>
                 <span>
@@ -164,8 +163,8 @@ const RedisClusterDatabases = ({
                 </span>
               </EuiText>
             )}
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiFormRow className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
@@ -176,8 +175,8 @@ const RedisClusterDatabases = ({
                 data-testid="search"
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         <br />
         <div
           className={cx(

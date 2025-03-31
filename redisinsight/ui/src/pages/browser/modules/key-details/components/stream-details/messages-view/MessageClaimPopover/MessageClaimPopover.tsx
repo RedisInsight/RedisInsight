@@ -7,8 +7,6 @@ import {
   EuiPopover,
   EuiButton,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiFieldNumber,
   EuiSwitch,
@@ -31,6 +29,7 @@ import {
   getDefaultConsumer,
   ClaimTimeOptions,
 } from 'uiSrc/utils/streamUtils'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
@@ -213,8 +212,8 @@ const MessageClaimPopover = (props: Props) => {
       button={consumerOptions.length < 1 ? buttonTooltip : button}
     >
       <EuiForm>
-        <EuiFlexGroup>
-          <EuiFlexItem>
+        <Row responsive>
+          <FlexItem grow>
             <EuiFormRow label="Consumer">
               <EuiSuperSelect
                 fullWidth
@@ -229,8 +228,8 @@ const MessageClaimPopover = (props: Props) => {
                 data-testid="destination-select"
               />
             </EuiFormRow>
-          </EuiFlexItem>
-          <EuiFlexItem className={styles.relative}>
+          </FlexItem>
+          <FlexItem grow className={styles.relative}>
             <EuiFormRow label="Min Idle Time">
               <EuiFieldNumber
                 name="minIdleTime"
@@ -250,13 +249,13 @@ const MessageClaimPopover = (props: Props) => {
                 min={0}
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         {isOptionalShow && (
           <>
             <EuiSpacer size="m" />
-            <EuiFlexGroup className={styles.container} alignItems="center">
-              <EuiFlexItem className={styles.idle}>
+            <Row className={styles.container} align="center">
+              <FlexItem grow className={styles.idle}>
                 <EuiFormRow label="Idle Time">
                   <EuiFieldNumber
                     name="timeCount"
@@ -276,8 +275,8 @@ const MessageClaimPopover = (props: Props) => {
                     min={0}
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-              <EuiFlexItem className={styles.timeSelect}>
+              </FlexItem>
+              <FlexItem grow className={styles.timeSelect}>
                 <EuiFormRow className={styles.hiddenLabel} label="time">
                   <EuiSuperSelect
                     itemClassName={styles.timeOption}
@@ -289,8 +288,8 @@ const MessageClaimPopover = (props: Props) => {
                     data-testid="time-option-select"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-              <EuiFlexItem>
+              </FlexItem>
+              <FlexItem grow>
                 <EuiFormRow label="Retry Count">
                   <EuiFieldNumber
                     name="retryCount"
@@ -309,8 +308,8 @@ const MessageClaimPopover = (props: Props) => {
                     min={0}
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-              <EuiFlexItem className={styles.grow}>
+              </FlexItem>
+              <FlexItem grow={2}>
                 <EuiFormRow className={styles.hiddenLabel} label="force">
                   <EuiCheckbox
                     id="force_claim"
@@ -323,12 +322,12 @@ const MessageClaimPopover = (props: Props) => {
                     data-testid="force-claim-checkbox"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-            </EuiFlexGroup>
+              </FlexItem>
+            </Row>
           </>
         )}
-        <EuiFlexGroup className={styles.footer}>
-          <EuiFlexItem grow={false}>
+        <Row responsive className={styles.footer}>
+          <FlexItem>
             <EuiSwitch
               label="Optional Parameters"
               checked={isOptionalShow}
@@ -337,7 +336,7 @@ const MessageClaimPopover = (props: Props) => {
               data-testid="optional-parameters-switcher"
               compressed
             />
-          </EuiFlexItem>
+          </FlexItem>
           <div>
             <EuiButton
               color="secondary"
@@ -358,7 +357,7 @@ const MessageClaimPopover = (props: Props) => {
               Claim
             </EuiButton>
           </div>
-        </EuiFlexGroup>
+        </Row>
       </EuiForm>
     </EuiPopover>
   )

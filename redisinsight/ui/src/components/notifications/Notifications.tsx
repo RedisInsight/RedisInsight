@@ -4,8 +4,6 @@ import {
   EuiGlobalToastList,
   EuiButton,
   EuiSpacer,
-  EuiFlexItem,
-  EuiFlexGroup,
   EuiTextColor,
 } from '@elastic/eui'
 import { Toast } from '@elastic/eui/src/components/toast/global_toast_list'
@@ -25,6 +23,7 @@ import { showOAuthProgress } from 'uiSrc/slices/oauth/cloud'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import errorMessages from './error-messages'
 import { InfiniteMessagesIds } from './components'
 
@@ -56,12 +55,8 @@ const Notifications = () => {
     <>
       <EuiTextColor color="ghost">{text}</EuiTextColor>
       <EuiSpacer />
-      <EuiFlexGroup
-        responsive={false}
-        justifyContent="flexEnd"
-        gutterSize="none"
-      >
-        <EuiFlexItem grow={false}>
+      <Row justify="end">
+        <FlexItem>
           <EuiButton
             fill
             size="s"
@@ -71,8 +66,8 @@ const Notifications = () => {
           >
             Ok
           </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </>
   )
 

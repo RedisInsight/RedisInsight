@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { capitalize } from 'lodash'
-import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiText } from '@elastic/eui'
 
 import cx from 'classnames'
 import {
@@ -20,6 +20,7 @@ import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import UnknownDark from 'uiSrc/assets/img/modules/UnknownDark.svg'
 import UnknownLight from 'uiSrc/assets/img/modules/UnknownLight.svg'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import styles from './styles.module.scss'
 
@@ -63,51 +64,44 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
         </span>
       </div>
       {databases > 1 && (
-        <EuiFlexGroup
+        <Row
           className={styles.dbIndexInfo}
-          alignItems="center"
-          gutterSize="none"
+          align="center"
         >
-          <EuiFlexItem grow={false} style={{ marginRight: 16 }}>
+          <FlexItem style={{ marginRight: 16 }}>
             <EuiIcon
               className={styles.messageInfoIcon}
               size="xxl"
               type={MessageInfoIcon}
             />
-          </EuiFlexItem>
-          <EuiFlexItem>
+          </FlexItem>
+          <FlexItem grow>
             <EuiText size="s">Logical Databases</EuiText>
             <EuiText color="subdued" size="xs">
               Select logical databases to work with in Browser, Workbench, and
               Database Analysis.
             </EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       )}
-      <EuiFlexGroup
-        className={styles.tooltipItem}
-        gutterSize="none"
-        alignItems="center"
-        justifyContent="flexStart"
-        responsive={false}
-      >
-        <EuiFlexItem className={styles.rowTooltipItem} grow={false}>
+      <Row className={styles.tooltipItem} align="center" justify="start">
+        <FlexItem className={styles.rowTooltipItem}>
           <EuiIcon type={ConnectionIcon} />
           <span className={styles.tooltipItemValue}>
             {connectionType
               ? CONNECTION_TYPE_DISPLAY[connectionType]
               : capitalize(connectionType)}
           </span>
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.rowTooltipItem} grow={false}>
+        </FlexItem>
+        <FlexItem className={styles.rowTooltipItem}>
           <EuiIcon type={VersionIcon} />
           <span className={styles.tooltipItemValue}>{version}</span>
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.rowTooltipItem} grow={false}>
+        </FlexItem>
+        <FlexItem className={styles.rowTooltipItem}>
           <EuiIcon type={UserIcon} />
           <span className={styles.tooltipItemValue}>{user || 'Default'}</span>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
       {!!modules?.length && (
         <div className={styles.modules}>
           <h4 className={styles.mi_fieldName}>Database Modules</h4>

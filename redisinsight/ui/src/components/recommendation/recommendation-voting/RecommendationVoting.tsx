@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiText, EuiFlexGroup } from '@elastic/eui'
+import { EuiText } from '@elastic/eui'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { Nullable } from 'uiSrc/utils'
 
+import { Row } from 'uiSrc/components/base/layout/Flex'
 import VoteOption from './components/vote-option'
 import styles from './styles.module.scss'
 
@@ -28,10 +29,10 @@ const RecommendationVoting = ({
   const [popover, setPopover] = useState<string>('')
 
   return (
-    <EuiFlexGroup
-      alignItems="center"
+    <Row
+      align="center"
       className={cx(styles.votingContainer, containerClass)}
-      gutterSize={live ? 'none' : 'l'}
+      gap={live ? 'none' : 'l'}
       data-testid="recommendation-voting"
     >
       <EuiText size="m" className={cx({ [styles.highlightText]: live })}>
@@ -52,7 +53,7 @@ const RecommendationVoting = ({
           />
         ))}
       </div>
-    </EuiFlexGroup>
+    </Row>
   )
 }
 

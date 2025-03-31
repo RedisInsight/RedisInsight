@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui'
+import { EuiButton, EuiSpacer } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 
 export interface Props {
   id?: string
@@ -22,12 +23,10 @@ const CloneConnection = (props: Props) => {
 
   return (
     <>
-      <EuiFlexGroup
-        responsive={false}
-        justifyContent="flexEnd"
+      <Row gap="m" justify="end"
         style={{ flexGrow: 0 }}
       >
-        <EuiFlexItem grow={false}>
+        <FlexItem>
           <EuiButton
             size="s"
             color="secondary"
@@ -38,8 +37,8 @@ const CloneConnection = (props: Props) => {
           >
             Clone Connection
           </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
       <EuiSpacer />
     </>
   )

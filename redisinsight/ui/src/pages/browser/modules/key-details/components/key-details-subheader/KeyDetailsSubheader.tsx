@@ -1,11 +1,10 @@
 import React, { ReactElement } from 'react'
-
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { isUndefined } from 'lodash'
 import Divider from 'uiSrc/components/divider/Divider'
 import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { KeyDetailsHeaderFormatter } from '../../../key-details-header/components/key-details-header-formatter'
 import styles from './styles.module.scss'
 
@@ -19,16 +18,13 @@ export const KeyDetailsSubheader = ({ keyType, Actions }: Props) => (
     <AutoSizer disableHeight>
       {({ width = 0 }) => (
         <div style={{ width }}>
-          <EuiFlexGroup
-            justifyContent="flexEnd"
-            alignItems="center"
-            gutterSize="none"
+          <Row justify="end" align="center"
           >
             {Object.values(KeyTypes).includes(keyType as KeyTypes) && (
               <>
-                <EuiFlexItem className={styles.keyFormatterItem} grow={false}>
+                <FlexItem className={styles.keyFormatterItem}>
                   <KeyDetailsHeaderFormatter width={width} />
-                </EuiFlexItem>
+                </FlexItem>
                 <Divider
                   className={styles.divider}
                   colorVariable="separatorColor"
@@ -37,7 +33,7 @@ export const KeyDetailsSubheader = ({ keyType, Actions }: Props) => (
               </>
             )}
             {!isUndefined(Actions) && <Actions width={width} />}
-          </EuiFlexGroup>
+          </Row>
         </div>
       )}
     </AutoSizer>

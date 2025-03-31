@@ -5,14 +5,11 @@ import { useParams } from 'react-router-dom'
 import {
   EuiButton,
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
+  EuiComboBox,
+  EuiComboBoxOptionOption,
   EuiIcon,
   EuiPopover,
   EuiSuperSelect,
-  EuiText,
-  EuiComboBox,
-  EuiComboBoxOptionOption,
 } from '@elastic/eui'
 import { isEqual } from 'lodash'
 
@@ -31,6 +28,7 @@ import {
 import TreeViewSort from 'uiSrc/assets/img/browser/treeViewSort.svg?react'
 import { comboBoxToArray } from 'uiSrc/utils'
 
+import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -143,9 +141,9 @@ const KeyTreeSettings = ({ loading }: Props) => {
         closePopover={closePopover}
         button={button}
       >
-        <EuiFlexGroup gutterSize="s" direction="column">
-          <EuiFlexItem className={styles.row} />
-          <EuiFlexItem className={styles.row}>
+        <Col gap="s">
+          <FlexItem grow className={styles.row} />
+          <FlexItem grow className={styles.row}>
             <div className={styles.label}>Delimiter</div>
             <EuiComboBox
               noSuggestions
@@ -160,8 +158,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
               className={styles.combobox}
               data-testid="delimiter-combobox"
             />
-          </EuiFlexItem>
-          <EuiFlexItem className={styles.row}>
+          </FlexItem>
+          <FlexItem className={styles.row}>
             <div className={styles.label}>
               <EuiIcon type={TreeViewSort} className={styles.sortIcon} />
               Sort by
@@ -174,8 +172,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
               onChange={(value: SortOrder) => onChangeSort(value)}
               data-testid="tree-view-sorting-select"
             />
-          </EuiFlexItem>
-          <EuiFlexItem className={styles.row}>
+          </FlexItem>
+          <FlexItem className={styles.row}>
             <div className={styles.footer}>
               <EuiButton
                 size="s"
@@ -195,8 +193,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
                 Apply
               </EuiButton>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Col>
       </EuiPopover>
     </div>
   )

@@ -1,13 +1,8 @@
 import React from 'react'
 import cx from 'classnames'
-import {
-  EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiSpacer, EuiToolTip } from '@elastic/eui'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -22,14 +17,14 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
   const { items, children, isClearDisabled, onClickRemove, onClickAdd } = props
 
   const renderItem = (child: React.ReactNode, item: T, index?: number) => (
-    <EuiFlexItem
+    <FlexItem
       key={index}
       className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace', styles.row)}
       grow
     >
-      <EuiFlexGroup alignItems="center" gutterSize="s">
-        <EuiFlexItem grow>{child}</EuiFlexItem>
-        <EuiFlexItem grow={false}>
+      <Row align="center" gap="s">
+        <FlexItem grow>{child}</FlexItem>
+        <FlexItem>
           <EuiToolTip content="Remove" position="left">
             <EuiButtonIcon
               iconType="trash"
@@ -40,9 +35,9 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
               data-testid="remove-item"
             />
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </EuiFlexItem>
+        </FlexItem>
+      </Row>
+    </FlexItem>
   )
 
   return (
@@ -51,8 +46,8 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
         renderItem(children(item, index), item, index),
       )}
       <EuiSpacer size="s" />
-      <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-        <EuiFlexItem grow={false}>
+      <Row align="center" justify="end">
+        <FlexItem>
           <EuiToolTip content="Add" position="left">
             <EuiButtonIcon
               className={styles.addBtn}
@@ -63,8 +58,8 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
               data-testid="add-item"
             />
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </>
   )
 }

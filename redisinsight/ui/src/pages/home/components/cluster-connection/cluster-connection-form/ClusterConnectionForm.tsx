@@ -7,8 +7,6 @@ import {
   EuiFieldNumber,
   EuiFieldPassword,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiIcon,
@@ -27,6 +25,7 @@ import validationErrors from 'uiSrc/constants/validationErrors'
 import { ICredentialsRedisCluster } from 'uiSrc/slices/interfaces'
 
 import { MessageEnterpriceSoftware } from 'uiSrc/pages/home/components/form/Messages'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 
 export interface Props {
   host: string
@@ -231,8 +230,8 @@ const ClusterConnectionForm = (props: Props) => {
 
       <EuiForm>
         <EuiWindowEvent event="keydown" handler={onKeyDown} />
-        <EuiFlexGroup>
-          <EuiFlexItem grow={4}>
+        <Row responsive>
+          <FlexItem grow={4}>
             <EuiFormRow label="Cluster Host*">
               <EuiFieldText
                 name="host"
@@ -253,9 +252,9 @@ const ClusterConnectionForm = (props: Props) => {
                 append={<AppendHostName />}
               />
             </EuiFormRow>
-          </EuiFlexItem>
+          </FlexItem>
 
-          <EuiFlexItem grow={2}>
+          <FlexItem grow={2}>
             <EuiFormRow
               label="Cluster Port*"
               helpText="Should not exceed 65535."
@@ -279,11 +278,11 @@ const ClusterConnectionForm = (props: Props) => {
                 max={MAX_PORT_NUMBER}
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
 
-        <EuiFlexGroup>
-          <EuiFlexItem>
+        <Row responsive>
+          <FlexItem grow>
             <EuiFormRow label="Admin Username*">
               <EuiFieldText
                 name="username"
@@ -296,9 +295,9 @@ const ClusterConnectionForm = (props: Props) => {
                 onChange={formik.handleChange}
               />
             </EuiFormRow>
-          </EuiFlexItem>
+          </FlexItem>
 
-          <EuiFlexItem>
+          <FlexItem grow>
             <EuiFormRow label="Admin Password*">
               <EuiFieldPassword
                 type="dual"
@@ -315,8 +314,8 @@ const ClusterConnectionForm = (props: Props) => {
                 autoComplete="new-password"
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiForm>
       <Footer />
     </div>

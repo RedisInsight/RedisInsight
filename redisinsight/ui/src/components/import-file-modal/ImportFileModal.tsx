@@ -1,8 +1,6 @@
 import {
   EuiButton,
   EuiFilePicker,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiLoadingSpinner,
   EuiModal,
@@ -20,6 +18,7 @@ import React from 'react'
 import { Nullable } from 'uiSrc/utils'
 
 import { UploadWarning } from 'uiSrc/components'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -79,14 +78,9 @@ const ImportFileModal = <T,>({
       </EuiModalHeader>
 
       <EuiModalBody>
-        <EuiFlexGroup
-          alignItems="center"
-          gutterSize="none"
-          responsive={false}
-          direction="column"
-        >
-          {warning && <EuiFlexItem grow={false}>{warning}</EuiFlexItem>}
-          <EuiFlexItem grow={false}>
+        <Col align="center">
+          {warning && <FlexItem>{warning}</FlexItem>}
+          <FlexItem>
             {isShowForm && (
               <>
                 <EuiFilePicker
@@ -135,23 +129,19 @@ const ImportFileModal = <T,>({
                 <EuiText color="subdued">{error}</EuiText>
               </div>
             )}
-          </EuiFlexItem>
+          </FlexItem>
           {isShowForm && (
-            <EuiFlexItem className={styles.uploadWarningContainer}>
+            <FlexItem grow className={styles.uploadWarningContainer}>
               <UploadWarning />
-            </EuiFlexItem>
+            </FlexItem>
           )}
-        </EuiFlexGroup>
+        </Col>
         {data && (
-          <EuiFlexGroup
-            justifyContent="center"
-            gutterSize="none"
-            responsive={false}
-          >
-            <EuiFlexItem style={{ maxWidth: '100%' }}>
+          <Row justify="center">
+            <FlexItem grow style={{ maxWidth: '100%' }}>
               {submitResults}
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         )}
       </EuiModalBody>
 

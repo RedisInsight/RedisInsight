@@ -1,14 +1,8 @@
 import React, { useState } from 'react'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiPopover,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
 import { formatLongName } from 'uiSrc/utils'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {
@@ -60,19 +54,18 @@ const DeleteAction = <T extends { id: string; name?: string }>(
       </EuiText>
       <div className={styles.boxSection}>
         {selection.map((select) => (
-          <EuiFlexGroup
+          <Row
             key={select.id}
-            gutterSize="s"
-            responsive={false}
+            gap="s"
             className={styles.nameList}
           >
-            <EuiFlexItem grow={false}>
+            <FlexItem>
               <EuiIcon type="check" />
-            </EuiFlexItem>
-            <EuiFlexItem className={styles.nameListText}>
+            </FlexItem>
+            <FlexItem grow className={styles.nameListText}>
               <span>{formatLongName(select.name)}</span>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         ))}
       </div>
       <div className={styles.popoverFooter}>

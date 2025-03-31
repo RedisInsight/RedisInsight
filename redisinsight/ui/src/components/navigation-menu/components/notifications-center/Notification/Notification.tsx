@@ -1,10 +1,4 @@
-import {
-  EuiBadge,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiBadge, EuiText, EuiTitle } from '@elastic/eui'
 import { EuiTitleSize } from '@elastic/eui/src/components/title/title'
 import cx from 'classnames'
 import { format } from 'date-fns'
@@ -15,6 +9,7 @@ import { NOTIFICATION_DATE_FORMAT } from 'uiSrc/constants/notifications'
 import { IGlobalNotification } from 'uiSrc/slices/interfaces'
 import { truncateText } from 'uiSrc/utils'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -44,19 +39,18 @@ const Notification = (props: Props) => {
         {parse(notification.body)}
       </EuiText>
 
-      <EuiFlexGroup
+      <Row
         className={styles.notificationFooter}
-        alignItems="center"
-        justifyContent="flexStart"
-        gutterSize="none"
+        align="center"
+        justify="start"
       >
-        <EuiFlexItem grow={false}>
+        <FlexItem>
           <EuiText size="xs" color="subdued" data-testid="notification-date">
             {format(notification.timestamp * 1000, NOTIFICATION_DATE_FORMAT)}
           </EuiText>
-        </EuiFlexItem>
+        </FlexItem>
         {notification.category && (
-          <EuiFlexItem grow={false}>
+          <FlexItem>
             <EuiBadge
               className={styles.category}
               style={{ backgroundColor: notification.categoryColor ?? '#666' }}
@@ -64,9 +58,9 @@ const Notification = (props: Props) => {
             >
               {truncateText(notification.category, 32)}
             </EuiBadge>
-          </EuiFlexItem>
+          </FlexItem>
         )}
-      </EuiFlexGroup>
+      </Row>
     </>
   )
 }

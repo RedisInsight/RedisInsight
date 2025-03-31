@@ -1,8 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef } from 'react'
 import {
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiIcon,
   EuiSpacer,
@@ -14,6 +12,7 @@ import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-k
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -169,12 +168,9 @@ const StreamEntryFields = (props: Props) => {
             onClickAdd={addField}
           >
             {(item, index) => (
-              <EuiFlexGroup
-                gutterSize="none"
-                alignItems="center"
-                responsive={false}
+              <Row align="center"
               >
-                <EuiFlexItem className={styles.fieldItemWrapper} grow>
+                <FlexItem className={styles.fieldItemWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -192,8 +188,8 @@ const StreamEntryFields = (props: Props) => {
                       data-testid="field-name"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-                <EuiFlexItem className={styles.valueItemWrapper} grow>
+                </FlexItem>
+                <FlexItem className={styles.valueItemWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -209,8 +205,8 @@ const StreamEntryFields = (props: Props) => {
                       data-testid="field-value"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+                </FlexItem>
+              </Row>
             )}
           </AddMultipleFields>
         </div>

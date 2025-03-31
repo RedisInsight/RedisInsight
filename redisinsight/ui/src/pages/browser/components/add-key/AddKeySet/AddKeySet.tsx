@@ -1,25 +1,24 @@
 import React, {
   ChangeEvent,
   FormEvent,
-  useState,
   useEffect,
   useRef,
+  useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiButton,
   EuiFieldText,
-  EuiFormRow,
-  EuiTextColor,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
+  EuiFormRow,
   EuiPanel,
+  EuiTextColor,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addSetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
 
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 
 import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from './interfaces'
@@ -139,8 +138,8 @@ const AddKeySet = (props: Props) => {
         onClickAdd={addMember}
       >
         {(item, index) => (
-          <EuiFlexGroup gutterSize="none" alignItems="center">
-            <EuiFlexItem grow>
+          <Row align="center">
+            <FlexItem grow>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -158,8 +157,8 @@ const AddKeySet = (props: Props) => {
                   data-testid="member-name"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         )}
       </AddMultipleFields>
       <EuiButton type="submit" fill style={{ display: 'none' }}>
@@ -173,8 +172,8 @@ const AddKeySet = (props: Props) => {
           borderRadius="none"
           style={{ border: 'none' }}
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <EuiButton
                 color="secondary"
                 onClick={() => onCancel(true)}
@@ -182,8 +181,8 @@ const AddKeySet = (props: Props) => {
               >
                 <EuiTextColor>Cancel</EuiTextColor>
               </EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <EuiButton
                 fill
                 size="m"
@@ -196,8 +195,8 @@ const AddKeySet = (props: Props) => {
               >
                 Add Key
               </EuiButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

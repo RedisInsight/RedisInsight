@@ -1,7 +1,5 @@
 import {
   EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiPopover,
   EuiSpacer,
   EuiTitle,
@@ -33,6 +31,7 @@ import {
 } from 'uiSrc/components/messages'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import { RunConfirmationPopover } from './components'
@@ -160,8 +159,8 @@ const CodeButtonBlock = (props: Props) => {
 
   return (
     <div className={styles.wrapper}>
-      <EuiFlexGroup gutterSize="none">
-        <EuiFlexItem>
+      <Row>
+        <FlexItem grow>
           {!!label && (
             <EuiTitle
               size="xxxs"
@@ -171,8 +170,8 @@ const CodeButtonBlock = (props: Props) => {
               <span>{truncateText(label, 86)}</span>
             </EuiTitle>
           )}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} className={styles.actions}>
+        </FlexItem>
+        <FlexItem className={styles.actions}>
           <EuiButton
             onClick={handleCopy}
             iconType="copy"
@@ -230,8 +229,8 @@ const CodeButtonBlock = (props: Props) => {
               {getPopoverMessage()}
             </EuiPopover>
           )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
       <div className={styles.content} data-testid="code-button-block-content">
         <CodeBlock className={styles.code}>
           {highlightedContent ? parse(highlightedContent) : content}

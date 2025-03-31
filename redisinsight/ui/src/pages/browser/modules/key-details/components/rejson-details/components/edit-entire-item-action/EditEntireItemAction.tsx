@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useState } from 'react'
 import {
   EuiButtonIcon,
-  EuiFlexItem,
   EuiFocusTrap,
   EuiForm,
   EuiOutsideClickDetector,
@@ -13,6 +12,7 @@ import cx from 'classnames'
 
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
+import { FlexItem } from 'uiSrc/components/base/layout/Flex'
 import { isValidJSON } from '../../utils'
 import { JSONErrors } from '../../constants'
 
@@ -61,7 +61,7 @@ const EditEntireItemAction = (props: Props) => {
                 data-testid="json-entire-form"
                 noValidate
               >
-                <EuiFlexItem grow component="span">
+                <FlexItem grow inline>
                   <EuiTextArea
                     isInvalid={!!error}
                     className={styles.fullWidthTextArea}
@@ -72,7 +72,7 @@ const EditEntireItemAction = (props: Props) => {
                     }
                     data-testid="json-value"
                   />
-                </EuiFlexItem>
+                </FlexItem>
                 <div className={cx(styles.controls, styles.controlsBottom)}>
                   <EuiButtonIcon
                     iconSize="m"

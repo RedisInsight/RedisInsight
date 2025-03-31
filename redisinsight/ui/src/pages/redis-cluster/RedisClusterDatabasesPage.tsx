@@ -1,11 +1,9 @@
 import {
   EuiBasicTableColumn,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiButtonIcon,
+  EuiIcon,
   EuiText,
   EuiTextColor,
-  EuiIcon,
   EuiToolTip,
 } from '@elastic/eui'
 import React from 'react'
@@ -20,17 +18,18 @@ import {
   resetInstancesRedisCluster,
 } from 'uiSrc/slices/instances/cluster'
 import {
-  Maybe,
   formatLongName,
+  Maybe,
   parseInstanceOptionsCluster,
   setTitle,
 } from 'uiSrc/utils'
 import {
-  InstanceRedisCluster,
   AddRedisDatabaseStatus,
+  InstanceRedisCluster,
 } from 'uiSrc/slices/interfaces'
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import RedisClusterDatabases from './RedisClusterDatabases'
 import RedisClusterDatabasesResult from './RedisClusterDatabasesResult'
 
@@ -196,24 +195,22 @@ const RedisClusterDatabasesPage = () => {
             <EuiText>{messageAdded}</EuiText>
           ) : (
             <EuiToolTip position="left" title="Error" content={messageAdded}>
-              <EuiFlexGroup
-                alignItems="center"
-                gutterSize="s"
-                responsive={false}
+              <Row align="center"
+                gap="s"
               >
-                <EuiFlexItem grow={false}>
+                <FlexItem>
                   <EuiIcon type="alert" color="danger" />
-                </EuiFlexItem>
+                </FlexItem>
 
-                <EuiFlexItem grow={false}>
+                <FlexItem>
                   <EuiTextColor
                     color="danger"
                     className="flex-row euiTextAlign--center"
                   >
                     Error
                   </EuiTextColor>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+                </FlexItem>
+              </Row>
             </EuiToolTip>
           )}
         </>

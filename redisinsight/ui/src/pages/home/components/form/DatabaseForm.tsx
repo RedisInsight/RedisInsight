@@ -6,8 +6,6 @@ import {
   EuiFieldNumber,
   EuiFieldPassword,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiIcon,
   EuiToolTip,
@@ -25,6 +23,7 @@ import {
   validateTimeoutNumber,
 } from 'uiSrc/utils'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 
 interface IShowFields {
   alias: boolean
@@ -95,8 +94,8 @@ const DatabaseForm = (props: Props) => {
   return (
     <>
       {showFields.alias && (
-        <EuiFlexGroup responsive={false}>
-          <EuiFlexItem>
+        <Row gap="m">
+          <FlexItem grow>
             <EuiFormRow label="Database Alias*">
               <EuiFieldText
                 fullWidth
@@ -111,14 +110,14 @@ const DatabaseForm = (props: Props) => {
                 disabled={isFieldDisabled('alias')}
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       )}
 
       {(showFields.host || isShowPort) && (
-        <EuiFlexGroup responsive={false}>
+        <Row gap="m">
           {showFields.host && (
-            <EuiFlexItem grow={4}>
+            <FlexItem grow={4}>
               <EuiFormRow label="Host*">
                 <EuiFieldText
                   autoFocus={autoFocus}
@@ -143,10 +142,10 @@ const DatabaseForm = (props: Props) => {
                   disabled={isFieldDisabled('host')}
                 />
               </EuiFormRow>
-            </EuiFlexItem>
+            </FlexItem>
           )}
           {isShowPort && (
-            <EuiFlexItem grow={2}>
+            <FlexItem grow={2}>
               <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
                 <EuiFieldNumber
                   name="port"
@@ -169,13 +168,13 @@ const DatabaseForm = (props: Props) => {
                   disabled={isFieldDisabled('port')}
                 />
               </EuiFormRow>
-            </EuiFlexItem>
+            </FlexItem>
           )}
-        </EuiFlexGroup>
+        </Row>
       )}
 
-      <EuiFlexGroup responsive={false}>
-        <EuiFlexItem grow={1}>
+      <Row gap="m">
+        <FlexItem grow>
           <EuiFormRow label="Username">
             <EuiFieldText
               name="username"
@@ -189,9 +188,9 @@ const DatabaseForm = (props: Props) => {
               disabled={isFieldDisabled('username')}
             />
           </EuiFormRow>
-        </EuiFlexItem>
+        </FlexItem>
 
-        <EuiFlexItem grow={1}>
+        <FlexItem grow>
           <EuiFormRow label="Password">
             <EuiFieldPassword
               type="password"
@@ -218,12 +217,12 @@ const DatabaseForm = (props: Props) => {
               disabled={isFieldDisabled('password')}
             />
           </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
 
       {showFields.timeout && (
-        <EuiFlexGroup>
-          <EuiFlexItem grow={1}>
+        <Row gap="m" responsive>
+          <FlexItem grow>
             <EuiFormRow label="Timeout (s)">
               <EuiFieldNumber
                 name="timeout"
@@ -246,9 +245,9 @@ const DatabaseForm = (props: Props) => {
                 disabled={isFieldDisabled('timeout')}
               />
             </EuiFormRow>
-          </EuiFlexItem>
-          <EuiFlexItem grow={1} />
-        </EuiFlexGroup>
+          </FlexItem>
+          <FlexItem grow />
+        </Row>
       )}
     </>
   )

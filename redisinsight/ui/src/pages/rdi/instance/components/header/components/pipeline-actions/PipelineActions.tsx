@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react'
-import { EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -23,6 +23,7 @@ import {
   PipelineStatus,
 } from 'uiSrc/slices/interfaces'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import DeployPipelineButton from '../buttons/deploy-pipeline-button'
 import ResetPipelineButton from '../buttons/reset-pipeline-button'
 import RdiConfigFileActionMenu from '../rdi-config-file-action-menu'
@@ -143,20 +144,15 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
   const isDeployButtonDisabled = disabled || !isPipelineValid
 
   return (
-    <EuiFlexGroup
-      gutterSize="m"
-      justifyContent="flexEnd"
-      alignItems="center"
-      responsive={false}
-    >
-      <EuiFlexItem grow={false}>
+    <Row gap="m" justify="end" align="center">
+      <FlexItem>
         <ResetPipelineButton
           onClick={onReset}
           disabled={disabled}
           loading={isLoadingBtn(PipelineAction.Reset)}
         />
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
+      </FlexItem>
+      <FlexItem>
         {collectorStatus === CollectorStatus.Ready ? (
           <StopPipelineButton
             onClick={onStopPipeline}
@@ -170,8 +166,8 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
             loading={isLoadingBtn(PipelineAction.Start)}
           />
         )}
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
+      </FlexItem>
+      <FlexItem>
         <EuiToolTip
           content={
             isPipelineValid
@@ -188,11 +184,11 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
             onReset={resetPipeline}
           />
         </EuiToolTip>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false} style={{ margin: 0 }}>
+      </FlexItem>
+      <FlexItem style={{ margin: 0 }}>
         <RdiConfigFileActionMenu />
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      </FlexItem>
+    </Row>
   )
 }
 

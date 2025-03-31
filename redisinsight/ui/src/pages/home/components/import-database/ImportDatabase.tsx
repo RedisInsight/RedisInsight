@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiButton,
   EuiFilePicker,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiLoadingSpinner,
   EuiSpacer,
@@ -24,6 +22,7 @@ import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { UploadWarning } from 'uiSrc/components'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -181,8 +180,8 @@ const ImportDatabase = (props: Props) => {
   return (
     <>
       <div className={styles.formWrapper} data-testid="add-db_import">
-        <EuiFlexGroup gutterSize="none" responsive={false} direction="column">
-          <EuiFlexItem>
+        <Col>
+          <FlexItem grow>
             {isShowForm && (
               <>
                 <EuiText color="subdued" size="s">
@@ -236,23 +235,20 @@ const ImportDatabase = (props: Props) => {
                 <EuiText color="subdued">{error}</EuiText>
               </div>
             )}
-          </EuiFlexItem>
+          </FlexItem>
           {isShowForm && (
-            <EuiFlexItem className={styles.uploadWarningContainer}>
+            <FlexItem grow className={styles.uploadWarningContainer}>
               <UploadWarning />
-            </EuiFlexItem>
+            </FlexItem>
           )}
-        </EuiFlexGroup>
+        </Col>
         {data && (
-          <EuiFlexGroup
-            justifyContent="center"
-            gutterSize="none"
-            responsive={false}
+          <Row justify="center"
           >
-            <EuiFlexItem style={{ maxWidth: '100%' }}>
+            <FlexItem grow style={{ maxWidth: '100%' }}>
               <ResultsLog data={data} />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         )}
       </div>
       <Footer />

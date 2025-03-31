@@ -8,8 +8,6 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiFlexGroup,
-  EuiFlexItem,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -23,6 +21,7 @@ import { clusterSelector } from 'uiSrc/slices/instances/cluster'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -99,13 +98,13 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
             Added
           </h1>
         </EuiTitle>
-        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
-          <EuiFlexItem>
+        <Row align="end" gap="s">
+          <FlexItem grow>
             <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>
               <SummaryText />
             </MessageBar>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiFormRow className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
@@ -116,8 +115,8 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
                 data-testid="search"
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         <br />
         <div className="itemList databaseList clusterDatabaseListResult">
           <EuiInMemoryTable

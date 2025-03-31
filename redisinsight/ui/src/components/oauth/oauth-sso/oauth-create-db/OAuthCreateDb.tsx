@@ -1,13 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 import {
   createFreeDbJob,
   fetchPlans,
@@ -35,6 +28,7 @@ import {
 } from 'uiSrc/slices/instances/cloud'
 import { Nullable } from 'uiSrc/utils'
 import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import {
   OAuthAdvantages,
   OAuthAgreement,
@@ -116,11 +110,11 @@ const OAuthCreateDb = (props: Props) => {
 
   return (
     <div className={styles.container} data-testid="oauth-container-create-db">
-      <EuiFlexGroup gutterSize="none" responsive={false}>
-        <EuiFlexItem className={styles.advantagesContainer}>
+      <Row>
+        <FlexItem grow className={styles.advantagesContainer}>
           <OAuthAdvantages />
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.socialContainer}>
+        </FlexItem>
+        <FlexItem grow className={styles.socialContainer}>
           {!data ? (
             <OAuthForm
               className={styles.socialButtons}
@@ -173,8 +167,8 @@ const OAuthCreateDb = (props: Props) => {
               </EuiButton>
             </>
           )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

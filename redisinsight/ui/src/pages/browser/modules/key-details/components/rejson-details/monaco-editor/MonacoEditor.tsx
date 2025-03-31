@@ -19,7 +19,7 @@ const MonacoEditor = (props: BaseProps) => {
   const [value, setValue] = useState(originalData)
 
   const { isValid, isValidating } = useMonacoValidation(editorRef)
-  const isButtonEnabled = isValid && !isValidating
+  const isButtonEnabled = isValid && !isValidating && originalData !== value
 
   const onEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
     editorRef.current = editor

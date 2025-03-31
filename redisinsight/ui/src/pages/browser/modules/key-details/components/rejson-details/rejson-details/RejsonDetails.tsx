@@ -5,7 +5,7 @@ import {
   appendReJSONArrayItemAction,
   fetchVisualisationResults,
   removeReJSONKeyAction,
-  setReJSONDataAction
+  setReJSONDataAction,
 } from 'uiSrc/slices/browser/rejson'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
@@ -25,25 +25,41 @@ const RejsonDetails = (props: BaseProps) => {
     parentPath,
     isDownloaded,
     onJsonKeyExpandAndCollapse,
-    expandedRows
+    expandedRows,
   } = props
 
   const [addRootKVPair, setAddRootKVPair] = useState<boolean>(false)
 
   const dispatch = useDispatch()
 
-  const handleFetchVisualisationResults = (path: string, forceRetrieve = false) =>
-    dispatch<any>(fetchVisualisationResults(path, forceRetrieve))
+  const handleFetchVisualisationResults = (
+    path: string,
+    forceRetrieve = false,
+  ) => dispatch<any>(fetchVisualisationResults(path, forceRetrieve))
 
-  const handleAppendRejsonArrayItemAction = (keyName: RedisResponseBuffer, path: string, data: string) => {
+  const handleAppendRejsonArrayItemAction = (
+    keyName: RedisResponseBuffer,
+    path: string,
+    data: string,
+  ) => {
     dispatch(appendReJSONArrayItemAction(keyName, path, data, length))
   }
 
-  const handleSetRejsonDataAction = (keyName: RedisResponseBuffer, path: string, data: string) => {
+  const handleSetRejsonDataAction = (
+    keyName: RedisResponseBuffer,
+    path: string,
+    data: string,
+  ) => {
     dispatch(setReJSONDataAction(keyName, path, data, false, length))
   }
 
-  const handleFormSubmit = ({ key, value }: { key?: string, value: string }) => {
+  const handleFormSubmit = ({
+    key,
+    value,
+  }: {
+    key?: string
+    value: string
+  }) => {
     setAddRootKVPair(false)
     if (isRealArray(data, dataType)) {
       handleAppendRejsonArrayItemAction(selectedKey, '$', value)
@@ -72,7 +88,12 @@ const RejsonDetails = (props: BaseProps) => {
       <>
         {(isObject || isArray) && (
           <div className={styles.row}>
-            <span>{getBrackets(isObject ? ObjectTypes.Object : ObjectTypes.Array, 'start')}</span>
+            <span>
+              {getBrackets(
+                isObject ? ObjectTypes.Object : ObjectTypes.Array,
+                'start',
+              )}
+            </span>
           </div>
         )}
         <RejsonDynamicTypes
@@ -96,7 +117,12 @@ const RejsonDetails = (props: BaseProps) => {
         )}
         {(isObject || isArray) && (
           <div className={styles.row}>
-            <span>{getBrackets(isObject ? ObjectTypes.Object : ObjectTypes.Array, 'end')}</span>
+            <span>
+              {getBrackets(
+                isObject ? ObjectTypes.Object : ObjectTypes.Array,
+                'end',
+              )}
+            </span>
             {!addRootKVPair && (
               <EuiButtonIcon
                 iconType="plus"

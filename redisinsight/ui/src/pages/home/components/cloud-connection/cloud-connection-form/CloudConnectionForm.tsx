@@ -5,8 +5,6 @@ import { isEmpty } from 'lodash'
 import {
   EuiButton,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiRadioGroup,
@@ -27,6 +25,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthAutodiscovery } from 'uiSrc/components/oauth/oauth-sso'
 import { MessageCloudApiKeys } from 'uiSrc/pages/home/components/form/Messages'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -60,22 +59,20 @@ const options = [
 ]
 
 const CloudConnectionForm = (props: Props) => {
-  const {
-    accessKey,
-    secretKey,
-    onClose,
-    onSubmit,
-    loading,
-  } = props
+  const { accessKey, secretKey, onClose, onSubmit, loading } = props
 
-  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
 
   const [domReady, setDomReady] = useState(false)
   const [errors, setErrors] = useState<FormikErrors<Values>>(
-    accessKey || secretKey ? {} : fieldDisplayNames
+    accessKey || secretKey ? {} : fieldDisplayNames,
   )
   const [type, setType] = useState<CloudConnectionOptions>(
-    cloudSsoFeature?.flag ? CloudConnectionOptions.Account : CloudConnectionOptions.ApiKeys
+    cloudSsoFeature?.flag
+      ? CloudConnectionOptions.Account
+      : CloudConnectionOptions.ApiKeys,
   )
 
   useEffect(() => {
@@ -86,7 +83,8 @@ const CloudConnectionForm = (props: Props) => {
     const errs: FormikErrors<Values> = {}
 
     Object.entries(values).forEach(
-      ([key, value]) => !value && Object.assign(errs, { [key]: fieldDisplayNames[key] })
+      ([key, value]) =>
+        !value && Object.assign(errs, { [key]: fieldDisplayNames[key] }),
     )
 
     setErrors(errs)
@@ -130,7 +128,9 @@ const CloudConnectionForm = (props: Props) => {
       position="top"
       anchorClassName="euiToolTip__btn-disabled"
       title={
-        submitIsDisabled ? validationErrors.REQUIRED_TITLE(Object.values(errors).length) : null
+        submitIsDisabled
+          ? validationErrors.REQUIRED_TITLE(Object.values(errors).length)
+          : null
       }
       content={
         submitIsDisabled ? (
@@ -164,9 +164,12 @@ const CloudConnectionForm = (props: Props) => {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
           {onClose && <CancelButton onClick={onClose} />}
-          <SubmitButton onClick={formik.submitForm} submitIsDisabled={!submitIsEnable()} />
+          <SubmitButton
+            onClick={formik.submitForm}
+            submitIsDisabled={!submitIsEnable()}
+          />
         </div>,
-        footerEl
+        footerEl,
       )
     }
     return null
@@ -178,8 +181,8 @@ const CloudConnectionForm = (props: Props) => {
       <EuiSpacer />
       <EuiWindowEvent event="keydown" handler={onKeyDown} />
       <EuiForm component="form" onSubmit={formik.handleSubmit}>
-        <EuiFlexGroup>
-          <EuiFlexItem>
+        <Row responsive>
+          <FlexItem>
             <EuiFormRow label="API Account Key*">
               <EuiFieldText
                 name="accessKey"
@@ -190,14 +193,17 @@ const CloudConnectionForm = (props: Props) => {
                 value={formik.values.accessKey}
                 autoComplete="off"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
+                  formik.setFieldValue(
+                    e.target.name,
+                    validateField(e.target.value.trim()),
+                  )
                 }}
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiFlexGroup>
-          <EuiFlexItem>
+          </FlexItem>
+        </Row>
+        <Row responsive>
+          <FlexItem grow>
             <EuiFormRow label="API User Key*">
               <EuiFieldText
                 name="secretKey"
@@ -208,12 +214,15 @@ const CloudConnectionForm = (props: Props) => {
                 value={formik.values.secretKey}
                 autoComplete="off"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
+                  formik.setFieldValue(
+                    e.target.name,
+                    validateField(e.target.value.trim()),
+                  )
                 }}
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         <Footer />
       </EuiForm>
     </div>
@@ -222,9 +231,13 @@ const CloudConnectionForm = (props: Props) => {
   return (
     <div className="getStartedForm eui-yScroll">
       <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-        <EuiFlexGroup direction="column" gutterSize="s">
-          <EuiFlexItem><EuiText color="subdued" size="s">Connect with:</EuiText></EuiFlexItem>
-          <EuiFlexItem>
+        <Col gap="s">
+          <FlexItem grow>
+            <EuiText color="subdued" size="s">
+              Connect with:
+            </EuiText>
+          </FlexItem>
+          <FlexItem grow>
             <EuiRadioGroup
               options={options}
               idSelected={type}
@@ -232,12 +245,15 @@ const CloudConnectionForm = (props: Props) => {
               onChange={(id) => setType(id as CloudConnectionOptions)}
               data-testid="cloud-options"
             />
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Col>
         <EuiSpacer size="s" />
       </FeatureFlagComponent>
       {type === CloudConnectionOptions.Account && (
-        <OAuthAutodiscovery source={OAuthSocialSource.DiscoveryForm} onClose={onClose} />
+        <OAuthAutodiscovery
+          source={OAuthSocialSource.DiscoveryForm}
+          onClose={onClose}
+        />
       )}
       {type === CloudConnectionOptions.ApiKeys && CloudApiForm}
     </div>

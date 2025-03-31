@@ -4,13 +4,13 @@ import axios, { AxiosError, CancelTokenSource } from 'axios'
 
 import ApiErrors from 'uiSrc/constants/apiErrors'
 import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem, COLUMN_FIELD_NAME_MAP, CustomErrorCodes } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
-import { Database, Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
+import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
 import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
 
@@ -66,14 +66,7 @@ export const initialState: InitialStateInstances = {
     error: '',
     data: null
   },
-  shownColumns: [
-    DatabaseListColumn.Name,
-    DatabaseListColumn.Host,
-    DatabaseListColumn.ConnectionType,
-    DatabaseListColumn.Modules,
-    DatabaseListColumn.LastConnection,
-    DatabaseListColumn.Controls,
-  ],
+  shownColumns: [...COLUMN_FIELD_NAME_MAP.keys()],
 }
 
 // A slice for recipes

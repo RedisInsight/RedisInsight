@@ -7,7 +7,7 @@ import { KeyTypes } from 'uiSrc/constants'
 import { RootState } from 'uiSrc/slices/store'
 import { setSelectedKeyRefreshDisabled, toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import BrowserPage from './BrowserPage'
 import KeyList, { Props as KeyListProps } from './components/key-list/KeyList'
 
@@ -87,6 +87,7 @@ jest.mock('uiSrc/telemetry', () => ({
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn(),
+  connectedInstanceOverviewSelector: jest.fn(),
 }))
 /**
  * BrowserPage tests
@@ -114,6 +115,9 @@ describe('BrowserPage', () => {
     (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
       ...commonOptions,
       isFreeDb,
+    }));
+    (connectedInstanceOverviewSelector as jest.Mock).mockImplementation(() => ({
+      totalKeys: 25,
     }))
 
     render(<BrowserPage />)
@@ -123,6 +127,7 @@ describe('BrowserPage', () => {
       eventData: {
         databaseId: 'instanceId',
         isFree: isFreeDb,
+        totalKeys: 25,
       },
     })
   })

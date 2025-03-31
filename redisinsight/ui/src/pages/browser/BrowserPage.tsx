@@ -36,7 +36,7 @@ import {
 } from 'uiSrc/slices/app/context'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
@@ -73,6 +73,7 @@ const BrowserPage = () => {
   const { type } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
   const { viewType, searchMode } = useSelector(keysSelector)
   const { openedPanel: openedSidePanel } = useSelector(sidePanelsSelector)
+  const overview = useSelector(connectedInstanceOverviewSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
   const [arePanelsCollapsed, setArePanelsCollapsed] = useState(isOneSideMode(!!openedSidePanel))
@@ -134,10 +135,10 @@ const BrowserPage = () => {
   }, [openedSidePanel])
 
   useEffect(() => {
-    if (connectedInstanceName && !isPageViewSent) {
-      sendPageView(instanceId)
+    if (connectedInstanceName && overview?.totalKeys !== undefined && !isPageViewSent) {
+      sendPageView(instanceId, overview?.totalKeys)
     }
-  }, [connectedInstanceName, isPageViewSent])
+  }, [connectedInstanceName, overview, isPageViewSent])
 
   const updateWindowDimensions = () => {
     setArePanelsCollapsed(isOneSideMode(isSidePanelOpenRef.current))
@@ -150,12 +151,13 @@ const BrowserPage = () => {
     }))
   }, [])
 
-  const sendPageView = (instanceId: string) => {
+  const sendPageView = (instanceId: string, totalKeys: number | null) => {
     sendPageViewTelemetry({
       name: TelemetryPageView.BROWSER_PAGE,
       eventData: {
         databaseId: instanceId,
         isFree: isFreeDb,
+        totalKeys,
       }
     })
     setIsPageViewSent(true)
@@ -172,9 +174,9 @@ const BrowserPage = () => {
   }
 
   const handleAddKeyPanel = useCallback((value: boolean, keyName?: RedisResponseBuffer) => {
-    handlePanel(value, keyName);
-    setIsAddKeyPanelOpen(value);
-    dispatch(setBrowserSelectedKey(keyName || null));
+    handlePanel(value, keyName)
+    setIsAddKeyPanelOpen(value)
+    dispatch(setBrowserSelectedKey(keyName || null))
   }, [])
 
   const handleBulkActionsPanel = useCallback((value: boolean) => {
@@ -183,7 +185,7 @@ const BrowserPage = () => {
   }, [])
 
   const handleRemoveSelectedKey = useCallback(() => {
-    setBrowserSelectedKey(null);
+    setBrowserSelectedKey(null)
     handlePanel(true)
   }, [])
 
@@ -224,7 +226,7 @@ const BrowserPage = () => {
 
       dispatch(setInitialStateByType(prevSelectedType.current))
       setSelectedKey(rowData.name)
-      dispatch(setBrowserSelectedKey(rowData.name));
+      dispatch(setBrowserSelectedKey(rowData.name))
       closeRightPanels()
       prevSelectedType.current = rowData.type
     }

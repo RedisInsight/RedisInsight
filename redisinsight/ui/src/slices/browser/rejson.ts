@@ -26,7 +26,11 @@ import {
 } from 'apiSrc/modules/browser/rejson-rl/dto'
 
 import { refreshKeyInfoAction } from './keys'
-import { InitialStateRejson, RedisResponseBuffer } from '../interfaces'
+import {
+  EditorType,
+  InitialStateRejson,
+  RedisResponseBuffer,
+} from '../interfaces'
 import {
   addErrorNotification,
   addMessageNotification,
@@ -43,6 +47,7 @@ export const initialState: InitialStateRejson = {
     data: undefined,
     type: '',
   },
+  editorType: EditorType.Default,
 }
 
 // A slice for recipes
@@ -106,6 +111,9 @@ const rejsonSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    setEditorType: (state, { payload }: PayloadAction<EditorType>) => {
+      state.editorType = payload
+    },
   },
 })
 
@@ -123,6 +131,7 @@ export const {
   removeRejsonKey,
   removeRejsonKeySuccess,
   removeRejsonKeyFailure,
+  setEditorType,
 } = rejsonSlice.actions
 
 // A selector

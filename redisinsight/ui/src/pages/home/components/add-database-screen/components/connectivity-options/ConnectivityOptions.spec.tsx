@@ -17,6 +17,9 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
       flag: false,
+    },
+    cloudAds: {
+      flag: true,
     }
   }),
 }))
@@ -59,9 +62,12 @@ describe('ConnectivityOptions', () => {
   })
 
   it('should call proper actions after click on create cloud btn', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       cloudSso: {
         flag: true
+      },
+      cloudAds: {
+        flag: true,
       }
     })
 

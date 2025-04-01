@@ -12,6 +12,7 @@ const fakeModel = { uri: { toString: () => 'mock-uri' } }
 const mockEditor = {
   getModel: () => fakeModel,
   onDidChangeModelContent: jest.fn(),
+  onDidChangeModelDecorations: jest.fn(),
 } as any
 
 let markerListener: ((uris: any[]) => void) | undefined
@@ -32,6 +33,11 @@ beforeEach(() => {
     mockEditor._contentChangeCallback = cb
     return { dispose: jest.fn() }
   })
+
+  mockEditor.onDidChangeModelDecorations.mockImplementation((cb: any) => {
+    mockEditor._decorationsChangeCallback = cb
+    return { dispose: jest.fn() }
+  })
 })
 
 afterEach(() => {
@@ -39,7 +45,7 @@ afterEach(() => {
 })
 
 describe('useMonacoValidation', () => {
-  test('returns valid = true when there are no markers', () => {
+  it('returns valid = true when there are no markers', () => {
     monaco.editor.getModelMarkers.mockReturnValue([])
 
     const { result } = renderHook(() =>
@@ -57,7 +63,7 @@ describe('useMonacoValidation', () => {
     expect(result.current.isValidating).toBe(false)
   })
 
-  test('returns valid = false when there is an error marker', () => {
+  it('returns valid = false when there is an error marker', () => {
     monaco.editor.getModelMarkers.mockReturnValue([{ severity: 8 }])
 
     const { result } = renderHook(() =>
@@ -72,6 +78,34 @@ describe('useMonacoValidation', () => {
     })
 
     expect(result.current.isValid).toBe(false)
+    expect(result.current.isValidating).toBe(false)
+  })
+
+  it('returns isValidating = false if decorations change without marker changes', () => {
+    let decorationsListener: (() => void) | undefined
+
+    mockEditor.onDidChangeModelDecorations.mockImplementation((cb: any) => {
+      decorationsListener = cb
+      return { dispose: jest.fn() }
+    })
+
+    monaco.editor.getModelMarkers.mockReturnValue([])
+
+    const { result } = renderHook(() =>
+      useMonacoValidation({ current: mockEditor }, monaco),
+    )
+
+    act(() => {
+      mockEditor._contentChangeCallback()
+    })
+
+    expect(result.current.isValidating).toBe(true)
+
+    // Simulate formatting triggering decorations change
+    act(() => {
+      decorationsListener?.()
+    })
+
     expect(result.current.isValidating).toBe(false)
   })
 })

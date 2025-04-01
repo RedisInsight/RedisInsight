@@ -37,10 +37,16 @@ const useMonacoValidation = (
       setIsValidating(false)
     })
 
+    // Catch formatting or silent model changes that don't touch markers
+    const decorationsDisposable = editor.onDidChangeModelDecorations(() => {
+      setIsValidating(false)
+    })
+
     // eslint-disable-next-line consistent-return
     return () => {
       contentChangeDisposable.dispose()
       markerChangeDisposable.dispose()
+      decorationsDisposable.dispose()
     }
   }, [editorRef, monaco])
 

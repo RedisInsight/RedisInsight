@@ -29,51 +29,11 @@ describe('SettingsAnalytics', () => {
         undefined,
       );
 
-      expect(eventEmitter.emit).toHaveBeenCalledWith(
-        AppAnalyticsEvents.Track,
-        mockSessionMetadata,
-        {
-          event: TelemetryEvents.AnalyticsPermission,
-          eventData: { state: 'enabled' },
-          nonTracking: true,
-        },
-      );
-    });
-    it('should emit ANALYTICS_PERMISSION with state enabled and reason undefined', async () => {
-      service.sendAnalyticsAgreementChange(
-        mockSessionMetadata,
-        new Map([['analytics', true]]),
-        undefined,
-        undefined,
-      );
-
-      expect(eventEmitter.emit).toHaveBeenCalledWith(
-        AppAnalyticsEvents.Track,
-        mockSessionMetadata,
-        {
-          event: TelemetryEvents.AnalyticsPermission,
-          eventData: { reason: undefined, state: 'enabled' },
-          nonTracking: true,
-        },
-      );
-    });
-    it('should emit ANALYTICS_PERMISSION with state enabled and reason "sso"', async () => {
-      service.sendAnalyticsAgreementChange(
-        mockSessionMetadata,
-        new Map([['analytics', true]]),
-        undefined,
-        'sso',
-      );
-
-      expect(eventEmitter.emit).toHaveBeenCalledWith(
-        AppAnalyticsEvents.Track,
-        mockSessionMetadata,
-        {
-          event: TelemetryEvents.AnalyticsPermission,
-          eventData: { reason: 'sso', state: 'enabled' },
-          nonTracking: true,
-        },
-      );
+      expect(eventEmitter.emit).toHaveBeenCalledWith(AppAnalyticsEvents.Track, {
+        event: TelemetryEvents.AnalyticsPermission,
+        eventData: { state: 'enabled' },
+        nonTracking: true,
+      });
     });
     it('should emit ANALYTICS_PERMISSION with state disabled on first app launch', async () => {
       service.sendAnalyticsAgreementChange(
@@ -117,15 +77,11 @@ describe('SettingsAnalytics', () => {
         'none',
       );
 
-      expect(eventEmitter.emit).toHaveBeenCalledWith(
-        AppAnalyticsEvents.Track,
-        mockSessionMetadata,
-        {
-          event: TelemetryEvents.AnalyticsPermission,
-          eventData: { state: 'disabled', reason: 'none' },
-          nonTracking: true,
-        },
-      );
+      expect(eventEmitter.emit).toHaveBeenCalledWith(AppAnalyticsEvents.Track, {
+        event: TelemetryEvents.AnalyticsPermission,
+        eventData: { state: 'disabled' },
+        nonTracking: true,
+      });
     });
   });
 

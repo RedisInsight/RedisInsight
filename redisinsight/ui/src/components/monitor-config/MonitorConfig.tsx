@@ -27,6 +27,8 @@ import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.in
 
 import ApiStatusCode from '../../constants/apiStatusCode'
 
+const riConfig = getConfig()
+
 interface IProps {
   retryDelay?: number
 }

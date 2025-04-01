@@ -102,6 +102,24 @@ describe('BulkActionsConfig', () => {
     unmount()
   })
 
+  it('should not connect socket', () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false }
+    )
+
+    const { unmount } = render(<GlobalSubscriptions />, {
+      store: mockStore(initialStoreState)
+    })
+
+    socket.socketClient.emit(SocketEvent.Connect)
+
+    expect(store.getActions()).toEqual([])
+
+    unmount()
+  })
+
   it('should emit Create a delete type', () => {
     const bulkActionsDeleteSelectorMock = jest.fn().mockReturnValue({
       isActionTriggered: true,

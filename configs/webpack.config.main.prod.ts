@@ -3,7 +3,7 @@ import webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import { toString } from 'lodash';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import baseConfig from './webpack.config.base';
+import baseConfig from './webpack.config.base.ts';
 import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
 import { version } from '../redisinsight/package.json';
 import webpackPaths from './webpack.paths';

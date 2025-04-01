@@ -116,7 +116,7 @@ describe('POST /cloud/autodiscovery/databases', () => {
         checkFn: ({ body }) => {
           expect(body).to.deepEqualIgnoreUndefined([{
             ...mockImportCloudDatabaseDto,
-            tags: mockCloudCapiDatabaseTags,
+            tags: [],
             message: 'Added',
             status: 'success',
             databaseDetails: {
@@ -125,7 +125,7 @@ describe('POST /cloud/autodiscovery/databases', () => {
             }
           }, {
             ...mockImportCloudDatabaseDtoFixed,
-            tags: mockCloudCapiDatabaseTags,
+            tags: [],
             message: 'Added',
             status: 'success',
             databaseDetails: {

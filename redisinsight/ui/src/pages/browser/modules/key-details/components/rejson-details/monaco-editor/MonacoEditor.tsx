@@ -55,8 +55,7 @@ const MonacoEditor = (props: BaseProps) => {
           disabled={!isButtonEnabled}
           data-testid="json-data-update-btn"
         >
-          {/* TODO: Make sure this is the best text for the users */}
-          Replace Entire Value
+          Overwrite Entire Value
         </EuiButton>
       </EuiFlexItem>
     </div>

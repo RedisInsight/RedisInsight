@@ -238,6 +238,7 @@ export const mockCreateFreeCloudDatabaseDto = Object.assign(new CreateFreeCloudD
 export const mockCloudDatabaseCapiProvider = jest.fn(() => ({
   getDatabase: jest.fn().mockResolvedValue(mockCloudCapiDatabase),
   getDatabases: jest.fn().mockResolvedValue(mockCloudCapiSubscriptionDatabases),
+  getDatabaseTags: jest.fn().mockResolvedValue(mockCloudCapiDatabaseTags),
   createFreeDatabase: jest.fn().mockResolvedValue(mockCloudTaskInit),
 }));
 

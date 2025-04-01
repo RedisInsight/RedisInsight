@@ -125,6 +125,7 @@ export const mockCloudDatabase = Object.assign(new CloudDatabase(), {
     subscriptionId: mockCloudSubscription.id,
     free: false,
   },
+  tags: [],
 });
 
 export const mockCloudDatabaseFixed = Object.assign(new CloudDatabase(), {

@@ -56,6 +56,13 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   status: Joi.string().valid('fail', 'success').required(),
   message: Joi.string().required(),
   databaseDetails: Joi.object().required(),
+  tags: Joi.array().items(Joi.object().keys({
+    key: Joi.string().required(),
+    value: Joi.string().required(),
+    createdAt: Joi.string().isoDate(),
+    updatedAt: Joi.string().isoDate(),
+    links: Joi.array().items(Joi.string().required()),
+  })).allow(null),
 })).required();
 
 const mainCheckFn = getMainCheckFn(endpoint);

@@ -204,16 +204,5 @@ describe('CloudDatabaseCapiProvider', () => {
         mockCloudCapiHeaders,
       );
     });
-
-    it('throw CloudCapiUnauthorizedException exception', async () => {
-      mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
-
-      await expect(service.getDatabaseTags(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabaseDto,
-      )).rejects.toThrow(
-        CloudCapiUnauthorizedException,
-      );
-    });
   })
 });

@@ -102,7 +102,8 @@ export class CloudDatabaseCapiProvider extends CloudCapiProvider {
 
       return tags;
     } catch (e) {
-      throw wrapCloudCapiError(e);
+      // failed to get tags
+      return [];
     }
   }
 }

@@ -87,6 +87,10 @@ describe('POST /cloud/autodiscovery/databases', () => {
               ...mockCloudCapiDatabaseFixed,
               publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
             })
+            .get(`/subscriptions/${mockImportCloudDatabaseDtoFixed.subscriptionId}/databases/${mockImportCloudDatabaseDtoFixed.databaseId}/tags`)
+            .reply(200, {
+              tags: mockCloudCapiDatabaseTags,
+            })
             .get(`/fixed/subscriptions/${mockImportCloudDatabaseDtoFixed.subscriptionId}/databases/${mockImportCloudDatabaseDtoFixed.databaseId}/tags`)
             .reply(200, {
               tags: mockCloudCapiDatabaseTags,

@@ -15,6 +15,9 @@ jest.mock('uiSrc/slices/app/features', () => ({
     databaseManagement: {
       flag: true,
     },
+    cloudAds: {
+      flag: true,
+    }
   }),
 }))
 
@@ -59,12 +62,6 @@ describe('DatabaseListHeader', () => {
   })
 
   it('should show promo cloud button with enabled feature flag', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      enhancedCloudUI: {
-        flag: false
-      }
-    })
-
     render(<DatabaseListHeader {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('promo-btn')).toBeInTheDocument()

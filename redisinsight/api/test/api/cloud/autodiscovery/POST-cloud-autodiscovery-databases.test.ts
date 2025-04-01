@@ -97,10 +97,6 @@ describe('POST /cloud/autodiscovery/databases', () => {
             .get(`/subscriptions/${mockImportCloudDatabaseDtoFixed.subscriptionId}/databases/${mockImportCloudDatabaseDtoFixed.databaseId}/tags`)
             .reply(200, {
               tags: mockCloudCapiDatabaseTags,
-            })
-            .get(`/fixed/subscriptions/${mockImportCloudDatabaseDtoFixed.subscriptionId}/databases/${mockImportCloudDatabaseDtoFixed.databaseId}/tags`)
-            .reply(200, {
-              tags: mockCloudCapiDatabaseTags,
             });
         },
         name: 'Should add 2 databases',
@@ -116,16 +112,15 @@ describe('POST /cloud/autodiscovery/databases', () => {
         checkFn: ({ body }) => {
           expect(body).to.deepEqualIgnoreUndefined([{
             ...mockImportCloudDatabaseDto,
-            tags: [],
             message: 'Added',
             status: 'success',
             databaseDetails: {
               ...mockCloudDatabase,
               publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
+              tags: mockCloudCapiDatabaseTags,
             }
           }, {
             ...mockImportCloudDatabaseDtoFixed,
-            tags: [],
             message: 'Added',
             status: 'success',
             databaseDetails: {

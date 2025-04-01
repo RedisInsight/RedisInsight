@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { EuiButton, EuiFlexItem } from '@elastic/eui'
 import { monaco } from 'react-monaco-editor'
 
@@ -6,13 +7,17 @@ import {
   MonacoEditor as Editor,
   useMonacoValidation,
 } from 'uiSrc/components/monaco-editor'
+import { setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
 import { BaseProps } from '../interfaces'
 import styles from '../styles.module.scss'
+
+const ROOT_PATH = '$'
 
 const jsonToReadableString = (data: any) => JSON.stringify(data, null, 2)
 
 const MonacoEditor = (props: BaseProps) => {
-  const { data } = props
+  const { data, length, selectedKey } = props
+  const dispatch = useDispatch()
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
 
   const originalData = jsonToReadableString(data)
@@ -26,7 +31,7 @@ const MonacoEditor = (props: BaseProps) => {
   }
 
   const submitUpdate = () => {
-    // TODO: implement me
+    dispatch(setReJSONDataAction(selectedKey, ROOT_PATH, value, false, length))
   }
 
   return (

@@ -12,6 +12,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { nock } from '../../../helpers/test';
 import {
   mockCloudCapiDatabase,
+  mockCloudCapiDatabaseTags,
   mockCloudCapiDatabaseFixed, mockCloudDatabase, mockCloudDatabaseFixed,
   mockImportCloudDatabaseDto,
   mockImportCloudDatabaseDtoFixed
@@ -85,6 +86,10 @@ describe('POST /cloud/autodiscovery/databases', () => {
             .reply(200, {
               ...mockCloudCapiDatabaseFixed,
               publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
+            })
+            .get(`/fixed/subscriptions/${mockImportCloudDatabaseDtoFixed.subscriptionId}/databases/${mockImportCloudDatabaseDtoFixed.databaseId}/tags`)
+            .reply(200, {
+              tags: mockCloudCapiDatabaseTags,
             });
         },
         name: 'Should add 2 databases',

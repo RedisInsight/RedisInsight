@@ -4,6 +4,7 @@ import {
   CloudDatabaseProtocol,
   CloudDatabaseStatus,
   ICloudCapiDatabase,
+  ICloudCapiDatabaseTag,
 } from 'src/modules/cloud/database/models';
 import {
   mockCloudSubscription,
@@ -21,6 +22,23 @@ import { mockCloudTaskInit } from 'src/__mocks__/cloud-task';
 import config from 'src/utils/config';
 
 const cloudConfig = config.get('cloud');
+
+export const mockCloudCapiDatabaseTags: ICloudCapiDatabaseTag[] = [
+  {
+    key: 'tag1',
+    value: 'value1',
+    createdAt: '2020-01-01T00:00:00Z',
+    updatedAt: '2020-01-01T00:00:00Z',
+    links: ['link1', 'link2'],
+  },
+  {
+    key: 'tag2',
+    value: 'value2',
+    createdAt: '2020-01-01T00:00:00Z',
+    updatedAt: '2020-01-01T00:00:00Z',
+    links: ['link3', 'link4'],
+  },
+]
 
 export const mockCloudCapiDatabase: ICloudCapiDatabase = {
   databaseId: 50859754,

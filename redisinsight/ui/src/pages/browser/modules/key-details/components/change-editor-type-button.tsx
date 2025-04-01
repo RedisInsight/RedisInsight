@@ -21,7 +21,11 @@ const ChangeEditorTypeButton = () => {
 
   return (
     <EuiToolTip content={`Switch to ${label}`} position="right">
-      <EuiButtonIcon iconType="pencil" onClick={handleChangeEditorType} />
+      <EuiButtonIcon
+        iconType="pencil"
+        onClick={handleChangeEditorType}
+        aria-label="Change editor type"
+      />
     </EuiToolTip>
   )
 }

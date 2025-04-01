@@ -74,32 +74,33 @@ export type FocusTrapProps = Omit<
   returnFocus?: ReactFocusOnProps['returnFocus']
 }
 
-interface State {
-  hasBeenDisabledByClick: boolean
-}
-
 // Programmatically sets focus on a nested DOM node; optional
 const setInitialFocus = (initialFocus?: FocusTarget) => {
-  if (!initialFocus) return
+  if (!initialFocus) {
+    return
+  }
   const node = findElementBySelectorOrRef(initialFocus)
-  if (!node) return
+  if (!node) {
+    return
+  }
   // `data-autofocus` is part of the 'react-focus-on' API
   node.setAttribute('data-autofocus', 'true')
 }
 
 const removeMouseupListener = (
-  onMouseupOutside: (e: MouseEvent | TouchEvent) => void,
+  onMouseupListener: (e: MouseEvent | TouchEvent) => void,
 ) => {
-  document.removeEventListener('mouseup', onMouseupOutside)
-  document.removeEventListener('touchend', onMouseupOutside)
+  document.removeEventListener('mouseup', onMouseupListener)
+  document.removeEventListener('touchend', onMouseupListener)
 }
 
 const addMouseupListener = (
-  onMouseupOutside: (e: MouseEvent | TouchEvent) => void,
+  onMouseupListener: (e: MouseEvent | TouchEvent) => void,
 ) => {
-  document.addEventListener('mouseup', onMouseupOutside)
-  document.addEventListener('touchend', onMouseupOutside)
+  document.addEventListener('mouseup', onMouseupListener)
+  document.addEventListener('touchend', onMouseupListener)
 }
+
 const defaultProps = {
   clickOutsideDisables: false,
   disabled: false,
@@ -114,19 +115,17 @@ export const FocusTrap = ({
   children,
   clickOutsideDisables = defaultProps.clickOutsideDisables,
   closeOnMouseup,
+  crossFrame = defaultProps.crossFrame,
   disabled = defaultProps.disabled,
   gapMode = defaultProps.gapMode,
   initialFocus,
   noIsolation = defaultProps.noIsolation,
   onClickOutside,
-  crossFrame = defaultProps.crossFrame,
   returnFocus = defaultProps.returnFocus,
   scrollLock = defaultProps.scrollLock,
   ...rest
 }: FocusTrapProps) => {
-  const [state, setState] = useState<State>({
-    hasBeenDisabledByClick: false,
-  })
+  const [hasBeenDisabledByClick, setHasBeenDisabledByClick] = useState(disabled)
 
   const onMouseupOutside = (e: MouseEvent | TouchEvent) => {
     // Timeout gives precedence to the consumer to initiate close if it has toggle behavior.
@@ -141,14 +140,14 @@ export const FocusTrap = ({
   }, [])
 
   useEffect(() => {
-    if (disabled === false) {
-      setState({ hasBeenDisabledByClick: false })
+    if (hasBeenDisabledByClick && disabled === false) {
+      setHasBeenDisabledByClick(false)
     }
   }, [disabled])
 
   const handleOutsideClick: ReactFocusOnProps['onClickOutside'] = (event) => {
     if (clickOutsideDisables) {
-      setState({ hasBeenDisabledByClick: true })
+      setHasBeenDisabledByClick(true)
     }
 
     if (onClickOutside) {
@@ -158,7 +157,7 @@ export const FocusTrap = ({
     }
   }
 
-  const isDisabled = disabled || state.hasBeenDisabledByClick
+  const isDisabled = disabled || hasBeenDisabledByClick
   const focusOnProps = {
     returnFocus,
     noIsolation,

@@ -9,7 +9,18 @@ const useMonacoValidation = (
 ) => {
   const monaco = monacoInstance || monacoLib
 
-  const [isValid, setIsValid] = useState(false)
+  // setIsValid is updated only when markers change.
+  // However, Monaco does not emit marker updates for every edit.
+  // For example, if you delete part of the code but the result is still valid JSON,
+  // Monaco might skip updating the markers.
+  // Example:
+  // Before: [{ "key": "value" }, { "foo": "bar" }]
+  // After deleting: , { "foo": "bar" } -> Monaco may not emit marker changes since it's still valid.
+  // That's why we initialize isValid = true.
+  // On the other hand, if the edit makes the JSON invalid:
+  // e.g., deleting just { "foo": "bar" } (but leaving the comma),
+  // Monaco will detect the syntax error and update the markers.
+  const [isValid, setIsValid] = useState(true)
   const [isValidating, setIsValidating] = useState(false)
 
   useEffect(() => {

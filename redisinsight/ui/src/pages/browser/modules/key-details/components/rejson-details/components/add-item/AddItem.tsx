@@ -3,16 +3,16 @@ import cx from 'classnames'
 import {
   EuiButtonIcon,
   EuiFieldText,
-  EuiFlexItem,
   EuiFocusTrap,
   EuiForm,
   EuiOutsideClickDetector,
   EuiWindowEvent,
-  keys
+  keys,
 } from '@elastic/eui'
 
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
+import { FlexItem } from 'uiSrc/components/base/layout/Flex'
 import { isValidJSON, isValidKey } from '../../utils'
 import { JSONErrors } from '../../constants'
 
@@ -21,17 +21,12 @@ import styles from '../../styles.module.scss'
 export interface Props {
   isPair: boolean
   onCancel: () => void
-  onSubmit: (pair: { key?: string, value: string }) => void
+  onSubmit: (pair: { key?: string; value: string }) => void
   leftPadding?: number
 }
 
 const AddItem = (props: Props) => {
-  const {
-    isPair,
-    leftPadding = 0,
-    onCancel,
-    onSubmit
-  } = props
+  const { isPair, leftPadding = 0, onCancel, onSubmit } = props
 
   const [key, setKey] = useState<string>('')
   const [value, setValue] = useState<string>('')
@@ -65,7 +60,14 @@ const AddItem = (props: Props) => {
   }
 
   return (
-    <div className={styles.row} style={{ display: 'flex', flexDirection: 'row', paddingLeft: `${leftPadding}em` }}>
+    <div
+      className={styles.row}
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        paddingLeft: `${leftPadding}em`,
+      }}
+    >
       <EuiOutsideClickDetector onOutsideClick={onCancel}>
         <div>
           <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
@@ -78,27 +80,31 @@ const AddItem = (props: Props) => {
               noValidate
             >
               {isPair && (
-                <EuiFlexItem grow component="span">
+                <FlexItem grow inline>
                   <EuiFieldText
                     name="newRootKey"
                     value={key}
                     isInvalid={!!error}
                     placeholder="Enter JSON key"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKey(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setKey(e.target.value)
+                    }
                     data-testid="json-key"
                   />
-                </EuiFlexItem>
+                </FlexItem>
               )}
-              <EuiFlexItem grow component="span">
+              <FlexItem grow inline>
                 <EuiFieldText
                   name="newValue"
                   value={value}
                   placeholder="Enter JSON value"
                   isInvalid={!!error}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setValue(e.target.value)
+                  }
                   data-testid="json-value"
                 />
-              </EuiFlexItem>
+              </FlexItem>
               <div className={cx(styles.controls)}>
                 <EuiButtonIcon
                   iconSize="m"

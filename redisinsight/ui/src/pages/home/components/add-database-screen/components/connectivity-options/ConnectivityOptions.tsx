@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiBadge, EuiButton, EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiTitle } from '@elastic/eui'
+import { EuiBadge, EuiButton, EuiSpacer, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -11,6 +11,7 @@ import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import RocketIcon from 'uiSrc/assets/img/oauth/rocket.svg?react'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { CONNECTIVITY_OPTIONS } from '../../constants'
 
 import styles from './styles.module.scss'
@@ -27,13 +28,11 @@ const ConnectivityOptions = (props: Props) => {
     <>
       <section className={styles.cloudSection}>
         <EuiTitle size="xs" className={styles.sectionTitle}>
-          <span>
-            Get started with Redis Cloud account
-          </span>
+          <span>Get started with Redis Cloud account</span>
         </EuiTitle>
         <EuiSpacer />
-        <EuiFlexGrid>
-          <EuiFlexItem grow={false}>
+        <Row gap="xl">
+          <FlexItem>
             <EuiButton
               color="secondary"
               className={styles.typeBtn}
@@ -43,37 +42,39 @@ const ConnectivityOptions = (props: Props) => {
               <CloudIcon className={styles.btnIcon} />
               Add databases
             </EuiButton>
-          </EuiFlexItem>
+          </FlexItem>
           <FeatureFlagComponent name={FeatureFlags.cloudAds}>
-            <EuiFlexItem grow={false}>
+            <FlexItem>
               <OAuthSsoHandlerDialog>
                 {(ssoCloudHandlerClick, isSSOEnabled) => (
                   <EuiButton
                     color="secondary"
                     className={styles.typeBtn}
                     href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
-                      campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm]
+                      campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm],
                     })}
                     target="_blank"
                     onClick={(e: React.MouseEvent) => {
                       ssoCloudHandlerClick(e, {
                         source: OAuthSocialSource.AddDbForm,
-                        action: OAuthSocialAction.Create
+                        action: OAuthSocialAction.Create,
                       })
                       isSSOEnabled && onClose?.()
                     }}
                     data-testid="create-free-db-btn"
                   >
-                    <EuiBadge color="subdued" className={styles.freeBadge}>Free</EuiBadge>
+                    <EuiBadge color="subdued" className={styles.freeBadge}>
+                      Free
+                    </EuiBadge>
                     <RocketIcon className={cx(styles.btnIcon, styles.rocket)} />
                     New database
                   </EuiButton>
                 )}
               </OAuthSsoHandlerDialog>
-            </EuiFlexItem>
+            </FlexItem>
           </FeatureFlagComponent>
-          <EuiFlexItem />
-        </EuiFlexGrid>
+          <FlexItem grow />
+        </Row>
       </section>
       <EuiSpacer size="xxl" />
       <section>
@@ -81,9 +82,9 @@ const ConnectivityOptions = (props: Props) => {
           <span>More connectivity options</span>
         </EuiTitle>
         <EuiSpacer />
-        <EuiFlexGrid>
+        <Row gap="xl">
           {CONNECTIVITY_OPTIONS.map(({ id, type, title, icon }) => (
-            <EuiFlexItem grow={false} key={id}>
+            <FlexItem key={id}>
               <EuiButton
                 color="secondary"
                 className={cx(styles.typeBtn, styles.small)}
@@ -93,9 +94,9 @@ const ConnectivityOptions = (props: Props) => {
                 {icon?.({ className: styles.btnIcon })}
                 {title}
               </EuiButton>
-            </EuiFlexItem>
+            </FlexItem>
           ))}
-        </EuiFlexGrid>
+        </Row>
       </section>
     </>
   )

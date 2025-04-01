@@ -1,8 +1,6 @@
 import React from 'react'
 import {
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiSpacer,
@@ -21,6 +19,7 @@ import {
   TlsDetails,
 } from 'uiSrc/pages/home/components/form'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import DecompressionAndFormatters from './DecompressionAndFormatters'
 
 import { ManualFormTab } from '../constants'
@@ -90,8 +89,8 @@ const EditSentinelConnection = (props: Props) => {
 
   const GeneralFormEditMode = (
     <>
-      <EuiFlexGroup responsive={false}>
-        <EuiFlexItem>
+      <Row gap="m">
+        <FlexItem grow>
           <EuiFormRow label="Database Alias*">
             <EuiFieldText
               fullWidth
@@ -105,8 +104,8 @@ const EditSentinelConnection = (props: Props) => {
               onChange={formik.handleChange}
             />
           </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
       <EuiSpacer size="s" />
       <Divider
         colorVariable="separatorColor"

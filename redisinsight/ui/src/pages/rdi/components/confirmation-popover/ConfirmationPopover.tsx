@@ -1,16 +1,15 @@
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiOutsideClickDetector,
   EuiPopover,
   EuiSpacer,
-  EuiText
+  EuiText,
 } from '@elastic/eui'
 import React, { useState } from 'react'
 
 import { formatLongName } from 'uiSrc/utils'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -49,7 +48,9 @@ const ConfirmationPopover = (props: Props) => {
     onButtonClick?.()
   }
 
-  const popoverButton = React.cloneElement(button, { onClick: handleButtonClick })
+  const popoverButton = React.cloneElement(button, {
+    onClick: handleButtonClick,
+  })
   const confirmBtn = React.cloneElement(submitBtn, { onClick: handleConfirm })
 
   return (
@@ -66,25 +67,21 @@ const ConfirmationPopover = (props: Props) => {
         panelClassName={styles.panelPopover}
         button={popoverButton}
       >
-        <EuiFlexGroup alignItems="center" gutterSize="none">
-          <EuiFlexItem grow={false}>
+        <Row align="center">
+          <FlexItem>
             <EuiIcon type="alert" className={styles.alertIcon} />
-          </EuiFlexItem>
-          <EuiFlexItem grow={false} className="eui-textNoWrap">
+          </FlexItem>
+          <FlexItem className="eui-textNoWrap">
             <EuiText>{formatLongName(title, 58, 0, '...')}</EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         <EuiSpacer size="xs" />
         {body}
         <EuiSpacer size="m" />
-        <EuiFlexGroup gutterSize="none" justifyContent={appendAction ? 'spaceBetween' : 'flexEnd'} alignItems="center">
-          <EuiFlexItem grow={false}>
-            {!!appendAction && appendAction}
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            {confirmBtn}
-          </EuiFlexItem>
-        </EuiFlexGroup>
+        <Row justify={appendAction ? 'between' : 'end'} align="center">
+          <FlexItem>{!!appendAction && appendAction}</FlexItem>
+          <FlexItem>{confirmBtn}</FlexItem>
+        </Row>
       </EuiPopover>
     </EuiOutsideClickDetector>
   )

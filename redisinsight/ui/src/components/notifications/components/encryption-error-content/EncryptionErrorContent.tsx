@@ -1,13 +1,14 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiSpacer, EuiTextColor, EuiFlexItem } from '@elastic/eui'
+import { EuiButton, EuiSpacer, EuiTextColor } from '@elastic/eui'
 import { matchPath, useHistory, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
 import { updateUserConfigSettingsAction } from 'uiSrc/slices/user/user-settings'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 
 export interface Props {
-  onClose?: () => void;
-  instanceId?: string;
+  onClose?: () => void
+  instanceId?: string
 }
 
 // TODO: use i18n file for texts
@@ -26,7 +27,9 @@ const EncryptionErrorContent = (props: Props) => {
 
   const disableEncryption = () => {
     const instanceId = props.instanceId || getInstanceIdFromUrl()
-    dispatch(updateUserConfigSettingsAction({ agreements: { encryption: false } }))
+    dispatch(
+      updateUserConfigSettingsAction({ agreements: { encryption: false } }),
+    )
     if (instanceId) {
       history.push(Pages.homeEditInstance(instanceId))
     }
@@ -41,12 +44,13 @@ const EncryptionErrorContent = (props: Props) => {
       </EuiTextColor>
       <EuiSpacer />
       <EuiTextColor color="ghost" style={{ fontWeight: 300 }}>
-        Disabling encryption will result in storing sensitive information locally in plain text.
-        Re-enter database connection information to work with databases.
+        Disabling encryption will result in storing sensitive information
+        locally in plain text. Re-enter database connection information to work
+        with databases.
       </EuiTextColor>
       <EuiSpacer />
-      <EuiFlexGroup justifyContent="flexEnd">
-        <EuiFlexItem grow={false}>
+      <Row justify="end">
+        <FlexItem>
           <div>
             <EuiButton
               size="s"
@@ -58,8 +62,8 @@ const EncryptionErrorContent = (props: Props) => {
               Disable Encryption
             </EuiButton>
           </div>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <div>
             <EuiButton
               fill
@@ -72,8 +76,8 @@ const EncryptionErrorContent = (props: Props) => {
               Cancel
             </EuiButton>
           </div>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </>
   )
 }

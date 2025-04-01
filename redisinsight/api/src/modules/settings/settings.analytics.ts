@@ -67,6 +67,7 @@ export class SettingsAnalytics extends TelemetryBaseService {
             state: newPermission ? 'enabled' : 'disabled',
             reason,
           },
+          nonTracking: true,
         });
       }
     } catch (e) {

@@ -21,7 +21,7 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 import { AutoRefresh, OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
-import { BrowserColumns, KeyValueFormat , BrowserColumns } from 'uiSrc/constants'
+import { BrowserColumns, KeyValueFormat } from 'uiSrc/constants'
 
 import styles from './styles.module.scss'
 

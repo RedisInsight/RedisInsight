@@ -1,6 +1,7 @@
 import { EuiInMemoryTable } from '@elastic/eui'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { cloneDeep } from 'lodash'
 
 import ItemList, {
   Props as ItemListProps,
@@ -11,7 +12,8 @@ import {
   RedisCloudSubscriptionType,
 } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+
 
 import { mswServer } from 'uiSrc/mocks/server'
 import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
@@ -69,15 +71,6 @@ const mockInstances: Instance[] = [
   },
 ]
 
-jest.mock('uiSrc/slices/instances/instances', () => ({
-  ...jest.requireActual('uiSrc/slices/instances/instances'),
-  instancesSelector: jest.fn().mockReturnValue({
-    loading: false,
-    error: '',
-    data: mockInstances,
-  }),
-}))
-
 const mockDatabasesList = (props: ItemListProps<Instance>) => {
   if (!props.columns) {
     return null
@@ -126,6 +119,13 @@ const mockDatabasesList = (props: ItemListProps<Instance>) => {
     </div>
   )
 }
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('DatabasesListWrapper', () => {
   beforeAll(() => {
@@ -215,16 +215,8 @@ describe('DatabasesListWrapper', () => {
   it('should call proper telemetry on list sort', async () => {
     const sendEventTelemetryMock = jest.fn()
 
-    ;(sendEventTelemetry as jest.Mock).mockImplementation(
-      () => sendEventTelemetryMock,
-    )
-    render(
-      <DatabasesListWrapper
-        {...instance(mockedProps)}
-        instances={mockInstances}
-        onEditInstance={() => {}}
-      />,
-    )
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} onEditInstance={() => { }} />)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('onTableChange-btn'))

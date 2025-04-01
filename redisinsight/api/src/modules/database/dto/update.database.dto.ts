@@ -4,12 +4,10 @@ import {
 import { Expose, Type } from 'class-transformer';
 import {
   IsInt, IsNotEmpty, IsNotEmptyObject, IsOptional, Max, Min, ValidateNested, ValidateIf, IsString, MaxLength,
-  IsArray,
 } from 'class-validator';
 import { UpdateSshOptionsDto } from 'src/modules/ssh/dto/update.ssh-options.dto';
 import { UpdateSentinelMasterDto } from 'src/modules/redis-sentinel/dto/update.sentinel.master.dto';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
-import { CreateTagDto } from 'src/modules/tag/dto/create-tag.dto';
 
 export class UpdateDatabaseDto extends PartialType(OmitType(CreateDatabaseDto, [
   'sshOptions', 'timeout', 'sentinelMaster',
@@ -58,15 +56,4 @@ export class UpdateDatabaseDto extends PartialType(OmitType(CreateDatabaseDto, [
   @Type(() => UpdateSentinelMasterDto)
   @ValidateNested()
   sentinelMaster?: UpdateSentinelMasterDto;
-
-  @ApiPropertyOptional({
-    description: 'List of tags to be updated',
-    type: [CreateTagDto],
-  })
-  @Expose()
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateTagDto)
-  tags?: CreateTagDto[];
 }

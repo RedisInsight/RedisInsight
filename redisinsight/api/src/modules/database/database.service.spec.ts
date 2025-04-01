@@ -183,6 +183,32 @@ describe('DatabaseService', () => {
         new NotFoundException(),
       );
     });
+    it('should create new database with tags', async() => {
+      const tags = [
+        { id: 'tagId1', key: 'env', value: 'prod' },
+        { id: 'tagId2', key: 'region', value: 'us-east' },
+      ];
+      const dtoTags = [
+        { key: 'env', value: 'prod' },
+        { key: 'region', value: 'us-east' },
+      ];
+
+      databaseRepository.create.mockResolvedValueOnce({
+        ...mockDatabase,
+        tags,
+      });
+      jest.spyOn(tagService, 'getOrCreateByKeyValuePairs').mockResolvedValue(dtoTags as any);
+
+      await service.create(
+        mockSessionMetadata,
+        {
+          ...mockDatabase,
+          tags: dtoTags as any,
+        }
+      );
+
+      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(dtoTags);
+    })
   });
 
   describe('update', () => {

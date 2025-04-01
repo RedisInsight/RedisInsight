@@ -162,6 +162,10 @@ export class DatabaseService {
     try {
       this.logger.debug('Creating new database.', sessionMetadata);
 
+      if (dto.tags) {
+        dto.tags = await this.tagService.getOrCreateByKeyValuePairs(dto.tags);
+      }
+
       const database = await this.repository.create(
         sessionMetadata,
         {

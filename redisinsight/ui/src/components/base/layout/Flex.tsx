@@ -3,11 +3,12 @@ import cx from 'classnames'
 
 import flex from './flex.module.scss'
 
+export const gapSizes = ['none', 's', 'm', 'l', 'xl'] as const
 export type GridProps = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode
   columns?: 1 | 2 | 3 | 4
   className?: string
-  gap?: 'none' | 's' | 'm' | 'l' | 'xl'
+  gap?: (typeof gapSizes)[number]
   centered?: boolean
   responsive?: boolean
 }
@@ -51,14 +52,34 @@ export const Grid = ({
   )
   return <div className={cn}>{children}</div>
 }
-
+export const alignValues = [
+  'center',
+  'stretch',
+  'baseline',
+  'start',
+  'end',
+] as const
+export const justifyValues = [
+  'center',
+  'start',
+  'end',
+  'between',
+  'around',
+  'evenly',
+] as const
+export const dirValues = [
+  'row',
+  'rowReverse',
+  'column',
+  'columnReverse',
+] as const
 export type FlexProps = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode
   className?: string
-  gap?: 'none' | 's' | 'm' | 'l' | 'xl'
-  align?: 'center' | 'stretch' | 'baseline' | 'start' | 'end'
-  dir?: 'row' | 'rowReverse' | 'column' | 'columnReverse'
-  justify?: 'center' | 'start' | 'end' | 'between' | 'around' | 'evenly'
+  gap?: (typeof gapSizes)[number]
+  align?: (typeof alignValues)[number]
+  dir?: (typeof dirValues)[number]
+  justify?: (typeof justifyValues)[number]
   centered?: boolean
   responsive?: boolean
   wrap?: boolean
@@ -141,6 +162,7 @@ const VALID_GROW_VALUES = [
 export type FlexItemProps = React.HTMLAttributes<HTMLDivElement> & {
   grow?: boolean | 0 | 5 | 2 | 8 | 3 | 7 | 1 | 4 | 6 | 9 | 10 | null
   inline?: boolean
+  className?: string
 }
 
 /**

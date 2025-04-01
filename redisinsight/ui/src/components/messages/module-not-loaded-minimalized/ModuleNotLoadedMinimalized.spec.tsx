@@ -59,6 +59,12 @@ describe('ModuleNotLoadedMinimalized', () => {
   })
 
   it('should render expected text when cloudAds feature flag is enabled', () => {
+    mockFeatureFlags({
+      cloudAds: {
+        flag: true,
+      }
+    })
+
     render(<ModuleNotLoadedMinimalized moduleName={moduleName} source={source} />)
 
     expect(screen.getByText(/Create a free trial Redis Stack database with search and query/)).toBeInTheDocument()

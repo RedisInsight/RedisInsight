@@ -6,7 +6,6 @@ import {
   EuiFieldText,
   EuiForm,
   EuiOutsideClickDetector,
-  EuiFocusTrap,
   EuiWindowEvent,
   EuiToolTip,
   EuiPopover,
@@ -16,6 +15,7 @@ import {
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
 import { FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import styles from './styles.module.scss'
 
 type Positions = 'top' | 'bottom' | 'left' | 'right' | 'inside'
@@ -200,7 +200,7 @@ const InlineItemEditor = (props: Props) => {
         <EuiOutsideClickDetector onOutsideClick={handleClickOutside}>
           <div ref={containerEl} className={styles.container}>
             <EuiWindowEvent event="keydown" handler={handleOnEsc} />
-            <EuiFocusTrap disabled={disableFocusTrap}>
+            <FocusTrap disabled={disableFocusTrap}>
               <EuiForm
                 component={formComponentType}
                 className="relative"
@@ -299,7 +299,7 @@ const InlineItemEditor = (props: Props) => {
                   )}
                 </div>
               </EuiForm>
-            </EuiFocusTrap>
+            </FocusTrap>
           </div>
         </EuiOutsideClickDetector>
       )}

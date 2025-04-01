@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useState } from 'react'
 import {
   EuiButtonIcon,
-  EuiFocusTrap,
   EuiForm,
   EuiOutsideClickDetector,
   EuiTextArea,
@@ -13,6 +12,7 @@ import cx from 'classnames'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
 import { FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import { isValidJSON } from '../../utils'
 import { JSONErrors } from '../../constants'
 
@@ -53,7 +53,7 @@ const EditEntireItemAction = (props: Props) => {
         <EuiOutsideClickDetector onOutsideClick={() => onCancel?.()}>
           <div>
             <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
-            <EuiFocusTrap>
+            <FocusTrap>
               <EuiForm
                 component="form"
                 className="relative"
@@ -110,7 +110,7 @@ const EditEntireItemAction = (props: Props) => {
                   </FieldMessage>
                 </div>
               )}
-            </EuiFocusTrap>
+            </FocusTrap>
           </div>
         </EuiOutsideClickDetector>
       </div>

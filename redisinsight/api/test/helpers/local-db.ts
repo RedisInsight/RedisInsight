@@ -5,6 +5,7 @@ import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 
 export const repositories = {
   DATABASE: 'DatabaseEntity',
+  TAG: 'TagEntity',
   CA_CERT_REPOSITORY: 'CaCertificateEntity',
   CLIENT_CERT_REPOSITORY: 'ClientCertificateEntity',
   SSH_OPTIONS_REPOSITORY: 'SshOptionsEntity',
@@ -461,6 +462,65 @@ export const createDatabaseInstances = async () => {
   }
 }
 
+export const getAllTags = async () => {
+  const rep = await getRepository(repositories.TAG);
+  return rep.find();
+}
+
+export const getTagById = async (id: string) => {
+  const rep = await getRepository(repositories.TAG);
+  return rep.findOneBy({ id });
+}
+
+export const getTagByKeyValuePair = async (key: string, value: string) => {
+  const rep = await getRepository(repositories.TAG);
+  return rep.findOneBy({ key, value });
+}
+
+export const initTags = async () => {
+  const rep = await getRepository(repositories.TAG);
+
+  await rep.createQueryBuilder()
+    .delete()
+    .execute()
+}
+
+export const createInstancesWithTags = async () => {
+  await initTags();
+
+  const rep = await getRepository(repositories.DATABASE);
+  const instances = [
+    {
+      id: constants.TEST_INSTANCE_ID_6,
+      name: constants.TEST_INSTANCE_NAME_6,
+      host: constants.TEST_INSTANCE_HOST_6,
+      db: constants.TEST_REDIS_DB_INDEX,
+      tags: [constants.TEST_TAGS[0], constants.TEST_TAGS[2]],
+      timeout: 30000,
+    },
+    {
+      id: constants.TEST_INSTANCE_ID_7,
+      name: constants.TEST_INSTANCE_NAME_7,
+      host: constants.TEST_INSTANCE_HOST_7,
+      tags: [constants.TEST_TAGS[1]],
+      timeout: 30000,
+    },
+  ];
+
+  for (let instance of instances) {
+    await rep.save({
+      tls: false,
+      verifyServerCert: false,
+      host: 'localhost',
+      port: 3679,
+      connectionType: 'STANDALONE',
+      ...instance,
+      modules: '[]',
+      version: '7.0',
+    });
+  }
+}
+
 export const createIncorrectDatabaseInstances = async () => {
   const rep = await getRepository(repositories.DATABASE);
 
@@ -643,6 +703,7 @@ export const setAppSettings = async (data: object) => {
 }
 
 const truncateAll = async () => {
+  await (await getRepository(repositories.TAG)).clear();
   await (await getRepository(repositories.DATABASE)).clear();
   await (await getRepository(repositories.FEATURE)).clear();
   await (await getRepository(repositories.FEATURES_CONFIG)).clear();

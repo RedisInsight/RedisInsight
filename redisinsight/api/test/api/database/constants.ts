@@ -78,7 +78,10 @@ export const databaseSchema = Joi.object().keys({
     memoryLimitMeasurementUnit: Joi.string(),
   }).allow(null),
   tags: Joi.array().items(Joi.object().keys({
+    id: Joi.string().required(),
     key: Joi.string().required(),
     value: Joi.string().required(),
+    createdAt: Joi.string().isoDate(),
+    updatedAt: Joi.string().isoDate(),
   })).allow(null),
 });

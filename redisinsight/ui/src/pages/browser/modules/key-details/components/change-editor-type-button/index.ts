@@ -1,4 +1,4 @@
-import ChangeEditorTypeButton from './change-editor-type-button'
+import ChangeEditorTypeButton from './ChangeEditorTypeButton'
 
 export { useChangeEditorType } from './useChangeEditorType'
 export default ChangeEditorTypeButton

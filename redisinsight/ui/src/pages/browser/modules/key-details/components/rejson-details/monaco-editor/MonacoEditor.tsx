@@ -3,13 +3,14 @@ import { useDispatch } from 'react-redux'
 import { EuiButton, EuiFlexItem } from '@elastic/eui'
 import { monaco } from 'react-monaco-editor'
 
-import { EditorType } from 'uiSrc/slices/interfaces'
 import {
   MonacoEditor as Editor,
   useMonacoValidation,
 } from 'uiSrc/components/monaco-editor'
-import { setEditorType, setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
+import { setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
 import { BaseProps } from '../interfaces'
+import { useChangeEditorType } from '../../change-editor-type-button'
+
 import styles from '../styles.module.scss'
 
 const ROOT_PATH = '$'
@@ -31,12 +32,10 @@ const MonacoEditor = (props: BaseProps) => {
     editorRef.current = editor
   }
 
+  const { switchEditorType } = useChangeEditorType()
+
   const submitUpdate = () => {
     dispatch(setReJSONDataAction(selectedKey, ROOT_PATH, value, false, length))
-  }
-
-  const goBack = () => {
-    dispatch(setEditorType(EditorType.Default))
   }
 
   return (
@@ -54,7 +53,7 @@ const MonacoEditor = (props: BaseProps) => {
 
       <EuiFlexItem className={styles.actions}>
         <EuiButton
-          onClick={goBack}
+          onClick={switchEditorType}
           color="danger"
           data-testid="json-data-cancel-btn"
         >

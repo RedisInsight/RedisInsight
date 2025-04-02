@@ -284,6 +284,7 @@ export const getFormValues = (instance?: Nullable<Record<string, any>>) => ({
   compressor: instance?.compressor ?? NONE,
   modules: instance?.modules,
   showDb: !!instance?.db,
+  forceStandalone: instance?.forceStandalone ?? false,
   showCompressor: instance && instance.compressor && instance.compressor !== NONE,
   sni: !!instance?.tlsServername,
   servername: instance?.tlsServername,

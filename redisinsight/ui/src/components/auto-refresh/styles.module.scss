@@ -94,6 +94,11 @@
     width: 10px !important;
     height: 10px !important;
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 }
 
 .switchOption {

@@ -12,14 +12,6 @@ import reducer, {
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
-const mockData = {
-  targets: {
-    target: {
-      status: 'success',
-    }
-  }
-}
-
 let store: typeof mockedStore
 
 beforeEach(() => {
@@ -54,7 +46,10 @@ describe('rdi test connections slice', () => {
   describe('testConnectionsSuccess', () => {
     it('should properly set state', () => {
       // Arrange
-      const data = { success: [{ target: 'target' }], fail: [] }
+      const data = {
+        target: { success: [{ target: 'target' }], fail: [] },
+        source: { success: [], fail: [] },
+      }
       const state = {
         ...initialState,
         results: data,
@@ -101,6 +96,21 @@ describe('rdi test connections slice', () => {
   describe('thunks', () => {
     describe('testConnectionsAction', () => {
       it('succeed to fetch data', async () => {
+        const mockData = {
+          targets: {
+            target: {
+              status: 'success',
+            },
+          },
+
+          sources: {
+            source: {
+              connected: true,
+              error: '',
+            }
+          },
+        }
+
         const responsePayload = { data: mockData, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
@@ -113,7 +123,17 @@ describe('rdi test connections slice', () => {
         // Assert
         const expectedActions = [
           testConnections(),
-          testConnectionsSuccess({ success: [{ target: 'target' }], fail: [] }),
+          testConnectionsSuccess({
+            target: { success: [{ target: 'target' }], fail: [] },
+            source: {
+              success: [
+                {
+                  target: 'source',
+                },
+              ],
+              fail: [],
+            },
+          }),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

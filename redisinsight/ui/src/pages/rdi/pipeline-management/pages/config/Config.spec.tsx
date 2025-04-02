@@ -5,7 +5,7 @@ import { rdiPipelineSelector, setChangedFile, deleteChangedFile, setPipelineConf
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
-import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
+import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import Config from './Config'
@@ -13,6 +13,7 @@ import Config from './Config'
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendPageViewTelemetry: jest.fn(),
+  sendEventTelemetry: jest.fn(),
 }))
 
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
@@ -234,5 +235,26 @@ describe('Config', () => {
 
     // check is btn has loader
     expect(screen.getByTestId('rdi-test-connection-btn').children[0].children[0]).toHaveClass('euiLoadingSpinner')
+  })
+
+  it('should send telemetry event when clicking Test Connection button', async () => {
+    const sendEventTelemetryMock = jest.fn();
+
+    (sendEventTelemetry as jest.Mock).mockImplementation(
+      sendEventTelemetryMock,
+    )
+
+    render(<Config />)
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('rdi-test-connection-btn'))
+    })
+
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
+      event: TelemetryEvent.RDI_TEST_CONNECTIONS_CLICKED,
+      eventData: {
+        id: 'rdiInstanceId',
+      },
+    })
   })
 })

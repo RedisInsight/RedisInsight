@@ -2,7 +2,8 @@ import { AxiosError } from 'axios'
 import { EuiComboBoxOptionOption } from '@elastic/eui'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { Nullable } from 'uiSrc/utils'
-import { BrowserColumns, DurationUnits, FeatureFlags, ICommands, SortOrder } from 'uiSrc/constants'
+import { BrowserColumns, BrowserStorageItem, DurationUnits, FeatureFlags, ICommands, SortOrder } from 'uiSrc/constants'
+import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 
@@ -142,6 +143,25 @@ export interface StateAppRedisCommands {
   spec: ICommands
   commandsArray: string[]
   commandGroups: string[]
+}
+
+export interface DatabaseSettingsData {
+  [ConfigDBStorageItem.notShowConfirmationRunTutorial]?: boolean,
+  [BrowserStorageItem.treeViewDelimiter]?: {
+    label: string
+  }[]
+  [BrowserStorageItem.treeViewSort]?: SortOrder,
+  [BrowserStorageItem.showHiddenRecommendations]?: boolean,
+
+  [key: string]: any;
+}
+
+export interface DatabaseSettings {
+  loading: boolean
+  error: string
+  data: {
+    [instanceId: string]: DatabaseSettingsData
+  };
 }
 
 export interface IPluginVisualization {

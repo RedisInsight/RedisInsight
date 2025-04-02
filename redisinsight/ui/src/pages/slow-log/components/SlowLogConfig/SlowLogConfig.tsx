@@ -17,16 +17,16 @@ import {
   DEFAULT_SLOWLOG_DURATION_UNIT,
   DEFAULT_SLOWLOG_MAX_LEN,
   DEFAULT_SLOWLOG_SLOWER_THAN,
-  DurationUnits,
   DURATION_UNITS,
+  DurationUnits,
   MINUS_ONE,
 } from 'uiSrc/constants'
 import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { patchSlowLogConfigAction, slowLogConfigSelector, slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
 import { errorValidateNegativeInteger, validateNumber } from 'uiSrc/utils'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 import { convertNumberByUnits } from '../../utils'
 import styles from './styles.module.scss'
 
@@ -38,7 +38,7 @@ export interface Props {
 const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
   const options = DURATION_UNITS
   const { instanceId } = useParams<{ instanceId: string }>()
-  const { connectionType } = useSelector(connectedInstanceSelector)
+  const connectionType = useConnectionType()
   const { loading } = useSelector(slowLogSelector)
   const { slowLogDurationUnit } = useSelector(appContextDbConfig)
   const {

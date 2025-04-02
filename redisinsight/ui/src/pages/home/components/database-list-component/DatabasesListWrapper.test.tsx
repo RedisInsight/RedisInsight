@@ -15,6 +15,7 @@ import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/util
 import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
+import {appFeatureFlagsFeaturesSelector} from 'uiSrc/slices/app/features'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
 
 const mockedProps = mock<Props>()
@@ -33,7 +34,10 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
       flag: true
-    }
+    },
+    databaseManagement: {
+      flag: true,
+    },
   }),
 }))
 
@@ -103,7 +107,7 @@ describe('DatabasesListWrapper', () => {
     render(<DatabasesListWrapper
       {...instance(mockedProps)}
       instances={mockInstances}
-      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free db' }] as Instance[]}
+      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free trial db' }] as Instance[]}
     />)
 
     expect(screen.getByTestId(`db-row_${CREATE_CLOUD_DB_ID}`)).toBeInTheDocument()
@@ -113,7 +117,7 @@ describe('DatabasesListWrapper', () => {
     render(<DatabasesListWrapper
       {...instance(mockedProps)}
       instances={mockInstances}
-      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free db' }] as Instance[]}
+      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free trial db' }] as Instance[]}
     />)
 
     fireEvent.click(screen.getByTestId(`db-row_${CREATE_CLOUD_DB_ID}`))
@@ -190,6 +194,22 @@ describe('DatabasesListWrapper', () => {
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
+  it('should open controls popover when three dots clicked', async () => {
+    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} onEditInstance={() => {}} />);
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('controls-button-a0db1bc8-a353-4c43-a856-b72f4811d2d4'));
+    })
+
+    const controlsPopoverId = screen.getByTestId('controls-popover-a0db1bc8-a353-4c43-a856-b72f4811d2d4');
+    const editBtn = screen.getByTestId('edit-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4');
+    const deleteBtn = screen.getByTestId('delete-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4-icon');
+
+    expect(controlsPopoverId).toBeInTheDocument();
+    expect(editBtn).toBeInTheDocument();
+    expect(deleteBtn).toBeInTheDocument();
+  });
+
   it('should call proper telemetry on delete database', async () => {
     const sendEventTelemetryMock = jest.fn();
 
@@ -197,8 +217,12 @@ describe('DatabasesListWrapper', () => {
     render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
 
     await act(() => {
+      fireEvent.click(screen.getByTestId('controls-button-a0db1bc8-a353-4c43-a856-b72f4811d2d4'));
+    });
+
+    await act(() => {
       fireEvent.click(screen.getByTestId('delete-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4-icon'))
-    })
+    });
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_SINGLE_DATABASE_DELETE_CLICKED,
@@ -217,6 +241,10 @@ describe('DatabasesListWrapper', () => {
     render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} onEditInstance={() => {}} />)
 
     await act(() => {
+      fireEvent.click(screen.getByTestId('controls-button-a0db1bc8-a353-4c43-a856-b72f4811d2d4'));
+    });
+
+    await act(() => {
       fireEvent.click(screen.getByTestId('edit-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4'))
     })
 
@@ -228,5 +256,18 @@ describe('DatabasesListWrapper', () => {
     });
 
     (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should hide management buttons when databaseManagement feature flag is disabled', async () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      databaseManagement: {
+        flag: false
+      }
+    })
+
+    const { queryByTestId } = render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
+
+    expect(queryByTestId(/^edit-instance-/i)).not.toBeInTheDocument()
+    expect(queryByTestId(/^delete-instance-/i)).not.toBeInTheDocument()
   })
 })

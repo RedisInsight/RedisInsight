@@ -38,7 +38,7 @@ describe('GET /cloud/me', () => {
         name: 'Should get user profile',
         responseSchema,
         checkFn: ({ body }) => {
-          expect(body).to.deep.eq(mockCloudUserSafe);
+          expect(body).to.deepEqualIgnoreUndefined(mockCloudUserSafe);
         },
       },
     ].map(mainCheckFn);

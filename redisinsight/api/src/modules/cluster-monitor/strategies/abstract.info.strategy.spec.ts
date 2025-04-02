@@ -4,6 +4,7 @@ import { set } from 'lodash';
 import { ClusterNodesInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-nodes.info.strategy';
 import { ClusterDetails, ClusterNodeDetails } from 'src/modules/cluster-monitor/models';
 import { mockClusterRedisClient, mockStandaloneRedisClient, mockStandaloneRedisInfoReply } from 'src/__mocks__';
+import { convertRedisInfoReplyToObject } from 'src/utils';
 
 const m1 = {
   id: 'm1',
@@ -136,8 +137,8 @@ describe('AbstractInfoStrategy', () => {
   describe('getClusterDetails', () => {
     beforeEach(() => {
       clusterClient.sendCommand.mockResolvedValue(mockClusterInfoReply);
-      node1.sendCommand.mockResolvedValue(mockStandaloneRedisInfoReply);
-      node2.sendCommand.mockResolvedValue(mockStandaloneRedisInfoReply);
+      node1.getInfo.mockResolvedValue(convertRedisInfoReplyToObject(mockStandaloneRedisInfoReply));
+      node2.getInfo.mockResolvedValue(convertRedisInfoReplyToObject(mockStandaloneRedisInfoReply));
     });
     it('should return cluster info', async () => {
       const info = await service.getClusterDetails(clusterClient);

@@ -1,9 +1,11 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen, fireEvent, act, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import { stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
 import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
+import { MOCK_TRUNCATED_BUFFER_VALUE } from 'uiSrc/mocks/data/bigString'
+import { TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA } from 'uiSrc/constants'
 import { Props, StringDetails } from './StringDetails'
 
 const mockedProps = mock<Props>()
@@ -109,5 +111,31 @@ describe('StringDetails', () => {
       ...afterRenderActions,
       setSelectedKeyRefreshDisabled(true)
     ])
+  })
+
+  describe('truncated data', () => {
+    it('should not be able to change value when value is truncated', async () => {
+      const stringDataSelectorMock = jest.fn().mockReturnValueOnce({
+        value: MOCK_TRUNCATED_BUFFER_VALUE,
+      });
+      (stringDataSelector as jest.Mock).mockImplementationOnce(stringDataSelectorMock)
+
+      render(
+        <StringDetails
+          {...mockedProps}
+        />
+      )
+
+      const editValueBtn = screen.getByTestId(`${EDIT_VALUE_BTN_TEST_ID}`)
+      expect(editValueBtn).toBeDisabled()
+
+      await act(async () => {
+        fireEvent.mouseOver(editValueBtn)
+      })
+      await waitForEuiToolTipVisible()
+
+      expect(screen.getByTestId('edit-key-value-tooltip'))
+        .toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
+    })
   })
 })

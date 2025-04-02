@@ -15,8 +15,8 @@ const endpoint = () => request(server).post(`/${constants.API.RDI}`);
 const dataSchema = Joi.object().keys({
   url: Joi.string().required(),
   name: Joi.string().max(500).required(),
-  username: Joi.string(),
-  password: Joi.string().required(),
+  username: Joi.string().allow(null),
+  password: Joi.string().allow(null),
 }).messages({ 'any.required': '{#label} should not be empty' }).strict(true);
 
 const validInputData = {

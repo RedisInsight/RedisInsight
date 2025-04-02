@@ -2,25 +2,43 @@ import { EuiCollapsibleNavGroup } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 
-import { Nullable } from 'uiSrc/utils'
-import { TransformResult } from 'uiSrc/slices/interfaces'
+import { TransformGroupResult } from 'uiSrc/slices/interfaces'
 import TestConnectionsTable from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-table'
 
 import styles from './styles.module.scss'
 
 enum ResultsStatus {
   Success = 'success',
-  Failed = 'failed'
+  Failed = 'failed',
+  Mixed = 'mixed'
 }
 
 export interface Props {
-  data: Nullable<TransformResult>
+  data: TransformGroupResult
+}
+
+const getStatus = (data: TransformGroupResult) => {
+  if (data.fail.length && data.success.length) {
+    return ResultsStatus.Mixed
+  }
+
+  if (data.fail.length) {
+    return ResultsStatus.Failed
+  }
+
+  return ResultsStatus.Success
+}
+
+const statusToLabel = {
+  [ResultsStatus.Success]: 'Connected successfully',
+  [ResultsStatus.Failed]: 'Failed to connect',
+  [ResultsStatus.Mixed]: 'Partially connected',
 }
 
 const TestConnectionsLog = (props: Props) => {
   const { data } = props
-  const statusData = data?.fail?.length ? data.fail : data?.success
-  const status = data?.fail?.length ? ResultsStatus.Failed : ResultsStatus.Success
+  const statusData = [...data.success, ...data.fail]
+  const status = getStatus(data)
   const [openedNav, setOpenedNav] = useState<string>('')
 
   const onToggle = (length: number = 0, isOpen: boolean, name: string) => {
@@ -28,14 +46,20 @@ const TestConnectionsLog = (props: Props) => {
     setOpenedNav(isOpen ? name : '')
   }
 
-  const CollapsibleNavTitle = ({ title, length = 0 }: { title: string, length: number }) => (
-    <div className={styles.collapsibleNavTitle}>
+  const CollapsibleNavTitle = ({
+    title,
+    length = 0,
+  }: {
+    title: string;
+    length: number;
+  }) => (
+    <div className={styles.collapsibleNavTitle} style={{ margin: 0 }}>
       <span data-testid="nav-group-title">{title}:</span>
       <span data-testid="number-of-connections">{length}</span>
     </div>
   )
 
-  const navTitle = status === ResultsStatus.Success ? 'Connected successfully' : 'Failed to connect'
+  const navTitle = statusToLabel[status]
 
   const getNavGroupState = (name: ResultsStatus) => (openedNav === name ? 'open' : 'closed')
 

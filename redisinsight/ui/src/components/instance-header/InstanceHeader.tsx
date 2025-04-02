@@ -18,11 +18,10 @@ import {
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 
-import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
+import { DatabaseOverview, FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
-import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/DatabaseOverviewWrapper'
 
 import { resetKeyInfo } from 'uiSrc/slices/browser/keys'
 
@@ -30,6 +29,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { getConfig } from 'uiSrc/config'
 import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
+import { CloudUserProfile } from 'uiSrc/components/instance-header/components/CloudUserProfile'
 import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -60,6 +60,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
+    [FeatureFlags.envDependent]: envDependentFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
   const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
 
@@ -111,8 +112,8 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
   return (
     <div className={cx(styles.container)}>
-      <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center">
-        <EuiFlexItem style={{ overflow: 'hidden' }}>
+      <EuiFlexGroup gutterSize="none" alignItems="center" justifyContent="spaceBetween" style={{ height: '100%' }}>
+        <EuiFlexItem style={{ overflow: 'hidden' }} grow={false}>
           <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
               <FeatureFlagComponent name={FeatureFlags.envDependent}>
@@ -136,15 +137,15 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>
-                    <EuiFlexItem grow={false} data-testid="instance-header-divider-env-dependent">
-                      <EuiText className={styles.divider}>&#62;</EuiText>
+                    <EuiFlexItem grow={false}>
+                      <EuiText className={styles.divider}>/</EuiText>
                     </EuiFlexItem>
                   </FeatureFlagComponent>
                   {returnUrlBase && returnUrl && (
                   <FeatureFlagComponent
                     name={FeatureFlags.envDependent}
                     otherwise={(
-                      <EuiFlexItem style={{ padding: '4px 24px 4px 0' }} grow={false}>
+                      <EuiFlexItem style={{ padding: '4px 24px 4px 0' }} grow={false} data-testid="return-to-sm-item">
                         <EuiToolTip
                           position="bottom"
                           content={returnUrlTooltip || returnUrlLabel}
@@ -163,52 +164,61 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                   />
                   )}
                   <EuiFlexItem style={{ overflow: 'hidden' }}>
-                    {isRedisStack ? (
+                    {isRedisStack || !envDependentFeature?.flag ? (
                       <b className={styles.dbName}>{name}</b>
                     ) : (
                       <InstancesNavigationPopover name={name} />
                     )}
                   </EuiFlexItem>
                   {databases > 1 && (
-                    <EuiFlexItem style={{ padding: '4px 0 4px 12px' }} grow={false}>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        {isDbIndexEditing ? (
-                          <div style={{ marginRight: 48 }}>
-                            <InlineItemEditor
-                              controlsPosition="right"
-                              onApply={handleChangeDbIndex}
-                              onDecline={() => setIsDbIndexEditing(false)}
-                              viewChildrenMode={false}
-                              controlsClassName={styles.controls}
-                            >
-                              <EuiFieldNumber
-                                onFocus={selectOnFocus}
-                                onChange={(e) => setDbIndex(validateNumber(e.target.value.trim()))}
-                                value={dbIndex}
-                                placeholder="Database Index"
-                                className={styles.input}
-                                fullWidth={false}
-                                compressed
-                                autoComplete="off"
-                                type="text"
-                                data-testid="change-index-input"
-                              />
-                            </InlineItemEditor>
-                          </div>
-                        ) : (
-                          <EuiButtonEmpty
-                            iconType="pencil"
-                            iconSide="right"
-                            onClick={() => setIsDbIndexEditing(true)}
-                            className={styles.buttonDbIndex}
-                            disabled={isDbIndexDisabled || instanceLoading}
-                            data-testid="change-index-btn"
+                  <EuiFlexItem style={{ padding: '4px 0 4px 12px' }} grow={false}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                    >
+                      {isDbIndexEditing ? (
+                        <div style={{ marginRight: 48 }}>
+                          <InlineItemEditor
+                            controlsPosition="right"
+                            onApply={handleChangeDbIndex}
+                            onDecline={() => setIsDbIndexEditing(false)}
+                            viewChildrenMode={false}
+                            controlsClassName={styles.controls}
                           >
-                            <span style={{ fontSize: 14, marginBottom: '-2px' }}>db{db || 0}</span>
-                          </EuiButtonEmpty>
-                        )}
-                      </div>
-                    </EuiFlexItem>
+                            <EuiFieldNumber
+                              onFocus={selectOnFocus}
+                              onChange={(e) => setDbIndex(validateNumber(e.target.value.trim()))}
+                              value={dbIndex}
+                              placeholder="Database Index"
+                              className={styles.input}
+                              fullWidth={false}
+                              compressed
+                              autoComplete="off"
+                              type="text"
+                              data-testid="change-index-input"
+                            />
+                          </InlineItemEditor>
+                        </div>
+                      ) : (
+                        <EuiButtonEmpty
+                          iconType="pencil"
+                          iconSide="right"
+                          onClick={() => setIsDbIndexEditing(true)}
+                          className={styles.buttonDbIndex}
+                          disabled={isDbIndexDisabled || instanceLoading}
+                          data-testid="change-index-btn"
+                        >
+                          <span style={{
+                            fontSize: 14,
+                            marginBottom: '-2px'
+                          }}
+                          >db{db || 0}
+                          </span>
+                        </EuiButtonEmpty>
+                      )}
+                    </div>
+                  </EuiFlexItem>
                   )}
                   <EuiFlexItem style={{ paddingLeft: 6 }} grow={false}>
                     <EuiToolTip
@@ -218,7 +228,13 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                       content={(
                         <ShortInstanceInfo
                           info={{
-                            name, host, port, user: username, connectionType, version, dbIndex: db
+                            name,
+                            host,
+                            port,
+                            user: username,
+                            connectionType,
+                            version,
+                            dbIndex: db
                           }}
                           modules={modules}
                           databases={databases}
@@ -240,25 +256,38 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
           </div>
         </EuiFlexItem>
 
+        <EuiFlexItem grow={false} style={{ textAlign: 'center' }}>
+          <DatabaseOverview />
+        </EuiFlexItem>
+
         <EuiFlexItem grow={false}>
-          <DatabaseOverviewWrapper />
+          <EuiFlexGroup gutterSize="none" alignItems="center" justifyContent="flexEnd">
+            {isAnyChatAvailable && (
+              <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+                <CopilotTrigger />
+              </EuiFlexItem>
+            )}
+
+            <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+              <InsightsTrigger />
+            </EuiFlexItem>
+
+            <FeatureFlagComponent
+              name={FeatureFlags.envDependent}
+              otherwise={(
+                <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
+                  <CloudUserProfile />
+                </EuiFlexItem>
+              )}
+            >
+              <FeatureFlagComponent name={FeatureFlags.cloudSso}>
+                <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
+                  <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
+                </EuiFlexItem>
+              </FeatureFlagComponent>
+            </FeatureFlagComponent>
+          </EuiFlexGroup>
         </EuiFlexItem>
-
-        {isAnyChatAvailable && (
-          <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
-            <CopilotTrigger />
-          </EuiFlexItem>
-        )}
-
-        <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
-          <InsightsTrigger />
-        </EuiFlexItem>
-
-        <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-          <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
-            <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
-          </EuiFlexItem>
-        </FeatureFlagComponent>
       </EuiFlexGroup>
     </div>
   )

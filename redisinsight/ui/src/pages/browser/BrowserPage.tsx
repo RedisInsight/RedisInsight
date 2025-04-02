@@ -172,8 +172,9 @@ const BrowserPage = () => {
   }
 
   const handleAddKeyPanel = useCallback((value: boolean, keyName?: RedisResponseBuffer) => {
-    handlePanel(value, keyName)
-    setIsAddKeyPanelOpen(value)
+    handlePanel(value, keyName);
+    setIsAddKeyPanelOpen(value);
+    dispatch(setBrowserSelectedKey(keyName || null));
   }, [])
 
   const handleBulkActionsPanel = useCallback((value: boolean) => {
@@ -182,6 +183,7 @@ const BrowserPage = () => {
   }, [])
 
   const handleRemoveSelectedKey = useCallback(() => {
+    setBrowserSelectedKey(null);
     handlePanel(true)
   }, [])
 
@@ -222,6 +224,7 @@ const BrowserPage = () => {
 
       dispatch(setInitialStateByType(prevSelectedType.current))
       setSelectedKey(rowData.name)
+      dispatch(setBrowserSelectedKey(rowData.name));
       closeRightPanels()
       prevSelectedType.current = rowData.type
     }

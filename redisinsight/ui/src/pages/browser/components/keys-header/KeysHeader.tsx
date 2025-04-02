@@ -9,9 +9,9 @@ import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import TreeViewIcon from 'uiSrc/assets/img/icons/treeview.svg?react'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { appContextDbConfig, resetBrowserTree, setBrowserKeyListDataLoaded, setBrowserShownColumns, } from 'uiSrc/slices/app/context'
+import { appContextDbConfig, resetBrowserTree, setBrowserKeyListDataLoaded, setBrowserSelectedKey, setBrowserShownColumns, } from 'uiSrc/slices/app/context'
 
-import { changeKeyViewType, fetchKeys, keysSelector, resetKeysData } from 'uiSrc/slices/browser/keys'
+import { changeKeyViewType, fetchKeys, keysSelector, resetKeyInfo, resetKeysData } from 'uiSrc/slices/browser/keys'
 import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -21,8 +21,8 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 import { AutoRefresh, OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { BrowserColumns, KeyValueFormat } from 'uiSrc/constants'
 
-import { BrowserColumns } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 640
@@ -58,7 +58,7 @@ const KeysHeader = (props: Props) => {
     nextCursor,
   } = props
 
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, keyNameFormat } = useSelector(connectedInstanceSelector)
   const { viewType, searchMode, isFiltered } = useSelector(keysSelector)
   const { shownColumns } = useSelector(appContextDbConfig)
   const { selectedIndex } = useSelector(redisearchSelector)
@@ -69,27 +69,40 @@ const KeysHeader = (props: Props) => {
 
   const dispatch = useDispatch()
 
+  // TODO: Check if encoding can be reused from BE and FE
+  const format = keyNameFormat as unknown as KeyValueFormat
+  const isTreeViewDisabled =
+    (format || KeyValueFormat.Unicode) === KeyValueFormat.HEX
   const viewTypes: ISwitchType<KeyViewType>[] = [
     {
       type: KeyViewType.Browser,
       tooltipText: 'List View',
       ariaLabel: 'List view button',
       dataTestId: 'view-type-browser-btn',
-      isActiveView() { return viewType === this.type },
+      isActiveView() {
+        return viewType === this.type
+      },
       getClassName() {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
       getIconType() {
         return 'menu'
       },
-      onClick() { handleSwitchView(this.type) }
+      onClick() {
+        handleSwitchView(this.type)
+      },
     },
     {
       type: KeyViewType.Tree,
-      tooltipText: 'Tree View',
+      tooltipText: isTreeViewDisabled
+        ? 'Tree View is unavailable when the HEX key name format is selected.'
+        : 'Tree View',
       ariaLabel: 'Tree view button',
       dataTestId: 'view-type-list-btn',
-      isActiveView() { return viewType === this.type },
+      disabled: isTreeViewDisabled,
+      isActiveView() {
+        return viewType === this.type
+      },
       getClassName() {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
@@ -98,18 +111,21 @@ const KeysHeader = (props: Props) => {
       },
       onClick() {
         handleSwitchView(this.type)
-        dispatch(incrementOnboardStepAction(
-          OnboardingSteps.BrowserTreeView,
-          undefined,
-          () => sendEventTelemetry({
-            event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
-            eventData: {
-              databaseId: instanceId,
-              step: OnboardingStepName.BrowserTreeView,
-            }
-          })
-        ))
-      }
+        dispatch(
+          incrementOnboardStepAction(
+            OnboardingSteps.BrowserTreeView,
+            undefined,
+            () =>
+              sendEventTelemetry({
+                event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
+                eventData: {
+                  databaseId: instanceId,
+                  step: OnboardingStepName.BrowserTreeView,
+                },
+              }),
+          ),
+        )
+      },
     },
   ]
 
@@ -127,7 +143,16 @@ const KeysHeader = (props: Props) => {
         cursor: '0',
         count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       },
-      () => dispatch(setBrowserKeyListDataLoaded(searchMode, true)),
+      (data) => {
+        const keys = Array.isArray(data) ? data[0].keys : data.keys
+
+        if (!keys.length) {
+          dispatch(resetKeyInfo())
+          dispatch(setBrowserSelectedKey(null))
+        }
+
+        dispatch(setBrowserKeyListDataLoaded(searchMode, true))
+      },
       () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
     ))
   }
@@ -221,6 +246,7 @@ const KeysHeader = (props: Props) => {
                 aria-label={view.ariaLabel}
                 onClick={() => view.onClick()}
                 data-testid={view.dataTestId}
+                disabled={view.disabled || false}
               />
             </EuiToolTip>
           ))}
@@ -257,6 +283,8 @@ const KeysHeader = (props: Props) => {
               </div>
               <div className={styles.keysControlsWrapper}>
                 <AutoRefresh
+                  disabled={searchMode === SearchMode.Redisearch && !selectedIndex}
+                  disabledRefreshButtonMessage="Select an index to refresh keys."
                   iconSize="xs"
                   postfix="keys"
                   loading={loading}

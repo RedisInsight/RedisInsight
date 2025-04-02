@@ -1,7 +1,9 @@
 import React from 'react'
-import { EuiButton, EuiButtonIcon, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiButton, EuiButtonEmpty, EuiButtonIcon, EuiPopover, EuiText, EuiToolTip } from '@elastic/eui'
 
 import { RedisString } from 'uiSrc/slices/interfaces'
+import { isTruncatedString } from 'uiSrc/utils'
+import { TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -18,6 +20,7 @@ export interface Props {
   handleButtonClick?: () => void
   appendInfo?: JSX.Element | string | null
   testid?: string
+  buttonLabel?: string
 }
 
 const PopoverDelete = (props: Props) => {
@@ -35,7 +38,10 @@ const PopoverDelete = (props: Props) => {
     handleButtonClick,
     appendInfo,
     testid = '',
+    buttonLabel,
   } = props
+
+  const isDisabled = isTruncatedString(item)
 
   const onButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()
@@ -47,6 +53,38 @@ const PopoverDelete = (props: Props) => {
     }
   }
 
+  const deleteButton = buttonLabel ? (
+    <EuiButtonEmpty
+      iconType="trash"
+      aria-label="Remove field"
+      color="primary"
+      disabled={isDisabled || updateLoading}
+      onClick={isDisabled ? () => {} : onButtonClick}
+      data-testid={testid ? `${testid}-icon` : 'remove-icon'}
+      isDisabled={isDisabled}
+    >{buttonLabel}</EuiButtonEmpty>
+    ) : (
+    <EuiButtonIcon
+      iconType="trash"
+      aria-label="Remove field"
+      color="primary"
+      disabled={isDisabled || updateLoading}
+      onClick={isDisabled ? () => {} : onButtonClick}
+      data-testid={testid ? `${testid}-icon` : 'remove-icon'}
+      isDisabled={isDisabled}
+    />
+  )
+
+  const deleteButtonWithTooltip = (
+    <EuiToolTip
+      content={TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA}
+      anchorClassName={styles.editBtnAnchor}
+      data-testid={testid ? `${testid}-tooltip` : 'remove-tooltip'}
+    >
+      {deleteButton}
+    </EuiToolTip>
+  )
+
   return (
     <EuiPopover
       key={item}
@@ -56,16 +94,7 @@ const PopoverDelete = (props: Props) => {
       closePopover={() => closePopover()}
       panelPaddingSize="m"
       anchorClassName="deleteFieldPopover"
-      button={(
-        <EuiButtonIcon
-          iconType="trash"
-          aria-label="Remove field"
-          color="primary"
-          disabled={updateLoading}
-          onClick={onButtonClick}
-          data-testid={testid ? `${testid}-icon` : 'remove-icon'}
-        />
-      )}
+      button={isDisabled ? deleteButtonWithTooltip : deleteButton}
       onClick={(e) => e.stopPropagation()}
     >
       <div className={styles.popover}>

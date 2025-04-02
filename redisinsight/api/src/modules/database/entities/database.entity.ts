@@ -1,5 +1,10 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -8,6 +13,7 @@ import { Expose, Transform, Type } from 'class-transformer';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
+import { DatabaseSettingsEntity } from 'src/modules/database-settings/entities/database-setting.entity';
 
 export enum HostingProvider {
   RE_CLUSTER = 'RE_CLUSTER',
@@ -46,6 +52,11 @@ export enum Compressor {
   SNAPPY = 'SNAPPY',
   Brotli = 'Brotli',
   PHPGZCompress = 'PHPGZCompress',
+}
+
+export enum Encoding {
+  UNICODE = 'Unicode',
+  HEX = 'HEX',
 }
 
 @Entity('database_instance')
@@ -228,6 +239,19 @@ export class DatabaseEntity {
   cloudDetails: CloudDatabaseDetailsEntity;
 
   @Expose()
+  @OneToOne(
+    () => DatabaseSettingsEntity,
+    (dbSettings) => dbSettings.database,
+    {
+      eager: true,
+      onDelete: 'CASCADE',
+      cascade: true,
+    },
+  )
+  @Type(() => DatabaseSettingsEntity)
+  dbSettings: DatabaseSettingsEntity;
+
+  @Expose()
   @Column({
     nullable: false,
     default: Compressor.NONE,
@@ -237,4 +261,16 @@ export class DatabaseEntity {
   @Expose()
   @Column({ nullable: true })
   version: string;
+
+  @Expose()
+  @Column({ nullable: true })
+  forceStandalone: boolean;
+
+  @Expose()
+  @Column({ nullable: true })
+  isPreSetup: boolean;
+
+  @Expose()
+  @Column({ nullable: true, default: Encoding.UNICODE })
+  keyNameFormat: string;
 }

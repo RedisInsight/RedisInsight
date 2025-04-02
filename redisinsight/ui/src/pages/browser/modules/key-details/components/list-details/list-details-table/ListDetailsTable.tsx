@@ -32,6 +32,7 @@ import {
   TEXT_UNPRINTABLE_CHARACTERS,
   TEXT_DISABLED_COMPRESSED_VALUE,
   TEXT_FAILED_CONVENT_FORMATTER,
+  TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
 } from 'uiSrc/constants'
 import {
   bufferToString,
@@ -44,7 +45,9 @@ import {
   stringToSerializedBufferFormat,
   validateListIndex,
   Nullable,
-  createTooltipContent, bufferToSerializedFormat
+  createTooltipContent,
+  bufferToSerializedFormat,
+  isTruncatedString,
 } from 'uiSrc/utils'
 import {
   selectedKeyDataSelector,
@@ -271,15 +274,20 @@ const ListDetailsTable = () => {
         rowIndex = 0
       ) {
         const { value: decompressedElementItem, isCompressed } = decompressingBuffer(elementItem, compressor)
+        const isTruncatedValue = isTruncatedString(elementItem)
         const element = bufferToString(elementItem)
         const { value, isValid } = formattingBuffer(decompressedElementItem, viewFormatProp, { expanded })
         const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
           && !isEqualBuffers(elementItem, stringToBuffer(element))
-        const isEditable = !isCompressed && isFormatEditable(viewFormat)
+        const isEditable = !isCompressed && isFormatEditable(viewFormat) && !isTruncatedValue
         const isEditing = index === editingIndex
 
         const tooltipContent = createTooltipContent(value, decompressedElementItem, viewFormatProp)
-        const editTooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
+        const editTooltipContent = isCompressed
+          ? TEXT_DISABLED_COMPRESSED_VALUE
+          : isTruncatedValue
+            ? TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA
+            : TEXT_DISABLED_FORMATTER_EDITING
         const serializedValue = isEditing ? bufferToSerializedFormat(viewFormat, elementItem, 4) : ''
 
         return (

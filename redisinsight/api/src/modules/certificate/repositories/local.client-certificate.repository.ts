@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { classToClass } from 'src/utils';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -54,14 +54,16 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
   /**
    * @inheritDoc
    */
-  async create(clientCertificate: ClientCertificate): Promise<ClientCertificate> {
-    // todo: use unique constraint and proper error handling to check for duplications
-    const found = await this.repository.findOneBy({ name: clientCertificate.name });
-    if (found) {
-      this.logger.error(
-        `Failed to create certificate: ${clientCertificate.name}. ${ERROR_MESSAGES.CLIENT_CERT_EXIST}`,
-      );
-      throw new BadRequestException(ERROR_MESSAGES.CLIENT_CERT_EXIST);
+  async create(clientCertificate: ClientCertificate, uniqueCheck = true): Promise<ClientCertificate> {
+    if (uniqueCheck) {
+      // todo: use unique constraint and proper error handling to check for duplications
+      const found = await this.repository.findOneBy({ name: clientCertificate.name });
+      if (found) {
+        this.logger.error(
+          `Failed to create certificate: ${clientCertificate.name}. ${ERROR_MESSAGES.CLIENT_CERT_EXIST}`,
+        );
+        throw new BadRequestException(ERROR_MESSAGES.CLIENT_CERT_EXIST);
+      }
     }
 
     const entity = await this.repository.save(
@@ -97,5 +99,21 @@ export class LocalClientCertificateRepository extends ClientCertificateRepositor
     this.logger.debug(`Succeed to delete client certificate: ${id}`);
 
     return { affectedDatabases };
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async cleanupPreSetup(excludeIds?: string[]): Promise<{ affected: number }> {
+    const { affected } = await this.repository
+      .createQueryBuilder()
+      .delete()
+      .where({
+        isPreSetup: true,
+        id: Not(In(excludeIds)),
+      })
+      .execute();
+
+    return { affected };
   }
 }

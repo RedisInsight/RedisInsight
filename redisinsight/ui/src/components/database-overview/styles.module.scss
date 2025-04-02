@@ -1,4 +1,6 @@
 .container {
+  margin: 0;
+
   @media only screen and (max-width: 1124px) {
     .modules {
       margin-left: 0;
@@ -13,9 +15,8 @@
 }
 
 .itemContainer {
-  height: 36px;
+  height: 42px;
   border-radius: 8px;
-  background: var(--euiColorEmptyShade);
   align-items: center;
   justify-content: center;
   margin-left: 6px;
@@ -27,9 +28,9 @@
 }
 
 .overviewItem {
-  min-width: 78px;
-  height: 17px;
-  margin: 10px 0;
+  min-width: 58px;
+
+  padding: 0 14px;
   color: var(--euiTextSubduedColor);
 
   &:not(:last-child) {
@@ -122,11 +123,23 @@
 .autoRefresh {
   padding-top: 0;
   padding-bottom: 0;
-  margin-top: 5px;
-  min-width: 78px;
-  padding-left: 16px;
+  margin-left: -2px; /* adjust for whitespace in the icon */
 
   :global(.popover-without-top-tail) {
     margin-top: 0;
+  }
+}
+
+.upgradeBtnItem {
+  border-right: none;
+  height: 28px;
+}
+
+.upgradeBtn {
+  padding: 0;
+  margin-top: 0;
+
+  :global(.euiButton__text) {
+    font: normal normal 400 14px/18px Graphik, sans-serif !important;
   }
 }

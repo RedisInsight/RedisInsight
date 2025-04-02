@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { connectedInstanceSelector, connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { pubSubSelector } from 'uiSrc/slices/pubsub/pubsub'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
+import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 import EmptyMessagesList from './EmptyMessagesList'
 import MessagesList from './MessagesList'
 
@@ -13,7 +14,7 @@ import styles from './MessagesList/styles.module.scss'
 
 const MessagesListWrapper = () => {
   const { messages = [], isSubscribed } = useSelector(pubSubSelector)
-  const { connectionType } = useSelector(connectedInstanceSelector)
+  const connectionType = useConnectionType()
   const { version } = useSelector(connectedInstanceOverviewSelector)
 
   const [isSpublishNotSupported, setIsSpublishNotSupported] = useState<boolean>(true)

@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 import { BrowserRouter } from 'react-router-dom'
 import configureMockStore from 'redux-mock-store'
-import { render as rtlRender, waitFor } from '@testing-library/react'
+import { render as rtlRender, renderHook as rtlRenderHook, waitFor } from '@testing-library/react'
 
 import { RootState, store as rootStore } from 'uiSrc/slices/store'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
@@ -36,6 +36,7 @@ import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-se
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
 import { initialState as initialStateUserSettings } from 'uiSrc/slices/user/user-settings'
+import { initialState as initialStateUserProfile } from 'uiSrc/slices/user/cloud-user-profile'
 import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb-results'
 import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { initialState as initialStateWBECustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
@@ -111,6 +112,7 @@ const initialStateDefault: RootState = {
   },
   user: {
     settings: cloneDeep(initialStateUserSettings),
+    cloudProfile: cloneDeep(initialStateUserProfile),
   },
   workbench: {
     results: cloneDeep(initialStateWBResults),
@@ -165,6 +167,19 @@ const render = (
   const wrapper = !withRouter ? Wrapper : BrowserRouter
 
   return rtlRender(ui, { wrapper, ...renderOptions })
+}
+
+const renderHook = (
+  hook: (initialProps: unknown) => unknown,
+  { initialState, store = mockedStore, withRouter, ...renderOptions }: Options = initialStateDefault
+) => {
+  const Wrapper = ({ children }: { children: JSX.Element }) => (
+    <Provider store={store}>{children}</Provider>
+  )
+
+  const wrapper = !withRouter ? Wrapper : BrowserRouter
+
+  return rtlRenderHook(hook, { wrapper, ...renderOptions })
 }
 
 // for render components WithRouter
@@ -343,6 +358,7 @@ export * from '@testing-library/react'
 export {
   initialStateDefault,
   render,
+  renderHook,
   renderWithRouter,
   clearStoreActions,
   waitForEuiToolTipVisible,

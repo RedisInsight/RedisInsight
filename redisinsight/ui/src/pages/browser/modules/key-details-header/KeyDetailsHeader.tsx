@@ -36,7 +36,7 @@ import { KeyDetailsHeaderSizeLength } from './components/key-details-header-size
 import styles from './styles.module.scss'
 
 export interface KeyDetailsHeaderProps {
-  onCloseKey: (key: RedisResponseBuffer) => void
+  onCloseKey: () => void
   onRemoveKey: () => void
   onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
   isFullScreen: boolean
@@ -58,7 +58,6 @@ const KeyDetailsHeader = ({
   const {
     type,
     length,
-    nameString: keyProp,
     name: keyBuffer,
   } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
   const { id: instanceId } = useSelector(connectedInstanceSelector)
@@ -142,7 +141,7 @@ const KeyDetailsHeader = ({
                         color="primary"
                         aria-label="Close key"
                         className={styles.closeBtn}
-                        onClick={() => onCloseKey(keyProp)}
+                        onClick={() => onCloseKey()}
                         data-testid="close-key-btn"
                       />
                     </EuiToolTip>

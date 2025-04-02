@@ -10,7 +10,7 @@ interface Props {
 const THEME_NAMES = THEMES.map(({ value }) => value)
 
 export const defaultState = {
-  theme: DEFAULT_THEME || THEME_NAMES[1], // env configured theme or dark theme by default
+  theme: DEFAULT_THEME || Theme.System,
   usingSystemTheme: localStorageService.get(BrowserStorageItem.theme) === Theme.System,
   changeTheme: (themeValue: any) => {
     themeService.applyTheme(themeValue)

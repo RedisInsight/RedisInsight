@@ -77,6 +77,7 @@ export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionR
    */
   processIterationResults(keys, res: [Error | null, RedisClientCommandReply][]) {
     this.summary.addProcessed(res.length);
+    this.summary.addKeys(keys);
 
     const errors = [];
 

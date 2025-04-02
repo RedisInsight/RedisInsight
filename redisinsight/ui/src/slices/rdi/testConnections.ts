@@ -90,7 +90,7 @@ export function testConnectionsAction(
       testConnectionsController = null
 
       if (isStatusSuccessful(status)) {
-        dispatch(testConnectionsSuccess(transformConnectionResults(data?.targets)))
+        dispatch(testConnectionsSuccess(transformConnectionResults(data)))
         onSuccessAction?.()
       }
     } catch (_err) {

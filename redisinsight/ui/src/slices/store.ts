@@ -22,6 +22,7 @@ import cliSettingsReducer from './cli/cli-settings'
 import outputReducer from './cli/cli-output'
 import monitorReducer from './cli/monitor'
 import userSettingsReducer from './user/user-settings'
+import cloudUserProfile from './user/cloud-user-profile'
 import appInfoReducer from './app/info'
 import appInitReducer from './app/init'
 import appConnectivityReducer from './app/connectivity'
@@ -53,6 +54,7 @@ import rdiDryRunJobReducer from './rdi/dryRun'
 import rdiTestConnectionsReducer from './rdi/testConnections'
 import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
+import appDbSettingsReducer from './app/db-settings'
 
 const riConfig = getConfig()
 
@@ -70,7 +72,8 @@ export const rootReducer = combineReducers({
     urlHandling: appUrlHandlingReducer,
     csrf: appCsrfReducer,
     init: appInitReducer,
-    connectivity: appConnectivityReducer
+    connectivity: appConnectivityReducer,
+    dbSettings: appDbSettingsReducer,
   }),
   connections: combineReducers({
     instances: instancesReducer,
@@ -99,6 +102,7 @@ export const rootReducer = combineReducers({
   }),
   user: combineReducers({
     settings: userSettingsReducer,
+    cloudProfile: cloudUserProfile,
   }),
   workbench: combineReducers({
     results: workbenchResultsReducer,

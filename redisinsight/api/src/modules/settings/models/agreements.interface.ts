@@ -9,6 +9,7 @@ export interface IAgreement {
   title?: string;
   label?: string;
   description?: string;
+  requiredText?: string;
   options?: {
     [key: string]: IAgreement;
   }

@@ -14,6 +14,7 @@ import { CloudSubscription } from 'src/modules/cloud/subscription/models';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
 import { SessionMetadata } from 'src/common/models';
+import { FeatureService } from 'src/modules/feature/feature.service';
 import { CloudSubscriptionApiService } from '../../subscription/cloud-subscription.api.service';
 import { CloudSubscriptionPlanResponse } from '../../subscription/dto';
 
@@ -38,6 +39,7 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
       bulkImportService: BulkImportService,
       cloudCapiKeyService: CloudCapiKeyService,
       cloudSubscriptionApiService: CloudSubscriptionApiService,
+      featureService: FeatureService,
     },
   ) {
     super(options);

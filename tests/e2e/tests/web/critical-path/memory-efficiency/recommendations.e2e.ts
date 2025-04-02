@@ -43,7 +43,7 @@ const avoidLogicalDbRecommendation = RecommendationIds.avoidLogicalDatabases;
 const redisVersionRecommendation = RecommendationIds.redisVersion;
 const searchJsonRecommendation = RecommendationIds.searchJson;
 
-fixture `Memory Efficiency Recommendations`
+fixture(`Memory Efficiency Recommendations`)
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {

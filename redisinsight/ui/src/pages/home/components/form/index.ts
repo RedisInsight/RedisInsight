@@ -5,6 +5,8 @@ import DbCompressor from './DbCompressor'
 import TlsDetails from './TlsDetails'
 import DatabaseForm from './DatabaseForm'
 import SSHDetails from './SSHDetails'
+import ForceStandalone from './ForceStandalone'
+import KeyFormatSelector from './KeyFormatSelector'
 
 export {
   DbInfo,
@@ -15,4 +17,6 @@ export {
   DatabaseForm,
   SSHDetails,
   DbCompressor,
+  ForceStandalone,
+  KeyFormatSelector,
 }

@@ -27,7 +27,10 @@ const contentUri = posix.join('/', proxyPath, 'static', 'content');
 const defaultPluginsUri = posix.join('/', proxyPath, 'static', 'plugins');
 const pluginsAssetsUri = posix.join('/', proxyPath, 'static', 'resources', 'plugins');
 
-const socketPath = posix.join('/', proxyPath, 'socket.io');
+const socketProxyPath = trim(process.env.RI_SOCKET_PROXY_PATH, '/');
+
+const socketPath = posix.join('/', socketProxyPath, 'socket.io');
+
 const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'data')
   : join(__dirname, '..', 'data');
@@ -42,6 +45,7 @@ export default {
     defaultsDir,
     logs: join(homedir, 'logs'),
     customConfig: join(homedir, 'config.json'),
+    preSetupDatabases: process.env.RI_PRE_SETUP_DATABASES_PATH || join(homedir, 'databases.json'),
     defaultPlugins: join(staticDir, 'plugins'),
     customPlugins: join(homedir, 'plugins'),
     customTutorials: join(homedir, 'custom-tutorials'),
@@ -80,10 +84,11 @@ export default {
     migrateOldFolders: process.env.RI_MIGRATE_OLD_FOLDERS ? process.env.RI_MIGRATE_OLD_FOLDERS === 'true' : true,
     autoBootstrap: process.env.RI_AUTO_BOOTSTRAP ? process.env.RI_AUTO_BOOTSTRAP === 'true' : true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.66.0',
+    appVersion: process.env.RI_APP_VERSION || '2.68.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
+    databaseManagement: process.env.RI_DATABASE_MANAGEMENT !== 'false',
   },
   statics: {
     initDefaults: process.env.RI_STATICS_INIT_DEFAULTS ? process.env.RI_STATICS_INIT_DEFAULTS === 'true' : true,
@@ -122,6 +127,8 @@ export default {
     maxRetriesPerRequest: parseInt(process.env.RI_CLIENTS_MAX_RETRIES_PER_REQUEST, 10) || 1,
     maxRedirections: parseInt(process.env.RI_CLIENTS_MAX_REDIRECTIONS, 10) || 3,
     slotsRefreshTimeout: parseInt(process.env.RI_CLIENTS_SLOTS_REQUEST_TIMEOUT, 10) || 5000,
+    maxStringSize: parseInt(process.env.RI_CLIENTS_MAX_STRING_SIZE, 10),
+    truncatedStringPrefix: process.env.RI_CLIENTS_TRUNCATED_STRING_PREFIX || '[Truncated due to length]',
   },
   redis_scan: {
     countDefault: parseInt(process.env.RI_SCAN_COUNT_DEFAULT, 10) || 200,
@@ -210,11 +217,6 @@ export default {
         || 'https://raw.githubusercontent.com/RedisTimeSeries/RedisTimeSeries/master/commands.json',
     },
     {
-      name: 'redisai',
-      url: process.env.RI_COMMANDS_REDISAI_URL
-        || 'https://raw.githubusercontent.com/RedisAI/RedisAI/master/commands.json',
-    },
-    {
       name: 'redisgraph',
       url: process.env.RI_COMMANDS_REDISGRAPH_URL
         || 'https://raw.githubusercontent.com/RedisGraph/RedisGraph/master/commands.json',
@@ -252,7 +254,7 @@ export default {
     capiUrl: process.env.RI_CLOUD_CAPI_URL || 'https://api-k8s-cloudapi.qa.redislabs.com/v1',
     capiKeyName: process.env.RI_CLOUD_CAPI_KEY_NAME || 'RedisInsight',
     freeSubscriptionName: process.env.RI_CLOUD_FREE_SUBSCRIPTION_NAME || 'My free subscription',
-    freeDatabaseName: process.env.RI_CLOUD_FREE_DATABASE_NAME || 'Redis-Stack-in-Redis-Enterprise-Cloud',
+    freeDatabaseName: process.env.RI_CLOUD_FREE_DATABASE_NAME || 'Redis-Cloud',
     defaultPlanRegion: process.env.RI_CLOUD_DEFAULT_PLAN_REGION || 'eu-west-1',
     jobIterationInterval: parseInt(process.env.RI_CLOUD_JOB_ITERATION_INTERVAL, 10) || 10_000, // 10 sec
     discoveryTimeout: parseInt(process.env.RI_CLOUD_DISCOVERY_TIMEOUT, 10) || 60 * 1000, // 1 min

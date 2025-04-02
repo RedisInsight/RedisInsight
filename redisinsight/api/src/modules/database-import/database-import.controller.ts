@@ -1,7 +1,7 @@
 import {
   ClassSerializerInterceptor,
   Controller, HttpCode, Post, UploadedFile,
-  UseInterceptors, UsePipes, ValidationPipe
+  UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody, ApiConsumes, ApiResponse, ApiTags,
@@ -9,7 +9,7 @@ import {
 import { DatabaseImportService } from 'src/modules/database-import/database-import.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DatabaseImportResponse } from 'src/modules/database-import/dto/database-import.response';
-import { RequestSessionMetadata } from 'src/common/decorators';
+import { DatabaseManagement, RequestSessionMetadata } from 'src/common/decorators';
 import { SessionMetadata } from 'src/common/models';
 
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -35,6 +35,7 @@ export class DatabaseImportController {
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('file'))
   @ApiResponse({ type: DatabaseImportResponse })
+  @DatabaseManagement()
   async import(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @UploadedFile() file: any,

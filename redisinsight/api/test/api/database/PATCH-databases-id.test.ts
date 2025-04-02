@@ -64,7 +64,9 @@ const baseDatabaseData = {
   password: constants.TEST_REDIS_PASSWORD || undefined,
 }
 
-const responseSchema = databaseSchema.required().strict(true);
+const responseSchema = databaseSchema.keys({
+  isPreSetup: Joi.boolean().allow(null),
+}).required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 

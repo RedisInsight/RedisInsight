@@ -3,11 +3,13 @@ import { Chance } from 'chance';
 import editJsonFile from 'edit-json-file';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
-import { commonUrl, workingDirectory } from '../../../../helpers/conf';
+import {commonUrl, ossStandaloneConfig, workingDirectory} from '../../../../helpers/conf';
+import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
 const chance = new Chance();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 if (fs.existsSync(workingDirectory)) {
     const timestampPromoButtonPath = `${workingDirectory}/content/build.json`;
@@ -26,17 +28,17 @@ if (fs.existsSync(workingDirectory)) {
     timestampPromoButtonFile.save();
 
     fixture `Auto-update in Promo Button`
-        .meta({ type: 'critical_path' })
+        .meta({ type: 'critical_path', skipComment: "Skipped because it is not run in the CI" })
         .page(commonUrl)
         .beforeEach(async() => {
             await databaseHelper.acceptLicenseTerms();
         });
-    test('Verify that user has the ability to update "Create free database" button without changing the app', async t => {
+    test.skip('Verify that user has the ability to update "Create free trial database" button without changing the app', async t => {
         // Create new file paths due to cache-ability
         const timestampPathNew = editJsonFile(timestampPromoButtonPath);
         const contentPathNew = editJsonFile(contentPromoButtonPath);
         // Check the promo button after the opening of app
-        await t.expect(myRedisDatabasePage.promoButton.textContent).notContains(newPromoButtonText, 'Promo button text is not updated');
+        await t.expect(myRedisDatabasePage.promoButton.textContent).notContains(newPromoButtonText, 'Promo button text is not updated'); // TODO: - check what is with this promo button
         // Get the values from build.json and create-redis.json files
         const actualTimestamp = await timestampPathNew.get('timestamp');
         const actualPromoButtonTitle = await contentPathNew.get('cloud.title');

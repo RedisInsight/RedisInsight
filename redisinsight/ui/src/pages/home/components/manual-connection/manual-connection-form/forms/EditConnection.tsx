@@ -1,10 +1,17 @@
 import React from 'react'
 import { EuiForm } from '@elastic/eui'
 import { FormikProps } from 'formik'
-import { DatabaseForm, DbCompressor, DbIndex, SSHDetails, TlsDetails } from 'uiSrc/pages/home/components/form'
+import {
+  DatabaseForm,
+  DbIndex,
+  ForceStandalone,
+  SSHDetails,
+  TlsDetails,
+} from 'uiSrc/pages/home/components/form'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BuildType } from 'uiSrc/constants/env'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import DecompressionAndFormatters from './DecompressionAndFormatters'
 
 import { ManualFormTab } from '../constants'
 
@@ -32,7 +39,7 @@ const EditConnection = (props: Props) => {
     onHostNamePaste,
     certificates,
     caCertificates,
-    buildType
+    buildType,
   } = props
 
   return (
@@ -55,12 +62,20 @@ const EditConnection = (props: Props) => {
             autoFocus={!isCloneMode && isEditMode}
             onHostNamePaste={onHostNamePaste}
           />
+          <Divider
+            colorVariable="separatorColor"
+            variant="fullWidth"
+            className="form__divider"
+          />
+          <ForceStandalone formik={formik} />
           {isCloneMode && (
             <>
-              <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
-              <DbIndex
-                formik={formik}
+              <Divider
+                colorVariable="separatorColor"
+                variant="fullWidth"
+                className="form__divider"
               />
+              <DbIndex formik={formik} />
             </>
           )}
         </>
@@ -74,18 +89,18 @@ const EditConnection = (props: Props) => {
           />
           {buildType !== BuildType.RedisStack && (
             <>
-              <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
-              <SSHDetails
-                formik={formik}
+              <Divider
+                colorVariable="separatorColor"
+                variant="fullWidth"
+                className="form__divider"
               />
+              <SSHDetails formik={formik} />
             </>
           )}
         </>
       )}
       {activeTab === ManualFormTab.Decompression && (
-        <DbCompressor
-          formik={formik}
-        />
+        <DecompressionAndFormatters formik={formik} />
       )}
     </EuiForm>
   )

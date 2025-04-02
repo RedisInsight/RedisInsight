@@ -4,7 +4,6 @@ import {
   mockCommandsJsonProvider,
   mockMainCommands,
   mockRedijsonCommands,
-  mockRedisaiCommands,
   mockRedisearchCommands,
   mockRedisgraphCommands,
   mockRedistimeseriesCommands,
@@ -19,7 +18,6 @@ describe('CommandsService', () => {
   const redisearchCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
   const redijsonCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
   const redistimeseriesCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
-  const redisaiCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
   const redisgraphCommandsProvider: MockType<CommandsJsonProvider> = mockCommandsJsonProvider();
 
   beforeEach(async () => {
@@ -30,7 +28,6 @@ describe('CommandsService', () => {
       redisearchCommandsProvider,
       redijsonCommandsProvider,
       redistimeseriesCommandsProvider,
-      redisaiCommandsProvider,
       redisgraphCommandsProvider,
     ];
 
@@ -50,7 +47,6 @@ describe('CommandsService', () => {
     redisearchCommandsProvider.getCommands.mockResolvedValue({ search: mockRedisearchCommands });
     redijsonCommandsProvider.getCommands.mockResolvedValue({ json: mockRedijsonCommands });
     redistimeseriesCommandsProvider.getCommands.mockResolvedValue({ timeseries: mockRedistimeseriesCommands });
-    redisaiCommandsProvider.getCommands.mockResolvedValue({ sai: mockRedisaiCommands });
     redisgraphCommandsProvider.getCommands.mockResolvedValue({ graph: mockRedisgraphCommands });
   });
 
@@ -62,7 +58,6 @@ describe('CommandsService', () => {
       expect(redisearchCommandsProvider.updateLatestJson).toHaveBeenCalled();
       expect(redijsonCommandsProvider.updateLatestJson).toHaveBeenCalled();
       expect(redistimeseriesCommandsProvider.updateLatestJson).toHaveBeenCalled();
-      expect(redisaiCommandsProvider.updateLatestJson).toHaveBeenCalled();
       expect(redisgraphCommandsProvider.updateLatestJson).toHaveBeenCalled();
     });
   });
@@ -73,7 +68,6 @@ describe('CommandsService', () => {
         ...mockRedisearchCommands,
         ...mockRedijsonCommands,
         ...mockRedistimeseriesCommands,
-        ...mockRedisaiCommands,
         ...mockRedisgraphCommands,
         ...mockMainCommands,
       });
@@ -86,7 +80,6 @@ describe('CommandsService', () => {
         search: { ...mockRedisearchCommands },
         json: { ...mockRedijsonCommands },
         timeseries: { ...mockRedistimeseriesCommands },
-        sai: { ...mockRedisaiCommands },
         graph: { ...mockRedisgraphCommands },
         main: { ...mockMainCommands },
       });

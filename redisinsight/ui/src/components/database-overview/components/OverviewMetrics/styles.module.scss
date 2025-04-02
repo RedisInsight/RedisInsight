@@ -7,12 +7,6 @@
 .cpuWrapper {
   min-width: 96px;
 
-  @media only screen and (max-width: 1200px) {
-    display: none !important;
-  }
-}
-
-.opsPerSecItem {
   @media only screen and (max-width: 992px) {
     display: none !important;
   }

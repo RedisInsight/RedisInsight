@@ -12,6 +12,7 @@ FROM node:20.14-alpine as build
 RUN apk update && apk add --no-cache --virtual .gyp \
         python3 \
         make \
+        git \
         g++
 
 # set workdir
@@ -19,6 +20,9 @@ WORKDIR /usr/src/app
 
 # restore node_modules for front-end
 COPY package.json yarn.lock tsconfig.json ./
+COPY patches ./patches
+COPY redisinsight/ui/vite.config.mjs ./redisinsight/ui/
+COPY redisinsight/ui/src/config ./redisinsight/ui/src/config
 RUN SKIP_POSTINSTALL=1 yarn install
 
 # prepare backend by copying scripts/configs and installing node modules

@@ -49,7 +49,7 @@ describe('PUT /cloud/me/accounts/:id/current', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(body).to.deep.eq(mockCloudUserSafe);
+          expect(body).to.deepEqualIgnoreUndefined(mockCloudUserSafe);
         },
       },
       {
@@ -63,7 +63,7 @@ describe('PUT /cloud/me/accounts/:id/current', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(body).to.deep.eq(mockCloudUserSafe);
+          expect(body).to.deepEqualIgnoreUndefined(mockCloudUserSafe);
         },
       },
       {

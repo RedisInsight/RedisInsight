@@ -44,6 +44,7 @@ export const databaseSchema = Joi.object().keys({
   verifyServerCert: Joi.boolean().allow(null),
   caCert: caCertSchema.strict(true).allow(null),
   clientCert: clientCertSchema.strict(true).allow(null),
+  keyNameFormat: Joi.string().valid('Unicode', 'HEX').allow(null),
   sentinelMaster: Joi.object({
     name: Joi.string().required(),
     username: Joi.string().allow(null),
@@ -59,6 +60,7 @@ export const databaseSchema = Joi.object().keys({
     semanticVersion: Joi.string(),
   }).allow(null),
   ssh: Joi.boolean().allow(null),
+  forceStandalone: Joi.boolean().allow(null),
   sshOptions: Joi.object({
     id: Joi.string().allow(null),
     host: Joi.string().required(),

@@ -314,7 +314,7 @@ describe('KeysService', () => {
 
       await expect(
         service.deleteKeys(mockBrowserClientMetadata, keyNames),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
     });
     it("user don't have required permissions for deleteKeys", async () => {
       const replyError: ReplyError = {

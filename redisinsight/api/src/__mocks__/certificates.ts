@@ -38,6 +38,7 @@ export const mockCaCertificateRepository = jest.fn(() => ({
   ]),
   create: jest.fn().mockResolvedValue(mockCaCertificate),
   delete: jest.fn().mockResolvedValue(undefined),
+  cleanupPreSetup: jest.fn().mockResolvedValue({ affected: 0 }),
 }));
 
 export const mockCaCertificateService = jest.fn(() => ({
@@ -81,6 +82,7 @@ export const mockClientCertificateRepository = jest.fn(() => ({
   ]),
   create: jest.fn().mockResolvedValue(mockClientCertificate),
   delete: jest.fn().mockResolvedValue(undefined),
+  cleanupPreSetup: jest.fn().mockResolvedValue({ affected: 0 }),
 }));
 
 export const mockClientCertificateService = jest.fn(() => ({

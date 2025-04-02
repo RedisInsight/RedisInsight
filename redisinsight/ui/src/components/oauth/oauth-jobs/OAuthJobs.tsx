@@ -72,6 +72,17 @@ const OAuthJobs = () => {
 
             break
 
+          case CustomErrorCodes.CloudDatabaseImportForbidden:
+            sendEventTelemetry({
+              event: TelemetryEvent.CLOUD_IMPORT_DATABASE_FORBIDDEN,
+            })
+
+            dispatch(addInfiniteNotification(
+              INFINITE_MESSAGES.DATABASE_IMPORT_FORBIDDEN(closeDatabaseImportForbidden)
+            ))
+
+            break
+
           case CustomErrorCodes.CloudSubscriptionAlreadyExistsFree:
             dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUBSCRIPTION_EXISTS(
               () => createFreeDatabase(subscriptionId),
@@ -121,6 +132,11 @@ const OAuthJobs = () => {
         dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
       }
     }))
+  }
+
+  const closeDatabaseImportForbidden = () => {
+    dispatch(setSSOFlow())
+    dispatch(removeInfiniteNotification(InfiniteMessagesIds.databaseImportForbidden))
   }
 
   const closeImportDatabase = () => {

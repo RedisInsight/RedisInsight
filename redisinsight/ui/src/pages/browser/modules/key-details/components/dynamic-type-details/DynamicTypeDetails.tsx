@@ -1,6 +1,10 @@
 import React from 'react'
 import { KeyTypes, MODULES_KEY_TYPES_NAMES, ModulesKeyTypes } from 'uiSrc/constants'
 import { KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { isTruncatedString } from 'uiSrc/utils'
+import TooLongKeyNameDetails
+  from 'uiSrc/pages/browser/modules/key-details/components/too-long-key-name-details/TooLongKeyNameDetails'
 import ModulesTypeDetails from '../modules-type-details/ModulesTypeDetails'
 import UnsupportedTypeDetails from '../unsupported-type-details/UnsupportedTypeDetails'
 import { RejsonDetailsWrapper } from '../rejson-details'
@@ -15,10 +19,11 @@ export interface Props extends KeyDetailsHeaderProps {
   onOpenAddItemPanel: () => void
   onCloseAddItemPanel: () => void
   keyType: KeyTypes | ModulesKeyTypes
+  keyProp: RedisResponseBuffer | null
 }
 
 const DynamicTypeDetails = (props: Props) => {
-  const { keyType: selectedKeyType } = props
+  const { keyType: selectedKeyType, keyProp } = props
 
   const TypeDetails: any = {
     [KeyTypes.ZSet]: <ZSetDetails {...props} />,
@@ -30,6 +35,10 @@ const DynamicTypeDetails = (props: Props) => {
     [KeyTypes.Stream]: <StreamDetails {...props} />,
   }
 
+  if (isTruncatedString(keyProp)) {
+    return <TooLongKeyNameDetails onClose={ props.onCloseKey }/>
+  }
+
   // Supported key type
   if (selectedKeyType && selectedKeyType in TypeDetails) {
     return TypeDetails[selectedKeyType]
@@ -37,11 +46,11 @@ const DynamicTypeDetails = (props: Props) => {
 
   // Unsupported redis modules key type
   if (Object.values(ModulesKeyTypes).includes(selectedKeyType as ModulesKeyTypes)) {
-    return <ModulesTypeDetails moduleName={MODULES_KEY_TYPES_NAMES[selectedKeyType]} />
+    return <ModulesTypeDetails moduleName={MODULES_KEY_TYPES_NAMES[selectedKeyType]} onClose={ props.onCloseKey }/>
   }
 
   // Unsupported key type
-  return <UnsupportedTypeDetails />
+  return <UnsupportedTypeDetails onClose={ props.onCloseKey }/>
 }
 
 export { DynamicTypeDetails }

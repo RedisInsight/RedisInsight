@@ -15,7 +15,6 @@ import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monito
 import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
 import { LocalDatabaseModule } from 'src/local-database.module';
 import { CoreModule } from 'src/core.module';
-import { AutodiscoveryModule } from 'src/modules/autodiscovery/autodiscovery.module';
 import { DatabaseImportModule } from 'src/modules/database-import/database-import.module';
 import { SingleUserAuthMiddleware } from 'src/common/middlewares/single-user-auth.middleware';
 import { CustomTutorialModule } from 'src/modules/custom-tutorial/custom-tutorial.module';
@@ -36,6 +35,7 @@ import SubpathProxyMiddleware from './middleware/subpath-proxy.middleware';
 import XFrameOptionsMiddleware from './middleware/x-frame-options.middleware';
 import { routes } from './app.routes';
 import { RedisConnectionMiddleware, redisConnectionControllers } from './middleware/redis-connection';
+import { DatabaseSettingsModule } from './modules/database-settings/database-settings.module';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -46,7 +46,6 @@ const STATICS_CONFIG = config.get('statics') as Config['statics'];
     LocalDatabaseModule,
     CoreModule,
     RouterModule.register(routes),
-    AutodiscoveryModule,
     RedisEnterpriseModule,
     CloudModule.register(),
     RedisSentinelModule,
@@ -72,7 +71,8 @@ const STATICS_CONFIG = config.get('statics') as Config['statics'];
       initDefaults: STATICS_CONFIG.initDefaults,
       autoUpdate: STATICS_CONFIG.autoUpdate,
     }),
-    InitModule.register([AutodiscoveryModule, AnalyticsModule]),
+    InitModule.register([AnalyticsModule]),
+    DatabaseSettingsModule.register(),
   ],
   controllers: [],
   providers: [],

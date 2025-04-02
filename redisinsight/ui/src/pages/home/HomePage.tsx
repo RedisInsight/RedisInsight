@@ -163,10 +163,15 @@ const HomePage = () => {
   }, [instances])
 
   const handleOpenPage = (instances: Instance[]) => {
+    const instancesWithTagsCount = instances.filter(
+      (instance) => instance.tags && instance.tags.length > 0,
+    ).length
+
     sendPageViewTelemetry({
       name: TelemetryPageView.DATABASES_LIST_PAGE,
       eventData: {
         instancesCount: instances.length,
+        instancesWithTagsCount,
       },
     })
   }

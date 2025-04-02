@@ -50,15 +50,22 @@ export class LocalTagRepository implements TagRepository {
   }
 
   async cleanupUnusedTags(): Promise<void> {
-    const tagsToDelete = await this.repository
+    await this.repository
       .createQueryBuilder('tag')
       .leftJoin('tag.databases', 'database')
-      .groupBy('tag.id')
-      .having('COUNT(database.id) == 0')
-      .getMany();
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('tag.id')
+          .from('tag', 'tag')
+          .leftJoin('tag.databases', 'database')
+          .groupBy('tag.id')
+          .having('COUNT(database.id) = 0')
+          .getQuery();
 
-    for (const tag of tagsToDelete) {
-      await this.delete(tag.id);
-    }
+        return `tag.id IN ${subQuery}`;
+      })
+      .delete()
+      .execute();
   }
 }

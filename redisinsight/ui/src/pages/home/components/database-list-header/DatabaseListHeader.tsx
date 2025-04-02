@@ -221,6 +221,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                     anchorPosition="downLeft"
                     isOpen={columnsConfigShown}
                     closePopover={() => setColumnsConfigShown(false)}
+                    data-testid='columns-config-popover'
                     button={
                       <EuiButton
                         size="m"
@@ -228,7 +229,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                         iconType={ColumnsIcon}
                         onClick={toggleColumnsConfigVisibility}
                         className={styles.columnsButton}
-                        data-testid="btn-columns-actions"
+                        data-testid="btn-columns-config"
                         aria-label="columns"
                       >
                         <span>Columns</span>

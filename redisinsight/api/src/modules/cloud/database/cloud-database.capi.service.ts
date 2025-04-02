@@ -36,8 +36,10 @@ export class CloudDatabaseCapiService {
     try {
       this.logger.debug('Getting cloud database', dto);
 
-      const database = await this.capi.getDatabase(authDto, dto);
-      const tags = await this.capi.getDatabaseTags(authDto, dto);
+      const [database, tags] = await Promise.all([
+        this.capi.getDatabase(authDto, dto),
+        this.capi.getDatabaseTags(authDto, dto),
+      ]);
 
       this.logger.debug('Succeed to get databases in RE cloud subscription.');
 

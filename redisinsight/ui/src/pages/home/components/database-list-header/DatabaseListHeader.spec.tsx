@@ -1,8 +1,30 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { render, screen } from 'uiSrc/utils/test-utils'
+
+import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { ConnectionType, Instance } from 'uiSrc/slices/interfaces'
+import { DatabaseListColumn } from 'uiSrc/constants'
+
 import DatabaseListHeader, { Props } from './DatabaseListHeader'
+
+const mockInstances: Instance[] = [
+  {
+    id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
+    host: 'localhost',
+    port: 6379,
+    name: 'localhost',
+    username: null,
+    password: null,
+    connectionType: ConnectionType.Standalone,
+    nameFromProvider: null,
+    new: true,
+    modules: [],
+    version: null,
+    lastConnection: new Date('2021-04-22T09:03:56.917Z'),
+    provider: 'provider'
+  }
+]
 
 const mockedProps = mock<Props>()
 
@@ -18,6 +40,27 @@ jest.mock('uiSrc/slices/app/features', () => ({
     cloudAds: {
       flag: true,
     },
+  }),
+}))
+
+const mockShownColumns: DatabaseListColumn[] = [
+  DatabaseListColumn.Name,
+  DatabaseListColumn.Controls,
+]
+
+const mockHiddenColumns: DatabaseListColumn[] = [
+  DatabaseListColumn.Host,
+  DatabaseListColumn.ConnectionType,
+  DatabaseListColumn.LastConnection,
+  DatabaseListColumn.Modules,
+]
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  instancesSelector: jest.fn().mockReturnValue({
+    loading: false,
+    shownColumns: ['name', 'controls'],
+    data: [...mockInstances],
   }),
 }))
 
@@ -90,5 +133,26 @@ describe('DatabaseListHeader', () => {
     )
 
     expect(queryByTestId('add-redis-database-short')).not.toBeInTheDocument()
+  })
+
+  it('should show checkbox when columns config button is clicked', async () => {
+    render(<DatabaseListHeader {...instance(mockedProps)} />)
+
+    fireEvent.click(screen.getByTestId('btn-columns-config'))
+
+    const popover = await screen.findByTestId('columns-config-popover')
+    expect(popover).toBeInTheDocument()
+
+    mockShownColumns.forEach(column => {
+      const checkbox = screen.getByTestId(`show-${column}`)
+      expect(checkbox).toBeInTheDocument()
+      expect(checkbox).toBeChecked()
+    })
+
+    mockHiddenColumns.forEach(column => {
+      const checkbox = screen.getByTestId(`show-${column}`)
+      expect(checkbox).toBeInTheDocument()
+      expect(checkbox).not.toBeChecked()
+    })
   })
 })

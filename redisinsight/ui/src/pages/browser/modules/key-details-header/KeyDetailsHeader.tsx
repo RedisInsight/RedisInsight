@@ -34,7 +34,6 @@ import { KeyDetailsHeaderName } from './components/key-details-header-name'
 import { KeyDetailsHeaderTTL } from './components/key-details-header-ttl'
 import { KeyDetailsHeaderDelete } from './components/key-details-header-delete'
 import { KeyDetailsHeaderSizeLength } from './components/key-details-header-size-length'
-import ChangeEditorTypeButton from '../key-details/components/change-editor-type-button'
 
 import styles from './styles.module.scss'
 
@@ -182,7 +181,6 @@ const KeyDetailsHeader = ({
                 <KeyDetailsHeaderTTL onEditTTL={handleEditTTL} />
                 <EuiFlexItem>
                   <div className={styles.subtitleActionBtns}>
-                    <ChangeEditorTypeButton />
                     <AutoRefresh
                       postfix={type}
                       disabled={isRefreshDisabled}

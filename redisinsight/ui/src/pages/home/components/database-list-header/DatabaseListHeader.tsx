@@ -170,6 +170,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const columnCheckboxes = Array.from(COLUMN_FIELD_NAME_MAP.entries()).map(
     ([field, name]) => (
       <EuiCheckbox
+        key={`show-${field}`}
         id={`show-${field}`}
         name={`show-${field}`}
         label={name}

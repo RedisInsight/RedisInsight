@@ -54,14 +54,14 @@ const mockedProps: Props<Instance> = {
   width: 0,
   editedInstance: null,
   columns: columnsMock,
-  onDelete: () => {},
-  onExport: () => {},
-  onWheel: () => {},
-  onTableChange: () => {},
+  onDelete: () => { },
+  onExport: () => { },
+  onWheel: () => { },
+  onTableChange: () => { },
   sort: {
     field: 'subscriptionId',
     direction: 'asc'
-  }
+  },
 }
 
 describe('ItemList', () => {
@@ -147,5 +147,39 @@ describe('ItemList', () => {
     const div = container.querySelector('.itemList')
 
     expect(div).toHaveClass('hideSelectableCheckboxes')
+  })
+
+  it('Database Alias / name column should not be available in the table', async () => {
+    const partialColumnsMock: EuiTableFieldDataColumnType<Instance>[] = [
+      {
+        field: 'name',
+        className: 'column_name',
+        name: 'Database Alias',
+        dataType: 'string',
+        sortable: true,
+        width: '170px',
+        truncateText: true,
+      }, {
+        field: 'host',
+        className: 'column_host',
+        name: 'Host:Port',
+        dataType: 'string',
+        sortable: true,
+        width: '170px',
+        truncateText: true,
+      },
+    ]
+
+    render(<ItemList {...mockedProps} columns={partialColumnsMock} />)
+
+    const nameColumnHeader = screen.queryByTitle('Database Alias')
+    const hostColumnHeader = screen.queryByTitle('Host:Port')
+
+    const connectionTypeColumnHeader = screen.queryByTitle('Connection Type')
+
+    expect(nameColumnHeader).toBeInTheDocument()
+    expect(hostColumnHeader).toBeInTheDocument()
+
+    expect(connectionTypeColumnHeader).not.toBeInTheDocument()
   })
 })

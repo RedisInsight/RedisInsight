@@ -1,10 +1,13 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { cloneDeep } from 'lodash'
 
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { ConnectionType, Instance } from 'uiSrc/slices/interfaces'
 import { DatabaseListColumn } from 'uiSrc/constants'
+import { setShownColumns } from 'uiSrc/slices/instances/instances'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import DatabaseListHeader, { Props } from './DatabaseListHeader'
 
@@ -45,21 +48,21 @@ jest.mock('uiSrc/slices/app/features', () => ({
 
 const mockShownColumns: DatabaseListColumn[] = [
   DatabaseListColumn.Name,
+  DatabaseListColumn.Host,
   DatabaseListColumn.Controls,
 ]
 
 const mockHiddenColumns: DatabaseListColumn[] = [
-  DatabaseListColumn.Host,
   DatabaseListColumn.ConnectionType,
-  DatabaseListColumn.LastConnection,
   DatabaseListColumn.Modules,
+  DatabaseListColumn.LastConnection,
 ]
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   instancesSelector: jest.fn().mockReturnValue({
     loading: false,
-    shownColumns: ['name', 'controls'],
+    shownColumns: ['name', 'host', 'controls'],
     data: [...mockInstances],
   }),
 }))
@@ -87,6 +90,13 @@ jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
 }))
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('DatabaseListHeader', () => {
   it('should render', () => {
@@ -135,7 +145,7 @@ describe('DatabaseListHeader', () => {
     expect(queryByTestId('add-redis-database-short')).not.toBeInTheDocument()
   })
 
-  it('should show checkbox when columns config button is clicked', async () => {
+  it('should show checkboxes with the right checked state when columns config button is clicked', async () => {
     render(<DatabaseListHeader {...instance(mockedProps)} />)
 
     fireEvent.click(screen.getByTestId('btn-columns-config'))
@@ -153,6 +163,51 @@ describe('DatabaseListHeader', () => {
       const checkbox = screen.getByTestId(`show-${column}`)
       expect(checkbox).toBeInTheDocument()
       expect(checkbox).not.toBeChecked()
+    })
+  })
+
+  it('should dispatch setShownColumns action when checkbox clicked', async () => {
+    render(<DatabaseListHeader {...instance(mockedProps)} />)
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('btn-columns-config'))
+
+    const popover = await screen.findByTestId('columns-config-popover')
+    expect(popover).toBeInTheDocument()
+
+    const checkbox = screen.getByTestId('show-name')
+    expect(checkbox).toBeInTheDocument()
+
+    fireEvent.click(checkbox)
+
+    const expectedActions = [setShownColumns(['host', 'controls'])]
+    expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
+  })
+
+  it('should log telemetry event when columns config changed', async () => {
+    const sendEventTelemetryMock = sendEventTelemetry as jest.Mock
+
+    render(<DatabaseListHeader {...instance(mockedProps)} />)
+
+    fireEvent.click(screen.getByTestId('btn-columns-config'))
+
+    const popover = await screen.findByTestId('columns-config-popover')
+    expect(popover).toBeInTheDocument()
+
+    const checkbox = screen.getByTestId('show-host')
+    expect(checkbox).toBeInTheDocument()
+
+    // clicking this checkbox will hide the column
+    fireEvent.click(checkbox)
+
+    expect(sendEventTelemetryMock).toBeCalledWith({
+      event: TelemetryEvent.DATABASE_LIST_COLUMNS_CLICKED,
+      eventData: {
+        shown: [],
+        hidden: [
+          DatabaseListColumn.Host,
+        ]
+      },
     })
   })
 })

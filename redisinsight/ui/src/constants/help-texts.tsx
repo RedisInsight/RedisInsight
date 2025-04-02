@@ -1,10 +1,12 @@
 import React from 'react'
 import { EuiIcon, EuiText } from '@elastic/eui'
 import { FeatureFlagComponent } from 'uiSrc/components'
-import { FeatureFlags } from './featureFlags'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import styles from 'uiSrc/pages/browser/components/popover-delete/styles.module.scss'
+import { CloudLink } from 'uiSrc/components/markdown'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { FeatureFlags } from './featureFlags'
 
 export default {
   REJSON_SHOULD_BE_LOADED: (
@@ -16,8 +18,9 @@ export default {
       <FeatureFlagComponent name={FeatureFlags.cloudAds}>
         <>You can also create a
           {' '}
-          <a href="https://redis.io/try-free/" target="_blank" rel="noreferrer">free trial Redis Cloud database</a>
+          <CloudLink text="free trial Redis Cloud database" url={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: 'json_module'})} />
           {' '}
+
           with built-in JSON support.
         </>
       </FeatureFlagComponent>

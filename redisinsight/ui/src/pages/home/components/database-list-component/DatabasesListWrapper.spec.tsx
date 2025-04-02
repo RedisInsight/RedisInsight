@@ -12,8 +12,14 @@ import {
   RedisCloudSubscriptionType,
 } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
 import { mswServer } from 'uiSrc/mocks/server'
 import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
@@ -213,10 +219,17 @@ describe('DatabasesListWrapper', () => {
   })
 
   it('should call proper telemetry on list sort', async () => {
-    const sendEventTelemetryMock = jest.fn()
-
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} onEditInstance={() => { }} />)
+    const sendEventTelemetryMock = jest
+      .fn()
+      (sendEventTelemetry as jest.Mock)
+      .mockImplementation(() => sendEventTelemetryMock)
+    render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+        onEditInstance={() => {}}
+      />,
+    )
 
     await act(() => {
       fireEvent.click(screen.getByTestId('onTableChange-btn'))

@@ -3,11 +3,12 @@ import { useDispatch } from 'react-redux'
 import { EuiButton, EuiFlexItem } from '@elastic/eui'
 import { monaco } from 'react-monaco-editor'
 
+import { EditorType } from 'uiSrc/slices/interfaces'
 import {
   MonacoEditor as Editor,
   useMonacoValidation,
 } from 'uiSrc/components/monaco-editor'
-import { setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
+import { setEditorType, setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
 import { BaseProps } from '../interfaces'
 import styles from '../styles.module.scss'
 
@@ -34,6 +35,10 @@ const MonacoEditor = (props: BaseProps) => {
     dispatch(setReJSONDataAction(selectedKey, ROOT_PATH, value, false, length))
   }
 
+  const goBack = () => {
+    dispatch(setEditorType(EditorType.Default))
+  }
+
   return (
     <div className={styles.jsonData} id="jsonData" data-testid="json-data">
       <Editor
@@ -48,6 +53,14 @@ const MonacoEditor = (props: BaseProps) => {
       />
 
       <EuiFlexItem className={styles.actions}>
+        <EuiButton
+          onClick={goBack}
+          color="danger"
+          data-testid="json-data-cancel-btn"
+        >
+          Cancel
+        </EuiButton>
+
         <EuiButton
           onClick={submitUpdate}
           fill

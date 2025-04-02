@@ -2,8 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TagService } from './tag.service';
 import { TagRepository } from './repository/tag.repository';
 import { Tag } from './models/tag';
-import { CreateTagDto, UpdateTagDto } from './dto';
 import { NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  mockTags,
+  createTagDto,
+  mockTagsRepository,
+  updateTagDto,
+} from 'src/__mocks__';
 
 describe('TagService', () => {
   let service: TagService;
@@ -15,14 +20,7 @@ describe('TagService', () => {
         TagService,
         {
           provide: TagRepository,
-          useValue: {
-            create: jest.fn(),
-            list: jest.fn(),
-            get: jest.fn(),
-            getByKeyValuePair: jest.fn(),
-            update: jest.fn(),
-            delete: jest.fn(),
-          },
+          useFactory: mockTagsRepository,
         },
       ],
     }).compile();
@@ -37,8 +35,10 @@ describe('TagService', () => {
 
   describe('create', () => {
     it('should create a new tag', async () => {
-      const createTagDto: CreateTagDto = { key: 'key1', value: 'value1' };
-      const tag: Tag = { id: '1', ...createTagDto, createdAt: new Date(), updatedAt: new Date() };
+      const tag: Tag = {
+        ...mockTags[0],
+        ...createTagDto,
+      };
       jest.spyOn(repository, 'create').mockResolvedValue(tag);
 
       const result = await service.create(createTagDto);
@@ -47,26 +47,26 @@ describe('TagService', () => {
     });
 
     it('should throw ConflictException if tag already exists', async () => {
-      const createTagDto: CreateTagDto = { key: 'key1', value: 'value1' };
       jest.spyOn(repository, 'create').mockRejectedValue({ code: '2067' });
 
-      await expect(service.create(createTagDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createTagDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
   describe('list', () => {
     it('should return a list of tags', async () => {
-      const tags: Tag[] = [{ id: '1', key: 'key1', value: 'value1', createdAt: new Date(), updatedAt: new Date() }];
-      jest.spyOn(repository, 'list').mockResolvedValue(tags);
+      jest.spyOn(repository, 'list').mockResolvedValue(mockTags);
 
       const result = await service.list();
-      expect(result).toEqual(tags);
+      expect(result).toEqual(mockTags);
     });
   });
 
   describe('get', () => {
     it('should return a tag by id', async () => {
-      const tag: Tag = { id: '1', key: 'key1', value: 'value1', createdAt: new Date(), updatedAt: new Date() };
+      const tag: Tag = mockTags[0];
       jest.spyOn(repository, 'get').mockResolvedValue(tag);
 
       const result = await service.get('1');
@@ -82,24 +82,28 @@ describe('TagService', () => {
 
   describe('getByKeyValuePair', () => {
     it('should return a tag by key-value pair', async () => {
-      const tag: Tag = { id: '1', key: 'key1', value: 'value1', createdAt: new Date(), updatedAt: new Date() };
+      const tag: Tag = mockTags[0];
       jest.spyOn(repository, 'getByKeyValuePair').mockResolvedValue(tag);
 
-      const result = await service.getByKeyValuePair('key1', 'value1');
+      const result = await service.getByKeyValuePair(tag.key, tag.value);
       expect(result).toEqual(tag);
     });
 
     it('should throw NotFoundException if tag not found', async () => {
       jest.spyOn(repository, 'getByKeyValuePair').mockResolvedValue(null);
 
-      await expect(service.getByKeyValuePair('key1', 'value1')).rejects.toThrow(NotFoundException);
+      await expect(service.getByKeyValuePair('key1', 'value1')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('getOrCreateByKeyValuePairs', () => {
     it('should return existing tags or create new ones', async () => {
-      const createTagDto: CreateTagDto = { key: 'key1', value: 'value1' };
-      const tag: Tag = { id: '1', ...createTagDto, createdAt: new Date(), updatedAt: new Date() };
+      const tag: Tag = {
+        ...mockTags[0],
+        ...createTagDto,
+      };
       jest.spyOn(service, 'getByKeyValuePair').mockResolvedValueOnce(tag);
       jest.spyOn(service, 'create').mockResolvedValueOnce(tag);
 
@@ -110,8 +114,13 @@ describe('TagService', () => {
 
   describe('update', () => {
     it('should update a tag', async () => {
-      const updateTagDto: UpdateTagDto = { key: 'updatedKey', value: 'updatedValue' };
-      const tag: Tag = { id: '1', ...updateTagDto, createdAt: new Date(), updatedAt: new Date(), databases: [] } as Tag;
+      const tag: Tag = {
+        id: '1',
+        ...updateTagDto,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        databases: [],
+      } as Tag;
       jest.spyOn(repository, 'update').mockResolvedValue(undefined);
       jest.spyOn(repository, 'get').mockResolvedValue(tag);
 
@@ -123,8 +132,6 @@ describe('TagService', () => {
 
   describe('delete', () => {
     it('should delete a tag', async () => {
-      jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
-
       await service.delete('1');
       expect(repository.delete).toHaveBeenCalledWith('1');
     });

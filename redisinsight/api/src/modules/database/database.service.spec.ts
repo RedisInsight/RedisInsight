@@ -15,6 +15,8 @@ import {
   mockClientCertificate,
   MockType,
   mockRedisGeneralInfo,
+  mockTagsService,
+  mockDatabaseWithTags,
   mockDatabaseWithTls,
   mockDatabaseWithTlsAuth,
   mockDatabaseWithSshPrivateKey,
@@ -34,6 +36,7 @@ import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { ExportDatabase } from './models/export-database';
 import { TagService } from '../tag/tag.service';
+import { Tag } from '../tag/models/tag';
 
 const updateDatabaseTests = [
   { input: {}, expected: 0 },
@@ -101,11 +104,7 @@ describe('DatabaseService', () => {
         },
         {
           provide: TagService,
-          useValue: {
-            getOrCreateByKeyValuePairs: jest.fn(),
-            delete: jest.fn(),
-            cleanupUnusedTags: jest.fn(),
-          },
+          useFactory: mockTagsService,
         },
       ],
     }).compile();
@@ -184,30 +183,31 @@ describe('DatabaseService', () => {
       );
     });
     it('should create new database with tags', async() => {
-      const tags = [
-        { id: 'tagId1', key: 'env', value: 'prod' },
-        { id: 'tagId2', key: 'region', value: 'us-east' },
-      ];
       const dtoTags = [
         { key: 'env', value: 'prod' },
         { key: 'region', value: 'us-east' },
-      ];
+      ] as Tag[];
 
-      databaseRepository.create.mockResolvedValueOnce({
-        ...mockDatabase,
-        tags,
+      databaseFactory.createDatabaseModel.mockResolvedValueOnce(mockDatabaseWithTags);
+      databaseRepository.create.mockResolvedValueOnce(mockDatabaseWithTags);
+      jest
+        .spyOn(tagService, 'getOrCreateByKeyValuePairs')
+        .mockResolvedValue(mockDatabaseWithTags.tags);
+
+      const result = await service.create(mockSessionMetadata, {
+        ...mockDatabaseWithTags,
+        tags: dtoTags,
       });
-      jest.spyOn(tagService, 'getOrCreateByKeyValuePairs').mockResolvedValue(dtoTags as any);
 
-      await service.create(
-        mockSessionMetadata,
-        {
-          ...mockDatabase,
-          tags: dtoTags as any,
-        }
+      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(
+        dtoTags,
       );
-
-      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(dtoTags);
+      expect(result).toEqual(mockDatabaseWithTags);
+      expect(databaseRepository.create).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        expect.objectContaining({ tags: mockDatabaseWithTags.tags }),
+        false,
+      );
     })
   });
 
@@ -316,26 +316,18 @@ describe('DatabaseService', () => {
     });
 
     it('should update existing database with tags', async () => {
-      const tags = [
-        { id: 'tagId1', key: 'env', value: 'prod' },
-        { id: 'tagId2', key: 'region', value: 'us-east' },
-      ];
       const dtoTags = [
         { key: 'env', value: 'prod' },
         { key: 'region', value: 'us-east' },
-      ];
+      ] as Tag[];
 
-      databaseRepository.get.mockResolvedValueOnce({
-        ...mockDatabase,
-        tags,
-      });
-      databaseRepository.update.mockResolvedValueOnce({
-        ...mockDatabase,
-        tags,
-      });
-      jest.spyOn(tagService, 'getOrCreateByKeyValuePairs').mockResolvedValue(dtoTags as any);
+      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTags);
+      databaseRepository.update.mockResolvedValueOnce(mockDatabaseWithTags);
+      jest
+        .spyOn(tagService, 'getOrCreateByKeyValuePairs')
+        .mockResolvedValue(mockDatabaseWithTags.tags);
 
-      await service.update(
+      const result = await service.update(
         mockSessionMetadata,
         mockDatabase.id,
         plainToClass(UpdateDatabaseDto, {
@@ -344,12 +336,13 @@ describe('DatabaseService', () => {
         true,
       );
 
+      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(dtoTags);
+      expect(result).toEqual(mockDatabaseWithTags);
       expect(databaseRepository.update).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockDatabase.id,
-        expect.objectContaining({ tags: dtoTags }),
+        expect.objectContaining({ tags: mockDatabaseWithTags.tags }),
       );
-      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(dtoTags);
       expect(tagService.cleanupUnusedTags).toHaveBeenCalled();
     });
 

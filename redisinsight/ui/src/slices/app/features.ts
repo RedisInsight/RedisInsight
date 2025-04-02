@@ -55,6 +55,9 @@ export const initialState: StateAppFeatures = {
       },
       [FeatureFlags.envDependent]: {
         flag: riConfig.features.envDependent.defaultFlag
+      },
+      [FeatureFlags.cloudAds]: {
+        flag: riConfig.features.cloudAds.defaultFlag
       }
     }
   }
@@ -128,10 +131,15 @@ const appFeaturesSlice = createSlice({
     getFeatureFlagsSuccess: (state, { payload }) => {
       state.featureFlags.loading = false
 
-      // make sure that feature was defined and enabled by default
+      // make sure certain features are defined and enabled by default
       if (!payload.features[FeatureFlags.envDependent]) {
         payload.features[FeatureFlags.envDependent] = {
           flag: riConfig.features.envDependent.defaultFlag
+        }
+      }
+      if (!payload.features[FeatureFlags.cloudAds]) {
+        payload.features[FeatureFlags.cloudAds] = {
+          flag: riConfig.features.cloudAds.defaultFlag
         }
       }
 

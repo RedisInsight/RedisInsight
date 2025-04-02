@@ -1,4 +1,4 @@
-name: 🚀 Manual build
+name: 🚀 Manual build - Enterprise
 
 on:
   # Manual trigger build
@@ -33,16 +33,6 @@ on:
 
       build_linux_deb_x64:
         description: Build Linux deb x64
-        type: boolean
-        required: false
-
-      build_linux_rpm_x64:
-        description: Build Linux rpm x64
-        type: boolean
-        required: false
-
-      build_linux_snap_x64:
-        description: Build Linux snap x64
         type: boolean
         required: false
 
@@ -85,7 +75,7 @@ jobs:
       target: ${{ needs.get-selected.outputs.selected }}
       debug: ${{ inputs.debug }}
       environment: ${{ inputs.environment }}
-      enterprise: false
+      enterprise: true
 
   aws-upload:
     uses: ./.github/workflows/aws-upload-dev.yml

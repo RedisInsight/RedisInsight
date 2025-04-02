@@ -13,7 +13,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { PackageType } from 'uiSrc/constants/env'
-import UserProfile from 'uiSrc/components/instance-header/components/user-profile/UserProfile'
+import UserProfileBadge from 'uiSrc/components/instance-header/components/user-profile/UserProfileBadge'
 
 import styles from './styles.module.scss'
 
@@ -82,11 +82,12 @@ const OAuthUserProfile = (props: Props) => {
   }
 
   return (
-    <UserProfile
+    <UserProfileBadge
       error={error}
       data={data}
       handleClickCloudAccount={handleClickCloudAccount}
       handleClickSelectAccount={handleClickSelectAccount}
+      data-testid="oauth-user-profile-badge"
     />
   )
 }

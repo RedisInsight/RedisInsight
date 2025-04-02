@@ -62,6 +62,7 @@ import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 import { initialState as initialStateAppConnectivity } from 'uiSrc/slices/app/connectivity'
 import { initialState as initialStateAppInit } from 'uiSrc/slices/app/init'
+import * as appFeaturesSlice from 'uiSrc/slices/app/features'
 
 interface Options {
   initialState?: RootState
@@ -350,6 +351,17 @@ export const mockWindowLocation = (initialHref = '') => {
   })
 
   return setHrefMock
+}
+
+export const mockFeatureFlags = (overrides?: Partial<typeof initialStateAppFeaturesReducer.featureFlags.features>) => {
+  const initialFlags = initialStateAppFeaturesReducer.featureFlags.features
+
+  return jest
+    .spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector')
+    .mockReturnValue({
+      ...initialFlags,
+      ...(overrides || {}),
+    })
 }
 
 // re-export everything

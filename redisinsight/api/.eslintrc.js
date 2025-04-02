@@ -15,6 +15,13 @@ module.exports = {
     'class-methods-use-this': 'off', // should be ignored since NestJS allow inheritance without using "this" inside class methods
     'no-await-in-loop': 'off',
     'import/no-extraneous-dependencies': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      },
+    ],
   },
   parserOptions: {
     project: './tsconfig.json',

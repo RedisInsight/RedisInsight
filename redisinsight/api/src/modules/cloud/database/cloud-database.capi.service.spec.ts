@@ -38,7 +38,7 @@ describe('CloudDatabaseCapiService', () => {
       expect(await service.getDatabase(
         mockCloudCapiAuthDto,
         mockGetCloudSubscriptionDatabaseDto,
-      )).toMatchObject({
+      )).toEqual({
         ...mockCloudDatabase,
         tags: mockCloudCapiDatabaseTags,
       });
@@ -58,14 +58,14 @@ describe('CloudDatabaseCapiService', () => {
       expect(await service.getDatabases(
         mockCloudCapiAuthDto,
         mockGetCloudSubscriptionDatabasesDto,
-      )).toMatchObject([mockCloudDatabaseFromList]);
+      )).toEqual([mockCloudDatabaseFromList]);
     });
     it('successfully get cloud fixed databases', async () => {
       capi.getDatabases.mockResolvedValueOnce(mockCloudCapiSubscriptionDatabasesFixed);
       expect(await service.getDatabases(
         mockCloudCapiAuthDto,
         mockGetCloudSubscriptionDatabasesDtoFixed,
-      )).toMatchObject([mockCloudDatabaseFromListFixed]);
+      )).toEqual([mockCloudDatabaseFromListFixed]);
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
       capi.getDatabases.mockRejectedValueOnce(new CloudApiUnauthorizedException());

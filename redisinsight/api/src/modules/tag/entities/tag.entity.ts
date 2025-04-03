@@ -25,6 +25,9 @@ export class TagEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column({ nullable: true })
+  encryption: string;
+
   @Expose()
   @ManyToMany(() => DatabaseEntity, (database) => database.tags, {
     onDelete: 'CASCADE',

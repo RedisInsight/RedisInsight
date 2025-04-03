@@ -40,6 +40,7 @@ import {
   mockSshOptionsUsernameEncrypted,
   mockSshOptionsUsernamePlain,
   MockType,
+  mockTagsRepository,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
@@ -50,6 +51,7 @@ import { cloneClassInstance } from 'src/utils';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
+import { TagRepository } from 'src/modules/tag/repository/tag.repository';
 
 const listFields = [
   'id', 'name', 'host', 'port', 'db', 'timeout',
@@ -61,6 +63,7 @@ describe('LocalDatabaseRepository', () => {
   let service: LocalDatabaseRepository;
   let encryptionService: MockType<EncryptionService>;
   let repository: MockType<Repository<DatabaseEntity>>;
+  let tagRepository: MockType<TagRepository>;
   let sshOptionsRepository: MockType<Repository<SshOptionsEntity>>;
   let caCertRepository: MockType<CaCertificateRepository>;
   let clientCertRepository: MockType<ClientCertificateRepository>;
@@ -91,10 +94,15 @@ describe('LocalDatabaseRepository', () => {
           provide: ClientCertificateRepository,
           useFactory: mockClientCertificateRepository,
         },
+        {
+          provide: TagRepository,
+          useFactory: mockTagsRepository,
+        }
       ],
     }).compile();
 
     repository = await module.get(getRepositoryToken(DatabaseEntity));
+    tagRepository = await module.get(TagRepository);
     sshOptionsRepository = await module.get(getRepositoryToken(SshOptionsEntity));
     caCertRepository = await module.get(CaCertificateRepository);
     clientCertRepository = await module.get(ClientCertificateRepository);
@@ -256,6 +264,7 @@ describe('LocalDatabaseRepository', () => {
       repository.findOne.mockResolvedValue(mockDatabaseWithTagsEntity);
       const result = await service.get(mockSessionMetadata, mockDatabaseWithTags.id);
 
+      expect(tagRepository.decryptTagEntities).toHaveBeenCalledWith(mockDatabaseWithTagsEntity.tags);
       expect(result).toEqual(mockDatabaseWithTags);
       expect(caCertRepository.get).not.toHaveBeenCalled();
       expect(clientCertRepository.get).not.toHaveBeenCalled();
@@ -291,6 +300,7 @@ describe('LocalDatabaseRepository', () => {
         pick(mockDatabaseWithTags, ...listFields),
         pick(mockDatabaseWithTags, ...listFields),
       ]);
+      expect(tagRepository.decryptTagEntities).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -355,6 +365,7 @@ describe('LocalDatabaseRepository', () => {
 
       const result = await service.create(mockSessionMetadata, mockDatabaseWithTags, false);
 
+      expect(tagRepository.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(mockDatabaseWithTags.tags);
       expect(result).toEqual(mockDatabaseWithTags);
       expect(caCertRepository.create).not.toHaveBeenCalled();
       expect(clientCertRepository.create).not.toHaveBeenCalled();
@@ -447,11 +458,28 @@ describe('LocalDatabaseRepository', () => {
       expect(caCertRepository.create).not.toHaveBeenCalled();
       expect(clientCertRepository.create).not.toHaveBeenCalled();
     });
+
+    it('should update standalone database with tags and cleanup unused tags', async () => {
+      repository.findOne.mockResolvedValue(mockDatabaseWithTagsEntity);
+      repository.merge.mockReturnValue(mockDatabaseWithTags);
+
+      const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabaseWithTags);
+
+      expect(result).toEqual(mockDatabaseWithTags);
+      expect(tagRepository.cleanupUnusedTags).toHaveBeenCalled();
+      expect(caCertRepository.create).not.toHaveBeenCalled();
+      expect(clientCertRepository.create).not.toHaveBeenCalled();
+    });
   });
 
   describe('delete', () => {
     it('should delete database by id', async () => {
       expect(await service.delete(mockSessionMetadata, mockDatabaseId)).toEqual(undefined);
+    });
+
+    it('should delete database by id and cleanup unused tags', async () => {
+      await service.delete(mockSessionMetadata, mockDatabaseId);
+      expect(tagRepository.cleanupUnusedTags).toHaveBeenCalled();
     });
   });
 

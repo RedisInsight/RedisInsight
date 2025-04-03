@@ -13,6 +13,6 @@ import { LocalTagRepository } from './repository/local.tag.repository';
       useClass: LocalTagRepository,
     },
   ],
-  exports: [TagService],
+  exports: [TagService, TagRepository],
 })
 export class TagModule {}

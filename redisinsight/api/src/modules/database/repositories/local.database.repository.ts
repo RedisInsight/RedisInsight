@@ -15,11 +15,11 @@ import { ClientCertificateRepository } from 'src/modules/certificate/repositorie
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
 import { SessionMetadata } from 'src/common/models';
+import { TagRepository } from 'src/modules/tag/repository/tag.repository';
 
 @Injectable()
 export class LocalDatabaseRepository extends DatabaseRepository {
   private readonly modelEncryptor: ModelEncryptor;
-
   private readonly sshModelEncryptor: ModelEncryptor;
 
   private uniqFieldsForCloudDatabase: string[] = [
@@ -40,6 +40,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     protected readonly caCertificateRepository: CaCertificateRepository,
     protected readonly clientCertificateRepository: ClientCertificateRepository,
     protected readonly encryptionService: EncryptionService,
+    protected readonly tagRepository: TagRepository,
   ) {
     super();
     this.modelEncryptor = new ModelEncryptor(encryptionService, ['password', 'sentinelMasterPassword']);
@@ -73,6 +74,11 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     if (!entity) {
       return null;
     }
+
+    if (entity.tags) {
+      entity.tags = await this.tagRepository.decryptTagEntities(entity.tags);
+    }
+
     const model = classToClass(Database, await this.decryptEntity(entity, ignoreEncryptionErrors));
 
     if (entity.caCert) {
@@ -103,6 +109,14 @@ export class LocalDatabaseRepository extends DatabaseRepository {
       ])
       .getMany();
 
+    await Promise.all(
+      entities
+        .filter((entity) => entity.tags?.length > 0)
+        .map(async (entity) => {
+          entity.tags = await this.tagRepository.decryptTagEntities(entity.tags);;
+        }),
+    );
+
     return entities.map((entity) => classToClass(Database, entity));
   }
 
@@ -113,6 +127,9 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param uniqueCheck
    */
   public async create(_: SessionMetadata, database: Database, uniqueCheck: boolean): Promise<Database> {
+    if (database.tags) {
+      database.tags = await this.tagRepository.getOrCreateByKeyValuePairs(database.tags);
+    }
     if (uniqueCheck) {
       await this.checkUniqueness(database);
     }
@@ -137,10 +154,15 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @throws TBD
    */
   public async update(sessionMetadata: SessionMetadata, id: string, database: Partial<Database>): Promise<Database> {
+    if (database.tags) {
+      database.tags = await this.tagRepository.getOrCreateByKeyValuePairs(database.tags);
+    }
+
     const oldEntity = await this.decryptEntity((await this.repository.findOne({ where: { id } })), true);
     const newEntity = classToClass(DatabaseEntity, await this.populateCertificates(database as Database));
 
     const mergeResult = this.repository.merge(oldEntity, newEntity);
+    mergeResult.tags = newEntity.tags;
 
     if (newEntity.caCert === null) {
       mergeResult.caCert = null;
@@ -154,13 +176,13 @@ export class LocalDatabaseRepository extends DatabaseRepository {
       mergeResult.sshOptions = null;
     }
 
-    if (newEntity.tags) {
-      mergeResult.tags = newEntity.tags;
-    }
-
     const encrypted = await this.encryptEntity(mergeResult);
 
     await this.repository.save(encrypted);
+
+    if (database.tags) {
+      await this.tagRepository.cleanupUnusedTags();
+    }
 
     // workaround for one way cascade deletion
     if (newEntity.sshOptions === null) {
@@ -178,6 +200,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    */
   public async delete(_: SessionMetadata, id: string): Promise<void> {
     await this.repository.delete(id);
+    await this.tagRepository.cleanupUnusedTags();
   }
 
   /**

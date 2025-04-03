@@ -1,4 +1,5 @@
 import { Tag } from '../models/tag';
+import { TagEntity } from '../entities/tag.entity';
 
 export abstract class TagRepository {
   /**
@@ -43,6 +44,29 @@ export abstract class TagRepository {
    * @returns {Promise<void>} A promise that resolves when the tag is deleted.
    */
   abstract delete(id: string): Promise<void>;
+
+  /**
+   * Encrypt and decrypt tag entities.
+   * @param {TagEntity[]} tags - The tag entities to encrypt or decrypt.
+   * @returns {Promise<TagEntity[]>} A promise that resolves to the encrypted or decrypted tag entities.
+   */
+  public abstract encryptTagEntities(tags: TagEntity[]): Promise<TagEntity[]>;
+
+  /**
+   * Decrypt tag entities.
+   * @param {TagEntity[]} tags - The tag entities to decrypt.
+   * @returns {Promise<TagEntity[]>} A promise that resolves to the decrypted tag entities.
+   */
+  public abstract decryptTagEntities(tags: TagEntity[]): Promise<TagEntity[]>;
+
+  /**
+   * Get or create tags by key-value pairs.
+   * @param {Array<{ key: string; value: string }>} keyValuePairs - An array of key-value pairs.
+   * @returns {Promise<Tag[]>} A promise that resolves to an array of tags.
+   * */
+  public abstract getOrCreateByKeyValuePairs(
+    keyValuePairs: { key: string; value: string }[],
+  ): Promise<Tag[]>;
 
   /**
    * Cleanup unused tags.

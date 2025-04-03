@@ -27,6 +27,7 @@ export const UTM_CAMPAINGS: Record<any, string> = {
   [OAuthSocialSource.AddDbForm]: 'add_db_form',
   PubSub: 'pub_sub',
   Main: 'main',
+  RedisJson: 'redisinsight_redisjson',
 }
 
 export const UTM_MEDIUMS = {

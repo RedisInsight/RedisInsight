@@ -1,13 +1,17 @@
 import React from 'react'
-import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
 
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { ADD_KEY_TYPE_OPTIONS } from 'uiSrc/pages/browser/components/add-key/constants/key-type-options'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import * as appFeaturesSlice from 'uiSrc/slices/app/features'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import AddKey from './AddKey'
 
-const handleAddKeyPanelMock = () => {}
-const handleCloseKeyMock = () => {}
+const handleAddKeyPanelMock = () => { }
+const handleCloseKeyMock = () => { }
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
@@ -16,6 +20,13 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
     modules: []
   }),
 }))
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('AddKey', () => {
   it('should render', () => {
@@ -57,6 +68,34 @@ describe('AddKey', () => {
     })
 
     expect(screen.getByTestId('json-not-loaded-text')).toBeInTheDocument()
+  })
+
+  it('should dispatch open oauth modal open actions if db not contains ReJSON module and has cloudSso is enabled', async () => {
+    jest.spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector').mockReturnValue({
+      cloudSso: {
+        flag: true
+      },
+      cloudAds: {
+        flag: true
+      }
+    })
+
+    render(<AddKey
+      onAddKeyPanel={handleAddKeyPanelMock}
+      onClosePanel={handleCloseKeyMock}
+    />)
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('select-key-type'))
+    fireEvent.click(screen.queryByText('JSON') || document)
+
+    fireEvent.click(screen.getByTestId('guide-free-database-link'))
+
+    const expectedActions = [
+      setSSOFlow(OAuthSocialAction.Create),
+      setSocialDialogState(OAuthSocialSource.BrowserRedisJSON)
+    ]
+    expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 
   it('should not show text if db contains ReJSON module', async () => {

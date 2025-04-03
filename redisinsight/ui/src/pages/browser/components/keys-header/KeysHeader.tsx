@@ -144,14 +144,14 @@ const KeysHeader = (props: Props) => {
         count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       },
       (data) => {
-        const keys = Array.isArray(data) ? data[0].keys : data.keys;
+        const keys = Array.isArray(data) ? data[0].keys : data.keys
 
         if (!keys.length) {
-          dispatch(resetKeyInfo());
-          dispatch(setBrowserSelectedKey(null));
+          dispatch(resetKeyInfo())
+          dispatch(setBrowserSelectedKey(null))
         }
 
-        dispatch(setBrowserKeyListDataLoaded(searchMode, true));
+        dispatch(setBrowserKeyListDataLoaded(searchMode, true))
       },
       () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
     ))

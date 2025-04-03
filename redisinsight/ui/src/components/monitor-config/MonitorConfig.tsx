@@ -17,7 +17,7 @@ import {
   setStartTimestamp,
   stopMonitor,
 } from 'uiSrc/slices/cli/monitor'
-import { getSocketApiUrl, Nullable } from 'uiSrc/utils';
+import { getSocketApiUrl, Nullable } from 'uiSrc/utils'
 import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'

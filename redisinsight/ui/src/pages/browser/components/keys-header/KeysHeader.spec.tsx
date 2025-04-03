@@ -24,7 +24,7 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
   ...jest.requireActual('uiSrc/slices/browser/keys'),
   keysSelector: jest.fn().mockReturnValue(mockSelectorData),
   fetchKeys: jest.fn(),
-}));
+}))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
@@ -160,17 +160,15 @@ describe('KeysHeader', () => {
   })
 
   it('should reset selected key data when no keys data is returned', async () => {
-    (keysSlice.fetchKeys as jest.Mock).mockImplementation((_options: any, onSuccess: (data: any) => void, __onFailed: () => void) => {
-      return () => {
-        onSuccess({ keys: [] }); // Simulate empty data response
-      };
-    });
+    (keysSlice.fetchKeys as jest.Mock).mockImplementation((_options: any, onSuccess: (data: any) => void, __onFailed: () => void) => () => {
+        onSuccess({ keys: [] }) // Simulate empty data response
+      })
 
     render(<KeysHeader {...propsMock} />)
 
-    fireEvent.click(screen.getByTestId("keys-refresh-btn"));
+    fireEvent.click(screen.getByTestId("keys-refresh-btn"))
 
     const expectedActions = [keysSlice.resetKeyInfo(), setBrowserSelectedKey(null), setBrowserPatternKeyListDataLoaded(true)]
     expect(store.getActions()).toEqual(expectedActions)
-  });
+  })
 })

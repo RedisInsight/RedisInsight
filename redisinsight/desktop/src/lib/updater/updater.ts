@@ -2,6 +2,7 @@ import log from 'electron-log'
 import { UpdateDownloadedEvent, autoUpdater } from 'electron-updater'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { getWindows } from 'desktopSrc/lib/window'
+import getCustomConfig from 'desktopSrc/utils/getCustomConfig'
 import { IpcOnEvent } from 'uiSrc/electron/constants'
 
 export const updateDownloaded = (updateInfo: UpdateDownloadedEvent) => {
@@ -12,7 +13,7 @@ export const updateDownloaded = (updateInfo: UpdateDownloadedEvent) => {
   }, 60 * 1_000) // 1 min
 }
 
-export const checkForUpdate = async (url: string = '') => {
+const checkForUpdate = async (url: string = '') => {
   if (!url || process.mas) {
     return
   }
@@ -40,7 +41,14 @@ export const checkForUpdate = async (url: string = '') => {
   }
 }
 
-export const initAutoUpdateChecks = (url = '', interval = 84 * 3600 * 1000) => {
+export const initAutoUpdateChecks = async (url = '', interval = 84 * 3600 * 1000) => {
+  const customConfig = await getCustomConfig()
+
+  if (customConfig?.forceDisableAutomaticUpdates) {
+    log.info('Auto updates are disabled')
+    return
+  }
+
   checkForUpdate(url)
     .catch((e) => log.error(wrapErrorMessageSensitiveData(e)))
     .finally(() => {

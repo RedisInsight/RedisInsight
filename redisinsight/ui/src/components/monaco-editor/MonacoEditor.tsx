@@ -25,6 +25,7 @@ export interface CommonProps {
   readOnly?: boolean
   isEditable?: boolean
   wrapperClassName?: string
+  editorWrapperClassName?: string
   options?: monacoEditor.editor.IStandaloneEditorConstructionOptions
   dedicatedEditorOptions?: monacoEditor.editor.IStandaloneEditorConstructionOptions
   dedicatedEditorLanguages?: DSL[]
@@ -58,6 +59,7 @@ const MonacoEditor = (props: Props) => {
     isEditable,
     language,
     wrapperClassName,
+    editorWrapperClassName,
     className,
     options = {},
     dedicatedEditorOptions = {},
@@ -235,7 +237,7 @@ const MonacoEditor = (props: Props) => {
         declineOnUnmount={false}
         preventOutsideClick
       >
-        <div className="inlineMonacoEditor" data-testid={`wrapper-${dataTestId}`} ref={input}>
+        <div className={cx("inlineMonacoEditor", editorWrapperClassName)} data-testid={`wrapper-${dataTestId}`} ref={input}>
           <ReactMonacoEditor
             language={language}
             theme={theme === Theme.Dark ? 'dark' : 'light'}

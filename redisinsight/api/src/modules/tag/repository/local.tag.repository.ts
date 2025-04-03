@@ -25,28 +25,28 @@ export class LocalTagRepository implements TagRepository {
 
   async list(): Promise<Tag[]> {
     const entities = await this.repository.find();
-    const decrypted = await Promise.all(
-      entities.map((entity) => this.modelEncryptor.decryptEntity(entity, true)),
-    );
+    const decrypted = await this.decryptTagEntities(entities);
 
     return decrypted.map((entity) => classToClass(Tag, entity));
   }
 
   async get(id: string): Promise<Tag> {
     const entity = await this.repository.findOneBy({ id });
-    const decrypted = await this.modelEncryptor.decryptEntity(entity);
+    const [decrypted] = await this.decryptTagEntities([entity]);
 
     return classToClass(Tag, decrypted);
   }
 
   async getByKeyValuePair(key: string, value: string): Promise<Tag> {
-    const encryptedDummy = await this.modelEncryptor.encryptEntity({
-      key,
-      value,
-    });
+    const [encrypted] = await this.encryptTagEntities([
+      {
+        key,
+        value,
+      } as TagEntity,
+    ]);
     const entity = await this.repository.findOneBy({
-      key: encryptedDummy.key,
-      value: encryptedDummy.value,
+      key: encrypted.key,
+      value: encrypted.value,
     });
 
     return classToClass(Tag, entity);
@@ -54,7 +54,7 @@ export class LocalTagRepository implements TagRepository {
 
   async create(tag: Tag): Promise<Tag> {
     const entity = classToClass(TagEntity, tag);
-    const encrypted = await this.modelEncryptor.encryptEntity(entity);
+    const [encrypted] = await this.encryptTagEntities([entity]);
     const createdEntity = await this.repository.save(encrypted);
 
     return classToClass(Tag, createdEntity);
@@ -62,7 +62,7 @@ export class LocalTagRepository implements TagRepository {
 
   async update(id: string, tag: Partial<Tag>): Promise<void> {
     const entity = classToClass(TagEntity, tag);
-    const encrypted = await this.modelEncryptor.encryptEntity(entity);
+    const [encrypted] = await this.encryptTagEntities([entity]);
 
     await this.repository.update(id, encrypted);
   }
@@ -72,7 +72,7 @@ export class LocalTagRepository implements TagRepository {
   }
 
   public async encryptTagEntities(tags: TagEntity[]): Promise<TagEntity[]> {
-    return await Promise.all(
+    return Promise.all(
       tags.map(async (tag) => {
         const encrypted = await this.modelEncryptor.encryptEntity(tag);
         return {
@@ -84,7 +84,7 @@ export class LocalTagRepository implements TagRepository {
   }
 
   public async decryptTagEntities(tags: TagEntity[]): Promise<TagEntity[]> {
-    return await Promise.all(
+    return Promise.all(
       tags.map((tag) => this.modelEncryptor.decryptEntity(tag, true)),
     );
   }

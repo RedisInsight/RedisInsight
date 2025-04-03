@@ -151,7 +151,7 @@ describe('ItemList', () => {
     expect(div).toHaveClass('hideSelectableCheckboxes')
   })
 
-  it('Database Alias / name column should not be available in the table', async () => {
+  it('should display propely configured shown columns and not display the hidden columns', async () => {
     const partialColumnsMock: EuiTableFieldDataColumnType<Instance>[] = [
       {
         field: 'name',

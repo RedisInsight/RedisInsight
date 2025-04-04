@@ -19,7 +19,10 @@ export class LocalTagRepository implements TagRepository {
     private readonly repository: Repository<TagEntity>,
     private readonly encryptionService: EncryptionService,
   ) {
-    this.modelEncryptor = new ModelEncryptor(encryptionService, TAG_FIELDS_TO_ENCRYPT);
+    this.modelEncryptor = new ModelEncryptor(
+      encryptionService,
+      TAG_FIELDS_TO_ENCRYPT,
+    );
   }
 
   async list(): Promise<Tag[]> {
@@ -55,7 +58,10 @@ export class LocalTagRepository implements TagRepository {
     const encrypted = await this.modelEncryptor.encryptEntity(entity);
     const createdEntity = await this.repository.save(encrypted);
 
-    return classToClass(Tag, await this.modelEncryptor.decryptEntity(createdEntity));
+    return classToClass(
+      Tag,
+      await this.modelEncryptor.decryptEntity(createdEntity),
+    );
   }
 
   async update(id: string, tag: Partial<Tag>): Promise<void> {

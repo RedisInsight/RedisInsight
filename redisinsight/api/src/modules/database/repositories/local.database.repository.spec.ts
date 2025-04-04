@@ -112,13 +112,14 @@ describe('LocalDatabaseRepository', () => {
     repository.findOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getMany.mockResolvedValue([
-      pick(mockDatabaseWithTlsAuthEntity, ...listFields),
-      pick(mockDatabaseWithTlsAuthEntity, ...listFields),
+      Object.assign(new DatabaseEntity(), pick(mockDatabaseWithTlsAuthEntity, ...listFields)),
+      Object.assign(new DatabaseEntity(), pick(mockDatabaseWithTlsAuthEntity, ...listFields)),
     ]);
     repository.save.mockResolvedValue(mockDatabaseEntity);
     repository.update.mockResolvedValue(mockDatabaseEntity);
 
     when(encryptionService.decrypt)
+      .defaultImplementation(async (data) => data || undefined)
       .calledWith(mockDatabasePasswordEncrypted, expect.anything())
       .mockResolvedValue(mockDatabasePasswordPlain)
       .calledWith(mockDatabaseSentinelMasterPasswordEncrypted, expect.anything())
@@ -132,6 +133,7 @@ describe('LocalDatabaseRepository', () => {
       .calledWith(mockSshOptionsPassphraseEncrypted, expect.anything())
       .mockResolvedValue(mockSshOptionsPassphrasePlain);
     when(encryptionService.encrypt)
+      .defaultImplementation(async (data) => data || undefined)
       .calledWith(mockDatabasePasswordPlain)
       .mockResolvedValue({
         data: mockDatabasePasswordEncrypted,
@@ -264,7 +266,6 @@ describe('LocalDatabaseRepository', () => {
       repository.findOne.mockResolvedValue(mockDatabaseWithTagsEntity);
       const result = await service.get(mockSessionMetadata, mockDatabaseWithTags.id);
 
-      expect(tagRepository.decryptTagEntities).toHaveBeenCalledWith(mockDatabaseWithTagsEntity.tags);
       expect(result).toEqual(mockDatabaseWithTags);
       expect(caCertRepository.get).not.toHaveBeenCalled();
       expect(clientCertRepository.get).not.toHaveBeenCalled();
@@ -280,8 +281,8 @@ describe('LocalDatabaseRepository', () => {
     });
     it('should return list with cloud details', async () => {
       repository.createQueryBuilder().getMany.mockResolvedValue([
-        pick(mockDatabaseEntityWithCloudDetails, ...listFields),
-        pick(mockDatabaseEntityWithCloudDetails, ...listFields),
+        Object.assign(new DatabaseEntity(), pick(mockDatabaseEntityWithCloudDetails, ...listFields)),
+        Object.assign(new DatabaseEntity(), pick(mockDatabaseEntityWithCloudDetails, ...listFields)),
       ]);
 
       expect(await service.list(mockSessionMetadata)).toEqual([
@@ -292,15 +293,14 @@ describe('LocalDatabaseRepository', () => {
 
     it('should return list of databases with tags', async () => {
       repository.createQueryBuilder().getMany.mockResolvedValue([
-        pick(mockDatabaseWithTagsEntity, ...listFields),
-        pick(mockDatabaseWithTagsEntity, ...listFields),
+        Object.assign(new DatabaseEntity(), pick(mockDatabaseWithTagsEntity, ...listFields)),
+        Object.assign(new DatabaseEntity(), pick(mockDatabaseWithTagsEntity, ...listFields)),
       ]);
 
       expect(await service.list(mockSessionMetadata)).toEqual([
         pick(mockDatabaseWithTags, ...listFields),
         pick(mockDatabaseWithTags, ...listFields),
       ]);
-      expect(tagRepository.decryptTagEntities).toHaveBeenCalledTimes(2);
     });
   });
 

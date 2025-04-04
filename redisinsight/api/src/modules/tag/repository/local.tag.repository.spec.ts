@@ -103,7 +103,7 @@ describe('LocalTagRepository', () => {
       await repository.update('1', tag);
       expect(tagRepository.update).toHaveBeenCalledWith(
         '1',
-        expect.objectContaining(tagEntity),
+        expect.objectContaining({ ...tagEntity, encryption: 'KEYTAR' }),
       );
     });
   });
@@ -114,26 +114,6 @@ describe('LocalTagRepository', () => {
 
       await repository.delete('1');
       expect(tagRepository.delete).toHaveBeenCalledWith('1');
-    });
-  });
-
-  describe('encryptTagEntities', () => {
-    it('should encrypt tag entities', async () => {
-      const encryptedEntities =
-        await repository.encryptTagEntities(mockTagEntities);
-      expect(encryptedEntities.length).toBe(mockTagEntities.length);
-      expect(encryptedEntities[0].encryption).toBe('KEYTAR');
-      expect(encryptedEntities[0]).toEqual(
-        expect.objectContaining(mockTagEntities[0]),
-      );
-    });
-  });
-
-  describe('decryptTagEntities', () => {
-    it('should decrypt tag entities', async () => {
-      const decryptedEntities =
-        await repository.decryptTagEntities(mockTagEntities);
-      expect(decryptedEntities).toEqual(mockTagEntities);
     });
   });
 

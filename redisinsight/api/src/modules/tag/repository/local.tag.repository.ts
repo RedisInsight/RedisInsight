@@ -78,22 +78,13 @@ export class LocalTagRepository implements TagRepository {
 
     return await Promise.all(
       keyValuePairs.map(async ({ key, value }) => {
-        try {
-          const found = await this.getByKeyValuePair(key, value);
+        const found = await this.getByKeyValuePair(key, value);
 
-          if (found) {
-            return found;
-          }
-
-          throw new NotFoundException(
-            `Tag with key ${key} and value ${value} not found`,
-          );
-        } catch (error) {
-          if (error instanceof NotFoundException) {
-            return await this.create({ key, value } as Tag);
-          }
-          throw error;
+        if (found) {
+          return found;
         }
+
+        return await this.create({ key, value } as Tag);
       }),
     );
   }

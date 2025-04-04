@@ -45,6 +45,15 @@ export abstract class TagRepository {
   abstract delete(id: string): Promise<void>;
 
   /**
+   * Get or create tags by key-value pairs.
+   * @param {Array<{ key: string; value: string }>} keyValuePairs - An array of key-value pairs.
+   * @returns {Promise<Tag[]>} A promise that resolves to an array of tags.
+   * */
+  public abstract getOrCreateByKeyValuePairs(
+    keyValuePairs: { key: string; value: string }[],
+  ): Promise<Tag[]>;
+
+  /**
    * Cleanup unused tags.
    * @returns {Promise<void>} A promise that resolves when the cleanup is complete.
    */

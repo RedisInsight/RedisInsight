@@ -61,6 +61,9 @@ export const mockTagsRepository = jest.fn(
       getByKeyValuePair: jest.fn().mockResolvedValue(mockTags[0]),
       update: jest.fn(),
       delete: jest.fn(),
+      encryptTagEntities: jest.fn().mockImplementation(async (tags) => tags),
+      decryptTagEntities: jest.fn().mockImplementation(async (tags) => tags),
+      getOrCreateByKeyValuePairs: jest.fn().mockImplementation(async (tags) => tags),
       cleanupUnusedTags: jest.fn(),
     }) as TagRepository,
 );

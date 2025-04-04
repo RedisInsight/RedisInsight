@@ -1,5 +1,5 @@
 import {
-  Injectable, InternalServerErrorException, Logger, NotFoundException, ConflictException,
+  Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
 import {
   isEmpty, omit, reject, sum, omitBy, isUndefined,
@@ -25,7 +25,6 @@ import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
-import { TagService } from 'src/modules/tag/tag.service';
 
 @Injectable()
 export class DatabaseService {
@@ -69,7 +68,6 @@ export class DatabaseService {
     private databaseFactory: DatabaseFactory,
     private analytics: DatabaseAnalytics,
     private eventEmitter: EventEmitter2,
-    private tagService: TagService,
   ) {}
 
   static isConnectionAffected(dto: object) {
@@ -162,10 +160,6 @@ export class DatabaseService {
     try {
       this.logger.debug('Creating new database.', sessionMetadata);
 
-      if (dto.tags) {
-        dto.tags = await this.tagService.getOrCreateByKeyValuePairs(dto.tags);
-      }
-
       const database = await this.repository.create(
         sessionMetadata,
         {
@@ -222,15 +216,10 @@ export class DatabaseService {
     manualUpdate: boolean = true, // todo: remove manualUpdate flag logic
   ): Promise<Database> {
     this.logger.debug(`Updating database: ${id}`, sessionMetadata);
-
     const oldDatabase = await this.get(sessionMetadata, id, true);
 
     let database: Database;
     try {
-      if (dto.tags) {
-        dto.tags = await this.tagService.getOrCreateByKeyValuePairs(dto.tags);
-      }
-
       database = await this.merge(oldDatabase, dto);
 
       if (DatabaseService.isConnectionAffected(dto)) {
@@ -244,10 +233,6 @@ export class DatabaseService {
       }
 
       database = await this.repository.update(sessionMetadata, id, database);
-
-      if (dto.tags) {
-        await this.tagService.cleanupUnusedTags();
-      }
 
       // todo: rethink
       this.analytics.sendInstanceEditedEvent(
@@ -346,9 +331,6 @@ export class DatabaseService {
     const database = await this.get(sessionMetadata, id, true);
     try {
       await this.repository.delete(sessionMetadata, id);
-      if (database.tags) {
-        await this.tagService.cleanupUnusedTags();
-      }
       // todo: rethink
       await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
       this.logger.debug('Succeed to delete database instance.', sessionMetadata);

@@ -100,15 +100,17 @@ describe('TagService', () => {
 
   describe('getOrCreateByKeyValuePairs', () => {
     it('should return existing tags or create new ones', async () => {
-      const tag: Tag = {
-        ...mockTags[0],
-        ...createTagDto,
-      };
-      jest.spyOn(service, 'getByKeyValuePair').mockResolvedValueOnce(tag);
-      jest.spyOn(service, 'create').mockResolvedValueOnce(tag);
+      const keyValuePairs = [
+        { key: 'key1', value: 'value1' },
+        { key: 'key2', value: 'value2' },
+      ];
+      const tags = [mockTags[0], mockTags[1]];
+      jest
+        .spyOn(repository, 'getOrCreateByKeyValuePairs')
+        .mockResolvedValue(tags);
 
-      const result = await service.getOrCreateByKeyValuePairs([createTagDto]);
-      expect(result).toEqual([tag]);
+      const result = await service.getOrCreateByKeyValuePairs(keyValuePairs);
+      expect(result).toEqual(tags);
     });
   });
 

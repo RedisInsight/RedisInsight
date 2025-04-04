@@ -57,20 +57,7 @@ export class TagService {
   }
 
   async getOrCreateByKeyValuePairs(keyValuePairs: CreateTagDto[]): Promise<Tag[]> {
-    const tags = await Promise.all(
-      keyValuePairs.map(async ({ key, value }) => {
-        try {
-          return await this.getByKeyValuePair(key, value);
-        } catch (error) {
-          if (error instanceof NotFoundException) {
-            return await this.create({ key, value });
-          }
-          throw error;
-        }
-      }),
-    );
-
-    return tags;
+    return this.tagRepository.getOrCreateByKeyValuePairs(keyValuePairs);
   }
 
   async update(id: string, updateTagDto: UpdateTagDto): Promise<Tag> {

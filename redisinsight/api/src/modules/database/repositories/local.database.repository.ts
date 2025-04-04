@@ -149,9 +149,6 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     const oldEntity = await this.decryptEntity((await this.repository.findOne({ where: { id } })), true);
     const newEntity = classToClass(DatabaseEntity, await this.populateForeignData(database as Database));
 
-    console.log(' _new Entity',  newEntity)
-    console.log(' _old Entity',  oldEntity)
-    console.log(' _database',  database)
     const mergeResult = this.repository.merge(oldEntity, newEntity);
     mergeResult.tags = newEntity.tags;
 
@@ -214,7 +211,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     }
 
     // process tags
-    if (!model.tags?.length) {
+    if (model.tags?.length) {
       model.tags = await this.tagRepository.getOrCreateByKeyValuePairs(model.tags);
     }
 
@@ -257,7 +254,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     }
 
     if (decryptedEntity.tags?.length > 0) {
-      decryptedEntity.tags = await this.tagModelEncryptor.encryptEntities(decryptedEntity.tags);
+      decryptedEntity.tags = await this.tagModelEncryptor.decryptEntities(decryptedEntity.tags, ignoreEncryptionErrors);
     }
 
     return decryptedEntity;

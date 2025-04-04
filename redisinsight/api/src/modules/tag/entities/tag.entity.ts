@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, OneToMany, ManyToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, ManyToMany } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
@@ -26,6 +26,7 @@ export class TagEntity {
   updatedAt: Date;
 
   @Column({ nullable: true })
+  @Expose({ groups: ['security'] })
   encryption: string;
 
   @Expose()

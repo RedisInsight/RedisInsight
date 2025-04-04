@@ -16,11 +16,15 @@ import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
 import { SessionMetadata } from 'src/common/models';
 import { TagRepository } from 'src/modules/tag/repository/tag.repository';
+import { TAG_FIELDS_TO_ENCRYPT } from 'src/modules/tag/repository/local.tag.repository';
 
 @Injectable()
 export class LocalDatabaseRepository extends DatabaseRepository {
   private readonly modelEncryptor: ModelEncryptor;
+
   private readonly sshModelEncryptor: ModelEncryptor;
+
+  private readonly tagModelEncryptor: ModelEncryptor;
 
   private uniqFieldsForCloudDatabase: string[] = [
     'host',
@@ -48,6 +52,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
       'username', 'password',
       'privateKey', 'passphrase',
     ]);
+    this.tagModelEncryptor = new ModelEncryptor(encryptionService, TAG_FIELDS_TO_ENCRYPT);
   }
 
   /**
@@ -73,10 +78,6 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     const entity = await this.repository.findOne({ where: { id } });
     if (!entity) {
       return null;
-    }
-
-    if (entity.tags) {
-      entity.tags = await this.tagRepository.decryptTagEntities(entity.tags);
     }
 
     const model = classToClass(Database, await this.decryptEntity(entity, ignoreEncryptionErrors));
@@ -109,15 +110,9 @@ export class LocalDatabaseRepository extends DatabaseRepository {
       ])
       .getMany();
 
-    await Promise.all(
-      entities
-        .filter((entity) => entity.tags?.length > 0)
-        .map(async (entity) => {
-          entity.tags = await this.tagRepository.decryptTagEntities(entity.tags);;
-        }),
-    );
-
-    return entities.map((entity) => classToClass(Database, entity));
+    return Promise.all(entities.map(
+      async (entity) => classToClass(Database, await this.decryptEntity(entity)),
+    ));
   }
 
   /**
@@ -127,13 +122,10 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param uniqueCheck
    */
   public async create(_: SessionMetadata, database: Database, uniqueCheck: boolean): Promise<Database> {
-    if (database.tags) {
-      database.tags = await this.tagRepository.getOrCreateByKeyValuePairs(database.tags);
-    }
     if (uniqueCheck) {
       await this.checkUniqueness(database);
     }
-    const entity = classToClass(DatabaseEntity, await this.populateCertificates(database));
+    const entity = classToClass(DatabaseEntity, await this.populateForeignData(database));
     return classToClass(
       Database,
       await this.decryptEntity(
@@ -154,13 +146,12 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @throws TBD
    */
   public async update(sessionMetadata: SessionMetadata, id: string, database: Partial<Database>): Promise<Database> {
-    if (database.tags) {
-      database.tags = await this.tagRepository.getOrCreateByKeyValuePairs(database.tags);
-    }
-
     const oldEntity = await this.decryptEntity((await this.repository.findOne({ where: { id } })), true);
-    const newEntity = classToClass(DatabaseEntity, await this.populateCertificates(database as Database));
+    const newEntity = classToClass(DatabaseEntity, await this.populateForeignData(database as Database));
 
+    console.log(' _new Entity',  newEntity)
+    console.log(' _old Entity',  oldEntity)
+    console.log(' _database',  database)
     const mergeResult = this.repository.merge(oldEntity, newEntity);
     mergeResult.tags = newEntity.tags;
 
@@ -209,7 +200,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param database
    * @private
    */
-  private async populateCertificates(database: Database): Promise<Database> {
+  private async populateForeignData(database: Database): Promise<Database> {
     const model = classToClass(Database, database);
 
     // fetch ca cert if needed to be able to connect
@@ -220,6 +211,11 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     // fetch client cert if needed to be able to connect
     if (!model.clientCert?.id && (model.clientCert?.certificate || model.clientCert?.key)) {
       model.clientCert = await this.clientCertificateRepository.create(model.clientCert);
+    }
+
+    // process tags
+    if (!model.tags?.length) {
+      model.tags = await this.tagRepository.getOrCreateByKeyValuePairs(model.tags);
     }
 
     return model;
@@ -235,6 +231,10 @@ export class LocalDatabaseRepository extends DatabaseRepository {
 
     if (encryptedEntity.sshOptions) {
       encryptedEntity.sshOptions = await this.sshModelEncryptor.encryptEntity(encryptedEntity.sshOptions);
+    }
+
+    if (encryptedEntity.tags?.length > 0) {
+      encryptedEntity.tags = await this.tagModelEncryptor.encryptEntities(encryptedEntity.tags);
     }
 
     return encryptedEntity;
@@ -254,6 +254,10 @@ export class LocalDatabaseRepository extends DatabaseRepository {
         decryptedEntity.sshOptions,
         ignoreEncryptionErrors,
       );
+    }
+
+    if (decryptedEntity.tags?.length > 0) {
+      decryptedEntity.tags = await this.tagModelEncryptor.encryptEntities(decryptedEntity.tags);
     }
 
     return decryptedEntity;

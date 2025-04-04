@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TagEntity } from '../entities/tag.entity';
-import { TagRepository } from './tag.repository';
-import { Tag } from '../models/tag';
 import { classToClass } from 'src/utils';
 import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
+import { TagEntity } from '../entities/tag.entity';
+import { TagRepository } from './tag.repository';
+import { Tag } from '../models/tag';
+
+export const TAG_FIELDS_TO_ENCRYPT = ['key', 'value'];
 
 @Injectable()
 export class LocalTagRepository implements TagRepository {
@@ -17,33 +19,29 @@ export class LocalTagRepository implements TagRepository {
     private readonly repository: Repository<TagEntity>,
     private readonly encryptionService: EncryptionService,
   ) {
-    this.modelEncryptor = new ModelEncryptor(encryptionService, [
-      'key',
-      'value',
-    ]);
+    this.modelEncryptor = new ModelEncryptor(encryptionService, TAG_FIELDS_TO_ENCRYPT);
   }
 
   async list(): Promise<Tag[]> {
     const entities = await this.repository.find();
-    const decrypted = await this.decryptTagEntities(entities);
+    const decrypted = await this.modelEncryptor.decryptEntities(entities);
 
     return decrypted.map((entity) => classToClass(Tag, entity));
   }
 
   async get(id: string): Promise<Tag> {
     const entity = await this.repository.findOneBy({ id });
-    const [decrypted] = await this.decryptTagEntities([entity]);
+    const decrypted = await this.modelEncryptor.decryptEntity(entity);
 
     return classToClass(Tag, decrypted);
   }
 
   async getByKeyValuePair(key: string, value: string): Promise<Tag> {
-    const [encrypted] = await this.encryptTagEntities([
-      {
-        key,
-        value,
-      } as TagEntity,
-    ]);
+    const encrypted = await this.modelEncryptor.encryptEntity({
+      key,
+      value,
+    } as TagEntity);
+
     const entity = await this.repository.findOneBy({
       key: encrypted.key,
       value: encrypted.value,
@@ -54,7 +52,7 @@ export class LocalTagRepository implements TagRepository {
 
   async create(tag: Tag): Promise<Tag> {
     const entity = classToClass(TagEntity, tag);
-    const [encrypted] = await this.encryptTagEntities([entity]);
+    const encrypted = await this.modelEncryptor.encryptEntity(entity);
     const createdEntity = await this.repository.save(encrypted);
 
     return classToClass(Tag, createdEntity);
@@ -62,7 +60,7 @@ export class LocalTagRepository implements TagRepository {
 
   async update(id: string, tag: Partial<Tag>): Promise<void> {
     const entity = classToClass(TagEntity, tag);
-    const [encrypted] = await this.encryptTagEntities([entity]);
+    const encrypted = await this.modelEncryptor.encryptEntity(entity);
 
     await this.repository.update(id, encrypted);
   }
@@ -71,28 +69,14 @@ export class LocalTagRepository implements TagRepository {
     await this.repository.delete(id);
   }
 
-  public async encryptTagEntities(tags: TagEntity[]): Promise<TagEntity[]> {
-    return Promise.all(
-      tags.map(async (tag) => {
-        const encrypted = await this.modelEncryptor.encryptEntity(tag);
-        return {
-          ...tag,
-          ...encrypted,
-        };
-      }),
-    );
-  }
-
-  public async decryptTagEntities(tags: TagEntity[]): Promise<TagEntity[]> {
-    return Promise.all(
-      tags.map((tag) => this.modelEncryptor.decryptEntity(tag, true)),
-    );
-  }
-
   public async getOrCreateByKeyValuePairs(
     keyValuePairs: { key: string; value: string }[],
   ): Promise<Tag[]> {
-    const tags = await Promise.all(
+    if (!keyValuePairs?.length) {
+      return [];
+    }
+
+    return await Promise.all(
       keyValuePairs.map(async ({ key, value }) => {
         try {
           const found = await this.getByKeyValuePair(key, value);
@@ -112,8 +96,6 @@ export class LocalTagRepository implements TagRepository {
         }
       }),
     );
-
-    return tags;
   }
 
   async cleanupUnusedTags(): Promise<void> {

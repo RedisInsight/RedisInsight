@@ -483,13 +483,15 @@ const DatabasesListWrapper = (props: Props) => {
         if (isCreateCloudDb(instance?.id)) return null
         return (
           <>
-            <EuiButtonIcon
-              iconType="tag"
-              className={styles.tagsButton}
-              aria-label="Manage Instance Tags"
-              data-testid={`manage-instance-tags-${instance.id}`}
-              onClick={() => handleManageInstanceTags(instance)}
-            />
+            <EuiToolTip content="Manage Tags" >
+              <EuiButtonIcon
+                iconType="tag"
+                className={styles.tagsButton}
+                aria-label="Manage Instance Tags"
+                data-testid={`manage-instance-tags-${instance.id}`}
+                onClick={() => handleManageInstanceTags(instance)}
+              />
+            </EuiToolTip>
             {instance.cloudDetails && (
               <EuiToolTip content="Go to Redis Cloud">
                 <EuiLink

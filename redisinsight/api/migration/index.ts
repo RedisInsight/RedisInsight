@@ -51,6 +51,7 @@ import { RdiOptionalAuth1740579711635 } from './1740579711635-rdi-optional-auth'
 import { DatabaseTags1741610039177 } from './1741610039177-database-tags';
 import { PreSetupDatabases1741786803681 } from './1741786803681-pre-setup-databases';
 import { KeyNameFormatAdded1742303245547 } from './1742303245547-key-name-format';
+import { CascadeTags1743432519891 } from './1743432519891-cascade-tags';
 
 export default [
   initialMigration1614164490968,
@@ -106,4 +107,5 @@ export default [
   DatabaseTags1741610039177,
   PreSetupDatabases1741786803681,
   KeyNameFormatAdded1742303245547,
+  CascadeTags1743432519891,
 ];

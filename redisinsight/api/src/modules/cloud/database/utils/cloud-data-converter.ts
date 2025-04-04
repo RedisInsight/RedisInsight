@@ -3,9 +3,11 @@ import { plainToClass } from 'class-transformer';
 import {
   CloudDatabase, CloudDatabaseMemoryStorage,
   CloudDatabasePersistencePolicy, CloudDatabaseProtocol, ICloudCapiDatabase, ICloudCapiSubscriptionDatabases,
+  ICloudCapiDatabaseTag,
 } from 'src/modules/cloud/database/models';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { RE_CLOUD_MODULES_NAMES } from 'src/constants';
+import { Tag } from 'src/modules/tag/models/tag';
 
 export function convertRECloudModuleName(name: string): string {
   return RE_CLOUD_MODULES_NAMES[name] ?? name;
@@ -13,6 +15,7 @@ export function convertRECloudModuleName(name: string): string {
 
 export const parseCloudDatabaseCapiResponse = (
   database: ICloudCapiDatabase,
+  tags: ICloudCapiDatabaseTag[],
   subscriptionId: number,
   subscriptionType: CloudSubscriptionType,
   free?: boolean,
@@ -43,6 +46,7 @@ export const parseCloudDatabaseCapiResponse = (
       enabledClustering: database.clustering.numberOfShards > 1,
       isReplicaDestination: !!database.replicaOf,
     },
+    tags: tags.map(tag => plainToClass(Tag, tag)),
     cloudDetails: {
       cloudId: databaseId,
       subscriptionId,
@@ -90,7 +94,7 @@ export const parseCloudDatabasesCapiResponse = (
   databases.forEach((database): void => {
     // We do not send the databases which have 'memcached' as their protocol.
     if ([CloudDatabaseProtocol.Redis, CloudDatabaseProtocol.Stack].includes(database.protocol)) {
-      result.push(parseCloudDatabaseCapiResponse(database, subscriptionId, subscriptionType, free));
+      result.push(parseCloudDatabaseCapiResponse(database, [], subscriptionId, subscriptionType, free));
     }
   });
   result = result.map((database) => ({

@@ -69,10 +69,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     ignoreEncryptionErrors: boolean = false,
     omitFields: string[] = [],
   ): Promise<Database> {
-    const entity = await this.repository.findOne({
-      where: { id },
-      relations: ['tags'],
-    });
+    const entity = await this.repository.findOne({ where: { id } });
     if (!entity) {
       return null;
     }
@@ -155,6 +152,10 @@ export class LocalDatabaseRepository extends DatabaseRepository {
 
     if (newEntity.sshOptions === null) {
       mergeResult.sshOptions = null;
+    }
+
+    if (newEntity.tags) {
+      mergeResult.tags = newEntity.tags;
     }
 
     const encrypted = await this.encryptEntity(mergeResult);

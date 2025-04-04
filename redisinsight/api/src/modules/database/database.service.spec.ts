@@ -2,6 +2,7 @@ import { InternalServerErrorException, NotFoundException, ServiceUnavailableExce
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { omit, get, update } from 'lodash';
+import { plainToClass } from 'class-transformer';
 
 import { classToClass } from 'src/utils';
 import {
@@ -14,6 +15,8 @@ import {
   mockClientCertificate,
   MockType,
   mockRedisGeneralInfo,
+  mockTagsService,
+  mockDatabaseWithTags,
   mockDatabaseWithTls,
   mockDatabaseWithTlsAuth,
   mockDatabaseWithSshPrivateKey,
@@ -33,8 +36,7 @@ import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { ExportDatabase } from './models/export-database';
 import { TagService } from '../tag/tag.service';
-import { CreateTagDto } from '../tag/dto';
-import { Database } from './models/database';
+import { Tag } from '../tag/models/tag';
 
 const updateDatabaseTests = [
   { input: {}, expected: 0 },
@@ -102,11 +104,7 @@ describe('DatabaseService', () => {
         },
         {
           provide: TagService,
-          useValue: {
-            getOrCreateByKeyValuePairs: jest.fn(),
-            delete: jest.fn(),
-            cleanupUnusedTags: jest.fn(),
-          },
+          useFactory: mockTagsService,
         },
       ],
     }).compile();
@@ -184,6 +182,33 @@ describe('DatabaseService', () => {
         new NotFoundException(),
       );
     });
+    it('should create new database with tags', async() => {
+      const dtoTags = [
+        { key: 'env', value: 'prod' },
+        { key: 'region', value: 'us-east' },
+      ] as Tag[];
+
+      databaseFactory.createDatabaseModel.mockResolvedValueOnce(mockDatabaseWithTags);
+      databaseRepository.create.mockResolvedValueOnce(mockDatabaseWithTags);
+      jest
+        .spyOn(tagService, 'getOrCreateByKeyValuePairs')
+        .mockResolvedValue(mockDatabaseWithTags.tags);
+
+      const result = await service.create(mockSessionMetadata, {
+        ...mockDatabaseWithTags,
+        tags: dtoTags,
+      });
+
+      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(
+        dtoTags,
+      );
+      expect(result).toEqual(mockDatabaseWithTags);
+      expect(databaseRepository.create).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        expect.objectContaining({ tags: mockDatabaseWithTags.tags }),
+        false,
+      );
+    })
   });
 
   describe('update', () => {
@@ -288,6 +313,37 @@ describe('DatabaseService', () => {
           },
         },
       );
+    });
+
+    it('should update existing database with tags', async () => {
+      const dtoTags = [
+        { key: 'env', value: 'prod' },
+        { key: 'region', value: 'us-east' },
+      ] as Tag[];
+
+      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTags);
+      databaseRepository.update.mockResolvedValueOnce(mockDatabaseWithTags);
+      jest
+        .spyOn(tagService, 'getOrCreateByKeyValuePairs')
+        .mockResolvedValue(mockDatabaseWithTags.tags);
+
+      const result = await service.update(
+        mockSessionMetadata,
+        mockDatabase.id,
+        plainToClass(UpdateDatabaseDto, {
+          tags: dtoTags,
+        }),
+        true,
+      );
+
+      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(dtoTags);
+      expect(result).toEqual(mockDatabaseWithTags);
+      expect(databaseRepository.update).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockDatabase.id,
+        expect.objectContaining({ tags: mockDatabaseWithTags.tags }),
+      );
+      expect(tagService.cleanupUnusedTags).toHaveBeenCalled();
     });
 
     describe('test connection', () => {
@@ -443,6 +499,14 @@ describe('DatabaseService', () => {
     it('should throw InternalServerErrorException? on any error during deletion', async () => {
       databaseRepository.delete.mockRejectedValueOnce(new NotFoundException());
       await expect(service.delete(mockSessionMetadata, mockDatabase.id)).rejects.toThrow(InternalServerErrorException);
+    });
+    it('should call cleanupUnusedTags if database had tags', async () => {
+      databaseRepository.get.mockResolvedValueOnce({
+        ...mockDatabase,
+        tags: [{ id: 'tagId' }],
+      });
+      await service.delete(mockSessionMetadata, mockDatabase.id);
+      expect(tagService.cleanupUnusedTags).toHaveBeenCalled();
     });
   });
 
@@ -733,48 +797,6 @@ describe('DatabaseService', () => {
           expect(analytics.sendInstanceAddedEvent).toBeCalled();
         },
       );
-    });
-  });
-
-  describe('bulkUpdateTags', () => {
-    it('should update tags successfully', async () => {
-      const databaseId = 'db1';
-      const tags: CreateTagDto[] = [
-        { key: 'env', value: 'prod' },
-        { key: 'region', value: 'us-east' },
-      ];
-
-      const database = new Database();
-      database.tags = [];
-
-      jest.spyOn(service, 'get').mockResolvedValue(database);
-      jest.spyOn(databaseRepository, 'update').mockResolvedValue(database);
-      jest.spyOn(tagService, 'getOrCreateByKeyValuePairs').mockResolvedValue(tags as any);
-
-      await service.bulkUpdateTags(mockSessionMetadata, databaseId, tags);
-
-      expect(service.get).toHaveBeenCalledWith(mockSessionMetadata, databaseId);
-      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledTimes(1);
-      expect(databaseRepository.update).toHaveBeenCalledWith(mockSessionMetadata, databaseId, expect.any(Database));
-      expect(tagService.delete).toHaveBeenCalledTimes(0);
-    });
-
-    it('should delete unused tags', async () => {
-      const databaseId = 'db1';
-      const tags: CreateTagDto[] = [
-        { key: 'env', value: 'prod' },
-      ];
-
-      const database = new Database();
-      database.tags = [{ key: 'region', value: 'us-east' }] as any;
-
-      jest.spyOn(databaseRepository, 'get').mockResolvedValue(database);
-      jest.spyOn(databaseRepository, 'update').mockResolvedValue(database);
-      jest.spyOn(tagService, 'getOrCreateByKeyValuePairs').mockResolvedValue(tags as any);
-
-      await service.bulkUpdateTags(mockSessionMetadata, databaseId, tags);
-
-      expect(tagService.cleanupUnusedTags).toHaveBeenCalledWith([database.tags[0].id]);
     });
   });
 });

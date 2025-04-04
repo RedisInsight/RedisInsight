@@ -26,6 +26,8 @@ export class TagEntity {
   updatedAt: Date;
 
   @Expose()
-  @ManyToMany(() => DatabaseEntity, (database) => database.tags)
+  @ManyToMany(() => DatabaseEntity, (database) => database.tags, {
+    onDelete: 'CASCADE',
+  })
   databases: DatabaseEntity[];
 }

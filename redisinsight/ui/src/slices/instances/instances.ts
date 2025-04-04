@@ -550,6 +550,7 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
       if (isStatusSuccessful(status)) {
         dispatch(setDefaultInstanceSuccess())
         dispatch<any>(fetchInstancesAction())
+        dispatch(fetchTags())
 
         if (databasesIds.includes(state.app.context.contextInstanceId)) {
           dispatch(resetConnectedInstance())
@@ -835,6 +836,7 @@ export function uploadInstancesFile(
       )
 
       if (isStatusSuccessful(status)) {
+        dispatch(fetchTags())
         dispatch(importInstancesFromFileSuccess(data))
         onSuccessAction?.(data)
       }

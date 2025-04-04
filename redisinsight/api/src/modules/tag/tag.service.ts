@@ -87,7 +87,7 @@ export class TagService {
     this.logger.debug('Successfully deleted tag', { id });
   }
 
-  async cleanupUnusedTags(ids: string[]): Promise<void> {
-    await this.tagRepository.cleanupUnusedTags(ids);
+  async cleanupUnusedTags(): Promise<void> {
+    await this.tagRepository.cleanupUnusedTags();
   }
 }

@@ -70,6 +70,7 @@ import reducer, {
 import { addErrorNotification, addInfiniteNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
 import { loadMastersSentinel } from '../../instances/sentinel'
+import { fetchTags } from 'uiSrc/slices/instances/tags'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -1063,7 +1064,11 @@ describe('instances slice', () => {
           addMessageNotification(successMessages.DELETE_INSTANCE(requestData[0].name ?? ''))
         ]
 
-        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
+        const actions = store.getActions()
+        // skip thunk action
+        const testActions = [...actions.slice(0, expectedActions.length - 1), actions[expectedActions.length]]
+
+        expect(testActions).toEqual(expectedActions)
       })
 
       it('call both deleteInstances and setDefaultInstanceSuccess when fetch is successed for several instances', async () => {
@@ -1085,7 +1090,11 @@ describe('instances slice', () => {
           addMessageNotification(successMessages.DELETE_INSTANCES(map(requestData, 'name')))
         ]
 
-        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
+        const actions = store.getActions()
+        // skip thunk action
+        const testActions = [...actions.slice(0, expectedActions.length - 1), actions[expectedActions.length]]
+
+        expect(testActions).toEqual(expectedActions)
       })
 
       it('call both deleteInstances and setDefaultInstanceFailure when fetch is fail', async () => {
@@ -1562,7 +1571,11 @@ describe('instances slice', () => {
           importInstancesFromFile(),
           importInstancesFromFileSuccess(responsePayload.data)
         ]
-        expect(store.getActions()).toEqual(expectedActions)
+        const actions = store.getActions()
+        // skip thunk action
+        const testActions = [...actions.slice(0, expectedActions.length - 1), actions[expectedActions.length]]
+
+        expect(testActions).toEqual(expectedActions)
       })
 
       it('should call proper actions on fail', async () => {

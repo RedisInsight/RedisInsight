@@ -270,7 +270,11 @@ export class DatabaseEntity {
   forceStandalone: boolean;
 
   @Expose()
-  @ManyToMany(() => TagEntity, (tag) => tag.databases)
+  @ManyToMany(() => TagEntity, (tag) => tag.databases, {
+    eager: true,
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinTable({
     name: 'database_tag',
     joinColumn: {

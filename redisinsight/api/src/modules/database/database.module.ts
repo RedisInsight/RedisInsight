@@ -16,13 +16,10 @@ import { StackDatabasesRepository } from 'src/modules/database/repositories/stac
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { DatabaseInfoProvider } from './providers/database-info.provider';
 import { ConnectionMiddleware } from './middleware/connection.middleware';
-import { TagModule } from 'src/modules/tag/tag.module';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
-@Module({
-  imports: [TagModule],
-})
+@Module({})
 export class DatabaseModule {
   static register(
     databaseRepository: Type<DatabaseRepository> =

@@ -19,6 +19,7 @@ import { mockCloudDatabaseDetails, mockCloudDatabaseDetailsEntity } from 'src/__
 import { mockRedisClientListResult } from 'src/__mocks__/database-info';
 import { DatabaseOverviewKeyspace } from 'src/modules/database/constants/overview';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
+import { mockTags } from 'src/__mocks__/tags';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';
 
@@ -173,7 +174,7 @@ export const mockDatabaseWithTlsAuthEntity = Object.assign(new DatabaseEntity(),
 
 export const mockDatabaseWithTags = Object.assign(new Database(), {
   ...mockDatabase,
-  tags: [{ key: 'tag1', value: 'value1' }, { key: 'tag2', value: 'value2' }],
+  tags: mockTags,
 });
 
 export const mockDatabaseWithTagsEntity = Object.assign(new DatabaseEntity(), {

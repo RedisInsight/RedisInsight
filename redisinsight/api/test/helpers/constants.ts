@@ -6,6 +6,7 @@ import { RECOMMENDATION_NAMES, TelemetryEvents } from 'src/constants';
 import { Compressor } from 'src/modules/database/entities/database.entity';
 import { Vote } from 'src/modules/database-recommendation/models';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
+import { TagEntity } from 'src/modules/tag/entities/tag.entity';
 
 const API = {
   DATABASES: 'databases',
@@ -36,6 +37,30 @@ const TEST_PRE_SETUP_DATABASES_PATH = process.env.RI_PRE_SETUP_DATABASES_PATH ||
 
 const TEST_RUN_DIR = '.test_run';
 
+const TEST_TAGS: TagEntity[] = [
+  Object.assign(new TagEntity(), {
+    id: uuidv4(),
+    key: 'environment',
+    value: 'production',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }),
+  Object.assign(new TagEntity(), {
+    id: uuidv4(),
+    key: 'environment',
+    value: 'staging',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }),
+  Object.assign(new TagEntity(), {
+    id: uuidv4(),
+    key: 'size',
+    value: 'large',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }),
+];
+
 export const constants = {
   // api
   API,
@@ -44,6 +69,7 @@ export const constants = {
   TEST_RUN_NAME: process.env.TEST_RUN_NAME || '',
   KEY_TTL,
   CLUSTER_HASH_SLOT,
+  TEST_TAGS,
   getRandomString: () => `${TEST_RUN_ID}_${uuidv4()}_${CLUSTER_HASH_SLOT}`,
   generateRandomKey: () => `${TEST_RUN_ID}_${uuidv4()}_${CLUSTER_HASH_SLOT}`,
   APP_DEFAULT_SETTINGS,
@@ -77,6 +103,12 @@ export const constants = {
   TEST_INSTANCE_ID_5: uuidv4(),
   TEST_INSTANCE_NAME_5: uuidv4(),
   TEST_INSTANCE_HOST_5: uuidv4(),
+  TEST_INSTANCE_ID_6: uuidv4(),
+  TEST_INSTANCE_NAME_6: uuidv4(),
+  TEST_INSTANCE_HOST_6: uuidv4(),
+  TEST_INSTANCE_ID_7: uuidv4(),
+  TEST_INSTANCE_NAME_7: uuidv4(),
+  TEST_INSTANCE_HOST_7: uuidv4(),
   TEST_INSTANCE_PORT_5: 5555,
   TEST_INSTANCE_HOST_4: '127.0.0.1',
   TEST_INSTANCE_PORT_4: 3333,

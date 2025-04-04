@@ -1,8 +1,7 @@
-import { InternalServerErrorException, NotFoundException, ServiceUnavailableException, ConflictException } from '@nestjs/common';
+import { InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { omit, get, update } from 'lodash';
-import { plainToClass } from 'class-transformer';
 
 import { classToClass } from 'src/utils';
 import {
@@ -15,8 +14,6 @@ import {
   mockClientCertificate,
   MockType,
   mockRedisGeneralInfo,
-  mockTagsService,
-  mockDatabaseWithTags,
   mockDatabaseWithTls,
   mockDatabaseWithTlsAuth,
   mockDatabaseWithSshPrivateKey,
@@ -35,8 +32,6 @@ import { Compressor } from 'src/modules/database/entities/database.entity';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { ExportDatabase } from './models/export-database';
-import { TagService } from '../tag/tag.service';
-import { Tag } from '../tag/models/tag';
 
 const updateDatabaseTests = [
   { input: {}, expected: 0 },
@@ -61,7 +56,6 @@ describe('DatabaseService', () => {
   let databaseFactory: MockType<DatabaseFactory>;
   let redisClientFactory: MockType<RedisClientFactory>;
   let analytics: MockType<DatabaseAnalytics>;
-  let tagService: TagService;
   const exportSecurityFields: string[] = [
     'password',
     'clientCert.key',
@@ -102,10 +96,6 @@ describe('DatabaseService', () => {
           provide: DatabaseAnalytics,
           useFactory: mockDatabaseAnalytics,
         },
-        {
-          provide: TagService,
-          useFactory: mockTagsService,
-        },
       ],
     }).compile();
 
@@ -114,7 +104,6 @@ describe('DatabaseService', () => {
     databaseFactory = await module.get(DatabaseFactory);
     redisClientFactory = await module.get(RedisClientFactory);
     analytics = await module.get(DatabaseAnalytics);
-    tagService = await module.get<TagService>(TagService);
   });
 
   describe('exists', () => {
@@ -182,33 +171,6 @@ describe('DatabaseService', () => {
         new NotFoundException(),
       );
     });
-    it('should create new database with tags', async() => {
-      const dtoTags = [
-        { key: 'env', value: 'prod' },
-        { key: 'region', value: 'us-east' },
-      ] as Tag[];
-
-      databaseFactory.createDatabaseModel.mockResolvedValueOnce(mockDatabaseWithTags);
-      databaseRepository.create.mockResolvedValueOnce(mockDatabaseWithTags);
-      jest
-        .spyOn(tagService, 'getOrCreateByKeyValuePairs')
-        .mockResolvedValue(mockDatabaseWithTags.tags);
-
-      const result = await service.create(mockSessionMetadata, {
-        ...mockDatabaseWithTags,
-        tags: dtoTags,
-      });
-
-      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(
-        dtoTags,
-      );
-      expect(result).toEqual(mockDatabaseWithTags);
-      expect(databaseRepository.create).toHaveBeenCalledWith(
-        mockSessionMetadata,
-        expect.objectContaining({ tags: mockDatabaseWithTags.tags }),
-        false,
-      );
-    })
   });
 
   describe('update', () => {
@@ -313,37 +275,6 @@ describe('DatabaseService', () => {
           },
         },
       );
-    });
-
-    it('should update existing database with tags', async () => {
-      const dtoTags = [
-        { key: 'env', value: 'prod' },
-        { key: 'region', value: 'us-east' },
-      ] as Tag[];
-
-      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTags);
-      databaseRepository.update.mockResolvedValueOnce(mockDatabaseWithTags);
-      jest
-        .spyOn(tagService, 'getOrCreateByKeyValuePairs')
-        .mockResolvedValue(mockDatabaseWithTags.tags);
-
-      const result = await service.update(
-        mockSessionMetadata,
-        mockDatabase.id,
-        plainToClass(UpdateDatabaseDto, {
-          tags: dtoTags,
-        }),
-        true,
-      );
-
-      expect(tagService.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(dtoTags);
-      expect(result).toEqual(mockDatabaseWithTags);
-      expect(databaseRepository.update).toHaveBeenCalledWith(
-        mockSessionMetadata,
-        mockDatabase.id,
-        expect.objectContaining({ tags: mockDatabaseWithTags.tags }),
-      );
-      expect(tagService.cleanupUnusedTags).toHaveBeenCalled();
     });
 
     describe('test connection', () => {
@@ -499,14 +430,6 @@ describe('DatabaseService', () => {
     it('should throw InternalServerErrorException? on any error during deletion', async () => {
       databaseRepository.delete.mockRejectedValueOnce(new NotFoundException());
       await expect(service.delete(mockSessionMetadata, mockDatabase.id)).rejects.toThrow(InternalServerErrorException);
-    });
-    it('should call cleanupUnusedTags if database had tags', async () => {
-      databaseRepository.get.mockResolvedValueOnce({
-        ...mockDatabase,
-        tags: [{ id: 'tagId' }],
-      });
-      await service.delete(mockSessionMetadata, mockDatabase.id);
-      expect(tagService.cleanupUnusedTags).toHaveBeenCalled();
     });
   });
 

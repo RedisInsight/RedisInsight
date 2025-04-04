@@ -2,6 +2,7 @@ import { Connection, createConnection, getConnectionManager } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
+import { TagEntity } from 'src/modules/tag/entities/tag.entity';
 
 export const repositories = {
   DATABASE: 'DatabaseEntity',
@@ -462,19 +463,26 @@ export const createDatabaseInstances = async () => {
   }
 }
 
+const encryptTags = (tags: TagEntity[]) =>
+  tags.map(({ key, value, ...rest }) => ({
+    key: encryptData(key),
+    value: encryptData(value),
+    ...rest,
+  } as TagEntity));
+
+const decryptTags = (tags: TagEntity[]) =>
+  tags.map(({ key, value, ...rest }) => ({
+    key: decryptData(key),
+    value: decryptData(value),
+    ...rest,
+  } as TagEntity));
+
 export const getAllTags = async () => {
   const rep = await getRepository(repositories.TAG);
-  return rep.find();
-}
+  const tags = await rep.find() as TagEntity[];
+  const decryptedTags = decryptTags(tags);
 
-export const getTagById = async (id: string) => {
-  const rep = await getRepository(repositories.TAG);
-  return rep.findOneBy({ id });
-}
-
-export const getTagByKeyValuePair = async (key: string, value: string) => {
-  const rep = await getRepository(repositories.TAG);
-  return rep.findOneBy({ key, value });
+  return decryptedTags;
 }
 
 export const initTags = async () => {
@@ -495,14 +503,14 @@ export const createInstancesWithTags = async () => {
       name: constants.TEST_INSTANCE_NAME_6,
       host: constants.TEST_INSTANCE_HOST_6,
       db: constants.TEST_REDIS_DB_INDEX,
-      tags: [constants.TEST_TAGS[0], constants.TEST_TAGS[2]],
+      tags: encryptTags([constants.TEST_TAGS[0], constants.TEST_TAGS[2]]),
       timeout: 30000,
     },
     {
       id: constants.TEST_INSTANCE_ID_7,
       name: constants.TEST_INSTANCE_NAME_7,
       host: constants.TEST_INSTANCE_HOST_7,
-      tags: [constants.TEST_TAGS[1]],
+      tags: encryptTags([constants.TEST_TAGS[1]]),
       timeout: 30000,
     },
   ];
@@ -614,7 +622,13 @@ export const getInstanceByName = async (name: string) => {
 
 export const getInstanceById = async (id: string) => {
   const rep = await getRepository(repositories.DATABASE);
-  return rep.findOneBy({ id });
+  const instance = await rep.findOneBy({ id });
+
+  if (instance?.tags) {
+    instance.tags = decryptTags(instance.tags);
+  }
+
+  return instance;
 }
 
 export const getBrowserHistoryById = async (id: string) => {

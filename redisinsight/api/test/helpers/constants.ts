@@ -36,6 +36,34 @@ const CERTS_FOLDER = process.env.CERTS_FOLDER || './coverage';
 const TEST_PRE_SETUP_DATABASES_PATH = process.env.RI_PRE_SETUP_DATABASES_PATH || './databases.json';
 
 const TEST_RUN_DIR = '.test_run';
+const TEST_ENCRYPTION_STRATEGY = 'KEYTAR';
+
+const TEST_TAGS: TagEntity[] = [
+  Object.assign(new TagEntity(), {
+    id: uuidv4(),
+    key: 'environment',
+    value: 'production',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    encryption: TEST_ENCRYPTION_STRATEGY,
+  }),
+  Object.assign(new TagEntity(), {
+    id: uuidv4(),
+    key: 'environment',
+    value: 'staging',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    encryption: TEST_ENCRYPTION_STRATEGY,
+  }),
+  Object.assign(new TagEntity(), {
+    id: uuidv4(),
+    key: 'size',
+    value: 'large',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    encryption: TEST_ENCRYPTION_STRATEGY,
+  }),
+];
 
 const TEST_TAGS: TagEntity[] = [
   Object.assign(new TagEntity(), {
@@ -75,7 +103,7 @@ export const constants = {
   APP_DEFAULT_SETTINGS,
   TEST_KEYTAR_PASSWORD: process.env.RI_SECRET_STORAGE_PASSWORD || 'somepassword',
   TEST_INCORRECT_PASSWORD: 'incorrect',
-  TEST_ENCRYPTION_STRATEGY: 'KEYTAR',
+  TEST_ENCRYPTION_STRATEGY,
   TEST_AGREEMENTS_VERSION: '1.0.3',
   TEST_REMOTE_STATIC_PATH: './remote',
   TEST_REMOTE_STATIC_URI: '/remote',

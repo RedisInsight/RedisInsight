@@ -286,6 +286,7 @@ export class DatabaseEntity {
       referencedColumnName: 'id',
     },
   })
+  @Type(() => TagEntity)
   tags: TagEntity[];
 
   @Expose()

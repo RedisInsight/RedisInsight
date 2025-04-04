@@ -78,10 +78,12 @@ jobs:
       enterprise: true
 
   aws-upload:
-    uses: ./.github/workflows/aws-upload-dev.yml
+    uses: ./.github/workflows/aws-upload-enterprise.yml
     secrets: inherit
     needs: [manual-build]
     if: always()
+    with:
+      environment: ${{ inputs.environment }}
 
   clean:
     uses: ./.github/workflows/clean-deployments.yml

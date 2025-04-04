@@ -8,7 +8,6 @@ import {
   mockDatabaseImportResponse,
   mockSessionMetadata,
   mockSshImportService,
-  mockTagsRepository,
   MockType,
 } from 'src/__mocks__';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -25,13 +24,11 @@ import {
 } from 'src/modules/database-import/exceptions';
 import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
 import { SshImportService } from 'src/modules/database-import/ssh-import.service';
-import { TagRepository } from '../tag/repository/tag.repository';
 
 describe('DatabaseImportService', () => {
   let service: DatabaseImportService;
   let certificateImportService: MockType<CertificateImportService>;
   let databaseRepository: MockType<DatabaseRepository>;
-  let tagRepository: MockType<TagRepository>;
   let analytics: MockType<DatabaseImportAnalytics>;
   let validatoSpy;
 
@@ -59,16 +56,11 @@ describe('DatabaseImportService', () => {
           provide: DatabaseImportAnalytics,
           useFactory: mockDatabaseImportAnalytics,
         },
-        {
-          provide: TagRepository,
-          useFactory: mockTagsRepository,
-        }
       ],
     }).compile();
 
     service = await module.get(DatabaseImportService);
     databaseRepository = await module.get(DatabaseRepository);
-    tagRepository = await module.get(TagRepository);
     certificateImportService = await module.get(CertificateImportService);
     analytics = await module.get(DatabaseImportAnalytics);
     validatoSpy = jest.spyOn(service['validator'], 'validateOrReject');

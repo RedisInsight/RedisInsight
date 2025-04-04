@@ -11,7 +11,6 @@ import {
   DatabaseImportResult,
   DatabaseImportStatus,
 } from 'src/modules/database-import/dto/database-import.response';
-import { TagRepository } from '../tag/repository/tag.repository';
 import { ValidationError, Validator } from 'class-validator';
 import { ImportDatabaseDto } from 'src/modules/database-import/dto/import.database.dto';
 import { classToClass } from 'src/utils';
@@ -81,7 +80,6 @@ export class DatabaseImportService {
     private readonly sshImportService: SshImportService,
     private readonly databaseRepository: DatabaseRepository,
     private readonly analytics: DatabaseImportAnalytics,
-    private readonly tagRepository: TagRepository,
   ) {}
 
   /**
@@ -255,10 +253,6 @@ export class DatabaseImportService {
           groups: ['security'],
         },
       );
-
-      if (dto.tags) {
-        dto.tags = await this.tagRepository.getOrCreateByKeyValuePairs(dto.tags);
-      }
 
       await this.validator.validateOrReject(dto, {
         whitelist: true,

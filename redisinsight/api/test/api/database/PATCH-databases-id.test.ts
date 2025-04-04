@@ -222,6 +222,15 @@ describe(`PATCH /databases/:id`, () => {
       },
     ];
     const newTagsDto3 = [];
+    const newTagsDto4 = [
+      {
+        key: 'duplicateKey',
+        value: 'value1',
+      }, {
+        key: 'duplicateKey',
+        value: 'value2',
+      }
+    ];
 
     const expectTagsCount = async (count: number) => {
       const tags = await localDb.getAllTags();
@@ -324,6 +333,30 @@ describe(`PATCH /databases/:id`, () => {
 
           expect(tagPairs).to.eql(newTagsDto3);
           await expectTagsCount(constants.TEST_TAGS.length - 2);
+        },
+      },
+      {
+        name: 'Should not allow adding duplicated tags by key to a database',
+        endpoint: () => endpoint(constants.TEST_INSTANCE_ID_6),
+        data: {
+          tags: newTagsDto4,
+        },
+        before: async () => {
+          await localDb.createInstancesWithTags();
+
+          oldDatabase = await localDb.getInstanceById(
+            constants.TEST_INSTANCE_ID_6,
+          );
+          const tagPairs = extractTagPairs(oldDatabase.tags);
+
+          expect(tagPairs).to.not.eql(newTagsDto4);
+          await expectTagsCount(constants.TEST_TAGS.length);
+        },
+        statusCode: 400,
+        responseBody: {
+          message: [ 'Tags must not contain duplicates by key.' ],
+          error: 'Bad Request',
+          statusCode: 400,
         },
       },
     ].map(mainCheckFn);

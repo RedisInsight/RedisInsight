@@ -65,30 +65,6 @@ const TEST_TAGS: TagEntity[] = [
   }),
 ];
 
-const TEST_TAGS: TagEntity[] = [
-  Object.assign(new TagEntity(), {
-    id: uuidv4(),
-    key: 'environment',
-    value: 'production',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }),
-  Object.assign(new TagEntity(), {
-    id: uuidv4(),
-    key: 'environment',
-    value: 'staging',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }),
-  Object.assign(new TagEntity(), {
-    id: uuidv4(),
-    key: 'size',
-    value: 'large',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }),
-];
-
 export const constants = {
   // api
   API,

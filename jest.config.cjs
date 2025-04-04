@@ -69,6 +69,10 @@ module.exports = {
     },
   },
   globals: {
-    riConfig: {}
+    riConfig: {
+      cloudAds: {
+        defaultFlag: true
+      }
+    }
   }
 }

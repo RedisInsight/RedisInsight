@@ -204,6 +204,34 @@ describe('OAuthJobs', () => {
     )
   })
 
+  it('should call addInfiniteNotification and removeInfiniteNotification when errorCode is 11_115', async () => {
+    const error = {
+      errorCode: CustomErrorCodes.CloudDatabaseImportForbidden,
+    };
+    (oauthCloudJobSelector as jest.Mock).mockImplementation(() => ({
+      status: ''
+    }))
+
+    const { rerender } = render(<OAuthJobs />);
+
+    (oauthCloudJobSelector as jest.Mock).mockImplementation(() => ({
+      status: CloudJobStatus.Failed,
+      error,
+    }))
+
+    rerender(<OAuthJobs />)
+
+    const expectedActions = [
+      addInfiniteNotification(INFINITE_MESSAGES.DATABASE_IMPORT_FORBIDDEN()),
+      setSSOFlow(),
+      setSocialDialogState(null),
+      removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
+    ]
+    expect(clearStoreActions(store.getActions())).toEqual(
+      clearStoreActions(expectedActions)
+    )
+  })
+
   it('should call logoutUser when statusCode is 401', async () => {
     const mockDatabaseId = '123'
     const error = {

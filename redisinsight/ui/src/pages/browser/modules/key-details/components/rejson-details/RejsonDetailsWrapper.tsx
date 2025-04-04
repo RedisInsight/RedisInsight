@@ -4,10 +4,20 @@ import { EuiProgress } from '@elastic/eui'
 
 import { isUndefined } from 'lodash'
 import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/browser/rejson'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import {
+  selectedKeyDataSelector,
+  keysSelector,
+} from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
+import {
+  sendEventTelemetry,
+  TelemetryEvent,
+  getBasedOnViewTypeEvent,
+} from 'uiSrc/telemetry'
+import {
+  KeyDetailsHeader,
+  KeyDetailsHeaderProps,
+} from 'uiSrc/pages/browser/modules'
 
 import { stringToBuffer } from 'uiSrc/utils'
 import { IJSONData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
@@ -21,7 +31,11 @@ export interface Props extends KeyDetailsHeaderProps {}
 const RejsonDetailsWrapper = (props: Props) => {
   const { loading } = useSelector(rejsonSelector)
   const { data, downloaded, type, path } = useSelector(rejsonDataSelector)
-  const { name: selectedKey, nameString, length } = useSelector(selectedKeyDataSelector) || {}
+  const {
+    name: selectedKey,
+    nameString,
+    length,
+  } = useSelector(selectedKeyDataSelector) || {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
 
@@ -38,12 +52,12 @@ const RejsonDetailsWrapper = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_JSON_KEY_COLLAPSED,
-        TelemetryEvent.TREE_VIEW_JSON_KEY_COLLAPSED
+        TelemetryEvent.TREE_VIEW_JSON_KEY_COLLAPSED,
       ),
       eventData: {
         databaseId: instanceId,
-        level
-      }
+        level,
+      },
     })
   }
 
@@ -52,16 +66,19 @@ const RejsonDetailsWrapper = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_JSON_KEY_EXPANDED,
-        TelemetryEvent.TREE_VIEW_JSON_KEY_EXPANDED
+        TelemetryEvent.TREE_VIEW_JSON_KEY_EXPANDED,
       ),
       eventData: {
         databaseId: instanceId,
-        level
-      }
+        level,
+      },
     })
   }
 
-  const handleJsonKeyExpandAndCollapse = (isExpanded: boolean, path: string) => {
+  const handleJsonKeyExpandAndCollapse = (
+    isExpanded: boolean,
+    path: string,
+  ) => {
     const matchedPath = path.match(/\[.+?\]/g)
     const levelFromPath = matchedPath ? matchedPath.length - 1 : 0
     if (isExpanded) {
@@ -81,16 +98,10 @@ const RejsonDetailsWrapper = (props: Props) => {
 
   return (
     <div className="fluid flex-column relative">
-      <KeyDetailsHeader
-        {...props}
-        key="key-details-header"
-      />
+      <KeyDetailsHeader {...props} key="key-details-header" />
       <div className="key-details-body" key="key-details-body">
         <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-          <div
-            data-testid="json-details"
-            className={styles.container}
-          >
+          <div data-testid="json-details" className={styles.container}>
             {loading && (
               <EuiProgress
                 color="primary"

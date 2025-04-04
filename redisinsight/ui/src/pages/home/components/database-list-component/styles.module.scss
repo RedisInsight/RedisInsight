@@ -96,12 +96,33 @@ $breakpoint-l: 1400px;
       visibility: hidden;
     }
   }
+
+  :global(.hideSelectableCheckboxes .euiCheckbox) {
+    visibility: hidden;
+  }
 }
 
 .cloudIcon {
   :global {
     path {
       fill: var(--euiTextSubduedColor);
+    }
+  }
+}
+
+:global(.controlsPopoverContent) {
+  display: flex;
+  flex-direction: column;
+
+  & > div {
+    display: flex;
+
+    button {
+      flex: 1;
+      
+      :global(.euiButtonContent) {
+        justify-content: start;
+      }
     }
   }
 }

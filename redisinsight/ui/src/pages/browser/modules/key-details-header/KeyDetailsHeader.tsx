@@ -11,9 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { GroupBadge, AutoRefresh, FullScreen } from 'uiSrc/components'
-import {
-  HIDE_LAST_REFRESH,
-} from 'uiSrc/constants'
+import { HIDE_LAST_REFRESH } from 'uiSrc/constants'
 import {
   deleteSelectedKeyAction,
   editKey,
@@ -26,7 +24,11 @@ import {
 } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 
 import { KeyDetailsHeaderName } from './components/key-details-header-name'
 import { KeyDetailsHeaderTTL } from './components/key-details-header-ttl'
@@ -38,7 +40,11 @@ import styles from './styles.module.scss'
 export interface KeyDetailsHeaderProps {
   onCloseKey: () => void
   onRemoveKey: () => void
-  onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
+  onEditKey: (
+    key: RedisResponseBuffer,
+    newKey: RedisResponseBuffer,
+    onFailure?: () => void,
+  ) => void
   isFullScreen: boolean
   arePanelsCollapsed: boolean
   onToggleFullScreen: () => void
@@ -54,7 +60,8 @@ const KeyDetailsHeader = ({
   onEditKey,
   Actions,
 }: KeyDetailsHeaderProps) => {
-  const { refreshing, loading, lastRefreshTime, isRefreshDisabled } = useSelector(selectedKeySelector)
+  const { refreshing, loading, lastRefreshTime, isRefreshDisabled } =
+    useSelector(selectedKeySelector)
   const {
     type,
     length,
@@ -72,15 +79,24 @@ const KeyDetailsHeader = ({
   const handleEditTTL = (key: RedisResponseBuffer, ttl: number) => {
     dispatch(editKeyTTL(key, ttl))
   }
-  const handleEditKey = (oldKey: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => {
-    dispatch(editKey(oldKey, newKey, () => onEditKey(oldKey, newKey), onFailure))
+  const handleEditKey = (
+    oldKey: RedisResponseBuffer,
+    newKey: RedisResponseBuffer,
+    onFailure?: () => void,
+  ) => {
+    dispatch(
+      editKey(oldKey, newKey, () => onEditKey(oldKey, newKey), onFailure),
+    )
   }
 
   const handleDeleteKey = (key: RedisResponseBuffer) => {
     dispatch(deleteSelectedKeyAction(key, onRemoveKey))
   }
 
-  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+  const handleEnableAutoRefresh = (
+    enableAutoRefresh: boolean,
+    refreshRate: string,
+  ) => {
     const browserViewEvent = enableAutoRefresh
       ? TelemetryEvent.BROWSER_KEY_DETAILS_AUTO_REFRESH_ENABLED
       : TelemetryEvent.BROWSER_KEY_DETAILS_AUTO_REFRESH_DISABLED
@@ -93,19 +109,25 @@ const KeyDetailsHeader = ({
         length,
         databaseId: instanceId,
         keyType: type,
-        refreshRate: +refreshRate
-      }
+        refreshRate: +refreshRate,
+      },
     })
   }
 
-  const handleChangeAutoRefreshRate = (enableAutoRefresh: boolean, refreshRate: string) => {
+  const handleChangeAutoRefreshRate = (
+    enableAutoRefresh: boolean,
+    refreshRate: string,
+  ) => {
     if (enableAutoRefresh) {
       handleEnableAutoRefresh(enableAutoRefresh, refreshRate)
     }
   }
 
   return (
-    <div className={`key-details-header ${styles.container}`} data-testid="key-details-header">
+    <div
+      className={`key-details-header ${styles.container}`}
+      data-testid="key-details-header"
+    >
       {loading ? (
         <div>
           <EuiLoadingContent lines={2} />
@@ -127,15 +149,15 @@ const KeyDetailsHeader = ({
                 <EuiFlexItem />
                 {!arePanelsCollapsed && (
                   <EuiFlexItem grow={false} style={{ marginRight: '8px' }}>
-                    <FullScreen isFullScreen={isFullScreen} onToggleFullScreen={onToggleFullScreen} />
+                    <FullScreen
+                      isFullScreen={isFullScreen}
+                      onToggleFullScreen={onToggleFullScreen}
+                    />
                   </EuiFlexItem>
                 )}
                 <EuiFlexItem grow={false}>
                   {(!arePanelsCollapsed || isFullScreen) && (
-                    <EuiToolTip
-                      content="Close"
-                      position="left"
-                    >
+                    <EuiToolTip content="Close" position="left">
                       <EuiButtonIcon
                         iconType="cross"
                         color="primary"

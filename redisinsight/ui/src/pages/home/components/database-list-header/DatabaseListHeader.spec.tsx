@@ -11,6 +11,12 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     enhancedCloudUI: {
       flag: false
+    },
+    databaseManagement: {
+      flag: true,
+    },
+    cloudAds: {
+      flag: true,
     }
   }),
 }))
@@ -56,14 +62,26 @@ describe('DatabaseListHeader', () => {
   })
 
   it('should show promo cloud button with enabled feature flag', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      enhancedCloudUI: {
+    render(<DatabaseListHeader {...instance(mockedProps)} />)
+
+    expect(screen.getByTestId('promo-btn')).toBeInTheDocument()
+  })
+
+  it('should show "create database" button when database management feature flag is enabled', () => {
+    const { queryByTestId } = render(<DatabaseListHeader {...instance(mockedProps)} />)
+
+    expect(queryByTestId('add-redis-database-short')).toBeInTheDocument()
+  })
+
+  it('should hide "create database" button when database management feature flag is disabled', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      databaseManagement: {
         flag: false
       }
     })
 
-    render(<DatabaseListHeader {...instance(mockedProps)} />)
+    const { queryByTestId } = render(<DatabaseListHeader {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('promo-btn')).toBeInTheDocument()
+    expect(queryByTestId('add-redis-database-short')).not.toBeInTheDocument()
   })
 })

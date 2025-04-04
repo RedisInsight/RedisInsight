@@ -305,7 +305,6 @@ export class RejsonRlService {
   ): Promise<GetRejsonRlResponseDto> {
     try {
       this.logger.debug('Getting json by key.', clientMetadata);
-
       const { keyName, path, forceRetrieve } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 

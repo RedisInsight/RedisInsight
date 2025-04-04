@@ -78,6 +78,7 @@ export enum OAuthSocialSource {
   BrowserContentMenu = 'browser content menu',
   BrowserFiltering = 'browser filtering',
   BrowserSearch = 'browser search',
+  BrowserRedisJSON = 'browser RedisJSON',
   RediSearch = 'workbench RediSearch',
   RedisJSON = 'workbench RedisJSON',
   RedisTimeSeries = 'workbench RedisTimeSeries',

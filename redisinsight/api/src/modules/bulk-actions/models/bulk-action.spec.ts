@@ -114,6 +114,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
         succeed: 0,
         failed: 0,
         errors: [],
+        keys: [],
       });
 
       await new Promise((res) => setTimeout(res, 100));
@@ -141,6 +142,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
         succeed: 0,
         failed: 0,
         errors: [],
+        keys: [],
       });
 
       await new Promise((res) => setTimeout(res, 100));
@@ -168,6 +170,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
         succeed: 0,
         failed: 0,
         errors: [],
+        keys: [],
       });
 
       await new Promise((res) => setTimeout(res, 100));
@@ -207,6 +210,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
         succeed: 900_000,
         failed: 100_000,
         errors: generateMockBulkActionErrors(500, false),
+        keys: [],
       });
     });
     it('should return overview for cluster', async () => {
@@ -227,7 +231,93 @@ describe('AbstractBulkActionSimpleRunner', () => {
         succeed: 2_700_000,
         failed: 300_000,
         errors: generateMockBulkActionErrors(500, false),
+        keys: [],
       });
+    });
+  });
+
+  describe('getOverview - keys aggregation', () => {
+    let mockSummary1;
+    let mockSummary2;
+    let mockSummary3;
+    let mockRunner1;
+    let mockRunner2;
+    let mockRunner3;
+    let mockProgress1;
+    let mockProgress2;
+    let mockProgress3;
+
+    beforeEach(() => {
+      mockProgress1 = {
+        getOverview: jest.fn().mockReturnValue({ total: 500, scanned: 400 }),
+      };
+      mockProgress2 = {
+        getOverview: jest.fn().mockReturnValue({ total: 1000, scanned: 800 }),
+      };
+      mockProgress3 = {
+        getOverview: jest.fn().mockReturnValue({ total: 1500, scanned: 1200 }),
+      };
+
+      mockSummary1 = {
+        getOverview: jest.fn().mockReturnValue({
+          processed: 100,
+          succeed: 90,
+          failed: 10,
+          errors: [],
+          keys: ['key1', 'key2'],
+        }),
+      };
+      mockSummary2 = {
+        getOverview: jest.fn().mockReturnValue({
+          processed: 200,
+          succeed: 180,
+          failed: 20,
+          errors: [],
+          keys: ['key3'],
+        }),
+      };
+      mockSummary3 = {
+        getOverview: jest.fn().mockReturnValue({
+          processed: 300,
+          succeed: 270,
+          failed: 30,
+          errors: [],
+          keys: ['key4', 'key5', 'key6'],
+        }),
+      };
+
+      mockRunner1 = {
+        getSummary: jest.fn().mockReturnValue(mockSummary1),
+        getProgress: jest.fn().mockReturnValue(mockProgress1),
+      };
+      mockRunner2 = {
+        getSummary: jest.fn().mockReturnValue(mockSummary2),
+        getProgress: jest.fn().mockReturnValue(mockProgress2),
+      };
+      mockRunner3 = {
+        getSummary: jest.fn().mockReturnValue(mockSummary3),
+        getProgress: jest.fn().mockReturnValue(mockProgress3),
+      };
+
+      bulkAction['runners'] = [mockRunner1, mockRunner2, mockRunner3];
+      bulkAction['status'] = BulkActionStatus.Completed;
+    });
+
+    it('should correctly concatenate keys from all runners', async () => {
+      const overview = bulkAction.getOverview();
+
+      // Convert to a Set to make the test order-independent
+      const expectedKeys = new Set([
+        'key1',
+        'key2',
+        'key3',
+        'key4',
+        'key5',
+        'key6',
+      ]);
+      const actualKey = new Set(overview.summary.keys);
+
+      expect(actualKey).toEqual(expectedKeys);
     });
   });
 

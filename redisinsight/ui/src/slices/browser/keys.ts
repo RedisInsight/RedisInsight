@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
+import { useSelector } from 'react-redux'
 import { apiService, localStorageService } from 'uiSrc/services'
 import {
   ApiEndpoints,
@@ -523,7 +524,7 @@ export function fetchPatternKeysAction(
       sourceKeysFetch = CancelToken.source()
 
       const state = stateInit()
-      const scanThreshold = state.user.settings.config?.scanThreshold || SCAN_COUNT_DEFAULT
+      const scanThreshold = state.user.settings.config?.scanThreshold || count || SCAN_COUNT_DEFAULT
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
 

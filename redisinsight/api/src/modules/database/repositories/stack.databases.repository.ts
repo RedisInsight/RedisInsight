@@ -13,6 +13,7 @@ import { Database } from 'src/modules/database/models/database';
 import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
+import { TagRepository } from 'src/modules/tag/repository/tag.repository';
 import config from 'src/utils/config';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
@@ -30,8 +31,9 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
     protected readonly clientCertificateRepository: ClientCertificateRepository,
     protected readonly encryptionService: EncryptionService,
     protected readonly constantsProvider: ConstantsProvider,
+    protected readonly tagRepository: TagRepository,
   ) {
-    super(repository, sshOptionsRepository, caCertificateRepository, clientCertificateRepository, encryptionService);
+    super(repository, sshOptionsRepository, caCertificateRepository, clientCertificateRepository, encryptionService, tagRepository);
   }
 
   async onApplicationBootstrap() {

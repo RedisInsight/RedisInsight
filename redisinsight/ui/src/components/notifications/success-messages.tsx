@@ -279,4 +279,7 @@ export default {
     title: 'Pipeline has been reset',
     message: 'The RDI pipeline has been reset, consider flushing the target Redis database.',
   }),
+  SUCCESS_TAGS_UPDATED: () => ({
+    title: 'Tags updated successfully.',
+  }),
 }

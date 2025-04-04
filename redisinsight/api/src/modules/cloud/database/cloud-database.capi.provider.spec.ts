@@ -154,4 +154,55 @@ describe('CloudDatabaseCapiProvider', () => {
       );
     });
   });
+
+  describe('getDatabaseTags', () => {
+    const mockTags = [
+      {
+        key: 'tag1',
+        value: 'value1',
+      },
+      {
+        key: 'tag2',
+        value: 'value2',
+      },
+    ]
+
+    it('successfully get flexible cloud database tags', async () => {
+      const response = {
+        status: 200,
+        data: {
+          tags: mockTags,
+        },
+      };
+      mockedAxios.get.mockResolvedValue(response);
+
+      expect(await service.getDatabaseTags(
+        mockCloudCapiAuthDto,
+        mockGetCloudSubscriptionDatabaseDto,
+      )).toEqual(mockTags);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `/subscriptions/${mockGetCloudSubscriptionDatabaseDto.subscriptionId}/databases/${mockGetCloudSubscriptionDatabaseDto.databaseId}/tags`,
+        mockCloudCapiHeaders,
+      );
+    });
+
+    it('successfully get fixed cloud database tags', async () => {
+      const response = {
+        status: 200,
+        data: {
+          tags: mockTags,
+        },
+      };
+      mockedAxios.get.mockResolvedValue(response);
+
+      expect(await service.getDatabaseTags(
+        mockCloudCapiAuthDto,
+        mockGetCloudSubscriptionDatabaseDtoFixed,
+      )).toEqual(mockTags);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `/fixed/subscriptions/${mockGetCloudSubscriptionDatabaseDtoFixed.subscriptionId}/databases/${mockGetCloudSubscriptionDatabaseDtoFixed.databaseId}/tags`,
+        mockCloudCapiHeaders,
+      );
+    });
+  })
 });

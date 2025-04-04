@@ -19,6 +19,7 @@ import { mockCloudDatabaseDetails, mockCloudDatabaseDetailsEntity } from 'src/__
 import { mockRedisClientListResult } from 'src/__mocks__/database-info';
 import { DatabaseOverviewKeyspace } from 'src/modules/database/constants/overview';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
+import { mockTags } from 'src/__mocks__/tags';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';
 
@@ -169,6 +170,16 @@ export const mockDatabaseWithTlsAuth = Object.assign(new Database(), {
 export const mockDatabaseWithTlsAuthEntity = Object.assign(new DatabaseEntity(), {
   ...mockDatabaseWithTlsEntity,
   clientCert: mockClientCertificate, // !not client cert entity since it managed on own repository
+});
+
+export const mockDatabaseWithTags = Object.assign(new Database(), {
+  ...mockDatabase,
+  tags: mockTags,
+});
+
+export const mockDatabaseWithTagsEntity = Object.assign(new DatabaseEntity(), {
+  ...mockDatabaseWithTags,
+  encryption: null,
 });
 
 export const mockSentinelMaster = Object.assign(new SentinelMaster(), {

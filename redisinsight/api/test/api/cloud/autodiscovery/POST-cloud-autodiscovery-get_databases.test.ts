@@ -54,6 +54,10 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   sslClientAuthentication: Joi.boolean().required(),
   modules: Joi.array().required(),
   options: Joi.object().required(),
+  tags: Joi.array().items(Joi.object().keys({
+    key: Joi.string().required(),
+    value: Joi.string().required(),
+  })).allow(null),
   cloudDetails: Joi.object().keys({
     cloudId: Joi.number().required(),
     subscriptionType: Joi.string().valid('fixed', 'flexible').required(),

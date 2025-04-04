@@ -8,6 +8,8 @@ enum ApiEndpoints {
   DATABASES_TEST_CONNECTION = 'databases/test',
   DATABASES_EXPORT = 'databases/export',
 
+  TAGS = 'tags',
+
   BULK_ACTIONS_IMPORT = 'bulk-actions/import',
   BULK_ACTIONS_IMPORT_DEFAULT_DATA = 'bulk-actions/import/default-data',
   BULK_ACTIONS_IMPORT_TUTORIAL_DATA = 'bulk-actions/import/tutorial-data',

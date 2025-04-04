@@ -83,6 +83,11 @@ $breakpoint-l: 1400px;
   tr > td:nth-child(2) {
     padding-left: 5px !important;
   }
+  tr:hover {
+    .tagsButton {
+      display: inline-block !important;
+    }
+  }
 
   :global(.euiTableRow.cloudDbRow) {
     cursor: pointer;
@@ -110,6 +115,10 @@ $breakpoint-l: 1400px;
   }
 }
 
+.tagsButton {
+  display: none !important;
+}
+
 :global(.controlsPopoverContent) {
   display: flex;
   flex-direction: column;
@@ -119,7 +128,7 @@ $breakpoint-l: 1400px;
 
     button {
       flex: 1;
-      
+
       :global(.euiButtonContent) {
         justify-content: start;
       }

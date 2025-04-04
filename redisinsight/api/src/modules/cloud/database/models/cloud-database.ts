@@ -2,7 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models/cloud-subscription';
 import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-database-details';
-import { IsEnum, IsInt, IsNotEmpty } from 'class-validator';
+import { IsArray, IsEnum, IsInt, IsNotEmpty } from 'class-validator';
+import { Tag } from 'src/modules/tag/models/tag';
 
 export enum CloudDatabaseProtocol {
   Redis = 'redis',
@@ -149,4 +150,14 @@ export class CloudDatabase {
   @Expose()
   @Type(() => CloudDatabaseDetails)
   cloudDetails?: CloudDatabaseDetails;
+
+  @ApiProperty({
+    description: 'Tags associated with the database.',
+    type: Tag,
+    isArray: true,
+  })
+  @Expose()
+  @IsArray()
+  @Type(() => Tag)
+  tags: Tag[];
 }

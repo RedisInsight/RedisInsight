@@ -55,6 +55,10 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     isPreSetup: Joi.boolean().allow(null),
   }).allow(null),
   compressor: Joi.string().valid('NONE', 'GZIP', 'ZSTD', 'LZ4', 'SNAPPY', 'Brotli', 'PHPGZCompress').required(),
+  tags: Joi.array().items(Joi.object().keys({
+    key: Joi.string().required(),
+    value: Joi.string().required(),
+  })).allow(null),
   isPreSetup: Joi.boolean().allow(null),
 })).required().strict(true);
 

@@ -72,6 +72,7 @@ export class DatabaseImportService {
     ['compressor', ['compressor']],
     ['modules', ['modules']],
     ['forceStandalone', ['forceStandalone']],
+    ['tags', ['tags']],
   ];
 
   constructor(

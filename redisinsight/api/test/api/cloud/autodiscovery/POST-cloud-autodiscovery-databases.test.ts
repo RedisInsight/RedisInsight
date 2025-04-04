@@ -12,6 +12,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { nock } from '../../../helpers/test';
 import {
   mockCloudCapiDatabase,
+  mockCloudCapiDatabaseTags,
   mockCloudCapiDatabaseFixed, mockCloudDatabase, mockCloudDatabaseFixed,
   mockImportCloudDatabaseDto,
   mockImportCloudDatabaseDtoFixed
@@ -55,6 +56,13 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   status: Joi.string().valid('fail', 'success').required(),
   message: Joi.string().required(),
   databaseDetails: Joi.object().required(),
+  tags: Joi.array().items(Joi.object().keys({
+    key: Joi.string().required(),
+    value: Joi.string().required(),
+    createdAt: Joi.string().isoDate(),
+    updatedAt: Joi.string().isoDate(),
+    links: Joi.array().items(Joi.string().required()),
+  })).allow(null),
 })).required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
@@ -85,6 +93,10 @@ describe('POST /cloud/autodiscovery/databases', () => {
             .reply(200, {
               ...mockCloudCapiDatabaseFixed,
               publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
+            })
+            .get(`/subscriptions/${mockImportCloudDatabaseDtoFixed.subscriptionId}/databases/${mockImportCloudDatabaseDtoFixed.databaseId}/tags`)
+            .reply(200, {
+              tags: mockCloudCapiDatabaseTags,
             });
         },
         name: 'Should add 2 databases',
@@ -105,6 +117,7 @@ describe('POST /cloud/autodiscovery/databases', () => {
             databaseDetails: {
               ...mockCloudDatabase,
               publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
+              tags: mockCloudCapiDatabaseTags,
             }
           }, {
             ...mockImportCloudDatabaseDtoFixed,

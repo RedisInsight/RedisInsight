@@ -12,6 +12,21 @@ export class ModelEncryptor {
     protected readonly fields: string[],
   ) {}
 
+  async encryptEntities<T>(entities: T[]): Promise<T[]> {
+    return Promise.all(entities.map(async (entity) => {
+      return this.encryptEntity(entity);
+    }));
+  }
+
+  async decryptEntities<T>(
+    entities: T[],
+    ignoreErrors: boolean = false,
+  ): Promise<T[]> {
+    return Promise.all(entities.map(async (entity) => {
+      return this.decryptEntity(entity, ignoreErrors);
+    }));
+  }
+
   /**
    * Encrypt required fields based on picked encryption strategy
    * Should always throw an encryption error to determine that something wrong

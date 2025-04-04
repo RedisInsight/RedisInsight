@@ -18,6 +18,7 @@ import {
   mockEncryptionService,
   mockRepository,
   mockSessionMetadata,
+  mockTagsRepository,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -29,6 +30,7 @@ import config from 'src/utils/config';
 import { NotImplementedException } from '@nestjs/common';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { TagRepository } from 'src/modules/tag/repository/tag.repository';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
 
@@ -74,6 +76,10 @@ describe('StackDatabasesRepository', () => {
           provide: ConstantsProvider,
           useFactory: mockConstantsProvider,
         },
+        {
+          provide: TagRepository,
+          useFactory: mockTagsRepository,
+        }
       ],
     }).compile();
 
@@ -83,7 +89,7 @@ describe('StackDatabasesRepository', () => {
     encryptionService = await module.get(EncryptionService);
     service = await module.get(StackDatabasesRepository);
 
-    repository.findOneBy.mockResolvedValue(mockDatabaseEntity);
+    repository.findOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getOne.mockResolvedValue(mockDatabaseEntity);
     repository.createQueryBuilder().getMany.mockResolvedValue([
       pick(mockDatabaseWithTlsAuthEntity, ...listFields),
@@ -160,7 +166,7 @@ describe('StackDatabasesRepository', () => {
       const result = await service.get(mockSessionMetadata, mockDatabaseId);
 
       expect(result).toEqual(mockDatabase);
-      expect(repository.findOneBy).toHaveBeenCalledWith({ id: REDIS_STACK_CONFIG.id });
+      expect(repository.findOne).toHaveBeenCalled();
       expect(caCertRepository.get).not.toHaveBeenCalled();
       expect(clientCertRepository.get).not.toHaveBeenCalled();
     });

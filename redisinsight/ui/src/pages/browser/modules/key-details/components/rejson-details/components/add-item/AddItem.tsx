@@ -68,7 +68,7 @@ const AddItem = (props: Props) => {
     }
 
     const wrappedKey = wrapPath(key) || ''
-    if (checkExistingPath(wrappedKey, jsonContent)) {
+    if (isPair && checkExistingPath(wrappedKey, jsonContent)) {
       setIsConfirmationVisible(true)
       return
     }

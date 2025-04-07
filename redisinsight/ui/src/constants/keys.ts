@@ -123,7 +123,8 @@ export interface LengthNamingByType {
 export const LENGTH_NAMING_BY_TYPE: LengthNamingByType = Object.freeze({
   [ModulesKeyTypes.Graph]: 'Nodes',
   [ModulesKeyTypes.TimeSeries]: 'Samples',
-  [KeyTypes.Stream]: 'Entries'
+  [KeyTypes.Stream]: 'Entries',
+  [KeyTypes.ReJSON]: 'Top-level values',
 })
 
 export interface ModulesKeyTypesNames {

@@ -25,6 +25,7 @@ import { CloudSessionEntity } from 'src/modules/cloud/session/entities/cloud.ses
 import { DatabaseSettingsEntity } from 'src/modules/database-settings/entities/database-setting.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
+import { TagEntity } from 'src/modules/tag/entities/tag.entity';
 
 const dbConfig = config.get('db');
 
@@ -56,6 +57,7 @@ const ormConfig = {
     AiQueryMessageEntity,
     CloudSessionEntity,
     DatabaseSettingsEntity,
+    TagEntity,
   ],
   migrations,
 };

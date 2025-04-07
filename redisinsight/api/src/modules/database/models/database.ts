@@ -28,6 +28,7 @@ import { Endpoint } from 'src/common/models';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { SshOptions } from 'src/modules/ssh/models/ssh-options';
 import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-database-details';
+import { Tag } from 'src/modules/tag/models/tag';
 
 const CONNECTIONS_CONFIG = config.get('connections');
 
@@ -329,6 +330,17 @@ export class Database {
   @IsBoolean()
   @IsOptional()
   forceStandalone?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Tags associated with the database.',
+    type: Tag,
+    isArray: true,
+  })
+  @Expose()
+  @IsOptional()
+  @IsArray()
+  @Type(() => Tag)
+  tags?: Tag[];
 
   @ApiPropertyOptional({
     description: 'Whether the database was created from a file or environment variables at startup',

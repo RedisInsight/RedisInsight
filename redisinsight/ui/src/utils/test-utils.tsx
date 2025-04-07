@@ -9,6 +9,7 @@ import { render as rtlRender, renderHook as rtlRenderHook, waitFor } from '@test
 
 import { RootState, store as rootStore } from 'uiSrc/slices/store'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
+import { initialState as initialStateTags } from 'uiSrc/slices/instances/tags'
 import { initialState as initialStateCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { initialState as initialStateClientCerts } from 'uiSrc/slices/instances/clientCerts'
 import { initialState as initialStateCluster } from 'uiSrc/slices/instances/cluster'
@@ -93,6 +94,7 @@ const initialStateDefault: RootState = {
     cluster: cloneDeep(initialStateCluster),
     cloud: cloneDeep(initialStateCloud),
     sentinel: cloneDeep(initialStateSentinel),
+    tags: cloneDeep(initialStateTags),
   },
   browser: {
     keys: cloneDeep(initialStateKeys),

@@ -2,9 +2,11 @@ import { Connection, createConnection, getConnectionManager } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
+import { TagEntity } from 'src/modules/tag/entities/tag.entity';
 
 export const repositories = {
   DATABASE: 'DatabaseEntity',
+  TAG: 'TagEntity',
   CA_CERT_REPOSITORY: 'CaCertificateEntity',
   CLIENT_CERT_REPOSITORY: 'ClientCertificateEntity',
   SSH_OPTIONS_REPOSITORY: 'SshOptionsEntity',
@@ -461,6 +463,72 @@ export const createDatabaseInstances = async () => {
   }
 }
 
+const encryptTags = (tags: TagEntity[]) =>
+  tags.map(({ key, value, ...rest }) => ({
+    key: encryptData(key),
+    value: encryptData(value),
+    ...rest,
+  } as TagEntity));
+
+const decryptTags = (tags: TagEntity[]) =>
+  tags.map(({ key, value, ...rest }) => ({
+    key: decryptData(key),
+    value: decryptData(value),
+    ...rest,
+  } as TagEntity));
+
+export const getAllTags = async () => {
+  const rep = await getRepository(repositories.TAG);
+  const tags = await rep.find() as TagEntity[];
+  const decryptedTags = decryptTags(tags);
+
+  return decryptedTags;
+}
+
+export const initTags = async () => {
+  const rep = await getRepository(repositories.TAG);
+
+  await rep.createQueryBuilder()
+    .delete()
+    .execute()
+}
+
+export const createInstancesWithTags = async () => {
+  await initTags();
+
+  const rep = await getRepository(repositories.DATABASE);
+  const instances = [
+    {
+      id: constants.TEST_INSTANCE_ID_6,
+      name: constants.TEST_INSTANCE_NAME_6,
+      host: constants.TEST_INSTANCE_HOST_6,
+      db: constants.TEST_REDIS_DB_INDEX,
+      tags: encryptTags([constants.TEST_TAGS[0], constants.TEST_TAGS[2]]),
+      timeout: 30000,
+    },
+    {
+      id: constants.TEST_INSTANCE_ID_7,
+      name: constants.TEST_INSTANCE_NAME_7,
+      host: constants.TEST_INSTANCE_HOST_7,
+      tags: encryptTags([constants.TEST_TAGS[1]]),
+      timeout: 30000,
+    },
+  ];
+
+  for (let instance of instances) {
+    await rep.save({
+      tls: false,
+      verifyServerCert: false,
+      host: 'localhost',
+      port: 3679,
+      connectionType: 'STANDALONE',
+      ...instance,
+      modules: '[]',
+      version: '7.0',
+    });
+  }
+}
+
 export const createIncorrectDatabaseInstances = async () => {
   const rep = await getRepository(repositories.DATABASE);
 
@@ -554,7 +622,13 @@ export const getInstanceByName = async (name: string) => {
 
 export const getInstanceById = async (id: string) => {
   const rep = await getRepository(repositories.DATABASE);
-  return rep.findOneBy({ id });
+  const instance = await rep.findOneBy({ id });
+
+  if (instance?.tags) {
+    instance.tags = decryptTags(instance.tags);
+  }
+
+  return instance;
 }
 
 export const getBrowserHistoryById = async (id: string) => {
@@ -643,6 +717,7 @@ export const setAppSettings = async (data: object) => {
 }
 
 const truncateAll = async () => {
+  await (await getRepository(repositories.TAG)).clear();
   await (await getRepository(repositories.DATABASE)).clear();
   await (await getRepository(repositories.FEATURE)).clear();
   await (await getRepository(repositories.FEATURES_CONFIG)).clear();

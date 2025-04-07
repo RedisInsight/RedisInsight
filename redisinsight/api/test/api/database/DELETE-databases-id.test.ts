@@ -40,6 +40,26 @@ describe(`DELETE /databases/:id`, () => {
           expect(await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_2)).to.eql(null)
         },
       },
+      {
+        name: 'Should remove unused tags along with database',
+        endpoint: () => endpoint(constants.TEST_INSTANCE_ID_7),
+        before: async () => {
+          await localDb.createInstancesWithTags();
+
+          const instance = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_7);
+          const tags = await localDb.getAllTags();
+
+          expect(instance).to.be.an('object')
+          expect(tags.length).to.eq(constants.TEST_TAGS.length);
+        },
+        after: async () => {
+          const instance = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_7);
+          const tags = await localDb.getAllTags();
+
+          expect(instance).to.eql(null)
+          expect(tags.length).to.eq(constants.TEST_TAGS.length - 1);
+        },
+      },
     ].map(mainCheckFn);
   });
 });

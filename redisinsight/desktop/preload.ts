@@ -22,6 +22,9 @@ contextBridge.exposeInMainWorld('app', {
   cloudOauthCallback: ((connected: any) => {
     ipcRenderer.on(IpcOnEvent.cloudOauthCallback, connected)
   }),
+  microsoftAuthCallback: ((connected: any) => {
+    ipcRenderer.on(IpcOnEvent.microsoftAuthCallback, connected)
+  }),
   deepLinkAction: ((parsedDeepLink: any) => {
     ipcRenderer.on(IpcOnEvent.deepLinkAction, parsedDeepLink)
   }),

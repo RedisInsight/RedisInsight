@@ -14,6 +14,7 @@ import {
   initAutoUpdaterHandlers,
   launchApiServer,
   initCloudHandlers,
+  initMicrosoftAuthHandlers,
   electronStore,
 } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
@@ -35,6 +36,7 @@ const init = async () => {
   initAutoUpdaterHandlers()
   initTray()
   initCloudHandlers()
+  initMicrosoftAuthHandlers()
 
   nativeTheme.themeSource = electronStore?.get(ElectronStorageItem.themeSource) || config.themeSource
 

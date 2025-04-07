@@ -6,6 +6,7 @@ enum IpcInvokeEvent {
   windowOpen = 'window:open',
   themeChange = 'theme:change',
   appRestart = 'app:restart',
+  microsoftAuth = 'microsoft-auth',
 }
 
 enum IpcOnEvent {
@@ -13,6 +14,7 @@ enum IpcOnEvent {
   cloudOauthCallback = 'cloud:oauth:callback',
   deepLinkAction = 'deep-link:action',
   appUpdateAvailable = 'app:update:available',
+  microsoftAuthCallback = 'microsoft:auth:callback',
 }
 
 export {

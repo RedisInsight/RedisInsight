@@ -62,6 +62,7 @@ import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 import { initialState as initialStateAppConnectivity } from 'uiSrc/slices/app/connectivity'
 import { initialState as initialStateAppInit } from 'uiSrc/slices/app/init'
+import { initialState as initialStateAzure } from 'uiSrc/slices/instances/microsoftAzure'
 
 interface Options {
   initialState?: RootState
@@ -92,6 +93,7 @@ const initialStateDefault: RootState = {
     cluster: cloneDeep(initialStateCluster),
     cloud: cloneDeep(initialStateCloud),
     sentinel: cloneDeep(initialStateSentinel),
+    azure: cloneDeep(initialStateAzure),
   },
   browser: {
     keys: cloneDeep(initialStateKeys),

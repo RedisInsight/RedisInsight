@@ -477,7 +477,7 @@ const DatabasesListWrapper = (props: Props) => {
       field: DatabaseListColumn.Modules,
       className: styles.columnModules,
       name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Modules), // Capabilities
-      width: '100%',
+      width: '110%',
       dataType: 'string',
       render: (_cellData, { modules = [], isRediStack }: Instance) => (
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -566,7 +566,7 @@ const DatabasesListWrapper = (props: Props) => {
     {
       field: DatabaseListColumn.Controls,
       className: 'column_controls',
-      width: '80%',
+      width: '100%',
       name: '',
       render: function Actions(_act: any, instance: Instance) {
         if (isCreateCloudDb(instance?.id)) return null

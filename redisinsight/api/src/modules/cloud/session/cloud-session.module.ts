@@ -17,7 +17,7 @@ export class CloudSessionModule {
           useClass: cloudSessionRepository,
         },
       ],
-      exports: [CloudSessionService],
+      exports: [CloudSessionService, CloudSessionRepository],
     };
   }
 }

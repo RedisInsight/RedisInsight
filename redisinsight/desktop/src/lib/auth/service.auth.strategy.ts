@@ -61,7 +61,14 @@ export class ServiceAuthStrategy implements AuthStrategy {
   async getAuthUrl(options: any): Promise<{ url: string }> {
     this.lastAuthType = options.authOptions?.strategy
     log.info('[Service Auth] Getting auth URL', options.authOptions?.strategy === AuthProviderType.Microsoft, options)
-    const url = await this.getAuthService().getAuthorizationUrl(options.sessionMetadata, options.authOptions)
+
+    // Create a default session metadata if not provided
+    const sessionMetadata = options.sessionMetadata || {
+      sessionId: 'default',
+      userId: 'default'
+    }
+
+    const url = await this.getAuthService().getAuthorizationUrl(sessionMetadata, options.authOptions)
     log.info('[Service Auth] Auth URL obtained')
     return { url }
   }

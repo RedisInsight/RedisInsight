@@ -1,18 +1,48 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
-export class MicrosoftAuthSession {
-    @Expose()
-    username: string;
-
-    @Expose()
-    password: string;
-}
-
+/**
+ * Data model for Microsoft Authentication session
+ */
 export class MicrosoftAuthSessionData {
-    @Expose()
-    id: string;
+  /**
+   * Primary key
+   */
+  @Expose()
+  id: string;
 
-    @Expose()
-    @Type(() => MicrosoftAuthSession)
-    data: MicrosoftAuthSession;
-} 
+  /**
+   * The serialized MSAL token cache
+   */
+  @Expose()
+  tokenCache?: string;
+
+  /**
+   * Username of the authenticated user
+   */
+  @Expose()
+  username?: string;
+
+  /**
+   * Account ID from Microsoft
+   */
+  @Expose()
+  accountId?: string;
+
+  /**
+   * Tenant ID from Microsoft
+   */
+  @Expose()
+  tenantId?: string;
+
+  /**
+   * Display name of the user
+   */
+  @Expose()
+  displayName?: string;
+
+  /**
+   * Last updated timestamp
+   */
+  @Expose()
+  lastUpdated?: number;
+}

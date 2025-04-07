@@ -4,6 +4,7 @@ import { ApiAzureClient } from '../client/api.azure.client'
 import { AzureClientMetadata, AzureRedisDatabase } from '../client/azure.interfaces'
 import { SubscriptionDto } from './dto/subscriptions.dto'
 import { AzureRedisDatabaseDto } from './dto/azure-redis-database.dto'
+import { SessionMetadata } from 'src/common/models'
 
 export interface EnhancedAzureRedisDatabase extends AzureRedisDatabase {
   subscriptionId: string
@@ -25,12 +26,36 @@ export class AzureAutodiscoveryService {
   }
 
   private async ensureAuthenticated(): Promise<void> {
-    const accessToken = await this.microsoftAuthService.getAccessToken()
-    if (!accessToken) {
-      throw new UnauthorizedException('No Azure access token available')
-    }
+    try {
+      this.logger.log('Ensuring Azure authentication');
 
-    this.azureClient.setAuthToken(accessToken)
+      const accessToken = await this.microsoftAuthService.getAccessToken();
+
+      if (!accessToken) {
+        this.logger.error('Failed to get Azure access token');
+        throw new UnauthorizedException('Azure authentication required. Please sign in to your Microsoft account.');
+      }
+
+      // Set the token in the Azure client
+      this.azureClient.setAuthToken(accessToken);
+      this.logger.log('Azure authentication successful');
+    } catch (error) {
+      this.logger.error('Azure authentication failed:', error);
+
+      // Check if this is an unauthorized error from the auth service
+      if (error.name === 'CloudApiUnauthorizedException') {
+        throw new UnauthorizedException(
+          'Your Microsoft Azure session has expired. Please sign in again.'
+        );
+      }
+
+      // Handle other errors
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
+      throw new UnauthorizedException(`Azure authentication failed: ${error.message}`);
+    }
   }
 
   async getSubscriptions(): Promise<SubscriptionDto[]> {

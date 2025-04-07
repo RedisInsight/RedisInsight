@@ -6,7 +6,7 @@ import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/tes
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { ConnectionType, Instance } from 'uiSrc/slices/interfaces'
 import { DatabaseListColumn } from 'uiSrc/constants'
-import { setShownColumns } from 'uiSrc/slices/instances/instances'
+import { instancesSelector, setShownColumns } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import DatabaseListHeader, { Props } from './DatabaseListHeader'
@@ -95,7 +95,13 @@ let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
-  store.clearActions()
+  store.clearActions();
+
+  (instancesSelector as jest.Mock).mockReturnValue({
+    loading: false,
+    shownColumns: ['name', 'host', 'controls'],
+    data: [...mockInstances],
+  })
 })
 
 describe('DatabaseListHeader', () => {

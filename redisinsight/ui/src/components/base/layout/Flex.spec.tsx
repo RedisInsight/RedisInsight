@@ -161,7 +161,7 @@ describe('Flex Components', () => {
 
             expect(container.firstChild).toHaveClass(
               flex.flex,
-              value ? flex.flexWrap : '',
+              value ? flex['flex-wrap'] : '',
             )
           })
         })
@@ -177,7 +177,7 @@ describe('Flex Components', () => {
 
             expect(container.firstChild).toHaveClass(
               flex.flex,
-              value ? flex.flexResponsive : '',
+              value ? flex['flex-responsive'] : '',
             )
           })
         })

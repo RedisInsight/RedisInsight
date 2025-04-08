@@ -29,16 +29,10 @@ const parseRedisJsonPath = (path: string): (string | number)[] => {
 
     const [, quote, strContent, numContent] = match
 
+    // Assumming the path will be created from wrapPath()
+    // no need to handle the JSON encodings
     if (quote) {
-      let jsonStr: string
-
-      if (quote === "'") {
-        const decoded = strContent.replace(/\\\\/g, '\\').replace(/\\'/g, "'")
-        jsonStr = JSON.stringify(decoded)
-      } else {
-        jsonStr = `${quote}${strContent}${quote}`
-      }
-
+      const jsonStr = `"${strContent}"`
       chunks.push(JSON.parse(jsonStr))
     } else if (numContent) {
       chunks.push(Number(numContent))

@@ -11,7 +11,6 @@ import {
   EuiFormRow,
   EuiIcon,
   EuiToolTip,
-  EuiWindowEvent,
   keys,
 } from '@elastic/eui'
 
@@ -26,6 +25,7 @@ import { ICredentialsRedisCluster } from 'uiSrc/slices/interfaces'
 
 import { MessageEnterpriceSoftware } from 'uiSrc/pages/home/components/form/Messages'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { WindowEvent } from 'uiSrc/components/base/utilities/WindowEvent'
 
 export interface Props {
   host: string
@@ -229,7 +229,7 @@ const ClusterConnectionForm = (props: Props) => {
       <br />
 
       <EuiForm>
-        <EuiWindowEvent event="keydown" handler={onKeyDown} />
+        <WindowEvent event="keydown" handler={onKeyDown} />
         <Row responsive>
           <FlexItem grow={4}>
             <EuiFormRow label="Cluster Host*">

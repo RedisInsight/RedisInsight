@@ -54,20 +54,22 @@ const MonacoEditor = (props: BaseProps) => {
       <EuiFlexItem className={styles.actions}>
         <EuiButton
           onClick={switchEditorType}
-          color="danger"
+          color="secondary"
+          size="s"
           data-testid="json-data-cancel-btn"
         >
           Cancel
         </EuiButton>
 
         <EuiButton
-          onClick={submitUpdate}
-          fill
-          color="secondary"
           disabled={!isButtonEnabled}
+          fill
+          onClick={submitUpdate}
+          color="secondary"
+          size="s"
           data-testid="json-data-update-btn"
         >
-          Overwrite Entire Value
+          Overwrite Data
         </EuiButton>
       </EuiFlexItem>
     </div>

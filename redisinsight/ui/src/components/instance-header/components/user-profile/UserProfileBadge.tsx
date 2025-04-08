@@ -152,18 +152,32 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
           </div>
           <FeatureFlagComponent
             name={FeatureFlags.envDependent}
-            otherwise={(
-              <EuiLink
-                external={false}
-                target="_blank"
-                className={cx(styles.option, styles.clickableOption)}
-                href={riConfig.app.smConsoleRedirect}
-                data-testid="cloud-admin-console-link"
-              >
-                <EuiText>Back to Redis Cloud Admin console</EuiText>
-                <EuiIcon type={CloudIcon} style={{ fill: 'none' }} viewBox="-1 0 30 20" strokeWidth={1.8} />
-              </EuiLink>
-            )}
+            otherwise={
+              <>
+                <EuiLink
+                  className={cx(styles.option, styles.clickableOption)}
+                  href="redisinsight://databases/connect"
+                  data-testid="open-ri-desktop-link"
+                >
+                  <EuiText>Open in Redis Insight Desktop version</EuiText>
+                </EuiLink>
+                <EuiLink
+                  external={false}
+                  target="_blank"
+                  className={cx(styles.option, styles.clickableOption)}
+                  href={riConfig.app.smConsoleRedirect}
+                  data-testid="cloud-admin-console-link"
+                >
+                  <EuiText>Back to Redis Cloud Admin console</EuiText>
+                  <EuiIcon
+                    type={CloudIcon}
+                    style={{ fill: 'none' }}
+                    viewBox="-1 0 30 20"
+                    strokeWidth={1.8}
+                  />
+                </EuiLink>
+              </>
+            }
           >
             <div
               role="presentation"

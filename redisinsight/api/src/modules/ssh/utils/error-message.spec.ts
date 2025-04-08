@@ -22,19 +22,19 @@ describe('SSH exception error message helper', () => {
   it('should remove IP addresses and ports from the message', () => {
     const message = 'Error occurred at 192.168.1.1:8080';
     const result = sanitizeMessage(message);
-    expect(result).toBe('Error occurred at ');
+    expect(result).toBe('Error occurred at');
   });
 
   it('should remove hostnames and domains from the message', () => {
     const message = 'Unable to resolve host example.com';
     const result = sanitizeMessage(message);
-    expect(result).toBe('Unable to resolve host ');
+    expect(result).toBe('Unable to resolve host');
   });
 
   it('should handle messages with multiple sensitive patterns', () => {
     const message = 'connect ECONNREFUSED 192.168.1.1:22 example.com';
     const result = sanitizeMessage(message);
-    expect(result).toBe('connect ECONNREFUSED ');
+    expect(result).toBe('connect ECONNREFUSED');
   });
 
   it('should return the original message if no sensitive patterns are found', () => {

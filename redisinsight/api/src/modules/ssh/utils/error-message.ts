@@ -24,7 +24,7 @@ export const sanitizeMessage = (message: string): string => {
   const regexes = [
     /(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?/g, // IP + port
     /\b[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+/g,  // Hostname/domain
-  ]
+  ];
 
-  return regexes.reduce((sanitized, regex) => sanitized.replace(regex, ''), message);
+  return regexes.reduce((sanitized, regex) => sanitized.replace(regex, '').trim(), message);
 };

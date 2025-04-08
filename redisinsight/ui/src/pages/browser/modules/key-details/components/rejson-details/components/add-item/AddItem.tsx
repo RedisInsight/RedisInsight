@@ -27,10 +27,11 @@ export interface Props {
   onCancel: () => void
   onSubmit: (pair: { key?: string; value: string }) => void
   leftPadding?: number
+  parentPath: string
 }
 
 const AddItem = (props: Props) => {
-  const { isPair, leftPadding = 0, onCancel, onSubmit } = props
+  const { isPair, leftPadding = 0, onCancel, onSubmit, parentPath } = props
   const [isConfirmationVisible, setIsConfirmationVisible] =
     useState<boolean>(false)
 
@@ -65,7 +66,7 @@ const AddItem = (props: Props) => {
       return
     }
 
-    const wrappedKey = wrapPath(key) || ''
+    const wrappedKey = wrapPath(key, parentPath) || ''
     if (isPair && checkExistingPath(wrappedKey, jsonContent)) {
       setIsConfirmationVisible(true)
       return

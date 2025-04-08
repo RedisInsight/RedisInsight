@@ -113,6 +113,7 @@ const RejsonDetails = (props: BaseProps) => {
             isPair={isObject}
             onCancel={() => setAddRootKVPair(false)}
             onSubmit={handleFormSubmit}
+            parentPath={parentPath || '$'}
           />
         )}
         {(isObject || isArray) && (

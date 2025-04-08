@@ -61,6 +61,7 @@
   &-wrap {
     flex-wrap: wrap;
   }
+
   &-centered {
     align-items: center;
     justify-content: center;
@@ -176,11 +177,12 @@
   }
 }
 
-.flex-responsive {
-  @include euiBreakpoint("m") {
+@media screen and (max-width: 767px) {
+  .flex-responsive {
     flex-wrap: wrap;
   }
 }
+
 
 .grid-centered {
   place-content: center;
@@ -189,6 +191,7 @@
 .col-centered {
   justify-content: center;
 }
+
 .gap-xs {
   gap: var(--size-xs);
 }
@@ -208,6 +211,7 @@
 .gap-xl {
   gap: var(--size-xl);
 }
+
 .gap-xxl {
   gap: var(--size-xxl);
 }

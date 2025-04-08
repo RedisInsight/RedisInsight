@@ -1,5 +1,6 @@
 .spacer {
   flex-shrink: 0;
+
   &-xs {
     height: var(--size-xs);
   }
@@ -17,7 +18,9 @@
   }
 
   &-xl {
-    height: var(--size-xl);
+    //height: var(--size-xl);
+    // @see redisinsight/ui/src/styles/base/_base.scss:124
+    height: 36px;
   }
 
   &-xxl {

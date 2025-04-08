@@ -5,7 +5,6 @@ import {
   EuiFilePicker,
   EuiIcon,
   EuiLoadingSpinner,
-  EuiSpacer,
   EuiText,
   EuiTextColor,
   EuiTitle,
@@ -23,6 +22,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { UploadWarning } from 'uiSrc/components'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -189,7 +189,7 @@ const ImportDatabase = (props: Props) => {
                   that you only use files from trusted sources to prevent the
                   risk of automatically executing malicious code.
                 </EuiText>
-                <EuiSpacer />
+                <Spacer />
                 <EuiFilePicker
                   id="import-file-modal-filepicker"
                   initialPromptText="Select or drag and drop a file"

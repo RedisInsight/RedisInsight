@@ -47,7 +47,7 @@ const ConfirmOverwrite = ({
 
       <EuiButton
         fill
-        color="warning"
+        color="secondary"
         aria-label="Overwrite"
         size="s"
         onClick={onConfirm}

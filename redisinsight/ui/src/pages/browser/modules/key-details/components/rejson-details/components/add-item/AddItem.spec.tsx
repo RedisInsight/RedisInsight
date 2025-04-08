@@ -81,7 +81,7 @@ describe('AddItem', () => {
     expect(onSubmit).toBeCalledWith({ key: '"key"', value: '1' })
   })
 
-  it('should show confirmation and submit on save', async () => {
+  it('should show confirmation and submit on Overwrite', async () => {
     const onSubmit = jest.fn()
     const onCancel = jest.fn()
 
@@ -111,7 +111,7 @@ describe('AddItem', () => {
       ).toBeInTheDocument()
     })
 
-    fireEvent.click(screen.getByTestId('save-btn'))
+    fireEvent.click(screen.getByTestId('overwrite-btn'))
 
     expect(onSubmit).toHaveBeenCalledWith({
       key: '"existingKey"',

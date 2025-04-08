@@ -4,19 +4,19 @@ import { EuiButton, EuiPopover, EuiText } from '@elastic/eui'
 
 import styles from '../../styles.module.scss'
 
-interface ConfirmOverrideProps {
+interface ConfirmOverwriteProps {
   isOpen: boolean
   onCancel: () => void
   onConfirm: () => void
   children: NonNullable<React.ReactNode>
 }
 
-const ConfirmOverride = ({
+const ConfirmOverwrite = ({
   isOpen,
   onCancel,
   onConfirm,
   children,
-}: ConfirmOverrideProps) => (
+}: ConfirmOverwriteProps) => (
   <EuiPopover
     ownFocus
     initialFocus={false}
@@ -48,15 +48,15 @@ const ConfirmOverride = ({
       <EuiButton
         fill
         color="warning"
-        aria-label="Save"
+        aria-label="Overwrite"
         size="s"
         onClick={onConfirm}
-        data-testid="save-btn"
+        data-testid="overwrite-btn"
       >
-        Save
+        Overwrite
       </EuiButton>
     </div>
   </EuiPopover>
 )
 
-export default ConfirmOverride
+export default ConfirmOverwrite

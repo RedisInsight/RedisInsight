@@ -16,7 +16,7 @@ import { rejsonDataSelector } from 'uiSrc/slices/browser/rejson'
 import { checkExistingPath } from 'uiSrc/utils/rejson'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
-import ConfirmOverride from './ConfirmOverride'
+import ConfirmOverwrite from './ConfirmOverwrite'
 import { isValidJSON, isValidKey, parseJsonData, wrapPath } from '../../utils'
 import { JSONErrors } from '../../constants'
 
@@ -125,7 +125,7 @@ const AddItem = (props: Props) => {
                   data-testid="json-value"
                 />
               </EuiFlexItem>
-              <ConfirmOverride
+              <ConfirmOverwrite
                 isOpen={isConfirmationVisible}
                 onCancel={() => setIsConfirmationVisible(false)}
                 onConfirm={confirmApply}
@@ -150,7 +150,7 @@ const AddItem = (props: Props) => {
                     data-testid="apply-btn"
                   />
                 </div>
-              </ConfirmOverride>
+              </ConfirmOverwrite>
             </EuiForm>
             {!!error && (
               <div className={cx(styles.errorMessage)}>

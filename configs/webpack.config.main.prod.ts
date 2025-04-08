@@ -62,6 +62,7 @@ export default merge(baseConfig, {
       RI_SERVE_STATICS: false,
       RI_APP_FOLDER_NAME: process.env.RI_APP_FOLDER_NAME || '',
       RI_UPGRADES_LINK: process.env.RI_UPGRADES_LINK || '',
+      RI_DISABLE_AUTO_UPGRADE: process.env.RI_DISABLE_AUTO_UPGRADE || 'false',
       RI_ANALYTICS_START_EVENTS: 'true',
       RI_APP_HOST: '127.0.0.1',
       RI_BUILD_TYPE: 'ELECTRON',

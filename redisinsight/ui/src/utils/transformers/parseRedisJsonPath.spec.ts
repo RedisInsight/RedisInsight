@@ -50,4 +50,26 @@ describe('parseRedisJsonPath', () => {
   it('works without $ root', () => {
     expect(parseRedisJsonPath(`['foo'][0]["bar"]`)).toEqual(['foo', 0, 'bar'])
   })
+
+  it('parses keys with escaped backslashes and quotes correctly', () => {
+    // single-quoted key with escaped backslash and quote
+    expect(parseRedisJsonPath(`$['foo\\\\bar']`)).toEqual(['foo\\bar'])
+    expect(parseRedisJsonPath(`$['She\\'s cool']`)).toEqual([`She's cool`])
+
+    // double-quoted key with escaped quote
+    expect(parseRedisJsonPath(`$["He said: \\"hi\\""]`)).toEqual([
+      `He said: "hi"`,
+    ])
+
+    // tricky mix of escaped backslash and quote in single-quoted string
+    expect(parseRedisJsonPath(`$['a\\\\\\'b']`)).toEqual([`a\\'b`])
+
+    // escaped backslashes in double-quoted key
+    expect(parseRedisJsonPath(`$["a\\\\b\\\\c"]`)).toEqual(['a\\b\\c'])
+  })
+
+  it('parses empty string keys', () => {
+    expect(parseRedisJsonPath(`$['']`)).toEqual([''])
+    expect(parseRedisJsonPath(`$[""]`)).toEqual([''])
+  })
 })

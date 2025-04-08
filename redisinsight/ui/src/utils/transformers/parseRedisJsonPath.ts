@@ -33,9 +33,8 @@ const parseRedisJsonPath = (path: string): (string | number)[] => {
       let jsonStr: string
 
       if (quote === "'") {
-        const fixed = strContent.replace(/\\'/g, "'")
-        const escaped = fixed.replace(/"/g, '\\"')
-        jsonStr = `"${escaped}"`
+        const decoded = strContent.replace(/\\\\/g, '\\').replace(/\\'/g, "'")
+        jsonStr = JSON.stringify(decoded)
       } else {
         jsonStr = `${quote}${strContent}${quote}`
       }

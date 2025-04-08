@@ -193,7 +193,6 @@
   }
 }
 
-
 @media screen and (max-width: 767px) {
   .flex-responsive {
     flex-wrap: wrap;
@@ -230,6 +229,7 @@
 .gap-xl {
   gap: var(--size-xl);
 }
+
 .gap-xxl {
   gap: var(--size-xxl);
 }

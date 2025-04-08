@@ -4,11 +4,15 @@ import cx from 'classnames'
 import flex from './flex.module.scss'
 
 export const gapSizes = ['none', 's', 'm', 'l', 'xl'] as const
+export type GapSizeType = (typeof gapSizes)[number]
+export const columnCount = [1, 2, 3, 4] as const
+export type ColumnCountType = (typeof columnCount)[number]
+
 export type GridProps = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode
-  columns?: 1 | 2 | 3 | 4
+  columns?: ColumnCountType
   className?: string
-  gap?: (typeof gapSizes)[number]
+  gap?: GapSizeType
   centered?: boolean
   responsive?: boolean
 }
@@ -73,10 +77,11 @@ export const dirValues = [
   'column',
   'columnReverse',
 ] as const
+
 export type FlexProps = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode
   className?: string
-  gap?: (typeof gapSizes)[number]
+  gap?: GapSizeType | 'xs' // EUI supports 'xs'
   align?: (typeof alignValues)[number]
   dir?: (typeof dirValues)[number]
   justify?: (typeof justifyValues)[number]
@@ -160,7 +165,7 @@ const VALID_GROW_VALUES = [
   10,
 ] as const
 export type FlexItemProps = React.HTMLAttributes<HTMLDivElement> & {
-  grow?: boolean | 0 | 5 | 2 | 8 | 3 | 7 | 1 | 4 | 6 | 9 | 10 | null
+  grow?: boolean | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | null
   inline?: boolean
   className?: string
 }

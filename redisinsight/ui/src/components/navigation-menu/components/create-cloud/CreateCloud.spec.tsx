@@ -55,9 +55,12 @@ describe('CreateCloud', () => {
   it('should call proper telemetry when sso is disabled', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       cloudSso: {
         flag: false
+      },
+      cloudAds: {
+        flag: true
       }
     })
     const { container } = render(<CreateCloud />)

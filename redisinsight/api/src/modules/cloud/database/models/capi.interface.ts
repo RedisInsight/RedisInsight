@@ -25,6 +25,14 @@ interface ICloudCapiDatabaseSecurity {
   sourceIps: string[];
 }
 
+export interface ICloudCapiDatabaseTag {
+  key: string;
+  value: string;
+  createdAt: string;
+  updatedAt: string;
+  links: string[];
+}
+
 export interface ICloudCapiDatabase {
   databaseId: number;
   name: string;

@@ -85,7 +85,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     if (!cloudAdsFeature?.flag) {
       return (
         <EuiText className={cx(styles.text, styles.marginBottom)}>
-          Open a database with {moduleName?.toLowerCase()}.
+          Open a database with {moduleName}.
         </EuiText>
       )
     }

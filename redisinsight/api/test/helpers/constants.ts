@@ -6,6 +6,7 @@ import { RECOMMENDATION_NAMES, TelemetryEvents } from 'src/constants';
 import { Compressor } from 'src/modules/database/entities/database.entity';
 import { Vote } from 'src/modules/database-recommendation/models';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
+import { TagEntity } from 'src/modules/tag/entities/tag.entity';
 
 const API = {
   DATABASES: 'databases',
@@ -35,6 +36,34 @@ const CERTS_FOLDER = process.env.CERTS_FOLDER || './coverage';
 const TEST_PRE_SETUP_DATABASES_PATH = process.env.RI_PRE_SETUP_DATABASES_PATH || './databases.json';
 
 const TEST_RUN_DIR = '.test_run';
+const TEST_ENCRYPTION_STRATEGY = 'KEYTAR';
+
+const TEST_TAGS: TagEntity[] = [
+  Object.assign(new TagEntity(), {
+    id: uuidv4(),
+    key: 'environment',
+    value: 'production',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    encryption: TEST_ENCRYPTION_STRATEGY,
+  }),
+  Object.assign(new TagEntity(), {
+    id: uuidv4(),
+    key: 'environment',
+    value: 'staging',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    encryption: TEST_ENCRYPTION_STRATEGY,
+  }),
+  Object.assign(new TagEntity(), {
+    id: uuidv4(),
+    key: 'size',
+    value: 'large',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    encryption: TEST_ENCRYPTION_STRATEGY,
+  }),
+];
 
 export const constants = {
   // api
@@ -44,12 +73,13 @@ export const constants = {
   TEST_RUN_NAME: process.env.TEST_RUN_NAME || '',
   KEY_TTL,
   CLUSTER_HASH_SLOT,
+  TEST_TAGS,
   getRandomString: () => `${TEST_RUN_ID}_${uuidv4()}_${CLUSTER_HASH_SLOT}`,
   generateRandomKey: () => `${TEST_RUN_ID}_${uuidv4()}_${CLUSTER_HASH_SLOT}`,
   APP_DEFAULT_SETTINGS,
   TEST_KEYTAR_PASSWORD: process.env.RI_SECRET_STORAGE_PASSWORD || 'somepassword',
   TEST_INCORRECT_PASSWORD: 'incorrect',
-  TEST_ENCRYPTION_STRATEGY: 'KEYTAR',
+  TEST_ENCRYPTION_STRATEGY,
   TEST_AGREEMENTS_VERSION: '1.0.3',
   TEST_REMOTE_STATIC_PATH: './remote',
   TEST_REMOTE_STATIC_URI: '/remote',
@@ -77,6 +107,12 @@ export const constants = {
   TEST_INSTANCE_ID_5: uuidv4(),
   TEST_INSTANCE_NAME_5: uuidv4(),
   TEST_INSTANCE_HOST_5: uuidv4(),
+  TEST_INSTANCE_ID_6: uuidv4(),
+  TEST_INSTANCE_NAME_6: uuidv4(),
+  TEST_INSTANCE_HOST_6: uuidv4(),
+  TEST_INSTANCE_ID_7: uuidv4(),
+  TEST_INSTANCE_NAME_7: uuidv4(),
+  TEST_INSTANCE_HOST_7: uuidv4(),
   TEST_INSTANCE_PORT_5: 5555,
   TEST_INSTANCE_HOST_4: '127.0.0.1',
   TEST_INSTANCE_PORT_4: 3333,

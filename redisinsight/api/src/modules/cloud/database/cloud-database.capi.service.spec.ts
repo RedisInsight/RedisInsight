@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockCloudCapiAuthDto, mockCloudCapiSubscriptionDatabasesFixed,
+  mockCloudCapiAuthDto, mockCloudCapiDatabaseTags, mockCloudCapiSubscriptionDatabasesFixed,
   mockCloudDatabase,
   mockCloudDatabaseCapiProvider,
   mockCloudDatabaseFromList, mockCloudDatabaseFromListFixed,
@@ -38,7 +38,10 @@ describe('CloudDatabaseCapiService', () => {
       expect(await service.getDatabase(
         mockCloudCapiAuthDto,
         mockGetCloudSubscriptionDatabaseDto,
-      )).toEqual(mockCloudDatabase);
+      )).toEqual({
+        ...mockCloudDatabase,
+        tags: mockCloudCapiDatabaseTags,
+      });
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
       capi.getDatabase.mockRejectedValueOnce(new CloudApiUnauthorizedException());

@@ -178,12 +178,12 @@ export class CloudAutodiscoveryService {
         async (
           dto: ImportCloudDatabaseDto,
         ): Promise<ImportCloudDatabaseResponse> => {
-          let database;
+          let database: CloudDatabase;
           try {
             database = await this.cloudDatabaseCapiService.getDatabase(authDto, dto);
 
             const {
-              publicEndpoint, name, password, status,
+              publicEndpoint, name, password, status, tags,
             } = database;
             if (status !== CloudDatabaseStatus.Active) {
               const exception = new ServiceUnavailableException(ERROR_MESSAGES.DATABASE_IS_INACTIVE);
@@ -207,6 +207,7 @@ export class CloudAutodiscoveryService {
                 password,
                 provider: HostingProvider.RE_CLOUD,
                 cloudDetails: database?.cloudDetails,
+                tags,
                 timeout: cloudConfig.cloudDatabaseConnectionTimeout,
               },
             );

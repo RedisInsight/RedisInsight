@@ -9,6 +9,7 @@ import {
   connectedInstanceInfoSelector,
   connectedInstanceSelector,
 } from 'uiSrc/slices/instances/instances'
+import { loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
 import { appContextDbIndex } from 'uiSrc/slices/app/context'
 
 import { FeatureFlags } from 'uiSrc/constants'

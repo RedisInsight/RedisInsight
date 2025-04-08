@@ -127,6 +127,7 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
       icon: theme === Theme.Dark ? MeasureDarkIcon : MeasureLightIcon,
       content: opsPerSecond
     },
+    className: styles.opsPerSecItem,
   }
 
   let [networkIn, networkInUnit] = formatBytes(networkInKbps * 1000, 3, true, 1000)

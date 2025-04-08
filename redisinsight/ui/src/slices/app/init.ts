@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { fetchCsrfTokenAction } from 'uiSrc/slices/app/csrf'
-import { appFeatureFlagsFeaturesSelector, fetchFeatureFlags } from 'uiSrc/slices/app/features'
+import { fetchFeatureFlags } from 'uiSrc/slices/app/features'
 import { FeatureFlags } from 'uiSrc/constants'
 import { fetchCloudUserProfile } from 'uiSrc/slices/user/cloud-user-profile'
 import { AppDispatch, RootState } from '../store'

@@ -200,6 +200,167 @@ describe(`PATCH /databases/:id`, () => {
       },
     ].map(mainCheckFn);
   });
+  describe('TAGS', () => {
+    const newTagsDto1 = [
+      {
+        key: constants.TEST_TAGS[1].key,
+        value: constants.TEST_TAGS[1].value,
+      },
+      {
+        key: 'newKey',
+        value: 'newValue',
+      },
+    ];
+    const newTagsDto2 = [
+      {
+        key: constants.TEST_TAGS[1].key,
+        value: constants.TEST_TAGS[1].value,
+      },
+      {
+        key: constants.TEST_TAGS[2].key,
+        value: constants.TEST_TAGS[2].value,
+      },
+    ];
+    const newTagsDto3 = [];
+    const newTagsDto4 = [
+      {
+        key: 'duplicateKey',
+        value: 'value1',
+      }, {
+        key: 'duplicateKey',
+        value: 'value2',
+      }
+    ];
+
+    const expectTagsCount = async (count: number) => {
+      const tags = await localDb.getAllTags();
+      expect(tags.length).to.eq(count);
+    };
+    const extractTagPairs = (tags: any[]) =>
+      tags
+        .map(({ key, value }) => ({ key, value }))
+        .sort((a, b) => a.key.localeCompare(b.key));
+
+    [
+      {
+        name: 'Should update database with new tags and remove unused ones (+1,-2)',
+        endpoint: () => endpoint(constants.TEST_INSTANCE_ID_6),
+        data: {
+          tags: newTagsDto1,
+        },
+        responseSchema,
+        before: async () => {
+          await localDb.createInstancesWithTags();
+
+          oldDatabase = await localDb.getInstanceById(
+            constants.TEST_INSTANCE_ID_6,
+          );
+          const tagPairs = extractTagPairs(oldDatabase.tags);
+
+          expect(tagPairs).to.not.eql(newTagsDto1);
+          await expectTagsCount(constants.TEST_TAGS.length);
+        },
+        responseBody: {
+          tags: newTagsDto1,
+        },
+        after: async () => {
+          newDatabase = await localDb.getInstanceById(
+            constants.TEST_INSTANCE_ID_6,
+          );
+          const tagPairs = extractTagPairs(newDatabase.tags);
+
+          expect(tagPairs).to.eql(newTagsDto1);
+          await expectTagsCount(constants.TEST_TAGS.length - 1);
+        },
+      },
+      {
+        name: 'Should update database with new tags and remove unused ones (+0,+0)',
+        endpoint: () => endpoint(constants.TEST_INSTANCE_ID_7),
+        data: {
+          tags: newTagsDto2,
+        },
+        responseSchema,
+        before: async () => {
+          await localDb.createInstancesWithTags();
+
+          oldDatabase = await localDb.getInstanceById(
+            constants.TEST_INSTANCE_ID_7,
+          );
+          const tagPairs = extractTagPairs(oldDatabase.tags);
+
+          expect(tagPairs).to.not.eql(newTagsDto2);
+          await expectTagsCount(constants.TEST_TAGS.length);
+        },
+        responseBody: {
+          tags: newTagsDto2,
+        },
+        after: async () => {
+          newDatabase = await localDb.getInstanceById(
+            constants.TEST_INSTANCE_ID_7,
+          );
+          const tagPairs = extractTagPairs(newDatabase.tags);
+
+          expect(tagPairs).to.eql(newTagsDto2);
+          await expectTagsCount(constants.TEST_TAGS.length);
+        },
+      },
+      {
+        name: 'Should update database with new tags and remove unused ones (+0,-2)',
+        endpoint: () => endpoint(constants.TEST_INSTANCE_ID_6),
+        data: {
+          tags: newTagsDto3,
+        },
+        responseSchema,
+        before: async () => {
+          await localDb.createInstancesWithTags();
+
+          oldDatabase = await localDb.getInstanceById(
+            constants.TEST_INSTANCE_ID_6,
+          );
+          const tagPairs = extractTagPairs(oldDatabase.tags);
+
+          expect(tagPairs).to.not.eql(newTagsDto3);
+          await expectTagsCount(constants.TEST_TAGS.length);
+        },
+        responseBody: {
+          tags: newTagsDto3,
+        },
+        after: async () => {
+          newDatabase = await localDb.getInstanceById(
+            constants.TEST_INSTANCE_ID_6,
+          );
+          const tagPairs = extractTagPairs(newDatabase.tags);
+
+          expect(tagPairs).to.eql(newTagsDto3);
+          await expectTagsCount(constants.TEST_TAGS.length - 2);
+        },
+      },
+      {
+        name: 'Should not allow adding duplicated tags by key to a database',
+        endpoint: () => endpoint(constants.TEST_INSTANCE_ID_6),
+        data: {
+          tags: newTagsDto4,
+        },
+        before: async () => {
+          await localDb.createInstancesWithTags();
+
+          oldDatabase = await localDb.getInstanceById(
+            constants.TEST_INSTANCE_ID_6,
+          );
+          const tagPairs = extractTagPairs(oldDatabase.tags);
+
+          expect(tagPairs).to.not.eql(newTagsDto4);
+          await expectTagsCount(constants.TEST_TAGS.length);
+        },
+        statusCode: 400,
+        responseBody: {
+          message: [ 'Tags must not contain duplicates by key.' ],
+          error: 'Bad Request',
+          statusCode: 400,
+        },
+      },
+    ].map(mainCheckFn);
+  });
   describe('STANDALONE', () => {
     requirements('rte.type=STANDALONE', '!rte.ssh');
     describe('NO AUTH', function () {
@@ -235,7 +396,7 @@ describe(`PATCH /databases/:id`, () => {
           after: async () => {
             newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
             expect(newDatabase).to.contain({
-              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'timeout', 'compressor', 'version', 'createdAt']),
+              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'timeout', 'compressor', 'version', 'createdAt', 'tags']),
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
             });

@@ -171,29 +171,24 @@ const KeysHeader = (props: Props) => {
     setColumnsConfigShown(!columnsConfigShown)
 
   const handleRefreshKeys = () => {
-    dispatch(
-      fetchKeys(
-        {
-          searchMode,
-          cursor: '0',
-          count:
-            viewType === KeyViewType.Browser
-              ? SCAN_COUNT_DEFAULT
-              : SCAN_TREE_COUNT_DEFAULT,
-        },
-        (data) => {
-          const keys = Array.isArray(data) ? data[0].keys : data.keys
+    dispatch(fetchKeys(
+      {
+        searchMode,
+        cursor: '0',
+        count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+      },
+      (data) => {
+        const keys = Array.isArray(data) ? data[0].keys : data.keys
 
-          if (!keys.length) {
-            dispatch(resetKeyInfo())
-            dispatch(setBrowserSelectedKey(null))
-          }
+        if (!keys.length) {
+          dispatch(resetKeyInfo())
+          dispatch(setBrowserSelectedKey(null))
+        }
 
-          dispatch(setBrowserKeyListDataLoaded(searchMode, true))
-        },
-        () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
-      ),
-    )
+        dispatch(setBrowserKeyListDataLoaded(searchMode, true))
+      },
+      () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
+    ))
   }
 
   const handleEnableAutoRefresh = (

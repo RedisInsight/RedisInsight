@@ -93,7 +93,9 @@ describe('AddItem', () => {
       }),
     )
 
-    render(<AddItem isPair onSubmit={onSubmit} onCancel={onCancel} />)
+    render(
+      <AddItem isPair onSubmit={onSubmit} onCancel={onCancel} parentPath="$" />,
+    )
 
     fireEvent.change(screen.getByTestId('json-key'), {
       target: { value: '"existingKey"' },
@@ -117,7 +119,7 @@ describe('AddItem', () => {
     })
   })
 
-  it('should show confirmation and cancel on cancel click', async () => {
+  it('should show confirmation and hide confirmation dialog on cancel click, but not cancel the add item form', async () => {
     const onSubmit = jest.fn()
     const onCancel = jest.fn()
 
@@ -129,7 +131,9 @@ describe('AddItem', () => {
       }),
     )
 
-    render(<AddItem isPair onSubmit={onSubmit} onCancel={onCancel} />)
+    render(
+      <AddItem isPair onSubmit={onSubmit} onCancel={onCancel} parentPath="$" />,
+    )
 
     fireEvent.change(screen.getByTestId('json-key'), {
       target: { value: '"existingKey"' },
@@ -147,7 +151,13 @@ describe('AddItem', () => {
 
     fireEvent.click(screen.getByTestId('cancel-confirmation-btn'))
 
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/Duplicate JSON key detected/i),
+      ).not.toBeInTheDocument()
+    })
+
     expect(onSubmit).not.toHaveBeenCalled()
-    expect(onCancel).toHaveBeenCalled()
+    expect(onCancel).not.toHaveBeenCalled()
   })
 })

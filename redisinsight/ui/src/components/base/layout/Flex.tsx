@@ -123,8 +123,8 @@ export const Flex = ({
       [flex[`justify-${justify}`]]: !centered,
       [flex[`gap-${gap}`]]: gap !== 'none',
       [flex['flex-centered']]: centered,
-      [flex.flexResponsive]: responsive,
-      [flex.flexWrap]: wrap ? flex.flexWrap : undefined,
+      [flex['flex-responsive']]: responsive,
+      [flex['flex-wrap']]: wrap ? flex.flexWrap : undefined,
     },
     className,
   )

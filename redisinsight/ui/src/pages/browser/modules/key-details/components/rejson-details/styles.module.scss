@@ -294,8 +294,9 @@
 }
 
 .editor, .editorWrapper {
-  // Using 99% instead of 100% to avoid a weird Monaco animation that kicks in at full height,
+  // Using 100% height starts a weird Monaco animation,
   // which causes the editor to overflow its container.
+  // Probably it's related to the borders of the inside elements.
   // TODO: Find a cleaner fix for this.
-  height: 99% !important;
+  height: calc(100% - 2px) !important;
 }

@@ -144,7 +144,7 @@ const AddDatabaseScreen = (props: Props) => {
             </EuiToolTip>
           </FlexItem>
           <FlexItem>
-            <Row responsive>
+            <Row responsive gap="l">
               <FlexItem>
                 <EuiButton
                   size="s"

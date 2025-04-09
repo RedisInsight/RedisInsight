@@ -14,7 +14,7 @@ import {
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
 import { FlexItem } from 'uiSrc/components/base/layout/Flex'
-import { WindowEvent } from 'uiSrc/components/base/utilities/WindowEvent'
+import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import styles from './styles.module.scss'
 

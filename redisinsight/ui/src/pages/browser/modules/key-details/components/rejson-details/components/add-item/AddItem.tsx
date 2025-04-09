@@ -11,7 +11,7 @@ import {
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
 import { FlexItem } from 'uiSrc/components/base/layout/Flex'
-import { WindowEvent } from 'uiSrc/components/base/utilities/WindowEvent'
+import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import { isValidJSON, isValidKey } from '../../utils'
 import { JSONErrors } from '../../constants'

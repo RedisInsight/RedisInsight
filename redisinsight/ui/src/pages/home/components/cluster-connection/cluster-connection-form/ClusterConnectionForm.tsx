@@ -25,7 +25,7 @@ import { ICredentialsRedisCluster } from 'uiSrc/slices/interfaces'
 
 import { MessageEnterpriceSoftware } from 'uiSrc/pages/home/components/form/Messages'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
-import { WindowEvent } from 'uiSrc/components/base/utilities/WindowEvent'
+import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 
 export interface Props {
   host: string

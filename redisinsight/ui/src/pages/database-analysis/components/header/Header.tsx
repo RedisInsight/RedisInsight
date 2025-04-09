@@ -2,7 +2,6 @@ import React from 'react'
 import cx from 'classnames'
 import {
   EuiButton,
-  EuiHideFor,
   EuiIcon,
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -28,6 +27,7 @@ import {
 import { FormatedDate } from 'uiSrc/components'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { HideFor } from 'uiSrc/components/base/utils/ShowHide'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
 
@@ -93,13 +93,13 @@ const Header = (props: Props) => {
         {!!items.length && (
           <FlexItem>
             <Row align="center" wrap>
-              <EuiHideFor sizes={['xs', 's']}>
+              <HideFor sizes={['xs', 's']}>
                 <FlexItem>
                   <EuiText className={styles.text} size="s">
                     Report generated on:
                   </EuiText>
                 </FlexItem>
-              </EuiHideFor>
+              </HideFor>
               <FlexItem grow>
                 <EuiSuperSelect
                   options={analysisOptions}

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import cx from 'classnames'
-import { EuiBadge, EuiHideFor, EuiIcon, EuiShowFor } from '@elastic/eui'
+import { EuiBadge, EuiIcon } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -24,6 +24,7 @@ import FeatureFlagComponent from 'uiSrc/components/feature-flag-component'
 import { FeatureFlags } from 'uiSrc/constants'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { HideFor, ShowFor } from 'uiSrc/components/base/utils/ShowHide'
 import styles from '../../styles.module.scss'
 
 const BottomGroupMinimized = () => {
@@ -141,12 +142,12 @@ const BottomGroupMinimized = () => {
           data-testid="user-survey-link"
         >
           <EuiIcon type={SurveyIcon} className={styles.surveyIcon} />
-          <EuiHideFor sizes={['xs', 's']}>
+          <HideFor sizes={['xs', 's']}>
             <span>Let us know what you think</span>
-          </EuiHideFor>
-          <EuiShowFor sizes={['xs', 's']}>
+          </HideFor>
+          <ShowFor sizes={['xs', 's']}>
             <span>Survey</span>
-          </EuiShowFor>
+          </ShowFor>
         </a>
       </FeatureFlagComponent>
     </div>

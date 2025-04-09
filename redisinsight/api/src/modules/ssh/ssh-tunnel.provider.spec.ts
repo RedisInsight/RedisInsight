@@ -66,7 +66,7 @@ describe('SshTunnelProvider', () => {
           done();
         });
     });
-    it('should fail due to createServer failed', (done) => {
+    it('should fail due to createServer failed, error "Cannot parse privateKey" message', (done) => {
       tunnelSshSpy.mockReset()
         .mockImplementationOnce(() => { throw new Error('Cannot parse privateKey: due to some reason'); });
 
@@ -74,6 +74,27 @@ describe('SshTunnelProvider', () => {
         .catch((e) => {
           expect(e).toBeInstanceOf(UnableToCreateTunnelException);
           expect(e.message).toEqual('Unable to create tunnel. Cannot parse privateKey');
+          done();
+        });
+    });
+
+    it('should fail due to createServer failed, error connect ECONNREFUSED', (done) => {
+      const sshClientErrorMessage = 'connect ECONNREFUSED 127.0.0.1:22222';
+      tunnelSshSpy.mockReset().mockImplementationOnce(() => {
+        throw new Error(sshClientErrorMessage);
+      });
+
+      const sanitizedMessage = 'connect ECONNREFUSED';
+      service
+        .createTunnel(
+          mockDatabaseWithSshBasic,
+          mockDatabaseWithSshBasic.sshOptions,
+        )
+        .catch((e) => {
+          expect(e).toBeInstanceOf(UnableToCreateTunnelException);
+          expect(e.message).toEqual(
+            `Unable to create tunnel. ${sanitizedMessage}`,
+          );
           done();
         });
     });

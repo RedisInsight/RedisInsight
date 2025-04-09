@@ -11,7 +11,7 @@ import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import RocketIcon from 'uiSrc/assets/img/oauth/rocket.svg?react'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Grid } from 'uiSrc/components/base/layout/Flex'
 import { CONNECTIVITY_OPTIONS } from '../../constants'
 
 import styles from './styles.module.scss'
@@ -31,7 +31,7 @@ const ConnectivityOptions = (props: Props) => {
           <span>Get started with Redis Cloud account</span>
         </EuiTitle>
         <EuiSpacer />
-        <Row gap="xl">
+        <Grid gap="l" columns={3} responsive>
           <FlexItem>
             <EuiButton
               color="secondary"
@@ -74,7 +74,7 @@ const ConnectivityOptions = (props: Props) => {
             </FlexItem>
           </FeatureFlagComponent>
           <FlexItem grow />
-        </Row>
+        </Grid>
       </section>
       <EuiSpacer size="xxl" />
       <section>
@@ -82,7 +82,7 @@ const ConnectivityOptions = (props: Props) => {
           <span>More connectivity options</span>
         </EuiTitle>
         <EuiSpacer />
-        <Row gap="xl">
+        <Grid gap="l" responsive columns={3}>
           {CONNECTIVITY_OPTIONS.map(({ id, type, title, icon }) => (
             <FlexItem key={id}>
               <EuiButton
@@ -96,7 +96,7 @@ const ConnectivityOptions = (props: Props) => {
               </EuiButton>
             </FlexItem>
           ))}
-        </Row>
+        </Grid>
       </section>
     </>
   )

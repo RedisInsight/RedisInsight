@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { EuiText, EuiSelectable, EuiSelectableOption } from '@elastic/eui'
-import { chain } from 'lodash'
+import { uniqBy } from 'lodash'
 import { tagsSelector } from 'uiSrc/slices/instances/tags'
 import { presetTagSuggestions } from './constants'
 import styles from './styles.module.scss'
@@ -22,9 +22,7 @@ export const TagSuggestions = ({
   const { data: allTags } = useSelector(tagsSelector)
   const tagsSuggestions: EuiSelectableOption<{ value: string }>[] =
     useMemo(() => {
-      const options = chain(presetTagSuggestions)
-        .concat(allTags)
-        .uniqBy('key')
+      const options = uniqBy(presetTagSuggestions.concat(allTags), 'key')
         .filter(({ key, value }) => {
           if (targetKey !== undefined) {
             return (
@@ -41,7 +39,6 @@ export const TagSuggestions = ({
           label: targetKey ? value : key,
           value: targetKey ? value : key,
         }))
-        .value()
 
       const isNewTag = options.length === 0 && searchTerm
 

@@ -48,9 +48,9 @@ export const Grid = ({
     flex.grid,
     {
       [flex[`gap-${gap}`]]: gap !== 'none',
-      [flex[`columns-${columns}`]]: [1, 2, 3, 4].includes(columns),
-      [flex.gridCentered]: centered,
-      [flex.gridResponsive]: responsive,
+      [flex[`grid-columns-${columns}`]]: [1, 2, 3, 4].includes(columns),
+      [flex['grid-centered']]: centered,
+      [flex['grid-responsive']]: responsive,
     },
     className,
   )

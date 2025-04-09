@@ -290,7 +290,7 @@ describe('Flex Components', () => {
             )
             expect(container.firstChild).toHaveClass(
               flex.grid,
-              flex[`columns-${value}`],
+              flex[`grid-columns-${value}`],
             )
           })
         })
@@ -314,7 +314,7 @@ describe('Flex Components', () => {
           )
           expect(container.firstChild).toHaveClass(
             flex.grid,
-            flex.gridResponsive,
+            flex['grid-responsive'],
           )
         })
       })
@@ -335,7 +335,10 @@ describe('Flex Components', () => {
               <h2>My Child</h2>
             </Grid>,
           )
-          expect(container.firstChild).toHaveClass(flex.grid, flex.gridCentered)
+          expect(container.firstChild).toHaveClass(
+            flex.grid,
+            flex['grid-centered'],
+          )
         })
       })
     })

@@ -3,7 +3,6 @@ import cx from 'classnames'
 import {
   EuiButtonIcon,
   EuiFieldText,
-  EuiFocusTrap,
   EuiForm,
   EuiOutsideClickDetector,
   EuiWindowEvent,
@@ -16,6 +15,7 @@ import { checkExistingPath } from 'uiSrc/utils/rejson'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
 import { FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import ConfirmOverwrite from './ConfirmOverwrite'
 import { isValidJSON, isValidKey, parseJsonData, wrapPath } from '../../utils'
 import { JSONErrors } from '../../constants'
@@ -91,7 +91,7 @@ const AddItem = (props: Props) => {
       <EuiOutsideClickDetector onOutsideClick={() => {}}>
         <div>
           <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
-          <EuiFocusTrap>
+          <FocusTrap>
             <EuiForm
               component="form"
               className="relative"
@@ -163,7 +163,7 @@ const AddItem = (props: Props) => {
                 </FieldMessage>
               </div>
             )}
-          </EuiFocusTrap>
+          </FocusTrap>
         </div>
       </EuiOutsideClickDetector>
     </div>

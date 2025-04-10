@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import { useHistory } from 'react-router-dom'
@@ -14,7 +14,7 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getTruncatedName, Nullable } from 'uiSrc/utils'
-import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { cloudSelector, fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
@@ -41,6 +41,8 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
     selectingAccountId,
     'data-testid': dataTestId,
   } = props
+
+  const { subscriptions, credentials, data: cloudData } = useSelector(cloudSelector)
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isImportLoading, setIsImportLoading] = useState(false)
@@ -93,6 +95,23 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
       })
     }
     setIsProfileOpen((v) => !v)
+  }
+
+  const handleOpenRiDesktop = () => {
+    console.log('subscriptions', subscriptions)
+    console.log('credentials', credentials)
+    console.log('data', cloudData)
+
+    // TODO [DA]: Pass the right params
+    // const urlRequestParams: BuildRedisInsightUrlParams = {
+    //   endpoint: '',
+    //   plan: {},
+    //   subscription: {},
+    //   bdb: {},
+    // }
+    // const url = buildRedisInsightUrl(urlRequestParams)
+    
+    // window.open(url)
   }
 
   const { accounts, currentAccountId, name } = data
@@ -156,7 +175,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
               <>
                 <EuiLink
                   className={cx(styles.option, styles.clickableOption)}
-                  href="redisinsight://databases/connect"
+                  onClick={handleOpenRiDesktop}
                   data-testid="open-ri-desktop-link"
                 >
                   <EuiText>Open in Redis Insight Desktop version</EuiText>

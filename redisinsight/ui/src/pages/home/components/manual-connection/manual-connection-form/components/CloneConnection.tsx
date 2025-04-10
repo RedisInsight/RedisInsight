@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui'
+import { EuiButton, EuiSpacer } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 
 export interface Props {
   id?: string
@@ -15,15 +16,15 @@ const CloneConnection = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_REQUESTED,
       eventData: {
-        databaseId: id
-      }
+        databaseId: id,
+      },
     })
   }
 
   return (
     <>
-      <EuiFlexGroup responsive={false} justifyContent="flexEnd" style={{ flexGrow: 0 }}>
-        <EuiFlexItem grow={false}>
+      <Row gap="m" justify="end" style={{ flexGrow: 0 }}>
+        <FlexItem>
           <EuiButton
             size="s"
             color="secondary"
@@ -34,8 +35,8 @@ const CloneConnection = (props: Props) => {
           >
             Clone Connection
           </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
       <EuiSpacer />
     </>
   )

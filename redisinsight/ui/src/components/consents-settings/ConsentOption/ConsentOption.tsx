@@ -1,13 +1,8 @@
 import React from 'react'
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSwitch,
-  EuiText,
-  EuiSpacer,
-} from '@elastic/eui'
+import { EuiSwitch, EuiText, EuiSpacer } from '@elastic/eui'
 import parse from 'html-react-parser'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { IConsent } from '../ConsentsSettings'
 
 import styles from '../styles.module.scss'
@@ -26,10 +21,10 @@ const ConsentOption = (props: Props) => {
     onChangeAgreement,
     checked,
     isSettingsPage = false,
-    withoutSpacer = false
+    withoutSpacer = false,
   } = props
   return (
-    <EuiFlexItem key={consent.agreementName}>
+    <FlexItem key={consent.agreementName} grow>
       {isSettingsPage && consent.description && (
         <>
           <EuiText
@@ -43,22 +38,22 @@ const ConsentOption = (props: Props) => {
           <EuiSpacer size="m" />
         </>
       )}
-      <EuiFlexGroup gutterSize="s">
-        <EuiFlexItem grow={false}>
+      <Row gap="m">
+        <FlexItem>
           <EuiSwitch
             showLabel={false}
             label=""
             checked={checked}
-            onChange={(e) => onChangeAgreement(e.target.checked, consent.agreementName)}
+            onChange={(e) =>
+              onChangeAgreement(e.target.checked, consent.agreementName)
+            }
             className={styles.switchOption}
             data-testid={`switch-option-${consent.agreementName}`}
             disabled={consent?.disabled}
           />
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiText className={styles.smallText}>
-            {parse(consent.label)}
-          </EuiText>
+        </FlexItem>
+        <FlexItem>
+          <EuiText className={styles.smallText}>{parse(consent.label)}</EuiText>
           {!isSettingsPage && consent.description && (
             <EuiText
               size="s"
@@ -69,10 +64,10 @@ const ConsentOption = (props: Props) => {
               {parse(consent.description)}
             </EuiText>
           )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      {!withoutSpacer && (<EuiSpacer size="l" />)}
-    </EuiFlexItem>
+        </FlexItem>
+      </Row>
+      {!withoutSpacer && <EuiSpacer size="l" />}
+    </FlexItem>
   )
 }
 

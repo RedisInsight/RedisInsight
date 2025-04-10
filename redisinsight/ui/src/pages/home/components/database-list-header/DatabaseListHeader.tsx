@@ -1,10 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-} from '@elastic/eui'
+import { EuiButton, EuiSpacer } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { isEmpty } from 'lodash'
 import cx from 'classnames'
@@ -22,6 +17,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { FeatureFlags } from 'uiSrc/constants'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import SearchDatabasesList from '../search-databases-list'
 
 import styles from './styles.module.scss'
@@ -38,7 +34,8 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
 
   const { theme } = useContext(ThemeContext)
-  const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } = featureFlags
+  const { [FeatureFlags.enhancedCloudUI]: enhancedCloudUIFeature } =
+    featureFlags
   const isShowPromoBtn = !enhancedCloudUIFeature?.flag
 
   useEffect(() => {
@@ -56,7 +53,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
       event: TelemetryEvent.CONFIG_DATABASES_CLICKED,
       eventData: {
         source: OAuthSocialSource.DatabasesList,
-      }
+      },
     })
     onAddInstance()
   }
@@ -66,8 +63,8 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
       sendEventTelemetry({
         event,
         eventData: {
-          ...eventData
-        }
+          ...eventData,
+        },
       })
     }
   }
@@ -110,14 +107,17 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
               ...linkStyles,
               backgroundImage: linkStyles?.backgroundImage
                 ? `url(${getPathToResource(linkStyles.backgroundImage)})`
-                : undefined
+                : undefined,
             }}
             onClick={(e) => {
-              !isSSOEnabled && handleCreateDatabaseClick(
-                HELP_LINKS.cloud.event,
-                { source: HELP_LINKS.cloud.sources.databaseList },
-              )
-              ssoCloudHandlerClick(e, { source: OAuthSocialSource.ListOfDatabases, action: OAuthSocialAction.Create })
+              !isSSOEnabled &&
+                handleCreateDatabaseClick(HELP_LINKS.cloud.event, {
+                  source: HELP_LINKS.cloud.sources.databaseList,
+                })
+              ssoCloudHandlerClick(e, {
+                source: OAuthSocialSource.ListOfDatabases,
+                action: OAuthSocialAction.Create,
+              })
             }}
           />
         )}
@@ -127,31 +127,36 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
 
   return (
     <div className={styles.containerDl}>
-      <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false} gutterSize="s">
-        <EuiFlexItem grow={false}>
+      <Row
+        className={styles.contentDL}
+        align="center"
+        responsive={false}
+        gap="s"
+      >
+        <FlexItem>
           <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
             <AddInstanceBtn />
           </FeatureFlagComponent>
-        </EuiFlexItem>
+        </FlexItem>
         {!loading && !isEmpty(data) && (
-          <EuiFlexItem grow={false} className={cx(styles.promo)}>
-            <EuiFlexGroup alignItems="center" gutterSize="s">
+          <FlexItem className={cx(styles.promo)}>
+            <Row align="center" gap="s">
               {promoData && (
                 <FeatureFlagComponent name={FeatureFlags.cloudAds}>
-                  <EuiFlexItem grow={false}>
+                  <FlexItem>
                     <CreateBtn content={promoData} />
-                  </EuiFlexItem>
+                  </FlexItem>
                 </FeatureFlagComponent>
               )}
-            </EuiFlexGroup>
-          </EuiFlexItem>
+            </Row>
+          </FlexItem>
         )}
         {instances.length > 0 && (
-          <EuiFlexItem grow={false} className={styles.searchContainer}>
+          <FlexItem className={styles.searchContainer}>
             <SearchDatabasesList />
-          </EuiFlexItem>
+          </FlexItem>
         )}
-      </EuiFlexGroup>
+      </Row>
       <EuiSpacer className={styles.spacerDl} />
     </div>
   )

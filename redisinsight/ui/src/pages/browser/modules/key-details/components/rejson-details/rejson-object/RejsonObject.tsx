@@ -208,6 +208,7 @@ const RejsonObject = (props: JSONObjectProps) => {
           onCancel={() => setAddNewKeyValuePair(false)}
           onSubmit={handleFormSubmit}
           leftPadding={leftPadding}
+          parentPath={path}
         />
       )}
       {isExpanded && !editEntireObject && (

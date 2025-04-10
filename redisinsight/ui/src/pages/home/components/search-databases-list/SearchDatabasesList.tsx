@@ -21,7 +21,12 @@ const SearchDatabasesList = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const isInitialRender = value === '' && selectedTags.size === 0 && !instances.some(({ visible }) => visible === false )
+    const isInitialRender =
+      value === '' &&
+      selectedTags.size === 0 &&
+      (!instances ||
+        instances.length === 0 ||
+        !instances.some((instance) => instance?.visible === false))
 
     if (isInitialRender) {
       return

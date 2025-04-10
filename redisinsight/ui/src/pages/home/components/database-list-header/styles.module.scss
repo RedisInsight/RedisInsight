@@ -38,14 +38,6 @@
   }
 }
 
-.searchContainer {
-  position: relative;
-  height: 42px;
-  max-width: 320px;
-  margin-left: auto !important;
-  padding-left: 12px;
-}
-
 .promo {
   display: flex !important;
   @media only screen and (max-width: 800px) {
@@ -68,5 +60,15 @@
 @include global.insights-open(1350px) {
   .promo {
     display: none !important;
+  }
+}
+
+.columnsButtonItem {
+  margin-right: 16px !important;
+
+  .columnsButton {
+    padding: 4px 6px 4px;
+    border-color: transparent !important;
+    box-shadow: none !important;
   }
 }

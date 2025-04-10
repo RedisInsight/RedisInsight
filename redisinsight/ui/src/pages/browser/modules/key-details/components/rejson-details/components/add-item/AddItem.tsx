@@ -5,7 +5,6 @@ import {
   EuiFieldText,
   EuiForm,
   EuiOutsideClickDetector,
-  EuiWindowEvent,
   keys,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
@@ -15,6 +14,7 @@ import { checkExistingPath } from 'uiSrc/utils/rejson'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
 import { FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import ConfirmOverwrite from './ConfirmOverwrite'
 import { isValidJSON, isValidKey, parseJsonData, wrapPath } from '../../utils'
@@ -90,7 +90,7 @@ const AddItem = (props: Props) => {
     >
       <EuiOutsideClickDetector onOutsideClick={() => {}}>
         <div>
-          <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
+          <WindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
           <FocusTrap>
             <EuiForm
               component="form"

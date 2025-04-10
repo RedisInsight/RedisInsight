@@ -33,9 +33,10 @@
   border-bottom-width: 1px !important;
 }
 
+// 115px is the key details header height
 :global(.key-details-body) {
   position: relative;
-  height: calc(100% - 144px);
+  height: calc(100% - 115px);
 }
 
 :global(.key-details-footer) {

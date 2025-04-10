@@ -7,7 +7,6 @@ import {
   EuiFormRow,
   EuiRadioGroup,
   EuiRadioGroupOption,
-  EuiSpacer,
   EuiTextArea,
   htmlIdGenerator,
 } from '@elastic/eui'
@@ -26,6 +25,7 @@ import { SshPassType } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -142,7 +142,7 @@ const SSHDetails = (props: Props) => {
             </FlexItem>
           </Row>
 
-          <EuiSpacer />
+          <Spacer />
           <Row gap="m" responsive className={flexGroupClassName}>
             <FlexItem
               grow

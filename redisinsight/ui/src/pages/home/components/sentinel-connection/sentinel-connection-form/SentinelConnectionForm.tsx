@@ -1,4 +1,4 @@
-import { EuiButton, EuiForm, EuiSpacer, EuiToolTip, keys } from '@elastic/eui'
+import { EuiButton, EuiForm, EuiToolTip, keys } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
 import React, { useRef, useState } from 'react'
@@ -13,6 +13,7 @@ import {
   MessageSentinel,
   TlsDetails,
 } from 'uiSrc/pages/home/components/form'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export interface Props {
   loading: boolean
@@ -154,7 +155,7 @@ const SentinelConnectionForm = (props: Props) => {
             }}
             onHostNamePaste={onHostNamePaste}
           />
-          <EuiSpacer />
+          <Spacer />
           <TlsDetails
             formik={formik}
             certificates={certificates}

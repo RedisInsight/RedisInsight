@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { EuiButton, EuiSpacer } from '@elastic/eui'
+import { EuiButton } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { isEmpty } from 'lodash'
 import cx from 'classnames'
@@ -18,6 +18,7 @@ import { getContentByFeature } from 'uiSrc/utils/content'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { FeatureFlags } from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import SearchDatabasesList from '../search-databases-list'
 
 import styles from './styles.module.scss'
@@ -157,7 +158,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
           </FlexItem>
         )}
       </Row>
-      <EuiSpacer className={styles.spacerDl} />
+      <Spacer className={styles.spacerDl} />
     </div>
   )
 }

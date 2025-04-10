@@ -11,7 +11,6 @@ import {
   EuiPageHeader,
   EuiCollapsibleNavGroup,
   EuiLoadingSpinner,
-  EuiSpacer,
   EuiText,
   EuiCallOut,
 } from '@elastic/eui'
@@ -20,8 +19,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setTitle } from 'uiSrc/utils'
 import { FeatureFlags, Theme, THEMES } from 'uiSrc/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { ConsentsNotifications, ConsentsPrivacy, FeatureFlagComponent } from 'uiSrc/components'
-import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
+import {
+  ConsentsNotifications,
+  ConsentsPrivacy,
+  FeatureFlagComponent,
+} from 'uiSrc/components'
+import {
+  sendEventTelemetry,
+  sendPageViewTelemetry,
+  TelemetryEvent,
+  TelemetryPageView,
+} from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   fetchUserConfigSettings,
@@ -30,7 +38,12 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 
 import Divider from 'uiSrc/components/divider/Divider'
-import { AdvancedSettings, WorkbenchSettings, CloudSettings } from './components'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import {
+  AdvancedSettings,
+  WorkbenchSettings,
+  CloudSettings,
+} from './components'
 import { DateTimeFormatter } from './components/general-settings'
 import styles from './styles.module.scss'
 
@@ -58,7 +71,7 @@ const SettingsPage = () => {
 
   useEffect(() => {
     sendPageViewTelemetry({
-      name: TelemetryPageView.SETTINGS_PAGE
+      name: TelemetryPageView.SETTINGS_PAGE,
     })
   }, [])
 
@@ -73,7 +86,7 @@ const SettingsPage = () => {
       eventData: {
         previousColorTheme: previousValue,
         currentColorTheme: value,
-      }
+      },
     })
   }
 
@@ -83,7 +96,7 @@ const SettingsPage = () => {
         <EuiTitle size="xs">
           <h4>Color Theme</h4>
         </EuiTitle>
-        <EuiSpacer size="m" />
+        <Spacer size="m" />
         <EuiFormRow label="Specifies the color theme to be used in Redis Insight:">
           <EuiSuperSelect
             options={options}
@@ -93,11 +106,11 @@ const SettingsPage = () => {
             data-test-subj="select-theme"
           />
         </EuiFormRow>
-        <EuiSpacer size="xl" />
+        <Spacer size="xl" />
       </EuiForm>
       <ConsentsNotifications />
       <Divider colorVariable="separatorColor" />
-      <EuiSpacer size="l" />
+      <Spacer />
       <DateTimeFormatter />
     </>
   )
@@ -144,7 +157,8 @@ const SettingsPage = () => {
       )}
       <EuiCallOut className={styles.warning}>
         <EuiText size="s" className={styles.smallText}>
-          Advanced settings should only be changed if you understand their impact.
+          Advanced settings should only be changed if you understand their
+          impact.
         </EuiText>
       </EuiCallOut>
       <AdvancedSettings />

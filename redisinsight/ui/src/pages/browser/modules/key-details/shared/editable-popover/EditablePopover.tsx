@@ -6,11 +6,11 @@ import {
   EuiForm,
   EuiLoadingSpinner,
   EuiPopover,
-  EuiSpacer,
 } from '@elastic/eui'
 
 import cx from 'classnames'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -149,7 +149,7 @@ const EditablePopover = (props: Props) => {
     >
       <EuiForm component="form" onSubmit={onFormSubmit}>
         <div className={styles.content}>{children}</div>
-        <EuiSpacer size="s" />
+        <Spacer size="s" />
         <Row className={styles.footer} justify="end">
           <FlexItem>
             <EuiButton

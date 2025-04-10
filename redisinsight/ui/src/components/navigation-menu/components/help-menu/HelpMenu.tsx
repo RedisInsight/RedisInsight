@@ -3,7 +3,6 @@ import {
   EuiIcon,
   EuiLink,
   EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiTitle,
   EuiToolTip,
@@ -30,6 +29,7 @@ import BulbSVG from 'uiSrc/assets/img/bulb.svg?react'
 import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
@@ -111,7 +111,7 @@ const HelpMenu = () => {
         <EuiTitle size="xs" className={styles.helpMenuTitle}>
           <span>Help Center</span>
         </EuiTitle>
-        <EuiSpacer size="l" />
+        <Spacer size="l" />
         <Row
           className={styles.helpMenuItems}
           align="center"
@@ -128,7 +128,7 @@ const HelpMenu = () => {
                 data-testid="submit-bug-btn"
               >
                 <EuiIcon type={GithubHelpCenterSVG} size="xxl" />
-                <EuiSpacer size="m" />
+                <Spacer size="m" />
                 <EuiText
                   size="xs"
                   textAlign="center"

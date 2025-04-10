@@ -1,11 +1,5 @@
 import React, { useState } from 'react'
-import {
-  EuiButton,
-  EuiButtonEmpty,
-  EuiForm,
-  EuiSpacer,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButton, EuiButtonEmpty, EuiForm, EuiToolTip } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -21,6 +15,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import ConnectivityOptions from './components/connectivity-options'
 import ConnectionUrl from './components/connection-url'
 import { Values } from './constants'
@@ -184,9 +179,9 @@ const AddDatabaseScreen = (props: Props) => {
           </FlexItem>
         </Row>
       </EuiForm>
-      <EuiSpacer />
+      <Spacer />
       <div className={styles.hr}>Or</div>
-      <EuiSpacer />
+      <Spacer />
       <ConnectivityOptions
         onClickOption={handleProceedForm}
         onClose={onClose}

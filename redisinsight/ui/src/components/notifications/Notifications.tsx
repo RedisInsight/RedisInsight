@@ -1,11 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiGlobalToastList,
-  EuiButton,
-  EuiSpacer,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiGlobalToastList, EuiButton, EuiTextColor } from '@elastic/eui'
 import { Toast } from '@elastic/eui/src/components/toast/global_toast_list'
 import cx from 'classnames'
 import {
@@ -24,6 +19,7 @@ import { CustomErrorCodes } from 'uiSrc/constants'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import errorMessages from './error-messages'
 import { InfiniteMessagesIds } from './components'
 
@@ -54,7 +50,7 @@ const Notifications = () => {
   ) => (
     <>
       <EuiTextColor color="ghost">{text}</EuiTextColor>
-      <EuiSpacer />
+      <Spacer />
       <Row justify="end">
         <FlexItem>
           <EuiButton

@@ -1,8 +1,9 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiSpacer, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -45,7 +46,7 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
       {items.map((item, index) =>
         renderItem(children(item, index), item, index),
       )}
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <Row align="center" justify="end">
         <FlexItem>
           <EuiToolTip content="Add" position="left">

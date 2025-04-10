@@ -1,11 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef } from 'react'
-import {
-  EuiFieldText,
-  EuiFormRow,
-  EuiIcon,
-  EuiSpacer,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiFormRow, EuiIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { validateEntryId } from 'uiSrc/utils'
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
@@ -13,6 +7,7 @@ import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/ad
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -133,7 +128,7 @@ const StreamEntryFields = (props: Props) => {
                   <>
                     ID must be a timestamp and sequence number greater than the
                     last ID.
-                    <EuiSpacer size="xs" />
+                    <Spacer size="xs" />
                     Otherwise, type * to auto-generate ID based on the database
                     current time.
                   </>

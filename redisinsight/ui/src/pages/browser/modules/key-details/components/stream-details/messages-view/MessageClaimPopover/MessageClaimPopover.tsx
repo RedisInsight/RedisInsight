@@ -12,7 +12,6 @@ import {
   EuiSwitch,
   EuiText,
   EuiCheckbox,
-  EuiSpacer,
   EuiToolTip,
 } from '@elastic/eui'
 import { useFormik } from 'formik'
@@ -30,6 +29,7 @@ import {
   ClaimTimeOptions,
 } from 'uiSrc/utils/streamUtils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
@@ -253,7 +253,7 @@ const MessageClaimPopover = (props: Props) => {
         </Row>
         {isOptionalShow && (
           <>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <Row className={styles.container} align="center">
               <FlexItem grow className={styles.idle}>
                 <EuiFormRow label="Idle Time">

@@ -8,7 +8,6 @@ import {
   EuiForm,
   EuiFormRow,
   EuiRadioGroup,
-  EuiSpacer,
   EuiText,
   EuiToolTip,
   keys,
@@ -26,6 +25,7 @@ import { OAuthAutodiscovery } from 'uiSrc/components/oauth/oauth-sso'
 import { MessageCloudApiKeys } from 'uiSrc/pages/home/components/form/Messages'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -178,7 +178,7 @@ const CloudConnectionForm = (props: Props) => {
   const CloudApiForm = (
     <div className={styles.cloudApi} data-testid="add-db_cloud-api">
       <MessageCloudApiKeys />
-      <EuiSpacer />
+      <Spacer />
       <WindowEvent event="keydown" handler={onKeyDown} />
       <EuiForm component="form" onSubmit={formik.handleSubmit}>
         <Row responsive>
@@ -247,7 +247,7 @@ const CloudConnectionForm = (props: Props) => {
             />
           </FlexItem>
         </Col>
-        <EuiSpacer size="s" />
+        <Spacer size="s" />
       </FeatureFlagComponent>
       {type === CloudConnectionOptions.Account && (
         <OAuthAutodiscovery

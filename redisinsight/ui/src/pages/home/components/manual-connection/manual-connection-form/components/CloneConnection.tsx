@@ -1,7 +1,8 @@
 import React from 'react'
-import { EuiButton, EuiSpacer } from '@elastic/eui'
+import { EuiButton } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export interface Props {
   id?: string
@@ -37,7 +38,7 @@ const CloneConnection = (props: Props) => {
           </EuiButton>
         </FlexItem>
       </Row>
-      <EuiSpacer />
+      <Spacer />
     </>
   )
 }

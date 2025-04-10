@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiButton, EuiPanel, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiPanel, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -16,6 +16,7 @@ import ArrowToGuidesIcon from 'uiSrc/assets/img/workbench/arrow-to-guides.svg?re
 import TriggerIcon from 'uiSrc/assets/img/bulb.svg?react'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 const WbNoResultsMessage = () => {
@@ -56,7 +57,7 @@ const WbNoResultsMessage = () => {
           for Redis commands.
         </span>
       </EuiTitle>
-      <EuiSpacer />
+      <Spacer />
 
       <EuiPanel
         className={styles.noResultsPanel}
@@ -81,7 +82,7 @@ const WbNoResultsMessage = () => {
               Try Workbench with our interactive Tutorials to learn how Redis
               can solve your use cases.
             </EuiText>
-            <EuiSpacer size="xl" />
+            <Spacer size="xl" />
             <div>
               <EuiButton
                 fill
@@ -94,7 +95,7 @@ const WbNoResultsMessage = () => {
                 Explore
               </EuiButton>
             </div>
-            <EuiSpacer size="s" />
+            <Spacer size="s" />
             <EuiText color="subdued" textAlign="left" size="xs">
               Or click the icon in the top right corner.
             </EuiText>

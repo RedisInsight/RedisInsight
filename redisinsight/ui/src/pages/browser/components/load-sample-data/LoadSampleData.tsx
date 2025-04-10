@@ -1,11 +1,5 @@
 import React, { useState } from 'react'
-import {
-  EuiButton,
-  EuiIcon,
-  EuiPopover,
-  EuiSpacer,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -17,6 +11,7 @@ import {
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -76,12 +71,12 @@ const LoadSampleData = (props: Props) => {
         </FlexItem>
         <FlexItem>
           <EuiText>Execute commands in bulk</EuiText>
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           <EuiText color="subdued" size="s">
             All commands from the file will be automatically executed against
             your database. Avoid executing them in production databases.
           </EuiText>
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           <Row justify="end">
             <FlexItem>
               <EuiButton

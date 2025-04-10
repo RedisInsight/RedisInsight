@@ -1,4 +1,4 @@
-import { EuiButton, EuiSpacer, EuiTextColor } from '@elastic/eui'
+import { EuiButton, EuiTextColor } from '@elastic/eui'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -7,6 +7,7 @@ import { Pages } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export interface Props {
   resourceId: string
@@ -44,7 +45,7 @@ const CloudCapiUnAuthorizedErrorContent = ({
   return (
     <>
       <EuiTextColor color="ghost">{text}</EuiTextColor>
-      <EuiSpacer />
+      <Spacer />
       <Row justify="end">
         <FlexItem>
           <EuiButton

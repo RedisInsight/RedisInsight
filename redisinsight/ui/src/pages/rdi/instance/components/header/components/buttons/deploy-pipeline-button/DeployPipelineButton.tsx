@@ -4,7 +4,6 @@ import {
   EuiIcon,
   EuiOutsideClickDetector,
   EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiTitle,
   EuiToolTip,
@@ -27,6 +26,7 @@ import { createAxiosError, pipelineToJson } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -135,17 +135,17 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
         <EuiTitle size="xxs">
           <span>Are you sure you want to deploy the pipeline?</span>
         </EuiTitle>
-        <EuiSpacer size="s" />
+        <Spacer size="s" />
         <EuiText size="s">
           When deployed, this local configuration will overwrite any existing
           pipeline.
         </EuiText>
-        <EuiSpacer size="s" />
+        <Spacer size="s" />
         <EuiText size="s">
           After deployment, consider flushing the target Redis database and
           resetting the pipeline to ensure that all data is reprocessed.
         </EuiText>
-        <EuiSpacer size="s" />
+        <Spacer size="s" />
         <div className={styles.checkbox}>
           <EuiCheckbox
             id="resetPipeline"

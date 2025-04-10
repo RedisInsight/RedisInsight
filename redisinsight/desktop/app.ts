@@ -71,6 +71,11 @@ const init = async () => {
 
     await windowFactory(WindowType.Main, splashWindow, { parsedDeepLink })
 
+    log.info(`+++App is ready+++
+      ${typeof process.env.RI_DISABLE_AUTO_UPGRADE} (1)
+      ${process.env.RI_DISABLE_AUTO_UPGRADE} (2)
+      ${process.env.RI_DISABLE_AUTO_UPGRADE} (3)`
+    )
     if (process.env.RI_DISABLE_AUTO_UPGRADE !== 'true') {
       initAutoUpdateChecks(
         process.env.RI_MANUAL_UPGRADES_LINK || process.env.RI_UPGRADES_LINK,

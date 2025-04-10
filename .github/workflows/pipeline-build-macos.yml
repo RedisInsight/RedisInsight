@@ -38,6 +38,9 @@ jobs:
       with:
         detached: true
 
+    - name: Debug inputs
+      run: echo "Enterprise? ${{ inputs.enterprise }} RI_DISABLE_AUTO_UPGRADE? $RI_DISABLE_AUTO_UPGRADE"
+
     - name: Add certificates to the keychain
       uses: ./.github/actions/install-apple-certs
       with:

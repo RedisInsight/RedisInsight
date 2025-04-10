@@ -11,7 +11,6 @@ import {
   EuiSpacer,
   EuiText,
   EuiToolTip,
-  EuiWindowEvent,
   keys,
 } from '@elastic/eui'
 
@@ -26,6 +25,7 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthAutodiscovery } from 'uiSrc/components/oauth/oauth-sso'
 import { MessageCloudApiKeys } from 'uiSrc/pages/home/components/form/Messages'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -104,7 +104,7 @@ const CloudConnectionForm = (props: Props) => {
 
   const submitIsEnable = () => isEmpty(errors)
 
-  const onKeyDown = (event: any) => {
+  const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === keys.ENTER && submitIsEnable()) {
       formik.submitForm()
       event.stopPropagation()
@@ -179,7 +179,7 @@ const CloudConnectionForm = (props: Props) => {
     <div className={styles.cloudApi} data-testid="add-db_cloud-api">
       <MessageCloudApiKeys />
       <EuiSpacer />
-      <EuiWindowEvent event="keydown" handler={onKeyDown} />
+      <WindowEvent event="keydown" handler={onKeyDown} />
       <EuiForm component="form" onSubmit={formik.handleSubmit}>
         <Row responsive>
           <FlexItem>

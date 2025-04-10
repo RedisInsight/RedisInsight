@@ -4,7 +4,6 @@ import {
   EuiForm,
   EuiOutsideClickDetector,
   EuiTextArea,
-  EuiWindowEvent,
   keys,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -12,6 +11,7 @@ import cx from 'classnames'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
 import { FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import { isValidJSON } from '../../utils'
 import { JSONErrors } from '../../constants'
@@ -52,7 +52,7 @@ const EditEntireItemAction = (props: Props) => {
       <div className={styles.fullWidthContainer}>
         <EuiOutsideClickDetector onOutsideClick={() => onCancel?.()}>
           <div>
-            <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
+            <WindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
             <FocusTrap>
               <EuiForm
                 component="form"

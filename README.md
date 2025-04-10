@@ -75,6 +75,10 @@ If you would like to contribute to the code base or fix and issue, please consul
 
 * [How to build and contribute](https://github.com/RedisInsight/RedisInsight/wiki/How-to-build-and-contribute)
 
+## API documentation
+If you're using a Docker image of Redis Insight, open this URL to view the list of APIs:
+http://localhost:5530/api/docs
+
 ## Telemetry
 
 Redis Insight includes an opt-in telemetry system, that is leveraged to help improve the developer experience (DX) within the app. We value your privacy, so stay assured, that all the data collected is anonymised.

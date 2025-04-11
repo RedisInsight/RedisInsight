@@ -15,7 +15,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getTruncatedName, Nullable } from 'uiSrc/utils'
 import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
@@ -43,8 +43,9 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
     'data-testid': dataTestId,
   } = props
 
-  const overview = useSelector(connectedInstanceOverviewSelector)
   const connectedInstance = useSelector(connectedInstanceSelector)
+
+  const riDesktopLink = buildRedisInsightUrl(connectedInstance)
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isImportLoading, setIsImportLoading] = useState(false)
@@ -97,19 +98,6 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
       })
     }
     setIsProfileOpen((v) => !v)
-  }
-
-  const handleOpenRiDesktop = () => {
-    console.log('cloudData', overview.cloudDetails)
-    console.log('connectedInstance', connectedInstance)
-
-    const url = buildRedisInsightUrl(
-      `${connectedInstance.host}:${connectedInstance.port}`,
-      overview.cloudDetails,
-      connectedInstance
-    )
-    
-    window.open(url)
   }
 
   const { accounts, currentAccountId, name } = data
@@ -173,7 +161,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
               <>
                 <EuiLink
                   className={cx(styles.option, styles.clickableOption)}
-                  onClick={handleOpenRiDesktop}
+                  href={riDesktopLink}
                   data-testid="open-ri-desktop-link"
                 >
                   <EuiText>Open in Redis Insight Desktop version</EuiText>

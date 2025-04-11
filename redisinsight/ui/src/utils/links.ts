@@ -20,39 +20,24 @@ export const getUtmExternalLink = (baseUrl: string, params: UTMParams) => {
   }
 }
 
-export interface Bdb {
-  id: number
-  name: string
-  access_control?: {
-    redis_password?: string
-    has_ssl_auth?: boolean
-    enforce_client_authentication?: boolean
-  }
-}
-export interface Plan {
-  plan_type: string
-  size: number
-}
 const RI_PROTOCOL_SCHEMA = 'redisinsight://'
 
 export const buildRedisInsightUrl = (
-  endpoint: string,
-  cloudData: any,
   instanceData: Instance,
 ) => {
   if (!instanceData) {
     return ''
   }
 
+  const endpoint = `${instanceData.host}:${instanceData.port}`
   const defaultPassword = instanceData.password
-
   const dbUrl = defaultPassword
     ? `redis://default:${defaultPassword}@${endpoint}`
     : `redis://@${endpoint}`
 
   const params: Record<string, string> = {
     redisUrl: dbUrl,
-    cloudBdbId: cloudData.cloudId.toString() || '',
+    cloudBdbId: instanceData.cloudDetails?.cloudId.toString() || '',
     databaseAlias: instanceData.name || '',
   }
 
@@ -66,11 +51,13 @@ export const buildRedisInsightUrl = (
     params.requiredClientCert = 'true'
   }
 
-  if (cloudData.subscriptionType === 'fixed') {
-    params.planMemoryLimit = cloudData.planMemoryLimit
-    params.memoryLimitMeasurementUnit = cloudData.memoryLimitMeasurementUnit
-
-    // TODO [DA]: check and add if subscription is free
+  params.subscriptionType = instanceData.cloudDetails?.subscriptionType || ''
+  if (instanceData.cloudDetails?.subscriptionType === 'fixed') {
+    params.planMemoryLimit = instanceData.cloudDetails?.planMemoryLimit?.toString() || ''
+    params.memoryLimitMeasurementUnit = instanceData.cloudDetails?.memoryLimitMeasurementUnit || ''
+    if (instanceData.cloudDetails?.free) {
+      params.free = 'true'
+    }
   }
 
   return `${RI_PROTOCOL_SCHEMA}databases/connect${appendParams(params)}`

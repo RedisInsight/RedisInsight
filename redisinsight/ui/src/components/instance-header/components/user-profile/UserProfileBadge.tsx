@@ -14,7 +14,8 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getTruncatedName, Nullable } from 'uiSrc/utils'
-import { cloudSelector, fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
@@ -42,7 +43,17 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
     'data-testid': dataTestId,
   } = props
 
-  const { subscriptions, credentials, data: cloudData } = useSelector(cloudSelector)
+  const overview = useSelector(connectedInstanceOverviewSelector)
+  const {
+    usedMemory,
+    cloudDetails: {
+      subscriptionType,
+      subscriptionId,
+      planMemoryLimit,
+      memoryLimitMeasurementUnit,
+      isBdbPackages,
+    } = {},
+  } = overview
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isImportLoading, setIsImportLoading] = useState(false)
@@ -98,9 +109,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
   }
 
   const handleOpenRiDesktop = () => {
-    console.log('subscriptions', subscriptions)
-    console.log('credentials', credentials)
-    console.log('data', cloudData)
+    console.log('overview', overview)
 
     // TODO [DA]: Pass the right params
     // const urlRequestParams: BuildRedisInsightUrlParams = {

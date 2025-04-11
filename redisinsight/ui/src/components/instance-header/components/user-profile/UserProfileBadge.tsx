@@ -8,14 +8,14 @@ import {
 } from 'uiSrc/slices/oauth/cloud'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud.svg?react'
 
-import { buildRedisInsightUrl, BuildRedisInsightUrlParams, getUtmExternalLink } from 'uiSrc/utils/links'
+import { buildRedisInsightUrl, getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getTruncatedName, Nullable } from 'uiSrc/utils'
 import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
@@ -44,16 +44,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
   } = props
 
   const overview = useSelector(connectedInstanceOverviewSelector)
-  const {
-    usedMemory,
-    cloudDetails: {
-      subscriptionType,
-      subscriptionId,
-      planMemoryLimit,
-      memoryLimitMeasurementUnit,
-      isBdbPackages,
-    } = {},
-  } = overview
+  const connectedInstance = useSelector(connectedInstanceSelector)
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isImportLoading, setIsImportLoading] = useState(false)
@@ -109,18 +100,16 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
   }
 
   const handleOpenRiDesktop = () => {
-    console.log('overview', overview)
+    console.log('cloudData', overview.cloudDetails)
+    console.log('connectedInstance', connectedInstance)
 
-    // TODO [DA]: Pass the right params
-    // const urlRequestParams: BuildRedisInsightUrlParams = {
-    //   endpoint: '',
-    //   plan: {},
-    //   subscription: {},
-    //   bdb: {},
-    // }
-    // const url = buildRedisInsightUrl(urlRequestParams)
+    const url = buildRedisInsightUrl(
+      `${connectedInstance.host}:${connectedInstance.port}`,
+      overview.cloudDetails,
+      connectedInstance
+    )
     
-    // window.open(url)
+    window.open(url)
   }
 
   const { accounts, currentAccountId, name } = data

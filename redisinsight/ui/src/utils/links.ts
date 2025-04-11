@@ -1,6 +1,5 @@
 import { UTM_MEDIUMS } from 'uiSrc/constants/links'
-import { Instance, RedisCloudSubscription } from 'uiSrc/slices/interfaces'
-import { Nullable } from '.'
+import { Instance } from 'uiSrc/slices/interfaces'
 
 export interface UTMParams {
   source?: string
@@ -34,23 +33,18 @@ export interface Plan {
   plan_type: string
   size: number
 }
-export interface BuildRedisInsightUrlParams {
-  endpoint: string
-  bdb: Instance
-  plan: CloudSubscriptionPlan
-  subscription: Nullable<RedisCloudSubscription>
-}
 const RI_PROTOCOL_SCHEMA = 'redisinsight://'
-export const buildRedisInsightUrl = ({
-  endpoint,
-  bdb,
-  subscription,
-  plan,
-}: BuildRedisInsightUrlParams) => {
-  if (!bdb) {
+
+export const buildRedisInsightUrl = (
+  endpoint: string,
+  cloudData: any,
+  instanceData: Instance,
+) => {
+  if (!instanceData) {
     return ''
   }
-  const defaultPassword = bdb.password
+
+  const defaultPassword = instanceData.password
 
   const dbUrl = defaultPassword
     ? `redis://default:${defaultPassword}@${endpoint}`
@@ -58,28 +52,25 @@ export const buildRedisInsightUrl = ({
 
   const params: Record<string, string> = {
     redisUrl: dbUrl,
-    cloudBdbId: bdb.id.toString(),
-    databaseAlias: bdb.nameFromProvider || '',
+    cloudBdbId: cloudData.cloudId.toString() || '',
+    databaseAlias: instanceData.name || '',
   }
 
-  if (bdb.tls) {
+  if (instanceData.tls) {
     // requiredTls is for backwards compatibility, in the future we may remove it
     params.requiredTls = 'true'
     params.requiredCaCert = 'true'
   }
 
-  if (bdb.tlsClientAuthRequired) {
+  if (instanceData.tlsClientAuthRequired) {
     params.requiredClientCert = 'true'
   }
 
-  if (plan) {
-    if (subscription.type === 'fixed') {
-      params.planMemoryLimit = planMemoryLimit;
-      params.memoryLimitMeasurementUnit = memoryLimitMeasurementUnit
-      if (subscription.free === true) {
-        params.free = 'true'
-      }
-    }
+  if (cloudData.subscriptionType === 'fixed') {
+    params.planMemoryLimit = cloudData.planMemoryLimit
+    params.memoryLimitMeasurementUnit = cloudData.memoryLimitMeasurementUnit
+
+    // TODO [DA]: check and add if subscription is free
   }
 
   return `${RI_PROTOCOL_SCHEMA}databases/connect${appendParams(params)}`
@@ -88,6 +79,8 @@ export const buildRedisInsightUrl = ({
 const appendParams = (params: Record<string, string>) =>
   Object.entries(params).reduce(
     (acc, [key, value], index) =>
-      acc.concat(`${index === 0 ? '?' : '&'}${key}=${encodeURIComponent(value)}`),
-    ''
+      acc.concat(
+        `${index === 0 ? '?' : '&'}${key}=${encodeURIComponent(value)}`,
+      ),
+    '',
   )

@@ -8,7 +8,7 @@ import {
 } from 'uiSrc/slices/oauth/cloud'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud.svg?react'
 
-import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { buildRedisInsightUrl, BuildRedisInsightUrlParams, getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'

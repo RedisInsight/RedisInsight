@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import { useHistory } from 'react-router-dom'
@@ -8,13 +8,14 @@ import {
 } from 'uiSrc/slices/oauth/cloud'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud.svg?react'
 
-import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { buildRedisInsightUrl, getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getTruncatedName, Nullable } from 'uiSrc/utils'
 import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
@@ -41,6 +42,10 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
     selectingAccountId,
     'data-testid': dataTestId,
   } = props
+
+  const connectedInstance = useSelector(connectedInstanceSelector)
+
+  const riDesktopLink = buildRedisInsightUrl(connectedInstance)
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isImportLoading, setIsImportLoading] = useState(false)
@@ -152,18 +157,32 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
           </div>
           <FeatureFlagComponent
             name={FeatureFlags.envDependent}
-            otherwise={(
-              <EuiLink
-                external={false}
-                target="_blank"
-                className={cx(styles.option, styles.clickableOption)}
-                href={riConfig.app.smConsoleRedirect}
-                data-testid="cloud-admin-console-link"
-              >
-                <EuiText>Back to Redis Cloud Admin console</EuiText>
-                <EuiIcon type={CloudIcon} style={{ fill: 'none' }} viewBox="-1 0 30 20" strokeWidth={1.8} />
-              </EuiLink>
-            )}
+            otherwise={
+              <>
+                <EuiLink
+                  className={cx(styles.option, styles.clickableOption)}
+                  href={riDesktopLink}
+                  data-testid="open-ri-desktop-link"
+                >
+                  <EuiText>Open in Redis Insight Desktop version</EuiText>
+                </EuiLink>
+                <EuiLink
+                  external={false}
+                  target="_blank"
+                  className={cx(styles.option, styles.clickableOption)}
+                  href={riConfig.app.smConsoleRedirect}
+                  data-testid="cloud-admin-console-link"
+                >
+                  <EuiText>Back to Redis Cloud Admin console</EuiText>
+                  <EuiIcon
+                    type={CloudIcon}
+                    style={{ fill: 'none' }}
+                    viewBox="-1 0 30 20"
+                    strokeWidth={1.8}
+                  />
+                </EuiLink>
+              </>
+            }
           >
             <div
               role="presentation"

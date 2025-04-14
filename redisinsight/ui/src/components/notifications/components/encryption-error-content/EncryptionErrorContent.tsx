@@ -1,10 +1,11 @@
 import React from 'react'
-import { EuiButton, EuiSpacer, EuiTextColor } from '@elastic/eui'
+import { EuiButton, EuiTextColor } from '@elastic/eui'
 import { matchPath, useHistory, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
 import { updateUserConfigSettingsAction } from 'uiSrc/slices/user/user-settings'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export interface Props {
   onClose?: () => void
@@ -42,13 +43,13 @@ const EncryptionErrorContent = (props: Props) => {
       <EuiTextColor color="ghost">
         <b>Check the system keychain or disable encryption to proceed.</b>
       </EuiTextColor>
-      <EuiSpacer />
+      <Spacer />
       <EuiTextColor color="ghost" style={{ fontWeight: 300 }}>
         Disabling encryption will result in storing sensitive information
         locally in plain text. Re-enter database connection information to work
         with databases.
       </EuiTextColor>
-      <EuiSpacer />
+      <Spacer />
       <Row justify="end">
         <FlexItem>
           <div>

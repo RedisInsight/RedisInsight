@@ -1,9 +1,10 @@
-import { EuiButton, EuiSpacer } from '@elastic/eui'
+import { EuiButton } from '@elastic/eui'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
 import { instancesSelector } from 'uiSrc/slices/rdi/instances'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import SearchRdiList from '../search/SearchRdiList'
 
 export interface Props {
@@ -32,7 +33,7 @@ const RdiHeader = ({ onRdiInstanceClick }: Props) => {
           </FlexItem>
         )}
       </Row>
-      <EuiSpacer className="spacerDl" />
+      <Spacer className="spacerDl" />
     </div>
   )
 }

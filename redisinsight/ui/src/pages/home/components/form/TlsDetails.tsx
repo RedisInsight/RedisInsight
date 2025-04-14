@@ -3,7 +3,6 @@ import {
   EuiCheckbox,
   EuiFieldText,
   EuiFormRow,
-  EuiSpacer,
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiTextArea,
@@ -31,6 +30,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { deleteCaCertificateAction } from 'uiSrc/slices/instances/caCerts'
 import { deleteClientCertAction } from 'uiSrc/slices/instances/clientCerts'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from '../styles.module.scss'
 
 const suffix = '_tls_details'
@@ -188,7 +188,7 @@ const TlsDetails = (props: Props) => {
 
       {formik.values.tls && (
         <>
-          <EuiSpacer />
+          <Spacer />
           <Row gap="m">
             <FlexItem grow={1}>
               <EuiCheckbox
@@ -209,7 +209,7 @@ const TlsDetails = (props: Props) => {
           </Row>
           {formik.values.sni && (
             <>
-              <EuiSpacer />
+              <Spacer />
               <Row gap="m">
                 <FlexItem grow>
                   <EuiFormRow label="Server Name*">
@@ -233,7 +233,7 @@ const TlsDetails = (props: Props) => {
               </Row>
             </>
           )}
-          <EuiSpacer />
+          <Spacer />
           <Row gap="m" responsive>
             <FlexItem
               grow
@@ -253,7 +253,7 @@ const TlsDetails = (props: Props) => {
       )}
       {formik.values.tls && (
         <div className="boxSection">
-          <EuiSpacer />
+          <Spacer />
           <Row gap="m" responsive>
             <FlexItem grow>
               <EuiFormRow

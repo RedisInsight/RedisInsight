@@ -1,8 +1,9 @@
 import React from 'react'
-import { EuiSwitch, EuiText, EuiSpacer } from '@elastic/eui'
+import { EuiSwitch, EuiText } from '@elastic/eui'
 import parse from 'html-react-parser'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { IConsent } from '../ConsentsSettings'
 
 import styles from '../styles.module.scss'
@@ -35,7 +36,7 @@ const ConsentOption = (props: Props) => {
           >
             {parse(consent.description)}
           </EuiText>
-          <EuiSpacer size="m" />
+          <Spacer size="m" />
         </>
       )}
       <Row gap="m">
@@ -66,7 +67,7 @@ const ConsentOption = (props: Props) => {
           )}
         </FlexItem>
       </Row>
-      {!withoutSpacer && <EuiSpacer size="l" />}
+      {!withoutSpacer && <Spacer />}
     </FlexItem>
   )
 }

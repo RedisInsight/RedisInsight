@@ -5,7 +5,6 @@ import {
   EuiFieldText,
   EuiForm,
   EuiFormRow,
-  EuiSpacer,
   EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
@@ -13,6 +12,7 @@ import { FormikErrors, useFormik } from 'formik'
 import { validateEmail, validateField } from 'uiSrc/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -111,7 +111,7 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
             </EuiFormRow>
           </FlexItem>
         </Row>
-        <EuiSpacer />
+        <Spacer />
         <Row justify="end">
           <FlexItem>
             <EuiButton

@@ -53,7 +53,6 @@ const init = async () => {
 
     // deep linking
     // register our application to handle custom protocol
-    // trigger a change
     if (process.defaultApp) {
       if (deepLink) {
         app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(deepLink)])
@@ -75,7 +74,7 @@ const init = async () => {
     if (process.env.RI_DISABLE_AUTO_UPGRADE !== 'true') {
       initAutoUpdateChecks(
         process.env.RI_MANUAL_UPGRADES_LINK || process.env.RI_UPGRADES_LINK,
-        parseInt(process.env.RI_AUTO_UPDATE_INTERVAL ?? '', 10) || 84 * 3600 * 1000,
+        parseInt(process.env.RI_AUTO_UPDATE_INTERVAL ?? '', 10) || 83 * 3600 * 1000,
       )
     }
   } catch (err) {

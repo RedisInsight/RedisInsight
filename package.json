@@ -47,6 +47,7 @@
     "test:api": "yarn --cwd redisinsight/api test",
     "test:api:integration": "yarn --cwd redisinsight/api test:api",
     "test:watch": "jest ./redisinsight/ui --watch -w 1",
+    "test:cov:ui": "cross-env NODE_OPTIONS='' jest ./redisinsight/ui --ci --json --coverage --testLocationInResults --outputFile=report.json",
     "test:cov": "cross-env NODE_OPTIONS='' jest ./redisinsight/ui --silent --coverage --no-cache --forceExit -w 3",
     "test:cov:unit": "jest ./redisinsight/ui --group=-component --coverage -w 1",
     "test:cov:component": "jest ./redisinsight/ui --group=component --coverage -w 1",

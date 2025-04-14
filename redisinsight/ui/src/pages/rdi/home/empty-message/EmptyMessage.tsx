@@ -3,7 +3,6 @@ import {
   EuiIcon,
   EuiImage,
   EuiLink,
-  EuiSpacer,
   EuiText,
 } from '@elastic/eui'
 import React, { useContext } from 'react'
@@ -17,6 +16,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Theme } from 'uiSrc/constants'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 const subTitleText =
@@ -32,8 +32,9 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
     <div
       className={styles.noResultsContainer}
       data-testid="empty-rdi-instance-list"
+
     >
-      <EuiSpacer size="xl" />
+      <Spacer size="xl" />
       <EuiText className={styles.title}>Redis Data Integration</EuiText>
       <EuiImage
         src={theme === Theme.Dark ? EmptyListDarkIcon : EmptyListLightIcon}

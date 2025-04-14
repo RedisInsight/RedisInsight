@@ -12,7 +12,6 @@ import {
   EuiSuperSelectOption,
   EuiText,
   EuiPopover,
-  EuiSpacer,
   EuiIcon,
 } from '@elastic/eui'
 
@@ -43,6 +42,7 @@ import {
 
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
@@ -207,7 +207,7 @@ const RemoveListElements = (props: Props) => {
             </div>
           )}
         </EuiText>
-        <EuiSpacer />
+        <Spacer />
         <EuiButton
           fill
           size="s"

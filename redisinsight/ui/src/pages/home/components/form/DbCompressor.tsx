@@ -2,7 +2,6 @@ import React, { ChangeEvent } from 'react'
 import {
   EuiCheckbox,
   EuiFormRow,
-  EuiSpacer,
   EuiSuperSelect,
   EuiSuperSelectOption,
   htmlIdGenerator,
@@ -13,6 +12,7 @@ import { KeyValueCompressor } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { NONE } from 'uiSrc/pages/home/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>
@@ -82,7 +82,7 @@ const DbCompressor = (props: Props) => {
 
       {formik.values.showCompressor && (
         <>
-          <EuiSpacer />
+          <Spacer />
           <Row gap="m">
             <FlexItem grow>
               <EuiFormRow label="Decompression format">

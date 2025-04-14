@@ -3,7 +3,6 @@ import cx from 'classnames'
 import {
   EuiFieldNumber,
   EuiIcon,
-  EuiSpacer,
   EuiText,
   EuiTitle,
 } from '@elastic/eui'
@@ -11,6 +10,7 @@ import {
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -72,11 +72,11 @@ const SettingItem = (props: Props) => {
       <EuiTitle className={styles.title} size="xxs">
         <span>{title}</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <EuiText className={styles.smallText} size="s" color="subdued">
         {summary}
       </EuiText>
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
       <Row align="center" className={styles.container}>
         <FlexItem style={{ marginRight: '4px' }}>
           <EuiText size="xs" color="subdued" className={styles.inputLabel}>
@@ -123,7 +123,7 @@ const SettingItem = (props: Props) => {
           )}
         </FlexItem>
       </Row>
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
     </>
   )
 }

@@ -2,7 +2,6 @@ import {
   EuiIcon,
   EuiOutsideClickDetector,
   EuiPopover,
-  EuiSpacer,
   EuiText,
 } from '@elastic/eui'
 import React, { useState } from 'react'
@@ -10,6 +9,7 @@ import React, { useState } from 'react'
 import { formatLongName } from 'uiSrc/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -75,9 +75,9 @@ const ConfirmationPopover = (props: Props) => {
             <EuiText>{formatLongName(title, 58, 0, '...')}</EuiText>
           </FlexItem>
         </Row>
-        <EuiSpacer size="xs" />
+        <Spacer size="xs" />
         {body}
-        <EuiSpacer size="m" />
+        <Spacer size="m" />
         <Row justify={appendAction ? 'between' : 'end'} align="center">
           <FlexItem>{!!appendAction && appendAction}</FlexItem>
           <FlexItem>{confirmBtn}</FlexItem>

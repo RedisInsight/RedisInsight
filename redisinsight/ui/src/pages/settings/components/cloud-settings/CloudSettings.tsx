@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import {
-  EuiButton,
-  EuiLink,
-  EuiPopover,
-  EuiSpacer,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiButton, EuiLink, EuiPopover, EuiText, EuiTitle } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -17,6 +10,7 @@ import {
 } from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import UserApiKeysTable from './components/user-api-keys-table'
 
 import styles from './styles.module.scss'
@@ -54,7 +48,7 @@ const CloudSettings = () => {
       <EuiTitle className={styles.title} size="xxs">
         <span>API user keys</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <Row gap="m" responsive>
         <FlexItem grow>
           <EuiText size="s" className={styles.smallText} color="subdued">
@@ -109,7 +103,7 @@ const CloudSettings = () => {
                 </EuiLink>
                 {' and delete them manually.'}
               </EuiText>
-              <EuiSpacer />
+              <Spacer />
               <div className={styles.popoverFooter}>
                 <EuiButton
                   fill
@@ -127,7 +121,7 @@ const CloudSettings = () => {
           </EuiPopover>
         </FlexItem>
       </Row>
-      <EuiSpacer size="l" />
+      <Spacer />
       <UserApiKeysTable items={data} loading={loading} />
     </div>
   )

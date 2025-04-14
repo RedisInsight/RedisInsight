@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiBadge, EuiButton, EuiSpacer, EuiTitle } from '@elastic/eui'
+import { EuiBadge, EuiButton, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -12,6 +12,7 @@ import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import RocketIcon from 'uiSrc/assets/img/oauth/rocket.svg?react'
 
 import { FlexItem, Grid } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { CONNECTIVITY_OPTIONS } from '../../constants'
 
 import styles from './styles.module.scss'
@@ -30,7 +31,7 @@ const ConnectivityOptions = (props: Props) => {
         <EuiTitle size="xs" className={styles.sectionTitle}>
           <span>Get started with Redis Cloud account</span>
         </EuiTitle>
-        <EuiSpacer />
+        <Spacer />
         <Grid gap="l" columns={3} responsive>
           <FlexItem>
             <EuiButton
@@ -76,12 +77,12 @@ const ConnectivityOptions = (props: Props) => {
           <FlexItem grow />
         </Grid>
       </section>
-      <EuiSpacer size="xxl" />
+      <Spacer size="xxl" />
       <section>
         <EuiTitle size="xs" className={styles.sectionTitle}>
           <span>More connectivity options</span>
         </EuiTitle>
-        <EuiSpacer />
+        <Spacer />
         <Grid gap="l" responsive columns={3}>
           {CONNECTIVITY_OPTIONS.map(({ id, type, title, icon }) => (
             <FlexItem key={id}>

@@ -3,9 +3,7 @@ import {
   EuiFieldText,
   EuiForm,
   EuiFormRow,
-  EuiSpacer,
-  EuiTitle,
-} from '@elastic/eui'
+   EuiTitle } from '@elastic/eui'
 import { FormikProps } from 'formik'
 import {
   PrimaryGroupSentinel,
@@ -20,6 +18,7 @@ import {
 } from 'uiSrc/pages/home/components/form'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import DecompressionAndFormatters from './DecompressionAndFormatters'
 
 import { ManualFormTab } from '../constants'
@@ -58,7 +57,7 @@ const EditSentinelConnection = (props: Props) => {
       <EuiTitle size="xs">
         <span>Datababase</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <SentinelMasterDatabase
         formik={formik}
         db={db}
@@ -72,7 +71,7 @@ const EditSentinelConnection = (props: Props) => {
       <EuiTitle size="xs">
         <span>Sentinel</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <DatabaseForm
         formik={formik}
         showFields={{ host: true, port: true, alias: false, timeout: false }}
@@ -106,7 +105,7 @@ const EditSentinelConnection = (props: Props) => {
           </EuiFormRow>
         </FlexItem>
       </Row>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <Divider
         colorVariable="separatorColor"
         variant="fullWidth"
@@ -115,7 +114,7 @@ const EditSentinelConnection = (props: Props) => {
       <EuiTitle size="xs">
         <span>Datababase</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <SentinelMasterDatabase
         formik={formik}
         db={db}
@@ -129,7 +128,7 @@ const EditSentinelConnection = (props: Props) => {
       <EuiTitle size="xs">
         <span>Sentinel</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <DatabaseForm
         formik={formik}
         showFields={{ host: false, port: true, alias: false, timeout: false }}

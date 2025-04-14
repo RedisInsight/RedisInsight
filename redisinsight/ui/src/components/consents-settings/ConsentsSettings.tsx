@@ -4,7 +4,6 @@ import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, forEach } from 'lodash'
 import {
   EuiSwitch,
-  EuiSpacer,
   EuiText,
   EuiButton,
   EuiTitle,
@@ -24,6 +23,7 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -219,7 +219,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
       data-testid="consents-settings-form"
     >
       <div className={styles.consentsWrapper}>
-        <EuiSpacer size="m" />
+        <Spacer size="m" />
         {consents.length > 1 && (
           <>
             <EuiCallOut>
@@ -232,7 +232,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                 Workbench plugins, use files from trusted authors only.
               </EuiText>
             </EuiCallOut>
-            <EuiSpacer size="l" />
+            <Spacer />
             <FlexItem>
               <Row gap="m">
                 <FlexItem>
@@ -270,15 +270,15 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         )}
         {!!privacyConsents.length && (
           <>
-            <EuiSpacer size="l" />
+            <Spacer />
             <EuiTitle size="m">
               <h1 className={styles.title}>Privacy Settings</h1>
             </EuiTitle>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <EuiText className={styles.smallText} size="s" color="subdued">
               To optimize your experience, Redis Insight uses third-party tools.
             </EuiText>
-            <EuiSpacer size="l" />
+            <Spacer />
           </>
         )}
         {privacyConsents.map((consent: IConsent) => (
@@ -291,11 +291,11 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         ))}
         {!!notificationConsents.length && (
           <>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <EuiTitle size="m">
               <h1 className={styles.title}>Notifications</h1>
             </EuiTitle>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
           </>
         )}
         {notificationConsents.map((consent: IConsent) => (
@@ -310,7 +310,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
       {requiredConsents.length ? (
         <>
           <EuiHorizontalRule margin="l" className={styles.requiredHR} />
-          <EuiSpacer size="m" />
+          <Spacer size="m" />
           <EuiText color="subdued" size="s" className={styles.smallText}>
             To use Redis Insight, please accept the terms and conditions:{' '}
             <EuiLink
@@ -321,10 +321,10 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               Server Side Public License
             </EuiLink>
           </EuiText>
-          <EuiSpacer size="m" />
+          <Spacer size="m" />
         </>
       ) : (
-        <EuiSpacer size="l" />
+        <Spacer />
       )}
 
       <Row align="center" justify="between" responsive={false}>

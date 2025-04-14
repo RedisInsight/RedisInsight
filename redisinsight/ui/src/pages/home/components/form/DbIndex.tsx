@@ -3,7 +3,6 @@ import {
   EuiCheckbox,
   EuiFieldNumber,
   EuiFormRow,
-  EuiSpacer,
   htmlIdGenerator,
 } from '@elastic/eui'
 import { FormikProps } from 'formik'
@@ -12,6 +11,7 @@ import { validateNumber } from 'uiSrc/utils'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -51,7 +51,7 @@ const DbIndex = (props: Props) => {
 
       {formik.values.showDb && (
         <>
-          <EuiSpacer />
+          <Spacer />
           <Row gap="m" responsive>
             <FlexItem grow className={styles.dbInput}>
               <EuiFormRow label="Database Index">

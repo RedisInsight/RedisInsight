@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
-import { EuiButton, EuiSpacer, EuiTextColor } from '@elastic/eui'
+import { EuiButton, EuiTextColor } from '@elastic/eui'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export interface Props {
   message: string
@@ -44,7 +45,7 @@ const RdiDeployErrorContent = (props: Props) => {
         </Col>
       </EuiTextColor>
 
-      <EuiSpacer />
+      <Spacer />
       {/* // TODO remove display none when logs column will be available */}
       <Row style={{ display: 'none' }} justify="end">
         <FlexItem>

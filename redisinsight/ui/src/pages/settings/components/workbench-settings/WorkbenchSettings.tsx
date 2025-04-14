@@ -1,10 +1,4 @@
-import {
-  EuiFormRow,
-  EuiLink,
-  EuiSpacer,
-  EuiSwitch,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiFormRow, EuiLink, EuiSwitch, EuiTitle } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -19,6 +13,7 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { validateNumber } from 'uiSrc/utils'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 const WorkbenchSettings = () => {
   const { cleanup } = useSelector(userSettingsWBSelector)
@@ -47,7 +42,7 @@ const WorkbenchSettings = () => {
       <EuiTitle size="xs">
         <h4>Editor Cleanup</h4>
       </EuiTitle>
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
       <EuiFormRow>
         <EuiSwitch
           label="Clear the Editor after running commands"
@@ -57,7 +52,7 @@ const WorkbenchSettings = () => {
           data-testid="switch-workbench-cleanup"
         />
       </EuiFormRow>
-      <EuiSpacer size="xl" />
+      <Spacer size="xl" />
       <SettingItem
         initValue={batchSize.toString()}
         onApply={handleApplyPipelineCountChanges}

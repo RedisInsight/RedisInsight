@@ -1,5 +1,6 @@
-import { EuiSpacer, EuiText } from '@elastic/eui'
+import { EuiText } from '@elastic/eui'
 import React from 'react'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export const AssistanceChatInitialMessage = (
   <>
@@ -14,7 +15,7 @@ export const AssistanceChatInitialMessage = (
     <EuiText size="xs">
       Type <b>/help</b> for more info.
     </EuiText>
-    <EuiSpacer />
+    <Spacer />
     <EuiText size="xs">
       With <span style={{ color: 'red' }}>&hearts;</span>, your Redis Copilot!
     </EuiText>

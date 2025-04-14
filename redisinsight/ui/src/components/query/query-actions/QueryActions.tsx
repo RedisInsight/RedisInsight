@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 
 import cx from 'classnames'
-import { EuiButton, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiText, EuiToolTip } from '@elastic/eui'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
 import { KeyboardShortcut } from 'uiSrc/components'
@@ -11,6 +11,7 @@ import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
 import RawModeIcon from 'uiSrc/assets/img/icons/raw_mode.svg?react'
 
 import Divider from 'uiSrc/components/divider/Divider'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -40,7 +41,7 @@ const QueryActions = (props: Props) => {
       <EuiText className={styles.tooltipText} size="s">
         {KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:
       </EuiText>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <KeyboardShortcut
         badgeTextClassName={styles.tooltipText}
         separator={KEYBOARD_SHORTCUTS?._separator}

@@ -1,11 +1,11 @@
 import { set, cloneDeep } from 'lodash'
 import React from 'react'
-import { EuiSpacer } from '@elastic/eui'
 import { AxiosError } from 'axios'
 import { parseCustomError, getRdiValidationMessage, Maybe } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 const responseData = { response: { data: {}, status: 500 } }
 
@@ -25,9 +25,9 @@ const parseCustomErrorTests = [
       message: (
         <>
           Your request resulted in an error.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Try again later.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -54,7 +54,7 @@ const parseCustomErrorTests = [
       message: (
         <>
           Try restarting Redis Insight.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -74,9 +74,9 @@ const parseCustomErrorTests = [
       message: (
         <>
           Resource requested could not be found.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Try again later.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -96,7 +96,7 @@ const parseCustomErrorTests = [
       message: (
         <>
           Sign in again to continue working with Redis Cloud.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -116,7 +116,7 @@ const parseCustomErrorTests = [
       message: (
         <>
           Sign in again to continue working with Redis Cloud.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -150,9 +150,9 @@ const parseCustomErrorTests = [
         <>
           Authorization server encountered a misconfiguration error and was
           unable to complete your request.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Try again later.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -172,7 +172,7 @@ const parseCustomErrorTests = [
       message: (
         <>
           Unknown authorization request.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -192,7 +192,7 @@ const parseCustomErrorTests = [
       message: (
         <>
           An unexpected error occurred.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -226,15 +226,16 @@ const parseCustomErrorTests = [
       message: (
         <>
           You already have a free trial Redis Cloud database running.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           Check out your
           <a
             href="https://cloud.redis.io/?utm_source=redisinsight&utm_medium=main&utm_campaign=main#/databases/"
             target="_blank"
             rel="noreferrer"
           >
-            {' Cloud console '}
-          </a>
+            {'
+            Cloud console
+         '} </a>
           for connection details.
         </>
       ),
@@ -247,9 +248,9 @@ const parseCustomErrorTests = [
       message: (
         <>
           Your Redis Cloud authorization failed.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Remove the invalid API key from Redis Insight and try again.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           Open the Settings page to manage Redis Cloud API keys.
         </>
       ),

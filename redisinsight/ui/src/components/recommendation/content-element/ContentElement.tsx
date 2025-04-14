@@ -1,7 +1,6 @@
 import React from 'react'
 import { isArray, isString } from 'lodash'
-import { EuiTextColor, EuiLink, EuiSpacer } from '@elastic/eui'
-import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
+import { EuiTextColor, EuiLink } from '@elastic/eui'
 import cx from 'classnames'
 import { OAuthSsoHandlerDialog, OAuthConnectFreeDb } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
@@ -9,6 +8,7 @@ import { replaceVariables } from 'uiSrc/utils/recommendation'
 import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { UTM_MEDIUMS } from 'uiSrc/constants/links'
+import { Spacer, SpacerSize } from 'uiSrc/components/base/layout/Spacer'
 import InternalLink from '../internal-link'
 import RecommendationBody from '../recommendation-body'
 
@@ -138,7 +138,7 @@ const ContentElement = (props: Props) => {
       )
     case 'spacer':
       return (
-        <EuiSpacer
+        <Spacer
           data-testid={`spacer-${telemetryName}-${idx}`}
           key={`${telemetryName}-${idx}`}
           size={value as SpacerSize}

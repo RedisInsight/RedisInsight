@@ -1,5 +1,6 @@
 import React from 'react'
-import { EuiText, EuiSpacer } from '@elastic/eui'
+import { EuiText } from '@elastic/eui'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export const NoResultsFoundText = (
   <EuiText size="m" data-testid="no-result-found-only">
@@ -24,7 +25,7 @@ export const FullScanNoResultsFoundText = (
     <EuiText size="m" data-test-subj="no-result-found">
       No results found.
     </EuiText>
-    <EuiSpacer size="m" />
+    <Spacer size="m" />
     <EuiText size="s" data-test-subj="search-advices">
       Check the spelling.
       <br />
@@ -51,7 +52,7 @@ export const lastDeliveredIDTooltipText = (
   <>
     Specify the ID of the last delivered entry in the stream from the new
     group's perspective.
-    <EuiSpacer size="xs" />
+    <Spacer size="xs" />
     Otherwise, <b>$</b> represents the ID of the last entry in the stream,&nbsp;
     <b>0</b> fetches the entire stream from the beginning.
   </>

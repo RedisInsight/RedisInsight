@@ -3,7 +3,6 @@ import {
   EuiButton,
   EuiButtonEmpty,
   EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiToolTip,
 } from '@elastic/eui'
@@ -27,6 +26,7 @@ import {
 } from 'uiSrc/slices/panels/sidePanels'
 import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/components/shared'
 
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -117,7 +117,7 @@ const ExpertChatHeader = (props: Props) => {
               <EuiText>
                 Open relevant tutorials to learn more about search and query.
               </EuiText>
-              <EuiSpacer size="s" />
+              <Spacer size="s" />
               <EuiButton
                 fill
                 size="s"

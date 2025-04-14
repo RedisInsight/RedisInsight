@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiText, EuiTitle } from '@elastic/eui'
 
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 import {
@@ -26,6 +26,7 @@ import {
 import { useCapability } from 'uiSrc/services'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import {
   MODULE_CAPABILITY_TEXT_NOT_AVAILABLE,
   MODULE_CAPABILITY_TEXT_NOT_AVAILABLE_ENTERPRISE,
@@ -60,7 +61,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
         <EuiTitle size="xxs" className={styles.title}>
           <h5>{moduleText?.title}</h5>
         </EuiTitle>
-        <EuiSpacer size="s" />
+        <Spacer size="s" />
         <FeatureFlagComponent
           name={FeatureFlags.cloudAds}
           otherwise={
@@ -68,7 +69,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
               <EuiText color="subdued" size="s">
                 {moduleText?.text}
               </EuiText>
-              <EuiSpacer size="s" />
+              <Spacer size="s" />
               <EuiButton
                 fill
                 size="s"
@@ -88,7 +89,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
               <EuiText color="subdued" size="s">
                 {moduleText?.text}
               </EuiText>
-              <EuiSpacer size="s" />
+              <Spacer size="s" />
               <OAuthSsoHandlerDialog>
                 {(ssoCloudHandlerClick) => (
                   <ExternalLink
@@ -120,7 +121,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
                 Use your free trial all-in-one Redis Cloud database to start
                 exploring these capabilities.
               </EuiText>
-              <EuiSpacer size="s" />
+              <Spacer size="s" />
               <OAuthConnectFreeDb
                 id={freeDbWithModule.id}
                 source={sourceTutorial}

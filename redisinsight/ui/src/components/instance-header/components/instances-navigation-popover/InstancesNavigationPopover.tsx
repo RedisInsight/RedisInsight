@@ -3,7 +3,6 @@ import {
   EuiFieldText,
   EuiIcon,
   EuiPopover,
-  EuiSpacer,
   EuiTab,
   EuiTabs,
   EuiText,
@@ -18,9 +17,10 @@ import { BrowserStorageItem, DEFAULT_SORT, Pages } from 'uiSrc/constants'
 import Down from 'uiSrc/assets/img/Down.svg?react'
 import Search from 'uiSrc/assets/img/Search.svg'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { localStorageService } from 'uiSrc/services'
 import { filterAndSort } from 'uiSrc/utils'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import InstancesList from './components/instances-list'
 import styles from './styles.module.scss'
 
@@ -155,7 +155,7 @@ const InstancesNavigationPopover = ({ name }: Props) => {
               </EuiTab>
             </EuiTabs>
           </div>
-          <EuiSpacer size="m" />
+          <Spacer size="m" />
           <InstancesList
             selectedTab={selectedTab}
             filteredDbInstances={filteredDbInstances}
@@ -163,7 +163,7 @@ const InstancesNavigationPopover = ({ name }: Props) => {
             onItemClick={showPopover}
           />
           <div>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <Divider />
             <div className={styles.footerContainer}>
               <EuiText className={styles.homePageLink} onClick={goHome}>

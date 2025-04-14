@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiTitle, EuiSpacer, EuiImage, EuiButtonEmpty } from '@elastic/eui'
+import { EuiTitle, EuiImage, EuiButtonEmpty } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
@@ -19,6 +19,7 @@ import {
 import { SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { TutorialsIds } from 'uiSrc/constants'
 
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import LoadSampleData from '../load-sample-data'
 
 import styles from './styles.module.scss'
@@ -61,11 +62,11 @@ const NoKeysFound = (props: Props) => {
         src={TelescopeImg}
         alt="no results image"
       />
-      <EuiSpacer size="l" />
+      <Spacer />
       <EuiTitle className={styles.title} size="s">
         <span>Let&apos;s start working</span>
       </EuiTitle>
-      <EuiSpacer size="l" />
+      <Spacer />
       <div className={styles.actions}>
         <LoadSampleData onSuccess={onSuccessLoadData} />
         <EuiButtonEmpty

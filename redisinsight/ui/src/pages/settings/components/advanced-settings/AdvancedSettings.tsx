@@ -1,4 +1,3 @@
-import { EuiSpacer } from '@elastic/eui'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -9,6 +8,7 @@ import {
   updateUserConfigSettingsAction,
   userSettingsConfigSelector,
 } from 'uiSrc/slices/user/user-settings'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 const AdvancedSettings = () => {
   const { scanThreshold = '' } = useSelector(userSettingsConfigSelector) ?? {}
@@ -38,7 +38,7 @@ const AdvancedSettings = () => {
         placeholder="10 000"
         label="Keys to Scan:"
       />
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
     </>
   )
 }

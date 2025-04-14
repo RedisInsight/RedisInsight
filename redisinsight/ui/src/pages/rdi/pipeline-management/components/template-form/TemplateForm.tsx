@@ -2,7 +2,6 @@ import {
   EuiButton,
   EuiForm,
   EuiFormRow,
-  EuiSpacer,
   EuiSuperSelect,
   EuiText,
   EuiToolTip,
@@ -21,6 +20,7 @@ import {
 } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
 
 import styles from './styles.module.scss'
@@ -163,9 +163,9 @@ const TemplateForm = (props: Props) => {
   return (
     <div className={cx(styles.container)}>
       <EuiText className={styles.title}>Select a template</EuiText>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <EuiForm component="form">
-        <EuiSpacer size="xs" />
+        <Spacer size="xs" />
         {pipelineTypeOptions?.length > 1 && (
           <EuiFormRow className={styles.formRow}>
             <>

@@ -1,8 +1,9 @@
 import React, { ReactNode } from 'react'
 import { useHistory } from 'react-router-dom'
-import { EuiBreadcrumbs, EuiSpacer, EuiToolTip } from '@elastic/eui'
+import { EuiBreadcrumbs, EuiToolTip } from '@elastic/eui'
 import { EuiBreadcrumb } from '@elastic/eui/src/components/breadcrumbs/breadcrumbs'
 
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 interface TooltipOption {
@@ -75,7 +76,7 @@ const PageBreadcrumbs = (props: Props) => {
   return (
     <div className={styles.breadcrumbsWrapper}>
       <EuiBreadcrumbs breadcrumbs={modifiedBreadcrumbs} truncate />
-      <EuiSpacer size="xs" />
+      <Spacer size="xs" />
     </div>
   )
 }

@@ -1,10 +1,4 @@
-import {
-  EuiButton,
-  EuiPopover,
-  EuiSpacer,
-  EuiTitle,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButton, EuiPopover, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
@@ -32,6 +26,7 @@ import {
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import { RunConfirmationPopover } from './components'
@@ -236,7 +231,7 @@ const CodeButtonBlock = (props: Props) => {
           {highlightedContent ? parse(highlightedContent) : content}
         </CodeBlock>
       </div>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
     </div>
   )
 }

@@ -5,7 +5,6 @@ import {
   EuiFilePicker,
   EuiIcon,
   EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiTextColor,
   EuiToolTip,
@@ -30,6 +29,7 @@ import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkA
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
 import { UploadWarning } from 'uiSrc/components'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -125,7 +125,7 @@ const BulkUpload = (props: Props) => {
               />
             </EuiToolTip>
           </EuiText>
-          <EuiSpacer size="l" />
+          <Spacer size="l" />
           <EuiFilePicker
             id="bulk-upload-file-input"
             initialPromptText="Select or drag and drop a file"
@@ -146,7 +146,7 @@ const BulkUpload = (props: Props) => {
             </EuiTextColor>
           )}
           <UploadWarning />
-          <EuiSpacer size="l" />
+          <Spacer size="l" />
         </div>
       ) : (
         <BulkActionsInfo

@@ -3,7 +3,6 @@ import {
   EuiButton,
   EuiForm,
   EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiTextArea,
   EuiTitle,
@@ -16,6 +15,7 @@ import { isModifiedEvent } from 'uiSrc/services'
 
 import SendIcon from 'uiSrc/assets/img/icons/send.svg?react'
 
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -107,7 +107,7 @@ const ChatForm = (props: Props) => {
                     <EuiTitle size="xxs">
                       <span>{validation.title}</span>
                     </EuiTitle>
-                    <EuiSpacer size="s" />
+                    <Spacer size="s" />
                   </>
                 )}
                 {validation.content && (
@@ -166,7 +166,7 @@ const ChatForm = (props: Props) => {
           >
             <>
               {agreements}
-              <EuiSpacer size="m" />
+              <Spacer size="m" />
               <EuiButton
                 fill
                 color="secondary"

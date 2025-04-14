@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux'
 import {
   EuiButton,
   EuiIcon,
-  EuiSpacer,
   EuiTitle,
   EuiText,
   EuiButtonEmpty,
@@ -16,6 +15,7 @@ import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
 import { updateInstanceAction } from 'uiSrc/slices/instances/instances'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { VALID_TAG_KEY_REGEX, VALID_TAG_VALUE_REGEX } from './constants'
 import { TagInputField } from './TagInputField'
 import { getInvalidTagErrors } from './utils'
@@ -107,7 +107,7 @@ export const ManageTagsModal = ({
           <EuiTitle size="s">
             <h4>Manage tags for {instance.name}</h4>
           </EuiTitle>
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           <EuiText size="s" color="subdued">
             <p>
               Tags are key-value pairs that let you categorize your databases.
@@ -188,7 +188,7 @@ export const ManageTagsModal = ({
           })}
         </div>
       </div>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <EuiButtonEmpty
         iconType="plus"
         onClick={handleAddTag}

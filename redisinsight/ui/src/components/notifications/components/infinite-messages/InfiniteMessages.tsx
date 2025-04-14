@@ -4,7 +4,6 @@ import {
   EuiIcon,
   EuiLink,
   EuiLoadingSpinner,
-  EuiSpacer,
   EuiText,
   EuiTitle,
 } from '@elastic/eui'
@@ -26,6 +25,7 @@ import {
   UTM_MEDIUMS,
 } from 'uiSrc/constants/links'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
@@ -93,7 +93,7 @@ export const INFINITE_MESSAGES = {
             <EuiText size="xs">
               This may take several minutes, but it is totally worth it!
             </EuiText>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <EuiText size="xs">
               You can continue working in Redis Insight, and we will notify you
               once done.
@@ -140,15 +140,15 @@ export const INFINITE_MESSAGES = {
               </EuiTitle>
               <EuiText size="xs">
                 {text}
-                <EuiSpacer size="s" />
+                <Spacer size="s" />
                 <b>Notice:</b> the database will be deleted after 15 days of
                 inactivity.
               </EuiText>
               {!!details && (
                 <>
-                  <EuiSpacer size="m" />
+                  <Spacer size="m" />
                   <Divider variant="fullWidth" />
-                  <EuiSpacer size="m" />
+                  <Spacer size="m" />
                   <Row className={styles.detailsRow} justify="between">
                     <FlexItem>
                       <EuiText size="xs">Plan</EuiText>
@@ -179,7 +179,7 @@ export const INFINITE_MESSAGES = {
                   </Row>
                 </>
               )}
-              <EuiSpacer size="m" />
+              <Spacer size="m" />
               <Row justify="between" align="center">
                 <FlexItem>
                   <ExternalLink href={MANAGE_DB_LINK}>Manage DB</ExternalLink>
@@ -221,7 +221,7 @@ export const INFINITE_MESSAGES = {
         <EuiText size="xs">
           Do you want to import your existing database into Redis Insight?
         </EuiText>
-        <EuiSpacer size="m" />
+        <Spacer size="m" />
         <Row justify="between">
           <FlexItem>
             <EuiButton
@@ -268,7 +268,7 @@ export const INFINITE_MESSAGES = {
         <EuiText size="xs">
           Adding your Redis Cloud database to Redis Insight is disabled due to a
           setting restricting database connection management.
-          <EuiSpacer size="m" />
+          <Spacer size="m" />
           Log in to{' '}
           <EuiLink
             target="_blank"
@@ -281,7 +281,7 @@ export const INFINITE_MESSAGES = {
           </EuiLink>{' '}
           to check your database.
         </EuiText>
-        <EuiSpacer size="m" />
+        <Spacer size="m" />
         <Row justify="end">
           <FlexItem>
             <EuiButton
@@ -320,7 +320,7 @@ export const INFINITE_MESSAGES = {
           Do you want to create a free trial database in your existing
           subscription?
         </EuiText>
-        <EuiSpacer size="m" />
+        <Spacer size="m" />
         <Row justify="between">
           <FlexItem>
             <EuiButton
@@ -435,7 +435,7 @@ export const INFINITE_MESSAGES = {
               <br />
               Check out the pipeline statistics page.
             </EuiText>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             {/* // TODO remove display none when statistics page will be available */}
             <Row style={{ display: 'none' }} justify="end" align="center">
               <FlexItem>

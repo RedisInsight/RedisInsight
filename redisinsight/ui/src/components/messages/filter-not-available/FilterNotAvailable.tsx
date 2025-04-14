@@ -1,13 +1,6 @@
 import React from 'react'
 
-import {
-  EuiIcon,
-  EuiText,
-  EuiTitle,
-  EuiSpacer,
-  EuiLink,
-  EuiButton,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiLink, EuiText, EuiTitle } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 
@@ -26,6 +19,7 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { FeatureFlags } from 'uiSrc/constants'
 
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
 const utm = {
@@ -51,14 +45,14 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
       <EuiText>
         Filtering by data type is supported in Redis 6 and above.
       </EuiText>
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
       {!!freeInstances.length && (
         <>
           <EuiText color="subdued">
             Use your free trial all-in-one Redis Cloud database to start
             exploring these capabilities.
           </EuiText>
-          <EuiSpacer size="l" />
+          <Spacer />
           <OAuthConnectFreeDb
             id={freeInstances[0].id}
             source={OAuthSocialSource.BrowserFiltering}
@@ -72,7 +66,7 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
             Create a free trial Redis Stack database that supports filtering and
             extends the core capabilities of your Redis.
           </EuiText>
-          <EuiSpacer size="l" />
+          <Spacer size="l" />
           <div className={styles.linksWrapper}>
             <OAuthSsoHandlerDialog>
               {(ssoCloudHandlerClick) => (
@@ -95,7 +89,7 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
                 </EuiButton>
               )}
             </OAuthSsoHandlerDialog>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <EuiLink
               className={styles.link}
               external={false}

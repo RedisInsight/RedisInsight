@@ -3,7 +3,6 @@ import {
   EuiButtonIcon,
   EuiIcon,
   EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiToolTip,
 } from '@elastic/eui'
@@ -18,6 +17,7 @@ import { AutoRefresh } from 'uiSrc/components'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import SlowLogConfig from '../SlowLogConfig'
 import styles from './styles.module.scss'
 
@@ -207,7 +207,7 @@ const Actions = (props: Props) => {
             <span data-testid="slowlog-tooltip-text">
               Slow Log is a list of slow operations for your Redis instance.
               These can be used to troubleshoot performance issues.
-              <EuiSpacer size="xs" />
+              <Spacer size="xs" />
               Each entry in the list displays the command, duration and
               timestamp. Any transaction that exceeds{' '}
               <b>slowlog-log-slower-than</b> {durationUnit} are recorded up to a

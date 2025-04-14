@@ -46,7 +46,7 @@ export const parseCloudDatabaseCapiResponse = (
       enabledClustering: database.clustering.numberOfShards > 1,
       isReplicaDestination: !!database.replicaOf,
     },
-    tags: tags.map(tag => plainToClass(Tag, tag)),
+    tags: tags.map(tag => plainToInstance(Tag, tag)),
     cloudDetails: {
       cloudId: databaseId,
       subscriptionId,

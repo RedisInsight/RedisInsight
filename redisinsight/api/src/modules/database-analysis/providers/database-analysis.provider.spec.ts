@@ -15,7 +15,7 @@ import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/provider
 import { DatabaseAnalysis } from 'src/modules/database-analysis/models';
 import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { RedisDataType } from 'src/modules/browser/keys/dto';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
 import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/database-analysis.entity';
 import { NotFoundException } from '@nestjs/common';
@@ -24,7 +24,7 @@ import { KeytarDecryptionErrorException } from 'src/modules/encryption/exception
 
 export const mockCreateDatabaseAnalysisDto: CreateDatabaseAnalysisDto = {
   delimiter: ':',
-  filter: plainToClass(ScanFilter, {
+  filter: plainToInstance(ScanFilter, {
     type: RedisDataType.String,
     match: 'key*',
     count: 15,

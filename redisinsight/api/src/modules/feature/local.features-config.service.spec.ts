@@ -11,7 +11,7 @@ import {
 } from 'src/__mocks__';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
 import { FeatureConfigConfigDestination, FeatureServerEvents, KnownFeatures } from 'src/modules/feature/constants';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
@@ -139,7 +139,7 @@ describe('LocalFeaturesConfigService', () => {
     it('should update to the latest remote config', async () => {
       repository.getOrCreate.mockResolvedValue({
         ...mockFeaturesConfig,
-        data: plainToClass(FeaturesConfigData, defaultConfig),
+        data: plainToInstance(FeaturesConfigData, defaultConfig),
       });
 
       await service['sync'](mockSessionMetadata);
@@ -158,7 +158,7 @@ describe('LocalFeaturesConfigService', () => {
     it('should not fail and not emit recalculate event in case of an error', async () => {
       repository.getOrCreate.mockResolvedValue({
         ...mockFeaturesConfig,
-        data: plainToClass(FeaturesConfigData, defaultConfig),
+        data: plainToInstance(FeaturesConfigData, defaultConfig),
       });
       repository.update.mockRejectedValueOnce(new Error('update error'));
 

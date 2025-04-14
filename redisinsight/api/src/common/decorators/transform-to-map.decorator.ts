@@ -1,11 +1,11 @@
 import { applyDecorators } from '@nestjs/common';
-import { Transform, classToPlain, plainToClass } from 'class-transformer';
-import { ClassType } from 'class-transformer/ClassTransformer';
+import { Transform, instanceToPlain, plainToInstance } from 'class-transformer';
+import { ClassConstructor } from 'class-transformer/types/interfaces';
 
-export function TransformToMap<T>(targetClass: ClassType<T>) {
+export function TransformToMap<T>(targetClass: ClassConstructor<T>) {
   return applyDecorators(
     Transform(
-      (value) => {
+      ({ value, options }) => {
         if (!value) {
           return value;
         }
@@ -13,7 +13,7 @@ export function TransformToMap<T>(targetClass: ClassType<T>) {
         return Object.fromEntries(
           Object.entries(value).map(([key, val]) => [
             key,
-            plainToClass(targetClass, val),
+            plainToInstance(targetClass, val, options),
           ]),
         );
       },
@@ -21,7 +21,7 @@ export function TransformToMap<T>(targetClass: ClassType<T>) {
     ),
 
     Transform(
-      (value) => {
+      ({ value, options }) => {
         if (!value) {
           return value;
         }
@@ -29,7 +29,7 @@ export function TransformToMap<T>(targetClass: ClassType<T>) {
         return Object.fromEntries(
           Object.entries(value).map(([key, instance]) => [
             key,
-            classToPlain(instance),
+            instanceToPlain(instance, options),
           ]),
         );
       },

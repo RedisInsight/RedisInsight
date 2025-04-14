@@ -1,5 +1,5 @@
 import { find, get, isArray } from 'lodash';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import {
   CloudDatabase, CloudDatabaseMemoryStorage,
   CloudDatabasePersistencePolicy, CloudDatabaseProtocol, ICloudCapiDatabase, ICloudCapiSubscriptionDatabases,
@@ -24,7 +24,7 @@ export const parseCloudDatabaseCapiResponse = (
     databaseId, name, publicEndpoint, status, security, planMemoryLimit, memoryLimitMeasurementUnit,
   } = database;
 
-  return plainToClass(CloudDatabase, {
+  return plainToInstance(CloudDatabase, {
     subscriptionId,
     subscriptionType,
     databaseId,
@@ -46,7 +46,7 @@ export const parseCloudDatabaseCapiResponse = (
       enabledClustering: database.clustering.numberOfShards > 1,
       isReplicaDestination: !!database.replicaOf,
     },
-    tags: tags.map(tag => plainToClass(Tag, tag)),
+    tags: tags.map(tag => plainToInstance(Tag, tag)),
     cloudDetails: {
       cloudId: databaseId,
       subscriptionId,

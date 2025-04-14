@@ -20,7 +20,7 @@ import {
   DeleteConsumerGroupsResponse,
   UpdateConsumerGroupDto,
 } from 'src/modules/browser/stream/dto';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { RedisString } from 'src/common/constants';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
@@ -96,7 +96,7 @@ export class ConsumerGroupService {
       ]) as string[];
     }
 
-    return plainToClass(ConsumerGroupDto, {
+    return plainToInstance(ConsumerGroupDto, {
       ...group,
       smallestPendingId: info?.[1] || null,
       greatestPendingId: info?.[2] || null,
@@ -282,7 +282,7 @@ export class ConsumerGroupService {
 
     const [,name,,consumers,,pending,,lastDeliveredId] = entry;
 
-    return plainToClass(ConsumerGroupDto, {
+    return plainToInstance(ConsumerGroupDto, {
       name,
       consumers,
       pending,

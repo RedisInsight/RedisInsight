@@ -4,7 +4,7 @@ import { SessionMetadata } from 'src/common/models';
 import { NotificationEvents, NotificationServerEvents } from 'src/modules/notification/constants';
 import { NotificationsDto } from 'src/modules/notification/dto';
 import { Notification } from 'src/modules/notification/models/notification';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { NotificationRepository } from '../repositories/notification.repository';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class NotificationEmitter {
 
       const totalUnread = await this.notificationRepository.getTotalUnread(sessionMetadata);
 
-      this.eventEmitter.emit(NotificationServerEvents.Notification, plainToClass(NotificationsDto, {
+      this.eventEmitter.emit(NotificationServerEvents.Notification, plainToInstance(NotificationsDto, {
         notifications,
         totalUnread,
       }));

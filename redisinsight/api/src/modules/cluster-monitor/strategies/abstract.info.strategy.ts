@@ -2,7 +2,7 @@ import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.inf
 import { convertStringToNumber } from 'src/utils';
 import { get, map, sum } from 'lodash';
 import { ClusterDetails, ClusterNodeDetails } from 'src/modules/cluster-monitor/models';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { RedisClient } from 'src/modules/redis/client';
 
@@ -27,7 +27,7 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
       mode: get(nodes, '0.mode'),
     };
 
-    return plainToClass(ClusterDetails, clusterDetails);
+    return plainToInstance(ClusterDetails, clusterDetails);
   }
 
   /**

@@ -4,7 +4,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { classToClass } from 'src/utils';
 import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -39,7 +39,7 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
    * @param history
    */
   async create(sessionMetadata: SessionMetadata, history: Partial<BrowserHistory>): Promise<BrowserHistory> {
-    const encryptedDto = await this.modelEncryptor.encryptEntity(plainToClass(BrowserHistoryEntity, history));
+    const encryptedDto = await this.modelEncryptor.encryptEntity(plainToInstance(BrowserHistoryEntity, history));
     const entity = await this.repository.save(encryptedDto);
 
     // cleanup history and ignore error if any

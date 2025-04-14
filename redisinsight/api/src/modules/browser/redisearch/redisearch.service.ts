@@ -18,7 +18,7 @@ import {
 } from 'src/modules/browser/redisearch/dto';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/dto';
 import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { numberWithSpaces } from 'src/utils/base.helper';
 import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto';
@@ -58,7 +58,7 @@ export class RedisearchService {
         ['FT._LIST'],
       )));
 
-      return plainToClass(ListRedisearchIndexesResponse, {
+      return plainToInstance(ListRedisearchIndexesResponse, {
         indexes: (
           uniq(
             ([].concat(...res)).map((idx) => idx.toString('hex')),
@@ -167,7 +167,7 @@ export class RedisearchService {
         { replyEncoding: 'utf8' },
       ) as string[][];
 
-      return plainToClass(IndexInfoDto, convertIndexInfoReply(infoReply));
+      return plainToInstance(IndexInfoDto, convertIndexInfoReply(infoReply));
     } catch (e) {
       this.logger.error('Failed to get index info', e, clientMetadata);
       throw catchAclError(e);
@@ -236,14 +236,14 @@ export class RedisearchService {
       if (query !== DEFAULT_MATCH) {
         await this.browserHistory.create(
           clientMetadata,
-          plainToClass(
+          plainToInstance(
             CreateBrowserHistoryDto,
             { filter: { match: query, type: null }, mode: BrowserHistoryMode.Redisearch },
           ),
         );
       }
 
-      return plainToClass(GetKeysWithDetailsResponse, {
+      return plainToInstance(GetKeysWithDetailsResponse, {
         cursor: limit + offset >= total ? 0 : limit + offset,
         total,
         scanned: keyNames.length + offset,

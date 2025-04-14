@@ -27,7 +27,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolListCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientCommandReply } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
@@ -86,7 +86,7 @@ export class ListService {
       }
 
       this.logger.debug(`Succeed to insert element at the ${destination} of the list data type.`, clientMetadata);
-      return plainToClass(PushListElementsResponse, { keyName, total });
+      return plainToInstance(PushListElementsResponse, { keyName, total });
     } catch (error) {
       this.logger.error('Failed to inserts element to the list data type.', error, clientMetadata);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
@@ -119,7 +119,7 @@ export class ListService {
       ]);
 
       this.logger.debug('Succeed to get elements of the list.', clientMetadata);
-      return plainToClass(GetListElementsResponse, { keyName, total, elements });
+      return plainToInstance(GetListElementsResponse, { keyName, total, elements });
     } catch (error) {
       this.logger.error('Failed to to get elements of the list.', error, clientMetadata);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -154,7 +154,7 @@ export class ListService {
       }
 
       this.logger.debug('Succeed to get List element by index.', clientMetadata);
-      return plainToClass(GetListElementResponse, { keyName, value });
+      return plainToInstance(GetListElementResponse, { keyName, value });
     } catch (error) {
       this.logger.error('Failed to to get List element by index.', error, clientMetadata);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -177,7 +177,7 @@ export class ListService {
       await client.sendCommand([BrowserToolListCommands.LSet, keyName, index, element]);
 
       this.logger.debug('Succeed to set the list element at index.', clientMetadata);
-      return plainToClass(SetListElementResponse, { index, element });
+      return plainToInstance(SetListElementResponse, { index, element });
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
@@ -216,7 +216,7 @@ export class ListService {
         return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
       }
 
-      return plainToClass(DeleteListElementsResponse, {
+      return plainToInstance(DeleteListElementsResponse, {
         elements: isArray(result) ? [...result] : [result],
       });
     } catch (error) {

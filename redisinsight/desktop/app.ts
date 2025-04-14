@@ -53,6 +53,7 @@ const init = async () => {
 
     // deep linking
     // register our application to handle custom protocol
+    // trigger a change
     if (process.defaultApp) {
       if (deepLink) {
         app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(deepLink)])

@@ -12,7 +12,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import BanIcon from 'uiSrc/assets/img/monitor/ban.svg?react'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import MonitorLog from '../MonitorLog'
 import MonitorOutputList from '../MonitorOutputList'
 

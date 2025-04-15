@@ -7,7 +7,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { Nullable } from 'uiSrc/utils'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import OAuthForm from '../../shared/oauth-form/OAuthForm'
 import styles from './styles.module.scss'
 

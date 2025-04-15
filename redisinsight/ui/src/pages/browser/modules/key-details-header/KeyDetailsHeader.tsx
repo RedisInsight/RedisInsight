@@ -24,7 +24,7 @@ import {
   TelemetryEvent,
 } from 'uiSrc/telemetry'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { KeyDetailsHeaderName } from './components/key-details-header-name'
 import { KeyDetailsHeaderTTL } from './components/key-details-header-ttl'
 import { KeyDetailsHeaderDelete } from './components/key-details-header-delete'
@@ -136,7 +136,7 @@ const KeyDetailsHeader = ({
                   <GroupBadge type={type} />
                 </FlexItem>
                 <KeyDetailsHeaderName onEditKey={handleEditKey} />
-                <FlexItem />
+                <FlexItem grow />
                 {!arePanelsCollapsed && (
                   <FlexItem style={{ marginRight: '8px' }}>
                     <FullScreen

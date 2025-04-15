@@ -9,7 +9,7 @@ import {
 } from '@elastic/eui'
 
 import cx from 'classnames'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 

@@ -21,7 +21,7 @@ import {
   validateConsumerGroupId,
 } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'

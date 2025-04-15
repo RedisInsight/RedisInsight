@@ -8,7 +8,7 @@ import React, { useState } from 'react'
 
 import { formatLongName } from 'uiSrc/utils'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 

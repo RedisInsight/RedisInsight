@@ -51,7 +51,7 @@ import ExecutionTimeIcon from 'uiSrc/assets/img/workbench/execution_time.svg?rea
 import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
 import SilentModeIcon from 'uiSrc/assets/img/icons/silent_mode.svg?react'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import QueryCardTooltip from '../QueryCardTooltip'
 
 import styles from './styles.module.scss'

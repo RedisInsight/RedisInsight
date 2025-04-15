@@ -21,7 +21,7 @@ import {
   sendEventTelemetry,
   TelemetryEvent,
 } from 'uiSrc/telemetry'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { AddStreamEntriesDto } from 'apiSrc/modules/browser/stream/dto'
 
 import StreamEntryFields from './StreamEntryFields/StreamEntryFields'

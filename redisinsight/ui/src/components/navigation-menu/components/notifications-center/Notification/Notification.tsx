@@ -9,7 +9,7 @@ import { NOTIFICATION_DATE_FORMAT } from 'uiSrc/constants/notifications'
 import { IGlobalNotification } from 'uiSrc/slices/interfaces'
 import { truncateText } from 'uiSrc/utils'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
 export interface Props {

@@ -6,7 +6,7 @@ import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-k
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from '../styles.module.scss'
 

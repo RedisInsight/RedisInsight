@@ -6,7 +6,7 @@ import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { Nullable } from 'uiSrc/utils'
 
-import { Row } from 'uiSrc/components/base/layout/Flex'
+import { Row } from 'uiSrc/components/base/layout/flex'
 import VoteOption from './components/vote-option'
 import styles from './styles.module.scss'
 

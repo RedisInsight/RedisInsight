@@ -13,7 +13,7 @@ import {
   keys,
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
-import { FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import styles from './styles.module.scss'

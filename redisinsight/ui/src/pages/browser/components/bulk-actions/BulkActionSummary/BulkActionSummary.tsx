@@ -4,7 +4,7 @@ import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { millisecondsFormat } from 'uiSrc/utils'
 import { BulkActionsType } from 'uiSrc/constants'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {

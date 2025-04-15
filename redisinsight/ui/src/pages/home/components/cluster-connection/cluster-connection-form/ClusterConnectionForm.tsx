@@ -24,7 +24,7 @@ import validationErrors from 'uiSrc/constants/validationErrors'
 import { ICredentialsRedisCluster } from 'uiSrc/slices/interfaces'
 
 import { MessageEnterpriceSoftware } from 'uiSrc/pages/home/components/form/Messages'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 
 export interface Props {

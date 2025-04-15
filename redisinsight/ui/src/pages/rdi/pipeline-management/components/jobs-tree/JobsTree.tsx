@@ -28,7 +28,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
 import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface IProps {

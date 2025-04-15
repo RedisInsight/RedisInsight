@@ -35,7 +35,7 @@ import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommenda
 import { sortRecommendations } from 'uiSrc/utils/recommendation'
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { findTutorialPath } from 'uiSrc/utils'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {

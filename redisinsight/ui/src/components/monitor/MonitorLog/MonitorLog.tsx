@@ -13,7 +13,7 @@ import { cutDurationText } from 'uiSrc/utils'
 import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
 import { fetchMonitorLog } from 'uiSrc/slices/cli/cli-output'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const PADDINGS_OUTSIDE = 12

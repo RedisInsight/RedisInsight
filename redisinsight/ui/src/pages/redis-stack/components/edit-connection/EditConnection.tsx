@@ -27,7 +27,7 @@ import DatabasePanelDialog from 'uiSrc/pages/home/components/database-panel-dial
 
 import './styles.scss'
 import styles from './styles.module.scss'
-import { FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 
 interface IState {
   loading: boolean

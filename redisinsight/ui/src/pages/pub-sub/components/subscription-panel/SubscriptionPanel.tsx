@@ -26,7 +26,7 @@ import NotSubscribedIconDark from 'uiSrc/assets/img/pub-sub/not-subscribed.svg'
 import NotSubscribedIconLight from 'uiSrc/assets/img/pub-sub/not-subscribed-lt.svg'
 
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import PatternsInfo from './components/patternsInfo'
 import ClickableAppendInfo from './components/clickable-append-info'
 import styles from './styles.module.scss'

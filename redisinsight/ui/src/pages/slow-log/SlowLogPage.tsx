@@ -33,7 +33,7 @@ import {
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 
 import { FormatedDate } from 'uiSrc/components'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { SlowLog } from 'apiSrc/modules/slow-log/models'
 
 import { Actions, EmptySlowLog, SlowLogTable } from './components'

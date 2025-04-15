@@ -1,10 +1,4 @@
-import {
-  EuiButton,
-  EuiIcon,
-  EuiImage,
-  EuiLink,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiImage, EuiLink, EuiText } from '@elastic/eui'
 import React, { useContext } from 'react'
 
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
@@ -15,7 +9,7 @@ import NewTabIcon from 'uiSrc/assets/img/rdi/new_tab.svg'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Theme } from 'uiSrc/constants'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 
@@ -32,7 +26,6 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
     <div
       className={styles.noResultsContainer}
       data-testid="empty-rdi-instance-list"
-
     >
       <Spacer size="xl" />
       <EuiText className={styles.title}>Redis Data Integration</EuiText>

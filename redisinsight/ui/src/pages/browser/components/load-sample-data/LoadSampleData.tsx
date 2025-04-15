@@ -1,10 +1,5 @@
 import React, { useState } from 'react'
-import {
-  EuiButton,
-  EuiIcon,
-  EuiPopover,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -15,7 +10,7 @@ import {
 } from 'uiSrc/slices/browser/bulkActions'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 

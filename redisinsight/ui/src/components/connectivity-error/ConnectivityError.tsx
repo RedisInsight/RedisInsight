@@ -2,7 +2,7 @@ import React from 'react'
 import { EuiButton, EuiPanel } from '@elastic/eui'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 
-import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export type ConnectivityErrorProps = {

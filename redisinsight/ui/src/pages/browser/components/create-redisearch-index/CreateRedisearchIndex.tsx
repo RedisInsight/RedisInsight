@@ -31,7 +31,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { getFieldTypeOptions } from 'uiSrc/utils/redisearch'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'

@@ -28,7 +28,7 @@ import {
 import TreeViewSort from 'uiSrc/assets/img/browser/treeViewSort.svg?react'
 import { comboBoxToArray } from 'uiSrc/utils'
 
-import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {

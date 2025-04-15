@@ -24,7 +24,7 @@ import { SECURITY_FIELD } from 'uiSrc/constants'
 import { SshPassType } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from '../styles.module.scss'
 

@@ -53,7 +53,7 @@ import { AutoRefresh, OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BrowserColumns, KeyValueFormat } from 'uiSrc/constants'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 640
@@ -171,24 +171,29 @@ const KeysHeader = (props: Props) => {
     setColumnsConfigShown(!columnsConfigShown)
 
   const handleRefreshKeys = () => {
-    dispatch(fetchKeys(
-      {
-        searchMode,
-        cursor: '0',
-        count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      },
-      (data) => {
-        const keys = Array.isArray(data) ? data[0].keys : data.keys
+    dispatch(
+      fetchKeys(
+        {
+          searchMode,
+          cursor: '0',
+          count:
+            viewType === KeyViewType.Browser
+              ? SCAN_COUNT_DEFAULT
+              : SCAN_TREE_COUNT_DEFAULT,
+        },
+        (data) => {
+          const keys = Array.isArray(data) ? data[0].keys : data.keys
 
-        if (!keys.length) {
-          dispatch(resetKeyInfo())
-          dispatch(setBrowserSelectedKey(null))
-        }
+          if (!keys.length) {
+            dispatch(resetKeyInfo())
+            dispatch(setBrowserSelectedKey(null))
+          }
 
-        dispatch(setBrowserKeyListDataLoaded(searchMode, true))
-      },
-      () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
-    ))
+          dispatch(setBrowserKeyListDataLoaded(searchMode, true))
+        },
+        () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
+      ),
+    )
   }
 
   const handleEnableAutoRefresh = (

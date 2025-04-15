@@ -16,7 +16,7 @@ import {
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { toBytes, truncatePercentage } from 'uiSrc/utils'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { getOverviewMetrics, IMetric } from './components/OverviewMetrics'
 
 import AutoRefresh from '../auto-refresh'

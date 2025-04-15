@@ -16,7 +16,7 @@ import {
   optionsDestinations,
   TAIL_DESTINATION,
 } from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
   CreateListWithExpireDto,
   ListElementDestination,

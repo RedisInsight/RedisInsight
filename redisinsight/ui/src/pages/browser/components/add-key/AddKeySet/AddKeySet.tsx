@@ -18,7 +18,7 @@ import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addSetKey } from 'uiSrc/slices/browser/keys'
 
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 
 import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from './interfaces'

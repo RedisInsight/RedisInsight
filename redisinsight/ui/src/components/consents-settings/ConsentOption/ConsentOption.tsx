@@ -2,7 +2,7 @@ import React from 'react'
 import { EuiSwitch, EuiText } from '@elastic/eui'
 import parse from 'html-react-parser'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { IConsent } from '../ConsentsSettings'
 

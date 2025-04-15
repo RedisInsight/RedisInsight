@@ -2,7 +2,7 @@ import React from 'react'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 

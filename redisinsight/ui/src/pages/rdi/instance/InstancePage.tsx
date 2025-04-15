@@ -21,7 +21,7 @@ import {
 
 import { RdiInstancePageTemplate } from 'uiSrc/templates'
 import { RdiInstanceHeader } from 'uiSrc/components'
-import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import InstancePageRouter from './InstancePageRouter'
 import { RdiPipelineHeader } from './components'
 import styles from './styles.module.scss'

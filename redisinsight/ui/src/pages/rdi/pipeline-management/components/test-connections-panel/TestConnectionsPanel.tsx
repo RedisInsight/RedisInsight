@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import TestConnectionsLog from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-log'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 
-import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 interface TestConnectionPanelWrapperProps {

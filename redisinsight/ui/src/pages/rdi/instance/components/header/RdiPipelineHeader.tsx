@@ -7,7 +7,7 @@ import {
   getPipelineStatusAction,
   rdiPipelineStatusSelector,
 } from 'uiSrc/slices/rdi/pipeline'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import CurrentPipelineStatus from './components/current-pipeline-status'
 
 import PipelineActions from './components/pipeline-actions'

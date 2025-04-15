@@ -20,7 +20,7 @@ import {
 import { isContainJSONModule, Maybe, stringToBuffer } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
-import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { ADD_KEY_TYPE_OPTIONS } from './constants/key-type-options'
 import AddKeyHash from './AddKeyHash'
 import AddKeyZset from './AddKeyZset'

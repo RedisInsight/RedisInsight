@@ -1,9 +1,5 @@
 import React from 'react'
-import {
-  EuiFieldText,
-  EuiForm,
-  EuiFormRow,
-   EuiTitle } from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiFormRow, EuiTitle } from '@elastic/eui'
 import { FormikProps } from 'formik'
 import {
   PrimaryGroupSentinel,
@@ -17,7 +13,7 @@ import {
   TlsDetails,
 } from 'uiSrc/pages/home/components/form'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import DecompressionAndFormatters from './DecompressionAndFormatters'
 

@@ -17,7 +17,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { FeatureFlags } from 'uiSrc/constants'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import SearchDatabasesList from '../search-databases-list'
 

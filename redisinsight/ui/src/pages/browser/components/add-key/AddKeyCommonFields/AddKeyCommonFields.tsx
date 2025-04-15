@@ -8,7 +8,7 @@ import {
 } from '@elastic/eui'
 import { MAX_TTL_NUMBER, Maybe, validateTTLNumberForAddKey } from 'uiSrc/utils'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { AddCommonFieldsFormConfig as config } from '../constants/fields-config'
 
 import styles from './styles.module.scss'

@@ -26,7 +26,7 @@ import {
 } from 'uiSrc/constants/recommendations'
 import { FormatedDate } from 'uiSrc/components'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { HideFor } from 'uiSrc/components/base/utils/ShowHide'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'

@@ -23,7 +23,7 @@ import {
   PipelineStatus,
 } from 'uiSrc/slices/interfaces'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import DeployPipelineButton from '../buttons/deploy-pipeline-button'
 import ResetPipelineButton from '../buttons/reset-pipeline-button'
 import RdiConfigFileActionMenu from '../rdi-config-file-action-menu'

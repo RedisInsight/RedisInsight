@@ -1,7 +1,7 @@
 import { EuiIcon, EuiText } from '@elastic/eui'
 import React from 'react'
 import iwarning from 'uiSrc/assets/img/icons/warning.svg'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const UploadWarning = () => (

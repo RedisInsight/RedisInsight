@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Row } from 'uiSrc/components/base/layout/Flex'
+import { Row } from 'uiSrc/components/base/layout/flex'
 import BadgeIcon from '../badge-icon'
 import { badgesContent } from '../constants'
 import styles from '../styles.module.scss'

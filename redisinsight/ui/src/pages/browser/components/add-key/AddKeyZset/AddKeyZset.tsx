@@ -25,7 +25,7 @@ import {
   INITIAL_ZSET_MEMBER_STATE,
   IZsetMemberState,
 } from 'uiSrc/pages/browser/components/add-key/AddKeyZset/interfaces'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddZsetFormConfig as config } from '../constants/fields-config'

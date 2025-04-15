@@ -1,15 +1,10 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiFieldNumber,
-  EuiIcon,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiFieldNumber, EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 

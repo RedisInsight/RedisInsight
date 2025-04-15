@@ -25,7 +25,7 @@ import { publishMessageAction } from 'uiSrc/slices/pubsub/pubsub'
 import UserIcon from 'uiSrc/assets/img/icons/user.svg?react'
 import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const HIDE_BADGE_TIMER = 3000

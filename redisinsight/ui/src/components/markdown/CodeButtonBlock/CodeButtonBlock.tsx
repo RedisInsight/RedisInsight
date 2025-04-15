@@ -1,9 +1,4 @@
-import {
-  EuiButton,
-  EuiPopover,
-  EuiTitle,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButton, EuiPopover, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
@@ -30,7 +25,7 @@ import {
 } from 'uiSrc/components/messages'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 

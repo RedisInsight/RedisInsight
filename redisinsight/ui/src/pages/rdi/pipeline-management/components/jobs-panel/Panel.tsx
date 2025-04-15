@@ -28,7 +28,7 @@ import DryRunJobTransformations from 'uiSrc/pages/rdi/pipeline-management/compon
 import { createAxiosError, formatLongName, yamlToJson } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {

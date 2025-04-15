@@ -4,7 +4,7 @@ import { EuiFormRow, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 
 import { KeyValueFormat } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>

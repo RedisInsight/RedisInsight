@@ -41,7 +41,7 @@ import SnoozeIcon from 'uiSrc/assets/img/icons/snooze.svg?react'
 import StarsIcon from 'uiSrc/assets/img/icons/stars.svg?react'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface IProps {

@@ -32,7 +32,7 @@ import ImportDatabase from 'uiSrc/pages/home/components/import-database'
 import { FormDialog } from 'uiSrc/components'
 import { ModalHeaderProvider } from 'uiSrc/contexts/ModalTitleProvider'
 import ClusterConnectionFormWrapper from 'uiSrc/pages/home/components/cluster-connection'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {

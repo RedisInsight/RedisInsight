@@ -16,7 +16,7 @@ import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './PageHeader.module.scss'
 
 interface Props {

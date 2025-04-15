@@ -23,7 +23,7 @@ import {
   validateTimeoutNumber,
 } from 'uiSrc/utils'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 
 interface IShowFields {
   alias: boolean

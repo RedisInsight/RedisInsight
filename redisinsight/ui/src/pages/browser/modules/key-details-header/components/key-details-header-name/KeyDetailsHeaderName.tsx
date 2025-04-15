@@ -33,7 +33,7 @@ import {
   stringToBuffer,
 } from 'uiSrc/utils'
 
-import { FlexItem, Grid } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -162,7 +162,7 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
           className={styles.classNameGridComponent}
           data-testid="edit-key-grid"
         >
-          <FlexItem grow inline className={styles.flexItemKeyInput}>
+          <FlexItem grow className={styles.flexItemKeyInput}>
             <EuiToolTip
               title="Key Name"
               position="left"

@@ -19,7 +19,7 @@ import {
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { FullScreen } from 'uiSrc/components'
 
-import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import BulkUpload from './BulkUpload'
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'

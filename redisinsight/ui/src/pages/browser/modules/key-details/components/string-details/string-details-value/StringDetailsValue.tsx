@@ -62,7 +62,7 @@ import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const MIN_ROWS = 8

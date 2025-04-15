@@ -5,7 +5,7 @@ import validationErrors from 'uiSrc/constants/validationErrors'
 import { getSubmitButtonContent } from 'uiSrc/pages/home/utils'
 import { DbConnectionInfo, ISubmitButton } from 'uiSrc/pages/home/interfaces'
 import { SubmitBtnText } from 'uiSrc/pages/home/constants'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 
 export interface Props {
   submitIsDisable: () => boolean

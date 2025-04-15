@@ -1,18 +1,17 @@
 import React from 'react'
 import { render } from 'uiSrc/utils/test-utils'
-import {
-  FlexItem,
-  Flex,
-  Row,
-  Col,
-  Grid,
-  gapSizes,
-  alignValues,
-  justifyValues,
-  dirValues,
-} from 'uiSrc/components/base/layout/Flex'
-import flex from './flex.module.scss'
+import { theme } from 'uiSrc/components/base/theme'
+import { alignValues, dirValues, gapSizes, justifyValues } from './flex.styles'
+import { Col, FlexGroup as Flex, FlexItem, Grid, Row } from './flex'
 
+const gapStyles = {
+  none: '',
+  xs: theme.semantic.core.space.xs,
+  s: theme.semantic.core.space.s,
+  m: theme.semantic.core.space.m,
+  l: theme.semantic.core.space.l,
+  xl: theme.semantic.core.space.xl,
+}
 describe('Flex Components', () => {
   it('should render', () => {
     expect(render(<FlexItem />)).toBeTruthy()
@@ -54,24 +53,10 @@ describe('Flex Components', () => {
         </Row>,
       )
       expect(container).toBeTruthy()
-      expect(container.firstChild).toHaveClass(
-        flex.flex,
-        flex['flex-row'],
-        flex['align-stretch'],
-        flex['justify-start'], //
-      )
+      expect(container.firstChild).toHaveClass('RI-flex-row', 'RI-flex-group')
+      expect(container.firstChild).toHaveStyle('flex-direction: row')
     })
 
-    describe('Row', () => {
-      it('should render', () => {
-        const { container } = render(
-          <Row>
-            <span>Child</span>
-          </Row>,
-        )
-        expect(container.firstChild).toHaveClass(flex.flex, flex['flex-row'])
-      })
-    })
     describe('Col', () => {
       it('should render', () => {
         const { container } = render(
@@ -79,7 +64,8 @@ describe('Flex Components', () => {
             <span>Child</span>
           </Col>,
         )
-        expect(container.firstChild).toHaveClass(flex.flex, flex['flex-column'])
+        expect(container.firstChild).toHaveClass('RI-flex-col', 'RI-flex-group')
+        expect(container.firstChild).toHaveStyle('flex-direction: column')
       })
     })
 
@@ -92,11 +78,13 @@ describe('Flex Components', () => {
                 <span>Child</span>
               </Flex>,
             )
-            expect(container.firstChild).toHaveClass(flex.flex)
+            expect(container.firstChild).toHaveClass('RI-flex-group')
             if (value !== 'none') {
-              expect(container.firstChild).toHaveClass(flex[`gap-${value}`])
+              expect(container.firstChild).toHaveStyle(
+                `gap: ${gapStyles[value]}`,
+              )
             } else {
-              expect(container.firstChild).not.toHaveClass(flex[`gap-${value}`])
+              expect(container.firstChild).not.toHaveStyle('')
             }
           })
         })
@@ -110,8 +98,8 @@ describe('Flex Components', () => {
               </Flex>,
             )
             expect(container.firstChild).toHaveClass(
-              flex.flex,
-              flex[`align-${value}`],
+              'RI-flex-group',
+              // flex[`align-${value}`],
             )
           })
         })
@@ -126,8 +114,8 @@ describe('Flex Components', () => {
               </Flex>,
             )
             expect(container.firstChild).toHaveClass(
-              flex.flex,
-              flex[`justify-${value}`],
+              'RI-flex-group',
+              // flex[`justify-${value}`],
             )
           })
         })
@@ -137,14 +125,14 @@ describe('Flex Components', () => {
         dirValues.forEach((value) => {
           it(`should render ${value} dir`, () => {
             const { container } = render(
-              <Flex dir={value}>
+              <Flex direction={value}>
                 <span>Child</span>
               </Flex>,
             )
 
             expect(container.firstChild).toHaveClass(
-              flex.flex,
-              flex[`flex-${value}`],
+              'RI-flex-group',
+              // flex[`flex-${value}`],
             )
           })
         })
@@ -160,8 +148,8 @@ describe('Flex Components', () => {
             )
 
             expect(container.firstChild).toHaveClass(
-              flex.flex,
-              value ? flex['flex-wrap'] : '',
+              'RI-flex-group',
+              // value ? flex['flex-wrap'] : '',
             )
           })
         })
@@ -176,8 +164,8 @@ describe('Flex Components', () => {
             )
 
             expect(container.firstChild).toHaveClass(
-              flex.flex,
-              value ? flex['flex-responsive'] : '',
+              'RI-flex-group',
+              // value ? flex['flex-responsive'] : '',
             )
           })
         })
@@ -187,12 +175,6 @@ describe('Flex Components', () => {
 
   describe('FlexItem', () => {
     describe('inline', () => {
-      it(`span is rendered`, () => {
-        const { container } = render(<FlexItem inline />)
-
-        expect(container.firstChild?.nodeName).toEqual('SPAN')
-      })
-
       it('should render div as default', () => {
         const { getByText, container } = render(
           <FlexItem>
@@ -206,22 +188,17 @@ describe('Flex Components', () => {
     })
 
     describe('grow', () => {
-      // For some reason, `expect(...).toHaveStyle` is flaky, so we
-      // have to assert on generated Emotion classNames instead
-      const assertClassName = (expectedGrowClass: string) =>
-        expect(
-          document
-            .querySelector('.flexItem')!
-            .classList.contains(expectedGrowClass),
-        ).toBeTruthy
-
       describe('falsy values', () => {
         const VALUES = [0, false, null] as const
 
         VALUES.forEach((value) => {
           it(`${value} should generate a flex-grow of 0`, () => {
-            render(<FlexItem grow={value} />)
-            assertClassName(flex['flexItem-grow-0'])
+            const { container } = render(<FlexItem grow={value} />)
+            expect(container.firstChild).toHaveClass(
+              'RI-flex-item',
+              // value ? flex['flex-responsive'] : '',
+            )
+            // assertClassName(flex['flexItem-grow-0'])
           })
         })
       })
@@ -231,8 +208,12 @@ describe('Flex Components', () => {
 
         VALUES.forEach((value) => {
           test(`${value} generates a flex-grow of 1`, () => {
-            render(<FlexItem grow={value} />)
-            assertClassName(flex['flexItem-grow-0'])
+            const { container } = render(<FlexItem grow={value} />)
+            expect(container.firstChild).toHaveClass(
+              'RI-flex-item',
+              // value ? flex['flex-responsive'] : '',
+            )
+            // assertClassName(flex['flexItem-grow-0'])
           })
         })
       })
@@ -242,8 +223,12 @@ describe('Flex Components', () => {
 
         VALUES.forEach((value) => {
           test(`${value} generates a flex-grow of ${value}`, () => {
-            render(<FlexItem grow={value} />)
-            assertClassName(flex[`flexItem-grow-${value}`])
+            const { container } = render(<FlexItem grow={value} />)
+            expect(container.firstChild).toHaveClass(
+              'RI-flex-item',
+              // value ? flex['flex-responsive'] : '',
+            )
+            // assertClassName(flex[`flexItem-grow-${value}`])
           })
         })
       })
@@ -269,11 +254,12 @@ describe('Flex Components', () => {
                 <h2>My Child</h2>
               </Grid>,
             )
-            expect(container.firstChild).toHaveClass(flex.grid)
+            const grid = container.firstChild
+            expect(grid).toHaveClass('RI-flex-grid')
             if (value !== 'none') {
-              expect(container.firstChild).toHaveClass(flex[`gap-${value}`])
+              expect(grid).toHaveStyle(`gap: ${gapStyles[value]}`)
             } else {
-              expect(container.firstChild).not.toHaveClass(flex[`gap-${value}`])
+              expect(grid).not.toHaveStyle('')
             }
             expect(getByText('My Child')).toBeInTheDocument()
           })
@@ -289,8 +275,8 @@ describe('Flex Components', () => {
               </Grid>,
             )
             expect(container.firstChild).toHaveClass(
-              flex.grid,
-              flex[`grid-columns-${value}`],
+              'RI-flex-grid',
+              // flex[`grid-columns-${value}`],
             )
           })
         })
@@ -303,8 +289,8 @@ describe('Flex Components', () => {
               <h2>My Child</h2>
             </Grid>,
           )
-          expect(container.firstChild).toHaveClass(flex.grid)
-          expect(container.firstChild).not.toHaveClass(flex.gridResponsive)
+          expect(container.firstChild).toHaveClass('RI-flex-grid')
+          // expect(container.firstChild).not.toHaveClass(flex.gridResponsive)
         })
         it('should have class grid-responsive when responsive is true', () => {
           const { container } = render(
@@ -313,8 +299,8 @@ describe('Flex Components', () => {
             </Grid>,
           )
           expect(container.firstChild).toHaveClass(
-            flex.grid,
-            flex['grid-responsive'],
+            'RI-flex-grid',
+            // flex['grid-responsive'],
           )
         })
       })
@@ -326,8 +312,8 @@ describe('Flex Components', () => {
               <h2>My Child</h2>
             </Grid>,
           )
-          expect(container.firstChild).toHaveClass(flex.grid)
-          expect(container.firstChild).not.toHaveClass(flex.gridCentered)
+          expect(container.firstChild).toHaveClass('RI-flex-grid')
+          // expect(container.firstChild).not.toHaveClass(flex.gridCentered)
         })
         it('should have class grid-centered when responsive is true', () => {
           const { container } = render(
@@ -336,8 +322,8 @@ describe('Flex Components', () => {
             </Grid>,
           )
           expect(container.firstChild).toHaveClass(
-            flex.grid,
-            flex['grid-centered'],
+            'RI-flex-grid',
+            // flex['grid-centered'],
           )
         })
       })

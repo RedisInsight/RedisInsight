@@ -60,6 +60,6 @@ export const buildRedisInsightUrl = (instanceData: Instance) => {
 }
 
 const appendParams = (params: Record<string, string>) => {
-  const searchParams = new URLSearchParams(params);
-  return `?${searchParams.toString()}`;
+  const searchParams = new URLSearchParams(params)
+  return `?${searchParams.toString()}`
 }

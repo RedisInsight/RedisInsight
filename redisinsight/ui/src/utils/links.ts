@@ -30,10 +30,7 @@ export const buildRedisInsightUrl = (
   }
 
   const endpoint = `${instanceData.host}:${instanceData.port}`
-  const defaultPassword = instanceData.password
-  const dbUrl = defaultPassword
-    ? `redis://default:${defaultPassword}@${endpoint}`
-    : `redis://@${endpoint}`
+  const dbUrl = `redis://@${endpoint}`
 
   const params: Record<string, string> = {
     redisUrl: dbUrl,

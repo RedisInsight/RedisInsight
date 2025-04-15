@@ -52,7 +52,7 @@
     "winston-daily-rotate-file/**/file-stream-rotator": "^1.0.0"
   },
   "dependencies": {
-    "@nestjs/common": "^11.0.11",
+    "@nestjs/common": "^11.0.16",
     "@nestjs/core": "^11.0.11",
     "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/platform-express": "^11.0.11",

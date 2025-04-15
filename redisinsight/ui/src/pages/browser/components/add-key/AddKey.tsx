@@ -88,10 +88,15 @@ const AddKey = (props: Props) => {
   }
 
   const closeAddKeyPanel = (isCancelled?: boolean) => {
-    onAddKeyPanel(false, stringToBuffer(keyName))
+    // meaning that the user closed the "Add Key" panel when clicked on the cancel button
     if (isCancelled) {
+      onAddKeyPanel(false)
       onClosePanel()
       closeKeyTelemetry()
+    } 
+    // meaning that the user closed the "Add Key" panel when added a key
+    else {
+      onAddKeyPanel(false, stringToBuffer(keyName))
     }
   }
 

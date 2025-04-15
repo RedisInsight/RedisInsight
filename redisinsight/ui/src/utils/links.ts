@@ -59,11 +59,7 @@ export const buildRedisInsightUrl = (instanceData: Instance) => {
   return `${RI_PROTOCOL_SCHEMA}databases/connect${appendParams(params)}`
 }
 
-const appendParams = (params: Record<string, string>) =>
-  Object.entries(params).reduce(
-    (acc, [key, value], index) =>
-      acc.concat(
-        `${index === 0 ? '?' : '&'}${key}=${encodeURIComponent(value)}`,
-      ),
-    '',
-  )
+const appendParams = (params: Record<string, string>) => {
+  const searchParams = new URLSearchParams(params);
+  return `?${searchParams.toString()}`;
+}

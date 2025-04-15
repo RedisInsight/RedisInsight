@@ -22,9 +22,7 @@ export const getUtmExternalLink = (baseUrl: string, params: UTMParams) => {
 
 const RI_PROTOCOL_SCHEMA = 'redisinsight://'
 
-export const buildRedisInsightUrl = (
-  instanceData: Instance,
-) => {
+export const buildRedisInsightUrl = (instanceData: Instance) => {
   if (!instanceData) {
     return ''
   }
@@ -34,12 +32,11 @@ export const buildRedisInsightUrl = (
 
   const params: Record<string, string> = {
     redisUrl: dbUrl,
-    cloudBdbId: instanceData.cloudDetails?.cloudId.toString() || '',
+    cloudBdbId: instanceData.cloudDetails?.cloudId?.toString() || '',
     databaseAlias: instanceData.name || '',
   }
 
   if (instanceData.tls) {
-    // requiredTls is for backwards compatibility, in the future we may remove it
     params.requiredTls = 'true'
     params.requiredCaCert = 'true'
   }
@@ -48,11 +45,13 @@ export const buildRedisInsightUrl = (
     params.requiredClientCert = 'true'
   }
 
-  params.subscriptionType = instanceData.cloudDetails?.subscriptionType || ''
-  if (instanceData.cloudDetails?.subscriptionType === 'fixed') {
-    params.planMemoryLimit = instanceData.cloudDetails?.planMemoryLimit?.toString() || ''
-    params.memoryLimitMeasurementUnit = instanceData.cloudDetails?.memoryLimitMeasurementUnit || ''
-    if (instanceData.cloudDetails?.free) {
+  if (instanceData.cloudDetails) {
+    params.subscriptionType = instanceData.cloudDetails.subscriptionType || ''
+    params.planMemoryLimit =
+      instanceData.cloudDetails?.planMemoryLimit?.toString() || ''
+    params.memoryLimitMeasurementUnit =
+      instanceData.cloudDetails?.memoryLimitMeasurementUnit || ''
+    if (instanceData.cloudDetails.free) {
       params.free = 'true'
     }
   }

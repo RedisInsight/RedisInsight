@@ -4,7 +4,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { isUndefined } from 'lodash'
 import Divider from 'uiSrc/components/divider/Divider'
 import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { KeyDetailsHeaderFormatter } from '../../../key-details-header/components/key-details-header-formatter'
 import styles from './styles.module.scss'
 

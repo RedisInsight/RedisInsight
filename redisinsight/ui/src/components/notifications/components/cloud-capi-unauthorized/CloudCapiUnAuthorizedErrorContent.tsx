@@ -6,7 +6,7 @@ import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 import { Pages } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export interface Props {

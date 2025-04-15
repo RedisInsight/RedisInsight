@@ -18,7 +18,7 @@ import { showOAuthProgress } from 'uiSrc/slices/oauth/cloud'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import errorMessages from './error-messages'
 import { InfiniteMessagesIds } from './components'

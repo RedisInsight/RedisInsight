@@ -29,7 +29,7 @@ import {
 } from 'uiSrc/slices/interfaces'
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import RedisClusterDatabases from './RedisClusterDatabases'
 import RedisClusterDatabasesResult from './RedisClusterDatabasesResult'
 

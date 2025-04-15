@@ -10,7 +10,7 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import InstancesNavigationPopover from '../instance-header/components/instances-navigation-popover'
 import styles from './styles.module.scss'
 

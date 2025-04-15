@@ -28,7 +28,7 @@ import {
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appServerInfoSelector } from 'uiSrc/slices/app/info'
 
-import { FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {

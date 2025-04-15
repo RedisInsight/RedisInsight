@@ -30,7 +30,7 @@ import {
   setTitle,
 } from 'uiSrc/utils'
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import RedisCloudDatabasesResult from './RedisCloudDatabasesResult'
 
 import styles from './styles.module.scss'

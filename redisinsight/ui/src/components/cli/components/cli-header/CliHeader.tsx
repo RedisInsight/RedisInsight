@@ -15,7 +15,7 @@ import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const CliHeader = () => {

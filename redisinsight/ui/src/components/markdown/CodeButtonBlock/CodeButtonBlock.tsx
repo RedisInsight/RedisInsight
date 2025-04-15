@@ -25,7 +25,7 @@ import {
 } from 'uiSrc/components/messages'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 

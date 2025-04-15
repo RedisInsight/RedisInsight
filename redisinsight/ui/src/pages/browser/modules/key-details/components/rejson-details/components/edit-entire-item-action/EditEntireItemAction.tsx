@@ -10,7 +10,7 @@ import cx from 'classnames'
 
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
-import { FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import { isValidJSON } from '../../utils'

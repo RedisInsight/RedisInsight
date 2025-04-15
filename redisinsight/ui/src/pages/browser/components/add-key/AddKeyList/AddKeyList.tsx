@@ -12,7 +12,7 @@ import {
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
   CreateListWithExpireDto,
   ListElementDestination,

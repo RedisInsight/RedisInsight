@@ -7,7 +7,7 @@ import { FeatureFlags } from 'uiSrc/constants/featureFlags'
 import { getConfig } from 'uiSrc/config'
 import Logo from 'uiSrc/assets/img/logo.svg?react'
 import Robot from 'uiSrc/assets/img/robot.svg?react'
-import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const NotFoundErrorPage = () => {

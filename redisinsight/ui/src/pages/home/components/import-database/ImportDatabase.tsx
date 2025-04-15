@@ -21,7 +21,7 @@ import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { UploadWarning } from 'uiSrc/components'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
-import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import ResultsLog from './components/ResultsLog'
 

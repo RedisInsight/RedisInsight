@@ -30,7 +30,7 @@ import {
 } from 'uiSrc/pages/browser/components/add-key/AddKeySet/interfaces'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {

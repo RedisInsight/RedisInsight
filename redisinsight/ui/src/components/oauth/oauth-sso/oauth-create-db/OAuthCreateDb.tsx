@@ -28,7 +28,7 @@ import {
 } from 'uiSrc/slices/instances/cloud'
 import { Nullable } from 'uiSrc/utils'
 import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import {
   OAuthAdvantages,

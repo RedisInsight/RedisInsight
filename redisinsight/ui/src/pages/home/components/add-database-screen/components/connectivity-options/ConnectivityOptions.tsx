@@ -11,7 +11,7 @@ import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import RocketIcon from 'uiSrc/assets/img/oauth/rocket.svg?react'
 
-import { FlexItem, Grid } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { CONNECTIVITY_OPTIONS } from '../../constants'
 

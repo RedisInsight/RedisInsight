@@ -40,7 +40,7 @@ import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { getConfig } from 'uiSrc/config'
 import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
 import UserProfile from 'uiSrc/components/instance-header/components/user-profile/UserProfile'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
 

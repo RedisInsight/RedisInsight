@@ -4,7 +4,7 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthUserProfile } from 'uiSrc/components'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { CloudUserProfile } from './CloudUserProfile'
 
 const UserProfile = () => {

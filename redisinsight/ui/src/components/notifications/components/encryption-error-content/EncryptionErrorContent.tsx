@@ -4,7 +4,7 @@ import { matchPath, useHistory, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
 import { updateUserConfigSettingsAction } from 'uiSrc/slices/user/user-settings'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export interface Props {

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { IProcessingPerformance } from 'uiSrc/slices/interfaces'
-import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
 import VerticalDivider from '../components/vertical-divider'

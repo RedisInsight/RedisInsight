@@ -23,7 +23,7 @@ import SurveyIcon from 'uiSrc/assets/img/survey_icon.svg'
 import FeatureFlagComponent from 'uiSrc/components/feature-flag-component'
 import { FeatureFlags } from 'uiSrc/constants'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { HideFor, ShowFor } from 'uiSrc/components/base/utils/ShowHide'
 import styles from '../../styles.module.scss'
 

@@ -19,7 +19,7 @@ import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
-import { Flex, FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { Flex, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {

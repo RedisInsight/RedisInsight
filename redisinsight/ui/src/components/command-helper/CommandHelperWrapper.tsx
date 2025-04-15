@@ -14,7 +14,7 @@ import {
   removeDeprecatedModuleCommands,
   checkDeprecatedModuleCommand,
 } from 'uiSrc/utils'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import CommandHelper from './CommandHelper'
 import CommandHelperHeader from './CommandHelperHeader'
 

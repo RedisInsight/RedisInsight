@@ -9,7 +9,7 @@ import {
 } from '@elastic/eui'
 import { formatLongName } from 'uiSrc/utils'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {

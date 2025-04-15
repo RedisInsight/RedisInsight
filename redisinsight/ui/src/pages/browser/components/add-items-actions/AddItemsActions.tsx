@@ -1,6 +1,6 @@
 import React from 'react'
 import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 
 export interface Props {
   id: number

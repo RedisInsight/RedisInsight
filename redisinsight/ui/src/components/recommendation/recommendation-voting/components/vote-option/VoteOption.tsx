@@ -23,7 +23,7 @@ import { Nullable } from 'uiSrc/utils'
 import PetardIcon from 'uiSrc/assets/img/icons/petard.svg?react'
 import GithubSVG from 'uiSrc/assets/img/icons/github-white.svg?react'
 
-import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { getVotedText, voteTooltip, iconType } from './utils'
 import styles from './styles.module.scss'
 

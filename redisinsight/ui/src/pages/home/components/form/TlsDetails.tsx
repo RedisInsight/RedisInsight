@@ -29,7 +29,7 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { deleteCaCertificateAction } from 'uiSrc/slices/instances/caCerts'
 import { deleteClientCertAction } from 'uiSrc/slices/instances/clientCerts'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from '../styles.module.scss'
 

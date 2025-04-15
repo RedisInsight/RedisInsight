@@ -38,7 +38,7 @@ import {
   resetRdiContext,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
-import { FlexItem, Grid, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Grid, Row } from 'uiSrc/components/base/layout/flex'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import styles from './styles.module.scss'
 

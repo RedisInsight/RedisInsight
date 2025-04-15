@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 
 import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const TextDetailsWrapper = ({

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
 import { EuiButton, EuiTextColor } from '@elastic/eui'
-import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 
 export interface Props {

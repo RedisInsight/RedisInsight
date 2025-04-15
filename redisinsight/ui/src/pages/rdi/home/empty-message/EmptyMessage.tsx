@@ -9,7 +9,7 @@ import NewTabIcon from 'uiSrc/assets/img/rdi/new_tab.svg'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Theme } from 'uiSrc/constants'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 

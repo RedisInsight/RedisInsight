@@ -9,7 +9,7 @@ import {
   removeAllCapiKeysAction,
 } from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import UserApiKeysTable from './components/user-api-keys-table'
 

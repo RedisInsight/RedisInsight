@@ -10,7 +10,7 @@ import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 
-import { Flex, FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { Flex, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {

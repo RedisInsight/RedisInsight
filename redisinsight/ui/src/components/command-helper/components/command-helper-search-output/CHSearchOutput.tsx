@@ -9,7 +9,7 @@ import { setSearchedCommand } from 'uiSrc/slices/cli/cli-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {

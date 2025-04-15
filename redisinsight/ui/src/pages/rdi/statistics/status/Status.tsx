@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { IRdiPipelineStatus } from 'uiSrc/slices/interfaces'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import Panel from '../components/panel'
 import VerticalDivider from '../components/vertical-divider'
 

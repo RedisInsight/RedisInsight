@@ -10,7 +10,7 @@ import { FormikProps } from 'formik'
 import { validateNumber } from 'uiSrc/utils'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from '../styles.module.scss'
 

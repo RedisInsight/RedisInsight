@@ -19,7 +19,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import Logo from 'uiSrc/assets/img/logo.svg'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
 const ConsentsSettingsPopup = () => {

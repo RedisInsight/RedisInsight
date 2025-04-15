@@ -9,7 +9,7 @@ import {
 import { FormikProps } from 'formik'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>

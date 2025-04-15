@@ -8,7 +8,7 @@ import {
 } from '@elastic/eui'
 import cx from 'classnames'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
-import { Col, FlexItem } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import CreateRedisearchIndex from './CreateRedisearchIndex'
 
 import styles from './styles.module.scss'

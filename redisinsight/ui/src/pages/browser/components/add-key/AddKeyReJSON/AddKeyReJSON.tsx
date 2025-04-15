@@ -15,7 +15,7 @@ import { addKeyStateSelector, addReJSONKey } from 'uiSrc/slices/browser/keys'
 import { MonacoJson } from 'uiSrc/components/monaco-editor'
 import UploadFile from 'uiSrc/components/upload-file'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
 
 import { AddJSONFormConfig as config } from '../constants/fields-config'

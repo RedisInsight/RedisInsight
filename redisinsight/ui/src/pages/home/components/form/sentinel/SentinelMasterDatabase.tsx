@@ -12,7 +12,7 @@ import { Nullable } from 'uiSrc/utils'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../../styles.module.scss'
 
 export interface Props {

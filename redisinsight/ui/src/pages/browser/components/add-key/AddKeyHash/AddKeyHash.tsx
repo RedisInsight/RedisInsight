@@ -28,7 +28,7 @@ import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
   CreateHashWithExpireDto,
   HashFieldDto,

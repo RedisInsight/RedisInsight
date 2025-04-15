@@ -18,7 +18,7 @@ import React from 'react'
 import { Nullable } from 'uiSrc/utils'
 
 import { UploadWarning } from 'uiSrc/components'
-import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props<T> {

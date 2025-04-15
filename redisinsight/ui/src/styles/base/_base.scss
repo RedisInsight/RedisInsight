@@ -4,11 +4,11 @@ $sideBarSize: 60px;
 :root {
   --base: 16px;
   //2px
-  --size-xxs: calc(var(--base) / 8);
+  --size-xxs: calc(var(--base) * 0.125);
   //4px
-  --size-xs: calc(var(--base) / 4);
+  --size-xs: calc(var(--base) * 0.25);
   //8px
-  --size-s: calc(var(--base) / 2);
+  --size-s: calc(var(--base) * 0.5);
   //12px
   --size-m: calc(var(--base) * 0.75);
   //16px

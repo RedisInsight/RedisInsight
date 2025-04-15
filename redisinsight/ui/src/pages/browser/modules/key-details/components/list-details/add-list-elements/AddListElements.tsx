@@ -25,7 +25,7 @@ import {
 import { KeyTypes } from 'uiSrc/constants'
 import { stringToBuffer } from 'uiSrc/utils'
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { PushElementToListDto } from 'apiSrc/modules/browser/list/dto'
 
 import styles from '../styles.module.scss'

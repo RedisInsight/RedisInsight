@@ -13,7 +13,7 @@ import {
   millisecondsFormat,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 // TODO: use i18n file for texts

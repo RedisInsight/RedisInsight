@@ -23,7 +23,7 @@ import { InstanceRedisCloud } from 'uiSrc/slices/interfaces'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
 export interface Props {

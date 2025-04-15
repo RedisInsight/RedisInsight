@@ -25,7 +25,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { createAxiosError, pipelineToJson } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import styles from './styles.module.scss'
 

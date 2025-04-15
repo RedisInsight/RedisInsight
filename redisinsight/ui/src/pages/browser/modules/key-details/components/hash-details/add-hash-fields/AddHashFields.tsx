@@ -32,7 +32,7 @@ import {
   IHashFieldState,
   INITIAL_HASH_FIELD_STATE,
 } from 'uiSrc/pages/browser/components/add-key/AddKeyHash/interfaces'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
   AddFieldsToHashDto,
   HashFieldDto,

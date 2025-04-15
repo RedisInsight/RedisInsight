@@ -23,7 +23,7 @@ import { appInfoSelector } from 'uiSrc/slices/app/info'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/Spacer'
 import { MANUAL_FORM_TABS, ManualFormTab } from './constants'
 import CloneConnection from './components/CloneConnection'

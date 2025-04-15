@@ -20,7 +20,7 @@ import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import UnknownDark from 'uiSrc/assets/img/modules/UnknownDark.svg'
 import UnknownLight from 'uiSrc/assets/img/modules/UnknownLight.svg'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/Flex'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import styles from './styles.module.scss'
 

@@ -1,6 +1,6 @@
 import { EuiLink, EuiText } from '@elastic/eui'
 import React from 'react'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export const ASSISTANCE_CHAT_AGREEMENTS = (
   <>

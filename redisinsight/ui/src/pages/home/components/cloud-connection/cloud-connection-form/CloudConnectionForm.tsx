@@ -25,7 +25,7 @@ import { OAuthAutodiscovery } from 'uiSrc/components/oauth/oauth-sso'
 import { MessageCloudApiKeys } from 'uiSrc/pages/home/components/form/Messages'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'

@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 
 import EmptyPipelineIcon from 'uiSrc/assets/img/rdi/empty_pipeline.svg'
 import { Pages } from 'uiSrc/constants'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import Panel from '../components/panel'
 
 import styles from './styles.module.scss'

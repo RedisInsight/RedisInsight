@@ -23,7 +23,7 @@ import { getContentByFeature } from 'uiSrc/utils/content'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { COLUMN_FIELD_NAME_MAP, DatabaseListColumn, FeatureFlags } from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import SearchDatabasesList from '../search-databases-list'
 
 import styles from './styles.module.scss'

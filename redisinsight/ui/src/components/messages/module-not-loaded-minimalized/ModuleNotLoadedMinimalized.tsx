@@ -26,7 +26,7 @@ import {
 import { useCapability } from 'uiSrc/services'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   MODULE_CAPABILITY_TEXT_NOT_AVAILABLE,
   MODULE_CAPABILITY_TEXT_NOT_AVAILABLE_ENTERPRISE,

@@ -15,7 +15,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import ConnectivityOptions from './components/connectivity-options'
 import ConnectionUrl from './components/connection-url'
 import { Values } from './constants'

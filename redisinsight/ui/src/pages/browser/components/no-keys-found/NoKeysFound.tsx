@@ -19,7 +19,7 @@ import {
 import { SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { TutorialsIds } from 'uiSrc/constants'
 
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import LoadSampleData from '../load-sample-data'
 
 import styles from './styles.module.scss'

@@ -20,7 +20,7 @@ import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { localStorageService } from 'uiSrc/services'
 import { filterAndSort } from 'uiSrc/utils'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import InstancesList from './components/instances-list'
 import styles from './styles.module.scss'
 

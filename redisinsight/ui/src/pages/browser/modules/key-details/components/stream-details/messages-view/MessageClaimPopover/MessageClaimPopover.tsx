@@ -29,7 +29,7 @@ import {
   ClaimTimeOptions,
 } from 'uiSrc/utils/streamUtils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,

@@ -10,7 +10,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { findTutorialPath } from 'uiSrc/utils'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 const ExploreGuides = () => {

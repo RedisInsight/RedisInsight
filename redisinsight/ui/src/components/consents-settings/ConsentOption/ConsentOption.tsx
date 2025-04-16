@@ -3,7 +3,7 @@ import { EuiSwitch, EuiText } from '@elastic/eui'
 import parse from 'html-react-parser'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { IConsent } from '../ConsentsSettings'
 
 import styles from '../styles.module.scss'

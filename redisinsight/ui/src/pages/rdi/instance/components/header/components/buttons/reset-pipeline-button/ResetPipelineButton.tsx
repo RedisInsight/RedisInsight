@@ -2,7 +2,7 @@ import React from 'react'
 import { EuiButton, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import ResetIcon from 'uiSrc/assets/img/rdi/reset.svg?react'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from '../styles.module.scss'
 
 export interface PipelineButtonProps {

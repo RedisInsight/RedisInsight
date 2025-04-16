@@ -42,7 +42,7 @@ import {
 
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {

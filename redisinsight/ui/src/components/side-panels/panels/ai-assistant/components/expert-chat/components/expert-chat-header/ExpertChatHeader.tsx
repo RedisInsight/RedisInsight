@@ -26,7 +26,7 @@ import {
 } from 'uiSrc/slices/panels/sidePanels'
 import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/components/shared'
 
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {

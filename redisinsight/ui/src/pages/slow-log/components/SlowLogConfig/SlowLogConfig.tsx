@@ -30,7 +30,7 @@ import {
 import { errorValidateNegativeInteger, validateNumber } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { convertNumberByUnits } from '../../utils'
 import styles from './styles.module.scss'
 

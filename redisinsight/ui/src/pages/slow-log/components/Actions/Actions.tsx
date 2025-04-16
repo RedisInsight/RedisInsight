@@ -17,7 +17,7 @@ import { AutoRefresh } from 'uiSrc/components'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import SlowLogConfig from '../SlowLogConfig'
 import styles from './styles.module.scss'
 

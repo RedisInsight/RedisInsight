@@ -44,7 +44,7 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { FeatureFlags } from 'uiSrc/constants'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 const sendTelemetry = (databaseId: string, step: string, action: string) =>

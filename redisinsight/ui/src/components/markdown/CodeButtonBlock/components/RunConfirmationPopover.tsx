@@ -7,7 +7,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { FeatureFlagComponent } from 'uiSrc/components'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from '../styles.module.scss'
 
 interface Props {

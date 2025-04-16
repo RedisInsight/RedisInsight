@@ -22,7 +22,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { UploadWarning } from 'uiSrc/components'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'

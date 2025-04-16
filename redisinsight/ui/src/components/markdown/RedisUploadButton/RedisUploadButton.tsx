@@ -22,7 +22,7 @@ import {
   getPathToResource,
 } from 'uiSrc/services/resourcesService'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
 import { updateUserConfigSettingsAction } from 'uiSrc/slices/user/user-settings'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export interface Props {
   onClose?: () => void

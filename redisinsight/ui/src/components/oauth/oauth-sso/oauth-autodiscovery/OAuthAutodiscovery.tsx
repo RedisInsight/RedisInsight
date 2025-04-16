@@ -23,7 +23,7 @@ import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {

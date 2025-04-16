@@ -9,7 +9,7 @@ import {
   updateUserConfigSettingsAction,
   userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import ConsentOption from '../ConsentOption'
 import { ConsentCategories, IConsent } from '../ConsentsSettings'
 

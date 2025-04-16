@@ -9,7 +9,7 @@ import {
   UTM_CAMPAINGS,
   UTM_MEDIUMS,
 } from 'uiSrc/constants/links'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { getUtmExternalLink } from './links'
 
 export const getRdiValidationMessage = (

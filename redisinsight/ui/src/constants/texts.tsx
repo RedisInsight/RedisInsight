@@ -1,6 +1,6 @@
 import React from 'react'
 import { EuiText } from '@elastic/eui'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export const NoResultsFoundText = (
   <EuiText size="m" data-testid="no-result-found-only">

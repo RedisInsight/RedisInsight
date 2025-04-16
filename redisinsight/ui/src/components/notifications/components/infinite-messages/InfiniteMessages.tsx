@@ -25,7 +25,7 @@ import {
   UTM_MEDIUMS,
 } from 'uiSrc/constants/links'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {

@@ -15,7 +15,7 @@ import { isModifiedEvent } from 'uiSrc/services'
 
 import SendIcon from 'uiSrc/assets/img/icons/send.svg?react'
 
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {

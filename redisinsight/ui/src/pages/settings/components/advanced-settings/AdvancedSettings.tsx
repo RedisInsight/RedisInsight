@@ -8,7 +8,7 @@ import {
   updateUserConfigSettingsAction,
   userSettingsConfigSelector,
 } from 'uiSrc/slices/user/user-settings'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 const AdvancedSettings = () => {
   const { scanThreshold = '' } = useSelector(userSettingsConfigSelector) ?? {}

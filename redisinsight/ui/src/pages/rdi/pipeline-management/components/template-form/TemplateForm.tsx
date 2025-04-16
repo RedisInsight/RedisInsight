@@ -20,7 +20,7 @@ import {
 } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
 
 import styles from './styles.module.scss'

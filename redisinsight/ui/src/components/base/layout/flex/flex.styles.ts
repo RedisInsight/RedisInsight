@@ -1,15 +1,16 @@
-import React, { PropsWithChildren } from 'react'
+import React, { HTMLAttributes, PropsWithChildren, ReactNode } from 'react'
 
 import styled, { css } from 'styled-components'
 import { theme } from 'uiSrc/components/base/theme'
+import { CommonProps } from 'uiSrc/components/base/theme/types'
 
 export const gapSizes = ['none', 'xs', 's', 'm', 'l', 'xl'] as const
 export type GapSizeType = (typeof gapSizes)[number]
 export const columnCount = [1, 2, 3, 4] as const
 export type ColumnCountType = (typeof columnCount)[number]
 
-export type GridProps = React.HTMLAttributes<HTMLDivElement> & {
-  children: React.ReactNode
+export type GridProps = HTMLAttributes<HTMLDivElement> & {
+  children: ReactNode
   columns?: ColumnCountType
   className?: string
   gap?: GapSizeType
@@ -72,10 +73,6 @@ export const dirValues = [
   'column',
   'columnReverse',
 ] as const
-
-export interface CommonProps {
-  className?: string
-}
 
 const flexGroupStyles = {
   wrap: css`

@@ -1,10 +1,10 @@
-import webpack from 'webpack';
-import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
-import webpackPaths from './webpack.paths';
-import { dependencies as externals } from '../redisinsight/package.json';
+import webpack from 'webpack'
+import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin'
+import webpackPaths from './webpack.paths'
+import { dependencies as externals } from '../redisinsight/package.json'
 import { resolve } from 'path'
 
-const configuration: webpack.Configuration =  {
+const configuration: webpack.Configuration = {
   externals: [...Object.keys(externals || {})],
 
   stats: 'errors-only',
@@ -24,7 +24,7 @@ const configuration: webpack.Configuration =  {
               },
             },
           },
-        ]
+        ],
       },
     ],
   },
@@ -42,8 +42,10 @@ const configuration: webpack.Configuration =  {
     modules: [webpackPaths.apiPath, 'node_modules'],
     plugins: [new TsconfigPathsPlugins()],
     alias: {
-      'class-transformer': resolve('./redisinsight/api/node_modules/class-transformer/cjs'),
-    }
+      'class-transformer': resolve(
+        './redisinsight/api/node_modules/class-transformer/cjs',
+      ),
+    },
   },
 
   plugins: [
@@ -72,19 +74,19 @@ const configuration: webpack.Configuration =  {
           // '@nestjs/core/metadata-scanner',
           '@nestjs/microservices/microservices-module',
           // '@nestjs/websockets/socket-module',
-        ];
+        ]
         if (!lazyImports.includes(resource)) {
-          return false;
+          return false
         }
         try {
-          require.resolve(resource);
+          require.resolve(resource)
         } catch (err) {
-          return true;
+          return true
         }
-        return false;
+        return false
       },
     }),
   ],
-};
+}
 
-export default configuration;
+export default configuration

@@ -263,7 +263,11 @@ const MonacoEditor = (props: Props) => {
         declineOnUnmount={false}
         preventOutsideClick
       >
-        <div className={cx("inlineMonacoEditor", editorWrapperClassName)} data-testid={`wrapper-${dataTestId}`} ref={input}>
+        <div
+          className={cx('inlineMonacoEditor', editorWrapperClassName)}
+          data-testid={`wrapper-${dataTestId}`}
+          ref={input}
+        >
           <ReactMonacoEditor
             language={language}
             theme={theme === Theme.Dark ? 'dark' : 'light'}

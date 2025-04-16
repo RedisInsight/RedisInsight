@@ -313,13 +313,61 @@ export class MicrosoftAuthService implements OnModuleInit {
             this.authRequests.delete(query.state);
             this.inProgressRequests.set(query.state, authRequest);
 
-            this.activeCredentialsProvider = this.entraIdProvider.createCredentialsProvider(
-                {
-                    code: query.code as string,
-                    verifier: authRequest.pkceCodes.verifier,
-                    clientInfo: authRequest.options.client_info as string | undefined
-                },
+            // Create identity provider that handles both initial acquisition and refreshes
+            const idp = new MSALIdentityProvider(
+                async () => {
+                    // Try getting accounts first to see if we need to do a refresh
+                    const accounts = await this.msalClient.getTokenCache().getAllAccounts();
+
+                    if (accounts.length > 0) {
+                        // If we have accounts, this is likely a refresh
+                        this.logger.log('[Token] Found accounts in cache, checking for correct account to use');
+
+                        // Get saved account details
+                        const savedAuthData = await this.msAuthRepository.get();
+                        let accountToUse = accounts[0]; // Default fallback
+
+                        if (savedAuthData?.accountId) {
+                            // Find the specific account that matches our saved account ID
+                            const foundAccount = accounts.find(acc =>
+                                acc.homeAccountId === savedAuthData.accountId);
+                            console.log('foundAccount', foundAccount);
+                            if (foundAccount) {
+                                this.logger.log(`[Token] Found matching account: ${foundAccount.username}`);
+                                accountToUse = foundAccount;
+                            } else {
+                                this.logger.warn(`[Token] Saved account ID ${savedAuthData.accountId} not found in cache`);
+                            }
+                        } else {
+                            this.logger.warn('[Token] No saved account ID found, using first account as fallback');
+                        }
+
+                        this.logger.log(`[Token] Using silent token acquisition for refresh with account: ${accountToUse.username}`);
+                        return this.msalClient.acquireTokenSilent({
+                            account: accountToUse,
+                            scopes: this.scopes,
+                            forceRefresh: true
+                        });
+                    } else {
+                        // Initial token acquisition using authorization code
+                        this.logger.log('[Token] Using initial token acquisition with code');
+                        const authResult = await this.msalClient.acquireTokenByCode({
+                            code: query.code as string,
+                            codeVerifier: authRequest.pkceCodes.verifier,
+                            scopes: this.scopes,
+                            redirectUri: idpConfig.redirectUri,
+                        });
+
+                        // Store the account info for future refreshes
+                        this.updateAccountInfo(authResult.account);
+
+                        return authResult;
+                    }
+                }
             );
+
+            const tm = new TokenManager(idp, DEFAULT_TOKEN_MANAGER_CONFIG);
+            this.activeCredentialsProvider = new EntraidCredentialsProvider(tm, idp, {});
 
             const [credentials] = await this.activeCredentialsProvider.subscribe({
                 onNext: async (token) => {

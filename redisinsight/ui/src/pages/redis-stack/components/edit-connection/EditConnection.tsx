@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { EuiFlexItem, EuiPage, EuiPageBody } from '@elastic/eui'
+import { EuiFlexItem } from '@elastic/eui'
 
 import {
   getApiErrorMessage,
@@ -24,6 +24,7 @@ import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import DatabasePanelDialog from 'uiSrc/pages/home/components/database-panel-dialog'
+import { Page, PageBody } from 'uiSrc/components/base/layout/page'
 
 import './styles.scss'
 import styles from './styles.module.scss'
@@ -115,8 +116,8 @@ const EditConnection = () => {
     <>
       <PageHeader title="Redis Stack" />
       <div />
-      <EuiPage className="homePage redisStackConnection">
-        <EuiPageBody component="div" className={styles.container}>
+      <Page className="homePage redisStackConnection">
+        <PageBody component="div" className={styles.container}>
           {createDbContent?.cloud && (
             <EuiFlexItem grow={false} style={{ margin: '20px 0' }}>
               <CreateCloudBtn content={createDbContent.cloud} />
@@ -132,8 +133,8 @@ const EditConnection = () => {
               />
             </div>
           </div>
-        </EuiPageBody>
-      </EuiPage>
+        </PageBody>
+      </Page>
     </>
   )
 }

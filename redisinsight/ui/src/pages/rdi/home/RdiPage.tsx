@@ -1,4 +1,4 @@
-import { EuiPage, EuiPageBody, EuiPanel, EuiResizeObserver } from '@elastic/eui'
+import { EuiPanel, EuiResizeObserver } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -11,13 +11,14 @@ import {
   instancesSelector,
 } from 'uiSrc/slices/rdi/instances'
 import {
-  TelemetryEvent,
-  TelemetryPageView,
   sendEventTelemetry,
   sendPageViewTelemetry,
+  TelemetryEvent,
+  TelemetryPageView,
 } from 'uiSrc/telemetry'
 import HomePageTemplate from 'uiSrc/templates/home-page-template'
 import { setTitle } from 'uiSrc/utils'
+import { Page, PageBody } from 'uiSrc/components/base/layout/page'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 import EmptyMessage from './empty-message/EmptyMessage'
 import ConnectionForm from './connection-form/ConnectionFormWrapper'
@@ -146,8 +147,8 @@ const RdiPage = () => {
 
   return (
     <HomePageTemplate>
-      <EuiPage className={cx(styles.page, 'homePage')}>
-        <EuiPageBody component="div">
+      <Page className={cx(styles.page, 'homePage')}>
+        <PageBody component="div">
           <RdiHeader onRdiInstanceClick={handleOpenConnectionForm} />
           <InstanceList />
           <ConnectionForm
@@ -157,8 +158,8 @@ const RdiPage = () => {
             editInstance={editInstance}
             isLoading={loading || loadingChanging}
           />
-        </EuiPageBody>
-      </EuiPage>
+        </PageBody>
+      </Page>
     </HomePageTemplate>
   )
 }

@@ -26,7 +26,10 @@ import {
   mockSetMembers,
 } from 'src/modules/browser/__mocks__';
 import { SetService } from 'src/modules/browser/set/set.service';
-import { CreateSetWithExpireDto, GetSetMembersDto } from 'src/modules/browser/set/dto';
+import {
+  CreateSetWithExpireDto,
+  GetSetMembersDto,
+} from 'src/modules/browser/set/dto';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 describe('SetService', () => {
@@ -53,7 +56,10 @@ describe('SetService', () => {
   describe('createSet', () => {
     beforeEach(() => {
       when(client.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersToSetDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockAddMembersToSetDto.keyName,
+        ])
         .mockResolvedValue(false);
       service.createSetWithExpiration = jest.fn();
     });
@@ -84,7 +90,10 @@ describe('SetService', () => {
     });
     it('key with this name exist', async () => {
       when(client.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersToSetDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockAddMembersToSetDto.keyName,
+        ])
         .mockResolvedValue(true);
 
       await expect(
@@ -99,10 +108,12 @@ describe('SetService', () => {
         command: 'SADD',
       };
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolSetCommands.SAdd,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolSetCommands.SAdd,
+            expect.anything(),
+          ]),
+        )
         .mockRejectedValue(replyError);
 
       await expect(
@@ -157,15 +168,20 @@ describe('SetService', () => {
   describe('getMembers', () => {
     beforeEach(() => {
       when(client.sendCommand)
-        .calledWith([BrowserToolSetCommands.SCard, mockGetSetMembersDto.keyName])
+        .calledWith([
+          BrowserToolSetCommands.SCard,
+          mockGetSetMembersDto.keyName,
+        ])
         .mockResolvedValue(mockSetMembers.length);
     });
     it('succeed to get members of the set', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolSetCommands.SScan,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolSetCommands.SScan,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue([Buffer.from('0'), mockSetMembers]);
 
       const result = await service.getMembers(
@@ -187,11 +203,7 @@ describe('SetService', () => {
         match: mockSetMembers[0].toString(),
       };
       when(client.sendCommand)
-        .calledWith([
-          BrowserToolSetCommands.SIsMember,
-          dto.keyName,
-          dto.match,
-        ])
+        .calledWith([BrowserToolSetCommands.SIsMember, dto.keyName, dto.match])
         .mockResolvedValue(1);
 
       const result = await service.getMembers(mockBrowserClientMetadata, dto);
@@ -208,11 +220,7 @@ describe('SetService', () => {
         match: mockSetMembers[0].toString(),
       };
       when(client.sendCommand)
-        .calledWith([
-          BrowserToolSetCommands.SIsMember,
-          dto.keyName,
-          dto.match,
-        ])
+        .calledWith([BrowserToolSetCommands.SIsMember, dto.keyName, dto.match])
         .mockResolvedValue(0);
 
       const result = await service.getMembers(mockBrowserClientMetadata, dto);
@@ -225,7 +233,11 @@ describe('SetService', () => {
         match: 'm\\[a-e\\]mber',
       };
       when(client.sendCommand)
-        .calledWith([BrowserToolSetCommands.SIsMember, dto.keyName, 'm[a-e]mber'])
+        .calledWith([
+          BrowserToolSetCommands.SIsMember,
+          dto.keyName,
+          'm[a-e]mber',
+        ])
         .mockResolvedValue(1);
 
       const result = await service.getMembers(mockBrowserClientMetadata, dto);
@@ -263,7 +275,10 @@ describe('SetService', () => {
     // });
     it('key with this name does not exist for getMembers', async () => {
       when(client.sendCommand)
-        .calledWith([BrowserToolSetCommands.SCard, mockGetSetMembersDto.keyName])
+        .calledWith([
+          BrowserToolSetCommands.SCard,
+          mockGetSetMembersDto.keyName,
+        ])
         .mockResolvedValue(0);
 
       await expect(
@@ -297,7 +312,10 @@ describe('SetService', () => {
   describe('addMembers', () => {
     beforeEach(() => {
       when(client.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersToSetDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockAddMembersToSetDto.keyName,
+        ])
         .mockResolvedValue(true);
     });
     it('succeed to add members to the Set data type', async () => {
@@ -313,7 +331,10 @@ describe('SetService', () => {
     it('key with this name does not exist for addMembers', async () => {
       const { keyName, members } = mockAddMembersToSetDto;
       when(client.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersToSetDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockAddMembersToSetDto.keyName,
+        ])
         .mockResolvedValue(false);
 
       await expect(
@@ -331,10 +352,12 @@ describe('SetService', () => {
         command: 'SADD',
       };
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolSetCommands.SAdd,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolSetCommands.SAdd,
+            expect.anything(),
+          ]),
+        )
         .mockRejectedValue(replyError);
 
       await expect(
@@ -357,7 +380,10 @@ describe('SetService', () => {
   describe('deleteMembers', () => {
     beforeEach(() => {
       when(client.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockDeleteMembersDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockDeleteMembersDto.keyName,
+        ])
         .mockResolvedValue(true);
     });
     it('succeeded to delete members from Set data type', async () => {
@@ -394,10 +420,12 @@ describe('SetService', () => {
         command: 'SREM',
       };
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolSetCommands.SRem,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolSetCommands.SRem,
+            expect.anything(),
+          ]),
+        )
         .mockRejectedValue(replyError);
 
       await expect(

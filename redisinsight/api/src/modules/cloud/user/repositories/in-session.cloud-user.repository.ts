@@ -7,9 +7,7 @@ import { TransformGroup } from 'src/common/constants';
 
 @Injectable()
 export class InSessionCloudUserRepository extends CloudUserRepository {
-  constructor(
-    private readonly sessionService: CloudSessionService,
-  ) {
+  constructor(private readonly sessionService: CloudSessionService) {
     super();
   }
 
@@ -20,7 +18,11 @@ export class InSessionCloudUserRepository extends CloudUserRepository {
   async get(sessionId: string): Promise<CloudUser> {
     const session = await this.sessionService.getSession(sessionId);
 
-    return plainToInstance(CloudUser, session?.user, { groups: [TransformGroup.Secure] }) || null;
+    return (
+      plainToInstance(CloudUser, session?.user, {
+        groups: [TransformGroup.Secure],
+      }) || null
+    );
   }
 
   /**
@@ -28,13 +30,20 @@ export class InSessionCloudUserRepository extends CloudUserRepository {
    * @param sessionId
    * @param data
    */
-  async update(sessionId: string, data: Partial<CloudUser>): Promise<CloudUser> {
+  async update(
+    sessionId: string,
+    data: Partial<CloudUser>,
+  ): Promise<CloudUser> {
     const user = await this.get(sessionId);
     await this.sessionService.updateSessionData(sessionId, {
-      user: plainToInstance(CloudUser, {
-        ...instanceToPlain(user, { groups: [TransformGroup.Secure] }),
-        ...instanceToPlain(data, { groups: [TransformGroup.Secure] }),
-      }, { groups: [TransformGroup.Secure] }),
+      user: plainToInstance(
+        CloudUser,
+        {
+          ...instanceToPlain(user, { groups: [TransformGroup.Secure] }),
+          ...instanceToPlain(data, { groups: [TransformGroup.Secure] }),
+        },
+        { groups: [TransformGroup.Secure] },
+      ),
     });
 
     return this.get(sessionId);

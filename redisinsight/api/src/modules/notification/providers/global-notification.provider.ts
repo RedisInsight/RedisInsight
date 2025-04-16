@@ -7,9 +7,7 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { plainToInstance } from 'class-transformer';
 import { Validator } from 'class-validator';
-import {
-  forEach, keyBy, orderBy, values,
-} from 'lodash';
+import { forEach, keyBy, orderBy, values } from 'lodash';
 import { SessionMetadata } from 'src/common/models';
 import {
   NotificationEvents,
@@ -55,11 +53,14 @@ export class GlobalNotificationProvider {
       await this.validatedNotifications(remoteNotificationsDto);
 
       const toInsert = keyBy(
-        remoteNotificationsDto.notifications.map((notification) => plainToInstance(Notification, {
-          ...notification,
-          type: NotificationType.Global,
-          read: false,
-        })), 'timestamp',
+        remoteNotificationsDto.notifications.map((notification) =>
+          plainToInstance(Notification, {
+            ...notification,
+            type: NotificationType.Global,
+            read: false,
+          }),
+        ),
+        'timestamp',
       );
 
       const currentNotifications = keyBy(
@@ -79,7 +80,8 @@ export class GlobalNotificationProvider {
 
       forEach(toInsert, (notification) => {
         if (currentNotifications[notification.timestamp]) {
-          toInsert[notification.timestamp].read = currentNotifications[notification.timestamp].read;
+          toInsert[notification.timestamp].read =
+            currentNotifications[notification.timestamp].read;
         } else {
           newNotifications.push(notification);
         }
@@ -93,14 +95,14 @@ export class GlobalNotificationProvider {
       this.eventEmitter.emit(
         NotificationEvents.NewNotifications,
         sessionMetadata,
-        orderBy(
-          newNotifications,
-          ['timestamp'],
-          'desc',
-        ),
+        orderBy(newNotifications, ['timestamp'], 'desc'),
       );
     } catch (e) {
-      this.logger.error('Unable to sync notifications with remote', e, sessionMetadata);
+      this.logger.error(
+        'Unable to sync notifications with remote',
+        e,
+        sessionMetadata,
+      );
     }
   }
 

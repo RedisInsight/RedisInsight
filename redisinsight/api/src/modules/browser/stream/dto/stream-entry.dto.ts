@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  ArrayNotEmpty, IsArray, IsDefined, IsNotEmpty, IsString, ValidateNested,
+  ArrayNotEmpty,
+  IsArray,
+  IsDefined,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
 } from 'class-validator';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
@@ -44,7 +49,10 @@ export class StreamEntryDto {
   @ApiProperty({
     type: Object,
     description: 'Entry fields',
-    example: [{ name: 'field1', value: 'value1' }, { name: 'field2', value: 'value2' }],
+    example: [
+      { name: 'field1', value: 'value1' },
+      { name: 'field2', value: 'value2' },
+    ],
   })
   @IsDefined()
   @IsNotEmpty()

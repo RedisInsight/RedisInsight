@@ -17,19 +17,29 @@ const { server, request, constants, rte } = deps;
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
   request(server).post(`/${constants.API.DATABASES}/${instanceId}/keys`);
 
-const responseSchema = Joi.array().items(Joi.object().keys({
-  total: Joi.number().integer().required(),
-  scanned: Joi.number().integer().required(),
-  cursor: Joi.number().integer().required(),
-  host: Joi.string(),
-  port: Joi.number().integer(),
-  keys: Joi.array().items(Joi.object().keys({
-    name: JoiRedisString.required(),
-    type: Joi.string(),
-    ttl: Joi.number().integer(),
-    size: Joi.number().allow(null), // todo: fix size pipeline for cluster
-  })).required(),
-}).required()).required();
+const responseSchema = Joi.array()
+  .items(
+    Joi.object()
+      .keys({
+        total: Joi.number().integer().required(),
+        scanned: Joi.number().integer().required(),
+        cursor: Joi.number().integer().required(),
+        host: Joi.string(),
+        port: Joi.number().integer(),
+        keys: Joi.array()
+          .items(
+            Joi.object().keys({
+              name: JoiRedisString.required(),
+              type: Joi.string(),
+              ttl: Joi.number().integer(),
+              size: Joi.number().allow(null), // todo: fix size pipeline for cluster
+            }),
+          )
+          .required(),
+      })
+      .required(),
+  )
+  .required();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -48,17 +58,14 @@ const mainCheckFn = async (testCase) => {
   });
 };
 
-const isKeyInResponse = (body, keyName) => _.find(
-  body,
-  nodeKeys => _.find(
-    nodeKeys.keys,
-    (key) => _.isEqual(key.name, keyName),
-  ),
-)
+const isKeyInResponse = (body, keyName) =>
+  _.find(body, (nodeKeys) =>
+    _.find(nodeKeys.keys, (key) => _.isEqual(key.name, keyName)),
+  );
 
 describe('POST /databases/:id/keys', () => {
   // todo: add query validation
-  xdescribe('Validation', () => { });
+  xdescribe('Validation', () => {});
 
   describe('Modes', () => {
     requirements('!rte.bigData');
@@ -74,8 +81,10 @@ describe('POST /databases/:id/keys', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_UTF8_1)).to.not.eq(undefined);
-        }
+          expect(
+            isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_UTF8_1),
+          ).to.not.eq(undefined);
+        },
       },
       {
         name: 'Should return all keys in utf-8',
@@ -88,8 +97,10 @@ describe('POST /databases/:id/keys', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_UTF8_1)).to.not.eq(undefined);
-        }
+          expect(
+            isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_UTF8_1),
+          ).to.not.eq(undefined);
+        },
       },
       {
         name: 'Should return all keys in ascii',
@@ -102,8 +113,10 @@ describe('POST /databases/:id/keys', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_ASCII_1)).to.not.eq(undefined);
-        }
+          expect(
+            isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_ASCII_1),
+          ).to.not.eq(undefined);
+        },
       },
       {
         name: 'Should return all keys in buffer',
@@ -116,15 +129,16 @@ describe('POST /databases/:id/keys', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_BUF_OBJ_1)).to.not.eq(undefined);
-        }
+          expect(
+            isKeyInResponse(body, constants.TEST_STRING_KEY_BIN_BUF_OBJ_1),
+          ).to.not.eq(undefined);
+        },
       },
     ].map(mainCheckFn);
-
   });
 
   describe('Sandbox rte', () => {
-    requirements('!rte.sharedData')
+    requirements('!rte.sharedData');
     const KEYS_NUMBER = 1500; // 300 per each base type
     before(async () => await rte.data.generateNKeys(KEYS_NUMBER, true));
 
@@ -134,7 +148,7 @@ describe('POST /databases/:id/keys', () => {
           name: 'Should find key by exact name',
           data: {
             cursor: '0',
-            match: `${constants.TEST_RUN_ID}_str_key_1`
+            match: `${constants.TEST_RUN_ID}_str_key_1`,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -145,7 +159,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -154,14 +168,16 @@ describe('POST /databases/:id/keys', () => {
             expect(result.total).to.eql(KEYS_NUMBER);
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.eq(1);
-            expect(result.keys[0].name).to.eq(`${constants.TEST_RUN_ID}_str_key_1`);
-          }
+            expect(result.keys[0].name).to.eq(
+              `${constants.TEST_RUN_ID}_str_key_1`,
+            );
+          },
         },
         {
           name: 'Should not find key by exact name',
           data: {
             cursor: '0',
-            match: 'not_exist_key'
+            match: 'not_exist_key',
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -172,7 +188,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -181,7 +197,7 @@ describe('POST /databases/:id/keys', () => {
             expect(result.total).to.eql(KEYS_NUMBER);
             expect(result.scanned).gte(KEYS_NUMBER);
             expect(result.keys.length).to.eq(0);
-          }
+          },
         },
         {
           name: 'Should prevent full scan in one request',
@@ -201,22 +217,24 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
               result.numberOfShards++;
             });
             expect(result.total).to.eql(KEYS_NUMBER);
-            expect(result.scanned).to.gte(500).lte((500 + 100) * result.numberOfShards);
+            expect(result.scanned)
+              .to.gte(500)
+              .lte((500 + 100) * result.numberOfShards);
             expect(result.keys.length).to.eql(0);
-          }
+          },
         },
         {
           name: 'Should search by with * in the end',
           data: {
             cursor: '0',
-            match: `${constants.TEST_RUN_ID}_str_key_11*`
+            match: `${constants.TEST_RUN_ID}_str_key_11*`,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -227,7 +245,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -237,15 +255,17 @@ describe('POST /databases/:id/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(11);
             result.keys.map(({ name }) => {
-              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_11`)).to.eql(0);
-            })
-          }
+              expect(
+                name.indexOf(`${constants.TEST_RUN_ID}_str_key_11`),
+              ).to.eql(0);
+            });
+          },
         },
         {
           name: 'Should search by with * in the beginning',
           data: {
             cursor: '0',
-            match: '*_key_111'
+            match: '*_key_111',
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -256,7 +276,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -267,14 +287,14 @@ describe('POST /databases/:id/keys', () => {
             expect(result.keys.length).to.gte(5);
             result.keys.map(({ name }) => {
               expect(name.indexOf('_key_111')).to.eql(name.length - 8);
-            })
-          }
+            });
+          },
         },
         {
           name: 'Should search by with * in the middle',
           data: {
             cursor: '0',
-            match: `${constants.TEST_RUN_ID}_str_*_111`
+            match: `${constants.TEST_RUN_ID}_str_*_111`,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -285,7 +305,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -294,8 +314,10 @@ describe('POST /databases/:id/keys', () => {
             expect(result.total).to.eql(KEYS_NUMBER);
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.eq(1);
-            expect(result.keys[0].name).to.eq(`${constants.TEST_RUN_ID}_str_key_111`);
-          }
+            expect(result.keys[0].name).to.eq(
+              `${constants.TEST_RUN_ID}_str_key_111`,
+            );
+          },
         },
         {
           name: 'Should search by with ? in the end',
@@ -312,7 +334,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -322,12 +344,14 @@ describe('POST /databases/:id/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(10);
             result.keys.map(({ name, type, ttl, size }) => {
-              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
+              expect(
+                name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`),
+              ).to.eql(0);
               expect(type).to.be.a('string');
               expect(ttl).to.be.a('number');
               expect(size).to.be.a('number');
-            })
-          }
+            });
+          },
         },
         {
           name: 'Should search by with ? in the end (without keys info)',
@@ -345,7 +369,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -355,18 +379,20 @@ describe('POST /databases/:id/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(10);
             result.keys.map(({ name, type, ttl, size }) => {
-              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
+              expect(
+                name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`),
+              ).to.eql(0);
               expect(type).to.eql(undefined);
               expect(ttl).to.eql(undefined);
               expect(size).to.eql(undefined);
-            })
-          }
+            });
+          },
         },
         {
           name: 'Should search by with [a-b] glob pattern',
           data: {
             cursor: '0',
-            match: `${constants.TEST_RUN_ID}_str_key_10[0-5]`
+            match: `${constants.TEST_RUN_ID}_str_key_10[0-5]`,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -377,7 +403,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -387,15 +413,17 @@ describe('POST /databases/:id/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(1).lte(6);
             result.keys.map(({ name }) => {
-              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
-            })
-          }
+              expect(
+                name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`),
+              ).to.eql(0);
+            });
+          },
         },
         {
           name: 'Should search by with [a,b,c] glob pattern',
           data: {
             cursor: '0',
-            match: `${constants.TEST_RUN_ID}_str_key_10[0,1,2]`
+            match: `${constants.TEST_RUN_ID}_str_key_10[0,1,2]`,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -406,7 +434,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -416,15 +444,17 @@ describe('POST /databases/:id/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(1).lte(3);
             result.keys.map(({ name }) => {
-              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
-            })
-          }
+              expect(
+                name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`),
+              ).to.eql(0);
+            });
+          },
         },
         {
           name: 'Should search by with [abc] glob pattern',
           data: {
             cursor: '0',
-            match: `${constants.TEST_RUN_ID}_str_key_10[012]`
+            match: `${constants.TEST_RUN_ID}_str_key_10[012]`,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -435,7 +465,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -445,15 +475,17 @@ describe('POST /databases/:id/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(1).lte(3);
             result.keys.map(({ name }) => {
-              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
-            })
-          }
+              expect(
+                name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`),
+              ).to.eql(0);
+            });
+          },
         },
         {
           name: 'Should search by with [^a] glob pattern',
           data: {
             cursor: '0',
-            match: `${constants.TEST_RUN_ID}_str_key_10[^0]`
+            match: `${constants.TEST_RUN_ID}_str_key_10[^0]`,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -464,7 +496,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -474,15 +506,17 @@ describe('POST /databases/:id/keys', () => {
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(9);
             result.keys.map(({ name }) => {
-              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
-            })
-          }
+              expect(
+                name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`),
+              ).to.eql(0);
+            });
+          },
         },
         {
           name: 'Should search by with combined glob patterns',
           data: {
             cursor: '0',
-            match: `${constants.TEST_RUN_ID}_s?r_*_[1][0-5][^0]`
+            match: `${constants.TEST_RUN_ID}_s?r_*_[1][0-5][^0]`,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -493,7 +527,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -502,7 +536,7 @@ describe('POST /databases/:id/keys', () => {
             expect(result.total).to.eql(KEYS_NUMBER);
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(54);
-          }
+          },
         },
       ].map(mainCheckFn);
     });
@@ -521,7 +555,7 @@ describe('POST /databases/:id/keys', () => {
             expect(body[0].scanned).to.eql(200);
             expect(body[0].cursor).to.not.eql(0);
             expect(body[0].keys.length).to.gte(200);
-          }
+          },
         },
         {
           name: 'Should scan by provided count value',
@@ -538,7 +572,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -547,7 +581,7 @@ describe('POST /databases/:id/keys', () => {
             expect(result.total).to.eql(KEYS_NUMBER);
             expect(result.scanned).to.gte(500).lte(510);
             expect(result.keys.length).to.gte(500).lte(510);
-          }
+          },
         },
       ].map(mainCheckFn);
 
@@ -598,9 +632,11 @@ describe('POST /databases/:id/keys', () => {
               expect(body[0].cursor).to.not.eql(0);
               expect(body[0].keys.length).to.gte(200);
               expect(body[0].keys.length).to.lt(300);
-              body[0].keys.map(key => expect(key.name).to.have.string('str_key_'));
-              body[0].keys.map(key => expect(key.type).to.eql('string'));
-            }
+              body[0].keys.map((key) =>
+                expect(key.name).to.have.string('str_key_'),
+              );
+              body[0].keys.map((key) => expect(key.type).to.eql('string'));
+            },
           },
           {
             name: 'Should filter by type (list)',
@@ -618,9 +654,11 @@ describe('POST /databases/:id/keys', () => {
               expect(body[0].cursor).to.not.eql(0);
               expect(body[0].keys.length).to.gte(200);
               expect(body[0].keys.length).to.lt(300);
-              body[0].keys.map(key => expect(key.name).to.have.string('list_key_'));
-              body[0].keys.map(key => expect(key.type).to.eql('list'));
-            }
+              body[0].keys.map((key) =>
+                expect(key.name).to.have.string('list_key_'),
+              );
+              body[0].keys.map((key) => expect(key.type).to.eql('list'));
+            },
           },
           {
             name: 'Should filter by type (set)',
@@ -638,9 +676,11 @@ describe('POST /databases/:id/keys', () => {
               expect(body[0].cursor).to.not.eql(0);
               expect(body[0].keys.length).to.gte(200);
               expect(body[0].keys.length).to.lt(300);
-              body[0].keys.map(key => expect(key.name).to.have.string('set_key_'));
-              body[0].keys.map(key => expect(key.type).to.eql('set'));
-            }
+              body[0].keys.map((key) =>
+                expect(key.name).to.have.string('set_key_'),
+              );
+              body[0].keys.map((key) => expect(key.type).to.eql('set'));
+            },
           },
           {
             name: 'Should filter by type (zset)',
@@ -658,9 +698,11 @@ describe('POST /databases/:id/keys', () => {
               expect(body[0].cursor).to.not.eql(0);
               expect(body[0].keys.length).to.gte(200);
               expect(body[0].keys.length).to.lt(300);
-              body[0].keys.map(key => expect(key.name).to.have.string('zset_key_'));
-              body[0].keys.map(key => expect(key.type).to.eql('zset'));
-            }
+              body[0].keys.map((key) =>
+                expect(key.name).to.have.string('zset_key_'),
+              );
+              body[0].keys.map((key) => expect(key.type).to.eql('zset'));
+            },
           },
           {
             name: 'Should filter by type (hash)',
@@ -678,9 +720,11 @@ describe('POST /databases/:id/keys', () => {
               expect(body[0].cursor).to.not.eql(0);
               expect(body[0].keys.length).to.gte(200);
               expect(body[0].keys.length).to.lt(300);
-              body[0].keys.map(key => expect(key.name).to.have.string('hash_key_'));
-              body[0].keys.map(key => expect(key.type).to.eql('hash'));
-            }
+              body[0].keys.map((key) =>
+                expect(key.name).to.have.string('hash_key_'),
+              );
+              body[0].keys.map((key) => expect(key.type).to.eql('hash'));
+            },
           },
         ].map(mainCheckFn);
 
@@ -704,9 +748,11 @@ describe('POST /databases/:id/keys', () => {
                 expect(body[0].cursor).to.not.eql(0);
                 expect(body[0].keys.length).to.gte(200);
                 expect(body[0].keys.length).to.lt(300);
-                body[0].keys.map(key => expect(key.name).to.have.string('rejson_key_'));
-                body[0].keys.map(key => expect(key.type).to.eql('ReJSON-RL'));
-              }
+                body[0].keys.map((key) =>
+                  expect(key.name).to.have.string('rejson_key_'),
+                );
+                body[0].keys.map((key) => expect(key.type).to.eql('ReJSON-RL'));
+              },
             },
           ].map(mainCheckFn);
         });
@@ -730,9 +776,11 @@ describe('POST /databases/:id/keys', () => {
                 expect(body[0].cursor).to.not.eql(0);
                 expect(body[0].keys.length).to.gte(200);
                 expect(body[0].keys.length).to.lt(300);
-                body[0].keys.map(key => expect(key.name).to.have.string('ts_key_'));
-                body[0].keys.map(key => expect(key.type).to.eql('TSDB-TYPE'));
-              }
+                body[0].keys.map((key) =>
+                  expect(key.name).to.have.string('ts_key_'),
+                );
+                body[0].keys.map((key) => expect(key.type).to.eql('TSDB-TYPE'));
+              },
             },
           ].map(mainCheckFn);
         });
@@ -756,9 +804,11 @@ describe('POST /databases/:id/keys', () => {
                 expect(body[0].cursor).to.not.eql(0);
                 expect(body[0].keys.length).to.gte(200);
                 expect(body[0].keys.length).to.lt(300);
-                body[0].keys.map(key => expect(key.name).to.have.string('st_key_'));
-                body[0].keys.map(key => expect(key.type).to.eql('stream'));
-              }
+                body[0].keys.map((key) =>
+                  expect(key.name).to.have.string('st_key_'),
+                );
+                body[0].keys.map((key) => expect(key.type).to.eql('stream'));
+              },
             },
           ].map(mainCheckFn);
         });
@@ -782,9 +832,11 @@ describe('POST /databases/:id/keys', () => {
                 expect(body[0].cursor).to.not.eql(0);
                 expect(body[0].keys.length).to.gte(200);
                 expect(body[0].keys.length).to.lt(300);
-                body[0].keys.map(key => expect(key.name).to.have.string('graph_key_'));
-                body[0].keys.map(key => expect(key.type).to.eql('graphdata'));
-              }
+                body[0].keys.map((key) =>
+                  expect(key.name).to.have.string('graph_key_'),
+                );
+                body[0].keys.map((key) => expect(key.type).to.eql('graphdata'));
+              },
             },
           ].map(mainCheckFn);
         });
@@ -808,7 +860,7 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
@@ -818,7 +870,7 @@ describe('POST /databases/:id/keys', () => {
             expect(result.total).to.eql(KEYS_NUMBER);
             expect(result.scanned).to.eql(200 * result.numberOfShards);
             expect(result.keys.length).to.gte(200 * result.numberOfShards);
-          }
+          },
         },
         {
           name: 'Should scan by provided count value',
@@ -835,16 +887,20 @@ describe('POST /databases/:id/keys', () => {
               numberOfShards: 0,
             };
 
-            body.map(shard => {
+            body.map((shard) => {
               result.total += shard.total;
               result.scanned += shard.scanned;
               result.keys.push(...shard.keys);
               result.numberOfShards++;
             });
             expect(result.total).to.eql(KEYS_NUMBER);
-            expect(result.scanned).to.gte(300 * result.numberOfShards).lte(310 * result.numberOfShards);
-            expect(result.keys.length).to.gte(300 * result.numberOfShards).lte(310 * result.numberOfShards);
-          }
+            expect(result.scanned)
+              .to.gte(300 * result.numberOfShards)
+              .lte(310 * result.numberOfShards);
+            expect(result.keys.length)
+              .to.gte(300 * result.numberOfShards)
+              .lte(310 * result.numberOfShards);
+          },
         },
       ].map(mainCheckFn);
 
@@ -861,7 +917,7 @@ describe('POST /databases/:id/keys', () => {
             },
             checkFn: ({ body }) => {
               cursor = [];
-              body.map(shard => {
+              body.map((shard) => {
                 if (shard.cursor !== 0) {
                   cursor.push(`${shard.host}:${shard.port}@${shard.cursor}`);
                 }
@@ -896,7 +952,7 @@ describe('POST /databases/:id/keys', () => {
                 numberOfShards: 0,
               };
 
-              body.map(shard => {
+              body.map((shard) => {
                 result.total += shard.total;
                 result.scanned += shard.scanned;
                 result.keys.push(...shard.keys);
@@ -907,13 +963,13 @@ describe('POST /databases/:id/keys', () => {
               expect(result.total).to.eql(KEYS_NUMBER);
               expect(result.scanned).to.gte(200 * result.numberOfShards);
               expect(result.keys.length).to.gte(200);
-              result.keys.map(key => {
+              result.keys.map((key) => {
                 expect(key.name).to.have.string('str_key_');
                 expect(key.type).to.eql('string');
                 expect(key.size).to.be.a('number');
                 expect(key.ttl).to.be.a('number');
               });
-            }
+            },
           },
         ].map(mainCheckFn);
       });
@@ -937,7 +993,7 @@ describe('POST /databases/:id/keys', () => {
                 numberOfShards: 0,
               };
 
-              body.map(shard => {
+              body.map((shard) => {
                 result.total += shard.total;
                 result.scanned += shard.scanned;
                 result.keys.push(...shard.keys);
@@ -948,13 +1004,13 @@ describe('POST /databases/:id/keys', () => {
               expect(result.total).to.eql(KEYS_NUMBER);
               expect(result.scanned).to.gte(200 * result.numberOfShards);
               expect(result.keys.length).to.gte(200);
-              result.keys.map(key => {
+              result.keys.map((key) => {
                 expect(key.name).to.have.string('str_key_');
                 expect(key.ttl).to.eq(undefined);
                 expect(key.size).to.eq(undefined);
                 expect(key.type).to.eq('string');
               });
-            }
+            },
           },
         ].map(mainCheckFn);
       });
@@ -971,15 +1027,24 @@ describe('POST /databases/:id/keys', () => {
           },
           responseSchema,
           checkFn: async ({ body }) => {
-            const [stringNonASCIIKey] = _.filter(body.map(
-              nodeResult => nodeResult.keys.find((key) => key.name === constants.TEST_STRING_KEY_ASCII_UNICODE),
-            ), array => !!array);
+            const [stringNonASCIIKey] = _.filter(
+              body.map((nodeResult) =>
+                nodeResult.keys.find(
+                  (key) => key.name === constants.TEST_STRING_KEY_ASCII_UNICODE,
+                ),
+              ),
+              (array) => !!array,
+            );
 
-            expect(stringNonASCIIKey.name).to.eq(constants.TEST_STRING_KEY_ASCII_UNICODE)
-            expect(stringNonASCIIKey.type).to.eq(constants.TEST_STRING_TYPE)
-            expect(stringNonASCIIKey.ttl).to.eq(-1)
-            expect(stringNonASCIIKey.size).to.gt(constants.TEST_STRING_KEY_ASCII_BUFFER.length)
-          }
+            expect(stringNonASCIIKey.name).to.eq(
+              constants.TEST_STRING_KEY_ASCII_UNICODE,
+            );
+            expect(stringNonASCIIKey.type).to.eq(constants.TEST_STRING_TYPE);
+            expect(stringNonASCIIKey.ttl).to.eq(-1);
+            expect(stringNonASCIIKey.size).to.gt(
+              constants.TEST_STRING_KEY_ASCII_BUFFER.length,
+            );
+          },
         },
       ].map(mainCheckFn);
     });
@@ -997,7 +1062,7 @@ describe('POST /databases/:id/keys', () => {
           name: 'Should scan all types',
           data: {
             cursor: '0',
-            match: key
+            match: key,
           },
           responseSchema,
           checkFn: ({ body }) => {
@@ -1006,7 +1071,7 @@ describe('POST /databases/:id/keys', () => {
             expect(body[0].cursor).to.eql(0);
             expect(body[0].keys.length).to.eql(1);
             expect(body[0].keys[0].name).to.eql(key);
-          }
+          },
         },
       ].map(mainCheckFn);
     });
@@ -1036,7 +1101,7 @@ describe('POST /databases/:id/keys', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -scan')
+        before: () => rte.data.setAclUserRules('~* +@all -scan'),
       },
     ].map(mainCheckFn);
   });

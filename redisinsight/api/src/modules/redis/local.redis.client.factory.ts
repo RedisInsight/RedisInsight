@@ -33,9 +33,13 @@ export class LocalRedisClientFactory extends RedisClientFactory {
         this.constantsProvider.getSystemSessionMetadata(),
         KnownFeatures.RedisClient,
       );
-      this.defaultConnectionStrategy = this.getConnectionStrategy(feature?.data?.strategy);
+      this.defaultConnectionStrategy = this.getConnectionStrategy(
+        feature?.data?.strategy,
+      );
     } catch (e) {
-      this.logger.warn('Unable to setup default strategy from the feature config');
+      this.logger.warn(
+        'Unable to setup default strategy from the feature config',
+      );
     }
   }
 }

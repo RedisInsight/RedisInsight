@@ -21,18 +21,20 @@ const logLevels = Object.keys(mockWinstonLogger);
 
 jest.spyOn(WinstonModule, 'createLogger').mockReturnValue(mockWinstonLogger);
 
-const getSessionMetadata = () => plainToInstance(SessionMetadata, {
-  userId: '123',
-  sessionId: 'test-session-id',
-});
+const getSessionMetadata = () =>
+  plainToInstance(SessionMetadata, {
+    userId: '123',
+    sessionId: 'test-session-id',
+  });
 
-const getClientMetadata = () => plainToInstance(ClientMetadata, {
-  sessionMetadata: getSessionMetadata(),
-  databaseId: 'db-123',
-  context: ClientContext.Browser,
-  uniqueId: 'unique-id',
-  db: 1,
-});
+const getClientMetadata = () =>
+  plainToInstance(ClientMetadata, {
+    sessionMetadata: getSessionMetadata(),
+    databaseId: 'db-123',
+    context: ClientContext.Browser,
+    uniqueId: 'unique-id',
+    db: 1,
+  });
 
 describe('AppLogger', () => {
   let logger: AppLogger;

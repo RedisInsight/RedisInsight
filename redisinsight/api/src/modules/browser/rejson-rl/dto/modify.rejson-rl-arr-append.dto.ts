@@ -1,8 +1,6 @@
 import { KeyDto } from 'src/modules/browser/keys/dto';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray, IsNotEmpty, IsString, Validate,
-} from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, Validate } from 'class-validator';
 import { SerializedJsonValidator } from 'src/validators';
 
 export class ModifyRejsonRlArrAppendDto extends KeyDto {

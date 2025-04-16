@@ -80,12 +80,17 @@ describe('RdiService', () => {
     it('should throw an error if Rdi instance is not found', async () => {
       repository.get.mockResolvedValue(undefined);
 
-      await expect(service.get('123')).rejects.toThrowError('RDI with id 123 was not found');
+      await expect(service.get('123')).rejects.toThrowError(
+        'RDI with id 123 was not found',
+      );
     });
   });
 
   describe('update', () => {
-    const rdiClientMetadata: RdiClientMetadata = { id: '123', sessionMetadata: undefined };
+    const rdiClientMetadata: RdiClientMetadata = {
+      id: '123',
+      sessionMetadata: undefined,
+    };
     it('should update an Rdi instance', async () => {
       const oldRd = Object.assign(new Rdi(), mockRdi);
       const newRd = Object.assign(new Rdi(), {
@@ -103,16 +108,22 @@ describe('RdiService', () => {
       const result = await service.update(rdiClientMetadata, dto);
 
       expect(repository.get).toHaveBeenCalledWith(rdiClientMetadata.id);
-      expect(repository.update).toHaveBeenCalledWith(rdiClientMetadata.id, newRd);
+      expect(repository.update).toHaveBeenCalledWith(
+        rdiClientMetadata.id,
+        newRd,
+      );
       expect(result).toEqual(newRd);
     });
 
     it('should create a client and delete rdis if updating connectionFields', async () => {
       const oldRd = Object.assign(new Rdi(), mockRdi);
-      const dto: UpdateRdiDto = Object.assign(new UpdateRdiDto(), RdiService.connectionFields.reduce((res, key) => {
-        res[key] = 'updated';
-        return res;
-      }, {}));
+      const dto: UpdateRdiDto = Object.assign(
+        new UpdateRdiDto(),
+        RdiService.connectionFields.reduce((res, key) => {
+          res[key] = 'updated';
+          return res;
+        }, {}),
+      );
       const newRd = Object.assign(new Rdi(), {
         ...mockRdi,
         ...dto,
@@ -125,8 +136,13 @@ describe('RdiService', () => {
       await service.update(rdiClientMetadata, dto);
 
       expect(RdiService.isConnectionAffected(dto)).toBeTruthy();
-      expect(rdiClientFactory.createClient).toHaveBeenCalledWith(rdiClientMetadata, newRd);
-      expect(rdiClientProvider.deleteManyByRdiId).toHaveBeenCalledWith(rdiClientMetadata.id);
+      expect(rdiClientFactory.createClient).toHaveBeenCalledWith(
+        rdiClientMetadata,
+        newRd,
+      );
+      expect(rdiClientProvider.deleteManyByRdiId).toHaveBeenCalledWith(
+        rdiClientMetadata.id,
+      );
     });
 
     it('should throw an error if update fails', async () => {
@@ -140,17 +156,21 @@ describe('RdiService', () => {
       rdiClientFactory.createClient.mockResolvedValue(undefined);
       rdiClientProvider.deleteManyByRdiId.mockResolvedValue(undefined);
 
-      await expect(service.update(rdiClientMetadata, dto)).rejects.toThrowError(wrapRdiPipelineError(error));
+      await expect(service.update(rdiClientMetadata, dto)).rejects.toThrowError(
+        wrapRdiPipelineError(error),
+      );
     });
   });
 
   describe('create', () => {
-    const validGetPipelineStatus = () => Promise.resolve({
-      components: {
-        processor:{
-          version: "test-version"
-        }
-      }});
+    const validGetPipelineStatus = () =>
+      Promise.resolve({
+        components: {
+          processor: {
+            version: 'test-version',
+          },
+        },
+      });
 
     it('should create an Rdi instance', async () => {
       const dto: CreateRdiDto = {
@@ -162,14 +182,16 @@ describe('RdiService', () => {
       const sessionMetadata = { userId: '123', sessionId: '789' };
       repository.create.mockResolvedValue(mockRdi);
       rdiClientFactory.createClient.mockReturnValue({
-        getPipelineStatus: validGetPipelineStatus
+        getPipelineStatus: validGetPipelineStatus,
       });
 
       const result = await service.create(sessionMetadata, dto);
 
       expect(result.name).toEqual(dto.name);
-      expect(rdiClientFactory.createClient).toHaveBeenCalledWith({ sessionMetadata, id: expect.any(String) },
-        expect.any(Rdi));
+      expect(rdiClientFactory.createClient).toHaveBeenCalledWith(
+        { sessionMetadata, id: expect.any(String) },
+        expect.any(Rdi),
+      );
     });
 
     it('should throw an error if create fails', async () => {
@@ -184,7 +206,9 @@ describe('RdiService', () => {
       repository.create.mockRejectedValue(error);
       rdiClientFactory.createClient.mockRejectedValue(error);
 
-      await expect(service.create(sessionMetadata, dto)).rejects.toThrowError(wrapRdiPipelineError(error));
+      await expect(service.create(sessionMetadata, dto)).rejects.toThrowError(
+        wrapRdiPipelineError(error),
+      );
     });
 
     it('should get the RDI version', async () => {
@@ -198,14 +222,16 @@ describe('RdiService', () => {
 
       repository.create.mockResolvedValue(mockRdi);
       rdiClientFactory.createClient.mockReturnValue({
-        getPipelineStatus: validGetPipelineStatus
+        getPipelineStatus: validGetPipelineStatus,
       });
 
       await service.create(sessionMetadata, dto);
 
-      expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({
-        version: 'test-version'
-      }))
+      expect(repository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          version: 'test-version',
+        }),
+      );
     });
 
     it('should get the default RDI version when other information is missing', async () => {
@@ -219,18 +245,21 @@ describe('RdiService', () => {
 
       repository.create.mockResolvedValue(mockRdi);
       rdiClientFactory.createClient.mockResolvedValue({
-        getPipelineStatus: () => Promise.resolve(({
-          components: {
-            // missing processor.version
-          }
-        }))
+        getPipelineStatus: () =>
+          Promise.resolve({
+            components: {
+              // missing processor.version
+            },
+          }),
       });
 
       await service.create(sessionMetadata, dto);
 
-      expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({
-        version: '-'
-      }))
+      expect(repository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          version: '-',
+        }),
+      );
     });
   });
 
@@ -239,44 +268,68 @@ describe('RdiService', () => {
       const ids = ['123', '456'];
       repository.delete.mockResolvedValue(undefined);
       rdiClientProvider.deleteManyByRdiId.mockResolvedValue(undefined);
-      jest.spyOn(analytics, 'sendRdiInstanceDeleted').mockResolvedValue(undefined as never);
+      jest
+        .spyOn(analytics, 'sendRdiInstanceDeleted')
+        .mockResolvedValue(undefined as never);
 
       await service.delete(mockSessionMetadata, ids);
 
       expect(repository.delete).toHaveBeenCalledWith(ids);
       expect(rdiClientProvider.deleteManyByRdiId).toHaveBeenCalledWith(ids[0]);
       expect(rdiClientProvider.deleteManyByRdiId).toHaveBeenCalledWith(ids[1]);
-      expect(analytics.sendRdiInstanceDeleted).toHaveBeenCalledWith(mockSessionMetadata, ids.length);
+      expect(analytics.sendRdiInstanceDeleted).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        ids.length,
+      );
     });
 
     it('should throw an error if delete fails', async () => {
       const ids = ['123', '456'];
       repository.delete.mockRejectedValue(new Error('Delete failed'));
-      rdiClientProvider.deleteManyByRdiId.mockRejectedValue(new Error('Delete client failed'));
-      jest.spyOn(analytics, 'sendRdiInstanceDeleted').mockResolvedValue(undefined as never);
+      rdiClientProvider.deleteManyByRdiId.mockRejectedValue(
+        new Error('Delete client failed'),
+      );
+      jest
+        .spyOn(analytics, 'sendRdiInstanceDeleted')
+        .mockResolvedValue(undefined as never);
 
-      await expect(service.delete(mockSessionMetadata, ids)).rejects.toThrowError('Internal Server Error');
-      expect(analytics.sendRdiInstanceDeleted)
-        .toHaveBeenCalledWith(mockSessionMetadata, ids.length, expect.any(String));
+      await expect(
+        service.delete(mockSessionMetadata, ids),
+      ).rejects.toThrowError('Internal Server Error');
+      expect(analytics.sendRdiInstanceDeleted).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        ids.length,
+        expect.any(String),
+      );
     });
   });
 
   describe('connect', () => {
     it('should connect to an Rdi instance', async () => {
-      const rdiClientMetadata: RdiClientMetadata = { id: '123', sessionMetadata: undefined };
+      const rdiClientMetadata: RdiClientMetadata = {
+        id: '123',
+        sessionMetadata: undefined,
+      };
       rdiClientProvider.getOrCreate.mockResolvedValue(undefined);
 
       await service.connect(rdiClientMetadata);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
     });
 
     it('should throw an error if connection fails', async () => {
-      const rdiClientMetadata: RdiClientMetadata = { id: '123', sessionMetadata: undefined };
+      const rdiClientMetadata: RdiClientMetadata = {
+        id: '123',
+        sessionMetadata: undefined,
+      };
       const error = new AxiosError('Connection failed');
       rdiClientProvider.getOrCreate.mockRejectedValue(error);
 
-      await expect(service.connect(rdiClientMetadata)).rejects.toThrowError(wrapRdiPipelineError(error));
+      await expect(service.connect(rdiClientMetadata)).rejects.toThrowError(
+        wrapRdiPipelineError(error),
+      );
     });
   });
 });

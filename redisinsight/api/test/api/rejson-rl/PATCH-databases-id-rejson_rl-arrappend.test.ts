@@ -8,23 +8,34 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).patch(`/${constants.API.DATABASES}/${instanceId}/rejson-rl/arrappend`);
+  request(server).patch(
+    `/${constants.API.DATABASES}/${instanceId}/rejson-rl/arrappend`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
-  data: Joi.array().items(Joi.string().required().messages({
-    'any.required': '{#label} should be a correct serialized json string',
-  }).label('data')).required().messages({
-    'any.required': '{#label} must be an array',
-    'array.sparse': 'each value in data must be a string',
-  }),
+  data: Joi.array()
+    .items(
+      Joi.string()
+        .required()
+        .messages({
+          'any.required': '{#label} should be a correct serialized json string',
+        })
+        .label('data'),
+    )
+    .required()
+    .messages({
+      'any.required': '{#label} must be an array',
+      'array.sparse': 'each value in data must be a string',
+    }),
   path: Joi.string().required().messages({
     'any.required': '{#label} should not be empty',
   }),
@@ -59,39 +70,58 @@ describe('PATCH /databases/:instanceId/rejson-rl/arrappend', () => {
             data: [...Buffer.from(constants.TEST_REJSON_KEY_2)],
           },
           data: [JSON.stringify([1, 2])],
-          path: '.'
+          path: '.',
         },
         statusCode: 200,
         after: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_2,'$'))
-          expect(json[0])
-            .to.eql([...constants.TEST_REJSON_VALUE_2, [1, 2]]);
-        }
+          const json = JSON.parse(
+            await rte.data.executeCommand(
+              'json.get',
+              constants.TEST_REJSON_KEY_2,
+              '$',
+            ),
+          );
+          expect(json[0]).to.eql([...constants.TEST_REJSON_VALUE_2, [1, 2]]);
+        },
       },
       {
         name: 'Should append multiple items into array.array',
         data: {
           keyName: constants.TEST_REJSON_KEY_2,
           data: [JSON.stringify(null), JSON.stringify('somestring')],
-          path: '$[1]'
+          path: '$[1]',
         },
         statusCode: 200,
         before: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_2, '$[1]'))
-          expect(json[0]).to.eql([1,2])
+          const json = JSON.parse(
+            await rte.data.executeCommand(
+              'json.get',
+              constants.TEST_REJSON_KEY_2,
+              '$[1]',
+            ),
+          );
+          expect(json[0]).to.eql([1, 2]);
         },
         after: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_2, '$'))
-          expect(json[0])
-            .to.eql([...constants.TEST_REJSON_VALUE_2, [1, 2, null, 'somestring']]);
-        }
+          const json = JSON.parse(
+            await rte.data.executeCommand(
+              'json.get',
+              constants.TEST_REJSON_KEY_2,
+              '$',
+            ),
+          );
+          expect(json[0]).to.eql([
+            ...constants.TEST_REJSON_VALUE_2,
+            [1, 2, null, 'somestring'],
+          ]);
+        },
       },
       {
         name: 'Should return BadRequest if try to append to not array item',
         data: {
           keyName: constants.TEST_REJSON_KEY_2,
           data: [JSON.stringify(constants.getRandomString())],
-          path: '$[1][1]'
+          path: '$[1][1]',
         },
         // todo: handle error to return 400 instead of 500 (BE)
         statusCode: 500,
@@ -105,7 +135,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/arrappend', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_2,
           data: JSON.stringify(constants.getRandomString()),
-          path: '$'
+          path: '$',
         },
         statusCode: 404,
         responseBody: {
@@ -128,7 +158,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/arrappend', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_2,
           data: [JSON.stringify([1, 2])],
-           path: '$'
+          path: '$',
         },
         statusCode: 200,
       },
@@ -145,7 +175,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/arrappend', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -json.arrappend')
+        before: () => rte.data.setAclUserRules('~* +@all -json.arrappend'),
       },
     ].map(mainCheckFn);
   });

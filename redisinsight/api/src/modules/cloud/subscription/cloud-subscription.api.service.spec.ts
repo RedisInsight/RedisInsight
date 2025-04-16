@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockCapiUnauthorizedError,
-  mockCloudApiAuthDto, mockCloudApiCloudRegions, mockCloudApiCsrfToken, mockCloudCapiKeyService,
+  mockCloudApiAuthDto,
+  mockCloudApiCloudRegions,
+  mockCloudApiCsrfToken,
+  mockCloudCapiKeyService,
   mockCloudSessionService,
   mockCloudSubscriptionApiProvider,
   mockCloudSubscriptionCapiService,
@@ -63,7 +66,8 @@ describe('CloudSubscriptionApiService', () => {
     capi = module.get(CloudSubscriptionCapiService);
     featureService = module.get(FeatureService);
 
-    when(mockedAxios.get).calledWith('/plans/cloud_regions', expect.anything())
+    when(mockedAxios.get)
+      .calledWith('/plans/cloud_regions', expect.anything())
       .mockResolvedValue({
         status: 200,
         data: mockCloudApiCloudRegions,
@@ -72,20 +76,26 @@ describe('CloudSubscriptionApiService', () => {
 
   describe('getSubscriptionPlans', () => {
     it('successfully get plans and cloud regions', async () => {
-      expect(await service.getSubscriptionPlans(mockSessionMetadata)).toEqual(mockSubscriptionPlanResponse);
+      expect(await service.getSubscriptionPlans(mockSessionMetadata)).toEqual(
+        mockSubscriptionPlanResponse,
+      );
     });
     it('successfully get plans and cloud regions from 2nd attempt', async () => {
-      when(mockedAxios.get).calledWith('/plans/cloud_regions', expect.anything())
+      when(mockedAxios.get)
+        .calledWith('/plans/cloud_regions', expect.anything())
         .mockRejectedValueOnce(mockCapiUnauthorizedError);
-      expect(await service.getSubscriptionPlans(mockSessionMetadata)).toEqual(mockSubscriptionPlanResponse);
+      expect(await service.getSubscriptionPlans(mockSessionMetadata)).toEqual(
+        mockSubscriptionPlanResponse,
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
-      when(mockedAxios.get).calledWith('/plans/cloud_regions', expect.anything())
+      when(mockedAxios.get)
+        .calledWith('/plans/cloud_regions', expect.anything())
         .mockRejectedValue(mockCapiUnauthorizedError);
 
-      await expect(service.getSubscriptionPlans(mockSessionMetadata)).rejects.toThrow(
-        CloudApiUnauthorizedException,
-      );
+      await expect(
+        service.getSubscriptionPlans(mockSessionMetadata),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
     });
 
     describe('filter', () => {
@@ -93,11 +103,13 @@ describe('CloudSubscriptionApiService', () => {
         featureService.getByName.mockResolvedValueOnce({
           flag: true,
           data: {
-            filterFreePlan: [{
-              field: 'name',
-              expression: '^(No HA?.)|(Cache?.)',
-              options: 'i',
-            }],
+            filterFreePlan: [
+              {
+                field: 'name',
+                expression: '^(No HA?.)|(Cache?.)',
+                options: 'i',
+              },
+            ],
           },
         });
       });
@@ -106,7 +118,9 @@ describe('CloudSubscriptionApiService', () => {
         capi.getSubscriptionsPlans.mockResolvedValueOnce([
           { name: 'some name', price: 0 },
         ]);
-        expect(await service.getSubscriptionPlans(mockSessionMetadata)).toEqual([]);
+        expect(await service.getSubscriptionPlans(mockSessionMetadata)).toEqual(
+          [],
+        );
       });
 
       it('filter only "no ha" and "cache" plans', async () => {
@@ -124,31 +138,36 @@ describe('CloudSubscriptionApiService', () => {
           { name: 'cache 30MB', price: 0 },
           { name: '', price: 0 },
         ]);
-        expect(await service.getSubscriptionPlans(mockSessionMetadata)).toEqual([
-          { name: 'No HA', price: 0 },
-          { name: 'No HA 30MB price:0', price: 0 },
-          { name: 'no ha 30MB', price: 0 },
-          { name: 'no ha', price: 0 },
-          { name: 'Cache', price: 0 },
-          { name: 'Cache 30MB', price: 0 },
-          { name: 'cache', price: 0 },
-          { name: 'cache 30MB', price: 0 },
-        ]);
+        expect(await service.getSubscriptionPlans(mockSessionMetadata)).toEqual(
+          [
+            { name: 'No HA', price: 0 },
+            { name: 'No HA 30MB price:0', price: 0 },
+            { name: 'no ha 30MB', price: 0 },
+            { name: 'no ha', price: 0 },
+            { name: 'Cache', price: 0 },
+            { name: 'Cache 30MB', price: 0 },
+            { name: 'cache', price: 0 },
+            { name: 'cache 30MB', price: 0 },
+          ],
+        );
       });
     });
   });
 
   describe('getCloudRegions', () => {
     it('successfully get cloud regions', async () => {
-      expect(await service['getCloudRegions'](mockCloudApiAuthDto)).toEqual(mockCloudSubscriptionRegions);
+      expect(await service['getCloudRegions'](mockCloudApiAuthDto)).toEqual(
+        mockCloudSubscriptionRegions,
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
-      when(mockedAxios.get).calledWith('/plans/cloud_regions', expect.anything())
+      when(mockedAxios.get)
+        .calledWith('/plans/cloud_regions', expect.anything())
         .mockRejectedValue(mockCapiUnauthorizedError);
 
-      await expect(service['getCloudRegions'](mockCloudApiAuthDto)).rejects.toThrow(
-        CloudApiUnauthorizedException,
-      );
+      await expect(
+        service['getCloudRegions'](mockCloudApiAuthDto),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
     });
   });
 });

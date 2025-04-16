@@ -5,9 +5,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Commands')
 @Controller('commands')
 export class CommandsController {
-  constructor(
-    private readonly commandsService: CommandsService,
-  ) {}
+  constructor(private readonly commandsService: CommandsService) {}
 
   @Get()
   async getAll(): Promise<Record<string, any>> {

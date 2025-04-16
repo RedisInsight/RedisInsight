@@ -1,8 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import {
-  IsEnum, IsNotEmpty, IsOptional, IsString,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { AiQueryIntermediateStep } from 'src/modules/ai/query/models/ai-query.intermediate-step';
 import { Default } from 'src/common/decorators';
 

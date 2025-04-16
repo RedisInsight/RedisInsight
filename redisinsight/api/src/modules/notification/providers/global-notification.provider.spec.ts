@@ -10,7 +10,10 @@ import {
 import { GlobalNotificationProvider } from 'src/modules/notification/providers/global-notification.provider';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import axios from 'axios';
-import { CreateNotificationDto, CreateNotificationsDto } from 'src/modules/notification/dto';
+import {
+  CreateNotificationDto,
+  CreateNotificationsDto,
+} from 'src/modules/notification/dto';
 import { InternalServerErrorException } from '@nestjs/common';
 import { NotificationRepository } from '../repositories/notification.repository';
 
@@ -39,7 +42,10 @@ describe('GlobalNotificationProvider', () => {
     service = await module.get(GlobalNotificationProvider);
     repository = await module.get(NotificationRepository);
 
-    getNotificationsFromRemoteSpy = jest.spyOn(service, 'getNotificationsFromRemote');
+    getNotificationsFromRemoteSpy = jest.spyOn(
+      service,
+      'getNotificationsFromRemote',
+    );
   });
 
   afterEach(() => {
@@ -60,10 +66,7 @@ describe('GlobalNotificationProvider', () => {
   describe('sync', () => {
     it('should add new notifications and update existing one and delete one', async () => {
       getNotificationsFromRemoteSpy.mockResolvedValueOnce({
-        notifications: [
-          mockNotification1UPD,
-          mockNotification2,
-        ],
+        notifications: [mockNotification1UPD, mockNotification2],
       });
 
       repository.getGlobalNotifications.mockResolvedValueOnce([
@@ -73,34 +76,37 @@ describe('GlobalNotificationProvider', () => {
       await service.sync(mockSessionMetadata);
 
       expect(repository.deleteGlobalNotifications).toHaveBeenCalledTimes(1);
-      expect(repository.deleteGlobalNotifications).toHaveBeenCalledWith(mockSessionMetadata);
+      expect(repository.deleteGlobalNotifications).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
 
-      expect(repository.insertNotifications).toHaveBeenCalledWith(mockSessionMetadata, [
-        mockNotification2,
-        mockNotification1UPD,
-      ]);
+      expect(repository.insertNotifications).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        [mockNotification2, mockNotification1UPD],
+      );
     });
   });
 
   describe('getNotificationsFromRemote', () => {
     it('should add new notifications and update existing one and delete one', async () => {
       mockedAxios.get.mockResolvedValue({
-        data: Buffer.from(JSON.stringify({
-          notifications: [
-            mockNotification1,
-            mockNotification2,
-          ],
-        })),
+        data: Buffer.from(
+          JSON.stringify({
+            notifications: [mockNotification1, mockNotification2],
+          }),
+        ),
       });
 
       const res = await service.getNotificationsFromRemote();
 
-      expect(res).toEqual(new CreateNotificationsDto({
-        notifications: [
-          new CreateNotificationDto({ ...mockNotification1 }),
-          new CreateNotificationDto({ ...mockNotification2 }),
-        ],
-      }));
+      expect(res).toEqual(
+        new CreateNotificationsDto({
+          notifications: [
+            new CreateNotificationDto({ ...mockNotification1 }),
+            new CreateNotificationDto({ ...mockNotification2 }),
+          ],
+        }),
+      );
     });
     it('should throw an error when incorrect data passed', async () => {
       mockedAxios.get.mockResolvedValue({

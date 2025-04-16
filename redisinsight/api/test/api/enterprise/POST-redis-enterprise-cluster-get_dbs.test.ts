@@ -1,7 +1,8 @@
 import { describe, it, deps, validateApiCall, requirements } from '../deps';
 const { request, server, constants } = deps;
 
-const endpoint = () => request(server).post(`/redis-enterprise/cluster/get-databases`);
+const endpoint = () =>
+  request(server).post(`/redis-enterprise/cluster/get-databases`);
 
 //todo: add response
 //{

@@ -1,8 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import {
-  IsBoolean, IsNotEmpty, IsOptional, IsString,
-} from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CaCertificate {
   @ApiProperty({
@@ -33,7 +31,8 @@ export class CaCertificate {
   certificate: string;
 
   @ApiPropertyOptional({
-    description: 'Whether the certificate was created from a file or environment variables at startup',
+    description:
+      'Whether the certificate was created from a file or environment variables at startup',
     type: Boolean,
   })
   @Expose()

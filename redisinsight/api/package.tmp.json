@@ -36,11 +36,7 @@
     "rimraf": "^3.0.2"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
+    "moduleFileExtensions": ["js", "json", "ts"],
     "rootDir": "src",
     "testRegex": ".spec.ts$",
     "transform": {
@@ -58,8 +54,6 @@
       "apiSrc/(.*)": "<rootDir>/$1",
       "tests/(.*)": "<rootDir>/__tests__/$1"
     },
-    "setupFilesAfterEnv": [
-      "../test/jest.setup.ts"
-    ]
+    "setupFilesAfterEnv": ["../test/jest.setup.ts"]
   }
 }

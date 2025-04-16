@@ -1,6 +1,4 @@
-import {
-  Column, Entity, PrimaryColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DataAsJsonString } from 'src/common/decorators';
 

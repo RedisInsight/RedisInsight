@@ -7,14 +7,20 @@ export abstract class FeatureService {
    * @param sessionMetadata
    * @param name
    */
-  abstract getByName(sessionMetadata: SessionMetadata, name: string): Promise<Feature>;
+  abstract getByName(
+    sessionMetadata: SessionMetadata,
+    name: string,
+  ): Promise<Feature>;
 
   /**
    * Check if feature enabled by feature name
    * @param sessionMetadata
    * @param name
    */
-  abstract isFeatureEnabled(sessionMetadata: SessionMetadata, name: string): Promise<boolean>;
+  abstract isFeatureEnabled(
+    sessionMetadata: SessionMetadata,
+    name: string,
+  ): Promise<boolean>;
 
   /**
    * Get features list with calculated flags and control numbers
@@ -26,5 +32,7 @@ export abstract class FeatureService {
    * Recalculate all feature flags based on existing config
    * @param sessionMetadata
    */
-  abstract recalculateFeatureFlags(sessionMetadata: SessionMetadata): Promise<void>;
+  abstract recalculateFeatureFlags(
+    sessionMetadata: SessionMetadata,
+  ): Promise<void>;
 }

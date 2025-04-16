@@ -7,7 +7,10 @@ import {
   RedisDataType,
 } from 'src/modules/browser/keys/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { IScannerNodeKeys, IScannerGetKeysArgs } from 'src/modules/browser/keys/scanner/scanner.interface';
+import {
+  IScannerNodeKeys,
+  IScannerGetKeysArgs,
+} from 'src/modules/browser/keys/scanner/scanner.interface';
 import { Injectable } from '@nestjs/common';
 import { ScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/scanner.strategy';
 import { RedisClient, RedisClientCommandReply } from 'src/modules/redis/client';
@@ -25,7 +28,10 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
    * @param keys
    * @protected
    */
-  private async getKeysTtl(client: RedisClient, keys: RedisString[]): Promise<number[]> {
+  private async getKeysTtl(
+    client: RedisClient,
+    keys: RedisString[],
+  ): Promise<number[]> {
     const result = await client.sendPipeline(
       keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
     );
@@ -39,11 +45,14 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
    * @param keys
    * @protected
    */
-  private async getKeysType(client: RedisClient, keys: RedisString[]): Promise<string[]> {
-    const result = await client.sendPipeline(
+  private async getKeysType(
+    client: RedisClient,
+    keys: RedisString[],
+  ): Promise<string[]> {
+    const result = (await client.sendPipeline(
       keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
       { replyEncoding: 'utf8' },
-    ) as [any, string][];
+    )) as [any, string][];
 
     return result.map((item: [ReplyError, any]) => (item[0] ? null : item[1]));
   }
@@ -54,15 +63,18 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
    * @param keys
    * @private
    */
-  private async getKeysSize(client: RedisClient, keys: RedisString[]): Promise<number[]> {
-    const result = await client.sendPipeline(
+  private async getKeysSize(
+    client: RedisClient,
+    keys: RedisString[],
+  ): Promise<number[]> {
+    const result = (await client.sendPipeline(
       keys.map((key) => [
         BrowserToolKeysCommands.MemoryUsage,
         key,
         'samples',
         '0',
       ]),
-    ) as [any, number][];
+    )) as [any, number][];
 
     return result.map((item: [ReplyError, any]) => (item[0] ? null : item[1]));
   }
@@ -79,21 +91,19 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
 
     let fullScanned = false;
     while (
-      (node.total >= 0 || isNull(node.total))
-      && !fullScanned
-      && node.keys.length < count
-      && (
-        node.scanned < scanThreshold
-      )
+      (node.total >= 0 || isNull(node.total)) &&
+      !fullScanned &&
+      node.keys.length < count &&
+      node.scanned < scanThreshold
     ) {
       let commandArgs = [`${node.cursor}`, 'MATCH', match, 'COUNT', COUNT];
       if (type) {
         commandArgs = [...commandArgs, 'TYPE', type];
       }
-      const execResult = await client.sendCommand([
+      const execResult = (await client.sendCommand([
         BrowserToolKeysCommands.Scan,
         ...commandArgs,
-      ]) as [string, RedisClientCommandReply[]];
+      ])) as [string, RedisClientCommandReply[]];
 
       const [nextCursor, keys] = execResult;
       // eslint-disable-next-line no-param-reassign
@@ -108,7 +118,10 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
   /**
    * @inheritDoc
    */
-  public async getKeys(client: RedisClient, args: IScannerGetKeysArgs): Promise<GetKeysWithDetailsResponse[]> {
+  public async getKeys(
+    client: RedisClient,
+    args: IScannerGetKeysArgs,
+  ): Promise<GetKeysWithDetailsResponse[]> {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
     const scanThreshold = args.scanThreshold || REDIS_SCAN_CONFIG.scanThreshold;
@@ -126,7 +139,13 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
       const keyName = Buffer.from(unescapeRedisGlob(match));
       node.cursor = 0;
       node.scanned = isNull(node.total) ? 1 : node.total;
-      node.keys = await this.getKeysInfo(client, [keyName], undefined, true, true);
+      node.keys = await this.getKeysInfo(
+        client,
+        [keyName],
+        undefined,
+        true,
+        true,
+      );
       node.keys = node.keys.filter((key: GetKeyInfoResponse) => {
         if (key.ttl === -2) {
           return false;
@@ -142,9 +161,18 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
     await this.scan(client, node, match, count, scanThreshold, args.type);
 
     if (node.keys.length && args.keysInfo) {
-      node.keys = await this.getKeysInfo(client, node.keys, args.type, true, true);
+      node.keys = await this.getKeysInfo(
+        client,
+        node.keys,
+        args.type,
+        true,
+        true,
+      );
     } else {
-      node.keys = node.keys.map((name) => ({ name, type: args.type || undefined }));
+      node.keys = node.keys.map((name) => ({
+        name,
+        type: args.type || undefined,
+      }));
     }
 
     // workaround for "pika" databases

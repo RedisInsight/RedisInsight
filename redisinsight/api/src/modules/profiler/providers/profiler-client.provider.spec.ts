@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import {
   mockDatabaseService,
-  mockLogFile, mockLogFileProvider, mockMonitorSettings,
+  mockLogFile,
+  mockLogFileProvider,
+  mockMonitorSettings,
   mockSessionMetadata,
   mockSocket,
   MockType,

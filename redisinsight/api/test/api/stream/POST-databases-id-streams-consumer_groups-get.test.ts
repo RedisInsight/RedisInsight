@@ -7,13 +7,16 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, JoiRedisString,
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups/get`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups/get`,
+  );
 
 const consumerGroupSchema = Joi.object().keys({
   name: JoiRedisString.required(),
@@ -72,7 +75,9 @@ describe('POST /databases/:instanceId/streams/consumer-groups/get', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body.length).to.eq(1);
-          expect(body[0].name).to.deep.eq(constants.TEST_STREAM_GROUP_BIN_BUF_OBJ_1);
+          expect(body[0].name).to.deep.eq(
+            constants.TEST_STREAM_GROUP_BIN_BUF_OBJ_1,
+          );
           expect(body[0].consumers).to.eq(0);
           expect(body[0].pending).to.eq(0);
           expect(body[0].lastDeliveredId).to.eq(constants.TEST_STREAM_ID_1);
@@ -136,7 +141,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/get', () => {
             expect(body[1].lastDeliveredId).to.eq(constants.TEST_STREAM_ID_1);
             expect(body[1].smallestPendingId).to.eq(null);
             expect(body[1].greatestPendingId).to.eq(null);
-          }
+          },
         },
         {
           name: 'Should return BadRequest error if key has another type',
@@ -204,7 +209,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
         {
           name: 'Should throw error if no permissions for "xpending" command',
@@ -217,7 +222,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xpending')
+          before: () => rte.data.setAclUserRules('~* +@all -xpending'),
         },
         {
           name: 'Should throw error if no permissions for "xinfo" command',
@@ -230,7 +235,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xinfo')
+          before: () => rte.data.setAclUserRules('~* +@all -xinfo'),
         },
       ].map(mainCheckFn);
     });

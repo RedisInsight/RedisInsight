@@ -1,6 +1,4 @@
-import {
-  Column, Entity, PrimaryColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { NotificationType } from 'src/modules/notification/constants';
 import { Expose } from 'class-transformer';
 

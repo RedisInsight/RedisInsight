@@ -1,6 +1,10 @@
 import { isNull, isNumber } from 'lodash';
 import { createClient, createCluster } from 'redis';
-import { IRedisClientCommandOptions, RedisClient, RedisClientCommand } from 'src/modules/redis/client';
+import {
+  IRedisClientCommandOptions,
+  RedisClient,
+  RedisClientCommand,
+} from 'src/modules/redis/client';
 import { RedisString } from 'src/common/constants';
 
 export type NodeRedis = ReturnType<typeof createClient>;
@@ -22,7 +26,9 @@ export abstract class NodeRedisClient extends RedisClient {
   }
 
   static prepareCommandArgs(args: RedisClientCommand): RedisString[] {
-    const strArgs = args.map((arg) => (isNumber(arg) ? arg.toString() : arg)) as string[];
+    const strArgs = args.map((arg) =>
+      isNumber(arg) ? arg.toString() : arg,
+    ) as string[];
     return [...strArgs.shift().split(' '), ...strArgs];
   }
 
@@ -36,11 +42,11 @@ export abstract class NodeRedisClient extends RedisClient {
   isConnected(): boolean {
     // todo: find a way
     return true;
-  //   try {
-  //     return this.client.status === 'ready';
-  //   } catch (e) {
-  //     return false;
-  //   }
+    //   try {
+    //     return this.client.status === 'ready';
+    //   } catch (e) {
+    //     return false;
+    //   }
   }
 
   /**
@@ -54,7 +60,7 @@ export abstract class NodeRedisClient extends RedisClient {
    * @inheritDoc
    */
   async subscribe(channel: string): Promise<void> {
-    const listener = (message: string, messageChannel : string) => {
+    const listener = (message: string, messageChannel: string) => {
       this.emit('message', messageChannel, message);
     };
     return this.client.subscribe(channel, listener);
@@ -64,7 +70,7 @@ export abstract class NodeRedisClient extends RedisClient {
    * @inheritDoc
    */
   async pSubscribe(channel: string): Promise<void> {
-    const listener = (message: string, messageChannel : string) => {
+    const listener = (message: string, messageChannel: string) => {
       this.emit('pmessage', channel, messageChannel, message);
     };
     return this.client.pSubscribe(channel, listener);

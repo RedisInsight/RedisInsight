@@ -2,7 +2,13 @@ import { CustomTutorialActions } from 'src/modules/custom-tutorial/models/custom
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import {
-  IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested,
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
 } from 'class-validator';
 
 export enum CustomTutorialManifestType {
@@ -12,13 +18,13 @@ export enum CustomTutorialManifestType {
 }
 
 export interface ICustomTutorialManifest {
-  id: string,
-  type: CustomTutorialManifestType,
-  label: string,
-  children?: Record<string, ICustomTutorialManifest>,
-  args?: Record<string, any>,
-  _actions?: CustomTutorialActions[],
-  _path?: string,
+  id: string;
+  type: CustomTutorialManifestType;
+  label: string;
+  children?: Record<string, ICustomTutorialManifest>;
+  args?: Record<string, any>;
+  _actions?: CustomTutorialActions[];
+  _path?: string;
 }
 
 export class CustomTutorialManifestArgs {

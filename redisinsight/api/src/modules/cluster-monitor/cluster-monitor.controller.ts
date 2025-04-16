@@ -25,7 +25,8 @@ export class ClusterMonitorController {
   async getClusterDetails(
     @ClientMetadataParam({
       ignoreDbIndex: true,
-    }) clientMetadata: ClientMetadata,
+    })
+    clientMetadata: ClientMetadata,
   ): Promise<ClusterDetails> {
     return this.clusterMonitorService.getClusterDetails(clientMetadata);
   }

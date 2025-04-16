@@ -17,10 +17,10 @@ export enum RedisClientLib {
 }
 
 export interface IRedisConnectionOptions {
-  useRetry?: boolean,
-  connectionName?: string,
-  clientLib?: RedisClientLib,
-  enableReadyCheck?: boolean,
+  useRetry?: boolean;
+  connectionName?: string;
+  clientLib?: RedisClientLib;
+  enableReadyCheck?: boolean;
 }
 
 @Injectable()
@@ -49,7 +49,9 @@ export abstract class RedisClientFactory {
    * @param strategy
    * @private
    */
-  public getConnectionStrategy(strategy?: RedisClientLib): RedisConnectionStrategy {
+  public getConnectionStrategy(
+    strategy?: RedisClientLib,
+  ): RedisConnectionStrategy {
     switch (strategy || REDIS_CLIENTS_CONFIG.forceStrategy) {
       case RedisClientLib.NODE_REDIS:
         return this.nodeRedisConnectionStrategy;
@@ -80,7 +82,11 @@ export abstract class RedisClientFactory {
     // try sentinel connection
     if (database.sentinelMaster) {
       try {
-        return connectionStrategy.createSentinelClient(clientMetadata, database, opts);
+        return connectionStrategy.createSentinelClient(
+          clientMetadata,
+          database,
+          opts,
+        );
       } catch (e) {
         // ignore error
       }
@@ -88,13 +94,21 @@ export abstract class RedisClientFactory {
 
     // try cluster connection
     try {
-      return await connectionStrategy.createClusterClient(clientMetadata, database, opts);
+      return await connectionStrategy.createClusterClient(
+        clientMetadata,
+        database,
+        opts,
+      );
     } catch (e) {
       // ignore error
     }
 
     // Standalone in any other case
-    return connectionStrategy.createStandaloneClient(clientMetadata, database, opts);
+    return connectionStrategy.createStandaloneClient(
+      clientMetadata,
+      database,
+      opts,
+    );
   }
 
   /**
@@ -126,7 +140,11 @@ export abstract class RedisClientFactory {
 
     switch (database.connectionType) {
       case ConnectionType.STANDALONE:
-        client = await connectionStrategy.createStandaloneClient(clientMetadata, database, opts);
+        client = await connectionStrategy.createStandaloneClient(
+          clientMetadata,
+          database,
+          opts,
+        );
         break;
       case ConnectionType.CLUSTER:
         if (database.forceStandalone) {
@@ -135,23 +153,41 @@ export abstract class RedisClientFactory {
             database,
           });
           // if force standalone, ignore connectionType
-          client = await connectionStrategy.createStandaloneClient(clientMetadata, database, opts);
+          client = await connectionStrategy.createStandaloneClient(
+            clientMetadata,
+            database,
+            opts,
+          );
         } else {
-          client = await connectionStrategy.createClusterClient(clientMetadata, database, opts);
+          client = await connectionStrategy.createClusterClient(
+            clientMetadata,
+            database,
+            opts,
+          );
         }
         break;
       case ConnectionType.SENTINEL:
-        client = await connectionStrategy.createSentinelClient(clientMetadata, database, opts);
+        client = await connectionStrategy.createSentinelClient(
+          clientMetadata,
+          database,
+          opts,
+        );
         break;
       default:
         // AUTO
-        client = await this.createClientAutomatically(clientMetadata, database, opts);
+        client = await this.createClientAutomatically(
+          clientMetadata,
+          database,
+          opts,
+        );
     }
 
     return client;
   }
 
-  static prepareConnectionOptions(options: IRedisConnectionOptions = {}): IRedisConnectionOptions {
+  static prepareConnectionOptions(
+    options: IRedisConnectionOptions = {},
+  ): IRedisConnectionOptions {
     return {
       useRetry: true,
       // todo: generate connection name based on clientMetadata

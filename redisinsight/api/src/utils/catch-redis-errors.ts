@@ -20,12 +20,14 @@ import { RedisClientCommandReply } from 'src/modules/redis/client';
 export const isCertError = (error: ReplyError): boolean => {
   try {
     const errorCodesArray: string[] = Object.values(CertificatesErrorCodes);
-    return errorCodesArray.includes(error.code)
-      || error.code?.includes(CertificatesErrorCodes.OSSLError)
-      || error.message.includes('SSL')
-      || error.message.includes(CertificatesErrorCodes.OSSLError)
-      || error.message.includes(CertificatesErrorCodes.IncorrectCertificates)
-      || error.message.includes('ERR unencrypted connection is prohibited');
+    return (
+      errorCodesArray.includes(error.code) ||
+      error.code?.includes(CertificatesErrorCodes.OSSLError) ||
+      error.message.includes('SSL') ||
+      error.message.includes(CertificatesErrorCodes.OSSLError) ||
+      error.message.includes(CertificatesErrorCodes.IncorrectCertificates) ||
+      error.message.includes('ERR unencrypted connection is prohibited')
+    );
   } catch (e) {
     return false;
   }
@@ -33,7 +35,7 @@ export const isCertError = (error: ReplyError): boolean => {
 
 export const getRedisConnectionException = (
   error: ReplyError,
-  connectionOptions: { host: string, port: number },
+  connectionOptions: { host: string; port: number },
   errorPlaceholder: string = '',
 ): HttpException => {
   const { host, port } = connectionOptions;
@@ -55,16 +57,16 @@ export const getRedisConnectionException = (
     }
 
     if (
-      error.message.includes(RedisErrorCodes.Timeout)
-      || error.message.includes('timed out')
+      error.message.includes(RedisErrorCodes.Timeout) ||
+      error.message.includes('timed out')
     ) {
       return new GatewayTimeoutException(ERROR_MESSAGES.CONNECTION_TIMEOUT);
     }
 
     if (
-      error.message.includes(RedisErrorCodes.InvalidPassword)
-      || error.message.includes(RedisErrorCodes.AuthRequired)
-      || error.message === 'ERR invalid password'
+      error.message.includes(RedisErrorCodes.InvalidPassword) ||
+      error.message.includes(RedisErrorCodes.AuthRequired) ||
+      error.message === 'ERR invalid password'
     ) {
       return new UnauthorizedException(ERROR_MESSAGES.AUTHENTICATION_FAILED());
     }
@@ -82,10 +84,10 @@ export const getRedisConnectionException = (
     }
 
     if (
-      error.message.includes(RedisErrorCodes.ConnectionRefused)
-      || error.message.includes(RedisErrorCodes.ConnectionNotFound)
-      || error.message.includes(RedisErrorCodes.DNSTimeoutError)
-      || error?.code === RedisErrorCodes.ConnectionReset
+      error.message.includes(RedisErrorCodes.ConnectionRefused) ||
+      error.message.includes(RedisErrorCodes.ConnectionNotFound) ||
+      error.message.includes(RedisErrorCodes.DNSTimeoutError) ||
+      error?.code === RedisErrorCodes.ConnectionReset
     ) {
       return new ServiceUnavailableException(
         ERROR_MESSAGES.INCORRECT_DATABASE_URL(
@@ -94,7 +96,9 @@ export const getRedisConnectionException = (
       );
     }
     if (isCertError(error)) {
-      const message = ERROR_MESSAGES.INCORRECT_CERTIFICATES(errorPlaceholder || `${host}:${port}`);
+      const message = ERROR_MESSAGES.INCORRECT_CERTIFICATES(
+        errorPlaceholder || `${host}:${port}`,
+      );
       return new BadRequestException(message);
     }
   }
@@ -112,7 +116,7 @@ export const getRedisConnectionException = (
 
 export const catchRedisConnectionError = (
   error: ReplyError,
-  connectionOptions: { host: string, port: number },
+  connectionOptions: { host: string; port: number },
   errorPlaceholder: string = '',
 ): HttpException => {
   throw getRedisConnectionException(error, connectionOptions, errorPlaceholder);
@@ -121,10 +125,10 @@ export const catchRedisConnectionError = (
 export const catchAclError = (error: ReplyError): HttpException => {
   // todo: Move to other place after refactoring
   if (
-    error instanceof EncryptionServiceErrorException
-    || error instanceof NotFoundException
-    || error instanceof ConflictException
-    || error instanceof ServiceUnavailableException
+    error instanceof EncryptionServiceErrorException ||
+    error instanceof NotFoundException ||
+    error instanceof ConflictException ||
+    error instanceof ServiceUnavailableException
   ) {
     throw error;
   }
@@ -133,9 +137,9 @@ export const catchAclError = (error: ReplyError): HttpException => {
     throw new ForbiddenException(error.message);
   }
   if (error?.previousErrors?.length) {
-    const noPermError: ReplyError = error.previousErrors.find((
-      errorItem,
-    ) => errorItem?.message?.includes(RedisErrorCodes.NoPermission));
+    const noPermError: ReplyError = error.previousErrors.find((errorItem) =>
+      errorItem?.message?.includes(RedisErrorCodes.NoPermission),
+    );
 
     if (noPermError) {
       throw new ForbiddenException(noPermError.message);

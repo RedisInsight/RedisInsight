@@ -1,14 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import {
-  mockStandaloneRedisClient,
-} from 'src/__mocks__';
+import { mockStandaloneRedisClient } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import { ZSetKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/z-set.key-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
@@ -24,9 +25,7 @@ describe('ZSetKeyInfoStrategy', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ZSetKeyInfoStrategy,
-      ],
+      providers: [ZSetKeyInfoStrategy],
     }).compile();
 
     strategy = module.get(ZSetKeyInfoStrategy);
@@ -76,9 +75,7 @@ describe('ZSetKeyInfoStrategy', () => {
           .calledWith([
             [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           ])
-          .mockResolvedValueOnce([
-            [null, 50],
-          ]);
+          .mockResolvedValueOnce([[null, 50]]);
 
         const result = await strategy.getInfo(
           mockStandaloneRedisClient,
@@ -111,9 +108,7 @@ describe('ZSetKeyInfoStrategy', () => {
           .calledWith([
             [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           ])
-          .mockResolvedValueOnce([
-            [replyError, null],
-          ]);
+          .mockResolvedValueOnce([[replyError, null]]);
 
         const result = await strategy.getInfo(
           mockStandaloneRedisClient,
@@ -146,7 +141,7 @@ describe('ZSetKeyInfoStrategy', () => {
         expect(result).toEqual({
           ...getKeyInfoResponse,
           length: 50000,
-          size: -1
+          size: -1,
         });
       });
     });

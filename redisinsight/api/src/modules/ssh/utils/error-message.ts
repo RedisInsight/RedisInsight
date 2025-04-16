@@ -15,16 +15,20 @@
  * @returns {string} A sanitized, safe-to-display message.
  */
 export const sanitizeMessage = (message: string): string => {
-  if (message.includes('Cannot parse privateKey')) return 'Cannot parse privateKey'
+  if (message.includes('Cannot parse privateKey'))
+    return 'Cannot parse privateKey';
 
-  const coreError = message.match(/(getaddrinfo|connect|read|write)\s+[A-Z_]+/)
-  if (coreError) return coreError[0]
+  const coreError = message.match(/(getaddrinfo|connect|read|write)\s+[A-Z_]+/);
+  if (coreError) return coreError[0];
 
   // Remove known sensitive patterns from the message
   const regexes = [
     /(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?/g, // IP + port
-    /\b[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+/g,  // Hostname/domain
+    /\b[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+/g, // Hostname/domain
   ];
 
-  return regexes.reduce((sanitized, regex) => sanitized.replace(regex, '').trim(), message);
+  return regexes.reduce(
+    (sanitized, regex) => sanitized.replace(regex, '').trim(),
+    message,
+  );
 };

@@ -7,9 +7,7 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import axios from 'axios';
 import { RecommendationServerEvents } from 'src/modules/database-recommendation/constants';
-import {
-  DatabaseRecommendationEmitter,
-} from 'src/modules/database-recommendation/providers/database-recommendation.emitter';
+import { DatabaseRecommendationEmitter } from 'src/modules/database-recommendation/providers/database-recommendation.emitter';
 import { DatabaseRecommendationRepository } from '../repositories/database-recommendation.repository';
 
 jest.mock('axios');
@@ -48,7 +46,9 @@ describe('DatabaseRecommendationEmitter', () => {
     }).compile();
 
     service = await module.get(DatabaseRecommendationEmitter);
-    databaseRecommendationRepositoryMock = await module.get(DatabaseRecommendationRepository);
+    databaseRecommendationRepositoryMock = await module.get(
+      DatabaseRecommendationRepository,
+    );
     emitter = await module.get(EventEmitter2);
     emitter.emit.mockReset();
   });
@@ -62,11 +62,16 @@ describe('DatabaseRecommendationEmitter', () => {
       expect(emitter.emit).toHaveBeenCalledTimes(0);
     });
     it('should emit 2 new recommendations', async () => {
-      databaseRecommendationRepositoryMock.getTotalUnread.mockResolvedValueOnce(2);
+      databaseRecommendationRepositoryMock.getTotalUnread.mockResolvedValueOnce(
+        2,
+      );
 
       await service.newRecommendation({
         sessionMetadata: mockSessionMetadata,
-        recommendations: [mockDatabaseRecommendation, mockDatabaseRecommendation],
+        recommendations: [
+          mockDatabaseRecommendation,
+          mockDatabaseRecommendation,
+        ],
       });
       expect(emitter.emit).toHaveBeenCalledTimes(1);
       expect(emitter.emit).toHaveBeenCalledWith(
@@ -82,7 +87,9 @@ describe('DatabaseRecommendationEmitter', () => {
       );
     });
     it('should log an error but not fail', async () => {
-      databaseRecommendationRepositoryMock.getTotalUnread.mockRejectedValueOnce(new Error('test error'));
+      databaseRecommendationRepositoryMock.getTotalUnread.mockRejectedValueOnce(
+        new Error('test error'),
+      );
 
       await service.newRecommendation({
         sessionMetadata: mockSessionMetadata,

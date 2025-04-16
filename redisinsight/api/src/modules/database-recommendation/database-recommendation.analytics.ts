@@ -18,15 +18,11 @@ export class DatabaseRecommendationAnalytics extends TelemetryBaseService {
     database: Database,
   ): void {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.InsightsTipGenerated,
-        {
-          recommendationName: recommendation.name,
-          databaseId: database.id,
-          provider: database.provider,
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.InsightsTipGenerated, {
+        recommendationName: recommendation.name,
+        databaseId: database.id,
+        provider: database.provider,
+      });
     } catch (e) {
       // ignore
     }

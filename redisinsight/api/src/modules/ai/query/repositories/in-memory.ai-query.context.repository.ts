@@ -5,7 +5,8 @@ import { AiQueryContextRepository } from 'src/modules/ai/query/repositories/ai-q
 
 @Injectable()
 export class InMemoryAiQueryContextRepository extends AiQueryContextRepository {
-  private chats: Record<string, { index: Record<string, object>, db: object }> = {};
+  private chats: Record<string, { index: Record<string, object>; db: object }> =
+    {};
 
   static getChatId(databaseId: string, accountId: string) {
     return `${databaseId}_${accountId}`;
@@ -19,7 +20,10 @@ export class InMemoryAiQueryContextRepository extends AiQueryContextRepository {
     databaseId: string,
     accountId: string,
   ): Promise<object> {
-    const chatId = InMemoryAiQueryContextRepository.getChatId(databaseId, accountId);
+    const chatId = InMemoryAiQueryContextRepository.getChatId(
+      databaseId,
+      accountId,
+    );
 
     return get(this.chats, [chatId, 'db'], null);
   }
@@ -33,7 +37,10 @@ export class InMemoryAiQueryContextRepository extends AiQueryContextRepository {
     accountId: string,
     context: object,
   ): Promise<object> {
-    const chatId = InMemoryAiQueryContextRepository.getChatId(databaseId, accountId);
+    const chatId = InMemoryAiQueryContextRepository.getChatId(
+      databaseId,
+      accountId,
+    );
 
     set(this.chats, [chatId, 'db'], context);
 
@@ -49,7 +56,10 @@ export class InMemoryAiQueryContextRepository extends AiQueryContextRepository {
     accountId: string,
     index: string,
   ): Promise<object> {
-    const chatId = InMemoryAiQueryContextRepository.getChatId(databaseId, accountId);
+    const chatId = InMemoryAiQueryContextRepository.getChatId(
+      databaseId,
+      accountId,
+    );
 
     return get(this.chats, [chatId, 'index', index], null);
   }
@@ -64,7 +74,10 @@ export class InMemoryAiQueryContextRepository extends AiQueryContextRepository {
     index: string,
     context: object,
   ): Promise<object> {
-    const chatId = InMemoryAiQueryContextRepository.getChatId(databaseId, accountId);
+    const chatId = InMemoryAiQueryContextRepository.getChatId(
+      databaseId,
+      accountId,
+    );
 
     set(this.chats, [chatId, 'index', index], context);
 
@@ -75,11 +88,14 @@ export class InMemoryAiQueryContextRepository extends AiQueryContextRepository {
    * @inheritdoc
    */
   async reset(
-    _sessionMetadata:SessionMetadata,
-    databaseId:string,
-    accountId:string,
+    _sessionMetadata: SessionMetadata,
+    databaseId: string,
+    accountId: string,
   ): Promise<void> {
-    const chatId = InMemoryAiQueryContextRepository.getChatId(databaseId, accountId);
+    const chatId = InMemoryAiQueryContextRepository.getChatId(
+      databaseId,
+      accountId,
+    );
 
     unset(this.chats, [chatId]);
   }

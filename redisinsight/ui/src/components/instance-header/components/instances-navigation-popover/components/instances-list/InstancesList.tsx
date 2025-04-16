@@ -1,10 +1,5 @@
 import React, { useState } from 'react'
-import {
-  EuiListGroup,
-  EuiListGroupItem,
-  EuiLoadingSpinner,
-  EuiText,
-} from '@elastic/eui'
+import { EuiLoadingSpinner, EuiText } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { checkConnectToRdiInstanceAction } from 'uiSrc/slices/rdi/instances'
@@ -131,36 +126,13 @@ const InstancesList = ({
 
   return (
     <div className={styles.listContainer}>
-      <EuiListGroup flush maxWidth="none" gutterSize="none" color="subdued">
-        {instances?.map((instance) => (
-          <EuiListGroupItem
-            color="subdued"
-            className={styles.item}
-            isActive={isInstanceActive(instance.id)}
-            disabled={loading}
-            key={instance.id}
-            label={
-              <EuiText style={{ display: 'flex', alignItems: 'center' }}>
-                {loading && instance?.id === selected && (
-                  <EuiLoadingSpinner size="s" className={styles.loading} />
-                )}
-                {instance.name} {getDbIndex(instance.db)}
-              </EuiText>
-            }
-            onClick={() => {
-              setSelected(instance.id)
-              goToPage(instance)
-            }}
-            data-testid={`instance-item-${instance.id}`}
-          />
-        ))}
-      </EuiListGroup>
       <ListGroup flush maxWidth="none" gap="none">
         {instances?.map((instance) => (
           <ListGroupItem
+            color="subdued"
             className={styles.item}
             isActive={isInstanceActive(instance.id)}
-            disabled={loading}
+            isDisabled={loading}
             key={instance.id}
             label={
               <EuiText style={{ display: 'flex', alignItems: 'center' }}>

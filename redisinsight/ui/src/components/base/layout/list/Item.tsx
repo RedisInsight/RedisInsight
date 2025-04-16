@@ -1,94 +1,15 @@
-import React, {
-  HTMLAttributes,
-  MouseEventHandler,
-  ReactElement,
-  ReactNode,
-} from 'react'
+import React, { ButtonHTMLAttributes, ReactElement } from 'react'
 // todo replace with redis-ui icon
-import { IconType } from '@elastic/eui/src/components/icon/icon'
-import classNames from 'classnames'
 import { EuiIcon } from '@elastic/eui'
-
-/*
-            className={styles.item}
-            isActive={isInstanceActive(instance.id)}
-            disabled={loading}
-            key={instance.id}
-            label={
-            onClick={() => {
-      iconType={iconType}
-      size={size}
-      wrapText
-      color="subdued"
-
-
- */
-type IconProps = Omit<React.ComponentPropsWithRef<'span'>, 'type'>
-export const SIZES = ['xs', 's', 'm', 'l'] as const
-export type ListGroupItemSize = (typeof SIZES)[number]
-
-export const COLORS = ['primary', 'text', 'subdued'] as const
-export type ListGroupItemColor = (typeof COLORS)[number]
-
-export type ListGroupItemProps = HTMLAttributes<HTMLLIElement> & {
-  /**
-   * Size of the label text
-   */
-  size?: ListGroupItemSize
-  /**
-   * By default, the item will get the color `text`.
-   * You can customize the color of the item by passing a color name.
-   */
-  color?: ListGroupItemColor
-
-  /**
-   * Content to be displayed in the list item
-   */
-  label: ReactNode
-
-  /**
-   * Apply styles indicating an item is active
-   */
-  isActive?: boolean
-
-  /**
-   * Apply styles indicating an item is disabled
-   */
-  isDisabled?: boolean
-
-  /**
-   * Adds `EuiIcon` of `EuiIcon.type`
-   */
-  iconType?: IconType
-
-  /**
-   * Further extend the props applied to EuiIcon
-   */
-  iconProps?: Omit<IconProps, 'type'>
-
-  /**
-   * Custom node to pass as the icon. Cannot be used in conjunction
-   * with `iconType` and `iconProps`.
-   */
-  icon?: ReactElement
-
-  /**
-   * Make the list item label a button.
-   * While permitted, `href` and `onClick` should not be used together in most cases and may create problems.
-   */
-  onClick?: MouseEventHandler<HTMLButtonElement>
-
-  /**
-   * Allow link text to wrap
-   */
-  wrapText?: boolean
-
-  /**
-   * Pass-through ref reference specifically for targeting
-   * instances where the item content is rendered as a `button`
-   */
-  buttonRef?: React.Ref<HTMLButtonElement>
-}
+import cx from 'classnames'
+import {
+  ListClassNames,
+  ListGroupItemProps,
+  StyledItem,
+  StyledItemInnerButton,
+  StyledItemInnerSpan,
+  StyledLabel,
+} from 'uiSrc/components/base/layout/list/list.styles'
 
 const Item = ({
   size,
@@ -102,18 +23,26 @@ const Item = ({
   iconProps,
   icon,
   wrapText,
+  buttonRef,
   ...rest
 }: ListGroupItemProps) => {
   const isClickable = !!onClick
-  let iconNode
+  let iconNode: ReactElement
 
   if (iconType) {
+    // todo replace with redis-ui icon
     iconNode = (
       <EuiIcon
         color="inherit" // forces the icon to inherit its parent color
         {...iconProps}
         type={iconType}
-        className={classNames('euiListGroupItem__icon', iconProps?.className)}
+        className={cx('euiListGroupItem__icon', iconProps?.className)}
+        style={{
+          ...iconProps?.style,
+          marginRight: 'var(--size-m)',
+          flexGrow: 0,
+          flexShrink: 0,
+        }}
       />
     )
 
@@ -124,17 +53,66 @@ const Item = ({
     }
   } else if (icon) {
     iconNode = icon
+  } else {
+    iconNode = <></>
   }
   const labelContent = !wrapText ? (
-    <span className="label" title={label ? label.toString() : ''}>
+    <StyledLabel className="label" title={label} wrapText={wrapText}>
       {label}
-    </span>
+    </StyledLabel>
   ) : (
-    <span className="label">{label}</span>
+    <StyledLabel className="label" wrapText={wrapText}>
+      {label}
+    </StyledLabel>
   )
+  let itemContent: ReactElement
+  if (isDisabled || onClick) {
+    itemContent = (
+      <StyledItemInnerButton
+        type="button"
+        className={ListClassNames.listItemButton}
+        disabled={isDisabled}
+        onClick={onClick}
+        isActive={isActive}
+        isDisabled={isDisabled}
+        isClickable={isClickable}
+        size={size}
+        ref={buttonRef}
+        {...(rest as Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'>)}
+      >
+        {iconNode !== undefined && iconNode}
+        {labelContent}
+      </StyledItemInnerButton>
+    )
+  } else {
+    itemContent = (
+      <StyledItemInnerSpan
+        isClickable={false}
+        isActive={isActive}
+        isDisabled={isDisabled}
+        className={ListClassNames.listItemText}
+        {...rest}
+      >
+        {iconNode !== undefined && iconNode}
+        {labelContent}
+      </StyledItemInnerSpan>
+    )
+  }
+
   return (
-    // todo
-    <li {...rest}>{children}</li>
+    <StyledItem
+      size={size}
+      isActive={isActive}
+      isDisabled={isDisabled}
+      onClick={onClick}
+      color={rest.color}
+      className={cx(ListClassNames.listItem, className, {
+        [ListClassNames.listItemActive]: isActive,
+        [ListClassNames.listItemDisabled]: isDisabled,
+      })}
+    >
+      {itemContent}
+    </StyledItem>
   )
 }
 

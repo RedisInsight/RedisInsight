@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
-import { EuiListGroupItem, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { truncateText } from 'uiSrc/utils'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
+import { Item as ListItem } from 'uiSrc/components/base/layout/list'
 
 import styles from './styles.module.scss'
 import './styles.scss'
@@ -54,20 +55,22 @@ const InternalLink = (props: Props) => {
     </EuiToolTip>
   )
   return (
-    <EuiListGroupItem
-      data-testid={`internal-link-${testId}`}
-      className={cx(
-        styles.link,
-        iconPosition === 'right' && styles.linkIconRight,
-      )}
-      iconType={iconType}
-      size={size}
-      wrapText
-      color="subdued"
-      onClick={handleOpenPage}
-      label={content}
-      {...rest}
-    />
+    <>
+      <ListItem
+        data-testid={`internal-link-${testId}`}
+        className={cx(
+          styles.link,
+          iconPosition === 'right' && styles.linkIconRight,
+        )}
+        iconType={iconType}
+        size={size}
+        wrapText
+        color="subdued"
+        onClick={handleOpenPage}
+        label={content}
+        {...rest}
+      />
+    </>
   )
 }
 

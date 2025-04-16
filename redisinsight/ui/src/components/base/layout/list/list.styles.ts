@@ -83,7 +83,7 @@ type IconProps = Omit<EuiIconProps, 'type'>
 export const SIZES = ['xs', 's', 'm', 'l'] as const
 export type ListGroupItemSize = (typeof SIZES)[number]
 
-export const COLORS = ['primary', 'text', 'subdued'] as const
+export const COLORS = ['primary', 'text', 'subdued', 'ghost'] as const
 export type ListGroupItemColor = (typeof COLORS)[number]
 
 export type ListGroupItemProps = HTMLAttributes<HTMLLIElement> & {
@@ -145,20 +145,6 @@ export type ListGroupItemProps = HTMLAttributes<HTMLLIElement> & {
    */
   buttonRef?: Ref<HTMLButtonElement>
 }
-/*
-            className={styles.item}
-            isActive={isInstanceActive(instance.id)}
-            disabled={loading}
-            key={instance.id}
-            label={
-            onClick={() => {
-      iconType={iconType}
-      size={size}
-      wrapText
-      color="subdued"
-
-
- */
 
 const listItemStyles = {
   size: {
@@ -185,6 +171,9 @@ const listItemStyles = {
     subdued: css`
       background-color: var(--color-subdued);
     `,
+    ghost: css`
+      background-color: var(--color-ghost);
+    `,
   },
   clickable: {
     primary: css`
@@ -205,12 +194,22 @@ const listItemStyles = {
         background-color: var(--color-subdued);
       }
     `,
+    ghost: css`
+      &:hover,
+      &:focus-within {
+        background-color: var(--color-ghost);
+      }
+    `,
   },
 }
 export const StyledItem = styled.li<Omit<ListGroupItemProps, 'label'>>`
   // todo: take from theme
   --color-primary: #e8f1ff;
   --color-subdued: #e8f1ff;
+  --color-ghost: rgba(255, 255, 255, 0.1);
+  --color-primary-text: #006bb4;
+  --color-ghost-text: #fff;
+  --color-text-text: #343741;
   --background-hover: rgba(23 80 186 / 0.04);
   --background-primary-hover: rgba(23 80 186 / 0.04);
   --border-radius-small: 4px;
@@ -274,16 +273,16 @@ const listItemInnerStyles = {
   colors: {
     // Colors
     primary: css`
-      color: #ffffff;
+      color: var(--color-primary-text);
     `,
     text: css`
-      color: #ffffff;
+      color: var(--color-text-text);
     `,
     subdued: css`
-      color: #7186a8;
+      color: var(--euiTextSubduedColor);
     `,
     ghost: css`
-      color: #ffffff;
+      color: var(--color-ghost-text);
     `,
   },
   variants: {
@@ -367,7 +366,9 @@ export const StyledLabel = styled.span<{
   children: ReactNode
   className?: string
   title?: string | ReactNode
+  ref?: React.Ref<HTMLSpanElement>
 }>`
+  white-space: break-spaces;
   ${({ wrapText }) =>
     wrapText ? listItemLabelStyles.wrapText : listItemLabelStyles.truncate}
 `

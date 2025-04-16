@@ -571,7 +571,6 @@ const DatabasesListWrapper = (props: Props) => {
     ...predefinedInstances,
     ...instances
   ]
-  console.log('+++test', databaseManagementFeature?.flag)
 
   return (
     <EuiResizeObserver onResize={onResize}>

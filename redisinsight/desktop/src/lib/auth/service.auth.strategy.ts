@@ -12,6 +12,7 @@ export class ServiceAuthStrategy implements AuthStrategy {
 
   private beApp: any
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
   public static getInstance(beApp?: any): ServiceAuthStrategy {

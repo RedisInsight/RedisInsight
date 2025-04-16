@@ -6,6 +6,7 @@ const gotTheLock =
 
 // deep link open (win)
 if (!gotTheLock) {
+  // eslint-disable-next-line no-console
   console.log("Didn't get the lock. Quiting...")
   app.quit()
 } else {

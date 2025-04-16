@@ -269,5 +269,6 @@ describe('DatabasesListWrapper', () => {
 
     expect(queryByTestId(/^edit-instance-/i)).not.toBeInTheDocument()
     expect(queryByTestId(/^delete-instance-/i)).not.toBeInTheDocument()
+    expect(queryByTestId(/^manage-instance-tags-/i)).not.toBeInTheDocument()
   })
 })

@@ -25,7 +25,6 @@ export type FocusTrapProps = Omit<
   | 'noIsolation'
   | 'returnFocus'
 > & {
-  // For some reason, Storybook doesn't register these props if they're Pick<>'d
   className?: string
   style?: CSSProperties
   /**

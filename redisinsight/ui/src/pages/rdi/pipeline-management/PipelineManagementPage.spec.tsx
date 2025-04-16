@@ -54,11 +54,9 @@ describe('PipelineManagementPage', () => {
   it('should redirect to the config tab by default', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
-    reactRouterDom.useLocation = jest
-      .fn()
-      .mockReturnValue({
-        pathname: Pages.rdiPipelineManagement('rdiInstanceId'),
-      })
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({
+      pathname: Pages.rdiPipelineManagement('rdiInstanceId'),
+    })
 
     render(
       <BrowserRouter>
@@ -75,11 +73,9 @@ describe('PipelineManagementPage', () => {
     })
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
-    reactRouterDom.useLocation = jest
-      .fn()
-      .mockReturnValue({
-        pathname: Pages.rdiPipelineManagement('rdiInstanceId'),
-      })
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({
+      pathname: Pages.rdiPipelineManagement('rdiInstanceId'),
+    })
 
     render(
       <BrowserRouter>

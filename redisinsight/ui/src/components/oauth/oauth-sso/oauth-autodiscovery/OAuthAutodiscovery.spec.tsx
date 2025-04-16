@@ -160,7 +160,6 @@ describe('OAuthAutodiscovery', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({
       data: MOCK_OAUTH_USER_PROFILE,
     })

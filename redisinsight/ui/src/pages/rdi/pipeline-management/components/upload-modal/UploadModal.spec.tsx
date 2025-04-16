@@ -255,12 +255,10 @@ describe('UploadModal', () => {
       configValidationErrors: [],
       jobsValidationErrors: {},
     })
-
     ;(rdiPipelineSelector as jest.Mock).mockReturnValue({
       loading: false,
       schema: 'mockSchema',
     })
-
     ;(loadAsync as jest.Mock).mockReturnValue({
       file: jest.fn().mockReturnValue({
         async: jest.fn().mockReturnValue('mockConfig'),

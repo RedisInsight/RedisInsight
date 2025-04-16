@@ -1611,7 +1611,6 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       source.links = source.links
         ? Array.from(new Set([...source.links, target.labels[0]]))
         : [target.labels[0]]
-
       ;(r.source = source),
         (r.target = target),
         (r.naturalAngle = 0),

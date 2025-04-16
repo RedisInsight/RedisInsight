@@ -55,12 +55,10 @@ export const mockSshTunnelClient = jest.fn(() => ({
   on: jest.fn(),
 }));
 export const mockSshTunnelServer = jest.fn(() => ({
-  address: jest
-    .fn()
-    .mockReturnValue({
-      address: mockSshOptionsBasic.host,
-      port: mockSshOptionsBasic.port,
-    }),
+  address: jest.fn().mockReturnValue({
+    address: mockSshOptionsBasic.host,
+    port: mockSshOptionsBasic.port,
+  }),
   on: jest.fn(),
 }));
 export const mockSshTunnel = new SshTunnel(

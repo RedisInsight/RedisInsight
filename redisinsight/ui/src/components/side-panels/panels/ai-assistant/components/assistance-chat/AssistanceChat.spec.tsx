@@ -100,7 +100,6 @@ describe('AssistanceChat', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(aiAssistantChatSelector as jest.Mock).mockReturnValue({
       id: '1',
       messages: [],
@@ -137,7 +136,6 @@ describe('AssistanceChat', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(aiAssistantChatSelector as jest.Mock).mockReturnValue({
       id: '1',
       messages: [],
@@ -189,7 +187,6 @@ describe('AssistanceChat', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(aiAssistantChatSelector as jest.Mock).mockReturnValue({
       id: '1',
       messages: [{}],

@@ -100,7 +100,6 @@ describe('PipelineActions', () => {
       configValidationErrors: [],
       jobsValidationErrors: {},
     })
-
     ;(rdiPipelineSelector as jest.Mock).mockReturnValueOnce({
       loading: false,
       schema: 'test-schema',
@@ -129,7 +128,6 @@ describe('PipelineActions', () => {
       configValidationErrors: ['Error'],
       jobsValidationErrors: [],
     })
-
     ;(rdiPipelineSelector as jest.Mock).mockReturnValueOnce({
       config: '',
       jobs: '',
@@ -153,7 +151,6 @@ describe('PipelineActions', () => {
       configValidationErrors: ['Error'],
       jobsValidationErrors: [],
     })
-
     ;(rdiPipelineSelector as jest.Mock).mockReturnValueOnce({
       config: undefined,
       jobs: undefined,
@@ -177,7 +174,6 @@ describe('PipelineActions', () => {
       configValidationErrors: ['Missing field'],
       jobsValidationErrors: ['Invalid job config'],
     })
-
     ;(rdiPipelineSelector as jest.Mock).mockReturnValueOnce({
       loading: false,
       schema: 'test-schema',

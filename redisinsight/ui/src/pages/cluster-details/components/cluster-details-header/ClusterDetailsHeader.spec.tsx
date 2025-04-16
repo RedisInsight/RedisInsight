@@ -57,7 +57,6 @@ describe('ClusterDetailsHeader', () => {
       loading: false,
       error: '',
     }))
-
     ;(connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
       username: Array.from({ length: 50 }).fill('test').join(''),
     }))

@@ -152,7 +152,6 @@ describe('ChatsWrapper', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(aiChatSelector as jest.Mock).mockReturnValue({
       activeTab: AiChatType.Query,
     })

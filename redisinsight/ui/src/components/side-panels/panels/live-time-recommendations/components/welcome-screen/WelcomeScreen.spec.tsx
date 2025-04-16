@@ -77,7 +77,6 @@ describe('WelcomeScreen', () => {
     const afterRenderActions = [...store.getActions()]
 
     fireEvent.click(screen.getByTestId('insights-db-analysis-link'))
-
     ;(async () => {
       await waitForEuiPopoverVisible()
     })()

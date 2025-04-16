@@ -203,7 +203,6 @@ describe('DatabasesListWrapper', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_LINK_CLICKED,
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -258,7 +257,6 @@ describe('DatabasesListWrapper', () => {
         customModules: [],
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -329,7 +327,6 @@ describe('DatabasesListWrapper', () => {
         databaseId: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -369,7 +366,6 @@ describe('DatabasesListWrapper', () => {
         databaseId: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 

@@ -155,7 +155,6 @@ describe('DatabasesListWrapper', () => {
         numberOfDatabases: 1,
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -183,7 +182,6 @@ describe('DatabasesListWrapper', () => {
         numberOfDatabases: 1,
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -211,7 +209,6 @@ describe('DatabasesListWrapper', () => {
         databaseId: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -237,7 +234,6 @@ describe('DatabasesListWrapper', () => {
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SORTED,
       eventData: { field: 'name', direction: 'asc' },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -264,7 +260,6 @@ describe('DatabasesListWrapper', () => {
         ids: ['a0db1bc8-a353-4c43-a856-b72f4811d2d4'],
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

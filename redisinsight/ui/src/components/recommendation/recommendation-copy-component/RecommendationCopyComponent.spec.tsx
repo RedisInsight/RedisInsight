@@ -51,7 +51,6 @@ describe('RecommendationCopyComponent', () => {
         provider: mockProvider,
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -80,7 +79,6 @@ describe('RecommendationCopyComponent', () => {
         provider: mockProvider,
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

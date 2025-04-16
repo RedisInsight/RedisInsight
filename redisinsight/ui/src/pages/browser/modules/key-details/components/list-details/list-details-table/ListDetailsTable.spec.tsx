@@ -158,7 +158,6 @@ describe('ListDetailsTable', () => {
       ;(listDataSelector as jest.Mock).mockImplementationOnce(
         listDataSelectorMock,
       )
-
       ;(connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
         compressor: KeyValueCompressor.GZIP,
       }))

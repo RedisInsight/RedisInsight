@@ -99,7 +99,6 @@ describe('OAuthJobs', () => {
     }))
 
     rerender(<OAuthJobs />)
-
     ;(oauthCloudJobSelector as jest.Mock).mockImplementation(() => ({
       status: CloudJobStatus.Running,
       id: '123',

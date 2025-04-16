@@ -134,7 +134,6 @@ describe('RedisUploadButton', () => {
         databaseId: 'instanceId',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     await act(() => {
@@ -147,7 +146,6 @@ describe('RedisUploadButton', () => {
         databaseId: 'instanceId',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('upload-data-bulk-apply-btn'))
@@ -158,7 +156,6 @@ describe('RedisUploadButton', () => {
         databaseId: 'instanceId',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

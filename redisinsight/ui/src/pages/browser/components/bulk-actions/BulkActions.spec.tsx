@@ -177,7 +177,6 @@ describe('BulkActions', () => {
           action: 'delete',
         },
       })
-
       ;(sendEventTelemetry as jest.Mock).mockRestore()
 
       fireEvent.click(screen.getByTestId('bulk-action-cancel-btn'))

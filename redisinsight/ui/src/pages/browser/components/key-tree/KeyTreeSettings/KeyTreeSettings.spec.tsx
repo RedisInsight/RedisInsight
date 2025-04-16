@@ -116,7 +116,6 @@ describe('KeyTreeDelimiter', () => {
     await act(() => {
       fireEvent.click(screen.getByTestId(SORTING_DESC_ITEM))
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     await act(() => {
@@ -150,7 +149,6 @@ describe('KeyTreeDelimiter', () => {
         sorting: SortOrder.DESC,
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 

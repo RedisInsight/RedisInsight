@@ -127,7 +127,6 @@ describe('ExpertChat', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(aiExpertChatSelector as jest.Mock).mockReturnValueOnce({
       loading: false,
       messages: [],
@@ -164,7 +163,6 @@ describe('ExpertChat', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(aiExpertChatSelector as jest.Mock).mockReturnValue({
       loading: false,
       messages: [],
@@ -219,7 +217,6 @@ describe('ExpertChat', () => {
     )
     apiService.delete = jest.fn().mockResolvedValueOnce({ status: 200 })
     apiService.get = jest.fn().mockResolvedValueOnce({ status: 200, data: [] })
-
     ;(aiExpertChatSelector as jest.Mock).mockReturnValue({
       loading: false,
       messages: [{}],
@@ -257,7 +254,6 @@ describe('ExpertChat', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(aiExpertChatSelector as jest.Mock).mockReturnValue({
       loading: false,
       messages: [],

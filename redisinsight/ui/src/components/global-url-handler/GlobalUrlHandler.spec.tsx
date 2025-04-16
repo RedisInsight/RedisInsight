@@ -96,7 +96,6 @@ describe('GlobalUrlHandler', () => {
       config: {},
       isShowConsents: false,
     })
-
     ;(appRedirectionSelector as jest.Mock).mockReturnValueOnce({ fromUrl })
 
     await act(async () => {
@@ -128,7 +127,6 @@ describe('GlobalUrlHandler', () => {
       config: {},
       isShowConsents: false,
     })
-
     ;(appRedirectionSelector as jest.Mock).mockReturnValueOnce({ fromUrl })
 
     await act(async () => {
@@ -156,7 +154,6 @@ describe('GlobalUrlHandler', () => {
       config: {},
       isShowConsents: false,
     })
-
     ;(appRedirectionSelector as jest.Mock).mockReturnValueOnce({
       fromUrl,
     })

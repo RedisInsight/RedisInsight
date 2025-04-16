@@ -146,7 +146,6 @@ describe('OAuthUserProfile', () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
     })
     await waitForEuiPopoverVisible()
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('profile-import-cloud-databases'))
@@ -163,7 +162,6 @@ describe('OAuthUserProfile', () => {
       setSSOFlow(OAuthSocialAction.Import),
       loadSubscriptionsRedisCloud(),
     ])
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -188,7 +186,6 @@ describe('OAuthUserProfile', () => {
       setInitialLoadingState(false),
       getUserInfo(),
     ])
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -202,7 +199,6 @@ describe('OAuthUserProfile', () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
     })
     await waitForEuiPopoverVisible()
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('cloud-console-link'))
@@ -210,7 +206,6 @@ describe('OAuthUserProfile', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_CONSOLE_CLICKED,
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 

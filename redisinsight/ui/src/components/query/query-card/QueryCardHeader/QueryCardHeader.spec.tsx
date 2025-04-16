@@ -99,7 +99,6 @@ describe('QueryCardHeader', () => {
         databaseId: INSTANCE_ID_MOCK,
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

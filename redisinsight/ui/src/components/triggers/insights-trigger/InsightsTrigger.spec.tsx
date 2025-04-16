@@ -88,7 +88,6 @@ describe('InsightsTrigger', () => {
     reactRouterDom.useLocation = jest
       .fn()
       .mockReturnValue({ pathname: Pages.browser('instanceId') })
-
     ;(recommendationsSelector as jest.Mock).mockReturnValue({
       isHighlighted: true,
     })
@@ -106,7 +105,6 @@ describe('InsightsTrigger', () => {
         tab: 'tips',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

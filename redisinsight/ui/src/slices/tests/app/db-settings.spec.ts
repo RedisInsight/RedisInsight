@@ -124,11 +124,9 @@ describe('DB Settings slices', () => {
   })
 
   it('fetchDbSettings should handle axios failure', async () => {
-    apiService.get = jest
-      .fn()
-      .mockRejectedValueOnce({
-        response: { data: { message: 'something went wrong' } },
-      })
+    apiService.get = jest.fn().mockRejectedValueOnce({
+      response: { data: { message: 'something went wrong' } },
+    })
     const successFn = jest.fn()
     const failFn = jest.fn()
     await store.dispatch<any>(fetchDBSettings('testDb', successFn, failFn))

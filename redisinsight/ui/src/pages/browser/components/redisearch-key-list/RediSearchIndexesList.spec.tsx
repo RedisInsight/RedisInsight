@@ -101,7 +101,6 @@ describe('RediSearchIndexesList', () => {
           },
         }),
     )
-
     ;(connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
       ...state.connections.instances.connectedInstance,
       loading: true,
@@ -118,7 +117,6 @@ describe('RediSearchIndexesList', () => {
 
   it('should render and call changeSearchMode if no RediSearch module', () => {
     localStorageService.set = jest.fn()
-
     ;(connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
       host: '123.123.2.2',
       modules: [],
@@ -181,7 +179,6 @@ describe('RediSearchIndexesList', () => {
     const fetchKeysMock = jest.fn()
 
     ;(fetchKeys as jest.Mock).mockReturnValue(fetchKeysMock)
-
     ;(redisearchListSelector as jest.Mock).mockReturnValue({
       data: [index],
       loading: false,

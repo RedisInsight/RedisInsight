@@ -94,7 +94,6 @@ describe('CloudCapiUnAuthorizedErrorContent', () => {
         source: OAuthSocialSource.ConfirmationMessage,
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

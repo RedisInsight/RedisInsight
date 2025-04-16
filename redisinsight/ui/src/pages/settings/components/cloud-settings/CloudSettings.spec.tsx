@@ -87,7 +87,6 @@ describe('CloudSettings', () => {
     apiService.delete = jest.fn().mockResolvedValueOnce({ status: 200 })
     const sendEventTelemetryMock = jest.fn()
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
-
     ;(oauthCapiKeysSelector as jest.Mock).mockReturnValue({
       data: OAUTH_CLOUD_CAPI_KEYS_DATA,
       loading: false,

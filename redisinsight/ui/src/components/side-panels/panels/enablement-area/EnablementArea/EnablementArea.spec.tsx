@@ -289,7 +289,6 @@ describe('EnablementArea', () => {
           databaseId: 'instanceId',
         },
       })
-
       ;(sendEventTelemetry as jest.Mock).mockRestore()
     })
 
@@ -306,7 +305,6 @@ describe('EnablementArea', () => {
         />,
       )
       fireEvent.click(screen.getByTestId('open-upload-tutorial-btn'))
-
       ;(sendEventTelemetry as jest.Mock).mockRestore()
 
       await act(() => {
@@ -326,7 +324,6 @@ describe('EnablementArea', () => {
           source: 'URL',
         },
       })
-
       ;(sendEventTelemetry as jest.Mock).mockRestore()
     })
 
@@ -360,7 +357,6 @@ describe('EnablementArea', () => {
           databaseId: 'instanceId',
         },
       })
-
       ;(sendEventTelemetry as jest.Mock).mockRestore()
     })
   })

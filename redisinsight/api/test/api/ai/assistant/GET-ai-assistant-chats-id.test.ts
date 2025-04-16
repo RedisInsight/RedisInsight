@@ -51,12 +51,10 @@ describe('GET /ai/assistant/chats/:id', () => {
     {
       name: 'Should return Unauthorized error',
       before: () => {
-        aiAssistantNock
-          .get('/history')
-          .replyWithError({
-            response: { status: 401 },
-            message: 'Custom unauthorized message',
-          });
+        aiAssistantNock.get('/history').replyWithError({
+          response: { status: 401 },
+          message: 'Custom unauthorized message',
+        });
       },
       statusCode: 401,
       responseBody: {

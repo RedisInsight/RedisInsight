@@ -142,7 +142,6 @@ describe('SidePanels', () => {
         totalUnread: 1,
       },
     }))
-
     ;(sidePanelsSelector as jest.Mock).mockReturnValue({
       openedPanel: ISidePanels.Insights,
     })
@@ -176,14 +175,12 @@ describe('SidePanels', () => {
     reactRouterDom.useParams = jest
       .fn()
       .mockReturnValue({ instanceId: undefined })
-
     ;(sidePanelsSelector as jest.Mock).mockReturnValue({
       openedPanel: ISidePanels.Insights,
     })
     ;(insightsPanelSelector as jest.Mock).mockReturnValue({
       tabSelected: 'tips',
     })
-
     ;(recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
       ...mockRecommendationsSelector,
       data: {
@@ -205,7 +202,6 @@ describe('SidePanels', () => {
     ;(insightsPanelSelector as jest.Mock).mockReturnValue({
       tabSelected: 'tips',
     })
-
     ;(recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
       ...mockRecommendationsSelector,
       data: {
@@ -229,7 +225,6 @@ describe('SidePanels', () => {
     reactRouterDom.useLocation = jest
       .fn()
       .mockReturnValue({ pathname: Pages.pubSub('instanceId') })
-
     ;(sidePanelsSelector as jest.Mock).mockReturnValue({
       openedPanel: ISidePanels.Insights,
     })
@@ -250,7 +245,6 @@ describe('SidePanels', () => {
         tab: 'tips',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -263,7 +257,6 @@ describe('SidePanels', () => {
     reactRouterDom.useLocation = jest
       .fn()
       .mockReturnValue({ pathname: Pages.pubSub('instanceId') })
-
     ;(sidePanelsSelector as jest.Mock).mockReturnValue({
       openedPanel: ISidePanels.Insights,
     })
@@ -283,7 +276,6 @@ describe('SidePanels', () => {
         currentTab: 'explore',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -292,7 +284,6 @@ describe('SidePanels', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(sidePanelsSelector as jest.Mock).mockReturnValue({
       openedPanel: ISidePanels.Insights,
     })
@@ -311,7 +302,6 @@ describe('SidePanels', () => {
         state: 'open',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
@@ -395,7 +385,6 @@ describe('SidePanels', () => {
         changeSidePanel(ISidePanels.Insights),
       ]
       expect(store.getActions()).toEqual(expectedActions)
-
       ;(getTutorialCapability as jest.Mock).mockRestore()
     })
     it('should call resetExplorePanelSearch if capability was not found', () => {

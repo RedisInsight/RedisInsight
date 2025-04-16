@@ -118,7 +118,6 @@ describe('ResultsLog', () => {
         name: 'success',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(

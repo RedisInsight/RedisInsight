@@ -52,7 +52,6 @@ describe('BulkActionsTabs', () => {
         action: BulkActionsType.Upload,
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('bulk-action-tab-delete'))
@@ -68,7 +67,6 @@ describe('BulkActionsTabs', () => {
         },
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

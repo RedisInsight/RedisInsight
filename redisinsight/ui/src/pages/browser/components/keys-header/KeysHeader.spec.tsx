@@ -27,7 +27,6 @@ beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
   store.clearActions()
-
   ;(keysSlice.keysSelector as jest.Mock).mockReturnValue({
     ...mockSelectorData,
   })

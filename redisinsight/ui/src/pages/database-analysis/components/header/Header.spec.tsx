@@ -128,7 +128,6 @@ describe('DatabaseAnalysisHeader', () => {
         provider: 'RE_CLOUD',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 

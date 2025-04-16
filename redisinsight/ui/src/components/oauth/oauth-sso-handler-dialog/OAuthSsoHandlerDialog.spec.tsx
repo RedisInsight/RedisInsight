@@ -112,7 +112,6 @@ describe('OAuthSsoHandlerDialog', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockImplementation(() => ({
       [FeatureFlags.cloudSso]: { flag: true },
     }))

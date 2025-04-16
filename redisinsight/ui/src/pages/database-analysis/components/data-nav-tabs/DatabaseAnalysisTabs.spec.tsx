@@ -63,7 +63,6 @@ beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
   store.clearActions()
-
   ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
     ...mockRecommendationsSelector,
     content: recommendationsContent,

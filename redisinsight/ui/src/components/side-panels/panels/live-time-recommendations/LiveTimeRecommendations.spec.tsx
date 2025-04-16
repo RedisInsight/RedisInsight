@@ -129,7 +129,6 @@ describe('LiveTimeRecommendations', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
@@ -142,7 +141,6 @@ describe('LiveTimeRecommendations', () => {
     render(<LiveTimeRecommendations />)
 
     fireEvent.click(screen.getByTestId('footer-db-analysis-link'))
-
     ;(async () => {
       await waitForEuiPopoverVisible()
     })()
@@ -166,7 +164,6 @@ describe('LiveTimeRecommendations', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-
     ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: RECOMMENDATIONS_DATA_MOCK,

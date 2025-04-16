@@ -96,7 +96,6 @@ describe('HelpMenu', () => {
         databaseId: '-',
       },
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 

@@ -77,7 +77,6 @@ describe('ImportDatabase', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_SUBMITTED,
     })
-
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 

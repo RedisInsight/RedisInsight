@@ -1,129 +1,22 @@
 :root {
   --gap-s: var(--size-s);
   --gap-m: var(--base);
-  --color-primary: var(--euiTextColor); // todo: take from theme
-  --color-subdued: var(--euiTextSubduedColor);
-  --background-hover: var(--euiColorEmptyShade);
-  --backgroundPrimaryHover: var(--euiPageBackgroundColor)
-}
-.ListGroup {
-  display: flex;
-  flex-direction: column;
-
-  &-flush {
-    margin: 0;
-    padding: 0;
-    border: 0 none;
-
-    .ListGroupItem {
-      border-radius: 0;
-    }
-  }
-
-  &-gap {
-    &-none {
-      gap: 0;
-    }
-
-    &-s {
-      gap: var(--gap-s);
-    }
-
-    &-m {
-      gap: var(--gap-m);
-    }
-  }
-}
-
-.ListGroupItem {
-  padding: 0;
-  display: flex;
-  align-items: center;
-  position: relative;
-  transition: background-color 150ms;
-  // sizes
-  &-xs {
-    border-radius: var(--border-width-small);
-  }
-
-  &-s {
-    border-radius: var(--border-width-small);
-  }
-
-  &-m {
-    border-radius: var(--border-width-medium);
-  }
-
-  &-l {
-    border-radius: var(--border-width-medium);
-  }
-
-  // colors
-  &-active-primary {
-    background-color: var(--color-primary);
-  }
-
-  &-active-text {
-    background-color: var(--color-subdued);
-  }
-
-  &-active-subdued {
-    background-color: var(--color-subdued);
-  }
-
-  &-clickable-primary {
-    &:hover, &:focus-within {
-      background-color: var(--color-subdued);
-    }
-  ;
-  }
-
-  &-clickable-text {
-    &:hover, &:focus-within {
-      background-color: var(--color-subdued);
-    }
-  ;
-  }
-
-  &-clickable-subdued {
-    &:hover, &:focus-within {
-      background-color: var(--color-subdued);
-    }
-  ;
-  }
-
-  .inner {
-    padding: var(--size-xs) var(--size-s);
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    max-inline-size: 100%;
-    overflow: hidden;
-    text-align: start;
-    font-weight: inherit;
-    // sizes
-    &-xs {
-      font-size: 12px;
-      font-weight: 450;
-      letter-spacing: 0;
-      min-height: var(--size-l);
-    }
-
-    &-s {
-      font-size: 14px;
-      font-weight: 450;
-      letter-spacing: 0;
-      min-height: var(--size-xl);
-    }
-
-    &-m {
-      font-size: 16px;
-      min-height: var(--size-xl);
-    }
-
-    &-l {
-      font-size: 20px;
-      min-height: var(--size-xxl);
-    }
-  }
+  --backgroundPrimaryHover: var(--euiPageBackgroundColor);
+  --color-primary: #e8f1ff;
+  --color-subdued: #e8f1ff;
+  --background-hover: rgba(23 80 186 / 0.04);
+  --background-primary-hover: rgba(23 80 186 / 0.04);
+  --border-radius-small: 4px;
+  --border-radius-medium: 6px;
+  --font-weight-m: 500;
+  --font-size-xs: 12px;
+  --font-size-s: 14px;
+  --font-size-m: 16px;
+  --font-size-l: 18px;
+  --size-xs: 4px;
+  --size-s: 6px;
+  --size-m: 12px;
+  --size-l: 20px;
+  --size-xl: 32px;
+  --size-xxl: 40px;
 }

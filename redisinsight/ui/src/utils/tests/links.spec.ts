@@ -43,52 +43,59 @@ const buildRedisInsightUrlTests: Array<{
   {
     input: {
       id: '0',
-      host: 'localhost',
+      host: 'aws-instance.amazonaws.com',
       port: 6379,
-      name: 'TestInstance',
+      name: 'free aws instance',
       tls: false,
       tlsClientAuthRequired: false,
+      modules: [],
+      version: '1.0.0',
       cloudDetails: {
-        subscriptionId: 0,
-        cloudId: 123,
+        subscriptionId: 1,
+        cloudId: 1,
         subscriptionType: 'fixed',
         planMemoryLimit: 1024,
         memoryLimitMeasurementUnit: 'MB',
         free: true,
       },
-      modules: [],
-      version: '1.0.0',
     },
     expected:
-      'redisinsight://databases/connect?redisUrl=redis%3A%2F%2F%40localhost%3A6379&cloudBdbId=123&databaseAlias=TestInstance&subscriptionType=fixed&planMemoryLimit=1024&memoryLimitMeasurementUnit=MB&free=true',
+      'redisinsight://databases/connect?redisUrl=redis%3A%2F%2F%40aws-instance.amazonaws.com%3A6379&cloudBdbId=1&databaseAlias=free+aws+instance&subscriptionType=fixed&planMemoryLimit=1024&memoryLimitMeasurementUnit=MB&free=true',
   },
   {
     input: {
       id: '1',
       host: '127.0.0.1',
       port: 6380,
-      name: '',
+      name: 'cert localhost instance',
       tls: true,
       tlsClientAuthRequired: true,
       modules: [],
       version: '1.0.0',
     },
     expected:
-      'redisinsight://databases/connect?redisUrl=redis%3A%2F%2F%40127.0.0.1%3A6380&cloudBdbId=&databaseAlias=&requiredTls=true&requiredCaCert=true&requiredClientCert=true',
+      'redisinsight://databases/connect?redisUrl=redis%3A%2F%2F%40127.0.0.1%3A6380&cloudBdbId=&databaseAlias=cert+localhost+instance&requiredTls=true&requiredCaCert=true&requiredClientCert=true',
   },
   {
     input: {
       id: '2',
-      host: 'example.com',
+      host: 'gcp-instance.example.com',
       port: 6379,
-      name: 'ExampleInstance',
+      name: 'mixed cert gcp instance',
       tls: true,
       tlsClientAuthRequired: false,
       modules: [],
       version: '1.0.0',
+      cloudDetails: {
+        subscriptionId: 2,
+        cloudId: 2,
+        subscriptionType: 'fixed',
+        planMemoryLimit: 2048,
+        memoryLimitMeasurementUnit: 'MB',
+      },
     },
     expected:
-      'redisinsight://databases/connect?redisUrl=redis%3A%2F%2F%40example.com%3A6379&cloudBdbId=&databaseAlias=ExampleInstance&requiredTls=true&requiredCaCert=true',
+      'redisinsight://databases/connect?redisUrl=redis%3A%2F%2F%40gcp-instance.example.com%3A6379&cloudBdbId=2&databaseAlias=mixed+cert+gcp+instance&requiredTls=true&requiredCaCert=true&subscriptionType=fixed&planMemoryLimit=2048&memoryLimitMeasurementUnit=MB',
   },
 ]
 

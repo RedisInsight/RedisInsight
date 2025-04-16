@@ -11,7 +11,8 @@ const Group = ({
   className,
   style,
   maxWidth = true,
-  color,
+  gap,
+  flush,
   ...rest
 }: ListGroupProps) => {
   let newStyle = style
@@ -22,7 +23,13 @@ const Group = ({
 
   const classes = classNames(ListClassNames.listGroup, className)
   return (
-    <StyledGroup {...rest} className={classes} style={newStyle}>
+    <StyledGroup
+      {...rest}
+      className={classes}
+      style={newStyle}
+      $gap={gap}
+      $flush={flush}
+    >
       {children}
     </StyledGroup>
   )

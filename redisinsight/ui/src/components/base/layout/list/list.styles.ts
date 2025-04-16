@@ -66,17 +66,23 @@ export const listStyles = {
     margin: 0;
     padding: 0;
     border: 0 none;
+
     .${ListClassNames.listItem} {
       border-radius: 0;
     }
   `,
 }
 
-export const StyledGroup = styled.ul<ListGroupProps>`
+export const StyledGroup = styled.ul<
+  Omit<ListGroupProps, 'gap' | 'flush' | 'maxWidth'> & {
+    $gap?: ListGroupGapSize
+    $flush?: boolean
+  }
+>`
   display: flex;
   flex-direction: column;
-  ${({ gap = 's' }) => listStyles.gap[gap]};
-  ${({ flush = false }) => flush && listStyles.flush};
+  ${({ $gap = 's' }) => listStyles.gap[$gap]};
+  ${({ $flush = false }) => $flush && listStyles.flush};
 `
 
 type IconProps = Omit<EuiIconProps, 'type'>
@@ -202,7 +208,23 @@ const listItemStyles = {
     `,
   },
 }
-export const StyledItem = styled.li<Omit<ListGroupItemProps, 'label'>>`
+/*
+      $size={size}
+      $isActive={isActive}
+      $isDisabled={isDisabled}
+      $color={color}
+ */
+export const StyledItem = styled.li<
+  Omit<
+    ListGroupItemProps,
+    'label' | 'color' | 'size' | 'isDisabled' | 'isActive'
+  > & {
+    $size?: ListGroupItemSize
+    $color?: ListGroupItemColor
+    $isDisabled?: boolean
+    $isActive?: boolean
+  }
+>`
   // todo: take from theme
   --color-primary: #e8f1ff;
   --color-subdued: #e8f1ff;
@@ -230,11 +252,11 @@ export const StyledItem = styled.li<Omit<ListGroupItemProps, 'label'>>`
   align-items: center;
   position: relative;
   transition: background-color 150ms;
-  ${({ size = 'm' }) => listItemStyles.size[size]};
-  ${({ isActive = false, color = 'text' }) =>
-    isActive && listItemStyles.active[color]};
-  ${({ onClick, color = 'text' }) =>
-    onClick !== undefined && listItemStyles.clickable[color]};
+  ${({ $size = 'm' }) => listItemStyles.size[$size]};
+  ${({ $isActive = false, $color = 'text' }) =>
+    $isActive && listItemStyles.active[$color]};
+  ${({ onClick, $color = 'text' }) =>
+    onClick !== undefined && listItemStyles.clickable[$color]};
 `
 
 const listItemInnerStyles = {
@@ -289,6 +311,7 @@ const listItemInnerStyles = {
     // Variants
     isDisabled: css`
       cursor: not-allowed;
+
       &,
       &:hover,
       &:focus {
@@ -311,11 +334,11 @@ const listItemInnerStyles = {
 }
 
 type InnerProps = {
-  size?: ListGroupItemSize
-  color?: ListGroupItemColor
-  isActive?: boolean
-  isDisabled?: boolean
-  isClickable?: boolean
+  $size?: ListGroupItemSize
+  $color?: ListGroupItemColor
+  $isActive?: boolean
+  $isDisabled?: boolean
+  $isClickable?: boolean
   ref?: React.Ref<HTMLButtonElement | HTMLSpanElement>
 }
 
@@ -323,29 +346,30 @@ export const StyledItemInnerButton = styled.button<
   ButtonHTMLAttributes<HTMLButtonElement> & InnerProps
 >`
   ${listItemInnerStyles.base}
-  ${({ size = 'm' }) => listItemInnerStyles.size[size]}
-  ${({ isActive = false }) => isActive && listItemInnerStyles.variants.isActive}
-  ${({ isDisabled = false }) =>
-    isDisabled && listItemInnerStyles.variants.isDisabled}
-  ${({ isDisabled = false, color = 'text' }) =>
-    !isDisabled && listItemInnerStyles.colors[color]}
-  ${({ isDisabled = false, isClickable = false }) =>
-    !isDisabled && isClickable && listItemInnerStyles.variants.isClickable}
+  ${({ $size = 'm' }) => listItemInnerStyles.size[$size]}
+    ${({ $isActive = false }) =>
+    $isActive && listItemInnerStyles.variants.isActive}
+    ${({ $isDisabled = false }) =>
+    $isDisabled && listItemInnerStyles.variants.isDisabled}
+    ${({ $isDisabled = false, $color = 'text' }) =>
+    !$isDisabled && listItemInnerStyles.colors[$color]}
+    ${({ $isDisabled = false, $isClickable = false }) =>
+    !$isDisabled && $isClickable && listItemInnerStyles.variants.isClickable}
 `
 
 export const StyledItemInnerSpan = styled.span<
   Omit<AllHTMLAttributes<HTMLSpanElement>, 'size'> & InnerProps
 >`
   ${listItemInnerStyles.base}
-  ${({ size = 'm' }) => listItemInnerStyles.size[size]}
-    ${({ isActive = false }) =>
-    isActive && listItemInnerStyles.variants.isActive}
-    ${({ isDisabled = false }) =>
-    isDisabled && listItemInnerStyles.variants.isDisabled}
-    ${({ isDisabled = false, color = 'text' }) =>
-    !isDisabled && listItemInnerStyles.colors[color]}
-    ${({ isDisabled = false, isClickable = false }) =>
-    !isDisabled && isClickable && listItemInnerStyles.variants.isClickable}
+  ${({ $size = 'm' }) => listItemInnerStyles.size[$size]}
+    ${({ $isActive = false }) =>
+    $isActive && listItemInnerStyles.variants.isActive}
+    ${({ $isDisabled = false }) =>
+    $isDisabled && listItemInnerStyles.variants.isDisabled}
+    ${({ $isDisabled = false, $color = 'text' }) =>
+    !$isDisabled && listItemInnerStyles.colors[$color]}
+    ${({ $isDisabled = false, $isClickable = false }) =>
+    !$isDisabled && $isClickable && listItemInnerStyles.variants.isClickable}
 `
 
 const listItemLabelStyles = {

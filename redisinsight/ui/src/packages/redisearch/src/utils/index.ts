@@ -4,6 +4,4 @@ export * from './parseResponse'
 export * from './replaceSpaces'
 export * from './formatLongName'
 
-export {
-  cachedIcons
-}
+export { cachedIcons }

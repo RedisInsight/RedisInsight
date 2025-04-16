@@ -1,5 +1,12 @@
 import React from 'react'
-import { EuiBadge, EuiButton, EuiFlexGrid, EuiFlexItem, EuiSpacer, EuiTitle } from '@elastic/eui'
+import {
+  EuiBadge,
+  EuiButton,
+  EuiFlexGrid,
+  EuiFlexItem,
+  EuiSpacer,
+  EuiTitle,
+} from '@elastic/eui'
 import cx from 'classnames'
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -27,9 +34,7 @@ const ConnectivityOptions = (props: Props) => {
     <>
       <section className={styles.cloudSection}>
         <EuiTitle size="xs" className={styles.sectionTitle}>
-          <span>
-            Get started with Redis Cloud account
-          </span>
+          <span>Get started with Redis Cloud account</span>
         </EuiTitle>
         <EuiSpacer />
         <EuiFlexGrid>
@@ -52,19 +57,21 @@ const ConnectivityOptions = (props: Props) => {
                     color="secondary"
                     className={styles.typeBtn}
                     href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
-                      campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm]
+                      campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm],
                     })}
                     target="_blank"
                     onClick={(e: React.MouseEvent) => {
                       ssoCloudHandlerClick(e, {
                         source: OAuthSocialSource.AddDbForm,
-                        action: OAuthSocialAction.Create
+                        action: OAuthSocialAction.Create,
                       })
                       isSSOEnabled && onClose?.()
                     }}
                     data-testid="create-free-db-btn"
                   >
-                    <EuiBadge color="subdued" className={styles.freeBadge}>Free</EuiBadge>
+                    <EuiBadge color="subdued" className={styles.freeBadge}>
+                      Free
+                    </EuiBadge>
                     <RocketIcon className={cx(styles.btnIcon, styles.rocket)} />
                     New database
                   </EuiButton>

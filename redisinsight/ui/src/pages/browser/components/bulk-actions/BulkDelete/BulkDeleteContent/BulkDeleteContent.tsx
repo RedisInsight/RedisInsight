@@ -18,9 +18,10 @@ const BulkDeleteContent = () => {
   const listRef = useRef<List>(null)
   const rowHeights = useRef<{ [key: number]: number }>({})
 
-  const getRowHeight = (index: number) => (
-    rowHeights.current[index] > MIN_ROW_HEIGHT ? (rowHeights.current[index] + 2) : MIN_ROW_HEIGHT
-  )
+  const getRowHeight = (index: number) =>
+    rowHeights.current[index] > MIN_ROW_HEIGHT
+      ? rowHeights.current[index] + 2
+      : MIN_ROW_HEIGHT
 
   const setRowHeight = (index: number, size: number) => {
     listRef.current?.resetAfterIndex(0)
@@ -57,9 +58,9 @@ const BulkDeleteContent = () => {
       <div className={styles.header}>
         <EuiText className={styles.headerTitle}>Error list</EuiText>
         {errors.length >= MAX_BULK_ACTION_ERRORS_LENGTH && (
-        <EuiText className={styles.headerSummary}>
-          last {MAX_BULK_ACTION_ERRORS_LENGTH} errors are shown
-        </EuiText>
+          <EuiText className={styles.headerSummary}>
+            last {MAX_BULK_ACTION_ERRORS_LENGTH} errors are shown
+          </EuiText>
         )}
       </div>
       <div className={styles.list}>

@@ -4,7 +4,9 @@ import { EuiInMemoryTable } from '@elastic/eui'
 import { render, fireEvent, screen } from 'uiSrc/utils/test-utils'
 
 import RedisCloudDatabasesResultPage from './RedisCloudDatabasesResultPage'
-import RedisCloudDatabasesResult, { Props as RedisCloudDatabasesResultProps } from './RedisCloudDatabasesResult'
+import RedisCloudDatabasesResult, {
+  Props as RedisCloudDatabasesResultProps,
+} from './RedisCloudDatabasesResult'
 
 jest.mock('./RedisCloudDatabasesResult', () => ({
   __esModule: true,
@@ -12,10 +14,16 @@ jest.mock('./RedisCloudDatabasesResult', () => ({
   default: jest.fn(),
 }))
 
-const mockRedisCloudDatabasesResult = (props: RedisCloudDatabasesResultProps) => (
+const mockRedisCloudDatabasesResult = (
+  props: RedisCloudDatabasesResultProps,
+) => (
   <div>
-    <button type="button" onClick={() => props.onView()} data-testid="view-btn">onView</button>
-    <button type="button" onClick={() => props.onBack()} data-testid="back-btn">onBack</button>
+    <button type="button" onClick={() => props.onView()} data-testid="view-btn">
+      onView
+    </button>
+    <button type="button" onClick={() => props.onBack()} data-testid="back-btn">
+      onBack
+    </button>
     <div className="itemList">
       <EuiInMemoryTable
         isSelectable

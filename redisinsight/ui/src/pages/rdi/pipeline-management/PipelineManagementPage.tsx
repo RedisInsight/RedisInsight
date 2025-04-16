@@ -4,7 +4,10 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import { fetchRdiPipelineJobFunctions, fetchRdiPipelineSchema } from 'uiSrc/slices/rdi/pipeline'
+import {
+  fetchRdiPipelineJobFunctions,
+  fetchRdiPipelineSchema,
+} from 'uiSrc/slices/rdi/pipeline'
 import {
   appContextPipelineManagement,
   setLastPageContext,
@@ -26,7 +29,9 @@ export interface Props {
 const PipelineManagementPage = ({ routes = [] }: Props) => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const { lastViewedPage } = useSelector(appContextPipelineManagement)
-  const { name: connectedRdiInstanceName } = useSelector(connectedInstanceSelector)
+  const { name: connectedRdiInstanceName } = useSelector(
+    connectedInstanceSelector,
+  )
 
   const pathnameRef = useRef<string>('')
 
@@ -42,11 +47,16 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
     dispatch(fetchRdiPipelineJobFunctions(rdiInstanceId))
   }, [])
 
-  useEffect(() => () => {
-    dispatch(setLastPageContext(PageNames.rdiPipelineManagement))
-    dispatch(setLastPipelineManagementPage(pathnameRef.current))
-    dispatch(removeInfiniteNotification(InfiniteMessagesIds.pipelineDeploySuccess))
-  }, [])
+  useEffect(
+    () => () => {
+      dispatch(setLastPageContext(PageNames.rdiPipelineManagement))
+      dispatch(setLastPipelineManagementPage(pathnameRef.current))
+      dispatch(
+        removeInfiniteNotification(InfiniteMessagesIds.pipelineDeploySuccess),
+      )
+    },
+    [],
+  )
 
   useEffect(() => {
     if (pathname === Pages.rdiPipelineManagement(rdiInstanceId)) {
@@ -64,7 +74,8 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
       history.push(Pages.rdiPipelineConfig(rdiInstanceId))
     }
 
-    pathnameRef.current = pathname === Pages.rdiPipelineManagement(rdiInstanceId) ? '' : pathname
+    pathnameRef.current =
+      pathname === Pages.rdiPipelineManagement(rdiInstanceId) ? '' : pathname
   }, [pathname, lastViewedPage])
 
   return (

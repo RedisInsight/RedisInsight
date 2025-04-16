@@ -42,8 +42,11 @@ describe('InstanceForm', () => {
   it('should render', () => {
     expect(
       render(
-        <ManualConnectionForm {...instance(mockedProps)} formFields={formFields} />
-      )
+        <ManualConnectionForm
+          {...instance(mockedProps)}
+          formFields={formFields}
+        />,
+      ),
     ).toBeTruthy()
   })
 
@@ -57,8 +60,8 @@ describe('InstanceForm', () => {
             ...formFields,
             connectionType: ConnectionType.Sentinel,
           }}
-        />
-      )
+        />,
+      ),
     ).toBeTruthy()
   })
 
@@ -69,8 +72,8 @@ describe('InstanceForm', () => {
           {...instance(mockedProps)}
           isEditMode
           formFields={{ ...formFields, connectionType: ConnectionType.Cluster }}
-        />
-      )
+        />,
+      ),
     ).toBeTruthy()
   })
 
@@ -85,8 +88,8 @@ describe('InstanceForm', () => {
             nodes: [{ host: '1', port: 1 }],
             connectionType: ConnectionType.Cluster,
           }}
-        />
-      )
+        />,
+      ),
     ).toBeTruthy()
   })
 
@@ -105,8 +108,8 @@ describe('InstanceForm', () => {
             nodes: [{ host: '1', port: 1 }],
             connectionType: ConnectionType.Cluster,
           }}
-        />
-      )
+        />,
+      ),
     ).toBeTruthy()
   })
 
@@ -126,7 +129,7 @@ describe('InstanceForm', () => {
           onSubmit={handleSubmit}
           onTestConnection={handleTestConnection}
         />
-      </div>
+      </div>,
     )
 
     await act(() => {
@@ -144,7 +147,7 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toBeCalledWith(
       expect.objectContaining({
         sentinelMasterUsername: 'user',
-      })
+      }),
     )
 
     await act(() => {
@@ -153,7 +156,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toBeCalledWith(
       expect.objectContaining({
         sentinelMasterUsername: 'user',
-      })
+      }),
     )
   })
 
@@ -170,7 +173,7 @@ describe('InstanceForm', () => {
           }}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     await act(() => {
@@ -186,7 +189,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toBeCalledWith(
       expect.objectContaining({
         port: '123',
-      })
+      }),
     )
   })
 
@@ -206,7 +209,7 @@ describe('InstanceForm', () => {
           onSubmit={handleSubmit}
           onTestConnection={handleTestConnection}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -224,7 +227,7 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toBeCalledWith(
       expect.objectContaining({
         tls: ['on'],
-      })
+      }),
     )
 
     await act(() => {
@@ -234,7 +237,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toBeCalledWith(
       expect.objectContaining({
         tls: ['on'],
-      })
+      }),
     )
   })
 
@@ -252,7 +255,7 @@ describe('InstanceForm', () => {
           onSubmit={handleSubmit}
           onTestConnection={handleTestConnection}
         />
-      </div>
+      </div>,
     )
     await act(() => {
       fireEvent.click(screen.getByTestId('showDb'))
@@ -266,7 +269,7 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toBeCalledWith(
       expect.objectContaining({
         showDb: ['on'],
-      })
+      }),
     )
     await act(() => {
       fireEvent.click(submitBtn)
@@ -275,7 +278,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toBeCalledWith(
       expect.objectContaining({
         showDb: ['on'],
-      })
+      }),
     )
   })
 
@@ -293,7 +296,7 @@ describe('InstanceForm', () => {
           onSubmit={handleSubmit}
           onTestConnection={handleTestConnection}
         />
-      </div>
+      </div>,
     )
     await act(() => {
       fireEvent.click(screen.getByTestId('showDb'))
@@ -314,8 +317,8 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toBeCalledWith(
       expect.objectContaining({
         showDb: ['on'],
-        db: '12'
-      })
+        db: '12',
+      }),
     )
     await act(() => {
       fireEvent.click(submitBtn)
@@ -324,8 +327,8 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toBeCalledWith(
       expect.objectContaining({
         showDb: ['on'],
-        db: '12'
-      })
+        db: '12',
+      }),
     )
   })
 
@@ -345,7 +348,7 @@ describe('InstanceForm', () => {
           onSubmit={handleSubmit}
           onTestConnection={handleTestConnection}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -361,8 +364,8 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toBeCalledWith(
       expect.objectContaining({
         sni: ['on'],
-        servername: formFields.host
-      })
+        servername: formFields.host,
+      }),
     )
     await act(() => {
       fireEvent.click(submitBtn)
@@ -371,8 +374,8 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toBeCalledWith(
       expect.objectContaining({
         sni: ['on'],
-        servername: formFields.host
-      })
+        servername: formFields.host,
+      }),
     )
   })
 
@@ -392,7 +395,7 @@ describe('InstanceForm', () => {
           onSubmit={handleSubmit}
           onTestConnection={handleTestConnection}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -414,8 +417,8 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toBeCalledWith(
       expect.objectContaining({
         sni: ['on'],
-        servername: '12'
-      })
+        servername: '12',
+      }),
     )
     await act(() => {
       fireEvent.click(submitBtn)
@@ -424,8 +427,8 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toBeCalledWith(
       expect.objectContaining({
         sni: ['on'],
-        servername: '12'
-      })
+        servername: '12',
+      }),
     )
   })
 
@@ -445,7 +448,7 @@ describe('InstanceForm', () => {
           onSubmit={handleSubmit}
           onTestConnection={handleTestConnection}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -461,7 +464,7 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toBeCalledWith(
       expect.objectContaining({
         verifyServerTlsCert: ['on'],
-      })
+      }),
     )
     await act(() => {
       fireEvent.click(submitBtn)
@@ -470,7 +473,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toBeCalledWith(
       expect.objectContaining({
         verifyServerTlsCert: ['on'],
-      })
+      }),
     )
   })
 
@@ -490,7 +493,7 @@ describe('InstanceForm', () => {
           onSubmit={handleSubmit}
           onTestConnection={handleTestConnection}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -525,7 +528,7 @@ describe('InstanceForm', () => {
         selectedCaCertName: ADD_NEW_CA_CERT,
         newCaCertName: '321',
         newCaCert: '123',
-      })
+      }),
     )
     await act(() => {
       fireEvent.click(submitBtn)
@@ -536,7 +539,7 @@ describe('InstanceForm', () => {
         selectedCaCertName: ADD_NEW_CA_CERT,
         newCaCertName: '321',
         newCaCert: '123',
-      })
+      }),
     )
   })
 
@@ -557,7 +560,7 @@ describe('InstanceForm', () => {
           onSubmit={handleSubmit}
           onTestConnection={handleTestConnection}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -584,7 +587,7 @@ describe('InstanceForm', () => {
       expect.objectContaining({
         newCaCert: '123',
         newCaCertName: '321',
-      })
+      }),
     )
     await act(() => {
       fireEvent.click(submitBtn)
@@ -594,7 +597,7 @@ describe('InstanceForm', () => {
       expect.objectContaining({
         newCaCert: '123',
         newCaCertName: '321',
-      })
+      }),
     )
   })
 
@@ -614,7 +617,7 @@ describe('InstanceForm', () => {
           onSubmit={handleSubmit}
           onTestConnection={handleTestConnection}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -630,7 +633,7 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toBeCalledWith(
       expect.objectContaining({
         tlsClientAuthRequired: true,
-      })
+      }),
     )
     await act(() => {
       fireEvent.click(submitBtn)
@@ -639,7 +642,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toBeCalledWith(
       expect.objectContaining({
         tlsClientAuthRequired: true,
-      })
+      }),
     )
   })
 
@@ -660,7 +663,7 @@ describe('InstanceForm', () => {
           }}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -672,7 +675,7 @@ describe('InstanceForm', () => {
 
     await act(() => {
       fireEvent.click(
-        container.querySelectorAll('.euiContextMenuItem__text')[0] || document
+        container.querySelectorAll('.euiContextMenuItem__text')[0] || document,
       )
     })
 
@@ -708,7 +711,7 @@ describe('InstanceForm', () => {
         newTlsClientCert: '321',
         newTlsCertPairName: '123',
         newTlsClientKey: '231',
-      })
+      }),
     )
   })
 
@@ -721,7 +724,7 @@ describe('InstanceForm', () => {
           ...formFields,
           connectionType: ConnectionType.Standalone,
         }}
-      />
+      />,
     )
     expect(screen.getByTestId('clone-db-btn')).toBeTruthy()
   })
@@ -737,7 +740,7 @@ describe('InstanceForm', () => {
             ...formFields,
             connectionType: ConnectionType.Standalone,
           }}
-        />
+        />,
       )
       const fieldsTestIds = ['host', 'port', 'username', 'password', 'showDb']
       fieldsTestIds.forEach((id) => {
@@ -758,7 +761,7 @@ describe('InstanceForm', () => {
             ...formFields,
             connectionType: ConnectionType.Sentinel,
           }}
-        />
+        />,
       )
       const fieldsTestIds = [
         'name',
@@ -789,9 +792,9 @@ describe('InstanceForm', () => {
             ...formFields,
             connectionType: ConnectionType.Standalone,
             showDb: true,
-            db: 5
+            db: 5,
           }}
-        />
+        />,
       )
       expect(screen.getByTestId('showDb')).toBeChecked()
       expect(screen.getByTestId('db')).toHaveValue('5')
@@ -807,22 +810,22 @@ describe('InstanceForm', () => {
             ...formFields,
             connectionType: ConnectionType.Standalone,
           }}
-        />
+        />,
       )
       expect(screen.getByTestId('name')).toHaveValue('lala')
     })
 
-  //   it('should render proper default values for standalone', () => {
-  //     render(
-  //       <ManualConnectionForm
-  //         {...instance(mockedProps)}
-  //         formFields={{}}
-  //       />
-  //     )
-  //     expect(screen.getByTestId('host')).toHaveValue('127.0.0.1')
-  //     expect(screen.getByTestId('port')).toHaveValue('6379')
-  //     expect(screen.getByTestId('name')).toHaveValue('127.0.0.1:6379')
-  //   })
+    //   it('should render proper default values for standalone', () => {
+    //     render(
+    //       <ManualConnectionForm
+    //         {...instance(mockedProps)}
+    //         formFields={{}}
+    //       />
+    //     )
+    //     expect(screen.getByTestId('host')).toHaveValue('127.0.0.1')
+    //     expect(screen.getByTestId('port')).toHaveValue('6379')
+    //     expect(screen.getByTestId('name')).toHaveValue('127.0.0.1:6379')
+    //   })
   })
 
   it('should change Use SSH checkbox', async () => {
@@ -837,7 +840,7 @@ describe('InstanceForm', () => {
           }}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -861,7 +864,7 @@ describe('InstanceForm', () => {
           buildType={BuildType.RedisStack}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     expect(screen.queryByTestId('use-ssh')).not.toBeInTheDocument()
@@ -880,7 +883,7 @@ describe('InstanceForm', () => {
           }}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -910,14 +913,14 @@ describe('InstanceForm', () => {
           }}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
     await act(() => {
       fireEvent.click(screen.getByTestId('use-ssh'))
       fireEvent.click(
-        container.querySelector(RADIO_BTN_PRIVATE_KEY) as HTMLLabelElement
+        container.querySelector(RADIO_BTN_PRIVATE_KEY) as HTMLLabelElement,
       )
     })
 
@@ -944,7 +947,7 @@ describe('InstanceForm', () => {
           }}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
@@ -957,28 +960,25 @@ describe('InstanceForm', () => {
     expect(screen.getByTestId(BTN_SUBMIT)).toBeDisabled()
 
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('sshHost'),
-        { target: { value: 'localhost' } }
-      )
+      fireEvent.change(screen.getByTestId('sshHost'), {
+        target: { value: 'localhost' },
+      })
     })
 
     expect(screen.getByTestId(BTN_SUBMIT)).toBeDisabled()
 
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('sshUsername'),
-        { target: { value: 'username' } }
-      )
+      fireEvent.change(screen.getByTestId('sshUsername'), {
+        target: { value: 'username' },
+      })
     })
 
     expect(screen.getByTestId(BTN_SUBMIT)).toBeDisabled()
 
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('sshPort'),
-        { target: { value: '22' } }
-      )
+      fireEvent.change(screen.getByTestId('sshPort'), {
+        target: { value: '22' },
+      })
     })
 
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
@@ -997,7 +997,7 @@ describe('InstanceForm', () => {
           }}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
@@ -1006,34 +1006,30 @@ describe('InstanceForm', () => {
     await act(() => {
       fireEvent.click(screen.getByTestId('use-ssh'))
       fireEvent.click(
-        container.querySelector(RADIO_BTN_PRIVATE_KEY) as HTMLLabelElement
+        container.querySelector(RADIO_BTN_PRIVATE_KEY) as HTMLLabelElement,
       )
     })
 
     expect(screen.getByTestId(BTN_SUBMIT)).toBeDisabled()
 
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('sshHost'),
-        { target: { value: 'localhost' } }
-      )
-      fireEvent.change(
-        screen.getByTestId('sshPort'),
-        { target: { value: '22' } }
-      )
-      fireEvent.change(
-        screen.getByTestId('sshUsername'),
-        { target: { value: 'username' } }
-      )
+      fireEvent.change(screen.getByTestId('sshHost'), {
+        target: { value: 'localhost' },
+      })
+      fireEvent.change(screen.getByTestId('sshPort'), {
+        target: { value: '22' },
+      })
+      fireEvent.change(screen.getByTestId('sshUsername'), {
+        target: { value: 'username' },
+      })
     })
 
     expect(screen.getByTestId(BTN_SUBMIT)).toBeDisabled()
 
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('sshPrivateKey'),
-        { target: { value: 'PRIVATEKEY' } }
-      )
+      fireEvent.change(screen.getByTestId('sshPrivateKey'), {
+        target: { value: 'PRIVATEKEY' },
+      })
     })
 
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
@@ -1052,7 +1048,7 @@ describe('InstanceForm', () => {
           }}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
@@ -1061,25 +1057,21 @@ describe('InstanceForm', () => {
     })
 
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('sshHost'),
-        { target: { value: 'localhost' } }
-      )
+      fireEvent.change(screen.getByTestId('sshHost'), {
+        target: { value: 'localhost' },
+      })
 
-      fireEvent.change(
-        screen.getByTestId('sshPort'),
-        { target: { value: '1771' } }
-      )
+      fireEvent.change(screen.getByTestId('sshPort'), {
+        target: { value: '1771' },
+      })
 
-      fireEvent.change(
-        screen.getByTestId('sshUsername'),
-        { target: { value: 'username' } }
-      )
+      fireEvent.change(screen.getByTestId('sshUsername'), {
+        target: { value: 'username' },
+      })
 
-      fireEvent.change(
-        screen.getByTestId('sshPassword'),
-        { target: { value: '123' } }
-      )
+      fireEvent.change(screen.getByTestId('sshPassword'), {
+        target: { value: '123' },
+      })
     })
 
     await act(() => {
@@ -1092,7 +1084,7 @@ describe('InstanceForm', () => {
         sshPort: '1771',
         sshUsername: 'username',
         sshPassword: '123',
-      })
+      }),
     )
   })
 
@@ -1108,42 +1100,37 @@ describe('InstanceForm', () => {
           }}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
     await act(() => {
       fireEvent.click(screen.getByTestId('use-ssh'))
       fireEvent.click(
-        container.querySelector(RADIO_BTN_PRIVATE_KEY) as HTMLLabelElement
+        container.querySelector(RADIO_BTN_PRIVATE_KEY) as HTMLLabelElement,
       )
     })
 
     await act(() => {
-      fireEvent.change(
-        screen.getByTestId('sshHost'),
-        { target: { value: 'localhost' } }
-      )
+      fireEvent.change(screen.getByTestId('sshHost'), {
+        target: { value: 'localhost' },
+      })
 
-      fireEvent.change(
-        screen.getByTestId('sshPort'),
-        { target: { value: '1771' } }
-      )
+      fireEvent.change(screen.getByTestId('sshPort'), {
+        target: { value: '1771' },
+      })
 
-      fireEvent.change(
-        screen.getByTestId('sshUsername'),
-        { target: { value: 'username' } }
-      )
+      fireEvent.change(screen.getByTestId('sshUsername'), {
+        target: { value: 'username' },
+      })
 
-      fireEvent.change(
-        screen.getByTestId('sshPrivateKey'),
-        { target: { value: '123444' } }
-      )
+      fireEvent.change(screen.getByTestId('sshPrivateKey'), {
+        target: { value: '123444' },
+      })
 
-      fireEvent.change(
-        screen.getByTestId('sshPassphrase'),
-        { target: { value: '123444' } }
-      )
+      fireEvent.change(screen.getByTestId('sshPassphrase'), {
+        target: { value: '123444' },
+      })
     })
 
     await act(() => {
@@ -1157,7 +1144,7 @@ describe('InstanceForm', () => {
         sshUsername: 'username',
         sshPrivateKey: '123444',
         sshPassphrase: '123444',
-      })
+      }),
     )
   })
 
@@ -1165,8 +1152,11 @@ describe('InstanceForm', () => {
     render(
       <ManualConnectionForm
         {...instance(mockedProps)}
-        formFields={{ ...formFields, connectionType: ConnectionType.Standalone }}
-      />
+        formFields={{
+          ...formFields,
+          connectionType: ConnectionType.Standalone,
+        }}
+      />,
     )
 
     expect(screen.getByTestId('password')).toHaveAttribute('maxLength', '10000')
@@ -1184,15 +1174,24 @@ describe('InstanceForm', () => {
           sshPassphrase: true,
           sshPassType: SshPassType.PrivateKey,
         }}
-      />
+      />,
     )
 
-    expect(screen.getByTestId('password')).toHaveAttribute('value', '••••••••••••')
+    expect(screen.getByTestId('password')).toHaveAttribute(
+      'value',
+      '••••••••••••',
+    )
     expect(screen.getByTestId('password')).toHaveAttribute('type', 'password')
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
-    expect(screen.getByTestId('sshPassphrase')).toHaveAttribute('value', '••••••••••••')
-    expect(screen.getByTestId('sshPassphrase')).toHaveAttribute('type', 'password')
+    expect(screen.getByTestId('sshPassphrase')).toHaveAttribute(
+      'value',
+      '••••••••••••',
+    )
+    expect(screen.getByTestId('sshPassphrase')).toHaveAttribute(
+      'type',
+      'password',
+    )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-general'))
     fireEvent.focus(screen.getByTestId('password'))
@@ -1215,12 +1214,18 @@ describe('InstanceForm', () => {
           sshPassword: true,
           sshPassType: SshPassType.Password,
         }}
-      />
+      />,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
-    expect(screen.getByTestId('sshPassword')).toHaveAttribute('value', '••••••••••••')
-    expect(screen.getByTestId('sshPassword')).toHaveAttribute('type', 'password')
+    expect(screen.getByTestId('sshPassword')).toHaveAttribute(
+      'value',
+      '••••••••••••',
+    )
+    expect(screen.getByTestId('sshPassword')).toHaveAttribute(
+      'type',
+      'password',
+    )
 
     fireEvent.focus(screen.getByTestId('sshPassword'))
 
@@ -1237,11 +1242,14 @@ describe('InstanceForm', () => {
           ssh: true,
           sshPassType: SshPassType.Password,
         }}
-      />
+      />,
     )
 
     fireEvent.click(screen.getByTestId('manual-form-tab-security'))
-    expect(screen.getByTestId('sshPassword')).toHaveAttribute('maxLength', '10000')
+    expect(screen.getByTestId('sshPassword')).toHaveAttribute(
+      'maxLength',
+      '10000',
+    )
   })
 
   describe('timeout', () => {
@@ -1250,16 +1258,15 @@ describe('InstanceForm', () => {
         <ManualConnectionForm
           {...instance(mockedProps)}
           formFields={{ ...formFields, timeout: '30' }}
-        />
+        />,
       )
 
       expect(screen.getByTestId('timeout')).toBeInTheDocument()
       expect(screen.getByTestId('timeout')).toHaveAttribute('maxLength', '7')
 
-      fireEvent.change(
-        screen.getByTestId('timeout'),
-        { target: { value: '2000000' } }
-      )
+      fireEvent.change(screen.getByTestId('timeout'), {
+        target: { value: '2000000' },
+      })
 
       expect(screen.getByTestId('timeout')).toHaveAttribute('value', '1000000')
     })
@@ -1269,13 +1276,12 @@ describe('InstanceForm', () => {
         <ManualConnectionForm
           {...instance(mockedProps)}
           formFields={{ ...formFields, timeout: '30' }}
-        />
+        />,
       )
 
-      fireEvent.change(
-        screen.getByTestId('timeout'),
-        { target: { value: '11a2EU$#@' } }
-      )
+      fireEvent.change(screen.getByTestId('timeout'), {
+        target: { value: '11a2EU$#@' },
+      })
 
       expect(screen.getByTestId('timeout')).toHaveAttribute('value', '112')
     })
@@ -1283,7 +1289,7 @@ describe('InstanceForm', () => {
 
   describe('cloud', () => {
     it('some fields should be readonly if instance data source from cloud', () => {
-      (appRedirectionSelector as jest.Mock).mockImplementation(() => ({
+      ;(appRedirectionSelector as jest.Mock).mockImplementation(() => ({
         action: UrlHandlingActions.Connect,
       }))
 
@@ -1291,7 +1297,7 @@ describe('InstanceForm', () => {
         <ManualConnectionForm
           {...instance(mockedProps)}
           formFields={formFields}
-        />
+        />,
       )
 
       expect(queryByTestId('connection-type')).not.toBeInTheDocument()
@@ -1311,11 +1317,15 @@ describe('InstanceForm', () => {
           formFields={formFields}
           onSubmit={handleSubmit}
         />
-      </div>
+      </div>,
     )
 
     await act(() => {
-      fireEvent.keyDown(screen.getByTestId('form'), { key: 'Enter', code: 13, charCode: 13 })
+      fireEvent.keyDown(screen.getByTestId('form'), {
+        key: 'Enter',
+        code: 13,
+        charCode: 13,
+      })
     })
     expect(handleSubmit).toBeCalled()
   })

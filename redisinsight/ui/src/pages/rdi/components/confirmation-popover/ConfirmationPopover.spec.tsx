@@ -1,6 +1,14 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { act, cleanup, fireEvent, mockedStore, render, screen, waitFor } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+  waitFor,
+} from 'uiSrc/utils/test-utils'
 import ConfirmationPopover from './ConfirmationPopover'
 
 let store: typeof mockedStore
@@ -25,7 +33,7 @@ const mockedProps = {
       Button
     </button>
   ),
-  onButtonClick: jest.fn()
+  onButtonClick: jest.fn(),
 }
 
 describe('ConfirmationPopover', () => {
@@ -96,13 +104,17 @@ describe('ConfirmationPopover', () => {
       <ConfirmationPopover
         {...mockedProps}
         title="job1fjdsafdhsjalkfhdsjlafhdjksalhfjdsalgldkafhjdsalfdhsjaflkdsahjfdsalkfhdsa"
-      />
+      />,
     )
 
     await act(() => {
       fireEvent.click(screen.getByTestId('button'))
     })
 
-    expect(screen.getByText('job1fjdsafdhsjalkfhdsjlafhdjksalhfjdsalgldkafhjdsalfdhs...')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'job1fjdsafdhsjalkfhdsjlafhdjksalhfjdsalgldkafhjdsalfdhs...',
+      ),
+    ).toBeInTheDocument()
   })
 })

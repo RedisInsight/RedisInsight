@@ -11,8 +11,12 @@ export const getRootStaticPath = (mdPath: string) => {
   const paths = mdPath?.split('/') || []
   const tutorialFolder = paths[1]
 
-  if (tutorialFolder === TutorialsPaths.CustomTutorials) return paths.slice(0, 3).join('/')
-  if (tutorialFolder === TutorialsPaths.Guide || tutorialFolder === TutorialsPaths.Tutorials) {
+  if (tutorialFolder === TutorialsPaths.CustomTutorials)
+    return paths.slice(0, 3).join('/')
+  if (
+    tutorialFolder === TutorialsPaths.Guide ||
+    tutorialFolder === TutorialsPaths.Tutorials
+  ) {
     return paths.slice(0, 2).join('/')
   }
 
@@ -37,4 +41,5 @@ export const getFileUrlFromMd = (nodeUrl: string, mdPath: string): string => {
   return new URL(nodeUrl, pathUrl).toString()
 }
 
-export const getFileNameFromPath = (path: string): string => path.split('/').pop() || ''
+export const getFileNameFromPath = (path: string): string =>
+  path.split('/').pop() || ''

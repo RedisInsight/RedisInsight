@@ -9,7 +9,11 @@ import JSONBigInt from 'json-bigint'
 import { store } from 'uiSrc/slices/store'
 
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
-import { DATETIME_FORMATTER_DEFAULT, KeyValueFormat, TimezoneOption } from 'uiSrc/constants'
+import {
+  DATETIME_FORMATTER_DEFAULT,
+  KeyValueFormat,
+  TimezoneOption,
+} from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import {
   anyToBuffer,
@@ -38,24 +42,30 @@ export interface FormattingProps {
   tooltip?: boolean
 }
 
-const isTextViewFormatter = (format: KeyValueFormat) => [
-  KeyValueFormat.Unicode,
-  KeyValueFormat.ASCII,
-  KeyValueFormat.HEX,
-  KeyValueFormat.Binary,
-].includes(format)
-const isJsonViewFormatter = (format: KeyValueFormat) => !isTextViewFormatter(format)
-const isFormatEditable = (format: KeyValueFormat) => ![
-  KeyValueFormat.Protobuf,
-  KeyValueFormat.JAVA,
-  KeyValueFormat.Pickle,
-  KeyValueFormat.Vector32Bit,
-  KeyValueFormat.Vector64Bit,
-  KeyValueFormat.HEX,
-  KeyValueFormat.Binary,
-].includes(format)
+const isTextViewFormatter = (format: KeyValueFormat) =>
+  [
+    KeyValueFormat.Unicode,
+    KeyValueFormat.ASCII,
+    KeyValueFormat.HEX,
+    KeyValueFormat.Binary,
+  ].includes(format)
+const isJsonViewFormatter = (format: KeyValueFormat) =>
+  !isTextViewFormatter(format)
+const isFormatEditable = (format: KeyValueFormat) =>
+  ![
+    KeyValueFormat.Protobuf,
+    KeyValueFormat.JAVA,
+    KeyValueFormat.Pickle,
+    KeyValueFormat.Vector32Bit,
+    KeyValueFormat.Vector64Bit,
+    KeyValueFormat.HEX,
+    KeyValueFormat.Binary,
+  ].includes(format)
 
-const isFullStringLoaded = (currentLength: Maybe<number>, fullLength: Maybe<number>) => currentLength === fullLength
+const isFullStringLoaded = (
+  currentLength: Maybe<number>,
+  fullLength: Maybe<number>,
+) => currentLength === fullLength
 
 const isNonUnicodeFormatter = (format: KeyValueFormat, isValid: boolean) => {
   if (format === KeyValueFormat.Msgpack) {
@@ -73,20 +83,24 @@ const bufferToUnicode = (reply: RedisResponseBuffer): string =>
 
 const bufferToJSON = (
   reply: RedisResponseBuffer,
-  props: FormattingProps
-): { value: JSX.Element | string, isValid: boolean } =>
+  props: FormattingProps,
+): { value: JSX.Element | string; isValid: boolean } =>
   JSONViewer({ value: bufferToUTF8(reply), useNativeBigInt: false, ...props })
 
 const formattingBuffer = (
   reply: RedisResponseBuffer,
   format: KeyValueFormat,
-  props?: FormattingProps
-): { value: JSX.Element | string, isValid: boolean } => {
+  props?: FormattingProps,
+): { value: JSX.Element | string; isValid: boolean } => {
   switch (format) {
-    case KeyValueFormat.ASCII: return { value: bufferToASCII(reply), isValid: true }
-    case KeyValueFormat.HEX: return { value: bufferToHex(reply), isValid: true }
-    case KeyValueFormat.Binary: return { value: bufferToBinary(reply), isValid: true }
-    case KeyValueFormat.JSON: return bufferToJSON(reply, props as FormattingProps)
+    case KeyValueFormat.ASCII:
+      return { value: bufferToASCII(reply), isValid: true }
+    case KeyValueFormat.HEX:
+      return { value: bufferToHex(reply), isValid: true }
+    case KeyValueFormat.Binary:
+      return { value: bufferToBinary(reply), isValid: true }
+    case KeyValueFormat.JSON:
+      return bufferToJSON(reply, props as FormattingProps)
     case KeyValueFormat.Msgpack: {
       try {
         const decoded = decode(Uint8Array.from(reply.data))
@@ -98,7 +112,11 @@ const formattingBuffer = (
     }
     case KeyValueFormat.PHP: {
       try {
-        const decoded = unserialize(bufferToUTF8(reply), {}, { strict: false, encoding: 'utf8' })
+        const decoded = unserialize(
+          bufferToUTF8(reply),
+          {},
+          { strict: false, encoding: 'utf8' },
+        )
         const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
@@ -122,7 +140,9 @@ const formattingBuffer = (
         if (isEqualBuffers(reply, bufferFromUtf)) {
           return { value: utfVariant, isValid: true }
         }
-        const vector = Array.from(bufferToFloat32Array(reply.data as Uint8Array))
+        const vector = Array.from(
+          bufferToFloat32Array(reply.data as Uint8Array),
+        )
         const value = JSONBigInt.stringify(vector)
         return JSONViewer({ value, useNativeBigInt: false, ...props })
       } catch (e) {
@@ -137,7 +157,9 @@ const formattingBuffer = (
         if (isEqualBuffers(reply, bufferFromUtf)) {
           return { value: utfVariant, isValid: true }
         }
-        const vector = Array.from(bufferToFloat64Array(reply.data as Uint8Array))
+        const vector = Array.from(
+          bufferToFloat64Array(reply.data as Uint8Array),
+        )
         const value = JSONBigInt.stringify(vector)
         return JSONViewer({ value, useNativeBigInt: false, ...props })
       } catch (e) {
@@ -165,7 +187,7 @@ const formattingBuffer = (
         if (isUndefined(decoded)) {
           return {
             value: bufferToUTF8(reply),
-            isValid: false
+            isValid: false,
           }
         }
 
@@ -183,34 +205,43 @@ const formattingBuffer = (
           // if seconds - add milliseconds (since JS Date works only with milliseconds)
           const timestamp = convertTimestampToMilliseconds(value)
           const config = get(store.getState(), 'user.settings.config', null)
-          return { value: formatTimestamp(
-            timestamp,
-            config?.dateFormat || DATETIME_FORMATTER_DEFAULT,
-            config?.timezone || TimezoneOption.Local,
-          ),
-          isValid: true }
+          return {
+            value: formatTimestamp(
+              timestamp,
+              config?.dateFormat || DATETIME_FORMATTER_DEFAULT,
+              config?.timezone || TimezoneOption.Local,
+            ),
+            isValid: true,
+          }
         }
       } catch (e) {
         // if error return default
       }
       return { value, isValid: false }
     }
-    default: return { value: bufferToUnicode(reply), isValid: true }
+    default:
+      return { value: bufferToUnicode(reply), isValid: true }
   }
 }
 
 const bufferToSerializedFormat = (
   format: KeyValueFormat,
   value: RedisResponseBuffer = stringToBuffer(''),
-  space?: number
+  space?: number,
 ): string => {
   switch (format) {
-    case KeyValueFormat.ASCII: return bufferToASCII(value)
-    case KeyValueFormat.HEX: return bufferToHex(value)
-    case KeyValueFormat.Binary: return bufferToBinary(value)
-    case KeyValueFormat.JSON: return reSerializeJSON(bufferToUTF8(value), space)
-    case KeyValueFormat.Vector32Bit: return bufferToFloat32Array(value.data as Uint8Array)
-    case KeyValueFormat.Vector64Bit: return bufferToFloat64Array(value.data as Uint8Array)
+    case KeyValueFormat.ASCII:
+      return bufferToASCII(value)
+    case KeyValueFormat.HEX:
+      return bufferToHex(value)
+    case KeyValueFormat.Binary:
+      return bufferToBinary(value)
+    case KeyValueFormat.JSON:
+      return reSerializeJSON(bufferToUTF8(value), space)
+    case KeyValueFormat.Vector32Bit:
+      return bufferToFloat32Array(value.data as Uint8Array)
+    case KeyValueFormat.Vector64Bit:
+      return bufferToFloat64Array(value.data as Uint8Array)
     case KeyValueFormat.Msgpack: {
       try {
         const decoded = decode(Uint8Array.from(value.data))
@@ -222,21 +253,32 @@ const bufferToSerializedFormat = (
     }
     case KeyValueFormat.PHP: {
       try {
-        const decoded = unserialize(bufferToUTF8(value), {}, { strict: false, encoding: 'utf8' })
+        const decoded = unserialize(
+          bufferToUTF8(value),
+          {},
+          { strict: false, encoding: 'utf8' },
+        )
         const stringified = JSON.stringify(decoded)
         return reSerializeJSON(stringified, space)
       } catch (e) {
         return bufferToUTF8(value)
       }
     }
-    default: return bufferToUTF8(value)
+    default:
+      return bufferToUTF8(value)
   }
 }
 
-const stringToSerializedBufferFormat = (format: KeyValueFormat, value: string): RedisResponseBuffer => {
+const stringToSerializedBufferFormat = (
+  format: KeyValueFormat,
+  value: string,
+): RedisResponseBuffer => {
   switch (format) {
     case KeyValueFormat.HEX: {
-      if ((value.match(/([0-9]|[a-f])/gim) || []).length === value.length && (value.length % 2 === 0)) {
+      if (
+        (value.match(/([0-9]|[a-f])/gim) || []).length === value.length &&
+        value.length % 2 === 0
+      ) {
         return hexToBuffer(value)
       }
       return stringToBuffer(value)

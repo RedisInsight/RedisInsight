@@ -20,25 +20,33 @@ describe('AutoRefresh', () => {
   })
 
   it('prop "displayText = true" should show Refresh text', () => {
-    const { queryByTestId } = render(<AutoRefresh {...instance(mockedProps)} displayText />)
+    const { queryByTestId } = render(
+      <AutoRefresh {...instance(mockedProps)} displayText />,
+    )
 
     expect(queryByTestId('refresh-message-label')).toBeInTheDocument()
   })
 
   it('prop "displayText = false" should hide Refresh text', () => {
-    const { queryByTestId } = render(<AutoRefresh {...instance(mockedProps)} displayText={false} />)
+    const { queryByTestId } = render(
+      <AutoRefresh {...instance(mockedProps)} displayText={false} />,
+    )
 
     expect(queryByTestId('refresh-message-label')).not.toBeInTheDocument()
   })
 
   it('prop "displayLastRefresh = true" should show refresh time message', () => {
-    const { queryByTestId } = render(<AutoRefresh {...instance(mockedProps)} displayLastRefresh />)
+    const { queryByTestId } = render(
+      <AutoRefresh {...instance(mockedProps)} displayLastRefresh />,
+    )
 
     expect(queryByTestId('refresh-message')).toBeInTheDocument()
   })
 
   it('prop "displayLastRefresh = false" should hide refresh time message', () => {
-    const { queryByTestId } = render(<AutoRefresh {...instance(mockedProps)} displayLastRefresh={false} />)
+    const { queryByTestId } = render(
+      <AutoRefresh {...instance(mockedProps)} displayLastRefresh={false} />,
+    )
 
     expect(queryByTestId('refresh-message')).not.toBeInTheDocument()
   })
@@ -54,7 +62,9 @@ describe('AutoRefresh', () => {
   it('refresh text should contain "Last refresh" time with disabled auto-refresh', async () => {
     render(<AutoRefresh {...instance(mockedProps)} displayText />)
 
-    expect(screen.getByTestId('refresh-message-label')).toHaveTextContent(/Last refresh:/i)
+    expect(screen.getByTestId('refresh-message-label')).toHaveTextContent(
+      /Last refresh:/i,
+    )
     expect(screen.getByTestId('refresh-message')).toHaveTextContent('now')
   })
 
@@ -64,18 +74,28 @@ describe('AutoRefresh', () => {
     fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
     fireEvent.click(screen.getByTestId('auto-refresh-switch'))
 
-    expect(screen.getByTestId('refresh-message-label')).toHaveTextContent(/Auto refresh:/i)
-    expect(screen.getByTestId('refresh-message')).toHaveTextContent(DEFAULT_REFRESH_RATE)
+    expect(screen.getByTestId('refresh-message-label')).toHaveTextContent(
+      /Auto refresh:/i,
+    )
+    expect(screen.getByTestId('refresh-message')).toHaveTextContent(
+      DEFAULT_REFRESH_RATE,
+    )
   })
 
   it('should locate refresh message label when testid is provided', () => {
-    render(<AutoRefresh {...instance(mockedProps)} displayText testid="testid" />)
+    render(
+      <AutoRefresh {...instance(mockedProps)} displayText testid="testid" />,
+    )
 
-    expect(screen.getByTestId('testid-refresh-message-label')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('testid-refresh-message-label'),
+    ).toBeInTheDocument()
   })
 
   it('should locate refresh message when testid is provided', () => {
-    render(<AutoRefresh {...instance(mockedProps)} displayText testid="testid" />)
+    render(
+      <AutoRefresh {...instance(mockedProps)} displayText testid="testid" />,
+    )
 
     expect(screen.getByTestId('testid-refresh-message')).toBeInTheDocument()
   })
@@ -89,7 +109,9 @@ describe('AutoRefresh', () => {
   it('should locate auto-refresh config button when testid is provided', () => {
     render(<AutoRefresh {...instance(mockedProps)} testid="testid" />)
 
-    expect(screen.getByTestId('testid-auto-refresh-config-btn')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('testid-auto-refresh-config-btn'),
+    ).toBeInTheDocument()
   })
 
   it('should locate auto-refresh switch when testid is provided', () => {
@@ -111,12 +133,16 @@ describe('AutoRefresh', () => {
 
     fireEvent.click(screen.getByTestId('testid-auto-refresh-config-btn'))
     fireEvent.click(screen.getByTestId('testid-refresh-rate'))
-    expect(screen.getByTestId('testid-auto-refresh-rate-input')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('testid-auto-refresh-rate-input'),
+    ).toBeInTheDocument()
   })
 
   describe('AutoRefresh Config', () => {
     it('Auto refresh config should render', () => {
-      const { queryByTestId } = render(<AutoRefresh {...instance(mockedProps)} />)
+      const { queryByTestId } = render(
+        <AutoRefresh {...instance(mockedProps)} />,
+      )
 
       fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
       expect(queryByTestId('auto-refresh-switch')).toBeInTheDocument()
@@ -130,7 +156,9 @@ describe('AutoRefresh', () => {
       fireEvent.click(screen.getByTestId('auto-refresh-switch'))
       fireEvent.click(screen.getByTestId('refresh-rate'))
 
-      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: '1' } })
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
+        target: { value: '1' },
+      })
       expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveValue('1')
 
       screen.getByTestId(/apply-btn/).click()
@@ -159,14 +187,19 @@ describe('AutoRefresh', () => {
           {...instance(mockedProps)}
           minimumRefreshRate={minimumRefreshRate}
           onChangeAutoRefreshRate={onChangeAutoRefreshRate}
-        />
+        />,
       )
 
       fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
       fireEvent.click(screen.getByTestId('refresh-rate'))
-      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: (minimumRefreshRate / 2).toString() } })
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
+        target: { value: (minimumRefreshRate / 2).toString() },
+      })
       screen.getByTestId(/apply-btn/).click()
-      expect(onChangeAutoRefreshRate).toHaveBeenLastCalledWith(false, minimumRefreshRate.toString())
+      expect(onChangeAutoRefreshRate).toHaveBeenLastCalledWith(
+        false,
+        minimumRefreshRate.toString(),
+      )
     })
 
     it('should allow valid refresh rates above minimumRefreshRate', async () => {
@@ -177,18 +210,20 @@ describe('AutoRefresh', () => {
           {...instance(mockedProps)}
           minimumRefreshRate={minimumRefreshRate}
           onChangeAutoRefreshRate={onChangeAutoRefreshRate}
-        />
+        />,
       )
 
       fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
       fireEvent.click(screen.getByTestId('refresh-rate'))
-      fireEvent.change(
-        screen.getByTestId(INLINE_ITEM_EDITOR),
-        { target: { value: (minimumRefreshRate * 2).toString() } }
-      )
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
+        target: { value: (minimumRefreshRate * 2).toString() },
+      })
       screen.getByTestId(/apply-btn/).click()
 
-      expect(onChangeAutoRefreshRate).toHaveBeenLastCalledWith(false, (minimumRefreshRate * 2).toString())
+      expect(onChangeAutoRefreshRate).toHaveBeenLastCalledWith(
+        false,
+        (minimumRefreshRate * 2).toString(),
+      )
     })
 
     it('should use defaultRefreshRate when provided', () => {
@@ -197,11 +232,13 @@ describe('AutoRefresh', () => {
         <AutoRefresh
           {...instance(mockedProps)}
           defaultRefreshRate={customDefaultRate}
-        />
+        />,
       )
 
       fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-      expect(screen.getByTestId('refresh-rate')).toHaveTextContent(`${customDefaultRate} s`)
+      expect(screen.getByTestId('refresh-rate')).toHaveTextContent(
+        `${customDefaultRate} s`,
+      )
     })
 
     it('should use DEFAULT_REFRESH_RATE when defaultRefreshRate is not provided', () => {
@@ -209,25 +246,37 @@ describe('AutoRefresh', () => {
 
       // Open config and check default value
       fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-      expect(screen.getByTestId('refresh-rate')).toHaveTextContent(`${DEFAULT_REFRESH_RATE} s`)
+      expect(screen.getByTestId('refresh-rate')).toHaveTextContent(
+        `${DEFAULT_REFRESH_RATE} s`,
+      )
     })
   })
 
   it('should NOT call onRefresh with disabled state', async () => {
     const onRefresh = jest.fn()
-    const { rerender } = render(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />)
+    const { rerender } = render(
+      <AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />,
+    )
 
     fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
     fireEvent.click(screen.getByTestId('auto-refresh-switch'))
     fireEvent.click(screen.getByTestId('refresh-rate'))
-    fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: '1' } })
+    fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
+      target: { value: '1' },
+    })
 
     expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveValue('1')
 
     screen.getByTestId(/apply-btn/).click()
 
     await act(() => {
-      rerender(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} disabled />)
+      rerender(
+        <AutoRefresh
+          {...instance(mockedProps)}
+          onRefresh={onRefresh}
+          disabled
+        />,
+      )
     })
 
     await act(async () => {
@@ -241,21 +290,35 @@ describe('AutoRefresh', () => {
     expect(onRefresh).toBeCalledTimes(0)
 
     await act(() => {
-      rerender(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} disabled={false} />)
+      rerender(
+        <AutoRefresh
+          {...instance(mockedProps)}
+          onRefresh={onRefresh}
+          disabled={false}
+        />,
+      )
     })
 
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1300))
     })
     expect(onRefresh).toBeCalledTimes(1)
-  });
+  })
 
   it('refresh tooltip text should contain disabled refresh button reason message when button disabled', async () => {
-    const tooltipText = 'some-disabled-message';
-    render(<AutoRefresh {...instance(mockedProps)} disabled={true} disabledRefreshButtonMessage={tooltipText} />);
+    const tooltipText = 'some-disabled-message'
+    render(
+      <AutoRefresh
+        {...instance(mockedProps)}
+        disabled={true}
+        disabledRefreshButtonMessage={tooltipText}
+      />,
+    )
 
-    fireEvent.mouseOver(screen.getByTestId('refresh-btn'));
-    await screen.findByTestId('refresh-tooltip');
-    expect(screen.getByTestId('refresh-tooltip')).toHaveTextContent(new RegExp(`^${tooltipText}$`));
+    fireEvent.mouseOver(screen.getByTestId('refresh-btn'))
+    await screen.findByTestId('refresh-tooltip')
+    expect(screen.getByTestId('refresh-tooltip')).toHaveTextContent(
+      new RegExp(`^${tooltipText}$`),
+    )
   })
 })

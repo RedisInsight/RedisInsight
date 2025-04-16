@@ -3,7 +3,10 @@ import cx from 'classnames'
 import { EuiButton, EuiToolTip } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { sidePanelsSelector, toggleSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import {
+  sidePanelsSelector,
+  toggleSidePanel,
+} from 'uiSrc/slices/panels/sidePanels'
 
 import CopilotIcon from 'uiSrc/assets/img/icons/copilot.svg?react'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
@@ -21,12 +24,10 @@ const CopilotTrigger = () => {
   return (
     <div
       className={cx(styles.container, {
-        [styles.isOpen]: openedPanel === SidePanels.AiAssistant
+        [styles.isOpen]: openedPanel === SidePanels.AiAssistant,
       })}
     >
-      <EuiToolTip
-        content="Redis Copilot"
-      >
+      <EuiToolTip content="Redis Copilot">
         <EuiButton
           fill
           size="s"

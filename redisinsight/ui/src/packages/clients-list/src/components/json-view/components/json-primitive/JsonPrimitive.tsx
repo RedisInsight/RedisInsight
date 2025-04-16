@@ -27,7 +27,9 @@ const JsonPrimitive = ({ data, lastElement = true }: IDefaultProps) => {
   }
   return (
     <span data-testid="json-primitive-component">
-      <span className={valueStyle} data-testid="json-primitive-value">{stringValue}</span>
+      <span className={valueStyle} data-testid="json-primitive-value">
+        {stringValue}
+      </span>
       {!lastElement && ','}
       {'\n'}
     </span>

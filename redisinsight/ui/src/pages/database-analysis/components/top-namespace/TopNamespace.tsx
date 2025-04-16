@@ -5,7 +5,11 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { Pages } from 'uiSrc/constants'
-import { DEFAULT_EXTRAPOLATION, SectionName, TableView } from 'uiSrc/pages/database-analysis'
+import {
+  DEFAULT_EXTRAPOLATION,
+  SectionName,
+  TableView,
+} from 'uiSrc/pages/database-analysis'
 import { TableLoader } from 'uiSrc/pages/database-analysis/components'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { changeKeyViewType } from 'uiSrc/slices/browser/keys'
@@ -57,7 +61,10 @@ const TopNamespace = (props: Props) => {
 
   if (!data?.topMemoryNsp?.length && !data?.topKeysNsp?.length) {
     return (
-      <div className={cx('section', styles.wrapper)} data-testid="top-namespaces-empty">
+      <div
+        className={cx('section', styles.wrapper)}
+        data-testid="top-namespaces-empty"
+      >
         <div className="section-title-wrapper">
           <EuiTitle className="section-title">
             <h4>TOP NAMESPACES</h4>
@@ -97,7 +104,9 @@ const TopNamespace = (props: Props) => {
           color="secondary"
           onClick={() => setTableView(TableView.MEMORY)}
           disabled={tableView === TableView.MEMORY}
-          className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.MEMORY })}
+          className={cx(styles.textBtn, {
+            [styles.activeBtn]: tableView === TableView.MEMORY,
+          })}
           data-testid="btn-change-table-memory"
         >
           by Memory
@@ -108,7 +117,9 @@ const TopNamespace = (props: Props) => {
           color="secondary"
           onClick={() => setTableView(TableView.KEYS)}
           disabled={tableView === TableView.KEYS}
-          className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.KEYS })}
+          className={cx(styles.textBtn, {
+            [styles.activeBtn]: tableView === TableView.KEYS,
+          })}
           data-testid="btn-change-table-keys"
         >
           by Number of Keys
@@ -122,7 +133,10 @@ const TopNamespace = (props: Props) => {
             checked={isExtrapolated}
             onChange={(e) => {
               setIsExtrapolated(e.target.checked)
-              onSwitchExtrapolation?.(e.target.checked, SectionName.TOP_NAMESPACES)
+              onSwitchExtrapolation?.(
+                e.target.checked,
+                SectionName.TOP_NAMESPACES,
+              )
             }}
             data-testid="extrapolate-results"
           />

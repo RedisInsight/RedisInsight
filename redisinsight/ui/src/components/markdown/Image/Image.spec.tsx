@@ -13,13 +13,19 @@ describe('Image', () => {
 
   it('should render image with absolute path', () => {
     const path = 'https://image.com/image.png'
-    const { container } = render(<Image {...instance(mockedProps)} src={path} />)
+    const { container } = render(
+      <Image {...instance(mockedProps)} src={path} />,
+    )
     expect(container.querySelector('img')?.getAttribute('src')).toEqual(path)
   })
 
   it('should render image with path to static folder', () => {
     const path = 'static/image.png'
-    const { container } = render(<Image {...instance(mockedProps)} src={path} />)
-    expect(container.querySelector('img')?.getAttribute('src')).toEqual(`${RESOURCES_BASE_URL}${path}`)
+    const { container } = render(
+      <Image {...instance(mockedProps)} src={path} />,
+    )
+    expect(container.querySelector('img')?.getAttribute('src')).toEqual(
+      `${RESOURCES_BASE_URL}${path}`,
+    )
   })
 })

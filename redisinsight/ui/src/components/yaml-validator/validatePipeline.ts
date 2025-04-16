@@ -44,7 +44,10 @@ export const validatePipeline = ({
     result,
     configValidationErrors: [...new Set(configErrors)],
     jobsValidationErrors: Object.fromEntries(
-      Object.entries(jobsErrors).map(([jobName, errors]) => [jobName, [...errors]])
+      Object.entries(jobsErrors).map(([jobName, errors]) => [
+        jobName,
+        [...errors],
+      ]),
     ),
   }
 }

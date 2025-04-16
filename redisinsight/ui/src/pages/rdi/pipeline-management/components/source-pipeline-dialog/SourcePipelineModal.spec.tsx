@@ -1,11 +1,24 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, fireEvent, screen } from 'uiSrc/utils/test-utils'
-import { getPipeline, setChangedFile, setPipeline } from 'uiSrc/slices/rdi/pipeline'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  fireEvent,
+  screen,
+} from 'uiSrc/utils/test-utils'
+import {
+  getPipeline,
+  setChangedFile,
+  setPipeline,
+} from 'uiSrc/slices/rdi/pipeline'
 import { setPipelineDialogState } from 'uiSrc/slices/app/context'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
-import SourcePipelineDialog, { EMPTY_PIPELINE, PipelineSourceOptions } from './SourcePipelineModal'
+import SourcePipelineDialog, {
+  EMPTY_PIPELINE,
+  PipelineSourceOptions,
+} from './SourcePipelineModal'
 
 jest.mock('formik', () => ({
   ...jest.requireActual('formik'),
@@ -13,13 +26,13 @@ jest.mock('formik', () => ({
     values: {
       config: '',
       jobs: [],
-    }
-  })
+    },
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 let store: typeof mockedStore
@@ -35,31 +48,32 @@ describe('SourcePipelineDialog', () => {
   })
 
   it('should call proper actions after select fetch from server option', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<SourcePipelineDialog />)
 
     fireEvent.click(screen.getByTestId('server-source-pipeline-dialog'))
 
-    const expectedActions = [
-      getPipeline(),
-      setPipelineDialogState(false),
-    ]
+    const expectedActions = [getPipeline(), setPipelineDialogState(false)]
 
     expect(store.getActions()).toEqual(expectedActions)
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_START_OPTION_SELECTED,
       eventData: {
         id: 'rdiInstanceId',
-        option: PipelineSourceOptions.SERVER
-      }
+        option: PipelineSourceOptions.SERVER,
+      },
     })
   })
 
   it('should call proper actions after select empty pipeline  option', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<SourcePipelineDialog />)
 
     fireEvent.click(screen.getByTestId('empty-source-pipeline-dialog'))
@@ -75,14 +89,16 @@ describe('SourcePipelineDialog', () => {
       event: TelemetryEvent.RDI_START_OPTION_SELECTED,
       eventData: {
         id: 'rdiInstanceId',
-        option: PipelineSourceOptions.NEW
-      }
+        option: PipelineSourceOptions.NEW,
+      },
     })
   })
 
   it('should call proper telemetry event after select empty pipeline  option', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<SourcePipelineDialog />)
 
     fireEvent.click(screen.getByTestId('file-source-pipeline-dialog'))
@@ -91,8 +107,8 @@ describe('SourcePipelineDialog', () => {
       event: TelemetryEvent.RDI_START_OPTION_SELECTED,
       eventData: {
         id: 'rdiInstanceId',
-        option: PipelineSourceOptions.FILE
-      }
+        option: PipelineSourceOptions.FILE,
+      },
     })
   })
 })

@@ -15,7 +15,9 @@ const OAuthAdvantages = () => (
       {OAUTH_ADVANTAGES_ITEMS.map(({ title }) => (
         <EuiText className={styles.advantage} key={title?.toString()}>
           <EuiIcon type="check" className={styles.advantageIcon} />
-          <EuiText className={styles.advantageTitle} color="subdued">{title}</EuiText>
+          <EuiText className={styles.advantageTitle} color="subdued">
+            {title}
+          </EuiText>
         </EuiText>
       ))}
     </div>

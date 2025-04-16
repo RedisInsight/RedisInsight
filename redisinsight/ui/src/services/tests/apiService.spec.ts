@@ -1,6 +1,9 @@
 import { cloneDeep } from 'lodash'
 import { sessionStorageService } from 'uiSrc/services'
-import { cloudAuthInterceptor, requestInterceptor } from 'uiSrc/services/apiService'
+import {
+  cloudAuthInterceptor,
+  requestInterceptor,
+} from 'uiSrc/services/apiService'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 import { logoutUser } from 'uiSrc/slices/oauth/cloud'
@@ -13,7 +16,7 @@ describe('requestInterceptor', () => {
 
     const config: any = {
       headers: {},
-      url: 'http://localhost:8080/databases/123-215gg-23/endpoint'
+      url: 'http://localhost:8080/databases/123-215gg-23/endpoint',
     }
 
     requestInterceptor(config)
@@ -25,7 +28,7 @@ describe('requestInterceptor', () => {
 
     const config: any = {
       headers: {},
-      url: 'http://localhost:8080/settings/123-215gg-23/endpoint'
+      url: 'http://localhost:8080/settings/123-215gg-23/endpoint',
     }
 
     requestInterceptor(config)
@@ -42,14 +45,14 @@ describe('cloudAuthInterceptor', () => {
   })
 
   it('should properly handle 401 error, call logogut', async () => {
-    jest.spyOn(store, 'dispatch')
+    jest
+      .spyOn(store, 'dispatch')
       .mockImplementation(mockedTestStore.dispatch as any)
-    jest.spyOn(store, 'getState')
-      .mockImplementation(mockedTestStore.getState)
+    jest.spyOn(store, 'getState').mockImplementation(mockedTestStore.getState)
 
     const response: any = {
       response: { status: 401 },
-      config: { url: ApiEndpoints.CLOUD_CAPI_KEYS }
+      config: { url: ApiEndpoints.CLOUD_CAPI_KEYS },
     }
 
     try {
@@ -60,14 +63,14 @@ describe('cloudAuthInterceptor', () => {
   })
 
   it('should properly handle 401 error, do not call logout', async () => {
-    jest.spyOn(store, 'dispatch')
+    jest
+      .spyOn(store, 'dispatch')
       .mockImplementation(mockedTestStore.dispatch as any)
-    jest.spyOn(store, 'getState')
-      .mockImplementation(mockedTestStore.getState)
+    jest.spyOn(store, 'getState').mockImplementation(mockedTestStore.getState)
 
     const response: any = {
       response: { status: 401 },
-      config: { url: ApiEndpoints.BULK_ACTIONS_IMPORT }
+      config: { url: ApiEndpoints.BULK_ACTIONS_IMPORT },
     }
 
     try {

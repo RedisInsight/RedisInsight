@@ -6,7 +6,7 @@ import {
   EuiFlexItem,
   EuiFormRow,
   EuiSpacer,
-  htmlIdGenerator
+  htmlIdGenerator,
 } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
@@ -22,7 +22,9 @@ export interface Props {
 const DbIndex = (props: Props) => {
   const { formik } = props
 
-  const handleChangeDbIndexCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleChangeDbIndexCheckbox = (
+    e: ChangeEvent<HTMLInputElement>,
+  ): void => {
     const isChecked = e.target.checked
     if (!isChecked) {
       // Reset db field to initial value
@@ -33,13 +35,8 @@ const DbIndex = (props: Props) => {
 
   return (
     <>
-      <EuiFlexGroup
-        responsive={false}
-        gutterSize="xs"
-      >
-        <EuiFlexItem
-          grow={false}
-        >
+      <EuiFlexGroup responsive={false} gutterSize="xs">
+        <EuiFlexItem grow={false}>
           <EuiFormRow>
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
@@ -69,7 +66,7 @@ const DbIndex = (props: Props) => {
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     formik.setFieldValue(
                       e.target.name,
-                      validateNumber(e.target.value.trim())
+                      validateNumber(e.target.value.trim()),
                     )
                   }}
                   type="text"

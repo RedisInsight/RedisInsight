@@ -1,7 +1,4 @@
-import {
-  EuiButtonIcon,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
 export interface Props {

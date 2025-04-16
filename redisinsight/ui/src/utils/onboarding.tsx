@@ -5,7 +5,7 @@ import { OnboardingTourOptions } from 'uiSrc/components/onboarding-tour'
 import { Props as OnboardingTourProps } from 'uiSrc/components/onboarding-tour/OnboardingTourWrapper'
 import { Maybe } from 'uiSrc/utils/types'
 
-interface Props extends Omit<OnboardingTourProps, 'children' | 'options' > {
+interface Props extends Omit<OnboardingTourProps, 'children' | 'options'> {
   options: Maybe<OnboardingTourOptions>
 }
 
@@ -13,14 +13,18 @@ const renderOnboardingTourWithChild = (
   children: React.ReactElement,
   props: Props,
   isActive = true,
-  key: string = htmlIdGenerator()()
+  key: string = htmlIdGenerator()(),
 ) =>
-  (props.options && isActive ? (
-    <OnboardingTour {...props} options={props.options as OnboardingTourOptions} key={key}>
+  props.options && isActive ? (
+    <OnboardingTour
+      {...props}
+      options={props.options as OnboardingTourOptions}
+      key={key}
+    >
       {children}
     </OnboardingTour>
-  ) : children)
+  ) : (
+    children
+  )
 
-export {
-  renderOnboardingTourWithChild
-}
+export { renderOnboardingTourWithChild }

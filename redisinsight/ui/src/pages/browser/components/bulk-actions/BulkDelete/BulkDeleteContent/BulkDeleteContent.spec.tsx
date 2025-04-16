@@ -17,30 +17,33 @@ beforeEach(() => {
 jest.mock('uiSrc/slices/browser/bulkActions', () => ({
   ...jest.requireActual('uiSrc/slices/browser/bulkActions'),
   selectedBulkActionsSelector: jest.fn().mockReturnValue({
-    type: 'delete'
+    type: 'delete',
   }),
 }))
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
-  useSelector: jest.fn()
+  useSelector: jest.fn(),
 }))
 
 beforeEach(() => {
-  const state: any = store.getState();
+  const state: any = store.getState()
 
-  (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-    ...state,
-    browser: {
-      ...state.browser,
-      keys: {
-        ...state.browser.keys,
-        data: {
-          ...state.browser.keys.data,
-        }
-      }
-    }
-  }))
+  ;(useSelector as jest.Mock).mockImplementation(
+    (callback: (arg0: RootState) => RootState) =>
+      callback({
+        ...state,
+        browser: {
+          ...state.browser,
+          keys: {
+            ...state.browser.keys,
+            data: {
+              ...state.browser.keys.data,
+            },
+          },
+        },
+      }),
+  )
 })
 
 describe('BulkDeleteContent', () => {

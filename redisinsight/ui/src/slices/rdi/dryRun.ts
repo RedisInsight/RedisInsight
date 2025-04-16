@@ -1,9 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { apiService, } from 'uiSrc/services'
+import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { getApiErrorMessage, getAxiosError, isStatusSuccessful } from 'uiSrc/utils'
-import { EnhancedAxiosError, IDryRunJobResults, IStateRdiDryRunJob } from 'uiSrc/slices/interfaces'
+import {
+  getApiErrorMessage,
+  getAxiosError,
+  isStatusSuccessful,
+} from 'uiSrc/utils'
+import {
+  EnhancedAxiosError,
+  IDryRunJobResults,
+  IStateRdiDryRunJob,
+} from 'uiSrc/slices/interfaces'
 
 import { AppDispatch, RootState } from '../store'
 
@@ -22,7 +30,10 @@ const rdiPipelineSlice = createSlice({
       state.loading = true
       state.results = null
     },
-    dryRunJobSuccess: (state, { payload }: PayloadAction<IDryRunJobResults>) => {
+    dryRunJobSuccess: (
+      state,
+      { payload }: PayloadAction<IDryRunJobResults>,
+    ) => {
       state.loading = false
       state.results = payload
       state.error = ''
@@ -32,7 +43,7 @@ const rdiPipelineSlice = createSlice({
       state.error = payload
       state.results = null
     },
-  }
+  },
 })
 
 export const rdiDryRunJobSelector = (state: RootState) => state.rdi.dryRun
@@ -63,7 +74,7 @@ export function rdiDryRunJob(
         {
           input_data,
           job,
-        }
+        },
       )
 
       if (isStatusSuccessful(status)) {

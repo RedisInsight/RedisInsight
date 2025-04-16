@@ -63,7 +63,7 @@ export const AddZsetFormConfig: IAddZsetFormConfig = {
     isRequire: false,
     label: 'Member',
     placeholder: 'Enter Member',
-  }
+  },
 }
 
 interface IAddSetFormConfig {
@@ -108,8 +108,8 @@ export const AddListFormConfig: IAddListFormConfig = {
     name: 'count',
     isRequire: true,
     label: 'Count',
-    placeholder: 'Enter Count*'
-  }
+    placeholder: 'Enter Count*',
+  },
 }
 
 interface IAddJSONFormConfig {
@@ -137,7 +137,7 @@ export const AddStreamFormConfig: IAddStreamFormConfig = {
     name: 'Entry ID',
     isRequire: true,
     label: 'Entry ID*',
-    placeholder: 'Enter Entry ID'
+    placeholder: 'Enter Entry ID',
   },
   name: {
     id: 'name',

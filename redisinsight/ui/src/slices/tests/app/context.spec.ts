@@ -101,12 +101,12 @@ describe('slices', () => {
         pubsub: {
           ...initialState.pubsub,
           channel: '123123',
-          message: '123123'
+          message: '123123',
         },
         analytics: {
           ...initialState.analytics,
-          lastViewedPage: 'zxczxc'
-        }
+          lastViewedPage: 'zxczxc',
+        },
       }
       const state = {
         ...initialState,
@@ -133,11 +133,14 @@ describe('slices', () => {
       const contextInstanceId = '12312-3123'
       const state = {
         ...initialState,
-        contextInstanceId
+        contextInstanceId,
       }
 
       // Act
-      const nextState = reducer(initialState, setAppContextConnectedInstanceId(contextInstanceId))
+      const nextState = reducer(
+        initialState,
+        setAppContextConnectedInstanceId(contextInstanceId),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -154,11 +157,14 @@ describe('slices', () => {
       const contextRdiInstanceId = 'rdi-123'
       const state = {
         ...initialState,
-        contextRdiInstanceId
+        contextRdiInstanceId,
       }
 
       // Act
-      const nextState = reducer(initialState, setAppContextConnectedRdiInstanceId(contextRdiInstanceId))
+      const nextState = reducer(
+        initialState,
+        setAppContextConnectedRdiInstanceId(contextRdiInstanceId),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -177,12 +183,15 @@ describe('slices', () => {
         ...initialState.browser,
         keyList: {
           ...initialState.browser.keyList,
-          isDataPatternLoaded
-        }
+          isDataPatternLoaded,
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, setBrowserPatternKeyListDataLoaded(isDataPatternLoaded))
+      const nextState = reducer(
+        initialState,
+        setBrowserPatternKeyListDataLoaded(isDataPatternLoaded),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -201,12 +210,15 @@ describe('slices', () => {
         ...initialState.browser,
         keyList: {
           ...initialState.browser.keyList,
-          isDataRedisearchLoaded
-        }
+          isDataRedisearchLoaded,
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, setBrowserRedisearchKeyListDataLoaded(isDataRedisearchLoaded))
+      const nextState = reducer(
+        initialState,
+        setBrowserRedisearchKeyListDataLoaded(isDataRedisearchLoaded),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -225,12 +237,15 @@ describe('slices', () => {
         ...initialState.browser,
         keyList: {
           ...initialState.browser.keyList,
-          selectedKey
-        }
+          selectedKey,
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, setBrowserSelectedKey(selectedKey))
+      const nextState = reducer(
+        initialState,
+        setBrowserSelectedKey(selectedKey),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -249,12 +264,15 @@ describe('slices', () => {
         ...initialState.browser,
         keyList: {
           ...initialState.browser.keyList,
-          scrollPatternTopPosition
-        }
+          scrollPatternTopPosition,
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, setBrowserPatternScrollPosition(scrollPatternTopPosition))
+      const nextState = reducer(
+        initialState,
+        setBrowserPatternScrollPosition(scrollPatternTopPosition),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -273,14 +291,14 @@ describe('slices', () => {
         ...initialState.browser,
         keyList: {
           ...initialState.browser.keyList,
-          scrollRedisearchTopPosition
-        }
+          scrollRedisearchTopPosition,
+        },
       }
 
       // Act
       const nextState = reducer(
         initialState,
-        setBrowserRedisearchScrollPosition(scrollRedisearchTopPosition)
+        setBrowserRedisearchScrollPosition(scrollRedisearchTopPosition),
       )
 
       // Assert
@@ -297,11 +315,11 @@ describe('slices', () => {
       // Arrange
       const panelSizes = {
         first: 100,
-        second: 200
+        second: 200,
       }
       const state = {
         ...initialState.browser,
-        panelSizes
+        panelSizes,
       }
 
       // Act
@@ -322,7 +340,7 @@ describe('slices', () => {
       const script = 'set 1 1 // 215 hset 5 21'
       const state = {
         ...initialState.workbench,
-        script
+        script,
       }
 
       // Act
@@ -342,18 +360,21 @@ describe('slices', () => {
       // Arrange
       const panelSizes = {
         first: 100,
-        second: 200
+        second: 200,
       }
       const state = {
         ...initialState.workbench,
         panelSizes: {
           ...initialState.workbench.panelSizes,
-          vertical: panelSizes
-        }
+          vertical: panelSizes,
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, setWorkbenchVerticalPanelSizes(panelSizes))
+      const nextState = reducer(
+        initialState,
+        setWorkbenchVerticalPanelSizes(panelSizes),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -370,7 +391,7 @@ describe('slices', () => {
       const lastPage = 'workbench'
       const state = {
         ...initialState,
-        lastPage
+        lastPage,
       }
 
       // Act
@@ -398,14 +419,14 @@ describe('slices', () => {
           ...initialState.browser,
           tree: {
             ...initialState.browser.tree,
-            openNodes
-          }
+            openNodes,
+          },
         },
       }
 
       const state = {
         ...initialState.browser.tree,
-        openNodes
+        openNodes,
       }
 
       // Act
@@ -428,12 +449,15 @@ describe('slices', () => {
         ...initialState.browser,
         keyList: {
           ...initialState.browser.keyList,
-          isNotRendered
-        }
+          isNotRendered,
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, setBrowserIsNotRendered(isNotRendered))
+      const nextState = reducer(
+        initialState,
+        setBrowserIsNotRendered(isNotRendered),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -456,7 +480,7 @@ describe('slices', () => {
 
       const state = {
         ...initialState.dbConfig,
-        ...data
+        ...data,
       }
 
       // Act
@@ -478,11 +502,14 @@ describe('slices', () => {
 
       const state = {
         ...initialState.dbConfig,
-        slowLogDurationUnit
+        slowLogDurationUnit,
       }
 
       // Act
-      const nextState = reducer(initialState, setSlowLogUnits(slowLogDurationUnit))
+      const nextState = reducer(
+        initialState,
+        setSlowLogUnits(slowLogDurationUnit),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -500,11 +527,14 @@ describe('slices', () => {
 
       const state = {
         ...initialState.dbConfig,
-        treeViewDelimiter: delimiter
+        treeViewDelimiter: delimiter,
       }
 
       // Act
-      const nextState = reducer(initialState, setBrowserTreeDelimiter(delimiter))
+      const nextState = reducer(
+        initialState,
+        setBrowserTreeDelimiter(delimiter),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -544,11 +574,14 @@ describe('slices', () => {
 
       const state = {
         ...initialState.dbConfig,
-        showHiddenRecommendations: value
+        showHiddenRecommendations: value,
       }
 
       // Act
-      const nextState = reducer(initialState, setRecommendationsShowHidden(value))
+      const nextState = reducer(
+        initialState,
+        setRecommendationsShowHidden(value),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -569,16 +602,16 @@ describe('slices', () => {
           tree: {
             ...initialState.browser.tree,
             openNodes: {
-              test: true
+              test: true,
             },
             selectedLeaf: 'test',
-          }
+          },
         },
       }
       const state = {
         ...initialState.browser.tree,
         openNodes: {},
-        selectedLeaf: null
+        selectedLeaf: null,
       }
 
       // Act
@@ -599,13 +632,13 @@ describe('slices', () => {
       const payload = {
         type: KeyTypes.Hash,
         sizes: {
-          field: 50
-        }
+          field: 50,
+        },
       }
 
       const state = {
         ...initialState.browser.keyDetailsSizes,
-        [KeyTypes.Hash]: { ...payload.sizes }
+        [KeyTypes.Hash]: { ...payload.sizes },
       }
 
       // Act
@@ -625,7 +658,7 @@ describe('slices', () => {
       // Arrange
       const state = {
         ...initialState.dbIndex,
-        disabled: true
+        disabled: true,
       }
 
       // Act
@@ -695,7 +728,10 @@ describe('slices', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, setLastPipelineManagementPage(mockLastPage))
+      const nextState = reducer(
+        initialState,
+        setLastPipelineManagementPage(mockLastPage),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

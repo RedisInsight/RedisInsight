@@ -17,7 +17,10 @@ const CloudLink = (props: Props) => {
         <EuiLink
           color="text"
           onClick={(e) => {
-            ssoCloudHandlerClick(e, { source, action: OAuthSocialAction.Create })
+            ssoCloudHandlerClick(e, {
+              source,
+              action: OAuthSocialAction.Create,
+            })
           }}
           external={false}
           target="_blank"

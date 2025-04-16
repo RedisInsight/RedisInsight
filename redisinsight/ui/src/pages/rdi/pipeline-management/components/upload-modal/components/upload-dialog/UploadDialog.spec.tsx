@@ -6,8 +6,8 @@ import UploadDialog, { Props } from './UploadDialog'
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineSelector: jest.fn().mockReturnValue({
-    loading: false
-  })
+    loading: false,
+  }),
 }))
 
 jest.mock('formik', () => ({
@@ -17,15 +17,15 @@ jest.mock('formik', () => ({
       config: 'value',
       jobs: [
         { name: 'job1', value: 'value' },
-        { name: 'job2', value: 'value' }
-      ]
-    }
-  })
+        { name: 'job2', value: 'value' },
+      ],
+    },
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 const mockedProps: Props = {
@@ -34,7 +34,7 @@ const mockedProps: Props = {
   onFileChange: jest.fn(),
   isUploaded: false,
   showWarning: false,
-  loading: false
+  loading: false,
 }
 
 describe('UploadDialog', () => {
@@ -52,7 +52,7 @@ describe('UploadDialog', () => {
     render(<UploadDialog {...mockedProps} />)
 
     fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
-      target: { files: ['file'] }
+      target: { files: ['file'] },
     })
 
     expect(screen.getByTestId('submit-btn')).not.toBeDisabled()
@@ -67,31 +67,42 @@ describe('UploadDialog', () => {
   it('should only allow .zip files', () => {
     render(<UploadDialog {...mockedProps} />)
 
-    expect(screen.getByTestId('import-file-modal-filepicker')).toHaveAttribute('accept', '.zip')
+    expect(screen.getByTestId('import-file-modal-filepicker')).toHaveAttribute(
+      'accept',
+      '.zip',
+    )
   })
 
   it('should show custom results success title after submit', () => {
     render(<UploadDialog {...mockedProps} isUploaded />)
 
-    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('Pipeline has been uploaded')
+    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent(
+      'Pipeline has been uploaded',
+    )
   })
 
   it('should show custom results failed title after submit', () => {
     render(<UploadDialog {...mockedProps} isUploaded error="error" />)
 
-    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('Failed to upload pipeline')
+    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent(
+      'Failed to upload pipeline',
+    )
   })
 
   it('should show results after submit', () => {
     render(<UploadDialog {...mockedProps} isUploaded />)
 
-    expect(screen.getByTestId('result-succeeded')).toHaveTextContent('A new pipeline has been successfully uploaded.')
+    expect(screen.getByTestId('result-succeeded')).toHaveTextContent(
+      'A new pipeline has been successfully uploaded.',
+    )
   })
 
   it('should show error message when error is present', () => {
     render(<UploadDialog {...mockedProps} error="error" />)
 
-    expect(screen.getByTestId('result-failed')).toHaveTextContent('There was a problem with the .zip file')
+    expect(screen.getByTestId('result-failed')).toHaveTextContent(
+      'There was a problem with the .zip file',
+    )
     expect(screen.getByTestId('result-failed')).toHaveTextContent('error')
   })
 })

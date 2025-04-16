@@ -10,11 +10,13 @@ const mockedDownloadedSimpleArray = [1, 2, 3]
 
 describe('RejsonDynamicTypes Component', () => {
   it('renders correctly simple downloaded JSON', () => {
-    render(<RejsonDynamicTypes
-      {...instance(mockedProps)}
-      data={mockedDownloadedSimpleArray}
-      isDownloaded
-    />)
+    render(
+      <RejsonDynamicTypes
+        {...instance(mockedProps)}
+        data={mockedDownloadedSimpleArray}
+        isDownloaded
+      />,
+    )
 
     expect(screen.queryAllByTestId('json-scalar-value')).toHaveLength(3)
   })

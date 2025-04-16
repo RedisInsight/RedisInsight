@@ -12,14 +12,14 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
     config: 'value',
     jobs: [
       { name: 'job1', value: 'value' },
-      { name: 'job2', value: 'value' }
-    ]
-  })
+      { name: 'job2', value: 'value' },
+    ],
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 describe('Download', () => {
@@ -39,8 +39,10 @@ describe('Download', () => {
   })
 
   it('should call proper telemetry event when button is clicked', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<Download />)
 
@@ -52,14 +54,14 @@ describe('Download', () => {
       event: TelemetryEvent.RDI_PIPELINE_DOWNLOAD_CLICKED,
       eventData: {
         id: 'rdiInstanceId',
-        jobsNumber: 2
-      }
+        jobsNumber: 2,
+      },
     })
   })
 
   it('should render disabled download button when loading', () => {
-    (rdiPipelineSelector as jest.Mock).mockImplementation(() => ({
-      loading: true
+    ;(rdiPipelineSelector as jest.Mock).mockImplementation(() => ({
+      loading: true,
     }))
 
     render(<Download />)

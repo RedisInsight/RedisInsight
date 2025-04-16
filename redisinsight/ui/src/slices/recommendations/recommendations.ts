@@ -6,10 +6,18 @@ import { apiService, resourcesService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { DeleteDatabaseRecommendationResponse, ModifyDatabaseRecommendationDto } from 'apiSrc/modules/database-recommendation/dto'
+import {
+  DeleteDatabaseRecommendationResponse,
+  ModifyDatabaseRecommendationDto,
+} from 'apiSrc/modules/database-recommendation/dto'
 
 import { AppDispatch, RootState } from '../store'
-import { StateRecommendations, IRecommendations, IRecommendation, IRecommendationsStatic } from '../interfaces/recommendations'
+import {
+  StateRecommendations,
+  IRecommendations,
+  IRecommendation,
+  IRecommendationsStatic,
+} from '../interfaces/recommendations'
 
 export const initialState: StateRecommendations = {
   data: {
@@ -19,7 +27,7 @@ export const initialState: StateRecommendations = {
   content: {},
   loading: false,
   error: '',
-  isHighlighted: false
+  isHighlighted: false,
 }
 
 // A slice for recipes
@@ -38,7 +46,10 @@ const recommendationsSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    getRecommendationsSuccess: (state, { payload }: { payload: IRecommendations }) => {
+    getRecommendationsSuccess: (
+      state,
+      { payload }: { payload: IRecommendations },
+    ) => {
       state.loading = false
       state.data = payload
       state.error = ''
@@ -56,7 +67,10 @@ const recommendationsSlice = createSlice({
     },
     addUnreadRecommendations: (state, { payload }) => {
       payload.recommendations?.forEach((r: IRecommendation) => {
-        const isRecommendationExists = some(state.data.recommendations, (stateR) => r.id === stateR.id)
+        const isRecommendationExists = some(
+          state.data.recommendations,
+          (stateR) => r.id === stateR.id,
+        )
         if (!isRecommendationExists) {
           state.data.recommendations?.unshift(r)
         }
@@ -67,23 +81,32 @@ const recommendationsSlice = createSlice({
     readRecommendations: (state, { payload }) => {
       state.data = {
         ...state.data,
-        totalUnread: payload
+        totalUnread: payload,
       }
     },
     updateRecommendation: () => {
       // we don't have any loading here
     },
-    updateRecommendationSuccess: (state, { payload }: PayloadAction<IRecommendation>) => {
+    updateRecommendationSuccess: (
+      state,
+      { payload }: PayloadAction<IRecommendation>,
+    ) => {
       state.data.recommendations = [
         ...state.data.recommendations.map((recommendation) =>
-          (payload.id === recommendation.id ? payload : recommendation))
+          payload.id === recommendation.id ? payload : recommendation,
+        ),
       ]
     },
     updateRecommendationError: (state, { payload }) => {
       state.error = payload
     },
-    deleteRecommendations: (state, { payload }: PayloadAction<Array<{ id: string, isRead: boolean }>>) => {
-      remove(state.data.recommendations, (r) => some(payload, (pR) => pR.id === r.id))
+    deleteRecommendations: (
+      state,
+      { payload }: PayloadAction<Array<{ id: string; isRead: boolean }>>,
+    ) => {
+      remove(state.data.recommendations, (r) =>
+        some(payload, (pR) => pR.id === r.id),
+      )
       const countUnread = payload.filter((r) => !r.isRead).length
       state.data.totalUnread -= countUnread
     },
@@ -91,7 +114,10 @@ const recommendationsSlice = createSlice({
     getContentRecommendations: (state) => {
       state.loading = true
     },
-    getContentRecommendationsSuccess: (state, { payload }: PayloadAction<IRecommendationsStatic>) => {
+    getContentRecommendationsSuccess: (
+      state,
+      { payload }: PayloadAction<IRecommendationsStatic>,
+    ) => {
       state.loading = false
       state.content = payload
     },
@@ -122,7 +148,8 @@ export const {
 } = recommendationsSlice.actions
 
 // A selector
-export const recommendationsSelector = (state: RootState) => state.recommendations
+export const recommendationsSelector = (state: RootState) =>
+  state.recommendations
 
 // The reducer
 export default recommendationsSlice.reducer
@@ -138,10 +165,7 @@ export function fetchRecommendationsAction(
       dispatch(getRecommendations())
 
       const { data, status } = await apiService.get<IRecommendations>(
-        getUrl(
-          instanceId,
-          ApiEndpoints.RECOMMENDATIONS,
-        )
+        getUrl(instanceId, ApiEndpoints.RECOMMENDATIONS),
       )
 
       if (isStatusSuccessful(status)) {
@@ -165,10 +189,7 @@ export function readRecommendationsAction(instanceId: string) {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, status } = await apiService.patch(
-        getUrl(
-          instanceId,
-          ApiEndpoints.RECOMMENDATIONS_READ,
-        )
+        getUrl(instanceId, ApiEndpoints.RECOMMENDATIONS_READ),
       )
 
       if (isStatusSuccessful(status)) {
@@ -195,11 +216,7 @@ export function updateLiveRecommendation(
       const instanceId = state.connections.instances.connectedInstance?.id
 
       const { data, status } = await apiService.patch<IRecommendation>(
-        getUrl(
-          instanceId,
-          ApiEndpoints.RECOMMENDATIONS,
-          id,
-        ),
+        getUrl(instanceId, ApiEndpoints.RECOMMENDATIONS, id),
         dto,
       )
 
@@ -219,7 +236,7 @@ export function updateLiveRecommendation(
 
 // Asynchronous thunk action
 export function deleteLiveRecommendations(
-  recommendations: Array<{ id: string, isRead: boolean }>,
+  recommendations: Array<{ id: string; isRead: boolean }>,
   onSuccessAction?: (instanceId: string) => void,
   onFailAction?: () => void,
 ) {
@@ -229,13 +246,11 @@ export function deleteLiveRecommendations(
       const state = stateInit()
       const instanceId = state.connections.instances.connectedInstance?.id
 
-      const { status } = await apiService.delete<DeleteDatabaseRecommendationResponse>(
-        getUrl(
-          instanceId,
-          ApiEndpoints.RECOMMENDATIONS,
-        ),
-        { data: { ids: recommendations.map(({ id }) => id) } },
-      )
+      const { status } =
+        await apiService.delete<DeleteDatabaseRecommendationResponse>(
+          getUrl(instanceId, ApiEndpoints.RECOMMENDATIONS),
+          { data: { ids: recommendations.map(({ id }) => id) } },
+        )
 
       if (isStatusSuccessful(status)) {
         dispatch(deleteRecommendations(recommendations))
@@ -257,8 +272,10 @@ export function fetchContentRecommendations() {
     dispatch(getContentRecommendations())
 
     try {
-      const { data, status } = await resourcesService
-        .get<IRecommendationsStatic>(ApiEndpoints.CONTENT_RECOMMENDATIONS)
+      const { data, status } =
+        await resourcesService.get<IRecommendationsStatic>(
+          ApiEndpoints.CONTENT_RECOMMENDATIONS,
+        )
       if (isStatusSuccessful(status)) {
         dispatch(getContentRecommendationsSuccess(data))
       }

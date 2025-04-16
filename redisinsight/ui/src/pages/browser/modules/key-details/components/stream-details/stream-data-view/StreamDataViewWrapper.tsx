@@ -10,15 +10,30 @@ import {
   createDeleteFieldMessage,
   createTooltipContent,
   formattingBuffer,
-  stringToBuffer
+  stringToBuffer,
 } from 'uiSrc/utils'
-import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
+import {
+  streamDataSelector,
+  deleteStreamEntry,
+} from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { KeyTypes, TableCellTextAlignment, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  KeyTypes,
+  TableCellTextAlignment,
+  TEXT_FAILED_CONVENT_FORMATTER,
+} from 'uiSrc/constants'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
+import {
+  keysSelector,
+  selectedKeySelector,
+  updateSelectedKeyRefreshTime,
+} from 'uiSrc/slices/browser/keys'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
 import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
@@ -26,7 +41,10 @@ import { FormatedDate } from 'uiSrc/components'
 import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
-import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP, MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP } from '../constants'
+import {
+  MAX_FORMAT_LENGTH_STREAM_TIMESTAMP,
+  MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP,
+} from '../constants'
 
 const suffix = '_stream'
 const actionsWidth = 50
@@ -43,7 +61,9 @@ const StreamDataViewWrapper = (props: Props) => {
     keyNameString: keyString,
     lastRefreshTime,
   } = useSelector(streamDataSelector)
-  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(
+    connectedInstanceSelector,
+  )
   const { viewType: browserViewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
@@ -61,28 +81,35 @@ const StreamDataViewWrapper = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    const fieldsNames: { [key: string]: { index: number, name: RedisResponseBuffer } } = {}
+    const fieldsNames: {
+      [key: string]: { index: number; name: RedisResponseBuffer }
+    } = {}
 
     const streamEntries = loadedEntries?.map((entry) => {
-      const namesInEntry: { [key: string]: { index: number, name: RedisResponseBuffer } } = {}
+      const namesInEntry: {
+        [key: string]: { index: number; name: RedisResponseBuffer }
+      } = {}
       const entryFields = entry.fields.map((field) => {
         const { name } = field
         const nameViewValue = bufferToString(name, viewFormat)
 
         namesInEntry[nameViewValue] = {
-          index: namesInEntry[nameViewValue] ? namesInEntry[nameViewValue].index + 1 : 1,
-          name
+          index: namesInEntry[nameViewValue]
+            ? namesInEntry[nameViewValue].index + 1
+            : 1,
+          name,
         }
 
         return formatItem(field)
       })
 
-      const mergeByCount = (accCount: number, newCount: number) => (newCount > accCount ? newCount : accCount)
+      const mergeByCount = (accCount: number, newCount: number) =>
+        newCount > accCount ? newCount : accCount
 
       mergeWith(fieldsNames, namesInEntry, mergeByCount)
       return {
         ...entry,
-        fields: entryFields
+        fields: entryFields,
       }
     })
 
@@ -97,21 +124,42 @@ const StreamDataViewWrapper = (props: Props) => {
             id: field,
             label: field,
             render: () => {
-              const { value: decompressedName } = decompressingBuffer(name, compressor)
+              const { value: decompressedName } = decompressingBuffer(
+                name,
+                compressor,
+              )
               const buffer = decompressedName || stringToBuffer('')
-              const { value: formattedValue, isValid } = formattingBuffer(buffer, viewFormatProp, { skipVector: true })
-              const tooltipContent = createTooltipContent(formattedValue, buffer, viewFormatProp, { skipVector: true })
+              const { value: formattedValue, isValid } = formattingBuffer(
+                buffer,
+                viewFormatProp,
+                { skipVector: true },
+              )
+              const tooltipContent = createTooltipContent(
+                formattedValue,
+                buffer,
+                viewFormatProp,
+                { skipVector: true },
+              )
 
               return (
                 <>
                   {formattedValue ? (
                     <div
-                      style={{ display: 'flex', whiteSpace: 'break-spaces', wordBreak: 'break-all', width: 'max-content' }}
+                      style={{
+                        display: 'flex',
+                        whiteSpace: 'break-spaces',
+                        wordBreak: 'break-all',
+                        width: 'max-content',
+                      }}
                       data-testid={`stream-field-name-${field}`}
                     >
                       <FormattedValue
                         value={formattedValue}
-                        title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                        title={
+                          isValid
+                            ? 'Field'
+                            : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)
+                        }
                         tooltipContent={tooltipContent}
                       />
                     </div>
@@ -120,8 +168,8 @@ const StreamDataViewWrapper = (props: Props) => {
                   )}
                 </>
               )
-            }
-          }
+            },
+          },
         }
       }
       return { ...acc, ...names }
@@ -133,7 +181,7 @@ const StreamDataViewWrapper = (props: Props) => {
       id: {
         id: 'id',
         label: 'Entry ID',
-        sortable: true
+        sortable: true,
       },
       ...columnsNames,
       actions: '',
@@ -141,8 +189,10 @@ const StreamDataViewWrapper = (props: Props) => {
     setEntries([headerRow, ...streamEntries])
     setColumns([
       idColumn,
-      ...Object.keys(columnsNames).map((field) => getTemplateColumn(field, columnsNames[field]?.id)),
-      actionsColumn
+      ...Object.keys(columnsNames).map((field) =>
+        getTemplateColumn(field, columnsNames[field]?.id),
+      ),
+      actionsColumn,
     ])
 
     if (viewFormat !== viewFormatProp) {
@@ -158,23 +208,26 @@ const StreamDataViewWrapper = (props: Props) => {
     setDeleting(`${entry + suffix}`)
   }, [])
 
-  const formatItem = useCallback((field) => ({
-    name: field.name,
-    value: field.value,
-  }), [viewFormatProp])
+  const formatItem = useCallback(
+    (field) => ({
+      name: field.name,
+      value: field.value,
+    }),
+    [viewFormatProp],
+  )
 
   const onSuccessRemoved = () => {
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         browserViewType,
         TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED,
       ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Stream,
         numberOfRemoved: 1,
-      }
+      },
     })
   }
 
@@ -188,16 +241,16 @@ const StreamDataViewWrapper = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         browserViewType,
         TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED,
       ),
       eventData: {
         databaseId: instanceId,
-        keyType: KeyTypes.Stream
-      }
+        keyType: KeyTypes.Stream,
+      },
     })
   }
 
-  const getTemplateColumn = (label: string, name: string) : ITableColumn => ({
+  const getTemplateColumn = (label: string, name: string): ITableColumn => ({
     id: label,
     label: name,
     minWidth: minColumnWidth,
@@ -206,12 +259,25 @@ const StreamDataViewWrapper = (props: Props) => {
     headerClassName: 'streamItemHeader',
     render: function Id({ id, fields }: StreamEntryDto, expanded: boolean) {
       const index = toNumber(last(label.split('-')))
-      const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name)
+      const values = fields.filter(
+        ({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name,
+      )
 
-      const { value: decompressedBufferValue } = decompressingBuffer(values[index]?.value || stringToBuffer(''), compressor)
+      const { value: decompressedBufferValue } = decompressingBuffer(
+        values[index]?.value || stringToBuffer(''),
+        compressor,
+      )
       // const bufferValue = values[index]?.value || stringToBuffer('')
-      const { value: formattedValue, isValid } = formattingBuffer(decompressedBufferValue, viewFormatProp, { expanded })
-      const tooltipContent = createTooltipContent(formattedValue, decompressedBufferValue, viewFormatProp)
+      const { value: formattedValue, isValid } = formattingBuffer(
+        decompressedBufferValue,
+        viewFormatProp,
+        { expanded },
+      )
+      const tooltipContent = createTooltipContent(
+        formattedValue,
+        decompressedBufferValue,
+        viewFormatProp,
+      )
 
       return (
         <EuiText size="s" style={{ maxWidth: '100%', minHeight: '36px' }}>
@@ -222,7 +288,11 @@ const StreamDataViewWrapper = (props: Props) => {
           >
             <FormattedValue
               value={formattedValue}
-              title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+              title={
+                isValid
+                  ? 'Value'
+                  : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)
+              }
               tooltipContent={tooltipContent}
               expanded={expanded}
               truncateLength={650}
@@ -231,7 +301,7 @@ const StreamDataViewWrapper = (props: Props) => {
           </div>
         </EuiText>
       )
-    }
+    },
   })
 
   const idColumn: ITableColumn = {
@@ -250,15 +320,29 @@ const StreamDataViewWrapper = (props: Props) => {
         <div style={{ minHeight: '38px' }}>
           {id.length < MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP && (
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
-                {timestamp.length > MAX_FORMAT_LENGTH_STREAM_TIMESTAMP ? '-' : (
+              <div
+                className="streamItem truncateText"
+                style={{ display: 'flex' }}
+                data-testid={`stream-entry-${id}-date`}
+              >
+                {timestamp.length > MAX_FORMAT_LENGTH_STREAM_TIMESTAMP ? (
+                  '-'
+                ) : (
                   <FormatedDate date={timestamp} />
                 )}
               </div>
             </EuiText>
           )}
-          <EuiText size="s" style={{ maxWidth: '100%' }} className="truncateText">
-            <div className="streamItemId truncateText" data-testid={`stream-entry-${id}`} title={idStr}>
+          <EuiText
+            size="s"
+            style={{ maxWidth: '100%' }}
+            className="truncateText"
+          >
+            <div
+              className="streamItemId truncateText"
+              data-testid={`stream-entry-${id}`}
+              title={idStr}
+            >
               {id}
             </div>
           </EuiText>

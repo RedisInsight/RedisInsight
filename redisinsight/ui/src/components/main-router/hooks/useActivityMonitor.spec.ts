@@ -18,7 +18,7 @@ const mockConfig = (origin = 'http://localhost', throttleTimeout = 200) => {
 
 const mockWindowOpener = (postMessage = jest.fn()) => {
   global.window.opener = {
-    postMessage
+    postMessage,
   }
 }
 
@@ -45,20 +45,60 @@ describe('useActivityMonitor', () => {
 
     // Verify mount behavior
     expect(addEventListenerSpy).toHaveBeenCalledTimes(4)
-    expect(addEventListenerSpy).toHaveBeenNthCalledWith(1, 'click', expect.any(Function), addEventListenerProps)
-    expect(addEventListenerSpy).toHaveBeenNthCalledWith(2, 'keydown', expect.any(Function), addEventListenerProps)
-    expect(addEventListenerSpy).toHaveBeenNthCalledWith(3, 'scroll', expect.any(Function), addEventListenerProps)
-    expect(addEventListenerSpy).toHaveBeenNthCalledWith(4, 'touchstart', expect.any(Function), addEventListenerProps)
+    expect(addEventListenerSpy).toHaveBeenNthCalledWith(
+      1,
+      'click',
+      expect.any(Function),
+      addEventListenerProps,
+    )
+    expect(addEventListenerSpy).toHaveBeenNthCalledWith(
+      2,
+      'keydown',
+      expect.any(Function),
+      addEventListenerProps,
+    )
+    expect(addEventListenerSpy).toHaveBeenNthCalledWith(
+      3,
+      'scroll',
+      expect.any(Function),
+      addEventListenerProps,
+    )
+    expect(addEventListenerSpy).toHaveBeenNthCalledWith(
+      4,
+      'touchstart',
+      expect.any(Function),
+      addEventListenerProps,
+    )
 
     // Trigger unmount
     unmount()
 
     // Verify unmount behavior
     expect(removeEventListenerSpy).toHaveBeenCalledTimes(4)
-    expect(removeEventListenerSpy).toHaveBeenNthCalledWith(1, 'click', expect.any(Function), removeEventListenerProps)
-    expect(removeEventListenerSpy).toHaveBeenNthCalledWith(2, 'keydown', expect.any(Function), removeEventListenerProps)
-    expect(removeEventListenerSpy).toHaveBeenNthCalledWith(3, 'scroll', expect.any(Function), removeEventListenerProps)
-    expect(removeEventListenerSpy).toHaveBeenNthCalledWith(4, 'touchstart', expect.any(Function), removeEventListenerProps)
+    expect(removeEventListenerSpy).toHaveBeenNthCalledWith(
+      1,
+      'click',
+      expect.any(Function),
+      removeEventListenerProps,
+    )
+    expect(removeEventListenerSpy).toHaveBeenNthCalledWith(
+      2,
+      'keydown',
+      expect.any(Function),
+      removeEventListenerProps,
+    )
+    expect(removeEventListenerSpy).toHaveBeenNthCalledWith(
+      3,
+      'scroll',
+      expect.any(Function),
+      removeEventListenerProps,
+    )
+    expect(removeEventListenerSpy).toHaveBeenNthCalledWith(
+      4,
+      'touchstart',
+      expect.any(Function),
+      removeEventListenerProps,
+    )
   })
 
   it('should register event handlers even if window.opener is undefined', () => {
@@ -170,9 +210,11 @@ describe('useActivityMonitor', () => {
   })
 
   it('should ignore errors from window.addEventListener', () => {
-    jest.spyOn(window, 'addEventListener').mockImplementation(jest.fn(() => {
-      throw new Error('Test')
-    }))
+    jest.spyOn(window, 'addEventListener').mockImplementation(
+      jest.fn(() => {
+        throw new Error('Test')
+      }),
+    )
 
     mockWindowOpener()
 

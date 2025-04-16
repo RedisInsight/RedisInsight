@@ -33,9 +33,4 @@ export * from './capability'
 export * from './rdi'
 export * from './bigString'
 
-export {
-  Maybe,
-  Nullable,
-  RouterWithSubRoutes,
-  getLetterByIndex
-}
+export { Maybe, Nullable, RouterWithSubRoutes, getLetterByIndex }

@@ -13,9 +13,17 @@ import Divider from 'uiSrc/components/divider/Divider'
 import { KeyTypes } from 'uiSrc/constants'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import AddKeyCommonFields from 'uiSrc/pages/browser/components/add-key/AddKeyCommonFields/AddKeyCommonFields'
-import { addKeyStateSelector, resetAddKey, keysSelector } from 'uiSrc/slices/browser/keys'
+import {
+  addKeyStateSelector,
+  resetAddKey,
+  keysSelector,
+} from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+import {
+  sendEventTelemetry,
+  TelemetryEvent,
+  getBasedOnViewTypeEvent,
+} from 'uiSrc/telemetry'
 import { isContainJSONModule, Maybe, stringToBuffer } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
@@ -40,22 +48,30 @@ const AddKey = (props: Props) => {
   const dispatch = useDispatch()
 
   const { loading } = useSelector(addKeyStateSelector)
-  const { id: instanceId, modules = [] } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, modules = [] } = useSelector(
+    connectedInstanceSelector,
+  )
   const { viewType } = useSelector(keysSelector)
 
-  useEffect(() =>
-    // componentWillUnmount
-    () => {
-      dispatch(resetAddKey())
-    },
-  [])
+  useEffect(
+    () =>
+      // componentWillUnmount
+      () => {
+        dispatch(resetAddKey())
+      },
+    [],
+  )
 
   const options = ADD_KEY_TYPE_OPTIONS.map((item) => {
     const { value, color, text } = item
     return {
       value,
       inputDisplay: (
-        <EuiHealth color={color} style={{ lineHeight: 'inherit' }} data-test-subj={value}>
+        <EuiHealth
+          color={color}
+          style={{ lineHeight: 'inherit' }}
+          data-test-subj={value}
+        >
           {text}
         </EuiHealth>
       ),
@@ -74,11 +90,11 @@ const AddKey = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_ADD_CANCELLED,
-        TelemetryEvent.TREE_VIEW_KEY_ADD_CANCELLED
+        TelemetryEvent.TREE_VIEW_KEY_ADD_CANCELLED,
       ),
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
   }
 
@@ -93,7 +109,7 @@ const AddKey = (props: Props) => {
       onAddKeyPanel(false)
       onClosePanel()
       closeKeyTelemetry()
-    } 
+    }
     // meaning that the user closed the "Add Key" panel when added a key
     else {
       onAddKeyPanel(false, stringToBuffer(keyName))
@@ -102,7 +118,7 @@ const AddKey = (props: Props) => {
 
   const defaultFields = {
     keyName,
-    keyTTL
+    keyTTL,
   }
 
   return (
@@ -152,7 +168,10 @@ const AddKey = (props: Props) => {
                 setKeyTTL={setKeyTTL}
               />
 
-              <Divider colorVariable="separatorColor" className={styles.divider} />
+              <Divider
+                colorVariable="separatorColor"
+                className={styles.divider}
+              />
 
               {typeSelected === KeyTypes.Hash && (
                 <AddKeyHash onCancel={closeAddKeyPanel} {...defaultFields} />
@@ -172,11 +191,17 @@ const AddKey = (props: Props) => {
               {typeSelected === KeyTypes.ReJSON && (
                 <>
                   {!isContainJSONModule(modules) && (
-                    <span className={styles.helpText} data-testid="json-not-loaded-text">
+                    <span
+                      className={styles.helpText}
+                      data-testid="json-not-loaded-text"
+                    >
                       {HelpTexts.REJSON_SHOULD_BE_LOADED}
                     </span>
                   )}
-                  <AddKeyReJSON onCancel={closeAddKeyPanel} {...defaultFields} />
+                  <AddKeyReJSON
+                    onCancel={closeAddKeyPanel}
+                    {...defaultFields}
+                  />
                 </>
               )}
               {typeSelected === KeyTypes.Stream && (

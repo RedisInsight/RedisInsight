@@ -1,5 +1,8 @@
 import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { getSourceTutorialByCapability, getTutorialCapability } from '../capability'
+import {
+  getSourceTutorialByCapability,
+  getTutorialCapability,
+} from '../capability'
 
 const getSourceTutorialByCapabilityTests: any[] = [
   ['123', '123_tutorial'],
@@ -8,23 +11,44 @@ const getSourceTutorialByCapabilityTests: any[] = [
 ]
 
 describe('getSourceTutorialByCapability', () => {
-  it.each(getSourceTutorialByCapabilityTests)('for input: %s (input), should be output: %s',
+  it.each(getSourceTutorialByCapabilityTests)(
+    'for input: %s (input), should be output: %s',
     (input, expected) => {
       const result = getSourceTutorialByCapability(input)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })
 
-const emptyCapability = { name: '', telemetryName: '', path: null, }
-const searchCapability = { name: 'Redis Query Engine', telemetryName: 'searchAndQuery', path: null, }
-const jsonCapability = { name: 'JSON data structure', telemetryName: 'JSON', path: null, }
-const tsCapability = { name: 'Time series data structure', telemetryName: 'timeSeries', path: null, }
-const bloomCapability = { name: 'Probabilistic data structures', telemetryName: 'probabilistic', path: null, }
+const emptyCapability = { name: '', telemetryName: '', path: null }
+const searchCapability = {
+  name: 'Redis Query Engine',
+  telemetryName: 'searchAndQuery',
+  path: null,
+}
+const jsonCapability = {
+  name: 'JSON data structure',
+  telemetryName: 'JSON',
+  path: null,
+}
+const tsCapability = {
+  name: 'Time series data structure',
+  telemetryName: 'timeSeries',
+  path: null,
+}
+const bloomCapability = {
+  name: 'Probabilistic data structures',
+  telemetryName: 'probabilistic',
+  path: null,
+}
 
 const getTutorialCapabilityTests: any[] = [
   [OAuthSocialSource.RediSearch, searchCapability],
   [OAuthSocialSource.BrowserSearch, searchCapability],
-  [getSourceTutorialByCapability(RedisDefaultModules.SearchLight), searchCapability],
+  [
+    getSourceTutorialByCapability(RedisDefaultModules.SearchLight),
+    searchCapability,
+  ],
   [getSourceTutorialByCapability(RedisDefaultModules.Search), searchCapability],
   [getSourceTutorialByCapability(RedisDefaultModules.FT), searchCapability],
   [getSourceTutorialByCapability(RedisDefaultModules.FTL), searchCapability],
@@ -46,10 +70,12 @@ const getTutorialCapabilityTests: any[] = [
 ]
 
 describe('getTutorialCapability', () => {
-  it.each(getTutorialCapabilityTests)('for input: %s (source), should be output: %s',
+  it.each(getTutorialCapabilityTests)(
+    'for input: %s (source), should be output: %s',
     (source, expected) => {
       const result = getTutorialCapability(source)
 
       expect(result).toEqual(expected)
-    })
+    },
+  )
 })

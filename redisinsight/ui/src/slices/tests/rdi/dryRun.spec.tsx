@@ -1,7 +1,11 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { AnyAction } from '@reduxjs/toolkit'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import reducer, {
   initialState,
   dryRunJob,
@@ -41,7 +45,7 @@ describe('rdi dry run slice', () => {
       const state = {
         ...initialState,
         loading: true,
-        results: null
+        results: null,
       }
 
       // Act
@@ -62,7 +66,7 @@ describe('rdi dry run slice', () => {
       // Arrange
       const mockData = {
         output: [{ connection: 'name', commands: ['HSET 1 1'] }],
-        transformation: { name: 'John' }
+        transformation: { name: 'John' },
       }
 
       const state = {
@@ -116,7 +120,7 @@ describe('rdi dry run slice', () => {
             {
               connection: 'target',
               commands: ['HSET 1 1'],
-            }
+            },
           ],
           transformation: { name: 'John' },
         }
@@ -125,15 +129,10 @@ describe('rdi dry run slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          rdiDryRunJob('123', { name: 'Johny' }, {})
-        )
+        await store.dispatch<any>(rdiDryRunJob('123', { name: 'Johny' }, {}))
 
         // Assert
-        const expectedActions = [
-          dryRunJob(),
-          dryRunJobSuccess(mockData),
-        ]
+        const expectedActions = [dryRunJob(), dryRunJobSuccess(mockData)]
 
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -150,15 +149,13 @@ describe('rdi dry run slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          rdiDryRunJob('123', { name: 'Johny' }, {})
-        )
+        await store.dispatch<any>(rdiDryRunJob('123', { name: 'Johny' }, {}))
 
         // Assert
         const expectedActions = [
           dryRunJob(),
           addErrorNotification(responsePayload as AxiosError),
-          dryRunJobFailure(errorMessage)
+          dryRunJobFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

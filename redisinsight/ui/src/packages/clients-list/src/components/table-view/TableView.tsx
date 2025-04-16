@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiBasicTableColumn,
-  EuiInMemoryTable,
-} from '@elastic/eui'
+import { EuiBasicTableColumn, EuiInMemoryTable } from '@elastic/eui'
 
 export interface Props {
-  query: string;
-  result: any;
-  matched?: number;
+  query: string
+  result: any
+  matched?: number
 }
 
 const noResultMessage = 'No results'
@@ -38,13 +35,11 @@ const TableView = React.memo(({ result, query }: Props) => {
         loading={!result}
         message={noResultMessage}
         columns={columns}
-        className={cx(
-          {
-            table: true,
-            inMemoryTableDefault: true,
-            tableWithPagination: result?.length > 10,
-          }
-        )}
+        className={cx({
+          table: true,
+          inMemoryTableDefault: true,
+          tableWithPagination: result?.length > 10,
+        })}
         responsive={false}
         data-testid={`query-table-result-${query}`}
       />

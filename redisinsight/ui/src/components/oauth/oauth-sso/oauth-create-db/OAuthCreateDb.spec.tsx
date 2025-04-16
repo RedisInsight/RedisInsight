@@ -1,6 +1,13 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
@@ -9,9 +16,12 @@ import {
   oauthCloudUserSelector,
   setSocialDialogState,
   showOAuthProgress,
-  signIn
+  signIn,
 } from 'uiSrc/slices/oauth/cloud'
-import { setIsRecommendedSettingsSSO, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import {
+  setIsRecommendedSettingsSSO,
+  setSSOFlow,
+} from 'uiSrc/slices/instances/cloud'
 import { CloudJobStep } from 'uiSrc/electron/constants'
 import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
@@ -28,8 +38,8 @@ jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSsoRecommendedSettings: {
-      flag: true
-    }
+      flag: true,
+    },
   }),
 }))
 
@@ -40,7 +50,7 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
   }),
   oauthCloudPAgreementSelector: jest.fn().mockReturnValue(true),
   oauthCloudUserSelector: jest.fn().mockReturnValue({
-    data: null
+    data: null,
   }),
 }))
 
@@ -60,9 +70,13 @@ describe('OAuthCreateDb', () => {
     render(<OAuthCreateDb />)
 
     expect(screen.getByTestId('oauth-advantages')).toBeInTheDocument()
-    expect(screen.getByTestId('oauth-container-social-buttons')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('oauth-container-social-buttons'),
+    ).toBeInTheDocument()
     expect(screen.getByTestId('oauth-agreement-checkbox')).toBeInTheDocument()
-    expect(screen.getByTestId('oauth-recommended-settings-checkbox')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('oauth-recommended-settings-checkbox'),
+    ).toBeInTheDocument()
   })
 
   it('should call proper actions after click on sso sign button', async () => {
@@ -77,12 +91,14 @@ describe('OAuthCreateDb', () => {
       eventData: {
         accountOption: OAuthStrategy.SSO,
         action: OAuthSocialAction.Create,
-        cloudRecommendedSettings: 'enabled'
-      }
+        cloudRecommendedSettings: 'enabled',
+      },
     })
 
     await act(async () => {
-      fireEvent.change(screen.getByTestId('sso-email'), { target: { value: MOCK_OAUTH_SSO_EMAIL } })
+      fireEvent.change(screen.getByTestId('sso-email'), {
+        target: { value: MOCK_OAUTH_SSO_EMAIL },
+      })
     })
 
     expect(screen.getByTestId('btn-submit')).not.toBeDisabled()
@@ -95,12 +111,12 @@ describe('OAuthCreateDb', () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
       eventData: {
         action: OAuthSocialAction.Create,
-      }
+      },
     })
 
     const expectedActions = [setIsRecommendedSettingsSSO(true), signIn()]
-    expect(store.getActions()).toEqual(expectedActions);
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    expect(store.getActions()).toEqual(expectedActions)
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper actions after click on sign button', () => {
@@ -113,29 +129,35 @@ describe('OAuthCreateDb', () => {
       eventData: {
         accountOption: OAuthStrategy.Google,
         action: OAuthSocialAction.Create,
-        cloudRecommendedSettings: 'enabled'
-      }
+        cloudRecommendedSettings: 'enabled',
+      },
     })
 
     const expectedActions = [setIsRecommendedSettingsSSO(true), signIn()]
-    expect(store.getActions()).toEqual(expectedActions);
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    expect(store.getActions()).toEqual(expectedActions)
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should render proper components if user is logged in', () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({ data: {} })
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({ data: {} })
     render(<OAuthCreateDb />)
 
     expect(screen.getByTestId('oauth-advantages')).toBeInTheDocument()
     expect(screen.getByTestId('oauth-create-db')).toBeInTheDocument()
-    expect(screen.getByTestId('oauth-recommended-settings-checkbox')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('oauth-recommended-settings-checkbox'),
+    ).toBeInTheDocument()
 
-    expect(screen.queryByTestId('oauth-agreement-checkbox')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('oauth-container-social-buttons')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('oauth-agreement-checkbox'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('oauth-container-social-buttons'),
+    ).not.toBeInTheDocument()
   })
 
   it('should call proper actions after click create', () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({ data: {} })
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({ data: {} })
     render(<OAuthCreateDb />)
 
     fireEvent.click(screen.getByTestId('oauth-create-db'))
@@ -143,15 +165,17 @@ describe('OAuthCreateDb', () => {
     const expectedActions = [
       setSSOFlow(OAuthSocialAction.Create),
       showOAuthProgress(true),
-      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
+      addInfiniteNotification(
+        INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials),
+      ),
       setSocialDialogState(null),
-      addFreeDb()
+      addFreeDb(),
     ]
     expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should call proper actions after click create without recommened settings', async () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({ data: {} })
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({ data: {} })
     render(<OAuthCreateDb />)
 
     await act(async () => {
@@ -163,9 +187,11 @@ describe('OAuthCreateDb', () => {
     const expectedActions = [
       setSSOFlow(OAuthSocialAction.Create),
       showOAuthProgress(true),
-      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
+      addInfiniteNotification(
+        INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials),
+      ),
       setSocialDialogState(null),
-      getPlans()
+      getPlans(),
     ]
     expect(store.getActions()).toEqual(expectedActions)
   })

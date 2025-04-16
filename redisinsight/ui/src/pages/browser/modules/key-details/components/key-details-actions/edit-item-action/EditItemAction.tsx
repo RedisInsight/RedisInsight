@@ -11,12 +11,14 @@ export interface Props {
   onEditItem: () => void
 }
 
-const EditItemAction = ({ title, isEditable, tooltipContent, onEditItem }: Props) => (
+const EditItemAction = ({
+  title,
+  isEditable,
+  tooltipContent,
+  onEditItem,
+}: Props) => (
   <div className={styles.actionBtn}>
-    <EuiToolTip
-      content={tooltipContent}
-      data-testid="edit-key-value-tooltip"
-    >
+    <EuiToolTip content={tooltipContent} data-testid="edit-key-value-tooltip">
       <EuiButtonIcon
         disabled={!isEditable}
         iconType="pencil"

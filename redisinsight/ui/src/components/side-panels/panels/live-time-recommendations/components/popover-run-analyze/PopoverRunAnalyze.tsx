@@ -12,7 +12,13 @@ export interface Props {
 }
 
 const PopoverRunAnalyze = (props: Props) => {
-  const { isShowPopover, popoverContent, setIsShowPopover, onApproveClick, children } = props
+  const {
+    isShowPopover,
+    popoverContent,
+    setIsShowPopover,
+    onApproveClick,
+    children,
+  } = props
 
   return (
     <EuiPopover
@@ -26,7 +32,10 @@ const PopoverRunAnalyze = (props: Props) => {
       button={children}
       onClick={(e) => e.stopPropagation()}
     >
-      <div className={styles.popover} data-testid="insights-db-analysis-popover">
+      <div
+        className={styles.popover}
+        data-testid="insights-db-analysis-popover"
+      >
         <EuiText className={styles.popoverTitle}>Run database analysis</EuiText>
         <EuiSpacer size="xs" />
         <EuiText className={styles.popoverContent} color="subdued">

@@ -42,18 +42,24 @@ export const {
 } = cloudUserProfileSlice.actions
 
 // A selector
-export const cloudUserProfileSelector = (state: RootState) => state.user.cloudProfile
+export const cloudUserProfileSelector = (state: RootState) =>
+  state.user.cloudProfile
 
 // The reducer
 export default cloudUserProfileSlice.reducer
 
 // Asynchronous thunk action
-export function fetchCloudUserProfile(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchCloudUserProfile(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getUserProfile())
 
     try {
-      const { data, status } = await apiService.get<CloudUser>(ApiEndpoints.CLOUD_ME)
+      const { data, status } = await apiService.get<CloudUser>(
+        ApiEndpoints.CLOUD_ME,
+      )
 
       if (isStatusSuccessful(status)) {
         dispatch(getUserProfileSuccess(data))

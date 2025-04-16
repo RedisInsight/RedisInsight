@@ -16,8 +16,9 @@ const FeatureFlagComponent = (props: Props) => {
   const features = useSelector(appFeatureFlagsFeaturesSelector)
 
   const nameArray = isArray(name) ? name : [name]
-  const matchingFeatures = nameArray
-    .map((feature) => features?.[feature] || { flag: enabledByDefault})
+  const matchingFeatures = nameArray.map(
+    (feature) => features?.[feature] || { flag: enabledByDefault },
+  )
   const allFlagsEnabled = matchingFeatures.every((feature) => feature.flag)
 
   if (!allFlagsEnabled) {
@@ -30,7 +31,11 @@ const FeatureFlagComponent = (props: Props) => {
 
   const cloneElement = (child: React.ReactElement) => React.cloneElement(child)
 
-  return isArray(children) ? <>{React.Children.map(children, cloneElement)}</> : cloneElement(children)
+  return isArray(children) ? (
+    <>{React.Children.map(children, cloneElement)}</>
+  ) : (
+    cloneElement(children)
+  )
 }
 
 export default FeatureFlagComponent

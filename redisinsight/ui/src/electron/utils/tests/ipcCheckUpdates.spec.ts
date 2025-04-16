@@ -10,7 +10,7 @@ beforeEach(() => {
   store = cloneDeep(mockedStore)
   store.clearActions()
   window.app = {
-    ipc: { invoke: invokeMock }
+    ipc: { invoke: invokeMock },
   }
 })
 
@@ -30,9 +30,7 @@ describe('ipcCheckUpdates', () => {
 describe('ipcSendEvents', () => {
   it('should call localStorageService.getAll if optimization needed', () => {
     const appVersionMock = '1'
-    invokeMock
-      .mockReturnValueOnce(true)
-      .mockReturnValue(false)
+    invokeMock.mockReturnValueOnce(true).mockReturnValue(false)
 
     ipcSendEvents({ appVersion: appVersionMock })
 

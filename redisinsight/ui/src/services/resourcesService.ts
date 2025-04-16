@@ -10,7 +10,8 @@ const isDevelopment = riConfig.app.env === 'development'
 const isWebApp = riConfig.app.type === 'web'
 const hostedApiBaseUrl = riConfig.api.hostedBaseUrl
 
-let BASE_URL = !isDevelopment && isWebApp ? '/' : `${riConfig.api.baseUrl}:${apiPort}/`
+let BASE_URL =
+  !isDevelopment && isWebApp ? '/' : `${riConfig.api.baseUrl}:${apiPort}/`
 
 if (window.__RI_PROXY_PATH__) {
   BASE_URL = `${BASE_URL}${window.__RI_PROXY_PATH__}/`
@@ -30,23 +31,29 @@ export const setResourceCsrfHeader = (token: string) => {
 // TODO: it seems it's shoudn't be location.origin
 // TODO: check all cases and rename this to getResourcesUrl
 // TODO: also might be helpful create function which returns origin url
-export const getOriginUrl = () => (IS_ABSOLUTE_PATH.test(RESOURCES_BASE_URL)
-  ? RESOURCES_BASE_URL
-  : (window?.location?.origin || RESOURCES_BASE_URL))
+export const getOriginUrl = () =>
+  IS_ABSOLUTE_PATH.test(RESOURCES_BASE_URL)
+    ? RESOURCES_BASE_URL
+    : window?.location?.origin || RESOURCES_BASE_URL
 
 export const getPathToResource = (url: string = ''): string => {
   try {
-    return IS_ABSOLUTE_PATH.test(url) ? url : new URL(url, getOriginUrl()).toString()
+    return IS_ABSOLUTE_PATH.test(url)
+      ? url
+      : new URL(url, getOriginUrl()).toString()
   } catch {
     return ''
   }
 }
 
-export const checkResourse = async (url: string = '') => resourcesService.head(url)
+export const checkResourse = async (url: string = '') =>
+  resourcesService.head(url)
 
 const localResourcesService = axios.create({
   baseURL: riConfig.app.localResourcesBaseUrl,
   withCredentials: false,
 })
 
-export default (riConfig.app.useLocalResources) ? localResourcesService : resourcesService
+export default riConfig.app.useLocalResources
+  ? localResourcesService
+  : resourcesService

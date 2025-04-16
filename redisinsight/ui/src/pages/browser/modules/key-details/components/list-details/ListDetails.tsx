@@ -2,12 +2,13 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 
-import {
-  selectedKeySelector,
-} from 'uiSrc/slices/browser/keys'
+import { selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { KeyTypes } from 'uiSrc/constants'
 
-import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
+import {
+  KeyDetailsHeader,
+  KeyDetailsHeaderProps,
+} from 'uiSrc/pages/browser/modules'
 import { ListDetailsTable } from './list-details-table'
 
 import { RemoveListElements } from './remove-list-elements'
@@ -28,7 +29,8 @@ const ListDetails = (props: Props) => {
   const { onRemoveKey, onOpenAddItemPanel, onCloseAddItemPanel } = props
   const { loading } = useSelector(selectedKeySelector)
 
-  const [isRemoveItemPanelOpen, setIsRemoveItemPanelOpen] = useState<boolean>(false)
+  const [isRemoveItemPanelOpen, setIsRemoveItemPanelOpen] =
+    useState<boolean>(false)
   const [isAddItemPanelOpen, setIsAddItemPanelOpen] = useState<boolean>(false)
 
   const openAddItemPanel = () => {
@@ -55,23 +57,24 @@ const ListDetails = (props: Props) => {
 
   const Actions = ({ width }: { width: number }) => (
     <>
-      <AddItemsAction title="Add Elements" width={width} openAddItemPanel={openAddItemPanel} />
+      <AddItemsAction
+        title="Add Elements"
+        width={width}
+        openAddItemPanel={openAddItemPanel}
+      />
       <div className={styles.removeBtnContainer}>
-        <RemoveItemsAction title="Remove Elements" openRemoveItemPanel={openRemoveItemPanel} />
+        <RemoveItemsAction
+          title="Remove Elements"
+          openRemoveItemPanel={openRemoveItemPanel}
+        />
       </div>
     </>
   )
 
   return (
     <div className="fluid flex-column relative">
-      <KeyDetailsHeader
-        {...props}
-        key="key-details-header"
-      />
-      <KeyDetailsSubheader
-        keyType={keyType}
-        Actions={Actions}
-      />
+      <KeyDetailsHeader {...props} key="key-details-header" />
+      <KeyDetailsSubheader keyType={keyType} Actions={Actions} />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
@@ -85,12 +88,14 @@ const ListDetails = (props: Props) => {
         )}
         {isRemoveItemPanelOpen && (
           <div className={cx('formFooterBar', styles.contentActive)}>
-            <RemoveListElements closePanel={closeRemoveItemPanel} onRemoveKey={onRemoveKey} />
+            <RemoveListElements
+              closePanel={closeRemoveItemPanel}
+              onRemoveKey={onRemoveKey}
+            />
           </div>
         )}
       </div>
     </div>
-
   )
 }
 

@@ -10,7 +10,10 @@ import {
   waitForStack,
 } from 'uiSrc/utils/test-utils'
 
-import { bulkImportDefaultData, bulkImportDefaultDataSuccess } from 'uiSrc/slices/browser/bulkActions'
+import {
+  bulkImportDefaultData,
+  bulkImportDefaultDataSuccess,
+} from 'uiSrc/slices/browser/bulkActions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { apiService } from 'uiSrc/services'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
@@ -20,7 +23,7 @@ import LoadSampleData from './LoadSampleData'
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    id: '1'
+    id: '1',
   }),
 }))
 
@@ -42,9 +45,13 @@ describe('LoadSampleData', () => {
   })
 
   it('should call proper actions', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    apiService.post = jest.fn().mockResolvedValueOnce({ status: 200, data: { data: {} } })
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    apiService.post = jest
+      .fn()
+      .mockResolvedValueOnce({ status: 200, data: { data: {} } })
 
     render(<LoadSampleData />)
 
@@ -58,16 +65,16 @@ describe('LoadSampleData', () => {
     const expectedActions = [
       bulkImportDefaultData(),
       bulkImportDefaultDataSuccess(),
-      addMessageNotification(
-        successMessages.UPLOAD_DATA_BULK()
-      ),
+      addMessageNotification(successMessages.UPLOAD_DATA_BULK()),
     ]
 
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+      expectedActions,
+    )
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.IMPORT_SAMPLES_CLICKED,
-      eventData: { databaseId: '1' }
+      eventData: { databaseId: '1' },
     })
   })
 })

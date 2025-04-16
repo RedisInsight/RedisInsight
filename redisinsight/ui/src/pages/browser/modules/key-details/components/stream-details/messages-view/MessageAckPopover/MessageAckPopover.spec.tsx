@@ -8,6 +8,8 @@ const mockedProps = mock<Props>()
 
 describe('MessageAckPopover', () => {
   it('should render', () => {
-    expect(render(<MessageAckPopover {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<MessageAckPopover {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 })

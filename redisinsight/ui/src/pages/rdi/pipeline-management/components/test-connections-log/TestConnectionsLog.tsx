@@ -10,7 +10,7 @@ import styles from './styles.module.scss'
 enum ResultsStatus {
   Success = 'success',
   Failed = 'failed',
-  Mixed = 'mixed'
+  Mixed = 'mixed',
 }
 
 export interface Props {
@@ -50,8 +50,8 @@ const TestConnectionsLog = (props: Props) => {
     title,
     length = 0,
   }: {
-    title: string;
-    length: number;
+    title: string
+    length: number
   }) => (
     <div className={styles.collapsibleNavTitle} style={{ margin: 0 }}>
       <span data-testid="nav-group-title">{title}:</span>
@@ -61,12 +61,20 @@ const TestConnectionsLog = (props: Props) => {
 
   const navTitle = statusToLabel[status]
 
-  const getNavGroupState = (name: ResultsStatus) => (openedNav === name ? 'open' : 'closed')
+  const getNavGroupState = (name: ResultsStatus) =>
+    openedNav === name ? 'open' : 'closed'
 
   return (
     <EuiCollapsibleNavGroup
-      title={<CollapsibleNavTitle title={navTitle} length={statusData?.length ?? 0} />}
-      className={cx(styles.collapsibleNav, status, { [styles.disabled]: !statusData?.length })}
+      title={
+        <CollapsibleNavTitle
+          title={navTitle}
+          length={statusData?.length ?? 0}
+        />
+      }
+      className={cx(styles.collapsibleNav, status, {
+        [styles.disabled]: !statusData?.length,
+      })}
       isCollapsible
       initialIsOpen={false}
       onToggle={(isOpen) => onToggle(statusData?.length, isOpen, status)}

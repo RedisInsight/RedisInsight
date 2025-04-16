@@ -43,7 +43,9 @@ describe('NoKeysMessage', () => {
 
   describe('SearchMode = Pattern', () => {
     it('NoKeysFound should be rendered if total=0', () => {
-      const { queryByTestId } = render(<NoKeysMessage {...instance(mockedProps)} total={0} />)
+      const { queryByTestId } = render(
+        <NoKeysMessage {...instance(mockedProps)} total={0} />,
+      )
       expect(queryByTestId('no-result-found-msg')).toBeInTheDocument()
     })
 
@@ -52,15 +54,15 @@ describe('NoKeysMessage', () => {
         isSearched: true,
         searchMode: SearchMode.Pattern,
       })
-      const total = 100;
+      const total = 100
 
-      (keysSelector as jest.Mock).mockImplementation(keysSelectorMock)
+      ;(keysSelector as jest.Mock).mockImplementation(keysSelectorMock)
       const { queryByTestId } = render(
         <NoKeysMessage
           {...instance(mockedProps)}
           total={total}
           scanned={total - 1}
-        />
+        />,
       )
 
       expect(queryByTestId('scan-no-results-found')).toBeInTheDocument()
@@ -71,18 +73,20 @@ describe('NoKeysMessage', () => {
         isSearched: true,
         searchMode: SearchMode.Pattern,
       })
-      const total = 100;
+      const total = 100
 
-      (keysSelector as jest.Mock).mockImplementation(keysSelectorMock)
+      ;(keysSelector as jest.Mock).mockImplementation(keysSelectorMock)
       const { container } = render(
         <NoKeysMessage
           {...instance(mockedProps)}
           total={total}
           scanned={total}
-        />
+        />,
       )
 
-      expect(container.querySelector('[data-test-subj="no-result-found"]')).toBeInTheDocument()
+      expect(
+        container.querySelector('[data-test-subj="no-result-found"]'),
+      ).toBeInTheDocument()
     })
 
     it('"scan-no-results-found" should be rendered if filtered and scanned<total', () => {
@@ -90,15 +94,15 @@ describe('NoKeysMessage', () => {
         isFiltered: true,
         searchMode: SearchMode.Pattern,
       })
-      const total = 100;
+      const total = 100
 
-      (keysSelector as jest.Mock).mockImplementation(keysSelectorMock)
+      ;(keysSelector as jest.Mock).mockImplementation(keysSelectorMock)
       const { queryByTestId } = render(
         <NoKeysMessage
           {...instance(mockedProps)}
           total={total}
           scanned={total - 1}
-        />
+        />,
       )
 
       expect(queryByTestId('scan-no-results-found')).toBeInTheDocument()
@@ -112,18 +116,20 @@ describe('NoKeysMessage', () => {
         searchMode: SearchMode.Redisearch,
       })
       const redisearchSelectorMock = jest.fn().mockReturnValue({
-        selectedIndex: null
+        selectedIndex: null,
       })
-      const total = 100;
+      const total = 100
 
-      (keysSelector as jest.Mock).mockImplementation(keysSelectorMock);
-      (redisearchSelector as jest.Mock).mockImplementation(redisearchSelectorMock)
+      ;(keysSelector as jest.Mock).mockImplementation(keysSelectorMock)
+      ;(redisearchSelector as jest.Mock).mockImplementation(
+        redisearchSelectorMock,
+      )
       const { queryByTestId } = render(
         <NoKeysMessage
           {...instance(mockedProps)}
           total={total}
           scanned={total - 1}
-        />
+        />,
       )
 
       expect(queryByTestId('no-result-select-index')).toBeInTheDocument()
@@ -134,17 +140,16 @@ describe('NoKeysMessage', () => {
         searchMode: SearchMode.Redisearch,
       })
       const redisearchSelectorMock = jest.fn().mockReturnValue({
-        selectedIndex: '123'
+        selectedIndex: '123',
       })
-      const total = 0;
+      const total = 0
 
-      (keysSelector as jest.Mock).mockImplementation(keysSelectorMock);
-      (redisearchSelector as jest.Mock).mockImplementation(redisearchSelectorMock)
+      ;(keysSelector as jest.Mock).mockImplementation(keysSelectorMock)
+      ;(redisearchSelector as jest.Mock).mockImplementation(
+        redisearchSelectorMock,
+      )
       const { queryByTestId } = render(
-        <NoKeysMessage
-          {...instance(mockedProps)}
-          total={total}
-        />
+        <NoKeysMessage {...instance(mockedProps)} total={total} />,
       )
 
       expect(queryByTestId('no-result-found-only')).toBeInTheDocument()
@@ -158,16 +163,18 @@ describe('NoKeysMessage', () => {
         isSearched: true,
         selectedIndex: '123',
       })
-      const total = 100;
+      const total = 100
 
-      (keysSelector as jest.Mock).mockImplementation(keysSelectorMock);
-      (redisearchSelector as jest.Mock).mockImplementation(redisearchSelectorMock)
+      ;(keysSelector as jest.Mock).mockImplementation(keysSelectorMock)
+      ;(redisearchSelector as jest.Mock).mockImplementation(
+        redisearchSelectorMock,
+      )
       const { queryByTestId } = render(
         <NoKeysMessage
           {...instance(mockedProps)}
           total={total}
           scanned={total - 1}
-        />
+        />,
       )
 
       expect(queryByTestId('no-result-found-only')).toBeInTheDocument()

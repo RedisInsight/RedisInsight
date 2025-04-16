@@ -14,19 +14,30 @@ export interface Props {
   onDelete?: (type: string) => void
 }
 
-const GroupBadge = ({ type, name = '', className = '', onDelete, compressed }: Props) => (
+const GroupBadge = ({
+  type,
+  name = '',
+  className = '',
+  onDelete,
+  compressed,
+}: Props) => (
   <EuiBadge
-    style={{ backgroundColor: GROUP_TYPES_COLORS[type] ?? 'var(--defaultTypeColor)' }}
-    className={cx(
-      styles.badgeWrapper,
-      className,
-      { [styles.withDeleteBtn]: onDelete, [styles.compressed]: compressed }
-    )}
+    style={{
+      backgroundColor: GROUP_TYPES_COLORS[type] ?? 'var(--defaultTypeColor)',
+    }}
+    className={cx(styles.badgeWrapper, className, {
+      [styles.withDeleteBtn]: onDelete,
+      [styles.compressed]: compressed,
+    })}
     title={undefined}
     data-testid={`badge-${type}_${name}`}
   >
     {!compressed && (
-      <EuiText style={{ color: 'var(--euiTextSubduedColorHover)' }} className="text-uppercase" size="xs">
+      <EuiText
+        style={{ color: 'var(--euiTextSubduedColorHover)' }}
+        className="text-uppercase"
+        size="xs"
+      >
         {getGroupTypeDisplay(type)}
       </EuiText>
     )}

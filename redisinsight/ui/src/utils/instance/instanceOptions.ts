@@ -6,20 +6,22 @@ import {
 
 export const parseInstanceOptionsCluster = (
   uid: number,
-  instances: InstanceRedisCluster[]
+  instances: InstanceRedisCluster[],
 ) => {
-  const { options } = find(instances, (instance: InstanceRedisCluster) => instance.uid === uid)
-    || {}
+  const { options } =
+    find(instances, (instance: InstanceRedisCluster) => instance.uid === uid) ||
+    {}
   return pickBy(options, identity)
 }
 
 export const parseInstanceOptionsCloud = (
   databaseId: number,
-  instances: InstanceRedisCloud[]
+  instances: InstanceRedisCloud[],
 ) => {
-  const { options } = find(
-    instances,
-    (instance: InstanceRedisCloud) => instance.databaseId === databaseId
-  ) || {}
+  const { options } =
+    find(
+      instances,
+      (instance: InstanceRedisCloud) => instance.databaseId === databaseId,
+    ) || {}
   return pickBy(options, identity)
 }

@@ -28,13 +28,21 @@ describe('WBResults', () => {
   })
 
   it('should render NoResults component with empty items', () => {
-    const { getByTestId } = render(<WBResults {...instance(mockedProps)} items={[]} isResultsLoaded />)
+    const { getByTestId } = render(
+      <WBResults {...instance(mockedProps)} items={[]} isResultsLoaded />,
+    )
 
     expect(getByTestId('wb_no-results')).toBeInTheDocument()
   })
 
   it('should not render NoResults component with empty items and loading state', () => {
-    render(<WBResults {...instance(mockedProps)} items={[]} isResultsLoaded={false} />)
+    render(
+      <WBResults
+        {...instance(mockedProps)}
+        items={[]}
+        isResultsLoaded={false}
+      />,
+    )
 
     expect(screen.queryByTestId('wb_no-results')).not.toBeInTheDocument()
   })
@@ -44,21 +52,27 @@ describe('WBResults', () => {
       {
         id: '1',
         command: 'query1',
-        result: [{
-          response: 'data1',
-          status: 'success'
-        }],
+        result: [
+          {
+            response: 'data1',
+            status: 'success',
+          },
+        ],
       },
       {
         id: '2',
         command: 'query2',
-        result: [{
-          response: 'data2',
-          status: 'success'
-        }],
+        result: [
+          {
+            response: 'data2',
+            status: 'success',
+          },
+        ],
       },
     ]
 
-    expect(render(<WBResults {...instance(mockedProps)} items={itemsMock} />)).toBeTruthy()
+    expect(
+      render(<WBResults {...instance(mockedProps)} items={itemsMock} />),
+    ).toBeTruthy()
   })
 })

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { ApiEndpoints, } from 'uiSrc/constants'
-import { apiService, } from 'uiSrc/services'
+import { ApiEndpoints } from 'uiSrc/constants'
+import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { StateClusterDetails } from 'uiSrc/slices/interfaces/analytics'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
@@ -23,7 +23,10 @@ const clusterDetailsSlice = createSlice({
     getClusterDetails: (state) => {
       state.loading = true
     },
-    getClusterDetailsSuccess: (state, { payload }: PayloadAction<ClusterDetails>) => {
+    getClusterDetailsSuccess: (
+      state,
+      { payload }: PayloadAction<ClusterDetails>,
+    ) => {
       state.loading = false
       state.data = payload
     },
@@ -31,10 +34,11 @@ const clusterDetailsSlice = createSlice({
       state.loading = false
       state.error = payload
     },
-  }
+  },
 })
 
-export const clusterDetailsSelector = (state: RootState) => state.analytics.clusterDetails
+export const clusterDetailsSelector = (state: RootState) =>
+  state.analytics.clusterDetails
 
 export const {
   setClusterDetailsInitialState,
@@ -57,10 +61,7 @@ export function fetchClusterDetailsAction(
       dispatch(getClusterDetails())
 
       const { data, status } = await apiService.get<ClusterDetails>(
-        getUrl(
-          instanceId,
-          ApiEndpoints.CLUSTER_DETAILS
-        )
+        getUrl(instanceId, ApiEndpoints.CLUSTER_DETAILS),
       )
 
       if (isStatusSuccessful(status)) {

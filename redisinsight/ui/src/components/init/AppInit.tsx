@@ -12,17 +12,18 @@ import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoad
 
 type Props = {
   children: ReactElement
-  onSuccess?: () => void,
-  onFail?: () => void,
+  onSuccess?: () => void
+  onFail?: () => void
 }
 
 const AppInit = ({ children, onSuccess, onFail }: Props) => {
   const dispatch = useDispatch()
-  const {
-    status,
-  } = useSelector(appInitSelector)
+  const { status } = useSelector(appInitSelector)
 
-  const initApp = useCallback(() => dispatch(initializeAppAction(onSuccess, onFail)), [onSuccess, onFail])
+  const initApp = useCallback(
+    () => dispatch(initializeAppAction(onSuccess, onFail)),
+    [onSuccess, onFail],
+  )
 
   useEffect(() => {
     initApp()
@@ -30,7 +31,13 @@ const AppInit = ({ children, onSuccess, onFail }: Props) => {
 
   if (status === STATUS_FAIL) {
     removePagePlaceholder()
-    return <ConnectivityError isLoading={false} onRetry={initApp} error="An unexpected server error has occurred. Please retry the request." />
+    return (
+      <ConnectivityError
+        isLoading={false}
+        onRetry={initApp}
+        error="An unexpected server error has occurred. Please retry the request."
+      />
+    )
   }
 
   return status === STATUS_SUCCESS ? children : <SuspenseLoader />

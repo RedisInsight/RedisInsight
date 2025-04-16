@@ -5,10 +5,16 @@ import { useParams, useHistory } from 'react-router-dom'
 
 import { Pages } from 'uiSrc/constants'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
-import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
+import {
+  analyticsSettingsSelector,
+  setAnalyticsViewTab,
+} from 'uiSrc/slices/analytics/settings'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 
-import { appFeatureOnboardingSelector, setOnboardNextStep } from 'uiSrc/slices/app/features'
+import {
+  appFeatureOnboardingSelector,
+  setOnboardNextStep,
+} from 'uiSrc/slices/app/features'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
@@ -25,7 +31,10 @@ const AnalyticsTabs = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (connectionType !== ConnectionType.Cluster && currentStep === OnboardingSteps.AnalyticsOverview) {
+    if (
+      connectionType !== ConnectionType.Cluster &&
+      currentStep === OnboardingSteps.AnalyticsOverview
+    ) {
       dispatch(setOnboardNextStep())
     }
   }, [])
@@ -44,12 +53,15 @@ const AnalyticsTabs = () => {
   }
 
   const renderTabs = useCallback(() => {
-    const filteredAnalyticsViewTabs = connectionType === ConnectionType.Cluster
-      ? [...analyticsViewTabs]
-      : [...analyticsViewTabs].filter((tab) => tab.id !== AnalyticsViewTab.ClusterDetails)
+    const filteredAnalyticsViewTabs =
+      connectionType === ConnectionType.Cluster
+        ? [...analyticsViewTabs]
+        : [...analyticsViewTabs].filter(
+            (tab) => tab.id !== AnalyticsViewTab.ClusterDetails,
+          )
 
-    return filteredAnalyticsViewTabs.map(({ id, label, onboard }) => renderOnboardingTourWithChild(
-      (
+    return filteredAnalyticsViewTabs.map(({ id, label, onboard }) =>
+      renderOnboardingTourWithChild(
         <EuiTab
           isSelected={viewTab === id}
           onClick={() => onSelectedTabChanged(id)}
@@ -57,17 +69,19 @@ const AnalyticsTabs = () => {
           data-testid={`analytics-tab-${id}`}
         >
           {label}
-        </EuiTab>
+        </EuiTab>,
+        { options: onboard, anchorPosition: 'downLeft' },
+        viewTab === id,
+        id,
       ),
-      { options: onboard, anchorPosition: 'downLeft' },
-      viewTab === id,
-      id
-    ))
+    )
   }, [viewTab, connectionType])
 
   return (
     <>
-      <EuiTabs className="tabs-active-borders" data-test-subj="analytics-tabs">{renderTabs()}</EuiTabs>
+      <EuiTabs className="tabs-active-borders" data-test-subj="analytics-tabs">
+        {renderTabs()}
+      </EuiTabs>
     </>
   )
 }

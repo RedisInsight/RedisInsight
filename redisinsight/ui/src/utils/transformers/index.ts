@@ -13,9 +13,4 @@ export * from './getTruncatedName'
 export * from './transformRdiPipeline'
 export * from './browser'
 
-export {
-  replaceSpaces,
-  removeEmpty,
-  formatToText,
-  toRedisCodeBlock,
-}
+export { replaceSpaces, removeEmpty, formatToText, toRedisCodeBlock }

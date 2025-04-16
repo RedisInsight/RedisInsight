@@ -79,7 +79,8 @@ const JobsTree = (props: IProps) => {
   const [isNewJob, setIsNewJob] = useState(false)
   const [hideTooltip, setHideTooltip] = useState(false)
 
-  const { loading, data, jobs, jobsValidationErrors } = useSelector(rdiPipelineSelector)
+  const { loading, data, jobs, jobsValidationErrors } =
+    useSelector(rdiPipelineSelector)
 
   const dispatch = useDispatch()
 
@@ -117,10 +118,10 @@ const JobsTree = (props: IProps) => {
     const isJobExists = isNumber(idx)
     const updatedJobs = isJobExists
       ? [
-        ...jobs.slice(0, idx),
-        { ...jobs[idx], name: value },
-        ...jobs.slice(idx + 1),
-      ]
+          ...jobs.slice(0, idx),
+          { ...jobs[idx], name: value },
+          ...jobs.slice(idx + 1),
+        ]
       : [...jobs, { name: value, value: '' }]
 
     dispatch(setPipelineJobs(updatedJobs))
@@ -132,9 +133,9 @@ const JobsTree = (props: IProps) => {
     }
 
     if (
-      deployedJob
-      && isJobExists
-      && isEqualPipelineFile(jobs[idx].value, deployedJob.value)
+      deployedJob &&
+      isJobExists &&
+      isEqualPipelineFile(jobs[idx].value, deployedJob.value)
     ) {
       dispatch(deleteChangedFile(deployedJob.value))
     }
@@ -205,12 +206,12 @@ const JobsTree = (props: IProps) => {
         >
           <ConfirmationPopover
             title={`Delete ${name}`}
-            body={(
+            body={
               <EuiText size="s">
                 Changes will not be applied until the pipeline is deployed.
               </EuiText>
-            )}
-            submitBtn={(
+            }
+            submitBtn={
               <EuiButton
                 fill
                 size="s"
@@ -219,15 +220,15 @@ const JobsTree = (props: IProps) => {
               >
                 Delete
               </EuiButton>
-            )}
+            }
             onConfirm={() => handleDeleteClick(name)}
-            button={(
+            button={
               <EuiButtonIcon
                 iconType="trash"
                 aria-label="delete job"
                 data-testid={`delete-job-${name}`}
               />
-            )}
+            }
           />
         </EuiToolTip>
       </EuiFlexItem>
@@ -244,7 +245,8 @@ const JobsTree = (props: IProps) => {
         onApply={(value: string) => handleApplyJobName(value, idx)}
         onDecline={handleDeclineJobName}
         disableByValidation={(value) =>
-          !!validateJobName(value, currentJobName, jobs)}
+          !!validateJobName(value, currentJobName, jobs)
+        }
         getError={(value) => validateJobName(value, currentJobName, jobs)}
         isLoading={loading}
         declineOnUnmount={false}
@@ -260,9 +262,9 @@ const JobsTree = (props: IProps) => {
   )
 
   const isJobValid = (jobName: string) =>
-    (jobsValidationErrors[jobName]
+    jobsValidationErrors[jobName]
       ? jobsValidationErrors[jobName].length === 0
-      : true)
+      : true
 
   const renderJobsList = (jobs: IRdiPipelineJob[]) =>
     jobs.map(({ name }, idx) => (
@@ -304,7 +306,9 @@ const JobsTree = (props: IProps) => {
               data-test-subj="jobs-folder-icon-close"
             />
           </EuiFlexItem>
-          {currentJobName === name ? jobNameEditor(name, idx) : jobName(name, isJobValid(name))}
+          {currentJobName === name
+            ? jobNameEditor(name, idx)
+            : jobName(name, isJobValid(name))}
         </EuiFlexGroup>
       </EuiFlexGroup>
     ))
@@ -358,7 +362,7 @@ const JobsTree = (props: IProps) => {
       onToggle={handleToggleAccordion}
       className={styles.wrapper}
       forceState={accordionState}
-      extraAction={(
+      extraAction={
         <EuiToolTip
           content={!hideTooltip ? 'Add a job file' : null}
           position="top"
@@ -382,7 +386,7 @@ const JobsTree = (props: IProps) => {
             data-testid="add-new-job"
           />
         </EuiToolTip>
-      )}
+      }
     >
       {/* // TODO confirm with RDI team and put sort in separate component */}
       {isNewJob && (

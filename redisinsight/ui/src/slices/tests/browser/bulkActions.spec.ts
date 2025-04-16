@@ -23,11 +23,19 @@ import reducer, {
   setDeleteOverviewStatus,
   bulkImportDefaultData,
   bulkImportDefaultDataSuccess,
-  bulkImportDefaultDataFailed, bulkImportDefaultDataAction,
+  bulkImportDefaultDataFailed,
+  bulkImportDefaultDataAction,
 } from 'uiSrc/slices/browser/bulkActions'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { IBulkActionOverview } from 'uiSrc/slices/interfaces'
 
@@ -61,16 +69,16 @@ describe('bulkActions slice', () => {
             overview: {
               id: '123',
             },
-            isActionTriggered: true
-          }
+            isActionTriggered: true,
+          },
         }
 
         // Arrange
         const state = {
           ...initialState,
           bulkDelete: {
-            ...initialState.bulkDelete
-          }
+            ...initialState.bulkDelete,
+          },
         }
 
         // Act
@@ -90,25 +98,25 @@ describe('bulkActions slice', () => {
           ...initialState,
           isConnected: true,
           bulkDelete: {
-            isActionTriggered: true
+            isActionTriggered: true,
           },
           bulkUpload: {
             fileName: 'file.ts',
             overview: {
-              id: '123123'
-            }
-          }
+              id: '123123',
+            },
+          },
         }
 
         // Arrange
         const state = {
           ...initialState,
           bulkDelete: {
-            isActionTriggered: true
+            isActionTriggered: true,
           },
           bulkUpload: {
-            ...initialState.bulkUpload
-          }
+            ...initialState.bulkUpload,
+          },
         }
 
         // Act
@@ -126,13 +134,13 @@ describe('bulkActions slice', () => {
       it('should properly set state', () => {
         const currentState = {
           ...initialState,
-          isShowBulkActions: true
+          isShowBulkActions: true,
         }
 
         // Arrange
         const state = {
           ...initialState,
-          isShowBulkActions: false
+          isShowBulkActions: false,
         }
 
         // Act
@@ -151,7 +159,7 @@ describe('bulkActions slice', () => {
         // Arrange
         const state = {
           ...initialState,
-          isConnected: true
+          isConnected: true,
         }
 
         // Act
@@ -170,7 +178,7 @@ describe('bulkActions slice', () => {
         // Arrange
         const state = {
           ...initialState,
-          loading: true
+          loading: true,
         }
 
         // Act
@@ -191,8 +199,8 @@ describe('bulkActions slice', () => {
           ...initialState,
           bulkDelete: {
             ...initialState.bulkDelete,
-            loading: true
-          }
+            loading: true,
+          },
         }
 
         // Act
@@ -213,12 +221,15 @@ describe('bulkActions slice', () => {
           ...initialState,
           selectedBulkAction: {
             ...initialState.selectedBulkAction,
-            type: BulkActionsType.Delete
-          }
+            type: BulkActionsType.Delete,
+          },
         }
 
         // Act
-        const nextState = reducer(initialState, setBulkActionType(BulkActionsType.Delete))
+        const nextState = reducer(
+          initialState,
+          setBulkActionType(BulkActionsType.Delete),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -235,12 +246,15 @@ describe('bulkActions slice', () => {
           ...initialState,
           bulkDelete: {
             ...initialState.bulkDelete,
-            isActionTriggered: true
-          }
+            isActionTriggered: true,
+          },
         }
 
         // Act
-        const nextState = reducer(initialState, toggleBulkDeleteActionTriggered())
+        const nextState = reducer(
+          initialState,
+          toggleBulkDeleteActionTriggered(),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -263,7 +277,7 @@ describe('bulkActions slice', () => {
         }
 
         const overview = {
-          ...data
+          ...data,
         }
 
         // Act
@@ -291,23 +305,28 @@ describe('bulkActions slice', () => {
               status: 'inprogress',
               type: BulkActionsType.Delete,
               summary: { processed: 1, succeed: 1, failed: 0, errors: [] },
-            }
-          }
+            },
+          },
         }
 
         const overviewState = {
           ...currentState.bulkDelete.overview,
-          status: BulkActionsStatus.Disconnected
+          status: BulkActionsStatus.Disconnected,
         }
 
         // Act
-        const nextState = reducer(currentState, setDeleteOverviewStatus(BulkActionsStatus.Disconnected))
+        const nextState = reducer(
+          currentState,
+          setDeleteOverviewStatus(BulkActionsStatus.Disconnected),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
           browser: { bulkActions: nextState },
         })
-        expect(bulkActionsDeleteOverviewSelector(rootState)).toEqual(overviewState)
+        expect(bulkActionsDeleteOverviewSelector(rootState)).toEqual(
+          overviewState,
+        )
       })
     })
 
@@ -321,7 +340,7 @@ describe('bulkActions slice', () => {
             ...initialState.bulkDelete,
             loading: true,
             isActionTriggered: true,
-          }
+          },
         }
 
         // Act
@@ -342,8 +361,8 @@ describe('bulkActions slice', () => {
           ...initialState,
           bulkDelete: {
             ...initialState.bulkDelete,
-            loading: true
-          }
+            loading: true,
+          },
         }
 
         // Act
@@ -364,8 +383,8 @@ describe('bulkActions slice', () => {
           ...initialState,
           bulkUpload: {
             ...initialState.bulkUpload,
-            loading: true
-          }
+            loading: true,
+          },
         }
 
         // Act
@@ -386,7 +405,7 @@ describe('bulkActions slice', () => {
             bulkUpload: {
               ...initialState.bulkUpload,
               loading: true,
-            }
+            },
           }
 
           const state = {
@@ -395,12 +414,15 @@ describe('bulkActions slice', () => {
               ...initialState.bulkUpload,
               loading: false,
               overview: {},
-              fileName: 'file.txt'
-            }
+              fileName: 'file.txt',
+            },
           }
 
           // Act
-          const nextState = reducer(currentState, bulkUploadSuccess({ data: {}, fileName: 'file.txt' }))
+          const nextState = reducer(
+            currentState,
+            bulkUploadSuccess({ data: {}, fileName: 'file.txt' }),
+          )
 
           // Assert
           const rootState = Object.assign(initialStateDefault, {
@@ -418,8 +440,8 @@ describe('bulkActions slice', () => {
             bulkUpload: {
               ...initialState.bulkUpload,
               loading: false,
-              error: 'error'
-            }
+              error: 'error',
+            },
           }
 
           // Act
@@ -439,7 +461,7 @@ describe('bulkActions slice', () => {
         // Arrange
         const state = {
           ...initialState,
-          loading: true
+          loading: true,
         }
 
         // Act
@@ -457,16 +479,19 @@ describe('bulkActions slice', () => {
           // Arrange
           const currentState = {
             ...initialState,
-            loading: true
+            loading: true,
           }
 
           const state = {
             ...initialState,
-            loading: false
+            loading: false,
           }
 
           // Act
-          const nextState = reducer(currentState, bulkImportDefaultDataSuccess())
+          const nextState = reducer(
+            currentState,
+            bulkImportDefaultDataSuccess(),
+          )
 
           // Assert
           const rootState = Object.assign(initialStateDefault, {
@@ -481,12 +506,12 @@ describe('bulkActions slice', () => {
           // Arrange
           const currentState = {
             ...initialState,
-            loading: true
+            loading: true,
           }
 
           const state = {
             ...initialState,
-            loading: false
+            loading: false,
           }
 
           // Act
@@ -515,12 +540,14 @@ describe('bulkActions slice', () => {
       apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(bulkUploadDataAction('id', { file: formData, fileName: 'text.txt' }))
+      await store.dispatch<any>(
+        bulkUploadDataAction('id', { file: formData, fileName: 'text.txt' }),
+      )
 
       // Assert
       const expectedActions = [
         bulkUpload(),
-        bulkUploadSuccess({ data: responsePayload.data, fileName: 'text.txt' })
+        bulkUploadSuccess({ data: responsePayload.data, fileName: 'text.txt' }),
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })
@@ -539,7 +566,9 @@ describe('bulkActions slice', () => {
       apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
       // Act
-      await store.dispatch<any>(bulkUploadDataAction('id', { file: formData, fileName: 'text.txt' }))
+      await store.dispatch<any>(
+        bulkUploadDataAction('id', { file: formData, fileName: 'text.txt' }),
+      )
 
       // Assert
       const expectedActions = [
@@ -567,8 +596,8 @@ describe('bulkActions slice', () => {
         bulkImportDefaultData(),
         bulkImportDefaultDataSuccess(),
         addMessageNotification(
-          successMessages.UPLOAD_DATA_BULK(data as IBulkActionOverview)
-        )
+          successMessages.UPLOAD_DATA_BULK(data as IBulkActionOverview),
+        ),
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })

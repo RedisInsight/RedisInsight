@@ -3,7 +3,10 @@ import { Maybe, Nullable } from 'uiSrc/utils'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces/cloud'
 import { GetHashFieldsResponse } from 'apiSrc/modules/browser/hash/dto'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
-import { GetRejsonRlResponseDto, SafeRejsonRlDataDto } from 'apiSrc/modules/browser/rejson-rl/dto'
+import {
+  GetRejsonRlResponseDto,
+  SafeRejsonRlDataDto,
+} from 'apiSrc/modules/browser/rejson-rl/dto'
 import {
   GetListElementsDto,
   GetListElementsResponse,
@@ -128,7 +131,7 @@ export interface InstanceRedisCloud {
   account: Nullable<RedisCloudAccount>
   host: string
   port: number
-  uid: number;
+  uid: number
   name: string
   id?: number
   dnsName: string
@@ -148,13 +151,13 @@ export interface InstanceRedisCloud {
   statusAdded?: AddRedisDatabaseStatus
   messageAdded?: string
   databaseDetails?: InstanceRedisCluster
-  free: boolean,
+  free: boolean
 }
 
 export interface IBulkOperationResult {
-  status: AddRedisDatabaseStatus,
-  message: string,
-  error?: any,
+  status: AddRedisDatabaseStatus
+  message: string
+  error?: any
 }
 
 export enum AddRedisDatabaseStatus {
@@ -196,7 +199,10 @@ export const COMMAND_MODULES = {
   [RedisDefaultModules.Bloom]: [RedisDefaultModules.Bloom],
 }
 
-const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'Redis Query Engine' }), {})
+const RediSearchModulesText = [...REDISEARCH_MODULES].reduce(
+  (prev, next) => ({ ...prev, [next]: 'Redis Query Engine' }),
+  {},
+)
 
 // Enums don't allow to use dynamic key
 export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
@@ -464,16 +470,16 @@ export interface ModifiedSentinelMaster extends CreateSentinelDatabaseDto {
 
 export interface ModifiedGetListElementsResponse
   extends GetListElementsDto,
-  GetListElementsResponse {
-  elements: { index: number, element: RedisResponseBuffer }[]
-  key?: RedisString;
-  searchedIndex: Nullable<number>;
+    GetListElementsResponse {
+  elements: { index: number; element: RedisResponseBuffer }[]
+  key?: RedisString
+  searchedIndex: Nullable<number>
 }
 
 export interface InitialStateSet {
-  loading: boolean;
-  error: string;
-  data: ModifiedGetSetMembersResponse;
+  loading: boolean
+  error: string
+  data: ModifiedGetSetMembersResponse
 }
 
 export interface GetRejsonRlResponse extends GetRejsonRlResponseDto {

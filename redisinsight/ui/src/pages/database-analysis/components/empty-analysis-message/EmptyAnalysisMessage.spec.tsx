@@ -6,6 +6,8 @@ import EmptyAnalysisMessage from './EmptyAnalysisMessage'
 
 describe('EmptyAnalysisMessage', () => {
   it('should render', () => {
-    expect(render(<EmptyAnalysisMessage name={EmptyMessage.Keys} />)).toBeTruthy()
+    expect(
+      render(<EmptyAnalysisMessage name={EmptyMessage.Keys} />),
+    ).toBeTruthy()
   })
 })

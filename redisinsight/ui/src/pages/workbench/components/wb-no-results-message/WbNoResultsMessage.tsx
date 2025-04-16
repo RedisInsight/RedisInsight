@@ -16,7 +16,7 @@ import ArrowToGuidesIcon from 'uiSrc/assets/img/workbench/arrow-to-guides.svg?re
 import TriggerIcon from 'uiSrc/assets/img/bulb.svg?react'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 const WbNoResultsMessage = () => {

@@ -3,7 +3,7 @@ import { EuiLink, EuiText } from '@elastic/eui'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import LoadSampleData from 'uiSrc/pages/browser/components/load-sample-data'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {

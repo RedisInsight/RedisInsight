@@ -38,7 +38,7 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 
 import Divider from 'uiSrc/components/divider/Divider'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   AdvancedSettings,
   WorkbenchSettings,

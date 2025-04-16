@@ -8,7 +8,7 @@ import { replaceVariables } from 'uiSrc/utils/recommendation'
 import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { UTM_MEDIUMS } from 'uiSrc/constants/links'
-import { Spacer, SpacerSize } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer, SpacerSize } from 'uiSrc/components/base/layout/spacer'
 import InternalLink from '../internal-link'
 import RecommendationBody from '../recommendation-body'
 

@@ -11,7 +11,7 @@ import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
 import RawModeIcon from 'uiSrc/assets/img/icons/raw_mode.svg?react'
 
 import Divider from 'uiSrc/components/divider/Divider'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {

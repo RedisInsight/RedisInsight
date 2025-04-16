@@ -13,7 +13,7 @@ import { isEmpty } from 'lodash'
 import { Nullable } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
 
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import CreateTutorialLink from '../CreateTutorialLink'
 import styles from './styles.module.scss'
 

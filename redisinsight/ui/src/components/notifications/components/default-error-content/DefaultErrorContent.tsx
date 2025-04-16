@@ -1,6 +1,6 @@
 import { EuiButton, EuiTextColor } from '@elastic/eui'
 import React from 'react'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export interface Props {
   text: string | JSX.Element | JSX.Element[]

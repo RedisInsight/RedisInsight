@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { EuiBreadcrumbs, EuiToolTip } from '@elastic/eui'
 import { EuiBreadcrumb } from '@elastic/eui/src/components/breadcrumbs/breadcrumbs'
 
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 interface TooltipOption {

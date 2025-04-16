@@ -29,7 +29,7 @@ import BulbSVG from 'uiSrc/assets/img/bulb.svg?react'
 import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 

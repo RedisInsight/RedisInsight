@@ -8,7 +8,7 @@ import {
 import React, { memo } from 'react'
 
 import FilterSvg from 'uiSrc/assets/img/icons/filter.svg'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { useFilterTags } from './useFilterTags'
 import styles from './styles.module.scss'
 

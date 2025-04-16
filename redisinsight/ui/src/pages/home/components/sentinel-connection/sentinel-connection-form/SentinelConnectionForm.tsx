@@ -13,7 +13,7 @@ import {
   MessageSentinel,
   TlsDetails,
 } from 'uiSrc/pages/home/components/form'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export interface Props {
   loading: boolean

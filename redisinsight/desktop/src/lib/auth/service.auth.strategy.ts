@@ -12,7 +12,7 @@ export class ServiceAuthStrategy implements AuthStrategy {
 
   private beApp: any
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(beApp?: any): ServiceAuthStrategy {
     if (!ServiceAuthStrategy.instance) {
@@ -36,7 +36,9 @@ export class ServiceAuthStrategy implements AuthStrategy {
         throw new Error('[Service Auth] Backend app not provided')
       }
 
-      this.cloudAuthService = this.beApp.select(CloudAuthModule).get(CloudAuthService)
+      this.cloudAuthService = this.beApp
+        .select(CloudAuthModule)
+        .get(CloudAuthService)
       this.initialized = true
       log.info('[Service Auth] Service auth initialized')
     } catch (err) {
@@ -49,7 +51,7 @@ export class ServiceAuthStrategy implements AuthStrategy {
     log.info('[Service Auth] Getting auth URL')
     const url = await this.cloudAuthService.getAuthorizationUrl(
       options.sessionMetadata,
-      options.authOptions
+      options.authOptions,
     )
     log.info('[Service Auth] Auth URL obtained')
     return { url }

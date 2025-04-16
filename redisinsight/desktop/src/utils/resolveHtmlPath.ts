@@ -2,13 +2,18 @@
 import path from 'path'
 import { IParsedDeepLink } from 'desktopSrc/lib/app/deep-link.handlers'
 
-export const resolveHtmlPath = (htmlFileName: string, parsedDeepLink?: IParsedDeepLink) => {
+export const resolveHtmlPath = (
+  htmlFileName: string,
+  parsedDeepLink?: IParsedDeepLink,
+) => {
   let resolved = `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}#/`
 
   if (parsedDeepLink) {
     try {
       if (parsedDeepLink.initialPage) {
-        const initialPage = parsedDeepLink.initialPage.slice(+parsedDeepLink.initialPage.startsWith('/'))
+        const initialPage = parsedDeepLink.initialPage.slice(
+          +parsedDeepLink.initialPage.startsWith('/'),
+        )
         resolved += initialPage
       }
 

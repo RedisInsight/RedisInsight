@@ -29,21 +29,29 @@ export const launchApiServer = async () => {
 
     if (!config.isDevelopment) {
       // Production code
-      const detectPortConst = await getPort({ port: portNumbers(port, port + 1_000) })
+      const detectPortConst = await getPort({
+        port: portNumbers(port, port + 1_000),
+      })
       process.env.RI_APP_PORT = detectPortConst?.toString()
 
       if (process.env.APPIMAGE) {
         process.env.BUILD_PACKAGE = 'appimage'
       }
-      log.info('[Server] Starting production server with port:', detectPortConst)
+      log.info(
+        '[Server] Starting production server with port:',
+        detectPortConst,
+      )
       log.info('[Server] Environment:', process.env.NODE_ENV)
 
-      const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server(detectPortConst)
+      const { gracefulShutdown: gracefulShutdownFn, app: apiApp } =
+        await server(detectPortConst)
       gracefulShutdown = gracefulShutdownFn
       beApp = apiApp
 
       // Get the WindowAuthService directly from the app
-      const winAuthService = beApp?.select?.(WindowAuthModule).get?.(WindowAuthService)
+      const winAuthService = beApp
+        ?.select?.(WindowAuthModule)
+        .get?.(WindowAuthService)
       winAuthService.setStrategy(new ElectronWindowAuthStrategy())
 
       // Pass the service instance to the auth strategy
@@ -56,7 +64,10 @@ export const launchApiServer = async () => {
     }
   } catch (_err) {
     const error = _err as Error
-    log.error('[Server] Catch server error:', wrapErrorMessageSensitiveData(error))
+    log.error(
+      '[Server] Catch server error:',
+      wrapErrorMessageSensitiveData(error),
+    )
     log.error('[Server] Server initialization error:', error)
     log.error('[Server] Error stack:', error.stack)
     throw error

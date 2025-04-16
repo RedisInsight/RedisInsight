@@ -32,6 +32,7 @@ export const presetTagSuggestions: {
   },
 ]
 
-export const VALID_TAG_REGEX = /^[a-zA-Z0-9\-_.@:+ ]+$/
+export const VALID_TAG_KEY_REGEX = /^[a-zA-Z0-9\-_.@:+ ]{1,64}$/
+export const VALID_TAG_VALUE_REGEX = /^[a-zA-Z0-9\-_.@:+ ]{1,128}$/
 export const INVALID_FIELD_MESSAGE =
-  'Tag should have unique keys and can only have letters, numbers, spaces, and these special characters: “- _ . + @ :”'
+  'Tag should have unique keys and can only have letters, numbers, spaces, and these special characters: “- _ . + @ :”. Max characters length is 64 for keys and 128 for values.'

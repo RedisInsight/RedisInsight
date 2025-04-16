@@ -106,4 +106,26 @@ describe('ManageTagsModal', () => {
     })
     expect(screen.getByTestId('save-tags-button')).toBeDisabled()
   })
+
+  it('should disable Save tags button when a tag key is too long', () => {
+    renderComponent()
+    fireEvent.change(screen.getAllByRole('textbox')[0], {
+      target: { value: 'a'.repeat(66) },
+    })
+    fireEvent.change(screen.getAllByRole('textbox')[1], {
+      target: { value: 'value' },
+    })
+    expect(screen.getByTestId('save-tags-button')).toBeDisabled()
+  })
+
+  it('should disable Save tags button when a tag value is too long', () => {
+    renderComponent()
+    fireEvent.change(screen.getAllByRole('textbox')[0], {
+      target: { value: 'new-key' },
+    })
+    fireEvent.change(screen.getAllByRole('textbox')[1], {
+      target: { value: 'a'.repeat(130) },
+    })
+    expect(screen.getByTestId('save-tags-button')).toBeDisabled()
+  })
 })

@@ -16,7 +16,7 @@ import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
 import { updateInstanceAction } from 'uiSrc/slices/instances/instances'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { VALID_TAG_REGEX } from './constants'
+import { VALID_TAG_KEY_REGEX, VALID_TAG_VALUE_REGEX } from './constants'
 import { TagInputField } from './TagInputField'
 import styles from './styles.module.scss'
 
@@ -55,7 +55,7 @@ export const ManageTagsModal = ({
     () =>
       tags.some(
         (tag) =>
-          !VALID_TAG_REGEX.test(tag.key) || !VALID_TAG_REGEX.test(tag.value),
+          !VALID_TAG_KEY_REGEX.test(tag.key) || !VALID_TAG_VALUE_REGEX.test(tag.value),
       ),
     [tags],
   )
@@ -152,10 +152,10 @@ export const ManageTagsModal = ({
           {tags.map((tag, index) => {
             const isKeyInvalid =
               Boolean(tag.key) &&
-              (!VALID_TAG_REGEX.test(tag.key) ||
+              (!VALID_TAG_KEY_REGEX.test(tag.key) ||
                 tags.some((t, i) => i !== index && t.key === tag.key))
             const isValueInvalid =
-              Boolean(tag.value) && !VALID_TAG_REGEX.test(tag.value)
+              Boolean(tag.value) && !VALID_TAG_VALUE_REGEX.test(tag.value)
 
             return (
               <div key={`tag-row-${index}`} className={styles.tagFormRow}>

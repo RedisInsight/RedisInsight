@@ -30,7 +30,9 @@ const SearchDatabasesList = () => {
     const isInitialRender =
       value === '' &&
       selectedTags.size === 0 &&
-      !instances.some(({ visible }) => visible === false)
+      (!instances ||
+        instances.length === 0 ||
+        !instances.some((instance) => instance?.visible === false))
 
     if (isInitialRender) {
       return

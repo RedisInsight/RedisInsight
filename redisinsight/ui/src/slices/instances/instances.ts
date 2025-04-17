@@ -11,7 +11,9 @@ import {
 import {
   ApiEndpoints,
   BrowserStorageItem,
+  COLUMN_FIELD_NAME_MAP,
   CustomErrorCodes,
+  DatabaseListColumn,
 } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
@@ -39,7 +41,11 @@ import {
   addMessageNotification,
   removeInfiniteNotification,
 } from '../app/notifications'
-import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
+import {
+  Instance,
+  InitialStateInstances,
+  ConnectionType,
+} from '../interfaces'
 
 const HIDE_CREATING_DB_DELAY_MS = 500
 
@@ -82,6 +88,7 @@ export const initialState: InitialStateInstances = {
     error: '',
     data: null,
   },
+  shownColumns: [...COLUMN_FIELD_NAME_MAP.keys()],
 }
 
 // A slice for recipes
@@ -301,6 +308,12 @@ const instancesSlice = createSlice({
     checkDatabaseIndexFailure: (state) => {
       state.connectedInstance.loading = false
     },
+    setShownColumns: (
+      state,
+      { payload }: { payload: DatabaseListColumn[] },
+    ) => {
+      state.shownColumns = [...payload]
+    },
   },
 })
 
@@ -341,6 +354,7 @@ export const {
   checkDatabaseIndexFailure,
   setConnectedInfoInstance,
   setConnectedInfoInstanceSuccess,
+  setShownColumns,
 } = instancesSlice.actions
 
 // selectors

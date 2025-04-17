@@ -349,6 +349,7 @@ export interface InitialStateInstances {
     error: string
     data: Nullable<ImportDatabasesData>
   }
+  shownColumns: DatabaseListColumn[]
 }
 
 export interface ErrorImportResult {

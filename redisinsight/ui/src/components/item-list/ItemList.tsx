@@ -135,11 +135,13 @@ function ItemList<T extends { id: string; visible?: boolean }>({
       const { offsetWidth } = containerTableRef.current
       const beforeAdjustHiddenCols = hiddenCols.current.size
       try {
-        const currentColumns = filteredColumns.filter(fc => !hiddenCols.current.has(fc.field.toString()))
+        const currentColumns = filteredColumns.filter(
+          (fc) => !hiddenCols.current.has(fc.field.toString()),
+        )
         const adjustedColumns = adjustColumns(currentColumns, offsetWidth)
         if (beforeAdjustHiddenCols !== hiddenCols.current.size) {
           return adjustedColumns
-        } 
+        }
         return currentColumns
       } catch (_) {
         // ignore

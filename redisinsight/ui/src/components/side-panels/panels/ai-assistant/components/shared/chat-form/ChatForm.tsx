@@ -1,5 +1,15 @@
 import React, { Ref, useRef, useState } from 'react'
-import { EuiButton, EuiForm, EuiPopover, EuiSpacer, EuiText, EuiTextArea, EuiTitle, EuiToolTip, keys } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiForm,
+  EuiPopover,
+  EuiSpacer,
+  EuiText,
+  EuiTextArea,
+  EuiTitle,
+  EuiToolTip,
+  keys,
+} from '@elastic/eui'
 
 import cx from 'classnames'
 import { isModifiedEvent } from 'uiSrc/services'
@@ -30,7 +40,7 @@ const ChatForm = (props: Props) => {
     onAgreementsDisplayed,
     isDisabled,
     placeholder,
-    onSubmit
+    onSubmit,
   } = props
   const [value, setValue] = useState('')
   const [isAgreementsPopoverOpen, setIsAgreementsPopoverOpen] = useState(false)
@@ -88,25 +98,33 @@ const ChatForm = (props: Props) => {
   return (
     <div>
       <EuiToolTip
-        content={validation ? (
-          <div className={styles.tooltipContent}>
-            <div>
-              {validation.title && (
-                <>
-                  <EuiTitle size="xxs"><span>{validation.title}</span></EuiTitle>
-                  <EuiSpacer size="s" />
-                </>
-              )}
-              {validation.content && (<EuiText size="xs">{validation.content}</EuiText>)}
+        content={
+          validation ? (
+            <div className={styles.tooltipContent}>
+              <div>
+                {validation.title && (
+                  <>
+                    <EuiTitle size="xxs">
+                      <span>{validation.title}</span>
+                    </EuiTitle>
+                    <EuiSpacer size="s" />
+                  </>
+                )}
+                {validation.content && (
+                  <EuiText size="xs">{validation.content}</EuiText>
+                )}
+              </div>
+              {validation.icon}
             </div>
-            {validation.icon}
-          </div>
-        ) : undefined}
+          ) : undefined
+        }
         className={styles.validationTooltip}
         display="block"
       >
         <EuiForm
-          className={cx(styles.wrapper, { [styles.isFormDisabled]: validation })}
+          className={cx(styles.wrapper, {
+            [styles.isFormDisabled]: validation,
+          })}
           component="form"
           onSubmit={handleSubmitForm}
           onKeyDown={handleKeyDown}
@@ -126,9 +144,13 @@ const ChatForm = (props: Props) => {
             isOpen={isAgreementsPopoverOpen}
             anchorPosition="downRight"
             closePopover={() => setIsAgreementsPopoverOpen(false)}
-            panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+            panelClassName={cx(
+              'euiToolTip',
+              'popoverLikeTooltip',
+              styles.popover,
+            )}
             anchorClassName={styles.popoverAnchor}
-            button={(
+            button={
               <EuiButton
                 fill
                 size="s"
@@ -140,7 +162,7 @@ const ChatForm = (props: Props) => {
                 aria-label="submit"
                 data-testid="ai-submit-message-btn"
               />
-            )}
+            }
           >
             <>
               {agreements}
@@ -162,10 +184,10 @@ const ChatForm = (props: Props) => {
         </EuiForm>
       </EuiToolTip>
       <EuiText textAlign="center" size="xs" className={styles.agreementText}>
-        Verify the accuracy of any information provided by Redis Copilot before using it
+        Verify the accuracy of any information provided by Redis Copilot before
+        using it
       </EuiText>
     </div>
-
   )
 }
 

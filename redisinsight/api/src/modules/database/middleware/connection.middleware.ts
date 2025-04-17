@@ -18,12 +18,11 @@ import { Database } from '../models/database';
 export class ConnectionMiddleware implements NestMiddleware {
   private logger = new Logger('ConnectionMiddleware');
 
-  constructor(
-    private databaseService: DatabaseService,
-  ) {}
+  constructor(private databaseService: DatabaseService) {}
 
   async use(req: Request, res: Response, next: NextFunction): Promise<any> {
-    let { timeout, instanceIdFromReq } = ConnectionMiddleware.getConnectionConfigFromReq(req);
+    let { timeout, instanceIdFromReq } =
+      ConnectionMiddleware.getConnectionConfigFromReq(req);
 
     const sessionMetadata = sessionMetadataFromRequest(req);
 
@@ -35,10 +34,15 @@ export class ConnectionMiddleware implements NestMiddleware {
     }
 
     const cb = (err?: any) => {
-      if (err?.code === RedisErrorCodes.Timeout
-        || err?.message?.includes('timeout')) {
+      if (
+        err?.code === RedisErrorCodes.Timeout ||
+        err?.message?.includes('timeout')
+      ) {
         next(
-          this.returnError(req, new BadGatewayException(ERROR_MESSAGES.DB_CONNECTION_TIMEOUT)),
+          this.returnError(
+            req,
+            new BadGatewayException(ERROR_MESSAGES.DB_CONNECTION_TIMEOUT),
+          ),
         );
       } else {
         next();

@@ -16,20 +16,14 @@ describe('AddStreamGroup', () => {
   it('should set member value properly', () => {
     render(<AddStreamGroup {...instance(mockedProps)} />)
     const groupNameInput = screen.getByTestId(GROUP_NAME_FIELD)
-    fireEvent.change(
-      groupNameInput,
-      { target: { value: 'group name' } }
-    )
+    fireEvent.change(groupNameInput, { target: { value: 'group name' } })
     expect(groupNameInput).toHaveValue('group name')
   })
 
   it('should set score value properly if input wrong value', () => {
     render(<AddStreamGroup {...instance(mockedProps)} />)
     const idInput = screen.getByTestId(ID_FIELD)
-    fireEvent.change(
-      idInput,
-      { target: { value: 'aa1x-5' } }
-    )
+    fireEvent.change(idInput, { target: { value: 'aa1x-5' } })
     expect(idInput).toHaveValue('1-5')
   })
 
@@ -37,14 +31,8 @@ describe('AddStreamGroup', () => {
     render(<AddStreamGroup {...instance(mockedProps)} />)
     const groupNameInput = screen.getByTestId(GROUP_NAME_FIELD)
     const idInput = screen.getByTestId(ID_FIELD)
-    fireEvent.change(
-      groupNameInput,
-      { target: { value: 'name' } }
-    )
-    fireEvent.change(
-      idInput,
-      { target: { value: '11111-3' } }
-    )
+    fireEvent.change(groupNameInput, { target: { value: 'name' } })
+    fireEvent.change(idInput, { target: { value: '11111-3' } })
     expect(screen.getByTestId('save-groups-btn')).not.toBeDisabled()
   })
 
@@ -52,14 +40,8 @@ describe('AddStreamGroup', () => {
     render(<AddStreamGroup {...instance(mockedProps)} />)
     const groupNameInput = screen.getByTestId(GROUP_NAME_FIELD)
     const idInput = screen.getByTestId(ID_FIELD)
-    fireEvent.change(
-      groupNameInput,
-      { target: { value: 'name' } }
-    )
-    fireEvent.change(
-      idInput,
-      { target: { value: '11111----' } }
-    )
+    fireEvent.change(groupNameInput, { target: { value: 'name' } })
+    fireEvent.change(idInput, { target: { value: '11111----' } })
     expect(screen.getByTestId('save-groups-btn')).toBeDisabled()
   })
 })

@@ -29,35 +29,47 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
     private readonly encryptionService: EncryptionService,
   ) {
     super();
-    this.modelEncryptor = new ModelEncryptor(encryptionService, ['certificate']);
+    this.modelEncryptor = new ModelEncryptor(encryptionService, [
+      'certificate',
+    ]);
   }
 
   /**
    * @inheritDoc
    */
   async get(id: string): Promise<CaCertificate> {
-    return classToClass(CaCertificate, await this.modelEncryptor.decryptEntity(
-      await this.repository.findOneBy({ id }),
-    ));
+    return classToClass(
+      CaCertificate,
+      await this.modelEncryptor.decryptEntity(
+        await this.repository.findOneBy({ id }),
+      ),
+    );
   }
 
   /**
    * @inheritDoc
    */
   async list(): Promise<CaCertificate[]> {
-    return (await this.repository
-      .createQueryBuilder('c')
-      .select(['c.id', 'c.name'])
-      .getMany()).map((entity) => classToClass(CaCertificate, entity));
+    return (
+      await this.repository
+        .createQueryBuilder('c')
+        .select(['c.id', 'c.name'])
+        .getMany()
+    ).map((entity) => classToClass(CaCertificate, entity));
   }
 
   /**
    * @inheritDoc
    */
-  async create(caCertificate: CaCertificate, uniqueCheck = true): Promise<CaCertificate> {
+  async create(
+    caCertificate: CaCertificate,
+    uniqueCheck = true,
+  ): Promise<CaCertificate> {
     if (uniqueCheck) {
       // todo: use unique constraint and proper error handling to check for duplications
-      const found = await this.repository.findOneBy({ name: caCertificate.name });
+      const found = await this.repository.findOneBy({
+        name: caCertificate.name,
+      });
 
       if (found) {
         this.logger.error(
@@ -68,7 +80,9 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
     }
 
     const entity = await this.repository.save(
-      await this.modelEncryptor.encryptEntity(this.repository.create(caCertificate)),
+      await this.modelEncryptor.encryptEntity(
+        this.repository.create(caCertificate),
+      ),
     );
 
     return this.get(entity.id);
@@ -90,12 +104,14 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
       throw new NotFoundException();
     }
 
-    const affectedDatabases = (await this.databaseRepository
-      .createQueryBuilder('d')
-      .leftJoinAndSelect('d.caCert', 'c')
-      .where({ caCert: id })
-      .select(['d.id'])
-      .getMany()).map((e) => e.id);
+    const affectedDatabases = (
+      await this.databaseRepository
+        .createQueryBuilder('d')
+        .leftJoinAndSelect('d.caCert', 'c')
+        .where({ caCert: id })
+        .select(['d.id'])
+        .getMany()
+    ).map((e) => e.id);
 
     await this.repository.delete(id);
     this.logger.debug(`Succeed to delete ca certificate: ${id}`);

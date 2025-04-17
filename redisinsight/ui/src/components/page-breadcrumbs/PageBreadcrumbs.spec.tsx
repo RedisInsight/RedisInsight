@@ -8,7 +8,7 @@ const breadcrumbs: Breadcrumb[] = [
     text: 'first',
     href: '/',
     'data-test-subject': 'first-link',
-    onClick
+    onClick,
   },
   {
     text: 'second',
@@ -16,8 +16,8 @@ const breadcrumbs: Breadcrumb[] = [
     'data-test-subject': 'second-link',
   },
   {
-    text: 'third'
-  }
+    text: 'third',
+  },
 ]
 
 describe('PageBreadcrumbs', () => {
@@ -27,12 +27,16 @@ describe('PageBreadcrumbs', () => {
 
   it('should render properly', () => {
     const { container } = render(<PageBreadcrumbs breadcrumbs={breadcrumbs} />)
-    expect(container.querySelector('[data-test-subject="first-link"]')).toBeInTheDocument()
+    expect(
+      container.querySelector('[data-test-subject="first-link"]'),
+    ).toBeInTheDocument()
   })
 
   it('should call onClick', () => {
     const { container } = render(<PageBreadcrumbs breadcrumbs={breadcrumbs} />)
-    fireEvent.click(container.querySelector('[data-test-subject="first-link"]') as Element)
+    fireEvent.click(
+      container.querySelector('[data-test-subject="first-link"]') as Element,
+    )
     expect(onClick).toBeCalled()
   })
 })

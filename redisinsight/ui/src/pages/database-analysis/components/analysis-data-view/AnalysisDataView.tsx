@@ -3,15 +3,22 @@ import { useSelector } from 'react-redux'
 
 import cx from 'classnames'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { dbAnalysisSelector, dbAnalysisReportsSelector } from 'uiSrc/slices/analytics/dbAnalysis'
+import {
+  dbAnalysisSelector,
+  dbAnalysisReportsSelector,
+} from 'uiSrc/slices/analytics/dbAnalysis'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { DEFAULT_EXTRAPOLATION, EmptyMessage, SectionName } from 'uiSrc/pages/database-analysis/constants'
+import {
+  DEFAULT_EXTRAPOLATION,
+  EmptyMessage,
+  SectionName,
+} from 'uiSrc/pages/database-analysis/constants'
 import {
   TopKeys,
   EmptyAnalysisMessage,
   TopNamespace,
   SummaryPerData,
-  ExpirationGroupsView
+  ExpirationGroupsView,
 } from 'uiSrc/pages/database-analysis/components'
 
 import styles from './styles.module.scss'
@@ -37,13 +44,13 @@ const AnalysisDataView = () => {
         from: !value,
         to: value,
         section,
-        provider
-      }
+        provider,
+      },
     })
   }
 
   if (!loading && !!reports?.length && data?.totalKeys?.total === 0) {
-    return (<EmptyAnalysisMessage name={EmptyMessage.Keys} />)
+    return <EmptyAnalysisMessage name={EmptyMessage.Keys} />
   }
 
   return (

@@ -1,7 +1,10 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
 import { isNumber } from 'lodash'
 import { IMonacoQuery, Nullable, splitQueryByArgs } from 'uiSrc/utils'
-import { CursorContext, FoundCommandArgument } from 'uiSrc/pages/workbench/types'
+import {
+  CursorContext,
+  FoundCommandArgument,
+} from 'uiSrc/pages/workbench/types'
 import { IRedisCommand } from 'uiSrc/constants'
 import {
   asSuggestionsRef,
@@ -15,7 +18,7 @@ import {
   COMMANDS_WITHOUT_INDEX_PROPOSE,
   DefinedArgumentName,
   FIELD_START_SYMBOL,
-  ModuleCommandPrefix
+  ModuleCommandPrefix,
 } from 'uiSrc/pages/workbench/constants'
 import { findSuggestionsByQueryArgs } from 'uiSrc/pages/workbench/utils/query'
 
@@ -25,22 +28,24 @@ export const findSuggestionsByArg = (
   cursorContext: CursorContext,
   additionData: {
     indexes?: any[]
-    fields?: any[],
+    fields?: any[]
   },
-  isEscaped: boolean = false
+  isEscaped: boolean = false,
 ): {
-  suggestions: any,
+  suggestions: any
   helpWidget?: any
 } => {
   const { allArgs, args, cursor } = command
   const { prevCursorChar } = cursor
   const [beforeOffsetArgs, [currentOffsetArg]] = args
 
-  const startCommentIndex = beforeOffsetArgs.findIndex((el) => el.startsWith('//'))
+  const startCommentIndex = beforeOffsetArgs.findIndex((el) =>
+    el.startsWith('//'),
+  )
   if (startCommentIndex > -1 || currentOffsetArg?.startsWith('//')) {
     return {
       suggestions: asSuggestionsRef([]),
-      helpWidget: { isOpen: false }
+      helpWidget: { isOpen: false },
     }
   }
 
@@ -48,13 +53,23 @@ export const findSuggestionsByArg = (
 
   if (!command.name.startsWith(ModuleCommandPrefix.RediSearch)) {
     return {
-      helpWidget: { isOpen: !!foundArg, data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg } },
-      suggestions: asSuggestionsRef([])
+      helpWidget: {
+        isOpen: !!foundArg,
+        data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg },
+      },
+      suggestions: asSuggestionsRef([]),
     }
   }
 
-  if (prevCursorChar === FIELD_START_SYMBOL || currentOffsetArg?.startsWith(FIELD_START_SYMBOL)) {
-    return handleFieldSuggestions(additionData.fields || [], foundArg, cursorContext.range)
+  if (
+    prevCursorChar === FIELD_START_SYMBOL ||
+    currentOffsetArg?.startsWith(FIELD_START_SYMBOL)
+  ) {
+    return handleFieldSuggestions(
+      additionData.fields || [],
+      foundArg,
+      cursorContext.range,
+    )
   }
 
   if (foundArg?.stopArg?.token && !foundArg?.isBlocked) {
@@ -64,20 +79,33 @@ export const findSuggestionsByArg = (
       allArgs,
       additionData.fields || [],
       cursorContext,
-      isEscaped
+      isEscaped,
     )
   }
 
   const { indexes, fields } = additionData
   switch (foundArg?.stopArg?.name) {
     case DefinedArgumentName.index: {
-      return handleIndexSuggestions(indexes, command, foundArg, currentOffsetArg, cursorContext)
+      return handleIndexSuggestions(
+        indexes,
+        command,
+        foundArg,
+        currentOffsetArg,
+        cursorContext,
+      )
     }
     case DefinedArgumentName.query: {
       return handleQuerySuggestions(foundArg)
     }
     default: {
-      return handleCommonSuggestions(command.commandQuery, foundArg, allArgs, fields, cursorContext, isEscaped)
+      return handleCommonSuggestions(
+        command.commandQuery,
+        foundArg,
+        allArgs,
+        fields,
+        cursorContext,
+        isEscaped,
+      )
     }
   }
 }
@@ -85,12 +113,12 @@ export const findSuggestionsByArg = (
 const handleFieldSuggestions = (
   fields: any[],
   foundArg: Nullable<FoundCommandArgument>,
-  range: monacoEditor.IRange
+  range: monacoEditor.IRange,
 ) => {
   const isInQuery = foundArg?.stopArg?.name === DefinedArgumentName.query
   const fieldSuggestions = getFieldsSuggestions(fields, range, true, isInQuery)
   return {
-    suggestions: asSuggestionsRef(fieldSuggestions, true)
+    suggestions: asSuggestionsRef(fieldSuggestions, true),
   }
 }
 
@@ -99,16 +127,19 @@ const handleIndexSuggestions = (
   command: IMonacoQuery,
   foundArg: FoundCommandArgument,
   currentOffsetArg: Nullable<string>,
-  cursorContext: CursorContext
+  cursorContext: CursorContext,
 ) => {
   const isIndex = indexes.length > 0
-  const helpWidget = { isOpen: isIndex, data: { parent: foundArg.parent, currentArg: foundArg?.stopArg } }
+  const helpWidget = {
+    isOpen: isIndex,
+    data: { parent: foundArg.parent, currentArg: foundArg?.stopArg },
+  }
   const currentCommand = command.info
 
   if (COMMANDS_WITHOUT_INDEX_PROPOSE.includes(command.name || '')) {
     return {
       suggestions: asSuggestionsRef([]),
-      helpWidget
+      helpWidget,
     }
   }
 
@@ -116,32 +147,43 @@ const handleIndexSuggestions = (
     helpWidget.isOpen = !!currentOffsetArg
 
     return {
-      suggestions: asSuggestionsRef(!currentOffsetArg ? getNoIndexesSuggestion(cursorContext.range) : [], true),
-      helpWidget
+      suggestions: asSuggestionsRef(
+        !currentOffsetArg ? getNoIndexesSuggestion(cursorContext.range) : [],
+        true,
+      ),
+      helpWidget,
     }
   }
 
   if (!isIndex || currentOffsetArg) {
     return {
       suggestions: asSuggestionsRef([], !currentOffsetArg),
-      helpWidget
+      helpWidget,
     }
   }
 
-  const argumentIndex = currentCommand?.arguments
-    ?.findIndex(({ name }) => foundArg?.stopArg?.name === name)
-  const isNextArgQuery = isNumber(argumentIndex)
-    && currentCommand?.arguments?.[argumentIndex + 1]?.name === DefinedArgumentName.query
+  const argumentIndex = currentCommand?.arguments?.findIndex(
+    ({ name }) => foundArg?.stopArg?.name === name,
+  )
+  const isNextArgQuery =
+    isNumber(argumentIndex) &&
+    currentCommand?.arguments?.[argumentIndex + 1]?.name ===
+      DefinedArgumentName.query
 
   return {
-    suggestions: asSuggestionsRef(getIndexesSuggestions(indexes, cursorContext.range, isNextArgQuery)),
-    helpWidget
+    suggestions: asSuggestionsRef(
+      getIndexesSuggestions(indexes, cursorContext.range, isNextArgQuery),
+    ),
+    helpWidget,
   }
 }
 
 const handleQuerySuggestions = (foundArg: FoundCommandArgument) => ({
-  helpWidget: { isOpen: true, data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg } },
-  suggestions: asSuggestionsRef([], false)
+  helpWidget: {
+    isOpen: true,
+    data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg },
+  },
+  suggestions: asSuggestionsRef([], false),
 })
 
 const handleExpressionSuggestions = (
@@ -149,13 +191,16 @@ const handleExpressionSuggestions = (
   foundArg: FoundCommandArgument,
   cursorContext: CursorContext,
 ) => {
-  const helpWidget = { isOpen: true, data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg } }
+  const helpWidget = {
+    isOpen: true,
+    data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg },
+  }
 
   const { isCursorInQuotes, offset, argLeftOffset } = cursorContext
   if (!isCursorInQuotes) {
     return {
       suggestions: asSuggestionsRef([]),
-      helpWidget
+      helpWidget,
     }
   }
 
@@ -166,11 +211,13 @@ const handleExpressionSuggestions = (
 
   const functions = foundArg?.stopArg?.arguments ?? []
   const suggestions = getFunctionsSuggestions(functions, cursorContext.range)
-  const isStartsWithFunction = functions.some(({ token }) => token?.startsWith(currentArg))
+  const isStartsWithFunction = functions.some(({ token }) =>
+    token?.startsWith(currentArg),
+  )
 
   return {
     suggestions: asSuggestionsRef(suggestions, true, isStartsWithFunction),
-    helpWidget
+    helpWidget,
   }
 }
 
@@ -180,29 +227,34 @@ const handleCommonSuggestions = (
   allArgs: string[],
   fields: any[] = [],
   cursorContext: CursorContext,
-  isEscaped: boolean
+  isEscaped: boolean,
 ) => {
   if (foundArg?.stopArg?.expression && foundArg.isBlocked) {
     return handleExpressionSuggestions(value, foundArg, cursorContext)
   }
 
   const { prevCursorChar, nextCursorChar, isCursorInQuotes } = cursorContext
-  const shouldHideSuggestions = isCursorInQuotes || nextCursorChar || (prevCursorChar && isEscaped)
+  const shouldHideSuggestions =
+    isCursorInQuotes || nextCursorChar || (prevCursorChar && isEscaped)
   if (shouldHideSuggestions) {
     return {
-      helpWidget: { isOpen: !!foundArg, data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg } },
-      suggestions: asSuggestionsRef([])
+      helpWidget: {
+        isOpen: !!foundArg,
+        data: { parent: foundArg?.parent, currentArg: foundArg?.stopArg },
+      },
+      suggestions: asSuggestionsRef([]),
     }
   }
 
-  const {
-    suggestions,
-    forceHide,
-    helpWidgetData
-  } = getGeneralSuggestions(foundArg, allArgs, cursorContext.range, fields)
+  const { suggestions, forceHide, helpWidgetData } = getGeneralSuggestions(
+    foundArg,
+    allArgs,
+    cursorContext.range,
+    fields,
+  )
 
   return {
     suggestions: asSuggestionsRef(suggestions, forceHide),
-    helpWidget: helpWidgetData
+    helpWidget: helpWidgetData,
   }
 }

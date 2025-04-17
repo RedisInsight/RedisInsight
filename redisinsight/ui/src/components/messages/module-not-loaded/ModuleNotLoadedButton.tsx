@@ -1,10 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiButton,
-  EuiLink,
-} from '@elastic/eui'
+import { EuiButton, EuiLink } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import {
   FeatureFlags,
@@ -24,16 +21,21 @@ import {
 
 export interface IProps {
   moduleName: RedisDefaultModules
-  module?: String;
+  module?: String
   onClose?: () => void
   type?: 'workbench' | 'browser'
 }
 
-const ModuleNotLoadedButton = ({ moduleName, type, onClose, module }: IProps) => {
+const ModuleNotLoadedButton = ({
+  moduleName,
+  type,
+  onClose,
+  module,
+}: IProps) => {
   const history = useHistory()
-  const {
-    [FeatureFlags.envDependent]: envDependentFeature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.envDependent]: envDependentFeature } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
 
   const utmCampaign =
     type === 'browser'
@@ -98,7 +100,9 @@ const ModuleNotLoadedButton = ({ moduleName, type, onClose, module }: IProps) =>
                   source:
                     type === 'browser'
                       ? OAuthSocialSource.BrowserSearch
-                      : OAuthSocialSource[module as keyof typeof OAuthSocialSource],
+                      : OAuthSocialSource[
+                          module as keyof typeof OAuthSocialSource
+                        ],
                   action: OAuthSocialAction.Create,
                 })
                 onClose?.()

@@ -3,9 +3,7 @@ import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { orderBy } from 'lodash'
 
-import {
-  streamGroupsSelector,
-} from 'uiSrc/slices/browser/stream'
+import { streamGroupsSelector } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
@@ -35,14 +33,18 @@ const ConsumersView = (props: Props) => {
   } = props
 
   const { loading } = useSelector(streamGroupsSelector)
-  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }
+  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? {}
 
   const [consumers, setConsumers] = useState(data)
   const [sortedColumnName, setSortedColumnName] = useState<string>('name')
-  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.ASC)
+  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(
+    SortOrder.ASC,
+  )
 
   useEffect(() => {
-    setConsumers(orderBy(data, sortedColumnName, sortedColumnOrder?.toLowerCase()))
+    setConsumers(
+      orderBy(data, sortedColumnName, sortedColumnOrder?.toLowerCase()),
+    )
   }, [data])
 
   const onChangeSorting = (column: any, order: SortOrder) => {
@@ -78,10 +80,14 @@ const ConsumersView = (props: Props) => {
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
           noItemsMessage={noItemsMessageString}
-          sortedColumn={consumers?.length ? {
-            column: sortedColumnName,
-            order: sortedColumnOrder,
-          } : undefined}
+          sortedColumn={
+            consumers?.length
+              ? {
+                  column: sortedColumnName,
+                  order: sortedColumnOrder,
+                }
+              : undefined
+          }
         />
       </div>
     </>

@@ -15,13 +15,16 @@ export const mockRedisEnterpriseDatabaseDto: RedisEnterpriseDatabase = {
   password: null,
 };
 
-export const mockAddRedisEnterpriseDatabasesDto = Object.assign(new AddRedisEnterpriseDatabasesDto(), {
-  host: 'localhost',
-  port: 9443,
-  username: 'admin',
-  password: 'password',
-  uids: [1],
-});
+export const mockAddRedisEnterpriseDatabasesDto = Object.assign(
+  new AddRedisEnterpriseDatabasesDto(),
+  {
+    host: 'localhost',
+    port: 9443,
+    username: 'admin',
+    password: 'password',
+    uids: [1],
+  },
+);
 
 export const mockRedisEnterpriseAnalytics = jest.fn(() => ({
   sendGetREClusterDbsSucceedEvent: jest.fn(),

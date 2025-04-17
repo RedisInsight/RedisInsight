@@ -31,12 +31,13 @@ const parseRedisUrl = (urlString: string = ''): Nullable<ParsedRedisUrl> => {
       host,
       port: port ? parseInt(port, 10) : undefined,
       hostname: port ? `${host}:${port}` : host,
-      dbNumber: undefined
+      dbNumber: undefined,
     }
   }
 
   // eslint-disable-next-line no-useless-escape
-  const redisUrlPattern = /^(redis[s]?):\/\/(?:(.+)?@)?(?:.*@)?([^:\/]+)(?::(\d+))?(?:\/(\d+))?$/
+  const redisUrlPattern =
+    /^(redis[s]?):\/\/(?:(.+)?@)?(?:.*@)?([^:\/]+)(?::(\d+))?(?:\/(\d+))?$/
   const match = urlString.match(redisUrlPattern)
 
   if (!match) {
@@ -53,10 +54,8 @@ const parseRedisUrl = (urlString: string = ''): Nullable<ParsedRedisUrl> => {
     host,
     port: port ? parseInt(port, 10) : undefined,
     hostname: port ? `${host}:${port}` : host,
-    dbNumber: dbNumber ? parseInt(dbNumber, 10) : undefined
+    dbNumber: dbNumber ? parseInt(dbNumber, 10) : undefined,
   }
 }
 
-export {
-  parseRedisUrl
-}
+export { parseRedisUrl }

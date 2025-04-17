@@ -1,6 +1,13 @@
 import {
   ClassSerializerInterceptor,
-  Controller, Get, Param, Put, Query, UseInterceptors, UsePipes, ValidationPipe,
+  Controller,
+  Get,
+  Param,
+  Put,
+  Query,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
@@ -29,7 +36,7 @@ export class CloudUserController {
   })
   async me(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Query() utm: CloudRequestUtm,
+    @Query() utm: CloudRequestUtm,
   ): Promise<CloudUser> {
     return this.service.me(sessionMetadata, false, utm);
   }
@@ -43,7 +50,7 @@ export class CloudUserController {
   @ApiParam({ name: 'id', type: String })
   async setCurrentAccount(
     @Param('id') id: string,
-      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<CloudUser> {
     return this.service.setCurrentAccount(sessionMetadata, id);
   }
@@ -53,7 +60,9 @@ export class CloudUserController {
     description: 'Logout user',
     statusCode: 200,
   })
-  async logout(@RequestSessionMetadata() sessionMetadata: SessionMetadata): Promise<void> {
+  async logout(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+  ): Promise<void> {
     return this.cloudAuthService.logout(sessionMetadata);
   }
 }

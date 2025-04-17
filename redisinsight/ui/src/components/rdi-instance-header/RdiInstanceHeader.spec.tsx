@@ -62,11 +62,11 @@ describe('RdiInstanceHeader', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
-      { flag: true }
+      { flag: true },
     )
 
     render(<RdiInstanceHeader />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('o-auth-user-profile-rdi')).toBeInTheDocument()
   })
@@ -75,12 +75,14 @@ describe('RdiInstanceHeader', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
-      { flag: false }
+      { flag: false },
     )
 
     render(<RdiInstanceHeader />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
-    expect(screen.queryByTestId('o-auth-user-profile-rdi')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('o-auth-user-profile-rdi'),
+    ).not.toBeInTheDocument()
   })
 })

@@ -1,6 +1,10 @@
 import { cloneDeep, flatMap, isEmpty, reject } from 'lodash'
 import { apiService } from 'uiSrc/services'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { IPlugin, PluginsResponse } from 'uiSrc/slices/interfaces'
 import reducer, {
   appPluginsSelector,
@@ -33,20 +37,16 @@ const MOCK_PLUGINS_RESPONSE = {
           id: 'redisearch',
           name: 'Table',
           activationMethod: 'renderRediSearch',
-          matchCommands: [
-            'FT.INFO',
-            'FT.SEARCH',
-            'FT.AGGREGATE'
-          ],
+          matchCommands: ['FT.INFO', 'FT.SEARCH', 'FT.AGGREGATE'],
           iconDark: './dist/table_view_icon_dark.svg',
           iconLight: './dist/table_view_icon_light.svg',
-          default: true
-        }
+          default: true,
+        },
       ],
       internal: true,
-      baseUrl: '/static/plugins/redisearch/'
-    }
-  ]
+      baseUrl: '/static/plugins/redisearch/',
+    },
+  ],
 }
 
 describe('slices', () => {
@@ -69,7 +69,7 @@ describe('slices', () => {
       const loading = true
       const state = {
         ...initialState,
-        loading
+        loading,
       }
 
       // Act
@@ -94,18 +94,19 @@ describe('slices', () => {
         plugins: reject(data?.plugins, isEmpty),
         visualizations: flatMap(
           reject(data?.plugins, isEmpty),
-          (plugin: IPlugin) => plugin.visualizations.map((view) => ({
-            ...view,
-            plugin: {
-              name: plugin.name,
-              baseUrl: plugin.baseUrl,
-              internal: plugin.internal,
-              stylesSrc: plugin.styles,
-              scriptSrc: plugin.main
-            },
-            uniqId: `${plugin.name}__${view.id}`
-          }))
-        )
+          (plugin: IPlugin) =>
+            plugin.visualizations.map((view) => ({
+              ...view,
+              plugin: {
+                name: plugin.name,
+                baseUrl: plugin.baseUrl,
+                internal: plugin.internal,
+                stylesSrc: plugin.styles,
+                scriptSrc: plugin.main,
+              },
+              uniqId: `${plugin.name}__${view.id}`,
+            })),
+        ),
       }
 
       // Act
@@ -127,7 +128,7 @@ describe('slices', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
@@ -156,10 +157,7 @@ describe('slices', () => {
       await store.dispatch<any>(loadPluginsAction())
 
       // Assert
-      const expectedActions = [
-        getAllPlugins(),
-        getAllPluginsSuccess(data),
-      ]
+      const expectedActions = [getAllPlugins(), getAllPluginsSuccess(data)]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
     })
@@ -198,10 +196,12 @@ describe('slices', () => {
       apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(sendPluginCommandAction({
-        command: 'info',
-        onSuccessAction: onSuccess
-      }))
+      await store.dispatch<any>(
+        sendPluginCommandAction({
+          command: 'info',
+          onSuccessAction: onSuccess,
+        }),
+      )
 
       expect(onSuccess).toBeCalledWith(data)
     })
@@ -219,10 +219,12 @@ describe('slices', () => {
       apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(sendPluginCommandAction({
-        command: 'info',
-        onFailAction: onFailed
-      }))
+      await store.dispatch<any>(
+        sendPluginCommandAction({
+          command: 'info',
+          onFailAction: onFailed,
+        }),
+      )
 
       expect(onFailed).toBeCalledWith(responsePayload)
     })
@@ -238,11 +240,13 @@ describe('slices', () => {
       apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(getPluginStateAction({
-        visualizationId: '1',
-        commandId: '1',
-        onSuccessAction: onSuccess
-      }))
+      await store.dispatch<any>(
+        getPluginStateAction({
+          visualizationId: '1',
+          commandId: '1',
+          onSuccessAction: onSuccess,
+        }),
+      )
 
       expect(onSuccess).toBeCalledWith(data)
     })
@@ -260,11 +264,13 @@ describe('slices', () => {
       apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(getPluginStateAction({
-        visualizationId: '1',
-        commandId: '1',
-        onFailAction: onFailed
-      }))
+      await store.dispatch<any>(
+        getPluginStateAction({
+          visualizationId: '1',
+          commandId: '1',
+          onFailAction: onFailed,
+        }),
+      )
 
       expect(onFailed).toBeCalledWith(responsePayload)
     })
@@ -280,12 +286,14 @@ describe('slices', () => {
       apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(setPluginStateAction({
-        visualizationId: '1',
-        commandId: '1',
-        pluginState: { info: 'smth' },
-        onSuccessAction: onSuccess
-      }))
+      await store.dispatch<any>(
+        setPluginStateAction({
+          visualizationId: '1',
+          commandId: '1',
+          pluginState: { info: 'smth' },
+          onSuccessAction: onSuccess,
+        }),
+      )
 
       expect(onSuccess).toBeCalledWith(data)
     })
@@ -303,12 +311,14 @@ describe('slices', () => {
       apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(setPluginStateAction({
-        visualizationId: '1',
-        commandId: '1',
-        pluginState: { info: 'smth' },
-        onFailAction: onFailed
-      }))
+      await store.dispatch<any>(
+        setPluginStateAction({
+          visualizationId: '1',
+          commandId: '1',
+          pluginState: { info: 'smth' },
+          onFailAction: onFailed,
+        }),
+      )
 
       expect(onFailed).toBeCalledWith(responsePayload)
     })

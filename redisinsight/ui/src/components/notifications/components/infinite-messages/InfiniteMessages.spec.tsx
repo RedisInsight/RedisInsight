@@ -24,12 +24,21 @@ describe('INFINITE_MESSAGES', () => {
     })
 
     it('should render plan details', () => {
-      const { Inner } = INFINITE_MESSAGES.SUCCESS_CREATE_DB({ region: 'us-us', provider: OAuthProvider.AWS }, jest.fn())
+      const { Inner } = INFINITE_MESSAGES.SUCCESS_CREATE_DB(
+        { region: 'us-us', provider: OAuthProvider.AWS },
+        jest.fn(),
+      )
       render(<>{Inner}</>)
 
-      expect(screen.getByTestId('notification-details-plan')).toHaveTextContent('Free')
-      expect(screen.getByTestId('notification-details-vendor')).toHaveTextContent('Amazon Web Services')
-      expect(screen.getByTestId('notification-details-region')).toHaveTextContent('us-us')
+      expect(screen.getByTestId('notification-details-plan')).toHaveTextContent(
+        'Free',
+      )
+      expect(
+        screen.getByTestId('notification-details-vendor'),
+      ).toHaveTextContent('Amazon Web Services')
+      expect(
+        screen.getByTestId('notification-details-region'),
+      ).toHaveTextContent('us-us')
     })
   })
   describe('AUTHENTICATING', () => {
@@ -87,9 +96,15 @@ describe('INFINITE_MESSAGES', () => {
       const { Inner } = INFINITE_MESSAGES.DATABASE_IMPORT_FORBIDDEN(onClose)
       render(<>{Inner}</>)
 
-      fireEvent.click(screen.getByTestId('database-import-forbidden-notification-ok-btn'))
-      fireEvent.mouseUp(screen.getByTestId('database-import-forbidden-notification'))
-      fireEvent.mouseDown(screen.getByTestId('database-import-forbidden-notification'))
+      fireEvent.click(
+        screen.getByTestId('database-import-forbidden-notification-ok-btn'),
+      )
+      fireEvent.mouseUp(
+        screen.getByTestId('database-import-forbidden-notification'),
+      )
+      fireEvent.mouseDown(
+        screen.getByTestId('database-import-forbidden-notification'),
+      )
 
       expect(onClose).toBeCalled()
     })
@@ -108,7 +123,9 @@ describe('INFINITE_MESSAGES', () => {
 
       fireEvent.click(screen.getByTestId('create-subscription-sso-btn'))
       fireEvent.mouseUp(screen.getByTestId('subscription-exists-notification'))
-      fireEvent.mouseDown(screen.getByTestId('subscription-exists-notification'))
+      fireEvent.mouseDown(
+        screen.getByTestId('subscription-exists-notification'),
+      )
 
       expect(onSuccess).toBeCalled()
     })
@@ -116,12 +133,17 @@ describe('INFINITE_MESSAGES', () => {
     it('should call onCancel', () => {
       const onSuccess = jest.fn()
       const onCancel = jest.fn()
-      const { Inner } = INFINITE_MESSAGES.SUBSCRIPTION_EXISTS(onSuccess, onCancel)
+      const { Inner } = INFINITE_MESSAGES.SUBSCRIPTION_EXISTS(
+        onSuccess,
+        onCancel,
+      )
       render(<>{Inner}</>)
 
       fireEvent.click(screen.getByTestId('cancel-create-subscription-sso-btn'))
       fireEvent.mouseUp(screen.getByTestId('subscription-exists-notification'))
-      fireEvent.mouseDown(screen.getByTestId('subscription-exists-notification'))
+      fireEvent.mouseDown(
+        screen.getByTestId('subscription-exists-notification'),
+      )
 
       expect(onCancel).toBeCalled()
     })
@@ -147,7 +169,9 @@ describe('INFINITE_MESSAGES', () => {
 
       fireEvent.click(screen.getByTestId('app-restart-btn'))
       fireEvent.mouseUp(screen.getByTestId('app-update-available-notification'))
-      fireEvent.mouseDown(screen.getByTestId('app-update-available-notification'))
+      fireEvent.mouseDown(
+        screen.getByTestId('app-update-available-notification'),
+      )
 
       expect(onSuccess).toBeCalled()
     })

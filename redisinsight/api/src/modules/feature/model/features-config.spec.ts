@@ -1,6 +1,10 @@
 import {
-  mockFeaturesConfig, mockFeaturesConfigComplex, mockFeaturesConfigEntity, mockFeaturesConfigEntityComplex,
-  mockFeaturesConfigJson, mockFeaturesConfigJsonComplex,
+  mockFeaturesConfig,
+  mockFeaturesConfigComplex,
+  mockFeaturesConfigEntity,
+  mockFeaturesConfigEntityComplex,
+  mockFeaturesConfigJson,
+  mockFeaturesConfigJsonComplex,
 } from 'src/__mocks__';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { FeaturesConfig } from 'src/modules/feature/model/features-config';
@@ -14,7 +18,10 @@ const testCases = [
       data: { ...mockFeaturesConfigJson },
     },
     model: mockFeaturesConfig,
-    entity: Object.assign(new FeaturesConfigEntity(), { ...mockFeaturesConfigEntity, id: undefined }),
+    entity: Object.assign(new FeaturesConfigEntity(), {
+      ...mockFeaturesConfigEntity,
+      id: undefined,
+    }),
   },
   {
     plain: {
@@ -22,7 +29,10 @@ const testCases = [
       data: { ...mockFeaturesConfigJsonComplex },
     },
     model: mockFeaturesConfigComplex,
-    entity: Object.assign(new FeaturesConfigEntity(), { ...mockFeaturesConfigEntityComplex, id: undefined }),
+    entity: Object.assign(new FeaturesConfigEntity(), {
+      ...mockFeaturesConfigEntityComplex,
+      id: undefined,
+    }),
   },
   {
     plain: {},
@@ -52,7 +62,10 @@ describe('FeaturesConfig', () => {
       it(`input ${JSON.stringify(tc.plain)}`, async () => {
         const modelFromPlain = plainToInstance(FeaturesConfig, tc.plain);
         const plainFromModel = instanceToPlain(modelFromPlain);
-        const entityFromModel = classToClass(FeaturesConfigEntity, modelFromPlain);
+        const entityFromModel = classToClass(
+          FeaturesConfigEntity,
+          modelFromPlain,
+        );
         const modelFromEntity = classToClass(FeaturesConfig, entityFromModel);
 
         expect(tc.model).toEqual(modelFromPlain);

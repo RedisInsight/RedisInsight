@@ -2,41 +2,26 @@
   "productName": "Redis Insight",
   "appId": "org.RedisLabs.RedisInsight-V2",
   "copyright": "Copyright © 2024 Redis Ltd.",
-  "files": [
-    "dist",
-    "node_modules",
-    "package.json"
-  ],
+  "files": ["dist", "node_modules", "package.json"],
   "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
   "compression": "normal",
-  "asarUnpack": [
-    "node_modules/keytar",
-    "node_modules/sqlite3"
-  ],
+  "asarUnpack": ["node_modules/keytar", "node_modules/sqlite3"],
   "protocols": [
     {
       "name": "RedisInsight",
       "role": "Viewer",
-      "schemes": [
-        "redisinsight"
-      ]
+      "schemes": ["redisinsight"]
     }
   ],
   "mac": {
     "target": [
       {
         "target": "dmg",
-        "arch": [
-          "x64",
-          "arm64"
-        ]
+        "arch": ["x64", "arm64"]
       },
       {
         "target": "zip",
-        "arch": [
-          "x64",
-          "arm64"
-        ]
+        "arch": ["x64", "arm64"]
       }
     ],
     "notarize": {
@@ -57,9 +42,7 @@
     "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
     "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
     "hardenedRuntime": false,
-    "asarUnpack": [
-      "node_modules"
-    ],
+    "asarUnpack": ["node_modules"],
     "provisioningProfile": "embedded.provisionprofile",
     "binaries": [
       "Contents/Resources/app-x64.asar.unpacked/node_modules/sqlite3/build/Release/node_sqlite3.node",
@@ -75,9 +58,7 @@
     "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
     "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
     "hardenedRuntime": false,
-    "asarUnpack": [
-      "node_modules"
-    ],
+    "asarUnpack": ["node_modules"],
     "provisioningProfile": "dev.provisionprofile",
     "binaries": [
       "Contents/Resources/app-x64.asar.unpacked/node_modules/sqlite3/build/Release/node_sqlite3.node",
@@ -102,15 +83,10 @@
     ]
   },
   "win": {
-    "target": [
-      "nsis"
-    ],
+    "target": ["nsis"],
     "artifactName": "Redis-Insight-${os}-installer.${ext}",
     "icon": "resources/icon.ico",
-    "publisherName": [
-      "Redis Inc.",
-      "Redis Labs Inc."
-    ]
+    "publisherName": ["Redis Inc.", "Redis Labs Inc."]
   },
   "nsis": {
     "oneClick": false,
@@ -122,27 +98,19 @@
     "target": [
       {
         "target": "AppImage",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64"]
       },
       {
         "target": "deb",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64"]
       },
       {
         "target": "rpm",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64"]
       },
       {
         "target": "snap",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64"]
       }
     ],
     "synopsis": "Redis GUI by Redis Ltd.",
@@ -158,14 +126,9 @@
     "afterInstall": "scripts/deb-after-install.sh"
   },
   "snap": {
-    "plugs": [
-      "default",
-      "password-manager-service"
-    ],
+    "plugs": ["default", "password-manager-service"],
     "confinement": "strict",
-    "stagePackages": [
-      "default"
-    ]
+    "stagePackages": ["default"]
   },
   "flatpak": {
     "runtimeVersion": "20.08",
@@ -179,12 +142,7 @@
           "-Dgtk_doc=false",
           "-Dintrospection=false"
         ],
-        "cleanup": [
-          "/bin",
-          "/include",
-          "/lib/pkgconfig",
-          "/share/man"
-        ],
+        "cleanup": ["/bin", "/include", "/lib/pkgconfig", "/share/man"],
         "sources": [
           {
             "type": "archive",
@@ -217,23 +175,17 @@
     {
       "from": "./redisinsight/api/static",
       "to": "static",
-      "filter": [
-        "**/*"
-      ]
+      "filter": ["**/*"]
     },
     {
       "from": "./redisinsight/api/defaults",
       "to": "defaults",
-      "filter": [
-        "**/*"
-      ]
+      "filter": ["**/*"]
     },
     {
       "from": "./redisinsight/api/data",
       "to": "data",
-      "filter": [
-        "**/*"
-      ]
+      "filter": ["**/*"]
     },
     {
       "from": "LICENSE",
@@ -242,9 +194,7 @@
     {
       "from": "./resources/app",
       "to": "./app",
-      "filter": [
-        "**/*"
-      ]
+      "filter": ["**/*"]
     }
   ]
 }

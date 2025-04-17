@@ -9,20 +9,30 @@ import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 export const initDataHelper = (rte) => {
   const client = rte.client;
 
-  const sendCommand = async (command: string, args?: (Buffer | string)[], replyEncoding: BufferEncoding = 'utf8'): Promise<any> => {
-    return client.sendCommand(new IORedis.Command(command, args, {
-      replyEncoding,
-    }));
+  const sendCommand = async (
+    command: string,
+    args?: (Buffer | string)[],
+    replyEncoding: BufferEncoding = 'utf8',
+  ): Promise<any> => {
+    return client.sendCommand(
+      new IORedis.Command(command, args, {
+        replyEncoding,
+      }),
+    );
   };
 
   const executeCommand = async (...args: string[]): Promise<any> => {
-    return client.nodes ? Promise.all(client.nodes('master').map(async (node) => {
-      try {
-        return node.call(...args);
-      } catch (e) {
-        return null;
-      }
-    })) : client.call(args.shift(), ...args);
+    return client.nodes
+      ? Promise.all(
+          client.nodes('master').map(async (node) => {
+            try {
+              return node.call(...args);
+            } catch (e) {
+              return null;
+            }
+          }),
+        )
+      : client.call(args.shift(), ...args);
   };
 
   const waitForInfoSync = async () => {
@@ -32,12 +42,18 @@ export const initDataHelper = (rte) => {
     while (true) {
       const currentDbIndex = get(client, ['options', 'db'], 0);
 
-      dbSize = await sendCommand('dbsize')
+      dbSize = await sendCommand('dbsize');
 
-      const info = convertRedisInfoReplyToObject(await sendCommand('info', ['keyspace']));
+      const info = convertRedisInfoReplyToObject(
+        await sendCommand('info', ['keyspace']),
+      );
       const dbInfo = get(info, 'keyspace', {});
       if (dbInfo[`db${currentDbIndex}`]) {
-        const { keys } = convertMultilineReplyToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
+        const { keys } = convertMultilineReplyToObject(
+          dbInfo[`db${currentDbIndex}`],
+          ',',
+          '=',
+        );
         totalKeys = parseInt(keys, 10);
       }
 
@@ -47,21 +63,23 @@ export const initDataHelper = (rte) => {
 
       await sleep(200);
     }
-  }
-
-  const executeCommandAll = async (...args: string[]): Promise<any> => {
-    return client.nodes ? Promise.all(client.nodes().map(async (node) => {
-      try {
-        return node.call(...args);
-      } catch (e) {
-        return null;
-      }
-    })) : client.call(args.shift(), ...args);
   };
 
-  const setAclUserRules = async (
-    rules: string,
-  ): Promise<any> => {
+  const executeCommandAll = async (...args: string[]): Promise<any> => {
+    return client.nodes
+      ? Promise.all(
+          client.nodes().map(async (node) => {
+            try {
+              return node.call(...args);
+            } catch (e) {
+              return null;
+            }
+          }),
+        )
+      : client.call(args.shift(), ...args);
+  };
+
+  const setAclUserRules = async (rules: string): Promise<any> => {
     const command = `ACL SETUSER ${constants.TEST_INSTANCE_ACL_USER} reset on ${rules} >${constants.TEST_INSTANCE_ACL_PASS}`;
 
     return executeCommandAll(...command.split(' '));
@@ -78,25 +96,38 @@ export const initDataHelper = (rte) => {
     let cursor = null;
     let keys = [];
     while (cursor !== '0') {
-      [cursor, keys] = await node.sendCommand(new IORedis.Command(
-        'scan',
-        [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`],
-      ));
+      [cursor, keys] = await node.sendCommand(
+        new IORedis.Command('scan', [
+          cursor,
+          'count',
+          count,
+          'match',
+          `${constants.TEST_RUN_ID}*`,
+        ]),
+      );
       cursor = cursor.toString();
       if (keys.length) {
-        await Promise.all(keys.map((key) => node.sendCommand(new IORedis.Command('del', [key]))));
+        await Promise.all(
+          keys.map((key) =>
+            node.sendCommand(new IORedis.Command('del', [key])),
+          ),
+        );
       }
     }
-  }
+  };
 
   const truncate = async () => {
-    return client.nodes ? Promise.all(client.nodes('master').map(async (node) => {
-      try {
-        return flushTestRunData(node);
-      } catch (e) {
-        return null;
-      }
-    })) : flushTestRunData(client);
+    return client.nodes
+      ? Promise.all(
+          client.nodes('master').map(async (node) => {
+            try {
+              return flushTestRunData(node);
+            } catch (e) {
+              return null;
+            }
+          }),
+        )
+      : flushTestRunData(client);
   };
 
   // bin data
@@ -106,13 +137,22 @@ export const initDataHelper = (rte) => {
     }
 
     // string
-    await client.set(constants.TEST_STRING_KEY_BIN_BUFFER_1, constants.TEST_STRING_VALUE_BIN_BUFFER_1);
+    await client.set(
+      constants.TEST_STRING_KEY_BIN_BUFFER_1,
+      constants.TEST_STRING_VALUE_BIN_BUFFER_1,
+    );
 
     // list
-    await client.lpush(constants.TEST_LIST_KEY_BIN_BUFFER_1, constants.TEST_LIST_ELEMENT_BIN_BUFFER_1);
+    await client.lpush(
+      constants.TEST_LIST_KEY_BIN_BUFFER_1,
+      constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
+    );
 
     // set
-    await client.sadd(constants.TEST_SET_KEY_BIN_BUFFER_1, constants.TEST_SET_MEMBER_BIN_BUFFER_1);
+    await client.sadd(
+      constants.TEST_SET_KEY_BIN_BUFFER_1,
+      constants.TEST_SET_MEMBER_BIN_BUFFER_1,
+    );
 
     // zset
     await client.zadd(
@@ -139,7 +179,7 @@ export const initDataHelper = (rte) => {
       'create',
       constants.TEST_STREAM_KEY_BIN_BUFFER_1,
       constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
-      constants.TEST_STREAM_ID_1
+      constants.TEST_STREAM_ID_1,
     ]);
 
     await waitForInfoSync();
@@ -162,7 +202,10 @@ export const initDataHelper = (rte) => {
     await waitForInfoSync();
   };
 
-  const insertKeysBasedOnEnv = async (pipeline, forcePipeline: boolean = false) => {
+  const insertKeysBasedOnEnv = async (
+    pipeline,
+    forcePipeline: boolean = false,
+  ) => {
     const builtInCommand = client.getBuiltinCommands().includes(pipeline[0][0]);
     if (!forcePipeline && (!builtInCommand || rte.env.type === 'CLUSTER')) {
       for (const command of pipeline) {
@@ -179,7 +222,11 @@ export const initDataHelper = (rte) => {
     }
   };
 
-  const generateAnyKeys = async (types: Array<any>, number: number = 15000, clean: boolean) => {
+  const generateAnyKeys = async (
+    types: Array<any>,
+    number: number = 15000,
+    clean: boolean,
+  ) => {
     if (clean) {
       await truncate();
     }
@@ -189,7 +236,7 @@ export const initDataHelper = (rte) => {
     for (let i = 0; i < types.length; i++) {
       await insertKeysBasedOnEnv(types[i].create(numberPerType));
     }
-  }
+  };
 
   // Strings
   const generateString = async (clean: boolean = false) => {
@@ -197,7 +244,10 @@ export const initDataHelper = (rte) => {
       await truncate();
     }
 
-    await client.set(constants.TEST_STRING_KEY_1, constants.TEST_STRING_VALUE_1);
+    await client.set(
+      constants.TEST_STRING_KEY_1,
+      constants.TEST_STRING_VALUE_1,
+    );
   };
 
   const generateStrings = async (clean: boolean = false) => {
@@ -205,9 +255,20 @@ export const initDataHelper = (rte) => {
       await truncate();
     }
 
-    await client.set(constants.TEST_STRING_KEY_1, constants.TEST_STRING_VALUE_1);
-    await client.set(constants.TEST_STRING_KEY_2, constants.TEST_STRING_VALUE_2, 'EX', constants.TEST_STRING_EXPIRE_2);
-    await client.set(constants.TEST_STRING_KEY_ASCII_BUFFER, constants.TEST_STRING_KEY_ASCII_VALUE);
+    await client.set(
+      constants.TEST_STRING_KEY_1,
+      constants.TEST_STRING_VALUE_1,
+    );
+    await client.set(
+      constants.TEST_STRING_KEY_2,
+      constants.TEST_STRING_VALUE_2,
+      'EX',
+      constants.TEST_STRING_EXPIRE_2,
+    );
+    await client.set(
+      constants.TEST_STRING_KEY_ASCII_BUFFER,
+      constants.TEST_STRING_KEY_ASCII_VALUE,
+    );
   };
 
   // List
@@ -223,12 +284,14 @@ export const initDataHelper = (rte) => {
     );
     await client.rpush(
       constants.TEST_LIST_KEY_2,
-      ...(new Array(100).fill(0)).map((item, i) => `element_${i + 1}`)
+      ...new Array(100).fill(0).map((item, i) => `element_${i + 1}`),
     );
   };
 
-
-  const generateHugeElementsForListKey = async (number: number = 100000, clean: boolean) => {
+  const generateHugeElementsForListKey = async (
+    number: number = 100000,
+    clean: boolean,
+  ) => {
     if (clean) {
       await truncate();
     }
@@ -243,7 +306,7 @@ export const initDataHelper = (rte) => {
       }
 
       await insertKeysBasedOnEnv(pipeline, true);
-    } while (inserted < number)
+    } while (inserted < number);
   };
 
   // Set
@@ -255,7 +318,7 @@ export const initDataHelper = (rte) => {
     await client.sadd(constants.TEST_SET_KEY_1, constants.TEST_SET_MEMBER_1);
     await client.sadd(
       constants.TEST_SET_KEY_2,
-      ...(new Array(100).fill(0)).map((item, i) => `member_${i + 1}`)
+      ...new Array(100).fill(0).map((item, i) => `member_${i + 1}`),
     );
   };
 
@@ -277,7 +340,7 @@ export const initDataHelper = (rte) => {
       constants.TEST_ZSET_KEY_2,
       ...(() => {
         const toInsert = [];
-        (new Array(100).fill(0)).map((item, i) => {
+        new Array(100).fill(0).map((item, i) => {
           toInsert.push(i + 1, `member_${i + 1}`);
         });
         return toInsert;
@@ -287,7 +350,7 @@ export const initDataHelper = (rte) => {
       constants.TEST_ZSET_KEY_3,
       ...(() => {
         const toInsert = [];
-        (new Array(3000).fill(0)).map((item, i) => {
+        new Array(3000).fill(0).map((item, i) => {
           toInsert.push(i + 1, `member_${i + 1}`);
         });
         return toInsert;
@@ -295,7 +358,10 @@ export const initDataHelper = (rte) => {
     );
   };
 
-  const generateHugeMembersForSortedListKey = async (number: number = 100000, clean: boolean) => {
+  const generateHugeMembersForSortedListKey = async (
+    number: number = 100000,
+    clean: boolean,
+  ) => {
     if (clean) {
       await truncate();
     }
@@ -310,7 +376,7 @@ export const initDataHelper = (rte) => {
       }
 
       await insertKeysBasedOnEnv(pipeline, true);
-    } while (inserted < number)
+    } while (inserted < number);
   };
 
   // Hash
@@ -330,7 +396,7 @@ export const initDataHelper = (rte) => {
       constants.TEST_HASH_KEY_2,
       ...(() => {
         const toInsert = [];
-        (new Array(3000).fill(0)).map((item, i) => {
+        new Array(3000).fill(0).map((item, i) => {
           toInsert.push(`field_${i + 1}`, `value_${i + 1}`);
         });
         return toInsert;
@@ -348,9 +414,24 @@ export const initDataHelper = (rte) => {
       await truncate();
     }
 
-    await executeCommand('json.set', constants.TEST_REJSON_KEY_1, '.', JSON.stringify(constants.TEST_REJSON_VALUE_1));
-    await executeCommand('json.set', constants.TEST_REJSON_KEY_2, '.', JSON.stringify(constants.TEST_REJSON_VALUE_2));
-    await executeCommand('json.set', constants.TEST_REJSON_KEY_3, '.', JSON.stringify(constants.TEST_REJSON_VALUE_3));
+    await executeCommand(
+      'json.set',
+      constants.TEST_REJSON_KEY_1,
+      '.',
+      JSON.stringify(constants.TEST_REJSON_VALUE_1),
+    );
+    await executeCommand(
+      'json.set',
+      constants.TEST_REJSON_KEY_2,
+      '.',
+      JSON.stringify(constants.TEST_REJSON_VALUE_2),
+    );
+    await executeCommand(
+      'json.set',
+      constants.TEST_REJSON_KEY_3,
+      '.',
+      JSON.stringify(constants.TEST_REJSON_VALUE_3),
+    );
   };
 
   // Streams
@@ -359,20 +440,30 @@ export const initDataHelper = (rte) => {
       await truncate();
     }
 
-    await client.xadd(constants.TEST_STREAM_KEY_1, '*', constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+    await client.xadd(
+      constants.TEST_STREAM_KEY_1,
+      '*',
+      constants.TEST_STREAM_FIELD_1,
+      constants.TEST_STREAM_VALUE_1,
+    );
     await sendCommand('xgroup', [
       'create',
       constants.TEST_STREAM_KEY_1,
       constants.TEST_STREAM_GROUP_1,
-      constants.TEST_STREAM_ID_1
-    ])
+      constants.TEST_STREAM_ID_1,
+    ]);
     await sendCommand('xgroup', [
       'create',
       constants.TEST_STREAM_KEY_1,
       constants.TEST_STREAM_GROUP_2,
-      constants.TEST_STREAM_ID_1
-    ])
-    await client.xadd(constants.TEST_STREAM_KEY_2, '*', constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+      constants.TEST_STREAM_ID_1,
+    ]);
+    await client.xadd(
+      constants.TEST_STREAM_KEY_2,
+      '*',
+      constants.TEST_STREAM_FIELD_1,
+      constants.TEST_STREAM_VALUE_1,
+    );
   };
 
   const generateStreamsWithoutStrictMode = async (clean: boolean = false) => {
@@ -380,23 +471,36 @@ export const initDataHelper = (rte) => {
       await truncate();
     }
 
-    await client.xadd(constants.TEST_STREAM_KEY_1, constants.TEST_STREAM_ID_1, constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+    await client.xadd(
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_ID_1,
+      constants.TEST_STREAM_FIELD_1,
+      constants.TEST_STREAM_VALUE_1,
+    );
     await sendCommand('xgroup', [
       'create',
       constants.TEST_STREAM_KEY_1,
       constants.TEST_STREAM_GROUP_1,
-      constants.TEST_STREAM_ID_1
-    ])
+      constants.TEST_STREAM_ID_1,
+    ]);
     await sendCommand('xgroup', [
       'create',
       constants.TEST_STREAM_KEY_1,
       constants.TEST_STREAM_GROUP_2,
-      constants.TEST_STREAM_ID_1
-    ])
-    await client.xadd(constants.TEST_STREAM_KEY_2, constants.TEST_STREAM_ID_1, constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+      constants.TEST_STREAM_ID_1,
+    ]);
+    await client.xadd(
+      constants.TEST_STREAM_KEY_2,
+      constants.TEST_STREAM_ID_1,
+      constants.TEST_STREAM_FIELD_1,
+      constants.TEST_STREAM_VALUE_1,
+    );
   };
 
-  const generateHugeStream = async (number: number = 100000, clean: boolean) => {
+  const generateHugeStream = async (
+    number: number = 100000,
+    clean: boolean,
+  ) => {
     if (clean) {
       await truncate();
     }
@@ -407,14 +511,23 @@ export const initDataHelper = (rte) => {
       const pipeline = [];
       const limit = inserted + batchSize;
       for (inserted; inserted < limit && inserted < number; inserted++) {
-        pipeline.push(['xadd', `${constants.TEST_STREAM_HUGE_KEY}`, '*', `f_${inserted}`, `v_${inserted}`]);
+        pipeline.push([
+          'xadd',
+          `${constants.TEST_STREAM_HUGE_KEY}`,
+          '*',
+          `f_${inserted}`,
+          `v_${inserted}`,
+        ]);
       }
 
       await insertKeysBasedOnEnv(pipeline);
-    } while (inserted < number)
+    } while (inserted < number);
   };
 
-  const generateHugeNumberOfFieldsForHashKey = async (number: number = 100000, clean: boolean) => {
+  const generateHugeNumberOfFieldsForHashKey = async (
+    number: number = 100000,
+    clean: boolean,
+  ) => {
     if (clean) {
       await truncate();
     }
@@ -425,14 +538,22 @@ export const initDataHelper = (rte) => {
       const pipeline = [];
       const limit = inserted + batchSize;
       for (inserted; inserted < limit && inserted < number; inserted++) {
-        pipeline.push(['hset', constants.TEST_HASH_KEY_1, `f_${inserted}`, 'v']);
+        pipeline.push([
+          'hset',
+          constants.TEST_HASH_KEY_1,
+          `f_${inserted}`,
+          'v',
+        ]);
       }
 
       await insertKeysBasedOnEnv(pipeline, true);
-    } while (inserted < number)
+    } while (inserted < number);
   };
 
-  const generateHugeNumberOfMembersForSetKey = async (number: number = 100000, clean: boolean) => {
+  const generateHugeNumberOfMembersForSetKey = async (
+    number: number = 100000,
+    clean: boolean,
+  ) => {
     if (clean) {
       await truncate();
     }
@@ -447,11 +568,13 @@ export const initDataHelper = (rte) => {
       }
 
       await insertKeysBasedOnEnv(pipeline, true);
-    } while (inserted < number)
+    } while (inserted < number);
   };
 
-
-  const generateHugeNumberOfTinyStringKeys = async (number: number = 100000, clean: boolean) => {
+  const generateHugeNumberOfTinyStringKeys = async (
+    number: number = 100000,
+    clean: boolean,
+  ) => {
     if (clean) {
       await truncate();
     }
@@ -466,17 +589,58 @@ export const initDataHelper = (rte) => {
       }
 
       await insertKeysBasedOnEnv(pipeline);
-    } while (inserted < number)
+    } while (inserted < number);
   };
 
   const generateNKeys = async (number: number = 15000, clean: boolean) => {
-    await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v, i) => ['set', `${constants.TEST_RUN_ID}_str_key_${i}`, `str_val_${i}`]) }, // string
-      { create: n => _.map(new Array(n), (v, i) => ['lpush', `${constants.TEST_RUN_ID}_list_key_${i}`, `list_val_${i}`]) }, // list
-      { create: n => _.map(new Array(n), (v, i) => ['sadd', `${constants.TEST_RUN_ID}_set_key_${i}`, `set_val_${i}`]) }, // set
-      { create: n => _.map(new Array(n), (v, i) => ['zadd', `${constants.TEST_RUN_ID}_zset_key_${i}`, 0, `zset_val_${i}`]) }, // zset
-      { create: n => _.map(new Array(n), (v, i) => ['hset', `${constants.TEST_RUN_ID}_hash_key_${i}`, `field`, `hash_val_${i}`]) }, // hash
-    ], number, clean);
+    await generateAnyKeys(
+      [
+        {
+          create: (n) =>
+            _.map(new Array(n), (v, i) => [
+              'set',
+              `${constants.TEST_RUN_ID}_str_key_${i}`,
+              `str_val_${i}`,
+            ]),
+        }, // string
+        {
+          create: (n) =>
+            _.map(new Array(n), (v, i) => [
+              'lpush',
+              `${constants.TEST_RUN_ID}_list_key_${i}`,
+              `list_val_${i}`,
+            ]),
+        }, // list
+        {
+          create: (n) =>
+            _.map(new Array(n), (v, i) => [
+              'sadd',
+              `${constants.TEST_RUN_ID}_set_key_${i}`,
+              `set_val_${i}`,
+            ]),
+        }, // set
+        {
+          create: (n) =>
+            _.map(new Array(n), (v, i) => [
+              'zadd',
+              `${constants.TEST_RUN_ID}_zset_key_${i}`,
+              0,
+              `zset_val_${i}`,
+            ]),
+        }, // zset
+        {
+          create: (n) =>
+            _.map(new Array(n), (v, i) => [
+              'hset',
+              `${constants.TEST_RUN_ID}_hash_key_${i}`,
+              `field`,
+              `hash_val_${i}`,
+            ]),
+        }, // hash
+      ],
+      number,
+      clean,
+    );
 
     await waitForInfoSync();
   };
@@ -484,11 +648,28 @@ export const initDataHelper = (rte) => {
   const generateRedisearchIndexes = async (clean: boolean) => {
     await generateNKeys(10_000, clean);
 
-    await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_1, 'on', 'hash', 'schema', 'field', 'text']);
-    await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_2, 'on', 'hash', 'schema', '*', 'text']);
+    await sendCommand('ft.create', [
+      constants.TEST_SEARCH_HASH_INDEX_1,
+      'on',
+      'hash',
+      'schema',
+      'field',
+      'text',
+    ]);
+    await sendCommand('ft.create', [
+      constants.TEST_SEARCH_HASH_INDEX_2,
+      'on',
+      'hash',
+      'schema',
+      '*',
+      'text',
+    ]);
 
     // Indexes creation needs some additional time to complete, which usually is around 500ms
-    await waitIndexingToComplete([constants.TEST_SEARCH_HASH_INDEX_1, constants.TEST_SEARCH_HASH_INDEX_2])
+    await waitIndexingToComplete([
+      constants.TEST_SEARCH_HASH_INDEX_1,
+      constants.TEST_SEARCH_HASH_INDEX_2,
+    ]);
   };
 
   /**
@@ -498,9 +679,13 @@ export const initDataHelper = (rte) => {
    * @param {number} [retryLimit=3] - the maximum number of iterations. Defaults to 3.
    * @param {number} [retryInterval=300] - the time wait between iterations, in milliseconds. Defaults to 300.
    */
-  const waitIndexingToComplete = async (hashIndexes: string[], retryLimit = 3, retryInterval = 300) => {
+  const waitIndexingToComplete = async (
+    hashIndexes: string[],
+    retryLimit = 3,
+    retryInterval = 300,
+  ) => {
     let indexesCompleted = new Array(hashIndexes.length).fill(false);
-    for(let retryCounter = 0; retryCounter < retryLimit; retryCounter++) {
+    for (let retryCounter = 0; retryCounter < retryLimit; retryCounter++) {
       await new Promise((resolve) => setTimeout(resolve, retryInterval));
 
       for (let i = 0; i < hashIndexes.length; i++) {
@@ -509,7 +694,7 @@ export const initDataHelper = (rte) => {
         const indexInfo = await sendCommand('ft.info', [hashIndexes[i]]);
 
         // searching for the "indexing" property index, so we can reach it's value using index + 1 in the info array
-        const indexingPropertyIndex = indexInfo.indexOf("indexing");
+        const indexingPropertyIndex = indexInfo.indexOf('indexing');
         const indexingValue = indexInfo[indexingPropertyIndex + 1]; // 1 - in progress, 0 - completed
         indexesCompleted[i] = !indexingValue;
       }
@@ -522,31 +707,78 @@ export const initDataHelper = (rte) => {
     if (indexesCompleted.includes(false)) {
       console.error('Indexing has not yet completed');
     }
-  }
+  };
 
   const generateNReJSONs = async (number: number = 300, clean: boolean) => {
     const jsonValue = JSON.stringify(constants.TEST_REJSON_VALUE_1);
-    await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v, i) => ['json.set', `${constants.TEST_RUN_ID}_rejson_key_${i}`, '.', jsonValue]) },
-    ], number, clean);
+    await generateAnyKeys(
+      [
+        {
+          create: (n) =>
+            _.map(new Array(n), (v, i) => [
+              'json.set',
+              `${constants.TEST_RUN_ID}_rejson_key_${i}`,
+              '.',
+              jsonValue,
+            ]),
+        },
+      ],
+      number,
+      clean,
+    );
   };
 
   const generateNTimeSeries = async (number: number = 300, clean: boolean) => {
-    await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v, i) => ['ts.create', `${constants.TEST_RUN_ID}_ts_key_${i}`, `ts_val_${i}`]) },
-    ], number, clean);
+    await generateAnyKeys(
+      [
+        {
+          create: (n) =>
+            _.map(new Array(n), (v, i) => [
+              'ts.create',
+              `${constants.TEST_RUN_ID}_ts_key_${i}`,
+              `ts_val_${i}`,
+            ]),
+        },
+      ],
+      number,
+      clean,
+    );
   };
 
   const generateNStreams = async (number: number = 300, clean: boolean) => {
-    await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v, i) => ['xadd', `${constants.TEST_RUN_ID}_st_key_${i}`, `*`, `st_field_${i}`, `st_val_${i}`]) },
-    ], number, clean);
+    await generateAnyKeys(
+      [
+        {
+          create: (n) =>
+            _.map(new Array(n), (v, i) => [
+              'xadd',
+              `${constants.TEST_RUN_ID}_st_key_${i}`,
+              `*`,
+              `st_field_${i}`,
+              `st_val_${i}`,
+            ]),
+        },
+      ],
+      number,
+      clean,
+    );
   };
 
   const generateNGraphs = async (number: number = 300, clean: boolean) => {
-    await generateAnyKeys([
-      { create: n => _.map(new Array(n), (v, i) => ['graph.query', `${constants.TEST_RUN_ID}_graph_key_${i}`, `CREATE (n_${i})`]) },
-    ], number, clean);
+    await generateAnyKeys(
+      [
+        {
+          create: (n) =>
+            _.map(new Array(n), (v, i) => [
+              'graph.query',
+              `${constants.TEST_RUN_ID}_graph_key_${i}`,
+              `CREATE (n_${i})`,
+            ]),
+        },
+      ],
+      number,
+      clean,
+    );
   };
 
   const getClientNodes = () => {
@@ -555,17 +787,20 @@ export const initDataHelper = (rte) => {
     } else {
       return [client];
     }
-  }
+  };
 
   // scripts
-  const generateNCachedScripts = async (number: number = 10, clean: boolean) => {
+  const generateNCachedScripts = async (
+    number: number = 10,
+    clean: boolean,
+  ) => {
     if (clean) {
       await truncate();
     }
 
     const pipeline = [];
     for (let i = 0; i < number; i++) {
-      pipeline.push(['eval', `return ${i}`, '0'])
+      pipeline.push(['eval', `return ${i}`, '0']);
     }
     await insertKeysBasedOnEnv(pipeline);
   };
@@ -579,7 +814,9 @@ export const initDataHelper = (rte) => {
     return executeCommand(...command.split(' '));
   };
 
-  const generateTriggeredFunctionsLibrary = async (clean: boolean = true): Promise<any> => {
+  const generateTriggeredFunctionsLibrary = async (
+    clean: boolean = true,
+  ): Promise<any> => {
     if (clean) {
       await truncate();
     }
@@ -588,8 +825,8 @@ export const initDataHelper = (rte) => {
       'LOAD',
       constants.TEST_TRIGGERED_FUNCTIONS_CODE,
       constants.TEST_TRIGGERED_FUNCTIONS_CONFIGURATION,
-    ])
-  }
+    ]);
+  };
 
   return {
     sendCommand,
@@ -619,5 +856,5 @@ export const initDataHelper = (rte) => {
     getClientNodes,
     generateTriggeredFunctionsLibrary,
     setRedisearchConfig,
-  }
-}
+  };
+};

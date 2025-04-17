@@ -1,7 +1,4 @@
-import {
-  mockSshOptionsBasic,
-  mockSshOptionsPrivateKey,
-} from 'src/__mocks__';
+import { mockSshOptionsBasic, mockSshOptionsPrivateKey } from 'src/__mocks__';
 import * as utils from 'src/common/utils';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SshImportService } from 'src/modules/database-import/ssh-import.service';
@@ -12,7 +9,7 @@ import {
 } from 'src/modules/database-import/exceptions';
 
 jest.mock('src/common/utils', () => ({
-  ...jest.requireActual('src/common/utils') as object,
+  ...(jest.requireActual('src/common/utils') as object),
   getPemBodyFromFileSync: jest.fn(),
 }));
 
@@ -36,9 +33,7 @@ describe('SshImportService', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        SshImportService,
-      ],
+      providers: [SshImportService],
     }).compile();
 
     service = await module.get(SshImportService);
@@ -48,8 +43,13 @@ describe('SshImportService', () => {
 
   describe('processSshOptions', () => {
     beforeEach(() => {
-      getPemBodyFromFileSyncSpy = jest.spyOn(utils as any, 'getPemBodyFromFileSync');
-      getPemBodyFromFileSyncSpy.mockReturnValue(mockSshOptionsPrivateKey.privateKey);
+      getPemBodyFromFileSyncSpy = jest.spyOn(
+        utils as any,
+        'getPemBodyFromFileSync',
+      );
+      getPemBodyFromFileSyncSpy.mockReturnValue(
+        mockSshOptionsPrivateKey.privateKey,
+      );
     });
 
     it('should successfully process ssh basic', async () => {
@@ -91,7 +91,9 @@ describe('SshImportService', () => {
     });
 
     it('should throw an error when invalid privateKey body provided', async () => {
-      getPemBodyFromFileSyncSpy.mockImplementation(() => { throw new Error('no file'); });
+      getPemBodyFromFileSyncSpy.mockImplementation(() => {
+        throw new Error('no file');
+      });
 
       try {
         await service.processSshOptions({

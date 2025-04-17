@@ -30,34 +30,64 @@ describe('Tab', () => {
   })
 
   it('should show an error icon when isValid is false', () => {
-    render(<Tab title="Invalid Config" isSelected={false} fileName="config.yaml" isValid={false} />)
+    render(
+      <Tab
+        title="Invalid Config"
+        isSelected={false}
+        fileName="config.yaml"
+        isValid={false}
+      />,
+    )
 
     expect(screen.getByTestId('rdi-nav-config-error')).toBeInTheDocument()
   })
 
   it('should not show an error icon when isValid is true', () => {
-    render(<Tab title="Valid Config" isSelected={false} fileName="config.yaml" isValid />)
+    render(
+      <Tab
+        title="Valid Config"
+        isSelected={false}
+        fileName="config.yaml"
+        isValid
+      />,
+    )
 
     expect(screen.queryByTestId('rdi-nav-config-error')).not.toBeInTheDocument()
   })
 
   it('should show a loading spinner when isLoading is true', () => {
-    render(<Tab title="Loading Config" fileName="config.yaml" isSelected={false} isLoading />)
+    render(
+      <Tab
+        title="Loading Config"
+        fileName="config.yaml"
+        isSelected={false}
+        isLoading
+      />,
+    )
 
     expect(screen.getByTestId('rdi-nav-config-loader')).toBeInTheDocument()
   })
 
   it('should not show a loading spinner when isLoading is false', () => {
-    render(<Tab title="Config" fileName="config.yaml" isSelected={false} isLoading={false} />)
+    render(
+      <Tab
+        title="Config"
+        fileName="config.yaml"
+        isSelected={false}
+        isLoading={false}
+      />,
+    )
 
-    expect(screen.queryByTestId('rdi-nav-config-loader')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('rdi-nav-config-loader'),
+    ).not.toBeInTheDocument()
   })
 
   it('should render children correctly', () => {
     render(
       <Tab title="With Children" isSelected={false}>
         <span data-testid="tab-child">Child Content</span>
-      </Tab>
+      </Tab>,
     )
 
     expect(screen.getByTestId('tab-child')).toBeInTheDocument()

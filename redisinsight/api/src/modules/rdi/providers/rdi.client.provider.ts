@@ -33,10 +33,16 @@ export class RdiClientProvider {
     const rdi = await this.repository.get(clientMetadata.id);
 
     if (!rdi) {
-      this.logger.error(`RDI with ${clientMetadata.id} was not Found`, clientMetadata);
+      this.logger.error(
+        `RDI with ${clientMetadata.id} was not Found`,
+        clientMetadata,
+      );
       throw new NotFoundException(ERROR_MESSAGES.INVALID_RDI_INSTANCE_ID);
     }
-    const rdiClient = await this.rdiClientFactory.createClient(clientMetadata, rdi);
+    const rdiClient = await this.rdiClientFactory.createClient(
+      clientMetadata,
+      rdi,
+    );
     if (rdiClient) {
       this.updateLastConnection(clientMetadata);
     }
@@ -55,9 +61,13 @@ export class RdiClientProvider {
     return this.rdiClientStorage.deleteManyByRdiId(id);
   }
 
-  private async updateLastConnection(rdiClientMetadata: RdiClientMetadata): Promise<void> {
+  private async updateLastConnection(
+    rdiClientMetadata: RdiClientMetadata,
+  ): Promise<void> {
     try {
-      await this.repository.update(rdiClientMetadata.id, { lastConnection: new Date() });
+      await this.repository.update(rdiClientMetadata.id, {
+        lastConnection: new Date(),
+      });
     } catch (e) {
       // ignore the error
     }

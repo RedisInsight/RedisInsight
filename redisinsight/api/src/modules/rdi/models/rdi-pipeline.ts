@@ -1,6 +1,4 @@
-import {
-  IsObject, IsOptional,
-} from 'class-validator';
+import { IsObject, IsOptional } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class RdiPipeline {

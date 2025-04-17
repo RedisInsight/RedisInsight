@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { useLocation } from 'react-router-dom'
 import cx from 'classnames'
-import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
+import {
+  TelemetryEvent,
+  getRedisModulesSummary,
+  sendEventTelemetry,
+} from 'uiSrc/telemetry'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import {
   checkConnectToInstanceAction,
@@ -53,7 +57,7 @@ const OAuthConnectFreeDb = ({
         provider,
         source,
         ...modulesSummary,
-      }
+      },
     })
   }
 
@@ -63,16 +67,17 @@ const OAuthConnectFreeDb = ({
     openNewWindowDatabase(Pages.browser(targetDatabaseId) + search)
   }
 
-  const handleCheckConnectToInstance = (
-  ) => {
+  const handleCheckConnectToInstance = () => {
     sendTelemetry()
     dispatch(setCapability({ source, tutorialPopoverShown: false }))
-    dispatch(checkConnectToInstanceAction(
-      targetDatabaseId,
-      connectToInstanceSuccess,
-      () => {},
-      false,
-    ))
+    dispatch(
+      checkConnectToInstanceAction(
+        targetDatabaseId,
+        connectToInstanceSuccess,
+        () => {},
+        false,
+      ),
+    )
   }
 
   return (

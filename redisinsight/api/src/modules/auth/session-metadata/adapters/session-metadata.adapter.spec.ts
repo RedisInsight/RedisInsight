@@ -16,12 +16,13 @@ const createBaseBindMessageHandlersMock = () => {
   return mockBaseBindMessageHandlers;
 };
 
-const createMockSocket = () => ({
-  request: {},
-  disconnect: jest.fn(),
-  data: {},
-  join: jest.fn(),
-}) as unknown as Socket;
+const createMockSocket = () =>
+  ({
+    request: {},
+    disconnect: jest.fn(),
+    data: {},
+    join: jest.fn(),
+  }) as unknown as Socket;
 
 describe('Session metadata adapater', () => {
   let app: INestApplication;
@@ -40,8 +41,7 @@ describe('Session metadata adapater', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       providers: [],
-    })
-      .compile();
+    }).compile();
 
     app = moduleFixture.createNestApplication();
     sessionMetadataAdapter = new SessionMetadataAdapter();
@@ -54,11 +54,7 @@ describe('Session metadata adapater', () => {
   });
 
   it('should attach session metadata and join a room for the user id', async () => {
-    await sessionMetadataAdapter.bindMessageHandlers(
-      mockSocket,
-      [],
-      jest.fn(),
-    );
+    await sessionMetadataAdapter.bindMessageHandlers(mockSocket, [], jest.fn());
 
     expect(mockBaseBindMessageHandlers).toHaveBeenCalledTimes(1);
     expect(mockSocket.data).toEqual({

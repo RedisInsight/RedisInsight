@@ -1,7 +1,5 @@
 import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
-import {
-  DatabaseRecommendationsResponse,
-} from 'src/modules/database-recommendation/dto/database-recommendations.response';
+import { DatabaseRecommendationsResponse } from 'src/modules/database-recommendation/dto/database-recommendations.response';
 import { ModifyDatabaseRecommendationDto } from 'src/modules/database-recommendation/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { ClientMetadata, SessionMetadata } from 'src/common/models';
@@ -13,7 +11,10 @@ export abstract class DatabaseRecommendationRepository {
    * @param entity
    * @return DatabaseRecommendation
    */
-  abstract create(sessionMetadata: SessionMetadata, entity: DatabaseRecommendation): Promise<DatabaseRecommendation>;
+  abstract create(
+    sessionMetadata: SessionMetadata,
+    entity: DatabaseRecommendation,
+  ): Promise<DatabaseRecommendation>;
 
   /**
    * Get all recommendations from database
@@ -21,7 +22,9 @@ export abstract class DatabaseRecommendationRepository {
    * @param clientMetadata
    * @return DatabaseRecommendationsResponse
    */
-  abstract list(clientMetadata: ClientMetadata): Promise<DatabaseRecommendationsResponse>;
+  abstract list(
+    clientMetadata: ClientMetadata,
+  ): Promise<DatabaseRecommendationsResponse>;
 
   /**
    * Mark all recommendations as read by database id
@@ -38,7 +41,8 @@ export abstract class DatabaseRecommendationRepository {
    */
   abstract update(
     clientMetadata: ClientMetadata,
-    id: string, recommendation: ModifyDatabaseRecommendationDto
+    id: string,
+    recommendation: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation>;
 
   /**
@@ -47,14 +51,20 @@ export abstract class DatabaseRecommendationRepository {
    * @param name
    * @return Boolean
    */
-  abstract isExist(clientMetadata: ClientMetadata, name: string): Promise<boolean>;
+  abstract isExist(
+    clientMetadata: ClientMetadata,
+    name: string,
+  ): Promise<boolean>;
 
   /**
    * Check if one or more recommendations exist in repository
    * @param clientMetadata
    * @param names
    */
-  abstract isExistMulti(clientMetadata: ClientMetadata, names: string[]): Promise<Map<string, boolean>>;
+  abstract isExistMulti(
+    clientMetadata: ClientMetadata,
+    names: string[],
+  ): Promise<Map<string, boolean>>;
 
   /**
    * Get database recommendation by id
@@ -62,14 +72,20 @@ export abstract class DatabaseRecommendationRepository {
    * @param id
    * @return DatabaseRecommendation
    */
-  abstract get(sessionMetadata: SessionMetadata, id: string): Promise<DatabaseRecommendation>;
+  abstract get(
+    sessionMetadata: SessionMetadata,
+    id: string,
+  ): Promise<DatabaseRecommendation>;
 
   /**
    * Sync db analysis recommendations with insights recommendations
    * @param clientMetadata
    * @param dbAnalysisRecommendations
    */
-  abstract sync(clientMetadata: ClientMetadata, dbAnalysisRecommendations: Recommendation[]): Promise<void>;
+  abstract sync(
+    clientMetadata: ClientMetadata,
+    dbAnalysisRecommendations: Recommendation[],
+  ): Promise<void>;
 
   /**
    * Delete database recommendation by id
@@ -81,5 +97,8 @@ export abstract class DatabaseRecommendationRepository {
   /**
    * Get total unread recommendations
    */
-  abstract getTotalUnread(sessionMetadata: SessionMetadata, databaseId: string): Promise<number>;
+  abstract getTotalUnread(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+  ): Promise<number>;
 }

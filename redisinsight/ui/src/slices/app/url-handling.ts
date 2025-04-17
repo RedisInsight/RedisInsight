@@ -9,7 +9,7 @@ export const initialState: StateUrlHandling = {
   returnUrl: localStorageService.get(AppStorageItem.returnUrl),
   action: null,
   dbConnection: null,
-  properties: {}
+  properties: {},
 }
 
 const appUrlHandlingSlice = createSlice({
@@ -29,8 +29,8 @@ const appUrlHandlingSlice = createSlice({
     },
     setUrlProperties: (state, { payload }) => {
       state.properties = payload
-    }
-  }
+    },
+  },
 })
 
 export const {
@@ -41,8 +41,10 @@ export const {
   setUrlProperties,
 } = appUrlHandlingSlice.actions
 
-export const appRedirectionSelector = (state: RootState) => state.app.urlHandling
+export const appRedirectionSelector = (state: RootState) =>
+  state.app.urlHandling
 
-export const appReturnUrlSelector = (state: RootState) => state.app.urlHandling.returnUrl
+export const appReturnUrlSelector = (state: RootState) =>
+  state.app.urlHandling.returnUrl
 
 export default appUrlHandlingSlice.reducer

@@ -30,9 +30,7 @@ describe('RdiDeployErrorContent', () => {
   })
 
   it('creates and revokes the object URL properly', () => {
-    const { unmount } = render(
-      <RdiDeployErrorContent message={mockMessage} />,
-    )
+    const { unmount } = render(<RdiDeployErrorContent message={mockMessage} />)
 
     expect(URL.createObjectURL).toHaveBeenCalled()
     unmount()

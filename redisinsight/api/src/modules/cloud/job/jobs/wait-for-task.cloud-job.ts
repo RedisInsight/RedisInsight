@@ -1,4 +1,7 @@
-import { CloudJob, CloudJobOptions } from 'src/modules/cloud/job/jobs/cloud-job';
+import {
+  CloudJob,
+  CloudJobOptions,
+} from 'src/modules/cloud/job/jobs/cloud-job';
 import { CloudTask, CloudTaskStatus } from 'src/modules/cloud/task/models';
 import { CloudTaskCapiService } from 'src/modules/cloud/task/cloud-task.capi.service';
 import { CloudJobStatus } from 'src/modules/cloud/job/models';
@@ -15,10 +18,10 @@ export class WaitForTaskCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
-      taskId: string,
+      taskId: string;
     },
     protected readonly dependencies: {
-      cloudTaskCapiService: CloudTaskCapiService,
+      cloudTaskCapiService: CloudTaskCapiService;
     },
   ) {
     super(options);
@@ -31,13 +34,18 @@ export class WaitForTaskCloudJob extends CloudJob {
 
     this.logger.debug('Fetching cloud task');
 
-    const task = await this.dependencies.cloudTaskCapiService.getTask(this.options.capiCredentials, this.data.taskId);
+    const task = await this.dependencies.cloudTaskCapiService.getTask(
+      this.options.capiCredentials,
+      this.data.taskId,
+    );
 
     switch (task?.status) {
       case CloudTaskStatus.Initialized:
       case CloudTaskStatus.Received:
       case CloudTaskStatus.ProcessingInProgress:
-        this.logger.debug('Cloud task processing is in progress. Scheduling new iteration.');
+        this.logger.debug(
+          'Cloud task processing is in progress. Scheduling new iteration.',
+        );
         return await this.runNextIteration(sessionMetadata);
       case CloudTaskStatus.ProcessingCompleted:
         this.logger.debug('Cloud task processing successfully completed.');
@@ -46,9 +54,13 @@ export class WaitForTaskCloudJob extends CloudJob {
 
         return task;
       case CloudTaskStatus.ProcessingError:
-        throw new CloudTaskProcessingErrorException(undefined, { cause: task.response?.error });
+        throw new CloudTaskProcessingErrorException(undefined, {
+          cause: task.response?.error,
+        });
       default:
-        throw new CloudJobUnexpectedErrorException('Something went wrong. Unknown task status or task was not found');
+        throw new CloudJobUnexpectedErrorException(
+          'Something went wrong. Unknown task status or task was not found',
+        );
     }
   }
 }

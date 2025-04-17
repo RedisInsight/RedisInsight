@@ -8,7 +8,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -19,24 +20,30 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 // input data schema
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
-  members: Joi.array().items(Joi.object().keys({
-    name: Joi.string().required().label('.name'),
-    // todo: allow(true) - is incorrect but will be transformed to number by BE. Investigate/fix it
-    score: Joi.number().required().allow(true).label('.score'),
-  })).messages({
-    'number.base': '{#lavel} must be a string or a number',
-    'array.sparse': 'members must be either object or array',
-    'array.base': 'property {#label} must be either object or array',
-  }),
+  members: Joi.array()
+    .items(
+      Joi.object().keys({
+        name: Joi.string().required().label('.name'),
+        // todo: allow(true) - is incorrect but will be transformed to number by BE. Investigate/fix it
+        score: Joi.number().required().allow(true).label('.score'),
+      }),
+    )
+    .messages({
+      'number.base': '{#lavel} must be a string or a number',
+      'array.sparse': 'members must be either object or array',
+      'array.base': 'property {#label} must be either object or array',
+    }),
   expire: Joi.number().integer().allow(null).min(1).max(2147483647),
 }).strict();
 
 const validInputData = {
   keyName: constants.TEST_ZSET_KEY_1,
-  members: [{
-    name: constants.TEST_ZSET_MEMBER_1,
-    score: constants.TEST_ZSET_MEMBER_1_SCORE,
-  }],
+  members: [
+    {
+      name: constants.TEST_ZSET_MEMBER_1,
+      score: constants.TEST_ZSET_MEMBER_1_SCORE,
+    },
+  ],
   expire: constants.TEST_ZSET_EXPIRE_1,
 };
 
@@ -64,9 +71,13 @@ const createCheckFn = async (testCase) => {
     } else {
       if (testCase.statusCode === 201) {
         expect(await rte.client.exists(testCase.data.keyName)).to.eql(1);
-        expect(await rte.client.zrange(testCase.data.keyName, 0, 10)).to.eql([testCase.data.members[0].name]);
+        expect(await rte.client.zrange(testCase.data.keyName, 0, 10)).to.eql([
+          testCase.data.members[0].name,
+        ]);
         if (testCase.data.expire) {
-          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(testCase.data.expire - 5);
+          expect(await rte.client.ttl(testCase.data.keyName)).to.gte(
+            testCase.data.expire - 5,
+          );
         } else {
           expect(await rte.client.ttl(testCase.data.keyName)).to.eql(-1);
         }
@@ -85,34 +96,50 @@ describe('POST /databases/:instanceId/zSet', () => {
         name: 'Should create zset from buff',
         data: {
           keyName: constants.TEST_ZSET_KEY_BIN_BUF_OBJ_1,
-          members: [{
-            name: constants.TEST_ZSET_MEMBER_BIN_BUF_OBJ_1,
-            score: 0,
-          }],
+          members: [
+            {
+              name: constants.TEST_ZSET_MEMBER_BIN_BUF_OBJ_1,
+              score: 0,
+            },
+          ],
         },
         statusCode: 201,
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_ZSET_KEY_BIN_BUFFER_1)).to.eql(1);
-          expect(await rte.data.sendCommand('zrange', [constants.TEST_ZSET_KEY_BIN_BUFFER_1, 0, 10], null)).to.deep.eq([
-            constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
-          ]);
+          expect(
+            await rte.client.exists(constants.TEST_ZSET_KEY_BIN_BUFFER_1),
+          ).to.eql(1);
+          expect(
+            await rte.data.sendCommand(
+              'zrange',
+              [constants.TEST_ZSET_KEY_BIN_BUFFER_1, 0, 10],
+              null,
+            ),
+          ).to.deep.eq([constants.TEST_ZSET_MEMBER_BIN_BUFFER_1]);
         },
       },
       {
         name: 'Should create zset from ascii',
         data: {
           keyName: constants.TEST_ZSET_KEY_BIN_ASCII_1,
-          members: [{
-            name: constants.TEST_ZSET_MEMBER_BIN_ASCII_1,
-            score: 0,
-          }],
+          members: [
+            {
+              name: constants.TEST_ZSET_MEMBER_BIN_ASCII_1,
+              score: 0,
+            },
+          ],
         },
         statusCode: 201,
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_ZSET_KEY_BIN_BUFFER_1)).to.eql(1);
-          expect(await rte.data.sendCommand('zrange', [constants.TEST_ZSET_KEY_BIN_BUFFER_1, 0, 10], null)).to.deep.eq([
-            constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
-          ]);
+          expect(
+            await rte.client.exists(constants.TEST_ZSET_KEY_BIN_BUFFER_1),
+          ).to.eql(1);
+          expect(
+            await rte.data.sendCommand(
+              'zrange',
+              [constants.TEST_ZSET_KEY_BIN_BUFFER_1, 0, 10],
+              null,
+            ),
+          ).to.deep.eq([constants.TEST_ZSET_MEMBER_BIN_BUFFER_1]);
         },
       },
     ].map(mainCheckFn);
@@ -133,10 +160,12 @@ describe('POST /databases/:instanceId/zSet', () => {
           name: 'Should create item with empty value',
           data: {
             keyName: constants.getRandomString(),
-            members: [{
-              name: '',
-              score: 0
-            }],
+            members: [
+              {
+                name: '',
+                score: 0,
+              },
+            ],
           },
           statusCode: 201,
         },
@@ -144,10 +173,12 @@ describe('POST /databases/:instanceId/zSet', () => {
           name: 'Should create item with key ttl',
           data: {
             keyName: constants.getRandomString(),
-            members: [{
-              name: constants.getRandomString(),
-              score: 0
-            }],
+            members: [
+              {
+                name: constants.getRandomString(),
+                score: 0,
+              },
+            ],
             expire: constants.TEST_ZSET_EXPIRE_1,
           },
           statusCode: 201,
@@ -156,10 +187,12 @@ describe('POST /databases/:instanceId/zSet', () => {
           name: 'Should create regular item',
           data: {
             keyName: constants.TEST_ZSET_KEY_1,
-            members: [{
-              name: constants.TEST_ZSET_MEMBER_1,
-              score: 0
-            }],
+            members: [
+              {
+                name: constants.TEST_ZSET_MEMBER_1,
+                score: 0,
+              },
+            ],
           },
           statusCode: 201,
         },
@@ -167,10 +200,12 @@ describe('POST /databases/:instanceId/zSet', () => {
           name: 'Should return conflict error if key already exists',
           data: {
             keyName: constants.TEST_ZSET_KEY_1,
-            members: [{
-              name: constants.getRandomString(),
-              score: 0
-            }],
+            members: [
+              {
+                name: constants.getRandomString(),
+                score: 0,
+              },
+            ],
           },
           statusCode: 409,
           responseBody: {
@@ -180,18 +215,21 @@ describe('POST /databases/:instanceId/zSet', () => {
           },
           after: async () =>
             // check that value was not overwritten
-            expect(await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10))
-              .to.eql([constants.TEST_ZSET_MEMBER_1])
+            expect(
+              await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10),
+            ).to.eql([constants.TEST_ZSET_MEMBER_1]),
         },
         {
           name: 'Should return NotFound error if instance id does not exists',
           endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            members: [{
-              name: constants.getRandomString(),
-              score: 0
-            }],
+            members: [
+              {
+                name: constants.getRandomString(),
+                score: 0,
+              },
+            ],
           },
           statusCode: 404,
           responseBody: {
@@ -201,8 +239,9 @@ describe('POST /databases/:instanceId/zSet', () => {
           },
           after: async () =>
             // check that value was not overwritten
-            expect(await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10))
-              .to.eql([constants.TEST_ZSET_MEMBER_1])
+            expect(
+              await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10),
+            ).to.eql([constants.TEST_ZSET_MEMBER_1]),
         },
       ].map(createCheckFn);
     });
@@ -217,10 +256,12 @@ describe('POST /databases/:instanceId/zSet', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.getRandomString(),
-            members: [{
-              name: constants.getRandomString(),
-              score: 0
-            }],
+            members: [
+              {
+                name: constants.getRandomString(),
+                score: 0,
+              },
+            ],
           },
           statusCode: 201,
         },
@@ -229,34 +270,38 @@ describe('POST /databases/:instanceId/zSet', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.getRandomString(),
-            members: [{
-              name: constants.getRandomString(),
-              score: 0
-            }],
+            members: [
+              {
+                name: constants.getRandomString(),
+                score: 0,
+              },
+            ],
           },
           statusCode: 403,
           responseBody: {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -zadd')
+          before: () => rte.data.setAclUserRules('~* +@all -zadd'),
         },
         {
           name: 'Should throw error if no permissions for "exists" command',
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.getRandomString(),
-            members: [{
-              name: constants.getRandomString(),
-              score: 0
-            }],
+            members: [
+              {
+                name: constants.getRandomString(),
+                score: 0,
+              },
+            ],
           },
           statusCode: 403,
           responseBody: {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
       ].map(createCheckFn);
     });

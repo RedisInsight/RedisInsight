@@ -6,16 +6,20 @@ import ExportAction from './ExportAction'
 
 describe('ExportAction', () => {
   it('should render', () => {
-    expect(render(<ExportAction subTitle="" selection={[]} onExport={jest.fn()} />)).toBeTruthy()
+    expect(
+      render(<ExportAction subTitle="" selection={[]} onExport={jest.fn()} />),
+    ).toBeTruthy()
   })
 
   it('should call onExport with proper data', () => {
     const onExport = jest.fn()
-    render(<ExportAction
-      subTitle=""
-      selection={INSTANCES_MOCK}
-      onExport={onExport}
-    />)
+    render(
+      <ExportAction
+        subTitle=""
+        selection={INSTANCES_MOCK}
+        onExport={onExport}
+      />,
+    )
 
     fireEvent.click(screen.getByTestId('export-btn'))
     fireEvent.click(screen.getByTestId('export-selected-dbs'))
@@ -25,11 +29,13 @@ describe('ExportAction', () => {
 
   it('should call onExport with proper data', () => {
     const onExport = jest.fn()
-    render(<ExportAction
-      subTitle=""
-      selection={INSTANCES_MOCK}
-      onExport={onExport}
-    />)
+    render(
+      <ExportAction
+        subTitle=""
+        selection={INSTANCES_MOCK}
+        onExport={onExport}
+      />,
+    )
 
     fireEvent.click(screen.getByTestId('export-btn'))
     fireEvent.click(screen.getByTestId('export-passwords'))

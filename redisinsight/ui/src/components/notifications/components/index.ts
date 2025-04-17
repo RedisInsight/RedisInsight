@@ -6,5 +6,5 @@ export {
   EncryptionErrorContent,
   DefaultErrorContent,
   INFINITE_MESSAGES,
-  InfiniteMessagesIds
+  InfiniteMessagesIds,
 }

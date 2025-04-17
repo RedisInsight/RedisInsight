@@ -6,7 +6,9 @@ import { RdiStartPipelineFailedException } from './rdi-start-pipeline-failed.exc
 describe('RdiStartPipelineFailedException', () => {
   it('should create an exception with default message and status code', () => {
     const exception = new RdiStartPipelineFailedException();
-    expect(exception.message).toEqual(ERROR_MESSAGES.RDI_START_PIPELINE_FAILURE);
+    expect(exception.message).toEqual(
+      ERROR_MESSAGES.RDI_START_PIPELINE_FAILURE,
+    );
     expect(exception.getStatus()).toEqual(HttpStatus.BAD_REQUEST);
     expect(exception.getResponse()).toEqual({
       message: ERROR_MESSAGES.RDI_START_PIPELINE_FAILURE,
@@ -20,7 +22,9 @@ describe('RdiStartPipelineFailedException', () => {
   it('should create an exception with custom message and error', () => {
     const customMessage = 'Custom error message';
     const customError = 'Custom error';
-    const exception = new RdiStartPipelineFailedException(customMessage, { error: customError });
+    const exception = new RdiStartPipelineFailedException(customMessage, {
+      error: customError,
+    });
     expect(exception.message).toEqual(customMessage);
     expect(exception.getStatus()).toEqual(HttpStatus.BAD_REQUEST);
     expect(exception.getResponse()).toEqual({

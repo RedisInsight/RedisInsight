@@ -1,14 +1,13 @@
-import {
-  EuiButton,
-  EuiButtonEmpty,
-  EuiText
-} from '@elastic/eui'
+import { EuiButton, EuiButtonEmpty, EuiText } from '@elastic/eui'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover/ConfirmationPopover'
-import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import {
+  fetchRdiPipeline,
+  rdiPipelineSelector,
+} from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import Download from 'uiSrc/pages/rdi/instance/components/download/Download'
 import downloadIcon from 'uiSrc/assets/img/rdi/download.svg?react'
@@ -30,7 +29,7 @@ const FetchPipelinePopover = ({ onClose }: Props) => {
     dispatch(
       fetchRdiPipeline(rdiInstanceId, () => {
         onClose?.()
-      })
+      }),
     )
   }
 
@@ -39,23 +38,23 @@ const FetchPipelinePopover = ({ onClose }: Props) => {
       event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FROM_SERVER_CLICKED,
       eventData: {
         id: rdiInstanceId,
-        jobsNumber: data?.jobs?.length || 'none'
-      }
+        jobsNumber: data?.jobs?.length || 'none',
+      },
     })
   }
 
   return (
     <ConfirmationPopover
       title="Download a pipeline from the server"
-      body={(
+      body={
         <>
           <EuiText size="s">
-            When downloading a new pipeline from the server,
-            it will overwrite the existing one displayed in Redis Insight.
+            When downloading a new pipeline from the server, it will overwrite
+            the existing one displayed in Redis Insight.
           </EuiText>
         </>
-      )}
-      submitBtn={(
+      }
+      submitBtn={
         <EuiButton
           fill
           size="s"
@@ -64,9 +63,9 @@ const FetchPipelinePopover = ({ onClose }: Props) => {
         >
           Download from server
         </EuiButton>
-      )}
+      }
       onConfirm={handleRefreshClick}
-      button={(
+      button={
         <EuiButtonEmpty
           color="text"
           className={styles.downloadBtn}
@@ -78,7 +77,7 @@ const FetchPipelinePopover = ({ onClose }: Props) => {
         >
           Download from server
         </EuiButtonEmpty>
-      )}
+      }
       onButtonClick={handleRefreshWarning}
       appendAction={<Download />}
     />

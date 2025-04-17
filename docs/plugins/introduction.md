@@ -2,12 +2,12 @@
 
 ## Introduction
 
-Redis can hold a range of different data types. Visualizing these in a 
-format that’s convenient to you for validation and debugging is paramount. 
-You can now easily extend the core functionality of Redis Insight independently by 
+Redis can hold a range of different data types. Visualizing these in a
+format that’s convenient to you for validation and debugging is paramount.
+You can now easily extend the core functionality of Redis Insight independently by
 building your own custom visualization plugin.
 
-Data visualization provided by the plugin is rendered within the 
+Data visualization provided by the plugin is rendered within the
 Workbench results area and is based on the executed command, ie. a certain
 Redis command can generate its own custom data visualization.
 
@@ -15,5 +15,5 @@ We have included the following [plugin package example](https://github.com/Redis
 
 ## Wiki
 
-* [Installation and Usage](installation.md)
-* [Plugin Development](development.md)
+- [Installation and Usage](installation.md)
+- [Plugin Development](development.md)

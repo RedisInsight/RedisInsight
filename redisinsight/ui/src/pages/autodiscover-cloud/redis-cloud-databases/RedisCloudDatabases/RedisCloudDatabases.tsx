@@ -28,21 +28,25 @@ import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCloud>[];
-  onClose: () => void;
-  onBack: () => void;
+  columns: EuiBasicTableColumn<InstanceRedisCloud>[]
+  onClose: () => void
+  onBack: () => void
   onSubmit: (
-    databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'databaseId' | 'free'>[]
-  ) => void;
+    databases: Pick<
+      InstanceRedisCloud,
+      'subscriptionId' | 'subscriptionType' | 'databaseId' | 'free'
+    >[],
+  ) => void
 }
 
 interface IPopoverProps {
-  isPopoverOpen: boolean;
+  isPopoverOpen: boolean
 }
 
 const loadingMsg = 'loading...'
 const notFoundMsg = 'Not found'
-const noResultsMessage = 'Your Redis Enterprise Сloud has no databases available'
+const noResultsMessage =
+  'Your Redis Enterprise Сloud has no databases available'
 
 const RedisCloudDatabasesPage = ({
   columns,
@@ -84,7 +88,11 @@ const RedisCloudDatabasesPage = ({
   }
 
   const handleSubmit = () => {
-    onSubmit(map(selection, (i) => pick(i, 'subscriptionId', 'subscriptionType', 'databaseId', 'free')))
+    onSubmit(
+      map(selection, (i) =>
+        pick(i, 'subscriptionId', 'subscriptionType', 'databaseId', 'free'),
+      ),
+    )
   }
 
   const showPopover = () => {
@@ -103,14 +111,15 @@ const RedisCloudDatabasesPage = ({
   const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value?.toLowerCase()
 
-    const itemsTemp = instances?.filter(
-      (item: InstanceRedisCloud) =>
-        item.name?.toLowerCase().indexOf(value) !== -1
-        || item.publicEndpoint?.toLowerCase().indexOf(value) !== -1
-        || item.subscriptionId?.toString()?.indexOf(value) !== -1
-        || item.subscriptionName?.toLowerCase().indexOf(value) !== -1
-        || item.databaseId?.toString()?.indexOf(value) !== -1
-    ) || []
+    const itemsTemp =
+      instances?.filter(
+        (item: InstanceRedisCloud) =>
+          item.name?.toLowerCase().indexOf(value) !== -1 ||
+          item.publicEndpoint?.toLowerCase().indexOf(value) !== -1 ||
+          item.subscriptionId?.toString()?.indexOf(value) !== -1 ||
+          item.subscriptionName?.toLowerCase().indexOf(value) !== -1 ||
+          item.databaseId?.toString()?.indexOf(value) !== -1,
+      ) || []
 
     if (!itemsTemp.length) {
       setMessage(notFoundMsg)
@@ -125,11 +134,16 @@ const RedisCloudDatabasesPage = ({
       closePopover={closePopover}
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
-      button={(
-        <EuiButton onClick={showPopover} color="secondary" className="btn-cancel" data-testid="btn-cancel">
+      button={
+        <EuiButton
+          onClick={showPopover}
+          color="secondary"
+          className="btn-cancel"
+          data-testid="btn-cancel"
+        >
           Cancel
         </EuiButton>
-      )}
+      }
     >
       <EuiText size="m">
         <p>
@@ -139,7 +153,13 @@ const RedisCloudDatabasesPage = ({
       </EuiText>
       <br />
       <div>
-        <EuiButton fill size="s" color="warning" onClick={onClose} data-testid="btn-cancel-proceed">
+        <EuiButton
+          fill
+          size="s"
+          color="warning"
+          onClick={onClose}
+          data-testid="btn-cancel-proceed"
+        >
           Proceed
         </EuiButton>
       </div>
@@ -180,23 +200,17 @@ const RedisCloudDatabasesPage = ({
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
         <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>
-            Redis Cloud Databases
-          </h1>
+          <h1>Redis Cloud Databases</h1>
         </EuiTitle>
 
         <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
           <EuiFlexItem>
             <EuiText color="subdued" className={styles.subTitle}>
               <span>
-                These are
-                {' '}
-                {items.length > 1 ? 'databases ' : 'database '}
+                These are {items.length > 1 ? 'databases ' : 'database '}
                 in your Redis Cloud. Select the
-                {items.length > 1 ? ' databases ' : ' database '}
-                {' '}
-                that you
-                want to add.
+                {items.length > 1 ? ' databases ' : ' database '} that you want
+                to add.
               </span>
             </EuiText>
           </EuiFlexItem>

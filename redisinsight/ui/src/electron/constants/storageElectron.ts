@@ -7,7 +7,7 @@ enum ElectronStorageItem {
   updatePreviousVersion = 'updatePreviousVersion',
   zoomFactor = 'zoomFactor',
   themeSource = 'themeSource',
-  bounds = 'bounds'
+  bounds = 'bounds',
 }
 
 export default ElectronStorageItem

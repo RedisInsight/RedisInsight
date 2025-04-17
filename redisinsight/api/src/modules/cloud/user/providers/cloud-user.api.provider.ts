@@ -1,10 +1,11 @@
 import { get } from 'lodash';
 import { Injectable } from '@nestjs/common';
-import {
-  ICloudApiAccount, ICloudApiUser,
-} from 'src/modules/cloud/user/models';
+import { ICloudApiAccount, ICloudApiUser } from 'src/modules/cloud/user/models';
 import { wrapCloudApiError } from 'src/modules/cloud/common/exceptions';
-import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
+import {
+  CloudRequestUtm,
+  ICloudApiCredentials,
+} from 'src/modules/cloud/common/models';
 import { CloudApiProvider } from 'src/modules/cloud/common/providers/cloud.api.provider';
 
 @Injectable()
@@ -35,7 +36,10 @@ export class CloudUserApiProvider extends CloudApiProvider {
    * @param utm
    * @private
    */
-  async getApiSessionId(credentials: ICloudApiCredentials, utm?: CloudRequestUtm): Promise<string> {
+  async getApiSessionId(
+    credentials: ICloudApiCredentials,
+    utm?: CloudRequestUtm,
+  ): Promise<string> {
     try {
       const { headers } = await this.api.post(
         'login',
@@ -48,9 +52,8 @@ export class CloudUserApiProvider extends CloudApiProvider {
         },
       );
 
-      return get(headers, 'set-cookie', []).find(
-        (header) => header.indexOf('JSESSIONID=') > -1,
-      )
+      return get(headers, 'set-cookie', [])
+        .find((header) => header.indexOf('JSESSIONID=') > -1)
         ?.match(/JSESSIONID=([^;]+)/)?.[1];
     } catch (e) {
       throw wrapCloudApiError(e);
@@ -61,7 +64,9 @@ export class CloudUserApiProvider extends CloudApiProvider {
    * Get current user profile
    * @param credentials
    */
-  async getCurrentUser(credentials: ICloudApiCredentials): Promise<ICloudApiUser> {
+  async getCurrentUser(
+    credentials: ICloudApiCredentials,
+  ): Promise<ICloudApiUser> {
     try {
       const { data } = await this.api.get(
         '/users/me',
@@ -78,7 +83,9 @@ export class CloudUserApiProvider extends CloudApiProvider {
    * Fetch list of user accounts
    * @param credentials
    */
-  async getAccounts(credentials: ICloudApiCredentials): Promise<ICloudApiAccount[]> {
+  async getAccounts(
+    credentials: ICloudApiCredentials,
+  ): Promise<ICloudApiAccount[]> {
     try {
       const { data } = await this.api.get(
         '/accounts',
@@ -96,7 +103,10 @@ export class CloudUserApiProvider extends CloudApiProvider {
    * @param credentials
    * @param accountId
    */
-  async setCurrentAccount(credentials: ICloudApiCredentials, accountId: number): Promise<void> {
+  async setCurrentAccount(
+    credentials: ICloudApiCredentials,
+    accountId: number,
+  ): Promise<void> {
     try {
       await this.api.post(
         `/accounts/setcurrent/${accountId}`,

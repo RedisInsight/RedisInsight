@@ -16,9 +16,11 @@ describe('CreateTutoralLink', () => {
   })
 
   it('should call proper telemetry event after click read more', () => {
-    const sendEventTelemetryMock = jest.fn();
+    const sendEventTelemetryMock = jest.fn()
 
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<CreateTutorailLink />)
 
     fireEvent.click(screen.getByTestId('read-more-link'))
@@ -27,8 +29,8 @@ describe('CreateTutoralLink', () => {
       event: TelemetryEvent.EXPLORE_PANEL_CREATE_TUTORIAL_LINK_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

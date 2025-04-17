@@ -22,12 +22,15 @@ import {
   TEXT_DISABLED_FORMATTER_EDITING,
   TEXT_FAILED_CONVENT_FORMATTER,
   TEXT_INVALID_VALUE,
-  TEXT_UNPRINTABLE_CHARACTERS
+  TEXT_UNPRINTABLE_CHARACTERS,
 } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { appContextBrowserKeyDetails, updateKeyDetailsSizes } from 'uiSrc/slices/app/context'
+import {
+  appContextBrowserKeyDetails,
+  updateKeyDetailsSizes,
+} from 'uiSrc/slices/app/context'
 
 import {
   deleteHashFields,
@@ -35,18 +38,24 @@ import {
   fetchMoreHashFields,
   hashDataSelector,
   hashSelector,
-  updateHashFieldsAction, updateHashTTLAction,
+  updateHashFieldsAction,
+  updateHashTTLAction,
   updateHashValueStateSelector,
 } from 'uiSrc/slices/browser/hash'
 import {
   keysSelector,
   selectedKeyDataSelector,
   selectedKeySelector,
-  setSelectedKeyRefreshDisabled
+  setSelectedKeyRefreshDisabled,
 } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
-import { getBasedOnViewTypeEvent, getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  getMatchType,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import {
   bufferToSerializedFormat,
   bufferToString,
@@ -62,12 +71,16 @@ import {
   Nullable,
   stringToSerializedBufferFormat,
   truncateNumberToDuration,
-  validateTTLNumber
+  validateTTLNumber,
 } from 'uiSrc/utils'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { EditableInput, EditableTextArea, FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
+import {
+  EditableInput,
+  EditableTextArea,
+  FormattedValue,
+} from 'uiSrc/pages/browser/modules/key-details/shared'
 import {
   AddFieldsToHashDto,
   GetHashFieldsResponse,
@@ -104,16 +117,24 @@ const HashDetailsTable = (props: Props) => {
   } = useSelector(hashDataSelector)
   const { loading } = useSelector(hashSelector)
   const { viewType } = useSelector(keysSelector)
-  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
-  const { viewFormat: viewFormatProp, lastRefreshTime } = useSelector(selectedKeySelector)
-  const { name: key, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const { id: instanceId, compressor = null } = useSelector(
+    connectedInstanceSelector,
+  )
+  const { viewFormat: viewFormatProp, lastRefreshTime } =
+    useSelector(selectedKeySelector)
+  const { name: key, length } = useSelector(selectedKeyDataSelector) ?? {
+    name: '',
+  }
   const { loading: updateLoading } = useSelector(updateHashValueStateSelector)
-  const { [KeyTypes.Hash]: hashSizes } = useSelector(appContextBrowserKeyDetails)
+  const { [KeyTypes.Hash]: hashSizes } = useSelector(
+    appContextBrowserKeyDetails,
+  )
 
   const [match, setMatch] = useState<Nullable<string>>(matchAllValue)
   const [deleting, setDeleting] = useState('')
   const [fields, setFields] = useState<IHashField[]>([])
-  const [editingIndex, setEditingIndex] = useState<Nullable<{ index: number, field: string }>>(null)
+  const [editingIndex, setEditingIndex] =
+    useState<Nullable<{ index: number; field: string }>>(null)
   const [width, setWidth] = useState(100)
   const [expandedRows, setExpandedRows] = useState<number[]>([])
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
@@ -172,13 +193,13 @@ const HashDetailsTable = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED,
       ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Hash,
         numberOfRemoved: 1,
-      }
+      },
     })
   }
 
@@ -187,33 +208,48 @@ const HashDetailsTable = (props: Props) => {
     closePopover()
   }
 
-  const handleEditField = useCallback((
-    index: number,
-    editing: boolean,
-    field: string
+  const handleEditField = useCallback(
+    (index: number, editing: boolean, field: string) => {
+      setEditingIndex(editing ? { index, field } : null)
+      dispatch(setSelectedKeyRefreshDisabled(editing))
+
+      clearCache(index)
+    },
+    [viewFormat],
+  )
+
+  const handleApplyEditValue = (
+    field = '',
+    value: string,
+    rowIndex: number,
   ) => {
-    setEditingIndex(editing ? { index, field } : null)
-    dispatch(setSelectedKeyRefreshDisabled(editing))
-
-    clearCache(index)
-  }, [viewFormat])
-
-  const handleApplyEditValue = (field = '', value: string, rowIndex: number) => {
     const data: AddFieldsToHashDto = {
       keyName: key,
-      fields: [{ field, value: stringToSerializedBufferFormat(viewFormat, value) }],
+      fields: [
+        { field, value: stringToSerializedBufferFormat(viewFormat, value) },
+      ],
     }
 
-    dispatch(updateHashFieldsAction(data, () => handleEditField(rowIndex, false, 'value')))
+    dispatch(
+      updateHashFieldsAction(data, () =>
+        handleEditField(rowIndex, false, 'value'),
+      ),
+    )
   }
 
-  const handleApplyEditExpire = (field = '', expire: string, rowIndex: number) => {
+  const handleApplyEditExpire = (
+    field = '',
+    expire: string,
+    rowIndex: number,
+  ) => {
     const data: UpdateHashFieldsTtlDto = {
       keyName: key,
-      fields: [{ field, expire: expire ? toNumber(expire) : -1 }]
+      fields: [{ field, expire: expire ? toNumber(expire) : -1 }],
     }
 
-    dispatch(updateHashTTLAction(data, () => handleEditField(rowIndex, false, 'ttl')))
+    dispatch(
+      updateHashTTLAction(data, () => handleEditField(rowIndex, false, 'ttl')),
+    )
   }
 
   const handleRemoveIconClick = () => {
@@ -221,12 +257,12 @@ const HashDetailsTable = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED,
       ),
       eventData: {
         databaseId: instanceId,
-        keyType: KeyTypes.Hash
-      }
+        keyType: KeyTypes.Hash,
+      },
     })
   }
 
@@ -240,18 +276,27 @@ const HashDetailsTable = (props: Props) => {
           event: getBasedOnViewTypeEvent(
             viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED,
           ),
           eventData: {
             databaseId: instanceId,
             keyType: KeyTypes.Hash,
             match: matchValue,
             length: data.total,
-          }
+          },
         })
       }
       setMatch(match)
-      dispatch(fetchHashFields(key, 0, SCAN_COUNT_DEFAULT, match || matchAllValue, true, onSuccess))
+      dispatch(
+        fetchHashFields(
+          key,
+          0,
+          SCAN_COUNT_DEFAULT,
+          match || matchAllValue,
+          true,
+          onSuccess,
+        ),
+      )
     }
   }
 
@@ -268,8 +313,11 @@ const HashDetailsTable = (props: Props) => {
       eventData: {
         keyType: KeyTypes.Hash,
         databaseId: instanceId,
-        largestCellLength: Math.max(...Object.values(fields[rowIndex]).map((a) => a.toString().length)) || 0,
-      }
+        largestCellLength:
+          Math.max(
+            ...Object.values(fields[rowIndex]).map((a) => a.toString().length),
+          ) || 0,
+      },
     })
 
     cellCache.clearAll()
@@ -282,17 +330,19 @@ const HashDetailsTable = (props: Props) => {
           key as RedisResponseBuffer,
           nextCursor,
           SCAN_COUNT_DEFAULT,
-          match || matchAllValue
-        )
+          match || matchAllValue,
+        ),
       )
     }
   }
 
   const onColResizeEnd = (sizes: RelativeWidthSizes) => {
-    dispatch(updateKeyDetailsSizes({
-      type: KeyTypes.Hash,
-      sizes
-    }))
+    dispatch(
+      updateKeyDetailsSizes({
+        type: KeyTypes.Hash,
+        sizes,
+      }),
+    )
   }
 
   const columns: ITableColumn[] = [
@@ -309,19 +359,46 @@ const HashDetailsTable = (props: Props) => {
       alignment: TableCellAlignment.Left,
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
-      render: (_name: string, { field: fieldItem }: HashFieldDto, expanded?: boolean) => {
-        const { value: decompressedItem } = decompressingBuffer(fieldItem, compressor)
+      render: (
+        _name: string,
+        { field: fieldItem }: HashFieldDto,
+        expanded?: boolean,
+      ) => {
+        const { value: decompressedItem } = decompressingBuffer(
+          fieldItem,
+          compressor,
+        )
         const field = bufferToString(fieldItem) || ''
-        const { value, isValid } = formattingBuffer(decompressedItem, viewFormatProp, { expanded, skipVector: true })
-        const tooltipContent = createTooltipContent(value, decompressedItem, viewFormatProp, { skipVector: true })
+        const { value, isValid } = formattingBuffer(
+          decompressedItem,
+          viewFormatProp,
+          { expanded, skipVector: true },
+        )
+        const tooltipContent = createTooltipContent(
+          value,
+          decompressedItem,
+          viewFormatProp,
+          { skipVector: true },
+        )
 
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
-            <div style={{ display: 'flex' }} data-testid={`hash-field-${field}`}>
+          <EuiText
+            color="subdued"
+            size="s"
+            style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}
+          >
+            <div
+              style={{ display: 'flex' }}
+              data-testid={`hash-field-${field}`}
+            >
               <FormattedValue
                 value={value}
                 expanded={expanded}
-                title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                title={
+                  isValid
+                    ? 'Field'
+                    : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)
+                }
                 tooltipContent={tooltipContent}
               />
             </div>
@@ -340,26 +417,46 @@ const HashDetailsTable = (props: Props) => {
         _name: string,
         { field: fieldItem, value: valueItem }: IHashField,
         expanded?: boolean,
-        rowIndex = 0
+        rowIndex = 0,
       ) {
-        const { value: decompressedFieldItem } = decompressingBuffer(fieldItem, compressor)
-        const { value: decompressedValueItem, isCompressed } = decompressingBuffer(valueItem, compressor)
-        const isTruncatedFieldOrValue = isTruncatedString(valueItem) || isTruncatedString(fieldItem)
+        const { value: decompressedFieldItem } = decompressingBuffer(
+          fieldItem,
+          compressor,
+        )
+        const { value: decompressedValueItem, isCompressed } =
+          decompressingBuffer(valueItem, compressor)
+        const isTruncatedFieldOrValue =
+          isTruncatedString(valueItem) || isTruncatedString(fieldItem)
         const value = bufferToString(valueItem)
         const field = bufferToString(decompressedFieldItem)
-        const { value: formattedValue, isValid } = formattingBuffer(decompressedValueItem, viewFormatProp, { expanded })
-        const tooltipContent = createTooltipContent(formattedValue, decompressedValueItem, viewFormatProp)
-        const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
-          && !isEqualBuffers(valueItem, stringToBuffer(value))
-        const isEditable = !isCompressed && isFormatEditable(viewFormat) && !isTruncatedFieldOrValue
+        const { value: formattedValue, isValid } = formattingBuffer(
+          decompressedValueItem,
+          viewFormatProp,
+          { expanded },
+        )
+        const tooltipContent = createTooltipContent(
+          formattedValue,
+          decompressedValueItem,
+          viewFormatProp,
+        )
+        const disabled =
+          !isNonUnicodeFormatter(viewFormat, isValid) &&
+          !isEqualBuffers(valueItem, stringToBuffer(value))
+        const isEditable =
+          !isCompressed &&
+          isFormatEditable(viewFormat) &&
+          !isTruncatedFieldOrValue
         const editTooltipContent = isCompressed
           ? TEXT_DISABLED_COMPRESSED_VALUE
           : isTruncatedFieldOrValue
             ? TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA
             : TEXT_DISABLED_FORMATTER_EDITING
-        const isEditing = editingIndex?.field === 'value' && editingIndex?.index === rowIndex
+        const isEditing =
+          editingIndex?.field === 'value' && editingIndex?.index === rowIndex
 
-        const serializedValue = isEditing ? bufferToSerializedFormat(viewFormat, valueItem, 4) : ''
+        const serializedValue = isEditing
+          ? bufferToSerializedFormat(viewFormat, valueItem, 4)
+          : ''
 
         return (
           <EditableTextArea
@@ -370,14 +467,19 @@ const HashDetailsTable = (props: Props) => {
             isEditDisabled={!isEditable || updateLoading}
             disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
             onDecline={() => handleEditField(rowIndex, false, 'value')}
-            onApply={(value) => handleApplyEditValue(fieldItem, value, rowIndex)}
+            onApply={(value) =>
+              handleApplyEditValue(fieldItem, value, rowIndex)
+            }
             approveText={TEXT_INVALID_VALUE}
             approveByValidation={(value) =>
               formattingBuffer(
                 stringToSerializedBufferFormat(viewFormat, value),
-                viewFormat
-              )?.isValid}
-            onEdit={(isEditing) => handleEditField(rowIndex, isEditing, 'value')}
+                viewFormat,
+              )?.isValid
+            }
+            onEdit={(isEditing) =>
+              handleEditField(rowIndex, isEditing, 'value')
+            }
             editToolTipContent={!isEditable ? editTooltipContent : null}
             onUpdateTextAreaHeight={() => clearCache(rowIndex)}
             field={field}
@@ -387,7 +489,11 @@ const HashDetailsTable = (props: Props) => {
               <FormattedValue
                 value={formattedValue}
                 expanded={expanded}
-                title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                title={
+                  isValid
+                    ? 'Value'
+                    : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)
+                }
                 tooltipContent={tooltipContent}
               />
             </div>
@@ -402,7 +508,11 @@ const HashDetailsTable = (props: Props) => {
       absoluteWidth: 40,
       minWidth: 40,
       maxWidth: 40,
-      render: function Actions(_act: any, { field: fieldItem, value: valueItem }: HashFieldDto, _) {
+      render: function Actions(
+        _act: any,
+        { field: fieldItem, value: valueItem }: HashFieldDto,
+        _,
+      ) {
         const field = bufferToString(fieldItem, viewFormat)
         return (
           <StopPropagation>
@@ -419,7 +529,9 @@ const HashDetailsTable = (props: Props) => {
               testid={`remove-hash-button-${field}`}
               handleDeleteItem={handleDeleteField}
               handleButtonClick={handleRemoveIconClick}
-              appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Field') : null}
+              appendInfo={
+                length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Field') : null
+              }
             />
           </StopPropagation>
         )
@@ -439,12 +551,15 @@ const HashDetailsTable = (props: Props) => {
         _name: string,
         { field: fieldItem, expire }: IHashField,
         _expanded?: boolean,
-        rowIndex = 0
+        rowIndex = 0,
       ) {
         const field = bufferToString(fieldItem, viewFormat)
-        const isEditing = editingIndex?.field === 'ttl' && editingIndex?.index === rowIndex
+        const isEditing =
+          editingIndex?.field === 'ttl' && editingIndex?.index === rowIndex
         const isTruncatedFieldName = isTruncatedString(fieldItem)
-        const editTooltipContent = isTruncatedFieldName ? TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA : null
+        const editTooltipContent = isTruncatedFieldName
+          ? TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA
+          : null
 
         return (
           <EditableInput
@@ -461,7 +576,9 @@ const HashDetailsTable = (props: Props) => {
             editToolTipContent={editTooltipContent}
           >
             <div className="innerCellAsCell">
-              {expire === -1 ? 'No Limit' : (
+              {expire === -1 ? (
+                'No Limit'
+              ) : (
                 <EuiToolTip
                   title="Time to Live"
                   className={styles.tooltip}
@@ -475,7 +592,7 @@ const HashDetailsTable = (props: Props) => {
             </div>
           </EditableInput>
         )
-      }
+      },
     })
   }
 
@@ -508,7 +625,7 @@ const HashDetailsTable = (props: Props) => {
           onChangeWidth={setWidth}
           columns={columns.map((column, i, arr) => ({
             ...column,
-            width: getColumnWidth(i, width, arr)
+            width: getColumnWidth(i, width, arr),
           }))}
           footerHeight={0}
           overscanRowCount={10}

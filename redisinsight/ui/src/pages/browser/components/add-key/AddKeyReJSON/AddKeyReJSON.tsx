@@ -12,16 +12,14 @@ import {
 } from '@elastic/eui'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
-import { addKeyStateSelector, addReJSONKey, } from 'uiSrc/slices/browser/keys'
+import { addKeyStateSelector, addReJSONKey } from 'uiSrc/slices/browser/keys'
 
 import { MonacoJson } from 'uiSrc/components/monaco-editor'
 import UploadFile from 'uiSrc/components/upload-file'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
 
-import {
-  AddJSONFormConfig as config
-} from '../constants/fields-config'
+import { AddJSONFormConfig as config } from '../constants/fields-config'
 
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 
@@ -64,7 +62,7 @@ const AddKeyReJSON = (props: Props) => {
   const submitData = (): void => {
     const data: CreateRejsonRlWithExpireDto = {
       keyName: stringToBuffer(keyName),
-      data: ReJSONValue
+      data: ReJSONValue,
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL
@@ -77,7 +75,7 @@ const AddKeyReJSON = (props: Props) => {
       event: TelemetryEvent.BROWSER_JSON_VALUE_IMPORT_CLICKED,
       eventData: {
         databaseId: instanceId,
-      }
+      },
     })
   }
 
@@ -93,7 +91,11 @@ const AddKeyReJSON = (props: Props) => {
           />
           <EuiFlexGroup justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
-              <UploadFile onClick={onClick} onFileChange={setReJSONValue} accept="application/json, text/plain" />
+              <UploadFile
+                onClick={onClick}
+                onFileChange={setReJSONValue}
+                accept="application/json, text/plain"
+              />
             </EuiFlexItem>
           </EuiFlexGroup>
         </>

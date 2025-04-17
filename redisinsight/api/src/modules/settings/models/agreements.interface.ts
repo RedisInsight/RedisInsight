@@ -12,7 +12,7 @@ export interface IAgreement {
   requiredText?: string;
   options?: {
     [key: string]: IAgreement;
-  }
+  };
 }
 
 export interface IAgreementSpec {

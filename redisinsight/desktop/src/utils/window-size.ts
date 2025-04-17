@@ -6,10 +6,10 @@ export const getFittedBounds = (bounds: Rectangle): Rectangle | null => {
     const area = screen.getDisplayMatching(bounds).workArea
 
     if (
-      bounds.x >= area.x
-      && bounds.y >= area.y
-      && bounds.x + bounds.width <= area.x + area.width
-      && bounds.y + bounds.height <= area.y + area.height
+      bounds.x >= area.x &&
+      bounds.y >= area.y &&
+      bounds.x + bounds.width <= area.x + area.width &&
+      bounds.y + bounds.height <= area.y + area.height
     ) {
       options.x = bounds.x
       options.y = bounds.y

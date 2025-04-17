@@ -1,7 +1,5 @@
-import { AbstractRecommendationStrategy }
-  from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
-import { IDatabaseRecommendationStrategyData }
-  from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
+import { AbstractRecommendationStrategy } from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
+import { IDatabaseRecommendationStrategyData } from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 
 export class AvoidLogicalDatabasesStrategy extends AbstractRecommendationStrategy {
   /**
@@ -9,9 +7,13 @@ export class AvoidLogicalDatabasesStrategy extends AbstractRecommendationStrateg
    * @param databases
    */
 
-  async isRecommendationReached(
-    { prevDb, db }: { prevDb: number, db: number },
-  ): Promise<IDatabaseRecommendationStrategyData> {
+  async isRecommendationReached({
+    prevDb,
+    db,
+  }: {
+    prevDb: number;
+    db: number;
+  }): Promise<IDatabaseRecommendationStrategyData> {
     return { isReached: prevDb !== db };
   }
 }

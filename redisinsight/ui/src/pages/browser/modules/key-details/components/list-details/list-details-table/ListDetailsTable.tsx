@@ -4,7 +4,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { isNull, isNumber } from 'lodash'
 import { CellMeasurerCache } from 'react-virtualized'
-import { appContextBrowserKeyDetails, updateKeyDetailsSizes } from 'uiSrc/slices/app/context'
+import {
+  appContextBrowserKeyDetails,
+  updateKeyDetailsSizes,
+} from 'uiSrc/slices/app/context'
 
 import {
   listSelector,
@@ -22,7 +25,11 @@ import {
 } from 'uiSrc/components/virtual-table/interfaces'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+import {
+  sendEventTelemetry,
+  TelemetryEvent,
+  getBasedOnViewTypeEvent,
+} from 'uiSrc/telemetry'
 import {
   KeyTypes,
   OVER_RENDER_BUFFER_COUNT,
@@ -53,14 +60,17 @@ import {
   selectedKeyDataSelector,
   keysSelector,
   selectedKeySelector,
-  setSelectedKeyRefreshDisabled
+  setSelectedKeyRefreshDisabled,
 } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
-import { EditableTextArea, FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
+import {
+  EditableTextArea,
+  FormattedValue,
+} from 'uiSrc/pages/browser/modules/key-details/shared'
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -83,14 +93,21 @@ interface IListElement extends SetListElementResponse {}
 const ListDetailsTable = () => {
   const { loading } = useSelector(listSelector)
   const { loading: updateLoading } = useSelector(updateListValueStateSelector)
-  const { elements: loadedElements, total, searchedIndex } = useSelector(
-    listDataSelector
-  )
+  const {
+    elements: loadedElements,
+    total,
+    searchedIndex,
+  } = useSelector(listDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
-  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(
+    connectedInstanceSelector,
+  )
   const { viewType } = useSelector(keysSelector)
-  const { viewFormat: viewFormatProp, lastRefreshTime } = useSelector(selectedKeySelector)
-  const { [KeyTypes.List]: listSizes } = useSelector(appContextBrowserKeyDetails)
+  const { viewFormat: viewFormatProp, lastRefreshTime } =
+    useSelector(selectedKeySelector)
+  const { [KeyTypes.List]: listSizes } = useSelector(
+    appContextBrowserKeyDetails,
+  )
 
   const [elements, setElements] = useState<IListElement[]>([])
   const [width, setWidth] = useState(100)
@@ -138,15 +155,15 @@ const ListDetailsTable = () => {
     cellCache.clearAll()
   }
 
-  const handleEditElement = useCallback((
-    index: number,
-    editing: boolean,
-  ) => {
-    setEditingIndex(editing ? index : null)
-    dispatch(setSelectedKeyRefreshDisabled(editing))
+  const handleEditElement = useCallback(
+    (index: number, editing: boolean) => {
+      setEditingIndex(editing ? index : null)
+      dispatch(setSelectedKeyRefreshDisabled(editing))
 
-    clearCache(index)
-  }, [cellCache, viewFormat])
+      clearCache(index)
+    },
+    [cellCache, viewFormat],
+  )
 
   const handleApplyEditElement = (index = 0, value: string) => {
     const data: SetListElementDto = {
@@ -154,9 +171,7 @@ const ListDetailsTable = () => {
       element: stringToSerializedBufferFormat(viewFormat, value),
       index,
     }
-    dispatch(
-      updateListElementAction(data, () => onElementEditedSuccess(index))
-    )
+    dispatch(updateListElementAction(data, () => onElementEditedSuccess(index)))
   }
 
   const onElementEditedSuccess = (elementIndex = 0) => {
@@ -171,13 +186,13 @@ const ListDetailsTable = () => {
         event: getBasedOnViewTypeEvent(
           viewType,
           TelemetryEvent.BROWSER_KEY_VALUE_FILTERED,
-          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED
+          TelemetryEvent.TREE_VIEW_KEY_VALUE_FILTERED,
         ),
         eventData: {
           databaseId: instanceId,
           keyType: KeyTypes.List,
           match: 'EXACT_VALUE_NAME',
-        }
+        },
       })
     }
 
@@ -192,8 +207,8 @@ const ListDetailsTable = () => {
         fetchSearchingListElementAction(
           key,
           value ? +value : initSearchingIndex,
-          onSuccess
-        )
+          onSuccess,
+        ),
       )
     }
   }
@@ -212,17 +227,19 @@ const ListDetailsTable = () => {
         keyType: KeyTypes.List,
         databaseId: instanceId,
         largestCellLength: elements[rowIndex]?.element?.length || 0,
-      }
+      },
     })
 
     cellCache.clearAll()
   }
 
   const onColResizeEnd = (sizes: RelativeWidthSizes) => {
-    dispatch(updateKeyDetailsSizes({
-      type: KeyTypes.List,
-      sizes
-    }))
+    dispatch(
+      updateKeyDetailsSizes({
+        type: KeyTypes.List,
+        sizes,
+      }),
+    )
   }
 
   const columns: ITableColumn[] = [
@@ -245,7 +262,11 @@ const ListDetailsTable = () => {
         const tooltipContent = formatLongName(index?.toString())
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`list-index-value-${index}`}>
+            <div
+              style={{ display: 'flex' }}
+              className="truncateText"
+              data-testid={`list-index-value-${index}`}
+            >
               <EuiToolTip
                 title="Index"
                 className={styles.tooltip}
@@ -271,24 +292,37 @@ const ListDetailsTable = () => {
         _element: string,
         { element: elementItem, index }: IListElement,
         expanded: boolean = false,
-        rowIndex = 0
+        rowIndex = 0,
       ) {
-        const { value: decompressedElementItem, isCompressed } = decompressingBuffer(elementItem, compressor)
+        const { value: decompressedElementItem, isCompressed } =
+          decompressingBuffer(elementItem, compressor)
         const isTruncatedValue = isTruncatedString(elementItem)
         const element = bufferToString(elementItem)
-        const { value, isValid } = formattingBuffer(decompressedElementItem, viewFormatProp, { expanded })
-        const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
-          && !isEqualBuffers(elementItem, stringToBuffer(element))
-        const isEditable = !isCompressed && isFormatEditable(viewFormat) && !isTruncatedValue
+        const { value, isValid } = formattingBuffer(
+          decompressedElementItem,
+          viewFormatProp,
+          { expanded },
+        )
+        const disabled =
+          !isNonUnicodeFormatter(viewFormat, isValid) &&
+          !isEqualBuffers(elementItem, stringToBuffer(element))
+        const isEditable =
+          !isCompressed && isFormatEditable(viewFormat) && !isTruncatedValue
         const isEditing = index === editingIndex
 
-        const tooltipContent = createTooltipContent(value, decompressedElementItem, viewFormatProp)
+        const tooltipContent = createTooltipContent(
+          value,
+          decompressedElementItem,
+          viewFormatProp,
+        )
         const editTooltipContent = isCompressed
           ? TEXT_DISABLED_COMPRESSED_VALUE
           : isTruncatedValue
             ? TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA
             : TEXT_DISABLED_FORMATTER_EDITING
-        const serializedValue = isEditing ? bufferToSerializedFormat(viewFormat, elementItem, 4) : ''
+        const serializedValue = isEditing
+          ? bufferToSerializedFormat(viewFormat, elementItem, 4)
+          : ''
 
         return (
           <EditableTextArea
@@ -304,8 +338,9 @@ const ListDetailsTable = () => {
             approveByValidation={(value) =>
               formattingBuffer(
                 stringToSerializedBufferFormat(viewFormat, value),
-                viewFormat
-              )?.isValid}
+                viewFormat,
+              )?.isValid
+            }
             onEdit={(isEditing) => handleEditElement(index, isEditing)}
             editToolTipContent={!isEditable ? editTooltipContent : null}
             onUpdateTextAreaHeight={() => clearCache(rowIndex)}
@@ -316,7 +351,11 @@ const ListDetailsTable = () => {
               <FormattedValue
                 value={value}
                 expanded={expanded}
-                title={isValid ? 'Element' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                title={
+                  isValid
+                    ? 'Element'
+                    : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)
+                }
                 tooltipContent={tooltipContent}
               />
             </div>
@@ -329,7 +368,7 @@ const ListDetailsTable = () => {
   const loadMoreItems = ({ startIndex, stopIndex }: any) => {
     if (isNull(searchedIndex)) {
       dispatch(
-        fetchMoreListElements(key, startIndex, stopIndex - startIndex + 1)
+        fetchMoreListElements(key, startIndex, stopIndex - startIndex + 1),
       )
     }
   }
@@ -364,7 +403,7 @@ const ListDetailsTable = () => {
         onChangeWidth={setWidth}
         columns={columns.map((column, i, arr) => ({
           ...column,
-          width: getColumnWidth(i, width, arr)
+          width: getColumnWidth(i, width, arr),
         }))}
         loadMoreItems={loadMoreItems}
         loading={loading}

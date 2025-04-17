@@ -7,7 +7,11 @@ import StopIcon from 'uiSrc/assets/img/rdi/stopFilled.svg?react'
 import { PipelineButtonProps } from '../reset-pipeline-button/ResetPipelineButton'
 import styles from '../styles.module.scss'
 
-const StopPipelineButton = ({ onClick, disabled, loading }: PipelineButtonProps) => (
+const StopPipelineButton = ({
+  onClick,
+  disabled,
+  loading,
+}: PipelineButtonProps) => (
   <EuiToolTip
     content="Stop the pipeline to prevent processing of new data arrivals."
     anchorClassName={disabled ? styles.disabled : undefined}

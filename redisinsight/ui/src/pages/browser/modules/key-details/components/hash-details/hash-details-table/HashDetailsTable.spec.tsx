@@ -11,33 +11,66 @@ import {
 import { hashDataSelector } from 'uiSrc/slices/browser/hash'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { anyToBuffer, bufferToString } from 'uiSrc/utils'
-import { act, cleanup, fireEvent, mockedStore, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
-import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
-import { setSelectedKeyRefreshDisabled, selectedKeySelector } from 'uiSrc/slices/browser/keys'
-import { MOCK_TRUNCATED_BUFFER_VALUE, MOCK_TRUNCATED_STRING_VALUE } from 'uiSrc/mocks/data/bigString'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+  waitForEuiToolTipVisible,
+} from 'uiSrc/utils/test-utils'
+import {
+  GZIP_COMPRESSED_VALUE_1,
+  GZIP_COMPRESSED_VALUE_2,
+  DECOMPRESSED_VALUE_STR_1,
+  DECOMPRESSED_VALUE_STR_2,
+} from 'uiSrc/utils/tests/decompressors'
+import {
+  setSelectedKeyRefreshDisabled,
+  selectedKeySelector,
+} from 'uiSrc/slices/browser/keys'
+import {
+  MOCK_TRUNCATED_BUFFER_VALUE,
+  MOCK_TRUNCATED_STRING_VALUE,
+} from 'uiSrc/mocks/data/bigString'
 import { HashDetailsTable, Props } from './HashDetailsTable'
 
 const mockedProps = mock<Props>()
-const fields: Array<{ field: any, value: any, expire?: number }> = [
-  { field: { type: 'Buffer', data: [49] }, value: { type: 'Buffer', data: [49, 65] } },
-  { field: { type: 'Buffer', data: [49, 50, 51] }, value: { type: 'Buffer', data: [49, 11] } },
-  { field: { type: 'Buffer', data: [50] }, value: { type: 'Buffer', data: [49, 234, 453] }, expire: 300 },
+const fields: Array<{ field: any; value: any; expire?: number }> = [
+  {
+    field: { type: 'Buffer', data: [49] },
+    value: { type: 'Buffer', data: [49, 65] },
+  },
+  {
+    field: { type: 'Buffer', data: [49, 50, 51] },
+    value: { type: 'Buffer', data: [49, 11] },
+  },
+  {
+    field: { type: 'Buffer', data: [50] },
+    value: { type: 'Buffer', data: [49, 234, 453] },
+    expire: 300,
+  },
 ]
 
 jest.mock('uiSrc/slices/browser/hash', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/browser/hash').initialState
-  return ({
+  const defaultState = jest.requireActual(
+    'uiSrc/slices/browser/hash',
+  ).initialState
+  return {
     hashSelector: jest.fn().mockReturnValue(defaultState),
-    updateHashValueStateSelector: jest.fn().mockReturnValue(defaultState.updateValue),
+    updateHashValueStateSelector: jest
+      .fn()
+      .mockReturnValue(defaultState.updateValue),
     hashDataSelector: jest.fn().mockReturnValue({
       ...defaultState,
       total: 3,
       key: '123zxczxczxc',
-      fields
+      fields,
     }),
     setHashInitialState: jest.fn,
-    fetchHashFields: () => jest.fn
-  })
+    fetchHashFields: () => jest.fn,
+  }
 })
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
@@ -69,8 +102,12 @@ describe('HashDetailsTable', () => {
   })
 
   it('should render rows properly', () => {
-    const { container } = render(<HashDetailsTable {...instance(mockedProps)} />)
-    const rows = container.querySelectorAll('.ReactVirtualized__Table__row[role="row"]')
+    const { container } = render(
+      <HashDetailsTable {...instance(mockedProps)} />,
+    )
+    const rows = container.querySelectorAll(
+      '.ReactVirtualized__Table__row[role="row"]',
+    )
     expect(rows).toHaveLength(fields.length)
   })
 
@@ -82,17 +119,18 @@ describe('HashDetailsTable', () => {
   it('should call search', () => {
     render(<HashDetailsTable {...instance(mockedProps)} />)
     const searchInput = screen.getByTestId('search')
-    fireEvent.change(
-      searchInput,
-      { target: { value: '*1*' } }
-    )
+    fireEvent.change(searchInput, { target: { value: '*1*' } })
     expect(searchInput).toHaveValue('*1*')
   })
 
   it('should render delete popup after click remove button', () => {
     render(<HashDetailsTable {...instance(mockedProps)} />)
     fireEvent.click(screen.getAllByTestId(/remove-hash-button/)[0])
-    expect(screen.getByTestId(`remove-hash-button-${bufferToString(fields[0].field)}-icon`)).toBeInTheDocument()
+    expect(
+      screen.getByTestId(
+        `remove-hash-button-${bufferToString(fields[0].field)}-icon`,
+      ),
+    ).toBeInTheDocument()
   })
 
   it('should render editor after click edit button', () => {
@@ -126,17 +164,21 @@ describe('HashDetailsTable', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      setSelectedKeyRefreshDisabled(true)
+      setSelectedKeyRefreshDisabled(true),
     ])
   })
 
   it('should not render ttl column', async () => {
     render(<HashDetailsTable {...instance(mockedProps)} />)
-    expect(screen.queryByTestId('hash-ttl_content-value-2')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('hash-ttl_content-value-2'),
+    ).not.toBeInTheDocument()
   })
 
   it('should render ttl column', async () => {
-    render(<HashDetailsTable {...instance(mockedProps)} isExpireFieldsAvailable />)
+    render(
+      <HashDetailsTable {...instance(mockedProps)} isExpireFieldsAvailable />,
+    )
 
     const afterRenderActions = [...store.getActions()]
 
@@ -150,19 +192,16 @@ describe('HashDetailsTable', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      setSelectedKeyRefreshDisabled(true)
+      setSelectedKeyRefreshDisabled(true),
     ])
   })
 
-  const nonEditableFormats = [
-    KeyValueFormat.HEX,
-    KeyValueFormat.Binary,
-  ]
+  const nonEditableFormats = [KeyValueFormat.HEX, KeyValueFormat.Binary]
 
   test.each(nonEditableFormats)(
     'should disable edit button when viewFormat is not editable for format: %s',
     async (format) => {
-      (selectedKeySelector as jest.Mock).mockReturnValueOnce({
+      ;(selectedKeySelector as jest.Mock).mockReturnValueOnce({
         viewFormat: format,
         lastRefreshTime: Date.now(),
       })
@@ -189,18 +228,25 @@ describe('HashDetailsTable', () => {
 
   describe('decompressed  data', () => {
     it('should render decompressed GZIP data', () => {
-      const defaultState = jest.requireActual('uiSrc/slices/browser/hash').initialState
+      const defaultState = jest.requireActual(
+        'uiSrc/slices/browser/hash',
+      ).initialState
       const hashDataSelectorMock = jest.fn().mockReturnValue({
         ...defaultState,
         total: 1,
         key: '123zxczxczxc',
         fields: [
-          { field: anyToBuffer(GZIP_COMPRESSED_VALUE_1), value: anyToBuffer(GZIP_COMPRESSED_VALUE_2) },
-        ]
-      });
-      (hashDataSelector as jest.Mock).mockImplementation(hashDataSelectorMock)
+          {
+            field: anyToBuffer(GZIP_COMPRESSED_VALUE_1),
+            value: anyToBuffer(GZIP_COMPRESSED_VALUE_2),
+          },
+        ],
+      })
+      ;(hashDataSelector as jest.Mock).mockImplementation(hashDataSelectorMock)
 
-      const { queryAllByTestId } = render(<HashDetailsTable {...instance(mockedProps)} />)
+      const { queryAllByTestId } = render(
+        <HashDetailsTable {...instance(mockedProps)} />,
+      )
       const fieldEl = queryAllByTestId(/hash-field-/)?.[0]
       const valueEl = queryAllByTestId(/hash_content-value/)?.[0]
 
@@ -209,22 +255,30 @@ describe('HashDetailsTable', () => {
     })
 
     it('edit button should be disabled if data was compressed', async () => {
-      const defaultState = jest.requireActual('uiSrc/slices/browser/hash').initialState
+      const defaultState = jest.requireActual(
+        'uiSrc/slices/browser/hash',
+      ).initialState
       const hashDataSelectorMock = jest.fn().mockReturnValueOnce({
         ...defaultState,
         total: 1,
         key: '123zxczxczxc',
         fields: [
-          { field: anyToBuffer(GZIP_COMPRESSED_VALUE_1), value: anyToBuffer(GZIP_COMPRESSED_VALUE_2) },
-        ]
-      });
-      (hashDataSelector as jest.Mock).mockImplementationOnce(hashDataSelectorMock);
-
-      (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
+          {
+            field: anyToBuffer(GZIP_COMPRESSED_VALUE_1),
+            value: anyToBuffer(GZIP_COMPRESSED_VALUE_2),
+          },
+        ],
+      })
+      ;(hashDataSelector as jest.Mock).mockImplementationOnce(
+        hashDataSelectorMock,
+      )
+      ;(connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
         compressor: KeyValueCompressor.GZIP,
       }))
 
-      const { queryByTestId } = render(<HashDetailsTable {...instance(mockedProps)} />)
+      const { queryByTestId } = render(
+        <HashDetailsTable {...instance(mockedProps)} />,
+      )
 
       act(() => {
         fireEvent.mouseEnter(screen.getByTestId('hash_content-value-1'))
@@ -239,14 +293,18 @@ describe('HashDetailsTable', () => {
       await waitForEuiToolTipVisible()
 
       expect(editBtn).toBeDisabled()
-      expect(screen.getByTestId('hash_edit-tooltip-1')).toHaveTextContent(TEXT_DISABLED_COMPRESSED_VALUE)
+      expect(screen.getByTestId('hash_edit-tooltip-1')).toHaveTextContent(
+        TEXT_DISABLED_COMPRESSED_VALUE,
+      )
       expect(queryByTestId('hash_value-editor-1')).not.toBeInTheDocument()
     })
   })
 
   describe('truncated values', () => {
     beforeEach(() => {
-      const defaultState = jest.requireActual('uiSrc/slices/browser/hash').initialState
+      const defaultState = jest.requireActual(
+        'uiSrc/slices/browser/hash',
+      ).initialState
       const hashDataSelectorMock = jest.fn().mockReturnValue({
         ...defaultState,
         total: 2,
@@ -254,16 +312,18 @@ describe('HashDetailsTable', () => {
         fields: [
           { field: 'regular-field', value: MOCK_TRUNCATED_BUFFER_VALUE },
           { field: MOCK_TRUNCATED_BUFFER_VALUE, value: 'regular-value' },
-        ]
-      });
-      (hashDataSelector as jest.Mock).mockImplementation(hashDataSelectorMock)
+        ],
+      })
+      ;(hashDataSelector as jest.Mock).mockImplementation(hashDataSelectorMock)
     })
 
     it('should disable delete entry when field name is truncated', async () => {
       render(<HashDetailsTable {...instance(mockedProps)} />)
 
       // check delete actions
-      const removeHashButtons = screen.getAllByTestId(/remove-hash-button.+-icon$/)
+      const removeHashButtons = screen.getAllByTestId(
+        /remove-hash-button.+-icon$/,
+      )
       expect(removeHashButtons.length).toEqual(2)
       expect(removeHashButtons[0]).toBeEnabled()
       expect(removeHashButtons[1]).toBeDisabled()
@@ -273,12 +333,17 @@ describe('HashDetailsTable', () => {
         fireEvent.mouseOver(removeHashButtons[1])
       })
       await waitForEuiToolTipVisible()
-      expect(screen.getByTestId(`remove-hash-button-${MOCK_TRUNCATED_STRING_VALUE}-tooltip`))
-        .toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
+      expect(
+        screen.getByTestId(
+          `remove-hash-button-${MOCK_TRUNCATED_STRING_VALUE}-tooltip`,
+        ),
+      ).toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
     })
 
     it('should disable editing value when entry value is truncated', async () => {
-      const { queryByTestId } = render(<HashDetailsTable {...instance(mockedProps)} />)
+      const { queryByTestId } = render(
+        <HashDetailsTable {...instance(mockedProps)} />,
+      )
 
       const hashValue = screen.getByTestId('hash_content-value-regular-field')
 
@@ -294,23 +359,33 @@ describe('HashDetailsTable', () => {
       })
       await waitForEuiToolTipVisible()
 
-      expect(screen.getByTestId('hash_edit-tooltip-regular-field')).toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
+      expect(
+        screen.getByTestId('hash_edit-tooltip-regular-field'),
+      ).toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
 
       fireEvent.click(editButton)
-      expect(queryByTestId('hash_value-editor-regular-field')).not.toBeInTheDocument()
+      expect(
+        queryByTestId('hash_value-editor-regular-field'),
+      ).not.toBeInTheDocument()
     })
 
     it('should disable editing value when entry field is truncated', async () => {
-      const { queryByTestId } = render(<HashDetailsTable {...instance(mockedProps)} />)
+      const { queryByTestId } = render(
+        <HashDetailsTable {...instance(mockedProps)} />,
+      )
 
       // check edit action
-      const hashValue = screen.getByTestId(`hash_content-value-${MOCK_TRUNCATED_STRING_VALUE}`)
+      const hashValue = screen.getByTestId(
+        `hash_content-value-${MOCK_TRUNCATED_STRING_VALUE}`,
+      )
 
       await act(async () => {
         fireEvent.mouseEnter(hashValue)
       })
 
-      const editButton = screen.getByTestId(`hash_edit-btn-${MOCK_TRUNCATED_STRING_VALUE}`)
+      const editButton = screen.getByTestId(
+        `hash_edit-btn-${MOCK_TRUNCATED_STRING_VALUE}`,
+      )
       expect(editButton).toBeDisabled()
 
       await act(async () => {
@@ -318,23 +393,32 @@ describe('HashDetailsTable', () => {
       })
       await waitForEuiToolTipVisible()
 
-      expect(screen.getByTestId(`hash_edit-tooltip-${MOCK_TRUNCATED_STRING_VALUE}`))
-        .toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
+      expect(
+        screen.getByTestId(`hash_edit-tooltip-${MOCK_TRUNCATED_STRING_VALUE}`),
+      ).toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
 
       fireEvent.click(editButton)
-      expect(queryByTestId(`hash_value-editor-${MOCK_TRUNCATED_STRING_VALUE}`)).not.toBeInTheDocument()
+      expect(
+        queryByTestId(`hash_value-editor-${MOCK_TRUNCATED_STRING_VALUE}`),
+      ).not.toBeInTheDocument()
     })
 
     it('should disable editing ttl when entry field is truncated', async () => {
-      render(<HashDetailsTable {...instance(mockedProps)} isExpireFieldsAvailable />)
+      render(
+        <HashDetailsTable {...instance(mockedProps)} isExpireFieldsAvailable />,
+      )
 
-      const ttl = screen.getByTestId(`hash-ttl_content-value-${MOCK_TRUNCATED_STRING_VALUE}`)
+      const ttl = screen.getByTestId(
+        `hash-ttl_content-value-${MOCK_TRUNCATED_STRING_VALUE}`,
+      )
 
       await act(async () => {
         fireEvent.mouseEnter(ttl)
       })
 
-      const editTtlButton = screen.getByTestId(`hash-ttl_edit-btn-${MOCK_TRUNCATED_STRING_VALUE}`)
+      const editTtlButton = screen.getByTestId(
+        `hash-ttl_edit-btn-${MOCK_TRUNCATED_STRING_VALUE}`,
+      )
 
       expect(editTtlButton).toBeDisabled()
 
@@ -343,8 +427,11 @@ describe('HashDetailsTable', () => {
       })
       await waitForEuiToolTipVisible()
 
-      expect(screen.getByTestId(`hash-ttl_edit-tooltip-${MOCK_TRUNCATED_STRING_VALUE}`))
-        .toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
+      expect(
+        screen.getByTestId(
+          `hash-ttl_edit-tooltip-${MOCK_TRUNCATED_STRING_VALUE}`,
+        ),
+      ).toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
     })
   })
 })

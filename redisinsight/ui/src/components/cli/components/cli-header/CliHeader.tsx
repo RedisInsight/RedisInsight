@@ -30,7 +30,8 @@ const CliHeader = () => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const removeCliClient = () => {
-    const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
+    const cliClientUuid =
+      sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
 
     cliClientUuid && dispatch(deleteCliClientAction(instanceId, cliClientUuid))
   }
@@ -46,8 +47,8 @@ const CliHeader = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLI_CLOSED,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
     removeCliClient()
     dispatch(resetCliSettings())
@@ -58,8 +59,8 @@ const CliHeader = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLI_MINIMIZED,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
     dispatch(toggleCli())
   }

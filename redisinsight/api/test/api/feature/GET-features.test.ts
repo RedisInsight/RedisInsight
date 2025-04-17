@@ -2,11 +2,18 @@ import {
   expect,
   describe,
   deps,
-  getMainCheckFn, fsExtra, before, after,
+  getMainCheckFn,
+  fsExtra,
+  before,
+  after,
 } from '../deps';
 import { constants } from '../../helpers/constants';
 import * as defaultConfig from '../../../config/features-config.json';
-import { getRepository, initSettings, repositories } from '../../helpers/local-db';
+import {
+  getRepository,
+  initSettings,
+  repositories,
+} from '../../helpers/local-db';
 const { getSocket, server, request } = deps;
 
 // endpoint to test
@@ -29,7 +36,7 @@ const waitForFlags = async (flags: any, action?: Function) => {
     client.once('features', (data) => {
       expect(flags.features).to.deep.eq(data.features);
       res(true);
-    })
+    });
     setTimeout(() => {
       rej(new Error('no flags received in 10s'));
     }, 10000);
@@ -51,39 +58,47 @@ describe('GET /features', () => {
     {
       name: 'Should return false flag since no range was defined',
       before: async () => {
-        await fsExtra.writeFile(constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH, JSON.stringify({
-          version: defaultConfig.version + 1,
-          features: {
-            insightsRecommendations: {
-              perc: [],
-              flag: true,
-            },
-            cloudSso: {
-              perc: [[0, 100]],
-              flag: true,
-            },
-          },
-        })).catch(console.error);
+        await fsExtra
+          .writeFile(
+            constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH,
+            JSON.stringify({
+              version: defaultConfig.version + 1,
+              features: {
+                insightsRecommendations: {
+                  perc: [],
+                  flag: true,
+                },
+                cloudSso: {
+                  perc: [[0, 100]],
+                  flag: true,
+                },
+              },
+            }),
+          )
+          .catch(console.error);
 
         // remove all configs
         await featureConfigRepository.delete({});
         await featureRepository.delete({});
-        await waitForFlags({
-          features: {
-            insightsRecommendations: {
-              flag: false,
-              name: 'insightsRecommendations',
-            },
-            cloudSso: {
-              flag: true,
-              name: 'cloudSso',
-            },
-            databaseManagement: {
-              flag: true,
-              name: 'databaseManagement',
+        await waitForFlags(
+          {
+            features: {
+              insightsRecommendations: {
+                flag: false,
+                name: 'insightsRecommendations',
+              },
+              cloudSso: {
+                flag: true,
+                name: 'cloudSso',
+              },
+              databaseManagement: {
+                flag: true,
+                name: 'databaseManagement',
+              },
             },
           },
-        }, syncEndpoint);
+          syncEndpoint,
+        );
       },
       statusCode: 200,
       checkFn: async ({ body }) => {
@@ -113,38 +128,46 @@ describe('GET /features', () => {
         const [config, empty] = await featureConfigRepository.find();
         expect(empty).to.eq(undefined);
 
-        await fsExtra.writeFile(constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH, JSON.stringify({
-          version: defaultConfig.version + 2,
-          features: {
-            insightsRecommendations: {
-              perc: [[config.controlNumber - 1, config.controlNumber + 1]],
-              flag: true,
-            },
-            cloudSso: {
-              perc: [[0, 100]],
-              flag: true,
-            },
-          },
-        })).catch(console.error);
+        await fsExtra
+          .writeFile(
+            constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH,
+            JSON.stringify({
+              version: defaultConfig.version + 2,
+              features: {
+                insightsRecommendations: {
+                  perc: [[config.controlNumber - 1, config.controlNumber + 1]],
+                  flag: true,
+                },
+                cloudSso: {
+                  perc: [[0, 100]],
+                  flag: true,
+                },
+              },
+            }),
+          )
+          .catch(console.error);
 
         // remove all configs
 
-        await waitForFlags({
-          features: {
-            insightsRecommendations: {
-              flag: true,
-              name: 'insightsRecommendations',
-            },
-            cloudSso: {
-              flag: true,
-              name: 'cloudSso',
-            },
-            databaseManagement: {
-              flag: true,
-              name: 'databaseManagement',
+        await waitForFlags(
+          {
+            features: {
+              insightsRecommendations: {
+                flag: true,
+                name: 'insightsRecommendations',
+              },
+              cloudSso: {
+                flag: true,
+                name: 'cloudSso',
+              },
+              databaseManagement: {
+                flag: true,
+                name: 'databaseManagement',
+              },
             },
           },
-        }, syncEndpoint);
+          syncEndpoint,
+        );
       },
       statusCode: 200,
       responseBody: {
@@ -161,8 +184,8 @@ describe('GET /features', () => {
             flag: true,
             name: 'databaseManagement',
           },
-        }
-      }
+        },
+      },
     },
     {
       name: 'Should return true since controlNumber is inside range and filters are match (analytics=true)',
@@ -170,41 +193,51 @@ describe('GET /features', () => {
         const [config, empty] = await featureConfigRepository.find();
         expect(empty).to.eq(undefined);
 
-        await fsExtra.writeFile(constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH, JSON.stringify({
-          version: JSON.parse(config.data).version + 1,
-          features: {
-            insightsRecommendations: {
-              perc: [[config.controlNumber - 1, config.controlNumber + 1]],
-              flag: true,
-              filters: [{
-                name: 'agreements.analytics',
-                value: true,
-                cond: 'eq',
-              }],
-            },
-            cloudSso: {
-              perc: [[0, 100]],
-              flag: true,
-            },
-          },
-        })).catch(console.error);
+        await fsExtra
+          .writeFile(
+            constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH,
+            JSON.stringify({
+              version: JSON.parse(config.data).version + 1,
+              features: {
+                insightsRecommendations: {
+                  perc: [[config.controlNumber - 1, config.controlNumber + 1]],
+                  flag: true,
+                  filters: [
+                    {
+                      name: 'agreements.analytics',
+                      value: true,
+                      cond: 'eq',
+                    },
+                  ],
+                },
+                cloudSso: {
+                  perc: [[0, 100]],
+                  flag: true,
+                },
+              },
+            }),
+          )
+          .catch(console.error);
 
-        await waitForFlags({
-          features: {
-            insightsRecommendations: {
-              flag: true,
-              name: 'insightsRecommendations',
-            },
-            cloudSso: {
-              flag: true,
-              name: 'cloudSso',
-            },
-            databaseManagement: {
-              flag: true,
-              name: 'databaseManagement',
+        await waitForFlags(
+          {
+            features: {
+              insightsRecommendations: {
+                flag: true,
+                name: 'insightsRecommendations',
+              },
+              cloudSso: {
+                flag: true,
+                name: 'cloudSso',
+              },
+              databaseManagement: {
+                flag: true,
+                name: 'databaseManagement',
+              },
             },
           },
-        }, syncEndpoint);
+          syncEndpoint,
+        );
       },
       statusCode: 200,
       responseBody: {
@@ -221,8 +254,8 @@ describe('GET /features', () => {
             flag: true,
             name: 'databaseManagement',
           },
-        }
-      }
+        },
+      },
     },
     {
       name: 'Should return false since analytics disabled (triggered by settings change)',
@@ -243,7 +276,9 @@ describe('GET /features', () => {
                 name: 'databaseManagement',
               },
             },
-          }).then(res).catch(rej);
+          })
+            .then(res)
+            .catch(rej);
 
           updateSettings({
             agreements: {
@@ -267,8 +302,8 @@ describe('GET /features', () => {
             flag: true,
             name: 'databaseManagement',
           },
-        }
-      }
+        },
+      },
     },
   ].map(mainCheckFn);
 });

@@ -4,9 +4,7 @@ import {
   mockCreateBulkActionDto,
   mockStandaloneRedisClient,
 } from 'src/__mocks__';
-import {
-  DeleteBulkActionSimpleRunner,
-} from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
+import { DeleteBulkActionSimpleRunner } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { RedisDataType } from 'src/modules/browser/keys/dto';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
@@ -38,7 +36,11 @@ describe('DeleteBulkActionSimpleRunner', () => {
   });
 
   it('prepareCommands 3 commands', () => {
-    const commands = deleteRunner.prepareCommands([mockKeyBuffer, mockKeyBuffer, mockKeyBuffer]);
+    const commands = deleteRunner.prepareCommands([
+      mockKeyBuffer,
+      mockKeyBuffer,
+      mockKeyBuffer,
+    ]);
     expect(commands).toEqual([
       ['del', mockKeyBuffer],
       ['del', mockKeyBuffer],

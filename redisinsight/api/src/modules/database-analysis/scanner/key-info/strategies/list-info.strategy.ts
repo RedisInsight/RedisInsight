@@ -4,6 +4,6 @@ import { RedisClient } from 'src/modules/redis/client';
 
 export class ListInfoStrategy extends AbstractInfoStrategy {
   async getLength(client: RedisClient, key: RedisString): Promise<number> {
-    return await client.sendCommand(['llen', key]) as number;
+    return (await client.sendCommand(['llen', key])) as number;
   }
 }

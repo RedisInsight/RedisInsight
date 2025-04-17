@@ -18,7 +18,10 @@ import {
 } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
-import { deepLinkHandler, deepLinkWindowHandler } from 'desktopSrc/lib/app/deep-link.handlers'
+import {
+  deepLinkHandler,
+  deepLinkWindowHandler,
+} from 'desktopSrc/lib/app/deep-link.handlers'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
 
 if (!config.isProduction) {
@@ -36,7 +39,8 @@ const init = async () => {
   initTray()
   initCloudHandlers()
 
-  nativeTheme.themeSource = electronStore?.get(ElectronStorageItem.themeSource) || config.themeSource
+  nativeTheme.themeSource =
+    electronStore?.get(ElectronStorageItem.themeSource) || config.themeSource
 
   app.setName(config.name)
   app.setAppUserModelId(config.name)
@@ -55,7 +59,9 @@ const init = async () => {
     // register our application to handle custom protocol
     if (process.defaultApp) {
       if (deepLink) {
-        app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(deepLink)])
+        app.setAsDefaultProtocolClient(config.schema, process.execPath, [
+          path.resolve(deepLink),
+        ])
       }
     } else {
       app.setAsDefaultProtocolClient(config.schema)
@@ -74,7 +80,8 @@ const init = async () => {
     if (process.env.RI_DISABLE_AUTO_UPGRADE !== 'true') {
       initAutoUpdateChecks(
         process.env.RI_MANUAL_UPGRADES_LINK || process.env.RI_UPGRADES_LINK,
-        parseInt(process.env.RI_AUTO_UPDATE_INTERVAL ?? '', 10) || 84 * 3600 * 1000,
+        parseInt(process.env.RI_AUTO_UPDATE_INTERVAL ?? '', 10) ||
+          84 * 3600 * 1000,
       )
     }
   } catch (err) {

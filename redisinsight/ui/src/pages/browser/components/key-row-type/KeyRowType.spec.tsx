@@ -15,21 +15,22 @@ describe('KeyRowType', () => {
   })
 
   it('should render Loading if no type', () => {
-    const { queryByTestId } = render(<KeyRowType
-      {...instance(mockedProps)}
-      nameString={nameString}
-    />)
+    const { queryByTestId } = render(
+      <KeyRowType {...instance(mockedProps)} nameString={nameString} />,
+    )
 
     expect(queryByTestId(loadingTestId + nameString)).toBeInTheDocument()
   })
 
   it('should render Badge if type exists', () => {
     const type = KeyTypes.Hash
-    const { queryByTestId } = render(<KeyRowType
-      {...instance(mockedProps)}
-      nameString={nameString}
-      type={type}
-    />)
+    const { queryByTestId } = render(
+      <KeyRowType
+        {...instance(mockedProps)}
+        nameString={nameString}
+        type={type}
+      />,
+    )
 
     expect(queryByTestId(loadingTestId + nameString)).not.toBeInTheDocument()
     expect(queryByTestId(`badge-${type}_${nameString}`)).toBeInTheDocument()

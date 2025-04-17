@@ -4,7 +4,9 @@ import {
   it,
   deps,
   validateApiCall,
-  after, requirements, before,
+  after,
+  requirements,
+  before,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -34,24 +36,36 @@ const mainCheckFn = async (testCase) => {
 describe('DELETE /databases/:instanceId/slow-logs', () => {
   describe('Common', () => {
     beforeEach(async () => {
-      await rte.data.executeCommandAll('config', ['set', 'slowlog-log-slower-than', 0]);
+      await rte.data.executeCommandAll('config', [
+        'set',
+        'slowlog-log-slower-than',
+        0,
+      ]);
       await rte.client.get(constants.TEST_STRING_KEY_1);
     });
 
     after(async () => {
-      await rte.data.executeCommandAll('config', ['set', 'slowlog-log-slower-than', 10000]);
+      await rte.data.executeCommandAll('config', [
+        'set',
+        'slowlog-log-slower-than',
+        10000,
+      ]);
     });
 
     [
       {
         name: 'Check that slowlog cleaned up',
         before: async () => {
-          await rte.data.executeCommandAll('config', ['set', 'slowlog-log-slower-than', 10000000000]);
+          await rte.data.executeCommandAll('config', [
+            'set',
+            'slowlog-log-slower-than',
+            10000000000,
+          ]);
           expect((await rte.client.call('slowlog', 'get')).length).to.gt(0);
         },
         after: async () => {
           expect((await rte.client.call('slowlog', 'get')).length).to.eq(0);
-        }
+        },
       },
       {
         name: 'Should return 404 not found when incorrect instance',
@@ -60,7 +74,7 @@ describe('DELETE /databases/:instanceId/slow-logs', () => {
         responseBody: {
           statusCode: 404,
           message: 'Invalid database instance id.',
-          error: 'Not Found'
+          error: 'Not Found',
         },
       },
     ].map(mainCheckFn);
@@ -83,7 +97,7 @@ describe('DELETE /databases/:instanceId/slow-logs', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -slowlog')
+        before: () => rte.data.setAclUserRules('~* +@all -slowlog'),
       },
     ].map(mainCheckFn);
   });

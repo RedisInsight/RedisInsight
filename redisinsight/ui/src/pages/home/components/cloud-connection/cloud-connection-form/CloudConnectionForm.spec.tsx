@@ -11,14 +11,14 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
       flag: false,
-    }
+    },
   }),
 }))
 
 describe('CloudConnectionForm', () => {
   it('should render', () => {
     expect(
-      render(<CloudConnectionForm {...instance(mockedProps)} />)
+      render(<CloudConnectionForm {...instance(mockedProps)} />),
     ).toBeTruthy()
   })
 
@@ -29,14 +29,16 @@ describe('CloudConnectionForm', () => {
   })
 
   it('should render cloud sso form with feature flag', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       cloudSso: {
-        flag: true
-      }
+        flag: true,
+      },
     })
 
     render(<CloudConnectionForm {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('oauth-container-social-buttons')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('oauth-container-social-buttons'),
+    ).toBeInTheDocument()
   })
 })

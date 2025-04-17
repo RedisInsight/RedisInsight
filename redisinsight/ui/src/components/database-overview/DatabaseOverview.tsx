@@ -1,14 +1,23 @@
 import React, { useContext, useState, useMemo } from 'react'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiToolTip,
+} from '@elastic/eui'
 import { getConfig } from 'uiSrc/config'
 
-import { DATABASE_OVERVIEW_REFRESH_INTERVAL, DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL } from 'uiSrc/constants/browser'
+import {
+  DATABASE_OVERVIEW_REFRESH_INTERVAL,
+  DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL,
+} from 'uiSrc/constants/browser'
 import {
   connectedInstanceOverviewSelector,
   connectedInstanceSelector,
-  getDatabaseConfigInfoAction
+  getDatabaseConfigInfoAction,
 } from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -63,7 +72,9 @@ const DatabaseOverview = () => {
   const { theme } = useContext(ThemeContext)
   const dispatch = useDispatch()
   const [lastRefreshTime, setLastRefreshTime] = useState<number | null>(null)
-  const { id: connectedInstanceId = '', db } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '', db } = useSelector(
+    connectedInstanceSelector,
+  )
 
   const overview = useSelector(connectedInstanceOverviewSelector)
   const {
@@ -84,20 +95,25 @@ const DatabaseOverview = () => {
     }
   }
 
-  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+  const handleEnableAutoRefresh = (
+    enableAutoRefresh: boolean,
+    refreshRate: string,
+  ) => {
     sendEventTelemetry({
       event: enableAutoRefresh
         ? TelemetryEvent.OVERVIEW_AUTO_REFRESH_ENABLED
         : TelemetryEvent.OVERVIEW_AUTO_REFRESH_DISABLED,
       eventData: {
         databaseId: connectedInstanceId,
-        refreshRate: +refreshRate
-      }
+        refreshRate: +refreshRate,
+      },
     })
   }
 
   const usedMemoryPercent = planMemoryLimit
-    ? parseFloat(`${truncatePercentage(((usedMemory || 0) / toBytes(planMemoryLimit, memoryLimitMeasurementUnit || 'MB')) * 100, 1)}`)
+    ? parseFloat(
+        `${truncatePercentage(((usedMemory || 0) / toBytes(planMemoryLimit, memoryLimitMeasurementUnit || 'MB')) * 100, 1)}`,
+      )
     : undefined
 
   const metrics = useMemo(() => {
@@ -109,15 +125,15 @@ const DatabaseOverview = () => {
   }, [theme, overview, db, usedMemoryPercent])
 
   return (
-    <EuiFlexGroup className={styles.container} gutterSize="none" responsive={false}>
+    <EuiFlexGroup
+      className={styles.container}
+      gutterSize="none"
+      responsive={false}
+    >
       {metrics?.length! > 0 && (
         <EuiFlexItem key="overview">
           <EuiFlexGroup
-            className={cx(
-              'flex-row',
-              styles.itemContainer,
-              styles.overview,
-            )}
+            className={cx('flex-row', styles.itemContainer, styles.overview)}
             gutterSize="none"
             responsive={false}
             alignItems="center"
@@ -145,37 +161,46 @@ const DatabaseOverview = () => {
                 </EuiButton>
               </EuiFlexItem>
             )}
-            {
-              metrics?.map((overviewItem) => (
-                <EuiFlexItem
-                  className={cx(styles.overviewItem, overviewItem.className ?? '')}
-                  key={overviewItem.id}
-                  data-test-subj={overviewItem.id}
-                  grow={false}
+            {metrics?.map((overviewItem) => (
+              <EuiFlexItem
+                className={cx(
+                  styles.overviewItem,
+                  overviewItem.className ?? '',
+                )}
+                key={overviewItem.id}
+                data-test-subj={overviewItem.id}
+                grow={false}
+              >
+                <EuiToolTip
+                  position="bottom"
+                  className={styles.tooltip}
+                  content={getTooltipContent(overviewItem)}
                 >
-                  <EuiToolTip
-                    position="bottom"
-                    className={styles.tooltip}
-                    content={getTooltipContent(overviewItem)}
+                  <EuiFlexGroup
+                    gutterSize="none"
+                    responsive={false}
+                    alignItems="center"
+                    justifyContent="center"
                   >
-                    <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center" justifyContent="center">
-                      {overviewItem.icon && (
-                        <EuiFlexItem grow={false} className={styles.icon}>
-                          <EuiIcon
-                            size="m"
-                            type={overviewItem.icon}
-                            className={styles.icon}
-                          />
-                        </EuiFlexItem>
-                      )}
-                      <EuiFlexItem grow={false} className={styles.overviewItemContent}>
-                        {overviewItem.content}
+                    {overviewItem.icon && (
+                      <EuiFlexItem grow={false} className={styles.icon}>
+                        <EuiIcon
+                          size="m"
+                          type={overviewItem.icon}
+                          className={styles.icon}
+                        />
                       </EuiFlexItem>
-                    </EuiFlexGroup>
-                  </EuiToolTip>
-                </EuiFlexItem>
-              ))
-            }
+                    )}
+                    <EuiFlexItem
+                      grow={false}
+                      className={styles.overviewItemContent}
+                    >
+                      {overviewItem.content}
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </EuiToolTip>
+              </EuiFlexItem>
+            ))}
             <EuiFlexItem
               className={cx(styles.overviewItem, styles.autoRefresh)}
               grow={false}
@@ -193,7 +218,9 @@ const DatabaseOverview = () => {
                   postfix="overview"
                   testid="auto-refresh-overview"
                   defaultRefreshRate={DATABASE_OVERVIEW_REFRESH_INTERVAL}
-                  minimumRefreshRate={parseInt(DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL)}
+                  minimumRefreshRate={parseInt(
+                    DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL,
+                  )}
                   onRefresh={loadData}
                   onEnableAutoRefresh={handleEnableAutoRefresh}
                 />

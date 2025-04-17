@@ -1,4 +1,4 @@
-version: "3.4"
+version: '3.4'
 
 services:
   test:
@@ -9,4 +9,4 @@ services:
       TEST_CLOUD_API_SECRET_KEY: ${TEST_CLOUD_API_SECRET_KEY}
   redis:
     image: node:20.14-alpine
-    entrypoint: [ "echo", "Dummy Service" ]
+    entrypoint: ['echo', 'Dummy Service']

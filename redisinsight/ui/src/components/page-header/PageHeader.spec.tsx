@@ -62,11 +62,11 @@ describe('PageHeader', () => {
   })
 
   it('should render custom component', () => {
-    render((
+    render(
       <PageHeader title="Page" showInsights>
         <div data-testid="custom-logo" />
-      </PageHeader>
-    ))
+      </PageHeader>,
+    )
 
     expect(screen.getByTestId('custom-logo')).toBeInTheDocument()
     expect(screen.queryByTestId('redis-logo-home')).not.toBeInTheDocument()
@@ -76,11 +76,11 @@ describe('PageHeader', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
-      { flag: true }
+      { flag: true },
     )
 
     render(<PageHeader title="Page" subtitle="subtitle" showInsights />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('o-auth-user-profile')).toBeInTheDocument()
   })
@@ -89,11 +89,11 @@ describe('PageHeader', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
-      { flag: false }
+      { flag: false },
     )
 
     render(<PageHeader title="Page" subtitle="subtitle" showInsights />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('o-auth-user-profile')).not.toBeInTheDocument()
   })

@@ -1,6 +1,12 @@
 import { Expose, Transform, Type } from 'class-transformer';
 import {
-  IsArray, IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested,
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
 } from 'class-validator';
 import { IsMultiNumber, ObjectAsMap } from 'src/common/decorators';
 import { featureConfigFilterTransformer } from 'src/modules/feature/transformers';
@@ -14,7 +20,10 @@ export enum FeatureConfigFilterCondition {
   Lte = 'lte',
 }
 
-export type FeatureConfigFilterType = FeatureConfigFilter | FeatureConfigFilterOr | FeatureConfigFilterAnd;
+export type FeatureConfigFilterType =
+  | FeatureConfigFilter
+  | FeatureConfigFilterOr
+  | FeatureConfigFilterAnd;
 
 export class FeatureConfigFilter {
   @Expose()

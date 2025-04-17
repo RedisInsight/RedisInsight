@@ -3,7 +3,11 @@ import { capitalize } from 'lodash'
 import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
 
 import cx from 'classnames'
-import { CONNECTION_TYPE_DISPLAY, ConnectionType, DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
+import {
+  CONNECTION_TYPE_DISPLAY,
+  ConnectionType,
+  DATABASE_LIST_MODULES_TEXT,
+} from 'uiSrc/slices/interfaces'
 import { getModule, Nullable, truncateText } from 'uiSrc/utils'
 
 import ConnectionIcon from 'uiSrc/assets/img/icons/connection.svg?react'
@@ -37,7 +41,10 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
   const { theme } = useContext(ThemeContext)
 
   const getIcon = (name: string) => {
-    const icon = DEFAULT_MODULES_INFO[name]?.[theme === Theme.Dark ? 'iconDark' : 'iconLight']
+    const icon =
+      DEFAULT_MODULES_INFO[name]?.[
+        theme === Theme.Dark ? 'iconDark' : 'iconLight'
+      ]
     if (icon) {
       return icon
     }
@@ -52,20 +59,27 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
       </div>
       <div className={styles.tooltipItem}>
         <span>
-          {host}
-          :
-          {port}
+          {host}:{port}
         </span>
       </div>
       {databases > 1 && (
-        <EuiFlexGroup className={styles.dbIndexInfo} alignItems="center" gutterSize="none">
+        <EuiFlexGroup
+          className={styles.dbIndexInfo}
+          alignItems="center"
+          gutterSize="none"
+        >
           <EuiFlexItem grow={false} style={{ marginRight: 16 }}>
-            <EuiIcon className={styles.messageInfoIcon} size="xxl" type={MessageInfoIcon} />
+            <EuiIcon
+              className={styles.messageInfoIcon}
+              size="xxl"
+              type={MessageInfoIcon}
+            />
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiText size="s">Logical Databases</EuiText>
             <EuiText color="subdued" size="xs">
-              Select logical databases to work with in Browser, Workbench, and Database Analysis.
+              Select logical databases to work with in Browser, Workbench, and
+              Database Analysis.
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -80,7 +94,9 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
         <EuiFlexItem className={styles.rowTooltipItem} grow={false}>
           <EuiIcon type={ConnectionIcon} />
           <span className={styles.tooltipItemValue}>
-            {connectionType ? CONNECTION_TYPE_DISPLAY[connectionType] : capitalize(connectionType)}
+            {connectionType
+              ? CONNECTION_TYPE_DISPLAY[connectionType]
+              : capitalize(connectionType)}
           </span>
         </EuiFlexItem>
         <EuiFlexItem className={styles.rowTooltipItem} grow={false}>
@@ -102,7 +118,14 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
               data-testid={`module_${name}`}
             >
               <EuiIcon type={getIcon(name)} className={styles.mi_icon} />
-              <span>{truncateText(getModule(name)?.name || DATABASE_LIST_MODULES_TEXT[name] || name, 50)}</span>
+              <span>
+                {truncateText(
+                  getModule(name)?.name ||
+                    DATABASE_LIST_MODULES_TEXT[name] ||
+                    name,
+                  50,
+                )}
+              </span>
               {!!(semanticVersion || version) && (
                 <span className={styles.mi_version}>
                   v.

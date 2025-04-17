@@ -10,7 +10,7 @@ export const MOCK_RDI_PIPELINE_JOB2 = {
   value: `job2:
   transform:
     type: redis
-`
+`,
 }
 
 export const MOCK_RDI_PIPELINE_JOB1 = {
@@ -18,7 +18,7 @@ export const MOCK_RDI_PIPELINE_JOB1 = {
   value: `job:
   transform:
     type: sql
-`
+`,
 }
 
 export const MOCK_RDI_PIPELINE_DATA = {
@@ -30,26 +30,26 @@ export const MOCK_RDI_PIPELINE_JSON_DATA = {
   config: {
     connections: {
       target: {
-        type: 'redis'
-      }
-    }
+        type: 'redis',
+      },
+    },
   },
   jobs: {
     jobName: {
       job: {
         transform: {
-          type: 'sql'
-        }
-      }
+          type: 'sql',
+        },
+      },
     },
     job2: {
       job2: {
         transform: {
-          type: 'redis'
-        }
-      }
-    }
-  }
+          type: 'redis',
+        },
+      },
+    },
+  },
 }
 
 export const MOCK_RDI_PIPELINE_STATUS_DATA: IPipelineStatus = {
@@ -59,6 +59,6 @@ export const MOCK_RDI_PIPELINE_STATUS_DATA: IPipelineStatus = {
       status: PipelineStatus.Starting,
       state: 'some',
       tasks: 'none',
-    }
-  }
+    },
+  },
 }

@@ -23,10 +23,10 @@ jest.mock('formik', () => ({
       config: 'value',
       jobs: [
         { name: 'job1', value: 'value' },
-        { name: 'job2', value: 'value' }
-      ]
-    }
-  })
+        { name: 'job2', value: 'value' },
+      ],
+    },
+  }),
 }))
 
 describe('Navigation', () => {
@@ -41,6 +41,8 @@ describe('Navigation', () => {
     render(<Navigation />)
 
     fireEvent.click(screen.getByTestId('rdi-nav-btn-config'))
-    expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline-management/config')
+    expect(pushMock).toBeCalledWith(
+      '/integrate/rdiInstanceId/pipeline-management/config',
+    )
   })
 })

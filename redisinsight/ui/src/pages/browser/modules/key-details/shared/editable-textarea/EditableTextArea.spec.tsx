@@ -5,17 +5,17 @@ import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import EditableTextArea, { Props } from './EditableTextArea'
 
 const mockedProps = mock<Props>()
-const Text = () => (<span data-testid="text">text</span>)
+const Text = () => <span data-testid="text">text</span>
 
 describe('EditableTextArea', () => {
   it('should render', () => {
-    expect(render(
-      <EditableTextArea
-        {...mockedProps}
-      >
-        <Text />
-      </EditableTextArea>
-    )).toBeTruthy()
+    expect(
+      render(
+        <EditableTextArea {...mockedProps}>
+          <Text />
+        </EditableTextArea>,
+      ),
+    ).toBeTruthy()
   })
 
   it('should display editor', () => {
@@ -28,7 +28,7 @@ describe('EditableTextArea', () => {
         onDecline={jest.fn()}
       >
         <Text />
-      </EditableTextArea>
+      </EditableTextArea>,
     )
 
     expect(screen.getByTestId('item_value-editor-field')).toBeInTheDocument()
@@ -47,10 +47,12 @@ describe('EditableTextArea', () => {
         onApply={onApply}
       >
         <Text />
-      </EditableTextArea>
+      </EditableTextArea>,
     )
 
-    fireEvent.change(screen.getByTestId('item_value-editor-field'), { target: { value: 'value' } })
+    fireEvent.change(screen.getByTestId('item_value-editor-field'), {
+      target: { value: 'value' },
+    })
     fireEvent.click(screen.getByTestId('apply-btn'))
 
     expect(onApply).toBeCalledWith('value', expect.any(Object))
@@ -68,10 +70,12 @@ describe('EditableTextArea', () => {
         onDecline={onDecline}
       >
         <Text />
-      </EditableTextArea>
+      </EditableTextArea>,
     )
 
-    fireEvent.change(screen.getByTestId('item_value-editor-field'), { target: { value: 'value' } })
+    fireEvent.change(screen.getByTestId('item_value-editor-field'), {
+      target: { value: 'value' },
+    })
     fireEvent.click(screen.getByTestId('cancel-btn'))
 
     expect(onDecline).toBeCalled()

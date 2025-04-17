@@ -6,13 +6,16 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, expect
+  getMainCheckFn,
+  expect,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/rejson-rl/get`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/rejson-rl/get`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -27,12 +30,14 @@ const validInputData = {
   forceRetrieve: false,
 };
 
-const responseSchema = Joi.object().keys({
-  downloaded: Joi.boolean().required(),
-  path: Joi.string().required(),
-  type: Joi.string(),
-  data: Joi.any(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    downloaded: Joi.boolean().required(),
+    path: Joi.string().required(),
+    type: Joi.string(),
+    data: Joi.any(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -160,7 +165,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
                 key: 'object',
                 path: '$["object"]',
                 cardinality: 2,
-              }
+              },
             ],
           },
         },
@@ -180,7 +185,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
           },
         },
       ].map(mainCheckFn);
-    })
+    });
 
     describe('ACL', () => {
       // todo: do not forget to remove rte.modules.rejson check after fixing MEMORY USAGE issue in RedisJSON v2.0.0
@@ -211,7 +216,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -json.get')
+          before: () => rte.data.setAclUserRules('~* +@all -json.get'),
         },
         {
           name: 'Should throw error if no permissions for "json.get" command (another)',
@@ -226,7 +231,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -json.get')
+          before: () => rte.data.setAclUserRules('~* +@all -json.get'),
         },
         {
           name: 'Should return regular item if no permissions for "json.debug" command',
@@ -242,7 +247,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
             path: '$',
             data: constants.TEST_REJSON_VALUE_3,
           },
-          before: () => rte.data.setAclUserRules('~* +@all -json.debug')
+          before: () => rte.data.setAclUserRules('~* +@all -json.debug'),
         },
         {
           name: 'Should get full json if no permissions for "json.debug" command',
@@ -258,7 +263,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
             path: '$',
             data: constants.TEST_REJSON_VALUE_3,
           },
-          before: () => rte.data.setAclUserRules('~* +@all -json.debug')
+          before: () => rte.data.setAclUserRules('~* +@all -json.debug'),
         },
         {
           name: 'Should throw error if no permissions for "json.objkeys" command',
@@ -273,7 +278,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -json.objkeys')
+          before: () => rte.data.setAclUserRules('~* +@all -json.objkeys'),
         },
         {
           name: 'Should throw error if no permissions for "json.type" command',
@@ -288,7 +293,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -json.type')
+          before: () => rte.data.setAclUserRules('~* +@all -json.type'),
         },
         {
           name: 'Should throw error if no permissions for "json.objlen" command',
@@ -303,7 +308,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -json.objlen')
+          before: () => rte.data.setAclUserRules('~* +@all -json.objlen'),
         },
         {
           name: 'Should throw error if no permissions for "json.arrlen" command',
@@ -318,7 +323,7 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -json.arrlen')
+          before: () => rte.data.setAclUserRules('~* +@all -json.arrlen'),
         },
       ].map(mainCheckFn);
     });

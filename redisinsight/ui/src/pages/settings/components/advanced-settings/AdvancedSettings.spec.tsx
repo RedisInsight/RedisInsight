@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-  render,
-  screen,
-} from 'uiSrc/utils/test-utils'
+import { render, screen } from 'uiSrc/utils/test-utils'
 import AdvancedSettings from './AdvancedSettings'
 
 jest.mock('uiSrc/slices/user/user-settings', () => ({
@@ -13,7 +10,7 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
       batchSize: 5,
     },
   }),
-  updateUserConfigSettingsAction: () => jest.fn
+  updateUserConfigSettingsAction: () => jest.fn,
 }))
 
 describe('AdvancedSettings', () => {

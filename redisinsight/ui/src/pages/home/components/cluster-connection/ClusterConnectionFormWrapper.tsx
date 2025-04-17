@@ -38,8 +38,10 @@ const ClusterConnectionFormWrapper = ({ onClose }: Props) => {
 
   useEffect(() => {
     setModalHeader(
-      <EuiTitle size="s"><h4>Redis Software</h4></EuiTitle>,
-      true
+      <EuiTitle size="s">
+        <h4>Redis Software</h4>
+      </EuiTitle>,
+      true,
     )
 
     return () => {
@@ -61,7 +63,7 @@ const ClusterConnectionFormWrapper = ({ onClose }: Props) => {
 
   const formSubmit = (values: ICredentialsRedisCluster) => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_RE_CLUSTER_AUTODISCOVERY_SUBMITTED
+      event: TelemetryEvent.CONFIG_DATABASES_RE_CLUSTER_AUTODISCOVERY_SUBMITTED,
     })
 
     dispatch(fetchInstancesRedisCluster(values, onSuccess))
@@ -71,9 +73,13 @@ const ClusterConnectionFormWrapper = ({ onClose }: Props) => {
     history.push(Pages.redisEnterpriseAutodiscovery)
   }
 
-  const handlePostHostName = (content: string) => (
-    autoFillFormDetails(content, initialValues, setInitialValues, InstanceType.RedisEnterpriseCluster)
-  )
+  const handlePostHostName = (content: string) =>
+    autoFillFormDetails(
+      content,
+      initialValues,
+      setInitialValues,
+      InstanceType.RedisEnterpriseCluster,
+    )
 
   return (
     <div ref={formRef}>

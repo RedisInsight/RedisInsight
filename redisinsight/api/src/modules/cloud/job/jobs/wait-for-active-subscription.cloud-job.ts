@@ -1,4 +1,7 @@
-import { CloudJob, CloudJobOptions } from 'src/modules/cloud/job/jobs/cloud-job';
+import {
+  CloudJob,
+  CloudJobOptions,
+} from 'src/modules/cloud/job/jobs/cloud-job';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
 import {
   CloudSubscription,
@@ -19,28 +22,31 @@ export class WaitForActiveSubscriptionCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
-      subscriptionId: number,
-      subscriptionType: CloudSubscriptionType,
+      subscriptionId: number;
+      subscriptionType: CloudSubscriptionType;
     },
     protected readonly dependencies: {
-      cloudSubscriptionCapiService: CloudSubscriptionCapiService,
+      cloudSubscriptionCapiService: CloudSubscriptionCapiService;
     },
   ) {
     super(options);
   }
 
-  async iteration(sessionMetadata: SessionMetadata): Promise<CloudSubscription> {
+  async iteration(
+    sessionMetadata: SessionMetadata,
+  ): Promise<CloudSubscription> {
     this.logger.debug('Waiting for cloud subscription active state');
 
     this.checkSignal();
 
     this.logger.debug('Fetching cloud subscription');
 
-    const subscription = await this.dependencies.cloudSubscriptionCapiService.getSubscription(
-      this.options.capiCredentials,
-      this.data.subscriptionId,
-      this.data.subscriptionType,
-    );
+    const subscription =
+      await this.dependencies.cloudSubscriptionCapiService.getSubscription(
+        this.options.capiCredentials,
+        this.data.subscriptionId,
+        this.data.subscriptionType,
+      );
 
     switch (subscription?.status) {
       case CloudSubscriptionStatus.Active:
@@ -51,7 +57,9 @@ export class WaitForActiveSubscriptionCloudJob extends CloudJob {
         return subscription;
       case CloudSubscriptionStatus.Pending:
       case CloudSubscriptionStatus.NotActivated:
-        this.logger.debug('Cloud subscription is not in the active state. Scheduling new iteration');
+        this.logger.debug(
+          'Cloud subscription is not in the active state. Scheduling new iteration',
+        );
 
         return await this.runNextIteration(sessionMetadata);
       case CloudSubscriptionStatus.Error:
@@ -60,7 +68,6 @@ export class WaitForActiveSubscriptionCloudJob extends CloudJob {
         throw new CloudSubscriptionInFailedStateException();
       case CloudSubscriptionStatus.Deleting:
       default:
-
         throw new CloudSubscriptionInUnexpectedStateException();
     }
   }

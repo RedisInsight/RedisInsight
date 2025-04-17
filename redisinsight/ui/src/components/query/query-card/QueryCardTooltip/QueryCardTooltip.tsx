@@ -23,37 +23,51 @@ interface IQueryLine {
 }
 
 const QueryCardTooltip = (props: Props) => {
-  const { query = '', maxLinesNumber = 20, summary = '', resultsMode, db } = props
+  const {
+    query = '',
+    maxLinesNumber = 20,
+    summary = '',
+    resultsMode,
+    db,
+  } = props
   const command = summary || query || EMPTY_COMMAND
 
-  let queryLines: IQueryLine[] = (query || EMPTY_COMMAND).split('\n')
+  let queryLines: IQueryLine[] = (query || EMPTY_COMMAND)
+    .split('\n')
     .map((query: string, i) => ({
       value: truncateText(query, 497, '...'),
-      index: i
+      index: i,
     }))
 
   const isMultilineCommand = queryLines.length > 1
   if (queryLines.length > maxLinesNumber) {
     const lastItem = queryLines[queryLines.length - 1]
     queryLines = take(queryLines, maxLinesNumber - 2)
-    queryLines.push({ index: queryLines.length, value: ' ...', isFolding: true })
+    queryLines.push({
+      index: queryLines.length,
+      value: ' ...',
+      isFolding: true,
+    })
     queryLines.push(lastItem)
   }
 
-  const contentItems = queryLines
-    .map((item: IQueryLine) => {
-      const { value, index, isFolding } = item
-      const command = `${getDbIndex(db)} ${value}`
-      return !isMultilineCommand ? <span key={index}>{command}</span> : (
-        <pre
-          key={index}
-          className={cx(styles.queryLine, styles.queryMultiLine, { [styles.queryLineFolding]: isFolding })}
-        >
-          <div className={styles.queryLineNumber}>{`${index + 1}`}</div>
-          <span>{command}</span>
-        </pre>
-      )
-    })
+  const contentItems = queryLines.map((item: IQueryLine) => {
+    const { value, index, isFolding } = item
+    const command = `${getDbIndex(db)} ${value}`
+    return !isMultilineCommand ? (
+      <span key={index}>{command}</span>
+    ) : (
+      <pre
+        key={index}
+        className={cx(styles.queryLine, styles.queryMultiLine, {
+          [styles.queryLineFolding]: isFolding,
+        })}
+      >
+        <div className={styles.queryLineNumber}>{`${index + 1}`}</div>
+        <span>{command}</span>
+      </pre>
+    )
+  })
 
   return (
     <EuiToolTip

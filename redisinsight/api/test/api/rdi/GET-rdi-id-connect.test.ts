@@ -1,21 +1,21 @@
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../deps';
+import { describe, expect, deps, getMainCheckFn } from '../deps';
 import { nock } from '../../helpers/test';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST';
 const notExistedRdiId = 'notExisted';
 const testRdiUrl = 'http://rdilocal.test';
 
-const endpoint = (id) => request(server).get(`/${constants.API.RDI}/${id || testRdiId}/connect`);
+const endpoint = (id) =>
+  request(server).get(`/${constants.API.RDI}/${id || testRdiId}/connect`);
 
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 

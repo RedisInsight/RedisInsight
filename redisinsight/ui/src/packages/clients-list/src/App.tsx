@@ -23,28 +23,35 @@ interface Props {
   plugin: CommonPlugin
   command: string
   mode: RawMode
-  result?: { response: any, status: string }[]
+  result?: { response: any; status: string }[]
 }
 
 // This is problematic for some bundlers and/or deployments,
 // so a method exists to preload specific icons an application needs.
 appendIconComponentCache(cachedIcons)
 
-const getJsonResultString = (result:any, mode: RawMode) =>
-  (mode !== RawMode.RAW && result !== null
+const getJsonResultString = (result: any, mode: RawMode) =>
+  mode !== RawMode.RAW && result !== null
     ? parseJSONASCIIResponse(result)
-    : result)
+    : result
 
 const getJsonResultStringFromArr = (response: any, mode: RawMode) =>
   `[${response.map((result: any) => getJsonResultString(result, mode)).join(',')}]`
 
 const App = (props: Props) => {
-  const { command = '', result: [{ response = '', status = '' } = {}] = [], plugin, mode } = props
+  const {
+    command = '',
+    result: [{ response = '', status = '' } = {}] = [],
+    plugin,
+    mode,
+  } = props
 
   if (status === 'fail') {
     return (
       <div className="cli-container">
-        <div className="cli-output-response-fail">{JSON.stringify(response)}</div>
+        <div className="cli-output-response-fail">
+          {JSON.stringify(response)}
+        </div>
       </div>
     )
   }

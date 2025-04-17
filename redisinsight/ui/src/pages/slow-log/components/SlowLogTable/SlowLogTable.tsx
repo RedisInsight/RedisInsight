@@ -3,7 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
-import { DURATION_UNITS, DurationUnits, SortOrder, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import {
+  DURATION_UNITS,
+  DurationUnits,
+  SortOrder,
+  TableCellAlignment,
+  TableCellTextAlignment,
+} from 'uiSrc/constants'
 import { convertNumberByUnits } from 'uiSrc/pages/slow-log/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
@@ -20,7 +26,9 @@ export interface Props {
 }
 
 const sortByTimeStamp = (items = [], order: SortOrder) =>
-  [...items].sort((a: any, b: any) => (order === SortOrder.DESC ? b.time - a.time : a.time - b.time))
+  [...items].sort((a: any, b: any) =>
+    order === SortOrder.DESC ? b.time - a.time : a.time - b.time,
+  )
 
 const SlowLogTable = (props: Props) => {
   const { items = [], loading = false, durationUnit } = props
@@ -46,10 +54,15 @@ const SlowLogTable = (props: Props) => {
       minWidth: 190,
       isSortable: true,
       render: (timestamp) => (
-        <EuiText size="s" color="subdued" data-testid="timestamp-value" className={styles.timestampCell}>
+        <EuiText
+          size="s"
+          color="subdued"
+          data-testid="timestamp-value"
+          className={styles.timestampCell}
+        >
           <FormatedDate date={timestamp * 1000} />
         </EuiText>
-      )
+      ),
     },
     {
       id: 'durationUs',
@@ -58,7 +71,11 @@ const SlowLogTable = (props: Props) => {
       absoluteWidth: 'auto',
       textAlignment: TableCellTextAlignment.Right,
       alignment: TableCellAlignment.Right,
-      render: (duration) => <EuiText size="s" color="subdued" data-testid="duration-value">{numberWithSpaces(convertNumberByUnits(duration, durationUnit))}</EuiText>
+      render: (duration) => (
+        <EuiText size="s" color="subdued" data-testid="duration-value">
+          {numberWithSpaces(convertNumberByUnits(duration, durationUnit))}
+        </EuiText>
+      ),
     },
     {
       id: 'args',
@@ -69,9 +86,11 @@ const SlowLogTable = (props: Props) => {
           content={command}
           anchorClassName={styles.commandTooltip}
         >
-          <span className={styles.commandText} data-testid="command-value">{command}</span>
+          <span className={styles.commandText} data-testid="command-value">
+            {command}
+          </span>
         </EuiToolTip>
-      )
+      ),
     },
   ]
 
@@ -82,8 +101,8 @@ const SlowLogTable = (props: Props) => {
       event: TelemetryEvent.SLOWLOG_SORTED,
       eventData: {
         databaseId: instanceId,
-        timestamp: order
-      }
+        timestamp: order,
+      },
     })
   }
 

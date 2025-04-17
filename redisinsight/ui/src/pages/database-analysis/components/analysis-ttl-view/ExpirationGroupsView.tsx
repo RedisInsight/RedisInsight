@@ -4,11 +4,28 @@ import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { DEFAULT_EXTRAPOLATION, SectionName } from 'uiSrc/pages/database-analysis'
-import { extrapolate, formatBytes, formatExtrapolation, Nullable } from 'uiSrc/utils'
+import {
+  DEFAULT_EXTRAPOLATION,
+  SectionName,
+} from 'uiSrc/pages/database-analysis'
+import {
+  extrapolate,
+  formatBytes,
+  formatExtrapolation,
+  Nullable,
+} from 'uiSrc/utils'
 import { BarChart } from 'uiSrc/components/charts'
-import { BarChartData, BarChartDataType, DEFAULT_BAR_WIDTH, DEFAULT_MULTIPLIER_GRID, DEFAULT_Y_TICKS } from 'uiSrc/components/charts/bar-chart'
-import { dbAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
+import {
+  BarChartData,
+  BarChartDataType,
+  DEFAULT_BAR_WIDTH,
+  DEFAULT_MULTIPLIER_GRID,
+  DEFAULT_Y_TICKS,
+} from 'uiSrc/components/charts/bar-chart'
+import {
+  dbAnalysisReportsSelector,
+  setShowNoExpiryGroup,
+} from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import styles from './styles.module.scss'
@@ -47,23 +64,29 @@ const ExpirationGroupsView = (props: Props) => {
       newExpirationGroups.push(noExpireGroup)
     }
 
-    const extrapolationOptions = { apply: isExtrapolated, extrapolation, showPrefix: false }
+    const extrapolationOptions = {
+      apply: isExtrapolated,
+      extrapolation,
+      showPrefix: false,
+    }
 
     setExpirationGroups(
-      newExpirationGroups.map(({ total, threshold, label, ...group }) =>
-        ({
-          ...group,
-          y: extrapolate(total, extrapolationOptions) as number,
-          x: threshold,
-          xlabel: label,
-          ylabel: ''
-        }))
+      newExpirationGroups.map(({ total, threshold, label, ...group }) => ({
+        ...group,
+        y: extrapolate(total, extrapolationOptions) as number,
+        x: threshold,
+        xlabel: label,
+        ylabel: '',
+      })),
     )
   }, [data?.expirationGroups, showNoExpiryGroup, isExtrapolated, extrapolation])
 
   if (loading) {
     return (
-      <div className={cx(styles.content, styles.loadingWrapper)} data-testid="summary-per-ttl-loading" />
+      <div
+        className={cx(styles.content, styles.loadingWrapper)}
+        data-testid="summary-per-ttl-loading"
+      />
     )
   }
 
@@ -71,7 +94,11 @@ const ExpirationGroupsView = (props: Props) => {
     dispatch(setShowNoExpiryGroup(value))
   }
 
-  if (!data?.expirationGroups?.length || !totalMemory?.total || !totalKeys?.total) {
+  if (
+    !data?.expirationGroups?.length ||
+    !totalMemory?.total ||
+    !totalKeys?.total
+  ) {
     return null
   }
 
@@ -94,7 +121,10 @@ const ExpirationGroupsView = (props: Props) => {
               checked={isExtrapolated}
               onChange={(e) => {
                 setIsExtrapolated(e.target.checked)
-                onSwitchExtrapolation?.(e.target.checked, SectionName.MEMORY_LIKELY_TO_BE_FREED)
+                onSwitchExtrapolation?.(
+                  e.target.checked,
+                  SectionName.MEMORY_LIKELY_TO_BE_FREED,
+                )
               }}
               data-testid="extrapolate-results"
             />
@@ -123,10 +153,18 @@ const ExpirationGroupsView = (props: Props) => {
                 multiplierGrid={multiplierGrid}
                 data={expirationGroups}
                 yCountTicks={yCountTicks}
-                barWidth={width > 1000 ? 70 : (width < 800 ? 30 : DEFAULT_BAR_WIDTH)}
-                tooltipValidation={(val) => `${formatExtrapolation(formatBytes(val, 3) as string, isExtrapolated)}`}
-                leftAxiosValidation={(val, i) => (i % 2 ? '' : formatBytes(val, 1))}
-                bottomAxiosValidation={(_val, i) => expirationGroups[i / multiplierGrid]?.xlabel}
+                barWidth={
+                  width > 1000 ? 70 : width < 800 ? 30 : DEFAULT_BAR_WIDTH
+                }
+                tooltipValidation={(val) =>
+                  `${formatExtrapolation(formatBytes(val, 3) as string, isExtrapolated)}`
+                }
+                leftAxiosValidation={(val, i) =>
+                  i % 2 ? '' : formatBytes(val, 1)
+                }
+                bottomAxiosValidation={(_val, i) =>
+                  expirationGroups[i / multiplierGrid]?.xlabel
+                }
               />
             )}
           </AutoSizer>

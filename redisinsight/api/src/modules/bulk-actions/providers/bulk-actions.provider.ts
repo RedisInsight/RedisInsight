@@ -1,13 +1,17 @@
 import {
-  BadRequestException, Injectable, Logger, NotFoundException,
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
 import { Socket } from 'socket.io';
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import {
-  DeleteBulkActionSimpleRunner,
-} from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
+  BulkActionStatus,
+  BulkActionType,
+} from 'src/modules/bulk-actions/constants';
+import { DeleteBulkActionSimpleRunner } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
@@ -28,12 +32,23 @@ export class BulkActionsProvider {
    * @param dto
    * @param socket
    */
-  async create(sessionMetadata: SessionMetadata, dto: CreateBulkActionDto, socket: Socket): Promise<BulkAction> {
+  async create(
+    sessionMetadata: SessionMetadata,
+    dto: CreateBulkActionDto,
+    socket: Socket,
+  ): Promise<BulkAction> {
     if (this.bulkActions.get(dto.id)) {
       throw new Error('You already have bulk action with such id');
     }
 
-    const bulkAction = new BulkAction(dto.id, dto.databaseId, dto.type, dto.filter, socket, this.analytics);
+    const bulkAction = new BulkAction(
+      dto.id,
+      dto.databaseId,
+      dto.type,
+      dto.filter,
+      socket,
+      this.analytics,
+    );
 
     this.bulkActions.set(dto.id, bulkAction);
 
@@ -46,7 +61,10 @@ export class BulkActionsProvider {
       db: dto.db,
     });
 
-    await bulkAction.prepare(client, BulkActionsProvider.getSimpleRunnerClass(dto));
+    await bulkAction.prepare(
+      client,
+      BulkActionsProvider.getSimpleRunnerClass(dto),
+    );
 
     bulkAction.start().catch();
 
@@ -63,7 +81,9 @@ export class BulkActionsProvider {
       case BulkActionType.Delete:
         return DeleteBulkActionSimpleRunner;
       default:
-        throw new BadRequestException(`Unsupported type: ${dto.type} for Bulk Actions`);
+        throw new BadRequestException(
+          `Unsupported type: ${dto.type} for Bulk Actions`,
+        );
     }
   }
 

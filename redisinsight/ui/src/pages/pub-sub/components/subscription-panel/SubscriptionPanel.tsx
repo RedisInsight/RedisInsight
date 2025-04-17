@@ -1,11 +1,24 @@
-import { EuiButton, EuiButtonIcon, EuiFieldText, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiButtonIcon,
+  EuiFieldText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiText,
+  EuiToolTip,
+} from '@elastic/eui'
 import cx from 'classnames'
 import React, { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { clearPubSubMessages, pubSubSelector, toggleSubscribeTriggerPubSub } from 'uiSrc/slices/pubsub/pubsub'
+import {
+  clearPubSubMessages,
+  pubSubSelector,
+  toggleSubscribeTriggerPubSub,
+} from 'uiSrc/slices/pubsub/pubsub'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import UserInCircle from 'uiSrc/assets/img/icons/user_in_circle.svg?react'
@@ -20,14 +33,19 @@ import ClickableAppendInfo from './components/clickable-append-info'
 import styles from './styles.module.scss'
 
 const SubscriptionPanel = () => {
-  const { messages, isSubscribed, subscriptions, loading, count } = useSelector(pubSubSelector)
+  const { messages, isSubscribed, subscriptions, loading, count } =
+    useSelector(pubSubSelector)
 
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const [channels, setChannels] = useState(subscriptions?.length ? subscriptions.map((sub) => sub.channel).join(' ') : DEFAULT_SEARCH_MATCH)
+  const [channels, setChannels] = useState(
+    subscriptions?.length
+      ? subscriptions.map((sub) => sub.channel).join(' ')
+      : DEFAULT_SEARCH_MATCH,
+  )
 
   const toggleSubscribe = () => {
     dispatch(toggleSubscribeTriggerPubSub(channels))
@@ -39,8 +57,8 @@ const SubscriptionPanel = () => {
       event: TelemetryEvent.PUBSUB_MESSAGES_CLEARED,
       eventData: {
         databaseId: instanceId,
-        messages: count
-      }
+        messages: count,
+      },
     })
   }
 
@@ -50,13 +68,21 @@ const SubscriptionPanel = () => {
     }
   }
 
-  const subscribedIcon = theme === Theme.Dark ? SubscribedIconDark : SubscribedIconLight
-  const notSubscribedIcon = theme === Theme.Dark ? NotSubscribedIconDark : NotSubscribedIconLight
+  const subscribedIcon =
+    theme === Theme.Dark ? SubscribedIconDark : SubscribedIconLight
+  const notSubscribedIcon =
+    theme === Theme.Dark ? NotSubscribedIconDark : NotSubscribedIconLight
 
   const displayMessages = count !== 0 || isSubscribed
 
   return (
-    <EuiFlexGroup className={styles.container} alignItems="center" justifyContent="spaceBetween" gutterSize="s" responsive={false}>
+    <EuiFlexGroup
+      className={styles.container}
+      alignItems="center"
+      justifyContent="spaceBetween"
+      gutterSize="s"
+      responsive={false}
+    >
       <EuiFlexItem grow={false}>
         <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
           <EuiFlexItem grow={false} className={styles.iconSubscribe}>
@@ -66,8 +92,12 @@ const SubscriptionPanel = () => {
             />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiText color="subdued" size="s" data-testid="subscribe-status-text">
-              You are { !isSubscribed && 'not' } subscribed
+            <EuiText
+              color="subdued"
+              size="s"
+              data-testid="subscribe-status-text"
+            >
+              You are {!isSubscribed && 'not'} subscribed
             </EuiText>
           </EuiFlexItem>
           {isSubscribed && (
@@ -77,11 +107,12 @@ const SubscriptionPanel = () => {
           )}
           {displayMessages && (
             <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
-              <EuiText color="subdued" size="s" data-testid="messages-count">Messages: {count}</EuiText>
+              <EuiText color="subdued" size="s" data-testid="messages-count">
+                Messages: {count}
+              </EuiText>
             </EuiFlexItem>
           )}
         </EuiFlexGroup>
-
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
@@ -110,7 +141,7 @@ const SubscriptionPanel = () => {
               data-testid="subscribe-btn"
               disabled={loading}
             >
-              { isSubscribed ? 'Unsubscribe' : 'Subscribe' }
+              {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
             </EuiButton>
           </EuiFlexItem>
           {!!messages.length && (

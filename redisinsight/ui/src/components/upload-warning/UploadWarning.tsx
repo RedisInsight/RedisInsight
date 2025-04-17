@@ -9,10 +9,9 @@ const UploadWarning = () => (
       <EuiIcon type={iwarning} />
     </EuiFlexItem>
     <EuiFlexItem>
-      <EuiText
-        className={styles.warningMessage}
-      >
-        Use files only from trusted authors to avoid automatic execution of malicious code.
+      <EuiText className={styles.warningMessage}>
+        Use files only from trusted authors to avoid automatic execution of
+        malicious code.
       </EuiText>
     </EuiFlexItem>
   </EuiFlexGroup>

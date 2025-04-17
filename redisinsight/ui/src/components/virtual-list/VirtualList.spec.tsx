@@ -7,13 +7,11 @@ const mockedProps = mock<Props>()
 
 describe('VirtualList', () => {
   it('should render', () => {
-    expect(
-      render(<VirtualGrid {...instance(mockedProps)} />)
-    ).toBeTruthy()
+    expect(render(<VirtualGrid {...instance(mockedProps)} />)).toBeTruthy()
   })
   it('should render with empty rows', () => {
     expect(
-      render(<VirtualGrid {...instance(mockedProps)} items={[]} />)
+      render(<VirtualGrid {...instance(mockedProps)} items={[]} />),
     ).toBeTruthy()
   })
 })

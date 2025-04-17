@@ -4,7 +4,8 @@ import {
   describe,
   deps,
   fsExtra,
-  getMainCheckFn, sleep
+  getMainCheckFn,
+  sleep,
 } from '../deps';
 import { constants } from '../../helpers/constants';
 import * as defaultConfig from '../../../config/features-config.json';
@@ -30,7 +31,9 @@ describe('POST /features/sync', () => {
       name: 'Should sync with default config when db:null and remote:fail',
       before: async () => {
         // remove remote config so BE will get an error during fetching
-        await fsExtra.remove(constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH).catch(console.error);
+        await fsExtra
+          .remove(constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH)
+          .catch(console.error);
         // remove all configs
         await featureConfigRepository.delete({});
 
@@ -44,26 +47,33 @@ describe('POST /features/sync', () => {
         expect(empty).to.eq(undefined);
         expect(config.controlNumber).to.gte(0).lt(100);
         expect(config.data).to.eq(JSON.stringify(defaultConfig));
-      }
+      },
     },
     {
       name: 'Should sync with default config when db:version < default.version and remote:fail',
       before: async () => {
-        await fsExtra.remove(constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH).catch(console.error);
-        await featureConfigRepository.update({}, {
-          data: JSON.stringify({
-            ...defaultConfig,
-            version: defaultConfig.version - 0.1,
-          }),
-        });
+        await fsExtra
+          .remove(constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH)
+          .catch(console.error);
+        await featureConfigRepository.update(
+          {},
+          {
+            data: JSON.stringify({
+              ...defaultConfig,
+              version: defaultConfig.version - 0.1,
+            }),
+          },
+        );
 
         const [config, empty] = await featureConfigRepository.find();
 
         expect(empty).to.eq(undefined);
-        expect(config.data).to.eq(JSON.stringify({
-          ...defaultConfig,
-          version: defaultConfig.version - 0.1,
-        }));
+        expect(config.data).to.eq(
+          JSON.stringify({
+            ...defaultConfig,
+            version: defaultConfig.version - 0.1,
+          }),
+        );
       },
       statusCode: 200,
       checkFn: async () => {
@@ -72,15 +82,20 @@ describe('POST /features/sync', () => {
         expect(empty).to.eq(undefined);
         expect(config.controlNumber).to.gte(0).lt(100);
         expect(config.data).to.eq(JSON.stringify(defaultConfig));
-      }
+      },
     },
     {
       name: 'Should sync with remote config when db:null and remote:version > default.version',
       before: async () => {
-        await fsExtra.writeFile(constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH, JSON.stringify({
-          ...defaultConfig,
-          version: defaultConfig.version + 3.33,
-        })).catch(console.error);
+        await fsExtra
+          .writeFile(
+            constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH,
+            JSON.stringify({
+              ...defaultConfig,
+              version: defaultConfig.version + 3.33,
+            }),
+          )
+          .catch(console.error);
 
         // remove all configs
         await featureConfigRepository.delete({});
@@ -98,34 +113,46 @@ describe('POST /features/sync', () => {
 
         expect(empty).to.eq(undefined);
         expect(config.controlNumber).to.gte(0).lt(100);
-        expect(config.data).to.eq(JSON.stringify({
-          ...defaultConfig,
-          version: defaultConfig.version + 3.33,
-        }));
-      }
+        expect(config.data).to.eq(
+          JSON.stringify({
+            ...defaultConfig,
+            version: defaultConfig.version + 3.33,
+          }),
+        );
+      },
     },
     {
       name: 'Should sync with remote config when db:version < default and remote:version > default',
       before: async () => {
-        await fsExtra.writeFile(constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH, JSON.stringify({
-          ...defaultConfig,
-          version: defaultConfig.version + 1.11,
-        })).catch(console.error);
+        await fsExtra
+          .writeFile(
+            constants.TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH,
+            JSON.stringify({
+              ...defaultConfig,
+              version: defaultConfig.version + 1.11,
+            }),
+          )
+          .catch(console.error);
         // remove all configs
-        await featureConfigRepository.update({}, {
-          data: JSON.stringify({
-            ...defaultConfig,
-            version: defaultConfig.version - 0.1,
-          }),
-        });
+        await featureConfigRepository.update(
+          {},
+          {
+            data: JSON.stringify({
+              ...defaultConfig,
+              version: defaultConfig.version - 0.1,
+            }),
+          },
+        );
 
         const [config, empty] = await featureConfigRepository.find();
 
         expect(empty).to.eq(undefined);
-        expect(config.data).to.eq(JSON.stringify({
-          ...defaultConfig,
-          version: defaultConfig.version - 0.1,
-        }));
+        expect(config.data).to.eq(
+          JSON.stringify({
+            ...defaultConfig,
+            version: defaultConfig.version - 0.1,
+          }),
+        );
       },
       statusCode: 200,
       checkFn: async () => {
@@ -133,11 +160,13 @@ describe('POST /features/sync', () => {
 
         expect(empty).to.eq(undefined);
         expect(config.controlNumber).to.gte(0).lt(100);
-        expect(config.data).to.eq(JSON.stringify({
-          ...defaultConfig,
-          version: defaultConfig.version + 1.11,
-        }));
-      }
+        expect(config.data).to.eq(
+          JSON.stringify({
+            ...defaultConfig,
+            version: defaultConfig.version + 1.11,
+          }),
+        );
+      },
     },
   ].map(mainCheckFn);
 });

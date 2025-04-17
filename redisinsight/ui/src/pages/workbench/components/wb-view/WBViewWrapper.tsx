@@ -3,7 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { monaco as monacoEditor } from 'react-monaco-editor'
 
-import { getMonacoLines, getParsedParamsInQuery, isGroupMode, Maybe, Nullable, scrollIntoView, } from 'uiSrc/utils'
+import {
+  getMonacoLines,
+  getParsedParamsInQuery,
+  isGroupMode,
+  Maybe,
+  Nullable,
+  scrollIntoView,
+} from 'uiSrc/utils'
 import {
   changeActiveRunQueryMode,
   changeResultsMode,
@@ -16,10 +23,19 @@ import {
   workbenchResultsSelector,
 } from 'uiSrc/slices/workbench/wb-results'
 import { Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
-import { connectedInstanceSelector, initialState as instanceInitState } from 'uiSrc/slices/instances/instances'
+import {
+  connectedInstanceSelector,
+  initialState as instanceInitState,
+} from 'uiSrc/slices/instances/instances'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
-import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
-import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
+import {
+  cliSettingsSelector,
+  fetchBlockingCliCommandsAction,
+} from 'uiSrc/slices/cli/cli-settings'
+import {
+  appContextWorkbench,
+  setWorkbenchScript,
+} from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { userSettingsWBSelector } from 'uiSrc/slices/user/user-settings'
 import { CodeButtonParams } from 'uiSrc/constants'
@@ -29,7 +45,10 @@ import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 
-import { changeSelectedTab, changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import {
+  changeSelectedTab,
+  changeSidePanel,
+} from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import WBView from './WBView'
 
@@ -61,14 +80,16 @@ const WBViewWrapper = () => {
     clearing,
     processing,
     activeRunQueryMode,
-    resultsMode
+    resultsMode,
   } = useSelector(workbenchResultsSelector)
-  const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
+  const { unsupportedCommands, blockingCommands } =
+    useSelector(cliSettingsSelector)
   const { cleanup: cleanupWB } = useSelector(userSettingsWBSelector)
   const { script: scriptContext } = useSelector(appContextWorkbench)
 
   const [script, setScript] = useState(scriptContext)
-  const [scriptEl, setScriptEl] = useState<Nullable<monacoEditor.editor.IStandaloneCodeEditor>>(null)
+  const [scriptEl, setScriptEl] =
+    useState<Nullable<monacoEditor.editor.IStandaloneCodeEditor>>(null)
 
   const instance = useSelector(connectedInstanceSelector)
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -115,64 +136,69 @@ const WBViewWrapper = () => {
   }, [blockingCommands])
 
   const handleChangeQueryRunMode = () => {
-    dispatch(changeActiveRunQueryMode(
-      activeRunQueryMode === RunQueryMode.ASCII
-        ? RunQueryMode.Raw
-        : RunQueryMode.ASCII
-    ))
+    dispatch(
+      changeActiveRunQueryMode(
+        activeRunQueryMode === RunQueryMode.ASCII
+          ? RunQueryMode.Raw
+          : RunQueryMode.ASCII,
+      ),
+    )
     sendEventTelemetry({
       event: TelemetryEvent.WORKBENCH_MODE_CHANGED,
       eventData: {
         databaseId: instanceId,
         changedFromMode: activeRunQueryMode,
-        changedToMode: activeRunQueryMode === RunQueryMode.ASCII
-          ? RunQueryMode.Raw
-          : RunQueryMode.ASCII
-      }
+        changedToMode:
+          activeRunQueryMode === RunQueryMode.ASCII
+            ? RunQueryMode.Raw
+            : RunQueryMode.ASCII,
+      },
     })
   }
 
   const handleChangeGroupMode = () => {
-    dispatch(changeResultsMode(isGroupMode(resultsMode) ? ResultsMode.Default : ResultsMode.GroupMode))
+    dispatch(
+      changeResultsMode(
+        isGroupMode(resultsMode) ? ResultsMode.Default : ResultsMode.GroupMode,
+      ),
+    )
   }
 
-  const updateOnboardingOnSubmit = () => dispatch(
-    incrementOnboardStepAction(
-      OnboardingSteps.WorkbenchPage,
-      undefined,
-      () => {
-        dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
-        dispatch(changeSidePanel(SidePanels.Insights))
-        sendEventTelemetry({
-          event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
-          eventData: {
-            databaseId: instanceId,
-            step: OnboardingStepName.WorkbenchIntro,
-          }
-        })
-      }
+  const updateOnboardingOnSubmit = () =>
+    dispatch(
+      incrementOnboardStepAction(
+        OnboardingSteps.WorkbenchPage,
+        undefined,
+        () => {
+          dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+          dispatch(changeSidePanel(SidePanels.Insights))
+          sendEventTelemetry({
+            event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
+            eventData: {
+              databaseId: instanceId,
+              step: OnboardingStepName.WorkbenchIntro,
+            },
+          })
+        },
+      ),
     )
-  )
 
   const handleSubmit = (
     commandInit: string = script,
     commandId?: Nullable<string>,
-    executeParams: CodeButtonParams = {}
+    executeParams: CodeButtonParams = {},
   ) => {
     if (!commandInit?.length) return
 
-    dispatch(sendWbQueryAction(
-      commandInit,
-      commandId,
-      executeParams,
-      {
+    dispatch(
+      sendWbQueryAction(commandInit, commandId, executeParams, {
         afterEach: () => {
           const isNewCommand = !commandId
           isNewCommand && scrollResults('start')
         },
-        afterAll: updateOnboardingOnSubmit
-      }
-    ))
+        afterAll: updateOnboardingOnSubmit,
+      }),
+    )
   }
 
   const scrollResults = (inline: ScrollLogicalPosition = 'start') => {
@@ -195,7 +221,7 @@ const WBViewWrapper = () => {
       event: TelemetryEvent.WORKBENCH_CLEAR_ALL_RESULTS_CLICKED,
       eventData: {
         databaseId: instanceId,
-      }
+      },
     })
   }
 
@@ -211,7 +237,7 @@ const WBViewWrapper = () => {
   const sourceValueSubmit = (
     value: string = script,
     commandId?: Nullable<string>,
-    executeParams: CodeButtonParams = { clearEditor: true }
+    executeParams: CodeButtonParams = { clearEditor: true },
   ) => {
     if (state.loading || (!value && !script)) return
 

@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
-  mockRepository, mockServer, mockServerEntity,
+  mockRepository,
+  mockServer,
+  mockServerEntity,
   MockType,
 } from 'src/__mocks__';
 import { LocalServerRepository } from 'src/modules/server/repositories/local.server.repository';
@@ -45,7 +47,7 @@ describe('LocalServerRepository', () => {
   });
 
   describe('getOrCreate', () => {
-    it('should create server entity if it doesn\'t exists before', async () => {
+    it("should create server entity if it doesn't exists before", async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
       expect(await service.getOrCreate()).toEqual(mockServer);
       expect(repository.save).toHaveBeenCalled();

@@ -1,5 +1,8 @@
 import {
-  Injectable, Logger, NotImplementedException, OnApplicationBootstrap,
+  Injectable,
+  Logger,
+  NotImplementedException,
+  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { merge } from 'lodash';
@@ -8,7 +11,10 @@ import { SessionMetadata } from 'src/common/models';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
-import { ConnectionType, DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import {
+  ConnectionType,
+  DatabaseEntity,
+} from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
 import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -19,7 +25,10 @@ import config from 'src/utils/config';
 const REDIS_STACK_CONFIG = config.get('redisStack');
 
 @Injectable()
-export class StackDatabasesRepository extends LocalDatabaseRepository implements OnApplicationBootstrap {
+export class StackDatabasesRepository
+  extends LocalDatabaseRepository
+  implements OnApplicationBootstrap
+{
   protected logger = new Logger('StackDatabasesRepository');
 
   constructor(
@@ -33,18 +42,28 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
     protected readonly constantsProvider: ConstantsProvider,
     protected readonly tagRepository: TagRepository,
   ) {
-    super(repository, sshOptionsRepository, caCertificateRepository, clientCertificateRepository, encryptionService, tagRepository);
+    super(
+      repository,
+      sshOptionsRepository,
+      caCertificateRepository,
+      clientCertificateRepository,
+      encryptionService,
+      tagRepository,
+    );
   }
 
   async onApplicationBootstrap() {
     const sessionMetadata = this.constantsProvider.getSystemSessionMetadata(); // TODO: [USER_CONTEXT]
     await this.setPredefinedDatabase(
       sessionMetadata,
-      merge({
-        name: 'Redis Stack',
-        host: 'localhost',
-        port: '6379',
-      }, REDIS_STACK_CONFIG),
+      merge(
+        {
+          name: 'Redis Stack',
+          host: 'localhost',
+          port: '6379',
+        },
+        REDIS_STACK_CONFIG,
+      ),
     );
   }
 
@@ -64,7 +83,12 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
     ignoreEncryptionErrors: boolean = false,
     omitFields: string[] = [],
   ): Promise<Database> {
-    return super.get(sessionMetadata, REDIS_STACK_CONFIG.id, ignoreEncryptionErrors, omitFields);
+    return super.get(
+      sessionMetadata,
+      REDIS_STACK_CONFIG.id,
+      ignoreEncryptionErrors,
+      omitFields,
+    );
   }
 
   /**
@@ -78,7 +102,9 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
    * @inheritDoc
    */
   async create() {
-    return Promise.reject(new NotImplementedException('This functionality is not supported'));
+    return Promise.reject(
+      new NotImplementedException('This functionality is not supported'),
+    );
   }
 
   /**
@@ -95,12 +121,10 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
    */
   private async setPredefinedDatabase(
     sessionMetadata: SessionMetadata,
-    options: { id: string; name: string; host: string; port: string; },
+    options: { id: string; name: string; host: string; port: string },
   ): Promise<void> {
     try {
-      const {
-        id, name, host, port,
-      } = options;
+      const { id, name, host, port } = options;
       const isExist = await this.exists(sessionMetadata);
       if (!isExist) {
         await super.create(
@@ -118,9 +142,16 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
           false,
         );
       }
-      this.logger.debug(`Succeed to set predefined database ${id}`, sessionMetadata);
+      this.logger.debug(
+        `Succeed to set predefined database ${id}`,
+        sessionMetadata,
+      );
     } catch (error) {
-      this.logger.error('Failed to set predefined database', error, sessionMetadata);
+      this.logger.error(
+        'Failed to set predefined database',
+        error,
+        sessionMetadata,
+      );
     }
   }
 }

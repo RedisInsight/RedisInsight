@@ -4,7 +4,10 @@ import { EuiLoadingContent } from '@elastic/eui'
 
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { fetchRedisearchListAction, redisearchListSelector } from 'uiSrc/slices/browser/redisearch'
+import {
+  fetchRedisearchListAction,
+  redisearchListSelector,
+} from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { mergeRedisCommandsSpecs } from 'uiSrc/utils/transformers/redisCommands'
 import SEARCH_COMMANDS_SPEC from 'uiSrc/pages/workbench/data/supported_commands.json'
@@ -33,16 +36,16 @@ const QueryWrapper = (props: Props) => {
     onKeyDown,
     onSubmit,
     onQueryChangeMode,
-    onChangeGroupMode
+    onChangeGroupMode,
   } = props
-  const { loading: isCommandsLoading, } = useSelector(appRedisCommandsSelector)
+  const { loading: isCommandsLoading } = useSelector(appRedisCommandsSelector)
   const { id: connectedIndstanceId } = useSelector(connectedInstanceSelector)
   const { data: indexes = [] } = useSelector(redisearchListSelector)
   const { spec: COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
 
   const REDIS_COMMANDS = useMemo(
     () => mergeRedisCommandsSpecs(COMMANDS_SPEC, SEARCH_COMMANDS_SPEC),
-    [COMMANDS_SPEC, SEARCH_COMMANDS_SPEC]
+    [COMMANDS_SPEC, SEARCH_COMMANDS_SPEC],
   )
 
   const dispatch = useDispatch()

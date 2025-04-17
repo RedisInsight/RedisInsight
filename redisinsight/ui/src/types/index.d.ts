@@ -3,7 +3,11 @@ import { Buffer } from 'buffer'
 // eslint-disable-next-line import/order
 import { Nullable } from 'uiSrc/utils'
 import { KeyValueCompressor } from 'uiSrc/constants'
-import { RedisResponseBuffer, RedisString, UintArray } from 'uiSrc/slices/interfaces'
+import {
+  RedisResponseBuffer,
+  RedisString,
+  UintArray,
+} from 'uiSrc/slices/interfaces'
 import { Config } from 'uiSrc/config'
 import { IPCHandler } from '../../../desktop/preload'
 
@@ -13,7 +17,7 @@ declare global {
     Buffer: typeof Buffer
     app: WindowApp
     windowId?: string
-    MonacoEnvironment: Environment;
+    MonacoEnvironment: Environment
     readonly __RI_PROXY_PATH__: string
   }
 }

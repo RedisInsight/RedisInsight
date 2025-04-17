@@ -19,7 +19,8 @@ export class SumGroup {
   total: number;
 
   @ApiProperty({
-    description: 'Group threshold during analyzing (all values less then (<) threshold)',
+    description:
+      'Group threshold during analyzing (all values less then (<) threshold)',
     type: Number,
     example: -1,
   })

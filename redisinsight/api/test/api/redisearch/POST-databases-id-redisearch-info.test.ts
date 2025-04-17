@@ -10,13 +10,13 @@ import {
   getMainCheckFn,
 } from '../deps';
 
-const {
-  server, request, constants, rte, localDb,
-} = deps;
+const { server, request, constants, rte, localDb } = deps;
 
 // endpoint to test
-const endpoint = (instanceId = constants.TEST_INSTANCE_ID) => request(server)
-  .post(`/${constants.API.DATABASES}/${instanceId}/redisearch/info`);
+const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/redisearch/info`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -85,8 +85,10 @@ const EXPECTED_SCHEMA_V1 = Joi.object({
   total_inverted_index_blocks: Joi.string(),
   hash_indexing_failures: Joi.string(),
   indexing: Joi.string(),
-  index_definition: Joi.object(BASE_RESPONSE_SCHEMA.index_definition)
-}).required().strict();
+  index_definition: Joi.object(BASE_RESPONSE_SCHEMA.index_definition),
+})
+  .required()
+  .strict();
 
 const EXPECTED_SCHEMA_V2 = Joi.object({
   ...BASE_RESPONSE_SCHEMA,
@@ -100,11 +102,13 @@ const EXPECTED_SCHEMA_V2 = Joi.object({
   index_definition: Joi.object({
     ...BASE_RESPONSE_SCHEMA.index_definition,
     indexes_all: Joi.string(),
-  })
-}).required().strict();
+  }),
+})
+  .required()
+  .strict();
 
-const INVALID_INDEX_ERROR_MESSAGE_V1: string = "Unknown Index name";
-const INVALID_INDEX_ERROR_MESSAGE_V2: string = "Unknown index name";
+const INVALID_INDEX_ERROR_MESSAGE_V1: string = 'Unknown Index name';
+const INVALID_INDEX_ERROR_MESSAGE_V2: string = 'Unknown index name';
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -112,7 +116,11 @@ describe('POST /databases/:id/redisearch/info', () => {
   requirements('!rte.bigData', 'rte.modules.search');
   before(async () => {
     await rte.data.generateRedisearchIndexes(true);
-    await localDb.createTestDbInstance(rte, {}, { id: constants.TEST_INSTANCE_ID_2 });
+    await localDb.createTestDbInstance(
+      rte,
+      {},
+      { id: constants.TEST_INSTANCE_ID_2 },
+    );
   });
 
   describe('Validation', () => {
@@ -140,16 +148,20 @@ describe('POST /databases/:id/redisearch/info', () => {
         },
         statusCode: 500,
         responseBody: {
-            message: INVALID_INDEX_ERROR_MESSAGE_V1,
-            error: 'Internal Server Error',
-            statusCode: 500,
+          message: INVALID_INDEX_ERROR_MESSAGE_V1,
+          error: 'Internal Server Error',
+          statusCode: 500,
         },
       },
     ].forEach(mainCheckFn);
   });
 
   describe('Common, 2.8.X <= redisearch version  < 2.10.X', () => {
-    requirements(() => 20800 <= rte.env.modules.search.version && rte.env.modules.search.version < 21000);
+    requirements(
+      () =>
+        20800 <= rte.env.modules.search.version &&
+        rte.env.modules.search.version < 21000,
+    );
     [
       {
         name: 'Should get info index',
@@ -167,9 +179,9 @@ describe('POST /databases/:id/redisearch/info', () => {
         },
         statusCode: 500,
         responseBody: {
-            message: INVALID_INDEX_ERROR_MESSAGE_V2,
-            error: 'Internal Server Error',
-            statusCode: 500,
+          message: INVALID_INDEX_ERROR_MESSAGE_V2,
+          error: 'Internal Server Error',
+          statusCode: 500,
         },
       },
     ].forEach(mainCheckFn);

@@ -1,4 +1,7 @@
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import {
   BrowserToolKeysCommands,
   BrowserToolRejsonRlCommands,
@@ -17,13 +20,10 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
     this.logger.debug(`Getting ${RedisDataType.JSON} type info.`);
 
     if (includeSize !== false) {
-      const [
-        [, ttl = null],
-        [, size = null],
-      ] = await client.sendPipeline([
+      const [[, ttl = null], [, size = null]] = (await client.sendPipeline([
         [BrowserToolKeysCommands.Ttl, key],
         [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-      ]) as [any, number][];
+      ])) as [any, number][];
 
       const length = await this.getLength(client, key);
 
@@ -36,19 +36,17 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
       };
     }
 
-    const [
-      [, ttl = null],
-    ] = await client.sendPipeline([
+    const [[, ttl = null]] = (await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
-    ]) as [any, number][];
+    ])) as [any, number][];
 
     const length = await this.getLength(client, key);
 
     let size = -1;
     if (length < 100) {
-      const sizeData = await client.sendPipeline([
+      const sizeData = (await client.sendPipeline([
         [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-      ]) as [any, number][];
+      ])) as [any, number][];
       size = sizeData && sizeData[0] && sizeData[0][1];
     }
 
@@ -61,7 +59,10 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
     };
   }
 
-  private async getLength(client: RedisClient, key: RedisString): Promise<number> {
+  private async getLength(
+    client: RedisClient,
+    key: RedisString,
+  ): Promise<number> {
     try {
       const objectKeyType = await client.sendCommand(
         [BrowserToolRejsonRlCommands.JsonType, key],
@@ -70,20 +71,20 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
 
       switch (objectKeyType) {
         case 'object':
-          return await client.sendCommand(
+          return (await client.sendCommand(
             [BrowserToolRejsonRlCommands.JsonObjLen, key],
             { replyEncoding: 'utf8' },
-          ) as number;
+          )) as number;
         case 'array':
-          return await client.sendCommand(
+          return (await client.sendCommand(
             [BrowserToolRejsonRlCommands.JsonArrLen, key],
             { replyEncoding: 'utf8' },
-          ) as number;
+          )) as number;
         case 'string':
-          return await client.sendCommand(
+          return (await client.sendCommand(
             [BrowserToolRejsonRlCommands.JsonStrLen, key],
             { replyEncoding: 'utf8' },
-          ) as number;
+          )) as number;
         default:
           return null;
       }

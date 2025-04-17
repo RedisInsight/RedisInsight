@@ -11,8 +11,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { fetchRdiPipeline, setChangedFile, setPipeline } from 'uiSrc/slices/rdi/pipeline'
-import { appContextPipelineManagement, setPipelineDialogState } from 'uiSrc/slices/app/context'
+import {
+  fetchRdiPipeline,
+  setChangedFile,
+  setPipeline,
+} from 'uiSrc/slices/rdi/pipeline'
+import {
+  appContextPipelineManagement,
+  setPipelineDialogState,
+} from 'uiSrc/slices/app/context'
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
 import UploadIcon from 'uiSrc/assets/img/rdi/upload_from_server.svg?react'
 
@@ -21,7 +28,7 @@ import styles from './styles.module.scss'
 
 export const EMPTY_PIPELINE = {
   config: '',
-  jobs: []
+  jobs: [],
 }
 
 export enum PipelineSourceOptions {
@@ -72,7 +79,10 @@ const SourcePipelineDialog = () => {
     onSelect(PipelineSourceOptions.FILE)
   }
 
-  const onEnter = (event: React.KeyboardEvent<HTMLDivElement>, callback: () => void) => {
+  const onEnter = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    callback: () => void,
+  ) => {
     if (event.key === keys.ENTER) callback()
   }
 
@@ -90,7 +100,11 @@ const SourcePipelineDialog = () => {
   }
 
   return (
-    <EuiModal className={styles.container} onClose={handleCloseDialog} data-testid="rdi-pipeline-source-dialog">
+    <EuiModal
+      className={styles.container}
+      onClose={handleCloseDialog}
+      data-testid="rdi-pipeline-source-dialog"
+    >
       <EuiModalBody>
         <div className={styles.content}>
           <EuiTitle size="s">

@@ -15,7 +15,12 @@ import {
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 
 import { JSONScalarProps } from '../interfaces'
-import { generatePath, getClassNameByValue, isValidJSON, stringifyScalarValue } from '../utils'
+import {
+  generatePath,
+  getClassNameByValue,
+  isValidJSON,
+  stringifyScalarValue,
+} from '../utils'
 import { JSONErrors } from '../constants'
 
 import styles from '../styles.module.scss'
@@ -33,7 +38,9 @@ const RejsonScalar = (props: JSONScalarProps) => {
     handleSubmitRemoveKey,
   } = props
   const [changedValue, setChangedValue] = useState<any>('')
-  const [path] = useState<string>(currentFullPath || generatePath(parentPath, keyName))
+  const [path] = useState<string>(
+    currentFullPath || generatePath(parentPath, keyName),
+  )
   const [error, setError] = useState<Nullable<string>>(null)
   const [editing, setEditing] = useState<boolean>(false)
   const [deleting, setDeleting] = useState<string>('')
@@ -55,22 +62,37 @@ const RejsonScalar = (props: JSONScalarProps) => {
       return
     }
 
-    dispatch<any>(setReJSONDataAction(selectedKey, path, String(value), true, undefined, () => setEditing(false)))
+    dispatch<any>(
+      setReJSONDataAction(
+        selectedKey,
+        path,
+        String(value),
+        true,
+        undefined,
+        () => setEditing(false),
+      ),
+    )
   }
 
   return (
     <>
-      {isRoot ? (<p className={getClassNameByValue(value)}>{`${changedValue}`}</p>) : (
+      {isRoot ? (
+        <p className={getClassNameByValue(value)}>{`${changedValue}`}</p>
+      ) : (
         <div className={styles.row}>
           <div className={styles.rowContainer}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', flexGrow: 1 }}>
+            <div
+              style={{ display: 'flex', alignItems: 'flex-start', flexGrow: 1 }}
+            >
               <span
                 className={cx(styles.quoted, styles.keyName)}
-                style={{ paddingLeft: `${leftPadding}em`, }}
+                style={{ paddingLeft: `${leftPadding}em` }}
               >
                 {keyName}
               </span>
-              <div style={{ paddingLeft: '0.2em', display: 'inline-block' }}>:</div>
+              <div style={{ paddingLeft: '0.2em', display: 'inline-block' }}>
+                :
+              </div>
               {editing ? (
                 <div className="jsonItemEditor">
                   <InlineItemEditor
@@ -119,7 +141,9 @@ const RejsonScalar = (props: JSONScalarProps) => {
                 closePopover={() => setDeleting('')}
                 updateLoading={false}
                 showPopover={(item) => setDeleting(`${item}scalar`)}
-                handleDeleteItem={() => handleSubmitRemoveKey(path, keyName.toString())}
+                handleDeleteItem={() =>
+                  handleSubmitRemoveKey(path, keyName.toString())
+                }
               />
             </div>
           </div>

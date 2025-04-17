@@ -1,4 +1,10 @@
-import { EuiBadge, EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle } from '@elastic/eui'
+import {
+  EuiBadge,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiText,
+  EuiTitle,
+} from '@elastic/eui'
 import { EuiTitleSize } from '@elastic/eui/src/components/title/title'
 import cx from 'classnames'
 import { format } from 'date-fns'
@@ -21,21 +27,31 @@ const Notification = (props: Props) => {
 
   return (
     <>
-      <EuiTitle size={titleSize} className={styles.notificationTitle} data-testid="notification-title">
+      <EuiTitle
+        size={titleSize}
+        className={styles.notificationTitle}
+        data-testid="notification-title"
+      >
         <span>{notification.title}</span>
       </EuiTitle>
 
-      <EuiText size="s" color="subdued" className={cx('notificationHTMLBody', styles.notificationBody)} data-testid="notification-body">
+      <EuiText
+        size="s"
+        color="subdued"
+        className={cx('notificationHTMLBody', styles.notificationBody)}
+        data-testid="notification-body"
+      >
         {parse(notification.body)}
       </EuiText>
 
-      <EuiFlexGroup className={styles.notificationFooter} alignItems="center" justifyContent="flexStart" gutterSize="none">
+      <EuiFlexGroup
+        className={styles.notificationFooter}
+        alignItems="center"
+        justifyContent="flexStart"
+        gutterSize="none"
+      >
         <EuiFlexItem grow={false}>
-          <EuiText
-            size="xs"
-            color="subdued"
-            data-testid="notification-date"
-          >
+          <EuiText size="xs" color="subdued" data-testid="notification-date">
             {format(notification.timestamp * 1000, NOTIFICATION_DATE_FORMAT)}
           </EuiText>
         </EuiFlexItem>

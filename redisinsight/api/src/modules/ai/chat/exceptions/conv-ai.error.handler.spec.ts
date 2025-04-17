@@ -3,13 +3,15 @@ import {
   ConvAiBadRequestException,
   ConvAiForbiddenException,
   ConvAiUnauthorizedException,
-  ConvAiNotFoundException, ConvAiInternalServerErrorException,
+  ConvAiNotFoundException,
+  ConvAiInternalServerErrorException,
 } from 'src/modules/ai/chat/exceptions';
 import { BadRequestException } from '@nestjs/common';
 import {
   mockAiChatAccessDeniedError,
   mockAiChatBadRequestError,
-  mockAiChatInternalServerError, mockAiChatNotFoundError,
+  mockAiChatInternalServerError,
+  mockAiChatNotFoundError,
   mockAiChatUnauthorizedError,
 } from 'src/__mocks__';
 import { wrapConvAiError } from './conv-ai.error.handler';
@@ -18,27 +20,39 @@ describe('wrapConvAiError', () => {
   it('Should return ConvAiBadRequestException of status code is 400', async () => {
     const error = wrapConvAiError(mockAiChatBadRequestError);
     expect(error).toBeInstanceOf(ConvAiBadRequestException);
-    expect(error).toEqual(new ConvAiBadRequestException(mockAiChatBadRequestError.message));
+    expect(error).toEqual(
+      new ConvAiBadRequestException(mockAiChatBadRequestError.message),
+    );
   });
   it('Should return ConvAiUnauthorizedException of status code is 401', async () => {
     const error = wrapConvAiError(mockAiChatUnauthorizedError);
     expect(error).toBeInstanceOf(ConvAiUnauthorizedException);
-    expect(error).toEqual(new ConvAiUnauthorizedException(mockAiChatUnauthorizedError.message));
+    expect(error).toEqual(
+      new ConvAiUnauthorizedException(mockAiChatUnauthorizedError.message),
+    );
   });
   it('Should return ConvAiForbiddenException of status code is 403', async () => {
     const error = wrapConvAiError(mockAiChatAccessDeniedError);
     expect(error).toBeInstanceOf(ConvAiForbiddenException);
-    expect(error).toEqual(new ConvAiForbiddenException(mockAiChatAccessDeniedError.message));
+    expect(error).toEqual(
+      new ConvAiForbiddenException(mockAiChatAccessDeniedError.message),
+    );
   });
   it('Should return ConvAiNotFoundException of status code is 404', async () => {
     const error = wrapConvAiError(mockAiChatNotFoundError);
     expect(error).toBeInstanceOf(ConvAiNotFoundException);
-    expect(error).toEqual(new ConvAiNotFoundException(mockAiChatNotFoundError.message));
+    expect(error).toEqual(
+      new ConvAiNotFoundException(mockAiChatNotFoundError.message),
+    );
   });
   it('Should return ConvAiInternalServerErrorException of status code is 500', async () => {
     const error = wrapConvAiError(mockAiChatInternalServerError);
     expect(error).toBeInstanceOf(ConvAiInternalServerErrorException);
-    expect(error).toEqual(new ConvAiInternalServerErrorException(mockAiChatInternalServerError.message));
+    expect(error).toEqual(
+      new ConvAiInternalServerErrorException(
+        mockAiChatInternalServerError.message,
+      ),
+    );
   });
   it('Should return ConvAiInternalServerErrorException by default', async () => {
     const errorMessage = 'Unreachable error';

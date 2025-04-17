@@ -5,7 +5,7 @@ import {
   EuiOutsideClickDetector,
   EuiPopover,
   EuiSpacer,
-  EuiText
+  EuiText,
 } from '@elastic/eui'
 import React, { useState } from 'react'
 
@@ -49,7 +49,9 @@ const ConfirmationPopover = (props: Props) => {
     onButtonClick?.()
   }
 
-  const popoverButton = React.cloneElement(button, { onClick: handleButtonClick })
+  const popoverButton = React.cloneElement(button, {
+    onClick: handleButtonClick,
+  })
   const confirmBtn = React.cloneElement(submitBtn, { onClick: handleConfirm })
 
   return (
@@ -77,13 +79,15 @@ const ConfirmationPopover = (props: Props) => {
         <EuiSpacer size="xs" />
         {body}
         <EuiSpacer size="m" />
-        <EuiFlexGroup gutterSize="none" justifyContent={appendAction ? 'spaceBetween' : 'flexEnd'} alignItems="center">
+        <EuiFlexGroup
+          gutterSize="none"
+          justifyContent={appendAction ? 'spaceBetween' : 'flexEnd'}
+          alignItems="center"
+        >
           <EuiFlexItem grow={false}>
             {!!appendAction && appendAction}
           </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            {confirmBtn}
-          </EuiFlexItem>
+          <EuiFlexItem grow={false}>{confirmBtn}</EuiFlexItem>
         </EuiFlexGroup>
       </EuiPopover>
     </EuiOutsideClickDetector>

@@ -59,7 +59,8 @@ export const mockDatabaseToImportWithCertsFromEnvsPrepared = {
   clientCert: {
     id: mockDatabaseToImportWithCertsFromEnvsInput.id,
     name: `${mockDatabaseToImportWithCertsFromEnvsInput.id}_${mockDatabaseToImportWithCertsFromEnvsInput.name}`,
-    certificate: mockDatabaseToImportWithCertsFromEnvsInput.clientCert.certificate,
+    certificate:
+      mockDatabaseToImportWithCertsFromEnvsInput.clientCert.certificate,
     key: mockDatabaseToImportWithCertsFromEnvsInput.clientCert.key,
     isPreSetup: true,
   },
@@ -146,7 +147,8 @@ export const mockDatabaseToImportWithCertsFromFilePrepared = {
   clientCert: {
     id: mockDatabaseToImportWithCertsFromFileInput.id,
     name: `${mockDatabaseToImportWithCertsFromFileInput.id}_${mockDatabaseToImportWithCertsFromFileInput.name}`,
-    certificate: mockDatabaseToImportWithCertsFromFileInput.clientCert.certificate,
+    certificate:
+      mockDatabaseToImportWithCertsFromFileInput.clientCert.certificate,
     key: mockDatabaseToImportWithCertsFromFileInput.clientCert.key,
     isPreSetup: true,
   },

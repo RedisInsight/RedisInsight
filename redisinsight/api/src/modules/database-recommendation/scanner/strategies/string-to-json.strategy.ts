@@ -1,7 +1,5 @@
-import { AbstractRecommendationStrategy }
-  from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
-import { IDatabaseRecommendationStrategyData }
-  from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
+import { AbstractRecommendationStrategy } from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
+import { IDatabaseRecommendationStrategyData } from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { isJson } from 'src/utils/base.helper';
 import { getUTF8FromBuffer } from 'src/utils/cli-helper';
 

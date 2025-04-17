@@ -60,77 +60,81 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   const hiddenCols = useRef<Set<string>>(new Set([]))
   const lastHiddenColumn = useRef<EuiTableFieldDataColumnType<T>>()
 
-  const filteredColumns = useMemo(() => {
+  const visibleColumns = useMemo(() => {
     if (!incomingColumns?.length) return []
-    let columns = incomingColumns
+    let filteredColumns = incomingColumns
     if (shownColumns && shownColumns.length) {
-      columns = incomingColumns.filter((col) =>
+      filteredColumns = incomingColumns.filter((col) =>
         shownColumns.includes(col.field as DatabaseListColumn),
       )
     }
 
-    return columns
-  }, [incomingColumns, shownColumns])
+    const adjustColumns = (
+      cols: EuiTableFieldDataColumnType<T>[],
+      offsetWidth: number,
+    ): EuiTableFieldDataColumnType<T>[] => {
+      let sum = cols?.reduce(
+        (prev, next) => prev + getColumnWidth(next.width),
+        0,
+      )
+      const visibleColumnsLength = cols.length - hiddenCols.current.size
 
-  const adjustColumns = (
-    cols: EuiTableFieldDataColumnType<T>[],
-    offsetWidth: number,
-  ): EuiTableFieldDataColumnType<T>[] => {
-    let sum = cols?.reduce((prev, next) => prev + getColumnWidth(next.width), 0)
-    const visibleColumnsLength = cols.length - hiddenCols.current.size
+      // hide columns
+      if (
+        sum > offsetWidth &&
+        hiddenColsOnResize.length + visibleColumnsLength
+      ) {
+        let resultsCol = [...cols]
+        while (sum > offsetWidth) {
+          const colToHide = hiddenColsOnResize[hiddenCols.current.size]
+          const initialCol = findColumn(filteredColumns, colToHide)
+          if (!initialCol) return resultsCol
 
-    // hide columns
-    if (sum > offsetWidth && hiddenColsOnResize.length + visibleColumnsLength) {
-      let resultsCol = [...cols]
-      while (sum > offsetWidth) {
-        const colToHide = hiddenColsOnResize[hiddenCols.current.size]
-        const initialCol = findColumn(filteredColumns, colToHide)
-        if (!initialCol) return resultsCol
+          sum -= getColumnWidth(initialCol?.width)
+          hiddenCols.current.add(colToHide)
+          lastHiddenColumn.current = initialCol
+          resultsCol = resultsCol.map((item) =>
+            item.field === colToHide ? hideColumn(item) : item,
+          )
+        }
 
-        sum -= getColumnWidth(initialCol?.width)
-        hiddenCols.current.add(colToHide)
-        lastHiddenColumn.current = initialCol
-        resultsCol = resultsCol.map((item) =>
-          item.field === colToHide ? hideColumn(item) : item,
+        return resultsCol
+      }
+
+      // show columns
+      if (filteredColumns.length > visibleColumnsLength) {
+        // early return to not calculate other columns
+        const lastHiddenColWidth = getColumnWidth(
+          lastHiddenColumn.current?.width,
         )
+        if (sum + lastHiddenColWidth > offsetWidth) {
+          return cols
+        }
+
+        let resultsCol = [...cols]
+        Array.from(hiddenCols.current)
+          .reverse()
+          .forEach((hiddenCol) => {
+            const initialCol = findColumn(filteredColumns, hiddenCol)
+            if (!initialCol) return
+
+            const hiddenColWidth = getColumnWidth(initialCol.width)
+            if (hiddenColWidth + sum < offsetWidth) {
+              hiddenCols.current.delete(hiddenCol)
+              sum += hiddenColWidth
+              lastHiddenColumn.current = initialCol
+              resultsCol = resultsCol.map((item) =>
+                item.field === hiddenCol ? initialCol : item,
+              )
+            }
+          })
+
+        return resultsCol
       }
 
-      return resultsCol
+      return cols
     }
 
-    // show columns
-    if (filteredColumns.length > visibleColumnsLength) {
-      // early return to not calculate other columns
-      const lastHiddenColWidth = getColumnWidth(lastHiddenColumn.current?.width)
-      if (sum + lastHiddenColWidth > offsetWidth) {
-        return cols
-      }
-
-      let resultsCol = [...cols]
-      Array.from(hiddenCols.current)
-        .reverse()
-        .forEach((hiddenCol) => {
-          const initialCol = findColumn(filteredColumns, hiddenCol)
-          if (!initialCol) return
-
-          const hiddenColWidth = getColumnWidth(initialCol.width)
-          if (hiddenColWidth + sum < offsetWidth) {
-            hiddenCols.current.delete(hiddenCol)
-            sum += hiddenColWidth
-            lastHiddenColumn.current = initialCol
-            resultsCol = resultsCol.map((item) =>
-              item.field === hiddenCol ? initialCol : item,
-            )
-          }
-        })
-
-      return resultsCol
-    }
-
-    return cols
-  }
-
-  const visibleColumns = useMemo(() => {
     if (hiddenColsOnResize?.length && containerTableRef.current) {
       const { offsetWidth } = containerTableRef.current
       const beforeAdjustHiddenCols = hiddenCols.current.size
@@ -149,7 +153,7 @@ function ItemList<T extends { id: string; visible?: boolean }>({
     }
 
     return filteredColumns
-  }, [filteredColumns, width, hiddenColsOnResize])
+  }, [incomingColumns, shownColumns, width, hiddenColsOnResize])
 
   useEffect(() => {
     if (loading) {

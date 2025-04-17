@@ -15,7 +15,14 @@ import {
 import cx from 'classnames'
 import { saveAs } from 'file-saver'
 import { capitalize, map } from 'lodash'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import AutoSizer from 'react-virtualized-auto-sizer'
@@ -350,301 +357,309 @@ const DatabasesListWrapper = (props: Props) => {
     />
   )
 
-  const columns: EuiTableFieldDataColumnType<Instance>[] = [
-    {
-      field: DatabaseListColumn.Name,
-      className: 'column_name',
-      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Name),
-      dataType: 'string',
-      truncateText: true,
-      'data-test-subj': 'database-alias-column',
-      sortable: ({ name, id }) => {
-        if (isCreateCloudDb(id))
-          return sortingRef.current.direction === 'asc' ? '' : false
-        return name?.toLowerCase()
-      },
-      width: '200%',
-      render: function InstanceCell(name: string = '', instance: Instance) {
-        if (isCreateCloudDb(instance.id)) {
-          return (
-            <EuiText className={cx(styles.tooltipAnchorColumnName)}>
-              {instance.name}
-            </EuiText>
-          )
-        }
-
-        const {
-          id,
-          db,
-          new: newStatus = false,
-          lastConnection,
-          createdAt,
-          cloudDetails,
-        } = instance
-        const cellContent = replaceSpaces(name.substring(0, 200))
-
-        return (
-          <div role="presentation">
-            <DbStatus
-              id={id}
-              isNew={newStatus}
-              lastConnection={lastConnection}
-              createdAt={createdAt}
-              isFree={cloudDetails?.free}
-            />
-            <EuiToolTip
-              position="bottom"
-              title="Database Alias"
-              className={styles.tooltipColumnName}
-              content={`${formatLongName(name)} ${getDbIndex(db)}`}
-            >
-              <EuiText
-                className={styles.tooltipAnchorColumnName}
-                data-testid={`instance-name-${id}`}
-                onClick={(e: React.MouseEvent) =>
-                  handleCheckConnectToInstance(e, instance)
-                }
-                onKeyDown={(e: React.KeyboardEvent) =>
-                  handleCheckConnectToInstance(e, instance)
-                }
-              >
-                <EuiTextColor
-                  className={cx(styles.tooltipColumnNameText, {
-                    [styles.withDb]: db,
-                  })}
-                >
-                  {cellContent}
-                </EuiTextColor>
-                <EuiTextColor>{` ${getDbIndex(db)}`}</EuiTextColor>
+  const columns: EuiTableFieldDataColumnType<Instance>[] = useMemo(
+    () => [
+      {
+        field: DatabaseListColumn.Name,
+        className: 'column_name',
+        name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Name),
+        dataType: 'string',
+        truncateText: true,
+        'data-test-subj': 'database-alias-column',
+        sortable: ({ name, id }) => {
+          if (isCreateCloudDb(id))
+            return sortingRef.current.direction === 'asc' ? '' : false
+          return name?.toLowerCase()
+        },
+        width: '200%',
+        render: function InstanceCell(name: string = '', instance: Instance) {
+          if (isCreateCloudDb(instance.id)) {
+            return (
+              <EuiText className={cx(styles.tooltipAnchorColumnName)}>
+                {instance.name}
               </EuiText>
-            </EuiToolTip>
-          </div>
-        )
-      },
-    },
-    {
-      field: DatabaseListColumn.Host,
-      className: 'column_host',
-      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Host),
-      width: '200%',
-      dataType: 'string',
-      truncateText: true,
-      sortable: ({ host, port, id }) => {
-        if (isCreateCloudDb(id))
-          return sortingRef.current.direction === 'asc' ? '' : false
-        return `${host}:${port}`
-      },
-      render: function HostPort(name: string, { host, port, id }: Instance) {
-        if (isCreateCloudDb(id)) return host
+            )
+          }
 
-        const text = `${name}:${port}`
-        return (
-          <div className="host_port" data-testid="host-port">
-            <EuiText className="copyHostPortText">{text}</EuiText>
-            <EuiToolTip
-              position="right"
-              content="Copy"
-              anchorClassName="copyHostPortTooltip"
-            >
-              <EuiButtonIcon
-                iconType="copy"
-                aria-label="Copy host:port"
-                className="copyHostPortBtn"
-                onClick={() => handleCopy(text, id)}
+          const {
+            id,
+            db,
+            new: newStatus = false,
+            lastConnection,
+            createdAt,
+            cloudDetails,
+          } = instance
+          const cellContent = replaceSpaces(name.substring(0, 200))
+
+          return (
+            <div role="presentation">
+              <DbStatus
+                id={id}
+                isNew={newStatus}
+                lastConnection={lastConnection}
+                createdAt={createdAt}
+                isFree={cloudDetails?.free}
               />
-            </EuiToolTip>
-          </div>
-        )
-      },
-    },
-    {
-      field: DatabaseListColumn.ConnectionType,
-      className: 'column_type',
-      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.ConnectionType),
-      dataType: 'string',
-      sortable: ({ id, connectionType }) => {
-        if (isCreateCloudDb(id))
-          return sortingRef.current.direction === 'asc' ? '' : false
-        return connectionType
-      },
-      width: '150%',
-      truncateText: true,
-      hideForMobile: true,
-      render: (cellData: ConnectionType) =>
-        CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
-    },
-    {
-      field: DatabaseListColumn.Modules,
-      className: styles.columnModules,
-      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Modules), // Capabilities
-      width: '110%',
-      dataType: 'string',
-      render: (_cellData, { modules = [], isRediStack }: Instance) => (
-        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-          <AutoSizer>
-            {({ width: columnWidth }) => (
-              <div style={{ width: columnWidth, height: 40, marginLeft: -6 }}>
-                <DatabaseListModules
-                  content={
-                    isRediStack ? (
-                      <EuiIcon
-                        type={
-                          theme === Theme.Dark
-                            ? RediStackDarkMin
-                            : RediStackLightMin
-                        }
-                        data-testid="redis-stack-icon"
-                      />
-                    ) : undefined
+              <EuiToolTip
+                position="bottom"
+                title="Database Alias"
+                className={styles.tooltipColumnName}
+                content={`${formatLongName(name)} ${getDbIndex(db)}`}
+              >
+                <EuiText
+                  className={styles.tooltipAnchorColumnName}
+                  data-testid={`instance-name-${id}`}
+                  onClick={(e: React.MouseEvent) =>
+                    handleCheckConnectToInstance(e, instance)
                   }
-                  tooltipTitle={
-                    isRediStack ? (
-                      <>
+                  onKeyDown={(e: React.KeyboardEvent) =>
+                    handleCheckConnectToInstance(e, instance)
+                  }
+                >
+                  <EuiTextColor
+                    className={cx(styles.tooltipColumnNameText, {
+                      [styles.withDb]: db,
+                    })}
+                  >
+                    {cellContent}
+                  </EuiTextColor>
+                  <EuiTextColor>{` ${getDbIndex(db)}`}</EuiTextColor>
+                </EuiText>
+              </EuiToolTip>
+            </div>
+          )
+        },
+      },
+      {
+        field: DatabaseListColumn.Host,
+        className: 'column_host',
+        name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Host),
+        width: '200%',
+        dataType: 'string',
+        truncateText: true,
+        sortable: ({ host, port, id }) => {
+          if (isCreateCloudDb(id))
+            return sortingRef.current.direction === 'asc' ? '' : false
+          return `${host}:${port}`
+        },
+        render: function HostPort(name: string, { host, port, id }: Instance) {
+          if (isCreateCloudDb(id)) return host
+
+          const text = `${name}:${port}`
+          return (
+            <div className="host_port" data-testid="host-port">
+              <EuiText className="copyHostPortText">{text}</EuiText>
+              <EuiToolTip
+                position="right"
+                content="Copy"
+                anchorClassName="copyHostPortTooltip"
+              >
+                <EuiButtonIcon
+                  iconType="copy"
+                  aria-label="Copy host:port"
+                  className="copyHostPortBtn"
+                  onClick={() => handleCopy(text, id)}
+                />
+              </EuiToolTip>
+            </div>
+          )
+        },
+      },
+      {
+        field: DatabaseListColumn.ConnectionType,
+        className: 'column_type',
+        name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.ConnectionType),
+        dataType: 'string',
+        sortable: ({ id, connectionType }) => {
+          if (isCreateCloudDb(id))
+            return sortingRef.current.direction === 'asc' ? '' : false
+          return connectionType
+        },
+        width: '150%',
+        truncateText: true,
+        hideForMobile: true,
+        render: (cellData: ConnectionType) =>
+          CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
+      },
+      {
+        field: DatabaseListColumn.Modules,
+        className: styles.columnModules,
+        name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.Modules), // Capabilities
+        width: '110%',
+        dataType: 'string',
+        render: (_cellData, { modules = [], isRediStack }: Instance) => (
+          <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <AutoSizer>
+              {({ width: columnWidth }) => (
+                <div style={{ width: columnWidth, height: 40, marginLeft: -6 }}>
+                  <DatabaseListModules
+                    content={
+                      isRediStack ? (
                         <EuiIcon
                           type={
                             theme === Theme.Dark
-                              ? RediStackDarkLogo
-                              : RediStackLightLogo
+                              ? RediStackDarkMin
+                              : RediStackLightMin
                           }
-                          className={styles.tooltipLogo}
-                          data-testid="tooltip-redis-stack-icon"
+                          data-testid="redis-stack-icon"
                         />
-                        <EuiText
-                          color="subdued"
-                          style={{ marginTop: 4, marginBottom: -4 }}
-                        >
-                          Includes
-                        </EuiText>
-                      </>
-                    ) : undefined
-                  }
-                  modules={modules}
-                  maxViewModules={
-                    columnWidth && columnWidth > 40
-                      ? Math.floor((columnWidth - 12) / 28) - 1
-                      : 0
-                  }
-                />
-              </div>
-            )}
-          </AutoSizer>
-        </div>
-      ),
-    },
-    {
-      field: DatabaseListColumn.LastConnection,
-      className: 'column_lastConnection',
-      name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.LastConnection),
-      dataType: 'date',
-      align: 'right',
-      width: '140%',
-      sortable: ({ lastConnection, id }) => {
-        if (isCreateCloudDb(id))
-          return sortingRef.current.direction === 'asc' ? -Infinity : +Infinity
-        return lastConnection ? -new Date(`${lastConnection}`) : -Infinity
-      },
-      render: (date: Date, { id }) => {
-        if (id === CREATE_CLOUD_DB_ID) return null
-        return lastConnectionFormat(date)
-      },
-    },
-    {
-      field: 'tags',
-      dataType: 'auto',
-      name: <TagsCellHeader />,
-      width: '130%',
-      sortable: ({ tags, id }) => {
-        if (isCreateCloudDb(id))
-          return sortingRef.current.direction === 'asc' ? '' : '\uffff'
-        return tags?.[0] ? `${tags[0].key}:${tags[0].value}` : null
-      },
-      render: (tags: Tag[], { id }) => {
-        if (isCreateCloudDb(id) || !tags) return null
-        return <TagsCell tags={tags} />
-      },
-    },
-    {
-      field: DatabaseListColumn.Controls,
-      className: 'column_controls',
-      width: '100%',
-      name: '',
-      render: function Actions(_act: any, instance: Instance) {
-        if (isCreateCloudDb(instance?.id)) return null
-        return (
-          <>
-            <EuiToolTip content="Manage Tags">
-              <EuiButtonIcon
-                iconType="tag"
-                className={styles.tagsButton}
-                aria-label="Manage Instance Tags"
-                data-testid={`manage-instance-tags-${instance.id}`}
-                onClick={() => handleManageInstanceTags(instance)}
-              />
-            </EuiToolTip>
-            {instance.cloudDetails && (
-              <EuiToolTip content="Go to Redis Cloud">
-                <EuiLink
-                  target="_blank"
-                  external={false}
-                  href={EXTERNAL_LINKS.cloudConsole}
-                  onClick={handleClickGoToCloud}
-                  data-testid={`cloud-link-${instance.id}`}
-                >
-                  <EuiIcon type={CloudLinkIcon} className={styles.cloudIcon} />
-                </EuiLink>
-              </EuiToolTip>
-            )}
-            <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
-              <EuiPopover
-                ownFocus
-                initialFocus={false}
-                anchorPosition="leftUp"
-                isOpen={controlsOpenIdRef.current === instance.id}
-                closePopover={() => toggleControlsPopover('')}
-                panelPaddingSize="s"
-                button={controlsButton(instance.id)}
-                data-testid={`controls-popover-${instance.id}`}
-              >
-                <div className="controlsPopoverContent">
-                  <div>
-                    <EuiButtonEmpty
-                      iconType="pencil"
-                      className="editInstanceBtn"
-                      aria-label="Edit instance"
-                      data-testid={`edit-instance-${instance.id}`}
-                      onClick={() => handleClickEditInstance(instance)}
-                    >
-                      Edit database
-                    </EuiButtonEmpty>
-                  </div>
-                  <div>
-                    <PopoverDelete
-                      header={formatLongName(instance.name, 50, 10, '...')}
-                      text="will be removed from Redis Insight."
-                      item={instance.id}
-                      suffix={suffix}
-                      deleting={deletingIdRef.current}
-                      closePopover={closePopover}
-                      updateLoading={false}
-                      showPopover={showPopover}
-                      handleDeleteItem={() => handleDeleteInstance(instance)}
-                      handleButtonClick={() =>
-                        handleClickDeleteInstance(instance)
-                      }
-                      testid={`delete-instance-${instance.id}`}
-                      buttonLabel="Remove database"
-                    />
-                  </div>
+                      ) : undefined
+                    }
+                    tooltipTitle={
+                      isRediStack ? (
+                        <>
+                          <EuiIcon
+                            type={
+                              theme === Theme.Dark
+                                ? RediStackDarkLogo
+                                : RediStackLightLogo
+                            }
+                            className={styles.tooltipLogo}
+                            data-testid="tooltip-redis-stack-icon"
+                          />
+                          <EuiText
+                            color="subdued"
+                            style={{ marginTop: 4, marginBottom: -4 }}
+                          >
+                            Includes
+                          </EuiText>
+                        </>
+                      ) : undefined
+                    }
+                    modules={modules}
+                    maxViewModules={
+                      columnWidth && columnWidth > 40
+                        ? Math.floor((columnWidth - 12) / 28) - 1
+                        : 0
+                    }
+                  />
                 </div>
-              </EuiPopover>
-            </FeatureFlagComponent>
-          </>
-        )
+              )}
+            </AutoSizer>
+          </div>
+        ),
       },
-    },
-  ]
+      {
+        field: DatabaseListColumn.LastConnection,
+        className: 'column_lastConnection',
+        name: COLUMN_FIELD_NAME_MAP.get(DatabaseListColumn.LastConnection),
+        dataType: 'date',
+        align: 'right',
+        width: '140%',
+        sortable: ({ lastConnection, id }) => {
+          if (isCreateCloudDb(id))
+            return sortingRef.current.direction === 'asc'
+              ? -Infinity
+              : +Infinity
+          return lastConnection ? -new Date(`${lastConnection}`) : -Infinity
+        },
+        render: (date: Date, { id }) => {
+          if (id === CREATE_CLOUD_DB_ID) return null
+          return lastConnectionFormat(date)
+        },
+      },
+      {
+        field: 'tags',
+        dataType: 'auto',
+        name: <TagsCellHeader />,
+        width: '130%',
+        sortable: ({ tags, id }) => {
+          if (isCreateCloudDb(id))
+            return sortingRef.current.direction === 'asc' ? '' : '\uffff'
+          return tags?.[0] ? `${tags[0].key}:${tags[0].value}` : null
+        },
+        render: (tags: Tag[], { id }) => {
+          if (isCreateCloudDb(id) || !tags) return null
+          return <TagsCell tags={tags} />
+        },
+      },
+      {
+        field: DatabaseListColumn.Controls,
+        className: 'column_controls',
+        width: '100%',
+        name: '',
+        render: function Actions(_act: any, instance: Instance) {
+          if (isCreateCloudDb(instance?.id)) return null
+          return (
+            <>
+              <EuiToolTip content="Manage Tags">
+                <EuiButtonIcon
+                  iconType="tag"
+                  className={styles.tagsButton}
+                  aria-label="Manage Instance Tags"
+                  data-testid={`manage-instance-tags-${instance.id}`}
+                  onClick={() => handleManageInstanceTags(instance)}
+                />
+              </EuiToolTip>
+              {instance.cloudDetails && (
+                <EuiToolTip content="Go to Redis Cloud">
+                  <EuiLink
+                    target="_blank"
+                    external={false}
+                    href={EXTERNAL_LINKS.cloudConsole}
+                    onClick={handleClickGoToCloud}
+                    data-testid={`cloud-link-${instance.id}`}
+                  >
+                    <EuiIcon
+                      type={CloudLinkIcon}
+                      className={styles.cloudIcon}
+                    />
+                  </EuiLink>
+                </EuiToolTip>
+              )}
+              <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
+                <EuiPopover
+                  ownFocus
+                  initialFocus={false}
+                  anchorPosition="leftUp"
+                  isOpen={controlsOpenIdRef.current === instance.id}
+                  closePopover={() => toggleControlsPopover('')}
+                  panelPaddingSize="s"
+                  button={controlsButton(instance.id)}
+                  data-testid={`controls-popover-${instance.id}`}
+                >
+                  <div className="controlsPopoverContent">
+                    <div>
+                      <EuiButtonEmpty
+                        iconType="pencil"
+                        className="editInstanceBtn"
+                        aria-label="Edit instance"
+                        data-testid={`edit-instance-${instance.id}`}
+                        onClick={() => handleClickEditInstance(instance)}
+                      >
+                        Edit database
+                      </EuiButtonEmpty>
+                    </div>
+                    <div>
+                      <PopoverDelete
+                        header={formatLongName(instance.name, 50, 10, '...')}
+                        text="will be removed from Redis Insight."
+                        item={instance.id}
+                        suffix={suffix}
+                        deleting={deletingIdRef.current}
+                        closePopover={closePopover}
+                        updateLoading={false}
+                        showPopover={showPopover}
+                        handleDeleteItem={() => handleDeleteInstance(instance)}
+                        handleButtonClick={() =>
+                          handleClickDeleteInstance(instance)
+                        }
+                        testid={`delete-instance-${instance.id}`}
+                        buttonLabel="Remove database"
+                      />
+                    </div>
+                  </div>
+                </EuiPopover>
+              </FeatureFlagComponent>
+            </>
+          )
+        },
+      },
+    ],
+    [],
+  )
 
-  const onTableChange = ({ sort, page }: Criteria<Instance>) => {
+  const onTableChange = useCallback(({ sort, page }: Criteria<Instance>) => {
     // calls also with page changing
     if (sort && !page) {
       sortingRef.current = sort
@@ -654,9 +669,12 @@ const DatabasesListWrapper = (props: Props) => {
         eventData: sort,
       })
     }
-  }
+  }, [])
 
-  const listOfInstances = [...predefinedInstances, ...instances]
+  const listOfInstances = useMemo(
+    () => [...predefinedInstances, ...instances],
+    [predefinedInstances, instances],
+  )
 
   return (
     <EuiResizeObserver onResize={onResize}>

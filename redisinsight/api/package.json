@@ -41,7 +41,6 @@
     "typeorm:run:stage": "cross-env NODE_ENV=staging yarn typeorm migration:run"
   },
   "resolutions": {
-    "nanoid": "^3.1.31",
     "word-wrap": "1.2.4",
     "jest/**/micromatch": "^4.0.8",
     "mocha/minimatch": "^3.0.5",

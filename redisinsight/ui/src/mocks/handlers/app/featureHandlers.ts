@@ -6,11 +6,11 @@ export const FEATURES_DATA_MOCK = {
   features: {
     insightsRecommendations: {
       name: 'insightsRecommendations',
-      flag: true
+      flag: true,
     },
     envDependent: {
       name: 'envDependent',
-      flag: true
+      flag: true,
     },
     cloudSso: {
       name: 'cloudSso',
@@ -21,50 +21,38 @@ export const FEATURES_DATA_MOCK = {
           {
             field: 'name',
             expression: '^(No HA?.)|(Cache?.)|(30MB$)',
-            options: 'i'
-          }
+            options: 'i',
+          },
         ],
         selectPlan: {
           components: {
             triggersAndFunctions: [
               {
                 provider: 'AWS',
-                regions: [
-                  'ap-southeast-1'
-                ]
+                regions: ['ap-southeast-1'],
               },
               {
                 provider: 'GCP',
-                regions: [
-                  'asia-northeast1'
-                ]
-              }
+                regions: ['asia-northeast1'],
+              },
             ],
             redisStackPreview: [
               {
                 provider: 'AWS',
-                regions: [
-                  'us-east-2',
-                  'ap-southeast-1',
-                  'sa-east-1'
-                ]
+                regions: ['us-east-2', 'ap-southeast-1', 'sa-east-1'],
               },
               {
                 provider: 'GCP',
-                regions: [
-                  'asia-northeast1',
-                  'europe-west1',
-                  'us-central1'
-                ]
-              }
-            ]
-          }
-        }
-      }
+                regions: ['asia-northeast1', 'europe-west1', 'us-central1'],
+              },
+            ],
+          },
+        },
+      },
     },
     cloudSsoRecommendedSettings: {
       name: 'cloudSsoRecommendedSettings',
-      flag: false
+      flag: false,
     },
     redisModuleFilter: {
       name: 'redisModuleFilter',
@@ -73,43 +61,44 @@ export const FEATURES_DATA_MOCK = {
         hideByName: [
           {
             expression: '^RedisGraph.',
-            options: 'i'
+            options: 'i',
           },
           {
             expression: '^RedisStackCompat?.',
-            options: 'i'
+            options: 'i',
           },
           {
             expression: '^rediscompat?.',
-            options: 'i'
-          }
-        ]
-      }
+            options: 'i',
+          },
+        ],
+      },
     },
     redisClient: {
       name: 'redisClient',
       flag: true,
       data: {
-        strategy: 'ioredis'
-      }
+        strategy: 'ioredis',
+      },
     },
     documentationChat: {
       name: 'documentationChat',
-      flag: true
+      flag: true,
     },
     databaseChat: {
       name: 'databaseChat',
-      flag: true
-    }
-  }
+      flag: true,
+    },
+  },
 }
 
 const handlers: RestHandler[] = [
   // get features
-  rest.get<typeof FEATURES_DATA_MOCK[]>(getMswURL(ApiEndpoints.FEATURES), async (_req, res, ctx) => res(
-    ctx.status(200),
-    ctx.json(FEATURES_DATA_MOCK),
-  )),
+  rest.get<(typeof FEATURES_DATA_MOCK)[]>(
+    getMswURL(ApiEndpoints.FEATURES),
+    async (_req, res, ctx) =>
+      res(ctx.status(200), ctx.json(FEATURES_DATA_MOCK)),
+  ),
 ]
 
 export default handlers

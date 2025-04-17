@@ -167,10 +167,7 @@ describe('ModuleNotLoaded', () => {
 
   it('should uppercase first letter of module name in title - bloom', () => {
     const { getByText } = render(
-      <ModuleNotLoaded
-        {...props}
-        moduleName={RedisDefaultModules.Bloom}
-      />,
+      <ModuleNotLoaded {...props} moduleName={RedisDefaultModules.Bloom} />,
     )
     expect(
       getByText(

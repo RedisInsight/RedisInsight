@@ -15,7 +15,11 @@ import {
   toggleBrowserFullScreen,
 } from 'uiSrc/slices/browser/keys'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
@@ -42,12 +46,16 @@ const BrowserRightPanel = (props: Props) => {
     isBulkActionsPanelOpen,
     handleBulkActionsPanel,
     isCreateIndexPanelOpen,
-    closeRightPanels
+    closeRightPanels,
   } = props
 
   const { isBrowserFullScreen, viewType } = useSelector(keysSelector)
-  const { total, lastRefreshTime: keysLastRefreshTime } = useSelector(keysDataSelector)
-  const { type, length } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
+  const { total, lastRefreshTime: keysLastRefreshTime } =
+    useSelector(keysDataSelector)
+  const { type, length } = useSelector(selectedKeyDataSelector) ?? {
+    type: '',
+    length: 0,
+  }
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -66,7 +74,7 @@ const BrowserRightPanel = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         view: viewType,
-      }
+      },
     })
   }
 
@@ -85,27 +93,31 @@ const BrowserRightPanel = (props: Props) => {
         databaseId: instanceId,
         keyType: type,
         length,
-      }
+      },
     })
   }
 
-  const handleEditKey = (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => {
+  const handleEditKey = (
+    key: RedisResponseBuffer,
+    newKey: RedisResponseBuffer,
+  ) => {
     setSelectedKey(newKey)
   }
 
   const onEditKey = useCallback(
-    (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => handleEditKey(key, newKey),
+    (key: RedisResponseBuffer, newKey: RedisResponseBuffer) =>
+      handleEditKey(key, newKey),
     [],
   )
 
-  const onSelectKey = useCallback(
-    () => setSelectedKey(null),
-    [],
-  )
+  const onSelectKey = useCallback(() => setSelectedKey(null), [])
 
   return (
     <>
-      {every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
+      {every(
+        [!isAddKeyPanelOpen, !isBulkActionsPanelOpen, !isCreateIndexPanelOpen],
+        Boolean,
+      ) && (
         <KeyDetails
           isFullScreen={isBrowserFullScreen}
           arePanelsCollapsed={arePanelsCollapsed}
@@ -118,31 +130,34 @@ const BrowserRightPanel = (props: Props) => {
           keysLastRefreshTime={keysLastRefreshTime}
         />
       )}
-      {isAddKeyPanelOpen && every([!isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
-        <AddKey
-          onAddKeyPanel={handleAddKeyPanel}
-          onClosePanel={closePanel}
-          arePanelsCollapsed={arePanelsCollapsed}
-        />
-      )}
-      {isBulkActionsPanelOpen && every([!isAddKeyPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
-        <FeatureFlagComponent name={FeatureFlags.envDependent}>
-          <BulkActions
-            isFullScreen={isBrowserFullScreen}
-            arePanelsCollapsed={arePanelsCollapsed}
+      {isAddKeyPanelOpen &&
+        every([!isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
+          <AddKey
+            onAddKeyPanel={handleAddKeyPanel}
             onClosePanel={closePanel}
-            onBulkActionsPanel={handleBulkActionsPanel}
-            onToggleFullScreen={handleToggleFullScreen}
+            arePanelsCollapsed={arePanelsCollapsed}
           />
-        </FeatureFlagComponent>
-      )}
-      {isCreateIndexPanelOpen && every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen], Boolean) && (
-        <CreateRedisearchIndex
-          arePanelsCollapsed={arePanelsCollapsed}
-          onCreateIndex={closePanel}
-          onClosePanel={onCloseRedisearchPanel}
-        />
-      )}
+        )}
+      {isBulkActionsPanelOpen &&
+        every([!isAddKeyPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
+          <FeatureFlagComponent name={FeatureFlags.envDependent}>
+            <BulkActions
+              isFullScreen={isBrowserFullScreen}
+              arePanelsCollapsed={arePanelsCollapsed}
+              onClosePanel={closePanel}
+              onBulkActionsPanel={handleBulkActionsPanel}
+              onToggleFullScreen={handleToggleFullScreen}
+            />
+          </FeatureFlagComponent>
+        )}
+      {isCreateIndexPanelOpen &&
+        every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen], Boolean) && (
+          <CreateRedisearchIndex
+            arePanelsCollapsed={arePanelsCollapsed}
+            onCreateIndex={closePanel}
+            onClosePanel={onCloseRedisearchPanel}
+          />
+        )}
     </>
   )
 }

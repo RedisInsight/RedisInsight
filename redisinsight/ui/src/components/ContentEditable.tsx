@@ -3,13 +3,16 @@ import ReactContentEditable, { Props } from 'react-contenteditable'
 
 const useRefCallback = <T extends any[]>(
   value: ((...args: T) => void) | undefined,
-  deps?: React.DependencyList
+  deps?: React.DependencyList,
 ): ((...args: T) => void) => {
   const ref = React.useRef(value)
 
-  React.useEffect(() => {
-    ref.current = value
-  }, deps ?? [value])
+  React.useEffect(
+    () => {
+      ref.current = value
+    },
+    deps ?? [value],
+  )
 
   return React.useCallback((...args: T) => {
     ref.current?.(...args)
@@ -20,7 +23,8 @@ const useRefCallback = <T extends any[]>(
 export const parsePastedText = (text: string = '') =>
   text.replace(/\n/gi, '').replace(/</gi, '<').replace(/>/gi, '>')
 
-export const parseContentEditableChangeHtml = (text: string = '') => text.replace(/&nbsp;/gi, ' ')
+export const parseContentEditableChangeHtml = (text: string = '') =>
+  text.replace(/&nbsp;/gi, ' ')
 
 export const parseMultilineContentEditableChangeHtml = (text: string = '') =>
   parseContentEditableChangeHtml(text).replace(/<br>/gi, ' ')
@@ -35,7 +39,8 @@ export const parseContentEditableHtml = (text: string = '') =>
 const onPaste = (e: React.ClipboardEvent) => {
   e.preventDefault()
 
-  const clipboardData = e.clipboardData || window.clipboardData || e.originalEvent.clipboardData
+  const clipboardData =
+    e.clipboardData || window.clipboardData || e.originalEvent.clipboardData
   const text = clipboardData.getData('text/plain') as string
 
   document.execCommand('insertText', false, parsePastedText(text))

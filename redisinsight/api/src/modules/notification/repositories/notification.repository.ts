@@ -7,7 +7,9 @@ export abstract class NotificationRepository {
    * Get all notifications ordered (DESC) by timestamp field
    * @param sessionMetadata
    */
-  abstract getNotifications(sessionMetadata: SessionMetadata): Promise<Notification[]>;
+  abstract getNotifications(
+    sessionMetadata: SessionMetadata,
+  ): Promise<Notification[]>;
 
   /**
    * Get number of total unread notifications
@@ -34,19 +36,26 @@ export abstract class NotificationRepository {
    * @param sessionMetadata
    * @param notifications
    */
-  abstract insertNotifications(sessionMetadata: SessionMetadata, notifications: Notification[]): Promise<void>;
+  abstract insertNotifications(
+    sessionMetadata: SessionMetadata,
+    notifications: Notification[],
+  ): Promise<void>;
 
   /**
    * Special function to get only "global" type of notifications
    * Used for auto update notifications from remote
    * @param sessionMetadata
    */
-  abstract getGlobalNotifications(sessionMetadata: SessionMetadata): Promise<Partial<Notification>[]>;
+  abstract getGlobalNotifications(
+    sessionMetadata: SessionMetadata,
+  ): Promise<Partial<Notification>[]>;
 
   /**
    * Deletes all "global" notification
    * Used during auto update from remote
    * @param sessionMetadata
    */
-  abstract deleteGlobalNotifications(sessionMetadata: SessionMetadata): Promise<void>;
+  abstract deleteGlobalNotifications(
+    sessionMetadata: SessionMetadata,
+  ): Promise<void>;
 }

@@ -29,7 +29,11 @@ export class LogFile {
 
   public readonly id: string;
 
-  constructor(instanceId: string, id: string, analyticsEvents?: Map<TelemetryEvents, Function>) {
+  constructor(
+    instanceId: string,
+    id: string,
+    analyticsEvents?: Map<TelemetryEvents, Function>,
+  ) {
     this.instanceId = instanceId;
     this.id = id;
     this.alias = id;
@@ -60,7 +64,10 @@ export class LogFile {
     stream.once('end', () => {
       stream.destroy();
       try {
-        this.analyticsEvents.get(TelemetryEvents.ProfilerLogDownloaded)(this.instanceId, this.getFileSize());
+        this.analyticsEvents.get(TelemetryEvents.ProfilerLogDownloaded)(
+          this.instanceId,
+          this.getFileSize(),
+        );
       } catch (e) {
         // ignore analytics errors
       }
@@ -109,7 +116,10 @@ export class LogFile {
       this.idleSince = Date.now();
 
       setTimeout(() => {
-        if (this?.idleSince && Date.now() - this.idleSince >= PROFILER.logFileIdleThreshold) {
+        if (
+          this?.idleSince &&
+          Date.now() - this.idleSince >= PROFILER.logFileIdleThreshold
+        ) {
           this.destroy();
         }
       }, PROFILER.logFileIdleThreshold);
@@ -126,7 +136,10 @@ export class LogFile {
       const size = this.getFileSize();
       fs.unlinkSync(this.filePath);
 
-      this.analyticsEvents.get(TelemetryEvents.ProfilerLogDeleted)(this.instanceId, size);
+      this.analyticsEvents.get(TelemetryEvents.ProfilerLogDeleted)(
+        this.instanceId,
+        size,
+      );
     } catch (e) {
       // ignore error
     }

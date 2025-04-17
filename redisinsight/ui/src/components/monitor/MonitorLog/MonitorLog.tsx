@@ -1,10 +1,20 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiText,
+} from '@elastic/eui'
 import { format, formatDuration, intervalToDuration } from 'date-fns'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { monitorSelector, resetProfiler, stopMonitor } from 'uiSrc/slices/cli/monitor'
+import {
+  monitorSelector,
+  resetProfiler,
+  stopMonitor,
+} from 'uiSrc/slices/cli/monitor'
 import { cutDurationText } from 'uiSrc/utils'
 import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
 import { fetchMonitorLog } from 'uiSrc/slices/cli/cli-output'
@@ -24,13 +34,13 @@ const MonitorLog = () => {
     formatDuration(
       intervalToDuration({
         end: timestamp.duration,
-        start: 0
-      })
-    )
+        start: 0,
+      }),
+    ),
   )
 
   const downloadBtnProps: any = {
-    target: DOWNLOAD_IFRAME_NAME
+    target: DOWNLOAD_IFRAME_NAME,
   }
 
   const onResetProfiler = () => {
@@ -52,23 +62,35 @@ const MonitorLog = () => {
 
   return (
     <div className={styles.monitorLogWrapper}>
-      <iframe title="downloadIframeTarget" name={DOWNLOAD_IFRAME_NAME} style={{ display: 'none' }} />
+      <iframe
+        title="downloadIframeTarget"
+        name={DOWNLOAD_IFRAME_NAME}
+        style={{ display: 'none' }}
+      />
       <AutoSizer disableHeight>
         {({ width }) => (
           <div
             className={styles.container}
-            style={{ width, paddingLeft: getPaddingByWidth(width), paddingRight: getPaddingByWidth(width) }}
+            style={{
+              width,
+              paddingLeft: getPaddingByWidth(width),
+              paddingRight: getPaddingByWidth(width),
+            }}
             data-testid="download-log-panel"
           >
-            <EuiText size="xs" color="subdued" className={styles.time} data-testid="profiler-running-time">
+            <EuiText
+              size="xs"
+              color="subdued"
+              className={styles.time}
+              data-testid="profiler-running-time"
+            >
               <EuiIcon type="clock" />
               {format(timestamp.start, 'hh:mm:ss')}
               &nbsp;&#8211;&nbsp;
               {format(timestamp.paused, 'hh:mm:ss')}
               &nbsp;(
               {duration}
-              {width > SMALL_SCREEN_RESOLUTION && ' Running time'}
-              )
+              {width > SMALL_SCREEN_RESOLUTION && ' Running time'})
             </EuiText>
             <EuiFlexGroup
               className={styles.actions}

@@ -15,10 +15,19 @@ export interface Props {
   loading: boolean
 }
 
-const warningMessage = 'If a new pipeline is uploaded, existing pipeline configuration and transformation\n'
-  + 'jobs will be overwritten. Changes will not be applied until the pipeline is deployed.'
+const warningMessage =
+  'If a new pipeline is uploaded, existing pipeline configuration and transformation\n' +
+  'jobs will be overwritten. Changes will not be applied until the pipeline is deployed.'
 
-const UploadDialog = ({ onClose, onConfirm, onFileChange, isUploaded, showWarning, error, loading }: Props) => {
+const UploadDialog = ({
+  onClose,
+  onConfirm,
+  onFileChange,
+  isUploaded,
+  showWarning,
+  error,
+  loading,
+}: Props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true)
 
   const handleFileChange = (files: FileList | null) => {
@@ -35,13 +44,21 @@ const UploadDialog = ({ onClose, onConfirm, onFileChange, isUploaded, showWarnin
       onClose={onClose}
       onFileChange={handleFileChange}
       onSubmit={onConfirm}
-      title={showWarning ? 'Upload a new pipeline' : 'Upload an archive with an RDI pipeline'}
-      resultsTitle={!error ? 'Pipeline has been uploaded' : 'Failed to upload pipeline'}
-      submitResults={(
+      title={
+        showWarning
+          ? 'Upload a new pipeline'
+          : 'Upload an archive with an RDI pipeline'
+      }
+      resultsTitle={
+        !error ? 'Pipeline has been uploaded' : 'Failed to upload pipeline'
+      }
+      submitResults={
         <div className={styles.result} data-testid="result-succeeded">
-          <EuiText color="subdued">A new pipeline has been successfully uploaded.</EuiText>
+          <EuiText color="subdued">
+            A new pipeline has been successfully uploaded.
+          </EuiText>
         </div>
-      )}
+      }
       loading={loading}
       data={isUploaded}
       warning={

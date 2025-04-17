@@ -15,7 +15,10 @@ export const mockRdiPasswordEncrypted = 'password_ENCRYPTED';
 
 export const mockRdiPasswordPlain = 'some pass';
 
-export const mockedRdiAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+export const mockedRdiAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 export const mockedAccessToken = mockedRdiAccessToken;
 
 export class MockRdiClient extends ApiRdiClient {
@@ -81,10 +84,13 @@ export const mockRdiPipeline = Object.assign(new RdiPipeline(), {
   config: {},
 });
 
-export const mockRdiDryRunJob: RdiDryRunJobDto = Object.assign(new RdiDryRunJobDto(), {
-  input_data: {},
-  job: {},
-});
+export const mockRdiDryRunJob: RdiDryRunJobDto = Object.assign(
+  new RdiDryRunJobDto(),
+  {
+    input_data: {},
+    job: {},
+  },
+);
 
 export const mockRdiStatisticsData = Object.assign(new RdiStatisticsData(), {});
 
@@ -113,10 +119,7 @@ export const mockRdiUnauthorizedError = {
 
 export const mockRdiConfigSchema = {
   title: 'Redis Data Integration Configuration File',
-  type: [
-    'object',
-    'null',
-  ],
+  type: ['object', 'null'],
   properties: {
     sources: {
       title: 'Source collectors',
@@ -138,15 +141,10 @@ export const mockRdiConfigSchema = {
             properties: {
               level: {
                 title: 'Logging level',
-                description: 'Logging level for the source collector (trace|debug|info|warn|error)',
+                description:
+                  'Logging level for the source collector (trace|debug|info|warn|error)',
                 type: 'string',
-                enum: [
-                  'trace',
-                  'debug',
-                  'info',
-                  'warn',
-                  'error',
-                ],
+                enum: ['trace', 'debug', 'info', 'warn', 'error'],
                 default: 'info',
               },
             },
@@ -155,19 +153,22 @@ export const mockRdiConfigSchema = {
           tables: {
             type: 'object',
             title: 'Tables to capture',
-            description: 'Tables to capture from the source database (table.include.list)',
+            description:
+              'Tables to capture from the source database (table.include.list)',
             additionalProperties: {
               type: 'object',
               properties: {
                 snapshot_sql: {
                   title: 'Snapshot SQL',
-                  description: 'SQL statement used to override the statement for the initial snapshot (snapshot.select.statement.overrides)',
+                  description:
+                    'SQL statement used to override the statement for the initial snapshot (snapshot.select.statement.overrides)',
                   type: 'string',
                 },
                 columns: {
                   type: 'array',
                   title: 'Columns to capture',
-                  description: 'Columns to capture from the source database (column.include.list)',
+                  description:
+                    'Columns to capture from the source database (column.include.list)',
                   items: {
                     type: 'string',
                   },
@@ -175,7 +176,8 @@ export const mockRdiConfigSchema = {
                 keys: {
                   type: 'array',
                   title: 'Message keys',
-                  description: 'Fields to use as keys in the generated messages (message.key.columns)',
+                  description:
+                    'Fields to use as keys in the generated messages (message.key.columns)',
                   items: {
                     type: 'string',
                   },
@@ -189,7 +191,8 @@ export const mockRdiConfigSchema = {
             properties: {
               nopass: {
                 title: 'Nopass in the Redis sink',
-                description: 'Flag to disable password in the sink configuration. If set to true, the password will not be included in the sink configuration',
+                description:
+                  'Flag to disable password in the sink configuration. If set to true, the password will not be included in the sink configuration',
                 type: 'boolean',
                 default: false,
               },
@@ -215,35 +218,23 @@ export const mockRdiConfigSchema = {
             additionalProperties: false,
           },
         },
-        required: [
-          'type',
-          'connection',
-        ],
+        required: ['type', 'connection'],
       },
     },
     processors: {
       title: 'Configuration details of Redis Data Integration Processors',
-      type: [
-        'object',
-        'null',
-      ],
+      type: ['object', 'null'],
       properties: {
         on_failed_retry_interval: {
           title: 'Interval (in seconds) on which to perform retry on failure',
-          type: [
-            'integer',
-            'string',
-          ],
+          type: ['integer', 'string'],
           minimum: 1,
           pattern: '^\\${.*}$',
           default: 5,
         },
         read_batch_size: {
           title: 'The batch size for reading data from source database',
-          type: [
-            'integer',
-            'string',
-          ],
+          type: ['integer', 'string'],
           minimum: 1,
           pattern: '^\\${.*}$',
           default: 2000,
@@ -265,72 +256,66 @@ export const mockRdiConfigSchema = {
           default: 1024,
         },
         dedup_strategy: {
-          title: 'Deduplication strategy: reject - reject messages(dlq), ignore - ignore messages',
+          title:
+            'Deduplication strategy: reject - reject messages(dlq), ignore - ignore messages',
           type: 'string',
           default: 'ignore',
-          enum: [
-            'reject',
-            'ignore',
-          ],
+          enum: ['reject', 'ignore'],
           deprecated: true,
-          description: "Property 'dedup_strategy' is now deprecated. The only supported strategy is 'ignore'. Please remove from the configuration.",
+          description:
+            "Property 'dedup_strategy' is now deprecated. The only supported strategy is 'ignore'. Please remove from the configuration.",
         },
         duration: {
-          title: 'Time (in ms) after which data will be read from stream even if read_batch_size was not reached',
-          type: [
-            'integer',
-            'string',
-          ],
+          title:
+            'Time (in ms) after which data will be read from stream even if read_batch_size was not reached',
+          type: ['integer', 'string'],
           minimum: 1,
           pattern: '^\\${.*}$',
           default: 100,
         },
         write_batch_size: {
-          title: 'The batch size for writing data to target Redis database. Should be less or equal to the read_batch_size',
-          type: [
-            'integer',
-            'string',
-          ],
+          title:
+            'The batch size for writing data to target Redis database. Should be less or equal to the read_batch_size',
+          type: ['integer', 'string'],
           minimum: 1,
           pattern: '^\\${.*}$',
           default: 200,
         },
         error_handling: {
-          title: 'Error handling strategy: ignore - skip, dlq - store rejected messages in a dead letter queue',
+          title:
+            'Error handling strategy: ignore - skip, dlq - store rejected messages in a dead letter queue',
           type: 'string',
           pattern: '^\\${.*}$|ignore|dlq',
           default: 'dlq',
         },
         dlq_max_messages: {
           title: 'Dead letter queue max messages per stream',
-          type: [
-            'integer',
-            'string',
-          ],
+          type: ['integer', 'string'],
           minimum: 1,
           pattern: '^\\${.*}$',
           default: 1000,
         },
         target_data_type: {
-          title: 'Target data type: hash/json - JSON module must be in use in the target DB',
+          title:
+            'Target data type: hash/json - JSON module must be in use in the target DB',
           type: 'string',
           pattern: '^\\${.*}$|hash|json',
           default: 'hash',
         },
         json_update_strategy: {
-          title: 'Target update strategy: replace/merge - JSON module must be in use in the target DB',
+          title:
+            'Target update strategy: replace/merge - JSON module must be in use in the target DB',
           type: 'string',
           pattern: '^\\${.*}$|replace|merge',
           default: 'replace',
           deprecated: true,
-          description: "Property 'json_update_strategy' will be deprecated in future releases. Use 'on_update' job-level property to define the json update strategy.",
+          description:
+            "Property 'json_update_strategy' will be deprecated in future releases. Use 'on_update' job-level property to define the json update strategy.",
         },
         initial_sync_processes: {
-          title: 'Number of processes RDI Engine creates to process the initial sync with the source',
-          type: [
-            'integer',
-            'string',
-          ],
+          title:
+            'Number of processes RDI Engine creates to process the initial sync with the source',
+          type: ['integer', 'string'],
           minimum: 1,
           maximum: 32,
           pattern: '^\\${.*}$',
@@ -338,32 +323,25 @@ export const mockRdiConfigSchema = {
         },
         idle_sleep_time_ms: {
           title: 'Idle sleep time (in milliseconds) between batches',
-          type: [
-            'integer',
-            'string',
-          ],
+          type: ['integer', 'string'],
           minimum: 1,
           maximum: 999999,
           pattern: '^\\${.*}$',
           default: 200,
         },
         idle_streams_check_interval_ms: {
-          title: 'Interval (in milliseconds) for checking new streams when the stream processor is idling',
-          type: [
-            'integer',
-            'string',
-          ],
+          title:
+            'Interval (in milliseconds) for checking new streams when the stream processor is idling',
+          type: ['integer', 'string'],
           minimum: 1,
           maximum: 999999,
           pattern: '^\\${.*}$',
           default: 1000,
         },
         busy_streams_check_interval_ms: {
-          title: 'Interval (in milliseconds) for checking new streams when the stream processor is busy',
-          type: [
-            'integer',
-            'string',
-          ],
+          title:
+            'Interval (in milliseconds) for checking new streams when the stream processor is busy',
+          type: ['integer', 'string'],
           minimum: 1,
           maximum: 999999,
           pattern: '^\\${.*}$',
@@ -375,17 +353,16 @@ export const mockRdiConfigSchema = {
           default: false,
         },
         wait_timeout: {
-          title: 'Timeout in milliseconds when checking write to the replica shard',
-          type: [
-            'integer',
-            'string',
-          ],
+          title:
+            'Timeout in milliseconds when checking write to the replica shard',
+          type: ['integer', 'string'],
           minimum: 1,
           pattern: '^\\${.*}$',
           default: 1000,
         },
         retry_on_replica_failure: {
-          title: 'Ensures that the data has been written to the replica shard and keeps retrying if not',
+          title:
+            'Ensures that the data has been written to the replica shard and keeps retrying if not',
           type: 'boolean',
           default: true,
         },
@@ -423,10 +400,7 @@ export const mockRdiConfigSchema = {
                 },
                 port: {
                   title: 'Redis DB port',
-                  type: [
-                    'integer',
-                    'string',
-                  ],
+                  type: ['integer', 'string'],
                   minimum: 1,
                   maximum: 65535,
                   pattern: '^\\${.*}$',
@@ -456,20 +430,11 @@ export const mockRdiConfigSchema = {
                   type: 'string',
                 },
               },
-              required: [
-                'host',
-                'port',
-              ],
+              required: ['host', 'port'],
               dependentRequired: {
-                key: [
-                  'cert',
-                ],
-                cert: [
-                  'key',
-                ],
-                key_password: [
-                  'key',
-                ],
+                key: ['cert'],
+                cert: ['key'],
+                key_password: ['key'],
               },
               additionalProperties: false,
             },
@@ -480,13 +445,7 @@ export const mockRdiConfigSchema = {
                 type: {
                   description: 'DB type',
                   type: 'string',
-                  enum: [
-                    'db2',
-                    'mysql',
-                    'oracle',
-                    'postgresql',
-                    'sqlserver',
-                  ],
+                  enum: ['db2', 'mysql', 'oracle', 'postgresql', 'sqlserver'],
                 },
                 host: {
                   description: 'DB host',
@@ -523,12 +482,14 @@ export const mockRdiConfigSchema = {
                   default: 60,
                 },
                 connect_args: {
-                  description: 'Additional arguments to use when connecting to the DB',
+                  description:
+                    'Additional arguments to use when connecting to the DB',
                   type: 'object',
                   additionalProperties: true,
                 },
                 query_args: {
-                  description: 'Additional query string arguments to use when connecting to the DB',
+                  description:
+                    'Additional query string arguments to use when connecting to the DB',
                   type: 'object',
                   additionalProperties: true,
                 },
@@ -545,16 +506,11 @@ export const mockRdiConfigSchema = {
                     },
                     query_args: {
                       not: {
-                        required: [
-                          'service_name',
-                        ],
+                        required: ['service_name'],
                       },
                     },
                   },
-                  required: [
-                    'type',
-                    'database',
-                  ],
+                  required: ['type', 'database'],
                 },
                 {
                   properties: {
@@ -567,34 +523,21 @@ export const mockRdiConfigSchema = {
                       },
                     },
                     query_args: {
-                      required: [
-                        'service_name',
-                      ],
+                      required: ['service_name'],
                     },
                   },
-                  required: [
-                    'type',
-                    'query_args',
-                  ],
+                  required: ['type', 'query_args'],
                 },
                 {
                   properties: {
                     type: {
-                      enum: [
-                        'db2',
-                        'mysql',
-                        'postgresql',
-                        'sqlserver',
-                      ],
+                      enum: ['db2', 'mysql', 'postgresql', 'sqlserver'],
                     },
                     database: {
                       type: 'string',
                     },
                   },
-                  required: [
-                    'type',
-                    'database',
-                  ],
+                  required: ['type', 'database'],
                 },
               ],
               examples: [
@@ -668,17 +611,12 @@ export const mockRdiConfigSchema = {
                 },
               },
               additionalProperties: false,
-              required: [
-                'type',
-                'hosts',
-              ],
+              required: ['type', 'hosts'],
               examples: [
                 {
                   cache: {
                     type: 'cassandra',
-                    hosts: [
-                      'localhost',
-                    ],
+                    hosts: ['localhost'],
                     port: 9042,
                     database: 'myDB',
                     user: 'myUser',
@@ -727,9 +665,7 @@ export const mockRdiJobsSchema = {
               $ref: '#/$defs/row_format',
             },
           },
-          required: [
-            'table',
-          ],
+          required: ['table'],
           additionalProperties: false,
         },
         transform: {
@@ -747,10 +683,7 @@ export const mockRdiJobsSchema = {
                 type: 'object',
               },
             },
-            required: [
-              'uses',
-              'with',
-            ],
+            required: ['uses', 'with'],
             additionalProperties: false,
           },
         },
@@ -760,16 +693,10 @@ export const mockRdiJobsSchema = {
       },
       anyOf: [
         {
-          required: [
-            'source',
-            'transform',
-          ],
+          required: ['source', 'transform'],
         },
         {
-          required: [
-            'source',
-            'output',
-          ],
+          required: ['source', 'output'],
         },
       ],
       additionalProperties: false,
@@ -824,18 +751,14 @@ export const mockRdiJobsSchema = {
                   },
                 },
               },
-              required: [
-                'key_pattern',
-              ],
+              required: ['key_pattern'],
               additionalProperties: false,
             },
             row_format: {
               $ref: '#/$defs/row_format',
             },
           },
-          required: [
-            'redis',
-          ],
+          required: ['redis'],
           additionalProperties: false,
         },
         transform: {
@@ -853,10 +776,7 @@ export const mockRdiJobsSchema = {
                 type: 'object',
               },
             },
-            required: [
-              'uses',
-              'with',
-            ],
+            required: ['uses', 'with'],
             additionalProperties: false,
           },
         },
@@ -864,9 +784,7 @@ export const mockRdiJobsSchema = {
           $ref: '#/$defs/output',
         },
       },
-      required: [
-        'output',
-      ],
+      required: ['output'],
       additionalProperties: false,
     },
   ],
@@ -875,17 +793,13 @@ export const mockRdiJobsSchema = {
       title: 'Job name',
       type: 'string',
       pattern: '^[A-Za-z0-9_-]+$',
-      examples: [
-        'my-job',
-      ],
+      examples: ['my-job'],
     },
     row_format: {
-      title: 'Format of the data to be transformed: data_only - only payload, full - complete change record',
+      title:
+        'Format of the data to be transformed: data_only - only payload, full - complete change record',
       type: 'string',
-      enum: [
-        'data_only',
-        'full',
-      ],
+      enum: ['data_only', 'full'],
     },
     source_definition: {
       case_insensitive: {
@@ -924,25 +838,14 @@ export const mockRdiJobsSchema = {
       on_update: {
         title: 'Target update strategy',
         type: 'string',
-        enum: [
-          'merge',
-          'replace',
-        ],
+        enum: ['merge', 'replace'],
         default: 'replace',
       },
       data_type: {
         title: 'Target data type',
         description: '',
         type: 'string',
-        enum: [
-          'hash',
-          'json',
-          'lua',
-          'set',
-          'sorted_set',
-          'stream',
-          'string',
-        ],
+        enum: ['hash', 'json', 'lua', 'set', 'sorted_set', 'stream', 'string'],
         default: 'hash',
       },
     },
@@ -965,55 +868,41 @@ export const mockRdiJobsSchema = {
               $ref: '#/$defs/source_definition/table',
             },
           },
-          required: [
-            'table',
-          ],
+          required: ['table'],
           additionalProperties: false,
         },
         parent_key: {
-          description: 'Foreign key field that is used to identify the parent record',
+          description:
+            'Foreign key field that is used to identify the parent record',
           type: 'string',
-          examples: [
-            'InvoiceId',
-          ],
+          examples: ['InvoiceId'],
         },
         child_key: {
-          description: 'Foreign key field in a child table, if different from the parent_key',
+          description:
+            'Foreign key field in a child table, if different from the parent_key',
           type: 'string',
-          examples: [
-            'ParentInvoiceId',
-          ],
+          examples: ['ParentInvoiceId'],
         },
         nesting_key: {
-          description: 'Primary key that is used to identify child element in a parent collection',
+          description:
+            'Primary key that is used to identify child element in a parent collection',
           type: 'string',
-          examples: [
-            'InvoiceLineId',
-          ],
+          examples: ['InvoiceLineId'],
         },
         path: {
           description: 'Path used to embed child elements to a parent object',
           type: 'string',
           pattern: '^\\$\\.[a-zA-Z0-9_]+$',
-          examples: [
-            '$.InvoiceLineItems',
-          ],
+          examples: ['$.InvoiceLineItems'],
         },
         structure: {
           description: 'Structure type used to embed children objects',
           type: 'string',
-          enum: [
-            'map',
-          ],
+          enum: ['map'],
           default: 'map',
         },
       },
-      required: [
-        'parent',
-        'parent_key',
-        'nesting_key',
-        'path',
-      ],
+      required: ['parent', 'parent_key', 'nesting_key', 'path'],
       additionalProperties: false,
     },
     'supported-arguments-for-sets': {
@@ -1023,9 +912,7 @@ export const mockRdiJobsSchema = {
             const: 'set',
           },
         },
-        required: [
-          'data_type',
-        ],
+        required: ['data_type'],
       },
       then: {
         properties: {
@@ -1036,15 +923,11 @@ export const mockRdiJobsSchema = {
                 type: 'string',
               },
             },
-            required: [
-              'member',
-            ],
+            required: ['member'],
             additionalProperties: false,
           },
         },
-        required: [
-          'args',
-        ],
+        required: ['args'],
       },
     },
     'supported-arguments-for-sorted-sets': {
@@ -1054,9 +937,7 @@ export const mockRdiJobsSchema = {
             const: 'sorted_set',
           },
         },
-        required: [
-          'data_type',
-        ],
+        required: ['data_type'],
       },
       then: {
         properties: {
@@ -1071,16 +952,11 @@ export const mockRdiJobsSchema = {
                 type: 'string',
               },
             },
-            required: [
-              'member',
-              'score',
-            ],
+            required: ['member', 'score'],
             additionalProperties: false,
           },
         },
-        required: [
-          'args',
-        ],
+        required: ['args'],
       },
     },
     'supported-arguments-for-strings': {
@@ -1090,9 +966,7 @@ export const mockRdiJobsSchema = {
             const: 'string',
           },
         },
-        required: [
-          'data_type',
-        ],
+        required: ['data_type'],
       },
       then: {
         properties: {
@@ -1103,15 +977,11 @@ export const mockRdiJobsSchema = {
                 type: 'string',
               },
             },
-            required: [
-              'value',
-            ],
+            required: ['value'],
             additionalProperties: false,
           },
         },
-        required: [
-          'args',
-        ],
+        required: ['args'],
       },
     },
     'supported-arguments-for-lua': {
@@ -1121,9 +991,7 @@ export const mockRdiJobsSchema = {
             const: 'lua',
           },
         },
-        required: [
-          'data_type',
-        ],
+        required: ['data_type'],
       },
       then: {
         properties: {
@@ -1134,15 +1002,11 @@ export const mockRdiJobsSchema = {
                 type: 'string',
               },
             },
-            required: [
-              'script',
-            ],
+            required: ['script'],
             additionalProperties: false,
           },
         },
-        required: [
-          'args',
-        ],
+        required: ['args'],
       },
     },
     'unsupported-legacy-rt-job': {
@@ -1164,9 +1028,7 @@ export const mockRdiJobsSchema = {
                   $ref: '#/$defs/source_definition/redis_key_pattern',
                 },
               },
-              required: [
-                'key_pattern',
-              ],
+              required: ['key_pattern'],
               additionalProperties: false,
             },
             keys: {
@@ -1176,18 +1038,14 @@ export const mockRdiJobsSchema = {
                 expression: {
                   title: 'Regular expression',
                   type: 'string',
-                  examples: [
-                    'branch:(\\d+):emp:(\\d+)',
-                  ],
+                  examples: ['branch:(\\d+):emp:(\\d+)'],
                 },
                 delimiter: {
                   title: 'Delimiter',
                   type: 'string',
                   minLength: 1,
                   default: ':',
-                  examples: [
-                    ':',
-                  ],
+                  examples: [':'],
                 },
                 fields: {
                   title: 'Key parts mapping',
@@ -1196,33 +1054,21 @@ export const mockRdiJobsSchema = {
                   additionalProperties: {
                     type: 'integer',
                     minimum: 0,
-                    examples: [
-                      2,
-                      4,
-                    ],
+                    examples: [2, 4],
                   },
                 },
               },
               oneOf: [
                 {
-                  required: [
-                    'fields',
-                    'expression',
-                  ],
+                  required: ['fields', 'expression'],
                   not: {
-                    required: [
-                      'delimiter',
-                    ],
+                    required: ['delimiter'],
                   },
                 },
                 {
-                  required: [
-                    'fields',
-                  ],
+                  required: ['fields'],
                   not: {
-                    required: [
-                      'expression',
-                    ],
+                    required: ['expression'],
                   },
                 },
               ],
@@ -1238,9 +1084,7 @@ export const mockRdiJobsSchema = {
             table: {
               title: 'Table to fetch data from',
               type: 'string',
-              examples: [
-                'EMP',
-              ],
+              examples: ['EMP'],
             },
             columns: {
               title: 'List of columns',
@@ -1249,13 +1093,7 @@ export const mockRdiJobsSchema = {
                 type: 'string',
                 title: 'Column',
               },
-              examples: [
-                [
-                  'first_name',
-                  'last_name',
-                  'birth_date',
-                ],
-              ],
+              examples: [['first_name', 'last_name', 'birth_date']],
             },
             sql: {
               title: 'SQL',
@@ -1271,48 +1109,30 @@ export const mockRdiJobsSchema = {
               default: '1',
             },
           },
-          required: [
-            'redis',
-            'keys',
-            'connection',
-          ],
+          required: ['redis', 'keys', 'connection'],
           oneOf: [
             {
-              required: [
-                'table',
-                'columns',
-                'schema',
-              ],
+              required: ['table', 'columns', 'schema'],
               not: {
-                required: [
-                  'sql',
-                ],
+                required: ['sql'],
               },
             },
             {
-              required: [
-                'sql',
-              ],
+              required: ['sql'],
               allOf: [
                 {
                   not: {
-                    required: [
-                      'table',
-                    ],
+                    required: ['table'],
                   },
                 },
                 {
                   not: {
-                    required: [
-                      'columns',
-                    ],
+                    required: ['columns'],
                   },
                 },
                 {
                   not: {
-                    required: [
-                      'schema',
-                    ],
+                    required: ['schema'],
                   },
                 },
               ],
@@ -1335,10 +1155,7 @@ export const mockRdiJobsSchema = {
                 type: 'object',
               },
             },
-            required: [
-              'uses',
-              'with',
-            ],
+            required: ['uses', 'with'],
             additionalProperties: false,
           },
         },
@@ -1353,9 +1170,7 @@ export const mockRdiJobsSchema = {
           },
         },
       },
-      required: [
-        'source',
-      ],
+      required: ['source'],
       additionalProperties: false,
     },
     output: {
@@ -1367,11 +1182,7 @@ export const mockRdiJobsSchema = {
           uses: {
             title: 'Output writer',
             type: 'string',
-            enum: [
-              'cassandra.write',
-              'redis.write',
-              'relational.write',
-            ],
+            enum: ['cassandra.write', 'redis.write', 'relational.write'],
           },
           with: {
             title: 'Output writer arguments',
@@ -1389,18 +1200,18 @@ export const mockRdiJobsSchema = {
                 type: 'string',
                 title: 'Keyspace',
                 description: 'Keyspace',
-                examples: [
-                  'employees',
-                ],
+                examples: ['employees'],
               },
               key: {
                 title: 'key',
-                description: 'Expression to form the target Redis key when using redis.write block',
+                description:
+                  'Expression to form the target Redis key when using redis.write block',
                 type: 'object',
               },
               keys: {
                 title: 'keys',
-                description: 'List of fields to uniquely identify target record when using relational.write block',
+                description:
+                  'List of fields to uniquely identify target record when using relational.write block',
                 type: 'array',
               },
               data_type: {
@@ -1409,38 +1220,32 @@ export const mockRdiJobsSchema = {
               schema: {
                 type: 'string',
                 title: 'The table schema of the target table',
-                description: 'If left blank, the default schema of this connection will be used as defined in the `connections.yaml`',
-                examples: [
-                  'dbo',
-                ],
+                description:
+                  'If left blank, the default schema of this connection will be used as defined in the `connections.yaml`',
+                examples: ['dbo'],
               },
               table: {
                 type: 'string',
                 title: 'The target table name',
                 description: 'Target table name',
-                examples: [
-                  'employees',
-                ],
+                examples: ['employees'],
               },
               mapping: {
                 title: 'Fields to write',
                 type: 'array',
                 items: {
-                  type: [
-                    'string',
-                    'object',
-                  ],
+                  type: ['string', 'object'],
                   title: 'Name of column',
                 },
               },
               foreach: {
                 type: 'string',
-                title: 'Split a column into multiple records with a JMESPath expression',
-                description: 'Use a JMESPath expression to split a column into multiple records. The expression should be in the format column: expression.',
+                title:
+                  'Split a column into multiple records with a JMESPath expression',
+                description:
+                  'Use a JMESPath expression to split a column into multiple records. The expression should be in the format column: expression.',
                 pattern: '^(?!:).*:.*(?<!:)$',
-                examples: [
-                  'order_line: lines[]',
-                ],
+                examples: ['order_line: lines[]'],
               },
               args: {
                 title: 'Arguments for Redis writers',
@@ -1468,40 +1273,24 @@ export const mockRdiJobsSchema = {
                     const: 'json',
                   },
                 },
-                required: [
-                  'nest',
-                  'on_update',
-                  'data_type',
-                ],
+                required: ['nest', 'on_update', 'data_type'],
               },
               {
-                required: [
-                  'key',
-                ],
+                required: ['key'],
                 not: {
-                  required: [
-                    'nest',
-                  ],
+                  required: ['nest'],
                 },
               },
               {
-                required: [
-                  'keys',
-                ],
+                required: ['keys'],
                 not: {
-                  required: [
-                    'nest',
-                  ],
+                  required: ['nest'],
                 },
               },
               {
-                required: [
-                  'data_type',
-                ],
+                required: ['data_type'],
                 not: {
-                  required: [
-                    'nest',
-                  ],
+                  required: ['nest'],
                 },
               },
             ],
@@ -1509,11 +1298,7 @@ export const mockRdiJobsSchema = {
               mapping: {
                 properties: {
                   data_type: {
-                    enum: [
-                      'hash',
-                      'json',
-                      'stream',
-                    ],
+                    enum: ['hash', 'json', 'stream'],
                   },
                 },
               },
@@ -1535,10 +1320,7 @@ export const mockRdiJobsSchema = {
             additionalProperties: false,
           },
         },
-        required: [
-          'uses',
-          'with',
-        ],
+        required: ['uses', 'with'],
         additionalProperties: false,
       },
     },

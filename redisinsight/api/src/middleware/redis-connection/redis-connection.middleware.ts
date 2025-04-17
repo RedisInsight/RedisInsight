@@ -14,19 +14,21 @@ import { sessionMetadataFromRequest } from 'src/common/decorators';
 export class RedisConnectionMiddleware implements NestMiddleware {
   private logger = new Logger('RedisConnectionMiddleware');
 
-  constructor(
-    private databaseService: DatabaseService,
-  ) {}
+  constructor(private databaseService: DatabaseService) {}
 
   async use(req: Request, res: Response, next: NextFunction): Promise<any> {
-    const { instanceIdFromReq } = RedisConnectionMiddleware.getConnectionConfigFromReq(req);
+    const { instanceIdFromReq } =
+      RedisConnectionMiddleware.getConnectionConfigFromReq(req);
     if (!instanceIdFromReq) {
       this.throwError(req, ERROR_MESSAGES.UNDEFINED_INSTANCE_ID);
     }
 
     const sessionMetadata = sessionMetadataFromRequest(req);
 
-    const existDatabaseInstance = await this.databaseService.exists(sessionMetadata, instanceIdFromReq);
+    const existDatabaseInstance = await this.databaseService.exists(
+      sessionMetadata,
+      instanceIdFromReq,
+    );
     if (!existDatabaseInstance) {
       throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
     }

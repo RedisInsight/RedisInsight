@@ -2,17 +2,17 @@ name: Install all libraries action
 description: Install all libraries and dependencies
 inputs:
   skip-electron-deps:
-    description:  Skip install electron dependencies
+    description: Skip install electron dependencies
     default: '0'
     required: false
 
   skip-backend-deps:
-    description:  Skip install backend dependencies
+    description: Skip install backend dependencies
     default: '0'
     required: false
 
   skip-postinstall:
-    description:  Skip postinstall
+    description: Skip postinstall
     default: '0'
     required: false
 

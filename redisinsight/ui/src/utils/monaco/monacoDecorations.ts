@@ -5,16 +5,19 @@ export interface ILightWeightDecoration {
   range: monacoEditor.IRange
 }
 
-interface IModelDeltaDecoration extends monacoEditor.editor.IModelDeltaDecoration {}
+interface IModelDeltaDecoration
+  extends monacoEditor.editor.IModelDeltaDecoration {}
 
-export const toModelDeltaDecoration = (dec: ILightWeightDecoration):IModelDeltaDecoration => ({
+export const toModelDeltaDecoration = (
+  dec: ILightWeightDecoration,
+): IModelDeltaDecoration => ({
   range: dec.range,
   options: {
     className: dec.id,
     isWholeLine: false,
     glyphMarginClassName: 'monaco-glyph-run-command',
     // glyphMarginHoverMessage: { value: 'Run command' }
-  }
+  },
 })
 
 export const decoration = (
@@ -23,8 +26,13 @@ export const decoration = (
   startLineNumber: number,
   startColumn: number,
   endLineNumber: number,
-  endColum: number
+  endColum: number,
 ): ILightWeightDecoration => ({
   id,
-  range: new monaco.Range(startLineNumber, startColumn, endLineNumber, endColum)
+  range: new monaco.Range(
+    startLineNumber,
+    startColumn,
+    endLineNumber,
+    endColum,
+  ),
 })

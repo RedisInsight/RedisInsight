@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
 enum TokenType {
-
   INIT = 'INIT',
 
   EOF = 'EOF',
@@ -126,21 +125,18 @@ class Lexer {
     // Sample Query - `FT.EXPLAIN rs:recipes 'very simple | @t:hello @t2:{ free\\world } (@n:[1 2]|@n:[3 4]) (@g:[1.5 0.5 0.5 km] -@g:[2.5 1.5 0.5 km])'`
     let prevEscape = false
     while (
-      this.C !== undefined
-        && (
-          isLetter(this.C)
-            || ['@', ':', '\\'].includes(this.C)
-            || (startsWithAt && isDigit(this.C))
-
-            // Text can be searched in multiple schemas via '|'
-            //
-            // Example:
-            // FT.CREATE idx SCHEMA t1 TEXT t2 TEXT
-            // FT.EXPLAIN idx '@t1|t2:(text value)'
-            || (startsWithAt && this.C === '|')
-            || str.startsWith('TAG:@') && isDigit(this.C)
-            || prevEscape
-        )
+      this.C !== undefined &&
+      (isLetter(this.C) ||
+        ['@', ':', '\\'].includes(this.C) ||
+        (startsWithAt && isDigit(this.C)) ||
+        // Text can be searched in multiple schemas via '|'
+        //
+        // Example:
+        // FT.CREATE idx SCHEMA t1 TEXT t2 TEXT
+        // FT.EXPLAIN idx '@t1|t2:(text value)'
+        (startsWithAt && this.C === '|') ||
+        (str.startsWith('TAG:@') && isDigit(this.C)) ||
+        prevEscape)
     ) {
       str += this.C
       if (this.C === '\\' && this.PeekChar() === '\\') {
@@ -159,7 +155,11 @@ class Lexer {
 
   ReadNumber(): string {
     let str = ''
-    while (this.C !== undefined && (isDigit(this.C) || this.C === '.') && !Number.isNaN(parseFloat(str + this.C))) {
+    while (
+      this.C !== undefined &&
+      (isDigit(this.C) || this.C === '.') &&
+      !Number.isNaN(parseFloat(str + this.C))
+    ) {
       str += this.C
       this.ReadChar()
     }
@@ -187,10 +187,10 @@ class Lexer {
       case ')':
         t = new Token(TokenType.RPAREN, this.C)
         break
-      case '+':// TODO: This should be PLUS token
+      case '+': // TODO: This should be PLUS token
         t = new Token(TokenType.IDENTIFIER, this.C)
         break
-      case '-':// TODO: This should be MINUS token
+      case '-': // TODO: This should be MINUS token
         t = new Token(TokenType.IDENTIFIER, this.C)
         const p = this.PeekChar()
         if (p !== null && isDigit(p)) {
@@ -238,7 +238,10 @@ class Lexer {
         t = new Token(TokenType.EOF, '')
         break
       default:
-        if (this.C !== undefined && (isLetter(this.C) || ['@', ':'].includes(this.C))) {
+        if (
+          this.C !== undefined &&
+          (isLetter(this.C) || ['@', ':'].includes(this.C))
+        ) {
           const literal = this.ReadIdentifier()
           let tokenType = KEYWORDS[literal] || TokenType.IDENTIFIER
           if (literal.startsWith('TAG:')) {
@@ -265,12 +268,16 @@ class Lexer {
             tokenType = TokenType.VECTOR
           } else if (literal.startsWith('@') && literal.endsWith(':UNION')) {
             tokenType = TokenType.UNION
-          } else if (literal.startsWith('@') && literal.endsWith(':INTERSECT')) {
+          } else if (
+            literal.startsWith('@') &&
+            literal.endsWith(':INTERSECT')
+          ) {
             tokenType = TokenType.INTERSECT
           }
           t = new Token(tokenType, literal)
           return t
-        } if (this.C !== undefined && isDigit(this.C)) {
+        }
+        if (this.C !== undefined && isDigit(this.C)) {
           const n = this.ReadNumber()
           t = new Token(TokenType.NUMBER, n)
           return t
@@ -309,13 +316,13 @@ export enum EntityType {
   Sorter = 'Sorter',
   Loader = 'Loader',
 
-  CLUSTER_MERGE = 'CLUSTER MERGE'
+  CLUSTER_MERGE = 'CLUSTER MERGE',
 }
 
 export interface EntityInfo {
   id: string
-  type: EntityType,
-  subType?: EntityType,
+  type: EntityType
+  subType?: EntityType
   data?: string
   snippet?: string
   children: EntityInfo[]
@@ -333,11 +340,15 @@ interface IAncestors {
   pairs: [string, string][]
 }
 
-export function GetAncestors(info: EntityInfo, searchId: string, a: IAncestors): IAncestors {
+export function GetAncestors(
+  info: EntityInfo,
+  searchId: string,
+  a: IAncestors,
+): IAncestors {
   if (searchId === info.id) {
     return {
       found: true,
-      pairs: info.parentId ? [[info.parentId, info.id]] : []
+      pairs: info.parentId ? [[info.parentId, info.id]] : [],
     }
   }
   const r: IAncestors = { ...a }
@@ -365,7 +376,11 @@ class Expr {
 
   Info?: string
 
-  constructor(expr: string, subType: EntityType, info: string | undefined = undefined) {
+  constructor(
+    expr: string,
+    subType: EntityType,
+    info: string | undefined = undefined,
+  ) {
     this.Core = expr
     this.SubType = subType
     this.Info = info
@@ -408,7 +423,13 @@ class NumericExpr {
 
   RSign: Token
 
-  constructor(left: number, lsign: Token, identifier: Token, rsign: Token, right: number) {
+  constructor(
+    left: number,
+    lsign: Token,
+    identifier: Token,
+    rsign: Token,
+    right: number,
+  ) {
     this.Left = left
     this.LSign = lsign
     this.Identifier = identifier
@@ -465,7 +486,7 @@ class ExpandExpr {
         ...d,
         parentId: id,
         parentSnippet: snippet,
-      }))
+      })),
     }
   }
 }
@@ -535,7 +556,10 @@ class Parser {
     this.nextToken()
 
     while (true) {
-      if (this.CurrentToken.T === TokenType.RBRACE && this.PeekToken.T === TokenType.NEW_LINE) {
+      if (
+        this.CurrentToken.T === TokenType.RBRACE &&
+        this.PeekToken.T === TokenType.NEW_LINE
+      ) {
         this.nextToken()
         break
       }
@@ -546,26 +570,32 @@ class Parser {
         Exprs.push(this.parseNumericExpr())
       } else if (this.CurrentToken?.T === TokenType.IDENTIFIER) {
         Exprs.push(this.parseExpr())
-      } else if ([
-        TokenType.UNION,
-        TokenType.INTERSECT,
-        TokenType.NOT,
-        TokenType.OPTIONAL,
-        TokenType.EXACT,
-        TokenType.VECTOR,
-        TokenType.TAG
-      ].includes(t)) {
+      } else if (
+        [
+          TokenType.UNION,
+          TokenType.INTERSECT,
+          TokenType.NOT,
+          TokenType.OPTIONAL,
+          TokenType.EXACT,
+          TokenType.VECTOR,
+          TokenType.TAG,
+        ].includes(t)
+      ) {
         Exprs.push(this.parseExpandExpr(EntityType[t]))
       } else if (this.CurrentToken.T === TokenType.GEO_EXPR) {
         Exprs.push(this.parseGeoExpr())
-      } else if ([TokenType.FUZZY, TokenType.WILDCARD, TokenType.PREFIX].includes(t)) {
+      } else if (
+        [TokenType.FUZZY, TokenType.WILDCARD, TokenType.PREFIX].includes(t)
+      ) {
         Exprs.push(this.parseSimpleExpr(EntityType[t]))
       } else if (this.CurrentToken.T === TokenType.IDS_EXPR) {
         Exprs.push(this.parseIdsExpr())
       } else if (this.CurrentToken.T === TokenType.LEXRANGE_EXPR) {
         Exprs.push(this.parseLexrangeExpr())
       } else if (this.CurrentToken.T === TokenType.NUMBER) {
-        Exprs.push(new Expr(this.CurrentToken.Data.toString(), EntityType.NUMBER))
+        Exprs.push(
+          new Expr(this.CurrentToken.Data.toString(), EntityType.NUMBER),
+        )
       } else if (this.CurrentToken.T === TokenType.LESS) {
         Exprs.push(this.parseWildcardEmpty())
       }
@@ -767,7 +797,11 @@ class Parser {
 
     this.nextToken()
 
-    return new Expr(`${first},${second} --> ${third} ${metric}`, EntityType.GEO, identifierData)
+    return new Expr(
+      `${first},${second} --> ${third} ${metric}`,
+      EntityType.GEO,
+      identifierData,
+    )
   }
 
   parseNumericExpr() {
@@ -812,13 +846,19 @@ class Parser {
 
     this.assertToken(TokenType.RBRACE)
 
-    this.nextToken()// read off RBRACE
+    this.nextToken() // read off RBRACE
 
     // assertToken(TokenType.NEW_LINE, this.CurrentToken?.T)
     //
     // this.nextToken() // read off new line
 
-    return new NumericExpr(left !== 'inf' ? parseFloat(left) : Infinity, lsign, identifier, rsign, right !== 'inf' ? parseFloat(right) : Infinity)
+    return new NumericExpr(
+      left !== 'inf' ? parseFloat(left) : Infinity,
+      lsign,
+      identifier,
+      rsign,
+      right !== 'inf' ? parseFloat(right) : Infinity,
+    )
   }
 }
 
@@ -831,25 +871,33 @@ function Parse(data: string): SearchExpr {
 
   if (p.CurrentToken?.T === TokenType.NUMERIC) {
     return p.parseNumericExpr()
-  } if ([
-    TokenType.UNION,
-    TokenType.INTERSECT,
-    TokenType.NOT,
-    TokenType.OPTIONAL,
-    TokenType.EXACT,
-    TokenType.VECTOR,
-    TokenType.TAG,
-  ].includes(t)) {
+  }
+  if (
+    [
+      TokenType.UNION,
+      TokenType.INTERSECT,
+      TokenType.NOT,
+      TokenType.OPTIONAL,
+      TokenType.EXACT,
+      TokenType.VECTOR,
+      TokenType.TAG,
+    ].includes(t)
+  ) {
     return p.parseExpandExpr(EntityType[t])
-  } if (p.CurrentToken.T === TokenType.GEO_EXPR) {
+  }
+  if (p.CurrentToken.T === TokenType.GEO_EXPR) {
     return p.parseGeoExpr()
-  } if ([TokenType.FUZZY, TokenType.WILDCARD, TokenType.PREFIX].includes(t)) {
+  }
+  if ([TokenType.FUZZY, TokenType.WILDCARD, TokenType.PREFIX].includes(t)) {
     return p.parseSimpleExpr(EntityType[t])
-  } if (p.CurrentToken.T === TokenType.IDS_EXPR) {
+  }
+  if (p.CurrentToken.T === TokenType.IDS_EXPR) {
     return p.parseIdsExpr()
-  } if (p.CurrentToken.T === TokenType.LEXRANGE_EXPR) {
+  }
+  if (p.CurrentToken.T === TokenType.LEXRANGE_EXPR) {
     return p.parseLexrangeExpr()
-  } if (p.CurrentToken.T === TokenType.LESS) {
+  }
+  if (p.CurrentToken.T === TokenType.LESS) {
     return p.parseWildcardEmpty()
   }
   return p.parseExpr()
@@ -860,7 +908,7 @@ export function ParseExplain(output: string) {
 }
 
 function isLetter(str: string): boolean {
-  return str.length === 1 && (str.match(/[a-z]/i) !== null)
+  return str.length === 1 && str.match(/[a-z]/i) !== null
 }
 
 function isDigit(str: string): boolean {
@@ -882,25 +930,23 @@ function assertToken(expected: TokenType, actual: TokenType | undefined) {
 }
 
 function assertExpandEntity(t: EntityType) {
-  if (![
-    EntityType.UNION,
-    EntityType.INTERSECT,
-    EntityType.NOT,
-    EntityType.OPTIONAL,
-    EntityType.EXACT,
-    EntityType.VECTOR,
-    EntityType.TAG,
-  ].includes(t)) {
+  if (
+    ![
+      EntityType.UNION,
+      EntityType.INTERSECT,
+      EntityType.NOT,
+      EntityType.OPTIONAL,
+      EntityType.EXACT,
+      EntityType.VECTOR,
+      EntityType.TAG,
+    ].includes(t)
+  ) {
     throw new Error(`${t} is not an expand entity`)
   }
 }
 
 function assertSimpleEntity(t: EntityType) {
-  if (![
-    EntityType.FUZZY,
-    EntityType.WILDCARD,
-    EntityType.PREFIX,
-  ].includes(t)) {
+  if (![EntityType.FUZZY, EntityType.WILDCARD, EntityType.PREFIX].includes(t)) {
     throw new Error(`${t} is not a simple entity`)
   }
 }
@@ -912,7 +958,7 @@ export function ParseProfileCluster(info: any[]): [Object, EntityInfo] {
   while (i < info.length) {
     if (Array.isArray(info[i])) {
       clusterInfo[key].push(info[i])
-    } else if (typeof (info[i]) === 'string') {
+    } else if (typeof info[i] === 'string') {
       key = info[i]
       clusterInfo[key] = []
     } else {
@@ -940,16 +986,20 @@ export function ParseProfileCluster(info: any[]): [Object, EntityInfo] {
       id: uuidv4(),
       type: EntityType.CLUSTER_MERGE,
       // children: shards,
-      children: Object.keys(clusterInfo).filter((k) => k.toLowerCase().startsWith('shard')).map((k) =>
-        ParseProfile(clusterInfo[k]))
-    }
+      children: Object.keys(clusterInfo)
+        .filter((k) => k.toLowerCase().startsWith('shard'))
+        .map((k) => ParseProfile(clusterInfo[k])),
+    },
   ]
 }
 
 export function ParseProfile(shard: Array<any>): EntityInfo {
   const iterators = findFlatProfile('Iterators profile', shard)
   let result = iterators ? ParseIteratorProfile(iterators) : null
-  const processorsProfile: string[][] = findFlatProfile('Result processors profile', shard)
+  const processorsProfile: string[][] = findFlatProfile(
+    'Result processors profile',
+    shard,
+  )
 
   for (let i = 0; i < processorsProfile.length; i++) {
     const e = processorsProfile[i]
@@ -986,7 +1036,7 @@ export function ParseIteratorProfile(data: any[]): EntityInfo {
 
     if (Array.isArray(val)) {
       const arr: any[] = []
-      while ((x + 1) < data.length && Array.isArray(data[x + 1])) {
+      while (x + 1 < data.length && Array.isArray(data[x + 1])) {
         arr.push(data[x + 1])
         x += 1
       }
@@ -1006,7 +1056,9 @@ export function ParseIteratorProfile(data: any[]): EntityInfo {
     counter: props.Counter,
     size: props.Size,
     data: props.Term,
-    children: childrens.map(ParseIteratorProfile).map((d: EntityInfo) => ({ ...d, parentId: id })),
+    children: childrens
+      .map(ParseIteratorProfile)
+      .map((d: EntityInfo) => ({ ...d, parentId: id })),
   }
 
   // const t: EntityType = props['Type']
@@ -1061,14 +1113,14 @@ export function getOutputLevel(output: string) {
 function ParseEntity(entity: string, children: EntityInfo[]): EntityInfo {
   const info = entity.trim().split('|')
 
-  let time: string | undefined = ''; let
-    size: string | undefined = ''
+  let time: string | undefined = ''
+  let size: string | undefined = ''
 
   const metaData = info.slice(-1)[0].trim()
 
   // Is GRAPH.PROFILE output
   if (metaData.startsWith('Records produced')) {
-    [size, time] = metaData.trim().split(',')
+    ;[size, time] = metaData.trim().split(',')
 
     size = size.split(': ')[1]
     time = time.split(': ')[1].split(' ')[0]
@@ -1097,8 +1149,8 @@ export function ParseGraphV2(output: string[]) {
 
   const pairs: [number, number][] = []
 
-  let s: number | null = null; const
-    e: number | null = null
+  let s: number | null = null
+  const e: number | null = null
   let i = 1
 
   while (i < output.length) {
@@ -1120,7 +1172,10 @@ export function ParseGraphV2(output: string[]) {
 
   for (let k = 0; k < pairs.length; k++) {
     const p = pairs[k]
-    children.push({ ...ParseGraphV2(output.slice(p[0], p[1])), parentId: entity.id })
+    children.push({
+      ...ParseGraphV2(output.slice(p[0], p[1])),
+      parentId: entity.id,
+    })
   }
 
   entity.children = children
@@ -1128,22 +1183,32 @@ export function ParseGraphV2(output: string[]) {
 }
 
 export function GetTotalExecutionTime(g: EntityInfo) {
-  return parseFloat(g.time || '') + g.children.reduce((a, c) => a + GetTotalExecutionTime(c), 0)
+  return (
+    parseFloat(g.time || '') +
+    g.children.reduce((a, c) => a + GetTotalExecutionTime(c), 0)
+  )
 }
 
 export const findFlatProfile = (key: string, profiles: any) => {
-  const index = profiles.findIndex((k: string) => k?.toLowerCase?.() === key?.toLowerCase?.())
+  const index = profiles.findIndex(
+    (k: string) => k?.toLowerCase?.() === key?.toLowerCase?.(),
+  )
   return index > -1 ? profiles[index + 1] : undefined
 }
 
 // Helper to find a profile by key (redis < 8)
-export const findProfile = (key: string, profiles: Array<[string, any]>, defautlVal: any = []) => {
-  const [, ...rest] = profiles.find(([k]) => k?.toLowerCase?.() === key?.toLowerCase?.()) || []
+export const findProfile = (
+  key: string,
+  profiles: Array<[string, any]>,
+  defautlVal: any = [],
+) => {
+  const [, ...rest] =
+    profiles.find(([k]) => k?.toLowerCase?.() === key?.toLowerCase?.()) || []
   return rest?.length ? rest : [defautlVal]
 }
 
 // transform profile result to be campatible with redis 8+
-export const transformProfileResult = (profiles: Array<[string, any]>,) => [
+export const transformProfileResult = (profiles: Array<[string, any]>) => [
   'Shards',
   [
     [
@@ -1158,9 +1223,9 @@ export const transformProfileResult = (profiles: Array<[string, any]>,) => [
       'Iterators profile',
       ...findProfile('Iterators profile', profiles),
       'Result processors profile',
-      findProfile('Result processors profile', profiles)
-    ]
+      findProfile('Result processors profile', profiles),
+    ],
   ],
   'Coordinator',
-  []
+  [],
 ]

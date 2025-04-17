@@ -13,8 +13,8 @@ const mockAppInfoSelector = jest.requireActual('uiSrc/slices/app/info')
 jest.mock('uiSrc/slices/app/info', () => ({
   ...jest.requireActual('uiSrc/slices/app/info'),
   appInfoSelector: jest.fn().mockReturnValue({
-    server: {}
-  })
+    server: {},
+  }),
 }))
 
 describe('DatabaseAlias', () => {
@@ -36,11 +36,11 @@ describe('DatabaseAlias', () => {
   })
 
   it('should not render clone button with buildType=REDIS_STACK', () => {
-    (appInfoSelector as jest.Mock).mockImplementation(() => ({
+    ;(appInfoSelector as jest.Mock).mockImplementation(() => ({
       ...mockAppInfoSelector,
       server: {
-        buildType: BuildType.RedisStack
-      }
+        buildType: BuildType.RedisStack,
+      },
     }))
 
     render(<DatabaseAlias {...mockedProps} />)

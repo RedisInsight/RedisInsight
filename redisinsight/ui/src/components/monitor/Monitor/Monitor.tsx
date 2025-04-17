@@ -41,17 +41,14 @@ const Monitor = (props: Props) => {
     isShowHelper = false,
     isShowCli = false,
     isSaveToFile = false,
-    handleRunMonitor = () => {}
+    handleRunMonitor = () => {},
   } = props
   const [saveLogValue, setSaveLogValue] = useState(isSaveToFile)
 
   const MonitorNotStarted = () => (
     <div className={styles.startContainer} data-testid="monitor-not-started">
       <div className={styles.startContent}>
-        <EuiToolTip
-          content="Start"
-          display="inlineBlock"
-        >
+        <EuiToolTip content="Start" display="inlineBlock">
           <EuiButtonIcon
             iconType="playFilled"
             className={styles.startTitleIcon}
@@ -62,7 +59,11 @@ const Monitor = (props: Props) => {
           />
         </EuiToolTip>
         <div className={styles.startTitle}>Start Profiler</div>
-        <EuiFlexGroup responsive={false} style={{ flexGrow: 0 }} gutterSize="none">
+        <EuiFlexGroup
+          responsive={false}
+          style={{ flexGrow: 0 }}
+          gutterSize="none"
+        >
           <EuiFlexItem grow={false}>
             <EuiIcon
               className={cx(styles.iconWarning, 'warning--light')}
@@ -74,8 +75,14 @@ const Monitor = (props: Props) => {
             />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiTextColor color="warning" className="warning--light" style={{ paddingLeft: 4 }} data-testid="monitor-warning-message">
-              Running Profiler will decrease throughput, avoid running it in production databases.
+            <EuiTextColor
+              color="warning"
+              className="warning--light"
+              style={{ paddingLeft: 4 }}
+              data-testid="monitor-warning-message"
+            >
+              Running Profiler will decrease throughput, avoid running it in
+              production databases.
             </EuiTextColor>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -112,8 +119,12 @@ const Monitor = (props: Props) => {
             />
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiTextColor color="danger" style={{ paddingLeft: 4 }} data-testid="monitor-error-message">
-              { error }
+            <EuiTextColor
+              color="danger"
+              style={{ paddingLeft: 4 }}
+              data-testid="monitor-error-message"
+            >
+              {error}
             </EuiTextColor>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -123,19 +134,27 @@ const Monitor = (props: Props) => {
 
   return (
     <>
-      <div className={cx(styles.container, { [styles.isRunning]: isRunning && !isPaused })} data-testid="monitor">
-        {(error && !isRunning)
-          ? (<MonitorError />)
-          : (
-            <>
-              {!isStarted && <MonitorNotStarted />}
-              {!items?.length && isRunning && !isPaused && (
-                <div data-testid="monitor-started" style={{ paddingTop: 10, paddingLeft: 12 }}>
-                  Profiler is started.
-                </div>
-              )}
-            </>
-          )}
+      <div
+        className={cx(styles.container, {
+          [styles.isRunning]: isRunning && !isPaused,
+        })}
+        data-testid="monitor"
+      >
+        {error && !isRunning ? (
+          <MonitorError />
+        ) : (
+          <>
+            {!isStarted && <MonitorNotStarted />}
+            {!items?.length && isRunning && !isPaused && (
+              <div
+                data-testid="monitor-started"
+                style={{ paddingTop: 10, paddingLeft: 12 }}
+              >
+                Profiler is started.
+              </div>
+            )}
+          </>
+        )}
         {isStarted && (
           <div className={styles.content}>
             {!!items?.length && (
@@ -152,9 +171,7 @@ const Monitor = (props: Props) => {
             )}
           </div>
         )}
-        {(isStarted && isPaused) && (
-          <MonitorLog />
-        )}
+        {isStarted && isPaused && <MonitorLog />}
       </div>
     </>
   )

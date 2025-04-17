@@ -1,14 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import {
-  mockStandaloneRedisClient,
-} from 'src/__mocks__';
+import { mockStandaloneRedisClient } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
   BrowserToolTSCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { ReplyError } from 'src/models';
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import { TsKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/ts.key-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
@@ -41,9 +42,7 @@ describe('TsKeyInfoStrategy', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        TsKeyInfoStrategy,
-      ],
+      providers: [TsKeyInfoStrategy],
     }).compile();
 
     strategy = module.get(TsKeyInfoStrategy);
@@ -62,10 +61,9 @@ describe('TsKeyInfoStrategy', () => {
           [null, 50],
         ]);
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith(
-          [BrowserToolTSCommands.TSInfo, key],
-          { replyEncoding: 'utf8' },
-        )
+        .calledWith([BrowserToolTSCommands.TSInfo, key], {
+          replyEncoding: 'utf8',
+        })
         .mockResolvedValue(mockTSInfoReply);
     });
     it('should return appropriate value', async () => {
@@ -108,10 +106,9 @@ describe('TsKeyInfoStrategy', () => {
         message: "ERR unknown command 'ts.info'",
       };
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith(
-          [BrowserToolTSCommands.TSInfo, key],
-          { replyEncoding: 'utf8' },
-        )
+        .calledWith([BrowserToolTSCommands.TSInfo, key], {
+          replyEncoding: 'utf8',
+        })
         .mockResolvedValue(replyError);
 
       const result = await strategy.getInfo(

@@ -1,8 +1,13 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Delete, Get, Logger, Param,
-  Post, Res,
+  Controller,
+  Delete,
+  Get,
+  Logger,
+  Param,
+  Post,
+  Res,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -22,9 +27,7 @@ import { Response } from 'express';
 export class AiQueryController {
   private readonly logger = new Logger('AiQueryController');
 
-  constructor(
-    private readonly service: AiQueryService,
-  ) {}
+  constructor(private readonly service: AiQueryService) {}
 
   @Post()
   @ApiEndpoint({
@@ -33,7 +36,7 @@ export class AiQueryController {
     responses: [{ type: String }],
   })
   async streamQuestion(
-  @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') databaseId: string,
     @Body() dto: SendAiQueryMessageDto,
     @Res() res: Response,
@@ -48,7 +51,7 @@ export class AiQueryController {
     responses: [{ type: String }],
   })
   async getHistory(
-  @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') databaseId: string,
   ) {
     return this.service.getHistory(sessionMetadata, databaseId);
@@ -61,7 +64,7 @@ export class AiQueryController {
     responses: [{ type: String }],
   })
   async clearHistory(
-  @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') databaseId: string,
   ) {
     return this.service.clearHistory(sessionMetadata, databaseId);

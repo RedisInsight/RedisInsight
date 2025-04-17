@@ -5,7 +5,10 @@ import { ApiRdiClient } from 'src/modules/rdi/client/api.rdi.client';
 
 @Injectable()
 export class RdiClientFactory {
-  async createClient(clientMetadata: RdiClientMetadata, rdi: Rdi): Promise<RdiClient> {
+  async createClient(
+    clientMetadata: RdiClientMetadata,
+    rdi: Rdi,
+  ): Promise<RdiClient> {
     const rdiClient = new ApiRdiClient(clientMetadata, rdi);
     await rdiClient.connect();
 

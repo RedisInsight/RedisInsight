@@ -9,7 +9,10 @@ import {
 } from 'src/__mocks__';
 import { SlowLogService } from 'src/modules/slow-log/slow-log.service';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
-import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constants/commands';
+import {
+  SlowLogArguments,
+  SlowLogCommands,
+} from 'src/modules/slow-log/constants/commands';
 import { SlowLogAnalytics } from 'src/modules/slow-log/slow-log.analytics';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
@@ -76,16 +79,27 @@ describe('SlowLogService', () => {
 
   describe('getSlowLogs', () => {
     it('should return slowlogs for standalone', async () => {
-      const res = await service.getSlowLogs(mockCommonClientMetadata, getSlowLogDto);
+      const res = await service.getSlowLogs(
+        mockCommonClientMetadata,
+        getSlowLogDto,
+      );
       expect(res).toEqual([mockSlowLog, mockSlowLog]);
     });
     it('should return slowlogs for standalone without active connection', async () => {
-      const res = await service.getSlowLogs(mockCommonClientMetadata, getSlowLogDto);
+      const res = await service.getSlowLogs(
+        mockCommonClientMetadata,
+        getSlowLogDto,
+      );
       expect(res).toEqual([mockSlowLog, mockSlowLog]);
     });
     it('should return slowlogs cluster', async () => {
-      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(clusterClient);
-      const res = await service.getSlowLogs(mockCommonClientMetadata, getSlowLogDto);
+      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(
+        clusterClient,
+      );
+      const res = await service.getSlowLogs(
+        mockCommonClientMetadata,
+        getSlowLogDto,
+      );
       expect(res).toEqual([mockSlowLog, mockSlowLog, mockSlowLog, mockSlowLog]);
     });
     it('should proxy HttpException', async () => {
@@ -116,12 +130,20 @@ describe('SlowLogService', () => {
   describe('reset', () => {
     it('should reset slowlogs for standalone', async () => {
       await service.reset(mockCommonClientMetadata);
-      expect(standaloneClient.call).toHaveBeenCalledWith([SlowLogCommands.SlowLog, SlowLogArguments.Reset]);
+      expect(standaloneClient.call).toHaveBeenCalledWith([
+        SlowLogCommands.SlowLog,
+        SlowLogArguments.Reset,
+      ]);
     });
     it('should reset slowlogs cluster', async () => {
-      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(clusterClient);
+      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(
+        clusterClient,
+      );
       await service.reset(mockCommonClientMetadata);
-      expect(standaloneClient.call).toHaveBeenCalledWith([SlowLogCommands.SlowLog, SlowLogArguments.Reset]);
+      expect(standaloneClient.call).toHaveBeenCalledWith([
+        SlowLogCommands.SlowLog,
+        SlowLogArguments.Reset,
+      ]);
     });
     it('should proxy HttpException', async () => {
       databaseClientFactory.getOrCreateClient.mockImplementationOnce(() => {
@@ -197,7 +219,9 @@ describe('SlowLogService', () => {
       standaloneClient.call.mockResolvedValueOnce(mockSlowlogConfigReply);
       standaloneClient.call.mockResolvedValueOnce('OK');
 
-      const res = await service.updateConfig(mockCommonClientMetadata, { slowlogMaxLen: 128 });
+      const res = await service.updateConfig(mockCommonClientMetadata, {
+        slowlogMaxLen: 128,
+      });
       expect(res).toEqual(mockSlowLogConfig);
       expect(standaloneClient.call).toHaveBeenCalledTimes(2);
     });
@@ -207,17 +231,27 @@ describe('SlowLogService', () => {
         .mockResolvedValueOnce('OK')
         .mockResolvedValueOnce('OK');
 
-      const res = await service.updateConfig(mockCommonClientMetadata, { slowlogMaxLen: 128, slowlogLogSlowerThan: 1 });
+      const res = await service.updateConfig(mockCommonClientMetadata, {
+        slowlogMaxLen: 128,
+        slowlogLogSlowerThan: 1,
+      });
       expect(res).toEqual({ slowlogMaxLen: 128, slowlogLogSlowerThan: 1 });
       expect(standaloneClient.call).toHaveBeenCalledTimes(3);
     });
     it('should throw an error for cluster', async () => {
-      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(clusterClient);
-      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(clusterClient);
+      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(
+        clusterClient,
+      );
+      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(
+        clusterClient,
+      );
       clusterClient.call.mockResolvedValueOnce(mockSlowlogConfigReply);
 
       try {
-        await service.updateConfig(mockCommonClientMetadata, { slowlogMaxLen: 128, slowlogLogSlowerThan: 1 });
+        await service.updateConfig(mockCommonClientMetadata, {
+          slowlogMaxLen: 128,
+          slowlogLogSlowerThan: 1,
+        });
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
@@ -229,7 +263,9 @@ describe('SlowLogService', () => {
       });
 
       try {
-        await service.updateConfig(mockCommonClientMetadata, { slowlogMaxLen: 1 });
+        await service.updateConfig(mockCommonClientMetadata, {
+          slowlogMaxLen: 1,
+        });
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
@@ -241,7 +277,9 @@ describe('SlowLogService', () => {
       });
 
       try {
-        await service.updateConfig(mockCommonClientMetadata, { slowlogMaxLen: 1 });
+        await service.updateConfig(mockCommonClientMetadata, {
+          slowlogMaxLen: 1,
+        });
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);

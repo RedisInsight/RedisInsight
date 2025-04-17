@@ -11,35 +11,19 @@ describe('AddItemsActions', () => {
   })
 
   it('should not render any buttons with one item', () => {
-    render(
-      <AddItemsActions
-        {...instance(mockedProps)}
-        length={1}
-      />
-    )
+    render(<AddItemsActions {...instance(mockedProps)} length={1} />)
     expect(screen.queryByLabelText(/remove item/i)).toBeNull()
     expect(screen.queryByLabelText(/add new item/i)).toBeNull()
   })
 
   it('should render clear button', () => {
-    render(
-      <AddItemsActions
-        {...instance(mockedProps)}
-        length={1}
-      />
-    )
+    render(<AddItemsActions {...instance(mockedProps)} length={1} />)
     expect(screen.queryByLabelText(/remove item/i)).toBeNull()
     expect(screen.getByLabelText(/clear item/i)).toBeTruthy()
   })
 
   it('should render add button', () => {
-    render(
-      <AddItemsActions
-        {...instance(mockedProps)}
-        length={2}
-        index={1}
-      />
-    )
+    render(<AddItemsActions {...instance(mockedProps)} length={2} index={1} />)
     expect(screen.getByTestId('add-new-item')).toBeTruthy()
   })
 
@@ -50,7 +34,7 @@ describe('AddItemsActions', () => {
         {...instance(mockedProps)}
         length={1}
         clearItemValues={clearItemValues}
-      />
+      />,
     )
     fireEvent.click(screen.getByLabelText(/clear item/i))
     expect(clearItemValues).toHaveBeenCalledTimes(1)
@@ -63,7 +47,7 @@ describe('AddItemsActions', () => {
         {...instance(mockedProps)}
         length={2}
         removeItem={removeItem}
-      />
+      />,
     )
     fireEvent.click(screen.getByLabelText(/remove item/i))
     expect(removeItem).toHaveBeenCalledTimes(1)

@@ -2,14 +2,17 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { AxiosError, AxiosResponseHeaders } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem, } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import {
   cliParseTextResponseWithOffset,
   getDbIndexFromSelectQuery,
 } from 'uiSrc/utils/cliHelper'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { SelectCommand, CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
-import { SendCommandResponse, } from 'apiSrc/modules/cli/dto/cli.dto'
+import {
+  SelectCommand,
+  CliOutputFormatterType,
+} from 'uiSrc/constants/cliOutput'
+import { SendCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import { AppDispatch, RootState } from '../store'
 import { CommandExecutionStatus, StateCliOutput } from '../interfaces/cli'
@@ -20,7 +23,8 @@ export const initialState: StateCliOutput = {
   loading: false,
   error: '',
   db: 0,
-  commandHistory: localStorageService?.get(BrowserStorageItem.cliInputHistory) ?? [],
+  commandHistory:
+    localStorageService?.get(BrowserStorageItem.cliInputHistory) ?? [],
 }
 
 // A slice for recipes
@@ -91,7 +95,7 @@ export default outputSlice.reducer
 export function sendCliCommandAction(
   command: string = '',
   onSuccessAction?: () => void,
-  onFailAction?: (error: AxiosError) => void
+  onFailAction?: (error: AxiosError) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
@@ -105,18 +109,30 @@ export function sendCliCommandAction(
 
       dispatch(sendCliCommand())
 
-      const { data: { response, status: dataStatus }, status } = await apiService.post<SendCommandResponse>(
-        getUrl(id, ApiEndpoints.CLI, state.cli.settings?.cliClientUuid, ApiEndpoints.SEND_COMMAND),
+      const {
+        data: { response, status: dataStatus },
+        status,
+      } = await apiService.post<SendCommandResponse>(
+        getUrl(
+          id,
+          ApiEndpoints.CLI,
+          state.cli.settings?.cliClientUuid,
+          ApiEndpoints.SEND_COMMAND,
+        ),
         { command, outputFormat: CliOutputFormatterType.Raw },
       )
 
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
-        dispatch(concatToOutput(cliParseTextResponseWithOffset(response, command, dataStatus)))
+        dispatch(
+          concatToOutput(
+            cliParseTextResponseWithOffset(response, command, dataStatus),
+          ),
+        )
         if (
-          dataStatus === CommandExecutionStatus.Success
-          && command.toLowerCase().startsWith(SelectCommand.toLowerCase())
+          dataStatus === CommandExecutionStatus.Success &&
+          command.toLowerCase().startsWith(SelectCommand.toLowerCase())
         ) {
           try {
             const dbIndex = getDbIndexFromSelectQuery(command)
@@ -139,7 +155,7 @@ export function sendCliCommandAction(
 export function sendCliClusterCommandAction(
   command: string = '',
   onSuccessAction?: () => void,
-  onFailAction?: (error: AxiosError) => void
+  onFailAction?: (error: AxiosError) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
@@ -154,12 +170,15 @@ export function sendCliClusterCommandAction(
 
       dispatch(sendCliCommand())
 
-      const { data: { response, status: dataStatus }, status } = await apiService.post<SendCommandResponse>(
+      const {
+        data: { response, status: dataStatus },
+        status,
+      } = await apiService.post<SendCommandResponse>(
         getUrl(
           id,
           ApiEndpoints.CLI,
           state.cli.settings?.cliClientUuid,
-          ApiEndpoints.SEND_CLUSTER_COMMAND
+          ApiEndpoints.SEND_CLUSTER_COMMAND,
         ),
         { command, outputFormat },
       )
@@ -167,7 +186,11 @@ export function sendCliClusterCommandAction(
       if (isStatusSuccessful(status)) {
         onSuccessAction?.()
         dispatch(sendCliCommandSuccess())
-        dispatch(concatToOutput(cliParseTextResponseWithOffset(response, command, dataStatus)))
+        dispatch(
+          concatToOutput(
+            cliParseTextResponseWithOffset(response, command, dataStatus),
+          ),
+        )
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error as AxiosError)
@@ -188,7 +211,7 @@ export function fetchMonitorLog(
 
     try {
       const { data, status, headers } = await apiService.get<string>(
-        `${ApiEndpoints.PROFILER_LOGS}/${logFileId}`
+        `${ApiEndpoints.PROFILER_LOGS}/${logFileId}`,
       )
 
       if (isStatusSuccessful(status)) {

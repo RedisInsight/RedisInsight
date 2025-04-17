@@ -13,7 +13,6 @@
   "main": "./dist/index.js",
   "name": "redistimeseries",
   "version": "0.0.2",
-
   "scripts": {
     "dev": "vite -c ../vite.config.mjs"
   },

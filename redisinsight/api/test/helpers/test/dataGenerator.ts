@@ -12,14 +12,14 @@ export const generateInvalidDataArray = (schema, path = [], cases = []) => {
 
   const allowedValues = [];
   if (schema._valids?._values?.size) {
-    schema._valids._values.forEach(value => allowedValues.push(value));
+    schema._valids._values.forEach((value) => allowedValues.push(value));
   }
 
   switch (schema.type) {
     case 'object':
       // if nested object
       if (path?.length) {
-        if (!allowedValues.some(allowed => allowed === null)) {
+        if (!allowedValues.some((allowed) => allowed === null)) {
           cases.push({ path, value: null });
         }
         cases.push({ path, value: 'somestring' });
@@ -38,7 +38,7 @@ export const generateInvalidDataArray = (schema, path = [], cases = []) => {
     case 'array':
       // if nested array
       if (path?.length) {
-        if (!allowedValues.some(allowed => allowed === null)) {
+        if (!allowedValues.some((allowed) => allowed === null)) {
           cases.push({ path, value: null });
         }
         cases.push({ path, value: 'somestring' });
@@ -56,12 +56,13 @@ export const generateInvalidDataArray = (schema, path = [], cases = []) => {
       }
       break;
     case 'string':
-      [null, 100, 100.12, true, { some: 'object' }, ['some', 'array']]
-        .map(value => {
-          if (!allowedValues.some(allowed => allowed === value)) {
+      [null, 100, 100.12, true, { some: 'object' }, ['some', 'array']].map(
+        (value) => {
+          if (!allowedValues.some((allowed) => allowed === value)) {
             cases.push({ path, value });
           }
-        });
+        },
+      );
 
       // check for additional rules
       if (schema._singleRules?.size) {
@@ -82,12 +83,13 @@ export const generateInvalidDataArray = (schema, path = [], cases = []) => {
       }
       break;
     case 'number':
-      [null, 'stringvalue', true, { some: 'object' }, ['some', 'array']]
-        .map(value => {
-          if (!allowedValues.some(allowed => allowed === value)) {
+      [null, 'stringvalue', true, { some: 'object' }, ['some', 'array']].map(
+        (value) => {
+          if (!allowedValues.some((allowed) => allowed === value)) {
             cases.push({ path, value });
           }
-        });
+        },
+      );
 
       // check for additional rules
       if (schema._singleRules?.size) {
@@ -111,12 +113,18 @@ export const generateInvalidDataArray = (schema, path = [], cases = []) => {
       }
       break;
     case 'boolean':
-      [null, 'stringvalue', 100, 100.12, { some: 'object' }, ['some', 'array']]
-        .map(value => {
-          if (!allowedValues.some(allowed => allowed === value)) {
-            cases.push({ path, value });
-          }
-        });
+      [
+        null,
+        'stringvalue',
+        100,
+        100.12,
+        { some: 'object' },
+        ['some', 'array'],
+      ].map((value) => {
+        if (!allowedValues.some((allowed) => allowed === value)) {
+          cases.push({ path, value });
+        }
+      });
       break;
     case 'any':
       // ignore "any" type

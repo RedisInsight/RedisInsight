@@ -24,9 +24,9 @@ export class FeatureAnalytics extends TelemetryBaseService {
   sendFeatureFlagConfigUpdated(
     sessionMetadata: SessionMetadata,
     data: {
-      configVersion: number,
-      oldVersion: number,
-      type?: string,
+      configVersion: number;
+      oldVersion: number;
+      type?: string;
     },
   ): void {
     try {
@@ -47,9 +47,9 @@ export class FeatureAnalytics extends TelemetryBaseService {
   sendFeatureFlagConfigUpdateError(
     sessionMetadata: SessionMetadata,
     data: {
-      error: Error | Error[],
-      configVersion?: number,
-      type?: string,
+      error: Error | Error[];
+      configVersion?: number;
+      type?: string;
     },
   ): void {
     try {
@@ -70,9 +70,9 @@ export class FeatureAnalytics extends TelemetryBaseService {
   sendFeatureFlagInvalidRemoteConfig(
     sessionMetadata: SessionMetadata,
     data: {
-      error: Error | Error[],
-      configVersion?: number,
-      type?: string,
+      error: Error | Error[];
+      configVersion?: number;
+      type?: string;
     },
   ): void {
     try {
@@ -93,9 +93,9 @@ export class FeatureAnalytics extends TelemetryBaseService {
   sendFeatureFlagRecalculated(
     sessionMetadata: SessionMetadata,
     data: {
-      configVersion: number,
-      features: Record<string, { flag: boolean }>
-      force?: Record<string, boolean>
+      configVersion: number;
+      features: Record<string, { flag: boolean }>;
+      force?: Record<string, boolean>;
     },
   ): void {
     try {
@@ -104,15 +104,11 @@ export class FeatureAnalytics extends TelemetryBaseService {
         features[key] = value?.flag;
       });
 
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.FeatureFlagRecalculated,
-        {
-          configVersion: data.configVersion,
-          features,
-          force: data.force,
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.FeatureFlagRecalculated, {
+        configVersion: data.configVersion,
+        features,
+        force: data.force,
+      });
     } catch (e) {
       // ignore error
     }

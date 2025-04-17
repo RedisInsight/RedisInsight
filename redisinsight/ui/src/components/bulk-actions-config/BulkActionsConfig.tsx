@@ -32,11 +32,16 @@ import { useIoConnection } from 'uiSrc/services/hooks/useIoConnection'
 const BulkActionsConfig = () => {
   const { id: instanceId = '', db } = useSelector(connectedInstanceSelector)
   const { isConnected } = useSelector(bulkActionsSelector)
-  const { isActionTriggered: isDeleteTriggered } = useSelector(bulkActionsDeleteSelector)
+  const { isActionTriggered: isDeleteTriggered } = useSelector(
+    bulkActionsDeleteSelector,
+  )
   const { filter, search } = useSelector(keysSelector)
   const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
-  const connectIo = useIoConnection(getSocketApiUrl('bulk-actions'), { token, query: { instanceId } })
+  const connectIo = useIoConnection(getSocketApiUrl('bulk-actions'), {
+    token,
+    query: { instanceId },
+  })
 
   const dispatch = useDispatch()
 
@@ -69,7 +74,8 @@ const BulkActionsConfig = () => {
     if (!socketRef.current?.connected) {
       return
     }
-    const id = sessionStorageService.get(BrowserStorageItem.bulkActionDeleteId) ?? ''
+    const id =
+      sessionStorageService.get(BrowserStorageItem.bulkActionDeleteId) ?? ''
     if (!id) return
 
     if (!isDeleteTriggered) {
@@ -94,7 +100,7 @@ const BulkActionsConfig = () => {
         filter: {
           type: filter,
           match: search || '*',
-        }
+        },
       },
       onBulkDeleting,
     )
@@ -105,7 +111,7 @@ const BulkActionsConfig = () => {
     socketRef.current?.emit(
       BulkActionsServerEvent.Get,
       { id: `${id}` },
-      fetchBulkAction
+      fetchBulkAction,
     )
   }
 
@@ -114,7 +120,7 @@ const BulkActionsConfig = () => {
     socketRef.current?.emit(
       BulkActionsServerEvent.Abort,
       { id: `${id}` },
-      onBulkDeleteAborted
+      onBulkDeleteAborted,
     )
   }
 

@@ -4,7 +4,7 @@ import {
   EuiTableFieldDataColumnType,
   EuiTableSelectionType,
   PropertySort,
-  EuiBasicTableProps
+  EuiBasicTableProps,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useRef, useState } from 'react'
@@ -28,8 +28,8 @@ export interface Props<T> {
   loading: boolean
   data: T[]
   onTableChange: ({ sort, page }: Criteria<T>) => void
-  sort: PropertySort,
-  hideSelectableCheckboxes?: boolean,
+  sort: PropertySort
+  hideSelectableCheckboxes?: boolean
 }
 
 function ItemList<T extends { id: string; visible?: boolean }>({
@@ -48,7 +48,8 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   sort,
   hideSelectableCheckboxes,
 }: Props<T>) {
-  const [columns, setColumns] = useState<EuiTableFieldDataColumnType<T>[]>(columnsProp)
+  const [columns, setColumns] =
+    useState<EuiTableFieldDataColumnType<T>[]>(columnsProp)
   const [selection, setSelection] = useState<T[]>([])
   const [message, setMessage] = useState<Maybe<string | JSX.Element>>(undefined)
 
@@ -90,7 +91,7 @@ function ItemList<T extends { id: string; visible?: boolean }>({
         <div className={styles.noResults}>
           <div className={styles.tableMsgTitle}>No results found</div>
           <div>No results matched your search. Try reducing the criteria.</div>
-        </div>
+        </div>,
       )
     }
   }, [instances, loading])
@@ -113,7 +114,9 @@ function ItemList<T extends { id: string; visible?: boolean }>({
         sum -= getColumnWidth(initialCol?.width)
         hiddenCols.current.add(colToHide)
         lastHiddenColumn.current = initialCol
-        resultsCol = resultsCol.map((item) => (item.field === colToHide ? hideColumn(item) : item))
+        resultsCol = resultsCol.map((item) =>
+          item.field === colToHide ? hideColumn(item) : item,
+        )
       }
 
       return resultsCol
@@ -128,18 +131,22 @@ function ItemList<T extends { id: string; visible?: boolean }>({
       }
 
       let resultsCol = [...cols]
-      Array.from(hiddenCols.current).reverse().forEach((hiddenCol) => {
-        const initialCol = findColumn(columnsProp, hiddenCol)
-        if (!initialCol) return
+      Array.from(hiddenCols.current)
+        .reverse()
+        .forEach((hiddenCol) => {
+          const initialCol = findColumn(columnsProp, hiddenCol)
+          if (!initialCol) return
 
-        const hiddenColWidth = getColumnWidth(initialCol.width)
-        if (hiddenColWidth + sum < offsetWidth) {
-          hiddenCols.current.delete(hiddenCol)
-          sum += hiddenColWidth
-          lastHiddenColumn.current = initialCol
-          resultsCol = resultsCol.map((item) => (item.field === hiddenCol ? initialCol : item))
-        }
-      })
+          const hiddenColWidth = getColumnWidth(initialCol.width)
+          if (hiddenColWidth + sum < offsetWidth) {
+            hiddenCols.current.delete(hiddenCol)
+            sum += hiddenColWidth
+            lastHiddenColumn.current = initialCol
+            resultsCol = resultsCol.map((item) =>
+              item.field === hiddenCol ? initialCol : item,
+            )
+          }
+        })
 
       return resultsCol
     }
@@ -148,10 +155,11 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   }
 
   const selectionValue: EuiTableSelectionType<T> = {
-    selectable: (item) => (getSelectableItems ? getSelectableItems?.(item) : true),
+    selectable: (item) =>
+      getSelectableItems ? getSelectableItems?.(item) : true,
     onSelectionChange: (selected: T[]) => {
       setSelection(selected)
-    }
+    },
   }
 
   const handleResetSelection = () => {
@@ -177,7 +185,10 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   `
 
   return (
-    <div className={`itemList ${hideSelectableCheckboxes ? 'hideSelectableCheckboxes' : ''}`} ref={containerTableRef}>
+    <div
+      className={`itemList ${hideSelectableCheckboxes ? 'hideSelectableCheckboxes' : ''}`}
+      ref={containerTableRef}
+    >
       <EuiInMemoryTable
         ref={tableRef}
         items={instances.filter(({ visible = true }) => visible)}
@@ -190,10 +201,7 @@ function ItemList<T extends { id: string; visible?: boolean }>({
         selection={selectionValue}
         onWheel={onWheel}
         onTableChange={onTableChange}
-        className={cx(
-          'stickyHeader',
-          styles.table
-        )}
+        className={cx('stickyHeader', styles.table)}
         isSelectable
       />
 
@@ -202,12 +210,18 @@ function ItemList<T extends { id: string; visible?: boolean }>({
           selectionCount={selection.length}
           onCloseActionBar={handleResetSelection}
           actions={[
-            !hideExport ? <ExportAction<T> selection={selection} onExport={handleExport} subTitle={actionMsg('exported')} /> : null,
+            !hideExport ? (
+              <ExportAction<T>
+                selection={selection}
+                onExport={handleExport}
+                subTitle={actionMsg('exported')}
+              />
+            ) : null,
             <DeleteAction<T>
               selection={selection}
               onDelete={handleDelete}
               subTitle={actionMsg('deleted')}
-            />
+            />,
           ]}
           width={width}
         />

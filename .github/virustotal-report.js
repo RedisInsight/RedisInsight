@@ -6,7 +6,8 @@ const failed = process.env.FAILED === 'true';
 
 const results = {
   message: {
-    text: `*Virustotal checks* (Branch: *${process.env.GITHUB_REF_NAME}*)` +
+    text:
+      `*Virustotal checks* (Branch: *${process.env.GITHUB_REF_NAME}*)` +
       `\n<https://github.com/RedisInsight/RedisInsight/actions/runs/${process.env.GITHUB_RUN_ID}|View on Github Actions>`,
     attachments: [],
   },
@@ -36,8 +37,10 @@ if (failed === true) {
   results.message.text = '<!here> ' + results.message.text;
 }
 
-
-fs.writeFileSync(fileName, JSON.stringify({
-  channel: process.env.SLACK_VIRUSTOTAL_REPORT_CHANNEL,
-  ...results.message,
-}));
+fs.writeFileSync(
+  fileName,
+  JSON.stringify({
+    channel: process.env.SLACK_VIRUSTOTAL_REPORT_CHANNEL,
+    ...results.message,
+  }),
+);

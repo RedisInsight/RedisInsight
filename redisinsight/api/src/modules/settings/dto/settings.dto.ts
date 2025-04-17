@@ -1,20 +1,22 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsBoolean, IsEnum,
+  IsBoolean,
+  IsEnum,
   IsInstance,
   IsInt,
   IsOptional,
   IsString,
   Min,
 } from 'class-validator';
-import {
-  Exclude, Expose, Transform, Type,
-} from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { pickDefinedAgreements } from 'src/dto/dto-transformer';
 import { Default } from 'src/common/decorators';
 import config from 'src/utils/config';
 import { IAgreementSpec } from 'src/modules/settings/models/agreements.interface';
-import { ToggleAnalyticsReason, ToggleAnalyticsReasonType } from 'src/modules/settings/constants/settings';
+import {
+  ToggleAnalyticsReason,
+  ToggleAnalyticsReasonType,
+} from 'src/modules/settings/constants/settings';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');

@@ -3,7 +3,7 @@ import React from 'react'
 import { CLUSTER_DETAILS_DATA_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
 import {
   getClusterDetails,
-  getClusterDetailsSuccess
+  getClusterDetailsSuccess,
 } from 'uiSrc/slices/analytics/clusterDetails'
 import { act, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 
@@ -33,8 +33,7 @@ describe('ClusterDetailsPage', () => {
 
   it('should render', async () => {
     await act(() => {
-      expect(render(<ClusterDetailsPage />))
-        .toBeTruthy()
+      expect(render(<ClusterDetailsPage />)).toBeTruthy()
     })
   })
 
@@ -43,7 +42,10 @@ describe('ClusterDetailsPage', () => {
       render(<ClusterDetailsPage />)
     })
 
-    const expectedActions = [getClusterDetails(), getClusterDetailsSuccess(CLUSTER_DETAILS_DATA_MOCK)]
+    const expectedActions = [
+      getClusterDetails(),
+      getClusterDetailsSuccess(CLUSTER_DETAILS_DATA_MOCK),
+    ]
     expect(store.getActions()).toEqual([...expectedActions])
   })
 })

@@ -1,6 +1,4 @@
-import {
-  IsNotEmpty, IsObject, IsOptional, IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
@@ -36,10 +34,7 @@ export class SessionMetadata implements ISessionMetadata {
    * @param sessionMetadata
    */
   static validate(sessionMetadata: SessionMetadata) {
-    if (
-      !sessionMetadata?.sessionId
-      || !sessionMetadata?.userId
-    ) {
+    if (!sessionMetadata?.sessionId || !sessionMetadata?.userId) {
       throw new BadRequestException(ERROR_MESSAGES.INVALID_SESSION_METADATA);
     }
   }

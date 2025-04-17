@@ -9,15 +9,15 @@ jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
-      flag: true
-    }
+      flag: true,
+    },
   }),
 }))
 
 jest.mock('uiSrc/slices/oauth/cloud', () => ({
   ...jest.requireActual('uiSrc/slices/oauth/cloud'),
   oauthCloudUserSelector: jest.fn().mockReturnValue({
-    data: null
+    data: null,
   }),
 }))
 
@@ -33,7 +33,7 @@ describe('AiAssistant', () => {
   })
 
   it('should not render welcome screen with feature flag and authorized user', () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({ data: {} })
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({ data: {} })
     render(<AiAssistant />)
 
     expect(screen.queryByTestId('copilot-welcome')).not.toBeInTheDocument()
@@ -41,7 +41,9 @@ describe('AiAssistant', () => {
   })
 
   it('should not render welcome screen without feature flag', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({ cloudSso: { flag: false } })
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      cloudSso: { flag: false },
+    })
     render(<AiAssistant />)
 
     expect(screen.queryByTestId('copilot-welcome')).not.toBeInTheDocument()

@@ -1,6 +1,9 @@
 import { BulkActionProgress } from 'src/modules/bulk-actions/models/bulk-action-progress';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
-import { IBulkAction, IBulkActionRunner } from 'src/modules/bulk-actions/interfaces';
+import {
+  IBulkAction,
+  IBulkActionRunner,
+} from 'src/modules/bulk-actions/interfaces';
 
 export abstract class AbstractBulkActionRunner implements IBulkActionRunner {
   protected bulkAction: IBulkAction;

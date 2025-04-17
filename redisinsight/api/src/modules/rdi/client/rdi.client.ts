@@ -1,9 +1,14 @@
 import {
   Rdi,
-  RdiClientMetadata, RdiPipeline, RdiStatisticsResult,
+  RdiClientMetadata,
+  RdiPipeline,
+  RdiStatisticsResult,
 } from 'src/modules/rdi/models';
 import {
-  RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTemplateResponseDto, RdiTestConnectionsResponseDto,
+  RdiDryRunJobDto,
+  RdiDryRunJobResponseDto,
+  RdiTemplateResponseDto,
+  RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
 import { IDLE_THRESHOLD } from 'src/modules/rdi/constants';
 
@@ -27,9 +32,14 @@ export abstract class RdiClient {
 
   abstract getPipeline(): Promise<RdiPipeline>;
 
-  abstract getConfigTemplate(pipelineType: string, dbType: string): Promise<RdiTemplateResponseDto>;
+  abstract getConfigTemplate(
+    pipelineType: string,
+    dbType: string,
+  ): Promise<RdiTemplateResponseDto>;
 
-  abstract getJobTemplate(pipelineType: string): Promise<RdiTemplateResponseDto>;
+  abstract getJobTemplate(
+    pipelineType: string,
+  ): Promise<RdiTemplateResponseDto>;
 
   abstract getStrategies(): Promise<object>;
 
@@ -43,7 +53,9 @@ export abstract class RdiClient {
 
   abstract dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto>;
 
-  abstract testConnections(config: object): Promise<RdiTestConnectionsResponseDto>;
+  abstract testConnections(
+    config: object,
+  ): Promise<RdiTestConnectionsResponseDto>;
 
   abstract getStatistics(sections?: string): Promise<RdiStatisticsResult>;
 
@@ -63,9 +75,7 @@ export abstract class RdiClient {
     const empty = '(nil)';
     const separator = '_';
 
-    const id = [
-      cm.id,
-    ].join(separator);
+    const id = [cm.id].join(separator);
 
     const uId = [
       cm.sessionMetadata?.userId || empty,
@@ -73,9 +83,6 @@ export abstract class RdiClient {
       cm.sessionMetadata?.uniqueId || empty,
     ].join(separator);
 
-    return [
-      id,
-      uId,
-    ].join(separator);
+    return [id, uId].join(separator);
   }
 }

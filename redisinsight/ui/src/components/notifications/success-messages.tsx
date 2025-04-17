@@ -1,8 +1,17 @@
 import React from 'react'
 import { EuiFlexGroup, EuiFlexItem, EuiText } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { IBulkActionOverview, RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { bufferToString, formatLongName, formatNameShort, Maybe, millisecondsFormat } from 'uiSrc/utils'
+import {
+  IBulkActionOverview,
+  RedisResponseBuffer,
+} from 'uiSrc/slices/interfaces'
+import {
+  bufferToString,
+  formatLongName,
+  formatNameShort,
+  Maybe,
+  millisecondsFormat,
+} from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import styles from './styles.module.scss'
 
@@ -12,9 +21,7 @@ export default {
     title: 'Database has been added',
     message: (
       <>
-        <b>{formatNameShort(instanceName)}</b>
-        {' '}
-        has been added to Redis Insight.
+        <b>{formatNameShort(instanceName)}</b> has been added to Redis Insight.
       </>
     ),
   }),
@@ -22,9 +29,7 @@ export default {
     title: 'Instance has been added',
     message: (
       <>
-        <b>{formatNameShort(instanceName)}</b>
-        {' '}
-        has been added to RedisInsight.
+        <b>{formatNameShort(instanceName)}</b> has been added to RedisInsight.
       </>
     ),
   }),
@@ -32,9 +37,8 @@ export default {
     title: 'Database has been deleted',
     message: (
       <>
-        <b>{formatNameShort(instanceName)}</b>
-        {' '}
-        has been deleted from Redis Insight.
+        <b>{formatNameShort(instanceName)}</b> has been deleted from Redis
+        Insight.
       </>
     ),
   }),
@@ -42,9 +46,8 @@ export default {
     title: 'Instance has been deleted',
     message: (
       <>
-        <b>{formatNameShort(instanceName)}</b>
-        {' '}
-        has been deleted from RedisInsight.
+        <b>{formatNameShort(instanceName)}</b> has been deleted from
+        RedisInsight.
       </>
     ),
   }),
@@ -55,9 +58,8 @@ export default {
       message: (
         <>
           <span>
-            <b>{instanceNames.length}</b>
-            {' '}
-            databases have been deleted from Redis Insight:
+            <b>{instanceNames.length}</b> databases have been deleted from Redis
+            Insight:
           </span>
           <ul style={{ marginBottom: 0 }}>
             {instanceNames.slice(0, limitShowRemovedInstances).map((el, i) => (
@@ -79,9 +81,8 @@ export default {
       message: (
         <>
           <span>
-            <b>{instanceNames.length}</b>
-            {' '}
-            instances have been deleted from RedisInsight:
+            <b>{instanceNames.length}</b> instances have been deleted from
+            RedisInsight:
           </span>
           <ul style={{ marginBottom: 0 }}>
             {instanceNames.slice(0, limitShowRemovedInstances).map((el, i) => (
@@ -100,9 +101,7 @@ export default {
     title: 'Key has been added',
     message: (
       <>
-        <b>{formatNameShort(bufferToString(keyName))}</b>
-        {' '}
-        has been added.
+        <b>{formatNameShort(bufferToString(keyName))}</b> has been added.
       </>
     ),
   }),
@@ -110,25 +109,24 @@ export default {
     title: 'Key has been deleted',
     message: (
       <>
-        <b>{formatNameShort(bufferToString(keyName))}</b>
-        {' '}
-        has been deleted.
+        <b>{formatNameShort(bufferToString(keyName))}</b> has been deleted.
       </>
     ),
   }),
-  REMOVED_KEY_VALUE: (keyName: RedisResponseBuffer, keyValue: RedisResponseBuffer, valueType: string) => ({
+  REMOVED_KEY_VALUE: (
+    keyName: RedisResponseBuffer,
+    keyValue: RedisResponseBuffer,
+    valueType: string,
+  ) => ({
     title: (
       <>
-        <span>{valueType}</span>
-        {' '}
-        has been removed
+        <span>{valueType}</span> has been removed
       </>
     ),
     message: (
       <>
-        <b>{formatNameShort(bufferToString(keyValue))}</b>
-        {' '}
-        has been removed from &nbsp;
+        <b>{formatNameShort(bufferToString(keyValue))}</b> has been removed from
+        &nbsp;
         <b>{formatNameShort(bufferToString(keyName))}</b>
       </>
     ),
@@ -159,32 +157,33 @@ export default {
       ),
     }
   },
-  INSTALLED_NEW_UPDATE: (updateDownloadedVersion: string, onClickLink?: () => void) => ({
+  INSTALLED_NEW_UPDATE: (
+    updateDownloadedVersion: string,
+    onClickLink?: () => void,
+  ) => ({
     title: 'Application updated',
     message: (
       <>
         <span>{`Your application has been updated to ${updateDownloadedVersion}. Find more information in `}</span>
-        <a href={EXTERNAL_LINKS.releaseNotes} onClick={() => onClickLink?.()} className="link-underline" target="_blank" rel="noreferrer">Release Notes.</a>
+        <a
+          href={EXTERNAL_LINKS.releaseNotes}
+          onClick={() => onClickLink?.()}
+          className="link-underline"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Release Notes.
+        </a>
       </>
     ),
-    group: 'upgrade'
+    group: 'upgrade',
   }),
   // only one message is being processed at the moment
   MESSAGE_ACTION: (message: string, actionName: string) => ({
-    title: (
-      <>
-        Message has been
-        {' '}
-        {actionName}
-      </>
-    ),
+    title: <>Message has been {actionName}</>,
     message: (
       <>
-        <b>{message}</b>
-        {' '}
-        has been successfully
-        {' '}
-        {actionName}.
+        <b>{message}</b> has been successfully {actionName}.
       </>
     ),
   }),
@@ -194,14 +193,14 @@ export default {
   }),
   CREATE_INDEX: () => ({
     title: 'Index has been created',
-    message: 'Open the list of indexes to see it.'
+    message: 'Open the list of indexes to see it.',
   }),
   TEST_CONNECTION: () => ({
     title: 'Connection is successful',
   }),
   UPLOAD_DATA_BULK: (data?: IBulkActionOverview, fileName?: string) => {
-    const { processed = 0, succeed = 0, failed = 0, } = data?.summary ?? {}
-    return ({
+    const { processed = 0, succeed = 0, failed = 0 } = data?.summary ?? {}
+    return {
       title: (
         <>
           Action completed
@@ -223,33 +222,47 @@ export default {
           className={styles.summary}
         >
           <EuiFlexItem grow={false}>
-            <EuiText color="ghost" className={styles.summaryValue}>{numberWithSpaces(processed)}</EuiText>
-            <EuiText size="xs" className={styles.summaryLabel}>Commands Processed</EuiText>
+            <EuiText color="ghost" className={styles.summaryValue}>
+              {numberWithSpaces(processed)}
+            </EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>
+              Commands Processed
+            </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiText color="ghost" className={styles.summaryValue}>{numberWithSpaces(succeed)}</EuiText>
-            <EuiText size="xs" className={styles.summaryLabel}>Success</EuiText>
+            <EuiText color="ghost" className={styles.summaryValue}>
+              {numberWithSpaces(succeed)}
+            </EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>
+              Success
+            </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiText color="ghost" className={styles.summaryValue}>{numberWithSpaces(failed)}</EuiText>
-            <EuiText size="xs" className={styles.summaryLabel}>Errors</EuiText>
+            <EuiText color="ghost" className={styles.summaryValue}>
+              {numberWithSpaces(failed)}
+            </EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>
+              Errors
+            </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiText color="ghost" className={styles.summaryValue}>{millisecondsFormat(data?.duration || 0, 'H:mm:ss.SSS')}</EuiText>
-            <EuiText size="xs" className={styles.summaryLabel}>Time Taken</EuiText>
+            <EuiText color="ghost" className={styles.summaryValue}>
+              {millisecondsFormat(data?.duration || 0, 'H:mm:ss.SSS')}
+            </EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>
+              Time Taken
+            </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
       ),
-      className: 'dynamic'
-    })
+      className: 'dynamic',
+    }
   },
   DELETE_LIBRARY: (libraryName: string) => ({
     title: 'Library has been deleted',
     message: (
       <>
-        <b>{formatNameShort(libraryName)}</b>
-        {' '}
-        has been deleted.
+        <b>{formatNameShort(libraryName)}</b> has been deleted.
       </>
     ),
   }),
@@ -257,9 +270,7 @@ export default {
     title: 'Library has been added',
     message: (
       <>
-        <b>{formatNameShort(libraryName)}</b>
-        {' '}
-        has been added.
+        <b>{formatNameShort(libraryName)}</b> has been added.
       </>
     ),
   }),
@@ -269,7 +280,7 @@ export default {
   }),
   REMOVED_CAPI_KEY: (name: string) => ({
     title: 'API Key has been removed',
-    message: `${formatNameShort(name)} has been removed from Redis Insight.`
+    message: `${formatNameShort(name)} has been removed from Redis Insight.`,
   }),
   DATABASE_ALREADY_EXISTS: () => ({
     title: 'Database already exists',
@@ -277,7 +288,8 @@ export default {
   }),
   SUCCESS_RESET_PIPELINE: () => ({
     title: 'Pipeline has been reset',
-    message: 'The RDI pipeline has been reset, consider flushing the target Redis database.',
+    message:
+      'The RDI pipeline has been reset, consider flushing the target Redis database.',
   }),
   SUCCESS_TAGS_UPDATED: () => ({
     title: 'Tags updated successfully.',

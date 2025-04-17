@@ -1,6 +1,4 @@
-import {
-  forwardRef, Inject, Injectable, Logger,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import config, { Config } from 'src/utils/config';
 import { SessionMetadata } from 'src/common/models';
 import { PreSetupDatabaseDiscoveryService } from 'src/modules/database-discovery/pre-setup.database-discovery.service';
@@ -23,7 +21,10 @@ export class LocalDatabaseDiscoveryService extends DatabaseDiscoveryService {
     super();
   }
 
-  async discover(sessionMetadata: SessionMetadata, firstRun?: boolean): Promise<void> {
+  async discover(
+    sessionMetadata: SessionMetadata,
+    firstRun?: boolean,
+  ): Promise<void> {
     try {
       // no need to auto discover for Redis Stack
       if (SERVER_CONFIG.buildType === 'REDIS_STACK') {
@@ -31,13 +32,15 @@ export class LocalDatabaseDiscoveryService extends DatabaseDiscoveryService {
       }
 
       // check agreements to understand if it is first launch
-      const settings = await this.settingsService.getAppSettings(sessionMetadata);
+      const settings =
+        await this.settingsService.getAppSettings(sessionMetadata);
 
       if (!settings?.agreements?.eula) {
         return;
       }
 
-      const { discovered } = await this.preSetupDatabaseDiscoveryService.discover(sessionMetadata);
+      const { discovered } =
+        await this.preSetupDatabaseDiscoveryService.discover(sessionMetadata);
 
       if (!discovered && firstRun) {
         await this.autoDatabaseDiscoveryService.discover(sessionMetadata);

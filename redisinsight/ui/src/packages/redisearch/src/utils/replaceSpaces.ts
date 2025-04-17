@@ -5,6 +5,4 @@ const replaceSpaces = (text = '') => {
   return text.replace(/\s\s/g, '\u00a0\u00a0')
 }
 
-export {
-  replaceSpaces
-}
+export { replaceSpaces }

@@ -18,10 +18,7 @@ describe('DatabaseRecommendationAnalytics', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        DatabaseRecommendationAnalytics,
-      ],
+      providers: [EventEmitter2, DatabaseRecommendationAnalytics],
     }).compile();
 
     service = await module.get(DatabaseRecommendationAnalytics);

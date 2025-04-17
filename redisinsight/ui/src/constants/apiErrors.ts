@@ -27,7 +27,7 @@ export const AI_CHAT_ERRORS = {
 
     return error
   },
-  tokenLimit: () => 'Conversation is too long. Restart the session.'
+  tokenLimit: () => 'Conversation is too long. Restart the session.',
 }
 
 export default ApiErrors

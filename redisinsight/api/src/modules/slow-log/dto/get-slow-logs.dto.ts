@@ -1,7 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsInt, IsNotEmpty, IsOptional, Min,
-} from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class GetSlowLogsDto {

@@ -17,10 +17,9 @@ export const USER_SETTINGS_DATA_MOCK = {
 }
 
 const handlers: RestHandler[] = [
-  rest.get(getMswURL(ApiEndpoints.SETTINGS), async (_req, res, ctx) => res(
-    ctx.status(200),
-    ctx.json(USER_SETTINGS_DATA_MOCK),
-  ))
+  rest.get(getMswURL(ApiEndpoints.SETTINGS), async (_req, res, ctx) =>
+    res(ctx.status(200), ctx.json(USER_SETTINGS_DATA_MOCK)),
+  ),
 ]
 
 export default handlers

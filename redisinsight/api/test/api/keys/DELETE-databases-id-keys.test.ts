@@ -8,7 +8,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -19,7 +20,7 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 // input data schema
 const dataSchema = Joi.object({
   keyNames: Joi.array().items(Joi.string().allow('')).required().messages({
-    'string.base': 'each value in keyNames must be a string'
+    'string.base': 'each value in keyNames must be a string',
   }),
 }).strict();
 
@@ -27,9 +28,11 @@ const validInputData = {
   keyNames: [constants.TEST_LIST_KEY_1],
 };
 
-const responseSchema = Joi.object().keys({
-  affected: Joi.number().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    affected: Joi.number().required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -174,11 +177,11 @@ describe('DELETE /databases/:instanceId/keys', () => {
           },
           before: async function () {
             // generate already deleted keys again
-            await rte.data.generateKeys(true)
+            await rte.data.generateKeys(true);
             this.data.keyNames.map(async (keyName) => {
               expect(await rte.client.exists(keyName)).to.eql(1);
             });
-          }
+          },
         },
         {
           name: 'Should return NotFound error for not existing error',
@@ -190,7 +193,7 @@ describe('DELETE /databases/:instanceId/keys', () => {
           responseBody: {
             statusCode: 404,
             error: 'Not Found',
-            message: 'Key with this name does not exist.'
+            message: 'Key with this name does not exist.',
           },
         },
       ].map(deleteCheckFn);
@@ -236,7 +239,7 @@ describe('DELETE /databases/:instanceId/keys', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -del')
+          before: () => rte.data.setAclUserRules('~* +@all -del'),
         },
       ].map(deleteCheckFn);
     });

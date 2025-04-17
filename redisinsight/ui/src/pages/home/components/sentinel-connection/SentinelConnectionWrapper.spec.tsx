@@ -1,12 +1,11 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import SentinelConnectionForm, { Props as SentinelConnectionFormProps } from
-  'uiSrc/pages/home/components/sentinel-connection/sentinel-connection-form/SentinelConnectionForm'
+import SentinelConnectionForm, {
+  Props as SentinelConnectionFormProps,
+} from 'uiSrc/pages/home/components/sentinel-connection/sentinel-connection-form/SentinelConnectionForm'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import SentinelConnectionWrapper, {
-  Props,
-} from './SentinelConnectionWrapper'
+import SentinelConnectionWrapper, { Props } from './SentinelConnectionWrapper'
 
 const mockedProps = mock<Props>()
 
@@ -53,19 +52,26 @@ describe('SentinelConnectionWrapper', () => {
   })
   it('should render', () => {
     expect(
-      render(<SentinelConnectionWrapper {...instance(mockedProps)} />)
+      render(<SentinelConnectionWrapper {...instance(mockedProps)} />),
     ).toBeTruthy()
   })
 
   it('should call onHostNamePaste', () => {
-    const component = render(<SentinelConnectionWrapper {...instance(mockedProps)} />)
+    const component = render(
+      <SentinelConnectionWrapper {...instance(mockedProps)} />,
+    )
     fireEvent.click(screen.getByTestId('onHostNamePaste-btn'))
     expect(component).toBeTruthy()
   })
 
   it('should call onClose', () => {
     const onClose = jest.fn()
-    render(<SentinelConnectionWrapper {...instance(mockedProps)} onClose={onClose} />)
+    render(
+      <SentinelConnectionWrapper
+        {...instance(mockedProps)}
+        onClose={onClose}
+      />,
+    )
     fireEvent.click(screen.getByTestId('onClose-btn'))
     expect(onClose).toBeCalled()
   })
@@ -80,7 +86,8 @@ describe('SentinelConnectionWrapper', () => {
     fireEvent.click(screen.getByTestId('onSubmit-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_SUBMITTED,
+      event:
+        TelemetryEvent.CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_SUBMITTED,
     })
 
     sendEventTelemetry.mockRestore()

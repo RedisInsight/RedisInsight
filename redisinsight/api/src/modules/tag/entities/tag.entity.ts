@@ -1,4 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, ManyToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Unique,
+  ManyToMany,
+} from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 

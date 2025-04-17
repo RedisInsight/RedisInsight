@@ -4,10 +4,19 @@ import React from 'react'
 import MockedSocket from 'socket.io-mock'
 import socketIO from 'socket.io-client'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
-import { setLastReceivedNotification, setNewNotificationReceived } from 'uiSrc/slices/app/notifications'
+import {
+  setLastReceivedNotification,
+  setNewNotificationReceived,
+} from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
 import { NotificationType } from 'uiSrc/slices/interfaces'
-import { cleanup, initialStateDefault, mockedStore, mockStore, render } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+  mockStore,
+  render,
+} from 'uiSrc/utils/test-utils'
 import { FeatureFlags, SocketEvent } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
@@ -48,9 +57,7 @@ describe('CommonAppSubscription', () => {
 
     socket.socketClient.emit(SocketEvent.Connect)
 
-    const afterRenderActions = [
-      setIsConnected(true)
-    ]
+    const afterRenderActions = [setIsConnected(true)]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
     unmount()
@@ -60,11 +67,11 @@ describe('CommonAppSubscription', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
 
     const { unmount } = render(<GlobalSubscriptions />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
 
     socket.socketClient.emit(SocketEvent.Connect)
@@ -87,7 +94,7 @@ describe('CommonAppSubscription', () => {
           read: false,
         },
       ],
-      totalUnread: 1
+      totalUnread: 1,
     }
 
     socket.on(NotificationEvent.Notification, (data: NotificationsDto) => {
@@ -106,22 +113,40 @@ describe('CommonAppSubscription', () => {
   })
 
   it('should call proper actions after emit recommendation', async () => {
-    (connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
+    ;(connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
       id: '123',
       connectionType: 'STANDALONE',
       db: 0,
     })
 
     const { unmount } = render(<CommonAppSubscription />)
-    const mockData = { totalUnread: 10, recommendations: [{ databaseId: '123' }] }
-    const mockData2 = { totalUnread: 20, recommendations: [{ databaseId: '123' }] }
+    const mockData = {
+      totalUnread: 10,
+      recommendations: [{ databaseId: '123' }],
+    }
+    const mockData2 = {
+      totalUnread: 20,
+      recommendations: [{ databaseId: '123' }],
+    }
 
-    socket.socketClient.emit(RecommendationsSocketEvents.Recommendation, mockData)
-    socket.socketClient.emit(RecommendationsSocketEvents.Recommendation, mockData2)
+    socket.socketClient.emit(
+      RecommendationsSocketEvents.Recommendation,
+      mockData,
+    )
+    socket.socketClient.emit(
+      RecommendationsSocketEvents.Recommendation,
+      mockData2,
+    )
 
     const afterRenderActions = [
-      addUnreadRecommendations({ totalUnread: 10, recommendations: [{ databaseId: '123' }] }),
-      addUnreadRecommendations({ totalUnread: 20, recommendations: [{ databaseId: '123' }] }),
+      addUnreadRecommendations({
+        totalUnread: 10,
+        recommendations: [{ databaseId: '123' }],
+      }),
+      addUnreadRecommendations({
+        totalUnread: 20,
+        recommendations: [{ databaseId: '123' }],
+      }),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 
@@ -129,18 +154,30 @@ describe('CommonAppSubscription', () => {
   })
 
   it('should ignore recommendations from non-connected instances', async () => {
-    (connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
+    ;(connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
       id: '456',
       connectionType: 'STANDALONE',
       db: 0,
     })
 
     const { unmount } = render(<CommonAppSubscription />)
-    const mockData = { totalUnread: 10, recommendations: [{ databaseId: '123' }] }
-    const mockData2 = { totalUnread: 20, recommendations: [{ databaseId: '123' }] }
+    const mockData = {
+      totalUnread: 10,
+      recommendations: [{ databaseId: '123' }],
+    }
+    const mockData2 = {
+      totalUnread: 20,
+      recommendations: [{ databaseId: '123' }],
+    }
 
-    socket.socketClient.emit(RecommendationsSocketEvents.Recommendation, mockData)
-    socket.socketClient.emit(RecommendationsSocketEvents.Recommendation, mockData2)
+    socket.socketClient.emit(
+      RecommendationsSocketEvents.Recommendation,
+      mockData,
+    )
+    socket.socketClient.emit(
+      RecommendationsSocketEvents.Recommendation,
+      mockData2,
+    )
 
     expect(store.getActions()).toEqual([])
 

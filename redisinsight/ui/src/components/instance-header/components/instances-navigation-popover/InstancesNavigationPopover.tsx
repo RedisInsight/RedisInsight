@@ -1,5 +1,13 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { EuiFieldText, EuiIcon, EuiPopover, EuiSpacer, EuiTab, EuiTabs, EuiText } from '@elastic/eui'
+import {
+  EuiFieldText,
+  EuiIcon,
+  EuiPopover,
+  EuiSpacer,
+  EuiTab,
+  EuiTabs,
+  EuiText,
+} from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
@@ -22,28 +30,39 @@ export interface Props {
 
 export enum InstancesTabs {
   Databases = 'Databases',
-  RDI = 'Redis Data Integration'
+  RDI = 'Redis Data Integration',
 }
 
 const InstancesNavigationPopover = ({ name }: Props) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [searchFilter, setSearchFilter] = useState('')
   const [filteredDbInstances, setFilteredDbInstances] = useState<Instance[]>([])
-  const [filteredRdiInstances, setFilteredRdiInstances] = useState<RdiInstance[]>([])
+  const [filteredRdiInstances, setFilteredRdiInstances] = useState<
+    RdiInstance[]
+  >([])
 
-  const { instanceId, rdiInstanceId } = useParams<{ instanceId: string, rdiInstanceId: string }>()
-  const [selectedTab, setSelectedTab] = useState(rdiInstanceId ? InstancesTabs.RDI : InstancesTabs.Databases)
+  const { instanceId, rdiInstanceId } = useParams<{
+    instanceId: string
+    rdiInstanceId: string
+  }>()
+  const [selectedTab, setSelectedTab] = useState(
+    rdiInstanceId ? InstancesTabs.RDI : InstancesTabs.Databases,
+  )
 
   const { data: rdiInstances } = useSelector(rdiInstancesSelector)
   const { data: dbInstances } = useSelector(dbInstancesSelector)
   const history = useHistory()
 
   useEffect(() => {
-    const dbSort = localStorageService.get(BrowserStorageItem.instancesSorting) ?? DEFAULT_SORT
+    const dbSort =
+      localStorageService.get(BrowserStorageItem.instancesSorting) ??
+      DEFAULT_SORT
 
     const dbFiltered = filterAndSort(dbInstances, searchFilter, dbSort)
 
-    const rdiSort = localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ?? DEFAULT_SORT
+    const rdiSort =
+      localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ??
+      DEFAULT_SORT
 
     const rdiFiltered = filterAndSort(rdiInstances, searchFilter, rdiSort)
     setFilteredDbInstances(dbFiltered)
@@ -63,16 +82,21 @@ const InstancesNavigationPopover = ({ name }: Props) => {
           databaseId: instanceId || rdiInstanceId,
           numOfRedisDbs: dbInstances?.length || 0,
           numOfRdiDbs: rdiInstances?.length || 0,
-        }
+        },
       })
     }
     setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
   }
 
-  const btnLabel = selectedTab === InstancesTabs.Databases ? 'Redis Databases page' : 'Redis Data Integration page'
+  const btnLabel =
+    selectedTab === InstancesTabs.Databases
+      ? 'Redis Databases page'
+      : 'Redis Data Integration page'
 
   const goHome = () => {
-    history.push(selectedTab === InstancesTabs.Databases ? Pages.home : Pages.rdi)
+    history.push(
+      selectedTab === InstancesTabs.Databases ? Pages.home : Pages.rdi,
+    )
   }
 
   return (
@@ -82,7 +106,7 @@ const InstancesNavigationPopover = ({ name }: Props) => {
       panelPaddingSize="none"
       isOpen={isPopoverOpen}
       closePopover={() => showPopover()}
-      button={(
+      button={
         <EuiText
           className={styles.showPopoverBtn}
           onClick={() => showPopover()}
@@ -90,13 +114,10 @@ const InstancesNavigationPopover = ({ name }: Props) => {
         >
           <b className={styles.breadCrumbLink}>{name}</b>
           <span>
-            <EuiIcon
-              color="primaryText"
-              type={Down}
-            />
+            <EuiIcon color="primaryText" type={Down} />
           </span>
         </EuiText>
-        )}
+      }
     >
       <div className={styles.wrapper}>
         <div className={styles.searchInputContainer}>
@@ -120,7 +141,8 @@ const InstancesNavigationPopover = ({ name }: Props) => {
                 isSelected={selectedTab === InstancesTabs.Databases}
                 onClick={() => setSelectedTab(InstancesTabs.Databases)}
                 data-testid={`${InstancesTabs.Databases}-tab-id`}
-              >{InstancesTabs.Databases} ({dbInstances?.length || 0})
+              >
+                {InstancesTabs.Databases} ({dbInstances?.length || 0})
               </EuiTab>
 
               <EuiTab
@@ -128,7 +150,8 @@ const InstancesNavigationPopover = ({ name }: Props) => {
                 isSelected={selectedTab === InstancesTabs.RDI}
                 onClick={() => setSelectedTab(InstancesTabs.RDI)}
                 data-testid={`${InstancesTabs.RDI}-tab-id`}
-              >{InstancesTabs.RDI} ({rdiInstances?.length || 0})
+              >
+                {InstancesTabs.RDI} ({rdiInstances?.length || 0})
               </EuiTab>
             </EuiTabs>
           </div>
@@ -143,10 +166,8 @@ const InstancesNavigationPopover = ({ name }: Props) => {
             <EuiSpacer size="m" />
             <Divider />
             <div className={styles.footerContainer}>
-              <EuiText
-                className={styles.homePageLink}
-                onClick={goHome}
-              >{btnLabel}
+              <EuiText className={styles.homePageLink} onClick={goHome}>
+                {btnLabel}
               </EuiText>
             </div>
           </div>

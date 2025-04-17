@@ -1,11 +1,15 @@
 import {
   mockRedisSentinelUtilModule,
   mockRedisClusterUtilModule,
-  mockRedisClusterUtil, mockRedisSentinelUtil,
+  mockRedisClusterUtil,
+  mockRedisSentinelUtil,
 } from 'src/__mocks__/redis-utils';
 
 jest.doMock('src/modules/redis/utils/cluster.util', mockRedisClusterUtilModule);
-jest.doMock('src/modules/redis/utils/sentinel.util', mockRedisSentinelUtilModule);
+jest.doMock(
+  'src/modules/redis/utils/sentinel.util',
+  mockRedisSentinelUtilModule,
+);
 
 import { Test, TestingModule } from '@nestjs/testing';
 import {
@@ -69,7 +73,10 @@ describe('DatabaseFactory', () => {
       mockRedisSentinelUtil.isSentinel.mockResolvedValue(false);
       mockRedisClusterUtil.isCluster.mockResolvedValue(false);
 
-      const result = await service.createDatabaseModel(mockSessionMetadata, mockDatabase);
+      const result = await service.createDatabaseModel(
+        mockSessionMetadata,
+        mockDatabase,
+      );
 
       expect(result).toEqual(mockDatabase);
     });
@@ -77,7 +84,10 @@ describe('DatabaseFactory', () => {
       mockRedisSentinelUtil.isSentinel.mockResolvedValue(true);
       mockRedisClusterUtil.isCluster.mockResolvedValue(false);
 
-      const result = await service.createDatabaseModel(mockSessionMetadata, mockSentinelDatabaseWithTlsAuth);
+      const result = await service.createDatabaseModel(
+        mockSessionMetadata,
+        mockSentinelDatabaseWithTlsAuth,
+      );
 
       expect(result).toEqual(mockSentinelDatabaseWithTlsAuth);
     });
@@ -95,7 +105,10 @@ describe('DatabaseFactory', () => {
       mockRedisSentinelUtil.isSentinel.mockResolvedValue(false);
       mockRedisClusterUtil.isCluster.mockResolvedValue(true);
 
-      const result = await service.createDatabaseModel(mockSessionMetadata, mockClusterDatabaseWithTlsAuth);
+      const result = await service.createDatabaseModel(
+        mockSessionMetadata,
+        mockClusterDatabaseWithTlsAuth,
+      );
 
       expect(result).toEqual(mockClusterDatabaseWithTlsAuth);
     });
@@ -108,7 +121,9 @@ describe('DatabaseFactory', () => {
       expect(result).toEqual(mockDatabase);
     });
     it('should create standalone database model and fetch existing certs', async () => {
-      const result = await service.createStandaloneDatabaseModel(mockDatabaseWithTlsAuth);
+      const result = await service.createStandaloneDatabaseModel(
+        mockDatabaseWithTlsAuth,
+      );
 
       expect(result).toEqual(mockDatabaseWithTlsAuth);
     });
@@ -130,7 +145,9 @@ describe('DatabaseFactory', () => {
     });
 
     it('should throw ACL error if no permissions', async () => {
-      mockRedisClusterUtil.discoverClusterNodes.mockRejectedValueOnce(mockRedisNoPermError);
+      mockRedisClusterUtil.discoverClusterNodes.mockRejectedValueOnce(
+        mockRedisNoPermError,
+      );
 
       try {
         await service.createClusterDatabaseModel(
@@ -187,7 +204,9 @@ describe('DatabaseFactory', () => {
     });
 
     it('should throw ACL error if no permissions', async () => {
-      mockRedisSentinelUtil.discoverSentinelMasterGroups.mockRejectedValueOnce(mockRedisNoPermError);
+      mockRedisSentinelUtil.discoverSentinelMasterGroups.mockRejectedValueOnce(
+        mockRedisNoPermError,
+      );
 
       try {
         await service.createSentinelDatabaseModel(

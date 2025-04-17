@@ -14,7 +14,9 @@ describe('ConnectionUrl', () => {
 
     expect(screen.getByTestId('connection-url')).toHaveValue('val')
 
-    fireEvent.change(screen.getByTestId('connection-url'), { target: { value: 'val1' } })
+    fireEvent.change(screen.getByTestId('connection-url'), {
+      target: { value: 'val1' },
+    })
 
     expect(onChangeMock).toBeCalled()
   })

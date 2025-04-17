@@ -5,7 +5,8 @@ export interface IEditorMount {
   monaco: typeof monacoEditor
 }
 
-export interface ISnippetController extends monacoEditor.editor.IEditorContribution {
+export interface ISnippetController
+  extends monacoEditor.editor.IEditorContribution {
   isInSnippet: () => boolean
   finish: () => boolean
   cancel: () => boolean

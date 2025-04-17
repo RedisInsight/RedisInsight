@@ -53,7 +53,7 @@ export class MeCloudAutodiscoveryController {
   })
   async getAccount(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Query() utm: CloudRequestUtm,
+    @Query() utm: CloudRequestUtm,
   ): Promise<CloudAccountInfo> {
     return await this.service.getAccount(sessionMetadata, utm);
   }
@@ -74,7 +74,7 @@ export class MeCloudAutodiscoveryController {
   })
   async discoverSubscriptions(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Query() utm: CloudRequestUtm,
+    @Query() utm: CloudRequestUtm,
   ): Promise<CloudSubscription[]> {
     return await this.service.discoverSubscriptions(sessionMetadata, utm);
   }
@@ -96,8 +96,8 @@ export class MeCloudAutodiscoveryController {
   })
   async discoverDatabases(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Body() dto: DiscoverCloudDatabasesDto,
-      @Query() utm: CloudRequestUtm,
+    @Body() dto: DiscoverCloudDatabasesDto,
+    @Query() utm: CloudRequestUtm,
   ): Promise<CloudDatabase[]> {
     return await this.service.discoverDatabases(sessionMetadata, dto, utm);
   }
@@ -118,13 +118,18 @@ export class MeCloudAutodiscoveryController {
   })
   async addDiscoveredDatabases(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Body() dto: ImportCloudDatabasesDto,
-      @Res() res: Response,
-      @Query() utm: CloudRequestUtm,
+    @Body() dto: ImportCloudDatabasesDto,
+    @Res() res: Response,
+    @Query() utm: CloudRequestUtm,
   ): Promise<Response> {
-    const result = await this.service.addRedisCloudDatabases(sessionMetadata, dto.databases, utm);
+    const result = await this.service.addRedisCloudDatabases(
+      sessionMetadata,
+      dto.databases,
+      utm,
+    );
     const hasSuccessResult = result.some(
-      (addResponse: ImportCloudDatabaseResponse) => addResponse.status === ActionStatus.Success,
+      (addResponse: ImportCloudDatabaseResponse) =>
+        addResponse.status === ActionStatus.Success,
     );
     if (!hasSuccessResult) {
       return res.status(200).json(result);

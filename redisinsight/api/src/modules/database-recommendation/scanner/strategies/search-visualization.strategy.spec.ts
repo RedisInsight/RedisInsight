@@ -19,10 +19,12 @@ describe('SearchVisualizationStrategy', () => {
   });
 
   describe('isRecommendationReached', () => {
-    it.each(isRecommendationReachedTests)('for input: %s (command), should be output: %s',
+    it.each(isRecommendationReachedTests)(
+      'for input: %s (command), should be output: %s',
       async (command, expected) => {
         const result = await strategy.isRecommendationReached(command);
         expect(result).toEqual(expected);
-      });
+      },
+    );
   });
 });

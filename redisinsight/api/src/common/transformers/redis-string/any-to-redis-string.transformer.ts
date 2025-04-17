@@ -29,7 +29,9 @@ const ArrayToRedisStringTransformer = ({ value }) => {
   return value;
 };
 
-export const AnyToRedisStringTransformer = (opts?: RedisStringTransformOptions) => {
+export const AnyToRedisStringTransformer = (
+  opts?: RedisStringTransformOptions,
+) => {
   if (opts?.each === true) {
     return Transform(ArrayToRedisStringTransformer, opts);
   }

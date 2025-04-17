@@ -1,9 +1,16 @@
 import { when } from 'jest-when';
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { ForbiddenException, INestApplication, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import {
-  mockCreateDatabaseDto, mockDatabase,
+  ForbiddenException,
+  INestApplication,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
+import {
+  mockCreateDatabaseDto,
+  mockDatabase,
   mockDatabaseConnectionService,
   mockDatabaseService,
   mockSessionService,
@@ -17,9 +24,10 @@ import { DatabaseConnectionService } from 'src/modules/database/database-connect
 
 const mockServerConfig = config.get('server') as Config['server'];
 
-jest.mock('src/utils/config', jest.fn(
-  () => jest.requireActual('src/utils/config') as object,
-));
+jest.mock(
+  'src/utils/config',
+  jest.fn(() => jest.requireActual('src/utils/config') as object),
+);
 
 @Module({
   controllers: [DatabaseController],
@@ -40,9 +48,7 @@ jest.mock('src/utils/config', jest.fn(
 })
 class TestModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(SingleUserAuthMiddleware)
-      .forRoutes('*');
+    consumer.apply(SingleUserAuthMiddleware).forRoutes('*');
   }
 }
 
@@ -87,7 +93,9 @@ describe('DatabaseController', () => {
         .send(mockCreateDatabaseDto)
         .expect(403)
         .expect(
-          (new ForbiddenException('Database connection management is disabled.')).getResponse(),
+          new ForbiddenException(
+            'Database connection management is disabled.',
+          ).getResponse(),
         );
     });
   });
@@ -110,7 +118,9 @@ describe('DatabaseController', () => {
         .send(mockCreateDatabaseDto)
         .expect(403)
         .expect(
-          (new ForbiddenException('Database connection management is disabled.')).getResponse(),
+          new ForbiddenException(
+            'Database connection management is disabled.',
+          ).getResponse(),
         );
     });
   });
@@ -133,7 +143,9 @@ describe('DatabaseController', () => {
         .send(mockCreateDatabaseDto)
         .expect(403)
         .expect(
-          (new ForbiddenException('Database connection management is disabled.')).getResponse(),
+          new ForbiddenException(
+            'Database connection management is disabled.',
+          ).getResponse(),
         );
     });
   });
@@ -156,7 +168,9 @@ describe('DatabaseController', () => {
         .send(mockCreateDatabaseDto)
         .expect(403)
         .expect(
-          (new ForbiddenException('Database connection management is disabled.')).getResponse(),
+          new ForbiddenException(
+            'Database connection management is disabled.',
+          ).getResponse(),
         );
     });
   });
@@ -177,7 +191,9 @@ describe('DatabaseController', () => {
         .delete(`/databases/${mockDatabase.id}`)
         .expect(403)
         .expect(
-          (new ForbiddenException('Database connection management is disabled.')).getResponse(),
+          new ForbiddenException(
+            'Database connection management is disabled.',
+          ).getResponse(),
         );
     });
   });
@@ -200,7 +216,9 @@ describe('DatabaseController', () => {
         .send({ ids: [mockDatabase.id] })
         .expect(403)
         .expect(
-          (new ForbiddenException('Database connection management is disabled.')).getResponse(),
+          new ForbiddenException(
+            'Database connection management is disabled.',
+          ).getResponse(),
         );
     });
   });
@@ -223,7 +241,9 @@ describe('DatabaseController', () => {
         .send({ ids: [mockDatabase.id] })
         .expect(403)
         .expect(
-          (new ForbiddenException('Database connection management is disabled.')).getResponse(),
+          new ForbiddenException(
+            'Database connection management is disabled.',
+          ).getResponse(),
         );
     });
   });

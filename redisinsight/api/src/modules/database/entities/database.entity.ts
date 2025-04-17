@@ -98,37 +98,34 @@ export class DatabaseEntity {
 
   @Expose()
   @Column({ nullable: true })
-  @Transform(({ obj }) => (
-    obj?.sentinelMaster?.name
-  ), { toClassOnly: true })
+  @Transform(({ obj }) => obj?.sentinelMaster?.name, { toClassOnly: true })
   sentinelMasterName: string;
 
   @Expose()
   @Column({ nullable: true })
-  @Transform(({ obj }) => (
-    obj?.sentinelMaster?.username
-  ), { toClassOnly: true })
+  @Transform(({ obj }) => obj?.sentinelMaster?.username, { toClassOnly: true })
   sentinelMasterUsername: string;
 
   @Expose()
   @Column({ nullable: true })
-  @Transform(({ obj }) => (
-    obj?.sentinelMaster?.password
-  ), { toClassOnly: true })
+  @Transform(({ obj }) => obj?.sentinelMaster?.password, { toClassOnly: true })
   sentinelMasterPassword: string;
 
   @Expose()
-  @Transform(({ obj }) => {
-    if (obj?.sentinelMasterName) {
-      return {
-        name: obj?.sentinelMasterName,
-        username: obj?.sentinelMasterUsername,
-        password: obj?.sentinelMasterPassword,
-      };
-    }
+  @Transform(
+    ({ obj }) => {
+      if (obj?.sentinelMasterName) {
+        return {
+          name: obj?.sentinelMasterName,
+          username: obj?.sentinelMasterUsername,
+          password: obj?.sentinelMasterPassword,
+        };
+      }
 
-    return undefined;
-  }, { toPlainOnly: true })
+      return undefined;
+    },
+    { toPlainOnly: true },
+  )
   @Transform(() => undefined, { toClassOnly: true })
   sentinelMaster: SentinelMaster;
 
@@ -216,15 +213,11 @@ export class DatabaseEntity {
   ssh: boolean;
 
   @Expose()
-  @OneToOne(
-    () => SshOptionsEntity,
-    (sshOptions) => sshOptions.database,
-    {
-      eager: true,
-      onDelete: 'CASCADE',
-      cascade: true,
-    },
-  )
+  @OneToOne(() => SshOptionsEntity, (sshOptions) => sshOptions.database, {
+    eager: true,
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   @Type(() => SshOptionsEntity)
   sshOptions: SshOptionsEntity;
 
@@ -242,15 +235,11 @@ export class DatabaseEntity {
   cloudDetails: CloudDatabaseDetailsEntity;
 
   @Expose()
-  @OneToOne(
-    () => DatabaseSettingsEntity,
-    (dbSettings) => dbSettings.database,
-    {
-      eager: true,
-      onDelete: 'CASCADE',
-      cascade: true,
-    },
-  )
+  @OneToOne(() => DatabaseSettingsEntity, (dbSettings) => dbSettings.database, {
+    eager: true,
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   @Type(() => DatabaseSettingsEntity)
   dbSettings: DatabaseSettingsEntity;
 

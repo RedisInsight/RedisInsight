@@ -15,7 +15,9 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/keys/get-info`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/keys/get-info`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -26,13 +28,15 @@ const validInputData = {
   keyName: constants.TEST_LIST_KEY_1,
 };
 
-const responseSchema = Joi.object().keys({
-  name: JoiRedisString.required(),
-  type: Joi.string().required(),
-  ttl: Joi.number().integer().allow(null).optional(),
-  size: Joi.number().integer().allow(null).optional(),
-  length: Joi.number().integer().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    name: JoiRedisString.required(),
+    type: Joi.string().required(),
+    ttl: Joi.number().integer().allow(null).optional(),
+    size: Joi.number().integer().allow(null).optional(),
+    length: Joi.number().integer().required(),
+  })
+  .required();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -69,7 +73,7 @@ describe('POST /databases/:instanceId/keys/get-info', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body.name).to.eq(constants.TEST_STRING_KEY_BIN_UTF8_1);
-        }
+        },
       },
       {
         name: 'Should return string info in utf8',
@@ -82,7 +86,7 @@ describe('POST /databases/:instanceId/keys/get-info', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body.name).to.eq(constants.TEST_STRING_KEY_BIN_UTF8_1);
-        }
+        },
       },
       {
         name: 'Should return string info in ASCII',
@@ -95,7 +99,7 @@ describe('POST /databases/:instanceId/keys/get-info', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body.name).to.eq(constants.TEST_STRING_KEY_BIN_ASCII_1);
-        }
+        },
       },
       {
         name: 'Should return string info in Buffer',
@@ -108,7 +112,7 @@ describe('POST /databases/:instanceId/keys/get-info', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body.name).to.deep.eq(constants.TEST_STRING_KEY_BIN_BUF_OBJ_1);
-        }
+        },
       },
       {
         name: 'Should return error when send unicode with unprintable chars',
@@ -241,7 +245,7 @@ describe('POST /databases/:instanceId/keys/get-info', () => {
             expect(body.ttl).to.be.oneOf([null, undefined]);
             expect(body.length).to.be.oneOf([null, undefined]);
             expect(body.size).to.be.oneOf([null, undefined]);
-          }
+          },
         });
       });
     };
@@ -266,7 +270,7 @@ describe('POST /databases/:instanceId/keys/get-info', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -type')
+        before: () => rte.data.setAclUserRules('~* +@all -type'),
       },
     ].map(mainCheckFn);
 
@@ -352,7 +356,8 @@ describe('POST /databases/:instanceId/keys/get-info', () => {
             name: constants.TEST_REJSON_KEY_1,
             type: constants.TEST_REJSON_TYPE,
           },
-          before: () => rte.data.setAclUserRules('~* +@all -ttl -memory -json.type'),
+          before: () =>
+            rte.data.setAclUserRules('~* +@all -ttl -memory -json.type'),
         },
       ].map(mainACLCheckFn);
     });

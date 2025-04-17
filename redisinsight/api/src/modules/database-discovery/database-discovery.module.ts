@@ -13,8 +13,6 @@ import { PreSetupDatabaseDiscoveryService } from 'src/modules/database-discovery
       useClass: LocalDatabaseDiscoveryService,
     },
   ],
-  exports: [
-    DatabaseDiscoveryService,
-  ],
+  exports: [DatabaseDiscoveryService],
 })
 export class DatabaseDiscoveryModule {}

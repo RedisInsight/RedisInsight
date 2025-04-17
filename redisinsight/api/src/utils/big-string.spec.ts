@@ -1,7 +1,9 @@
 import * as bigStringUtil from 'src/utils/big-string';
 import config, { Config } from 'src/utils/config';
 
-const REDIS_CLIENTS_CONFIG = config.get('redis_clients') as Config['redis_clients'];
+const REDIS_CLIENTS_CONFIG = config.get(
+  'redis_clients',
+) as Config['redis_clients'];
 const BIG_STRING_PREFIX = REDIS_CLIENTS_CONFIG.truncatedStringPrefix;
 
 describe('bigStringUtil', () => {
@@ -38,7 +40,9 @@ describe('bigStringUtil', () => {
 
     it('should return false when truncating is disabled', async () => {
       isTruncatingEnabledSpy.mockReturnValueOnce(false);
-      expect(bigStringUtil.isTruncatedString(`${BIG_STRING_PREFIX} some string`)).toBe(false);
+      expect(
+        bigStringUtil.isTruncatedString(`${BIG_STRING_PREFIX} some string`),
+      ).toBe(false);
     });
   });
 });

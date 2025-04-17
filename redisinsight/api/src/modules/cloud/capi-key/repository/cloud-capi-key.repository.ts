@@ -16,7 +16,10 @@ export abstract class CloudCapiKeyRepository {
    * @param id
    * @param data
    */
-  abstract update(id: string, data: Partial<CloudCapiKey>): Promise<CloudCapiKey>;
+  abstract update(
+    id: string,
+    data: Partial<CloudCapiKey>,
+  ): Promise<CloudCapiKey>;
 
   /**
    * Get current user CAPI key by cloud user id and cloud account id
@@ -24,7 +27,11 @@ export abstract class CloudCapiKeyRepository {
    * @param cloudUserId
    * @param cloudAccountId
    */
-  abstract getByUserAccount(userId: string, cloudUserId: number, cloudAccountId: number): Promise<CloudCapiKey>;
+  abstract getByUserAccount(
+    userId: string,
+    cloudUserId: number,
+    cloudAccountId: number,
+  ): Promise<CloudCapiKey>;
 
   /**
    * Create CAPI key

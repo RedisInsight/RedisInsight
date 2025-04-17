@@ -1,7 +1,13 @@
 import { when } from 'jest-when';
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { ForbiddenException, INestApplication, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  ForbiddenException,
+  INestApplication,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
 import {
   mockDatabase,
   mockDatabaseImportService,
@@ -15,9 +21,10 @@ import { DatabaseImportService } from 'src/modules/database-import/database-impo
 
 const mockServerConfig = config.get('server') as Config['server'];
 
-jest.mock('src/utils/config', jest.fn(
-  () => jest.requireActual('src/utils/config') as object,
-));
+jest.mock(
+  'src/utils/config',
+  jest.fn(() => jest.requireActual('src/utils/config') as object),
+);
 
 @Module({
   controllers: [DatabaseImportController],
@@ -34,9 +41,7 @@ jest.mock('src/utils/config', jest.fn(
 })
 class TestModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(SingleUserAuthMiddleware)
-      .forRoutes('*');
+    consumer.apply(SingleUserAuthMiddleware).forRoutes('*');
   }
 }
 
@@ -81,7 +86,9 @@ describe('DatabaseImportController', () => {
         .send([mockDatabase])
         .expect(403)
         .expect(
-          (new ForbiddenException('Database connection management is disabled.')).getResponse(),
+          new ForbiddenException(
+            'Database connection management is disabled.',
+          ).getResponse(),
         );
     });
   });

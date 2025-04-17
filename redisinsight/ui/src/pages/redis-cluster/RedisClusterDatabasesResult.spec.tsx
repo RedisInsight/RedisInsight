@@ -25,8 +25,8 @@ describe('RedisClusterDatabasesResult', () => {
         <RedisClusterDatabasesResult
           {...instance(mockedProps)}
           columns={columnsMock}
-        />
-      )
+        />,
+      ),
     ).toBeTruthy()
   })
 })

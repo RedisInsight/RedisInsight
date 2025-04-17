@@ -15,8 +15,8 @@ jest.mock('uiSrc/slices/app/notifications', () => ({
       title: 'string',
       body: 'string',
       read: false,
-    }
-  })
+    },
+  }),
 }))
 
 let store: typeof mockedStore

@@ -1,7 +1,11 @@
 import { FeatureConfigFilterCondition } from 'src/modules/feature/model/features-config';
 import * as semverCompare from 'node-version-compare';
 
-export const filterVersion = (cond: FeatureConfigFilterCondition, value: string, filterValue: string) => {
+export const filterVersion = (
+  cond: FeatureConfigFilterCondition,
+  value: string,
+  filterValue: string,
+) => {
   const compareRes = semverCompare(value, filterValue);
   switch (cond) {
     case FeatureConfigFilterCondition.Eq:

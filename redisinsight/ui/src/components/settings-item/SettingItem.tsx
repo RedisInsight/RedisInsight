@@ -7,7 +7,7 @@ import {
   EuiIcon,
   EuiSpacer,
   EuiText,
-  EuiTitle
+  EuiTitle,
 } from '@elastic/eui'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
@@ -15,18 +15,27 @@ import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEdit
 import styles from './styles.module.scss'
 
 export interface Props {
-  initValue: string,
-  testid: string,
-  placeholder: string,
-  label: string,
-  title: string,
-  summary: string | JSX.Element,
-  onApply: (value: string) => void,
-  validation: (value: string) => string,
+  initValue: string
+  testid: string
+  placeholder: string
+  label: string
+  title: string
+  summary: string | JSX.Element
+  onApply: (value: string) => void
+  validation: (value: string) => string
 }
 
 const SettingItem = (props: Props) => {
-  const { initValue, title, summary, testid, placeholder, label, onApply, validation = (val: string) => val } = props
+  const {
+    initValue,
+    title,
+    summary,
+    testid,
+    placeholder,
+    label,
+    onApply,
+    validation = (val: string) => val,
+  } = props
 
   const [value, setValue] = useState<string>(initValue)
   const [isEditing, setEditing] = useState<boolean>(false)
@@ -50,12 +59,14 @@ const SettingItem = (props: Props) => {
     setHovering(false)
   }
 
-  const onChange = ({ currentTarget: { value } }: ChangeEvent<HTMLInputElement>) => {
+  const onChange = ({
+    currentTarget: { value },
+  }: ChangeEvent<HTMLInputElement>) => {
     isEditing && setValue(validation(value))
   }
 
   const appendEditing = () =>
-    (!isEditing ? <EuiIcon type="pencil" color="subdued" /> : '')
+    !isEditing ? <EuiIcon type="pencil" color="subdued" /> : ''
 
   return (
     <>
@@ -67,9 +78,16 @@ const SettingItem = (props: Props) => {
         {summary}
       </EuiText>
       <EuiSpacer size="m" />
-      <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false} className={styles.container}>
+      <EuiFlexGroup
+        alignItems="center"
+        gutterSize="none"
+        responsive={false}
+        className={styles.container}
+      >
         <EuiFlexItem grow={false} style={{ marginRight: '4px' }}>
-          <EuiText size="xs" color="subdued" className={styles.inputLabel}>{label}</EuiText>
+          <EuiText size="xs" color="subdued" className={styles.inputLabel}>
+            {label}
+          </EuiText>
         </EuiFlexItem>
 
         <EuiFlexItem
@@ -93,9 +111,9 @@ const SettingItem = (props: Props) => {
                 value={value}
                 placeholder={placeholder}
                 aria-label={testid?.replaceAll?.('-', ' ')}
-                className={
-                  cx(styles.input, { [styles.inputEditing]: isEditing })
-                }
+                className={cx(styles.input, {
+                  [styles.inputEditing]: isEditing,
+                })}
                 append={appendEditing()}
                 fullWidth={false}
                 compressed

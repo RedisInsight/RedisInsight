@@ -22,10 +22,8 @@ beforeEach(() => {
 })
 
 describe('DB Settings slices', () => {
-  beforeEach(() => {
-  })
-  afterAll(() => {
-  })
+  beforeEach(() => {})
+  afterAll(() => {})
 
   it('get db settings reducer should properly set the loading state', () => {
     const nextState = reducer(initialState, getDBSettings())
@@ -35,45 +33,53 @@ describe('DB Settings slices', () => {
       app: {
         ...initialStateDefault.app,
         dbSettings: nextState,
-      }
+      },
     }
 
     expect(appDBSettingsSelector(newState).loading).toEqual(true)
   })
 
   it('get db settings success reducer should properly set the state', () => {
-    const nextState = reducer(initialState, getDBSettingsSuccess({ data: { key: 'test' }, id: 'testDb' }))
+    const nextState = reducer(
+      initialState,
+      getDBSettingsSuccess({ data: { key: 'test' }, id: 'testDb' }),
+    )
 
     const newState = {
       ...initialStateDefault,
       app: {
         ...initialStateDefault.app,
         dbSettings: nextState,
-      }
+      },
     }
 
     expect(appDBSettingsSelector(newState).data).toEqual({
       testDb: {
-        key: 'test'
-      }
+        key: 'test',
+      },
     })
     expect(appDBSettingsSelector(newState).loading).toEqual(false)
   })
 
   it('get db settings failure reducer should properly set the state', () => {
-    const nextState = reducer(initialState, getDBSettingsFailure({ error: 'something went wrong' }))
+    const nextState = reducer(
+      initialState,
+      getDBSettingsFailure({ error: 'something went wrong' }),
+    )
 
     const newState = {
       ...initialStateDefault,
       app: {
         ...initialStateDefault.app,
         dbSettings: nextState,
-      }
+      },
     }
 
     expect(appDBSettingsSelector(newState).data).toEqual({})
     expect(appDBSettingsSelector(newState).loading).toEqual(false)
-    expect(appDBSettingsSelector(newState).error).toEqual({ error: 'something went wrong' })
+    expect(appDBSettingsSelector(newState).error).toEqual({
+      error: 'something went wrong',
+    })
   })
 
   it('fetchDBSettings should fetch database settings', async () => {
@@ -82,8 +88,8 @@ describe('DB Settings slices', () => {
       data: {
         data: {
           key: 'test',
-        }
-      }
+        },
+      },
     })
     const successFn = jest.fn()
     const failFn = jest.fn()
@@ -93,10 +99,13 @@ describe('DB Settings slices', () => {
       getDBSettings(),
       getDBSettingsSuccess({
         data: { key: 'test' },
-        id: 'testDb'
-      })
+        id: 'testDb',
+      }),
     ])
-    expect(successFn).toHaveBeenCalledWith({ data: { key: 'test' }, id: 'testDb' })
+    expect(successFn).toHaveBeenCalledWith({
+      data: { key: 'test' },
+      id: 'testDb',
+    })
     expect(failFn).not.toHaveBeenCalled()
   })
 
@@ -107,20 +116,24 @@ describe('DB Settings slices', () => {
     await store.dispatch<any>(fetchDBSettings('testDb', successFn, failFn))
 
     expect(store.getActions()).toEqual([
-      getDBSettings(), getDBSettingsFailure('Something was wrong!')
+      getDBSettings(),
+      getDBSettingsFailure('Something was wrong!'),
     ])
     expect(successFn).not.toHaveBeenCalled()
     expect(failFn).toHaveBeenCalled()
   })
 
   it('fetchDbSettings should handle axios failure', async () => {
-    apiService.get = jest.fn().mockRejectedValueOnce({ response: { data: { message: 'something went wrong' } } })
+    apiService.get = jest.fn().mockRejectedValueOnce({
+      response: { data: { message: 'something went wrong' } },
+    })
     const successFn = jest.fn()
     const failFn = jest.fn()
     await store.dispatch<any>(fetchDBSettings('testDb', successFn, failFn))
 
     expect(store.getActions()).toEqual([
-      getDBSettings(), getDBSettingsFailure('something went wrong')
+      getDBSettings(),
+      getDBSettingsFailure('something went wrong'),
     ])
     expect(successFn).not.toHaveBeenCalled()
     expect(failFn).toHaveBeenCalled()
@@ -132,7 +145,8 @@ describe('DB Settings slices', () => {
     await store.dispatch<any>(fetchDBSettings('', successFn, failFn))
 
     expect(store.getActions()).toEqual([
-      getDBSettings(), getDBSettingsFailure('DB not connected')
+      getDBSettings(),
+      getDBSettingsFailure('DB not connected'),
     ])
     expect(successFn).not.toHaveBeenCalled()
     expect(failFn).toHaveBeenCalled()

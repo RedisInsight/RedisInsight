@@ -6,7 +6,7 @@ import { getDbIndex } from '../longNames'
 export const filterAndSort = (
   arr: Array<Instance | RdiInstance>,
   search: string,
-  sort: PropertySort
+  sort: PropertySort,
 ): Array<Instance | RdiInstance> => {
   if (!arr?.length) return arr
   const filtered = arr.filter((instance) => {
@@ -24,9 +24,5 @@ export const filterAndSort = (
     return sort.field
   }
 
-  return orderBy(
-    filtered,
-    sortingFunc,
-    sort.direction
-  )
+  return orderBy(filtered, sortingFunc, sort.direction)
 }

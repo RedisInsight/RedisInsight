@@ -15,7 +15,7 @@ export class PubSubWsException extends Error {
     if (isString(err)) {
       this.message = err;
     } else if (err instanceof HttpException) {
-      this.message = (err.getResponse())['message'];
+      this.message = err.getResponse()['message'];
       this.status = err.getStatus();
       this.name = err.constructor.name;
     } else if (err instanceof Error) {

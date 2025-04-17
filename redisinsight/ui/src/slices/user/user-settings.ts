@@ -7,7 +7,7 @@ import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import {
   GetAgreementsSpecResponse,
   GetAppSettingsResponse,
-  UpdateSettingsDto
+  UpdateSettingsDto,
 } from 'apiSrc/modules/settings/dto/settings.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -20,8 +20,8 @@ export const initialState: StateUserSettings = {
   config: null,
   spec: null,
   workbench: {
-    cleanup: localStorageService?.get(BrowserStorageItem.wbCleanUp) ?? true
-  }
+    cleanup: localStorageService?.get(BrowserStorageItem.wbCleanUp) ?? true,
+  },
 }
 
 // A slice for recipes
@@ -70,7 +70,7 @@ const userSettingsSlice = createSlice({
     setWorkbenchCleanUp: (state, { payload }) => {
       localStorageService.set(BrowserStorageItem.wbCleanUp, payload)
       state.workbench.cleanup = payload
-    }
+    },
   },
 })
 
@@ -87,24 +87,31 @@ export const {
   getUserSettingsSpec,
   getUserSettingsSpecSuccess,
   getUserSettingsSpecFailure,
-  setWorkbenchCleanUp
+  setWorkbenchCleanUp,
 } = userSettingsSlice.actions
 
 // A selector
 export const userSettingsSelector = (state: RootState) => state.user.settings
-export const userSettingsConfigSelector = (state: RootState) => state.user.settings.config
-export const userSettingsWBSelector = (state: RootState) => state.user.settings.workbench
+export const userSettingsConfigSelector = (state: RootState) =>
+  state.user.settings.config
+export const userSettingsWBSelector = (state: RootState) =>
+  state.user.settings.workbench
 
 // The reducer
 export default userSettingsSlice.reducer
 
 // Asynchronous thunk action
-export function fetchAppInfo(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchAppInfo(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getUserConfigSettings())
 
     try {
-      const { data, status } = await apiService.get<GetAppSettingsResponse>(ApiEndpoints.INFO)
+      const { data, status } = await apiService.get<GetAppSettingsResponse>(
+        ApiEndpoints.INFO,
+      )
 
       if (isStatusSuccessful(status)) {
         dispatch(getUserConfigSettingsSuccess(data))
@@ -119,12 +126,17 @@ export function fetchAppInfo(onSuccessAction?: () => void, onFailAction?: () => 
 }
 
 // Asynchronous thunk action
-export function fetchUserConfigSettings(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchUserConfigSettings(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getUserConfigSettings())
 
     try {
-      const { data, status } = await apiService.get<GetAppSettingsResponse>(ApiEndpoints.SETTINGS)
+      const { data, status } = await apiService.get<GetAppSettingsResponse>(
+        ApiEndpoints.SETTINGS,
+      )
 
       if (isStatusSuccessful(status)) {
         dispatch(getUserConfigSettingsSuccess(data))
@@ -139,13 +151,16 @@ export function fetchUserConfigSettings(onSuccessAction?: () => void, onFailActi
 }
 
 // Asynchronous thunk action
-export function fetchUserSettingsSpec(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchUserSettingsSpec(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getUserSettingsSpec())
 
     try {
       const { data, status } = await apiService.get<GetAgreementsSpecResponse>(
-        ApiEndpoints.SETTINGS_AGREEMENTS_SPEC
+        ApiEndpoints.SETTINGS_AGREEMENTS_SPEC,
       )
 
       if (isStatusSuccessful(status)) {
@@ -164,7 +179,7 @@ export function fetchUserSettingsSpec(onSuccessAction?: () => void, onFailAction
 export function updateUserConfigSettingsAction(
   settings: any,
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(updateUserConfigSettings())
@@ -172,7 +187,7 @@ export function updateUserConfigSettingsAction(
     try {
       const { status, data } = await apiService.patch<UpdateSettingsDto>(
         ApiEndpoints.SETTINGS,
-        settings
+        settings,
       )
 
       if (isStatusSuccessful(status)) {
@@ -188,18 +203,28 @@ export function updateUserConfigSettingsAction(
   }
 }
 
-type ToggleAnalyticsReasonType = 'none' | 'oauth-agreement' | 'google' | 'github' | 'sso' | 'user'
+type ToggleAnalyticsReasonType =
+  | 'none'
+  | 'oauth-agreement'
+  | 'google'
+  | 'github'
+  | 'sso'
+  | 'user'
 
-export function enableUserAnalyticsAction(reason: ToggleAnalyticsReasonType = 'none') {
+export function enableUserAnalyticsAction(
+  reason: ToggleAnalyticsReasonType = 'none',
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const agreements = state?.user?.settings?.config?.agreements
 
     if (agreements && !agreements.analytics) {
-      dispatch(updateUserConfigSettingsAction({
-        agreements: { ...agreements, analytics: true },
-        analyticsReason: reason
-      }))
+      dispatch(
+        updateUserConfigSettingsAction({
+          agreements: { ...agreements, analytics: true },
+          analyticsReason: reason,
+        }),
+      )
     }
   }
 }

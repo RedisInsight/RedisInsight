@@ -10,13 +10,17 @@ import {
   WindowType,
   quitAndInstallUpdate,
 } from 'desktopSrc/lib'
-import { IpcInvokeEvent, ElectronStorageItem, IpcOnEvent } from 'uiSrc/electron/constants'
+import {
+  IpcInvokeEvent,
+  ElectronStorageItem,
+  IpcOnEvent,
+} from 'uiSrc/electron/constants'
 
 export const initWindowHandlers = (
   newWindow: BrowserWindow,
   splash: BrowserWindow | null = null,
   windows: Map<string, BrowserWindow>,
-  id: string
+  id: string,
 ) => {
   const tray = getTray()
   const trayInstance = getTrayInstance()
@@ -29,7 +33,8 @@ export const initWindowHandlers = (
     // set up windowId to preload.js
     newWindow.webContents.send(IpcOnEvent.sendWindowId, id)
 
-    const zoomFactor = (electronStore?.get(ElectronStorageItem.zoomFactor) as number) ?? null
+    const zoomFactor =
+      (electronStore?.get(ElectronStorageItem.zoomFactor) as number) ?? null
     if (zoomFactor) {
       newWindow?.webContents.setZoomFactor(zoomFactor)
     }
@@ -100,7 +105,9 @@ export const initWindowHandlers = (
 
 export const initWindowIPCHandlers = () => {
   ipcMain.handle(IpcInvokeEvent.windowOpen, async (_event, { location }) => {
-    await windowFactory(WindowType.Main, null, { parsedDeepLink: { initialPage: location } })
+    await windowFactory(WindowType.Main, null, {
+      parsedDeepLink: { initialPage: location },
+    })
   })
   ipcMain.handle(IpcInvokeEvent.appRestart, async () => {
     quitAndInstallUpdate()

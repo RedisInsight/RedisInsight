@@ -78,14 +78,20 @@ const CommandHelper = (props: Props) => {
                 onBackClick={handleBackClick}
               />
               {summary && (
-                <EuiText className={styles.summary} color="subdued" data-testid="cli-helper-summary">
-                  <span style={{ paddingRight: 5 }}>{summary}</span>
-                  {' '}
+                <EuiText
+                  className={styles.summary}
+                  color="subdued"
+                  data-testid="cli-helper-summary"
+                >
+                  <span style={{ paddingRight: 5 }}>{summary}</span>{' '}
                   {readMore(commandLine)}
                 </EuiText>
               )}
               {!!argList.length && (
-                <div className={styles.field} data-testid="cli-helper-arguments">
+                <div
+                  className={styles.field}
+                  data-testid="cli-helper-arguments"
+                >
                   <EuiText color="subdued" className={styles.fieldTitle}>
                     Arguments:
                   </EuiText>
@@ -101,7 +107,10 @@ const CommandHelper = (props: Props) => {
                 </div>
               )}
               {!complexityShort && complexity && (
-                <div className={styles.field} data-testid="cli-helper-complexity">
+                <div
+                  className={styles.field}
+                  data-testid="cli-helper-complexity"
+                >
                   <EuiText color="subdued" className={styles.fieldTitle}>
                     Complexity:
                   </EuiText>
@@ -116,7 +125,8 @@ const CommandHelper = (props: Props) => {
               className={styles.defaultScreen}
               data-testid="cli-helper-default"
             >
-              Enter any command in CLI or use search to see detailed information.
+              Enter any command in CLI or use search to see detailed
+              information.
             </EuiTextColor>
           )}
         </div>

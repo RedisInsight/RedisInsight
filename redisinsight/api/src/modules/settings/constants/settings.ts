@@ -1,4 +1,10 @@
-export type ToggleAnalyticsReasonType = 'none' | 'oauth-agreement' | 'google' | 'github' | 'sso' | 'user';
+export type ToggleAnalyticsReasonType =
+  | 'none'
+  | 'oauth-agreement'
+  | 'google'
+  | 'github'
+  | 'sso'
+  | 'user';
 
 export enum ToggleAnalyticsReason {
   None = 'none',

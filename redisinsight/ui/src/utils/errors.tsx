@@ -5,10 +5,17 @@ import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
-import { EXTERNAL_LINKS, UTM_CAMPAINGS, UTM_MEDIUMS } from 'uiSrc/constants/links'
+import {
+  EXTERNAL_LINKS,
+  UTM_CAMPAINGS,
+  UTM_MEDIUMS,
+} from 'uiSrc/constants/links'
 import { getUtmExternalLink } from './links'
 
-export const getRdiValidationMessage = (message: string = '', loc?: Array<string | number>): string => {
+export const getRdiValidationMessage = (
+  message: string = '',
+  loc?: Array<string | number>,
+): string => {
   // first item is always "body"
   if (!loc || !isArray(loc) || loc.length < 2) {
     return message
@@ -33,11 +40,13 @@ export const getRdiValidationMessage = (message: string = '', loc?: Array<string
   return capitalize(words.join(' '))
 }
 
-export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSAGE): AxiosError => {
+export const parseCustomError = (
+  err: CustomError | string = DEFAULT_ERROR_MESSAGE,
+): AxiosError => {
   const error = {
     response: {
       status: 500,
-      data: { },
+      data: {},
     },
   }
 
@@ -54,7 +63,8 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
       title = 'Github Email Permission'
       message = (
         <>
-          Unable to get an email from the GitHub account. Make sure that it is available.
+          Unable to get an email from the GitHub account. Make sure that it is
+          available.
           <br />
         </>
       )
@@ -63,11 +73,19 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
       title = 'Misconfiguration'
       message = (
         <>
-          Authorization server encountered a misconfiguration error and was unable to complete your request.
+          Authorization server encountered a misconfiguration error and was
+          unable to complete your request.
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
       )
       break
@@ -77,7 +95,14 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
         <>
           Unknown authorization request.
           <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
       )
       break
@@ -87,17 +112,20 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
         <>
           An unexpected error occurred.
           <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
       )
       break
     case CustomErrorCodes.CloudOauthSsoUnsupportedEmail:
       title = 'Invalid email'
-      message = (
-        <>
-          Invalid email.
-        </>
-      )
+      message = <>Invalid email.</>
       break
     case CustomErrorCodes.CloudApiBadRequest:
       title = 'Bad request'
@@ -107,18 +135,21 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
       )
       break
 
     case CustomErrorCodes.CloudApiForbidden:
       title = 'Access denied'
-      message = (
-        <>
-          You do not have permission to access Redis Cloud.
-        </>
-      )
+      message = <>You do not have permission to access Redis Cloud.</>
       break
 
     case CustomErrorCodes.CloudApiInternalServerError:
@@ -127,7 +158,14 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
         <>
           Try restarting Redis Insight.
           <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
       )
       break
@@ -140,7 +178,14 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
       )
       break
@@ -153,7 +198,14 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
         <>
           Sign in again to continue working with Redis Cloud.
           <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
       )
       break
@@ -181,10 +233,10 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
           <EuiSpacer size="s" />
           Check out your
           <a
-            href={getUtmExternalLink(
-              EXTERNAL_LINKS.cloudConsole,
-              { campaign: UTM_CAMPAINGS.Main, medium: UTM_MEDIUMS.Main }
-            )}
+            href={getUtmExternalLink(EXTERNAL_LINKS.cloudConsole, {
+              campaign: UTM_CAMPAINGS.Main,
+              medium: UTM_MEDIUMS.Main,
+            })}
             target="_blank"
             rel="noreferrer"
           >
@@ -197,7 +249,9 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
 
     case CustomErrorCodes.RdiDeployPipelineFailure:
       title = 'Pipeline not deployed'
-      message = err?.message || 'Unfortunately we’ve found some errors in your pipeline.'
+      message =
+        err?.message ||
+        'Unfortunately we’ve found some errors in your pipeline.'
       additionalInfo.errorCode = err.errorCode
       break
 

@@ -87,33 +87,47 @@ describe('LocalCommandExecutionRepository', () => {
     });
 
     it('should process new entity', async () => {
-      expect(await service.createMany(mockSessionMetadata, [{
-        ...mockCommandExecution,
-        id: undefined,
-        createdAt: undefined,
-      }])).toEqual([mockCommandExecution]);
+      expect(
+        await service.createMany(mockSessionMetadata, [
+          {
+            ...mockCommandExecution,
+            id: undefined,
+            createdAt: undefined,
+          },
+        ]),
+      ).toEqual([mockCommandExecution]);
       expect(repository.save).toHaveBeenCalledWith({
         ...mockCommandExecutionEntity,
         id: undefined,
         createdAt: undefined,
       });
       expect(cleanupSpy).toBeCalledTimes(1);
-      expect(cleanupSpy).toHaveBeenCalledWith(mockCommandExecution.databaseId, { type: mockCommandExecution.type });
+      expect(cleanupSpy).toHaveBeenCalledWith(mockCommandExecution.databaseId, {
+        type: mockCommandExecution.type,
+      });
     });
     it('should return full result even if size limit exceeded', async () => {
-      const executionResult = [{
-        status: CommandExecutionStatus.Success,
-        response: `${Buffer.alloc(WORKBENCH_CONFIG.maxResultSize, 'a').toString()}`,
-      }];
+      const executionResult = [
+        {
+          status: CommandExecutionStatus.Success,
+          response: `${Buffer.alloc(WORKBENCH_CONFIG.maxResultSize, 'a').toString()}`,
+        },
+      ];
 
-      expect(await service.createMany(mockSessionMetadata, [{
-        ...mockCommandExecution,
-        result: executionResult,
-      }])).toEqual([{
-        ...mockCommandExecution,
-        result: executionResult,
-        isNotStored: true, // double check that for such cases special flag returned
-      }]);
+      expect(
+        await service.createMany(mockSessionMetadata, [
+          {
+            ...mockCommandExecution,
+            result: executionResult,
+          },
+        ]),
+      ).toEqual([
+        {
+          ...mockCommandExecution,
+          result: executionResult,
+          isNotStored: true, // double check that for such cases special flag returned
+        },
+      ]);
       expect(repository.save).toHaveBeenCalledWith({
         ...mockCommandExecutionEntity,
         command: mockCommandExecutionEntity.command,
@@ -123,17 +137,20 @@ describe('LocalCommandExecutionRepository', () => {
   });
   describe('getList', () => {
     it('should return list (2) of command execution', async () => {
-      repository.createQueryBuilder()
-        .getMany.mockReturnValueOnce([mockShortCommandExecutionEntity, mockShortCommandExecutionEntity]);
+      repository
+        .createQueryBuilder()
+        .getMany.mockReturnValueOnce([
+          mockShortCommandExecutionEntity,
+          mockShortCommandExecutionEntity,
+        ]);
 
-      expect(await service.getList(
-        mockSessionMetadata,
-        mockCommandExecutionEntity.databaseId,
-        mockCommandExecutionFilter,
-      )).toEqual([
-        mockShortCommandExecution,
-        mockShortCommandExecution,
-      ]);
+      expect(
+        await service.getList(
+          mockSessionMetadata,
+          mockCommandExecutionEntity.databaseId,
+          mockCommandExecutionFilter,
+        ),
+      ).toEqual([mockShortCommandExecution, mockShortCommandExecution]);
       expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({
         databaseId: mockCommandExecution.databaseId,
         type: mockCommandExecutionFilter.type,
@@ -147,49 +164,79 @@ describe('LocalCommandExecutionRepository', () => {
           command: 'something that can not be decrypted',
         },
       ]);
-      encryptionService.decrypt.mockResolvedValueOnce(mockShortCommandExecution.command);
-      encryptionService.decrypt.mockRejectedValueOnce(new KeytarDecryptionErrorException());
+      encryptionService.decrypt.mockResolvedValueOnce(
+        mockShortCommandExecution.command,
+      );
+      encryptionService.decrypt.mockRejectedValueOnce(
+        new KeytarDecryptionErrorException(),
+      );
 
-      expect(await service.getList(
-        mockSessionMetadata,
-        mockCommandExecution.databaseId,
-        mockCommandExecutionFilter,
-      )).toEqual([
-        mockShortCommandExecution,
-      ]);
+      expect(
+        await service.getList(
+          mockSessionMetadata,
+          mockCommandExecution.databaseId,
+          mockCommandExecutionFilter,
+        ),
+      ).toEqual([mockShortCommandExecution]);
     });
   });
   describe('getOne', () => {
     it('should return decrypted and transformed command execution', async () => {
-      expect(await service.getOne(mockSessionMetadata, mockCommandExecution.databaseId, mockCommandExecution.id))
-        .toEqual(mockCommandExecution);
+      expect(
+        await service.getOne(
+          mockSessionMetadata,
+          mockCommandExecution.databaseId,
+          mockCommandExecution.id,
+        ),
+      ).toEqual(mockCommandExecution);
       expect(repository.findOneBy).toHaveBeenCalledWith({
         id: mockCommandExecution.id,
         databaseId: mockCommandExecution.databaseId,
       });
     });
     it('should return null fields in case of decryption errors', async () => {
-      encryptionService.decrypt.mockReturnValueOnce(mockCommandExecution.command);
-      encryptionService.decrypt.mockRejectedValueOnce(new KeytarDecryptionErrorException());
+      encryptionService.decrypt.mockReturnValueOnce(
+        mockCommandExecution.command,
+      );
+      encryptionService.decrypt.mockRejectedValueOnce(
+        new KeytarDecryptionErrorException(),
+      );
 
-      expect(await service.getOne(mockSessionMetadata, mockCommandExecution.databaseId, mockCommandExecution.id))
-        .toEqual({
-          ...mockCommandExecution,
-          result: null,
-        });
+      expect(
+        await service.getOne(
+          mockSessionMetadata,
+          mockCommandExecution.databaseId,
+          mockCommandExecution.id,
+        ),
+      ).toEqual({
+        ...mockCommandExecution,
+        result: null,
+      });
     });
     it('should return not found exception', async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
 
-      await expect(service.getOne(mockSessionMetadata, mockCommandExecution.databaseId, mockCommandExecution.id))
-        .rejects.toEqual(new NotFoundException(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND));
+      await expect(
+        service.getOne(
+          mockSessionMetadata,
+          mockCommandExecution.databaseId,
+          mockCommandExecution.id,
+        ),
+      ).rejects.toEqual(
+        new NotFoundException(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND),
+      );
     });
   });
   describe('delete', () => {
     it('Should not return anything on delete', async () => {
       repository.delete.mockResolvedValueOnce(1);
-      expect(await service.delete(mockSessionMetadata, mockCommandExecution.databaseId, mockCommandExecution.id))
-        .toEqual(undefined);
+      expect(
+        await service.delete(
+          mockSessionMetadata,
+          mockCommandExecution.databaseId,
+          mockCommandExecution.id,
+        ),
+      ).toEqual(undefined);
       expect(repository.delete).toHaveBeenCalledWith({
         id: mockCommandExecution.id,
         databaseId: mockCommandExecution.databaseId,
@@ -199,8 +246,13 @@ describe('LocalCommandExecutionRepository', () => {
   describe('deleteAll', () => {
     it('Should not return anything on delete', async () => {
       repository.delete.mockResolvedValueOnce(1);
-      expect(await service.deleteAll(mockSessionMetadata, mockCommandExecution.databaseId, mockCommandExecutionFilter))
-        .toEqual(undefined);
+      expect(
+        await service.deleteAll(
+          mockSessionMetadata,
+          mockCommandExecution.databaseId,
+          mockCommandExecutionFilter,
+        ),
+      ).toEqual(undefined);
       expect(repository.delete).toHaveBeenCalledWith({
         databaseId: mockCommandExecution.databaseId,
         type: mockCommandExecutionFilter.type,
@@ -209,19 +261,27 @@ describe('LocalCommandExecutionRepository', () => {
   });
   describe('cleanupDatabaseHistory', () => {
     it('Should should not return anything on cleanup', async () => {
-      repository.createQueryBuilder().getRawMany.mockReturnValueOnce([
-        { id: mockCommandExecutionEntity.id },
-        { id: mockCommandExecutionEntity.id },
-      ]);
+      repository
+        .createQueryBuilder()
+        .getRawMany.mockReturnValueOnce([
+          { id: mockCommandExecutionEntity.id },
+          { id: mockCommandExecutionEntity.id },
+        ]);
 
-      expect(await service['cleanupDatabaseHistory'](mockCommandExecution.databaseId, mockCommandExecutionFilter))
-        .toEqual(undefined);
+      expect(
+        await service['cleanupDatabaseHistory'](
+          mockCommandExecution.databaseId,
+          mockCommandExecutionFilter,
+        ),
+      ).toEqual(undefined);
       expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({
         databaseId: mockCommandExecution.databaseId,
         type: mockCommandExecutionFilter.type,
       });
-      expect(repository.createQueryBuilder().whereInIds)
-        .toHaveBeenCalledWith([mockCommandExecutionEntity.id, mockCommandExecutionEntity.id]);
+      expect(repository.createQueryBuilder().whereInIds).toHaveBeenCalledWith([
+        mockCommandExecutionEntity.id,
+        mockCommandExecutionEntity.id,
+      ]);
     });
   });
 });

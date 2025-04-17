@@ -18,9 +18,11 @@ const getGroupTypeDisplayTests: any[] = [
 ]
 
 describe('getGroupTypeDisplay', () => {
-  it.each(getGroupTypeDisplayTests)('for input: %s (type), should be output: %s',
+  it.each(getGroupTypeDisplayTests)(
+    'for input: %s (type), should be output: %s',
     (type, expected) => {
       const result = getGroupTypeDisplay(type)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })

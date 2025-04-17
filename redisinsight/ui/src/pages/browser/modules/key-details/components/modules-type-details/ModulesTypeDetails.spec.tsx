@@ -6,6 +6,13 @@ import ModulesTypeDetails from './ModulesTypeDetails'
 
 describe('ModulesTypeDetails', () => {
   it('should render', () => {
-    expect(render(<ModulesTypeDetails moduleName={MODULES_KEY_TYPES_NAMES[ModulesKeyTypes.Graph]} onClose={jest.fn()} />)).toBeTruthy()
+    expect(
+      render(
+        <ModulesTypeDetails
+          moduleName={MODULES_KEY_TYPES_NAMES[ModulesKeyTypes.Graph]}
+          onClose={jest.fn()}
+        />,
+      ),
+    ).toBeTruthy()
   })
 })

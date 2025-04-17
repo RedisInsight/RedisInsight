@@ -2,7 +2,11 @@ import { createSlice } from '@reduxjs/toolkit'
 import { isString, uniqBy } from 'lodash'
 import { apiService, resourcesService } from 'uiSrc/services'
 import { ApiEndpoints, ICommand, ICommands } from 'uiSrc/constants'
-import { getApiErrorMessage, isStatusSuccessful, checkDeprecatedCommandGroup } from 'uiSrc/utils'
+import {
+  getApiErrorMessage,
+  isStatusSuccessful,
+  checkDeprecatedCommandGroup,
+} from 'uiSrc/utils'
 import { getConfig } from 'uiSrc/config'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 
@@ -16,7 +20,7 @@ export const commands = [
   'redistimeseries',
   'redisgraph',
   'redisgears',
-  'redisbloom'
+  'redisbloom',
 ]
 
 export const initialState: StateAppRedisCommands = {
@@ -59,13 +63,17 @@ export const {
 } = appRedisCommandsSlice.actions
 
 // A selector
-export const appRedisCommandsSelector = (state: RootState) => state.app.redisCommands
+export const appRedisCommandsSelector = (state: RootState) =>
+  state.app.redisCommands
 
 // The reducer
 export default appRedisCommandsSlice.reducer
 
 // Asynchronous thunk action
-export function fetchRedisCommandsInfo(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchRedisCommandsInfo(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getRedisCommands())
 
@@ -74,21 +82,26 @@ export function fetchRedisCommandsInfo(onSuccessAction?: () => void, onFailActio
 
       if (riConfig.app.useLocalResources) {
         const results = await Promise.all(
-          commands.map((command) => resourcesService.get<ICommand>(
-            `/static/commands/${command}.json`
-          ))
+          commands.map((command) =>
+            resourcesService.get<ICommand>(`/static/commands/${command}.json`),
+          ),
         )
         if (results.every(({ status }) => isStatusSuccessful(status))) {
-          const data: ICommands = results.reduce((obj, result) => ({
-            ...obj,
-            ...result.data
-          }), {})
+          const data: ICommands = results.reduce(
+            (obj, result) => ({
+              ...obj,
+              ...result.data,
+            }),
+            {},
+          )
 
           dispatch(getRedisCommandsSuccess(data))
           onSuccessAction?.()
         }
       } else {
-        const { data, status } = await apiService.get<GetServerInfoResponse>(ApiEndpoints.REDIS_COMMANDS)
+        const { data, status } = await apiService.get<GetServerInfoResponse>(
+          ApiEndpoints.REDIS_COMMANDS,
+        )
         if (isStatusSuccessful(status)) {
           dispatch(getRedisCommandsSuccess(data))
           onSuccessAction?.()

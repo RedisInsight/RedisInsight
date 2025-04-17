@@ -4,7 +4,9 @@ import { LocalConstantsProvider } from 'src/modules/constants/providers/local.co
 
 @Global()
 export class ConstantsModule {
-  static register(provider: Type<ConstantsProvider> = LocalConstantsProvider): DynamicModule {
+  static register(
+    provider: Type<ConstantsProvider> = LocalConstantsProvider,
+  ): DynamicModule {
     return {
       module: ConstantsModule,
       providers: [
@@ -13,9 +15,7 @@ export class ConstantsModule {
           useClass: provider,
         },
       ],
-      exports: [
-        ConstantsProvider,
-      ],
+      exports: [ConstantsProvider],
     };
   }
 }

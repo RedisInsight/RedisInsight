@@ -1,5 +1,12 @@
 import React, { useCallback } from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiText,
+  EuiTitle,
+} from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -12,9 +19,9 @@ import styles from './styles.module.scss'
 const NotFoundErrorPage = () => {
   const history = useHistory()
   const config = getConfig()
-  const {
-    [FeatureFlags.envDependent]: envDependentFeature
-  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.envDependent]: envDependentFeature } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
 
   const onDbButtonClick = useCallback(() => {
     if (envDependentFeature?.flag) {
@@ -47,11 +54,19 @@ const NotFoundErrorPage = () => {
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiTitle>
-                <h1>Whoops!<br />This Page Is an Empty Set</h1>
+                <h1>
+                  Whoops!
+                  <br />
+                  This Page Is an Empty Set
+                </h1>
               </EuiTitle>
               <EuiText>
-                <p className={styles.errorSubtext} style={{ marginBottom: '.8rem' }}>
-                  We searched every shard, <br />But couldn&apos;t find the page you&apos;re after.
+                <p
+                  className={styles.errorSubtext}
+                  style={{ marginBottom: '.8rem' }}
+                >
+                  We searched every shard, <br />
+                  But couldn&apos;t find the page you&apos;re after.
                 </p>
                 <EuiButton
                   color="secondary"

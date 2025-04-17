@@ -14,18 +14,39 @@ export interface Props {
 }
 
 const CHCommandInfo = (props: Props) => {
-  const { args = '', group = CommandGroup.Generic, complexity = '', onBackClick } = props
+  const {
+    args = '',
+    group = CommandGroup.Generic,
+    complexity = '',
+    onBackClick,
+  } = props
 
   return (
     <div className={styles.container} data-testid="cli-helper-title">
-      <EuiButtonIcon iconType="sortLeft" onClick={onBackClick} data-testid="cli-helper-back-to-list-btn" style={{ marginRight: '4px' }} />
+      <EuiButtonIcon
+        iconType="sortLeft"
+        onClick={onBackClick}
+        data-testid="cli-helper-back-to-list-btn"
+        style={{ marginRight: '4px' }}
+      />
       <GroupBadge type={group} className={styles.groupBadge} />
-      <EuiTextColor className={styles.title} color="subdued" data-testid="cli-helper-title-args">
+      <EuiTextColor
+        className={styles.title}
+        color="subdued"
+        data-testid="cli-helper-title-args"
+      >
         {args}
       </EuiTextColor>
       {complexity && (
-        <EuiBadge className={styles.badge} data-testid="cli-helper-complexity-short">
-          <EuiText style={{ color: 'white' }} className="text-capitalize" size="xs">
+        <EuiBadge
+          className={styles.badge}
+          data-testid="cli-helper-complexity-short"
+        >
+          <EuiText
+            style={{ color: 'white' }}
+            className="text-capitalize"
+            size="xs"
+          >
             {complexity}
           </EuiText>
         </EuiBadge>

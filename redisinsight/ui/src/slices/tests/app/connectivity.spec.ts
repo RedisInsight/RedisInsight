@@ -1,20 +1,27 @@
 import { cloneDeep } from 'lodash'
 import { rest } from 'msw'
 import { waitFor } from '@testing-library/react'
-import { cleanup, getMswURL, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  getMswURL,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { mswServer } from 'uiSrc/mocks/server'
 import { store } from 'uiSrc/slices/store'
 import reducer, {
-  appConnectivity, appConnectivityError,
-  initialState, retryConnection,
+  appConnectivity,
+  appConnectivityError,
+  initialState,
+  retryConnection,
   setConnectivityError,
-  setConnectivityLoading
+  setConnectivityLoading,
 } from 'uiSrc/slices/app/connectivity'
 import { ApiEndpoints } from 'uiSrc/constants'
 import {
   getDatabaseConfigInfo,
   getDatabaseConfigInfoFailure,
-  getDatabaseConfigInfoSuccess
+  getDatabaseConfigInfoSuccess,
 } from 'uiSrc/slices/instances/instances'
 
 let testStore: typeof mockedStore
@@ -34,7 +41,7 @@ describe('app connectivity slice', () => {
       const nextState = reducer(initialState, setConnectivityLoading(true))
       const expectedState = {
         loading: true,
-        error: undefined
+        error: undefined,
       }
       expect(nextState).toEqual(expectedState)
     })
@@ -43,7 +50,7 @@ describe('app connectivity slice', () => {
       const nextState = reducer(initialState, setConnectivityLoading(false))
       const expectedState = {
         loading: false,
-        error: undefined
+        error: undefined,
       }
       expect(nextState).toEqual(expectedState)
     })
@@ -51,10 +58,13 @@ describe('app connectivity slice', () => {
 
   describe('setConnectivityError reducer', () => {
     it('should set connectivity error to a value', () => {
-      const nextState = reducer(initialState, setConnectivityError('Test error message'))
+      const nextState = reducer(
+        initialState,
+        setConnectivityError('Test error message'),
+      )
       const expectedState = {
         loading: false,
-        error: 'Test error message'
+        error: 'Test error message',
       }
       expect(nextState).toEqual(expectedState)
     })
@@ -63,7 +73,7 @@ describe('app connectivity slice', () => {
       const nextState = reducer(initialState, setConnectivityError(null))
       const expectedState = {
         loading: false,
-        error: null
+        error: null,
       }
       expect(nextState).toEqual(expectedState)
     })
@@ -73,10 +83,15 @@ describe('app connectivity slice', () => {
     it('should handle success path', async () => {
       const getDbOverviewMock = jest.fn((_req, res, ctx) => res(ctx.json({})))
       mswServer.use(
-        rest.get(getMswURL(`${ApiEndpoints.DATABASES}/123/overview`), getDbOverviewMock)
+        rest.get(
+          getMswURL(`${ApiEndpoints.DATABASES}/123/overview`),
+          getDbOverviewMock,
+        ),
       )
 
-      testStore.dispatch<any>(retryConnection('123', onSuccessAction, onFailAction))
+      testStore.dispatch<any>(
+        retryConnection('123', onSuccessAction, onFailAction),
+      )
 
       await waitFor(() => {
         expect(getDbOverviewMock).toHaveBeenCalledTimes(1)
@@ -100,12 +115,22 @@ describe('app connectivity slice', () => {
       jest.spyOn(store, 'dispatch').mockImplementation((action: any) => {
         mockedStore.dispatch(action)
       })
-      const getDbOverviewMock = jest.fn((_req, res, ctx) => res(ctx.status(503), ctx.json({ code: 'serviceUnavailable', message: 'Test error' })))
+      const getDbOverviewMock = jest.fn((_req, res, ctx) =>
+        res(
+          ctx.status(503),
+          ctx.json({ code: 'serviceUnavailable', message: 'Test error' }),
+        ),
+      )
       mswServer.use(
-        rest.get(getMswURL(`${ApiEndpoints.DATABASES}/123/overview`), getDbOverviewMock)
+        rest.get(
+          getMswURL(`${ApiEndpoints.DATABASES}/123/overview`),
+          getDbOverviewMock,
+        ),
       )
 
-      testStore.dispatch<any>(retryConnection('123', onSuccessAction, onFailAction))
+      testStore.dispatch<any>(
+        retryConnection('123', onSuccessAction, onFailAction),
+      )
 
       await waitFor(() => {
         expect(getDbOverviewMock).toHaveBeenCalledTimes(1)
@@ -139,7 +164,9 @@ describe('app connectivity slice', () => {
       await waitFor(() => {
         const actualValue = appConnectivity(rootState)
         expect(actualValue).toStrictEqual(expectedState)
-        expect(appConnectivityError(rootState)).toStrictEqual(expectedState.error)
+        expect(appConnectivityError(rootState)).toStrictEqual(
+          expectedState.error,
+        )
       })
     })
 
@@ -157,7 +184,9 @@ describe('app connectivity slice', () => {
       await waitFor(() => {
         const actualValue = appConnectivity(rootState)
         expect(actualValue).toStrictEqual(expectedState)
-        expect(appConnectivityError(rootState)).toStrictEqual(expectedState.error)
+        expect(appConnectivityError(rootState)).toStrictEqual(
+          expectedState.error,
+        )
       })
     })
   })

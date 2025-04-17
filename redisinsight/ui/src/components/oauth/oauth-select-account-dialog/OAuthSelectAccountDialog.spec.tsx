@@ -1,6 +1,12 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { act, cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+} from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import {
   getUserInfo,
@@ -26,7 +32,10 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
   }),
   oauthCloudUserDataSelector: jest.fn().mockReturnValue({
     id: 1,
-    accounts: [{ id: 1, name: 'name1' }, { id: 2, name: 'name2' }]
+    accounts: [
+      { id: 1, name: 'name1' },
+      { id: 2, name: 'name2' },
+    ],
   }),
 }))
 jest.mock('uiSrc/slices/instances/cloud', () => ({
@@ -49,14 +58,14 @@ describe('OAuthSelectAccountDialog', () => {
     expect(queryByTestId('oauth-select-account-dialog')).toBeInTheDocument()
   })
   it('should not render if account.length < 2', () => {
-    (oauthCloudUserDataSelector as jest.Mock).mockReturnValueOnce({
+    ;(oauthCloudUserDataSelector as jest.Mock).mockReturnValueOnce({
       accounts: [{ id: 1, name: 'name1' }],
     })
     const { queryByTestId } = render(<OAuthSelectAccountDialog />)
     expect(queryByTestId('oauth-select-account-dialog')).not.toBeInTheDocument()
   })
   it('should not render if isOpenSelectAccountDialog=false', () => {
-    (oauthCloudSelector as jest.Mock).mockReturnValueOnce({
+    ;(oauthCloudSelector as jest.Mock).mockReturnValueOnce({
       isOpenSelectAccountDialog: false,
     })
     const { queryByTestId } = render(<OAuthSelectAccountDialog />)
@@ -64,12 +73,16 @@ describe('OAuthSelectAccountDialog', () => {
   })
 
   it('should send telemetry after close modal', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     const { queryByTestId } = render(<OAuthSelectAccountDialog />)
 
-    const closeEl = queryByTestId('oauth-select-account-dialog')?.querySelector('.euiModal__closeIcon')
+    const closeEl = queryByTestId('oauth-select-account-dialog')?.querySelector(
+      '.euiModal__closeIcon',
+    )
 
     fireEvent.click(closeEl as HTMLButtonElement)
 
@@ -77,14 +90,16 @@ describe('OAuthSelectAccountDialog', () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_ACCOUNT_FORM_CLOSED,
       eventData: {
         accountsCount: 2,
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('click on submit btn should call getUserInfo', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     apiService.put = jest.fn().mockResolvedValue({ status: 200 })
 
@@ -101,20 +116,24 @@ describe('OAuthSelectAccountDialog', () => {
       loadSubscriptionsRedisCloud(),
       setSelectAccountDialogState(false),
     ]
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+      expectedActions,
+    )
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_SIGN_IN_ACCOUNT_SELECTED,
       eventData: {
         accountsCount: 2,
-        action: 'import'
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        action: 'import',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
   it('on error in activeAccount telemetry should be sent', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     const { queryByTestId } = render(<OAuthSelectAccountDialog />)
 
@@ -140,8 +159,8 @@ describe('OAuthSelectAccountDialog', () => {
       eventData: {
         error: errorMessage,
         accountsCount: 2,
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

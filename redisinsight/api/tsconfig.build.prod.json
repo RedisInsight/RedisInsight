@@ -11,6 +11,6 @@
     "ui",
     "**/ui/**.*",
     "**/*spec.ts",
-    "src/__mocks__",
+    "src/__mocks__"
   ]
 }

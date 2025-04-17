@@ -1,6 +1,4 @@
-import {
-  Column, Entity, OneToMany, PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { Expose } from 'class-transformer';
 

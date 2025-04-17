@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockNotificationRepository, mockNotificationsDto,
+  mockNotificationRepository,
+  mockNotificationsDto,
   mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
@@ -66,7 +67,10 @@ describe('NotificationService', () => {
       repository.readNotifications.mockRejectedValue(new Error('some error'));
 
       try {
-        await service.readNotifications(mockSessionMetadata, { timestamp: 1, type: NotificationType.Global });
+        await service.readNotifications(mockSessionMetadata, {
+          timestamp: 1,
+          type: NotificationType.Global,
+        });
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);

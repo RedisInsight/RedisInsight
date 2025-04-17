@@ -2,7 +2,11 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 
 import { apiService } from 'uiSrc/services'
-import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  initialStateDefault,
+} from 'uiSrc/utils/test-utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 import reducer, {
@@ -21,7 +25,7 @@ import reducer, {
   fetchUserConfigSettings,
   fetchUserSettingsSpec,
   updateUserConfigSettingsAction,
-  userSettingsSelector
+  userSettingsSelector,
 } from '../../user/user-settings'
 
 let store: typeof mockedStore
@@ -49,7 +53,7 @@ describe('userSettings slice', () => {
     it('should properly set the initial state', () => {
       // Arrange
       const state = {
-        ...initialState
+        ...initialState,
       }
 
       // Act
@@ -69,7 +73,7 @@ describe('userSettings slice', () => {
         workbench: {
           ...initialState.workbench,
           cleanup: true,
-        }
+        },
       }
 
       // Act
@@ -126,17 +130,20 @@ describe('userSettings slice', () => {
       // Arrange
       const data = {
         agreements: {
-          eula: true
-        }
+          eula: true,
+        },
       }
       const state = {
         ...initialState,
         loading: false,
-        config: data
+        config: data,
       }
 
       // Act
-      const nextState = reducer(initialState, getUserConfigSettingsSuccess(data))
+      const nextState = reducer(
+        initialState,
+        getUserConfigSettingsSuccess(data),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -153,11 +160,14 @@ describe('userSettings slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
-      const nextState = reducer(initialState, getUserConfigSettingsFailure(error))
+      const nextState = reducer(
+        initialState,
+        getUserConfigSettingsFailure(error),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -192,18 +202,21 @@ describe('userSettings slice', () => {
 
       const config = {
         agreements: {
-          eula: true
-        }
+          eula: true,
+        },
       }
       const state = {
         ...initialState,
         loading: false,
         isShowConceptsPopup: false,
-        config
+        config,
       }
 
       // Act
-      const nextState = reducer(initialState, updateUserConfigSettingsSuccess(config))
+      const nextState = reducer(
+        initialState,
+        updateUserConfigSettingsSuccess(config),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -220,11 +233,14 @@ describe('userSettings slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
-      const nextState = reducer(initialState, updateUserConfigSettingsFailure(error))
+      const nextState = reducer(
+        initialState,
+        updateUserConfigSettingsFailure(error),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -265,14 +281,14 @@ describe('userSettings slice', () => {
             editable: false,
             since: '1.0.0',
             title: 'Title',
-            label: '<a>Text</a>'
-          }
-        }
+            label: '<a>Text</a>',
+          },
+        },
       }
       const state = {
         ...initialState,
         loading: false,
-        spec: data
+        spec: data,
       }
 
       // Act
@@ -293,7 +309,7 @@ describe('userSettings slice', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
@@ -316,8 +332,8 @@ describe('userSettings slice', () => {
         const data = {
           agreements: {
             eula: true,
-            analytics: false
-          }
+            analytics: false,
+          },
         }
         const responsePayload = { data, status: 200 }
 
@@ -352,7 +368,7 @@ describe('userSettings slice', () => {
         // Assert
         const expectedActions = [
           getUserConfigSettings(),
-          getUserConfigSettingsFailure(errorMessage)
+          getUserConfigSettingsFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -371,9 +387,9 @@ describe('userSettings slice', () => {
               editable: false,
               since: '1.0.0',
               title: 'Title',
-              label: '<a>Text</a>'
-            }
-          }
+              label: '<a>Text</a>',
+            },
+          },
         }
         const responsePayload = { data, status: 200 }
 
@@ -408,7 +424,7 @@ describe('userSettings slice', () => {
         // Assert
         const expectedActions = [
           getUserSettingsSpec(),
-          getUserSettingsSpecFailure(errorMessage)
+          getUserSettingsSpecFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -424,7 +440,9 @@ describe('userSettings slice', () => {
         apiService.patch = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(updateUserConfigSettingsAction({ agreements: { eula: true } }))
+        await store.dispatch<any>(
+          updateUserConfigSettingsAction({ agreements: { eula: true } }),
+        )
 
         // Assert
         const expectedActions = [
@@ -447,7 +465,9 @@ describe('userSettings slice', () => {
         apiService.patch = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(updateUserConfigSettingsAction({ agreements: { eula: true } }))
+        await store.dispatch<any>(
+          updateUserConfigSettingsAction({ agreements: { eula: true } }),
+        )
 
         // Assert
         const expectedActions = [

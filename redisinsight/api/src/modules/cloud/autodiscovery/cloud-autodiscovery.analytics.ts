@@ -3,15 +3,16 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
-import {
-  CloudAutodiscoveryAuthType,
-} from 'src/modules/cloud/autodiscovery/models';
+import { CloudAutodiscoveryAuthType } from 'src/modules/cloud/autodiscovery/models';
 import {
   CloudSubscription,
   CloudSubscriptionStatus,
   CloudSubscriptionType,
 } from 'src/modules/cloud/subscription/models';
-import { CloudDatabase, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
+import {
+  CloudDatabase,
+  CloudDatabaseStatus,
+} from 'src/modules/cloud/database/models';
 import { SessionMetadata } from 'src/common/models';
 
 @Injectable()

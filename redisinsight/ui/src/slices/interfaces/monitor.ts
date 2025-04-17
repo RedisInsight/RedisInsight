@@ -2,7 +2,7 @@ import { Socket } from 'socket.io-client'
 import { Nullable } from 'uiSrc/utils'
 import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
-export interface IMonitorDataPayload extends Partial<IMonitorData>{
+export interface IMonitorDataPayload extends Partial<IMonitorData> {
   isError?: boolean
   message?: string
 }

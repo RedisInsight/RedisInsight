@@ -9,7 +9,9 @@ import { LocalNotificationRepository } from './repositories/local.notification.r
 
 @Module({})
 export class NotificationModule {
-  static register(notificationRepository: Type<NotificationRepository> = LocalNotificationRepository) {
+  static register(
+    notificationRepository: Type<NotificationRepository> = LocalNotificationRepository,
+  ) {
     return {
       module: NotificationModule,
       providers: [
@@ -22,9 +24,7 @@ export class NotificationModule {
         GlobalNotificationProvider,
         NotificationEmitter,
       ],
-      controllers: [
-        NotificationController,
-      ],
+      controllers: [NotificationController],
     };
   }
 }

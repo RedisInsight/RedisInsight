@@ -1,5 +1,11 @@
 import React from 'react'
-import { EuiModal, EuiModalBody, EuiModalFooter, EuiModalHeader, EuiModalHeaderTitle } from '@elastic/eui'
+import {
+  EuiModal,
+  EuiModalBody,
+  EuiModalFooter,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
+} from '@elastic/eui'
 import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
@@ -19,21 +25,12 @@ const FormDialog = (props: Props) => {
   if (!isOpen) return null
 
   return (
-    <EuiModal
-      className={`${styles.modal} ${className}`}
-      onClose={onClose}
-    >
+    <EuiModal className={`${styles.modal} ${className}`} onClose={onClose}>
       <EuiModalHeader>
-        <EuiModalHeaderTitle id="formModalHeader">
-          {header}
-        </EuiModalHeaderTitle>
+        <EuiModalHeaderTitle id="formModalHeader">{header}</EuiModalHeaderTitle>
       </EuiModalHeader>
-      <EuiModalBody>
-        {children}
-      </EuiModalBody>
-      <EuiModalFooter>
-        {footer}
-      </EuiModalFooter>
+      <EuiModalBody>{children}</EuiModalBody>
+      <EuiModalFooter>{footer}</EuiModalFooter>
     </EuiModal>
   )
 }

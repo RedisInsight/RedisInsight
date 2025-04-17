@@ -44,11 +44,14 @@ const OAuthSocialButtons = (props: Props) => {
       icon: SsoIcon,
       label: 'sso-oauth',
       strategy: OAuthStrategy.SSO,
-    }
+    },
   ]
 
   return (
-    <div className={cx(styles.container, className)} data-testid="oauth-container-social-buttons">
+    <div
+      className={cx(styles.container, className)}
+      data-testid="oauth-container-social-buttons"
+    >
       {socialLinks.map(({ strategy, text, icon, label, className = '' }) => (
         <EuiToolTip
           key={label}
@@ -60,7 +63,9 @@ const OAuthSocialButtons = (props: Props) => {
           <>
             <EuiButtonEmpty
               disabled={!agreement || disabled}
-              className={cx(styles.button, className, { [styles.inline]: inline })}
+              className={cx(styles.button, className, {
+                [styles.inline]: inline,
+              })}
               onClick={() => {
                 onClick(strategy)
               }}

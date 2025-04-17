@@ -1,7 +1,15 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, mockedStore, render, fireEvent, act, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  render,
+  fireEvent,
+  act,
+  screen,
+  waitForEuiToolTipVisible,
+} from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import QueryCardHeader, { Props } from './QueryCardHeader'
@@ -26,7 +34,7 @@ jest.mock('uiSrc/services', () => ({
 jest.mock('uiSrc/slices/app/plugins', () => ({
   ...jest.requireActual('uiSrc/slices/app/plugins'),
   appPluginsSelector: jest.fn().mockReturnValue({
-    visualizations: []
+    visualizations: [],
   }),
 }))
 
@@ -49,14 +57,21 @@ describe('QueryCardHeader', () => {
     expect(render(<QueryCardHeader {...instance(mockedProps)} />)).toBeTruthy()
   })
   it('should render tooltip in milliseconds', async () => {
-    render(<QueryCardHeader {...instance(mockedProps)} executionTime={12345678910} />)
+    render(
+      <QueryCardHeader
+        {...instance(mockedProps)}
+        executionTime={12345678910}
+      />,
+    )
 
     await act(async () => {
       fireEvent.mouseOver(screen.getByTestId('command-execution-time-icon'))
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('execution-time-tooltip')).toHaveTextContent('12 345 678.91 msec')
+    expect(screen.getByTestId('execution-time-tooltip')).toHaveTextContent(
+      '12 345 678.91 msec',
+    )
   })
 
   it('should render disabled copy button', async () => {
@@ -67,8 +82,10 @@ describe('QueryCardHeader', () => {
 
   it('event telemetry WORKBENCH_COMMAND_COPIED should be call after click on copy btn', async () => {
     const command = 'info'
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<QueryCardHeader {...instance(mockedProps)} query={command} />)
 
     await act(async () => {
@@ -80,9 +97,8 @@ describe('QueryCardHeader', () => {
       eventData: {
         command,
         databaseId: INSTANCE_ID_MOCK,
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

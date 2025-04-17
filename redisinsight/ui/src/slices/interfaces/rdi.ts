@@ -6,13 +6,13 @@ import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 // tabs for dry run job panel
 export enum PipelineJobsTabs {
   Transformations = 'transformations',
-  Output = 'output'
+  Output = 'output',
 }
 
 // pipeline management page tabs
 export enum RdiPipelineTabs {
   Config = 'config',
-  Jobs = 'jobs'
+  Jobs = 'jobs',
 }
 
 export interface IRdiPipelineJob {
@@ -53,7 +53,7 @@ export interface IRdiPipelineStrategies {
 
 export enum StatisticsConnectionStatus {
   notYetUsed = 'not yet used',
-  connected = 'connected'
+  connected = 'connected',
 }
 
 export interface IConnections {
@@ -80,7 +80,7 @@ export interface IDataStreamsData {
 }
 
 export interface IDataStreams {
-  totals: IDataStreamsData,
+  totals: IDataStreamsData
   streams: {
     [key: string]: IDataStreamsData
   }
@@ -115,11 +115,11 @@ export interface IClients {
 
 export enum RdiPipelineStatus {
   Success = 'success',
-  Failed = 'failed'
+  Failed = 'failed',
 }
 
 export interface IRdiStatistics {
-  status: RdiPipelineStatus,
+  status: RdiPipelineStatus
   data: {
     connections: IConnections
     dataStreams: IDataStreams
@@ -162,8 +162,8 @@ export interface IPipelineStatus {
   pipelines: {
     default?: {
       status: PipelineStatus
-      state: PipelineState,
-      tasks: unknown,
+      state: PipelineState
+      tasks: unknown
     }
   }
 }
@@ -216,6 +216,8 @@ export interface RdiInstance extends RdiInstanceResponse {
   visible?: boolean
   loading: boolean
   error: string
+  // not really present, but used in InstancesList.tsx:142
+  db?: number
 }
 
 export interface IErrorData {
@@ -294,7 +296,8 @@ export interface IStateRdiTestConnections {
 }
 
 export type TJMESPathFunctions = {
-  [key: string]: Pick<ICommand, 'summary'> & Required<Pick<ICommand, 'arguments'>>
+  [key: string]: Pick<ICommand, 'summary'> &
+    Required<Pick<ICommand, 'arguments'>>
 }
 
 export interface IYamlFormatError {

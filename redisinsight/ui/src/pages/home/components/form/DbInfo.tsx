@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { EuiIcon, EuiListGroup, EuiListGroupItem, EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
 import { DatabaseListModules } from 'uiSrc/components'
@@ -8,6 +8,10 @@ import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
+import {
+  Group as ListGroup,
+  Item as ListGroupItem,
+} from 'uiSrc/components/base/layout/list'
 import { Endpoint } from 'apiSrc/common/models'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
@@ -25,7 +29,16 @@ export interface Props {
 }
 
 const DbInfo = (props: Props) => {
-  const { connectionType, nameFromProvider, nodes = null, host, port, db, modules, isFromCloud } = props
+  const {
+    connectionType,
+    nameFromProvider,
+    nodes = null,
+    host,
+    port,
+    db,
+    modules,
+    isFromCloud,
+  } = props
 
   const { server } = useSelector(appInfoSelector)
 
@@ -34,20 +47,17 @@ const DbInfo = (props: Props) => {
       title="Host:port"
       position="left"
       anchorClassName={styles.anchorEndpoints}
-      content={(
+      content={
         <ul className={styles.endpointsList}>
           {nodes?.map(({ host: eHost, port: ePort }) => (
             <li key={host + port}>
               <EuiText>
-                {eHost}
-                :
-                {ePort}
-                ;
+                {eHost}:{ePort};
               </EuiText>
             </li>
           ))}
         </ul>
-      )}
+      }
     >
       <EuiIcon
         type="iInCircle"
@@ -59,87 +69,100 @@ const DbInfo = (props: Props) => {
   )
 
   return (
-    <EuiListGroup className={styles.dbInfoGroup} flush>
+    <ListGroup className={styles.dbInfoGroup} flush>
       {!isFromCloud && (
-        <EuiListGroupItem
-          label={(
+        <ListGroupItem
+          label={
             <EuiText color="subdued" size="s">
               Connection Type:
-              <EuiTextColor color="default" className={styles.dbInfoListValue} data-testid="connection-type">
+              <EuiTextColor
+                color="default"
+                className={styles.dbInfoListValue}
+                data-testid="connection-type"
+              >
                 {capitalize(connectionType)}
               </EuiTextColor>
             </EuiText>
-          )}
+          }
         />
       )}
 
       {nameFromProvider && (
-        <EuiListGroupItem
-          label={(
+        <ListGroupItem
+          label={
             <EuiText color="subdued" size="s">
               Database Name from Provider:
               <EuiTextColor color="default" className={styles.dbInfoListValue}>
                 {nameFromProvider}
               </EuiTextColor>
             </EuiText>
-          )}
+          }
         />
       )}
-      <EuiListGroupItem
-        label={(
+      <ListGroupItem
+        label={
           <>
             {!!nodes?.length && <AppendEndpoints />}
             <EuiText color="subdued" size="s">
               Host:
-              <EuiTextColor color="default" className={styles.dbInfoListValue} data-testid="db-info-host">
+              <EuiTextColor
+                color="default"
+                className={styles.dbInfoListValue}
+                data-testid="db-info-host"
+              >
                 {host}
               </EuiTextColor>
             </EuiText>
           </>
-        )}
+        }
       />
       {(server?.buildType === BuildType.RedisStack || isFromCloud) && (
-        <EuiListGroupItem
-          label={(
+        <ListGroupItem
+          label={
             <EuiText color="subdued" size="s">
               Port:
-              <EuiTextColor color="default" className={styles.dbInfoListValue} data-testid="db-info-port">
+              <EuiTextColor
+                color="default"
+                className={styles.dbInfoListValue}
+                data-testid="db-info-port"
+              >
                 {port}
               </EuiTextColor>
             </EuiText>
-          )}
+          }
         />
       )}
 
       {!!db && (
-        <EuiListGroupItem
-          label={(
+        <ListGroupItem
+          label={
             <EuiText color="subdued" size="s">
               Database Index:
               <EuiTextColor color="default" className={styles.dbInfoListValue}>
                 {db}
               </EuiTextColor>
             </EuiText>
-          )}
+          }
         />
       )}
 
       {!!modules?.length && (
-        <>
-          <EuiListGroupItem
-            className={styles.dbInfoModulesLabel}
-            label={(
-              <EuiText color="subdued" size="s">
-                Capabilities:
-              </EuiText>
-            )}
-          />
-          <EuiTextColor color="default" className={cx(styles.dbInfoListValue, styles.dbInfoModules)}>
-            <DatabaseListModules modules={modules} />
-          </EuiTextColor>
-        </>
+        <ListGroupItem
+          className={styles.dbInfoModulesLabel}
+          label={
+            <EuiText color="subdued" size="s">
+              Capabilities:
+              <EuiTextColor
+                color="default"
+                className={cx(styles.dbInfoListValue, styles.dbInfoModules)}
+              >
+                <DatabaseListModules modules={modules} />
+              </EuiTextColor>
+            </EuiText>
+          }
+        />
       )}
-    </EuiListGroup>
+    </ListGroup>
   )
 }
 
